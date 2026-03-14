@@ -1,10 +1,15 @@
 'use client';
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { proxy, useSnapshot } from 'valtio';
 
 import { getNestedProperty, handleCharacterIdChange, setNestedProperty } from '@/lib/editUtils';
-import type { CharacterWithFaction, KnowledgeCardWithFaction } from '@/lib/types';
+import {
+  CATEGORY_HINTS,
+  type CharacterWithFaction,
+  type KnowledgeCardWithFaction,
+} from '@/lib/types';
 import { useAppContext } from '@/context/AppContext';
 import {
   useEditMode,
@@ -22,6 +27,7 @@ import {
 import {
   achievementsEdit,
   buffsEdit,
+  cards,
   cardsEdit,
   characters,
   entitiesEdit,
@@ -79,6 +85,384 @@ type EditableElementsProxy = {
 
 const emptyObject = proxy({});
 const EMPTY_EDITABLE_PLACEHOLDER = '<无内容>';
+const MAX_AUTOCOMPLETE_ITEMS = 12;
+
+type PairOpenBrace = '{' | '[';
+
+type EditableAutocompleteSource =
+  | '角色'
+  | '知识卡'
+  | '技能'
+  | '特技'
+  | '道具'
+  | '衍生物'
+  | '状态'
+  | '场景'
+  | '地图'
+  | '模式'
+  | '成就'
+  | '分类';
+
+type EditableAutocompleteCandidate = {
+  label: string;
+  insertText: string;
+  source: EditableAutocompleteSource;
+  pinyin: string;
+  pinyinInitials: string;
+};
+
+type CaretViewportPosition = {
+  top: number;
+  left: number;
+};
+
+type BraceAutocompleteContext = {
+  openBraceIndex: number;
+  caretOffset: number;
+  query: string;
+};
+
+let editableAutocompleteCandidatesPromise: Promise<EditableAutocompleteCandidate[]> | null = null;
+let pinyinModulePromise: Promise<typeof import('pinyin-pro')> | null = null;
+
+function normalizeAutocompleteInput(input: string): string {
+  return input.toLowerCase().replace(/['\s]+/g, '');
+}
+
+function getPinyinModule() {
+  if (!pinyinModulePromise) {
+    pinyinModulePromise = import('pinyin-pro');
+  }
+  return pinyinModulePromise;
+}
+
+async function toPinyinTokens(text: string): Promise<{ full: string; initials: string }> {
+  if (!text.trim()) {
+    return { full: '', initials: '' };
+  }
+
+  const pinyinModule = await getPinyinModule();
+  const syllables = pinyinModule.pinyin(text, {
+    toneType: 'none',
+    v: true,
+    type: 'array',
+  });
+
+  const normalized = syllables.map((syllable) => normalizeAutocompleteInput(String(syllable)));
+  return {
+    full: normalized.join(''),
+    initials: normalized.map((syllable) => syllable[0] ?? '').join(''),
+  };
+}
+
+async function buildEditableAutocompleteCandidates(): Promise<EditableAutocompleteCandidate[]> {
+  const dedup = new Map<
+    string,
+    { label: string; insertText: string; source: EditableAutocompleteSource }
+  >();
+
+  const add = (value: string | undefined, source: EditableAutocompleteSource) => {
+    const normalized = value?.trim();
+    if (!normalized || dedup.has(normalized)) {
+      return;
+    }
+    dedup.set(normalized, {
+      label: normalized,
+      insertText: normalized,
+      source,
+    });
+  };
+
+  const addAliases = (aliases: unknown, source: EditableAutocompleteSource) => {
+    if (!Array.isArray(aliases)) {
+      return;
+    }
+
+    aliases.forEach((alias) => {
+      if (typeof alias === 'string') {
+        add(alias, source);
+      }
+    });
+  };
+
+  const addFromRecord = (record: Record<string, unknown>, source: EditableAutocompleteSource) => {
+    Object.entries(record).forEach(([recordKey, rawEntry]) => {
+      add(recordKey, source);
+
+      if (!rawEntry || typeof rawEntry !== 'object') {
+        return;
+      }
+
+      const entry = rawEntry as Record<string, unknown>;
+      if (typeof entry.name === 'string') {
+        add(entry.name, source);
+      }
+      if (typeof entry.id === 'string') {
+        add(entry.id, source);
+      }
+
+      addAliases(entry.aliases, source);
+    });
+  };
+
+  Object.entries(characters).forEach(([name, character]) => {
+    add(name, '角色');
+    add(character.id, '角色');
+    addAliases(character.aliases, '角色');
+    character.skills.forEach((skill) => {
+      add(skill.name, '技能');
+      addAliases(skill.aliases, '技能');
+    });
+  });
+
+  Object.entries(cards).forEach(([name, card]) => {
+    add(name, '知识卡');
+    add(card.id, '知识卡');
+    if ('aliases' in card && Array.isArray(card.aliases)) {
+      card.aliases.forEach((alias) => add(alias, '知识卡'));
+    }
+  });
+
+  addFromRecord(itemsEdit as unknown as Record<string, unknown>, '道具');
+  addFromRecord(entitiesEdit as unknown as Record<string, unknown>, '衍生物');
+  addFromRecord(buffsEdit as unknown as Record<string, unknown>, '状态');
+  addFromRecord(fixturesEdit as unknown as Record<string, unknown>, '场景');
+  addFromRecord(mapsEdit as unknown as Record<string, unknown>, '地图');
+  addFromRecord(modesEdit as unknown as Record<string, unknown>, '模式');
+  addFromRecord(achievementsEdit as unknown as Record<string, unknown>, '成就');
+  addFromRecord(specialSkillsEdit.cat as unknown as Record<string, unknown>, '特技');
+  addFromRecord(specialSkillsEdit.mouse as unknown as Record<string, unknown>, '特技');
+
+  CATEGORY_HINTS.forEach((hint) => add(hint, '分类'));
+
+  const candidates = await Promise.all(
+    Array.from(dedup.values()).map(async (candidate) => {
+      const pinyinTokens = await toPinyinTokens(candidate.label);
+      return {
+        ...candidate,
+        pinyin: pinyinTokens.full,
+        pinyinInitials: pinyinTokens.initials,
+      };
+    })
+  );
+
+  return candidates.sort((a, b) => a.label.localeCompare(b.label, 'zh-CN'));
+}
+
+function getEditableAutocompleteCandidates() {
+  if (!editableAutocompleteCandidatesPromise) {
+    editableAutocompleteCandidatesPromise = buildEditableAutocompleteCandidates();
+  }
+  return editableAutocompleteCandidatesPromise;
+}
+
+function getSelectionRangeWithinElement(element: HTMLElement): Range | null {
+  const selection = window.getSelection();
+  if (!selection || selection.rangeCount === 0) {
+    return null;
+  }
+
+  const range = selection.getRangeAt(0);
+  if (!element.contains(range.startContainer) || !element.contains(range.endContainer)) {
+    return null;
+  }
+
+  return range;
+}
+
+function getCaretOffsetInElement(element: HTMLElement): number | null {
+  const range = getSelectionRangeWithinElement(element);
+  if (!range) {
+    return null;
+  }
+
+  const preRange = range.cloneRange();
+  preRange.selectNodeContents(element);
+  preRange.setEnd(range.endContainer, range.endOffset);
+  return preRange.toString().length;
+}
+
+function setCaretOffsetInElement(element: HTMLElement, offset: number): void {
+  const selection = window.getSelection();
+  if (!selection) {
+    return;
+  }
+
+  const range = document.createRange();
+  range.selectNodeContents(element);
+
+  let targetOffset = Math.max(0, offset);
+  const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+  let currentNode = walker.nextNode();
+
+  while (currentNode) {
+    const textNode = currentNode as Text;
+    const length = textNode.nodeValue?.length ?? 0;
+    if (targetOffset <= length) {
+      range.setStart(textNode, targetOffset);
+      range.collapse(true);
+      selection.removeAllRanges();
+      selection.addRange(range);
+      return;
+    }
+    targetOffset -= length;
+    currentNode = walker.nextNode();
+  }
+
+  range.selectNodeContents(element);
+  range.collapse(false);
+  selection.removeAllRanges();
+  selection.addRange(range);
+}
+
+function setElementTextAndCaret(element: HTMLElement, nextText: string, caretOffset: number): void {
+  element.textContent = nextText;
+  setCaretOffsetInElement(element, caretOffset);
+}
+
+function isPairOpenBrace(char: string): char is PairOpenBrace {
+  return char === '{' || char === '[';
+}
+
+function deletePairedBraceAtCaret(
+  element: HTMLElement,
+  direction: 'backward' | 'forward'
+): boolean {
+  const range = getSelectionRangeWithinElement(element);
+  if (!range || !range.collapsed) {
+    return false;
+  }
+
+  const caretOffset = getCaretOffsetInElement(element);
+  if (caretOffset == null) {
+    return false;
+  }
+
+  const text = element.textContent ?? '';
+  const openIndex = direction === 'backward' ? caretOffset - 1 : caretOffset;
+  const closeIndex = openIndex + 1;
+  const openCharRaw = text[openIndex];
+
+  if (
+    openIndex < 0 ||
+    closeIndex >= text.length ||
+    typeof openCharRaw !== 'string' ||
+    !isPairOpenBrace(openCharRaw)
+  ) {
+    return false;
+  }
+
+  const openChar = openCharRaw;
+  const closeChar = text[closeIndex] ?? '';
+  if (openChar == '{') {
+    if (closeChar !== '}') return false;
+    const nextText = text.slice(0, openIndex) + text.slice(closeIndex + 1);
+    const nextCaretOffset = direction === 'backward' ? openIndex : caretOffset;
+    setElementTextAndCaret(element, nextText, nextCaretOffset);
+    return true;
+  } else {
+    if (closeIndex + 2 >= text.length || text.slice(closeIndex, closeIndex + 3) !== ']()')
+      return false;
+    const nextText = text.slice(0, openIndex) + text.slice(closeIndex + 3);
+    const nextCaretOffset = direction === 'backward' ? openIndex : caretOffset;
+    setElementTextAndCaret(element, nextText, nextCaretOffset);
+    return true;
+  }
+}
+
+function getBraceAutocompleteContext(element: HTMLElement): BraceAutocompleteContext | null {
+  const caretOffset = getCaretOffsetInElement(element);
+  if (caretOffset == null) {
+    return null;
+  }
+
+  const fullText = element.textContent ?? '';
+  const beforeCaret = fullText.slice(0, caretOffset);
+  const openBraceIndex = beforeCaret.lastIndexOf('{');
+  if (openBraceIndex === -1) {
+    return null;
+  }
+
+  const betweenOpenAndCaret = beforeCaret.slice(openBraceIndex + 1);
+  if (betweenOpenAndCaret.includes('}') || betweenOpenAndCaret.includes('\n')) {
+    return null;
+  }
+
+  return {
+    openBraceIndex,
+    caretOffset,
+    query: betweenOpenAndCaret,
+  };
+}
+
+function getCaretViewportPosition(element: HTMLElement): CaretViewportPosition {
+  const range = getSelectionRangeWithinElement(element);
+  if (!range) {
+    const rect = element.getBoundingClientRect();
+    return { top: rect.bottom + 6, left: rect.left };
+  }
+
+  const collapsed = range.cloneRange();
+  collapsed.collapse(true);
+  const rect = collapsed.getBoundingClientRect();
+
+  if (rect.width === 0 && rect.height === 0) {
+    const fallbackRect = element.getBoundingClientRect();
+    return { top: fallbackRect.bottom + 6, left: fallbackRect.left };
+  }
+
+  return {
+    top: rect.bottom + 6,
+    left: rect.left,
+  };
+}
+
+function filterAutocompleteCandidates(
+  candidates: EditableAutocompleteCandidate[],
+  rawQuery: string
+): EditableAutocompleteCandidate[] {
+  const normalizedQuery = normalizeAutocompleteInput(rawQuery);
+  if (!normalizedQuery) {
+    return candidates.slice(0, MAX_AUTOCOMPLETE_ITEMS);
+  }
+
+  const scored = candidates
+    .map((candidate) => {
+      const normalizedLabel = normalizeAutocompleteInput(candidate.label);
+
+      if (normalizedLabel.startsWith(normalizedQuery)) {
+        return { candidate, score: 0 };
+      }
+      if (candidate.pinyin.startsWith(normalizedQuery)) {
+        return { candidate, score: 1 };
+      }
+      if (candidate.pinyinInitials.startsWith(normalizedQuery)) {
+        return { candidate, score: 2 };
+      }
+      if (normalizedLabel.includes(normalizedQuery)) {
+        return { candidate, score: 3 };
+      }
+      if (candidate.pinyin.includes(normalizedQuery)) {
+        return { candidate, score: 4 };
+      }
+      if (candidate.pinyinInitials.includes(normalizedQuery)) {
+        return { candidate, score: 5 };
+      }
+
+      return null;
+    })
+    .filter((entry): entry is { candidate: EditableAutocompleteCandidate; score: number } =>
+      Boolean(entry)
+    )
+    .sort((a, b) => {
+      if (a.score !== b.score) {
+        return a.score - b.score;
+      }
+      return a.candidate.label.localeCompare(b.candidate.label, 'zh-CN');
+    });
+
+  return scored.slice(0, MAX_AUTOCOMPLETE_ITEMS).map((entry) => entry.candidate);
+}
 
 function createMissingEditableTargetError(
   scope: EditableScope,
@@ -103,6 +487,18 @@ function useInlineEditableContent(opts: {
   const { isEditMode } = useEditMode();
   const [content, setContent] = useState<string | number>(initialValue);
   const contentRef = useRef<HTMLElement>(null);
+  const [isImeComposing, setIsImeComposing] = useState(false);
+  const [autocompleteCandidates, setAutocompleteCandidates] =
+    useState<EditableAutocompleteCandidate[]>();
+  const [autocompleteItems, setAutocompleteItems] = useState<EditableAutocompleteCandidate[]>([]);
+  const [isAutocompleteOpen, setIsAutocompleteOpen] = useState(false);
+  const [activeAutocompleteIndex, setActiveAutocompleteIndex] = useState(0);
+  const [autocompletePosition, setAutocompletePosition] = useState<CaretViewportPosition>({
+    top: 0,
+    left: 0,
+  });
+  const autocompleteListRef = useRef<HTMLDivElement>(null);
+  const autocompleteItemRefs = useRef<Array<HTMLButtonElement | null>>([]);
 
   const setNodeRef = useCallback((node: HTMLElement | null) => {
     contentRef.current = node;
@@ -127,6 +523,163 @@ function useInlineEditableContent(opts: {
       contentRef.current.textContent = String(content) || EMPTY_EDITABLE_PLACEHOLDER;
     }
   }, [content]);
+
+  useEffect(() => {
+    let disposed = false;
+
+    getEditableAutocompleteCandidates()
+      .then((candidates) => {
+        if (!disposed) {
+          setAutocompleteCandidates(candidates);
+        }
+      })
+      .catch((error) => {
+        console.error('Failed to prepare editable autocomplete candidates:', error);
+      });
+
+    return () => {
+      disposed = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    autocompleteItemRefs.current = [];
+  }, [autocompleteItems]);
+
+  useEffect(() => {
+    if (!isAutocompleteOpen) {
+      return;
+    }
+
+    const activeItem = autocompleteItemRefs.current[activeAutocompleteIndex];
+    if (!activeItem || !autocompleteListRef.current) {
+      return;
+    }
+
+    activeItem.scrollIntoView({ block: 'nearest' });
+  }, [activeAutocompleteIndex, autocompleteItems, isAutocompleteOpen]);
+
+  const syncAutocompletePosition = useCallback(() => {
+    if (!isAutocompleteOpen || !contentRef.current) {
+      return;
+    }
+
+    setAutocompletePosition(getCaretViewportPosition(contentRef.current));
+  }, [isAutocompleteOpen]);
+
+  useEffect(() => {
+    if (!isAutocompleteOpen) {
+      return;
+    }
+
+    let rafId = 0;
+    const schedulePositionSync = () => {
+      if (rafId !== 0) {
+        return;
+      }
+
+      rafId = window.requestAnimationFrame(() => {
+        rafId = 0;
+        syncAutocompletePosition();
+      });
+    };
+
+    window.addEventListener('scroll', schedulePositionSync, true);
+    window.addEventListener('resize', schedulePositionSync);
+    schedulePositionSync();
+
+    return () => {
+      window.removeEventListener('scroll', schedulePositionSync, true);
+      window.removeEventListener('resize', schedulePositionSync);
+      if (rafId !== 0) {
+        window.cancelAnimationFrame(rafId);
+      }
+    };
+  }, [isAutocompleteOpen, syncAutocompletePosition]);
+
+  const closeAutocomplete = useCallback(() => {
+    setIsAutocompleteOpen(false);
+    setAutocompleteItems([]);
+    setActiveAutocompleteIndex(0);
+  }, []);
+
+  const refreshAutocomplete = useCallback(() => {
+    if (!contentRef.current || valueType !== 'string' || !isEditMode || !enableEdit) {
+      closeAutocomplete();
+      return;
+    }
+
+    if (!autocompleteCandidates || autocompleteCandidates.length === 0) {
+      closeAutocomplete();
+      return;
+    }
+
+    const context = getBraceAutocompleteContext(contentRef.current);
+    if (!context) {
+      closeAutocomplete();
+      return;
+    }
+
+    const nextItems = filterAutocompleteCandidates(autocompleteCandidates, context.query);
+    if (nextItems.length === 0) {
+      closeAutocomplete();
+      return;
+    }
+
+    setAutocompleteItems(nextItems);
+    setAutocompletePosition(getCaretViewportPosition(contentRef.current));
+    setIsAutocompleteOpen(true);
+    setActiveAutocompleteIndex((prev) => Math.min(prev, nextItems.length - 1));
+  }, [autocompleteCandidates, closeAutocomplete, enableEdit, isEditMode, valueType]);
+
+  const insertSnippetAtCaret = useCallback((snippet: string, cursorOffsetInSnippet: number) => {
+    if (!contentRef.current) {
+      return;
+    }
+
+    const currentText =
+      contentRef.current.textContent === EMPTY_EDITABLE_PLACEHOLDER
+        ? ''
+        : (contentRef.current.textContent ?? '');
+    const caretOffset = getCaretOffsetInElement(contentRef.current);
+    if (caretOffset == null) {
+      return;
+    }
+
+    const nextText =
+      currentText.slice(0, caretOffset) + snippet + currentText.slice(Math.max(caretOffset, 0));
+    const nextCaretOffset = caretOffset + cursorOffsetInSnippet;
+    setElementTextAndCaret(contentRef.current, nextText, nextCaretOffset);
+  }, []);
+
+  const applyAutocompleteItem = useCallback(
+    (candidate: EditableAutocompleteCandidate) => {
+      if (!contentRef.current) {
+        return;
+      }
+
+      const context = getBraceAutocompleteContext(contentRef.current);
+      if (!context) {
+        return;
+      }
+
+      const currentText =
+        contentRef.current.textContent === EMPTY_EDITABLE_PLACEHOLDER
+          ? ''
+          : (contentRef.current.textContent ?? '');
+      const beforeOpenBrace = currentText.slice(0, context.openBraceIndex + 1);
+      const afterCaret = currentText.slice(context.caretOffset);
+      const shouldAppendClosingBrace = !afterCaret.startsWith('}');
+      const closingBrace = shouldAppendClosingBrace ? '}' : '';
+
+      const nextText = `${beforeOpenBrace}${candidate.insertText}${closingBrace}${afterCaret}`;
+      const nextCaretOffset = beforeOpenBrace.length + candidate.insertText.length + 1;
+
+      setElementTextAndCaret(contentRef.current, nextText, nextCaretOffset);
+      closeAutocomplete();
+    },
+    [closeAutocomplete]
+  );
 
   const handleBlur = useCallback(() => {
     if (!contentRef.current) return;
@@ -157,27 +710,185 @@ function useInlineEditableContent(opts: {
       console.error('Failed to save editable value:', error);
       contentRef.current.textContent = String(content) || EMPTY_EDITABLE_PLACEHOLDER;
     }
-  }, [content, onSave, valueType, writeValue]);
+    closeAutocomplete();
+  }, [closeAutocomplete, content, onSave, valueType, writeValue]);
+
+  const handleInput = useCallback(() => {
+    if (isImeComposing) {
+      return;
+    }
+
+    refreshAutocomplete();
+  }, [isImeComposing, refreshAutocomplete]);
+
+  const handleCompositionStart = useCallback(() => {
+    setIsImeComposing(true);
+  }, []);
+
+  const handleCompositionEnd = useCallback(() => {
+    setIsImeComposing(false);
+    refreshAutocomplete();
+  }, [refreshAutocomplete]);
+
+  const handleClick = useCallback(() => {
+    refreshAutocomplete();
+  }, [refreshAutocomplete]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLElement>) => {
+      const isComposing = isImeComposing || e.nativeEvent.isComposing;
+
+      if (isAutocompleteOpen && !isComposing) {
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          setActiveAutocompleteIndex((prev) =>
+            autocompleteItems.length === 0 ? 0 : Math.min(prev + 1, autocompleteItems.length - 1)
+          );
+          return;
+        }
+
+        if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          setActiveAutocompleteIndex((prev) => Math.max(prev - 1, 0));
+          return;
+        }
+
+        if (e.key === 'Enter' || e.key === 'Tab') {
+          const activeItem = autocompleteItems[activeAutocompleteIndex];
+          if (activeItem) {
+            e.preventDefault();
+            applyAutocompleteItem(activeItem);
+            return;
+          }
+        }
+
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          closeAutocomplete();
+          return;
+        }
+      }
+
+      if (
+        !isComposing &&
+        valueType === 'string' &&
+        !e.altKey &&
+        !e.ctrlKey &&
+        !e.metaKey &&
+        e.key === '{'
+      ) {
+        e.preventDefault();
+        insertSnippetAtCaret('{}', 1);
+        refreshAutocomplete();
+        return;
+      }
+
+      if (
+        !isComposing &&
+        valueType === 'string' &&
+        !e.altKey &&
+        !e.ctrlKey &&
+        !e.metaKey &&
+        e.key === '['
+      ) {
+        e.preventDefault();
+        insertSnippetAtCaret('[]()', 1);
+        closeAutocomplete();
+        return;
+      }
+
+      if (!isComposing && valueType === 'string' && e.key === 'Backspace' && contentRef.current) {
+        if (deletePairedBraceAtCaret(contentRef.current, 'backward')) {
+          e.preventDefault();
+          refreshAutocomplete();
+          return;
+        }
+      }
+
+      if (!isComposing && valueType === 'string' && e.key === 'Delete' && contentRef.current) {
+        if (deletePairedBraceAtCaret(contentRef.current, 'forward')) {
+          e.preventDefault();
+          refreshAutocomplete();
+          return;
+        }
+      }
+
       if (e.key === 'Escape') {
         e.preventDefault();
+        closeAutocomplete();
         contentRef.current?.blur();
       } else if (e.key === 'Enter' && isSingleLine) {
         e.preventDefault();
         contentRef.current?.blur();
       }
     },
-    [isSingleLine]
+    [
+      activeAutocompleteIndex,
+      applyAutocompleteItem,
+      autocompleteItems,
+      closeAutocomplete,
+      insertSnippetAtCaret,
+      isAutocompleteOpen,
+      isImeComposing,
+      isSingleLine,
+      refreshAutocomplete,
+      valueType,
+    ]
   );
+
+  const autocompleteOverlay = isAutocompleteOpen
+    ? createPortal(
+        <div
+          ref={autocompleteListRef}
+          className='z-120 max-h-64 min-w-56 overflow-y-auto rounded-md border border-slate-200 bg-white p-1 text-slate-900 shadow-xl ring-1 ring-black/5 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:ring-white/10'
+          style={{
+            position: 'fixed',
+            top: autocompletePosition.top,
+            left: autocompletePosition.left,
+          }}
+        >
+          {autocompleteItems.map((candidate, index) => {
+            const isActive = index === activeAutocompleteIndex;
+            return (
+              <button
+                key={`${candidate.source}-${candidate.label}`}
+                ref={(node) => {
+                  autocompleteItemRefs.current[index] = node;
+                }}
+                type='button'
+                className={`flex w-full items-center justify-between rounded px-2 py-1.5 text-left text-sm ${
+                  isActive
+                    ? 'bg-blue-100 text-blue-900 dark:bg-blue-900/40 dark:text-blue-100'
+                    : 'hover:bg-slate-100 dark:hover:bg-slate-800'
+                }`}
+                onMouseDown={(event) => {
+                  event.preventDefault();
+                  applyAutocompleteItem(candidate);
+                }}
+              >
+                <span className='truncate'>{candidate.label}</span>
+                <span className='text-muted-foreground ml-2 shrink-0 text-[11px]'>
+                  {candidate.source}
+                </span>
+              </button>
+            );
+          })}
+        </div>,
+        document.body
+      )
+    : null;
 
   return {
     isEditMode: isEditMode && enableEdit,
     content,
     setNodeRef,
     handleBlur,
+    handleInput,
+    handleClick,
+    handleCompositionStart,
+    handleCompositionEnd,
     handleKeyDown,
+    autocompleteOverlay,
   };
 }
 
@@ -201,7 +912,18 @@ function EditableCharactersField<TagName extends IntrinsicTagName>({
   const valueType: 'string' | 'number' =
     valueTypeProp ?? (typeof initialValue === 'number' ? 'number' : 'string');
 
-  const { isEditMode, content, setNodeRef, handleBlur, handleKeyDown } = useInlineEditableContent({
+  const {
+    isEditMode,
+    content,
+    setNodeRef,
+    handleBlur,
+    handleInput,
+    handleClick,
+    handleCompositionStart,
+    handleCompositionEnd,
+    handleKeyDown,
+    autocompleteOverlay,
+  } = useInlineEditableContent({
     initialValue,
     valueType,
     isSingleLine,
@@ -245,17 +967,26 @@ function EditableCharactersField<TagName extends IntrinsicTagName>({
   });
 
   if (isEditMode) {
-    return React.createElement(
-      tag,
-      {
-        contentEditable: 'plaintext-only',
-        suppressContentEditableWarning: true,
-        onBlur: handleBlur,
-        onKeyDown: handleKeyDown,
-        ref: setNodeRef as unknown as React.Ref<HTMLElementTagNameMap[TagName]>,
-        ...(rest as React.ComponentPropsWithoutRef<TagName>),
-      },
-      String(content) || EMPTY_EDITABLE_PLACEHOLDER
+    return (
+      <>
+        {React.createElement(
+          tag,
+          {
+            contentEditable: 'plaintext-only',
+            suppressContentEditableWarning: true,
+            onBlur: handleBlur,
+            onInput: handleInput,
+            onClick: handleClick,
+            onCompositionStart: handleCompositionStart,
+            onCompositionEnd: handleCompositionEnd,
+            onKeyDown: handleKeyDown,
+            ref: setNodeRef as unknown as React.Ref<HTMLElementTagNameMap[TagName]>,
+            ...(rest as React.ComponentPropsWithoutRef<TagName>),
+          },
+          String(content) || EMPTY_EDITABLE_PLACEHOLDER
+        )}
+        {autocompleteOverlay}
+      </>
     );
   }
 
@@ -284,7 +1015,18 @@ function EditableCardsField<TagName extends IntrinsicTagName>({
   const valueType: 'string' | 'number' =
     valueTypeProp ?? (typeof initialValue === 'number' ? 'number' : 'string');
 
-  const { isEditMode, content, setNodeRef, handleBlur, handleKeyDown } = useInlineEditableContent({
+  const {
+    isEditMode,
+    content,
+    setNodeRef,
+    handleBlur,
+    handleInput,
+    handleClick,
+    handleCompositionStart,
+    handleCompositionEnd,
+    handleKeyDown,
+    autocompleteOverlay,
+  } = useInlineEditableContent({
     initialValue,
     valueType,
     isSingleLine,
@@ -306,17 +1048,26 @@ function EditableCardsField<TagName extends IntrinsicTagName>({
   });
 
   if (isEditMode) {
-    return React.createElement(
-      tag,
-      {
-        contentEditable: 'plaintext-only',
-        suppressContentEditableWarning: true,
-        onBlur: handleBlur,
-        onKeyDown: handleKeyDown,
-        ref: setNodeRef as unknown as React.Ref<HTMLElementTagNameMap[TagName]>,
-        ...(rest as React.ComponentPropsWithoutRef<TagName>),
-      },
-      String(content) || EMPTY_EDITABLE_PLACEHOLDER
+    return (
+      <>
+        {React.createElement(
+          tag,
+          {
+            contentEditable: 'plaintext-only',
+            suppressContentEditableWarning: true,
+            onBlur: handleBlur,
+            onInput: handleInput,
+            onClick: handleClick,
+            onCompositionStart: handleCompositionStart,
+            onCompositionEnd: handleCompositionEnd,
+            onKeyDown: handleKeyDown,
+            ref: setNodeRef as unknown as React.Ref<HTMLElementTagNameMap[TagName]>,
+            ...(rest as React.ComponentPropsWithoutRef<TagName>),
+          },
+          String(content) || EMPTY_EDITABLE_PLACEHOLDER
+        )}
+        {autocompleteOverlay}
+      </>
     );
   }
 
@@ -554,7 +1305,18 @@ function EditableRecordField<TagName extends IntrinsicTagName>({
     ]
   );
 
-  const { isEditMode, content, setNodeRef, handleBlur, handleKeyDown } = useInlineEditableContent({
+  const {
+    isEditMode,
+    content,
+    setNodeRef,
+    handleBlur,
+    handleInput,
+    handleClick,
+    handleCompositionStart,
+    handleCompositionEnd,
+    handleKeyDown,
+    autocompleteOverlay,
+  } = useInlineEditableContent({
     initialValue,
     valueType,
     isSingleLine,
@@ -565,17 +1327,26 @@ function EditableRecordField<TagName extends IntrinsicTagName>({
   });
 
   if (isEditMode) {
-    return React.createElement(
-      tag,
-      {
-        contentEditable: 'plaintext-only',
-        suppressContentEditableWarning: true,
-        onBlur: handleBlur,
-        onKeyDown: handleKeyDown,
-        ref: setNodeRef as unknown as React.Ref<HTMLElementTagNameMap[TagName]>,
-        ...(rest as React.ComponentPropsWithoutRef<TagName>),
-      },
-      String(content) || EMPTY_EDITABLE_PLACEHOLDER
+    return (
+      <>
+        {React.createElement(
+          tag,
+          {
+            contentEditable: 'plaintext-only',
+            suppressContentEditableWarning: true,
+            onBlur: handleBlur,
+            onInput: handleInput,
+            onClick: handleClick,
+            onCompositionStart: handleCompositionStart,
+            onCompositionEnd: handleCompositionEnd,
+            onKeyDown: handleKeyDown,
+            ref: setNodeRef as unknown as React.Ref<HTMLElementTagNameMap[TagName]>,
+            ...(rest as React.ComponentPropsWithoutRef<TagName>),
+          },
+          String(content) || EMPTY_EDITABLE_PLACEHOLDER
+        )}
+        {autocompleteOverlay}
+      </>
     );
   }
 
