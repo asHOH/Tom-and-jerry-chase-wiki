@@ -14,6 +14,7 @@ import { useNavigationProgress } from '@/hooks/useNavigationProgress';
 import { useNavigationTabs } from '@/hooks/useNavigationTabs';
 import { useUser } from '@/hooks/useUser';
 import { useAppContext } from '@/context/AppContext';
+import { isNavGroup } from '@/constants/navigation';
 import ChangePasswordDialog from '@/components/ChangePasswordDialog';
 import { HomeIcon, UserCircleIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
@@ -31,9 +32,9 @@ type TabNavigationProps = {
   showDetailToggle?: boolean;
 };
 
-const MOBILE_STACK_COLLAPSE_WIDTHS = [724, 680, 636, 592, 548, 504, 460, 416, 372, 328] as const;
+const MOBILE_STACK_COLLAPSE_WIDTHS = [420, 376, 332] as const;
 
-const DESKTOP_STACK_COLLAPSE_WIDTHS = [9999, 1410, 1280, 1150, 864] as const;
+const DESKTOP_STACK_COLLAPSE_WIDTHS = [800, 720] as const;
 
 const DETAIL_TOGGLE_WIDTH = 56;
 const USER_BUTTON_WIDTH = 44;
@@ -42,6 +43,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
   const [overflowOpen, setOverflowOpen] = useState(false);
+  const [openGroupId, setOpenGroupId] = useState<string | null>(null);
   const [signingOut, setSigningOut] = useState(false);
   const [signOutError, setSignOutError] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
@@ -112,6 +114,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   useEffect(() => {
     setOverflowOpen(false);
     setUserDropdownOpen(false);
+    setOpenGroupId(null);
   }, [pathname]);
 
   useEffect(() => {
@@ -140,6 +143,19 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     return () => document.removeEventListener('click', onDocClick);
   }, [mounted, overflowOpen]);
 
+  useEffect(() => {
+    if (!mounted) return;
+    if (!openGroupId) return;
+    const onDocClick = (event: MouseEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (!target) return;
+      if (target.closest('[data-group-dropdown-root]')) return;
+      setOpenGroupId(null);
+    };
+    document.addEventListener('click', onDocClick);
+    return () => document.removeEventListener('click', onDocClick);
+  }, [mounted, openGroupId]);
+
   const isTabActive = (tabPath: string) => isActive(tabPath);
 
   const isHomeActive = () => {
@@ -167,15 +183,14 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     }
   };
 
-  const isArticlesEnabled =
-    env.NEXT_PUBLIC_DISABLE_ARTICLES !== '1' && !!env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  const renderItems = items.filter((tab) => isArticlesEnabled || tab.id !== 'articles');
-
-  const totalTabs = renderItems.length;
+  const totalTabs = items.length;
   const clampedCollapsed = Math.min(collapsedCount, totalTabs);
   const isCompactMode = clampedCollapsed > 0;
   const visibleCount = Math.max(totalTabs - clampedCollapsed, 0);
-  const activeIndex = renderItems.findIndex((tab) => isTabActive(tab.href));
+  const activeIndex = items.findIndex((entry) => {
+    if (isNavGroup(entry)) return entry.children.some((child) => isTabActive(child.href));
+    return isTabActive(entry.href);
+  });
 
   // Sliding window logic: preserve order, but shift window if active tab is hidden
   let startIndex = 0;
@@ -183,11 +198,8 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     startIndex = activeIndex - visibleCount + 1;
   }
 
-  const primaryTabs = renderItems.slice(startIndex, startIndex + visibleCount);
-  const overflowTabs = [
-    ...renderItems.slice(0, startIndex),
-    ...renderItems.slice(startIndex + visibleCount),
-  ];
+  const primaryTabs = items.slice(startIndex, startIndex + visibleCount);
+  const overflowTabs = [...items.slice(0, startIndex), ...items.slice(startIndex + visibleCount)];
 
   const tabMinWidthClass = 'min-w-[40px]';
   const homeButtonSizing = clsx('min-w-[40px]', !isCompactMode && 'lg:min-w-fit');
@@ -231,47 +243,135 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
               <span className='sr-only lg:hidden'>首页</span>
             </MotionLink>
           </Tooltip>
-          {primaryTabs.map((tab) => (
-            <Tooltip key={tab.id} content={tab.label} className='border-none' disabled={isMd}>
-              <MotionLink
-                href={tab.href}
-                className={clsx(
-                  getNavigationButtonClasses(
-                    isNavigatingTo(tab.href),
-                    isTabActive(tab.href),
-                    false,
-                    true
-                  ),
-                  'gap-0 md:gap-1 lg:gap-2',
-                  tabMinWidthClass
-                )}
-                aria-label={tab.label}
-                tabIndex={isNavigatingTo(tab.href) ? -1 : 0}
-                aria-disabled={isNavigatingTo(tab.href)}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {isTabActive(tab.href) && (
-                  <m.div
-                    layoutId='active-nav-pill'
-                    className='absolute inset-0 -z-10 rounded-md bg-blue-600 dark:bg-blue-700'
-                    transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
-                  />
-                )}
-                <span className={tabIconWrapperClassName}>
-                  <Image
-                    src={tab.iconSrc}
-                    alt={tab.iconAlt}
-                    width={64}
-                    height={64}
-                    className='h-full w-full object-contain'
-                  />
-                </span>
-                <span className='hidden md:inline'>{tab.label}</span>
-                <span className='sr-only md:hidden'>{tab.label}</span>
-              </MotionLink>
-            </Tooltip>
-          ))}
+          {primaryTabs.map((entry) => {
+            if (isNavGroup(entry)) {
+              const isGroupActive = entry.children.some((child) => isTabActive(child.href));
+              const isGroupOpen = openGroupId === entry.id;
+              return (
+                <div key={entry.id} className='relative' data-group-dropdown-root>
+                  <Tooltip content={entry.label} className='border-none' disabled={isMd}>
+                    <m.button
+                      type='button'
+                      aria-label={entry.label}
+                      aria-expanded={isGroupOpen}
+                      aria-haspopup='true'
+                      className={clsx(
+                        getNavigationButtonClasses(false, isGroupActive || isGroupOpen, false),
+                        'gap-0 md:gap-1 lg:gap-2',
+                        tabMinWidthClass
+                      )}
+                      onClick={() => {
+                        setOpenGroupId((prev) => (prev === entry.id ? null : entry.id));
+                        setOverflowOpen(false);
+                      }}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <Image
+                        src={entry.iconSrc}
+                        alt={entry.iconAlt}
+                        width={64}
+                        height={64}
+                        className='h-6 w-6 shrink-0 object-contain'
+                      />
+                      <span className='hidden md:inline'>{entry.label}</span>
+                      <span className='sr-only md:hidden'>{entry.label}</span>
+                    </m.button>
+                  </Tooltip>
+                  <AnimatePresence initial={false}>
+                    {isGroupOpen && (
+                      <m.div
+                        key={`group-${entry.id}-dropdown`}
+                        className={clsx(
+                          'absolute z-9999 mt-2 min-w-35 rounded-md bg-white shadow-lg dark:bg-slate-800',
+                          dropdownAlignmentClass
+                        )}
+                        initial={
+                          shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: -6, scale: 0.98 }
+                        }
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={
+                          shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -6, scale: 0.98 }
+                        }
+                        transition={{ duration: 0.14, ease: 'easeOut' }}
+                        style={{ transformOrigin: 'top' }}
+                      >
+                        <ul className='py-1'>
+                          {entry.children.map(
+                            (child) =>
+                              (env.NEXT_PUBLIC_DISABLE_ARTICLES !== '1' ||
+                                child.id != 'articles') && (
+                                <li key={child.id}>
+                                  <Link
+                                    href={child.href}
+                                    className={clsx(
+                                      'flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700',
+                                      isTabActive(child.href) && 'font-semibold'
+                                    )}
+                                    onClick={() => setOpenGroupId(null)}
+                                  >
+                                    <Image
+                                      src={child.iconSrc}
+                                      alt={child.iconAlt}
+                                      width={64}
+                                      height={64}
+                                      className='h-6 w-6 shrink-0 object-contain'
+                                    />
+                                    <span>{child.label}</span>
+                                  </Link>
+                                </li>
+                              )
+                          )}
+                        </ul>
+                      </m.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              );
+            }
+            const tab = entry;
+            return (
+              <Tooltip key={tab.id} content={tab.label} className='border-none' disabled={isMd}>
+                <MotionLink
+                  href={tab.href}
+                  className={clsx(
+                    getNavigationButtonClasses(
+                      isNavigatingTo(tab.href),
+                      isTabActive(tab.href),
+                      false,
+                      true
+                    ),
+                    'gap-0 md:gap-1 lg:gap-2',
+                    tabMinWidthClass
+                  )}
+                  aria-label={tab.label}
+                  tabIndex={isNavigatingTo(tab.href) ? -1 : 0}
+                  aria-disabled={isNavigatingTo(tab.href)}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {isTabActive(tab.href) && (
+                    <m.div
+                      layoutId='active-nav-pill'
+                      className='absolute inset-0 -z-10 rounded-md bg-blue-600 dark:bg-blue-700'
+                      transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+                    />
+                  )}
+                  <span className={tabIconWrapperClassName}>
+                    <Image
+                      src={tab.iconSrc}
+                      alt={tab.iconAlt}
+                      width={64}
+                      height={64}
+                      className='h-full w-full object-contain'
+                    />
+                  </span>
+                  <span className='hidden md:inline'>{tab.label}</span>
+                  <span className='sr-only md:hidden'>{tab.label}</span>
+                </MotionLink>
+              </Tooltip>
+            );
+          })}
           {!!overflowTabs.length && (
             <div className='relative' data-overflow-root>
               <m.button
@@ -304,29 +404,61 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                     style={{ transformOrigin: 'top' }}
                   >
                     <ul className='py-1'>
-                      {overflowTabs.map((tab) => (
-                        <li key={tab.id}>
-                          <Link
-                            href={tab.href}
-                            className={clsx(
-                              'flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700',
-                              isTabActive(tab.href) && 'font-semibold'
-                            )}
-                            onClick={() => {
-                              setOverflowOpen(false);
-                            }}
-                          >
-                            <Image
-                              src={tab.iconSrc}
-                              alt={tab.iconAlt}
-                              width={64}
-                              height={64}
-                              className='h-6 w-6 shrink-0 object-contain'
-                            />
-                            <span>{tab.label}</span>
-                          </Link>
-                        </li>
-                      ))}
+                      {overflowTabs.map((entry) => {
+                        if (isNavGroup(entry)) {
+                          return (
+                            <li key={entry.id}>
+                              <div className='px-4 py-1 text-xs font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400'>
+                                {entry.label}
+                              </div>
+                              {entry.children.map((child) => (
+                                <Link
+                                  key={child.id}
+                                  href={child.href}
+                                  className={clsx(
+                                    'flex items-center gap-2 py-2 pr-4 pl-7 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700',
+                                    isTabActive(child.href) && 'font-semibold'
+                                  )}
+                                  onClick={() => setOverflowOpen(false)}
+                                >
+                                  <Image
+                                    src={child.iconSrc}
+                                    alt={child.iconAlt}
+                                    width={64}
+                                    height={64}
+                                    className='h-6 w-6 shrink-0 object-contain'
+                                  />
+                                  <span>{child.label}</span>
+                                </Link>
+                              ))}
+                            </li>
+                          );
+                        }
+                        const tab = entry;
+                        return (
+                          <li key={tab.id}>
+                            <Link
+                              href={tab.href}
+                              className={clsx(
+                                'flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700',
+                                isTabActive(tab.href) && 'font-semibold'
+                              )}
+                              onClick={() => {
+                                setOverflowOpen(false);
+                              }}
+                            >
+                              <Image
+                                src={tab.iconSrc}
+                                alt={tab.iconAlt}
+                                width={64}
+                                height={64}
+                                className='h-6 w-6 shrink-0 object-contain'
+                              />
+                              <span>{tab.label}</span>
+                            </Link>
+                          </li>
+                        );
+                      })}
                     </ul>
                   </m.div>
                 )}

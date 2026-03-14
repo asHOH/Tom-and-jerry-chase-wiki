@@ -1,4 +1,4 @@
-type NavItem = {
+export type NavItem = {
   id: string;
   label: string;
   description: string;
@@ -7,7 +7,21 @@ type NavItem = {
   iconAlt: string;
 };
 
-export const NAV_ITEMS: readonly NavItem[] = [
+export type NavGroup = {
+  id: string;
+  label: string;
+  children: readonly NavItem[];
+  iconSrc: string;
+  iconAlt: string;
+};
+
+export type NavEntry = NavItem | NavGroup;
+
+export function isNavGroup(entry: NavEntry): entry is NavGroup {
+  return 'children' in entry;
+}
+
+export const NAV_ITEMS: readonly NavEntry[] = [
   {
     id: 'mouse',
     label: '鼠阵营',
@@ -25,68 +39,100 @@ export const NAV_ITEMS: readonly NavItem[] = [
     iconAlt: '猫阵营图标',
   },
   {
-    id: 'cards',
-    label: '知识卡',
-    description: '知识卡列表',
-    href: '/cards',
+    id: 'prepare',
+    label: '备战',
     iconSrc: '/images/icons/cat-knowledge-card.png',
-    iconAlt: '知识卡图标',
+    iconAlt: '备战图标',
+    children: [
+      {
+        id: 'cards',
+        label: '知识卡',
+        description: '知识卡列表',
+        href: '/cards',
+        iconSrc: '/images/icons/cat-knowledge-card.png',
+        iconAlt: '知识卡图标',
+      },
+      {
+        id: 'special-skills',
+        label: '特技',
+        description: '特技列表',
+        href: '/special-skills',
+        iconSrc: '/images/mouseSpecialSkills/%E5%BA%94%E6%80%A5%E6%B2%BB%E7%96%97.png',
+        iconAlt: '特技图标',
+      },
+    ],
   },
   {
-    id: 'special-skills',
-    label: '特技',
-    description: '特技列表',
-    href: '/special-skills',
-    iconSrc: '/images/mouseSpecialSkills/%E5%BA%94%E6%80%A5%E6%B2%BB%E7%96%97.png',
-    iconAlt: '特技图标',
-  },
-  {
-    id: 'items',
-    label: '道具',
-    description: '道具列表',
-    href: '/items',
+    id: 'game',
+    label: '游戏',
     iconSrc: '/images/icons/item.png',
-    iconAlt: '道具图标',
+    iconAlt: '游戏图标',
+    children: [
+      {
+        id: 'items',
+        label: '道具',
+        description: '道具列表',
+        href: '/items',
+        iconSrc: '/images/icons/item.png',
+        iconAlt: '道具图标',
+      },
+      {
+        id: 'entities',
+        label: '衍生物',
+        description: '衍生物列表',
+        href: '/entities',
+        iconSrc: '/images/icons/entity.png',
+        iconAlt: '衍生物图标',
+      },
+      {
+        id: 'maps',
+        label: '地图',
+        description: '地图列表',
+        href: '/maps',
+        iconSrc: '/images/icons/map.png',
+        iconAlt: '地图图标',
+      },
+    ],
   },
   {
-    id: 'entities',
-    label: '衍生物',
-    description: '衍生物列表',
-    href: '/entities',
-    iconSrc: '/images/icons/entity.png',
-    iconAlt: '衍生物图标',
-  },
-  {
-    id: 'buffs',
-    label: '状态',
-    description: '状态效果列表',
-    href: '/buffs',
+    id: 'inquiry',
+    label: '咨询',
     iconSrc: '/images/icons/buff.png',
-    iconAlt: '状态图标',
-  },
-  {
-    id: 'articles',
-    label: '文章',
-    description: '社区文章列表',
-    href: '/articles',
-    iconSrc: '/images/icons/article.png',
-    iconAlt: '文章图标',
-  },
-  {
-    id: 'maps',
-    label: '地图',
-    description: '地图列表',
-    href: '/maps',
-    iconSrc: '/images/icons/map.png',
-    iconAlt: '地图图标',
-  },
-  {
-    id: 'modes',
-    label: '模式',
-    description: '游戏模式列表',
-    href: '/modes',
-    iconSrc: '/images/icons/mode.png',
-    iconAlt: '模式图标',
+    iconAlt: '咨询图标',
+    children: [
+      {
+        id: 'buffs',
+        label: '状态',
+        description: '状态效果列表',
+        href: '/buffs',
+        iconSrc: '/images/icons/buff.png',
+        iconAlt: '状态图标',
+      },
+      {
+        id: 'articles',
+        label: '文章',
+        description: '社区文章列表',
+        href: '/articles',
+        iconSrc: '/images/icons/article.png',
+        iconAlt: '文章图标',
+      },
+      {
+        id: 'modes',
+        label: '模式',
+        description: '游戏模式列表',
+        href: '/modes',
+        iconSrc: '/images/icons/mode.png',
+        iconAlt: '模式图标',
+      },
+      {
+        id: 'mechanics',
+        label: '机制',
+        description: '局内机制列表',
+        href: '/mechanics',
+        iconSrc: '/images/mouseEntities/线条火箭.png',
+        iconAlt: '机制图标',
+      },
+    ],
   },
   // {
   //   id: 'achievements',
@@ -96,14 +142,6 @@ export const NAV_ITEMS: readonly NavItem[] = [
   //   iconSrc: '/images/icons/mode.png', // Temporary icon
   //   iconAlt: '成就图标',
   // },
-  /*{
-    id: 'mechanics',
-    label: '机制',
-    description: '局内机制列表',
-    href: '/mechanics',
-    iconSrc: '/images/mouseEntities/线条火箭.png',
-    iconAlt: '机制图标',
-  },*/
   {
     id: 'tools',
     label: '工具',
@@ -167,14 +205,6 @@ export const TOOL_NAV_ITEMS: readonly NavItem[] = [
     iconAlt: '特性大全图标',
   },
   //建设中界面
-  {
-    id: 'mechanics',
-    label: '机制',
-    description: '游戏机制简述',
-    href: '/mechanics',
-    iconSrc: '/images/catSpecialSkills/%E7%BB%9D%E5%9C%B0%E5%8F%8D%E5%87%BB.png',
-    iconAlt: '机制图标',
-  },
   {
     id: 'fixtures',
     label: '地图组件',

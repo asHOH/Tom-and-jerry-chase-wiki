@@ -5,7 +5,7 @@ import { AnimatePresence } from 'motion/react';
 
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useUser } from '@/hooks/useUser';
-import { NAV_ITEMS } from '@/constants/navigation';
+import { isNavGroup, NAV_ITEMS } from '@/constants/navigation';
 import ChangeLogs, { ChangeLogsRef } from '@/components/ui/ChangeLogs';
 import FeedbackSection, { FeedbackSectionRef } from '@/components/ui/FeedbackSection';
 import HomePageSection from '@/components/ui/NavSection';
@@ -76,10 +76,13 @@ export default function HomeContentClient({ description, hasServiceKey }: Props)
   ];
 
   const getSectionButtons = (items: SectionItem[]) => {
+    const allNavItems = NAV_ITEMS.flatMap((entry) =>
+      isNavGroup(entry) ? entry.children : [entry]
+    );
     return items
       .filter((item) => item.condition !== false)
       .map((item) => {
-        const navItem = NAV_ITEMS.find((n) => n.id === item.id);
+        const navItem = allNavItems.find((n) => n.id === item.id);
         if (!navItem) return null;
         return {
           imageSrc: navItem.iconSrc,
