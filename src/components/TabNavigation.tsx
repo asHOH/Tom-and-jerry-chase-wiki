@@ -247,6 +247,8 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
             if (isNavGroup(entry)) {
               const isGroupActive = entry.children.some((child) => isTabActive(child.href));
               const isGroupOpen = openGroupId === entry.id;
+              const image =
+                entry.children.find((child) => isTabActive(child.href)) || entry.children[0];
               return (
                 <div key={entry.id} className='relative' data-group-dropdown-root>
                   <Tooltip content={entry.label} className='border-none' disabled={isMd}>
@@ -267,13 +269,15 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
-                      <Image
-                        src={entry.iconSrc}
-                        alt={entry.iconAlt}
-                        width={64}
-                        height={64}
-                        className='h-6 w-6 shrink-0 object-contain'
-                      />
+                      {!!image && (
+                        <Image
+                          src={image.iconSrc}
+                          alt={image.iconAlt}
+                          width={64}
+                          height={64}
+                          className='h-6 w-6 shrink-0 object-contain'
+                        />
+                      )}
                       <span className='hidden md:inline'>{entry.label}</span>
                       <span className='sr-only md:hidden'>{entry.label}</span>
                     </m.button>

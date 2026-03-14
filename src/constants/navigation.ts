@@ -11,8 +11,6 @@ export type NavGroup = {
   id: string;
   label: string;
   children: readonly NavItem[];
-  iconSrc: string;
-  iconAlt: string;
 };
 
 export type NavEntry = NavItem | NavGroup;
@@ -41,8 +39,6 @@ export const NAV_ITEMS: readonly NavEntry[] = [
   {
     id: 'prepare',
     label: '备战',
-    iconSrc: '/images/icons/cat-knowledge-card.png',
-    iconAlt: '备战图标',
     children: [
       {
         id: 'cards',
@@ -65,8 +61,6 @@ export const NAV_ITEMS: readonly NavEntry[] = [
   {
     id: 'game',
     label: '游戏',
-    iconSrc: '/images/icons/item.png',
-    iconAlt: '游戏图标',
     children: [
       {
         id: 'items',
@@ -97,8 +91,6 @@ export const NAV_ITEMS: readonly NavEntry[] = [
   {
     id: 'inquiry',
     label: '咨询',
-    iconSrc: '/images/icons/buff.png',
-    iconAlt: '咨询图标',
     children: [
       {
         id: 'buffs',
