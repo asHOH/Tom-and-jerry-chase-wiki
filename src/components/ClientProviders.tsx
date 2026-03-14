@@ -16,7 +16,7 @@ import { VersionChecker } from './VersionChecker';
 
 type ClientProvidersProps = { children: ReactNode; initialPublicActions?: PublicActionRow[] };
 
-const loadMotionFeatures = () => import('motion/react').then((mod) => mod.domAnimation);
+const loadMotionFeatures = () => import('motion/react').then((mod) => mod.domMax);
 
 export function ClientProviders({ children, initialPublicActions }: ClientProvidersProps) {
   usePersistentGameStore();

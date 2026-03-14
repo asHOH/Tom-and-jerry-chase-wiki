@@ -99,7 +99,7 @@
     "esbuild-wasm": "^0.27.3",
     "json5": "^2.2.3",
     "lodash-es": "^4.17.22",
-    "motion": "^12.35.1",
+    "motion": "^12.36.0",
     "next": "^16.1.6",
     "next-themes": "^0.4.6",
     "nextjs-toploader": "^3.9.17",

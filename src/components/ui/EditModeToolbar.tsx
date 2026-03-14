@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import clsx from 'clsx';
-import { AnimatePresence, m, useReducedMotion } from 'motion/react';
+import { AnimatePresence, m, useDragControls, useReducedMotion } from 'motion/react';
 import { createPortal } from 'react-dom';
 
 import { CheckBadgeIcon, CloseIcon, FolderIcon, TrashIcon } from '@/components/icons/CommonIcons';
@@ -40,6 +40,7 @@ export default function EditModeToolbar({
   entityName,
 }: EditModeToolbarProps) {
   const shouldReduceMotion = useReducedMotion();
+  const dragControls = useDragControls();
   const [showMessageInput, setShowMessageInput] = useState(false);
   const [publishMessage, setPublishMessage] = useState('');
   const [isConfirmingDiscard, setIsConfirmingDiscard] = useState(false);
@@ -50,6 +51,9 @@ export default function EditModeToolbar({
     return () => {
       if (discardResetTimerRef.current !== null) {
         window.clearTimeout(discardResetTimerRef.current);
+      }
+      if (typeof document !== 'undefined') {
+        document.body.classList.remove('select-none');
       }
     };
   }, []);
@@ -109,13 +113,40 @@ export default function EditModeToolbar({
 
   const toolbarContent = (
     <m.div
-      className='fixed bottom-4 left-1/2 z-9999 w-[calc(100%-2rem)] max-w-lg -translate-x-1/2'
+      className='fixed inset-x-0 bottom-4 z-9999 mx-auto w-[calc(100%-2rem)] max-w-lg'
       initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 20 }}
       transition={{ duration: 0.2 }}
+      drag
+      dragListener={false}
+      dragControls={dragControls}
+      dragMomentum={false}
+      onDragStart={() => document.body.classList.add('select-none')}
+      onDragEnd={() => document.body.classList.remove('select-none')}
     >
-      <div className='rounded-xl bg-white/95 px-4 py-3 shadow-lg ring-1 ring-gray-200 backdrop-blur-sm dark:bg-slate-800/95 dark:ring-slate-700'>
+      <div className='relative rounded-xl bg-white/95 py-3 pr-4 pl-10 shadow-lg ring-1 ring-gray-200 backdrop-blur-sm dark:bg-slate-800/95 dark:ring-slate-700'>
+        {/* Drag handle */}
+        <div
+          className='absolute top-0 bottom-0 left-0 flex w-8 cursor-grab items-center justify-center rounded-l-xl transition-colors hover:bg-gray-100/50 active:cursor-grabbing dark:hover:bg-slate-700/50'
+          onPointerDown={(e) => dragControls.start(e)}
+          style={{ touchAction: 'none' }}
+          title='拖动位置'
+        >
+          <svg
+            className='h-4 w-4 text-gray-400 dark:text-gray-500'
+            fill='currentColor'
+            viewBox='0 0 24 24'
+          >
+            <circle cx='9' cy='5' r='2' />
+            <circle cx='9' cy='12' r='2' />
+            <circle cx='9' cy='19' r='2' />
+            <circle cx='15' cy='5' r='2' />
+            <circle cx='15' cy='12' r='2' />
+            <circle cx='15' cy='19' r='2' />
+          </svg>
+        </div>
+
         {/* Header with edit status */}
         <div className='mb-3 flex items-center justify-between text-sm'>
           <div className='flex items-center gap-2'>
