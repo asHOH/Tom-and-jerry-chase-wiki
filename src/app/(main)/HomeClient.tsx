@@ -7,6 +7,7 @@ import { useMobile } from '@/hooks/useMediaQuery';
 import { useUser } from '@/hooks/useUser';
 import { isNavGroup, NAV_ITEMS, NavItem } from '@/constants/navigation';
 import ChangeLogs, { ChangeLogsRef } from '@/components/ui/ChangeLogs';
+import FactionButton from '@/components/ui/FactionButton';
 import FeedbackSection, { FeedbackSectionRef } from '@/components/ui/FeedbackSection';
 import HomePageSection from '@/components/ui/NavSection';
 import OfficialSitesDisplay from '@/components/ui/OfficialSitesDisplay';
@@ -93,6 +94,16 @@ export default function HomeContentClient({ description, hasServiceKey }: Props)
         <div className='mt-6 flex flex-wrap justify-center gap-4'>
           <FeedbackSection ref={feedbackSectionRef} />
           <ChangeLogs ref={changeLogsRef} />
+          <div>
+            <FactionButton
+              title='网站使用指南'
+              description='介绍wiki基础功能的使用'
+              ariaLabel='介绍wiki基础功能的使用'
+              imageSrc='/images/mouseSkills/%E8%8E%B1%E6%81%A91-%E8%93%9D%E5%9B%BE.png'
+              href='/usages/use'
+              className='px-2'
+            />
+          </div>
         </div>
 
         <div className='mt-12 px-2 sm:px-4'>
