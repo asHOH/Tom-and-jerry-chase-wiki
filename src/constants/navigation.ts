@@ -94,6 +94,14 @@ export const NAV_ITEMS: readonly NavGroup[] = [
         iconSrc: '/images/icons/map.png',
         iconAlt: '地图图标',
       },
+      {
+        id: 'modes',
+        label: '模式',
+        description: '游戏模式列表',
+        href: '/modes',
+        iconSrc: '/images/icons/mode.png',
+        iconAlt: '模式图标',
+      },
     ],
   },
   {
@@ -115,14 +123,6 @@ export const NAV_ITEMS: readonly NavGroup[] = [
         href: '/buffs',
         iconSrc: '/images/icons/buff.png',
         iconAlt: '状态图标',
-      },
-      {
-        id: 'modes',
-        label: '模式',
-        description: '游戏模式列表',
-        href: '/modes',
-        iconSrc: '/images/icons/mode.png',
-        iconAlt: '模式图标',
       },
       {
         id: 'mechanics',

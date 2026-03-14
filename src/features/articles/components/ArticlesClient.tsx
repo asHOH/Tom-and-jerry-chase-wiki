@@ -448,7 +448,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
                             alt={boundCharacter.id}
                             width={32}
                             height={32}
-                            className='h-8 w-8 rounded-full object-cover ring-2 ring-blue-400 dark:ring-blue-500'
+                            className='h-8 w-8 rounded-lg object-cover ring-2 ring-blue-400 dark:ring-blue-500'
                           />
                           <span className='text-sm font-medium text-blue-600 dark:text-blue-400'>
                             {boundCharacter.id}攻略
