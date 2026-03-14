@@ -1,5 +1,317 @@
 [
   {
+    "date": "2026-03-14",
+    "changes": [
+      {
+        "type": "feat",
+        "scope": "导航栏",
+        "message": "优化导航栏布局",
+        "hashes": ["495069a1"],
+        "author": "3swordman"
+      },
+      {
+        "type": "fix",
+        "scope": "编辑模式",
+        "message": "修复教程遮罩层级问题",
+        "hashes": ["47033b4f"],
+        "author": "3swordman"
+      },
+      {
+        "type": "refactor",
+        "scope": "编辑模式",
+        "message": "简化编辑模式逻辑",
+        "hashes": ["4ec3da14"],
+        "author": "3swordman"
+      },
+      {
+        "type": "fix",
+        "scope": "搜索",
+        "message": "移除搜索框聚焦时的重复轮廓",
+        "hashes": ["f528a723"],
+        "author": "3swordman"
+      }
+    ]
+  },
+  {
+    "date": "2026-03-13",
+    "changes": [
+      {
+        "type": "docs",
+        "message": "新增及修改文章内容",
+        "hashes": ["f57fc662", "826c27f4"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
+    "date": "2026-03-11",
+    "changes": [
+      {
+        "type": "fix",
+        "scope": "属性排行",
+        "message": "调整属性值格式，非整数显示两位小数",
+        "hashes": ["e77114a7"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "feat",
+        "message": "添加带有 PR 追踪的同步状态",
+        "hashes": ["1ee760e3"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "message": "同步 5 项游戏数据更新",
+        "hashes": ["21071a06"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "角色信息",
+        "message": "更新角色别名及技能描述",
+        "hashes": [
+          "cf4c0e3d",
+          "8c3f2ae1",
+          "b82956eb",
+          "0827013e",
+          "f99f8e33",
+          "c119a6f2",
+          "5338de03"
+        ],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "衍生物",
+        "message": "更新咸鱼投射物类型",
+        "hashes": ["6e0ba7f0"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-03-10",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "地图组件",
+        "message": "添加新地图组件的文本说明",
+        "hashes": ["aaadf250"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "style",
+        "scope": "状态详情",
+        "message": "优化状态详情界面样式",
+        "hashes": ["a9be8df6"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "状态详情",
+        "message": "简化状态详情区块及卡片快照逻辑",
+        "hashes": ["a383089b"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "知识卡详情",
+        "message": "使用目标化Valtio以保持一致性",
+        "hashes": ["3adbc014"],
+        "author": "asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "文章功能",
+        "message": "添加编辑源选择及待审核覆盖指引",
+        "hashes": ["78c9ff1d"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "文章功能",
+        "message": "通过后续迁移添加向后兼容的待审核别名",
+        "hashes": ["24f93eb2"],
+        "author": "asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "文章功能",
+        "message": "添加待审核版本的元信息快照审核流程",
+        "hashes": ["6d7b2df7"],
+        "author": "asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "文章功能",
+        "message": "通过不可变提交和过期操作409强化待审核流程",
+        "hashes": ["dfc07ae1"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "道具属性卡片",
+        "message": "修复变量名拼写错误并确保别名过滤正确",
+        "hashes": ["ba02923f"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "message": "移除正则表达式中不必要的转义字符",
+        "hashes": ["f3980701"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "message": "移除冗余的展开运算符",
+        "hashes": ["0660bd4a"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "message": "移除冗余的双重否定",
+        "hashes": ["c2c92e91"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "属性排行",
+        "message": "使用类名替代内联样式",
+        "hashes": ["9169a085"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "message": "在列表和卡片视图中使用类名替代内联样式",
+        "hashes": ["d060edfc"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "角色列表",
+        "message": "使用类名替代内联样式并统一宽度",
+        "hashes": ["7205b1fd"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "角色列表",
+        "message": "稳定布局样式并提取列计算辅助函数及测试",
+        "hashes": ["597847b4"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "导航栏",
+        "message": "使用类名替代内联样式",
+        "hashes": ["bf340c57"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-03-09",
+    "changes": [
+      {
+        "type": "refactor",
+        "message": "移除道具和衍生物编辑器文件",
+        "hashes": ["a677a7e8"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "refactor",
+        "message": "更新特性编辑器",
+        "hashes": ["ce7c832c"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "message": "添加新特性说明",
+        "hashes": ["b0cd2220"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "message": "优化近期更新日志描述",
+        "hashes": ["22f2c0d1"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "地图组件",
+        "message": "去重地图网格类型定义",
+        "hashes": ["b59333ac"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "message": "引入目录页外壳并迁移目录网格",
+        "hashes": ["b349dfd1"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-03-08",
+    "changes": [
+      {
+        "type": "docs",
+        "message": "更新用法相关文章",
+        "hashes": ["5b9eb273"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "message": "新增两篇机制文章并更新对象说明",
+        "hashes": ["dee31c58"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
+    "date": "2026-03-06",
+    "changes": [
+      {
+        "type": "refactor",
+        "scope": "地图组件",
+        "message": "添加地图组件支持的地图列表并调整类型",
+        "hashes": ["f8154f4f", "d9ff86ee"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "地图组件",
+        "message": "添加地图组件的图片及描述",
+        "hashes": ["2ac3a6e8", "bee5bb92"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "message": "添加今日更新日志",
+        "hashes": ["91b1c385"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "message": "使用更小的批次以防止更新日志 JSON 被截断",
+        "hashes": ["1ac190ce"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-03-04",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "图片",
+        "message": "添加地图组件相关图片",
+        "hashes": ["50f80196"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
     "date": "2026-03-02",
     "changes": [
       {
