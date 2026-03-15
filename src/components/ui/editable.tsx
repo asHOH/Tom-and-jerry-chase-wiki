@@ -86,6 +86,8 @@ type EditableElementsProxy = {
 const emptyObject = proxy({});
 const EMPTY_EDITABLE_PLACEHOLDER = '<无内容>';
 const MAX_AUTOCOMPLETE_ITEMS = 12;
+const AUTOCOMPLETE_VIEWPORT_PADDING = 8;
+const AUTOCOMPLETE_FALLBACK_WIDTH = 224;
 
 type PairOpenBrace = '{' | '[';
 
@@ -559,13 +561,36 @@ function useInlineEditableContent(opts: {
     activeItem.scrollIntoView({ block: 'nearest' });
   }, [activeAutocompleteIndex, autocompleteItems, isAutocompleteOpen]);
 
+  const getClampedAutocompletePosition = useCallback((): CaretViewportPosition | null => {
+    if (!contentRef.current) {
+      return null;
+    }
+
+    const caretPosition = getCaretViewportPosition(contentRef.current);
+    const popupWidth = autocompleteListRef.current?.offsetWidth ?? AUTOCOMPLETE_FALLBACK_WIDTH;
+    const maxLeft = Math.max(
+      AUTOCOMPLETE_VIEWPORT_PADDING,
+      window.innerWidth - popupWidth - AUTOCOMPLETE_VIEWPORT_PADDING
+    );
+
+    return {
+      top: caretPosition.top,
+      left: Math.min(Math.max(caretPosition.left, AUTOCOMPLETE_VIEWPORT_PADDING), maxLeft),
+    };
+  }, []);
+
   const syncAutocompletePosition = useCallback(() => {
-    if (!isAutocompleteOpen || !contentRef.current) {
+    if (!isAutocompleteOpen) {
       return;
     }
 
-    setAutocompletePosition(getCaretViewportPosition(contentRef.current));
-  }, [isAutocompleteOpen]);
+    const nextPosition = getClampedAutocompletePosition();
+    if (!nextPosition) {
+      return;
+    }
+
+    setAutocompletePosition(nextPosition);
+  }, [getClampedAutocompletePosition, isAutocompleteOpen]);
 
   useEffect(() => {
     if (!isAutocompleteOpen) {
@@ -627,10 +652,20 @@ function useInlineEditableContent(opts: {
     }
 
     setAutocompleteItems(nextItems);
-    setAutocompletePosition(getCaretViewportPosition(contentRef.current));
+    const nextPosition = getClampedAutocompletePosition();
+    if (nextPosition) {
+      setAutocompletePosition(nextPosition);
+    }
     setIsAutocompleteOpen(true);
     setActiveAutocompleteIndex((prev) => Math.min(prev, nextItems.length - 1));
-  }, [autocompleteCandidates, closeAutocomplete, enableEdit, isEditMode, valueType]);
+  }, [
+    autocompleteCandidates,
+    closeAutocomplete,
+    enableEdit,
+    getClampedAutocompletePosition,
+    isEditMode,
+    valueType,
+  ]);
 
   const insertSnippetAtCaret = useCallback((snippet: string, cursorOffsetInSnippet: number) => {
     if (!contentRef.current) {
@@ -840,11 +875,13 @@ function useInlineEditableContent(opts: {
     ? createPortal(
         <div
           ref={autocompleteListRef}
-          className='z-120 max-h-64 min-w-56 overflow-y-auto rounded-md border border-slate-200 bg-white p-1 text-slate-900 shadow-xl ring-1 ring-black/5 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:ring-white/10'
+          className='z-120 max-h-64 min-w-0 overflow-y-auto rounded-md border border-slate-200 bg-white p-1 text-slate-900 shadow-xl ring-1 ring-black/5 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:ring-white/10'
           style={{
             position: 'fixed',
             top: autocompletePosition.top,
             left: autocompletePosition.left,
+            minWidth: 'min(14rem, calc(100vw - 1rem))',
+            maxWidth: 'calc(100vw - 1rem)',
           }}
         >
           {autocompleteItems.map((candidate, index) => {
