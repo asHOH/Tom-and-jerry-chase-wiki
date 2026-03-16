@@ -65,7 +65,7 @@
   },
   "dependencies": {
     "@google/genai": "^1.44.0",
-    "@hcaptcha/react-hcaptcha": "^1.17.2",
+    "@hcaptcha/react-hcaptcha": "^2.0.2",
     "@marsidev/react-turnstile": "^1.4.2",
     "@mdx-js/loader": "^3.1.1",
     "@mdx-js/react": "^3.1.1",
