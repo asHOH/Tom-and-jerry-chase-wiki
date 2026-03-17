@@ -416,26 +416,30 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                               <div className='px-4 py-1 text-xs font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400'>
                                 {entry.label}
                               </div>
-                              {entry.children.map((child) => (
-                                <Link
-                                  key={child.id}
-                                  href={child.href}
-                                  className={clsx(
-                                    'flex items-center gap-2 py-2 pr-4 pl-7 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700',
-                                    isTabActive(child.href) && 'font-semibold'
-                                  )}
-                                  onClick={() => setOverflowOpen(false)}
-                                >
-                                  <Image
-                                    src={child.iconSrc}
-                                    alt={child.iconAlt}
-                                    width={64}
-                                    height={64}
-                                    className='h-6 w-6 shrink-0 object-contain'
-                                  />
-                                  <span>{child.label}</span>
-                                </Link>
-                              ))}
+                              {entry.children.map(
+                                (child) =>
+                                  (env.NEXT_PUBLIC_DISABLE_ARTICLES !== '1' ||
+                                    child.id != 'articles') && (
+                                    <Link
+                                      key={child.id}
+                                      href={child.href}
+                                      className={clsx(
+                                        'flex items-center gap-2 py-2 pr-4 pl-7 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700',
+                                        isTabActive(child.href) && 'font-semibold'
+                                      )}
+                                      onClick={() => setOverflowOpen(false)}
+                                    >
+                                      <Image
+                                        src={child.iconSrc}
+                                        alt={child.iconAlt}
+                                        width={64}
+                                        height={64}
+                                        className='h-6 w-6 shrink-0 object-contain'
+                                      />
+                                      <span>{child.label}</span>
+                                    </Link>
+                                  )
+                              )}
                             </li>
                           );
                         }
