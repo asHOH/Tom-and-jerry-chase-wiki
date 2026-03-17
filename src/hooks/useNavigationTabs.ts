@@ -10,7 +10,7 @@ export function useNavigationTabs() {
     if (!pathname) return false;
     if (pathname.startsWith(href)) return true;
     if (!href.startsWith('/factions/mouse') && !href.startsWith('/factions/cat')) return false;
-    const slug = /^\/characters\/([^/]*)\/?$/.exec(pathname)?.[1];
+    const slug = /^\/characters\/(?:user\/)?([^/]+)\/?$/.exec(pathname)?.[1];
     if (!slug) return false;
     const character = characters[decodeURIComponent(slug)];
     return (
