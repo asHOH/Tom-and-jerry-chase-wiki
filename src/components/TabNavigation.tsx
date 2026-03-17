@@ -487,9 +487,14 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
               content={isDetailedView ? '切换至简明描述' : '切换至详细描述'}
               className='border-none'
             >
-              <div
+              <button
+                type='button'
+                aria-pressed={isDetailedView}
+                aria-label={isDetailedView ? '切换至简明描述' : '切换至详细描述'}
                 className={clsx(
-                  'relative flex min-h-10 cursor-pointer rounded-lg bg-gray-100 p-1 transition-all duration-200 md:min-h-11 dark:border-gray-600 dark:bg-slate-800'
+                  'relative flex min-h-10 cursor-pointer rounded-lg border-none bg-gray-100 p-1 transition-all duration-200',
+                  'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500',
+                  'md:min-h-11 dark:border-gray-600 dark:bg-slate-800 dark:focus-visible:outline-blue-300'
                 )}
                 onClick={() => {
                   toggleDetailedView();
@@ -536,7 +541,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                   <span className='lg:hidden'>详</span>
                   <span className='hidden lg:inline'>详细</span>
                 </div>
-              </div>
+              </button>
             </Tooltip>
           )}
           {/* User Settings Dropdown (deferred until mounted to avoid hydration mismatch) */}
