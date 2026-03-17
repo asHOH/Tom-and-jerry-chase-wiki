@@ -34,8 +34,6 @@ type TabNavigationProps = {
 
 const MOBILE_STACK_COLLAPSE_WIDTHS = [420, 376, 332] as const;
 
-const DESKTOP_STACK_COLLAPSE_WIDTHS = [800, 720] as const;
-
 const DETAIL_TOGGLE_WIDTH = 56;
 const USER_BUTTON_WIDTH = 44;
 
@@ -77,7 +75,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     const total = items.length;
     let nextCollapsed = 0;
 
-    const collapseWidths = isMobile ? MOBILE_STACK_COLLAPSE_WIDTHS : DESKTOP_STACK_COLLAPSE_WIDTHS;
+    const collapseWidths = isMobile ? MOBILE_STACK_COLLAPSE_WIDTHS : [];
 
     for (let index = 0; index < collapseWidths.length; index += 1) {
       const threshold = collapseWidths[index]!;
