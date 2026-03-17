@@ -59,9 +59,12 @@ export async function sendPushNotification(userId: string, payload: PushPayload)
       },
     };
 
-    return webpush.sendNotification(pushSubscription, payloadString).catch((err) => {
+    return webpush.sendNotification(pushSubscription, payloadString).catch((err: unknown) => {
+      const statusCode =
+        typeof err === 'object' && err !== null && 'statusCode' in err ? err.statusCode : undefined;
+
       // Clean up subscriptions manually on 410 Gone / 404 Not Found errors
-      if (err.statusCode === 410 || err.statusCode === 404) {
+      if (statusCode === 410 || statusCode === 404) {
         removePromises.push(supabaseAdmin.from('push_subscriptions').delete().eq('id', sub.id));
       } else {
         console.error('Error sending push notification:', err);
