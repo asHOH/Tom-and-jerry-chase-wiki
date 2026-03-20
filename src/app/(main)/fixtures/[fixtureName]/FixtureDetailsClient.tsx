@@ -1,10 +1,14 @@
 'use client';
 
 import dynamic from 'next/dynamic';
+import { usePathname } from 'next/navigation';
 
+import { getPathSegmentFromEnd } from '@/lib/edit/editModeRouteUtils';
+import type { Fixture } from '@/data/types';
+import EditModePageShell from '@/components/ui/EditModePageShell';
 import LoadingState from '@/components/ui/LoadingState';
 
-const FixtureDetailsClient = dynamic(
+const FixtureDetails = dynamic(
   () => import('@/features/fixtures/components/fixture-detail/FixtureDetails'),
   {
     loading: () => (
@@ -16,4 +20,13 @@ const FixtureDetailsClient = dynamic(
   }
 );
 
-export default FixtureDetailsClient;
+export default function FixtureDetailsClient({ fixture }: { fixture: Fixture }) {
+  const pathname = usePathname();
+  const fixtureName = getPathSegmentFromEnd(pathname, 0) || fixture.name;
+
+  return (
+    <EditModePageShell entityType='fixtures' entityId={fixtureName} entityName={fixtureName}>
+      <FixtureDetails fixture={fixture} />
+    </EditModePageShell>
+  );
+}

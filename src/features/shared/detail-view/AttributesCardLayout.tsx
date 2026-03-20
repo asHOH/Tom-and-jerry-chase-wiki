@@ -4,7 +4,9 @@ import { ReactNode, type CSSProperties } from 'react';
 
 import { componentTokens, designTokens } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
+import { useEditMode } from '@/context/EditModeContext';
 import BaseCard from '@/components/ui/BaseCard';
+import EditButton from '@/components/ui/EditButton';
 import GameImage from '@/components/ui/GameImage';
 
 interface AttributesCardLayoutProps {
@@ -33,6 +35,7 @@ export default function AttributesCardLayout({
   wikiHistory,
 }: AttributesCardLayoutProps) {
   const isMobile = useMobile();
+  const { isEditMode } = useEditMode();
   const spacing = designTokens.spacing;
   const spacingVars = {
     '--space-xs': spacing.xs,
@@ -66,6 +69,7 @@ export default function AttributesCardLayout({
               />
               <div>
                 <h1 className='pt-(--space-xs) text-2xl font-bold dark:text-white'>{title} </h1>
+                {!isEditMode ? <EditButton compact className='mt-1' /> : null}
                 {subtitle && (
                   <h1 className='text-lg font-normal text-gray-400 dark:text-gray-500'>
                     {subtitle}
@@ -97,6 +101,7 @@ export default function AttributesCardLayout({
                   </span>
                 )}
               </h1>
+              {!isEditMode ? <EditButton compact className='mt-2' /> : null}
             </div>
             {aliasList.length > 0 && (
               <div className='mx-(--space-md) text-sm text-gray-400 dark:text-gray-500'>

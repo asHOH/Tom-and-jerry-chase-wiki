@@ -1,8 +1,11 @@
 'use client';
 
 import dynamic from 'next/dynamic';
+import { usePathname } from 'next/navigation';
 
+import { getPathSegmentFromEnd } from '@/lib/edit/editModeRouteUtils';
 import { KnowledgeCardDetailsProps } from '@/lib/types';
+import EditModePageShell from '@/components/ui/EditModePageShell';
 import LoadingState from '@/components/ui/LoadingState';
 
 // Dynamic import for KnowledgeCardDetails component
@@ -22,5 +25,12 @@ const KnowledgeCardDetails = dynamic(
 );
 
 export default function KnowledgeCardDetailsClient(props: KnowledgeCardDetailsProps) {
-  return <KnowledgeCardDetails {...props} />;
+  const pathname = usePathname();
+  const cardId = getPathSegmentFromEnd(pathname, 0) || props.card.id;
+
+  return (
+    <EditModePageShell entityType='cards' entityId={cardId} entityName={props.card.id}>
+      <KnowledgeCardDetails {...props} />
+    </EditModePageShell>
+  );
 }
