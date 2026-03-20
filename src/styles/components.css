@@ -53,41 +53,6 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
 }
 
-/* Faction button styles */
-/* Base styles for faction buttons */
-button.faction-button,
-a.faction-button {
-  position: relative;
-  overflow: visible;
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease,
-    transform 0.3s ease,
-    box-shadow 0.3s ease !important;
-}
-
-/* Hover styles for faction buttons */
-button.faction-button:hover,
-a.faction-button:hover {
-  background-color: #2563eb !important; /* Blue background on hover */
-  color: white !important; /* White text on hover */
-}
-
-/* Ensure all child elements also change color on hover */
-button.faction-button:hover span,
-button.faction-button:hover div,
-a.faction-button:hover span,
-a.faction-button:hover div {
-  color: white !important;
-}
-
-/* Add a subtle shadow effect on hover */
-button.faction-button:hover,
-a.faction-button:hover {
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2) !important;
-  transform: translateY(-2px) !important;
-}
-
 /* Normalize faction button icon sizing (fallback if Tailwind utilities are missing) */
 button.faction-button img,
 a.faction-button img {

@@ -48,7 +48,9 @@ function FactionButton({
     icon,
     ariaLabel,
     layout: 'stacked' as const,
-    className: `faction-button flex-1 px-0 py-3 gap-1 md:gap-2${className ? ` ${className}` : ''}`,
+    className: `faction-button flex-1 gap-1 px-0 py-3 hover:-translate-y-0.5 hover:shadow-lg md:gap-2${
+      className ? ` ${className}` : ''
+    }`,
     contentRowClassName: 'gap-2 md:gap-3',
     iconWrapperClassName: 'text-xl md:text-2xl',
     titleClassName: 'text-xl md:text-2xl',

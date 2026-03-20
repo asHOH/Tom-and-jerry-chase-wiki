@@ -61,7 +61,8 @@ describe('FactionButton', () => {
       'flex-1',
       'gap-1',
       'py-3',
-      'md:gap-2'
+      'md:gap-2',
+      'hover:-translate-y-0.5'
     );
     expect(image).toHaveAttribute('data-preload', 'true');
     expect(image).toHaveClass('h-9', 'w-auto', 'flex-shrink-0', 'object-contain', 'md:h-10');
@@ -93,7 +94,13 @@ describe('FactionButton', () => {
     const button = screen.getByRole('button', { name: '打开彩蛋面板' });
     fireEvent.click(button);
 
-    expect(button).toHaveClass('faction-button', 'min-w-[180px]', 'flex-1', 'py-3');
+    expect(button).toHaveClass(
+      'faction-button',
+      'min-w-[180px]',
+      'flex-1',
+      'py-3',
+      'hover:-translate-y-0.5'
+    );
     expect(screen.getByText('🐭')).toHaveClass('text-xl', 'md:text-2xl');
     expect(onClick).toHaveBeenCalledTimes(1);
   });
