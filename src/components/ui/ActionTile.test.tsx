@@ -18,13 +18,52 @@ jest.mock('@/components/Link', () => ({
 }));
 
 describe('ActionTile', () => {
-  it('renders an internal link for navigation tiles', () => {
+  it('renders a button when href is not provided', () => {
+    render(<ActionTile title='更新日志' ariaLabel='更新日志' />);
+
+    expect(screen.getByRole('button', { name: '更新日志' })).toBeInTheDocument();
+  });
+
+  it('renders an internal link when href is provided', () => {
     render(<ActionTile title='机制' ariaLabel='机制' href='/mechanics/object' />);
 
     const link = screen.getByRole('link', { name: '机制' });
 
     expect(link).toHaveAttribute('href', '/mechanics/object');
     expect(link).toHaveClass('rounded-lg', 'shadow-md');
+  });
+
+  it('renders an external anchor when external and href are provided', () => {
+    render(
+      <ActionTile
+        title='主站'
+        ariaLabel='主站'
+        href='https://www.tjwiki.com'
+        external
+        layout='stacked'
+      />
+    );
+
+    const link = screen.getByRole('link', { name: '主站' });
+
+    expect(link).toHaveAttribute('href', 'https://www.tjwiki.com');
+    expect(link).toHaveAttribute('target', '_blank');
+    expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+  });
+
+  it('allows interaction when interaction is normal', () => {
+    const onClick = jest.fn();
+
+    render(<ActionTile title='彩蛋' ariaLabel='彩蛋' interaction='normal' onClick={onClick} />);
+
+    const button = screen.getByRole('button', { name: '彩蛋' });
+    fireEvent.click(button);
+
+    expect(button).not.toBeDisabled();
+    expect(button).not.toHaveAttribute('aria-current');
+    expect(button).not.toHaveAttribute('aria-disabled');
+    expect(button).not.toHaveAttribute('tabindex');
+    expect(onClick).toHaveBeenCalledTimes(1);
   });
 
   it('applies current-page semantics and blocks clicks for active links', () => {
@@ -51,7 +90,7 @@ describe('ActionTile', () => {
     expect(onClick).not.toHaveBeenCalled();
   });
 
-  it('renders a disabled button when no href is provided', () => {
+  it('applies disabled semantics and blocks clicks when interaction is disabled', () => {
     const onClick = jest.fn();
 
     render(<ActionTile title='禁用' ariaLabel='禁用' interaction='disabled' onClick={onClick} />);
@@ -81,7 +120,7 @@ describe('ActionTile', () => {
     expect(screen.getByText('查看网站更新历史')).toHaveClass('mt-1', 'text-sm', 'text-gray-500');
   });
 
-  it('renders active stacked external tiles without disabling interaction', () => {
+  it('keeps active stacked external tiles interactive when tone is active', () => {
     render(
       <ActionTile
         title='主站'
