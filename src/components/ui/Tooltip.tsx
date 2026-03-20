@@ -21,7 +21,12 @@ export default function Tooltip({
 }: TooltipProps) {
   const [open, setOpen] = React.useState<boolean>(false);
   const [isHoverOnly, setIsHoverOnly] = React.useState<boolean>(false);
+  const [mounted, setMounted] = React.useState<boolean>(false);
   const longPressTimerRef = React.useRef<NodeJS.Timeout | null>(null);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   React.useEffect(() => {
     if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
@@ -69,7 +74,7 @@ export default function Tooltip({
     </span>
   );
 
-  if (disabled) {
+  if (disabled || !mounted) {
     return <>{trigger}</>;
   }
 
@@ -79,8 +84,6 @@ export default function Tooltip({
         <TooltipPrimitive.Trigger
           asChild
           onClick={(e) => {
-            // Only intercept click for non-interactive triggers (when not asChild)
-            // For buttons (asChild=true), we let the click pass through
             if (!isHoverOnly && !asChild) {
               e.preventDefault();
               setOpen((prev) => !prev);

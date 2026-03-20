@@ -4,6 +4,8 @@ import { createClient } from '@/lib/supabase/server';
 
 import AdminPanel from './AdminPanel';
 
+export const dynamic = 'force-dynamic';
+
 export default async function AdminPage() {
   const supabase = await createClient();
   const {
