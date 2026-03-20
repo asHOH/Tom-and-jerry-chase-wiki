@@ -2,9 +2,6 @@ import { GameDataManager } from '@/lib/dataManager';
 import catSpecialSkillsWithImages from '@/features/special-skills/data/catSpecialSkills';
 import mouseSpecialSkillsWithImages from '@/features/special-skills/data/mouseSpecialSkills';
 
-import catEntitiesWithImages from './catEntities';
-import mouseEntitiesWithImages from './mouseEntities';
-
 export const { factionData, cardData } = GameDataManager.getRawData();
 
 export const cards = GameDataManager.getCards();
@@ -16,10 +13,7 @@ export const specialSkills = {
 
 export { default as items } from '@/features/items/data/items';
 
-export const entities = {
-  cat: catEntitiesWithImages,
-  mouse: mouseEntitiesWithImages,
-};
+export { default as entities } from '@/features/entities/data/entities';
 
 export { default as buffs } from '@/features/buffs/data/buffs';
 

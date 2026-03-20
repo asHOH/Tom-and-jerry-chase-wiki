@@ -1,23 +1,17 @@
 import { NextResponse } from 'next/server';
 
-import { catEntitiesDefinitions } from '@/data/catEntities';
-import { mouseEntitiesDefinitions } from '@/data/mouseEntities';
+import { entityDefinitions } from '@/features/entities/data/entities';
 
 export const dynamic = 'force-static';
 export const revalidate = 3600;
 export const runtime = 'nodejs';
 
 export function GET() {
-  const combined = {
-    ...catEntitiesDefinitions,
-    ...mouseEntitiesDefinitions,
-  };
-
   return NextResponse.json(
     {
       source: 'site-data',
-      total: Object.keys(combined).length,
-      entities: combined,
+      total: Object.keys(entityDefinitions).length,
+      entities: entityDefinitions,
     },
     {
       headers: {

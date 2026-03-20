@@ -272,8 +272,7 @@ export function getCategorizedKeywords(singleItem: SingleItem): CategorizedKeywo
     } else if (singleItem.type == 'item') {
       R = items[singleItem.name]?.aliases;
     } else if (singleItem.type == 'entity') {
-      const allEntities = { ...entities.cat, ...entities.mouse };
-      R = allEntities[singleItem.name]?.aliases;
+      R = entities[singleItem.name]?.aliases;
     } else if (singleItem.type == 'buff') {
       R = buffs[singleItem.name]?.aliases;
     } else if (singleItem.type == 'map') {
@@ -450,7 +449,7 @@ export default function singleItemRreverse(
       return { name: a?.name || '', type: 'item', description };
     });
 
-  const EntityResult = [...Object.values(entities.cat), ...Object.values(entities.mouse)]
+  const EntityResult = Object.values(entities)
     .filter((a) => {
       return [a.description, a.detailedDescription]
         .filter((d): d is string => d != null)

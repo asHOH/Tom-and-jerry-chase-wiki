@@ -24,8 +24,7 @@ type Kind =
   | 'character'
   | 'itemGroup'
   | 'card'
-  | 'entity-cat'
-  | 'entity-mouse'
+  | 'entity'
   | 'item'
   | 'buff'
   | 'special-skill-cat'
@@ -77,8 +76,7 @@ const PRIORITY: Record<Kind, { name: number; alias: number }> = {
   character: { name: 1, alias: 14 },
   itemGroup: { name: 2, alias: 15 },
   card: { name: 3, alias: 99 }, // no alias search for cards in current behavior
-  'entity-cat': { name: 4, alias: 16 },
-  'entity-mouse': { name: 5, alias: 17 },
+  entity: { name: 4, alias: 16 },
   item: { name: 6, alias: 18 },
   buff: { name: 7, alias: 98 }, // alias handled via fuzzy later, not here
   'special-skill-cat': { name: 8, alias: 19 },
@@ -204,50 +202,28 @@ async function buildGotoIndex(): Promise<GotoIndex> {
     });
   }
 
-  // Entities (cat/mouse)
-  for (const [name, e] of Object.entries(entities['cat'])) {
+  // Entities
+  for (const [name, it] of Object.entries(entities)) {
     const goto: GotoResult = {
       url: `/entities/${encodeURIComponent(name)}`,
       type: 'entity',
-      name: e.name,
-      description: e.description,
-      imageUrl: e.imageUrl,
+      name: it.name,
+      description: it.description,
+      imageUrl: it.imageUrl,
     };
     push(byName, normalizeName(name), {
-      kind: 'entity-cat',
-      priority: PRIORITY['entity-cat'].name,
+      kind: 'entity',
+      priority: PRIORITY.entity.name,
       goto,
     });
-    for (const a of e.aliases ?? []) {
+    for (const a of it.aliases ?? []) {
       push(byName, normalizeName(a), {
-        kind: 'entity-cat',
-        priority: PRIORITY['entity-cat'].alias,
+        kind: 'entity',
+        priority: PRIORITY.entity.alias,
         goto,
       });
     }
   }
-  for (const [name, e] of Object.entries(entities['mouse'])) {
-    const goto: GotoResult = {
-      url: `/entities/${encodeURIComponent(name)}`,
-      type: 'entity',
-      name: e.name,
-      description: e.description,
-      imageUrl: e.imageUrl,
-    };
-    push(byName, normalizeName(name), {
-      kind: 'entity-mouse',
-      priority: PRIORITY['entity-mouse'].name,
-      goto,
-    });
-    for (const a of e.aliases ?? []) {
-      push(byName, normalizeName(a), {
-        kind: 'entity-mouse',
-        priority: PRIORITY['entity-mouse'].alias,
-        goto,
-      });
-    }
-  }
-
   // Items
   for (const [name, it] of Object.entries(items)) {
     const goto: GotoResult = {

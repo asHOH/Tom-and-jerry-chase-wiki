@@ -72,8 +72,7 @@ export const getSingleItemImageUrl = (singleItem: SingleItem): string => {
   } else if (singleItem.type == 'item') {
     R = items[singleItem.name]?.imageUrl;
   } else if (singleItem.type == 'entity') {
-    const allEntities = { ...entities.cat, ...entities.mouse };
-    R = allEntities[singleItem.name]?.imageUrl;
+    R = entities[singleItem.name]?.imageUrl;
   } else if (singleItem.type == 'buff') {
     R = buffs[singleItem.name]?.imageUrl;
   } else if (singleItem.type == 'map') {
@@ -121,8 +120,7 @@ export const getSingleItemFactionId = (singleItem: SingleItem): FactionId | unde
     return undefined;
   };
   const findEntity = (singleItem: SingleItem) => {
-    const allEntities = { ...entities.cat, ...entities.mouse };
-    return allEntities[singleItem.name];
+    return entities[singleItem.name];
   };
 
   if (singleItem.type !== 'entity') {

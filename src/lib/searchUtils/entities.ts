@@ -8,9 +8,7 @@ export async function* searchEntities(
   lowerCaseQuery: string,
   pinyinQuery: string
 ): AsyncGenerator<SearchResult> {
-  const allEntities = { ...entities.cat, ...entities.mouse };
-
-  for (const entity of Object.values(allEntities)) {
+  for (const entity of Object.values(entities)) {
     let matchContext: string | undefined;
     let priority = 0;
     let isPinyinMatch = false;

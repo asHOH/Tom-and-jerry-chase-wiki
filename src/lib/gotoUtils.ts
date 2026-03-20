@@ -66,11 +66,10 @@ export async function getGotoResult(
     if (hint === '猫角色') return (c: K) => c.kind === 'character' && c.goto?.factionId === 'cat';
     if (hint === '鼠角色') return (c: K) => c.kind === 'character' && c.goto?.factionId === 'mouse';
     if (hint === '技能') return (c: K) => c.kind === 'character-skill';
-    if (hint === '道具')
-      return (c: K) => c.kind === 'item' || c.kind === 'entity-cat' || c.kind === 'entity-mouse';
-    if (hint === '衍生物') return (c: K) => c.kind === 'entity-cat' || c.kind === 'entity-mouse';
-    if (hint === '猫衍生物') return (c: K) => c.kind === 'entity-cat';
-    if (hint === '鼠衍生物') return (c: K) => c.kind === 'entity-mouse';
+    if (hint === '道具') return (c: K) => c.kind === 'item' || c.kind === 'entity';
+    if (hint === '衍生物') return (c: K) => c.kind === 'entity';
+    if (hint === '猫衍生物') return (c: K) => c.kind === 'entity';
+    if (hint === '鼠衍生物') return (c: K) => c.kind === 'entity';
     if (hint === '地图') return (c: K) => c.kind === 'map';
     if (hint === '地图组件') return (c: K) => c.kind === 'fixture';
     if (hint === '场景物') return (c: K) => c.kind === 'fixture';
@@ -235,8 +234,7 @@ export async function getGotoResult(
     if (kind === 'special-skill-mouse')
       return { categoryLabel: '鼠特技', kindDescription: '鼠方特技' };
     if (kind === 'character-skill') return { categoryLabel: '技能', kindDescription: '角色技能' };
-    if (kind === 'entity-cat') return { categoryLabel: '衍生物', kindDescription: '猫方衍生物' };
-    if (kind === 'entity-mouse') return { categoryLabel: '衍生物', kindDescription: '鼠方衍生物' };
+    if (kind === 'entity') return { categoryLabel: '衍生物', kindDescription: '衍生物' };
     if (kind === 'map') return { categoryLabel: '地图', kindDescription: '地图' };
     if (kind === 'fixture')
       return { categoryLabel: '地图组件', kindDescription: '地图组件/场景物' };

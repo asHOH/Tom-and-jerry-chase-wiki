@@ -68,9 +68,7 @@ export const useSpecifyTypeNavigation = (
       return Object.keys(items);
     }, []),
     entity: useMemo(() => {
-      const catIds = Object.keys(entities['cat']);
-      const mouseIds = Object.keys(entities['mouse']);
-      return [...catIds, ...mouseIds];
+      return Object.keys(entities);
     }, []),
     buff: useMemo(() => {
       return Object.keys(buffs);

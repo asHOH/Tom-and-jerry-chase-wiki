@@ -16,7 +16,7 @@ export function generateStaticParams() {
 }
 
 function generateStructuredData(entityName: string): WithContext<Article> {
-  const entity = allentities[entityName]!;
+  const entity = entities[entityName]!;
 
   const desc = entity.description ?? `${entity.name}详细信息`;
   return {
@@ -33,14 +33,13 @@ function generateStructuredData(entityName: string): WithContext<Article> {
   };
 }
 
-const allentities = { ...entities['cat'], ...entities['mouse'] };
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ entityName: string }>;
 }): Promise<Metadata> {
   const entityName = decodeURIComponent((await params).entityName);
-  const entity = allentities[entityName];
+  const entity = entities[entityName];
 
   if (!entity) {
     return {};
@@ -62,7 +61,7 @@ export default async function EntityDetailPage({
   params: Promise<{ entityName: string }>;
 }) {
   const entityName = decodeURIComponent((await params).entityName);
-  const entity = allentities[entityName];
+  const entity = entities[entityName];
 
   if (!entity) {
     notFound();

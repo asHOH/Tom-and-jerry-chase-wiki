@@ -63,10 +63,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.4,
   }));
 
-  const entitiesMap: MetadataRoute.Sitemap = [
-    ...Object.keys(entities.cat),
-    ...Object.keys(entities.mouse),
-  ].map((entityName) => ({
+  const entitiesMap: MetadataRoute.Sitemap = Object.keys(entities).map((entityName) => ({
     url: `${baseUrl}/entities/${encodeURIComponent(entityName)}`,
     lastModified: buildTime,
     changeFrequency: 'monthly',

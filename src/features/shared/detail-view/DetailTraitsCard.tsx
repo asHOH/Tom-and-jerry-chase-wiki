@@ -11,7 +11,7 @@ interface DetailTraitsCardProps {
 }
 
 export default function DetailTraitsCard({ singleItem }: DetailTraitsCardProps) {
-  const OwnEntities = Object.values({ ...entities.cat, ...entities.mouse }).filter((entity) => {
+  const OwnEntities = Object.values(entities).filter((entity) => {
     const owner = entity.owner;
 
     if (!owner) return false; // 如果 owner 不存在，直接返回 false

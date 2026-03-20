@@ -5,7 +5,7 @@ import { requireRole } from '@/lib/auth/requireRole';
 import type { Action } from '@/lib/edit/diffUtils';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { PROJECT_INFO } from '@/constants';
-import { cards, characters, entities } from '@/data';
+import { cards, characters } from '@/data';
 import { env } from '@/env';
 
 type EntityFileConfig = {
@@ -43,14 +43,7 @@ const ENTITY_FILE_CONFIGS: Record<string, EntityFileConfig[]> = {
       faction: 'mouse',
     },
   ],
-  entities: [
-    { path: 'src/data/catEntities.ts', rootObject: 'catEntitiesDefinitions', faction: 'cat' },
-    {
-      path: 'src/data/mouseEntities.ts',
-      rootObject: 'mouseEntitiesDefinitions',
-      faction: 'mouse',
-    },
-  ],
+  entities: [{ path: 'src/features/entities/data/entities.ts', rootObject: 'entityDefinitions' }],
   buffs: [{ path: 'src/features/buffs/data/buffs.ts', rootObject: 'buffDefinitions' }],
   items: [{ path: 'src/features/items/data/items.ts', rootObject: 'itemDefinitions' }],
   fixtures: [{ path: 'src/features/fixtures/data/fixtures.ts', rootObject: 'FixtureDefinitions' }],
@@ -203,20 +196,6 @@ function getCandidateFileConfigs(entityType: string, actionPath: string): Entity
     const cardId = parts[0];
     if (!cardId) return configs;
     const factionId = cards[cardId]?.factionId;
-    if (factionId === 'cat' || factionId === 'mouse') {
-      const filtered = configs.filter((config) => config.faction === factionId);
-      return filtered.length > 0 ? filtered : configs;
-    }
-  }
-
-  if (entityType === 'entities') {
-    const entityName = parts[0];
-    if (!entityName) return configs;
-    const factionId = entities.cat?.[entityName]
-      ? 'cat'
-      : entities.mouse?.[entityName]
-        ? 'mouse'
-        : undefined;
     if (factionId === 'cat' || factionId === 'mouse') {
       const filtered = configs.filter((config) => config.faction === factionId);
       return filtered.length > 0 ? filtered : configs;

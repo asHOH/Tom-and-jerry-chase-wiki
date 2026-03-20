@@ -1,11 +1,6 @@
 import 'server-only';
 
-import {
-  applyAction,
-  applyActionEntry,
-  type Action,
-  type ActionHistoryEntry,
-} from '@/lib/edit/diffUtils';
+import { applyActionEntry, type ActionHistoryEntry } from '@/lib/edit/diffUtils';
 import { cached } from '@/lib/serverCache';
 import { supabaseServerPublic } from '@/lib/supabase/public';
 import { actionHistoryEntrySchema } from '@/lib/validation/schemas';
@@ -33,6 +28,7 @@ import type { PublicActionRow } from './publicActionsTypes';
 
 const appliedPublicActionIds = new Set<string>();
 
+/*
 function forEachAction(entry: ActionHistoryEntry, fn: (action: Action) => void): void {
   if (Array.isArray(entry)) {
     for (const action of entry) fn(action);
@@ -62,6 +58,11 @@ function applyEntitiesActionEntry(entry: ActionHistoryEntry): void {
 
     applyAction(target, action);
   });
+}
+*/
+
+function applyEntitiesActionEntry(entry: ActionHistoryEntry): void {
+  applyActionEntry(entities as unknown as Record<string, unknown>, entry);
 }
 
 /**
