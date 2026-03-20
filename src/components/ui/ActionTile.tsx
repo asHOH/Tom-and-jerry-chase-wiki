@@ -1,8 +1,8 @@
 'use client';
 
 import type { MouseEvent, ReactNode } from 'react';
-import clsx from 'clsx';
 
+import { cn } from '@/lib/design/cn';
 import Link from '@/components/Link';
 
 export type ActionTileProps = {
@@ -18,6 +18,8 @@ export type ActionTileProps = {
   tone?: 'default' | 'active';
   interaction?: 'normal' | 'current-page' | 'disabled';
   className?: string;
+  contentRowClassName?: string;
+  iconWrapperClassName?: string;
   titleClassName?: string;
   descriptionClassName?: string;
 };
@@ -46,6 +48,8 @@ export default function ActionTile({
   tone = 'default',
   interaction = 'normal',
   className,
+  contentRowClassName,
+  iconWrapperClassName,
   titleClassName,
   descriptionClassName,
 }: ActionTileProps) {
@@ -64,7 +68,7 @@ export default function ActionTile({
     onClick?.();
   };
 
-  const tileClasses = clsx(
+  const tileClasses = cn(
     'group overflow-hidden shadow-md transition-all duration-300 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none dark:focus-visible:ring-blue-400',
     layout === 'inline'
       ? 'flex items-center rounded-lg'
@@ -74,7 +78,7 @@ export default function ActionTile({
       ? layout === 'inline'
         ? 'bg-blue-600 text-white dark:bg-blue-700'
         : 'bg-blue-100 text-blue-900 ring-2 ring-blue-500 dark:bg-blue-900/40 dark:text-blue-100 dark:ring-blue-400'
-      : clsx(
+      : cn(
           'bg-gray-200 text-gray-800',
           layout === 'inline' ? 'dark:bg-slate-700' : 'dark:bg-black',
           'dark:text-gray-200'
@@ -86,15 +90,23 @@ export default function ActionTile({
     className
   );
 
-  const titleClasses = clsx(
+  const contentRowClasses = cn(
+    'flex items-center',
+    layout === 'inline' ? 'w-full' : 'gap-3',
+    contentRowClassName
+  );
+
+  const iconClasses = cn('shrink-0 text-current', iconWrapperClassName);
+
+  const titleClasses = cn(
     layout === 'inline'
-      ? clsx('truncate', size === 'sm' ? 'text-xs' : 'text-sm')
-      : clsx('font-bold whitespace-nowrap', size === 'sm' ? 'text-xl' : 'text-2xl'),
+      ? cn('truncate', size === 'sm' ? 'text-xs' : 'text-sm')
+      : cn('font-bold whitespace-nowrap', size === 'sm' ? 'text-xl' : 'text-2xl'),
     allowHoverAccent && 'group-hover:text-white',
     titleClassName
   );
 
-  const descriptionClasses = clsx(
+  const descriptionClasses = cn(
     'mt-1 text-sm',
     tone === 'active' ? 'text-blue-700 dark:text-blue-300' : 'text-gray-500 dark:text-gray-400',
     allowHoverAccent && 'group-hover:text-white',
@@ -105,13 +117,13 @@ export default function ActionTile({
     <>
       {layout === 'inline' ? (
         <>
-          {icon ? <span className='shrink-0 text-current'>{icon}</span> : null}
+          {icon ? <span className={iconClasses}>{icon}</span> : null}
           <span className={titleClasses}>{title}</span>
         </>
       ) : (
         <>
-          <div className='flex items-center gap-3'>
-            {icon ? <span className='shrink-0 text-current'>{icon}</span> : null}
+          <div className={contentRowClasses}>
+            {icon ? <span className={iconClasses}>{icon}</span> : null}
             <span className={titleClasses}>{title}</span>
           </div>
           {description ? <div className={descriptionClasses}>{description}</div> : null}
