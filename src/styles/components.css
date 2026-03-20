@@ -1,14 +1,14 @@
-/* Temporary FactionButton compatibility: preserve icon sizing until the component owns it fully */
-button.faction-button img,
-a.faction-button img {
+.faction-button-image {
+  display: block;
   height: 36px;
   width: auto;
+  max-width: none;
+  flex-shrink: 0;
   object-fit: contain;
 }
 
 @media (min-width: 768px) {
-  button.faction-button img,
-  a.faction-button img {
+  .faction-button-image {
     height: 40px;
   }
 }

@@ -37,7 +37,7 @@ jest.mock('@/components/Image', () => ({
 }));
 
 describe('FactionButton', () => {
-  it('preserves the current image-based sizing contract for linked tiles', () => {
+  it('owns image sizing locally for linked tiles without the legacy faction-button class', () => {
     render(
       <FactionButton
         title='角色'
@@ -58,7 +58,6 @@ describe('FactionButton', () => {
     const contentRow = image.closest('span.flex');
 
     expect(link).toHaveClass(
-      'faction-button',
       'min-w-[180px]',
       'flex-1',
       'gap-1',
@@ -66,8 +65,9 @@ describe('FactionButton', () => {
       'md:gap-2',
       'hover:-translate-y-0.5'
     );
+    expect(link).not.toHaveClass('faction-button');
     expect(image).toHaveAttribute('data-preload', 'true');
-    expect(image).toHaveClass('h-9', 'w-auto', 'flex-shrink-0', 'object-contain', 'md:h-10');
+    expect(image).toHaveClass('faction-button-image');
     expect(titleWrapper).toHaveClass('text-xl', 'font-bold', 'whitespace-nowrap', 'md:text-2xl');
     expect(contentRow).toHaveClass('flex', 'items-center', 'gap-2', 'md:gap-3');
     expect(description).toHaveClass(
@@ -96,13 +96,8 @@ describe('FactionButton', () => {
     const button = screen.getByRole('button', { name: '打开彩蛋面板' });
     fireEvent.click(button);
 
-    expect(button).toHaveClass(
-      'faction-button',
-      'min-w-[180px]',
-      'flex-1',
-      'py-3',
-      'hover:-translate-y-0.5'
-    );
+    expect(button).toHaveClass('min-w-[180px]', 'flex-1', 'py-3', 'hover:-translate-y-0.5');
+    expect(button).not.toHaveClass('faction-button');
     expect(screen.getByText('🐭')).toHaveClass('text-xl', 'md:text-2xl');
     expect(onClick).toHaveBeenCalledTimes(1);
   });

@@ -35,7 +35,7 @@ function FactionButton({
       alt={imageAlt || title || ''}
       width={36}
       height={36}
-      className='h-9 w-auto flex-shrink-0 object-contain md:h-10'
+      className='faction-button-image'
       preload={preload}
     />
   ) : emoji ? (
@@ -54,7 +54,7 @@ function FactionButton({
     description,
     ariaLabel,
     layout: 'stacked' as const,
-    className: `faction-button flex-1 gap-1 px-0 py-3 hover:-translate-y-0.5 hover:shadow-lg md:gap-2${
+    className: `flex-1 gap-1 px-0 py-3 hover:-translate-y-0.5 hover:shadow-lg md:gap-2${
       className ? ` ${className}` : ''
     }`,
     titleClassName: 'text-xl md:text-2xl',
