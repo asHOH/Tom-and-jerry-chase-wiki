@@ -3,6 +3,7 @@
 import {
   createContext,
   ReactNode,
+  Suspense,
   useCallback,
   useContext,
   useEffect,
@@ -265,7 +266,7 @@ function restoreEntitiesToCanonical(): void {
   GameDataManager.invalidate();
 }
 
-export const EditModeProvider = ({ children }: { children: ReactNode }) => {
+export const EditModeProviderInner = ({ children }: { children: ReactNode }) => {
   const searchParams = useSearchParams();
   const [hasInitialized, setHasInitialized] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -341,6 +342,20 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
   );
 
   return <EditModeContext.Provider value={contextValue}>{children}</EditModeContext.Provider>;
+};
+
+export const EditModeProvider = ({ children }: { children: ReactNode }) => {
+  return (
+    <Suspense
+      fallback={
+        <EditModeContext.Provider value={{ isEditMode: false, isLoading: true }}>
+          {children}
+        </EditModeContext.Provider>
+      }
+    >
+      <EditModeProviderInner>{children}</EditModeProviderInner>
+    </Suspense>
+  );
 };
 
 export const useEditMode = () => {

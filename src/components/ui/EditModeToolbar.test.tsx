@@ -26,6 +26,10 @@ jest.mock('motion/react', () => {
       div: createMotionTag('div'),
     },
     useReducedMotion: () => false,
+    useDragControls: () => ({
+      start: jest.fn(),
+      bindToContainer: jest.fn(),
+    }),
   };
 });
 
