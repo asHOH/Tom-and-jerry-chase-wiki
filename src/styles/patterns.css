@@ -98,19 +98,6 @@
   box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.35);
 }
 
-/* Styles for content to account for fixed navbar */
-.content-container {
-  padding-top: var(--nav-height) !important;
-  margin-top: 0 !important;
-  position: relative !important;
-  z-index: 1 !important;
-}
-
-/* When offline banner is visible, add extra padding */
-body.offline-banner-visible .content-container {
-  padding-top: calc(var(--nav-height) + var(--offline-banner-height)) !important;
-}
-
 /* Offline indicator styles */
 .offline-banner {
   top: calc(var(--nav-height) - 10px); /* Position below navigation bar */
