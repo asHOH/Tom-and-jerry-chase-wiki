@@ -16,6 +16,7 @@ const customJestConfig = {
   // Transform ESM packages that ship untranspiled code
   transformIgnorePatterns: ['node_modules/(?!(lodash-es|@t3-oss/env-nextjs)/)'],
   moduleNameMapper: {
+    '^@/(.*)$': '<rootDir>/src/$1',
     '^lodash-es$': 'lodash',
     '^lodash-es/(.*)$': 'lodash/$1',
     '^@t3-oss/env-nextjs$': '<rootDir>/test/__mocks__/t3-env-nextjs.ts',
