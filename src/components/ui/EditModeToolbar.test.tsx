@@ -1,7 +1,7 @@
 import React, { type JSX } from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
-import EditModeToolbar from './EditModeToolbar';
+import EditModeToolbar, { type EditModeToolbarProps } from './EditModeToolbar';
 
 jest.mock('react-dom', () => ({
   ...jest.requireActual('react-dom'),
@@ -25,20 +25,22 @@ jest.mock('motion/react', () => {
       button: createMotionTag('button'),
       div: createMotionTag('div'),
     },
+    useDragControls: () => ({ start: jest.fn() }),
     useReducedMotion: () => false,
   };
 });
 
 describe('EditModeToolbar', () => {
-  const createProps = () => ({
-    actionCount: 2,
-    draftsSummary: [],
-    isDirty: true,
-    isPublishing: false,
-    onDiscard: jest.fn(),
-    onExitEditMode: jest.fn(),
-    onPublish: jest.fn<Promise<boolean>, [string | undefined]>(),
-  });
+  const createProps = () =>
+    ({
+      actionCount: 2,
+      draftsSummary: [] as NonNullable<EditModeToolbarProps['draftsSummary']>,
+      isDirty: true,
+      isPublishing: false,
+      onDiscard: jest.fn(),
+      onExitEditMode: jest.fn(),
+      onPublish: jest.fn<Promise<boolean>, [string | undefined]>(),
+    }) satisfies EditModeToolbarProps;
 
   it('does not exit edit mode when publish fails', async () => {
     const props = createProps();
@@ -73,5 +75,35 @@ describe('EditModeToolbar', () => {
       expect(props.onPublish).toHaveBeenCalledWith(undefined);
       expect(props.onExitEditMode).toHaveBeenCalledTimes(1);
     });
+  });
+
+  it('renders item-level draft rows in the drafts dropdown', () => {
+    const props = createProps();
+    props.draftsSummary = [
+      {
+        entityType: 'characters',
+        entityLabel: '角色',
+        entityId: '汤姆',
+        itemLabel: '汤姆',
+        count: 2,
+      },
+      {
+        entityType: 'specialSkills',
+        entityLabel: '特技',
+        entityId: '双重爆发',
+        itemLabel: '双重爆发',
+        factionId: 'cat',
+        count: 1,
+      },
+    ];
+
+    render(<EditModeToolbar {...props} />);
+
+    fireEvent.click(screen.getByRole('button', { name: '查看草稿' }));
+
+    expect(screen.getByText('角色 · 汤姆')).toBeInTheDocument();
+    expect(screen.getByText('特技 · 双重爆发 (猫)')).toBeInTheDocument();
+    expect(screen.getByText('2 条')).toBeInTheDocument();
+    expect(screen.getByText('1 条')).toBeInTheDocument();
   });
 });

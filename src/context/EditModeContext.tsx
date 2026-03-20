@@ -422,10 +422,146 @@ interface PageEditModeResult {
   isDirty: boolean;
   isPublishing: boolean;
   draftInfo: { actionCount: number } | null;
-  draftsSummary: { entityType: string; entityLabel: string; count: number }[];
+  draftsSummary: DraftSummaryItem[];
   discardChanges: (options?: { showToast?: boolean; suppressSync?: boolean }) => void;
   publishChanges: (message?: string) => Promise<boolean>;
   getActionCount: () => number;
+}
+
+type DraftSummaryItem = {
+  entityType: PublishableEntityType;
+  entityLabel: string;
+  entityId: string;
+  itemLabel: string;
+  count: number;
+  factionId?: 'cat' | 'mouse';
+};
+
+type DraftPathParts = {
+  entityId: string;
+  factionId?: 'cat' | 'mouse';
+};
+
+function normalizeActionEntryToList(entry: ActionHistoryEntry): Action[] {
+  return Array.isArray(entry) ? entry : [entry];
+}
+
+function parseDraftPath(entityType: PublishableEntityType, path: string): DraftPathParts | null {
+  const parts = path.split('.').filter(Boolean);
+  if (parts.length === 0) return null;
+
+  if (entityType === 'specialSkills') {
+    const factionPart = parts[0];
+    const skillId = parts[1];
+    if (!skillId) return null;
+
+    if (factionPart === 'cat' || factionPart === 'mouse') {
+      return { entityId: skillId, factionId: factionPart };
+    }
+
+    return { entityId: skillId };
+  }
+
+  return { entityId: parts[0]! };
+}
+
+function resolveDraftItemLabel(
+  entityType: PublishableEntityType,
+  entityId: string,
+  factionId?: 'cat' | 'mouse'
+): string {
+  if (entityType === 'specialSkills') {
+    const specialSkillRoot = entityRegistry.get(entityType) as
+      | {
+          cat?: Record<string, unknown>;
+          mouse?: Record<string, unknown>;
+        }
+      | undefined;
+
+    const fromFaction = factionId ? specialSkillRoot?.[factionId]?.[entityId] : undefined;
+    const fallback =
+      fromFaction ?? specialSkillRoot?.cat?.[entityId] ?? specialSkillRoot?.mouse?.[entityId];
+    const skill = fallback as { name?: string; id?: string } | undefined;
+    return skill?.name ?? skill?.id ?? entityId;
+  }
+
+  const store = entityRegistry.get(entityType) as Record<string, unknown> | undefined;
+  const item = store?.[entityId] as { name?: string; id?: string } | undefined;
+  return item?.name ?? item?.id ?? entityId;
+}
+
+function buildDraftSummaryItemsForType(
+  entityType: PublishableEntityType,
+  history: ActionHistoryEntry[]
+): DraftSummaryItem[] {
+  const counters = new Map<
+    string,
+    {
+      entityId: string;
+      count: number;
+      factionId?: 'cat' | 'mouse';
+    }
+  >();
+
+  history.forEach((entry) => {
+    normalizeActionEntryToList(entry).forEach((action) => {
+      const pathParts = parseDraftPath(entityType, action.path);
+      if (!pathParts) return;
+
+      const itemKey = `${pathParts.factionId ?? ''}:${pathParts.entityId}`;
+      const current = counters.get(itemKey);
+      if (current) {
+        current.count += 1;
+        return;
+      }
+
+      const nextCounter: {
+        entityId: string;
+        count: number;
+        factionId?: 'cat' | 'mouse';
+      } = {
+        entityId: pathParts.entityId,
+        count: 1,
+      };
+
+      if (pathParts.factionId) {
+        nextCounter.factionId = pathParts.factionId;
+      }
+
+      counters.set(itemKey, nextCounter);
+    });
+  });
+
+  return Array.from(counters.values()).map((counter) => {
+    const summary: DraftSummaryItem = {
+      entityType,
+      entityLabel: formatEntityLabel(entityType),
+      entityId: counter.entityId,
+      itemLabel: resolveDraftItemLabel(entityType, counter.entityId, counter.factionId),
+      count: counter.count,
+    };
+
+    if (counter.factionId) {
+      summary.factionId = counter.factionId;
+    }
+
+    return summary;
+  });
+}
+
+function sortDraftSummaryItems(items: DraftSummaryItem[]): DraftSummaryItem[] {
+  return items.sort((a, b) => {
+    if (b.count !== a.count) {
+      return b.count - a.count;
+    }
+
+    const typeCompare = a.entityLabel.localeCompare(b.entityLabel, 'zh-CN');
+    if (typeCompare !== 0) {
+      return typeCompare;
+    }
+
+    return a.itemLabel.localeCompare(b.itemLabel, 'zh-CN');
+  });
 }
 
 /**
@@ -491,16 +627,13 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
     if (!isEditMode) return;
     if (typeof window === 'undefined') return;
 
-    const summary = PUBLISHABLE_ENTITY_TYPES.map((type) => {
-      const storageKey = getActionsStorageKey(type);
-      const history = readActionHistory(storageKey);
-      return { entityType: type, count: history.length };
-    })
-      .filter((item) => item.count > 0)
-      .map((item) => ({
-        ...item,
-        entityLabel: formatEntityLabel(item.entityType),
-      }));
+    const summary = sortDraftSummaryItems(
+      PUBLISHABLE_ENTITY_TYPES.flatMap((type) => {
+        const storageKey = getActionsStorageKey(type);
+        const history = readActionHistory(storageKey);
+        return buildDraftSummaryItemsForType(type, history);
+      })
+    );
 
     setDraftsSummary(summary);
   }, [debouncedActionCount, isEditMode]);

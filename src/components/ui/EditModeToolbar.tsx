@@ -15,7 +15,14 @@ export interface EditModeToolbarProps {
   /** Draft info for current entity */
   draftInfo?: { actionCount: number } | null;
   /** Summary of drafts for all entity types */
-  draftsSummary?: { entityType: string; entityLabel: string; count: number }[];
+  draftsSummary?: {
+    entityType: string;
+    entityLabel: string;
+    entityId: string;
+    itemLabel: string;
+    count: number;
+    factionId?: 'cat' | 'mouse';
+  }[];
   /** Whether publish is in progress */
   isPublishing: boolean;
   /** Called when user clicks discard */
@@ -267,11 +274,14 @@ export default function EditModeToolbar({
                   <ul className='py-1'>
                     {draftsSummary.map((item) => (
                       <li
-                        key={item.entityType}
+                        key={`${item.entityType}:${item.factionId ?? 'default'}:${item.entityId}`}
                         className='px-3 py-2 text-sm text-gray-700 dark:text-gray-200'
                       >
                         <div className='flex items-center justify-between'>
-                          <span>{item.entityLabel}</span>
+                          <span>
+                            {item.entityLabel} · {item.itemLabel}
+                            {item.factionId && ` (${item.factionId === 'cat' ? '猫' : '鼠'})`}
+                          </span>
                           <span className='text-amber-600 dark:text-amber-300'>
                             {item.count} 条
                           </span>
