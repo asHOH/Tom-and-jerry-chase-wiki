@@ -44,9 +44,8 @@ const HomePageSection: React.FC<HomePageSectionProps> = ({ title, buttons }) => 
       )}
       <FactionButtonGroup>
         {buttons.map((button, index) => (
-          <>
+          <React.Fragment key={button.href}>
             <FactionButton
-              key={index}
               imageSrc={button.imageSrc}
               imageAlt={button.imageAlt}
               title={button.title || ''}
@@ -56,7 +55,7 @@ const HomePageSection: React.FC<HomePageSectionProps> = ({ title, buttons }) => 
               preload
             />
             {buttons.length == 4 && index == 1 && <div className='hidden h-0 w-full sm:block' />}
-          </>
+          </React.Fragment>
         ))}
       </FactionButtonGroup>
     </div>
