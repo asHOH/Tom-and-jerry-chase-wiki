@@ -53,7 +53,8 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
 }
 
-/* Normalize faction button icon sizing (fallback if Tailwind utilities are missing) */
+/* Temporary FactionButton compatibility: preserve icon sizing. This is functioning but should be refactored later */
+
 button.faction-button img,
 a.faction-button img {
   height: 36px;
