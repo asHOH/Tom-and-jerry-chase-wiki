@@ -5,6 +5,7 @@ import uniq from 'lodash-es/uniq';
 
 import { contributors } from '@/data/contributors';
 import { changeLogs, type ChangeType } from '@/data/generated/changeLogs';
+import ActionTile from '@/components/ui/ActionTile';
 import { BaseDialog } from '@/components/ui/BaseDialog';
 
 const typeColors: Record<ChangeType, string> = {
@@ -132,13 +133,10 @@ const ChangeLogs = forwardRef<ChangeLogsRef>((_props, ref) => {
   return (
     <>
       {/* ChangeLogs Button */}
-      <button
-        type='button'
-        onClick={() => setIsChangeLogsOpen(true)}
-        className='faction-button flex min-w-45 flex-col items-center justify-center gap-2 rounded-md border-none bg-gray-200 px-6 py-4 text-center text-gray-800 shadow-md transition-colors duration-200 focus:outline-none dark:border-gray-700 dark:bg-black dark:text-gray-200 dark:hover:bg-gray-900'
-        aria-label='更新日志'
-      >
-        <div className='flex items-center gap-3'>
+      <ActionTile
+        title='更新日志'
+        description='查看网站更新历史'
+        icon={
           <svg
             className='h-8 w-8'
             fill='none'
@@ -152,10 +150,11 @@ const ChangeLogs = forwardRef<ChangeLogsRef>((_props, ref) => {
               d='M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'
             />
           </svg>
-          <span className='text-2xl font-bold whitespace-nowrap'>更新日志</span>
-        </div>
-        <div className='mt-1 text-sm text-gray-500 dark:text-gray-400'>查看网站更新历史</div>
-      </button>
+        }
+        onClick={() => setIsChangeLogsOpen(true)}
+        ariaLabel='更新日志'
+        layout='stacked'
+      />
 
       {/* ChangeLogs Modal */}
       <BaseDialog

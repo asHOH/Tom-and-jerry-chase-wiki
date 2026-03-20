@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 
 import { OFFICIAL_SITES } from '@/data/officialSites';
+import ActionTile from '@/components/ui/ActionTile';
 
 const HIDDEN_SITE_HASH = '8a421bd68f71baf196bb5272a38aff89675310595276fd957ee73167f5017a00';
 
@@ -69,27 +70,17 @@ export default function OfficialSitesDisplay() {
       {OFFICIAL_SITES.map((site) => {
         const active = isCurrentSite(site.url, site.isMain);
         return (
-          <a
+          <ActionTile
             key={site.url}
             href={site.url}
-            target='_blank'
-            rel='noopener noreferrer'
-            className={`faction-button flex min-w-[180px] flex-col items-center justify-center gap-2 rounded-md border-none px-6 py-4 text-center shadow-md transition-colors duration-200 focus:outline-none ${
-              active
-                ? 'bg-blue-100 text-blue-900 ring-2 ring-blue-500 dark:bg-blue-900/40 dark:text-blue-100 dark:ring-blue-400'
-                : 'bg-gray-200 text-gray-800 dark:bg-black dark:text-gray-200 dark:hover:bg-gray-900'
-            } `}
-          >
-            <div className='flex items-center gap-3'>
-              <GlobeIcon className='h-8 w-8' />
-              <span className='text-2xl font-bold whitespace-nowrap'>{site.label}</span>
-            </div>
-            <div
-              className={`mt-1 text-sm ${active ? 'text-blue-700 dark:text-blue-300' : 'text-gray-500 dark:text-gray-400'}`}
-            >
-              {site.description}
-            </div>
-          </a>
+            external
+            ariaLabel={site.label}
+            description={site.description}
+            icon={<GlobeIcon className='h-8 w-8' />}
+            layout='stacked'
+            title={site.label}
+            tone={active ? 'active' : 'default'}
+          />
         );
       })}
     </div>

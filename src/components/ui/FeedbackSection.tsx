@@ -2,6 +2,7 @@
 
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
+import ActionTile from '@/components/ui/ActionTile';
 import { BaseDialog } from '@/components/ui/BaseDialog';
 import Button from '@/components/ui/Button';
 import { ChatBubbleIcon } from '@/components/icons/CommonIcons';
@@ -89,20 +90,14 @@ const FeedbackSection =
         return (
           <>
             {/* Feedback Button */}
-            <button
-              type='button'
+            <ActionTile
+              title='反馈建议'
+              description='提交建议或报告问题'
+              icon={<ChatBubbleIcon className='h-8 w-8' strokeWidth={2} />}
               onClick={() => setIsFeedbackOpen(true)}
-              className='faction-button flex min-w-45 flex-col items-center justify-center gap-2 rounded-md border-none bg-gray-200 px-6 py-4 text-center text-gray-800 shadow-md transition-colors duration-200 focus:outline-none dark:border-gray-700 dark:bg-black dark:text-gray-200 dark:hover:bg-gray-900'
-              aria-label='反馈建议'
-            >
-              <div className='flex items-center gap-3'>
-                <ChatBubbleIcon className='h-8 w-8' strokeWidth={2} />
-                <span className='text-2xl font-bold whitespace-nowrap'>反馈建议</span>
-              </div>
-              <div className='mt-1 text-sm text-gray-500 dark:text-gray-400'>
-                提交建议或报告问题
-              </div>
-            </button>
+              ariaLabel='反馈建议'
+              layout='stacked'
+            />
 
             {/* Feedback Modal */}
             <BaseDialog
