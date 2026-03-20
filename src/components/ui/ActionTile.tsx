@@ -18,8 +18,6 @@ export type ActionTileProps = {
   tone?: 'default' | 'active';
   interaction?: 'normal' | 'current-page' | 'disabled';
   className?: string;
-  contentRowClassName?: string;
-  iconWrapperClassName?: string;
   titleClassName?: string;
   descriptionClassName?: string;
 };
@@ -48,8 +46,6 @@ export default function ActionTile({
   tone = 'default',
   interaction = 'normal',
   className,
-  contentRowClassName,
-  iconWrapperClassName,
   titleClassName,
   descriptionClassName,
 }: ActionTileProps) {
@@ -90,13 +86,9 @@ export default function ActionTile({
     className
   );
 
-  const contentRowClasses = cn(
-    'flex items-center',
-    layout === 'inline' ? 'w-full' : 'gap-3',
-    contentRowClassName
-  );
+  const contentRowClasses = cn('flex items-center', layout === 'inline' ? 'w-full' : 'gap-3');
 
-  const iconClasses = cn('shrink-0 text-current', iconWrapperClassName);
+  const iconClasses = 'shrink-0 text-current';
 
   const titleClasses = cn(
     layout === 'inline'

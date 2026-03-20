@@ -54,6 +54,8 @@ describe('FactionButton', () => {
     const image = screen.getByAltText('角色图标');
     const title = screen.getByText('角色');
     const description = screen.getByText('查看角色属性');
+    const titleWrapper = title.closest('span.font-bold');
+    const contentRow = image.closest('span.flex');
 
     expect(link).toHaveClass(
       'faction-button',
@@ -66,8 +68,8 @@ describe('FactionButton', () => {
     );
     expect(image).toHaveAttribute('data-preload', 'true');
     expect(image).toHaveClass('h-9', 'w-auto', 'flex-shrink-0', 'object-contain', 'md:h-10');
-    expect(image.parentElement).toHaveClass('text-xl', 'md:text-2xl');
-    expect(title).toHaveClass('text-xl', 'font-bold', 'whitespace-nowrap', 'md:text-2xl');
+    expect(titleWrapper).toHaveClass('text-xl', 'font-bold', 'whitespace-nowrap', 'md:text-2xl');
+    expect(contentRow).toHaveClass('flex', 'items-center', 'gap-2', 'md:gap-3');
     expect(description).toHaveClass(
       'mt-0.5',
       'text-xs',
