@@ -1576,7 +1576,7 @@ export const entityDefinitions = {
     detailedDescription:
       '对命中者造成{20}的[无视护盾的伤害](无法被护盾、无敌抵消（例外：如果该伤害将导致虚弱，则不会进入虚弱，而是破盾并保留0Hp）)和10%减速，持续2秒',
     create: '由{大星星}吐出。',
-    specialImageUrl: '/images/mouseEntities/星星.png',
+    specialImageUrl: '/images/entities/星星.png',
   },
   照片: {
     entitytype: '指示物',

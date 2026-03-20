@@ -37,7 +37,7 @@ export const NAV_ITEM_CONFIGS: readonly NavItemConfig[] = [
   {
     id: 'object',
     label: '物体',
-    iconSrc: '/images/mouseEntities/方块.png',
+    iconSrc: '/images/entities/方块.png',
     iconAlt: '物体图标',
   },
   {

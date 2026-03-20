@@ -106,7 +106,7 @@ scripts/                    # Build scripts (generate-doc-pages.mjs, image optim
 - Components: `PascalCase.tsx` (e.g., `SearchBar.tsx`, `CharacterGrid.tsx`)
 - Hooks: `camelCase.ts` starting with `use` (e.g., `useSwipeGesture.ts`)
 - Utils/lib: `camelCase.ts` (e.g., `filterUtils.ts`, `textUtils.ts`)
-- Data files: `camelCase.ts` (e.g., `catCharacters.ts`, `mouseEntities.ts`)
+- Data files: `camelCase.ts` (e.g., `catCharacters.ts`)
 - Test files: `*.test.ts` / `*.test.tsx` co-located with source
 - Feature directories: `kebab-case` (e.g., `character-detail/`, `special-skill-grid/`)
 - Barrel exports: `index.ts` files in feature component directories

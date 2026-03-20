@@ -137,7 +137,7 @@ export const NAV_ITEMS: readonly NavGroup[] = [
         label: '机制',
         description: '局内机制列表',
         href: '/mechanics',
-        iconSrc: '/images/mouseEntities/线条火箭.png',
+        iconSrc: '/images/entities/线条火箭.png',
         iconAlt: '机制图标',
       },
       {
