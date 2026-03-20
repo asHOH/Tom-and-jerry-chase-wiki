@@ -71,16 +71,14 @@ export default function KnowledgeCardGrid({ description }: Props) {
           />
 
           <div
-            className='filter-section flex flex-col gap-2 md:flex-row md:items-center md:gap-4'
+            className='filter-section mt-1 flex items-center justify-center gap-2 md:mt-4'
             role='group'
             aria-labelledby={costLabelId}
           >
-            <div className='label-col w-full text-left md:w-32'>
-              <FilterLabel id={costLabelId} full='费用筛选:' />
-            </div>
-            <div className='flex w-full min-w-0 justify-center'>
+            <FilterLabel id={costLabelId} full='费用筛选:' />
+            <div className='flex w-full max-w-md min-w-0'>
               <div
-                className='flex w-full max-w-md items-center rounded-lg bg-transparent px-2 text-gray-700 dark:text-gray-300'
+                className='flex w-full items-center rounded-lg bg-transparent px-2 text-gray-700 dark:text-gray-300'
                 aria-label='费用筛选'
               >
                 <CostRangeSlider
