@@ -2,6 +2,7 @@
 
 import StyledMDX from '@/components/ui/StyledMDX';
 
+import CharacterMDX from '../articles/Character.mdx';
 import DamageMDX from '../articles/Damage.mdx';
 import ExpMDX from '../articles/Exp.mdx';
 import HpMDX from '../articles/Hp.mdx';
@@ -40,6 +41,13 @@ export function Damage() {
   return (
     <StyledMDX className='article-content'>
       <DamageMDX />
+    </StyledMDX>
+  );
+}
+export function Character() {
+  return (
+    <StyledMDX className='article-content'>
+      <CharacterMDX />
     </StyledMDX>
   );
 }
