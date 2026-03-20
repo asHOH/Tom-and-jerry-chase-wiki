@@ -191,6 +191,7 @@ export const UserProvider =
             value={{
               fallback: { [USER_API_KEY]: initialValue },
               provider: localStorageProvider,
+              dedupingInterval: 10000,
             }}
           >
             <AuthListener />
