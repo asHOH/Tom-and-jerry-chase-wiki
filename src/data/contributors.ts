@@ -175,6 +175,7 @@ export const contributors: Contributor[] = [
   {
     id: 'dotdotdot',
     name: '人畜有害的白菜',
+    url: 'https://space.bilibili.com/3494366331013311',
     roles: [
       {
         type: RoleType.ContentWriter,
@@ -274,6 +275,7 @@ export const contributors: Contributor[] = [
   {
     id: 'dashuijiangjun',
     name: '大水将军',
+    url: 'https://space.bilibili.com/1466875723',
     roles: [
       {
         type: RoleType.ContentWriter,
@@ -351,6 +353,7 @@ export const contributors: Contributor[] = [
   {
     id: 'qifengpanmuoshanghuakai',
     name: '祈风盼陌上花开',
+    url: 'https://space.bilibili.com/3493133927057609',
     roles: [
       {
         type: RoleType.ContentWriter,
@@ -402,6 +405,7 @@ export const contributors: Contributor[] = [
   {
     id: 'qingchengluomeng',
     name: '青城落梦',
+    url: 'https://space.bilibili.com/1183463489',
     roles: [
       {
         type: RoleType.ContentWriter,
@@ -442,6 +446,7 @@ export const contributors: Contributor[] = [
   {
     id: 'HZZHD',
     name: 'HZZHD',
+    url: 'https://space.bilibili.com/3493130452076692',
     roles: [
       {
         type: RoleType.ContentWriter,
@@ -472,6 +477,7 @@ export const contributors: Contributor[] = [
   {
     id: 'wucaibanlandeqian',
     name: '五彩斑斓的铅',
+    url: 'https://space.bilibili.com/2010889930',
     roles: [
       {
         type: RoleType.ContentWriter,
@@ -533,6 +539,7 @@ export const contributors: Contributor[] = [
     name: '丷小天丷',
     description:
       'S25全国第6如玉；S19、20、21全国前十表演者·杰瑞，S22全国第1兔八哥、S23全国第5仙女鼠、全国第6莱恩、全国第3梦游杰瑞、S24全国第3兔八哥、全国第6莱恩，S25全国第10米可',
+    url: 'https://space.bilibili.com/3546770502060350',
     roles: [
       {
         type: RoleType.ContentWriter,
