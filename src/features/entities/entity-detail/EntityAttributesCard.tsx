@@ -41,23 +41,16 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
 
   const factionId = getEntityFactionId(entity);
 
-  function putTypeTagOn(currentEntity: Entity) {
-    if (typeof currentEntity.entitytype === 'string') {
+  function putTypeTagOn(currentEntity: Entity, mode: 'type' | 'tag' = 'type') {
+    const tags = mode === 'tag' ? currentEntity.entitytag : currentEntity.entitytype;
+    if (typeof tags === 'string') {
       return (
-        <Tag
-          size='sm'
-          margin='compact'
-          colorStyles={getEntityTypeColors(currentEntity.entitytype, isDarkMode)}
-        >
-          <ed.span
-            path='entitytype'
-            initialValue={currentEntity.entitytype ?? '<无内容>'}
-            isSingleLine
-          />
+        <Tag size='sm' margin='compact' colorStyles={getEntityTypeColors(tags, isDarkMode)}>
+          <ed.span path='entitytype' initialValue={tags ?? '<无内容>'} isSingleLine />
         </Tag>
       );
     } else {
-      return currentEntity.entitytype.map((type) => {
+      return tags.map((type) => {
         return (
           <Tag
             size='sm'
@@ -128,7 +121,11 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
         <>
           <div className='flex flex-wrap items-center gap-1 text-sm font-normal'>
             <span className='text-sm whitespace-pre'>类型: </span>
-            {putTypeTagOn(effectiveEntity)}
+            {putTypeTagOn(effectiveEntity, 'type')}
+          </div>
+          <div className='flex flex-wrap items-center gap-1 text-sm font-normal'>
+            <span className='text-sm whitespace-pre'>标签: </span>
+            {putTypeTagOn(effectiveEntity, 'tag')}
           </div>
           {effectiveEntity.owner && (
             <div className='flex items-center gap-2 text-sm'>

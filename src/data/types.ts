@@ -278,17 +278,36 @@ export type ItemDefinition = {
 
 export type Item = ItemDefinition & { name: string; imageUrl: string };
 
-export type Entitytypelist =
-  | '拾取物'
-  | '投射物'
-  | '召唤物'
-  | '平台类'
-  | 'NPC'
-  | '变身类'
-  | '指示物';
+export type Entitytypelist = '投射类' | '触发类' | '物件类' | 'NPC' | '变身类' | '特殊类';
+
+export type Entitytaglist =
+  | '抛掷' // 投射类（生成后以抛物线运动）
+  | '平射' // 投射类（生成后以直线运动）
+  | '命中' // 投射类（可触发命中相关的知识卡/特技）
+  | '触发' // 触发类（放下后不立即产生效果，需达成条件才能触发后续效果）
+  | '延时' // 触发类（部分效果需触发并等待一段时间后才会完全产生）
+  | '功能' // 物件类（持续存在，发挥特殊作用）
+  | '阻挡' // 物件类（特定情况下可以阻挡其它角色通行）
+  | '指示' // 物件类（基本无功能，仅作指示）
+  | 'NPC' // NPC（无角色特质）
+  | '变形' // 变身类（在原角色基础上附加状态）
+  | '变身' // 变身类（变为新角色，原角色消失）
+  | '彩蛋' // 变身类（彩蛋角色）
+  | '星元' // 变身类（星元乱斗角色）
+  | '特殊' // 特殊类（难以分类）
+  | '拾取' // 可被角色拾取
+  | '交互' // 可被角色交互以触发相关效果
+  | '伤害' // 对目标造成伤害
+  | '硬控' // 对目标造成负面状态或效果
+  | '增益' // 对目标施加增益
+  | '群体' // 可一次性对生效范围内多个目标产生效果
+  | '复用' // 可多次命中/触发/使用
+  | '巡逻' // 会自行来回运动
+  | '追踪' // 追踪目标
+  | '遥控'; // 可被归属者通过技能等方式远程控制其行为
 
 export type EntityDefinition = {
-  entitytype: Entitytypelist | Entitytypelist[]; // type of entity
+  entitytag: Entitytaglist | Entitytaglist[]; // type of entity
   owner?: SingleItem | SingleItem[];
   factionId?: FactionId; // 若未填写该项，则在显示时继承owner的此属性（需使用getSingleItemFactionId函数）
   aliases?: string[]; // (entities') Alternative names for search
@@ -303,7 +322,11 @@ export type EntityDefinition = {
   entityAttributesAsCharacter?: ItemAttributesAsCharacter;
 } & PhysicalAttributes;
 
-export type Entity = EntityDefinition & { name: string; imageUrl: string };
+export type Entity = EntityDefinition & {
+  name: string;
+  imageUrl: string;
+  entitytype: Entitytypelist | Entitytypelist[];
+};
 
 export type buffTypelist =
   | '正面状态'

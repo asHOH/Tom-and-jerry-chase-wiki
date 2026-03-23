@@ -409,26 +409,74 @@ export const getPositioningTagContainerColor = (
 /**
  * Entity type color utility
  */
-export const getEntityTypeColors = (entitytype: string, isDarkMode: boolean) => {
-  const entityTypeColorMap: Record<
-    string,
-    'rescue' | 'support' | 'breakthrough' | 'wallBreak' | 'disrupt' | 'cheese' | 'lateGameMouse'
-  > = {
-    拾取物: 'rescue',
-    投射物: 'support',
-    召唤物: 'breakthrough',
-    平台类: 'wallBreak',
-    NPC: 'disrupt',
-    变身类: 'cheese',
-    指示物: 'lateGameMouse',
+export const getEntityTypeColors = (
+  entityType: string,
+  isDarkMode: boolean,
+  isMinor: boolean = false
+) => {
+  const entityTypePaletteMap: Record<string, keyof typeof sharedPositioningTagPalettes> = {
+    /*投射类：绿色*/
+    投射类: 'emerald',
+    抛掷: 'emerald',
+    平射: 'emerald',
+    追踪: 'emerald',
+    /*触发类：蓝色*/
+    触发类: 'azure',
+    触发: 'azure',
+    延时: 'azure',
+    遥控: 'azure',
+    /*物件类：橙色*/
+    物件类: 'amber',
+    功能: 'amber',
+    阻挡: 'amber',
+    指示: 'amber',
+    /*NPC：玫瑰色*/
+    NPC: 'rose',
+    /*变身类：黄色*/
+    变身类: 'russet',
+    变形: 'russet',
+    变身: 'russet',
+    /*特殊类：紫色*/
+    特殊类: 'violet',
+    特殊: 'violet',
+    /*其余tag按直观感受配色*/
+    拾取: 'indigo',
+    交互: 'indigo',
+    伤害: 'crimson',
+    硬控: 'crimson',
+    群体: 'crimson',
+    命中: 'crimson',
+    增益: 'emerald',
+    复用: 'deepGray',
+    巡逻: 'violet',
+    彩蛋: 'violet',
+    星元: 'violet',
   };
-  const skillType = entityTypeColorMap[entitytype] || 'lateGameMouse';
-  const colorScheme =
-    designTokens.colors.positioningTags[skillType] || designTokens.colors.skillTypes.passive;
+
+  const hexToRgba = (hex: string, alpha: number): string => {
+    let hexColor = hex.replace('#', '');
+    if (hexColor.length === 3) {
+      hexColor = hexColor
+        .split('')
+        .map((c) => c + c)
+        .join('');
+    }
+    const r = parseInt(hexColor.slice(0, 2), 16);
+    const g = parseInt(hexColor.slice(2, 4), 16);
+    const b = parseInt(hexColor.slice(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  };
+
+  const paletteKey = entityTypePaletteMap[entityType] || 'deepGray';
+  const palette = sharedPositioningTagPalettes[paletteKey];
+  const theme = isDarkMode && palette.dark ? palette.dark : palette;
+
+  const semiTransparentBg = hexToRgba(theme.background, 0.5);
+  const backgroundColor = isMinor ? semiTransparentBg : theme.background;
+
   return {
-    color: isDarkMode && colorScheme.dark ? colorScheme.dark.text : colorScheme.text,
-    backgroundColor:
-      isDarkMode && colorScheme.dark ? colorScheme.dark.background : colorScheme.background,
+    color: theme.text,
+    backgroundColor,
   };
 };
 
