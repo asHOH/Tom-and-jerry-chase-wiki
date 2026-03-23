@@ -10,10 +10,30 @@ jest.mock('react-dom', () => ({
 
 jest.mock('motion/react', () => {
   const ReactModule = jest.requireActual<typeof import('react')>('react');
+  const motionOnlyProps = new Set([
+    'animate',
+    'drag',
+    'dragControls',
+    'dragListener',
+    'dragMomentum',
+    'exit',
+    'initial',
+    'layout',
+    'transition',
+    'whileHover',
+    'whileTap',
+  ]);
+
+  const stripMotionProps = (props: React.HTMLAttributes<HTMLElement>) => {
+    return Object.fromEntries(
+      Object.entries(props).filter(([key]) => !motionOnlyProps.has(key))
+    ) as React.HTMLAttributes<HTMLElement>;
+  };
 
   const createMotionTag = (tag: keyof JSX.IntrinsicElements) => {
     const MotionTag = ReactModule.forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>(
-      ({ children, ...props }, ref) => ReactModule.createElement(tag, { ...props, ref }, children)
+      ({ children, ...props }, ref) =>
+        ReactModule.createElement(tag, { ...stripMotionProps(props), ref }, children)
     );
     MotionTag.displayName = `MockMotion(${tag})`;
     return MotionTag;
