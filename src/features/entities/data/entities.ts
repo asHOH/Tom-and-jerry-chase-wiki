@@ -19,7 +19,6 @@ export const getEntityType = (
     追踪: '投射类',
     触发: '触发类',
     延时: '触发类',
-    遥控: '触发类',
     功能: '物件类',
     阻挡: '物件类',
     指示: '物件类',
@@ -315,7 +314,7 @@ export const entityDefinitions = {
     ],
   },
   托普斯分身: {
-    entitytag: ['NPC', '巡逻', '伤害'],
+    entitytag: ['NPC', '巡逻', '伤害', '遥控'],
     owner: { name: '双重猫格', type: 'skill' },
     aliases: ['分身', '弟弟'],
     move: true,
@@ -413,7 +412,10 @@ export const entityDefinitions = {
   小仙人掌球: {
     entitytag: ['抛掷', '伤害'],
     aliases: ['小仙人球', '仙人球'],
-    owner: { name: '仙人掌弹弓', type: 'skill' },
+    owner: [
+      { name: '仙人掌弹弓', type: 'skill' },
+      { name: '大仙人掌球', type: 'entity' },
+    ],
     move: true,
     gravity: true,
     description: '命中时造成伤害和受伤状态、并获得老鼠的小地图位置。',
@@ -422,7 +424,7 @@ export const entityDefinitions = {
     create: '由牛仔汤姆-仙人掌弹弓第1、2段射出，或由{大仙人掌球}分裂。',
   },
   大仙人掌球: {
-    entitytag: ['抛掷', '伤害', '群体', '硬控'],
+    entitytag: ['抛掷', '伤害', '群体', '硬控', '衍生'],
     aliases: ['大仙人球', '仙人球'],
     owner: { name: '仙人掌弹弓', type: 'skill' },
     move: true,
@@ -458,7 +460,7 @@ export const entityDefinitions = {
     create: '由图多盖洛-魅力香水喷洒后，每隔一段时间或在投掷物/爪刀命中敌方时召唤。',
   },
   皇家火炮: {
-    entitytag: ['功能', '复用'],
+    entitytag: ['功能', '复用', '衍生', '遥控'],
     owner: { name: '皇家火炮', type: 'skill' },
     move: false,
     gravity: false,
@@ -470,7 +472,10 @@ export const entityDefinitions = {
   },
   炮弹: {
     entitytag: ['平射', '伤害', '硬控'],
-    owner: { name: '皇家火炮', type: 'skill' },
+    owner: [
+      { name: '皇家火炮', type: 'skill' },
+      { name: '皇家火炮', type: 'entity' },
+    ],
     move: true,
     gravity: false,
     description: '命中时对老鼠造成眩晕和伤害，同时侍卫汤姆获得大幅加速和护盾。',
@@ -479,7 +484,7 @@ export const entityDefinitions = {
     create: '由侍卫汤姆操作{皇家火炮(衍生物)}射出。',
   },
   汽水罐: {
-    entitytag: ['平射', '触发', '伤害', '硬控'],
+    entitytag: ['平射', '触发', '伤害', '硬控', '衍生'],
     owner: { name: '汽水罐', type: 'skill' },
     move: true,
     gravity: false,
@@ -491,7 +496,10 @@ export const entityDefinitions = {
   },
   汽水冰面: {
     entitytag: ['触发', '硬控', '群体', '增益', '复用'],
-    owner: { name: '汽水罐', type: 'skill' },
+    owner: [
+      { name: '汽水罐', type: 'skill' },
+      { name: '汽水罐', type: 'entity' },
+    ],
     move: true,
     gravity: false,
     description:
@@ -499,7 +507,7 @@ export const entityDefinitions = {
     create: '2级以上的{汽水罐(衍生物)}爆炸时，在原地留下1处汽水冰面。',
   },
   胡椒粉罐头: {
-    entitytag: ['抛掷', '拾取', '伤害'],
+    entitytag: ['抛掷', '拾取', '伤害', '衍生'],
     owner: { name: '胡椒粉罐头', type: 'skill' },
     aliases: ['胡椒粉', '胡椒罐'],
     move: true,
@@ -513,7 +521,10 @@ export const entityDefinitions = {
   },
   胡椒罐头烟雾: {
     entitytag: ['触发', '群体', '复用', '伤害'],
-    owner: { name: '胡椒粉罐头', type: 'skill' },
+    owner: [
+      { name: '胡椒粉罐头', type: 'skill' },
+      { name: '胡椒粉罐头', type: 'entity' },
+    ],
     aliases: ['胡椒烟雾', '罐头烟雾', '毒雾'],
     move: true,
     gravity: true,
@@ -523,7 +534,7 @@ export const entityDefinitions = {
     create: '{胡椒粉罐头(衍生物)}破碎时，在原地召唤胡椒罐头烟雾。',
   },
   饭盒: {
-    entitytag: ['触发', '伤害', '硬控', '群体'],
+    entitytag: ['触发', '伤害', '硬控', '群体', '衍生'],
     owner: { name: '饭盒陷阱', type: 'skill' },
     move: true,
     gravity: true,
@@ -536,7 +547,10 @@ export const entityDefinitions = {
   },
   食物: {
     entitytag: ['触发', '增益'],
-    owner: { name: '饭盒陷阱', type: 'skill' },
+    owner: [
+      { name: '饭盒陷阱', type: 'skill' },
+      { name: '饭盒', type: 'entity' },
+    ],
     //ToDo: add missing information
     description: '米特触碰后会获得持续Hp恢复效果。',
     create: 'Lv.2以上的{饭盒}爆炸时生成。',
@@ -617,7 +631,7 @@ export const entityDefinitions = {
     create: '通过凯特-追求者出击召唤。',
   },
   百科全书: {
-    entitytag: ['抛掷', '遥控', '伤害', '硬控', '增益', '复用'],
+    entitytag: ['抛掷', '触发', '遥控', '伤害', '硬控', '增益', '复用'],
     owner: { name: '知识即力量', type: 'skill' },
     aliases: ['书', '书籍'],
     move: true,
@@ -630,7 +644,7 @@ export const entityDefinitions = {
     create: '由凯特-知识即力量召唤并投掷。',
   },
   瑜伽球: {
-    entitytag: ['抛掷', '遥控', '伤害', '硬控', '群体'],
+    entitytag: ['抛掷', '触发', '遥控', '伤害', '硬控', '群体'],
     owner: { name: '瑜伽球', type: 'skill' },
     move: true,
     gravity: true,
@@ -651,7 +665,7 @@ export const entityDefinitions = {
     create: '由斯飞-猎召唤并投掷。',
   },
   轨道: {
-    entitytag: '指示',
+    entitytag: ['指示', '衍生'],
     owner: { name: '迷乱列车', type: 'skill' },
     move: false,
     gravity: false,
@@ -663,7 +677,10 @@ export const entityDefinitions = {
   },
   列车: {
     entitytag: ['平射', '伤害', '硬控', '群体', '复用'],
-    owner: { name: '迷乱列车', type: 'skill' },
+    owner: [
+      { name: '迷乱列车', type: 'skill' },
+      { name: '轨道', type: 'entity' },
+    ],
     move: true,
     gravity: false,
     description: '沿{轨道}首端冲撞至末端，对被撞击的敌人施加伤害，眩晕和击退效果。',
@@ -754,7 +771,7 @@ export const entityDefinitions = {
 
   //-------------------------------鼠道具-------------------------------------//
   鸟哨金丝雀: {
-    entitytag: ['功能', 'NPC', '巡逻'],
+    entitytag: ['功能', 'NPC', '巡逻', '衍生'],
     owner: { name: '鸟哨', type: 'skill' },
     move: true,
     gravity: false,
@@ -766,7 +783,10 @@ export const entityDefinitions = {
   },
   鸟哨鞭炮: {
     entitytag: ['平射', '伤害', '硬控'],
-    owner: { name: '鸟哨', type: 'skill' },
+    owner: [
+      { name: '鸟哨', type: 'skill' },
+      { name: '鸟哨金丝雀', type: 'entity' },
+    ],
     aliases: ['炸弹', '鸟哨炸弹'],
     move: true,
     gravity: true,
@@ -1024,7 +1044,7 @@ export const entityDefinitions = {
     create: '由剑客泰菲-剑客长枪召唤。',
   },
   大仙人掌: {
-    entitytag: ['触发', '伤害', '硬控'],
+    entitytag: ['触发', '伤害', '硬控', '衍生'],
     owner: { name: '仙人掌', type: 'skill' },
     aliases: ['仙人掌'],
     move: true,
@@ -1038,7 +1058,10 @@ export const entityDefinitions = {
   },
   小仙人掌: {
     entitytag: ['触发', '伤害', '硬控'],
-    owner: { name: '仙人掌', type: 'skill' },
+    owner: [
+      { name: '仙人掌', type: 'skill' },
+      { name: '大仙人掌', type: 'entity' },
+    ],
     move: true,
     gravity: true,
     collsion: ['道具', '墙壁', '平台', '地面'],
@@ -1069,7 +1092,7 @@ export const entityDefinitions = {
     create: '由恶魔杰瑞-三叉戟召唤。',
   },
   飞行的小淘气: {
-    entitytag: '追踪',
+    entitytag: ['追踪', '衍生'],
     owner: { name: '小淘气', type: 'skill' },
     move: true,
     gravity: false,
@@ -1079,7 +1102,10 @@ export const entityDefinitions = {
   },
   蓝色小淘气: {
     entitytag: ['拾取', '追踪', '命中', '伤害', '延时'],
-    owner: { name: '小淘气', type: 'skill' },
+    owner: [
+      { name: '小淘气', type: 'skill' },
+      { name: '飞行的小淘气', type: 'entity' },
+    ],
     aliases: ['蓝恶魔', '蓝色小恶魔'],
     move: true,
     gravity: false,
@@ -1092,7 +1118,10 @@ export const entityDefinitions = {
   },
   红色小淘气: {
     entitytag: ['拾取', '平射', '命中', '伤害', '硬控'],
-    owner: { name: '小淘气', type: 'skill' },
+    owner: [
+      { name: '小淘气', type: 'skill' },
+      { name: '飞行的小淘气', type: 'entity' },
+    ],
     aliases: ['红恶魔', '红色小恶魔'],
     move: true,
     gravity: false,
@@ -1104,7 +1133,10 @@ export const entityDefinitions = {
   },
   绿色小淘气: {
     entitytag: ['拾取', '抛掷', '命中', '伤害', '复用'],
-    owner: { name: '小淘气', type: 'skill' },
+    owner: [
+      { name: '小淘气', type: 'skill' },
+      { name: '飞行的小淘气', type: 'entity' },
+    ],
     aliases: ['绿恶魔', '绿色小恶魔'],
     move: true,
     gravity: true,
@@ -1219,7 +1251,7 @@ export const entityDefinitions = {
     create: '通过魔术师-奇思妙想召唤，或通过魔术师-魔术戏法Lv.1效果自动生成。',
   },
   兔子先生: {
-    entitytag: ['NPC', '巡逻'],
+    entitytag: ['NPC', '巡逻', '遥控'],
     owner: { name: '兔子先生', type: 'skill' },
     aliases: ['小兔子'],
     move: true,
@@ -1239,7 +1271,7 @@ export const entityDefinitions = {
     },
   },
   兔子大表哥: {
-    entitytag: ['NPC', '巡逻'],
+    entitytag: ['NPC', '巡逻', '遥控'],
     owner: { name: '兔子大表哥', type: 'skill' },
     aliases: ['大兔子', '兔表哥', '蛋白兔'],
     move: true,
@@ -1270,7 +1302,7 @@ export const entityDefinitions = {
     create: '由拿坡里鼠-比萨斜塔召唤。',
   },
   披萨: {
-    entitytag: ['触发', '伤害', '硬控', '交互'],
+    entitytag: ['触发', '伤害', '硬控', '交互', '衍生'],
     owner: { name: '意式披萨', type: 'skill' },
     aliases: ['披萨饼', '大饼'],
     move: true,
@@ -1285,7 +1317,10 @@ export const entityDefinitions = {
   },
   披萨块: {
     entitytag: ['触发', '增益'],
-    owner: { name: '意式披萨', type: 'skill' },
+    owner: [
+      { name: '意式披萨', type: 'skill' },
+      { name: '披萨', type: 'entity' },
+    ],
     move: true,
     gravity: true,
     collsion: ['墙壁', '平台', '地面'],
@@ -1322,7 +1357,7 @@ export const entityDefinitions = {
     entityAttributesAsCharacter: { type: 'mouse', factionBelong: 'mouse' },
   },
   饮料印记: {
-    entitytag: '触发',
+    entitytag: ['触发', '衍生'],
     owner: { name: '追踪饮料', type: 'skill' },
     move: true,
     gravity: true,
@@ -1335,7 +1370,10 @@ export const entityDefinitions = {
   },
   饮料分身: {
     entitytag: ['NPC', '巡逻'],
-    owner: { name: '追踪饮料', type: 'skill' },
+    owner: [
+      { name: '追踪饮料', type: 'skill' },
+      { name: '饮料印记', type: 'entity' },
+    ],
     aliases: ['分身'],
     move: true,
     gravity: true,
@@ -1361,7 +1399,7 @@ export const entityDefinitions = {
     create: '由剑客莉莉-御风剑舞召唤。',
   },
   剑气: {
-    entitytag: ['抛掷', '伤害', '增益', '复用'],
+    entitytag: ['抛掷', '伤害', '增益', '衍生', '复用'],
     owner: { name: '幻影剑气', type: 'skill' },
     move: true,
     gravity: true,
@@ -1374,7 +1412,10 @@ export const entityDefinitions = {
   },
   幻影: {
     entitytag: '指示',
-    owner: { name: '幻影剑气', type: 'skill' },
+    owner: [
+      { name: '幻影剑气', type: 'skill' },
+      { name: '剑气', type: 'entity' },
+    ],
     move: false,
     gravity: false,
     description:
@@ -1382,7 +1423,7 @@ export const entityDefinitions = {
     create: '由[剑气]落地时召唤。',
   },
   藤蔓: {
-    entitytag: ['阻挡', '交互', '触发', '增益', '群体', '复用'],
+    entitytag: ['阻挡', '交互', '触发', '增益', '群体', '衍生', '复用'],
     owner: { name: '藤蔓', type: 'skill' },
     move: false,
     gravity: false,
@@ -1395,7 +1436,10 @@ export const entityDefinitions = {
   },
   藤蔓纸盒: {
     entitytag: ['触发', '交互'],
-    owner: { name: '藤蔓', type: 'skill' },
+    owner: [
+      { name: '藤蔓', type: 'skill' },
+      { name: '藤蔓', type: 'entity' },
+    ],
     move: true,
     gravity: true,
     collsion: ['道具', '墙壁', '平台', '地面'],
@@ -1407,7 +1451,7 @@ export const entityDefinitions = {
     specialImageUrl: '/images/items/大纸盒.png',
   },
   战车: {
-    entitytag: '变身',
+    entitytag: ['变身', '衍生'],
     owner: { name: '军团战车', type: 'skill' },
     move: true,
     gravity: true,
@@ -1447,7 +1491,10 @@ export const entityDefinitions = {
   },
   '战车-分离态': {
     entitytag: ['延时', '伤害', '硬控', '群体'],
-    owner: { name: '军团战车', type: 'skill' },
+    owner: [
+      { name: '军团战车', type: 'skill' },
+      { name: '战车', type: 'entity' },
+    ],
     move: true,
     gravity: true,
     collsion: ['墙壁', '平台', '地面'],
@@ -1457,7 +1504,10 @@ export const entityDefinitions = {
   },
   战矛: {
     entitytag: ['抛掷', '命中', '伤害'],
-    owner: { name: '军团战车', type: 'skill' },
+    owner: [
+      { name: '军团战车', type: 'skill' },
+      { name: '战矛', type: 'entity' },
+    ],
     aliases: ['矛', '长矛'],
     move: true,
     gravity: true,
@@ -1468,7 +1518,7 @@ export const entityDefinitions = {
     create: '由{战车}释放武器技能掷出。',
   },
   尼宝的朋友: {
-    entitytag: ['功能', 'NPC', '复用'],
+    entitytag: ['功能', 'NPC', '复用', '衍生'],
     owner: { name: '尼宝的朋友', type: 'skill' },
     move: false,
     gravity: false,
@@ -1480,7 +1530,10 @@ export const entityDefinitions = {
   },
   鱼钩: {
     entitytag: ['平射', '硬控'],
-    owner: { name: '尼宝的朋友', type: 'skill' },
+    owner: [
+      { name: '尼宝的朋友', type: 'skill' },
+      { name: '尼宝的朋友', type: 'entity' },
+    ],
     aliases: ['钩子'],
     move: true,
     gravity: false,
@@ -1528,7 +1581,7 @@ export const entityDefinitions = {
     create: '朵朵-能源装置达到Lv.2后，朵朵进入虚弱状态时自动召唤并弹出。',
   },
   魔镜: {
-    entitytag: ['功能', '交互', '复用'],
+    entitytag: ['功能', '交互', '复用', '衍生'],
     owner: { name: '魔镜召唤咒', type: 'skill' },
     aliases: ['镜子'],
     move: false,
@@ -1541,7 +1594,10 @@ export const entityDefinitions = {
   },
   魔镜经验蛋糕: {
     entitytag: ['触发', '交互'],
-    owner: { name: '魔镜召唤咒', type: 'skill' },
+    owner: [
+      { name: '魔镜召唤咒', type: 'skill' },
+      { name: '魔镜', type: 'entity' },
+    ],
     move: true,
     gravity: true,
     description: '[角色未手持道具时](机器鼠则为未拾取道具时)可通过交互键将其拾取，直接获得经验。',
@@ -1586,7 +1642,7 @@ export const entityDefinitions = {
     ],
   },
   大星星: {
-    entitytag: '变形',
+    entitytag: ['变形', '衍生'],
     owner: { name: '仙女棒', type: 'skill' },
     move: true,
     gravity: true,
@@ -1614,7 +1670,10 @@ export const entityDefinitions = {
   },
   '星星-敌方': {
     entitytag: ['抛掷', '伤害'],
-    owner: { name: '仙女棒', type: 'skill' },
+    owner: [
+      { name: '仙女棒', type: 'skill' },
+      { name: '大星星', type: 'entity' },
+    ],
     move: true,
     gravity: true,
     description: '对命中者造成伤害和微弱减速。',
@@ -1656,8 +1715,11 @@ export const entityDefinitions = {
       '由霜月-滑步踢在跳起且手持部分道具的情况下投掷出，包括{盘子}/{扁盘}/{玻璃杯}/{碗}/{叉子}/{高尔夫球}/{香水瓶}/{胡椒瓶}。',
   },
   '乾坤袋-投射物': {
-    entitytag: ['抛掷', '命中'],
-    owner: { name: '乾坤袋', type: 'skill' },
+    entitytag: ['抛掷', '命中', '衍生'],
+    owner: [
+      { name: '乾坤袋', type: 'skill' },
+      { name: '乾坤袋', type: 'entity' },
+    ],
     aliases: ['坤坤袋', '袋子'],
     move: true,
     gravity: true,
@@ -1669,8 +1731,11 @@ export const entityDefinitions = {
     create: '由霜月-乾坤袋在使用时掷出，或是在结束技能时短暂变回。',
   },
   乾坤袋: {
-    entitytag: ['NPC', '变身'],
-    owner: { name: '乾坤袋', type: 'skill' },
+    entitytag: ['NPC', '变身', '衍生', '遥控'],
+    owner: [
+      { name: '乾坤袋', type: 'skill' },
+      { name: '乾坤袋-投射物', type: 'entity' },
+    ],
     aliases: ['坤坤袋', '胖呆呆', '袋子', '乾坤袋NPC'],
     move: true,
     gravity: true,
@@ -1737,7 +1802,7 @@ export const entityDefinitions = {
     create: '表演者•杰瑞-喜剧之王达到Lv.3并触发放飞返场后，其可通过拖拽道具键掷出，有内置CD。',
   },
   '蓝图-投射物': {
-    entitytag: ['抛掷', '命中'],
+    entitytag: ['抛掷', '命中', '衍生'],
     aliases: ['蓝图', '收起的蓝图', '蓝图投掷物', '蓝图投射物'],
     owner: { name: '蓝图', type: 'skill' },
     move: true,
@@ -1752,9 +1817,12 @@ export const entityDefinitions = {
     create: '通过莱恩-蓝图技能丢出。',
   },
   蓝图: {
-    entitytag: ['触发', '群体', '复用', '增益'],
+    entitytag: ['触发', '群体', '复用', '增益', '遥控'],
     aliases: ['展开的蓝图', '蓝图召唤物', '蓝图-召唤物'],
-    owner: { name: '蓝图', type: 'skill' },
+    owner: [
+      { name: '蓝图', type: 'skill' },
+      { name: '蓝图-投射物', type: 'entity' },
+    ],
     move: false,
     gravity: false,
     description:
@@ -1873,7 +1941,7 @@ export const entityDefinitions = {
     create: '通过莱恩-蘸水笔Lv.2及以上时在{蓝图(衍生物)}上绘制生成。',
   },
   毛线球: {
-    entitytag: ['抛掷', '命中'],
+    entitytag: ['抛掷', '命中', '衍生'],
     owner: { name: '毛线球', type: 'skill' },
     aliases: ['毛线团'],
     move: true,
@@ -1887,7 +1955,10 @@ export const entityDefinitions = {
   },
   毛线: {
     entitytag: ['触发', '复用', '指示'],
-    owner: { name: '毛线球', type: 'skill' },
+    owner: [
+      { name: '毛线球', type: 'skill' },
+      { name: '毛线球', type: 'entity' },
+    ],
     move: false,
     gravity: false,
     description: '{毛线球}与{梦游杰瑞}通过{毛线}连接。踩到毛线的敌方会受到极少量伤害并被减速。',
@@ -1937,21 +2008,24 @@ export const entityDefinitions = {
     ],
   },
   枪头: {
-    entitytag: '特殊',
+    entitytag: ['特殊', '遥控', '衍生'],
     owner: { name: '玩具长长长枪', type: 'skill' },
     aliases: ['玩具枪头'],
     move: true,
     gravity: false,
     collsion: ['墙壁', '地面'],
     description:
-      '朝圣者泰菲瞄准时可操作枪头向前延长及转向，枪头被猫咪爪刀命中时会对朝圣者泰菲造成伤害。',
+      '朝圣者泰菲瞄准时可操作枪头向前延长及转向，枪头被猫咪爪刀命中时会对朝圣者泰菲造成伤害。再次使用技能发射一枚{木塞子}。',
     detailedDescription:
-      '朝圣者泰菲瞄准时可操作枪头向前延长及转向(枪管变向转弯直径450单位距离)，枪管移速800单位距离每秒，最长可伸长4000单位距离。枪头被猫咪爪刀命中时会对朝圣者泰菲造成伤害。',
+      '朝圣者泰菲瞄准时可操作枪头向前延长及转向(枪管变向转弯直径450单位距离)，枪管移速800单位距离每秒，最长可伸长4000单位距离。枪头被猫咪爪刀命中时会对朝圣者泰菲造成伤害。朝圣者泰菲再次使用技能后，从枪头位置向前发射一枚{木塞子}（实际发射角度随机存在极小幅度偏移）。',
     create: '朝圣者泰菲-玩具长长长枪在瞄准期间自动生成。',
   },
   木塞子: {
     entitytag: ['平射', '伤害'],
-    owner: { name: '玩具长长长枪', type: 'skill' },
+    owner: [
+      { name: '玩具长长长枪', type: 'skill' },
+      { name: '枪头', type: 'entity' },
+    ],
     aliases: ['木塞子子弹'],
     move: true,
     gravity: false,
@@ -1963,7 +2037,7 @@ export const entityDefinitions = {
     create: '朝圣者泰菲-玩具长长长枪在瞄准期间，再次使用该技能时自{枪头}处被发射。',
   },
   机器鼠: {
-    entitytag: '变身',
+    entitytag: ['变身', '衍生'],
     aliases: ['机械鼠'],
     factionId: 'mouse',
     move: true,
@@ -2061,6 +2135,7 @@ export const entityDefinitions = {
   肌肉汤姆: {
     entitytag: ['变身', '星元'],
     owner: { name: '多元乱斗', type: 'mode' },
+    factionId: 'cat',
     move: true,
     gravity: true,
     collsion: ['墙壁', '平台', '地面'],
@@ -2095,6 +2170,7 @@ export const entityDefinitions = {
   肌肉杰瑞: {
     entitytag: ['变身', '星元'],
     owner: { name: '多元乱斗', type: 'mode' },
+    factionId: 'mouse',
     move: false,
     gravity: true,
     collsion: ['墙壁', '平台', '地面'],
@@ -2129,6 +2205,7 @@ export const entityDefinitions = {
   小象: {
     entitytag: ['变身', '星元'],
     owner: { name: '多元乱斗', type: 'mode' },
+    factionId: 'mouse',
     move: true,
     gravity: true,
     collsion: ['墙壁', '平台', '地面'],
@@ -2161,6 +2238,7 @@ export const entityDefinitions = {
   机甲汤姆: {
     entitytag: ['变身', '星元'],
     owner: { name: '多元乱斗', type: 'mode' },
+    factionId: 'cat',
     move: true,
     gravity: true,
     collsion: ['墙壁', '平台', '地面'],
@@ -2192,7 +2270,7 @@ export const entityDefinitions = {
     ],
   },
   兔霸哥: {
-    entitytag: ['变身', '星元'],
+    entitytag: ['变身', '星元', '衍生'],
     owner: { name: '多元乱斗', type: 'mode' },
     move: true,
     gravity: true,
