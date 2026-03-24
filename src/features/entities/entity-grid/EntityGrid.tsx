@@ -51,6 +51,7 @@ const ENTITY_TAG_OPTIONS: Entitytaglist[] = [
   '增益',
   '复用',
   '巡逻',
+  '衍生',
   '彩蛋',
   '星元',
   '特殊',

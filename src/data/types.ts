@@ -304,7 +304,8 @@ export type Entitytaglist =
   | '复用' // 可多次命中/触发/使用
   | '巡逻' // 会自行来回运动
   | '追踪' // 追踪目标
-  | '遥控'; // 可被归属者通过技能等方式远程控制其行为
+  | '遥控' // 可被归属者通过技能等方式远程控制其行为
+  | '衍生'; // 会创建其它衍生物
 
 export type EntityDefinition = {
   entitytag: Entitytaglist | Entitytaglist[]; // type of entity

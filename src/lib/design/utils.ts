@@ -424,7 +424,6 @@ export const getEntityTypeColors = (
     触发类: 'azure',
     触发: 'azure',
     延时: 'azure',
-    遥控: 'azure',
     /*物件类：橙色*/
     物件类: 'amber',
     功能: 'amber',
@@ -449,6 +448,8 @@ export const getEntityTypeColors = (
     增益: 'emerald',
     复用: 'deepGray',
     巡逻: 'violet',
+    遥控: 'violet',
+    衍生: 'violet',
     彩蛋: 'violet',
     星元: 'violet',
   };
