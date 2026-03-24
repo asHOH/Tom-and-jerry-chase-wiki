@@ -93,42 +93,48 @@ export const getSingleItemImageUrl = (singleItem: SingleItem): string => {
   return R || '/images/icons/cat-faction.png';
 };
 
-export const getSingleItemFactionId = (singleItem: SingleItem): FactionId | undefined => {
-  const findFactionId = (singleItem: SingleItem): FactionId | undefined => {
-    if (singleItem.factionId !== undefined) {
-      return singleItem.factionId;
-    } else if (singleItem.type === 'character') {
+export const getSingleItemFactionId = (
+  singleItem: SingleItem,
+  _visitedSet?: Set<string>,
+  _cache?: Map<string, FactionId | undefined>
+): FactionId | undefined => {
+  // 优先使用直接指定的 factionId
+  if (singleItem.factionId !== undefined) {
+    return singleItem.factionId;
+  }
+
+  // 根据类型从数据源中获取 factionId
+  const findFactionId = (): FactionId | undefined => {
+    if (singleItem.type === 'character') {
       return characters[singleItem.name]?.factionId;
     } else if (singleItem.type === 'knowledgeCard') {
       return cards[singleItem.name]?.factionId;
-    } else if (singleItem.type == 'specialSkill') {
-      {
-        const allSpecialSkills = Object.values({ ...specialSkills.cat, ...specialSkills.mouse });
-        return allSpecialSkills.find((specialSkill) => specialSkill.name === singleItem.name)
-          ?.factionId;
-      }
+    } else if (singleItem.type === 'specialSkill') {
+      const allSpecialSkills = Object.values({ ...specialSkills.cat, ...specialSkills.mouse });
+      return allSpecialSkills.find((skill) => skill.name === singleItem.name)?.factionId;
     } else if (singleItem.type === 'item') {
       return items[singleItem.name]?.factionId;
-    } else if (singleItem.type == 'skill') {
+    } else if (singleItem.type === 'skill') {
       const owner = Object.values(characters).find((c) =>
         c.skills.some((skill) => skill.name === singleItem.name)
       );
       return owner?.factionId;
-    } else if (singleItem.type == 'achievement') {
+    } else if (singleItem.type === 'achievement') {
       return achievements[singleItem.name]?.factionId;
     }
     return undefined;
   };
-  const findEntity = (singleItem: SingleItem) => {
-    return entities[singleItem.name];
-  };
 
-  if (singleItem.type !== 'entity') {
-    return findFactionId(singleItem);
-  } else {
-    const entity = findEntity(singleItem);
-    return entity !== undefined ? getEntityFactionId(entity) : undefined;
+  // 处理实体类型：委托给 getEntityFactionId
+  if (singleItem.type === 'entity') {
+    const entity = entities[singleItem.name];
+    if (!entity) return undefined;
+    // 传递 visitedSet 和 cache
+    return getEntityFactionId(entity, _visitedSet, _cache);
   }
+
+  // 其他类型直接查找
+  return findFactionId();
 };
 
 export const compareSingleItem = (
