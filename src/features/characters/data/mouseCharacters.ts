@@ -736,6 +736,7 @@ const mouseCharacterDefinitions = {
       {
         name: '飞翔金币',
         type: 'active',
+        videoUrl: 'https://www.bilibili.com/video/BV1PUcYzXE8J/?t=78',
         description:
           '拿出一枚{金币(衍生物)}（能穿过大部分平台，命中敌方造成{眩晕}，被命中的敌方短暂免疫该道具效果）。获得金币时会替换并掉落手中的其他道具。',
         detailedDescription:
@@ -769,6 +770,7 @@ const mouseCharacterDefinitions = {
       {
         name: '火药桶',
         type: 'weapon1',
+        videoUrl: 'https://www.bilibili.com/video/BV1PUcYzXE8J/?t=106',
         aliases: ['桶', '炸药桶'],
         description:
           '放置{火药桶(衍生物)}，延迟数秒后爆炸，对周围造成不分敌我的伤害和眩晕，对墙缝造成伤害，并{炸毁}范围内的火箭。猫咪可以通过交互拆除火药桶，老鼠可以通过交互推动火药桶。火药桶被部分道具命中时缩短引爆时间。',
@@ -807,6 +809,7 @@ const mouseCharacterDefinitions = {
       {
         name: '舰艇火炮',
         type: 'weapon2',
+        videoUrl: 'https://www.bilibili.com/video/BV1PUcYzXE8J/?t=145',
         description:
           '放置{火炮}，持续数秒后消失。老鼠可通过交互键进入火炮，通过投掷键发射自身，对碰到的敌方造成伤害与眩晕，碰到绑在火箭上的队友时自动救援。火炮内不会被投掷道具及部分技能命中。火炮会对所有角色展示在小地图上。',
         detailedDescription:
@@ -840,6 +843,7 @@ const mouseCharacterDefinitions = {
       {
         name: '无坚不摧',
         type: 'passive',
+        videoUrl: 'https://www.bilibili.com/video/BV1PUcYzXE8J/?t=39',
         skillLevels: [
           {
             level: 1,
