@@ -7,7 +7,7 @@ const getMouseSpecialSkillImageUrl = (name: string): string => {
 const mouseSpecialSkillDefinitions: Record<string, SpecialSkillDefinition> = {
   应急治疗: {
     cooldown: 80,
-    description: '恢复一定Hp，且移速短暂提高。',
+    description: '恢复一定Hp并解除部分负面效果，且移速短暂提高。',
     detailedDescription: '恢复25Hp，且移速提高20%，持续1.15秒。',
     adviceDescription:
       '适合**需要额外恢复能力**的老鼠。用于进行治疗或解除[部分不良状态](包括受伤、香水反向、烟雾失明、莱特宁1级被动标记等效果)。',

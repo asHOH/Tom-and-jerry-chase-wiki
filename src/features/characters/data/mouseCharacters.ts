@@ -4777,6 +4777,11 @@ const mouseCharacterDefinitions = {
         name: '急速翻滚',
         description: '音乐家在武器技能持续期间持有惯性，此时使用急速翻滚能快速位移。',
       },
+      {
+        name: '冰冻保鲜',
+        description:
+          '音乐家利用冰冻保鲜可以瞬间触发四层共鸣，快速救下猫手中的老鼠，配合任意技能也可以拆火箭救人。',
+      },
     ],
     skills: [
       {
