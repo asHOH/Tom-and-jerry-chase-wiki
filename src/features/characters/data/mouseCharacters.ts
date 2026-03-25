@@ -1350,7 +1350,7 @@ const mouseCharacterDefinitions = {
       {
         cards: ['S-舍己', 'S-铁血', 'C-救救我', 'S-缴械'],
         description:
-          '用来打依赖爪刀或有无敌霸体技能的猫。{缴械}可以在一定程度上防止霸体反杀，特别是泰菲不能自主取消{火箭筒}的后摇，极其容易被霸体接爪刀反杀。因为炮能触发{缴械}，所以就限制了霸体卡后摇的发挥。',
+          '用来打依赖爪刀或有无敌霸体技能的猫。炮能触发缴械，泰菲不能自主取消火箭筒后摇，容易被猫秒开霸体攻击到，浪费一个圆滚滚，缴械能在一定程度上遏制霸体的发挥',
         detailedDescription: '',
       },
       {
@@ -2942,7 +2942,7 @@ const mouseCharacterDefinitions = {
         description:
           '展开天使翅膀，短暂获得减伤，并反弹一定比例的来自敌方的伤害。自动消耗怜悯值增加反弹伤害。',
         detailedDescription:
-          '展开天使翅膀，持续6秒，期间获得15减伤；若受到来自敌方的伤害，则对其造成一次[等同于该次伤害值55%的伤害（若“该次伤害值”超过天使泰菲的剩余Hp，则对对方造成伤害改为天使泰菲剩余Hp的55%）](该伤害不受攻击增伤影响。"受到伤害"的计算时机晚于攻击者的攻击增/减伤，但早于天使泰菲的受击增/减伤，并且最终数值不会超过天使泰菲当前的Hp。{主动技能}的转移伤害没有伤害来源，因此不触发该效果)。若反弹伤害时自身的怜悯值超过25%，自动消耗25%怜悯值增加反弹伤害。', //[本技能有争议](另一种说法：不考虑怜悯值时，消耗25变5伤害返还20，50变25伤害返还25，75变50伤害返还20，100变60伤害返还40，125直接虚弱返还50；每10％反伤5伤害)。
+          '展开天使翅膀，持续6秒，期间获得20减伤；若受到来自敌方的伤害，则对其造成一次[等同于该次伤害值55%的伤害（若“该次伤害值”超过天使泰菲的剩余Hp，则对对方造成伤害改为天使泰菲剩余Hp的55%）](该伤害不受攻击增伤影响。"受到伤害"的计算时机晚于攻击者的攻击增/减伤，但早于天使泰菲的受击增/减伤，并且最终数值不会超过天使泰菲当前的Hp。{主动技能}的转移伤害没有伤害来源，因此不触发该效果)。若反弹伤害时自身的怜悯值超过25%，自动消耗25%怜悯值增加反弹伤害。', //[本技能有争议](另一种说法：不考虑怜悯值时，消耗25变5伤害返还20，50变25伤害返还25，75变50伤害返还20，100变60伤害返还40，125直接虚弱返还50；每10％反伤5伤害)。
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: ['跳跃键', '道具键*'],
@@ -4264,7 +4264,7 @@ const mouseCharacterDefinitions = {
         pattern: '2(0)2121100',
         weaponType: 'weapon1',
         description:
-          '加点灵活，可随机应变。游戏开始时需保留一级被动加点，铁血且附近有队友再加点。适用于需要破局的情况。',
+          '加点灵活，可随机应变。游戏开始时需保留一级被动加点，当铁血触发且附近有队友时再加点。适用于需要破局的情况。',
       },
       {
         id: '后期礼仪控场',
@@ -5665,6 +5665,7 @@ const mouseCharacterDefinitions = {
         name: '说出你的故事',
         aliases: ['采访'],
         type: 'active',
+        videoUrl: 'https://www.bilibili.com/video/BV1GQcuzYE3y', // TODO: add time stamps
         description:
           '开始采访，期间免疫控制且移速固定，范围内敌方的移速降低，造成的伤害降低，且[作出攻击行为](包括使用爪刀、投掷道具、使用技能、对米可造成伤害)时会为其自身叠加一层“素材”状态，最多叠加5层。可通过第二段技能进行曝光，对大范围内持有“素材”的敌方造成伤害和眩晕，“素材”层数越高效果越强，3层以上时会掉落道具和老鼠。曝光后清除对方持有的素材。',
         detailedDescription:
@@ -5703,6 +5704,7 @@ const mouseCharacterDefinitions = {
         name: '记录美好瞬间',
         aliases: ['相机'],
         type: 'weapon1',
+        videoUrl: 'https://www.bilibili.com/video/BV1GQcuzYE3y', // TODO: add time stamps
         description:
           '用魔法相机为面向镜头的所有角色[生成](可被虚弱、霸体等状态抵挡，但不能被无敌抵挡)一张{照片}，12秒内可再次使用技能将所有照片中的角色以照片生成时的状态[回溯](可被其虚弱、霸体、护盾、无敌等状态抵挡)。',
         detailedDescription:
@@ -5737,6 +5739,7 @@ const mouseCharacterDefinitions = {
       {
         name: '必备专业素养',
         type: 'passive',
+        videoUrl: 'https://www.bilibili.com/video/BV1GQcuzYE3y', // TODO: add time stamps
         skillLevels: [
           {
             level: 1,
@@ -5761,7 +5764,6 @@ const mouseCharacterDefinitions = {
       },
     ],
     aliases: ['记者'],
-
     specialSkills: [
       {
         name: '应急治疗',
