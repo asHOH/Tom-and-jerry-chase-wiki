@@ -882,8 +882,7 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description:
-      '恶魔泰菲小淘气召唤的蓝色小淘气能禁用技能，绿色小淘气配合Lv.3被动的极高攻击增伤能迅速击倒牛汤，被动提供的恢复与高移速能化解鞭子或仙人掌弹弓的消耗；但恶魔泰菲Hp上限低，牛仔汤姆弹弓爆发高，有机会瞬间击倒恶魔泰菲。',
+    description: '“虽然恶菲绿恶魔的高伤可以快速击倒牛汤，但是牛汤同样可以利用三被和绿恶魔反制敌方”',
     group: [
       { name: '恶魔泰菲', type: 'character' },
       { name: '牛仔汤姆', type: 'character' },
@@ -2204,6 +2203,19 @@ const characterRelations: Trait[] = [
       subject: { name: '音乐家杰瑞', type: 'character' },
       target: { name: '牛仔汤姆', type: 'character' },
       isMinor: true,
+    },
+  },
+  {
+    description: '',
+    group: [
+      { name: '恶魔泰菲', type: 'character' },
+      { name: '牛仔汤姆', type: 'character' },
+    ],
+    relation: {
+      kind: 'counters',
+      subject: { name: '恶魔泰菲', type: 'character' },
+      target: { name: '牛仔汤姆', type: 'character' },
+      isMinor: false,
     },
   },
   {
@@ -6273,6 +6285,113 @@ const characterRelations: Trait[] = [
       subject: { name: '追风汤姆', type: 'character' },
       target: { name: '魔术漂浮', type: 'specialSkill', factionId: 'mouse' },
       isMinor: true,
+    },
+  },
+  {
+    description:
+      '广寒宫占有地利（空间小，出入必须钻管道，利于牛仔汤姆布局与酣战）但记住时不时去干扰蟠桃园拿点经验，不然广寒宫会被老鼠强攻沦陷',
+    group: [
+      { name: '牛仔汤姆', type: 'character' },
+      { name: '天宫', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '牛仔汤姆', type: 'character' },
+      target: { name: '天宫', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '熊猫谷占有地利（空间略小，出入必须走车牌，利于牛仔汤姆布局与酣战，同时能极大拖延老鼠进入墙缝期节奏），熊猫谷老鼠需要喂饱熊猫才能开启老鼠洞，牛仔汤姆的斗牛能够给予持续性的干扰。保护研究基地的奶酪处也是易守难攻，同时两个药水仓能够辅助牛仔汤姆的进攻。',
+    group: [
+      { name: '牛仔汤姆', type: 'character' },
+      { name: '熊猫馆', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '牛仔汤姆', type: 'character' },
+      target: { name: '熊猫馆', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '装饰树大作战特殊地图，牛仔汤姆的斗牛能够来回撞击，能够干扰敌方老鼠捡礼物和推雪橇车。',
+    group: [
+      { name: '牛仔汤姆', type: 'character' },
+      { name: '后院', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '牛仔汤姆', type: 'character' },
+      target: { name: '后院', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '',
+    group: [
+      { name: '牛仔汤姆', type: 'character' },
+      { name: '熊猫馆-烟花大作战', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '牛仔汤姆', type: 'character' },
+      target: { name: '熊猫馆-烟花大作战', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '',
+    group: [
+      { name: '牛仔汤姆', type: 'character' },
+      { name: '5V5经典奶酪赛', type: 'mode' },
+    ],
+    relation: {
+      kind: 'advantageModes',
+      subject: { name: '牛仔汤姆', type: 'character' },
+      target: { name: '5V5经典奶酪赛', type: 'mode' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '',
+    group: [
+      { name: '牛仔汤姆', type: 'character' },
+      { name: '夏日游轮III', type: 'map' },
+    ],
+    relation: {
+      kind: 'disadvantageMaps',
+      subject: { name: '牛仔汤姆', type: 'character' },
+      target: { name: '夏日游轮III', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '',
+    group: [
+      { name: '牛仔汤姆', type: 'character' },
+      { name: '疯狂奶酪赛', type: 'mode' },
+    ],
+    relation: {
+      kind: 'disadvantageModes',
+      subject: { name: '牛仔汤姆', type: 'character' },
+      target: { name: '疯狂奶酪赛', type: 'mode' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '',
+    group: [
+      { name: '牛仔汤姆', type: 'character' },
+      { name: '5V5经典奶酪赛', type: 'mode' },
+    ],
+    relation: {
+      kind: 'disadvantageModes',
+      subject: { name: '牛仔汤姆', type: 'character' },
+      target: { name: '5V5经典奶酪赛', type: 'mode' },
+      isMinor: false,
     },
   },
   {

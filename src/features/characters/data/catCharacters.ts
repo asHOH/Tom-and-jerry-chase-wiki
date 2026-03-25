@@ -892,13 +892,13 @@ const catCharacterDefinitions = {
     skillAllocations: [
       {
         id: '鞭子（控制）',
-        pattern: '120011220',
+        pattern: '120021120',
         weaponType: 'weapon1',
         description: '以技能的控制和1级被动的快爪刀为主要进攻手段',
       },
       {
         id: '鞭子（高伤）',
-        pattern: '120001122',
+        pattern: '120002112',
         weaponType: 'weapon1',
         description: '以3级被动的高伤为主要进攻手段',
       },
@@ -921,16 +921,16 @@ const catCharacterDefinitions = {
         description: '',
         groups: [
           {
-            cards: ['S-击晕', 'S-知识渊博', 'A-细心', 'B-皮糙肉厚'],
+            cards: ['S-击晕', 'S-知识渊博', 'S-乘胜追击'],
             description: '常规卡组。',
           },
           {
-            cards: ['S-知识渊博', 'S-乘胜追击', 'A-细心', 'B-皮糙肉厚'],
-            description: '大图或敌方攻击性不大时使用。',
+            cards: ['S-击晕', 'S-知识渊博', 'A-穷追猛打', 'B-皮糙肉厚'],
+            description: '万金油卡组',
           },
           {
-            cards: ['S-击晕', 'S-知识渊博', 'A-细心', 'C-猫是液体', 'C-狡诈'],
-            description: '小图或管道多的地图使用（雪夜古堡除外）。',
+            cards: ['S-击晕', 'S-乾坤一掷', 'A-细心', 'B-皮糙肉厚'],
+            description: '敌方攻击性不大时可使用。',
           },
         ],
         defaultFolded: true,
