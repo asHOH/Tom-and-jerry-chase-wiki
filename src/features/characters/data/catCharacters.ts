@@ -2745,7 +2745,7 @@ const catCharacterDefinitions = {
           {
             level: 3,
             description: '追求者额外造成爆炸伤害和控制。',
-            detailedDescription: '追求者额外造成25的爆炸伤害和2秒{爆炸眩晕}。',
+            detailedDescription: '追求者额外造成20的爆炸伤害和2秒{爆炸眩晕}。',
             cooldown: 18,
           },
         ],
