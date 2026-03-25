@@ -1012,7 +1012,7 @@ const catCharacterDefinitions = {
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['跳跃键'],
-        cancelableAftercast: ['道具键', '跳跃键', '移动键'],
+        cancelableAftercast: ['道具键', '跳跃键'],
         skillLevels: [
           {
             level: 1,

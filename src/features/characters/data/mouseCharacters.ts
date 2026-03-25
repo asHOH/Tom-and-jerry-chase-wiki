@@ -1283,14 +1283,8 @@ const mouseCharacterDefinitions = {
     EnglishName: 'Tuffy',
     mousePositioningTags: [
       {
-        tagName: '奶酪',
-        isMinor: false,
-        description: '推速较快。',
-        additionalDescription: '有点矮子里面拔高个的意味，毕竟两个技能都跟奶酪没关系。',
-      },
-      {
         tagName: '破局',
-        isMinor: true,
+        isMinor: false,
         weapon: 1,
         description: '火箭炮能炸开捕鼠夹和叉子。',
         additionalDescription: '缺点是CD长，并且需要把控角度。',
@@ -1298,7 +1292,29 @@ const mouseCharacterDefinitions = {
       {
         tagName: '砸墙',
         isMinor: true,
-        description: '{武器技能}可以提供可观的砸墙伤害；{3级被动}能免疫鞭炮和泡泡。',
+        weapon: 1,
+        description: '火箭筒可以提供可观的砸墙伤害；三级被动免疫鞭炮和泡泡爆炸，可辅助砸墙。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '砸墙',
+        isMinor: false,
+        weapon: 2,
+        description:
+          '用道具触发地雷可以提供一定的砸墙伤害；三级被动免疫鞭炮和泡泡爆炸，可辅助砸墙。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '奶酪',
+        isMinor: false,
+        description: '推速较快，且被动推奶酪有霸体和减伤，适合做主推或副推位。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '干扰',
+        isMinor: true,
+        description:
+          '远程火箭炮可以减少队友溜猫的压力；地雷可以进行威慑，逼迫猫离开地雷追踪爆炸范围或交技能进行防御',
         additionalDescription: '',
       },
     ],
@@ -1360,7 +1376,7 @@ const mouseCharacterDefinitions = {
       {
         name: '圆滚滚',
         type: 'active',
-        description: '向前翻滚一段距离。可在被眩晕时释放，但CD会额外增加6秒。',
+        description: '向前翻滚一段距离。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '无前摇',
@@ -1370,8 +1386,10 @@ const mouseCharacterDefinitions = {
         skillLevels: [
           {
             level: 1,
-            description: '',
-            detailedDescription: '向前翻滚1.1秒；期间速度提升70%。',
+            description:
+              '向前翻滚一段距离。技能可以在被眩晕时释放，并解除自身的眩晕效果，但会略微延长技能冷却时间',
+            detailedDescription:
+              '向前翻滚1.1秒；期间速度提升70%；可以在被控制状态下使用，并解除当前所受的控制，但技能冷却时间会增加6秒。',
             cooldown: 12,
           },
           {
@@ -1477,15 +1495,15 @@ const mouseCharacterDefinitions = {
           {
             level: 2,
             description:
-              '可以持续缓慢恢复Hp（受伤状态也触发）；推奶酪时不会因受到眩晕而打断；并在搬起奶酪、推奶酪、火箭救援时额外获得短暂的Hp恢复和减伤；吃食物速度增加。',
+              '可以持续缓慢恢复健康值（受伤状态也触发）；吃食物更快；推奶酪时不会因受到眩晕而打断；并在搬起奶酪、推奶酪、火箭救援时额外获得短暂的健康值缓慢恢复和减伤。',
             detailedDescription:
-              '[获得2.5Hp/秒的恢复效果](与角色基础的Hp恢复效果不同，不会因受伤而失效)；推奶酪时免疫控制效果（不免疫强制位移）；在搬奶酪、推奶酪、火箭救援时获得35%减伤和[0.5Hp/秒的恢复效果](与角色基础的Hp恢复效果不同，不会因受伤而失效)；吃食物速度提升20%。',
+              'Hp恢复提升2.5（受伤状态也触发）；吃食物速度提升20%；在推奶酪状态下，免疫控制效果（不免疫强制位移）；在搬奶酪、推奶酪、火箭救援时获得25%减伤和0.5/s的健康值回复。',
           },
           {
             level: 3,
-            description: '免疫部分爆炸；Hp恢复进一步提升；吃食物速度进一步增加。',
+            description: '免疫部分爆炸；吃食物速度进一步增加。',
             detailedDescription:
-              '免疫鞭炮、泡泡等爆炸（不免疫{3级追求者出击}的爆炸以及太空堡垒的药水罐爆炸等）；Hp恢复提升增加至5；吃食物速度提升增加至45%。',
+              '免疫鞭炮、泡泡等爆炸（不免疫{3级追求者出击}的爆炸以及太空堡垒的药水罐爆炸等）；吃食物速度提升增加至45%。',
           },
         ],
       },
@@ -1519,7 +1537,7 @@ const mouseCharacterDefinitions = {
       },
     ],
 
-    aliases: ['塔菲'],
+    aliases: [],
   },
   /* ----------------------------------- 剑客泰菲 ----------------------------------- */
   剑客泰菲: {
