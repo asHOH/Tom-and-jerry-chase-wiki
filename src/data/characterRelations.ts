@@ -327,6 +327,19 @@ const characterRelations: Trait[] = [
     },
   },
   {
+    description: '爱心之吻，提高容错与基础数值',
+    group: [
+      { name: '剑客杰瑞', type: 'character' },
+      { name: '雪梨', type: 'character' },
+    ],
+    relation: {
+      kind: 'collaborators',
+      subject: { name: '剑客杰瑞', type: 'character' },
+      target: { name: '雪梨', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
     description: '剑客莉莉的低成本拦截可以帮助头盔撤离和协作长枪打连控。',
     group: [
       { name: '剑客泰菲', type: 'character' },
@@ -1105,7 +1118,8 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '恶魔泰菲的三级被动能轻易击倒斯飞，斯飞也能轻易击倒恶魔泰菲。',
+    description:
+      '恶魔泰菲的三级被动带来的高伤能轻易打到斯飞，同时小恶魔的负面效果给予斯飞威胁，但斯飞能够找机会一套击倒恶魔泰菲。',
     group: [
       { name: '斯飞', type: 'character' },
       { name: '恶魔泰菲', type: 'character' },
@@ -1118,21 +1132,8 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '杰瑞的鸟哨使斯飞需要时刻注意鞭炮下落，但斯飞能轻易击倒杰瑞。',
-    group: [
-      { name: '斯飞', type: 'character' },
-      { name: '杰瑞', type: 'character' },
-    ],
-    relation: {
-      kind: 'counterEachOther',
-      subject: { name: '斯飞', type: 'character' },
-      target: { name: '杰瑞', type: 'character' },
-      isMinor: true,
-    },
-  },
-  {
     description:
-      '莱恩画出的方块能阻碍斯飞行动，同时三角形的减速与圆的伤害不可忽视，但斯飞的追击能力使莱恩无法轻易逃脱。',
+      '莱恩画出的方块能阻碍斯飞行动，同时三角形的减速与圆的伤害不可忽视，但莱恩无法轻易逃脱斯飞的追击。',
     group: [
       { name: '斯飞', type: 'character' },
       { name: '莱恩', type: 'character' },
@@ -1145,16 +1146,142 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '斯飞会受到侦探泰菲的分身带来的失明效果，但侦探泰菲缺乏自保能力。',
+    description:
+      '魔术师的红牌能给斯飞一定的威胁，同时斯飞无法快速清理兔子，但斯飞迅捷效果下免疫魔术师的黄牌，蓝牌能用武器技能拉回，同时魔术师无法轻易逃脱斯飞追击',
     group: [
       { name: '斯飞', type: 'character' },
-      { name: '侦探泰菲', type: 'character' },
+      { name: '魔术师', type: 'character' },
     ],
     relation: {
       kind: 'counterEachOther',
       subject: { name: '斯飞', type: 'character' },
-      target: { name: '侦探泰菲', type: 'character' },
+      target: { name: '魔术师', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '马索尔进入被动状态时免疫斯飞疾冲状态的感电，同时强化后的拳头对斯飞威胁很大，但脱离发怒状态后的马索尔短时间无法逃离斯飞的追击，同时斯飞的感电能干扰未进入被动状态的马索尔进行救援',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '马索尔', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '马索尔', type: 'character' },
       isMinor: true,
+    },
+  },
+  {
+    description:
+      '莉莉的无敌与减伤使斯飞难以快速击倒莉莉，莉莉剑气的减速也能有效干扰斯飞，但莉莉的风墙无法困住或有效影响斯飞攻势',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '剑客莉莉', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '剑客莉莉', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description:
+      '音乐家杰瑞的音波能够造成短暂控制以及快速破坏火箭，并且墙缝期的辅助能力与音波破墙我威胁使斯飞难以防守，但斯飞疾冲状态的感电或者强化技能能够打断音乐家杰瑞武器技能状态',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '音乐家杰瑞', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '音乐家杰瑞', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description:
+      '佩克斯被动的复活甲让斯飞短时间无法击倒佩克斯，同时佩克斯武器带来的范围回血能够缓解斯飞进攻带来的部分损失，但斯飞感电或者强化技能能打断佩克斯的武器技能持续',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '佩克斯', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '佩克斯', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description:
+      '朝圣者泰菲的武器高伤害容易一次性给予斯飞重击，同时斯飞无法对因主动技能变身的朝圣者泰菲造成有效威胁，但朝圣者泰菲自身仍然缺乏逃脱斯飞追击的手段',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '朝圣者泰菲', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '朝圣者泰菲', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description:
+      '拿坡里的主动技能和披萨饼能够给予斯飞干扰，但斯飞迅捷效果下免疫拿破里足球带来的失明',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '拿坡里鼠', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '拿坡里鼠', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '霜月的主动技能能够中断斯飞追击以及使斯飞脱离疾冲状态，定身符也能极大拖延斯飞追击节奏，但斯飞能够一套击倒霜月',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '霜月', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '霜月', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '罗宾汉杰瑞的主动能够给予老鼠高机动性以抗衡斯飞，同时罗宾汉杰瑞的降落伞能够抵挡斯飞攻势，但斯飞能够找机会一套击倒罗宾汉杰瑞并持续保持追击节奏',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '罗宾汉杰瑞', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '罗宾汉杰瑞', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '朵朵武器技能前期给予的高伤害使斯飞难以承受，但斯飞点出三级被动后能够恢复追击节奏',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '朵朵', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '朵朵', type: 'character' },
+      isMinor: false,
     },
   },
   {
@@ -1168,6 +1295,76 @@ const characterRelations: Trait[] = [
       kind: 'counterEachOther',
       subject: { name: '泰菲', type: 'character' },
       target: { name: '追风汤姆', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '泰菲的圆滚滚可以解控，导致托普斯很难刀接网或使用我生气了抓住泰菲。但泰菲的炮前摇长，近身很容易被托普斯找到机会网住，托普斯三级分身可以转移伤害，炮无法控制住本体，而且泰菲在圆滚滚真空期内时，只要被托普斯找到机会，就会被网住，因此泰菲被动的减伤霸体无法发挥用处',
+    group: [
+      { name: '泰菲', type: 'character' },
+      { name: '托普斯', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '托普斯', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '泰菲的圆滚滚可以解控，配合治疗可以克制米特的刷尸；泰菲的圆滚滚可以强行把米特的饭盒踩掉，克制米特的防守。但米特的野性层数叠加到七层时可以一刀秒泰菲，被动还可以短时间内取消泰菲被动的回血buff，不利于泰菲强行推奶酪；泰菲火箭筒或者地雷击中米特时，米特的胡椒粉会自动掉落，导致救下来的队友再次被胡椒粉毒死，被米特抓住，浪费了一次技能',
+    group: [
+      { name: '泰菲', type: 'character' },
+      { name: '米特', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '米特', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '泰菲的二级圆滚滚没有前摇，有无敌，可以克制天汤开飞行刷虚弱拉火箭；但天汤机动性高、伤害高，二被有霸体，克制机动性差、血量少、主要打控制的泰菲',
+    group: [
+      { name: '泰菲', type: 'character' },
+      { name: '天使汤姆', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '天使汤姆', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '泰菲的圆滚滚可以解控，克制汤姆的枪、锅眩晕，地雷可以强行击飞汤姆无敌，拖延汤姆的无敌绑火箭时间；汤姆的无敌可以解控，克制泰菲火箭筒打控制，汤姆三级被动可以禁用泰菲的圆滚滚，后期很克制泰菲',
+    group: [
+      { name: '泰菲', type: 'character' },
+      { name: '汤姆', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '汤姆', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '泰菲的圆滚滚可以解控，克制恶汤的打碟、被动控制和红温爪刀，泰菲的火箭筒有两段伤害，克制恶汤的的火车盾（盾只有一层）；恶汤的火车有强制位移，克制泰菲被动霸体减伤推奶酪，恶汤的打碟有霸体，克制泰菲的火箭筒打控制，恶汤的绑火箭速度快，打碟有霸体，克制泰菲的地雷拖延绑火箭',
+    group: [
+      { name: '泰菲', type: 'character' },
+      { name: '恶魔汤姆', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '恶魔汤姆', type: 'character' },
       isMinor: false,
     },
   },
@@ -1875,15 +2072,16 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '斯飞用电和主动技能这些眩晕型攻击可以抓住机会一套秒罗宾汉杰瑞。',
+    description:
+      '斯飞疾冲状态带来的感电能够破掉米雪儿的变身与主动时的护盾，并且主动技能的拖拽能够中断米雪儿的主动技能',
     group: [
       { name: '斯飞', type: 'character' },
-      { name: '罗宾汉杰瑞', type: 'character' },
+      { name: '米雪儿', type: 'character' },
     ],
     relation: {
       kind: 'counters',
       subject: { name: '斯飞', type: 'character' },
-      target: { name: '罗宾汉杰瑞', type: 'character' },
+      target: { name: '米雪儿', type: 'character' },
       isMinor: false,
     },
   },
@@ -1992,15 +2190,16 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '斯飞的被动技能免疫足球失明效果。',
+    description:
+      '侦探泰菲分身带来的失明时长跟斯飞进入疾冲状态时间差不多，同时侦探泰菲隐身期间不容易逃脱斯飞追击范围',
     group: [
       { name: '斯飞', type: 'character' },
-      { name: '拿坡里鼠', type: 'character' },
+      { name: '侦探泰菲', type: 'character' },
     ],
     relation: {
       kind: 'counters',
       subject: { name: '斯飞', type: 'character' },
-      target: { name: '拿坡里鼠', type: 'character' },
+      target: { name: '侦探泰菲', type: 'character' },
       isMinor: false,
     },
   },
@@ -2232,15 +2431,16 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '电可以抓住前摇绑上火箭。',
+    description:
+      '国王杰瑞的护盾能够被斯飞疾冲状态的感电效果轻易破掉，同时国王杰瑞无法轻易逃离斯飞追击',
     group: [
       { name: '斯飞', type: 'character' },
-      { name: '佩克斯', type: 'character' },
+      { name: '国王杰瑞', type: 'character' },
     ],
     relation: {
       kind: 'counters',
       subject: { name: '斯飞', type: 'character' },
-      target: { name: '佩克斯', type: 'character' },
+      target: { name: '国王杰瑞', type: 'character' },
       isMinor: true,
     },
   },
@@ -2428,19 +2628,6 @@ const characterRelations: Trait[] = [
       subject: { name: '航海士杰瑞', type: 'character' },
       target: { name: '斯飞', type: 'character' },
       isMinor: true,
-    },
-  },
-  {
-    description: '剑客杰瑞伤害高，容易击倒未点出三级被动的斯飞。',
-    group: [
-      { name: '剑客杰瑞', type: 'character' },
-      { name: '斯飞', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '剑客杰瑞', type: 'character' },
-      target: { name: '斯飞', type: 'character' },
-      isMinor: false,
     },
   },
   {
@@ -3135,20 +3322,6 @@ const characterRelations: Trait[] = [
   },
   {
     description:
-      '剑客杰瑞伤害高，能较好的处理托普斯的分身。需注意{剑客格挡}只有被动戳击才能攻击分身。',
-    group: [
-      { name: '剑客杰瑞', type: 'character' },
-      { name: '托普斯', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '剑客杰瑞', type: 'character' },
-      target: { name: '托普斯', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
-    description:
       '托普斯的分身也会触发剑客莉莉二级被动的护盾，提高其救援能力。同时剑客莉莉的基础伤害较高，也容易击倒托普斯的分身。剑客莉莉的风墙也在一定程度上拦截托普斯与分身的汇合。',
     group: [
       { name: '剑客莉莉', type: 'character' },
@@ -3574,6 +3747,19 @@ const characterRelations: Trait[] = [
     },
   },
   {
+    description: '能够提高斯飞袭击时的存活率',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '有难同当', type: 'knowledgeCard', factionId: 'mouse' },
+    ],
+    relation: {
+      kind: 'counteredByKnowledgeCards',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '有难同当', type: 'knowledgeCard', factionId: 'mouse' },
+      isMinor: true,
+    },
+  },
+  {
     description: '苏蕊攻击手段较为单一，跳舞爪刀cd长，主要输出又依赖跳舞蓄势爪刀。',
     group: [
       { name: '苏蕊', type: 'character' },
@@ -3596,7 +3782,7 @@ const characterRelations: Trait[] = [
       kind: 'counteredByKnowledgeCards',
       subject: { name: '泰菲', type: 'character' },
       target: { name: '皮糙肉厚', type: 'knowledgeCard', factionId: 'cat' },
-      isMinor: false,
+      isMinor: true,
     },
   },
   {
@@ -3798,19 +3984,6 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '蓄力重击可以直接击倒高Hp老鼠。',
-    group: [
-      { name: '剑客杰瑞', type: 'character' },
-      { name: '蓄力重击', type: 'specialSkill', factionId: 'cat' },
-    ],
-    relation: {
-      kind: 'counteredBySpecialSkills',
-      subject: { name: '剑客杰瑞', type: 'character' },
-      target: { name: '蓄力重击', type: 'specialSkill', factionId: 'cat' },
-      isMinor: true,
-    },
-  },
-  {
     description:
       '绝处逢生能破除库博在天堂布置的老鼠夹；此外部分地图中的猫传送点距离鼠洞过远，老鼠有概率利用铁血+绝处逢生逃跑。',
     group: [
@@ -4004,6 +4177,386 @@ const characterRelations: Trait[] = [
       subject: { name: '泰菲', type: 'character' },
       target: { name: '绝地反击', type: 'specialSkill', factionId: 'cat' },
       isMinor: true,
+    },
+  },
+  {
+    description:
+      '布奇的基础伤害高，可一刀或一个道具秒满血泰菲，并且三级桶盖的霸体也在一定程度上限制了炮的发挥。',
+    group: [
+      { name: '泰菲', type: 'character' },
+      { name: '布奇', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '布奇', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '侍卫汤姆移速快，且在Lv.2被动加成下能一击击倒泰菲。并且侍卫视野大，远程火箭筒被克死，侍卫还能用火炮刷新护盾，每打中一次就有两层盾，可抵消火箭筒的两段伤害。',
+    group: [
+      { name: '泰菲', type: 'character' },
+      { name: '侍卫汤姆', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '侍卫汤姆', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '塔拉视野较大，3级被动有霸体，远程炮不好发挥。',
+    group: [
+      { name: '泰菲', type: 'character' },
+      { name: '塔拉', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '塔拉', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '带皮糙的苏蕊跳舞霸体对泰菲有很大压力。',
+    group: [
+      { name: '泰菲', type: 'character' },
+      { name: '苏蕊', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '苏蕊', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description:
+      '库博的伤害高，可以一刀秒泰菲，克制泰菲的被动；库博机动性强，思路很难被判断，泰菲无法及时支援队友；库博的隐身导致地雷无法被触发',
+    group: [
+      { name: '泰菲', type: 'character' },
+      { name: '库博', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '库博', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '兔八哥伤害高，克制血量少的泰菲，兔八哥二级被动可以闪避泰菲的炮，兔八哥的巨型胡萝卜克制泰菲霸体减伤推奶酪，兔八哥的打洞可以躲避泰菲的地雷锁定',
+    group: [
+      { name: '泰菲', type: 'character' },
+      { name: '兔八哥', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '兔八哥', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '剑客杰瑞HP高，斯飞短时间难以击倒，并且剑客杰瑞能够击倒三级被动状态下的斯飞，同时剑客杰瑞的格挡能够抵挡并反击斯飞',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '剑客杰瑞', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '剑客杰瑞', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '斯飞须格外小心牛仔杰瑞仙人掌带来的控制与减速。同时牛仔杰瑞琴的控制与减速以及自身的霸体使斯飞难以击倒牛仔杰瑞',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '牛仔杰瑞', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '牛仔杰瑞', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '航海士杰瑞的技能控制能够打断斯飞追击节奏，同时航海士杰瑞被动带来的减速使斯飞难以进入被动强化，而且航海士杰瑞的破墙速度很快，斯飞难以守住墙缝',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '航海士杰瑞', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '航海士杰瑞', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '侦探杰瑞的高推速能够缩短奶酪期，同时烟雾弹带来的减速与沉默使斯飞无法有效进攻',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '侦探杰瑞', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '侦探杰瑞', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '罗菲的圆球可以打断斯飞的疾冲状态，并且武器技能能够使斯飞的攻势减弱。',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '罗宾汉泰菲', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '罗宾汉泰菲', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description:
+      '斯飞拦不住尼宝的翻滚，同时无法免疫尼宝鱼钩的控制；但斯飞在“疾冲”状态下被勾，抓在手上老鼠的还是会被电。',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '尼宝', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '尼宝', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description:
+      '杰瑞自身具备的高推速能够缩短奶酪期，同时斯飞需要注意杰瑞鸟哨下落的鞭炮，并且杰瑞主动技能给予的部分回血与延长火箭燃烧CD能够延长斯飞的节奏',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '杰瑞', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '杰瑞', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description:
+      '恶魔杰瑞的被动能够免疫斯飞的关键伤害或者控制，同时恶魔杰瑞的传送门能够大幅限制斯飞的攻势',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '恶魔杰瑞', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '恶魔杰瑞', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '剑客泰菲的头盔斯飞束手无策，并且剑客泰菲的长枪也能给予斯飞有效的干扰',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '剑客泰菲', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '剑客泰菲', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '雪梨给予的回复使斯飞难以短时间击倒老鼠，同时雪梨能够回复火箭上老鼠的血量，使斯飞追击难度上升',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '雪梨', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '雪梨', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description:
+      '天使泰菲的主动技能能够转移斯飞的伤害与控制，同时能够减慢火箭燃烧时间，并且天使泰菲能够通过武器技能获得霸体',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '天使泰菲', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '天使泰菲', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '蒙金奇主动技能能够给予斯飞有效干扰与中断斯飞追击的可能，同时斯飞无法有效处理战车',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '蒙金奇', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '蒙金奇', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description:
+      '天使杰瑞的被动禁用爪刀与沉默给予斯飞极大的进攻阻力，同时雷云的的减速与雷击给予斯飞有效干扰',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '天使杰瑞', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '天使杰瑞', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '表演家杰瑞的主动技能期间斯飞束手无策，并且斯飞无法有效处理三级被动复活的表演家杰瑞',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '表演者•杰瑞', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '表演者•杰瑞', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '梦游杰瑞主动技能带来的被动位移能够化解斯飞的突袭，同时梦游杰瑞的毛线球能够加快奶酪推进与快速破墙，斯飞难以牵制',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '梦游杰瑞', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '梦游杰瑞', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description:
+      '自身具备的高HP使斯飞短时间难以击倒，同时鲍姆主动技能的控制与拆除火箭的能力极大干扰斯飞节奏',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '鲍姆', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '鲍姆', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '猛攻可以禁用泰菲的圆滚滚，导致泰菲无法使用圆滚滚解控',
+    group: [
+      { name: '泰菲', type: 'character' },
+      { name: '猛攻', type: 'knowledgeCard', factionId: 'cat' },
+    ],
+    relation: {
+      kind: 'counteredByKnowledgeCards',
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '猛攻', type: 'knowledgeCard', factionId: 'cat' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '猫在抓着老鼠时，可以通过屈打看到泰菲的位置，从而堤防泰菲的远程炮',
+    group: [
+      { name: '泰菲', type: 'character' },
+      { name: '屈打成招', type: 'knowledgeCard', factionId: 'cat' },
+    ],
+    relation: {
+      kind: 'counteredByKnowledgeCards',
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '屈打成招', type: 'knowledgeCard', factionId: 'cat' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '有蓄势一击加持的猫可以一刀秒泰菲',
+    group: [
+      { name: '泰菲', type: 'character' },
+      { name: '蓄势一击', type: 'knowledgeCard', factionId: 'cat' },
+    ],
+    relation: {
+      kind: 'counteredByKnowledgeCards',
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '蓄势一击', type: 'knowledgeCard', factionId: 'cat' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '泰菲血量低，前期三级自保较弱，容易被伤害高的穷追猫针对',
+    group: [
+      { name: '泰菲', type: 'character' },
+      { name: '穷追猛打', type: 'knowledgeCard', factionId: 'cat' },
+    ],
+    relation: {
+      kind: 'counteredByKnowledgeCards',
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '穷追猛打', type: 'knowledgeCard', factionId: 'cat' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '泰菲机动性差，基础速度不高，没队友干扰的情况下容易被速度高的乘胜猫追杀',
+    group: [
+      { name: '泰菲', type: 'character' },
+      { name: '乘胜追击', type: 'knowledgeCard', factionId: 'cat' },
+    ],
+    relation: {
+      kind: 'counteredByKnowledgeCards',
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '乘胜追击', type: 'knowledgeCard', factionId: 'cat' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '我生气了！',
+    group: [
+      { name: '泰菲', type: 'character' },
+      { name: '我生气了！', type: 'specialSkill', factionId: 'cat' },
+    ],
+    relation: {
+      kind: 'countersSpecialSkills',
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '我生气了！', type: 'specialSkill', factionId: 'cat' },
+      isMinor: false,
     },
   },
   {
@@ -4425,7 +4978,7 @@ const characterRelations: Trait[] = [
       kind: 'counters',
       subject: { name: '剑客杰瑞', type: 'character' },
       target: { name: '莱特宁', type: 'character' },
-      isMinor: true,
+      isMinor: false,
     },
   },
   {
@@ -5387,20 +5940,8 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '斯飞的高机动性让莉莉的干扰不起作用。',
-    group: [
-      { name: '斯飞', type: 'character' },
-      { name: '剑客莉莉', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '斯飞', type: 'character' },
-      target: { name: '剑客莉莉', type: 'character' },
-      isMinor: true,
-    },
-  },
-  {
-    description: '斯飞的被动免疫玛丽的扇子技能，同时玛丽缺乏打架能力。',
+    description:
+      '斯飞迅捷效果下免疫玛丽的扇子技能，当玛丽被动锁血时斯飞被动的感电效果能直接击倒玛丽，同时玛丽无法轻易逃离斯飞的追击。',
     group: [
       { name: '斯飞', type: 'character' },
       { name: '玛丽', type: 'character' },
@@ -5413,20 +5954,8 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '斯飞的被动免疫魔术师黄色卡牌，同时魔术师缺乏自保和打架能力。',
-    group: [
-      { name: '斯飞', type: 'character' },
-      { name: '魔术师', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '斯飞', type: 'character' },
-      target: { name: '魔术师', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
-    description: '斯飞变成大星星也能吃到被动，仙女鼠的减速可以忽略。',
+    description:
+      '斯飞变成大星星也能触发被动，同时仙女鼠的减速可以忽略，带来的反向能被斯飞的迅捷效果免疫。',
     group: [
       { name: '斯飞', type: 'character' },
       { name: '仙女鼠', type: 'character' },
@@ -5435,6 +5964,19 @@ const characterRelations: Trait[] = [
       kind: 'counters',
       subject: { name: '斯飞', type: 'character' },
       target: { name: '仙女鼠', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '泰菲的低HP使斯飞能够一套击倒，同时斯飞的高机动性能够无视泰菲的地雷',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '泰菲', type: 'character' },
+    ],
+    relation: {
+      kind: 'counters',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '泰菲', type: 'character' },
       isMinor: true,
     },
   },
@@ -5480,7 +6022,7 @@ const characterRelations: Trait[] = [
   },
   {
     description:
-      '地雷的强制位移能带走垃圾桶，咸鱼可以被圆滚滚强行踩掉，莱特宁闪现过来泰菲也可以秒开圆滚滚躲避攻击。',
+      '地雷的强制位移能带走垃圾桶，咸鱼可以被圆滚滚强行踩掉，莱特宁闪现过来泰菲也可以秒开圆滚滚躲避攻击，被三级闪震慑到，泰菲也可以开圆滚滚解控。',
     group: [
       { name: '泰菲', type: 'character' },
       { name: '莱特宁', type: 'character' },
@@ -6050,6 +6592,45 @@ const characterRelations: Trait[] = [
       kind: 'countersKnowledgeCards',
       subject: { name: '斯飞', type: 'character' },
       target: { name: '无畏', type: 'knowledgeCard', factionId: 'mouse' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '在斯飞面前这张卡生效不明显',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '孤军奋战', type: 'knowledgeCard', factionId: 'mouse' },
+    ],
+    relation: {
+      kind: 'countersKnowledgeCards',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '孤军奋战', type: 'knowledgeCard', factionId: 'mouse' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '斯飞疾冲状态带来的感电效果能直接中断漂浮持续',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '魔术漂浮', type: 'specialSkill', factionId: 'mouse' },
+    ],
+    relation: {
+      kind: 'countersSpecialSkills',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '魔术漂浮', type: 'specialSkill', factionId: 'mouse' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '斯飞高移速能几乎无视翻滚的位移',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '急速翻滚', type: 'specialSkill', factionId: 'mouse' },
+    ],
+    relation: {
+      kind: 'countersSpecialSkills',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '急速翻滚', type: 'specialSkill', factionId: 'mouse' },
       isMinor: true,
     },
   },

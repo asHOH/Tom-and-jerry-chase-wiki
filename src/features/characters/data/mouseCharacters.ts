@@ -1101,6 +1101,10 @@ const mouseCharacterDefinitions = {
         name: '干扰投掷',
         description: '道具起手，衔接武器技能打出连控。',
       },
+      {
+        name: '冰冻保鲜',
+        description: '使用冰冻保鲜配格挡，既可拖格挡CD，在冰保结束后也可以使用格挡反击',
+      },
     ],
     skillAllocations: [
       {
@@ -1288,14 +1292,14 @@ const mouseCharacterDefinitions = {
     mousePositioningTags: [
       {
         tagName: '破局',
-        isMinor: false,
+        isMinor: true,
         weapon: 1,
         description: '火箭炮能炸开捕鼠夹和叉子。',
         additionalDescription: '缺点是CD长，并且需要把控角度。',
       },
       {
         tagName: '砸墙',
-        isMinor: true,
+        isMinor: false,
         weapon: 1,
         description: '火箭筒可以提供可观的砸墙伤害；三级被动免疫鞭炮和泡泡爆炸，可辅助砸墙。',
         additionalDescription: '',
@@ -1354,7 +1358,7 @@ const mouseCharacterDefinitions = {
       {
         cards: ['S-舍己', 'S-铁血', 'C-救救我', 'S-缴械'],
         description:
-          '用来打依赖爪刀或有无敌霸体技能的猫。炮能触发缴械，泰菲不能自主取消火箭筒后摇，容易被猫秒开霸体攻击到，浪费一个圆滚滚，缴械能在一定程度上遏制霸体的发挥',
+          '用来打依赖爪刀或有无敌霸体技能的猫。泰菲的{火箭筒}不能取消后摇，{缴械}可以在一定程度上防止霸体卡后摇反杀。',
         detailedDescription: '',
       },
       {
@@ -1369,6 +1373,11 @@ const mouseCharacterDefinitions = {
         cards: ['S-舍己', 'S-铁血', 'C-救救我', 'A-逃窜', 'C-不屈'],
         description:
           '这套卡也是主点被动，用于牵制救援充足的阵容，{不屈}加{逃窜}再加被动，速度快，回血快，续航稳定，增加容错，缺点是{1级被动}加Hp上限的时间较少。',
+      },
+      {
+        cards: ['S-舍己', 'S-铁血', 'A-冲冠一怒', 'C-不屈', 'C-救救我'],
+        description:
+          '用于大图，冲冠一怒增强泰菲的机动性，方便泰菲快速支援队友，在阵容泰菲为副推时使用',
       },
     ],
     skills: [
