@@ -816,7 +816,7 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '雪梨和天使泰菲的技能搭配能大幅提高生存能力。',
+    description: '雪梨帮天使泰菲免于拍抓，天使泰菲帮雪梨提高生存能力。',
     group: [
       { name: '天使泰菲', type: 'character' },
       { name: '雪梨', type: 'character' },
@@ -1515,20 +1515,6 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description:
-      '国王杰瑞主救能力较差，但战旗与其队友配合会有较大的威胁。例如进攻旗加伤，守护旗在冲刺真空期不好处理，感知旗拉扯，灵巧旗躲冲刺。',
-    group: [
-      { name: '国王杰瑞', type: 'character' },
-      { name: '布奇', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '国王杰瑞', type: 'character' },
-      target: { name: '布奇', type: 'character' },
-      isMinor: true,
-    },
-  },
-  {
     description: '海盗的金币可以打断冲刺前摇，炸毁的火箭也可以拖延桶盖的霸体，但救援能力较差。',
     group: [
       { name: '航海士杰瑞', type: 'character' },
@@ -1553,19 +1539,6 @@ const characterRelations: Trait[] = [
       subject: { name: '剑客莉莉', type: 'character' },
       target: { name: '布奇', type: 'character' },
       isMinor: true,
-    },
-  },
-  {
-    description: '剑客泰菲的头盔能反制布奇的防守奶酪能力，或是安全地进行救援。',
-    group: [
-      { name: '剑客泰菲', type: 'character' },
-      { name: '布奇', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '剑客泰菲', type: 'character' },
-      target: { name: '布奇', type: 'character' },
-      isMinor: false,
     },
   },
   {
@@ -1631,19 +1604,6 @@ const characterRelations: Trait[] = [
       subject: { name: '霜月', type: 'character' },
       target: { name: '布奇', type: 'character' },
       isMinor: false,
-    },
-  },
-  {
-    description: '高等级天使杰瑞不好处理。',
-    group: [
-      { name: '天使杰瑞', type: 'character' },
-      { name: '布奇', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '天使杰瑞', type: 'character' },
-      target: { name: '布奇', type: 'character' },
-      isMinor: true,
     },
   },
   {
@@ -1832,20 +1792,6 @@ const characterRelations: Trait[] = [
   },
   {
     description:
-      '恶魔汤姆非常怕破局或拥有禁用技能能力的老鼠。剑客泰菲头盔能强行救援或掩护队友强推奶酪，长枪能禁用技能，因此克制恶魔汤姆。尽管恶魔汤姆可以用"我生气了！"快速击破头盔，但该特技CD极长，而头盔的CD较短，且击破头盔所需的时间足以让剑客泰菲逃跑，综合来看该克制关系仍然十分明显。',
-    group: [
-      { name: '剑客泰菲', type: 'character' },
-      { name: '恶魔汤姆', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '剑客泰菲', type: 'character' },
-      target: { name: '恶魔汤姆', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
-    description:
       '天使Lv.1被动禁用爪刀使红温流恶汤无法发挥效果；雷云使被动流恶汤一直遭雷劈；后期3级被动禁用技能，对于恶汤技能型防守特别难受；主动技能复活，能够避免恶汤的死守火箭救不下来而减员，也能尽可能的拖时间，恶魔汤姆没有很强的追击性，很难再把复活的人击倒。',
     group: [
       { name: '天使杰瑞', type: 'character' },
@@ -1922,19 +1868,6 @@ const characterRelations: Trait[] = [
       subject: { name: '剑客莉莉', type: 'character' },
       target: { name: '凯特', type: 'character' },
       isMinor: true,
-    },
-  },
-  {
-    description: '凯特无法阻止剑客泰菲头盔救人。',
-    group: [
-      { name: '剑客泰菲', type: 'character' },
-      { name: '凯特', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '剑客泰菲', type: 'character' },
-      target: { name: '凯特', type: 'character' },
-      isMinor: false,
     },
   },
   {
@@ -2283,20 +2216,6 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description:
-      '剑客泰菲的头盔可以抵挡牛仔汤姆的攻势，长枪的禁用技能可以大幅削弱牛仔汤姆的攻击力。',
-    group: [
-      { name: '剑客泰菲', type: 'character' },
-      { name: '牛仔汤姆', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '剑客泰菲', type: 'character' },
-      target: { name: '牛仔汤姆', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
     description: '杰瑞的主动技能能够解除附近老鼠的受伤状态。',
     group: [
       { name: '杰瑞', type: 'character' },
@@ -2566,19 +2485,6 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '剑客泰菲破局能力强，能突破侍卫汤姆的火炮防守。',
-    group: [
-      { name: '剑客泰菲', type: 'character' },
-      { name: '侍卫汤姆', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '剑客泰菲', type: 'character' },
-      target: { name: '侍卫汤姆', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
     description: '米可生存能力非常强，容易采访到侍卫汤姆的素材，侍卫汤姆对此缺乏反制手段。',
     group: [
       { name: '米可', type: 'character' },
@@ -2820,20 +2726,6 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description:
-      '魔术师的兔子大表哥举火箭影响放飞效率，且魔术师兔子先生多拉扯，强推与救援也不好拦截。',
-    group: [
-      { name: '魔术师', type: 'character' },
-      { name: '汤姆', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '魔术师', type: 'character' },
-      target: { name: '汤姆', type: 'character' },
-      isMinor: true,
-    },
-  },
-  {
     description: '拿坡里斜塔干扰汤姆无敌上火箭。',
     group: [
       { name: '拿坡里鼠', type: 'character' },
@@ -2982,19 +2874,6 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '头盔强救能力天汤不好处理。',
-    group: [
-      { name: '剑客泰菲', type: 'character' },
-      { name: '天使汤姆', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '剑客泰菲', type: 'character' },
-      target: { name: '天使汤姆', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
     description: '蓝图打断飞行，圆消耗武器道具，且莱恩多缴械。',
     group: [
       { name: '莱恩', type: 'character' },
@@ -3112,19 +2991,6 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '剑客泰菲拥有长时间的群体无敌，克制甲油和香水防守。',
-    group: [
-      { name: '剑客泰菲', type: 'character' },
-      { name: '图多盖洛', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '剑客泰菲', type: 'character' },
-      target: { name: '图多盖洛', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
     description: '扇子作为有效破局手段，主动技能可以禁用图多的核心爪刀。',
     group: [
       { name: '玛丽', type: 'character' },
@@ -3190,19 +3056,6 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '剑客泰菲头盔破局和救援能力过于强大。',
-    group: [
-      { name: '剑客泰菲', type: 'character' },
-      { name: '兔八哥', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '剑客泰菲', type: 'character' },
-      target: { name: '兔八哥', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
     description: '战车能帮队友挡胡萝卜飞镖，且冲撞可以将兔子从洞里撞出来。',
     group: [
       { name: '蒙金奇', type: 'character' },
@@ -3226,7 +3079,7 @@ const characterRelations: Trait[] = [
       kind: 'counters',
       subject: { name: '魔术师', type: 'character' },
       target: { name: '兔八哥', type: 'character' },
-      isMinor: true,
+      isMinor: false,
     },
   },
   {
@@ -3335,19 +3188,6 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '剑客泰菲的头盔救援能力强，强推能力也强。',
-    group: [
-      { name: '剑客泰菲', type: 'character' },
-      { name: '托普斯', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '剑客泰菲', type: 'character' },
-      target: { name: '托普斯', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
     description: '罗宾汉泰菲能快速击倒托普斯的分身。',
     group: [
       { name: '罗宾汉泰菲', type: 'character' },
@@ -3425,20 +3265,6 @@ const characterRelations: Trait[] = [
       subject: { name: '梦游杰瑞', type: 'character' },
       target: { name: '追风汤姆', type: 'character' },
       isMinor: true,
-    },
-  },
-  {
-    description:
-      '魔术师携带兔子大表哥时可通过刷经验形成等级压制；同时追汤伤害低，难以处理兔子。兔子大表哥还会在追汤试图利用技能将魔术师绑上火箭时瞬移出现挡下技能，导致追汤被迫落地手动绑火箭。兔子保镖机制让追汤不易通过鞭尸魔术师刷新挣扎进度。',
-    group: [
-      { name: '魔术师', type: 'character' },
-      { name: '追风汤姆', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '魔术师', type: 'character' },
-      target: { name: '追风汤姆', type: 'character' },
-      isMinor: false,
     },
   },
   {
@@ -3537,16 +3363,16 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '可以提前拦截非高点的头盔，但是当前环境不大适合带该卡。',
+    description: '总结头盔克制守奶酪，守奶酪。断节奏，破局强，ban位买房。',
     group: [
       { name: '剑客泰菲', type: 'character' },
-      { name: '屈打成招', type: 'knowledgeCard', factionId: 'cat' },
+      { name: '严防死守', type: 'knowledgeCard', factionId: 'cat' },
     ],
     relation: {
-      kind: 'counteredByKnowledgeCards',
+      kind: 'countersKnowledgeCards',
       subject: { name: '剑客泰菲', type: 'character' },
-      target: { name: '屈打成招', type: 'knowledgeCard', factionId: 'cat' },
-      isMinor: true,
+      target: { name: '严防死守', type: 'knowledgeCard', factionId: 'cat' },
+      isMinor: false,
     },
   },
   {
@@ -4878,19 +4704,6 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '恶魔杰瑞武器技能可以将恶魔汤姆传送走，克制其死守。',
-    group: [
-      { name: '恶魔杰瑞', type: 'character' },
-      { name: '恶魔汤姆', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '恶魔杰瑞', type: 'character' },
-      target: { name: '恶魔汤姆', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
     description: '后期恶魔杰瑞可刷盾免疫苏蕊攻击，但较长前摇可能会被苏蕊反制。',
     group: [
       { name: '恶魔杰瑞', type: 'character' },
@@ -5017,45 +4830,6 @@ const characterRelations: Trait[] = [
       kind: 'counters',
       subject: { name: '剑客杰瑞', type: 'character' },
       target: { name: '托普斯', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
-    description: '自身相对强悍的保节奏能力被头盔完全克制。',
-    group: [
-      { name: '剑客泰菲', type: 'character' },
-      { name: '米特', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '剑客泰菲', type: 'character' },
-      target: { name: '米特', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
-    description: '大部分稳救都能断苏蕊的节奏。',
-    group: [
-      { name: '剑客泰菲', type: 'character' },
-      { name: '苏蕊', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '剑客泰菲', type: 'character' },
-      target: { name: '苏蕊', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
-    description: '被头盔稳定救人断节奏且无法反制。',
-    group: [
-      { name: '剑客泰菲', type: 'character' },
-      { name: '图茨', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '剑客泰菲', type: 'character' },
-      target: { name: '图茨', type: 'character' },
       isMinor: false,
     },
   },
@@ -6865,6 +6639,86 @@ const characterRelations: Trait[] = [
       kind: 'countersSpecialSkills',
       subject: { name: '追风汤姆', type: 'character' },
       target: { name: '魔术漂浮', type: 'specialSkill', factionId: 'mouse' },
+      isMinor: true,
+    },
+  },
+  {
+    description:
+      '火车头配合我生气了，克制国王护盾。但权杖的无敌，进攻战旗的高伤，救援战旗的速救，克制恶汤。',
+    group: [
+      { name: '国王杰瑞', type: 'character' },
+      { name: '恶魔汤姆', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '国王杰瑞', type: 'character' },
+      target: { name: '恶魔汤姆', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '国王杰瑞主救能力较差，但战旗与其队友配合会有较大的威胁。例如进攻旗加伤，守护旗在冲刺真空期不好处理，感知旗拉扯，灵巧旗躲冲刺。',
+    group: [
+      { name: '国王杰瑞', type: 'character' },
+      { name: '布奇', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '国王杰瑞', type: 'character' },
+      target: { name: '布奇', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '奔跑状态斯飞下会受到分身带来的失明效果，影响追击',
+    group: [
+      { name: '侦探泰菲', type: 'character' },
+      { name: '斯飞', type: 'character' },
+    ],
+    relation: {
+      kind: 'counters',
+      subject: { name: '侦探泰菲', type: 'character' },
+      target: { name: '斯飞', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '火车头红温克制刷盾强推强救，但传送门流放克制死守，',
+    group: [
+      { name: '恶魔杰瑞', type: 'character' },
+      { name: '恶魔汤姆', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '恶魔杰瑞', type: 'character' },
+      target: { name: '恶魔汤姆', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '大小兔子都能给撞击火车头触发红温，但魔术师的红牌克制恶魔汤姆',
+    group: [
+      { name: '魔术师', type: 'character' },
+      { name: '恶魔汤姆', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '魔术师', type: 'character' },
+      target: { name: '恶魔汤姆', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '斯飞的被动免疫魔术师黄色卡牌，',
+    group: [
+      { name: '魔术师', type: 'character' },
+      { name: '斯飞', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '魔术师', type: 'character' },
+      target: { name: '斯飞', type: 'character' },
       isMinor: true,
     },
   },

@@ -865,8 +865,8 @@ const mouseCharacterDefinitions = {
       },
     ],
     specialSkills: [
-      { name: '魔术漂浮', description: '通用特技。' },
-      { name: '绝处逢生', description: '通用特技。' },
+      { name: '魔术漂浮', description: '提高自保能力。' },
+      { name: '绝处逢生', description: '铁血拉距快速起身。' },
       { name: '干扰投掷', description: '提高干扰能力。' },
     ],
   },
@@ -2176,7 +2176,7 @@ const mouseCharacterDefinitions = {
       },
       {
         name: '应急治疗',
-        description: '应对高机动性猫时使用。',
+        description: '应对高机动性猫时使用，增加容错',
       },
     ],
     aliases: ['恶杰'],
@@ -2371,8 +2371,8 @@ const mouseCharacterDefinitions = {
         description: '通用特技。',
       },
       {
-        name: '绝处逢生',
-        description: '用于自保或破坏老鼠夹。',
+        name: '干扰投掷',
+        description: '配合二武红恶魔。做到类似佩克斯弹琴效果',
       },
     ],
   },
@@ -2588,7 +2588,7 @@ const mouseCharacterDefinitions = {
     specialSkills: [
       {
         name: '魔术漂浮',
-        description: '通用特技。',
+        description: '加强自保能力。',
       },
     ],
   },
