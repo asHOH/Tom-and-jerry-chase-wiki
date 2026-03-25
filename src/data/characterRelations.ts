@@ -1690,6 +1690,19 @@ const characterRelations: Trait[] = [
     },
   },
   {
+    description: '航海士杰瑞的金币和火药桶十分克制剑客汤姆。',
+    group: [
+      { name: '航海士杰瑞', type: 'character' },
+      { name: '剑客汤姆', type: 'character' },
+    ],
+    relation: {
+      kind: 'counters',
+      subject: { name: '航海士杰瑞', type: 'character' },
+      target: { name: '剑客汤姆', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
     description: '凯特难以处理国王杰瑞的国王权杖以及国王战旗。',
     group: [
       { name: '国王杰瑞', type: 'character' },
@@ -3004,7 +3017,8 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '兔子大表哥可以一直挡胡萝卜飞镖，还能将兔八哥从洞里顶出来。',
+    description:
+      '兔子大表哥体型较大并且也能被宣战，能挡住胡萝卜飞镖。并且红牌的沉默效果会导致兔八哥进攻能力大打折扣。',
     group: [
       { name: '魔术师', type: 'character' },
       { name: '兔八哥', type: 'character' },
@@ -3013,7 +3027,7 @@ const characterRelations: Trait[] = [
       kind: 'counters',
       subject: { name: '魔术师', type: 'character' },
       target: { name: '兔八哥', type: 'character' },
-      isMinor: false,
+      isMinor: true,
     },
   },
   {

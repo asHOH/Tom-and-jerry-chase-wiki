@@ -450,7 +450,7 @@ const mapDefinitions: Record<string, MapDefinition> = {
   '天宫-云上': {
     type: '常规地图',
     size: '小型',
-    aliases: ['新天宫'],
+    aliases: ['新天宫', '天宫二'],
     studyLevelUnlock: '大师学业',
     roomCount: 5,
     pipeCount: 2,
