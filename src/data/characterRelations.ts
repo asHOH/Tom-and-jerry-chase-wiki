@@ -736,6 +736,19 @@ const characterRelations: Trait[] = [
     },
   },
   {
+    description: '马索尔的升龙拳可以使霸体中的猫咪修不了火箭，提高拦截几率。',
+    group: [
+      { name: '航海士杰瑞', type: 'character' },
+      { name: '马索尔', type: 'character' },
+    ],
+    relation: {
+      kind: 'collaborators',
+      subject: { name: '航海士杰瑞', type: 'character' },
+      target: { name: '马索尔', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
     description: '音乐家杰瑞可拆掉火箭，便于霜月守火箭。',
     group: [
       { name: '霜月', type: 'character' },
@@ -3403,6 +3416,20 @@ const characterRelations: Trait[] = [
   },
   {
     description:
+      '守株待兔的固定减伤会抵消小绿恶魔的伤害，使伤害为零，导致不触发恶菲的三倍增伤。彻底失去伤害',
+    group: [
+      { name: '恶魔泰菲', type: 'character' },
+      { name: '守株待鼠', type: 'knowledgeCard', factionId: 'cat' },
+    ],
+    relation: {
+      kind: 'counteredByKnowledgeCards',
+      subject: { name: '恶魔泰菲', type: 'character' },
+      target: { name: '守株待鼠', type: 'knowledgeCard', factionId: 'cat' },
+      isMinor: true,
+    },
+  },
+  {
+    description:
       '朝圣者泰菲处于圆球状态时获得猛攻效果期间无法撞击敌方，同时也无法主动取消圆球状态。',
     group: [
       { name: '朝圣者泰菲', type: 'character' },
@@ -3943,7 +3970,7 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '治疗可以解除Lv.1被动的标记效果。',
+    description: '治疗可以解除Lv.1被动的标记与咸鱼效果。',
     group: [
       { name: '莱特宁', type: 'character' },
       { name: '应急治疗', type: 'specialSkill', factionId: 'mouse' },
@@ -6348,16 +6375,16 @@ const characterRelations: Trait[] = [
   },
   {
     description:
-      '金币难以命中飞行状态下的追汤，且无法对其造成控制，炸药桶可用风推走；但可以组成双拆体系应对追汤',
+      '火药桶炸掉火箭后能让追风被迫落地修二手火箭，大幅提高拦截几率。但是航海士杰瑞没有自保，一旦被针对很难逃脱。而且火药桶会被追风汤姆的风吹走。',
     group: [
       { name: '追风汤姆', type: 'character' },
       { name: '航海士杰瑞', type: 'character' },
     ],
     relation: {
-      kind: 'counters',
-      subject: { name: '追风汤姆', type: 'character' },
-      target: { name: '航海士杰瑞', type: 'character' },
-      isMinor: true,
+      kind: 'counterEachOther',
+      target: { name: '追风汤姆', type: 'character' },
+      subject: { name: '航海士杰瑞', type: 'character' },
+      isMinor: false,
     },
   },
   {
