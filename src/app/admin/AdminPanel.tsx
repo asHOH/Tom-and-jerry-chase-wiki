@@ -7,6 +7,10 @@ import { useToast } from '@/context/ToastContext';
 import { Database } from '@/data/database.types';
 import CategoryManagement from '@/features/admin/components/CategoryManagement';
 import UserManagement from '@/features/admin/components/UserManagement';
+import {
+  diffGameActionIdArray,
+  summarizeGameActionValue,
+} from '@/features/admin/utils/gameActionPreview';
 
 type Category = Database['public']['Tables']['categories']['Row'];
 type ActionStatus = Database['public']['Enums']['game_data_action_status'];
@@ -192,71 +196,6 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
     () => filteredActions.filter((a) => a.status === 'approved' && a.is_public),
     [filteredActions]
   );
-
-  const summarizeValue = (value: unknown): string => {
-    if (value === null || value === undefined) return '空';
-    if (typeof value === 'string') return value.length > 60 ? `${value.slice(0, 60)}…` : value;
-    if (Array.isArray(value)) return value.length === 0 ? '空' : `数组(${value.length})`;
-    if (typeof value === 'object') return `对象(${Object.keys(value as object).length}键)`;
-    return String(value);
-  };
-
-  const diffIdArrays = (
-    oldValue: unknown,
-    newValue: unknown
-  ): {
-    added: string[];
-    removed: string[];
-    changed: Array<{ id: string; fields: string[] }>;
-    enabled: boolean;
-  } => {
-    if (!Array.isArray(oldValue) && !Array.isArray(newValue))
-      return { added: [], removed: [], changed: [], enabled: false };
-    const oldArr = Array.isArray(oldValue) ? oldValue : [];
-    const newArr = Array.isArray(newValue) ? newValue : [];
-    const oldMap = new Map<string, Record<string, unknown>>();
-    const newMap = new Map<string, Record<string, unknown>>();
-    for (const item of oldArr) {
-      if (item && typeof item === 'object' && typeof (item as { id?: unknown }).id === 'string') {
-        oldMap.set((item as { id: string }).id, item as Record<string, unknown>);
-      }
-    }
-    for (const item of newArr) {
-      if (item && typeof item === 'object' && typeof (item as { id?: unknown }).id === 'string') {
-        newMap.set((item as { id: string }).id, item as Record<string, unknown>);
-      }
-    }
-    if (oldMap.size === 0 && newMap.size === 0)
-      return { added: [], removed: [], changed: [], enabled: false };
-
-    const added: string[] = [];
-    const removed: string[] = [];
-    const changed: Array<{ id: string; fields: string[] }> = [];
-
-    for (const id of newMap.keys()) {
-      if (!oldMap.has(id)) added.push(id);
-    }
-    for (const id of oldMap.keys()) {
-      if (!newMap.has(id)) removed.push(id);
-    }
-    for (const id of newMap.keys()) {
-      const oldItem = oldMap.get(id);
-      const newItem = newMap.get(id);
-      if (!oldItem || !newItem) continue;
-      const fields = new Set([...Object.keys(oldItem), ...Object.keys(newItem)]);
-      const changedFields: string[] = [];
-      for (const key of fields) {
-        const ov = oldItem[key];
-        const nv = newItem[key];
-        if (JSON.stringify(ov) !== JSON.stringify(nv)) changedFields.push(key);
-      }
-      if (changedFields.length > 0) {
-        changed.push({ id, fields: changedFields });
-      }
-    }
-
-    return { added, removed, changed, enabled: true };
-  };
 
   const moderateMany = async (action: 'approve' | 'reject') => {
     if (moderatingId) return;
@@ -798,9 +737,12 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
                                 };
                                 const op = action.op ?? 'set';
                                 const path = action.path ?? '<无路径>';
-                                const oldSummary = summarizeValue(action.oldValue);
-                                const newSummary = summarizeValue(action.newValue);
-                                const idDiff = diffIdArrays(action.oldValue, action.newValue);
+                                const oldSummary = summarizeGameActionValue(action.oldValue);
+                                const newSummary = summarizeGameActionValue(action.newValue);
+                                const idDiff = diffGameActionIdArray(
+                                  action.oldValue,
+                                  action.newValue
+                                );
 
                                 return (
                                   <li
@@ -843,13 +785,15 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
                                           </div>
                                           {idDiff.changed.length > 0 && (
                                             <div className='rounded bg-blue-50 px-2 py-1 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200'>
-                                              变更字段：
-                                              {idDiff.changed.map((c, i) => (
-                                                <span key={c.id} className='ml-1'>
-                                                  {c.id}({c.fields.join('、')})
-                                                  {i < idDiff.changed.length - 1 ? '；' : ''}
-                                                </span>
-                                              ))}
+                                              <div className='font-medium'>变更字段：</div>
+                                              <ul className='mt-1 space-y-0.5'>
+                                                {idDiff.changed.map((c) => (
+                                                  <li key={c.id} className='break-words'>
+                                                    <span className='font-medium'>{c.id}</span>：
+                                                    {c.fields.join('、')}
+                                                  </li>
+                                                ))}
+                                              </ul>
                                             </div>
                                           )}
                                         </div>
