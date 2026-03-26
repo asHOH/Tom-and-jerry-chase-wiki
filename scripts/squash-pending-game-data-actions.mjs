@@ -5,9 +5,12 @@
  *
  * Usage:
  *   node scripts/squash-pending-game-data-actions.mjs [--apply] [--entity-type=characters] [--limit=20]
+ *   node scripts/squash-pending-game-data-actions.mjs --status=approved --date=2026-02-20 --created-by-nickname=SYSTEM-CPYTHON --entity-type=characters --export-json=./scripts/temp/squashed-2026-02-20-system-cpython.json
  *
  * Default: dry-run (no writes).
  */
+import fs from 'node:fs/promises';
+import path from 'node:path';
 import process from 'node:process';
 import nextEnv from '@next/env';
 import { createClient } from '@supabase/supabase-js';
@@ -41,6 +44,21 @@ function getArgValue(name) {
 
 const groupLimit = getArgValue('--limit') ? Number(getArgValue('--limit')) : undefined;
 const filterEntityType = getArgValue('--entity-type') || undefined;
+const filterStatus = getArgValue('--status') || 'pending';
+const filterDate = getArgValue('--date') || undefined;
+const filterCreatedBy = getArgValue('--created-by') || undefined;
+const filterCreatedByNickname = getArgValue('--created-by-nickname') || undefined;
+const exportJsonPath = getArgValue('--export-json') || undefined;
+
+if (isApply && filterStatus !== 'pending') {
+  console.error('--apply is only supported for --status=pending');
+  process.exit(1);
+}
+
+if (filterDate && !/^\d{4}-\d{2}-\d{2}$/.test(filterDate)) {
+  console.error('--date must be in YYYY-MM-DD format');
+  process.exit(1);
+}
 
 const supabase = createClient(SUPABASE_URL, SERVICE_KEY);
 
@@ -172,14 +190,44 @@ function splitEntriesByRoot(entries) {
 // Main
 // ---------------------------------------------
 async function main() {
-  const { data: rows, error } = await supabase
+  let query = supabase
     .from('game_data_actions')
     .select('id, entity_type, entry, created_at, created_by, message, status, is_public')
-    .eq('status', 'pending')
+    .eq('status', filterStatus)
     .order('created_at', { ascending: true });
 
+  if (filterDate) {
+    const start = `${filterDate}T00:00:00.000Z`;
+    const [year, month, day] = filterDate.split('-').map(Number);
+    const end = new Date(Date.UTC(year, month - 1, day + 1)).toISOString();
+    query = query.gte('created_at', start).lt('created_at', end);
+  }
+
+  if (filterCreatedBy) {
+    query = query.eq('created_by', filterCreatedBy);
+  }
+
+  if (filterCreatedByNickname) {
+    const { data: userRows, error: userError } = await supabase
+      .from('users_public_view')
+      .select('id')
+      .eq('nickname', filterCreatedByNickname);
+    if (userError) {
+      console.error('Failed to resolve created-by nickname:', userError);
+      process.exit(1);
+    }
+    const userIds = (userRows ?? []).map((u) => u.id).filter(Boolean);
+    if (userIds.length === 0) {
+      console.log(`No users found for nickname: ${filterCreatedByNickname}`);
+      process.exit(0);
+    }
+    query = query.in('created_by', userIds);
+  }
+
+  const { data: rows, error } = await query;
+
   if (error) {
-    console.error('Failed to fetch pending actions:', error);
+    console.error('Failed to fetch actions:', error);
     process.exit(1);
   }
 
@@ -214,6 +262,7 @@ async function main() {
   // split across multiple root-groups should only be rejected once all its
   // groups have been processed).
   const supersededIds = new Set();
+  const exportedGroups = [];
 
   for (const [key, { items, rowIds }] of groupEntries) {
     const parts = key.split('::');
@@ -228,6 +277,20 @@ async function main() {
     console.log(
       `Group ${entityType}/${root} by ${author}: rows=${items.length}, actions=${history.length} -> ${squashed.length} (saved ${delta})`
     );
+
+    if (exportJsonPath) {
+      exportedGroups.push({
+        key,
+        entityType,
+        author,
+        root,
+        rowIds: [...rowIds],
+        historyCount: history.length,
+        squashedCount: squashed.length,
+        history,
+        squashed,
+      });
+    }
 
     if (!isApply) continue;
 
@@ -292,6 +355,33 @@ async function main() {
         );
       }
     }
+  }
+
+  if (exportJsonPath) {
+    const resolvedPath = path.resolve(process.cwd(), exportJsonPath);
+    await fs.mkdir(path.dirname(resolvedPath), { recursive: true });
+    await fs.writeFile(
+      resolvedPath,
+      JSON.stringify(
+        {
+          generatedAt: new Date().toISOString(),
+          filters: {
+            status: filterStatus,
+            entityType: filterEntityType ?? null,
+            createdBy: filterCreatedBy ?? null,
+            createdByNickname: filterCreatedByNickname ?? null,
+            date: filterDate ?? null,
+            limit: groupLimit ?? null,
+          },
+          groupCount: exportedGroups.length,
+          groups: exportedGroups,
+        },
+        null,
+        2
+      ),
+      'utf8'
+    );
+    console.log(`Exported dry-run details to ${resolvedPath}`);
   }
 }
 
