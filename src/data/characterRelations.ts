@@ -763,6 +763,58 @@ const characterRelations: Trait[] = [
     },
   },
   {
+    description: '雪梨的回血配合泰菲被动霸体和减伤，没有强制位移和高伤的情况下可以强行推奶酪',
+    group: [
+      { name: '泰菲', type: 'character' },
+      { name: '雪梨', type: 'character' },
+    ],
+    relation: {
+      kind: 'collaborators',
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '雪梨', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '泰菲蹭国王的强化救援战旗，利用圆滚滚的无敌位移可以实现稳救',
+    group: [
+      { name: '泰菲', type: 'character' },
+      { name: '国王杰瑞', type: 'character' },
+    ],
+    relation: {
+      kind: 'collaborators',
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '国王杰瑞', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '泰菲可以利用罗菲的树快速回血，弥补健康值低的缺点，有利于强行推奶酪',
+    group: [
+      { name: '泰菲', type: 'character' },
+      { name: '罗宾汉泰菲', type: 'character' },
+    ],
+    relation: {
+      kind: 'collaborators',
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '罗宾汉泰菲', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '玛丽的扇子可以加快泰菲推速，帮助泰菲回血，有利于在残血前尽可能多推进奶酪',
+    group: [
+      { name: '泰菲', type: 'character' },
+      { name: '玛丽', type: 'character' },
+    ],
+    relation: {
+      kind: 'collaborators',
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '玛丽', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
     description:
       '天使杰瑞的Lv.2被动可以夺取猫身上的星星，供仙女鼠使用；雷云还能降低对方伤害，提高二者的容错率。但这一组合中的仙女鼠压力极大，很怕空技能和猛攻，相对来说操作和收益并不完全对等，慎用。',
     group: [
@@ -1299,7 +1351,7 @@ const characterRelations: Trait[] = [
   },
   {
     description:
-      '追风飞行时机动性很强，使其很难被预警太长的地雷和炮命中。但泰菲的圆滚滚可以解控，强行打断追风技能造成的眩晕，使追风不易将其击倒',
+      '追风飞行时机动性很强，使其很难被预警太长的地雷和炮命中。但泰菲的圆滚滚可以解控，强行打断追风技能造成的眩晕，追风伤害较低，不易将其击倒；追风可以利用飞行碰撞箱强行顶开在平台推奶酪的泰菲',
     group: [
       { name: '泰菲', type: 'character' },
       { name: '追风汤姆', type: 'character' },
@@ -1355,7 +1407,7 @@ const characterRelations: Trait[] = [
   },
   {
     description:
-      '泰菲的圆滚滚可以解控，克制汤姆的枪、锅眩晕，地雷可以强行击飞汤姆无敌，拖延汤姆的无敌绑火箭时间；汤姆的无敌可以解控，克制泰菲火箭筒打控制，汤姆三级被动可以禁用泰菲的圆滚滚，后期很克制泰菲',
+      '泰菲的圆滚滚可以解控，克制汤姆的枪、锅眩晕，地雷可以强行击飞汤姆无敌，拖延汤姆的无敌绑火箭时间；汤姆的发怒冲刺为无敌状态，可以解控，克制泰菲火箭筒和地雷打控制，汤姆三级被动可以禁用泰菲的圆滚滚，后期很克制泰菲',
     group: [
       { name: '泰菲', type: 'character' },
       { name: '汤姆', type: 'character' },
@@ -1378,6 +1430,19 @@ const characterRelations: Trait[] = [
       kind: 'counterEachOther',
       subject: { name: '泰菲', type: 'character' },
       target: { name: '恶魔汤姆', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '泰菲的圆滚滚是无敌状态，可以解控，克制斯飞的疾冲电击、穿刺以及勾子控制',
+    group: [
+      { name: '泰菲', type: 'character' },
+      { name: '斯飞', type: 'character' },
+    ],
+    relation: {
+      kind: 'counters',
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '斯飞', type: 'character' },
       isMinor: false,
     },
   },
@@ -2633,7 +2698,7 @@ const characterRelations: Trait[] = [
   },
   {
     description:
-      '布奇的基础伤害高，可一刀或一个道具秒满血泰菲，并且三级桶盖的霸体也在一定程度上限制了炮的发挥。',
+      '布奇的基础伤害高，克制血量低的泰菲和泰菲被动；三级桶盖赋予霸体，克制泰菲火箭筒和地雷打控制',
     group: [
       { name: '布奇', type: 'character' },
       { name: '泰菲', type: 'character' },
@@ -2656,12 +2721,12 @@ const characterRelations: Trait[] = [
       kind: 'counters',
       subject: { name: '米特', type: 'character' },
       target: { name: '泰菲', type: 'character' },
-      isMinor: false,
+      isMinor: true,
     },
   },
   {
     description:
-      '侍卫汤姆移速快，且在Lv.2被动加成下能一击击倒泰菲。并且侍卫视野大，远程火箭筒被克死，侍卫还能用火炮刷新护盾，每打中一次就有两层盾，可抵消火箭筒的两段伤害。',
+      '侍卫汤姆移速快，且在Lv.2被动加成下伤害高，克制血量少的泰菲；侍卫视野大，远程火箭筒被克死；侍卫可以用火炮刷盾，每打中一次就有两层盾，可抵消火箭筒的两段伤害；侍卫火炮可以禁用技能、解除增益效果，克制泰菲的圆滚滚解控和被动',
     group: [
       { name: '侍卫汤姆', type: 'character' },
       { name: '泰菲', type: 'character' },
@@ -4071,11 +4136,12 @@ const characterRelations: Trait[] = [
       kind: 'counteredBy',
       subject: { name: '泰菲', type: 'character' },
       target: { name: '侍卫汤姆', type: 'character' },
-      isMinor: false,
+      isMinor: true,
     },
   },
   {
-    description: '带皮糙的苏蕊跳舞霸体对泰菲有很大压力。',
+    description:
+      '苏蕊跳舞有霸体、伤害高，克制伤害高、血量低、主要打控制的泰菲；苏蕊跳舞可直接把老鼠带上火箭，克制泰菲地雷拖延绑火箭；泰菲火箭筒前摇长，近身容易被苏蕊瑜伽球打断',
     group: [
       { name: '泰菲', type: 'character' },
       { name: '苏蕊', type: 'character' },
@@ -4084,12 +4150,12 @@ const characterRelations: Trait[] = [
       kind: 'counteredBy',
       subject: { name: '泰菲', type: 'character' },
       target: { name: '苏蕊', type: 'character' },
-      isMinor: true,
+      isMinor: false,
     },
   },
   {
     description:
-      '库博的伤害高，可以一刀秒泰菲，克制泰菲的被动；库博机动性强，思路很难被判断，泰菲无法及时支援队友；库博的隐身导致地雷无法被触发',
+      '库博的伤害很高，克制血量少的泰菲，克制泰菲的被动；库博机动性强，思路很难被判断，泰菲无法及时支援队友；库博的隐身导致地雷无法被触发',
     group: [
       { name: '泰菲', type: 'character' },
       { name: '库博', type: 'character' },
@@ -4112,6 +4178,34 @@ const characterRelations: Trait[] = [
       kind: 'counteredBy',
       subject: { name: '泰菲', type: 'character' },
       target: { name: '兔八哥', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description:
+      '泰菲的炮和地雷可协助牛汤的斗牛鞭尸，触发二级被动；牛汤伤害高，克制血量低的泰菲；牛汤技能冷却快，攻击、控制手段多，泰菲圆滚滚冷却时间长，疲于应对；泰菲火箭筒前摇长、地雷预警时间长，容易被牛汤卡时间击倒',
+    group: [
+      { name: '泰菲', type: 'character' },
+      { name: '牛仔汤姆', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '牛仔汤姆', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '泰菲可以用圆滚滚抵挡图多的吻和指甲油外刀，但图多伤害较高，技能冷却快，后期攻击手段多，三级吻可以禁用技能，让泰菲疲于应对；图多的三级指甲油赋予长时间霸体，克制泰菲的炮和地雷打控制；图多的三级香水可以禁用技能，图多在三级香水中伤害十分高，爪刀冷却快，克制泰菲被动推奶酪',
+    group: [
+      { name: '泰菲', type: 'character' },
+      { name: '图多盖洛', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '图多盖洛', type: 'character' },
       isMinor: false,
     },
   },
@@ -4375,19 +4469,6 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '有蓄势一击加持的猫可以一刀秒泰菲',
-    group: [
-      { name: '泰菲', type: 'character' },
-      { name: '蓄势一击', type: 'knowledgeCard', factionId: 'cat' },
-    ],
-    relation: {
-      kind: 'counteredByKnowledgeCards',
-      subject: { name: '泰菲', type: 'character' },
-      target: { name: '蓄势一击', type: 'knowledgeCard', factionId: 'cat' },
-      isMinor: true,
-    },
-  },
-  {
     description: '泰菲血量低，前期三级自保较弱，容易被伤害高的穷追猫针对',
     group: [
       { name: '泰菲', type: 'character' },
@@ -4414,6 +4495,19 @@ const characterRelations: Trait[] = [
     },
   },
   {
+    description: '暴怒赋予猫长时间高伤，克制血量低的泰菲',
+    group: [
+      { name: '泰菲', type: 'character' },
+      { name: '暴怒', type: 'knowledgeCard', factionId: 'cat' },
+    ],
+    relation: {
+      kind: 'counteredByKnowledgeCards',
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '暴怒', type: 'knowledgeCard', factionId: 'cat' },
+      isMinor: false,
+    },
+  },
+  {
     description: '泰菲的圆滚滚可以解控，猫无法用无限爪刀秒掉泰菲',
     group: [
       { name: '泰菲', type: 'character' },
@@ -4424,6 +4518,32 @@ const characterRelations: Trait[] = [
       subject: { name: '泰菲', type: 'character' },
       target: { name: '我生气了！', type: 'specialSkill', factionId: 'cat' },
       isMinor: false,
+    },
+  },
+  {
+    description: '泰菲的圆滚滚可以解控，克制猫用击晕接蓄重',
+    group: [
+      { name: '泰菲', type: 'character' },
+      { name: '蓄力重击', type: 'specialSkill', factionId: 'cat' },
+    ],
+    relation: {
+      kind: 'countersSpecialSkills',
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '蓄力重击', type: 'specialSkill', factionId: 'cat' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '全垒打赋予猫高伤，克制血量低的泰菲',
+    group: [
+      { name: '泰菲', type: 'character' },
+      { name: '全垒打', type: 'specialSkill', factionId: 'cat' },
+    ],
+    relation: {
+      kind: 'counteredBySpecialSkills',
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '全垒打', type: 'specialSkill', factionId: 'cat' },
+      isMinor: true,
     },
   },
   {
