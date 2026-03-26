@@ -1499,7 +1499,8 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '兔八哥空中放洞技巧可以防止马索尔闪现救援，但马索尔也可以提前拦截防止兔子上火箭。',
+    description:
+      '闪现导致兔子只能守在火箭底下，且三级拳头打奶酪也可以防止死守，且拳头不怕兔子二被，二被的霸体也可以减少被秒的概率',
     group: [
       { name: '兔八哥', type: 'character' },
       { name: '马索尔', type: 'character' },
@@ -1512,7 +1513,7 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '梦游杰瑞破局和推奶酪能力强，克制兔八哥的防守；但梦游杰瑞主动移动也会触发宣战。',
+    description: '后期毛线球可以秒奶酪，且不怕兔子把奶酪挤出洞口。',
     group: [
       { name: '兔八哥', type: 'character' },
       { name: '梦游杰瑞', type: 'character' },
@@ -1561,6 +1562,19 @@ const characterRelations: Trait[] = [
       kind: 'counterEachOther',
       subject: { name: '兔八哥', type: 'character' },
       target: { name: '侦探杰瑞', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '玛丽吹扇子给的debuff会被兔子秒解还会给自己挂宣战，但是后期玛丽三级礼仪能禁技能。',
+    group: [
+      { name: '兔八哥', type: 'character' },
+      { name: '玛丽', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '兔八哥', type: 'character' },
+      target: { name: '玛丽', type: 'character' },
       isMinor: false,
     },
   },
@@ -3189,7 +3203,7 @@ const characterRelations: Trait[] = [
   },
   {
     description:
-      '兔子大表哥体型较大并且也能被宣战，能挡住胡萝卜飞镖。并且红牌的沉默效果会导致兔八哥进攻能力大打折扣。',
+      '兔子大表哥的体型较大可以挡住胡萝卜飞镖并且也能被宣战，挡住大部分火力。另外红牌的沉默效果使兔八哥的防守和进攻能力都大打折扣。',
     group: [
       { name: '魔术师', type: 'character' },
       { name: '兔八哥', type: 'character' },
@@ -6468,6 +6482,20 @@ const characterRelations: Trait[] = [
     },
   },
   {
+    description:
+      '携带长爪的猫咪使用拍子不会造成伤害，不会触发香甜梦境的解控和位移，如果被拍中将可以直接抓起来。',
+    group: [
+      { name: '梦游杰瑞', type: 'character' },
+      { name: '长爪', type: 'knowledgeCard', factionId: 'cat' },
+    ],
+    relation: {
+      kind: 'counteredByKnowledgeCards',
+      subject: { name: '梦游杰瑞', type: 'character' },
+      target: { name: '长爪', type: 'knowledgeCard', factionId: 'cat' },
+      isMinor: false,
+    },
+  },
+  {
     description: '老鼠舍己救人后一般为空血，若无特殊技能，将会被胡椒粉直接击倒。',
     group: [
       { name: '米特', type: 'character' },
@@ -6908,6 +6936,20 @@ const characterRelations: Trait[] = [
       kind: 'counterEachOther',
       subject: { name: '魔术师', type: 'character' },
       target: { name: '恶魔汤姆', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '兔子们也能触发托普斯的一级被动，配合特技我生气了可以快速刷取经验，但过长的分身释放前摇很容易被魔术师丢中红牌导致分身释放失败。',
+    group: [
+      { name: '魔术师', type: 'character' },
+      { name: '托普斯', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '魔术师', type: 'character' },
+      target: { name: '托普斯', type: 'character' },
       isMinor: false,
     },
   },
@@ -7519,7 +7561,8 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '牛汤难处理后期几乎无敌的天菲，但鞭子加强后前期直接抓取好打天菲，后期三被也容易打没免死状态的天菲，但弹弓伤害刮，后期天菲免死免控牛汤不好处理',
+    description:
+      '牛汤难处理后期几乎无敌的天菲，但鞭子加强后前期直接抓取好打天菲，后期三被也容易打没免死状态的天菲，但弹弓伤害刮，后期天菲免死免控牛汤不好处理',
     group: [
       { name: '天使泰菲', type: 'character' },
       { name: '牛仔汤姆', type: 'character' },
