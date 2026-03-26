@@ -961,7 +961,7 @@ const characterRelations: Trait[] = [
   },
   {
     description:
-      '恶魔泰菲小淘气召唤的蓝色小淘气能禁用技能，绿色小淘气配合Lv.3被动的极高攻击增伤能迅速击倒牛汤，被动提供的恢复与高移速能化解鞭子或仙人掌弹弓的消耗；但恶魔泰菲Hp上限低，牛仔汤姆弹弓爆发高，有机会瞬间击倒恶魔泰菲，且牛汤也可以使用恶菲绿恶魔触发三被',
+      '恶魔泰菲小淘气召唤的蓝色小淘气能禁用技能，绿色小淘气配合Lv.3被动的极高攻击增伤能迅速击倒牛汤，被动提供的恢复与高移速能化解鞭子或仙人掌弹弓的消耗；但恶魔泰菲Hp上限低，牛仔汤姆弹弓爆发高，有机会瞬间击倒恶魔泰菲，且牛汤也可以使用恶菲绿恶魔触发三被。',
     group: [
       { name: '恶魔泰菲', type: 'character' },
       { name: '牛仔汤姆', type: 'character' },
@@ -4786,7 +4786,7 @@ const characterRelations: Trait[] = [
   },
   {
     description:
-      '布奇的爪刀可以秒恶魔泰菲，冲飞洞口的奶酪也能克制恶菲的游击策略，且加强后可以无限霸体不怕蓝恶魔和绿恶魔，冲刺刀可以秒回家恶菲',
+      '布奇的爪刀可以秒恶魔泰菲，冲飞洞口的奶酪也能克制恶菲的游击策略，且加强后可以无限霸体不怕蓝恶魔和绿恶魔，冲刺刀可以秒回家恶菲。',
     group: [
       { name: '布奇', type: 'character' },
       { name: '恶魔泰菲', type: 'character' },
@@ -7588,7 +7588,7 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '泰菲类角色一刀秒且给的反应时间短',
+    description: '可一击击倒泰菲类角色，且给的反应时间短。',
     group: [
       { name: '恶魔泰菲', type: 'character' },
       { name: '全垒打', type: 'specialSkill', factionId: 'cat' },
@@ -7598,6 +7598,124 @@ const characterRelations: Trait[] = [
       subject: { name: '恶魔泰菲', type: 'character' },
       target: { name: '全垒打', type: 'specialSkill', factionId: 'cat' },
       isMinor: true,
+    },
+  },
+  {
+    description: '图多三级甲油免疫无视蓝恶魔和绿恶魔的高伤。不过图多前期弱势，恶菲还是可以打的。',
+    group: [
+      { name: '图多盖洛', type: 'character' },
+      { name: '恶魔泰菲', type: 'character' },
+    ],
+    relation: {
+      kind: 'counters',
+      subject: { name: '图多盖洛', type: 'character' },
+      target: { name: '恶魔泰菲', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '易于拉扯，且恶菲不怕奶酪刷新差。',
+    group: [
+      { name: '恶魔泰菲', type: 'character' },
+      { name: '经典之家II', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '恶魔泰菲', type: 'character' },
+      target: { name: '经典之家II', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '不怕同一边刷三块奶酪，且好拉扯。',
+    group: [
+      { name: '恶魔泰菲', type: 'character' },
+      { name: '雪夜古堡III', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '恶魔泰菲', type: 'character' },
+      target: { name: '雪夜古堡III', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '易于拉扯，且有传送带提供奶酪，不怕开局上面刷两块奶酪。',
+    group: [
+      { name: '恶魔泰菲', type: 'character' },
+      { name: '太空堡垒I', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '恶魔泰菲', type: 'character' },
+      target: { name: '太空堡垒I', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '难以拉扯，易被高熟练度猫咪瓮中捉鳖。',
+    group: [
+      { name: '恶魔泰菲', type: 'character' },
+      { name: '熊猫馆', type: 'map' },
+    ],
+    relation: {
+      kind: 'disadvantageMaps',
+      subject: { name: '恶魔泰菲', type: 'character' },
+      target: { name: '熊猫馆', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '前期猫容易用七色花展开节奏，不便拉扯。但比较烂的奶酪刷新一定程度上可以凸显恶菲的功能性。',
+    group: [
+      { name: '恶魔泰菲', type: 'character' },
+      { name: '御门酒店', type: 'map' },
+    ],
+    relation: {
+      kind: 'disadvantageMaps',
+      subject: { name: '恶魔泰菲', type: 'character' },
+      target: { name: '御门酒店', type: 'map' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '恶菲前期功能性易被取代，且相较于其他后期角色缺少自保。',
+    group: [
+      { name: '恶魔泰菲', type: 'character' },
+      { name: '天梯', type: 'mode' },
+    ],
+    relation: {
+      kind: 'disadvantageModes',
+      subject: { name: '恶魔泰菲', type: 'character' },
+      target: { name: '天梯', type: 'mode' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '跑得快、跳得高、后期三被伤害高。',
+    group: [
+      { name: '恶魔泰菲', type: 'character' },
+      { name: '奔跑吧老鼠团体赛', type: 'mode' },
+    ],
+    relation: {
+      kind: 'disadvantageModes',
+      subject: { name: '恶魔泰菲', type: 'character' },
+      target: { name: '奔跑吧老鼠团体赛', type: 'mode' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '剑客汤姆除了携带特技蓄力一击几乎没有办法快速击倒兔子大表哥从而无法及时减员。',
+    group: [
+      { name: '魔术师', type: 'character' },
+      { name: '剑客汤姆', type: 'character' },
+    ],
+    relation: {
+      kind: 'counters',
+      subject: { name: '魔术师', type: 'character' },
+      target: { name: '剑客汤姆', type: 'character' },
+      isMinor: false,
     },
   },
 ];
