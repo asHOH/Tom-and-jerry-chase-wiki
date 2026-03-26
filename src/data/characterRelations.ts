@@ -7699,7 +7699,7 @@ const characterRelations: Trait[] = [
       { name: '奔跑吧老鼠团体赛', type: 'mode' },
     ],
     relation: {
-      kind: 'disadvantageModes',
+      kind: 'advantageModes',
       subject: { name: '恶魔泰菲', type: 'character' },
       target: { name: '奔跑吧老鼠团体赛', type: 'mode' },
       isMinor: false,
