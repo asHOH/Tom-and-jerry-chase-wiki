@@ -1216,6 +1216,19 @@ const characterRelations: Trait[] = [
     },
   },
   {
+    description: '佩克斯的琴可以眩晕苏蕊，但如果在苏蕊跳舞中被击倒会使三级被动失效。',
+    group: [
+      { name: '苏蕊', type: 'character' },
+      { name: '佩克斯', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '苏蕊', type: 'character' },
+      target: { name: '佩克斯', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
     description:
       '朝圣者泰菲的武器高伤害容易一次性给予斯飞重击，同时斯飞无法对因主动技能变身的朝圣者泰菲造成有效威胁，但朝圣者泰菲自身仍然缺乏逃脱斯飞追击的手段',
     group: [
@@ -1832,7 +1845,7 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '航海士杰瑞的金币和火药桶十分克制剑客汤姆。',
+    description: '航海士杰瑞的火药桶和金币使剑客汤姆在无护盾的情况下几乎无法绑上二手火箭。',
     group: [
       { name: '航海士杰瑞', type: 'character' },
       { name: '剑客汤姆', type: 'character' },
@@ -1909,6 +1922,20 @@ const characterRelations: Trait[] = [
       subject: { name: '马索尔', type: 'character' },
       target: { name: '库博', type: 'character' },
       isMinor: true,
+    },
+  },
+  {
+    description:
+      '马索尔周围有老鼠或者自己被连斩的时候会快速积攒怒气，二级被动发怒后的马索尔剑客汤姆几乎无法处理。',
+    group: [
+      { name: '马索尔', type: 'character' },
+      { name: '剑客汤姆', type: 'character' },
+    ],
+    relation: {
+      kind: 'counters',
+      subject: { name: '马索尔', type: 'character' },
+      target: { name: '剑客汤姆', type: 'character' },
+      isMinor: false,
     },
   },
   {
@@ -2524,7 +2551,8 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '航海士杰瑞不仅控制多，还能炸火箭。',
+    description:
+      '航海士杰瑞的一级被动搭配知识卡投手能让满层乘胜追击知识卡的斯飞打断疾冲姿态，火药桶炸火箭也让斯飞十分头疼。',
     group: [
       { name: '航海士杰瑞', type: 'character' },
       { name: '斯飞', type: 'character' },
@@ -2533,7 +2561,7 @@ const characterRelations: Trait[] = [
       kind: 'counters',
       subject: { name: '航海士杰瑞', type: 'character' },
       target: { name: '斯飞', type: 'character' },
-      isMinor: true,
+      isMinor: false,
     },
   },
   {
@@ -3771,6 +3799,19 @@ const characterRelations: Trait[] = [
     },
   },
   {
+    description: '冰冻保鲜可以躲过布奇的一波冲撞。',
+    group: [
+      { name: '布奇', type: 'character' },
+      { name: '冰冻保鲜', type: 'specialSkill', factionId: 'mouse' },
+    ],
+    relation: {
+      kind: 'counteredBySpecialSkills',
+      subject: { name: '布奇', type: 'character' },
+      target: { name: '冰冻保鲜', type: 'specialSkill', factionId: 'mouse' },
+      isMinor: false,
+    },
+  },
+  {
     description: '绝地反击能暂时免疫朵朵的控制，但免疫不了伤害。',
     group: [
       { name: '朵朵', type: 'character' },
@@ -4114,6 +4155,19 @@ const characterRelations: Trait[] = [
       subject: { name: '斯飞', type: 'character' },
       target: { name: '航海士杰瑞', type: 'character' },
       isMinor: true,
+    },
+  },
+  {
+    description: '航海士杰瑞的火药桶炸完火箭后使塔拉无法通过扔老鼠的方式上火箭，并且自身缺乏霸体。',
+    group: [
+      { name: '塔拉', type: 'character' },
+      { name: '航海士杰瑞', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '塔拉', type: 'character' },
+      target: { name: '航海士杰瑞', type: 'character' },
+      isMinor: false,
     },
   },
   {

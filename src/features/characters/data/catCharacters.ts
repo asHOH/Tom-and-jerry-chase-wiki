@@ -3850,7 +3850,7 @@ const catCharacterDefinitions = {
         tagName: '防守',
         isMinor: true,
         description:
-          '守火箭能力强，风的范围大，易命中并击退前来救援的老鼠，且CD短；飞行时自身的碰撞箱可以打断老鼠跳救使其踩夹；风可以吹飞果盘，有一定守墙缝能力。',
+          '守火箭能力强，风的范围大，易命中并击退前来救援的老鼠，且CD短；飞行时自身的碰撞箱可以打断老鼠跳救使其踩夹。',
         additionalDescription: '',
       },
     ],
