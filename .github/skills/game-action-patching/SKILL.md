@@ -1,0 +1,248 @@
+---
+name: game-action-patching
+description: 'Patch approved game_data_actions into character relation/data files. Use when processing admin-approved data actions, reconciling action logs with refactored code structures, or performing batch content syncs safely.'
+argument-hint: 'Date range, actor filter, status policy'
+user-invocable: true
+---
+
+# Game Action Patching Workflow
+
+## What This Skill Produces
+
+- A safe, auditable workflow to apply approved game actions into code.
+- Clear progress reporting per chunk with action counts.
+- Status updates in game_data_actions (synced or rejected) based on actual patch outcomes.
+- Regression checks (just targeted content verification; no linting or type-checking) before finalization.
+
+## When To Use
+
+- You need to process approved actions and patch them into static data files.
+- You need deterministic bookkeeping: patched count, skipped count, rejected count, synced count.
+
+## Common Candidate Files
+
+Prioritize these files when mapping character-related actions:
+
+- src/features/characters/data/catCharacters.ts
+  - Cat character skills, aliases, descriptions, positioning tags, allocations, special skills.
+- src/features/characters/data/mouseCharacters.ts
+  - Mouse character skills, aliases, descriptions, positioning tags, allocations, special skills.
+- src/data/characterRelations.ts
+  - Cross-character/mode/map/card relation graph (counter/collaborator/advantage/disadvantage style entries).
+
+Secondary candidates (when action path indicates these domains):
+
+- src/features/entities/data/\*
+  - Entity-specific data updates.
+- src/features/special-skills/data/\*
+  - Special skill metadata or descriptions.
+- src/data/\*.ts (other than characterRelations.ts)
+  - Shared static datasets when action path is not character-local.
+
+Selection heuristic:
+
+1. First infer top-level root from action path (character name, relation type, mode/map/card).
+2. Prefer feature-local file before generic data file.
+3. If action refers to relation semantics (counter/advantage/etc), check characterRelations.ts first.
+4. If multiple files are plausible, list candidates and confirm before patching.
+
+## Core Rules
+
+1. If unspecified, default to year 2026.
+2. Never blindly replay action paths into source files. Always map to current structure first.
+3. Before patch planning, read src/app/admin/sync-pr/route.ts as the behavioral reference for sync intent and status handling.
+4. If the route path changed, locate the active admin sync endpoint first, then continue.
+5. If action volume is large, classify based on content into smaller chunks and stop for approval before each chunk.
+6. Status updates are not done until code edits and validations for that chunk succeed.
+7. Use utf-8 encoding.
+
+## Workflow
+
+### Phase 1: Scope and Discovery
+
+1. Collect candidate actions from game_data_actions from supabase MCP using filters:
+
+- date or date range
+- created_by nickname (or empty nickname if applicable)
+- status: approved
+
+2. Summarize counts by one or more of:
+
+- date
+- creator
+- entity_type
+
+3. Build an action inventory table (id, path, op, oldValue, newValue, message). No need to print it.
+
+Completion check:
+
+- You can state exact total actions and grouping dimensions.
+
+### Phase 2: Preflight Classification
+
+Classify each action into one of:
+
+- Direct patchable: maps cleanly to current file structure.
+- Refactor-mapped: semantic equivalent exists but path moved.
+- Needs decision: ambiguous mapping.
+
+(for smaller batches, skip this step)
+For larger batches:
+
+- Create chunk plan first (for example by character, by file, or by message cluster).
+- Keep each chunk small enough (typically 5~20 actions) to review quickly.
+- Pause after establishing the plan before preceeding to execution.
+
+Chunk checklist template:
+
+- Chunk name
+- Action ids included
+- Expected files
+- Validation plan
+
+Stop here and ask for approval to execute chunk 1.
+
+### Phase 3: Chunk Execution (One by One)
+
+For each approved chunk:
+
+1. Apply code edits only for actions in chunk scope.
+2. Check targeted grep/content for changed fields
+3. If checks pass:
+
+- mark successfully applied actions as synced
+
+4. If explicit user policy says a subset must not be applied (for example alias-only actions), mark only that subset as rejected.
+5. Emit per-chunk report:
+
+- patched count
+- skipped/ambiguous count
+- their ids (if not too many)
+
+Approval gate:
+
+- Pause after each chunk summary and ask whether to proceed to next chunk.
+
+### Phase 4: Final Reconciliation
+
+1. Re-query statuses for processed scope.
+2. Confirm totals:
+
+- synced total
+- remaining approved total (should be zero unless intentionally deferred)
+
+## Supabase MCP SQL Templates (Practical)
+
+Use these patterns with mcp_supabase_execute_sql. Replace placeholders first.
+
+Placeholders:
+
+- DATE: e.g. '2026-02-22'
+- NICK: creator nickname, e.g. 'SYSTEM-CPYTHON' (or '' for empty nickname)
+- IDS: explicit action id list
+
+1. Status distribution for a date and creator
+
+```sql
+select g.status, count(*) as cnt
+from game_data_actions g
+left join users_public_view u on u.id = g.created_by
+where date(g.created_at) = DATE
+  and coalesce(u.nickname, '') = NICK
+group by g.status
+order by g.status;
+```
+
+2. Pull approved action inventory (id + entry)
+
+```sql
+select g.id, g.entity_type, g.status, g.created_at, coalesce(u.nickname, '') as created_by_nickname, g.message, g.entry
+from game_data_actions g
+left join users_public_view u on u.id = g.created_by
+where date(g.created_at) = DATE
+  and g.status = 'approved'
+  and coalesce(u.nickname, '') = NICK
+order by g.created_at asc;
+```
+
+3. Mark only selected ids as rejected (policy subset)
+
+```sql
+update game_data_actions
+set status = 'rejected'
+where id in (IDS)
+  and status in ('approved', 'synced');
+```
+
+4. Mark remaining same-scope approved as synced (excluding rejected ids)
+
+```sql
+update game_data_actions g
+set status = 'synced'
+from users_public_view u
+where u.id = g.created_by
+  and date(g.created_at) = DATE
+  and coalesce(u.nickname, '') = NICK
+  and g.status = 'approved'
+  and g.id not in (IDS);
+```
+
+5. Final verification snapshot
+
+```sql
+select status, count(*) as cnt
+from game_data_actions g
+left join users_public_view u on u.id = g.created_by
+where date(g.created_at) = DATE
+  and coalesce(u.nickname, '') = NICK
+group by status
+order by status;
+```
+
+6. Verify non-synced residual ids
+
+```sql
+select g.id, g.status, g.message, g.entry
+from game_data_actions g
+left join users_public_view u on u.id = g.created_by
+where date(g.created_at) = DATE
+  and coalesce(u.nickname, '') = NICK
+  and g.status <> 'synced'
+order by g.created_at asc;
+```
+
+Execution notes:
+
+- Always run inventory query before any status write.
+- Prefer id-scoped writes for rejected subset.
+- Do not bulk-convert synced to rejected unless user explicitly asks.
+
+## Branching Logic
+
+- If action count <= 10: one chunk is acceptable unless they are very complex.
+- If action count > 10: try to chunk unless they are very simple.
+- If file encoding/garbling risk is detected: stop and ask permission to recover file with git before continuing.
+
+## Regression and Safety Checks
+
+- Data consistency checks:
+  - newValue appears exactly where intended
+  - deprecated/old value removed when action semantics require replacement
+- Content checks:
+  - new value is reasonable
+  - if the change only happens at new description fields, ensure the change is appropriate
+
+## Reporting Format
+
+Use compact, deterministic summaries:
+
+- Scope discovered: total actions and filters used
+- Chunk N result: patched X, rejected Y, deferred Z
+- Status snapshot: synced A, rejected B, approved C
+- Residual risk: any ambiguous mappings, intentionally deferred items, or regressions
+
+## Quick Improvements
+
+- Keep a per-chunk status ledger (ids by synced/rejected/deferred) before issuing status updates.
+- If a chunk includes both content changes and policy rejections, report them separately to avoid accidental bulk status writes.
+- For repeated action waves on the same date, always re-query current statuses before writing to avoid overwriting manual moderation changes.
