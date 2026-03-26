@@ -1300,16 +1300,8 @@ const mouseCharacterDefinitions = {
       {
         tagName: '砸墙',
         isMinor: false,
-        weapon: 1,
-        description: '火箭筒可以提供可观的砸墙伤害；三级被动免疫鞭炮和泡泡爆炸，可辅助砸墙。',
-        additionalDescription: '',
-      },
-      {
-        tagName: '砸墙',
-        isMinor: false,
-        weapon: 2,
         description:
-          '用道具触发地雷可以提供一定的砸墙伤害；三级被动免疫鞭炮和泡泡爆炸，可辅助砸墙。',
+          '火箭筒及用道具触发地雷可以提供可观的砸墙伤害；三级被动免疫鞭炮和泡泡爆炸，可辅助砸墙。',
         additionalDescription: '',
       },
       {
