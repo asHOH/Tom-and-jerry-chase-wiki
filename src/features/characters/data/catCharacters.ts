@@ -933,14 +933,15 @@ const catCharacterDefinitions = {
           },
           {
             cards: ['S-击晕', 'S-知识渊博', 'A-穷追猛打', 'B-皮糙肉厚'],
-            description: '万金油卡组',
-          },
-          {
-            cards: ['S-击晕', 'S-乾坤一掷', 'A-细心', 'B-皮糙肉厚'],
             description: '敌方攻击性不大时可使用。',
           },
+          {
+            cards: ['S-击晕', 'S-乾坤一掷', 'B-皮糙肉厚', 'A-穷追猛打'],
+            description: '',
+          },
         ],
-        defaultFolded: true,
+        defaultFolded: false,
+        detailedDescription: '<无内容>',
       },
       {
         id: '弹弓防守流',
@@ -956,6 +957,7 @@ const catCharacterDefinitions = {
           },
         ],
         defaultFolded: false,
+        detailedDescription: '<无内容>',
       },
       {
         id: '弹弓追击流',
@@ -963,7 +965,7 @@ const catCharacterDefinitions = {
         groups: [
           {
             cards: ['S-乘胜追击', 'S-知识渊博', 'A-加大火力', 'A-穷追猛打'],
-            description: '常规卡组',
+            description: '适合鼠方伤害低控制少的阵容',
           },
           {
             cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
@@ -972,6 +974,10 @@ const catCharacterDefinitions = {
           },
         ],
         defaultFolded: false,
+      },
+      {
+        cards: [],
+        description: '待补充',
       },
     ],
     skills: [
@@ -1018,8 +1024,9 @@ const catCharacterDefinitions = {
           '前摇0.25s，对前方老鼠造成1点伤害和持续7.9秒的9.5%减速、给自己持续8秒的1%加速和减少2%爪刀CD，能破坏[易碎道具](包括玻璃杯/碗/盘子/扁盘/灰花瓶/蓝花瓶/香水瓶/胡椒瓶/番茄，以及纸盒、吊灯、牛仔杰瑞的仙人掌等)。连续命中敌方角色两次后获得1层[增益](上限3层)，永久增加3%移速和减少6%爪刀CD。老鼠被累计命中两次后，受到50点伤害和2.4秒眩晕效果，并清除鞭子带来的减益。鞭子眩晕期间可被直接抓取。使用技能时还能使场上的{斗牛}加速。',
         canMoveWhileUsing: true,
         canUseInAir: true,
-        cancelableSkill: ['跳跃键'],
-        cancelableAftercast: ['道具键', '跳跃键'],
+        cancelableSkill: [],
+        cancelableAftercast: ['跳跃键', '道具键'],
+        aftercast: -1,
         skillLevels: [
           {
             level: 1,

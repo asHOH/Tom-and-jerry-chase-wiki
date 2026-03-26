@@ -1057,6 +1057,32 @@ const characterRelations: Trait[] = [
     },
   },
   {
+    description: '虽然恶菲绿恶魔的高伤可以快速击倒牛汤，但是牛汤同样可以利用三被和绿恶魔反制敌方',
+    group: [
+      { name: '牛仔汤姆', type: 'character' },
+      { name: '恶魔泰菲', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '牛仔汤姆', type: 'character' },
+      target: { name: '恶魔泰菲', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '',
+    group: [
+      { name: '牛仔汤姆', type: 'character' },
+      { name: '天使杰瑞', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '牛仔汤姆', type: 'character' },
+      target: { name: '天使杰瑞', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
     description:
       '牛仔杰瑞二级被动带来的霸体使牛汤姆技能的控制失效，同时二级琴带来的回复与加速让牛仔汤姆不容易击倒牛仔杰瑞，但牛仔汤姆能够强打牛仔杰瑞，同时斗牛会清除仙人掌并进行干扰，三级被动也能轻易击倒霸体的牛仔杰瑞。',
     group: [
@@ -2429,19 +2455,6 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '',
-    group: [
-      { name: '恶魔泰菲', type: 'character' },
-      { name: '牛仔汤姆', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '恶魔泰菲', type: 'character' },
-      target: { name: '牛仔汤姆', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
     description: '高伤、高回复和强机动性非常克制佩克斯。',
     group: [
       { name: '库博', type: 'character' },
@@ -3650,7 +3663,7 @@ const characterRelations: Trait[] = [
       kind: 'counteredByKnowledgeCards',
       subject: { name: '牛仔汤姆', type: 'character' },
       target: { name: '祝愿', type: 'knowledgeCard', factionId: 'mouse' },
-      isMinor: false,
+      isMinor: true,
     },
   },
   {
@@ -5622,7 +5635,7 @@ const characterRelations: Trait[] = [
   },
   {
     description:
-      '牛仔汤姆可用技能控制直接抓取，佩克斯3级被动复活甲和主动技能给予的免疫虚弱能被牛仔汤姆轻易破解',
+      '牛仔汤姆可用技能控制直接抓取，佩克斯3级被动复活甲和3级武器技能给予的免疫虚弱基本无效',
     group: [
       { name: '牛仔汤姆', type: 'character' },
       { name: '佩克斯', type: 'character' },
@@ -6966,7 +6979,7 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '',
+    description: '三级被动对猫的斩杀线很高，但是怕控制和猛攻',
     group: [
       { name: '牛仔汤姆', type: 'character' },
       { name: '5V5经典奶酪赛', type: 'mode' },
@@ -6975,7 +6988,7 @@ const characterRelations: Trait[] = [
       kind: 'advantageModes',
       subject: { name: '牛仔汤姆', type: 'character' },
       target: { name: '5V5经典奶酪赛', type: 'mode' },
-      isMinor: false,
+      isMinor: true,
     },
   },
   {
@@ -7204,7 +7217,7 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '',
+    description: '只在部分地图占优势（见上文牛仔汤姆的优势地图/模式）',
     group: [
       { name: '牛仔汤姆', type: 'character' },
       { name: '疯狂奶酪赛', type: 'mode' },
@@ -7226,6 +7239,111 @@ const characterRelations: Trait[] = [
       kind: 'disadvantageModes',
       subject: { name: '牛仔汤姆', type: 'character' },
       target: { name: '5V5经典奶酪赛', type: 'mode' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '因地图较平坦，斗牛释放后基本看不见牛回来，还有老鼠被击倒后能从实验舱右侧发射器前往左侧太空，断掉追击节奏',
+    group: [
+      { name: '牛仔汤姆', type: 'character' },
+      { name: '太空堡垒II', type: 'map' },
+    ],
+    relation: {
+      kind: 'disadvantageMaps',
+      subject: { name: '牛仔汤姆', type: 'character' },
+      target: { name: '太空堡垒II', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '',
+    group: [
+      { name: '牛仔汤姆', type: 'character' },
+      { name: '游乐场', type: 'map' },
+    ],
+    relation: {
+      kind: 'disadvantageMaps',
+      subject: { name: '牛仔汤姆', type: 'character' },
+      target: { name: '游乐场', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '',
+    group: [
+      { name: '牛仔汤姆', type: 'character' },
+      { name: '御门酒店', type: 'map' },
+    ],
+    relation: {
+      kind: 'disadvantageMaps',
+      subject: { name: '牛仔汤姆', type: 'character' },
+      target: { name: '御门酒店', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '',
+    group: [
+      { name: '牛仔汤姆', type: 'character' },
+      { name: '森林牧场', type: 'map' },
+    ],
+    relation: {
+      kind: 'disadvantageMaps',
+      subject: { name: '牛仔汤姆', type: 'character' },
+      target: { name: '森林牧场', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '',
+    group: [
+      { name: '牛仔汤姆', type: 'character' },
+      { name: '大都会', type: 'map' },
+    ],
+    relation: {
+      kind: 'disadvantageMaps',
+      subject: { name: '牛仔汤姆', type: 'character' },
+      target: { name: '大都会', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '',
+    group: [
+      { name: '牛仔汤姆', type: 'character' },
+      { name: '天宫-云上', type: 'map' },
+    ],
+    relation: {
+      kind: 'disadvantageMaps',
+      subject: { name: '牛仔汤姆', type: 'character' },
+      target: { name: '天宫-云上', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '',
+    group: [
+      { name: '牛仔汤姆', type: 'character' },
+      { name: '5V5大都会', type: 'map' },
+    ],
+    relation: {
+      kind: 'disadvantageMaps',
+      subject: { name: '牛仔汤姆', type: 'character' },
+      target: { name: '5V5大都会', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '容易被拉扯，并且防守奶酪只在杂物间占优势',
+    group: [
+      { name: '牛仔汤姆', type: 'character' },
+      { name: '经典之家I', type: 'map' },
+    ],
+    relation: {
+      kind: 'disadvantageMaps',
+      subject: { name: '牛仔汤姆', type: 'character' },
+      target: { name: '经典之家I', type: 'map' },
       isMinor: false,
     },
   },
