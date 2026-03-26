@@ -4034,19 +4034,6 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '塔拉视野较大，3级被动有霸体，远程炮不好发挥。',
-    group: [
-      { name: '泰菲', type: 'character' },
-      { name: '塔拉', type: 'character' },
-    ],
-    relation: {
-      kind: 'counteredBy',
-      subject: { name: '泰菲', type: 'character' },
-      target: { name: '塔拉', type: 'character' },
-      isMinor: true,
-    },
-  },
-  {
     description: '带皮糙的苏蕊跳舞霸体对泰菲有很大压力。',
     group: [
       { name: '泰菲', type: 'character' },
@@ -4373,7 +4360,7 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '我生气了！',
+    description: '泰菲的圆滚滚可以解控，猫无法用无限爪刀秒掉泰菲',
     group: [
       { name: '泰菲', type: 'character' },
       { name: '我生气了！', type: 'specialSkill', factionId: 'cat' },
@@ -5823,7 +5810,7 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '圆滚滚的无敌和解控克制喵喵叫，并且图茨的Hp上限低，被绝反克制。',
+    description: '圆滚滚的无敌和解控克制喵喵叫',
     group: [
       { name: '泰菲', type: 'character' },
       { name: '图茨', type: 'character' },
@@ -5832,7 +5819,7 @@ const characterRelations: Trait[] = [
       kind: 'counters',
       subject: { name: '泰菲', type: 'character' },
       target: { name: '图茨', type: 'character' },
-      isMinor: false,
+      isMinor: true,
     },
   },
   {
