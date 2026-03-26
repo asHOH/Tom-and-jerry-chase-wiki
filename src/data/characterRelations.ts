@@ -4220,7 +4220,7 @@ const characterRelations: Trait[] = [
       kind: 'counteredBy',
       subject: { name: '斯飞', type: 'character' },
       target: { name: '剑客杰瑞', type: 'character' },
-      isMinor: false,
+      isMinor: true,
     },
   },
   {
@@ -5595,7 +5595,7 @@ const characterRelations: Trait[] = [
   },
   {
     description:
-      '牛仔汤姆可用技能控制直接抓取，佩克斯3级被动复活甲和主动技能给予的免疫虚弱基本无效',
+      '牛仔汤姆可用技能控制直接抓取，佩克斯3级被动复活甲和主动技能给予的免疫虚弱能被牛仔汤姆轻易破解',
     group: [
       { name: '牛仔汤姆', type: 'character' },
       { name: '佩克斯', type: 'character' },
@@ -6948,6 +6948,218 @@ const characterRelations: Trait[] = [
       kind: 'advantageModes',
       subject: { name: '牛仔汤姆', type: 'character' },
       target: { name: '5V5经典奶酪赛', type: 'mode' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '斯飞能够利用武器技能从甲板飞上电影院，同时地形利于斯飞追击',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '夏日游轮II', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '夏日游轮II', type: 'map' },
+      isMinor: true,
+    },
+  },
+  {
+    description:
+      '斯飞的高机动性使老鼠的拉扯不容易干扰节奏，同时斯飞的武器技能能够使斯飞从井盖下方飞上去，并且能够利用武器技能穿梭于两边钟楼',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '雪夜古堡III', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '雪夜古堡III', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '斯飞的高机动性使老鼠的拉扯不容易干扰节奏，同时斯飞的武器技能能够使斯飞从井盖下方飞上去',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '雪夜古堡I', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '雪夜古堡I', type: 'map' },
+      isMinor: true,
+    },
+  },
+  {
+    description:
+      '斯飞的高机动性使老鼠的拉扯不容易干扰节奏，同时斯飞的武器技能能够使斯飞从井盖下方飞上去',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '雪夜古堡II', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '雪夜古堡II', type: 'map' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '斯飞能够利用武器技能从甲板飞上电影院，同时地形利于斯飞追击',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '夏日游轮I', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '夏日游轮I', type: 'map' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '斯飞能够利用武器技能从甲板飞上电影院，同时地形利于斯飞追击',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '夏日游轮III', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '夏日游轮III', type: 'map' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '斯飞的机动性利于斯飞在大都会的地图穿梭',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '大都会', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '大都会', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '熊猫谷与科普体验馆利于斯飞追击。',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '熊猫馆', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '熊猫馆', type: 'map' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '大堂的七色花能够给予斯飞打好前期的优势，同时自身的高机动性可以在地图里穿梭',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '御门酒店', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '御门酒店', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '斯飞的高机动性利于追击，同时斯飞的强化主动技能与武器技能能够击中通过管道的老鼠',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '天宫', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '天宫', type: 'map' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '开局十级给予斯飞极大优势',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '疯狂奶酪赛', type: 'mode' },
+    ],
+    relation: {
+      kind: 'advantageModes',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '疯狂奶酪赛', type: 'mode' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '疾冲的感电能够干扰敌方老鼠捡挂件，同时强化主动技能与武器技能容易命中敌方猫，三级被动给予的续航也能持续作战',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '装饰树大作战', type: 'mode' },
+    ],
+    relation: {
+      kind: 'advantageModes',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '装饰树大作战', type: 'mode' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '房间分布四散，给予老鼠拉扯空间',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '经典之家I', type: 'map' },
+    ],
+    relation: {
+      kind: 'disadvantageMaps',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '经典之家I', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '太空环境提高老鼠逃脱斯飞追击的可能',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '太空堡垒I', type: 'map' },
+    ],
+    relation: {
+      kind: 'disadvantageMaps',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '太空堡垒I', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '机动性优势在森林的多平台中削弱，同时湖泊给斯飞追击带来阻力',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '森林牧场', type: 'map' },
+    ],
+    relation: {
+      kind: 'disadvantageMaps',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '森林牧场', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '没有知识渊博的加持，斯飞无法正常开局',
+    group: [
+      { name: '斯飞', type: 'character' },
+      { name: '黄金钥匙赛', type: 'mode' },
+    ],
+    relation: {
+      kind: 'disadvantageModes',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '黄金钥匙赛', type: 'mode' },
       isMinor: false,
     },
   },
