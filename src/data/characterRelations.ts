@@ -960,7 +960,8 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '“虽然恶菲绿恶魔的高伤可以快速击倒牛汤，但是牛汤同样可以利用三被和绿恶魔反制敌方”',
+    description:
+      '恶魔泰菲小淘气召唤的蓝色小淘气能禁用技能，绿色小淘气配合Lv.3被动的极高攻击增伤能迅速击倒牛汤，被动提供的恢复与高移速能化解鞭子或仙人掌弹弓的消耗；但恶魔泰菲Hp上限低，牛仔汤姆弹弓爆发高，有机会瞬间击倒恶魔泰菲，且牛汤也可以使用恶菲绿恶魔触发三被',
     group: [
       { name: '恶魔泰菲', type: 'character' },
       { name: '牛仔汤姆', type: 'character' },
@@ -1209,8 +1210,7 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description:
-      '恶魔泰菲的三级被动带来的高伤能轻易打到斯飞，同时小恶魔的负面效果给予斯飞威胁，但斯飞能够找机会一套击倒恶魔泰菲。',
+    description: '恶魔泰菲的三级被动能轻易击倒斯飞，斯飞克制恶菲的高移速，且三被斯飞血条回得快',
     group: [
       { name: '斯飞', type: 'character' },
       { name: '恶魔泰菲', type: 'character' },
@@ -4771,7 +4771,8 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '布奇的爪刀可以秒恶魔泰菲，冲飞洞口的奶酪也能克制恶菲的游击策略。',
+    description:
+      '布奇的爪刀可以秒恶魔泰菲，冲飞洞口的奶酪也能克制恶菲的游击策略，且加强后可以无限霸体不怕蓝恶魔和绿恶魔，冲刺刀可以秒回家恶菲',
     group: [
       { name: '布奇', type: 'character' },
       { name: '恶魔泰菲', type: 'character' },
@@ -4780,7 +4781,7 @@ const characterRelations: Trait[] = [
       kind: 'counters',
       subject: { name: '布奇', type: 'character' },
       target: { name: '恶魔泰菲', type: 'character' },
-      isMinor: true,
+      isMinor: false,
     },
   },
   {
@@ -4996,7 +4997,7 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '格挡的无敌有效克制反击。',
+    description: '格挡的主动反击可以反击如玉的反击，使其反击无效的同时还能牵制如玉。',
     group: [
       { name: '剑客杰瑞', type: 'character' },
       { name: '如玉', type: 'character' },
@@ -5005,7 +5006,7 @@ const characterRelations: Trait[] = [
       kind: 'counters',
       subject: { name: '剑客杰瑞', type: 'character' },
       target: { name: '如玉', type: 'character' },
-      isMinor: true,
+      isMinor: false,
     },
   },
   {
@@ -7424,6 +7425,136 @@ const characterRelations: Trait[] = [
       subject: { name: '航海士杰瑞', type: 'character' },
       target: { name: '装饰树大作战', type: 'mode' },
       isMinor: false,
+    },
+  },
+  {
+    description: '典型的拉扯图容易苟到后期',
+    group: [
+      { name: '天使泰菲', type: 'character' },
+      { name: '经典之家II', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '天使泰菲', type: 'character' },
+      target: { name: '经典之家II', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '<拉扯图',
+    group: [
+      { name: '天使泰菲', type: 'character' },
+      { name: '雪夜古堡III', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '天使泰菲', type: 'character' },
+      target: { name: '雪夜古堡III', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '易拉扯',
+    group: [
+      { name: '天使泰菲', type: 'character' },
+      { name: '天宫', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '天使泰菲', type: 'character' },
+      target: { name: '天宫', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '中期易拉扯',
+    group: [
+      { name: '天使泰菲', type: 'character' },
+      { name: '森林牧场', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '天使泰菲', type: 'character' },
+      target: { name: '森林牧场', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '好拉扯，猫死追一边必定亏奶酪',
+    group: [
+      { name: '天使泰菲', type: 'character' },
+      { name: '游乐场', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '天使泰菲', type: 'character' },
+      target: { name: '游乐场', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '前期一起推两块天菲等级就起来了，不怕10级猫咪',
+    group: [
+      { name: '天使泰菲', type: 'character' },
+      { name: '疯狂奶酪赛', type: 'mode' },
+    ],
+    relation: {
+      kind: 'advantageModes',
+      subject: { name: '天使泰菲', type: 'character' },
+      target: { name: '疯狂奶酪赛', type: 'mode' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '只要节奏不大崩就死不掉，不过玩起来挺无聊的',
+    group: [
+      { name: '天使泰菲', type: 'character' },
+      { name: '5V5经典奶酪赛', type: 'mode' },
+    ],
+    relation: {
+      kind: 'advantageModes',
+      subject: { name: '天使泰菲', type: 'character' },
+      target: { name: '5V5经典奶酪赛', type: 'mode' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '牛汤难处理后期几乎无敌的天菲，但鞭子加强后前期直接抓取好打天菲，后期三被也容易打没免死状态的天菲，但弹弓伤害刮，后期天菲免死免控牛汤不好处理',
+    group: [
+      { name: '天使泰菲', type: 'character' },
+      { name: '牛仔汤姆', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '天使泰菲', type: 'character' },
+      target: { name: '牛仔汤姆', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '前期一刀秒，后期不怕',
+    group: [
+      { name: '天使泰菲', type: 'character' },
+      { name: '全垒打', type: 'specialSkill', factionId: 'cat' },
+    ],
+    relation: {
+      kind: 'counteredBySpecialSkills',
+      subject: { name: '天使泰菲', type: 'character' },
+      target: { name: '全垒打', type: 'specialSkill', factionId: 'cat' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '泰菲类角色一刀秒且给的反应时间短',
+    group: [
+      { name: '恶魔泰菲', type: 'character' },
+      { name: '全垒打', type: 'specialSkill', factionId: 'cat' },
+    ],
+    relation: {
+      kind: 'counteredBySpecialSkills',
+      subject: { name: '恶魔泰菲', type: 'character' },
+      target: { name: '全垒打', type: 'specialSkill', factionId: 'cat' },
+      isMinor: true,
     },
   },
 ];
