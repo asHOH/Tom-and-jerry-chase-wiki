@@ -7399,5 +7399,32 @@ const characterRelations: Trait[] = [
       isMinor: false,
     },
   },
+  {
+    description:
+      '库博可以通过频繁换绑和转点来规避海盗的技能与被拆火箭，但自身较低的血量也容易被火炮的高伤连招控到死',
+    group: [
+      { name: '航海士杰瑞', type: 'character' },
+      { name: '库博', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '航海士杰瑞', type: 'character' },
+      target: { name: '库博', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '火炮可以强势守家，但需注意该技能可被敌方老鼠使用',
+    group: [
+      { name: '航海士杰瑞', type: 'character' },
+      { name: '装饰树大作战', type: 'mode' },
+    ],
+    relation: {
+      kind: 'advantageModes',
+      subject: { name: '航海士杰瑞', type: 'character' },
+      target: { name: '装饰树大作战', type: 'mode' },
+      isMinor: false,
+    },
+  },
 ];
 export default buildRelation(characterRelations);
