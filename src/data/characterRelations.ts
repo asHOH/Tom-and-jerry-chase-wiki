@@ -262,6 +262,20 @@ const characterRelations: Trait[] = [
     },
   },
   {
+    description:
+      '防止尼宝被猫方对策角色托普斯克制，蓝恶魔让尼宝在托普斯没有护盾时放不出捕虫网，从而按照正常节奏救援。',
+    group: [
+      { name: '恶魔泰菲', type: 'character' },
+      { name: '尼宝', type: 'character' },
+    ],
+    relation: {
+      kind: 'collaborators',
+      subject: { name: '恶魔泰菲', type: 'character' },
+      target: { name: '尼宝', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
     description: '国王杰瑞的强化救援战旗配合表演者•杰瑞的梦幻舞步可以实现稳救。',
     group: [
       { name: '国王杰瑞', type: 'character' },

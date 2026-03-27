@@ -2245,9 +2245,15 @@ const mouseCharacterDefinitions = {
       },
       {
         id: '小淘气2',
-        pattern: '013001133',
+        pattern: '01[30]01133',
         weaponType: 'weapon2',
         description: '爆伤瞬秒流，舍弃破墙能力打极致伤害',
+      },
+      {
+        id: '小淘气3',
+        pattern: '03010[1133]',
+        weaponType: 'weapon1',
+        description: '小图奶酪位置较好时的加点，7级后取舍同上',
       },
     ],
     knowledgeCardGroups: [
