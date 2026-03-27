@@ -4032,7 +4032,7 @@ const mouseCharacterDefinitions = {
           {
             level: 1,
             description: 'Hp满时，获得减伤。',
-            detailedDescription: '当Hp高于[Hp上限的99%](122)时，获得40%减伤。',
+            detailedDescription: '当Hp高于[Hp上限的99%](122)时，获得60%减伤。',
           },
           {
             level: 2,
@@ -4813,7 +4813,7 @@ const mouseCharacterDefinitions = {
             description:
               '米雪儿受到伤害后，附近队友将大幅提高移速和救援速度。在队友附近时受到的伤害减少。',
             detailedDescription:
-              '米雪儿受到伤害后，自身半径900范围内的队友移动度提高15%、救援速度提高50%，持续7.9秒。在队友附近时受到的伤害减少。',
+              '米雪儿受到伤害后，自身半径900范围内的队友移动度提高15%、救援速度提高50%，持续7.9秒。在队友附近时受到的伤害减少20点。',
           },
           {
             level: 2,
