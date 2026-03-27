@@ -716,6 +716,18 @@ const mouseCharacterDefinitions = {
         description: '',
         additionaldescription: '',
       },
+      {
+        id: '主点被动控制',
+        pattern: '120011022',
+        weaponType: 'weapon1',
+        description: '新增加点方案描述',
+      },
+      {
+        id: '主点被动炸火箭',
+        pattern: '120022011',
+        weaponType: 'weapon1',
+        description: '新增加点方案描述',
+      },
     ],
 
     knowledgeCardGroups: [
