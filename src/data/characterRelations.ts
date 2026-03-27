@@ -249,6 +249,19 @@ const characterRelations: Trait[] = [
     },
   },
   {
+    description: '恶魔泰菲的红色小淘气可以将猫咪打进流放门强行流放，但实战实现难度偏高。',
+    group: [
+      { name: '恶魔泰菲', type: 'character' },
+      { name: '恶魔杰瑞', type: 'character' },
+    ],
+    relation: {
+      kind: 'collaborators',
+      subject: { name: '恶魔泰菲', type: 'character' },
+      target: { name: '恶魔杰瑞', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
     description: '国王杰瑞的强化救援战旗配合表演者•杰瑞的梦幻舞步可以实现稳救。',
     group: [
       { name: '国王杰瑞', type: 'character' },
