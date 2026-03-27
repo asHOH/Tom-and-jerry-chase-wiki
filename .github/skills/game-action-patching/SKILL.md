@@ -46,6 +46,50 @@ Selection heuristic:
 3. If action refers to relation semantics (counter/advantage/etc), check characterRelations.ts first.
 4. If multiple files are plausible, list candidates and confirm before patching.
 
+## Relation Kind Mapping (Must Follow)
+
+When an action path expresses relation semantics (`counters`, `counterEachOther`, `counteredBy`, `advantageMaps`, `advantageModes`, etc.), map it to one normalized relation entry in `src/data/characterRelations.ts` with this shape:
+
+```ts
+{
+  description: '...',
+  group: [
+    { name: 'A', type: 'character' },
+    { name: 'B', type: 'character' | 'map' | 'mode' | 'knowledgeCard' | 'specialSkill' },
+  ],
+  relation: {
+    kind: '...',
+    subject: { ... },
+    target: { ... },
+    isMinor: boolean,
+  },
+}
+```
+
+Required mapping rules:
+
+1. `X.counters` -> `kind: 'counters'`, `subject = X`, `target = Y`.
+2. `X.counteredBy` -> `kind: 'counteredBy'`, `subject = X`, `target = Y`.
+3. `X.counterEachOther` -> `kind: 'counterEachOther'`, `subject = X`, `target = Y`.
+4. `X.advantageMaps` -> `kind: 'advantageMaps'`, `subject = X`, `target = map`.
+5. `X.disadvantageMaps` -> `kind: 'disadvantageMaps'`, `subject = X`, `target = map`.
+6. `X.advantageModes` -> `kind: 'advantageModes'`, `subject = X`, `target = mode`.
+7. `X.disadvantageModes` -> `kind: 'disadvantageModes'`, `subject = X`, `target = mode`.
+8. `X.counteredByKnowledgeCards` -> `kind: 'counteredByKnowledgeCards'`, `subject = X`, `target = knowledgeCard` (with factionId if provided).
+9. `X.counteredBySpecialSkills` -> `kind: 'counteredBySpecialSkills'`, `subject = X`, `target = specialSkill` (with factionId if provided).
+
+Do not store relation text under `relation.description`; keep user-facing text in top-level `description`.
+Do not downgrade to partial/placeholder description (e.g. empty string) when newValue provides concrete text.
+
+## Conflict Resolution for Same Scope
+
+If multiple approved actions on the same date touch the same logical relation area:
+
+1. Apply in `created_at ASC` order.
+2. Treat later actions as authoritative for overlapping fields.
+3. If one action changes relation kind (e.g. `counters` -> `counterEachOther`), ensure the obsolete semantic twin is removed or updated so final graph is not contradictory.
+4. If an action path cannot be mapped confidently, mark it as deferred (not synced), report ids, and ask before status writes.
+
 ## Core Rules
 
 1. If unspecified, default to year 2026.
@@ -55,6 +99,7 @@ Selection heuristic:
 5. If action volume is large, classify based on content into smaller chunks and stop for approval before each chunk.
 6. Never update status to "synced" until code edits and validations for that chunk succeed.
 7. Use utf-8 encoding.
+8. Never mark a chunk as synced when code mapping is unresolved, ambiguous, or intentionally skipped.
 
 ## Workflow
 
@@ -228,10 +273,20 @@ Execution notes:
 - Data consistency checks:
   - newValue appears exactly where intended
   - deprecated/old value removed when action semantics require replacement
+  - relation entries keep normalized shape: top-level `description`, and `relation` only contains semantic metadata (`kind/subject/target/isMinor`)
 - Content checks:
   - new value is reasonable
   - "message" of a set of submitted action is implemented (for example, if several actions have same message saying "修复了牛仔杰瑞同时存在于克制与被克制的bug（改为互有克制）", check whether "counter" relationship is deleted and "counterEachOther" relationship is added. Other unrelated actions as we do not expect "message" to describe everything it does.)
   - if the change only happens at new description fields, ensure the change is appropriate, e.g. no regression in precision or conciseness. If there is a risk of regression, assess its level.
+
+## Status Write Gate (Hard Stop)
+
+Before any `update ... set status = 'synced'`:
+
+1. Ensure every action id in the write set is in the chunk ledger as `patched`.
+2. Ensure no id in the write set is `deferred` or `ambiguous`.
+3. Re-run targeted grep/read checks for each changed field family.
+4. If any check fails, do not write synced; report and resolve first.
 
 ## Reporting Format
 
