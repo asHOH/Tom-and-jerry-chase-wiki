@@ -2308,15 +2308,15 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '托普斯的捕虫网无视牛仔杰瑞的霸体，同时托普斯三级分身在附近时拥有霸体，不会被控。',
+    description: '马索尔的升龙拳能够阻拦无敌汤姆上火箭，拦截成功几率大幅提高。',
     group: [
-      { name: '托普斯', type: 'character' },
-      { name: '牛仔杰瑞', type: 'character' },
+      { name: '马索尔', type: 'character' },
+      { name: '汤姆', type: 'character' },
     ],
     relation: {
       kind: 'counters',
-      subject: { name: '托普斯', type: 'character' },
-      target: { name: '牛仔杰瑞', type: 'character' },
+      subject: { name: '马索尔', type: 'character' },
+      target: { name: '汤姆', type: 'character' },
       isMinor: false,
     },
   },
@@ -3361,16 +3361,16 @@ const characterRelations: Trait[] = [
   },
   {
     description:
-      '牛仔杰瑞的干扰在托普斯没有三级分身时影响较大，同时琴和仙人掌的干扰也容易击倒分身，1级被动配合冰冻保鲜的救援也不好拦截。',
+      '牛仔杰瑞的干扰在托普斯没有三级分身时影响较大；但托普斯三级分身在附近时拥有霸体，且捕虫网无视牛仔杰瑞的霸体',
     group: [
       { name: '牛仔杰瑞', type: 'character' },
       { name: '托普斯', type: 'character' },
     ],
     relation: {
-      kind: 'counters',
+      kind: 'counterEachOther',
       subject: { name: '牛仔杰瑞', type: 'character' },
       target: { name: '托普斯', type: 'character' },
-      isMinor: true,
+      isMinor: false,
     },
   },
   {
@@ -4319,7 +4319,7 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '航海士杰瑞的火药桶炸完火箭后使塔拉无法通过扔老鼠的方式上火箭，并且自身缺乏霸体。',
+    description: '航海士杰瑞的火药桶炸完火箭之后塔拉无法通过套索扔老鼠的方式上火箭，并且自身缺乏霸体。',
     group: [
       { name: '塔拉', type: 'character' },
       { name: '航海士杰瑞', type: 'character' },
@@ -4469,7 +4469,7 @@ const characterRelations: Trait[] = [
   },
   {
     description:
-      '表演家杰瑞的主动技能期间斯飞束手无策，并且斯飞无法有效处理三级被动复活的表演家杰瑞',
+      '跳舞中的表演者杰瑞可以免疫咸鱼的效果，并且强大的自保可以主动帮助队友吸闪。',
     group: [
       { name: '斯飞', type: 'character' },
       { name: '表演者•杰瑞', type: 'character' },
@@ -6424,6 +6424,19 @@ const characterRelations: Trait[] = [
     relation: {
       kind: 'counterEachOther',
       target: { name: '追风汤姆', type: 'character' },
+      subject: { name: '航海士杰瑞', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '被火药桶炸毁的火箭无法被天使汤姆吸走，但高机动性使航海士杰瑞难以拦截和逃跑。',
+    group: [
+      { name: '天使汤姆', type: 'character' },
+      { name: '航海士杰瑞', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      target: { name: '天使汤姆', type: 'character' },
       subject: { name: '航海士杰瑞', type: 'character' },
       isMinor: false,
     },
