@@ -6105,6 +6105,10 @@ const mouseCharacterDefinitions = {
         cards: ['S-铁血', 'S-舍己', 'A-逃窜', 'B-应激反应'],
         description: '可以在被打的时候快速跑路。也可以把{应激反应}换成{不屈}。',
       },
+      {
+        cards: ['S-舍己', 'S-铁血', 'B-绝地反击', 'B-夹不住我', 'C-救救我'],
+        description: '武器技能搭配绝地反击可以对猫造成大量伤害，21点时可将夹不住我换成精准投射',
+      },
     ],
     specialSkills: [
       {

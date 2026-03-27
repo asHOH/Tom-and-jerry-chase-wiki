@@ -3622,7 +3622,7 @@ const catCharacterDefinitions = {
       {
         tagName: '后期',
         isMinor: true,
-        description: '9级时拥有三级洞和三级萝卜，冷却短爆发强续航强所有兔子后期较为强势。',
+        description: '9级时拥有三级洞和三级萝卜，冷却短爆发强续航强所以兔子后期较为强势。',
         additionalDescription: '',
       },
       {
