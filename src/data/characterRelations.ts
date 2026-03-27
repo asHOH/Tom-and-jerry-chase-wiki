@@ -1633,13 +1633,13 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '主动技能无敌使鲍姆爆炸无法造成有效干扰。',
+    description: '主动技能无敌使鲍姆爆炸无自保，但能干扰汤姆无敌上火箭。',
     group: [
       { name: '汤姆', type: 'character' },
       { name: '鲍姆', type: 'character' },
     ],
     relation: {
-      kind: 'counters',
+      kind: 'counterEachOther',
       subject: { name: '汤姆', type: 'character' },
       target: { name: '鲍姆', type: 'character' },
       isMinor: false,
@@ -4319,7 +4319,8 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '航海士杰瑞的火药桶炸完火箭之后塔拉无法通过套索扔老鼠的方式上火箭，并且自身缺乏霸体。',
+    description:
+      '航海士杰瑞的火药桶炸完火箭之后塔拉无法通过套索扔老鼠的方式上火箭，并且自身缺乏霸体。',
     group: [
       { name: '塔拉', type: 'character' },
       { name: '航海士杰瑞', type: 'character' },
@@ -4468,8 +4469,7 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description:
-      '跳舞中的表演者杰瑞可以免疫咸鱼的效果，并且强大的自保可以主动帮助队友吸闪。',
+    description: '跳舞中的表演者杰瑞可以免疫咸鱼的效果，并且强大的自保可以主动帮助队友吸闪。',
     group: [
       { name: '斯飞', type: 'character' },
       { name: '表演者•杰瑞', type: 'character' },
@@ -7035,7 +7035,7 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '',
+    description: '无敌无视烟花伤害',
     group: [
       { name: '牛仔汤姆', type: 'character' },
       { name: '熊猫馆-烟花大作战', type: 'map' },
@@ -7044,7 +7044,7 @@ const characterRelations: Trait[] = [
       kind: 'advantageMaps',
       subject: { name: '牛仔汤姆', type: 'character' },
       target: { name: '熊猫馆-烟花大作战', type: 'map' },
-      isMinor: false,
+      isMinor: true,
     },
   },
   {
@@ -7741,6 +7741,45 @@ const characterRelations: Trait[] = [
       kind: 'counters',
       subject: { name: '魔术师', type: 'character' },
       target: { name: '剑客汤姆', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '魔术师的兔子吞闪现，影响追击能力',
+    group: [
+      { name: '莱特宁', type: 'character' },
+      { name: '魔术师', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '莱特宁', type: 'character' },
+      target: { name: '魔术师', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '大幅度提高老鼠救人后逃离能力。I',
+    group: [
+      { name: '米特', type: 'character' },
+      { name: '无畏', type: 'knowledgeCard', factionId: 'mouse' },
+    ],
+    relation: {
+      kind: 'counteredByKnowledgeCards',
+      subject: { name: '米特', type: 'character' },
+      target: { name: '无畏', type: 'knowledgeCard', factionId: 'mouse' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '增加血量，防止被胡椒粉击倒',
+    group: [
+      { name: '米特', type: 'character' },
+      { name: '应急治疗', type: 'specialSkill', factionId: 'mouse' },
+    ],
+    relation: {
+      kind: 'counteredBySpecialSkills',
+      subject: { name: '米特', type: 'character' },
+      target: { name: '应急治疗', type: 'specialSkill', factionId: 'mouse' },
       isMinor: false,
     },
   },
