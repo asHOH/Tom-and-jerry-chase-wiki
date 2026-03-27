@@ -4837,7 +4837,7 @@ const mouseCharacterDefinitions = {
     hpRecovery: 1,
     moveSpeed: 600,
     jumpHeight: 400,
-    cheesePushSpeed: 3.5,
+    cheesePushSpeed: 3.1,
     wallCrackDamageBoost: 1,
     gender: 'male',
     EnglishName: 'Conductor Jerry',
@@ -4910,6 +4910,10 @@ const mouseCharacterDefinitions = {
         description:
           '现版本冰冻保鲜在释放和解除时均能触发共鸣，可在短时间内放出4段共鸣，可用于打伤害或拆火箭。',
       },
+      {
+        name: '魔术漂浮',
+        description: '通用特技，兼具一定对策，但与被动技能相性较差。',
+      },
     ],
     skills: [
       {
@@ -4933,7 +4937,7 @@ const mouseCharacterDefinitions = {
             level: 2,
             description: '狂想：额外给予击中敌方时回复Hp的效果。\n协奏：额外提升推速和交互速度。',
             detailedDescription:
-              '狂想：额外给予击中敌方时回复10Hp的效果。\n协奏：额外提升30%推速和18%交互速度。',
+              '狂想：额外给予击中敌方时回复10Hp的效果。\n协奏：推速固定提高1.25%/秒，交互速度提高18%。',
             cooldown: 15,
           },
           {

@@ -1111,6 +1111,19 @@ const characterRelations: Trait[] = [
     },
   },
   {
+    description: '',
+    group: [
+      { name: '牛仔汤姆', type: 'character' },
+      { name: '剑客泰菲', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '牛仔汤姆', type: 'character' },
+      target: { name: '剑客泰菲', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
     description:
       '牛仔杰瑞二级被动带来的霸体使牛汤姆技能的控制失效，同时二级琴带来的回复与加速让牛仔汤姆不容易击倒牛仔杰瑞，但牛仔汤姆能够强打牛仔杰瑞，同时斗牛会清除仙人掌并进行干扰，三级被动也能轻易击倒霸体的牛仔杰瑞。',
     group: [
@@ -1840,6 +1853,19 @@ const characterRelations: Trait[] = [
       kind: 'counters',
       subject: { name: '如玉', type: 'character' },
       target: { name: '朵朵', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '如此密集的道具使如玉可以频繁触发花枪反击',
+    group: [
+      { name: '如玉', type: 'character' },
+      { name: '经典之家-疯狂奶酪赛', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '如玉', type: 'character' },
+      target: { name: '经典之家-疯狂奶酪赛', type: 'map' },
       isMinor: false,
     },
   },
@@ -5846,7 +5872,7 @@ const characterRelations: Trait[] = [
       kind: 'counters',
       subject: { name: '如玉', type: 'character' },
       target: { name: '剑客泰菲', type: 'character' },
-      isMinor: true,
+      isMinor: false,
     },
   },
   {
@@ -7340,7 +7366,8 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '',
+    description:
+      '游乐场的地形使斗牛难以频繁折返，但女巫古堡二层常会刷出火箭，这对牛汤来说是不小的优势',
     group: [
       { name: '牛仔汤姆', type: 'character' },
       { name: '游乐场', type: 'map' },
@@ -7349,7 +7376,7 @@ const characterRelations: Trait[] = [
       kind: 'disadvantageMaps',
       subject: { name: '牛仔汤姆', type: 'character' },
       target: { name: '游乐场', type: 'map' },
-      isMinor: false,
+      isMinor: true,
     },
   },
   {
