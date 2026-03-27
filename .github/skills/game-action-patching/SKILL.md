@@ -53,7 +53,7 @@ Selection heuristic:
 3. Before patch planning, read src/app/admin/sync-pr/route.ts as the behavioral reference for sync intent and status handling.
 4. If the route path changed, locate the active admin sync endpoint first, then continue.
 5. If action volume is large, classify based on content into smaller chunks and stop for approval before each chunk.
-6. Status updates are not done until code edits and validations for that chunk succeed.
+6. Never update status to "synced" until code edits and validations for that chunk succeed.
 7. Use utf-8 encoding.
 
 ## Workflow
@@ -230,7 +230,8 @@ Execution notes:
   - deprecated/old value removed when action semantics require replacement
 - Content checks:
   - new value is reasonable
-  - if the change only happens at new description fields, ensure the change is appropriate
+  - "message" of a set of submitted action is implemented (for example, if several actions have same message saying "修复了牛仔杰瑞同时存在于克制与被克制的bug（改为互有克制）", check whether "counter" relationship is deleted and "counterEachOther" relationship is added. Other unrelated actions as we do not expect "message" to describe everything it does.)
+  - if the change only happens at new description fields, ensure the change is appropriate, e.g. no regression in precision or conciseness. If there is a risk of regression, assess its level.
 
 ## Reporting Format
 
