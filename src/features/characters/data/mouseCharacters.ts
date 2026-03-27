@@ -718,15 +718,16 @@ const mouseCharacterDefinitions = {
       },
       {
         id: '主点被动控制',
-        pattern: '120011022',
+        pattern: '12001[10]22',
         weaponType: 'weapon1',
-        description: '新增加点方案描述',
+        description: '适合单双排，先点二被自保，若7级进墙缝期先点三被自保',
       },
       {
         id: '主点被动炸火箭',
-        pattern: '120022011',
+        pattern: '12002(2)011',
         weaponType: 'weapon1',
-        description: '新增加点方案描述',
+        description:
+          '适合单双排，先点二被自保，若7级进墙缝期先点三被自保，若玩几何桶不建议点三级桶',
       },
     ],
 
@@ -1162,6 +1163,10 @@ const mouseCharacterDefinitions = {
       {
         cards: ['S-铁血', 'S-舍己', 'B-绝地反击', 'C-不屈', 'C-救救我'],
         description: '第一套卡的下位替代，兼具自保和输出。',
+      },
+      {
+        cards: ['S-舍己', 'S-缴械', 'A-投手', 'B-绝地反击', 'C-不屈'],
+        description: '剑舞卡组，控制+救援+霸体刀上夹+绝反牵制',
       },
     ],
     skills: [
@@ -4241,8 +4246,8 @@ const mouseCharacterDefinitions = {
           },
           {
             level: 3,
-            description:
-              '藤蔓的恢复效果可解除[受伤](被猫咪攻击时附加的状态，效果为停止自然Hp恢复且减速5%)，同时提高跳跃速度。',
+            description: '藤蔓的恢复效果可解除{受伤}，同时提高跳跃速度。',
+            detailedDescription: '藤蔓的恢复效果可解除{受伤}，同时提高跳跃速度。',
             cooldown: 15,
             charges: 2,
           },
@@ -4262,15 +4267,15 @@ const mouseCharacterDefinitions = {
           },
           {
             level: 2,
-            description: '每隔一段时间，获得一层短时间的护盾。',
-            detailedDescription: '加点时立刻获得一层持续5秒的护盾，此后每15秒会再次获得。',
+            description: '每隔一段时间，获得一层短时间的护盾。（加点时立刻获得护盾并重置护盾CD）',
+            detailedDescription: '每隔15秒获得一层护盾，该护盾持续5秒。（加点时立刻获得护盾）',
           },
           {
             level: 3,
             description:
-              '获得Hp恢复状态；{2级被动}的护盾触发时解除[受伤](被猫咪攻击时附加的状态，效果为停止自然Hp恢复且减速5%)；加点时立刻获得护盾。',
+              'Hp自然恢复速度增加；2级被动的护盾触发时解除{受伤}。（加点时立刻获得护盾并重置护盾CD）',
             detailedDescription:
-              '[获得2Hp/秒的恢复状态](在受伤期间也生效)；{2级被动}的护盾触发时解除[受伤](被猫咪攻击时附加的状态，效果为停止自然Hp恢复且减速5%)；加点时立刻获得护盾并重置护盾CD。',
+              '获得2Hp/秒的{恢复}状态；2级被动的护盾触发时解除{受伤}。（加点时立刻获得护盾并重置护盾CD）',
           },
         ],
       },
@@ -6754,7 +6759,7 @@ const mouseCharacterDefinitions = {
     hpRecovery: 1.5,
     moveSpeed: 650,
     jumpHeight: 380,
-    cheesePushSpeed: 5,
+    cheesePushSpeed: 4.75,
     wallCrackDamageBoost: 0.5,
     gender: 'male',
     EnglishName: '',
