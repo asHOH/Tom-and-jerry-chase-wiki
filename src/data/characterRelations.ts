@@ -672,6 +672,20 @@ const characterRelations: Trait[] = [
   },
   {
     description:
+      '米雪儿2武附身音乐家后可以提高音乐家杰瑞的自保能力，同时由于附身后仍然可以触发共鸣，所以能卡好距离仅用一段礼服拆掉火箭',
+    group: [
+      { name: '音乐家杰瑞', type: 'character' },
+      { name: '米雪儿', type: 'character' },
+    ],
+    relation: {
+      kind: 'collaborators',
+      subject: { name: '音乐家杰瑞', type: 'character' },
+      target: { name: '米雪儿', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
       '魔术师的卡牌和航海士杰瑞的金币可以相互弥补控制真空期，提高干扰能力。魔术师在干扰的同时还能推奶酪。',
     group: [
       { name: '魔术师', type: 'character' },
@@ -7933,6 +7947,19 @@ const characterRelations: Trait[] = [
       kind: 'advantageMaps',
       subject: { name: '恶魔泰菲', type: 'character' },
       target: { name: '经典之家II', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '游乐场存在多处滑坡可以利用，变相提高了音乐家的自保能力和转点能力',
+    group: [
+      { name: '音乐家杰瑞', type: 'character' },
+      { name: '游乐场', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '音乐家杰瑞', type: 'character' },
+      target: { name: '游乐场', type: 'map' },
       isMinor: false,
     },
   },

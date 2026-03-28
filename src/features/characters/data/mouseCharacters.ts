@@ -4933,7 +4933,7 @@ const mouseCharacterDefinitions = {
         type: 'active',
         description: '根据演奏风格给予周围友方增益效果。使用技能可切换风格。',
         detailedDescription:
-          '根据演奏风格给予周围友方增益效果。使用技能可切换风格，切换时音乐家杰瑞会同时保持上一种风格8秒。点出该技能时风格为协奏。',
+          '音乐家自身为中心，根据演奏风格给予半径内友方增益效果。使用技能可切换风格，切换时音乐家杰瑞会同时保持上一种风格8秒。点出该技能时风格为协奏。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: ['跳跃键'],
