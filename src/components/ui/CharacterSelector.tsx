@@ -8,7 +8,7 @@ import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 import { characters, type FactionId } from '@/data';
 
-export type RelationKey = 'counters' | 'counterEachOther' | 'collaborators';
+export type RelationKey = 'counters' | 'counteredBy' | 'counterEachOther' | 'collaborators';
 
 export function CharacterSelector({
   currentCharacterId,

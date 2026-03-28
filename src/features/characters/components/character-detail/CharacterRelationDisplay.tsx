@@ -1130,7 +1130,11 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       },
       {
         relationKind: 'counteredBy',
-        isEditable: false,
+        isEditable: true,
+        onToggleMinor: (itemId) => toggleRelationMinor(id, 'counteredBy', itemId),
+        onRemove: (itemId) => removeRelationItem(id, 'counteredBy', itemId),
+        onUpdateDescription: (itemId, description) =>
+          updateRelationDescription(id, 'counteredBy', itemId, description),
       }
     ),
     ...buildKnowledgeCardItems(
@@ -1325,7 +1329,17 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       items: counteredByItems,
       selectors: (
         <div className='flex items-center gap-2'>
-          <div title='添加角色'></div>
+          <div title='添加角色'>
+            <CharacterSelector
+              currentCharacterId={id}
+              factionId={factionId}
+              relationType='counteredBy'
+              existingRelations={char.counteredBy}
+              onSelect={(characterId: string) =>
+                addRelationItem(id, 'counteredBy', createRelationItem(characterId))
+              }
+            />
+          </div>
           <div title='添加知识卡'>
             <KnowledgeCardSelector
               selected={char.counteredByKnowledgeCards}
