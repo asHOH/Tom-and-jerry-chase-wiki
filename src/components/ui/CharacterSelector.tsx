@@ -259,28 +259,24 @@ export function ArticleCharacterSelector({
     setSearchQuery('');
   };
 
-  const handleClear = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleClear = () => {
     onSelect(null);
   };
 
   return (
     <div className='relative'>
-      <div
+      <button
+        type='button'
         onClick={() => !disabled && setIsOpen(!isOpen)}
+        disabled={disabled}
         className={`flex w-full items-center justify-between rounded-lg border px-4 py-3 text-left text-lg transition-all duration-200 ${
           disabled
             ? 'cursor-not-allowed border-gray-200 bg-gray-100 text-gray-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-500'
             : 'cursor-pointer border-gray-300 bg-white text-gray-900 hover:border-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100'
-        }`}
-        role='button'
-        tabIndex={disabled ? -1 : 0}
-        onKeyDown={(e) => {
-          if (!disabled && (e.key === 'Enter' || e.key === ' ')) {
-            e.preventDefault();
-            setIsOpen(!isOpen);
-          }
-        }}
+        } ${selectedCharacter && !disabled ? 'pr-14' : ''}`}
+        aria-haspopup='listbox'
+        aria-expanded={isOpen}
+        aria-label='选择角色'
       >
         {selectedCharacter ? (
           <div className='flex items-center gap-3'>
@@ -299,34 +295,34 @@ export function ArticleCharacterSelector({
         ) : (
           <span className='text-gray-500 dark:text-gray-400'>请选择角色</span>
         )}
-        <div className='flex items-center gap-2'>
-          {selectedCharacter && !disabled && (
-            <button
-              type='button'
-              onClick={handleClear}
-              className='rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300'
-              aria-label='清除选择'
-            >
-              <svg className='h-4 w-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth={2}
-                  d='M6 18L18 6M6 6l12 12'
-                />
-              </svg>
-            </button>
-          )}
-          <svg
-            className={`h-5 w-5 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}
-            fill='none'
-            stroke='currentColor'
-            viewBox='0 0 24 24'
-          >
-            <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M19 9l-7 7-7-7' />
+        <svg
+          className={`h-5 w-5 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+          fill='none'
+          stroke='currentColor'
+          viewBox='0 0 24 24'
+          aria-hidden='true'
+        >
+          <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M19 9l-7 7-7-7' />
+        </svg>
+      </button>
+
+      {selectedCharacter && !disabled && (
+        <button
+          type='button'
+          onClick={handleClear}
+          className='absolute top-1/2 right-9 -translate-y-1/2 rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:hover:bg-gray-700 dark:hover:text-gray-300'
+          aria-label='清除选择'
+        >
+          <svg className='h-4 w-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+            <path
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              strokeWidth={2}
+              d='M6 18L18 6M6 6l12 12'
+            />
           </svg>
-        </div>
-      </div>
+        </button>
+      )}
 
       {isOpen && (
         <>
