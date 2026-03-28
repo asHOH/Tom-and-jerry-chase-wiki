@@ -14,55 +14,42 @@ export default function CharacterNavigationButtons({
   currentCharacterId,
   className = '',
 }: CharacterNavigationButtonsProps) {
-  const {
-    previousCharacter,
-    nextCharacter,
-    navigateToPrevious,
-    navigateToNext,
-    currentIndex,
-    totalCharacters,
-  } = useCharacterNavigation(currentCharacterId);
+  const { previousId, nextId, navigateToPrevious, navigateToNext, currentIndex, totalCharacters } =
+    useCharacterNavigation(currentCharacterId);
 
   return (
     <div className={`flex items-center justify-between gap-4 ${className}`}>
-      {/* Previous Character Button */}
       <m.button
         onClick={navigateToPrevious}
-        disabled={!previousCharacter}
+        disabled={!previousId}
         className={`flex items-center gap-2 rounded-lg px-4 py-2 transition-colors ${
-          previousCharacter
+          previousId
             ? 'bg-blue-500 text-white hover:bg-blue-600'
             : 'cursor-not-allowed bg-gray-300 text-gray-500 dark:bg-gray-700 dark:text-gray-400'
         }`}
-        whileHover={previousCharacter ? { scale: 1.05 } : {}}
-        whileTap={previousCharacter ? { scale: 0.95 } : {}}
+        whileHover={previousId ? { scale: 1.05 } : {}}
+        whileTap={previousId ? { scale: 0.95 } : {}}
       >
         <ChevronLeftIcon className='h-4 w-4' />
-        <span className='hidden sm:inline'>
-          {previousCharacter ? previousCharacter.character?.id : '上一个'}
-        </span>
+        <span className='hidden sm:inline'>{previousId ?? '上一位'}</span>
       </m.button>
 
-      {/* Character Counter */}
       <div className='px-2 text-sm text-gray-600 dark:text-gray-400'>
         {currentIndex + 1} / {totalCharacters}
       </div>
 
-      {/* Next Character Button */}
       <m.button
         onClick={navigateToNext}
-        disabled={!nextCharacter}
+        disabled={!nextId}
         className={`flex items-center gap-2 rounded-lg px-4 py-2 transition-colors ${
-          nextCharacter
+          nextId
             ? 'bg-blue-500 text-white hover:bg-blue-600'
             : 'cursor-not-allowed bg-gray-300 text-gray-500 dark:bg-gray-700 dark:text-gray-400'
         }`}
-        whileHover={nextCharacter ? { scale: 1.05 } : {}}
-        whileTap={nextCharacter ? { scale: 0.95 } : {}}
+        whileHover={nextId ? { scale: 1.05 } : {}}
+        whileTap={nextId ? { scale: 0.95 } : {}}
       >
-        <span className='hidden sm:inline'>
-          {nextCharacter ? nextCharacter.character?.id : '下一个'}
-        </span>
+        <span className='hidden sm:inline'>{nextId ?? '下一位'}</span>
         <ChevronRightIcon className='h-4 w-4' />
       </m.button>
     </div>
