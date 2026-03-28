@@ -45,7 +45,6 @@ type RelationThemeClasses = {
   itemBg: string;
   interactive: string;
   toggle: string;
-  badge: string;
 };
 
 const e = editable('characters');
@@ -151,8 +150,6 @@ const relationThemeClasses: Record<RelationTheme, RelationThemeClasses> = {
       'cursor-pointer transition-shadow hover:shadow-lg hover:bg-blue-100 dark:hover:bg-blue-800/40 focus:outline-none focus:ring-2 focus:ring-blue-400 active:scale-95',
     toggle:
       'text-[10px] px-1 py-0.5 bg-blue-200 dark:bg-blue-700 text-blue-800 dark:text-blue-200 rounded-full hover:bg-blue-300 dark:hover:bg-blue-600 cursor-pointer',
-    badge:
-      'text-[10px] px-1 py-0.5 bg-blue-200 dark:bg-blue-700 text-blue-800 dark:text-blue-200 rounded-full',
   },
   amber: {
     headerText: 'text-amber-700 dark:text-amber-300',
@@ -162,8 +159,6 @@ const relationThemeClasses: Record<RelationTheme, RelationThemeClasses> = {
       'cursor-pointer transition-shadow hover:shadow-lg hover:bg-amber-100 dark:hover:bg-amber-800/40 focus:outline-none focus:ring-2 focus:ring-amber-400 active:scale-95',
     toggle:
       'text-[10px] px-1 py-0.5 bg-amber-200 dark:bg-amber-700 text-amber-800 dark:text-amber-200 rounded-full hover:bg-amber-300 dark:hover:bg-amber-600 cursor-pointer',
-    badge:
-      'text-[10px] px-1 py-0.5 bg-amber-200 dark:bg-amber-700 text-amber-800 dark:text-amber-200 rounded-full',
   },
   red: {
     headerText: 'text-red-700 dark:text-red-300',
@@ -173,8 +168,6 @@ const relationThemeClasses: Record<RelationTheme, RelationThemeClasses> = {
       'cursor-pointer transition-shadow hover:shadow-lg hover:bg-red-100 dark:hover:bg-red-800/40 focus:outline-none focus:ring-2 focus:ring-red-400 active:scale-95',
     toggle:
       'text-[10px] px-1 py-0.5 bg-red-200 dark:bg-red-700 text-red-800 dark:text-red-200 rounded-full hover:bg-red-300 dark:hover:bg-red-600 cursor-pointer',
-    badge:
-      'text-[10px] px-1 py-0.5 bg-red-200 dark:bg-red-700 text-red-800 dark:text-red-200 rounded-full',
   },
   green: {
     headerText: 'text-green-700 dark:text-green-300',
@@ -184,8 +177,6 @@ const relationThemeClasses: Record<RelationTheme, RelationThemeClasses> = {
       'cursor-pointer transition-shadow hover:shadow-lg hover:bg-green-100 dark:hover:bg-green-800/40 focus:outline-none focus:ring-2 focus:ring-green-400 active:scale-95',
     toggle:
       'text-[10px] px-1 py-0.5 bg-green-200 dark:bg-green-700 text-green-800 dark:text-green-200 rounded-full hover:bg-green-300 dark:hover:bg-green-600 cursor-pointer',
-    badge:
-      'text-[10px] px-1 py-0.5 bg-green-200 dark:bg-green-700 text-green-800 dark:text-green-200 rounded-full',
   },
   purple: {
     headerText: 'text-purple-700 dark:text-purple-300',
@@ -195,8 +186,6 @@ const relationThemeClasses: Record<RelationTheme, RelationThemeClasses> = {
       'cursor-pointer transition-shadow hover:shadow-lg hover:bg-purple-100 dark:hover:bg-purple-800/40 focus:outline-none focus:ring-2 focus:ring-purple-400 active:scale-95',
     toggle:
       'text-[10px] px-1 py-0.5 bg-purple-200 dark:bg-purple-700 text-purple-800 dark:text-purple-200 rounded-full hover:bg-purple-300 dark:hover:bg-purple-600 cursor-pointer',
-    badge:
-      'text-[10px] px-1 py-0.5 bg-purple-200 dark:bg-purple-700 text-purple-800 dark:text-purple-200 rounded-full',
   },
   orange: {
     headerText: 'text-orange-700 dark:text-orange-300',
@@ -206,10 +195,10 @@ const relationThemeClasses: Record<RelationTheme, RelationThemeClasses> = {
       'cursor-pointer transition-shadow hover:shadow-lg hover:bg-orange-100 dark:hover:bg-orange-800/40 focus:outline-none focus:ring-2 focus:ring-orange-400 active:scale-95',
     toggle:
       'text-[10px] px-1 py-0.5 bg-orange-200 dark:bg-orange-700 text-orange-800 dark:text-orange-200 rounded-full hover:bg-orange-300 dark:hover:bg-orange-600 cursor-pointer',
-    badge:
-      'text-[10px] px-1 py-0.5 bg-orange-200 dark:bg-orange-700 text-orange-800 dark:text-orange-200 rounded-full',
   },
 };
+
+const minorLabelClassName = 'text-[11px] text-gray-500 dark:text-gray-400';
 
 type RelationDisplayBase = {
   key: string;
@@ -570,7 +559,7 @@ const RelationSection: React.FC<RelationSectionProps> = ({
                 {item.isMinor ? '次要' : '主要'}
               </button>
             ) : (
-              !canEdit && item.isMinor && <span className={themeClasses.badge}>次要</span>
+              !canEdit && item.isMinor && <span className={minorLabelClassName}>(次要)</span>
             )}
             {canEdit && item.onRemove && (
               <button
@@ -655,7 +644,7 @@ const RelationSection: React.FC<RelationSectionProps> = ({
                 {item.isMinor ? '次要' : '主要'}
               </button>
             ) : (
-              item.isMinor && <span className={themeClasses.badge}>次要</span>
+              item.isMinor && <span className={minorLabelClassName}>(次要)</span>
             )}
             {canEdit && item.onRemove && (
               <button
@@ -752,7 +741,7 @@ const RelationSection: React.FC<RelationSectionProps> = ({
                 {item.isMinor ? '次要' : '主要'}
               </button>
             ) : (
-              item.isMinor && <span className={themeClasses.badge}>次要</span>
+              item.isMinor && <span className={minorLabelClassName}>(次要)</span>
             )}
             {canEdit && item.onRemove && (
               <button
@@ -849,7 +838,7 @@ const RelationSection: React.FC<RelationSectionProps> = ({
                 {item.isMinor ? '次要' : '主要'}
               </button>
             ) : (
-              item.isMinor && <span className={themeClasses.badge}>次要</span>
+              item.isMinor && <span className={minorLabelClassName}>(次要)</span>
             )}
             {canEdit && item.onRemove && (
               <button
@@ -946,7 +935,7 @@ const RelationSection: React.FC<RelationSectionProps> = ({
                 {item.isMinor ? '次要' : '主要'}
               </button>
             ) : (
-              item.isMinor && <span className={themeClasses.badge}>次要</span>
+              item.isMinor && <span className={minorLabelClassName}>(次要)</span>
             )}
             {canEdit && item.onRemove && (
               <button
