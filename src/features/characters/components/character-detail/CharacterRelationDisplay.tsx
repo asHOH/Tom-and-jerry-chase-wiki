@@ -198,6 +198,10 @@ const relationThemeClasses: Record<RelationTheme, RelationThemeClasses> = {
   },
 };
 
+const relationItemNameClassName = 'text-sm text-gray-700 dark:text-gray-300';
+const relationItemDescriptionClassName = 'mt-1 text-left text-xs text-gray-500 dark:text-gray-400';
+const relationItemTextareaClassName =
+  'mt-1 w-full resize-none rounded-md border border-gray-200 bg-white/60 px-2 py-1 text-left text-xs text-gray-600 focus:border-blue-400 focus:ring-1 focus:ring-blue-300 focus:outline-none dark:border-gray-600 dark:bg-slate-800/60 dark:text-gray-300';
 const minorLabelClassName = 'text-[11px] text-gray-500 dark:text-gray-400';
 
 type RelationDisplayBase = {
@@ -548,7 +552,7 @@ const RelationSection: React.FC<RelationSectionProps> = ({
         />
         <div className='flex flex-1 flex-col'>
           <div className='flex items-center gap-1'>
-            <span className='text-xs text-gray-700 dark:text-gray-300'>{item.id}</span>
+            <span className={relationItemNameClassName}>{item.id}</span>
             {canEdit && item.isEditable && item.onToggleMinor ? (
               <button
                 type='button'
@@ -577,7 +581,7 @@ const RelationSection: React.FC<RelationSectionProps> = ({
               <e.span
                 path={`${item.descriptionPath}.description`}
                 initialValue={item.description}
-                className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'
+                className={relationItemDescriptionClassName}
                 onSave={(value) => item.onUpdateDescription?.(value)}
               />
             ) : (
@@ -585,15 +589,13 @@ const RelationSection: React.FC<RelationSectionProps> = ({
                 rows={2}
                 defaultValue={item.description}
                 onBlur={(event) => item.onUpdateDescription?.(event.currentTarget.value)}
-                className='mt-1 w-full resize-none rounded-md border border-gray-200 bg-white/60 px-2 py-1 text-left text-[11px] text-gray-600 focus:border-blue-400 focus:ring-1 focus:ring-blue-300 focus:outline-none dark:border-gray-600 dark:bg-slate-800/60 dark:text-gray-300'
+                className={relationItemTextareaClassName}
                 placeholder='补充关系描述'
               />
             )
           ) : (
             item.description && (
-              <span className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'>
-                {item.description}
-              </span>
+              <span className={relationItemDescriptionClassName}>{item.description}</span>
             )
           )}
         </div>
@@ -633,7 +635,7 @@ const RelationSection: React.FC<RelationSectionProps> = ({
         <Image src={item.imageUrl} alt={item.id} width={32} height={40} className='mx-1 h-10 w-8' />
         <div className='flex flex-1 flex-col'>
           <div className='flex items-center gap-1'>
-            <span className='text-xs text-gray-700 dark:text-gray-300'>{item.id}</span>
+            <span className={relationItemNameClassName}>{item.id}</span>
             {canEdit && item.onToggleMinor ? (
               <button
                 type='button'
@@ -662,7 +664,7 @@ const RelationSection: React.FC<RelationSectionProps> = ({
               <e.span
                 path={`${item.descriptionPath}.description`}
                 initialValue={item.description}
-                className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'
+                className={relationItemDescriptionClassName}
                 onSave={(value) => item.onUpdateDescription?.(value)}
               />
             ) : (
@@ -670,15 +672,13 @@ const RelationSection: React.FC<RelationSectionProps> = ({
                 rows={2}
                 defaultValue={item.description}
                 onBlur={(event) => item.onUpdateDescription?.(event.currentTarget.value)}
-                className='mt-1 w-full resize-none rounded-md border border-gray-200 bg-white/60 px-2 py-1 text-left text-[11px] text-gray-600 focus:border-blue-400 focus:ring-1 focus:ring-blue-300 focus:outline-none dark:border-gray-600 dark:bg-slate-800/60 dark:text-gray-300'
+                className={relationItemTextareaClassName}
                 placeholder='补充关系描述'
               />
             )
           ) : (
             item.description && (
-              <span className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'>
-                {item.description}
-              </span>
+              <span className={relationItemDescriptionClassName}>{item.description}</span>
             )
           )}
         </div>
@@ -730,7 +730,7 @@ const RelationSection: React.FC<RelationSectionProps> = ({
         )}
         <div className='flex flex-1 flex-col'>
           <div className='flex items-center gap-1'>
-            <span className='text-xs text-gray-700 dark:text-gray-300'>{item.id}</span>
+            <span className={relationItemNameClassName}>{item.id}</span>
             {canEdit && item.onToggleMinor ? (
               <button
                 type='button'
@@ -759,7 +759,7 @@ const RelationSection: React.FC<RelationSectionProps> = ({
               <e.span
                 path={`${item.descriptionPath}.description`}
                 initialValue={item.description}
-                className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'
+                className={relationItemDescriptionClassName}
                 onSave={(value) => item.onUpdateDescription?.(value)}
               />
             ) : (
@@ -767,15 +767,13 @@ const RelationSection: React.FC<RelationSectionProps> = ({
                 rows={2}
                 defaultValue={item.description}
                 onBlur={(event) => item.onUpdateDescription?.(event.currentTarget.value)}
-                className='mt-1 w-full resize-none rounded-md border border-gray-200 bg-white/60 px-2 py-1 text-left text-[11px] text-gray-600 focus:border-blue-400 focus:ring-1 focus:ring-blue-300 focus:outline-none dark:border-gray-600 dark:bg-slate-800/60 dark:text-gray-300'
+                className={relationItemTextareaClassName}
                 placeholder='补充关系描述'
               />
             )
           ) : (
             item.description && (
-              <span className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'>
-                {item.description}
-              </span>
+              <span className={relationItemDescriptionClassName}>{item.description}</span>
             )
           )}
         </div>
@@ -827,7 +825,7 @@ const RelationSection: React.FC<RelationSectionProps> = ({
         )}
         <div className='flex flex-1 flex-col'>
           <div className='flex items-center gap-1'>
-            <span className='text-xs text-gray-700 dark:text-gray-300'>{item.id}</span>
+            <span className={relationItemNameClassName}>{item.id}</span>
             {canEdit && item.onToggleMinor ? (
               <button
                 type='button'
@@ -856,7 +854,7 @@ const RelationSection: React.FC<RelationSectionProps> = ({
               <e.span
                 path={`${item.descriptionPath}.description`}
                 initialValue={item.description}
-                className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'
+                className={relationItemDescriptionClassName}
                 onSave={(value) => item.onUpdateDescription?.(value)}
               />
             ) : (
@@ -864,15 +862,13 @@ const RelationSection: React.FC<RelationSectionProps> = ({
                 rows={2}
                 defaultValue={item.description}
                 onBlur={(event) => item.onUpdateDescription?.(event.currentTarget.value)}
-                className='mt-1 w-full resize-none rounded-md border border-gray-200 bg-white/60 px-2 py-1 text-left text-[11px] text-gray-600 focus:border-blue-400 focus:ring-1 focus:ring-blue-300 focus:outline-none dark:border-gray-600 dark:bg-slate-800/60 dark:text-gray-300'
+                className={relationItemTextareaClassName}
                 placeholder='补充关系描述'
               />
             )
           ) : (
             item.description && (
-              <span className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'>
-                {item.description}
-              </span>
+              <span className={relationItemDescriptionClassName}>{item.description}</span>
             )
           )}
         </div>
@@ -924,7 +920,7 @@ const RelationSection: React.FC<RelationSectionProps> = ({
         )}
         <div className='flex flex-1 flex-col'>
           <div className='flex items-center gap-1'>
-            <span className='text-xs text-gray-700 dark:text-gray-300'>{item.id}</span>
+            <span className={relationItemNameClassName}>{item.id}</span>
             {canEdit && item.onToggleMinor ? (
               <button
                 type='button'
@@ -953,7 +949,7 @@ const RelationSection: React.FC<RelationSectionProps> = ({
               <e.span
                 path={`${item.descriptionPath}.description`}
                 initialValue={item.description}
-                className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'
+                className={relationItemDescriptionClassName}
                 onSave={(value) => item.onUpdateDescription?.(value)}
               />
             ) : (
@@ -961,15 +957,13 @@ const RelationSection: React.FC<RelationSectionProps> = ({
                 rows={2}
                 defaultValue={item.description}
                 onBlur={(event) => item.onUpdateDescription?.(event.currentTarget.value)}
-                className='mt-1 w-full resize-none rounded-md border border-gray-200 bg-white/60 px-2 py-1 text-left text-[11px] text-gray-600 focus:border-blue-400 focus:ring-1 focus:ring-blue-300 focus:outline-none dark:border-gray-600 dark:bg-slate-800/60 dark:text-gray-300'
+                className={relationItemTextareaClassName}
                 placeholder='补充关系描述'
               />
             )
           ) : (
             item.description && (
-              <span className='mt-1 text-left text-[11px] text-gray-500 dark:text-gray-400'>
-                {item.description}
-              </span>
+              <span className={relationItemDescriptionClassName}>{item.description}</span>
             )
           )}
         </div>
@@ -981,7 +975,10 @@ const RelationSection: React.FC<RelationSectionProps> = ({
     <div>
       <div className='flex items-center justify-between'>
         <span
-          className={clsx('flex items-center gap-1 text-sm font-semibold', themeClasses.headerText)}
+          className={clsx(
+            'flex items-center gap-1 text-base font-semibold',
+            themeClasses.headerText
+          )}
         >
           <span
             className={clsx(
