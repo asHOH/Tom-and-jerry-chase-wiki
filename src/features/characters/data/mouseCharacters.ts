@@ -5756,6 +5756,12 @@ const mouseCharacterDefinitions = {
         weaponType: 'weapon1',
         description: '通过优先点出采访和被动增强干扰能力。',
       },
+      {
+        id: '被动',
+        pattern: '120001122',
+        weaponType: 'weapon1',
+        description: '现版本的三级被动让采访状态下的米可血量更高，也能蹭到更多素材',
+      },
     ],
     knowledgeCardGroups: [
       {
