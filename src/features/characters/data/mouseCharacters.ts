@@ -4668,6 +4668,7 @@ const mouseCharacterDefinitions = {
     wallCrackDamageBoost: 1,
     gender: 'female',
     EnglishName: 'Michelle',
+    aliases: ['米雪'],
     mousePositioningTags: [
       {
         tagName: '辅助',
@@ -4693,7 +4694,7 @@ const mouseCharacterDefinitions = {
       },
       {
         id: '第二武器',
-        pattern: '13[03]11[0003]',
+        pattern: '13[03]11003',
         weaponType: 'weapon2',
         description:
           '全程附身流派加点，此加点下米雪儿的发挥高度绑定队友。（附身状态下一级被动可用{有难同当}触发，若未携带该卡则可不点）',
@@ -4703,6 +4704,14 @@ const mouseCharacterDefinitions = {
       {
         cards: ['S-铁血', 'S-舍己', 'S-缴械', 'C-救救我'],
         description: '一武器常用。',
+      },
+      {
+        cards: ['S-铁血', 'S-舍己', 'A-逃窜', 'C-不屈', 'C-救救我'],
+        description: '常规卡组，双武器通用。',
+      },
+      {
+        cards: ['S-铁血', 'S-舍己', 'S-有难同当', 'C-救救我'],
+        description: '二武被动流。',
       },
     ],
     skills: [
