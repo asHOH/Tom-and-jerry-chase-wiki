@@ -1688,7 +1688,8 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '苏蕊跳舞霸体后几乎完全不受鲍姆爆炸的影响。',
+    description:
+      '苏蕊跳舞霸体后几乎完全不受鲍姆爆炸的影响，但鲍姆可通过升级被动实现在火箭上爆炸自救。',
     group: [
       { name: '苏蕊', type: 'character' },
       { name: '鲍姆', type: 'character' },
@@ -1697,7 +1698,7 @@ const characterRelations: Trait[] = [
       kind: 'counters',
       subject: { name: '苏蕊', type: 'character' },
       target: { name: '鲍姆', type: 'character' },
-      isMinor: false,
+      isMinor: true,
     },
   },
   {
@@ -2468,7 +2469,7 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '杰瑞的主动技能能够解除附近老鼠的受伤状态。',
+    description: '杰瑞的主动技能能够解除附近老鼠的受伤状态，且牛仔汤姆怕控制，易被鸟哨干扰防守。',
     group: [
       { name: '杰瑞', type: 'character' },
       { name: '牛仔汤姆', type: 'character' },
@@ -2477,6 +2478,58 @@ const characterRelations: Trait[] = [
       kind: 'counters',
       subject: { name: '杰瑞', type: 'character' },
       target: { name: '牛仔汤姆', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '杰瑞推速较快，二级被动增加搬奶酪速度；鸟哨可破除部分猫的防守',
+    group: [
+      { name: '杰瑞', type: 'character' },
+      { name: '疯狂奶酪赛', type: 'mode' },
+    ],
+    relation: {
+      kind: 'advantageModes',
+      subject: { name: '杰瑞', type: 'character' },
+      target: { name: '疯狂奶酪赛', type: 'mode' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '盔甲房与侍卫房较小，鸟哨可起到折返轰炸作用',
+    group: [
+      { name: '杰瑞', type: 'character' },
+      { name: '雪夜古堡I', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '杰瑞', type: 'character' },
+      target: { name: '雪夜古堡I', type: 'map' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '',
+    group: [
+      { name: '杰瑞', type: 'character' },
+      { name: '雪夜古堡II', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '杰瑞', type: 'character' },
+      target: { name: '雪夜古堡II', type: 'map' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '',
+    group: [
+      { name: '杰瑞', type: 'character' },
+      { name: '雪夜古堡III', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '杰瑞', type: 'character' },
+      target: { name: '雪夜古堡III', type: 'map' },
       isMinor: true,
     },
   },
@@ -5358,6 +5411,20 @@ const characterRelations: Trait[] = [
     },
   },
   {
+    description:
+      '米雪儿的二级变身可抵挡如玉的一次反击；后期制造大量比利鼠，消耗如玉坚毅的同时快速破墙。',
+    group: [
+      { name: '米雪儿', type: 'character' },
+      { name: '如玉', type: 'character' },
+    ],
+    relation: {
+      kind: 'counters',
+      subject: { name: '米雪儿', type: 'character' },
+      target: { name: '如玉', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
     description: '剑客汤姆缺乏霸体能力，很容易被罗菲连续控制。',
     group: [
       { name: '罗宾汉泰菲', type: 'character' },
@@ -6147,6 +6214,33 @@ const characterRelations: Trait[] = [
     },
   },
   {
+    description: '烟花模式地图小，猫开局5级，苏蕊可以利用跳舞和烟花带来的眩晕一波杀穿。',
+    group: [
+      { name: '苏蕊', type: 'character' },
+      { name: '烟花大作战', type: 'mode' },
+    ],
+    relation: {
+      kind: 'advantageModes',
+      subject: { name: '苏蕊', type: 'character' },
+      target: { name: '烟花大作战', type: 'mode' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '苏蕊跳舞时间持续30秒，抓住老鼠后可跑到杂物间点燃大炸药后跳舞跟随直到放飞。老鼠对此缺乏反制手段',
+    group: [
+      { name: '苏蕊', type: 'character' },
+      { name: '经典之家I', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '苏蕊', type: 'character' },
+      target: { name: '经典之家I', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
     description: '杰瑞自保能力较差，容易被抓，且杰瑞阵容多三保一，易被针对。',
     group: [
       { name: '苏蕊', type: 'character' },
@@ -6746,6 +6840,19 @@ const characterRelations: Trait[] = [
       kind: 'countersKnowledgeCards',
       subject: { name: '如玉', type: 'character' },
       target: { name: '缴械', type: 'knowledgeCard', factionId: 'mouse' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '掷花枪能轻易击倒无畏后摇眩晕的老鼠。',
+    group: [
+      { name: '如玉', type: 'character' },
+      { name: '无畏', type: 'knowledgeCard', factionId: 'mouse' },
+    ],
+    relation: {
+      kind: 'countersKnowledgeCards',
+      subject: { name: '如玉', type: 'character' },
+      target: { name: '无畏', type: 'knowledgeCard', factionId: 'mouse' },
       isMinor: false,
     },
   },
@@ -7925,7 +8032,7 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '如玉远距离瞬移反击，有前摇。可以通过冰冻保鲜规避伤害',
+    description: '冰冻保鲜的无敌可以抵挡如玉的反击。',
     group: [
       { name: '如玉', type: 'character' },
       { name: '冰冻保鲜', type: 'specialSkill', factionId: 'mouse' },
