@@ -2,7 +2,7 @@ import { AssetManager } from '@/lib/assetManager';
 import { CardGroupType, type CharacterDefinition } from '@/data/types';
 import { processCharacters } from '@/features/characters/utils/skillId';
 
-export const mouseCharacterDefinitions = {
+const mouseCharacterDefinitions = {
   /* ----------------------------------- 杰瑞 ----------------------------------- */
   杰瑞: {
     description: '一只古灵精怪的小老鼠，总喜欢戏弄汤姆，和汤姆是一对欢喜冤家。',

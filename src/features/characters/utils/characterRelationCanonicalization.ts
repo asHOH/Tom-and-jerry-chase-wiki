@@ -1,6 +1,8 @@
 import type { CharacterRelationItem, FactionId, TraitRelationKind } from '../../../data/types';
-import { catCharacterDefinitions } from '../data/catCharacters';
-import { mouseCharacterDefinitions } from '../data/mouseCharacters';
+import {
+  getCharacterDisplayRankById,
+  getCharacterFactionById,
+} from '../data/characterMetadata';
 
 export type CanonicalStoredCharacterRelationKind = Exclude<TraitRelationKind, 'counteredBy'>;
 
@@ -12,26 +14,12 @@ export type CanonicalRelationStorageLocation = {
 
 export type CanonicalRelationMergeInput = Pick<CharacterRelationItem, 'description' | 'isMinor'>;
 
-const mouseCharacterIds = Object.keys(mouseCharacterDefinitions);
-const catCharacterIds = Object.keys(catCharacterDefinitions);
-
-export const characterDisplayOrder = [...mouseCharacterIds, ...catCharacterIds];
-
-const mouseCharacterIdSet = new Set(mouseCharacterIds);
-const catCharacterIdSet = new Set(catCharacterIds);
-
-const characterDisplayRankMap = new Map(
-  characterDisplayOrder.map((characterId, index) => [characterId, index] as const)
-);
-
 export const getCharacterFaction = (characterId: string): FactionId | undefined => {
-  if (mouseCharacterIdSet.has(characterId)) return 'mouse';
-  if (catCharacterIdSet.has(characterId)) return 'cat';
-  return undefined;
+  return getCharacterFactionById(characterId);
 };
 
 export const getCharacterDisplayRank = (characterId: string): number =>
-  characterDisplayRankMap.get(characterId) ?? Number.MAX_SAFE_INTEGER;
+  getCharacterDisplayRankById(characterId);
 
 export const getCanonicalCollaboratorOwner = (leftId: string, rightId: string): string =>
   getCharacterDisplayRank(leftId) <= getCharacterDisplayRank(rightId) ? leftId : rightId;
