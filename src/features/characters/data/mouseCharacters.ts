@@ -2298,7 +2298,11 @@ const mouseCharacterDefinitions = {
       },
       {
         cards: ['S-舍己', 'S-铁血', 'B-幸运', 'C-救救我'],
-        description: '最基础的幸运卡，车队可以救救我换不屈，舍己换回家，打苏蕊也可以铁血换缴械',
+        description: '最基础的幸运卡，车队可以救救我换不屈，舍己换回家',
+      },
+      {
+        cards: ['S-回家', 'S-缴械', 'S-舍己', 'C-救救我'],
+        description: '专门打苏蕊的卡组，舍弃铁血换收益',
       },
     ],
 
@@ -2423,15 +2427,15 @@ const mouseCharacterDefinitions = {
       },
       {
         name: '干扰投掷',
-        description: '配合二武红恶魔。做到类似佩克斯弹琴效果',
+        description: '用于自保或破坏老鼠夹，有一定救援能力',
       },
       {
         name: '冰冻保鲜',
-        description: '提高前期自保，手快可以当一层盾',
+        description: '提高前期自保，手快可以当一层盾，有一定救援能力',
       },
       {
         name: '急速翻滚',
-        description: '最传统的卡组，但不适合救人',
+        description: '传统配法，增加机动性，但不适合救人',
       },
     ],
   },

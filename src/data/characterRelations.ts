@@ -276,6 +276,20 @@ const characterRelations: Trait[] = [
     },
   },
   {
+    description:
+      '米雪儿可以变身成红色小淘气，被恶菲向上掷出进行快速跨楼层支援；也可以变身成捕鼠夹与恶菲进行主动布夹，拦截没有带细心的猫咪。',
+    group: [
+      { name: '恶魔泰菲', type: 'character' },
+      { name: '米雪儿', type: 'character' },
+    ],
+    relation: {
+      kind: 'collaborators',
+      subject: { name: '恶魔泰菲', type: 'character' },
+      target: { name: '米雪儿', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
     description: '国王杰瑞的强化救援战旗配合表演者•杰瑞的梦幻舞步可以实现稳救。',
     group: [
       { name: '国王杰瑞', type: 'character' },
@@ -1098,6 +1112,20 @@ const characterRelations: Trait[] = [
     },
   },
   {
+    description:
+      '苏蕊血量极低，可以被三被恶菲轻易打死无数次，但苏蕊作为前期强势猫，容易将有恶菲的阵容在前期就速通，且二被苏蕊起身极快，苏蕊可以被击倒后起身但恶菲没有容错。',
+    group: [
+      { name: '恶魔泰菲', type: 'character' },
+      { name: '苏蕊', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '恶魔泰菲', type: 'character' },
+      target: { name: '苏蕊', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
     description: '',
     group: [
       { name: '牛仔汤姆', type: 'character' },
@@ -1263,16 +1291,16 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '恶魔泰菲的三级被动能轻易击倒斯飞，斯飞克制恶菲的高移速，且三被斯飞血条回得快',
+    description: '恶魔泰菲的三级被动能轻易击倒斯飞，但斯飞克制恶菲的高移速，且三级被动恢复能力强。',
     group: [
-      { name: '斯飞', type: 'character' },
       { name: '恶魔泰菲', type: 'character' },
+      { name: '斯飞', type: 'character' },
     ],
     relation: {
       kind: 'counterEachOther',
-      subject: { name: '斯飞', type: 'character' },
-      target: { name: '恶魔泰菲', type: 'character' },
-      isMinor: false,
+      subject: { name: '恶魔泰菲', type: 'character' },
+      target: { name: '斯飞', type: 'character' },
+      isMinor: true,
     },
   },
   {
@@ -2631,13 +2659,13 @@ const characterRelations: Trait[] = [
     description:
       '如玉的爪刀无法破除莱恩的方块，但莱恩用三角或圆命中开启主动技能的如玉仍可触发其花枪反击。',
     group: [
-      { name: '莱恩', type: 'character' },
       { name: '如玉', type: 'character' },
+      { name: '莱恩', type: 'character' },
     ],
     relation: {
-      kind: 'counters',
-      subject: { name: '莱恩', type: 'character' },
-      target: { name: '如玉', type: 'character' },
+      kind: 'counterEachOther',
+      subject: { name: '如玉', type: 'character' },
+      target: { name: '莱恩', type: 'character' },
       isMinor: true,
     },
   },
@@ -3373,6 +3401,20 @@ const characterRelations: Trait[] = [
     },
   },
   {
+    description:
+      '恶菲一被对胡萝卜飞镖有一定躲避能力，且蓝色小淘气可以稳定破除兔八哥的二级被动。在猫方没有钻地洞的情况下，先蓝后绿的二武组合可以瞬秒兔八哥。而主点地洞的兔八哥恶菲不好进行击杀。',
+    group: [
+      { name: '恶魔泰菲', type: 'character' },
+      { name: '兔八哥', type: 'character' },
+    ],
+    relation: {
+      kind: 'counters',
+      subject: { name: '恶魔泰菲', type: 'character' },
+      target: { name: '兔八哥', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
     description: '国王杰瑞护盾挡托普斯的网，旗子团队增益能力强，能为队友提供更多增益来应对托普斯。',
     group: [
       { name: '国王杰瑞', type: 'character' },
@@ -3522,7 +3564,7 @@ const characterRelations: Trait[] = [
   },
   {
     description:
-      '守株待兔的固定减伤会抵消小绿恶魔的伤害，使伤害为零，导致不触发恶菲的三倍增伤。彻底失去伤害',
+      '守株待鼠对道具基础伤害的固定减伤会抵消小绿恶魔的伤害，使伤害为零，导致不触发恶菲的三被增伤。彻底失去伤害',
     group: [
       { name: '恶魔泰菲', type: 'character' },
       { name: '守株待鼠', type: 'knowledgeCard', factionId: 'cat' },
@@ -3532,6 +3574,20 @@ const characterRelations: Trait[] = [
       subject: { name: '恶魔泰菲', type: 'character' },
       target: { name: '守株待鼠', type: 'knowledgeCard', factionId: 'cat' },
       isMinor: true,
+    },
+  },
+  {
+    description:
+      '恶菲的伤害形式为单段伤害，且触发次数极多，皮糙肉厚的减伤幅度在恶菲+100的三被增伤面前完全不够看，脆皮猫带了皮糙照样被秒。',
+    group: [
+      { name: '恶魔泰菲', type: 'character' },
+      { name: '皮糙肉厚', type: 'knowledgeCard', factionId: 'cat' },
+    ],
+    relation: {
+      kind: 'countersKnowledgeCards',
+      subject: { name: '恶魔泰菲', type: 'character' },
+      target: { name: '皮糙肉厚', type: 'knowledgeCard', factionId: 'cat' },
+      isMinor: false,
     },
   },
   {
@@ -5958,16 +6014,16 @@ const characterRelations: Trait[] = [
   },
   {
     description:
-      '天使杰瑞1级被动对如玉无效；如玉前刺回马枪能直接击倒使用2级主动的天使杰瑞；如玉可借助天使杰瑞武器技能造成的伤害进行反击。',
+      '天使杰瑞1级被动对如玉无效；如玉前刺回马枪能直接击倒使用2级主动的天使杰瑞；如玉可借助天使杰瑞武器技能造成的伤害进行反击但3级被动禁用技能可以反制如玉的甩花枪反击',
     group: [
       { name: '如玉', type: 'character' },
       { name: '天使杰瑞', type: 'character' },
     ],
     relation: {
-      kind: 'counters',
+      kind: 'counterEachOther',
       subject: { name: '如玉', type: 'character' },
       target: { name: '天使杰瑞', type: 'character' },
-      isMinor: true,
+      isMinor: false,
     },
   },
   {
@@ -7748,7 +7804,7 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '图多三级甲油免疫无视蓝恶魔和绿恶魔的高伤。不过图多前期弱势，恶菲还是可以打的。',
+    description: '图多三级甲油免疫优先级极高，可以无视蓝恶魔的沉默和绿恶魔的高伤。',
     group: [
       { name: '图多盖洛', type: 'character' },
       { name: '恶魔泰菲', type: 'character' },
@@ -7757,7 +7813,7 @@ const characterRelations: Trait[] = [
       kind: 'counters',
       subject: { name: '图多盖洛', type: 'character' },
       target: { name: '恶魔泰菲', type: 'character' },
-      isMinor: true,
+      isMinor: false,
     },
   },
   {
@@ -7783,11 +7839,12 @@ const characterRelations: Trait[] = [
       kind: 'advantageMaps',
       subject: { name: '恶魔泰菲', type: 'character' },
       target: { name: '雪夜古堡III', type: 'map' },
-      isMinor: false,
+      isMinor: true,
     },
   },
   {
-    description: '易于拉扯，且有传送带提供奶酪，不怕开局上面刷两块奶酪。',
+    description:
+      '易于拉扯，且有传送带提供奶酪，可以提前将所有奶酪洞口都放置奶酪，方便队友拉扯换推。',
     group: [
       { name: '恶魔泰菲', type: 'character' },
       { name: '太空堡垒I', type: 'map' },
@@ -7796,6 +7853,20 @@ const characterRelations: Trait[] = [
       kind: 'advantageMaps',
       subject: { name: '恶魔泰菲', type: 'character' },
       target: { name: '太空堡垒I', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '游乐场地图大，开放性强，高低差大适合恶菲一被牵制，而且奶酪转点极其方便，且各奶酪洞口附近蓝色小淘气架点都有明确有效点位。',
+    group: [
+      { name: '恶魔泰菲', type: 'character' },
+      { name: '游乐场', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '恶魔泰菲', type: 'character' },
+      target: { name: '游乐场', type: 'map' },
       isMinor: false,
     },
   },
@@ -7827,20 +7898,7 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '恶菲前期功能性易被取代，且相较于其他后期角色缺少自保。',
-    group: [
-      { name: '恶魔泰菲', type: 'character' },
-      { name: '天梯', type: 'mode' },
-    ],
-    relation: {
-      kind: 'disadvantageModes',
-      subject: { name: '恶魔泰菲', type: 'character' },
-      target: { name: '天梯', type: 'mode' },
-      isMinor: false,
-    },
-  },
-  {
-    description: '跑得快、跳得高、后期三被伤害高。',
+    description: '恶菲跑得快、跳得高、后期三被伤害高。',
     group: [
       { name: '恶魔泰菲', type: 'character' },
       { name: '奔跑吧老鼠团体赛', type: 'mode' },
@@ -7849,6 +7907,33 @@ const characterRelations: Trait[] = [
       kind: 'advantageModes',
       subject: { name: '恶魔泰菲', type: 'character' },
       target: { name: '奔跑吧老鼠团体赛', type: 'mode' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '5v5模式中，好的队伍可以快速升级到近六级成型，且5v5模式中道具刷新量大，恶菲可以造出满屋子绿恶魔，对敌方猫和鼠压力都非常大。',
+    group: [
+      { name: '恶魔泰菲', type: 'character' },
+      { name: '5V5经典奶酪赛', type: 'mode' },
+    ],
+    relation: {
+      kind: 'advantageModes',
+      subject: { name: '恶魔泰菲', type: 'character' },
+      target: { name: '5V5经典奶酪赛', type: 'mode' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '如玉远距离瞬移反击，有前摇。可以通过冰冻保鲜规避伤害',
+    group: [
+      { name: '如玉', type: 'character' },
+      { name: '冰冻保鲜', type: 'specialSkill', factionId: 'mouse' },
+    ],
+    relation: {
+      kind: 'counteredBySpecialSkills',
+      subject: { name: '如玉', type: 'character' },
+      target: { name: '冰冻保鲜', type: 'specialSkill', factionId: 'mouse' },
       isMinor: false,
     },
   },
