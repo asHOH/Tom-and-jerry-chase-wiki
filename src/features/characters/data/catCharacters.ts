@@ -2049,7 +2049,7 @@ const catCharacterDefinitions = {
         tagName: '速通',
         isMinor: false,
         description: '{武器技能}可甩火箭',
-        additionalDescription: '配合熊熊燃烧，7秒火箭可直接甩。',
+        additionalDescription: '配合熊熊燃烧，9秒火箭可直接甩。',
       },
       {
         tagName: '追击',
@@ -2060,11 +2060,17 @@ const catCharacterDefinitions = {
     ],
     skillAllocations: [
       {
-        id: '',
+        id: '常规加点',
         pattern: '022001112',
         weaponType: 'weapon1',
         description:
           '开局搜刮远视药水，利用远视药水可以不急点2级被动，优先点出来2级绳索。抓到老鼠尽可能手绑火箭。',
+      },
+      {
+        id: '二武加点',
+        pattern: '030103311',
+        weaponType: 'weapon1',
+        description: '二武常规加点',
       },
     ],
     knowledgeCardGroups: [
@@ -2083,6 +2089,10 @@ const catCharacterDefinitions = {
       {
         cards: ['S-乘胜追击', 'S-击晕', 'A-熊熊燃烧'],
         description: '建议地图：游乐场，御门酒店。注意没皮糙容易倒地，造成乘胜层数减少。',
+      },
+      {
+        cards: ['S-击晕', 'A-熊熊燃烧', 'A-细心', 'B-皮糙肉厚'],
+        description: '击晕布局流，适合夹多的地图',
       },
     ],
     specialSkills: [
@@ -3490,8 +3500,8 @@ const catCharacterDefinitions = {
         contributor: 'wudimaohudawang',
       },
       {
-        cards: ['S-击晕', 'A-穷追猛打', 'A-越挫越勇', 'A-加大火力', 'C-猫是液体'],
-        description: '入门门槛低，至少能打到传奇。新手老玩家都可以用，没有21点可以去掉{猫是液体}。',
+        cards: ['S-击晕', 'A-加大火力', 'A-越挫越勇', 'A-穷追猛打'],
+        description: '19费常规卡组，穷追开节奏。',
       },
     ],
     specialSkills: [
