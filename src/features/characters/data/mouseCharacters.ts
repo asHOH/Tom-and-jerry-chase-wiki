@@ -1354,7 +1354,7 @@ const mouseCharacterDefinitions = {
     ],
     skillAllocations: [
       {
-        id: '火箭筒1',
+        id: '火箭筒',
         pattern: '121002201',
         weaponType: 'weapon1',
         description: '',
@@ -1405,7 +1405,7 @@ const mouseCharacterDefinitions = {
       {
         cards: ['S-舍己', 'S-铁血', 'A-闭门羹', 'C-不屈', 'C-救救我'],
         description:
-          '牵制、生存卡组，用于有门的地图，闭门羹有利于快速与猫拉开水平距离，不屈增加续航',
+          '牵制、生存卡组，用于有门的地图，闭门羹有利于快速与猫拉开水平距离，配合卡门雷可以硬控猫，不屈增加续航',
       },
     ],
     skills: [
@@ -1425,20 +1425,19 @@ const mouseCharacterDefinitions = {
             description:
               '向前翻滚一段距离。技能可以在被眩晕时释放，并解除自身的眩晕效果，但会略微延长技能冷却时间',
             detailedDescription:
-              '向前翻滚1.3秒；期间速度提升70%；可以在被控制状态下使用，并解除当前所受的控制，但技能冷却时间会增加6秒。',
+              '向前滚动1.1秒，滚动结束后有0.2秒惯性；期间速度提70%；可以在被控制状态下使用，并解除当前所受的控制，但技能冷却时间会增加6秒。',
             cooldown: 12,
           },
           {
             level: 2,
             description: '滚动时无敌；滚动后短暂提升跳跃高度。',
-            detailedDescription: '滚动1.1秒处于无敌状态；滚动结束后极短暂地提升跳跃高度。',
+            detailedDescription: '滚动时于无敌状态；滚动结束后极短暂地提升跳跃高度。',
             cooldown: 12,
           },
           {
             level: 3,
             description: '滚得更快更远。',
-            detailedDescription:
-              '翻滚时间提升至1.6秒，无敌时间提升至1.4秒；期间速度提升增加至105%。',
+            detailedDescription: '滚动时间提升至1.4秒；期间速度提升增加至105%。',
             cooldown: 12,
           },
         ],
@@ -1536,7 +1535,7 @@ const mouseCharacterDefinitions = {
             description:
               '可以持续缓慢恢复健康值（受伤状态也触发）；吃食物更快；推奶酪时不会因受到眩晕而打断；并在搬起奶酪、推奶酪、火箭救援时额外获得短暂的健康值缓慢恢复和减伤。',
             detailedDescription:
-              'Hp恢复提升2.5（受伤状态也触发）；吃食物速度提升20%；在推奶酪状态下，免疫控制效果（不免疫强制位移）；在搬奶酪、推奶酪、火箭救援时获得25%减伤和0.5/s的健康值回复。',
+              'Hp恢复提升2.5（受伤状态也触发，该效果不与牛奶恢复效果重叠，若两者同时存在，仅生效牛奶效果）；吃食物速度提20%；在推奶酪状态下，免疫控制效果（不免疫强制位移）；在搬奶酪、推奶酪、火箭救援时获得25%减伤和0.5/s的健康值回复。',
           },
           {
             level: 3,

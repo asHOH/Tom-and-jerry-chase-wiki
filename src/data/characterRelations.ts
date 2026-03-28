@@ -883,6 +883,19 @@ const characterRelations: Trait[] = [
     },
   },
   {
+    description: '米雪儿的漂浮气球配合泰菲圆滚滚解控，可大大提高泰菲的续航和容错率，使其不易被击倒',
+    group: [
+      { name: '泰菲', type: 'character' },
+      { name: '米雪儿', type: 'character' },
+    ],
+    relation: {
+      kind: 'collaborators',
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '米雪儿', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
     description:
       '天使杰瑞的Lv.2被动可以夺取猫身上的星星，供仙女鼠使用；雷云还能降低对方伤害，提高二者的容错率。但这一组合中的仙女鼠压力极大，很怕空技能和猛攻，相对来说操作和收益并不完全对等，慎用。',
     group: [
@@ -2961,19 +2974,6 @@ const characterRelations: Trait[] = [
     relation: {
       kind: 'counters',
       subject: { name: '苏蕊', type: 'character' },
-      target: { name: '泰菲', type: 'character' },
-      isMinor: true,
-    },
-  },
-  {
-    description: '视野较大，3级被动有霸体，远程炮不好发挥。',
-    group: [
-      { name: '塔拉', type: 'character' },
-      { name: '泰菲', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '塔拉', type: 'character' },
       target: { name: '泰菲', type: 'character' },
       isMinor: true,
     },
@@ -5880,19 +5880,6 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '泰菲的地雷能协助牛仔汤姆触发2级被动，且不容易承受牛仔汤姆的进攻。',
-    group: [
-      { name: '牛仔汤姆', type: 'character' },
-      { name: '泰菲', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '牛仔汤姆', type: 'character' },
-      target: { name: '泰菲', type: 'character' },
-      isMinor: true,
-    },
-  },
-  {
     description:
       '牛仔汤姆的弹弓和斗牛在混战中很容易打到仙女鼠，从而掠夺仙女鼠的星星；此外牛汤被变为大星星时依旧能触发3级被动。',
     group: [
@@ -6202,19 +6189,6 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '泰菲的低HP使斯飞能够一套击倒，同时斯飞的高机动性能够无视泰菲的地雷',
-    group: [
-      { name: '斯飞', type: 'character' },
-      { name: '泰菲', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '斯飞', type: 'character' },
-      target: { name: '泰菲', type: 'character' },
-      isMinor: true,
-    },
-  },
-  {
     description: '苏蕊在律动时间中免疫航海士杰瑞各个技能的控制效果。',
     group: [
       { name: '苏蕊', type: 'character' },
@@ -6310,7 +6284,7 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '圆滚滚的无敌和解控克制喵喵叫',
+    description: '圆滚滚的无敌和解控克制喵喵叫，但三级汽水罐使泰菲有些疲于应对',
     group: [
       { name: '泰菲', type: 'character' },
       { name: '图茨', type: 'character' },
@@ -6358,19 +6332,6 @@ const characterRelations: Trait[] = [
       kind: 'counters',
       subject: { name: '汤姆', type: 'character' },
       target: { name: '牛仔杰瑞', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
-    description: '泰菲自保能力差，推速较慢，机动性差，救援能力差，汤姆无敌挡泰菲的干扰。',
-    group: [
-      { name: '汤姆', type: 'character' },
-      { name: '泰菲', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '汤姆', type: 'character' },
-      target: { name: '泰菲', type: 'character' },
       isMinor: false,
     },
   },
