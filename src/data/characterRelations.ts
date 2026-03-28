@@ -20,11 +20,13 @@ type CharacterRelationDefinition = {
   target: SingleItem;
 };
 
+type SourceCharacterRelationKind = Exclude<TraitRelationKind, 'counteredBy'>;
+
 type CharacterRelationDefinitions = Partial<
-  Record<TraitRelationKind, readonly CharacterRelationDefinition[]>
+  Record<SourceCharacterRelationKind, readonly CharacterRelationDefinition[]>
 >;
 
-const characterRelationDefinitions = {
+export const characterRelationDefinitions = {
   鲍姆: {
     counters: [
       {
@@ -35,6 +37,11 @@ const characterRelationDefinitions = {
       {
         target: character('如玉'),
         description: '鲍姆爆炸无法触发如玉反击。',
+      },
+      {
+        target: character('斯飞'),
+        description:
+          '自身具备的高HP使斯飞短时间难以击倒，同时鲍姆主动技能的控制与拆除火箭的能力极大干扰斯飞节奏',
       },
     ],
     counterEachOther: [
@@ -52,17 +59,9 @@ const characterRelationDefinitions = {
         description: '二者克制关系主要取决于托普斯操作水平和与分身是否保持距离。',
         isMinor: true,
       },
-    ],
-    collaborators: [
       {
-        target: character('剑客莉莉'),
-        description:
-          '鲍姆救援后自保差不好走，可以通过剑客莉莉风墙掩护其撤退；莉莉救援时鲍姆也可提供干扰效果。',
-      },
-      {
-        target: character('米可'),
-        description: '鲍姆救援后可通过米可拍照撤退。',
-        isMinor: true,
+        target: character('汤姆'),
+        description: '主动技能无敌使鲍姆爆炸无自保，但能干扰汤姆无敌上火箭。',
       },
     ],
     countersSpecialSkills: [
@@ -86,19 +85,16 @@ const characterRelationDefinitions = {
       },
       {
         target: character('库博'),
-        description: ' ',
+        description: '',
         isMinor: true,
       },
       {
         target: character('图茨'),
         description: '柠檬的二级跳舞时，喵喵叫和汽水瓶都不能给柠檬叠加减速。',
       },
-    ],
-    collaborators: [
       {
-        target: character('米雪儿'),
-        description: '可以在表演者•杰瑞铁血的时候将其变为大老鼠，防止被抓。',
-        isMinor: true,
+        target: character('斯飞'),
+        description: '跳舞中的表演者杰瑞可以免疫咸鱼的效果，并且强大的自保可以主动帮助队友吸闪。',
       },
     ],
   },
@@ -106,12 +102,13 @@ const characterRelationDefinitions = {
     counters: [
       {
         target: character('米可'),
-        description: '高伤害，容易击倒米可；虚弱起身无敌时间长，三级桶盖还有霸体。',
+        description:
+          '布奇伤害较高，容易击倒米可；虚弱起身无敌时间长，三级桶盖还有霸体，相对更容易处理米可。',
       },
       {
         target: character('泰菲'),
         description:
-          '布奇的基础伤害高，克制血量低的泰菲和泰菲被动；三级桶盖赋予霸体，克制泰菲火箭筒和地雷打控制',
+          '布奇基础伤害高，能一刀或配合道具快速击倒泰菲；三级桶盖赋予霸体，一定程度上限制泰菲火箭筒、地雷和圆滚滚的发挥。',
       },
       {
         target: character('表演者•杰瑞'),
@@ -129,15 +126,6 @@ const characterRelationDefinitions = {
         description:
           '布奇的爪刀可以秒罗宾汉泰菲，且罗菲在近距离干扰时容易被布奇抓到机会，但罗菲可以远距离拉扯。',
         isMinor: true,
-      },
-      {
-        target: character('米可'),
-        description: '布奇伤害较高，相对能更好的处理米可。',
-        isMinor: true,
-      },
-      {
-        target: character('泰菲'),
-        description: '布奇的爪刀理由秒泰菲，同时泰菲推速较慢，干扰能力不够，救援能力较差。',
       },
       {
         target: character('侦探泰菲'),
@@ -183,11 +171,11 @@ const characterRelationDefinitions = {
         target: character('布奇'),
         description: '二者均拥有较高伤害和较低血量，易击倒对方，但整体来看布奇仍略克朝圣者泰菲。',
       },
-    ],
-    collaborators: [
       {
-        target: character('国王杰瑞'),
-        description: '国王杰瑞战旗与朝圣者泰菲配合可打出极高伤害。',
+        target: character('斯飞'),
+        description:
+          '朝圣者泰菲的武器高伤害容易一次性给予斯飞重击，同时斯飞无法对因主动技能变身的朝圣者泰菲造成有效威胁，但朝圣者泰菲自身仍然缺乏逃脱斯飞追击的手段',
+        isMinor: true,
       },
     ],
     counteredByKnowledgeCards: [
@@ -219,20 +207,11 @@ const characterRelationDefinitions = {
         isMinor: true,
       },
     ],
-    collaborators: [
+    counterEachOther: [
       {
-        target: character('国王杰瑞'),
-        description: '进一步增强输出。',
-      },
-      {
-        target: character('航海士杰瑞'),
-        description: '金币与火炮衔接控制。',
-        isMinor: true,
-      },
-      {
-        target: character('罗宾汉泰菲'),
-        description: '圆球衔接控制，藤蔓提供续航。',
-        isMinor: true,
+        target: character('斯飞'),
+        description:
+          '朵朵武器技能前期给予的高伤害使斯飞难以承受，但斯飞点出三级被动后能够恢复追击节奏',
       },
     ],
     countersKnowledgeCards: [
@@ -281,11 +260,21 @@ const characterRelationDefinitions = {
         description: '图多盖洛指甲油被后期恶魔杰瑞地狱裂隙克制。',
         isMinor: true,
       },
+      {
+        target: character('斯飞'),
+        description:
+          '恶魔杰瑞的被动能够免疫斯飞的关键伤害或者控制，同时恶魔杰瑞的传送门能够大幅限制斯飞的攻势',
+      },
     ],
     counterEachOther: [
       {
         target: character('恶魔汤姆'),
         description: '火车头红温克制刷盾强推强救，但传送门流放克制死守，',
+      },
+      {
+        target: character('追风汤姆'),
+        description:
+          '恶杰前期对战追风比较白板，但后期的3级被动和3级主动使其自保极强，且具有较强救援能力。',
       },
     ],
     collaborators: [
@@ -293,6 +282,11 @@ const characterRelationDefinitions = {
         target: character('天使杰瑞'),
         description:
           '天使杰瑞和恶魔杰瑞都属于后期角色，恶魔杰瑞被复活后的存活能力较强，恶魔为天使提供增益，天使为恶魔提供复活和雷云。',
+      },
+      {
+        target: character('恶魔泰菲'),
+        description: '恶魔泰菲的红色小淘气可以将猫咪打进流放门强行流放，但实战实现难度偏高。',
+        isMinor: true,
       },
     ],
   },
@@ -314,7 +308,7 @@ const characterRelationDefinitions = {
       {
         target: character('牛仔汤姆'),
         description:
-          '恶魔泰菲小淘气召唤的蓝色小淘气能禁用技能，绿色小淘气配合Lv.3被动的极高攻击增伤能迅速击倒牛汤，被动提供的恢复与高移速能化解鞭子或仙人掌弹弓的消耗；但恶魔泰菲Hp上限低，牛仔汤姆弹弓爆发高，有机会瞬间击倒恶魔泰菲，且牛汤也可以使用恶菲绿恶魔触发三被。',
+          '恶魔泰菲绿恶魔的高伤和蓝恶魔的禁技能快速击倒牛仔汤姆，但牛仔汤姆同样能利用高爆发、三被和绿恶魔反制恶魔泰菲。',
       },
       {
         target: character('苏蕊'),
@@ -332,11 +326,6 @@ const characterRelationDefinitions = {
       {
         target: character('剑客莉莉'),
         description: '恶魔泰菲的蓝色小淘气可以显著降低剑客莉莉利用二级被动的救援难度。',
-        isMinor: true,
-      },
-      {
-        target: character('恶魔杰瑞'),
-        description: '恶魔泰菲的红色小淘气可以将猫咪打进流放门强行流放，但实战实现难度偏高。',
         isMinor: true,
       },
       {
@@ -508,6 +497,14 @@ const characterRelationDefinitions = {
     ],
     collaborators: [
       {
+        target: character('朝圣者泰菲'),
+        description: '国王杰瑞战旗与朝圣者泰菲配合可打出极高伤害。',
+      },
+      {
+        target: character('朵朵'),
+        description: '进一步增强输出。',
+      },
+      {
         target: character('表演者•杰瑞'),
         description: '国王杰瑞的强化救援战旗配合表演者•杰瑞的梦幻舞步可以实现稳救。',
       },
@@ -518,12 +515,22 @@ const characterRelationDefinitions = {
       },
       {
         target: character('泰菲'),
-        description: '国王杰瑞的强化救援战旗配合泰菲的圆滚滚可以实现稳救。',
-        isMinor: true,
+        description: '国王杰瑞的强化救援战旗配合泰菲的圆滚滚无敌位移，可以实现稳救。',
       },
       {
         target: character('音乐家杰瑞'),
         description: '国王杰瑞的进攻战旗可以为音乐家杰瑞提供高额增伤。',
+      },
+      {
+        target: character('剑客杰瑞'),
+        description: '战旗的增益能使剑杰的输出能力进一步提升。',
+        isMinor: true,
+      },
+      {
+        target: character('马索尔'),
+        description:
+          '国王杰瑞的救援战旗能为马索尔提供救援速度，守护战旗或国王权杖能提供护盾，辅助其稳定救援。',
+        isMinor: true,
       },
     ],
   },
@@ -555,7 +562,12 @@ const characterRelationDefinitions = {
       {
         target: character('斯飞'),
         description:
-          '航海士杰瑞的一级被动搭配知识卡投手能让满层乘胜追击知识卡的斯飞打断疾冲姿态，火药桶炸火箭也让斯飞十分头疼。',
+          '航海士杰瑞的控制、减速与火药桶都能打断斯飞追击节奏，火药桶炸火箭也让斯飞头疼；同时航海士杰瑞破墙很快，斯飞较难守住墙缝。',
+      },
+      {
+        target: character('塔拉'),
+        description:
+          '航海士杰瑞的火药桶炸完火箭之后塔拉无法通过套索扔老鼠的方式上火箭，并且自身缺乏霸体。',
       },
     ],
     counterEachOther: [
@@ -576,6 +588,11 @@ const characterRelationDefinitions = {
     ],
     collaborators: [
       {
+        target: character('朵朵'),
+        description: '金币与火炮衔接控制。',
+        isMinor: true,
+      },
+      {
         target: character('拿坡里鼠'),
         description: '航海士杰瑞和拿坡里鼠能相互补充控制，火药桶和斜塔还能一起守火箭。',
         isMinor: true,
@@ -584,6 +601,30 @@ const characterRelationDefinitions = {
         target: character('马索尔'),
         description: '马索尔的升龙拳可以使霸体中的猫咪修不了火箭，提高拦截几率。',
         isMinor: true,
+      },
+      {
+        target: character('罗宾汉泰菲'),
+        description: '航海士杰瑞与罗菲的控制能互相弥补CD。罗菲还能提供航海士杰瑞急需的恢复能力。',
+      },
+      {
+        target: character('魔术师'),
+        description:
+          '魔术师的卡牌和航海士杰瑞的金币可以相互弥补控制真空期，提高干扰能力。魔术师在干扰的同时还能推奶酪。',
+      },
+      {
+        target: character('牛仔杰瑞'),
+        description: '牛仔软控配合海盗硬控',
+        isMinor: true,
+      },
+      {
+        target: character('霜月'),
+        description: '航海士杰瑞可拆掉火箭，便于霜月守火箭。',
+        isMinor: true,
+      },
+      {
+        target: character('泰菲'),
+        description:
+          '感应雷可以中断交互动作，和火药桶可以相互配合，让猫难以绑上火箭，硬拖时间给队友机会。',
       },
     ],
     counteredBySpecialSkills: [
@@ -622,16 +663,29 @@ const characterRelationDefinitions = {
         target: character('托普斯'),
         description: '二武和高伤都可以迅速消灭分身，需要注意二武不能主动戳到分身。',
       },
+      {
+        target: character('斯飞'),
+        description:
+          '剑客杰瑞HP高，斯飞短时间难以击倒，并且剑客杰瑞能够击倒三级被动状态下的斯飞，同时剑客杰瑞的格挡能够抵挡并反击斯飞',
+        isMinor: true,
+      },
+    ],
+    counterEachOther: [
+      {
+        target: character('如玉'),
+        description: '剑客杰瑞可以使用格挡免疫反击伤害，但是剑客杰瑞伤害较高，容易触发坚毅。',
+        isMinor: true,
+      },
     ],
     collaborators: [
       {
-        target: character('国王杰瑞'),
-        description: '战旗的增益能使剑杰的输出能力进一步提升。',
-        isMinor: true,
-      },
-      {
         target: character('雪梨'),
         description: '爱心之吻，提高容错与基础数值',
+      },
+      {
+        target: character('罗宾汉泰菲'),
+        description:
+          '剑客杰瑞的伤害和罗菲的控制能互相弥补短板。罗菲还能提供恢复，发挥剑客杰瑞的Hp上限优势。',
       },
     ],
     counteredBySpecialSkills: [
@@ -673,6 +727,46 @@ const characterRelationDefinitions = {
         isMinor: true,
       },
     ],
+    counterEachOther: [
+      {
+        target: character('牛仔汤姆'),
+        description:
+          '剑客莉莉的道具击中获得无敌以及主动技能的风墙给予牛仔汤姆防守与追击很大压力，但牛仔汤姆基本无视剑客莉莉的被动减伤。',
+      },
+      {
+        target: character('斯飞'),
+        description:
+          '莉莉的无敌与减伤使斯飞难以快速击倒莉莉，莉莉剑气的减速也能有效干扰斯飞，但莉莉的风墙无法困住或有效影响斯飞攻势',
+        isMinor: true,
+      },
+    ],
+    collaborators: [
+      {
+        target: character('鲍姆'),
+        description:
+          '鲍姆救援后自保差不好走，可以通过剑客莉莉风墙掩护其撤退；莉莉救援时鲍姆也可提供干扰效果。',
+      },
+      {
+        target: character('罗宾汉泰菲'),
+        description:
+          '剑客莉莉与罗菲的控制能互相弥补CD。罗菲还能提供恢复，发挥剑客莉莉的Hp上限优势，并触发她的Lv.1被动。',
+      },
+      {
+        target: character('马索尔'),
+        description: '剑客莉莉的剑气能为马索尔提供回溯能力，帮助其救援后返回。',
+        isMinor: true,
+      },
+      {
+        target: character('梦游杰瑞'),
+        description: '莉莉的风墙可困住或阻挡猫，方便梦游安全地拉取毛线球。',
+        isMinor: true,
+      },
+      {
+        target: character('尼宝'),
+        description: '可以配合泥巴救援后传送',
+        isMinor: true,
+      },
+    ],
     countersSpecialSkills: [
       {
         target: specialSkill('绝地反击', 'cat'),
@@ -682,6 +776,16 @@ const characterRelationDefinitions = {
     ],
   },
   剑客泰菲: {
+    counters: [
+      {
+        target: character('牛仔汤姆'),
+        description: '',
+      },
+      {
+        target: character('斯飞'),
+        description: '剑客泰菲的头盔斯飞束手无策，并且剑客泰菲的长枪也能给予斯飞有效的干扰',
+      },
+    ],
     collaborators: [
       {
         target: character('剑客莉莉'),
@@ -721,6 +825,19 @@ const characterRelationDefinitions = {
         target: character('牛仔汤姆'),
         description:
           '杰瑞的主动技能能够解除附近老鼠的受伤状态，且牛仔汤姆怕控制，易被鸟哨干扰防守。',
+      },
+      {
+        target: character('斯飞'),
+        description:
+          '杰瑞自身具备的高推速能够缩短奶酪期，同时斯飞需要注意杰瑞鸟哨下落的鞭炮，并且杰瑞主动技能给予的部分回血与延长火箭燃烧CD能够延长斯飞的节奏',
+        isMinor: true,
+      },
+    ],
+    collaborators: [
+      {
+        target: character('米可'),
+        description: '二级鼓舞可以在米可采访时帮米可回血和加速，提高续航。',
+        isMinor: true,
       },
     ],
     advantageMaps: [
@@ -787,6 +904,11 @@ const characterRelationDefinitions = {
         target: character('天使泰菲'),
         description:
           '库博的被动和主动技能提供额外的攻击增伤，能击晕接道具秒天菲，或利用蓄势90*2的伤害打死三级翅膀的天菲。',
+      },
+      {
+        target: character('泰菲'),
+        description:
+          '库博的伤害很高，克制血量少的泰菲，克制泰菲的被动；库博机动性强，思路很难被判断，泰菲无法及时支援队友；库博的隐身导致地雷无法被触发',
       },
     ],
     counteredByKnowledgeCards: [
@@ -876,11 +998,17 @@ const characterRelationDefinitions = {
           '莱恩的圆形、方块可以封锁追汤的走位，并阻挡旋风和铁砧，且命中率极高，能快速削减追汤的飞行时间和血量。',
       },
     ],
-    collaborators: [
+    counterEachOther: [
       {
-        target: character('仙女鼠'),
+        target: character('如玉'),
         description:
-          '莱恩容易死，仙女鼠变六星提高下限，并且在遇到汤姆无敌强上火箭时，可强制造成伤害变线条，线条猫与八星一块干扰猫，使对面露出破绽。',
+          '如玉的爪刀无法破除莱恩的方块，但莱恩用三角或圆命中开启主动技能的如玉仍可触发其花枪反击。',
+        isMinor: true,
+      },
+      {
+        target: character('斯飞'),
+        description:
+          '莱恩画出的方块能阻碍斯飞行动，同时三角形的减速与圆的伤害不可忽视，但莱恩无法轻易逃脱斯飞的追击。',
       },
     ],
     countersSpecialSkills: [
@@ -914,13 +1042,6 @@ const characterRelationDefinitions = {
         description: '头盔过长的前摇与全图可见的音效容易被闪现抓住机会。',
       },
     ],
-    counteredBy: [
-      {
-        target: character('魔术师'),
-        description: '魔术师的兔子吞闪现，影响追击能力',
-        isMinor: true,
-      },
-    ],
     counteredByKnowledgeCards: [
       {
         target: knowledgeCard('护佑', 'mouse'),
@@ -947,19 +1068,14 @@ const characterRelationDefinitions = {
     counters: [
       {
         target: character('布奇'),
-        description: '罗宾汉拉扯能力较强，同时二段跳的全体增益能更好的规避布奇的冲刺。',
+        description:
+          '罗宾汉杰瑞拉扯能力较强，二段跳和降落伞能更好规避布奇的冲刺；不过布奇的武器技能对罗宾汉杰瑞仍有威慑。',
         isMinor: true,
       },
       {
         target: character('汤姆'),
         description:
           '罗宾汉杰瑞可以为团队提供二段跳，增强拉扯和自保能力，而776锅汤前期不好找节奏，',
-      },
-      {
-        target: character('布奇'),
-        description:
-          '布奇冲撞可以被罗宾汉杰瑞二段跳或降落伞躲开；不过布奇的武器技能对罗宾汉杰瑞仍有威慑。',
-        isMinor: true,
       },
       {
         target: character('剑客汤姆'),
@@ -992,6 +1108,13 @@ const characterRelationDefinitions = {
       {
         target: character('兔八哥'),
         description: '兔八哥萝卜可以被罗宾的伞躲避，且二段的加速也可很好的帮队友和自己躲萝卜。',
+      },
+    ],
+    counterEachOther: [
+      {
+        target: character('斯飞'),
+        description:
+          '罗宾汉杰瑞的主动能够给予老鼠高机动性以抗衡斯飞，同时罗宾汉杰瑞的降落伞能够抵挡斯飞攻势，但斯飞能够找机会一套击倒罗宾汉杰瑞并持续保持追击节奏',
       },
     ],
     collaborators: [
@@ -1073,7 +1196,7 @@ const characterRelationDefinitions = {
       },
       {
         target: character('斯飞'),
-        description: '罗菲的圆球加投掷道具配合投手，可以暂时中断斯飞的疾冲状态，达到干扰效果。',
+        description: '罗宾汉泰菲的圆球和投掷道具都能打断斯飞的疾冲状态，并削弱其攻势。',
         isMinor: true,
       },
       {
@@ -1082,34 +1205,28 @@ const characterRelationDefinitions = {
           '图茨缺乏霸体能力，并且机动性较差，可被罗菲连续控制或拉扯，但要小心对方的绝地反击特技。',
       },
     ],
+    counterEachOther: [
+      {
+        target: character('如玉'),
+        description:
+          '罗宾汉泰菲机动性强，善于拉扯，可以让如玉占不到便宜；但Hp上限低，进行干扰时又依赖近身连续控制，容易被反击击倒。',
+        isMinor: true,
+      },
+      {
+        target: character('兔八哥'),
+        description: '罗菲技能控制多且可以无视二被，但Hp较低无技能不好跑。',
+        isMinor: true,
+      },
+    ],
     collaborators: [
       {
-        target: character('航海士杰瑞'),
-        description: '航海士杰瑞与罗菲的控制能互相弥补CD。罗菲还能提供航海士杰瑞急需的恢复能力。',
-      },
-      {
-        target: character('剑客杰瑞'),
-        description:
-          '剑客杰瑞的伤害和罗菲的控制能互相弥补短板。罗菲还能提供恢复，发挥剑客杰瑞的Hp上限优势。',
-      },
-      {
-        target: character('剑客莉莉'),
-        description:
-          '剑客莉莉与罗菲的控制能互相弥补CD。罗菲还能提供恢复，发挥剑客莉莉的Hp上限优势，并触发她的Lv.1被动。',
+        target: character('朵朵'),
+        description: '圆球衔接控制，藤蔓提供续航。',
+        isMinor: true,
       },
       {
         target: character('米可'),
         description: '米可与罗菲的控制能互相弥补CD。罗菲还能提供米可相对匮乏的恢复能力。',
-      },
-      {
-        target: character('牛仔杰瑞'),
-        description:
-          '牛仔杰瑞与罗菲的控制能互相弥补CD。罗菲还能提供恢复，发挥牛仔杰瑞的Hp上限优势。',
-      },
-      {
-        target: character('天使杰瑞'),
-        description: '罗菲能为天使杰瑞提供恢复，帮助其多次触发被动。',
-        isMinor: true,
       },
     ],
     counteredBySpecialSkills: [
@@ -1165,18 +1282,25 @@ const characterRelationDefinitions = {
         isMinor: true,
       },
     ],
-    collaborators: [
+    counterEachOther: [
       {
-        target: character('国王杰瑞'),
+        target: character('牛仔汤姆'),
         description:
-          '国王杰瑞的救援战旗能为马索尔提供救援速度，守护战旗或国王权杖能提供护盾，辅助其稳定救援。',
+          '马索尔强大的输出控制手段与传送使牛仔汤姆要时刻关注，但马索尔发怒结束后无法逃离牛仔汤姆的攻击范围，且使用主动技能时无法知道牛对于火箭的位置。',
+      },
+      {
+        target: character('斯飞'),
+        description:
+          '马索尔进入被动状态时免疫斯飞疾冲状态的感电，同时强化后的拳头对斯飞威胁很大，但脱离发怒状态后的马索尔短时间无法逃离斯飞的追击，同时斯飞的感电能干扰未进入被动状态的马索尔进行救援',
         isMinor: true,
       },
       {
-        target: character('剑客莉莉'),
-        description: '剑客莉莉的剑气能为马索尔提供回溯能力，帮助其救援后返回。',
-        isMinor: true,
+        target: character('兔八哥'),
+        description:
+          '闪现导致兔子只能守在火箭底下，且三级拳头打奶酪也可以防止死守，且拳头不怕兔子二被，二被的霸体也可以减少被秒的概率',
       },
+    ],
+    collaborators: [
       {
         target: character('米可'),
         description: '米可的相机能为马索尔提供回溯能力，帮助其救援后返回。',
@@ -1199,6 +1323,24 @@ const characterRelationDefinitions = {
         isMinor: true,
       },
     ],
+    counterEachOther: [
+      {
+        target: character('牛仔汤姆'),
+        description:
+          '玛丽的主动技能可以禁用爪刀，同时扇子的失明与反向会造成很大干扰，但玛丽的免疫虚弱被牛仔汤姆克制，同时扇子的回血起身让牛仔汤姆具有利用2级被动的可能性。',
+      },
+      {
+        target: character('如玉'),
+        description:
+          '玛丽的主动技能无法封锁如玉的爪刀，折扇会触发如玉的花枪反击；但如玉较怕鼠方的拉扯破局，而玛丽折扇能救起队友或快速地推入奶酪，有助于拉扯破局；玛丽后期的禁用技能效果也克制如玉的反击。',
+        isMinor: true,
+      },
+      {
+        target: character('兔八哥'),
+        description:
+          '玛丽吹扇子给的debuff会被兔子秒解还会给自己挂宣战，但是后期玛丽三级礼仪能禁技能。',
+      },
+    ],
   },
   蒙金奇: {
     counters: [
@@ -1211,6 +1353,19 @@ const characterRelationDefinitions = {
         target: character('兔八哥'),
         description: '战车能帮队友挡胡萝卜飞镖，且冲撞可以将兔子从洞里撞出来。',
         isMinor: true,
+      },
+      {
+        target: character('斯飞'),
+        description:
+          '蒙金奇主动技能能够给予斯飞有效干扰与中断斯飞追击的可能，同时斯飞无法有效处理战车',
+        isMinor: true,
+      },
+    ],
+    counterEachOther: [
+      {
+        target: character('牛仔汤姆'),
+        description:
+          '蒙金奇主动技能的控制与霸体对于牛汤来说较为棘手，同时战车能够挡下牛仔汤姆的大部分输出，但牛仔汤姆的3级被动很容易打爆战车以及击倒蒙金奇。',
       },
     ],
     counteredByKnowledgeCards: [
@@ -1230,7 +1385,8 @@ const characterRelationDefinitions = {
     counters: [
       {
         target: character('布奇'),
-        description: '梦游杰瑞强推能力较强，同时自保能力也较强。',
+        description:
+          '梦游杰瑞强推和自保能力都较强；同时布奇冲撞会将奶酪撞出洞口，而梦游杰瑞能利用这一点进一步推进奶酪。',
       },
       {
         target: character('托普斯'),
@@ -1243,11 +1399,6 @@ const characterRelationDefinitions = {
         isMinor: true,
       },
       {
-        target: character('布奇'),
-        description: '布奇冲撞会将奶酪撞出洞口，而每次奶酪被毛线球拉入洞口都会增加奶酪进度。',
-        isMinor: true,
-      },
-      {
         target: character('恶魔汤姆'),
         description: '梦游杰瑞毛线球特性克制恶魔汤姆火车死守。',
       },
@@ -1257,16 +1408,29 @@ const characterRelationDefinitions = {
           '梦游在主动技能梦游期间免疫击晕，不会被剑汤用击晕和连斩直接击倒；但破除梦游状态后自保较为孱弱。',
         isMinor: true,
       },
-    ],
-    collaborators: [
       {
-        target: character('剑客莉莉'),
-        description: '莉莉的风墙可困住或阻挡猫，方便梦游安全地拉取毛线球。',
+        target: character('斯飞'),
+        description:
+          '梦游杰瑞主动技能带来的被动位移能够化解斯飞的突袭，同时梦游杰瑞的毛线球能够加快奶酪推进与快速破墙，斯飞难以牵制',
+        isMinor: true,
+      },
+    ],
+    counterEachOther: [
+      {
+        target: character('牛仔汤姆'),
+        description:
+          '梦游杰瑞受到伤害时的位移能略微摆脱牛仔汤姆的追击，同时毛线团容易加快游戏节奏与破墙时间，但牛仔汤姆的攻击很容易波及到梦游杰瑞。',
         isMinor: true,
       },
       {
-        target: character('仙女鼠'),
-        description: '梦游在拉毛线时，仙女鼠给梦游丢六星不会让毛线消失，可以强行破局。',
+        target: character('如玉'),
+        description:
+          '梦游杰瑞推奶酪能力和破局能力很强，但香甜梦境状态会被掷花枪破除，高Hp上限也被如玉的高攻击所克制，因此自保能力有所不足。',
+        isMinor: true,
+      },
+      {
+        target: character('兔八哥'),
+        description: '后期毛线球可以秒奶酪，且不怕兔子把奶酪挤出洞口。',
         isMinor: true,
       },
     ],
@@ -1324,20 +1488,22 @@ const characterRelationDefinitions = {
           '米可的减伤使胡椒粉难以造成伤害；照相机回溯可以舍己救人后不会因为胡椒粉而虚弱。',
       },
     ],
+    counterEachOther: [
+      {
+        target: character('兔八哥'),
+        description: '米可前期不好救援，但后期高减伤加霸体很难被兔八哥击倒。',
+      },
+      {
+        target: character('追风汤姆'),
+        description:
+          '追汤的飞行霸体无视米可采访的弱化和叠素材，可以蓄势一刀打死；但后期米可点了二三级被动后，追汤就难以将其击倒了',
+      },
+    ],
     collaborators: [
       {
-        target: character('杰瑞'),
-        description: '二级鼓舞可以在米可采访时帮米可回血和加速，提高续航。',
+        target: character('鲍姆'),
+        description: '鲍姆救援后可通过米可拍照撤退。',
         isMinor: true,
-      },
-      {
-        target: character('雪梨'),
-        description:
-          '雪梨可以帮米可回血，提高续航，配合米可三级被动很难被打死，也有了防止拍抓的能力。',
-      },
-      {
-        target: character('音乐家杰瑞'),
-        description: '主动技能协奏曲可以在米可采访时给米可回血和加速，提高续航。',
       },
     ],
     counteredByKnowledgeCards: [
@@ -1406,9 +1572,26 @@ const characterRelationDefinitions = {
         isMinor: true,
       },
     ],
+    collaborators: [
+      {
+        target: character('表演者•杰瑞'),
+        description: '可以在表演者•杰瑞铁血的时候将其变为大老鼠，防止被抓。',
+        isMinor: true,
+      },
+      {
+        target: character('音乐家杰瑞'),
+        description:
+          '米雪儿2武附身音乐家后可以提高音乐家杰瑞的自保能力，同时由于附身后仍然可以触发共鸣，所以能卡好距离仅用一段礼服拆掉火箭',
+      },
+    ],
   },
   魔术师: {
     counters: [
+      {
+        target: character('莱特宁'),
+        description: '魔术师的兔子吞闪现，影响追击能力',
+        isMinor: true,
+      },
       {
         target: character('兔八哥'),
         description:
@@ -1435,13 +1618,6 @@ const characterRelationDefinitions = {
         description: '剑客汤姆除了携带特技蓄力一击几乎没有办法快速击倒兔子大表哥从而无法及时减员。',
       },
     ],
-    counteredBy: [
-      {
-        target: character('斯飞'),
-        description: '斯飞的被动免疫魔术师黄色卡牌，',
-        isMinor: true,
-      },
-    ],
     counterEachOther: [
       {
         target: character('恶魔汤姆'),
@@ -1452,12 +1628,16 @@ const characterRelationDefinitions = {
         description:
           '兔子们也能触发托普斯的一级被动，配合特技我生气了可以快速刷取经验，但过长的分身释放前摇很容易被魔术师丢中红牌导致分身释放失败。',
       },
-    ],
-    collaborators: [
       {
-        target: character('航海士杰瑞'),
+        target: character('如玉'),
         description:
-          '魔术师的卡牌和航海士杰瑞的金币可以相互弥补控制真空期，提高干扰能力。魔术师在干扰的同时还能推奶酪。',
+          '魔术师的红牌封锁技能使如玉无法释放花枪反击，黄蓝牌造成无伤害的控制也能克制如玉；如玉的前刺回马枪伤害极高，可以快速击倒兔子先生或兔子大表哥，此外掷花枪也能以兔子为跳板进行反击。',
+        isMinor: true,
+      },
+      {
+        target: character('斯飞'),
+        description:
+          '魔术师的红牌能给斯飞一定的威胁，同时斯飞无法快速清理兔子，但斯飞迅捷效果下免疫魔术师的黄牌，蓝牌能用武器技能拉回，同时魔术师无法轻易逃脱斯飞追击',
       },
     ],
     counteredBySpecialSkills: [
@@ -1481,16 +1661,24 @@ const characterRelationDefinitions = {
         isMinor: true,
       },
     ],
+    counterEachOther: [
+      {
+        target: character('牛仔汤姆'),
+        description:
+          '拿坡里的主动技能能够阻挡牛，但也会加速牛的来回。武器能够给予牛仔汤姆控制以及视野方面的干扰，但自身缺乏逃脱手段。',
+        isMinor: true,
+      },
+      {
+        target: character('斯飞'),
+        description:
+          '拿坡里的主动技能和披萨饼能够给予斯飞干扰，但斯飞迅捷效果下免疫拿破里足球带来的失明',
+      },
+    ],
     collaborators: [
       {
         target: character('罗宾汉泰菲'),
         description:
           '罗宾汉泰菲与拿坡里鼠的高频控制能互相弥补CD，提高容错。罗菲还能利用圆球与斜塔的碰撞，快速碰撞破墙。',
-      },
-      {
-        target: character('雪梨'),
-        description: '骑乘披萨饼期间可通过花束快速位移，连带披萨饼一同移动，出其不意。',
-        isMinor: true,
       },
     ],
     counteredByKnowledgeCards: [
@@ -1512,7 +1700,7 @@ const characterRelationDefinitions = {
     counters: [
       {
         target: character('布奇'),
-        description: '泥巴翻滚救援不会拦截，桶盖的霸体也会被勾下来。',
+        description: '尼宝翻滚救援不会被布奇拦截，桶盖霸体也会被鱼钩勾下。',
       },
       {
         target: character('库博'),
@@ -1520,7 +1708,8 @@ const characterRelationDefinitions = {
       },
       {
         target: character('牛仔汤姆'),
-        description: '尼宝的主动技能免疫控制。',
+        description:
+          '牛仔汤姆拦不住尼宝的翻滚，也不好抓到尼宝；另外尼宝往往携带逃窜，进一步克制牛仔汤姆。',
         isMinor: true,
       },
       {
@@ -1551,24 +1740,17 @@ const characterRelationDefinitions = {
         description: '尼宝提供稳定救援，克制兔八哥。',
       },
       {
-        target: character('布奇'),
-        description: '布奇拦不住翻滚，而且旋转桶盖霸体也免疫不了鱼钩。',
-      },
-      {
-        target: character('牛仔汤姆'),
-        description: '牛仔汤姆拦不住翻滚，也不好抓尼宝。另外尼宝往往携带逃窜，克制牛汤。',
-        isMinor: true,
-      },
-      {
         target: character('斯飞'),
-        description: '斯飞拦不住翻滚；但斯飞在“疾冲”状态下被勾，抓在手上老鼠的还是会被电。',
+        description:
+          '斯飞拦不住尼宝的翻滚，也无法免疫鱼钩的控制；但斯飞在“疾冲”状态下被勾时，抓在手上的老鼠仍会被电。',
         isMinor: true,
       },
     ],
-    collaborators: [
+    counterEachOther: [
       {
-        target: character('剑客莉莉'),
-        description: '可以配合泥巴救援后传送',
+        target: character('如玉'),
+        description:
+          '尼宝有一定自保能力，2级灵活跳跃能躲避花枪反击，鱼钩也能进行有效干扰。但翻滚期间有机会被回马枪沿移动方向戳飞，可能会中断救援。',
         isMinor: true,
       },
     ],
@@ -1589,7 +1771,7 @@ const characterRelationDefinitions = {
       },
       {
         target: character('斯飞'),
-        description: '斯飞须格外小心牛杰仙人掌的控制与减速。',
+        description: '斯飞须格外小心牛仔杰瑞仙人掌和琴带来的控制、减速与霸体反制。',
       },
       {
         target: character('塔拉'),
@@ -1644,12 +1826,21 @@ const characterRelationDefinitions = {
         description:
           '牛仔杰瑞的干扰在托普斯没有三级分身时影响较大；但托普斯三级分身在附近时拥有霸体，且捕虫网无视牛仔杰瑞的霸体',
       },
+      {
+        target: character('牛仔汤姆'),
+        description:
+          '牛仔杰瑞二级被动带来的霸体使牛汤姆技能的控制失效，同时二级琴带来的回复与加速让牛仔汤姆不容易击倒牛仔杰瑞，但牛仔汤姆能够强打牛仔杰瑞，同时斗牛会清除仙人掌并进行干扰，三级被动也能轻易击倒霸体的牛仔杰瑞。',
+      },
     ],
     collaborators: [
       {
-        target: character('航海士杰瑞'),
-        description: '牛仔软控配合海盗硬控',
-        isMinor: true,
+        target: character('罗宾汉泰菲'),
+        description:
+          '牛仔杰瑞与罗菲的控制能互相弥补CD。罗菲还能提供恢复，发挥牛仔杰瑞的Hp上限优势。',
+      },
+      {
+        target: character('佩克斯'),
+        description: '牛仔控住可接弹琴，1级被动提供的经验可以助他活到后期。',
       },
     ],
     counteredBySpecialSkills: [
@@ -1704,70 +1895,10 @@ const characterRelationDefinitions = {
         target: character('侦探泰菲'),
         description: '侦探泰菲的分身会触发牛仔汤姆的2级被动，大幅减少技能CD',
       },
-    ],
-    counteredBy: [
       {
-        target: character('剑客泰菲'),
-        description: '',
-      },
-    ],
-    counterEachOther: [
-      {
-        target: character('剑客莉莉'),
+        target: character('泰菲'),
         description:
-          '剑客莉莉的道具击中获得无敌以及主动技能的风墙给予牛仔汤姆防守与追击很大压力，但牛仔汤姆基本无视剑客莉莉的被动减伤。',
-      },
-      {
-        target: character('马索尔'),
-        description:
-          '马索尔强大的输出控制手段与传送使牛仔汤姆要时刻关注，但马索尔发怒结束后无法逃离牛仔汤姆的攻击范围，且使用主动技能时无法知道牛对于火箭的位置。',
-      },
-      {
-        target: character('玛丽'),
-        description:
-          '玛丽的主动技能可以禁用爪刀，同时扇子的失明与反向会造成很大干扰，但玛丽的免疫虚弱被牛仔汤姆克制，同时扇子的回血起身让牛仔汤姆具有利用2级被动的可能性。',
-      },
-      {
-        target: character('蒙金奇'),
-        description:
-          '蒙金奇主动技能的控制与霸体对于牛汤来说较为棘手，同时战车能够挡下牛仔汤姆的大部分输出，但牛仔汤姆的3级被动很容易打爆战车以及击倒蒙金奇。',
-      },
-      {
-        target: character('梦游杰瑞'),
-        description:
-          '梦游杰瑞受到伤害时的位移能略微摆脱牛仔汤姆的追击，同时毛线团容易加快游戏节奏与破墙时间，但牛仔汤姆的攻击很容易波及到梦游杰瑞。',
-        isMinor: true,
-      },
-      {
-        target: character('拿坡里鼠'),
-        description:
-          '拿坡里的主动技能能够阻挡牛，但也会加速牛的来回。武器能够给予牛仔汤姆控制以及视野方面的干扰，但自身缺乏逃脱手段。',
-        isMinor: true,
-      },
-      {
-        target: character('恶魔泰菲'),
-        description:
-          '虽然恶菲绿恶魔的高伤可以快速击倒牛汤，但是牛汤同样可以利用三被和绿恶魔反制敌方',
-      },
-      {
-        target: character('天使杰瑞'),
-        description: '',
-      },
-      {
-        target: character('牛仔杰瑞'),
-        description:
-          '牛仔杰瑞二级被动带来的霸体使牛汤姆技能的控制失效，同时二级琴带来的回复与加速让牛仔汤姆不容易击倒牛仔杰瑞，但牛仔汤姆能够强打牛仔杰瑞，同时斗牛会清除仙人掌并进行干扰，三级被动也能轻易击倒霸体的牛仔杰瑞。',
-      },
-      {
-        target: character('霜月'),
-        description:
-          '霜月滑铲期间免疫牛的控制并且定身符会对牛仔汤姆造成干扰，但霜月容易被牛仔汤姆击倒且武器能协助牛仔汤姆触发2级被动。',
-        isMinor: true,
-      },
-      {
-        target: character('侦探杰瑞'),
-        description:
-          '侦探杰瑞的三级烟雾弹使牛仔汤姆无法正常释放技能，但牛仔汤姆能在烟雾外对内进行干扰。',
+          '泰菲的炮和地雷可协助牛汤的斗牛鞭尸，触发二级被动；牛汤伤害高，克制血量低的泰菲；牛汤技能冷却快，攻击、控制手段多，泰菲圆滚滚冷却时间长，疲于应对；泰菲火箭筒前摇长、地雷预警时间长，容易被牛汤卡时间击倒',
       },
     ],
     countersKnowledgeCards: [
@@ -1900,7 +2031,7 @@ const characterRelationDefinitions = {
     counters: [
       {
         target: character('汤姆'),
-        description: '佩克斯团队增益较强。',
+        description: '佩克斯团队增益较强，击退也有一定能力反制汤姆的无敌。',
         isMinor: true,
       },
       {
@@ -1924,20 +2055,17 @@ const characterRelationDefinitions = {
         description: '击退和高伤有一定能力反制跳舞。',
         isMinor: true,
       },
+    ],
+    counterEachOther: [
       {
-        target: character('汤姆'),
-        description: '击退有一定能力反制无敌。',
+        target: character('斯飞'),
+        description:
+          '佩克斯被动的复活甲让斯飞短时间无法击倒佩克斯，同时佩克斯武器带来的范围回血能够缓解斯飞进攻带来的部分损失，但斯飞感电或者强化技能能打断佩克斯的武器技能持续',
         isMinor: true,
       },
-    ],
-    collaborators: [
       {
-        target: character('牛仔杰瑞'),
-        description: '牛仔控住可接弹琴，1级被动提供的经验可以助他活到后期。',
-      },
-      {
-        target: character('雪梨'),
-        description: '可以为佩克斯提供续航。',
+        target: character('苏蕊'),
+        description: '佩克斯的琴可以眩晕苏蕊，但如果在苏蕊跳舞中被击倒会使三级被动失效。',
       },
     ],
     counteredBySpecialSkills: [
@@ -1952,7 +2080,7 @@ const characterRelationDefinitions = {
       {
         target: character('朝圣者泰菲'),
         description:
-          '朝圣者泰菲子弹可以被如玉主动技能反向利用刷反击，且如玉被动适配暴怒，朝圣者泰菲的高伤极易被如玉反制。',
+          '朝圣者泰菲子弹伤害高，容易触发如玉坚毅状态；同时这些子弹也可能被如玉主动技能反向利用刷反击。',
       },
       {
         target: character('朵朵'),
@@ -2001,65 +2129,6 @@ const characterRelationDefinitions = {
         target: character('音乐家杰瑞'),
         description:
           '音乐家杰瑞狂想状态下拥有较高伤害，容易触发如玉坚毅。同时音乐家杰瑞使用位移救队友拆火箭，当如玉距离音乐家较近会触发反击。',
-      },
-      {
-        target: character('朝圣者泰菲'),
-        description: '朝圣者泰菲射出来的子弹伤害较高，非常容易触发如玉坚毅状态。',
-        isMinor: true,
-      },
-    ],
-    counterEachOther: [
-      {
-        target: character('罗宾汉泰菲'),
-        description:
-          '罗宾汉泰菲机动性强，善于拉扯，可以让如玉占不到便宜；但Hp上限低，进行干扰时又依赖近身连续控制，容易被反击击倒。',
-        isMinor: true,
-      },
-      {
-        target: character('玛丽'),
-        description:
-          '玛丽的主动技能无法封锁如玉的爪刀，折扇会触发如玉的花枪反击；但如玉较怕鼠方的拉扯破局，而玛丽折扇能救起队友或快速地推入奶酪，有助于拉扯破局；玛丽后期的禁用技能效果也克制如玉的反击。',
-        isMinor: true,
-      },
-      {
-        target: character('梦游杰瑞'),
-        description:
-          '梦游杰瑞推奶酪能力和破局能力很强，但香甜梦境状态会被掷花枪破除，高Hp上限也被如玉的高攻击所克制，因此自保能力有所不足。',
-        isMinor: true,
-      },
-      {
-        target: character('魔术师'),
-        description:
-          '魔术师的红牌封锁技能使如玉无法释放花枪反击，黄蓝牌造成无伤害的控制也能克制如玉；如玉的前刺回马枪伤害极高，可以快速击倒兔子先生或兔子大表哥，此外掷花枪也能以兔子为跳板进行反击。',
-        isMinor: true,
-      },
-      {
-        target: character('尼宝'),
-        description:
-          '尼宝有一定自保能力，2级灵活跳跃能躲避花枪反击，鱼钩也能进行有效干扰。但翻滚期间有机会被回马枪沿移动方向戳飞，可能会中断救援。',
-        isMinor: true,
-      },
-      {
-        target: character('天使泰菲'),
-        description:
-          '如玉自身的高额伤害在一定程度上克制天菲的减伤，但如玉无法用拍子直接抓起老鼠，因此后期难以处理天菲。',
-        isMinor: true,
-      },
-      {
-        target: character('剑客杰瑞'),
-        description: '剑客杰瑞可以使用格挡免疫反击伤害，但是剑客杰瑞伤害较高，容易触发坚毅。',
-        isMinor: true,
-      },
-      {
-        target: character('莱恩'),
-        description:
-          '如玉的爪刀无法破除莱恩的方块，但莱恩用三角或圆命中开启主动技能的如玉仍可触发其花枪反击。',
-        isMinor: true,
-      },
-      {
-        target: character('天使杰瑞'),
-        description:
-          '天使杰瑞1级被动对如玉无效；如玉前刺回马枪能直接击倒使用2级主动的天使杰瑞；如玉可借助天使杰瑞武器技能造成的伤害进行反击但3级被动禁用技能可以反制如玉的甩花枪反击',
       },
     ],
     countersKnowledgeCards: [
@@ -2121,7 +2190,7 @@ const characterRelationDefinitions = {
       {
         target: character('泰菲'),
         description:
-          '侍卫汤姆移速快，且在Lv.2被动加成下伤害高，克制血量少的泰菲；侍卫视野大，远程火箭筒被克死；侍卫可以用火炮刷盾，每打中一次就有两层盾，可抵消火箭筒的两段伤害；侍卫火炮可以禁用技能、解除增益效果，克制泰菲的圆滚滚解控和被动',
+          '侍卫汤姆移速快，在Lv.2被动加成下能快速击倒泰菲；视野大克制远程火箭筒，还能用火炮刷新护盾、禁用技能并解除增益，进一步限制泰菲。',
       },
       {
         target: character('杰瑞'),
@@ -2156,16 +2225,17 @@ const characterRelationDefinitions = {
         description: '霜月的滑铲和袋子使兔八哥难以绑火箭，且滑铲可以将兔子从洞中顶出来。',
       },
     ],
-    collaborators: [
+    counterEachOther: [
       {
-        target: character('航海士杰瑞'),
-        description: '航海士杰瑞可拆掉火箭，便于霜月守火箭。',
+        target: character('牛仔汤姆'),
+        description:
+          '霜月滑铲期间免疫牛的控制并且定身符会对牛仔汤姆造成干扰，但霜月容易被牛仔汤姆击倒且武器能协助牛仔汤姆触发2级被动。',
         isMinor: true,
       },
       {
-        target: character('音乐家杰瑞'),
-        description: '音乐家杰瑞可拆掉火箭，便于霜月守火箭。',
-        isMinor: true,
+        target: character('斯飞'),
+        description:
+          '霜月的主动技能能够中断斯飞追击以及使斯飞脱离疾冲状态，定身符也能极大拖延斯飞追击节奏，但斯飞能够一套击倒霜月',
       },
     ],
     countersSpecialSkills: [
@@ -2178,6 +2248,11 @@ const characterRelationDefinitions = {
   },
   斯飞: {
     counters: [
+      {
+        target: character('魔术师'),
+        description: '斯飞的被动免疫魔术师黄色卡牌，',
+        isMinor: true,
+      },
       {
         target: character('米雪儿'),
         description:
@@ -2204,156 +2279,6 @@ const characterRelationDefinitions = {
         description:
           '斯飞变成大星星也能触发被动，同时仙女鼠的减速可以忽略，带来的反向能被斯飞的迅捷效果免疫。',
         isMinor: true,
-      },
-    ],
-    counteredBy: [
-      {
-        target: character('剑客杰瑞'),
-        description:
-          '剑客杰瑞HP高，斯飞短时间难以击倒，并且剑客杰瑞能够击倒三级被动状态下的斯飞，同时剑客杰瑞的格挡能够抵挡并反击斯飞',
-        isMinor: true,
-      },
-      {
-        target: character('牛仔杰瑞'),
-        description:
-          '斯飞须格外小心牛仔杰瑞仙人掌带来的控制与减速。同时牛仔杰瑞琴的控制与减速以及自身的霸体使斯飞难以击倒牛仔杰瑞',
-      },
-      {
-        target: character('航海士杰瑞'),
-        description:
-          '航海士杰瑞的技能控制能够打断斯飞追击节奏，同时航海士杰瑞被动带来的减速使斯飞难以进入被动强化，而且航海士杰瑞的破墙速度很快，斯飞难以守住墙缝',
-        isMinor: true,
-      },
-      {
-        target: character('侦探杰瑞'),
-        description: '侦探杰瑞的高推速能够缩短奶酪期，同时烟雾弹带来的减速与沉默使斯飞无法有效进攻',
-        isMinor: true,
-      },
-      {
-        target: character('罗宾汉泰菲'),
-        description: '罗菲的圆球可以打断斯飞的疾冲状态，并且武器技能能够使斯飞的攻势减弱。',
-        isMinor: true,
-      },
-      {
-        target: character('尼宝'),
-        description:
-          '斯飞拦不住尼宝的翻滚，同时无法免疫尼宝鱼钩的控制；但斯飞在“疾冲”状态下被勾，抓在手上老鼠的还是会被电。',
-        isMinor: true,
-      },
-      {
-        target: character('杰瑞'),
-        description:
-          '杰瑞自身具备的高推速能够缩短奶酪期，同时斯飞需要注意杰瑞鸟哨下落的鞭炮，并且杰瑞主动技能给予的部分回血与延长火箭燃烧CD能够延长斯飞的节奏',
-        isMinor: true,
-      },
-      {
-        target: character('恶魔杰瑞'),
-        description:
-          '恶魔杰瑞的被动能够免疫斯飞的关键伤害或者控制，同时恶魔杰瑞的传送门能够大幅限制斯飞的攻势',
-      },
-      {
-        target: character('剑客泰菲'),
-        description: '剑客泰菲的头盔斯飞束手无策，并且剑客泰菲的长枪也能给予斯飞有效的干扰',
-      },
-      {
-        target: character('雪梨'),
-        description:
-          '雪梨给予的回复使斯飞难以短时间击倒老鼠，同时雪梨能够回复火箭上老鼠的血量，使斯飞追击难度上升',
-        isMinor: true,
-      },
-      {
-        target: character('天使泰菲'),
-        description:
-          '天使泰菲的主动技能能够转移斯飞的伤害与控制，同时能够减慢火箭燃烧时间，并且天使泰菲能够通过武器技能获得霸体',
-        isMinor: true,
-      },
-      {
-        target: character('蒙金奇'),
-        description:
-          '蒙金奇主动技能能够给予斯飞有效干扰与中断斯飞追击的可能，同时斯飞无法有效处理战车',
-        isMinor: true,
-      },
-      {
-        target: character('天使杰瑞'),
-        description:
-          '天使杰瑞的被动禁用爪刀与沉默给予斯飞极大的进攻阻力，同时雷云的的减速与雷击给予斯飞有效干扰',
-      },
-      {
-        target: character('表演者•杰瑞'),
-        description: '跳舞中的表演者杰瑞可以免疫咸鱼的效果，并且强大的自保可以主动帮助队友吸闪。',
-      },
-      {
-        target: character('梦游杰瑞'),
-        description:
-          '梦游杰瑞主动技能带来的被动位移能够化解斯飞的突袭，同时梦游杰瑞的毛线球能够加快奶酪推进与快速破墙，斯飞难以牵制',
-        isMinor: true,
-      },
-      {
-        target: character('鲍姆'),
-        description:
-          '自身具备的高HP使斯飞短时间难以击倒，同时鲍姆主动技能的控制与拆除火箭的能力极大干扰斯飞节奏',
-      },
-    ],
-    counterEachOther: [
-      {
-        target: character('莱恩'),
-        description:
-          '莱恩画出的方块能阻碍斯飞行动，同时三角形的减速与圆的伤害不可忽视，但莱恩无法轻易逃脱斯飞的追击。',
-      },
-      {
-        target: character('魔术师'),
-        description:
-          '魔术师的红牌能给斯飞一定的威胁，同时斯飞无法快速清理兔子，但斯飞迅捷效果下免疫魔术师的黄牌，蓝牌能用武器技能拉回，同时魔术师无法轻易逃脱斯飞追击',
-      },
-      {
-        target: character('马索尔'),
-        description:
-          '马索尔进入被动状态时免疫斯飞疾冲状态的感电，同时强化后的拳头对斯飞威胁很大，但脱离发怒状态后的马索尔短时间无法逃离斯飞的追击，同时斯飞的感电能干扰未进入被动状态的马索尔进行救援',
-        isMinor: true,
-      },
-      {
-        target: character('剑客莉莉'),
-        description:
-          '莉莉的无敌与减伤使斯飞难以快速击倒莉莉，莉莉剑气的减速也能有效干扰斯飞，但莉莉的风墙无法困住或有效影响斯飞攻势',
-        isMinor: true,
-      },
-      {
-        target: character('音乐家杰瑞'),
-        description:
-          '音乐家杰瑞的音波能够造成短暂控制以及快速破坏火箭，并且墙缝期的辅助能力与音波破墙我威胁使斯飞难以防守，但斯飞疾冲状态的感电或者强化技能能够打断音乐家杰瑞武器技能状态',
-        isMinor: true,
-      },
-      {
-        target: character('佩克斯'),
-        description:
-          '佩克斯被动的复活甲让斯飞短时间无法击倒佩克斯，同时佩克斯武器带来的范围回血能够缓解斯飞进攻带来的部分损失，但斯飞感电或者强化技能能打断佩克斯的武器技能持续',
-        isMinor: true,
-      },
-      {
-        target: character('朝圣者泰菲'),
-        description:
-          '朝圣者泰菲的武器高伤害容易一次性给予斯飞重击，同时斯飞无法对因主动技能变身的朝圣者泰菲造成有效威胁，但朝圣者泰菲自身仍然缺乏逃脱斯飞追击的手段',
-        isMinor: true,
-      },
-      {
-        target: character('拿坡里鼠'),
-        description:
-          '拿坡里的主动技能和披萨饼能够给予斯飞干扰，但斯飞迅捷效果下免疫拿破里足球带来的失明',
-      },
-      {
-        target: character('霜月'),
-        description:
-          '霜月的主动技能能够中断斯飞追击以及使斯飞脱离疾冲状态，定身符也能极大拖延斯飞追击节奏，但斯飞能够一套击倒霜月',
-      },
-      {
-        target: character('罗宾汉杰瑞'),
-        description:
-          '罗宾汉杰瑞的主动能够给予老鼠高机动性以抗衡斯飞，同时罗宾汉杰瑞的降落伞能够抵挡斯飞攻势，但斯飞能够找机会一套击倒罗宾汉杰瑞并持续保持追击节奏',
-      },
-      {
-        target: character('朵朵'),
-        description:
-          '朵朵武器技能前期给予的高伤害使斯飞难以承受，但斯飞点出三级被动后能够恢复追击节奏',
       },
     ],
     countersKnowledgeCards: [
@@ -2516,8 +2441,8 @@ const characterRelationDefinitions = {
       },
       {
         target: character('泰菲'),
-        description: '苏蕊跳舞霸体对泰菲有很大压力。',
-        isMinor: true,
+        description:
+          '苏蕊跳舞有霸体且伤害高，克制伤害高但血量低、主要依赖控制的泰菲；同时跳舞可直接把老鼠带上火箭，也能打断泰菲火箭筒前摇。',
       },
       {
         target: character('航海士杰瑞'),
@@ -2526,12 +2451,6 @@ const characterRelationDefinitions = {
       {
         target: character('杰瑞'),
         description: '杰瑞自保能力较差，容易被抓，且杰瑞阵容多三保一，易被针对。',
-      },
-    ],
-    counterEachOther: [
-      {
-        target: character('佩克斯'),
-        description: '佩克斯的琴可以眩晕苏蕊，但如果在苏蕊跳舞中被击倒会使三级被动失效。',
       },
     ],
     countersKnowledgeCards: [
@@ -2575,13 +2494,6 @@ const characterRelationDefinitions = {
         isMinor: true,
       },
     ],
-    counteredBy: [
-      {
-        target: character('航海士杰瑞'),
-        description:
-          '航海士杰瑞的火药桶炸完火箭之后塔拉无法通过套索扔老鼠的方式上火箭，并且自身缺乏霸体。',
-      },
-    ],
   },
   泰菲: {
     counters: [
@@ -2609,45 +2521,6 @@ const characterRelationDefinitions = {
         target: character('图茨'),
         description: '圆滚滚的无敌和解控克制喵喵叫，但三级汽水罐使泰菲有些疲于应对',
         isMinor: true,
-      },
-    ],
-    counteredBy: [
-      {
-        target: character('布奇'),
-        description:
-          '布奇的基础伤害高，可一刀或一个道具秒满血泰菲，并且三级桶盖的霸体也在一定程度上限制了炮的发挥。',
-      },
-      {
-        target: character('侍卫汤姆'),
-        description:
-          '侍卫汤姆移速快，且在Lv.2被动加成下能一击击倒泰菲。并且侍卫视野大，远程火箭筒被克死，侍卫还能用火炮刷新护盾，每打中一次就有两层盾，可抵消火箭筒的两段伤害。',
-        isMinor: true,
-      },
-      {
-        target: character('苏蕊'),
-        description:
-          '苏蕊跳舞有霸体、伤害高，克制伤害高、血量低、主要打控制的泰菲；苏蕊跳舞可直接把老鼠带上火箭，克制泰菲地雷拖延绑火箭；泰菲火箭筒前摇长，近身容易被苏蕊瑜伽球打断',
-      },
-      {
-        target: character('库博'),
-        description:
-          '库博的伤害很高，克制血量少的泰菲，克制泰菲的被动；库博机动性强，思路很难被判断，泰菲无法及时支援队友；库博的隐身导致地雷无法被触发',
-      },
-      {
-        target: character('兔八哥'),
-        description:
-          '兔八哥伤害高，克制血量少的泰菲，兔八哥二级被动可以闪避泰菲的炮，兔八哥的巨型胡萝卜克制泰菲霸体减伤推奶酪，兔八哥的打洞可以躲避泰菲的地雷锁定',
-        isMinor: true,
-      },
-      {
-        target: character('牛仔汤姆'),
-        description:
-          '泰菲的炮和地雷可协助牛汤的斗牛鞭尸，触发二级被动；牛汤伤害高，克制血量低的泰菲；牛汤技能冷却快，攻击、控制手段多，泰菲圆滚滚冷却时间长，疲于应对；泰菲火箭筒前摇长、地雷预警时间长，容易被牛汤卡时间击倒',
-      },
-      {
-        target: character('图多盖洛'),
-        description:
-          '泰菲可以用圆滚滚抵挡图多的吻和指甲油外刀，但图多伤害较高，技能冷却快，后期攻击手段多，三级吻可以禁用技能，让泰菲疲于应对；图多的三级指甲油赋予长时间霸体，克制泰菲的炮和地雷打控制；图多的三级香水可以禁用技能，图多在三级香水中伤害十分高，爪刀冷却快，克制泰菲被动推奶酪',
       },
     ],
     counterEachOther: [
@@ -2684,17 +2557,8 @@ const characterRelationDefinitions = {
     ],
     collaborators: [
       {
-        target: character('航海士杰瑞'),
-        description:
-          '感应雷可以中断交互动作，和火药桶可以相互配合，让猫难以绑上火箭，硬拖时间给队友机会。',
-      },
-      {
         target: character('雪梨'),
         description: '雪梨的回血配合泰菲被动霸体和减伤，没有强制位移和高伤的情况下可以强行推奶酪',
-      },
-      {
-        target: character('国王杰瑞'),
-        description: '泰菲蹭国王的强化救援战旗，利用圆滚滚的无敌位移可以实现稳救',
       },
       {
         target: character('罗宾汉泰菲'),
@@ -2788,15 +2652,14 @@ const characterRelationDefinitions = {
         description: '汤姆无敌挡仙人掌和琴，二级锅解决124血量，平底锅击飞干扰冰冻保鲜救援。',
       },
     ],
-    counterEachOther: [
-      {
-        target: character('鲍姆'),
-        description: '主动技能无敌使鲍姆爆炸无自保，但能干扰汤姆无敌上火箭。',
-      },
-    ],
   },
   天使杰瑞: {
     counters: [
+      {
+        target: character('斯飞'),
+        description:
+          '天使杰瑞的被动禁用爪刀与沉默给予斯飞极大的进攻阻力，同时雷云的的减速与雷击给予斯飞有效干扰',
+      },
       {
         target: character('恶魔汤姆'),
         description:
@@ -2818,7 +2681,23 @@ const characterRelationDefinitions = {
           '天使杰瑞1级被动和3级被动让追汤无法快速拿刀，雷云减伤可以放大追汤缺伤害的缺点，打团也很强。祝福可以一定程度上反制追汤飞行强上火箭；同时追汤缺伤害，不易处理复活体。',
       },
     ],
+    counterEachOther: [
+      {
+        target: character('牛仔汤姆'),
+        description: '',
+      },
+      {
+        target: character('如玉'),
+        description:
+          '天使杰瑞1级被动对如玉无效；如玉前刺回马枪能直接击倒使用2级主动的天使杰瑞；如玉可借助天使杰瑞武器技能造成的伤害进行反击但3级被动禁用技能可以反制如玉的甩花枪反击',
+      },
+    ],
     collaborators: [
+      {
+        target: character('罗宾汉泰菲'),
+        description: '罗菲能为天使杰瑞提供恢复，帮助其多次触发被动。',
+        isMinor: true,
+      },
       {
         target: character('仙女鼠'),
         description:
@@ -2836,6 +2715,12 @@ const characterRelationDefinitions = {
   天使泰菲: {
     counters: [
       {
+        target: character('斯飞'),
+        description:
+          '天使泰菲的主动技能能够转移斯飞的伤害与控制，同时能够减慢火箭燃烧时间，并且天使泰菲能够通过武器技能获得霸体',
+        isMinor: true,
+      },
+      {
         target: character('牛仔汤姆'),
         description:
           '当天使泰菲点出3级武器技能时可以无视甚至利用牛来对牛仔汤姆造成干扰，同时利用主动技能能使队友不受牛的控制效果。',
@@ -2852,6 +2737,12 @@ const characterRelationDefinitions = {
       },
     ],
     counterEachOther: [
+      {
+        target: character('如玉'),
+        description:
+          '如玉自身的高额伤害在一定程度上克制天菲的减伤，但如玉无法用拍子直接抓起老鼠，因此后期难以处理天菲。',
+        isMinor: true,
+      },
       {
         target: character('牛仔汤姆'),
         description:
@@ -2871,15 +2762,6 @@ const characterRelationDefinitions = {
       {
         target: character('佩克斯'),
         description: '天使泰菲后期强力。佩克斯能提供大量经验，帮助到达后期。',
-        isMinor: true,
-      },
-      {
-        target: character('雪梨'),
-        description: '雪梨帮天使泰菲免于拍抓，天使泰菲帮雪梨提高生存能力。',
-      },
-      {
-        target: character('侦探杰瑞'),
-        description: '侦探杰瑞的推奶酪和破局能力很强，推奶酪提供的经验能帮助天使泰菲到达后期。',
         isMinor: true,
       },
     ],
@@ -3020,6 +2902,11 @@ const characterRelationDefinitions = {
   图多盖洛: {
     counters: [
       {
+        target: character('泰菲'),
+        description:
+          '泰菲可以用圆滚滚抵挡图多的吻和指甲油外刀，但图多伤害较高，技能冷却快，后期攻击手段多，三级吻可以禁用技能，让泰菲疲于应对；图多的三级指甲油赋予长时间霸体，克制泰菲的炮和地雷打控制；图多的三级香水可以禁用技能，图多在三级香水中伤害十分高，爪刀冷却快，克制泰菲被动推奶酪',
+      },
+      {
         target: character('鲍姆'),
         description: '霸体免疫鲍姆爆炸控制。',
       },
@@ -3064,6 +2951,12 @@ const characterRelationDefinitions = {
   兔八哥: {
     counters: [
       {
+        target: character('泰菲'),
+        description:
+          '兔八哥伤害高，克制血量少的泰菲，兔八哥二级被动可以闪避泰菲的炮，兔八哥的巨型胡萝卜克制泰菲霸体减伤推奶酪，兔八哥的打洞可以躲避泰菲的地雷锁定',
+        isMinor: true,
+      },
+      {
         target: character('朵朵'),
         description: '兔八哥二被可以躲掉充能道具，地洞给的减伤也可以防止被秒。',
       },
@@ -3079,42 +2972,6 @@ const characterRelationDefinitions = {
       {
         target: character('莱恩'),
         description: '莱恩Hp较低，且因技能可宣战容错较低。',
-      },
-    ],
-    counterEachOther: [
-      {
-        target: character('罗宾汉泰菲'),
-        description: '罗菲技能控制多且可以无视二被，但Hp较低无技能不好跑。',
-        isMinor: true,
-      },
-      {
-        target: character('马索尔'),
-        description:
-          '闪现导致兔子只能守在火箭底下，且三级拳头打奶酪也可以防止死守，且拳头不怕兔子二被，二被的霸体也可以减少被秒的概率',
-      },
-      {
-        target: character('梦游杰瑞'),
-        description: '后期毛线球可以秒奶酪，且不怕兔子把奶酪挤出洞口。',
-        isMinor: true,
-      },
-      {
-        target: character('米可'),
-        description: '米可前期不好救援，但后期高减伤加霸体很难被兔八哥击倒。',
-      },
-      {
-        target: character('仙女鼠'),
-        description:
-          '仙女鼠被宣战后比较难受，但仙女鼠Lv.1被动克制胡萝卜飞镖，以及兔八哥Lv2被动不免疫星星。',
-        isMinor: true,
-      },
-      {
-        target: character('侦探杰瑞'),
-        description: '侦探三级烟雾弹可强推，但兔子也可用洞反制。',
-      },
-      {
-        target: character('玛丽'),
-        description:
-          '玛丽吹扇子给的debuff会被兔子秒解还会给自己挂宣战，但是后期玛丽三级礼仪能禁技能。',
       },
     ],
     counteredByKnowledgeCards: [
@@ -3139,7 +2996,7 @@ const characterRelationDefinitions = {
       {
         target: character('天使泰菲'),
         description:
-          '托普斯的捕虫网能无视天菲的两个技能。哪怕是开启Lv.3友情庇护的天菲，也能被携带“我生气了！”特技的托普斯利用击晕和Lv.1被动进行连续控制，当成“提款机”。',
+          '托普斯的捕虫网能无视天使泰菲两个技能；即便开启三级友情庇护，也可能被托普斯结合击晕、“我生气了！”和一级元气满满连续控制。',
       },
       {
         target: character('表演者•杰瑞'),
@@ -3182,11 +3039,6 @@ const characterRelationDefinitions = {
         description: '托普斯三级分身霸体免疫滑铲，网可直接网住。',
         isMinor: true,
       },
-      {
-        target: character('天使泰菲'),
-        description:
-          '托普斯的网可以无视天使泰菲两个技能。即便是开启3级友情庇护的天菲，也可能被托普斯利用{击晕}、{“我生气了！”}和{1级元气满满}进行连续控制。',
-      },
     ],
     countersKnowledgeCards: [
       {
@@ -3227,6 +3079,26 @@ const characterRelationDefinitions = {
         isMinor: true,
       },
     ],
+    counterEachOther: [
+      {
+        target: character('兔八哥'),
+        description:
+          '仙女鼠被宣战后比较难受，但仙女鼠Lv.1被动克制胡萝卜飞镖，以及兔八哥Lv2被动不免疫星星。',
+        isMinor: true,
+      },
+    ],
+    collaborators: [
+      {
+        target: character('莱恩'),
+        description:
+          '莱恩容易死，仙女鼠变六星提高下限，并且在遇到汤姆无敌强上火箭时，可强制造成伤害变线条，线条猫与八星一块干扰猫，使对面露出破绽。',
+      },
+      {
+        target: character('梦游杰瑞'),
+        description: '梦游在拉毛线时，仙女鼠给梦游丢六星不会让毛线消失，可以强行破局。',
+        isMinor: true,
+      },
+    ],
     countersSpecialSkills: [
       {
         target: specialSkill('绝地反击', 'cat'),
@@ -3236,6 +3108,12 @@ const characterRelationDefinitions = {
   },
   雪梨: {
     counters: [
+      {
+        target: character('斯飞'),
+        description:
+          '雪梨给予的回复使斯飞难以短时间击倒老鼠，同时雪梨能够回复火箭上老鼠的血量，使斯飞追击难度上升',
+        isMinor: true,
+      },
       {
         target: character('莱特宁'),
         description: '雪梨的治疗可消除莱特宁Lv.1被动的标记，且莱特宁本身攻击手段不多。',
@@ -3249,6 +3127,26 @@ const characterRelationDefinitions = {
         target: character('汤姆'),
         description: '雪梨花洒配合干扰投掷浇灭火箭。',
         isMinor: true,
+      },
+    ],
+    collaborators: [
+      {
+        target: character('米可'),
+        description:
+          '雪梨可以帮米可回血，提高续航，配合米可三级被动很难被打死，也有了防止拍抓的能力。',
+      },
+      {
+        target: character('拿坡里鼠'),
+        description: '骑乘披萨饼期间可通过花束快速位移，连带披萨饼一同移动，出其不意。',
+        isMinor: true,
+      },
+      {
+        target: character('佩克斯'),
+        description: '可以为佩克斯提供续航。',
+      },
+      {
+        target: character('天使泰菲'),
+        description: '雪梨帮天使泰菲免于拍抓，天使泰菲帮雪梨提高生存能力。',
       },
     ],
   },
@@ -3267,11 +3165,23 @@ const characterRelationDefinitions = {
         isMinor: true,
       },
     ],
+    counterEachOther: [
+      {
+        target: character('斯飞'),
+        description:
+          '音乐家杰瑞的音波能够造成短暂控制以及快速破坏火箭，并且墙缝期的辅助能力与音波破墙我威胁使斯飞难以防守，但斯飞疾冲状态的感电或者强化技能能够打断音乐家杰瑞武器技能状态',
+        isMinor: true,
+      },
+    ],
     collaborators: [
       {
-        target: character('米雪儿'),
-        description:
-          '米雪儿2武附身音乐家后可以提高音乐家杰瑞的自保能力，同时由于附身后仍然可以触发共鸣，所以能卡好距离仅用一段礼服拆掉火箭',
+        target: character('米可'),
+        description: '主动技能协奏曲可以在米可采访时给米可回血和加速，提高续航。',
+      },
+      {
+        target: character('霜月'),
+        description: '音乐家杰瑞可拆掉火箭，便于霜月守火箭。',
+        isMinor: true,
       },
     ],
     counteredByKnowledgeCards: [
@@ -3298,6 +3208,12 @@ const characterRelationDefinitions = {
   侦探杰瑞: {
     counters: [
       {
+        target: character('斯飞'),
+        description:
+          '侦探杰瑞推速很快，能缩短奶酪期；同时烟雾弹带来的减速与沉默也会让斯飞难以有效进攻。',
+        isMinor: true,
+      },
+      {
         target: character('布奇'),
         description: '侦探杰瑞推奶酪和自保能力强，烟雾弹还能反制布奇的防守奶酪能力。',
       },
@@ -3323,11 +3239,6 @@ const characterRelationDefinitions = {
         isMinor: true,
       },
       {
-        target: character('斯飞'),
-        description: '侦探杰瑞推速很快，自保较强，很容易加快游戏节奏。',
-        isMinor: true,
-      },
-      {
         target: character('汤姆'),
         description:
           '自保能力较强，同时兼具一定的救援能力，较快的推速也可以加快游戏节奏，烟雾弹强推也在一定程度上克制汤姆。',
@@ -3339,6 +3250,24 @@ const characterRelationDefinitions = {
       {
         target: character('托普斯'),
         description: '强推能力较强，与队友配合能较好的处理最后一个奶酪。',
+        isMinor: true,
+      },
+    ],
+    counterEachOther: [
+      {
+        target: character('牛仔汤姆'),
+        description:
+          '侦探杰瑞的三级烟雾弹使牛仔汤姆无法正常释放技能，但牛仔汤姆能在烟雾外对内进行干扰。',
+      },
+      {
+        target: character('兔八哥'),
+        description: '侦探三级烟雾弹可强推，但兔子也可用洞反制。',
+      },
+    ],
+    collaborators: [
+      {
+        target: character('天使泰菲'),
+        description: '侦探杰瑞的推奶酪和破局能力很强，推奶酪提供的经验能帮助天使泰菲到达后期。',
         isMinor: true,
       },
     ],
@@ -3386,18 +3315,6 @@ const characterRelationDefinitions = {
         description:
           '追汤飞行时有碰撞箱，可以顶住前来救援的头盔剑菲，从而拖到头盔时间结束。守高点火箭时效果更佳',
         isMinor: true,
-      },
-    ],
-    counterEachOther: [
-      {
-        target: character('恶魔杰瑞'),
-        description:
-          '恶杰前期对战追风比较白板，但后期的3级被动和3级主动使其自保极强，且具有较强救援能力。',
-      },
-      {
-        target: character('米可'),
-        description:
-          '追汤的飞行霸体无视米可采访的弱化和叠素材，可以蓄势一刀打死；但后期米可点了二三级被动后，追汤就难以将其击倒了',
       },
     ],
     counteredByKnowledgeCards: [
@@ -3449,7 +3366,7 @@ function processCharacterRelations(
 
     (
       Object.entries(relationDefinitions) as Array<
-        [TraitRelationKind, readonly CharacterRelationDefinition[] | undefined]
+        [SourceCharacterRelationKind, readonly CharacterRelationDefinition[] | undefined]
       >
     ).forEach(([kind, entries]) => {
       if (!entries || entries.length === 0) return;

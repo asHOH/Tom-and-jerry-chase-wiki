@@ -6,7 +6,7 @@ import {
 } from '@/data/types';
 import { processCharacters } from '@/features/characters/utils/skillId';
 
-const catCharacterDefinitions = {
+export const catCharacterDefinitions = {
   /* ----------------------------------- 汤姆 ----------------------------------- */
   汤姆: {
     description:
