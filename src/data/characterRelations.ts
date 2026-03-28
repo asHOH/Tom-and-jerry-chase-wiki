@@ -1250,6 +1250,19 @@ const characterRelations: Trait[] = [
     },
   },
   {
+    description: '剑客杰瑞可以使用格挡免疫反击伤害，但是剑客杰瑞伤害较高，容易触发坚毅。',
+    group: [
+      { name: '如玉', type: 'character' },
+      { name: '剑客杰瑞', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '如玉', type: 'character' },
+      target: { name: '剑客杰瑞', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
     description: '恶魔泰菲的三级被动能轻易击倒斯飞，斯飞克制恶菲的高移速，且三被斯飞血条回得快',
     group: [
       { name: '斯飞', type: 'character' },
@@ -1866,6 +1879,19 @@ const characterRelations: Trait[] = [
       kind: 'advantageMaps',
       subject: { name: '如玉', type: 'character' },
       target: { name: '经典之家-疯狂奶酪赛', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '烟花大作战的鞭炮容易触发如玉的反击。',
+    group: [
+      { name: '如玉', type: 'character' },
+      { name: '烟花大作战', type: 'mode' },
+    ],
+    relation: {
+      kind: 'advantageModes',
+      subject: { name: '如玉', type: 'character' },
+      target: { name: '烟花大作战', type: 'mode' },
       isMinor: false,
     },
   },
@@ -5223,7 +5249,8 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '如玉花枪反击可以被罗宾汉杰瑞的降落伞躲避，且罗宾汉杰瑞很灵活难以追击。',
+    description:
+      '罗宾汉杰瑞拥有更高的机动性，如玉触发反击后罗宾汉可以使用降落伞免疫反击，也能使用二段跳躲避反击。',
     group: [
       { name: '罗宾汉杰瑞', type: 'character' },
       { name: '如玉', type: 'character' },
@@ -5872,7 +5899,7 @@ const characterRelations: Trait[] = [
       kind: 'counters',
       subject: { name: '如玉', type: 'character' },
       target: { name: '剑客泰菲', type: 'character' },
-      isMinor: false,
+      isMinor: true,
     },
   },
   {
@@ -5940,6 +5967,33 @@ const characterRelations: Trait[] = [
       kind: 'counters',
       subject: { name: '如玉', type: 'character' },
       target: { name: '天使杰瑞', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description:
+      '音乐家杰瑞狂想状态下拥有较高伤害，容易触发如玉坚毅。同时音乐家杰瑞使用位移救队友拆火箭，当如玉距离音乐家较近会触发反击。',
+    group: [
+      { name: '如玉', type: 'character' },
+      { name: '音乐家杰瑞', type: 'character' },
+    ],
+    relation: {
+      kind: 'counters',
+      subject: { name: '如玉', type: 'character' },
+      target: { name: '音乐家杰瑞', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '朝圣者泰菲射出来的子弹伤害较高，非常容易触发如玉坚毅状态。',
+    group: [
+      { name: '如玉', type: 'character' },
+      { name: '朝圣者泰菲', type: 'character' },
+    ],
+    relation: {
+      kind: 'counters',
+      subject: { name: '如玉', type: 'character' },
+      target: { name: '朝圣者泰菲', type: 'character' },
       isMinor: true,
     },
   },
@@ -6637,6 +6691,32 @@ const characterRelations: Trait[] = [
       subject: { name: '如玉', type: 'character' },
       target: { name: '缴械', type: 'knowledgeCard', factionId: 'mouse' },
       isMinor: false,
+    },
+  },
+  {
+    description: '队友救完人后如果血量非常低，如玉可以直接使用掷花枪将队友造成伤害触发虚弱或铁血。',
+    group: [
+      { name: '如玉', type: 'character' },
+      { name: '舍己', type: 'knowledgeCard', factionId: 'mouse' },
+    ],
+    relation: {
+      kind: 'countersKnowledgeCards',
+      subject: { name: '如玉', type: 'character' },
+      target: { name: '舍己', type: 'knowledgeCard', factionId: 'mouse' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '如玉触发反击将老鼠打飞时，可以无视铁血效果直接打上火箭。',
+    group: [
+      { name: '如玉', type: 'character' },
+      { name: '铁血', type: 'knowledgeCard', factionId: 'mouse' },
+    ],
+    relation: {
+      kind: 'countersKnowledgeCards',
+      subject: { name: '如玉', type: 'character' },
+      target: { name: '铁血', type: 'knowledgeCard', factionId: 'mouse' },
+      isMinor: true,
     },
   },
   {

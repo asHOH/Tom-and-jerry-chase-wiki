@@ -785,6 +785,7 @@ const mouseCharacterDefinitions = {
             cooldown: 15,
           },
         ],
+        cueRange: '全图可见',
       },
       {
         name: '火药桶',
@@ -824,11 +825,13 @@ const mouseCharacterDefinitions = {
             cooldown: 30,
           },
         ],
+        cueRange: '全图可见',
       },
       {
         name: '舰艇火炮',
         type: 'weapon2',
         videoUrl: 'https://www.bilibili.com/video/BV1PUcYzXE8J/?t=145',
+        aliases: ['炮', '海盗火炮'],
         description:
           '放置{火炮}，持续数秒后消失。老鼠可通过交互键进入火炮，通过投掷键发射自身，对碰到的敌方造成伤害与眩晕，碰到绑在火箭上的队友时自动救援。火炮内不会被投掷道具及部分技能命中。火炮会对所有角色展示在小地图上。',
         detailedDescription:
@@ -4929,6 +4932,7 @@ const mouseCharacterDefinitions = {
           '根据演奏风格给予周围友方增益效果。使用技能可切换风格，切换时音乐家杰瑞会同时保持上一种风格8秒。点出该技能时风格为协奏。',
         canMoveWhileUsing: false,
         canUseInAir: true,
+        cancelableSkill: ['跳跃键'],
         cancelableAftercast: ['道具键*', '跳跃键'],
         videoUrl: 'https://www.bilibili.com/video/BV1UDiKeSE63?t=408.2',
         skillLevels: [
@@ -4956,6 +4960,7 @@ const mouseCharacterDefinitions = {
         ],
         forecast: 1,
         aftercast: 0.2,
+        cueRange: '本房间可见',
       },
       {
         name: '幻风礼服',
@@ -4990,6 +4995,7 @@ const mouseCharacterDefinitions = {
         ],
         forecast: 0,
         aftercast: 0,
+        cueRange: '本房间可见',
       },
       {
         name: '共鸣',
