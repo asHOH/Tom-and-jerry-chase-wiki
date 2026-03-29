@@ -3,6 +3,7 @@ import path from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
 import { createJiti } from 'jiti';
+import * as prettier from 'prettier';
 
 const args = new Set(process.argv.slice(2));
 const isCheckMode = args.has('--check');
@@ -285,10 +286,15 @@ if (!declarationPattern.test(fileContent)) {
     'Failed to locate characterRelationDefinitions declaration in characterRelations.ts.'
   );
 }
-const nextFileContent = fileContent.replace(
+const normalizedFileContent = fileContent.replace(
   declarationPattern,
   `export const characterRelationDefinitions = ${serializedDefinitions} as const satisfies Readonly<Record<string, CharacterRelationDefinitions>>;`
 );
+const prettierConfig = await prettier.resolveConfig(targetFilePath);
+const nextFileContent = await prettier.format(normalizedFileContent, {
+  ...prettierConfig,
+  filepath: targetFilePath,
+});
 
 if (nextFileContent === fileContent && conflicts.length === 0) {
   if (showReport) {
