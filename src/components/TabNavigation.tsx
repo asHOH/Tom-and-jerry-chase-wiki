@@ -497,7 +497,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                 aria-label={isDetailedView ? '切换至简明描述' : '切换至详细描述'}
                 className={clsx(
                   'relative flex min-h-10 cursor-pointer rounded-lg border-none bg-gray-100 p-1 transition-all duration-200',
-                  'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500',
+                  'focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-blue-500',
                   'md:min-h-11 dark:border-gray-600 dark:bg-slate-800 dark:focus-visible:outline-blue-300'
                 )}
                 onClick={() => {
