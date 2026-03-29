@@ -381,7 +381,7 @@ export default function CharacterDetails({
                 })()}
                 <div className='space-y-2'>
                   <CollapseCard
-                    title={`${localCharacter.id}角色自身的相关互动特性(${filterTraitsBySingleItem({ name: localCharacter.id, type: 'character' }).length})`}
+                    title={`${localCharacter.id}角色自身的互动特性(${filterTraitsBySingleItem({ name: localCharacter.id, type: 'character' }).length})`}
                     size='xs'
                     className='rounded-md border-x border-b border-gray-300 px-1 pb-1 whitespace-pre-wrap dark:border-gray-700'
                     titleClassName='pl-3'

@@ -43,7 +43,7 @@ export default function DetailReverseCard({ singleItem }: DetailReverseCardProps
 
   return (
     <DetailRelatedCard
-      title={`${singleItem.name}${ownEntities.length > 0 ? '及其衍生物' : ''}的相关引用项(${numberOfOwnReverse.reduce((a, b) => a + b)})`}
+      title={`${singleItem.name}${ownEntities.length > 0 ? '及其衍生物' : ''}的引用项(${numberOfOwnReverse.reduce((a, b) => a + b)})`}
       color='yellow'
       items={items}
       singleContent={

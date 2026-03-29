@@ -41,7 +41,7 @@ export default function DetailTraitsCard({ singleItem }: DetailTraitsCardProps) 
 
   return (
     <DetailRelatedCard
-      title={`${singleItem.name}${ownEntities.length > 0 ? '及其衍生物' : ''}的相关互动特性(${numberOfOwnTraits.reduce((a, b) => a + b)})`}
+      title={`${singleItem.name}${ownEntities.length > 0 ? '及其衍生物' : ''}的互动特性(${numberOfOwnTraits.reduce((a, b) => a + b)})`}
       color='lime'
       items={items}
       singleContent={<SingleItemTraitsText singleItem={singleItem} />}
