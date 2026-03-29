@@ -203,9 +203,10 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   const overflowTabs = [...items.slice(0, startIndex), ...items.slice(startIndex + visibleCount)];
 
   const tabMinWidthClass = 'min-w-[40px]';
+  const tabButtonClassName = 'h-10 min-h-0 px-1 md:h-11 md:px-2';
   const homeButtonSizing = clsx('min-w-[40px]', !isCompactMode && 'lg:min-w-fit');
   const tabIconWrapperClassName = clsx(
-    'flex size-6 items-center justify-center overflow-hidden md:size-7',
+    'flex size-7 items-center justify-center overflow-hidden md:size-8',
     isCompactMode && 'shrink-0'
   );
   const shouldAlignLeft = showDetailToggle || !!nickname;
@@ -260,7 +261,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                       aria-haspopup='true'
                       className={clsx(
                         getNavigationButtonClasses(false, isGroupActive || isGroupOpen, false),
-                        'gap-0 md:gap-1 lg:gap-2',
+                        tabButtonClassName,
                         tabMinWidthClass
                       )}
                       onClick={() => {
@@ -276,7 +277,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                           alt={entry.iconAlt ?? image.iconAlt}
                           width={64}
                           height={64}
-                          className='h-6 w-6 shrink-0 object-contain'
+                          className='h-7 w-7 shrink-0 object-contain md:h-8 md:w-8'
                         />
                       )}
                       <span className='hidden md:inline'>{entry.label}</span>
@@ -346,7 +347,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                       false,
                       true
                     ),
-                    'gap-0 md:gap-1 lg:gap-2',
+                    tabButtonClassName,
                     tabMinWidthClass
                   )}
                   aria-label={tab.label}
