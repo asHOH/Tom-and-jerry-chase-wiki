@@ -30,7 +30,7 @@ const HomePageSection: React.FC<HomePageSectionProps> = ({ title, buttons }) => 
   return (
     <div
       ref={sectionRef}
-      className={`mt-16 flex flex-col items-center px-2 transition-all duration-300 ease-out md:px-4 ${
+      className={`mt-12 flex flex-col items-center px-2 transition-all duration-300 ease-out md:mt-16 md:px-4 ${
         isVisible ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'
       }`}
     >
