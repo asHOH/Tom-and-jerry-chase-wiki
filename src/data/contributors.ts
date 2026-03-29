@@ -560,6 +560,17 @@ export const contributors: Contributor[] = [
       },
     ],
   },
+  {
+    id: 'shaofengyuan',
+    name: '韶风愿の恶魔泰猫',
+    url: 'https://space.bilibili.com/1945435633',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['恶魔泰菲'],
+      },
+    ],
+  },
   // TODO: Add 米特技巧 contributor
   // TODO：Add 库博知识卡推荐 contributor
   {
