@@ -1174,10 +1174,6 @@ export const characterRelationDefinitions = {
         isMinor: true,
       },
       {
-        target: character('莱特宁'),
-        description: '缺霸体不好上火箭，后期三级闪有一定反制能力。',
-      },
-      {
         target: character('米特'),
         description: '一个琴高伤害远击退还掉胡椒粉。',
       },
