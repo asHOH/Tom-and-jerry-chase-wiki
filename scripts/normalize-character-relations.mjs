@@ -60,7 +60,7 @@ const stats = {
 };
 
 const subjectSortKey = new Map(
-  [...characterDisplayOrder, ...originalSubjectOrder].map((subjectName, index) => [
+  [...originalSubjectOrder, ...characterDisplayOrder].map((subjectName, index) => [
     subjectName,
     index,
   ])
