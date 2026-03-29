@@ -36,8 +36,9 @@ export default function DetailRelatedCard({
   items,
   singleContent,
 }: DetailRelatedCardProps) {
-  const accordionItems = items.map(({ count: _count, ...item }) => item);
-  const defaultOpenId = items.find((item) => item.count > 0)?.id ?? items[0]?.id;
+  const visibleItems = items.filter((item) => item.count > 0);
+  const accordionItems = visibleItems.map(({ count: _count, ...item }) => item);
+  const defaultOpenId = visibleItems[0]?.id;
   const accordionProps = defaultOpenId ? { defaultOpenId } : {};
 
   return (
@@ -49,8 +50,8 @@ export default function DetailRelatedCard({
       collapsedTitleClassName={collapsedTitleClassName}
       color={color}
     >
-      {items.length <= 1 ? (
-        <div>{singleContent}</div>
+      {visibleItems.length <= 1 ? (
+        <div>{visibleItems[0]?.children ?? singleContent}</div>
       ) : (
         <div>
           <AccordionCard
