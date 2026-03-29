@@ -1,8 +1,5 @@
 import type { CharacterRelationItem, FactionId, TraitRelationKind } from '../../../data/types';
-import {
-  getCharacterDisplayRankById,
-  getCharacterFactionById,
-} from '../data/characterMetadata';
+import { getCharacterDisplayRankById, getCharacterFactionById } from '../data/characterMetadata';
 
 export type CanonicalStoredCharacterRelationKind = Exclude<TraitRelationKind, 'counteredBy'>;
 

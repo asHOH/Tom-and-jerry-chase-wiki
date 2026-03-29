@@ -1,17 +1,19 @@
+import { characterDisplayOrder } from '../data/characterMetadata';
 import {
   getCanonicalCharacterRelationStorageLocation,
   getCanonicalCounterEachOtherOwner,
   getCharacterFaction,
   mergeCanonicalRelationEntries,
 } from './characterRelationCanonicalization';
-import { characterDisplayOrder } from '../data/characterMetadata';
 
 describe('characterRelationCanonicalization', () => {
   it('should rank mice before cats using character grid order', () => {
     const firstMouseId = characterDisplayOrder.find(
       (id: string) => getCharacterFaction(id) === 'mouse'
     );
-    const firstCatId = characterDisplayOrder.find((id: string) => getCharacterFaction(id) === 'cat');
+    const firstCatId = characterDisplayOrder.find(
+      (id: string) => getCharacterFaction(id) === 'cat'
+    );
 
     expect(firstMouseId).toBeDefined();
     expect(firstCatId).toBeDefined();
