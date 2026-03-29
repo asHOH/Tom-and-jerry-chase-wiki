@@ -312,12 +312,6 @@ export function getCategorizedKeywords(singleItem: SingleItem): CategorizedKeywo
   };
 }
 
-// Backward compatibility function
-export function getReverseStrings(singleItem: SingleItem): string[] {
-  const { allKeywords } = getCategorizedKeywords(singleItem);
-  return allKeywords;
-}
-
 export default function singleItemRreverse(
   singleItem: SingleItem,
   isMobile: boolean = false
