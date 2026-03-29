@@ -103,6 +103,7 @@ const actionSchema = z.object({
   path: trimmedString,
   oldValue: z.any(),
   newValue: z.any(),
+  sourceEntityId: trimmedString.optional(),
 });
 
 export const actionHistoryEntrySchema: z.ZodType<unknown> = z.lazy(() =>

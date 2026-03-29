@@ -14,11 +14,17 @@ export interface Action {
   path: string;
   oldValue: unknown;
   newValue: unknown;
+  /** Optional page/entity attribution when data is stored on a canonical sibling entity. */
+  sourceEntityId?: string;
 }
 
 export type ActionHistoryEntry = Action | Action[];
+export type ActionContext = {
+  sourceEntityId?: string;
+};
 
 const ACTIONS_STORAGE_PREFIX = 'editmode:actions:';
+const actionContextStack: ActionContext[] = [];
 
 /**
  * Returns the localStorage key used to persist action history for an entity store.
@@ -80,6 +86,25 @@ function filterActionHistory(history: ActionHistoryEntry[]): ActionHistoryEntry[
   return filtered;
 }
 
+function getCurrentActionContext(): ActionContext | null {
+  return actionContextStack[actionContextStack.length - 1] ?? null;
+}
+
+function applyActionContext(action: Omit<Action, 'sourceEntityId'>): Action {
+  const sourceEntityId = getCurrentActionContext()?.sourceEntityId?.trim();
+  return sourceEntityId ? { ...action, sourceEntityId } : action;
+}
+
+export function withActionContext<T>(context: ActionContext, fn: () => T): T {
+  const sourceEntityId = context.sourceEntityId?.trim();
+  actionContextStack.push(sourceEntityId ? { sourceEntityId } : {});
+  try {
+    return fn();
+  } finally {
+    actionContextStack.pop();
+  }
+}
+
 /**
  * Convert Valtio internal ops to our stable Action format.
  *
@@ -97,13 +122,27 @@ export function actionsFromValtioOps(ops: INTERNAL_Op[]): Action[] {
     if (opName === 'set') {
       const nextValue = untrackIfPossible(op[2]);
       const prevValue = untrackIfPossible(op[3]);
-      actions.push({ op: 'set', path: pathString, oldValue: prevValue, newValue: nextValue });
+      actions.push(
+        applyActionContext({
+          op: 'set',
+          path: pathString,
+          oldValue: prevValue,
+          newValue: nextValue,
+        })
+      );
       continue;
     }
 
     // delete
     const prevValue = untrackIfPossible(op[2]);
-    actions.push({ op: 'delete', path: pathString, oldValue: prevValue, newValue: undefined });
+    actions.push(
+      applyActionContext({
+        op: 'delete',
+        path: pathString,
+        oldValue: prevValue,
+        newValue: undefined,
+      })
+    );
   }
 
   return actions.filter((action) => !isNoOpAction(action));
