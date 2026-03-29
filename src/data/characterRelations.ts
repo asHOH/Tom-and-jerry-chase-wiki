@@ -1029,17 +1029,20 @@ export const characterRelationDefinitions = {
   莱特宁: {
     counters: [
       {
+        target: character('剑客泰菲'),
+        description: '头盔过长的前摇与全图可见的音效容易被闪现抓住机会。',
+        isMinor: true,
+      },
+      {
         target: character('恶魔杰瑞'),
-        description: '恶魔杰瑞两个技能均有较长前摇，被莱特宁3级闪现克制。',
+        description:
+          '恶魔杰瑞两个技能均有较长前摇，被莱特宁3级闪现克制，且不惧怕刷盾与中小距离流放。',
+        isMinor: false,
       },
       {
         target: character('梦游杰瑞'),
         description: '梦游拉毛线时会被莱特宁3级闪现恐吓，莱特宁的垃圾桶还能略微反制梦游的破局。',
         isMinor: true,
-      },
-      {
-        target: character('剑客泰菲'),
-        description: '头盔过长的前摇与全图可见的音效容易被闪现抓住机会。',
       },
     ],
     counteredByKnowledgeCards: [
@@ -1051,16 +1054,20 @@ export const characterRelationDefinitions = {
       {
         target: knowledgeCard('缴械', 'mouse'),
         description: '莱特宁依赖爪刀造成伤害，缴械几乎削弱了莱特宁一半的进攻能力。',
-      },
-      {
-        target: knowledgeCard('无畏', 'mouse'),
-        description: '无畏提供无敌和推速增加效果，能强行突破垃圾桶对最后一块奶酪的防守。',
+        isMinor: false,
       },
     ],
     counteredBySpecialSkills: [
       {
         target: specialSkill('应急治疗', 'mouse'),
         description: '治疗可以解除Lv.1被动的标记与咸鱼效果。',
+      },
+    ],
+    advantageMaps: [
+      {
+        target: map('经典之家II'),
+        description: '横排上下两层的地图使莱特林在下方就能通过闪现管控上方奶酪。',
+        isMinor: false,
       },
     ],
   },
@@ -1574,14 +1581,32 @@ export const characterRelationDefinitions = {
     ],
     collaborators: [
       {
-        target: character('表演者•杰瑞'),
-        description: '可以在表演者•杰瑞铁血的时候将其变为大老鼠，防止被抓。',
+        target: character('泰菲'),
+        description:
+          '米雪儿的漂浮气球配合泰菲圆滚滚解控，可大大提高泰菲的续航和容错率，使其不易被击倒',
+        isMinor: false,
+      },
+      {
+        target: character('恶魔泰菲'),
+        description:
+          '米雪儿可以变身成红色小淘气，被恶菲向上掷出进行快速跨楼层支援；也可以变身成捕鼠夹与恶菲进行主动布夹，拦截没有带细心的猫咪。',
         isMinor: true,
       },
       {
         target: character('音乐家杰瑞'),
         description:
           '米雪儿2武附身音乐家后可以提高音乐家杰瑞的自保能力，同时由于附身后仍然可以触发共鸣，所以能卡好距离仅用一段礼服拆掉火箭',
+        isMinor: false,
+      },
+      {
+        target: character('表演者•杰瑞'),
+        description: '可以在表演者•杰瑞铁血的时候将其变为大老鼠，防止被抓。',
+        isMinor: true,
+      },
+      {
+        target: character('天使泰菲'),
+        description: '米雪儿和天使泰菲的技能搭配能大幅提高生存能力。',
+        isMinor: true,
       },
     ],
   },
