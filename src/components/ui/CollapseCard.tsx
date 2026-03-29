@@ -6,6 +6,7 @@ type CollapseCardProps = {
   title: string;
   className?: string;
   titleClassName?: string;
+  collapsedTitleClassName?: string;
   size?: 'xs' | 'md' | 'sm';
   color?: 'default' | 'red' | 'orange' | 'yellow' | 'green' | 'purple' | 'blue' | 'lime';
   openOnStart?: boolean;
@@ -26,6 +27,7 @@ export default function CollapseCard({
   title,
   className,
   titleClassName,
+  collapsedTitleClassName,
   color = 'default',
   size = 'sm',
   openOnStart = false,
@@ -53,7 +55,8 @@ export default function CollapseCard({
         className={clsx(
           'flex w-full cursor-pointer items-center justify-between px-1 py-1 font-bold text-black focus:outline-none dark:text-white',
           titleColor,
-          titleClassName
+          titleClassName,
+          !isExpanded && collapsedTitleClassName
         )}
         aria-expanded={isExpanded}
       >

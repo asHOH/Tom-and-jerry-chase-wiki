@@ -22,6 +22,7 @@ const contentClassName =
   'rounded-b-md border border-t-0 border-slate-200/80 bg-white/80 px-3 pb-3 pt-2 whitespace-pre-wrap shadow-sm dark:border-slate-700 dark:bg-slate-900/40';
 
 const titleClassName = 'rounded-t-md border px-3 pt-1.5 pb-1';
+const collapsedTitleClassName = 'rounded-md';
 
 export default function DetailRelatedCard({
   title,
@@ -39,6 +40,7 @@ export default function DetailRelatedCard({
       size='xs'
       className={contentClassName}
       titleClassName={titleClassName}
+      collapsedTitleClassName={collapsedTitleClassName}
       color={color}
     >
       {items.length <= 1 ? (
