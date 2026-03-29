@@ -674,3 +674,18 @@ export interface WikiYearData {
  * The complete, structured history of wiki data changes.
  */
 export type WikiDataHistory = WikiYearData[];
+
+/**
+ * 表示一个原型与变种之间的直接映射关系
+ */
+export type VariantEdge = {
+  prototype: SingleItem; // 原型
+  variant: SingleItem; // 变种
+};
+
+/**
+ * 存储所有变种关系的图
+ */
+export type VariantGraph = {
+  edges: VariantEdge[]; // 所有边
+};
