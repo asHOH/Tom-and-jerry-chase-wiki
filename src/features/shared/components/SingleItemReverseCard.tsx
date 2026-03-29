@@ -2,7 +2,12 @@ import { useMemo } from 'react';
 
 import { getTypeLabelColors } from '@/lib/design';
 import singleItemRreverse, { getCategorizedKeywords } from '@/lib/singleItemReverse';
-import { getSingleItemHref, getSingleItemImageUrl } from '@/lib/singleItemTools';
+import {
+  getFactionLabel,
+  getSingleItemHref,
+  getSingleItemImageUrl,
+  getSingleItemOwnerSuffix,
+} from '@/lib/singleItemTools';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import {
@@ -61,6 +66,8 @@ function ReverseResultButton({
   }
 
   const buttonColors = getButtonColors();
+  const ownerSuffix = getSingleItemOwnerSuffix(result);
+  const factionLabel = getFactionLabel(result.factionId);
 
   // Helper function to highlight matched keywords in text with priority
   const highlightKeywords = (text: string): React.ReactNode => {
@@ -153,8 +160,15 @@ function ReverseResultButton({
           {/* Top row: name and tags */}
           <div className='mb-1 flex items-center justify-between'>
             {/* Object name */}
-            <div className='mr-2 flex-1 truncate font-medium text-gray-900 dark:text-white'>
-              {highlightKeywords(result.name)}
+            <div className='mr-2 flex flex-1 items-baseline gap-1.5 overflow-hidden'>
+              <span className='truncate font-medium text-gray-900 dark:text-white'>
+                {highlightKeywords(result.name)}
+              </span>
+              {ownerSuffix ? (
+                <span className='shrink-0 text-xs whitespace-nowrap text-gray-500 dark:text-gray-400'>
+                  {ownerSuffix}
+                </span>
+              ) : null}
             </div>
 
             {/* Type and faction tags */}
@@ -162,11 +176,11 @@ function ReverseResultButton({
               <span className='rounded-md bg-white/70 px-1.5 py-0.5 text-xs text-gray-700 dark:bg-slate-800/80 dark:text-gray-300'>
                 {SingleItemTypeChineseNameList[result.type]}
               </span>
-              {result.factionId && (
+              {factionLabel ? (
                 <span className='rounded-md bg-white/70 px-1.5 py-0.5 text-xs text-gray-700 dark:bg-slate-800/80 dark:text-gray-300'>
-                  {result.factionId === 'cat' ? '猫' : '鼠'}
+                  {factionLabel}
                 </span>
-              )}
+              ) : null}
             </div>
           </div>
 

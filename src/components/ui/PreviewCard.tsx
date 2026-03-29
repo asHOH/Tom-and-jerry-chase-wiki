@@ -1,13 +1,12 @@
-// GotoPreviewCard.tsx
 import clsx from 'clsx';
 
 import { getTypeLabelColors } from '@/lib/design';
+import { getFactionLabel, getOwnerSuffix } from '@/lib/singleItemTools';
 import type { GotoDisambiguationCandidate } from '@/lib/types';
 import { useDarkMode } from '@/context/DarkModeContext';
-import type { SkillType } from '@/data/types';
+import type { FactionId, SkillType } from '@/data/types';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 import Link from '@/components/Link';
-import type { FactionId } from '@/data';
 
 import BaseCard from './BaseCard';
 import Tag from './Tag';
@@ -27,7 +26,7 @@ export type GotoPreviewCardProps = {
   skillLevel?: number;
   skillType?: SkillType;
   skillLevelDescription?: string;
-  clickable?: boolean; // when false, render preview as non-anchor to avoid nested <a>
+  clickable?: boolean;
 };
 
 const typeLabels: Record<string, string> = {
@@ -68,42 +67,41 @@ export default function PreviewCard({
   clickable = true,
 }: GotoPreviewCardProps) {
   const [isDarkMode] = useDarkMode();
-  const factionLabel = (f: FactionId | undefined) =>
-    f === 'cat' ? '猫' : f === 'mouse' ? '鼠' : undefined;
-  const characterTypeLabel = factionLabel(factionId)
-    ? `${factionLabel(factionId)}${typeLabels[type] || type}`
+  const characterTypeLabel = getFactionLabel(factionId)
+    ? `${getFactionLabel(factionId)}${typeLabels[type] || type}`
     : typeLabels[type] || type;
   const ownerSuffix =
-    type === 'character-skill' && ownerName
-      ? `（${ownerFactionId ? factionLabel(ownerFactionId) + '‐' : ''}${ownerName}）`
-      : undefined;
+    type === 'character-skill' ? getOwnerSuffix(ownerName, ownerFactionId) : undefined;
 
   const disambiguationList =
     type === 'disambiguation' && Array.isArray(candidates) && candidates.length > 0 ? (
       <div className='mt-2 w-full text-sm text-gray-700 dark:text-gray-300'>
         <div className='mb-1'>{name}可能指：</div>
         <ul className='list-inside list-disc space-y-1'>
-          {candidates.map((c) => (
-            <li key={`${c.type}@@${c.url}`} className='leading-relaxed'>
+          {candidates.map((candidate) => (
+            <li key={`${candidate.type}@@${candidate.url}`} className='leading-relaxed'>
               {clickable ? (
                 <span>
-                  {c.name}（{c.categoryLabel}）
+                  {candidate.name}（{candidate.categoryLabel}）
                 </span>
               ) : (
                 <Link
-                  href={c.url}
+                  href={candidate.url}
                   className='underline decoration-solid decoration-1 underline-offset-2'
-                  aria-label={`前往：${c.name}（${c.categoryLabel}）`}
+                  aria-label={`前往：${candidate.name}（${candidate.categoryLabel}）`}
                 >
-                  {c.name}（{c.categoryLabel}）
+                  {candidate.name}（{candidate.categoryLabel}）
                 </Link>
               )}
-              <span className='text-gray-600 dark:text-gray-400'>，{c.kindDescription}</span>
+              <span className='text-gray-600 dark:text-gray-400'>
+                （{candidate.kindDescription}）
+              </span>
             </li>
           ))}
         </ul>
       </div>
     ) : null;
+
   const content = (
     <BaseCard
       className={clsx(
@@ -126,6 +124,7 @@ export default function PreviewCard({
           />
         </div>
       ) : null}
+
       <div className='flex w-0 flex-1 flex-col items-start'>
         {!hideImage && imageUrl ? (
           <>
@@ -140,15 +139,15 @@ export default function PreviewCard({
             <div className='mb-1 flex w-full min-w-0 items-baseline' title={name}>
               <span className='min-w-0 truncate text-lg font-bold text-gray-900 dark:text-gray-100'>
                 {typeof skillLevel === 'number' && type === 'character-skill'
-                  ? `${skillLevel}级 ${name}`
+                  ? `${skillLevel}级${name}`
                   : name}
               </span>
-              {ownerSuffix && (
+              {ownerSuffix ? (
                 <span className='text-sm whitespace-nowrap text-gray-500 dark:text-gray-400'>
                   {'\u00A0\u00A0'}
                   {ownerSuffix}
                 </span>
-              )}
+              ) : null}
             </div>
           </>
         ) : (
@@ -161,23 +160,25 @@ export default function PreviewCard({
             <div className='flex min-w-0 flex-1 items-baseline' title={name}>
               <span className='min-w-0 truncate text-lg font-bold text-gray-900 dark:text-gray-100'>
                 {typeof skillLevel === 'number' && type === 'character-skill'
-                  ? `${skillLevel}级 ${name}`
+                  ? `${skillLevel}级${name}`
                   : name}
               </span>
-              {ownerSuffix && (
+              {ownerSuffix ? (
                 <span className='text-sm whitespace-nowrap text-gray-500 dark:text-gray-400'>
                   {'\u00A0\u00A0'}
                   {ownerSuffix}
                 </span>
-              )}
+              ) : null}
             </div>
           </div>
         )}
+
         {type === 'disambiguation' && disambiguationList
           ? disambiguationList
           : (() => {
               if (type !== 'character-skill') {
                 if (!description) return null;
+
                 return (
                   <div
                     className='line-clamp-3 w-full text-sm text-gray-600 dark:text-gray-300'
@@ -187,13 +188,15 @@ export default function PreviewCard({
                   </div>
                 );
               }
-              // character-skill description composition for level
+
               if (skillType === 'passive') {
                 const text =
                   skillLevelDescription && skillLevelDescription.trim().length > 0
                     ? skillLevelDescription
                     : description || '';
+
                 if (!text) return null;
+
                 return (
                   <div
                     className='line-clamp-3 w-full text-sm text-gray-600 dark:text-gray-300'
@@ -203,14 +206,16 @@ export default function PreviewCard({
                   </div>
                 );
               }
-              // non-passive: base description + optional level line
+
               const base = description || '';
               const levelLine =
                 skillLevelDescription && String(skillLevel ?? '').length > 0
                   ? `\nLv. ${skillLevel}: ${skillLevelDescription}`
                   : '';
               const composed = `${base}${levelLine}`.trim();
+
               if (!composed) return null;
+
               return (
                 <div
                   className='line-clamp-3 w-full text-sm text-gray-600 dark:text-gray-300'
