@@ -204,7 +204,6 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
 
   const tabMinWidthClass = 'min-w-[40px]';
   const tabButtonClassName = 'h-10 min-h-0 px-1 md:h-11 md:px-2';
-  const homeButtonSizing = clsx('min-w-[40px]', !isCompactMode && 'lg:min-w-fit');
   const tabIconWrapperClassName = clsx(
     'flex size-7 items-center justify-center overflow-hidden md:size-8',
     isCompactMode && 'shrink-0'
@@ -225,7 +224,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
               className={clsx(
                 getNavigationButtonClasses(isNavigatingTo('/'), isHomeActive(), false, true),
                 'relative',
-                homeButtonSizing
+                tabMinWidthClass
               )}
               aria-label='首页'
               tabIndex={isNavigatingTo('/') ? -1 : 0}
@@ -240,9 +239,8 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                   transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
                 />
               )}
-              <HomeIcon className='size-6 lg:hidden' />
-              <span className='hidden lg:inline'>首页</span>
-              <span className='sr-only lg:hidden'>首页</span>
+              <HomeIcon className='size-6' />
+              <span className='sr-only'>首页</span>
             </MotionLink>
           </Tooltip>
           {primaryTabs.map((entry) => {
