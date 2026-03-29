@@ -7,6 +7,7 @@ import { contributors } from '@/data/contributors';
 import { changeLogs, type ChangeType } from '@/data/generated/changeLogs';
 import ActionTile from '@/components/ui/ActionTile';
 import { BaseDialog } from '@/components/ui/BaseDialog';
+import { HOME_ACTION_TILE_PROPS } from '@/components/ui/homeActionTileStyles';
 
 const typeColors: Record<ChangeType, string> = {
   feat: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
@@ -154,6 +155,7 @@ const ChangeLogs = forwardRef<ChangeLogsRef>((_props, ref) => {
         onClick={() => setIsChangeLogsOpen(true)}
         ariaLabel='更新日志'
         layout='stacked'
+        {...HOME_ACTION_TILE_PROPS}
       />
 
       {/* ChangeLogs Modal */}

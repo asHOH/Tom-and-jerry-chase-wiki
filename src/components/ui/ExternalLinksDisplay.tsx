@@ -1,5 +1,6 @@
 import { EXTERNAL_LINK_GROUPS } from '@/data/externalLinks';
 import ActionTile from '@/components/ui/ActionTile';
+import { HOME_ACTION_TILE_PROPS } from '@/components/ui/homeActionTileStyles';
 
 const LinkIcon = ({ className }: { className?: string }) => (
   <svg
@@ -36,8 +37,8 @@ export default function ExternalLinksDisplay() {
                   icon={<LinkIcon className='h-8 w-8' />}
                   interaction={isLinked ? 'normal' : 'disabled'}
                   layout='stacked'
-                  size='sm'
                   title={item.title}
+                  {...HOME_ACTION_TILE_PROPS}
                   {...(isLinked ? { href: item.href, external: true } : {})}
                 />
               );

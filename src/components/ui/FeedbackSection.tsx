@@ -5,6 +5,7 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 're
 import ActionTile from '@/components/ui/ActionTile';
 import { BaseDialog } from '@/components/ui/BaseDialog';
 import Button from '@/components/ui/Button';
+import { HOME_ACTION_TILE_PROPS } from '@/components/ui/homeActionTileStyles';
 import { ChatBubbleIcon } from '@/components/icons/CommonIcons';
 import { env } from '@/env';
 
@@ -97,6 +98,7 @@ const FeedbackSection =
               onClick={() => setIsFeedbackOpen(true)}
               ariaLabel='反馈建议'
               layout='stacked'
+              {...HOME_ACTION_TILE_PROPS}
             />
 
             {/* Feedback Modal */}
