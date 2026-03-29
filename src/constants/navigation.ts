@@ -33,7 +33,7 @@ export const NAV_ITEMS: readonly NavGroup[] = [
         description: '鼠阵营角色列表',
         href: '/factions/mouse',
         iconSrc: '/images/icons/mouse-faction.png',
-        iconAlt: '鼠阵营图标',
+        iconAlt: '',
       },
       {
         id: 'cat',
@@ -41,7 +41,7 @@ export const NAV_ITEMS: readonly NavGroup[] = [
         description: '猫阵营角色列表',
         href: '/factions/cat',
         iconSrc: '/images/icons/cat-faction.png',
-        iconAlt: '猫阵营图标',
+        iconAlt: '',
       },
     ],
     shouldExpand: true,
@@ -50,7 +50,7 @@ export const NAV_ITEMS: readonly NavGroup[] = [
     id: 'prepare',
     label: '备战',
     iconSrc: '/images/icons/prepare.png',
-    iconAlt: '备战图标',
+    iconAlt: '',
     children: [
       {
         id: 'cards',
@@ -58,7 +58,7 @@ export const NAV_ITEMS: readonly NavGroup[] = [
         description: '知识卡列表',
         href: '/cards',
         iconSrc: '/images/icons/cat-knowledge-card.png',
-        iconAlt: '知识卡图标',
+        iconAlt: '',
       },
       {
         id: 'special-skills',
@@ -66,7 +66,7 @@ export const NAV_ITEMS: readonly NavGroup[] = [
         description: '特技列表',
         href: '/special-skills',
         iconSrc: '/images/mouseSpecialSkills/%E5%BA%94%E6%80%A5%E6%B2%BB%E7%96%97.png',
-        iconAlt: '特技图标',
+        iconAlt: '',
       },
     ],
   },
@@ -74,7 +74,7 @@ export const NAV_ITEMS: readonly NavGroup[] = [
     id: 'game',
     label: '游戏',
     iconSrc: '/images/icons/game.png',
-    iconAlt: '游戏图标',
+    iconAlt: '',
     children: [
       {
         id: 'items',
@@ -82,7 +82,7 @@ export const NAV_ITEMS: readonly NavGroup[] = [
         description: '道具列表',
         href: '/items',
         iconSrc: '/images/icons/item.png',
-        iconAlt: '道具图标',
+        iconAlt: '',
       },
       {
         id: 'entities',
@@ -90,7 +90,7 @@ export const NAV_ITEMS: readonly NavGroup[] = [
         description: '衍生物列表',
         href: '/entities',
         iconSrc: '/images/icons/entity.png',
-        iconAlt: '衍生物图标',
+        iconAlt: '',
       },
       {
         id: 'maps',
@@ -98,7 +98,7 @@ export const NAV_ITEMS: readonly NavGroup[] = [
         description: '地图列表',
         href: '/maps',
         iconSrc: '/images/icons/map.png',
-        iconAlt: '地图图标',
+        iconAlt: '',
       },
       {
         id: 'modes',
@@ -106,7 +106,7 @@ export const NAV_ITEMS: readonly NavGroup[] = [
         description: '游戏模式列表',
         href: '/modes',
         iconSrc: '/images/icons/mode.png',
-        iconAlt: '模式图标',
+        iconAlt: '',
       },
     ],
   },
@@ -114,7 +114,7 @@ export const NAV_ITEMS: readonly NavGroup[] = [
     id: 'inquiry',
     label: '资料',
     iconSrc: '/images/icons/inquiry.png',
-    iconAlt: '资料图标',
+    iconAlt: '',
     children: [
       {
         id: 'articles',
@@ -122,7 +122,7 @@ export const NAV_ITEMS: readonly NavGroup[] = [
         description: '社区文章列表',
         href: '/articles',
         iconSrc: '/images/icons/article.png',
-        iconAlt: '文章图标',
+        iconAlt: '',
       },
       {
         id: 'buffs',
@@ -130,7 +130,7 @@ export const NAV_ITEMS: readonly NavGroup[] = [
         description: '状态效果列表',
         href: '/buffs',
         iconSrc: '/images/icons/buff.png',
-        iconAlt: '状态图标',
+        iconAlt: '',
       },
       {
         id: 'mechanics',
@@ -138,7 +138,7 @@ export const NAV_ITEMS: readonly NavGroup[] = [
         description: '局内机制列表',
         href: '/mechanics',
         iconSrc: '/images/entities/线条火箭.png',
-        iconAlt: '机制图标',
+        iconAlt: '',
       },
       {
         id: 'tools',
@@ -146,7 +146,7 @@ export const NAV_ITEMS: readonly NavGroup[] = [
         description: '胜率、属性和特技查询',
         href: '/tools',
         iconSrc: '/images/entitySkills/%E7%A9%BA%E7%BD%AE%E9%81%93%E5%85%B7%E9%94%AE.png',
-        iconAlt: '工具图标',
+        iconAlt: '',
       },
     ],
   },
@@ -168,7 +168,7 @@ export const TOOL_NAV_ITEMS: readonly NavItem[] = [
     description: '介绍wiki基础功能的使用',
     href: '/usages/use',
     iconSrc: '/images/mouseSkills/%E8%8E%B1%E6%81%A91-%E8%93%9D%E5%9B%BE.png',
-    iconAlt: '使用指南图标',
+    iconAlt: '',
   },
   {
     id: 'usage-edit',
@@ -176,7 +176,7 @@ export const TOOL_NAV_ITEMS: readonly NavItem[] = [
     description: '介绍wiki进阶功能的使用',
     href: '/usages/edit',
     iconSrc: '/images/mouseSkills/%E8%8E%B1%E6%81%A92-%E8%98%B8%E6%B0%B4%E7%AC%94.png',
-    iconAlt: '编辑指南图标',
+    iconAlt: '',
   },
   //查询工具
   {
@@ -185,7 +185,7 @@ export const TOOL_NAV_ITEMS: readonly NavItem[] = [
     description: '排列并查看角色属性值',
     href: '/ranks',
     iconSrc: '/images/items/%E5%A5%B6%E9%85%AA.png',
-    iconAlt: '属性排行图标',
+    iconAlt: '',
   },
   {
     id: 'win-rates',
@@ -193,7 +193,7 @@ export const TOOL_NAV_ITEMS: readonly NavItem[] = [
     description: '查看角色在各段位的胜率、登场率和禁用率',
     href: '/win-rates',
     iconSrc: '/images/icons/cat-faction.png',
-    iconAlt: '胜率数据图标',
+    iconAlt: '',
   },
   {
     id: 'special-skill-advices',
@@ -201,7 +201,7 @@ export const TOOL_NAV_ITEMS: readonly NavItem[] = [
     description: '便捷查看各特技推荐信息',
     href: '/special-skills/advice',
     iconSrc: '/images/catSpecialSkills/%E7%BB%9D%E5%9C%B0%E5%8F%8D%E5%87%BB.png',
-    iconAlt: '特技推荐图标',
+    iconAlt: '',
   },
   //临时将特性入口放置于工具栏中，日后修改
   {
@@ -210,7 +210,7 @@ export const TOOL_NAV_ITEMS: readonly NavItem[] = [
     description: '便捷查看已收录的全部特性',
     href: '/mechanics/traitCollection',
     iconSrc: '/images/mouseSkills/%E8%8E%B1%E6%81%A92-%E8%98%B8%E6%B0%B4%E7%AC%94.png',
-    iconAlt: '特性大全图标',
+    iconAlt: '',
   },
   //建设中界面
   {
@@ -219,7 +219,7 @@ export const TOOL_NAV_ITEMS: readonly NavItem[] = [
     description: '地图组件列表',
     href: '/fixtures',
     iconSrc: '/images/catSpecialSkills/%E7%BB%9D%E5%9C%B0%E5%8F%8D%E5%87%BB.png',
-    iconAlt: '地图组件图标',
+    iconAlt: '',
   },
   {
     id: 'achievements',
@@ -227,7 +227,7 @@ export const TOOL_NAV_ITEMS: readonly NavItem[] = [
     description: '局内成就列表',
     href: '/achievements',
     iconSrc: '/images/icons/mode.png', // Temporary icon
-    iconAlt: '成就图标',
+    iconAlt: '',
   },
   //以下为编辑模式专用工具，正常情况不显示
   {
@@ -236,7 +236,7 @@ export const TOOL_NAV_ITEMS: readonly NavItem[] = [
     description: '编辑道具信息，导出代码片段提交给开发人员',
     href: '/item-maker.html',
     iconSrc: '/images/icons/item.png',
-    iconAlt: '道具编辑器图标',
+    iconAlt: '',
   },
   {
     id: 'entity-maker',
@@ -244,7 +244,7 @@ export const TOOL_NAV_ITEMS: readonly NavItem[] = [
     description: '编辑衍生物信息，导出代码片段提交给开发人员',
     href: '/entity-maker.html',
     iconSrc: '/images/icons/entity.png',
-    iconAlt: '衍生物编辑器图标',
+    iconAlt: '',
   },
   {
     id: 'trait-maker',
@@ -252,6 +252,6 @@ export const TOOL_NAV_ITEMS: readonly NavItem[] = [
     description: '编辑特性信息，导出代码片段提交给开发人员',
     href: '/trait-maker.html',
     iconSrc: '/images/mouseSkills/%E8%8E%B1%E6%81%A92-%E8%98%B8%E6%B0%B4%E7%AC%94.png',
-    iconAlt: '特性编辑器图标',
+    iconAlt: '',
   },
 ];

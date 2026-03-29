@@ -31,13 +31,13 @@ export const NAV_ITEM_CONFIGS: readonly NavItemConfig[] = [
     id: 'use',
     label: '使用指南',
     iconSrc: '/images/mouseSkills/%E8%8E%B1%E6%81%A91-%E8%93%9D%E5%9B%BE.png',
-    iconAlt: '使用指南图标',
+    iconAlt: '',
   },
   {
     id: 'edit',
     label: '编辑指南',
     iconSrc: '/images/mouseSkills/%E8%8E%B1%E6%81%A92-%E8%98%B8%E6%B0%B4%E7%AC%94.png',
-    iconAlt: '编辑指南图标',
+    iconAlt: '',
   },
 ] as const;
 

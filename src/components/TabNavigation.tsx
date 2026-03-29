@@ -273,7 +273,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                       {!!image && (
                         <Image
                           src={entry.iconSrc || image.iconSrc}
-                          alt={entry.iconAlt || image.iconAlt}
+                          alt={entry.iconAlt ?? image.iconAlt}
                           width={64}
                           height={64}
                           className='h-6 w-6 shrink-0 object-contain'

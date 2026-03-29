@@ -32,7 +32,7 @@ function FactionButton({
   const icon = imageSrc ? (
     <Image
       src={imageSrc}
-      alt={imageAlt || title || ''}
+      alt={imageAlt ?? title ?? ''}
       width={36}
       height={36}
       className='faction-button-image'

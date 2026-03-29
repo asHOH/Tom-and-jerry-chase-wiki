@@ -37,26 +37,28 @@ jest.mock('@/components/Image', () => ({
 }));
 
 describe('FactionButton', () => {
-  it('owns image sizing locally for linked tiles without the legacy faction-button class', () => {
+  it('keeps decorative image alt text empty for linked tiles', () => {
     render(
       <FactionButton
-        title='角色'
-        description='查看角色属性'
+        title='Characters'
+        description='Open the character list'
         href='/characters'
-        ariaLabel='查看角色属性'
+        ariaLabel='Open the character list'
         imageSrc='/images/icons/mouse-faction.png'
-        imageAlt='角色图标'
+        imageAlt=''
         preload
       />
     );
 
-    const link = screen.getByRole('link', { name: '查看角色属性' });
-    const image = screen.getByAltText('角色图标');
-    const title = screen.getByText('角色');
-    const description = screen.getByText('查看角色属性');
+    const link = screen.getByRole('link', { name: 'Open the character list' });
+    const image = link.querySelector('img');
+    const title = screen.getByText('Characters');
+    const description = screen.getByText('Open the character list');
     const titleWrapper = title.closest('span.font-bold');
-    const contentRow = image.closest('span.flex');
+    const contentRow = image?.closest('span.flex');
 
+    expect(image).not.toBeNull();
+    expect(image).toHaveAttribute('alt', '');
     expect(link).toHaveClass(
       'min-w-[180px]',
       'flex-1',
@@ -85,20 +87,20 @@ describe('FactionButton', () => {
 
     render(
       <FactionButton
-        emoji='🐭'
-        title='彩蛋'
-        description='打开彩蛋面板'
+        emoji='egg'
+        title='Easter Egg'
+        description='Open the easter egg panel'
         onClick={onClick}
-        ariaLabel='打开彩蛋面板'
+        ariaLabel='Open the easter egg panel'
       />
     );
 
-    const button = screen.getByRole('button', { name: '打开彩蛋面板' });
+    const button = screen.getByRole('button', { name: 'Open the easter egg panel' });
     fireEvent.click(button);
 
     expect(button).toHaveClass('min-w-[180px]', 'flex-1', 'py-3', 'hover:-translate-y-0.5');
     expect(button).not.toHaveClass('faction-button');
-    expect(screen.getByText('🐭')).toHaveClass('text-xl', 'md:text-2xl');
+    expect(screen.getByText('egg')).toHaveClass('text-xl', 'md:text-2xl');
     expect(onClick).toHaveBeenCalledTimes(1);
   });
 });
