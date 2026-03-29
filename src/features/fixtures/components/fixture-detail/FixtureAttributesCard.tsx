@@ -3,6 +3,7 @@
 import { useSnapshot } from 'valtio';
 
 import { getFixtureSourceColors, getFixtureTypeColors } from '@/lib/design';
+import { getSingleItemPrototype, getSingleItemVariant } from '@/lib/singleItemTools';
 import { getTooltipContent } from '@/lib/tooltipUtils';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
@@ -12,6 +13,7 @@ import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleIte
 import AttributesCardLayout from '@/features/shared/detail-view/AttributesCardLayout';
 import { editable } from '@/components/ui/editable';
 import NavigationButtonsRow from '@/components/ui/NavigationButtonsRow';
+import SingleItemAccordionCard from '@/components/ui/SingleItemAccordionCard';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import Tag from '@/components/ui/Tag';
 import Tooltip from '@/components/ui/Tooltip';
@@ -32,6 +34,11 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
   const effectiveFixture = (
     isEditMode ? (fixturesSnapshot[fixtureName] ?? fixture) : fixture
   ) as Fixture;
+
+  /* 计算variant相关内容 */
+  const prototype = getSingleItemPrototype({ name: fixture.name, type: 'fixture' });
+  const variant = getSingleItemVariant({ name: fixture.name, type: 'fixture' });
+  /* -------- */
 
   const collisionOptions = ['角色', '道具', '墙壁', '平台', '地面'] as const;
   const activeCollision = Array.isArray(effectiveFixture?.collsion)
@@ -346,6 +353,26 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
                   </>
                 )}
               </div>
+            </div>
+          )}
+          {(prototype.length > 0 || variant.length > 0) && (
+            <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
+              {prototype.length > 0 && (
+                <div>
+                  <span className='text-lg font-bold whitespace-pre'>本内容为以下内容的变种：</span>
+                  <div className='mt-1'>
+                    <SingleItemAccordionCard items={prototype} />
+                  </div>
+                </div>
+              )}
+              {variant.length > 0 && (
+                <div className={prototype.length > 0 ? 'mt-2' : ''}>
+                  <span className='text-lg font-bold whitespace-pre'>本内容有以下变种：</span>
+                  <div className='mt-1'>
+                    <SingleItemAccordionCard items={variant} />
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </>
