@@ -1836,6 +1836,7 @@ export const entityDefinitions = {
   线条猫: {
     entitytag: ['变形'],
     owner: { name: '蓝图', type: 'skill' },
+    aliases: ['粉笔猫'],
     move: true,
     gravity: true,
     collsion: ['墙壁', '平台', '地面'],
@@ -1848,6 +1849,7 @@ export const entityDefinitions = {
   线条火箭: {
     entitytag: ['功能', '交互', '复用'],
     owner: { name: '蓝图', type: 'skill' },
+    aliases: ['粉笔火箭', '蓝图火箭'],
     move: false,
     gravity: true,
     collsion: ['墙壁', '平台', '地面'],
