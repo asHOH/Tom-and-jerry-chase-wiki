@@ -1,4 +1,5 @@
 import singleItemRreverse from '@/lib/singleItemReverse';
+import { getSingleItemPrototype } from '@/lib/singleItemTools';
 import type { SingleItem } from '@/data/types';
 
 import SingleItemReverseCard from '../components/SingleItemReverseCard';
@@ -11,13 +12,12 @@ type DetailReverseCardProps = {
 
 export default function DetailReverseCard({ singleItem }: DetailReverseCardProps) {
   const ownEntities = getOwnEntities(singleItem);
-  const numberOfOwnReverse: number[] = [singleItem, ...ownEntities].map((item, key) => {
-    return singleItemRreverse({
-      name: item.name,
-      type: key === 0 ? singleItem.type : 'entity',
-      ...(item.factionId !== undefined ? { factionId: item.factionId } : {}),
-    }).length;
-  });
+  const ownPrototypes = getSingleItemPrototype(singleItem);
+  const numberOfOwnReverse: number[] = [singleItem, ...ownEntities, ...ownPrototypes].map(
+    (item) => {
+      return singleItemRreverse(item).length;
+    }
+  );
   const totalReverse = numberOfOwnReverse.reduce((a, b) => a + b, 0);
 
   if (totalReverse === 0) {
@@ -32,9 +32,9 @@ export default function DetailReverseCard({ singleItem }: DetailReverseCardProps
       count: numberOfOwnReverse[0] ?? 0,
       activeColor: 'orange' as const,
     },
+
     ...ownEntities.map((entity, key) => {
       const count = numberOfOwnReverse[key + 1] ?? 0;
-
       return {
         id: String(key + 1),
         title: `${entity.name}${entity.name === singleItem.name ? '-衍生物' : ''}(${count})`,
@@ -43,11 +43,22 @@ export default function DetailReverseCard({ singleItem }: DetailReverseCardProps
         activeColor: 'orange' as const,
       };
     }),
+
+    ...ownPrototypes.map((singleItem, key) => {
+      const count = numberOfOwnReverse[key + 1] ?? 0;
+      return {
+        id: String(key + 1),
+        title: `${singleItem.name}${singleItem.name === singleItem.name ? '-原型' : ''}(${count})`,
+        children: <SingleItemReverseCard singleItem={singleItem} />,
+        count,
+        activeColor: 'orange' as const,
+      };
+    }),
   ];
 
   return (
     <DetailRelatedCard
-      title={`${singleItem.name}${ownEntities.length > 0 ? '及其衍生物' : ''}的引用项(${totalReverse})`}
+      title={`${singleItem.name}${ownEntities.length > 0 ? '及其衍生物' : ''}${ownPrototypes.length > 0 ? '和原型' : ''}的引用项(${totalReverse})`}
       color='yellow'
       items={items}
       singleContent={<SingleItemReverseCard singleItem={singleItem} />}
