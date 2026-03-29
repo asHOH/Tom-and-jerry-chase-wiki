@@ -131,14 +131,14 @@ function ReverseResultButton({
     <li className='w-full'>
       <a
         href={getSingleItemHref(result)}
-        className='flex w-full items-start rounded-lg border-1 border-dotted p-1.5 transition-all hover:-translate-y-1'
+        className='flex w-full items-start rounded-lg p-2 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md'
         style={{
           borderColor: buttonColors.color,
           backgroundColor: buttonColors.backgroundColor,
         }}
       >
         {/* Image on the left */}
-        <div className='mr-2 flex-shrink-0'>
+        <div className='mr-2 shrink-0'>
           <Image
             src={getSingleItemImageUrl(result)}
             alt={`${result.name}图标`}
@@ -158,12 +158,12 @@ function ReverseResultButton({
             </div>
 
             {/* Type and faction tags */}
-            <div className='flex flex-shrink-0 items-center gap-2'>
-              <span className='rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-700 dark:bg-gray-700 dark:text-gray-300'>
+            <div className='flex shrink-0 items-center'>
+              <span className='rounded-md bg-white/70 px-1.5 py-0.5 text-xs text-gray-700 dark:bg-slate-800/80 dark:text-gray-300'>
                 {SingleItemTypeChineseNameList[result.type]}
               </span>
               {result.factionId && (
-                <span className='rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-700 dark:bg-gray-700 dark:text-gray-300'>
+                <span className='rounded-md bg-white/70 px-1.5 py-0.5 text-xs text-gray-700 dark:bg-slate-800/80 dark:text-gray-300'>
                   {result.factionId === 'cat' ? '猫' : '鼠'}
                 </span>
               )}
