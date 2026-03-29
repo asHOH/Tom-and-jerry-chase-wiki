@@ -27,7 +27,7 @@ const accordionTitleClassName = 'mb-2 gap-1 rounded-lg bg-slate-100/80 p-1 dark:
 const accordionButtonClassName =
   'min-w-fit rounded-md border border-transparent bg-transparent px-2.5 py-1.5 text-gray-600 hover:bg-white/70 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-slate-900/70 dark:hover:text-white';
 const accordionActiveButtonClassName =
-  'border-orange-200/80 bg-white text-orange-700 shadow-sm not-italic no-underline dark:border-orange-700/70 dark:bg-slate-900 dark:text-orange-200';
+  'border-orange-200/80 bg-white text-orange-700 shadow-sm not-italic no-underline hover:bg-white hover:text-orange-700 dark:border-orange-700/70 dark:bg-slate-900 dark:text-orange-200 dark:hover:bg-slate-900 dark:hover:text-orange-200';
 const accordionContentContainerClassName = 'mt-2';
 
 export default function DetailRelatedCard({
