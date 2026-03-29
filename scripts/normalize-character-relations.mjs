@@ -66,6 +66,8 @@ const subjectSortKey = new Map(
 );
 
 const getSubjectOrder = (subjectName) => subjectSortKey.get(subjectName) ?? Number.MAX_SAFE_INTEGER;
+const getCharacterTargetOrder = (target) =>
+  target.type === 'character' ? getSubjectOrder(target.name) : Number.MAX_SAFE_INTEGER;
 
 const ensureOwnerBucket = (ownerId, kind) => {
   normalizedDefinitions[ownerId] ??= {};
@@ -198,18 +200,34 @@ const orderedSubjectIds = Object.keys(normalizedDefinitions).sort(
   (leftId, rightId) => getSubjectOrder(leftId) - getSubjectOrder(rightId)
 );
 
+const serializeString = (value) =>
+  `'${String(value)
+    .replace(/\\/g, '\\\\')
+    .replace(/'/g, "\\'")
+    .replace(/\r/g, '\\r')
+    .replace(/\n/g, '\\n')
+    .replace(/\t/g, '\\t')
+    .replaceAll('\u0008', '\\b')
+    .replaceAll('\u000C', '\\f')
+    .replaceAll('\u000B', '\\v')
+    .replaceAll('\0', '\\0')}'`;
+
+const isBareObjectKey = (value) =>
+  /^[$_\p{ID_Start}][$_\u200C\u200D\p{ID_Continue}]*$/u.test(value);
+const serializeObjectKey = (value) => (isBareObjectKey(value) ? value : serializeString(value));
+
 const serializeTarget = (target) => {
   switch (target.type) {
     case 'character':
-      return `character(${JSON.stringify(target.name)})`;
+      return `character(${serializeString(target.name)})`;
     case 'map':
-      return `map(${JSON.stringify(target.name)})`;
+      return `map(${serializeString(target.name)})`;
     case 'mode':
-      return `mode(${JSON.stringify(target.name)})`;
+      return `mode(${serializeString(target.name)})`;
     case 'knowledgeCard':
-      return `knowledgeCard(${JSON.stringify(target.name)}, ${JSON.stringify(target.factionId)})`;
+      return `knowledgeCard(${serializeString(target.name)}, ${serializeString(target.factionId)})`;
     case 'specialSkill':
-      return `specialSkill(${JSON.stringify(target.name)}, ${JSON.stringify(target.factionId)})`;
+      return `specialSkill(${serializeString(target.name)}, ${serializeString(target.factionId)})`;
     default:
       throw new Error(`Unsupported target type: ${target.type}`);
   }
@@ -219,7 +237,7 @@ const serializeEntry = (entry) => {
   const lines = [
     '      {',
     `        target: ${serializeTarget(entry.target)},`,
-    `        description: ${JSON.stringify(entry.description ?? '')},`,
+    `        description: ${serializeString(entry.description ?? '')},`,
   ];
 
   if (entry.isMinor) {
@@ -231,7 +249,17 @@ const serializeEntry = (entry) => {
 };
 
 const serializeKindEntries = (kind, entries) => {
-  const serializedEntries = entries.map((entry) => serializeEntry(entry)).join('\n');
+  const serializedEntries = entries
+    .map((entry, index) => ({ entry, index }))
+    .sort((left, right) => {
+      const orderDifference =
+        getCharacterTargetOrder(left.entry.target) - getCharacterTargetOrder(right.entry.target);
+
+      return orderDifference !== 0 ? orderDifference : left.index - right.index;
+    })
+    .map(({ entry }) => serializeEntry(entry))
+    .join('\n');
+
   return `    ${kind}: [\n${serializedEntries}\n    ],`;
 };
 
@@ -245,7 +273,7 @@ const serializedDefinitions = `{\n${orderedSubjectIds
       .map((kind) => serializeKindEntries(kind, relationDefinitions[kind]))
       .join('\n');
 
-    return `  ${JSON.stringify(subjectId)}: {\n${serializedKinds}\n  },`;
+    return `  ${serializeObjectKey(subjectId)}: {\n${serializedKinds}\n  },`;
   })
   .join('\n')}\n}`;
 
