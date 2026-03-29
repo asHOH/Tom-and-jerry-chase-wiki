@@ -18,15 +18,17 @@ const jiti = createJiti(import.meta.url, {
 });
 const targetFilePath = path.join(repoRoot, 'src/data/characterRelations.ts');
 
-const { characterRelationDefinitions } = await jiti(
+const { characterRelationDefinitions } = await jiti.import(
   path.join(repoRoot, 'src/data/characterRelations.ts')
 );
+const { characterDisplayOrder } = await jiti.import(
+  path.join(repoRoot, 'src/features/characters/data/characterMetadata.ts')
+);
 const {
-  characterDisplayOrder,
   getCanonicalCharacterRelationStorageLocation,
   getCharacterFaction,
   mergeCanonicalRelationEntries,
-} = await jiti(
+} = await jiti.import(
   path.join(repoRoot, 'src/features/characters/utils/characterRelationCanonicalization.ts')
 );
 
