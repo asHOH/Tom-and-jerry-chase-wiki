@@ -86,6 +86,65 @@ function filterActionHistory(history: ActionHistoryEntry[]): ActionHistoryEntry[
   return filtered;
 }
 
+function normalizeActionEntry(actions: Action[]): ActionHistoryEntry {
+  return actions.length === 1 ? actions[0]! : actions;
+}
+
+export function matchesActionEntityId(action: Action, entityId: string): boolean {
+  if (!entityId) return true;
+  const sourceEntityId = action.sourceEntityId?.trim();
+  if (sourceEntityId) {
+    return sourceEntityId === entityId;
+  }
+  return action.path === entityId || action.path.startsWith(`${entityId}.`);
+}
+
+export function splitActionEntryByEntity(
+  entry: ActionHistoryEntry,
+  entityId: string
+): { matching: ActionHistoryEntry | null; remaining: ActionHistoryEntry | null } {
+  if (Array.isArray(entry)) {
+    const matching: Action[] = [];
+    const remaining: Action[] = [];
+
+    entry.forEach((action) => {
+      if (matchesActionEntityId(action, entityId)) {
+        matching.push(action);
+      } else {
+        remaining.push(action);
+      }
+    });
+
+    return {
+      matching: matching.length > 0 ? normalizeActionEntry(matching) : null,
+      remaining: remaining.length > 0 ? normalizeActionEntry(remaining) : null,
+    };
+  }
+
+  if (matchesActionEntityId(entry, entityId)) {
+    return { matching: entry, remaining: null };
+  }
+
+  return { matching: null, remaining: entry };
+}
+
+export function splitActionHistoryByEntity(history: ActionHistoryEntry[], entityId: string) {
+  const matching: ActionHistoryEntry[] = [];
+  const remaining: ActionHistoryEntry[] = [];
+
+  history.forEach((entry) => {
+    const { matching: matchingEntry, remaining: remainingEntry } = splitActionEntryByEntity(
+      entry,
+      entityId
+    );
+
+    if (matchingEntry) matching.push(matchingEntry);
+    if (remainingEntry) remaining.push(remainingEntry);
+  });
+
+  return { matching, remaining };
+}
+
 function getCurrentActionContext(): ActionContext | null {
   return actionContextStack[actionContextStack.length - 1] ?? null;
 }

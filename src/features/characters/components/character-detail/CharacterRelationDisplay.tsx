@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import { useSnapshot } from 'valtio';
 
 import { AssetManager } from '@/lib/assetManager';
+import { withActionContext } from '@/lib/edit/diffUtils';
 import { setNestedProperty } from '@/lib/editUtils';
 import { useNavigation } from '@/hooks/useNavigation';
 import { useAppContext } from '@/context/AppContext';
@@ -63,14 +64,17 @@ const getStoredRelationItems = (characterId: string, kind: TraitRelationKind, it
 };
 
 const updateRelationItems = (
-  characterId: string,
+  sourceCharacterId: string,
+  storageOwnerId: string,
   kind: TraitRelationKind,
   items: CharacterRelationItem[]
 ) => {
-  setNestedProperty(characters, `${characterId}.${kind}`, items);
-  if (characters[characterId]) {
-    (characters[characterId] as Record<string, unknown>)[kind] = items;
-  }
+  withActionContext({ sourceEntityId: sourceCharacterId }, () => {
+    setNestedProperty(characters, `${storageOwnerId}.${kind}`, items);
+    if (characters[storageOwnerId]) {
+      (characters[storageOwnerId] as Record<string, unknown>)[kind] = items;
+    }
+  });
 };
 
 const updateRelationItem = (
@@ -83,6 +87,7 @@ const updateRelationItem = (
   if (!storageLocation) return;
   const current = getStoredRelationItems(characterId, kind, itemId);
   updateRelationItems(
+    characterId,
     storageLocation.ownerId,
     storageLocation.kind,
     current.map((item) => (item.id === storageLocation.targetId ? updater(item) : item))
@@ -104,7 +109,7 @@ const addRelationItem = (
   if (!storageLocation) return;
   const current = getStoredRelationItems(characterId, kind, item.id);
   if (current.some((existing) => existing.id === storageLocation.targetId)) return;
-  updateRelationItems(storageLocation.ownerId, storageLocation.kind, [
+  updateRelationItems(characterId, storageLocation.ownerId, storageLocation.kind, [
     ...current,
     createRelationItem(storageLocation.targetId),
   ]);
@@ -135,6 +140,7 @@ const removeRelationItem = (characterId: string, kind: TraitRelationKind, itemId
   if (!storageLocation) return;
   const current = getStoredRelationItems(characterId, kind, itemId);
   updateRelationItems(
+    characterId,
     storageLocation.ownerId,
     storageLocation.kind,
     current.filter((item) => item.id !== storageLocation.targetId)
