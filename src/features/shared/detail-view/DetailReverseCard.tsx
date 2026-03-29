@@ -12,6 +12,9 @@ interface DetailReverseCardProps {
 }
 
 export default function DetailReverseCard({ singleItem }: DetailReverseCardProps) {
+  const contentClassName =
+    'rounded-b-md border border-t-0 border-slate-200/80 bg-white/80 px-3 pb-3 pt-2 whitespace-pre-wrap shadow-sm dark:border-slate-700 dark:bg-slate-900/40';
+
   const OwnEntities = Object.values(entities).filter((entity) => {
     const owner = entity.owner;
 
@@ -45,8 +48,8 @@ export default function DetailReverseCard({ singleItem }: DetailReverseCardProps
     <CollapseCard
       title={`${singleItem.name}${OwnEntities.length > 0 ? '及其衍生物' : ''}的相关引用项(${NumberOfOwnReverse.reduce((a, b) => a + b)})`}
       size='xs'
-      className='rounded-md border-x-1 border-b-1 border-gray-300 px-1 pb-1 whitespace-pre-wrap dark:border-gray-700'
-      titleClassName='pl-3'
+      className={contentClassName}
+      titleClassName='rounded-t-md border px-3 pt-1.5 pb-1'
       color='yellow'
     >
       {OwnEntities.length === 0 ? (
@@ -58,9 +61,8 @@ export default function DetailReverseCard({ singleItem }: DetailReverseCardProps
           )}
         </div>
       ) : (
-        <div className='mx-2 mt-0.5 mb-2'>
+        <div>
           <AccordionCard
-            titleClassName='mt-2'
             items={[
               {
                 id: '0',
