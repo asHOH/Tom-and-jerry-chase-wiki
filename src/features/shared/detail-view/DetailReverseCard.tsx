@@ -2,7 +2,6 @@ import singleItemRreverse from '@/lib/singleItemReverse';
 import type { SingleItem } from '@/data/types';
 
 import SingleItemReverseCard from '../components/SingleItemReverseCard';
-import TextWithHoverTooltips from '../components/TextWithHoverTooltips';
 import DetailRelatedCard from './DetailRelatedCard';
 import { getOwnEntities } from './getOwnEntities';
 
@@ -19,6 +18,11 @@ export default function DetailReverseCard({ singleItem }: DetailReverseCardProps
       ...(item.factionId !== undefined ? { factionId: item.factionId } : {}),
     }).length;
   });
+  const totalReverse = numberOfOwnReverse.reduce((a, b) => a + b, 0);
+
+  if (totalReverse === 0) {
+    return null;
+  }
 
   const items = [
     {
@@ -43,16 +47,10 @@ export default function DetailReverseCard({ singleItem }: DetailReverseCardProps
 
   return (
     <DetailRelatedCard
-      title={`${singleItem.name}${ownEntities.length > 0 ? '及其衍生物' : ''}的引用项(${numberOfOwnReverse.reduce((a, b) => a + b)})`}
+      title={`${singleItem.name}${ownEntities.length > 0 ? '及其衍生物' : ''}的引用项(${totalReverse})`}
       color='yellow'
       items={items}
-      singleContent={
-        numberOfOwnReverse[0] === 0 ? (
-          <TextWithHoverTooltips text='$暂无任何引用本项的界面$italic text-gray-500 dark:text-gray-400 text-sm#' />
-        ) : (
-          <SingleItemReverseCard singleItem={singleItem} />
-        )
-      }
+      singleContent={<SingleItemReverseCard singleItem={singleItem} />}
     />
   );
 }

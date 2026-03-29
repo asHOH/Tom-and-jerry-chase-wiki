@@ -17,6 +17,11 @@ export default function DetailTraitsCard({ singleItem }: DetailTraitsCardProps) 
       type: key === 0 ? singleItem.type : 'entity',
     }).length;
   });
+  const totalTraits = numberOfOwnTraits.reduce((a, b) => a + b, 0);
+
+  if (totalTraits === 0) {
+    return null;
+  }
 
   const items = [
     {
@@ -41,7 +46,7 @@ export default function DetailTraitsCard({ singleItem }: DetailTraitsCardProps) 
 
   return (
     <DetailRelatedCard
-      title={`${singleItem.name}${ownEntities.length > 0 ? '及其衍生物' : ''}的互动特性(${numberOfOwnTraits.reduce((a, b) => a + b)})`}
+      title={`${singleItem.name}${ownEntities.length > 0 ? '及其衍生物' : ''}的互动特性(${totalTraits})`}
       color='lime'
       items={items}
       singleContent={<SingleItemTraitsText singleItem={singleItem} />}
