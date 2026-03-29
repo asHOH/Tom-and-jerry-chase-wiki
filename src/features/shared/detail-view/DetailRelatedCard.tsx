@@ -23,6 +23,12 @@ const contentClassName =
 
 const titleClassName = 'rounded-t-md border px-3 pt-1.5 pb-1';
 const collapsedTitleClassName = 'rounded-md';
+const accordionTitleClassName = 'mb-2 gap-1 rounded-lg bg-slate-100/80 p-1 dark:bg-slate-800/70';
+const accordionButtonClassName =
+  'min-w-fit rounded-md border border-transparent bg-transparent px-2.5 py-1.5 text-gray-600 hover:bg-white/70 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-slate-900/70 dark:hover:text-white';
+const accordionActiveButtonClassName =
+  'border-orange-200/80 bg-white text-orange-700 shadow-sm not-italic no-underline dark:border-orange-700/70 dark:bg-slate-900 dark:text-orange-200';
+const accordionContentContainerClassName = 'mt-2';
 
 export default function DetailRelatedCard({
   title,
@@ -47,7 +53,16 @@ export default function DetailRelatedCard({
         <div>{singleContent}</div>
       ) : (
         <div>
-          <AccordionCard items={accordionItems} size='xs' {...accordionProps} />
+          <AccordionCard
+            items={accordionItems}
+            size='xs'
+            useDefaultButtonColors={false}
+            titleClassName={accordionTitleClassName}
+            buttonClassName={accordionButtonClassName}
+            activeButtonClassName={accordionActiveButtonClassName}
+            contentContainerClassName={accordionContentContainerClassName}
+            {...accordionProps}
+          />
         </div>
       )}
     </CollapseCard>
