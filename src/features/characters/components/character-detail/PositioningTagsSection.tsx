@@ -296,7 +296,6 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
                             alt={`武器${tag.weapon}`}
                             width={18}
                             height={18}
-                            className='rounded-sm'
                           />
                         ) : null;
                       })()}

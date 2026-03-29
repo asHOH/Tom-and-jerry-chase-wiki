@@ -97,7 +97,6 @@ export default function CharacterDisplay({
                         alt={`武器${tag.weapon}`}
                         width={14}
                         height={14}
-                        className='rounded-sm'
                       />
                     </div>
                   )}
