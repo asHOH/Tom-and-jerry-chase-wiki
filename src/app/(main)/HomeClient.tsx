@@ -7,6 +7,7 @@ import { useMobile } from '@/hooks/useMediaQuery';
 import { useUser } from '@/hooks/useUser';
 import { isNavGroup, NAV_ITEMS, NavItem } from '@/constants/navigation';
 import ChangeLogs, { ChangeLogsRef } from '@/components/ui/ChangeLogs';
+import ExternalLinksDisplay from '@/components/ui/ExternalLinksDisplay';
 import FactionButton from '@/components/ui/FactionButton';
 import FeedbackSection, { FeedbackSectionRef } from '@/components/ui/FeedbackSection';
 import HomePageSection from '@/components/ui/NavSection';
@@ -115,6 +116,9 @@ export default function HomeContentClient({ description, hasServiceKey }: Props)
         <div className='mt-6 sm:mt-8'>
           <h2 className='mb-6 text-3xl font-bold dark:text-white'>站点列表</h2>
           <OfficialSitesDisplay />
+          <div className='mt-10'>
+            <ExternalLinksDisplay />
+          </div>
         </div>
       </div>
 
