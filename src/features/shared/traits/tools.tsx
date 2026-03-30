@@ -1,4 +1,8 @@
-import { getSingleItemFactionId } from '@/lib/singleItemTools';
+import {
+  compareSingleItem,
+  getSingleItemFactionId,
+  getSingleItemPrototype,
+} from '@/lib/singleItemTools';
 import { FactionId, SingleItem, SingleItemOrGroup, Trait } from '@/data/types';
 import { buffs, itemGroups } from '@/data';
 
@@ -154,12 +158,18 @@ export const searchBuffBySingleItem = (singleItem: SingleItem): SingleItem[] => 
       const buffItem: SingleItem = {
         name: buff.name,
         type: 'buff',
-        ...(singleItemFactionId !== undefined && { factionId: singleItemFactionId }), //赋予buff额外的factionId属性，以支持hard模式排除
+        //...(singleItemFactionId !== undefined && { factionId: singleItemFactionId }), //赋予buff额外的factionId属性，以支持hard模式排除//20260330音乐家注：该步骤意义不明，暂时删除。
       };
 
-      // 重要：将buffItem添加到buffItems数组中
       buffItems.push(buffItem);
     }
   });
+  buffItems.forEach((buffItem) =>
+    getSingleItemPrototype(buffItem).forEach((singleBuff) => {
+      if (buffItems.every((item) => item.type === 'buff' && !compareSingleItem(item, singleBuff))) {
+        buffItems.push(singleBuff);
+      }
+    })
+  );
   return buffItems;
 };
