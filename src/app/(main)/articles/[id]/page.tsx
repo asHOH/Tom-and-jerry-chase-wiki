@@ -6,6 +6,7 @@ import { getApprovedArticleVersion, getArticleBasicInfo } from '@/lib/articles/s
 import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { SITE_URL } from '@/constants/seo';
+import { sanitizeHTMLOnServer } from '@/lib/xssServer';
 import StructuredData from '@/components/StructuredData';
 
 import ArticleClient from './ArticleClient';
@@ -125,6 +126,8 @@ export default async function ArticlePage({
     notFound();
   }
 
+  const sanitizedContent = sanitizeHTMLOnServer(response.article.latest_version?.content ?? '');
+
   return (
     <>
       <StructuredData
@@ -139,7 +142,7 @@ export default async function ArticlePage({
           datePublished: response.article.created_at,
         })}
       />
-      <ArticleClient article={response.article} />
+      <ArticleClient article={response.article} sanitizedContent={sanitizedContent} />
     </>
   );
 }

@@ -1,8 +1,7 @@
 'use client';
 
-import { use, useLayoutEffect, useState } from 'react';
+import { use } from 'react';
 
-import { sanitizeHTML } from '@/lib/xssUtils';
 import CharacterSection from '@/features/characters/components/character-detail/CharacterSection';
 import AccordionCard from '@/components/ui/AccordionCard';
 import CollapseCard from '@/components/ui/CollapseCard';
@@ -17,6 +16,12 @@ type CharacterArticleItem = {
 
 type CharacterArticleResult = CharacterArticleItem | CharacterArticleItem[] | null;
 
+const SECTION_TITLE = '\u64cd\u4f5c\u6280\u5de7';
+const DEFAULT_ARTICLE_TITLE = '\u6587\u7ae0';
+const UNKNOWN_AUTHOR = '\u672a\u77e5';
+const AUTHOR_LABEL = '\u4f5c\u8005\uff1a';
+const AUTHOR_SEPARATOR = '\u3001';
+
 export default function CharacterArticle({
   content,
 }: {
@@ -26,48 +31,26 @@ export default function CharacterArticle({
 
   const articles: CharacterArticleItem[] = Array.isArray(result) ? result : result ? [result] : [];
 
-  const [displayContentById, setDisplayContentById] = useState<Record<string, string>>({});
-  useLayoutEffect(() => {
-    const nextArticles: CharacterArticleItem[] = Array.isArray(result)
-      ? result
-      : result
-        ? [result]
-        : [];
-
-    if (!nextArticles || nextArticles.length === 0) {
-      setDisplayContentById({});
-      return;
-    }
-
-    const nextMap: Record<string, string> = {};
-    for (const item of nextArticles) {
-      if (!item?.id || !item?.content) continue;
-      nextMap[item.id] = sanitizeHTML(item.content, { removeH1: true });
-    }
-    setDisplayContentById(nextMap);
-  }, [result]);
-
   if (articles.length === 0) {
     return null;
   }
 
   if (articles.length === 1) {
     const single = articles[0];
-    if (!single?.id) return null;
-    const displayContent = displayContentById[single.id];
-    if (!displayContent) return null;
+    if (!single?.id || !single.content) return null;
 
     const authors = single.authors ?? [];
     return (
-      <CharacterSection title='操作技巧' to={`/articles/${encodeURIComponent(single.id)}`}>
+      <CharacterSection title={SECTION_TITLE} to={`/articles/${encodeURIComponent(single.id)}`}>
         {authors.length > 0 && (
           <div className='mx-2 mb-2 text-sm text-gray-500 dark:text-gray-400'>
-            作者：{authors.join('、')}
+            {AUTHOR_LABEL}
+            {authors.join(AUTHOR_SEPARATOR)}
           </div>
         )}
         <StyledMDX
           className='mx-0 max-w-none p-0 sm:p-0'
-          dangerouslySetInnerHTML={{ __html: displayContent }}
+          dangerouslySetInnerHTML={{ __html: single.content }}
         />
       </CharacterSection>
     );
@@ -83,7 +66,7 @@ export default function CharacterArticle({
   }
 
   return (
-    <CharacterSection title='操作技巧'>
+    <CharacterSection title={SECTION_TITLE}>
       <div className='mx-2'>
         <AccordionCard
           defaultOpenId={firstId}
@@ -93,15 +76,14 @@ export default function CharacterArticle({
           buttonClassName='px-2'
           activeButtonClassName='italic underline'
           items={normalizedArticles.map((article) => {
-            const id = article.id;
-            const title = article.title?.trim() || '文章';
+            const title = article.title?.trim() || DEFAULT_ARTICLE_TITLE;
             const authorsText =
-              article.authors && article.authors.length > 0 ? article.authors.join('、') : '未知';
-
-            const displayContent = displayContentById[id];
+              article.authors && article.authors.length > 0
+                ? article.authors.join(AUTHOR_SEPARATOR)
+                : UNKNOWN_AUTHOR;
 
             return {
-              id,
+              id: article.id,
               title: authorsText,
               className: 'py-2',
               children: (
@@ -112,10 +94,10 @@ export default function CharacterArticle({
                   className='rounded-md border-x border-b border-gray-300 px-1 pb-1 dark:border-gray-700'
                 >
                   <div className='px-1 py-2'>
-                    {displayContent ? (
+                    {article.content ? (
                       <StyledMDX
                         className='mx-0 max-w-none p-0 sm:p-0'
-                        dangerouslySetInnerHTML={{ __html: displayContent }}
+                        dangerouslySetInnerHTML={{ __html: article.content }}
                       />
                     ) : null}
                   </div>
