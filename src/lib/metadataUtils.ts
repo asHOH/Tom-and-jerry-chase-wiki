@@ -13,11 +13,24 @@ interface PageMetadata {
 }
 
 /**
+ * Normalizes a URL so it matches Next.js trailingSlash routing.
+ */
+export function normalizeUrlWithTrailingSlash(url: string): string {
+  const normalizedUrl = new URL(url, SITE_URL);
+
+  if (normalizedUrl.pathname !== '/' && !normalizedUrl.pathname.endsWith('/')) {
+    normalizedUrl.pathname = `${normalizedUrl.pathname}/`;
+  }
+
+  return normalizedUrl.toString();
+}
+
+/**
  * Generates a full canonical URL for a given path
  */
 export function getCanonicalUrl(path: string): string {
   const cleanPath = path.startsWith('/') ? path : `/${path}`;
-  return `${SITE_URL}${cleanPath}`;
+  return normalizeUrlWithTrailingSlash(cleanPath);
 }
 
 export function generatePageMetadata({
@@ -28,6 +41,8 @@ export function generatePageMetadata({
   robots,
   absoluteTitle = false,
 }: PageMetadata): Metadata {
+  const normalizedCanonicalUrl = normalizeUrlWithTrailingSlash(canonicalUrl);
+
   // Strip existing site suffixes to prevent duplication when the template is applied
   const cleanTitle = title
     .replace(` - ${SITE_SHORT_NAME}`, '')
@@ -45,14 +60,14 @@ export function generatePageMetadata({
     description,
     keywords: mergedKeywords,
     alternates: {
-      canonical: canonicalUrl,
+      canonical: normalizedCanonicalUrl,
     },
     robots,
     openGraph: {
       title: ogTitle,
       description,
       type: 'website',
-      url: canonicalUrl,
+      url: normalizedCanonicalUrl,
     },
     twitter: {
       card: 'summary',

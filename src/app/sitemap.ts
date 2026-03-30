@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next';
 
+import { normalizeUrlWithTrailingSlash } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
 import docPages from '@/data/generated/docPages.json';
 import { RANKABLE_PROPERTIES } from '@/features/characters/utils/ranking';
@@ -18,6 +19,13 @@ import {
 import { env } from '@/env';
 
 export const dynamic = 'force-static';
+
+function normalizeSitemapEntries(entries: MetadataRoute.Sitemap): MetadataRoute.Sitemap {
+  return entries.map((entry) => ({
+    ...entry,
+    url: normalizeUrlWithTrailingSlash(entry.url),
+  }));
+}
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = SITE_URL;
@@ -112,7 +120,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.5,
   }));
 
-  return [
+  const entries: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
       lastModified: buildTime,
@@ -243,4 +251,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     // Note: /recommended/ is excluded from sitemap as it has noindex
   ];
+
+  return normalizeSitemapEntries(entries);
 }
