@@ -478,7 +478,7 @@ export default function singleItemRreverse(
 
   const ModeResult = Object.values(modes)
     .filter((a) => {
-      return [a?.description, a?.detailedDescription]
+      return [a?.description, a?.detailedDescription, a?.rules, a?.detailedRules]
         .filter((d): d is string => d != null)
         .some((d) => allKeywords.some((string) => d.includes(string)));
     })
