@@ -1,5 +1,4 @@
 import React from 'react';
-import uniq from 'lodash-es/uniq';
 import { proxy, useSnapshot } from 'valtio';
 
 import { getCardRankColors } from '@/lib/design';
@@ -7,24 +6,12 @@ import { renderTextWithHighlights } from '@/lib/textUtils';
 import { CATEGORY_HINTS, type CategoryHint } from '@/lib/types';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useLocalCharacter } from '@/context/EditModeContext';
+import { autoWrapNames } from '@/data/autoWrapNames';
 import type { SkillType } from '@/data/types';
 import Tag from '@/components/ui/Tag';
 import Tooltip from '@/components/ui/Tooltip';
 import GotoLink from '@/components/GotoLink';
 import { cards, characters } from '@/data';
-
-const nameBlacklist = [
-  '破墙',
-  '捕鼠夹',
-  '爪刀',
-  '迅',
-  '三叉戟',
-  '绝地反击',
-  '追风',
-  '兔子',
-  '大表哥',
-  '相助',
-];
 
 type CharacterRecord = (typeof characters)[string];
 
@@ -63,21 +50,6 @@ function preprocessText(text: string, currentCharacterName?: string | undefined)
     return text;
   }
 
-  // Collect canonical names (exclude aliases) and sort by length (longest first)
-  const canonicalCharacterNames = [
-    ...Object.keys(characters),
-    ...Object.values(characters).map((character) => character.id),
-  ].filter((name): name is string => typeof name === 'string' && name.length > 0);
-
-  const canonicalCardNames = [
-    ...Object.keys(cards),
-    ...Object.values(cards).map((card) => card.id),
-  ].filter((name): name is string => typeof name === 'string' && name.length > 0);
-
-  const names = uniq([...canonicalCharacterNames, ...canonicalCardNames])
-    .filter((name) => !nameBlacklist.includes(name))
-    .sort((a, b) => b.length - a.length);
-
   let result = text;
 
   const currentCharacter = currentCharacterName ? characters[currentCharacterName] : undefined;
@@ -90,7 +62,7 @@ function preprocessText(text: string, currentCharacterName?: string | undefined)
   // Track positions that have been wrapped to avoid overlaps
   const processedRanges: Array<{ start: number; end: number }> = [];
 
-  for (const name of names) {
+  for (const name of autoWrapNames) {
     let searchIndex = 0;
 
     while (true) {
