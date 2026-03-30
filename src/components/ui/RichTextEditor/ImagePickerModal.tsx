@@ -348,7 +348,7 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
           暂无图片，请先上传。
         </div>
       ) : (
-        <div className='grid max-h-[360px] grid-cols-1 gap-4 overflow-y-auto pr-1 sm:grid-cols-2 lg:grid-cols-3'>
+        <div className='grid max-h-90 grid-cols-1 gap-4 overflow-y-auto pr-1 sm:grid-cols-2 lg:grid-cols-3'>
           {filteredLibraryItems.map((item) => (
             <button
               type='button'
@@ -421,7 +421,7 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
           该目录下暂无可用图片。
         </div>
       ) : (
-        <div className='grid max-h-[360px] grid-cols-1 gap-3 overflow-y-auto pr-1 sm:grid-cols-2 lg:grid-cols-3'>
+        <div className='grid max-h-90 grid-cols-1 gap-3 overflow-y-auto pr-1 sm:grid-cols-2 lg:grid-cols-3'>
           {siteEntries.map((entry) => (
             <button
               type='button'
@@ -464,7 +464,7 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
   );
 
   return createPortal(
-    <div className='fixed inset-0 z-[120] flex items-center justify-center p-4'>
+    <div className='fixed inset-0 z-120 flex items-center justify-center p-4'>
       <div className='absolute inset-0 bg-black/60' onClick={handleOverlayClick} />
       <div
         role='dialog'

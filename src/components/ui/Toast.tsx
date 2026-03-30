@@ -85,7 +85,7 @@ export function ToastViewport() {
       offset='16px'
       richColors={false}
       icons={icons}
-      className='pointer-events-none z-[100]'
+      className='pointer-events-none z-100'
       toastOptions={{
         unstyled: true,
         closeButton: false,

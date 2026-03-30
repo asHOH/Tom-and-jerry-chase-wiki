@@ -497,7 +497,7 @@ export default function ArticleClient({
       {/* Reading Progress Bar - Teleported to body to escape transformed containers */}
       {mounted &&
         createPortal(
-          <div className='pointer-events-none fixed top-0 left-0 z-[9999] h-[2px] w-full bg-transparent'>
+          <div className='pointer-events-none fixed top-0 left-0 z-9999 h-0.5 w-full bg-transparent'>
             <div
               className='h-full bg-blue-500/80 transition-all duration-150 ease-out dark:bg-blue-400/80'
               style={{ width: `${readingProgress}%` }}

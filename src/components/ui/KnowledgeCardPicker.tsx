@@ -111,13 +111,13 @@ const KnowledgeCardPicker: React.FC<KnowledgeCardPickerProps> = ({
     <>
       {/* Backdrop */}
       <div
-        className='fixed inset-0 z-[10000] bg-black/40 backdrop-blur-sm'
+        className='fixed inset-0 z-10000 bg-black/40 backdrop-blur-sm'
         aria-hidden='true'
         onClick={onClose}
       />
 
       {/* Dialog Panel */}
-      <div className='fixed inset-0 z-[10001] flex items-center justify-center p-4'>
+      <div className='fixed inset-0 z-10001 flex items-center justify-center p-4'>
         <div
           className={clsx(
             'relative flex flex-col bg-white p-6 shadow-2xl dark:bg-slate-800',
