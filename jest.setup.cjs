@@ -1,5 +1,7 @@
 require('@testing-library/jest-dom');
 
+const { TextDecoder, TextEncoder } = require('util');
+
 // Mock Next.js router
 jest.mock('next/navigation', () => ({
   useRouter: () => ({
@@ -18,6 +20,14 @@ if (!global.structuredClone) {
   global.structuredClone = (obj) => {
     return JSON.parse(JSON.stringify(obj));
   };
+}
+
+if (!global.TextEncoder) {
+  global.TextEncoder = TextEncoder;
+}
+
+if (!global.TextDecoder) {
+  global.TextDecoder = TextDecoder;
 }
 
 const intersectionObserverMock = () => ({

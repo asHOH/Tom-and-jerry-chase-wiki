@@ -167,7 +167,13 @@ const stripExistingHeadingNumbering = (
 //     return res.json();
 //   });
 
-export default function ArticleClient({ article }: { article: ArticleData }) {
+export default function ArticleClient({
+  article,
+  sanitizedContent,
+}: {
+  article: ArticleData;
+  sanitizedContent: string;
+}) {
   const params = useParams();
   const { role: userRole } = useUser();
   const articleId = params?.id as string;
@@ -635,7 +641,10 @@ export default function ArticleClient({ article }: { article: ArticleData }) {
               showAutoNumbering && 'article-content-auto-numbered'
             )}
           >
-            <RichTextDisplay content={article.latest_version?.content} />
+            <RichTextDisplay
+              content={article.latest_version?.content}
+              sanitizedContent={sanitizedContent}
+            />
           </div>
 
           <CommentsSection scope='articles' targetId={article.id} />
