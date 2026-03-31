@@ -1,4 +1,4 @@
-import { Character, Damage, Exp, Hp, Move, Object } from './ArticlesIndex';
+import { Character, Damage, Exp, Hp, Item, Move, Object } from './ArticlesIndex';
 import TraitCollection from './TraitCollection';
 
 //维护说明：添加新模块时，先修改ArticlesIndex，随后在本文件添加新的导入，并修改mechanicsSections和NAV_ITEM_CONFIGS
@@ -21,6 +21,7 @@ export const mechanicsSections = {
   move: Move,
   damage: Damage,
   character: Character,
+  item: Item,
   // 在此处添加新的模块
   // newSection: NewSectionComponent,
 } as const;
@@ -38,43 +39,49 @@ export const NAV_ITEM_CONFIGS: readonly NavItemConfig[] = [
     id: 'object',
     label: '物体',
     iconSrc: '/images/entities/方块.png',
-    iconAlt: '',
+    iconAlt: '物体图标',
   },
   {
     id: 'character',
     label: '角色',
     iconSrc: '/images/icons/mouse-faction.png',
-    iconAlt: '',
+    iconAlt: '角色图标',
   },
   {
     id: 'move',
     label: '移动',
     iconSrc: '/images/fixtures/侦查金丝雀.png',
-    iconAlt: '',
+    iconAlt: '移动图标',
   },
   {
     id: 'exp',
     label: '经验',
     iconSrc: '/images/items/经验蛋糕.png',
-    iconAlt: '',
+    iconAlt: '经验图标',
   },
   {
     id: 'hp',
     label: '血量',
     iconSrc: '/images/catSpecialSkills/应急治疗.png',
-    iconAlt: '',
+    iconAlt: '血量图标',
   },
   {
     id: 'damage',
     label: '伤害',
     iconSrc: '/images/catSpecialSkills/蓄力重击.png',
-    iconAlt: '',
+    iconAlt: '伤害图标',
+  },
+  {
+    id: 'item',
+    label: '道具',
+    iconSrc: '/images/icons/item.png',
+    iconAlt: '道具图标',
   },
   {
     id: 'traitCollection',
     label: '特性大全',
     iconSrc: '/images/mouseSkills/莱恩2-蘸水笔.png',
-    iconAlt: '',
+    iconAlt: '特性图标',
   },
 ] as const;
 

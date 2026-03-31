@@ -6,6 +6,7 @@ import CharacterMDX from '../articles/Character.mdx';
 import DamageMDX from '../articles/Damage.mdx';
 import ExpMDX from '../articles/Exp.mdx';
 import HpMDX from '../articles/Hp.mdx';
+import ItemMDX from '../articles/Item.mdx';
 import MoveMDX from '../articles/Move.mdx';
 import ObjectMDX from '../articles/Object.mdx';
 
@@ -48,6 +49,13 @@ export function Character() {
   return (
     <StyledMDX className='article-content'>
       <CharacterMDX />
+    </StyledMDX>
+  );
+}
+export function Item() {
+  return (
+    <StyledMDX className='article-content'>
+      <ItemMDX />
     </StyledMDX>
   );
 }
