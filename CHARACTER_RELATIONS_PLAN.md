@@ -8,7 +8,7 @@ The main conclusion is:
 
 - The long-term architecture should remain edge-centric for shared character-character relations.
 - The immediate priority is not a new `characterRelations` entity type.
-- Phase 0 must first stabilize the current edit path semantics and add characterization tests.
+- Phase 0 must be split into separate safety slices for tests, path semantics, and index refresh policy.
 - The default plan should be the lighter path.
 - A full `characterRelations` platform migration should happen only after an explicit decision gate.
 - The legacy `sync-pr` maintenance path is de-scoped from this plan; future source patching should be handled directly by coding agents following [.github/skills/game-action-patching/SKILL.md](/d:/P/Tom-and-jerry-chase-wiki/.github/skills/game-action-patching/SKILL.md).
@@ -136,19 +136,21 @@ Implication:
 
 ## Recommended Plan
 
-## Phase 0: Stabilization and Characterization
+## Phase 0A: Characterization Baseline
 
-This phase is mandatory.
+This phase is mandatory and must happen before any production logic changes.
 
 ### Work
 
-- Fix the current relation editable path contract in [src/features/characters/components/character-detail/CharacterRelationDisplay.tsx](/d:/P/Tom-and-jerry-chase-wiki/src/features/characters/components/character-detail/CharacterRelationDisplay.tsx) and/or [src/components/ui/editable.tsx](/d:/P/Tom-and-jerry-chase-wiki/src/components/ui/editable.tsx).
-- Ensure relation description editing does not depend on malformed or ambiguous nested paths.
-- Remove any assumption that relation arrays can be addressed by `itemId` through dot-path access unless that is actually implemented.
-- Document the current hybrid runtime behavior explicitly so follow-up work does not accidentally assume graph-only reads.
-- Review relation-index refresh policy and eliminate unconditional full rebuilds on hot read paths.
 - Add characterization tests for the current relation projection layer and current edit behavior.
+- Document the current hybrid runtime behavior explicitly so follow-up work does not accidentally assume graph-only reads.
 - Record that source-file patching is outside the runtime architecture plan and will be handled, when needed, by the coding-agent workflow in [.github/skills/game-action-patching/SKILL.md](/d:/P/Tom-and-jerry-chase-wiki/.github/skills/game-action-patching/SKILL.md).
+
+### Rules
+
+- No production logic changes.
+- No perf-policy changes.
+- Only tests and minimal test-only helpers.
 
 ### Minimum test coverage
 
@@ -158,18 +160,71 @@ This phase is mandatory.
 - Page-local relation edits on a character page update the rendered relation view as expected.
 - Draft counting in [src/context/EditModeContext.tsx](/d:/P/Tom-and-jerry-chase-wiki/src/context/EditModeContext.tsx) correctly counts relation edits for the current character page.
 - Public replay through [src/lib/gameData/publicActions.ts](/d:/P/Tom-and-jerry-chase-wiki/src/lib/gameData/publicActions.ts) and [src/hooks/usePublicGameDataActions.ts](/d:/P/Tom-and-jerry-chase-wiki/src/hooks/usePublicGameDataActions.ts) still applies relation edits correctly.
-- Relation index is not rebuilt unconditionally on every `getCharacterRelation()` call in hot paths.
+
+### Exit criteria
+
+- Tests capture current hybrid user-visible behavior.
+- The migration baseline is trustworthy before any behavior change.
+- No production code behavior changed in this slice.
+
+## Phase 0B: Path Contract Stabilization
+
+This phase is mandatory and must happen after Phase 0A.
+
+### Work
+
+- Fix the current relation editable path contract in [src/features/characters/components/character-detail/CharacterRelationDisplay.tsx](/d:/P/Tom-and-jerry-chase-wiki/src/features/characters/components/character-detail/CharacterRelationDisplay.tsx) and/or [src/components/ui/editable.tsx](/d:/P/Tom-and-jerry-chase-wiki/src/components/ui/editable.tsx).
+- Ensure relation description editing does not depend on malformed or ambiguous nested paths.
+- Remove any assumption that relation arrays can be addressed by `itemId` through dot-path access unless that is actually implemented.
+
+### Rules
+
+- No perf-policy changes.
+- No opportunistic refactors.
+- No intentional behavior changes beyond removing malformed or misleading path semantics.
+
+### Validation
+
+- Re-run Phase 0A tests.
+- Run focused manual smoke checks on relation editing and public replay behavior.
 
 ### Exit criteria
 
 - Relation edit widgets use a coherent path contract.
-- Tests prove current relation editing behavior is stable enough to serve as a migration baseline.
 - No known malformed-path behavior remains in relation editing.
+- Phase 0A tests still pass.
+
+## Phase 0C: Relation Index Refresh Policy
+
+This phase is mandatory and must happen after Phase 0B.
+
+### Work
+
+- Review relation-index refresh policy and eliminate unconditional full rebuilds on hot read paths.
+- Add targeted freshness tests so index reuse does not introduce stale relation output.
+- Add one focused perf sanity check if practical.
+
+### Rules
+
+- No relation editor path changes in this slice.
+- No unrelated refactors.
+- Keep scope limited to index refresh / invalidation policy and its direct test coverage.
+
+### Validation
+
+- Re-run Phase 0A tests.
+- Add targeted tests for freshness and invalidation.
+- Run one focused check for repeated `getCharacterRelation()` usage on a looped screen such as [RecommendedPageClient.tsx](</d:/P/Tom-and-jerry-chase-wiki/src/app/(main)/recommended/RecommendedPageClient.tsx>).
+
+### Exit criteria
+
 - The current hot-path relation lookup no longer pays unnecessary full-index rebuild cost.
+- Relation output stays correct under the Phase 0A baseline tests.
+- Index invalidation behavior is explicit and test-covered.
 
 ## Phase 1: Lightweight Boundary Cleanup
 
-This is the default path after Phase 0.
+This is the default path after Phase 0A through 0C.
 
 ### Work
 
@@ -280,11 +335,13 @@ Introduce `entityType: 'characterRelations'` as a first-class editable and publi
 
 ## Suggested Implementation Order
 
-1. Phase 0 stabilization and tests
-2. Phase 1 lightweight boundary cleanup
-3. Phase 2 validation/tooling improvements
-4. Decision gate
-5. Phase 3 only if explicitly approved
+1. Phase 0A characterization baseline
+2. Phase 0B path contract stabilization
+3. Phase 0C relation index refresh policy
+4. Phase 1 lightweight boundary cleanup
+5. Phase 2 validation/tooling improvements
+6. Decision gate
+7. Phase 3 only if explicitly approved
 
 ## Acceptance Criteria
 
