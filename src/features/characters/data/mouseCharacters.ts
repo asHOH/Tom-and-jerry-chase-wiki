@@ -4693,17 +4693,23 @@ const mouseCharacterDefinitions = {
         description: '',
       },
       {
-        id: '第二武器',
+        id: '全程附身流',
         pattern: '13[03]11003',
-        weaponType: 'weapon2',
+        weaponType: 'weapon1',
         description:
-          '全程附身流派加点，此加点下米雪儿的发挥高度绑定队友。（附身状态下一级被动可用{有难同当}触发，若未携带该卡则可不点）',
+          '角色强势全能或队友能力突出时使用。（附身状态下一级被动可用{有难同当}触发，若未携带该卡则可不点，六级直接点出三级哭）',
+      },
+      {
+        id: '辅助游走流',
+        pattern: '130[30]0113',
+        weaponType: 'weapon1',
+        description: '需要时可参与打团，也可以作为补推位',
       },
     ],
     knowledgeCardGroups: [
       {
         cards: ['S-铁血', 'S-舍己', 'S-缴械', 'C-救救我'],
-        description: '一武器常用。',
+        description: '通用卡。',
       },
       {
         cards: ['S-铁血', 'S-舍己', 'A-逃窜', 'C-不屈', 'C-救救我'],
@@ -4712,6 +4718,10 @@ const mouseCharacterDefinitions = {
       {
         cards: ['S-铁血', 'S-舍己', 'S-有难同当', 'C-救救我'],
         description: '二武被动流。',
+      },
+      {
+        cards: ['S-舍己', 'S-有难同当', 'B-幸运', 'C-脱身', 'C-救救我'],
+        description: '二武卡组，适用于打前期猫，需要队友配合接哭接气球。',
       },
     ],
     skills: [

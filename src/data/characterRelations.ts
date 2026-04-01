@@ -5439,6 +5439,19 @@ const characterRelations: Trait[] = [
     },
   },
   {
+    description: '附身时可吸闪，且缺伤害难以击倒附身的鼠。',
+    group: [
+      { name: '米雪儿', type: 'character' },
+      { name: '莱特宁', type: 'character' },
+    ],
+    relation: {
+      kind: 'counters',
+      subject: { name: '米雪儿', type: 'character' },
+      target: { name: '莱特宁', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
     description: '剑客汤姆缺乏霸体能力，很容易被罗菲连续控制。',
     group: [
       { name: '罗宾汉泰菲', type: 'character' },
