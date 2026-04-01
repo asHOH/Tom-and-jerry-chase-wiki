@@ -11,19 +11,28 @@ The main conclusion is:
 - Phase 0 must first stabilize the current edit path semantics and add characterization tests.
 - The default plan should be the lighter path.
 - A full `characterRelations` platform migration should happen only after an explicit decision gate.
+- The legacy `sync-pr` maintenance path is de-scoped from this plan; future source patching should be handled directly by coding agents following [.github/skills/game-action-patching/SKILL.md](/d:/P/Tom-and-jerry-chase-wiki/.github/skills/game-action-patching/SKILL.md).
 
 ## Current State
 
-### Read model
+### Runtime read model
 
-The project already uses a shared relation graph as its canonical read-side source:
+The project does not currently use a pure graph-only runtime read model.
 
-- [src/data/characterRelations.ts](/d:/P/Tom-and-jerry-chase-wiki/src/data/characterRelations.ts)
-- [src/data/traits.ts](/d:/P/Tom-and-jerry-chase-wiki/src/data/traits.ts)
-- [src/features/shared/traits/relationIndex.ts](/d:/P/Tom-and-jerry-chase-wiki/src/features/shared/traits/relationIndex.ts)
-- [src/features/characters/utils/relations.ts](/d:/P/Tom-and-jerry-chase-wiki/src/features/characters/utils/relations.ts)
+Instead, runtime relation reads are hybrid:
 
-This is already suitable for the requirement that one character-character relation can affect two pages.
+- shared relation graph projection from:
+  - [src/data/characterRelations.ts](/d:/P/Tom-and-jerry-chase-wiki/src/data/characterRelations.ts)
+  - [src/data/traits.ts](/d:/P/Tom-and-jerry-chase-wiki/src/data/traits.ts)
+  - [src/features/shared/traits/relationIndex.ts](/d:/P/Tom-and-jerry-chase-wiki/src/features/shared/traits/relationIndex.ts)
+  - [src/features/characters/utils/relations.ts](/d:/P/Tom-and-jerry-chase-wiki/src/features/characters/utils/relations.ts)
+- page-local legacy overlay from the editable `characters` store in:
+  - [src/data/store.ts](/d:/P/Tom-and-jerry-chase-wiki/src/data/store.ts)
+  - [src/features/characters/utils/relations.ts](/d:/P/Tom-and-jerry-chase-wiki/src/features/characters/utils/relations.ts)
+- synthesized inverse legacy links by scanning all characters in:
+  - [src/features/characters/utils/relations.ts](/d:/P/Tom-and-jerry-chase-wiki/src/features/characters/utils/relations.ts)
+
+So the long-term architectural direction should still be edge-centric for shared character-character relations, but any migration plan must treat current runtime behavior as hybrid rather than graph-only.
 
 ### Write model
 
@@ -34,7 +43,6 @@ The current edit mode does not edit the shared relation graph directly. Instead,
 - [src/lib/edit/diffUtils.ts](/d:/P/Tom-and-jerry-chase-wiki/src/lib/edit/diffUtils.ts)
 - [src/lib/gameData/publicActions.ts](/d:/P/Tom-and-jerry-chase-wiki/src/lib/gameData/publicActions.ts)
 - [src/hooks/usePublicGameDataActions.ts](/d:/P/Tom-and-jerry-chase-wiki/src/hooks/usePublicGameDataActions.ts)
-- [src/app/api/admin/sync-pr/route.ts](/d:/P/Tom-and-jerry-chase-wiki/src/app/api/admin/sync-pr/route.ts)
 
 This mismatch between read model and write model is the root of the current complexity.
 
@@ -60,6 +68,19 @@ Implication:
 - Fix this first.
 - Do not start architecture migration work before path semantics are coherent and test-covered.
 
+### 1a. Current runtime behavior is hybrid, not graph-only
+
+This is also real and changes how migration should be framed.
+
+Implication:
+
+- The plan must not describe current runtime behavior as if it were already “canonical shared graph only”.
+- Any adapter or migration must preserve:
+  - graph-derived relations
+  - page-local legacy overlays
+  - synthesized inverse legacy links
+- Phase 0 and Phase 1 must use characterization tests to lock current user-visible behavior before changing architecture.
+
 ### 2. Adding `entityType: characterRelations` is a platform migration
 
 This is also real.
@@ -70,7 +91,6 @@ It is not only a relation-module refactor. It would require coordinated changes 
 - draft counting and per-page draft summaries
 - server public replay
 - client public replay
-- admin sync target resolution and patching
 - wiki history type mapping
 - likely moderation and tooling assumptions around path shape
 
@@ -79,13 +99,27 @@ Implication:
 - This should be treated as a strategic investment.
 - It should not be the default plan for a minor cleanup.
 
+### 3. Relation index rebuild cost is immediate, not optional
+
+This is real and should be moved earlier in the plan.
+
+Why it matters:
+
+- [src/features/characters/utils/relations.ts](/d:/P/Tom-and-jerry-chase-wiki/src/features/characters/utils/relations.ts) unconditionally calls `refreshRelationIndex()` in `getCharacterRelation()`.
+- Some screens call `getCharacterRelation()` in loops, such as [RecommendedPageClient.tsx](</d:/P/Tom-and-jerry-chase-wiki/src/app/(main)/recommended/RecommendedPageClient.tsx>).
+- [src/features/shared/traits/relationIndex.ts](/d:/P/Tom-and-jerry-chase-wiki/src/features/shared/traits/relationIndex.ts) rebuilds the whole index.
+
+Implication:
+
+- Relation-index refresh policy should be part of the main path, not a later optional optimization.
+
 ## Goals
 
 ### Primary goals
 
 - Make relation editing behavior reliable and understandable.
 - Keep edit counting, submit payloads, and public replay correct.
-- Reduce architecture confusion without breaking existing moderation and sync workflows.
+- Reduce architecture confusion without breaking existing moderation and runtime replay workflows.
 
 ### Secondary goals
 
@@ -98,6 +132,7 @@ Implication:
 - Replacing the entire game-data action system immediately.
 - Rebuilding relation rendering from scratch.
 - Migrating to a new entity type before the current path contract is stabilized.
+- Maintaining or extending the legacy `sync-pr` route as part of this effort.
 
 ## Recommended Plan
 
@@ -110,21 +145,27 @@ This phase is mandatory.
 - Fix the current relation editable path contract in [src/features/characters/components/character-detail/CharacterRelationDisplay.tsx](/d:/P/Tom-and-jerry-chase-wiki/src/features/characters/components/character-detail/CharacterRelationDisplay.tsx) and/or [src/components/ui/editable.tsx](/d:/P/Tom-and-jerry-chase-wiki/src/components/ui/editable.tsx).
 - Ensure relation description editing does not depend on malformed or ambiguous nested paths.
 - Remove any assumption that relation arrays can be addressed by `itemId` through dot-path access unless that is actually implemented.
+- Document the current hybrid runtime behavior explicitly so follow-up work does not accidentally assume graph-only reads.
+- Review relation-index refresh policy and eliminate unconditional full rebuilds on hot read paths.
 - Add characterization tests for the current relation projection layer and current edit behavior.
+- Record that source-file patching is outside the runtime architecture plan and will be handled, when needed, by the coding-agent workflow in [.github/skills/game-action-patching/SKILL.md](/d:/P/Tom-and-jerry-chase-wiki/.github/skills/game-action-patching/SKILL.md).
 
 ### Minimum test coverage
 
 - `getCharacterRelation()` returns expected `counters`, `counteredBy`, `counterEachOther`, and `collaborators` from the shared relation graph.
+- `getCharacterRelation()` preserves current hybrid behavior, including graph projection plus legacy overlay merge and inverse legacy synthesis.
 - Inverse projection from other characters still works.
 - Page-local relation edits on a character page update the rendered relation view as expected.
 - Draft counting in [src/context/EditModeContext.tsx](/d:/P/Tom-and-jerry-chase-wiki/src/context/EditModeContext.tsx) correctly counts relation edits for the current character page.
 - Public replay through [src/lib/gameData/publicActions.ts](/d:/P/Tom-and-jerry-chase-wiki/src/lib/gameData/publicActions.ts) and [src/hooks/usePublicGameDataActions.ts](/d:/P/Tom-and-jerry-chase-wiki/src/hooks/usePublicGameDataActions.ts) still applies relation edits correctly.
+- Relation index is not rebuilt unconditionally on every `getCharacterRelation()` call in hot paths.
 
 ### Exit criteria
 
 - Relation edit widgets use a coherent path contract.
 - Tests prove current relation editing behavior is stable enough to serve as a migration baseline.
 - No known malformed-path behavior remains in relation editing.
+- The current hot-path relation lookup no longer pays unnecessary full-index rebuild cost.
 
 ## Phase 1: Lightweight Boundary Cleanup
 
@@ -133,7 +174,8 @@ This is the default path after Phase 0.
 ### Work
 
 - Keep `entityType: 'characters'` unchanged.
-- Keep the existing shared relation graph in [src/data/characterRelations.ts](/d:/P/Tom-and-jerry-chase-wiki/src/data/characterRelations.ts) as the read-side canonical source.
+- Keep the existing shared relation graph in [src/data/characterRelations.ts](/d:/P/Tom-and-jerry-chase-wiki/src/data/characterRelations.ts) as the primary shared source for character-character relation semantics.
+- Preserve current hybrid runtime reads during this phase unless an explicit behavior change is approved.
 - Introduce a clear relation-domain adapter between:
   - shared relation graph projection
   - page-local edit overlay
@@ -145,6 +187,7 @@ This is the default path after Phase 0.
 - Treat page-local relation edits as an overlay model, not as if they were the same thing as canonical relation storage.
 - Avoid cross-entity writes.
 - Keep current publish/dispersal behavior compatible with existing `characters` actions.
+- Make action path production explicit and consistent with current runtime replay semantics.
 
 ### Suggested boundaries
 
@@ -159,17 +202,17 @@ This is the default path after Phase 0.
 
 - Relation editing no longer relies on hidden assumptions in UI components.
 - Relation edit code has a dedicated boundary module instead of scattered logic.
-- Existing public replay and admin sync continue to work without new entity-type support.
+- Existing public replay continues to work without new entity-type support.
+- Runtime relation output remains behaviorally compatible with the current hybrid model unless deliberately changed.
 
 ## Phase 2: Validation and Tooling Improvements
 
-This phase is still part of the lightweight path.
+This phase is still part of the lightweight path, but it now focuses on data integrity and tooling after the earlier stabilization/performance work is done.
 
 ### Work
 
 - Add invariant checks for duplicate `(kind, subject, target)` relation entries in [src/data/characterRelations.ts](/d:/P/Tom-and-jerry-chase-wiki/src/data/characterRelations.ts).
 - Add explicit validation for contradictory pairs where applicable.
-- Reduce relation-index rebuild overhead if needed.
 - Add tests around dedupe and merge behavior in [src/features/characters/utils/relations.ts](/d:/P/Tom-and-jerry-chase-wiki/src/features/characters/utils/relations.ts).
 
 ### Optional tooling
@@ -198,7 +241,7 @@ After Phases 0 through 2, decide whether to stop or escalate.
 - relation editing is a strategic content workflow
 - relation history/moderation should be first-class
 - patching back to [src/data/characterRelations.ts](/d:/P/Tom-and-jerry-chase-wiki/src/data/characterRelations.ts) is a long-term requirement
-- the team accepts platform-level changes across edit mode, replay, admin sync, and history tooling
+- the team accepts platform-level changes across edit mode, replay, and history tooling
 
 ## Phase 3: Full `characterRelations` Entity Migration
 
@@ -213,7 +256,6 @@ Introduce `entityType: 'characterRelations'` as a first-class editable and publi
 - Add `characterRelations` to publishable entity definitions and stores in [src/context/EditModeContext.tsx](/d:/P/Tom-and-jerry-chase-wiki/src/context/EditModeContext.tsx).
 - Add server public replay support in [src/lib/gameData/publicActions.ts](/d:/P/Tom-and-jerry-chase-wiki/src/lib/gameData/publicActions.ts).
 - Add client public replay support in [src/hooks/usePublicGameDataActions.ts](/d:/P/Tom-and-jerry-chase-wiki/src/hooks/usePublicGameDataActions.ts).
-- Add admin sync target resolution and file patching for [src/data/characterRelations.ts](/d:/P/Tom-and-jerry-chase-wiki/src/data/characterRelations.ts) in [src/app/api/admin/sync-pr/route.ts](/d:/P/Tom-and-jerry-chase-wiki/src/app/api/admin/sync-pr/route.ts).
 - Add wiki history mapping in [src/lib/wikiHistoryFromActions.ts](/d:/P/Tom-and-jerry-chase-wiki/src/lib/wikiHistoryFromActions.ts).
 - Redesign draft counting so it no longer assumes the first path segment is the current page entity id.
 
@@ -232,9 +274,9 @@ Introduce `entityType: 'characterRelations'` as a first-class editable and publi
 ### Exit criteria
 
 - Relation edits publish as `characterRelations` actions.
-- Public replay and admin sync patch the relation source file correctly.
 - Per-page relation views are still correct.
 - Wiki history and moderation flows remain coherent.
+- If source-file patching is still desired, the workflow is handled outside this plan through the coding-agent process described in [.github/skills/game-action-patching/SKILL.md](/d:/P/Tom-and-jerry-chase-wiki/.github/skills/game-action-patching/SKILL.md).
 
 ## Suggested Implementation Order
 
@@ -250,13 +292,13 @@ The lightweight plan is successful if:
 
 - relation edit widgets have coherent path semantics
 - relation projection is covered by tests
-- current public replay and admin sync remain functional
+- current public replay remains functional
 - developers can reason about read-side vs edit-side relation behavior without tracing multiple hidden assumptions
 
 The full migration is successful if:
 
 - `characterRelations` becomes a first-class editable entity
-- relation actions replay and sync back to the relation source file
+- relation actions replay correctly at runtime
 - per-page projection and moderation behavior remain correct
 
 ## Recommendation
