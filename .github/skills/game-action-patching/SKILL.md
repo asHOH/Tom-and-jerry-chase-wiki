@@ -93,13 +93,15 @@ If multiple approved actions on the same date touch the same logical relation ar
 ## Core Rules
 
 1. If unspecified, default to year 2026.
-2. Never blindly replay action paths into source files. Always map to current structure first.
-3. Before patch planning, read src/app/admin/sync-pr/route.ts as the behavioral reference for sync intent and status handling.
-4. If the route path changed, locate the active admin sync endpoint first, then continue.
-5. If action volume is large, classify based on content into smaller chunks and stop for approval before each chunk.
-6. Never update status to "synced" until code edits and validations for that chunk succeed.
-7. Use utf-8 encoding.
-8. Never mark a chunk as synced when code mapping is unresolved, ambiguous, or intentionally skipped.
+2. Time zone policy: always interpret all date/date-range scopes in Beijing time (`Asia/Shanghai`, UTC+8), including discovery, reconciliation, and status writes.
+3. Branch policy: do all patching work on branch `data-sync`. If current branch is not `data-sync`, switch to `data-sync` before any code edit or status write.
+4. Never blindly replay action paths into source files. Always map to current structure first.
+5. Before patch planning, read src/app/admin/sync-pr/route.ts as the behavioral reference for sync intent and status handling.
+6. If the route path changed, locate the active admin sync endpoint first, then continue.
+7. If action volume is large, classify based on content into smaller chunks and stop for approval before each chunk.
+8. Never update status to "synced" until code edits and validations for that chunk succeed.
+9. Use utf-8 encoding.
+10. Never mark a chunk as synced when code mapping is unresolved, ambiguous, or intentionally skipped.
 
 ## Workflow
 
@@ -192,7 +194,7 @@ Placeholders:
 select g.status, count(*) as cnt
 from game_data_actions g
 left join users_public_view u on u.id = g.created_by
-where date(g.created_at) = DATE
+where ((g.created_at at time zone 'Asia/Shanghai')::date) = DATE
   and coalesce(u.nickname, '') = NICK
 group by g.status
 order by g.status;
@@ -204,7 +206,7 @@ order by g.status;
 select g.id, g.entity_type, g.status, g.created_at, coalesce(u.nickname, '') as created_by_nickname, g.message, g.entry
 from game_data_actions g
 left join users_public_view u on u.id = g.created_by
-where date(g.created_at) = DATE
+where ((g.created_at at time zone 'Asia/Shanghai')::date) = DATE
   and g.status = 'approved'
   and coalesce(u.nickname, '') = NICK
 order by g.created_at asc;
@@ -226,7 +228,7 @@ update game_data_actions g
 set status = 'synced'
 from users_public_view u
 where u.id = g.created_by
-  and date(g.created_at) = DATE
+  and ((g.created_at at time zone 'Asia/Shanghai')::date) = DATE
   and coalesce(u.nickname, '') = NICK
   and g.status = 'approved'
   and g.id not in (IDS);
@@ -238,7 +240,7 @@ where u.id = g.created_by
 select status, count(*) as cnt
 from game_data_actions g
 left join users_public_view u on u.id = g.created_by
-where date(g.created_at) = DATE
+where ((g.created_at at time zone 'Asia/Shanghai')::date) = DATE
   and coalesce(u.nickname, '') = NICK
 group by status
 order by status;
@@ -250,7 +252,7 @@ order by status;
 select g.id, g.status, g.message, g.entry
 from game_data_actions g
 left join users_public_view u on u.id = g.created_by
-where date(g.created_at) = DATE
+where ((g.created_at at time zone 'Asia/Shanghai')::date) = DATE
   and coalesce(u.nickname, '') = NICK
   and g.status <> 'synced'
 order by g.created_at asc;
