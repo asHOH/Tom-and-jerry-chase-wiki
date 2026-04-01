@@ -48,53 +48,35 @@ Selection heuristic:
 
 ## Relation Kind Mapping (Must Follow)
 
-`src/data/characterRelations.ts` is authored in a raw-definition format and normalized at module load.
-
-When an action path expresses relation semantics (`counters`, `counterEachOther`, `counteredBy`, `advantageMaps`, `advantageModes`, etc.), patch the raw definition under the subject character key with this shape:
+When an action path expresses relation semantics (`counters`, `counterEachOther`, `counteredBy`, `advantageMaps`, `advantageModes`, etc.), map it to one normalized relation entry in `src/data/characterRelations.ts` with this shape:
 
 ```ts
 {
-  A: {
-    counters: [
-      {
-        target: character('B'),
-        description: '...',
-        isMinor: false,
-      },
-    ],
+  description: '...',
+  group: [
+    { name: 'A', type: 'character' },
+    { name: 'B', type: 'character' | 'map' | 'mode' | 'knowledgeCard' | 'specialSkill' },
+  ],
+  relation: {
+    kind: '...',
+    subject: { ... },
+    target: { ... },
+    isMinor: boolean,
   },
 }
 ```
 
-Supported target helpers:
-
-- `character(name)`
-- `map(name)`
-- `mode(name)`
-- `knowledgeCard(name, factionId)`
-- `specialSkill(name, factionId)`
-
-Normalization rules:
-
-- `subject` is always the containing character key.
-- `group` is auto-generated as `[subject, target]`.
-- `relation.description` must stay unset.
-- Top-level `description` remains the user-facing text source.
-- `isMinor` may be omitted and defaults to `false`.
-- Do not add empty relation arrays.
-- `factionId` is never inferred for `knowledgeCard` or `specialSkill`; provide it explicitly.
-
 Required mapping rules:
 
-1. `X.counters` -> `X.counters[]`, `target = character(Y)`.
-2. `X.counteredBy` -> `X.counteredBy[]`, `target = character(Y)`.
-3. `X.counterEachOther` -> `X.counterEachOther[]`, `target = character(Y)`.
-4. `X.advantageMaps` -> `X.advantageMaps[]`, `target = map(Y)`.
-5. `X.disadvantageMaps` -> `X.disadvantageMaps[]`, `target = map(Y)`.
-6. `X.advantageModes` -> `X.advantageModes[]`, `target = mode(Y)`.
-7. `X.disadvantageModes` -> `X.disadvantageModes[]`, `target = mode(Y)`.
-8. `X.counteredByKnowledgeCards` -> `X.counteredByKnowledgeCards[]`, `target = knowledgeCard(Y, factionId)`.
-9. `X.counteredBySpecialSkills` -> `X.counteredBySpecialSkills[]`, `target = specialSkill(Y, factionId)`.
+1. `X.counters` -> `kind: 'counters'`, `subject = X`, `target = Y`.
+2. `X.counteredBy` -> `kind: 'counteredBy'`, `subject = X`, `target = Y`.
+3. `X.counterEachOther` -> `kind: 'counterEachOther'`, `subject = X`, `target = Y`.
+4. `X.advantageMaps` -> `kind: 'advantageMaps'`, `subject = X`, `target = map`.
+5. `X.disadvantageMaps` -> `kind: 'disadvantageMaps'`, `subject = X`, `target = map`.
+6. `X.advantageModes` -> `kind: 'advantageModes'`, `subject = X`, `target = mode`.
+7. `X.disadvantageModes` -> `kind: 'disadvantageModes'`, `subject = X`, `target = mode`.
+8. `X.counteredByKnowledgeCards` -> `kind: 'counteredByKnowledgeCards'`, `subject = X`, `target = knowledgeCard` (with factionId if provided).
+9. `X.counteredBySpecialSkills` -> `kind: 'counteredBySpecialSkills'`, `subject = X`, `target = specialSkill` (with factionId if provided).
 
 Do not store relation text under `relation.description`; keep user-facing text in top-level `description`.
 Do not downgrade to partial/placeholder description (e.g. empty string) when newValue provides concrete text.
