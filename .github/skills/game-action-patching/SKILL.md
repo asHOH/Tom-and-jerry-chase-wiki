@@ -83,30 +83,18 @@ Normalization rules:
 - `isMinor` may be omitted and defaults to `false`.
 - Do not add empty relation arrays.
 - `factionId` is never inferred for `knowledgeCard` or `specialSkill`; provide it explicitly.
-- Stored character `counteredBy` is invalid source shape and must be normalized to `counters`.
-- `collaborators` are stored canonically once.
-- `counterEachOther` is stored canonically on the mouse side.
 
 Required mapping rules:
 
 1. `X.counters` -> `X.counters[]`, `target = character(Y)`.
-2. `X.counteredBy` -> `Y.counters[]`, `target = character(X)`.
-3. `X.counterEachOther` -> patch the semantic relationship, then run the normalizer.
-4. `X.collaborators` -> patch the semantic relationship, then run the normalizer.
-5. `X.advantageMaps` -> `X.advantageMaps[]`, `target = map(Y)`.
-6. `X.disadvantageMaps` -> `X.disadvantageMaps[]`, `target = map(Y)`.
-7. `X.advantageModes` -> `X.advantageModes[]`, `target = mode(Y)`.
-8. `X.disadvantageModes` -> `X.disadvantageModes[]`, `target = mode(Y)`.
-9. `X.counteredByKnowledgeCards` -> `X.counteredByKnowledgeCards[]`, `target = knowledgeCard(Y, factionId)`.
-10. `X.counteredBySpecialSkills` -> `X.counteredBySpecialSkills[]`, `target = specialSkill(Y, factionId)`.
-
-If a chunk edits `src/data/characterRelations.ts`, always run:
-
-- `node scripts/normalize-character-relations.mjs`
-
-Before marking that chunk synced, verify:
-
-- `node scripts/normalize-character-relations.mjs --check --report`
+2. `X.counteredBy` -> `X.counteredBy[]`, `target = character(Y)`.
+3. `X.counterEachOther` -> `X.counterEachOther[]`, `target = character(Y)`.
+4. `X.advantageMaps` -> `X.advantageMaps[]`, `target = map(Y)`.
+5. `X.disadvantageMaps` -> `X.disadvantageMaps[]`, `target = map(Y)`.
+6. `X.advantageModes` -> `X.advantageModes[]`, `target = mode(Y)`.
+7. `X.disadvantageModes` -> `X.disadvantageModes[]`, `target = mode(Y)`.
+8. `X.counteredByKnowledgeCards` -> `X.counteredByKnowledgeCards[]`, `target = knowledgeCard(Y, factionId)`.
+9. `X.counteredBySpecialSkills` -> `X.counteredBySpecialSkills[]`, `target = specialSkill(Y, factionId)`.
 
 Do not store relation text under `relation.description`; keep user-facing text in top-level `description`.
 Do not downgrade to partial/placeholder description (e.g. empty string) when newValue provides concrete text.

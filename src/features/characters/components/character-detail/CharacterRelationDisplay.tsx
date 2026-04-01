@@ -10,7 +10,6 @@ import { useNavigation } from '@/hooks/useNavigation';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { CharacterRelationItem, type FactionId, type TraitRelationKind } from '@/data/types';
-import { getCanonicalCharacterRelationStorageLocation } from '@/features/characters/utils/characterRelationCanonicalization';
 import { getCharacterRelation } from '@/features/characters/utils/relations';
 import { CharacterSelector } from '@/components/ui/CharacterSelector';
 import { editable } from '@/components/ui/editable';
@@ -49,17 +48,47 @@ type RelationThemeClasses = {
 
 const e = editable('characters');
 
+const relationKinds: TraitRelationKind[] = [
+  'counters',
+  'counteredBy',
+  'counterEachOther',
+  'collaborators',
+  'countersKnowledgeCards',
+  'counteredByKnowledgeCards',
+  'countersSpecialSkills',
+  'counteredBySpecialSkills',
+  'advantageMaps',
+  'advantageModes',
+  'disadvantageMaps',
+  'disadvantageModes',
+];
+
 const getEditableCharacterRelations = (
-  characterId: string
-): Record<TraitRelationKind, CharacterRelationItem[]> => getCharacterRelation(characterId);
+  characterId: string,
+  character?: Partial<Record<TraitRelationKind, CharacterRelationItem[]>>
+): Record<TraitRelationKind, CharacterRelationItem[]> => {
+  const characterRecord = character ?? characters[characterId];
+  const fromRelationIndex = getCharacterRelation(characterId);
+  if (!characterRecord) {
+    return fromRelationIndex;
+  }
 
-const getRelationStorageLocation = (characterId: string, kind: TraitRelationKind, itemId: string) =>
-  getCanonicalCharacterRelationStorageLocation(characterId, kind, itemId);
+  const next = { ...fromRelationIndex } as Record<TraitRelationKind, CharacterRelationItem[]>;
 
-const getStoredRelationItems = (characterId: string, kind: TraitRelationKind, itemId: string) => {
-  const storageLocation = getRelationStorageLocation(characterId, kind, itemId);
-  if (!storageLocation) return [];
-  return getEditableCharacterRelations(storageLocation.ownerId)[storageLocation.kind] ?? [];
+  relationKinds.forEach((kind) => {
+    const stored = (characterRecord as Partial<Record<TraitRelationKind, CharacterRelationItem[]>>)[
+      kind
+    ];
+    if (Array.isArray(stored)) {
+      next[kind] = stored.map((item) => ({
+        id: item.id,
+        description: item.description ?? '',
+        isMinor: !!item.isMinor,
+      }));
+    }
+  });
+
+  return next;
 };
 
 const updateRelationItems = (
@@ -79,13 +108,11 @@ const updateRelationItem = (
   itemId: string,
   updater: (item: CharacterRelationItem) => CharacterRelationItem
 ) => {
-  const storageLocation = getRelationStorageLocation(characterId, kind, itemId);
-  if (!storageLocation) return;
-  const current = getStoredRelationItems(characterId, kind, itemId);
+  const current = getEditableCharacterRelations(characterId)[kind] ?? [];
   updateRelationItems(
-    storageLocation.ownerId,
-    storageLocation.kind,
-    current.map((item) => (item.id === storageLocation.targetId ? updater(item) : item))
+    characterId,
+    kind,
+    current.map((item) => (item.id === itemId ? updater(item) : item))
   );
 };
 
@@ -100,14 +127,9 @@ const addRelationItem = (
   kind: TraitRelationKind,
   item: CharacterRelationItem
 ) => {
-  const storageLocation = getRelationStorageLocation(characterId, kind, item.id);
-  if (!storageLocation) return;
-  const current = getStoredRelationItems(characterId, kind, item.id);
-  if (current.some((existing) => existing.id === storageLocation.targetId)) return;
-  updateRelationItems(storageLocation.ownerId, storageLocation.kind, [
-    ...current,
-    createRelationItem(storageLocation.targetId),
-  ]);
+  const current = getEditableCharacterRelations(characterId)[kind] ?? [];
+  if (current.some((existing) => existing.id === item.id)) return;
+  updateRelationItems(characterId, kind, [...current, item]);
 };
 
 const updateRelationDescription = (
@@ -131,13 +153,11 @@ const toggleRelationMinor = (characterId: string, kind: TraitRelationKind, itemI
 };
 
 const removeRelationItem = (characterId: string, kind: TraitRelationKind, itemId: string) => {
-  const storageLocation = getRelationStorageLocation(characterId, kind, itemId);
-  if (!storageLocation) return;
-  const current = getStoredRelationItems(characterId, kind, itemId);
+  const current = getEditableCharacterRelations(characterId)[kind] ?? [];
   updateRelationItems(
-    storageLocation.ownerId,
-    storageLocation.kind,
-    current.filter((item) => item.id !== storageLocation.targetId)
+    characterId,
+    kind,
+    current.filter((item) => item.id !== itemId)
   );
 };
 
@@ -516,8 +536,6 @@ const RelationSection: React.FC<RelationSectionProps> = ({
 
   const renderCharacterItem = (item: CharacterDisplayItem) => {
     const ariaLabel = item.getAriaLabel(canEdit);
-    const canEditItemDescription =
-      canEdit && canEditDescription && item.isEditable && !!item.onUpdateDescription;
     const handleClick = () => {
       if (!canEdit) {
         item.onNavigate();
@@ -576,7 +594,7 @@ const RelationSection: React.FC<RelationSectionProps> = ({
               </button>
             )}
           </div>
-          {canEditItemDescription ? (
+          {canEdit && canEditDescription ? (
             item.descriptionPath ? (
               <e.span
                 path={`${item.descriptionPath}.description`}
@@ -604,8 +622,6 @@ const RelationSection: React.FC<RelationSectionProps> = ({
   };
 
   const renderKnowledgeCardItem = (item: KnowledgeCardDisplayItem) => {
-    const canEditItemDescription =
-      canEdit && canEditDescription && item.isEditable && !!item.onUpdateDescription;
     const handleClick = () => {
       if (!canEdit) {
         item.onNavigate();
@@ -659,7 +675,7 @@ const RelationSection: React.FC<RelationSectionProps> = ({
               </button>
             )}
           </div>
-          {canEditItemDescription ? (
+          {canEdit && canEditDescription ? (
             item.descriptionPath ? (
               <e.span
                 path={`${item.descriptionPath}.description`}
@@ -687,8 +703,6 @@ const RelationSection: React.FC<RelationSectionProps> = ({
   };
 
   const renderSpecialSkillItem = (item: SpecialSkillDisplayItem) => {
-    const canEditItemDescription =
-      canEdit && canEditDescription && item.isEditable && !!item.onUpdateDescription;
     const handleClick = () => {
       if (!canEdit) {
         item.onNavigate();
@@ -754,7 +768,7 @@ const RelationSection: React.FC<RelationSectionProps> = ({
               </button>
             )}
           </div>
-          {canEditItemDescription ? (
+          {canEdit && canEditDescription ? (
             item.descriptionPath ? (
               <e.span
                 path={`${item.descriptionPath}.description`}
@@ -782,8 +796,6 @@ const RelationSection: React.FC<RelationSectionProps> = ({
   };
 
   const renderMapItem = (item: MapDisplayItem) => {
-    const canEditItemDescription =
-      canEdit && canEditDescription && item.isEditable && !!item.onUpdateDescription;
     const handleClick = () => {
       if (!canEdit) {
         item.onNavigate();
@@ -849,7 +861,7 @@ const RelationSection: React.FC<RelationSectionProps> = ({
               </button>
             )}
           </div>
-          {canEditItemDescription ? (
+          {canEdit && canEditDescription ? (
             item.descriptionPath ? (
               <e.span
                 path={`${item.descriptionPath}.description`}
@@ -877,8 +889,6 @@ const RelationSection: React.FC<RelationSectionProps> = ({
   };
 
   const renderModeItem = (item: ModeDisplayItem) => {
-    const canEditItemDescription =
-      canEdit && canEditDescription && item.isEditable && !!item.onUpdateDescription;
     const handleClick = () => {
       if (!canEdit) {
         item.onNavigate();
@@ -944,7 +954,7 @@ const RelationSection: React.FC<RelationSectionProps> = ({
               </button>
             )}
           </div>
-          {canEditItemDescription ? (
+          {canEdit && canEditDescription ? (
             item.descriptionPath ? (
               <e.span
                 path={`${item.descriptionPath}.description`}
@@ -1026,13 +1036,16 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
   const mapsSnapshot = useSnapshot(mapsEdit);
   const modesSnapshot = useSnapshot(modesEdit);
   const specialSkillsSnapshot = useSnapshot(specialSkillsEdit);
-  useSnapshot(characters);
   const getImageUrl = React.useCallback(
     (targetId: string) =>
       AssetManager.getCharacterImageUrl(targetId, factionId === 'cat' ? 'mouse' : 'cat'),
     [factionId]
   );
-  const char = getEditableCharacterRelations(id);
+  const characterSnapshot = useSnapshot(characters[id]!);
+  const char = getEditableCharacterRelations(
+    id,
+    characterSnapshot as Partial<Record<TraitRelationKind, CharacterRelationItem[]>>
+  );
   const { handleSelectCharacter } = useAppContext();
   const { navigate } = useNavigation();
 
@@ -1050,6 +1063,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       {
         relationKind: 'counters',
         isEditable: true,
+        getDescriptionPath: (itemId) => `${id}.counters.${itemId}`,
         onToggleMinor: (itemId) => toggleRelationMinor(id, 'counters', itemId),
         onRemove: (itemId) => removeRelationItem(id, 'counters', itemId),
         onUpdateDescription: (itemId, description) =>
@@ -1062,6 +1076,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       {
         relationKind: 'countersKnowledgeCards',
         isEditable: true,
+        getDescriptionPath: (itemId) => `${id}.countersKnowledgeCards.${itemId}`,
         onToggleMinor: (itemId) => toggleRelationMinor(id, 'countersKnowledgeCards', itemId),
         onRemove: (itemId) => removeRelationItem(id, 'countersKnowledgeCards', itemId),
         onUpdateDescription: (itemId, description) =>
@@ -1077,6 +1092,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       {
         relationKind: 'countersSpecialSkills',
         isEditable: true,
+        getDescriptionPath: (itemId) => `${id}.countersSpecialSkills.${itemId}`,
         onToggleMinor: (itemId) => toggleRelationMinor(id, 'countersSpecialSkills', itemId),
         onRemove: (itemId) => removeRelationItem(id, 'countersSpecialSkills', itemId),
         onUpdateDescription: (itemId, description) =>
@@ -1097,6 +1113,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       {
         relationKind: 'counterEachOther',
         isEditable: true,
+        getDescriptionPath: (itemId) => `${id}.counterEachOther.${itemId}`,
         onToggleMinor: (itemId) => toggleRelationMinor(id, 'counterEachOther', itemId),
         onRemove: (itemId) => removeRelationItem(id, 'counterEachOther', itemId),
         onUpdateDescription: (itemId, description) =>
@@ -1116,7 +1133,12 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       },
       {
         relationKind: 'counteredBy',
-        isEditable: false,
+        isEditable: true,
+        getDescriptionPath: (itemId) => `${id}.counteredBy.${itemId}`,
+        onToggleMinor: (itemId) => toggleRelationMinor(id, 'counteredBy', itemId),
+        onRemove: (itemId) => removeRelationItem(id, 'counteredBy', itemId),
+        onUpdateDescription: (itemId, description) =>
+          updateRelationDescription(id, 'counteredBy', itemId, description),
       }
     ),
     ...buildKnowledgeCardItems(
@@ -1125,6 +1147,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       {
         relationKind: 'counteredByKnowledgeCards',
         isEditable: true,
+        getDescriptionPath: (itemId) => `${id}.counteredByKnowledgeCards.${itemId}`,
         onToggleMinor: (itemId) => toggleRelationMinor(id, 'counteredByKnowledgeCards', itemId),
         onRemove: (itemId) => removeRelationItem(id, 'counteredByKnowledgeCards', itemId),
         onUpdateDescription: (itemId, description) =>
@@ -1140,6 +1163,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       {
         relationKind: 'counteredBySpecialSkills',
         isEditable: true,
+        getDescriptionPath: (itemId) => `${id}.counteredBySpecialSkills.${itemId}`,
         onToggleMinor: (itemId) => toggleRelationMinor(id, 'counteredBySpecialSkills', itemId),
         onRemove: (itemId) => removeRelationItem(id, 'counteredBySpecialSkills', itemId),
         onUpdateDescription: (itemId, description) =>
@@ -1160,6 +1184,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       {
         relationKind: 'collaborators',
         isEditable: true,
+        getDescriptionPath: (itemId) => `${id}.collaborators.${itemId}`,
         onToggleMinor: (itemId) => toggleRelationMinor(id, 'collaborators', itemId),
         onRemove: (itemId) => removeRelationItem(id, 'collaborators', itemId),
         onUpdateDescription: (itemId, description) =>
@@ -1176,6 +1201,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       {
         relationKind: 'advantageMaps',
         isEditable: true,
+        getDescriptionPath: (itemId) => `${id}.advantageMaps.${itemId}`,
         onToggleMinor: (itemId) => toggleRelationMinor(id, 'advantageMaps', itemId),
         onRemove: (itemId) => removeRelationItem(id, 'advantageMaps', itemId),
         onUpdateDescription: (itemId, description) =>
@@ -1192,6 +1218,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       {
         relationKind: 'advantageModes',
         isEditable: true,
+        getDescriptionPath: (itemId) => `${id}.advantageModes.${itemId}`,
         onToggleMinor: (itemId) => toggleRelationMinor(id, 'advantageModes', itemId),
         onRemove: (itemId) => removeRelationItem(id, 'advantageModes', itemId),
         onUpdateDescription: (itemId, description) =>
@@ -1208,6 +1235,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       {
         relationKind: 'disadvantageMaps',
         isEditable: true,
+        getDescriptionPath: (itemId) => `${id}.disadvantageMaps.${itemId}`,
         onToggleMinor: (itemId) => toggleRelationMinor(id, 'disadvantageMaps', itemId),
         onRemove: (itemId) => removeRelationItem(id, 'disadvantageMaps', itemId),
         onUpdateDescription: (itemId, description) =>
@@ -1224,6 +1252,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       {
         relationKind: 'disadvantageModes',
         isEditable: true,
+        getDescriptionPath: (itemId) => `${id}.disadvantageModes.${itemId}`,
         onToggleMinor: (itemId) => toggleRelationMinor(id, 'disadvantageModes', itemId),
         onRemove: (itemId) => removeRelationItem(id, 'disadvantageModes', itemId),
         onUpdateDescription: (itemId, description) =>
@@ -1311,7 +1340,17 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       items: counteredByItems,
       selectors: (
         <div className='flex items-center gap-2'>
-          <div title='添加角色'></div>
+          <div title='添加角色'>
+            <CharacterSelector
+              currentCharacterId={id}
+              factionId={factionId}
+              relationType='counteredBy'
+              existingRelations={char.counteredBy}
+              onSelect={(characterId: string) =>
+                addRelationItem(id, 'counteredBy', createRelationItem(characterId))
+              }
+            />
+          </div>
           <div title='添加知识卡'>
             <KnowledgeCardSelector
               selected={char.counteredByKnowledgeCards}
