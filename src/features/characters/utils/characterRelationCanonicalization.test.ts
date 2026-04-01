@@ -1,5 +1,5 @@
-import { characterDisplayOrder } from '../data/characterMetadata';
 import {
+  characterDisplayOrder,
   getCanonicalCharacterRelationStorageLocation,
   getCanonicalCounterEachOtherOwner,
   getCharacterFaction,
@@ -8,12 +8,8 @@ import {
 
 describe('characterRelationCanonicalization', () => {
   it('should rank mice before cats using character grid order', () => {
-    const firstMouseId = characterDisplayOrder.find(
-      (id: string) => getCharacterFaction(id) === 'mouse'
-    );
-    const firstCatId = characterDisplayOrder.find(
-      (id: string) => getCharacterFaction(id) === 'cat'
-    );
+    const firstMouseId = characterDisplayOrder.find((id) => getCharacterFaction(id) === 'mouse');
+    const firstCatId = characterDisplayOrder.find((id) => getCharacterFaction(id) === 'cat');
 
     expect(firstMouseId).toBeDefined();
     expect(firstCatId).toBeDefined();
@@ -23,9 +19,7 @@ describe('characterRelationCanonicalization', () => {
   });
 
   it('should store collaborators on the lower-ranked owner', () => {
-    const mouseIds = characterDisplayOrder.filter(
-      (id: string) => getCharacterFaction(id) === 'mouse'
-    );
+    const mouseIds = characterDisplayOrder.filter((id) => getCharacterFaction(id) === 'mouse');
     const [firstMouseId, secondMouseId] = mouseIds;
 
     expect(firstMouseId).toBeDefined();
@@ -45,8 +39,8 @@ describe('characterRelationCanonicalization', () => {
   });
 
   it('should store counterEachOther on the mouse side only', () => {
-    const mouseId = characterDisplayOrder.find((id: string) => getCharacterFaction(id) === 'mouse');
-    const catId = characterDisplayOrder.find((id: string) => getCharacterFaction(id) === 'cat');
+    const mouseId = characterDisplayOrder.find((id) => getCharacterFaction(id) === 'mouse');
+    const catId = characterDisplayOrder.find((id) => getCharacterFaction(id) === 'cat');
 
     expect(mouseId).toBeDefined();
     expect(catId).toBeDefined();
@@ -56,9 +50,7 @@ describe('characterRelationCanonicalization', () => {
   });
 
   it('should reject same-faction counterEachOther pairs', () => {
-    const mouseIds = characterDisplayOrder.filter(
-      (id: string) => getCharacterFaction(id) === 'mouse'
-    );
+    const mouseIds = characterDisplayOrder.filter((id) => getCharacterFaction(id) === 'mouse');
     const [firstMouseId, secondMouseId] = mouseIds;
 
     expect(firstMouseId).toBeDefined();

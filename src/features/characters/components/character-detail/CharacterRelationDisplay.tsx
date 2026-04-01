@@ -5,7 +5,6 @@ import clsx from 'clsx';
 import { useSnapshot } from 'valtio';
 
 import { AssetManager } from '@/lib/assetManager';
-import { withActionContext } from '@/lib/edit/diffUtils';
 import { setNestedProperty } from '@/lib/editUtils';
 import { useNavigation } from '@/hooks/useNavigation';
 import { useAppContext } from '@/context/AppContext';
@@ -64,17 +63,14 @@ const getStoredRelationItems = (characterId: string, kind: TraitRelationKind, it
 };
 
 const updateRelationItems = (
-  sourceCharacterId: string,
-  storageOwnerId: string,
+  characterId: string,
   kind: TraitRelationKind,
   items: CharacterRelationItem[]
 ) => {
-  withActionContext({ sourceEntityId: sourceCharacterId }, () => {
-    setNestedProperty(characters, `${storageOwnerId}.${kind}`, items);
-    if (characters[storageOwnerId]) {
-      (characters[storageOwnerId] as Record<string, unknown>)[kind] = items;
-    }
-  });
+  setNestedProperty(characters, `${characterId}.${kind}`, items);
+  if (characters[characterId]) {
+    (characters[characterId] as Record<string, unknown>)[kind] = items;
+  }
 };
 
 const updateRelationItem = (
@@ -87,7 +83,6 @@ const updateRelationItem = (
   if (!storageLocation) return;
   const current = getStoredRelationItems(characterId, kind, itemId);
   updateRelationItems(
-    characterId,
     storageLocation.ownerId,
     storageLocation.kind,
     current.map((item) => (item.id === storageLocation.targetId ? updater(item) : item))
@@ -109,7 +104,7 @@ const addRelationItem = (
   if (!storageLocation) return;
   const current = getStoredRelationItems(characterId, kind, item.id);
   if (current.some((existing) => existing.id === storageLocation.targetId)) return;
-  updateRelationItems(characterId, storageLocation.ownerId, storageLocation.kind, [
+  updateRelationItems(storageLocation.ownerId, storageLocation.kind, [
     ...current,
     createRelationItem(storageLocation.targetId),
   ]);
@@ -140,7 +135,6 @@ const removeRelationItem = (characterId: string, kind: TraitRelationKind, itemId
   if (!storageLocation) return;
   const current = getStoredRelationItems(characterId, kind, itemId);
   updateRelationItems(
-    characterId,
     storageLocation.ownerId,
     storageLocation.kind,
     current.filter((item) => item.id !== storageLocation.targetId)
@@ -1122,11 +1116,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       },
       {
         relationKind: 'counteredBy',
-        isEditable: true,
-        onToggleMinor: (itemId) => toggleRelationMinor(id, 'counteredBy', itemId),
-        onRemove: (itemId) => removeRelationItem(id, 'counteredBy', itemId),
-        onUpdateDescription: (itemId, description) =>
-          updateRelationDescription(id, 'counteredBy', itemId, description),
+        isEditable: false,
       }
     ),
     ...buildKnowledgeCardItems(
@@ -1321,17 +1311,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       items: counteredByItems,
       selectors: (
         <div className='flex items-center gap-2'>
-          <div title='添加角色'>
-            <CharacterSelector
-              currentCharacterId={id}
-              factionId={factionId}
-              relationType='counteredBy'
-              existingRelations={char.counteredBy}
-              onSelect={(characterId: string) =>
-                addRelationItem(id, 'counteredBy', createRelationItem(characterId))
-              }
-            />
-          </div>
+          <div title='添加角色'></div>
           <div title='添加知识卡'>
             <KnowledgeCardSelector
               selected={char.counteredByKnowledgeCards}

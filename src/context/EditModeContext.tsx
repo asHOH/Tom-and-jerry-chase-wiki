@@ -21,7 +21,6 @@ import {
   getActionsStorageKey,
   invertActionEntry,
   readActionHistory,
-  splitActionHistoryByEntity,
   squashActions,
   subscribers,
   withRecordingSuppressed,
@@ -124,15 +123,11 @@ export const entityRegistry = new Map<string, Record<string, unknown>>([
 function syncEntityToLocalStorage(entityType: string, entity: Record<string, unknown>): () => void {
   const actionsStorageKey = getActionsStorageKey(entityType);
 
-  return subscribe(
-    entity,
-    (ops) => {
-      const actions = actionsFromValtioOps(ops);
-      if (actions.length === 0) return;
-      appendActionHistoryEntry(actionsStorageKey, actions.length === 1 ? actions[0]! : actions);
-    },
-    true
-  );
+  return subscribe(entity, (ops) => {
+    const actions = actionsFromValtioOps(ops);
+    if (actions.length === 0) return;
+    appendActionHistoryEntry(actionsStorageKey, actions.length === 1 ? actions[0]! : actions);
+  });
 }
 
 function setupEntitySubscribers(): void {
@@ -356,6 +351,61 @@ export const useEditMode = () => {
   return context;
 };
 
+function normalizeActionEntry(actions: Action[]): ActionHistoryEntry {
+  return actions.length === 1 ? actions[0]! : actions;
+}
+
+function matchesEntityAction(action: Action, entityId: string): boolean {
+  if (!entityId) return true;
+  return action.path === entityId || action.path.startsWith(`${entityId}.`);
+}
+
+function splitActionEntryByEntity(
+  entry: ActionHistoryEntry,
+  entityId: string
+): { matching: ActionHistoryEntry | null; remaining: ActionHistoryEntry | null } {
+  if (Array.isArray(entry)) {
+    const matching: Action[] = [];
+    const remaining: Action[] = [];
+
+    entry.forEach((action) => {
+      if (matchesEntityAction(action, entityId)) {
+        matching.push(action);
+      } else {
+        remaining.push(action);
+      }
+    });
+
+    return {
+      matching: matching.length > 0 ? normalizeActionEntry(matching) : null,
+      remaining: remaining.length > 0 ? normalizeActionEntry(remaining) : null,
+    };
+  }
+
+  if (matchesEntityAction(entry, entityId)) {
+    return { matching: entry, remaining: null };
+  }
+
+  return { matching: null, remaining: entry };
+}
+
+function splitActionHistoryByEntity(history: ActionHistoryEntry[], entityId: string) {
+  const matching: ActionHistoryEntry[] = [];
+  const remaining: ActionHistoryEntry[] = [];
+
+  history.forEach((entry) => {
+    const { matching: matchingEntry, remaining: remainingEntry } = splitActionEntryByEntity(
+      entry,
+      entityId
+    );
+
+    if (matchingEntry) matching.push(matchingEntry);
+    if (remainingEntry) remaining.push(remainingEntry);
+  });
+
+  return { matching, remaining };
+}
+
 // ============================================================================
 // Page-level edit mode hook for pages that support editing
 // ============================================================================
@@ -415,17 +465,6 @@ function parseDraftPath(entityType: PublishableEntityType, path: string): DraftP
   return { entityId: parts[0]! };
 }
 
-function parseDraftAction(
-  entityType: PublishableEntityType,
-  action: Action
-): DraftPathParts | null {
-  if (action.sourceEntityId) {
-    return { entityId: action.sourceEntityId };
-  }
-
-  return parseDraftPath(entityType, action.path);
-}
-
 function resolveDraftItemLabel(
   entityType: PublishableEntityType,
   entityId: string,
@@ -466,7 +505,7 @@ function buildDraftSummaryItemsForType(
 
   history.forEach((entry) => {
     normalizeActionEntryToList(entry).forEach((action) => {
-      const pathParts = parseDraftAction(entityType, action);
+      const pathParts = parseDraftPath(entityType, action.path);
       if (!pathParts) return;
 
       const itemKey = `${pathParts.factionId ?? ''}:${pathParts.entityId}`;
@@ -548,13 +587,9 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
     const entity = entityRegistry.get(entityType);
     if (!entity) return undefined;
 
-    const unsubscribe = subscribe(
-      entity,
-      () => {
-        setActionCountTrigger((prev) => prev + 1);
-      },
-      true
-    );
+    const unsubscribe = subscribe(entity, () => {
+      setActionCountTrigger((prev) => prev + 1);
+    });
 
     return unsubscribe;
   }, [isEditMode, entityType]);

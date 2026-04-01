@@ -14,17 +14,11 @@ export interface Action {
   path: string;
   oldValue: unknown;
   newValue: unknown;
-  /** Optional page/entity attribution when data is stored on a canonical sibling entity. */
-  sourceEntityId?: string;
 }
 
 export type ActionHistoryEntry = Action | Action[];
-export type ActionContext = {
-  sourceEntityId?: string;
-};
 
 const ACTIONS_STORAGE_PREFIX = 'editmode:actions:';
-const actionContextStack: ActionContext[] = [];
 
 /**
  * Returns the localStorage key used to persist action history for an entity store.
@@ -86,84 +80,6 @@ function filterActionHistory(history: ActionHistoryEntry[]): ActionHistoryEntry[
   return filtered;
 }
 
-function normalizeActionEntry(actions: Action[]): ActionHistoryEntry {
-  return actions.length === 1 ? actions[0]! : actions;
-}
-
-export function matchesActionEntityId(action: Action, entityId: string): boolean {
-  if (!entityId) return true;
-  const sourceEntityId = action.sourceEntityId?.trim();
-  if (sourceEntityId) {
-    return sourceEntityId === entityId;
-  }
-  return action.path === entityId || action.path.startsWith(`${entityId}.`);
-}
-
-export function splitActionEntryByEntity(
-  entry: ActionHistoryEntry,
-  entityId: string
-): { matching: ActionHistoryEntry | null; remaining: ActionHistoryEntry | null } {
-  if (Array.isArray(entry)) {
-    const matching: Action[] = [];
-    const remaining: Action[] = [];
-
-    entry.forEach((action) => {
-      if (matchesActionEntityId(action, entityId)) {
-        matching.push(action);
-      } else {
-        remaining.push(action);
-      }
-    });
-
-    return {
-      matching: matching.length > 0 ? normalizeActionEntry(matching) : null,
-      remaining: remaining.length > 0 ? normalizeActionEntry(remaining) : null,
-    };
-  }
-
-  if (matchesActionEntityId(entry, entityId)) {
-    return { matching: entry, remaining: null };
-  }
-
-  return { matching: null, remaining: entry };
-}
-
-export function splitActionHistoryByEntity(history: ActionHistoryEntry[], entityId: string) {
-  const matching: ActionHistoryEntry[] = [];
-  const remaining: ActionHistoryEntry[] = [];
-
-  history.forEach((entry) => {
-    const { matching: matchingEntry, remaining: remainingEntry } = splitActionEntryByEntity(
-      entry,
-      entityId
-    );
-
-    if (matchingEntry) matching.push(matchingEntry);
-    if (remainingEntry) remaining.push(remainingEntry);
-  });
-
-  return { matching, remaining };
-}
-
-function getCurrentActionContext(): ActionContext | null {
-  return actionContextStack[actionContextStack.length - 1] ?? null;
-}
-
-function applyActionContext(action: Omit<Action, 'sourceEntityId'>): Action {
-  const sourceEntityId = getCurrentActionContext()?.sourceEntityId?.trim();
-  return sourceEntityId ? { ...action, sourceEntityId } : action;
-}
-
-export function withActionContext<T>(context: ActionContext, fn: () => T): T {
-  const sourceEntityId = context.sourceEntityId?.trim();
-  actionContextStack.push(sourceEntityId ? { sourceEntityId } : {});
-  try {
-    return fn();
-  } finally {
-    actionContextStack.pop();
-  }
-}
-
 /**
  * Convert Valtio internal ops to our stable Action format.
  *
@@ -181,27 +97,13 @@ export function actionsFromValtioOps(ops: INTERNAL_Op[]): Action[] {
     if (opName === 'set') {
       const nextValue = untrackIfPossible(op[2]);
       const prevValue = untrackIfPossible(op[3]);
-      actions.push(
-        applyActionContext({
-          op: 'set',
-          path: pathString,
-          oldValue: prevValue,
-          newValue: nextValue,
-        })
-      );
+      actions.push({ op: 'set', path: pathString, oldValue: prevValue, newValue: nextValue });
       continue;
     }
 
     // delete
     const prevValue = untrackIfPossible(op[2]);
-    actions.push(
-      applyActionContext({
-        op: 'delete',
-        path: pathString,
-        oldValue: prevValue,
-        newValue: undefined,
-      })
-    );
+    actions.push({ op: 'delete', path: pathString, oldValue: prevValue, newValue: undefined });
   }
 
   return actions.filter((action) => !isNoOpAction(action));
