@@ -5,12 +5,19 @@ import clsx from 'clsx';
 import { useSnapshot } from 'valtio';
 
 import { AssetManager } from '@/lib/assetManager';
-import { setNestedProperty } from '@/lib/editUtils';
 import { useNavigation } from '@/hooks/useNavigation';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { CharacterRelationItem, type FactionId, type TraitRelationKind } from '@/data/types';
-import { getCharacterRelation } from '@/features/characters/utils/relationReadModel';
+import {
+  addCharacterRelationItem,
+  createCharacterRelationItem,
+  getCharacterRelationDescriptionPath,
+  getEditableCharacterRelations,
+  removeCharacterRelationItem,
+  toggleCharacterRelationMinor,
+  updateCharacterRelationDescription,
+} from '@/features/characters/utils/characterRelationOverlay';
 import { CharacterSelector } from '@/components/ui/CharacterSelector';
 import { editable } from '@/components/ui/editable';
 import { TrashIcon } from '@/components/icons/CommonIcons';
@@ -47,119 +54,6 @@ type RelationThemeClasses = {
 };
 
 const e = editable('characters');
-
-const relationKinds: TraitRelationKind[] = [
-  'counters',
-  'counteredBy',
-  'counterEachOther',
-  'collaborators',
-  'countersKnowledgeCards',
-  'counteredByKnowledgeCards',
-  'countersSpecialSkills',
-  'counteredBySpecialSkills',
-  'advantageMaps',
-  'advantageModes',
-  'disadvantageMaps',
-  'disadvantageModes',
-];
-
-const getEditableCharacterRelations = (
-  characterId: string,
-  character?: Partial<Record<TraitRelationKind, CharacterRelationItem[]>>
-): Record<TraitRelationKind, CharacterRelationItem[]> => {
-  const characterRecord = character ?? characters[characterId];
-  const fromRelationIndex = getCharacterRelation(characterId);
-  if (!characterRecord) {
-    return fromRelationIndex;
-  }
-
-  const next = { ...fromRelationIndex } as Record<TraitRelationKind, CharacterRelationItem[]>;
-
-  relationKinds.forEach((kind) => {
-    const stored = (characterRecord as Partial<Record<TraitRelationKind, CharacterRelationItem[]>>)[
-      kind
-    ];
-    if (Array.isArray(stored)) {
-      next[kind] = stored.map((item) => ({
-        id: item.id,
-        description: item.description ?? '',
-        isMinor: !!item.isMinor,
-      }));
-    }
-  });
-
-  return next;
-};
-
-const updateRelationItems = (
-  characterId: string,
-  kind: TraitRelationKind,
-  items: CharacterRelationItem[]
-) => {
-  setNestedProperty(characters, `${characterId}.${kind}`, items);
-  if (characters[characterId]) {
-    (characters[characterId] as Record<string, unknown>)[kind] = items;
-  }
-};
-
-const updateRelationItem = (
-  characterId: string,
-  kind: TraitRelationKind,
-  itemId: string,
-  updater: (item: CharacterRelationItem) => CharacterRelationItem
-) => {
-  const current = getEditableCharacterRelations(characterId)[kind] ?? [];
-  updateRelationItems(
-    characterId,
-    kind,
-    current.map((item) => (item.id === itemId ? updater(item) : item))
-  );
-};
-
-const createRelationItem = (id: string): CharacterRelationItem => ({
-  id,
-  description: '',
-  isMinor: false,
-});
-
-const addRelationItem = (
-  characterId: string,
-  kind: TraitRelationKind,
-  item: CharacterRelationItem
-) => {
-  const current = getEditableCharacterRelations(characterId)[kind] ?? [];
-  if (current.some((existing) => existing.id === item.id)) return;
-  updateRelationItems(characterId, kind, [...current, item]);
-};
-
-const updateRelationDescription = (
-  characterId: string,
-  kind: TraitRelationKind,
-  itemId: string,
-  description: string
-) => {
-  const nextDescription = description.trim();
-  updateRelationItem(characterId, kind, itemId, (item) => ({
-    ...item,
-    description: nextDescription,
-  }));
-};
-
-const toggleRelationMinor = (characterId: string, kind: TraitRelationKind, itemId: string) => {
-  updateRelationItem(characterId, kind, itemId, (item) => ({
-    ...item,
-    isMinor: !item.isMinor,
-  }));
-};
-
-const removeRelationItem = (characterId: string, kind: TraitRelationKind, itemId: string) => {
-  const current = getEditableCharacterRelations(characterId)[kind] ?? [];
-  updateRelationItems(
-    characterId,
-    kind,
-    current.filter((item) => item.id !== itemId)
-  );
-};
 
 const relationThemeClasses: Record<RelationTheme, RelationThemeClasses> = {
   blue: {
@@ -1063,11 +957,11 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       {
         relationKind: 'counters',
         isEditable: true,
-        getDescriptionPath: (index) => `counters.${index}`,
-        onToggleMinor: (itemId) => toggleRelationMinor(id, 'counters', itemId),
-        onRemove: (itemId) => removeRelationItem(id, 'counters', itemId),
+        getDescriptionPath: (index) => getCharacterRelationDescriptionPath('counters', index),
+        onToggleMinor: (itemId) => toggleCharacterRelationMinor(id, 'counters', itemId),
+        onRemove: (itemId) => removeCharacterRelationItem(id, 'counters', itemId),
         onUpdateDescription: (itemId, description) =>
-          updateRelationDescription(id, 'counters', itemId, description),
+          updateCharacterRelationDescription(id, 'counters', itemId, description),
       }
     ),
     ...buildKnowledgeCardItems(
@@ -1076,11 +970,13 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       {
         relationKind: 'countersKnowledgeCards',
         isEditable: true,
-        getDescriptionPath: (index) => `countersKnowledgeCards.${index}`,
-        onToggleMinor: (itemId) => toggleRelationMinor(id, 'countersKnowledgeCards', itemId),
-        onRemove: (itemId) => removeRelationItem(id, 'countersKnowledgeCards', itemId),
+        getDescriptionPath: (index) =>
+          getCharacterRelationDescriptionPath('countersKnowledgeCards', index),
+        onToggleMinor: (itemId) =>
+          toggleCharacterRelationMinor(id, 'countersKnowledgeCards', itemId),
+        onRemove: (itemId) => removeCharacterRelationItem(id, 'countersKnowledgeCards', itemId),
         onUpdateDescription: (itemId, description) =>
-          updateRelationDescription(id, 'countersKnowledgeCards', itemId, description),
+          updateCharacterRelationDescription(id, 'countersKnowledgeCards', itemId, description),
       }
     ),
     ...buildSpecialSkillItems(
@@ -1092,11 +988,13 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       {
         relationKind: 'countersSpecialSkills',
         isEditable: true,
-        getDescriptionPath: (index) => `countersSpecialSkills.${index}`,
-        onToggleMinor: (itemId) => toggleRelationMinor(id, 'countersSpecialSkills', itemId),
-        onRemove: (itemId) => removeRelationItem(id, 'countersSpecialSkills', itemId),
+        getDescriptionPath: (index) =>
+          getCharacterRelationDescriptionPath('countersSpecialSkills', index),
+        onToggleMinor: (itemId) =>
+          toggleCharacterRelationMinor(id, 'countersSpecialSkills', itemId),
+        onRemove: (itemId) => removeCharacterRelationItem(id, 'countersSpecialSkills', itemId),
         onUpdateDescription: (itemId, description) =>
-          updateRelationDescription(id, 'countersSpecialSkills', itemId, description),
+          updateCharacterRelationDescription(id, 'countersSpecialSkills', itemId, description),
       }
     ),
   ]);
@@ -1113,11 +1011,12 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       {
         relationKind: 'counterEachOther',
         isEditable: true,
-        getDescriptionPath: (index) => `counterEachOther.${index}`,
-        onToggleMinor: (itemId) => toggleRelationMinor(id, 'counterEachOther', itemId),
-        onRemove: (itemId) => removeRelationItem(id, 'counterEachOther', itemId),
+        getDescriptionPath: (index) =>
+          getCharacterRelationDescriptionPath('counterEachOther', index),
+        onToggleMinor: (itemId) => toggleCharacterRelationMinor(id, 'counterEachOther', itemId),
+        onRemove: (itemId) => removeCharacterRelationItem(id, 'counterEachOther', itemId),
         onUpdateDescription: (itemId, description) =>
-          updateRelationDescription(id, 'counterEachOther', itemId, description),
+          updateCharacterRelationDescription(id, 'counterEachOther', itemId, description),
       }
     )
   );
@@ -1134,11 +1033,11 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       {
         relationKind: 'counteredBy',
         isEditable: true,
-        getDescriptionPath: (index) => `counteredBy.${index}`,
-        onToggleMinor: (itemId) => toggleRelationMinor(id, 'counteredBy', itemId),
-        onRemove: (itemId) => removeRelationItem(id, 'counteredBy', itemId),
+        getDescriptionPath: (index) => getCharacterRelationDescriptionPath('counteredBy', index),
+        onToggleMinor: (itemId) => toggleCharacterRelationMinor(id, 'counteredBy', itemId),
+        onRemove: (itemId) => removeCharacterRelationItem(id, 'counteredBy', itemId),
         onUpdateDescription: (itemId, description) =>
-          updateRelationDescription(id, 'counteredBy', itemId, description),
+          updateCharacterRelationDescription(id, 'counteredBy', itemId, description),
       }
     ),
     ...buildKnowledgeCardItems(
@@ -1147,11 +1046,13 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       {
         relationKind: 'counteredByKnowledgeCards',
         isEditable: true,
-        getDescriptionPath: (index) => `counteredByKnowledgeCards.${index}`,
-        onToggleMinor: (itemId) => toggleRelationMinor(id, 'counteredByKnowledgeCards', itemId),
-        onRemove: (itemId) => removeRelationItem(id, 'counteredByKnowledgeCards', itemId),
+        getDescriptionPath: (index) =>
+          getCharacterRelationDescriptionPath('counteredByKnowledgeCards', index),
+        onToggleMinor: (itemId) =>
+          toggleCharacterRelationMinor(id, 'counteredByKnowledgeCards', itemId),
+        onRemove: (itemId) => removeCharacterRelationItem(id, 'counteredByKnowledgeCards', itemId),
         onUpdateDescription: (itemId, description) =>
-          updateRelationDescription(id, 'counteredByKnowledgeCards', itemId, description),
+          updateCharacterRelationDescription(id, 'counteredByKnowledgeCards', itemId, description),
       }
     ),
     ...buildSpecialSkillItems(
@@ -1163,11 +1064,13 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       {
         relationKind: 'counteredBySpecialSkills',
         isEditable: true,
-        getDescriptionPath: (index) => `counteredBySpecialSkills.${index}`,
-        onToggleMinor: (itemId) => toggleRelationMinor(id, 'counteredBySpecialSkills', itemId),
-        onRemove: (itemId) => removeRelationItem(id, 'counteredBySpecialSkills', itemId),
+        getDescriptionPath: (index) =>
+          getCharacterRelationDescriptionPath('counteredBySpecialSkills', index),
+        onToggleMinor: (itemId) =>
+          toggleCharacterRelationMinor(id, 'counteredBySpecialSkills', itemId),
+        onRemove: (itemId) => removeCharacterRelationItem(id, 'counteredBySpecialSkills', itemId),
         onUpdateDescription: (itemId, description) =>
-          updateRelationDescription(id, 'counteredBySpecialSkills', itemId, description),
+          updateCharacterRelationDescription(id, 'counteredBySpecialSkills', itemId, description),
       }
     ),
   ]);
@@ -1184,11 +1087,11 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       {
         relationKind: 'collaborators',
         isEditable: true,
-        getDescriptionPath: (index) => `collaborators.${index}`,
-        onToggleMinor: (itemId) => toggleRelationMinor(id, 'collaborators', itemId),
-        onRemove: (itemId) => removeRelationItem(id, 'collaborators', itemId),
+        getDescriptionPath: (index) => getCharacterRelationDescriptionPath('collaborators', index),
+        onToggleMinor: (itemId) => toggleCharacterRelationMinor(id, 'collaborators', itemId),
+        onRemove: (itemId) => removeCharacterRelationItem(id, 'collaborators', itemId),
         onUpdateDescription: (itemId, description) =>
-          updateRelationDescription(id, 'collaborators', itemId, description),
+          updateCharacterRelationDescription(id, 'collaborators', itemId, description),
       }
     )
   );
@@ -1201,11 +1104,11 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       {
         relationKind: 'advantageMaps',
         isEditable: true,
-        getDescriptionPath: (index) => `advantageMaps.${index}`,
-        onToggleMinor: (itemId) => toggleRelationMinor(id, 'advantageMaps', itemId),
-        onRemove: (itemId) => removeRelationItem(id, 'advantageMaps', itemId),
+        getDescriptionPath: (index) => getCharacterRelationDescriptionPath('advantageMaps', index),
+        onToggleMinor: (itemId) => toggleCharacterRelationMinor(id, 'advantageMaps', itemId),
+        onRemove: (itemId) => removeCharacterRelationItem(id, 'advantageMaps', itemId),
         onUpdateDescription: (itemId, description) =>
-          updateRelationDescription(id, 'advantageMaps', itemId, description),
+          updateCharacterRelationDescription(id, 'advantageMaps', itemId, description),
       }
     )
   );
@@ -1218,11 +1121,11 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       {
         relationKind: 'advantageModes',
         isEditable: true,
-        getDescriptionPath: (index) => `advantageModes.${index}`,
-        onToggleMinor: (itemId) => toggleRelationMinor(id, 'advantageModes', itemId),
-        onRemove: (itemId) => removeRelationItem(id, 'advantageModes', itemId),
+        getDescriptionPath: (index) => getCharacterRelationDescriptionPath('advantageModes', index),
+        onToggleMinor: (itemId) => toggleCharacterRelationMinor(id, 'advantageModes', itemId),
+        onRemove: (itemId) => removeCharacterRelationItem(id, 'advantageModes', itemId),
         onUpdateDescription: (itemId, description) =>
-          updateRelationDescription(id, 'advantageModes', itemId, description),
+          updateCharacterRelationDescription(id, 'advantageModes', itemId, description),
       }
     )
   );
@@ -1235,11 +1138,12 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       {
         relationKind: 'disadvantageMaps',
         isEditable: true,
-        getDescriptionPath: (index) => `disadvantageMaps.${index}`,
-        onToggleMinor: (itemId) => toggleRelationMinor(id, 'disadvantageMaps', itemId),
-        onRemove: (itemId) => removeRelationItem(id, 'disadvantageMaps', itemId),
+        getDescriptionPath: (index) =>
+          getCharacterRelationDescriptionPath('disadvantageMaps', index),
+        onToggleMinor: (itemId) => toggleCharacterRelationMinor(id, 'disadvantageMaps', itemId),
+        onRemove: (itemId) => removeCharacterRelationItem(id, 'disadvantageMaps', itemId),
         onUpdateDescription: (itemId, description) =>
-          updateRelationDescription(id, 'disadvantageMaps', itemId, description),
+          updateCharacterRelationDescription(id, 'disadvantageMaps', itemId, description),
       }
     )
   );
@@ -1252,11 +1156,12 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       {
         relationKind: 'disadvantageModes',
         isEditable: true,
-        getDescriptionPath: (index) => `disadvantageModes.${index}`,
-        onToggleMinor: (itemId) => toggleRelationMinor(id, 'disadvantageModes', itemId),
-        onRemove: (itemId) => removeRelationItem(id, 'disadvantageModes', itemId),
+        getDescriptionPath: (index) =>
+          getCharacterRelationDescriptionPath('disadvantageModes', index),
+        onToggleMinor: (itemId) => toggleCharacterRelationMinor(id, 'disadvantageModes', itemId),
+        onRemove: (itemId) => removeCharacterRelationItem(id, 'disadvantageModes', itemId),
         onUpdateDescription: (itemId, description) =>
-          updateRelationDescription(id, 'disadvantageModes', itemId, description),
+          updateCharacterRelationDescription(id, 'disadvantageModes', itemId, description),
       }
     )
   );
@@ -1281,7 +1186,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
               relationType='counters'
               existingRelations={char.counters}
               onSelect={(characterId: string) =>
-                addRelationItem(id, 'counters', createRelationItem(characterId))
+                addCharacterRelationItem(id, 'counters', createCharacterRelationItem(characterId))
               }
             />
           </div>
@@ -1289,7 +1194,11 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
             <KnowledgeCardSelector
               selected={char.countersKnowledgeCards}
               onSelect={(cardId) =>
-                addRelationItem(id, 'countersKnowledgeCards', createRelationItem(cardId))
+                addCharacterRelationItem(
+                  id,
+                  'countersKnowledgeCards',
+                  createCharacterRelationItem(cardId)
+                )
               }
               factionId={oppositeFactionId}
             />
@@ -1299,7 +1208,11 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
               selected={char.countersSpecialSkills}
               factionId={factionId}
               onSelect={(skillId) =>
-                addRelationItem(id, 'countersSpecialSkills', createRelationItem(skillId))
+                addCharacterRelationItem(
+                  id,
+                  'countersSpecialSkills',
+                  createCharacterRelationItem(skillId)
+                )
               }
             />
           </div>
@@ -1323,7 +1236,11 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
               relationType='counterEachOther'
               existingRelations={char.counterEachOther}
               onSelect={(characterId: string) =>
-                addRelationItem(id, 'counterEachOther', createRelationItem(characterId))
+                addCharacterRelationItem(
+                  id,
+                  'counterEachOther',
+                  createCharacterRelationItem(characterId)
+                )
               }
             />
           </div>
@@ -1347,7 +1264,11 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
               relationType='counteredBy'
               existingRelations={char.counteredBy}
               onSelect={(characterId: string) =>
-                addRelationItem(id, 'counteredBy', createRelationItem(characterId))
+                addCharacterRelationItem(
+                  id,
+                  'counteredBy',
+                  createCharacterRelationItem(characterId)
+                )
               }
             />
           </div>
@@ -1355,7 +1276,11 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
             <KnowledgeCardSelector
               selected={char.counteredByKnowledgeCards}
               onSelect={(cardId) =>
-                addRelationItem(id, 'counteredByKnowledgeCards', createRelationItem(cardId))
+                addCharacterRelationItem(
+                  id,
+                  'counteredByKnowledgeCards',
+                  createCharacterRelationItem(cardId)
+                )
               }
               factionId={oppositeFactionId}
             />
@@ -1365,7 +1290,11 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
               selected={char.counteredBySpecialSkills}
               factionId={factionId}
               onSelect={(skillId) =>
-                addRelationItem(id, 'counteredBySpecialSkills', createRelationItem(skillId))
+                addCharacterRelationItem(
+                  id,
+                  'counteredBySpecialSkills',
+                  createCharacterRelationItem(skillId)
+                )
               }
             />
           </div>
@@ -1389,7 +1318,11 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
               relationType='collaborators'
               existingRelations={char.collaborators}
               onSelect={(characterId: string) =>
-                addRelationItem(id, 'collaborators', createRelationItem(characterId))
+                addCharacterRelationItem(
+                  id,
+                  'collaborators',
+                  createCharacterRelationItem(characterId)
+                )
               }
             />
           </div>
@@ -1414,14 +1347,16 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
           <div title='添加地图'>
             <MapSelector
               selected={char.advantageMaps}
-              onSelect={(mapId) => addRelationItem(id, 'advantageMaps', createRelationItem(mapId))}
+              onSelect={(mapId) =>
+                addCharacterRelationItem(id, 'advantageMaps', createCharacterRelationItem(mapId))
+              }
             />
           </div>
           <div title='添加模式'>
             <ModeSelector
               selected={char.advantageModes}
               onSelect={(modeId) =>
-                addRelationItem(id, 'advantageModes', createRelationItem(modeId))
+                addCharacterRelationItem(id, 'advantageModes', createCharacterRelationItem(modeId))
               }
             />
           </div>
@@ -1447,7 +1382,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
             <MapSelector
               selected={char.disadvantageMaps}
               onSelect={(mapId) =>
-                addRelationItem(id, 'disadvantageMaps', createRelationItem(mapId))
+                addCharacterRelationItem(id, 'disadvantageMaps', createCharacterRelationItem(mapId))
               }
             />
           </div>
@@ -1455,7 +1390,11 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
             <ModeSelector
               selected={char.disadvantageModes}
               onSelect={(modeId) =>
-                addRelationItem(id, 'disadvantageModes', createRelationItem(modeId))
+                addCharacterRelationItem(
+                  id,
+                  'disadvantageModes',
+                  createCharacterRelationItem(modeId)
+                )
               }
             />
           </div>
