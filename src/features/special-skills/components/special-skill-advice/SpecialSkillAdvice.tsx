@@ -7,7 +7,7 @@ import { designTokens, getFactionButtonColors } from '@/lib/design';
 import { CharacterWithFaction } from '@/lib/types';
 import { useDarkMode } from '@/context/DarkModeContext';
 import type { FactionId, SpecialSkill } from '@/data/types';
-import { getSpecialSkillRelationSummary } from '@/features/characters/utils/relations';
+import { getSpecialSkillRelationSummary } from '@/features/characters/utils/relationReadModel';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 import BaseCard from '@/components/ui/BaseCard';
 import Card from '@/components/ui/Card';

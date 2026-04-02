@@ -10,7 +10,7 @@ import { useNavigation } from '@/hooks/useNavigation';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { CharacterRelationItem, type FactionId, type TraitRelationKind } from '@/data/types';
-import { getCharacterRelation } from '@/features/characters/utils/relations';
+import { getCharacterRelation } from '@/features/characters/utils/relationReadModel';
 import { CharacterSelector } from '@/components/ui/CharacterSelector';
 import { editable } from '@/components/ui/editable';
 import { TrashIcon } from '@/components/icons/CommonIcons';

@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 
 import { AssetManager } from '@/lib/assetManager';
 import CharacterDisplay from '@/features/characters/components/character-grid/CharacterDisplay';
-import { getCharacterRelation } from '@/features/characters/utils/relations';
+import { getCharacterRelation } from '@/features/characters/utils/relationReadModel';
 import { CharacterSlotsSelector } from '@/components/ui/CharacterSelector';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';

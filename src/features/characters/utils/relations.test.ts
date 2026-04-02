@@ -5,7 +5,7 @@ import {
   getAllSpecialSkillRelations,
   getCharacterRelation,
   getSpecialSkillRelationSummary,
-} from './relations';
+} from './relationReadModel';
 
 const cloneCharacters = () => structuredClone(characters);
 
