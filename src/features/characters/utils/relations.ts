@@ -8,7 +8,6 @@ import {
   getRelationsByKind,
   getRelationsBySubject,
   getRelationsByTarget,
-  refreshRelationIndex,
 } from '@/features/shared/traits/relationIndex';
 import { characters } from '@/data';
 
@@ -167,8 +166,6 @@ const buildRelationsFromTraits = (id: string): CharacterRelation => {
 export function getCharacterRelation(id: string): CharacterRelation {
   if (!characters[id]) return defaultRelation;
 
-  refreshRelationIndex();
-
   const traitRelations = buildRelationsFromTraits(id);
 
   const target: SingleItem = { name: id, type: 'character' };
@@ -222,7 +219,6 @@ export const getSpecialSkillRelationSummary = (
   skillName: string,
   factionId: SingleItem['factionId']
 ) => {
-  refreshRelationIndex();
   const target: SingleItem = {
     name: skillName,
     type: 'specialSkill',
@@ -266,7 +262,6 @@ export const getSpecialSkillRelationSummary = (
 };
 
 export const getAllSpecialSkillRelations = () => {
-  refreshRelationIndex();
   return getRelationsByKind('countersSpecialSkills').concat(
     getRelationsByKind('counteredBySpecialSkills')
   );

@@ -67,6 +67,9 @@ const buildRelationIndex = (): RelationIndex => {
   return { bySubject, byTarget };
 };
 
+// Relation traits are treated as static runtime data, so the shared index is
+// snapshotted once at module load and only rebuilt when a caller explicitly
+// opts into refresh after mutating the trait source.
 let relationIndex = buildRelationIndex();
 
 const sortRelations = (relations: TraitRelation[]): TraitRelation[] => {

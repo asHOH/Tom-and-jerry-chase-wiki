@@ -1,6 +1,11 @@
+import { getRelationIndex } from '@/features/shared/traits/relationIndex';
 import { characters } from '@/data';
 
-import { getCharacterRelation } from './relations';
+import {
+  getAllSpecialSkillRelations,
+  getCharacterRelation,
+  getSpecialSkillRelationSummary,
+} from './relations';
 
 const cloneCharacters = () => structuredClone(characters);
 
@@ -87,5 +92,26 @@ describe('getCharacterRelation', () => {
         }),
       ])
     );
+  });
+
+  it('should not rebuild the relation index on repeated read-only relation queries', () => {
+    // Trait-backed shared relation data is assumed static during read-only
+    // queries. If a future runtime flow starts mutating traits, it must call
+    // refreshRelationIndex() explicitly and this expectation should change.
+    const initialIndex = getRelationIndex();
+
+    for (let i = 0; i < 5; i += 1) {
+      const characterRelations = getCharacterRelation('莱特宁');
+      expect(characterRelations.counters.length).toBeGreaterThan(0);
+    }
+
+    const summary = getSpecialSkillRelationSummary('应急治疗', 'mouse');
+    expect(summary).toHaveProperty('counters');
+    expect(summary).toHaveProperty('counteredBy');
+
+    const allSkillRelations = getAllSpecialSkillRelations();
+    expect(allSkillRelations.length).toBeGreaterThan(0);
+
+    expect(getRelationIndex()).toBe(initialIndex);
   });
 });
