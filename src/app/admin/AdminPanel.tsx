@@ -28,19 +28,6 @@ interface User {
   role: string | null;
 }
 
-interface SyncResult {
-  success: boolean;
-  prUrl?: string;
-  prNumber?: number;
-  branch?: string;
-  commits?: Array<{ actionId: string; commitSha: string; message: string }>;
-  failedActions?: Array<{ actionId: string; reason: string }>;
-  syncedActionIds?: string[];
-  unsyncedActionIds?: string[];
-  statusUpdateWarning?: string;
-  error?: string;
-}
-
 const ACTION_STATUS_META: Record<ActionStatus, { label: string; className: string }> = {
   pending: { label: '待审核', className: 'text-orange-700 dark:text-orange-300' },
   approved: { label: '已批准', className: 'text-green-700 dark:text-green-300' },
@@ -87,9 +74,6 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
   const [actionEntityType, setActionEntityType] = useState<string>('all');
   const [actionStatus, setActionStatus] = useState<ActionStatusFilter>('pending');
   const [expandedActionIds, setExpandedActionIds] = useState<Set<string>>(() => new Set());
-  const [syncSelectedIds, setSyncSelectedIds] = useState<Set<string>>(() => new Set());
-  const [syncing, setSyncing] = useState(false);
-  const [syncResult, setSyncResult] = useState<SyncResult | null>(null);
   const { success, error } = useToast();
 
   const enableUserAccess = user.role === 'Coordinator';
@@ -192,11 +176,6 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
     [filteredActions]
   );
 
-  const syncableActions = useMemo(
-    () => filteredActions.filter((a) => a.status === 'approved' && a.is_public),
-    [filteredActions]
-  );
-
   const moderateMany = async (action: 'approve' | 'reject') => {
     if (moderatingId) return;
     if (actionableActions.length === 0) return;
@@ -232,60 +211,6 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
       else next.add(actionId);
       return next;
     });
-  };
-
-  const toggleSyncSelect = (actionId: string) => {
-    setSyncSelectedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(actionId)) next.delete(actionId);
-      else next.add(actionId);
-      return next;
-    });
-  };
-
-  const toggleSyncSelectAll = () => {
-    if (syncSelectedIds.size === syncableActions.length && syncableActions.length > 0) {
-      setSyncSelectedIds(new Set());
-    } else {
-      setSyncSelectedIds(new Set(syncableActions.map((a) => a.action_id)));
-    }
-  };
-
-  const createSyncPR = async () => {
-    if (syncSelectedIds.size === 0 || syncing) return;
-
-    const confirmed = window.confirm(
-      `确认将选中的 ${syncSelectedIds.size} 条已批准改动同步到 GitHub 仓库？\n将创建一个新分支和 Pull Request。`
-    );
-    if (!confirmed) return;
-
-    setSyncing(true);
-    setSyncResult(null);
-
-    try {
-      const res = await fetch('/api/admin/sync-pr', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ actionIds: Array.from(syncSelectedIds) }),
-      });
-
-      const data = (await res.json()) as SyncResult;
-
-      if (!res.ok) {
-        throw new Error(data.error ?? '创建 PR 失败');
-      }
-
-      setSyncResult(data);
-      success(`PR 已创建：#${data.prNumber}`);
-      setSyncSelectedIds(new Set());
-      await mutatePendingActions();
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : '创建 PR 失败';
-      error(msg);
-      setSyncResult({ success: false, error: msg });
-    } finally {
-      setSyncing(false);
-    }
   };
 
   return (
@@ -325,7 +250,7 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
                 : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-slate-400 dark:hover:text-slate-200'
             }`}
           >
-            改动审核（含数据同步）
+            改动审核
           </button>
         )}
       </div>
@@ -425,114 +350,8 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
               >
                 批量拒绝
               </button>
-              {syncableActions.length > 0 && (
-                <>
-                  <span className='mx-1 text-gray-300 dark:text-slate-600'>|</span>
-                  <button
-                    type='button'
-                    disabled={syncing}
-                    onClick={toggleSyncSelectAll}
-                    className={`rounded px-3 py-1 text-sm text-white ${
-                      syncing ? 'bg-purple-400 opacity-60' : 'bg-purple-600 hover:bg-purple-700'
-                    }`}
-                  >
-                    {syncSelectedIds.size === syncableActions.length ? '取消全选同步' : '全选同步'}
-                  </button>
-                  <button
-                    type='button'
-                    disabled={syncing || syncSelectedIds.size === 0}
-                    onClick={() => void createSyncPR()}
-                    className={`rounded px-3 py-1 text-sm text-white ${
-                      syncing || syncSelectedIds.size === 0
-                        ? 'bg-purple-400 opacity-60'
-                        : 'bg-purple-600 hover:bg-purple-700'
-                    }`}
-                  >
-                    {syncing ? '同步中...' : `同步到 GitHub (${syncSelectedIds.size})`}
-                  </button>
-                </>
-              )}
             </div>
           </div>
-
-          {/* Sync PR result */}
-          {syncResult && (
-            <div
-              className={`rounded-md border p-4 ${
-                syncResult.success
-                  ? 'border-green-200 bg-green-50 text-green-800 dark:border-green-900/50 dark:bg-green-900/30 dark:text-green-200'
-                  : 'border-red-200 bg-red-50 text-red-800 dark:border-red-900/50 dark:bg-red-900/30 dark:text-red-200'
-              }`}
-            >
-              {syncResult.success ? (
-                <div className='space-y-2'>
-                  <div className='font-semibold'>PR 创建成功</div>
-                  {syncResult.prUrl && (
-                    <div>
-                      <a
-                        href={syncResult.prUrl}
-                        target='_blank'
-                        rel='noopener noreferrer'
-                        className='underline hover:no-underline'
-                      >
-                        查看 Pull Request #{syncResult.prNumber}
-                      </a>
-                    </div>
-                  )}
-                  <div className='text-sm'>
-                    分支：{syncResult.branch} | 提交数：{syncResult.commits?.length ?? 0}
-                  </div>
-                  <div className='text-sm'>
-                    已同步改动：{syncResult.syncedActionIds?.length ?? 0} | 未同步改动：
-                    {syncResult.unsyncedActionIds?.length ?? 0}
-                  </div>
-                  {syncResult.statusUpdateWarning && (
-                    <div className='rounded border border-orange-200 bg-orange-50 p-2 text-xs text-orange-800 dark:border-orange-900/50 dark:bg-orange-900/20 dark:text-orange-200'>
-                      {syncResult.statusUpdateWarning}
-                    </div>
-                  )}
-                  {syncResult.commits && syncResult.commits.length > 0 && (
-                    <details className='mt-2'>
-                      <summary className='cursor-pointer text-sm'>查看提交详情</summary>
-                      <ul className='mt-1 list-inside list-disc text-xs'>
-                        {syncResult.commits.map((c) => (
-                          <li key={c.commitSha}>
-                            <code>{c.commitSha.slice(0, 7)}</code> {c.message}
-                          </li>
-                        ))}
-                      </ul>
-                    </details>
-                  )}
-                  {syncResult.failedActions && syncResult.failedActions.length > 0 && (
-                    <details className='mt-2'>
-                      <summary className='cursor-pointer text-sm text-orange-700 dark:text-orange-300'>
-                        {syncResult.failedActions.length} 条改动未能同步
-                      </summary>
-                      <ul className='mt-1 list-inside list-disc text-xs'>
-                        {syncResult.failedActions.map((f) => (
-                          <li key={f.actionId}>
-                            {f.actionId}: {f.reason}
-                          </li>
-                        ))}
-                      </ul>
-                    </details>
-                  )}
-                </div>
-              ) : (
-                <div>
-                  <span className='font-semibold'>失败：</span>
-                  {syncResult.error}
-                </div>
-              )}
-              <button
-                type='button'
-                onClick={() => setSyncResult(null)}
-                className='mt-2 text-sm underline'
-              >
-                关闭
-              </button>
-            </div>
-          )}
 
           {pendingActions.length === 0 ? (
             <div className='rounded-md border border-gray-200 bg-white p-4 text-gray-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300'>
@@ -541,8 +360,6 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
           ) : (
             <div className='space-y-3'>
               {filteredActions.map((submission) => {
-                const isSyncable = submission.status === 'approved' && submission.is_public;
-                const isSyncChecked = syncSelectedIds.has(submission.action_id);
                 const statusMeta =
                   ACTION_STATUS_META[submission.status as ActionStatus] ??
                   ACTION_STATUS_META.pending;
@@ -550,24 +367,10 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
                 return (
                   <div
                     key={submission.action_id}
-                    className={`rounded-md border p-4 ${
-                      isSyncChecked
-                        ? 'border-purple-300 bg-purple-50 dark:border-purple-700 dark:bg-purple-900/20'
-                        : 'border-gray-200 bg-white dark:border-slate-700 dark:bg-slate-800'
-                    }`}
+                    className='rounded-md border border-gray-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800'
                   >
                     <div className='flex flex-wrap items-center justify-between gap-2'>
                       <div className='flex items-center gap-2 text-sm text-gray-700 dark:text-slate-200'>
-                        {isSyncable && (
-                          <input
-                            type='checkbox'
-                            checked={isSyncChecked}
-                            onChange={() => toggleSyncSelect(submission.action_id)}
-                            disabled={syncing}
-                            className='h-4 w-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500'
-                            title='选中以同步到 GitHub'
-                          />
-                        )}
                         <span className='font-medium'>{submission.entity_type}</span>
                         <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
                         <span className={statusMeta.className}>{statusMeta.label}</span>

@@ -24,9 +24,6 @@ export const env = createEnv({
     // Chat Service (Gemini)
     GEMINI_API_KEY: z.string().optional(),
 
-    // GitHub API (for syncing game data actions to repo)
-    GITHUB_TOKEN: z.string().optional(),
-
     // Rate Limit (Upstash)
     UPSTASH_REDIS_REST_URL: z.url().optional(),
     UPSTASH_REDIS_REST_TOKEN: z.string().optional(),
