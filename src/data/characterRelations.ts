@@ -1,14 +1,18 @@
-import type { Trait } from '@/data/types';
+import type { SingleItem, Trait } from '@/data/types';
+
+import { assertValidCharacterRelations } from './characterRelationValidation';
 
 function buildRelation(traits: Trait[]) {
+  const toItemKey = (item: SingleItem) => `${item.type}-${item.name}-${item.factionId ?? ''}`;
+
   return Object.fromEntries(
     traits.map((trait) => [
-      `${trait.relation!.kind}-${trait.relation!.subject.name}-${trait.relation!.target.name}`,
+      `${trait.relation!.kind}-${toItemKey(trait.relation!.subject)}-${toItemKey(trait.relation!.target)}`,
       trait,
     ])
   );
 }
-const characterRelations: Trait[] = [
+export const characterRelationTraits: Trait[] = [
   {
     description: '库博在该地图表现更稳。',
     group: [
@@ -1782,19 +1786,6 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '罗宾汉拉扯能力较强，同时二段跳的全体增益能更好的规避布奇的冲刺。',
-    group: [
-      { name: '罗宾汉杰瑞', type: 'character' },
-      { name: '布奇', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '罗宾汉杰瑞', type: 'character' },
-      target: { name: '布奇', type: 'character' },
-      isMinor: true,
-    },
-  },
-  {
     description: '马索尔干扰能力较强，破局能力较强，易断节奏。',
     group: [
       { name: '马索尔', type: 'character' },
@@ -1805,32 +1796,6 @@ const characterRelations: Trait[] = [
       subject: { name: '马索尔', type: 'character' },
       target: { name: '布奇', type: 'character' },
       isMinor: true,
-    },
-  },
-  {
-    description: '梦游杰瑞强推能力较强，同时自保能力也较强。',
-    group: [
-      { name: '梦游杰瑞', type: 'character' },
-      { name: '布奇', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '梦游杰瑞', type: 'character' },
-      target: { name: '布奇', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
-    description: '泥巴翻滚救援不会拦截，桶盖的霸体也会被勾下来。',
-    group: [
-      { name: '尼宝', type: 'character' },
-      { name: '布奇', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '尼宝', type: 'character' },
-      target: { name: '布奇', type: 'character' },
-      isMinor: false,
     },
   },
   {
@@ -1856,20 +1821,6 @@ const characterRelations: Trait[] = [
       kind: 'counters',
       subject: { name: '侦探杰瑞', type: 'character' },
       target: { name: '布奇', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
-    description:
-      '朝圣者泰菲子弹可以被如玉主动技能反向利用刷反击，且如玉被动适配暴怒，朝圣者泰菲的高伤极易被如玉反制。',
-    group: [
-      { name: '如玉', type: 'character' },
-      { name: '朝圣者泰菲', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '如玉', type: 'character' },
-      target: { name: '朝圣者泰菲', type: 'character' },
       isMinor: false,
     },
   },
@@ -1987,19 +1938,6 @@ const characterRelations: Trait[] = [
       kind: 'counters',
       subject: { name: '追风汤姆', type: 'character' },
       target: { name: '朵朵', type: 'character' },
-      isMinor: true,
-    },
-  },
-  {
-    description: '头盔过长的前摇与全图可见的音效容易被闪现抓住机会。',
-    group: [
-      { name: '莱特宁', type: 'character' },
-      { name: '剑客泰菲', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '莱特宁', type: 'character' },
-      target: { name: '剑客泰菲', type: 'character' },
       isMinor: true,
     },
   },
@@ -2390,19 +2328,6 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '高伤害，容易击倒米可；虚弱起身无敌时间长，三级桶盖还有霸体。',
-    group: [
-      { name: '布奇', type: 'character' },
-      { name: '米可', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '布奇', type: 'character' },
-      target: { name: '米可', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
     description: '苏蕊的霸体和高伤能有效克制米可。',
     group: [
       { name: '苏蕊', type: 'character' },
@@ -2601,19 +2526,6 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '尼宝的主动技能免疫控制。',
-    group: [
-      { name: '尼宝', type: 'character' },
-      { name: '牛仔汤姆', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '尼宝', type: 'character' },
-      target: { name: '牛仔汤姆', type: 'character' },
-      isMinor: true,
-    },
-  },
-  {
     description:
       '天使杰瑞被动带来的禁用技能与爪刀能使牛仔汤姆的进攻大幅削弱，并且牛仔汤姆很容易对天使杰瑞造成伤害。',
     group: [
@@ -2623,20 +2535,6 @@ const characterRelations: Trait[] = [
     relation: {
       kind: 'counters',
       subject: { name: '天使杰瑞', type: 'character' },
-      target: { name: '牛仔汤姆', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
-    description:
-      '当天使泰菲点出3级武器技能时可以无视甚至利用牛来对牛仔汤姆造成干扰，同时利用主动技能能使队友不受牛的控制效果。',
-    group: [
-      { name: '天使泰菲', type: 'character' },
-      { name: '牛仔汤姆', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '天使泰菲', type: 'character' },
       target: { name: '牛仔汤姆', type: 'character' },
       isMinor: false,
     },
@@ -2938,20 +2836,6 @@ const characterRelations: Trait[] = [
   },
   {
     description:
-      '布奇的基础伤害高，克制血量低的泰菲和泰菲被动；三级桶盖赋予霸体，克制泰菲火箭筒和地雷打控制',
-    group: [
-      { name: '布奇', type: 'character' },
-      { name: '泰菲', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '布奇', type: 'character' },
-      target: { name: '泰菲', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
-    description:
       '米特的野性叠加到7层可以一刀秒泰菲，并且当手持胡椒粉抓着老鼠时，即使被火箭炮或地雷炸下来，残血老鼠也会被胡椒粉毒死，绑火箭的时候还有野性层数赋予的霸体。',
     group: [
       { name: '米特', type: 'character' },
@@ -3073,19 +2957,6 @@ const characterRelations: Trait[] = [
     },
   },
   {
-    description: '佩克斯团队增益较强，击退也有一定能力反制汤姆的无敌。',
-    group: [
-      { name: '佩克斯', type: 'character' },
-      { name: '汤姆', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '佩克斯', type: 'character' },
-      target: { name: '汤姆', type: 'character' },
-      isMinor: true,
-    },
-  },
-  {
     description: '霜月滑铲拦截汤姆无敌上火箭，且霜月滑铲霸体自保能力强。',
     group: [
       { name: '霜月', type: 'character' },
@@ -3164,20 +3035,6 @@ const characterRelations: Trait[] = [
       subject: { name: '图多盖洛', type: 'character' },
       target: { name: '天使泰菲', type: 'character' },
       isMinor: true,
-    },
-  },
-  {
-    description:
-      '托普斯的捕虫网能无视天菲的两个技能。哪怕是开启Lv.3友情庇护的天菲，也能被携带“我生气了！”特技的托普斯利用击晕和Lv.1被动进行连续控制，当成“提款机”。',
-    group: [
-      { name: '托普斯', type: 'character' },
-      { name: '天使泰菲', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '托普斯', type: 'character' },
-      target: { name: '天使泰菲', type: 'character' },
-      isMinor: false,
     },
   },
   {
@@ -8098,4 +7955,6 @@ const characterRelations: Trait[] = [
     },
   },
 ];
-export default buildRelation(characterRelations);
+assertValidCharacterRelations(characterRelationTraits);
+
+export default buildRelation(characterRelationTraits);

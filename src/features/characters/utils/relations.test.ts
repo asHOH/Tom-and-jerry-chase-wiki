@@ -1,3 +1,5 @@
+import { characterRelationTraits } from '@/data/characterRelations';
+import type { CharacterRelation, TraitRelation } from '@/data/types';
 import { getRelationIndex } from '@/features/shared/traits/relationIndex';
 import { characters } from '@/data';
 
@@ -17,6 +19,36 @@ const restoreCharacters = (snapshot: Record<string, unknown>) => {
   Object.entries(snapshot).forEach(([key, value]) => {
     (characters as Record<string, unknown>)[key] = structuredClone(value);
   });
+};
+
+const setLegacyRelationItems = (
+  id: string,
+  key: keyof Pick<
+    CharacterRelation,
+    'collaborators' | 'counterEachOther' | 'counteredBy' | 'counters'
+  >,
+  items: CharacterRelation[keyof CharacterRelation]
+) => {
+  (characters[id] as Partial<CharacterRelation>)[key] = items;
+};
+
+const findSharedCharacterRelation = (
+  kind: 'collaborators' | 'counterEachOther' | 'counteredBy' | 'counters'
+): TraitRelation => {
+  const relation = characterRelationTraits.find(
+    (trait): trait is typeof trait & { relation: TraitRelation } =>
+      trait.relation?.kind === kind &&
+      trait.relation.subject.type === 'character' &&
+      trait.relation.target.type === 'character' &&
+      trait.relation.subject.name in characters &&
+      trait.relation.target.name in characters
+  )?.relation;
+
+  if (!relation) {
+    throw new Error(`Missing shared character relation fixture for ${kind}.`);
+  }
+
+  return relation;
 };
 
 describe('getCharacterRelation', () => {
@@ -68,6 +100,22 @@ describe('getCharacterRelation', () => {
     );
   });
 
+  it('should let page-local overlays override duplicate shared relation entries by id', () => {
+    const relation = findSharedCharacterRelation('counters');
+    const overlayItem = {
+      id: relation.target.name,
+      description: 'legacy overlay wins duplicate shared edge',
+      isMinor: true,
+    };
+
+    setLegacyRelationItems(relation.subject.name, 'counters', [overlayItem]);
+
+    const relations = getCharacterRelation(relation.subject.name);
+    const matches = relations.counters.filter((item) => item.id === relation.target.name);
+
+    expect(matches).toEqual([overlayItem]);
+  });
+
   it('should synthesize inverse legacy character links by scanning other character overlays', () => {
     (
       characters['恶魔杰瑞'] as unknown as {
@@ -92,6 +140,29 @@ describe('getCharacterRelation', () => {
         }),
       ])
     );
+  });
+
+  it('should dedupe direct and synthesized legacy entries for the same character id', () => {
+    const relation = findSharedCharacterRelation('counters');
+    const directItem = {
+      id: relation.subject.name,
+      description: 'direct legacy relation wins synthesized inverse duplicate',
+      isMinor: false,
+    };
+
+    setLegacyRelationItems(relation.target.name, 'counteredBy', [directItem]);
+    setLegacyRelationItems(relation.subject.name, 'counters', [
+      {
+        id: relation.target.name,
+        description: 'synthesized inverse duplicate',
+        isMinor: true,
+      },
+    ]);
+
+    const relations = getCharacterRelation(relation.target.name);
+    const matches = relations.counteredBy.filter((item) => item.id === relation.subject.name);
+
+    expect(matches).toEqual([directItem]);
   });
 
   it('should not rebuild the relation index on repeated read-only relation queries', () => {
