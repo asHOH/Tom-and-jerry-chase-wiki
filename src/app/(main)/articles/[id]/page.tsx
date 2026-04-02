@@ -5,8 +5,8 @@ import { Article, WithContext } from 'schema-dts';
 import { getApprovedArticleVersion, getArticleBasicInfo } from '@/lib/articles/serverQueries';
 import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { supabaseAdmin } from '@/lib/supabase/admin';
-import { SITE_URL } from '@/constants/seo';
 import { sanitizeHTMLOnServer } from '@/lib/xssServer';
+import { SITE_URL } from '@/constants/seo';
 import StructuredData from '@/components/StructuredData';
 
 import ArticleClient from './ArticleClient';
