@@ -310,15 +310,15 @@ const buildCharacterItems = (
   options: {
     relationKind: TraitRelationKind;
     isEditable: boolean;
-    getDescriptionPath?: (id: string) => string | undefined;
+    getDescriptionPath?: (index: number, id: string) => string | undefined;
     onToggleMinor?: (id: string) => void;
     onRemove?: (id: string) => void;
     onUpdateDescription?: (id: string, description: string) => void;
   }
 ): CharacterDisplayItem[] => {
-  return combined.map((item) => {
+  return combined.map((item, index) => {
     const id = item.id;
-    const descriptionPath = options.getDescriptionPath?.(id);
+    const descriptionPath = options.getDescriptionPath?.(index, id);
     return {
       type: 'character',
       key: `character-${id}`,
@@ -347,17 +347,17 @@ const buildKnowledgeCardItems = (
   options: {
     relationKind: TraitRelationKind;
     isEditable: boolean;
-    getDescriptionPath?: (id: string) => string | undefined;
+    getDescriptionPath?: (index: number, id: string) => string | undefined;
     onToggleMinor?: (id: string) => void;
     onRemove?: (id: string) => void;
     onUpdateDescription?: (id: string, description: string) => void;
   }
 ): KnowledgeCardDisplayItem[] =>
   toArray(items)
-    .map((card) => {
+    .map((card, index) => {
       const cardObj = cards[card.id];
       if (!cardObj) return null;
-      const descriptionPath = options.getDescriptionPath?.(card.id);
+      const descriptionPath = options.getDescriptionPath?.(index, card.id);
       return {
         type: 'knowledgeCard',
         key: `knowledgeCard-${card.id}`,
@@ -392,15 +392,15 @@ const buildSpecialSkillItems = (
   options: {
     relationKind: TraitRelationKind;
     isEditable: boolean;
-    getDescriptionPath?: (id: string) => string | undefined;
+    getDescriptionPath?: (index: number, id: string) => string | undefined;
     onToggleMinor?: (id: string) => void;
     onRemove?: (id: string) => void;
     onUpdateDescription?: (id: string, description: string) => void;
   }
 ): SpecialSkillDisplayItem[] =>
-  toArray(items).map((skill) => {
+  toArray(items).map((skill, index) => {
     const skillObj = specialSkillsData[targetFaction]?.[skill.id];
-    const descriptionPath = options.getDescriptionPath?.(skill.id);
+    const descriptionPath = options.getDescriptionPath?.(index, skill.id);
     return {
       type: 'specialSkill',
       key: `specialSkill-${skill.id}`,
@@ -433,15 +433,15 @@ const buildMapItems = (
   options: {
     relationKind: TraitRelationKind;
     isEditable: boolean;
-    getDescriptionPath?: (id: string) => string | undefined;
+    getDescriptionPath?: (index: number, id: string) => string | undefined;
     onToggleMinor?: (id: string) => void;
     onRemove?: (id: string) => void;
     onUpdateDescription?: (id: string, description: string) => void;
   }
 ): MapDisplayItem[] =>
-  toArray(items).map((map) => {
+  toArray(items).map((map, index) => {
     const mapObj = mapsData[map.id];
-    const descriptionPath = options.getDescriptionPath?.(map.id);
+    const descriptionPath = options.getDescriptionPath?.(index, map.id);
     return {
       type: 'map',
       key: `map-${map.id}`,
@@ -474,15 +474,15 @@ const buildModeItems = (
   options: {
     relationKind: TraitRelationKind;
     isEditable: boolean;
-    getDescriptionPath?: (id: string) => string | undefined;
+    getDescriptionPath?: (index: number, id: string) => string | undefined;
     onToggleMinor?: (id: string) => void;
     onRemove?: (id: string) => void;
     onUpdateDescription?: (id: string, description: string) => void;
   }
 ): ModeDisplayItem[] =>
-  toArray(items).map((mode) => {
+  toArray(items).map((mode, index) => {
     const modeObj = modesData[mode.id];
-    const descriptionPath = options.getDescriptionPath?.(mode.id);
+    const descriptionPath = options.getDescriptionPath?.(index, mode.id);
     return {
       type: 'mode',
       key: `mode-${mode.id}`,
@@ -1063,7 +1063,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       {
         relationKind: 'counters',
         isEditable: true,
-        getDescriptionPath: (itemId) => `${id}.counters.${itemId}`,
+        getDescriptionPath: (index) => `counters.${index}`,
         onToggleMinor: (itemId) => toggleRelationMinor(id, 'counters', itemId),
         onRemove: (itemId) => removeRelationItem(id, 'counters', itemId),
         onUpdateDescription: (itemId, description) =>
@@ -1076,7 +1076,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       {
         relationKind: 'countersKnowledgeCards',
         isEditable: true,
-        getDescriptionPath: (itemId) => `${id}.countersKnowledgeCards.${itemId}`,
+        getDescriptionPath: (index) => `countersKnowledgeCards.${index}`,
         onToggleMinor: (itemId) => toggleRelationMinor(id, 'countersKnowledgeCards', itemId),
         onRemove: (itemId) => removeRelationItem(id, 'countersKnowledgeCards', itemId),
         onUpdateDescription: (itemId, description) =>
@@ -1092,7 +1092,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       {
         relationKind: 'countersSpecialSkills',
         isEditable: true,
-        getDescriptionPath: (itemId) => `${id}.countersSpecialSkills.${itemId}`,
+        getDescriptionPath: (index) => `countersSpecialSkills.${index}`,
         onToggleMinor: (itemId) => toggleRelationMinor(id, 'countersSpecialSkills', itemId),
         onRemove: (itemId) => removeRelationItem(id, 'countersSpecialSkills', itemId),
         onUpdateDescription: (itemId, description) =>
@@ -1113,7 +1113,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       {
         relationKind: 'counterEachOther',
         isEditable: true,
-        getDescriptionPath: (itemId) => `${id}.counterEachOther.${itemId}`,
+        getDescriptionPath: (index) => `counterEachOther.${index}`,
         onToggleMinor: (itemId) => toggleRelationMinor(id, 'counterEachOther', itemId),
         onRemove: (itemId) => removeRelationItem(id, 'counterEachOther', itemId),
         onUpdateDescription: (itemId, description) =>
@@ -1134,7 +1134,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       {
         relationKind: 'counteredBy',
         isEditable: true,
-        getDescriptionPath: (itemId) => `${id}.counteredBy.${itemId}`,
+        getDescriptionPath: (index) => `counteredBy.${index}`,
         onToggleMinor: (itemId) => toggleRelationMinor(id, 'counteredBy', itemId),
         onRemove: (itemId) => removeRelationItem(id, 'counteredBy', itemId),
         onUpdateDescription: (itemId, description) =>
@@ -1147,7 +1147,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       {
         relationKind: 'counteredByKnowledgeCards',
         isEditable: true,
-        getDescriptionPath: (itemId) => `${id}.counteredByKnowledgeCards.${itemId}`,
+        getDescriptionPath: (index) => `counteredByKnowledgeCards.${index}`,
         onToggleMinor: (itemId) => toggleRelationMinor(id, 'counteredByKnowledgeCards', itemId),
         onRemove: (itemId) => removeRelationItem(id, 'counteredByKnowledgeCards', itemId),
         onUpdateDescription: (itemId, description) =>
@@ -1163,7 +1163,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       {
         relationKind: 'counteredBySpecialSkills',
         isEditable: true,
-        getDescriptionPath: (itemId) => `${id}.counteredBySpecialSkills.${itemId}`,
+        getDescriptionPath: (index) => `counteredBySpecialSkills.${index}`,
         onToggleMinor: (itemId) => toggleRelationMinor(id, 'counteredBySpecialSkills', itemId),
         onRemove: (itemId) => removeRelationItem(id, 'counteredBySpecialSkills', itemId),
         onUpdateDescription: (itemId, description) =>
@@ -1184,7 +1184,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       {
         relationKind: 'collaborators',
         isEditable: true,
-        getDescriptionPath: (itemId) => `${id}.collaborators.${itemId}`,
+        getDescriptionPath: (index) => `collaborators.${index}`,
         onToggleMinor: (itemId) => toggleRelationMinor(id, 'collaborators', itemId),
         onRemove: (itemId) => removeRelationItem(id, 'collaborators', itemId),
         onUpdateDescription: (itemId, description) =>
@@ -1201,7 +1201,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       {
         relationKind: 'advantageMaps',
         isEditable: true,
-        getDescriptionPath: (itemId) => `${id}.advantageMaps.${itemId}`,
+        getDescriptionPath: (index) => `advantageMaps.${index}`,
         onToggleMinor: (itemId) => toggleRelationMinor(id, 'advantageMaps', itemId),
         onRemove: (itemId) => removeRelationItem(id, 'advantageMaps', itemId),
         onUpdateDescription: (itemId, description) =>
@@ -1218,7 +1218,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       {
         relationKind: 'advantageModes',
         isEditable: true,
-        getDescriptionPath: (itemId) => `${id}.advantageModes.${itemId}`,
+        getDescriptionPath: (index) => `advantageModes.${index}`,
         onToggleMinor: (itemId) => toggleRelationMinor(id, 'advantageModes', itemId),
         onRemove: (itemId) => removeRelationItem(id, 'advantageModes', itemId),
         onUpdateDescription: (itemId, description) =>
@@ -1235,7 +1235,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       {
         relationKind: 'disadvantageMaps',
         isEditable: true,
-        getDescriptionPath: (itemId) => `${id}.disadvantageMaps.${itemId}`,
+        getDescriptionPath: (index) => `disadvantageMaps.${index}`,
         onToggleMinor: (itemId) => toggleRelationMinor(id, 'disadvantageMaps', itemId),
         onRemove: (itemId) => removeRelationItem(id, 'disadvantageMaps', itemId),
         onUpdateDescription: (itemId, description) =>
@@ -1252,7 +1252,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       {
         relationKind: 'disadvantageModes',
         isEditable: true,
-        getDescriptionPath: (itemId) => `${id}.disadvantageModes.${itemId}`,
+        getDescriptionPath: (index) => `disadvantageModes.${index}`,
         onToggleMinor: (itemId) => toggleRelationMinor(id, 'disadvantageModes', itemId),
         onRemove: (itemId) => removeRelationItem(id, 'disadvantageModes', itemId),
         onUpdateDescription: (itemId, description) =>
