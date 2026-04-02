@@ -57,9 +57,9 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     rank: 'S',
     cost: 6,
     description:
-      '从火箭上救下队友后，彼此同时获得**短暂**的无敌并固定增加推速，但此期间无法使用技能和道具；效果结束后陷入短暂的眩晕。(CD: 60秒)',
+      '从火箭上救下队友后，对方获得**短暂**的无敌，自己获得3秒无敌，无敌期间固定增加推速，但此期间无法使用技能和道具；对方的无敌结束后陷入短暂的眩晕。(CD: 60秒)',
     detailedDescription:
-      '从火箭上救下队友后，彼此同时获得**短暂**的无敌并[固定增加推速2.5%/秒](该类效果不受其他任何百分比推速增/减效果影响，独立结算)，但此期间无法使用技能和道具；效果结束后眩晕1.2秒。(CD: 60秒)',
+      '从火箭上救下队友后，对方获得**短暂**的无敌，自己获得3秒无敌，无敌期间[固定增加推速2.5%/秒](该类效果不受其他任何百分比推速增/减效果影响，独立结算)，但此期间无法使用技能和道具；对方的无敌结束后眩晕1.2秒。(CD: 60秒)',
     levels: [
       { level: 1, description: '无畏持续**6**秒。' },
       { level: 2, description: '无畏持续**6.5**秒。' },
@@ -251,12 +251,11 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     id: '夹不住我',
     rank: 'B',
     cost: 3,
-    description:
-      '增加挣脱捕鼠夹速度；每次[挣脱捕鼠夹](自起排夹不计)后，下次挣脱捕鼠夹将会**更快**，最多叠加3层。',
+    description: '增加挣脱捕鼠夹速度。',
     levels: [
-      { level: 1, description: '每层提升**12%**挣脱速度。' },
-      { level: 2, description: '每层提升**14%**挣脱速度。' },
-      { level: 3, description: '每层提升**16%**挣脱速度。' },
+      { level: 1, description: '提升**20%**挣脱速度。' },
+      { level: 2, description: '提升**25%**挣脱速度。' },
+      { level: 3, description: '提升**30%**挣脱速度。' },
     ],
     priority: '提升较小',
   },
@@ -266,7 +265,8 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     rank: 'B',
     cost: 3,
     description: '被猫咪追击时，如果附近没有其他可行动的老鼠，获得**加速**。',
-    detailedDescription: '周围550范围内有猫咪时，如果该范围内没有其他可行动的老鼠，获得**加速**。',
+    detailedDescription:
+      '周围[小范围](20260402增强前为550范围，现已缩小)内有猫咪时，如果该范围内没有其他可行动的老鼠，获得**加速**。',
     levels: [
       { level: 1, description: '加速**3%**。' },
       { level: 2, description: '加速**4%**。' },
@@ -292,7 +292,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
   应激反应: {
     id: '应激反应',
     rank: 'B',
-    cost: 4,
+    cost: 3,
     description: '受伤状态下，**提升**移速和跳跃高度。',
     // detailedDescription: '',
     levels: [
@@ -307,9 +307,8 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     id: '求生欲',
     rank: 'B',
     cost: 4,
-    description: '当同一房间内没有其他老鼠时，在猫爪和火箭上的挣扎速度**提升**。',
-    detailedDescription:
-      '拥有强烈求生欲的老鼠，当同一房间内没有其他老鼠时，在猫爪和火箭上的挣扎速度**提升**。',
+    description: '在猫爪和火箭上的挣扎速度**提升**。',
+    detailedDescription: '拥有强烈求生欲的老鼠，在猫爪和火箭上的挣扎速度**提升**。',
     levels: [
       { level: 1, description: '挣扎速度提升**15%**。' },
       { level: 2, description: '挣扎速度提升**18%**。' },
@@ -408,8 +407,9 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     id: '飞跃',
     rank: 'B',
     cost: 4,
-    description: '跳跃速度**提升**。',
-    detailedDescription: '掌握了身轻如燕的秘法后，跳跃速度**提升**。',
+    description: '跳跃速度**提升**。每跳跃5次，获得持续3秒的{二段跳}状态，每60秒至多触发1次。',
+    detailedDescription:
+      '掌握了身轻如燕的秘法后，跳跃速度**提升**。每跳跃5次，获得持续3秒的{二段跳}状态，每60秒至多触发1次。',
     levels: [
       { level: 1, description: '跳跃速度提升**5%**。' },
       { level: 2, description: '跳跃速度提升**6%**。' },
@@ -465,8 +465,8 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     id: '强健',
     rank: 'C',
     cost: 4,
-    description: '**减少**虚弱时间。',
-    detailedDescription: '年轻鼠恢复的速度就是快！**减少**虚弱时间。',
+    description: '**减少**虚弱时间。虚弱期间移速提高15%。',
+    detailedDescription: '年轻鼠恢复的速度就是快！**减少**虚弱时间。虚弱期间移速提高15%。',
     levels: [
       { level: 1, description: '减少**20%**。' },
       { level: 2, description: '减少**25%**。' },

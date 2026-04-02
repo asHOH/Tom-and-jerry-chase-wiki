@@ -25,4 +25,20 @@ export const variantEdges: VariantEdge[] = [
     prototype: { name: '火箭', type: 'item' },
     variant: { name: '线条火箭', type: 'entity' },
   },
+  {
+    prototype: { name: '轨道', type: 'entity' },
+    variant: { name: '轨道-旧版', type: 'entity' },
+  },
+  {
+    prototype: { name: '列车', type: 'entity' },
+    variant: { name: '列车-旧版', type: 'entity' },
+  },
+  {
+    prototype: { name: '弓箭', type: 'entity' },
+    variant: { name: '弓箭-旧版', type: 'entity' },
+  },
+  {
+    prototype: { name: '蓄力箭', type: 'entity' },
+    variant: { name: '蓄力箭-旧版', type: 'entity' },
+  },
 ];

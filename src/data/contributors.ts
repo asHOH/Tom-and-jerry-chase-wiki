@@ -571,6 +571,18 @@ export const contributors: Contributor[] = [
       },
     ],
   },
+  {
+    id: 'shuxiao',
+    name: '戍孝',
+    description: 'S27全国第3恶魔汤姆',
+    roles: [
+      {
+        type: RoleType.ContentWriter,
+        characters: ['恶魔汤姆'],
+        isMinor: true,
+      },
+    ],
+  },
   // TODO: Add 米特技巧 contributor
   // TODO：Add 库博知识卡推荐 contributor
   {

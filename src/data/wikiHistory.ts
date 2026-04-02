@@ -399,6 +399,206 @@ export const wikiHistoryData: WikiDataHistory = [
           },
         },
       },
+      {
+        date: '3.26',
+        description: '添加米雪儿第二武器信息。',
+        details: {
+          data: {
+            changes: [
+              {
+                item: { name: '米雪儿', type: 'character' },
+                changeType: WikiChangeType.ADD,
+                description: '新增了米雪儿的第二武器信息。',
+              },
+            ],
+          },
+        },
+      },
+      {
+        date: '4.2',
+        description: '同步S28赛季更改内容。',
+        details: {
+          data: {
+            changes: [
+              {
+                item: { name: '汤姆', type: 'character' },
+                changeType: WikiChangeType.UPDATE,
+                description: '同步游戏内有关被动技能的更改。',
+              },
+              {
+                item: { name: '侍卫汤姆', type: 'character' },
+                changeType: WikiChangeType.UPDATE,
+                description: '同步游戏内有关主动技能的更改。',
+              },
+              {
+                item: { name: '如玉', type: 'character' },
+                changeType: WikiChangeType.UPDATE,
+                description: '同步游戏内有关“花枪反击”伤害数值的更改，掷花枪效果的更改。',
+              },
+              {
+                item: { name: '凯特', type: 'character' },
+                changeType: WikiChangeType.UPDATE,
+                description: '同步游戏内有关被动技能的更改。',
+              },
+              {
+                item: { name: '魔术师', type: 'character' },
+                changeType: WikiChangeType.UPDATE,
+                description: '同步游戏内有关二武兔子大表哥的Hp上限的更改。',
+              },
+              {
+                item: { name: '鲍姆', type: 'character' },
+                changeType: WikiChangeType.UPDATE,
+                description: '同步游戏内有关技能有效爆炸时间的更改。',
+              },
+              {
+                item: { name: '侦探杰瑞', type: 'character' },
+                changeType: WikiChangeType.UPDATE,
+                description: '同步游戏内有关二武储存次数的更改。',
+              },
+              {
+                item: { name: '侦探泰菲', type: 'character' },
+                changeType: WikiChangeType.UPDATE,
+                description: '同步游戏内有关武器技能的更改。',
+              },
+              {
+                item: { name: '米雪儿', type: 'character' },
+                changeType: WikiChangeType.UPDATE,
+                description: '同步游戏内有关第二武器效果的更改。',
+              },
+              {
+                item: { name: '恶魔汤姆', type: 'character' },
+                changeType: WikiChangeType.REWORK,
+                description: '同步游戏内的大幅度重做信息，更改推荐特技和卡组。',
+              },
+              {
+                item: { name: '天使杰瑞', type: 'character' },
+                changeType: WikiChangeType.REWORK,
+                description: '同步游戏内有关主动和一武器的大幅度重做信息，更改卡组描述。',
+              },
+              {
+                item: { name: '天使泰菲', type: 'character' },
+                changeType: WikiChangeType.REWORK,
+                description: '同步游戏内的大幅度重做信息，更改卡组描述。',
+              },
+              {
+                item: { name: '花枪', type: 'entity' },
+                changeType: WikiChangeType.UPDATE,
+                description: '同步游戏内更改。',
+              },
+              {
+                item: { name: '饮料印记', type: 'entity' },
+                changeType: WikiChangeType.UPDATE,
+                description: '同步游戏内更改。',
+              },
+              {
+                item: { name: '兔子大表哥', type: 'entity' },
+                changeType: WikiChangeType.UPDATE,
+                description: '暂时隐藏HP信息，待测试。',
+              },
+              {
+                item: { name: '轨道', type: 'entity' },
+                changeType: WikiChangeType.UPDATE,
+                description: '同步游戏内更改。',
+              },
+              {
+                item: { name: '列车', type: 'entity' },
+                changeType: WikiChangeType.UPDATE,
+                description: '同步游戏内更改。',
+              },
+              {
+                item: { name: '弓箭', type: 'entity' },
+                changeType: WikiChangeType.UPDATE,
+                description: '同步游戏内更改。',
+              },
+              {
+                item: { name: '蓄力箭', type: 'entity' },
+                changeType: WikiChangeType.UPDATE,
+                description: '同步游戏内更改。',
+              },
+              {
+                item: { name: '轨道-旧版', type: 'entity' },
+                changeType: WikiChangeType.CREATE,
+                description: '创建旧版界面，用于与新版区分。',
+              },
+              {
+                item: { name: '列车-旧版', type: 'entity' },
+                changeType: WikiChangeType.CREATE,
+                description: '创建旧版界面，用于与新版区分。',
+              },
+              {
+                item: { name: '弓箭-旧版', type: 'entity' },
+                changeType: WikiChangeType.CREATE,
+                description: '创建旧版界面，用于与新版区分。',
+              },
+              {
+                item: { name: '蓄力箭-旧版', type: 'entity' },
+                changeType: WikiChangeType.CREATE,
+                description: '创建旧版界面，用于与新版区分。',
+              },
+              {
+                item: { name: '铁手', type: 'knowledgeCard' },
+                changeType: WikiChangeType.UPDATE,
+                description: '同步了游戏内的修改。',
+              },
+              {
+                item: { name: '春风得意', type: 'knowledgeCard' },
+                changeType: WikiChangeType.UPDATE,
+                description: '同步了游戏内的修改。',
+              },
+              {
+                item: { name: '攻其不备', type: 'knowledgeCard' },
+                changeType: WikiChangeType.UPDATE,
+                description: '同步了游戏内的修改。',
+              },
+              {
+                item: { name: '减速警告', type: 'knowledgeCard' },
+                changeType: WikiChangeType.UPDATE,
+                description: '同步了游戏内的修改。',
+              },
+              {
+                item: { name: '都是朋友', type: 'knowledgeCard' },
+                changeType: WikiChangeType.UPDATE,
+                description: '同步了游戏内的修改。',
+              },
+              {
+                item: { name: '求生欲', type: 'knowledgeCard' },
+                changeType: WikiChangeType.UPDATE,
+                description: '同步了游戏内的修改。',
+              },
+              {
+                item: { name: '飞跃', type: 'knowledgeCard' },
+                changeType: WikiChangeType.UPDATE,
+                description: '同步了游戏内的修改。',
+              },
+              {
+                item: { name: '强健', type: 'knowledgeCard' },
+                changeType: WikiChangeType.UPDATE,
+                description: '同步了游戏内的修改。',
+              },
+              {
+                item: { name: '夹不住我', type: 'knowledgeCard' },
+                changeType: WikiChangeType.UPDATE,
+                description: '同步了游戏内的修改。',
+              },
+              {
+                item: { name: '应激反应', type: 'knowledgeCard' },
+                changeType: WikiChangeType.UPDATE,
+                description: '同步了游戏内的修改。',
+              },
+              {
+                item: { name: '孤军奋战', type: 'knowledgeCard' },
+                changeType: WikiChangeType.UPDATE,
+                description: '同步了游戏内的修改。',
+              },
+              {
+                item: { name: '无畏', type: 'knowledgeCard' },
+                changeType: WikiChangeType.UPDATE,
+                description: '同步了游戏内的修改。',
+              },
+            ],
+          },
+        },
+      },
     ],
   },
 ];

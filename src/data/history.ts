@@ -4694,6 +4694,110 @@ export const historyData: GameHistory = [
           },
         },
       },
+      {
+        date: '2.5',
+        description:
+          '更新魔镜皮司制、司苑，AP皮尚乘奉御。加强莱特宁，调整牛仔汤姆、莱恩、魔术师。调整雪夜古堡I、II、III管道、传送带，更新雪夜古堡III庭院平台，调整天宫·云上火箭刷新点位、平台美术资源。调整部分角色个人表现分得分机制。',
+        details: {
+          balance: {
+            characterChanges: [
+              { name: '莱特宁', changeType: ChangeType.BUFF },
+              { name: '牛仔汤姆', changeType: ChangeType.ADJUSTMENT },
+              { name: '莱恩', changeType: ChangeType.ADJUSTMENT },
+              { name: '魔术师', changeType: ChangeType.ADJUSTMENT },
+            ],
+          },
+        },
+      },
+      {
+        date: '2.12',
+        description:
+          '更新羽毛皮神箭天王，活动皮击鞠天王，高定皮尚乘奉御，机器鼠天宫马车，火箭天王俑，足迹天马印。加强朝圣者泰菲。更新限时玩法混沌大作战。',
+        details: {
+          balance: {
+            characterChanges: [{ name: '朝圣者泰菲', changeType: ChangeType.BUFF }],
+          },
+        },
+      },
+      {
+        date: '2.19',
+        description: '无战斗相关更新。',
+        details: {},
+      },
+      {
+        date: '2.26',
+        description: '更新魔镜皮神笔马良。',
+        details: {},
+      },
+      {
+        date: '3.5',
+        description: '调整留言板系统。',
+        details: {},
+      },
+      {
+        date: '3.12',
+        description: '无战斗相关更新。',
+        details: {},
+      },
+      {
+        date: '3.19',
+        description: '更新高定皮梵音。',
+        details: {},
+      },
+      {
+        date: '3.26',
+        description:
+          '更新魔镜皮远征赞歌、转盘皮远征队长。更新米雪儿第二武器漂浮气球。调整角色专精系统、收藏系统。',
+        details: {
+          content: {
+            newSecondWeapons: ['米雪儿-漂浮气球'],
+          },
+        },
+      },
+      {
+        date: '4.2',
+        description:
+          '加强侍卫汤姆、鲍姆、侦探杰瑞、侦探泰菲，削弱魔术师，调整汤姆、如玉、凯特、恶魔汤姆、天使杰瑞、天使泰菲、米雪儿。加强铁手、春风得意、减速警告、求生欲、飞跃、强健、应激反应、孤军奋战，调整攻其不备、都是朋友、夹不住我、无畏。调整个人表现分系统。调整天梯玩法加分机制、奶酪期机制、个人胜利系统。调整精选限定魔镜系统。',
+        details: {
+          balance: {
+            characterChanges: [
+              { name: '侍卫汤姆', changeType: ChangeType.BUFF },
+              { name: '鲍姆', changeType: ChangeType.BUFF },
+              { name: '侦探杰瑞', changeType: ChangeType.BUFF },
+              { name: '侦探泰菲', changeType: ChangeType.BUFF },
+              { name: '魔术师', changeType: ChangeType.NERF },
+              { name: '汤姆', changeType: ChangeType.ADJUSTMENT },
+              { name: '如玉', changeType: ChangeType.ADJUSTMENT },
+              { name: '凯特', changeType: ChangeType.ADJUSTMENT },
+              { name: '恶魔汤姆', changeType: ChangeType.ADJUSTMENT },
+              { name: '天使杰瑞', changeType: ChangeType.ADJUSTMENT },
+              { name: '天使泰菲', changeType: ChangeType.ADJUSTMENT },
+              { name: '米雪儿', changeType: ChangeType.ADJUSTMENT },
+            ],
+            knowledgeCardChanges: [
+              { name: '铁手', changeType: ChangeType.BUFF },
+              { name: '春风得意', changeType: ChangeType.BUFF },
+              { name: '减速警告', changeType: ChangeType.BUFF },
+              { name: '求生欲', changeType: ChangeType.BUFF },
+              { name: '飞跃', changeType: ChangeType.BUFF },
+              { name: '强健', changeType: ChangeType.BUFF },
+              { name: '应激反应', changeType: ChangeType.BUFF },
+              { name: '孤军奋战', changeType: ChangeType.BUFF },
+              { name: '攻其不备', changeType: ChangeType.ADJUSTMENT },
+              { name: '都是朋友', changeType: ChangeType.ADJUSTMENT },
+              { name: '夹不住我', changeType: ChangeType.ADJUSTMENT },
+              { name: '无畏', changeType: ChangeType.ADJUSTMENT },
+            ],
+          },
+        },
+      },
+      {
+        date: '4.3',
+        description: 'S28赛季开始，货架皮宫廷神官，染色皮翡冷翠。',
+        details: {
+          milestone: 'S28赛季开始',
+        },
+      },
     ],
   },
 ];
