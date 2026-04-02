@@ -54,4 +54,34 @@ describe('characterRelationValidation', () => {
       ])
     );
   });
+
+  it('should detect semantic duplicates across inverse counters and counteredBy edges', () => {
+    const duplicateTraits = [
+      createCharacterRelationTrait('counters', 'Alpha', 'Beta'),
+      createCharacterRelationTrait('counteredBy', 'Beta', 'Alpha'),
+    ];
+
+    expect(findCharacterRelationValidationErrors(duplicateTraits)).toEqual(
+      expect.arrayContaining([
+        expect.stringContaining(
+          'Semantic duplicate character relation counters::character:Alpha:::character:Beta:'
+        ),
+      ])
+    );
+  });
+
+  it('should detect semantic duplicates for symmetric reversed character relations', () => {
+    const duplicateTraits = [
+      createCharacterRelationTrait('counterEachOther', 'Alpha', 'Beta'),
+      createCharacterRelationTrait('counterEachOther', 'Beta', 'Alpha'),
+    ];
+
+    expect(findCharacterRelationValidationErrors(duplicateTraits)).toEqual(
+      expect.arrayContaining([
+        expect.stringContaining(
+          'Semantic duplicate character relation counterEachOther::character:Alpha:::character:Beta:'
+        ),
+      ])
+    );
+  });
 });

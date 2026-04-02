@@ -8,6 +8,11 @@ const contradictoryCharacterRelationKinds: ReadonlyArray<
   ['counteredBy', 'counterEachOther'],
 ];
 
+const symmetricCharacterRelationKinds = new Set<TraitRelationKind>([
+  'collaborators',
+  'counterEachOther',
+]);
+
 const toSingleItemKey = (item: SingleItem) => `${item.type}:${item.name}:${item.factionId ?? ''}`;
 
 export const buildCharacterRelationEdgeKey = (relation: TraitRelation) =>
@@ -19,9 +24,28 @@ const buildDirectedPairKey = (relation: TraitRelation) =>
 const isCharacterPairRelation = (relation: TraitRelation) =>
   relation.subject.type === 'character' && relation.target.type === 'character';
 
+const buildSemanticCharacterRelationKey = (relation: TraitRelation) => {
+  if (!isCharacterPairRelation(relation)) return null;
+
+  if (relation.kind === 'counters' || relation.kind === 'counteredBy') {
+    const canonicalSubject = relation.kind === 'counters' ? relation.subject : relation.target;
+    const canonicalTarget = relation.kind === 'counters' ? relation.target : relation.subject;
+
+    return `counters::${toSingleItemKey(canonicalSubject)}::${toSingleItemKey(canonicalTarget)}`;
+  }
+
+  if (symmetricCharacterRelationKinds.has(relation.kind)) {
+    const pair = [toSingleItemKey(relation.subject), toSingleItemKey(relation.target)].sort();
+    return `${relation.kind}::${pair[0]}::${pair[1]}`;
+  }
+
+  return null;
+};
+
 export const findCharacterRelationValidationErrors = (traits: Trait[]): string[] => {
   const errors: string[] = [];
   const seenEdges = new Map<string, number>();
+  const seenSemanticCharacterEdges = new Map<string, { index: number; relation: TraitRelation }>();
   const kindsByPair = new Map<string, Map<TraitRelationKind, number[]>>();
 
   traits.forEach((trait, index) => {
@@ -36,6 +60,21 @@ export const findCharacterRelationValidationErrors = (traits: Trait[]): string[]
       );
     } else {
       seenEdges.set(edgeKey, index);
+    }
+
+    const semanticCharacterEdgeKey = buildSemanticCharacterRelationKey(relation);
+    if (semanticCharacterEdgeKey) {
+      const existingSemanticEdge = seenSemanticCharacterEdges.get(semanticCharacterEdgeKey);
+
+      if (existingSemanticEdge) {
+        errors.push(
+          `Semantic duplicate character relation ${semanticCharacterEdgeKey} at entries #${
+            existingSemanticEdge.index + 1
+          } and #${index + 1} (${existingSemanticEdge.relation.kind} mirrors ${relation.kind}).`
+        );
+      } else {
+        seenSemanticCharacterEdges.set(semanticCharacterEdgeKey, { index, relation });
+      }
     }
 
     if (!isCharacterPairRelation(relation)) return;

@@ -320,19 +320,6 @@ export const characterRelationTraits: Trait[] = [
     },
   },
   {
-    description: '国王杰瑞的强化救援战旗配合泰菲的圆滚滚可以实现稳救。',
-    group: [
-      { name: '国王杰瑞', type: 'character' },
-      { name: '泰菲', type: 'character' },
-    ],
-    relation: {
-      kind: 'collaborators',
-      subject: { name: '国王杰瑞', type: 'character' },
-      target: { name: '泰菲', type: 'character' },
-      isMinor: true,
-    },
-  },
-  {
     description: '国王杰瑞的进攻战旗可以为音乐家杰瑞提供高额增伤。',
     group: [
       { name: '国王杰瑞', type: 'character' },
@@ -1127,19 +1114,6 @@ export const characterRelationTraits: Trait[] = [
       subject: { name: '牛仔汤姆', type: 'character' },
       target: { name: '拿坡里鼠', type: 'character' },
       isMinor: true,
-    },
-  },
-  {
-    description: '虽然恶菲绿恶魔的高伤可以快速击倒牛汤，但是牛汤同样可以利用三被和绿恶魔反制敌方',
-    group: [
-      { name: '牛仔汤姆', type: 'character' },
-      { name: '恶魔泰菲', type: 'character' },
-    ],
-    relation: {
-      kind: 'counterEachOther',
-      subject: { name: '牛仔汤姆', type: 'character' },
-      target: { name: '恶魔泰菲', type: 'character' },
-      isMinor: false,
     },
   },
   {
@@ -4226,48 +4200,6 @@ export const characterRelationTraits: Trait[] = [
   },
   {
     description:
-      '布奇的基础伤害高，可一刀或一个道具秒满血泰菲，并且三级桶盖的霸体也在一定程度上限制了炮的发挥。',
-    group: [
-      { name: '泰菲', type: 'character' },
-      { name: '布奇', type: 'character' },
-    ],
-    relation: {
-      kind: 'counteredBy',
-      subject: { name: '泰菲', type: 'character' },
-      target: { name: '布奇', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
-    description:
-      '侍卫汤姆移速快，且在Lv.2被动加成下能一击击倒泰菲。并且侍卫视野大，远程火箭筒被克死，侍卫还能用火炮刷新护盾，每打中一次就有两层盾，可抵消火箭筒的两段伤害。',
-    group: [
-      { name: '泰菲', type: 'character' },
-      { name: '侍卫汤姆', type: 'character' },
-    ],
-    relation: {
-      kind: 'counteredBy',
-      subject: { name: '泰菲', type: 'character' },
-      target: { name: '侍卫汤姆', type: 'character' },
-      isMinor: true,
-    },
-  },
-  {
-    description:
-      '苏蕊跳舞有霸体、伤害高，克制伤害高、血量低、主要打控制的泰菲；苏蕊跳舞可直接把老鼠带上火箭，克制泰菲地雷拖延绑火箭；泰菲火箭筒前摇长，近身容易被苏蕊瑜伽球打断',
-    group: [
-      { name: '泰菲', type: 'character' },
-      { name: '苏蕊', type: 'character' },
-    ],
-    relation: {
-      kind: 'counteredBy',
-      subject: { name: '泰菲', type: 'character' },
-      target: { name: '苏蕊', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
-    description:
       '库博的伤害很高，克制血量少的泰菲，克制泰菲的被动；库博机动性强，思路很难被判断，泰菲无法及时支援队友；库博的隐身导致地雷无法被触发',
     group: [
       { name: '泰菲', type: 'character' },
@@ -4338,34 +4270,6 @@ export const characterRelationTraits: Trait[] = [
   },
   {
     description:
-      '斯飞须格外小心牛仔杰瑞仙人掌带来的控制与减速。同时牛仔杰瑞琴的控制与减速以及自身的霸体使斯飞难以击倒牛仔杰瑞',
-    group: [
-      { name: '斯飞', type: 'character' },
-      { name: '牛仔杰瑞', type: 'character' },
-    ],
-    relation: {
-      kind: 'counteredBy',
-      subject: { name: '斯飞', type: 'character' },
-      target: { name: '牛仔杰瑞', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
-    description:
-      '航海士杰瑞的技能控制能够打断斯飞追击节奏，同时航海士杰瑞被动带来的减速使斯飞难以进入被动强化，而且航海士杰瑞的破墙速度很快，斯飞难以守住墙缝',
-    group: [
-      { name: '斯飞', type: 'character' },
-      { name: '航海士杰瑞', type: 'character' },
-    ],
-    relation: {
-      kind: 'counteredBy',
-      subject: { name: '斯飞', type: 'character' },
-      target: { name: '航海士杰瑞', type: 'character' },
-      isMinor: true,
-    },
-  },
-  {
-    description:
       '航海士杰瑞的火药桶炸完火箭之后塔拉无法通过套索扔老鼠的方式上火箭，并且自身缺乏霸体。',
     group: [
       { name: '塔拉', type: 'character' },
@@ -4376,46 +4280,6 @@ export const characterRelationTraits: Trait[] = [
       subject: { name: '塔拉', type: 'character' },
       target: { name: '航海士杰瑞', type: 'character' },
       isMinor: false,
-    },
-  },
-  {
-    description: '侦探杰瑞的高推速能够缩短奶酪期，同时烟雾弹带来的减速与沉默使斯飞无法有效进攻',
-    group: [
-      { name: '斯飞', type: 'character' },
-      { name: '侦探杰瑞', type: 'character' },
-    ],
-    relation: {
-      kind: 'counteredBy',
-      subject: { name: '斯飞', type: 'character' },
-      target: { name: '侦探杰瑞', type: 'character' },
-      isMinor: true,
-    },
-  },
-  {
-    description: '罗菲的圆球可以打断斯飞的疾冲状态，并且武器技能能够使斯飞的攻势减弱。',
-    group: [
-      { name: '斯飞', type: 'character' },
-      { name: '罗宾汉泰菲', type: 'character' },
-    ],
-    relation: {
-      kind: 'counteredBy',
-      subject: { name: '斯飞', type: 'character' },
-      target: { name: '罗宾汉泰菲', type: 'character' },
-      isMinor: true,
-    },
-  },
-  {
-    description:
-      '斯飞拦不住尼宝的翻滚，同时无法免疫尼宝鱼钩的控制；但斯飞在“疾冲”状态下被勾，抓在手上老鼠的还是会被电。',
-    group: [
-      { name: '斯飞', type: 'character' },
-      { name: '尼宝', type: 'character' },
-    ],
-    relation: {
-      kind: 'counteredBy',
-      subject: { name: '斯飞', type: 'character' },
-      target: { name: '尼宝', type: 'character' },
-      isMinor: true,
     },
   },
   {
