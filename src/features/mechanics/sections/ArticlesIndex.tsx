@@ -9,6 +9,7 @@ import HpMDX from '../articles/Hp.mdx';
 import ItemMDX from '../articles/Item.mdx';
 import MoveMDX from '../articles/Move.mdx';
 import ObjectMDX from '../articles/Object.mdx';
+import PrepareMDX from '../articles/Prepare.mdx';
 
 export function Object() {
   return (
@@ -56,6 +57,13 @@ export function Item() {
   return (
     <StyledMDX className='article-content'>
       <ItemMDX />
+    </StyledMDX>
+  );
+}
+export function Prepare() {
+  return (
+    <StyledMDX className='article-content'>
+      <PrepareMDX />
     </StyledMDX>
   );
 }
