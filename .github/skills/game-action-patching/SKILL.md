@@ -96,12 +96,10 @@ If multiple approved actions on the same date touch the same logical relation ar
 2. Time zone policy: always interpret all date/date-range scopes in Beijing time (`Asia/Shanghai`, UTC+8), including discovery, reconciliation, and status writes.
 3. Branch policy: do all patching work on branch `data-sync`. If current branch is not `data-sync`, switch to `data-sync` before any code edit or status write.
 4. Never blindly replay action paths into source files. Always map to current structure first.
-5. Before patch planning, read src/app/admin/sync-pr/route.ts as the behavioral reference for sync intent and status handling.
-6. If the route path changed, locate the active admin sync endpoint first, then continue.
-7. If action volume is large, classify based on content into smaller chunks and stop for approval before each chunk.
-8. Never update status to "synced" until code edits and validations for that chunk succeed.
-9. Use utf-8 encoding.
-10. Never mark a chunk as synced when code mapping is unresolved, ambiguous, or intentionally skipped.
+5. If action volume is large, classify based on content into smaller chunks and stop for approval before each chunk.
+6. Never update status to "synced" until code edits and validations for that chunk succeed.
+7. Use utf-8 encoding.
+8. Never mark a chunk as synced when code mapping is unresolved, ambiguous, or intentionally skipped.
 
 ## Workflow
 
@@ -124,6 +122,7 @@ If multiple approved actions on the same date touch the same logical relation ar
 Completion check:
 
 - You can state exact total actions and grouping dimensions.
+- You can state whether any action rows contain multiple flattened actions that need all-or-nothing status treatment.
 
 ### Phase 2: Preflight Classification
 
@@ -153,14 +152,16 @@ Stop here and ask for approval to execute chunk 1.
 
 For each approved chunk:
 
-1. Apply code edits only for actions in chunk scope.
-2. Check targeted grep/content for changed fields
-3. If checks pass:
+1. Flatten each selected `entry` into concrete actions before patching.
+2. Apply code edits only for actions in chunk scope.
+3. Check targeted grep/content for changed fields
+4. If checks pass:
 
 - mark successfully applied actions as synced
 
-4. If explicit user policy says a subset must not be applied (for example alias-only actions), mark only that subset as rejected.
-5. Emit per-chunk report:
+5. If explicit user policy says a subset must not be applied (for example alias-only actions), mark only that subset as rejected.
+6. If one source row expands to multiple flattened actions, mark that row as synced only if every flattened action succeeded.
+7. Emit per-chunk report:
 
 - patched count
 - skipped/ambiguous count
@@ -276,6 +277,7 @@ Execution notes:
   - newValue appears exactly where intended
   - deprecated/old value removed when action semantics require replacement
   - relation entries keep normalized shape: top-level `description`, and `relation` only contains semantic metadata (`kind/subject/target/isMinor`)
+  - if patching `src/data/characterRelations.ts`, run `npm run report:character-relations` after edits
 - Content checks:
   - new value is reasonable
   - "message" of a set of submitted action is implemented (for example, if several actions have same message saying "修复了牛仔杰瑞同时存在于克制与被克制的bug（改为互有克制）", check whether "counter" relationship is deleted and "counterEachOther" relationship is added. Other unrelated actions as we do not expect "message" to describe everything it does.)
@@ -286,9 +288,11 @@ Execution notes:
 Before any `update ... set status = 'synced'`:
 
 1. Ensure every action id in the write set is in the chunk ledger as `patched`.
-2. Ensure no id in the write set is `deferred` or `ambiguous`.
-3. Re-run targeted grep/read checks for each changed field family.
-4. If any check fails, do not write synced; report and resolve first.
+2. Ensure every flattened action under each action id in the write set succeeded.
+3. Ensure no id in the write set is `deferred` or `ambiguous`.
+4. Re-run targeted grep/read checks for each changed field family.
+5. Write statuses with an `approved` guard so concurrent moderation changes are not overwritten.
+6. If any check fails, do not write synced; report and resolve first.
 
 ## Reporting Format
 
