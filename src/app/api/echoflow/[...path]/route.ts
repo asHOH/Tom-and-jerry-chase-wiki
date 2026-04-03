@@ -23,6 +23,8 @@ import { resolvePath } from '../resolvers';
 
 const MAX_URL_LENGTH = 2000;
 const MAX_DETAIL_ID_LENGTH = 100;
+const VALID_RESOURCE_TYPES = ['characters', 'cards', 'items', 'entities', 'buffs', 'fixtures', 'maps', 'modes', 'achievements', 'specialSkills', 'articles'] as const;
+type ValidResourceType = typeof VALID_RESOURCE_TYPES[number];
 
 type RouteParams = {
   params: Promise<{ path: string[] }>;
@@ -90,12 +92,7 @@ const TRUSTED_HOSTNAMES = TRUSTED_ORIGINS.map(origin => {
 
 interface CachedKey {
   key: string;
-  expiry: number;
-  verifiedAt: number;
-}
-
-interface VerifiedClientKey {
-  key: string;
+  expiry?: number;
   verifiedAt: number;
   failedAttempts: number;
 }
@@ -106,7 +103,7 @@ class KeyManager {
   private readonly VERIFY_INTERVAL = 5 * 60 * 1000;
   private readonly MAX_FAILED_ATTEMPTS = 3;
   private readonly FAILED_ATTEMPTS_RESET = 60 * 1000;
-  private verifiedClientKeys: Map<string, VerifiedClientKey> = new Map();
+  private verifiedClientKeys: Map<string, CachedKey> = new Map();
   private lastError: { message: string; time: number } | null = null;
   private circuitBreakerOpen = false;
   private circuitBreakerResetTime = 0;
@@ -416,17 +413,31 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     );
   }
 
+  const detailId =
+    pathSegments.length > 1
+      ? sanitizeDetailId(pathSegments.slice(1).join('/'))
+      : undefined;
+
+  function sanitizeDetailId(id: string): string | undefined {
+    if (!id || id.length === 0) return undefined;
+    const decoded = id.replace(/%2f/gi, '/').replace(/\\/g, '/');
+    if (decoded.includes('..') || decoded.includes('%') || /[<>\"\'\\x00-\x1f]/.test(decoded)) {
+      return undefined;
+    }
+    return decoded.slice(0, MAX_DETAIL_ID_LENGTH);
+  }
+
   const resourceType = pathSegments[0];
-  if (!resourceType) {
+  if (!resourceType || !isValidResourceType(resourceType)) {
     return NextResponse.json(
-      { error: 'Not found', code: 'RESOURCE_TYPE_MISSING' },
+      { error: 'Not found', code: 'RESOURCE_TYPE_INVALID' },
       { status: 404 }
     );
   }
-  const detailId =
-    pathSegments.length > 1
-      ? pathSegments.slice(1).join('/').replace(/\.\./g, '') || undefined
-      : undefined;
+
+  function isValidResourceType(type: string): type is ValidResourceType {
+    return VALID_RESOURCE_TYPES.includes(type as ValidResourceType);
+  }
 
   const { searchParams } = new URL(request.url);
   const formatParam = searchParams.get('format');

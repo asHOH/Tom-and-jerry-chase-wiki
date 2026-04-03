@@ -33,39 +33,34 @@ import {
 
 import { WikiChangeType } from '@/data/types';
 
-function buildUpdateLookup(): Map<string, { date: string; description?: string }> {
-  const lookup = new Map<string, { date: string; description?: string }>();
+let updateLookup: Map<string, { date: string; description?: string }> | null = null;
 
+function getUpdateLookup(): Map<string, { date: string; description?: string }> {
+  if (updateLookup) return updateLookup;
+  
+  updateLookup = new Map();
   for (const yearData of wikiHistoryData) {
     for (const event of yearData.events) {
       const changes = event.details.data?.changes || [];
       const batchChanges = event.details.data?.batchChanges || [];
-
       const allChanges = [
         ...changes.map(c => ({ change: c, date: `${yearData.year}.${event.date.split('-')[0]}` })),
         ...batchChanges.flatMap(batch =>
           batch.changes.map(c => ({ change: c, date: `${yearData.year}.${event.date.split('-')[0]}` }))
         ),
       ];
-
       for (const { change, date } of allChanges) {
-        if (change.changeType === WikiChangeType.UPDATE && !lookup.has(change.item.name)) {
-          lookup.set(change.item.name, {
-            date,
-            description: change.description,
-          });
+        if (change.changeType === WikiChangeType.UPDATE && !updateLookup.has(change.item.name)) {
+          updateLookup.set(change.item.name, { date, description: change.description });
         }
       }
     }
   }
-
-  return lookup;
+  return updateLookup;
 }
 
-const updateLookup = buildUpdateLookup();
-
 function getItemUpdateTime(itemName: string): { date: string; description?: string } | undefined {
-  return updateLookup.get(itemName);
+  return getUpdateLookup().get(itemName);
 }
 
 export type ResolverResult = {
