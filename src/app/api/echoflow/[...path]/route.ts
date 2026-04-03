@@ -1,17 +1,6 @@
 /**
  * EchoFlow API
  *
- * 数据导出路由，提供游戏数据的 JSON/JSONL 格式输出。
- *
- * 安全特性：
- * - Origin 验证：防止浏览器端跨站请求，使用严格的 hostname 匹配
- * - Key 验证：客户端需提供有效的 X-EchoFlow-Key 头
- * - 熔断器：外部服务故障时自动降级，避免级联失败
- * - 客户端 Key 缓存：减少外部验证请求，提高响应速度
- * - 请求超时：5 秒超时限制，防止长时间阻塞
- *
- * 响应头：
- * - X-EchoFlow-Health: 'healthy' | 'degraded' - 服务健康状态
  */
 
 import { NextRequest, NextResponse } from 'next/server';
