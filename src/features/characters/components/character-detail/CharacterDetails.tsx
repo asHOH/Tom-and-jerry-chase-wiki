@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { AnimatePresence, m } from 'motion/react'; // smaller bundle size than framer-motion
 
+import { createPortal } from 'react-dom';
 import { useSnapshot } from 'valtio';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
@@ -413,31 +414,34 @@ export default function CharacterDetails({
         </div>
       </div>
       {/* Go to Top Button */}
-      <AnimatePresence>
-        {showGoTop && (
-          <m.button
-            aria-label='返回顶部'
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className='fixed right-6 bottom-6 z-50 rounded-full bg-blue-600 p-3 text-white shadow-lg transition-colors duration-200 hover:bg-blue-700 focus:ring-2 focus:ring-blue-400 focus:outline-none'
-            style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            transition={{ duration: 0.2 }}
-          >
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              className='h-6 w-6'
-              fill='none'
-              viewBox='0 0 24 24'
-              stroke='currentColor'
-              strokeWidth={2}
+      {createPortal(
+        <AnimatePresence>
+          {showGoTop && (
+            <m.button
+              aria-label='返回顶部'
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              className='fixed right-6 bottom-6 z-50 rounded-full bg-blue-600 p-3 text-white shadow-lg transition-colors duration-200 hover:bg-blue-700 focus:ring-2 focus:ring-blue-400 focus:outline-none'
+              style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.2 }}
             >
-              <path strokeLinecap='round' strokeLinejoin='round' d='M5 15l7-7 7 7' />
-            </svg>
-          </m.button>
-        )}
-      </AnimatePresence>
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                className='h-6 w-6'
+                fill='none'
+                viewBox='0 0 24 24'
+                stroke='currentColor'
+                strokeWidth={2}
+              >
+                <path strokeLinecap='round' strokeLinejoin='round' d='M5 15l7-7 7 7' />
+              </svg>
+            </m.button>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </EditModeContext>
   );
 }
