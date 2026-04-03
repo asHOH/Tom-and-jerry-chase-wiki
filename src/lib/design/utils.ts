@@ -53,7 +53,7 @@ const positioningTagContainerClasses: Record<
   fight:
     'bg-gradient-to-r from-purple-50 to-purple-100 border border-purple-200 dark:from-purple-900 dark:to-purple-950 dark:border-purple-800',
   lateGame:
-    'bg-gradient-to-r from-gray-100 to-gray-200 border border-gray-200 dark:from-gray-600 dark:to-gray-650 dark:border-gray-700',
+    'bg-gradient-to-r from-gray-100 to-gray-200 border border-gray-200 dark:from-gray-600 dark:to-gray-700 dark:border-gray-700',
   comeback:
     'bg-gradient-to-r from-amber-50 to-amber-100 border border-amber-200 dark:from-amber-900 dark:to-amber-950 dark:border-amber-800',
   cheese:
@@ -69,7 +69,7 @@ const positioningTagContainerClasses: Record<
   wallBreak:
     'bg-gradient-to-r from-orange-100 to-orange-200 border border-orange-300 dark:from-orange-900 dark:to-orange-950 dark:border-orange-800',
   lateGameMouse:
-    'bg-gradient-to-r from-gray-100 to-gray-200 border border-gray-200 dark:from-gray-600 dark:to-gray-650 dark:border-gray-700',
+    'bg-gradient-to-r from-gray-100 to-gray-200 border border-gray-200 dark:from-gray-600 dark:to-gray-700 dark:border-gray-700',
   minor: 'bg-gray-50 border border-gray-100 dark:bg-slate-800/50 dark:border-slate-700',
 };
 
