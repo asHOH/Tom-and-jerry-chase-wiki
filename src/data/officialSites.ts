@@ -13,7 +13,7 @@ export const OFFICIAL_SITES: OfficialSite[] = [
     isMain: true,
   },
   {
-    url: 'https://tjwiki.huahaiyc.fun',
+    url: 'https://tjwiki.stario.top',
     label: '分站1',
     description: '访问快，但文章功能受限',
   },
