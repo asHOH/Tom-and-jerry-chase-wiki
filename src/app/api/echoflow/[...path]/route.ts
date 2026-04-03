@@ -23,8 +23,20 @@ import { resolvePath } from '../resolvers';
 
 const MAX_URL_LENGTH = 2000;
 const MAX_DETAIL_ID_LENGTH = 100;
-const VALID_RESOURCE_TYPES = ['characters', 'cards', 'items', 'entities', 'buffs', 'fixtures', 'maps', 'modes', 'achievements', 'specialSkills', 'articles'] as const;
-type ValidResourceType = typeof VALID_RESOURCE_TYPES[number];
+const VALID_RESOURCE_TYPES = [
+  'characters',
+  'cards',
+  'items',
+  'entities',
+  'buffs',
+  'fixtures',
+  'maps',
+  'modes',
+  'achievements',
+  'specialSkills',
+  'articles',
+] as const;
+type ValidResourceType = (typeof VALID_RESOURCE_TYPES)[number];
 
 type RouteParams = {
   params: Promise<{ path: string[] }>;
@@ -80,9 +92,14 @@ function decodePathSegments(segments: string[]): string[] {
 const WORKER_URL = process.env.ECHOFLOW_WORKER_URL || 'https://tjwikiflowmcplic.zuyst.top';
 const API_KEY_HEADER = 'X-EchoFlow-Key';
 
-const TRUSTED_ORIGINS = ['https://www.tjwiki.com', 'https://tjwiki.com', 'http://localhost:3000', 'http://127.0.0.1:3000'];
+const TRUSTED_ORIGINS = [
+  'https://www.tjwiki.com',
+  'https://tjwiki.com',
+  'http://localhost:3000',
+  'http://127.0.0.1:3000',
+];
 
-const TRUSTED_HOSTNAMES = TRUSTED_ORIGINS.map(origin => {
+const TRUSTED_HOSTNAMES = TRUSTED_ORIGINS.map((origin) => {
   try {
     return new URL(origin).hostname;
   } catch {
@@ -143,7 +160,7 @@ class KeyManager {
   }
 
   async getKey(): Promise<string | null> {
-    if (this.cache && this.cache.expiry > Date.now()) {
+    if (this.cache && this.cache.expiry !== undefined && this.cache.expiry > Date.now()) {
       return this.cache.key;
     }
 
@@ -156,7 +173,7 @@ class KeyManager {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Origin': this.getOrigin(),
+          Origin: this.getOrigin(),
         },
         body: JSON.stringify({
           domain: this.getDomain(),
@@ -183,6 +200,7 @@ class KeyManager {
           key: data.key,
           expiry: Date.now() + this.CACHE_TTL,
           verifiedAt: Date.now(),
+          failedAttempts: 0,
         };
         return this.cache.key;
       }
@@ -193,7 +211,7 @@ class KeyManager {
       console.error('EchoFlow: Key registration error:', errorMessage);
       this.lastError = { message: errorMessage, time: Date.now() };
       this.tripCircuitBreaker();
-      return this.cache?.key || null;
+      return this.cache?.key ?? null;
     }
   }
 
@@ -207,7 +225,7 @@ class KeyManager {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Origin': this.getOrigin(),
+          Origin: this.getOrigin(),
         },
         body: JSON.stringify({
           domain: this.getDomain(),
@@ -233,6 +251,7 @@ class KeyManager {
           key: data.key,
           expiry: Date.now() + this.CACHE_TTL,
           verifiedAt: Date.now(),
+          failedAttempts: 0,
         };
         return this.cache.key;
       }
@@ -268,17 +287,14 @@ class KeyManager {
     }
 
     try {
-      const response = await fetch(
-        `${WORKER_URL}/auth/verify/${encodeURIComponent(apiKey)}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Origin': this.getOrigin(),
-          },
-          signal: AbortSignal.timeout(5000),
-        }
-      );
+      const response = await fetch(`${WORKER_URL}/auth/verify/${encodeURIComponent(apiKey)}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Origin: this.getOrigin(),
+        },
+        signal: AbortSignal.timeout(5000),
+      });
 
       if (response.status === 429) {
         if (cachedClient && cachedClient.failedAttempts < this.MAX_FAILED_ATTEMPTS) {
@@ -355,8 +371,8 @@ function isOriginAllowed(origin: string | null): boolean {
 
   try {
     const originHostname = new URL(origin).hostname;
-    return TRUSTED_HOSTNAMES.some(trusted => 
-      originHostname === trusted || originHostname.endsWith(`.${trusted}`)
+    return TRUSTED_HOSTNAMES.some(
+      (trusted) => originHostname === trusted || originHostname.endsWith(`.${trusted}`)
     );
   } catch {
     return false;
@@ -388,41 +404,41 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         error: 'Key management unavailable',
         code: 'KEY_UNAVAILABLE',
         ...(isDegraded && { degraded: true }),
-        ...(lastError && process.env.NODE_ENV === 'development' && {
-          details: lastError.message,
-        }),
+        ...(lastError &&
+          process.env.NODE_ENV === 'development' && {
+            details: lastError.message,
+          }),
       },
       { status: 503 }
     );
   }
 
   if (!(await verifyClientKey(request))) {
-    return NextResponse.json(
-      { error: 'Unauthorized', code: 'UNAUTHORIZED' },
-      { status: 401 }
-    );
+    return NextResponse.json({ error: 'Unauthorized', code: 'UNAUTHORIZED' }, { status: 401 });
   }
 
   const { path: rawPathSegments } = await params;
   const pathSegments = decodePathSegments(rawPathSegments);
 
   if (!pathSegments || pathSegments.length === 0) {
-    return NextResponse.json(
-      { error: 'Not found', code: 'PATH_MISSING' },
-      { status: 404 }
-    );
+    return NextResponse.json({ error: 'Not found', code: 'PATH_MISSING' }, { status: 404 });
   }
 
   const detailId =
-    pathSegments.length > 1
-      ? sanitizeDetailId(pathSegments.slice(1).join('/'))
-      : undefined;
+    pathSegments.length > 1 ? sanitizeDetailId(pathSegments.slice(1).join('/')) : undefined;
 
   function sanitizeDetailId(id: string): string | undefined {
     if (!id || id.length === 0) return undefined;
     const decoded = id.replace(/%2f/gi, '/').replace(/\\/g, '/');
-    if (decoded.includes('..') || decoded.includes('%') || /[<>\"\'\\x00-\x1f]/.test(decoded)) {
+    if (decoded.includes('..') || decoded.includes('%')) {
       return undefined;
+    }
+    for (let i = 0; i < decoded.length; i++) {
+      const charCode = decoded.charCodeAt(i);
+      const char = decoded.charAt(i);
+      if (charCode < 0x20 || '<>\'"\\'.includes(char)) {
+        return undefined;
+      }
     }
     return decoded.slice(0, MAX_DETAIL_ID_LENGTH);
   }
@@ -471,7 +487,9 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       hasDetail: 'hasDetail' in result.meta ? result.meta.hasDetail : false,
       format,
       timestamp: new Date().toISOString(),
-      ...('updatedAt' in result.meta && { updatedAt: (result.meta as { updatedAt: string }).updatedAt }),
+      ...('updatedAt' in result.meta && {
+        updatedAt: (result.meta as { updatedAt: string }).updatedAt,
+      }),
     };
 
     const healthStatus = keyManager.isHealthy() ? 'healthy' : 'degraded';
@@ -506,13 +524,14 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     );
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    const errorCode = error instanceof Error && 'code' in error 
-      ? (error as { code: string }).code 
-      : 'INTERNAL_ERROR';
+    const errorCode =
+      error instanceof Error && 'code' in error
+        ? (error as { code: string }).code
+        : 'INTERNAL_ERROR';
     console.error('EchoFlow API error:', { message: errorMessage, code: errorCode });
     return NextResponse.json(
-      { 
-        error: 'Internal server error', 
+      {
+        error: 'Internal server error',
         code: 'INTERNAL_ERROR',
         ...(process.env.NODE_ENV === 'development' && { details: errorMessage }),
       },

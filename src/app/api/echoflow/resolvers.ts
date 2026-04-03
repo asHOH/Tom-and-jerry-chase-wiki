@@ -15,6 +15,7 @@ import characterRelations from '@/data/characterRelations';
 import { contributors } from '@/data/contributors';
 import { historyData } from '@/data/history';
 import traits from '@/data/traits';
+import { WikiChangeType } from '@/data/types';
 import { wikiHistoryData } from '@/data/wikiHistory';
 import { winRatesData } from '@/data/winRates';
 import { getCharacterRelation } from '@/features/characters/utils/relations';
@@ -31,27 +32,33 @@ import {
   specialSkills,
 } from '@/data';
 
-import { WikiChangeType } from '@/data/types';
-
 let updateLookup: Map<string, { date: string; description?: string }> | null = null;
 
 function getUpdateLookup(): Map<string, { date: string; description?: string }> {
   if (updateLookup) return updateLookup;
-  
+
   updateLookup = new Map();
   for (const yearData of wikiHistoryData) {
     for (const event of yearData.events) {
       const changes = event.details.data?.changes || [];
       const batchChanges = event.details.data?.batchChanges || [];
       const allChanges = [
-        ...changes.map(c => ({ change: c, date: `${yearData.year}.${event.date.split('-')[0]}` })),
-        ...batchChanges.flatMap(batch =>
-          batch.changes.map(c => ({ change: c, date: `${yearData.year}.${event.date.split('-')[0]}` }))
+        ...changes.map((c) => ({
+          change: c,
+          date: `${yearData.year}.${event.date.split('-')[0]}`,
+        })),
+        ...batchChanges.flatMap((batch) =>
+          batch.changes.map((c) => ({
+            change: c,
+            date: `${yearData.year}.${event.date.split('-')[0]}`,
+          }))
         ),
       ];
       for (const { change, date } of allChanges) {
         if (change.changeType === WikiChangeType.UPDATE && !updateLookup.has(change.item.name)) {
-          updateLookup.set(change.item.name, { date, description: change.description });
+          const entry: { date: string; description?: string } = { date };
+          if (change.description) entry.description = change.description;
+          updateLookup.set(change.item.name, entry);
         }
       }
     }
@@ -125,7 +132,12 @@ function createListResult(
   };
 }
 
-function createDetailResult(data: unknown, type: string, path: string, updatedAt?: string): ResolverResult {
+function createDetailResult(
+  data: unknown,
+  type: string,
+  path: string,
+  updatedAt?: string
+): ResolverResult {
   return {
     data,
     meta: {
@@ -235,7 +247,12 @@ export const resolvers: Record<string, PathResolver> = {
       const card = cards[decodedId];
       if (!card) return null;
       const updateInfo = getItemUpdateTime(decodedId);
-      return createDetailResult({ ...card, id: decodedId }, 'Card', `/cards/${id}`, updateInfo?.date);
+      return createDetailResult(
+        { ...card, id: decodedId },
+        'Card',
+        `/cards/${id}`,
+        updateInfo?.date
+      );
     },
     fullData: () => {
       const fullCards = Object.entries(cards).map(([id, card]) => ({ ...card, id }));
@@ -361,7 +378,12 @@ export const resolvers: Record<string, PathResolver> = {
       const achievement = findByKey(achievements, id);
       if (!achievement) return null;
       const updateInfo = getItemUpdateTime(achievement.name);
-      return createDetailResult(achievement, 'Achievement', `/achievements/${id}`, updateInfo?.date);
+      return createDetailResult(
+        achievement,
+        'Achievement',
+        `/achievements/${id}`,
+        updateInfo?.date
+      );
     },
     fullData: () => {
       const fullAchievements = recordToArray(achievements, 'name');
