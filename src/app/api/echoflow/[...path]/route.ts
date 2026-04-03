@@ -118,7 +118,12 @@ class KeyManager {
     if (process.env.NODE_ENV === 'development') {
       return 'localhost';
     }
-    return 'www.tjwiki.com';
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.tjwiki.com';
+    try {
+      return new URL(siteUrl).hostname;
+    } catch {
+      return 'www.tjwiki.com';
+    }
   }
 
   private getSupabaseUrl(): string {
