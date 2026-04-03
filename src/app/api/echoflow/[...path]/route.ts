@@ -81,20 +81,25 @@ function decodePathSegments(segments: string[]): string[] {
 const WORKER_URL = process.env.ECHOFLOW_WORKER_URL || 'https://tjwikiflowmcplic.zuyst.top';
 const API_KEY_HEADER = 'X-EchoFlow-Key';
 
-const TRUSTED_ORIGINS = [
-  'https://www.tjwiki.com',
-  'https://tjwiki.com',
-  'http://localhost:3000',
-  'http://127.0.0.1:3000',
-];
-
-const TRUSTED_HOSTNAMES = TRUSTED_ORIGINS.map((origin) => {
-  try {
-    return new URL(origin).hostname;
-  } catch {
-    return origin.replace(/^https?:\/\//, '');
+function buildTrustedHostnames(): string[] {
+  const hostnames: string[] = [];
+  if (process.env.NODE_ENV === 'development') {
+    hostnames.push('localhost', '127.0.0.1');
   }
-});
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.tjwiki.com';
+  try {
+    const hostname = new URL(siteUrl).hostname;
+    hostnames.push(hostname);
+    if (!hostname.startsWith('www.')) {
+      hostnames.push(`www.${hostname}`);
+    }
+  } catch {
+    hostnames.push('www.tjwiki.com', 'tjwiki.com');
+  }
+  return hostnames;
+}
+
+const TRUSTED_HOSTNAMES = buildTrustedHostnames();
 
 interface CachedKey {
   key: string;
@@ -131,11 +136,10 @@ class KeyManager {
   }
 
   private getOrigin(): string {
-    const domain = this.getDomain();
-    if (domain === 'localhost' || domain === '127.0.0.1') {
+    if (process.env.NODE_ENV === 'development') {
       return 'http://localhost:3000';
     }
-    return `https://${domain}`;
+    return process.env.NEXT_PUBLIC_SITE_URL || 'https://www.tjwiki.com';
   }
 
   private isCircuitBreakerOpen(): boolean {
