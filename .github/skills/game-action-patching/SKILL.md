@@ -1,6 +1,6 @@
 ---
 name: game-action-patching
-description: 'Patch approved game_data_actions into character relation/data files. Use when processing admin-approved data actions, reconciling action logs with refactored code structures, or performing batch content syncs safely.'
+description: 'Patch approved game_data_actions into character relation/data files.'
 argument-hint: 'Date range, actor filter, status policy'
 user-invocable: true
 ---
@@ -13,11 +13,7 @@ user-invocable: true
 - Clear progress reporting per chunk with action counts.
 - Status updates in game_data_actions (synced or rejected) based on actual patch outcomes.
 - Regression checks (just targeted content verification; no linting or type-checking) before finalization.
-
-## When To Use
-
-- You need to process approved actions and patch them into static data files.
-- You need deterministic bookkeeping: patched count, skipped count, rejected count, synced count.
+- Deterministic bookkeeping: patched count, skipped count, rejected count, synced count.
 
 ## Common Candidate Files
 
@@ -26,25 +22,21 @@ Prioritize these files when mapping character-related actions:
 - src/features/characters/data/catCharacters.ts
   - Cat character skills, aliases, descriptions, positioning tags, allocations, special skills.
 - src/features/characters/data/mouseCharacters.ts
-  - Mouse character skills, aliases, descriptions, positioning tags, allocations, special skills.
+  - Similar to cat characters.
 - src/data/characterRelations.ts
   - Cross-character/mode/map/card relation graph (counter/collaborator/advantage/disadvantage style entries).
 
 Secondary candidates (when action path indicates these domains):
 
 - src/features/entities/data/\*
-  - Entity-specific data updates.
 - src/features/special-skills/data/\*
-  - Special skill metadata or descriptions.
 - src/data/\*.ts (other than characterRelations.ts)
-  - Shared static datasets when action path is not character-local.
 
 Selection heuristic:
 
 1. First infer top-level root from action path (character name, relation type, mode/map/card).
 2. Prefer feature-local file before generic data file.
-3. If action refers to relation semantics (counter/advantage/etc), check characterRelations.ts first.
-4. If multiple files are plausible, list candidates and confirm before patching.
+3. If multiple files are plausible, list candidates and confirm before patching.
 
 ## Relation Kind Mapping (Must Follow)
 
@@ -79,16 +71,13 @@ Required mapping rules:
 9. `X.counteredBySpecialSkills` -> `kind: 'counteredBySpecialSkills'`, `subject = X`, `target = specialSkill` (with factionId if provided).
 
 Do not store relation text under `relation.description`; keep user-facing text in top-level `description`.
-Do not downgrade to partial/placeholder description (e.g. empty string) when newValue provides concrete text.
 
 ## Array Index Path Rule (Must Follow)
 
 When an action path contains an array index (for example `skills.0.canMoveWhileUsing`):
 
-1. Treat the index literally by default (`0` = first item, `1` = second item, etc.).
-2. Do not remap index-based paths semantically unless you can prove a reorder with stable identity evidence (e.g. same `id`/`name` across revisions).
-3. If reorder cannot be proven confidently, mark the action as deferred/needs decision instead of guessing.
-4. Never mark an index-based action as synced when its literal target was not verified.
+1. Treat the index literally (`0` = first item, `1` = second item, etc.).
+2. If the target value is different from the reported old value, mark the action as deferred instead of guessing.
 
 ## Conflict Resolution for Same Scope
 
@@ -96,19 +85,20 @@ If multiple approved actions on the same date touch the same logical relation ar
 
 1. Apply in `created_at ASC` order.
 2. Treat later actions as authoritative for overlapping fields.
-3. If one action changes relation kind (e.g. `counters` -> `counterEachOther`), ensure the obsolete semantic twin is removed or updated so final graph is not contradictory.
-4. If an action path cannot be mapped confidently, mark it as deferred (not synced), report ids, and ask before status writes.
+3. If one action changes relation kind (e.g. `counters` -> `counterEachOther`), ensure the obsolete semantic twin is removed or updated.
+4. If an action path cannot be mapped confidently, mark it as deferred, report ids, and ask before status writes.
 
 ## Core Rules
 
-1. If unspecified, default to year 2026.
-2. Time zone policy: always interpret all date/date-range scopes in Beijing time (`Asia/Shanghai`, UTC+8), including discovery, reconciliation, and status writes.
-3. Branch policy: do all patching work on branch `data-sync`. If current branch is not `data-sync`, switch to `data-sync` before any code edit or status write.
-4. Never blindly replay action paths into source files. Always map to current structure first.
-5. If action volume is large, classify based on content into smaller chunks and stop for approval before each chunk.
-6. Never update status to "synced" until code edits and validations for that chunk succeed.
+1. Tool policy: use supabase MCP.
+2. If unspecified, default to year 2026.
+3. Time zone policy: always interpret all date/date-range in Beijing time (`Asia/Shanghai`, UTC+8), including discovery, reconciliation, and status writes.
+4. Branch policy: do all patching work on branch `data-sync`. If current branch is not `data-sync`, switch to `data-sync` before any code edit or status write.
+5. Never blindly replay action paths into source files. Always map to current structure first.
+6. If action volume is large, classify based on content into smaller chunks and stop for approval before each chunk.
 7. Use utf-8 encoding.
-8. Never mark a chunk as synced when code mapping is unresolved, ambiguous, or intentionally skipped.
+8. Never update status to "synced" until code edits and validations succeed.
+9. Never update status to "synced" when code mapping is unresolved, ambiguous, or intentionally skipped.
 
 ## Workflow
 
@@ -141,12 +131,12 @@ Classify each action into one of:
 - Refactor-mapped: semantic equivalent exists but path moved.
 - Needs decision: ambiguous mapping.
 
-(for smaller batches, skip this step)
+(for smaller batches, skip the following step)
 For larger batches:
 
-- Create chunk plan first (for example by character, by file, or by message cluster).
-- Keep each chunk small enough (typically 5~20 actions) to review quickly.
-- Pause after establishing the plan before preceeding to execution.
+- Create chunk plan first (e.g., by character, by file, or by message cluster).
+- Keep each chunk small enough (typically 5~10 actions) to review quickly.
+- Pause after establishing the plan before execution.
 
 Chunk checklist template:
 
@@ -155,22 +145,21 @@ Chunk checklist template:
 - Expected files
 - Validation plan
 
-Stop here and ask for approval to execute chunk 1.
+Pause here and ask for approval to execute chunk 1.
 
 ### Phase 3: Chunk Execution (One by One)
 
-For each approved chunk:
+For each chunk:
 
 1. Flatten each selected `entry` into concrete actions before patching.
-2. Apply code edits only for actions in chunk scope.
+2. Apply code edits for actions in chunk scope.
 3. Check targeted grep/content for changed fields
 4. If checks pass:
 
 - mark successfully applied actions as synced
 
-5. If explicit user policy says a subset must not be applied (for example alias-only actions), mark only that subset as rejected.
-6. If one source row expands to multiple flattened actions, mark that row as synced only if every flattened action succeeded.
-7. Emit per-chunk report:
+5. If one source row expands to multiple flattened actions, mark that row as synced only if every flattened action succeeded.
+6. Emit per-chunk report:
 
 - patched count
 - skipped/ambiguous count
@@ -186,7 +175,7 @@ Approval gate:
 2. Confirm totals:
 
 - synced total
-- remaining approved total (should be zero unless intentionally deferred)
+- remaining approved total (these should be the deferred actions that need manual review)
 
 ## Supabase MCP SQL Templates (Practical)
 
@@ -272,13 +261,12 @@ Execution notes:
 
 - Always run inventory query before any status write.
 - Prefer id-scoped writes for rejected subset.
-- Do not bulk-convert synced to rejected unless user explicitly asks.
 
-## Branching Logic
+## Chunk Logic
 
 - If action count <= 10: one chunk is acceptable unless they are very complex.
 - If action count > 10: try to chunk unless they are very simple.
-- If file encoding/garbling risk is detected: stop and ask permission to recover file with git before continuing.
+- If file encoding/garbling risk is detected: stop and ask permission to recover file with git.
 
 ## Regression and Safety Checks
 
@@ -289,8 +277,8 @@ Execution notes:
   - if patching `src/data/characterRelations.ts`, run `npm run report:character-relations` after edits
 - Content checks:
   - new value is reasonable
-  - "message" of a set of submitted action is implemented (for example, if several actions have same message saying "修复了牛仔杰瑞同时存在于克制与被克制的bug（改为互有克制）", check whether "counter" relationship is deleted and "counterEachOther" relationship is added. Other unrelated actions as we do not expect "message" to describe everything it does.)
-  - if the change only happens at new description fields, ensure the change is appropriate, e.g. no regression in precision or conciseness. If there is a risk of regression, assess its level.
+  - "message" of a set of submitted action is implemented (e.g., if several actions have same message saying "修复牛仔杰瑞同时存在于克制与被克制的bug（改为互有克制）", check whether "counter" relationship is deleted and "counterEachOther" relationship is added. No need to check other unrelated actions as we do not expect "message" to cover everything.)
+  - if the change only happens at new description fields, ensure the change introduces no regression in precision or conciseness. If there is a risk of regression, assess its level.
 
 ## Status Write Gate (Hard Stop)
 
@@ -298,7 +286,7 @@ Before any `update ... set status = 'synced'`:
 
 1. Ensure every action id in the write set is in the chunk ledger as `patched`.
 2. Ensure every flattened action under each action id in the write set succeeded.
-3. Ensure no id in the write set is `deferred` or `ambiguous`.
+3. Ensure no id in the write set is `deferred`.
 4. Re-run targeted grep/read checks for each changed field family.
 5. Write statuses with an `approved` guard so concurrent moderation changes are not overwritten.
 6. If any check fails, do not write synced; report and resolve first.
@@ -315,5 +303,4 @@ Use compact, deterministic summaries:
 ## Quick Improvements
 
 - Keep a per-chunk status ledger (ids by synced/rejected/deferred) before issuing status updates.
-- If a chunk includes both content changes and policy rejections, report them separately to avoid accidental bulk status writes.
 - For repeated action waves on the same date, always re-query current statuses before writing to avoid overwriting manual moderation changes.
