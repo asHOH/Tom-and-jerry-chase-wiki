@@ -2249,7 +2249,7 @@ const mouseCharacterDefinitions = {
         description:
           '蓝色小淘气减速猫咪、红色小淘气与猫咪拉开距离，绿色小淘气后期有爆发伤害，拥有很强的干扰能力。',
         additionalDescription:
-          '但恶魔泰菲自身使用红/蓝色小淘气会失去被动层数，并且一定程度上拖慢了奶酪进度。',
+          '但恶魔泰菲自身使用红/蓝色小淘气会失去被动层数，并且二武的破墙能力整体弱于一武。',
       },
     ],
     skillAllocations: [
@@ -2296,7 +2296,8 @@ const mouseCharacterDefinitions = {
       },
       {
         cards: ['S-无畏', 'S-铁血', 'C-救救我', 'C-不屈', 'B-夹不住我'],
-        description: '适合打米特恶汤这种防守猫',
+        description:
+          '适合打米特恶汤这类防守猫，卡组不够用时可以拆掉这套卡，打米特用舍己不屈，特技带治疗',
       },
       {
         cards: ['S-舍己', 'S-铁血', 'B-幸运', 'C-救救我'],
