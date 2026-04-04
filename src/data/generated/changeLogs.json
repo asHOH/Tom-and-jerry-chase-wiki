@@ -4,14 +4,14 @@
     "changes": [
       {
         "type": "feat",
-        "message": "添加新的官方站点",
+        "message": "添加新的分站",
         "hashes": ["fa6b1d1b"],
         "author": "3swordman"
       },
       {
         "type": "feat",
         "scope": "文章功能",
-        "message": "添加版权确认以防止版权纠纷",
+        "message": "编辑功能现在要求同意许可证",
         "hashes": ["b85ea718"],
         "author": "3swordman"
       },
@@ -43,47 +43,49 @@
       {
         "type": "feat",
         "scope": "界面",
-        "message": "为官方网站添加正确的SVG图标",
+        "message": "为官方网站添加正确的图标",
         "hashes": ["5b05e37e"],
         "author": "3swordman"
       },
       {
         "type": "refactor",
-        "message": "移除未使用的SyncPRPanel组件",
+        "scope": "管理面板",
+        "message": "移除未使用的同步pr组件",
         "hashes": ["e9f372b2"],
         "author": "asHOH"
       },
       {
         "type": "docs",
-        "message": "移除关于sync-pr的引用",
+        "scope": "管理面板",
+        "message": "移除关于同步pr的引用",
         "hashes": ["5b7ab470"],
         "author": "asHOH"
       },
       {
         "type": "docs",
         "scope": "角色关系",
-        "message": "重写并归档角色关系迁移计划第三阶段",
+        "message": "重写并归档角色关系至迁移第三阶段",
         "hashes": ["b1d32656"],
         "author": "asHOH"
       },
       {
         "type": "test",
         "scope": "角色关系",
-        "message": "拒绝语义重复的角色关系",
+        "message": "禁止重复的角色关系",
         "hashes": ["f5adf8bd"],
         "author": "asHOH"
       },
       {
         "type": "test",
         "scope": "角色关系",
-        "message": "验证角色关系完整性及投影去重",
+        "message": "验证角色关系完整性并去重",
         "hashes": ["61fec1b7"],
         "author": "asHOH"
       },
       {
         "type": "refactor",
         "scope": "角色信息",
-        "message": "提取关系覆盖编辑适配器",
+        "message": "提取关系覆盖编辑器",
         "hashes": ["8399ccda"],
         "author": "asHOH"
       },

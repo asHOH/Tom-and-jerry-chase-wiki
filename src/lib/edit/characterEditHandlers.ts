@@ -4,7 +4,7 @@
  * Can be used in conjunction with generic entity edit utilities.
  */
 
-import { proxy } from 'valtio';
+import { proxy, snapshot } from 'valtio';
 
 import { AssetManager } from '@/lib/assetManager';
 import { GameDataManager } from '@/lib/dataManager';
@@ -66,7 +66,7 @@ export function handleCharacterIdChange(
   }
 
   // Create new character with updated ID and image URL
-  const newCharacter = structuredClone(character) as CharacterWithFaction;
+  const newCharacter = structuredClone(snapshot(character)) as CharacterWithFaction;
   newCharacter.id = normalizedNewId;
   newCharacter.imageUrl = AssetManager.getCharacterImageUrl(normalizedNewId, factionId);
 

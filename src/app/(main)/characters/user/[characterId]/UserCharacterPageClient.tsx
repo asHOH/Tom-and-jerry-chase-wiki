@@ -1,5 +1,8 @@
 'use client';
 
+import { useLayoutEffect } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+
 import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
 import { PageLoadingState } from '@/components/ui/LoadingState';
 import CharacterDetailsClient from '@/app/(main)/characters/[characterId]/CharacterDetailsClient';
@@ -13,6 +16,17 @@ export default function UserCharacterPageClient() {
   const { isLoading, isEditMode } = useEditMode();
   const { characterId } = useLocalCharacter();
   const character = characterId ? (characters[characterId] ?? null) : null;
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const { replace } = useRouter();
+
+  useLayoutEffect(() => {
+    if (searchParams.get('edit') !== '1') {
+      const newSearchParams = new URLSearchParams(searchParams.toString());
+      newSearchParams.set('edit', '1');
+      replace(`${pathname}?${newSearchParams.toString()}`, { scroll: false });
+    }
+  }, [replace, searchParams, pathname]);
 
   if (isLoading) {
     return <PageLoadingState type='character-detail' message='加载角色详情中...' />;
