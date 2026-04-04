@@ -81,6 +81,15 @@ Required mapping rules:
 Do not store relation text under `relation.description`; keep user-facing text in top-level `description`.
 Do not downgrade to partial/placeholder description (e.g. empty string) when newValue provides concrete text.
 
+## Array Index Path Rule (Must Follow)
+
+When an action path contains an array index (for example `skills.0.canMoveWhileUsing`):
+
+1. Treat the index literally by default (`0` = first item, `1` = second item, etc.).
+2. Do not remap index-based paths semantically unless you can prove a reorder with stable identity evidence (e.g. same `id`/`name` across revisions).
+3. If reorder cannot be proven confidently, mark the action as deferred/needs decision instead of guessing.
+4. Never mark an index-based action as synced when its literal target was not verified.
+
 ## Conflict Resolution for Same Scope
 
 If multiple approved actions on the same date touch the same logical relation area:
