@@ -5,8 +5,18 @@ describe('gameActionPreview', () => {
     it('summarizes common value shapes for the admin preview', () => {
       expect(summarizeGameActionValue(undefined)).toBe('空');
       expect(summarizeGameActionValue([])).toBe('空数组');
-      expect(summarizeGameActionValue([{ id: 'A' }, { id: 'B' }])).toBe('数组(2)');
+      expect(summarizeGameActionValue([{ id: 'A' }, { id: 'B' }])).toBe('数组(2: A、B)');
       expect(summarizeGameActionValue({ a: 1, b: 2 })).toBe('对象(2键)');
+    });
+
+    it('includes recognizable labels for keyed object arrays', () => {
+      expect(
+        summarizeGameActionValue([
+          { tagName: '辅助', description: 'A' },
+          { tagName: '砸墙', description: 'B' },
+          { tagName: '奶酪', description: 'C' },
+        ])
+      ).toBe('数组(3: 辅助、砸墙、奶酪)');
     });
   });
 
@@ -14,14 +24,14 @@ describe('gameActionPreview', () => {
     it('reports every changed item in an id-keyed relation array', () => {
       const diff = diffGameActionIdArray(
         [
-          { id: '马索尔', isMinor: false, description: '' },
+          { id: '玛索尔', isMinor: false, description: '' },
           { id: '梦游杰瑞', isMinor: false, description: '旧描述' },
-          { id: '恶魔泰菲', isMinor: true, description: '保留不变' },
+          { id: '恶魔泰菲', isMinor: true, description: '保持不变' },
         ],
         [
-          { id: '马索尔', isMinor: false, description: '新描述' },
+          { id: '玛索尔', isMinor: false, description: '新描述' },
           { id: '梦游杰瑞', isMinor: false, description: '更新后的描述' },
-          { id: '恶魔泰菲', isMinor: true, description: '保留不变' },
+          { id: '恶魔泰菲', isMinor: true, description: '保持不变' },
         ]
       );
 
@@ -29,7 +39,7 @@ describe('gameActionPreview', () => {
       expect(diff.added).toEqual([]);
       expect(diff.removed).toEqual([]);
       expect(diff.changed).toEqual([
-        { id: '马索尔', fields: ['description'] },
+        { id: '玛索尔', fields: ['description'] },
         { id: '梦游杰瑞', fields: ['description'] },
       ]);
     });
@@ -45,7 +55,43 @@ describe('gameActionPreview', () => {
       ]);
     });
 
-    it('returns disabled when neither side is an id-keyed array', () => {
+    it('supports arrays keyed by tagName for preview diffs', () => {
+      const diff = diffGameActionIdArray(
+        [
+          {
+            tagName: '辅助',
+            description: '保持不变',
+            additionalDescription: '',
+          },
+          {
+            tagName: '奶酪',
+            description: '旧描述',
+            additionalDescription: '新增标签介绍',
+          },
+        ],
+        [
+          {
+            tagName: '辅助',
+            description: '保持不变',
+            additionalDescription: '',
+          },
+          {
+            tagName: '奶酪',
+            description: '新描述',
+            additionalDescription: '新增标签介绍',
+          },
+        ]
+      );
+
+      expect(diff).toEqual({
+        added: [],
+        removed: [],
+        changed: [{ id: '奶酪', fields: ['description'] }],
+        enabled: true,
+      });
+    });
+
+    it('returns disabled when neither side is a keyed object array', () => {
       expect(diffGameActionIdArray('before', 'after')).toEqual({
         added: [],
         removed: [],
