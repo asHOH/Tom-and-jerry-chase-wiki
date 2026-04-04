@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import useSWR from 'swr';
 
 import { useToast } from '@/context/ToastContext';
@@ -74,6 +74,7 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
   const [actionEntityType, setActionEntityType] = useState<string>('all');
   const [actionStatus, setActionStatus] = useState<ActionStatusFilter>('pending');
   const [expandedActionIds, setExpandedActionIds] = useState<Set<string>>(() => new Set());
+  const [selectedActionIds, setSelectedActionIds] = useState<Set<string>>(() => new Set());
   const { success, error } = useToast();
 
   const enableUserAccess = user.role === 'Coordinator';
@@ -176,14 +177,42 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
     [filteredActions]
   );
 
+  const selectedPendingActions = useMemo(
+    () => actionableActions.filter((action) => selectedActionIds.has(action.action_id)),
+    [actionableActions, selectedActionIds]
+  );
+
+  const allVisiblePendingSelected =
+    actionableActions.length > 0 &&
+    actionableActions.every((action) => selectedActionIds.has(action.action_id));
+
+  useEffect(() => {
+    const pendingActionIds = new Set(
+      pendingActions
+        .filter((action) => action.status === 'pending')
+        .map((action) => action.action_id)
+    );
+
+    setSelectedActionIds((prev) => {
+      const next = new Set<string>();
+      for (const actionId of prev) {
+        if (pendingActionIds.has(actionId)) {
+          next.add(actionId);
+        }
+      }
+
+      return next.size === prev.size ? prev : next;
+    });
+  }, [pendingActions]);
+
   const moderateMany = async (action: 'approve' | 'reject') => {
     if (moderatingId) return;
-    if (actionableActions.length === 0) return;
+    if (selectedPendingActions.length === 0) return;
 
     const confirmed = window.confirm(
       action === 'approve'
-        ? `确认批准并公开筛选出的 ${actionableActions.length} 条待审核改动？`
-        : `确认拒绝筛选出的 ${actionableActions.length} 条待审核改动？`
+        ? `确认批准并公开 ${selectedPendingActions.length} 条待审核改动？`
+        : `确认拒绝 ${selectedPendingActions.length} 条待审核改动？`
     );
     if (!confirmed) return;
 
@@ -192,7 +221,7 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
       reason = window.prompt('批量拒绝原因（可选，将应用于全部）') ?? '';
     }
 
-    for (const submission of actionableActions) {
+    for (const submission of selectedPendingActions) {
       if (action === 'reject') {
         await moderateAction(submission.action_id, action, {
           reason,
@@ -211,6 +240,37 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
       else next.add(actionId);
       return next;
     });
+  };
+
+  const toggleSelectedAction = (actionId: string) => {
+    setSelectedActionIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(actionId)) next.delete(actionId);
+      else next.add(actionId);
+      return next;
+    });
+  };
+
+  const toggleSelectAllVisiblePending = () => {
+    setSelectedActionIds((prev) => {
+      const next = new Set(prev);
+
+      if (allVisiblePendingSelected) {
+        for (const action of actionableActions) {
+          next.delete(action.action_id);
+        }
+      } else {
+        for (const action of actionableActions) {
+          next.add(action.action_id);
+        }
+      }
+
+      return next;
+    });
+  };
+
+  const clearSelectedActions = () => {
+    setSelectedActionIds(new Set());
   };
 
   return (
@@ -316,6 +376,33 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
             </div>
 
             <div className='flex flex-wrap items-center gap-2'>
+              <div className='mr-1 text-sm text-gray-500 dark:text-gray-400'>
+                已勾选 {selectedPendingActions.length} 条
+              </div>
+              <button
+                type='button'
+                disabled={!!moderatingId || actionableActions.length === 0}
+                onClick={toggleSelectAllVisiblePending}
+                className={`rounded px-3 py-1 text-sm text-white ${
+                  moderatingId || actionableActions.length === 0
+                    ? 'bg-gray-400 opacity-60'
+                    : 'bg-slate-600 hover:bg-slate-700'
+                }`}
+              >
+                {allVisiblePendingSelected ? '取消全选待审核' : '全选待审核'}
+              </button>
+              <button
+                type='button'
+                disabled={!!moderatingId || selectedActionIds.size === 0}
+                onClick={clearSelectedActions}
+                className={`rounded px-3 py-1 text-sm text-white ${
+                  moderatingId || selectedActionIds.size === 0
+                    ? 'bg-gray-400 opacity-60'
+                    : 'bg-gray-600 hover:bg-gray-700'
+                }`}
+              >
+                清空勾选
+              </button>
               <button
                 type='button'
                 disabled={!!moderatingId}
@@ -328,10 +415,10 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
               </button>
               <button
                 type='button'
-                disabled={!!moderatingId || filteredActions.length === 0}
+                disabled={!!moderatingId || selectedPendingActions.length === 0}
                 onClick={() => void moderateMany('approve')}
                 className={`rounded px-3 py-1 text-sm text-white ${
-                  moderatingId || actionableActions.length === 0
+                  moderatingId || selectedPendingActions.length === 0
                     ? 'bg-green-400 opacity-60'
                     : 'bg-green-600 hover:bg-green-700'
                 }`}
@@ -340,10 +427,10 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
               </button>
               <button
                 type='button'
-                disabled={!!moderatingId || filteredActions.length === 0}
+                disabled={!!moderatingId || selectedPendingActions.length === 0}
                 onClick={() => void moderateMany('reject')}
                 className={`rounded px-3 py-1 text-sm text-white ${
-                  moderatingId || actionableActions.length === 0
+                  moderatingId || selectedPendingActions.length === 0
                     ? 'bg-red-400 opacity-60'
                     : 'bg-red-600 hover:bg-red-700'
                 }`}
@@ -369,249 +456,276 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
                     key={submission.action_id}
                     className='rounded-md border border-gray-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800'
                   >
-                    <div className='flex flex-wrap items-center justify-between gap-2'>
-                      <div className='flex items-center gap-2 text-sm text-gray-700 dark:text-slate-200'>
-                        <span className='font-medium'>{submission.entity_type}</span>
-                        <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
-                        <span className={statusMeta.className}>{statusMeta.label}</span>
-                        <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
-                        <span>
-                          {submission.created_by_nickname
-                            ? `由 ${submission.created_by_nickname} 提交`
-                            : '匿名提交'}
-                        </span>
-                        <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
-                        <span>{new Date(submission.created_at).toLocaleString()}</span>
-                        {submission.status !== 'pending' && submission.reviewed_at && (
-                          <>
-                            <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
-                            <span>
-                              {submission.reviewed_by_nickname
-                                ? `审核：${submission.reviewed_by_nickname}`
-                                : '已审核'}
-                            </span>
-                            <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
-                            <span>{new Date(submission.reviewed_at).toLocaleString()}</span>
-                          </>
+                    <div className='flex items-start gap-3'>
+                      <div className='pt-1'>
+                        {submission.status === 'pending' ? (
+                          <input
+                            type='checkbox'
+                            checked={selectedActionIds.has(submission.action_id)}
+                            disabled={!!moderatingId}
+                            onChange={() => toggleSelectedAction(submission.action_id)}
+                            aria-label={`选择改动 ${submission.action_id}`}
+                            className='h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-500 dark:border-slate-600 dark:bg-slate-900 dark:focus:ring-green-400'
+                          />
+                        ) : (
+                          <span aria-hidden='true' className='block h-4 w-4' />
                         )}
                       </div>
+                      <div className='min-w-0 flex-1'>
+                        <div className='flex flex-wrap items-center justify-between gap-2'>
+                          <div className='flex items-center gap-2 text-sm text-gray-700 dark:text-slate-200'>
+                            <span className='font-medium'>{submission.entity_type}</span>
+                            <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
+                            <span className={statusMeta.className}>{statusMeta.label}</span>
+                            <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
+                            <span>
+                              {submission.created_by_nickname
+                                ? `由 ${submission.created_by_nickname} 提交`
+                                : '匿名提交'}
+                            </span>
+                            <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
+                            <span>{new Date(submission.created_at).toLocaleString()}</span>
+                            {submission.status !== 'pending' && submission.reviewed_at && (
+                              <>
+                                <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
+                                <span>
+                                  {submission.reviewed_by_nickname
+                                    ? `审核：${submission.reviewed_by_nickname}`
+                                    : '已审核'}
+                                </span>
+                                <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
+                                <span>{new Date(submission.reviewed_at).toLocaleString()}</span>
+                              </>
+                            )}
+                          </div>
 
-                      <div className='flex items-center gap-2'>
-                        <button
-                          type='button'
-                          disabled={!!moderatingId}
-                          onClick={() => void copyText(submission.action_id)}
-                          className={`rounded px-3 py-1 text-sm text-white ${
-                            moderatingId
-                              ? 'bg-gray-400 opacity-60'
-                              : 'bg-gray-600 hover:bg-gray-700'
-                          }`}
-                        >
-                          复制ID
-                        </button>
-                        <button
-                          type='button'
-                          disabled={!!moderatingId}
-                          onClick={() => toggleExpanded(submission.action_id)}
-                          className={`rounded px-3 py-1 text-sm text-white ${
-                            moderatingId
-                              ? 'bg-gray-400 opacity-60'
-                              : 'bg-blue-600 hover:bg-blue-700'
-                          }`}
-                        >
-                          {expandedActionIds.has(submission.action_id) ? '收起详情' : '展开详情'}
-                        </button>
-                        {submission.status === 'pending' && (
-                          <>
+                          <div className='flex items-center gap-2'>
                             <button
                               type='button'
                               disabled={!!moderatingId}
-                              onClick={() => {
-                                const ok = window.confirm('确认批准并公开该改动？');
-                                if (!ok) return;
-                                void moderateAction(submission.action_id, 'approve');
-                              }}
+                              onClick={() => void copyText(submission.action_id)}
                               className={`rounded px-3 py-1 text-sm text-white ${
                                 moderatingId
-                                  ? 'bg-green-400 opacity-60'
-                                  : 'bg-green-600 hover:bg-green-700'
+                                  ? 'bg-gray-400 opacity-60'
+                                  : 'bg-gray-600 hover:bg-gray-700'
                               }`}
                             >
-                              批准
+                              复制ID
                             </button>
                             <button
                               type='button'
                               disabled={!!moderatingId}
-                              onClick={() => {
-                                const ok = window.confirm('确认拒绝该改动？');
-                                if (!ok) return;
-                                void moderateAction(submission.action_id, 'reject');
-                              }}
+                              onClick={() => toggleExpanded(submission.action_id)}
                               className={`rounded px-3 py-1 text-sm text-white ${
                                 moderatingId
-                                  ? 'bg-red-400 opacity-60'
-                                  : 'bg-red-600 hover:bg-red-700'
+                                  ? 'bg-gray-400 opacity-60'
+                                  : 'bg-blue-600 hover:bg-blue-700'
                               }`}
                             >
-                              拒绝
+                              {expandedActionIds.has(submission.action_id)
+                                ? '收起详情'
+                                : '展开详情'}
                             </button>
-                          </>
+                            {submission.status === 'pending' && (
+                              <>
+                                <button
+                                  type='button'
+                                  disabled={!!moderatingId}
+                                  onClick={() => {
+                                    const ok = window.confirm('确认批准并公开该改动？');
+                                    if (!ok) return;
+                                    void moderateAction(submission.action_id, 'approve');
+                                  }}
+                                  className={`rounded px-3 py-1 text-sm text-white ${
+                                    moderatingId
+                                      ? 'bg-green-400 opacity-60'
+                                      : 'bg-green-600 hover:bg-green-700'
+                                  }`}
+                                >
+                                  批准
+                                </button>
+                                <button
+                                  type='button'
+                                  disabled={!!moderatingId}
+                                  onClick={() => {
+                                    const ok = window.confirm('确认拒绝该改动？');
+                                    if (!ok) return;
+                                    void moderateAction(submission.action_id, 'reject');
+                                  }}
+                                  className={`rounded px-3 py-1 text-sm text-white ${
+                                    moderatingId
+                                      ? 'bg-red-400 opacity-60'
+                                      : 'bg-red-600 hover:bg-red-700'
+                                  }`}
+                                >
+                                  拒绝
+                                </button>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                        {submission.message && (
+                          <div className='mt-3 rounded border border-blue-100 bg-blue-50 p-2 text-sm text-blue-800 dark:border-blue-900/50 dark:bg-blue-900/30 dark:text-blue-200'>
+                            <span className='font-semibold'>留言：</span>
+                            {submission.message}
+                          </div>
+                        )}
+
+                        {expandedActionIds.has(submission.action_id) && (
+                          <div className='mt-3 space-y-2'>
+                            <div className='flex flex-wrap items-center justify-between gap-2'>
+                              <div className='text-xs text-gray-500 dark:text-slate-400'>
+                                action_id: {submission.action_id}
+                              </div>
+                              <button
+                                type='button'
+                                disabled={!!moderatingId}
+                                onClick={() => void copyText(JSON.stringify(submission, null, 2))}
+                                className={`rounded px-3 py-1 text-sm text-white ${
+                                  moderatingId
+                                    ? 'bg-gray-400 opacity-60'
+                                    : 'bg-gray-600 hover:bg-gray-700'
+                                }`}
+                              >
+                                复制JSON
+                              </button>
+                            </div>
+
+                            {submission.status === 'rejected' && submission.rejection_reason && (
+                              <div className='rounded border border-red-200 bg-red-50 p-3 text-sm text-red-800 dark:border-red-900/60 dark:bg-red-900/30 dark:text-red-200'>
+                                拒绝原因：{submission.rejection_reason}
+                              </div>
+                            )}
+
+                            {(submission.status === 'approved' ||
+                              submission.status === 'synced') && (
+                              <div className='rounded border border-gray-200 bg-gray-50 p-3 text-sm text-gray-700 dark:border-slate-700 dark:bg-slate-900/40 dark:text-slate-200'>
+                                是否已公开：{submission.is_public ? '是' : '否'}
+                                {submission.status === 'synced' && submission.pr_url && (
+                                  <div className='mt-2 break-all'>
+                                    PR: <a href={submission.pr_url}>{submission.pr_url}</a>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+
+                            {/* Human-friendly preview of actions */}
+                            <div className='rounded border border-amber-100 bg-amber-50 p-3 text-xs text-amber-800 dark:border-amber-900/40 dark:bg-amber-900/20 dark:text-amber-100'>
+                              <div className='mb-2 font-semibold'>变更预览</div>
+                              <ul className='space-y-1'>
+                                {(Array.isArray(submission.entry)
+                                  ? submission.entry
+                                  : [submission.entry]
+                                )
+                                  .filter((entry) => {
+                                    if (!entry || typeof entry !== 'object') return true;
+                                    const action = entry as {
+                                      oldValue?: unknown;
+                                      newValue?: unknown;
+                                    };
+                                    const noOld =
+                                      action.oldValue === null || action.oldValue === undefined;
+                                    const newIsEmptyArray =
+                                      Array.isArray(action.newValue) &&
+                                      action.newValue.length === 0;
+                                    return !(noOld && newIsEmptyArray);
+                                  })
+                                  .map((entry, idx) => {
+                                    if (!entry || typeof entry !== 'object') {
+                                      return (
+                                        <li
+                                          key={idx}
+                                          className='rounded bg-white/60 px-2 py-1 text-gray-700 dark:bg-slate-800/60 dark:text-slate-100'
+                                        >
+                                          非法记录
+                                        </li>
+                                      );
+                                    }
+
+                                    const action = entry as {
+                                      op?: string;
+                                      path?: string;
+                                      oldValue?: unknown;
+                                      newValue?: unknown;
+                                    };
+                                    const op = action.op ?? 'set';
+                                    const path = action.path ?? '<无路径>';
+                                    const oldSummary = summarizeGameActionValue(action.oldValue);
+                                    const newSummary = summarizeGameActionValue(action.newValue);
+                                    const idDiff = diffGameActionIdArray(
+                                      action.oldValue,
+                                      action.newValue
+                                    );
+
+                                    return (
+                                      <li
+                                        key={idx}
+                                        className='rounded bg-white/80 px-2 py-1 text-gray-800 shadow-sm ring-1 ring-amber-100 dark:bg-slate-800/60 dark:text-slate-100 dark:ring-amber-900/50'
+                                      >
+                                        <div className='flex flex-wrap items-center gap-2'>
+                                          {op !== 'set' && (
+                                            <span className='rounded bg-amber-600 px-1.5 py-0.5 text-[11px] font-semibold text-white'>
+                                              {op.toUpperCase()}
+                                            </span>
+                                          )}
+                                          <span className='font-medium'>{path}</span>
+                                        </div>
+                                        <div className='mt-1 grid grid-cols-[1fr_auto_1fr] items-center gap-1 text-[11px] text-gray-800 dark:text-slate-100'>
+                                          <div className='truncate text-gray-700 dark:text-slate-200'>
+                                            {oldSummary}
+                                          </div>
+                                          <span className='text-gray-500 dark:text-slate-400'>
+                                            →
+                                          </span>
+                                          <div className='truncate text-green-700 dark:text-green-200'>
+                                            {newSummary}
+                                          </div>
+                                        </div>
+                                        {idDiff.enabled &&
+                                          (idDiff.added.length > 0 ||
+                                            idDiff.removed.length > 0 ||
+                                            idDiff.changed.length > 0) && (
+                                            <div className='mt-1 space-y-1 text-[11px]'>
+                                              <div className='flex flex-wrap gap-2'>
+                                                {idDiff.added.length > 0 && (
+                                                  <span className='rounded bg-green-100 px-1.5 py-0.5 text-green-700 dark:bg-green-900/40 dark:text-green-200'>
+                                                    新增ID：{idDiff.added.join('、')}
+                                                  </span>
+                                                )}
+                                                {idDiff.removed.length > 0 && (
+                                                  <span className='rounded bg-red-100 px-1.5 py-0.5 text-red-700 dark:bg-red-900/40 dark:text-red-200'>
+                                                    移除ID：{idDiff.removed.join('、')}
+                                                  </span>
+                                                )}
+                                              </div>
+                                              {idDiff.changed.length > 0 && (
+                                                <div className='rounded bg-blue-50 px-2 py-1 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200'>
+                                                  <div className='font-medium'>变更字段：</div>
+                                                  <ul className='mt-1 space-y-0.5'>
+                                                    {idDiff.changed.map((c) => (
+                                                      <li key={c.id} className='wrap-break-word'>
+                                                        <span className='font-medium'>{c.id}</span>
+                                                        ：{c.fields.join('、')}
+                                                      </li>
+                                                    ))}
+                                                  </ul>
+                                                </div>
+                                              )}
+                                            </div>
+                                          )}
+                                      </li>
+                                    );
+                                  })}
+                              </ul>
+                            </div>
+
+                            <pre className='max-h-64 overflow-auto rounded bg-gray-50 p-3 text-xs text-gray-800 dark:bg-slate-900/40 dark:text-slate-100'>
+                              {JSON.stringify(submission.entry, null, 2)}
+                            </pre>
+                          </div>
                         )}
                       </div>
                     </div>
-                    {submission.message && (
-                      <div className='mt-3 rounded border border-blue-100 bg-blue-50 p-2 text-sm text-blue-800 dark:border-blue-900/50 dark:bg-blue-900/30 dark:text-blue-200'>
-                        <span className='font-semibold'>留言：</span>
-                        {submission.message}
-                      </div>
-                    )}
-
-                    {expandedActionIds.has(submission.action_id) && (
-                      <div className='mt-3 space-y-2'>
-                        <div className='flex flex-wrap items-center justify-between gap-2'>
-                          <div className='text-xs text-gray-500 dark:text-slate-400'>
-                            action_id: {submission.action_id}
-                          </div>
-                          <button
-                            type='button'
-                            disabled={!!moderatingId}
-                            onClick={() => void copyText(JSON.stringify(submission, null, 2))}
-                            className={`rounded px-3 py-1 text-sm text-white ${
-                              moderatingId
-                                ? 'bg-gray-400 opacity-60'
-                                : 'bg-gray-600 hover:bg-gray-700'
-                            }`}
-                          >
-                            复制JSON
-                          </button>
-                        </div>
-
-                        {submission.status === 'rejected' && submission.rejection_reason && (
-                          <div className='rounded border border-red-200 bg-red-50 p-3 text-sm text-red-800 dark:border-red-900/60 dark:bg-red-900/30 dark:text-red-200'>
-                            拒绝原因：{submission.rejection_reason}
-                          </div>
-                        )}
-
-                        {(submission.status === 'approved' || submission.status === 'synced') && (
-                          <div className='rounded border border-gray-200 bg-gray-50 p-3 text-sm text-gray-700 dark:border-slate-700 dark:bg-slate-900/40 dark:text-slate-200'>
-                            是否已公开：{submission.is_public ? '是' : '否'}
-                            {submission.status === 'synced' && submission.pr_url && (
-                              <div className='mt-2 break-all'>
-                                PR: <a href={submission.pr_url}>{submission.pr_url}</a>
-                              </div>
-                            )}
-                          </div>
-                        )}
-
-                        {/* Human-friendly preview of actions */}
-                        <div className='rounded border border-amber-100 bg-amber-50 p-3 text-xs text-amber-800 dark:border-amber-900/40 dark:bg-amber-900/20 dark:text-amber-100'>
-                          <div className='mb-2 font-semibold'>变更预览</div>
-                          <ul className='space-y-1'>
-                            {(Array.isArray(submission.entry)
-                              ? submission.entry
-                              : [submission.entry]
-                            )
-                              .filter((entry) => {
-                                if (!entry || typeof entry !== 'object') return true;
-                                const action = entry as { oldValue?: unknown; newValue?: unknown };
-                                const noOld =
-                                  action.oldValue === null || action.oldValue === undefined;
-                                const newIsEmptyArray =
-                                  Array.isArray(action.newValue) && action.newValue.length === 0;
-                                return !(noOld && newIsEmptyArray);
-                              })
-                              .map((entry, idx) => {
-                                if (!entry || typeof entry !== 'object') {
-                                  return (
-                                    <li
-                                      key={idx}
-                                      className='rounded bg-white/60 px-2 py-1 text-gray-700 dark:bg-slate-800/60 dark:text-slate-100'
-                                    >
-                                      非法记录
-                                    </li>
-                                  );
-                                }
-
-                                const action = entry as {
-                                  op?: string;
-                                  path?: string;
-                                  oldValue?: unknown;
-                                  newValue?: unknown;
-                                };
-                                const op = action.op ?? 'set';
-                                const path = action.path ?? '<无路径>';
-                                const oldSummary = summarizeGameActionValue(action.oldValue);
-                                const newSummary = summarizeGameActionValue(action.newValue);
-                                const idDiff = diffGameActionIdArray(
-                                  action.oldValue,
-                                  action.newValue
-                                );
-
-                                return (
-                                  <li
-                                    key={idx}
-                                    className='rounded bg-white/80 px-2 py-1 text-gray-800 shadow-sm ring-1 ring-amber-100 dark:bg-slate-800/60 dark:text-slate-100 dark:ring-amber-900/50'
-                                  >
-                                    <div className='flex flex-wrap items-center gap-2'>
-                                      {op !== 'set' && (
-                                        <span className='rounded bg-amber-600 px-1.5 py-0.5 text-[11px] font-semibold text-white'>
-                                          {op.toUpperCase()}
-                                        </span>
-                                      )}
-                                      <span className='font-medium'>{path}</span>
-                                    </div>
-                                    <div className='mt-1 grid grid-cols-[1fr_auto_1fr] items-center gap-1 text-[11px] text-gray-800 dark:text-slate-100'>
-                                      <div className='truncate text-gray-700 dark:text-slate-200'>
-                                        {oldSummary}
-                                      </div>
-                                      <span className='text-gray-500 dark:text-slate-400'>→</span>
-                                      <div className='truncate text-green-700 dark:text-green-200'>
-                                        {newSummary}
-                                      </div>
-                                    </div>
-                                    {idDiff.enabled &&
-                                      (idDiff.added.length > 0 ||
-                                        idDiff.removed.length > 0 ||
-                                        idDiff.changed.length > 0) && (
-                                        <div className='mt-1 space-y-1 text-[11px]'>
-                                          <div className='flex flex-wrap gap-2'>
-                                            {idDiff.added.length > 0 && (
-                                              <span className='rounded bg-green-100 px-1.5 py-0.5 text-green-700 dark:bg-green-900/40 dark:text-green-200'>
-                                                新增ID：{idDiff.added.join('、')}
-                                              </span>
-                                            )}
-                                            {idDiff.removed.length > 0 && (
-                                              <span className='rounded bg-red-100 px-1.5 py-0.5 text-red-700 dark:bg-red-900/40 dark:text-red-200'>
-                                                移除ID：{idDiff.removed.join('、')}
-                                              </span>
-                                            )}
-                                          </div>
-                                          {idDiff.changed.length > 0 && (
-                                            <div className='rounded bg-blue-50 px-2 py-1 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200'>
-                                              <div className='font-medium'>变更字段：</div>
-                                              <ul className='mt-1 space-y-0.5'>
-                                                {idDiff.changed.map((c) => (
-                                                  <li key={c.id} className='break-words'>
-                                                    <span className='font-medium'>{c.id}</span>：
-                                                    {c.fields.join('、')}
-                                                  </li>
-                                                ))}
-                                              </ul>
-                                            </div>
-                                          )}
-                                        </div>
-                                      )}
-                                  </li>
-                                );
-                              })}
-                          </ul>
-                        </div>
-
-                        <pre className='max-h-64 overflow-auto rounded bg-gray-50 p-3 text-xs text-gray-800 dark:bg-slate-900/40 dark:text-slate-100'>
-                          {JSON.stringify(submission.entry, null, 2)}
-                        </pre>
-                      </div>
-                    )}
                   </div>
                 );
               })}
