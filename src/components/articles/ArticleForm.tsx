@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import clsx from 'clsx';
 
 import { normalizeHeadingLevels } from '@/lib/richTextUtils';
@@ -76,6 +76,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
   const isTypoFixActive = showCommitMessage && commitMessage.trim().startsWith(typoPrefix);
   const lintResults = getArticleLintResults(title, content);
   const hasLintError = lintResults.some((item) => item.severity === 'error');
+  const [agreedToLicense, setAgreedToLicense] = useState(false);
   const isSaveDisabled =
     isSubmitting ||
     isLoadingCategories ||
@@ -85,7 +86,8 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
     !content ||
     (showCharacterSelector && !characterId) ||
     (showCommitMessage && !commitMessage.trim()) ||
-    hasLintError;
+    hasLintError ||
+    !agreedToLicense;
 
   const toggleTypoFixPrefix = () => {
     if (!onCommitMessageChange) return;
@@ -270,6 +272,33 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
               <p className='text-sm text-amber-900 dark:text-amber-200'>{submitNoticeMessage}</p>
             </BaseCard>
           )}
+
+          <div className='mt-4 flex items-start gap-2 py-2'>
+            <input
+              type='checkbox'
+              id='license-agreement'
+              checked={agreedToLicense}
+              onChange={(e) => setAgreedToLicense(e.target.checked)}
+              className='mt-1 shrink-0 rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800'
+              disabled={isSubmitting}
+            />
+            <label
+              htmlFor='license-agreement'
+              className='cursor-pointer text-sm text-gray-700 select-none dark:text-gray-300'
+            >
+              提交即表示您同意将修改内容根据{' '}
+              <a
+                href='https://creativecommons.org/licenses/by/4.0/deed.zh-hans'
+                className='text-blue-600 hover:underline dark:text-blue-400'
+                target='_blank'
+                rel='noopener noreferrer'
+                title='Creative Commons Attribution 4.0 International'
+              >
+                CC BY 4.0 许可协议
+              </a>{' '}
+              进行授权发布。
+            </label>
+          </div>
 
           <div className='flex flex-col gap-4 border-t border-gray-200 pt-6 md:flex-row dark:border-gray-700'>
             <Button

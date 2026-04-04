@@ -52,6 +52,7 @@ export default function EditModeToolbar({
   const [publishMessage, setPublishMessage] = useState('');
   const [isConfirmingDiscard, setIsConfirmingDiscard] = useState(false);
   const [isDraftsOpen, setIsDraftsOpen] = useState(false);
+  const [agreedToLicense, setAgreedToLicense] = useState(false);
   const discardResetTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -71,6 +72,7 @@ export default function EditModeToolbar({
       if (!didPublish) return;
       setPublishMessage('');
       setShowMessageInput(false);
+      setAgreedToLicense(false);
       onExitEditMode();
     } else {
       setShowMessageInput(true);
@@ -194,12 +196,39 @@ export default function EditModeToolbar({
                   onClick={() => {
                     setShowMessageInput(false);
                     setPublishMessage('');
+                    setAgreedToLicense(false);
                   }}
                   className='absolute top-1 right-1 rounded p-1 text-gray-400 hover:bg-gray-200 hover:text-gray-600 dark:hover:bg-slate-600 dark:hover:text-gray-300'
                   aria-label='取消'
                 >
                   <CloseIcon className='h-4 w-4' />
                 </button>
+              </div>
+              <div className='mt-2 flex items-start gap-2'>
+                <input
+                  type='checkbox'
+                  id='toolbar-license-agreement'
+                  checked={agreedToLicense}
+                  onChange={(e) => setAgreedToLicense(e.target.checked)}
+                  className='mt-0.5 shrink-0 rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800'
+                  disabled={isPublishing}
+                />
+                <label
+                  htmlFor='toolbar-license-agreement'
+                  className='cursor-pointer text-xs text-gray-600 select-none dark:text-gray-400'
+                >
+                  提交即表示您同意将修改内容根据{' '}
+                  <a
+                    href='https://creativecommons.org/licenses/by/4.0/deed.zh-hans'
+                    className='text-blue-600 hover:underline dark:text-blue-400'
+                    target='_blank'
+                    rel='noopener noreferrer'
+                    title='Creative Commons Attribution 4.0 International'
+                  >
+                    CC BY 4.0 许可协议
+                  </a>{' '}
+                  进行授权发布。
+                </label>
               </div>
             </m.div>
           )}
@@ -301,10 +330,10 @@ export default function EditModeToolbar({
           <button
             type='button'
             onClick={handlePublish}
-            disabled={!isDirty || isPublishing}
+            disabled={!isDirty || isPublishing || (showMessageInput && !agreedToLicense)}
             className={clsx(
               'flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium transition-colors',
-              isDirty && !isPublishing
+              isDirty && !isPublishing && (!showMessageInput || agreedToLicense)
                 ? 'bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600'
                 : 'cursor-not-allowed bg-gray-200 text-gray-500 dark:bg-slate-700 dark:text-gray-500'
             )}
