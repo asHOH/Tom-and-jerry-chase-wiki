@@ -18,6 +18,7 @@ import {
   toggleCharacterRelationMinor,
   updateCharacterRelationDescription,
 } from '@/features/characters/utils/characterRelationOverlay';
+import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 import { CharacterSelector } from '@/components/ui/CharacterSelector';
 import { editable } from '@/components/ui/editable';
 import { TrashIcon } from '@/components/icons/CommonIcons';
@@ -507,7 +508,9 @@ const RelationSection: React.FC<RelationSectionProps> = ({
             )
           ) : (
             item.description && (
-              <span className={relationItemDescriptionClassName}>{item.description}</span>
+              <span className={relationItemDescriptionClassName}>
+                <TextWithHoverTooltips text={item.description} />
+              </span>
             )
           )}
         </div>
@@ -588,7 +591,9 @@ const RelationSection: React.FC<RelationSectionProps> = ({
             )
           ) : (
             item.description && (
-              <span className={relationItemDescriptionClassName}>{item.description}</span>
+              <span className={relationItemDescriptionClassName}>
+                <TextWithHoverTooltips text={item.description} />
+              </span>
             )
           )}
         </div>
@@ -681,7 +686,9 @@ const RelationSection: React.FC<RelationSectionProps> = ({
             )
           ) : (
             item.description && (
-              <span className={relationItemDescriptionClassName}>{item.description}</span>
+              <span className={relationItemDescriptionClassName}>
+                <TextWithHoverTooltips text={item.description} />
+              </span>
             )
           )}
         </div>
@@ -774,7 +781,9 @@ const RelationSection: React.FC<RelationSectionProps> = ({
             )
           ) : (
             item.description && (
-              <span className={relationItemDescriptionClassName}>{item.description}</span>
+              <span className={relationItemDescriptionClassName}>
+                <TextWithHoverTooltips text={item.description} />
+              </span>
             )
           )}
         </div>
@@ -867,7 +876,9 @@ const RelationSection: React.FC<RelationSectionProps> = ({
             )
           ) : (
             item.description && (
-              <span className={relationItemDescriptionClassName}>{item.description}</span>
+              <span className={relationItemDescriptionClassName}>
+                <TextWithHoverTooltips text={item.description} />
+              </span>
             )
           )}
         </div>
