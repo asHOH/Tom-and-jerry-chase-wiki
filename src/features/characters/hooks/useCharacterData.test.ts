@@ -1,11 +1,19 @@
 import { renderHook } from '@testing-library/react';
 import useSWR from 'swr';
 
+import { catCharactersWithImages } from '@/features/characters/data/catCharacters';
+import { mouseCharactersWithImages } from '@/features/characters/data/mouseCharacters';
 import { useCharacterData } from '@/features/characters/hooks/useCharacterData';
 
-// Mock SWR
 jest.mock('swr');
+
 const mockUseSWR = useSWR as jest.MockedFunction<typeof useSWR>;
+
+const getLatestFetcher = () => {
+  const fetcher = mockUseSWR.mock.calls.at(-1)?.[1];
+  expect(fetcher).toEqual(expect.any(Function));
+  return fetcher as () => Promise<unknown>;
+};
 
 describe('useCharacterData', () => {
   beforeEach(() => {
@@ -22,7 +30,7 @@ describe('useCharacterData', () => {
     jest.clearAllMocks();
   });
 
-  it('should create correct SWR key for cat faction', () => {
+  it('uses the cat SWR key and fetcher branch', async () => {
     renderHook(() => useCharacterData('cat'));
 
     expect(mockUseSWR).toHaveBeenCalledWith(
@@ -33,9 +41,11 @@ describe('useCharacterData', () => {
         revalidateOnReconnect: false,
       })
     );
+
+    await expect(getLatestFetcher()()).resolves.toEqual(catCharactersWithImages);
   });
 
-  it('should create correct SWR key for mouse faction', () => {
+  it('uses the mouse SWR key and fetcher branch', async () => {
     renderHook(() => useCharacterData('mouse'));
 
     expect(mockUseSWR).toHaveBeenCalledWith(
@@ -46,14 +56,23 @@ describe('useCharacterData', () => {
         revalidateOnReconnect: false,
       })
     );
+
+    await expect(getLatestFetcher()()).resolves.toEqual(mouseCharactersWithImages);
   });
 
-  it('should return SWR response structure', () => {
+  it('returns the current SWR response object', () => {
+    const swrResponse = {
+      data: { tom: { id: 'tom' } },
+      error: undefined,
+      isLoading: false,
+      mutate: jest.fn(),
+      isValidating: false,
+    };
+
+    mockUseSWR.mockReturnValueOnce(swrResponse);
+
     const { result } = renderHook(() => useCharacterData('cat'));
 
-    expect(result.current).toHaveProperty('data');
-    expect(result.current).toHaveProperty('error');
-    expect(result.current).toHaveProperty('isLoading');
-    expect(result.current).toHaveProperty('mutate');
+    expect(result.current).toBe(swrResponse);
   });
 });
