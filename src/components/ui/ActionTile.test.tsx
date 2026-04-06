@@ -54,7 +54,14 @@ describe('ActionTile', () => {
   it('allows interaction when interaction is normal', () => {
     const onClick = jest.fn();
 
-    render(<ActionTile title='Easter egg' ariaLabel='Easter egg' interaction='normal' onClick={onClick} />);
+    render(
+      <ActionTile
+        title='Easter egg'
+        ariaLabel='Easter egg'
+        interaction='normal'
+        onClick={onClick}
+      />
+    );
 
     const button = screen.getByRole('button', { name: 'Easter egg' });
     fireEvent.click(button);
@@ -92,7 +99,9 @@ describe('ActionTile', () => {
   it('applies disabled semantics and blocks clicks when interaction is disabled', () => {
     const onClick = jest.fn();
 
-    render(<ActionTile title='Disabled' ariaLabel='Disabled' interaction='disabled' onClick={onClick} />);
+    render(
+      <ActionTile title='Disabled' ariaLabel='Disabled' interaction='disabled' onClick={onClick} />
+    );
 
     const button = screen.getByRole('button', { name: 'Disabled' });
     fireEvent.click(button);

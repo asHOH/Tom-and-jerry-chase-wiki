@@ -4,14 +4,10 @@ import LoadingState, { PageLoadingState } from './LoadingState';
 
 jest.mock('./LoadingSpinner', () => ({
   __esModule: true,
-  default: function MockLoadingSpinner({
-    message,
-    size,
-  }: {
-    message?: string;
-    size?: string;
-  }) {
-    return <div data-testid='loading-spinner' data-message={message ?? ''} data-size={size ?? ''} />;
+  default: function MockLoadingSpinner({ message, size }: { message?: string; size?: string }) {
+    return (
+      <div data-testid='loading-spinner' data-message={message ?? ''} data-size={size ?? ''} />
+    );
   },
 }));
 
@@ -26,7 +22,11 @@ jest.mock('./Skeleton', () => ({
   SkeletonCharacterCard: function MockSkeletonCharacterCard({ animate }: { animate?: boolean }) {
     return <div data-testid='skeleton-character-card' data-animate={String(animate ?? true)} />;
   },
-  SkeletonCharacterDetail: function MockSkeletonCharacterDetail({ animate }: { animate?: boolean }) {
+  SkeletonCharacterDetail: function MockSkeletonCharacterDetail({
+    animate,
+  }: {
+    animate?: boolean;
+  }) {
     return <div data-testid='skeleton-character-detail' data-animate={String(animate ?? true)} />;
   },
   SkeletonDetailLayout: function MockSkeletonDetailLayout({

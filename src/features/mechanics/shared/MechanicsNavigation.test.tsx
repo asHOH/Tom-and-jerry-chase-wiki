@@ -1,10 +1,10 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 
-import type { ActionTileProps } from '@/components/ui/ActionTile';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useNavigationTabs } from '@/hooks/useNavigationTabs';
 import UsagesNavigation from '@/features/usages/shared/UsagesNavigation';
+import type { ActionTileProps } from '@/components/ui/ActionTile';
 
 import MechanicsNavigation from './MechanicsNavigation';
 
@@ -126,8 +126,12 @@ describe('Navigation tile semantics', () => {
     expect(screen.getAllByTestId('action-tile')).toHaveLength(4);
 
     const actionTileProps = mockActionTile.mock.calls.map((call) => call[0] as ActionTileProps);
-    const activeTiles = actionTileProps.filter((props) => props.href === mockMechanicsNavItems[0].href);
-    const inactiveTiles = actionTileProps.filter((props) => props.href === mockMechanicsNavItems[1].href);
+    const activeTiles = actionTileProps.filter(
+      (props) => props.href === mockMechanicsNavItems[0].href
+    );
+    const inactiveTiles = actionTileProps.filter(
+      (props) => props.href === mockMechanicsNavItems[1].href
+    );
 
     expect(activeTiles).toHaveLength(2);
     expect(inactiveTiles).toHaveLength(2);
@@ -165,8 +169,12 @@ describe('Navigation tile semantics', () => {
     expect(screen.getAllByTestId('action-tile')).toHaveLength(4);
 
     const actionTileProps = mockActionTile.mock.calls.map((call) => call[0] as ActionTileProps);
-    const activeTiles = actionTileProps.filter((props) => props.href === mockUsagesNavItems[0].href);
-    const inactiveTiles = actionTileProps.filter((props) => props.href === mockUsagesNavItems[1].href);
+    const activeTiles = actionTileProps.filter(
+      (props) => props.href === mockUsagesNavItems[0].href
+    );
+    const inactiveTiles = actionTileProps.filter(
+      (props) => props.href === mockUsagesNavItems[1].href
+    );
 
     expect(activeTiles).toHaveLength(2);
     expect(inactiveTiles).toHaveLength(2);
