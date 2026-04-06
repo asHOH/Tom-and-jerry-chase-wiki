@@ -224,14 +224,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${baseUrl}/docs`,
       lastModified: buildTime,
       changeFrequency: 'monthly',
-      priority: 0.7,
+      priority: 0.3,
     },
     // Tools
     {
       url: `${baseUrl}/tools`,
       lastModified: buildTime,
       changeFrequency: 'weekly',
-      priority: 0.7,
+      priority: 0.6,
     },
     // Other
     {
