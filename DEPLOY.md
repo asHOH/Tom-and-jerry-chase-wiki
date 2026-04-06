@@ -67,11 +67,12 @@ docker compose up -d
 
 ## 方法二 自动化运维脚本 (Linux 推荐)
 
-`scripts/ops/start_server.sh` 是为 Linux 生产环境设计的自动化脚本，主站就在用此脚本维护。特点：
+`scripts/ops/deploy_server.sh` 是推荐的 Linux 生产部署脚本，一次性执行拉取代码、安装依赖、构建，并在成功后重载 pm2。`scripts/ops/start_server.sh` 只负责运行时启动 `next start`，供 pm2 托管。特点：
 
+- **部署与运行分离**: 构建失败时不会影响当前在线进程
 - **环境配置**: 自动安装 NVM 与 Node.js；自动切换 npm 镜像源（npmmirror/官方）
-- **智能更新**: Git 拉取防超时、断点续传；仅在代码变更时增量构建
-- **一键启动**: 自动处理环境变量加载与服务启动
+- **智能更新**: Git 拉取防超时；仅在代码变更时增量构建
+- **运行托管**: pm2 只托管站点进程；`cloudflared` 单独作为系统服务运行
 
 ### 使用方法
 
@@ -80,15 +81,36 @@ docker compose up -d
    ```bash
    mkdir -p ~/tjwiki-ops
    cd ~/tjwiki-ops
+   wget https://raw.githubusercontent.com/asHOH/Tom-and-jerry-chase-wiki/develop/scripts/ops/deploy_server.sh
    wget https://raw.githubusercontent.com/asHOH/Tom-and-jerry-chase-wiki/develop/scripts/ops/start_server.sh
-   chmod +x start_server.sh
+   chmod +x deploy_server.sh start_server.sh
    ```
 
-2. 运行脚本：
+2. 首次部署：
+
    ```bash
-   ./start_server.sh
+   ./deploy_server.sh
    ```
-   首次运行会克隆仓库到 `Tom-and-jerry-chase-wiki` 目录，并生成 `.env.production` 模板文件。请按提示填入环境变量后再次运行。
+
+   首次运行会克隆仓库到 `Tom-and-jerry-chase-wiki` 目录，并在缺少 `.env.production` 时提示先补齐生产环境变量。
+
+3. 后续更新：
+
+   ```bash
+   cd ~/tjwiki-ops
+   ./deploy_server.sh
+   ```
+
+   脚本会在构建成功后自动执行 `pm2 reload tjwiki --update-env`；如果构建失败，会保留当前正在运行的旧版本。
+
+4. 配置 pm2 开机自启：
+
+   ```bash
+   pm2 startup
+   pm2 save
+   ```
+
+   `pm2 startup` 会输出一条需要使用 `sudo` 执行的命令，请按提示执行一次。
 
 ## 方法三 手动构建
 
@@ -248,13 +270,44 @@ ingress:
 
 #### 第 7 步 作为服务运行
 
+如果你使用 **Token 管理的 Tunnel**（推荐），请在 Cloudflare Dashboard 中为目标域名分别配置 Public Hostname，目标都指向 `http://127.0.0.1:3000`。
+
+先保存 token：
+
 ```bash
-sudo cloudflared service install
-sudo systemctl enable --now cloudflared
-sudo systemctl status cloudflared --no-pager
+sudo install -D -m 600 /path/to/tunnel.token /etc/cloudflared/tunnel.token
 ```
 
-如果状态是 running，就成功了。
+创建 systemd 服务：
+
+```bash
+sudo tee /etc/systemd/system/cloudflared.service > /dev/null <<'EOF'
+[Unit]
+Description=Cloudflare Tunnel
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=5
+ExecStart=/usr/bin/cloudflared tunnel --loglevel info run --token-file /etc/cloudflared/tunnel.token
+
+[Install]
+WantedBy=multi-user.target
+EOF
+```
+
+启用并检查状态：
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now cloudflared
+sudo systemctl status cloudflared --no-pager
+journalctl -u cloudflared -n 50 --no-pager
+```
+
+如果状态是 `active (running)`，并且日志中能看到 `Registered tunnel connection`，就说明隧道已经连通。
 
 #### 第 8 步 访问
 
