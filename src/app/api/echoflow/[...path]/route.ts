@@ -21,8 +21,20 @@ const VALID_RESOURCE_TYPES = [
   'maps',
   'modes',
   'achievements',
-  'specialSkills',
+  'special-skills',
   'articles',
+  'win-rates',
+  'ranks',
+  'recommended',
+  'traits',
+  'character-relations',
+  'history',
+  'wiki-history',
+  'contributors',
+  'factions',
+  'itemGroups',
+  'usages',
+  'mechanics',
 ] as const;
 type ValidResourceType = (typeof VALID_RESOURCE_TYPES)[number];
 
