@@ -1,33 +1,49 @@
-import type { ReactNode } from 'react';
+import React from 'react';
 import { render, screen } from '@testing-library/react';
 
+import { useMobile } from '@/hooks/useMediaQuery';
 import { TOOL_NAV_ITEMS } from '@/constants/navigation';
 
 import ToolGrid from './ToolGrid';
 
-type HomePageSectionProps = {
-  title?: string;
-  buttons: Array<{
-    imageSrc: string;
-    imageAlt: string;
-    title?: string;
-    description: string;
-    href: string;
-    ariaLabel: string;
-  }>;
-};
-
-const recordedSections: HomePageSectionProps[] = [];
-
 jest.mock('@/hooks/useMediaQuery', () => ({
-  useMobile: jest.fn(() => false),
+  useMobile: jest.fn(),
 }));
 
-jest.mock('@/components/ui/NavSection', () => ({
+jest.mock('usehooks-ts', () => ({
+  useIntersectionObserver: jest.fn(() => [jest.fn(), true] as const),
+}));
+
+jest.mock('@/components/Link', () => ({
   __esModule: true,
-  default: function MockHomePageSection(props: HomePageSectionProps) {
-    recordedSections.push(props);
-    return <section data-testid='tool-section'>{props.title ?? 'untitled'}</section>;
+  default: function MockLink({
+    children,
+    href,
+    ...props
+  }: React.AnchorHTMLAttributes<HTMLAnchorElement> & {
+    href: string;
+    children: React.ReactNode;
+  }) {
+    return (
+      <a href={href} {...props}>
+        {children}
+      </a>
+    );
+  },
+}));
+
+jest.mock('@/components/Image', () => ({
+  __esModule: true,
+  default: function MockImage({
+    preload,
+    alt,
+    ...props
+  }: React.ImgHTMLAttributes<HTMLImageElement> & { preload?: boolean }) {
+    return React.createElement('img', {
+      ...props,
+      alt,
+      'data-preload': preload ? 'true' : 'false',
+    });
   },
 }));
 
@@ -45,76 +61,58 @@ jest.mock('@/components/ui/ChangeLogs', () => ({
   },
 }));
 
-jest.mock('@/components/ui/PageTitle', () => ({
-  __esModule: true,
-  default: function MockPageTitle({ children }: { children: ReactNode }) {
-    return <h1>{children}</h1>;
-  },
-}));
-
-jest.mock('@/components/ui/PageDescription', () => ({
-  __esModule: true,
-  default: function MockPageDescription({ children }: { children: ReactNode }) {
-    return <p>{children}</p>;
-  },
-}));
+const mockedUseMobile = jest.mocked(useMobile);
 
 describe('ToolGrid', () => {
   beforeEach(() => {
-    recordedSections.length = 0;
+    mockedUseMobile.mockReturnValue(false);
   });
 
-  it('maps tool navigation items into the current section/button layout contract', () => {
-    render(<ToolGrid description='工具页说明' />);
+  it('renders the real navigation sections and tool links on desktop', () => {
+    const { container } = render(<ToolGrid description='Tool page description' />);
 
-    const usageItems = TOOL_NAV_ITEMS.filter((item) =>
-      ['usage-use', 'usage-edit'].includes(item.id)
-    );
-    const queryItems = TOOL_NAV_ITEMS.filter((item) =>
-      ['ranks', 'win-rates', 'special-skill-advices', 'traitCollection'].includes(item.id)
-    );
-    const buildingItems = TOOL_NAV_ITEMS.filter((item) =>
-      ['fixtures', 'achievements'].includes(item.id)
-    );
+    const root = container.firstElementChild as HTMLElement;
+    const sectionHeadings = screen.getAllByRole('heading', { level: 2 });
 
-    expect(screen.getByText('工具页说明')).toBeInTheDocument();
-    expect(screen.getAllByTestId('tool-section')).toHaveLength(3);
+    expect(screen.getByRole('heading', { level: 1, name: '工具栏' })).toBeInTheDocument();
+    expect(screen.getByText('Tool page description')).toBeInTheDocument();
+    expect(root).toHaveClass('max-w-6xl', 'space-y-8', 'p-6');
+    expect(sectionHeadings).toHaveLength(4);
     expect(screen.getByTestId('feedback-section')).toBeInTheDocument();
     expect(screen.getByTestId('change-logs')).toBeInTheDocument();
 
-    expect(recordedSections).toHaveLength(3);
-    expect(recordedSections[0]).toMatchObject({
-      title: '使用指南',
-      buttons: usageItems.map((item) => ({
-        imageSrc: item.iconSrc,
-        imageAlt: item.iconAlt,
-        title: item.label,
-        description: item.description,
-        href: item.href,
-        ariaLabel: item.description,
-      })),
+    const visibleToolItems = TOOL_NAV_ITEMS.filter((item) =>
+      [
+        'usage-use',
+        'usage-edit',
+        'ranks',
+        'win-rates',
+        'special-skill-advices',
+        'traitCollection',
+        'fixtures',
+        'achievements',
+      ].includes(item.id)
+    );
+
+    visibleToolItems.forEach((item) => {
+      expect(screen.getByRole('link', { name: item.description })).toHaveAttribute(
+        'href',
+        item.href
+      );
+      expect(screen.getByText(item.label)).toBeInTheDocument();
     });
-    expect(recordedSections[1]).toMatchObject({
-      title: '查询工具',
-      buttons: queryItems.map((item) => ({
-        imageSrc: item.iconSrc,
-        imageAlt: item.iconAlt,
-        title: item.label,
-        description: item.description,
-        href: item.href,
-        ariaLabel: item.description,
-      })),
-    });
-    expect(recordedSections[2]).toMatchObject({
-      title: '建设中界面',
-      buttons: buildingItems.map((item) => ({
-        imageSrc: item.iconSrc,
-        imageAlt: item.iconAlt,
-        title: item.label,
-        description: item.description,
-        href: item.href,
-        ariaLabel: item.description,
-      })),
-    });
+  });
+
+  it('switches to the mobile shell layout when useMobile is true', () => {
+    mockedUseMobile.mockReturnValue(true);
+
+    const { container } = render(<ToolGrid description='Mobile description' />);
+
+    const root = container.firstElementChild as HTMLElement;
+    const header = container.querySelector('header') as HTMLElement | null;
+
+    expect(root).toHaveClass('max-w-3xl', 'space-y-2', 'p-2');
+    expect(header).toHaveClass('mb-4', 'space-y-2', 'px-2', 'text-center');
+    expect(screen.getByText('Mobile description')).toBeInTheDocument();
   });
 });
