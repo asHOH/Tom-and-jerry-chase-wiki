@@ -1,22 +1,21 @@
 import React from 'react';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+
+import type { ActionTileProps } from '@/components/ui/ActionTile';
 
 import FactionButton from './FactionButton';
 
-jest.mock('@/components/Link', () => ({
+const mockActionTile = jest.fn();
+
+jest.mock('@/components/ui/ActionTile', () => ({
   __esModule: true,
-  default: function MockLink({
-    children,
-    href,
-    ...props
-  }: React.AnchorHTMLAttributes<HTMLAnchorElement> & {
-    href: string;
-    children: React.ReactNode;
-  }) {
+  default: function MockActionTile(props: ActionTileProps) {
+    mockActionTile(props);
     return (
-      <a href={href} {...props}>
-        {children}
-      </a>
+      <div data-testid='action-tile'>
+        {props.title}
+        <div>{props.description}</div>
+      </div>
     );
   },
 }));
@@ -37,8 +36,12 @@ jest.mock('@/components/Image', () => ({
 }));
 
 describe('FactionButton', () => {
-  it('keeps decorative image alt text empty for linked tiles', () => {
-    render(
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('passes a decorative image title block into ActionTile for linked tiles', () => {
+    const { container } = render(
       <FactionButton
         title='Characters'
         description='Open the character list'
@@ -50,39 +53,22 @@ describe('FactionButton', () => {
       />
     );
 
-    const link = screen.getByRole('link', { name: 'Open the character list' });
-    const image = link.querySelector('img');
-    const title = screen.getByText('Characters');
-    const description = screen.getByText('Open the character list');
-    const titleWrapper = title.closest('span.font-bold');
-    const contentRow = image?.closest('span.flex');
+    const image = container.querySelector('img');
+    const actionTileProps = mockActionTile.mock.calls[0]?.[0] as ActionTileProps | undefined;
 
-    expect(image).not.toBeNull();
+    expect(screen.getByTestId('action-tile')).toHaveTextContent('Characters');
+    expect(screen.getByText('Open the character list')).toBeInTheDocument();
     expect(image).toHaveAttribute('alt', '');
-    expect(link).toHaveClass(
-      'min-w-[180px]',
-      'flex-1',
-      'gap-1',
-      'py-3',
-      'md:gap-2',
-      'hover:-translate-y-0.5'
-    );
-    expect(link).not.toHaveClass('faction-button');
     expect(image).toHaveAttribute('data-preload', 'true');
-    expect(image).toHaveClass('faction-button-image');
-    expect(titleWrapper).toHaveClass('text-xl', 'font-bold', 'whitespace-nowrap', 'md:text-2xl');
-    expect(contentRow).toHaveClass('flex', 'items-center', 'gap-2', 'md:gap-3');
-    expect(description).toHaveClass(
-      'mt-0.5',
-      'text-xs',
-      'text-gray-500',
-      'md:mt-1',
-      'md:text-sm',
-      'dark:text-gray-400'
-    );
+    expect(actionTileProps).toMatchObject({
+      description: 'Open the character list',
+      ariaLabel: 'Open the character list',
+      href: '/characters',
+      layout: 'stacked',
+    });
   });
 
-  it('renders a clickable button with emoji fallback when href is absent', () => {
+  it('passes emoji fallback content and click handling into ActionTile when href is absent', () => {
     const onClick = jest.fn();
 
     render(
@@ -95,12 +81,17 @@ describe('FactionButton', () => {
       />
     );
 
-    const button = screen.getByRole('button', { name: 'Open the easter egg panel' });
-    fireEvent.click(button);
+    const actionTileProps = mockActionTile.mock.calls[0]?.[0] as ActionTileProps | undefined;
 
-    expect(button).toHaveClass('min-w-[180px]', 'flex-1', 'py-3', 'hover:-translate-y-0.5');
-    expect(button).not.toHaveClass('faction-button');
-    expect(screen.getByText('egg')).toHaveClass('text-xl', 'md:text-2xl');
-    expect(onClick).toHaveBeenCalledTimes(1);
+    expect(screen.getByTestId('action-tile')).toHaveTextContent('egg');
+    expect(screen.getByTestId('action-tile')).toHaveTextContent('Easter Egg');
+    expect(screen.getByText('Open the easter egg panel')).toBeInTheDocument();
+    expect(actionTileProps).toMatchObject({
+      description: 'Open the easter egg panel',
+      ariaLabel: 'Open the easter egg panel',
+      layout: 'stacked',
+    });
+    expect(actionTileProps?.href).toBeUndefined();
+    expect(actionTileProps?.onClick).toBe(onClick);
   });
 });

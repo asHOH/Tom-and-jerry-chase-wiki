@@ -10,94 +10,82 @@ type MockFactionButtonProps = {
   preload?: boolean;
 };
 
+const mockFactionButton = jest.fn();
+
 jest.mock('usehooks-ts', () => ({
   useIntersectionObserver: jest.fn(() => [jest.fn(), true] as const),
 }));
 
 jest.mock('@/components/ui/FactionButton', () => ({
   __esModule: true,
-  default: function MockFactionButton({
-    title,
-    description,
-    href,
-    ariaLabel,
-    preload,
-  }: MockFactionButtonProps) {
-    return (
-      <div
-        data-testid='faction-button'
-        data-title={title ?? ''}
-        data-description={description}
-        data-href={href ?? ''}
-        data-aria-label={ariaLabel}
-        data-preload={preload ? 'true' : 'false'}
-      />
-    );
+  default: function MockFactionButton(props: MockFactionButtonProps) {
+    mockFactionButton(props);
+    return <div data-testid='faction-button'>{props.title}</div>;
+  },
+}));
+
+jest.mock('@/components/ui/FactionButtonGroup', () => ({
+  __esModule: true,
+  default: function MockFactionButtonGroup({ children }: { children: React.ReactNode }) {
+    return <div data-testid='faction-button-group'>{children}</div>;
   },
 }));
 
 describe('HomePageSection', () => {
-  let consoleErrorSpy: jest.SpyInstance;
-
   beforeEach(() => {
-    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.clearAllMocks();
   });
 
-  afterEach(() => {
-    consoleErrorSpy.mockRestore();
-  });
-
-  it('passes preload to every faction button and keeps the 4-item wrap spacer', () => {
+  it('passes every button through with preload enabled and inserts the 4-item wrap spacer', () => {
     const buttons = [
       {
         imageSrc: '/images/one.png',
-        imageAlt: '一号',
-        title: '一号',
-        description: '说明一',
+        imageAlt: 'One',
+        title: 'One',
+        description: 'Description one',
         href: '/one',
-        ariaLabel: '说明一',
+        ariaLabel: 'Description one',
       },
       {
         imageSrc: '/images/two.png',
-        imageAlt: '二号',
-        title: '二号',
-        description: '说明二',
+        imageAlt: 'Two',
+        title: 'Two',
+        description: 'Description two',
         href: '/two',
-        ariaLabel: '说明二',
+        ariaLabel: 'Description two',
       },
       {
         imageSrc: '/images/three.png',
-        imageAlt: '三号',
-        title: '三号',
-        description: '说明三',
+        imageAlt: 'Three',
+        title: 'Three',
+        description: 'Description three',
         href: '/three',
-        ariaLabel: '说明三',
+        ariaLabel: 'Description three',
       },
       {
         imageSrc: '/images/four.png',
-        imageAlt: '四号',
-        title: '四号',
-        description: '说明四',
+        imageAlt: 'Four',
+        title: 'Four',
+        description: 'Description four',
         href: '/four',
-        ariaLabel: '说明四',
+        ariaLabel: 'Description four',
       },
     ];
 
-    const { container } = render(<HomePageSection title='主页面块' buttons={buttons} />);
+    render(<HomePageSection title='Home section' buttons={buttons} />);
 
-    const renderedButtons = screen.getAllByTestId('faction-button');
-    const wrapSpacer = container.querySelector('.hidden.h-0.w-full.sm\\:block');
+    const group = screen.getByTestId('faction-button-group');
 
-    expect(screen.getByText('主页面块')).toBeInTheDocument();
-    expect(renderedButtons).toHaveLength(4);
-    expect(renderedButtons[0]).toHaveAttribute('data-title', '一号');
-    expect(renderedButtons[1]).toHaveAttribute('data-title', '二号');
-    expect(renderedButtons[2]).toHaveAttribute('data-title', '三号');
-    expect(renderedButtons[3]).toHaveAttribute('data-title', '四号');
-    renderedButtons.forEach((button) => {
-      expect(button).toHaveAttribute('data-preload', 'true');
-    });
-    expect(wrapSpacer).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Home section' })).toBeInTheDocument();
+    expect(screen.getAllByTestId('faction-button')).toHaveLength(4);
+    expect(mockFactionButton.mock.calls.map((call) => call[0])).toEqual(
+      buttons.map((button) => ({
+        ...button,
+        preload: true,
+      }))
+    );
+    expect(group.childElementCount).toBe(5);
+    expect(group.children[2]?.textContent).toBe('');
   });
 
   it('omits the section heading when title is not provided', () => {
@@ -106,17 +94,17 @@ describe('HomePageSection', () => {
         buttons={[
           {
             imageSrc: '/images/one.png',
-            imageAlt: '一号',
-            title: '一号',
-            description: '说明一',
+            imageAlt: 'One',
+            title: 'One',
+            description: 'Description one',
             href: '/one',
-            ariaLabel: '说明一',
+            ariaLabel: 'Description one',
           },
         ]}
       />
     );
 
     expect(screen.queryByRole('heading')).not.toBeInTheDocument();
-    expect(screen.getByTestId('faction-button')).toHaveAttribute('data-title', '一号');
+    expect(screen.getByTestId('faction-button')).toHaveTextContent('One');
   });
 });

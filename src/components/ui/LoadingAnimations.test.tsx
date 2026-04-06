@@ -11,81 +11,73 @@ import {
 } from './LoadingAnimations';
 
 describe('LoadingAnimations', () => {
-  describe('BouncingDots', () => {
-    it('renders with default props', () => {
-      const { container } = render(<BouncingDots />);
-      const dots = container.querySelectorAll('.animate-bounce');
-      expect(dots).toHaveLength(3);
-    });
+  it('renders three bouncing dots and changes dot sizing across variants', () => {
+    const { container: defaultContainer } = render(<BouncingDots />);
+    const { container: largeContainer } = render(<BouncingDots size='lg' />);
 
-    it('renders with different sizes', () => {
-      const { container } = render(<BouncingDots size='lg' />);
-      const dots = container.querySelectorAll('.w-3.h-3');
-      expect(dots).toHaveLength(3);
-    });
+    const defaultRoot = defaultContainer.firstElementChild as HTMLElement;
+    const largeRoot = largeContainer.firstElementChild as HTMLElement;
+
+    expect(defaultRoot.childElementCount).toBe(3);
+    expect(largeRoot.childElementCount).toBe(3);
+    expect((largeRoot.children[0] as HTMLElement).className).not.toBe(
+      (defaultRoot.children[0] as HTMLElement).className
+    );
   });
 
-  describe('PulsingCircle', () => {
-    it('renders with pulse animation', () => {
-      const { container } = render(<PulsingCircle />);
-      const circle = container.querySelector('.animate-pulse');
-      expect(circle).toBeInTheDocument();
-    });
+  it('renders a single pulsing circle', () => {
+    const { container } = render(<PulsingCircle />);
+
+    const root = container.firstElementChild as HTMLElement;
+    expect(root.childElementCount).toBe(1);
   });
 
-  describe('RippleAnimation', () => {
-    it('renders with ping animations', () => {
-      const { container } = render(<RippleAnimation />);
-      const ripples = container.querySelectorAll('.animate-ping');
-      expect(ripples).toHaveLength(2);
-    });
+  it('renders two ripple rings and one center circle', () => {
+    const { container } = render(<RippleAnimation />);
+
+    const rippleContainer = container.querySelector('.relative > .relative') as HTMLElement | null;
+    expect(rippleContainer?.childElementCount).toBe(3);
   });
 
-  describe('SpinningBars', () => {
-    it('renders with spin animation', () => {
-      const { container } = render(<SpinningBars />);
-      const spinner = container.querySelector('.animate-spin');
-      expect(spinner).toBeInTheDocument();
-    });
+  it('renders a single spinning bar wrapper', () => {
+    const { container } = render(<SpinningBars />);
+
+    const spinnerContainer = container.querySelector('.relative') as HTMLElement | null;
+    expect(spinnerContainer?.childElementCount).toBe(1);
   });
 
-  describe('WaveAnimation', () => {
-    it('renders with multiple bars', () => {
-      const { container } = render(<WaveAnimation />);
-      const bars = container.querySelectorAll('.animate-pulse');
-      expect(bars).toHaveLength(5);
-    });
+  it('renders five wave bars', () => {
+    const { container } = render(<WaveAnimation />);
+
+    const root = container.firstElementChild as HTMLElement;
+    expect(root.childElementCount).toBe(5);
   });
 
-  describe('TypingDots', () => {
-    it('renders three typing dots', () => {
-      const { container } = render(<TypingDots />);
-      const dots = container.querySelectorAll('.rounded-full');
-      expect(dots).toHaveLength(3);
-    });
+  it('renders three typing dots', () => {
+    const { container } = render(<TypingDots />);
+
+    const root = container.firstElementChild as HTMLElement;
+    expect(root.childElementCount).toBe(3);
   });
 
-  describe('ProgressBar', () => {
-    it('renders with correct progress width', () => {
-      const { container } = render(<ProgressBar progress={50} />);
-      const progressBar = container.querySelector('.bg-blue-500');
-      expect(progressBar).toHaveStyle('width: 50%');
-    });
+  it('renders the requested progress width and clamps out-of-range values', () => {
+    const { container: midContainer } = render(<ProgressBar progress={50} />);
+    const { container: lowContainer } = render(<ProgressBar progress={-10} />);
+    const { container: highContainer } = render(<ProgressBar progress={150} />);
 
-    it('clamps progress to 0-100 range', () => {
-      const { container: container1 } = render(<ProgressBar progress={-10} />);
-      const progressBar1 = container1.querySelector('.bg-blue-500');
-      expect(progressBar1).toHaveStyle('width: 0%');
+    const midBar = midContainer.firstElementChild?.firstElementChild as HTMLElement;
+    const lowBar = lowContainer.firstElementChild?.firstElementChild as HTMLElement;
+    const highBar = highContainer.firstElementChild?.firstElementChild as HTMLElement;
 
-      const { container: container2 } = render(<ProgressBar progress={150} />);
-      const progressBar2 = container2.querySelector('.bg-blue-500');
-      expect(progressBar2).toHaveStyle('width: 100%');
-    });
+    expect(midBar).toHaveStyle('width: 50%');
+    expect(lowBar).toHaveStyle('width: 0%');
+    expect(highBar).toHaveStyle('width: 100%');
+  });
 
-    it('renders without animation when animated is false', () => {
-      const { container } = render(<ProgressBar animated={false} />);
-      const progressBar = container.querySelector('.bg-blue-500');
-      expect(progressBar).not.toHaveClass('animate-pulse');
-    });
+  it('disables pulse animation on the progress indicator when animated is false', () => {
+    const { container } = render(<ProgressBar animated={false} />);
+
+    const progressBar = container.firstElementChild?.firstElementChild as HTMLElement;
+    expect(progressBar.className).not.toContain('animate-pulse');
   });
 });

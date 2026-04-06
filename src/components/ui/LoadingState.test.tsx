@@ -2,112 +2,135 @@ import { render, screen } from '@testing-library/react';
 
 import LoadingState, { PageLoadingState } from './LoadingState';
 
+jest.mock('./LoadingSpinner', () => ({
+  __esModule: true,
+  default: function MockLoadingSpinner({
+    message,
+    size,
+  }: {
+    message?: string;
+    size?: string;
+  }) {
+    return <div data-testid='loading-spinner' data-message={message ?? ''} data-size={size ?? ''} />;
+  },
+}));
+
+jest.mock('./Skeleton', () => ({
+  __esModule: true,
+  Skeleton: function MockSkeleton({ animate }: { animate?: boolean }) {
+    return <div data-testid='skeleton' data-animate={String(animate ?? true)} />;
+  },
+  SkeletonBuffCard: function MockSkeletonBuffCard({ animate }: { animate?: boolean }) {
+    return <div data-testid='skeleton-buff-card' data-animate={String(animate ?? true)} />;
+  },
+  SkeletonCharacterCard: function MockSkeletonCharacterCard({ animate }: { animate?: boolean }) {
+    return <div data-testid='skeleton-character-card' data-animate={String(animate ?? true)} />;
+  },
+  SkeletonCharacterDetail: function MockSkeletonCharacterDetail({ animate }: { animate?: boolean }) {
+    return <div data-testid='skeleton-character-detail' data-animate={String(animate ?? true)} />;
+  },
+  SkeletonDetailLayout: function MockSkeletonDetailLayout({
+    animate,
+    sectionCount,
+  }: {
+    animate?: boolean;
+    sectionCount?: number;
+  }) {
+    return (
+      <div
+        data-testid='skeleton-detail-layout'
+        data-animate={String(animate ?? true)}
+        data-section-count={String(sectionCount ?? 0)}
+      />
+    );
+  },
+  SkeletonItemCard: function MockSkeletonItemCard({ animate }: { animate?: boolean }) {
+    return <div data-testid='skeleton-item-card' data-animate={String(animate ?? true)} />;
+  },
+  SkeletonKnowledgeCard: function MockSkeletonKnowledgeCard({ animate }: { animate?: boolean }) {
+    return <div data-testid='skeleton-knowledge-card' data-animate={String(animate ?? true)} />;
+  },
+}));
+
 describe('LoadingState', () => {
   it('renders spinner type by default', () => {
     render(<LoadingState />);
-    expect(screen.getByText('加载中...')).toBeInTheDocument();
+
+    expect(screen.getByTestId('loading-spinner')).toHaveAttribute('data-message', '加载中...');
   });
 
-  it('renders custom message', () => {
-    render(<LoadingState message='自定义加载消息' />);
-    expect(screen.getByText('自定义加载消息')).toBeInTheDocument();
-  });
+  it('renders a custom spinner message', () => {
+    render(<LoadingState message='Custom loading message' />);
 
-  it('renders character-grid type with correct elements', () => {
-    const { container } = render(<LoadingState type='character-grid' />);
-
-    // Should have grid layout
-    const grid = container.querySelector('.grid');
-    expect(grid).toBeInTheDocument();
-    expect(grid).toHaveClass('grid-cols-1', 'sm:grid-cols-2', 'md:grid-cols-3', 'lg:grid-cols-4');
-  });
-
-  it('renders knowledge-cards type with correct elements', () => {
-    const { container } = render(<LoadingState type='knowledge-cards' />);
-
-    // Should have grid layout for cards
-    const grid = container.querySelector('.grid');
-    expect(grid).toBeInTheDocument();
-    expect(grid).toHaveClass(
-      'grid-cols-2',
-      'sm:grid-cols-3',
-      'md:grid-cols-4',
-      'lg:grid-cols-5',
-      'xl:grid-cols-6'
+    expect(screen.getByTestId('loading-spinner')).toHaveAttribute(
+      'data-message',
+      'Custom loading message'
     );
   });
 
-  it('renders item-grid type with correct elements', () => {
-    const { container } = render(<LoadingState type='item-grid' />);
+  it('renders character-grid skeleton cards and a compact spinner', () => {
+    render(<LoadingState type='character-grid' count={3} />);
 
-    const grid = container.querySelector('.grid');
-    expect(grid).toBeInTheDocument();
-    expect(grid).toHaveClass(
-      'grid-cols-2',
-      'sm:grid-cols-3',
-      'md:grid-cols-4',
-      'lg:grid-cols-5',
-      'xl:grid-cols-6'
-    );
+    expect(screen.getAllByTestId('skeleton-character-card')).toHaveLength(3);
+    expect(screen.getByTestId('loading-spinner')).toHaveAttribute('data-size', 'sm');
   });
 
-  it('renders buff-grid type with correct elements', () => {
-    const { container } = render(<LoadingState type='buff-grid' />);
+  it('renders knowledge-card skeleton cards and a compact spinner', () => {
+    render(<LoadingState type='knowledge-cards' count={4} />);
 
-    const grid = container.querySelector('.grid');
-    expect(grid).toBeInTheDocument();
-    expect(grid).toHaveClass(
-      'grid-cols-2',
-      'sm:grid-cols-3',
-      'md:grid-cols-4',
-      'lg:grid-cols-5',
-      'xl:grid-cols-6'
-    );
+    expect(screen.getAllByTestId('skeleton-knowledge-card')).toHaveLength(4);
+    expect(screen.getByTestId('loading-spinner')).toHaveAttribute('data-size', 'sm');
   });
 
-  it('renders character-detail type', () => {
-    const { container } = render(<LoadingState type='character-detail' />);
+  it('renders item-grid skeleton cards without the spinner footer', () => {
+    render(<LoadingState type='item-grid' count={5} />);
 
-    // Should have character detail layout columns
-    expect(container.querySelector('.md\\:w-1\\/3')).toBeInTheDocument();
-    expect(container.querySelector('.md\\:w-2\\/3')).toBeInTheDocument();
+    expect(screen.getAllByTestId('skeleton-item-card')).toHaveLength(5);
+    expect(screen.queryByTestId('loading-spinner')).not.toBeInTheDocument();
   });
 
-  it('renders skeleton type with custom count', () => {
-    const { container } = render(<LoadingState type='skeleton' count={5} />);
+  it('renders buff-grid skeleton cards without the spinner footer', () => {
+    render(<LoadingState type='buff-grid' count={2} />);
 
-    // Should have 5 skeleton lines
-    const skeletons = container.querySelectorAll('.bg-gray-200');
-    expect(skeletons).toHaveLength(5);
+    expect(screen.getAllByTestId('skeleton-buff-card')).toHaveLength(2);
+    expect(screen.queryByTestId('loading-spinner')).not.toBeInTheDocument();
   });
 
-  it('can disable animation', () => {
-    const { container } = render(<LoadingState type='skeleton' animate={false} />);
+  it('renders the character-detail skeleton branch', () => {
+    render(<LoadingState type='character-detail' />);
 
-    // Should not have animate-pulse class
-    expect(container.querySelector('.animate-pulse')).not.toBeInTheDocument();
+    expect(screen.getByTestId('skeleton-character-detail')).toBeInTheDocument();
+  });
+
+  it('renders the detail-layout skeleton branch', () => {
+    render(<LoadingState type='detail' />);
+
+    expect(screen.getByTestId('skeleton-detail-layout')).toHaveAttribute('data-section-count', '3');
+  });
+
+  it('renders the requested number of generic skeleton rows', () => {
+    render(<LoadingState type='skeleton' count={5} />);
+
+    expect(screen.getAllByTestId('skeleton')).toHaveLength(5);
+  });
+
+  it('passes animate=false through to skeleton rows', () => {
+    render(<LoadingState type='skeleton' count={2} animate={false} />);
+
+    screen.getAllByTestId('skeleton').forEach((row) => {
+      expect(row).toHaveAttribute('data-animate', 'false');
+    });
   });
 });
 
 describe('PageLoadingState', () => {
-  it('renders with correct page layout', () => {
-    const { container } = render(<PageLoadingState />);
+  it('renders the requested loading branch when children are absent', () => {
+    render(<PageLoadingState type='character-grid' />);
 
-    // Should have page container classes
-    const pageContainer = container.querySelector('.max-w-6xl');
-    expect(pageContainer).toBeInTheDocument();
-    expect(pageContainer).toHaveClass('mx-auto', 'p-6', 'space-y-6');
+    expect(screen.getAllByTestId('skeleton-character-card')).toHaveLength(8);
   });
 
-  it('renders with custom type', () => {
-    const { container } = render(<PageLoadingState type='character-grid' />);
-
-    // Should render character grid loading
-    const grid = container.querySelector('.grid');
-    expect(grid).toBeInTheDocument();
-  });
-
-  it('renders custom children', () => {
+  it('renders custom children instead of the default loading state', () => {
     render(
       <PageLoadingState>
         <div data-testid='custom-loading'>Custom loading content</div>
@@ -115,5 +138,6 @@ describe('PageLoadingState', () => {
     );
 
     expect(screen.getByTestId('custom-loading')).toBeInTheDocument();
+    expect(screen.queryByTestId('loading-spinner')).not.toBeInTheDocument();
   });
 });
