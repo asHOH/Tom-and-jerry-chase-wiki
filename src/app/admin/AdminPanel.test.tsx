@@ -1,18 +1,19 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import useSWR from 'swr';
+
+import type { PendingGameDataAction } from '@/features/admin/components/GameDataActionModerationPanel';
 
 import AdminPanel from './AdminPanel';
 
 jest.mock('swr');
-const mockUseSWR = useSWR as jest.MockedFunction<typeof useSWR>;
 
-const mockSuccess = jest.fn();
-const mockError = jest.fn();
+const mockUseSWR = useSWR as jest.MockedFunction<typeof useSWR>;
+const mockModerationPanel = jest.fn();
 
 jest.mock('@/context/ToastContext', () => ({
   useToast: () => ({
-    success: mockSuccess,
-    error: mockError,
+    success: jest.fn(),
+    error: jest.fn(),
   }),
 }));
 
@@ -28,133 +29,139 @@ jest.mock('@/features/admin/components/UserManagement', () => {
   };
 });
 
-describe('AdminPanel', () => {
-  const mutateUsers = jest.fn();
-  const mutateCategories = jest.fn();
-  const mutatePendingActions = jest.fn().mockResolvedValue(undefined);
+jest.mock('@/features/admin/components/GameDataActionModerationPanel', () => ({
+  __esModule: true,
+  default: function MockGameDataActionModerationPanel(props: {
+    pendingActions: PendingGameDataAction[];
+    mutatePendingActions: () => Promise<unknown> | unknown;
+  }) {
+    mockModerationPanel(props);
+    return <div data-testid='moderation-panel'>Moderation Panel</div>;
+  },
+}));
 
+const samplePendingActions: PendingGameDataAction[] = [
+  {
+    action_id: 'action-1',
+    entity_type: 'characters',
+    status: 'pending',
+    created_by_nickname: 'Alice',
+    created_at: '2026-04-05T08:00:00.000Z',
+    reviewed_at: null,
+    reviewed_by_nickname: null,
+    rejection_reason: null,
+    is_public: false,
+    entry: {
+      op: 'set',
+      path: 'characters.tom',
+      oldValue: 'before',
+      newValue: 'after',
+    },
+  },
+];
+
+const mutateUsers = jest.fn();
+const mutateCategories = jest.fn();
+const mutatePendingActions = jest.fn().mockResolvedValue(undefined);
+
+const createSWRResponse = <T,>(data: T, mutate: jest.Mock) =>
+  ({
+    data,
+    error: undefined,
+    isLoading: false,
+    isValidating: false,
+    mutate,
+  }) as never;
+
+const renderAdminPanel = (role: string | null) =>
+  render(
+    <AdminPanel
+      user={{
+        id: 'user-1',
+        nickname: 'Tester',
+        role,
+      }}
+    />
+  );
+
+describe('AdminPanel', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
     mockUseSWR.mockImplementation((key) => {
-      if (key === null) {
-        return {
-          data: [],
-          error: undefined,
-          isLoading: false,
-          isValidating: false,
-          mutate: mutateUsers,
-        } as never;
+      if (key === 'users') {
+        return createSWRResponse([], mutateUsers);
       }
 
       if (key === 'categories') {
-        return {
-          data: [],
-          error: undefined,
-          isLoading: false,
-          isValidating: false,
-          mutate: mutateCategories,
-        } as never;
+        return createSWRResponse([], mutateCategories);
       }
 
       if (key === 'game-data-actions-admin') {
-        return {
-          data: [
-            {
-              action_id: 'action-1',
-              entity_type: 'characters',
-              status: 'pending',
-              created_by_nickname: 'Alice',
-              created_at: '2026-04-05T08:00:00.000Z',
-              reviewed_at: null,
-              reviewed_by_nickname: null,
-              rejection_reason: null,
-              is_public: false,
-              entry: {
-                op: 'set',
-                path: 'characters.tom',
-                oldValue: 'before',
-                newValue: 'after',
-              },
-            },
-            {
-              action_id: 'action-2',
-              entity_type: 'characters',
-              status: 'pending',
-              created_by_nickname: 'Bob',
-              created_at: '2026-04-05T09:00:00.000Z',
-              reviewed_at: null,
-              reviewed_by_nickname: null,
-              rejection_reason: null,
-              is_public: false,
-              entry: {
-                op: 'set',
-                path: 'characters.jerry',
-                oldValue: 'before',
-                newValue: 'after',
-              },
-            },
-          ],
-          error: undefined,
-          isLoading: false,
-          isValidating: false,
-          mutate: mutatePendingActions,
-        } as never;
+        return createSWRResponse(samplePendingActions, mutatePendingActions);
       }
 
-      return {
-        data: [],
-        error: undefined,
-        isLoading: false,
-        isValidating: false,
-        mutate: jest.fn(),
-      } as never;
+      return createSWRResponse([], jest.fn());
     });
-
-    global.fetch = jest.fn().mockResolvedValue({
-      ok: true,
-      json: async () => ({}),
-    }) as jest.Mock;
-
-    window.confirm = jest.fn(() => true);
   });
 
-  it('approves only checked pending actions during batch approval', async () => {
-    render(
-      <AdminPanel
-        user={{
-          id: 'reviewer-1',
-          nickname: 'Reviewer',
-          role: 'Reviewer',
-        }}
-      />
-    );
+  it('renders the categories tab by default for reviewers and enables moderation without user access', () => {
+    renderAdminPanel('Reviewer');
 
-    fireEvent.click(screen.getByRole('button', { name: '改动审核' }));
+    expect(screen.getByText('Category Management')).toBeInTheDocument();
+    expect(screen.queryByText('User Management')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('moderation-panel')).not.toBeInTheDocument();
+    expect(mockModerationPanel).not.toHaveBeenCalled();
 
-    const bulkApproveButton = screen.getByRole('button', { name: '批量批准' });
-    expect(bulkApproveButton).toBeDisabled();
+    expect(mockUseSWR.mock.calls).toEqual([
+      [null, expect.any(Function)],
+      ['categories', expect.any(Function)],
+      ['game-data-actions-admin', expect.any(Function)],
+    ]);
+  });
 
-    fireEvent.click(screen.getByRole('checkbox', { name: '选择改动 action-1' }));
+  it('renders coordinator-only user management and wires the moderation panel props on tab switch', () => {
+    renderAdminPanel('Coordinator');
 
-    expect(bulkApproveButton).toBeEnabled();
+    expect(screen.getByText('Category Management')).toBeInTheDocument();
+    expect(screen.queryByText('User Management')).not.toBeInTheDocument();
+    expect(mockUseSWR.mock.calls).toEqual([
+      ['users', expect.any(Function)],
+      ['categories', expect.any(Function)],
+      ['game-data-actions-admin', expect.any(Function)],
+    ]);
 
-    fireEvent.click(bulkApproveButton);
+    const [usersTab, categoriesTab, actionsTab] = screen.getAllByRole('button');
 
-    await waitFor(() => {
-      expect(global.fetch).toHaveBeenCalledWith(
-        '/api/game-data-actions/moderation/action-1?action=approve',
-        expect.objectContaining({
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-        })
-      );
+    fireEvent.click(usersTab!);
+    expect(screen.getByText('User Management')).toBeInTheDocument();
+    expect(screen.queryByText('Category Management')).not.toBeInTheDocument();
+
+    fireEvent.click(categoriesTab!);
+    expect(screen.getByText('Category Management')).toBeInTheDocument();
+
+    fireEvent.click(actionsTab!);
+
+    expect(screen.getByTestId('moderation-panel')).toBeInTheDocument();
+    expect(mockModerationPanel).toHaveBeenCalledTimes(1);
+    expect(mockModerationPanel.mock.calls[0]?.[0]).toEqual({
+      pendingActions: samplePendingActions,
+      mutatePendingActions,
     });
+  });
 
-    expect(global.fetch).not.toHaveBeenCalledWith(
-      '/api/game-data-actions/moderation/action-2?action=approve',
-      expect.anything()
-    );
-    expect(mutatePendingActions).toHaveBeenCalledTimes(1);
+  it('keeps both user management and moderation hidden for unprivileged roles', () => {
+    renderAdminPanel(null);
+
+    expect(screen.getByText('Category Management')).toBeInTheDocument();
+    expect(screen.queryByText('User Management')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('moderation-panel')).not.toBeInTheDocument();
+    expect(screen.getAllByRole('button')).toHaveLength(1);
+
+    expect(mockUseSWR.mock.calls).toEqual([
+      [null, expect.any(Function)],
+      ['categories', expect.any(Function)],
+      [null, expect.any(Function)],
+    ]);
   });
 });
