@@ -1,6 +1,23 @@
+import type { Metadata } from 'next';
+
+import { generatePageMetadata } from '@/lib/metadataUtils';
+import { SITE_URL } from '@/constants/seo';
 import { getDocPages } from '@/features/articles/utils/docs';
 import { ChevronRightIcon } from '@/components/icons/CommonIcons';
 import Link from '@/components/Link';
+
+const DESCRIPTION = '猫和老鼠手游 wiki 操作技巧汇总。';
+
+export const metadata: Metadata = generatePageMetadata({
+  title: '文档',
+  description: DESCRIPTION,
+  keywords: ['文档', '操作技巧', '站点文档'],
+  canonicalUrl: `${SITE_URL}/docs`,
+  robots: {
+    index: true,
+    follow: true,
+  },
+});
 
 export default async function DocsIndexPage() {
   const docPages = await getDocPages();

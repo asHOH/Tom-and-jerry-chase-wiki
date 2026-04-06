@@ -2,7 +2,6 @@ import { MetadataRoute } from 'next';
 
 import { normalizeUrlWithTrailingSlash } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
-import docPages from '@/data/generated/docPages.json';
 import { RANKABLE_PROPERTIES } from '@/features/characters/utils/ranking';
 import { mechanicsSectionsList } from '@/features/mechanics/sections';
 import {
@@ -110,13 +109,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url: `${baseUrl}/ranks/${property.key}`,
     lastModified: buildTime,
     changeFrequency: 'weekly',
-    priority: 0.5,
-  }));
-
-  const docsMap: MetadataRoute.Sitemap = docPages.map((doc) => ({
-    url: `${baseUrl}${doc.path}`,
-    lastModified: buildTime,
-    changeFrequency: 'monthly',
     priority: 0.5,
   }));
 
@@ -234,7 +226,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly',
       priority: 0.7,
     },
-    ...docsMap,
     // Tools
     {
       url: `${baseUrl}/tools`,
@@ -249,7 +240,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly',
       priority: 0.6,
     },
-    // Note: /recommended/ is excluded from sitemap as it has noindex
+    // Note: /recommended/ is excluded because it has noindex.
+    // /docs/* is excluded because those MDX pages inherit docs layout noindex.
+    // /achievements/, /itemGroups/, and /usages/ are omitted intentionally because
+    // they are visitable utility/reference pages, not part of the primary search surface.
   ];
 
   return normalizeSitemapEntries(entries);

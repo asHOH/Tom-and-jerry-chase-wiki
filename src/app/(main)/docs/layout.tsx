@@ -1,6 +1,23 @@
+import type { Metadata } from 'next';
+
+import { generatePageMetadata } from '@/lib/metadataUtils';
+import { SITE_URL } from '@/constants/seo';
 import { getDocPages } from '@/features/articles/utils/docs';
 import DocsSidebar from '@/components/ui/DocsSidebar';
 import StyledMDX from '@/components/ui/StyledMDX';
+
+const DESCRIPTION = '猫和老鼠手游 wiki 操作技巧汇总。';
+
+export const metadata: Metadata = generatePageMetadata({
+  title: '文档',
+  description: DESCRIPTION,
+  keywords: ['文档', '操作技巧', '站点文档'],
+  canonicalUrl: `${SITE_URL}/docs`,
+  robots: {
+    index: false,
+    follow: true,
+  },
+});
 
 export default async function DocsLayout({ children }: { children: React.ReactNode }) {
   const docPages = await getDocPages();
