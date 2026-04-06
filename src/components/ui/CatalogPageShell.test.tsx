@@ -2,6 +2,8 @@ import { render, screen } from '@testing-library/react';
 
 import CatalogPageShell from './CatalogPageShell';
 
+const originalMatchMedia = Object.getOwnPropertyDescriptor(window, 'matchMedia');
+
 beforeAll(() => {
   Object.defineProperty(window, 'matchMedia', {
     writable: true,
@@ -16,6 +18,15 @@ beforeAll(() => {
       dispatchEvent: jest.fn(),
     })),
   });
+});
+
+afterAll(() => {
+  if (originalMatchMedia) {
+    Object.defineProperty(window, 'matchMedia', originalMatchMedia);
+    return;
+  }
+
+  delete (window as Partial<typeof window>).matchMedia;
 });
 
 describe('CatalogPageShell', () => {
