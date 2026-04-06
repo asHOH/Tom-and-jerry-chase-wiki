@@ -71,14 +71,12 @@ export default function AttributesCardLayout({
                 <h1 className='pt-(--space-xs) text-2xl font-bold dark:text-white'>{title} </h1>
                 {!isEditMode ? <EditButton compact className='mt-1' /> : null}
                 {subtitle && (
-                  <h1 className='text-lg font-normal text-gray-400 dark:text-gray-500'>
-                    {subtitle}
-                  </h1>
+                  <p className='text-lg font-normal text-gray-400 dark:text-gray-500'>{subtitle}</p>
                 )}
                 {aliasList.length > 0 && (
-                  <h1 className='text-xs text-gray-400 dark:text-gray-500'>
+                  <p className='text-xs text-gray-400 dark:text-gray-500'>
                     {aliasLabel}: {aliasList.join('、')}
-                  </h1>
+                  </p>
                 )}
                 {aliasesContent && (
                   <div className='mt-1 text-xs text-gray-400 dark:text-gray-500'>

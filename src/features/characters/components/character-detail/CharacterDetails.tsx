@@ -106,8 +106,8 @@ export default function CharacterDetails({
                       />
                     </div>
                   </div>
-                  <h1 className='flex items-center justify-between py-2 text-3xl font-bold dark:text-white'>
-                    <div>
+                  <div className='flex items-center justify-between py-2'>
+                    <h1 className='text-3xl font-bold dark:text-white'>
                       <e.span
                         path='id'
                         initialValue={localCharacter.id}
@@ -117,7 +117,7 @@ export default function CharacterDetails({
                       <span className='text-xl font-normal text-gray-400 dark:text-gray-500'>
                         ({localCharacter.factionId == 'cat' ? '猫' : '鼠'}阵营)
                       </span>
-                    </div>
+                    </h1>
                     {!isEditMode && <EditButton compact className='ml-2' />}
                     {isEditMode && (
                       <div className='flex overflow-hidden rounded-md border border-gray-300 dark:border-gray-600'>
@@ -252,7 +252,7 @@ export default function CharacterDetails({
                         </button>
                       </div>
                     )}
-                  </h1>
+                  </div>
                   <ContentWriterDisplay characterId={localCharacter.id} />
                   <CreateDateDisplay createDate={localCharacter.createDate} />
                   <CharacterHistoryDisplay
@@ -292,7 +292,7 @@ export default function CharacterDetails({
                           <h1 className='text-2xl font-bold dark:text-white'>
                             {localCharacter.id}{' '}
                           </h1>
-                          <h1 className='text-lg font-normal text-gray-400 dark:text-gray-500'>
+                          <p className='text-lg font-normal text-gray-400 dark:text-gray-500'>
                             (
                             {localCharacter.factionId === 'cat'
                               ? '猫阵营'
@@ -300,7 +300,7 @@ export default function CharacterDetails({
                                 ? '鼠阵营'
                                 : ''}
                             )
-                          </h1>
+                          </p>
                         </div>
                         <EditButton compact />
                       </div>
