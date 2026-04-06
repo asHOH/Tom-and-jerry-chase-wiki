@@ -1,5 +1,5 @@
 import React, { type JSX } from 'react';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 
 import EditModeToolbar, { type EditModeToolbarProps } from './EditModeToolbar';
 
@@ -62,24 +62,30 @@ describe('EditModeToolbar', () => {
       onPublish: jest.fn<Promise<boolean>, [string | undefined]>(),
     }) satisfies EditModeToolbarProps;
 
+  const getPublishButton = () => {
+    const buttons = screen.getAllByRole('button');
+    return buttons[buttons.length - 1]!;
+  };
+
   it('does not exit edit mode when publish fails', async () => {
     const props = createProps();
     props.onPublish.mockResolvedValue(false);
 
     render(<EditModeToolbar {...props} />);
 
-    fireEvent.click(screen.getByRole('button', { name: '发布' }));
-    fireEvent.change(screen.getByPlaceholderText('描述您的修改内容（可选）'), {
-      target: { value: '测试发布失败' },
+    fireEvent.click(getPublishButton());
+    fireEvent.change(screen.getByRole('textbox'), {
+      target: { value: 'publish failed' },
     });
-    fireEvent.click(screen.getByRole('button', { name: '确认发布' }));
+    fireEvent.click(screen.getByRole('checkbox'));
+    fireEvent.click(getPublishButton());
 
     await waitFor(() => {
-      expect(props.onPublish).toHaveBeenCalledWith('测试发布失败');
+      expect(props.onPublish).toHaveBeenCalledWith('publish failed');
     });
 
     expect(props.onExitEditMode).not.toHaveBeenCalled();
-    expect(screen.getByDisplayValue('测试发布失败')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('publish failed')).toBeInTheDocument();
   });
 
   it('exits edit mode after a successful publish', async () => {
@@ -88,8 +94,9 @@ describe('EditModeToolbar', () => {
 
     render(<EditModeToolbar {...props} />);
 
-    fireEvent.click(screen.getByRole('button', { name: '发布' }));
-    fireEvent.click(screen.getByRole('button', { name: '确认发布' }));
+    fireEvent.click(getPublishButton());
+    fireEvent.click(screen.getByRole('checkbox'));
+    fireEvent.click(getPublishButton());
 
     await waitFor(() => {
       expect(props.onPublish).toHaveBeenCalledWith(undefined);
@@ -102,16 +109,16 @@ describe('EditModeToolbar', () => {
     props.draftsSummary = [
       {
         entityType: 'characters',
-        entityLabel: '角色',
-        entityId: '汤姆',
-        itemLabel: '汤姆',
+        entityLabel: 'Characters',
+        entityId: 'tom',
+        itemLabel: 'Tom',
         count: 2,
       },
       {
         entityType: 'specialSkills',
-        entityLabel: '特技',
-        entityId: '双重爆发',
-        itemLabel: '双重爆发',
+        entityLabel: 'Special Skill',
+        entityId: 'double-burst',
+        itemLabel: 'Double Burst',
         factionId: 'cat',
         count: 1,
       },
@@ -119,11 +126,18 @@ describe('EditModeToolbar', () => {
 
     render(<EditModeToolbar {...props} />);
 
-    fireEvent.click(screen.getByRole('button', { name: '查看草稿' }));
+    const [, draftsButton] = screen.getAllByRole('button');
+    fireEvent.click(draftsButton!);
 
-    expect(screen.getByText('角色 · 汤姆')).toBeInTheDocument();
-    expect(screen.getByText('特技 · 双重爆发 (猫)')).toBeInTheDocument();
-    expect(screen.getByText('2 条')).toBeInTheDocument();
-    expect(screen.getByText('1 条')).toBeInTheDocument();
+    const menu = screen.getByRole('menu');
+    const menuItems = within(menu).getAllByRole('listitem');
+
+    expect(menuItems).toHaveLength(2);
+    expect(menu).toHaveTextContent('Characters');
+    expect(menu).toHaveTextContent('Tom');
+    expect(menu).toHaveTextContent('Special Skill');
+    expect(menu).toHaveTextContent('Double Burst');
+    expect(menu).toHaveTextContent('2');
+    expect(menu).toHaveTextContent('1');
   });
 });
