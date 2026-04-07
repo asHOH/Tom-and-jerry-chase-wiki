@@ -32,7 +32,7 @@ const VALID_RESOURCE_TYPES = [
   'wiki-history',
   'contributors',
   'factions',
-  'itemGroups',
+  'itemgroups',
   'usages',
   'mechanics',
 ] as const;
@@ -76,6 +76,12 @@ function decodePathSegments(segments: string[]): string[] {
 const API_KEY_HEADER = 'X-EchoFlow-Key';
 const FLOW_KEY = process.env.FLOWKEY;
 
+function buildCorsHeaders(origin: string | null): Record<string, string> {
+  return {
+    'Access-Control-Allow-Origin': origin || '*',
+  };
+}
+
 function buildTrustedHostnames(): string[] {
   const hostnames: string[] = [];
   if (process.env.NODE_ENV === 'development') {
@@ -96,14 +102,6 @@ function buildTrustedHostnames(): string[] {
 
 const TRUSTED_HOSTNAMES = buildTrustedHostnames();
 
-function verifyClientKey(request: NextRequest): boolean {
-  const clientKey = request.headers.get(API_KEY_HEADER);
-  if (!clientKey || !FLOW_KEY) {
-    return false;
-  }
-  return clientKey === FLOW_KEY;
-}
-
 function isOriginAllowed(origin: string | null): boolean {
   if (!origin) return false;
 
@@ -119,36 +117,44 @@ function isOriginAllowed(origin: string | null): boolean {
 
 export async function GET(request: NextRequest, { params }: RouteParams) {
   const origin = request.headers.get('origin');
-  if (!isOriginAllowed(origin)) {
+  const clientKey = request.headers.get(API_KEY_HEADER);
+  const hasValidKey = FLOW_KEY && clientKey === FLOW_KEY;
+
+  if (!FLOW_KEY) {
     return NextResponse.json(
-      { error: 'origin not allowed', code: 'ORIGIN_FORBIDDEN' },
-      { status: 403 }
+      { error: 'EchoFlow API is not enabled', code: 'SERVICE_DISABLED' },
+      { status: 503, headers: buildCorsHeaders(origin) }
+    );
+  }
+
+  if (!hasValidKey) {
+    if (!isOriginAllowed(origin)) {
+      return NextResponse.json(
+        { error: 'origin not allowed', code: 'ORIGIN_FORBIDDEN' },
+        { status: 403, headers: buildCorsHeaders(origin) }
+      );
+    }
+    return NextResponse.json(
+      { error: 'Unauthorized', code: 'UNAUTHORIZED' },
+      { status: 401, headers: buildCorsHeaders(origin) }
     );
   }
 
   if (request.url.length > MAX_URL_LENGTH) {
     return NextResponse.json(
       { error: 'URL too long', code: 'URL_TOO_LONG', max: MAX_URL_LENGTH },
-      { status: 414 }
+      { status: 414, headers: buildCorsHeaders(origin) }
     );
-  }
-
-  if (!FLOW_KEY) {
-    return NextResponse.json(
-      { error: 'EchoFlow API is not enabled', code: 'SERVICE_DISABLED' },
-      { status: 503 }
-    );
-  }
-
-  if (!verifyClientKey(request)) {
-    return NextResponse.json({ error: 'Unauthorized', code: 'UNAUTHORIZED' }, { status: 401 });
   }
 
   const { path: rawPathSegments } = await params;
   const pathSegments = decodePathSegments(rawPathSegments);
 
   if (!pathSegments || pathSegments.length === 0) {
-    return NextResponse.json({ error: 'Not found', code: 'PATH_MISSING' }, { status: 404 });
+    return NextResponse.json(
+      { error: 'Not found', code: 'PATH_MISSING' },
+      { status: 404, headers: buildCorsHeaders(origin) }
+    );
   }
 
   const detailId =
@@ -172,7 +178,10 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
   const firstSegment = pathSegments[0];
   if (!firstSegment) {
-    return NextResponse.json({ error: 'Not found', code: 'PATH_MISSING' }, { status: 404 });
+    return NextResponse.json(
+      { error: 'Not found', code: 'PATH_MISSING' },
+      { status: 404, headers: buildCorsHeaders(origin) }
+    );
   }
 
   const resourceType = firstSegment.toLowerCase();
@@ -180,14 +189,14 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   if (!VALID_RESOURCE_TYPES.includes(resourceType as ValidResourceType)) {
     return NextResponse.json(
       { error: 'Resource type not found', code: 'TYPE_NOT_FOUND', resourceType },
-      { status: 404 }
+      { status: 404, headers: buildCorsHeaders(origin) }
     );
   }
 
   if (detailId !== undefined && sanitizeDetailId(detailId) === undefined) {
     return NextResponse.json(
       { error: 'Invalid detail ID', code: 'INVALID_DETAIL_ID' },
-      { status: 400 }
+      { status: 400, headers: buildCorsHeaders(origin) }
     );
   }
 
@@ -200,7 +209,10 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     });
 
     if (!result) {
-      return NextResponse.json({ error: 'Not found', code: 'NOT_FOUND' }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Not found', code: 'NOT_FOUND' },
+        { status: 404, headers: buildCorsHeaders(origin) }
+      );
     }
 
     const responseData =
@@ -214,7 +226,9 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         status: 200,
         headers: {
           'Content-Type': 'application/jsonl',
+          'Cache-Control': `public, max-age=${getCacheTtl(resourceType)}, stale-while-revalidate=60`,
           'X-EchoFlow-Health': healthStatus,
+          'Access-Control-Allow-Origin': origin || '*',
         },
       });
     }
@@ -223,7 +237,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       headers: {
         'Cache-Control': `public, max-age=${getCacheTtl(resourceType)}, stale-while-revalidate=60`,
         'X-EchoFlow-Health': healthStatus,
-        'Access-Control-Allow-Origin': origin || '',
+        'Access-Control-Allow-Origin': origin || '*',
       },
     });
   } catch (error) {
@@ -235,23 +249,25 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         code: 'INTERNAL_ERROR',
         ...(process.env.NODE_ENV === 'development' && { details: errorMessage }),
       },
-      { status: 500 }
+      { status: 500, headers: buildCorsHeaders(origin) }
     );
   }
 }
 
 export async function OPTIONS(request: NextRequest) {
   const origin = request.headers.get('origin');
+  const clientKey = request.headers.get(API_KEY_HEADER);
+  const hasValidKey = FLOW_KEY && clientKey === FLOW_KEY;
   const healthStatus = FLOW_KEY ? 'healthy' : 'disabled';
 
-  if (!isOriginAllowed(origin)) {
+  if (!isOriginAllowed(origin) && !hasValidKey) {
     return new NextResponse(null, { status: 403 });
   }
 
   return new NextResponse(null, {
     status: 200,
     headers: {
-      'Access-Control-Allow-Origin': origin || '',
+      'Access-Control-Allow-Origin': origin || '*',
       'Access-Control-Allow-Methods': 'GET, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-EchoFlow-Key',
       'Cache-Control': 'public, max-age=86400',

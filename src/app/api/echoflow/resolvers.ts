@@ -568,16 +568,29 @@ export const resolvers: Record<string, PathResolver> = {
   'character-relations': {
     description: '角色关系数据',
     list: () => {
-      const relationsList = Object.entries(characterRelations).map(([name, relations]) => ({
-        name,
-        relations,
+      const charactersRecord = GameDataManager.getCharacters();
+      const relationsList = Object.keys(charactersRecord).map((characterId) => ({
+        id: characterId,
+        relations: getCharacterRelation(characterId),
       }));
-      return createListResult(relationsList, 'CharacterRelation', '/character-relations', false);
+      return createListResult(relationsList, 'CharacterRelation', '/character-relations', true);
+    },
+    detail: (id: string) => {
+      const decodedId = decodeURIComponent(id);
+      const charactersRecord = GameDataManager.getCharacters();
+      if (!charactersRecord[decodedId]) return null;
+      const relations = getCharacterRelation(decodedId);
+      return createDetailResult(
+        { id: decodedId, relations },
+        'CharacterRelation',
+        `/character-relations/${id}`
+      );
     },
     fullData: () => {
-      const relationsList = Object.entries(characterRelations).map(([name, relations]) => ({
-        name,
-        relations,
+      const charactersRecord = GameDataManager.getCharacters();
+      const relationsList = Object.keys(charactersRecord).map((characterId) => ({
+        id: characterId,
+        relations: getCharacterRelation(characterId),
       }));
       return createFullDataResult(relationsList, 'CharacterRelation', '/character-relations');
     },
@@ -738,22 +751,16 @@ function getDetailIds(resourcePath: string): string[] {
       case 'factions': {
         return ['cat', 'mouse'];
       }
+      case 'itemgroups':
       case 'itemGroups': {
         return Object.keys(itemGroups);
       }
-      case 'ranks': {
-        const characters = GameDataManager.getCharacters();
-        return Object.keys(characters);
-      }
-      case 'recommended': {
-        const characters = GameDataManager.getCharacters();
-        return Object.keys(characters);
-      }
       case 'character-relations': {
-        return Object.keys(characterRelations);
+        const characters = GameDataManager.getCharacters();
+        return Object.keys(characters);
       }
-      case 'traits': {
-        return Object.keys(traits);
+      case 'articles': {
+        return [];
       }
       default:
         return [];
@@ -768,7 +775,14 @@ export async function resolvePath(
   detailId?: string,
   fullData: boolean = false
 ): Promise<ResolverResult | FullDataResult | null> {
-  const resolver = resolvers[path];
+  let resolver = resolvers[path];
+  if (!resolver) {
+    const lowerPath = path.toLowerCase();
+    const matchedKey = Object.keys(resolvers).find((key) => key.toLowerCase() === lowerPath);
+    if (matchedKey) {
+      resolver = resolvers[matchedKey];
+    }
+  }
   if (!resolver) return null;
 
   if (detailId && resolver.detail) {

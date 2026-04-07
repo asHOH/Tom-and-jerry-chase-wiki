@@ -26,10 +26,21 @@ export async function cached<T>(
   options?: ServerCacheOptions
 ): Promise<T> {
   const key = normalizeKeyParts(keyParts);
-  const disableRevalidate = env.VERCEL === '1' && env.VERCEL_ENV === 'preview';
-  const normalizedOptions = disableRevalidate
-    ? { ...options, revalidate: false as const }
-    : options;
+
+  const resourceType = String(keyParts[0] ?? 'unknown');
+  const defaultRevalidate = resourceType === 'articles' ? 30 : 300;
+
+  let revalidate: number | false | undefined = options?.revalidate;
+  if (revalidate === undefined) {
+    revalidate = defaultRevalidate;
+  }
+
+  const shouldDisableRevalidate = env.VERCEL === '1' && env.VERCEL_ENV === 'preview';
+  if (shouldDisableRevalidate) {
+    revalidate = false;
+  }
+
+  const normalizedOptions = { ...options, revalidate };
 
   const wrapped = unstable_cache(fn, key, normalizedOptions);
   return wrapped();
