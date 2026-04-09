@@ -67,7 +67,7 @@
 
 - **Node.js**: `>=20.3.0`
 - **npm**: `>=10.0.0`
-- **.env.local**: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN`,`NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS`（设为 `0` 强制禁用或 `1` 强制启用Vercel Analytics；默认仅在 Vercel 生产环境启用）。
+- **.env.local**: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN`,`NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS`（设为 `0` 强制禁用或 `1` 强制启用Vercel Analytics；默认仅在 Vercel 生产环境启用），`FLOWKEY`（可选，用于将数据流转到MCP Server，不填写则不开启这一接口）。
 
 ### 开发步骤
 
