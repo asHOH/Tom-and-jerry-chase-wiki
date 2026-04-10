@@ -636,6 +636,19 @@ export const characterRelationTraits: Trait[] = [
     },
   },
   {
+    description: '二段跳和鼓舞可以增加杰瑞的移速和逃跑能力，等级越高效果越显著。',
+    group: [
+      { name: '杰瑞', type: 'character' },
+      { name: '罗宾汉杰瑞', type: 'character' },
+    ],
+    relation: {
+      kind: 'collaborators',
+      subject: { name: '杰瑞', type: 'character' },
+      target: { name: '罗宾汉杰瑞', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
     description: '雪梨可以帮米可回血，提高续航，配合米可三级被动很难被打死，也有了防止拍抓的能力。',
     group: [
       { name: '米可', type: 'character' },
@@ -3911,6 +3924,19 @@ export const characterRelationTraits: Trait[] = [
     },
   },
   {
+    description: '击晕知识卡可以在音乐家杰瑞未点三级位移的时候打断位移',
+    group: [
+      { name: '音乐家杰瑞', type: 'character' },
+      { name: '击晕', type: 'knowledgeCard', factionId: 'cat' },
+    ],
+    relation: {
+      kind: 'counteredByKnowledgeCards',
+      subject: { name: '音乐家杰瑞', type: 'character' },
+      target: { name: '击晕', type: 'knowledgeCard', factionId: 'cat' },
+      isMinor: true,
+    },
+  },
+  {
     description:
       '不屈增加的额外血量和移速增大了追汤打倒老鼠的难度，加的推速使老鼠发育更快并更易来到后期。',
     group: [
@@ -5827,6 +5853,20 @@ export const characterRelationTraits: Trait[] = [
       subject: { name: '如玉', type: 'character' },
       target: { name: '音乐家杰瑞', type: 'character' },
       isMinor: false,
+    },
+  },
+  {
+    description:
+      '剑客汤姆爪刀较长，搭配击晕知识卡可以使用打断位移，同时可以使用闪电旋风劈在音乐家杰瑞使用位移的时候打断技能，但是三级位移自带两层护盾，剑客汤姆无法打断技能，但是可以使用闪电旋风劈把音乐家杰瑞带走。',
+    group: [
+      { name: '剑客汤姆', type: 'character' },
+      { name: '音乐家杰瑞', type: 'character' },
+    ],
+    relation: {
+      kind: 'counters',
+      subject: { name: '剑客汤姆', type: 'character' },
+      target: { name: '音乐家杰瑞', type: 'character' },
+      isMinor: true,
     },
   },
   {
