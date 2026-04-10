@@ -636,6 +636,19 @@ export const characterRelationTraits: Trait[] = [
     },
   },
   {
+    description: '二段跳和鼓舞可以增加杰瑞的移速和逃跑能力，等级越高效果越显著。',
+    group: [
+      { name: '杰瑞', type: 'character' },
+      { name: '罗宾汉杰瑞', type: 'character' },
+    ],
+    relation: {
+      kind: 'collaborators',
+      subject: { name: '杰瑞', type: 'character' },
+      target: { name: '罗宾汉杰瑞', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
     description: '雪梨可以帮米可回血，提高续航，配合米可三级被动很难被打死，也有了防止拍抓的能力。',
     group: [
       { name: '米可', type: 'character' },
@@ -658,6 +671,20 @@ export const characterRelationTraits: Trait[] = [
       kind: 'collaborators',
       subject: { name: '米可', type: 'character' },
       target: { name: '音乐家杰瑞', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '米可技能自带霸体与减伤，可与米雪儿的回复和变大极好衔接（不要小瞧兄妹之间的羁绊啊！）',
+    group: [
+      { name: '米雪儿', type: 'character' },
+      { name: '米可', type: 'character' },
+    ],
+    relation: {
+      kind: 'collaborators',
+      subject: { name: '米雪儿', type: 'character' },
+      target: { name: '米可', type: 'character' },
       isMinor: false,
     },
   },
@@ -897,6 +924,19 @@ export const characterRelationTraits: Trait[] = [
       kind: 'collaborators',
       subject: { name: '天使杰瑞', type: 'character' },
       target: { name: '仙女鼠', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '仙女鼠1星命中朵朵可使其电量条立即充满。',
+    group: [
+      { name: '仙女鼠', type: 'character' },
+      { name: '朵朵', type: 'character' },
+    ],
+    relation: {
+      kind: 'collaborators',
+      subject: { name: '仙女鼠', type: 'character' },
+      target: { name: '朵朵', type: 'character' },
       isMinor: true,
     },
   },
@@ -1996,7 +2036,7 @@ export const characterRelationTraits: Trait[] = [
     },
   },
   {
-    description: '速推克制恶魔汤姆死守，三级烟雾弹禁用技能。',
+    description: '三级烟雾弹禁用技能。',
     group: [
       { name: '侦探杰瑞', type: 'character' },
       { name: '恶魔汤姆', type: 'character' },
@@ -3312,8 +3352,7 @@ export const characterRelationTraits: Trait[] = [
     },
   },
   {
-    description:
-      '恶菲一被对胡萝卜飞镖有一定躲避能力，且蓝色小淘气可以稳定破除兔八哥的二级被动。在猫方没有钻地洞的情况下，先蓝后绿的二武组合可以瞬秒兔八哥。而主点地洞的兔八哥恶菲不好进行击杀。',
+    description: '恶魔泰菲跑得快，能禁技能但血少，恶魔泰菲三被也不好打死兔子，前提是加点为主点地洞',
     group: [
       { name: '恶魔泰菲', type: 'character' },
       { name: '兔八哥', type: 'character' },
@@ -3538,20 +3577,6 @@ export const characterRelationTraits: Trait[] = [
       kind: 'counteredByKnowledgeCards',
       subject: { name: '朵朵', type: 'character' },
       target: { name: '猛攻', type: 'knowledgeCard', factionId: 'cat' },
-      isMinor: false,
-    },
-  },
-  {
-    description:
-      '恶汤正常防守时都要绑火箭。使用无畏知识卡救完人后就强推。找几个人送一下，吃蛋糕刷新知识卡CD，反复几次救援就能破局。',
-    group: [
-      { name: '恶魔汤姆', type: 'character' },
-      { name: '无畏', type: 'knowledgeCard', factionId: 'mouse' },
-    ],
-    relation: {
-      kind: 'counteredByKnowledgeCards',
-      subject: { name: '恶魔汤姆', type: 'character' },
-      target: { name: '无畏', type: 'knowledgeCard', factionId: 'mouse' },
       isMinor: false,
     },
   },
@@ -3908,6 +3933,19 @@ export const characterRelationTraits: Trait[] = [
       subject: { name: '音乐家杰瑞', type: 'character' },
       target: { name: '皮糙肉厚', type: 'knowledgeCard', factionId: 'cat' },
       isMinor: false,
+    },
+  },
+  {
+    description: '击晕知识卡可以在音乐家杰瑞未点三级位移的时候打断位移',
+    group: [
+      { name: '音乐家杰瑞', type: 'character' },
+      { name: '击晕', type: 'knowledgeCard', factionId: 'cat' },
+    ],
+    relation: {
+      kind: 'counteredByKnowledgeCards',
+      subject: { name: '音乐家杰瑞', type: 'character' },
+      target: { name: '击晕', type: 'knowledgeCard', factionId: 'cat' },
+      isMinor: true,
     },
   },
   {
@@ -4882,19 +4920,6 @@ export const characterRelationTraits: Trait[] = [
     },
   },
   {
-    description: '恶魔汤姆主流特技我生气了和列车克制国王小盾，降低国王容错。',
-    group: [
-      { name: '恶魔汤姆', type: 'character' },
-      { name: '国王杰瑞', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '恶魔汤姆', type: 'character' },
-      target: { name: '国王杰瑞', type: 'character' },
-      isMinor: true,
-    },
-  },
-  {
     description: '恶魔汤姆技能免控，列车冲撞会给予其护盾，列车克制霸体角色。',
     group: [
       { name: '恶魔汤姆', type: 'character' },
@@ -5147,7 +5172,7 @@ export const characterRelationTraits: Trait[] = [
   },
   {
     description:
-      '米雪儿的二级变身可抵挡如玉的一次反击；后期制造大量比利鼠，消耗如玉坚毅的同时快速破墙。',
+      '米雪儿的二级变身可抵挡如玉的一次反击；后期制造大量比利鼠，消耗如玉坚毅的同时快速破墙',
     group: [
       { name: '米雪儿', type: 'character' },
       { name: '如玉', type: 'character' },
@@ -5156,11 +5181,12 @@ export const characterRelationTraits: Trait[] = [
       kind: 'counters',
       subject: { name: '米雪儿', type: 'character' },
       target: { name: '如玉', type: 'character' },
-      isMinor: true,
+      isMinor: false,
     },
   },
   {
-    description: '附身时可吸闪，且缺伤害难以击倒附身的鼠。',
+    description:
+      '莱特宁缺伤害，难以击倒气球附身老鼠；血量少，容易被愤怒大老鼠击倒；垃圾桶可被愤怒大老鼠推开破局；三级闪现眩晕的老鼠可被附身的米雪儿变大无法抓取；米雪儿还可通过附身莱特宁使其无法闪现。',
     group: [
       { name: '米雪儿', type: 'character' },
       { name: '莱特宁', type: 'character' },
@@ -5827,6 +5853,20 @@ export const characterRelationTraits: Trait[] = [
       subject: { name: '如玉', type: 'character' },
       target: { name: '音乐家杰瑞', type: 'character' },
       isMinor: false,
+    },
+  },
+  {
+    description:
+      '剑客汤姆爪刀较长，搭配击晕知识卡可以使用打断位移，同时可以使用闪电旋风劈在音乐家杰瑞使用位移的时候打断技能，但是三级位移自带两层护盾，剑客汤姆无法打断技能，但是可以使用闪电旋风劈把音乐家杰瑞带走。',
+    group: [
+      { name: '剑客汤姆', type: 'character' },
+      { name: '音乐家杰瑞', type: 'character' },
+    ],
+    relation: {
+      kind: 'counters',
+      subject: { name: '剑客汤姆', type: 'character' },
+      target: { name: '音乐家杰瑞', type: 'character' },
+      isMinor: true,
     },
   },
   {
@@ -6683,19 +6723,6 @@ export const characterRelationTraits: Trait[] = [
     },
   },
   {
-    description: '恶魔汤姆打碟期间免疫眩晕。',
-    group: [
-      { name: '恶魔汤姆', type: 'character' },
-      { name: '干扰投掷', type: 'specialSkill', factionId: 'mouse' },
-    ],
-    relation: {
-      kind: 'countersSpecialSkills',
-      subject: { name: '恶魔汤姆', type: 'character' },
-      target: { name: '干扰投掷', type: 'specialSkill', factionId: 'mouse' },
-      isMinor: true,
-    },
-  },
-  {
     description: '风墙的干扰无法被绝地反击免疫，且莉莉2级被动命中霸体敌方也能触发。',
     group: [
       { name: '剑客莉莉', type: 'character' },
@@ -6879,20 +6906,6 @@ export const characterRelationTraits: Trait[] = [
   },
   {
     description:
-      '火车头配合我生气了，克制国王护盾。但权杖的无敌，进攻战旗的高伤，救援战旗的速救，克制恶汤。',
-    group: [
-      { name: '国王杰瑞', type: 'character' },
-      { name: '恶魔汤姆', type: 'character' },
-    ],
-    relation: {
-      kind: 'counterEachOther',
-      subject: { name: '国王杰瑞', type: 'character' },
-      target: { name: '恶魔汤姆', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
-    description:
       '国王杰瑞主救能力较差，但战旗与其队友配合会有较大的威胁。例如进攻旗加伤，守护旗在冲刺真空期不好处理，感知旗拉扯，灵巧旗躲冲刺。',
     group: [
       { name: '国王杰瑞', type: 'character' },
@@ -6919,29 +6932,30 @@ export const characterRelationTraits: Trait[] = [
     },
   },
   {
-    description: '火车头红温克制刷盾强推强救，但传送门流放克制死守，',
+    description: '火车头克制刷盾强推强救，但传送门流放克制定点防守。',
     group: [
-      { name: '恶魔杰瑞', type: 'character' },
       { name: '恶魔汤姆', type: 'character' },
+      { name: '恶魔杰瑞', type: 'character' },
     ],
     relation: {
       kind: 'counterEachOther',
-      subject: { name: '恶魔杰瑞', type: 'character' },
-      target: { name: '恶魔汤姆', type: 'character' },
+      subject: { name: '恶魔汤姆', type: 'character' },
+      target: { name: '恶魔杰瑞', type: 'character' },
       isMinor: false,
     },
   },
   {
-    description: '大小兔子都能给撞击火车头触发红温，但魔术师的红牌克制恶魔汤姆',
+    description:
+      '恶魔汤姆用火车头打大兔子较快，防小兔子强推强就有反制能力。但怕魔术师的红牌，且打碟不防卡牌',
     group: [
-      { name: '魔术师', type: 'character' },
       { name: '恶魔汤姆', type: 'character' },
+      { name: '魔术师', type: 'character' },
     ],
     relation: {
       kind: 'counterEachOther',
-      subject: { name: '魔术师', type: 'character' },
-      target: { name: '恶魔汤姆', type: 'character' },
-      isMinor: false,
+      subject: { name: '恶魔汤姆', type: 'character' },
+      target: { name: '魔术师', type: 'character' },
+      isMinor: true,
     },
   },
   {

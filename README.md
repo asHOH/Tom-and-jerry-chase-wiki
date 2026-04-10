@@ -64,10 +64,16 @@
 部署教程（含 Docker / Vercel / Cloudflare Tunnel / 公网 IP + 80/443）见 [DEPLOY.md](DEPLOY.md)。
 
 ### 环境要求
-
-- **Node.js**: `>=20.3.0`
-- **npm**: `>=10.0.0`
-- **.env.local**: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN`,`NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS`（设为 `0` 强制禁用或 `1` 强制启用Vercel Analytics；默认仅在 Vercel 生产环境启用），`FLOWKEY`（可选，用于将数据流转到MCP Server，不填写则不开启这一接口）。
+| 配置文件 / 依赖 | 变量名 / 版本要求 | 说明 |
+| :--- | :--- | :--- |
+| **Node.js** | `>=20.3.0` | 运行环境版本要求 |
+| **npm** | `>=10.0.0` | 包管理器版本要求 |
+| **.env.local** | `NEXT_PUBLIC_SUPABASE_URL` | Supabase 项目 URL |
+| | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | - |
+| | `SUPABASE_SERVICE_ROLE_KEY` | - |
+| | `NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN` | - |
+| | `NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS` | 默认情况下仅在 Vercel 生产环境启用，设为 0 强制禁用或 1 强制启用 Vercel Analytics |
+| | `FLOWKEY` | 可选，为TJWiki MCP Server提供数据流转支持，默认情况下不填写此项则不开启它 |
 
 ### 开发步骤
 
