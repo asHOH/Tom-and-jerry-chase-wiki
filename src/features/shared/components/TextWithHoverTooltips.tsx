@@ -187,7 +187,14 @@ const extractBaseNameAndCategoryHint = (
 
 // ---------- Damage tag processing system ----------
 
-type TagCategory = 'source' | 'calculation' | 'electric' | 'shield' | 'injure' | 'bubble';
+type TagCategory =
+  | 'source'
+  | 'calculation'
+  | 'electric'
+  | 'shield'
+  | 'injure'
+  | 'bubble'
+  | 'protection';
 
 interface TagDefinition {
   category: TagCategory;
@@ -239,7 +246,6 @@ const TAG_DEFINITIONS: TagDefinition[] = [
     processDisplay: () => ({
       prefixElement: <strong key='calc'>{'不受目标影响的'}</strong>,
       suffixNote: '；不受受击增伤/减伤影响，但仍受攻击增伤/减伤等其它效果影响',
-      preventBoost: true,
     }),
   },
   {
@@ -351,6 +357,21 @@ const TAG_DEFINITIONS: TagDefinition[] = [
       suffixNote: '；无法攻击泡泡',
     }),
   },
+  {
+    category: 'protection',
+    names: [
+      '无视保护机制',
+      '无视保护',
+      '无视伤害保护机制',
+      '不受保护机制',
+      '不受保护',
+      '不受伤害保护机制',
+    ],
+    processDisplay: () => ({
+      suffixText: '无视伤害保护',
+      suffixNote: '；不会触发猫方伤害保护机制的减伤效果，也不受此类减伤的影响',
+    }),
+  },
 ];
 
 // Parse tag strings and return effects in order of appearance
@@ -366,6 +387,7 @@ function parseDamageTags(rawTags: string[]): {
   let preventBoost = false;
 
   const seenCategories = new Set<TagCategory>();
+  let sourceDefApplied: TagDefinition | undefined;
 
   // Process tags in order, but skip categories already processed
   for (const rawTag of rawTags) {
@@ -382,9 +404,26 @@ function parseDamageTags(rawTags: string[]): {
     if (seenCategories.has(def.category)) continue;
     seenCategories.add(def.category);
 
-    // Apply effects
+    if (def.category === 'source') {
+      sourceDefApplied = def;
+    }
+
     if (def.processDisplay) {
       const result = def.processDisplay();
+
+      // Hide prefix for "只受目标影响" when "无来源" is also present
+      if (def.category === 'calculation') {
+        const isNoSourcePresent = sourceDefApplied?.names.includes('无来源') ?? false;
+        const isUninfluencedBySource =
+          def.names.includes('只受目标影响') || def.names.includes('不受来源影响');
+        if (isNoSourcePresent && isUninfluencedBySource) {
+          // Apply preventBoost and suffixNote, but skip prefixElement
+          if (result.preventBoost) preventBoost = true;
+          if (result.suffixNote) tooltipAppends.push(result.suffixNote);
+          continue;
+        }
+      }
+
       if (result.prefixElement) {
         displayPrefixElements.push(result.prefixElement);
       }
@@ -400,17 +439,44 @@ function parseDamageTags(rawTags: string[]): {
     }
   }
 
-  // *** ADD: Default calculation category if none specified ***
+  // Default calculation category if none specified
   if (!seenCategories.has('calculation')) {
-    const defaultCalcDef = TAG_DEFINITIONS.find(
-      (d) => d.category === 'calculation' && d.names.includes('受双方影响')
-    );
+    const hasNoSource = sourceDefApplied?.names.includes('无来源') ?? false;
+    let defaultCalcDef: TagDefinition | undefined;
+    if (hasNoSource) {
+      defaultCalcDef = TAG_DEFINITIONS.find(
+        (d) => d.category === 'calculation' && d.names.includes('只受目标影响')
+      );
+    } else {
+      defaultCalcDef = TAG_DEFINITIONS.find(
+        (d) => d.category === 'calculation' && d.names.includes('受双方影响')
+      );
+    }
+
     if (defaultCalcDef?.processDisplay) {
       const result = defaultCalcDef.processDisplay();
-      if (result.suffixNote) {
-        tooltipAppends.push(result.suffixNote);
+
+      if (result.preventBoost) {
+        preventBoost = true;
       }
-      // Note: No prefix element or preventBoost for default calculation
+
+      if (result.suffixNote) {
+        // Insert after any source note (contains '该伤害无来源')
+        let insertIndex = tooltipAppends.length;
+        for (let i = 0; i < tooltipAppends.length; i++) {
+          if (tooltipAppends[i]?.includes('该伤害无来源')) {
+            insertIndex = i + 1;
+            break;
+          }
+        }
+        tooltipAppends.splice(insertIndex, 0, result.suffixNote);
+      }
+
+      // Add prefix only if not the hidden "只受目标影响" + "无来源" combo
+      const isNoSourceAndTargetOnly = hasNoSource && defaultCalcDef.names.includes('只受目标影响');
+      if (!isNoSourceAndTargetOnly && result.prefixElement) {
+        displayPrefixElements.push(result.prefixElement);
+      }
     }
   }
 
@@ -739,6 +805,12 @@ const renderTextWithTooltips = (
         ['可攻击泡泡', '不可攻击泡泡'].includes(s)
       );
       if (bubbleSuffix.length > 0) suffixItems.push(...bubbleSuffix);
+
+      // Protection suffixes
+      const protectionSuffix = tagEffects.displaySuffixes.filter((s) =>
+        ['无视伤害保护'].includes(s)
+      );
+      if (protectionSuffix.length > 0) suffixItems.push(...protectionSuffix);
 
       if (suffixItems.length > 0) {
         displayElements.push(`（${suffixItems.join('，')}）`);
