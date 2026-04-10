@@ -185,6 +185,240 @@ const extractBaseNameAndCategoryHint = (
   return { baseName: content, categoryHint: null };
 };
 
+// ---------- Damage tag processing system ----------
+
+type TagCategory = 'source' | 'calculation' | 'electric' | 'shield' | 'injure' | 'bubble';
+
+interface TagDefinition {
+  category: TagCategory;
+  names: string[]; // Includes primary name and aliases
+  // Modify final display text: returns React elements to insert (bold, colors, etc.) and suffix strings
+  processDisplay?: () => {
+    prefixElement?: React.ReactElement; // Modifier inserted after the number, e.g. "无来源", "固定", "电击"
+    suffixText?: string; // Text appended inside parentheses, e.g. "无视护盾"
+    suffixNote?: string; // Note appended to tooltip
+    preventBoost?: boolean; // Whether to prevent adding character boost
+  };
+}
+
+// Tag definitions table
+const TAG_DEFINITIONS: TagDefinition[] = [
+  {
+    category: 'source',
+    names: ['有来源', '有来源伤害'],
+    // Default tag, no special effect
+  },
+  {
+    category: 'source',
+    names: ['无来源', '无来源伤害', '环境伤害', '环境'],
+    processDisplay: () => ({
+      prefixElement: <strong key='source'>{'无来源'}</strong>,
+      suffixNote: '；该伤害无来源，不会触发来源相关效果',
+      preventBoost: true,
+    }),
+  },
+  {
+    category: 'calculation',
+    names: ['受双方影响', '可增', '可增型', '可增型伤害', '常规', '常规伤害'],
+    processDisplay: () => ({
+      suffixNote: '；会受到其它来源的攻击增伤/减伤，受击增伤/减伤等效果影响',
+    }),
+  },
+  {
+    category: 'calculation',
+    names: ['只受目标影响', '受目标影响', '不受来源影响', '不增', '不增型', '不增型伤害'],
+    processDisplay: () => ({
+      prefixElement: <strong key='calc'>{'不受来源影响的'}</strong>,
+      suffixNote: '；不受攻击增伤/减伤影响，但仍受受击增伤/减伤等其它效果影响',
+      preventBoost: true,
+    }),
+  },
+  {
+    category: 'calculation',
+    names: ['只受来源影响', '受来源影响', '不受目标影响'],
+    processDisplay: () => ({
+      prefixElement: <strong key='calc'>{'不受目标影响的'}</strong>,
+      suffixNote: '；不受受击增伤/减伤影响，但仍受攻击增伤/减伤等其它效果影响',
+      preventBoost: true,
+    }),
+  },
+  {
+    category: 'calculation',
+    names: [
+      '不受双方影响',
+      '不受影响',
+      '固定值伤害',
+      '固定型伤害',
+      '固定',
+      '固定值',
+      '固定型',
+      '不变型',
+      '不变值',
+      '不变型伤害',
+      '不变值伤害',
+    ],
+    processDisplay: () => ({
+      prefixElement: <strong key='calc'>{'固定'}</strong>,
+      suffixNote: '；不受包括攻击增伤/减伤、受击增伤/减伤等效果在内的大多数效果的影响',
+      preventBoost: true,
+    }),
+  },
+  {
+    category: 'electric',
+    names: ['电击', '电击伤害'],
+    processDisplay: () => ({
+      prefixElement: (
+        <strong key='electric' className='text-blue-600 dark:text-blue-400'>
+          {'电击'}
+        </strong>
+      ),
+      suffixNote:
+        '；可对目标造成感电，一段时间内目标受到的电击伤害增加，可叠加，目标遇水时发生电爆炸并失去感电',
+    }),
+  },
+  {
+    category: 'shield',
+    names: ['可攻击护盾', '可击破护盾', '可破盾', '可破盾伤害'],
+    processDisplay: () => ({
+      suffixText: '可破盾',
+      suffixNote: '；会被护盾抵挡且正常消耗护盾层数',
+    }),
+  },
+  {
+    category: 'shield',
+    names: [
+      '不可攻击护盾',
+      '不可击破护盾',
+      '不可破盾',
+      '不可破盾伤害',
+      '无法攻击护盾',
+      '无法击破护盾',
+      '无法破盾',
+      '无法破盾伤害',
+    ],
+    processDisplay: () => ({
+      suffixText: '不破盾',
+      suffixNote: '；会被护盾完全抵挡，不消耗护盾层数',
+    }),
+  },
+  {
+    category: 'shield',
+    names: [
+      '无视护盾',
+      '无视护盾伤害',
+      '穿透',
+      '穿透护盾',
+      '穿透伤害',
+      '穿透护盾伤害',
+      '真实',
+      '真实伤害',
+    ],
+    processDisplay: () => ({
+      suffixText: '无视护盾',
+      suffixNote:
+        '；无视包括护盾在内的绝大多数保护效果，直接对目标造成伤害，但由此引发虚弱时可能会被护盾等状态抵消',
+    }),
+  },
+  {
+    category: 'injure',
+    names: ['可致伤', '可导致受伤', '会导致受伤', '会致伤'],
+    processDisplay: () => ({
+      suffixText: '可致伤',
+      suffixNote: '；成功命中目标且未被护盾等效果抵挡时，使目标进入受伤状态',
+    }),
+  },
+  {
+    category: 'injure',
+    names: ['不可致伤', '不可导致受伤', '不会导致受伤', '不会致伤'],
+    processDisplay: () => ({
+      suffixText: '不可致伤',
+      suffixNote: '；不会使目标进入受伤状态',
+    }),
+  },
+  {
+    category: 'bubble',
+    names: ['可攻击泡泡', '可击破泡泡'],
+    processDisplay: () => ({
+      suffixText: '可攻击泡泡',
+      suffixNote: '；可以正常攻击泡泡',
+    }),
+  },
+  {
+    category: 'bubble',
+    names: ['不可攻击泡泡', '不可击破泡泡'],
+    processDisplay: () => ({
+      suffixText: '不可攻击泡泡',
+      suffixNote: '；无法攻击泡泡',
+    }),
+  },
+];
+
+// Parse tag strings and return effects in order of appearance
+function parseDamageTags(rawTags: string[]): {
+  displayPrefixElements: React.ReactElement[];
+  displaySuffixes: string[];
+  tooltipAppends: string[];
+  preventBoost: boolean;
+} {
+  const displayPrefixElements: React.ReactElement[] = [];
+  const displaySuffixes: string[] = [];
+  const tooltipAppends: string[] = [];
+  let preventBoost = false;
+
+  const seenCategories = new Set<TagCategory>();
+
+  // Process tags in order, but skip categories already processed
+  for (const rawTag of rawTags) {
+    const trimmed = rawTag.trim();
+    if (!trimmed) continue;
+
+    // Find matching tag definition
+    const def = TAG_DEFINITIONS.find((d) =>
+      d.names.some((name) => name.toLowerCase() === trimmed.toLowerCase())
+    );
+    if (!def) continue;
+
+    // Only take the first tag of each category
+    if (seenCategories.has(def.category)) continue;
+    seenCategories.add(def.category);
+
+    // Apply effects
+    if (def.processDisplay) {
+      const result = def.processDisplay();
+      if (result.prefixElement) {
+        displayPrefixElements.push(result.prefixElement);
+      }
+      if (result.suffixText) {
+        displaySuffixes.push(result.suffixText);
+      }
+      if (result.suffixNote) {
+        tooltipAppends.push(result.suffixNote);
+      }
+      if (result.preventBoost) {
+        preventBoost = true;
+      }
+    }
+  }
+
+  // *** ADD: Default calculation category if none specified ***
+  if (!seenCategories.has('calculation')) {
+    const defaultCalcDef = TAG_DEFINITIONS.find(
+      (d) => d.category === 'calculation' && d.names.includes('受双方影响')
+    );
+    if (defaultCalcDef?.processDisplay) {
+      const result = defaultCalcDef.processDisplay();
+      if (result.suffixNote) {
+        tooltipAppends.push(result.suffixNote);
+      }
+      // Note: No prefix element or preventBoost for default calculation
+    }
+  }
+
+  return { displayPrefixElements, displaySuffixes, tooltipAppends, preventBoost };
+}
+
+// ---------- End of tag processing ----------
+
 /**
  * Parse and render text with tooltips for patterns like {visible text}
  * The text inside the brackets will be shown as visible text and also as tooltip content.
@@ -219,7 +453,15 @@ const renderTextWithTooltips = (
       parts.push(...renderTextWithClasses(beforeText));
     }
 
-    const content = match[1] || '';
+    const rawContent = match[1] || '';
+
+    // Detect trailing asterisk to indicate base damage only
+    let isBaseOnly = false;
+    let content = rawContent;
+    if (content.endsWith('*')) {
+      isBaseOnly = true;
+      content = content.slice(0, -1);
+    }
 
     // Extract base name and category hint (hide parentheses if present)
     const { baseName, categoryHint } = extractBaseNameAndCategoryHint(content);
@@ -266,24 +508,258 @@ const renderTextWithTooltips = (
         !Number.isNaN(boost)
       ) {
         visibleText = String(base + boost);
-        tooltipContent =
-          boost === 0
-            ? `基础伤害${base}，同时也享受其他来源的攻击增伤加成`
-            : `基础伤害${base}+角色增伤${boost}，同时也享受其他来源的攻击增伤加成`;
+        tooltipContent = boost === 0 ? `基础伤害${base}` : `基础伤害${base}+角色增伤${boost}`;
       } else {
         visibleText = contentForTooltip;
         tooltipContent = contentForTooltip;
       }
     } else if (contentForTooltip.startsWith('_')) {
-      visibleText = contentForTooltip.substring(1);
-      if (wallCrackDamageBoost !== undefined) {
-        const totalWallCrackDamage = parseFloat(visibleText as string);
-        const baseWallCrackDamage =
-          Math.round((totalWallCrackDamage - wallCrackDamageBoost) * 10) / 10;
-        tooltipContent = `基础墙缝伤害${baseWallCrackDamage}+角色墙缝增伤${wallCrackDamageBoost}，同时也享受其他来源的墙缝增伤加成`;
-      } else {
-        tooltipContent = `基础墙缝伤害${visibleText}，同时也享受其他来源的墙缝增伤加成`;
+      // ---------- Wall crack damage branch (applies tag system) ----------
+      // Remove leading underscore, content may contain comma-separated tags
+      const withoutUnderscore = contentForTooltip.substring(1);
+
+      // Check if there are comma-separated tags
+      const hasTags = withoutUnderscore.includes(',');
+
+      if (!hasTags) {
+        // Wall crack number without tags
+        const numericOnlyPattern = /^-?\d+(?:\.\d+)?$/;
+        if (!numericOnlyPattern.test(withoutUnderscore)) {
+          // Not a pure number, fallback to link
+          const linkName = withoutUnderscore || '';
+          const card = cards[linkName as keyof typeof cards];
+          if ((!categoryHint || categoryHint === '知识卡') && card) {
+            const rankColors = getCardRankColors(card.rank, false, isDarkMode);
+            const hint = isCategoryHint(categoryHint) ? categoryHint : undefined;
+            parts.push(
+              <GotoLink
+                name={linkName}
+                className='no-underline'
+                key={`${card.rank}-${match.index}`}
+                {...(hint ? { categoryHint: hint } : {})}
+              >
+                <Tag
+                  colorStyles={rankColors}
+                  size='sm'
+                  margin='micro'
+                  role='link'
+                  className='mr-0.5 ml-0.75'
+                >
+                  {withoutUnderscore}
+                </Tag>
+              </GotoLink>
+            );
+          } else {
+            const hint2 = isCategoryHint(categoryHint) ? categoryHint : undefined;
+            parts.push(
+              <GotoLink
+                name={linkName}
+                className='underline'
+                key={`${linkName}-${tooltipPattern.lastIndex}`}
+                {...(hint2 ? { categoryHint: hint2 } : {})}
+              >
+                {withoutUnderscore}
+              </GotoLink>
+            );
+          }
+          lastIndex = tooltipPattern.lastIndex;
+          continue;
+        }
+
+        const parsedNumber = parseFloat(withoutUnderscore);
+        let totalValue: number;
+        let baseValue: number;
+        const effectiveBoost = wallCrackDamageBoost ?? 0;
+
+        if (isBaseOnly) {
+          baseValue = parsedNumber;
+          totalValue = baseValue + effectiveBoost;
+        } else {
+          totalValue = parsedNumber;
+          baseValue = totalValue - effectiveBoost;
+        }
+
+        // *** ADD: Default calculation note for wall crack without tags ***
+        const defaultCalcDef = TAG_DEFINITIONS.find(
+          (d) => d.category === 'calculation' && d.names.includes('受双方影响')
+        );
+        const defaultNote = defaultCalcDef?.processDisplay?.()?.suffixNote ?? '';
+        tooltipContent = `基础墙缝伤害${baseValue}${
+          effectiveBoost !== 0 ? `+角色墙缝增伤${effectiveBoost}` : ''
+        }${defaultNote}`;
+
+        const displayText = `${totalValue}伤害`;
+
+        parts.push(
+          <Tooltip key={`hover-${index}-${match.index}`} content={tooltipContent}>
+            {displayText}
+          </Tooltip>
+        );
+
+        // Skip immediately following "伤害" or "点伤害" to avoid duplication
+        const afterMatch = normalized.slice(tooltipPattern.lastIndex);
+        const skipDamagePattern = /^(伤害|点伤害)/;
+        const skipMatch = skipDamagePattern.exec(afterMatch);
+        if (skipMatch) {
+          tooltipPattern.lastIndex += skipMatch[0].length;
+        }
+
+        lastIndex = tooltipPattern.lastIndex;
+        continue;
       }
+
+      // Wall crack number with tags
+      const partsForTag = withoutUnderscore.split(',').map((s) => s.trim());
+      let numericPart = partsForTag[0] || '';
+      const tagParts = partsForTag.slice(1);
+      let localIsBaseOnly = isBaseOnly;
+      if (numericPart.endsWith('*')) {
+        localIsBaseOnly = true;
+        numericPart = numericPart.slice(0, -1);
+      }
+
+      const numericOnlyPattern = /^-?\d+(?:\.\d+)?$/;
+      if (!numericOnlyPattern.test(numericPart)) {
+        // Invalid numeric part, fallback to link
+        const linkName = numericPart || '';
+        const card = cards[linkName as keyof typeof cards];
+        if ((!categoryHint || categoryHint === '知识卡') && card) {
+          const rankColors = getCardRankColors(card.rank, false, isDarkMode);
+          const hint = isCategoryHint(categoryHint) ? categoryHint : undefined;
+          parts.push(
+            <GotoLink
+              name={linkName}
+              className='no-underline'
+              key={`${card.rank}-${match.index}`}
+              {...(hint ? { categoryHint: hint } : {})}
+            >
+              <Tag
+                colorStyles={rankColors}
+                size='sm'
+                margin='micro'
+                role='link'
+                className='mr-0.5 ml-0.75'
+              >
+                {numericPart}
+              </Tag>
+            </GotoLink>
+          );
+        } else {
+          const hint2 = isCategoryHint(categoryHint) ? categoryHint : undefined;
+          parts.push(
+            <GotoLink
+              name={linkName}
+              className='underline'
+              key={`${linkName}-${tooltipPattern.lastIndex}`}
+              {...(hint2 ? { categoryHint: hint2 } : {})}
+            >
+              {numericPart}
+            </GotoLink>
+          );
+        }
+        lastIndex = tooltipPattern.lastIndex;
+        continue;
+      }
+
+      const parsedNumber = parseFloat(numericPart);
+      const tagEffects = parseDamageTags(tagParts);
+
+      // Calculate wall crack damage value
+      let totalValue: number;
+      let baseValue: number;
+      const effectiveBoost = tagEffects.preventBoost ? 0 : (wallCrackDamageBoost ?? 0);
+
+      if (localIsBaseOnly) {
+        baseValue = parsedNumber;
+        totalValue = baseValue + effectiveBoost;
+      } else {
+        totalValue = parsedNumber;
+        baseValue = totalValue - effectiveBoost;
+      }
+
+      // Build base tooltip
+      let baseTooltip = `基础墙缝伤害${baseValue}`;
+      if (effectiveBoost !== 0) {
+        baseTooltip += `+角色墙缝增伤${effectiveBoost}`;
+      }
+
+      // Append tag notes
+      const fullTooltip = baseTooltip + tagEffects.tooltipAppends.join('');
+
+      // Build display text React elements
+      const displayElements: React.ReactNode[] = [];
+      displayElements.push(`${totalValue}`);
+
+      // Insert prefix elements (无来源, 固定, 电击, etc.)
+      const sourceElements: React.ReactElement[] = [];
+      const calcElements: React.ReactElement[] = [];
+      const electricElements: React.ReactElement[] = [];
+
+      tagEffects.displayPrefixElements.forEach((el) => {
+        if (el.key === 'source') sourceElements.push(el);
+        else if (el.key === 'calc') calcElements.push(el);
+        else if (el.key === 'electric') electricElements.push(el);
+      });
+
+      // Add source and calculation prefixes
+      if (sourceElements.length > 0 || calcElements.length > 0) {
+        displayElements.push('');
+        sourceElements.forEach((el) => displayElements.push(el));
+        if (sourceElements.length > 0 && calcElements.length > 0) {
+          displayElements.push('的');
+        }
+        calcElements.forEach((el) => displayElements.push(el));
+      }
+
+      // Add electric prefix
+      if (electricElements.length > 0) {
+        displayElements.push(' ');
+        electricElements.forEach((el) => displayElements.push(el));
+      }
+
+      // Add the word "伤害"
+      displayElements.push('伤害');
+
+      // Build suffix items inside parentheses
+      const suffixItems: string[] = [];
+      // Shield suffixes
+      const shieldSuffix = tagEffects.displaySuffixes.filter((s) =>
+        ['可破盾', '不破盾', '无视护盾'].includes(s)
+      );
+      if (shieldSuffix.length > 0) suffixItems.push(...shieldSuffix);
+
+      // Injure suffixes
+      const injureSuffix = tagEffects.displaySuffixes.filter((s) =>
+        ['可致伤', '不可致伤'].includes(s)
+      );
+      if (injureSuffix.length > 0) suffixItems.push(...injureSuffix);
+
+      // Bubble suffixes
+      const bubbleSuffix = tagEffects.displaySuffixes.filter((s) =>
+        ['可攻击泡泡', '不可攻击泡泡'].includes(s)
+      );
+      if (bubbleSuffix.length > 0) suffixItems.push(...bubbleSuffix);
+
+      if (suffixItems.length > 0) {
+        displayElements.push(`（${suffixItems.join('，')}）`);
+      }
+
+      parts.push(
+        <Tooltip key={`hover-${index}-${match.index}`} content={fullTooltip}>
+          <>{displayElements}</>
+        </Tooltip>
+      );
+
+      // Skip immediately following "伤害" or "点伤害"
+      const afterMatch = normalized.slice(tooltipPattern.lastIndex);
+      const skipDamagePattern = /^(伤害|点伤害)/;
+      const skipMatch = skipDamagePattern.exec(afterMatch);
+      if (skipMatch) {
+        tooltipPattern.lastIndex += skipMatch[0].length;
+      }
+
+      lastIndex = tooltipPattern.lastIndex;
+      continue;
     } else {
       // Use the extracted baseName for further processing
       visibleText = classProcessedBaseName;
@@ -357,31 +833,134 @@ const renderTextWithTooltips = (
         continue;
       }
 
-      // Only treat as numeric if it's a pure number (no units or letters)
-      const numericOnlyPattern = /^-?\d+(?:\.\d+)?$/;
-      const isNumericOnly = numericOnlyPattern.test(contentForTooltip);
+      // Check if there are comma-separated tags
+      const hasTags = contentForTooltip.includes(',');
 
-      // If it's not a number or attack boost not available, try rendering as Knowledge Card tag
-      if (!isNumericOnly || attackBoost == null) {
-        if (contentForTooltip.startsWith(':')) {
-          const currentCharacter: CharacterRecord | undefined =
-            currentCharacterId && currentCharacterId in characters
-              ? characters[currentCharacterId as keyof typeof characters]
-              : undefined;
-          const evaluated = resolveCharacterExpression(contentForTooltip, currentCharacter);
-          if (typeof evaluated === 'string' || typeof evaluated === 'number') {
-            parts.push(String(evaluated));
+      if (!hasTags) {
+        // Pure number without tags (original logic kept, extra description removed)
+        const numericOnlyPattern = /^-?\d+(?:\.\d+)?$/;
+        const isNumericOnly = numericOnlyPattern.test(contentForTooltip);
+
+        if (!isNumericOnly || attackBoost == null) {
+          // Non-number branch...
+          if (contentForTooltip.startsWith(':')) {
+            const currentCharacter: CharacterRecord | undefined =
+              currentCharacterId && currentCharacterId in characters
+                ? characters[currentCharacterId as keyof typeof characters]
+                : undefined;
+            const evaluated = resolveCharacterExpression(contentForTooltip, currentCharacter);
+            if (typeof evaluated === 'string' || typeof evaluated === 'number') {
+              parts.push(String(evaluated));
+              lastIndex = tooltipPattern.lastIndex;
+              continue;
+            }
+          }
+          const linkName = contentForTooltip || ''; // Ensure string type
+          const card = cards[contentForTooltip as keyof typeof cards];
+
+          if ((!categoryHint || categoryHint === '知识卡') && card) {
+            const rankColors = getCardRankColors(card.rank, false, isDarkMode);
+            const hint = isCategoryHint(categoryHint) ? categoryHint : undefined;
+            parts.push(
+              <GotoLink
+                name={linkName}
+                className='no-underline'
+                key={`${card.rank}-${match.index}`}
+                {...(hint ? { categoryHint: hint } : {})}
+              >
+                <Tag
+                  colorStyles={rankColors}
+                  size='sm'
+                  margin='micro'
+                  role='link'
+                  className='mr-0.5 ml-0.75'
+                >
+                  {contentForTooltip}
+                </Tag>
+              </GotoLink>
+            );
             lastIndex = tooltipPattern.lastIndex;
             continue;
           }
-        }
-        const linkName = contentForTooltip;
-        const card = cards[contentForTooltip as keyof typeof cards];
 
-        // If explicitly marked as knowledge card or no hint (and we can resolve as a card), render as card Tag
+          // For other categories (e.g., 特技, 技能, etc.) or unknowns, render a plain goto link with the category kept in the link target
+          const hint2 = isCategoryHint(categoryHint) ? categoryHint : undefined;
+          parts.push(
+            <GotoLink
+              name={linkName}
+              className='underline'
+              key={`${linkName}-${tooltipPattern.lastIndex}`}
+              {...(hint2 ? { categoryHint: hint2 } : {})}
+            >
+              {typeof visibleText === 'string' ? visibleText : <>{visibleText}</>}
+            </GotoLink>
+          );
+          lastIndex = tooltipPattern.lastIndex;
+          continue;
+        }
+
+        // Pure number without tags
+        const parsedNumber = parseFloat(contentForTooltip);
+        let totalValue: number;
+        let baseValue: number;
+
+        if (isBaseOnly) {
+          baseValue = parsedNumber;
+          totalValue = Math.round((baseValue + (attackBoost ?? 0)) * 10) / 10;
+        } else {
+          totalValue = parsedNumber;
+          baseValue = Math.round((totalValue - (attackBoost ?? 0)) * 10) / 10;
+        }
+
+        // *** ADD: Default calculation note for plain number ***
+        const defaultCalcDef = TAG_DEFINITIONS.find(
+          (d) => d.category === 'calculation' && d.names.includes('受双方影响')
+        );
+        const defaultNote = defaultCalcDef?.processDisplay?.()?.suffixNote ?? '';
+        tooltipContent =
+          (attackBoost ?? 0) === 0
+            ? `基础伤害${baseValue}${defaultNote}`
+            : `基础伤害${baseValue}+角色增伤${attackBoost}${defaultNote}`;
+
+        const displayText = `${totalValue}伤害`;
+
+        parts.push(
+          <Tooltip key={`hover-${index}-${match.index}`} content={tooltipContent}>
+            {displayText}
+          </Tooltip>
+        );
+
+        // Skip immediately following "伤害" or "点伤害"
+        const afterMatch = normalized.slice(tooltipPattern.lastIndex);
+        const skipDamagePattern = /^(伤害|点伤害)/;
+        const skipMatch = skipDamagePattern.exec(afterMatch);
+        if (skipMatch) {
+          tooltipPattern.lastIndex += skipMatch[0].length;
+        }
+
+        lastIndex = tooltipPattern.lastIndex;
+        continue;
+      }
+
+      // ---------- Number with tags processing ----------
+      const partsForTag = contentForTooltip.split(',').map((s) => s.trim());
+      let numericPart = partsForTag[0] || '';
+      const tagParts = partsForTag.slice(1);
+
+      let localIsBaseOnly = isBaseOnly;
+      if (numericPart.endsWith('*')) {
+        localIsBaseOnly = true;
+        numericPart = numericPart.slice(0, -1);
+      }
+
+      // Parse number
+      const numericOnlyPattern = /^-?\d+(?:\.\d+)?$/;
+      if (!numericOnlyPattern.test(numericPart) || attackBoost == null) {
+        // If not a pure number, fallback to normal link (could be card or skill)
+        const linkName = numericPart || '';
+        const card = cards[linkName as keyof typeof cards];
         if ((!categoryHint || categoryHint === '知识卡') && card) {
           const rankColors = getCardRankColors(card.rank, false, isDarkMode);
-          // Only pass recognized category hints to GotoLink for type safety
           const hint = isCategoryHint(categoryHint) ? categoryHint : undefined;
           parts.push(
             <GotoLink
@@ -397,42 +976,124 @@ const renderTextWithTooltips = (
                 role='link'
                 className='mr-0.5 ml-0.75'
               >
-                {contentForTooltip}
+                {numericPart}
               </Tag>
             </GotoLink>
           );
-          lastIndex = tooltipPattern.lastIndex;
-          continue;
+        } else {
+          const hint2 = isCategoryHint(categoryHint) ? categoryHint : undefined;
+          parts.push(
+            <GotoLink
+              name={linkName}
+              className='underline'
+              key={`${linkName}-${tooltipPattern.lastIndex}`}
+              {...(hint2 ? { categoryHint: hint2 } : {})}
+            >
+              {numericPart}
+            </GotoLink>
+          );
         }
-
-        // For other categories (e.g., 特技, 技能, etc.) or unknowns, render a plain goto link with the category kept in the link target
-        const hint2 = isCategoryHint(categoryHint) ? categoryHint : undefined;
-        parts.push(
-          <GotoLink
-            name={linkName}
-            className='underline'
-            key={`${linkName}-${tooltipPattern.lastIndex}`}
-            {...(hint2 ? { categoryHint: hint2 } : {})}
-          >
-            {typeof visibleText === 'string' ? visibleText : <>{visibleText}</>}
-          </GotoLink>
-        );
         lastIndex = tooltipPattern.lastIndex;
         continue;
       }
 
-      const totalAttack = parseFloat(contentForTooltip);
-      const baseAttack = Math.round((totalAttack - attackBoost) * 10) / 10;
-      tooltipContent =
-        attackBoost === 0
-          ? `基础伤害${baseAttack}，同时也享受其他来源的攻击增伤加成`
-          : `基础伤害${baseAttack}+角色增伤${attackBoost}，同时也享受其他来源的攻击增伤加成`;
+      const parsedNumber = parseFloat(numericPart);
+      const tagEffects = parseDamageTags(tagParts);
+
+      // Calculate damage value
+      let totalValue: number;
+      let baseValue: number;
+      const effectiveAttackBoost = tagEffects.preventBoost ? 0 : (attackBoost ?? 0);
+
+      if (localIsBaseOnly) {
+        baseValue = parsedNumber;
+        totalValue = Math.round((baseValue + effectiveAttackBoost) * 10) / 10;
+      } else {
+        totalValue = parsedNumber;
+        baseValue = Math.round((totalValue - effectiveAttackBoost) * 10) / 10;
+      }
+
+      // Build base tooltip
+      let baseTooltip =
+        effectiveAttackBoost === 0
+          ? `基础伤害${baseValue}`
+          : `基础伤害${baseValue}+角色增伤${effectiveAttackBoost}`;
+
+      // Append tag notes
+      const fullTooltip = baseTooltip + tagEffects.tooltipAppends.join('');
+
+      // Build display text React elements
+      const displayElements: React.ReactNode[] = [];
+      displayElements.push(`${totalValue}`);
+
+      // Insert prefix elements (无来源, 固定, 电击, etc.)
+      const sourceElements: React.ReactElement[] = [];
+      const calcElements: React.ReactElement[] = [];
+      const electricElements: React.ReactElement[] = [];
+
+      tagEffects.displayPrefixElements.forEach((el) => {
+        if (el.key === 'source') sourceElements.push(el);
+        else if (el.key === 'calc') calcElements.push(el);
+        else if (el.key === 'electric') electricElements.push(el);
+      });
+
+      // Add source and calculation prefixes
+      if (sourceElements.length > 0 || calcElements.length > 0) {
+        displayElements.push('');
+        sourceElements.forEach((el) => displayElements.push(el));
+        if (sourceElements.length > 0 && calcElements.length > 0) {
+          displayElements.push('的');
+        }
+        calcElements.forEach((el) => displayElements.push(el));
+      }
+
+      // Add electric prefix
+      if (electricElements.length > 0) {
+        displayElements.push(' ');
+        electricElements.forEach((el) => displayElements.push(el));
+      }
+
+      // Add the word "伤害"
+      displayElements.push('伤害');
+
+      // Build suffix items inside parentheses
+      const suffixItems: string[] = [];
+      // Shield suffixes
+      const shieldSuffix = tagEffects.displaySuffixes.filter((s) =>
+        ['可破盾', '不破盾', '无视护盾'].includes(s)
+      );
+      if (shieldSuffix.length > 0) suffixItems.push(...shieldSuffix);
+
+      // Injure suffixes
+      const injureSuffix = tagEffects.displaySuffixes.filter((s) =>
+        ['可致伤', '不可致伤'].includes(s)
+      );
+      if (injureSuffix.length > 0) suffixItems.push(...injureSuffix);
+
+      // Bubble suffixes
+      const bubbleSuffix = tagEffects.displaySuffixes.filter((s) =>
+        ['可攻击泡泡', '不可攻击泡泡'].includes(s)
+      );
+      if (bubbleSuffix.length > 0) suffixItems.push(...bubbleSuffix);
+
+      if (suffixItems.length > 0) {
+        displayElements.push(`（${suffixItems.join('，')}）`);
+      }
 
       parts.push(
-        <Tooltip key={`hover-${index}-${match.index}`} content={tooltipContent}>
-          {typeof visibleText === 'string' ? visibleText : <>{visibleText}</>}
+        <Tooltip key={`hover-${index}-${match.index}`} content={fullTooltip}>
+          <>{displayElements}</>
         </Tooltip>
       );
+
+      // Skip immediately following "伤害" or "点伤害"
+      const afterMatch = normalized.slice(tooltipPattern.lastIndex);
+      const skipDamagePattern = /^(伤害|点伤害)/;
+      const skipMatch = skipDamagePattern.exec(afterMatch);
+      if (skipMatch) {
+        tooltipPattern.lastIndex += skipMatch[0].length;
+      }
+
       lastIndex = tooltipPattern.lastIndex;
       continue;
     }
