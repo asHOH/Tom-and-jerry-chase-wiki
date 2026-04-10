@@ -435,7 +435,7 @@ const mapDefinitions: Record<string, MapDefinition> = {
     aliases: ['老天宫'],
     studyLevelUnlock: '大师学业',
     roomCount: 5,
-    pipeCount: 1,
+    pipeCount: 2,
     supportedModes: ['经典奶酪赛', '天梯', '黄金钥匙赛', '特工行动', '克隆大作战', '房间'],
     mapSkin: [
       {
@@ -445,7 +445,7 @@ const mapDefinitions: Record<string, MapDefinition> = {
       },
     ],
     description:
-      '$特殊机制$text-indigo-700 dark:text-indigo-400#：兜率宫处的两个初始火箭为二段火箭，初始燃烧倒计时较低，但起飞到达上方莲花水台后会重置进度且被熄灭，需要二次点燃和放飞。',
+      '$特殊机制$text-indigo-700 dark:text-indigo-400#：兜率宫处的两个初始火箭为二段火箭，初始燃烧倒计时较低，但起飞到达上方莲花水台后会重置进度且二次点燃。',
   },
   '天宫-云上': {
     type: '常规地图',
@@ -456,7 +456,7 @@ const mapDefinitions: Record<string, MapDefinition> = {
     pipeCount: 2,
     supportedModes: ['经典奶酪赛', '黄金钥匙赛', '特工行动', '克隆大作战', '房间'],
     description:
-      '$特殊机制$text-indigo-700 dark:text-indigo-400#：玉清宫和兜率宫处的各两个初始火箭为二段火箭，初始燃烧倒计时较低，但起飞到达上方莲花水台后会重置进度且被熄灭，需要二次点燃和放飞。',
+      '$特殊机制$text-indigo-700 dark:text-indigo-400#：玉清宫和兜率宫处的各两个初始火箭为二段火箭，初始燃烧倒计时较低，但起飞到达上方莲花水台后会重置进度且二次点燃。',
   },
   '经典之家-疯狂奶酪赛': {
     type: '娱乐地图',
