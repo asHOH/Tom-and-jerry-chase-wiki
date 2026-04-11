@@ -1086,7 +1086,7 @@ const renderTextWithTooltips = (
       }
 
       // Build base tooltip
-      let baseTooltip =
+      const baseTooltip =
         effectiveAttackBoost === 0
           ? `基础伤害${baseValue}`
           : `基础伤害${baseValue}+角色增伤${effectiveAttackBoost}`;
