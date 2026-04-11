@@ -128,6 +128,21 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
     return result.type;
   };
 
+  const getResultName = (result: SearchResult): string => {
+    return 'id' in result ? result.id : result.name;
+  };
+
+  const getResultKey = (result: SearchResult): string => {
+    switch (result.type) {
+      case 'specialSkill':
+        return `${result.type}-${result.factionId}-${result.name}`;
+      case 'doc':
+        return `${result.type}-${result.slug}`;
+      default:
+        return `${result.type}-${getResultName(result)}`;
+    }
+  };
+
   // Use chat hook to get AI response for the search query
   const {
     responseText: aiResponseText,
@@ -450,8 +465,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
               {/* Regular search results */}
               {searchResults.map((result, index) => (
                 <m.li
-                  // @ts-expect-error: assuming result.type, result.id, result.name, and result.factionId are always defined
-                  key={`${result.type}-${result.id}-${result.name}-${result.factionId}`}
+                  key={getResultKey(result)}
                   className='border-b border-gray-200 last:border-b-0 dark:border-gray-700'
                   variants={{
                     hidden: { opacity: 0, y: 10 },
@@ -474,16 +488,22 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
                     {result.imageUrl && (
                       <Image
                         src={result.imageUrl}
-                        // @ts-expect-error: assuming result.type, result.id, result.name, and result.factionId are always defined
-                        alt={result.id ?? result.name ?? ''}
+                        alt={getResultName(result)}
                         width={32}
                         height={32}
                         className='mr-3 object-cover'
                       />
                     )}
-                    <span className='min-w-0 flex-1 truncate text-gray-900 dark:text-white'>
-                      {'id' in result ? result.id : 'name' in result ? result.name : ''}{' '}
-                    </span>
+                    <div className='min-w-0 flex-1'>
+                      <span className='block truncate text-gray-900 dark:text-white'>
+                        {getResultName(result)}
+                      </span>
+                      {result.matchContext && (
+                        <span className='mt-0.5 hidden truncate text-sm text-gray-500 md:block dark:text-gray-400'>
+                          {highlightMatch(result.matchContext, searchQuery, result.isPinyinMatch)}
+                        </span>
+                      )}
+                    </div>
                     <Tag
                       colorStyles={getTypeLabelColors(getTypeColorKey(result), isDarkMode)}
                       size='xs'
@@ -492,11 +512,6 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
                     >
                       {getResultLabel(result)}
                     </Tag>
-                    {result.matchContext && (
-                      <span className='ml-2 hidden truncate text-sm text-gray-500 md:inline dark:text-gray-400'>
-                        {highlightMatch(result.matchContext, searchQuery, result.isPinyinMatch)}
-                      </span>
-                    )}
                   </button>
                 </m.li>
               ))}
