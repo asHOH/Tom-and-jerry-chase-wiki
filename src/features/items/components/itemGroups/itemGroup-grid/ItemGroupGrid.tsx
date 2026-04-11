@@ -1,6 +1,9 @@
 'use client';
 
+import { useMemo } from 'react';
+
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
+import { VirtualGrid } from '@/components/ui/VirtualGrid';
 import Link from '@/components/Link';
 import { itemGroups } from '@/data';
 
@@ -10,6 +13,18 @@ type Props = { description?: string };
 
 export default function ItemGroupClient({ description }: Props) {
   const filteredItemGroups = Object.values(itemGroups);
+  const itemGroupCardNodes = useMemo(() => {
+    return filteredItemGroups.map((itemGroup) => (
+      <div
+        key={itemGroup.name}
+        className='character-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
+      >
+        <Link href={`/itemGroups/${encodeURIComponent(itemGroup.name)}`} className='block'>
+          <ItemGroupCardDisplay itemGroup={itemGroup} />
+        </Link>
+      </div>
+    ));
+  }, [filteredItemGroups]);
 
   return (
     <CatalogPageShell
@@ -17,18 +32,13 @@ export default function ItemGroupClient({ description }: Props) {
       description={description ?? '列举目前支持的所有组合'}
       descriptionVisibility='desktop'
     >
-      <div className='auto-fit-grid grid-container grid grid-cols-[repeat(auto-fit,minmax(100px,1fr))] gap-4 md:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]'>
-        {filteredItemGroups.map((itemGroup) => (
-          <div
-            key={itemGroup.name}
-            className='character-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
-          >
-            <Link href={`/itemGroups/${encodeURIComponent(itemGroup.name)}`} className='block'>
-              <ItemGroupCardDisplay itemGroup={itemGroup} />
-            </Link>
-          </div>
-        ))}
-      </div>
+      <VirtualGrid
+        items={itemGroupCardNodes}
+        rowClassName='auto-fit-grid grid-container grid'
+        minItemWidth={100}
+        gapPx={16}
+        estimatedRowHeight={210}
+      />
     </CatalogPageShell>
   );
 }

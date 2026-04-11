@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useSnapshot } from 'valtio';
 
 import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
@@ -9,6 +9,7 @@ import type { Fixture, FixtureSourceList, FixtureTypeList } from '@/data/types';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
 import Tooltip from '@/components/ui/Tooltip';
+import { VirtualGrid } from '@/components/ui/VirtualGrid';
 import Link from '@/components/Link';
 import { fixturesEdit } from '@/data';
 
@@ -52,6 +53,19 @@ export default function FixtureClient({ description }: Props) {
       return typeMatch && sourceMatch;
     }
   );
+
+  const fixtureCardNodes = useMemo(() => {
+    return filteredFixtures.map((fixture) => (
+      <div
+        key={fixture.name}
+        className='fixture-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
+      >
+        <Link href={`/fixtures/${encodeURIComponent(fixture.name)}`} className='block'>
+          <FixtureCardDisplay fixture={fixture} />
+        </Link>
+      </div>
+    ));
+  }, [filteredFixtures]);
 
   return (
     <CatalogPageShell
@@ -109,18 +123,13 @@ export default function FixtureClient({ description }: Props) {
         </>
       }
     >
-      <div className='auto-fit-grid grid-container grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-4 md:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]'>
-        {filteredFixtures.map((fixture) => (
-          <div
-            key={fixture.name}
-            className='fixture-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
-          >
-            <Link href={`/fixtures/${encodeURIComponent(fixture.name)}`} className='block'>
-              <FixtureCardDisplay fixture={fixture} />
-            </Link>
-          </div>
-        ))}
-      </div>
+      <VirtualGrid
+        items={fixtureCardNodes}
+        rowClassName='auto-fit-grid grid-container grid'
+        minItemWidth={isMobile ? 120 : 150}
+        gapPx={16}
+        estimatedRowHeight={isMobile ? 200 : 230}
+      />
     </CatalogPageShell>
   );
 }

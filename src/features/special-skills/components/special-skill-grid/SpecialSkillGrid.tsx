@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useSnapshot } from 'valtio';
 
 import { getFactionButtonColors } from '@/lib/design';
@@ -12,6 +12,7 @@ import BaseCard from '@/components/ui/BaseCard';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
 import GameImage from '@/components/ui/GameImage';
+import { VirtualGrid } from '@/components/ui/VirtualGrid';
 
 type Props = { description?: string };
 
@@ -30,6 +31,31 @@ export default function SpecialSkillClient({ description }: Props) {
     ? allSkills.filter((skill) => skill.factionId === selectedFaction)
     : allSkills;
 
+  const skillCardNodes = useMemo(() => {
+    return filteredSkills.map((skill) => (
+      <div
+        key={skill.factionId + skill.name}
+        className='character-card transform transition-transform hover:-translate-y-1'
+      >
+        <BaseCard
+          variant='item'
+          href={`/special-skills/${encodeURIComponent(skill.factionId)}/${encodeURIComponent(skill.name)}`}
+          aria-label={`查看${skill.name}特技详情`}
+        >
+          <GameImage
+            src={skill.imageUrl}
+            alt={skill.name}
+            size='SPECIAL_SKILL_CARD'
+            className={`hover:scale-105 ${isMobile ? 'h-32 w-auto' : ''}`}
+          />
+          <div className='px-3 pt-1 pb-3 text-center'>
+            <div className='font-semibold dark:text-white'>{skill.name}</div>
+          </div>
+        </BaseCard>
+      </div>
+    ));
+  }, [filteredSkills, isMobile]);
+
   return (
     <CatalogPageShell
       title='特技'
@@ -47,32 +73,13 @@ export default function SpecialSkillClient({ description }: Props) {
         />
       }
     >
-      <div className='auto-fit-grid grid-container grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-4 md:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]'>
-        {filteredSkills.map((skill) => (
-          <div
-            key={skill.factionId + skill.name}
-            className='character-card transform transition-transform hover:-translate-y-1'
-          >
-            <BaseCard
-              variant='item'
-              href={`/special-skills/${encodeURIComponent(skill.factionId)}/${encodeURIComponent(
-                skill.name
-              )}`}
-              aria-label={`查看${skill.name}特技详情`}
-            >
-              <GameImage
-                src={skill.imageUrl}
-                alt={skill.name}
-                size='SPECIAL_SKILL_CARD'
-                className={`hover:scale-105 ${isMobile ? 'h-32 w-auto' : ''}`}
-              />
-              <div className='px-3 pt-1 pb-3 text-center'>
-                <div className='font-semibold dark:text-white'>{skill.name}</div>
-              </div>
-            </BaseCard>
-          </div>
-        ))}
-      </div>
+      <VirtualGrid
+        items={skillCardNodes}
+        rowClassName='auto-fit-grid grid-container grid'
+        minItemWidth={isMobile ? 120 : 150}
+        gapPx={16}
+        estimatedRowHeight={isMobile ? 210 : 250}
+      />
     </CatalogPageShell>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useSnapshot } from 'valtio';
 
 import { getFactionButtonColors } from '@/lib/design';
@@ -11,6 +11,7 @@ import type { Item, Itemsourcelist, Itemtypelist } from '@/data/types';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
 import Tooltip from '@/components/ui/Tooltip';
+import { VirtualGrid } from '@/components/ui/VirtualGrid';
 import Link from '@/components/Link';
 import { itemsEdit } from '@/data';
 
@@ -53,6 +54,19 @@ export default function ItemClient({ description }: Props) {
       return typeMatch && sourceMatch && factionMatch;
     }
   );
+
+  const itemCardNodes = useMemo(() => {
+    return filteredItems.map((item) => (
+      <div
+        key={item.name}
+        className='character-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
+      >
+        <Link href={`/items/${encodeURIComponent(item.name)}`} className='block'>
+          <ItemCardDisplay item={item} />
+        </Link>
+      </div>
+    ));
+  }, [filteredItems]);
 
   return (
     <CatalogPageShell
@@ -141,18 +155,13 @@ export default function ItemClient({ description }: Props) {
         </>
       }
     >
-      <div className='auto-fit-grid grid-container grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-4 md:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]'>
-        {filteredItems.map((item) => (
-          <div
-            key={item.name}
-            className='character-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
-          >
-            <Link href={`/items/${encodeURIComponent(item.name)}`} className='block'>
-              <ItemCardDisplay item={item} />
-            </Link>
-          </div>
-        ))}
-      </div>
+      <VirtualGrid
+        items={itemCardNodes}
+        rowClassName='auto-fit-grid grid-container grid'
+        minItemWidth={isMobile ? 120 : 150}
+        gapPx={16}
+        estimatedRowHeight={isMobile ? 190 : 230}
+      />
     </CatalogPageShell>
   );
 }

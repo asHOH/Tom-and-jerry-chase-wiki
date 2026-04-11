@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useSnapshot } from 'valtio';
 
 import type { Mode, ModeTypeList } from '@/data/types';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
+import { VirtualGrid } from '@/components/ui/VirtualGrid';
 import Link from '@/components/Link';
 import { modesEdit } from '@/data';
 
@@ -34,6 +35,19 @@ export default function ModeClient({ description }: Props) {
     }
   );
 
+  const modeCardNodes = useMemo(() => {
+    return filteredModes.map((mode) => (
+      <div
+        key={mode.name}
+        className='mode-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
+      >
+        <Link href={`/modes/${encodeURIComponent(mode.name)}`} className='block'>
+          <ModeCardDisplay mode={mode} />
+        </Link>
+      </div>
+    ));
+  }, [filteredModes]);
+
   return (
     <CatalogPageShell
       title='游戏模式'
@@ -56,18 +70,13 @@ export default function ModeClient({ description }: Props) {
         />
       }
     >
-      <div className='auto-fit-grid grid-container grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-4 md:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]'>
-        {filteredModes.map((mode) => (
-          <div
-            key={mode.name}
-            className='mode-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
-          >
-            <Link href={`/modes/${encodeURIComponent(mode.name)}`} className='block'>
-              <ModeCardDisplay mode={mode} />
-            </Link>
-          </div>
-        ))}
-      </div>
+      <VirtualGrid
+        items={modeCardNodes}
+        rowClassName='auto-fit-grid grid-container grid'
+        minItemWidth={120}
+        gapPx={16}
+        estimatedRowHeight={210}
+      />
     </CatalogPageShell>
   );
 }

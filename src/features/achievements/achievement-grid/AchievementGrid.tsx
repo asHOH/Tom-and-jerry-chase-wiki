@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useSnapshot } from 'valtio';
 
 import { getFactionButtonColors } from '@/lib/design';
@@ -9,6 +9,7 @@ import { achievementsEdit } from '@/data/store';
 import type { Achievement } from '@/data/types';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
+import { VirtualGrid } from '@/components/ui/VirtualGrid';
 import Link from '@/components/Link';
 
 import AchievementCardDisplay from './AchievementCardDisplay';
@@ -24,6 +25,19 @@ export default function AchievementGridClient() {
     if (selectedFactions.length === 0) return true;
     return selectedFactions.includes(achievement.factionId);
   });
+
+  const achievementCardNodes = useMemo(() => {
+    return filteredAchievements.map((achievement) => (
+      <div
+        key={achievement.name}
+        className='character-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
+      >
+        <Link href={`/achievements/${encodeURIComponent(achievement.name)}`} className='block'>
+          <AchievementCardDisplay achievement={achievement} />
+        </Link>
+      </div>
+    ));
+  }, [filteredAchievements]);
 
   return (
     <CatalogPageShell
@@ -46,18 +60,13 @@ export default function AchievementGridClient() {
         />
       }
     >
-      <div className='auto-fit-grid grid-container grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] md:grid-cols-[repeat(auto-fit,minmax(150px,1fr))] md:gap-4'>
-        {filteredAchievements.map((achievement) => (
-          <div
-            key={achievement.name}
-            className='character-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
-          >
-            <Link href={`/achievements/${encodeURIComponent(achievement.name)}`} className='block'>
-              <AchievementCardDisplay achievement={achievement} />
-            </Link>
-          </div>
-        ))}
-      </div>
+      <VirtualGrid
+        items={achievementCardNodes}
+        rowClassName='auto-fit-grid grid-container grid'
+        minItemWidth={120}
+        gapPx={16}
+        estimatedRowHeight={200}
+      />
     </CatalogPageShell>
   );
 }

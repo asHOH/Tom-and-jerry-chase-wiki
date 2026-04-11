@@ -1,6 +1,6 @@
 'use client';
 
-import { useId, useState } from 'react';
+import { useId, useMemo, useState } from 'react';
 import { useSnapshot } from 'valtio';
 
 import { getCardRankColors, getFactionButtonColors } from '@/lib/design';
@@ -14,6 +14,7 @@ import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import CostRangeSlider from '@/components/ui/CostRangeSlider';
 import FilterLabel from '@/components/ui/FilterLabel';
 import FilterRow from '@/components/ui/FilterRow';
+import { VirtualGrid } from '@/components/ui/VirtualGrid';
 import { cards, cardsEdit } from '@/data';
 
 import KnowledgeCardDisplay from './KnowledgeCardDisplay';
@@ -41,6 +42,25 @@ export default function KnowledgeCardGrid({ description }: Props) {
       .filter((card) => card.cost >= costRange[0] && card.cost <= costRange[1])
       .filter((card) => !selectedFaction || card.factionId === selectedFaction)
   );
+
+  const cardNodes = useMemo(() => {
+    return filteredAndSortedCards.map((card, index) => (
+      <div
+        key={card.id}
+        className='character-card transform transition-transform hover:-translate-y-1'
+      >
+        <KnowledgeCardDisplay
+          id={card.id}
+          name={card.id}
+          rank={card.rank}
+          cost={card.cost}
+          imageUrl={card.imageUrl}
+          onClick={handleSelectCard}
+          preload={index < 6}
+        />
+      </div>
+    ));
+  }, [filteredAndSortedCards, handleSelectCard]);
 
   return (
     <CatalogPageShell
@@ -94,24 +114,13 @@ export default function KnowledgeCardGrid({ description }: Props) {
         </>
       }
     >
-      <div className='auto-fit-grid grid-container grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-4 md:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]'>
-        {filteredAndSortedCards.map((card, index) => (
-          <div
-            key={card.id}
-            className='character-card transform transition-transform hover:-translate-y-1'
-          >
-            <KnowledgeCardDisplay
-              id={card.id}
-              name={card.id}
-              rank={card.rank}
-              cost={card.cost}
-              imageUrl={card.imageUrl}
-              onClick={handleSelectCard}
-              preload={index < 6}
-            />
-          </div>
-        ))}
-      </div>
+      <VirtualGrid
+        items={cardNodes}
+        rowClassName='auto-fit-grid grid-container grid'
+        minItemWidth={120}
+        gapPx={16}
+        estimatedRowHeight={200}
+      />
     </CatalogPageShell>
   );
 }

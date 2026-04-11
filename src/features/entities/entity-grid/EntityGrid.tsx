@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useSnapshot } from 'valtio';
 
 import { getEntityTypeColors, getFactionButtonColors } from '@/lib/design';
@@ -11,6 +11,7 @@ import type { Entity, Entitytaglist, Entitytypelist } from '@/data/types';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
 import Tooltip from '@/components/ui/Tooltip';
+import { VirtualGrid } from '@/components/ui/VirtualGrid';
 import Link from '@/components/Link';
 import { entitiesEdit } from '@/data';
 
@@ -142,6 +143,19 @@ export default function EntityClient({ description }: Props) {
     }
   );
 
+  const entityCardNodes = useMemo(() => {
+    return filteredEntities.map((entity) => (
+      <div
+        key={entity.name}
+        className='character-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
+      >
+        <Link href={`/entities/${encodeURIComponent(entity.name)}`} className='block'>
+          <EntityCardDisplay entity={entity} showTags={showTagFilter} />
+        </Link>
+      </div>
+    ));
+  }, [filteredEntities, showTagFilter]);
+
   return (
     <CatalogPageShell
       title='衍生物'
@@ -269,24 +283,19 @@ export default function EntityClient({ description }: Props) {
         </>
       }
     >
-      <div className='auto-fit-grid grid-container grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] md:grid-cols-[repeat(auto-fit,minmax(150px,1fr))] md:gap-4'>
-        {filteredEntities.length > 0 ? (
-          filteredEntities.map((entity) => (
-            <div
-              key={entity.name}
-              className='character-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
-            >
-              <Link href={`/entities/${encodeURIComponent(entity.name)}`} className='block'>
-                <EntityCardDisplay entity={entity} showTags={showTagFilter} />
-              </Link>
-            </div>
-          ))
-        ) : (
-          <div className='col-span-full flex items-center justify-center py-12 text-lg text-gray-500 dark:text-gray-400'>
-            未筛选到任何结果
-          </div>
-        )}
-      </div>
+      {entityCardNodes.length > 0 ? (
+        <VirtualGrid
+          items={entityCardNodes}
+          rowClassName='auto-fit-grid grid-container grid'
+          minItemWidth={isMobile ? 120 : 150}
+          gapPx={isMobile ? 12 : 16}
+          estimatedRowHeight={isMobile ? 190 : 230}
+        />
+      ) : (
+        <div className='col-span-full flex items-center justify-center py-12 text-lg text-gray-500 dark:text-gray-400'>
+          未筛选到任何结果
+        </div>
+      )}
     </CatalogPageShell>
   );
 }

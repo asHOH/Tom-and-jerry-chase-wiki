@@ -14,6 +14,7 @@ import {
 } from '@/features/characters/utils/ranking';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
+import { VirtualGrid } from '@/components/ui/VirtualGrid';
 import { characters } from '@/data';
 
 import CharacterRankingCard from './CharacterRankingCard';
@@ -115,6 +116,23 @@ export default function CharacterRankingGrid({
     return map;
   }, [rankedCharacters]);
 
+  const rankingCardNodes = useMemo(() => {
+    return rankedCharacters.map((rankedCharacter, index) => (
+      <div
+        key={rankedCharacter.character.id}
+        className='character-card transform transition-transform hover:-translate-y-1'
+      >
+        <CharacterRankingCard
+          rankedCharacter={rankedCharacter}
+          {...(rankGroupIndexById[rankedCharacter.character.id]
+            ? { rankGroupIndex: rankGroupIndexById[rankedCharacter.character.id] }
+            : {})}
+          preload={index < 6}
+        />
+      </div>
+    ));
+  }, [rankedCharacters, rankGroupIndexById]);
+
   // Get property info for display
   const propertyInfo = selectedProperty ? getPropertyInfo(selectedProperty) : undefined;
 
@@ -197,22 +215,14 @@ export default function CharacterRankingGrid({
       </div>
 
       {/* Rankings Grid */}
-      <div className='auto-fit-grid grid-container mt-8 grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-4'>
-        {rankedCharacters.map((rankedCharacter, index) => (
-          <div
-            key={rankedCharacter.character.id}
-            className='character-card transform transition-transform hover:-translate-y-1'
-          >
-            <CharacterRankingCard
-              rankedCharacter={rankedCharacter}
-              {...(rankGroupIndexById[rankedCharacter.character.id]
-                ? { rankGroupIndex: rankGroupIndexById[rankedCharacter.character.id] }
-                : {})}
-              preload={index < 6} // Prioritize loading for top 6 characters
-            />
-          </div>
-        ))}
-      </div>
+      <VirtualGrid
+        items={rankingCardNodes}
+        className='mt-8'
+        rowClassName='auto-fit-grid grid-container grid'
+        minItemWidth={160}
+        gapPx={16}
+        estimatedRowHeight={250}
+      />
 
       {/* Additional Stats */}
       {rankedCharacters.length > 0 &&
