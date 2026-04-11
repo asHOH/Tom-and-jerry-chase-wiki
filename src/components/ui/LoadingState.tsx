@@ -10,6 +10,7 @@ import {
   SkeletonDetailLayout,
   SkeletonItemCard,
   SkeletonKnowledgeCard,
+  SkeletonSpecialSkillCard,
 } from './Skeleton';
 
 interface LoadingStateProps {
@@ -20,6 +21,8 @@ interface LoadingStateProps {
     | 'knowledge-cards'
     | 'character-detail'
     | 'item-grid'
+    | 'special-skill-grid'
+    | 'special-skill-advice'
     | 'buff-grid'
     | 'detail';
   message?: string;
@@ -183,6 +186,73 @@ export default function LoadingState({
         </div>
       );
 
+    case 'special-skill-grid':
+      return (
+        <div className={clsx('space-y-8', className)}>
+          <div className='space-y-4 text-center'>
+            <Skeleton className='mx-auto h-10 w-1/3' animate={animate} />
+            <Skeleton className='mx-auto h-5 w-2/3' animate={animate} />
+          </div>
+
+          <div className='flex items-center justify-center gap-4'>
+            <Skeleton className='h-6 w-20' animate={animate} />
+            <div className='flex gap-2'>
+              {Array.from({ length: 2 }).map((_, i) => (
+                <Skeleton key={i} className='h-8 w-16' animate={animate} />
+              ))}
+            </div>
+          </div>
+
+          <div className='grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6'>
+            {Array.from({ length: count }).map((_, i) => (
+              <div key={i} className={`animate-fadeInUp grid-item-${(i % 8) + 1}`}>
+                <SkeletonSpecialSkillCard animate={animate} />
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+
+    case 'special-skill-advice':
+      return (
+        <div className={clsx('space-y-8', className)}>
+          <div className='space-y-4 text-center'>
+            <Skeleton className='mx-auto h-10 w-1/3' animate={animate} />
+            <Skeleton className='mx-auto h-5 w-2/3' animate={animate} />
+          </div>
+
+          <div className='flex items-center justify-center gap-4'>
+            <Skeleton className='h-6 w-20' animate={animate} />
+            <div className='flex gap-2'>
+              {Array.from({ length: 2 }).map((_, i) => (
+                <Skeleton key={i} className='h-8 w-16' animate={animate} />
+              ))}
+            </div>
+          </div>
+
+          <div className='space-y-4'>
+            {Array.from({ length: count }).map((_, i) => (
+              <div
+                key={i}
+                className='rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800'
+              >
+                <div className='flex flex-col gap-4 md:flex-row'>
+                  <div className='md:w-1/5'>
+                    <SkeletonSpecialSkillCard animate={animate} />
+                  </div>
+                  <div className='space-y-3 md:w-4/5'>
+                    <Skeleton className='h-5 w-2/3' animate={animate} />
+                    <Skeleton className='h-4 w-full' animate={animate} />
+                    <Skeleton className='h-4 w-5/6' animate={animate} />
+                    <Skeleton className='h-4 w-3/4' animate={animate} />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+
     case 'buff-grid':
       return (
         <div className={clsx('space-y-8', className)}>
@@ -228,15 +298,23 @@ export default function LoadingState({
 export function PageLoadingState({
   type = 'spinner',
   message = '加载中...',
+  count,
   children,
 }: {
   type?: LoadingStateProps['type'];
   message?: string;
+  count?: number;
   children?: React.ReactNode;
 }) {
   return (
     <div className='mx-auto max-w-6xl space-y-6 p-6'>
-      {children || <LoadingState type={type} message={message} />}
+      {children || (
+        <LoadingState
+          type={type}
+          message={message}
+          {...(typeof count === 'number' ? { count } : {})}
+        />
+      )}
     </div>
   );
 }

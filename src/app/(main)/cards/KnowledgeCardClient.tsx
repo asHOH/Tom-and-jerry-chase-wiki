@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic';
 
+import { LOADING_COUNTS } from '@/constants/loadingCounts';
 import LoadingState from '@/components/ui/LoadingState';
 
 type Props = { description?: string };
@@ -11,7 +12,11 @@ const KnowledgeCardGrid = dynamic<Props>(
   {
     loading: () => (
       <div className='mx-auto max-w-6xl space-y-6 p-6'>
-        <LoadingState type='knowledge-cards' message='加载知识卡列表中...' />
+        <LoadingState
+          type='knowledge-cards'
+          message='加载知识卡列表中...'
+          count={LOADING_COUNTS.knowledgeCards}
+        />
       </div>
     ),
     ssr: false,

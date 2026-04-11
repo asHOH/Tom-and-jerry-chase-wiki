@@ -1,3 +1,5 @@
+import { LOADING_COUNTS } from '@/constants/loadingCounts';
+
 export default function Loading() {
   return (
     <div className='mx-auto max-w-7xl space-y-8 p-6'>
@@ -41,7 +43,7 @@ export default function Loading() {
         {/* Rankings grid skeleton */}
         <div className='mx-auto max-w-4xl px-4'>
           <div className='grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-6'>
-            {Array.from({ length: 12 }).map((_, i) => (
+            {Array.from({ length: LOADING_COUNTS.rankings }).map((_, i) => (
               <div
                 key={i}
                 className='space-y-3 rounded-lg border border-gray-200 bg-white p-4 shadow-md dark:border-gray-700 dark:bg-gray-800'

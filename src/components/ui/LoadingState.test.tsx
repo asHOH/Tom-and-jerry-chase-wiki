@@ -50,6 +50,13 @@ jest.mock('./Skeleton', () => ({
   SkeletonKnowledgeCard: function MockSkeletonKnowledgeCard({ animate }: { animate?: boolean }) {
     return <div data-testid='skeleton-knowledge-card' data-animate={String(animate ?? true)} />;
   },
+  SkeletonSpecialSkillCard: function MockSkeletonSpecialSkillCard({
+    animate,
+  }: {
+    animate?: boolean;
+  }) {
+    return <div data-testid='skeleton-special-skill-card' data-animate={String(animate ?? true)} />;
+  },
 }));
 
 describe('LoadingState', () => {
@@ -86,6 +93,20 @@ describe('LoadingState', () => {
     render(<LoadingState type='item-grid' count={5} />);
 
     expect(screen.getAllByTestId('skeleton-item-card')).toHaveLength(5);
+    expect(screen.queryByTestId('loading-spinner')).not.toBeInTheDocument();
+  });
+
+  it('renders special-skill-grid skeleton cards', () => {
+    render(<LoadingState type='special-skill-grid' count={6} />);
+
+    expect(screen.getAllByTestId('skeleton-special-skill-card')).toHaveLength(6);
+    expect(screen.queryByTestId('loading-spinner')).not.toBeInTheDocument();
+  });
+
+  it('renders special-skill-advice skeleton cards', () => {
+    render(<LoadingState type='special-skill-advice' count={4} />);
+
+    expect(screen.getAllByTestId('skeleton-special-skill-card')).toHaveLength(4);
     expect(screen.queryByTestId('loading-spinner')).not.toBeInTheDocument();
   });
 

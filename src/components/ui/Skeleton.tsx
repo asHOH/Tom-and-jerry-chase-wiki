@@ -135,6 +135,20 @@ export function SkeletonItemCard({
 }
 
 /**
+ * Skeleton for special skill card
+ */
+export function SkeletonSpecialSkillCard({ animate = true }: { animate?: boolean }) {
+  return (
+    <div className='overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800'>
+      <Skeleton className='h-48 w-full rounded-none' animate={animate} />
+      <div className='space-y-2 px-3 pt-2 pb-4 text-center'>
+        <Skeleton className='mx-auto h-5 w-3/4' animate={animate} />
+      </div>
+    </div>
+  );
+}
+
+/**
  * Skeleton for buff-style card
  */
 export function SkeletonBuffCard({ animate = true }: { animate?: boolean }) {
