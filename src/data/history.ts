@@ -4757,7 +4757,7 @@ export const historyData: GameHistory = [
       {
         date: '4.2',
         description:
-          '加强侍卫汤姆、鲍姆、侦探杰瑞、侦探泰菲，削弱魔术师，调整汤姆、如玉、凯特、恶魔汤姆、天使杰瑞、天使泰菲、米雪儿。加强铁手、春风得意、减速警告、求生欲、飞跃、强健、应激反应、孤军奋战，调整攻其不备、都是朋友、夹不住我、无畏。调整个人表现分系统。调整天梯玩法加分机制、奶酪期机制、个人胜利系统。调整精选限定魔镜系统。',
+          '加强侍卫汤姆、鲍姆、侦探杰瑞、侦探泰菲，削弱魔术师，调整汤姆、如玉、凯特、米雪儿，重做恶魔汤姆、天使杰瑞、天使泰菲。加强铁手、春风得意、减速警告、求生欲、飞跃、强健、应激反应、孤军奋战，调整攻其不备、都是朋友、夹不住我、无畏。调整个人表现分系统。调整天梯玩法加分机制、奶酪期机制、个人胜利系统。调整精选限定魔镜系统。',
         details: {
           balance: {
             characterChanges: [
@@ -4769,9 +4769,9 @@ export const historyData: GameHistory = [
               { name: '汤姆', changeType: ChangeType.ADJUSTMENT },
               { name: '如玉', changeType: ChangeType.ADJUSTMENT },
               { name: '凯特', changeType: ChangeType.ADJUSTMENT },
-              { name: '恶魔汤姆', changeType: ChangeType.ADJUSTMENT },
-              { name: '天使杰瑞', changeType: ChangeType.ADJUSTMENT },
-              { name: '天使泰菲', changeType: ChangeType.ADJUSTMENT },
+              { name: '恶魔汤姆', changeType: ChangeType.REWORK },
+              { name: '天使杰瑞', changeType: ChangeType.REWORK },
+              { name: '天使泰菲', changeType: ChangeType.REWORK },
               { name: '米雪儿', changeType: ChangeType.ADJUSTMENT },
             ],
             knowledgeCardChanges: [
@@ -4796,6 +4796,21 @@ export const historyData: GameHistory = [
         description: 'S28赛季开始，货架皮宫廷神官，染色皮翡冷翠。',
         details: {
           milestone: 'S28赛季开始',
+        },
+      },
+      {
+        date: '4.9',
+        description: '削弱天使泰菲、米雪儿、天使杰瑞，加强恶魔汤姆、剑客汤姆。更新高定皮机械女郎。',
+        details: {
+          balance: {
+            characterChanges: [
+              { name: '恶魔汤姆', changeType: ChangeType.BUFF },
+              { name: '剑客汤姆', changeType: ChangeType.BUFF },
+              { name: '天使杰瑞', changeType: ChangeType.NERF },
+              { name: '天使泰菲', changeType: ChangeType.NERF },
+              { name: '米雪儿', changeType: ChangeType.NERF },
+            ],
+          },
         },
       },
     ],

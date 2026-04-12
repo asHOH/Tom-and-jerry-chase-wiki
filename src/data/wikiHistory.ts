@@ -599,6 +599,41 @@ export const wikiHistoryData: WikiDataHistory = [
           },
         },
       },
+      {
+        date: '4.9',
+        description: '同步游戏内更改内容。',
+        details: {
+          data: {
+            changes: [
+              {
+                item: { name: '米雪儿', type: 'character' },
+                changeType: WikiChangeType.UPDATE,
+                description: '同步第二武器冷却时间的更改。',
+              },
+              {
+                item: { name: '恶魔汤姆', type: 'character' },
+                changeType: WikiChangeType.UPDATE,
+                description: '完善技能介绍，并同步游戏内的更改。',
+              },
+              {
+                item: { name: '天使杰瑞', type: 'character' },
+                changeType: WikiChangeType.UPDATE,
+                description: '完善技能介绍，并同步游戏内的更改。',
+              },
+              {
+                item: { name: '天使泰菲', type: 'character' },
+                changeType: WikiChangeType.UPDATE,
+                description: '完善技能介绍，并同步游戏内的更改。',
+              },
+              {
+                item: { name: '剑客汤姆', type: 'character' },
+                changeType: WikiChangeType.UPDATE,
+                description: '同步游戏内有关主动技能伤害类型的更改。',
+              },
+            ],
+          },
+        },
+      },
     ],
   },
 ];
