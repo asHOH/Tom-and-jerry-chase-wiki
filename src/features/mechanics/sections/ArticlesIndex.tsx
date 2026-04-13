@@ -7,6 +7,7 @@ import DamageMDX from '../articles/Damage.mdx';
 import ExpMDX from '../articles/Exp.mdx';
 import HpMDX from '../articles/Hp.mdx';
 import ItemMDX from '../articles/Item.mdx';
+import MapMDX from '../articles/Map.mdx';
 import MoveMDX from '../articles/Move.mdx';
 import ObjectMDX from '../articles/Object.mdx';
 import PrepareMDX from '../articles/Prepare.mdx';
@@ -57,6 +58,13 @@ export function Item() {
   return (
     <StyledMDX className='article-content'>
       <ItemMDX />
+    </StyledMDX>
+  );
+}
+export function Map() {
+  return (
+    <StyledMDX className='article-content'>
+      <MapMDX />
     </StyledMDX>
   );
 }
