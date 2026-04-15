@@ -268,7 +268,7 @@ const FeedbackSection =
                       fullWidth
                       onClick={() => setIsFeedbackOpen(false)}
                     >
-                      ??
+                      关闭
                     </Button>
                     <Button
                       type='submit'
