@@ -1464,7 +1464,7 @@ export const entityDefinitions = {
         type: 'weapon2',
         description: '攻击面前所有目标，对敌方造成伤害和减速，对墙缝造成伤害。',
         detailedDescription:
-          '攻击面前所有目标，对敌方造成{110}伤害和20%的减速状态，持续1.9秒；对墙缝造成{1.5}伤害，对泡泡固定造成7伤害。',
+          '攻击面前所有目标，对敌方造成{110*}伤害和20%的减速状态，持续1.9秒；对墙缝造成{_1.5*}伤害，对泡泡固定造成7伤害。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cooldown: 2,
