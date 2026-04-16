@@ -2434,16 +2434,16 @@ const mouseCharacterDefinitions = {
         description: '通用特技。',
       },
       {
-        name: '干扰投掷',
-        description: '用于自保或破坏老鼠夹，有一定救援能力',
+        name: '绝处逢生',
+        description: '用于自保或破坏老鼠夹，有一定救援能力。',
       },
       {
         name: '冰冻保鲜',
-        description: '提高前期自保，手快可以当一层盾，有一定救援能力',
+        description: '提高前期自保，手快可以当一层盾，有一定救援能力。',
       },
       {
         name: '急速翻滚',
-        description: '传统配法，增加机动性，但不适合救人',
+        description: '传统配法，增加机动性，但不适合救人。',
       },
     ],
   },
