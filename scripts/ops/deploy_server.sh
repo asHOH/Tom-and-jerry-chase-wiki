@@ -9,8 +9,8 @@ REPO_URL="https://github.com/asHOH/Tom-and-jerry-chase-wiki.git"
 TARGET_BRANCH="develop"
 # Set this to a specific commit hash to deploy that version. Leave empty to deploy the latest.
 TARGET_COMMIT=""
-# Node.js memory limit in MB. Adjust based on server capacity (for example, 2560 for a 4 GB VPS).
-NODE_MEMORY_LIMIT="2048"
+# Node.js memory limit in MB. Leave empty to auto-detect from available RAM.
+NODE_MEMORY_LIMIT="${NODE_MEMORY_LIMIT:-auto}"
 ENV_FILE=".env.production"
 PM2_APP_NAME="tjwiki"
 START_SCRIPT="scripts/ops/start_server.sh"
@@ -55,6 +55,53 @@ load_env_file() {
   set -a
   . "$ENV_FILE"
   set +a
+}
+
+cleanup_child_processes() {
+  local child_pids
+
+  child_pids="$(ps -o pid= --ppid "$$" 2>/dev/null | tr -d ' ' || true)"
+  if [ -z "$child_pids" ]; then
+    return 0
+  fi
+
+  kill $child_pids 2>/dev/null || true
+  sleep 1
+
+  child_pids="$(ps -o pid= --ppid "$$" 2>/dev/null | tr -d ' ' || true)"
+  if [ -n "$child_pids" ]; then
+    kill -9 $child_pids 2>/dev/null || true
+  fi
+}
+
+trap cleanup_child_processes EXIT
+
+detect_node_memory_limit() {
+  if [ -n "$NODE_MEMORY_LIMIT" ] && [ "$NODE_MEMORY_LIMIT" != "auto" ]; then
+    return 0
+  fi
+
+  if [ -r /proc/meminfo ]; then
+    local total_mb limit_mb
+
+    total_mb="$(awk '/MemTotal:/ { print int($2 / 1024) }' /proc/meminfo 2>/dev/null || echo "")"
+    if [ -n "$total_mb" ] && [ "$total_mb" -gt 0 ]; then
+      limit_mb=$((total_mb / 2))
+      if [ "$limit_mb" -lt 768 ]; then
+        limit_mb=768
+      fi
+      if [ "$limit_mb" -gt 2048 ]; then
+        limit_mb=2048
+      fi
+
+      NODE_MEMORY_LIMIT="$limit_mb"
+      echo "Auto-detected Node.js memory limit: ${NODE_MEMORY_LIMIT} MB (system RAM: ${total_mb} MB)."
+      return 0
+    fi
+  fi
+
+  NODE_MEMORY_LIMIT="2048"
+  echo "Could not detect system RAM. Falling back to ${NODE_MEMORY_LIMIT} MB for Node.js."
 }
 
 ensure_nvm() {
@@ -194,6 +241,8 @@ if [ "$CURRENT_HASH" != "$LAST_BUILD_HASH" ]; then
 
   echo "Memory status before build:"
   free -h 2>/dev/null || echo "Unable to check memory"
+
+  detect_node_memory_limit
 
   export NODE_OPTIONS="--max-old-space-size=$NODE_MEMORY_LIMIT"
   export NEXT_CPU_COUNT=1
