@@ -219,7 +219,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
     const corsHeaders = buildCorsHeaders(origin);
     const securityHeaders = {
-      'Vary': 'Origin',
+      Vary: 'Origin',
       'X-Content-Type-Options': 'nosniff',
     };
 
@@ -281,7 +281,7 @@ export async function OPTIONS(request: NextRequest) {
       'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-EchoFlow-Key',
       'Cache-Control': 'public, max-age=86400',
       'X-EchoFlow-Health': 'healthy',
-      'Vary': 'Origin',
+      Vary: 'Origin',
       'X-Content-Type-Options': 'nosniff',
     },
   });
