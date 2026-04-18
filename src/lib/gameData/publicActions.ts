@@ -179,6 +179,55 @@ function applyPublicGameDataActionsToServerData(actions: PublicActionRow[]): voi
   }
 }
 
+export type EntityUpdateHistory = {
+  updatedAt: string;
+  actionId: string;
+  createdBy: string | null;
+  status: string;
+  message: string | null;
+  reviewedAt: string | null;
+  affectedPath: string;
+};
+
+export async function getEntityUpdateHistory(): Promise<Map<string, EntityUpdateHistory>> {
+  const actions = await getPublicGameDataActions();
+  const historyMap = new Map<string, EntityUpdateHistory>();
+
+  for (const action of actions) {
+    if (action.status !== 'approved' && action.status !== 'synced') continue;
+
+    const entries = parseEntries(action.entry);
+    for (const entry of entries) {
+      if (!entry || typeof entry !== 'object') continue;
+      const act = entry as { path?: string };
+
+      if (!act.path) continue;
+
+      const pathParts = act.path.split('.').filter(Boolean);
+      if (pathParts.length === 0) continue;
+
+      const entryId = pathParts[0];
+      if (!entryId) continue;
+      const historyKey = `${action.entity_type}:${entryId}`;
+
+      const existing = historyMap.get(historyKey);
+      if (!existing || new Date(action.created_at) > new Date(existing.updatedAt)) {
+        historyMap.set(historyKey, {
+          updatedAt: action.created_at,
+          actionId: action.id,
+          createdBy: action.created_by ?? null,
+          status: action.status,
+          message: action.message ?? null,
+          reviewedAt: action.reviewed_at ?? null,
+          affectedPath: act.path,
+        });
+      }
+    }
+  }
+
+  return historyMap;
+}
+
 export async function getPublicGameDataActions(): Promise<PublicActionRow[]> {
   if (env.NEXT_PUBLIC_DISABLE_ARTICLES === '1' || !env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return [];
@@ -189,7 +238,7 @@ export async function getPublicGameDataActions(): Promise<PublicActionRow[]> {
     async () => {
       const { data, error } = await supabaseServerPublic
         .from('game_data_actions')
-        .select('id, entity_type, entry, created_at')
+        .select('id, entity_type, entry, created_at, status, message, reviewed_at, created_by')
         .eq('is_public', true)
         .order('created_at', { ascending: true });
 
