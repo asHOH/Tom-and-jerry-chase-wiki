@@ -33,11 +33,31 @@ import {
 } from '@/data';
 
 let updateLookup: Map<string, { date: string; description?: string }> | null = null;
+let updateLookupTimestamp: number | null = null;
+let supabaseHistoryCache: Map<
+  string,
+  {
+    updatedAt: string;
+    message: string | null;
+    actionId: string;
+    createdBy: string | null;
+    status: string;
+  }
+> | null = null;
+let supabaseHistoryTimestamp: number | null = null;
+
+const CACHE_TTL_MS = 10 * 60 * 1000;
+
+function isCacheExpired(timestamp: number | null): boolean {
+  if (!timestamp) return true;
+  return Date.now() - timestamp > CACHE_TTL_MS;
+}
 
 function getUpdateLookup(): Map<string, { date: string; description?: string }> {
-  if (updateLookup) return updateLookup;
+  if (updateLookup && !isCacheExpired(updateLookupTimestamp)) return updateLookup;
 
   updateLookup = new Map();
+  updateLookupTimestamp = Date.now();
   for (const yearData of wikiHistoryData) {
     for (const event of yearData.events) {
       const changes = event.details.data?.changes || [];
@@ -45,12 +65,12 @@ function getUpdateLookup(): Map<string, { date: string; description?: string }> 
       const allChanges = [
         ...changes.map((c) => ({
           change: c,
-          date: `${yearData.year}.${event.date.split('-')[0]}`,
+          date: `${yearData.year}-${event.date}`,
         })),
         ...batchChanges.flatMap((batch) =>
           batch.changes.map((c) => ({
             change: c,
-            date: `${yearData.year}.${event.date.split('-')[0]}`,
+            date: `${yearData.year}-${event.date}`,
           }))
         ),
       ];
@@ -66,8 +86,72 @@ function getUpdateLookup(): Map<string, { date: string; description?: string }> 
   return updateLookup;
 }
 
-function getItemUpdateTime(itemName: string): { date: string; description?: string } | undefined {
-  return getUpdateLookup().get(itemName);
+async function getSupabaseHistory(): Promise<
+  Map<
+    string,
+    {
+      updatedAt: string;
+      message: string | null;
+      actionId: string;
+      createdBy: string | null;
+      status: string;
+    }
+  >
+> {
+  if (supabaseHistoryCache && !isCacheExpired(supabaseHistoryTimestamp)) {
+    return supabaseHistoryCache;
+  }
+
+  const { getEntityUpdateHistory } = await import('@/lib/gameData/publicActions');
+  const historyMap = await getEntityUpdateHistory();
+  supabaseHistoryCache = new Map();
+  supabaseHistoryTimestamp = Date.now();
+
+  for (const [key, history] of historyMap) {
+    const [, entryId] = key.split(':');
+    if (!entryId) continue;
+
+    const existing = supabaseHistoryCache.get(entryId);
+    if (!existing || new Date(history.updatedAt) > new Date(existing.updatedAt)) {
+      supabaseHistoryCache.set(entryId, {
+        updatedAt: history.updatedAt,
+        message: history.message,
+        actionId: history.actionId,
+        createdBy: history.createdBy,
+        status: history.status,
+      });
+    }
+  }
+
+  return supabaseHistoryCache;
+}
+
+async function getMergedUpdateTime(
+  itemName: string
+): Promise<{ date: string; description?: string } | undefined> {
+  const wikiUpdate = getUpdateLookup().get(itemName);
+  const supabaseHistory = await getSupabaseHistory();
+  const supabaseUpdate = supabaseHistory.get(itemName);
+
+  if (!wikiUpdate && !supabaseUpdate) return undefined;
+  if (!wikiUpdate && supabaseUpdate) {
+    const result: { date: string; description?: string } = { date: supabaseUpdate.updatedAt };
+    if (supabaseUpdate.message) result.description = supabaseUpdate.message;
+    return result;
+  }
+  if (wikiUpdate && !supabaseUpdate) return wikiUpdate;
+  if (wikiUpdate && supabaseUpdate) {
+    const wikiDate = new Date(wikiUpdate.date);
+    const supabaseDate = new Date(supabaseUpdate.updatedAt);
+
+    if (supabaseDate > wikiDate) {
+      const result: { date: string; description?: string } = { date: supabaseUpdate.updatedAt };
+      if (supabaseUpdate.message) result.description = supabaseUpdate.message;
+      return result;
+    }
+    return wikiUpdate;
+  }
+  return undefined;
 }
 
 export type ResolverResult = {
@@ -109,7 +193,12 @@ function recordToArray<T extends object>(
 }
 
 function findByKey<T>(record: Record<string, T>, key: string): (T & { name: string }) | null {
-  const decodedKey = decodeURIComponent(key);
+  let decodedKey: string;
+  try {
+    decodedKey = decodeURIComponent(key);
+  } catch {
+    decodedKey = key;
+  }
   const item = record[decodedKey];
   if (!item) return null;
   return { ...item, name: decodedKey };
@@ -174,14 +263,14 @@ export const resolvers: Record<string, PathResolver> = {
       const charactersList = recordToArray(charactersRecord, 'id');
       return createListResult(charactersList, 'Character', '/characters', true);
     },
-    detail: (id: string) => {
+    detail: async (id: string) => {
       const charactersRecord = GameDataManager.getCharacters();
       const decodedId = decodeURIComponent(id);
       const character = charactersRecord[decodedId];
       if (!character) return null;
 
       const relations = getCharacterRelation(decodedId);
-      const updateInfo = getItemUpdateTime(decodedId);
+      const updateInfo = await getMergedUpdateTime(decodedId);
 
       return createDetailResult(
         {
@@ -204,7 +293,7 @@ export const resolvers: Record<string, PathResolver> = {
               : undefined,
         },
         'Character',
-        `/characters/${id}`,
+        `/characters/${decodedId}`,
         updateInfo?.date
       );
     },
@@ -242,15 +331,15 @@ export const resolvers: Record<string, PathResolver> = {
       const cardsList = recordToArray(cards, 'id');
       return createListResult(cardsList, 'Card', '/cards', true);
     },
-    detail: (id: string) => {
+    detail: async (id: string) => {
       const decodedId = decodeURIComponent(id);
       const card = cards[decodedId];
       if (!card) return null;
-      const updateInfo = getItemUpdateTime(decodedId);
+      const updateInfo = await getMergedUpdateTime(decodedId);
       return createDetailResult(
         { ...card, id: decodedId },
         'Card',
-        `/cards/${id}`,
+        `/cards/${decodedId}`,
         updateInfo?.date
       );
     },
@@ -266,11 +355,11 @@ export const resolvers: Record<string, PathResolver> = {
       const itemsList = recordToArray(items, 'name');
       return createListResult(itemsList, 'Item', '/items', true);
     },
-    detail: (id: string) => {
+    detail: async (id: string) => {
       const item = findByKey(items, id);
       if (!item) return null;
-      const updateInfo = getItemUpdateTime(item.name);
-      return createDetailResult(item, 'Item', `/items/${id}`, updateInfo?.date);
+      const updateInfo = await getMergedUpdateTime(item.name);
+      return createDetailResult(item, 'Item', `/items/${item.name}`, updateInfo?.date);
     },
     fullData: () => {
       const fullItems = recordToArray(items, 'name');
@@ -284,11 +373,11 @@ export const resolvers: Record<string, PathResolver> = {
       const entitiesList = recordToArray(entities, 'name');
       return createListResult(entitiesList, 'Entity', '/entities', true);
     },
-    detail: (id: string) => {
+    detail: async (id: string) => {
       const entity = findByKey(entities, id);
       if (!entity) return null;
-      const updateInfo = getItemUpdateTime(entity.name);
-      return createDetailResult(entity, 'Entity', `/entities/${id}`, updateInfo?.date);
+      const updateInfo = await getMergedUpdateTime(entity.name);
+      return createDetailResult(entity, 'Entity', `/entities/${entity.name}`, updateInfo?.date);
     },
     fullData: () => {
       const fullEntities = recordToArray(entities, 'name');
@@ -302,11 +391,11 @@ export const resolvers: Record<string, PathResolver> = {
       const buffsList = recordToArray(buffs, 'name');
       return createListResult(buffsList, 'Buff', '/buffs', true);
     },
-    detail: (id: string) => {
+    detail: async (id: string) => {
       const buff = findByKey(buffs, id);
       if (!buff) return null;
-      const updateInfo = getItemUpdateTime(buff.name);
-      return createDetailResult(buff, 'Buff', `/buffs/${id}`, updateInfo?.date);
+      const updateInfo = await getMergedUpdateTime(buff.name);
+      return createDetailResult(buff, 'Buff', `/buffs/${buff.name}`, updateInfo?.date);
     },
     fullData: () => {
       const fullBuffs = recordToArray(buffs, 'name');
@@ -320,11 +409,11 @@ export const resolvers: Record<string, PathResolver> = {
       const mapsList = recordToArray(maps, 'name');
       return createListResult(mapsList, 'Map', '/maps', true);
     },
-    detail: (id: string) => {
+    detail: async (id: string) => {
       const map = findByKey(maps, id);
       if (!map) return null;
-      const updateInfo = getItemUpdateTime(map.name);
-      return createDetailResult(map, 'Map', `/maps/${id}`, updateInfo?.date);
+      const updateInfo = await getMergedUpdateTime(map.name);
+      return createDetailResult(map, 'Map', `/maps/${map.name}`, updateInfo?.date);
     },
     fullData: () => {
       const fullMaps = recordToArray(maps, 'name');
@@ -338,11 +427,11 @@ export const resolvers: Record<string, PathResolver> = {
       const fixturesList = recordToArray(fixtures, 'name');
       return createListResult(fixturesList, 'Fixture', '/fixtures', true);
     },
-    detail: (id: string) => {
+    detail: async (id: string) => {
       const fixture = findByKey(fixtures, id);
       if (!fixture) return null;
-      const updateInfo = getItemUpdateTime(fixture.name);
-      return createDetailResult(fixture, 'Fixture', `/fixtures/${id}`, updateInfo?.date);
+      const updateInfo = await getMergedUpdateTime(fixture.name);
+      return createDetailResult(fixture, 'Fixture', `/fixtures/${fixture.name}`, updateInfo?.date);
     },
     fullData: () => {
       const fullFixtures = recordToArray(fixtures, 'name');
@@ -356,11 +445,11 @@ export const resolvers: Record<string, PathResolver> = {
       const modesList = recordToArray(modes, 'name');
       return createListResult(modesList, 'Mode', '/modes', true);
     },
-    detail: (id: string) => {
+    detail: async (id: string) => {
       const mode = findByKey(modes, id);
       if (!mode) return null;
-      const updateInfo = getItemUpdateTime(mode.name);
-      return createDetailResult(mode, 'Mode', `/modes/${id}`, updateInfo?.date);
+      const updateInfo = await getMergedUpdateTime(mode.name);
+      return createDetailResult(mode, 'Mode', `/modes/${mode.name}`, updateInfo?.date);
     },
     fullData: () => {
       const fullModes = recordToArray(modes, 'name');
@@ -374,14 +463,14 @@ export const resolvers: Record<string, PathResolver> = {
       const achievementsList = recordToArray(achievements, 'name');
       return createListResult(achievementsList, 'Achievement', '/achievements', true);
     },
-    detail: (id: string) => {
+    detail: async (id: string) => {
       const achievement = findByKey(achievements, id);
       if (!achievement) return null;
-      const updateInfo = getItemUpdateTime(achievement.name);
+      const updateInfo = await getMergedUpdateTime(achievement.name);
       return createDetailResult(
         achievement,
         'Achievement',
-        `/achievements/${id}`,
+        `/achievements/${achievement.name}`,
         updateInfo?.date
       );
     },
@@ -405,7 +494,7 @@ export const resolvers: Record<string, PathResolver> = {
       const allSkills = [...catSkillsList, ...mouseSkillsList];
       return createListResult(allSkills, 'SpecialSkill', '/special-skills', true);
     },
-    detail: (id: string) => {
+    detail: async (id: string) => {
       const decodedId = decodeURIComponent(id);
       let skill = specialSkills.cat[decodedId];
       let factionId: 'cat' | 'mouse' = 'cat';
@@ -414,11 +503,11 @@ export const resolvers: Record<string, PathResolver> = {
         factionId = 'mouse';
       }
       if (!skill) return null;
-      const updateInfo = getItemUpdateTime(decodedId);
+      const updateInfo = await getMergedUpdateTime(decodedId);
       return createDetailResult(
         { ...skill, name: decodedId, factionId },
         'SpecialSkill',
-        `/special-skills/${id}`,
+        `/special-skills/${decodedId}`,
         updateInfo?.date
       );
     },
@@ -454,7 +543,7 @@ export const resolvers: Record<string, PathResolver> = {
       const factionsWithCharacters = GameDataManager.getFactionsWithCharacters(characters);
       const faction = factionsWithCharacters[decodedId];
       if (!faction) return null;
-      return createDetailResult({ ...faction, id: decodedId }, 'Faction', `/factions/${id}`);
+      return createDetailResult({ ...faction, id: decodedId }, 'Faction', `/factions/${decodedId}`);
     },
     fullData: () => {
       const characters = GameDataManager.getCharacters();
@@ -473,11 +562,11 @@ export const resolvers: Record<string, PathResolver> = {
       const groupsList = recordToArray(itemGroups, 'name');
       return createListResult(groupsList, 'ItemGroup', '/itemGroups', true);
     },
-    detail: (id: string) => {
+    detail: async (id: string) => {
       const group = findByKey(itemGroups, id);
       if (!group) return null;
-      const updateInfo = getItemUpdateTime(group.name);
-      return createDetailResult(group, 'ItemGroup', `/itemGroups/${id}`, updateInfo?.date);
+      const updateInfo = await getMergedUpdateTime(group.name);
+      return createDetailResult(group, 'ItemGroup', `/itemGroups/${group.name}`, updateInfo?.date);
     },
     fullData: () => {
       const fullItemGroups = recordToArray(itemGroups, 'name');
@@ -786,8 +875,8 @@ export async function resolvePath(
   if (!resolver) return null;
 
   if (detailId && resolver.detail) {
-    const result = resolver.detail(detailId);
-    return result instanceof Promise ? await result : result;
+    const result = await resolver.detail(detailId);
+    return result;
   }
 
   if (fullData && resolver.fullData) {

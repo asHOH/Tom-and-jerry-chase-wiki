@@ -13,4 +13,8 @@ export type PublicActionRow = {
    */
   entry: unknown;
   created_at: string;
+  status: string;
+  message: string | null;
+  reviewed_at: string | null;
+  created_by: string | null;
 };
