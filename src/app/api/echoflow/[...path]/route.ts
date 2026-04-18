@@ -3,6 +3,7 @@
  *
  */
 
+import { timingSafeEqual } from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { cached } from '@/lib/serverCache';
@@ -128,7 +129,11 @@ function isOriginAllowed(origin: string | null): boolean {
 export async function GET(request: NextRequest, { params }: RouteParams) {
   const origin = request.headers.get('origin');
   const clientKey = request.headers.get(API_KEY_HEADER);
-  const hasValidKey = FLOW_KEY && clientKey === FLOW_KEY;
+
+  let hasValidKey = false;
+  if (FLOW_KEY && clientKey && clientKey.length === FLOW_KEY.length) {
+    hasValidKey = timingSafeEqual(Buffer.from(clientKey), Buffer.from(FLOW_KEY));
+  }
 
   if (!FLOW_KEY) {
     return NextResponse.json(
@@ -221,6 +226,8 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     const securityHeaders = {
       Vary: 'Origin',
       'X-Content-Type-Options': 'nosniff',
+      'X-Frame-Options': 'DENY',
+      'Referrer-Policy': 'strict-origin-when-cross-origin',
     };
 
     if (format === 'jsonl') {
@@ -265,7 +272,11 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 export async function OPTIONS(request: NextRequest) {
   const origin = request.headers.get('origin');
   const clientKey = request.headers.get(API_KEY_HEADER);
-  const hasValidKey = FLOW_KEY && clientKey === FLOW_KEY;
+
+  let hasValidKey = false;
+  if (FLOW_KEY && clientKey && clientKey.length === FLOW_KEY.length) {
+    hasValidKey = timingSafeEqual(Buffer.from(clientKey), Buffer.from(FLOW_KEY));
+  }
 
   if (!isOriginAllowed(origin) && !hasValidKey) {
     return new NextResponse(null, { status: 403 });
@@ -283,6 +294,8 @@ export async function OPTIONS(request: NextRequest) {
       'X-EchoFlow-Health': 'healthy',
       Vary: 'Origin',
       'X-Content-Type-Options': 'nosniff',
+      'X-Frame-Options': 'DENY',
+      'Referrer-Policy': 'strict-origin-when-cross-origin',
     },
   });
 }
