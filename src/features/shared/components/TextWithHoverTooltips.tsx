@@ -978,10 +978,10 @@ const renderTextWithTooltips = (
 
         if (isBaseOnly) {
           baseValue = parsedNumber;
-          totalValue = Math.round((baseValue + (attackBoost ?? 0)) * 10) / 10;
+          totalValue = Math.round((baseValue + (attackBoost ?? 0)) * 100) / 100;
         } else {
           totalValue = parsedNumber;
-          baseValue = Math.round((totalValue - (attackBoost ?? 0)) * 10) / 10;
+          baseValue = Math.round((totalValue - (attackBoost ?? 0)) * 100) / 100;
         }
 
         // *** ADD: Default calculation note for plain number ***
@@ -1079,10 +1079,10 @@ const renderTextWithTooltips = (
 
       if (localIsBaseOnly) {
         baseValue = parsedNumber;
-        totalValue = Math.round((baseValue + effectiveAttackBoost) * 10) / 10;
+        totalValue = Math.round((baseValue + effectiveAttackBoost) * 100) / 100;
       } else {
         totalValue = parsedNumber;
-        baseValue = Math.round((totalValue - effectiveAttackBoost) * 10) / 10;
+        baseValue = Math.round((totalValue - effectiveAttackBoost) * 100) / 100;
       }
 
       // Build base tooltip
