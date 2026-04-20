@@ -127,7 +127,7 @@ jobs:
 
       - name: Upload coverage artifacts
         if: steps.check-tests.outputs.tests-exist == 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-report-${{ github.sha }}
           path: coverage/
