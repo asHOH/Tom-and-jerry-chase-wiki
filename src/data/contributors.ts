@@ -619,4 +619,14 @@ export const contributors: Contributor[] = [
     name: '丸子',
     roles: [{ type: RoleType.ArtProvider }],
   },
+  {
+    id: 'hongdou',
+    name: '是红豆嗷',
+    url: 'https://space.bilibili.com/515297471',
+    roles: [
+      {
+        type: RoleType.DataTester,
+      },
+    ],
+  },
 ];
