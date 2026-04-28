@@ -90,7 +90,7 @@ jobs:
           steps.unused-deps.outputs.unused-deps == 'true' ||
           steps.complexity.outputs.total-files > '200' ||
           (steps.coverage.outputs.coverage-available == 'true' && steps.coverage.outputs.coverage-percent != '' && steps.coverage.outputs.coverage-percent < '80')
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const coverage = parseFloat('${{ steps.coverage.outputs.coverage-percent }}') || 0;
