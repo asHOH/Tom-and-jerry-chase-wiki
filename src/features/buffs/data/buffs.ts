@@ -477,6 +477,14 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     ],
     unuseImage: true,
   },
+  击飞: {
+    type: '负面效果',
+    class: '类眩晕',
+    global: false,
+    target: '角色',
+    duration: '不固定',
+    description: '使角色受到一个（通常是向上或斜上方的）一次性受力效果。',
+  },
   牵引: {
     type: '特殊状态',
     class: '类眩晕',
