@@ -7832,6 +7832,59 @@ export const characterRelationTraits: Trait[] = [
       isMinor: false,
     },
   },
+
+  {
+    description: '技能免疫控制和虚弱，还能反伤削减追汤飞行时间。',
+    group: [
+      { name: '追风汤姆', type: 'character' },
+      { name: '天使泰菲', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '追风汤姆', type: 'character' },
+      target: { name: '天使泰菲', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '该模式老鼠血量极高，道具多，追汤无法发挥独属前期的优势',
+    group: [
+      { name: '追风汤姆', type: 'character' },
+      { name: '疯狂奶酪赛', type: 'mode' },
+    ],
+    relation: {
+      kind: 'disadvantageModes',
+      subject: { name: '追风汤姆', type: 'character' },
+      target: { name: '疯狂奶酪赛', type: 'mode' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '理由同古堡1；该地图追汤还能在两个钟楼间换绑',
+    group: [
+      { name: '追风汤姆', type: 'character' },
+      { name: '雪夜古堡III', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '追风汤姆', type: 'character' },
+      target: { name: '雪夜古堡III', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '该地图下方会积蓄较多球和叉子，利于布奇防守',
+    group: [
+      { name: '布奇', type: 'character' },
+      { name: '天宫-云上', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '布奇', type: 'character' },
+      target: { name: '天宫-云上', type: 'map' },
+      isMinor: false,
+    },
+  },
 ];
 assertValidCharacterRelations(characterRelationTraits);
 
