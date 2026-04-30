@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import { useSnapshot } from 'valtio';
 
-import { getFactionButtonColors } from '@/lib/design';
+import { cn, getFactionButtonColors } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { specialSkillsEdit } from '@/data/store';
@@ -46,7 +46,7 @@ export default function SpecialSkillClient({ description }: Props) {
             src={skill.imageUrl}
             alt={skill.name}
             size='SPECIAL_SKILL_CARD'
-            className={`hover:scale-105 ${isMobile ? 'h-32 w-auto' : ''}`}
+            className={cn('hover:scale-105', isMobile && 'h-32 w-auto')}
           />
           <div className='px-3 pt-1 pb-3 text-center'>
             <div className='font-semibold dark:text-white'>{skill.name}</div>

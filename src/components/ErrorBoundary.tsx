@@ -2,6 +2,8 @@
 
 import { Component, ErrorInfo, ReactNode } from 'react';
 
+import { cn } from '@/lib/design';
+
 interface Props {
   children: ReactNode;
   fallback?: ReactNode;
@@ -98,7 +100,7 @@ function ErrorDisplay({
 
   return (
     <div
-      className={`flex flex-col items-center justify-center px-6 py-12 text-center ${className}`}
+      className={cn('flex flex-col items-center justify-center px-6 py-12 text-center', className)}
     >
       <div className='max-w-md space-y-4'>
         {/* Error icon */}

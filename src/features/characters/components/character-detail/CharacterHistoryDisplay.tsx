@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 
+import { cn } from '@/lib/design';
 import { getHistory } from '@/lib/historyUtils';
 import { ChangeType } from '@/data/types';
 
@@ -60,7 +61,7 @@ export default function CharacterHistoryDisplay({
         <span>角色历史记录</span>
         <svg
           xmlns='http://www.w3.org/2000/svg'
-          className={`h-3 w-3 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+          className={cn('h-3 w-3 transition-transform', isExpanded && 'rotate-180')}
           fill='none'
           viewBox='0 0 24 24'
           stroke='currentColor'

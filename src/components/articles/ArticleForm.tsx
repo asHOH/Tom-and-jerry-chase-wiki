@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import clsx from 'clsx';
 
+import { cn } from '@/lib/design';
 import { normalizeHeadingLevels } from '@/lib/richTextUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
@@ -117,10 +117,13 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
   };
 
   return (
-    <div className={`mx-auto max-w-4xl ${isMobile ? '' : 'px-4'}`}>
+    <div className={cn('mx-auto max-w-4xl', !isMobile && 'px-4')}>
       {errorMessage && (
         <BaseCard
-          className={`mb-6 border border-red-200 bg-red-50 ${isMobile ? '' : 'p-4'} dark:border-red-800 dark:bg-red-900/20`}
+          className={cn(
+            'mb-6 border border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20',
+            !isMobile && 'p-4'
+          )}
         >
           <div className='flex items-center gap-3'>
             <svg
@@ -154,7 +157,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
               value={title}
               onChange={(e) => onTitleChange(e.target.value)}
               placeholder='请保证标题清晰准确'
-              className={clsx('form-control', !isMobile && 'px-4')}
+              className={cn('form-control', !isMobile && 'px-4')}
               disabled={isSubmitting}
             />
           </div>
@@ -176,7 +179,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
                 id='category'
                 value={category}
                 onChange={(e) => onCategoryChange(e.target.value)}
-                className={clsx('form-control', !isMobile && 'px-4')}
+                className={cn('form-control', !isMobile && 'px-4')}
                 disabled={isSubmitting}
               >
                 <option value=''>请选择分类</option>
@@ -242,7 +245,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
                   type='button'
                   onClick={toggleTypoFixPrefix}
                   disabled={isSubmitting || !onCommitMessageChange}
-                  className={clsx(
+                  className={cn(
                     'shrink-0 rounded-lg border px-3 py-2 text-sm font-medium transition-colors',
                     isTypoFixActive
                       ? 'border-blue-600 bg-blue-50 text-blue-700 dark:border-blue-500 dark:bg-blue-900/30 dark:text-blue-200'
@@ -261,7 +264,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
                 value={commitMessage}
                 onChange={(e) => onCommitMessageChange?.(e.target.value)}
                 placeholder='如：修正笔误、更新数据、补充说明等'
-                className={clsx('form-control', !isMobile && 'px-4')}
+                className={cn('form-control', !isMobile && 'px-4')}
                 disabled={isSubmitting}
               />
             </div>
@@ -309,7 +312,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
               variant='primary'
               size='lg'
               fullWidth={isMobile}
-              className={clsx(
+              className={cn(
                 'flex-1 shadow-lg transition-transform hover:scale-[1.02] hover:shadow-xl sm:flex-none',
                 !isMobile && 'px-8'
               )}

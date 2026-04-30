@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 
+import { cn } from '@/lib/design';
 import { useToast } from '@/context/ToastContext';
 import { Database } from '@/data/database.types';
 import {
@@ -28,6 +29,12 @@ const ACTION_STATUS_META: Record<ActionStatus, { label: string; className: strin
   rejected: { label: '已拒绝', className: 'text-red-700 dark:text-red-300' },
   synced: { label: '已同步', className: 'text-purple-700 dark:text-purple-300' },
 };
+
+const getActionButtonClassName = (
+  isDisabled: boolean,
+  enabledClassName: string,
+  disabledClassName: string
+) => cn('rounded px-3 py-1 text-sm text-white', isDisabled ? disabledClassName : enabledClassName);
 
 const GameDataActionModerationPanel = ({
   pendingActions,
@@ -294,11 +301,11 @@ const GameDataActionModerationPanel = ({
             type='button'
             disabled={!!moderatingId || actionableActions.length === 0}
             onClick={toggleSelectAllVisiblePending}
-            className={`rounded px-3 py-1 text-sm text-white ${
-              moderatingId || actionableActions.length === 0
-                ? 'bg-gray-400 opacity-60'
-                : 'bg-slate-600 hover:bg-slate-700'
-            }`}
+            className={getActionButtonClassName(
+              !!moderatingId || actionableActions.length === 0,
+              'bg-slate-600 hover:bg-slate-700',
+              'bg-gray-400 opacity-60'
+            )}
           >
             {allVisiblePendingSelected ? '取消全选待审核' : '全选待审核'}
           </button>
@@ -306,11 +313,11 @@ const GameDataActionModerationPanel = ({
             type='button'
             disabled={!!moderatingId || selectedActionIds.size === 0}
             onClick={clearSelectedActions}
-            className={`rounded px-3 py-1 text-sm text-white ${
-              moderatingId || selectedActionIds.size === 0
-                ? 'bg-gray-400 opacity-60'
-                : 'bg-gray-600 hover:bg-gray-700'
-            }`}
+            className={getActionButtonClassName(
+              !!moderatingId || selectedActionIds.size === 0,
+              'bg-gray-600 hover:bg-gray-700',
+              'bg-gray-400 opacity-60'
+            )}
           >
             清空勾选
           </button>
@@ -318,9 +325,11 @@ const GameDataActionModerationPanel = ({
             type='button'
             disabled={!!moderatingId}
             onClick={() => void mutatePendingActions()}
-            className={`rounded px-3 py-1 text-sm text-white ${
-              moderatingId ? 'bg-gray-400 opacity-60' : 'bg-gray-700 hover:bg-gray-800'
-            }`}
+            className={getActionButtonClassName(
+              !!moderatingId,
+              'bg-gray-700 hover:bg-gray-800',
+              'bg-gray-400 opacity-60'
+            )}
           >
             刷新
           </button>
@@ -328,11 +337,11 @@ const GameDataActionModerationPanel = ({
             type='button'
             disabled={!!moderatingId || selectedPendingActions.length === 0}
             onClick={() => void moderateMany('approve')}
-            className={`rounded px-3 py-1 text-sm text-white ${
-              moderatingId || selectedPendingActions.length === 0
-                ? 'bg-green-400 opacity-60'
-                : 'bg-green-600 hover:bg-green-700'
-            }`}
+            className={getActionButtonClassName(
+              !!moderatingId || selectedPendingActions.length === 0,
+              'bg-green-600 hover:bg-green-700',
+              'bg-green-400 opacity-60'
+            )}
           >
             批量批准
           </button>
@@ -340,11 +349,11 @@ const GameDataActionModerationPanel = ({
             type='button'
             disabled={!!moderatingId || selectedPendingActions.length === 0}
             onClick={() => void moderateMany('reject')}
-            className={`rounded px-3 py-1 text-sm text-white ${
-              moderatingId || selectedPendingActions.length === 0
-                ? 'bg-red-400 opacity-60'
-                : 'bg-red-600 hover:bg-red-700'
-            }`}
+            className={getActionButtonClassName(
+              !!moderatingId || selectedPendingActions.length === 0,
+              'bg-red-600 hover:bg-red-700',
+              'bg-red-400 opacity-60'
+            )}
           >
             批量拒绝
           </button>
@@ -415,11 +424,11 @@ const GameDataActionModerationPanel = ({
                           type='button'
                           disabled={!!moderatingId}
                           onClick={() => void copyText(submission.action_id)}
-                          className={`rounded px-3 py-1 text-sm text-white ${
-                            moderatingId
-                              ? 'bg-gray-400 opacity-60'
-                              : 'bg-gray-600 hover:bg-gray-700'
-                          }`}
+                          className={getActionButtonClassName(
+                            !!moderatingId,
+                            'bg-gray-600 hover:bg-gray-700',
+                            'bg-gray-400 opacity-60'
+                          )}
                         >
                           复制ID
                         </button>
@@ -427,11 +436,11 @@ const GameDataActionModerationPanel = ({
                           type='button'
                           disabled={!!moderatingId}
                           onClick={() => toggleExpanded(submission.action_id)}
-                          className={`rounded px-3 py-1 text-sm text-white ${
-                            moderatingId
-                              ? 'bg-gray-400 opacity-60'
-                              : 'bg-blue-600 hover:bg-blue-700'
-                          }`}
+                          className={getActionButtonClassName(
+                            !!moderatingId,
+                            'bg-blue-600 hover:bg-blue-700',
+                            'bg-gray-400 opacity-60'
+                          )}
                         >
                           {expandedActionIds.has(submission.action_id) ? '收起详情' : '展开详情'}
                         </button>
@@ -445,11 +454,11 @@ const GameDataActionModerationPanel = ({
                                 if (!confirmed) return;
                                 void moderateAction(submission.action_id, 'approve');
                               }}
-                              className={`rounded px-3 py-1 text-sm text-white ${
-                                moderatingId
-                                  ? 'bg-green-400 opacity-60'
-                                  : 'bg-green-600 hover:bg-green-700'
-                              }`}
+                              className={getActionButtonClassName(
+                                !!moderatingId,
+                                'bg-green-600 hover:bg-green-700',
+                                'bg-green-400 opacity-60'
+                              )}
                             >
                               批准
                             </button>
@@ -461,11 +470,11 @@ const GameDataActionModerationPanel = ({
                                 if (!confirmed) return;
                                 void moderateAction(submission.action_id, 'reject');
                               }}
-                              className={`rounded px-3 py-1 text-sm text-white ${
-                                moderatingId
-                                  ? 'bg-red-400 opacity-60'
-                                  : 'bg-red-600 hover:bg-red-700'
-                              }`}
+                              className={getActionButtonClassName(
+                                !!moderatingId,
+                                'bg-red-600 hover:bg-red-700',
+                                'bg-red-400 opacity-60'
+                              )}
                             >
                               拒绝
                             </button>
@@ -497,11 +506,11 @@ const GameDataActionModerationPanel = ({
                             type='button'
                             disabled={!!moderatingId}
                             onClick={() => void copyText(JSON.stringify(submission, null, 2))}
-                            className={`rounded px-3 py-1 text-sm text-white ${
-                              moderatingId
-                                ? 'bg-gray-400 opacity-60'
-                                : 'bg-gray-600 hover:bg-gray-700'
-                            }`}
+                            className={getActionButtonClassName(
+                              !!moderatingId,
+                              'bg-gray-600 hover:bg-gray-700',
+                              'bg-gray-400 opacity-60'
+                            )}
                           >
                             复制JSON
                           </button>

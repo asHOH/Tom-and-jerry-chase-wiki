@@ -1,3 +1,4 @@
+import { cn } from '@/lib/design';
 import { getContentWritersByCharacter } from '@/constants';
 
 interface ContentWriterDisplayProps {
@@ -13,9 +14,7 @@ export default function ContentWriterDisplay({ characterId, type }: ContentWrite
   }
 
   return (
-    <div
-      className={`text-xs text-gray-400 dark:text-gray-500 ${type === 'isMobile' ? '' : 'mt-2'}`}
-    >
+    <div className={cn('text-xs text-gray-400 dark:text-gray-500', type !== 'isMobile' && 'mt-2')}>
       文案撰写：
       <span className={type === 'isMobile' ? '' : 'whitespace-pre'}>
         {contentWriters.join('、')}

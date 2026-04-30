@@ -13,6 +13,12 @@ type CollapseCardProps = {
   openOnStart?: boolean;
 };
 
+const titleSizeClasses = {
+  xs: 'text-sm',
+  md: 'ml-1 text-xl',
+  sm: 'ml-2 text-2xl',
+} as const;
+
 /**
  * 可折叠卡片组件
  * @param children - 卡片内容
@@ -35,7 +41,7 @@ export default function CollapseCard({
 }: CollapseCardProps) {
   const [isExpanded, setIsExpanded] = useState(openOnStart);
   const width = { xs: '15px', md: '25px', sm: '35px' }[size];
-  const text = { xs: 'sm', md: 'xl ml-1', sm: '2xl ml-2' }[size];
+  const titleSizeClassName = titleSizeClasses[size];
   const titleColor = {
     default: 'border-b border-gray-100 dark:border-gray-800',
     red: 'bg-red-200 dark:bg-red-900 border-2 border-red-300 dark:border-red-700',
@@ -61,7 +67,7 @@ export default function CollapseCard({
         )}
         aria-expanded={isExpanded}
       >
-        <span className={`text-${text}`}>{title}</span>
+        <span className={titleSizeClassName}>{title}</span>
         <svg
           className={cn(
             'transform transition-transform duration-200 ease-in-out',

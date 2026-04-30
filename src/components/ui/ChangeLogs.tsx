@@ -3,6 +3,7 @@
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import uniq from 'lodash-es/uniq';
 
+import { cn } from '@/lib/design';
 import { contributors } from '@/data/contributors';
 import { changeLogs, type ChangeType } from '@/data/generated/changeLogs';
 import ActionTile from '@/components/ui/ActionTile';
@@ -87,7 +88,10 @@ const ChangeLogs = forwardRef<ChangeLogsRef>((_props, ref) => {
       <div key={key} className='px-4 py-3'>
         <div className='flex items-start gap-3'>
           <span
-            className={`inline-flex shrink-0 items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${typeColors[change.type]}`}
+            className={cn(
+              'inline-flex shrink-0 items-center rounded-full px-2.5 py-0.5 text-xs font-medium',
+              typeColors[change.type]
+            )}
           >
             {typeLabels[change.type]}
           </span>
@@ -204,7 +208,10 @@ const ChangeLogs = forwardRef<ChangeLogsRef>((_props, ref) => {
                   >
                     <div className='flex items-center gap-3'>
                       <svg
-                        className={`h-5 w-5 text-gray-600 transition-transform dark:text-gray-400 ${isExpanded ? 'rotate-90' : ''}`}
+                        className={cn(
+                          'h-5 w-5 text-gray-600 transition-transform dark:text-gray-400',
+                          isExpanded && 'rotate-90'
+                        )}
                         fill='none'
                         stroke='currentColor'
                         viewBox='0 0 24 24'
@@ -250,7 +257,10 @@ const ChangeLogs = forwardRef<ChangeLogsRef>((_props, ref) => {
                                   {uniq(minorChanges.map((c) => c.type)).map((type) => (
                                     <span
                                       key={type}
-                                      className={`rounded-full px-1.5 py-0.5 text-[10px] ${typeColors[type]}`}
+                                      className={cn(
+                                        'rounded-full px-1.5 py-0.5 text-[10px]',
+                                        typeColors[type]
+                                      )}
                                     >
                                       {typeLabels[type]}
                                     </span>
@@ -258,7 +268,10 @@ const ChangeLogs = forwardRef<ChangeLogsRef>((_props, ref) => {
                                 </div>
                               </div>
                               <svg
-                                className={`h-4 w-4 transition-transform ${isMinorExpanded ? 'rotate-180' : ''}`}
+                                className={cn(
+                                  'h-4 w-4 transition-transform',
+                                  isMinorExpanded && 'rotate-180'
+                                )}
                                 fill='none'
                                 stroke='currentColor'
                                 viewBox='0 0 24 24'

@@ -2,11 +2,11 @@
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
-import clsx from 'clsx';
 import { createPortal } from 'react-dom';
 
 import { AssetManager } from '@/lib/assetManager';
 import { formatArticleDate } from '@/lib/dateUtils';
+import { cn } from '@/lib/design';
 import { toChineseNumeral } from '@/lib/textUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useUser } from '@/hooks/useUser';
@@ -476,11 +476,13 @@ export default function ArticleClient({
             <li key={item.id} style={{ marginLeft: `${levelOffset * 12}px` }}>
               <a
                 href={`#${item.id}`}
-                className={`block rounded px-2 py-1 text-sm transition-colors ${itemClassName} ${
+                className={cn(
+                  'block rounded px-2 py-1 text-sm transition-colors',
+                  itemClassName,
                   isActive
                     ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-200'
                     : 'text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-300'
-                }`}
+                )}
               >
                 {showAutoNumbering && <span className='mr-1 opacity-70'>{item.prefix}</span>}
                 {item.text}
@@ -493,7 +495,7 @@ export default function ArticleClient({
   );
 
   return (
-    <div className={`container mx-auto ${isMobile ? 'px-1 py-2' : 'px-6 py-8'} max-w-6xl`}>
+    <div className={cn('container mx-auto max-w-6xl', isMobile ? 'px-1 py-2' : 'px-6 py-8')}>
       {/* Reading Progress Bar - Teleported to body to escape transformed containers */}
       {mounted &&
         createPortal(
@@ -517,7 +519,7 @@ export default function ArticleClient({
           {/* Header */}
           <div className='mb-8 flex flex-col'>
             <header className='text-center'>
-              <h1 className={`${titleSize} py-3 font-bold text-blue-600 dark:text-blue-400`}>
+              <h1 className={cn('py-3 font-bold text-blue-600 dark:text-blue-400', titleSize)}>
                 {article.title}
               </h1>
             </header>
@@ -590,11 +592,12 @@ export default function ArticleClient({
                 <button
                   onClick={() => setShowAutoNumbering(!showAutoNumbering)}
                   type='button'
-                  className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 transition-colors ${
+                  className={cn(
+                    'inline-flex items-center gap-2 rounded-lg px-4 py-2 transition-colors',
                     showAutoNumbering
                       ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-200'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
-                  }`}
+                  )}
                 >
                   {showAutoNumbering ? '隐藏编号' : '自动编号'}
                 </button>
@@ -634,7 +637,7 @@ export default function ArticleClient({
           {/* Article Content */}
           <div
             ref={contentRef}
-            className={clsx(
+            className={cn(
               'article-content',
               !isMobile &&
                 'rounded-lg border border-transparent p-0 lg:bg-white/70 lg:p-8 lg:shadow-sm dark:lg:border-gray-800 dark:lg:bg-gray-900/40',

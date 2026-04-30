@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import useSWR from 'swr';
 
 import { formatArticleDate } from '@/lib/dateUtils';
+import { cn } from '@/lib/design';
 import { useUser } from '@/hooks/useUser';
 import BaseCard from '@/components/ui/BaseCard';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
@@ -86,7 +87,10 @@ export default function ArticleHistoryClient() {
 
     return (
       <span
-        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${config.color}`}
+        className={cn(
+          'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium',
+          config.color
+        )}
       >
         {config.text}
       </span>

@@ -1,4 +1,4 @@
-import { getCardCostColors, getCardRankColors } from '@/lib/design';
+import { cn, getCardCostColors, getCardRankColors } from '@/lib/design';
 import { KnowledgeCardDisplayProps } from '@/lib/types';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
@@ -30,7 +30,7 @@ export default function KnowledgeCardDisplay({
         src={imageUrl}
         alt={`${name}知识卡图标`}
         size='KNOWLEDGECARD_CARD'
-        className={`hover:scale-105 ${isMobile ? 'h-32 w-auto' : ''}`}
+        className={cn('hover:scale-105', isMobile && 'h-32 w-auto')}
         preload={preload}
       />
       <div className='px-3 pt-1 pb-3 text-center'>

@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 
+import { cn } from '@/lib/design';
 import { supabase } from '@/lib/supabase/client';
 import { Database } from '@/data/database.types';
 
@@ -135,11 +136,12 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
     <>
       {message && (
         <div
-          className={`mb-4 rounded p-3 ${
+          className={cn(
+            'mb-4 rounded p-3',
             message.type === 'success'
               ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200'
               : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-200'
-          }`}
+          )}
         >
           {message.text}
           <button onClick={() => setMessage(null)} className='ml-3 text-sm underline'>

@@ -1,4 +1,4 @@
-import { getModeTypeColors } from '@/lib/design';
+import { cn, getModeTypeColors } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Mode } from '@/data/types';
@@ -24,11 +24,14 @@ export default function ModeCardDisplay({ mode }: { mode: Mode }) {
         src={mode.imageUrl}
         alt={`${mode.name}模式图标`}
         size='ITEM_CARD'
-        className={`hover:scale-105 ${isMobile ? 'h-32 w-auto' : ''}`}
+        className={cn('hover:scale-105', isMobile && 'h-32 w-auto')}
       />
-      <div className={`${isMobile ? '' : 'px-3'} w-full pt-1 pb-3 text-center`}>
+      <div className={cn('w-full pt-1 pb-3 text-center', !isMobile && 'px-3')}>
         <h3
-          className={`${isMobile && mode.name.length >= 6 ? 'text-md' : 'mb-1 text-lg'} h-6 font-bold whitespace-pre text-gray-800 dark:text-white`}
+          className={cn(
+            'h-6 font-bold whitespace-pre text-gray-800 dark:text-white',
+            isMobile && mode.name.length >= 6 ? 'text-md' : 'mb-1 text-lg'
+          )}
         >
           {mode.name}
         </h3>

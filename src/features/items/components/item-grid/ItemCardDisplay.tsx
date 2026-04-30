@@ -1,4 +1,4 @@
-import { getItemSourceColors /* , getCardCostColors */, getItemTypeColors } from '@/lib/design';
+import { cn, getItemSourceColors /* , getCardCostColors */, getItemTypeColors } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Item } from '@/data/types';
@@ -20,11 +20,14 @@ export default function ItemCardDisplay({ item }: { item: Item }) {
         src={item.imageUrl}
         alt={`${item.name}道具图标`}
         size='ITEM_CARD'
-        className={`hover:scale-105 ${isMobile ? 'h-32 w-auto' : ''}`}
+        className={cn('hover:scale-105', isMobile && 'h-32 w-auto')}
       />
       <div className='w-full px-3 pt-1 pb-3 text-center'>
         <h3
-          className={`${isMobile && item.name.length >= 6 ? 'text-md' : 'text-lg'} mb-1 h-6 font-bold whitespace-pre text-gray-800 dark:text-white`}
+          className={cn(
+            'mb-1 h-6 font-bold whitespace-pre text-gray-800 dark:text-white',
+            isMobile && item.name.length >= 6 ? 'text-md' : 'text-lg'
+          )}
         >
           {item.name}
         </h3>

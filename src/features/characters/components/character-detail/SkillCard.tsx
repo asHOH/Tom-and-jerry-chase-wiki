@@ -1,13 +1,12 @@
 'use client';
 
 import React, { Fragment, useState } from 'react';
-import clsx from 'clsx';
 import uniq from 'lodash-es/uniq';
 import { useSnapshot } from 'valtio';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { AssetManager } from '@/lib/assetManager';
-import { getSkillLevelColors, getSkillLevelContainerColor } from '@/lib/design';
+import { cn, getSkillLevelColors, getSkillLevelContainerColor } from '@/lib/design';
 import { CharacterWithFaction } from '@/lib/types';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useAppContext } from '@/context/AppContext';
@@ -184,7 +183,7 @@ export default function SkillCard({
                 }}
                 className='h-3 w-3'
               />
-              <span className={clsx({ 'font-bold': currentValue === option })}>{option}</span>
+              <span className={cn({ 'font-bold': currentValue === option })}>{option}</span>
             </label>
           ))}
         </div>
@@ -315,16 +314,14 @@ export default function SkillCard({
                       }}
                       className='h-3 w-3'
                     />
-                    <span className={clsx({ 'font-bold': skill.forecast === 0 })}>无前摇</span>
+                    <span className={cn({ 'font-bold': skill.forecast === 0 })}>无前摇</span>
                   </label>
                 </div>
                 {(() => {
                   const disabled = skill.forecast === 0;
                   return (
                     <>
-                      <div
-                        className={clsx('flex flex-wrap gap-1 text-xs', disabled && 'opacity-50')}
-                      >
+                      <div className={cn('flex flex-wrap gap-1 text-xs', disabled && 'opacity-50')}>
                         {specialOptions.map((option) => (
                           <label key={option} className='flex cursor-pointer items-center gap-1'>
                             <input
@@ -342,16 +339,14 @@ export default function SkillCard({
                               className='h-3 w-3'
                             />
                             <span
-                              className={clsx(skill.cancelableSkill == option ? 'font-bold' : '')}
+                              className={cn(skill.cancelableSkill == option ? 'font-bold' : '')}
                             >
                               {option}
                             </span>
                           </label>
                         ))}
                       </div>
-                      <div
-                        className={clsx('flex flex-wrap gap-1 text-xs', disabled && 'opacity-50')}
-                      >
+                      <div className={cn('flex flex-wrap gap-1 text-xs', disabled && 'opacity-50')}>
                         <span className='text-xs text-gray-400 dark:text-gray-500'>可被</span>
                         {cancelableOptions.map((option) => (
                           <label key={option} className='flex cursor-pointer items-center gap-1'>
@@ -395,7 +390,7 @@ export default function SkillCard({
                               className='h-3 w-3'
                             />
                             <span
-                              className={clsx({
+                              className={cn({
                                 'font-bold': activeCancelableOptions.includes(option),
                               })}
                             >
@@ -469,16 +464,14 @@ export default function SkillCard({
                       }}
                       className='h-3 w-3'
                     />
-                    <span className={clsx({ 'font-bold': skill.aftercast === 0 })}>无后摇</span>
+                    <span className={cn({ 'font-bold': skill.aftercast === 0 })}>无后摇</span>
                   </label>
                 </div>
                 {(() => {
                   const disabled = skill.aftercast === 0;
                   return (
                     <>
-                      <div
-                        className={clsx('flex flex-wrap gap-1 text-xs', disabled && 'opacity-50')}
-                      >
+                      <div className={cn('flex flex-wrap gap-1 text-xs', disabled && 'opacity-50')}>
                         {specialOptions.map((option) => (
                           <label key={option} className='flex cursor-pointer items-center gap-1'>
                             <input
@@ -496,16 +489,14 @@ export default function SkillCard({
                               className='h-3 w-3'
                             />
                             <span
-                              className={clsx({ 'font-bold': skill.cancelableAftercast == option })}
+                              className={cn({ 'font-bold': skill.cancelableAftercast == option })}
                             >
                               {option}
                             </span>
                           </label>
                         ))}
                       </div>
-                      <div
-                        className={clsx('flex flex-wrap gap-1 text-xs', disabled && 'opacity-50')}
-                      >
+                      <div className={cn('flex flex-wrap gap-1 text-xs', disabled && 'opacity-50')}>
                         <span className='text-xs text-gray-400 dark:text-gray-500'>可被</span>
                         {cancelableOptions.map((option) => (
                           <label key={option} className='flex cursor-pointer items-center gap-1'>
@@ -566,7 +557,7 @@ export default function SkillCard({
                               className='h-3 w-3'
                             />
                             <span
-                              className={clsx({
+                              className={cn({
                                 'font-bold': activeCancelableOptions.includes(option),
                               })}
                             >
@@ -673,11 +664,11 @@ export default function SkillCard({
 
   return (
     <Card
-      className={`${isMobile ? 'px-4! py-6!' : 'p-6!'} dark:border-slate-700 dark:bg-slate-800`}
+      className={cn('dark:border-slate-700 dark:bg-slate-800', isMobile ? 'px-4! py-6!' : 'p-6!')}
     >
       <div className='flex items-start'>
         {skill.imageUrl && (
-          <div className={`flex-shrink-0 ${isMobile ? 'mr-2' : 'mr-6'}`}>
+          <div className={cn('flex-shrink-0', isMobile ? 'mr-2' : 'mr-6')}>
             <div className='relative h-16 w-16 overflow-hidden rounded-full border-2 border-gray-300 bg-white dark:border-gray-600 dark:bg-slate-700'>
               <Image
                 src={skill.imageUrl}
@@ -692,7 +683,7 @@ export default function SkillCard({
                 <button
                   type='button'
                   onClick={() => setShowVideoAddress(!showVideoAddress)}
-                  className={clsx(
+                  className={cn(
                     'block w-full rounded-md px-2 py-1 text-center text-xs transition-colors',
                     skill.videoUrl
                       ? 'bg-blue-50 text-blue-600 hover:bg-blue-100 hover:underline dark:bg-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-900'
@@ -926,7 +917,7 @@ export default function SkillCard({
             .map((level: SkillLevel) => (
               <div
                 key={`${skill.id}-${level.level}`}
-                className={clsx(
+                className={cn(
                   'rounded p-4 dark:text-gray-300',
                   getSkillLevelContainerColor(level.level)
                 )}

@@ -1,4 +1,4 @@
-import { getMapSizeColors, getMapTypeColors } from '@/lib/design';
+import { cn, getMapSizeColors, getMapTypeColors } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Map } from '@/data/types';
@@ -16,11 +16,14 @@ export default function MapCardDisplay({ map }: { map: Map }) {
         src={map.imageUrl}
         alt={`${map.name}地图预览`}
         size='ITEM_CARD'
-        className={`hover:scale-105 ${isMobile ? 'h-32 w-auto' : ''}`}
+        className={cn('hover:scale-105', isMobile && 'h-32 w-auto')}
       />
-      <div className={`${isMobile ? '' : 'px-3'} w-full pt-1 pb-3 text-center`}>
+      <div className={cn('w-full pt-1 pb-3 text-center', !isMobile && 'px-3')}>
         <h3
-          className={`${isMobile && map.name.length >= 6 ? 'text-md' : 'mb-1 text-lg'} h-6 truncate overflow-hidden font-bold whitespace-nowrap text-gray-800 dark:text-white`}
+          className={cn(
+            'h-6 truncate overflow-hidden font-bold whitespace-nowrap text-gray-800 dark:text-white',
+            isMobile && map.name.length >= 6 ? 'text-md' : 'mb-1 text-lg'
+          )}
           title={map.name}
         >
           {map.name}

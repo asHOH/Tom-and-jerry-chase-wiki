@@ -1,4 +1,4 @@
-import { getFixtureTypeColors } from '@/lib/design';
+import { cn, getFixtureTypeColors } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Fixture } from '@/data/types';
@@ -47,11 +47,14 @@ export default function FixtureCardDisplay({ fixture }: { fixture: Fixture }) {
         src={fixture.imageUrl}
         alt={`${fixture.name}物件图标`}
         size='ITEM_CARD'
-        className={`hover:scale-105 ${isMobile ? 'h-32 w-auto' : ''}`}
+        className={cn('hover:scale-105', isMobile && 'h-32 w-auto')}
       />
-      <div className={`${isMobile ? '' : 'px-3'} w-full pt-1 pb-3 text-center`}>
+      <div className={cn('w-full pt-1 pb-3 text-center', !isMobile && 'px-3')}>
         <h3
-          className={`${isMobile && fixture.name.length >= 6 ? 'text-md' : 'mb-1 text-lg'} h-6 font-bold whitespace-pre text-gray-800 dark:text-white`}
+          className={cn(
+            'h-6 font-bold whitespace-pre text-gray-800 dark:text-white',
+            isMobile && fixture.name.length >= 6 ? 'text-md' : 'mb-1 text-lg'
+          )}
         >
           {fixture.name}
         </h3>

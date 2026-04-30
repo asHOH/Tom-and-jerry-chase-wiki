@@ -1,4 +1,4 @@
-import { getBuffGlobalColors, getBuffTypeColors } from '@/lib/design';
+import { cn, getBuffGlobalColors, getBuffTypeColors } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Buff } from '@/data/types';
@@ -13,13 +13,15 @@ export default function BuffCardDisplay({ buff }: { buff: Buff }) {
   return (
     <BaseCard variant='item' aria-label={`查看${buff.name}效果详情`}>
       <div
-        className={`${isMobile ? 'pb-1.5' : 'pb-3'} flex w-full items-center justify-center border border-dotted pt-1 text-center ${
+        className={cn(
+          'flex w-full items-center justify-center border border-dotted pt-1 text-center',
+          isMobile ? 'pb-1.5' : 'pb-3',
           buff.type.includes('正面')
             ? 'border-green-300 dark:border-green-800'
             : buff.type.includes('负面')
               ? 'border-red-300 dark:border-red-800'
               : 'border-yellow-300 dark:border-yellow-800'
-        }`}
+        )}
       >
         {!buff.unuseImage && (
           <Image
@@ -30,14 +32,20 @@ export default function BuffCardDisplay({ buff }: { buff: Buff }) {
             height={90}
           />
         )}
-        <div className={`ml-1.5 items-center justify-center text-center`}>
+        <div className='ml-1.5 items-center justify-center text-center'>
           <h3
-            className={`${buff.name.length >= 6 ? 'text-md' : 'text-lg'} mb-1 h-6 font-bold whitespace-pre text-gray-800 dark:text-white`}
+            className={cn(
+              'mb-1 h-6 font-bold whitespace-pre text-gray-800 dark:text-white',
+              buff.name.length >= 6 ? 'text-md' : 'text-lg'
+            )}
           >
             {buff.name}
           </h3>
           <div
-            className={`flex ${buff.unuseImage && 'justify-center'} items-center gap-0.5 text-sm text-gray-600 dark:text-gray-300`}
+            className={cn(
+              'flex items-center gap-0.5 text-sm text-gray-600 dark:text-gray-300',
+              buff.unuseImage && 'justify-center'
+            )}
             role='group'
             aria-label='状态属性'
           >

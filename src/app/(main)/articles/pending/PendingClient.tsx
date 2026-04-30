@@ -1,10 +1,10 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import clsx from 'clsx';
 import useSWR from 'swr';
 
 import { formatArticleDate } from '@/lib/dateUtils';
+import { cn } from '@/lib/design';
 import { useUser } from '@/hooks/useUser';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import PageDescription from '@/components/ui/PageDescription';
@@ -160,7 +160,10 @@ export default function PendingClient() {
     const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
     return (
       <span
-        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${config.color}`}
+        className={cn(
+          'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium',
+          config.color
+        )}
       >
         {config.text}
       </span>
@@ -235,7 +238,7 @@ export default function PendingClient() {
             <div className='flex items-center gap-2'>
               <button
                 onClick={() => setFilter('all')}
-                className={clsx(
+                className={cn(
                   'rounded-lg px-3 py-1.5 text-sm transition-colors',
                   filter === 'all'
                     ? 'bg-blue-600 text-white'
@@ -246,7 +249,7 @@ export default function PendingClient() {
               </button>
               <button
                 onClick={() => setFilter('pending')}
-                className={clsx(
+                className={cn(
                   'rounded-lg px-3 py-1.5 text-sm transition-colors',
                   filter === 'pending'
                     ? 'bg-blue-600 text-white'
@@ -257,7 +260,7 @@ export default function PendingClient() {
               </button>
               <button
                 onClick={() => setFilter('rejected')}
-                className={clsx(
+                className={cn(
                   'rounded-lg px-3 py-1.5 text-sm transition-colors',
                   filter === 'rejected'
                     ? 'bg-blue-600 text-white'

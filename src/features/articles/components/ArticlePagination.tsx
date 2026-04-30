@@ -2,6 +2,8 @@
 
 import React from 'react';
 
+import { cn } from '@/lib/design';
+
 interface ArticlePaginationProps {
   currentPage: number;
   clientTotalPages: number;
@@ -48,7 +50,10 @@ const ArticlePagination: React.FC<ArticlePaginationProps> = ({
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage <= 1}
           aria-label='上一页'
-          className={`${paginationButtonBase} bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600`}
+          className={cn(
+            paginationButtonBase,
+            'bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+          )}
         >
           上一页
         </button>
@@ -59,7 +64,10 @@ const ArticlePagination: React.FC<ArticlePaginationProps> = ({
               type='button'
               onClick={() => handlePageChange(1)}
               aria-label='第 1 页'
-              className={`${paginationButtonBase} bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600`}
+              className={cn(
+                paginationButtonBase,
+                'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+              )}
             >
               1
             </button>
@@ -78,11 +86,12 @@ const ArticlePagination: React.FC<ArticlePaginationProps> = ({
             onClick={() => handlePageChange(page)}
             aria-label={`第 ${page} 页`}
             aria-current={page === currentPage ? 'page' : undefined}
-            className={`${paginationButtonBase} ${
+            className={cn(
+              paginationButtonBase,
               page === currentPage
                 ? 'bg-blue-600 text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
-            }`}
+            )}
           >
             {page}
           </button>
@@ -99,7 +108,10 @@ const ArticlePagination: React.FC<ArticlePaginationProps> = ({
               type='button'
               onClick={() => handlePageChange(clientTotalPages)}
               aria-label={`第 ${clientTotalPages} 页`}
-              className={`${paginationButtonBase} bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600`}
+              className={cn(
+                paginationButtonBase,
+                'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+              )}
             >
               {clientTotalPages}
             </button>
@@ -111,7 +123,10 @@ const ArticlePagination: React.FC<ArticlePaginationProps> = ({
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage >= clientTotalPages}
           aria-label='下一页'
-          className={`${paginationButtonBase} bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600`}
+          className={cn(
+            paginationButtonBase,
+            'bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+          )}
         >
           下一页
         </button>

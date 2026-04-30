@@ -1,3 +1,4 @@
+import { cn } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { ItemGroup } from '@/data/types';
 import BaseCard from '@/components/ui/BaseCard';
@@ -14,11 +15,14 @@ export default function ItemGroupCardDisplay({ itemGroup }: { itemGroup: ItemGro
         src={getItemGroupImageUrl(itemGroup)}
         alt={`${itemGroup.name}效果图标`}
         size='ITEM_CARD'
-        className={`hover:scale-105 ${isMobile ? 'h-32 w-auto' : ''}`}
+        className={cn('hover:scale-105', isMobile && 'h-32 w-auto')}
       />
       <div className='w-full px-3 pt-1 pb-3 text-center'>
         <h3
-          className={`${isMobile && itemGroup.name.length >= 6 ? 'text-md' : 'text-lg'} mb-1 h-6 font-bold whitespace-pre text-gray-800 dark:text-white`}
+          className={cn(
+            'mb-1 h-6 font-bold whitespace-pre text-gray-800 dark:text-white',
+            isMobile && itemGroup.name.length >= 6 ? 'text-md' : 'text-lg'
+          )}
         >
           {itemGroup.name}
         </h3>

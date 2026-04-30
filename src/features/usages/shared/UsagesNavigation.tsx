@@ -1,5 +1,6 @@
 'use client';
 
+import { cn } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useNavigationTabs } from '@/hooks/useNavigationTabs';
 import ActionTile from '@/components/ui/ActionTile';
@@ -22,7 +23,10 @@ interface NavigationButtonsProps {
 const NavigationButtons = ({ isMobile, isTabActive }: NavigationButtonsProps) => (
   <div className='grid items-center justify-center'>
     <ul
-      className={`flex flex-wrap items-center ${isMobile ? 'gap-2' : 'gap-4'} text-sm font-normal`}
+      className={cn(
+        'flex flex-wrap items-center text-sm font-normal',
+        isMobile ? 'gap-2' : 'gap-4'
+      )}
     >
       {USAGES_NAV_ITEMS.map((tab) => {
         const active = isTabActive(tab.href);
@@ -36,7 +40,7 @@ const NavigationButtons = ({ isMobile, isTabActive }: NavigationButtonsProps) =>
                 <Image
                   src={tab.iconSrc}
                   alt={tab.iconAlt}
-                  className={`${isMobile ? 'h-7 w-7' : 'h-10 w-10'} object-contain py-0.5`}
+                  className={cn('object-contain py-0.5', isMobile ? 'h-7 w-7' : 'h-10 w-10')}
                   width={90}
                   height={90}
                 />

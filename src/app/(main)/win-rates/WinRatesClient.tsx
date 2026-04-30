@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 
-import { getFactionButtonColors } from '@/lib/design';
+import { cn, getFactionButtonColors } from '@/lib/design';
 import { useFilterState } from '@/lib/filterUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
@@ -466,7 +466,7 @@ export default function WinRatesClient({ description }: WinRatesClientProps) {
                     key={`${row.rank}-${row.faction}-${row.character}-${idx}`}
                     className='hover:bg-gray-50 dark:hover:bg-gray-700'
                   >
-                    <td className={`${cellClass} tabular-nums`}>{row.no}</td>
+                    <td className={cn(cellClass, 'tabular-nums')}>{row.no}</td>
                     {isColVisible('rank') && (
                       <td className={cellClass} onDoubleClick={() => toggleRank(row.rank)}>
                         {row.rank}
@@ -478,7 +478,7 @@ export default function WinRatesClient({ description }: WinRatesClientProps) {
                       </td>
                     )}
                     {isColVisible('character') && (
-                      <td className={`${cellClass} font-medium`}>
+                      <td className={cn(cellClass, 'font-medium')}>
                         <Link href={`/characters/${encodeURIComponent(row.character)}`}>
                           {row.character}
                         </Link>

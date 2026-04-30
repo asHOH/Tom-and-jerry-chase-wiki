@@ -3,12 +3,13 @@
 
 import { useState } from 'react';
 
+import { cn } from '@/lib/design';
 import { SingleItem } from '@/data/types';
 import SingleItemButton from '@/components/ui/SingleItemButton';
 
 // 箭头SVG组件 - 与原文件保持一致
 const ArrowIcon = ({ expanded }: { expanded: boolean }) => (
-  <div className={`transition-transform duration-300 ${expanded ? 'rotate-90' : 'rotate-0'}`}>
+  <div className={cn('transition-transform duration-300', expanded ? 'rotate-90' : 'rotate-0')}>
     <svg
       className='h-5 w-5'
       fill='none'
@@ -97,14 +98,17 @@ export default function CollapsibleItems({
 
         {/* 展开的剩余项目列表 - 使用纯CSS动画 */}
         <div
-          className={`overflow-hidden transition-all duration-300 ease-in-out ${
-            expanded ? `max-h-[${maxExpandHeight}] opacity-100` : 'max-h-0 opacity-0'
-          }`}
+          className={cn(
+            'overflow-hidden transition-all duration-300 ease-in-out',
+            expanded ? 'opacity-100' : 'max-h-0 opacity-0'
+          )}
+          style={expanded ? { maxHeight: maxExpandHeight } : undefined}
         >
           <div
-            className={`flex flex-wrap gap-2 pt-1 transition-opacity duration-300 ${
+            className={cn(
+              'flex flex-wrap gap-2 pt-1 transition-opacity duration-300',
               expanded ? 'opacity-100' : 'opacity-0'
-            }`}
+            )}
           >
             {itemsArray.map((item, index) => (
               <SingleItemButton key={index} singleItem={item} size='small' />

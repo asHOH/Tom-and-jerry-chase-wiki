@@ -1,3 +1,4 @@
+import { cn } from '@/lib/design';
 import { getSingleItemImageUrl } from '@/lib/singleItemTools';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { SingleItem } from '@/data/types';
@@ -13,11 +14,14 @@ export default function SingleItemCardDisplay({ singleItem }: { singleItem: Sing
         src={getSingleItemImageUrl(singleItem)}
         alt={`${singleItem.name}道具图标`}
         size='ITEM_CARD'
-        className={`hover:scale-105 ${isMobile ? 'h-32 w-auto' : ''}`}
+        className={cn('hover:scale-105', isMobile && 'h-32 w-auto')}
       />
       <div className='w-full px-3 pt-1 pb-3 text-center'>
         <h3
-          className={`${isMobile && singleItem.name.length >= 6 ? 'text-md' : 'text-lg'} mb-1 h-6 font-bold whitespace-pre text-gray-800 dark:text-white`}
+          className={cn(
+            'mb-1 h-6 font-bold whitespace-pre text-gray-800 dark:text-white',
+            isMobile && singleItem.name.length >= 6 ? 'text-md' : 'text-lg'
+          )}
         >
           {singleItem.name}
         </h3>

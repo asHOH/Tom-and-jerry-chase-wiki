@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import useSWR from 'swr';
 
+import { cn } from '@/lib/design';
 import { Database } from '@/data/database.types';
 import CategoryManagement from '@/features/admin/components/CategoryManagement';
 import GameDataActionModerationPanel, {
@@ -69,42 +70,32 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
     fetchPendingGameDataActions
   );
 
+  const getTabClassName = (tab: 'users' | 'categories' | 'actions') =>
+    cn(
+      'border-b-2 px-4 py-2 text-sm font-medium transition-colors',
+      activeTab === tab
+        ? 'border-blue-500 text-blue-600 dark:border-blue-400 dark:text-blue-300'
+        : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-slate-400 dark:hover:text-slate-200'
+    );
+
   return (
     <div className='mx-auto max-w-6xl p-6 dark:text-slate-200'>
       <h1 className='mb-6 text-3xl font-bold text-gray-900 dark:text-gray-100'>管理面板</h1>
 
       <div className='mb-6 flex border-b border-gray-200 dark:border-slate-700'>
         {enableUserAccess && (
-          <button
-            onClick={() => setActiveTab('users')}
-            className={`border-b-2 px-4 py-2 text-sm font-medium transition-colors ${
-              activeTab === 'users'
-                ? 'border-blue-500 text-blue-600 dark:border-blue-400 dark:text-blue-300'
-                : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-slate-400 dark:hover:text-slate-200'
-            }`}
-          >
+          <button onClick={() => setActiveTab('users')} className={getTabClassName('users')}>
             用户管理
           </button>
         )}
         <button
           onClick={() => setActiveTab('categories')}
-          className={`border-b-2 px-4 py-2 text-sm font-medium transition-colors ${
-            activeTab === 'categories'
-              ? 'border-blue-500 text-blue-600 dark:border-blue-400 dark:text-blue-300'
-              : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-slate-400 dark:hover:text-slate-200'
-          }`}
+          className={getTabClassName('categories')}
         >
           分类管理
         </button>
         {enableActionModeration && (
-          <button
-            onClick={() => setActiveTab('actions')}
-            className={`border-b-2 px-4 py-2 text-sm font-medium transition-colors ${
-              activeTab === 'actions'
-                ? 'border-blue-500 text-blue-600 dark:border-blue-400 dark:text-blue-300'
-                : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-slate-400 dark:hover:text-slate-200'
-            }`}
-          >
+          <button onClick={() => setActiveTab('actions')} className={getTabClassName('actions')}>
             改动审核
           </button>
         )}

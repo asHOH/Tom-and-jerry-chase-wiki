@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { AnimatePresence, m, useReducedMotion } from 'motion/react';
 
 import { AssetManager } from '@/lib/assetManager';
+import { cn } from '@/lib/design';
 import { useFilterState } from '@/lib/filterUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useSwipeGesture } from '@/hooks/useSwipeGesture';
@@ -324,7 +325,10 @@ export default function ArticlesClient({ articles: data, description }: Articles
 
         {/* Stats and Quick Actions */}
         <div
-          className={`flex flex-col sm:flex-row sm:items-center sm:justify-between ${isMobile ? 'mt-4 gap-2 px-2' : 'mt-8 gap-4 px-4'}`}
+          className={cn(
+            'flex flex-col sm:flex-row sm:items-center sm:justify-between',
+            isMobile ? 'mt-4 gap-2 px-2' : 'mt-8 gap-4 px-4'
+          )}
         >
           <div className='text-center text-sm text-gray-600 sm:text-left dark:text-gray-400'>
             共 {filteredArticles.length} 篇文章
@@ -415,7 +419,10 @@ export default function ArticlesClient({ articles: data, description }: Articles
       ) : (
         <div
           ref={isMobile ? (swipeContainerRef as React.RefObject<HTMLDivElement>) : articlesGridRef}
-          className={`auto-fit-grid grid-container grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] ${!isMobile && 'mt-8 gap-6 px-4'}`}
+          className={cn(
+            'auto-fit-grid grid-container grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))]',
+            !isMobile && 'mt-8 gap-6 px-4'
+          )}
         >
           <AnimatePresence initial={false}>
             {visibleArticles.map((article) => {

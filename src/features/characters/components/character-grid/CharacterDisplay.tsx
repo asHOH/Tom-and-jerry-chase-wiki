@@ -1,10 +1,9 @@
 'use client';
 
 import { useMemo } from 'react';
-import clsx from 'clsx';
 
 import { GameDataManager } from '@/lib/dataManager';
-import { getPositioningTagColors } from '@/lib/design';
+import { cn, getPositioningTagColors } from '@/lib/design';
 import { CharacterDisplayProps } from '@/lib/types';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
@@ -45,7 +44,7 @@ export default function CharacterDisplay({
       preserveEditParam={isUserCharacter}
       role='button'
       aria-label={`查看${name}角色详情`}
-      className={clsx(
+      className={cn(
         isEntryCard &&
           'border-2 border-dashed border-slate-300 bg-slate-50 opacity-60 dark:border-slate-600 dark:bg-slate-800/50'
       )}
@@ -54,19 +53,22 @@ export default function CharacterDisplay({
         src={imageUrl}
         alt={`${name}`}
         size='CHARACTER_CARD'
-        className={`group-hover:scale-105 ${isMobile ? 'h-40 w-auto' : ''}`}
+        className={cn('group-hover:scale-105', isMobile && 'h-40 w-auto')}
         preload={preload}
       />
-      <div className={`${isMobile ? 'pb-3' : 'px-3 pb-5'} pt-1 text-center`}>
+      <div className={cn('pt-1 text-center', isMobile ? 'pb-3' : 'px-3 pb-5')}>
         <h2
-          className={`${isMobile ? 'text-lg' : 'mb-2 text-xl'} font-bold whitespace-pre dark:text-white`}
+          className={cn(
+            'font-bold whitespace-pre dark:text-white',
+            isMobile ? 'text-lg' : 'mb-2 text-xl'
+          )}
         >
           {name}
         </h2>
 
         {sortedPositioningTags && sortedPositioningTags.length > 0 && (
           <div
-            className={`flex flex-wrap justify-center gap-1 ${isMobile ? '' : 'mt-2'}`}
+            className={cn('flex flex-wrap justify-center gap-1', !isMobile && 'mt-2')}
             role='list'
             aria-label='角色定位标签'
           >

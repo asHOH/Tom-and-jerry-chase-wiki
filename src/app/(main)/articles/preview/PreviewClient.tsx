@@ -4,6 +4,7 @@ import { useSearchParams } from 'next/navigation';
 import useSWR from 'swr';
 
 import { formatArticleDate } from '@/lib/dateUtils';
+import { cn } from '@/lib/design';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import PageTitle from '@/components/ui/PageTitle';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
@@ -128,7 +129,8 @@ export default function PreviewClient() {
       {/* Preview Banner */}
       <div className='mb-6'>
         <div
-          className={`border-l-4 p-4 ${
+          className={cn(
+            'border-l-4 p-4',
             statusInfo.color.includes('yellow')
               ? 'border-yellow-400'
               : statusInfo.color.includes('green')
@@ -136,7 +138,7 @@ export default function PreviewClient() {
                 : statusInfo.color.includes('red')
                   ? 'border-red-400'
                   : 'border-gray-400'
-          }`}
+          )}
         >
           <div className='flex items-start justify-between'>
             <div className='flex-1'>
@@ -146,7 +148,10 @@ export default function PreviewClient() {
                   文章预览
                 </span>
                 <span
-                  className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-medium ${statusInfo.color}`}
+                  className={cn(
+                    'inline-flex items-center rounded-full px-3 py-1 text-sm font-medium',
+                    statusInfo.color
+                  )}
                 >
                   {statusInfo.text}
                 </span>

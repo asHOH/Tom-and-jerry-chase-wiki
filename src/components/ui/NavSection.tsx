@@ -3,6 +3,7 @@
 import React from 'react';
 import { useIntersectionObserver } from 'usehooks-ts';
 
+import { cn } from '@/lib/design';
 import FactionButton from '@/components/ui/FactionButton';
 import FactionButtonGroup from '@/components/ui/FactionButtonGroup';
 
@@ -30,9 +31,10 @@ const HomePageSection: React.FC<HomePageSectionProps> = ({ title, buttons }) => 
   return (
     <div
       ref={sectionRef}
-      className={`mt-12 flex flex-col items-center px-2 transition-all duration-300 ease-out md:mt-16 md:px-4 ${
+      className={cn(
+        'mt-12 flex flex-col items-center px-2 transition-all duration-300 ease-out md:mt-16 md:px-4',
         isVisible ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'
-      }`}
+      )}
     >
       {title !== undefined && (
         <h2

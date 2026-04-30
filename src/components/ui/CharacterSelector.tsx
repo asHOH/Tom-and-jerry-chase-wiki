@@ -3,6 +3,7 @@
 import React, { useMemo, useState } from 'react';
 
 import { AssetManager } from '@/lib/assetManager';
+import { cn } from '@/lib/design';
 import type { CharacterRelationItem } from '@/data/types';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
@@ -140,7 +141,12 @@ export function CharacterSlotsSelector({
           <div
             key={index}
             onClick={() => handleSlotClick(index)}
-            className={`relative flex h-24 w-24 cursor-pointer items-center justify-center rounded-xl border-2 border-dashed transition-all duration-200 hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 ${id ? 'border-solid border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-300 dark:border-gray-600'} `}
+            className={cn(
+              'relative flex h-24 w-24 cursor-pointer items-center justify-center rounded-xl border-2 border-dashed transition-all duration-200 hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20',
+              id
+                ? 'border-solid border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                : 'border-gray-300 dark:border-gray-600'
+            )}
           >
             {id ? (
               <>
@@ -199,7 +205,12 @@ export function CharacterSlotsSelector({
                     onClick={() => !isSelected && handleSelect(character.id)}
                     disabled={isSelected}
                     type='button'
-                    className={`flex flex-col items-center gap-2 rounded-lg p-2 transition-colors ${isSelected ? 'cursor-not-allowed opacity-50 grayscale' : 'hover:bg-gray-100 focus:outline-none focus-visible:bg-gray-100 dark:hover:bg-gray-700 dark:focus-visible:bg-gray-700'} `}
+                    className={cn(
+                      'flex flex-col items-center gap-2 rounded-lg p-2 transition-colors',
+                      isSelected
+                        ? 'cursor-not-allowed opacity-50 grayscale'
+                        : 'hover:bg-gray-100 focus:outline-none focus-visible:bg-gray-100 dark:hover:bg-gray-700 dark:focus-visible:bg-gray-700'
+                    )}
                   >
                     <Image
                       src={getCharacterImageUrl(character.id)}
@@ -269,11 +280,13 @@ export function ArticleCharacterSelector({
         type='button'
         onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
-        className={`flex w-full items-center justify-between rounded-lg border px-4 py-3 text-left text-lg transition-all duration-200 ${
+        className={cn(
+          'flex w-full items-center justify-between rounded-lg border px-4 py-3 text-left text-lg transition-all duration-200',
           disabled
             ? 'cursor-not-allowed border-gray-200 bg-gray-100 text-gray-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-500'
-            : 'cursor-pointer border-gray-300 bg-white text-gray-900 hover:border-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100'
-        } ${selectedCharacter && !disabled ? 'pr-14' : ''}`}
+            : 'cursor-pointer border-gray-300 bg-white text-gray-900 hover:border-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100',
+          selectedCharacter && !disabled && 'pr-14'
+        )}
         aria-haspopup='listbox'
         aria-expanded={isOpen}
         aria-label='选择角色'
@@ -296,7 +309,7 @@ export function ArticleCharacterSelector({
           <span className='text-gray-500 dark:text-gray-400'>请选择角色</span>
         )}
         <svg
-          className={`h-5 w-5 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+          className={cn('h-5 w-5 text-gray-400 transition-transform', isOpen && 'rotate-180')}
           fill='none'
           stroke='currentColor'
           viewBox='0 0 24 24'
@@ -349,11 +362,12 @@ export function ArticleCharacterSelector({
                     key={char.id}
                     type='button'
                     onClick={() => handleSelect(char.id)}
-                    className={`flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors hover:bg-gray-100 focus:bg-gray-100 focus:outline-none dark:hover:bg-slate-800 dark:focus:bg-slate-800 ${
+                    className={cn(
+                      'flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors hover:bg-gray-100 focus:bg-gray-100 focus:outline-none dark:hover:bg-slate-800 dark:focus:bg-slate-800',
                       selectedCharacterId === char.id
                         ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300'
                         : 'text-gray-800 dark:text-slate-100'
-                    }`}
+                    )}
                   >
                     <Image
                       src={AssetManager.getCharacterImageUrl(char.id, char.factionId)}
@@ -364,11 +378,12 @@ export function ArticleCharacterSelector({
                     />
                     <span>{char.id}</span>
                     <span
-                      className={`ml-auto rounded px-1.5 py-0.5 text-xs ${
+                      className={cn(
+                        'ml-auto rounded px-1.5 py-0.5 text-xs',
                         char.factionId === 'cat'
                           ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300'
                           : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
-                      }`}
+                      )}
                     >
                       {char.factionId === 'cat' ? '猫' : '鼠'}
                     </span>

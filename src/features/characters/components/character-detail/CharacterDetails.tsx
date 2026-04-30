@@ -268,7 +268,7 @@ export default function CharacterDetails({
               {!isEditMode && isMobile && (
                 <div>
                   <div
-                    className={`auto-fit-grid grid-container grid`}
+                    className='auto-fit-grid grid-container grid'
                     style={{
                       gridTemplateColumns: `5rem repeat(auto-fit, minmax(1px,1fr))`,
                     }}

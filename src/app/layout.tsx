@@ -5,6 +5,7 @@ import Script from 'next/script';
 import NextTopLoader from 'nextjs-toploader';
 
 import { getRuntimeCspHeader } from '@/lib/csp';
+import { cn } from '@/lib/design';
 import { isVercelAnalyticsEnabled } from '@/lib/platform';
 import { defaultMetadata } from '@/constants/seo';
 import { AnalyticsComponent } from '@/components/AnalyticsComponent';
@@ -109,7 +110,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         </Script>
         {/* Next.js automatically self-hosts Google Fonts - no external requests needed */}
       </head>
-      <body className={`${inter.className} ${inter.variable} ${notoSansSC.variable}`}>
+      <body className={cn(inter.className, inter.variable, notoSansSC.variable)}>
         <DarkModeProvider>
           <NextTopLoader
             color='#2563eb'

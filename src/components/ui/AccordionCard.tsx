@@ -34,6 +34,12 @@ const colorMap = {
   purple: 'bg-fuchsia-200 dark:bg-fuchsia-900 border-2 border-fuchsia-300 dark:border-fuchsia-700',
 } as const;
 
+const titleSizeClasses = {
+  xs: 'text-sm',
+  md: 'mx-1 text-xl',
+  sm: 'mx-2 text-2xl',
+} as const;
+
 export default function AccordionCard({
   items,
   className,
@@ -46,7 +52,7 @@ export default function AccordionCard({
   contentContainerClassName,
   contentPanelClassName,
 }: AccordionProps) {
-  const text = { xs: 'sm', md: 'xl mx-1', sm: '2xl mx-2' }[size || 'sm'];
+  const titleSizeClassName = titleSizeClasses[size || 'sm'];
   const [activeItemId, setActiveItemId] = useState<string | null>(defaultOpenId ?? null);
   const [renderedItemId, setRenderedItemId] = useState<string | null>(defaultOpenId ?? null);
 
@@ -89,7 +95,7 @@ export default function AccordionCard({
               )}
               aria-expanded={isExpanded}
             >
-              <span className={`text-${text}`}>{item.title}</span>
+              <span className={titleSizeClassName}>{item.title}</span>
             </button>
           );
         })}

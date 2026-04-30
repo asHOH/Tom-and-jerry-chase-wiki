@@ -2,6 +2,7 @@
 
 import { m } from 'motion/react';
 
+import { cn } from '@/lib/design';
 import { useSpecifyTypeNavigation } from '@/hooks/useSpecifyTypeNavigation';
 import { ChevronLeftIcon, ChevronRightIcon } from '@/components/icons/CommonIcons';
 
@@ -45,14 +46,15 @@ export default function SpecifyTypeNavigationButtons({
     'cursor-not-allowed bg-gray-200 text-gray-500 border-gray-300 dark:bg-gray-700 dark:text-gray-500 dark:border-gray-700';
 
   return (
-    <div className={`flex items-center justify-between gap-3 ${className}`}>
+    <div className={cn('flex items-center justify-between gap-3', className)}>
       {/* Previous Target Button */}
       <m.button
         onClick={navigateToPrevious}
         disabled={!previousTarget}
-        className={`${baseButtonClasses} ${
-          previousTarget ? enabledButtonClasses : `${disabledButtonClasses}`
-        }`}
+        className={cn(
+          baseButtonClasses,
+          previousTarget ? enabledButtonClasses : disabledButtonClasses
+        )}
         whileHover={previousTarget ? { scale: 1.05 } : {}}
         whileTap={previousTarget ? { scale: 0.95 } : {}}
       >
@@ -70,9 +72,7 @@ export default function SpecifyTypeNavigationButtons({
       <m.button
         onClick={navigateToNext}
         disabled={!nextTarget}
-        className={`${baseButtonClasses} ${
-          nextTarget ? enabledButtonClasses : `${disabledButtonClasses}`
-        }`}
+        className={cn(baseButtonClasses, nextTarget ? enabledButtonClasses : disabledButtonClasses)}
         whileHover={nextTarget ? { scale: 1.05 } : {}}
         whileTap={nextTarget ? { scale: 0.95 } : {}}
       >

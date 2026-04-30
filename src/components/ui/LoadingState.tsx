@@ -32,6 +32,19 @@ interface LoadingStateProps {
   animate?: boolean;
 }
 
+const gridItemClasses = [
+  'grid-item-1',
+  'grid-item-2',
+  'grid-item-3',
+  'grid-item-4',
+  'grid-item-5',
+  'grid-item-6',
+  'grid-item-7',
+  'grid-item-8',
+] as const;
+
+const getGridItemClass = (index: number) => gridItemClasses[index % gridItemClasses.length];
+
 /**
  * Unified loading state component that provides consistent loading UI across the app
  */
@@ -83,7 +96,7 @@ export default function LoadingState({
           {/* Character grid skeleton */}
           <div className='grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
             {Array.from({ length: count }).map((_, i) => (
-              <div key={i} className={`animate-fadeInUp grid-item-${(i % 8) + 1}`}>
+              <div key={i} className={cn('animate-fadeInUp', getGridItemClass(i))}>
                 <SkeletonCharacterCard animate={animate} />
               </div>
             ))}
@@ -126,7 +139,7 @@ export default function LoadingState({
           {/* Knowledge card grid skeleton */}
           <div className='grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6'>
             {Array.from({ length: count }).map((_, i) => (
-              <div key={i} className={`animate-slideInLeft grid-item-${(i % 8) + 1}`}>
+              <div key={i} className={cn('animate-slideInLeft', getGridItemClass(i))}>
                 <SkeletonKnowledgeCard animate={animate} />
               </div>
             ))}
@@ -179,7 +192,7 @@ export default function LoadingState({
           {/* Item grid skeleton */}
           <div className='grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6'>
             {Array.from({ length: count }).map((_, i) => (
-              <div key={i} className={`animate-fadeInUp grid-item-${(i % 8) + 1}`}>
+              <div key={i} className={cn('animate-fadeInUp', getGridItemClass(i))}>
                 <SkeletonItemCard animate={animate} tagCount={2} />
               </div>
             ))}
@@ -206,7 +219,7 @@ export default function LoadingState({
 
           <div className='grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6'>
             {Array.from({ length: count }).map((_, i) => (
-              <div key={i} className={`animate-fadeInUp grid-item-${(i % 8) + 1}`}>
+              <div key={i} className={cn('animate-fadeInUp', getGridItemClass(i))}>
                 <SkeletonSpecialSkillCard animate={animate} />
               </div>
             ))}
@@ -276,7 +289,7 @@ export default function LoadingState({
           {/* Buff grid skeleton */}
           <div className='grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6'>
             {Array.from({ length: count }).map((_, i) => (
-              <div key={i} className={`animate-fadeInUp grid-item-${(i % 8) + 1}`}>
+              <div key={i} className={cn('animate-fadeInUp', getGridItemClass(i))}>
                 <SkeletonBuffCard animate={animate} />
               </div>
             ))}

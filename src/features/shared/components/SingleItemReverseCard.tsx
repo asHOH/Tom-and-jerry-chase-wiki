@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { getTypeLabelColors } from '@/lib/design';
+import { cn, getTypeLabelColors } from '@/lib/design';
 import singleItemRreverse, { getCategorizedKeywords } from '@/lib/singleItemReverse';
 import {
   getFactionLabel,
@@ -124,7 +124,7 @@ function ReverseResultButton({
 
       if (keywordInfo) {
         return (
-          <span key={`highlight-${index}`} className={`font-bold ${keywordInfo.colorClass}`}>
+          <span key={`highlight-${index}`} className={cn('font-bold', keywordInfo.colorClass)}>
             {part}
           </span>
         );

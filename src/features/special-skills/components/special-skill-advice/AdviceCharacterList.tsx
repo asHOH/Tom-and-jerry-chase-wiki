@@ -1,5 +1,6 @@
 'use client';
 
+import { cn } from '@/lib/design';
 import Image from '@/components/Image';
 
 interface Character {
@@ -46,7 +47,10 @@ export default function AdviceCharacterList({
         {characters.map((character) => (
           <li
             key={character.id ?? ''}
-            className={`flex items-center gap-3 rounded-lg p-3 transition-colors hover:-translate-y-1 ${classNameColors[color]}`}
+            className={cn(
+              'flex items-center gap-3 rounded-lg p-3 transition-colors hover:-translate-y-1',
+              classNameColors[color]
+            )}
           >
             <a
               href={`/characters/${character.id}`}
@@ -69,7 +73,10 @@ export default function AdviceCharacterList({
         {isMinorCharacters.map((character) => (
           <li
             key={character.id ?? ''}
-            className={`flex items-center gap-3 rounded-lg p-3 opacity-60 transition-colors hover:-translate-y-1 ${classNameColors[color]}`}
+            className={cn(
+              'flex items-center gap-3 rounded-lg p-3 opacity-60 transition-colors hover:-translate-y-1',
+              classNameColors[color]
+            )}
           >
             <a
               href={`/characters/${character.id}`}
