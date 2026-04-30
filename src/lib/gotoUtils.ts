@@ -110,12 +110,11 @@ export async function getGotoResult(
   };
 
   const parseSkillSlot = (rest: string): Skill['type'] | null => {
-    if (/^(?:主动技能|主动|主(?:动)?|主技能|(?:1|一)主)$/.test(rest)) return 'active';
-    if (/^(?:被动技能|被动|被(?:动)?|被技能|(?:1|一)被)$/.test(rest)) return 'passive';
-    if (/^(?:(?:1|一)武(?:器)?|武(?:器)?1|武(?:器)?一|武1|武一|武器技能(?:1|一)?)$/.test(rest))
+    if (/^(?:主动技能|主动|主(?:动)?|(?:1|一)主)$/.test(rest)) return 'active';
+    if (/^(?:被动技能|被动|被(?:动)?|(?:1|一)被)$/.test(rest)) return 'passive';
+    if (/^(?:(?:1|一)武(?:器)?|武(?:器)?1|武(?:器)?一|武器技能(?:1|一)?)$/.test(rest))
       return 'weapon1';
-    if (/^(?:(?:2|二)武(?:器)?|武(?:器)?2|武(?:器)?二|武2|武二|武器技能2)$/.test(rest))
-      return 'weapon2';
+    if (/^(?:(?:2|二)武(?:器)?|武(?:器)?2|武(?:器)?二|武器技能2)$/.test(rest)) return 'weapon2';
     return null;
   };
 
