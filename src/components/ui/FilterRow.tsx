@@ -1,7 +1,7 @@
 import React, { ReactNode, useId } from 'react';
-import clsx from 'clsx';
 import { m, MotionStyle } from 'motion/react';
 
+import { cn } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 
 import FilterLabel from './FilterLabel';
@@ -46,7 +46,7 @@ export default function FilterRow<T extends string | number>(props: FilterRowPro
 
   return (
     <div
-      className={clsx(
+      className={cn(
         `flex items-center justify-center gap-2 ${isMobile ? 'mt-1' : 'mt-4'}`,
         className
       )}
@@ -59,7 +59,7 @@ export default function FilterRow<T extends string | number>(props: FilterRowPro
       </div> */}
       <div className='flex'>
         <div
-          className={clsx('flex flex-wrap gap-1 md:gap-2', innerClassName)}
+          className={cn('flex flex-wrap gap-1 md:gap-2', innerClassName)}
           aria-label={ariaLabel || label}
         >
           {options.map((opt) => {
@@ -72,7 +72,7 @@ export default function FilterRow<T extends string | number>(props: FilterRowPro
                 key={String(opt)}
                 type='button'
                 onClick={() => onToggle(opt as T)}
-                className={clsx(
+                className={cn(
                   'filter-button cursor-pointer rounded-lg border-none px-3 py-2 text-sm font-medium transition-all duration-200 ease-in-out',
                   active
                     ? 'bg-gray-200 text-gray-900 dark:bg-gray-700 dark:text-gray-100'

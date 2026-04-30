@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import clsx from 'clsx';
 import { useReducedMotion } from 'motion/react';
+
+import { cn } from '@/lib/design';
 
 type AttentionDotProps = {
   /** Whether the dot should be visible at all */
@@ -45,7 +46,7 @@ export default function AttentionDot({ visible, className, color = 'blue' }: Att
 
   return (
     <span
-      className={clsx(
+      className={cn(
         'pointer-events-none absolute z-20 size-2 rounded-full',
         colorClasses,
         pulsing && ['animate-attention-pulse', glowClasses],

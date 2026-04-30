@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import clsx from 'clsx';
 import { createPortal } from 'react-dom';
+
+import { cn } from '@/lib/design';
 
 interface LinkDialogProps {
   isOpen: boolean;
@@ -66,7 +67,7 @@ export default function LinkDialog({
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               placeholder='https://example.com'
-              className={clsx(
+              className={cn(
                 'w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500',
                 'dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400'
               )}

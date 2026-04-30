@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { EditorContent } from '@tiptap/react';
-import clsx from 'clsx';
 
+import { cn } from '@/lib/design';
 import { cleanHTMLForExport } from '@/lib/richtext/htmlTransforms';
 import {
   describeAllowedImageSources,
@@ -304,7 +304,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
                 onChange?.(sanitizedHtml);
               }
             }}
-            className={clsx(
+            className={cn(
               'h-full min-h-[400px] w-full bg-gray-50 p-6 text-gray-900 dark:bg-gray-800 dark:text-gray-100',
               'resize-none font-mono text-sm focus:outline-none',
               className

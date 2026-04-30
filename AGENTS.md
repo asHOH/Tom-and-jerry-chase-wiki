@@ -99,7 +99,7 @@ scripts/                    # Build scripts (generate-doc-pages.mjs, image optim
 - Client components: `'use client'` directive at top. Server components are the default.
 - Props: `type FooProps = { ... }` above the component. Extend HTML attributes when wrapping native elements.
 - Default exports for page-level and UI primitive components. Named exports for utilities and types.
-- Use `clsx` (not `classnames`) for conditional classes. Use `tailwind-merge` via design utilities when needed.
+- Use `cn` from `@/lib/design` for conditional or composed classes. It wraps `clsx` and `tailwind-merge`.
 
 ## Naming
 
@@ -172,6 +172,9 @@ scripts/                    # Build scripts (generate-doc-pages.mjs, image optim
 # UI Rules
 
 - Tailwind classes for all static styling. No CSS modules, no styled-components.
+- Static one-off `className` strings can stay inline. Use `cn(...)` when classes are conditional, merged with incoming `className`, or assembled from reusable constants.
+- Avoid template literals for `className`; prefer `cn('base classes', condition && 'conditional classes', className)`.
+- Reusable component variants should use typed maps or helper functions, not repeated ad hoc class strings.
 - Inline `style` prop: ONLY for runtime-computed values (dynamic transforms, positions).
 - Mobile-first: Use Tailwind responsive prefixes (`sm:`, `md:`, `lg:`). `useMobile` hook for gesture behavior.
 - Dark mode: Tailwind `dark:` variant. `DarkModeProvider` context.

@@ -2,9 +2,9 @@
 
 /* eslint-disable @next/next/no-img-element */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import clsx from 'clsx';
 import { createPortal } from 'react-dom';
 
+import { cn } from '@/lib/design';
 import { RTE_IMAGE_ALLOWED_MIME_TYPES, RTE_IMAGE_MAX_BYTES } from '@/lib/richtext/imagePolicy';
 
 import { LoadingSpinnerIcon } from '../RichTextEditorIcons';
@@ -250,7 +250,7 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
     <button
       type='button'
       onClick={() => setActiveTab(id)}
-      className={clsx(
+      className={cn(
         'rounded-md px-4 py-2 text-sm font-medium transition-colors duration-150',
         activeTab === id
           ? 'bg-blue-600 text-white shadow-sm'

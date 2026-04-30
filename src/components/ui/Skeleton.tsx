@@ -1,4 +1,4 @@
-import clsx from 'clsx';
+import { cn } from '@/lib/design';
 
 interface SkeletonProps {
   className?: string;
@@ -24,7 +24,7 @@ export function Skeleton({
 
   return (
     <div
-      className={clsx(
+      className={cn(
         'relative overflow-hidden bg-gray-200 dark:bg-gray-700',
         rounded && 'rounded',
         animate && 'animate-pulse',
@@ -50,11 +50,11 @@ function SkeletonText({
   animate?: boolean;
 }) {
   return (
-    <div className={clsx('space-y-2', className)}>
+    <div className={cn('space-y-2', className)}>
       {Array.from({ length: lines }).map((_, i) => (
         <Skeleton
           key={i}
-          className={clsx(
+          className={cn(
             'h-4',
             i === lines - 1 && lines > 1 ? 'w-3/4' : 'w-full' // Last line is shorter
           )}
@@ -219,7 +219,7 @@ export function SkeletonDetailLayout({
   className?: string;
 }) {
   return (
-    <div className={clsx('space-y-8', className)}>
+    <div className={cn('space-y-8', className)}>
       <div className='flex flex-col gap-8 md:flex-row'>
         <div className='md:w-1/3'>
           <div className='overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800'>

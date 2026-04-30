@@ -1,4 +1,4 @@
-import clsx from 'clsx';
+import { cn } from '@/lib/design';
 
 import { BouncingDots, RippleAnimation, SpinningBars } from './LoadingAnimations';
 
@@ -34,14 +34,11 @@ export default function LoadingSpinner({
   };
 
   return (
-    <div className={clsx('flex items-center justify-center space-x-3', className)}>
+    <div className={cn('flex items-center justify-center space-x-3', className)}>
       {renderAnimation()}
       {message && (
         <span
-          className={clsx(
-            'animate-fadeInUp text-gray-600 dark:text-gray-300',
-            textSizeClasses[size]
-          )}
+          className={cn('animate-fadeInUp text-gray-600 dark:text-gray-300', textSizeClasses[size])}
         >
           {message}
         </span>

@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import clsx from 'clsx';
+
+import { cn } from '@/lib/design';
 
 type CardProps<E extends React.ElementType = 'div'> = {
   as?: E;
@@ -16,5 +17,5 @@ export default function Card<E extends React.ElementType = 'div'>({
   ...rest
 }: CardProps<E>) {
   const Component = (as || 'div') as React.ElementType;
-  return <Component className={clsx(baseClasses, className)} {...rest} />;
+  return <Component className={cn(baseClasses, className)} {...rest} />;
 }

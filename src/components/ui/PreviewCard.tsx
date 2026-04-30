@@ -1,6 +1,4 @@
-import clsx from 'clsx';
-
-import { getTypeLabelColors } from '@/lib/design';
+import { cn, getTypeLabelColors } from '@/lib/design';
 import { getFactionLabel, getOwnerSuffix } from '@/lib/singleItemTools';
 import type { GotoDisambiguationCandidate } from '@/lib/types';
 import { useDarkMode } from '@/context/DarkModeContext';
@@ -104,7 +102,7 @@ export default function PreviewCard({
 
   const content = (
     <BaseCard
-      className={clsx(
+      className={cn(
         'flex w-full max-w-xs cursor-pointer flex-row items-start p-4 shadow-md transition-shadow duration-200 hover:shadow-lg sm:max-w-sm md:max-w-md md:p-5 lg:max-w-lg lg:p-6',
         className
       )}

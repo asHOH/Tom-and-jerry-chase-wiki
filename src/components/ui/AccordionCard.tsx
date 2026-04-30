@@ -1,5 +1,6 @@
 import React, { startTransition, useState } from 'react';
-import clsx from 'clsx';
+
+import { cn } from '@/lib/design';
 
 type AccordionItem = {
   id: string;
@@ -61,7 +62,7 @@ export default function AccordionCard({
   return (
     <div className={className}>
       <div
-        className={clsx(
+        className={cn(
           'scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 flex overflow-x-auto',
           'dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800',
           titleClassName
@@ -78,7 +79,7 @@ export default function AccordionCard({
               key={item.id}
               type='button'
               onClick={() => toggleItem(item.id)}
-              className={clsx(
+              className={cn(
                 'flex flex-1 cursor-pointer items-center justify-center px-1 py-1 font-bold text-black focus:outline-none dark:text-white',
                 'whitespace-nowrap transition-[background-color,border-color,box-shadow] duration-200',
                 useDefaultButtonColors && titleColor,
@@ -100,10 +101,7 @@ export default function AccordionCard({
 
           return (
             isExpanded && (
-              <div
-                key={`content-${item.id}`}
-                className={clsx(contentPanelClassName, item.className)}
-              >
+              <div key={`content-${item.id}`} className={cn(contentPanelClassName, item.className)}>
                 {item.children}
               </div>
             )

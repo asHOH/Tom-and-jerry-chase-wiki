@@ -2,7 +2,7 @@
 
 import type { MouseEvent, ReactNode } from 'react';
 
-import { cn } from '@/lib/design/cn';
+import { cn } from '@/lib/design';
 import Link from '@/components/Link';
 
 export type ActionTileProps = {

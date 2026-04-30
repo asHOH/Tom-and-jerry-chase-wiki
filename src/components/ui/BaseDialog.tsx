@@ -1,9 +1,10 @@
 'use client';
 
 import { useEffect, useId, useRef, type ReactNode } from 'react';
-import clsx from 'clsx';
 import { AnimatePresence, m, useReducedMotion } from 'motion/react';
 import { createPortal } from 'react-dom';
+
+import { cn } from '@/lib/design';
 
 export type DialogCloseReason = 'escape' | 'backdrop' | 'close-button' | 'programmatic';
 
@@ -119,10 +120,7 @@ export function BaseDialog({
         <>
           <m.div
             key='backdrop'
-            className={clsx(
-              'fixed inset-0 z-40 bg-gray-900/30 backdrop-blur-sm',
-              backdropClassName
-            )}
+            className={cn('fixed inset-0 z-40 bg-gray-900/30 backdrop-blur-sm', backdropClassName)}
             aria-hidden='true'
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -145,7 +143,7 @@ export function BaseDialog({
             aria-label={ariaLabel}
             aria-labelledby={effectiveLabelledBy}
             aria-describedby={ariaDescribedBy}
-            className={clsx(
+            className={cn(
               'fixed inset-5 z-50 overflow-hidden rounded-lg bg-white shadow-xl md:inset-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:transform dark:bg-gray-800',
               panelClassName
             )}

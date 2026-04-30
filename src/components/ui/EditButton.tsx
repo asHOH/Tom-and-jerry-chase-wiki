@@ -1,7 +1,6 @@
 'use client';
 
-import clsx from 'clsx';
-
+import { cn } from '@/lib/design';
 import { useSearchParamEditMode } from '@/hooks/useSearchParamEditMode';
 
 export interface EditButtonProps {
@@ -22,7 +21,7 @@ export default function EditButton({ className, compact = false }: EditButtonPro
     <button
       type='button'
       onClick={enterEditMode}
-      className={clsx(
+      className={cn(
         'inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm font-medium transition-colors',
         'bg-amber-50 text-amber-700 hover:bg-amber-100',
         'dark:bg-amber-900/20 dark:text-amber-400 dark:hover:bg-amber-900/30',

@@ -1,5 +1,6 @@
 import React from 'react';
-import clsx from 'clsx';
+
+import { cn } from '@/lib/design';
 
 interface FactionButtonGroupProps {
   children: React.ReactNode;
@@ -9,7 +10,7 @@ interface FactionButtonGroupProps {
 function FactionButtonGroup({ children, className = '' }: FactionButtonGroupProps) {
   return (
     <div
-      className={clsx(
+      className={cn(
         'mx-auto flex w-full max-w-[700px] flex-row flex-wrap justify-center gap-3 md:gap-4',
         className
       )}

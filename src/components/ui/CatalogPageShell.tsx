@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { cn } from '@/lib/design/cn';
+import { cn } from '@/lib/design';
 
 import PageDescription from './PageDescription';
 import PageTitle from './PageTitle';

@@ -1,4 +1,4 @@
-import clsx from 'clsx';
+import { cn } from '@/lib/design';
 
 interface LoadingAnimationProps {
   size?: 'sm' | 'md' | 'lg';
@@ -15,15 +15,15 @@ export function BouncingDots({ size = 'md', className = '' }: LoadingAnimationPr
     lg: 'w-3 h-3',
   };
 
-  const dotClass = clsx(
+  const dotClass = cn(
     'bg-blue-500 dark:bg-blue-400 rounded-full animate-bounce',
     sizeClasses[size]
   );
 
   return (
-    <div className={clsx('flex items-center justify-center space-x-1', className)}>
-      <div className={clsx(dotClass, '[animation-delay:-0.3s]')}></div>
-      <div className={clsx(dotClass, '[animation-delay:-0.15s]')}></div>
+    <div className={cn('flex items-center justify-center space-x-1', className)}>
+      <div className={cn(dotClass, '[animation-delay:-0.3s]')}></div>
+      <div className={cn(dotClass, '[animation-delay:-0.15s]')}></div>
       <div className={dotClass}></div>
     </div>
   );
@@ -40,12 +40,9 @@ export function PulsingCircle({ size = 'md', className = '' }: LoadingAnimationP
   };
 
   return (
-    <div className={clsx('flex items-center justify-center', className)}>
+    <div className={cn('flex items-center justify-center', className)}>
       <div
-        className={clsx(
-          'animate-pulse rounded-full bg-blue-500 dark:bg-blue-400',
-          sizeClasses[size]
-        )}
+        className={cn('animate-pulse rounded-full bg-blue-500 dark:bg-blue-400', sizeClasses[size])}
       ></div>
     </div>
   );
@@ -62,8 +59,8 @@ export function RippleAnimation({ size = 'md', className = '' }: LoadingAnimatio
   };
 
   return (
-    <div className={clsx('relative flex items-center justify-center', className)}>
-      <div className={clsx('relative', sizeClasses[size])}>
+    <div className={cn('relative flex items-center justify-center', className)}>
+      <div className={cn('relative', sizeClasses[size])}>
         <div className='absolute inset-0 animate-ping rounded-full border-2 border-blue-500 dark:border-blue-400'></div>
         <div className='absolute inset-2 animate-ping rounded-full border-2 border-blue-500 [animation-delay:0.2s] dark:border-blue-400'></div>
         <div className='absolute inset-4 rounded-full bg-blue-500 dark:bg-blue-400'></div>
@@ -83,8 +80,8 @@ export function SpinningBars({ size = 'md', className = '' }: LoadingAnimationPr
   };
 
   return (
-    <div className={clsx('flex items-center justify-center', className)}>
-      <div className={clsx('relative', sizeClasses[size])}>
+    <div className={cn('flex items-center justify-center', className)}>
+      <div className={cn('relative', sizeClasses[size])}>
         <div className='absolute inset-0 animate-spin rounded-full border-2 border-blue-500 border-t-transparent dark:border-blue-400'></div>
       </div>
     </div>
@@ -107,28 +104,28 @@ export function WaveAnimation({ size = 'md', className = '' }: LoadingAnimationP
     lg: 'w-2',
   };
 
-  const barClass = clsx(
+  const barClass = cn(
     'bg-blue-500 dark:bg-blue-400 rounded-full animate-pulse',
     heightClasses[size],
     widthClasses[size]
   );
 
   return (
-    <div className={clsx('flex items-end justify-center space-x-1', className)}>
+    <div className={cn('flex items-end justify-center space-x-1', className)}>
       <div
-        className={clsx(barClass, '[animation-delay:-0.4s]')}
+        className={cn(barClass, '[animation-delay:-0.4s]')}
         style={{ animationDuration: '1.4s' }}
       ></div>
       <div
-        className={clsx(barClass, '[animation-delay:-0.3s]')}
+        className={cn(barClass, '[animation-delay:-0.3s]')}
         style={{ animationDuration: '1.2s' }}
       ></div>
       <div
-        className={clsx(barClass, '[animation-delay:-0.2s]')}
+        className={cn(barClass, '[animation-delay:-0.2s]')}
         style={{ animationDuration: '1.0s' }}
       ></div>
       <div
-        className={clsx(barClass, '[animation-delay:-0.1s]')}
+        className={cn(barClass, '[animation-delay:-0.1s]')}
         style={{ animationDuration: '1.2s' }}
       ></div>
       <div className={barClass} style={{ animationDuration: '1.4s' }}></div>
@@ -146,24 +143,21 @@ export function TypingDots({ size = 'md', className = '' }: LoadingAnimationProp
     lg: 'w-2 h-2',
   };
 
-  const dotClass = clsx('bg-gray-500 dark:bg-gray-400 rounded-full', sizeClasses[size]);
+  const dotClass = cn('bg-gray-500 dark:bg-gray-400 rounded-full', sizeClasses[size]);
 
   return (
-    <div className={clsx('flex items-center space-x-1', className)}>
+    <div className={cn('flex items-center space-x-1', className)}>
       <div
-        className={clsx(
-          dotClass,
-          'animate-[typing_1.4s_infinite_ease-in-out] [animation-delay:0s]'
-        )}
+        className={cn(dotClass, 'animate-[typing_1.4s_infinite_ease-in-out] [animation-delay:0s]')}
       ></div>
       <div
-        className={clsx(
+        className={cn(
           dotClass,
           'animate-[typing_1.4s_infinite_ease-in-out] [animation-delay:0.2s]'
         )}
       ></div>
       <div
-        className={clsx(
+        className={cn(
           dotClass,
           'animate-[typing_1.4s_infinite_ease-in-out] [animation-delay:0.4s]'
         )}
@@ -185,9 +179,9 @@ export function ProgressBar({
   className?: string;
 }) {
   return (
-    <div className={clsx('h-2 w-full rounded-full bg-gray-200 dark:bg-gray-700', className)}>
+    <div className={cn('h-2 w-full rounded-full bg-gray-200 dark:bg-gray-700', className)}>
       <div
-        className={clsx(
+        className={cn(
           'h-2 rounded-full bg-blue-500 transition-all duration-300 dark:bg-blue-400',
           animated && 'animate-pulse'
         )}

@@ -1,9 +1,9 @@
 'use client';
 
 import React, { forwardRef } from 'react';
-import clsx from 'clsx';
 
 import {
+  cn,
   getActionButtonClasses,
   type ActionButtonSize,
   type ActionButtonVariant,
@@ -37,7 +37,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref
   ) => {
-    const computedClassName = clsx(
+    const computedClassName = cn(
       getActionButtonClasses(variant, size, { fullWidth, loading }),
       className
     );

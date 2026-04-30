@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
-import clsx from 'clsx';
 
+import { cn } from '@/lib/design';
 import { DocPage } from '@/features/articles/utils/docs';
 import { ChevronLeftIcon, ChevronRightIcon, CloseIcon } from '@/components/icons/CommonIcons';
 import Link from '@/components/Link';
@@ -57,7 +57,7 @@ export default function DocsSidebar({ docPages }: DocsSidebarProps) {
 
       {/* Sidebar */}
       <aside
-        className={clsx(
+        className={cn(
           'fixed inset-y-0 left-0 z-40 border-r border-gray-200 bg-white lg:static dark:border-slate-700 dark:bg-slate-800',
           'transform transition-all duration-300 ease-in-out lg:block',
           isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
@@ -77,7 +77,7 @@ export default function DocsSidebar({ docPages }: DocsSidebarProps) {
             {/* Desktop collapse button */}
             <button
               onClick={toggleCollapse}
-              className={clsx(
+              className={cn(
                 'absolute top-6 right-4 hidden rounded-md p-1 text-gray-400 transition-colors hover:text-gray-600 lg:flex dark:hover:text-gray-300',
                 isCollapsed && 'right-auto left-4'
               )}
@@ -97,7 +97,7 @@ export default function DocsSidebar({ docPages }: DocsSidebarProps) {
               {/* Home link */}
               <Link
                 href='/docs'
-                className={clsx(
+                className={cn(
                   'flex items-center rounded-md text-sm font-medium transition-colors',
                   isCollapsed ? 'justify-center px-2 py-2' : 'px-3 py-2',
                   pathname === '/docs'
@@ -108,7 +108,7 @@ export default function DocsSidebar({ docPages }: DocsSidebarProps) {
                 title={isCollapsed ? 'Overview' : undefined}
               >
                 <svg
-                  className={clsx('h-4 w-4 flex-shrink-0', !isCollapsed && 'mr-3')}
+                  className={cn('h-4 w-4 flex-shrink-0', !isCollapsed && 'mr-3')}
                   fill='none'
                   stroke='currentColor'
                   viewBox='0 0 24 24'
@@ -144,7 +144,7 @@ export default function DocsSidebar({ docPages }: DocsSidebarProps) {
                         <Link
                           key={page.slug}
                           href={page.path}
-                          className={clsx(
+                          className={cn(
                             'flex items-center rounded-md text-sm font-medium transition-colors',
                             isCollapsed ? 'justify-center px-2 py-2' : 'px-3 py-2',
                             isActive
@@ -155,7 +155,7 @@ export default function DocsSidebar({ docPages }: DocsSidebarProps) {
                           title={isCollapsed ? page.title : undefined}
                         >
                           <svg
-                            className={clsx('h-4 w-4 flex-shrink-0', !isCollapsed && 'mr-3')}
+                            className={cn('h-4 w-4 flex-shrink-0', !isCollapsed && 'mr-3')}
                             fill='none'
                             stroke='currentColor'
                             viewBox='0 0 24 24'

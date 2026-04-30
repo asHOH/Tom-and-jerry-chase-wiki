@@ -1,10 +1,9 @@
 'use client';
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import clsx from 'clsx';
 import { m } from 'motion/react';
 
-import { getTypeLabelColors } from '@/lib/design';
+import { cn, getTypeLabelColors } from '@/lib/design';
 import { isOriginalCharacter } from '@/lib/editUtils';
 import { performSearch, SearchResult } from '@/lib/searchUtils';
 import { useChat } from '@/hooks/useChat';
@@ -339,7 +338,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
 
   return (
     <m.div
-      className={clsx(
+      className={cn(
         'fixed inset-0 z-50 flex items-center justify-center bg-gray-800/40 backdrop-blur-sm',
         isMobile && 'p-0'
       )}
@@ -351,7 +350,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
     >
       <m.div
         ref={dialogRef}
-        className={clsx(
+        className={cn(
           'relative bg-white p-4 shadow-xl dark:bg-gray-800',
           isMobile
             ? 'flex h-full w-full flex-col rounded-none'
@@ -402,7 +401,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
             (searchQuery.length > 1 && (aiResponseText || isChatLoading))) && (
             <m.ul
               ref={resultsListRef}
-              className={clsx(
+              className={cn(
                 'overflow-y-auto rounded-md border border-gray-300 dark:border-gray-600',
                 isMobile ? 'flex-1' : 'max-h-60'
               )}
@@ -428,7 +427,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
                   transition={{ duration: 0.2 }}
                 >
                   <div
-                    className={clsx(
+                    className={cn(
                       'flex items-start bg-blue-50 p-3 dark:bg-blue-900/20',
                       highlightedIndex === 0 && 'bg-blue-100 dark:bg-blue-900/40'
                     )}
@@ -476,7 +475,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
                   <button
                     type='button'
                     onClick={() => handleResultClick(result)}
-                    className={clsx(
+                    className={cn(
                       'flex w-full items-center gap-2 p-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700',
                       highlightedIndex === (searchQuery.length > 1 ? index + 1 : index) &&
                         'bg-gray-100 dark:bg-gray-700'

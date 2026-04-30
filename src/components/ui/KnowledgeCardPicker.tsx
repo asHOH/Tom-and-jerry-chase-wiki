@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import clsx from 'clsx';
 import { createPortal } from 'react-dom';
 
+import { cn } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { Card, FactionId } from '@/data/types';
 import { catKnowledgeCards } from '@/features/knowledge-cards/data/catKnowledgeCards';
@@ -119,7 +119,7 @@ const KnowledgeCardPicker: React.FC<KnowledgeCardPickerProps> = ({
       {/* Dialog Panel */}
       <div className='fixed inset-0 z-10001 flex items-center justify-center p-4'>
         <div
-          className={clsx(
+          className={cn(
             'relative flex flex-col bg-white p-6 shadow-2xl dark:bg-slate-800',
             pickerClasses
           )}
@@ -138,7 +138,7 @@ const KnowledgeCardPicker: React.FC<KnowledgeCardPickerProps> = ({
                   <Tooltip key={card.id} content={`${card.id} (${card.cost}费)`}>
                     <div
                       onClick={() => handleCardClick(cardIdWithRank)}
-                      className={clsx(
+                      className={cn(
                         'relative aspect-square w-full cursor-pointer rounded-lg border-4 transition-all duration-200',
                         isSelected
                           ? 'scale-105 border-blue-500 dark:border-blue-400'

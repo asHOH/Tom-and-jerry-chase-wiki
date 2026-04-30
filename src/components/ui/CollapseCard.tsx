@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import clsx from 'clsx';
+
+import { cn } from '@/lib/design';
 
 type CollapseCardProps = {
   children: React.ReactNode;
@@ -52,7 +53,7 @@ export default function CollapseCard({
       <button
         type='button'
         onClick={() => setIsExpanded(!isExpanded)}
-        className={clsx(
+        className={cn(
           'flex w-full cursor-pointer items-center justify-between px-1 py-1 font-bold text-black focus:outline-none dark:text-white',
           titleColor,
           titleClassName,
@@ -62,7 +63,7 @@ export default function CollapseCard({
       >
         <span className={`text-${text}`}>{title}</span>
         <svg
-          className={clsx(
+          className={cn(
             'transform transition-transform duration-200 ease-in-out',
             isExpanded ? 'rotate-0' : '-rotate-90'
           )}
@@ -84,13 +85,13 @@ export default function CollapseCard({
 
       {/* 动画容器 */}
       <div
-        className={clsx(
+        className={cn(
           'transform overflow-hidden text-gray-700 transition-all duration-100 ease-in-out dark:text-gray-300',
           isExpanded ? 'max-h-9999 translate-y-0 opacity-100' : 'max-h-0 -translate-y-2 opacity-0'
         )}
       >
         <div
-          className={clsx(
+          className={cn(
             'transform transition-all duration-100 ease-in-out',
             isExpanded ? 'translate-y-0' : '-translate-y-4'
           )}

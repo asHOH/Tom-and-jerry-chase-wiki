@@ -1,5 +1,6 @@
 import React from 'react';
-import clsx from 'clsx';
+
+import { cn } from '@/lib/design';
 
 type FilterLabelProps = {
   id?: string;
@@ -32,10 +33,10 @@ const FilterLabel: React.FC<FilterLabelProps> = ({ id, full, short, className })
           {accessibleLabel}
         </span>
       ) : null}
-      <span className={clsx(baseClasses, 'hidden sm:inline', className)} aria-hidden='true'>
+      <span className={cn(baseClasses, 'hidden sm:inline', className)} aria-hidden='true'>
         {full}
       </span>
-      <span className={clsx(baseClasses, 'sm:hidden', className)} aria-hidden='true'>
+      <span className={cn(baseClasses, 'sm:hidden', className)} aria-hidden='true'>
         {shortLabel}
       </span>
     </>

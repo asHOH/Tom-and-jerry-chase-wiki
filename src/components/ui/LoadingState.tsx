@@ -1,5 +1,6 @@
 import React from 'react';
-import clsx from 'clsx';
+
+import { cn } from '@/lib/design';
 
 import LoadingSpinner from './LoadingSpinner';
 import {
@@ -46,14 +47,14 @@ export default function LoadingState({
   switch (type) {
     case 'spinner':
       return (
-        <div className={clsx(baseClasses, 'py-8', className)}>
+        <div className={cn(baseClasses, 'py-8', className)}>
           <LoadingSpinner message={message} />
         </div>
       );
 
     case 'skeleton':
       return (
-        <div className={clsx('space-y-4', className)}>
+        <div className={cn('space-y-4', className)}>
           {Array.from({ length: count }).map((_, i) => (
             <Skeleton key={i} className='h-4 w-full' animate={animate} />
           ))}
@@ -62,7 +63,7 @@ export default function LoadingState({
 
     case 'character-grid':
       return (
-        <div className={clsx('space-y-8', className)}>
+        <div className={cn('space-y-8', className)}>
           {/* Header skeleton */}
           <div className='space-y-4 text-center'>
             <Skeleton className='mx-auto h-12 w-1/2' animate={animate} />
@@ -97,7 +98,7 @@ export default function LoadingState({
 
     case 'knowledge-cards':
       return (
-        <div className={clsx('space-y-8', className)}>
+        <div className={cn('space-y-8', className)}>
           {/* Header skeleton */}
           <div className='space-y-4 text-center'>
             <Skeleton className='mx-auto h-12 w-1/2' animate={animate} />
@@ -154,7 +155,7 @@ export default function LoadingState({
 
     case 'item-grid':
       return (
-        <div className={clsx('space-y-8', className)}>
+        <div className={cn('space-y-8', className)}>
           {/* Header skeleton */}
           <div className='space-y-4 text-center'>
             <Skeleton className='mx-auto h-10 w-1/3' animate={animate} />
@@ -188,7 +189,7 @@ export default function LoadingState({
 
     case 'special-skill-grid':
       return (
-        <div className={clsx('space-y-8', className)}>
+        <div className={cn('space-y-8', className)}>
           <div className='space-y-4 text-center'>
             <Skeleton className='mx-auto h-10 w-1/3' animate={animate} />
             <Skeleton className='mx-auto h-5 w-2/3' animate={animate} />
@@ -215,7 +216,7 @@ export default function LoadingState({
 
     case 'special-skill-advice':
       return (
-        <div className={clsx('space-y-8', className)}>
+        <div className={cn('space-y-8', className)}>
           <div className='space-y-4 text-center'>
             <Skeleton className='mx-auto h-10 w-1/3' animate={animate} />
             <Skeleton className='mx-auto h-5 w-2/3' animate={animate} />
@@ -255,7 +256,7 @@ export default function LoadingState({
 
     case 'buff-grid':
       return (
-        <div className={clsx('space-y-8', className)}>
+        <div className={cn('space-y-8', className)}>
           {/* Header skeleton */}
           <div className='space-y-4 text-center'>
             <Skeleton className='mx-auto h-10 w-1/3' animate={animate} />
@@ -285,7 +286,7 @@ export default function LoadingState({
 
     default:
       return (
-        <div className={clsx(baseClasses, 'py-8', className)}>
+        <div className={cn(baseClasses, 'py-8', className)}>
           <LoadingSpinner message={message} />
         </div>
       );

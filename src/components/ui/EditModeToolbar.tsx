@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import clsx from 'clsx';
 import { AnimatePresence, m, useDragControls, useReducedMotion } from 'motion/react';
 import { createPortal } from 'react-dom';
 
+import { cn } from '@/lib/design';
 import { CheckBadgeIcon, CloseIcon, FolderIcon, TrashIcon } from '@/components/icons/CommonIcons';
 
 export interface EditModeToolbarProps {
@@ -241,7 +241,7 @@ export default function EditModeToolbar({
             type='button'
             onClick={handleDiscard}
             disabled={isPublishing}
-            className={clsx(
+            className={cn(
               'flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
               isConfirmingDiscard
                 ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
@@ -271,7 +271,7 @@ export default function EditModeToolbar({
               type='button'
               onClick={() => setIsDraftsOpen((prev) => !prev)}
               disabled={draftsSummary.length === 0}
-              className={clsx(
+              className={cn(
                 'flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
                 draftsSummary.length > 0
                   ? 'bg-amber-50 text-amber-700 hover:bg-amber-100 dark:bg-amber-900/30 dark:text-amber-300 dark:hover:bg-amber-900/40'
@@ -331,7 +331,7 @@ export default function EditModeToolbar({
             type='button'
             onClick={handlePublish}
             disabled={!isDirty || isPublishing || (showMessageInput && !agreedToLicense)}
-            className={clsx(
+            className={cn(
               'flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium transition-colors',
               isDirty && !isPublishing && (!showMessageInput || agreedToLicense)
                 ? 'bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600'

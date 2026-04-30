@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import clsx from 'clsx';
 
+import { cn } from '@/lib/design';
 import { env } from '@/env';
 
 import {
@@ -98,7 +98,7 @@ const ToolbarButton = React.memo(function ToolbarButton({
       type='button'
       onClick={onClick}
       disabled={disabled || mode !== 'rich'}
-      className={clsx(
+      className={cn(
         'inline-flex h-8 items-center justify-center rounded-md border p-2 text-sm font-medium transition-all duration-200',
         'hover:bg-gray-100 dark:hover:bg-gray-700',
         'focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none',
@@ -136,7 +136,7 @@ const Toolbar = React.memo(function Toolbar({
 
   return (
     <div
-      className={clsx(
+      className={cn(
         'border-b border-gray-300 bg-gray-50 p-3 dark:border-gray-600 dark:bg-gray-800/50',
         className
       )}
@@ -268,7 +268,7 @@ const Toolbar = React.memo(function Toolbar({
               onClick={() => setShowTableTools((v) => !v)}
               aria-pressed={showTableTools}
               aria-label={showTableTools ? '收起表格工具' : '展开表格工具'}
-              className={clsx(
+              className={cn(
                 'rounded p-1',
                 'border-0 bg-transparent',
                 'hover:bg-gray-100 dark:hover:bg-gray-700',
@@ -278,7 +278,7 @@ const Toolbar = React.memo(function Toolbar({
               <svg
                 viewBox='0 0 20 20'
                 fill='currentColor'
-                className={clsx(
+                className={cn(
                   'h-4 w-4 transition-transform',
                   showTableTools ? 'rotate-90' : 'rotate-0'
                 )}

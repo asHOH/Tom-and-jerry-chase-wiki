@@ -1,5 +1,6 @@
 import React from 'react';
-import clsx from 'clsx';
+
+import { cn } from '@/lib/design';
 
 export type EditorViewMode = 'rich' | 'wiki' | 'html';
 
@@ -41,14 +42,14 @@ const ViewModeToggle = React.memo(function ViewModeToggle({
   }
 
   return (
-    <div className={clsx('flex items-center gap-1', className)}>
+    <div className={cn('flex items-center gap-1', className)}>
       {buttonConfigs.map(({ mode: targetMode, label, title }) => (
         <button
           key={targetMode}
           type='button'
           onClick={() => onChange(targetMode)}
           disabled={disabled}
-          className={clsx(baseButtonClasses, mode === targetMode ? activeClasses : inactiveClasses)}
+          className={cn(baseButtonClasses, mode === targetMode ? activeClasses : inactiveClasses)}
           title={title}
         >
           {label}

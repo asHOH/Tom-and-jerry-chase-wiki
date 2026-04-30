@@ -2,7 +2,8 @@
 
 import React from 'react';
 import * as TooltipPrimitive from '@radix-ui/react-tooltip';
-import clsx from 'clsx';
+
+import { cn } from '@/lib/design';
 
 interface TooltipProps {
   children: React.ReactNode;
@@ -65,7 +66,7 @@ export default function Tooltip({
     children
   ) : (
     <span
-      className={clsx(
+      className={cn(
         'cursor-help border-b border-dotted border-gray-400 transition-colors hover:border-gray-600 dark:border-gray-500 dark:hover:border-gray-400',
         className
       )}
