@@ -1,6 +1,5 @@
-import { cn, getCardCostColors, getCardRankColors } from '@/lib/design';
+import { getCardCostColors, getCardRankColors } from '@/lib/design';
 import { KnowledgeCardDisplayProps } from '@/lib/types';
-import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import BaseCard from '@/components/ui/BaseCard';
 import GameImage from '@/components/ui/GameImage';
@@ -17,7 +16,6 @@ export default function KnowledgeCardDisplay({
   const [isDarkMode] = useDarkMode();
   const rankColors = getCardRankColors(rank, false, isDarkMode);
   const costColors = getCardCostColors(cost, false, isDarkMode);
-  const isMobile = useMobile();
 
   return (
     <BaseCard
@@ -30,7 +28,7 @@ export default function KnowledgeCardDisplay({
         src={imageUrl}
         alt={`${name}知识卡图标`}
         size='KNOWLEDGECARD_CARD'
-        className={cn('hover:scale-105', isMobile && 'h-32 w-auto')}
+        className='h-32 w-auto hover:scale-105 md:h-auto'
         preload={preload}
       />
       <div className='px-3 pt-1 pb-3 text-center'>

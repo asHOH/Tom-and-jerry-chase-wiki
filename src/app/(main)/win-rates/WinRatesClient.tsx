@@ -4,7 +4,6 @@ import { useMemo, useState } from 'react';
 
 import { cn, getFactionButtonColors } from '@/lib/design';
 import { useFilterState } from '@/lib/filterUtils';
-import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import type { FactionId } from '@/data/types';
 import { CharacterTable, summarySymbol, winRatesData } from '@/data/winRates';
@@ -153,7 +152,6 @@ function getRanksFromSeason(seasonIndex: number): string[] {
 }
 
 export default function WinRatesClient({ description }: WinRatesClientProps) {
-  const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
 
   const seasons = useMemo(() => getSeasons(), []);
@@ -361,16 +359,8 @@ export default function WinRatesClient({ description }: WinRatesClientProps) {
   };
 
   return (
-    <div
-      className={
-        isMobile
-          ? 'mx-auto max-w-3xl space-y-2 p-2 dark:text-slate-200'
-          : 'mx-auto max-w-6xl space-y-8 p-6 dark:text-slate-200'
-      }
-    >
-      <header
-        className={isMobile ? 'mb-4 space-y-2 px-2 text-center' : 'mb-8 space-y-4 px-4 text-center'}
-      >
+    <div className='mx-auto max-w-3xl space-y-2 p-2 md:max-w-6xl md:space-y-8 md:p-6 dark:text-slate-200'>
+      <header className='mb-4 space-y-2 px-2 text-center md:mb-8 md:space-y-4 md:px-4'>
         <PageTitle>胜率数据统计</PageTitle>
         <PageDescription>{description}</PageDescription>
 
@@ -420,7 +410,7 @@ export default function WinRatesClient({ description }: WinRatesClientProps) {
             }
           />
 
-          <div className={isMobile ? 'mt-2 flex justify-center' : 'mt-4 flex justify-center'}>
+          <div className='mt-2 flex justify-center md:mt-4'>
             <button
               type='button'
               onClick={handleExportCsv}

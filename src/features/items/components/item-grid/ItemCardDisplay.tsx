@@ -20,7 +20,7 @@ export default function ItemCardDisplay({ item }: { item: Item }) {
         src={item.imageUrl}
         alt={`${item.name}道具图标`}
         size='ITEM_CARD'
-        className={cn('hover:scale-105', isMobile && 'h-32 w-auto')}
+        className='h-32 w-auto hover:scale-105 md:h-auto'
       />
       <div className='w-full px-3 pt-1 pb-3 text-center'>
         <h3

@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 
 import { cn } from '@/lib/design';
 import { normalizeHeadingLevels } from '@/lib/richTextUtils';
-import { useMobile } from '@/hooks/useMediaQuery';
 import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
 import BaseCard from '@/components/ui/BaseCard';
 import Button from '@/components/ui/Button';
@@ -70,7 +69,6 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
   showCommitMessage = false,
   submitNoticeMessage = null,
 }) => {
-  const isMobile = useMobile();
   const typoPrefix = '修正笔误';
   const typoPrefixWithComma = '修正笔误，';
   const isTypoFixActive = showCommitMessage && commitMessage.trim().startsWith(typoPrefix);
@@ -117,14 +115,9 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
   };
 
   return (
-    <div className={cn('mx-auto max-w-4xl', !isMobile && 'px-4')}>
+    <div className='mx-auto max-w-4xl md:px-4'>
       {errorMessage && (
-        <BaseCard
-          className={cn(
-            'mb-6 border border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20',
-            !isMobile && 'p-4'
-          )}
-        >
+        <BaseCard className='mb-6 border border-red-200 bg-red-50 md:p-4 dark:border-red-800 dark:bg-red-900/20'>
           <div className='flex items-center gap-3'>
             <svg
               className='size-5 text-red-600 dark:text-red-400'
@@ -142,7 +135,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
         </BaseCard>
       )}
 
-      <div className={isMobile ? '' : 'p-8'}>
+      <div className='md:p-8'>
         <form onSubmit={(e) => e.preventDefault()} className='space-y-8'>
           <div className='space-y-2'>
             <label
@@ -157,7 +150,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
               value={title}
               onChange={(e) => onTitleChange(e.target.value)}
               placeholder='请保证标题清晰准确'
-              className={cn('form-control', !isMobile && 'px-4')}
+              className='form-control md:px-4'
               disabled={isSubmitting}
             />
           </div>
@@ -179,7 +172,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
                 id='category'
                 value={category}
                 onChange={(e) => onCategoryChange(e.target.value)}
-                className={cn('form-control', !isMobile && 'px-4')}
+                className='form-control md:px-4'
                 disabled={isSubmitting}
               >
                 <option value=''>请选择分类</option>
@@ -264,7 +257,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
                 value={commitMessage}
                 onChange={(e) => onCommitMessageChange?.(e.target.value)}
                 placeholder='如：修正笔误、更新数据、补充说明等'
-                className={cn('form-control', !isMobile && 'px-4')}
+                className='form-control md:px-4'
                 disabled={isSubmitting}
               />
             </div>
@@ -311,11 +304,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
               loading={isSubmitting}
               variant='primary'
               size='lg'
-              fullWidth={isMobile}
-              className={cn(
-                'flex-1 shadow-lg transition-transform hover:scale-[1.02] hover:shadow-xl sm:flex-none',
-                !isMobile && 'px-8'
-              )}
+              className='flex-1 shadow-lg transition-transform hover:scale-[1.02] hover:shadow-xl sm:flex-none md:px-8'
               leadingIcon={!isSubmitting ? <CheckBadgeIcon className='size-5' /> : undefined}
             >
               {isSubmitting ? submittingLabel : submitLabel}
@@ -327,7 +316,6 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
               disabled={isSubmitting}
               variant='secondary'
               size='lg'
-              fullWidth={isMobile}
               className='flex-1 sm:flex-none'
               leadingIcon={<CloseIcon className='size-5' />}
             >

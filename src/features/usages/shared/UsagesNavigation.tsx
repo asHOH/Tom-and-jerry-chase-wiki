@@ -1,6 +1,5 @@
 'use client';
 
-import { cn } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useNavigationTabs } from '@/hooks/useNavigationTabs';
 import ActionTile from '@/components/ui/ActionTile';
@@ -22,12 +21,7 @@ interface NavigationButtonsProps {
 
 const NavigationButtons = ({ isMobile, isTabActive }: NavigationButtonsProps) => (
   <div className='grid items-center justify-center'>
-    <ul
-      className={cn(
-        'flex flex-wrap items-center text-sm font-normal',
-        isMobile ? 'gap-2' : 'gap-4'
-      )}
-    >
+    <ul className='flex flex-wrap items-center gap-2 text-sm font-normal md:gap-4'>
       {USAGES_NAV_ITEMS.map((tab) => {
         const active = isTabActive(tab.href);
 
@@ -40,7 +34,7 @@ const NavigationButtons = ({ isMobile, isTabActive }: NavigationButtonsProps) =>
                 <Image
                   src={tab.iconSrc}
                   alt={tab.iconAlt}
-                  className={cn('object-contain py-0.5', isMobile ? 'h-7 w-7' : 'h-10 w-10')}
+                  className='h-7 w-7 object-contain py-0.5 md:h-10 md:w-10'
                   width={90}
                   height={90}
                 />
@@ -63,14 +57,8 @@ export default function UsagesNavigation({ children, description }: UsagesNaviga
   const isTabActive = (tabPath: string) => isActive(tabPath);
 
   return (
-    <div
-      className={
-        isMobile
-          ? 'mx-auto max-w-3xl space-y-4 dark:text-slate-200'
-          : 'mx-auto max-w-6xl space-y-8 p-6 dark:text-slate-200'
-      }
-    >
-      <header className={isMobile ? 'mb-2 text-center' : 'mb-4 space-y-4 px-4 text-center'}>
+    <div className='mx-auto max-w-3xl space-y-4 md:max-w-6xl md:space-y-8 md:p-6 dark:text-slate-200'>
+      <header className='mb-2 text-center md:mb-4 md:space-y-4 md:px-4'>
         <PageTitle>网站说明</PageTitle>
         <PageDescription>{description}</PageDescription>
       </header>

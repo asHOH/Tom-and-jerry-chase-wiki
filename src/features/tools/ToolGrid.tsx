@@ -2,7 +2,6 @@
 
 import { useRef } from 'react';
 
-import { useMobile } from '@/hooks/useMediaQuery';
 /*import { useEditMode } from '@/context/EditModeContext';*/
 import { TOOL_NAV_ITEMS } from '@/constants/navigation';
 import ChangeLogs, { ChangeLogsRef } from '@/components/ui/ChangeLogs';
@@ -16,7 +15,6 @@ interface CharacterRankingGridProps {
 }
 
 export default function CharacterRankingGrid({ description }: CharacterRankingGridProps) {
-  const isMobile = useMobile();
   /*const { isEditMode } = useEditMode();*/
   const feedbackSectionRef = useRef<FeedbackSectionRef>(null);
   const changeLogsRef = useRef<ChangeLogsRef>(null);
@@ -59,16 +57,8 @@ export default function CharacterRankingGrid({ description }: CharacterRankingGr
   };
 
   return (
-    <div
-      className={
-        isMobile
-          ? 'mx-auto max-w-3xl space-y-2 p-2 dark:text-slate-200'
-          : 'mx-auto max-w-6xl space-y-8 p-6 dark:text-slate-200'
-      }
-    >
-      <header
-        className={isMobile ? 'mb-4 space-y-2 px-2 text-center' : 'mb-8 space-y-4 px-4 text-center'}
-      >
+    <div className='mx-auto max-w-3xl space-y-2 p-2 md:max-w-6xl md:space-y-8 md:p-6 dark:text-slate-200'>
+      <header className='mb-4 space-y-2 px-2 text-center md:mb-8 md:space-y-4 md:px-4'>
         <PageTitle>工具栏</PageTitle>
         <PageDescription>{description}</PageDescription>
       </header>

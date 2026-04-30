@@ -18,7 +18,6 @@ interface ArticleFiltersProps {
   sortBy: SortBy;
   sortOrder: SortOrder;
   handleSortChange: (newSortBy: SortBy, newSortOrder: SortOrder) => void;
-  isMobile: boolean;
 }
 
 const ArticleFilters: React.FC<ArticleFiltersProps> = ({
@@ -31,7 +30,6 @@ const ArticleFilters: React.FC<ArticleFiltersProps> = ({
   sortBy,
   sortOrder,
   handleSortChange,
-  isMobile,
 }) => {
   return (
     <>
@@ -61,7 +59,7 @@ const ArticleFilters: React.FC<ArticleFiltersProps> = ({
             )}
           />
           {selectedCategories.size > 0 && (
-            <div className={isMobile ? 'mt-2 flex justify-center' : 'mt-4 flex justify-center'}>
+            <div className='mt-2 flex justify-center md:mt-4'>
               <button
                 type='button'
                 onClick={handleClearFilters}

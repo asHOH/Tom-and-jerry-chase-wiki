@@ -302,11 +302,9 @@ export default function ArticlesClient({ articles: data, description }: Articles
     );
   }
   return (
-    <div className={isMobile ? 'space-y-2 dark:text-slate-200' : 'space-y-8 dark:text-slate-200'}>
+    <div className='space-y-2 md:space-y-8 dark:text-slate-200'>
       {/* Header */}
-      <header
-        className={isMobile ? 'mb-4 space-y-2 px-2 text-center' : 'mb-8 space-y-4 px-4 text-center'}
-      >
+      <header className='mb-4 space-y-2 px-2 text-center md:mb-8 md:space-y-4 md:px-4'>
         <PageTitle>文章列表</PageTitle>
         {description && <PageDescription>{description}</PageDescription>}
 
@@ -320,14 +318,13 @@ export default function ArticlesClient({ articles: data, description }: Articles
           sortBy={sortBy}
           sortOrder={sortOrder}
           handleSortChange={handleSortChange}
-          isMobile={isMobile}
         />
 
         {/* Stats and Quick Actions */}
         <div
           className={cn(
             'flex flex-col sm:flex-row sm:items-center sm:justify-between',
-            isMobile ? 'mt-4 gap-2 px-2' : 'mt-8 gap-4 px-4'
+            'mt-4 gap-2 px-2 md:mt-8 md:gap-4 md:px-4'
           )}
         >
           <div className='text-center text-sm text-gray-600 sm:text-left dark:text-gray-400'>
@@ -421,7 +418,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
           ref={isMobile ? (swipeContainerRef as React.RefObject<HTMLDivElement>) : articlesGridRef}
           className={cn(
             'auto-fit-grid grid-container grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))]',
-            !isMobile && 'mt-8 gap-6 px-4'
+            'md:mt-8 md:gap-6 md:px-4'
           )}
         >
           <AnimatePresence initial={false}>

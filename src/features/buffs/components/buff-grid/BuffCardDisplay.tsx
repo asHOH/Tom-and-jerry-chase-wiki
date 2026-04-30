@@ -1,5 +1,4 @@
 import { cn, getBuffGlobalColors, getBuffTypeColors } from '@/lib/design';
-import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Buff } from '@/data/types';
 import BaseCard from '@/components/ui/BaseCard';
@@ -8,14 +7,12 @@ import Image from '@/components/Image';
 
 export default function BuffCardDisplay({ buff }: { buff: Buff }) {
   const [isDarkMode] = useDarkMode();
-  const isMobile = useMobile();
 
   return (
     <BaseCard variant='item' aria-label={`查看${buff.name}效果详情`}>
       <div
         className={cn(
-          'flex w-full items-center justify-center border border-dotted pt-1 text-center',
-          isMobile ? 'pb-1.5' : 'pb-3',
+          'flex w-full items-center justify-center border border-dotted pt-1 pb-1.5 text-center md:pb-3',
           buff.type.includes('正面')
             ? 'border-green-300 dark:border-green-800'
             : buff.type.includes('负面')

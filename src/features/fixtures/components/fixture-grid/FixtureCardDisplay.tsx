@@ -47,9 +47,9 @@ export default function FixtureCardDisplay({ fixture }: { fixture: Fixture }) {
         src={fixture.imageUrl}
         alt={`${fixture.name}物件图标`}
         size='ITEM_CARD'
-        className={cn('hover:scale-105', isMobile && 'h-32 w-auto')}
+        className='h-32 w-auto hover:scale-105 md:h-auto'
       />
-      <div className={cn('w-full pt-1 pb-3 text-center', !isMobile && 'px-3')}>
+      <div className='w-full pt-1 pb-3 text-center md:px-3'>
         <h3
           className={cn(
             'h-6 font-bold whitespace-pre text-gray-800 dark:text-white',

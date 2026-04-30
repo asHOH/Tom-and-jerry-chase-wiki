@@ -2,7 +2,6 @@ import React, { ReactNode, useId } from 'react';
 import { m, MotionStyle } from 'motion/react';
 
 import { cn } from '@/lib/design';
-import { useMobile } from '@/hooks/useMediaQuery';
 
 import FilterLabel from './FilterLabel';
 
@@ -41,15 +40,11 @@ export default function FilterRow<T extends string | number>(props: FilterRowPro
     innerClassName,
     ariaLabel,
   } = props;
-  const isMobile = useMobile();
   const labelId = useId();
 
   return (
     <div
-      className={cn(
-        `flex items-center justify-center gap-2 ${isMobile ? 'mt-1' : 'mt-4'}`,
-        className
-      )}
+      className={cn('mt-1 flex items-center justify-center gap-2 md:mt-4', className)}
       role='group'
       aria-labelledby={labelId}
     >
