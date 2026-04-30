@@ -15,7 +15,6 @@ type ActionStatusFilter = 'all' | ActionStatus;
 export type PendingGameDataAction =
   Database['public']['Functions']['get_pending_game_data_actions']['Returns'][number] & {
     message?: string | null;
-    pr_url?: string | null;
   };
 
 type GameDataActionModerationPanelProps = {
@@ -492,15 +491,6 @@ const GameDataActionModerationPanel = ({
                               <span className='rounded bg-gray-100 px-2 py-0.5 whitespace-nowrap text-gray-700 dark:bg-slate-900/60 dark:text-slate-200'>
                                 {submission.is_public ? '已' : '未'}公开
                               </span>
-                            )}
-                            {submission.status === 'synced' && submission.pr_url && (
-                              <a
-                                href={submission.pr_url}
-                                title={submission.pr_url}
-                                className='max-w-full truncate rounded bg-blue-50 px-2 py-0.5 text-blue-700 hover:text-blue-800 sm:max-w-96 dark:bg-blue-900/30 dark:text-blue-200 dark:hover:text-blue-100'
-                              >
-                                PR：{submission.pr_url}
-                              </a>
                             )}
                           </div>
                           <button
