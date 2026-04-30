@@ -83,9 +83,10 @@ export async function getGotoResult(
       .replace(/[\s\-_:：·•—–/\\、,，.。()（）[\]{}【】「」'"“”]+/g, '')
       .trim();
 
-  const parseOneTwo = (s: string): 1 | 2 | null => {
+  const parseSkillLevel = (s: string): 1 | 2 | 3 | null => {
     if (s === '1' || s === '一') return 1;
     if (s === '2' || s === '二') return 2;
+    if (s === '3' || s === '三') return 3;
     return null;
   };
 
@@ -118,12 +119,12 @@ export async function getGotoResult(
     return null;
   };
 
-  // Parse skill level prefix like "2级技能名" / "一级技能名" (only 1/2, 一/二)
+  // Parse skill level prefix like "2级技能名" / "三级技能名".
   let skillLevelRequested: number | null = null;
   let rawName = templateBaseName;
-  const levelMatch = /^([12一二])级(.+)$/.exec(rawName.trim());
+  const levelMatch = /^([123一二三])级(.+)$/.exec(rawName.trim());
   if (levelMatch && levelMatch[1] && levelMatch[2]) {
-    const parsed = parseOneTwo(levelMatch[1]);
+    const parsed = parseSkillLevel(levelMatch[1]);
     if (parsed) {
       skillLevelRequested = parsed;
       rawName = (levelMatch[2] as string).trim();
