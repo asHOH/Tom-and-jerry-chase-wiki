@@ -8,15 +8,15 @@ type CollapseCardProps = {
   className?: string;
   titleClassName?: string;
   collapsedTitleClassName?: string;
-  size?: 'xs' | 'md' | 'sm';
+  size?: 'xs' | 'sm' | 'md';
   color?: 'default' | 'red' | 'orange' | 'yellow' | 'green' | 'purple' | 'blue' | 'lime';
   openOnStart?: boolean;
 };
 
 const titleSizeClasses = {
   xs: 'text-sm',
-  md: 'ml-1 text-xl',
-  sm: 'ml-2 text-2xl',
+  sm: 'ml-1 text-xl',
+  md: 'ml-2 text-2xl',
 } as const;
 
 /**
@@ -36,11 +36,11 @@ export default function CollapseCard({
   titleClassName,
   collapsedTitleClassName,
   color = 'default',
-  size = 'sm',
+  size = 'md',
   openOnStart = false,
 }: CollapseCardProps) {
   const [isExpanded, setIsExpanded] = useState(openOnStart);
-  const width = { xs: '15px', md: '25px', sm: '35px' }[size];
+  const width = { xs: '15px', sm: '25px', md: '35px' }[size];
   const titleSizeClassName = titleSizeClasses[size];
   const titleColor = {
     default: 'border-b border-gray-100 dark:border-gray-800',

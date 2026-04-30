@@ -16,7 +16,7 @@ type AccordionProps = {
   className?: string;
   titleClassName?: string;
   defaultOpenId?: string;
-  size?: 'xs' | 'md' | 'sm';
+  size?: 'xs' | 'sm' | 'md';
   useDefaultButtonColors?: boolean;
   buttonClassName?: string;
   activeButtonClassName?: string;
@@ -36,8 +36,8 @@ const colorMap = {
 
 const titleSizeClasses = {
   xs: 'text-sm',
-  md: 'mx-1 text-xl',
-  sm: 'mx-2 text-2xl',
+  sm: 'mx-1 text-xl',
+  md: 'mx-2 text-2xl',
 } as const;
 
 export default function AccordionCard({
@@ -52,7 +52,7 @@ export default function AccordionCard({
   contentContainerClassName,
   contentPanelClassName,
 }: AccordionProps) {
-  const titleSizeClassName = titleSizeClasses[size || 'sm'];
+  const titleSizeClassName = titleSizeClasses[size || 'md'];
   const [activeItemId, setActiveItemId] = useState<string | null>(defaultOpenId ?? null);
   const [renderedItemId, setRenderedItemId] = useState<string | null>(defaultOpenId ?? null);
 
