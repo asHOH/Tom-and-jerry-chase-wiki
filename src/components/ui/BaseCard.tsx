@@ -86,7 +86,7 @@ export default function BaseCard({
   const content = (
     <div
       className={cn(
-        'group flex-1 bg-gradient-to-br from-white to-gray-50 dark:from-slate-800 dark:to-slate-900 dark:text-slate-200 [&_img]:select-none',
+        'group flex-1 bg-linear-to-br from-white to-gray-50 dark:from-slate-800 dark:to-slate-900 dark:text-slate-200 [&_img]:select-none',
         className
       )}
       {...cardProps}

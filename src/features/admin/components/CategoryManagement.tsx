@@ -161,6 +161,7 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
             className='flex-1 rounded border border-gray-300 bg-white p-2 text-gray-900 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100'
           />
           <select
+            title='选择父分类'
             value={newCategory.parent_category_id ?? ''}
             onChange={(e) =>
               setNewCategory({
@@ -177,6 +178,7 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
             ))}
           </select>
           <select
+            title='选择默认可见性'
             value={newCategory.default_visibility || ''}
             onChange={(e) =>
               setNewCategory({
@@ -191,6 +193,7 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
             <option value='rejected'>禁止修改</option>
           </select>
           <button
+            type='button'
             onClick={handleCreateCategory}
             className='rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700'
             disabled={loading}
@@ -286,6 +289,7 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
             />
             {editingCategory.name != '根分类' && (
               <select
+                title='选择父分类'
                 value={editingCategory.parent_category_id ?? ''}
                 onChange={(e) =>
                   setEditingCategory((prev) => ({
@@ -305,6 +309,7 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
               </select>
             )}
             <select
+              title='选择默认可见性'
               value={editingCategory.default_visibility ?? ''}
               onChange={(e) =>
                 setEditingCategory((prev) => ({
@@ -320,6 +325,7 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
             </select>
             <div className='flex gap-2'>
               <button
+                type='button'
                 onClick={handleEditCategory}
                 className='rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700'
                 disabled={loading}
@@ -327,6 +333,7 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
                 保存
               </button>
               <button
+                type='button'
                 onClick={() => setEditingCategory(null)}
                 className='rounded bg-gray-300 px-4 py-2 text-gray-800 hover:bg-gray-400'
               >

@@ -305,7 +305,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
               }
             }}
             className={cn(
-              'h-full min-h-[400px] w-full bg-gray-50 p-6 text-gray-900 dark:bg-gray-800 dark:text-gray-100',
+              'h-full min-h-100 w-full bg-gray-50 p-6 text-gray-900 dark:bg-gray-800 dark:text-gray-100',
               'resize-none font-mono text-sm focus:outline-none',
               className
             )}

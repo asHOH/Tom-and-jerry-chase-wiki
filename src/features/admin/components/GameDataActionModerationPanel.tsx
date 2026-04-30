@@ -255,6 +255,7 @@ const GameDataActionModerationPanel = ({
         <div className='flex flex-wrap items-center gap-2'>
           <label className='text-sm text-gray-600 dark:text-slate-300'>状态</label>
           <select
+            title='过滤状态'
             value={actionStatus}
             onChange={(e) => setActionStatus(e.target.value as ActionStatusFilter)}
             className='rounded border border-gray-300 bg-white px-2 py-1 text-sm text-gray-800 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100'
@@ -268,6 +269,7 @@ const GameDataActionModerationPanel = ({
 
           <label className='text-sm text-gray-600 dark:text-slate-300'>实体类型</label>
           <select
+            title='过滤实体类型'
             value={actionEntityType}
             onChange={(e) => setActionEntityType(e.target.value)}
             className='rounded border border-gray-300 bg-white px-2 py-1 text-sm text-gray-800 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100'

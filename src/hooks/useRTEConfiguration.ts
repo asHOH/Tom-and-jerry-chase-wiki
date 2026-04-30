@@ -70,7 +70,7 @@ export function useRTEConfiguration({
           'prose prose-sm sm:prose lg:prose-lg xl:prose-xl max-w-none',
           'dark:prose-invert',
           'focus:outline-none',
-          'p-6 min-h-[400px]',
+          'p-6 min-h-100',
           'text-gray-900 dark:text-gray-100',
           className
         ),

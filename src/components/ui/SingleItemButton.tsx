@@ -54,7 +54,7 @@ export default function SingleItemButton({ singleItem, size = 'default' }: Singl
     <li
       key={singleItem.name}
       className={cn(
-        'flex items-center overflow-hidden rounded-lg border-1 border-dotted transition-all hover:-translate-y-1',
+        'flex items-center overflow-hidden rounded-lg border border-dotted transition-all hover:-translate-y-1',
         sizeClasses.li
       )}
       style={getSingleItemButtonColor(singleItem)}

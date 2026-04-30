@@ -166,6 +166,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, mutateUsers }) =
                   </td>
                   <td className='px-4 py-3 text-sm text-gray-600 dark:text-gray-300'>
                     <select
+                      title='修改角色'
                       className='rounded border border-gray-300 bg-white px-2 py-1 text-gray-900 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100'
                       value={user.role ?? 'Contributor'}
                       onChange={(e) => {

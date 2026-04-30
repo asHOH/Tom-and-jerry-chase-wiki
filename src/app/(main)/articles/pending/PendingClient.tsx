@@ -179,7 +179,7 @@ export default function PendingClient() {
   if (loading) {
     return (
       <div className='container mx-auto px-4 py-8'>
-        <div className='flex min-h-[400px] items-center justify-center'>
+        <div className='flex min-h-100 items-center justify-center'>
           <LoadingSpinner size='lg' />
         </div>
       </div>

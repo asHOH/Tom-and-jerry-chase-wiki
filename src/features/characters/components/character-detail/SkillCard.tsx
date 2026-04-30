@@ -668,7 +668,7 @@ export default function SkillCard({
     >
       <div className='flex items-start'>
         {skill.imageUrl && (
-          <div className={cn('flex-shrink-0', isMobile ? 'mr-2' : 'mr-6')}>
+          <div className={cn('shrink-0', isMobile ? 'mr-2' : 'mr-6')}>
             <div className='relative h-16 w-16 overflow-hidden rounded-full border-2 border-gray-300 bg-white dark:border-gray-600 dark:bg-slate-700'>
               <Image
                 src={skill.imageUrl}

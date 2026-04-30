@@ -186,7 +186,7 @@ const NewArticleClient: React.FC = () => {
   if (isUserLoading || (isUserValidating && !userRole)) {
     return (
       <div className='space-y-8 dark:text-slate-200'>
-        <div className='flex min-h-[400px] items-center justify-center'>
+        <div className='flex min-h-100 items-center justify-center'>
           <LoadingSpinner size='lg' />
         </div>
       </div>
