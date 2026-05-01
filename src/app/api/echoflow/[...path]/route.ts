@@ -3,9 +3,11 @@
  *
  */
 
+import { timingSafeEqual } from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { cached } from '@/lib/serverCache';
+import { env } from '@/env';
 
 import { resolvePath } from '../resolvers';
 
@@ -74,11 +76,14 @@ function decodePathSegments(segments: string[]): string[] {
 }
 
 const API_KEY_HEADER = 'X-EchoFlow-Key';
-const FLOW_KEY = process.env.FLOWKEY;
+const FLOW_KEY = env.FLOWKEY;
 
 function buildCorsHeaders(origin: string | null): Record<string, string> {
+  if (!origin || !isOriginAllowed(origin)) {
+    return {};
+  }
   return {
-    'Access-Control-Allow-Origin': origin || '*',
+    'Access-Control-Allow-Origin': origin,
   };
 }
 
@@ -106,10 +111,16 @@ function isOriginAllowed(origin: string | null): boolean {
   if (!origin) return false;
 
   try {
-    const originHostname = new URL(origin).hostname;
-    return TRUSTED_HOSTNAMES.some(
-      (trusted) => originHostname === trusted || originHostname.endsWith(`.${trusted}`)
-    );
+    const url = new URL(origin);
+    const originHostname = url.hostname;
+    return TRUSTED_HOSTNAMES.some((trusted) => {
+      if (originHostname === trusted) return true;
+      if (originHostname.endsWith(`.${trusted}`)) {
+        const subdomain = originHostname.slice(0, -(trusted.length + 1));
+        return /^[a-zA-Z0-9]+$/.test(subdomain);
+      }
+      return false;
+    });
   } catch {
     return false;
   }
@@ -118,12 +129,16 @@ function isOriginAllowed(origin: string | null): boolean {
 export async function GET(request: NextRequest, { params }: RouteParams) {
   const origin = request.headers.get('origin');
   const clientKey = request.headers.get(API_KEY_HEADER);
-  const hasValidKey = FLOW_KEY && clientKey === FLOW_KEY;
+
+  let hasValidKey = false;
+  if (FLOW_KEY && clientKey && clientKey.length === FLOW_KEY.length) {
+    hasValidKey = timingSafeEqual(Buffer.from(clientKey), Buffer.from(FLOW_KEY));
+  }
 
   if (!FLOW_KEY) {
     return NextResponse.json(
       { error: 'EchoFlow API is not enabled', code: 'SERVICE_DISABLED' },
-      { status: 503, headers: buildCorsHeaders(origin) }
+      { status: 503 }
     );
   }
 
@@ -131,7 +146,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     if (!isOriginAllowed(origin)) {
       return NextResponse.json(
         { error: 'origin not allowed', code: 'ORIGIN_FORBIDDEN' },
-        { status: 403, headers: buildCorsHeaders(origin) }
+        { status: 403 }
       );
     }
     return NextResponse.json(
@@ -157,24 +172,23 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     );
   }
 
-  const detailId =
-    pathSegments.length > 1 ? sanitizeDetailId(pathSegments.slice(1).join('/')) : undefined;
-
   function sanitizeDetailId(id: string): string | undefined {
     if (!id || id.length === 0) return undefined;
     const decoded = id.replace(/%2f/gi, '/').replace(/\\/g, '/');
-    if (decoded.includes('..') || decoded.includes('%')) {
+    if (decoded.includes('..')) {
       return undefined;
     }
-    for (let i = 0; i < decoded.length; i++) {
-      const charCode = decoded.charCodeAt(i);
-      const char = decoded.charAt(i);
-      if (charCode < 0x20 || '<>\'"\\'.includes(char)) {
-        return undefined;
-      }
+    if (/%(?![0-9a-fA-F]{2})/.test(decoded)) {
+      return undefined;
     }
-    return decoded.slice(0, MAX_DETAIL_ID_LENGTH);
+    if (decoded.length > MAX_DETAIL_ID_LENGTH) {
+      return undefined;
+    }
+    return decoded;
   }
+
+  const detailId =
+    pathSegments.length > 1 ? sanitizeDetailId(pathSegments.slice(1).join('/')) : undefined;
 
   const firstSegment = pathSegments[0];
   if (!firstSegment) {
@@ -190,13 +204,6 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     return NextResponse.json(
       { error: 'Resource type not found', code: 'TYPE_NOT_FOUND', resourceType },
       { status: 404, headers: buildCorsHeaders(origin) }
-    );
-  }
-
-  if (detailId !== undefined && sanitizeDetailId(detailId) === undefined) {
-    return NextResponse.json(
-      { error: 'Invalid detail ID', code: 'INVALID_DETAIL_ID' },
-      { status: 400, headers: buildCorsHeaders(origin) }
     );
   }
 
@@ -218,7 +225,13 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     const responseData =
       result && typeof result === 'object' && 'data' in result ? result : { data: result };
 
-    const healthStatus = FLOW_KEY ? 'healthy' : 'disabled';
+    const corsHeaders = buildCorsHeaders(origin);
+    const securityHeaders = {
+      Vary: 'Origin',
+      'X-Content-Type-Options': 'nosniff',
+      'X-Frame-Options': 'DENY',
+      'Referrer-Policy': 'strict-origin-when-cross-origin',
+    };
 
     if (format === 'jsonl') {
       const jsonlContent = toJsonl(responseData.data);
@@ -227,8 +240,9 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         headers: {
           'Content-Type': 'application/jsonl',
           'Cache-Control': `public, max-age=${getCacheTtl(resourceType)}, stale-while-revalidate=60`,
-          'X-EchoFlow-Health': healthStatus,
-          'Access-Control-Allow-Origin': origin || '*',
+          'X-EchoFlow-Health': 'healthy',
+          ...corsHeaders,
+          ...securityHeaders,
         },
       });
     }
@@ -236,18 +250,22 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     return NextResponse.json(responseData, {
       headers: {
         'Cache-Control': `public, max-age=${getCacheTtl(resourceType)}, stale-while-revalidate=60`,
-        'X-EchoFlow-Health': healthStatus,
-        'Access-Control-Allow-Origin': origin || '*',
+        'X-EchoFlow-Health': 'healthy',
+        ...corsHeaders,
+        ...securityHeaders,
       },
     });
   } catch (error) {
+    const isDev = process.env.NODE_ENV === 'development';
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    console.error('EchoFlow API error:', errorMessage);
+    if (isDev) {
+      console.error('EchoFlow API error:', errorMessage);
+    }
     return NextResponse.json(
       {
         error: 'Internal server error',
         code: 'INTERNAL_ERROR',
-        ...(process.env.NODE_ENV === 'development' && { details: errorMessage }),
+        ...(isDev && { details: errorMessage }),
       },
       { status: 500, headers: buildCorsHeaders(origin) }
     );
@@ -257,21 +275,30 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 export async function OPTIONS(request: NextRequest) {
   const origin = request.headers.get('origin');
   const clientKey = request.headers.get(API_KEY_HEADER);
-  const hasValidKey = FLOW_KEY && clientKey === FLOW_KEY;
-  const healthStatus = FLOW_KEY ? 'healthy' : 'disabled';
+
+  let hasValidKey = false;
+  if (FLOW_KEY && clientKey && clientKey.length === FLOW_KEY.length) {
+    hasValidKey = timingSafeEqual(Buffer.from(clientKey), Buffer.from(FLOW_KEY));
+  }
 
   if (!isOriginAllowed(origin) && !hasValidKey) {
     return new NextResponse(null, { status: 403 });
   }
 
+  const corsHeaders = buildCorsHeaders(origin);
+
   return new NextResponse(null, {
     status: 200,
     headers: {
-      'Access-Control-Allow-Origin': origin || '*',
+      ...corsHeaders,
       'Access-Control-Allow-Methods': 'GET, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-EchoFlow-Key',
       'Cache-Control': 'public, max-age=86400',
-      'X-EchoFlow-Health': healthStatus,
+      'X-EchoFlow-Health': 'healthy',
+      Vary: 'Origin',
+      'X-Content-Type-Options': 'nosniff',
+      'X-Frame-Options': 'DENY',
+      'Referrer-Policy': 'strict-origin-when-cross-origin',
     },
   });
 }
