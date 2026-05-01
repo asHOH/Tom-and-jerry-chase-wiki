@@ -189,6 +189,28 @@ export type EntityUpdateHistory = {
   affectedPath: string;
 };
 
+function extractActionPaths(entry: ActionHistoryEntry): string[] {
+  if (Array.isArray(entry)) {
+    const paths: string[] = [];
+    for (const action of entry) {
+      if (action.path) paths.push(action.path);
+    }
+    return paths;
+  }
+  return entry.path ? [entry.path] : [];
+}
+
+function extractEntryId(entityType: string, path: string): string | undefined {
+  const pathParts = path.split('.').filter(Boolean);
+  if (pathParts.length === 0) return undefined;
+
+  if (entityType === 'specialSkills') {
+    return pathParts.length >= 2 ? pathParts[1] : undefined;
+  }
+
+  return pathParts[0];
+}
+
 export async function getEntityUpdateHistory(): Promise<Map<string, EntityUpdateHistory>> {
   const actions = await getPublicGameDataActions();
   const historyMap = new Map<string, EntityUpdateHistory>();
@@ -198,29 +220,25 @@ export async function getEntityUpdateHistory(): Promise<Map<string, EntityUpdate
 
     const entries = parseEntries(action.entry);
     for (const entry of entries) {
-      if (!entry || typeof entry !== 'object') continue;
-      const act = entry as { path?: string };
+      const paths = extractActionPaths(entry);
+      for (const path of paths) {
+        const entryId = extractEntryId(action.entity_type, path);
+        if (!entryId) continue;
 
-      if (!act.path) continue;
+        const historyKey = `${action.entity_type}:${entryId}`;
 
-      const pathParts = act.path.split('.').filter(Boolean);
-      if (pathParts.length === 0) continue;
-
-      const entryId = pathParts[0];
-      if (!entryId) continue;
-      const historyKey = `${action.entity_type}:${entryId}`;
-
-      const existing = historyMap.get(historyKey);
-      if (!existing || new Date(action.created_at) > new Date(existing.updatedAt)) {
-        historyMap.set(historyKey, {
-          updatedAt: action.created_at,
-          actionId: action.id,
-          createdBy: action.created_by ?? null,
-          status: action.status,
-          message: action.message ?? null,
-          reviewedAt: action.reviewed_at ?? null,
-          affectedPath: act.path,
-        });
+        const existing = historyMap.get(historyKey);
+        if (!existing || new Date(action.created_at) > new Date(existing.updatedAt)) {
+          historyMap.set(historyKey, {
+            updatedAt: action.created_at,
+            actionId: action.id,
+            createdBy: action.created_by ?? null,
+            status: action.status,
+            message: action.message ?? null,
+            reviewedAt: action.reviewed_at ?? null,
+            affectedPath: path,
+          });
+        }
       }
     }
   }
