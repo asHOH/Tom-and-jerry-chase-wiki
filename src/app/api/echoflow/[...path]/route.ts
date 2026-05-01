@@ -178,6 +178,9 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     if (decoded.includes('..')) {
       return undefined;
     }
+    if (/%(?![0-9a-fA-F]{2})/.test(decoded)) {
+      return undefined;
+    }
     if (decoded.length > MAX_DETAIL_ID_LENGTH) {
       return undefined;
     }
