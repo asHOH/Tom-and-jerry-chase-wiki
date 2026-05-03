@@ -1,9 +1,7 @@
-import { cn, getEntityTypeColors } from '@/lib/design';
-import { useMobile } from '@/hooks/useMediaQuery';
+import { getEntityTypeColors } from '@/lib/design';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Entity } from '@/data/types';
-import BaseCard from '@/components/ui/BaseCard';
-import GameImage from '@/components/ui/GameImage';
+import CatalogCard from '@/components/ui/CatalogCard';
 import Tag from '@/components/ui/Tag';
 
 export default function EntityCardDisplay({
@@ -14,7 +12,6 @@ export default function EntityCardDisplay({
   showTags?: boolean;
 }) {
   const [isDarkMode] = useDarkMode();
-  const isMobile = useMobile();
 
   // 生成标签列表（竖向排列在图片左上角，动态圆角）
   const renderTags = () => {
@@ -81,16 +78,13 @@ export default function EntityCardDisplay({
   }
 
   return (
-    <BaseCard variant='item' aria-label={`查看${entity.name}衍生物详情`}>
-      <div className='relative'>
-        <GameImage
-          src={entity.imageUrl}
-          alt={`${entity.name}衍生物图标`}
-          size='ITEM_CARD'
-          className='h-32 w-auto hover:scale-105 md:h-auto'
-        />
-        {/* 竖向标签列：根据 showTags 决定是否显示 */}
-        {showTags && (
+    <CatalogCard
+      title={entity.name}
+      imageSrc={entity.imageUrl}
+      imageAlt={`${entity.name}衍生物图标`}
+      ariaLabel={`查看${entity.name}衍生物详情`}
+      overlay={
+        showTags ? (
           <div
             className='absolute top-2 left-2 z-10 flex flex-col'
             role='group'
@@ -98,27 +92,11 @@ export default function EntityCardDisplay({
           >
             {renderTags()}
           </div>
-        )}
-      </div>
-
-      <div className='w-full pt-1 pb-3 text-center md:px-3'>
-        <h3
-          className={cn(
-            'h-6 font-bold whitespace-pre text-gray-800 dark:text-white',
-            isMobile && entity.name.length >= 6 ? 'text-md' : 'mb-1 text-lg'
-          )}
-        >
-          {entity.name}
-        </h3>
-
-        <div
-          className='entitys-center flex flex-wrap justify-center gap-1.5 text-sm text-gray-600 dark:text-gray-300'
-          role='group'
-          aria-label='衍生物属性'
-        >
-          {putTypeTagOn(entity)}
-        </div>
-      </div>
-    </BaseCard>
+        ) : undefined
+      }
+      tagsAriaLabel='衍生物属性'
+      tagsClassName='entitys-center flex flex-wrap justify-center gap-1.5 text-sm text-gray-600 dark:text-gray-300'
+      tags={putTypeTagOn(entity)}
+    />
   );
 }

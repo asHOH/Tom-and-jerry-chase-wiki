@@ -1,14 +1,11 @@
-import { cn, getFixtureTypeColors } from '@/lib/design';
-import { useMobile } from '@/hooks/useMediaQuery';
+import { getFixtureTypeColors } from '@/lib/design';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Fixture } from '@/data/types';
-import BaseCard from '@/components/ui/BaseCard';
-import GameImage from '@/components/ui/GameImage';
+import CatalogCard from '@/components/ui/CatalogCard';
 import Tag from '@/components/ui/Tag';
 
 export default function FixtureCardDisplay({ fixture }: { fixture: Fixture }) {
   const [isDarkMode] = useDarkMode();
-  const isMobile = useMobile();
 
   function putTypeTagOn(fixture: Fixture) {
     if (typeof fixture.type === 'string') {
@@ -42,30 +39,14 @@ export default function FixtureCardDisplay({ fixture }: { fixture: Fixture }) {
   }
 
   return (
-    <BaseCard variant='item' aria-label={`查看${fixture.name}物件详情`}>
-      <GameImage
-        src={fixture.imageUrl}
-        alt={`${fixture.name}物件图标`}
-        size='ITEM_CARD'
-        className='h-32 w-auto hover:scale-105 md:h-auto'
-      />
-      <div className='w-full pt-1 pb-3 text-center md:px-3'>
-        <h3
-          className={cn(
-            'h-6 font-bold whitespace-pre text-gray-800 dark:text-white',
-            isMobile && fixture.name.length >= 6 ? 'text-md' : 'mb-1 text-lg'
-          )}
-        >
-          {fixture.name}
-        </h3>
-        <div
-          className='fixtures-center flex flex-wrap justify-center gap-1.5 text-sm text-gray-600 dark:text-gray-300'
-          role='group'
-          aria-label='物件属性'
-        >
-          {putTypeTagOn(fixture)}
-        </div>
-      </div>
-    </BaseCard>
+    <CatalogCard
+      title={fixture.name}
+      imageSrc={fixture.imageUrl}
+      imageAlt={`${fixture.name}物件图标`}
+      ariaLabel={`查看${fixture.name}物件详情`}
+      tagsAriaLabel='物件属性'
+      tagsClassName='fixtures-center flex flex-wrap justify-center gap-1.5 text-sm text-gray-600 dark:text-gray-300'
+      tags={putTypeTagOn(fixture)}
+    />
   );
 }

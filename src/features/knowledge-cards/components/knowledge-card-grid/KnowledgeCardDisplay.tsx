@@ -1,8 +1,7 @@
 import { getCardCostColors, getCardRankColors } from '@/lib/design';
 import { KnowledgeCardDisplayProps } from '@/lib/types';
 import { useDarkMode } from '@/context/DarkModeContext';
-import BaseCard from '@/components/ui/BaseCard';
-import GameImage from '@/components/ui/GameImage';
+import CatalogCard from '@/components/ui/CatalogCard';
 import Tag from '@/components/ui/Tag';
 
 export default function KnowledgeCardDisplay({
@@ -18,34 +17,28 @@ export default function KnowledgeCardDisplay({
   const costColors = getCardCostColors(cost, false, isDarkMode);
 
   return (
-    <BaseCard
-      variant='item'
+    <CatalogCard
+      title={name}
+      imageSrc={imageUrl}
+      imageAlt={`${name}知识卡图标`}
       href={`/cards/${id}`}
-      role='button'
-      aria-label={`查看${name}知识卡详情，${rank}级，${cost}费`}
-    >
-      <GameImage
-        src={imageUrl}
-        alt={`${name}知识卡图标`}
-        size='KNOWLEDGECARD_CARD'
-        className='h-32 w-auto hover:scale-105 md:h-auto'
-        preload={preload}
-      />
-      <div className='px-3 pt-1 pb-3 text-center'>
-        <h3 className='mb-1 text-lg font-bold text-gray-800 dark:text-white'>{name}</h3>
-        <div
-          className='flex items-center justify-center gap-1.5 text-sm text-gray-600 dark:text-gray-300'
-          role='group'
-          aria-label='卡片属性'
-        >
+      ariaLabel={`查看${name}知识卡详情，${rank}级，${cost}费`}
+      imageSize='KNOWLEDGECARD_CARD'
+      preload={preload}
+      contentClassName='px-3 pt-1 pb-3 text-center'
+      titleClassName='mb-1 text-lg'
+      tagsAriaLabel='卡片属性'
+      tagsClassName='flex items-center justify-center gap-1.5 text-sm text-gray-600 dark:text-gray-300'
+      tags={
+        <>
           <Tag colorStyles={rankColors} size='xs' margin='compact'>
             {rank}级
           </Tag>
           <Tag colorStyles={costColors} size='xs' margin='compact'>
             {cost}费
           </Tag>
-        </div>
-      </div>
-    </BaseCard>
+        </>
+      }
+    />
   );
 }

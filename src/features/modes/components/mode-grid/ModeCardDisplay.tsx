@@ -1,14 +1,11 @@
-import { cn, getModeTypeColors } from '@/lib/design';
-import { useMobile } from '@/hooks/useMediaQuery';
+import { getModeTypeColors } from '@/lib/design';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Mode } from '@/data/types';
-import BaseCard from '@/components/ui/BaseCard';
-import GameImage from '@/components/ui/GameImage';
+import CatalogCard from '@/components/ui/CatalogCard';
 import Tag from '@/components/ui/Tag';
 
 export default function ModeCardDisplay({ mode }: { mode: Mode }) {
   const [isDarkMode] = useDarkMode();
-  const isMobile = useMobile();
 
   function putTypeTagOn(mode: Mode) {
     return (
@@ -19,30 +16,14 @@ export default function ModeCardDisplay({ mode }: { mode: Mode }) {
   }
 
   return (
-    <BaseCard variant='item' aria-label={`查看${mode.name}模式详情`}>
-      <GameImage
-        src={mode.imageUrl}
-        alt={`${mode.name}模式图标`}
-        size='ITEM_CARD'
-        className='h-32 w-auto hover:scale-105 md:h-auto'
-      />
-      <div className='w-full pt-1 pb-3 text-center md:px-3'>
-        <h3
-          className={cn(
-            'h-6 font-bold whitespace-pre text-gray-800 dark:text-white',
-            isMobile && mode.name.length >= 6 ? 'text-md' : 'mb-1 text-lg'
-          )}
-        >
-          {mode.name}
-        </h3>
-        <div
-          className='modes-center flex flex-wrap justify-center gap-1.5 text-sm text-gray-600 dark:text-gray-300'
-          role='group'
-          aria-label='模式属性'
-        >
-          {putTypeTagOn(mode)}
-        </div>
-      </div>
-    </BaseCard>
+    <CatalogCard
+      title={mode.name}
+      imageSrc={mode.imageUrl}
+      imageAlt={`${mode.name}模式图标`}
+      ariaLabel={`查看${mode.name}模式详情`}
+      tagsAriaLabel='模式属性'
+      tagsClassName='modes-center flex flex-wrap justify-center gap-1.5 text-sm text-gray-600 dark:text-gray-300'
+      tags={putTypeTagOn(mode)}
+    />
   );
 }

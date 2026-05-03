@@ -1,59 +1,32 @@
-import { cn, getItemSourceColors /* , getCardCostColors */, getItemTypeColors } from '@/lib/design';
-import { useMobile } from '@/hooks/useMediaQuery';
+import { getItemSourceColors, getItemTypeColors } from '@/lib/design';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Item } from '@/data/types';
-import BaseCard from '@/components/ui/BaseCard';
-import GameImage from '@/components/ui/GameImage';
+import CatalogCard from '@/components/ui/CatalogCard';
 import Tag from '@/components/ui/Tag';
 
 export default function ItemCardDisplay({ item }: { item: Item }) {
   const [isDarkMode] = useDarkMode();
   const typeColors = getItemTypeColors(item.itemtype, isDarkMode);
   const sourceColors = getItemSourceColors(item.itemsource, isDarkMode);
-  const isMobile = useMobile();
-  // const damageColors = getCardCostColors(item.damage ?? 0, false, isDarkMode);
-  // const wallDamageColors = getCardCostColors(item.walldamage ?? 0, false, isDarkMode);
 
   return (
-    <BaseCard variant='item' aria-label={`查看${item.name}道具详情`}>
-      <GameImage
-        src={item.imageUrl}
-        alt={`${item.name}道具图标`}
-        size='ITEM_CARD'
-        className='h-32 w-auto hover:scale-105 md:h-auto'
-      />
-      <div className='w-full px-3 pt-1 pb-3 text-center'>
-        <h3
-          className={cn(
-            'mb-1 h-6 font-bold whitespace-pre text-gray-800 dark:text-white',
-            isMobile && item.name.length >= 6 ? 'text-md' : 'text-lg'
-          )}
-        >
-          {item.name}
-        </h3>
-        <div
-          className='flex flex-wrap items-center justify-center gap-1.5 text-sm text-gray-600 dark:text-gray-300'
-          role='group'
-          aria-label='道具属性'
-        >
+    <CatalogCard
+      title={item.name}
+      imageSrc={item.imageUrl}
+      imageAlt={`${item.name}道具图标`}
+      ariaLabel={`查看${item.name}道具详情`}
+      contentClassName='w-full px-3 pt-1 pb-3 text-center'
+      tagsAriaLabel='道具属性'
+      tags={
+        <>
           <Tag size='xs' margin='compact' colorStyles={typeColors}>
             {item.itemtype.slice(0, 2)}
           </Tag>
           <Tag size='xs' margin='compact' colorStyles={sourceColors}>
             {item.itemsource.slice(0, 2)}
           </Tag>
-          {/* {typeof item.damage === 'number' && (
-            <Tag size='xs' variant='compact' colorStyles={damageColors}>
-              伤害: {item.damage}
-            </Tag>
-          )}
-          {typeof item.walldamage === 'number' && (
-            <Tag size='xs' variant='compact' colorStyles={wallDamageColors}>
-              墙伤害: {item.walldamage}
-            </Tag>
-          )} */}
-        </div>
-      </div>
-    </BaseCard>
+        </>
+      }
+    />
   );
 }

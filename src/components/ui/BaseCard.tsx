@@ -80,6 +80,7 @@ export default function BaseCard({
         style: cardStyle,
       }
     : {
+        'aria-label': ariaLabel,
         style: cardStyle,
       };
 
@@ -96,7 +97,7 @@ export default function BaseCard({
   );
 
   return href ? (
-    <Link className='flex' href={href} preserveEditParam={preserveEditParam}>
+    <Link aria-label={ariaLabel} className='flex' href={href} preserveEditParam={preserveEditParam}>
       {content}
     </Link>
   ) : (
