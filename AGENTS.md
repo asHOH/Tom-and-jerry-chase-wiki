@@ -93,6 +93,11 @@ scripts/                    # Build scripts (generate-doc-pages.mjs, image optim
 - Tailwind class sorting via `prettier-plugin-tailwindcss`.
 - Import order automated by `@ianvs/prettier-plugin-sort-imports`
 
+## Encoding
+
+- Source files are UTF-8. Chinese text may display as mojibake in Windows PowerShell or agent terminal output when the console decodes UTF-8 bytes with a legacy code page. Treat terminal mojibake as a display issue unless the file bytes or browser output prove corruption.
+- Do not "fix" Chinese strings, comments, or generated text solely because `Get-Content`, `rg`, or command output rendered them incorrectly in the terminal.
+
 ## Components
 
 - Functional components only. Arrow functions or `forwardRef` pattern.
