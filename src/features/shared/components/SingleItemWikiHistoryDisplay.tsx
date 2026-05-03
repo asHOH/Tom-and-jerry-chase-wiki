@@ -6,9 +6,24 @@ import { cn } from '@/lib/design';
 import { useWikiHistory } from '@/hooks/useWikiHistory';
 import { SingleItem, WikiChangeType } from '@/data/types';
 
+function formatHistoryChangeText(type: WikiChangeType, description: string) {
+  const trimmedDescription = description.trim();
+
+  if (!trimmedDescription) {
+    return type;
+  }
+
+  if (trimmedDescription.startsWith(type)) {
+    return trimmedDescription;
+  }
+
+  return `${type} ${trimmedDescription}`;
+}
+
 export default function SingleItemWikiHistoryDisplay({ singleItem }: { singleItem: SingleItem }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const history = useWikiHistory([singleItem]);
+  const currentYear = new Date().getFullYear();
 
   const sortedHistory = useMemo(() => {
     return [...history].sort((a, b) => {
@@ -28,12 +43,20 @@ export default function SingleItemWikiHistoryDisplay({ singleItem }: { singleIte
     });
   }, [history]);
 
+  const historySummary = useMemo(() => {
+    return Object.values(WikiChangeType)
+      .map((type) => ({
+        type,
+        count: sortedHistory.reduce(
+          (count, historyEntry) => (historyEntry.type === type ? count + 1 : count),
+          0
+        ),
+      }))
+      .filter(({ count }) => count > 0);
+  }, [sortedHistory]);
+
   if (sortedHistory.length === 0) {
     return null;
-  }
-
-  function getCount(type: WikiChangeType) {
-    return sortedHistory.reduce((count, history) => (history.type == type ? count + 1 : count), 0);
   }
 
   return (
@@ -60,10 +83,10 @@ export default function SingleItemWikiHistoryDisplay({ singleItem }: { singleIte
         <ul className='mt-2 space-y-1 pl-2'>
           <li>
             <ul className='flex gap-1'>
-              {Object.values(WikiChangeType).map((value) => (
-                <li key={value}>
-                  <strong>{value}: </strong>
-                  {getCount(value)}
+              {historySummary.map(({ type, count }) => (
+                <li key={type}>
+                  <strong>{type}: </strong>
+                  {count}
                 </li>
               ))}
             </ul>
@@ -73,12 +96,12 @@ export default function SingleItemWikiHistoryDisplay({ singleItem }: { singleIte
               key={`${entry.year}-${entry.date}-${entry.type}`}
               className={index === 0 ? 'text-blue-600 dark:text-blue-400' : ''}
             >
-              <strong>
-                {entry.year}.{entry.date}
-              </strong>
-              {' - '}
-              {entry.type}
-              {entry.description ? <div className='pre-wrap'>{`: ${entry.description}`}</div> : ''}
+              <span>
+                <strong>
+                  {entry.year === currentYear ? entry.date : `${entry.year}.${entry.date}`}
+                </strong>
+                {` - ${formatHistoryChangeText(entry.type, entry.description)}`}
+              </span>
             </li>
           ))}
         </ul>
