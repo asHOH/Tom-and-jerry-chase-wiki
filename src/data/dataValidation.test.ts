@@ -77,6 +77,28 @@ describe('Data Validation', () => {
         });
       });
     });
+
+    it('should not have skill detailed descriptions without base descriptions', () => {
+      const detailedOnlyDescriptions: Array<{
+        characterId: string;
+        skillName: string;
+        path: string;
+      }> = [];
+
+      characterArray.forEach((character: Character) => {
+        character.skills.forEach((skill, skillIndex) => {
+          if (skill.detailedDescription?.trim() && !skill.description?.trim()) {
+            detailedOnlyDescriptions.push({
+              characterId: character.id,
+              skillName: skill.name,
+              path: `skills.${skillIndex}.detailedDescription`,
+            });
+          }
+        });
+      });
+
+      expect(detailedOnlyDescriptions).toEqual([]);
+    });
   });
 
   describe('Knowledge Cards Data', () => {

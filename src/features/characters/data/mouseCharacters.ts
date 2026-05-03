@@ -2872,8 +2872,7 @@ const mouseCharacterDefinitions = {
       {
         name: '神之惩戒',
         type: 'passive',
-        description: '',
-        detailedDescription: '所有被动均会被敌方的护盾、无敌、霸体抵消，且不会破盾。',
+        description: '所有被动均会被敌方的护盾、无敌、霸体抵消，且不会破盾。',
         skillLevels: [
           {
             level: 1,
