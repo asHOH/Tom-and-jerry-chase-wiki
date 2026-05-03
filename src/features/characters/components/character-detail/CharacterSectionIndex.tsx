@@ -114,7 +114,7 @@ export default function CharacterSectionIndex() {
             className={cn(
               'transition-all ease-out',
               shouldExpandSkills ? 'duration-300' : 'duration-200',
-              shouldExpandSkills ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
+              shouldExpandSkills ? 'max-h-250 opacity-100' : 'max-h-0 opacity-0'
             )}
             style={{ pointerEvents: shouldExpandSkills ? 'auto' : 'none' }}
             {...(!shouldExpandSkills && { 'aria-hidden': true })}

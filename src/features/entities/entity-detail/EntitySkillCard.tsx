@@ -154,7 +154,7 @@ export default function EntitySkillCard({ skill }: SkillCardProps) {
     <Card className='p-6!'>
       <div className='flex items-start justify-between'>
         {skill.imageUrl && (
-          <div className='mr-6 flex-shrink-0'>
+          <div className='mr-6 shrink-0'>
             <div className='relative h-16 w-16 overflow-hidden rounded-full border-2 border-gray-300 bg-white dark:border-gray-600 dark:bg-slate-700'>
               <Image
                 src={skill.imageUrl}

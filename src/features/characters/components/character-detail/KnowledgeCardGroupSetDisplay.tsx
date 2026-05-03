@@ -120,7 +120,7 @@ const KnowledgeCardGroupSetDisplay: React.FC<KnowledgeCardGroupSetDisplayProps> 
         className={cn(
           'transition-all ease-out',
           isOpen ? 'duration-300' : 'duration-200',
-          isOpen ? 'max-h-[10000px] opacity-100' : 'max-h-0 opacity-0'
+          isOpen ? 'max-h-2500 opacity-100' : 'max-h-0 opacity-0'
         )}
         style={{ pointerEvents: isOpen ? 'auto' : 'none' }}
         {...(!isOpen && { 'aria-hidden': true })}

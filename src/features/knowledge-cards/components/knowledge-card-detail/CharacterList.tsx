@@ -31,7 +31,7 @@ export default function CharacterList({ characters, showList }: CharacterListPro
               className='flex w-full items-center gap-2 rounded-lg duration-300 hover:bg-slate-100 lg:px-0.5 dark:hover:bg-slate-700/60'
               tabIndex={0}
             >
-              <div className='relative flex h-16 w-16 flex-shrink-0 items-center justify-center'>
+              <div className='relative flex h-16 w-16 shrink-0 items-center justify-center'>
                 {character.imageUrl ? (
                   <Image
                     src={character.imageUrl}

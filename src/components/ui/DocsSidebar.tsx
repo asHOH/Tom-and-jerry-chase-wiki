@@ -108,7 +108,7 @@ export default function DocsSidebar({ docPages }: DocsSidebarProps) {
                 title={isCollapsed ? 'Overview' : undefined}
               >
                 <svg
-                  className={cn('h-4 w-4 flex-shrink-0', !isCollapsed && 'mr-3')}
+                  className={cn('h-4 w-4 shrink-0', !isCollapsed && 'mr-3')}
                   fill='none'
                   stroke='currentColor'
                   viewBox='0 0 24 24'
@@ -155,7 +155,7 @@ export default function DocsSidebar({ docPages }: DocsSidebarProps) {
                           title={isCollapsed ? page.title : undefined}
                         >
                           <svg
-                            className={cn('h-4 w-4 flex-shrink-0', !isCollapsed && 'mr-3')}
+                            className={cn('h-4 w-4 shrink-0', !isCollapsed && 'mr-3')}
                             fill='none'
                             stroke='currentColor'
                             viewBox='0 0 24 24'

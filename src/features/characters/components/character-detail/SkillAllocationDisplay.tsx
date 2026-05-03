@@ -335,7 +335,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
             ))}
 
           {hasNegativeEffect && (
-            <div className='pointer-events-none absolute -top-[5px] -right-[5px] z-10 h-4 w-4'>
+            <div className='pointer-events-none absolute -top-1.25 -right-1.25 z-10 h-4 w-4'>
               <Image
                 src='/images/misc/禁止.png'
                 alt='负面效果'
@@ -519,9 +519,9 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
       if (nextGroup.isParallelGroup) {
         // Single to parallel -> diverge
         return (
-          // The top-[7px] value centers the divergence point vertically with the single 40px icon.
+          // The top-1.75 value centers the divergence point vertically with the single 40px icon.
           <div
-            className='absolute top-[7px] left-8 h-7 w-4 [transform:scaleX(-1)]'
+            className='absolute top-1.75 left-8 h-7 w-4 transform-[scaleX(-1)]'
             style={startAdjustStyle}
           >
             <svg className='h-full w-full' viewBox='0 0 16 28'>
@@ -564,7 +564,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
   return (
     <div className='space-y-3'>
       <div className='flex gap-4'>
-        <div className='flex w-1/6 flex-shrink-0 flex-col'>
+        <div className='flex w-1/6 shrink-0 flex-col'>
           {isEditMode ? (
             <e.h4
               path={`skillAllocations.${index}.id`}
@@ -592,7 +592,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
           {!patternValidation.isValid && (
             <div className='mb-3 rounded-lg border border-red-200 bg-red-50 p-3 dark:border-red-800 dark:bg-red-900/20'>
               <div className='flex items-start gap-2'>
-                <div className='mt-0.5 h-5 w-5 flex-shrink-0'>
+                <div className='mt-0.5 h-5 w-5 shrink-0'>
                   <svg
                     className='h-5 w-5 text-red-500 dark:text-red-400'
                     fill='currentColor'
