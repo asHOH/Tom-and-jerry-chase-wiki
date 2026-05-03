@@ -90,12 +90,12 @@ jest.mock('@/lib/singleItemReverse', () => ({
 
 jest.mock('@/features/shared/components/SingleItemReverseCard', () => ({
   __esModule: true,
-  default: () => <div />,
+  default: () => <div>reverse-card</div>,
 }));
 
 jest.mock('@/features/shared/components/SingleItemTraitsText', () => ({
   __esModule: true,
-  default: () => <div />,
+  default: () => <div>traits-text</div>,
 }));
 
 jest.mock('@/features/shared/components/SingleItemWikiHistoryDisplay', () => ({
@@ -182,5 +182,12 @@ jest.mock('./WinRatesDisplay', () => ({
 describe('CharacterDetails', () => {
   it('should render on the server without accessing document for the portal target', () => {
     expect(() => renderToString(<CharacterDetails />)).not.toThrow();
+  });
+
+  it('should hide own traits and reverse cards when their counts are zero', () => {
+    const html = renderToString(<CharacterDetails />);
+
+    expect(html).not.toContain('traits-text');
+    expect(html).not.toContain('reverse-card');
   });
 });

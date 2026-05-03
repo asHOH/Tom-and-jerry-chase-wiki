@@ -80,6 +80,9 @@ export default function CharacterDetails({
     factionId === 'cat'
       ? localCharacter.catPositioningTags || []
       : localCharacter.mousePositioningTags || [];
+  const characterSingleItem = { name: localCharacter.id, type: 'character' as const };
+  const characterTraitCount = filterTraitsBySingleItem(characterSingleItem).length;
+  const characterReverseCount = singleItemRreverse(characterSingleItem).length;
 
   return (
     <EditModeContext
@@ -385,28 +388,30 @@ export default function CharacterDetails({
                       ) : null
                     );
                 })()}
-                <div className='space-y-2'>
-                  <CollapseCard
-                    title={`${localCharacter.id}角色自身的互动特性(${filterTraitsBySingleItem({ name: localCharacter.id, type: 'character' }).length})`}
-                    size='xs'
-                    className='rounded-md border-x border-b border-gray-300 px-1 pb-1 whitespace-pre-wrap dark:border-gray-700'
-                    titleClassName='pl-3'
-                  >
-                    <SingleItemTraitsText
-                      singleItem={{ name: localCharacter.id, type: 'character' }}
-                    />
-                  </CollapseCard>
-                  <CollapseCard
-                    title={`${localCharacter.id}角色自身的引用项(${singleItemRreverse({ name: localCharacter.id, type: 'character' }).length})`}
-                    size='xs'
-                    className='rounded-md border-x border-b border-gray-300 px-1 pb-1 whitespace-pre-wrap dark:border-gray-700'
-                    titleClassName='pl-3'
-                  >
-                    <SingleItemReverseCard
-                      singleItem={{ name: localCharacter.id, type: 'character' }}
-                    />
-                  </CollapseCard>
-                </div>
+                {characterTraitCount > 0 || characterReverseCount > 0 ? (
+                  <div className='space-y-2'>
+                    {characterTraitCount > 0 ? (
+                      <CollapseCard
+                        title={`${localCharacter.id}自身的互动特性(${characterTraitCount})`}
+                        size='xs'
+                        className='rounded-md border-x border-b border-gray-300 px-1 pb-1 whitespace-pre-wrap dark:border-gray-700'
+                        titleClassName='pl-3'
+                      >
+                        <SingleItemTraitsText singleItem={characterSingleItem} />
+                      </CollapseCard>
+                    ) : null}
+                    {characterReverseCount > 0 ? (
+                      <CollapseCard
+                        title={`${localCharacter.id}自身的引用项(${characterReverseCount})`}
+                        size='xs'
+                        className='rounded-md border-x border-b border-gray-300 px-1 pb-1 whitespace-pre-wrap dark:border-gray-700'
+                        titleClassName='pl-3'
+                      >
+                        <SingleItemReverseCard singleItem={characterSingleItem} />
+                      </CollapseCard>
+                    ) : null}
+                  </div>
+                ) : null}
               </div>
             </CharacterSection>
             <CharacterSection
