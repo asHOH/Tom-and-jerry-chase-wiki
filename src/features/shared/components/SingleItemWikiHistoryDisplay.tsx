@@ -94,13 +94,17 @@ export default function SingleItemWikiHistoryDisplay({ singleItem }: { singleIte
           {sortedHistory.map((entry, index) => (
             <li
               key={`${entry.year}-${entry.date}-${entry.type}`}
-              className={index === 0 ? 'text-blue-600 dark:text-blue-400' : ''}
+              className={cn(
+                'grid grid-cols-[3.25rem_auto_1fr] items-baseline gap-x-1',
+                index === 0 && 'text-blue-600 dark:text-blue-400'
+              )}
             >
-              <span>
-                <strong>
+              <span className='contents'>
+                <strong className='text-right'>
                   {entry.year === currentYear ? entry.date : `${entry.year}.${entry.date}`}
                 </strong>
-                {` - ${formatHistoryChangeText(entry.type, entry.description)}`}
+                <span> - </span>
+                <span>{formatHistoryChangeText(entry.type, entry.description)}</span>
               </span>
             </li>
           ))}

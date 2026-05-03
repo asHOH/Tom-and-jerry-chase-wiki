@@ -49,5 +49,8 @@ describe('SingleItemWikiHistoryDisplay', () => {
     expect(screen.queryByText(`${WikiChangeType.REWORK}:`)).not.toBeInTheDocument();
     expect(getHistoryLine(`4.6 - ${WikiChangeType.UPDATE} collaborators`)).toBeInTheDocument();
     expect(getHistoryLine(`2025.12.31 - ${WikiChangeType.UPDATE} aliases.0`)).toBeInTheDocument();
+    expect(
+      getHistoryLine(`4.6 - ${WikiChangeType.UPDATE} collaborators`).closest('li')
+    ).toHaveClass('grid', 'grid-cols-[5.25rem_auto_1fr]', 'gap-x-1');
   });
 });
