@@ -29,12 +29,12 @@ import { characters } from '@/data';
 
 const e = editable('characters');
 
-interface SkillCardProps {
+type SkillCardProps = {
   skill: DeepReadonly<Skill>;
   isSingleWeapon?: boolean;
   characterId: string;
   skillIndex: number;
-}
+};
 
 function SkillDescriptionPrefix({ skill, level }: { skill: DeepReadonly<Skill>; level: number }) {
   const results: string[] = [];
@@ -56,6 +56,240 @@ function SkillDescriptionPrefix({ skill, level }: { skill: DeepReadonly<Skill>; 
   );
 }
 
+function getSkillTypeLabel(type: string, isSingleWeapon?: boolean) {
+  if (isSingleWeapon && type === 'weapon1') {
+    return '武器';
+  }
+  const typeMap = {
+    active: '主动',
+    weapon1: '武器1',
+    weapon2: '武器2',
+    passive: '被动',
+  };
+  return typeMap[type as keyof typeof typeMap] || '被动';
+}
+
+function SkillMedia({
+  skill,
+  characterId,
+  skillIndex,
+  isEditMode,
+}: {
+  skill: DeepReadonly<Skill>;
+  characterId: string;
+  skillIndex: number;
+  isEditMode: boolean;
+}) {
+  const [showVideoAddress, setShowVideoAddress] = useState(false);
+
+  if (!skill.imageUrl) {
+    return null;
+  }
+
+  return (
+    <div className='mr-2 shrink-0 md:mr-6'>
+      <div className='relative h-16 w-16 overflow-hidden rounded-full border-2 border-gray-300 bg-white dark:border-gray-600 dark:bg-slate-700'>
+        <Image
+          src={skill.imageUrl}
+          alt={skill.name}
+          fill
+          sizes='64px'
+          className='object-contain p-2'
+        />
+      </div>
+      {isEditMode && (
+        <div className='mt-2'>
+          <button
+            type='button'
+            onClick={() => setShowVideoAddress(!showVideoAddress)}
+            className={cn(
+              'block w-full rounded-md px-2 py-1 text-center text-xs transition-colors',
+              skill.videoUrl
+                ? 'bg-blue-50 text-blue-600 hover:bg-blue-100 hover:underline dark:bg-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-900'
+                : 'bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-900/50 dark:text-red-400 dark:hover:bg-red-900'
+            )}
+            data-tutorial-id='skill-video-url-edit'
+          >
+            {showVideoAddress ? '隐藏视频地址' : skill.videoUrl ? '查看视频' : '无视频'}
+          </button>
+          {showVideoAddress && (
+            <e.div
+              className='mt-2 block w-full rounded-md bg-blue-50 px-2 py-1 text-center text-xs wrap-anywhere text-blue-600 transition-colors hover:bg-blue-100 hover:underline dark:bg-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-900'
+              path={`skills.${skillIndex}.videoUrl`}
+              initialValue={skill.videoUrl ?? '输入视频网址'}
+              onSave={(newValue) => {
+                const skill = characters[characterId]!.skills[skillIndex]!;
+                if (newValue.trim() === '输入视频网址' || newValue.trim() === '') {
+                  delete skill.videoUrl;
+                } else {
+                  skill.videoUrl = newValue.trim();
+                }
+              }}
+            />
+          )}
+        </div>
+      )}
+
+      {!isEditMode && skill.videoUrl && (
+        <div className='mt-2'>
+          <button
+            type='button'
+            onClick={() => window.open(skill.videoUrl, '_blank', 'noopener,noreferrer')}
+            className='block w-full rounded-md bg-blue-50 px-2 py-1 text-center text-xs text-blue-600 transition-colors hover:bg-blue-100 hover:underline dark:bg-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-900'
+          >
+            查看视频
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function updateSkillName({
+  characterId,
+  skillIndex,
+  localCharacter,
+  newName,
+}: {
+  characterId: string;
+  skillIndex: number;
+  localCharacter: CharacterWithFaction;
+  newName: string;
+}) {
+  const factionId = localCharacter.factionId!;
+  const skill = characters[characterId]!.skills[skillIndex]!;
+  skill.name = newName;
+  skill.imageUrl = AssetManager.getSkillImageUrl(
+    localCharacter.id,
+    { ...skill, name: newName },
+    factionId
+  );
+}
+
+function RemoveWeaponButton({ characterId }: { characterId: string }) {
+  return (
+    <button
+      type='button'
+      aria-label='移除技能'
+      onClick={() => {
+        characters[characterId]!.skills = characters[characterId]!.skills.filter(
+          ({ type }: Skill) => type != 'weapon2'
+        );
+      }}
+      className='ml-auto flex h-8 w-8 items-center justify-center rounded-md bg-red-500 text-xs text-white hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
+    >
+      <TrashIcon className='h-4 w-4' aria-hidden='true' />
+    </button>
+  );
+}
+
+function SkillHistory({ skill, className }: { skill: DeepReadonly<Skill>; className?: string }) {
+  return (
+    <div className={className}>
+      <SingleItemWikiHistoryDisplay singleItem={{ name: skill.name, type: 'skill' }} />
+    </div>
+  );
+}
+
+function SkillHeader({
+  skill,
+  skillTypeLabel,
+  characterId,
+  skillIndex,
+  localCharacter,
+  isEditMode,
+  showHistory,
+}: {
+  skill: DeepReadonly<Skill>;
+  skillTypeLabel: string;
+  characterId: string;
+  skillIndex: number;
+  localCharacter: CharacterWithFaction;
+  isEditMode: boolean;
+  showHistory: boolean;
+}) {
+  return (
+    <div className='flex items-center justify-between'>
+      <h3 className='px-2 text-xl font-bold md:py-2 dark:text-white'>
+        {skillTypeLabel} ·{' '}
+        <e.span
+          id={`Skill:${skill.name}`}
+          path={`skills.${skillIndex}.name`}
+          initialValue={skill.name}
+          isSingleLine={true}
+          onSave={(newName) =>
+            updateSkillName({ characterId, skillIndex, localCharacter, newName })
+          }
+        />
+        {showHistory && <SkillHistory skill={skill} className='font-normal' />}
+      </h3>
+      {isEditMode && skill.type == 'weapon2' && <RemoveWeaponButton characterId={characterId} />}
+    </div>
+  );
+}
+
+function SkillProperties({
+  properties,
+  isEditMode,
+  isMobileEditMode,
+}: {
+  properties: React.ReactNode[];
+  isEditMode: boolean;
+  isMobileEditMode?: boolean;
+}) {
+  if (properties.length === 0) {
+    return null;
+  }
+
+  return (
+    <div
+      className={cn(
+        'mt-1 px-2 text-sm text-gray-500 dark:text-gray-400',
+        isMobileEditMode && 'divide-y divide-dashed divide-gray-300'
+      )}
+    >
+      {properties.map((prop, index) => (
+        <React.Fragment key={index}>
+          {index > 0 && !isEditMode && ' · '}
+          {prop}
+        </React.Fragment>
+      ))}
+    </div>
+  );
+}
+
+function SkillDescription({
+  skill,
+  skillIndex,
+  isDetailed,
+  isEditMode,
+}: {
+  skill: DeepReadonly<Skill>;
+  skillIndex: number;
+  isDetailed: boolean;
+  isEditMode: boolean;
+}) {
+  if (skill.type == 'passive' && !('description' in skill) && !isEditMode) {
+    return null;
+  }
+
+  return (
+    <div className='mt-3 px-2'>
+      <div className='py-2 whitespace-pre-wrap text-gray-700 dark:text-gray-300'>
+        <e.span
+          initialValue={
+            (isDetailed && skill.detailedDescription?.trim()
+              ? skill.detailedDescription
+              : skill.description) ?? '<无内容>'
+          }
+          path={`skills.${skillIndex}.${isDetailed ? 'detailedDescription' : 'description'}`}
+          data-tutorial-id='skill-description-edit'
+        />
+      </div>
+    </div>
+  );
+}
+
 export default function SkillCard({
   skill,
   isSingleWeapon,
@@ -65,22 +299,9 @@ export default function SkillCard({
   const { isEditMode } = useEditMode();
   const { isDetailedView: isDetailed } = useAppContext();
   const localCharacter = useSnapshot(characters[characterId]!) as CharacterWithFaction;
-  const [showVideoAddress, setShowVideoAddress] = useState(false);
   const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
-
-  const getSkillTypeLabel = (type: string) => {
-    if (isSingleWeapon && type === 'weapon1') {
-      return '武器';
-    }
-    const typeMap = {
-      active: '主动',
-      weapon1: '武器1',
-      weapon2: '武器2',
-      passive: '被动',
-    };
-    return typeMap[type as keyof typeof typeMap] || '被动';
-  };
+  const skillTypeLabel = getSkillTypeLabel(skill.type, isSingleWeapon);
 
   const getCooldownProperty = () => {
     if (!skill.skillLevels.some((level: SkillLevel) => level.cooldown)) return null;
@@ -660,243 +881,56 @@ export default function SkillCard({
   };
 
   const properties = getSkillProperties();
-  const hasProperties = properties.length > 0;
 
   return (
-    <Card
-      className={cn('dark:border-slate-700 dark:bg-slate-800', isMobile ? 'px-4! py-6!' : 'p-6!')}
-    >
+    <Card className='px-4! py-6! md:p-6! dark:border-slate-700 dark:bg-slate-800'>
       <div className='flex items-start'>
-        {skill.imageUrl && (
-          <div className={cn('shrink-0', isMobile ? 'mr-2' : 'mr-6')}>
-            <div className='relative h-16 w-16 overflow-hidden rounded-full border-2 border-gray-300 bg-white dark:border-gray-600 dark:bg-slate-700'>
-              <Image
-                src={skill.imageUrl}
-                alt={skill.name}
-                fill
-                sizes='64px'
-                className='object-contain p-2'
-              />
-            </div>
-            {isEditMode && (
-              <div className='mt-2'>
-                <button
-                  type='button'
-                  onClick={() => setShowVideoAddress(!showVideoAddress)}
-                  className={cn(
-                    'block w-full rounded-md px-2 py-1 text-center text-xs transition-colors',
-                    skill.videoUrl
-                      ? 'bg-blue-50 text-blue-600 hover:bg-blue-100 hover:underline dark:bg-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-900'
-                      : 'bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-900/50 dark:text-red-400 dark:hover:bg-red-900'
-                  )}
-                  data-tutorial-id='skill-video-url-edit'
-                >
-                  {showVideoAddress ? '隐藏视频地址' : skill.videoUrl ? '查看视频' : '无视频'}
-                </button>
-                {showVideoAddress && (
-                  <e.div
-                    className='mt-2 block w-full rounded-md bg-blue-50 px-2 py-1 text-center text-xs wrap-anywhere text-blue-600 transition-colors hover:bg-blue-100 hover:underline dark:bg-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-900'
-                    path={`skills.${skillIndex}.videoUrl`}
-                    initialValue={skill.videoUrl ?? '输入视频网址'}
-                    onSave={(newValue) => {
-                      const skill = characters[characterId]!.skills[skillIndex]!;
-                      // Don't save if the value is the default placeholder text
-                      if (newValue.trim() === '输入视频网址' || newValue.trim() === '') {
-                        // Clear the video URL
-                        delete skill.videoUrl;
-                      } else {
-                        // Save the actual URL
-                        skill.videoUrl = newValue.trim();
-                      }
-                    }}
-                  />
-                )}
-              </div>
-            )}
-
-            {!isEditMode && skill.videoUrl && (
-              <div className='mt-2'>
-                <button
-                  type='button'
-                  onClick={() => window.open(skill.videoUrl, '_blank', 'noopener,noreferrer')}
-                  className='block w-full rounded-md bg-blue-50 px-2 py-1 text-center text-xs text-blue-600 transition-colors hover:bg-blue-100 hover:underline dark:bg-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-900'
-                >
-                  查看视频
-                </button>
-              </div>
-            )}
-          </div>
-        )}
-        {/*电脑版*/}
-        {!isMobile && (
-          <div className='flex-1'>
-            <div className='flex items-center justify-between'>
-              <h3 className='px-2 py-2 text-xl font-bold dark:text-white'>
-                {getSkillTypeLabel(skill.type)} ·{' '}
-                <e.span
-                  id={`Skill:${skill.name}`}
-                  path={`skills.${skillIndex}.name`}
-                  initialValue={skill.name}
-                  isSingleLine={true}
-                  onSave={(newName) => {
-                    // Update skill with new name and regenerate image URL
-                    const factionId = localCharacter.factionId!;
-
-                    const skill = characters[characterId]!.skills[skillIndex]!;
-                    skill.name = newName;
-                    skill.imageUrl = AssetManager.getSkillImageUrl(
-                      localCharacter?.id,
-                      { ...skill, name: newName },
-                      factionId
-                    );
-                  }}
-                />
-                {!isEditMode && (
-                  <div className='font-normal'>
-                    <SingleItemWikiHistoryDisplay
-                      singleItem={{ name: skill.name, type: 'skill' }}
-                    />
-                  </div>
-                )}
-              </h3>
-              {isEditMode && skill.type == 'weapon2' && (
-                <button
-                  type='button'
-                  aria-label='移除技能'
-                  onClick={() => {
-                    function removeSkill(localCharacter: CharacterWithFaction) {
-                      localCharacter.skills = localCharacter.skills.filter(
-                        ({ type }: Skill) => type != 'weapon2'
-                      );
-                    }
-                    removeSkill(characters[characterId]!);
-                  }}
-                  className='ml-auto flex h-8 w-8 items-center justify-center rounded-md bg-red-500 text-xs text-white hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
-                >
-                  <TrashIcon className='h-4 w-4' aria-hidden='true' />
-                </button>
-              )}
-            </div>
-
-            {hasProperties && (
-              <div className='mt-1 px-2 text-sm text-gray-500 dark:text-gray-400'>
-                {properties.map((prop, index) => (
-                  <React.Fragment key={index}>
-                    {index > 0 && !isEditMode && ' · '}
-                    {prop}
-                  </React.Fragment>
-                ))}
-              </div>
-            )}
-
-            {(skill.type != 'passive' || 'description' in skill || isEditMode) && (
-              <div className='mt-3 px-2'>
-                <div className='py-2 whitespace-pre-wrap text-gray-700 dark:text-gray-300'>
-                  <e.span
-                    initialValue={
-                      (isDetailed && skill.detailedDescription?.trim()
-                        ? skill.detailedDescription
-                        : skill.description) ?? '<无内容>'
-                    }
-                    path={`skills.${skillIndex}.${isDetailed ? 'detailedDescription' : 'description'}`}
-                    data-tutorial-id='skill-description-edit'
-                  />
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-        {/*手机版-标题栏*/}
-        {isMobile && (
-          <div className='flex-1'>
-            <div className='flex items-center justify-between'>
-              <h3 className='px-2 text-xl font-bold dark:text-white'>
-                {getSkillTypeLabel(skill.type)} ·{' '}
-                <e.span
-                  id={`Skill:${skill.name}`}
-                  path={`skills.${skillIndex}.name`}
-                  initialValue={skill.name}
-                  isSingleLine={true}
-                  onSave={(newName) => {
-                    // Update skill with new name and regenerate image URL
-                    const factionId = localCharacter.factionId!;
-
-                    const skill = characters[characterId]!.skills[skillIndex]!;
-                    skill.name = newName;
-                    skill.imageUrl = AssetManager.getSkillImageUrl(
-                      localCharacter?.id,
-                      { ...skill, name: newName },
-                      factionId
-                    );
-                  }}
-                />
-              </h3>
-              {isEditMode && skill.type == 'weapon2' && (
-                <button
-                  type='button'
-                  aria-label='移除技能'
-                  onClick={() => {
-                    function removeSkill(localCharacter: CharacterWithFaction) {
-                      localCharacter.skills = localCharacter.skills.filter(
-                        ({ type }: Skill) => type != 'weapon2'
-                      );
-                    }
-                    removeSkill(characters[characterId]!);
-                  }}
-                  className='ml-auto flex h-8 w-8 items-center justify-center rounded-md bg-red-500 text-xs text-white hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
-                >
-                  <TrashIcon className='h-4 w-4' aria-hidden='true' />
-                </button>
-              )}
-            </div>
-
-            {!isEditMode && hasProperties && (
-              <div className='mt-1 px-2 text-sm text-gray-500 dark:text-gray-400'>
-                {properties.map((prop, index) => (
-                  <React.Fragment key={index}>
-                    {index > 0 && !isEditMode && ' · '}
-                    {prop}
-                  </React.Fragment>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
+        <SkillMedia
+          skill={skill}
+          characterId={characterId}
+          skillIndex={skillIndex}
+          isEditMode={isEditMode}
+        />
+        <div className='flex-1'>
+          <SkillHeader
+            skill={skill}
+            skillTypeLabel={skillTypeLabel}
+            characterId={characterId}
+            skillIndex={skillIndex}
+            localCharacter={localCharacter}
+            isEditMode={isEditMode}
+            showHistory={!isMobile && !isEditMode}
+          />
+          {(!isMobile || !isEditMode) && (
+            <SkillProperties properties={properties} isEditMode={isEditMode} />
+          )}
+          {!isMobile && (
+            <SkillDescription
+              skill={skill}
+              skillIndex={skillIndex}
+              isDetailed={isDetailed}
+              isEditMode={isEditMode}
+            />
+          )}
+        </div>
       </div>
 
-      {/*手机版-主体栏*/}
       {isMobile && (
         <div className='flex-1'>
-          {!isEditMode && (
-            <div className='px-2'>
-              <SingleItemWikiHistoryDisplay singleItem={{ name: skill.name, type: 'skill' }} />
-            </div>
+          {!isEditMode && <SkillHistory skill={skill} className='px-2' />}
+          {isEditMode && (
+            <SkillProperties
+              properties={properties}
+              isEditMode={isEditMode}
+              isMobileEditMode={true}
+            />
           )}
-          {isEditMode && hasProperties && (
-            <div className='mt-1 divide-y divide-dashed divide-gray-300 px-2 text-sm text-gray-500 dark:text-gray-400'>
-              {properties.map((prop, index) => (
-                <React.Fragment key={index}>
-                  {index > 0 && !isEditMode && ' · '}
-                  {prop}
-                </React.Fragment>
-              ))}
-            </div>
-          )}
-          {(skill.type != 'passive' || 'description' in skill || isEditMode) && (
-            <div className='mt-3 px-2'>
-              <div className='py-2 whitespace-pre-wrap text-gray-700 dark:text-gray-300'>
-                <e.span
-                  initialValue={
-                    (isDetailed && skill.detailedDescription?.trim()
-                      ? skill.detailedDescription
-                      : skill.description) ?? '<无内容>'
-                  }
-                  path={`skills.${skillIndex}.${isDetailed ? 'detailedDescription' : 'description'}`}
-                  data-tutorial-id='skill-description-edit'
-                />
-              </div>
-            </div>
-          )}
+          <SkillDescription
+            skill={skill}
+            skillIndex={skillIndex}
+            isDetailed={isDetailed}
+            isEditMode={isEditMode}
+          />
         </div>
       )}
 
