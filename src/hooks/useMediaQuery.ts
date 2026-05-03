@@ -8,5 +8,5 @@ import { useMediaQuery as useMediaQueryHook } from 'usehooks-ts';
  * so mobile is max-width:767px (no overlap at exactly 768px).
  */
 export function useMobile(): boolean {
-  return useMediaQueryHook('(max-width: 767px)');
+  return useMediaQueryHook('(max-width: 767px)', { initializeWithValue: false });
 }

@@ -50,8 +50,8 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   const { nickname, role, clearData: clearUserData } = useUser();
   const { items: rawItems, isActive } = useNavigationTabs();
   const isMobile = useMobile();
-  const isMd = useMediaQuery('(min-width: 768px)');
-  const isLg = useMediaQuery('(min-width: 1024px)');
+  const isMd = useMediaQuery('(min-width: 768px)', { initializeWithValue: false });
+  const isLg = useMediaQuery('(min-width: 1024px)', { initializeWithValue: false });
   const shouldReduceMotion = useReducedMotion();
   const { isNavigatingTo } = useNavigationProgress();
   const items = rawItems.flatMap<NavEntry>((entry) =>

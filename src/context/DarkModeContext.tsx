@@ -1,6 +1,6 @@
 'use client';
 
-import { startTransition, useCallback, useMemo, type ReactNode } from 'react';
+import { startTransition, useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { ThemeProvider as NextThemeProvider, useTheme } from 'next-themes';
 
 export function DarkModeProvider({ children }: { children: ReactNode }) {
@@ -13,13 +13,19 @@ export function DarkModeProvider({ children }: { children: ReactNode }) {
 
 export function useDarkMode(): readonly [boolean, () => void] {
   const { resolvedTheme, setTheme } = useTheme();
-  const isDarkMode = resolvedTheme === 'dark';
+  const [hasMounted, setHasMounted] = useState(false);
+  const resolvedIsDarkMode = resolvedTheme === 'dark';
+  const isDarkMode = hasMounted && resolvedIsDarkMode;
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
 
   const toggleDarkMode = useCallback(() => {
     startTransition(() => {
-      setTheme(isDarkMode ? 'light' : 'dark');
+      setTheme(resolvedIsDarkMode ? 'light' : 'dark');
     });
-  }, [isDarkMode, setTheme]);
+  }, [resolvedIsDarkMode, setTheme]);
 
   return useMemo(() => [isDarkMode, toggleDarkMode] as const, [isDarkMode, toggleDarkMode]);
 }

@@ -20,7 +20,8 @@ export const useAppContext = () => {
   const { navigate } = useNavigation();
   const [storedDetailedView, setStoredDetailedView] = useLocalStorage<boolean>(
     'isDetailedView',
-    false
+    false,
+    { initializeWithValue: false }
   );
   const { isDetailedView } = useSnapshot(isDetailedViewStore);
 
