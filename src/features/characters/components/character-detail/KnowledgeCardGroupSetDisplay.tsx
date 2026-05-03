@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import clsx from 'clsx';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
+import { cn } from '@/lib/design';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { contributors } from '@/data/contributors';
@@ -62,7 +62,7 @@ const KnowledgeCardGroupSetDisplay: React.FC<KnowledgeCardGroupSetDisplayProps> 
 
   return (
     <div
-      className={clsx(
+      className={cn(
         'transition-all',
         isOpen ? 'duration-300 ease-out' : 'duration-200 ease-in',
         isOpen ? 'mb-2' : 'mb-0'
@@ -72,7 +72,7 @@ const KnowledgeCardGroupSetDisplay: React.FC<KnowledgeCardGroupSetDisplayProps> 
         <button
           type='button'
           aria-label={isOpen ? `折叠${groupSet.id}` : `展开${groupSet.id}`}
-          className={clsx(
+          className={cn(
             'flex-1 py-1 text-left text-2xl font-bold focus:outline-none dark:text-white',
             { 'cursor-pointer': !isEditMode }
           )}
@@ -117,7 +117,7 @@ const KnowledgeCardGroupSetDisplay: React.FC<KnowledgeCardGroupSetDisplayProps> 
       </div>
 
       <div
-        className={clsx(
+        className={cn(
           'transition-all ease-out',
           isOpen ? 'duration-300' : 'duration-200',
           isOpen ? 'max-h-[10000px] opacity-100' : 'max-h-0 opacity-0'

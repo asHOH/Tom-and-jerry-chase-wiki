@@ -1,10 +1,10 @@
 'use client';
 
 import React from 'react';
-import clsx from 'clsx';
 import { useSnapshot } from 'valtio';
 
 import { AssetManager } from '@/lib/assetManager';
+import { cn } from '@/lib/design';
 import { useNavigation } from '@/hooks/useNavigation';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
@@ -440,7 +440,7 @@ const RelationSection: React.FC<RelationSectionProps> = ({
     return (
       <div
         key={item.key}
-        className={clsx(
+        className={cn(
           'flex flex-row items-center gap-3 rounded-lg p-2',
           themeClasses.itemBg,
           !canEdit && themeClasses.interactive,
@@ -528,7 +528,7 @@ const RelationSection: React.FC<RelationSectionProps> = ({
     return (
       <div
         key={item.key}
-        className={clsx(
+        className={cn(
           'flex flex-row items-center gap-3 rounded-lg p-2',
           themeClasses.itemBg,
           !canEdit && themeClasses.interactive,
@@ -611,7 +611,7 @@ const RelationSection: React.FC<RelationSectionProps> = ({
     return (
       <div
         key={item.key}
-        className={clsx(
+        className={cn(
           'flex flex-row items-center gap-3 rounded-lg p-2',
           themeClasses.itemBg,
           !canEdit && themeClasses.interactive,
@@ -706,7 +706,7 @@ const RelationSection: React.FC<RelationSectionProps> = ({
     return (
       <div
         key={item.key}
-        className={clsx(
+        className={cn(
           'flex flex-row items-center gap-3 rounded-lg p-2',
           themeClasses.itemBg,
           !canEdit && themeClasses.interactive,
@@ -801,7 +801,7 @@ const RelationSection: React.FC<RelationSectionProps> = ({
     return (
       <div
         key={item.key}
-        className={clsx(
+        className={cn(
           'flex flex-row items-center gap-3 rounded-lg p-2',
           themeClasses.itemBg,
           !canEdit && themeClasses.interactive,
@@ -890,13 +890,10 @@ const RelationSection: React.FC<RelationSectionProps> = ({
     <div>
       <div className='flex items-center justify-between'>
         <span
-          className={clsx(
-            'flex items-center gap-1 text-base font-semibold',
-            themeClasses.headerText
-          )}
+          className={cn('flex items-center gap-1 text-base font-semibold', themeClasses.headerText)}
         >
           <span
-            className={clsx(
+            className={cn(
               'mr-1 flex h-5 w-5 items-center justify-center rounded-full',
               themeClasses.iconBg
             )}

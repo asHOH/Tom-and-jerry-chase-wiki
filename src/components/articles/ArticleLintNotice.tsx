@@ -1,5 +1,6 @@
 import React from 'react';
-import clsx from 'clsx';
+
+import { cn } from '@/lib/design';
 
 export type ArticleLintSeverity = 'error' | 'warning';
 
@@ -46,7 +47,7 @@ export const ArticleLintNotice: React.FC<ArticleLintNoticeProps> = ({ results, o
         return (
           <div
             key={severity}
-            className={clsx('rounded-lg border px-4 py-3 text-sm', styles.container)}
+            className={cn('rounded-lg border px-4 py-3 text-sm', styles.container)}
             role={severity === 'error' ? 'alert' : 'status'}
             aria-live={severity === 'error' ? 'assertive' : 'polite'}
           >

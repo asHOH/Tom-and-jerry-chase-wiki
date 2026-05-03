@@ -1,12 +1,11 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
-import clsx from 'clsx';
 import some from 'lodash-es/some';
 import uniq from 'lodash-es/uniq';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
-import { getCardRankColors } from '@/lib/design';
+import { cn, getCardRankColors } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
@@ -201,7 +200,7 @@ const GroupDescriptionBlock = ({
 
   return (
     <div
-      className={clsx(
+      className={cn(
         'rounded-lg bg-gray-50 p-2 sm:p-3 dark:bg-slate-700/50',
         'ml-11 sm:ml-12 md:ml-13 lg:ml-14'
       )}
@@ -299,20 +298,20 @@ function KnowledgeCardGroupFlat({
 
   return (
     <div
-      className={clsx(
+      className={cn(
         'flex flex-col transition-all duration-300 ease-in-out',
         isSqueezedView ? 'space-y-1' : 'space-y-2'
       )}
     >
       <div
-        className={clsx(
+        className={cn(
           'flex gap-0.5 sm:gap-1 md:gap-2 lg:gap-4',
           isSqueezedView ? 'items-center' : 'items-start'
         )}
       >
         <Tooltip content={tooltipContent} className='border-none'>
           <div
-            className={clsx(
+            className={cn(
               'flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border-2 text-sm font-bold',
               containerClass
             )}
@@ -322,7 +321,7 @@ function KnowledgeCardGroupFlat({
         </Tooltip>
 
         <div
-          className={clsx(
+          className={cn(
             'flex min-w-0 flex-1',
             isSqueezedView ? 'flex-wrap gap-1' : 'flex-wrap gap-0 sm:gap-0.5 md:gap-1 lg:gap-2'
           )}
@@ -347,7 +346,7 @@ function KnowledgeCardGroupFlat({
                       colorStyles={rankColors}
                       size='sm'
                       margin='compact'
-                      className={clsx(
+                      className={cn(
                         'transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm',
                         isOptional && 'opacity-50'
                       )}
@@ -367,7 +366,7 @@ function KnowledgeCardGroupFlat({
                   hideImagePreview
                 >
                   <div
-                    className={clsx(
+                    className={cn(
                       'relative h-20 w-20 cursor-pointer transition-transform duration-200 hover:scale-105 sm:h-24 sm:w-24',
                       isOptional && 'opacity-50'
                     )}
@@ -538,7 +537,7 @@ export function KnowledgeCardGroupDisplay({
         <div className='flex items-start gap-0.5 sm:gap-1 md:gap-2 lg:gap-4'>
           <Tooltip content={tooltipContent} className='border-none'>
             <div
-              className={clsx(
+              className={cn(
                 'flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border-2 text-sm font-bold',
                 containerClass
               )}
@@ -812,7 +811,7 @@ export default function KnowledgeCardSection({
   };
 
   const isTwoModeCycle = !hasTreeStructure;
-  const viewToggleButtonClass = clsx(
+  const viewToggleButtonClass = cn(
     'flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200',
     isTwoModeCycle
       ? viewMode === 'compact'
@@ -820,7 +819,7 @@ export default function KnowledgeCardSection({
         : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700 dark:text-gray-300 dark:hover:bg-slate-600'
       : 'bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-900'
   );
-  const viewToggleIconClass = clsx(
+  const viewToggleIconClass = cn(
     'w-4 h-4 transition-transform duration-200',
     viewMode === 'compact' ? 'rotate-90' : 'rotate-180'
   );

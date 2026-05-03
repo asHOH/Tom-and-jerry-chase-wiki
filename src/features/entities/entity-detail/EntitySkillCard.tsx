@@ -1,11 +1,10 @@
 'use client';
 
 import React from 'react';
-import clsx from 'clsx';
 import uniq from 'lodash-es/uniq';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
-import { getSkillLevelColors, getSkillLevelContainerColor } from '@/lib/design';
+import { cn, getSkillLevelColors, getSkillLevelContainerColor } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
@@ -231,7 +230,7 @@ export default function EntitySkillCard({ skill }: SkillCardProps) {
             .map((level: SkillLevel) => (
               <div
                 key={`${skill.id}-${level.level}`}
-                className={clsx(
+                className={cn(
                   'rounded p-4 dark:text-gray-300',
                   getSkillLevelContainerColor(level.level)
                 )}

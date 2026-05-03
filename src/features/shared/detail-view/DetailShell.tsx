@@ -1,9 +1,8 @@
 'use client';
 
 import React from 'react';
-import clsx from 'clsx';
 
-import { designTokens } from '@/lib/design';
+import { cn, designTokens } from '@/lib/design';
 import Card from '@/components/ui/Card';
 import SectionHeader from '@/components/ui/SectionHeader';
 
@@ -89,7 +88,7 @@ function DetailShell({
     if (variant === 'default') {
       return (
         <Card
-          className={clsx('mb-8', section.cardOptions?.className)}
+          className={cn('mb-8', section.cardOptions?.className)}
           style={{
             padding: designTokens.spacing.lg,
             ...section.cardOptions?.style,
@@ -104,7 +103,7 @@ function DetailShell({
     if (variant === 'ghost') {
       return (
         <div
-          className={clsx(
+          className={cn(
             'mb-8 rounded-lg border border-dashed border-slate-400/60 p-6',
             section.cardOptions?.className
           )}
@@ -120,22 +119,22 @@ function DetailShell({
   };
 
   return (
-    <div {...containerProps} className={clsx(containerProps?.className)} style={containerStyle}>
+    <div {...containerProps} className={cn(containerProps?.className)} style={containerStyle}>
       <div
         {...layoutProps}
-        className={clsx('flex flex-col md:flex-row', layoutProps?.className)}
+        className={cn('flex flex-col md:flex-row', layoutProps?.className)}
         style={layoutStyle}
       >
         <div
           {...leftColumnProps}
-          className={clsx('md:w-1/3', leftColumnProps?.className)}
+          className={cn('md:w-1/3', leftColumnProps?.className)}
           style={leftStyle}
         >
           {leftColumn}
         </div>
         <div
           {...rightColumnProps}
-          className={clsx('space-y-3 md:w-2/3', rightColumnProps?.className)}
+          className={cn('space-y-3 md:w-2/3', rightColumnProps?.className)}
           style={rightStyle}
         >
           {sections.map((section, index) => {
@@ -148,7 +147,7 @@ function DetailShell({
             return (
               <div
                 key={key}
-                className={clsx(section.containerClassName)}
+                className={cn(section.containerClassName)}
                 style={section.containerStyle}
               >
                 {section.title ? (

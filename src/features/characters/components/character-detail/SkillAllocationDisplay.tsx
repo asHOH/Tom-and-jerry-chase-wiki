@@ -1,10 +1,9 @@
 'use client';
 
 import React, { useCallback, useMemo } from 'react';
-import clsx from 'clsx';
 import { useSnapshot } from 'valtio';
 
-import { getSkillLevelColors } from '@/lib/design';
+import { cn, getSkillLevelColors } from '@/lib/design';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
@@ -153,7 +152,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
       } as React.CSSProperties;
 
       const iconElement = (
-        <div className={clsx('relative h-10 w-10', !isDelayed && 'rounded-full')} style={baseStyle}>
+        <div className={cn('relative h-10 w-10', !isDelayed && 'rounded-full')} style={baseStyle}>
           <Image
             src={imageUrl}
             alt={skill?.name || `技能${skillType}`}

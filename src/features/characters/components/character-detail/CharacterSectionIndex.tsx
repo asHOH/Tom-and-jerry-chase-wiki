@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
-import clsx from 'clsx';
 import { useSnapshot } from 'valtio';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
+import { cn } from '@/lib/design';
 import { useScrollSpy } from '@/hooks/useScrollSpy';
 import { useLocalCharacter } from '@/context/EditModeContext';
 import type { Skill } from '@/data/types';
@@ -20,7 +20,7 @@ function CharacterSectionIndexItem({
   return (
     <li>
       <a
-        className={clsx(
+        className={cn(
           'flex items-center gap-0.5 rounded px-1 py-0.5 text-sm transition-colors hover:underline focus:ring-2 focus:ring-blue-400 focus:outline-none dark:focus:ring-blue-600',
           isActive
             ? 'bg-blue-100 font-medium text-blue-800 dark:bg-blue-900/50 dark:text-blue-200'
@@ -83,7 +83,7 @@ export default function CharacterSectionIndex() {
           <button
             type='button'
             aria-label={skillsOpen ? '折叠技能描述' : '展开技能描述'}
-            className={clsx(
+            className={cn(
               'mb-1 flex w-full cursor-pointer items-center justify-between px-1 py-1 text-sm font-bold transition-colors focus:outline-none',
               activeSection === 'Section:技能描述' || isSkillActive
                 ? 'text-blue-800 dark:text-blue-200'
@@ -93,7 +93,7 @@ export default function CharacterSectionIndex() {
           >
             <span>技能描述</span>
             <svg
-              className={clsx(
+              className={cn(
                 'h-4 w-4 transform transition-transform duration-200 ease-out',
                 shouldExpandSkills ? 'rotate-0' : '-rotate-90'
               )}
@@ -111,7 +111,7 @@ export default function CharacterSectionIndex() {
             </svg>
           </button>
           <div
-            className={clsx(
+            className={cn(
               'transition-all ease-out',
               shouldExpandSkills ? 'duration-300' : 'duration-200',
               shouldExpandSkills ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'

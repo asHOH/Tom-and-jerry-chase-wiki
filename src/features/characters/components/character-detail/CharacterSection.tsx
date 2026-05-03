@@ -1,8 +1,8 @@
 'use client';
 
 import { ReactNode, useState } from 'react';
-import clsx from 'clsx';
 
+import { cn } from '@/lib/design';
 import { useNavigation } from '@/hooks/useNavigation';
 
 export default function CharacterSection({
@@ -36,7 +36,7 @@ export default function CharacterSection({
 
   return (
     <div
-      className={clsx(
+      className={cn(
         'flex flex-col transition-all',
         isOpen ? 'duration-300 ease-out' : 'duration-200 ease-in',
         isOpen ? 'mb-8' : 'mb-0'
@@ -67,7 +67,7 @@ export default function CharacterSection({
           </svg>
         ) : (
           <svg
-            className={clsx(
+            className={cn(
               'h-6 w-6 transform transition-transform duration-200 ease-out',
               isOpen ? 'rotate-0' : '-rotate-90'
             )}
@@ -87,7 +87,7 @@ export default function CharacterSection({
       </button>
       {isMounted && (
         <div
-          className={clsx(
+          className={cn(
             'transition-all ease-out',
             isOpen ? 'duration-300' : 'duration-200',
             isOpen ? 'max-h-[10000px] opacity-100' : 'max-h-0 opacity-0'

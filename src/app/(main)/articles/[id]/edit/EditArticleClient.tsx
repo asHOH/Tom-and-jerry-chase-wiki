@@ -2,7 +2,6 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import clsx from 'clsx';
 import useSWR from 'swr';
 
 import {
@@ -11,6 +10,7 @@ import {
   type EditSourceKey,
 } from '@/lib/articles/editSources';
 import { formatArticleDate } from '@/lib/dateUtils';
+import { cn } from '@/lib/design';
 import { isPushSubscribedLocally, subscribeToPushNotifications } from '@/lib/pushClient';
 import { normalizeHeadingLevels } from '@/lib/richTextUtils';
 import { useUser } from '@/hooks/useUser';
@@ -322,7 +322,7 @@ const EditArticleClient: React.FC = () => {
               <button
                 type='button'
                 onClick={() => handleSourceChange('approved')}
-                className={clsx(
+                className={cn(
                   'rounded-lg border p-3 text-left transition-colors',
                   selectedSource === 'approved'
                     ? 'border-blue-600 bg-blue-50 dark:border-blue-500 dark:bg-blue-900/30'
@@ -340,7 +340,7 @@ const EditArticleClient: React.FC = () => {
               <button
                 type='button'
                 onClick={() => handleSourceChange('pending_mine')}
-                className={clsx(
+                className={cn(
                   'rounded-lg border p-3 text-left transition-colors',
                   selectedSource === 'pending_mine'
                     ? 'border-blue-600 bg-blue-50 dark:border-blue-500 dark:bg-blue-900/30'

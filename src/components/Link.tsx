@@ -2,8 +2,8 @@
 
 import React, { forwardRef } from 'react';
 import NextLink, { LinkProps as NextLinkProps } from 'next/link';
-import clsx from 'clsx';
 
+import { cn } from '@/lib/design';
 import { useNavigation } from '@/hooks/useNavigation';
 import { useNavigationProgress } from '@/hooks/useNavigationProgress';
 import { stripEditParam } from '@/hooks/useSearchParamEditMode';
@@ -94,7 +94,7 @@ const Link = forwardRef<HTMLAnchorElement, LinkProps>(
         ref={ref}
         aria-disabled={props['aria-disabled'] ?? isNavigating}
         data-nav-loading={isNavigating || undefined}
-        className={clsx(
+        className={cn(
           props.className,
           isNavigating && 'pointer-events-none cursor-progress opacity-60'
         )}

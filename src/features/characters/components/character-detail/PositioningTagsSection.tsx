@@ -1,9 +1,8 @@
 import React, { useCallback } from 'react';
-import clsx from 'clsx';
 import { useSnapshot } from 'valtio';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
-import { getPositioningTagColors, getPositioningTagContainerColor } from '@/lib/design';
+import { cn, getPositioningTagColors, getPositioningTagContainerColor } from '@/lib/design';
 import { setNestedProperty } from '@/lib/editUtils';
 import { getPositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { CharacterWithFaction } from '@/lib/types';
@@ -247,7 +246,7 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
           return (
             <div
               key={index}
-              className={clsx(
+              className={cn(
                 'rounded-lg p-3',
                 getPositioningTagContainerColor(tag.tagName, tag.isMinor, factionId)
               )}
@@ -323,7 +322,7 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
                 ) : (
                   tag.isMinor && (
                     <span
-                      className={clsx(
+                      className={cn(
                         'text-xs text-gray-500 dark:text-gray-400',
                         hasWeapon && 'pl-6'
                       )}
@@ -353,7 +352,7 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
                 <e.p
                   path={`${tagsKey}.${originalIndex}.additionalDescription`}
                   initialValue={tag.additionalDescription}
-                  className={clsx(
+                  className={cn(
                     'mt-2 border-l-2 pl-3 text-sm whitespace-pre-wrap text-gray-600 dark:text-gray-400',
                     borderColor
                   )}

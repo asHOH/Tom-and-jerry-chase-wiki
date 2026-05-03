@@ -2,11 +2,10 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
-import clsx from 'clsx';
 import { AnimatePresence, m, useReducedMotion } from 'motion/react';
 import { useMediaQuery } from 'usehooks-ts';
 
-import { getNavigationButtonClasses } from '@/lib/design';
+import { cn, getNavigationButtonClasses } from '@/lib/design';
 import { supabase } from '@/lib/supabase/client';
 import { useFeatureDiscovery } from '@/hooks/useFeatureDiscovery';
 import { useMobile } from '@/hooks/useMediaQuery';
@@ -205,7 +204,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   const tabMinWidthClass = 'min-w-[40px]';
   const tabButtonClassName =
     'h-10 min-h-0 px-1 md:h-11 md:gap-1 md:px-2 md:text-base lg:text-[17px]';
-  const tabIconWrapperClassName = clsx(
+  const tabIconWrapperClassName = cn(
     'flex size-7 items-center justify-center overflow-hidden md:size-8',
     isCompactMode && 'shrink-0'
   );
@@ -218,11 +217,11 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     <div className='fixed top-0 right-0 left-0 z-50 w-full bg-white py-2 shadow-md dark:bg-slate-900 dark:shadow-lg'>
       <div className='mx-auto flex max-w-7xl items-center justify-between gap-4 px-4'>
         {/* Left-aligned navigation buttons */}
-        <div className={clsx('relative flex flex-nowrap gap-1 md:gap-2 lg:gap-2.5')}>
+        <div className={cn('relative flex flex-nowrap gap-1 md:gap-2 lg:gap-2.5')}>
           <Tooltip content='首页' className='border-none' disabled={isLg}>
             <MotionLink
               href='/'
-              className={clsx(
+              className={cn(
                 getNavigationButtonClasses(isNavigatingTo('/'), isHomeActive(), false, true),
                 'relative',
                 tabMinWidthClass
@@ -258,7 +257,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                       aria-label={entry.label}
                       aria-expanded={isGroupOpen}
                       aria-haspopup='true'
-                      className={clsx(
+                      className={cn(
                         getNavigationButtonClasses(false, isGroupActive || isGroupOpen, false),
                         tabButtonClassName,
                         tabMinWidthClass
@@ -287,7 +286,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                     {isGroupOpen && (
                       <m.div
                         key={`group-${entry.id}-dropdown`}
-                        className={clsx(
+                        className={cn(
                           'absolute z-9999 mt-2 min-w-35 rounded-md bg-white shadow-lg dark:bg-slate-800',
                           dropdownAlignmentClass
                         )}
@@ -309,7 +308,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                                 <li key={child.id}>
                                   <Link
                                     href={child.href}
-                                    className={clsx(
+                                    className={cn(
                                       'flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700',
                                       isTabActive(child.href) && 'font-semibold'
                                     )}
@@ -339,7 +338,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
               <Tooltip key={tab.id} content={tab.label} className='border-none' disabled={isMd}>
                 <MotionLink
                   href={tab.href}
-                  className={clsx(
+                  className={cn(
                     getNavigationButtonClasses(
                       isNavigatingTo(tab.href),
                       isTabActive(tab.href),
@@ -396,7 +395,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                 {overflowOpen && (
                   <m.div
                     key='tab-overflow-menu'
-                    className={clsx(
+                    className={cn(
                       'absolute z-9999 mt-2 min-w-35 rounded-md bg-white shadow-lg dark:bg-slate-800',
                       dropdownAlignmentClass
                     )}
@@ -423,7 +422,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                                     <Link
                                       key={child.id}
                                       href={child.href}
-                                      className={clsx(
+                                      className={cn(
                                         'flex items-center gap-2 py-2 pr-4 pl-7 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700',
                                         isTabActive(child.href) && 'font-semibold'
                                       )}
@@ -448,7 +447,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                           <li key={tab.id}>
                             <Link
                               href={tab.href}
-                              className={clsx(
+                              className={cn(
                                 'flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700',
                                 isTabActive(tab.href) && 'font-semibold'
                               )}
@@ -495,7 +494,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                 type='button'
                 aria-pressed={isDetailedView}
                 aria-label={isDetailedView ? '切换至简明描述' : '切换至详细描述'}
-                className={clsx(
+                className={cn(
                   'relative flex min-h-10 cursor-pointer rounded-lg border-none bg-gray-100 p-1 transition-all duration-200',
                   'focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-blue-500',
                   'md:min-h-11 dark:border-gray-600 dark:bg-slate-800 dark:focus-visible:outline-blue-300'
@@ -512,7 +511,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                 />
                 {/* Background slider */}
                 <div
-                  className={clsx(
+                  className={cn(
                     'absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-md shadow-sm transition-all duration-200 ease-out',
                     isDetailedView
                       ? 'left-1 translate-x-full transform bg-orange-100 dark:bg-orange-900'
@@ -522,7 +521,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
 
                 {/* Simple option */}
                 <div
-                  className={clsx(
+                  className={cn(
                     'relative z-10 flex items-center justify-center px-2 py-1 text-xs font-medium whitespace-nowrap transition-colors duration-200 md:py-1.5 md:text-sm lg:py-2',
                     !isDetailedView
                       ? 'text-blue-600 dark:text-blue-400'
@@ -535,7 +534,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
 
                 {/* Detailed option */}
                 <div
-                  className={clsx(
+                  className={cn(
                     'relative z-10 flex items-center justify-center px-2 py-1 text-xs font-medium whitespace-nowrap transition-colors duration-200 md:py-1.5 md:text-sm lg:py-2',
                     isDetailedView
                       ? 'text-orange-600 dark:text-orange-400'
@@ -616,7 +615,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                         <li>
                           <button
                             type='button'
-                            className={clsx(
+                            className={cn(
                               'w-full cursor-pointer rounded-b-md px-4 py-2 text-left text-sm text-gray-800 dark:text-gray-200',
                               signingOut
                                 ? 'pointer-events-none bg-gray-100 opacity-60 dark:bg-slate-700'

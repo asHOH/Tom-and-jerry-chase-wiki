@@ -8,8 +8,8 @@ import TableRow from '@tiptap/extension-table-row';
 import TextAlign from '@tiptap/extension-text-align';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import clsx from 'clsx';
 
+import { cn } from '@/lib/design';
 import { stripDisallowedImages } from '@/lib/richtext/imagePolicy';
 
 interface UseRTEConfigurationProps {
@@ -66,7 +66,7 @@ export function useRTEConfiguration({
     },
     editorProps: {
       attributes: {
-        class: clsx(
+        class: cn(
           'prose prose-sm sm:prose lg:prose-lg xl:prose-xl max-w-none',
           'dark:prose-invert',
           'focus:outline-none',

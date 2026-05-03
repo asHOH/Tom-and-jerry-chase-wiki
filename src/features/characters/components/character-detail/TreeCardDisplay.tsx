@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import clsx from 'clsx';
 
-import { getCardRankColors } from '@/lib/design';
+import { cn, getCardRankColors } from '@/lib/design';
 import { useDarkMode } from '@/context/DarkModeContext';
 import type { TreeNode } from '@/features/knowledge-cards/utils/sections';
 import Tag from '@/components/ui/Tag';
@@ -71,7 +70,7 @@ const CardDisplay: React.FC<CardDisplayProps> = ({
             colorStyles={rankColors}
             size='sm'
             margin='compact'
-            className={clsx(
+            className={cn(
               'transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm',
               isOptional && 'opacity-50'
             )}
@@ -86,7 +85,7 @@ const CardDisplay: React.FC<CardDisplayProps> = ({
   return (
     <GotoLink key={cardId} name={cardName} className='no-underline' asPreviewOnly hideImagePreview>
       <div
-        className={clsx(
+        className={cn(
           'relative h-20 w-20 cursor-pointer transition-transform duration-200 hover:scale-105 sm:h-24 sm:w-24',
           isOptional && 'opacity-50'
         )}
@@ -214,7 +213,7 @@ const TreeNodeDisplay: React.FC<
   if (node.type === 'and-group' && node.children) {
     return (
       <div
-        className={clsx('flex flex-wrap items-center', props.isSqueezedView ? 'gap-1' : 'sm:gap-1')}
+        className={cn('flex flex-wrap items-center', props.isSqueezedView ? 'gap-1' : 'sm:gap-1')}
       >
         {node.children.map((child, index) => (
           <TreeNodeDisplay
@@ -243,9 +242,7 @@ const TreeCardDisplay: React.FC<TreeCardDisplayProps> = (props) => {
   const [isDarkMode] = useDarkMode();
 
   return (
-    <div
-      className={clsx('flex flex-wrap items-center', props.isSqueezedView ? 'gap-1' : 'sm:gap-1')}
-    >
+    <div className={cn('flex flex-wrap items-center', props.isSqueezedView ? 'gap-1' : 'sm:gap-1')}>
       {props.tree.map((node, index) => (
         <TreeNodeDisplay
           key={index}

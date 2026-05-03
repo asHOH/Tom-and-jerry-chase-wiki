@@ -2,11 +2,11 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import clsx from 'clsx';
 import { AnimatePresence, m, useReducedMotion } from 'motion/react';
 import { createPortal } from 'react-dom';
 import { useSWRConfig } from 'swr';
 
+import { cn } from '@/lib/design';
 import { checkPasswordStrength, PasswordStrength } from '@/lib/passwordUtils';
 import { convertToPinyin } from '@/lib/pinyinUtils';
 import { USER_API_KEY } from '@/hooks/useUser';
@@ -288,7 +288,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
                 <div className='flex items-center gap-2'>
                   <div className='h-2 flex-1 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700'>
                     <div
-                      className={clsx(
+                      className={cn(
                         'h-full transition-all duration-300',
                         password != confirmPassword
                           ? 'bg-red-500'
@@ -303,7 +303,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
                     />
                   </div>
                   <span
-                    className={clsx(
+                    className={cn(
                       'text-xs font-medium',
                       password != confirmPassword
                         ? 'text-red-500'
@@ -357,7 +357,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
   return document
     ? createPortal(
         <m.div
-          className={clsx(
+          className={cn(
             'fixed inset-0 z-50 flex items-center justify-center bg-gray-800/40 backdrop-blur-sm',
             isMobile && 'p-0'
           )}
@@ -369,7 +369,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
         >
           <m.div
             ref={dialogRef}
-            className={clsx(
+            className={cn(
               'relative bg-white p-6 shadow-xl dark:bg-gray-800',
               isMobile
                 ? 'flex h-full w-full flex-col rounded-none'
