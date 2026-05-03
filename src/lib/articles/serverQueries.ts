@@ -55,6 +55,11 @@ export async function getArticlesPageData(): Promise<ArticlesData> {
           `
         )
         .eq('article_versions_public_view.status', 'approved')
+        .order('created_at', {
+          ascending: false,
+          referencedTable: 'article_versions_public_view',
+        })
+        .limit(1, { referencedTable: 'article_versions_public_view' })
         .order('created_at');
 
       const { data: categories } = await supabase
