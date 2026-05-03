@@ -179,6 +179,73 @@ function applyPublicGameDataActionsToServerData(actions: PublicActionRow[]): voi
   }
 }
 
+export type EntityUpdateHistory = {
+  updatedAt: string;
+  actionId: string;
+  createdBy: string | null;
+  status: string;
+  message: string | null;
+  reviewedAt: string | null;
+  affectedPath: string;
+};
+
+function extractActionPaths(entry: ActionHistoryEntry): string[] {
+  if (Array.isArray(entry)) {
+    const paths: string[] = [];
+    for (const action of entry) {
+      if (action.path) paths.push(action.path);
+    }
+    return paths;
+  }
+  return entry.path ? [entry.path] : [];
+}
+
+function extractEntryId(entityType: string, path: string): string | undefined {
+  const pathParts = path.split('.').filter(Boolean);
+  if (pathParts.length === 0) return undefined;
+
+  if (entityType === 'specialSkills') {
+    return pathParts.length >= 2 ? pathParts[1] : undefined;
+  }
+
+  return pathParts[0];
+}
+
+export async function getEntityUpdateHistory(): Promise<Map<string, EntityUpdateHistory>> {
+  const actions = await getPublicGameDataActions();
+  const historyMap = new Map<string, EntityUpdateHistory>();
+
+  for (const action of actions) {
+    if (action.status !== 'approved' && action.status !== 'synced') continue;
+
+    const entries = parseEntries(action.entry);
+    for (const entry of entries) {
+      const paths = extractActionPaths(entry);
+      for (const path of paths) {
+        const entryId = extractEntryId(action.entity_type, path);
+        if (!entryId) continue;
+
+        const historyKey = `${action.entity_type}:${entryId}`;
+
+        const existing = historyMap.get(historyKey);
+        if (!existing || new Date(action.created_at) > new Date(existing.updatedAt)) {
+          historyMap.set(historyKey, {
+            updatedAt: action.created_at,
+            actionId: action.id,
+            createdBy: action.created_by ?? null,
+            status: action.status,
+            message: action.message ?? null,
+            reviewedAt: action.reviewed_at ?? null,
+            affectedPath: path,
+          });
+        }
+      }
+    }
+  }
+
+  return historyMap;
+}
+
 export async function getPublicGameDataActions(): Promise<PublicActionRow[]> {
   if (env.NEXT_PUBLIC_DISABLE_ARTICLES === '1' || !env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return [];
@@ -189,7 +256,7 @@ export async function getPublicGameDataActions(): Promise<PublicActionRow[]> {
     async () => {
       const { data, error } = await supabaseServerPublic
         .from('game_data_actions')
-        .select('id, entity_type, entry, created_at')
+        .select('id, entity_type, entry, created_at, status, message, reviewed_at, created_by')
         .eq('is_public', true)
         .order('created_at', { ascending: true });
 

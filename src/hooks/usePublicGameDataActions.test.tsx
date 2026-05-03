@@ -1,6 +1,7 @@
 import { render, waitFor } from '@testing-library/react';
 
 import { GameDataManager } from '@/lib/dataManager';
+import { PublicActionRow } from '@/lib/gameData/publicActionsTypes';
 import { characters } from '@/data';
 
 import { usePublicGameDataActions } from './usePublicGameDataActions';
@@ -11,13 +12,6 @@ jest.mock('@/env', () => ({
     NEXT_PUBLIC_SUPABASE_ANON_KEY: 'test-anon-key',
   },
 }));
-
-type PublicActionRow = {
-  id: string;
-  entity_type: string;
-  entry: unknown;
-  created_at: string;
-};
 
 const cloneCharacters = () => structuredClone(characters);
 
@@ -69,6 +63,10 @@ describe('usePublicGameDataActions', () => {
             },
           ],
         },
+        status: 'approved',
+        message: null,
+        reviewed_at: null,
+        created_by: null,
       },
     ];
 
@@ -112,6 +110,10 @@ describe('usePublicGameDataActions', () => {
             },
           ],
         },
+        status: 'approved',
+        message: null,
+        reviewed_at: null,
+        created_by: null,
       },
     ];
 
