@@ -106,7 +106,28 @@ const ItemGroupDefinitions: Record<string, ItemGroupDefinition> = {
   },
   投掷道具: {
     description:
-      '包括能触发{投掷命中效果}的[所有](注：部分衍生物无法触发全部投掷命中类效果，已在各自界面注明。此处只要能触发任意一种效果就会进行收录)道具/衍生物。',
+      '包括可被拾取并投掷，命中敌方产生效果的道具（或与之相关的衍生物）。它们均能触发{投掷命中效果}。',
+    group: [
+      { name: '盘子', type: 'item' },
+      { name: '扁盘', type: 'item' },
+      { name: '玻璃杯', type: 'item' },
+      { name: '碗', type: 'item' },
+      { name: '灰花瓶', type: 'item' },
+      { name: '蓝花瓶', type: 'item' },
+      { name: '香水瓶', type: 'item' },
+      { name: '胡椒瓶', type: 'item' },
+      { name: '番茄', type: 'item' },
+      { name: '冰块', type: 'item' },
+      { name: '叉子', type: 'item' },
+      { name: '高尔夫球', type: 'item' },
+      { name: '狗骨头', type: 'item' },
+      { name: '果子', type: 'entity' },
+      { name: '子弹', type: 'entity' },
+    ],
+  },
+  '投掷道具-广义': {
+    description:
+      '包括任何能触发{投掷命中效果}的道具/衍生物。\n注：部分衍生物无法触发全部投掷命中类效果，已在各自界面注明。此处只要能触发任意一种效果就会进行收录',
     group: [
       { name: '盘子', type: 'item' },
       { name: '扁盘', type: 'item' },
