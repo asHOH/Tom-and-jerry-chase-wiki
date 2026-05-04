@@ -1,33 +1,71 @@
 'use client';
 
-import { startTransition, useLayoutEffect } from 'react';
-import { useLocalStorage } from 'usehooks-ts';
+import { useLayoutEffect } from 'react';
 import { proxy, useSnapshot } from 'valtio';
 
 import { isOriginalCharacter } from '@/lib/editUtils';
 import { useNavigation } from '@/hooks/useNavigation';
 
-interface AppContextType {
+type AppContextType = {
   isDetailedView: boolean;
   handleSelectCharacter: (characterId: string) => void;
   handleSelectCard: (cardId: string, fromCharacterId?: string) => void;
   toggleDetailedView: () => void;
-}
+};
 
 const isDetailedViewStore = proxy({ isDetailedView: false });
+const DETAILED_VIEW_STORAGE_KEY = 'isDetailedView';
+
+let hasHydratedDetailedView = false;
+let hasRegisteredDetailedViewStorageListener = false;
+
+const readStoredDetailedView = () => {
+  if (typeof window === 'undefined') return false;
+
+  try {
+    const storedValue = window.localStorage.getItem(DETAILED_VIEW_STORAGE_KEY);
+    if (!storedValue) return false;
+    return JSON.parse(storedValue) === true;
+  } catch (error) {
+    console.warn('Unable to read detailed-view preference from localStorage:', error);
+    return false;
+  }
+};
+
+const persistDetailedView = (isDetailedView: boolean) => {
+  if (typeof window === 'undefined') return;
+
+  try {
+    window.localStorage.setItem(DETAILED_VIEW_STORAGE_KEY, JSON.stringify(isDetailedView));
+  } catch (error) {
+    console.warn('Unable to persist detailed-view preference to localStorage:', error);
+  }
+};
+
+const hydrateDetailedViewStore = () => {
+  if (typeof window === 'undefined') return;
+
+  if (!hasHydratedDetailedView) {
+    isDetailedViewStore.isDetailedView = readStoredDetailedView();
+    hasHydratedDetailedView = true;
+  }
+
+  if (hasRegisteredDetailedViewStorageListener) return;
+
+  window.addEventListener('storage', (event) => {
+    if (event.key !== DETAILED_VIEW_STORAGE_KEY) return;
+    isDetailedViewStore.isDetailedView = readStoredDetailedView();
+  });
+  hasRegisteredDetailedViewStorageListener = true;
+};
 
 export const useAppContext = () => {
   const { navigate } = useNavigation();
-  const [storedDetailedView, setStoredDetailedView] = useLocalStorage<boolean>(
-    'isDetailedView',
-    false,
-    { initializeWithValue: false }
-  );
   const { isDetailedView } = useSnapshot(isDetailedViewStore);
 
   useLayoutEffect(() => {
-    isDetailedViewStore.isDetailedView = storedDetailedView ?? false;
-  }, [storedDetailedView]);
+    hydrateDetailedViewStore();
+  }, []);
 
   const handleSelectCharacter = (characterId: string) => {
     const isOriginal = isOriginalCharacter(characterId);
@@ -48,13 +86,8 @@ export const useAppContext = () => {
 
   const toggleDetailedView = () => {
     const next = !isDetailedViewStore.isDetailedView;
-    // Immediate local update for responsive UI
     isDetailedViewStore.isDetailedView = next;
-
-    // Defer storage persistence and downstream re-renders
-    startTransition(() => {
-      setStoredDetailedView(next);
-    });
+    persistDetailedView(next);
   };
 
   return {
