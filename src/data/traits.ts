@@ -1018,6 +1018,161 @@ const traits: Record<string, Trait> = {
       { name: '小黄鸭', type: 'fixture' },
     ],
   },
+  '20260328-01': {
+    description: '感应雷会与旋转桶盖发生碰撞，且不会被旋转桶盖触发。',
+    group: [
+      { name: '感应雷', type: 'entity' },
+      { name: '旋转桶盖', type: 'entity' },
+    ],
+  },
+
+  '20260328-03': {
+    description: '感应雷可与百科全书发生碰撞，且会被百科全书触发。',
+    group: [
+      { name: '感应雷', type: 'entity' },
+      { name: '百科全书', type: 'entity' },
+    ],
+  },
+
+  '20260328-04': {
+    description: '感应雷可与大仙人掌球发生碰撞，且会被大仙人掌球触发。',
+    group: [
+      { name: '感应雷', type: 'entity' },
+      { name: '大仙人掌球', type: 'entity' },
+    ],
+  },
+
+  '20260328-05': {
+    description: '感应雷爆炸时产生的推力可以助推漂浮，使漂浮获得较大的上升速度（比鞭炮略小）。',
+    group: [
+      { name: '感应雷', type: 'entity' },
+      { name: '魔术漂浮', type: 'specialSkill' },
+    ],
+  },
+
+  '20260328-06': {
+    description: '感应雷可与地图中刷新的投掷道具发生碰撞，且会被触发。',
+    group: [
+      { name: '感应雷', type: 'entity' },
+      { name: '投掷道具', type: 'itemGroup' },
+    ],
+  },
+
+  '20260328-07': {
+    description: '圆滚滚可被任何形式产生的受力效果改变其运动状态（鞭炮、平底锅、地雷等）。',
+    group: [
+      { name: '圆滚滚', type: 'skill' },
+      [
+        { name: '击飞', type: 'buff' },
+        { name: '击退', type: 'buff' },
+      ],
+    ],
+    excludeFactionId: 'mouse',
+  },
+
+  /*'20260328-08': {
+    description: '圆滚滚无法解除三角铃造成的控制效果',
+  },*/
+
+  '20260328-11': {
+    description: '火箭炮可被滑步踢改变运动状态。',
+    group: [
+      { name: '火箭炮', type: 'entity' },
+      { name: '滑步踢', type: 'skill' },
+    ],
+  },
+
+  '20260328-12': {
+    description: '火箭炮可被长枪携带，触碰敌方也会造成投掷效果。',
+    group: [
+      { name: '火箭炮', type: 'entity' },
+      { name: '长枪', type: 'entity' },
+    ],
+  },
+
+  '20260328-13': {
+    description: '超级变！变！变！可以火箭炮将火箭炮记录，并进行变身。',
+    group: [
+      { name: '火箭炮', type: 'entity' },
+      { name: '超级变！变！变！', type: 'skill' },
+    ],
+  },
+
+  '20260328-14': {
+    description: '火箭炮可以被平底锅反弹。',
+    group: [
+      { name: '火箭炮', type: 'entity' },
+      { name: '平底锅', type: 'skill' },
+    ],
+  },
+
+  '20260328-15': {
+    description: '火箭炮触碰已沟通两地的恶魔之门会被传送。',
+    group: [
+      { name: '火箭炮', type: 'entity' },
+      { name: '恶魔之门', type: 'entity' },
+    ],
+  },
+
+  '20260328-16': {
+    description: '兔八哥的二级被动会被火箭炮触发，完全闪避火箭炮',
+    group: [
+      { name: '火箭炮', type: 'entity' },
+      { name: '我，兔八哥', type: 'skill' },
+    ],
+  },
+
+  '20260328-17': {
+    description: '火箭炮可以被鱼钩携带，碰到敌方会产生投掷效果。',
+    group: [
+      { name: '火箭炮', type: 'entity' },
+      { name: '鱼钩', type: 'entity' },
+    ],
+  },
+
+  '20260504-01': {
+    description:
+      '梦游在扔出毛线球后被仙女鼠的仙女棒（6星）命中进入变身状态/饮用变身药水进入变身状态/在米雪儿使用小情绪时安抚米雪儿进入变身状态时，毛线不会消失。',
+    group: [
+      { name: '毛线球', type: 'skill' },
+      [{ name: '星星', type: 'entity' }],
+      [{ name: '小情绪', type: 'skill' }],
+      [{ name: '变身饮料', type: 'item' }],
+    ],
+  },
+
+  '20260504-02': {
+    description: '梦游杰瑞扔出毛线球后钻管道/进入乾坤袋会使毛线球消失。',
+    group: [
+      { name: '梦游杰瑞', type: 'character' },
+      [{ name: '乾坤袋', type: 'entity' }],
+      [{ name: '管道', type: 'fixture' }],
+    ],
+  },
+
+  '20260504-03': {
+    description:
+      '如玉在舞花枪时可点燃初始拿在手上或是从商店直接买到手上的鞭炮，无法点燃通过拾取获得的鞭炮；如玉可投掷点燃的鞭炮打断舞花枪。',
+    group: [
+      { name: '舞花枪', type: 'skill' },
+      { name: '鞭炮', type: 'itemGroup' },
+    ],
+  },
+
+  '20260504-04': {
+    description:
+      '天梯中，天宫、森林牧场、熊猫馆、游乐场地图中奶酪期的道具在第一次刷新后，将不再多批次的补充刷新，同时当放入奶酪、推入奶酪、绑上火箭、放飞火箭时将在附近少量刷新道具作为补偿，调整后场景直接刷新的眩晕道具将变得相对稀有，饮料暂不受影响，局内商店购买的眩晕道具不受影响。',
+    group: [
+      { name: '天梯', type: 'mode' },
+      [
+        { name: '天宫', type: 'map' },
+        { name: '森林牧场', type: 'map' },
+        { name: '熊猫馆', type: 'map' },
+        { name: '游乐场', type: 'map' },
+      ],
+    ],
+  },
+
   ...characterRelations,
 };
 
