@@ -40,6 +40,7 @@ const mouseSpecialSkillDefinitions: Record<string, SpecialSkillDefinition> = {
     adviceDescription: '只适合**极少部分**老鼠。用于缩短部分技能CD。',
   },
   冰冻保鲜: {
+    aliases: ['冰箱'],
     cooldown: 75,
     description:
       '获得一段时间的无敌和冰冻效果。可再次点击技能提前结束该效果，任何方式结束技能都会失去无敌效果。',

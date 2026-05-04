@@ -723,14 +723,14 @@ const mouseCharacterDefinitions = {
         id: '主点被动控制',
         pattern: '12001[10]22',
         weaponType: 'weapon1',
-        description: '适合单双排，先点二被自保，若7级进墙缝期先点三被自保',
+        description: '适合单双排，先点二被自保，若7级进墙缝期先点三被破墙',
       },
       {
         id: '主点被动炸火箭',
         pattern: '12002(2)011',
         weaponType: 'weapon1',
         description:
-          '适合单双排，先点二被自保，若7级进墙缝期先点三被自保，若玩几何桶不建议点三级桶',
+          '适合单双排，先点二被自保，若7级进墙缝期先点三被破墙，若玩几何桶不建议点三级桶',
       },
     ],
 
