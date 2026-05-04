@@ -6697,6 +6697,14 @@ const mouseCharacterDefinitions = {
         description: '主动技能炸毁火箭可救下队友，但救人之后自己难以逃跑。',
         additionalDescription: '',
       },
+      {
+        tagName: '砸墙',
+        isMinor: true,
+        description:
+          '2级自爆能持续对道具施加推力，可通过让高尔夫球在墙缝与冲击波之间来回弹射进行破墙。3级自爆也可直接对墙缝造成伤害。',
+        additionalDescription: '该操作需要一定的熟练度。',
+        weapon: 1,
+      },
     ],
     skillAllocations: [
       {
