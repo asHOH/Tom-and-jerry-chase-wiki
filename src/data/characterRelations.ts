@@ -3459,19 +3459,6 @@ export const characterRelationTraits: Trait[] = [
     },
   },
   {
-    description: '梦游杰瑞受击后的滑行碰撞可以秒破追汤飞行，而且蓄势一刀秒不掉，推得也快。',
-    group: [
-      { name: '梦游杰瑞', type: 'character' },
-      { name: '追风汤姆', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '梦游杰瑞', type: 'character' },
-      target: { name: '追风汤姆', type: 'character' },
-      isMinor: true,
-    },
-  },
-  {
     description:
       '牛仔杰瑞的1级被动提升自保，2级琴和2级被动进一步提升自保并且具有副推副救能力，追风汤姆难以将其击倒。',
     group: [
