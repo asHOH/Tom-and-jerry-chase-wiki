@@ -3503,45 +3503,21 @@ const catCharacterDefinitions = {
         contributor: 'shuxiao',
       },
       {
-        cards: ['B-皮糙肉厚', 'S-知识渊博', 'A-穷追猛打', 'A-熊熊燃烧'],
-        description: '打架队。',
-        contributor: 'shuxiao',
-      },
-      {
         cards: ['S-知识渊博', 'A-加大火力', 'A-细心', 'B-皮糙肉厚', 'B-捕鼠夹'],
-        description: '死守。',
+        description: '死守，布局，防拉扯',
         contributor: 'shuxiao',
       },
       {
-        id: '旧卡组',
-        description: '恶魔汤姆在20260402有一次大幅度改版，这些卡组为改版前的推荐卡组。',
-        groups: [
-          {
-            cards: ['S-击晕', 'A-熊熊燃烧', 'B-皮糙肉厚', 'A-加大火力'],
-            description: '御门酒店使用，对面高伤阵容换成越挫。',
-            contributor: 'wudimaohudawang',
-          },
-          {
-            cards: ['S-击晕', 'A-熊熊燃烧', 'B-皮糙肉厚', 'A-穷追猛打'],
-            description: '常规地图使用。',
-            contributor: 'wudimaohudawang',
-          },
-          {
-            cards: ['S-击晕', 'A-熊熊燃烧', 'A-越挫越勇', 'A-穷追猛打'],
-            description: '常规地图，对面高伤阵容时使用。',
-            contributor: 'wudimaohudawang',
-          },
-          {
-            cards: ['S-击晕', 'A-熊熊燃烧', 'B-皮糙肉厚', 'C-猫是液体', 'C-狡诈'],
-            description: '森林牧场使用，对面高伤阵容则把皮糙换成越挫。',
-            contributor: 'wudimaohudawang',
-          },
-          {
-            cards: ['S-击晕', 'A-加大火力', 'A-越挫越勇', 'A-穷追猛打'],
-            description: '19费常规卡组，穷追开节奏。',
-          },
-        ],
-        defaultFolded: true,
+        cards: ['S-击晕', 'S-暴怒', 'A-穷追猛打', 'A-越挫越勇'],
+        description: '打架，穷追开局，暴怒兜底。',
+      },
+      {
+        cards: ['S-击晕', 'A-加大火力', 'A-穷追猛打', 'B-皮糙肉厚', 'C-猫是液体'],
+        description: '没有21点的可以摘掉猫液',
+      },
+      {
+        cards: ['S-蓄势一击', 'S-屈打成招', 'A-加大火力', 'A-穷追猛打'],
+        description: '通过小地图使用火车头阻击老鼠救援。',
       },
     ],
     specialSkills: [
