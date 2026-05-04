@@ -10,14 +10,6 @@ export const variantEdges: VariantEdge[] = [
     variant: { name: '蛋糕-旧版', type: 'item' },
   },
   {
-    prototype: { name: '火箭', type: 'item' },
-    variant: { name: '蛋糕', type: 'item' },
-  },
-  {
-    prototype: { name: '藤蔓纸盒', type: 'item' },
-    variant: { name: '大纸盒', type: 'entity' },
-  },
-  {
     prototype: { name: '大纸盒', type: 'item' },
     variant: { name: '藤蔓纸盒', type: 'entity' },
   },
