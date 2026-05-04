@@ -72,6 +72,11 @@ Required mapping rules:
 
 Do not store relation text under `relation.description`; keep user-facing text in top-level `description`.
 
+No-op semantic rewrites:
+
+- Do not rewrite an existing relation solely to invert equivalent `counters`/`counteredBy` orientation when the existing entry already represents the same edge and text.
+- Do not reorder `collaborators` group/subject/target solely to match an action path. Preserve the existing orientation unless the action adds a genuinely new edge or changes user-facing content.
+
 ## Array Index Path Rule (Must Follow)
 
 When an action path contains an array index (for example `skills.0.canMoveWhileUsing`):

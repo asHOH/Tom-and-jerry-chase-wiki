@@ -2290,6 +2290,19 @@ export const characterRelationTraits: Trait[] = [
     },
   },
   {
+    description: '罗宾汉杰瑞难以处理托普斯的分身，且不易救援托普斯防守的火箭。',
+    group: [
+      { name: '罗宾汉杰瑞', type: 'character' },
+      { name: '托普斯', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '罗宾汉杰瑞', type: 'character' },
+      target: { name: '托普斯', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
     description: '恶魔汤姆有霸体和护盾能力，不怕罗菲的圆球控制；迷乱列车还能克制圆球的霸体。',
     group: [
       { name: '恶魔汤姆', type: 'character' },
@@ -2927,6 +2940,85 @@ export const characterRelationTraits: Trait[] = [
       kind: 'counters',
       subject: { name: '罗宾汉杰瑞', type: 'character' },
       target: { name: '汤姆', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '罗宾汉可利用技能翻越井盖和部分楼层。古堡23同理',
+    group: [
+      { name: '罗宾汉杰瑞', type: 'character' },
+      { name: '雪夜古堡I', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '罗宾汉杰瑞', type: 'character' },
+      target: { name: '雪夜古堡I', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '罗宾汉可利用技能翻越绝大多数楼层。游轮23同理',
+    group: [
+      { name: '罗宾汉杰瑞', type: 'character' },
+      { name: '夏日游轮I', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '罗宾汉杰瑞', type: 'character' },
+      target: { name: '夏日游轮I', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '罗宾汉可利用技能在牛棚和主人房屋顶间往返飞跃；且该地图小平台多，罗宾占据优势；罗宾汉还能利用降落伞反复钻主人房的两段管道。',
+    group: [
+      { name: '罗宾汉杰瑞', type: 'character' },
+      { name: '森林牧场', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '罗宾汉杰瑞', type: 'character' },
+      target: { name: '森林牧场', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '罗宾汉开伞坐车免疫晕车。',
+    group: [
+      { name: '罗宾汉杰瑞', type: 'character' },
+      { name: '熊猫馆', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '罗宾汉杰瑞', type: 'character' },
+      target: { name: '熊猫馆', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '罗宾汉可轻松翻越水城和摩天轮的大部分平台。',
+    group: [
+      { name: '罗宾汉杰瑞', type: 'character' },
+      { name: '游乐场', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '罗宾汉杰瑞', type: 'character' },
+      target: { name: '游乐场', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '罗宾汉机动性强，有无敌，在此模式受益极大。',
+    group: [
+      { name: '罗宾汉杰瑞', type: 'character' },
+      { name: '奔跑吧老鼠团体赛', type: 'mode' },
+    ],
+    relation: {
+      kind: 'advantageModes',
+      subject: { name: '罗宾汉杰瑞', type: 'character' },
+      target: { name: '奔跑吧老鼠团体赛', type: 'mode' },
       isMinor: false,
     },
   },
@@ -3984,6 +4076,19 @@ export const characterRelationTraits: Trait[] = [
     relation: {
       kind: 'counteredBySpecialSkills',
       subject: { name: '布奇', type: 'character' },
+      target: { name: '冰冻保鲜', type: 'specialSkill', factionId: 'mouse' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '可躲吻',
+    group: [
+      { name: '图多盖洛', type: 'character' },
+      { name: '冰冻保鲜', type: 'specialSkill', factionId: 'mouse' },
+    ],
+    relation: {
+      kind: 'counteredBySpecialSkills',
+      subject: { name: '图多盖洛', type: 'character' },
       target: { name: '冰冻保鲜', type: 'specialSkill', factionId: 'mouse' },
       isMinor: false,
     },
