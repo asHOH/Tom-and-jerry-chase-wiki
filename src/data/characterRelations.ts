@@ -3989,6 +3989,19 @@ export const characterRelationTraits: Trait[] = [
     },
   },
   {
+    description: '可躲吻',
+    group: [
+      { name: '图多盖洛', type: 'character' },
+      { name: '冰冻保鲜', type: 'specialSkill', factionId: 'mouse' },
+    ],
+    relation: {
+      kind: 'counteredBySpecialSkills',
+      subject: { name: '图多盖洛', type: 'character' },
+      target: { name: '冰冻保鲜', type: 'specialSkill', factionId: 'mouse' },
+      isMinor: false,
+    },
+  },
+  {
     description: '绝地反击能暂时免疫朵朵的控制，但免疫不了伤害。',
     group: [
       { name: '朵朵', type: 'character' },

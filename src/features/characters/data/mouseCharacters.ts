@@ -3448,6 +3448,12 @@ const mouseCharacterDefinitions = {
         description: '2级被动和琴可为队友加推速和回复Hp。',
         additionalDescription: '',
       },
+      {
+        tagName: '救援',
+        isMinor: true,
+        description: '高Hp，可弹开夹子，有免虚和复活甲，舍己救援后可接琴。',
+        additionalDescription: '小心[直接抓取](拍子、斗牛、三级枪)',
+      },
     ],
     skillAllocations: [
       {
@@ -3463,6 +3469,18 @@ const mouseCharacterDefinitions = {
         weaponType: 'weapon1',
         description: '队友干扰能力较强但推速较慢时，可以考虑做辅助位主点琴加推速。（注意配合）',
       },
+      {
+        id: '优先被动',
+        pattern: '12100(0)22-1',
+        weaponType: 'weapon1',
+        description: '5级如果不着急推奶酪可选，三主有减少击退距离的副作用，考虑加点。',
+      },
+      {
+        id: '优先武器',
+        pattern: '1212002(0)-1',
+        weaponType: 'weapon1',
+        description: '着急推奶酪/队友推速慢时可选，但3级被动会稍晚点出。（注意配合）',
+      },
     ],
     knowledgeCardGroups: [
       {
@@ -3477,6 +3495,10 @@ const mouseCharacterDefinitions = {
       {
         cards: ['S-缴械', 'S-铁血', 'S-舍己', 'C-救救我'],
         description: '{缴械}卡组。',
+      },
+      {
+        cards: ['S-无畏', 'S-铁血', 'C-不屈', 'C-美食家', 'C-救救我'],
+        description: '美食家可用于开蛋糕，重置3级被动',
       },
     ],
     skills: [
