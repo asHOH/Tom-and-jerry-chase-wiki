@@ -252,6 +252,11 @@ export type ItemAttributesAsCharacter = {
   hpRecovery?: number; // Hp恢复
   moveSpeed?: number; // 移速
   jumpHeight?: number; // 跳跃
+
+  // Cat-specific attributes
+  clawKnifeCdHit?: number; // 爪刀CD (命中)
+  clawKnifeCdUnhit?: number; // 爪刀CD (未命中)
+  clawKnifeRange?: number; // 爪刀范围
 };
 
 export type ItemDefinition = {

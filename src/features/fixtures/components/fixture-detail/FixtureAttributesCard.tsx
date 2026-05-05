@@ -204,6 +204,24 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
                         title: '攻击增伤',
                         text: effectiveFixture.fixtureAttributesAsCharacter.attackBoost,
                       },
+                  effectiveFixture.fixtureAttributesAsCharacter.clawKnifeCdHit === undefined
+                    ? { title: null, text: null }
+                    : {
+                        title: '攻击CD',
+                        text: effectiveFixture.fixtureAttributesAsCharacter.clawKnifeCdHit,
+                      },
+                  effectiveFixture.fixtureAttributesAsCharacter.clawKnifeCdUnhit === undefined
+                    ? { title: null, text: null }
+                    : {
+                        title: '未命中CD',
+                        text: effectiveFixture.fixtureAttributesAsCharacter.clawKnifeCdUnhit,
+                      },
+                  effectiveFixture.fixtureAttributesAsCharacter.clawKnifeRange === undefined
+                    ? { title: null, text: null }
+                    : {
+                        title: '攻击范围',
+                        text: effectiveFixture.fixtureAttributesAsCharacter.clawKnifeRange,
+                      },
                 ].map(({ title, text }) =>
                   title === null ? null : (
                     <span className='text-sm whitespace-pre' key={title}>

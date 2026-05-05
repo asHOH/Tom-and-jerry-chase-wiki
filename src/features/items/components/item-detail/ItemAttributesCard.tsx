@@ -224,6 +224,24 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                         title: '攻击增伤',
                         text: effectiveItem.itemAttributesAsCharacter.attackBoost,
                       },
+                  effectiveItem.itemAttributesAsCharacter.clawKnifeCdHit === undefined
+                    ? { title: null, text: null }
+                    : {
+                        title: '攻击CD',
+                        text: effectiveItem.itemAttributesAsCharacter.clawKnifeCdHit,
+                      },
+                  effectiveItem.itemAttributesAsCharacter.clawKnifeCdUnhit === undefined
+                    ? { title: null, text: null }
+                    : {
+                        title: '未命中CD',
+                        text: effectiveItem.itemAttributesAsCharacter.clawKnifeCdUnhit,
+                      },
+                  effectiveItem.itemAttributesAsCharacter.clawKnifeRange === undefined
+                    ? { title: null, text: null }
+                    : {
+                        title: '攻击范围',
+                        text: effectiveItem.itemAttributesAsCharacter.clawKnifeRange,
+                      },
                 ].map(({ title, text }) =>
                   title === null ? null : (
                     <span className='text-sm whitespace-pre' key={title}>

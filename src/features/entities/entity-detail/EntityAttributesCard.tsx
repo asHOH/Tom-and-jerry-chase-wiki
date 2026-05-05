@@ -191,6 +191,24 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
                         title: '攻击增伤',
                         text: effectiveEntity.entityAttributesAsCharacter.attackBoost,
                       },
+                  effectiveEntity.entityAttributesAsCharacter.clawKnifeCdHit === undefined
+                    ? { title: null, text: null }
+                    : {
+                        title: '攻击CD',
+                        text: effectiveEntity.entityAttributesAsCharacter.clawKnifeCdHit,
+                      },
+                  effectiveEntity.entityAttributesAsCharacter.clawKnifeCdUnhit === undefined
+                    ? { title: null, text: null }
+                    : {
+                        title: '未命中CD',
+                        text: effectiveEntity.entityAttributesAsCharacter.clawKnifeCdUnhit,
+                      },
+                  effectiveEntity.entityAttributesAsCharacter.clawKnifeRange === undefined
+                    ? { title: null, text: null }
+                    : {
+                        title: '攻击范围',
+                        text: effectiveEntity.entityAttributesAsCharacter.clawKnifeRange,
+                      },
                 ].map(({ title, text }) =>
                   title === null ? null : (
                     <span className='text-sm whitespace-pre' key={title}>
