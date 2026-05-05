@@ -18,7 +18,7 @@ const catCharacterDefinitions = {
     jumpHeight: 420,
     clawKnifeCdHit: 4.5,
     clawKnifeCdUnhit: 2.25,
-    clawKnifeRange: 300,
+    clawKnifeRange: 275,
     gender: 'male',
     EnglishName: 'Tom',
     catPositioningTags: [
@@ -224,7 +224,7 @@ const catCharacterDefinitions = {
     jumpHeight: 420,
     clawKnifeCdHit: 6,
     clawKnifeCdUnhit: 4.8,
-    clawKnifeRange: 280,
+    clawKnifeRange: 270,
     gender: 'male',
     EnglishName: 'Butch',
     catPositioningTags: [
@@ -425,7 +425,7 @@ const catCharacterDefinitions = {
     jumpHeight: 420,
     clawKnifeCdHit: 5,
     clawKnifeCdUnhit: 3.5,
-    clawKnifeRange: 220,
+    clawKnifeRange: 210,
     gender: 'male',
     EnglishName: 'Topsy',
     catPositioningTags: [
@@ -636,7 +636,7 @@ const catCharacterDefinitions = {
     jumpHeight: 420,
     clawKnifeCdHit: 6.5,
     clawKnifeCdUnhit: 4.55,
-    clawKnifeRange: 300,
+    clawKnifeRange: 270,
     gender: 'male',
     EnglishName: 'Lightning',
     catPositioningTags: [
@@ -857,7 +857,7 @@ const catCharacterDefinitions = {
     jumpHeight: 420,
     clawKnifeCdHit: 5,
     clawKnifeCdUnhit: 3.5,
-    clawKnifeRange: 300,
+    clawKnifeRange: 275,
     gender: 'male',
     EnglishName: 'Cowboy Tom',
     catPositioningTags: [
@@ -1142,7 +1142,7 @@ const catCharacterDefinitions = {
     jumpHeight: 420,
     clawKnifeCdHit: 3.5,
     clawKnifeCdUnhit: 3.5,
-    clawKnifeRange: 300,
+    clawKnifeRange: 235,
     gender: 'female',
     EnglishName: 'Toodles Galore',
     catPositioningTags: [
@@ -1442,7 +1442,7 @@ const catCharacterDefinitions = {
     jumpHeight: 420,
     clawKnifeCdHit: 5.5,
     clawKnifeCdUnhit: 2.2,
-    clawKnifeRange: 300,
+    clawKnifeRange: 275,
     gender: 'male',
     EnglishName: 'Guard Tom',
     catPositioningTags: [
@@ -1643,7 +1643,7 @@ const catCharacterDefinitions = {
     jumpHeight: 420, // FIXME: 梦回说跟托普斯一样是467.6、其他猫是481.7，但靠谱吗？
     clawKnifeCdHit: 2.5,
     clawKnifeCdUnhit: 2,
-    clawKnifeRange: 200,
+    clawKnifeRange: 180,
     gender: 'female',
     EnglishName: 'Toots',
     catPositioningTags: [
@@ -1875,7 +1875,7 @@ const catCharacterDefinitions = {
     jumpHeight: 420,
     clawKnifeCdHit: 5.5,
     clawKnifeCdUnhit: 3.3,
-    clawKnifeRange: 300,
+    clawKnifeRange: 275,
     gender: 'male',
     EnglishName: 'Meathead',
     catPositioningTags: [
@@ -2042,7 +2042,7 @@ const catCharacterDefinitions = {
     jumpHeight: 420,
     clawKnifeCdHit: 5,
     clawKnifeCdUnhit: 4,
-    clawKnifeRange: 300,
+    clawKnifeRange: 275,
     gender: 'female',
     EnglishName: 'Tara',
     catPositioningTags: [
@@ -2262,7 +2262,7 @@ const catCharacterDefinitions = {
     jumpHeight: 420,
     clawKnifeCdHit: 6,
     clawKnifeCdUnhit: 2,
-    clawKnifeRange: 300,
+    clawKnifeRange: 275,
     gender: 'male',
     EnglishName: 'Musketeer Tom',
     catPositioningTags: [
@@ -2483,7 +2483,7 @@ const catCharacterDefinitions = {
     jumpHeight: 420,
     clawKnifeCdHit: 5,
     clawKnifeCdUnhit: 1.65,
-    clawKnifeRange: 220,
+    clawKnifeRange: 210,
     gender: 'male',
     EnglishName: 'Cooper',
     catPositioningTags: [
@@ -2696,7 +2696,7 @@ const catCharacterDefinitions = {
     jumpHeight: 420,
     clawKnifeCdHit: 5,
     clawKnifeCdUnhit: 3.5,
-    clawKnifeRange: 300,
+    clawKnifeRange: 275,
     gender: 'female',
     EnglishName: 'Kate',
     catPositioningTags: [
@@ -2881,7 +2881,7 @@ const catCharacterDefinitions = {
     clawKnifeCdUnhit: 5,
     specialClawKnifeCdHit: 12,
     specialClawKnifeCdUnhit: 6,
-    clawKnifeRange: 280,
+    clawKnifeRange: 250,
     initialItem: '鞭炮束',
     gender: 'female',
     EnglishName: 'Zuri',
@@ -3098,7 +3098,7 @@ const catCharacterDefinitions = {
     jumpHeight: 420,
     clawKnifeCdHit: 8,
     clawKnifeCdUnhit: 4,
-    clawKnifeRange: 300,
+    clawKnifeRange: 275,
     gender: 'male',
     EnglishName: 'Angel Tom',
     catPositioningTags: [
@@ -3287,7 +3287,7 @@ const catCharacterDefinitions = {
     jumpHeight: 420,
     clawKnifeCdHit: 4,
     clawKnifeCdUnhit: 3.1,
-    clawKnifeRange: 300,
+    clawKnifeRange: 270,
     gender: 'male',
     EnglishName: 'Syrus',
     catPositioningTags: [
@@ -3470,7 +3470,7 @@ const catCharacterDefinitions = {
     jumpHeight: 420,
     clawKnifeCdHit: 6,
     clawKnifeCdUnhit: 3,
-    clawKnifeRange: 300,
+    clawKnifeRange: 275,
     gender: 'male',
     EnglishName: 'Devil Tom',
     catPositioningTags: [
@@ -3650,7 +3650,7 @@ const catCharacterDefinitions = {
     jumpHeight: 420,
     clawKnifeCdHit: 5,
     clawKnifeCdUnhit: 2.5,
-    clawKnifeRange: 300,
+    clawKnifeRange: 275,
     gender: 'male',
     EnglishName: 'Bugs Bunny',
     catPositioningTags: [
@@ -3876,7 +3876,7 @@ const catCharacterDefinitions = {
     jumpHeight: 420,
     clawKnifeCdHit: 7,
     clawKnifeCdUnhit: 3.85,
-    clawKnifeRange: 300,
+    clawKnifeRange: 275,
     gender: 'male',
     EnglishName: 'Wind Chaser Tom',
     catPositioningTags: [
@@ -4083,7 +4083,7 @@ const catCharacterDefinitions = {
     jumpHeight: 420,
     clawKnifeCdHit: 4,
     clawKnifeCdUnhit: 4,
-    clawKnifeRange: 270,
+    clawKnifeRange: 250,
     initialItem: '鞭炮束',
     gender: 'female',
     EnglishName: 'Jade',
