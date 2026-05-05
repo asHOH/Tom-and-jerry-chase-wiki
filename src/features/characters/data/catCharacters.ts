@@ -1437,7 +1437,7 @@ const catCharacterDefinitions = {
     description: '侍卫汤姆始终守护在皇宫内，负责保护国王的安全。',
     maxHp: 270,
     attackBoost: 0,
-    hpRecovery: 1.67,
+    hpRecovery: 1.5,
     moveSpeed: 745,
     jumpHeight: 420,
     clawKnifeCdHit: 5.5,
