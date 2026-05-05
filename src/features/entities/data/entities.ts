@@ -325,7 +325,13 @@ export const entityDefinitions = {
     detailedDescription:
       '其[与托普斯相貌相同](装扮、昵称、Hp条显示的方式和本体完全一致)。分身爪刀伤害提高15，爪刀CD减少至3.2秒，免疫碎片和老鼠夹，且[继承部分知识卡](大多数知识卡均可继承，其中一部分知识卡效果还能和本体叠加（如“捕鼠夹”的伤害和控制时间延长效果可以二次叠加）；但部分特殊知识卡则无法继承或继承后无效果（如“熊熊燃烧”等）)。分身[共享小地图视野](由于人工智能类角色具有能看到隐身角色的特性，因此分身也能在小地图上透视周围隐身的老鼠，但不会主动攻击)，但[受到的伤害增加20](包括受到部分环境伤害时)。本体[获得部分增益时](包括食物、药水效果，以及部分地图道具效果（如太空堡垒-科研舱药水等）)，分身也会获得。\n\n分身存在期间本体获得额外技能，点击可指挥分身出击或跟随（CD：5秒）\n出击：根据本体朝向前进，遇到障碍物会尝试跳跃过去，失败则原路返回。\n跟随：向本体跟随。\n\n分身存在期间再次使用主动技能可与分身换位（有[单独CD](与技能原本的CD无关；不受增加/缩减冷却的效果影响)，与技能等级有关）。\n\n分身成功释放后，技能本身的CD就开始倒计时；分身被击倒或消失后，技能切换回本来的CD。\n\nLv.2换位时回复Hp，且移速提高20%、交互速度提高25%。\nLv.3如果分身在本体附近，本体受到的[眩晕控制](包括大部分眩晕，另外还能免疫尼宝的鱼钩；不包括其它控制，如斯派克抓取、捕鼠夹、虚弱、仙女鼠8星等)和受到的一半伤害会转移给分身。',
     create: '由托普斯-双重猫格召唤。',
-    entityAttributesAsCharacter: { type: 'cat', factionBelong: 'cat', maxHp: 200 },
+    entityAttributesAsCharacter: {
+      type: 'cat',
+      factionBelong: 'cat',
+      maxHp: 200,
+      clawKnifeCdHit: 3.2,
+      clawKnifeRange: 210,
+    },
   },
   泡泡: {
     entitytag: ['触发', '伤害', '群体', '硬控'],
@@ -1298,6 +1304,7 @@ export const entityDefinitions = {
       moveSpeed: 820,
       jumpHeight: 550,
       attackBoost: 0,
+      clawKnifeRange: 300,
     },
   },
   斜塔: {
@@ -2186,6 +2193,10 @@ export const entityDefinitions = {
     entityAttributesAsCharacter: {
       type: 'cat',
       factionBelong: 'cat',
+      hpRecovery: 3.8,
+      clawKnifeRange: 320,
+      clawKnifeCdHit: 2,
+      clawKnifeCdUnhit: 2,
     },
     skills: [
       {
@@ -2221,6 +2232,9 @@ export const entityDefinitions = {
     entityAttributesAsCharacter: {
       type: 'mouse',
       factionBelong: 'mouse',
+      hpRecovery: 0,
+      clawKnifeCdHit: 2,
+      clawKnifeCdUnhit: 2,
     },
     skills: [
       {
@@ -2256,6 +2270,9 @@ export const entityDefinitions = {
     entityAttributesAsCharacter: {
       type: 'mouse',
       factionBelong: 'mouse',
+      hpRecovery: 0,
+      clawKnifeCdHit: 2,
+      clawKnifeCdUnhit: 2,
     },
     skills: [
       {
@@ -2289,6 +2306,10 @@ export const entityDefinitions = {
     entityAttributesAsCharacter: {
       type: 'cat',
       factionBelong: 'cat',
+      hpRecovery: 0,
+      clawKnifeRange: 320,
+      clawKnifeCdHit: 2,
+      clawKnifeCdUnhit: 2,
     },
     skills: [
       {
@@ -2322,6 +2343,9 @@ export const entityDefinitions = {
     entityAttributesAsCharacter: {
       type: 'cat',
       factionBelong: 'other',
+      hpRecovery: 0,
+      clawKnifeCdHit: 2,
+      clawKnifeCdUnhit: 2,
     },
     skills: [
       {
@@ -2355,6 +2379,9 @@ export const entityDefinitions = {
     entityAttributesAsCharacter: {
       type: 'cat',
       factionBelong: 'other',
+      hpRecovery: 3.8,
+      clawKnifeCdHit: 2,
+      clawKnifeCdUnhit: 2,
     },
     skills: [
       {
@@ -2390,6 +2417,9 @@ export const entityDefinitions = {
     entityAttributesAsCharacter: {
       type: 'cat',
       factionBelong: 'other',
+      hpRecovery: 3.8,
+      clawKnifeCdHit: 2,
+      clawKnifeCdUnhit: 2,
     },
     skills: [
       {
