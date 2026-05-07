@@ -98,7 +98,7 @@ If multiple approved actions on the same date touch the same logical relation ar
 1. Tool policy: use supabase MCP.
 2. If unspecified, default to year 2026.
 3. Time zone policy: always interpret all date/date-range in Beijing time (`Asia/Shanghai`, UTC+8), including discovery, reconciliation, and status writes.
-4. Branch policy: do all patching work on branch `data-sync`. If current branch is not `data-sync`, switch to `data-sync` before any code edit or status write.
+4. Branch policy: do all patching work on branch `data-sync`. If current branch is not `data-sync`, switch to `data-sync` before any code edit or status write. After switching to `data-sync`, first run `git merge develop`, resolve any conflicts, and only then start discovery or patching.
 5. Never blindly replay action paths into source files. Always map to current structure first.
 6. If action volume is large, classify based on content into smaller chunks and stop for approval before each chunk.
 7. Use utf-8 encoding.
