@@ -37,19 +37,20 @@ ejected.
   orientation. Apply only material field changes such as `description` or `isMinor`; if no
   material field changed, treat it as a no-op and the row can still be synced after verification.
 - **No-op**: Don't reorder collaborators or rewrite equivalent relations when the represented edge and material fields are unchanged.
+- **Duplicate cleanup**: If an action removes a redundant edge that is already covered by another relation, remove only the redundant edge. Do not rewrite the other one.
 - **Indices**: Treat 0, 1 literally. Defer if oldValue mismatches.
 
 ## Core Rules & Conflict Resolution
 
 1. **Conflicts**: 1. Process created_at ASC 2. Later overlaps win 3. Remove obsolete twins if relation changes 4. Defer ambiguities.
-2. **Env**: Year: 2026. TZ: Beijing (UTC+8). Encoding: UTF-8 (stop if garbled).
+2. **Env**: Year: 2026. TZ: Beijing (UTC+8). Source files are UTF-8. Chinese text may display as mojibake in Windows PowerShell or agent terminal output when UTF-8 bytes are decoded with a legacy code page. Treat terminal mojibake from `Get-Content`, `rg`, or command output as a display issue unless file bytes, the editor, or browser output prove corruption. Do not "fix" Chinese strings solely because terminal output rendered them incorrectly.
 3. **Git**: Branch must be data-sync. Run git merge develop first.
 4. **Execution**: Map to current structure; do not blindly replay paths. Chunk if >10 actions.
 5. **Status**: Never set synced if code edit/check fails, mapping is fuzzy, or skipped.
 
 ## Workflow
 
-1. **Discovery**: Query pproved actions via Supabase MCP.
+1. **Discovery**: Query approved actions via Supabase MCP.
 2. **Classify**: Map or Defer. For large sets, present chunk plan and wait for approval.
 3. **Apply & Verify**: Edit code. Run targeted grep/read checks. Sync status only if all flattened updates for a row succeeded. Pause between chunks.
 4. **Finalize**: Re-query statuses. Summarize (Synced, Deferred/Remaining) for the PR.
@@ -64,5 +65,6 @@ ejected.
 
 - Check newValue placement and schema shape.
 - Verify message intent (e.g. relation added and old deleted).
-- Check
-  pm run report:character-relations if modifying relations.
+- Check `npm run report:character-relations` if modifying relations.
+- For relation-only chunks, targeted grep/read checks plus `npm run report:character-relations`
+  are sufficient, unless shared code, validation logic, or non-relation data files changed.
