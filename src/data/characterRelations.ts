@@ -1195,7 +1195,7 @@ export const characterRelationTraits: Trait[] = [
     },
   },
   {
-    description: '三级毛线球拉进的奶酪可以瞬间推完',
+    description: '三级毛线球在该模式拉奶酪进洞口直接推入',
     group: [
       { name: '梦游杰瑞', type: 'character' },
       { name: '疯狂奶酪赛', type: 'mode' },
@@ -1205,6 +1205,73 @@ export const characterRelationTraits: Trait[] = [
       subject: { name: '梦游杰瑞', type: 'character' },
       target: { name: '疯狂奶酪赛', type: 'mode' },
       isMinor: false,
+    },
+  },
+  {
+    description: '贯穿线点位：侍卫房洞口（三楼右边洞口）。有传送带时可以攒高尔夫球用于后期破墙',
+    group: [
+      { name: '梦游杰瑞', type: 'character' },
+      { name: '雪夜古堡I', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '梦游杰瑞', type: 'character' },
+      target: { name: '雪夜古堡I', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '贯穿线点位：侍卫房洞口（三楼左边洞口），卧室洞口。有传送带时可以攒高尔夫球用于后期破墙',
+    group: [
+      { name: '梦游杰瑞', type: 'character' },
+      { name: '雪夜古堡II', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '梦游杰瑞', type: 'character' },
+      target: { name: '雪夜古堡II', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '贯穿线点位：左侍卫房洞口（左三楼左边洞口），右侍卫房洞口（右三楼右边洞口），左卧室洞口。有传送带时可以攒高尔夫球用于后期破墙',
+    group: [
+      { name: '梦游杰瑞', type: 'character' },
+      { name: '雪夜古堡III', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '梦游杰瑞', type: 'character' },
+      target: { name: '雪夜古堡III', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '三个游轮图的船长室与电影院均有贯穿线点位，但需要鞭炮辅助，实用性较古堡图低',
+    group: [
+      { name: '梦游杰瑞', type: 'character' },
+      { name: '夏日游轮I', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '梦游杰瑞', type: 'character' },
+      target: { name: '夏日游轮I', type: 'map' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '毛线球有利于搬森林奶酪',
+    group: [
+      { name: '梦游杰瑞', type: 'character' },
+      { name: '森林牧场', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '梦游杰瑞', type: 'character' },
+      target: { name: '森林牧场', type: 'map' },
+      isMinor: true,
     },
   },
   {
@@ -1713,7 +1780,7 @@ export const characterRelationTraits: Trait[] = [
       kind: 'counterEachOther',
       subject: { name: '兔八哥', type: 'character' },
       target: { name: '梦游杰瑞', type: 'character' },
-      isMinor: true,
+      isMinor: false,
     },
   },
   {
