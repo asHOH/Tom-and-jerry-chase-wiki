@@ -14,6 +14,58 @@ function buildRelation(traits: Trait[]) {
 }
 export const characterRelationTraits: Trait[] = [
   {
+    description: '',
+    group: [
+      { name: '塔拉', type: 'character' },
+      { name: '经典之家I', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '塔拉', type: 'character' },
+      target: { name: '经典之家I', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '',
+    group: [
+      { name: '塔拉', type: 'character' },
+      { name: '夏日游轮I', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '塔拉', type: 'character' },
+      target: { name: '夏日游轮I', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '',
+    group: [
+      { name: '塔拉', type: 'character' },
+      { name: '雪夜古堡III', type: 'map' },
+    ],
+    relation: {
+      kind: 'disadvantageMaps',
+      subject: { name: '塔拉', type: 'character' },
+      target: { name: '雪夜古堡III', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '',
+    group: [
+      { name: '塔拉', type: 'character' },
+      { name: '游乐场', type: 'map' },
+    ],
+    relation: {
+      kind: 'disadvantageMaps',
+      subject: { name: '塔拉', type: 'character' },
+      target: { name: '游乐场', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
     description: '库博在该地图表现更稳。',
     group: [
       { name: '库博', type: 'character' },
@@ -3156,20 +3208,6 @@ export const characterRelationTraits: Trait[] = [
     },
   },
   {
-    description:
-      '塔拉的超大视野逼迫天菲救人拦截方面提前开技能，蓄势重击克制翅膀流，拍子克制庇护流。',
-    group: [
-      { name: '塔拉', type: 'character' },
-      { name: '天使泰菲', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '塔拉', type: 'character' },
-      target: { name: '天使泰菲', type: 'character' },
-      isMinor: true,
-    },
-  },
-  {
     description: '天菲既被香水死克，又被猛攻指甲油克制。',
     group: [
       { name: '图多盖洛', type: 'character' },
@@ -4448,6 +4486,123 @@ export const characterRelationTraits: Trait[] = [
       kind: 'counteredBy',
       subject: { name: '塔拉', type: 'character' },
       target: { name: '航海士杰瑞', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '',
+    group: [
+      { name: '塔拉', type: 'character' },
+      { name: '米可', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '塔拉', type: 'character' },
+      target: { name: '米可', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '<缺伤害>',
+    group: [
+      { name: '塔拉', type: 'character' },
+      { name: '天使泰菲', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '塔拉', type: 'character' },
+      target: { name: '天使泰菲', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '<无法触发被动>',
+    group: [
+      { name: '塔拉', type: 'character' },
+      { name: '雪梨', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '塔拉', type: 'character' },
+      target: { name: '雪梨', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '<无法触发被动>',
+    group: [
+      { name: '塔拉', type: 'character' },
+      { name: '剑客莉莉', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '塔拉', type: 'character' },
+      target: { name: '剑客莉莉', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '',
+    group: [
+      { name: '塔拉', type: 'character' },
+      { name: '玛丽', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '塔拉', type: 'character' },
+      target: { name: '玛丽', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '<无法触发被动>',
+    group: [
+      { name: '塔拉', type: 'character' },
+      { name: '米雪儿', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '塔拉', type: 'character' },
+      target: { name: '米雪儿', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '<无法触发被动>',
+    group: [
+      { name: '塔拉', type: 'character' },
+      { name: '朵朵', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '塔拉', type: 'character' },
+      target: { name: '朵朵', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '<无法触发被动>',
+    group: [
+      { name: '塔拉', type: 'character' },
+      { name: '仙女鼠', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '塔拉', type: 'character' },
+      target: { name: '仙女鼠', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '<无法触发被动>',
+    group: [
+      { name: '塔拉', type: 'character' },
+      { name: '霜月', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '塔拉', type: 'character' },
+      target: { name: '霜月', type: 'character' },
       isMinor: false,
     },
   },
@@ -7101,19 +7256,6 @@ export const characterRelationTraits: Trait[] = [
       subject: { name: '魔术师', type: 'character' },
       target: { name: '托普斯', type: 'character' },
       isMinor: false,
-    },
-  },
-  {
-    description: '斯飞的被动免疫魔术师黄色卡牌，',
-    group: [
-      { name: '魔术师', type: 'character' },
-      { name: '斯飞', type: 'character' },
-    ],
-    relation: {
-      kind: 'counteredBy',
-      subject: { name: '魔术师', type: 'character' },
-      target: { name: '斯飞', type: 'character' },
-      isMinor: true,
     },
   },
   {
