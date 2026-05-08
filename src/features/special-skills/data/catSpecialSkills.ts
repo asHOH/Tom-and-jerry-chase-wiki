@@ -16,7 +16,7 @@ const catSpecialSkillDefinitions: Record<string, SpecialSkillDefinition> = {
     cooldown: 60,
     description: '向前翻滚一段距离，且移速短暂提高。释放后可在短时间内再释放一次。',
     detailedDescription:
-      '向前翻滚1000距离，且移速提高18%，持续2秒。释放后可在9.9秒内再释放一次，第二次释放后才进入CD。',
+      '向前翻滚1000距离，且移速提高18%，持续2秒。释放后可在9.9秒内再释放一次，第二次释放后或第一次释放后的9.9秒后才进入CD。',
     adviceDescription: '适合**需要额外位移能力**的猫咪。用于赶路或追击，提高机动性。',
   },
   长爪一击: {
