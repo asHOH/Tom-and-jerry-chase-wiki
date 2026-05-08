@@ -592,7 +592,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
   兴奋饮料: {
     itemtype: '食物类' as const,
     itemsource: '常规道具' as const,
-    aliases: ['兴奋药水', '攻击药水', '力量药水', '红色药水'],
+    aliases: ['兴奋药水', '攻击药水', '力量药水', '红色药水', '兴奋剂'],
     description: '拾取后储存在饮料栏，饮用后回复Hp并解除受伤，然后大幅提高{攻击增伤}。',
     detailedDescription:
       '拾取后储存在饮料栏，饮用需要2.9秒(猫)/2.45秒(鼠)，饮用后回复50Hp(猫)/25Hp(鼠)并解除受伤，提高100(猫)/50(鼠){攻击增伤}，持续40秒(猫)/20秒(鼠)。',

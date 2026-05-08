@@ -2716,13 +2716,13 @@ export const characterRelationTraits: Trait[] = [
     description:
       '如玉的爪刀无法破除莱恩的方块，但莱恩用三角或圆命中开启主动技能的如玉仍可触发其花枪反击。',
     group: [
-      { name: '如玉', type: 'character' },
       { name: '莱恩', type: 'character' },
+      { name: '如玉', type: 'character' },
     ],
     relation: {
-      kind: 'counterEachOther',
-      subject: { name: '如玉', type: 'character' },
-      target: { name: '莱恩', type: 'character' },
+      kind: 'counters',
+      subject: { name: '莱恩', type: 'character' },
+      target: { name: '如玉', type: 'character' },
       isMinor: true,
     },
   },
@@ -2957,7 +2957,7 @@ export const characterRelationTraits: Trait[] = [
   },
   {
     description:
-      '莱恩方块提前拦截汤姆无敌，阻止上火箭，蓝图影响火箭燃烧效率。但莱恩拦截要小心汤姆2级被动。',
+      '莱恩方块提前拦截汤姆无敌，阻止上火箭，蓝图影响火箭燃烧效率。但莱恩拦截要小心汤姆1级被动。',
     group: [
       { name: '莱恩', type: 'character' },
       { name: '汤姆', type: 'character' },
