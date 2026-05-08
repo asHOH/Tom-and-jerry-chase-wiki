@@ -1,354 +1,64 @@
----
+﻿---
 name: game-action-patching
 description: 'Patch approved game_data_actions into character relation/data files.'
 argument-hint: 'Date range, actor filter, status policy'
 user-invocable: true
 ---
 
-# Game Action Patching Workflow
+# Game Action Patching
 
-## What This Skill Produces
+## Goal
 
-- A safe, auditable workflow to apply approved game actions into code.
-- Clear progress reporting per chunk with action counts.
-- Status updates in game_data_actions (synced or rejected) based on actual patch outcomes.
-- Regression checks (just targeted content verification; no linting or type-checking) before finalization.
-- Deterministic bookkeeping: patched count, skipped count, rejected count, synced count.
+Safely patch approved game_data_actions into code, verify, and update their statuses to synced or
+ejected.
 
-## Common Candidate Files
+## Target Files
 
-Prioritize these files when mapping character-related actions:
+1. **Primary**: src/features/characters/data/\*Characters.ts (character skills, aliases, descriptions, positioning tags, allocations, special skills), src/data/characterRelations.ts (Cross-character/mode/map/card relation graph like counter/collaborator/advantage/disadvantage)
+2. **Secondary**: src/features/entities/data/_, src/features/special-skills/data/_, etc.
+   _Heuristic_: Prefer feature-local over generic files. Ask if ambiguous.
 
-- src/features/characters/data/catCharacters.ts
-  - Cat character skills, aliases, descriptions, positioning tags, allocations, special skills.
-- src/features/characters/data/mouseCharacters.ts
-  - Similar to cat characters.
-- src/data/characterRelations.ts
-  - Cross-character/mode/map/card relation graph (counter/collaborator/advantage/disadvantage style entries).
+## Relation Mapping (src/data/characterRelations.ts)
 
-Secondary candidates (when action path indicates these domains):
+| Action Path                 | Target kind                               | subject | target                         |
+| --------------------------- | ----------------------------------------- | ------- | ------------------------------ |
+| X.counters                  | counters                                  | X       | Y                              |
+| X.counteredBy               | counteredBy                               | X       | Y                              |
+| X.counterEachOther          | counterEachOther                          | X       | Y                              |
+| X.advantageMaps             | advantageMaps                             | X       | map                            |
+| X.disadvantageMaps          | disadvantageMaps                          | X       | map                            |
+| X.advantageModes            | advantageModes                            | X       | mode                           |
+| X.disadvantageModes         | disadvantageModes                         | X       | mode                           |
+| X.counteredBy[Cards/Skills] | counteredBy[KnowledgeCards/SpecialSkills] | X       | [card/skill] (needs factionId) |
 
-- src/features/entities/data/\*
-- src/features/special-skills/data/\*
-- src/data/\*.ts (other than characterRelations.ts)
+- **Text**: Put user text in top-level description.
+- **No-op**: Don't invert equivalent counters/counteredBy or reorder collaborators unless the kind or text inherently changed.
+- **Indices**: Treat 0, 1 literally. Defer if oldValue mismatches.
 
-Selection heuristic:
+## Core Rules & Conflict Resolution
 
-1. First infer top-level root from action path (character name, relation type, mode/map/card).
-2. Prefer feature-local file before generic data file.
-3. If multiple files are plausible, list candidates and confirm before patching.
-
-## Relation Kind Mapping (Must Follow)
-
-When an action path expresses relation semantics (`counters`, `counterEachOther`, `counteredBy`, `advantageMaps`, `advantageModes`, etc.), map it to one normalized relation entry in `src/data/characterRelations.ts` with this shape:
-
-```ts
-{
-  description: '...',
-  group: [
-    { name: 'A', type: 'character' },
-    { name: 'B', type: 'character' | 'map' | 'mode' | 'knowledgeCard' | 'specialSkill' },
-  ],
-  relation: {
-    kind: '...',
-    subject: { ... },
-    target: { ... },
-    isMinor: boolean,
-  },
-}
-```
-
-Required mapping rules:
-
-1. `X.counters` -> `kind: 'counters'`, `subject = X`, `target = Y`.
-2. `X.counteredBy` -> `kind: 'counteredBy'`, `subject = X`, `target = Y`.
-3. `X.counterEachOther` -> `kind: 'counterEachOther'`, `subject = X`, `target = Y`.
-4. `X.advantageMaps` -> `kind: 'advantageMaps'`, `subject = X`, `target = map`.
-5. `X.disadvantageMaps` -> `kind: 'disadvantageMaps'`, `subject = X`, `target = map`.
-6. `X.advantageModes` -> `kind: 'advantageModes'`, `subject = X`, `target = mode`.
-7. `X.disadvantageModes` -> `kind: 'disadvantageModes'`, `subject = X`, `target = mode`.
-8. `X.counteredByKnowledgeCards` -> `kind: 'counteredByKnowledgeCards'`, `subject = X`, `target = knowledgeCard` (with factionId if provided).
-9. `X.counteredBySpecialSkills` -> `kind: 'counteredBySpecialSkills'`, `subject = X`, `target = specialSkill` (with factionId if provided).
-
-Do not store relation text under `relation.description`; keep user-facing text in top-level `description`.
-
-No-op semantic rewrites:
-
-- Do not rewrite an existing relation solely to invert equivalent `counters`/`counteredBy` orientation when the existing entry already represents the same edge and text.
-- Do not reorder `collaborators` group/subject/target solely to match an action path. Preserve the existing orientation unless the action adds a genuinely new edge or changes user-facing content.
-
-## Array Index Path Rule (Must Follow)
-
-When an action path contains an array index (for example `skills.0.canMoveWhileUsing`):
-
-1. Treat the index literally (`0` = first item, `1` = second item, etc.).
-2. If the target value is different from the reported old value, mark the action as deferred instead of guessing.
-
-## Conflict Resolution for Same Scope
-
-When multiple approved actions touch the same logical area on the same date, follow this process:
-
-### Step 1: Order
-
-- Apply actions sequentially in `created_at ASC` order.
-
-### Step 2: Overlap
-
-- If overlapping fields exist, treat the later action as authoritative.
-
-### Step 3: Semantic Changes
-
-- If an action changes the relation kind (e.g., `counters` -> `counterEachOther`):
-  - Ensure the obsolete semantic twin is removed.
-  - Update to the new relation kind.
-
-### Step 4: Ambiguities
-
-- If an action path cannot be mapped confidently:
-  - Mark it as deferred.
-  - Report the action IDs.
-  - Ask for user clarification before making any status writes.
-
-## Core Policies & Rules
-
-### Tool & Environment Policies
-
-- **Supabase**: Use Supabase MCP when available. If not exposed, use the Supabase JS fallback documented below.
-- **Dates**: Default to the year 2026 if unspecified.
-- **Time Zone**: Always interpret dates/date-ranges in Beijing time (`Asia/Shanghai`, UTC+8) for discovery, reconciliation, and status writes.
-- **Encoding**: Use UTF-8 encoding for all files.
-
-### Git & Branch Policies
-
-- **Branch**: Perform all patching work on the `data-sync` branch. If not on `data-sync`, switch to it before any code edits or status writes.
-- **Merge**: After switching to `data-sync`, run `git merge develop` and resolve any conflicts before starting discovery or patching.
-
-### Patching Rules
-
-- **Mapping Accuracy**: Never blindly replay action paths into source files. Analyze the current structure and apply changes appropriately, while strictly respecting the "No-op semantic rewrites" exceptions to avoid unnecessary inversions.
-- **Chunking**: If action volume exceeds 10 actions, classify based on content into smaller chunks and stop for user approval before patching each chunk.
-- **Status Writes**:
-  - Never update status to "synced" until code edits and validations succeed.
-  - Never update status to "synced" if code mapping is unresolved, ambiguous, or intentionally skipped.
+1. **Conflicts**: 1. Process created_at ASC 2. Later overlaps win 3. Remove obsolete twins if relation changes 4. Defer ambiguities.
+2. **Env**: Year: 2026. TZ: Beijing (UTC+8). Encoding: UTF-8 (stop if garbled).
+3. **Git**: Branch must be data-sync. Run git merge develop first.
+4. **Execution**: Map to current structure; do not blindly replay paths. Chunk if >10 actions.
+5. **Status**: Never set synced if code edit/check fails, mapping is fuzzy, or skipped.
 
 ## Workflow
 
-### Phase 1: Scope and Discovery
+1. **Discovery**: Query pproved actions via Supabase MCP.
+2. **Classify**: Map or Defer. For large sets, present chunk plan and wait for approval.
+3. **Apply & Verify**: Edit code. Run targeted grep/read checks. Sync status only if all flattened updates for a row succeeded. Pause between chunks.
+4. **Finalize**: Re-query statuses. Summarize (Synced, Deferred/Remaining) for the PR.
 
-1. Collect candidate actions from game_data_actions from supabase MCP using filters:
+## Supabase MCP Fallback (If not exposed)
 
-- date or date range
-- created_by nickname (or empty nickname if applicable)
-- status: approved
+- Use local JS client over NEXT_PUBLIC_SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY.
+- Convert Beijing dates to UTC ranges.
+- Write updates by specific id.
 
-2. Summarize counts by one or more of:
+## Safety Gates
 
-- date
-- creator
-- entity_type
-
-3. Build an action inventory table (id, path, op, oldValue, newValue, message). No need to print it.
-
-Completion check:
-
-- You can state exact total actions and grouping dimensions.
-- You can state whether any action rows contain multiple flattened actions that need all-or-nothing status treatment.
-
-### Phase 2: Preflight Classification
-
-Classify each action into one of:
-
-- Direct patchable: maps cleanly to current file structure.
-- Refactor-mapped: semantic equivalent exists but path moved.
-- Needs decision: ambiguous mapping.
-
-(for smaller batches, skip the following step)
-For larger batches:
-
-- Create chunk plan first (e.g., by character, by file, or by message cluster).
-- Keep each chunk small enough (typically 5~10 actions) to review quickly.
-- Pause after establishing the plan before execution.
-
-Chunk checklist template:
-
-- Chunk name
-- Action ids included
-- Expected files
-- Validation plan
-
-Pause here and ask for approval to execute chunk 1.
-
-### Phase 3: Chunk Execution (One by One)
-
-For each chunk:
-
-1. Flatten each selected `entry` into concrete actions before patching.
-2. Apply code edits for actions in chunk scope.
-3. Check targeted grep/content for changed fields
-4. If checks pass:
-
-- mark successfully applied actions as synced
-
-5. If one source row expands to multiple flattened actions, mark that row as synced only if every flattened action succeeded.
-6. Emit per-chunk report:
-
-- patched count
-- skipped/ambiguous count
-- their ids (if not too many)
-
-Approval gate:
-
-- Pause after each chunk summary and ask whether to proceed to next chunk.
-
-### Phase 4: Final Reconciliation
-
-1. Re-query statuses for processed scope.
-2. Confirm totals:
-
-- synced total
-- remaining approved total (these should be the deferred actions that need manual review)
-
-## Supabase MCP SQL Templates (Practical)
-
-Use these patterns with mcp_supabase_execute_sql. Replace placeholders first.
-
-### Supabase JS Fallback When MCP Is Missing
-
-Some agent sessions may not expose the Supabase MCP server. If `list_mcp_resources`/available tools show no Supabase MCP, use the repo-local Supabase client instead:
-
-1. Run Node from the repo root and import `@supabase/supabase-js`.
-2. Read `.env.local` locally for `NEXT_PUBLIC_SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`; fall back to `NEXT_PUBLIC_SUPABASE_ANON_KEY` only for read-only discovery if service role is unavailable.
-3. Create the client with `createClient(url, key, { auth: { persistSession: false } })`.
-4. For Beijing-date filtering, convert the date to UTC bounds. Example: `2026-04-05` Beijing time is `[2026-04-04T16:00:00.000Z, 2026-04-05T16:00:00.000Z)`.
-5. Use `.from('game_data_actions').select(...)` with `.gte('created_at', start).lt('created_at', end)` and join creator nicknames with a second query to `users_public_view` when needed.
-6. For status writes, update explicit ids only, include `.eq('status', 'approved')`, and re-query the scope afterward.
-
-Safety rules for the fallback:
-
-- Network access may require sandbox escalation; request approval for Supabase read/write commands.
-- Prefer service role for moderation/status updates.
-- Keep fallback scripts inline/temporary; do not commit local helper scripts unless explicitly requested.
-
-Placeholders:
-
-- DATE: e.g. '2026-02-22'
-- NICK: creator nickname, e.g. 'SYSTEM-CPYTHON' (or '' for empty nickname)
-- IDS: explicit action id list
-
-1. Status distribution for a date and creator
-
-```sql
-select g.status, count(*) as cnt
-from game_data_actions g
-left join users_public_view u on u.id = g.created_by
-where ((g.created_at at time zone 'Asia/Shanghai')::date) = DATE
-  and coalesce(u.nickname, '') = NICK
-group by g.status
-order by g.status;
-```
-
-2. Pull approved action inventory (id + entry)
-
-```sql
-select g.id, g.entity_type, g.status, g.created_at, coalesce(u.nickname, '') as created_by_nickname, g.message, g.entry
-from game_data_actions g
-left join users_public_view u on u.id = g.created_by
-where ((g.created_at at time zone 'Asia/Shanghai')::date) = DATE
-  and g.status = 'approved'
-  and coalesce(u.nickname, '') = NICK
-order by g.created_at asc;
-```
-
-3. Mark only selected ids as rejected (policy subset)
-
-```sql
-update game_data_actions
-set status = 'rejected'
-where id in (IDS)
-  and status in ('approved', 'synced');
-```
-
-4. Mark remaining same-scope approved as synced (excluding rejected ids)
-
-```sql
-update game_data_actions g
-set status = 'synced'
-from users_public_view u
-where u.id = g.created_by
-  and ((g.created_at at time zone 'Asia/Shanghai')::date) = DATE
-  and coalesce(u.nickname, '') = NICK
-  and g.status = 'approved'
-  and g.id not in (IDS);
-```
-
-5. Final verification snapshot
-
-```sql
-select status, count(*) as cnt
-from game_data_actions g
-left join users_public_view u on u.id = g.created_by
-where ((g.created_at at time zone 'Asia/Shanghai')::date) = DATE
-  and coalesce(u.nickname, '') = NICK
-group by status
-order by status;
-```
-
-6. Verify non-synced residual ids
-
-```sql
-select g.id, g.status, g.message, g.entry
-from game_data_actions g
-left join users_public_view u on u.id = g.created_by
-where ((g.created_at at time zone 'Asia/Shanghai')::date) = DATE
-  and coalesce(u.nickname, '') = NICK
-  and g.status <> 'synced'
-order by g.created_at asc;
-```
-
-Execution notes:
-
-- Always run inventory query before any status write.
-- Prefer id-scoped writes for rejected subset.
-
-## Chunk Logic
-
-- If action count <= 10: one chunk is acceptable unless they are very complex.
-- If action count > 10: try to chunk unless they are very simple.
-- If file encoding/garbling risk is detected: stop and ask permission to recover file with git.
-
-## Regression and Safety Checks
-
-- Data consistency checks:
-  - newValue appears exactly where intended
-  - deprecated/old value removed when action semantics require replacement
-  - relation entries keep normalized shape: top-level `description`, and `relation` only contains semantic metadata (`kind/subject/target/isMinor`)
-  - if patching `src/data/characterRelations.ts`, run `npm run report:character-relations` after edits
-- Content checks:
-  - new value is reasonable
-  - "message" of a set of submitted action is implemented (e.g., if several actions have same message saying "修复牛仔杰瑞同时存在于克制与被克制的bug（改为互有克制）", check whether "counter" relationship is deleted and "counterEachOther" relationship is added. No need to check other unrelated actions as we do not expect "message" to cover everything.)
-  - if the change only happens at new description fields, ensure the change introduces no regression in precision or conciseness. If there is a risk of regression, assess its level.
-
-## Status Write Gate (Hard Stop)
-
-Before any `update ... set status = 'synced'`:
-
-1. Ensure every action id in the write set is in the chunk ledger as `patched`.
-2. Ensure every flattened action under each action id in the write set succeeded.
-3. Ensure no id in the write set is `deferred`.
-4. Re-run targeted grep/read checks for each changed field family.
-5. Write statuses with an `approved` guard so concurrent moderation changes are not overwritten.
-6. If any check fails, do not write synced; report and resolve first.
-
-## Reporting Format
-
-Use compact, deterministic summaries:
-
-- Scope discovered: total actions and filters used
-- Chunk N result: patched X, rejected Y, deferred Z
-- Status snapshot: synced A, rejected B, approved C
-- Residual risk: any ambiguous mappings, intentionally deferred items, or regressions
-
-## Quick Improvements
-
-- Keep a per-chunk status ledger (ids by synced/rejected/deferred) before issuing status updates.
-- For repeated action waves on the same date, always re-query current statuses before writing to avoid overwriting manual moderation changes.
+- Check newValue placement and schema shape.
+- Verify message intent (e.g. relation added and old deleted).
+- Check
+  pm run report:character-relations if modifying relations.
