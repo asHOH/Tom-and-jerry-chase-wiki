@@ -2,6 +2,7 @@ import { render, waitFor } from '@testing-library/react';
 
 import { GameDataManager } from '@/lib/dataManager';
 import { PublicActionRow } from '@/lib/gameData/publicActionsTypes';
+import { getCharacterRelation } from '@/features/characters/utils/relationReadModel';
 import { characters } from '@/data';
 
 import { usePublicGameDataActions } from './usePublicGameDataActions';
@@ -86,6 +87,40 @@ describe('usePublicGameDataActions', () => {
           isMinor: false,
         },
       ]);
+    });
+  });
+
+  it('should expose public character relation actions through the relation read model', async () => {
+    const characterId = Object.keys(characters)[0]!;
+    const publicRelationItem = {
+      id: '__public_relation_projection__',
+      description: 'public replay projection relation',
+      isMinor: true,
+    };
+    const actions: PublicActionRow[] = [
+      {
+        id: 'public-relation-projection',
+        entity_type: 'characters',
+        created_at: '2026-04-02T00:00:00.000Z',
+        entry: {
+          op: 'set',
+          path: `${characterId}.counteredBy`,
+          oldValue: undefined,
+          newValue: [publicRelationItem],
+        },
+        status: 'approved',
+        message: null,
+        reviewed_at: null,
+        created_by: null,
+      },
+    ];
+
+    render(<HookHarness actions={actions} />);
+
+    await waitFor(() => {
+      expect(getCharacterRelation(characterId).counteredBy).toEqual(
+        expect.arrayContaining([publicRelationItem])
+      );
     });
   });
 
