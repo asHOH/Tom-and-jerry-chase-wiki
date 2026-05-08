@@ -3,7 +3,6 @@ import 'server-only';
 import { applyActionEntry, type ActionHistoryEntry } from '@/lib/edit/diffUtils';
 import { cached } from '@/lib/serverCache';
 import { supabaseServerPublic } from '@/lib/supabase/public';
-import { actionHistoryEntrySchema } from '@/lib/validation/schemas';
 import {
   buffs,
   buffsEdit,
@@ -24,6 +23,7 @@ import {
 } from '@/data';
 import { env } from '@/env';
 
+import { normalizePublicActionEntries } from './actionEntries';
 import type { PublicActionRow } from './publicActionsTypes';
 
 const appliedPublicActionIds = new Set<string>();
@@ -63,49 +63,6 @@ function applyEntitiesActionEntry(entry: ActionHistoryEntry): void {
 
 function applyEntitiesActionEntry(entry: ActionHistoryEntry): void {
   applyActionEntry(entities as unknown as Record<string, unknown>, entry);
-}
-
-/**
- * Parses and normalizes entry to an array of ActionHistoryEntry items.
- * Supports both single entry and array of entries.
- */
-function parseEntries(rawEntry: unknown): ActionHistoryEntry[] {
-  // Check if it's an array of entries (batch submission)
-  if (Array.isArray(rawEntry)) {
-    // First try to parse as array of ActionHistoryEntry items
-    const entries: ActionHistoryEntry[] = [];
-    let allValid = true;
-
-    for (const item of rawEntry) {
-      const parsed = actionHistoryEntrySchema.safeParse(item);
-      if (parsed.success) {
-        entries.push(parsed.data as ActionHistoryEntry);
-      } else {
-        allValid = false;
-        break;
-      }
-    }
-
-    if (allValid && entries.length > 0) {
-      return entries;
-    }
-
-    // Fall back to treating the whole array as a single ActionHistoryEntry (array of actions)
-    const singleParsed = actionHistoryEntrySchema.safeParse(rawEntry);
-    if (singleParsed.success) {
-      return [singleParsed.data as ActionHistoryEntry];
-    }
-
-    return [];
-  }
-
-  // Single entry
-  const parsed = actionHistoryEntrySchema.safeParse(rawEntry);
-  if (parsed.success) {
-    return [parsed.data as ActionHistoryEntry];
-  }
-
-  return [];
 }
 
 function applyEntryToTarget(entityType: string, entry: ActionHistoryEntry): boolean {
@@ -155,7 +112,7 @@ function applyEntryToTarget(entityType: string, entry: ActionHistoryEntry): bool
 function applyPublicActionRowToServerData(row: PublicActionRow): boolean {
   if (!row?.id || appliedPublicActionIds.has(row.id)) return false;
 
-  const entries = parseEntries(row.entry);
+  const entries = normalizePublicActionEntries(row.entry);
   if (entries.length === 0) return false;
 
   try {
@@ -218,7 +175,7 @@ export async function getEntityUpdateHistory(): Promise<Map<string, EntityUpdate
   for (const action of actions) {
     if (action.status !== 'approved' && action.status !== 'synced') continue;
 
-    const entries = parseEntries(action.entry);
+    const entries = normalizePublicActionEntries(action.entry);
     for (const entry of entries) {
       const paths = extractActionPaths(entry);
       for (const path of paths) {

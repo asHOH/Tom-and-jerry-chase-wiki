@@ -2,8 +2,8 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
+import { normalizePublicActionEntries } from '@/lib/gameData/actionEntries';
 import type { PublicActionRow } from '@/lib/gameData/publicActionsTypes';
-import { actionHistoryEntrySchema } from '@/lib/validation/schemas';
 import {
   buffsEdit,
   cardsEdit,
@@ -22,7 +22,6 @@ import {
   applyActionEntry,
   getActionsStorageKey,
   withRecordingSuppressed,
-  type ActionHistoryEntry,
 } from '../lib/edit/diffUtils';
 
 function getTarget(entityType: string): Record<string, unknown> | null {
@@ -83,49 +82,6 @@ function readEditModeState(): { isEditMode: boolean; enabledAtMs: number | null 
 
   return { isEditMode: true, enabledAtMs };
 }
-/**
- * Parses and normalizes entry to an array of ActionHistoryEntry items.
- * Supports both single entry and array of entries.
- */
-function parseEntries(rawEntry: unknown): ActionHistoryEntry[] {
-  // Check if it's an array of entries (batch submission)
-  if (Array.isArray(rawEntry)) {
-    // First try to parse as array of ActionHistoryEntry items
-    const entries: ActionHistoryEntry[] = [];
-    let allValid = true;
-
-    for (const item of rawEntry) {
-      const parsed = actionHistoryEntrySchema.safeParse(item);
-      if (parsed.success) {
-        entries.push(parsed.data as ActionHistoryEntry);
-      } else {
-        allValid = false;
-        break;
-      }
-    }
-
-    if (allValid && entries.length > 0) {
-      return entries;
-    }
-
-    // Fall back to treating the whole array as a single ActionHistoryEntry (array of actions)
-    const singleParsed = actionHistoryEntrySchema.safeParse(rawEntry);
-    if (singleParsed.success) {
-      return [singleParsed.data as ActionHistoryEntry];
-    }
-
-    return [];
-  }
-
-  // Single entry
-  const parsed = actionHistoryEntrySchema.safeParse(rawEntry);
-  if (parsed.success) {
-    return [parsed.data as ActionHistoryEntry];
-  }
-
-  return [];
-}
-
 export function usePublicGameDataActions(options?: { initialPublicActions?: PublicActionRow[] }) {
   'use no memo';
   const [appliedCount, setAppliedCount] = useState(0);
@@ -188,7 +144,7 @@ export function usePublicGameDataActions(options?: { initialPublicActions?: Publ
       const target = getTarget(row.entity_type);
       if (!target) continue;
 
-      const entries = parseEntries(row.entry);
+      const entries = normalizePublicActionEntries(row.entry);
       if (entries.length === 0) continue;
 
       try {
