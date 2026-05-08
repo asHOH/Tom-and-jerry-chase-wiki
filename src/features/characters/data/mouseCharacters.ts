@@ -1413,6 +1413,7 @@ const mouseCharacterDefinitions = {
         name: '圆滚滚',
         type: 'active',
         description: '向前翻滚一段距离。',
+        detailedDescription: '向前翻滚一段距离，期间可通过跳跃键打断。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '无前摇',

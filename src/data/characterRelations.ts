@@ -1676,7 +1676,7 @@ export const characterRelationTraits: Trait[] = [
   },
   {
     description:
-      '泰菲的圆滚滚可以解控，配合治疗可以克制米特的刷尸；泰菲的圆滚滚可以强行把米特的饭盒踩掉，克制米特的防守。但米特的野性层数叠加到七层时可以一刀秒泰菲，被动还可以短时间内取消泰菲被动的回血buff，不利于泰菲强行推奶酪；泰菲火箭筒或者地雷击中米特时，米特的胡椒粉会自动掉落，导致救下来的队友再次被胡椒粉毒死，被米特抓住，浪费了一次技能',
+      '泰菲的圆滚滚可以解控，配合治疗可以克制米特的刷尸；泰菲的圆滚滚可以把米特的饭盒踩掉，克制米特的防守。但米特的野性层数叠加到七层时可以一刀秒泰菲，被动还可以短时间内取消泰菲被动的回血buff，不利于泰菲强行推奶酪。',
     group: [
       { name: '泰菲', type: 'character' },
       { name: '米特', type: 'character' },
@@ -3061,7 +3061,8 @@ export const characterRelationTraits: Trait[] = [
     },
   },
   {
-    description: '苏蕊跳舞霸体对泰菲有很大压力。',
+    description:
+      '苏蕊跳舞有霸体、伤害高，克制伤害高、血量低、主要打控制的泰菲；苏蕊跳舞可直接把老鼠带上火箭，克制泰菲地雷拖延绑火箭；泰菲火箭筒前摇长，近身容易被苏蕊瑜伽球打断',
     group: [
       { name: '苏蕊', type: 'character' },
       { name: '泰菲', type: 'character' },
@@ -3070,7 +3071,7 @@ export const characterRelationTraits: Trait[] = [
       kind: 'counters',
       subject: { name: '苏蕊', type: 'character' },
       target: { name: '泰菲', type: 'character' },
-      isMinor: true,
+      isMinor: false,
     },
   },
   {
@@ -4515,7 +4516,7 @@ export const characterRelationTraits: Trait[] = [
   },
   {
     description:
-      '泰菲的炮和地雷可协助牛汤的斗牛鞭尸，触发二级被动；牛汤伤害高，克制血量低的泰菲；牛汤技能冷却快，攻击、控制手段多，泰菲圆滚滚冷却时间长，疲于应对；泰菲火箭筒前摇长、地雷预警时间长，容易被牛汤卡时间击倒',
+      '泰菲的地雷能协助牛仔汤姆卡时间放斗牛鞭尸触发2级被动，且牛仔汤姆攻击手段多，圆滚滚疲于应对。',
     group: [
       { name: '泰菲', type: 'character' },
       { name: '牛仔汤姆', type: 'character' },
@@ -4524,7 +4525,7 @@ export const characterRelationTraits: Trait[] = [
       kind: 'counteredBy',
       subject: { name: '泰菲', type: 'character' },
       target: { name: '牛仔汤姆', type: 'character' },
-      isMinor: false,
+      isMinor: true,
     },
   },
   {
