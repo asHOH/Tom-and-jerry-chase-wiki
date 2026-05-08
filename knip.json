@@ -1,6 +1,9 @@
 {
-  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "$schema": "https://unpkg.com/knip@6/schema.json",
   "entry": [
+    "next.config.ts",
+    "src/sw.ts",
+    "src/mdx-components.tsx",
     "src/app/**/{page,layout,not-found,error,loading,sitemap,robots,manifest,viewport}.ts*",
     "src/lib/supabase/middleware.ts",
     "src/app/api/**/*.ts",
@@ -11,6 +14,7 @@
   "ignoreDependencies": [
     "@tailwindcss/typography",
     "depcheck",
+    "esbuild-wasm",
     "eslint-config-next",
     "rimraf",
     "tailwindcss",
