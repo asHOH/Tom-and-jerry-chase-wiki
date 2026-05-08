@@ -2995,7 +2995,7 @@ export const characterRelationTraits: Trait[] = [
   },
   {
     description:
-      '剑客莉莉的风墙可以阻挡开启无敌的汤姆；剑客莉莉Lv.2被动的护盾持续时间也够长，救援能力足够稳定。',
+      '剑客莉莉的风墙可以阻挡开启无敌的汤姆；剑客莉莉Lv.2被动的无敌持续时间也够长，救援能力足够稳定。',
     group: [
       { name: '剑客莉莉', type: 'character' },
       { name: '汤姆', type: 'character' },
@@ -4529,7 +4529,7 @@ export const characterRelationTraits: Trait[] = [
     },
   },
   {
-    description: '<无法触发被动>',
+    description: '剑客莉莉无法触发塔拉的被动。',
     group: [
       { name: '塔拉', type: 'character' },
       { name: '剑客莉莉', type: 'character' },
