@@ -95,7 +95,7 @@ If multiple approved actions on the same date touch the same logical relation ar
 
 ## Core Rules
 
-1. Tool policy: use supabase MCP.
+1. Tool policy: use supabase MCP when available. If no Supabase MCP tool/resource is exposed in the session, use the Supabase JS fallback documented below.
 2. If unspecified, default to year 2026.
 3. Time zone policy: always interpret all date/date-range in Beijing time (`Asia/Shanghai`, UTC+8), including discovery, reconciliation, and status writes.
 4. Branch policy: do all patching work on branch `data-sync`. If current branch is not `data-sync`, switch to `data-sync` before any code edit or status write. After switching to `data-sync`, first run `git merge develop`, resolve any conflicts, and only then start discovery or patching.
@@ -185,6 +185,23 @@ Approval gate:
 ## Supabase MCP SQL Templates (Practical)
 
 Use these patterns with mcp_supabase_execute_sql. Replace placeholders first.
+
+### Supabase JS Fallback When MCP Is Missing
+
+Some agent sessions may not expose the Supabase MCP server. If `list_mcp_resources`/available tools show no Supabase MCP, use the repo-local Supabase client instead:
+
+1. Run Node from the repo root and import `@supabase/supabase-js`.
+2. Read `.env.local` locally for `NEXT_PUBLIC_SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`; fall back to `NEXT_PUBLIC_SUPABASE_ANON_KEY` only for read-only discovery if service role is unavailable.
+3. Create the client with `createClient(url, key, { auth: { persistSession: false } })`.
+4. For Beijing-date filtering, convert the date to UTC bounds. Example: `2026-04-05` Beijing time is `[2026-04-04T16:00:00.000Z, 2026-04-05T16:00:00.000Z)`.
+5. Use `.from('game_data_actions').select(...)` with `.gte('created_at', start).lt('created_at', end)` and join creator nicknames with a second query to `users_public_view` when needed.
+6. For status writes, update explicit ids only, include `.eq('status', 'approved')`, and re-query the scope afterward.
+
+Safety rules for the fallback:
+
+- Network access may require sandbox escalation; request approval for Supabase read/write commands.
+- Prefer service role for moderation/status updates.
+- Keep fallback scripts inline/temporary; do not commit local helper scripts unless explicitly requested.
 
 Placeholders:
 
