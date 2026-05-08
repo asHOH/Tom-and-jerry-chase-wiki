@@ -3476,14 +3476,15 @@ const catCharacterDefinitions = {
     catPositioningTags: [
       {
         tagName: '防守',
+        weapon: 1,
         isMinor: false,
-        description: '列车可用于守奶酪和火箭，并且列车可以为恶魔汤姆提供护盾效果。',
+        description: '列车可用于守火箭和上火箭，并且列车可以为恶魔汤姆提供护盾效果。',
         additionalDescription: '',
       },
       {
-        tagName: '后期',
+        tagName: '打架',
         isMinor: false,
-        description: '由于适配越挫越勇，恶魔汤姆在后期强度与前期有较大差距。',
+        description: '前期可利用穷追猛打刷出优势，鼠方没稳救很难打。',
         additionalDescription: '',
       },
     ],
@@ -3492,32 +3493,21 @@ const catCharacterDefinitions = {
         id: '通用加点',
         pattern: '1220(2)0011',
         weaponType: 'weapon1',
-        description:
-          '（恶魔汤姆于20260402有一次改版，本加点可能已过时）三级火车技能真空期比二级火车真空期长，视情况考虑是否留点，不需要时可先跳过该加点。',
+        description: '新版恶汤加点不变',
       },
     ],
     knowledgeCardGroups: [
       {
-        cards: ['S-知识渊博', 'S-乘胜追击', 'A-熊熊燃烧', 'C-猫是液体'],
-        description: '管道图。',
-        contributor: 'shuxiao',
+        cards: ['S-蓄势一击', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
+        description: '蓄势主流卡组',
       },
       {
-        cards: ['S-知识渊博', 'A-加大火力', 'A-细心', 'B-皮糙肉厚', 'B-捕鼠夹'],
-        description: '死守，布局，防拉扯',
-        contributor: 'shuxiao',
+        cards: ['A-加大火力', 'A-穷追猛打', 'A-熊熊燃烧', 'C-猫是液体', 'B-皮糙肉厚'],
+        description: '双烧猫液卡组',
       },
       {
-        cards: ['S-击晕', 'S-暴怒', 'A-穷追猛打', 'A-越挫越勇'],
-        description: '打架，穷追开局，暴怒兜底。',
-      },
-      {
-        cards: ['S-击晕', 'A-加大火力', 'A-穷追猛打', 'B-皮糙肉厚', 'C-猫是液体'],
-        description: '没有21点的可以摘掉猫液',
-      },
-      {
-        cards: ['S-蓄势一击', 'S-屈打成招', 'A-加大火力', 'A-穷追猛打'],
-        description: '通过小地图使用火车头阻击老鼠救援。',
+        cards: ['S-屈打成招', 'A-穷追猛打', 'A-熊熊燃烧', 'B-皮糙肉厚'],
+        description: '屈打成招流，前期抓到鼠后不着急绑机会合适可以刷一下经验。',
       },
     ],
     specialSkills: [

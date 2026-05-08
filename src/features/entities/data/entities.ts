@@ -2369,7 +2369,7 @@ export const entityDefinitions = {
   斯派克: {
     entitytag: ['变身', '星元'],
     owner: { name: '多元乱斗', type: 'mode' },
-    aliases: ['正气守护斯派克', '“正气守护”斯派克', '多元乱斗斯派克'],
+    aliases: ['正气守护斯派克', '“正气守护”斯派克', '多元乱斗斯派克', '策划'],
     move: true,
     gravity: true,
     collsion: ['墙壁', '平台', '地面'],

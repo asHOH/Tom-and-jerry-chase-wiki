@@ -2049,6 +2049,45 @@ export const characterRelationTraits: Trait[] = [
     },
   },
   {
+    description: '怕高伤',
+    group: [
+      { name: '恶魔汤姆', type: 'character' },
+      { name: '音乐家杰瑞', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '恶魔汤姆', type: 'character' },
+      target: { name: '音乐家杰瑞', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '怕稳救',
+    group: [
+      { name: '恶魔汤姆', type: 'character' },
+      { name: '剑客泰菲', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '恶魔汤姆', type: 'character' },
+      target: { name: '剑客泰菲', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '怕稳救',
+    group: [
+      { name: '恶魔汤姆', type: 'character' },
+      { name: '尼宝', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '恶魔汤姆', type: 'character' },
+      target: { name: '尼宝', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
     description:
       '头盔未3级的时候可以有效拖延时间且震慑也可以加速放飞减少可能被剑菲救援的次数，但是后期难以反制且被长枪克制。',
     group: [
