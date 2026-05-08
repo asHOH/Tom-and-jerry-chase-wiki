@@ -11,6 +11,7 @@ const catCharacterDefinitions = {
   汤姆: {
     description:
       '全能男神汤姆，开得了大型演唱会，造得出飞行翅膀，弹琴舞蹈样样精通，除了不会抓老鼠什么都会。',
+    aliases: ['蓝猫'],
     maxHp: 255,
     attackBoost: 0,
     hpRecovery: 3.5,

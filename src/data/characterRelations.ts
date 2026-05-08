@@ -1195,6 +1195,19 @@ export const characterRelationTraits: Trait[] = [
     },
   },
   {
+    description: '三级毛线球拉进的奶酪可以瞬间推完',
+    group: [
+      { name: '梦游杰瑞', type: 'character' },
+      { name: '疯狂奶酪赛', type: 'mode' },
+    ],
+    relation: {
+      kind: 'advantageModes',
+      subject: { name: '梦游杰瑞', type: 'character' },
+      target: { name: '疯狂奶酪赛', type: 'mode' },
+      isMinor: false,
+    },
+  },
+  {
     description:
       '拿坡里的主动技能能够阻挡牛，但也会加速牛的来回。武器能够给予牛仔汤姆控制以及视野方面的干扰，但自身缺乏逃脱手段。',
     group: [
@@ -5607,19 +5620,6 @@ export const characterRelationTraits: Trait[] = [
     },
   },
   {
-    description: '梦游杰瑞毛线球特性克制恶魔汤姆火车死守。',
-    group: [
-      { name: '梦游杰瑞', type: 'character' },
-      { name: '恶魔汤姆', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '梦游杰瑞', type: 'character' },
-      target: { name: '恶魔汤姆', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
     description:
       '梦游在主动技能梦游期间免疫击晕，不会被剑汤用击晕和连斩直接击倒；但破除梦游状态后自保较为孱弱。',
     group: [
@@ -5630,6 +5630,19 @@ export const characterRelationTraits: Trait[] = [
       kind: 'counters',
       subject: { name: '梦游杰瑞', type: 'character' },
       target: { name: '剑客汤姆', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '梦游杰瑞受击后的滑行碰撞可以秒破追汤飞行，而且蓄势一刀秒不掉，推得也快。',
+    group: [
+      { name: '梦游杰瑞', type: 'character' },
+      { name: '追风汤姆', type: 'character' },
+    ],
+    relation: {
+      kind: 'counters',
+      subject: { name: '梦游杰瑞', type: 'character' },
+      target: { name: '追风汤姆', type: 'character' },
       isMinor: true,
     },
   },
@@ -6756,19 +6769,6 @@ export const characterRelationTraits: Trait[] = [
     relation: {
       kind: 'countersKnowledgeCards',
       subject: { name: '罗宾汉杰瑞', type: 'character' },
-      target: { name: '捕鼠夹', type: 'knowledgeCard', factionId: 'cat' },
-      isMinor: false,
-    },
-  },
-  {
-    description: '梦游杰瑞的香甜梦境可以直接解除该知识卡影响下的夹子的控制。',
-    group: [
-      { name: '梦游杰瑞', type: 'character' },
-      { name: '捕鼠夹', type: 'knowledgeCard', factionId: 'cat' },
-    ],
-    relation: {
-      kind: 'countersKnowledgeCards',
-      subject: { name: '梦游杰瑞', type: 'character' },
       target: { name: '捕鼠夹', type: 'knowledgeCard', factionId: 'cat' },
       isMinor: false,
     },
