@@ -32,7 +32,11 @@ ejected.
 | X.counteredBy[Cards/Skills] | counteredBy[KnowledgeCards/SpecialSkills] | X       | [card/skill] (needs factionId) |
 
 - **Text**: Put user text in top-level description.
-- **No-op**: Don't invert equivalent counters/counteredBy or reorder collaborators unless the kind or text inherently changed.
+- **Equivalent inverse preservation**: If current code already represents `X.counteredBy Y`
+  as `Y.counters X`, or `X.counters Y` as `Y.counteredBy X`, keep the existing
+  orientation. Apply only material field changes such as `description` or `isMinor`; if no
+  material field changed, treat it as a no-op and the row can still be synced after verification.
+- **No-op**: Don't reorder collaborators or rewrite equivalent relations when the represented edge and material fields are unchanged.
 - **Indices**: Treat 0, 1 literally. Defer if oldValue mismatches.
 
 ## Core Rules & Conflict Resolution
