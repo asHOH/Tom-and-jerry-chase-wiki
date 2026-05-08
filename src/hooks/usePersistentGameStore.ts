@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { subscribe } from 'valtio';
 
 import { entitySnapshotSchema } from '@/lib/validation/schemas';
-import { characters } from '@/data';
+import { characters } from '@/data/store';
 
 export function usePersistentGameStore() {
   useEffect(() => {

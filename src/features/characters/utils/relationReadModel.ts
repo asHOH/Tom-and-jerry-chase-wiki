@@ -1,3 +1,4 @@
+import { characters } from '@/data/store';
 import type {
   CharacterRelation,
   CharacterRelationItem,
@@ -9,7 +10,6 @@ import {
   getRelationsBySubject,
   getRelationsByTarget,
 } from '@/features/shared/traits/relationIndex';
-import { characters } from '@/data';
 
 const defaultRelation: CharacterRelation = {
   counters: [],

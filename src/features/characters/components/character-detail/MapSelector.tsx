@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useSnapshot } from 'valtio';
 
 import { mapsEdit } from '@/data/store';
-import { CharacterRelationItem } from '@/data/types';
+import type { CharacterRelationItem } from '@/data/types';
 import { PlusIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 

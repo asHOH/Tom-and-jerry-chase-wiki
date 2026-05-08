@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useSnapshot } from 'valtio';
 
 import { specialSkillsEdit } from '@/data/store';
-import { CharacterRelationItem, type FactionId } from '@/data/types';
+import type { CharacterRelationItem, FactionId } from '@/data/types';
 import { PlusIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 

@@ -1,7 +1,7 @@
 import { setNestedProperty } from '@/lib/editUtils';
-import { CharacterRelationItem, type TraitRelationKind } from '@/data/types';
+import { characters } from '@/data/store';
+import type { CharacterRelationItem, TraitRelationKind } from '@/data/types';
 import { getCharacterRelation } from '@/features/characters/utils/relationReadModel';
-import { characters } from '@/data';
 
 export const characterRelationKinds: TraitRelationKind[] = [
   'counters',

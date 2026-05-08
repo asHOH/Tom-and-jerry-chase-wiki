@@ -8,7 +8,9 @@ import { cn } from '@/lib/design';
 import { useNavigation } from '@/hooks/useNavigation';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
-import { CharacterRelationItem, type FactionId, type TraitRelationKind } from '@/data/types';
+import { cards } from '@/data/static';
+import { characters, mapsEdit, modesEdit, specialSkillsEdit } from '@/data/store';
+import type { CharacterRelationItem, FactionId, TraitRelationKind } from '@/data/types';
 import {
   addCharacterRelationItem,
   createCharacterRelationItem,
@@ -23,7 +25,6 @@ import { CharacterSelector } from '@/components/ui/CharacterSelector';
 import { editable } from '@/components/ui/editable';
 import { TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
-import { cards, characters, mapsEdit, modesEdit, specialSkillsEdit } from '@/data';
 
 import {
   AdvantageIcon,

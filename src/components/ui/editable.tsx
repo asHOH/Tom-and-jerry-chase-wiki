@@ -25,10 +25,10 @@ import {
   useLocalMode,
   useLocalSpecialSkill,
 } from '@/context/EditModeContext';
+import { cards } from '@/data/static';
 import {
   achievementsEdit,
   buffsEdit,
-  cards,
   cardsEdit,
   characters,
   entitiesEdit,
@@ -37,7 +37,7 @@ import {
   mapsEdit,
   modesEdit,
   specialSkillsEdit,
-} from '@/data/index';
+} from '@/data/store';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 
 type Key<T> = T extends object

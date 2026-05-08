@@ -2,10 +2,10 @@
 
 import React, { useState } from 'react';
 
-import { CharacterRelationItem } from '@/data/types';
+import { cards } from '@/data/static';
+import type { CharacterRelationItem } from '@/data/types';
 import { PlusIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
-import { cards } from '@/data';
 
 type Props = {
   selected: CharacterRelationItem[];

@@ -4,8 +4,6 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import type { PublicActionRow } from '@/lib/gameData/publicActionsTypes';
 import { actionHistoryEntrySchema } from '@/lib/validation/schemas';
-import { env } from '@/env';
-
 import {
   buffsEdit,
   cardsEdit,
@@ -16,7 +14,9 @@ import {
   mapsEdit,
   modesEdit,
   specialSkillsEdit,
-} from '../data';
+} from '@/data/store';
+import { env } from '@/env';
+
 import { GameDataManager } from '../lib/dataManager';
 import {
   applyActionEntry,

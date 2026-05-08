@@ -4,10 +4,10 @@ import React, { useMemo, useState } from 'react';
 
 import { AssetManager } from '@/lib/assetManager';
 import { cn } from '@/lib/design';
-import type { CharacterRelationItem } from '@/data/types';
+import { characters } from '@/data/store';
+import type { CharacterRelationItem, FactionId } from '@/data/types';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
-import { characters, type FactionId } from '@/data';
 
 export type RelationKey = 'counters' | 'counteredBy' | 'counterEachOther' | 'collaborators';
 
