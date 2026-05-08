@@ -11,7 +11,9 @@ async function main() {
 
   try {
     await fs.mkdir(outDir, { recursive: true });
-  } catch {}
+  } catch (error) {
+    console.warn(`[generate-doc-pages] Failed to ensure output directory ${outDir}:`, error);
+  }
 
   let entries = [];
   try {

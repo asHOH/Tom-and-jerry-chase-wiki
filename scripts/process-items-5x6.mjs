@@ -9,6 +9,10 @@ const ITEMS_DIR = path.resolve('public/images/items');
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
+const warnBestEffortFailure = (action, target, error) => {
+  console.warn(`[items 5:6] ${action} failed for ${target}:`, error?.message || error);
+};
+
 /**
  * Compute minimal 5:6 canvas that can contain (w,h) without scaling.
  * Returns {W,H,left,top}. Image should be placed at (left, top) on the canvas.
@@ -91,10 +95,14 @@ async function main() {
       for (let attempt = 1; attempt <= MAX_RETRIES && !replaced; attempt++) {
         try {
           await fs.chmod(filePath, 0o666);
-        } catch {}
+        } catch (error) {
+          warnBestEffortFailure('chmod', filePath, error);
+        }
         try {
           await fs.rm(filePath, { force: true });
-        } catch {}
+        } catch (error) {
+          warnBestEffortFailure('remove', filePath, error);
+        }
         try {
           await fs.rename(tmpPath, filePath);
           replaced = true;
@@ -106,7 +114,9 @@ async function main() {
           } catch {
             try {
               await fs.chmod(filePath, 0o666);
-            } catch {}
+            } catch (error) {
+              warnBestEffortFailure('chmod before retry', filePath, error);
+            }
             if (attempt === MAX_RETRIES) throw new Error('replace failed after retries');
             await sleep(150 * attempt); // incremental backoff
           }
@@ -119,7 +129,9 @@ async function main() {
       // Best-effort cleanup of tmp file if left behind
       try {
         await fs.rm(filePath + '.tmp-5x6.png', { force: true });
-      } catch {}
+      } catch (cleanupError) {
+        warnBestEffortFailure('cleanup', filePath + '.tmp-5x6.png', cleanupError);
+      }
       skipped++;
     }
   }

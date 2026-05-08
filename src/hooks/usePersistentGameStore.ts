@@ -7,7 +7,6 @@ import { entitySnapshotSchema } from '@/lib/validation/schemas';
 import { characters } from '@/data';
 
 export function usePersistentGameStore() {
-  return;
   useEffect(() => {
     try {
       const charStr = localStorage.getItem('characters');
@@ -17,12 +16,16 @@ export function usePersistentGameStore() {
           Object.assign(characters, parsed.data);
         }
       }
-    } catch {}
+    } catch (error) {
+      console.warn('Failed to hydrate persisted character store:', error);
+    }
 
     const unsubChars = subscribe(characters, () => {
       try {
         localStorage.setItem('characters', JSON.stringify(characters));
-      } catch {}
+      } catch (error) {
+        console.warn('Failed to persist character store:', error);
+      }
     });
     return () => {
       unsubChars();

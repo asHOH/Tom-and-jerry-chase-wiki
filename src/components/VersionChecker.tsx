@@ -81,7 +81,9 @@ export const VersionChecker: React.FC = () => {
     setHasLoadedSeenVersion(true);
     try {
       localStorage.setItem(LATEST_SEEN_VERSION_KEY, version);
-    } catch {}
+    } catch (error) {
+      console.warn('Unable to persist latest seen version:', error);
+    }
   }, []);
 
   const markSeenVersionLoaded = useCallback(() => {
@@ -201,7 +203,9 @@ export const VersionChecker: React.FC = () => {
       if (stored) {
         setLatestSeenVersion(stored);
       }
-    } catch {}
+    } catch (error) {
+      console.warn('Unable to read latest seen version:', error);
+    }
 
     markSeenVersionLoaded();
 
