@@ -86,24 +86,50 @@ When an action path contains an array index (for example `skills.0.canMoveWhileU
 
 ## Conflict Resolution for Same Scope
 
-If multiple approved actions on the same date touch the same logical relation area:
+When multiple approved actions touch the same logical area on the same date, follow this process:
 
-1. Apply in `created_at ASC` order.
-2. Treat later actions as authoritative for overlapping fields.
-3. If one action changes relation kind (e.g. `counters` -> `counterEachOther`), ensure the obsolete semantic twin is removed or updated.
-4. If an action path cannot be mapped confidently, mark it as deferred, report ids, and ask before status writes.
+### Step 1: Order
 
-## Core Rules
+- Apply actions sequentially in `created_at ASC` order.
 
-1. Tool policy: use supabase MCP when available. If no Supabase MCP tool/resource is exposed in the session, use the Supabase JS fallback documented below.
-2. If unspecified, default to year 2026.
-3. Time zone policy: always interpret all date/date-range in Beijing time (`Asia/Shanghai`, UTC+8), including discovery, reconciliation, and status writes.
-4. Branch policy: do all patching work on branch `data-sync`. If current branch is not `data-sync`, switch to `data-sync` before any code edit or status write. After switching to `data-sync`, first run `git merge develop`, resolve any conflicts, and only then start discovery or patching.
-5. Never blindly replay action paths into source files. Always map to current structure first.
-6. If action volume is large, classify based on content into smaller chunks and stop for approval before each chunk.
-7. Use utf-8 encoding.
-8. Never update status to "synced" until code edits and validations succeed.
-9. Never update status to "synced" when code mapping is unresolved, ambiguous, or intentionally skipped.
+### Step 2: Overlap
+
+- If overlapping fields exist, treat the later action as authoritative.
+
+### Step 3: Semantic Changes
+
+- If an action changes the relation kind (e.g., `counters` -> `counterEachOther`):
+  - Ensure the obsolete semantic twin is removed.
+  - Update to the new relation kind.
+
+### Step 4: Ambiguities
+
+- If an action path cannot be mapped confidently:
+  - Mark it as deferred.
+  - Report the action IDs.
+  - Ask for user clarification before making any status writes.
+
+## Core Policies & Rules
+
+### Tool & Environment Policies
+
+- **Supabase**: Use Supabase MCP when available. If not exposed, use the Supabase JS fallback documented below.
+- **Dates**: Default to the year 2026 if unspecified.
+- **Time Zone**: Always interpret dates/date-ranges in Beijing time (`Asia/Shanghai`, UTC+8) for discovery, reconciliation, and status writes.
+- **Encoding**: Use UTF-8 encoding for all files.
+
+### Git & Branch Policies
+
+- **Branch**: Perform all patching work on the `data-sync` branch. If not on `data-sync`, switch to it before any code edits or status writes.
+- **Merge**: After switching to `data-sync`, run `git merge develop` and resolve any conflicts before starting discovery or patching.
+
+### Patching Rules
+
+- **Mapping Accuracy**: Never blindly replay action paths into source files. Analyze the current structure and apply changes appropriately, while strictly respecting the "No-op semantic rewrites" exceptions to avoid unnecessary inversions.
+- **Chunking**: If action volume exceeds 10 actions, classify based on content into smaller chunks and stop for user approval before patching each chunk.
+- **Status Writes**:
+  - Never update status to "synced" until code edits and validations succeed.
+  - Never update status to "synced" if code mapping is unresolved, ambiguous, or intentionally skipped.
 
 ## Workflow
 
