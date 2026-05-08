@@ -1,4 +1,7 @@
-import { characterRelationTraits } from './characterRelations';
+import characterRelations, {
+  buildCharacterRelationMap,
+  characterRelationTraits,
+} from './characterRelations';
 import { findCharacterRelationValidationErrors } from './characterRelationValidation';
 import type { Trait, TraitRelationKind } from './types';
 
@@ -23,6 +26,15 @@ const createCharacterRelationTrait = (
 describe('characterRelationValidation', () => {
   it('should keep shared character relation data free of duplicate and contradictory edges', () => {
     expect(findCharacterRelationValidationErrors(characterRelationTraits)).toEqual([]);
+  });
+
+  it('should keep the default character relation export aligned with relation traits', () => {
+    const rebuiltRelations = buildCharacterRelationMap(characterRelationTraits);
+
+    expect(characterRelations).toEqual(rebuiltRelations);
+    expect(Object.keys(characterRelations)).toHaveLength(characterRelationTraits.length);
+    expect(Object.values(characterRelations)).toEqual(characterRelationTraits);
+    expect(characterRelationTraits.every((trait) => trait.relation)).toBe(true);
   });
 
   it('should detect duplicate relation edges', () => {
