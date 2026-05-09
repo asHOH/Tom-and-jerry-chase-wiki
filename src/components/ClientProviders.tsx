@@ -4,7 +4,6 @@ import type { ReactNode } from 'react';
 import { LazyMotion } from 'motion/react';
 
 import type { PublicActionRow } from '@/lib/gameData/publicActionsTypes';
-import { usePersistentGameStore } from '@/hooks/usePersistentGameStore';
 import { usePublicGameDataActions } from '@/hooks/usePublicGameDataActions';
 import { PublicActionsProvider } from '@/context/PublicActionsContext';
 import { ToastProvider } from '@/context/ToastContext';
@@ -19,7 +18,6 @@ type ClientProvidersProps = { children: ReactNode; initialPublicActions?: Public
 const loadMotionFeatures = () => import('motion/react').then((mod) => mod.domMax);
 
 export function ClientProviders({ children, initialPublicActions }: ClientProvidersProps) {
-  usePersistentGameStore();
   usePublicGameDataActions(initialPublicActions ? { initialPublicActions } : undefined);
   return (
     <LazyMotion features={loadMotionFeatures} strict>

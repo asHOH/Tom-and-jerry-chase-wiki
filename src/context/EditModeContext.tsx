@@ -116,6 +116,8 @@ export const entityRegistry = new Map<string, Record<string, unknown>>([
   ['specialSkills', specialSkillsEdit as unknown as Record<string, unknown>],
 ]);
 
+const DRAFT_HISTORY_WARNING_THRESHOLD = 1000;
+
 /**
  * Centralized localStorage sync helper.
  * Subscribes to entity changes and persists them to localStorage.
@@ -172,6 +174,14 @@ function loadEntitiesFromStorage(): void {
       const actionsStorageKey = getActionsStorageKey(entityType);
       const history = readActionHistory(actionsStorageKey);
       if (history.length > 0) {
+        if (history.length > DRAFT_HISTORY_WARNING_THRESHOLD) {
+          console.warn('Large edit mode draft history detected', {
+            entityType,
+            entries: history.length,
+            threshold: DRAFT_HISTORY_WARNING_THRESHOLD,
+          });
+        }
+
         withRecordingSuppressed(actionsStorageKey, () => {
           for (const entry of history) {
             applyActionEntry(entity, entry);
