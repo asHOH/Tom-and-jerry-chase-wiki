@@ -33,39 +33,6 @@ import type { PublicActionRow } from './publicActionsTypes';
 
 const appliedPublicActionIds = new Set<string>();
 
-/*
-function forEachAction(entry: ActionHistoryEntry, fn: (action: Action) => void): void {
-  if (Array.isArray(entry)) {
-    for (const action of entry) fn(action);
-    return;
-  }
-
-  fn(entry);
-}
-
-function applyEntitiesActionEntry(entry: ActionHistoryEntry): void {
-  const catEntities = entities.cat as unknown as Record<string, unknown>;
-  const mouseEntities = entities.mouse as unknown as Record<string, unknown>;
-
-  forEachAction(entry, (action) => {
-    if (!action.path) return;
-
-    const entityKey = action.path.split('.').filter(Boolean)[0];
-    if (!entityKey) return;
-
-    const target = Object.prototype.hasOwnProperty.call(catEntities, entityKey)
-      ? catEntities
-      : Object.prototype.hasOwnProperty.call(mouseEntities, entityKey)
-        ? mouseEntities
-        : null;
-
-    if (!target) return;
-
-    applyAction(target, action);
-  });
-}
-*/
-
 const serverPublicActionTargetRegistry: PublicActionTargetRegistry = {
   characters: [characters as unknown as Record<string, unknown>],
   factions: [],
@@ -214,12 +181,4 @@ export async function getPublicGameDataActionsAndApplyToServerData(): Promise<Pu
   applyPublicGameDataActionsToServerData(actions);
 
   return actions;
-}
-
-/**
- * @deprecated Use `fetchPublicGameDataActions()` for pure reads, or
- * `getPublicGameDataActionsAndApplyToServerData()` when imported game data must be patched.
- */
-export async function getPublicGameDataActions(): Promise<PublicActionRow[]> {
-  return getPublicGameDataActionsAndApplyToServerData();
 }
