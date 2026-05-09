@@ -875,6 +875,10 @@ export async function resolvePath(
   }
   if (!resolver) return null;
 
+  const { getPublicGameDataActionsAndApplyToServerData } =
+    await import('@/lib/gameData/publicActions');
+  await getPublicGameDataActionsAndApplyToServerData();
+
   if (detailId && resolver.detail) {
     const result = await resolver.detail(detailId);
     return result;

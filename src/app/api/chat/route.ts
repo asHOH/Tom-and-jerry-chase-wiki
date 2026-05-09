@@ -7,7 +7,7 @@ import {
   HarmCategory,
 } from '@google/genai';
 
-import { getPublicGameDataActions } from '@/lib/gameData/publicActions';
+import { getPublicGameDataActionsAndApplyToServerData } from '@/lib/gameData/publicActions';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { chatMessagesSchema, formatZodError } from '@/lib/validation/schemas';
 import { historyData } from '@/data/history';
@@ -95,7 +95,7 @@ function buildAliasMap<T extends { aliases?: string[] }>(
 async function buildSystemInstructionText(): Promise<string> {
   // Side effect: this call applies public patches to the in-memory `@/data` stores.
   // We intentionally do this *before* building alias maps so the system prompt stays in sync.
-  await getPublicGameDataActions();
+  await getPublicGameDataActionsAndApplyToServerData();
 
   const characterAliases = buildAliasMap(characters, 'Characters');
   const cardAliases = buildAliasMap(cards, 'Knowledge Cards');

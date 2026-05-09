@@ -145,7 +145,7 @@ function extractEntryId(entityType: string, path: string): string | undefined {
 }
 
 export async function getEntityUpdateHistory(): Promise<Map<string, EntityUpdateHistory>> {
-  const actions = await getPublicGameDataActions();
+  const actions = await fetchPublicGameDataActions();
   const historyMap = new Map<string, EntityUpdateHistory>();
 
   for (const action of actions) {
@@ -179,7 +179,7 @@ export async function getEntityUpdateHistory(): Promise<Map<string, EntityUpdate
   return historyMap;
 }
 
-export async function getPublicGameDataActions(): Promise<PublicActionRow[]> {
+export async function fetchPublicGameDataActions(): Promise<PublicActionRow[]> {
   if (env.NEXT_PUBLIC_DISABLE_ARTICLES === '1' || !env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return [];
   }
@@ -206,9 +206,20 @@ export async function getPublicGameDataActions(): Promise<PublicActionRow[]> {
     }
   );
 
-  // Side effect: keep server-side data in sync so route handlers / server components
-  // that import from `@/data` see the same public patches as the client.
+  return actions;
+}
+
+export async function getPublicGameDataActionsAndApplyToServerData(): Promise<PublicActionRow[]> {
+  const actions = await fetchPublicGameDataActions();
   applyPublicGameDataActionsToServerData(actions);
 
   return actions;
+}
+
+/**
+ * @deprecated Use `fetchPublicGameDataActions()` for pure reads, or
+ * `getPublicGameDataActionsAndApplyToServerData()` when imported game data must be patched.
+ */
+export async function getPublicGameDataActions(): Promise<PublicActionRow[]> {
+  return getPublicGameDataActionsAndApplyToServerData();
 }

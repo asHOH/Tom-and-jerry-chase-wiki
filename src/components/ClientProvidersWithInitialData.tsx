@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-import { getPublicGameDataActions } from '@/lib/gameData/publicActions';
+import { getPublicGameDataActionsAndApplyToServerData } from '@/lib/gameData/publicActions';
 
 import { ClientProviders } from './ClientProviders';
 
@@ -11,6 +11,6 @@ type ClientProvidersWithInitialDataProps = {
 export async function ClientProvidersWithInitialData({
   children,
 }: ClientProvidersWithInitialDataProps) {
-  const initialPublicActions = await getPublicGameDataActions();
+  const initialPublicActions = await getPublicGameDataActionsAndApplyToServerData();
   return <ClientProviders initialPublicActions={initialPublicActions}>{children}</ClientProviders>;
 }
