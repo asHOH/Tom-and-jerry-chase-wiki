@@ -3,10 +3,8 @@
 import { useMemo } from 'react';
 
 import { compareSingleItem } from '@/lib/singleItemTools';
-import { mergeWikiHistoryData, publicActionsToWikiHistory } from '@/lib/wikiHistoryFromActions';
-import { usePublicActionsContext } from '@/context/PublicActionsContext';
+import { useWikiHistoryData } from '@/context/WikiHistoryContext';
 import type { SingleItem, WikiChangeType } from '@/data/types';
-import { wikiHistoryData } from '@/data/wikiHistory';
 
 type WikiHistoryEntry = {
   year: number;
@@ -20,16 +18,7 @@ type WikiHistoryEntry = {
  * generated entries from public actions.
  */
 export function useWikiHistory(items: SingleItem[]): WikiHistoryEntry[] {
-  const { actions } = usePublicActionsContext();
-
-  const actionsHistoryData = useMemo(() => {
-    if (!actions.length) return [];
-    return publicActionsToWikiHistory(actions);
-  }, [actions]);
-
-  const mergedData = useMemo(() => {
-    return mergeWikiHistoryData(wikiHistoryData, actionsHistoryData);
-  }, [actionsHistoryData]);
+  const mergedData = useWikiHistoryData();
 
   const history = useMemo(() => {
     const result: WikiHistoryEntry[] = [];

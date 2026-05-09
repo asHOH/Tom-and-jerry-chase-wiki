@@ -5,8 +5,8 @@ import { LazyMotion } from 'motion/react';
 
 import type { PublicActionRow } from '@/lib/gameData/publicActionsTypes';
 import { usePublicGameDataActions } from '@/hooks/usePublicGameDataActions';
-import { PublicActionsProvider } from '@/context/PublicActionsContext';
 import { ToastProvider } from '@/context/ToastContext';
+import { WikiHistoryProvider } from '@/context/WikiHistoryContext';
 
 import { CacheDebugPanel } from './CacheDebugPanel';
 import { OfflineIndicator } from './OfflineIndicator';
@@ -22,9 +22,7 @@ export function ClientProviders({ children, initialPublicActions }: ClientProvid
   return (
     <LazyMotion features={loadMotionFeatures} strict>
       <ToastProvider>
-        <PublicActionsProvider initialActions={initialPublicActions}>
-          {children}
-        </PublicActionsProvider>
+        <WikiHistoryProvider publicActions={initialPublicActions}>{children}</WikiHistoryProvider>
         <ServiceWorkerRegistration />
         <CacheDebugPanel />
         <VersionChecker />
