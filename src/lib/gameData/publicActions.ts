@@ -1,7 +1,11 @@
 import 'server-only';
 
-import { applyActionEntry, type ActionHistoryEntry } from '@/lib/edit/diffUtils';
-import { applyPublicActionRows, type PublicActionApplyResult } from '@/lib/gameData/actionReplay';
+import type { ActionHistoryEntry } from '@/lib/edit/diffUtils';
+import {
+  applyPublicActionRows,
+  resolvePublicActionTargets,
+  type PublicActionTargetRegistry,
+} from '@/lib/gameData/actionReplay';
 import { cached } from '@/lib/serverCache';
 import { supabaseServerPublic } from '@/lib/supabase/public';
 import {
@@ -62,62 +66,46 @@ function applyEntitiesActionEntry(entry: ActionHistoryEntry): void {
 }
 */
 
-function applyEntitiesActionEntry(entry: ActionHistoryEntry): void {
-  applyActionEntry(entities as unknown as Record<string, unknown>, entry);
-}
-
-function applyEntryToServerData(
-  entityType: string,
-  entry: ActionHistoryEntry
-): PublicActionApplyResult {
-  switch (entityType) {
-    case 'characters':
-      applyActionEntry(characters as unknown as Record<string, unknown>, entry);
-      return 'mutated';
-    case 'factions':
-      return 'handled';
-    case 'cards':
-      applyActionEntry(cards as unknown as Record<string, unknown>, entry);
-      applyActionEntry(cardsEdit as unknown as Record<string, unknown>, entry);
-      return 'mutated';
-    case 'entities':
-      applyEntitiesActionEntry(entry);
-      return 'mutated';
-    case 'buffs':
-      applyActionEntry(buffs as unknown as Record<string, unknown>, entry);
-      applyActionEntry(buffsEdit as unknown as Record<string, unknown>, entry);
-      return 'mutated';
-    case 'items':
-      applyActionEntry(items as unknown as Record<string, unknown>, entry);
-      applyActionEntry(itemsEdit as unknown as Record<string, unknown>, entry);
-      return 'mutated';
-    case 'fixtures':
-      applyActionEntry(fixtures as unknown as Record<string, unknown>, entry);
-      applyActionEntry(fixturesEdit as unknown as Record<string, unknown>, entry);
-      return 'mutated';
-    case 'maps':
-      applyActionEntry(maps as unknown as Record<string, unknown>, entry);
-      applyActionEntry(mapsEdit as unknown as Record<string, unknown>, entry);
-      return 'mutated';
-    case 'modes':
-      applyActionEntry(modes as unknown as Record<string, unknown>, entry);
-      applyActionEntry(modesEdit as unknown as Record<string, unknown>, entry);
-      return 'mutated';
-    case 'specialSkills':
-      applyActionEntry(specialSkills as unknown as Record<string, unknown>, entry);
-      applyActionEntry(specialSkillsEdit as unknown as Record<string, unknown>, entry);
-      return 'mutated';
-    default:
-      return 'skipped';
-  }
-}
+const serverPublicActionTargetRegistry: PublicActionTargetRegistry = {
+  characters: [characters as unknown as Record<string, unknown>],
+  factions: [],
+  cards: [
+    cards as unknown as Record<string, unknown>,
+    cardsEdit as unknown as Record<string, unknown>,
+  ],
+  entities: [entities as unknown as Record<string, unknown>],
+  buffs: [
+    buffs as unknown as Record<string, unknown>,
+    buffsEdit as unknown as Record<string, unknown>,
+  ],
+  items: [
+    items as unknown as Record<string, unknown>,
+    itemsEdit as unknown as Record<string, unknown>,
+  ],
+  fixtures: [
+    fixtures as unknown as Record<string, unknown>,
+    fixturesEdit as unknown as Record<string, unknown>,
+  ],
+  maps: [
+    maps as unknown as Record<string, unknown>,
+    mapsEdit as unknown as Record<string, unknown>,
+  ],
+  modes: [
+    modes as unknown as Record<string, unknown>,
+    modesEdit as unknown as Record<string, unknown>,
+  ],
+  specialSkills: [
+    specialSkills as unknown as Record<string, unknown>,
+    specialSkillsEdit as unknown as Record<string, unknown>,
+  ],
+};
 
 function applyPublicGameDataActionsToServerData(actions: PublicActionRow[]): void {
   applyPublicActionRows({
     rows: actions,
     handledIds: appliedPublicActionIds,
-    resolveTargets: () => null,
-    applyEntry: (row, entry) => applyEntryToServerData(row.entity_type, entry),
+    resolveTargets: (entityType) =>
+      resolvePublicActionTargets(serverPublicActionTargetRegistry, entityType),
     onError: (row, err) => {
       console.error('Failed to apply public action on server:', row, err);
     },

@@ -4,6 +4,7 @@ import { normalizePublicActionEntries } from './actionEntries';
 import type { PublicActionRow } from './publicActionsTypes';
 
 export type PublicActionApplyResult = 'mutated' | 'handled' | 'skipped';
+export type PublicActionTargetRegistry = Record<string, Record<string, unknown>[]>;
 
 type ApplyPublicActionRowsOptions = {
   rows: PublicActionRow[];
@@ -20,6 +21,13 @@ type ApplyPublicActionRowsResult = {
   mutatedCount: number;
   handledIds: string[];
 };
+
+export function resolvePublicActionTargets(
+  registry: PublicActionTargetRegistry,
+  entityType: string
+): Record<string, unknown>[] | null {
+  return registry[entityType] ?? null;
+}
 
 function markHandled(rowId: string, handledIds: Set<string>, newlyHandledIds: string[]): void {
   handledIds.add(rowId);

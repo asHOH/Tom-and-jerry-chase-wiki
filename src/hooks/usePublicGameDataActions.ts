@@ -2,7 +2,11 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
-import { applyPublicActionRows } from '@/lib/gameData/actionReplay';
+import {
+  applyPublicActionRows,
+  resolvePublicActionTargets,
+  type PublicActionTargetRegistry,
+} from '@/lib/gameData/actionReplay';
 import type { PublicActionRow } from '@/lib/gameData/publicActionsTypes';
 import {
   buffsEdit,
@@ -20,30 +24,17 @@ import { env } from '@/env';
 import { GameDataManager } from '../lib/dataManager';
 import { getActionsStorageKey, withRecordingSuppressed } from '../lib/edit/diffUtils';
 
-function resolveTargets(entityType: string): Record<string, unknown>[] | null {
-  switch (entityType) {
-    case 'characters':
-      return [characters as unknown as Record<string, unknown>];
-    case 'cards':
-      return [cardsEdit as unknown as Record<string, unknown>];
-    case 'entities':
-      return [entitiesEdit as unknown as Record<string, unknown>];
-    case 'buffs':
-      return [buffsEdit as unknown as Record<string, unknown>];
-    case 'items':
-      return [itemsEdit as unknown as Record<string, unknown>];
-    case 'fixtures':
-      return [fixturesEdit as unknown as Record<string, unknown>];
-    case 'maps':
-      return [mapsEdit as unknown as Record<string, unknown>];
-    case 'modes':
-      return [modesEdit as unknown as Record<string, unknown>];
-    case 'specialSkills':
-      return [specialSkillsEdit as unknown as Record<string, unknown>];
-    default:
-      return null;
-  }
-}
+const clientPublicActionTargetRegistry: PublicActionTargetRegistry = {
+  characters: [characters as unknown as Record<string, unknown>],
+  cards: [cardsEdit as unknown as Record<string, unknown>],
+  entities: [entitiesEdit as unknown as Record<string, unknown>],
+  buffs: [buffsEdit as unknown as Record<string, unknown>],
+  items: [itemsEdit as unknown as Record<string, unknown>],
+  fixtures: [fixturesEdit as unknown as Record<string, unknown>],
+  maps: [mapsEdit as unknown as Record<string, unknown>],
+  modes: [modesEdit as unknown as Record<string, unknown>],
+  specialSkills: [specialSkillsEdit as unknown as Record<string, unknown>],
+};
 
 const EDIT_MODE_KEY = 'isEditMode';
 const EDIT_MODE_ENABLED_AT_KEY = 'editmode:enabledAt';
@@ -135,7 +126,8 @@ export function usePublicGameDataActions(options?: { initialPublicActions?: Publ
     const result = applyPublicActionRows({
       rows: actions,
       handledIds: handledIdsRef.current,
-      resolveTargets,
+      resolveTargets: (entityType) =>
+        resolvePublicActionTargets(clientPublicActionTargetRegistry, entityType),
       shouldApply,
       applyWithin: (row, fn) => {
         withRecordingSuppressed(getActionsStorageKey(row.entity_type), fn);

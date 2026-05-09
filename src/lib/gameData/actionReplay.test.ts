@@ -1,6 +1,11 @@
 import type { ActionHistoryEntry } from '@/lib/edit/diffUtils';
 
-import { applyPublicActionRows, type PublicActionApplyResult } from './actionReplay';
+import {
+  applyPublicActionRows,
+  resolvePublicActionTargets,
+  type PublicActionApplyResult,
+  type PublicActionTargetRegistry,
+} from './actionReplay';
 import type { PublicActionRow } from './publicActionsTypes';
 
 const row = (id: string, entry: unknown, entityType = 'characters'): PublicActionRow => ({
@@ -172,5 +177,81 @@ describe('applyPublicActionRows', () => {
 
     expect(calls).toEqual(['before:within', 'after:within']);
     expect(target).toEqual({ Tom: { description: 'new' } });
+  });
+});
+
+describe('resolvePublicActionTargets', () => {
+  it('should resolve client entities to the editable entity target', () => {
+    const entitiesEdit: Record<string, unknown> = {};
+    const registry: PublicActionTargetRegistry = {
+      entities: [entitiesEdit],
+    };
+
+    expect(resolvePublicActionTargets(registry, 'entities')).toEqual([entitiesEdit]);
+  });
+
+  it('should resolve server entity types to static and editable targets', () => {
+    const cards: Record<string, unknown> = {};
+    const cardsEdit: Record<string, unknown> = {};
+    const buffs: Record<string, unknown> = {};
+    const buffsEdit: Record<string, unknown> = {};
+    const items: Record<string, unknown> = {};
+    const itemsEdit: Record<string, unknown> = {};
+    const registry: PublicActionTargetRegistry = {
+      cards: [cards, cardsEdit],
+      buffs: [buffs, buffsEdit],
+      items: [items, itemsEdit],
+    };
+
+    expect(resolvePublicActionTargets(registry, 'cards')).toEqual([cards, cardsEdit]);
+    expect(resolvePublicActionTargets(registry, 'buffs')).toEqual([buffs, buffsEdit]);
+    expect(resolvePublicActionTargets(registry, 'items')).toEqual([items, itemsEdit]);
+  });
+
+  it('should resolve factions to a known no-op target list', () => {
+    const registry: PublicActionTargetRegistry = {
+      factions: [],
+    };
+
+    expect(resolvePublicActionTargets(registry, 'factions')).toEqual([]);
+  });
+
+  it('should apply entity rows through registry targets with current root-shaped paths', () => {
+    const entities: Record<string, unknown> = {
+      cat: {
+        Rocket: {
+          description: 'old',
+        },
+      },
+    };
+    const registry: PublicActionTargetRegistry = {
+      entities: [entities],
+    };
+
+    const result = applyPublicActionRows({
+      rows: [
+        row(
+          'entity-row',
+          {
+            op: 'set',
+            path: 'cat.Rocket.description',
+            oldValue: 'old',
+            newValue: 'new',
+          },
+          'entities'
+        ),
+      ],
+      handledIds: new Set<string>(),
+      resolveTargets: (entityType) => resolvePublicActionTargets(registry, entityType),
+    });
+
+    expect(entities).toEqual({
+      cat: {
+        Rocket: {
+          description: 'new',
+        },
+      },
+    });
+    expect(result).toEqual({ handledCount: 1, mutatedCount: 1, handledIds: ['entity-row'] });
   });
 });
