@@ -55,6 +55,7 @@ export default function MechanicsNavigation({ children, description }: Mechanics
   const isMobile = useMobile();
   const { isActive } = useNavigationTabs();
   const isTabActive = (tabPath: string) => isActive(tabPath);
+  const hasActiveMechanicsTab = MECHANICS_NAV_ITEMS.some((tab) => isTabActive(tab.href));
 
   return (
     <div className='mx-auto max-w-3xl space-y-4 md:max-w-6xl md:space-y-8 md:p-6 dark:text-slate-200'>
@@ -69,7 +70,9 @@ export default function MechanicsNavigation({ children, description }: Mechanics
         {children}
       </div>
 
-      <NavigationButtons isMobile={isMobile} isTabActive={isTabActive} />
+      {hasActiveMechanicsTab ? (
+        <NavigationButtons isMobile={isMobile} isTabActive={isTabActive} />
+      ) : null}
     </div>
   );
 }

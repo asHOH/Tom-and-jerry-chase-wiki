@@ -157,6 +157,27 @@ describe('Navigation tile semantics', () => {
     });
   });
 
+  it('renders only the primary mechanics navigation when no mechanics tab is active', () => {
+    mockedUseNavigationTabs.mockReturnValue({
+      isActive: () => false,
+      items: [] as const,
+      pathname: '/mechanics',
+    });
+
+    render(
+      <MechanicsNavigation description='Mechanics description'>
+        <p>Choose a mechanics section.</p>
+      </MechanicsNavigation>
+    );
+
+    expect(screen.getAllByTestId('action-tile')).toHaveLength(mockMechanicsNavItems.length);
+
+    const actionTileProps = mockActionTile.mock.calls.map((call) => call[0] as ActionTileProps);
+    mockMechanicsNavItems.forEach((item) => {
+      expect(actionTileProps.filter((props) => props.href === item.href)).toHaveLength(1);
+    });
+  });
+
   it('marks active usage tabs as current-page and leaves inactive ones interactive', () => {
     mockedUseNavigationTabs.mockReturnValue({
       isActive: (href: string) => href === mockUsagesNavItems[0].href,
