@@ -4,6 +4,8 @@ import type { INTERNAL_Op } from 'valtio';
 
 import { actionHistorySchema } from '@/lib/validation/schemas';
 
+export { squashActions } from './actionSquash';
+
 export const subscribers: Record<string, [() => void, () => void]> = {};
 
 export type DiffOp = 'set' | 'add' | 'delete';
@@ -325,102 +327,4 @@ export function withRecordingSuppressed<T>(storageKey: string, fn: () => T): T {
   } else {
     return fn();
   }
-}
-
-/**
- * Squash an action history so that only the last `set` per path remains.
- *
- * Safety rules:
- * - Always keep structural ops (`add`/`delete`) as-is.
- * - Do not squash paths whose top-level segment has any structural change in the batch
- *   (so array index shifts remain safe). Other paths can be squashed.
- * - Drop no-op sets where oldValue === newValue.
- */
-export function squashActions(entries: ActionHistoryEntry[]): ActionHistoryEntry[] {
-  if (entries.length === 0) return [];
-
-  const structuralRoots = new Set<string>();
-
-  const recordStructuralRoots = (action: Action) => {
-    if (action.op !== 'add' && action.op !== 'delete') return;
-    if (!action.path) return;
-    const root = action.path.split('.')[0] ?? '';
-    if (root) structuralRoots.add(root);
-  };
-
-  entries.forEach((entry) => {
-    if (Array.isArray(entry)) {
-      entry.forEach(recordStructuralRoots);
-    } else {
-      recordStructuralRoots(entry);
-    }
-  });
-
-  type FlatItem = {
-    action: Action;
-    entryIndex: number;
-    actionIndex: number;
-    flatIndex: number;
-  };
-
-  const flat: FlatItem[] = [];
-  let flatIndex = 0;
-
-  entries.forEach((entry, entryIndex) => {
-    if (Array.isArray(entry)) {
-      entry.forEach((action, actionIndex) => {
-        flat.push({ action, entryIndex, actionIndex, flatIndex });
-        flatIndex += 1;
-      });
-    } else {
-      flat.push({ action: entry, entryIndex, actionIndex: 0, flatIndex });
-      flatIndex += 1;
-    }
-  });
-
-  const latestByPath = new Map<string, number>();
-  flat.forEach((item) => {
-    const { action, flatIndex: idx } = item;
-    const path = action.path;
-    if (!path) return;
-    const root = path.split('.')[0] ?? '';
-
-    // Only squash pure sets on roots with no structural changes
-    if (action.op === 'set' && !structuralRoots.has(root)) {
-      latestByPath.set(path, idx);
-    }
-  });
-
-  const grouped: Action[][] = entries.map(() => []);
-
-  flat.forEach((item) => {
-    const { action, flatIndex: idx } = item;
-    const path = action.path;
-
-    const root = path ? (path.split('.')[0] ?? '') : '';
-    const isStructural = action.op === 'add' || action.op === 'delete' || structuralRoots.has(root);
-    const isLatestForPath = !path || latestByPath.get(path) === idx;
-    const isNoOp = isEqual(action.oldValue, action.newValue);
-
-    const shouldKeep =
-      isStructural ||
-      (action.op === 'set' && !structuralRoots.has(root) && isLatestForPath && !isNoOp);
-
-    if (shouldKeep) {
-      const bucket = grouped[item.entryIndex] ?? [];
-      bucket.push(action);
-      grouped[item.entryIndex] = bucket;
-    }
-  });
-
-  const result: ActionHistoryEntry[] = [];
-  grouped.forEach((actions) => {
-    if (actions.length === 1) {
-      result.push(actions[0]!);
-    } else if (actions.length > 1) {
-      result.push(actions);
-    }
-  });
-
-  return result;
 }

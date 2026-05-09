@@ -14,12 +14,15 @@ import path from 'node:path';
 import process from 'node:process';
 import nextEnv from '@next/env';
 import { createClient } from '@supabase/supabase-js';
+import { createJiti } from 'jiti';
 
 // ---------------------------------------------
 // Config & helpers
 // ---------------------------------------------
 const projectDir = new URL('..', import.meta.url).pathname.replace(/^\/([A-Z]:)/, '$1');
 nextEnv.loadEnvConfig(projectDir);
+const jiti = createJiti(import.meta.url);
+const { squashActions } = jiti('../src/lib/edit/actionSquash.ts');
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -61,102 +64,6 @@ if (filterDate && !/^\d{4}-\d{2}-\d{2}$/.test(filterDate)) {
 }
 
 const supabase = createClient(SUPABASE_URL, SERVICE_KEY);
-
-function deepEqual(a, b) {
-  if (a === b) return true;
-  if (a == null || b == null) return a === b;
-  if (typeof a !== typeof b) return false;
-  if (typeof a !== 'object') return false;
-  const isArrayA = Array.isArray(a);
-  const isArrayB = Array.isArray(b);
-  if (isArrayA !== isArrayB) return false;
-  if (isArrayA) {
-    if (a.length !== b.length) return false;
-    return a.every((v, i) => deepEqual(v, b[i]));
-  }
-  const keysA = Object.keys(a);
-  const keysB = Object.keys(b);
-  if (keysA.length !== keysB.length) return false;
-  return keysA.every((k) => Object.prototype.hasOwnProperty.call(b, k) && deepEqual(a[k], b[k]));
-}
-
-const isNoOp = (action) => {
-  return deepEqual(action.oldValue, action.newValue);
-};
-
-// Squash logic based on src/lib/edit/diffUtils.ts squashActions().
-// Refined: structural protection uses parent-path granularity instead of
-// root-level, so a delete on e.g. "X.specialSkills.4" only protects the
-// "X.specialSkills" subtree, not the entire "X" root.
-function squashActions(entries) {
-  if (!Array.isArray(entries) || entries.length === 0) return [];
-
-  // Collect parent paths of add/delete ops as structural zones.
-  // Any set whose path falls within a structural zone is kept as-is.
-  const structuralParents = new Set();
-  const recordStructural = (action) => {
-    if (!action || typeof action.path !== 'string') return;
-    if (action.op === 'add' || action.op === 'delete') {
-      const parts = action.path.split('.');
-      const parent = parts.slice(0, -1).join('.');
-      if (parent) structuralParents.add(parent);
-    }
-  };
-
-  for (const entry of entries) {
-    if (Array.isArray(entry)) entry.forEach(recordStructural);
-    else recordStructural(entry);
-  }
-
-  function isInStructuralZone(path) {
-    for (const parent of structuralParents) {
-      if (path === parent || path.startsWith(parent + '.')) return true;
-    }
-    return false;
-  }
-
-  const flat = [];
-  let flatIndex = 0;
-  entries.forEach((entry, entryIndex) => {
-    if (Array.isArray(entry)) {
-      entry.forEach((action, actionIndex) => {
-        flat.push({ action, entryIndex, actionIndex, flatIndex });
-        flatIndex += 1;
-      });
-    } else {
-      flat.push({ action: entry, entryIndex, actionIndex: 0, flatIndex });
-      flatIndex += 1;
-    }
-  });
-
-  const latestByPath = new Map();
-  flat.forEach(({ action, flatIndex: idx }) => {
-    const path = action?.path;
-    if (!path) return;
-    if (action.op === 'set' && !isInStructuralZone(path)) {
-      latestByPath.set(path, idx);
-    }
-  });
-
-  const grouped = entries.map(() => []);
-  flat.forEach(({ action, entryIndex, flatIndex: idx }) => {
-    if (!action) return;
-    const path = action.path || '';
-    const isStructural = action.op === 'add' || action.op === 'delete' || isInStructuralZone(path);
-    const isLatestForPath = !path || latestByPath.get(path) === idx;
-    const keep =
-      isStructural ||
-      (action.op === 'set' && !isInStructuralZone(path) && isLatestForPath && !isNoOp(action));
-    if (keep) grouped[entryIndex].push(action);
-  });
-
-  const result = [];
-  grouped.forEach((actions) => {
-    if (actions.length === 1) result.push(actions[0]);
-    else if (actions.length > 1) result.push(actions);
-  });
-  return result;
-}
 
 function toArray(value) {
   return Array.isArray(value) ? value : [value];
