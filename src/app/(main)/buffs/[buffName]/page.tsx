@@ -75,7 +75,7 @@ export default async function BuffDetailPage({
   return (
     <>
       <StructuredData data={generateStructuredData(buffName)} />
-      <BuffDetailClient buff={buff} />
+      <BuffDetailClient buff={buff} buffName={buffName} />
     </>
   );
 }

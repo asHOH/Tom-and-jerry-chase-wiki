@@ -1,10 +1,8 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { usePathname } from 'next/navigation';
 
-import { getPathSegmentFromEnd } from '@/lib/edit/editModeRouteUtils';
-import type { SpecialSkill } from '@/data/types';
+import type { FactionId, SpecialSkill } from '@/data/types';
 import EditModePageShell from '@/components/ui/EditModePageShell';
 import LoadingState from '@/components/ui/LoadingState';
 
@@ -16,14 +14,18 @@ const SpecialSkillDetails = dynamic(
         <LoadingState type='detail' message='加载特技详情中...' />
       </div>
     ),
-    ssr: false,
   }
 );
 
-export default function SpecialSkillDetailClient({ skill }: { skill: SpecialSkill }) {
-  const pathname = usePathname();
-  const skillId = getPathSegmentFromEnd(pathname, 0) || skill.name;
-  const factionId = getPathSegmentFromEnd(pathname, 1) || skill.factionId;
+export default function SpecialSkillDetailClient({
+  skill,
+  factionId,
+  skillId,
+}: {
+  skill: SpecialSkill;
+  factionId: FactionId;
+  skillId: string;
+}) {
   const entityId = `${factionId}.${skillId}`;
 
   return (

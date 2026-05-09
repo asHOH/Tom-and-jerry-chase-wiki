@@ -69,7 +69,7 @@ export default async function AchievementDetailPage({
   return (
     <>
       <StructuredData data={generateStructuredData(achievementName)} />
-      <AchievementDetailsClient achievement={achievement} />
+      <AchievementDetailsClient achievement={achievement} achievementName={achievementName} />
     </>
   );
 }

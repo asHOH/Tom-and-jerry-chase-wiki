@@ -19,7 +19,6 @@ const KnowledgeCardGrid = dynamic<Props>(
         />
       </div>
     ),
-    ssr: false,
   }
 );
 

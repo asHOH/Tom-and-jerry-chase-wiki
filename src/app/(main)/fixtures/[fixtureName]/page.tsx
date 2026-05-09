@@ -69,7 +69,7 @@ export default async function FixtureDetailPage({
   return (
     <>
       <StructuredData data={generateStructuredData(fixtureName)} />
-      <FixtureDetailClient fixture={fixture} />
+      <FixtureDetailClient fixture={fixture} fixtureName={fixtureName} />
     </>
   );
 }

@@ -17,7 +17,6 @@ const MechanicsClient = dynamic<Props>(() => import('@/features/mechanics/mechan
       />
     </div>
   ),
-  ssr: false,
 });
 
 export default MechanicsClient;

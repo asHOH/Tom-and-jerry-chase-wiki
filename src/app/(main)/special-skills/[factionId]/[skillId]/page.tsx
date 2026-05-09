@@ -118,7 +118,7 @@ export default async function SpecialSkillDetailPage({
   return (
     <>
       <StructuredData data={generateStructuredData(factionId, skillId)} />
-      <SpecialSkillDetailClient skill={skill} />
+      <SpecialSkillDetailClient skill={skill} factionId={factionId} skillId={skillId} />
     </>
   );
 }

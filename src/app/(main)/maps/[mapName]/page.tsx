@@ -65,7 +65,7 @@ export default async function MapDetailPage({ params }: { params: Promise<{ mapN
   return (
     <>
       <StructuredData data={generateStructuredData(mapName)} />
-      <MapDetailClient map={map} />
+      <MapDetailClient map={map} mapName={mapName} />
     </>
   );
 }

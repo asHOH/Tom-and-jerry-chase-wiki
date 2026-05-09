@@ -19,7 +19,6 @@ const EntityGridClient = dynamic<Props>(
         />
       </div>
     ),
-    ssr: false,
   }
 );
 

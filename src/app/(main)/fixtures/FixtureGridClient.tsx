@@ -19,7 +19,6 @@ const FixtureGridClient = dynamic<Props>(
         />
       </div>
     ),
-    ssr: false,
   }
 );
 

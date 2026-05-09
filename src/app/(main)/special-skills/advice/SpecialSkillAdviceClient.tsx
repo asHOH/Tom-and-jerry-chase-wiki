@@ -17,7 +17,6 @@ const SpecialSkillAdviceClient = dynamic(
         />
       </div>
     ),
-    ssr: false,
   }
 );
 

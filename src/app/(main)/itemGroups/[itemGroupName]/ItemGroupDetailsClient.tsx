@@ -12,7 +12,6 @@ const ItemGroupDetailsClient = dynamic(
         <LoadingState type='detail' message='加载组合详情中...' />
       </div>
     ),
-    ssr: false,
   }
 );
 

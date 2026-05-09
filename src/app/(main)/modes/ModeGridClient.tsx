@@ -15,7 +15,6 @@ const ModeGridClient = dynamic<Props>(
         <LoadingState type='item-grid' message='加载游戏模式中...' count={LOADING_COUNTS.modes} />
       </div>
     ),
-    ssr: false,
   }
 );
 

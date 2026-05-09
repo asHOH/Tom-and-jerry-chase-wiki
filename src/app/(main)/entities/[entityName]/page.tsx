@@ -70,7 +70,7 @@ export default async function EntityDetailPage({
   return (
     <>
       <StructuredData data={generateStructuredData(entityName)} />
-      <EntityDetailClient entity={entity} />
+      <EntityDetailClient entity={entity} entityName={entityName} />
     </>
   );
 }

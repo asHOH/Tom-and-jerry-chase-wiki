@@ -21,7 +21,6 @@ const CharacterGridCat = dynamic(
         />
       </div>
     ),
-    ssr: false,
   }
 );
 
@@ -40,7 +39,6 @@ const CharacterGridMouse = dynamic(
         />
       </div>
     ),
-    ssr: false,
   }
 );
 

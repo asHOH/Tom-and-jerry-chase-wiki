@@ -77,7 +77,7 @@ export default async function CardPage({ params }: { params: Promise<{ cardId: s
   return (
     <>
       <StructuredData data={generateStructuredData(cardId)} />
-      <KnowledgeCardDetailsClient card={card} />
+      <KnowledgeCardDetailsClient card={card} cardId={cardId} />
     </>
   );
 }

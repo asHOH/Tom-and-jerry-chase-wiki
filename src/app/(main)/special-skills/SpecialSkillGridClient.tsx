@@ -19,7 +19,6 @@ const SpecialSkillClient = dynamic<Props>(
         />
       </div>
     ),
-    ssr: false,
   }
 );
 

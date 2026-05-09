@@ -13,7 +13,6 @@ const MapGridClient = dynamic<Props>(() => import('@/features/maps/map-grid/MapG
       <LoadingState type='item-grid' message='加载地图列表中...' count={LOADING_COUNTS.maps} />
     </div>
   ),
-  ssr: false,
 });
 
 export default MapGridClient;

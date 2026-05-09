@@ -13,7 +13,6 @@ const ToolGridClient = dynamic<Props>(() => import('@/features/tools/ToolGrid'),
       <LoadingState type='item-grid' message='加载工具列表中...' count={LOADING_COUNTS.tools} />
     </div>
   ),
-  ssr: false,
 });
 
 export default ToolGridClient;

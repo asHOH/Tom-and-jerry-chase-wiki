@@ -17,7 +17,6 @@ const UsagesClient = dynamic<Props>(() => import('@/features/usages/usagesSectio
       />
     </div>
   ),
-  ssr: false,
 });
 
 export default UsagesClient;

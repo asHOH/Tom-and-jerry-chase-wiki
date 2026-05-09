@@ -15,7 +15,6 @@ const ItemGridClient = dynamic<Props>(
         <LoadingState type='item-grid' message='加载道具列表中...' count={LOADING_COUNTS.items} />
       </div>
     ),
-    ssr: false,
   }
 );
 

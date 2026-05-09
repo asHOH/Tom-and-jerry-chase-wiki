@@ -15,7 +15,6 @@ const BuffGridClient = dynamic<Props>(
         <LoadingState type='buff-grid' message='加载状态和效果中...' count={LOADING_COUNTS.buffs} />
       </div>
     ),
-    ssr: false,
   }
 );
 

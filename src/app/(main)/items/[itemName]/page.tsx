@@ -69,7 +69,7 @@ export default async function ItemDetailPage({
   return (
     <>
       <StructuredData data={generateStructuredData(itemName)} />
-      <ItemDetailClient item={item} />
+      <ItemDetailClient item={item} itemName={itemName} />
     </>
   );
 }

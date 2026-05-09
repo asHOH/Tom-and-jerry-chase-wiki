@@ -69,7 +69,7 @@ export default async function ModeDetailPage({
   return (
     <>
       <StructuredData data={generateStructuredData(modeName)} />
-      <ModeDetailClient mode={mode} />
+      <ModeDetailClient mode={mode} modeName={modeName} />
     </>
   );
 }

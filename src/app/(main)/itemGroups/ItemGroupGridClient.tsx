@@ -19,7 +19,6 @@ const ItemGroupGridClient = dynamic<Props>(
         />
       </div>
     ),
-    ssr: false,
   }
 );
 
