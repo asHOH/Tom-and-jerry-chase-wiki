@@ -35,17 +35,17 @@ export function editable(scope: EditableScope): EditableElementsProxy {
 
       const Tag = prop as IntrinsicTagName;
 
-      const Field =
-        scope === 'characters'
-          ? EditableCharactersField
-          : scope === 'cards'
-            ? EditableCardsField
-            : EditableRecordField;
+      const Component: React.FC<EditableFieldProps<IntrinsicTagName>> = (props) => {
+        if (scope === 'characters') {
+          return <EditableCharactersField tag={Tag} {...props} />;
+        }
 
-      const Component: React.FC<EditableFieldProps<IntrinsicTagName>> = (props) => (
-        // @ts-expect-error - internal generic routing by scope
-        <Field tag={Tag} scope={scope} {...(props as EditableFieldProps<typeof Tag>)} />
-      );
+        if (scope === 'cards') {
+          return <EditableCardsField tag={Tag} {...props} />;
+        }
+
+        return <EditableRecordField tag={Tag} scope={scope} {...props} />;
+      };
 
       Component.displayName = `editable(${scope}).${prop}`;
       tagComponentCache.set(prop, Component);

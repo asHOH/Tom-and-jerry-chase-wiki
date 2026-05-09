@@ -1,3 +1,5 @@
+import { readdirSync, readFileSync, statSync } from 'fs';
+import { join, relative } from 'path';
 import { render, screen, waitFor } from '@testing-library/react';
 
 import { editable } from './editable';
@@ -26,6 +28,21 @@ jest.mock('@/features/shared/components/TextWithHoverTooltips', () => ({
   __esModule: true,
   default: ({ text }: { text: string }) => <>{text}</>,
 }));
+
+const editableDir = join(process.cwd(), 'src/components/ui');
+const forbiddenEditableSourcePattern = new RegExp(
+  [`@ts-${'expect-error'}`, String.raw`\sas ${'any'}\b`].join('|')
+);
+
+function listEditableSourceFiles(): string[] {
+  return readdirSync(editableDir)
+    .map((entry) => join(editableDir, entry))
+    .filter((filePath) => {
+      const stats = statSync(filePath);
+      const fileName = filePath.split(/[\\/]/).at(-1) ?? '';
+      return stats.isFile() && /^editable(?!\.test).*\.(ts|tsx)$/.test(fileName);
+    });
+}
 
 describe('editable', () => {
   beforeEach(() => {
@@ -71,5 +88,13 @@ describe('editable', () => {
         'plaintext-only'
       );
     });
+  });
+
+  it('does not rely on TypeScript escape hatches in editable modules', () => {
+    const offenders = listEditableSourceFiles()
+      .filter((filePath) => forbiddenEditableSourcePattern.test(readFileSync(filePath, 'utf8')))
+      .map((filePath) => relative(process.cwd(), filePath));
+
+    expect(offenders).toEqual([]);
   });
 });
