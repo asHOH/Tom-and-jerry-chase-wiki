@@ -1,4 +1,6 @@
-import { normalizePublicActionEntries } from './actionEntries';
+import type { Action } from '@/lib/edit/diffUtils';
+
+import { flattenActionEntries, normalizePublicActionEntries } from './actionEntries';
 
 describe('normalizePublicActionEntries', () => {
   it('should wrap a single action entry in an array', () => {
@@ -54,5 +56,26 @@ describe('normalizePublicActionEntries', () => {
 
   it('should return an empty array for invalid entries', () => {
     expect(normalizePublicActionEntries([{ op: 'replace', path: 'Tom.description' }])).toEqual([]);
+  });
+});
+
+describe('flattenActionEntries', () => {
+  it('should flatten mixed action history entries into actions', () => {
+    const action: Action = {
+      op: 'set',
+      path: 'Tom.description',
+      oldValue: 'old',
+      newValue: 'new',
+    };
+    const batch: Action[] = [
+      {
+        op: 'delete',
+        path: 'Tom.aliases.0',
+        oldValue: 'alias',
+        newValue: undefined,
+      },
+    ];
+
+    expect(flattenActionEntries([action, batch])).toEqual([action, ...batch]);
   });
 });

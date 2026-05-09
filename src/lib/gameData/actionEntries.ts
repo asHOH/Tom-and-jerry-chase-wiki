@@ -1,4 +1,4 @@
-import type { ActionHistoryEntry } from '@/lib/edit/diffUtils';
+import type { Action, ActionHistoryEntry } from '@/lib/edit/diffUtils';
 import { actionHistoryEntrySchema } from '@/lib/validation/schemas';
 
 /**
@@ -6,7 +6,7 @@ import { actionHistoryEntrySchema } from '@/lib/validation/schemas';
  *
  * Compatibility:
  * - single ActionHistoryEntry -> one entry
- * - Action[] batch -> one entry
+ * - plain Action[] -> multiple replay entries, preserving existing replay behavior
  * - ActionHistoryEntry[] persisted by newer batch flows -> many entries
  */
 export function normalizePublicActionEntries(rawEntry: unknown): ActionHistoryEntry[] {
@@ -28,4 +28,8 @@ export function normalizePublicActionEntries(rawEntry: unknown): ActionHistoryEn
 
   const parsed = actionHistoryEntrySchema.safeParse(rawEntry);
   return parsed.success ? [parsed.data as ActionHistoryEntry] : [];
+}
+
+export function flattenActionEntries(entries: ActionHistoryEntry[]): Action[] {
+  return entries.flatMap((entry) => (Array.isArray(entry) ? entry : [entry]));
 }

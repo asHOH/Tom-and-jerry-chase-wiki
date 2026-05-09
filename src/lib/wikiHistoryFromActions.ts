@@ -1,7 +1,7 @@
-import type { Action, ActionHistoryEntry } from '@/lib/edit/diffUtils';
-import { actionHistoryEntrySchema } from '@/lib/validation/schemas';
+import type { Action } from '@/lib/edit/diffUtils';
 import { SingleItem, SingleItemTypeName, WikiChangeType, WikiYearData } from '@/data/types';
 
+import { flattenActionEntries, normalizePublicActionEntries } from './gameData/actionEntries';
 import type { PublicActionRow } from './gameData/publicActionsTypes';
 
 /**
@@ -110,15 +110,12 @@ export function publicActionsToWikiHistory(actions: PublicActionRow[]): WikiYear
   const yearMap = new Map<number, Map<string, WikiHistoryFromAction[]>>();
 
   for (const row of actions) {
-    const parsed = actionHistoryEntrySchema.safeParse(row.entry);
-    if (!parsed.success) continue;
+    const entries = normalizePublicActionEntries(row.entry);
+    const actionsArray = flattenActionEntries(entries);
+    if (actionsArray.length === 0) continue;
 
-    const entry = parsed.data as ActionHistoryEntry;
     const createdAt = new Date(row.created_at);
     const year = createdAt.getFullYear();
-
-    // Normalize to array
-    const actionsArray: Action[] = Array.isArray(entry) ? entry : [entry];
 
     // Group by date within year
     const month = createdAt.getMonth() + 1;
