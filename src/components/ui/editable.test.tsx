@@ -1,6 +1,6 @@
 import { readdirSync, readFileSync, statSync } from 'fs';
 import { join, relative } from 'path';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { editable } from './editable';
 
@@ -87,6 +87,22 @@ describe('editable', () => {
         'contenteditable',
         'plaintext-only'
       );
+    });
+  });
+
+  it('saves trimmed edited text on blur', async () => {
+    mockIsEditMode = true;
+    const onSave = jest.fn();
+    const Span = editable('items').span;
+
+    render(<Span path='description' initialValue='old value' onSave={onSave} />);
+
+    const element = screen.getByText('old value');
+    element.textContent = ' new value ';
+    fireEvent.blur(element);
+
+    await waitFor(() => {
+      expect(onSave).toHaveBeenCalledWith('new value');
     });
   });
 
