@@ -1,6 +1,7 @@
 import 'server-only';
 
 import { applyActionEntry, type ActionHistoryEntry } from '@/lib/edit/diffUtils';
+import { applyPublicActionRows, type PublicActionApplyResult } from '@/lib/gameData/actionReplay';
 import { cached } from '@/lib/serverCache';
 import { supabaseServerPublic } from '@/lib/supabase/public';
 import {
@@ -65,75 +66,62 @@ function applyEntitiesActionEntry(entry: ActionHistoryEntry): void {
   applyActionEntry(entities as unknown as Record<string, unknown>, entry);
 }
 
-function applyEntryToTarget(entityType: string, entry: ActionHistoryEntry): boolean {
+function applyEntryToServerData(
+  entityType: string,
+  entry: ActionHistoryEntry
+): PublicActionApplyResult {
   switch (entityType) {
     case 'characters':
       applyActionEntry(characters as unknown as Record<string, unknown>, entry);
-      break;
+      return 'mutated';
     case 'factions':
-      break;
+      return 'handled';
     case 'cards':
       applyActionEntry(cards as unknown as Record<string, unknown>, entry);
       applyActionEntry(cardsEdit as unknown as Record<string, unknown>, entry);
-      break;
+      return 'mutated';
     case 'entities':
       applyEntitiesActionEntry(entry);
-      break;
+      return 'mutated';
     case 'buffs':
       applyActionEntry(buffs as unknown as Record<string, unknown>, entry);
       applyActionEntry(buffsEdit as unknown as Record<string, unknown>, entry);
-      break;
+      return 'mutated';
     case 'items':
       applyActionEntry(items as unknown as Record<string, unknown>, entry);
       applyActionEntry(itemsEdit as unknown as Record<string, unknown>, entry);
-      break;
+      return 'mutated';
     case 'fixtures':
       applyActionEntry(fixtures as unknown as Record<string, unknown>, entry);
       applyActionEntry(fixturesEdit as unknown as Record<string, unknown>, entry);
-      break;
+      return 'mutated';
     case 'maps':
       applyActionEntry(maps as unknown as Record<string, unknown>, entry);
       applyActionEntry(mapsEdit as unknown as Record<string, unknown>, entry);
-      break;
+      return 'mutated';
     case 'modes':
       applyActionEntry(modes as unknown as Record<string, unknown>, entry);
       applyActionEntry(modesEdit as unknown as Record<string, unknown>, entry);
-      break;
+      return 'mutated';
     case 'specialSkills':
       applyActionEntry(specialSkills as unknown as Record<string, unknown>, entry);
       applyActionEntry(specialSkillsEdit as unknown as Record<string, unknown>, entry);
-      break;
+      return 'mutated';
     default:
-      return false;
-  }
-  return true;
-}
-
-function applyPublicActionRowToServerData(row: PublicActionRow): boolean {
-  if (!row?.id || appliedPublicActionIds.has(row.id)) return false;
-
-  const entries = normalizePublicActionEntries(row.entry);
-  if (entries.length === 0) return false;
-
-  try {
-    for (const entry of entries) {
-      if (!applyEntryToTarget(row.entity_type, entry)) {
-        return false;
-      }
-    }
-
-    appliedPublicActionIds.add(row.id);
-    return true;
-  } catch (err) {
-    console.error('Failed to apply public action on server:', row, err);
-    return false;
+      return 'skipped';
   }
 }
 
 function applyPublicGameDataActionsToServerData(actions: PublicActionRow[]): void {
-  for (const row of actions) {
-    applyPublicActionRowToServerData(row);
-  }
+  applyPublicActionRows({
+    rows: actions,
+    handledIds: appliedPublicActionIds,
+    resolveTargets: () => null,
+    applyEntry: (row, entry) => applyEntryToServerData(row.entity_type, entry),
+    onError: (row, err) => {
+      console.error('Failed to apply public action on server:', row, err);
+    },
+  });
 }
 
 export type EntityUpdateHistory = {

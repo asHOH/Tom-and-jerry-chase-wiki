@@ -2,7 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
-import { normalizePublicActionEntries } from '@/lib/gameData/actionEntries';
+import { applyPublicActionRows } from '@/lib/gameData/actionReplay';
 import type { PublicActionRow } from '@/lib/gameData/publicActionsTypes';
 import {
   buffsEdit,
@@ -18,32 +18,28 @@ import {
 import { env } from '@/env';
 
 import { GameDataManager } from '../lib/dataManager';
-import {
-  applyActionEntry,
-  getActionsStorageKey,
-  withRecordingSuppressed,
-} from '../lib/edit/diffUtils';
+import { getActionsStorageKey, withRecordingSuppressed } from '../lib/edit/diffUtils';
 
-function getTarget(entityType: string): Record<string, unknown> | null {
+function resolveTargets(entityType: string): Record<string, unknown>[] | null {
   switch (entityType) {
     case 'characters':
-      return characters as unknown as Record<string, unknown>;
+      return [characters as unknown as Record<string, unknown>];
     case 'cards':
-      return cardsEdit as unknown as Record<string, unknown>;
+      return [cardsEdit as unknown as Record<string, unknown>];
     case 'entities':
-      return entitiesEdit as unknown as Record<string, unknown>;
+      return [entitiesEdit as unknown as Record<string, unknown>];
     case 'buffs':
-      return buffsEdit as unknown as Record<string, unknown>;
+      return [buffsEdit as unknown as Record<string, unknown>];
     case 'items':
-      return itemsEdit as unknown as Record<string, unknown>;
+      return [itemsEdit as unknown as Record<string, unknown>];
     case 'fixtures':
-      return fixturesEdit as unknown as Record<string, unknown>;
+      return [fixturesEdit as unknown as Record<string, unknown>];
     case 'maps':
-      return mapsEdit as unknown as Record<string, unknown>;
+      return [mapsEdit as unknown as Record<string, unknown>];
     case 'modes':
-      return modesEdit as unknown as Record<string, unknown>;
+      return [modesEdit as unknown as Record<string, unknown>];
     case 'specialSkills':
-      return specialSkillsEdit as unknown as Record<string, unknown>;
+      return [specialSkillsEdit as unknown as Record<string, unknown>];
     default:
       return null;
   }
@@ -85,7 +81,7 @@ function readEditModeState(): { isEditMode: boolean; enabledAtMs: number | null 
 export function usePublicGameDataActions(options?: { initialPublicActions?: PublicActionRow[] }) {
   'use no memo';
   const [appliedCount, setAppliedCount] = useState(0);
-  const appliedIdsRef = useRef<Set<string>>(new Set());
+  const handledIdsRef = useRef<Set<string>>(new Set());
 
   const [{ isEditMode, enabledAtMs }, setEditModeState] = useState(() => readEditModeState());
 
@@ -131,38 +127,26 @@ export function usePublicGameDataActions(options?: { initialPublicActions?: Publ
     // This avoids remote updates overwriting local in-progress edits.
     const cutoffMs = isEditMode && enabledAtMs ? enabledAtMs : Number.POSITIVE_INFINITY;
 
-    let totalAppliedInThisPass = 0;
-
-    for (const row of actions) {
-      if (!row?.id || appliedIdsRef.current.has(row.id)) continue;
-
+    const shouldApply = (row: PublicActionRow) => {
       const createdAtMs = Date.parse(row.created_at);
-      if (Number.isFinite(createdAtMs) && createdAtMs > cutoffMs) {
-        continue;
-      }
+      return !Number.isFinite(createdAtMs) || createdAtMs <= cutoffMs;
+    };
 
-      const target = getTarget(row.entity_type);
-      if (!target) continue;
-
-      const entries = normalizePublicActionEntries(row.entry);
-      if (entries.length === 0) continue;
-
-      try {
-        const storageKey = getActionsStorageKey(row.entity_type);
-        withRecordingSuppressed(storageKey, () => {
-          for (const entry of entries) {
-            applyActionEntry(target, entry);
-          }
-        });
-        appliedIdsRef.current.add(row.id);
-        totalAppliedInThisPass += 1;
-      } catch (err) {
+    const result = applyPublicActionRows({
+      rows: actions,
+      handledIds: handledIdsRef.current,
+      resolveTargets,
+      shouldApply,
+      applyWithin: (row, fn) => {
+        withRecordingSuppressed(getActionsStorageKey(row.entity_type), fn);
+      },
+      onError: (row, err) => {
         console.error('Failed to apply public action:', row, err);
-      }
-    }
+      },
+    });
 
-    if (totalAppliedInThisPass > 0) {
-      setAppliedCount((prev) => prev + totalAppliedInThisPass);
+    if (result.mutatedCount > 0) {
+      setAppliedCount((prev) => prev + result.mutatedCount);
       GameDataManager.invalidate();
     }
   }, [actions, enabledAtMs, isEditMode]);
