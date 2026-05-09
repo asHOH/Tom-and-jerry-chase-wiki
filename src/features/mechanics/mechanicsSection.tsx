@@ -21,7 +21,7 @@ export default function MechanicsSection({ sectionName, description }: Mechanics
     <MechanicsNavigation description={description || ''}>
       {!isEffectiveSection && (
         <header className={'space-y-2 p-2 text-center'}>
-          <PageDescription>（点击上方列表按钮，选择界面进行查看）</PageDescription>
+          <PageDescription>请在上方选择界面</PageDescription>
         </header>
       )}
       {SectionComponent && <SectionComponent />}
