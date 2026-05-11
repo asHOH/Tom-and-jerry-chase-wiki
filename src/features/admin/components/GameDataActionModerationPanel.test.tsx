@@ -98,6 +98,44 @@ describe('GameDataActionModerationPanel', () => {
     expect(screen.getByRole('button', { name: '复制JSON' })).toBeInTheDocument();
   });
 
+  it('hides unchanged array summaries when changed fields explain the diff', () => {
+    const actionWithNestedArrayChange: PendingGameDataAction = {
+      ...sampleAction,
+      action_id: 'action-nested-array-change',
+      entry: {
+        op: 'set',
+        path: '侍卫汤姆.countersKnowledgeCards',
+        oldValue: [
+          { id: '回家', isMinor: false, description: '侍卫汤姆的警戒可以清除回家的护盾' },
+          { id: '护佑', isMinor: false, description: '侍卫汤姆的警戒可以清除护佑的护盾' },
+          { id: '无畏', isMinor: true, description: '侍卫汤姆的警戒可以清除无畏的无敌' },
+          { id: '舍己', isMinor: false, description: '侍卫汤姆的警戒可以清除舍己的无敌' },
+        ],
+        newValue: [
+          { id: '回家', isMinor: false, description: '侍卫汤姆的警戒可以清除回家的护盾' },
+          { id: '护佑', isMinor: false, description: '侍卫汤姆的警戒可以清除护佑的护盾' },
+          { id: '无畏', isMinor: true, description: '侍卫汤姆的警戒可以清除无畏的无敌' },
+          { id: '舍己', isMinor: true, description: '侍卫汤姆的警戒可以清除舍己的无敌' },
+        ],
+      },
+    };
+
+    render(
+      <GameDataActionModerationPanel
+        pendingActions={[actionWithNestedArrayChange]}
+        mutatePendingActions={jest.fn()}
+      />
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: '展开详情' }));
+
+    expect(screen.getByText('侍卫汤姆.countersKnowledgeCards')).toBeInTheDocument();
+    expect(screen.getByText('变更字段：')).toBeInTheDocument();
+    expect(screen.getByText(/舍己.*isMinor/)).toBeInTheDocument();
+    expect(screen.queryByText('数组(4: 回家、护佑、无畏 等)')).not.toBeInTheDocument();
+    expect(screen.queryByText('→')).not.toBeInTheDocument();
+  });
+
   it('keeps read-only controls enabled while moderation is in flight', async () => {
     let resolveFetch: (value: Response) => void = () => {};
     global.fetch = jest.fn(

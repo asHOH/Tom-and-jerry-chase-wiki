@@ -8,6 +8,8 @@ import { useToast } from '@/context/ToastContext';
 import { Database } from '@/data/database.types';
 import {
   diffGameActionIdArray,
+  hasVisibleIdArrayDiff,
+  shouldShowGameActionValueTransition,
   summarizeGameActionValue,
 } from '@/features/admin/utils/gameActionPreview';
 import { ChevronRightIcon } from '@/components/icons/CommonIcons';
@@ -581,6 +583,12 @@ const GameDataActionModerationPanel = ({
                                 action.oldValue,
                                 action.newValue
                               );
+                              const showValueTransition = shouldShowGameActionValueTransition(
+                                oldSummary,
+                                newSummary,
+                                idDiff
+                              );
+                              const showIdDiff = hasVisibleIdArrayDiff(idDiff);
 
                               return (
                                 <li
@@ -595,47 +603,46 @@ const GameDataActionModerationPanel = ({
                                     )}
                                     <span className='font-medium'>{path}</span>
                                   </div>
-                                  <div className='mt-1 grid grid-cols-[1fr_auto_1fr] items-center gap-1 text-[11px] text-gray-800 dark:text-slate-100'>
-                                    <div className='truncate text-gray-700 dark:text-slate-200'>
-                                      {oldSummary}
+                                  {showValueTransition && (
+                                    <div className='mt-1 grid grid-cols-[1fr_auto_1fr] items-center gap-1 text-[11px] text-gray-800 dark:text-slate-100'>
+                                      <div className='truncate text-gray-700 dark:text-slate-200'>
+                                        {oldSummary}
+                                      </div>
+                                      <span className='text-gray-500 dark:text-slate-400'>→</span>
+                                      <div className='truncate text-green-700 dark:text-green-200'>
+                                        {newSummary}
+                                      </div>
                                     </div>
-                                    <span className='text-gray-500 dark:text-slate-400'>→</span>
-                                    <div className='truncate text-green-700 dark:text-green-200'>
-                                      {newSummary}
-                                    </div>
-                                  </div>
-                                  {idDiff.enabled &&
-                                    (idDiff.added.length > 0 ||
-                                      idDiff.removed.length > 0 ||
-                                      idDiff.changed.length > 0) && (
-                                      <div className='mt-1 space-y-1 text-[11px]'>
-                                        <div className='flex flex-wrap gap-2'>
-                                          {idDiff.added.length > 0 && (
-                                            <span className='rounded bg-green-100 px-1.5 py-0.5 text-green-700 dark:bg-green-900/40 dark:text-green-200'>
-                                              新增ID：{idDiff.added.join('、')}
-                                            </span>
-                                          )}
-                                          {idDiff.removed.length > 0 && (
-                                            <span className='rounded bg-red-100 px-1.5 py-0.5 text-red-700 dark:bg-red-900/40 dark:text-red-200'>
-                                              移除ID：{idDiff.removed.join('、')}
-                                            </span>
-                                          )}
-                                        </div>
-                                        {idDiff.changed.length > 0 && (
-                                          <div className='rounded bg-blue-50 px-2 py-1 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200'>
-                                            <div className='font-medium'>变更字段：</div>
-                                            <ul className='mt-1 space-y-0.5'>
-                                              {idDiff.changed.map((change) => (
-                                                <li key={change.id} className='wrap-break-word'>
-                                                  <span className='font-medium'>{change.id}</span>：
-                                                  {change.fields.join('、')}
-                                                </li>
-                                              ))}
-                                            </ul>
-                                          </div>
+                                  )}
+                                  {showIdDiff && (
+                                    <div className='mt-1 space-y-1 text-[11px]'>
+                                      <div className='flex flex-wrap gap-2'>
+                                        {idDiff.added.length > 0 && (
+                                          <span className='rounded bg-green-100 px-1.5 py-0.5 text-green-700 dark:bg-green-900/40 dark:text-green-200'>
+                                            新增ID：{idDiff.added.join('、')}
+                                          </span>
+                                        )}
+                                        {idDiff.removed.length > 0 && (
+                                          <span className='rounded bg-red-100 px-1.5 py-0.5 text-red-700 dark:bg-red-900/40 dark:text-red-200'>
+                                            移除ID：{idDiff.removed.join('、')}
+                                          </span>
                                         )}
                                       </div>
-                                    )}
+                                      {idDiff.changed.length > 0 && (
+                                        <div className='rounded bg-blue-50 px-2 py-1 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200'>
+                                          <div className='font-medium'>变更字段：</div>
+                                          <ul className='mt-1 space-y-0.5'>
+                                            {idDiff.changed.map((change) => (
+                                              <li key={change.id} className='wrap-break-word'>
+                                                <span className='font-medium'>{change.id}</span>：
+                                                {change.fields.join('、')}
+                                              </li>
+                                            ))}
+                                          </ul>
+                                        </div>
+                                      )}
+                                    </div>
+                                  )}
                                 </li>
                               );
                             })}

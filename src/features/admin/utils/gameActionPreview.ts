@@ -150,4 +150,19 @@ export function diffGameActionIdArray(oldValue: unknown, newValue: unknown): IdA
   return { added, removed, changed, enabled: true };
 }
 
+export function hasVisibleIdArrayDiff(diff: IdArrayDiff): boolean {
+  return (
+    diff.enabled && (diff.added.length > 0 || diff.removed.length > 0 || diff.changed.length > 0)
+  );
+}
+
+export function shouldShowGameActionValueTransition(
+  oldSummary: string,
+  newSummary: string,
+  idDiff: IdArrayDiff
+): boolean {
+  if (oldSummary !== newSummary) return true;
+  return !hasVisibleIdArrayDiff(idDiff);
+}
+
 export type { ChangedArrayItem, IdArrayDiff };

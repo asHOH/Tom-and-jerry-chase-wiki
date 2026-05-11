@@ -1,4 +1,8 @@
-import { diffGameActionIdArray, summarizeGameActionValue } from './gameActionPreview';
+import {
+  diffGameActionIdArray,
+  shouldShowGameActionValueTransition,
+  summarizeGameActionValue,
+} from './gameActionPreview';
 
 describe('gameActionPreview', () => {
   describe('summarizeGameActionValue', () => {
@@ -98,6 +102,42 @@ describe('gameActionPreview', () => {
         changed: [],
         enabled: false,
       });
+    });
+  });
+
+  describe('shouldShowGameActionValueTransition', () => {
+    it('hides unchanged summaries when keyed-array details carry the visible diff', () => {
+      const diff = diffGameActionIdArray(
+        [
+          { id: '回家', isMinor: false, description: '侍卫汤姆的警戒可以清除回家的护盾' },
+          { id: '护佑', isMinor: false, description: '侍卫汤姆的警戒可以清除护佑的护盾' },
+          { id: '无畏', isMinor: true, description: '侍卫汤姆的警戒可以清除无畏的无敌' },
+          { id: '舍己', isMinor: false, description: '侍卫汤姆的警戒可以清除舍己的无敌' },
+        ],
+        [
+          { id: '回家', isMinor: false, description: '侍卫汤姆的警戒可以清除回家的护盾' },
+          { id: '护佑', isMinor: false, description: '侍卫汤姆的警戒可以清除护佑的护盾' },
+          { id: '无畏', isMinor: true, description: '侍卫汤姆的警戒可以清除无畏的无敌' },
+          { id: '舍己', isMinor: true, description: '侍卫汤姆的警戒可以清除舍己的无敌' },
+        ]
+      );
+
+      expect(diff.changed).toEqual([{ id: '舍己', fields: ['isMinor'] }]);
+      expect(
+        shouldShowGameActionValueTransition(
+          '数组(4: 回家、护佑、无畏 等)',
+          '数组(4: 回家、护佑、无畏 等)',
+          diff
+        )
+      ).toBe(false);
+    });
+
+    it('keeps the value transition when summaries differ', () => {
+      const diff = diffGameActionIdArray([{ id: '奶酪' }], [{ id: '奶酪' }, { id: '救援' }]);
+
+      expect(
+        shouldShowGameActionValueTransition('数组(1: 奶酪)', '数组(2: 奶酪、救援)', diff)
+      ).toBe(true);
     });
   });
 });
