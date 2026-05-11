@@ -25,7 +25,12 @@ describe('squashActions', () => {
 
     expect(
       squashActions([deleteSkill, oldSkillName, newSkillName, oldDescription, newDescription])
-    ).toEqual([deleteSkill, oldSkillName, newSkillName, newDescription]);
+    ).toEqual([
+      deleteSkill,
+      oldSkillName,
+      newSkillName,
+      setAction('Tom.description', 'old description', 'new description'),
+    ]);
   });
 
   it('should squash unrelated repeated sets when another root has structural edits', () => {
@@ -35,7 +40,7 @@ describe('squashActions', () => {
 
     expect(squashActions([deleteTomSkill, oldJerryDescription, newJerryDescription])).toEqual([
       deleteTomSkill,
-      newJerryDescription,
+      setAction('Jerry.description', 'old', 'new'),
     ]);
   });
 
@@ -49,7 +54,24 @@ describe('squashActions', () => {
 
     expect(squashActions([structuralBatch, oldDescription, newDescription])).toEqual([
       structuralBatch,
-      newDescription,
+      setAction('Tom.description', 'old description', 'new description'),
+    ]);
+  });
+
+  it('should preserve the original old value when squashing repeated sets', () => {
+    const firstPositioningTags = setAction(
+      'Tuffy.mousePositioningTags',
+      ['cheese'],
+      ['cheese', 'rescue']
+    );
+    const latestPositioningTags = setAction(
+      'Tuffy.mousePositioningTags',
+      ['cheese', 'rescue'],
+      ['cheese', 'rescue.']
+    );
+
+    expect(squashActions([firstPositioningTags, latestPositioningTags])).toEqual([
+      setAction('Tuffy.mousePositioningTags', ['cheese'], ['cheese', 'rescue.']),
     ]);
   });
 });

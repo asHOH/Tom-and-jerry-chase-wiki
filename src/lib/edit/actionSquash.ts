@@ -64,12 +64,16 @@ export function squashActions(entries: ActionHistoryEntry[]): ActionHistoryEntry
   });
 
   const latestByPath = new Map<string, number>();
+  const firstSetByPath = new Map<string, Action>();
   flat.forEach((item) => {
     const { action, flatIndex: idx } = item;
     const path = action.path;
     if (!path) return;
 
     if (action.op === 'set' && !isInStructuralZone(path, structuralParents)) {
+      if (!firstSetByPath.has(path)) {
+        firstSetByPath.set(path, action);
+      }
       latestByPath.set(path, idx);
     }
   });
@@ -85,7 +89,12 @@ export function squashActions(entries: ActionHistoryEntry[]): ActionHistoryEntry
       action.op === 'delete' ||
       (path ? isInStructuralZone(path, structuralParents) : false);
     const isLatestForPath = !path || latestByPath.get(path) === idx;
-    const isNoOp = isEqual(action.oldValue, action.newValue);
+    const shouldSquashSet =
+      action.op === 'set' && path ? !isInStructuralZone(path, structuralParents) : false;
+    const squashedAction = shouldSquashSet
+      ? { ...action, oldValue: firstSetByPath.get(path)?.oldValue }
+      : action;
+    const isNoOp = isEqual(squashedAction.oldValue, squashedAction.newValue);
 
     const shouldKeep =
       isStructural ||
@@ -96,7 +105,7 @@ export function squashActions(entries: ActionHistoryEntry[]): ActionHistoryEntry
 
     if (shouldKeep) {
       const bucket = grouped[item.entryIndex] ?? [];
-      bucket.push(action);
+      bucket.push(squashedAction);
       grouped[item.entryIndex] = bucket;
     }
   });
