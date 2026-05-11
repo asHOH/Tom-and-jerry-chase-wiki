@@ -33,6 +33,43 @@ const sampleAction: PendingGameDataAction = {
 };
 
 describe('GameDataActionModerationPanel', () => {
+  it('hides the year for current-year submit and review dates', () => {
+    const currentYear = new Date().getFullYear();
+    const previousYear = currentYear - 1;
+    const currentYearPendingAction: PendingGameDataAction = {
+      ...sampleAction,
+      action_id: 'action-current-pending',
+      created_at: `${currentYear}-05-10T06:49:28.749Z`,
+    };
+    const currentYearApprovedAction: PendingGameDataAction = {
+      ...sampleAction,
+      action_id: 'action-current-approved',
+      status: 'approved',
+      created_at: `${currentYear}-05-10T06:49:28.749Z`,
+      reviewed_at: `${currentYear}-05-11T07:30:00.000Z`,
+      reviewed_by: 'reviewer-1',
+      reviewed_by_nickname: 'Reviewer',
+      is_public: true,
+    };
+    const previousYearAction: PendingGameDataAction = {
+      ...sampleAction,
+      action_id: 'action-previous',
+      created_at: `${previousYear}-05-10T06:49:28.749Z`,
+    };
+
+    render(
+      <GameDataActionModerationPanel
+        pendingActions={[currentYearPendingAction, currentYearApprovedAction, previousYearAction]}
+        mutatePendingActions={jest.fn()}
+      />
+    );
+
+    fireEvent.change(screen.getByTitle('过滤状态'), { target: { value: 'all' } });
+
+    expect(screen.queryAllByText(String(currentYear), { exact: false })).toHaveLength(0);
+    expect(screen.getAllByText(String(previousYear), { exact: false }).length).toBeGreaterThan(0);
+  });
+
   it('keeps copy ID with copy JSON in expanded details and uses an icon-only expander', () => {
     render(
       <GameDataActionModerationPanel

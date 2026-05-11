@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 
+import { formatCompactDateTime } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
 import { useToast } from '@/context/ToastContext';
 import { Database } from '@/data/database.types';
@@ -36,22 +37,6 @@ const getActionButtonClassName = (
   enabledClassName: string,
   disabledClassName: string
 ) => cn('rounded px-3 py-1 text-sm text-white', isDisabled ? disabledClassName : enabledClassName);
-
-const padDatePart = (value: number) => String(value).padStart(2, '0');
-
-const formatActionTimestamp = (value: string) => {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-
-  const now = new Date();
-  const datePart =
-    date.getFullYear() === now.getFullYear()
-      ? `${padDatePart(date.getMonth() + 1)}-${padDatePart(date.getDate())}`
-      : `${date.getFullYear()}-${padDatePart(date.getMonth() + 1)}-${padDatePart(date.getDate())}`;
-  const timePart = `${padDatePart(date.getHours())}:${padDatePart(date.getMinutes())}`;
-
-  return `${datePart} ${timePart}`;
-};
 
 const GameDataActionModerationPanel = ({
   pendingActions,
@@ -425,7 +410,11 @@ const GameDataActionModerationPanel = ({
                             : '匿名提交'}
                         </span>
                         <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
-                        <span>{formatActionTimestamp(submission.created_at)}</span>
+                        <span>
+                          {formatCompactDateTime(submission.created_at, {
+                            invalidFallback: submission.created_at,
+                          })}
+                        </span>
                         {submission.status !== 'pending' && submission.reviewed_at && (
                           <>
                             <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
@@ -435,7 +424,11 @@ const GameDataActionModerationPanel = ({
                                 : '已审核'}
                             </span>
                             <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
-                            <span>{formatActionTimestamp(submission.reviewed_at)}</span>
+                            <span>
+                              {formatCompactDateTime(submission.reviewed_at, {
+                                invalidFallback: submission.reviewed_at,
+                              })}
+                            </span>
                           </>
                         )}
                       </div>
