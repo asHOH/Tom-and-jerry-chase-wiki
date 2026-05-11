@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 
+import { shouldIgnorePageNavigationKey } from '@/lib/keyboardNavigation';
 import { useCharacterNavigation } from '@/features/characters/hooks/useCharacterNavigation';
 
 export const useKeyboardNavigation = (currentCharacterId: string, disabled = false) => {
@@ -10,15 +11,7 @@ export const useKeyboardNavigation = (currentCharacterId: string, disabled = fal
     if (disabled) return;
 
     const handleKeyPress = (e: KeyboardEvent) => {
-      // Don't trigger navigation if user is typing in an input field
-      if (
-        e.target instanceof HTMLInputElement ||
-        e.target instanceof HTMLTextAreaElement ||
-        e.target instanceof HTMLSelectElement ||
-        (e.target as HTMLElement)?.contentEditable === 'true'
-      ) {
-        return;
-      }
+      if (shouldIgnorePageNavigationKey(e)) return;
 
       switch (e.key) {
         case 'ArrowLeft':
@@ -34,19 +27,15 @@ export const useKeyboardNavigation = (currentCharacterId: string, disabled = fal
           }
           break;
         case 'h': // Vim-style navigation
-          if (!e.ctrlKey && !e.metaKey && !e.altKey) {
-            e.preventDefault();
-            if (previousId) {
-              navigateToPrevious();
-            }
+          e.preventDefault();
+          if (previousId) {
+            navigateToPrevious();
           }
           break;
         case 'l': // Vim-style navigation
-          if (!e.ctrlKey && !e.metaKey && !e.altKey) {
-            e.preventDefault();
-            if (nextId) {
-              navigateToNext();
-            }
+          e.preventDefault();
+          if (nextId) {
+            navigateToNext();
           }
           break;
       }

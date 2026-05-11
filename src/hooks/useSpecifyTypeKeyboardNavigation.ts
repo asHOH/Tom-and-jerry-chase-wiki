@@ -1,5 +1,8 @@
 import { useEffect } from 'react';
 
+import { shouldIgnorePageNavigationKey } from '@/lib/keyboardNavigation';
+import { useEditMode } from '@/context/EditModeContext';
+
 import { useSpecifyTypeNavigation } from './useSpecifyTypeNavigation';
 
 type typelist =
@@ -24,11 +27,16 @@ export const useSpecifyTypeKeyboardNavigation = (
   specifyType: typelist,
   under: boolean = false
 ) => {
+  const { isEditMode } = useEditMode();
   const { navigateToPrevious, navigateToNext, previousTarget, nextTarget } =
     useSpecifyTypeNavigation(currentId, specifyType, under);
 
   useEffect(() => {
+    if (isEditMode) return;
+
     const handleKeyPress = (e: KeyboardEvent) => {
+      if (shouldIgnorePageNavigationKey(e)) return;
+
       switch (e.key) {
         case 'ArrowLeft':
           e.preventDefault();
@@ -59,5 +67,5 @@ export const useSpecifyTypeKeyboardNavigation = (
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [navigateToPrevious, navigateToNext, previousTarget, nextTarget]);
+  }, [isEditMode, navigateToPrevious, navigateToNext, previousTarget, nextTarget]);
 };

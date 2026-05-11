@@ -3,25 +3,19 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-function isEditableElement(el: EventTarget | null): boolean {
-  if (!(el instanceof HTMLElement)) return false;
-  const target = el;
-  if (target instanceof HTMLInputElement) return !target.readOnly && !target.disabled;
-  if (target instanceof HTMLTextAreaElement) return !target.readOnly && !target.disabled;
-  if (target.isContentEditable) return true;
-  const role = target.getAttribute?.('role');
-  if (role === 'textbox' || role === 'combobox' || role === 'searchbox') return true;
-  return false;
-}
+import { shouldIgnorePageNavigationKey } from '@/lib/keyboardNavigation';
+import { useEditMode } from '@/context/EditModeContext';
 
 export default function KeyboardNavigation() {
   const router = useRouter();
+  const { isEditMode } = useEditMode();
 
   useEffect(() => {
+    if (isEditMode) return;
+
     function handler(e: KeyboardEvent) {
       if (e.key !== 'Backspace') return;
-      if (e.metaKey || e.ctrlKey || e.altKey) return;
-      if (isEditableElement(e.target)) return;
+      if (shouldIgnorePageNavigationKey(e)) return;
 
       e.preventDefault();
       if (window.history.length > 1) {
@@ -33,7 +27,7 @@ export default function KeyboardNavigation() {
 
     window.addEventListener('keydown', handler, { passive: false });
     return () => window.removeEventListener('keydown', handler);
-  }, [router]);
+  }, [isEditMode, router]);
 
   return null;
 }

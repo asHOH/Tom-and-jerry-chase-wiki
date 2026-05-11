@@ -122,10 +122,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           />
           {isVercel ? <DisableLinkPrefetch /> : null}
           <ErrorBoundary>
-            <KeyboardNavigation />
             <main className='relative min-h-screen bg-gray-100 pt-0 dark:bg-slate-900'>
               <UserProvider initialValue={initialUser}>
                 <EditModeProvider>
+                  <KeyboardNavigation />
                   <ClientProvidersWithInitialData>{children}</ClientProvidersWithInitialData>
                 </EditModeProvider>
               </UserProvider>

@@ -7,9 +7,11 @@ import { AnimatePresence, m, useReducedMotion } from 'motion/react';
 import { AssetManager } from '@/lib/assetManager';
 import { cn } from '@/lib/design';
 import { useFilterState } from '@/lib/filterUtils';
+import { shouldIgnorePageNavigationKey } from '@/lib/keyboardNavigation';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useSwipeGesture } from '@/hooks/useSwipeGesture';
 import { useUser } from '@/hooks/useUser';
+import { useEditMode } from '@/context/EditModeContext';
 import { useToast } from '@/context/ToastContext';
 import { Article, ArticlesData, Category } from '@/data/types';
 import BaseCard from '@/components/ui/BaseCard';
@@ -58,6 +60,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
   const isMobile = useMobile();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { isEditMode } = useEditMode();
   const { info } = useToast();
   const articlesGridRef = useRef<HTMLDivElement>(null);
   const shouldReduceMotion = useReducedMotion();
@@ -253,15 +256,10 @@ export default function ArticlesClient({ articles: data, description }: Articles
 
   // Keyboard navigation for pagination
   useEffect(() => {
+    if (isEditMode) return;
+
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Don't trigger if user is typing in an input
-      if (
-        e.target instanceof HTMLInputElement ||
-        e.target instanceof HTMLTextAreaElement ||
-        e.target instanceof HTMLSelectElement
-      ) {
-        return;
-      }
+      if (shouldIgnorePageNavigationKey(e)) return;
 
       if (e.key === 'ArrowLeft' && currentPage > 1) {
         e.preventDefault();
@@ -281,6 +279,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
     currentPage,
     clientTotalPages,
     handlePageChange,
+    isEditMode,
     selectedCategories.size,
     handleClearFilters,
   ]);
