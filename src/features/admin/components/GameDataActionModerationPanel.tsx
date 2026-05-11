@@ -9,6 +9,7 @@ import {
   diffGameActionIdArray,
   summarizeGameActionValue,
 } from '@/features/admin/utils/gameActionPreview';
+import { ChevronRightIcon } from '@/components/icons/CommonIcons';
 
 export type ActionStatus = Database['public']['Enums']['game_data_action_status'];
 type ActionStatusFilter = 'all' | ActionStatus;
@@ -371,6 +372,7 @@ const GameDataActionModerationPanel = ({
           {filteredActions.map((submission) => {
             const statusMeta =
               ACTION_STATUS_META[submission.status as ActionStatus] ?? ACTION_STATUS_META.pending;
+            const isExpanded = expandedActionIds.has(submission.action_id);
 
             return (
               <div
@@ -422,30 +424,6 @@ const GameDataActionModerationPanel = ({
                       </div>
 
                       <div className='flex items-center gap-2'>
-                        <button
-                          type='button'
-                          disabled={!!moderatingId}
-                          onClick={() => void copyText(submission.action_id)}
-                          className={getActionButtonClassName(
-                            !!moderatingId,
-                            'bg-gray-600 hover:bg-gray-700',
-                            'bg-gray-400 opacity-60'
-                          )}
-                        >
-                          复制ID
-                        </button>
-                        <button
-                          type='button'
-                          disabled={!!moderatingId}
-                          onClick={() => toggleExpanded(submission.action_id)}
-                          className={getActionButtonClassName(
-                            !!moderatingId,
-                            'bg-blue-600 hover:bg-blue-700',
-                            'bg-gray-400 opacity-60'
-                          )}
-                        >
-                          {expandedActionIds.has(submission.action_id) ? '收起详情' : '展开详情'}
-                        </button>
                         {submission.status === 'pending' && (
                           <>
                             <button
@@ -482,6 +460,28 @@ const GameDataActionModerationPanel = ({
                             </button>
                           </>
                         )}
+                        <button
+                          type='button'
+                          disabled={!!moderatingId}
+                          onClick={() => toggleExpanded(submission.action_id)}
+                          aria-label={isExpanded ? '收起详情' : '展开详情'}
+                          aria-expanded={isExpanded}
+                          title={isExpanded ? '收起详情' : '展开详情'}
+                          className={cn(
+                            'flex h-8 w-8 items-center justify-center rounded-md text-sm transition-colors',
+                            moderatingId
+                              ? 'bg-gray-100 text-gray-400 opacity-60 dark:bg-slate-700 dark:text-slate-500'
+                              : 'bg-blue-50 text-blue-700 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-200 dark:hover:bg-blue-900/40'
+                          )}
+                        >
+                          <ChevronRightIcon
+                            className={cn(
+                              'h-4 w-4 transition-transform',
+                              isExpanded && 'rotate-90'
+                            )}
+                            aria-hidden='true'
+                          />
+                        </button>
                       </div>
                     </div>
 
@@ -492,7 +492,7 @@ const GameDataActionModerationPanel = ({
                       </div>
                     )}
 
-                    {expandedActionIds.has(submission.action_id) && (
+                    {isExpanded && (
                       <div className='mt-3 space-y-2'>
                         <div className='flex flex-wrap items-center justify-between gap-2'>
                           <div className='flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500 dark:text-slate-400'>
@@ -504,18 +504,32 @@ const GameDataActionModerationPanel = ({
                               </span>
                             )}
                           </div>
-                          <button
-                            type='button'
-                            disabled={!!moderatingId}
-                            onClick={() => void copyText(JSON.stringify(submission, null, 2))}
-                            className={getActionButtonClassName(
-                              !!moderatingId,
-                              'bg-gray-600 hover:bg-gray-700',
-                              'bg-gray-400 opacity-60'
-                            )}
-                          >
-                            复制JSON
-                          </button>
+                          <div className='flex items-center gap-2'>
+                            <button
+                              type='button'
+                              disabled={!!moderatingId}
+                              onClick={() => void copyText(submission.action_id)}
+                              className={getActionButtonClassName(
+                                !!moderatingId,
+                                'bg-gray-600 hover:bg-gray-700',
+                                'bg-gray-400 opacity-60'
+                              )}
+                            >
+                              复制ID
+                            </button>
+                            <button
+                              type='button'
+                              disabled={!!moderatingId}
+                              onClick={() => void copyText(JSON.stringify(submission, null, 2))}
+                              className={getActionButtonClassName(
+                                !!moderatingId,
+                                'bg-gray-600 hover:bg-gray-700',
+                                'bg-gray-400 opacity-60'
+                              )}
+                            >
+                              复制JSON
+                            </button>
+                          </div>
                         </div>
 
                         {submission.status === 'rejected' && submission.rejection_reason && (
