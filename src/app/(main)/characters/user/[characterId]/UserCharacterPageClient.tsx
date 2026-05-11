@@ -3,7 +3,8 @@
 import { useLayoutEffect } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
+import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
+import { useEditMode } from '@/context/EditModeStateContext';
 import { PageLoadingState } from '@/components/ui/LoadingState';
 import CharacterDetailsClient from '@/app/(main)/characters/[characterId]/CharacterDetailsClient';
 import { characters } from '@/data';

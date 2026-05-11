@@ -4,7 +4,7 @@ import AttributesCardLayout from './AttributesCardLayout';
 
 const mockUseEditMode = jest.fn();
 
-jest.mock('@/context/EditModeContext', () => ({
+jest.mock('@/context/EditModeStateContext', () => ({
   useEditMode: () => mockUseEditMode(),
 }));
 

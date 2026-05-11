@@ -2,7 +2,8 @@ import React, { Fragment } from 'react';
 import { useSnapshot } from 'valtio';
 
 import { getTooltipContent } from '@/lib/tooltipUtils';
-import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
+import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
+import { useEditMode } from '@/context/EditModeStateContext';
 import type { FactionId } from '@/data/types';
 import { RANKABLE_PROPERTIES, RankableProperty } from '@/features/characters/utils/ranking';
 import { editable } from '@/components/ui/editable';

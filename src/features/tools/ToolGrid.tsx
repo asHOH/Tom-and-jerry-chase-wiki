@@ -2,7 +2,6 @@
 
 import { useRef } from 'react';
 
-/*import { useEditMode } from '@/context/EditModeContext';*/
 import { TOOL_NAV_ITEMS } from '@/constants/navigation';
 import ChangeLogs, { ChangeLogsRef } from '@/components/ui/ChangeLogs';
 import FeedbackSection, { FeedbackSectionRef } from '@/components/ui/FeedbackSection';
@@ -15,7 +14,6 @@ interface CharacterRankingGridProps {
 }
 
 export default function CharacterRankingGrid({ description }: CharacterRankingGridProps) {
-  /*const { isEditMode } = useEditMode();*/
   const feedbackSectionRef = useRef<FeedbackSectionRef>(null);
   const changeLogsRef = useRef<ChangeLogsRef>(null);
 

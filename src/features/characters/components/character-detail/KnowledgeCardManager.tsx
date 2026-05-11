@@ -2,7 +2,7 @@
 
 import { useSnapshot } from 'valtio';
 
-import { useLocalCharacter } from '@/context/EditModeContext';
+import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import type { FactionId, KnowledgeCardGroup } from '@/data/types';
 import { characters } from '@/data'; // Import Character type
 

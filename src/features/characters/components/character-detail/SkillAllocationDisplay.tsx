@@ -4,9 +4,10 @@ import React, { useCallback, useMemo } from 'react';
 import { useSnapshot } from 'valtio';
 
 import { cn, getSkillLevelColors } from '@/lib/design';
+import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
-import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
+import { useEditMode } from '@/context/EditModeStateContext';
 import { FactionId, SkillAllocation } from '@/data/types';
 import {
   getSkillAllocationImageUrl,

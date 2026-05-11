@@ -1,16 +1,24 @@
 import { readdirSync, readFileSync, statSync } from 'fs';
 import { join, relative } from 'path';
 
-const nonCharacterFeatureRoots = [
+const featureRoots = [
   'src/features/achievements',
   'src/features/buffs',
+  'src/features/characters',
   'src/features/entities',
   'src/features/fixtures',
   'src/features/items',
   'src/features/knowledge-cards',
   'src/features/maps',
   'src/features/modes',
+  'src/features/shared',
   'src/features/special-skills',
+  'src/features/tools',
+];
+
+const appFeatureConsumers = [
+  'src/app/(main)/characters/[characterId]/CharacterDetailsClient.tsx',
+  'src/app/(main)/characters/user/[characterId]/UserCharacterPageClient.tsx',
 ];
 
 function listSourceFiles(root: string): string[] {
@@ -36,9 +44,10 @@ function listSourceFiles(root: string): string[] {
 }
 
 describe('feature edit mode import boundaries', () => {
-  it('keeps non-character feature code off the EditModeContext compatibility facade', () => {
-    const offenders = nonCharacterFeatureRoots
+  it('keeps feature code off the EditModeContext compatibility facade', () => {
+    const offenders = featureRoots
       .flatMap((root) => listSourceFiles(root))
+      .concat(appFeatureConsumers)
       .filter((filePath) => readFileSync(filePath, 'utf8').includes('@/context/EditModeContext'))
       .map((filePath) => relative(process.cwd(), filePath));
 

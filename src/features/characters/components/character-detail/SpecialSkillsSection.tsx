@@ -1,6 +1,7 @@
 import { useSnapshot } from 'valtio';
 
-import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
+import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
+import { useEditMode } from '@/context/EditModeStateContext';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 import { editable } from '@/components/ui/editable';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';

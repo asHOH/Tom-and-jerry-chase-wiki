@@ -3,8 +3,8 @@ import { useSnapshot } from 'valtio';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { cn } from '@/lib/design';
+import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useScrollSpy } from '@/hooks/useScrollSpy';
-import { useLocalCharacter } from '@/context/EditModeContext';
 import type { Skill } from '@/data/types';
 import { characters } from '@/data';
 

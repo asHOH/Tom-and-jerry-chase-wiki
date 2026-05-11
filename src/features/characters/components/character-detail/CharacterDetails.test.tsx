@@ -36,9 +36,12 @@ jest.mock('@/data', () => ({
   })(),
 }));
 
-jest.mock('@/context/EditModeContext', () => ({
+jest.mock('@/context/EditModeStateContext', () => ({
   EditModeContext: ({ children }: { children: ReactNode }) => <>{children}</>,
   useEditMode: () => ({ isEditMode: false }),
+}));
+
+jest.mock('@/hooks/useLocalEditEntity', () => ({
   useLocalCharacter: () => ({ characterId: 'testCharacter' }),
 }));
 

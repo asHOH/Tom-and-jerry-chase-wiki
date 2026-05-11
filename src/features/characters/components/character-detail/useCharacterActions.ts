@@ -3,7 +3,7 @@ import { useSnapshot } from 'valtio';
 import { AssetManager } from '@/lib/assetManager';
 import { generateTypescriptCodeFromCharacter } from '@/lib/editUtils';
 import type { CharacterWithFaction } from '@/lib/types';
-import { useLocalCharacter } from '@/context/EditModeContext';
+import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import type { Skill } from '@/data/types';
 import { characters } from '@/data';
 

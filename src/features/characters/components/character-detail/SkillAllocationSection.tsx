@@ -4,7 +4,8 @@ import React, { useCallback } from 'react';
 import { useSnapshot } from 'valtio';
 
 import { setNestedProperty } from '@/lib/editUtils';
-import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
+import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
+import { useEditMode } from '@/context/EditModeStateContext';
 import { FactionId, SkillAllocation } from '@/data/types';
 import Card from '@/components/ui/Card';
 import { PlusIcon } from '@/components/icons/CommonIcons';

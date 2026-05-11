@@ -9,8 +9,10 @@ import {
 } from '@/lib/tutorialUtils';
 import { CharacterDetailsProps } from '@/lib/types';
 import { useKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
+import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
+import { usePageEditMode } from '@/hooks/usePageEditMode';
 import { useSearchParamEditMode } from '@/hooks/useSearchParamEditMode';
-import { useEditMode, useLocalCharacter, usePageEditMode } from '@/context/EditModeContext';
+import { useEditMode } from '@/context/EditModeStateContext';
 import { useToast } from '@/context/ToastContext';
 import { CharacterDetails } from '@/features/characters/components/character-detail';
 import EditModeToolbar from '@/components/ui/EditModeToolbar';

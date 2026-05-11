@@ -6,9 +6,10 @@ import { cn, getPositioningTagColors, getPositioningTagContainerColor } from '@/
 import { setNestedProperty } from '@/lib/editUtils';
 import { getPositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { CharacterWithFaction } from '@/lib/types';
+import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
-import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
+import { useEditMode } from '@/context/EditModeStateContext';
 import { sortPositioningTags } from '@/constants/positioningTagSequences';
 import type { FactionId } from '@/data/types';
 import { getWeaponSkillImageUrl } from '@/features/characters/utils/weapons';

@@ -4,7 +4,7 @@ import { ReactNode, type CSSProperties } from 'react';
 
 import { componentTokens, designTokens } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
-import { useEditMode } from '@/context/EditModeContext';
+import { useEditMode } from '@/context/EditModeStateContext';
 import BaseCard from '@/components/ui/BaseCard';
 import EditButton from '@/components/ui/EditButton';
 import GameImage from '@/components/ui/GameImage';

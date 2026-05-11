@@ -7,7 +7,7 @@ import { componentTokens, designTokens } from '@/lib/design';
 import { handleCharacterIdChange } from '@/lib/editUtils';
 import type { CharacterWithFaction } from '@/lib/types';
 import { useAppContext } from '@/context/AppContext';
-import { useEditMode } from '@/context/EditModeContext';
+import { useEditMode } from '@/context/EditModeStateContext';
 import BaseCard from '@/components/ui/BaseCard';
 import { PlusIcon } from '@/components/icons/CommonIcons';
 import { characters, FactionId } from '@/data';

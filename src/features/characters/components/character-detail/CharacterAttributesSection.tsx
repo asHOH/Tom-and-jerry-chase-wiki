@@ -1,7 +1,8 @@
 import { useSnapshot } from 'valtio';
 
+import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useAppContext } from '@/context/AppContext';
-import { useEditMode, useLocalCharacter } from '@/context/EditModeContext';
+import { useEditMode } from '@/context/EditModeStateContext';
 import { FactionId } from '@/data/types';
 import { characters } from '@/data';
 

@@ -5,7 +5,8 @@ import '@testing-library/jest-dom';
 
 import { proxy } from 'valtio';
 
-import { EditModeProvider } from '../../../../context/EditModeContext';
+import { EditModeProvider } from '@/context/EditModeStateContext';
+
 import { characters } from '../../../../data';
 import type { SkillAllocation } from '../../../../data/types';
 import type { CharacterWithFaction } from '../../../../lib/types';
@@ -21,10 +22,14 @@ jest.mock('../../utils/skillAllocation', () => ({
   getSkillTypeDisplayName: jest.fn(),
 }));
 
-jest.mock('../../../../context/EditModeContext', () => ({
+jest.mock('@/context/EditModeStateContext', () => ({
   __esModule: true,
   EditModeProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   useEditMode: () => ({ isEditMode: false }),
+}));
+
+jest.mock('@/hooks/useLocalEditEntity', () => ({
+  __esModule: true,
   useLocalCharacter: () => ({ characterId: '汤姆' }),
 }));
 
