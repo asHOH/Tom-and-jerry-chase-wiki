@@ -2,6 +2,7 @@ import { differenceInCalendarDays, format, isSameYear } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
 
 export type DateInput = string | number | Date;
+type OptionalDateInput = DateInput | null | undefined;
 
 type CompactDateTimeOptions = {
   relativeRecent?: boolean;
@@ -32,6 +33,27 @@ export function formatCompactDateTime(value: DateInput, options?: CompactDateTim
   }
 
   return `${format(date, 'yyyy-MM-dd', { locale: zhCN })} ${timePart}`;
+}
+
+/**
+ * Formats dates without time using compact current-year dates.
+ */
+export function formatCompactDate(value: OptionalDateInput, options?: CompactDateTimeOptions) {
+  if (value == null) {
+    return options?.invalidFallback ?? '';
+  }
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return options?.invalidFallback ?? '';
+  }
+
+  if (isSameYear(date, new Date())) {
+    return format(date, 'MM-dd', { locale: zhCN });
+  }
+
+  return format(date, 'yyyy-MM-dd', { locale: zhCN });
 }
 
 /**

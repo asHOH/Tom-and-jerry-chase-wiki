@@ -1,4 +1,4 @@
-import { formatArticleDate, formatCompactDateTime } from './dateUtils';
+import { formatArticleDate, formatCompactDate, formatCompactDateTime } from './dateUtils';
 
 describe('dateUtils', () => {
   beforeEach(() => {
@@ -21,6 +21,25 @@ describe('dateUtils', () => {
 
     it('returns the configured fallback for invalid dates', () => {
       expect(formatCompactDateTime('not-a-date', { invalidFallback: 'invalid' })).toBe('invalid');
+    });
+  });
+
+  describe('formatCompactDate', () => {
+    it('omits the year for current-year dates', () => {
+      expect(formatCompactDate(new Date(2026, 4, 10, 14, 49))).toBe('05-10');
+    });
+
+    it('keeps the year for dates outside the current year', () => {
+      expect(formatCompactDate(new Date(2025, 4, 10, 14, 49))).toBe('2025-05-10');
+    });
+
+    it('returns the configured fallback for invalid dates', () => {
+      expect(formatCompactDate('not-a-date', { invalidFallback: '日期未知' })).toBe('日期未知');
+    });
+
+    it('returns the configured fallback for missing dates', () => {
+      expect(formatCompactDate(null, { invalidFallback: '日期未知' })).toBe('日期未知');
+      expect(formatCompactDate(undefined, { invalidFallback: '日期未知' })).toBe('日期未知');
     });
   });
 

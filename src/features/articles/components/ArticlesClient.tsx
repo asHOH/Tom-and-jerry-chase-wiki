@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { AnimatePresence, m, useReducedMotion } from 'motion/react';
 
 import { AssetManager } from '@/lib/assetManager';
+import { formatCompactDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
 import { useFilterState } from '@/lib/filterUtils';
 import { shouldIgnorePageNavigationKey } from '@/lib/keyboardNavigation';
@@ -26,29 +27,6 @@ import { characters } from '@/data';
 
 import ArticleFilters from './ArticleFilters';
 import ArticlePagination from './ArticlePagination';
-
-const monthDayFormatter = new Intl.DateTimeFormat('zh-CN', {
-  timeZone: 'Asia/Shanghai',
-  month: '2-digit',
-  day: '2-digit',
-});
-
-const formatMonthDay = (value: string | null | undefined) => {
-  if (!value) {
-    return '日期未知';
-  }
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return '日期未知';
-  }
-  const parts = monthDayFormatter.formatToParts(date);
-  const month = parts.find((part) => part.type === 'month')?.value;
-  const day = parts.find((part) => part.type === 'day')?.value;
-  if (!month || !day) {
-    return monthDayFormatter.format(date);
-  }
-  return `${month}月${day}日`;
-};
 
 interface ArticlesClientProps {
   articles: ArticlesData;
@@ -481,9 +459,19 @@ export default function ArticlesClient({ articles: data, description }: Articles
 
                       <div className='mt-auto mb-2 flex'>
                         <div className='flex flex-col items-center justify-between text-xs text-gray-600 dark:text-gray-400'>
-                          <span>发布: {formatMonthDay(article.created_at)}</span>
+                          <span>
+                            发布:{' '}
+                            {formatCompactDate(article.created_at, {
+                              invalidFallback: '日期未知',
+                            })}
+                          </span>
                           {latestVersion && (
-                            <span>更新: {formatMonthDay(latestVersion.created_at)}</span>
+                            <span>
+                              更新:{' '}
+                              {formatCompactDate(latestVersion.created_at, {
+                                invalidFallback: '日期未知',
+                              })}
+                            </span>
                           )}
                           <span>浏览: {article.view_count ?? 0}</span>
                         </div>

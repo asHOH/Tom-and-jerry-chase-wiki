@@ -3,6 +3,7 @@
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import uniq from 'lodash-es/uniq';
 
+import { formatCompactDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
 import { contributors } from '@/data/contributors';
 import { changeLogs, type ChangeType } from '@/data/generated/changeLogs';
@@ -224,15 +225,7 @@ const ChangeLogs = forwardRef<ChangeLogsRef>((_props, ref) => {
                         />
                       </svg>
                       <h4 className='text-base font-semibold text-gray-900 dark:text-gray-100'>
-                        {(() => {
-                          const date = new Date(dailyLog.date);
-                          const isCurrentYear = date.getFullYear() === new Date().getFullYear();
-                          return date.toLocaleDateString('zh-CN', {
-                            year: isCurrentYear ? undefined : 'numeric',
-                            month: 'long',
-                            day: 'numeric',
-                          });
-                        })()}
+                        {formatCompactDate(dailyLog.date, { invalidFallback: dailyLog.date })}
                       </h4>
                     </div>
                     <span className='text-sm text-gray-600 dark:text-gray-400'>
