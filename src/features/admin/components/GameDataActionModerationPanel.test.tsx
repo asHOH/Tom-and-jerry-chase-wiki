@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import GameDataActionModerationPanel, {
   type PendingGameDataAction,
@@ -59,5 +59,42 @@ describe('GameDataActionModerationPanel', () => {
     );
     expect(screen.getByRole('button', { name: '复制ID' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '复制JSON' })).toBeInTheDocument();
+  });
+
+  it('keeps read-only controls enabled while moderation is in flight', async () => {
+    let resolveFetch: (value: Response) => void = () => {};
+    global.fetch = jest.fn(
+      () =>
+        new Promise<Response>((resolve) => {
+          resolveFetch = resolve;
+        })
+    );
+    jest.spyOn(window, 'confirm').mockReturnValue(true);
+
+    render(
+      <GameDataActionModerationPanel
+        pendingActions={[sampleAction]}
+        mutatePendingActions={jest.fn().mockResolvedValue(undefined)}
+      />
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: '展开详情' }));
+    fireEvent.click(screen.getByRole('button', { name: '批准' }));
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: '批准' })).toBeDisabled();
+    });
+
+    expect(screen.getByRole('button', { name: '收起详情' })).not.toBeDisabled();
+    expect(screen.getByRole('button', { name: '复制ID' })).not.toBeDisabled();
+    expect(screen.getByRole('button', { name: '复制JSON' })).not.toBeDisabled();
+
+    await act(async () => {
+      resolveFetch({
+        ok: true,
+        json: async () => ({}),
+      } as Response);
+      await Promise.resolve();
+    });
   });
 });

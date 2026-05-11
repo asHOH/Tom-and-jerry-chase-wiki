@@ -41,7 +41,8 @@ const GameDataActionModerationPanel = ({
   pendingActions,
   mutatePendingActions,
 }: GameDataActionModerationPanelProps) => {
-  const [moderatingId, setModeratingId] = useState<string | null>(null);
+  const [moderatingActionId, setModeratingActionId] = useState<string | null>(null);
+  const isModerating = moderatingActionId !== null;
   const [actionQuery, setActionQuery] = useState('');
   const [actionEntityType, setActionEntityType] = useState<string>('all');
   const [actionStatus, setActionStatus] = useState<ActionStatusFilter>('pending');
@@ -68,9 +69,9 @@ const GameDataActionModerationPanel = ({
     action: 'approve' | 'reject',
     opts?: { reason?: string | null; skipPrompt?: boolean }
   ) => {
-    if (moderatingId) return;
+    if (isModerating) return;
 
-    setModeratingId(actionId);
+    setModeratingActionId(actionId);
 
     try {
       let body: unknown = undefined;
@@ -107,7 +108,7 @@ const GameDataActionModerationPanel = ({
       const message = e instanceof Error ? e.message : '操作失败';
       error(message);
     } finally {
-      setModeratingId(null);
+      setModeratingActionId(null);
     }
   };
 
@@ -171,7 +172,7 @@ const GameDataActionModerationPanel = ({
   }, [pendingActions]);
 
   const moderateMany = async (action: 'approve' | 'reject') => {
-    if (moderatingId || selectedPendingActions.length === 0) return;
+    if (isModerating || selectedPendingActions.length === 0) return;
 
     const confirmed = window.confirm(
       action === 'approve'
@@ -302,10 +303,10 @@ const GameDataActionModerationPanel = ({
           </div>
           <button
             type='button'
-            disabled={!!moderatingId || actionableActions.length === 0}
+            disabled={isModerating || actionableActions.length === 0}
             onClick={toggleSelectAllVisiblePending}
             className={getActionButtonClassName(
-              !!moderatingId || actionableActions.length === 0,
+              isModerating || actionableActions.length === 0,
               'bg-slate-600 hover:bg-slate-700',
               'bg-gray-400 opacity-60'
             )}
@@ -314,10 +315,10 @@ const GameDataActionModerationPanel = ({
           </button>
           <button
             type='button'
-            disabled={!!moderatingId || selectedActionIds.size === 0}
+            disabled={isModerating || selectedActionIds.size === 0}
             onClick={clearSelectedActions}
             className={getActionButtonClassName(
-              !!moderatingId || selectedActionIds.size === 0,
+              isModerating || selectedActionIds.size === 0,
               'bg-gray-600 hover:bg-gray-700',
               'bg-gray-400 opacity-60'
             )}
@@ -326,10 +327,10 @@ const GameDataActionModerationPanel = ({
           </button>
           <button
             type='button'
-            disabled={!!moderatingId}
+            disabled={isModerating}
             onClick={() => void mutatePendingActions()}
             className={getActionButtonClassName(
-              !!moderatingId,
+              isModerating,
               'bg-gray-700 hover:bg-gray-800',
               'bg-gray-400 opacity-60'
             )}
@@ -338,10 +339,10 @@ const GameDataActionModerationPanel = ({
           </button>
           <button
             type='button'
-            disabled={!!moderatingId || selectedPendingActions.length === 0}
+            disabled={isModerating || selectedPendingActions.length === 0}
             onClick={() => void moderateMany('approve')}
             className={getActionButtonClassName(
-              !!moderatingId || selectedPendingActions.length === 0,
+              isModerating || selectedPendingActions.length === 0,
               'bg-green-600 hover:bg-green-700',
               'bg-green-400 opacity-60'
             )}
@@ -350,10 +351,10 @@ const GameDataActionModerationPanel = ({
           </button>
           <button
             type='button'
-            disabled={!!moderatingId || selectedPendingActions.length === 0}
+            disabled={isModerating || selectedPendingActions.length === 0}
             onClick={() => void moderateMany('reject')}
             className={getActionButtonClassName(
-              !!moderatingId || selectedPendingActions.length === 0,
+              isModerating || selectedPendingActions.length === 0,
               'bg-red-600 hover:bg-red-700',
               'bg-red-400 opacity-60'
             )}
@@ -385,7 +386,7 @@ const GameDataActionModerationPanel = ({
                       <input
                         type='checkbox'
                         checked={selectedActionIds.has(submission.action_id)}
-                        disabled={!!moderatingId}
+                        disabled={isModerating}
                         onChange={() => toggleSelectedAction(submission.action_id)}
                         aria-label={`选择改动 ${submission.action_id}`}
                         className='h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-500 dark:border-slate-600 dark:bg-slate-900 dark:focus:ring-green-400'
@@ -428,14 +429,14 @@ const GameDataActionModerationPanel = ({
                           <>
                             <button
                               type='button'
-                              disabled={!!moderatingId}
+                              disabled={isModerating}
                               onClick={() => {
                                 const confirmed = window.confirm('确认批准并公开该改动？');
                                 if (!confirmed) return;
                                 void moderateAction(submission.action_id, 'approve');
                               }}
                               className={getActionButtonClassName(
-                                !!moderatingId,
+                                isModerating,
                                 'bg-green-600 hover:bg-green-700',
                                 'bg-green-400 opacity-60'
                               )}
@@ -444,14 +445,14 @@ const GameDataActionModerationPanel = ({
                             </button>
                             <button
                               type='button'
-                              disabled={!!moderatingId}
+                              disabled={isModerating}
                               onClick={() => {
                                 const confirmed = window.confirm('确认拒绝该改动？');
                                 if (!confirmed) return;
                                 void moderateAction(submission.action_id, 'reject');
                               }}
                               className={getActionButtonClassName(
-                                !!moderatingId,
+                                isModerating,
                                 'bg-red-600 hover:bg-red-700',
                                 'bg-red-400 opacity-60'
                               )}
@@ -462,16 +463,13 @@ const GameDataActionModerationPanel = ({
                         )}
                         <button
                           type='button'
-                          disabled={!!moderatingId}
                           onClick={() => toggleExpanded(submission.action_id)}
                           aria-label={isExpanded ? '收起详情' : '展开详情'}
                           aria-expanded={isExpanded}
                           title={isExpanded ? '收起详情' : '展开详情'}
                           className={cn(
                             'flex h-8 w-8 items-center justify-center rounded-md text-sm transition-colors',
-                            moderatingId
-                              ? 'bg-gray-100 text-gray-400 opacity-60 dark:bg-slate-700 dark:text-slate-500'
-                              : 'bg-blue-50 text-blue-700 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-200 dark:hover:bg-blue-900/40'
+                            'bg-blue-50 text-blue-700 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-200 dark:hover:bg-blue-900/40'
                           )}
                         >
                           <ChevronRightIcon
@@ -507,10 +505,9 @@ const GameDataActionModerationPanel = ({
                           <div className='flex items-center gap-2'>
                             <button
                               type='button'
-                              disabled={!!moderatingId}
                               onClick={() => void copyText(submission.action_id)}
                               className={getActionButtonClassName(
-                                !!moderatingId,
+                                false,
                                 'bg-gray-600 hover:bg-gray-700',
                                 'bg-gray-400 opacity-60'
                               )}
@@ -519,10 +516,9 @@ const GameDataActionModerationPanel = ({
                             </button>
                             <button
                               type='button'
-                              disabled={!!moderatingId}
                               onClick={() => void copyText(JSON.stringify(submission, null, 2))}
                               className={getActionButtonClassName(
-                                !!moderatingId,
+                                false,
                                 'bg-gray-600 hover:bg-gray-700',
                                 'bg-gray-400 opacity-60'
                               )}
