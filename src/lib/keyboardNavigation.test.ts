@@ -1,4 +1,4 @@
-import { isEditableKeyboardTarget, shouldIgnorePageNavigationKey } from './keyboardNavigation';
+import { shouldIgnorePageNavigationKey } from './keyboardNavigation';
 
 describe('keyboardNavigation', () => {
   it('should identify editable keyboard targets', () => {
@@ -12,13 +12,13 @@ describe('keyboardNavigation', () => {
     contentEditable.contentEditable = 'true';
     searchbox.setAttribute('role', 'searchbox');
 
-    expect(isEditableKeyboardTarget(input)).toBe(true);
-    expect(isEditableKeyboardTarget(textarea)).toBe(true);
-    expect(isEditableKeyboardTarget(select)).toBe(true);
-    expect(isEditableKeyboardTarget(contentEditable)).toBe(true);
-    expect(isEditableKeyboardTarget(searchbox)).toBe(true);
-    expect(isEditableKeyboardTarget(plainElement)).toBe(false);
-    expect(isEditableKeyboardTarget(null)).toBe(false);
+    expect(shouldIgnorePageNavigationKey(new KeyboardEvent('keydown'), input)).toBe(true);
+    expect(shouldIgnorePageNavigationKey(new KeyboardEvent('keydown'), textarea)).toBe(true);
+    expect(shouldIgnorePageNavigationKey(new KeyboardEvent('keydown'), select)).toBe(true);
+    expect(shouldIgnorePageNavigationKey(new KeyboardEvent('keydown'), contentEditable)).toBe(true);
+    expect(shouldIgnorePageNavigationKey(new KeyboardEvent('keydown'), searchbox)).toBe(true);
+    expect(shouldIgnorePageNavigationKey(new KeyboardEvent('keydown'), plainElement)).toBe(false);
+    expect(shouldIgnorePageNavigationKey(new KeyboardEvent('keydown'), null)).toBe(false);
   });
 
   it('should ignore page navigation keys from editable targets or modifier chords', () => {

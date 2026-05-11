@@ -1,6 +1,7 @@
-const editableRoles = new Set(['textbox', 'combobox', 'searchbox']);
-
 const editableSelector = [
+  'input',
+  'textarea',
+  'select',
   '[contenteditable="true"]',
   '[contenteditable=""]',
   '[role="textbox"]',
@@ -8,16 +9,8 @@ const editableSelector = [
   '[role="searchbox"]',
 ].join(', ');
 
-export function isEditableKeyboardTarget(target: EventTarget | null): boolean {
+function isEditableKeyboardTarget(target: EventTarget | null): boolean {
   if (!(target instanceof Element)) return false;
-
-  if (
-    target instanceof HTMLInputElement ||
-    target instanceof HTMLTextAreaElement ||
-    target instanceof HTMLSelectElement
-  ) {
-    return true;
-  }
 
   if (
     target instanceof HTMLElement &&
@@ -25,9 +18,6 @@ export function isEditableKeyboardTarget(target: EventTarget | null): boolean {
   ) {
     return true;
   }
-
-  const role = target.getAttribute('role');
-  if (role && editableRoles.has(role)) return true;
 
   return Boolean(target.closest(editableSelector));
 }
