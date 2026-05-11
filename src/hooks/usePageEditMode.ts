@@ -27,7 +27,7 @@ import {
 } from '@/lib/edit/editModeRegistry';
 import { isPushSubscribedLocally, subscribeToPushNotifications } from '@/lib/pushClient';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
-import { useEditMode } from '@/context/EditModeContext';
+import { useEditMode } from '@/context/EditModeStateContext';
 import { useToast } from '@/context/ToastContext';
 
 export type PageEditModeOptions = {
