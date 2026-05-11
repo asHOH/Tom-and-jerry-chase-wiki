@@ -25,9 +25,13 @@ import {
   subscribers,
   withRecordingSuppressed,
   writeActionHistory,
-  type Action,
-  type ActionHistoryEntry,
 } from '@/lib/edit/diffUtils';
+import {
+  buildDraftSummaryItemsForType,
+  sortDraftSummaryItems,
+  splitActionHistoryByEntity,
+  type DraftSummaryItem,
+} from '@/lib/edit/editModeDrafts';
 import { getPathSegmentFromEnd } from '@/lib/edit/editModeRouteUtils';
 import { isPushSubscribedLocally, subscribeToPushNotifications } from '@/lib/pushClient';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
@@ -70,24 +74,6 @@ export const PUBLISHABLE_ENTITY_TYPES = [
 ] as const;
 
 export type PublishableEntityType = (typeof PUBLISHABLE_ENTITY_TYPES)[number];
-
-const ENTITY_LABELS: Record<PublishableEntityType, string> = {
-  characters: '角色',
-  factions: '阵营',
-  cards: '知识卡',
-  entities: '衍生物',
-  buffs: '状态',
-  items: '道具',
-  fixtures: '地图组件',
-  maps: '地图',
-  modes: '模式',
-  specialSkills: '特技',
-  achievements: '成就',
-};
-
-function formatEntityLabel(entityType: PublishableEntityType): string {
-  return ENTITY_LABELS[entityType] ?? entityType;
-}
 
 unstable_enableOp(true);
 
@@ -361,61 +347,6 @@ export const useEditMode = () => {
   return context;
 };
 
-function normalizeActionEntry(actions: Action[]): ActionHistoryEntry {
-  return actions.length === 1 ? actions[0]! : actions;
-}
-
-function matchesEntityAction(action: Action, entityId: string): boolean {
-  if (!entityId) return true;
-  return action.path === entityId || action.path.startsWith(`${entityId}.`);
-}
-
-function splitActionEntryByEntity(
-  entry: ActionHistoryEntry,
-  entityId: string
-): { matching: ActionHistoryEntry | null; remaining: ActionHistoryEntry | null } {
-  if (Array.isArray(entry)) {
-    const matching: Action[] = [];
-    const remaining: Action[] = [];
-
-    entry.forEach((action) => {
-      if (matchesEntityAction(action, entityId)) {
-        matching.push(action);
-      } else {
-        remaining.push(action);
-      }
-    });
-
-    return {
-      matching: matching.length > 0 ? normalizeActionEntry(matching) : null,
-      remaining: remaining.length > 0 ? normalizeActionEntry(remaining) : null,
-    };
-  }
-
-  if (matchesEntityAction(entry, entityId)) {
-    return { matching: entry, remaining: null };
-  }
-
-  return { matching: null, remaining: entry };
-}
-
-function splitActionHistoryByEntity(history: ActionHistoryEntry[], entityId: string) {
-  const matching: ActionHistoryEntry[] = [];
-  const remaining: ActionHistoryEntry[] = [];
-
-  history.forEach((entry) => {
-    const { matching: matchingEntry, remaining: remainingEntry } = splitActionEntryByEntity(
-      entry,
-      entityId
-    );
-
-    if (matchingEntry) matching.push(matchingEntry);
-    if (remainingEntry) remaining.push(remainingEntry);
-  });
-
-  return { matching, remaining };
-}
-
 // ============================================================================
 // Page-level edit mode hook for pages that support editing
 // ============================================================================
@@ -438,48 +369,11 @@ interface PageEditModeResult {
   getActionCount: () => number;
 }
 
-type DraftSummaryItem = {
-  entityType: PublishableEntityType;
-  entityLabel: string;
-  entityId: string;
-  itemLabel: string;
-  count: number;
-  factionId?: 'cat' | 'mouse';
-};
-
-type DraftPathParts = {
-  entityId: string;
-  factionId?: 'cat' | 'mouse';
-};
-
-function normalizeActionEntryToList(entry: ActionHistoryEntry): Action[] {
-  return Array.isArray(entry) ? entry : [entry];
-}
-
-function parseDraftPath(entityType: PublishableEntityType, path: string): DraftPathParts | null {
-  const parts = path.split('.').filter(Boolean);
-  if (parts.length === 0) return null;
-
-  if (entityType === 'specialSkills') {
-    const factionPart = parts[0];
-    const skillId = parts[1];
-    if (!skillId) return null;
-
-    if (factionPart === 'cat' || factionPart === 'mouse') {
-      return { entityId: skillId, factionId: factionPart };
-    }
-
-    return { entityId: skillId };
-  }
-
-  return { entityId: parts[0]! };
-}
-
 function resolveDraftItemLabel(
   entityType: PublishableEntityType,
   entityId: string,
   factionId?: 'cat' | 'mouse'
-): string {
+): string | undefined {
   if (entityType === 'specialSkills') {
     const specialSkillRoot = entityRegistry.get(entityType) as
       | {
@@ -492,86 +386,12 @@ function resolveDraftItemLabel(
     const fallback =
       fromFaction ?? specialSkillRoot?.cat?.[entityId] ?? specialSkillRoot?.mouse?.[entityId];
     const skill = fallback as { name?: string; id?: string } | undefined;
-    return skill?.name ?? skill?.id ?? entityId;
+    return skill?.name ?? skill?.id;
   }
 
   const store = entityRegistry.get(entityType) as Record<string, unknown> | undefined;
   const item = store?.[entityId] as { name?: string; id?: string } | undefined;
-  return item?.name ?? item?.id ?? entityId;
-}
-
-function buildDraftSummaryItemsForType(
-  entityType: PublishableEntityType,
-  history: ActionHistoryEntry[]
-): DraftSummaryItem[] {
-  const counters = new Map<
-    string,
-    {
-      entityId: string;
-      count: number;
-      factionId?: 'cat' | 'mouse';
-    }
-  >();
-
-  history.forEach((entry) => {
-    normalizeActionEntryToList(entry).forEach((action) => {
-      const pathParts = parseDraftPath(entityType, action.path);
-      if (!pathParts) return;
-
-      const itemKey = `${pathParts.factionId ?? ''}:${pathParts.entityId}`;
-      const current = counters.get(itemKey);
-      if (current) {
-        current.count += 1;
-        return;
-      }
-
-      const nextCounter: {
-        entityId: string;
-        count: number;
-        factionId?: 'cat' | 'mouse';
-      } = {
-        entityId: pathParts.entityId,
-        count: 1,
-      };
-
-      if (pathParts.factionId) {
-        nextCounter.factionId = pathParts.factionId;
-      }
-
-      counters.set(itemKey, nextCounter);
-    });
-  });
-
-  return Array.from(counters.values()).map((counter) => {
-    const summary: DraftSummaryItem = {
-      entityType,
-      entityLabel: formatEntityLabel(entityType),
-      entityId: counter.entityId,
-      itemLabel: resolveDraftItemLabel(entityType, counter.entityId, counter.factionId),
-      count: counter.count,
-    };
-
-    if (counter.factionId) {
-      summary.factionId = counter.factionId;
-    }
-
-    return summary;
-  });
-}
-
-function sortDraftSummaryItems(items: DraftSummaryItem[]): DraftSummaryItem[] {
-  return items.sort((a, b) => {
-    if (b.count !== a.count) {
-      return b.count - a.count;
-    }
-
-    const typeCompare = a.entityLabel.localeCompare(b.entityLabel, 'zh-CN');
-    if (typeCompare !== 0) {
-      return typeCompare;
-    }
-
-    return a.itemLabel.localeCompare(b.itemLabel, 'zh-CN');
-  });
+  return item?.name ?? item?.id;
 }
 
 /**
@@ -641,7 +461,9 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
       PUBLISHABLE_ENTITY_TYPES.flatMap((type) => {
         const storageKey = getActionsStorageKey(type);
         const history = readActionHistory(storageKey);
-        return buildDraftSummaryItemsForType(type, history);
+        return buildDraftSummaryItemsForType(type, history, ({ entityId, factionId }) =>
+          resolveDraftItemLabel(type, entityId, factionId)
+        );
       })
     );
 
