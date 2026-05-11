@@ -5,7 +5,7 @@ import { useSnapshot } from 'valtio';
 
 import { setNestedProperty } from '@/lib/editUtils';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
-import { useEditMode } from '@/context/EditModeStateContext';
+import { useEditMode } from '@/context/EditModeContext';
 import { FactionId, SkillAllocation } from '@/data/types';
 import Card from '@/components/ui/Card';
 import { PlusIcon } from '@/components/icons/CommonIcons';

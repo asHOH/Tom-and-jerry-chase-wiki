@@ -7,7 +7,7 @@ import { AssetManager } from '@/lib/assetManager';
 import { cn } from '@/lib/design';
 import { useNavigation } from '@/hooks/useNavigation';
 import { useAppContext } from '@/context/AppContext';
-import { useEditMode } from '@/context/EditModeStateContext';
+import { useEditMode } from '@/context/EditModeContext';
 import { cards } from '@/data/static';
 import { characters, mapsEdit, modesEdit, specialSkillsEdit } from '@/data/store';
 import type { CharacterRelationItem, FactionId, TraitRelationKind } from '@/data/types';

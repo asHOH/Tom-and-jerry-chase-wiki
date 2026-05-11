@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { getActionsStorageKey, readActionHistory } from '@/lib/edit/diffUtils';
-import { EditModeContext } from '@/context/EditModeStateContext';
+import { EditModeContext } from '@/context/EditModeContext';
 import { characters } from '@/data';
 
 import { usePageEditMode } from './usePageEditMode';

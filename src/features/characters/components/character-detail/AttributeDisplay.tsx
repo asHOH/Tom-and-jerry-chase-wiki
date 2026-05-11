@@ -3,7 +3,7 @@ import { useSnapshot } from 'valtio';
 
 import { getTooltipContent } from '@/lib/tooltipUtils';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
-import { useEditMode } from '@/context/EditModeStateContext';
+import { useEditMode } from '@/context/EditModeContext';
 import type { FactionId } from '@/data/types';
 import { RANKABLE_PROPERTIES, RankableProperty } from '@/features/characters/utils/ranking';
 import { editable } from '@/components/ui/editable';

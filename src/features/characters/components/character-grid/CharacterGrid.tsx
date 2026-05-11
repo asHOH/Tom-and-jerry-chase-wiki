@@ -12,7 +12,7 @@ import { FactionCharactersProps } from '@/lib/types';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
-import { useEditMode } from '@/context/EditModeStateContext';
+import { useEditMode } from '@/context/EditModeContext';
 import { sortPositioningTagNames } from '@/constants/positioningTagSequences';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';

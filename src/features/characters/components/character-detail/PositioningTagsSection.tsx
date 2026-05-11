@@ -9,7 +9,7 @@ import { CharacterWithFaction } from '@/lib/types';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
-import { useEditMode } from '@/context/EditModeStateContext';
+import { useEditMode } from '@/context/EditModeContext';
 import { sortPositioningTags } from '@/constants/positioningTagSequences';
 import type { FactionId } from '@/data/types';
 import { getWeaponSkillImageUrl } from '@/features/characters/utils/weapons';

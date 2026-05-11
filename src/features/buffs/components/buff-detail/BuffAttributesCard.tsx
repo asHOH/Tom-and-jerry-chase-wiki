@@ -5,7 +5,7 @@ import { useSnapshot } from 'valtio';
 import { getBuffGlobalColors, getBuffTypeColors } from '@/lib/design';
 import { useLocalBuff } from '@/hooks/useLocalEditEntity';
 import { useDarkMode } from '@/context/DarkModeContext';
-import { useEditMode } from '@/context/EditModeStateContext';
+import { useEditMode } from '@/context/EditModeContext';
 import { Buff, SingleItem } from '@/data/types';
 import AttributesCardLayout from '@/features/shared/detail-view/AttributesCardLayout';
 import { editable } from '@/components/ui/editable';

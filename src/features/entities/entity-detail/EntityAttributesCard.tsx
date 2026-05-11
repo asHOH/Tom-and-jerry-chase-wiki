@@ -8,7 +8,7 @@ import { getTooltipContent } from '@/lib/tooltipUtils';
 import { useLocalEntity } from '@/hooks/useLocalEditEntity';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
-import { useEditMode } from '@/context/EditModeStateContext';
+import { useEditMode } from '@/context/EditModeContext';
 import { Entity } from '@/data/types';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
 import AttributesCardLayout from '@/features/shared/detail-view/AttributesCardLayout';

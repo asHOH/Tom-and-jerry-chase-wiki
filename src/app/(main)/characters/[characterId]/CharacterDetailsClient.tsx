@@ -12,7 +12,7 @@ import { useKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { usePageEditMode } from '@/hooks/usePageEditMode';
 import { useSearchParamEditMode } from '@/hooks/useSearchParamEditMode';
-import { useEditMode } from '@/context/EditModeStateContext';
+import { useEditMode } from '@/context/EditModeContext';
 import { useToast } from '@/context/ToastContext';
 import { CharacterDetails } from '@/features/characters/components/character-detail';
 import EditModeToolbar from '@/components/ui/EditModeToolbar';

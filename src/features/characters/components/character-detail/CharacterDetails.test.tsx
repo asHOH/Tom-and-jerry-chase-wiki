@@ -36,7 +36,7 @@ jest.mock('@/data', () => ({
   })(),
 }));
 
-jest.mock('@/context/EditModeStateContext', () => ({
+jest.mock('@/context/EditModeContext', () => ({
   EditModeContext: ({ children }: { children: ReactNode }) => <>{children}</>,
   useEditMode: () => ({ isEditMode: false }),
 }));

@@ -8,7 +8,7 @@ import type { KnowledgeCardDetailsProps, KnowledgeCardWithFaction } from '@/lib/
 import { useLocalCard } from '@/hooks/useLocalEditEntity';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
-import { useEditMode } from '@/context/EditModeStateContext';
+import { useEditMode } from '@/context/EditModeContext';
 import type { KnowledgeCardGroup, KnowledgeCardGroupSet } from '@/data/types';
 import { flattenCardGroup } from '@/features/knowledge-cards/utils/sections';
 import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';

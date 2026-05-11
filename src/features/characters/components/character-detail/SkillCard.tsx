@@ -11,7 +11,7 @@ import { CharacterWithFaction } from '@/lib/types';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
-import { useEditMode } from '@/context/EditModeStateContext';
+import { useEditMode } from '@/context/EditModeContext';
 import { Skill, SkillLevel } from '@/data/types';
 import {
   convertCancelableAftercastToDisplayText,

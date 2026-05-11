@@ -4,7 +4,7 @@ import { useLayoutEffect } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
-import { useEditMode } from '@/context/EditModeStateContext';
+import { useEditMode } from '@/context/EditModeContext';
 import { PageLoadingState } from '@/components/ui/LoadingState';
 import CharacterDetailsClient from '@/app/(main)/characters/[characterId]/CharacterDetailsClient';
 import { characters } from '@/data';

@@ -5,7 +5,7 @@ import '@testing-library/jest-dom';
 
 import { proxy } from 'valtio';
 
-import { EditModeProvider } from '@/context/EditModeStateContext';
+import { EditModeProvider } from '@/context/EditModeContext';
 
 import { characters } from '../../../../data';
 import type { SkillAllocation } from '../../../../data/types';
@@ -22,7 +22,7 @@ jest.mock('../../utils/skillAllocation', () => ({
   getSkillTypeDisplayName: jest.fn(),
 }));
 
-jest.mock('@/context/EditModeStateContext', () => ({
+jest.mock('@/context/EditModeContext', () => ({
   __esModule: true,
   EditModeProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   useEditMode: () => ({ isEditMode: false }),

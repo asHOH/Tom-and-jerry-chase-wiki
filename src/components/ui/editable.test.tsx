@@ -13,7 +13,7 @@ jest.mock('@/context/AppContext', () => ({
   useAppContext: () => ({ handleSelectCharacter: mockHandleSelectCharacter }),
 }));
 
-jest.mock('@/context/EditModeStateContext', () => ({
+jest.mock('@/context/EditModeContext', () => ({
   useEditMode: () => ({ isEditMode: mockIsEditMode }),
 }));
 

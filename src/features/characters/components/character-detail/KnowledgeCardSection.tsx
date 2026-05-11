@@ -9,7 +9,7 @@ import { cn, getCardRankColors } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
-import { useEditMode } from '@/context/EditModeStateContext';
+import { useEditMode } from '@/context/EditModeContext';
 import { Contributor, contributors } from '@/data/contributors';
 import type { CardGroup, FactionId, KnowledgeCardGroup, KnowledgeCardGroupSet } from '@/data/types';
 import { catKnowledgeCards } from '@/features/knowledge-cards/data/catKnowledgeCards';

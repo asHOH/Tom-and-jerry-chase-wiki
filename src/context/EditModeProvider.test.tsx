@@ -6,7 +6,7 @@ import { getActionsStorageKey, readActionHistory } from '@/lib/edit/diffUtils';
 import { usePageEditMode } from '@/hooks/usePageEditMode';
 import { characters } from '@/data';
 
-import { EditModeProvider, useEditMode } from './EditModeStateContext';
+import { EditModeProvider, useEditMode } from './EditModeContext';
 
 const mockSuccessWithAction = jest.fn();
 const mockSuccess = jest.fn();

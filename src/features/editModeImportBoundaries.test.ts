@@ -21,6 +21,9 @@ const appFeatureConsumers = [
   'src/app/(main)/characters/user/[characterId]/UserCharacterPageClient.tsx',
 ];
 
+const broadEditModeContextImportPattern =
+  /import\s+\{[^}]*\b(?:useLocal[A-Z]\w*|usePageEditMode|PUBLISHABLE_ENTITY_TYPES|clearAllEditModeData|entityRegistry|getEntityRegistry)\b[^}]*\}\s+from ['"]@\/context\/EditModeContext['"]/;
+
 function listSourceFiles(root: string): string[] {
   return readdirSync(root).flatMap((entry) => {
     const filePath = join(root, entry);
@@ -44,11 +47,11 @@ function listSourceFiles(root: string): string[] {
 }
 
 describe('feature edit mode import boundaries', () => {
-  it('keeps feature code off the EditModeContext compatibility facade', () => {
+  it('keeps feature code from importing page-local or registry APIs from EditModeContext', () => {
     const offenders = featureRoots
       .flatMap((root) => listSourceFiles(root))
       .concat(appFeatureConsumers)
-      .filter((filePath) => readFileSync(filePath, 'utf8').includes('@/context/EditModeContext'))
+      .filter((filePath) => broadEditModeContextImportPattern.test(readFileSync(filePath, 'utf8')))
       .map((filePath) => relative(process.cwd(), filePath));
 
     expect(offenders).toEqual([]);

@@ -10,7 +10,7 @@ import type { DeepReadonly } from '@/types/deep-readonly';
 import singleItemRreverse from '@/lib/singleItemReverse';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useMobile } from '@/hooks/useMediaQuery';
-import { EditModeContext, useEditMode } from '@/context/EditModeStateContext';
+import { EditModeContext, useEditMode } from '@/context/EditModeContext';
 import { Skill } from '@/data/types';
 import SingleItemReverseCard from '@/features/shared/components/SingleItemReverseCard';
 import SingleItemTraitsText from '@/features/shared/components/SingleItemTraitsText';

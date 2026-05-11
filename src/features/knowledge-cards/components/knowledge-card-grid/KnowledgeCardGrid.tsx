@@ -8,7 +8,7 @@ import { createRankFilter, RANK_OPTIONS, useFilterState } from '@/lib/filterUtil
 import { sortCardsByRank } from '@/lib/sortingUtils';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
-import { useEditMode } from '@/context/EditModeStateContext';
+import { useEditMode } from '@/context/EditModeContext';
 import type { FactionId } from '@/data/types';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import CostRangeSlider from '@/components/ui/CostRangeSlider';

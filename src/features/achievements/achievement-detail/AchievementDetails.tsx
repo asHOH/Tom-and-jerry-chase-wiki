@@ -5,7 +5,7 @@ import { useSnapshot } from 'valtio';
 import { useLocalAchievement } from '@/hooks/useLocalEditEntity';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
-import { useEditMode } from '@/context/EditModeStateContext';
+import { useEditMode } from '@/context/EditModeContext';
 import { achievementsEdit } from '@/data/store';
 import { Achievement } from '@/data/types';
 import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';

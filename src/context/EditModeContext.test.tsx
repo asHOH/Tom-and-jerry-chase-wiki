@@ -1,7 +1,7 @@
 import { useSearchParams } from 'next/navigation';
 import { render, screen, waitFor } from '@testing-library/react';
 
-import { EditModeProvider, useEditMode } from './EditModeStateContext';
+import { EditModeProvider, useEditMode } from './EditModeContext';
 
 jest.mock('next/navigation', () => ({
   useSearchParams: jest.fn(),
@@ -21,7 +21,7 @@ function EditModeProbe() {
   );
 }
 
-describe('EditModeStateContext', () => {
+describe('EditModeContext', () => {
   beforeEach(() => {
     mockUseSearchParams.mockReturnValue(
       new URLSearchParams('edit=1') as ReturnType<typeof useSearchParams>
@@ -34,7 +34,7 @@ describe('EditModeStateContext', () => {
     jest.restoreAllMocks();
   });
 
-  it('should expose edit mode state from the state-context provider', async () => {
+  it('should expose edit mode state from the edit-mode context provider', async () => {
     render(
       <EditModeProvider>
         <EditModeProbe />

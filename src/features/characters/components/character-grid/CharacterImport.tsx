@@ -10,7 +10,7 @@ import { GameDataManager } from '@/lib/dataManager';
 import { componentTokens, designTokens } from '@/lib/design';
 import { CharacterWithFaction } from '@/lib/types';
 import { useAppContext } from '@/context/AppContext';
-import { useEditMode } from '@/context/EditModeStateContext';
+import { useEditMode } from '@/context/EditModeContext';
 import { useToast } from '@/context/ToastContext';
 import { processCharacters } from '@/features/characters/utils/skillId';
 import BaseCard from '@/components/ui/BaseCard';

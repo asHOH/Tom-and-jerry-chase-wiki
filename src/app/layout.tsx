@@ -20,7 +20,7 @@ import './globals.css';
 import { getUserData } from '@/lib/userActions';
 import { UserProvider } from '@/hooks/useUser';
 import { DarkModeProvider } from '@/context/DarkModeContext';
-import { EditModeProvider } from '@/context/EditModeStateContext';
+import { EditModeProvider } from '@/context/EditModeContext';
 import KeyboardNavigation from '@/components/KeyboardNavigation';
 
 const inter = localFont({
