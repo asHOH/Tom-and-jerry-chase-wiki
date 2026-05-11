@@ -2,9 +2,10 @@
 
 import { useSnapshot } from 'valtio';
 
+import { useLocalSpecialSkill } from '@/hooks/useLocalEditEntity';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
-import { useEditMode, useLocalSpecialSkill } from '@/context/EditModeContext';
+import { useEditMode } from '@/context/EditModeStateContext';
 import { SpecialSkill } from '@/data/types';
 import CharacterList from '@/features/knowledge-cards/components/knowledge-card-detail/CharacterList';
 import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';

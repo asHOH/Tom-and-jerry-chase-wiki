@@ -4,9 +4,10 @@ import React from 'react';
 import { useSnapshot } from 'valtio';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
+import { useLocalEntity } from '@/hooks/useLocalEditEntity';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
-import { useEditMode, useLocalEntity } from '@/context/EditModeContext';
+import { useEditMode } from '@/context/EditModeStateContext';
 import { Entity, Skill } from '@/data/types';
 import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
 import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';

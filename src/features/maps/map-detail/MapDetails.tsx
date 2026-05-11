@@ -3,10 +3,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSnapshot } from 'valtio';
 
+import { useLocalMap } from '@/hooks/useLocalEditEntity';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
-import { useEditMode, useLocalMap } from '@/context/EditModeContext';
+import { useEditMode } from '@/context/EditModeStateContext';
 import { Map as MapType, SingleItem } from '@/data/types';
 import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
 import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';

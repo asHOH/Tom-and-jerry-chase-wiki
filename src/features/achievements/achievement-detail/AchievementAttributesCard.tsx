@@ -3,8 +3,9 @@
 import { useSnapshot } from 'valtio';
 
 import { getFactionButtonColors } from '@/lib/design';
+import { useLocalAchievement } from '@/hooks/useLocalEditEntity';
 import { useDarkMode } from '@/context/DarkModeContext';
-import { useEditMode, useLocalAchievement } from '@/context/EditModeContext';
+import { useEditMode } from '@/context/EditModeStateContext';
 import { achievementsEdit } from '@/data/store';
 import { Achievement } from '@/data/types';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';

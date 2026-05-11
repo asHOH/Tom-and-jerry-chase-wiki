@@ -2,9 +2,10 @@
 
 import { useSnapshot } from 'valtio';
 
+import { useLocalMode } from '@/hooks/useLocalEditEntity';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
-import { useEditMode, useLocalMode } from '@/context/EditModeContext';
+import { useEditMode } from '@/context/EditModeStateContext';
 import { Mode } from '@/data/types';
 import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
 import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';

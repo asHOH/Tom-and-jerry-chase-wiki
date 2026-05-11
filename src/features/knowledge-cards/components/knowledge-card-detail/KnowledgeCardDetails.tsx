@@ -5,9 +5,10 @@ import { useSnapshot } from 'valtio';
 
 import { renderTextWithHighlights } from '@/lib/textUtils';
 import type { KnowledgeCardDetailsProps, KnowledgeCardWithFaction } from '@/lib/types';
+import { useLocalCard } from '@/hooks/useLocalEditEntity';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
-import { useEditMode, useLocalCard } from '@/context/EditModeContext';
+import { useEditMode } from '@/context/EditModeStateContext';
 import type { KnowledgeCardGroup, KnowledgeCardGroupSet } from '@/data/types';
 import { flattenCardGroup } from '@/features/knowledge-cards/utils/sections';
 import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';

@@ -3,8 +3,9 @@
 import { useSnapshot } from 'valtio';
 
 import { getMapLevelColors, getMapSizeColors, getMapTypeColors } from '@/lib/design';
+import { useLocalMap } from '@/hooks/useLocalEditEntity';
 import { useDarkMode } from '@/context/DarkModeContext';
-import { useEditMode, useLocalMap } from '@/context/EditModeContext';
+import { useEditMode } from '@/context/EditModeStateContext';
 import { Map, SingleItem } from '@/data/types';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
 import AttributesCardLayout from '@/features/shared/detail-view/AttributesCardLayout';

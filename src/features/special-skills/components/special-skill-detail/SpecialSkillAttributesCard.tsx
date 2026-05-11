@@ -1,6 +1,7 @@
 'use client';
 
-import { useEditMode, useLocalSpecialSkill } from '@/context/EditModeContext';
+import { useLocalSpecialSkill } from '@/hooks/useLocalEditEntity';
+import { useEditMode } from '@/context/EditModeStateContext';
 import { SpecialSkill } from '@/data/types';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
 import AttributesCardLayout from '@/features/shared/detail-view/AttributesCardLayout';
