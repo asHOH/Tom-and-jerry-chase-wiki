@@ -3,9 +3,10 @@ import { useSearchParams } from 'next/navigation';
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { getActionsStorageKey, readActionHistory } from '@/lib/edit/diffUtils';
+import { usePageEditMode } from '@/hooks/usePageEditMode';
 import { characters } from '@/data';
 
-import { EditModeProvider, useEditMode, usePageEditMode } from './EditModeContext';
+import { EditModeProvider, useEditMode } from './EditModeStateContext';
 
 const mockSuccessWithAction = jest.fn();
 const mockSuccess = jest.fn();
