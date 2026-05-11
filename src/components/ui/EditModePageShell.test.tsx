@@ -8,7 +8,7 @@ const mockInfo = jest.fn();
 const mockExitEditMode = jest.fn();
 const mockEditModeToolbar = jest.fn();
 
-jest.mock('@/context/EditModeContext', () => ({
+jest.mock('@/hooks/usePageEditMode', () => ({
   usePageEditMode: (options: unknown) => mockUsePageEditMode(options),
 }));
 

@@ -2,8 +2,9 @@
 
 import { ReactNode, useCallback } from 'react';
 
+import type { PublishableEntityType } from '@/lib/edit/editModeRegistry';
+import { usePageEditMode } from '@/hooks/usePageEditMode';
 import { useSearchParamEditMode } from '@/hooks/useSearchParamEditMode';
-import { usePageEditMode, type PublishableEntityType } from '@/context/EditModeContext';
 import { useToast } from '@/context/ToastContext';
 
 import EditModeToolbar from './EditModeToolbar';

@@ -13,8 +13,11 @@ jest.mock('@/context/AppContext', () => ({
   useAppContext: () => ({ handleSelectCharacter: mockHandleSelectCharacter }),
 }));
 
-jest.mock('@/context/EditModeContext', () => ({
+jest.mock('@/context/EditModeStateContext', () => ({
   useEditMode: () => ({ isEditMode: mockIsEditMode }),
+}));
+
+jest.mock('@/hooks/useLocalEditEntity', () => ({
   useLocalAchievement: () => ({ achievementName: 'test-achievement' }),
   useLocalBuff: () => ({ buffName: 'test-buff' }),
   useLocalCard: () => ({ cardId: 'test-card' }),

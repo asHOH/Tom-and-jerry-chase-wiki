@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom';
 
 import { cn } from '@/lib/design';
 import { CATEGORY_HINTS } from '@/lib/types';
-import { useEditMode } from '@/context/EditModeContext';
+import { useEditMode } from '@/context/EditModeStateContext';
 import { cards } from '@/data/static';
 import {
   achievementsEdit,

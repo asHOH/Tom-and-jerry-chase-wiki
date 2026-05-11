@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 
-import { useEditMode } from '@/context/EditModeContext';
+import { useEditMode } from '@/context/EditModeStateContext';
 
 const BASE_ICON = '/icon.png';
 

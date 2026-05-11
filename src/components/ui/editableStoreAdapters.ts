@@ -4,7 +4,6 @@ import { useCallback, useMemo } from 'react';
 import { proxy, useSnapshot } from 'valtio';
 
 import { getNestedProperty, handleCharacterIdChange, setNestedProperty } from '@/lib/editUtils';
-import { useAppContext } from '@/context/AppContext';
 import {
   useLocalAchievement,
   useLocalBuff,
@@ -16,7 +15,8 @@ import {
   useLocalMap,
   useLocalMode,
   useLocalSpecialSkill,
-} from '@/context/EditModeContext';
+} from '@/hooks/useLocalEditEntity';
+import { useAppContext } from '@/context/AppContext';
 import {
   achievementsEdit,
   buffsEdit,
