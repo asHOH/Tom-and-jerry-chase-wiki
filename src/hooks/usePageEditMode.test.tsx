@@ -134,6 +134,34 @@ describe('usePageEditMode', () => {
     });
   });
 
+  it('should count repeated same-path edits as one publishable change', async () => {
+    renderInEditMode();
+
+    window.localStorage.setItem(
+      getActionsStorageKey('characters'),
+      JSON.stringify([
+        {
+          op: 'set',
+          path: `${TEST_CHARACTER_ID}.skills.0.description`,
+          oldValue: 'canonical description',
+          newValue: 'draft description',
+        },
+        {
+          op: 'set',
+          path: `${TEST_CHARACTER_ID}.skills.0.description`,
+          oldValue: 'draft description',
+          newValue: 'final description',
+        },
+      ])
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'refresh' }));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('page-action-count')).toHaveTextContent('1');
+    });
+  });
+
   it('should publish only the current entity draft and preserve remaining drafts', async () => {
     const fetchMock = jest.fn().mockResolvedValue({
       ok: true,

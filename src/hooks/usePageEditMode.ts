@@ -107,7 +107,8 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
     if (typeof window === 'undefined') return 0;
     const storageKey = getActionsStorageKey(entityType);
     const history = readActionHistory(storageKey);
-    return splitActionHistoryByEntity(history, entityKey).matching.length;
+    const { matching } = splitActionHistoryByEntity(history, entityKey);
+    return squashActions(matching).length;
   }, [entityType, entityKey]);
 
   const isDirty = useMemo(() => {
@@ -140,7 +141,8 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
       PUBLISHABLE_ENTITY_TYPES.flatMap((type) => {
         const storageKey = getActionsStorageKey(type);
         const history = readActionHistory(storageKey);
-        return buildDraftSummaryItemsForType(type, history, ({ entityId, factionId }) =>
+        const squashed = squashActions(history);
+        return buildDraftSummaryItemsForType(type, squashed, ({ entityId, factionId }) =>
           resolveDraftItemLabel(type, entityId, factionId)
         );
       })
