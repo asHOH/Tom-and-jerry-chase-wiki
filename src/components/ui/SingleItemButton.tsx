@@ -66,7 +66,7 @@ export default function SingleItemButton({ singleItem, size = 'default' }: Singl
       >
         <Image
           src={getSingleItemImageUrl(singleItem)}
-          alt={`${singleItem.name}图标`}
+          alt=''
           className={cn('object-contain py-0.5', sizeClasses.image)}
           width={size === 'small' ? 64 : 90} // 根据 size 调整图片宽度
           height={size === 'small' ? 64 : 90} // 根据 size 调整图片高度

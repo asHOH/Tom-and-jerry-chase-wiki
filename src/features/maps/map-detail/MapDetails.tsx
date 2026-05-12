@@ -175,7 +175,7 @@ export default function MapDetailClient({ map }: { map: MapType }) {
           >
             <Image
               src={effectiveMap.mapImageUrl}
-              alt={'地图缩略图'}
+              alt={`${effectiveMap.name}地图预览`}
               fill
               placeholder='empty'
               sizes={isMobile ? '100vw' : '100vw'}
@@ -256,7 +256,7 @@ export default function MapDetailClient({ map }: { map: MapType }) {
           >
             <Image
               src={effectiveMap.mapImageUrl || ''}
-              alt={'地图全屏预览'}
+              alt={`${effectiveMap.name}地图预览`}
               fill
               className='object-contain'
               sizes='100vw'
