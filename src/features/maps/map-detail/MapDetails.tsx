@@ -163,7 +163,7 @@ export default function MapDetailClient({ map }: { map: MapType }) {
               handleImageClick();
             }}
             onDoubleClick={!isMobile ? () => setIsFullScreen(true) : undefined}
-            title={isMobile ? '点击放大图片' : '点击或双击放大图片'}
+            title={'点击放大图片'}
             role='button'
             tabIndex={0}
             onKeyDown={(e) => {
@@ -178,8 +178,8 @@ export default function MapDetailClient({ map }: { map: MapType }) {
               alt={`${effectiveMap.name}地图预览`}
               fill
               placeholder='empty'
-              sizes={isMobile ? '100vw' : '100vw'}
-              loading={'lazy'}
+              sizes='100vw'
+              loading='lazy'
               className='object-contain'
               draggable='false'
               onLoad={handleImageLoad}
