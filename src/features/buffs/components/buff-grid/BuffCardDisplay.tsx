@@ -23,7 +23,7 @@ export default function BuffCardDisplay({ buff }: { buff: Buff }) {
         {!buff.unuseImage && (
           <Image
             src={buff.imageUrl}
-            alt={`${buff.name}效果图标`}
+            alt=''
             className='h-12 w-12 object-contain'
             width={90}
             height={90}

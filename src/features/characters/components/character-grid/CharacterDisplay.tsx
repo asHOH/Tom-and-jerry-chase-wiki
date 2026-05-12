@@ -51,7 +51,7 @@ export default function CharacterDisplay({
     >
       <GameImage
         src={imageUrl}
-        alt={`${name}`}
+        alt=''
         size='CHARACTER_CARD'
         className={cn('group-hover:scale-105', isMobile && 'h-40 w-auto')}
         preload={preload}

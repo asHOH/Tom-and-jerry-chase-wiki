@@ -19,7 +19,7 @@ export default function ModeCardDisplay({ mode }: { mode: Mode }) {
     <CatalogCard
       title={mode.name}
       imageSrc={mode.imageUrl}
-      imageAlt={`${mode.name}模式图标`}
+      imageAlt=''
       ariaLabel={`查看${mode.name}模式详情`}
       tagsAriaLabel='模式属性'
       tagsClassName='modes-center flex flex-wrap justify-center gap-1.5 text-sm text-gray-600 dark:text-gray-300'

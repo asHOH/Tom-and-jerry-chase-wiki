@@ -13,7 +13,7 @@ export default function ItemCardDisplay({ item }: { item: Item }) {
     <CatalogCard
       title={item.name}
       imageSrc={item.imageUrl}
-      imageAlt={`${item.name}道具图标`}
+      imageAlt=''
       ariaLabel={`查看${item.name}道具详情`}
       contentClassName='w-full px-3 pt-1 pb-3 text-center'
       tagsAriaLabel='道具属性'

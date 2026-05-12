@@ -7,7 +7,7 @@ export default function SingleItemCardDisplay({ singleItem }: { singleItem: Sing
     <CatalogCard
       title={singleItem.name}
       imageSrc={getSingleItemImageUrl(singleItem)}
-      imageAlt={`${singleItem.name}道具图标`}
+      imageAlt=''
       ariaLabel={`查看${singleItem.name}详情`}
       contentClassName='w-full px-3 pt-1 pb-3 text-center'
     />

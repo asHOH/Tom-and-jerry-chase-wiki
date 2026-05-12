@@ -42,7 +42,7 @@ export default function FixtureCardDisplay({ fixture }: { fixture: Fixture }) {
     <CatalogCard
       title={fixture.name}
       imageSrc={fixture.imageUrl}
-      imageAlt={`${fixture.name}物件图标`}
+      imageAlt=''
       ariaLabel={`查看${fixture.name}物件详情`}
       tagsAriaLabel='物件属性'
       tagsClassName='fixtures-center flex flex-wrap justify-center gap-1.5 text-sm text-gray-600 dark:text-gray-300'

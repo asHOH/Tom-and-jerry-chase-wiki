@@ -8,7 +8,7 @@ export default function ItemGroupCardDisplay({ itemGroup }: { itemGroup: ItemGro
     <CatalogCard
       title={itemGroup.name}
       imageSrc={getItemGroupImageUrl(itemGroup)}
-      imageAlt={`${itemGroup.name}效果图标`}
+      imageAlt=''
       ariaLabel={`查看${itemGroup.name}效果详情`}
       contentClassName='w-full px-3 pt-1 pb-3 text-center'
     />

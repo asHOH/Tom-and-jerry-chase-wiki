@@ -11,7 +11,7 @@ export default function MapCardDisplay({ map }: { map: Map }) {
     <CatalogCard
       title={map.name}
       imageSrc={map.imageUrl}
-      imageAlt={`${map.name}地图预览`}
+      imageAlt=''
       ariaLabel={`查看${map.name}地图详情`}
       truncateTitle
       tagsAriaLabel='地图属性'

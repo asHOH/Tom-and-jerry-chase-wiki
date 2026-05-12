@@ -20,7 +20,7 @@ export default function KnowledgeCardDisplay({
     <CatalogCard
       title={name}
       imageSrc={imageUrl}
-      imageAlt={`${name}知识卡图标`}
+      imageAlt=''
       href={`/cards/${id}`}
       ariaLabel={`查看${name}知识卡详情，${rank}级，${cost}费`}
       imageSize='KNOWLEDGECARD_CARD'

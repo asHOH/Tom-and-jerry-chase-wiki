@@ -49,7 +49,7 @@ function CharacterRankingCard({
         <div className='h-20 w-20'>
           <Image
             src={character.imageUrl || `/images/${character.factionId}s/${character.id}.png`}
-            alt={`${character.id}角色图标`}
+            alt=''
             width={80}
             height={80}
             className='object-cover transition-transform duration-200 hover:scale-105'

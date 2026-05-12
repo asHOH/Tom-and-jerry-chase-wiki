@@ -81,7 +81,7 @@ export default function EntityCardDisplay({
     <CatalogCard
       title={entity.name}
       imageSrc={entity.imageUrl}
-      imageAlt={`${entity.name}衍生物图标`}
+      imageAlt=''
       ariaLabel={`查看${entity.name}衍生物详情`}
       overlay={
         showTags ? (

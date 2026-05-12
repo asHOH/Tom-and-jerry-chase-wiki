@@ -11,7 +11,7 @@ export default function AchievementCardDisplay({ achievement }: { achievement: A
     <CatalogCard
       title={achievement.name}
       imageSrc={achievement.imageUrl}
-      imageAlt={`${achievement.name}成就图标`}
+      imageAlt=''
       ariaLabel={`查看${achievement.name}成就详情`}
       tagsAriaLabel='成就阵营'
       tags={

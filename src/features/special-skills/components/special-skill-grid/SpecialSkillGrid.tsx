@@ -44,7 +44,7 @@ export default function SpecialSkillClient({ description }: Props) {
         >
           <GameImage
             src={skill.imageUrl}
-            alt={skill.name}
+            alt=''
             size='SPECIAL_SKILL_CARD'
             className='h-32 w-auto hover:scale-105 md:h-auto'
           />
