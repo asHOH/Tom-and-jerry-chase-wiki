@@ -4,6 +4,7 @@ import { EditorContent } from '@tiptap/react';
 import { cn } from '@/lib/design';
 import { cleanHTMLForExport } from '@/lib/richtext/htmlTransforms';
 import {
+  createDecorativeImageAttributes,
   describeAllowedImageSources,
   normalizeHostedImageUrl,
   RTE_IMAGE_ALLOWED_MIME_TYPES,
@@ -86,7 +87,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         showError('选取的图片地址未通过安全校验，请联系管理员。');
         return;
       }
-      editor?.chain().focus().setImage({ src: normalized }).run();
+      editor?.chain().focus().setImage(createDecorativeImageAttributes(normalized)).run();
       setShowImagePicker(false);
     },
     [editor, showError]
@@ -115,7 +116,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
       for (const file of files) {
         try {
           const imageUrl = await uploadImageFile(file);
-          editor.chain().focus().setImage({ src: imageUrl }).run();
+          editor.chain().focus().setImage(createDecorativeImageAttributes(imageUrl)).run();
         } catch {
           // Error is already handled in useRTEImageUpload
           break;

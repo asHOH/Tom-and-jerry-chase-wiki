@@ -26,6 +26,7 @@ export const RTE_IMAGE_MAX_BYTES = 3 * 1024 * 1024; // 3 MiB limit per upload
 const INLINE_EVENT_HANDLER_REGEX = /\s+on[a-z]+\s*=\s*(['"]).*?\1/gi;
 const IMG_TAG_REGEX = /<img\b[^>]*>/gi;
 const SRC_ATTRIBUTE_REGEX = /src\s*=\s*(['"])(.*?)\1/i;
+const ALT_ATTRIBUTE_REGEX = /\salt\s*=\s*(['"]).*?\1/i;
 
 const DISALLOWED_SCHEMES = ['javascript:', 'data:'];
 
@@ -62,13 +63,24 @@ export function normalizeHostedImageUrl(raw: string | null | undefined): string 
   return null;
 }
 
+export function createDecorativeImageAttributes(src: string): { src: string; alt: string } {
+  return { src, alt: '' };
+}
+
+function ensureAltAttribute(tag: string): string {
+  if (ALT_ATTRIBUTE_REGEX.test(tag)) {
+    return tag;
+  }
+  return tag.replace(/\s*\/?>$/, (closing) => (closing.includes('/') ? ' alt="" />' : ' alt="">'));
+}
+
 function sanitizeImageTag(tag: string, srcMatch: RegExpMatchArray, normalizedSrc: string): string {
   const [fullMatch, , originalSrc] = srcMatch;
   let sanitizedTag = tag.replace(INLINE_EVENT_HANDLER_REGEX, '');
   if (normalizedSrc !== originalSrc) {
     sanitizedTag = sanitizedTag.replace(fullMatch, `src="${normalizedSrc}"`);
   }
-  return sanitizedTag;
+  return ensureAltAttribute(sanitizedTag);
 }
 
 export function stripDisallowedImages(html: string | null | undefined): string {
