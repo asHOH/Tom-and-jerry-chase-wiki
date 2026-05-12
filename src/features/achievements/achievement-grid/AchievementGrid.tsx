@@ -10,7 +10,6 @@ import type { Achievement } from '@/data/types';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
 import { VirtualGrid } from '@/components/ui/VirtualGrid';
-import Link from '@/components/Link';
 
 import AchievementCardDisplay from './AchievementCardDisplay';
 
@@ -32,9 +31,7 @@ export default function AchievementGridClient() {
         key={achievement.name}
         className='character-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
       >
-        <Link href={`/achievements/${encodeURIComponent(achievement.name)}`} className='block'>
-          <AchievementCardDisplay achievement={achievement} />
-        </Link>
+        <AchievementCardDisplay achievement={achievement} />
       </div>
     ));
   }, [filteredAchievements]);

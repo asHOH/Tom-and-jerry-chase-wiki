@@ -9,7 +9,11 @@ export default function BuffCardDisplay({ buff }: { buff: Buff }) {
   const [isDarkMode] = useDarkMode();
 
   return (
-    <BaseCard variant='item' aria-label={`查看${buff.name}效果详情`}>
+    <BaseCard
+      variant='item'
+      href={`/buffs/${encodeURIComponent(buff.name)}`}
+      aria-label={`查看${buff.name}效果详情`}
+    >
       <div
         className={cn(
           'flex w-full items-center justify-center border border-dotted pt-1 pb-1.5 text-center md:pb-3',

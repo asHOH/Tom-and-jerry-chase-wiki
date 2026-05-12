@@ -12,7 +12,6 @@ import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
 import Tooltip from '@/components/ui/Tooltip';
 import { VirtualGrid } from '@/components/ui/VirtualGrid';
-import Link from '@/components/Link';
 import { entitiesEdit } from '@/data';
 
 import getEntityFactionId from '../lib/getEntityFactionId';
@@ -149,9 +148,7 @@ export default function EntityClient({ description }: Props) {
         key={entity.name}
         className='character-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
       >
-        <Link href={`/entities/${encodeURIComponent(entity.name)}`} className='block'>
-          <EntityCardDisplay entity={entity} showTags={showTagFilter} />
-        </Link>
+        <EntityCardDisplay entity={entity} showTags={showTagFilter} />
       </div>
     ));
   }, [filteredEntities, showTagFilter]);

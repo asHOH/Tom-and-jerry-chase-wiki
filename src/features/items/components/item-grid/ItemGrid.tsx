@@ -12,7 +12,6 @@ import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
 import Tooltip from '@/components/ui/Tooltip';
 import { VirtualGrid } from '@/components/ui/VirtualGrid';
-import Link from '@/components/Link';
 import { itemsEdit } from '@/data';
 
 import ItemCardDisplay from './ItemCardDisplay';
@@ -61,9 +60,7 @@ export default function ItemClient({ description }: Props) {
         key={item.name}
         className='character-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
       >
-        <Link href={`/items/${encodeURIComponent(item.name)}`} className='block'>
-          <ItemCardDisplay item={item} />
-        </Link>
+        <ItemCardDisplay item={item} />
       </div>
     ));
   }, [filteredItems]);

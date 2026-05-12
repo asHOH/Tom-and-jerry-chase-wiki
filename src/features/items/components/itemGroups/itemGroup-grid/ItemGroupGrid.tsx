@@ -4,7 +4,6 @@ import { useMemo } from 'react';
 
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import { VirtualGrid } from '@/components/ui/VirtualGrid';
-import Link from '@/components/Link';
 import { itemGroups } from '@/data';
 
 import ItemGroupCardDisplay from './ItemGroupCardDisplay';
@@ -19,9 +18,7 @@ export default function ItemGroupClient({ description }: Props) {
         key={itemGroup.name}
         className='character-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
       >
-        <Link href={`/itemGroups/${encodeURIComponent(itemGroup.name)}`} className='block'>
-          <ItemGroupCardDisplay itemGroup={itemGroup} />
-        </Link>
+        <ItemGroupCardDisplay itemGroup={itemGroup} />
       </div>
     ));
   }, [filteredItemGroups]);

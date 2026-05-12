@@ -82,6 +82,7 @@ export default function EntityCardDisplay({
       title={entity.name}
       imageSrc={entity.imageUrl}
       imageAlt=''
+      href={`/entities/${encodeURIComponent(entity.name)}`}
       ariaLabel={`查看${entity.name}衍生物详情`}
       overlay={
         showTags ? (

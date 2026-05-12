@@ -12,6 +12,7 @@ export default function AchievementCardDisplay({ achievement }: { achievement: A
       title={achievement.name}
       imageSrc={achievement.imageUrl}
       imageAlt=''
+      href={`/achievements/${encodeURIComponent(achievement.name)}`}
       ariaLabel={`查看${achievement.name}成就详情`}
       tagsAriaLabel='成就阵营'
       tags={

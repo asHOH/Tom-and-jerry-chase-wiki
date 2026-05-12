@@ -8,7 +8,6 @@ import { useDarkMode } from '@/context/DarkModeContext';
 import type { Buff, buffTypelist } from '@/data/types';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
-import Link from '@/components/Link';
 import { buffsEdit } from '@/data';
 
 import BuffCardDisplay from './BuffCardDisplay';
@@ -146,9 +145,7 @@ export default function BuffClient({ description }: Props) {
                         key={buff.name}
                         className='character-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
                       >
-                        <Link href={`/buffs/${encodeURIComponent(buff.name)}`} className='block'>
-                          <BuffCardDisplay buff={buff} />
-                        </Link>
+                        <BuffCardDisplay buff={buff} />
                       </div>
                     ))}
                   </div>
@@ -163,9 +160,7 @@ export default function BuffClient({ description }: Props) {
                   key={buff.name}
                   className='character-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
                 >
-                  <Link href={`/buffs/${encodeURIComponent(buff.name)}`} className='block'>
-                    <BuffCardDisplay buff={buff} />
-                  </Link>
+                  <BuffCardDisplay buff={buff} />
                 </div>
               ))}
             </div>
@@ -203,9 +198,7 @@ export default function BuffClient({ description }: Props) {
                         key={buff.name}
                         className='character-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
                       >
-                        <Link href={`/buffs/${encodeURIComponent(buff.name)}`} className='block'>
-                          <BuffCardDisplay buff={buff} />
-                        </Link>
+                        <BuffCardDisplay buff={buff} />
                       </div>
                     ))}
                   </div>
@@ -220,9 +213,7 @@ export default function BuffClient({ description }: Props) {
                   key={buff.name}
                   className='character-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
                 >
-                  <Link href={`/buffs/${encodeURIComponent(buff.name)}`} className='block'>
-                    <BuffCardDisplay buff={buff} />
-                  </Link>
+                  <BuffCardDisplay buff={buff} />
                 </div>
               ))}
             </div>

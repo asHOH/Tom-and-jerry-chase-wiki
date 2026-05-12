@@ -7,7 +7,6 @@ import type { Mode, ModeTypeList } from '@/data/types';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
 import { VirtualGrid } from '@/components/ui/VirtualGrid';
-import Link from '@/components/Link';
 import { modesEdit } from '@/data';
 
 import ModeCardDisplay from './ModeCardDisplay';
@@ -41,9 +40,7 @@ export default function ModeClient({ description }: Props) {
         key={mode.name}
         className='mode-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
       >
-        <Link href={`/modes/${encodeURIComponent(mode.name)}`} className='block'>
-          <ModeCardDisplay mode={mode} />
-        </Link>
+        <ModeCardDisplay mode={mode} />
       </div>
     ));
   }, [filteredModes]);

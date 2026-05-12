@@ -2,13 +2,11 @@
 
 import { useMemo } from 'react';
 
-import { getSingleItemHref } from '@/lib/singleItemTools';
 import type { ItemGroup } from '@/data/types';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
 import { VirtualGrid } from '@/components/ui/VirtualGrid';
-import Link from '@/components/Link';
 
 import SingleItemCardDisplay from './SingleItemCardDisplay';
 
@@ -19,9 +17,7 @@ export default function ItemGroupClient({ itemGroup }: { itemGroup: ItemGroup })
         key={singleItem.name}
         className='character-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
       >
-        <Link href={getSingleItemHref(singleItem)} className='block'>
-          <SingleItemCardDisplay singleItem={singleItem} />
-        </Link>
+        <SingleItemCardDisplay singleItem={singleItem} />
       </div>
     ));
   }, [itemGroup.group]);

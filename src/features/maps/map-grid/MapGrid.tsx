@@ -11,7 +11,6 @@ import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
 import Tooltip from '@/components/ui/Tooltip';
 import { VirtualGrid } from '@/components/ui/VirtualGrid';
-import Link from '@/components/Link';
 import { mapsEdit } from '@/data';
 
 import MapCardDisplay from './MapCardDisplay';
@@ -52,9 +51,7 @@ export default function MapClient({ description }: Props) {
         key={map.name}
         className='map-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
       >
-        <Link href={`/maps/${encodeURIComponent(map.name)}`} className='block'>
-          <MapCardDisplay map={map} />
-        </Link>
+        <MapCardDisplay map={map} />
       </div>
     ));
   }, [filteredMaps]);

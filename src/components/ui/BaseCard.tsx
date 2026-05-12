@@ -70,19 +70,23 @@ export default function BaseCard({
 
   const cardStyle = getVariantStyles();
 
-  const cardProps = isClickable
+  const cardProps = href
     ? {
-        onClick,
-        onKeyDown,
-        role,
-        tabIndex,
-        'aria-label': ariaLabel,
         style: cardStyle,
       }
-    : {
-        'aria-label': ariaLabel,
-        style: cardStyle,
-      };
+    : isClickable
+      ? {
+          onClick,
+          onKeyDown,
+          role,
+          tabIndex,
+          'aria-label': ariaLabel,
+          style: cardStyle,
+        }
+      : {
+          'aria-label': ariaLabel,
+          style: cardStyle,
+        };
 
   const content = (
     <div
@@ -97,7 +101,13 @@ export default function BaseCard({
   );
 
   return href ? (
-    <Link aria-label={ariaLabel} className='flex' href={href} preserveEditParam={preserveEditParam}>
+    <Link
+      aria-label={ariaLabel}
+      className='flex'
+      href={href}
+      {...(onClick ? { onClick: () => onClick() } : {})}
+      preserveEditParam={preserveEditParam}
+    >
       {content}
     </Link>
   ) : (

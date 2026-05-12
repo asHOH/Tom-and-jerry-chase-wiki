@@ -10,7 +10,6 @@ import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
 import Tooltip from '@/components/ui/Tooltip';
 import { VirtualGrid } from '@/components/ui/VirtualGrid';
-import Link from '@/components/Link';
 import { fixturesEdit } from '@/data';
 
 import FixtureCardDisplay from './FixtureCardDisplay';
@@ -60,9 +59,7 @@ export default function FixtureClient({ description }: Props) {
         key={fixture.name}
         className='fixture-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
       >
-        <Link href={`/fixtures/${encodeURIComponent(fixture.name)}`} className='block'>
-          <FixtureCardDisplay fixture={fixture} />
-        </Link>
+        <FixtureCardDisplay fixture={fixture} />
       </div>
     ));
   }, [filteredFixtures]);
