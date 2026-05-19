@@ -17,6 +17,7 @@ const customJestConfig = {
   transformIgnorePatterns: ['node_modules/(?!(lodash-es|@t3-oss/env-nextjs)/)'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
+    '^jsdom$': '<rootDir>/node_modules/jest-environment-jsdom/node_modules/jsdom/lib/api.js',
     '^lodash-es$': 'lodash',
     '^lodash-es/(.*)$': 'lodash/$1',
     '^@t3-oss/env-nextjs$': '<rootDir>/test/__mocks__/t3-env-nextjs.ts',
