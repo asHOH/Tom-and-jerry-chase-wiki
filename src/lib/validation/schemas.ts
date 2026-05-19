@@ -101,8 +101,8 @@ export const entitySnapshotSchema = z.record(z.string(), z.unknown());
 const actionSchema = z.object({
   op: z.enum(['set', 'add', 'delete']),
   path: trimmedString,
-  oldValue: z.any(),
-  newValue: z.any(),
+  oldValue: z.any().optional(),
+  newValue: z.any().optional(),
 });
 
 export const actionHistoryEntrySchema: z.ZodType<unknown> = z.lazy(() =>

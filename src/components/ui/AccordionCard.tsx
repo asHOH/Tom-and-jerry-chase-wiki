@@ -69,7 +69,7 @@ export default function AccordionCard({
     <div className={className}>
       <div
         className={cn(
-          'scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 flex overflow-x-auto',
+          'flex scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 overflow-x-auto',
           'dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800',
           titleClassName
         )}
