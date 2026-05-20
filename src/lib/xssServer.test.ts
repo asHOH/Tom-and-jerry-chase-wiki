@@ -28,4 +28,13 @@ describe('sanitizeHTMLOnServer', () => {
 
     expect(sanitized).toBe('<p class="rte-text-center">Body</p>');
   });
+
+  it('should remove classes outside the article content allowlist', () => {
+    const html =
+      '<p class="rte-text-center fixed inset-0">Body</p><a class="text-blue-600 underline" href="/articles">Link</a>';
+
+    const sanitized = sanitizeHTMLOnServer(html);
+
+    expect(sanitized).toBe('<p class="rte-text-center">Body</p><a href="/articles">Link</a>');
+  });
 });

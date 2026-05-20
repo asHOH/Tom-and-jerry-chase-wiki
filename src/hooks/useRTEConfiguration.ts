@@ -11,6 +11,7 @@ import StarterKit from '@tiptap/starter-kit';
 import { cn } from '@/lib/design';
 import {
   normalizeTextAlignAttributes,
+  removeDisallowedClassAttributes,
   removeInlineStyleAttributes,
 } from '@/lib/richtext/htmlTransforms';
 import { stripDisallowedImages } from '@/lib/richtext/imagePolicy';
@@ -37,16 +38,8 @@ export function useRTEConfiguration({
       TextAlignClasses,
       Link.configure({
         openOnClick: false,
-        HTMLAttributes: {
-          class:
-            'text-blue-600 dark:text-blue-400 underline hover:text-blue-800 dark:hover:text-blue-300',
-        },
       }),
-      Image.configure({
-        HTMLAttributes: {
-          class: 'max-w-full h-auto rounded-lg',
-        },
-      }),
+      Image,
       Table.configure({
         resizable: true,
         lastColumnResizable: true,
@@ -60,8 +53,8 @@ export function useRTEConfiguration({
     immediatelyRender: false,
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
-      const sanitized = removeInlineStyleAttributes(
-        normalizeTextAlignAttributes(stripDisallowedImages(html))
+      const sanitized = removeDisallowedClassAttributes(
+        removeInlineStyleAttributes(normalizeTextAlignAttributes(stripDisallowedImages(html)))
       );
       if (sanitized !== html) {
         editor.commands.setContent(sanitized, { emitUpdate: false });

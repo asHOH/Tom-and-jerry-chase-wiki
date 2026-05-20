@@ -26,9 +26,10 @@ describe('cleanHTMLForExport', () => {
     const out = cleanHTMLForExport(input);
 
     expect(out).toBe(
-      '<h2 class="rte-text-left">玩法说明</h2><p class="rte-text-center">基础信息</p><p class="lead rte-text-right">结论</p>'
+      '<h2 class="rte-text-left">玩法说明</h2><p class="rte-text-center">基础信息</p><p class="rte-text-right">结论</p>'
     );
     expect(out).not.toContain('style=');
+    expect(out).not.toContain('lead');
   });
 
   it('normalizes text alignment classes without duplicating existing classes', () => {

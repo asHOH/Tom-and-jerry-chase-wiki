@@ -5,6 +5,7 @@ import { cn } from '@/lib/design';
 import {
   cleanHTMLForExport,
   normalizeTextAlignAttributes,
+  removeDisallowedClassAttributes,
   removeInlineStyleAttributes,
 } from '@/lib/richtext/htmlTransforms';
 import {
@@ -43,7 +44,9 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
 }) => {
   const sanitizeEditorHtml = useCallback(
     (html: string) =>
-      removeInlineStyleAttributes(normalizeTextAlignAttributes(stripDisallowedImages(html))),
+      removeDisallowedClassAttributes(
+        removeInlineStyleAttributes(normalizeTextAlignAttributes(stripDisallowedImages(html)))
+      ),
     []
   );
   const sanitizedPlaceholder = useMemo(

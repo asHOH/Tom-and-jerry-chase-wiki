@@ -3,7 +3,7 @@ import 'server-only';
 import createDOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
 
-import { ALLOWED_HTML_ATTRS, getAllowedHtmlTags } from '@/lib/xssConfig';
+import { ALLOWED_HTML_ATTRS, getAllowedHtmlTags, sanitizeClassAttributes } from '@/lib/xssConfig';
 
 const serverWindow = new JSDOM('').window;
 
@@ -13,8 +13,14 @@ export function sanitizeHTMLOnServer(
 ): string {
   const DOMPurify = createDOMPurify(serverWindow);
 
-  return DOMPurify.sanitize(html, {
-    ALLOWED_TAGS: getAllowedHtmlTags(removeH1),
-    ALLOWED_ATTR: ALLOWED_HTML_ATTRS,
-  }) as string;
+  DOMPurify.addHook('afterSanitizeAttributes', sanitizeClassAttributes);
+
+  try {
+    return DOMPurify.sanitize(html, {
+      ALLOWED_TAGS: getAllowedHtmlTags(removeH1),
+      ALLOWED_ATTR: ALLOWED_HTML_ATTRS,
+    }) as string;
+  } finally {
+    DOMPurify.removeHook('afterSanitizeAttributes');
+  }
 }
