@@ -1,11 +1,56 @@
 import { stripDisallowedImages } from './imagePolicy';
 
+const TEXT_ALIGN_CLASS_BY_VALUE: Record<string, string> = {
+  left: 'rte-text-left',
+  center: 'rte-text-center',
+  right: 'rte-text-right',
+  justify: 'rte-text-justify',
+};
+
+const TEXT_ALIGN_STYLE_REGEX = /(?:^|;)\s*text-align\s*:\s*(left|center|right|justify)\s*(?:;|$)/i;
+const ALIGNABLE_BLOCK_TAG_REGEX = /<(p|h[1-6])\b([^>]*)>/gi;
+const CLASS_ATTR_REGEX = /\sclass=(["'])(.*?)\1/i;
+const STYLE_ATTR_REGEX = /\sstyle=(["'])(.*?)\1/i;
+
+function addClassAttribute(attributes: string, className: string): string {
+  const classMatch = attributes.match(CLASS_ATTR_REGEX);
+  if (!classMatch) {
+    return `${attributes} class="${className}"`;
+  }
+
+  const fullMatch = classMatch[0];
+  const quote = classMatch[1] ?? '"';
+  const currentValue = classMatch[2] ?? '';
+  const classNames = currentValue.split(/\s+/).filter(Boolean);
+  if (classNames.includes(className)) {
+    return attributes;
+  }
+
+  return attributes.replace(
+    fullMatch,
+    ` class=${quote}${[...classNames, className].join(' ')}${quote}`
+  );
+}
+
+export function normalizeTextAlignAttributes(html: string): string {
+  return html.replace(ALIGNABLE_BLOCK_TAG_REGEX, (tag, tagName: string, attributes: string) => {
+    const style = attributes.match(STYLE_ATTR_REGEX)?.[2] ?? '';
+    const alignValue = style.match(TEXT_ALIGN_STYLE_REGEX)?.[1]?.toLowerCase();
+    const className = alignValue ? TEXT_ALIGN_CLASS_BY_VALUE[alignValue] : undefined;
+    if (!className) {
+      return tag;
+    }
+
+    return `<${tagName}${addClassAttribute(attributes, className)}>`;
+  });
+}
+
 export function removeInlineStyleAttributes(html: string): string {
   return html.replace(/\sstyle=(?:"[^"]*"|'[^']*')/gi, '');
 }
 
 export function cleanHTMLForExport(html: string): string {
-  let out = stripDisallowedImages(html);
+  let out = normalizeTextAlignAttributes(stripDisallowedImages(html));
   out = removeInlineStyleAttributes(out);
   out = out.replace(/<colgroup>[\s\S]*?<\/colgroup>/gi, '');
   out = out.replace(/<(td|th)([^>]*)>\s*<p>([\s\S]*?)<\/p>\s*<\/\1>/gi, '<$1$2>$3</$1>');

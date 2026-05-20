@@ -88,6 +88,22 @@
   background-color: #1f2937; /* gray-800 */
 }
 
+.prose :where(.rte-text-left):not(:where([class~='not-prose'] *)) {
+  text-align: left;
+}
+
+.prose :where(.rte-text-center):not(:where([class~='not-prose'] *)) {
+  text-align: center;
+}
+
+.prose :where(.rte-text-right):not(:where([class~='not-prose'] *)) {
+  text-align: right;
+}
+
+.prose :where(.rte-text-justify):not(:where([class~='not-prose'] *)) {
+  text-align: justify;
+}
+
 /* Editor specific styles */
 .ProseMirror .selectedCell:after {
   background: rgba(200, 200, 255, 0.4);

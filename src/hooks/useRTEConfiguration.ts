@@ -9,8 +9,12 @@ import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 
 import { cn } from '@/lib/design';
-import { removeInlineStyleAttributes } from '@/lib/richtext/htmlTransforms';
+import {
+  normalizeTextAlignAttributes,
+  removeInlineStyleAttributes,
+} from '@/lib/richtext/htmlTransforms';
 import { stripDisallowedImages } from '@/lib/richtext/imagePolicy';
+import { TextAlignClasses } from '@/lib/richtext/textAlignClasses';
 
 interface UseRTEConfigurationProps {
   initialHtml: string;
@@ -30,6 +34,7 @@ export function useRTEConfiguration({
       StarterKit.configure({
         link: false,
       }),
+      TextAlignClasses,
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
@@ -55,7 +60,9 @@ export function useRTEConfiguration({
     immediatelyRender: false,
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
-      const sanitized = removeInlineStyleAttributes(stripDisallowedImages(html));
+      const sanitized = removeInlineStyleAttributes(
+        normalizeTextAlignAttributes(stripDisallowedImages(html))
+      );
       if (sanitized !== html) {
         editor.commands.setContent(sanitized, { emitUpdate: false });
       }

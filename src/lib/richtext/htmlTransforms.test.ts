@@ -1,4 +1,4 @@
-import { cleanHTMLForExport } from './htmlTransforms';
+import { cleanHTMLForExport, normalizeTextAlignAttributes } from './htmlTransforms';
 
 describe('cleanHTMLForExport', () => {
   it('removes colgroup and inline styles on table', () => {
@@ -14,8 +14,29 @@ describe('cleanHTMLForExport', () => {
       '<h2 style="text-align: left;">玩法说明</h2><p style="text-align: center;">基础信息</p>';
     const out = cleanHTMLForExport(input);
 
-    expect(out).toBe('<h2>玩法说明</h2><p>基础信息</p>');
+    expect(out).toBe(
+      '<h2 class="rte-text-left">玩法说明</h2><p class="rte-text-center">基础信息</p>'
+    );
     expect(out).not.toContain('style=');
+  });
+
+  it('converts text alignment styles to classes before removing styles', () => {
+    const input =
+      '<h2 style="text-align: left;">玩法说明</h2><p style="color:red;text-align: center;">基础信息</p><p class="lead" style="text-align: right;">结论</p>';
+    const out = cleanHTMLForExport(input);
+
+    expect(out).toBe(
+      '<h2 class="rte-text-left">玩法说明</h2><p class="rte-text-center">基础信息</p><p class="lead rte-text-right">结论</p>'
+    );
+    expect(out).not.toContain('style=');
+  });
+
+  it('normalizes text alignment classes without duplicating existing classes', () => {
+    const out = normalizeTextAlignAttributes(
+      '<p class="rte-text-center" style="text-align: center;">基础信息</p>'
+    );
+
+    expect(out).toBe('<p class="rte-text-center" style="text-align: center;">基础信息</p>');
   });
 
   it('unwraps p tags inside table cells', () => {

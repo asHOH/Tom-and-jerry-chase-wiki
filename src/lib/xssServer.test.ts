@@ -20,4 +20,12 @@ describe('sanitizeHTMLOnServer', () => {
     expect(sanitized).not.toContain('<h1>');
     expect(sanitized).toContain('<h2>Section</h2>');
   });
+
+  it('should preserve class-based text alignment while removing inline styles', () => {
+    const html = '<p class="rte-text-center" style="text-align:center">Body</p>';
+
+    const sanitized = sanitizeHTMLOnServer(html);
+
+    expect(sanitized).toBe('<p class="rte-text-center">Body</p>');
+  });
 });
