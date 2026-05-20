@@ -1,19 +1,13 @@
 import DOMPurify from 'dompurify';
 
-import { ALLOWED_HTML_ATTRS, getAllowedHtmlTags, sanitizeStyleAttributes } from '@/lib/xssConfig';
+import { ALLOWED_HTML_ATTRS, getAllowedHtmlTags } from '@/lib/xssConfig';
 
 export function sanitizeHTML(
   html: string,
   { removeH1 = false }: { removeH1?: boolean } = {}
 ): string {
-  DOMPurify.addHook('afterSanitizeAttributes', sanitizeStyleAttributes);
-
-  try {
-    return DOMPurify.sanitize(html, {
-      ALLOWED_TAGS: getAllowedHtmlTags(removeH1),
-      ALLOWED_ATTR: ALLOWED_HTML_ATTRS,
-    }) as string;
-  } finally {
-    DOMPurify.removeHook('afterSanitizeAttributes');
-  }
+  return DOMPurify.sanitize(html, {
+    ALLOWED_TAGS: getAllowedHtmlTags(removeH1),
+    ALLOWED_ATTR: ALLOWED_HTML_ATTRS,
+  }) as string;
 }

@@ -13,7 +13,6 @@ export function useRTEToolbarState(editor: Editor | null) {
     headingLevel: null,
     bulletList: false,
     orderedList: false,
-    textAlign: null,
     blockquote: false,
     codeBlock: false,
     canUndo: false,
@@ -32,10 +31,6 @@ export function useRTEToolbarState(editor: Editor | null) {
           break;
         }
       }
-      let textAlign: ToolbarState['textAlign'] = null;
-      if (editor.isActive({ textAlign: 'left' })) textAlign = 'left';
-      else if (editor.isActive({ textAlign: 'center' })) textAlign = 'center';
-      else if (editor.isActive({ textAlign: 'right' })) textAlign = 'right';
       return {
         bold: editor.isActive('bold'),
         italic: editor.isActive('italic'),
@@ -45,7 +40,6 @@ export function useRTEToolbarState(editor: Editor | null) {
         headingLevel,
         bulletList: editor.isActive('bulletList'),
         orderedList: editor.isActive('orderedList'),
-        textAlign,
         blockquote: editor.isActive('blockquote'),
         codeBlock: editor.isActive('codeBlock'),
         canUndo: editor.can().undo(),

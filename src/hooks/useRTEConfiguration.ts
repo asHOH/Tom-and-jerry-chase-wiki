@@ -5,11 +5,11 @@ import { Table } from '@tiptap/extension-table';
 import TableCell from '@tiptap/extension-table-cell';
 import TableHeader from '@tiptap/extension-table-header';
 import TableRow from '@tiptap/extension-table-row';
-import TextAlign from '@tiptap/extension-text-align';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 
 import { cn } from '@/lib/design';
+import { removeInlineStyleAttributes } from '@/lib/richtext/htmlTransforms';
 import { stripDisallowedImages } from '@/lib/richtext/imagePolicy';
 
 interface UseRTEConfigurationProps {
@@ -29,9 +29,6 @@ export function useRTEConfiguration({
     extensions: [
       StarterKit.configure({
         link: false,
-      }),
-      TextAlign.configure({
-        types: ['heading', 'paragraph'],
       }),
       Link.configure({
         openOnClick: false,
@@ -58,7 +55,7 @@ export function useRTEConfiguration({
     immediatelyRender: false,
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
-      const sanitized = stripDisallowedImages(html);
+      const sanitized = removeInlineStyleAttributes(stripDisallowedImages(html));
       if (sanitized !== html) {
         editor.commands.setContent(sanitized, { emitUpdate: false });
       }

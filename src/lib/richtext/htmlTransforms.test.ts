@@ -9,6 +9,15 @@ describe('cleanHTMLForExport', () => {
     expect(out).toMatch(/<table>/);
   });
 
+  it('removes inline styles from article content', () => {
+    const input =
+      '<h2 style="text-align: left;">玩法说明</h2><p style="text-align: center;">基础信息</p>';
+    const out = cleanHTMLForExport(input);
+
+    expect(out).toBe('<h2>玩法说明</h2><p>基础信息</p>');
+    expect(out).not.toContain('style=');
+  });
+
   it('unwraps p tags inside table cells', () => {
     const input = '<table><tr><td><p>cell</p></td><th><p>head</p></th></tr></table>';
     const out = cleanHTMLForExport(input);

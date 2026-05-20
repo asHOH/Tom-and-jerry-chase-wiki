@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { EditorContent } from '@tiptap/react';
 
 import { cn } from '@/lib/design';
-import { cleanHTMLForExport } from '@/lib/richtext/htmlTransforms';
+import { cleanHTMLForExport, removeInlineStyleAttributes } from '@/lib/richtext/htmlTransforms';
 import {
   createDecorativeImageAttributes,
   describeAllowedImageSources,
@@ -37,8 +37,14 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   placeholder = '',
   className,
 }) => {
-  const sanitizedPlaceholder = useMemo(() => stripDisallowedImages(placeholder), [placeholder]);
-  const sanitizedContent = useMemo(() => stripDisallowedImages(content ?? ''), [content]);
+  const sanitizedPlaceholder = useMemo(
+    () => removeInlineStyleAttributes(stripDisallowedImages(placeholder)),
+    [placeholder]
+  );
+  const sanitizedContent = useMemo(
+    () => removeInlineStyleAttributes(stripDisallowedImages(content ?? '')),
+    [content]
+  );
   const initialHtml = sanitizedContent || sanitizedPlaceholder;
 
   const [viewMode, setViewMode] = useState<'rich' | 'wiki' | 'html'>('rich');
@@ -57,6 +63,12 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   });
 
   const toolbarState = useRTEToolbarState(editor);
+
+  useEffect(() => {
+    if (content !== undefined && content !== sanitizedContent) {
+      onChange?.(sanitizedContent);
+    }
+  }, [content, onChange, sanitizedContent]);
 
   useEffect(() => {
     const target = sanitizedContent || sanitizedPlaceholder || '';
@@ -189,10 +201,6 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
       () => editor?.chain().focus().toggleOrderedList().run(),
       [editor]
     ),
-    setTextAlign: useCallback(
-      (alignment) => editor?.chain().focus().setTextAlign(alignment).run(),
-      [editor]
-    ),
     insertTable: useCallback(
       () => editor?.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run(),
       [editor]
@@ -224,15 +232,17 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     // Determine conversions based on current view
     if (mode === 'wiki') {
       if (viewMode === 'html') {
-        const sanitizedHtml = stripDisallowedImages(rawContent);
+        const sanitizedHtml = removeInlineStyleAttributes(stripDisallowedImages(rawContent));
         setRawContent(htmlToWikiText(sanitizedHtml));
       } else if (viewMode === 'rich') {
-        const currentHtml = stripDisallowedImages(editor.getHTML());
+        const currentHtml = removeInlineStyleAttributes(stripDisallowedImages(editor.getHTML()));
         setRawContent(htmlToWikiText(currentHtml));
       }
     } else if (mode === 'html') {
       if (viewMode === 'wiki') {
-        const htmlFromWiki = stripDisallowedImages(wikiTextToHTML(rawContent));
+        const htmlFromWiki = removeInlineStyleAttributes(
+          stripDisallowedImages(wikiTextToHTML(rawContent))
+        );
         setRawContent(cleanHTMLForExport(htmlFromWiki));
       } else if (viewMode === 'rich') {
         const currentHtml = editor.getHTML();
@@ -245,7 +255,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         newHtml = wikiTextToHTML(rawContent);
       }
       // If coming from HTML view, rawContent already holds HTML
-      const sanitizedHtml = stripDisallowedImages(newHtml);
+      const sanitizedHtml = removeInlineStyleAttributes(stripDisallowedImages(newHtml));
       editor.commands.setContent(sanitizedHtml, { emitUpdate: true });
     }
     setViewMode(mode);
@@ -297,10 +307,12 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
               const value = e.target.value;
               if (viewMode === 'wiki') {
                 setRawContent(value);
-                const convertedHTML = stripDisallowedImages(wikiTextToHTML(value));
+                const convertedHTML = removeInlineStyleAttributes(
+                  stripDisallowedImages(wikiTextToHTML(value))
+                );
                 onChange?.(convertedHTML);
               } else {
-                const sanitizedHtml = stripDisallowedImages(value);
+                const sanitizedHtml = removeInlineStyleAttributes(stripDisallowedImages(value));
                 setRawContent(sanitizedHtml);
                 onChange?.(sanitizedHtml);
               }

@@ -4,9 +4,6 @@ import { cn } from '@/lib/design';
 import { env } from '@/env';
 
 import {
-  AlignCenterIcon,
-  AlignLeftIcon,
-  AlignRightIcon,
   BlockquoteIcon,
   BoldIcon,
   BulletListIcon,
@@ -33,7 +30,6 @@ export interface ToolbarState {
   headingLevel?: 1 | 2 | 3 | 4 | 5 | 6 | null;
   bulletList?: boolean;
   orderedList?: boolean;
-  textAlign?: 'left' | 'center' | 'right' | null;
   blockquote?: boolean;
   codeBlock?: boolean;
   canUndo?: boolean;
@@ -50,7 +46,6 @@ export interface ToolbarCommands {
   toggleHeading(level: 2 | 3 | 4): void;
   toggleBulletList(): void;
   toggleOrderedList(): void;
-  setTextAlign(alignment: 'left' | 'center' | 'right'): void;
   insertTable(): void;
   toggleHeaderRow(): void;
   transposeTable(): void;
@@ -224,35 +219,6 @@ const Toolbar = React.memo(function Toolbar({
             mode={mode}
           >
             <OrderedListIcon />
-          </ToolbarButton>
-        </div>
-
-        <div className='h-6 w-px bg-gray-300 dark:bg-gray-600' />
-
-        <div className='flex items-center gap-1'>
-          <ToolbarButton
-            onClick={() => commands.setTextAlign('left')}
-            isActive={state.textAlign === 'left'}
-            title='左对齐'
-            mode={mode}
-          >
-            <AlignLeftIcon />
-          </ToolbarButton>
-          <ToolbarButton
-            onClick={() => commands.setTextAlign('center')}
-            isActive={state.textAlign === 'center'}
-            title='居中对齐'
-            mode={mode}
-          >
-            <AlignCenterIcon />
-          </ToolbarButton>
-          <ToolbarButton
-            onClick={() => commands.setTextAlign('right')}
-            isActive={state.textAlign === 'right'}
-            title='右对齐'
-            mode={mode}
-          >
-            <AlignRightIcon />
           </ToolbarButton>
         </div>
 
