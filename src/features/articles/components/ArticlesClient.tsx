@@ -458,7 +458,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
                       <RichTextDisplay content={latestVersion?.content} preview />
 
                       <div className='mt-auto mb-2 flex'>
-                        <div className='flex flex-col items-center justify-between text-xs text-gray-600 dark:text-gray-400'>
+                        <div className='items-left flex flex-col justify-between text-xs text-gray-600 dark:text-gray-400'>
                           <span>
                             发布:{' '}
                             {formatCompactDate(article.created_at, {
@@ -481,7 +481,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
                             <div className='flex-1' />
                             <Link
                               href={`/articles/${article.id}/history`}
-                              className='rounded-lg bg-gray-100 px-3 py-2 text-sm text-gray-700 transition-all duration-200 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+                              className='rounded-lg bg-gray-100 px-2 py-2 text-sm text-gray-700 transition-all duration-200 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
                               title='查看历史版本'
                             >
                               <ClockIcon className='size-4' strokeWidth={1.5} />
