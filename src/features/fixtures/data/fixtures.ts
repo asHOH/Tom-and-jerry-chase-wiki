@@ -213,6 +213,36 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     description:
       '传送带是会将所承载物体向指定方向运送的{平台}，会使[被自身直接承载的物体](即不包括通过其它物体而间接被自身承载的物体)沿传送带运送方向移动，除此之外与地面的特性相同。（游戏中暂不存在属于“地面”或“墙壁”类型的传送带）',
   },
+  限时平台: {
+    type: ['平台类', '组件类'],
+    source: '通用组件',
+    aliases: [
+      '香蕉树',
+      '芭蕉树',
+      '盆栽',
+      '装饰植物',
+      '大型盆栽',
+      '大型绿植',
+      '调酒机器人',
+      '报纸架',
+      '报纸',
+      '珊瑚树',
+    ],
+    move: false,
+    gravity: false,
+    collsion: ['道具', '角色'],
+    supportedMaps: [
+      '夏日游轮I',
+      '夏日游轮II',
+      '夏日游轮III',
+      '太空堡垒II',
+      '御门酒店',
+      '天宫',
+      '天宫-云上',
+    ],
+    description:
+      '限时平台与{平台}类似，但被角色踩踏时会在短暂延迟后收起，等待一段时间后才会重新生成。',
+  },
   木门: {
     type: ['墙壁类', '可交互'],
     source: '通用组件',
@@ -914,17 +944,6 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     description:
       '喷泉的水流会使接触的角色{减速}但解除由胡椒瓶造成的{失明}，还能够引爆{感电}状态。喷泉水池边缘和上方水流可被当作{平台}。',
   },
-  绿植: {
-    type: ['平台类', '组件类'],
-    source: '地图组件',
-    aliases: ['香蕉树', '芭蕉树', '盆栽', '装饰植物', '大型盆栽', '大型绿植'],
-    move: false,
-    gravity: false,
-    collsion: ['道具', '角色'],
-    supportedMaps: ['夏日游轮I', '夏日游轮II', '夏日游轮III', '御门酒店'],
-    description:
-      '绿植展开的叶片可被当作{平台}，但叶片被角色踩踏时会在短暂延迟后收起，等待一会后才会重新展开。',
-  },
   折叠椅: {
     type: ['平台类', '组件类'],
     source: '地图组件',
@@ -1046,7 +1065,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['发射舱', '火箭发射台'],
     supportedMaps: ['太空堡垒I', '太空堡垒II', '太空堡垒III'],
     description:
-      '发射台与{管道}类似，但单次使用间隔更长（需20秒）。\n在太空堡垒I或III中使用发射台后，将传送到[奶酪星房间](特殊房间，为太空堡垒彩蛋房)，内有1瓶{随机饮料}、1个{老鼠夹}与1个{苍蝇拍}，以及一个{返回舱}。\n在太空堡垒II中使用发射台后，将传送到左太空的右上角。\n发射台可以享受到{猫是液体}的交互速度及无视使用间隔的效果。',
+      '发射台与{管道}类似，但单次使用间隔更长（需20秒）。\n在太空堡垒I或III中使用发射台后，将传送到[奶酪星房间](特殊房间，为太空堡垒彩蛋房)，内有1瓶{神秘饮料}、1个{老鼠夹}与1个{苍蝇拍}，以及一个{返回舱}。\n在太空堡垒II中使用发射台后，将传送到左太空的右上角。\n发射台可以享受到{猫是液体}的交互速度及无视使用间隔的效果。',
   },
   返回舱: {
     type: ['组件类', '可交互'],
@@ -1085,6 +1104,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['工具台'],
     move: false,
     gravity: false,
+    collsion: ['道具', '角色'],
     supportedMaps: ['太空堡垒I', '太空堡垒III'],
     description:
       '角色可通过交互打开工具箱，随机生成一个道具。工具箱将保持被打开状态一段时间，随后重新合上。工具箱的上方可被当做{平台}。',
@@ -1108,6 +1128,36 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     supportedMaps: ['太空堡垒I', '太空堡垒II', '太空堡垒III'],
     description:
       '位于货舱，会间歇性生成货物。在太空堡垒II中，每次生成货物时有概率改为生成{奶酪}，单局游戏至多三块。',
+  },
+  吧台: {
+    type: ['平台类', '组件类'],
+    source: '地图组件',
+    aliases: ['调酒台', '玻璃杯彩蛋', '调酒台彩蛋', '吧台彩蛋'],
+    move: false,
+    gravity: false,
+    collsion: ['道具', '角色'],
+    supportedMaps: ['太空堡垒II'],
+    description:
+      '吧台位于休闲舱，其上方初始会刷新7个呈梯形摆放的{玻璃杯}。当有玻璃杯被放在距吧台上方一定距离（略高于2个玻璃杯）的位置时，在短暂延迟后该玻璃杯将被销毁，并原地生成一瓶{神秘饮料}。',
+  },
+  休闲舱开关: {
+    type: ['组件类', '可交互'],
+    source: '地图组件',
+    move: false,
+    gravity: false,
+    supportedMaps: ['太空堡垒II'],
+    description:
+      '休闲舱开关有红色/绿色/紫色三种状态，初始默认为绿色状态，玩家可通过交互切换开关状态。\n红色状态下，本房间绝大区域内的灯光消失。（无灯光时，角色只能看到自身周围小范围视野）\n绿色状态下，本房间仅有右侧部分区域未被灯光照亮。\n紫色状态下，本房间被全部照亮，且房间中的彩灯会出现闪耀特效。',
+  },
+  DJ操作台: {
+    type: ['平台类', '组件类', '可交互'],
+    source: '地图组件',
+    aliases: ['打碟台'],
+    move: false,
+    gravity: false,
+    collsion: ['道具', '角色'],
+    supportedMaps: ['太空堡垒II'],
+    description: 'DJ操作台是一个娱乐设施，玩家可通过交互来播放音乐并进行滑步表演。',
   },
   货物: {
     type: ['组件类'],
@@ -1159,6 +1209,17 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     supportedMaps: ['森林牧场'],
     description:
       '壁炉会间歇性燃烧，角色在燃烧期间碰触壁炉会受到短暂硬直。壁炉与屋顶上的烟囱通过{管道}连接，角色在壁炉燃烧期间使用壁炉处的管道时将受到一段时间的失明。',
+  },
+  鸟巢: {
+    type: ['平台类', '组件类'],
+    source: '地图组件',
+    aliases: ['鸟窝'],
+    move: false,
+    gravity: false,
+    collsion: ['道具', '角色'],
+    supportedMaps: ['森林牧场'],
+    description:
+      '当鸟巢上方有指定类型的道具时，鸟巢将在短暂延迟后销毁该道具，并按规则生成一个新道具（若有多种目标道具，则随机生成一个）。鸟巢在成功转化道具后会进入CD，较长时间内无法转化道具。\n\n兑换规则：\n{玻璃杯}/{盘子}/{碗}/{扁盘}→{香水瓶}/{胡椒瓶}→{高尔夫球}/{叉子}→{苍蝇拍}/{老鼠夹}；\n{苍蝇拍}→{老鼠夹}→{苍蝇拍}；\n{冰块}→{灰花瓶}→{蓝花瓶}→{神秘饮料}；\n任意{饮料}→{玩具枪}→{奶酪}；\n{小鞭炮}→{鞭炮束}；\n{果盘}→{冰桶}/{玩具枪}。',
   },
   鸭爸爸: {
     type: 'NPC',
@@ -1307,6 +1368,16 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     description:
       '公牛在牛棚区域来回移动。当公牛接触非“牛仔”类角色时，将原地短暂蓄力，随后冲刺到一侧终点，对沿途命中的所有角色造成眩晕（不掉落老鼠）。',
   },
+  仙人掌树: {
+    type: ['平台类', '组件类'],
+    source: '地图组件',
+    aliases: ['大型仙人掌', '仙人树'],
+    move: false,
+    gravity: false,
+    collsion: ['道具', '角色'],
+    supportedMaps: ['森林牧场'],
+    description: '仙人掌树会对站在上方的角色造成硬直。（与{碎片}相同，会被相关效果免疫）',
+  },
   口香糖: {
     type: ['组件类'],
     source: '地图组件',
@@ -1333,7 +1404,15 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     gravity: false,
     supportedMaps: ['大都会', '5V5大都会'],
     description:
-      '汽车每隔一段时间就会出现在街道上，等待红绿灯亮起后就会离开。汽车停留期间具有{平台}的特性，离开时则会撞击所有接触到自身的角色，对他们造成眩晕。',
+      '汽车在{红绿灯}的红灯亮起时出现在街道上，绿灯亮起时就会离开。汽车停留期间具有{平台}的特性，离开时则会撞击所有接触到自身的角色，对他们造成眩晕。',
+  },
+  红绿灯: {
+    type: ['组件类'],
+    source: '地图组件',
+    move: false,
+    gravity: false,
+    supportedMaps: ['大都会', '5V5大都会'],
+    description: '红绿灯会周期性切换信号，用于指示{汽车}的行动。',
   },
   电梯: {
     type: ['地面类', '墙壁类', '组件类'],
@@ -1354,6 +1433,16 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     description:
       '保安值守在大厅右侧入口。当有角色出现在他眼前时，他将尝试向左侧奔跑以追逐该角色，在视野范围内没有任何目标后才会向右侧折返；保安在追逐和折返过程中，当攻击范围内出现任意角色时，他将停下并原地连续出拳，对命中的所有角色造成伤害，直到攻击范围内没有任何角色。',
   },
+  礼帽: {
+    type: ['平台类', '组件类'],
+    source: '地图组件',
+    move: false,
+    gravity: false,
+    aliases: ['高礼帽'],
+    supportedMaps: ['大都会', '5V5大都会'],
+    description:
+      '礼帽有扁-正常-高三种状态，初始为扁状态。角色踩到礼帽上将被弹起，同时礼帽按顺序切换到下一形态。当礼帽由“正常”切换到“高”状态时，弹起的角色的同时会使其获得“弹跳”状态（与鼠使用黄+黄的{喷洒间}获得的状态相同）。',
+  },
   野猫: {
     type: 'NPC',
     source: '地图组件',
@@ -1363,6 +1452,26 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     supportedMaps: ['大都会', '5V5大都会'],
     description:
       '野猫平时躲在后街的垃圾桶中。当有老鼠角色出现在他眼前时，他将钻出垃圾桶，随后连续出爪，对命中的老鼠造成伤害，直到攻击范围内没有任何老鼠。野猫一段时间未攻击后将重新躲回垃圾桶内。',
+  },
+  碎酒瓶: {
+    type: ['组件类'],
+    source: '地图组件',
+    aliases: ['酒瓶'],
+    move: false,
+    gravity: false,
+    collsion: ['道具', '角色'],
+    supportedMaps: ['大都会', '5V5大都会'],
+    description: '碎酒瓶会对接触自身的角色造成硬直。（与{碎片}相同，会被相关效果免疫）',
+  },
+  晾衣架: {
+    type: ['组件类'],
+    source: '地图组件',
+    aliases: ['袜子', '晾晒处', '晾晒的袜子'],
+    move: false,
+    gravity: false,
+    collsion: ['道具', '角色'],
+    supportedMaps: ['大都会', '5V5大都会'],
+    description: '老鼠落到晾衣架上的袜子里时，会在短暂延迟后被弹出去。',
   },
   站牌: {
     type: ['组件类', '可交互'],
@@ -1447,6 +1556,33 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     description:
       '调料罐-钙被角色踩踏后将喷出调料，使自身范围内的所有角色在一段时间内提高Hp上限。调料罐被踩踏后将进入30秒内置CD，期间被踩踏不会产生效果。',
   },
+  '大堂吊灯-大': {
+    type: ['平台类', '组件类'],
+    source: '地图组件',
+    move: false,
+    gravity: false,
+    supportedMaps: ['御门酒店'],
+    description:
+      '大堂吊灯可以阻挡和承载角色及道具。角色在大堂吊灯上跳跃较多次后，吊灯会坠地并生成数个{碎片}，随后该区域的灯光将会变暗。',
+  },
+  '大堂吊灯-小': {
+    type: ['平台类', '组件类'],
+    source: '地图组件',
+    move: false,
+    gravity: false,
+    supportedMaps: ['御门酒店'],
+    description:
+      '大堂吊灯可以阻挡和承载角色及道具。角色在大堂吊灯上跳跃较多次后，吊灯会坠地并生成数个{碎片}，随后该区域的灯光将会变暗。',
+  },
+  行李架: {
+    type: ['平台类', '组件类', '可交互'],
+    source: '地图组件',
+    aliases: ['行李车'],
+    move: false,
+    gravity: false,
+    supportedMaps: ['御门酒店'],
+    description: '行李架上的把手可以阻挡和承载角色及道具。行李架可以被推动，撞倒碰到的角色。',
+  },
   鱼缸: {
     type: ['组件类'],
     source: '地图组件',
@@ -1473,26 +1609,46 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     description:
       '抽屉初始为打开状态，角色可通过交互关闭/打开抽屉。抽屉被打开时会随机生成一个道具，且被打开期间其上方可被当做{平台}。抽屉每次被打开/关闭后5秒内无法再次被交互。',
   },
-  嫦娥: {
-    type: 'NPC',
+  玉璧: {
+    type: ['组件类', '可交互'],
     source: '地图组件',
-    move: true,
+    aliases: ['瓷器'],
+    move: false,
     gravity: false,
-    aliases: ['仙女', '玉兔', '嫦娥与玉兔'],
-    supportedMaps: ['天宫', '天宫-云上'],
+    supportedMaps: ['天宫'],
     description:
-      '嫦娥怀抱玉兔在广寒宫来回散步。\n当任意{鞭炮}在广寒宫房间内被引爆时，嫦娥将会生气，周身在一段时间内被寒气环绕，对范围内的所有角色持续地施加“深寒”状态，该状态下移速降低且会熄灭鞭炮，可叠加，叠加至第5层时清除并造成伤害和冰冻控制（与{冰块}状态完全相同）。\n当嫦娥接触到{萝卜墩-天宫}时，她怀中的玉兔将会进食，随后为周围所有角色提供增益状态，并平息嫦娥的怒火。',
+      '玉璧可被鼠方角色持续缓慢推动/被猫方角色一次性大力推动。玉璧在坠落时碰到敌方角色将对其造成伤害及眩晕，坠落至地面时销毁。',
   },
   香炉: {
     type: ['平台类', '组件类'],
     source: '地图组件',
-    aliases: ['檀香炉', '檀香'],
+    aliases: ['炉子', '檀香炉', '檀香'],
     move: false,
     gravity: false,
     collsion: ['道具', '角色'],
-    supportedMaps: ['天宫'],
+    supportedMaps: ['天宫', '天宫-云上'],
     description:
       '香炉会间歇性散发檀香的香气。当角色在檀香范围内待一段时间后，将清除远视及部分反向、失明状态，并在一段时间内提高视野，但期间免疫部分远视状态。',
+  },
+  仙丹: {
+    type: ['组件类', '可交互'],
+    source: '地图组件',
+    move: false,
+    gravity: false,
+    supportedMaps: ['天宫'],
+    description:
+      '角色可通过交互吃掉仙丹，立即回复Hp并解除大部分反向、失明状态，随后一段时间内持续恢复Hp（与{牛奶}相同）。',
+  },
+  炼丹炉: {
+    type: ['平台类', '组件类', '可交互'],
+    source: '地图组件',
+    aliases: ['炉子', '丹炉'],
+    move: false,
+    gravity: false,
+    collsion: ['道具', '角色'],
+    supportedMaps: ['天宫', '天宫-云上'],
+    description:
+      '角色与丹炉交互后，将尝试把[一个当前持有的道具](优先手持道具，其次饮料)投入炼丹炉进行炼制。炼丹炉炼制完毕后一段时间内无法再次炼制，且若炼制未失败，则在炼制冷却期间丹炉将持续燃烧，使附近的角色被烫伤。\n炼制可能出现三种结果：\n大成功（10%）：炼制出一瓶{神秘饮料}；\n成功：按兑换规则炼制出产物；\n失败：没有任何产物。\n\n兑换规则：\n{玻璃杯}/{盘子}/{碗}/{扁盘}→{香水瓶}/{胡椒瓶}→{高尔夫球}/{叉子}→{苍蝇拍}/{老鼠夹}；\n{苍蝇拍}→{老鼠夹}→{苍蝇拍}；\n{冰块}→{灰花瓶}→{蓝花瓶}→{神秘饮料}；\n任意{饮料}→{玩具枪}→{奶酪}；\n{小鞭炮}→{鞭炮束}；\n{果盘}→{冰桶}/{玩具枪}（与{鸟巢}相同，但该配方疑似无法实现）。',
   },
   蒲团: {
     type: ['平台类', '组件类'],
@@ -1504,6 +1660,26 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     supportedMaps: ['天宫', '天宫-云上'],
     description:
       '蒲团具有{弹性平台}的特点。此外，角色在蒲团上待一段时间后，将清除受伤、鼠虚弱及部分反向、失明等状态，并在一段时间内持续恢复Hp。',
+  },
+  嫦娥: {
+    type: 'NPC',
+    source: '地图组件',
+    move: true,
+    gravity: false,
+    aliases: ['仙女', '玉兔', '嫦娥与玉兔'],
+    supportedMaps: ['天宫', '天宫-云上'],
+    description:
+      '嫦娥怀抱玉兔在广寒宫来回散步。\n当任意{鞭炮}在广寒宫房间内被引爆时，嫦娥将会生气，周身在一段时间内被寒气环绕，对范围内的所有角色持续地施加“深寒”状态，该状态下移速降低且会熄灭鞭炮，可叠加，叠加至第5层时清除并造成伤害和冰冻控制（与{冰块}状态完全相同）。\n当嫦娥接触到{萝卜墩-天宫}时，她怀中的玉兔将会进食，随后为周围所有角色提供增益状态，并平息嫦娥的怒火。',
+  },
+  吴刚: {
+    type: ['NPC', '平台类'],
+    source: '地图组件',
+    move: true,
+    gravity: false,
+    aliases: ['桂树', '吴刚与桂树'],
+    supportedMaps: ['天宫'],
+    description:
+      '吴刚挥舞木斧，周期性伐向桂树，使此时站在桂树上的角色被硬直（与{碎片}相同，会被相关效果免疫）。',
   },
   金洞: {
     type: ['组件类', '流程类', '可交互'],
