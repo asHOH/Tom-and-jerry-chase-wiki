@@ -1,0 +1,7682 @@
+{
+  "感电": [
+    {
+      "name": "带电残骸",
+      "type": "entity"
+    },
+    {
+      "name": "电风扇",
+      "type": "item"
+    },
+    {
+      "name": "大电球",
+      "type": "skill"
+    },
+    {
+      "name": "小电球",
+      "type": "skill"
+    },
+    {
+      "name": "强能灌注",
+      "type": "skill"
+    },
+    {
+      "name": "机械身躯",
+      "type": "skill"
+    },
+    {
+      "name": "止戈雷云",
+      "type": "skill"
+    },
+    {
+      "name": "猎",
+      "type": "skill"
+    },
+    {
+      "name": "电池",
+      "type": "skill"
+    },
+    {
+      "name": "能源装置",
+      "type": "skill"
+    },
+    {
+      "name": "迅",
+      "type": "skill"
+    },
+    {
+      "name": "雷云",
+      "type": "skill"
+    }
+  ],
+  "眩晕": [
+    {
+      "name": "猫虚弱",
+      "type": "buff"
+    },
+    {
+      "name": "乾坤袋",
+      "type": "entity"
+    },
+    {
+      "name": "列车",
+      "type": "entity"
+    },
+    {
+      "name": "垃圾桶",
+      "type": "entity"
+    },
+    {
+      "name": "墙缝泡泡",
+      "type": "entity"
+    },
+    {
+      "name": "大仙人掌",
+      "type": "entity"
+    },
+    {
+      "name": "大仙人掌球",
+      "type": "entity"
+    },
+    {
+      "name": "套索",
+      "type": "entity"
+    },
+    {
+      "name": "定身符",
+      "type": "entity"
+    },
+    {
+      "name": "小仙人掌",
+      "type": "entity"
+    },
+    {
+      "name": "尼宝的朋友",
+      "type": "entity"
+    },
+    {
+      "name": "巨型胡萝卜",
+      "type": "entity"
+    },
+    {
+      "name": "巨大泰菲球",
+      "type": "entity"
+    },
+    {
+      "name": "带电残骸",
+      "type": "entity"
+    },
+    {
+      "name": "弹簧仙人球",
+      "type": "entity"
+    },
+    {
+      "name": "弹簧猫",
+      "type": "entity"
+    },
+    {
+      "name": "感应雷",
+      "type": "entity"
+    },
+    {
+      "name": "战车",
+      "type": "entity"
+    },
+    {
+      "name": "战车-分离态",
+      "type": "entity"
+    },
+    {
+      "name": "手型枪",
+      "type": "entity"
+    },
+    {
+      "name": "打开的老鼠夹",
+      "type": "entity"
+    },
+    {
+      "name": "披萨",
+      "type": "entity"
+    },
+    {
+      "name": "斗牛",
+      "type": "entity"
+    },
+    {
+      "name": "斜塔",
+      "type": "entity"
+    },
+    {
+      "name": "斯派克",
+      "type": "entity"
+    },
+    {
+      "name": "旋转桶盖",
+      "type": "entity"
+    },
+    {
+      "name": "机器鼠",
+      "type": "entity"
+    },
+    {
+      "name": "板凳猫",
+      "type": "entity"
+    },
+    {
+      "name": "汽水罐",
+      "type": "entity"
+    },
+    {
+      "name": "泡泡",
+      "type": "entity"
+    },
+    {
+      "name": "泰克",
+      "type": "entity"
+    },
+    {
+      "name": "泰菲球",
+      "type": "entity"
+    },
+    {
+      "name": "洞穴",
+      "type": "entity"
+    },
+    {
+      "name": "火炮",
+      "type": "entity"
+    },
+    {
+      "name": "火箭炮",
+      "type": "entity"
+    },
+    {
+      "name": "火药桶",
+      "type": "entity"
+    },
+    {
+      "name": "炮弹",
+      "type": "entity"
+    },
+    {
+      "name": "猫咪泡泡",
+      "type": "entity"
+    },
+    {
+      "name": "瑜伽球",
+      "type": "entity"
+    },
+    {
+      "name": "百科全书",
+      "type": "entity"
+    },
+    {
+      "name": "皇家火炮",
+      "type": "entity"
+    },
+    {
+      "name": "碎片",
+      "type": "entity"
+    },
+    {
+      "name": "管道猫",
+      "type": "entity"
+    },
+    {
+      "name": "花枪",
+      "type": "entity"
+    },
+    {
+      "name": "蓄力箭",
+      "type": "entity"
+    },
+    {
+      "name": "追求者",
+      "type": "entity"
+    },
+    {
+      "name": "遥控机器猫",
+      "type": "entity"
+    },
+    {
+      "name": "遥控机器鼠",
+      "type": "entity"
+    },
+    {
+      "name": "金币",
+      "type": "entity"
+    },
+    {
+      "name": "铁砧",
+      "type": "entity"
+    },
+    {
+      "name": "长枪",
+      "type": "entity"
+    },
+    {
+      "name": "闪耀足球",
+      "type": "entity"
+    },
+    {
+      "name": "飓风",
+      "type": "entity"
+    },
+    {
+      "name": "鱼钩",
+      "type": "entity"
+    },
+    {
+      "name": "鸟哨鞭炮",
+      "type": "entity"
+    },
+    {
+      "name": "鼠片",
+      "type": "entity"
+    },
+    {
+      "name": "仙人掌树",
+      "type": "fixture"
+    },
+    {
+      "name": "剑鱼",
+      "type": "fixture"
+    },
+    {
+      "name": "喷洒间",
+      "type": "fixture"
+    },
+    {
+      "name": "国王",
+      "type": "fixture"
+    },
+    {
+      "name": "大钟",
+      "type": "fixture"
+    },
+    {
+      "name": "女主人",
+      "type": "fixture"
+    },
+    {
+      "name": "嫦娥",
+      "type": "fixture"
+    },
+    {
+      "name": "小黄鸭",
+      "type": "fixture"
+    },
+    {
+      "name": "挡板",
+      "type": "fixture"
+    },
+    {
+      "name": "斯派克",
+      "type": "fixture"
+    },
+    {
+      "name": "暖气片",
+      "type": "fixture"
+    },
+    {
+      "name": "消防栓",
+      "type": "fixture"
+    },
+    {
+      "name": "灶台",
+      "type": "fixture"
+    },
+    {
+      "name": "炸药堆",
+      "type": "fixture"
+    },
+    {
+      "name": "炼丹炉",
+      "type": "fixture"
+    },
+    {
+      "name": "烤箱",
+      "type": "fixture"
+    },
+    {
+      "name": "熨衣板",
+      "type": "fixture"
+    },
+    {
+      "name": "百叶窗",
+      "type": "fixture"
+    },
+    {
+      "name": "盔甲人",
+      "type": "fixture"
+    },
+    {
+      "name": "盔甲兵",
+      "type": "fixture"
+    },
+    {
+      "name": "碎酒瓶",
+      "type": "fixture"
+    },
+    {
+      "name": "章鱼",
+      "type": "fixture"
+    },
+    {
+      "name": "管道",
+      "type": "fixture"
+    },
+    {
+      "name": "药水罐",
+      "type": "fixture"
+    },
+    {
+      "name": "长柄斧",
+      "type": "fixture"
+    },
+    {
+      "name": "鸭妈妈",
+      "type": "fixture"
+    },
+    {
+      "name": "鸭爸爸",
+      "type": "fixture"
+    },
+    {
+      "name": "黑牛",
+      "type": "fixture"
+    },
+    {
+      "name": "冰块",
+      "type": "item"
+    },
+    {
+      "name": "小鞭炮",
+      "type": "item"
+    },
+    {
+      "name": "拳套盒",
+      "type": "item"
+    },
+    {
+      "name": "泡泡机",
+      "type": "item"
+    },
+    {
+      "name": "灰花瓶",
+      "type": "item"
+    },
+    {
+      "name": "狗骨头",
+      "type": "item"
+    },
+    {
+      "name": "电风扇",
+      "type": "item"
+    },
+    {
+      "name": "老鼠夹",
+      "type": "item"
+    },
+    {
+      "name": "苍蝇拍",
+      "type": "item"
+    },
+    {
+      "name": "蓝花瓶",
+      "type": "item"
+    },
+    {
+      "name": "遥控器",
+      "type": "item"
+    },
+    {
+      "name": "鞭炮束",
+      "type": "item"
+    },
+    {
+      "name": "击晕",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "无畏",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "猫鼠广场",
+      "type": "mode"
+    },
+    {
+      "name": "BOOM!!",
+      "type": "skill"
+    },
+    {
+      "name": "世界波",
+      "type": "skill"
+    },
+    {
+      "name": "丘比特之箭",
+      "type": "skill"
+    },
+    {
+      "name": "丰收盛宴",
+      "type": "skill"
+    },
+    {
+      "name": "乾坤袋",
+      "type": "skill"
+    },
+    {
+      "name": "仙人掌",
+      "type": "skill"
+    },
+    {
+      "name": "仙人掌弹弓",
+      "type": "skill"
+    },
+    {
+      "name": "共鸣",
+      "type": "skill"
+    },
+    {
+      "name": "军团战车",
+      "type": "skill"
+    },
+    {
+      "name": "剑客长枪",
+      "type": "skill"
+    },
+    {
+      "name": "剑舞华尔兹",
+      "type": "skill"
+    },
+    {
+      "name": "勇往直前",
+      "type": "skill"
+    },
+    {
+      "name": "勇气冲刺",
+      "type": "skill"
+    },
+    {
+      "name": "喵喵叫",
+      "type": "skill"
+    },
+    {
+      "name": "垃圾桶",
+      "type": "skill"
+    },
+    {
+      "name": "垃圾盖",
+      "type": "skill"
+    },
+    {
+      "name": "大电球",
+      "type": "skill"
+    },
+    {
+      "name": "大铁锤",
+      "type": "skill"
+    },
+    {
+      "name": "小电球",
+      "type": "skill"
+    },
+    {
+      "name": "尼宝的朋友",
+      "type": "skill"
+    },
+    {
+      "name": "平底锅",
+      "type": "skill"
+    },
+    {
+      "name": "弹力圆球",
+      "type": "skill"
+    },
+    {
+      "name": "强能灌注",
+      "type": "skill"
+    },
+    {
+      "name": "意式披萨",
+      "type": "skill"
+    },
+    {
+      "name": "感同身受",
+      "type": "skill"
+    },
+    {
+      "name": "戏剧转折",
+      "type": "skill"
+    },
+    {
+      "name": "战术机动",
+      "type": "skill"
+    },
+    {
+      "name": "手型枪",
+      "type": "skill"
+    },
+    {
+      "name": "指甲油",
+      "type": "skill"
+    },
+    {
+      "name": "捕虫网",
+      "type": "skill"
+    },
+    {
+      "name": "掷花枪",
+      "type": "skill"
+    },
+    {
+      "name": "攻无不克",
+      "type": "skill"
+    },
+    {
+      "name": "斗牛",
+      "type": "skill"
+    },
+    {
+      "name": "旋刃剑舞",
+      "type": "skill"
+    },
+    {
+      "name": "旋转桶盖",
+      "type": "skill"
+    },
+    {
+      "name": "机械身躯",
+      "type": "skill"
+    },
+    {
+      "name": "柠檬旋风",
+      "type": "skill"
+    },
+    {
+      "name": "格挡之剑",
+      "type": "skill"
+    },
+    {
+      "name": "横冲直撞",
+      "type": "skill"
+    },
+    {
+      "name": "止戈雷云",
+      "type": "skill"
+    },
+    {
+      "name": "比萨斜塔",
+      "type": "skill"
+    },
+    {
+      "name": "汽水罐",
+      "type": "skill"
+    },
+    {
+      "name": "沙包拳头",
+      "type": "skill"
+    },
+    {
+      "name": "泡泡棒",
+      "type": "skill"
+    },
+    {
+      "name": "滑步踢",
+      "type": "skill"
+    },
+    {
+      "name": "火箭筒",
+      "type": "skill"
+    },
+    {
+      "name": "火药桶",
+      "type": "skill"
+    },
+    {
+      "name": "牛仔吉他",
+      "type": "skill"
+    },
+    {
+      "name": "牛仔的礼物",
+      "type": "skill"
+    },
+    {
+      "name": "牛仔鞭索",
+      "type": "skill"
+    },
+    {
+      "name": "狂",
+      "type": "skill"
+    },
+    {
+      "name": "狡兔三窟",
+      "type": "skill"
+    },
+    {
+      "name": "猎",
+      "type": "skill"
+    },
+    {
+      "name": "瑜伽球",
+      "type": "skill"
+    },
+    {
+      "name": "电池",
+      "type": "skill"
+    },
+    {
+      "name": "皇家火炮",
+      "type": "skill"
+    },
+    {
+      "name": "瞬移闪击",
+      "type": "skill"
+    },
+    {
+      "name": "知识即力量",
+      "type": "skill"
+    },
+    {
+      "name": "胡椒粉罐头",
+      "type": "skill"
+    },
+    {
+      "name": "胡萝卜",
+      "type": "skill"
+    },
+    {
+      "name": "能源装置",
+      "type": "skill"
+    },
+    {
+      "name": "自由翱翔",
+      "type": "skill"
+    },
+    {
+      "name": "舞花枪",
+      "type": "skill"
+    },
+    {
+      "name": "舰艇火炮",
+      "type": "skill"
+    },
+    {
+      "name": "西部情谊",
+      "type": "skill"
+    },
+    {
+      "name": "说出你的故事",
+      "type": "skill"
+    },
+    {
+      "name": "贵族礼仪",
+      "type": "skill"
+    },
+    {
+      "name": "迅",
+      "type": "skill"
+    },
+    {
+      "name": "迷乱列车",
+      "type": "skill"
+    },
+    {
+      "name": "追求者出击",
+      "type": "skill"
+    },
+    {
+      "name": "追风双翼",
+      "type": "skill"
+    },
+    {
+      "name": "追风状态",
+      "type": "skill"
+    },
+    {
+      "name": "野生体格",
+      "type": "skill"
+    },
+    {
+      "name": "隐形感应雷",
+      "type": "skill"
+    },
+    {
+      "name": "雷云",
+      "type": "skill"
+    },
+    {
+      "name": "鞭子",
+      "type": "skill"
+    },
+    {
+      "name": "飞翔金币",
+      "type": "skill"
+    },
+    {
+      "name": "骑士之剑",
+      "type": "skill"
+    },
+    {
+      "name": "骑士连斩",
+      "type": "skill"
+    },
+    {
+      "name": "魔音穿耳",
+      "type": "skill"
+    },
+    {
+      "name": "鸟哨",
+      "type": "skill"
+    },
+    {
+      "name": "冰冻保鲜",
+      "type": "specialSkill"
+    },
+    {
+      "name": "干扰投掷",
+      "type": "specialSkill"
+    }
+  ],
+  "滑行": [
+    {
+      "name": "冰面",
+      "type": "entity"
+    },
+    {
+      "name": "汽水冰面",
+      "type": "entity"
+    },
+    {
+      "name": "汽水罐",
+      "type": "entity"
+    },
+    {
+      "name": "水潭",
+      "type": "fixture"
+    },
+    {
+      "name": "百叶窗",
+      "type": "fixture"
+    },
+    {
+      "name": "红色机油桶",
+      "type": "fixture"
+    },
+    {
+      "name": "调料罐-油",
+      "type": "fixture"
+    },
+    {
+      "name": "冰块",
+      "type": "item"
+    },
+    {
+      "name": "汽水罐",
+      "type": "skill"
+    }
+  ],
+  "隐身": [
+    {
+      "name": "干扰器",
+      "type": "entity"
+    },
+    {
+      "name": "恶魔之门",
+      "type": "entity"
+    },
+    {
+      "name": "星星",
+      "type": "entity"
+    },
+    {
+      "name": "黄色卡牌",
+      "type": "entity"
+    },
+    {
+      "name": "喷洒间",
+      "type": "fixture"
+    },
+    {
+      "name": "药水罐",
+      "type": "fixture"
+    },
+    {
+      "name": "隐身饮料",
+      "type": "item"
+    },
+    {
+      "name": "创意玩法",
+      "type": "mode"
+    },
+    {
+      "name": "特工行动",
+      "type": "mode"
+    },
+    {
+      "name": "三叉戟",
+      "type": "skill"
+    },
+    {
+      "name": "分身大师",
+      "type": "skill"
+    },
+    {
+      "name": "奇思妙想",
+      "type": "skill"
+    },
+    {
+      "name": "星星棒",
+      "type": "skill"
+    },
+    {
+      "name": "暗中观察",
+      "type": "skill"
+    },
+    {
+      "name": "灵活跳跃",
+      "type": "skill"
+    },
+    {
+      "name": "视觉干扰器",
+      "type": "skill"
+    },
+    {
+      "name": "隐身",
+      "type": "skill"
+    },
+    {
+      "name": "魔咒强身",
+      "type": "skill"
+    }
+  ],
+  "失明": [
+    {
+      "name": "侦探泰菲分身",
+      "type": "entity"
+    },
+    {
+      "name": "煎蛋",
+      "type": "entity"
+    },
+    {
+      "name": "胡椒烟雾",
+      "type": "entity"
+    },
+    {
+      "name": "闪耀足球",
+      "type": "entity"
+    },
+    {
+      "name": "饮料分身",
+      "type": "entity"
+    },
+    {
+      "name": "饮料印记",
+      "type": "entity"
+    },
+    {
+      "name": "壁炉",
+      "type": "fixture"
+    },
+    {
+      "name": "胡椒瓶",
+      "type": "item"
+    },
+    {
+      "name": "世界波",
+      "type": "skill"
+    },
+    {
+      "name": "分身大师",
+      "type": "skill"
+    },
+    {
+      "name": "平底锅",
+      "type": "skill"
+    },
+    {
+      "name": "感同身受",
+      "type": "skill"
+    },
+    {
+      "name": "记录美好瞬间",
+      "type": "skill"
+    },
+    {
+      "name": "追踪饮料",
+      "type": "skill"
+    },
+    {
+      "name": "香风折扇",
+      "type": "skill"
+    }
+  ],
+  "反向": [
+    {
+      "name": "香水烟雾",
+      "type": "entity"
+    },
+    {
+      "name": "黄色卡牌",
+      "type": "entity"
+    },
+    {
+      "name": "香水瓶",
+      "type": "item"
+    },
+    {
+      "name": "创意玩法",
+      "type": "mode"
+    },
+    {
+      "name": "奇思妙想",
+      "type": "skill"
+    },
+    {
+      "name": "感同身受",
+      "type": "skill"
+    },
+    {
+      "name": "指甲油",
+      "type": "skill"
+    },
+    {
+      "name": "狡兔三窟",
+      "type": "skill"
+    },
+    {
+      "name": "香风折扇",
+      "type": "skill"
+    },
+    {
+      "name": "魔咒强身",
+      "type": "skill"
+    }
+  ],
+  "护盾": [
+    {
+      "name": "守护战旗",
+      "type": "entity"
+    },
+    {
+      "name": "恶魔之门",
+      "type": "entity"
+    },
+    {
+      "name": "机器鼠",
+      "type": "entity"
+    },
+    {
+      "name": "炮弹",
+      "type": "entity"
+    },
+    {
+      "name": "皇家火炮",
+      "type": "entity"
+    },
+    {
+      "name": "护盾饮料",
+      "type": "item"
+    },
+    {
+      "name": "回家",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "幸运",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "护佑",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "混沌大作战",
+      "type": "mode"
+    },
+    {
+      "name": "谁是外星人",
+      "type": "mode"
+    },
+    {
+      "name": "三叉戟",
+      "type": "skill"
+    },
+    {
+      "name": "勇者无惧",
+      "type": "skill"
+    },
+    {
+      "name": "国王战旗",
+      "type": "skill"
+    },
+    {
+      "name": "地狱裂隙",
+      "type": "skill"
+    },
+    {
+      "name": "天使祝福",
+      "type": "skill"
+    },
+    {
+      "name": "威严光盾",
+      "type": "skill"
+    },
+    {
+      "name": "小情绪",
+      "type": "skill"
+    },
+    {
+      "name": "幻风礼服",
+      "type": "skill"
+    },
+    {
+      "name": "感同身受",
+      "type": "skill"
+    },
+    {
+      "name": "无坚不摧",
+      "type": "skill"
+    },
+    {
+      "name": "皇家火炮",
+      "type": "skill"
+    },
+    {
+      "name": "超级变！变！变！",
+      "type": "skill"
+    },
+    {
+      "name": "野生体格",
+      "type": "skill"
+    }
+  ],
+  "无敌": [
+    {
+      "name": "猫虚弱",
+      "type": "buff"
+    },
+    {
+      "name": "乾坤袋",
+      "type": "entity"
+    },
+    {
+      "name": "头盔",
+      "type": "entity"
+    },
+    {
+      "name": "套索",
+      "type": "entity"
+    },
+    {
+      "name": "机器鼠",
+      "type": "entity"
+    },
+    {
+      "name": "花束",
+      "type": "entity"
+    },
+    {
+      "name": "花枪",
+      "type": "entity"
+    },
+    {
+      "name": "喷洒间",
+      "type": "fixture"
+    },
+    {
+      "name": "盔甲人",
+      "type": "fixture"
+    },
+    {
+      "name": "无畏",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "舍己",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "5V5经典奶酪赛",
+      "type": "mode"
+    },
+    {
+      "name": "混沌大作战",
+      "type": "mode"
+    },
+    {
+      "name": "漂浮气球",
+      "type": "mode"
+    },
+    {
+      "name": "乾坤袋",
+      "type": "skill"
+    },
+    {
+      "name": "发怒冲刺",
+      "type": "skill"
+    },
+    {
+      "name": "国王权杖",
+      "type": "skill"
+    },
+    {
+      "name": "圆滚滚",
+      "type": "skill"
+    },
+    {
+      "name": "头盔",
+      "type": "skill"
+    },
+    {
+      "name": "戏剧转折",
+      "type": "skill"
+    },
+    {
+      "name": "掷花枪",
+      "type": "skill"
+    },
+    {
+      "name": "攻无不克",
+      "type": "skill"
+    },
+    {
+      "name": "格挡之剑",
+      "type": "skill"
+    },
+    {
+      "name": "爱心花束",
+      "type": "skill"
+    },
+    {
+      "name": "牛仔鞭索",
+      "type": "skill"
+    },
+    {
+      "name": "狡兔三窟",
+      "type": "skill"
+    },
+    {
+      "name": "老牛仔",
+      "type": "skill"
+    },
+    {
+      "name": "舞花枪",
+      "type": "skill"
+    },
+    {
+      "name": "冰冻保鲜",
+      "type": "specialSkill"
+    }
+  ],
+  "无法移动": [
+    {
+      "name": "鱼缸",
+      "type": "fixture"
+    },
+    {
+      "name": "超级变！变！变！",
+      "type": "skill"
+    }
+  ],
+  "隐藏": [
+    {
+      "name": "小推车",
+      "type": "fixture"
+    },
+    {
+      "name": "桶",
+      "type": "fixture"
+    }
+  ],
+  "冲刺": [
+    {
+      "name": "战车",
+      "type": "entity"
+    },
+    {
+      "name": "军团战车",
+      "type": "skill"
+    },
+    {
+      "name": "勇往直前",
+      "type": "skill"
+    },
+    {
+      "name": "勇气冲刺",
+      "type": "skill"
+    },
+    {
+      "name": "横冲直撞",
+      "type": "skill"
+    },
+    {
+      "name": "骑士连斩",
+      "type": "skill"
+    }
+  ],
+  "吻痕": [
+    {
+      "name": "飞吻",
+      "type": "entity"
+    },
+    {
+      "name": "魅惑之吻",
+      "type": "skill"
+    }
+  ],
+  "持续伤害": [
+    {
+      "name": "垃圾桶",
+      "type": "entity"
+    },
+    {
+      "name": "大仙人掌",
+      "type": "entity"
+    },
+    {
+      "name": "小仙人掌",
+      "type": "entity"
+    },
+    {
+      "name": "木塞子",
+      "type": "entity"
+    },
+    {
+      "name": "爆炸仙人球",
+      "type": "entity"
+    },
+    {
+      "name": "胡椒粉罐头",
+      "type": "entity"
+    },
+    {
+      "name": "胡椒罐头烟雾",
+      "type": "entity"
+    },
+    {
+      "name": "太空",
+      "type": "fixture"
+    },
+    {
+      "name": "仙人掌",
+      "type": "skill"
+    },
+    {
+      "name": "喜剧之王",
+      "type": "skill"
+    },
+    {
+      "name": "垃圾桶",
+      "type": "skill"
+    },
+    {
+      "name": "最佳表演",
+      "type": "skill"
+    },
+    {
+      "name": "灵气修为",
+      "type": "skill"
+    },
+    {
+      "name": "牛仔吉他",
+      "type": "skill"
+    },
+    {
+      "name": "牛仔的礼物",
+      "type": "skill"
+    },
+    {
+      "name": "狂欢时刻",
+      "type": "skill"
+    },
+    {
+      "name": "玩具长长长枪",
+      "type": "skill"
+    },
+    {
+      "name": "胡椒粉罐头",
+      "type": "skill"
+    },
+    {
+      "name": "鞭子",
+      "type": "skill"
+    },
+    {
+      "name": "香水美人",
+      "type": "skill"
+    }
+  ],
+  "间歇性受到状态": [
+    {
+      "name": "黄色卡牌",
+      "type": "entity"
+    },
+    {
+      "name": "红色机油桶",
+      "type": "fixture"
+    },
+    {
+      "name": "调料罐-油",
+      "type": "fixture"
+    },
+    {
+      "name": "创意玩法",
+      "type": "mode"
+    },
+    {
+      "name": "混沌大作战",
+      "type": "mode"
+    },
+    {
+      "name": "奇思妙想",
+      "type": "skill"
+    },
+    {
+      "name": "西部情谊",
+      "type": "skill"
+    },
+    {
+      "name": "野生体格",
+      "type": "skill"
+    }
+  ],
+  "间歇性隐身": [
+    {
+      "name": "虚幻梦影",
+      "type": "skill"
+    }
+  ],
+  "禁疗": [
+    {
+      "name": "混沌大作战",
+      "type": "mode"
+    },
+    {
+      "name": "喜剧之王",
+      "type": "skill"
+    },
+    {
+      "name": "野性迸发",
+      "type": "skill"
+    }
+  ],
+  "移速倍率": [
+    {
+      "name": "受伤",
+      "type": "buff"
+    },
+    {
+      "name": "鼠虚弱",
+      "type": "buff"
+    },
+    {
+      "name": "三角",
+      "type": "entity"
+    },
+    {
+      "name": "乾坤袋",
+      "type": "entity"
+    },
+    {
+      "name": "兔子先生",
+      "type": "entity"
+    },
+    {
+      "name": "兔子大表哥",
+      "type": "entity"
+    },
+    {
+      "name": "冰面",
+      "type": "entity"
+    },
+    {
+      "name": "剑气",
+      "type": "entity"
+    },
+    {
+      "name": "咸鱼",
+      "type": "entity"
+    },
+    {
+      "name": "咸鱼-投射物",
+      "type": "entity"
+    },
+    {
+      "name": "垃圾桶",
+      "type": "entity"
+    },
+    {
+      "name": "大仙人掌",
+      "type": "entity"
+    },
+    {
+      "name": "大星星",
+      "type": "entity"
+    },
+    {
+      "name": "套索",
+      "type": "entity"
+    },
+    {
+      "name": "子弹",
+      "type": "entity"
+    },
+    {
+      "name": "守护战旗",
+      "type": "entity"
+    },
+    {
+      "name": "小仙人掌",
+      "type": "entity"
+    },
+    {
+      "name": "小仙人掌球",
+      "type": "entity"
+    },
+    {
+      "name": "巨型胡萝卜",
+      "type": "entity"
+    },
+    {
+      "name": "巨大泰菲球",
+      "type": "entity"
+    },
+    {
+      "name": "干扰器",
+      "type": "entity"
+    },
+    {
+      "name": "弓箭",
+      "type": "entity"
+    },
+    {
+      "name": "弹簧猫",
+      "type": "entity"
+    },
+    {
+      "name": "强化三角",
+      "type": "entity"
+    },
+    {
+      "name": "恶魔之门",
+      "type": "entity"
+    },
+    {
+      "name": "战车",
+      "type": "entity"
+    },
+    {
+      "name": "托普斯分身",
+      "type": "entity"
+    },
+    {
+      "name": "披萨",
+      "type": "entity"
+    },
+    {
+      "name": "星星",
+      "type": "entity"
+    },
+    {
+      "name": "星星-敌方",
+      "type": "entity"
+    },
+    {
+      "name": "木塞子",
+      "type": "entity"
+    },
+    {
+      "name": "机器鼠",
+      "type": "entity"
+    },
+    {
+      "name": "果子",
+      "type": "entity"
+    },
+    {
+      "name": "柠檬",
+      "type": "entity"
+    },
+    {
+      "name": "柠檬杰瑞",
+      "type": "entity"
+    },
+    {
+      "name": "毛线",
+      "type": "entity"
+    },
+    {
+      "name": "毛线球",
+      "type": "entity"
+    },
+    {
+      "name": "汽水冰面",
+      "type": "entity"
+    },
+    {
+      "name": "汽水罐",
+      "type": "entity"
+    },
+    {
+      "name": "泰克",
+      "type": "entity"
+    },
+    {
+      "name": "泰菲球",
+      "type": "entity"
+    },
+    {
+      "name": "炮弹",
+      "type": "entity"
+    },
+    {
+      "name": "烂番茄",
+      "type": "entity"
+    },
+    {
+      "name": "烟雾",
+      "type": "entity"
+    },
+    {
+      "name": "爱心之吻",
+      "type": "entity"
+    },
+    {
+      "name": "皇家火炮",
+      "type": "entity"
+    },
+    {
+      "name": "管道猫",
+      "type": "entity"
+    },
+    {
+      "name": "红色卡牌",
+      "type": "entity"
+    },
+    {
+      "name": "红色小淘气",
+      "type": "entity"
+    },
+    {
+      "name": "线条猫",
+      "type": "entity"
+    },
+    {
+      "name": "绿色小淘气",
+      "type": "entity"
+    },
+    {
+      "name": "胡椒粉罐头",
+      "type": "entity"
+    },
+    {
+      "name": "胡椒罐头烟雾",
+      "type": "entity"
+    },
+    {
+      "name": "花洒",
+      "type": "entity"
+    },
+    {
+      "name": "蓝图",
+      "type": "entity"
+    },
+    {
+      "name": "蓝色卡牌",
+      "type": "entity"
+    },
+    {
+      "name": "藤蔓",
+      "type": "entity"
+    },
+    {
+      "name": "闪电仙人球",
+      "type": "entity"
+    },
+    {
+      "name": "飞吻",
+      "type": "entity"
+    },
+    {
+      "name": "饮料印记",
+      "type": "entity"
+    },
+    {
+      "name": "香水区域",
+      "type": "entity"
+    },
+    {
+      "name": "黄色卡牌",
+      "type": "entity"
+    },
+    {
+      "name": "鼠片",
+      "type": "entity"
+    },
+    {
+      "name": "仙丹",
+      "type": "fixture"
+    },
+    {
+      "name": "冰箱",
+      "type": "fixture"
+    },
+    {
+      "name": "唤猫铃",
+      "type": "fixture"
+    },
+    {
+      "name": "喷洒间",
+      "type": "fixture"
+    },
+    {
+      "name": "大钟",
+      "type": "fixture"
+    },
+    {
+      "name": "嫦娥",
+      "type": "fixture"
+    },
+    {
+      "name": "小熊猫",
+      "type": "fixture"
+    },
+    {
+      "name": "斯派克",
+      "type": "fixture"
+    },
+    {
+      "name": "果树丛",
+      "type": "fixture"
+    },
+    {
+      "name": "水潭",
+      "type": "fixture"
+    },
+    {
+      "name": "洗碗池",
+      "type": "fixture"
+    },
+    {
+      "name": "消防栓",
+      "type": "fixture"
+    },
+    {
+      "name": "游乐场水池",
+      "type": "fixture"
+    },
+    {
+      "name": "烤箱",
+      "type": "fixture"
+    },
+    {
+      "name": "盔甲人",
+      "type": "fixture"
+    },
+    {
+      "name": "站牌",
+      "type": "fixture"
+    },
+    {
+      "name": "红色机油桶",
+      "type": "fixture"
+    },
+    {
+      "name": "绿色机油桶",
+      "type": "fixture"
+    },
+    {
+      "name": "药水罐",
+      "type": "fixture"
+    },
+    {
+      "name": "调料罐-水",
+      "type": "fixture"
+    },
+    {
+      "name": "调料罐-油",
+      "type": "fixture"
+    },
+    {
+      "name": "鱼缸",
+      "type": "fixture"
+    },
+    {
+      "name": "鸭妈妈",
+      "type": "fixture"
+    },
+    {
+      "name": "鸭爸爸",
+      "type": "fixture"
+    },
+    {
+      "name": "黄色花",
+      "type": "fixture"
+    },
+    {
+      "name": "冰块",
+      "type": "item"
+    },
+    {
+      "name": "叉子",
+      "type": "item"
+    },
+    {
+      "name": "变身饮料",
+      "type": "item"
+    },
+    {
+      "name": "奶酪",
+      "type": "item"
+    },
+    {
+      "name": "扁盘",
+      "type": "item"
+    },
+    {
+      "name": "果盘",
+      "type": "item"
+    },
+    {
+      "name": "牛奶",
+      "type": "item"
+    },
+    {
+      "name": "狗骨头",
+      "type": "item"
+    },
+    {
+      "name": "玩具枪",
+      "type": "item"
+    },
+    {
+      "name": "玻璃杯",
+      "type": "item"
+    },
+    {
+      "name": "番茄",
+      "type": "item"
+    },
+    {
+      "name": "盘子",
+      "type": "item"
+    },
+    {
+      "name": "碗",
+      "type": "item"
+    },
+    {
+      "name": "苍蝇拍",
+      "type": "item"
+    },
+    {
+      "name": "高尔夫球",
+      "type": "item"
+    },
+    {
+      "name": "乘胜追击",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "乾坤一掷",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "冲冠一怒",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "回家",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "威压",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "孤军奋战",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "应激反应",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "投手",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "春风得意",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "气势如牛",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "狡诈",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "祝愿",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "穷追猛打",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "细心",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "翩若惊鸿",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "越挫越勇",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "追风",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "逃之夭夭",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "逃窜",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "5V5经典奶酪赛",
+      "type": "mode"
+    },
+    {
+      "name": "创意玩法",
+      "type": "mode"
+    },
+    {
+      "name": "婚礼大作战",
+      "type": "mode"
+    },
+    {
+      "name": "沙滩排球",
+      "type": "mode"
+    },
+    {
+      "name": "混沌大作战",
+      "type": "mode"
+    },
+    {
+      "name": "漂浮气球",
+      "type": "mode"
+    },
+    {
+      "name": "特工行动",
+      "type": "mode"
+    },
+    {
+      "name": "猫鼠广场",
+      "type": "mode"
+    },
+    {
+      "name": "疯狂奶酪赛",
+      "type": "mode"
+    },
+    {
+      "name": "装饰树大作战",
+      "type": "mode"
+    },
+    {
+      "name": "BOOM!!",
+      "type": "skill"
+    },
+    {
+      "name": "三叉戟",
+      "type": "skill"
+    },
+    {
+      "name": "世界波",
+      "type": "skill"
+    },
+    {
+      "name": "丘比特之箭",
+      "type": "skill"
+    },
+    {
+      "name": "丰收盛宴",
+      "type": "skill"
+    },
+    {
+      "name": "乾坤袋",
+      "type": "skill"
+    },
+    {
+      "name": "二段跳",
+      "type": "skill"
+    },
+    {
+      "name": "仙人掌",
+      "type": "skill"
+    },
+    {
+      "name": "仙人掌弹弓",
+      "type": "skill"
+    },
+    {
+      "name": "优雅从容",
+      "type": "skill"
+    },
+    {
+      "name": "兔子先生",
+      "type": "skill"
+    },
+    {
+      "name": "兔子大表哥",
+      "type": "skill"
+    },
+    {
+      "name": "军团战车",
+      "type": "skill"
+    },
+    {
+      "name": "剑盾防御",
+      "type": "skill"
+    },
+    {
+      "name": "剑舞华尔兹",
+      "type": "skill"
+    },
+    {
+      "name": "力大无穷",
+      "type": "skill"
+    },
+    {
+      "name": "勇往直前",
+      "type": "skill"
+    },
+    {
+      "name": "勇气冲刺",
+      "type": "skill"
+    },
+    {
+      "name": "双重猫格",
+      "type": "skill"
+    },
+    {
+      "name": "发怒冲刺",
+      "type": "skill"
+    },
+    {
+      "name": "咸鱼",
+      "type": "skill"
+    },
+    {
+      "name": "喜剧之王",
+      "type": "skill"
+    },
+    {
+      "name": "喵喵叫",
+      "type": "skill"
+    },
+    {
+      "name": "国王战旗",
+      "type": "skill"
+    },
+    {
+      "name": "地狱裂隙",
+      "type": "skill"
+    },
+    {
+      "name": "坚强的米雪儿",
+      "type": "skill"
+    },
+    {
+      "name": "垃圾桶",
+      "type": "skill"
+    },
+    {
+      "name": "垃圾盖",
+      "type": "skill"
+    },
+    {
+      "name": "天使强化",
+      "type": "skill"
+    },
+    {
+      "name": "奇思妙想",
+      "type": "skill"
+    },
+    {
+      "name": "奶酪好手",
+      "type": "skill"
+    },
+    {
+      "name": "威严光盾",
+      "type": "skill"
+    },
+    {
+      "name": "小淘气",
+      "type": "skill"
+    },
+    {
+      "name": "幻影剑气",
+      "type": "skill"
+    },
+    {
+      "name": "弹力圆球",
+      "type": "skill"
+    },
+    {
+      "name": "律动时间",
+      "type": "skill"
+    },
+    {
+      "name": "心思缜密",
+      "type": "skill"
+    },
+    {
+      "name": "必备专业素养",
+      "type": "skill"
+    },
+    {
+      "name": "怒气喷发",
+      "type": "skill"
+    },
+    {
+      "name": "意式披萨",
+      "type": "skill"
+    },
+    {
+      "name": "感同身受",
+      "type": "skill"
+    },
+    {
+      "name": "戏剧转折",
+      "type": "skill"
+    },
+    {
+      "name": "我，兔八哥",
+      "type": "skill"
+    },
+    {
+      "name": "我，即是军团。",
+      "type": "skill"
+    },
+    {
+      "name": "指甲油",
+      "type": "skill"
+    },
+    {
+      "name": "捕鼠专家",
+      "type": "skill"
+    },
+    {
+      "name": "捣蛋鬼",
+      "type": "skill"
+    },
+    {
+      "name": "旋刃剑舞",
+      "type": "skill"
+    },
+    {
+      "name": "无坚不摧",
+      "type": "skill"
+    },
+    {
+      "name": "星星棒",
+      "type": "skill"
+    },
+    {
+      "name": "暗中观察",
+      "type": "skill"
+    },
+    {
+      "name": "最佳表演",
+      "type": "skill"
+    },
+    {
+      "name": "朝圣瞭望",
+      "type": "skill"
+    },
+    {
+      "name": "柠檬旋风",
+      "type": "skill"
+    },
+    {
+      "name": "横冲直撞",
+      "type": "skill"
+    },
+    {
+      "name": "止戈雷云",
+      "type": "skill"
+    },
+    {
+      "name": "毛线球",
+      "type": "skill"
+    },
+    {
+      "name": "汽水罐",
+      "type": "skill"
+    },
+    {
+      "name": "沙包拳头",
+      "type": "skill"
+    },
+    {
+      "name": "温柔体贴",
+      "type": "skill"
+    },
+    {
+      "name": "烟雾弹",
+      "type": "skill"
+    },
+    {
+      "name": "爱之花洒",
+      "type": "skill"
+    },
+    {
+      "name": "爱心之吻",
+      "type": "skill"
+    },
+    {
+      "name": "牛仔吉他",
+      "type": "skill"
+    },
+    {
+      "name": "牛仔的礼物",
+      "type": "skill"
+    },
+    {
+      "name": "牛仔鞭索",
+      "type": "skill"
+    },
+    {
+      "name": "狂欢时刻",
+      "type": "skill"
+    },
+    {
+      "name": "狡兔三窟",
+      "type": "skill"
+    },
+    {
+      "name": "猎",
+      "type": "skill"
+    },
+    {
+      "name": "玩具长长长枪",
+      "type": "skill"
+    },
+    {
+      "name": "登山飞镐",
+      "type": "skill"
+    },
+    {
+      "name": "皇家火炮",
+      "type": "skill"
+    },
+    {
+      "name": "瞬移闪击",
+      "type": "skill"
+    },
+    {
+      "name": "穷追不舍",
+      "type": "skill"
+    },
+    {
+      "name": "老牛仔",
+      "type": "skill"
+    },
+    {
+      "name": "胆小如鼠",
+      "type": "skill"
+    },
+    {
+      "name": "胡椒粉罐头",
+      "type": "skill"
+    },
+    {
+      "name": "胡萝卜",
+      "type": "skill"
+    },
+    {
+      "name": "能源装置",
+      "type": "skill"
+    },
+    {
+      "name": "舞花枪",
+      "type": "skill"
+    },
+    {
+      "name": "莱恩的世界",
+      "type": "skill"
+    },
+    {
+      "name": "蓝图",
+      "type": "skill"
+    },
+    {
+      "name": "藤蔓",
+      "type": "skill"
+    },
+    {
+      "name": "蘸水笔",
+      "type": "skill"
+    },
+    {
+      "name": "虚幻梦影",
+      "type": "skill"
+    },
+    {
+      "name": "西部情谊",
+      "type": "skill"
+    },
+    {
+      "name": "视觉干扰器",
+      "type": "skill"
+    },
+    {
+      "name": "警戒",
+      "type": "skill"
+    },
+    {
+      "name": "说出你的故事",
+      "type": "skill"
+    },
+    {
+      "name": "身体素质",
+      "type": "skill"
+    },
+    {
+      "name": "身轻如燕",
+      "type": "skill"
+    },
+    {
+      "name": "迅",
+      "type": "skill"
+    },
+    {
+      "name": "追踪饮料",
+      "type": "skill"
+    },
+    {
+      "name": "追风状态",
+      "type": "skill"
+    },
+    {
+      "name": "闪电救援",
+      "type": "skill"
+    },
+    {
+      "name": "闭门羹",
+      "type": "skill"
+    },
+    {
+      "name": "防狼锤",
+      "type": "skill"
+    },
+    {
+      "name": "降落伞",
+      "type": "skill"
+    },
+    {
+      "name": "随机应变",
+      "type": "skill"
+    },
+    {
+      "name": "隐身",
+      "type": "skill"
+    },
+    {
+      "name": "雷云",
+      "type": "skill"
+    },
+    {
+      "name": "鞭子",
+      "type": "skill"
+    },
+    {
+      "name": "风格骤变",
+      "type": "skill"
+    },
+    {
+      "name": "香水美人",
+      "type": "skill"
+    },
+    {
+      "name": "香甜梦境",
+      "type": "skill"
+    },
+    {
+      "name": "香风折扇",
+      "type": "skill"
+    },
+    {
+      "name": "骄傲的学霸",
+      "type": "skill"
+    },
+    {
+      "name": "骑士之剑",
+      "type": "skill"
+    },
+    {
+      "name": "骑士连斩",
+      "type": "skill"
+    },
+    {
+      "name": "魅力甲油",
+      "type": "skill"
+    },
+    {
+      "name": "魅力香水",
+      "type": "skill"
+    },
+    {
+      "name": "魅惑之吻",
+      "type": "skill"
+    },
+    {
+      "name": "黑暗印记",
+      "type": "skill"
+    },
+    {
+      "name": "鼓舞",
+      "type": "skill"
+    },
+    {
+      "name": "全垒打",
+      "type": "specialSkill"
+    },
+    {
+      "name": "应急治疗",
+      "type": "specialSkill",
+      "factionId": "cat"
+    },
+    {
+      "name": "急速翻滚",
+      "type": "specialSkill",
+      "factionId": "cat"
+    }
+  ],
+  "移速加成值": [
+    {
+      "name": "小仙人掌球",
+      "type": "entity"
+    },
+    {
+      "name": "仙人掌弹弓",
+      "type": "skill"
+    },
+    {
+      "name": "共鸣",
+      "type": "skill"
+    },
+    {
+      "name": "自由翱翔",
+      "type": "skill"
+    },
+    {
+      "name": "说出你的故事",
+      "type": "skill"
+    }
+  ],
+  "移速保底": [
+    {
+      "name": "优雅从容",
+      "type": "skill"
+    },
+    {
+      "name": "机械身躯",
+      "type": "skill"
+    },
+    {
+      "name": "穷追不舍",
+      "type": "skill"
+    },
+    {
+      "name": "骑士之剑",
+      "type": "skill"
+    }
+  ],
+  "跳跃能力倍率": [
+    {
+      "name": "鼠虚弱",
+      "type": "buff"
+    },
+    {
+      "name": "兔子先生",
+      "type": "entity"
+    },
+    {
+      "name": "剑气",
+      "type": "entity"
+    },
+    {
+      "name": "咸鱼",
+      "type": "entity"
+    },
+    {
+      "name": "咸鱼-投射物",
+      "type": "entity"
+    },
+    {
+      "name": "垃圾桶",
+      "type": "entity"
+    },
+    {
+      "name": "大仙人掌",
+      "type": "entity"
+    },
+    {
+      "name": "头盔",
+      "type": "entity"
+    },
+    {
+      "name": "子弹",
+      "type": "entity"
+    },
+    {
+      "name": "小仙人掌",
+      "type": "entity"
+    },
+    {
+      "name": "弹簧猫",
+      "type": "entity"
+    },
+    {
+      "name": "恶魔之门",
+      "type": "entity"
+    },
+    {
+      "name": "机器鼠",
+      "type": "entity"
+    },
+    {
+      "name": "泰菲球",
+      "type": "entity"
+    },
+    {
+      "name": "灵巧战旗",
+      "type": "entity"
+    },
+    {
+      "name": "烟雾",
+      "type": "entity"
+    },
+    {
+      "name": "爱心之吻",
+      "type": "entity"
+    },
+    {
+      "name": "管道猫",
+      "type": "entity"
+    },
+    {
+      "name": "胡椒粉罐头",
+      "type": "entity"
+    },
+    {
+      "name": "胡椒罐头烟雾",
+      "type": "entity"
+    },
+    {
+      "name": "花洒",
+      "type": "entity"
+    },
+    {
+      "name": "蓝色卡牌",
+      "type": "entity"
+    },
+    {
+      "name": "藤蔓",
+      "type": "entity"
+    },
+    {
+      "name": "饮料印记",
+      "type": "entity"
+    },
+    {
+      "name": "香水区域",
+      "type": "entity"
+    },
+    {
+      "name": "喷洒间",
+      "type": "fixture"
+    },
+    {
+      "name": "大钟",
+      "type": "fixture"
+    },
+    {
+      "name": "果树丛",
+      "type": "fixture"
+    },
+    {
+      "name": "洗碗池",
+      "type": "fixture"
+    },
+    {
+      "name": "消防栓",
+      "type": "fixture"
+    },
+    {
+      "name": "游乐场水池",
+      "type": "fixture"
+    },
+    {
+      "name": "礼帽",
+      "type": "fixture"
+    },
+    {
+      "name": "药水罐",
+      "type": "fixture"
+    },
+    {
+      "name": "调料罐-水",
+      "type": "fixture"
+    },
+    {
+      "name": "调料罐-盐",
+      "type": "fixture"
+    },
+    {
+      "name": "鱼缸",
+      "type": "fixture"
+    },
+    {
+      "name": "鸭妈妈",
+      "type": "fixture"
+    },
+    {
+      "name": "鸭爸爸",
+      "type": "fixture"
+    },
+    {
+      "name": "黄色花",
+      "type": "fixture"
+    },
+    {
+      "name": "变身饮料",
+      "type": "item"
+    },
+    {
+      "name": "奶酪",
+      "type": "item"
+    },
+    {
+      "name": "玩具枪",
+      "type": "item"
+    },
+    {
+      "name": "乘胜追击",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "冲冠一怒",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "回家",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "应激反应",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "气势如牛",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "祝愿",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "逃窜",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "婚礼大作战",
+      "type": "mode"
+    },
+    {
+      "name": "疯狂奶酪赛",
+      "type": "mode"
+    },
+    {
+      "name": "装饰树大作战",
+      "type": "mode"
+    },
+    {
+      "name": "三叉戟",
+      "type": "skill"
+    },
+    {
+      "name": "仙人掌",
+      "type": "skill"
+    },
+    {
+      "name": "兔子先生",
+      "type": "skill"
+    },
+    {
+      "name": "剑舞华尔兹",
+      "type": "skill"
+    },
+    {
+      "name": "古灵精怪",
+      "type": "skill"
+    },
+    {
+      "name": "咸鱼",
+      "type": "skill"
+    },
+    {
+      "name": "喵喵叫",
+      "type": "skill"
+    },
+    {
+      "name": "国王战旗",
+      "type": "skill"
+    },
+    {
+      "name": "圆滚滚",
+      "type": "skill"
+    },
+    {
+      "name": "地狱裂隙",
+      "type": "skill"
+    },
+    {
+      "name": "垃圾桶",
+      "type": "skill"
+    },
+    {
+      "name": "垃圾盖",
+      "type": "skill"
+    },
+    {
+      "name": "头盔",
+      "type": "skill"
+    },
+    {
+      "name": "奇思妙想",
+      "type": "skill"
+    },
+    {
+      "name": "奶酪好手",
+      "type": "skill"
+    },
+    {
+      "name": "幻影剑气",
+      "type": "skill"
+    },
+    {
+      "name": "律动时间",
+      "type": "skill"
+    },
+    {
+      "name": "必备专业素养",
+      "type": "skill"
+    },
+    {
+      "name": "我，即是军团。",
+      "type": "skill"
+    },
+    {
+      "name": "捣蛋鬼",
+      "type": "skill"
+    },
+    {
+      "name": "无坚不摧",
+      "type": "skill"
+    },
+    {
+      "name": "暗中观察",
+      "type": "skill"
+    },
+    {
+      "name": "最佳表演",
+      "type": "skill"
+    },
+    {
+      "name": "朝圣瞭望",
+      "type": "skill"
+    },
+    {
+      "name": "温柔体贴",
+      "type": "skill"
+    },
+    {
+      "name": "滑步踢",
+      "type": "skill"
+    },
+    {
+      "name": "灵气修为",
+      "type": "skill"
+    },
+    {
+      "name": "烟雾弹",
+      "type": "skill"
+    },
+    {
+      "name": "爱之花洒",
+      "type": "skill"
+    },
+    {
+      "name": "爱心之吻",
+      "type": "skill"
+    },
+    {
+      "name": "牛仔吉他",
+      "type": "skill"
+    },
+    {
+      "name": "狂欢时刻",
+      "type": "skill"
+    },
+    {
+      "name": "登山飞镐",
+      "type": "skill"
+    },
+    {
+      "name": "瞬移闪击",
+      "type": "skill"
+    },
+    {
+      "name": "穷追不舍",
+      "type": "skill"
+    },
+    {
+      "name": "老牛仔",
+      "type": "skill"
+    },
+    {
+      "name": "胆小如鼠",
+      "type": "skill"
+    },
+    {
+      "name": "胡椒粉罐头",
+      "type": "skill"
+    },
+    {
+      "name": "能源装置",
+      "type": "skill"
+    },
+    {
+      "name": "藤蔓",
+      "type": "skill"
+    },
+    {
+      "name": "警戒",
+      "type": "skill"
+    },
+    {
+      "name": "身轻如燕",
+      "type": "skill"
+    },
+    {
+      "name": "追踪饮料",
+      "type": "skill"
+    },
+    {
+      "name": "野生体格",
+      "type": "skill"
+    },
+    {
+      "name": "闭门羹",
+      "type": "skill"
+    },
+    {
+      "name": "防狼锤",
+      "type": "skill"
+    },
+    {
+      "name": "随机应变",
+      "type": "skill"
+    },
+    {
+      "name": "鞭子",
+      "type": "skill"
+    },
+    {
+      "name": "香水美人",
+      "type": "skill"
+    },
+    {
+      "name": "骑士连斩",
+      "type": "skill"
+    },
+    {
+      "name": "魅力甲油",
+      "type": "skill"
+    },
+    {
+      "name": "魅力香水",
+      "type": "skill"
+    },
+    {
+      "name": "黑暗印记",
+      "type": "skill"
+    },
+    {
+      "name": "鼓舞",
+      "type": "skill"
+    },
+    {
+      "name": "全垒打",
+      "type": "specialSkill"
+    }
+  ],
+  "跳跃能力加成值": [
+    {
+      "name": "飞吻",
+      "type": "entity"
+    },
+    {
+      "name": "二段跳",
+      "type": "skill"
+    },
+    {
+      "name": "身轻如燕",
+      "type": "skill"
+    },
+    {
+      "name": "魅惑之吻",
+      "type": "skill"
+    }
+  ],
+  "跳跃能力保底": [
+    {
+      "name": "穷追不舍",
+      "type": "skill"
+    }
+  ],
+  "跳跃次数": [
+    {
+      "name": "星星",
+      "type": "entity"
+    },
+    {
+      "name": "灵巧战旗",
+      "type": "entity"
+    },
+    {
+      "name": "沙滩排球",
+      "type": "mode"
+    },
+    {
+      "name": "二段跳",
+      "type": "skill"
+    },
+    {
+      "name": "国王战旗",
+      "type": "skill"
+    },
+    {
+      "name": "星星棒",
+      "type": "skill"
+    },
+    {
+      "name": "魔术漂浮",
+      "type": "specialSkill"
+    }
+  ],
+  "速度保持": [
+    {
+      "name": "兔子大表哥",
+      "type": "entity"
+    },
+    {
+      "name": "列车",
+      "type": "entity"
+    },
+    {
+      "name": "套索",
+      "type": "entity"
+    },
+    {
+      "name": "尼宝的朋友",
+      "type": "entity"
+    },
+    {
+      "name": "带电残骸",
+      "type": "entity"
+    },
+    {
+      "name": "弹簧仙人球",
+      "type": "entity"
+    },
+    {
+      "name": "强化方块",
+      "type": "entity"
+    },
+    {
+      "name": "手型枪",
+      "type": "entity"
+    },
+    {
+      "name": "斜塔",
+      "type": "entity"
+    },
+    {
+      "name": "机器鼠",
+      "type": "entity"
+    },
+    {
+      "name": "泰菲球",
+      "type": "entity"
+    },
+    {
+      "name": "瑜伽球",
+      "type": "entity"
+    },
+    {
+      "name": "管道猫",
+      "type": "entity"
+    },
+    {
+      "name": "红色小淘气",
+      "type": "entity"
+    },
+    {
+      "name": "花束",
+      "type": "entity"
+    },
+    {
+      "name": "花枪",
+      "type": "entity"
+    },
+    {
+      "name": "飓风",
+      "type": "entity"
+    },
+    {
+      "name": "鱼钩",
+      "type": "entity"
+    },
+    {
+      "name": "挡板",
+      "type": "fixture"
+    },
+    {
+      "name": "消防栓",
+      "type": "fixture"
+    },
+    {
+      "name": "百叶窗",
+      "type": "fixture"
+    },
+    {
+      "name": "电风扇",
+      "type": "item"
+    },
+    {
+      "name": "漂浮气球",
+      "type": "mode"
+    },
+    {
+      "name": "猫鼠广场",
+      "type": "mode"
+    },
+    {
+      "name": "BOOM!!",
+      "type": "skill"
+    },
+    {
+      "name": "兔子大表哥",
+      "type": "skill"
+    },
+    {
+      "name": "勇往直前",
+      "type": "skill"
+    },
+    {
+      "name": "大电球",
+      "type": "skill"
+    },
+    {
+      "name": "小淘气",
+      "type": "skill"
+    },
+    {
+      "name": "小电球",
+      "type": "skill"
+    },
+    {
+      "name": "尼宝的朋友",
+      "type": "skill"
+    },
+    {
+      "name": "强能灌注",
+      "type": "skill"
+    },
+    {
+      "name": "戏剧转折",
+      "type": "skill"
+    },
+    {
+      "name": "手型枪",
+      "type": "skill"
+    },
+    {
+      "name": "掷花枪",
+      "type": "skill"
+    },
+    {
+      "name": "旋刃剑舞",
+      "type": "skill"
+    },
+    {
+      "name": "机械身躯",
+      "type": "skill"
+    },
+    {
+      "name": "止戈雷云",
+      "type": "skill"
+    },
+    {
+      "name": "比萨斜塔",
+      "type": "skill"
+    },
+    {
+      "name": "沙包拳头",
+      "type": "skill"
+    },
+    {
+      "name": "爱心花束",
+      "type": "skill"
+    },
+    {
+      "name": "牛仔的礼物",
+      "type": "skill"
+    },
+    {
+      "name": "牛仔鞭索",
+      "type": "skill"
+    },
+    {
+      "name": "瑜伽球",
+      "type": "skill"
+    },
+    {
+      "name": "电池",
+      "type": "skill"
+    },
+    {
+      "name": "能源装置",
+      "type": "skill"
+    },
+    {
+      "name": "舞花枪",
+      "type": "skill"
+    },
+    {
+      "name": "蘸水笔",
+      "type": "skill"
+    },
+    {
+      "name": "说出你的故事",
+      "type": "skill"
+    },
+    {
+      "name": "迅",
+      "type": "skill"
+    },
+    {
+      "name": "迷乱列车",
+      "type": "skill"
+    },
+    {
+      "name": "追风双翼",
+      "type": "skill"
+    },
+    {
+      "name": "追风状态",
+      "type": "skill"
+    },
+    {
+      "name": "雷云",
+      "type": "skill"
+    },
+    {
+      "name": "魔音穿耳",
+      "type": "skill"
+    }
+  ],
+  "重力缩放倍率": [
+    {
+      "name": "套索",
+      "type": "entity"
+    },
+    {
+      "name": "火炮",
+      "type": "entity"
+    },
+    {
+      "name": "花束",
+      "type": "entity"
+    },
+    {
+      "name": "花枪",
+      "type": "entity"
+    },
+    {
+      "name": "蓝色卡牌",
+      "type": "entity"
+    },
+    {
+      "name": "喷洒间",
+      "type": "fixture"
+    },
+    {
+      "name": "太空",
+      "type": "fixture"
+    },
+    {
+      "name": "晾衣架",
+      "type": "fixture"
+    },
+    {
+      "name": "湖泊",
+      "type": "fixture"
+    },
+    {
+      "name": "创意玩法",
+      "type": "mode"
+    },
+    {
+      "name": "漂浮气球",
+      "type": "mode"
+    },
+    {
+      "name": "奇思妙想",
+      "type": "skill"
+    },
+    {
+      "name": "戏剧转折",
+      "type": "skill"
+    },
+    {
+      "name": "掷花枪",
+      "type": "skill"
+    },
+    {
+      "name": "滑步踢",
+      "type": "skill"
+    },
+    {
+      "name": "爱心花束",
+      "type": "skill"
+    },
+    {
+      "name": "牛仔鞭索",
+      "type": "skill"
+    },
+    {
+      "name": "自由翱翔",
+      "type": "skill"
+    },
+    {
+      "name": "舞花枪",
+      "type": "skill"
+    },
+    {
+      "name": "舰艇火炮",
+      "type": "skill"
+    },
+    {
+      "name": "追风状态",
+      "type": "skill"
+    },
+    {
+      "name": "闪亮营救",
+      "type": "skill"
+    },
+    {
+      "name": "骑士连斩",
+      "type": "skill"
+    },
+    {
+      "name": "魔术漂浮",
+      "type": "specialSkill"
+    }
+  ],
+  "完全失重": [
+    {
+      "name": "兔子大表哥",
+      "type": "entity"
+    },
+    {
+      "name": "定身符",
+      "type": "entity"
+    },
+    {
+      "name": "弹簧仙人球",
+      "type": "entity"
+    },
+    {
+      "name": "打开的老鼠夹",
+      "type": "entity"
+    },
+    {
+      "name": "斯派克",
+      "type": "entity"
+    },
+    {
+      "name": "泡泡",
+      "type": "entity"
+    },
+    {
+      "name": "花枪",
+      "type": "entity"
+    },
+    {
+      "name": "小推车",
+      "type": "fixture"
+    },
+    {
+      "name": "桶",
+      "type": "fixture"
+    },
+    {
+      "name": "百叶窗",
+      "type": "fixture"
+    },
+    {
+      "name": "老鼠夹",
+      "type": "item"
+    },
+    {
+      "name": "猫鼠广场",
+      "type": "mode"
+    },
+    {
+      "name": "BOOM!!",
+      "type": "skill"
+    },
+    {
+      "name": "世界波",
+      "type": "skill"
+    },
+    {
+      "name": "兔子大表哥",
+      "type": "skill"
+    },
+    {
+      "name": "戏剧转折",
+      "type": "skill"
+    },
+    {
+      "name": "掷花枪",
+      "type": "skill"
+    },
+    {
+      "name": "泡泡棒",
+      "type": "skill"
+    },
+    {
+      "name": "滑步踢",
+      "type": "skill"
+    },
+    {
+      "name": "牛仔的礼物",
+      "type": "skill"
+    },
+    {
+      "name": "猎",
+      "type": "skill"
+    },
+    {
+      "name": "舞花枪",
+      "type": "skill"
+    }
+  ],
+  "伤害": [
+    {
+      "name": "三角",
+      "type": "entity"
+    },
+    {
+      "name": "乾坤袋",
+      "type": "entity"
+    },
+    {
+      "name": "兔子大表哥",
+      "type": "entity"
+    },
+    {
+      "name": "列车",
+      "type": "entity"
+    },
+    {
+      "name": "剑气",
+      "type": "entity"
+    },
+    {
+      "name": "圆形",
+      "type": "entity"
+    },
+    {
+      "name": "墙缝泡泡",
+      "type": "entity"
+    },
+    {
+      "name": "大仙人掌球",
+      "type": "entity"
+    },
+    {
+      "name": "大星星",
+      "type": "entity"
+    },
+    {
+      "name": "套索",
+      "type": "entity"
+    },
+    {
+      "name": "子弹",
+      "type": "entity"
+    },
+    {
+      "name": "定身符",
+      "type": "entity"
+    },
+    {
+      "name": "小仙人掌球",
+      "type": "entity"
+    },
+    {
+      "name": "巨型比利鼠",
+      "type": "entity"
+    },
+    {
+      "name": "巨型胡萝卜",
+      "type": "entity"
+    },
+    {
+      "name": "巨大泰菲球",
+      "type": "entity"
+    },
+    {
+      "name": "带电残骸",
+      "type": "entity"
+    },
+    {
+      "name": "弓箭",
+      "type": "entity"
+    },
+    {
+      "name": "强化三角",
+      "type": "entity"
+    },
+    {
+      "name": "强化圆形",
+      "type": "entity"
+    },
+    {
+      "name": "恶魔之门",
+      "type": "entity"
+    },
+    {
+      "name": "感应雷",
+      "type": "entity"
+    },
+    {
+      "name": "战矛",
+      "type": "entity"
+    },
+    {
+      "name": "战车",
+      "type": "entity"
+    },
+    {
+      "name": "战车-分离态",
+      "type": "entity"
+    },
+    {
+      "name": "手型枪",
+      "type": "entity"
+    },
+    {
+      "name": "披萨",
+      "type": "entity"
+    },
+    {
+      "name": "斗牛",
+      "type": "entity"
+    },
+    {
+      "name": "斯派克",
+      "type": "entity"
+    },
+    {
+      "name": "旋转桶盖",
+      "type": "entity"
+    },
+    {
+      "name": "星星",
+      "type": "entity"
+    },
+    {
+      "name": "星星-敌方",
+      "type": "entity"
+    },
+    {
+      "name": "木塞子",
+      "type": "entity"
+    },
+    {
+      "name": "机器鼠",
+      "type": "entity"
+    },
+    {
+      "name": "板凳猫",
+      "type": "entity"
+    },
+    {
+      "name": "柠檬",
+      "type": "entity"
+    },
+    {
+      "name": "柠檬杰瑞",
+      "type": "entity"
+    },
+    {
+      "name": "汽水罐",
+      "type": "entity"
+    },
+    {
+      "name": "泡泡",
+      "type": "entity"
+    },
+    {
+      "name": "泰克",
+      "type": "entity"
+    },
+    {
+      "name": "洞穴",
+      "type": "entity"
+    },
+    {
+      "name": "火炮",
+      "type": "entity"
+    },
+    {
+      "name": "火箭炮",
+      "type": "entity"
+    },
+    {
+      "name": "火药桶",
+      "type": "entity"
+    },
+    {
+      "name": "炮弹",
+      "type": "entity"
+    },
+    {
+      "name": "煎蛋",
+      "type": "entity"
+    },
+    {
+      "name": "猫咪泡泡",
+      "type": "entity"
+    },
+    {
+      "name": "瑜伽球",
+      "type": "entity"
+    },
+    {
+      "name": "百科全书",
+      "type": "entity"
+    },
+    {
+      "name": "皇家火炮",
+      "type": "entity"
+    },
+    {
+      "name": "管道猫",
+      "type": "entity"
+    },
+    {
+      "name": "红色卡牌",
+      "type": "entity"
+    },
+    {
+      "name": "红色小淘气",
+      "type": "entity"
+    },
+    {
+      "name": "绿色小淘气",
+      "type": "entity"
+    },
+    {
+      "name": "胡椒粉罐头",
+      "type": "entity"
+    },
+    {
+      "name": "胡萝卜飞镖",
+      "type": "entity"
+    },
+    {
+      "name": "胡萝卜飞镖-追踪",
+      "type": "entity"
+    },
+    {
+      "name": "花枪",
+      "type": "entity"
+    },
+    {
+      "name": "蓄力箭",
+      "type": "entity"
+    },
+    {
+      "name": "蓝图-投射物",
+      "type": "entity"
+    },
+    {
+      "name": "蓝色小淘气",
+      "type": "entity"
+    },
+    {
+      "name": "追求者",
+      "type": "entity"
+    },
+    {
+      "name": "遥控机器猫",
+      "type": "entity"
+    },
+    {
+      "name": "遥控机器鼠",
+      "type": "entity"
+    },
+    {
+      "name": "金币",
+      "type": "entity"
+    },
+    {
+      "name": "金币符",
+      "type": "entity"
+    },
+    {
+      "name": "铁砧",
+      "type": "entity"
+    },
+    {
+      "name": "长枪",
+      "type": "entity"
+    },
+    {
+      "name": "闪电仙人球",
+      "type": "entity"
+    },
+    {
+      "name": "闪耀足球",
+      "type": "entity"
+    },
+    {
+      "name": "飓风",
+      "type": "entity"
+    },
+    {
+      "name": "饭盒",
+      "type": "entity"
+    },
+    {
+      "name": "鸟哨鞭炮",
+      "type": "entity"
+    },
+    {
+      "name": "保安",
+      "type": "fixture"
+    },
+    {
+      "name": "喷洒间",
+      "type": "fixture"
+    },
+    {
+      "name": "国王",
+      "type": "fixture"
+    },
+    {
+      "name": "嫦娥",
+      "type": "fixture"
+    },
+    {
+      "name": "炸药堆",
+      "type": "fixture"
+    },
+    {
+      "name": "熨衣板",
+      "type": "fixture"
+    },
+    {
+      "name": "百叶窗",
+      "type": "fixture"
+    },
+    {
+      "name": "盔甲人",
+      "type": "fixture"
+    },
+    {
+      "name": "药水罐",
+      "type": "fixture"
+    },
+    {
+      "name": "野猫",
+      "type": "fixture"
+    },
+    {
+      "name": "冰块",
+      "type": "item"
+    },
+    {
+      "name": "叉子",
+      "type": "item"
+    },
+    {
+      "name": "变身饮料",
+      "type": "item"
+    },
+    {
+      "name": "小鞭炮",
+      "type": "item"
+    },
+    {
+      "name": "扁盘",
+      "type": "item"
+    },
+    {
+      "name": "拳套盒",
+      "type": "item"
+    },
+    {
+      "name": "泡泡机",
+      "type": "item"
+    },
+    {
+      "name": "灰花瓶",
+      "type": "item"
+    },
+    {
+      "name": "狗骨头",
+      "type": "item"
+    },
+    {
+      "name": "玩具枪",
+      "type": "item"
+    },
+    {
+      "name": "玻璃杯",
+      "type": "item"
+    },
+    {
+      "name": "电风扇",
+      "type": "item"
+    },
+    {
+      "name": "盘子",
+      "type": "item"
+    },
+    {
+      "name": "碗",
+      "type": "item"
+    },
+    {
+      "name": "苍蝇拍",
+      "type": "item"
+    },
+    {
+      "name": "蓝花瓶",
+      "type": "item"
+    },
+    {
+      "name": "遥控器",
+      "type": "item"
+    },
+    {
+      "name": "鞭炮束",
+      "type": "item"
+    },
+    {
+      "name": "高尔夫球",
+      "type": "item"
+    },
+    {
+      "name": "乾坤一掷",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "捕鼠夹",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "蓄势一击",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "铁血",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "三叉戟",
+      "type": "skill"
+    },
+    {
+      "name": "世界波",
+      "type": "skill"
+    },
+    {
+      "name": "丘比特之箭",
+      "type": "skill"
+    },
+    {
+      "name": "丰收盛宴",
+      "type": "skill"
+    },
+    {
+      "name": "乾坤袋",
+      "type": "skill"
+    },
+    {
+      "name": "仙人掌弹弓",
+      "type": "skill"
+    },
+    {
+      "name": "兔子大表哥",
+      "type": "skill"
+    },
+    {
+      "name": "共鸣",
+      "type": "skill"
+    },
+    {
+      "name": "军团战车",
+      "type": "skill"
+    },
+    {
+      "name": "剑客长枪",
+      "type": "skill"
+    },
+    {
+      "name": "剑舞华尔兹",
+      "type": "skill"
+    },
+    {
+      "name": "力大无穷",
+      "type": "skill"
+    },
+    {
+      "name": "勇往直前",
+      "type": "skill"
+    },
+    {
+      "name": "勇气冲刺",
+      "type": "skill"
+    },
+    {
+      "name": "喜剧之王",
+      "type": "skill"
+    },
+    {
+      "name": "喵喵叫",
+      "type": "skill"
+    },
+    {
+      "name": "垃圾盖",
+      "type": "skill"
+    },
+    {
+      "name": "大电球",
+      "type": "skill"
+    },
+    {
+      "name": "大铁锤",
+      "type": "skill"
+    },
+    {
+      "name": "奇思妙想",
+      "type": "skill"
+    },
+    {
+      "name": "小情绪",
+      "type": "skill"
+    },
+    {
+      "name": "小淘气",
+      "type": "skill"
+    },
+    {
+      "name": "小电球",
+      "type": "skill"
+    },
+    {
+      "name": "平底锅",
+      "type": "skill"
+    },
+    {
+      "name": "幻影剑气",
+      "type": "skill"
+    },
+    {
+      "name": "弹力圆球",
+      "type": "skill"
+    },
+    {
+      "name": "强能灌注",
+      "type": "skill"
+    },
+    {
+      "name": "律动时间",
+      "type": "skill"
+    },
+    {
+      "name": "意式披萨",
+      "type": "skill"
+    },
+    {
+      "name": "感同身受",
+      "type": "skill"
+    },
+    {
+      "name": "戏剧转折",
+      "type": "skill"
+    },
+    {
+      "name": "战术机动",
+      "type": "skill"
+    },
+    {
+      "name": "手型枪",
+      "type": "skill"
+    },
+    {
+      "name": "指甲油",
+      "type": "skill"
+    },
+    {
+      "name": "捕虫网",
+      "type": "skill"
+    },
+    {
+      "name": "掷花枪",
+      "type": "skill"
+    },
+    {
+      "name": "斗牛",
+      "type": "skill"
+    },
+    {
+      "name": "旋刃剑舞",
+      "type": "skill"
+    },
+    {
+      "name": "旋转桶盖",
+      "type": "skill"
+    },
+    {
+      "name": "星星棒",
+      "type": "skill"
+    },
+    {
+      "name": "机械身躯",
+      "type": "skill"
+    },
+    {
+      "name": "柠檬旋风",
+      "type": "skill"
+    },
+    {
+      "name": "格挡之剑",
+      "type": "skill"
+    },
+    {
+      "name": "梦幻舞步",
+      "type": "skill"
+    },
+    {
+      "name": "横冲直撞",
+      "type": "skill"
+    },
+    {
+      "name": "止戈雷云",
+      "type": "skill"
+    },
+    {
+      "name": "汽水罐",
+      "type": "skill"
+    },
+    {
+      "name": "沙包拳头",
+      "type": "skill"
+    },
+    {
+      "name": "泡泡棒",
+      "type": "skill"
+    },
+    {
+      "name": "游刃有余",
+      "type": "skill"
+    },
+    {
+      "name": "滑步踢",
+      "type": "skill"
+    },
+    {
+      "name": "火箭筒",
+      "type": "skill"
+    },
+    {
+      "name": "火药桶",
+      "type": "skill"
+    },
+    {
+      "name": "牛仔吉他",
+      "type": "skill"
+    },
+    {
+      "name": "牛仔的礼物",
+      "type": "skill"
+    },
+    {
+      "name": "牛仔鞭索",
+      "type": "skill"
+    },
+    {
+      "name": "狂",
+      "type": "skill"
+    },
+    {
+      "name": "狡兔三窟",
+      "type": "skill"
+    },
+    {
+      "name": "猎",
+      "type": "skill"
+    },
+    {
+      "name": "玩具长长长枪",
+      "type": "skill"
+    },
+    {
+      "name": "瑜伽球",
+      "type": "skill"
+    },
+    {
+      "name": "电池",
+      "type": "skill"
+    },
+    {
+      "name": "皇家火炮",
+      "type": "skill"
+    },
+    {
+      "name": "知识即力量",
+      "type": "skill"
+    },
+    {
+      "name": "羊角锤",
+      "type": "skill"
+    },
+    {
+      "name": "胡椒粉罐头",
+      "type": "skill"
+    },
+    {
+      "name": "胡萝卜",
+      "type": "skill"
+    },
+    {
+      "name": "能源装置",
+      "type": "skill"
+    },
+    {
+      "name": "舞花枪",
+      "type": "skill"
+    },
+    {
+      "name": "舰艇火炮",
+      "type": "skill"
+    },
+    {
+      "name": "蓝图",
+      "type": "skill"
+    },
+    {
+      "name": "蘸水笔",
+      "type": "skill"
+    },
+    {
+      "name": "西部情谊",
+      "type": "skill"
+    },
+    {
+      "name": "记录美好瞬间",
+      "type": "skill"
+    },
+    {
+      "name": "迅",
+      "type": "skill"
+    },
+    {
+      "name": "迷乱列车",
+      "type": "skill"
+    },
+    {
+      "name": "追求者出击",
+      "type": "skill"
+    },
+    {
+      "name": "追风双翼",
+      "type": "skill"
+    },
+    {
+      "name": "野生体格",
+      "type": "skill"
+    },
+    {
+      "name": "防狼锤",
+      "type": "skill"
+    },
+    {
+      "name": "隐形感应雷",
+      "type": "skill"
+    },
+    {
+      "name": "雷云",
+      "type": "skill"
+    },
+    {
+      "name": "鞭子",
+      "type": "skill"
+    },
+    {
+      "name": "飞翔金币",
+      "type": "skill"
+    },
+    {
+      "name": "饭盒陷阱",
+      "type": "skill"
+    },
+    {
+      "name": "香甜梦境",
+      "type": "skill"
+    },
+    {
+      "name": "香风折扇",
+      "type": "skill"
+    },
+    {
+      "name": "骄傲的学霸",
+      "type": "skill"
+    },
+    {
+      "name": "骑士之剑",
+      "type": "skill"
+    },
+    {
+      "name": "骑士连斩",
+      "type": "skill"
+    },
+    {
+      "name": "魅力甲油",
+      "type": "skill"
+    },
+    {
+      "name": "魔音穿耳",
+      "type": "skill"
+    },
+    {
+      "name": "鸟哨",
+      "type": "skill"
+    },
+    {
+      "name": "蓄力重击",
+      "type": "specialSkill"
+    }
+  ],
+  "攻击力倍率": [
+    {
+      "name": "兔子先生",
+      "type": "entity"
+    },
+    {
+      "name": "冲冠一怒",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "兔子先生",
+      "type": "skill"
+    },
+    {
+      "name": "坚强的米雪儿",
+      "type": "skill"
+    }
+  ],
+  "攻击力加成值": [
+    {
+      "name": "剑气",
+      "type": "entity"
+    },
+    {
+      "name": "恶魔之门",
+      "type": "entity"
+    },
+    {
+      "name": "托普斯分身",
+      "type": "entity"
+    },
+    {
+      "name": "攻击战旗",
+      "type": "entity"
+    },
+    {
+      "name": "爆炸仙人球",
+      "type": "entity"
+    },
+    {
+      "name": "爱心之吻",
+      "type": "entity"
+    },
+    {
+      "name": "香水区域",
+      "type": "entity"
+    },
+    {
+      "name": "喷洒间",
+      "type": "fixture"
+    },
+    {
+      "name": "小熊猫",
+      "type": "fixture"
+    },
+    {
+      "name": "红色花",
+      "type": "fixture"
+    },
+    {
+      "name": "药水罐",
+      "type": "fixture"
+    },
+    {
+      "name": "调料罐-糖",
+      "type": "fixture"
+    },
+    {
+      "name": "兴奋饮料",
+      "type": "item"
+    },
+    {
+      "name": "暴怒",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "穷追猛打",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "绝地反击",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "5V5经典奶酪赛",
+      "type": "mode"
+    },
+    {
+      "name": "婚礼大作战",
+      "type": "mode"
+    },
+    {
+      "name": "混沌大作战",
+      "type": "mode"
+    },
+    {
+      "name": "烟花大作战",
+      "type": "mode"
+    },
+    {
+      "name": "三叉戟",
+      "type": "skill"
+    },
+    {
+      "name": "剑与苹果",
+      "type": "skill"
+    },
+    {
+      "name": "勇者无惧",
+      "type": "skill"
+    },
+    {
+      "name": "双重猫格",
+      "type": "skill"
+    },
+    {
+      "name": "古灵精怪",
+      "type": "skill"
+    },
+    {
+      "name": "国王战旗",
+      "type": "skill"
+    },
+    {
+      "name": "垃圾盖",
+      "type": "skill"
+    },
+    {
+      "name": "幻影剑气",
+      "type": "skill"
+    },
+    {
+      "name": "律动时间",
+      "type": "skill"
+    },
+    {
+      "name": "感同身受",
+      "type": "skill"
+    },
+    {
+      "name": "止戈雷云",
+      "type": "skill"
+    },
+    {
+      "name": "爱心之吻",
+      "type": "skill"
+    },
+    {
+      "name": "牛仔的礼物",
+      "type": "skill"
+    },
+    {
+      "name": "胡萝卜",
+      "type": "skill"
+    },
+    {
+      "name": "能源装置",
+      "type": "skill"
+    },
+    {
+      "name": "虚幻梦影",
+      "type": "skill"
+    },
+    {
+      "name": "超级变！变！变！",
+      "type": "skill"
+    },
+    {
+      "name": "身体素质",
+      "type": "skill"
+    },
+    {
+      "name": "随机应变",
+      "type": "skill"
+    },
+    {
+      "name": "雷云",
+      "type": "skill"
+    },
+    {
+      "name": "风格骤变",
+      "type": "skill"
+    },
+    {
+      "name": "魅力香水",
+      "type": "skill"
+    },
+    {
+      "name": "黑暗印记",
+      "type": "skill"
+    },
+    {
+      "name": "全垒打",
+      "type": "specialSkill"
+    }
+  ],
+  "攻击增伤倍率": [
+    {
+      "name": "巨大泰菲球",
+      "type": "entity"
+    },
+    {
+      "name": "战车",
+      "type": "entity"
+    },
+    {
+      "name": "胡椒粉罐头",
+      "type": "entity"
+    },
+    {
+      "name": "胡椒罐头烟雾",
+      "type": "entity"
+    },
+    {
+      "name": "铁砧",
+      "type": "entity"
+    },
+    {
+      "name": "飓风",
+      "type": "entity"
+    },
+    {
+      "name": "老鼠洞",
+      "type": "fixture"
+    },
+    {
+      "name": "奶酪",
+      "type": "item"
+    },
+    {
+      "name": "混沌大作战",
+      "type": "mode"
+    },
+    {
+      "name": "丰收盛宴",
+      "type": "skill"
+    },
+    {
+      "name": "军团战车",
+      "type": "skill"
+    },
+    {
+      "name": "勇往直前",
+      "type": "skill"
+    },
+    {
+      "name": "幻风礼服",
+      "type": "skill"
+    },
+    {
+      "name": "必备专业素养",
+      "type": "skill"
+    },
+    {
+      "name": "我，即是军团。",
+      "type": "skill"
+    },
+    {
+      "name": "攻无不克",
+      "type": "skill"
+    },
+    {
+      "name": "暗中观察",
+      "type": "skill"
+    },
+    {
+      "name": "狡兔三窟",
+      "type": "skill"
+    },
+    {
+      "name": "胡椒粉罐头",
+      "type": "skill"
+    },
+    {
+      "name": "茁壮成长",
+      "type": "skill"
+    },
+    {
+      "name": "莱恩的世界",
+      "type": "skill"
+    },
+    {
+      "name": "贵族礼仪",
+      "type": "skill"
+    },
+    {
+      "name": "追风双翼",
+      "type": "skill"
+    }
+  ],
+  "攻击增伤固定值": [
+    {
+      "name": "托普斯分身",
+      "type": "entity"
+    },
+    {
+      "name": "旋转桶盖",
+      "type": "entity"
+    },
+    {
+      "name": "线条猫",
+      "type": "entity"
+    },
+    {
+      "name": "蓝图",
+      "type": "entity"
+    },
+    {
+      "name": "小熊猫",
+      "type": "fixture"
+    },
+    {
+      "name": "金色花",
+      "type": "fixture"
+    },
+    {
+      "name": "皮糙肉厚",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "混沌大作战",
+      "type": "mode"
+    },
+    {
+      "name": "万有引力",
+      "type": "skill"
+    },
+    {
+      "name": "双重猫格",
+      "type": "skill"
+    },
+    {
+      "name": "古灵精怪",
+      "type": "skill"
+    },
+    {
+      "name": "律动时间",
+      "type": "skill"
+    },
+    {
+      "name": "怒气喷发",
+      "type": "skill"
+    },
+    {
+      "name": "旋转桶盖",
+      "type": "skill"
+    },
+    {
+      "name": "灵活跳跃",
+      "type": "skill"
+    },
+    {
+      "name": "穷追不舍",
+      "type": "skill"
+    },
+    {
+      "name": "蓝图",
+      "type": "skill"
+    },
+    {
+      "name": "虚幻梦影",
+      "type": "skill"
+    },
+    {
+      "name": "魔咒强身",
+      "type": "skill"
+    }
+  ],
+  "受击减伤倍率": [
+    {
+      "name": "必备专业素养",
+      "type": "skill"
+    },
+    {
+      "name": "羊角锤",
+      "type": "skill"
+    },
+    {
+      "name": "说出你的故事",
+      "type": "skill"
+    }
+  ],
+  "受击减伤固定值": [
+    {
+      "name": "羊角锤",
+      "type": "skill"
+    }
+  ],
+  "投掷伤害降低值": [
+    {
+      "name": "守株待鼠",
+      "type": "knowledgeCard"
+    }
+  ],
+  "伤害保底": [
+    {
+      "name": "皮糙肉厚",
+      "type": "knowledgeCard"
+    }
+  ],
+  "电击伤害": [
+    {
+      "name": "带电残骸",
+      "type": "entity"
+    },
+    {
+      "name": "电风扇",
+      "type": "item"
+    },
+    {
+      "name": "大电球",
+      "type": "skill"
+    },
+    {
+      "name": "小电球",
+      "type": "skill"
+    },
+    {
+      "name": "强能灌注",
+      "type": "skill"
+    },
+    {
+      "name": "机械身躯",
+      "type": "skill"
+    },
+    {
+      "name": "止戈雷云",
+      "type": "skill"
+    },
+    {
+      "name": "猎",
+      "type": "skill"
+    },
+    {
+      "name": "电池",
+      "type": "skill"
+    },
+    {
+      "name": "能源装置",
+      "type": "skill"
+    },
+    {
+      "name": "迅",
+      "type": "skill"
+    },
+    {
+      "name": "雷云",
+      "type": "skill"
+    }
+  ],
+  "引爆感电": [
+    {
+      "name": "洗碗池",
+      "type": "fixture"
+    },
+    {
+      "name": "游乐场水池",
+      "type": "fixture"
+    },
+    {
+      "name": "湖泊",
+      "type": "fixture"
+    },
+    {
+      "name": "调料罐-水",
+      "type": "fixture"
+    }
+  ],
+  "HP上限加成值": [
+    {
+      "name": "侦探泰菲分身",
+      "type": "entity"
+    },
+    {
+      "name": "兔子先生",
+      "type": "entity"
+    },
+    {
+      "name": "托普斯分身",
+      "type": "entity"
+    },
+    {
+      "name": "爱心之吻",
+      "type": "entity"
+    },
+    {
+      "name": "饮料分身",
+      "type": "entity"
+    },
+    {
+      "name": "饮料印记",
+      "type": "entity"
+    },
+    {
+      "name": "调料罐-钙",
+      "type": "fixture"
+    },
+    {
+      "name": "越挫越勇",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "5V5经典奶酪赛",
+      "type": "mode"
+    },
+    {
+      "name": "创意玩法",
+      "type": "mode"
+    },
+    {
+      "name": "婚礼大作战",
+      "type": "mode"
+    },
+    {
+      "name": "混沌大作战",
+      "type": "mode"
+    },
+    {
+      "name": "烟花大作战",
+      "type": "mode"
+    },
+    {
+      "name": "疯狂奶酪赛",
+      "type": "mode"
+    },
+    {
+      "name": "优雅从容",
+      "type": "skill"
+    },
+    {
+      "name": "兔子先生",
+      "type": "skill"
+    },
+    {
+      "name": "分身大师",
+      "type": "skill"
+    },
+    {
+      "name": "双重猫格",
+      "type": "skill"
+    },
+    {
+      "name": "喜剧之王",
+      "type": "skill"
+    },
+    {
+      "name": "坚强的米雪儿",
+      "type": "skill"
+    },
+    {
+      "name": "心思缜密",
+      "type": "skill"
+    },
+    {
+      "name": "我，兔八哥",
+      "type": "skill"
+    },
+    {
+      "name": "爱心之吻",
+      "type": "skill"
+    },
+    {
+      "name": "羊角锤",
+      "type": "skill"
+    },
+    {
+      "name": "茁壮成长",
+      "type": "skill"
+    },
+    {
+      "name": "警戒",
+      "type": "skill"
+    },
+    {
+      "name": "越战越勇",
+      "type": "skill"
+    },
+    {
+      "name": "追踪饮料",
+      "type": "skill"
+    }
+  ],
+  "回复": [
+    {
+      "name": "咸鱼",
+      "type": "entity"
+    },
+    {
+      "name": "咸鱼-投射物",
+      "type": "entity"
+    },
+    {
+      "name": "巨大泰菲球",
+      "type": "entity"
+    },
+    {
+      "name": "弓箭",
+      "type": "entity"
+    },
+    {
+      "name": "恶魔之门",
+      "type": "entity"
+    },
+    {
+      "name": "托普斯分身",
+      "type": "entity"
+    },
+    {
+      "name": "星星",
+      "type": "entity"
+    },
+    {
+      "name": "爱心之吻",
+      "type": "entity"
+    },
+    {
+      "name": "百科全书",
+      "type": "entity"
+    },
+    {
+      "name": "花束",
+      "type": "entity"
+    },
+    {
+      "name": "蓄力箭",
+      "type": "entity"
+    },
+    {
+      "name": "蓝图",
+      "type": "entity"
+    },
+    {
+      "name": "藤蔓",
+      "type": "entity"
+    },
+    {
+      "name": "铁砧",
+      "type": "entity"
+    },
+    {
+      "name": "飓风",
+      "type": "entity"
+    },
+    {
+      "name": "仙丹",
+      "type": "fixture"
+    },
+    {
+      "name": "喷洒间",
+      "type": "fixture"
+    },
+    {
+      "name": "紫色花",
+      "type": "fixture"
+    },
+    {
+      "name": "药水罐",
+      "type": "fixture"
+    },
+    {
+      "name": "调料罐-盐",
+      "type": "fixture"
+    },
+    {
+      "name": "兴奋饮料",
+      "type": "item"
+    },
+    {
+      "name": "变身饮料",
+      "type": "item"
+    },
+    {
+      "name": "护盾饮料",
+      "type": "item"
+    },
+    {
+      "name": "牛奶",
+      "type": "item"
+    },
+    {
+      "name": "蛋糕",
+      "type": "item"
+    },
+    {
+      "name": "远视饮料",
+      "type": "item"
+    },
+    {
+      "name": "隐身饮料",
+      "type": "item"
+    },
+    {
+      "name": "回家",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "祝愿",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "脱身",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "5V5经典奶酪赛",
+      "type": "mode"
+    },
+    {
+      "name": "混沌大作战",
+      "type": "mode"
+    },
+    {
+      "name": "三叉戟",
+      "type": "skill"
+    },
+    {
+      "name": "丘比特之箭",
+      "type": "skill"
+    },
+    {
+      "name": "丰收盛宴",
+      "type": "skill"
+    },
+    {
+      "name": "剑与苹果",
+      "type": "skill"
+    },
+    {
+      "name": "力大无穷",
+      "type": "skill"
+    },
+    {
+      "name": "双重猫格",
+      "type": "skill"
+    },
+    {
+      "name": "咸鱼",
+      "type": "skill"
+    },
+    {
+      "name": "喜剧之王",
+      "type": "skill"
+    },
+    {
+      "name": "天使祝福",
+      "type": "skill"
+    },
+    {
+      "name": "奶酪好手",
+      "type": "skill"
+    },
+    {
+      "name": "律动时间",
+      "type": "skill"
+    },
+    {
+      "name": "戏剧转折",
+      "type": "skill"
+    },
+    {
+      "name": "捕鼠专家",
+      "type": "skill"
+    },
+    {
+      "name": "星星棒",
+      "type": "skill"
+    },
+    {
+      "name": "最佳表演",
+      "type": "skill"
+    },
+    {
+      "name": "格挡之剑",
+      "type": "skill"
+    },
+    {
+      "name": "温柔体贴",
+      "type": "skill"
+    },
+    {
+      "name": "爱心之吻",
+      "type": "skill"
+    },
+    {
+      "name": "爱心花束",
+      "type": "skill"
+    },
+    {
+      "name": "电池",
+      "type": "skill"
+    },
+    {
+      "name": "登山飞镐",
+      "type": "skill"
+    },
+    {
+      "name": "知识即力量",
+      "type": "skill"
+    },
+    {
+      "name": "羊角锤",
+      "type": "skill"
+    },
+    {
+      "name": "老牛仔",
+      "type": "skill"
+    },
+    {
+      "name": "胡萝卜",
+      "type": "skill"
+    },
+    {
+      "name": "能源装置",
+      "type": "skill"
+    },
+    {
+      "name": "莱恩的世界",
+      "type": "skill"
+    },
+    {
+      "name": "蓝图",
+      "type": "skill"
+    },
+    {
+      "name": "藤蔓",
+      "type": "skill"
+    },
+    {
+      "name": "追风双翼",
+      "type": "skill"
+    },
+    {
+      "name": "风格骤变",
+      "type": "skill"
+    },
+    {
+      "name": "香甜梦境",
+      "type": "skill"
+    },
+    {
+      "name": "香风折扇",
+      "type": "skill"
+    },
+    {
+      "name": "魔术戏法",
+      "type": "skill"
+    },
+    {
+      "name": "鼓舞",
+      "type": "skill"
+    },
+    {
+      "name": "应急治疗",
+      "type": "specialSkill",
+      "factionId": "cat"
+    }
+  ],
+  "HP恢复倍率": [
+    {
+      "name": "受伤",
+      "type": "buff"
+    },
+    {
+      "name": "鼠虚弱",
+      "type": "buff"
+    },
+    {
+      "name": "香水区域",
+      "type": "entity"
+    },
+    {
+      "name": "喜剧之王",
+      "type": "skill"
+    },
+    {
+      "name": "野性迸发",
+      "type": "skill"
+    },
+    {
+      "name": "魅力香水",
+      "type": "skill"
+    }
+  ],
+  "HP恢复加成值": [
+    {
+      "name": "猫虚弱",
+      "type": "buff"
+    },
+    {
+      "name": "乾坤袋",
+      "type": "entity"
+    },
+    {
+      "name": "兔子先生",
+      "type": "entity"
+    },
+    {
+      "name": "咸鱼",
+      "type": "entity"
+    },
+    {
+      "name": "咸鱼-投射物",
+      "type": "entity"
+    },
+    {
+      "name": "守护战旗",
+      "type": "entity"
+    },
+    {
+      "name": "恶魔之门",
+      "type": "entity"
+    },
+    {
+      "name": "披萨",
+      "type": "entity"
+    },
+    {
+      "name": "披萨块",
+      "type": "entity"
+    },
+    {
+      "name": "星星",
+      "type": "entity"
+    },
+    {
+      "name": "爱心之吻",
+      "type": "entity"
+    },
+    {
+      "name": "红色卡牌",
+      "type": "entity"
+    },
+    {
+      "name": "花洒",
+      "type": "entity"
+    },
+    {
+      "name": "藤蔓",
+      "type": "entity"
+    },
+    {
+      "name": "食物",
+      "type": "entity"
+    },
+    {
+      "name": "饭盒",
+      "type": "entity"
+    },
+    {
+      "name": "香水区域",
+      "type": "entity"
+    },
+    {
+      "name": "仙丹",
+      "type": "fixture"
+    },
+    {
+      "name": "蒲团",
+      "type": "fixture"
+    },
+    {
+      "name": "青色花",
+      "type": "fixture"
+    },
+    {
+      "name": "牛奶",
+      "type": "item"
+    },
+    {
+      "name": "回家",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "越挫越勇",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "逃窜",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "5V5经典奶酪赛",
+      "type": "mode"
+    },
+    {
+      "name": "沙滩排球",
+      "type": "mode"
+    },
+    {
+      "name": "混沌大作战",
+      "type": "mode"
+    },
+    {
+      "name": "漂浮气球",
+      "type": "mode"
+    },
+    {
+      "name": "烟花大作战",
+      "type": "mode"
+    },
+    {
+      "name": "特工行动",
+      "type": "mode"
+    },
+    {
+      "name": "三叉戟",
+      "type": "skill"
+    },
+    {
+      "name": "乾坤袋",
+      "type": "skill"
+    },
+    {
+      "name": "兔子先生",
+      "type": "skill"
+    },
+    {
+      "name": "剑与苹果",
+      "type": "skill"
+    },
+    {
+      "name": "咸鱼",
+      "type": "skill"
+    },
+    {
+      "name": "国王战旗",
+      "type": "skill"
+    },
+    {
+      "name": "天使强化",
+      "type": "skill"
+    },
+    {
+      "name": "天使祝福",
+      "type": "skill"
+    },
+    {
+      "name": "奇思妙想",
+      "type": "skill"
+    },
+    {
+      "name": "心思缜密",
+      "type": "skill"
+    },
+    {
+      "name": "怒气喷发",
+      "type": "skill"
+    },
+    {
+      "name": "意式披萨",
+      "type": "skill"
+    },
+    {
+      "name": "感同身受",
+      "type": "skill"
+    },
+    {
+      "name": "我，即是军团。",
+      "type": "skill"
+    },
+    {
+      "name": "指甲油",
+      "type": "skill"
+    },
+    {
+      "name": "星星棒",
+      "type": "skill"
+    },
+    {
+      "name": "暗中观察",
+      "type": "skill"
+    },
+    {
+      "name": "柠檬旋风",
+      "type": "skill"
+    },
+    {
+      "name": "温柔体贴",
+      "type": "skill"
+    },
+    {
+      "name": "灵活跳跃",
+      "type": "skill"
+    },
+    {
+      "name": "爱之花洒",
+      "type": "skill"
+    },
+    {
+      "name": "爱心之吻",
+      "type": "skill"
+    },
+    {
+      "name": "牛仔吉他",
+      "type": "skill"
+    },
+    {
+      "name": "狡兔三窟",
+      "type": "skill"
+    },
+    {
+      "name": "猎",
+      "type": "skill"
+    },
+    {
+      "name": "胡萝卜",
+      "type": "skill"
+    },
+    {
+      "name": "茁壮成长",
+      "type": "skill"
+    },
+    {
+      "name": "藤蔓",
+      "type": "skill"
+    },
+    {
+      "name": "说出你的故事",
+      "type": "skill"
+    },
+    {
+      "name": "贵族礼仪",
+      "type": "skill"
+    },
+    {
+      "name": "超级变！变！变！",
+      "type": "skill"
+    },
+    {
+      "name": "身体素质",
+      "type": "skill"
+    },
+    {
+      "name": "迅",
+      "type": "skill"
+    },
+    {
+      "name": "追风状态",
+      "type": "skill"
+    },
+    {
+      "name": "野性迸发",
+      "type": "skill"
+    },
+    {
+      "name": "野生体格",
+      "type": "skill"
+    },
+    {
+      "name": "随机应变",
+      "type": "skill"
+    },
+    {
+      "name": "风格骤变",
+      "type": "skill"
+    },
+    {
+      "name": "饭盒陷阱",
+      "type": "skill"
+    },
+    {
+      "name": "魅力香水",
+      "type": "skill"
+    },
+    {
+      "name": "黑暗印记",
+      "type": "skill"
+    },
+    {
+      "name": "绝处逢生",
+      "type": "specialSkill"
+    }
+  ],
+  "临时HP上限": [],
+  "推速倍率": [
+    {
+      "name": "兔子先生",
+      "type": "entity"
+    },
+    {
+      "name": "咸鱼",
+      "type": "entity"
+    },
+    {
+      "name": "咸鱼-投射物",
+      "type": "entity"
+    },
+    {
+      "name": "定身符",
+      "type": "entity"
+    },
+    {
+      "name": "巨型胡萝卜",
+      "type": "entity"
+    },
+    {
+      "name": "恶魔之门",
+      "type": "entity"
+    },
+    {
+      "name": "汽水冰面",
+      "type": "entity"
+    },
+    {
+      "name": "汽水罐",
+      "type": "entity"
+    },
+    {
+      "name": "爱心之吻",
+      "type": "entity"
+    },
+    {
+      "name": "金币符",
+      "type": "entity"
+    },
+    {
+      "name": "飞吻",
+      "type": "entity"
+    },
+    {
+      "name": "饭盒",
+      "type": "entity"
+    },
+    {
+      "name": "香水区域",
+      "type": "entity"
+    },
+    {
+      "name": "团队领袖",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "巡逻戒备",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "恐吓",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "救救我",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "震慑",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "食物力量",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "5V5经典奶酪赛",
+      "type": "mode"
+    },
+    {
+      "name": "创意玩法",
+      "type": "mode"
+    },
+    {
+      "name": "特工行动",
+      "type": "mode"
+    },
+    {
+      "name": "疯狂奶酪赛",
+      "type": "mode"
+    },
+    {
+      "name": "三叉戟",
+      "type": "skill"
+    },
+    {
+      "name": "兔子先生",
+      "type": "skill"
+    },
+    {
+      "name": "咸鱼",
+      "type": "skill"
+    },
+    {
+      "name": "坚强的米雪儿",
+      "type": "skill"
+    },
+    {
+      "name": "大铁锤",
+      "type": "skill"
+    },
+    {
+      "name": "奶酪好手",
+      "type": "skill"
+    },
+    {
+      "name": "我，兔八哥",
+      "type": "skill"
+    },
+    {
+      "name": "捣蛋鬼",
+      "type": "skill"
+    },
+    {
+      "name": "梦幻舞步",
+      "type": "skill"
+    },
+    {
+      "name": "汽水罐",
+      "type": "skill"
+    },
+    {
+      "name": "滑步踢",
+      "type": "skill"
+    },
+    {
+      "name": "灵气修为",
+      "type": "skill"
+    },
+    {
+      "name": "爱心之吻",
+      "type": "skill"
+    },
+    {
+      "name": "登山飞镐",
+      "type": "skill"
+    },
+    {
+      "name": "老牛仔",
+      "type": "skill"
+    },
+    {
+      "name": "胆小如鼠",
+      "type": "skill"
+    },
+    {
+      "name": "胡萝卜",
+      "type": "skill"
+    },
+    {
+      "name": "警戒",
+      "type": "skill"
+    },
+    {
+      "name": "闪电救援",
+      "type": "skill"
+    },
+    {
+      "name": "饭盒陷阱",
+      "type": "skill"
+    },
+    {
+      "name": "香甜梦境",
+      "type": "skill"
+    },
+    {
+      "name": "魅力香水",
+      "type": "skill"
+    },
+    {
+      "name": "魅惑之吻",
+      "type": "skill"
+    }
+  ],
+  "推速加成值": [
+    {
+      "name": "兔子先生",
+      "type": "entity"
+    },
+    {
+      "name": "兔子大表哥",
+      "type": "entity"
+    },
+    {
+      "name": "烟雾",
+      "type": "entity"
+    },
+    {
+      "name": "无畏",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "兔子先生",
+      "type": "skill"
+    },
+    {
+      "name": "兔子大表哥",
+      "type": "skill"
+    },
+    {
+      "name": "最佳表演",
+      "type": "skill"
+    },
+    {
+      "name": "烟雾弹",
+      "type": "skill"
+    },
+    {
+      "name": "牛仔吉他",
+      "type": "skill"
+    },
+    {
+      "name": "风格骤变",
+      "type": "skill"
+    },
+    {
+      "name": "香风折扇",
+      "type": "skill"
+    }
+  ],
+  "攻击冷却倍率": [
+    {
+      "name": "咸鱼",
+      "type": "entity"
+    },
+    {
+      "name": "咸鱼-投射物",
+      "type": "entity"
+    },
+    {
+      "name": "托普斯分身",
+      "type": "entity"
+    },
+    {
+      "name": "烟雾",
+      "type": "entity"
+    },
+    {
+      "name": "线条猫",
+      "type": "entity"
+    },
+    {
+      "name": "蓝图",
+      "type": "entity"
+    },
+    {
+      "name": "闪电仙人球",
+      "type": "entity"
+    },
+    {
+      "name": "香水区域",
+      "type": "entity"
+    },
+    {
+      "name": "变身饮料",
+      "type": "item"
+    },
+    {
+      "name": "乘胜追击",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "5V5经典奶酪赛",
+      "type": "mode"
+    },
+    {
+      "name": "婚礼大作战",
+      "type": "mode"
+    },
+    {
+      "name": "元气满满",
+      "type": "skill"
+    },
+    {
+      "name": "双重猫格",
+      "type": "skill"
+    },
+    {
+      "name": "发怒冲刺",
+      "type": "skill"
+    },
+    {
+      "name": "咸鱼",
+      "type": "skill"
+    },
+    {
+      "name": "愤怒的少女",
+      "type": "skill"
+    },
+    {
+      "name": "梦幻舞步",
+      "type": "skill"
+    },
+    {
+      "name": "烟雾弹",
+      "type": "skill"
+    },
+    {
+      "name": "牛仔的礼物",
+      "type": "skill"
+    },
+    {
+      "name": "瞬移闪击",
+      "type": "skill"
+    },
+    {
+      "name": "神之惩戒",
+      "type": "skill"
+    },
+    {
+      "name": "自由翱翔",
+      "type": "skill"
+    },
+    {
+      "name": "蓝图",
+      "type": "skill"
+    },
+    {
+      "name": "警戒",
+      "type": "skill"
+    },
+    {
+      "name": "追风状态",
+      "type": "skill"
+    },
+    {
+      "name": "随机应变",
+      "type": "skill"
+    },
+    {
+      "name": "鞭子",
+      "type": "skill"
+    },
+    {
+      "name": "魅力香水",
+      "type": "skill"
+    },
+    {
+      "name": "我生气了！",
+      "type": "specialSkill"
+    }
+  ],
+  "攻击冷却加成值": [],
+  "攻击范围倍率": [
+    {
+      "name": "香水区域",
+      "type": "entity"
+    },
+    {
+      "name": "变身饮料",
+      "type": "item"
+    },
+    {
+      "name": "苍蝇拍",
+      "type": "item"
+    },
+    {
+      "name": "警戒",
+      "type": "skill"
+    },
+    {
+      "name": "身体素质",
+      "type": "skill"
+    },
+    {
+      "name": "魅力香水",
+      "type": "skill"
+    },
+    {
+      "name": "全垒打",
+      "type": "specialSkill"
+    },
+    {
+      "name": "勇气爪击",
+      "type": "specialSkill"
+    },
+    {
+      "name": "长爪一击",
+      "type": "specialSkill"
+    }
+  ],
+  "攻击范围加成值": [
+    {
+      "name": "兔子大表哥",
+      "type": "entity"
+    },
+    {
+      "name": "兔子大表哥",
+      "type": "skill"
+    }
+  ],
+  "可空刀次数增加": [
+    {
+      "name": "愤怒的少女",
+      "type": "skill"
+    }
+  ],
+  "禁止攻击": [
+    {
+      "name": "知识渊博",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "创意玩法",
+      "type": "mode"
+    },
+    {
+      "name": "共鸣",
+      "type": "skill"
+    },
+    {
+      "name": "神之惩戒",
+      "type": "skill"
+    },
+    {
+      "name": "贵族礼仪",
+      "type": "skill"
+    }
+  ],
+  "交互速度倍率": [],
+  "交互白名单": [
+    {
+      "name": "鼠虚弱",
+      "type": "buff"
+    },
+    {
+      "name": "乾坤袋",
+      "type": "entity"
+    },
+    {
+      "name": "大星星",
+      "type": "entity"
+    },
+    {
+      "name": "头盔",
+      "type": "entity"
+    },
+    {
+      "name": "小星星",
+      "type": "entity"
+    },
+    {
+      "name": "巨型比利鼠",
+      "type": "entity"
+    },
+    {
+      "name": "巨大泰菲球",
+      "type": "entity"
+    },
+    {
+      "name": "弹簧猫",
+      "type": "entity"
+    },
+    {
+      "name": "战车",
+      "type": "entity"
+    },
+    {
+      "name": "星星",
+      "type": "entity"
+    },
+    {
+      "name": "机器鼠",
+      "type": "entity"
+    },
+    {
+      "name": "板凳猫",
+      "type": "entity"
+    },
+    {
+      "name": "泰菲球",
+      "type": "entity"
+    },
+    {
+      "name": "管道猫",
+      "type": "entity"
+    },
+    {
+      "name": "线条猫",
+      "type": "entity"
+    },
+    {
+      "name": "蓝图",
+      "type": "entity"
+    },
+    {
+      "name": "鼠片",
+      "type": "entity"
+    },
+    {
+      "name": "口香糖",
+      "type": "fixture"
+    },
+    {
+      "name": "喷洒间",
+      "type": "fixture"
+    },
+    {
+      "name": "盔甲人",
+      "type": "fixture"
+    },
+    {
+      "name": "老鼠洞",
+      "type": "fixture"
+    },
+    {
+      "name": "药水罐",
+      "type": "fixture"
+    },
+    {
+      "name": "鸭妈妈",
+      "type": "fixture"
+    },
+    {
+      "name": "鸭爸爸",
+      "type": "fixture"
+    },
+    {
+      "name": "变身饮料",
+      "type": "item"
+    },
+    {
+      "name": "奶酪",
+      "type": "item"
+    },
+    {
+      "name": "混沌大作战",
+      "type": "mode"
+    },
+    {
+      "name": "猫鼠广场",
+      "type": "mode"
+    },
+    {
+      "name": "疯狂奶酪赛",
+      "type": "mode"
+    },
+    {
+      "name": "丰收盛宴",
+      "type": "skill"
+    },
+    {
+      "name": "乾坤袋",
+      "type": "skill"
+    },
+    {
+      "name": "军团战车",
+      "type": "skill"
+    },
+    {
+      "name": "喜剧之王",
+      "type": "skill"
+    },
+    {
+      "name": "头盔",
+      "type": "skill"
+    },
+    {
+      "name": "奶酪好手",
+      "type": "skill"
+    },
+    {
+      "name": "小情绪",
+      "type": "skill"
+    },
+    {
+      "name": "星星棒",
+      "type": "skill"
+    },
+    {
+      "name": "机械身躯",
+      "type": "skill"
+    },
+    {
+      "name": "梦幻舞步",
+      "type": "skill"
+    },
+    {
+      "name": "蓝图",
+      "type": "skill"
+    },
+    {
+      "name": "说出你的故事",
+      "type": "skill"
+    },
+    {
+      "name": "追风状态",
+      "type": "skill"
+    },
+    {
+      "name": "魅力甲油",
+      "type": "skill"
+    }
+  ],
+  "交互黑名单": [
+    {
+      "name": "兔子先生",
+      "type": "entity"
+    },
+    {
+      "name": "桶",
+      "type": "fixture"
+    },
+    {
+      "name": "站牌",
+      "type": "fixture"
+    },
+    {
+      "name": "无畏",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "铁血",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "5V5经典奶酪赛",
+      "type": "mode"
+    },
+    {
+      "name": "猫鼠广场",
+      "type": "mode"
+    },
+    {
+      "name": "兔子先生",
+      "type": "skill"
+    },
+    {
+      "name": "喜剧之王",
+      "type": "skill"
+    },
+    {
+      "name": "旋刃剑舞",
+      "type": "skill"
+    },
+    {
+      "name": "沙包拳头",
+      "type": "skill"
+    },
+    {
+      "name": "猎",
+      "type": "skill"
+    },
+    {
+      "name": "自由翱翔",
+      "type": "skill"
+    },
+    {
+      "name": "超级变！变！变！",
+      "type": "skill"
+    }
+  ],
+  "攀爬速度加成值": [
+    {
+      "name": "藤蔓",
+      "type": "entity"
+    },
+    {
+      "name": "藤蔓",
+      "type": "skill"
+    }
+  ],
+  "掉落道具": [
+    {
+      "name": "乾坤袋",
+      "type": "entity"
+    },
+    {
+      "name": "大仙人掌",
+      "type": "entity"
+    },
+    {
+      "name": "套索",
+      "type": "entity"
+    },
+    {
+      "name": "女主人",
+      "type": "fixture"
+    },
+    {
+      "name": "斯派克",
+      "type": "fixture"
+    },
+    {
+      "name": "盔甲兵",
+      "type": "fixture"
+    },
+    {
+      "name": "乾坤袋",
+      "type": "skill"
+    },
+    {
+      "name": "仙人掌",
+      "type": "skill"
+    },
+    {
+      "name": "勇往直前",
+      "type": "skill"
+    },
+    {
+      "name": "弹力圆球",
+      "type": "skill"
+    },
+    {
+      "name": "牛仔鞭索",
+      "type": "skill"
+    }
+  ],
+  "掉落道具和老鼠": [
+    {
+      "name": "鼠虚弱",
+      "type": "buff"
+    },
+    {
+      "name": "乾坤袋",
+      "type": "entity"
+    },
+    {
+      "name": "列车",
+      "type": "entity"
+    },
+    {
+      "name": "圆形",
+      "type": "entity"
+    },
+    {
+      "name": "垃圾桶",
+      "type": "entity"
+    },
+    {
+      "name": "墙缝泡泡",
+      "type": "entity"
+    },
+    {
+      "name": "大仙人掌球",
+      "type": "entity"
+    },
+    {
+      "name": "小仙人掌球",
+      "type": "entity"
+    },
+    {
+      "name": "巨型胡萝卜",
+      "type": "entity"
+    },
+    {
+      "name": "巨大泰菲球",
+      "type": "entity"
+    },
+    {
+      "name": "带电残骸",
+      "type": "entity"
+    },
+    {
+      "name": "弹簧猫",
+      "type": "entity"
+    },
+    {
+      "name": "强化圆形",
+      "type": "entity"
+    },
+    {
+      "name": "恶魔之门",
+      "type": "entity"
+    },
+    {
+      "name": "感应雷",
+      "type": "entity"
+    },
+    {
+      "name": "战车",
+      "type": "entity"
+    },
+    {
+      "name": "战车-分离态",
+      "type": "entity"
+    },
+    {
+      "name": "手型枪",
+      "type": "entity"
+    },
+    {
+      "name": "打开的老鼠夹",
+      "type": "entity"
+    },
+    {
+      "name": "披萨",
+      "type": "entity"
+    },
+    {
+      "name": "斯派克",
+      "type": "entity"
+    },
+    {
+      "name": "旋转桶盖",
+      "type": "entity"
+    },
+    {
+      "name": "机器鼠",
+      "type": "entity"
+    },
+    {
+      "name": "板凳猫",
+      "type": "entity"
+    },
+    {
+      "name": "汽水冰面",
+      "type": "entity"
+    },
+    {
+      "name": "汽水罐",
+      "type": "entity"
+    },
+    {
+      "name": "泡泡",
+      "type": "entity"
+    },
+    {
+      "name": "泰克",
+      "type": "entity"
+    },
+    {
+      "name": "泰菲球",
+      "type": "entity"
+    },
+    {
+      "name": "洞穴",
+      "type": "entity"
+    },
+    {
+      "name": "火炮",
+      "type": "entity"
+    },
+    {
+      "name": "火箭炮",
+      "type": "entity"
+    },
+    {
+      "name": "火药桶",
+      "type": "entity"
+    },
+    {
+      "name": "炮弹",
+      "type": "entity"
+    },
+    {
+      "name": "猫咪泡泡",
+      "type": "entity"
+    },
+    {
+      "name": "瑜伽球",
+      "type": "entity"
+    },
+    {
+      "name": "百科全书",
+      "type": "entity"
+    },
+    {
+      "name": "皇家火炮",
+      "type": "entity"
+    },
+    {
+      "name": "管道猫",
+      "type": "entity"
+    },
+    {
+      "name": "红色卡牌",
+      "type": "entity"
+    },
+    {
+      "name": "蓄力箭",
+      "type": "entity"
+    },
+    {
+      "name": "追求者",
+      "type": "entity"
+    },
+    {
+      "name": "遥控机器猫",
+      "type": "entity"
+    },
+    {
+      "name": "遥控机器鼠",
+      "type": "entity"
+    },
+    {
+      "name": "金币",
+      "type": "entity"
+    },
+    {
+      "name": "铁砧",
+      "type": "entity"
+    },
+    {
+      "name": "长枪",
+      "type": "entity"
+    },
+    {
+      "name": "闪耀足球",
+      "type": "entity"
+    },
+    {
+      "name": "飓风",
+      "type": "entity"
+    },
+    {
+      "name": "鸟哨鞭炮",
+      "type": "entity"
+    },
+    {
+      "name": "鼠片",
+      "type": "entity"
+    },
+    {
+      "name": "口香糖",
+      "type": "fixture"
+    },
+    {
+      "name": "喷洒间",
+      "type": "fixture"
+    },
+    {
+      "name": "女主人",
+      "type": "fixture"
+    },
+    {
+      "name": "嫦娥",
+      "type": "fixture"
+    },
+    {
+      "name": "挡板",
+      "type": "fixture"
+    },
+    {
+      "name": "斯派克",
+      "type": "fixture"
+    },
+    {
+      "name": "炸药堆",
+      "type": "fixture"
+    },
+    {
+      "name": "百叶窗",
+      "type": "fixture"
+    },
+    {
+      "name": "盔甲人",
+      "type": "fixture"
+    },
+    {
+      "name": "药水罐",
+      "type": "fixture"
+    },
+    {
+      "name": "鸭妈妈",
+      "type": "fixture"
+    },
+    {
+      "name": "鸭爸爸",
+      "type": "fixture"
+    },
+    {
+      "name": "冰块",
+      "type": "item"
+    },
+    {
+      "name": "小鞭炮",
+      "type": "item"
+    },
+    {
+      "name": "泡泡机",
+      "type": "item"
+    },
+    {
+      "name": "灰花瓶",
+      "type": "item"
+    },
+    {
+      "name": "狗骨头",
+      "type": "item"
+    },
+    {
+      "name": "电风扇",
+      "type": "item"
+    },
+    {
+      "name": "老鼠夹",
+      "type": "item"
+    },
+    {
+      "name": "苍蝇拍",
+      "type": "item"
+    },
+    {
+      "name": "蓝花瓶",
+      "type": "item"
+    },
+    {
+      "name": "遥控器",
+      "type": "item"
+    },
+    {
+      "name": "鞭炮束",
+      "type": "item"
+    },
+    {
+      "name": "击晕",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "猛攻",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "铁血",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "漂浮气球",
+      "type": "mode"
+    },
+    {
+      "name": "猫鼠广场",
+      "type": "mode"
+    },
+    {
+      "name": "BOOM!!",
+      "type": "skill"
+    },
+    {
+      "name": "三叉戟",
+      "type": "skill"
+    },
+    {
+      "name": "世界波",
+      "type": "skill"
+    },
+    {
+      "name": "丘比特之箭",
+      "type": "skill"
+    },
+    {
+      "name": "丰收盛宴",
+      "type": "skill"
+    },
+    {
+      "name": "乾坤袋",
+      "type": "skill"
+    },
+    {
+      "name": "仙人掌弹弓",
+      "type": "skill"
+    },
+    {
+      "name": "共鸣",
+      "type": "skill"
+    },
+    {
+      "name": "军团战车",
+      "type": "skill"
+    },
+    {
+      "name": "剑客长枪",
+      "type": "skill"
+    },
+    {
+      "name": "剑舞华尔兹",
+      "type": "skill"
+    },
+    {
+      "name": "勇往直前",
+      "type": "skill"
+    },
+    {
+      "name": "垃圾桶",
+      "type": "skill"
+    },
+    {
+      "name": "垃圾盖",
+      "type": "skill"
+    },
+    {
+      "name": "大电球",
+      "type": "skill"
+    },
+    {
+      "name": "大铁锤",
+      "type": "skill"
+    },
+    {
+      "name": "奇思妙想",
+      "type": "skill"
+    },
+    {
+      "name": "小电球",
+      "type": "skill"
+    },
+    {
+      "name": "强能灌注",
+      "type": "skill"
+    },
+    {
+      "name": "怒气喷发",
+      "type": "skill"
+    },
+    {
+      "name": "意式披萨",
+      "type": "skill"
+    },
+    {
+      "name": "感同身受",
+      "type": "skill"
+    },
+    {
+      "name": "我，兔八哥",
+      "type": "skill"
+    },
+    {
+      "name": "战术机动",
+      "type": "skill"
+    },
+    {
+      "name": "手型枪",
+      "type": "skill"
+    },
+    {
+      "name": "指甲油",
+      "type": "skill"
+    },
+    {
+      "name": "捕虫网",
+      "type": "skill"
+    },
+    {
+      "name": "攻无不克",
+      "type": "skill"
+    },
+    {
+      "name": "旋刃剑舞",
+      "type": "skill"
+    },
+    {
+      "name": "旋转桶盖",
+      "type": "skill"
+    },
+    {
+      "name": "机械身躯",
+      "type": "skill"
+    },
+    {
+      "name": "柠檬旋风",
+      "type": "skill"
+    },
+    {
+      "name": "横冲直撞",
+      "type": "skill"
+    },
+    {
+      "name": "止戈雷云",
+      "type": "skill"
+    },
+    {
+      "name": "汽水罐",
+      "type": "skill"
+    },
+    {
+      "name": "沙包拳头",
+      "type": "skill"
+    },
+    {
+      "name": "泡泡棒",
+      "type": "skill"
+    },
+    {
+      "name": "滑步踢",
+      "type": "skill"
+    },
+    {
+      "name": "火箭筒",
+      "type": "skill"
+    },
+    {
+      "name": "火药桶",
+      "type": "skill"
+    },
+    {
+      "name": "狂",
+      "type": "skill"
+    },
+    {
+      "name": "狡兔三窟",
+      "type": "skill"
+    },
+    {
+      "name": "猎",
+      "type": "skill"
+    },
+    {
+      "name": "瑜伽球",
+      "type": "skill"
+    },
+    {
+      "name": "电池",
+      "type": "skill"
+    },
+    {
+      "name": "皇家火炮",
+      "type": "skill"
+    },
+    {
+      "name": "瞬移闪击",
+      "type": "skill"
+    },
+    {
+      "name": "知识即力量",
+      "type": "skill"
+    },
+    {
+      "name": "胡萝卜",
+      "type": "skill"
+    },
+    {
+      "name": "能源装置",
+      "type": "skill"
+    },
+    {
+      "name": "自由翱翔",
+      "type": "skill"
+    },
+    {
+      "name": "舞花枪",
+      "type": "skill"
+    },
+    {
+      "name": "舰艇火炮",
+      "type": "skill"
+    },
+    {
+      "name": "蘸水笔",
+      "type": "skill"
+    },
+    {
+      "name": "说出你的故事",
+      "type": "skill"
+    },
+    {
+      "name": "迷乱列车",
+      "type": "skill"
+    },
+    {
+      "name": "追求者出击",
+      "type": "skill"
+    },
+    {
+      "name": "追风双翼",
+      "type": "skill"
+    },
+    {
+      "name": "追风状态",
+      "type": "skill"
+    },
+    {
+      "name": "野生体格",
+      "type": "skill"
+    },
+    {
+      "name": "隐形感应雷",
+      "type": "skill"
+    },
+    {
+      "name": "雷云",
+      "type": "skill"
+    },
+    {
+      "name": "鞭子",
+      "type": "skill"
+    },
+    {
+      "name": "飞翔金币",
+      "type": "skill"
+    },
+    {
+      "name": "香甜梦境",
+      "type": "skill"
+    },
+    {
+      "name": "骑士之剑",
+      "type": "skill"
+    },
+    {
+      "name": "魅力甲油",
+      "type": "skill"
+    },
+    {
+      "name": "魔音穿耳",
+      "type": "skill"
+    },
+    {
+      "name": "鸟哨",
+      "type": "skill"
+    }
+  ],
+  "禁用道具": [
+    {
+      "name": "猫虚弱",
+      "type": "buff"
+    },
+    {
+      "name": "鼠虚弱",
+      "type": "buff"
+    },
+    {
+      "name": "乾坤袋",
+      "type": "entity"
+    },
+    {
+      "name": "大星星",
+      "type": "entity"
+    },
+    {
+      "name": "小星星",
+      "type": "entity"
+    },
+    {
+      "name": "战车",
+      "type": "entity"
+    },
+    {
+      "name": "星星",
+      "type": "entity"
+    },
+    {
+      "name": "炮弹",
+      "type": "entity"
+    },
+    {
+      "name": "烟雾",
+      "type": "entity"
+    },
+    {
+      "name": "皇家火炮",
+      "type": "entity"
+    },
+    {
+      "name": "线条猫",
+      "type": "entity"
+    },
+    {
+      "name": "蓝图",
+      "type": "entity"
+    },
+    {
+      "name": "蓝色小淘气",
+      "type": "entity"
+    },
+    {
+      "name": "风之屏障",
+      "type": "entity"
+    },
+    {
+      "name": "无畏",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "猛攻",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "铁血",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "创意玩法",
+      "type": "mode"
+    },
+    {
+      "name": "乾坤袋",
+      "type": "skill"
+    },
+    {
+      "name": "军团战车",
+      "type": "skill"
+    },
+    {
+      "name": "勇往直前",
+      "type": "skill"
+    },
+    {
+      "name": "喜剧之王",
+      "type": "skill"
+    },
+    {
+      "name": "圆滚滚",
+      "type": "skill"
+    },
+    {
+      "name": "小淘气",
+      "type": "skill"
+    },
+    {
+      "name": "弹力圆球",
+      "type": "skill"
+    },
+    {
+      "name": "御风剑舞",
+      "type": "skill"
+    },
+    {
+      "name": "我，兔八哥",
+      "type": "skill"
+    },
+    {
+      "name": "星星棒",
+      "type": "skill"
+    },
+    {
+      "name": "格挡之剑",
+      "type": "skill"
+    },
+    {
+      "name": "沙包拳头",
+      "type": "skill"
+    },
+    {
+      "name": "烟雾弹",
+      "type": "skill"
+    },
+    {
+      "name": "狡兔三窟",
+      "type": "skill"
+    },
+    {
+      "name": "皇家火炮",
+      "type": "skill"
+    },
+    {
+      "name": "胡椒粉罐头",
+      "type": "skill"
+    },
+    {
+      "name": "蓝图",
+      "type": "skill"
+    },
+    {
+      "name": "防狼锤",
+      "type": "skill"
+    }
+  ],
+  "投掷速度增加": [
+    {
+      "name": "能源装置",
+      "type": "skill"
+    }
+  ],
+  "禁用技能": [
+    {
+      "name": "猫虚弱",
+      "type": "buff"
+    },
+    {
+      "name": "乾坤袋",
+      "type": "entity"
+    },
+    {
+      "name": "头盔",
+      "type": "entity"
+    },
+    {
+      "name": "战车",
+      "type": "entity"
+    },
+    {
+      "name": "打开的老鼠夹",
+      "type": "entity"
+    },
+    {
+      "name": "炮弹",
+      "type": "entity"
+    },
+    {
+      "name": "烟雾",
+      "type": "entity"
+    },
+    {
+      "name": "皇家火炮",
+      "type": "entity"
+    },
+    {
+      "name": "红色卡牌",
+      "type": "entity"
+    },
+    {
+      "name": "蓝色小淘气",
+      "type": "entity"
+    },
+    {
+      "name": "风之屏障",
+      "type": "entity"
+    },
+    {
+      "name": "飞吻",
+      "type": "entity"
+    },
+    {
+      "name": "香水区域",
+      "type": "entity"
+    },
+    {
+      "name": "口香糖",
+      "type": "fixture"
+    },
+    {
+      "name": "老鼠夹",
+      "type": "item"
+    },
+    {
+      "name": "无畏",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "猛攻",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "铁血",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "创意玩法",
+      "type": "mode"
+    },
+    {
+      "name": "沙滩排球",
+      "type": "mode"
+    },
+    {
+      "name": "乾坤袋",
+      "type": "skill"
+    },
+    {
+      "name": "军团战车",
+      "type": "skill"
+    },
+    {
+      "name": "勇往直前",
+      "type": "skill"
+    },
+    {
+      "name": "喜剧之王",
+      "type": "skill"
+    },
+    {
+      "name": "头盔",
+      "type": "skill"
+    },
+    {
+      "name": "奇思妙想",
+      "type": "skill"
+    },
+    {
+      "name": "小淘气",
+      "type": "skill"
+    },
+    {
+      "name": "御风剑舞",
+      "type": "skill"
+    },
+    {
+      "name": "指甲油",
+      "type": "skill"
+    },
+    {
+      "name": "捕鼠专家",
+      "type": "skill"
+    },
+    {
+      "name": "格挡之剑",
+      "type": "skill"
+    },
+    {
+      "name": "烟雾弹",
+      "type": "skill"
+    },
+    {
+      "name": "皇家火炮",
+      "type": "skill"
+    },
+    {
+      "name": "神之惩戒",
+      "type": "skill"
+    },
+    {
+      "name": "胡椒粉罐头",
+      "type": "skill"
+    },
+    {
+      "name": "贵族礼仪",
+      "type": "skill"
+    },
+    {
+      "name": "防狼锤",
+      "type": "skill"
+    },
+    {
+      "name": "魅力甲油",
+      "type": "skill"
+    },
+    {
+      "name": "魅力香水",
+      "type": "skill"
+    },
+    {
+      "name": "魅惑之吻",
+      "type": "skill"
+    }
+  ],
+  "禁用部分技能": [
+    {
+      "name": "鼠虚弱",
+      "type": "buff"
+    },
+    {
+      "name": "巨型比利鼠",
+      "type": "entity"
+    },
+    {
+      "name": "巨大泰菲球",
+      "type": "entity"
+    },
+    {
+      "name": "弹簧猫",
+      "type": "entity"
+    },
+    {
+      "name": "战车",
+      "type": "entity"
+    },
+    {
+      "name": "板凳猫",
+      "type": "entity"
+    },
+    {
+      "name": "泰菲球",
+      "type": "entity"
+    },
+    {
+      "name": "管道猫",
+      "type": "entity"
+    },
+    {
+      "name": "鼠片",
+      "type": "entity"
+    },
+    {
+      "name": "喷洒间",
+      "type": "fixture"
+    },
+    {
+      "name": "药水罐",
+      "type": "fixture"
+    },
+    {
+      "name": "变身饮料",
+      "type": "item"
+    },
+    {
+      "name": "混沌大作战",
+      "type": "mode"
+    },
+    {
+      "name": "丰收盛宴",
+      "type": "skill"
+    },
+    {
+      "name": "军团战车",
+      "type": "skill"
+    },
+    {
+      "name": "勇者无惧",
+      "type": "skill"
+    },
+    {
+      "name": "小情绪",
+      "type": "skill"
+    },
+    {
+      "name": "超级变！变！变！",
+      "type": "skill"
+    },
+    {
+      "name": "追风状态",
+      "type": "skill"
+    }
+  ],
+  "当前冷却时间倍率": [
+    {
+      "name": "花束",
+      "type": "entity"
+    },
+    {
+      "name": "爱心花束",
+      "type": "skill"
+    },
+    {
+      "name": "胡萝卜",
+      "type": "skill"
+    },
+    {
+      "name": "勇气投掷",
+      "type": "specialSkill"
+    },
+    {
+      "name": "勇气爪击",
+      "type": "specialSkill"
+    }
+  ],
+  "当前冷却时间加成值": [
+    {
+      "name": "咸鱼",
+      "type": "entity"
+    },
+    {
+      "name": "咸鱼-投射物",
+      "type": "entity"
+    },
+    {
+      "name": "旋转桶盖",
+      "type": "entity"
+    },
+    {
+      "name": "百科全书",
+      "type": "entity"
+    },
+    {
+      "name": "花枪",
+      "type": "entity"
+    },
+    {
+      "name": "精准投射",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "混沌大作战",
+      "type": "mode"
+    },
+    {
+      "name": "丰收盛宴",
+      "type": "skill"
+    },
+    {
+      "name": "侠义相助",
+      "type": "skill"
+    },
+    {
+      "name": "剑与苹果",
+      "type": "skill"
+    },
+    {
+      "name": "古灵精怪",
+      "type": "skill"
+    },
+    {
+      "name": "咸鱼",
+      "type": "skill"
+    },
+    {
+      "name": "少女心",
+      "type": "skill"
+    },
+    {
+      "name": "怒气喷发",
+      "type": "skill"
+    },
+    {
+      "name": "戏剧转折",
+      "type": "skill"
+    },
+    {
+      "name": "掷花枪",
+      "type": "skill"
+    },
+    {
+      "name": "旋刃剑舞",
+      "type": "skill"
+    },
+    {
+      "name": "旋转桶盖",
+      "type": "skill"
+    },
+    {
+      "name": "知识即力量",
+      "type": "skill"
+    },
+    {
+      "name": "舞花枪",
+      "type": "skill"
+    },
+    {
+      "name": "警戒",
+      "type": "skill"
+    },
+    {
+      "name": "骄傲的学霸",
+      "type": "skill"
+    },
+    {
+      "name": "骑士之剑",
+      "type": "skill"
+    },
+    {
+      "name": "魔术戏法",
+      "type": "skill"
+    }
+  ],
+  "视野范围缩放": [
+    {
+      "name": "恶魔之门",
+      "type": "entity"
+    },
+    {
+      "name": "披萨",
+      "type": "entity"
+    },
+    {
+      "name": "老鼠洞",
+      "type": "fixture"
+    },
+    {
+      "name": "香炉",
+      "type": "fixture"
+    },
+    {
+      "name": "奶酪",
+      "type": "item"
+    },
+    {
+      "name": "远视饮料",
+      "type": "item"
+    },
+    {
+      "name": "创意玩法",
+      "type": "mode"
+    },
+    {
+      "name": "沙滩排球",
+      "type": "mode"
+    },
+    {
+      "name": "混沌大作战",
+      "type": "mode"
+    },
+    {
+      "name": "特工行动",
+      "type": "mode"
+    },
+    {
+      "name": "猫鼠广场",
+      "type": "mode"
+    },
+    {
+      "name": "疯狂奶酪赛",
+      "type": "mode"
+    },
+    {
+      "name": "三叉戟",
+      "type": "skill"
+    },
+    {
+      "name": "世界波",
+      "type": "skill"
+    },
+    {
+      "name": "分身大师",
+      "type": "skill"
+    },
+    {
+      "name": "剑盾防御",
+      "type": "skill"
+    },
+    {
+      "name": "心思缜密",
+      "type": "skill"
+    },
+    {
+      "name": "必备专业素养",
+      "type": "skill"
+    },
+    {
+      "name": "意式披萨",
+      "type": "skill"
+    },
+    {
+      "name": "感同身受",
+      "type": "skill"
+    },
+    {
+      "name": "朝圣瞭望",
+      "type": "skill"
+    },
+    {
+      "name": "机械身躯",
+      "type": "skill"
+    },
+    {
+      "name": "警戒",
+      "type": "skill"
+    },
+    {
+      "name": "超级变！变！变！",
+      "type": "skill"
+    },
+    {
+      "name": "追风状态",
+      "type": "skill"
+    }
+  ],
+  "隐藏小地图位置": [
+    {
+      "name": "面粉烟雾",
+      "type": "entity"
+    },
+    {
+      "name": "白色花",
+      "type": "fixture"
+    },
+    {
+      "name": "面粉袋",
+      "type": "item"
+    }
+  ],
+  "暴露位置": [
+    {
+      "name": "咸鱼",
+      "type": "entity"
+    },
+    {
+      "name": "咸鱼-投射物",
+      "type": "entity"
+    },
+    {
+      "name": "大仙人掌球",
+      "type": "entity"
+    },
+    {
+      "name": "小仙人掌球",
+      "type": "entity"
+    },
+    {
+      "name": "托普斯分身",
+      "type": "entity"
+    },
+    {
+      "name": "机器鼠",
+      "type": "entity"
+    },
+    {
+      "name": "汽水冰面",
+      "type": "entity"
+    },
+    {
+      "name": "汽水罐",
+      "type": "entity"
+    },
+    {
+      "name": "泡泡",
+      "type": "entity"
+    },
+    {
+      "name": "爆炸仙人球",
+      "type": "entity"
+    },
+    {
+      "name": "饭盒",
+      "type": "entity"
+    },
+    {
+      "name": "饮料印记",
+      "type": "entity"
+    },
+    {
+      "name": "章鱼",
+      "type": "fixture"
+    },
+    {
+      "name": "蓝色花",
+      "type": "fixture"
+    },
+    {
+      "name": "远视饮料",
+      "type": "item"
+    },
+    {
+      "name": "寻踪",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "创意玩法",
+      "type": "mode"
+    },
+    {
+      "name": "婚礼大作战",
+      "type": "mode"
+    },
+    {
+      "name": "仙人掌弹弓",
+      "type": "skill"
+    },
+    {
+      "name": "双重猫格",
+      "type": "skill"
+    },
+    {
+      "name": "咸鱼",
+      "type": "skill"
+    },
+    {
+      "name": "喜剧之王",
+      "type": "skill"
+    },
+    {
+      "name": "喵喵叫",
+      "type": "skill"
+    },
+    {
+      "name": "天使祝福",
+      "type": "skill"
+    },
+    {
+      "name": "必备专业素养",
+      "type": "skill"
+    },
+    {
+      "name": "怒气喷发",
+      "type": "skill"
+    },
+    {
+      "name": "我，兔八哥",
+      "type": "skill"
+    },
+    {
+      "name": "梦幻舞步",
+      "type": "skill"
+    },
+    {
+      "name": "汽水罐",
+      "type": "skill"
+    },
+    {
+      "name": "泡泡棒",
+      "type": "skill"
+    },
+    {
+      "name": "牛仔的礼物",
+      "type": "skill"
+    },
+    {
+      "name": "胆小如鼠",
+      "type": "skill"
+    },
+    {
+      "name": "警戒",
+      "type": "skill"
+    },
+    {
+      "name": "追踪饮料",
+      "type": "skill"
+    },
+    {
+      "name": "饭盒陷阱",
+      "type": "skill"
+    }
+  ],
+  "隐藏位置": [
+    {
+      "name": "兔子大表哥",
+      "type": "entity"
+    },
+    {
+      "name": "感知战旗",
+      "type": "entity"
+    },
+    {
+      "name": "白色花",
+      "type": "fixture"
+    },
+    {
+      "name": "兔子大表哥",
+      "type": "skill"
+    },
+    {
+      "name": "国王战旗",
+      "type": "skill"
+    },
+    {
+      "name": "香甜梦境",
+      "type": "skill"
+    }
+  ],
+  "不显示小地图": [
+    {
+      "name": "侦探泰菲分身",
+      "type": "entity"
+    },
+    {
+      "name": "烟雾",
+      "type": "entity"
+    },
+    {
+      "name": "煎蛋",
+      "type": "entity"
+    },
+    {
+      "name": "胡椒烟雾",
+      "type": "entity"
+    },
+    {
+      "name": "闪耀足球",
+      "type": "entity"
+    },
+    {
+      "name": "饮料分身",
+      "type": "entity"
+    },
+    {
+      "name": "饮料印记",
+      "type": "entity"
+    },
+    {
+      "name": "壁炉",
+      "type": "fixture"
+    },
+    {
+      "name": "胡椒瓶",
+      "type": "item"
+    },
+    {
+      "name": "世界波",
+      "type": "skill"
+    },
+    {
+      "name": "分身大师",
+      "type": "skill"
+    },
+    {
+      "name": "平底锅",
+      "type": "skill"
+    },
+    {
+      "name": "感同身受",
+      "type": "skill"
+    },
+    {
+      "name": "烟雾弹",
+      "type": "skill"
+    },
+    {
+      "name": "记录美好瞬间",
+      "type": "skill"
+    },
+    {
+      "name": "追踪饮料",
+      "type": "skill"
+    },
+    {
+      "name": "香风折扇",
+      "type": "skill"
+    }
+  ],
+  "挣扎读条": [
+    {
+      "name": "打开的老鼠夹",
+      "type": "entity"
+    },
+    {
+      "name": "斯派克",
+      "type": "entity"
+    },
+    {
+      "name": "泡泡",
+      "type": "entity"
+    },
+    {
+      "name": "百科全书",
+      "type": "entity"
+    },
+    {
+      "name": "老鼠夹",
+      "type": "item"
+    },
+    {
+      "name": "泡泡棒",
+      "type": "skill"
+    },
+    {
+      "name": "知识即力量",
+      "type": "skill"
+    }
+  ],
+  "获得经验": [
+    {
+      "name": "猫虚弱",
+      "type": "buff"
+    },
+    {
+      "name": "魔镜",
+      "type": "entity"
+    },
+    {
+      "name": "魔镜经验蛋糕",
+      "type": "entity"
+    },
+    {
+      "name": "知识渊博",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "祝愿",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "老牛仔",
+      "type": "skill"
+    },
+    {
+      "name": "骄傲的学霸",
+      "type": "skill"
+    },
+    {
+      "name": "魔术戏法",
+      "type": "skill"
+    },
+    {
+      "name": "魔镜召唤咒",
+      "type": "skill"
+    }
+  ],
+  "初始等级提高": [
+    {
+      "name": "创意玩法",
+      "type": "mode"
+    },
+    {
+      "name": "婚礼大作战",
+      "type": "mode"
+    },
+    {
+      "name": "混沌大作战",
+      "type": "mode"
+    },
+    {
+      "name": "烟花大作战",
+      "type": "mode"
+    },
+    {
+      "name": "特工行动",
+      "type": "mode"
+    },
+    {
+      "name": "疯狂奶酪赛",
+      "type": "mode"
+    },
+    {
+      "name": "装饰树大作战",
+      "type": "mode"
+    }
+  ],
+  "可直接抓起": [
+    {
+      "name": "手型枪",
+      "type": "entity"
+    },
+    {
+      "name": "斗牛",
+      "type": "entity"
+    },
+    {
+      "name": "鼠片",
+      "type": "entity"
+    },
+    {
+      "name": "苍蝇拍",
+      "type": "item"
+    },
+    {
+      "name": "平底锅",
+      "type": "skill"
+    },
+    {
+      "name": "手型枪",
+      "type": "skill"
+    },
+    {
+      "name": "斗牛",
+      "type": "skill"
+    },
+    {
+      "name": "瞬移闪击",
+      "type": "skill"
+    },
+    {
+      "name": "鞭子",
+      "type": "skill"
+    }
+  ],
+  "禁止购物": [
+    {
+      "name": "火炮",
+      "type": "entity"
+    },
+    {
+      "name": "老鼠洞",
+      "type": "fixture"
+    },
+    {
+      "name": "变身饮料",
+      "type": "item"
+    },
+    {
+      "name": "奶酪",
+      "type": "item"
+    },
+    {
+      "name": "无畏",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "铁血",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "混沌大作战",
+      "type": "mode"
+    },
+    {
+      "name": "疯狂奶酪赛",
+      "type": "mode"
+    },
+    {
+      "name": "喜剧之王",
+      "type": "skill"
+    },
+    {
+      "name": "奶酪好手",
+      "type": "skill"
+    },
+    {
+      "name": "机械身躯",
+      "type": "skill"
+    },
+    {
+      "name": "舰艇火炮",
+      "type": "skill"
+    }
+  ]
+}
