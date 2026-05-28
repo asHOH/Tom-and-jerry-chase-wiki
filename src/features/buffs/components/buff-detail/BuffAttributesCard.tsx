@@ -2,7 +2,7 @@
 
 import { useSnapshot } from 'valtio';
 
-import { getBuffGlobalColors, getBuffTypeColors } from '@/lib/design';
+import { getBuffTypeColors } from '@/lib/design';
 import { useLocalBuff } from '@/hooks/useLocalEditEntity';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
@@ -93,7 +93,7 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
       imageUrl={buff.imageUrl}
       alt={buff.name}
       title={buff.name}
-      subtitle={buff.type.includes('状态') ? '(状态)' : '(效果)'}
+      subtitle={'(' + buff.type + ')'}
       aliases={isEditMode ? undefined : availableAliases}
       aliasesContent={aliasesEditor}
       attributes={
@@ -107,100 +107,31 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
             >
               <ed.span path='type' initialValue={effectiveBuff.type ?? '<无内容>'} isSingleLine />
             </Tag>
-            {isEditMode ? (
-              <div className='flex items-center gap-1 text-xs'>
-                <span className='text-xs text-gray-400 dark:text-gray-500'>全局:</span>
-                <label className='flex cursor-pointer items-center gap-1'>
-                  <input
-                    type='checkbox'
-                    checked={effectiveBuff.global ?? false}
-                    onChange={(e) => {
-                      if (!rawBuff) return;
-                      rawBuff.global = e.target.checked;
-                    }}
-                    className='h-3 w-3'
-                  />
-                  <span className='font-bold'>
-                    {(effectiveBuff.global ?? false) ? '全局' : '非全局'}
-                  </span>
-                </label>
-              </div>
-            ) : effectiveBuff.global === true ? (
-              <Tag
-                size='sm'
-                margin='compact'
-                colorStyles={getBuffGlobalColors(effectiveBuff.global || false, isDarkMode)}
-              >
-                全局
-              </Tag>
-            ) : null}
           </div>
-
-          {(isEditMode ||
-            effectiveBuff.target !== undefined ||
-            effectiveBuff.duration !== undefined ||
-            effectiveBuff.failure !== undefined ||
-            effectiveBuff.class !== undefined) && (
-            <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
-              <div className='flex flex-wrap items-center gap-1.5 text-sm font-normal'>
-                {(isEditMode || !!effectiveBuff.target) && (
-                  <span className='inline-flex items-center gap-1 rounded bg-gray-100 px-2 py-0.5 text-xs dark:bg-slate-700'>
-                    对象:
-                    <span className='text-fuchsia-600 dark:text-fuchsia-400'>
-                      <ed.span
-                        path='target'
-                        initialValue={effectiveBuff.target ?? '<无内容>'}
-                        isSingleLine
-                      />
-                    </span>
+          <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
+            <span className='text-lg font-bold whitespace-pre'>基础信息</span>
+            <div className='auto-fill-grid grid-container grid grid-cols-[repeat(2,minmax(80px,1fr))] grid-rows-1 items-center justify-center gap-1 text-sm font-normal'>
+              {effectiveBuff.range !== undefined && (
+                <span className='text-sm whitespace-pre'>
+                  取值范围：
+                  <span className='text-blue-600 dark:text-blue-500'>
+                    {effectiveBuff.range[0] === 'infinity' ? '(∞' : '[' + effectiveBuff.range[0]}
                   </span>
-                )}
-                {(isEditMode || effectiveBuff.duration !== undefined) && (
-                  <span className='inline-flex items-center gap-1 rounded bg-gray-100 px-2 py-0.5 text-xs dark:bg-slate-700'>
-                    持续:
-                    <span className='text-indigo-700 dark:text-indigo-400'>
-                      <ed.span
-                        path='duration'
-                        initialValue={effectiveBuff.duration ?? '<无内容>'}
-                        valueType={typeof effectiveBuff.duration === 'number' ? 'number' : 'string'}
-                        isSingleLine
-                      />
-                    </span>
-                    {typeof effectiveBuff.duration === 'number' ? '秒' : ''}
+                  ,
+                  <span className='text-blue-600 dark:text-blue-500'>
+                    {effectiveBuff.range[1] === 'infinity' ? '∞)' : effectiveBuff.range[1] + ']'}
                   </span>
-                )}
-                {(isEditMode || effectiveBuff.failure !== undefined) && (
-                  <span className='inline-flex items-center gap-1 rounded bg-gray-100 px-2 py-0.5 text-xs dark:bg-slate-700'>
-                    中止:
-                    <span className='text-orange-600 dark:text-orange-400'>
-                      <ed.span
-                        path='failure'
-                        initialValue={effectiveBuff.failure ?? '<无内容>'}
-                        isSingleLine
-                      />
-                    </span>
-                  </span>
-                )}
-                {(isEditMode || !!effectiveBuff.class) && (
-                  <span className='inline-flex items-center gap-1 rounded bg-gray-100 px-2 py-0.5 text-xs dark:bg-slate-700'>
-                    分类:
-                    <span className='text-fuchsia-600 dark:text-fuchsia-400'>
-                      <ed.span
-                        path='class'
-                        initialValue={effectiveBuff.class ?? '<无内容>'}
-                        isSingleLine
-                      />
-                    </span>
-                  </span>
-                )}
-              </div>
+                </span>
+              )}
             </div>
-          )}
+          </div>
           {classFilter.length > 0 && (
             <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
               <span className='text-lg font-bold whitespace-pre'>
-                其他{effectiveBuff.class}
-                {effectiveBuff.type.includes('状态') ? '状态' : '效果'}
+                <span className='text-fuchsia-600 dark:text-fuchsia-400'>
+                  {effectiveBuff.class}
+                </span>
+                的同类内容
               </span>
               <div className='mt-1'>
                 <SingleItemAccordionCard

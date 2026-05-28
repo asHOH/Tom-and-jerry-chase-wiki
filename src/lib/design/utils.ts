@@ -299,23 +299,20 @@ export const getItemSourceColors = (itemsource: string, isDarkMode: boolean) => 
 /**
  * Buff
  */
-export const getBuffGlobalColors = (isGlobal: boolean, isDarkMode: boolean) => {
-  const buffType = isGlobal ? 'medium' : 'veryLow';
-  const colorScheme = designTokens.colors.cost[buffType] || designTokens.colors.skillTypes.passive;
-  return {
-    color: isDarkMode && colorScheme.dark ? colorScheme.dark.text : colorScheme.text,
-    backgroundColor:
-      isDarkMode && colorScheme.dark ? colorScheme.dark.background : colorScheme.background,
-  };
-};
-
 export const getBuffTypeColors = (type: buffTypelist, isDarkMode: boolean) => {
-  const buffType = type.includes('正面') ? 'veryLow' : type.includes('负面') ? 'high' : 'low';
-  const colorScheme = designTokens.colors.cost[buffType] || designTokens.colors.skillTypes.passive;
+  const buffTypePaletteMap: Record<string, keyof typeof sharedPositioningTagPalettes> = {
+    状态: 'amber',
+    瞬时效果: 'violet',
+    持续效果: 'azure',
+    属性: 'crimson',
+  };
+
+  const paletteKey = buffTypePaletteMap[type] || 'deepGray';
+  const palette = sharedPositioningTagPalettes[paletteKey];
+  const theme = isDarkMode && palette.dark ? palette.dark : palette;
   return {
-    color: isDarkMode && colorScheme.dark ? colorScheme.dark.text : colorScheme.text,
-    backgroundColor:
-      isDarkMode && colorScheme.dark ? colorScheme.dark.background : colorScheme.background,
+    color: theme.text,
+    backgroundColor: theme.background,
   };
 };
 

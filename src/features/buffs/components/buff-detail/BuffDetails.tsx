@@ -69,7 +69,7 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
       key: 'stack',
       render: () => (
         <DetailTextSection
-          title='叠加方式'
+          title='叠加/结算细节'
           value={effectiveBuff.stack}
           detailedValue={effectiveBuff.detailedStack}
           isDetailedView={isDetailedView}

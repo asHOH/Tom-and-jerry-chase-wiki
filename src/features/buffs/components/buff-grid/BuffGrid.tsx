@@ -5,38 +5,31 @@ import { useSnapshot } from 'valtio';
 
 import { getBuffTypeColors } from '@/lib/design';
 import { useDarkMode } from '@/context/DarkModeContext';
-import type { Buff, buffTypelist } from '@/data/types';
+import type { Buff } from '@/data/types';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
 import { buffsEdit } from '@/data';
 
 import BuffCardDisplay from './BuffCardDisplay';
 
-const INFLUENCE_OPTIONS = ['正面', '负面', '特殊'] as const;
+const TYPE_OPTIONS = ['状态', '瞬时效果', '持续效果', '属性'] as const;
 
 type Props = { description?: string };
 
 export default function BuffClient({ description }: Props) {
-  const [selectedInfluences, setSelectedInfluences] = useState<('正面' | '负面' | '特殊')[]>([]);
+  const [selectedTypes, setSelectedTypes] = useState<('状态' | '瞬时效果' | '持续效果' | '属性')[]>(
+    []
+  );
   const [isDarkMode] = useDarkMode();
 
   const buffsSnapshot = useSnapshot(buffsEdit);
-  const filteredBuffs = Object.values(buffsSnapshot as Record<string, Buff>).filter(
-    (buff: Buff) => {
-      if (buff.type.includes('效果')) return false;
-      return (
-        selectedInfluences.length === 0 || selectedInfluences.some((str) => buff.type.includes(str))
-      );
-    }
-  );
-  const filteredEffects = Object.values(buffsSnapshot as Record<string, Buff>).filter(
-    (buff: Buff) => {
-      if (buff.type.includes('状态')) return false;
-      return (
-        selectedInfluences.length === 0 || selectedInfluences.some((str) => buff.type.includes(str))
-      );
-    }
-  );
+  const allBuffs = Object.values(buffsSnapshot as Record<string, Buff>);
+  const filteredAll = allBuffs.filter((buff) => {
+    if (selectedTypes.length === 0) return true;
+    return selectedTypes.some((t) => buff.type === t);
+  });
+  const filteredBuffs = filteredAll.filter((buff) => buff.type === '状态');
+  const filteredEffects = filteredAll.filter((buff) => buff.type !== '状态');
 
   const { nonClassBuffs, classGroups } = useMemo(() => {
     const nonClass: Buff[] = [];
@@ -93,24 +86,17 @@ export default function BuffClient({ description }: Props) {
       title='状态和效果'
       description={description ?? ''}
       filters={
-        <FilterRow<'正面' | '负面' | '特殊'>
-          label='影响类型:'
-          options={INFLUENCE_OPTIONS}
-          isActive={(f) => selectedInfluences.includes(f)}
+        <FilterRow<'状态' | '瞬时效果' | '持续效果' | '属性'>
+          label='类型:'
+          options={TYPE_OPTIONS}
+          isActive={(f) => selectedTypes.includes(f)}
           onToggle={(f) =>
-            setSelectedInfluences((prev) =>
+            setSelectedTypes((prev) =>
               prev.includes(f) ? prev.filter((x) => x !== f) : [...prev, f]
             )
           }
           getOptionLabel={(f) => f}
-          getButtonStyle={(f, active) =>
-            active
-              ? getBuffTypeColors(
-                  { 正面: '正面效果', 负面: '负面效果', 特殊: '特殊效果' }[f] as buffTypelist,
-                  isDarkMode
-                )
-              : undefined
-          }
+          getButtonStyle={(f, active) => (active ? getBuffTypeColors(f, isDarkMode) : undefined)}
         />
       }
     >
@@ -175,7 +161,7 @@ export default function BuffClient({ description }: Props) {
             </div>
             <div className='relative flex justify-center'>
               <h1 className='inline-block bg-gray-100 px-4 text-2xl font-bold dark:bg-gray-900'>
-                效果
+                效果&属性
               </h1>
             </div>
           </div>
