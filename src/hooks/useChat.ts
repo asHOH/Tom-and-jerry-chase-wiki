@@ -1,52 +1,13 @@
+'use client';
+
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useChat as useAIChat } from '@ai-sdk/react';
+import { DefaultChatTransport, lastAssistantMessageIsCompleteWithToolCalls } from 'ai';
 import { snapshot } from 'valtio';
 
 import { historyData } from '@/data/history';
 import { buffs, cards, characters, entities, itemGroups, items, specialSkills } from '@/data';
 import { env } from '@/env';
-
-// Type definition for a message part, consistent with the API
-type Part = {
-  text?: string;
-  functionCall?: {
-    name: string;
-    args: Record<string, unknown>;
-  };
-  functionResponse?: {
-    name: string;
-    response: {
-      name: string;
-      content: unknown;
-    };
-  };
-};
-
-// Type definition for a message, consistent with the API
-export type Message = {
-  role: 'user' | 'model';
-  parts: Part[];
-};
-
-// Type for function calls returned by the API
-type FunctionCall = {
-  name: string;
-  args: Record<string, unknown>;
-};
-
-// Type for API response
-type ApiResponse =
-  | {
-      requiresAction: true;
-      functionCalls: FunctionCall[];
-    }
-  | {
-      text: string;
-      candidates?: unknown[];
-    }
-  | {
-      error: string;
-      details?: string;
-    };
 
 // Debounce utility to delay function execution
 function debounce<T extends (...args: never[]) => void>(func: T, waitFor: number): T {
@@ -147,7 +108,7 @@ async function executeCode({ code }: { code: string }): Promise<unknown> {
 }
 
 /**
- * A hook for managing multi-round chat requests with client-side tool calling.
+ * A hook for managing AI chat requests with client-side tool calling.
  *
  * @param message The message to send to the chat API.
  * @param debounceMs The debounce delay in milliseconds for sending messages.
@@ -156,10 +117,9 @@ async function executeCode({ code }: { code: string }): Promise<unknown> {
 export function useChat(message?: string, debounceMs = 500) {
   const [debouncedMessage, setDebouncedMessage] = useState<string | undefined>(message);
   const [responseText, setResponseText] = useState<string>('');
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
-  const abortControllerRef = useRef<AbortController | null>(null);
-  const currentRequestIdRef = useRef<number>(0);
+  const pendingRef = useRef<string | null>(null);
+  const mountedRef = useRef(true);
 
   // Debounce the message updates
   const debouncedSetMessage = useMemo(() => {
@@ -170,163 +130,97 @@ export function useChat(message?: string, debounceMs = 500) {
     debouncedSetMessage(message);
   }, [message, debouncedSetMessage]);
 
-  // Execute tool calls and return updated messages
-  const executeFunctionCalls = useCallback(
-    async (functionCalls: FunctionCall[], currentMessages: Message[]): Promise<Message[]> => {
-      const updatedMessages = [...currentMessages];
-
-      // Add model's function call to history
-      updatedMessages.push({
-        role: 'model',
-        parts: functionCalls.map((fc) => ({
-          functionCall: {
-            name: fc.name,
-            args: fc.args,
-          },
-        })),
-      });
-
-      // Execute each function call and collect results
-      const functionResponses: Part[] = [];
-      for (const functionCall of functionCalls) {
-        if (functionCall.name === 'executeCode') {
-          const toolResult = await executeCode(functionCall.args as { code: string });
-          functionResponses.push({
-            functionResponse: {
-              name: 'executeCode',
-              response: { name: 'executeCode', content: toolResult },
-            },
-          });
-        }
-      }
-
-      // Add function responses to history
-      updatedMessages.push({
-        role: 'user',
-        parts: functionResponses,
-      });
-
-      return updatedMessages;
-    },
-    []
-  );
-
-  // Main request function with multi-round support
-  const sendRequest = useCallback(
-    async (requestId: number, initialMessage: string) => {
-      if (!env.NEXT_PUBLIC_GEMINI_CHAT_MODEL) {
-        return;
-      }
-
-      const MAX_ROUNDS = 5; // Safety limit for multi-round requests
-      let messages: Message[] = [{ role: 'user', parts: [{ text: initialMessage }] }];
-
-      for (let round = 0; round < MAX_ROUNDS; round++) {
-        // Check if this request is still current
-        if (currentRequestIdRef.current !== requestId) {
-          console.log('Request cancelled, newer request in progress');
-          return;
-        }
-
-        try {
-          const response = await fetch('/api/chat', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ messages }),
-            signal: abortControllerRef.current!.signal,
-          });
-
-          if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`API request failed: ${errorText}`);
-          }
-
-          const data: ApiResponse = await response.json();
-
-          // Check for errors
-          if ('error' in data) {
-            throw new Error(data.details || data.error);
-          }
-
-          // Check if function calls are required
-          if ('requiresAction' in data && data.requiresAction) {
-            console.log(`Round ${round + 1}: Function calls required`, data.functionCalls);
-            // Execute function calls and update messages
-            messages = await executeFunctionCalls(data.functionCalls, messages);
-            // Continue loop for next round
-            continue;
-          }
-
-          // Final text response received
-          if ('text' in data) {
-            // Only update if this request is still current
-            if (currentRequestIdRef.current === requestId) {
-              setResponseText(data.text);
-              setIsLoading(false);
-              setError(null);
-            }
-            return;
-          }
-        } catch (err) {
-          if (err instanceof Error && err.name === 'AbortError') {
-            console.log('Request aborted');
-            return;
-          }
-          // Only update error if this request is still current
-          if (currentRequestIdRef.current === requestId) {
-            setError(err instanceof Error ? err : new Error('Unknown error'));
-            setIsLoading(false);
-          }
-          return;
-        }
-      }
-
-      // If we've reached here, max rounds exceeded
-      if (currentRequestIdRef.current === requestId) {
-        setError(new Error('Maximum number of conversation rounds reached'));
-        setIsLoading(false);
-      }
-    },
-    [executeFunctionCalls]
-  );
-
-  // Effect to trigger request when debounced message changes
   useEffect(() => {
-    if (!debouncedMessage?.trim() || !env.NEXT_PUBLIC_GEMINI_CHAT_MODEL) {
-      setResponseText('');
-      setIsLoading(false);
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
+
+  const featureEnabled = env.NEXT_PUBLIC_AI_CHAT_MODEL;
+
+  // Ref to hold addToolResult, avoiding circular dependency in onToolCall
+  const addToolResultRef = useRef<
+    ((options: { tool: string; toolCallId: string; output: unknown }) => void) | null
+  >(null);
+
+  const {
+    sendMessage,
+    setMessages,
+    addToolResult,
+    error: aiError,
+    status,
+  } = useAIChat({
+    transport: new DefaultChatTransport({ api: '/api/chat' }),
+    sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
+    onToolCall: useCallback(async ({ toolCall }) => {
+      if (toolCall.toolName === 'executeCode' && 'input' in toolCall) {
+        const toolInput = toolCall.input as { code: string };
+        const result = await executeCode({ code: toolInput.code });
+        addToolResultRef.current?.({
+          tool: toolCall.toolName,
+          toolCallId: toolCall.toolCallId,
+          output: result,
+        });
+      }
+    }, []),
+    onFinish: useCallback(({ message }) => {
+      if (!mountedRef.current) return;
+      const text = message.parts
+        ?.filter((p) => p.type === 'text')
+        .map((p) => p.text)
+        .join('');
+      if (text) {
+        setResponseText(text);
+      }
+    }, []),
+  });
+
+  // Wire up addToolResult ref after render
+  useEffect(() => {
+    addToolResultRef.current = addToolResult;
+  }, [addToolResult]);
+
+  // Map AI SDK error to local error state
+  useEffect(() => {
+    if (aiError && mountedRef.current) {
+      setError(new Error(aiError.message));
+    } else if (!aiError) {
       setError(null);
+    }
+  }, [aiError]);
+
+  // When debounced message changes, start a fresh conversation
+  useEffect(() => {
+    if (!debouncedMessage?.trim() || !featureEnabled) {
+      setResponseText('');
+      setError(null);
+      setMessages([]);
       return;
     }
 
-    // Cancel previous request
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
-
-    // Create new abort controller
-    abortControllerRef.current = new AbortController();
-
-    // Increment request ID
-    const requestId = ++currentRequestIdRef.current;
-
-    // Reset state
     setResponseText('');
-    setIsLoading(true);
     setError(null);
 
-    // Start request
-    sendRequest(requestId, debouncedMessage);
+    // Store pending message and trigger via ref pattern
+    pendingRef.current = debouncedMessage;
 
-    // Cleanup function
-    return () => {
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
+    // Clear and send in the same tick
+    setMessages([]);
+
+    // Use queueMicrotask to ensure setMessages is committed before sendMessage
+    queueMicrotask(() => {
+      const msg = pendingRef.current;
+      if (msg && mountedRef.current) {
+        pendingRef.current = null;
+        sendMessage({ text: msg });
       }
-    };
-  }, [debouncedMessage, sendRequest]);
+    });
+  }, [debouncedMessage, featureEnabled, setMessages, sendMessage]);
 
-  return env.NEXT_PUBLIC_GEMINI_CHAT_MODEL
+  const isLoading = status === 'submitted' || status === 'streaming';
+
+  return featureEnabled
     ? {
         responseText,
         isLoading,
