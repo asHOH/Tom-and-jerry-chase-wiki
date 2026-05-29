@@ -13,20 +13,14 @@ export const OFFICIAL_SITES: OfficialSite[] = [
     isMain: true,
   },
   {
-    url: 'https://tjwiki.stario.top',
-    label: '分站1',
-    description: '访问快，但文章功能受限',
-  },
-  {
     url: 'https://tjwiki.rickroll.cc',
-    label: '分站2',
+    label: '分站1',
     description: '访问快',
   },
-  // move to 分站3 for it's currently inacessible, but keep it in case it comes back
+  // move to 分站2 for it's currently inaccessible, but keep it in case it comes back
   {
-    url: 'https://tjwiki.net1.work',
-    label: '分站3',
-    // description: '访问快，但文章功能不可用',
+    url: 'https://tjwiki.stario.top',
+    label: '分站2',
     description: '暂时无法访问',
   },
   {
