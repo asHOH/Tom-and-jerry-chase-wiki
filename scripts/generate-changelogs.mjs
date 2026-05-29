@@ -1,9 +1,9 @@
 /**
- * Generate changelogs from git commits using Gemini AI
+ * Generate changelogs from git commits using AI
  *
  * This script:
  * 1. Reads git commits from the past 7 days
- * 2. Uses Gemini AI to convert them to structured changelog entries
+ * 2. Uses AI to convert them to structured changelog entries
  * 3. Groups changes by date (YYYY-MM-DD)
  * 4. Outputs to src/data/generated/changeLogs.json
  *
@@ -15,8 +15,9 @@
  *   node scripts/generate-changelogs.mjs --stdin-json < ai-output.json
  *
  * Environment Variables (from .env or .env.example):
- *   - GEMINI_API_KEY: Your Gemini API key (required)
- *   - NEXT_PUBLIC_GEMINI_CHAT_MODEL: Model to use (default: gemini-2.5-flash)
+ *   - OPENAI_API_KEY: Your OpenAI API key (required)
+ *   - OPENAI_BASE_URL: Custom base URL for OpenAI-compatible providers (optional)
+ *   - NEXT_PUBLIC_AI_CHAT_MODEL: Model to use (default: gpt-4o-mini)
  *
  * Output Format:
  *   - JSON array of daily changelogs
@@ -26,17 +27,23 @@
 import { execSync } from 'node:child_process';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { GoogleGenAI } from '@google/genai';
+import { createOpenAI } from '@ai-sdk/openai';
 import nextEnv from '@next/env';
+import { generateText } from 'ai';
 
 const { loadEnvConfig } = nextEnv;
 
 const projectDir = process.cwd();
 loadEnvConfig(projectDir);
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_MODEL = 'gemini-3.1-flash-lite-preview';
-// const GEMINI_MODEL = process.env.NEXT_PUBLIC_GEMINI_CHAT_MODEL || 'gemini-2.5-flash';
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+const OPENAI_BASE_URL = process.env.OPENAI_BASE_URL;
+const AI_CHAT_MODEL = process.env.NEXT_PUBLIC_AI_CHAT_MODEL || 'gpt-5.5';
+
+const openai = createOpenAI({
+  apiKey: OPENAI_API_KEY,
+  ...(OPENAI_BASE_URL ? { baseURL: OPENAI_BASE_URL } : {}),
+});
 
 // TypeScript type definitions for the output
 const TYPE_DEFINITIONS = `
@@ -416,12 +423,11 @@ function generateFallbackChangelogs(commits) {
  * Generate changelogs using Gemini AI
  */
 async function generateChangelogs(commits) {
-  if (!GEMINI_API_KEY) {
-    throw new Error('GEMINI_API_KEY not found in environment');
+  if (!OPENAI_API_KEY) {
+    throw new Error('OPENAI_API_KEY not found in environment');
   }
 
-  const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
-  console.log(`Generating changelogs with Gemini for ${commits.length} commits...`);
+  console.log(`Generating changelogs with AI for ${commits.length} commits...`);
 
   // Process in batches to avoid JSON truncation on large logs
   const BATCH_SIZE = 20;
@@ -435,79 +441,21 @@ async function generateChangelogs(commits) {
     const commitsInput = batch.map((c) => `${c.hash}|${c.message}`).join('\n');
 
     try {
-      const response = await ai.models.generateContent({
-        model: GEMINI_MODEL,
-        contents: [
-          {
-            role: 'user',
-            parts: [
-              {
-                text: `Convert these git commits to changelog format:\n\n${commitsInput}`,
-              },
-            ],
-          },
-        ],
-        config: {
-          systemInstruction: SYSTEM_PROMPT,
-          temperature: 0.1,
-          topP: 0.95,
-          topK: 20,
-          maxOutputTokens: 16384,
-          responseMimeType: 'application/json',
-          responseJsonSchema: {
-            $schema: 'http://json-schema.org/draft-07/schema#',
-            title: 'ChangeLogs',
-            description: 'List of processed changes.',
-            type: 'array',
-            items: {
-              type: 'object',
-              description: 'Represents a single change entry processed by AI.',
-              properties: {
-                type: {
-                  type: 'string',
-                  description: 'Type of change made in a commit.',
-                  enum: [
-                    'feat',
-                    'fix',
-                    'docs',
-                    'style',
-                    'refactor',
-                    'perf',
-                    'test',
-                    'revert',
-                    'other',
-                  ],
-                },
-                scope: {
-                  type: 'string',
-                  description: "The scope of the change (e.g., 'ai', 'ui', 'data').",
-                },
-                message: {
-                  type: 'string',
-                  description: 'Brief description of the change in Chinese.',
-                },
-                breaking: {
-                  type: 'boolean',
-                  description: 'Whether this is a breaking change.',
-                },
-                hashes: {
-                  type: 'array',
-                  description: 'Array of git commit hashes (short format).',
-                  items: { type: 'string' },
-                },
-              },
-              required: ['type', 'message', 'hashes'],
-            },
-          },
-          seed: 42, // Fixed seed for reproducible output
-        },
+      const { text } = await generateText({
+        model: openai(AI_CHAT_MODEL),
+        system: SYSTEM_PROMPT,
+        prompt: `Convert these git commits to changelog format:\n\n${commitsInput}`,
+        temperature: 0.1,
+        topP: 0.95,
+        maxTokens: 16384,
+        seed: 42,
       });
 
       let aiChanges = [];
       try {
-        aiChanges = JSON.parse(response.text);
+        aiChanges = JSON.parse(stripMarkdownCodeFences(text));
       } catch (e) {
-        console.error('Failed to parse JSON for batch: ', response.text);
+        console.error('Failed to parse JSON for batch: ', text);
         throw e;
       }
 
@@ -590,7 +538,7 @@ async function main() {
     process.stdout.write(
       JSON.stringify(
         {
-          model: GEMINI_MODEL,
+          model: AI_CHAT_MODEL,
           systemInstruction: SYSTEM_PROMPT,
           userPrompt,
         },
@@ -630,12 +578,10 @@ async function main() {
     try {
       newChangelogs = await generateChangelogs(parsedCommits);
     } catch (error) {
-      if (!GEMINI_API_KEY) {
-        console.error('Error: GEMINI_API_KEY not found in environment');
+      if (!OPENAI_API_KEY) {
+        console.error('Error: OPENAI_API_KEY not found in environment');
       }
-      console.warn(
-        'Warning: Failed to generate changelogs with Gemini. Skipping changelog update.'
-      );
+      console.warn('Warning: Failed to generate changelogs with AI. Skipping changelog update.');
       console.warn(`Details: ${formatError(error)}`);
       return;
     }

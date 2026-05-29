@@ -23,8 +23,9 @@ export const env = createEnv({
     // Captcha
     CAPTCHA_SECRET_KEY: z.string().optional(),
 
-    // Chat Service (Gemini)
-    GEMINI_API_KEY: z.string().optional(),
+    // Chat Service (AI)
+    OPENAI_API_KEY: z.string().optional(),
+    OPENAI_BASE_URL: z.string().url().optional(),
 
     // Rate Limit (Upstash)
     UPSTASH_REDIS_REST_URL: z.url().optional(),
@@ -79,8 +80,8 @@ export const env = createEnv({
     NEXT_PUBLIC_CAPTCHA_PROVIDER: z.enum(['hcaptcha', 'turnstile']).optional(),
     NEXT_PUBLIC_CAPTCHA_SITE_KEY: z.string().optional(),
 
-    // Chat Service (Gemini)
-    NEXT_PUBLIC_GEMINI_CHAT_MODEL: z.string().optional(),
+    // Chat Service (AI)
+    NEXT_PUBLIC_AI_CHAT_MODEL: z.string().optional(),
 
     // Build metadata
     NEXT_PUBLIC_BUILD_TIMESTAMP: z.string().optional(),
@@ -105,7 +106,7 @@ export const env = createEnv({
     NEXT_PUBLIC_SUPABASE_RTE_IMAGE_BUCKET: process.env.NEXT_PUBLIC_SUPABASE_RTE_IMAGE_BUCKET,
     NEXT_PUBLIC_CAPTCHA_PROVIDER: process.env.NEXT_PUBLIC_CAPTCHA_PROVIDER,
     NEXT_PUBLIC_CAPTCHA_SITE_KEY: process.env.NEXT_PUBLIC_CAPTCHA_SITE_KEY,
-    NEXT_PUBLIC_GEMINI_CHAT_MODEL: process.env.NEXT_PUBLIC_GEMINI_CHAT_MODEL,
+    NEXT_PUBLIC_AI_CHAT_MODEL: process.env.NEXT_PUBLIC_AI_CHAT_MODEL,
     NEXT_PUBLIC_BUILD_TIMESTAMP: process.env.NEXT_PUBLIC_BUILD_TIMESTAMP,
     NEXT_PUBLIC_VAPID_PUBLIC_KEY: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,

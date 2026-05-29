@@ -1,61 +1,13 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import {
-  FunctionCallingConfigMode,
-  FunctionDeclaration,
-  GoogleGenAI,
-  HarmBlockThreshold,
-  HarmCategory,
-} from '@google/genai';
+import { createOpenAI } from '@ai-sdk/openai';
+import { convertToModelMessages, streamText, type UIMessage } from 'ai';
+import { z } from 'zod';
 
 import { getPublicGameDataActionsAndApplyToServerData } from '@/lib/gameData/publicActions';
 import { checkRateLimit } from '@/lib/rateLimit';
-import { chatMessagesSchema, formatZodError } from '@/lib/validation/schemas';
 import { historyData } from '@/data/history';
 import { buffs, cards, characters, entities, itemGroups, items, specialSkills } from '@/data';
 import { env } from '@/env';
-
-// Define the structure of a message part, including function calls and responses
-// Based on Gemini's API structure
-type Part = {
-  text?: string;
-  functionCall?: {
-    name: string;
-    args: Record<string, unknown>;
-  };
-  functionResponse?: {
-    name: string;
-    response: {
-      name: string;
-      content: unknown;
-    };
-  };
-};
-
-// Define the structure of a message/content object
-type Content = {
-  role: 'user' | 'model';
-  parts: Part[];
-};
-
-// Gemini safety settings - configured to the strictest level using SDK enums
-const safetySettings = [
-  {
-    category: HarmCategory.HARM_CATEGORY_HARASSMENT,
-    threshold: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
-  },
-  {
-    category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
-    threshold: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
-  },
-  {
-    category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
-    threshold: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
-  },
-  {
-    category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
-    threshold: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
-  },
-];
 
 const debugLoggingEnabled = env.CHAT_DEBUG_LOG === '1';
 const logDebug = (message: string, detail?: unknown) => {
@@ -110,13 +62,13 @@ async function buildSystemInstructionText(): Promise<string> {
     console.warn('Warning: historyData is empty');
   }
 
-  return `You are Chase, a helpful and knowledgeable assistant for a unofficial project Tom and Jerry: Chase Wiki (猫和老鼠手游百科) based on ${env.NEXT_PUBLIC_GEMINI_CHAT_MODEL}.
+  return `You are Chase, a helpful and knowledgeable assistant for a unofficial project Tom and Jerry: Chase Wiki (猫和老鼠手游百科) based on ${env.NEXT_PUBLIC_AI_CHAT_MODEL || 'gpt-5.5'}.
 Your purpose is to provide accurate information about characters, skills, knowledge cards, game history, and other game elements.
 When a user asks for information, use the 'executeCode' tool to query the game database using JavaScript code.
 Be friendly, concise, and focus on answering the user's question based on the data retrieved.
 If the user asks about something outside of characters or game data, politely inform them that your expertise is limited to Tom and Jerry: Chase game information.
 If the user's prompt consists of only a character's name, use the executeCode tool to retrieve information and provide a brief introduction of that character.
-You MUST respond in simplified Chinese in plain text without any markdown formatting, HTML tags, or special characters. 
+You MUST respond in simplified Chinese in plain text without any markdown formatting, HTML tags, or special characters.
 
 For requests that are harmful, unethical, inappropriate, your only response MUST be: "我无法提供帮助。" Do not apologize or provide any explanation.
 
@@ -492,129 +444,68 @@ export type GameHistory = YearData[];
 }
 
 // Tool definition for executing JavaScript code to query game data
-const executeCodeDeclaration: FunctionDeclaration = {
-  name: 'executeCode',
+// No execute handler — tool calls are streamed to the client for sandboxed iframe execution
+const executeCodeTool = {
   description:
     'Execute JavaScript code to query the Tom and Jerry: Chase game database. The code has access to multiple game data objects including characters, cards, specialSkills, items, entities, buffs, itemGroups, and historyData.',
-  parametersJsonSchema: {
-    type: 'object',
-    properties: {
-      code: {
-        type: 'string',
-        description:
-          'JavaScript code to execute. Must include a return statement. Available variables: characters (Record<string, Character>), cards (Record<string, Card>), specialSkills ({cat: Record<string, SpecialSkill>, mouse: Record<string, SpecialSkill>}), items (Record<string, Item>), entities ({cat: Record<string, Entity>, mouse: Record<string, Entity>}), buffs (Record<string, Buff>), itemGroups (Record<string, ItemGroup>), historyData (GameHistory). Examples: return characters["汤姆"]; return Object.values(specialSkills.cat); return items["火箭"]; return historyData.find(y => y.year === 2020)',
-      },
-    },
-    required: ['code'],
-  },
+  inputSchema: z.object({
+    code: z
+      .string()
+      .describe(
+        'JavaScript code to execute. Must include a return statement. Available variables: characters (Record<string, Character>), cards (Record<string, Card>), specialSkills ({cat: Record<string, SpecialSkill>, mouse: Record<string, SpecialSkill>}), items (Record<string, Item>), entities ({cat: Record<string, Entity>, mouse: Record<string, Entity>}), buffs (Record<string, Buff>), itemGroups (Record<string, ItemGroup>), historyData (GameHistory). Examples: return characters["汤姆"]; return Object.values(specialSkills.cat); return items["火箭"]; return historyData.find(y => y.year === 2020)'
+      ),
+  }),
 };
 
-// Main POST handler for the chat API - returns function calls for client to execute
+const requestSchema = z.object({
+  messages: z.array(z.unknown()).min(1),
+});
+
+// Main POST handler — streams the AI response including tool calls to the client
 export async function POST(req: NextRequest) {
   try {
     const rl = await checkRateLimit(req, 'expensive', 'chat');
     if (!rl.allowed) {
-      return new NextResponse(JSON.stringify({ error: 'Too many requests' }), {
-        status: 429,
-        headers: {
-          'Content-Type': 'application/json',
-          ...rl.headers,
-        },
-      });
+      return NextResponse.json(
+        { error: 'Too many requests' },
+        {
+          status: 429,
+          headers: rl.headers as HeadersInit,
+        }
+      );
     }
 
-    const parsed = chatMessagesSchema.safeParse(await req.json());
+    const parsed = requestSchema.safeParse(await req.json());
     if (!parsed.success) {
-      return new NextResponse(
-        JSON.stringify({ error: 'Invalid request body', details: formatZodError(parsed.error) }),
+      return NextResponse.json(
+        { error: 'Invalid request body', details: parsed.error.issues },
         { status: 400 }
       );
     }
-    const messages = parsed.data.messages as unknown as Content[];
+    const messages = parsed.data.messages;
     logDebug('Received messages count:', messages.length);
 
-    const apiKey = env.GEMINI_API_KEY;
-    const modelName = env.NEXT_PUBLIC_GEMINI_CHAT_MODEL;
-
-    if (!apiKey || !modelName) {
-      return new NextResponse(JSON.stringify({ error: 'GEMINI_API_KEY is not set' }), {
-        status: 500,
-      });
+    const apiKey = env.OPENAI_API_KEY;
+    if (!apiKey) {
+      return NextResponse.json({ error: 'OPENAI_API_KEY is not set' }, { status: 500 });
     }
 
-    // Initialize Google GenAI SDK
-    const ai = new GoogleGenAI({ apiKey });
+    const openai = createOpenAI({
+      apiKey,
+      ...(env.OPENAI_BASE_URL ? { baseURL: env.OPENAI_BASE_URL } : {}),
+    });
 
-    try {
-      // Use SDK's generateContent with automatic function calling
-      const response = await ai.models.generateContent({
-        model: modelName,
-        contents: messages,
-        config: {
-          tools: [{ functionDeclarations: [executeCodeDeclaration] }],
-          toolConfig: {
-            functionCallingConfig: {
-              mode: FunctionCallingConfigMode.AUTO,
-            },
-          },
-          safetySettings,
-          systemInstruction: await buildSystemInstructionText(),
-        },
-      });
+    const result = streamText({
+      model: openai(env.NEXT_PUBLIC_AI_CHAT_MODEL || 'gpt-5.5'),
+      system: await buildSystemInstructionText(),
+      messages: await convertToModelMessages(messages as UIMessage[]),
+      tools: {
+        executeCode: executeCodeTool,
+      },
+      abortSignal: req.signal,
+    });
 
-      logDebug('Response received');
-
-      // Check if the model wants to call a function
-      if (response.functionCalls && response.functionCalls.length > 0) {
-        logDebug('Function calls detected:', response.functionCalls.length);
-
-        // Return function calls to client for execution
-        return new NextResponse(
-          JSON.stringify({
-            requiresAction: true,
-            functionCalls: response.functionCalls.map((fc) => ({
-              name: fc.name,
-              args: fc.args || {},
-            })),
-          }),
-          {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-      } else {
-        // No function call, we have a final text response
-        const text = response.text || '';
-        logDebug('Final text response (truncated):', text.slice(0, 200));
-
-        return new NextResponse(
-          JSON.stringify({
-            text,
-            candidates: response.candidates,
-          }),
-          {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-      }
-    } catch (apiError) {
-      // Handle SDK-specific errors
-      console.error('API call failed:', apiError);
-
-      if (apiError instanceof Error) {
-        return new NextResponse(
-          JSON.stringify({
-            error: 'Gemini API call failed',
-            details: apiError.message,
-          }),
-          { status: 500 }
-        );
-      }
-      throw apiError;
-    }
+    return result.toUIMessageStreamResponse();
   } catch (error) {
     if (error instanceof Error && error.name === 'AbortError') {
       logDebug('Request was aborted by the client.');
@@ -622,8 +513,8 @@ export async function POST(req: NextRequest) {
     }
     console.error('Chat API error:', error);
     const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-    return new NextResponse(
-      JSON.stringify({ error: 'An internal server error occurred.', details: errorMessage }),
+    return NextResponse.json(
+      { error: 'An internal server error occurred.', details: errorMessage },
       { status: 500 }
     );
   }
