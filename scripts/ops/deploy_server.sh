@@ -158,6 +158,27 @@ install_dependencies() {
   done
 }
 
+build_output_is_valid() {
+  [ -f ".next/BUILD_ID" ] && [ -d ".next/server" ] && [ -d ".next/static" ]
+}
+
+stop_pm2_process_for_build() {
+  if ! command -v pm2 >/dev/null 2>&1; then
+    return 0
+  fi
+
+  if pm2 describe "$PM2_APP_NAME" >/dev/null 2>&1; then
+    echo "Stopping PM2 app '$PM2_APP_NAME' before rebuilding .next..."
+    pm2 stop "$PM2_APP_NAME"
+  fi
+}
+
+clean_build_output() {
+  echo "Cleaning generated build output..."
+  rm -rf .next
+  rm -f public/sw.js public/workbox-*.js
+}
+
 ensure_pm2_process() {
   if ! command -v pm2 >/dev/null 2>&1; then
     echo "Fatal: pm2 is not installed. Install PM2 before running deployments."
@@ -235,8 +256,16 @@ if [ -f "$BUILD_HASH_FILE" ]; then
   LAST_BUILD_HASH="$(cat "$BUILD_HASH_FILE")"
 fi
 
-if [ "$CURRENT_HASH" != "$LAST_BUILD_HASH" ]; then
-  echo "Code has changed since the last build. Building application..."
+if [ "$CURRENT_HASH" != "$LAST_BUILD_HASH" ] || ! build_output_is_valid; then
+  if [ "$CURRENT_HASH" != "$LAST_BUILD_HASH" ]; then
+    echo "Code has changed since the last build. Building application..."
+  else
+    echo "Existing build output is missing or incomplete. Rebuilding application..."
+  fi
+
+  stop_pm2_process_for_build
+  clean_build_output
+
   npm run set-runtime:node
 
   echo "Memory status before build:"
@@ -251,6 +280,11 @@ if [ "$CURRENT_HASH" != "$LAST_BUILD_HASH" ]; then
   export NEXT_TELEMETRY_DISABLED=1
 
   if npm run build; then
+    if ! build_output_is_valid; then
+      echo "Fatal: build completed but .next output is missing required production files."
+      exit 1
+    fi
+
     echo "Build successful."
     mkdir -p .next
     echo "$CURRENT_HASH" > "$BUILD_HASH_FILE"
@@ -260,7 +294,7 @@ if [ "$CURRENT_HASH" != "$LAST_BUILD_HASH" ]; then
     if [ "$BUILD_EXIT_CODE" -eq 137 ]; then
       echo "(Exit code 137 usually indicates out of memory.)"
     fi
-    echo "Keeping the existing app process unchanged."
+    echo "The app process may have been stopped before build to avoid serving mutated .next output."
     exit 1
   fi
 else
