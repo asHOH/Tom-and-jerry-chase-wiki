@@ -12,7 +12,7 @@ type Rank =
   | '皇2000分以上'
   | typeof summarySymbol;
 
-export interface CharacterRow {
+interface CharacterRow {
   character: string;
   pickRate: Rate;
   winRate: Rate;

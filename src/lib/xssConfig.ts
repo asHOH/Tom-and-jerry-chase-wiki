@@ -5,7 +5,7 @@ type SanitizerNode = {
   setAttribute(name: string, value: string): void;
 };
 
-export const ALLOWED_HTML_TAGS: string[] = [
+const ALLOWED_HTML_TAGS: string[] = [
   'p',
   'strong',
   'b',

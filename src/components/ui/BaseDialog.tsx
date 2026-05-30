@@ -6,7 +6,7 @@ import { createPortal } from 'react-dom';
 
 import { cn } from '@/lib/design';
 
-export type DialogCloseReason = 'escape' | 'backdrop' | 'close-button' | 'programmatic';
+type DialogCloseReason = 'escape' | 'backdrop' | 'close-button' | 'programmatic';
 
 export type BaseDialogProps = {
   open: boolean;

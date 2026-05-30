@@ -6,7 +6,7 @@
 /**
  * Rank order mapping for consistent sorting
  */
-export const RANK_ORDER = { S: 4, A: 3, B: 2, C: 1 } as const;
+const RANK_ORDER = { S: 4, A: 3, B: 2, C: 1 } as const;
 
 /**
  * Sort cards by rank and cost

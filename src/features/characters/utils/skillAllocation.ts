@@ -11,7 +11,7 @@ export type ParsedSkillLevel = {
   bracketGroupId?: number; // Unique ID for each bracket group
 };
 
-export type ValidationError = {
+type ValidationError = {
   message: string;
   position?: number;
   severity: 'error' | 'warning';

@@ -70,18 +70,6 @@ export const characterFactionById = Object.freeze(
   ])
 ) as Readonly<Record<string, FactionId>>;
 
-const characterDisplayRankById = Object.freeze(
-  Object.fromEntries(
-    characterDisplayOrder.map((characterId, index) => [characterId, index] as const)
-  )
-) as Readonly<Record<string, number>>;
-
-export const getCharacterFactionById = (characterId: string): FactionId | undefined =>
-  characterFactionById[characterId];
-
-export const getCharacterDisplayRankById = (characterId: string): number =>
-  characterDisplayRankById[characterId] ?? Number.MAX_SAFE_INTEGER;
-
 export const getCharacterNavigationInfo = (currentCharacterId: string) => {
   const currentIndex = characterDisplayOrder.indexOf(
     currentCharacterId as (typeof characterDisplayOrder)[number]

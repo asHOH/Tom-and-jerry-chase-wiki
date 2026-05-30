@@ -67,11 +67,7 @@ function getChineseTypeNames(type: SingleItemTypeName, factionId?: FactionId): s
 }
 
 // Updated addBracket function to include Chinese type names
-export function addBracket(
-  strings: string[],
-  type?: SingleItemTypeName,
-  factionId?: FactionId
-): string[] {
+function addBracket(strings: string[], type?: SingleItemTypeName, factionId?: FactionId): string[] {
   return strings.flatMap((item) => {
     const baseBrackets = [`{${item}}`, `《${item}》`];
 

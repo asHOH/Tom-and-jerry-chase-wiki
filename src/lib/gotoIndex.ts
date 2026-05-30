@@ -36,7 +36,7 @@ type Kind =
   | 'mode'
   | 'achievement';
 
-export type IndexEntry = {
+type IndexEntry = {
   kind: Kind;
   priority: number;
   goto: GotoResult; // base result; skills don't include level fields yet
