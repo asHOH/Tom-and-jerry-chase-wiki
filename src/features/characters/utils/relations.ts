@@ -1,5 +1,1 @@
-export {
-  getAllSpecialSkillRelations,
-  getCharacterRelation,
-  getSpecialSkillRelationSummary,
-} from './relationReadModel';
+export { getCharacterRelation } from './relationReadModel';

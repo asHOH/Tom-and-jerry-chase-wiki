@@ -8,7 +8,7 @@ export { squashActions } from './actionSquash';
 
 export const subscribers: Record<string, [() => void, () => void]> = {};
 
-export type DiffOp = 'set' | 'add' | 'delete';
+type DiffOp = 'set' | 'add' | 'delete';
 
 export interface Action {
   op: DiffOp;
@@ -197,7 +197,7 @@ function deleteAtPath(target: Record<string, unknown>, path: string): void {
   delete (current as Record<string, unknown>)[last];
 }
 
-export function applyAction(target: Record<string, unknown>, action: Action): void {
+function applyAction(target: Record<string, unknown>, action: Action): void {
   if (!action.path) return;
 
   if (action.op === 'delete') {

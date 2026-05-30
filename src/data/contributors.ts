@@ -8,7 +8,7 @@ export interface Contributor {
 }
 
 // Defining the structure for roles
-export interface Role {
+interface Role {
   type: RoleType;
   characters?: string[]; // Optional: characters they have worked on
   isMinor?: boolean; // Optional: to quantify the contribution, defaults to major (false)

@@ -14,7 +14,7 @@ import {
 } from '@/features/admin/utils/gameActionPreview';
 import { ChevronRightIcon } from '@/components/icons/CommonIcons';
 
-export type ActionStatus = Database['public']['Enums']['game_data_action_status'];
+type ActionStatus = Database['public']['Enums']['game_data_action_status'];
 type ActionStatusFilter = 'all' | ActionStatus;
 
 export type PendingGameDataAction =

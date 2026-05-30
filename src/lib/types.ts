@@ -48,18 +48,6 @@ export type CharacterDetailsProps = {
   children?: ReactNode;
 };
 
-export type FactionWithCharacters = {
-  id: string;
-  name: string;
-  description: string;
-  characters: Array<{
-    id: string;
-    name: string;
-    imageUrl: string;
-    positioningTags: PositioningTag[];
-  }>;
-};
-
 export type FactionCharactersProps = {
   factionId: FactionId;
 };

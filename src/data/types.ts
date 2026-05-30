@@ -12,7 +12,7 @@ export type Faction = {
 export type CatPositioningTagName = '进攻' | '防守' | '追击' | '打架' | '速通' | '翻盘' | '后期';
 export type MousePositioningTagName = '奶酪' | '干扰' | '辅助' | '救援' | '破局' | '砸墙' | '后期';
 
-export type CatPositioningTag = {
+type CatPositioningTag = {
   tagName: CatPositioningTagName;
   weapon?: 1 | 2;
   isMinor: boolean; // Whether the character only partially exhibits this positioning's characteristics
@@ -20,7 +20,7 @@ export type CatPositioningTag = {
   additionalDescription: string; // Extended description for detailed view mode
 };
 
-export type MousePositioningTag = {
+type MousePositioningTag = {
   tagName: MousePositioningTagName;
   weapon?: 1 | 2;
   isMinor: boolean; // Whether the character only partially exhibits this positioning's characteristics
@@ -128,7 +128,7 @@ export type KnowledgeCardGroupSet = {
   defaultFolded: boolean;
 };
 
-export type SuggestedSpecialSkillItem = {
+type SuggestedSpecialSkillItem = {
   name: string;
   description: string;
 };
@@ -197,11 +197,11 @@ export type Character = CharacterDefinition & {
 };
 
 // Card-related types
-export type CardRank = 'C' | 'B' | 'A' | 'S';
+type CardRank = 'C' | 'B' | 'A' | 'S';
 
-export type CardPriority = '3级质变' | '提升明显' | '提升较小' | '几乎无提升' | '本身无用';
+type CardPriority = '3级质变' | '提升明显' | '提升较小' | '几乎无提升' | '本身无用';
 
-export type CardLevel = {
+type CardLevel = {
   level: number;
   description: string;
   detailedDescription?: string;
@@ -242,7 +242,7 @@ type PhysicalAttributes = {
 export type Itemtypelist = '投掷类' | '手持类' | '物件类' | '食物类' | '流程类' | '特殊类'; //list of items' types
 export type Itemsourcelist = '常规道具' | '地图道具'; //list of items' source
 
-export type ItemAttributesAsCharacter = {
+type ItemAttributesAsCharacter = {
   type: 'cat' | 'mouse' | 'special'; //which kind of character does item close to
   factionBelong: 'cat' | 'mouse' | 'other'; //which faction does item belong to
 
@@ -341,7 +341,7 @@ export type buffTypelist =
   | '负面效果'
   | '特殊状态'
   | '特殊效果';
-export type buffTargetlist = '角色' | '道具' | '角色或道具' | '猫角色' | '鼠角色' | '火箭' | '奶酪';
+type buffTargetlist = '角色' | '道具' | '角色或道具' | '猫角色' | '鼠角色' | '火箭' | '奶酪';
 
 export type BuffDefinition = {
   type: buffTypelist;
@@ -636,7 +636,7 @@ export enum WikiChangeType {
 /**
  * Represents a specific data change for a wiki item.
  */
-export interface WikiChange {
+interface WikiChange {
   item: SingleItem;
   changeType: WikiChangeType;
   description?: string;
@@ -645,7 +645,7 @@ export interface WikiChange {
 /**
  * Details for data changes organized by item type.
  */
-export interface WikiChangeDetails {
+interface WikiChangeDetails {
   // 常规变更记录
   changes?: WikiChange[];
   // 批量变更记录
@@ -658,7 +658,7 @@ export interface WikiChangeDetails {
 /**
  * Represents a single commit or update event in the wiki's data history.
  */
-export interface WikiUpdateEvent {
+interface WikiUpdateEvent {
   date: `${number}.${number}` | `${number}.${number}-${'次年' | ''}${number}.${number}`; // e.g., "7.24" or "12.25-次年1.1"
   description: string;
 
@@ -686,11 +686,4 @@ export type WikiDataHistory = WikiYearData[];
 export type VariantEdge = {
   prototype: SingleItem; // 原型
   variant: SingleItem; // 变种
-};
-
-/**
- * 存储所有变种关系的图
- */
-export type VariantGraph = {
-  edges: VariantEdge[]; // 所有边
 };

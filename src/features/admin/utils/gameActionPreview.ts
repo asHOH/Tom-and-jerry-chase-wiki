@@ -165,4 +165,4 @@ export function shouldShowGameActionValueTransition(
   return !hasVisibleIdArrayDiff(idDiff);
 }
 
-export type { ChangedArrayItem, IdArrayDiff };
+export type { IdArrayDiff };

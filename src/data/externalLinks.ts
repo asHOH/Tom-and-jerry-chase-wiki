@@ -1,4 +1,4 @@
-export type ExternalLinkItem = {
+type ExternalLinkItem = {
   title: string;
   description: string;
   ariaLabel: string;

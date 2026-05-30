@@ -3,8 +3,8 @@
 import { useCallback, useMemo } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-export const EDIT_MODE_SEARCH_PARAM = 'edit';
-export const EDIT_MODE_SEARCH_VALUE = '1';
+const EDIT_MODE_SEARCH_PARAM = 'edit';
+const EDIT_MODE_SEARCH_VALUE = '1';
 
 type SearchParamsReader = Pick<URLSearchParams, 'get'>;
 
@@ -79,21 +79,5 @@ export function stripEditParam(url: string): string {
     return newQuery ? `${path}?${newQuery}` : path;
   } catch {
     return url;
-  }
-}
-
-/**
- * Check if a URL has the edit param set.
- */
-export function hasEditParam(url: string): boolean {
-  try {
-    const questionIndex = url.indexOf('?');
-    if (questionIndex === -1) return false;
-
-    const query = url.slice(questionIndex + 1);
-    const params = new URLSearchParams(query);
-    return isEditModeSearchParamEnabled(params);
-  } catch {
-    return false;
   }
 }

@@ -2,7 +2,7 @@ import React from 'react';
 
 import { cn } from '@/lib/design';
 
-export type ArticleLintSeverity = 'error' | 'warning';
+type ArticleLintSeverity = 'error' | 'warning';
 
 export interface ArticleLintResult {
   id: string;

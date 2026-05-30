@@ -3,7 +3,7 @@ import { characters } from '@/data/store';
 import type { CharacterRelationItem, TraitRelationKind } from '@/data/types';
 import { getCharacterRelation } from '@/features/characters/utils/relationReadModel';
 
-export const characterRelationKinds: TraitRelationKind[] = [
+const characterRelationKinds: TraitRelationKind[] = [
   'counters',
   'counteredBy',
   'counterEachOther',

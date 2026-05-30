@@ -19,8 +19,6 @@ export const LOADING_COUNTS = {
   tools: 8,
 } as const;
 
-export type FactionLoadingId = keyof typeof LOADING_COUNTS.factionCharacters;
-
 export function getFactionLoadingCount(pathname: string | null | undefined) {
   if (pathname?.includes('/factions/cat')) {
     return LOADING_COUNTS.factionCharacters.cat;

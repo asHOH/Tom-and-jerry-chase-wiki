@@ -8,9 +8,7 @@ const getEntityImageUrl = (name: string, specialImageUrl: string | undefined): s
   if (specialImageUrl !== undefined) return specialImageUrl;
   return `/images/entities/${encodeURIComponent(name)}.png`;
 };
-export const getEntityType = (
-  tag: Entitytaglist | Entitytaglist[]
-): Entitytypelist | Entitytypelist[] => {
+const getEntityType = (tag: Entitytaglist | Entitytaglist[]): Entitytypelist | Entitytypelist[] => {
   const tags = Array.isArray(tag) ? tag : [tag];
 
   const mapping: Partial<Record<Entitytaglist, Entitytypelist>> = {

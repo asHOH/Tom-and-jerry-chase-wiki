@@ -160,7 +160,7 @@ export const getFactionLabel = (factionId: FactionId | undefined): '猫' | '鼠'
   return undefined;
 };
 
-export const formatOwnerName = (ownerName: string, ownerFactionId?: FactionId): string => {
+const formatOwnerName = (ownerName: string, ownerFactionId?: FactionId): string => {
   const ownerFactionLabel = getFactionLabel(ownerFactionId);
   return ownerFactionLabel ? `${ownerFactionLabel}‐${ownerName}` : ownerName;
 };
