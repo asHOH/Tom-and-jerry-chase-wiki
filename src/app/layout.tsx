@@ -17,6 +17,8 @@ import { SpeedInsightsComponent } from '@/components/SpeedInsights';
 
 import './globals.css';
 
+import { Suspense } from 'react';
+
 import { getUserData } from '@/lib/userActions';
 import { UserProvider } from '@/hooks/useUser';
 import { DarkModeProvider } from '@/context/DarkModeContext';
@@ -124,10 +126,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <ErrorBoundary>
             <main className='relative min-h-screen bg-gray-100 pt-0 dark:bg-slate-900'>
               <UserProvider initialValue={initialUser}>
-                <EditModeProvider>
-                  <KeyboardNavigation />
-                  <ClientProvidersWithInitialData>{children}</ClientProvidersWithInitialData>
-                </EditModeProvider>
+                <Suspense fallback={null}>
+                  <EditModeProvider>
+                    <KeyboardNavigation />
+                    <ClientProvidersWithInitialData>{children}</ClientProvidersWithInitialData>
+                  </EditModeProvider>
+                </Suspense>
               </UserProvider>
             </main>
           </ErrorBoundary>
