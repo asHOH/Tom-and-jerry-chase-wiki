@@ -922,14 +922,14 @@ const catCharacterDefinitions = {
         pattern: '303030111',
         weaponType: 'weapon1',
         description: '森林牧场加点，地势平坦，斗牛作用较小',
-      },
+      } /*
       {
         id: '弹弓（速通/顺风）',
         pattern: '313131000',
         weaponType: 'weapon1',
         description:
           '三级斗牛更长的眩晕，能让猫咪更好地利用直接抓起的机制，便于频繁实施双挂，有利于在找到节奏后施加压力、促进敌方减员',
-      },
+      },*/,
     ],
     knowledgeCardGroups: [
       {
@@ -983,11 +983,11 @@ const catCharacterDefinitions = {
           },
         ],
         defaultFolded: false,
-      },
+      } /*
       {
         cards: ['S-猛攻', 'A-越挫越勇', 'A-熊熊燃烧', 'B-皮糙肉厚', 'C-猫是液体'],
         description: '遇到有米可的打架队时使用',
-      },
+      },*/,
     ],
     skills: [
       {
