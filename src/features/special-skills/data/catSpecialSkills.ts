@@ -62,7 +62,7 @@ const catSpecialSkillDefinitions: Record<string, SpecialSkillDefinition> = {
     aliases: ['霸体', '解控'],
     cooldown: 90,
     description: '处于眩晕状态时解除受到的眩晕，否则将获得霸体。',
-    detailedDescription: '处于眩晕状态时解除受到的眩晕，否则将获得2.45秒霸体。',
+    detailedDescription: '处于眩晕状态时解除受到的眩晕，否则将获得2.45秒霸体(免疫虚弱）。',
     adviceDescription:
       '适合**绝大部分**猫咪，尤其适合缺乏霸体能力的猫咪。用于打架、解控或强绑火箭。',
   },
