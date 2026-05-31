@@ -1123,6 +1123,20 @@ export const characterRelationTraits: Trait[] = [
   },
   {
     description:
+      '米特一级被动绑火箭获得的霸体不会因为子弹击中头部而获得爆头间隔。可以连续灌伤让米特剩丝血,但朝圣者极易被米特击倒并且缺乏逃脱手段。',
+    group: [
+      { name: '朝圣者泰菲', type: 'character' },
+      { name: '米特', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '朝圣者泰菲', type: 'character' },
+      target: { name: '米特', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
       '恶魔泰菲小淘气召唤的蓝色小淘气能禁用技能，绿色小淘气配合Lv.3被动的极高攻击增伤能迅速击倒牛汤，被动提供的恢复与高移速能化解鞭子或仙人掌弹弓的消耗；但恶魔泰菲Hp上限低，牛仔汤姆弹弓爆发高，有机会瞬间击倒恶魔泰菲，且牛汤也可以使用恶菲绿恶魔触发三被。',
     group: [
       { name: '恶魔泰菲', type: 'character' },
@@ -3804,6 +3818,58 @@ export const characterRelationTraits: Trait[] = [
     },
   },
   {
+    description: '侍卫汤姆的警戒可以清除回家的护盾',
+    group: [
+      { name: '侍卫汤姆', type: 'character' },
+      { name: '回家', type: 'knowledgeCard', factionId: 'mouse' },
+    ],
+    relation: {
+      kind: 'countersKnowledgeCards',
+      subject: { name: '侍卫汤姆', type: 'character' },
+      target: { name: '回家', type: 'knowledgeCard', factionId: 'mouse' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '侍卫汤姆的警戒可以清除护佑的护盾',
+    group: [
+      { name: '侍卫汤姆', type: 'character' },
+      { name: '护佑', type: 'knowledgeCard', factionId: 'mouse' },
+    ],
+    relation: {
+      kind: 'countersKnowledgeCards',
+      subject: { name: '侍卫汤姆', type: 'character' },
+      target: { name: '护佑', type: 'knowledgeCard', factionId: 'mouse' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '侍卫汤姆的警戒可以清除无畏的无敌',
+    group: [
+      { name: '侍卫汤姆', type: 'character' },
+      { name: '无畏', type: 'knowledgeCard', factionId: 'mouse' },
+    ],
+    relation: {
+      kind: 'countersKnowledgeCards',
+      subject: { name: '侍卫汤姆', type: 'character' },
+      target: { name: '无畏', type: 'knowledgeCard', factionId: 'mouse' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '侍卫汤姆的警戒可以清除舍己的无敌',
+    group: [
+      { name: '侍卫汤姆', type: 'character' },
+      { name: '舍己', type: 'knowledgeCard', factionId: 'mouse' },
+    ],
+    relation: {
+      kind: 'countersKnowledgeCards',
+      subject: { name: '侍卫汤姆', type: 'character' },
+      target: { name: '舍己', type: 'knowledgeCard', factionId: 'mouse' },
+      isMinor: true,
+    },
+  },
+  {
     description: '使充能道具掉落。',
     group: [
       { name: '朵朵', type: 'character' },
@@ -6297,6 +6363,19 @@ export const characterRelationTraits: Trait[] = [
       kind: 'counters',
       subject: { name: '侍卫汤姆', type: 'character' },
       target: { name: '侦探杰瑞', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '侍卫汤姆警戒会导致国王杰瑞的小盾、大盾失效',
+    group: [
+      { name: '侍卫汤姆', type: 'character' },
+      { name: '国王杰瑞', type: 'character' },
+    ],
+    relation: {
+      kind: 'counters',
+      subject: { name: '侍卫汤姆', type: 'character' },
+      target: { name: '国王杰瑞', type: 'character' },
       isMinor: false,
     },
   },
