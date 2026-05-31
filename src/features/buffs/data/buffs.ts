@@ -12,7 +12,13 @@ const getBuffImageUrl = (name: string, buff: BuffDefinition): string => {
 //-----------------复用文案汇总区-----------------/
 
 const damageStack =
-  '伤害的计算方式较复杂，详见本网站机制板块的“伤害”相关介绍。此处仅列出一个极简版的伤害计算公式：\n角色造成的实际伤害=(基础伤害值+攻击力)×(1+攻击增伤倍率-受击减伤倍率)+攻击增伤固定值-受击减伤固定值。其中，攻击力=(基础攻击力×攻击力倍率)+攻击力加成值。\n若最终的伤害数值不大于0，则目标不受到伤害，也不会触发“受到伤害”的相关判定。';
+  '伤害的计算方式较复杂，详见本网站机制板块的“伤害”相关介绍。此处仅列出一个极简版的伤害计算公式：\n角色造成的实际伤害=(道具/技能造成的基础伤害值+实际攻击力)×(1+攻击增伤倍率-受击减伤倍率)+攻击增伤固定值-受击减伤固定值。其中，实际攻击力=(基础攻击力×攻击力倍率)+攻击力加成值。\n若最终的伤害数值不大于0，则目标不受到伤害，也不会触发“受到伤害”的相关判定。';
+
+const wallDamageStack =
+  '破坏值的计算方式与伤害类似，但更加简洁，此处列出相关计算公式：\n角色造成的实际破坏值=道具/技能造成的基础破坏值+实际破坏力。其中，实际破坏力=(基础破坏力×攻击力倍率)+攻击力加成值。\n正常情况下，墙缝HP为100，归零后就会被砸开。';
+
+const cheeseStack =
+  '推奶酪速度以下公式：实际推速=[(基础推速×推速倍率)+推速加成值]×第五块奶酪推速。注意“第五块奶酪推速”有单独的生效条件。';
 
 const commonStack =
   '角色属性相关效果的计算均遵循以下公式：属性值=(基础属性值×属性值倍率)+属性值加成值。此外，部分高级效果可能会改变最终实际的生效数值。';
@@ -154,6 +160,13 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       '持续期间，角色每隔一段时间（默认为1秒）受到1次伤害。该伤害分型默认为“不受来源影响、不可致伤”。\n（注：此效果属于“底层效果”，一个状态至多只会拥有一个“底层效果”）',
     unuseImage: true,
   },
+  甜蜜碰撞: {
+    type: '持续效果',
+    class: '底层效果',
+    description:
+      '与雪梨之间生成连线，连线将在超过2400后断裂；自身获得永结同心状态，在失去本状态时也会失去该状态或其衍生状态；使雪梨获得额外技能[“爱心治疗”](属于额外技能；与近身治疗效果和速度相同；若被打断则进入5秒冷却；成功使用后失去此技能)；自身在{隐身}状态下将隐藏连线，若在连线期间自身获得{隐身}则雪梨也将获得相同状态。"。\n（注：此效果属于“底层效果”，一个状态至多只会拥有一个“底层效果”）',
+    unuseImage: true,
+  },
   间歇性受到状态: {
     type: '持续效果',
     class: '底层效果',
@@ -253,7 +266,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     stack: '同名效果加算叠加。\n' + commonStack,
     unuseImage: true,
   },
-  跳跃力保底: {
+  跳跃能力保底: {
     type: '持续效果',
     class: '移动与跳跃',
     aliases: [
@@ -272,7 +285,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     description:
       '持续期间，使角色的{跳跃能力}属性始终不低于基础值的一定倍数。\n跳跃能力会影响角色进行跳跃时的效果。角色基础属性中的“跳跃高度”与跳跃能力存在映射关系，但角色实际跳跃高度并不与跳跃能力严格挂钩，详见本网站机制板块的“移动”相关介绍。',
     stack:
-      '同名效果叠加方式暂不确定。\n角色跳跃力保底值=基础跳跃力×跳跃力保底。角色实际的跳跃力数值不会低于角色跳跃力保底值。\n' +
+      '同名效果叠加方式暂不确定。\n角色跳跃能力保底值=基础跳跃能力×跳跃能力保底。角色实际的跳跃力数值不会低于角色跳跃力保底值。\n' +
       commonStack,
     unuseImage: true,
   },
@@ -486,6 +499,31 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     sourceDescription: '现版本中该效果仅见于部分“水地形”附加的状态。',
     unuseImage: true,
   },
+  破坏力: {
+    type: '属性',
+    class: '伤害及伤害更改',
+    range: [0, 'infinity'],
+    description:
+      '所有角色均有该属性，基础值因角色而异，其中猫角色默认为0。当角色对{墙缝}造成伤害时，将受到破坏力的影响。\n破坏力属性受{破坏力倍率}及{破坏力加成值}影响，最低为0。\n（[曾用名：破坏增伤](由于先前对游戏了解不足，本网站在过去一段时间一直使用这个名称，但它与这个属性的本质并不相称)）',
+    stack: wallDamageStack,
+    unuseImage: true,
+  },
+  破坏力倍率: {
+    type: '持续效果',
+    class: '伤害及伤害更改',
+    range: [0, 'infinity'],
+    description: '持续期间，使角色的{破坏力}提高（或降低）至指定倍数。',
+    stack: '同名效果乘算叠加。\n' + wallDamageStack,
+    unuseImage: true,
+  },
+  破坏力加成值: {
+    type: '持续效果',
+    class: '伤害及伤害更改',
+    range: ['infinity', 'infinity'],
+    description: '持续期间，使角色的{破坏力}增加（或减少）指定数值。',
+    stack: '同名效果加算叠加。\n' + wallDamageStack,
+    unuseImage: true,
+  },
   HP上限: {
     type: '属性',
     class: '回复',
@@ -580,8 +618,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     aliases: ['推奶酪速度'],
     range: [0, 'infinity'],
     description:
-      '仅有鼠角色具有该属性，基础值因角色而异，会影响老鼠推奶酪的速度。\n在本网站中，本属性单位为%/秒，代表鼠角色推入正常洞口中的奶酪时，每秒推入的奶酪进度百分比。游戏中采用的单位与“%/秒”的换算关系是严格的1:5。\n部分奶酪洞所需的“推入值”可能并非100%，鼠角色推入这些洞口的奶酪时的推入速度会按相应比例发生变化。\n推速会受{推速倍率}、{推速加成值}影响，最低为0。',
-    stack: commonStack,
+      '仅有鼠角色具有该属性，基础值因角色而异，会影响老鼠推奶酪的速度。\n在本网站中，本属性单位为%/秒，代表鼠角色推入正常洞口中的奶酪时，每秒推入的奶酪进度百分比。游戏中采用的单位与“%/秒”的换算关系是严格的1:5。\n部分奶酪洞所需的“推入值”可能并非100%，鼠角色推入这些洞口的奶酪时的推入速度会按相应比例发生变化。\n推速会受{推速倍率}、{推速加成值}、{第五块奶酪推速}影响，最低为0。',
+    stack: cheeseStack,
     unuseImage: true,
   },
   推速倍率: {
@@ -589,9 +627,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     class: '推奶酪',
     aliases: ['推奶酪速度', '推奶酪速度倍率'],
     range: [0, 'infinity'],
-    description:
-      '持续期间，使角色的推速提高（或降低）至指定倍数。\n（该效果只对鼠角色及类似角色生效）',
-    stack: '同名效果乘算叠加。\n' + commonStack,
+    description: '持续期间，使角色的推速提高（或降低）至指定倍数。',
+    stack: '同名效果乘算叠加。\n' + cheeseStack,
     unuseImage: true,
   },
   推速加成值: {
@@ -600,8 +637,16 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     aliases: ['推奶酪速度', '推奶酪速度加成值'],
     range: ['infinity', 'infinity'],
     description:
-      '持续期间，使角色的推速增加（或减少）指定数值（默认单位：%/秒，注意与游戏内的差异）。\n（该效果只对鼠角色及类似角色生效）',
-    stack: '同名效果加算叠加。\n' + commonStack,
+      '持续期间，使角色的推速增加（或减少）指定数值（默认单位：%/秒，注意与游戏内的差异）。',
+    stack: '同名效果加算叠加。\n' + cheeseStack,
+    unuseImage: true,
+  },
+  第五块奶酪加速: {
+    type: '持续效果',
+    class: '推奶酪',
+    range: ['infinity', 'infinity'],
+    description: '持续期间，若已推入4块奶酪，则推速最终提高至指定倍数。',
+    stack: '同名效果暂无同时出现的情况。\n' + cheeseStack,
     unuseImage: true,
   },
   攻击冷却: {
@@ -982,14 +1027,14 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
     sourceDescription: '“可叠加”是许多状态的底层执行逻辑之一，数量繁多，此处不再单独列举。',
   },
-  叠满后进化: {
+  叠满获得新状态: {
     type: '瞬时效果',
     class: '逻辑与互动',
     description:
       '具有该效果的状态在层数{叠加}至上限时，会在结算效果后立即清除全部层数，但获得一个对应的新状态。',
     unuseImage: true,
     sourceDescription:
-      '“叠满后进化”是许多{可叠加}状态的底层执行逻辑之一，数量繁多，此处不再单独列举。',
+      '“叠满获得新状态”是许多{可叠加}状态的底层执行逻辑之一，数量繁多，此处不再单独列举。',
   },
   牵引: {
     type: '持续效果',
