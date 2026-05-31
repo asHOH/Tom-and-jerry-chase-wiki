@@ -15,7 +15,7 @@ const symmetricCharacterRelationKinds = new Set<TraitRelationKind>([
 
 const toSingleItemKey = (item: SingleItem) => `${item.type}:${item.name}:${item.factionId ?? ''}`;
 
-const buildCharacterRelationEdgeKey = (relation: TraitRelation) =>
+export const buildCharacterRelationEdgeKey = (relation: TraitRelation) =>
   `${relation.kind}::${toSingleItemKey(relation.subject)}::${toSingleItemKey(relation.target)}`;
 
 const buildDirectedPairKey = (relation: TraitRelation) =>
