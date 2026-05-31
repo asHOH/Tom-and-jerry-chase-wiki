@@ -1317,19 +1317,6 @@ export const characterRelationTraits: Trait[] = [
     description: '',
     group: [
       { name: '牛仔汤姆', type: 'character' },
-      { name: '天使杰瑞', type: 'character' },
-    ],
-    relation: {
-      kind: 'counterEachOther',
-      subject: { name: '牛仔汤姆', type: 'character' },
-      target: { name: '天使杰瑞', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
-    description: '',
-    group: [
-      { name: '牛仔汤姆', type: 'character' },
       { name: '剑客泰菲', type: 'character' },
     ],
     relation: {
@@ -1476,6 +1463,20 @@ export const characterRelationTraits: Trait[] = [
       subject: { name: '如玉', type: 'character' },
       target: { name: '剑客杰瑞', type: 'character' },
       isMinor: true,
+    },
+  },
+  {
+    description:
+      '泰菲的隐形感应雷会触发如玉的花枪反击，Hp上限低，如玉的花枪反击能秒杀泰菲。但是泰菲的圆滚滚可以提供解控，在被反击打上火箭的失重状态下可以使用圆滚滚解控。2级主动提供的无敌效果也可以有效反制如玉的花枪反击。',
+    group: [
+      { name: '如玉', type: 'character' },
+      { name: '泰菲', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '如玉', type: 'character' },
+      target: { name: '泰菲', type: 'character' },
+      isMinor: false,
     },
   },
   {
@@ -1687,7 +1688,7 @@ export const characterRelationTraits: Trait[] = [
   },
   {
     description:
-      '泰菲的圆滚滚可以解控，配合治疗可以克制米特的刷尸；泰菲的圆滚滚可以把米特的饭盒踩掉，克制米特的防守。但米特的野性层数叠加到七层时可以一刀秒泰菲，被动还可以短时间内取消泰菲被动的回血buff，不利于泰菲强行推奶酪。',
+      '泰菲的圆滚滚可以解控，配合治疗可以克制米特的刷尸，2级圆滚滚可以看刷挣扎动作的前摇卡时间无伤逃跑；泰菲的圆滚滚可以把米特的饭盒踩掉，克制米特的防守。但米特的野性层数叠加到七层时可以一刀秒泰菲，被动还可以短时间内取消泰菲被动的回血buff，不利于泰菲强行推奶酪。',
     group: [
       { name: '泰菲', type: 'character' },
       { name: '米特', type: 'character' },
@@ -1729,7 +1730,7 @@ export const characterRelationTraits: Trait[] = [
   },
   {
     description:
-      '泰菲的圆滚滚可以解控，克制恶汤的打碟、被动控制和红温爪刀，泰菲的火箭筒有两段伤害，克制恶汤的的火车盾（盾只有一层）；恶汤的火车有强制位移，克制泰菲被动霸体减伤推奶酪，恶汤的打碟有霸体，克制泰菲的火箭筒打控制，恶汤的绑火箭速度快，打碟有霸体，克制泰菲的地雷拖延绑火箭',
+      '泰菲的圆滚滚可以解控，克制恶汤火车头控制、被动控制，泰菲的火箭筒有两段伤害，克制恶汤的的火车盾（盾只有一层）；恶汤的火车有强制位移，克制泰菲被动霸体减伤推奶酪，恶汤的打碟有霸体，克制泰菲的火箭筒打控制，恶汤的绑火箭速度快，打碟有霸体，克制泰菲的地雷拖延绑火箭',
     group: [
       { name: '泰菲', type: 'character' },
       { name: '恶魔汤姆', type: 'character' },
@@ -2722,7 +2723,7 @@ export const characterRelationTraits: Trait[] = [
   },
   {
     description:
-      '米可采访期间免控、有高额减伤，且牛仔汤姆每次释放技能都会被米可叠素材（弹弓会被叠多层）。',
+      '米可采访期间免控、有高额减伤，且牛仔汤姆每次释放技能都会被米可叠素材（弹弓会被叠多层）。但是牛仔汤姆的三级被动可以秒杀处于{受伤}状态下的米可。',
     group: [
       { name: '米可', type: 'character' },
       { name: '牛仔汤姆', type: 'character' },
@@ -5860,7 +5861,7 @@ export const characterRelationTraits: Trait[] = [
     },
   },
   {
-    description: '牛仔汤姆拦不住翻滚，也不好抓尼宝。另外尼宝往往携带逃窜，克制牛汤。',
+    description: '尼宝的主动技能免疫控制。',
     group: [
       { name: '尼宝', type: 'character' },
       { name: '牛仔汤姆', type: 'character' },
@@ -6406,20 +6407,6 @@ export const characterRelationTraits: Trait[] = [
       subject: { name: '泰菲', type: 'character' },
       target: { name: '莱特宁', type: 'character' },
       isMinor: false,
-    },
-  },
-  {
-    description:
-      '泰菲可以在花枪反击前摇时使用圆滚滚，即使被击中，也可以开圆滚滚解控，避免二次伤害。',
-    group: [
-      { name: '泰菲', type: 'character' },
-      { name: '如玉', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '泰菲', type: 'character' },
-      target: { name: '如玉', type: 'character' },
-      isMinor: true,
     },
   },
   {
@@ -6971,7 +6958,8 @@ export const characterRelationTraits: Trait[] = [
     },
   },
   {
-    description: '如玉触发反击将老鼠打飞时，可以无视铁血效果直接打上火箭。',
+    description:
+      '如玉触发反击将老鼠打飞时，可以无视铁血效果直接打上火箭。老鼠被打上火箭后，铁血效果正常触发，铁血生效期间队友实施救援后效果无法终止，会正常进入虚弱。',
     group: [
       { name: '如玉', type: 'character' },
       { name: '铁血', type: 'knowledgeCard', factionId: 'mouse' },
@@ -7685,7 +7673,7 @@ export const characterRelationTraits: Trait[] = [
     },
   },
   {
-    description: '',
+    description: '地图平坦，斗牛作用较小',
     group: [
       { name: '牛仔汤姆', type: 'character' },
       { name: '御门酒店', type: 'map' },
@@ -7698,7 +7686,7 @@ export const characterRelationTraits: Trait[] = [
     },
   },
   {
-    description: '',
+    description: '地图平坦，斗牛作用较小',
     group: [
       { name: '牛仔汤姆', type: 'character' },
       { name: '森林牧场', type: 'map' },
@@ -7711,7 +7699,7 @@ export const characterRelationTraits: Trait[] = [
     },
   },
   {
-    description: '',
+    description: '地图平坦，斗牛作用较小',
     group: [
       { name: '牛仔汤姆', type: 'character' },
       { name: '大都会', type: 'map' },
@@ -7737,7 +7725,7 @@ export const characterRelationTraits: Trait[] = [
     },
   },
   {
-    description: '',
+    description: '地图平坦，斗牛作用较小',
     group: [
       { name: '牛仔汤姆', type: 'character' },
       { name: '5V5大都会', type: 'map' },
