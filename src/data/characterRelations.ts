@@ -2207,16 +2207,17 @@ export const characterRelationTraits: Trait[] = [
     },
   },
   {
-    description: '怕高伤',
+    description:
+      '恶汤可以利用火车刷护盾，导致音乐家的共鸣难以生效；同时音乐家自保较弱，容易成为恶汤的突破口。但小恶魔绑火箭期间，火箭被摧毁会直接让老鼠下来，音乐家可以利用这一点实现救援。',
     group: [
       { name: '恶魔汤姆', type: 'character' },
       { name: '音乐家杰瑞', type: 'character' },
     ],
     relation: {
-      kind: 'counteredBy',
+      kind: 'counters',
       subject: { name: '恶魔汤姆', type: 'character' },
       target: { name: '音乐家杰瑞', type: 'character' },
-      isMinor: false,
+      isMinor: true,
     },
   },
   {
@@ -5495,7 +5496,8 @@ export const characterRelationTraits: Trait[] = [
     },
   },
   {
-    description: '头盔过长的前摇与全图可见的音效容易被闪现抓住机会。',
+    description:
+      '剑客泰菲头盔过长的前摇与全图可见的音效容易被莱特宁的闪现抓住机会。莱特宁的垃圾桶也能干扰剑菲的救援。',
     group: [
       { name: '莱特宁', type: 'character' },
       { name: '剑客泰菲', type: 'character' },
@@ -6207,7 +6209,7 @@ export const characterRelationTraits: Trait[] = [
   },
   {
     description:
-      '剑客泰菲开启头盔移动期间能被回马枪沿移动方向戳飞，他的长枪和冲刺可以触发如玉的“花枪反击”。不过剑菲勇气释放期间的长枪有禁用技能效果，能反制如玉的反击。',
+      '剑客泰菲开启头盔移动期间能被回马枪沿移动方向戳飞，他的长枪和冲刺可以触发如玉的“花枪反击”。不过剑菲勇气释放期间的长枪有禁用技能效果，能反制如玉的反击。此外，如玉的二级舞花枪可以通过高频伤害快速消耗头盔的持续时间。',
     group: [
       { name: '如玉', type: 'character' },
       { name: '剑客泰菲', type: 'character' },
@@ -6216,7 +6218,7 @@ export const characterRelationTraits: Trait[] = [
       kind: 'counters',
       subject: { name: '如玉', type: 'character' },
       target: { name: '剑客泰菲', type: 'character' },
-      isMinor: true,
+      isMinor: false,
     },
   },
   {
@@ -6813,7 +6815,7 @@ export const characterRelationTraits: Trait[] = [
   },
   {
     description:
-      '音乐家可以利用礼服撞开{垃圾桶}，避免莱特宁抓起老鼠后用垃圾桶鞭尸，而且由于莱特宁缺少控制手段，音乐家可以安全的使用礼服拆火箭。但由于莱特宁的高机动性还是得注意闪现爪刀和交互闪，防止被打死',
+      '音乐家可以利用礼服撞开{垃圾桶}，避免莱特宁利用垃圾桶卡地形，而且由于莱特宁缺少控制手段，音乐家可以安全的使用礼服拆火箭。同时莱特宁强上火箭极度依赖绝地反击，音乐家可以迅速拆掉火箭拖掉霸体。但由于莱特宁的高机动性还是得注意闪现爪刀和交互闪，防止被打死',
     group: [
       { name: '音乐家杰瑞', type: 'character' },
       { name: '莱特宁', type: 'character' },
