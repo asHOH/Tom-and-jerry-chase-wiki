@@ -1784,7 +1784,7 @@ export const characterRelationTraits: Trait[] = [
   },
   {
     description:
-      '闪现导致兔子只能守在火箭底下，且三级拳头打奶酪也可以防止死守，且拳头不怕兔子二被，二被的霸体也可以减少被秒的概率',
+      '大表哥三级拳头打奶酪克制兔八哥死守，且拳头不怕兔子二被；大表哥二被的霸体也可以减少被秒的概率。但兔八哥小跳放地洞可以反制大表哥火箭闪现救援。',
     group: [
       { name: '兔八哥', type: 'character' },
       { name: '马索尔', type: 'character' },
@@ -6815,7 +6815,7 @@ export const characterRelationTraits: Trait[] = [
   },
   {
     description:
-      '音乐家可以利用礼服撞开{垃圾桶}，避免莱特宁利用垃圾桶卡地形，而且由于莱特宁缺少控制手段，音乐家可以安全的使用礼服拆火箭。同时莱特宁强上火箭极度依赖绝地反击，音乐家可以迅速拆掉火箭拖掉霸体。但由于莱特宁的高机动性还是得注意闪现爪刀和交互闪，防止被打死',
+      '音乐家可以利用礼服撞开{垃圾桶}，避免莱特宁抓起老鼠后用垃圾桶鞭尸，而且由于莱特宁缺少控制手段，音乐家可以安全的使用礼服拆火箭。但由于莱特宁的高机动性还是得注意闪现爪刀和交互闪，防止被打死',
     group: [
       { name: '音乐家杰瑞', type: 'character' },
       { name: '莱特宁', type: 'character' },
@@ -6824,6 +6824,19 @@ export const characterRelationTraits: Trait[] = [
       kind: 'counters',
       subject: { name: '音乐家杰瑞', type: 'character' },
       target: { name: '莱特宁', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '拆掉火箭使天使汤姆无法将倒地的人吸上二手火箭',
+    group: [
+      { name: '音乐家杰瑞', type: 'character' },
+      { name: '天使汤姆', type: 'character' },
+    ],
+    relation: {
+      kind: 'counters',
+      subject: { name: '音乐家杰瑞', type: 'character' },
+      target: { name: '天使汤姆', type: 'character' },
       isMinor: true,
     },
   },
