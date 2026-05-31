@@ -5092,7 +5092,8 @@ const mouseCharacterDefinitions = {
         ],
         forecast: 0,
         aftercast: 0,
-        cueRange: '本房间可见',
+        cueRange: '随距离远近变化',
+        cooldownTiming: '释放后',
       },
       {
         name: '共鸣',
