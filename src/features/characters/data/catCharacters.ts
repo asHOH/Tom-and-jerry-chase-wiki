@@ -893,7 +893,7 @@ const catCharacterDefinitions = {
       {
         tagName: '追击',
         isMinor: false,
-        description: '新增标签介绍',
+        description: '',
         additionalDescription: '鞭子带来的移速提高与爪刀CD缩短有助于牛仔汤姆持续追击',
         weapon: 1,
       },
@@ -922,14 +922,7 @@ const catCharacterDefinitions = {
         pattern: '303030111',
         weaponType: 'weapon1',
         description: '森林牧场加点，地势平坦，斗牛作用较小',
-      } /*
-      {
-        id: '弹弓（速通/顺风）',
-        pattern: '313131000',
-        weaponType: 'weapon1',
-        description:
-          '三级斗牛更长的眩晕，能让猫咪更好地利用直接抓起的机制，便于频繁实施双挂，有利于在找到节奏后施加压力、促进敌方减员',
-      },*/,
+      },
     ],
     knowledgeCardGroups: [
       {
@@ -950,7 +943,6 @@ const catCharacterDefinitions = {
           },
         ],
         defaultFolded: false,
-        detailedDescription: '<无内容>',
       },
       {
         id: '弹弓防守流',
@@ -966,7 +958,6 @@ const catCharacterDefinitions = {
           },
         ],
         defaultFolded: false,
-        detailedDescription: '<无内容>',
       },
       {
         id: '弹弓追击流',
@@ -3113,26 +3104,26 @@ const catCharacterDefinitions = {
         tagName: '追击',
         isMinor: false,
         description: '飞行状态速度快，追击能力强。',
-        additionalDescription: '新增标签介绍',
+        additionalDescription: '',
       },
       {
         tagName: '速通',
         isMinor: false,
         description: '前期压制力强，很容易抓住机会打多倒。',
-        additionalDescription: '新增标签介绍',
+        additionalDescription: '',
       },
       {
         tagName: '进攻',
         isMinor: false,
         description:
           '伤害高，很容易处理124Hp老鼠；{2级被动}提供霸体以及飞行吸火箭，上火箭能力较强。',
-        additionalDescription: '新增标签介绍',
+        additionalDescription: '',
       },
       {
         tagName: '翻盘',
         isMinor: true,
         description: '抓住机会打多倒，飞行快速吸火箭，逆转劣势。',
-        additionalDescription: '新增标签介绍',
+        additionalDescription: '',
       },
     ],
     skillAllocations: [

@@ -4738,7 +4738,7 @@ const mouseCharacterDefinitions = {
         isMinor: true,
         weapon: 1,
         description: '二级被动可压血线增加推速；气球可给队友一定推速加成。',
-        additionalDescription: '新增标签介绍',
+        additionalDescription: '',
       },
     ],
     skillAllocations: [
