@@ -5993,7 +5993,8 @@ export const characterRelationTraits: Trait[] = [
     },
   },
   {
-    description: '米特怕干扰，不好处理火箭仙人掌',
+    description:
+      '米特怕干扰，不好处理火箭仙人掌，且牛仔杰瑞的二级琴的回血能略微弥补胡椒粉的持续伤害。',
     group: [
       { name: '牛仔杰瑞', type: 'character' },
       { name: '米特', type: 'character' },
