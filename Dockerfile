@@ -14,7 +14,7 @@ COPY . .
 ENV NEXT_PUBLIC_DISABLE_ARTICLES=1 \
     NEXT_PUBLIC_DISABLE_FEEDBACK_EMAIL=1 \
     NEXT_TELEMETRY_DISABLED=1
-RUN node scripts/run-image-optimization.cjs && npm run build --webpack
+RUN node scripts/run-image-optimization.cjs && npm run build:skip-images
 RUN npm prune --omit=dev
 
 FROM base AS runner
@@ -27,10 +27,10 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/next.config.mjs ./next.config.mjs
+COPY --from=builder /app/next.config.ts ./next.config.ts
 COPY --from=builder /app/csp.config.mjs ./csp.config.mjs
-COPY --from=builder /app/tailwind.config.js ./tailwind.config.js
 COPY --from=builder /app/postcss.config.js ./postcss.config.js
 COPY --from=builder /app/tsconfig.json ./tsconfig.json
+COPY --from=builder /app/src/env.ts ./src/env.ts
 EXPOSE 3000
 CMD ["npm", "run", "start"]

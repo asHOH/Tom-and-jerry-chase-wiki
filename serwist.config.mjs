@@ -1,8 +1,9 @@
-// @ts-check
 import { spawnSync } from 'node:child_process';
 import { serwist } from '@serwist/next/config';
 
-// Get git revision for cache busting (falls back to UUID if git not available)
+const nextStaticGlobPattern =
+  '.next/static/**/*.{js,css,html,ico,apng,png,avif,jpg,jpeg,jfif,pjpeg,pjp,gif,svg,webp,json,webmanifest}';
+
 const getRevision = () => {
   try {
     const result = spawnSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf-8' });
@@ -12,11 +13,11 @@ const getRevision = () => {
   }
 };
 
-const revision = getRevision();
-
 export default serwist({
   swSrc: 'src/sw.ts',
   swDest: 'public/sw.js',
-  // Precache the offline fallback page with revision for cache busting
-  additionalPrecacheEntries: [{ url: '/offline/', revision }],
+  precachePrerendered: false,
+  globPatterns: [nextStaticGlobPattern],
+  // Public images are cached on demand by runtimeCaching; precaching them stalls SW install.
+  additionalPrecacheEntries: [{ url: '/offline/', revision: getRevision() }],
 });
