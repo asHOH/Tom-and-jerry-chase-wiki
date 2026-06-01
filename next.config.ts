@@ -1,6 +1,4 @@
-import { spawnSync } from 'node:child_process';
 import createMDX from '@next/mdx';
-import withSerwistInit from '@serwist/next';
 
 import { buildCspHeader } from './csp.config.mjs';
 
@@ -21,26 +19,6 @@ if (process.env.ANALYZE === 'true') {
     if (e instanceof Error) console.warn('Failed to load @next/bundle-analyzer:', e.message);
   }
 }
-
-// Get git revision for cache busting (falls back to UUID if git not available)
-const getRevision = (): string => {
-  try {
-    const result = spawnSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf-8' });
-    return result.stdout?.trim() || crypto.randomUUID();
-  } catch {
-    return crypto.randomUUID();
-  }
-};
-
-const revision = getRevision();
-
-const withSerwist = withSerwistInit({
-  swSrc: 'src/sw.ts',
-  swDest: 'public/sw.js',
-  disable: process.env.NODE_ENV === 'development',
-  // Precache the offline fallback page with revision for cache busting
-  additionalPrecacheEntries: [{ url: '/offline/', revision }],
-});
 
 const withMDX = createMDX({
   options: {
@@ -183,6 +161,6 @@ const nextConfig: NextConfig = {
   typedRoutes: true,
 };
 
-const finalConfig = withBundleAnalyzer(withSerwist(withMDX(nextConfig)));
+const finalConfig = withBundleAnalyzer(withMDX(nextConfig));
 
 export default finalConfig;
