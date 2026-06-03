@@ -235,18 +235,26 @@ const TAG_DEFINITIONS: TagDefinition[] = [
   },
   {
     category: 'calculation',
-    names: ['只受目标影响', '受目标影响', '不受来源影响', '不增', '不增型', '不增型伤害'],
+    names: [
+      '只受目标影响',
+      '受目标影响',
+      '不受来源影响',
+      '不增',
+      '不增型',
+      '不增型伤害',
+      '不计来源影响',
+    ],
     processDisplay: () => ({
-      prefixElement: <strong key='calc'>{'不受来源影响的'}</strong>,
+      prefixElement: <strong key='calc'>{'不计来源影响的'}</strong>,
       suffixNote: '；不受攻击增伤/减伤影响，但仍受受击增伤/减伤等其它效果影响',
       preventBoost: true,
     }),
   },
   {
     category: 'calculation',
-    names: ['只受来源影响', '受来源影响', '不受目标影响'],
+    names: ['只受来源影响', '受来源影响', '不受目标影响', '不计目标影响'],
     processDisplay: () => ({
-      prefixElement: <strong key='calc'>{'不受目标影响的'}</strong>,
+      prefixElement: <strong key='calc'>{'不计目标影响的'}</strong>,
       suffixNote: '；不受受击增伤/减伤影响，但仍受攻击增伤/减伤等其它效果影响',
     }),
   },
@@ -656,7 +664,11 @@ const renderTextWithTooltips = (
           effectiveBoost !== 0 ? `+角色墙缝增伤${effectiveBoost}` : ''
         }${defaultNote}`;
 
-        const displayText = `${totalValue}伤害`;
+        const displayText = (
+          <>
+            <span className='text-red-500'>{totalValue}</span>伤害
+          </>
+        );
 
         parts.push(
           <Tooltip key={`hover-${index}-${match.index}`} content={tooltipContent}>
@@ -781,7 +793,7 @@ const renderTextWithTooltips = (
 
       // Add electric prefix
       if (electricElements.length > 0) {
-        displayElements.push(' ');
+        displayElements.push('');
         electricElements.forEach((el) => displayElements.push(el));
       }
 
@@ -996,7 +1008,11 @@ const renderTextWithTooltips = (
             ? `基础伤害${baseValue}${defaultNote}`
             : `基础伤害${baseValue}+角色增伤${attackBoost}${defaultNote}`;
 
-        const displayText = `${totalValue}伤害`;
+        const displayText = (
+          <>
+            <span className='text-red-500'>{totalValue}</span>伤害
+          </>
+        );
 
         parts.push(
           <Tooltip key={`hover-${index}-${match.index}`} content={tooltipContent}>
@@ -1098,7 +1114,7 @@ const renderTextWithTooltips = (
 
       // Build display text React elements
       const displayElements: React.ReactNode[] = [];
-      displayElements.push(`${totalValue}`);
+      displayElements.push(<span className='text-red-500'>{totalValue}</span>);
 
       // Insert prefix elements (无来源, 固定, 电击, etc.)
       const sourceElements: React.ReactElement[] = [];
@@ -1123,7 +1139,7 @@ const renderTextWithTooltips = (
 
       // Add electric prefix
       if (electricElements.length > 0) {
-        displayElements.push(' ');
+        displayElements.push('');
         electricElements.forEach((el) => displayElements.push(el));
       }
 
@@ -1197,6 +1213,91 @@ interface TextWithHoverTooltipsProps {
 
 const emptyObject = proxy({ attackBoost: 0 });
 
+// ---------- 新增橙色高亮辅助函数 ----------
+
+/**
+ * 将中文双引号“...”内的文本渲染为橙色，引号本身保持原色
+ */
+const applyDoubleQuotesOrange = (text: string): (string | React.ReactElement)[] => {
+  const parts: (string | React.ReactElement)[] = [];
+  const regex = /(“)(.*?)(”)/gs;
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = regex.exec(text)) !== null) {
+    // 添加引号前的普通文本
+    if (match.index > lastIndex) {
+      parts.push(text.slice(lastIndex, match.index));
+    }
+    // 添加左引号（普通文本）
+    parts.push(match[1] || ''); // “
+    // 添加内部橙色文本
+    parts.push(
+      <span key={`quote-${match.index}`} className='text-orange-500'>
+        {match[2]}
+      </span>
+    );
+    // 添加右引号（普通文本）
+    parts.push(match[3] || ''); // ”
+    lastIndex = regex.lastIndex;
+  }
+
+  if (lastIndex < text.length) {
+    parts.push(text.slice(lastIndex));
+  }
+  return parts;
+};
+
+/**
+ * 将数字（整数、小数）和四则运算符（+ - × ÷）渲染为橙色
+ * 注意：不对已经是 React 元素的片段再次处理
+ */
+const applyNumbersAndOperatorsOrange = (text: string): (string | React.ReactElement)[] => {
+  const parts: (string | React.ReactElement)[] = [];
+  const regex = /(\d+(?:\.\d+)?)|([+\-×÷±%])/g;
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push(text.slice(lastIndex, match.index));
+    }
+    parts.push(
+      <span key={`numop-${match.index}`} className='text-blue-500'>
+        {match[0]}
+      </span>
+    );
+    lastIndex = regex.lastIndex;
+  }
+
+  if (lastIndex < text.length) {
+    parts.push(text.slice(lastIndex));
+  }
+  return parts;
+};
+
+/**
+ * 对文本应用完整的橙色高亮规则：
+ * 1. 优先处理中文双引号，引号内的内容整体橙色，且不再进行数字/运算符染色
+ * 2. 其余部分进行数字/运算符染色
+ */
+const renderColorfulHighlight = (text: string): (string | React.ReactElement)[] => {
+  // 第一步：处理双引号，得到片段数组（可能包含字符串和橙色 span）
+  const quotedParts = applyDoubleQuotesOrange(text);
+  // 第二步：对每个片段，如果是字符串，再处理数字/运算符
+  const result: (string | React.ReactElement)[] = [];
+  for (const part of quotedParts) {
+    if (typeof part === 'string') {
+      result.push(...applyNumbersAndOperatorsOrange(part));
+    } else {
+      result.push(part);
+    }
+  }
+  return result;
+};
+
+// ---------- 主组件 ----------
+
 export default function TextWithHoverTooltips({ text: rawText }: TextWithHoverTooltipsProps) {
   const [isDarkMode] = useDarkMode();
   const intermediateParts: (string | React.ReactElement)[] = [];
@@ -1228,29 +1329,40 @@ export default function TextWithHoverTooltips({ text: rawText }: TextWithHoverTo
         const visibleText = match[1] || '';
         const tooltipContent = match[2] || '';
 
+        // 检查前后字符是否为中文双引号
+        const prevChar = match.index > 0 ? part[match.index - 1] : '';
+        const nextChar =
+          hoverTooltipPattern.lastIndex < part.length ? part[hoverTooltipPattern.lastIndex] : '';
+        const isQuoted = prevChar === '“' && nextChar === '”';
+
+        const visibleRendered = renderTextWithTooltips(
+          visibleText,
+          localCharacter.attackBoost ?? null,
+          index,
+          'wallCrackDamageBoost' in localCharacter
+            ? localCharacter.wallCrackDamageBoost
+            : undefined,
+          isDarkMode,
+          currentCharacterId
+        );
+
+        const tooltipRendered = renderTextWithTooltips(
+          tooltipContent,
+          localCharacter.attackBoost ?? null,
+          index,
+          'wallCrackDamageBoost' in localCharacter
+            ? localCharacter.wallCrackDamageBoost
+            : undefined,
+          isDarkMode,
+          currentCharacterId
+        );
+
         intermediateParts.push(
-          <Tooltip
-            key={`hover-${index}-${match.index}`}
-            content={renderTextWithTooltips(
-              tooltipContent,
-              localCharacter.attackBoost ?? null,
-              index,
-              'wallCrackDamageBoost' in localCharacter
-                ? localCharacter.wallCrackDamageBoost
-                : undefined,
-              isDarkMode,
-              currentCharacterId
-            )}
-          >
-            {renderTextWithTooltips(
-              visibleText,
-              localCharacter.attackBoost ?? null,
-              index,
-              'wallCrackDamageBoost' in localCharacter
-                ? localCharacter.wallCrackDamageBoost
-                : undefined,
-              isDarkMode,
-              currentCharacterId
+          <Tooltip key={`hover-${index}-${match.index}`} content={tooltipRendered}>
+            {isQuoted ? (
+              <span className='text-orange-500'>{visibleRendered}</span>
+            ) : (
+              visibleRendered
             )}
           </Tooltip>
         );
@@ -1288,5 +1400,13 @@ export default function TextWithHoverTooltips({ text: rawText }: TextWithHoverTo
     }
   });
 
-  return <>{finalParts}</>;
+  // 新增：对最终显示的纯文本部分进行橙色高亮（中文双引号、数字、运算符）
+  const colorfulHighlightedParts = finalParts.flatMap((part) => {
+    if (typeof part === 'string') {
+      return renderColorfulHighlight(part);
+    }
+    return part;
+  });
+
+  return <>{colorfulHighlightedParts}</>;
 }

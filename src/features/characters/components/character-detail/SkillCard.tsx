@@ -38,23 +38,39 @@ type SkillCardProps = {
 };
 
 function SkillDescriptionPrefix({ skill, level }: { skill: DeepReadonly<Skill>; level: number }) {
-  const results: string[] = [];
+  const results: React.ReactNode[] = [];
   const previousCharges = skill.skillLevels[level - 2]?.charges ?? 1;
   const charges = skill.skillLevels[level - 1]?.charges ?? 1;
   if (previousCharges != charges) {
     if (charges != 1) {
-      results.push(`技能可以存储${charges}次`);
+      results.push(
+        <>
+          技能可以存储<span className='text-blue-600 dark:text-blue-400'>{charges}</span>次
+        </>
+      );
     }
   }
   const previousCooldown = skill.skillLevels[level - 2]?.cooldown ?? 0;
   const cooldown = skill.skillLevels[level - 1]?.cooldown ?? 0;
   if (previousCooldown != cooldown && level != 1) {
-    results.push(`CD减少至${cooldown}秒`);
+    results.push(
+      <>
+        CD减少至<span className='text-blue-600 dark:text-blue-400'>{cooldown}</span>秒
+      </>
+    );
   }
-  return (
-    results.join('；') +
-    (results.length ? (skill.skillLevels[level - 1]?.description ? '；' : '。') : '')
-  );
+  if (results.length === 0) return null;
+
+  const children: React.ReactNode[] = [];
+  results.forEach((result, idx) => {
+    children.push(result);
+    if (idx < results.length - 1) {
+      children.push('；');
+    } else {
+      children.push(skill.skillLevels[level - 1]?.description ? '；' : '。');
+    }
+  });
+  return <>{children}</>;
 }
 
 function getSkillTypeLabel(type: string, isSingleWeapon?: boolean) {
