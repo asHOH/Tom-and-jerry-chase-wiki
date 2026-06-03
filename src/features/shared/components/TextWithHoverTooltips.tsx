@@ -13,6 +13,8 @@ import Tooltip from '@/components/ui/Tooltip';
 import GotoLink from '@/components/GotoLink';
 import { cards, characters } from '@/data';
 
+import { replaceBuffIds } from './replaceBuffIds';
+
 type CharacterRecord = (typeof characters)[string];
 
 // Safely resolve character-linked expressions like foo.bar[0] without eval
@@ -1202,7 +1204,13 @@ export default function TextWithHoverTooltips({ text: rawText }: TextWithHoverTo
   const currentCharacterId = localCharacterCtx.characterId;
   const rawLocalCharacter = characters[currentCharacterId];
   const localCharacter = useSnapshot(rawLocalCharacter ?? emptyObject);
-  const text = preprocessText(rawText, currentCharacterId);
+
+  // 1. 先替换 !{buffID} 占位符
+  let text = replaceBuffIds(rawText);
+
+  // 2. 再进行自动角色名包裹（preprocessText）
+  text = preprocessText(text, currentCharacterId);
+
   const highlightedParts = renderTextWithHighlights(text); // Handles **bold**
 
   // First pass: Handle [visible text](tooltip content)
