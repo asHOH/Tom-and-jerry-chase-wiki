@@ -7,6 +7,7 @@ import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboard
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { Fixture, SingleItem } from '@/data/types';
+import DetailOwnbuffsCard from '@/features/shared/detail-view/DetaidOwnbuffsCard';
 import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
 import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';
 import DetailTextSection from '@/features/shared/detail-view/DetailTextSection';
@@ -58,6 +59,7 @@ export default function FixtureDetailClient({ fixture }: { fixture: Fixture }) {
           <div className='-mt-4 space-y-2'>
             <DetailTraitsCard singleItem={{ name: effectiveFixture.name, type: 'fixture' }} />
             <DetailReverseCard singleItem={{ name: effectiveFixture.name, type: 'fixture' }} />
+            <DetailOwnbuffsCard singleItem={{ name: effectiveFixture.name, type: 'fixture' }} />
           </div>
         </DetailTextSection>
       ),

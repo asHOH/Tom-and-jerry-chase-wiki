@@ -9,6 +9,7 @@ import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboard
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { Entity, Skill } from '@/data/types';
+import DetailOwnbuffsCard from '@/features/shared/detail-view/DetaidOwnbuffsCard';
 import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
 import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';
 import DetailTextSection from '@/features/shared/detail-view/DetailTextSection';
@@ -58,6 +59,7 @@ export default function EntityDetailClient({ entity }: { entity: Entity }) {
           <div className='-mt-4 space-y-2'>
             <DetailTraitsCard singleItem={{ name: effectiveEntity.name, type: 'entity' }} />
             <DetailReverseCard singleItem={{ name: effectiveEntity.name, type: 'entity' }} />
+            <DetailOwnbuffsCard singleItem={{ name: effectiveEntity.name, type: 'entity' }} />
           </div>
         </DetailTextSection>
       ),
