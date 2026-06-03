@@ -1,10 +1,16 @@
-import { cn, getBuffGlobalColors, getBuffTypeColors } from '@/lib/design';
+import { cn, getBuffTypeColors } from '@/lib/design';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Buff } from '@/data/types';
 import BaseCard from '@/components/ui/BaseCard';
 import Tag from '@/components/ui/Tag';
 import Image from '@/components/Image';
 
+const borderColorList = {
+  状态: 'border-amber-200 dark:border-amber-800',
+  瞬时效果: 'border-purple-200 dark:border-purple-800',
+  持续效果: 'border-blue-200 dark:border-blue-800',
+  属性: 'border-red-200 dark:border-red-800',
+};
 export default function BuffCardDisplay({ buff }: { buff: Buff }) {
   const [isDarkMode] = useDarkMode();
 
@@ -17,11 +23,7 @@ export default function BuffCardDisplay({ buff }: { buff: Buff }) {
       <div
         className={cn(
           'flex w-full items-center justify-center border border-dotted pt-1 pb-1.5 text-center md:pb-3',
-          buff.type.includes('正面')
-            ? 'border-green-300 dark:border-green-800'
-            : buff.type.includes('负面')
-              ? 'border-red-300 dark:border-red-800'
-              : 'border-yellow-300 dark:border-yellow-800'
+          borderColorList[buff.type]
         )}
       >
         {!buff.unuseImage && (
@@ -59,17 +61,6 @@ export default function BuffCardDisplay({ buff }: { buff: Buff }) {
             >
               {buff.type}
             </Tag>
-            {/* 全局标签 */}
-            {buff.global === true && (
-              <Tag
-                size='xs'
-                margin='compact'
-                colorStyles={getBuffGlobalColors(buff.global || false, isDarkMode)}
-                className='whitespace-nowrap'
-              >
-                全局
-              </Tag>
-            )}
           </div>
         </div>
       </div>

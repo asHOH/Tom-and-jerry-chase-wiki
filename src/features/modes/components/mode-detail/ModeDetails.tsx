@@ -7,6 +7,7 @@ import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboard
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { Mode } from '@/data/types';
+import DetailOwnbuffsCard from '@/features/shared/detail-view/DetaidOwnbuffsCard';
 import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
 import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';
 import DetailTextSection from '@/features/shared/detail-view/DetailTextSection';
@@ -85,6 +86,7 @@ export default function ModeDetailClient({ mode }: { mode: Mode }) {
           <div className='-mt-4 space-y-2'>
             <DetailTraitsCard singleItem={{ name: effectiveMode.name, type: 'mode' }} />
             <DetailReverseCard singleItem={{ name: effectiveMode.name, type: 'mode' }} />
+            <DetailOwnbuffsCard singleItem={{ name: effectiveMode.name, type: 'mode' }} />
           </div>
         </DetailTextSection>
       ),

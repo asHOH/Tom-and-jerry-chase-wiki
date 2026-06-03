@@ -11,6 +11,7 @@ import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
 import type { KnowledgeCardGroup, KnowledgeCardGroupSet } from '@/data/types';
 import { flattenCardGroup } from '@/features/knowledge-cards/utils/sections';
+import DetailOwnbuffsCard from '@/features/shared/detail-view/DetaidOwnbuffsCard';
 import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
 import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';
 import DetailTextSection from '@/features/shared/detail-view/DetailTextSection';
@@ -165,6 +166,7 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
           <div className='mt-4 space-y-2'>
             <DetailTraitsCard singleItem={{ name: effectiveCard.id, type: 'knowledgeCard' }} />
             <DetailReverseCard singleItem={{ name: effectiveCard.id, type: 'knowledgeCard' }} />
+            <DetailOwnbuffsCard singleItem={{ name: effectiveCard.id, type: 'knowledgeCard' }} />
           </div>
         </DetailTextSection>
       ),
