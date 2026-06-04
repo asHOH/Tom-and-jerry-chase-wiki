@@ -103,6 +103,9 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
           detailedValue={null}
           isDetailedView={isDetailedView}
         >
+          <div className='text-lg font-bold text-blue-600'>
+            （注意：以下只列举由“角色状态”导致的效果的来源）
+          </div>
           {sourceItems.length >= 10 ? (
             <AccordionCard
               items={Object.values(
@@ -131,13 +134,12 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
                 ),
                 activeColor: 'orange' as const,
               }))}
-              titleClassName='-mt-4'
               size='xs'
               defaultOpenId='0'
             />
           ) : (
             <ul
-              className='-mt-4 w-full gap-2'
+              className='w-full gap-2'
               style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',

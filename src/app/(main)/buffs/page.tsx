@@ -7,7 +7,7 @@ import BuffClient from './BuffGridClient';
 
 export const dynamic = 'force-static';
 
-const DESCRIPTION = '游戏内的全部状态和效果（该页面建设调整中，非最终版本）';
+const DESCRIPTION = '列举了游戏内的部分常见效果及部分特殊状态';
 
 export const metadata: Metadata = generatePageMetadata({
   title: '状态和效果',
