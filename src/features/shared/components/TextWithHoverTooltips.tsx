@@ -671,7 +671,7 @@ const renderTextWithTooltips = (
         );
 
         parts.push(
-          <Tooltip key={`hover-${index}-${match.index}`} content={tooltipContent}>
+          <Tooltip key={`hover-${index}-${match.index}-${rawContent}`} content={tooltipContent}>
             {displayText}
           </Tooltip>
         );
@@ -831,7 +831,7 @@ const renderTextWithTooltips = (
       }
 
       parts.push(
-        <Tooltip key={`hover-${index}-${match.index}`} content={fullTooltip}>
+        <Tooltip key={`hover-${index}-${match.index}-${rawContent}`} content={fullTooltip}>
           <>{displayElements}</>
         </Tooltip>
       );
@@ -1015,7 +1015,7 @@ const renderTextWithTooltips = (
         );
 
         parts.push(
-          <Tooltip key={`hover-${index}-${match.index}`} content={tooltipContent}>
+          <Tooltip key={`hover-${index}-${match.index}-${rawContent}`} content={tooltipContent}>
             {displayText}
           </Tooltip>
         );
@@ -1171,7 +1171,7 @@ const renderTextWithTooltips = (
       }
 
       parts.push(
-        <Tooltip key={`hover-${index}-${match.index}`} content={fullTooltip}>
+        <Tooltip key={`hover-${index}-${match.index}-${rawContent}`} content={fullTooltip}>
           <>{displayElements}</>
         </Tooltip>
       );
@@ -1190,7 +1190,7 @@ const renderTextWithTooltips = (
 
     // For '+' and '_' branches (or invalid '+'), show tooltip for computed visible text
     parts.push(
-      <Tooltip key={`hover-${index}-${match.index}`} content={tooltipContent}>
+      <Tooltip key={`hover-${index}-${match.index}-${rawContent}`} content={tooltipContent}>
         {typeof visibleText === 'string' ? visibleText : <>{visibleText}</>}
       </Tooltip>
     );
@@ -1231,9 +1231,9 @@ const applyDoubleQuotesOrange = (text: string): (string | React.ReactElement)[] 
     }
     // 添加左引号（普通文本）
     parts.push(match[1] || ''); // “
-    // 添加内部橙色文本
+    // 添加内部橙色文本（key 中加入内容避免残留）
     parts.push(
-      <span key={`quote-${match.index}`} className='text-orange-500'>
+      <span key={`quote-${match.index}-${match[2]}`} className='text-orange-500'>
         {match[2]}
       </span>
     );
@@ -1263,7 +1263,7 @@ const applyNumbersAndOperatorsOrange = (text: string): (string | React.ReactElem
       parts.push(text.slice(lastIndex, match.index));
     }
     parts.push(
-      <span key={`numop-${match.index}`} className='text-blue-500'>
+      <span key={`numop-${match.index}-${match[0]}`} className='text-blue-500'>
         {match[0]}
       </span>
     );
