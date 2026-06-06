@@ -1220,7 +1220,7 @@ const emptyObject = proxy({ attackBoost: 0 });
  */
 const applyDoubleQuotesOrange = (text: string): (string | React.ReactElement)[] => {
   const parts: (string | React.ReactElement)[] = [];
-  const regex = /(“)(.*?)(”)/gs;
+  const regex = /(“)([^”]*?)(”)/gs;
   let lastIndex = 0;
   let match: RegExpExecArray | null;
 
@@ -1233,7 +1233,7 @@ const applyDoubleQuotesOrange = (text: string): (string | React.ReactElement)[] 
     parts.push(match[1] || ''); // “
     // 添加内部橙色文本（key 中加入内容避免残留）
     parts.push(
-      <span key={`quote-${match.index}-${match[2]}`} className='text-orange-500'>
+      <span key={`quote-${lastIndex}-${match.index}-${match[2]}`} className='text-orange-500'>
         {match[2]}
       </span>
     );
@@ -1252,7 +1252,10 @@ const applyDoubleQuotesOrange = (text: string): (string | React.ReactElement)[] 
  * 将数字（整数、小数）和四则运算符（+ - × ÷）渲染为橙色
  * 注意：不对已经是 React 元素的片段再次处理
  */
-const applyNumbersAndOperatorsOrange = (text: string): (string | React.ReactElement)[] => {
+const applyNumbersAndOperatorsOrange = (
+  text: string,
+  index: number
+): (string | React.ReactElement)[] => {
   const parts: (string | React.ReactElement)[] = [];
   const regex = /(\d+(?:\.\d+)?)|([+\-×÷±%])/g;
   let lastIndex = 0;
@@ -1263,7 +1266,10 @@ const applyNumbersAndOperatorsOrange = (text: string): (string | React.ReactElem
       parts.push(text.slice(lastIndex, match.index));
     }
     parts.push(
-      <span key={`numop-${match.index}-${match[0]}`} className='text-blue-500'>
+      <span
+        key={`numop-${lastIndex}-${match.index}-${match[0]}-${index}`}
+        className='text-blue-500'
+      >
         {match[0]}
       </span>
     );
@@ -1286,9 +1292,9 @@ const renderColorfulHighlight = (text: string): (string | React.ReactElement)[] 
   const quotedParts = applyDoubleQuotesOrange(text);
   // 第二步：对每个片段，如果是字符串，再处理数字/运算符
   const result: (string | React.ReactElement)[] = [];
-  for (const part of quotedParts) {
+  for (const [index, part] of quotedParts.entries()) {
     if (typeof part === 'string') {
-      result.push(...applyNumbersAndOperatorsOrange(part));
+      result.push(...applyNumbersAndOperatorsOrange(part, index));
     } else {
       result.push(part);
     }

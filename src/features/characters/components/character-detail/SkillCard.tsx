@@ -44,9 +44,9 @@ function SkillDescriptionPrefix({ skill, level }: { skill: DeepReadonly<Skill>; 
   if (previousCharges != charges) {
     if (charges != 1) {
       results.push(
-        <>
+        <Fragment key='charges-change'>
           技能可以存储<span className='text-blue-600 dark:text-blue-400'>{charges}</span>次
-        </>
+        </Fragment>
       );
     }
   }
@@ -54,9 +54,9 @@ function SkillDescriptionPrefix({ skill, level }: { skill: DeepReadonly<Skill>; 
   const cooldown = skill.skillLevels[level - 1]?.cooldown ?? 0;
   if (previousCooldown != cooldown && level != 1) {
     results.push(
-      <>
+      <Fragment key='cooldown-change'>
         CD减少至<span className='text-blue-600 dark:text-blue-400'>{cooldown}</span>秒
-      </>
+      </Fragment>
     );
   }
   if (results.length === 0) return null;
