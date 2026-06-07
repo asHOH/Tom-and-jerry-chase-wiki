@@ -29,7 +29,7 @@ function extractTypeAndValue(field: string): { type: string; value: string } {
   // 匹配：引号内容 | 运算符/逗号/顿号 | 数字（含小数点）
   const valueRegex = /([“"][^”"]*[”"])|[+\-×÷,、]|\d+(?:\.\d+)?/g;
   let match;
-  let valueParts: string[] = [];
+  const valueParts: string[] = [];
   let lastIndex = 0;
   const typeParts: string[] = [];
 
