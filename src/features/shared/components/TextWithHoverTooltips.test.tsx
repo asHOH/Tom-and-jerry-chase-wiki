@@ -72,6 +72,7 @@ describe('TextWithHoverTooltips', () => {
     render(<TextWithHoverTooltips text='获得{主动技能}' />);
 
     expect(screen.getByText('主动技能')).toHaveAttribute('data-category', '技能');
+    expect(screen.getByText('主动技能')).toHaveAttribute('data-name', '发怒冲刺');
   });
 
   it('renders numeric damage tooltip when attack boost is available', () => {
