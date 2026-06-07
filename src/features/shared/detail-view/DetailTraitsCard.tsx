@@ -60,6 +60,7 @@ export default function DetailTraitsCard({ singleItem }: DetailTraitsCardProps) 
       color='lime'
       items={items}
       singleContent={<SingleItemTraitsText singleItem={singleItem} />}
+      lazyMountContent
     />
   );
 }

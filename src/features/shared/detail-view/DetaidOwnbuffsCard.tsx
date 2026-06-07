@@ -34,6 +34,7 @@ export default function DetailOwnbuffsCard({ singleItem }: DetailOwnbuffsCardPro
       color='blue'
       items={items}
       singleContent={<SingleItemOwnbuffsCard singleItem={singleItem} />}
+      lazyMountContent
     />
   );
 }

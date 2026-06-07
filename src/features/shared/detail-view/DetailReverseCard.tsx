@@ -62,6 +62,7 @@ export default function DetailReverseCard({ singleItem }: DetailReverseCardProps
       color='yellow'
       items={items}
       singleContent={<SingleItemReverseCard singleItem={singleItem} />}
+      lazyMountContent
     />
   );
 }

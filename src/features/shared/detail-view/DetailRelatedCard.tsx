@@ -16,6 +16,7 @@ type DetailRelatedCardProps = {
   color: 'default' | 'red' | 'orange' | 'yellow' | 'green' | 'purple' | 'blue' | 'lime';
   items: DetailRelatedCardItem[];
   singleContent: ReactNode;
+  lazyMountContent?: boolean;
 };
 
 const contentClassName =
@@ -35,6 +36,7 @@ export default function DetailRelatedCard({
   color,
   items,
   singleContent,
+  lazyMountContent = false,
 }: DetailRelatedCardProps) {
   const visibleItems = items.filter((item) => item.count > 0);
   const accordionItems = visibleItems.map(({ count: _count, ...item }) => item);
@@ -49,6 +51,7 @@ export default function DetailRelatedCard({
       titleClassName={titleClassName}
       collapsedTitleClassName={collapsedTitleClassName}
       color={color}
+      lazyMount={lazyMountContent}
     >
       {visibleItems.length <= 1 ? (
         <div>{visibleItems[0]?.children ?? singleContent}</div>

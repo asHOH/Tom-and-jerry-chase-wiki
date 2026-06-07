@@ -11,6 +11,7 @@ type CollapseCardProps = {
   size?: 'xs' | 'sm' | 'md';
   color?: 'default' | 'red' | 'orange' | 'yellow' | 'green' | 'purple' | 'blue' | 'lime';
   openOnStart?: boolean;
+  lazyMount?: boolean;
 };
 
 const titleSizeClasses = {
@@ -38,8 +39,10 @@ export default function CollapseCard({
   color = 'default',
   size = 'md',
   openOnStart = false,
+  lazyMount = false,
 }: CollapseCardProps) {
   const [isExpanded, setIsExpanded] = useState(openOnStart);
+  const [hasMountedChildren, setHasMountedChildren] = useState(openOnStart);
   const width = { xs: '15px', sm: '25px', md: '35px' }[size];
   const titleSizeClassName = titleSizeClasses[size];
   const titleColor = {
@@ -53,12 +56,20 @@ export default function CollapseCard({
       'bg-fuchsia-200 dark:bg-fuchsia-900 border-2 border-fuchsia-300 dark:border-fuchsia-700',
     lime: 'bg-lime-100 dark:bg-lime-900 border-2 border-lime-200 dark:border-lime-700',
   }[color];
+  const shouldRenderChildren = !lazyMount || isExpanded || hasMountedChildren;
+  const handleToggle = () => {
+    const nextIsExpanded = !isExpanded;
+    if (nextIsExpanded) {
+      setHasMountedChildren(true);
+    }
+    setIsExpanded(nextIsExpanded);
+  };
 
   return (
     <div className='overflow-hidden'>
       <button
         type='button'
-        onClick={() => setIsExpanded(!isExpanded)}
+        onClick={handleToggle}
         className={cn(
           'flex w-full cursor-pointer items-center justify-between px-1 py-1 font-bold text-black focus:outline-none dark:text-white',
           titleColor,
@@ -96,14 +107,16 @@ export default function CollapseCard({
           isExpanded ? 'max-h-9999 translate-y-0 opacity-100' : 'max-h-0 -translate-y-2 opacity-0'
         )}
       >
-        <div
-          className={cn(
-            'transform transition-all duration-100 ease-in-out',
-            isExpanded ? 'translate-y-0' : '-translate-y-4'
-          )}
-        >
-          <div className={className}>{children}</div>
-        </div>
+        {shouldRenderChildren ? (
+          <div
+            className={cn(
+              'transform transition-all duration-100 ease-in-out',
+              isExpanded ? 'translate-y-0' : '-translate-y-4'
+            )}
+          >
+            <div className={className}>{children}</div>
+          </div>
+        ) : null}
       </div>
     </div>
   );
