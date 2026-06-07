@@ -18,6 +18,7 @@ import type {
   CharacterRecord,
   DamageTagCategory,
   DamageTagEffects,
+  ParsedName,
   RenderTextPart,
 } from './text-with-hover-tooltips/types';
 
@@ -174,9 +175,7 @@ const hasBalancedParentheses = (text: string): boolean => {
  * @param content - Content that may contain parentheses
  * @returns Object with baseName and categoryHint
  */
-const extractBaseNameAndCategoryHint = (
-  content: string
-): { baseName: string; categoryHint: string | null } => {
+const extractBaseNameAndCategoryHint = (content: string): ParsedName => {
   // Check if content has balanced parentheses and ends with ')'
   if (hasBalancedParentheses(content)) {
     const lastOpenParen = Math.max(content.lastIndexOf('('), content.lastIndexOf('（'));
