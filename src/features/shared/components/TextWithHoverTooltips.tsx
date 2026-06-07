@@ -14,8 +14,12 @@ import GotoLink from '@/components/GotoLink';
 import { cards, characters } from '@/data';
 
 import { replaceBuffIds } from './replaceBuffIds';
-
-type CharacterRecord = (typeof characters)[string];
+import type {
+  CharacterRecord,
+  DamageTagCategory,
+  DamageTagEffects,
+  RenderTextPart,
+} from './text-with-hover-tooltips/types';
 
 // Safely resolve character-linked expressions like foo.bar[0] without eval
 const resolveCharacterExpression = (
@@ -119,8 +123,8 @@ function preprocessText(text: string, currentCharacterName?: string | undefined)
  * @param text - Text to parse and add classes to
  * @returns JSX elements with class-styled portions
  */
-const renderTextWithClasses = (text: string): (string | React.ReactElement)[] => {
-  const parts: (string | React.ReactElement)[] = [];
+const renderTextWithClasses = (text: string): RenderTextPart[] => {
+  const parts: RenderTextPart[] = [];
   let lastIndex = 0;
   const classPattern = /\$([^$]+)\$([^#]+)#?/g;
   let match;
@@ -189,17 +193,8 @@ const extractBaseNameAndCategoryHint = (
 
 // ---------- Damage tag processing system ----------
 
-type TagCategory =
-  | 'source'
-  | 'calculation'
-  | 'electric'
-  | 'shield'
-  | 'injure'
-  | 'bubble'
-  | 'protection';
-
 interface TagDefinition {
-  category: TagCategory;
+  category: DamageTagCategory;
   names: string[]; // Includes primary name and aliases
   // Modify final display text: returns React elements to insert (bold, colors, etc.) and suffix strings
   processDisplay?: () => {
@@ -385,18 +380,13 @@ const TAG_DEFINITIONS: TagDefinition[] = [
 ];
 
 // Parse tag strings and return effects in order of appearance
-function parseDamageTags(rawTags: string[]): {
-  displayPrefixElements: React.ReactElement[];
-  displaySuffixes: string[];
-  tooltipAppends: string[];
-  preventBoost: boolean;
-} {
+function parseDamageTags(rawTags: string[]): DamageTagEffects {
   const displayPrefixElements: React.ReactElement[] = [];
   const displaySuffixes: string[] = [];
   const tooltipAppends: string[] = [];
   let preventBoost = false;
 
-  const seenCategories = new Set<TagCategory>();
+  const seenCategories = new Set<DamageTagCategory>();
   let sourceDefApplied: TagDefinition | undefined;
 
   // Process tags in order, but skip categories already processed
@@ -508,8 +498,8 @@ const renderTextWithTooltips = (
   wallCrackDamageBoost?: number,
   isDarkMode: boolean = false,
   currentCharacterId?: string
-): (string | React.ReactElement)[] => {
-  const parts: (string | React.ReactElement)[] = [];
+): RenderTextPart[] => {
+  const parts: RenderTextPart[] = [];
   const isCategoryHint = (v: string | null): v is CategoryHint =>
     !!v && (CATEGORY_HINTS as readonly string[]).includes(v);
 
@@ -546,11 +536,11 @@ const renderTextWithTooltips = (
     const classProcessedBaseName = renderTextWithClasses(baseName);
 
     // Now process the class-processed content for tooltip logic
-    let visibleText: string | (string | React.ReactElement)[] = classProcessedBaseName;
+    let visibleText: string | RenderTextPart[] = classProcessedBaseName;
     let tooltipContent: string = '';
 
     // Helper function to extract text content from React elements
-    const extractTextFromElements = (elements: (string | React.ReactElement)[]): string => {
+    const extractTextFromElements = (elements: RenderTextPart[]): string => {
       return elements
         .map((element) => {
           if (typeof element === 'string') {
@@ -851,10 +841,7 @@ const renderTextWithTooltips = (
       visibleText = classProcessedBaseName;
 
       // Helper: push a skill goto link with consistent props
-      const pushSkillLink = (
-        displayText: string | (string | React.ReactElement)[],
-        linkName: string
-      ) => {
+      const pushSkillLink = (displayText: string | RenderTextPart[], linkName: string) => {
         const hint2 = '技能' as CategoryHint;
         parts.push(
           <GotoLink
@@ -1218,8 +1205,8 @@ const emptyObject = proxy({ attackBoost: 0 });
 /**
  * 将中文双引号“...”内的文本渲染为橙色，引号本身保持原色
  */
-const applyDoubleQuotesOrange = (text: string): (string | React.ReactElement)[] => {
-  const parts: (string | React.ReactElement)[] = [];
+const applyDoubleQuotesOrange = (text: string): RenderTextPart[] => {
+  const parts: RenderTextPart[] = [];
   const regex = /(“)([^”]*?)(”)/gs;
   let lastIndex = 0;
   let match: RegExpExecArray | null;
@@ -1252,11 +1239,8 @@ const applyDoubleQuotesOrange = (text: string): (string | React.ReactElement)[] 
  * 将数字（整数、小数）和四则运算符（+ - × ÷）渲染为橙色
  * 注意：不对已经是 React 元素的片段再次处理
  */
-const applyNumbersAndOperatorsOrange = (
-  text: string,
-  index: number
-): (string | React.ReactElement)[] => {
-  const parts: (string | React.ReactElement)[] = [];
+const applyNumbersAndOperatorsOrange = (text: string, index: number): RenderTextPart[] => {
+  const parts: RenderTextPart[] = [];
   const regex = /(\d+(?:\.\d+)?)|([+\-×÷±%])/g;
   let lastIndex = 0;
   let match: RegExpExecArray | null;
@@ -1287,11 +1271,11 @@ const applyNumbersAndOperatorsOrange = (
  * 1. 优先处理中文双引号，引号内的内容整体橙色，且不再进行数字/运算符染色
  * 2. 其余部分进行数字/运算符染色
  */
-const renderColorfulHighlight = (text: string): (string | React.ReactElement)[] => {
+const renderColorfulHighlight = (text: string): RenderTextPart[] => {
   // 第一步：处理双引号，得到片段数组（可能包含字符串和橙色 span）
   const quotedParts = applyDoubleQuotesOrange(text);
   // 第二步：对每个片段，如果是字符串，再处理数字/运算符
-  const result: (string | React.ReactElement)[] = [];
+  const result: RenderTextPart[] = [];
   for (const [index, part] of quotedParts.entries()) {
     if (typeof part === 'string') {
       result.push(...applyNumbersAndOperatorsOrange(part, index));
@@ -1306,7 +1290,7 @@ const renderColorfulHighlight = (text: string): (string | React.ReactElement)[] 
 
 export default function TextWithHoverTooltips({ text: rawText }: TextWithHoverTooltipsProps) {
   const [isDarkMode] = useDarkMode();
-  const intermediateParts: (string | React.ReactElement)[] = [];
+  const intermediateParts: RenderTextPart[] = [];
   const localCharacterCtx = useLocalCharacter();
   const currentCharacterId = localCharacterCtx.characterId;
   const rawLocalCharacter = characters[currentCharacterId];
@@ -1384,7 +1368,7 @@ export default function TextWithHoverTooltips({ text: rawText }: TextWithHoverTo
     }
   });
 
-  const finalParts: (string | React.ReactElement)[] = [];
+  const finalParts: RenderTextPart[] = [];
 
   // Second pass: Handle {visible text} and $class$ patterns using the updated renderTextWithTooltips
   intermediateParts.forEach((part, index) => {
