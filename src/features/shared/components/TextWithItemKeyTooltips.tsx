@@ -1,23 +1,27 @@
+import type { ReactNode } from 'react';
+
 import { getStarredItemKeyTooltipContent } from '@/lib/tooltipUtils';
 import Tooltip from '@/components/ui/Tooltip';
 
-interface TextWithItemKeyTooltipsProps {
+const ITEM_KEY_MARKER = '道具键*';
+
+type TextWithItemKeyTooltipsProps = {
   text: string;
   isDetailed: boolean;
-}
+};
 
 export default function TextWithItemKeyTooltips({
   text,
   isDetailed,
 }: TextWithItemKeyTooltipsProps) {
-  if (!text.includes('道具键*')) {
+  if (!text.includes(ITEM_KEY_MARKER)) {
     return <>{text}</>;
   }
 
   const itemKeyPattern = /道具键\*([^（]*)/g;
-  const parts = [];
+  const parts: ReactNode[] = [];
   let lastIndex = 0;
-  let match;
+  let match: RegExpExecArray | null;
 
   while ((match = itemKeyPattern.exec(text)) !== null) {
     if (match.index > lastIndex) {
