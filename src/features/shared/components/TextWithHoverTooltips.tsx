@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import { proxy, useSnapshot } from 'valtio';
 
 import { renderTextWithHighlights } from '@/lib/textUtils';
@@ -128,5 +129,11 @@ export default function TextWithHoverTooltips({ text: rawText }: TextWithHoverTo
     return part;
   });
 
-  return <>{colorfulHighlightedParts}</>;
+  return (
+    <>
+      {colorfulHighlightedParts.map((part, index) => (
+        <Fragment key={`text-part-${index}`}>{part}</Fragment>
+      ))}
+    </>
+  );
 }

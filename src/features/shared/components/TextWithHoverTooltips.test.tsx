@@ -177,4 +177,19 @@ describe('TextWithHoverTooltips', () => {
     expect(screen.getByText('速度+10%')).toHaveClass('text-orange-500');
     expect(screen.getByText('5')).toHaveClass('text-blue-500');
   });
+
+  it('does not reuse highlight keys after braced buff fields split text', () => {
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+    try {
+      render(<TextWithHoverTooltips text='{移速}×0.7；{跳跃能力}×0.9；{视野范围缩放}×1.2' />);
+
+      const duplicateKeyMessages = consoleErrorSpy.mock.calls.filter(([message]) =>
+        String(message).includes('Encountered two children with the same key')
+      );
+      expect(duplicateKeyMessages).toHaveLength(0);
+    } finally {
+      consoleErrorSpy.mockRestore();
+    }
+  });
 });
