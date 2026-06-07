@@ -49,6 +49,11 @@ const extractBaseNameAndCategoryHint = (content: string): ParsedName => {
   return { baseName: content, categoryHint: null };
 };
 
+const renderDisplayElements = (elements: React.ReactNode[]): React.ReactElement[] =>
+  elements.map((element, elementIndex) => (
+    <React.Fragment key={`display-element-${elementIndex}`}>{element}</React.Fragment>
+  ));
+
 /**
  * Parse and render text with tooltips for patterns like {visible text}
  * The text inside the brackets will be shown as visible text and also as tooltip content.
@@ -332,7 +337,7 @@ export const renderTextWithTooltips = (
 
       parts.push(
         <Tooltip key={`hover-${index}-${match.index}-${rawContent}`} content={fullTooltip}>
-          <>{displayElements}</>
+          <>{renderDisplayElements(displayElements)}</>
         </Tooltip>
       );
 
@@ -643,7 +648,7 @@ export const renderTextWithTooltips = (
 
       parts.push(
         <Tooltip key={`hover-${index}-${match.index}-${rawContent}`} content={fullTooltip}>
-          <>{displayElements}</>
+          <>{renderDisplayElements(displayElements)}</>
         </Tooltip>
       );
 

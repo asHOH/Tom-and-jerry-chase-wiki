@@ -3,12 +3,14 @@ import { render, screen } from '@testing-library/react';
 
 import TextWithHoverTooltips from './TextWithHoverTooltips';
 
+let mockCharacterId = '汤姆';
+
 jest.mock('@/context/DarkModeContext', () => ({
   useDarkMode: () => [false, jest.fn()] as const,
 }));
 
 jest.mock('@/hooks/useLocalEditEntity', () => ({
-  useLocalCharacter: () => ({ characterId: '汤姆' }),
+  useLocalCharacter: () => ({ characterId: mockCharacterId }),
 }));
 
 jest.mock('@/components/ui/Tooltip', () => ({
@@ -50,6 +52,10 @@ jest.mock('@/components/GotoLink', () => ({
 }));
 
 describe('TextWithHoverTooltips', () => {
+  beforeEach(() => {
+    mockCharacterId = '汤姆';
+  });
+
   it('renders plain text unchanged', () => {
     render(<TextWithHoverTooltips text='普通描述' />);
 
@@ -80,5 +86,95 @@ describe('TextWithHoverTooltips', () => {
 
     expect(screen.getByText('5')).toHaveClass('text-red-500');
     expect(screen.getByText(/伤害/)).toBeInTheDocument();
+  });
+
+  it('renders custom class spans', () => {
+    render(<TextWithHoverTooltips text='$暂未收录$italic text-gray-500#' />);
+
+    expect(screen.getByText('暂未收录')).toHaveClass('italic', 'text-gray-500');
+  });
+
+  it('normalizes book-title brackets to goto links', () => {
+    render(<TextWithHoverTooltips text='升级《主动技能》' />);
+
+    expect(screen.getByText('主动技能')).toHaveAttribute('data-category', '技能');
+    expect(screen.getByText('主动技能')).toHaveAttribute('data-name', '发怒冲刺');
+  });
+
+  it('renders knowledge card links with category hints', () => {
+    render(<TextWithHoverTooltips text='携带{击晕(知识卡)}' />);
+
+    expect(screen.getByText('击晕').closest('a')).toHaveAttribute('data-name', '击晕');
+    expect(screen.getByText('击晕').closest('a')).toHaveAttribute('data-category', '知识卡');
+  });
+
+  it('renders generic goto links for non-card entries', () => {
+    render(<TextWithHoverTooltips text='获得{隐身}' />);
+
+    expect(screen.getByText('隐身')).toHaveAttribute('data-name', '隐身');
+  });
+
+  it('resolves current character expressions', () => {
+    render(<TextWithHoverTooltips text='命中CD为{:clawKnifeCdHit}秒' />);
+
+    expect(screen.getByText('4.5')).toHaveClass('text-blue-500');
+  });
+
+  it('auto-wraps other character names but not the current character', () => {
+    const { container, rerender } = render(<TextWithHoverTooltips text='布奇登场' />);
+
+    expect(screen.getByText('布奇')).toHaveAttribute('data-name', '布奇');
+
+    rerender(<TextWithHoverTooltips text='汤姆登场' />);
+
+    expect(container.querySelector('[data-name="汤姆"]')).not.toBeInTheDocument();
+    expect(screen.getByText('汤姆登场')).toBeInTheDocument();
+  });
+
+  it('replaces buff id placeholders before rendering', () => {
+    render(<TextWithHoverTooltips text='状态：!{2}' />);
+
+    expect(screen.getByText('冰冻-1')).toHaveClass('text-orange-500');
+    expect(screen.getByText('眩晕')).toHaveAttribute('data-name', '眩晕');
+  });
+
+  it('renders base-only damage with character attack boost in the tooltip', () => {
+    mockCharacterId = '布奇';
+
+    render(<TextWithHoverTooltips text='造成{5*}伤害' />);
+
+    expect(screen.getByText('30')).toHaveClass('text-red-500');
+    expect(screen.getByText('30').closest('[data-tooltip]')).toHaveAttribute(
+      'data-tooltip',
+      expect.stringContaining('基础伤害5+角色增伤25')
+    );
+  });
+
+  it('renders tagged damage notes and avoids duplicate trailing damage text', () => {
+    const { container } = render(<TextWithHoverTooltips text='造成{5*,无来源}伤害' />);
+
+    expect(screen.getByText('无来源')).toBeInTheDocument();
+    expect(screen.getByText('5').closest('[data-tooltip]')).toHaveAttribute(
+      'data-tooltip',
+      expect.stringContaining('该伤害无来源')
+    );
+    expect(container.textContent).toBe('造成5无来源伤害');
+  });
+
+  it('renders wall crack damage tooltips', () => {
+    render(<TextWithHoverTooltips text='对墙缝造成{_20*}伤害' />);
+
+    expect(screen.getByText('20')).toHaveClass('text-red-500');
+    expect(screen.getByText('20').closest('[data-tooltip]')).toHaveAttribute(
+      'data-tooltip',
+      expect.stringContaining('基础墙缝伤害20')
+    );
+  });
+
+  it('highlights quoted text and standalone numbers/operators', () => {
+    render(<TextWithHoverTooltips text='“速度+10%”外加5' />);
+
+    expect(screen.getByText('速度+10%')).toHaveClass('text-orange-500');
+    expect(screen.getByText('5')).toHaveClass('text-blue-500');
   });
 });
