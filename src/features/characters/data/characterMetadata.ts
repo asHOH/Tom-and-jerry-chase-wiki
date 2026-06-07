@@ -59,6 +59,7 @@ export const catCharacterIds = [
   '兔八哥',
   '追风汤姆',
   '如玉',
+  '侦探汤姆',
 ] as const;
 
 export const characterDisplayOrder = [...mouseCharacterIds, ...catCharacterIds] as const;
