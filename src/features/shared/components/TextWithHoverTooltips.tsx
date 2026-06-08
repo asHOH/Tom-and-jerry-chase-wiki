@@ -1,16 +1,14 @@
 import { Fragment, useMemo } from 'react';
 import { proxy, useSnapshot } from 'valtio';
 
-import { renderTextWithHighlights } from '@/lib/textUtils';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useDarkMode } from '@/context/DarkModeContext';
 import Tooltip from '@/components/ui/Tooltip';
 import { characters } from '@/data';
 
-import { replaceBuffIds } from './replaceBuffIds';
-import { preprocessText } from './text-with-hover-tooltips/characterText';
 import { renderColorfulHighlight } from './text-with-hover-tooltips/inlineMarkup';
 import { renderTextWithTooltips } from './text-with-hover-tooltips/renderTextWithTooltips';
+import { buildTextWithHoverTooltipTokens } from './text-with-hover-tooltips/textWithHoverTooltipTokens';
 import type { RenderTextPart } from './text-with-hover-tooltips/types';
 
 type TextWithHoverTooltipsProps = {
@@ -43,77 +41,64 @@ export default function TextWithHoverTooltips({ text: rawText }: TextWithHoverTo
   const attackBoost = localCharacter.attackBoost ?? null;
   const wallCrackDamageBoost =
     'wallCrackDamageBoost' in localCharacter ? localCharacter.wallCrackDamageBoost : undefined;
+  const parsedText = useMemo(
+    () => buildTextWithHoverTooltipTokens(rawText, currentCharacterId),
+    [currentCharacterId, rawText]
+  );
 
   const colorfulHighlightedParts = useMemo(() => {
     const shouldMeasure = shouldMeasureTooltipParsing();
     const startTime = shouldMeasure ? getCurrentTime() : 0;
     const intermediateParts: RenderTextPart[] = [];
 
-    // 1. 先替换 !{buffID} 占位符
-    let text = replaceBuffIds(rawText);
-
-    // 2. 再进行自动角色名包裹（preprocessText）
-    text = preprocessText(text, currentCharacterId);
-
-    const highlightedParts = renderTextWithHighlights(text); // Handles **bold**
-
-    // First pass: Handle [visible text](tooltip content)
-    highlightedParts.forEach((part, index) => {
-      if (typeof part === 'string') {
-        const hoverTooltipPattern = /\[([^\]]+?)\]\(([^)]+?)\)/g;
-        let lastIndex = 0;
-        let match;
-
-        while ((match = hoverTooltipPattern.exec(part)) !== null) {
-          if (match.index > lastIndex) {
-            intermediateParts.push(part.slice(lastIndex, match.index));
-          }
-
-          const visibleText = match[1] || '';
-          const tooltipContent = match[2] || '';
-
-          // 检查前后字符是否为中文双引号
-          const prevChar = match.index > 0 ? part[match.index - 1] : '';
-          const nextChar =
-            hoverTooltipPattern.lastIndex < part.length ? part[hoverTooltipPattern.lastIndex] : '';
-          const isQuoted = prevChar === '“' && nextChar === '”';
-
+    parsedText.tokens.forEach((part, index) => {
+      switch (part.type) {
+        case 'text':
+          intermediateParts.push(part.text);
+          break;
+        case 'markdownHighlight':
+          intermediateParts.push(
+            <span
+              key={`markdown-highlight-${index}`}
+              className='underline decoration-2 underline-offset-2'
+            >
+              {part.text}
+            </span>
+          );
+          break;
+        case 'hoverTooltip': {
           const visibleRendered = renderTextWithTooltips(
-            visibleText,
+            part.visibleText,
             attackBoost,
-            index,
+            part.sourceIndex,
             wallCrackDamageBoost,
             isDarkMode,
             currentCharacterId
           );
 
           const tooltipRendered = renderTextWithTooltips(
-            tooltipContent,
+            part.tooltipContent,
             attackBoost,
-            index,
+            part.sourceIndex,
             wallCrackDamageBoost,
             isDarkMode,
             currentCharacterId
           );
 
           intermediateParts.push(
-            <Tooltip key={`hover-${index}-${match.index}`} content={tooltipRendered}>
-              {isQuoted ? (
+            <Tooltip
+              key={`hover-${part.sourceIndex}-${part.matchIndex}`}
+              content={tooltipRendered}
+            >
+              {part.isQuoted ? (
                 <span className='text-orange-500'>{visibleRendered}</span>
               ) : (
                 visibleRendered
               )}
             </Tooltip>
           );
-
-          lastIndex = hoverTooltipPattern.lastIndex;
+          break;
         }
-
-        if (lastIndex < part.length) {
-          intermediateParts.push(part.slice(lastIndex));
-        }
-      } else {
-        intermediateParts.push(part);
       }
     });
 
@@ -149,6 +134,8 @@ export default function TextWithHoverTooltips({ text: rawText }: TextWithHoverTo
       console.debug('[TextWithHoverTooltips]', {
         durationMs: Number((getCurrentTime() - startTime).toFixed(2)),
         inputLength: rawText.length,
+        parsedTextLength: parsedText.text.length,
+        tokenCount: parsedText.tokens.length,
         intermediatePartCount: intermediateParts.length,
         finalPartCount: renderedParts.length,
         characterSnapshotAvailable: localCharacter != null,
@@ -162,6 +149,7 @@ export default function TextWithHoverTooltips({ text: rawText }: TextWithHoverTo
     isDarkMode,
     localCharacter,
     rawText,
+    parsedText,
     wallCrackDamageBoost,
   ]);
 
