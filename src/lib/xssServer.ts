@@ -1,26 +1,20 @@
 import 'server-only';
 
-import createDOMPurify from 'dompurify';
-import { JSDOM } from 'jsdom';
+import sanitizeHtml from 'sanitize-html';
 
-import { ALLOWED_HTML_ATTRS, getAllowedHtmlTags, sanitizeClassAttributes } from '@/lib/xssConfig';
-
-const serverWindow = new JSDOM('').window;
+import { ALLOWED_CONTENT_CLASSES, ALLOWED_HTML_ATTRS, getAllowedHtmlTags } from '@/lib/xssConfig';
 
 export function sanitizeHTMLOnServer(
   html: string,
   { removeH1 = false }: { removeH1?: boolean } = {}
 ): string {
-  const DOMPurify = createDOMPurify(serverWindow);
-
-  DOMPurify.addHook('afterSanitizeAttributes', sanitizeClassAttributes);
-
-  try {
-    return DOMPurify.sanitize(html, {
-      ALLOWED_TAGS: getAllowedHtmlTags(removeH1),
-      ALLOWED_ATTR: ALLOWED_HTML_ATTRS,
-    }) as string;
-  } finally {
-    DOMPurify.removeHook('afterSanitizeAttributes');
-  }
+  return sanitizeHtml(html, {
+    allowedTags: getAllowedHtmlTags(removeH1),
+    allowedAttributes: {
+      '*': ALLOWED_HTML_ATTRS,
+    },
+    allowedClasses: {
+      '*': [...ALLOWED_CONTENT_CLASSES],
+    },
+  });
 }

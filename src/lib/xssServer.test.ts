@@ -37,4 +37,23 @@ describe('sanitizeHTMLOnServer', () => {
 
     expect(sanitized).toBe('<p class="rte-text-center">Body</p><a href="/articles">Link</a>');
   });
+
+  it('should remove unsafe event handlers and JavaScript URLs', () => {
+    const html =
+      '<p onclick="alert(1)">Body</p><a href="javascript:alert(1)" onmouseover="alert(2)">Link</a>';
+
+    const sanitized = sanitizeHTMLOnServer(html);
+
+    expect(sanitized).toBe('<p>Body</p><a>Link</a>');
+  });
+
+  it('should preserve relative links and image attributes', () => {
+    const html = '<a href="/articles">Link</a><img src="/images/tom.png" alt="Tom" title="Tom">';
+
+    const sanitized = sanitizeHTMLOnServer(html);
+
+    expect(sanitized).toBe(
+      '<a href="/articles">Link</a><img src="/images/tom.png" alt="Tom" title="Tom" />'
+    );
+  });
 });
