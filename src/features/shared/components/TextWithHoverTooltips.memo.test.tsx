@@ -1,10 +1,10 @@
 import { render } from '@testing-library/react';
 
-import TextWithHoverTooltips from './TextWithHoverTooltips';
 import { replaceBuffIds } from './replaceBuffIds';
 import { preprocessText } from './text-with-hover-tooltips/characterText';
 import { renderColorfulHighlight } from './text-with-hover-tooltips/inlineMarkup';
 import { renderTextWithTooltips } from './text-with-hover-tooltips/renderTextWithTooltips';
+import TextWithHoverTooltips from './TextWithHoverTooltips';
 
 jest.mock('valtio', () => ({
   proxy: (value: unknown) => value,
