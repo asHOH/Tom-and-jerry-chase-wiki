@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import { useSnapshot } from 'valtio';
 
+import { cn } from '@/lib/design';
 import { getTooltipContent } from '@/lib/tooltipUtils';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useEditMode } from '@/context/EditModeContext';
@@ -13,6 +14,7 @@ import Link from '@/components/Link';
 import { characters } from '@/data';
 
 const e = editable('characters');
+const NUMBER_VALUE_CLASS = 'text-blue-500 dark:text-sky-300';
 
 interface AttributeDisplayProps {
   label: string;
@@ -52,11 +54,14 @@ export default function AttributeDisplay({
   const isLinkable = !isEditMode && !!rankablePropertyKey;
   const linkHref = isLinkable ? `/ranks/${rankablePropertyKey}?faction=${factionId}` : '';
 
+  const getValueClassName = (val: string | number, baseClassName?: string) =>
+    cn(baseClassName, typeof val === 'number' && NUMBER_VALUE_CLASS);
+
   const renderValue = (val: string | number, sfx: string | undefined, href?: string) =>
     href ? (
       <>
         {' '}
-        <Link href={href} className='cursor-pointer hover:underline'>
+        <Link href={href} className={getValueClassName(val, 'cursor-pointer hover:underline')}>
           <span>{val}</span>
         </Link>
         {sfx && <GrayUnit>{sfx}</GrayUnit>}
@@ -64,7 +69,7 @@ export default function AttributeDisplay({
     ) : (
       <>
         {' '}
-        <span>{val}</span>
+        <span className={getValueClassName(val)}>{val}</span>
         {sfx && <GrayUnit>{sfx}</GrayUnit>}
       </>
     );
@@ -76,7 +81,7 @@ export default function AttributeDisplay({
         <e.span
           path='clawKnifeCdUnhit'
           initialValue={localCharacter.clawKnifeCdUnhit || 0}
-          className='inline'
+          className={cn('inline', NUMBER_VALUE_CLASS)}
         />
         <span className='italic'>
           {' '}
@@ -86,6 +91,7 @@ export default function AttributeDisplay({
             initialValue={
               localCharacter.specialClawKnifeCdUnhit || localCharacter.clawKnifeCdUnhit || 0
             }
+            className={NUMBER_VALUE_CLASS}
           />
           )
         </span>
@@ -93,7 +99,7 @@ export default function AttributeDisplay({
         <e.span
           path='clawKnifeCdHit'
           initialValue={localCharacter.clawKnifeCdHit || 0}
-          className='inline'
+          className={cn('inline', NUMBER_VALUE_CLASS)}
         />
         <span className='italic'>
           {' '}
@@ -103,6 +109,7 @@ export default function AttributeDisplay({
             initialValue={
               localCharacter.specialClawKnifeCdHit || localCharacter.clawKnifeCdHit || 0
             }
+            className={NUMBER_VALUE_CLASS}
           />
           )
         </span>
@@ -114,19 +121,28 @@ export default function AttributeDisplay({
         {' '}
         <Link
           href={`/ranks/clawKnifeCdUnhit?faction=cat`}
-          className='cursor-pointer hover:underline'
+          className={cn('cursor-pointer hover:underline', NUMBER_VALUE_CLASS)}
         >
           {localCharacter.clawKnifeCdUnhit}
         </Link>
         {!!localCharacter.specialClawKnifeCdUnhit && (
-          <span className='italic'> ({localCharacter.specialClawKnifeCdUnhit})</span>
+          <span className='italic'>
+            {' '}
+            (<span className={NUMBER_VALUE_CLASS}>{localCharacter.specialClawKnifeCdUnhit}</span>)
+          </span>
         )}
         <GrayUnit> / </GrayUnit>
-        <Link href={`/ranks/clawKnifeCdHit?faction=cat`} className='cursor-pointer hover:underline'>
+        <Link
+          href={`/ranks/clawKnifeCdHit?faction=cat`}
+          className={cn('cursor-pointer hover:underline', NUMBER_VALUE_CLASS)}
+        >
           {localCharacter.clawKnifeCdHit}
         </Link>
         {!!localCharacter.specialClawKnifeCdHit && (
-          <span className='italic'> ({localCharacter.specialClawKnifeCdHit})</span>
+          <span className='italic'>
+            {' '}
+            (<span className={NUMBER_VALUE_CLASS}>{localCharacter.specialClawKnifeCdHit}</span>)
+          </span>
         )}
         <GrayUnit> 秒</GrayUnit>
         {suffix && <GrayUnit>{suffix}</GrayUnit>}
@@ -182,7 +198,7 @@ export default function AttributeDisplay({
       {path && isEditMode ? (
         <>
           {' '}
-          <e.span path={path} initialValue={value} className='inline' />
+          <e.span path={path} initialValue={value} className={getValueClassName(value, 'inline')} />
           {suffix && <GrayUnit>{suffix}</GrayUnit>}
         </>
       ) : label === '爪刀CD' && isEditMode ? (

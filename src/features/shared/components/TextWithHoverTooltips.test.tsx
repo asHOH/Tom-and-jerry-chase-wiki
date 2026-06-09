@@ -175,7 +175,7 @@ describe('TextWithHoverTooltips', () => {
     render(<TextWithHoverTooltips text='“速度+10%”外加5' />);
 
     expect(screen.getByText('速度+10%')).toHaveClass('text-orange-500');
-    expect(screen.getByText('5')).toHaveClass('text-blue-500');
+    expect(screen.getByText('5')).toHaveClass('text-blue-500', 'dark:text-sky-300');
   });
 
   it('does not reuse highlight keys after braced buff fields split text', () => {

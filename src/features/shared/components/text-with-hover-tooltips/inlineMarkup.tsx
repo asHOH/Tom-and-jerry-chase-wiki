@@ -97,7 +97,7 @@ const applyNumbersAndOperatorsOrange = (text: string, index: number): RenderText
     parts.push(
       <span
         key={`numop-${lastIndex}-${match.index}-${match[0]}-${index}`}
-        className='text-blue-500'
+        className='text-blue-500 dark:text-sky-300'
       >
         {match[0]}
       </span>
