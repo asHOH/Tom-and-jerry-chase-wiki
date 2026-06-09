@@ -11,6 +11,8 @@ interface TooltipProps {
   className?: string;
   disabled?: boolean;
   asChild?: boolean;
+  clickToToggle?: boolean;
+  triggerProps?: React.HTMLAttributes<HTMLSpanElement>;
 }
 
 export default function Tooltip({
@@ -19,6 +21,8 @@ export default function Tooltip({
   className = '',
   disabled = false,
   asChild = false,
+  clickToToggle = false,
+  triggerProps,
 }: TooltipProps) {
   const [open, setOpen] = React.useState<boolean>(false);
   const [isHoverOnly, setIsHoverOnly] = React.useState<boolean>(false);
@@ -62,13 +66,16 @@ export default function Tooltip({
     }
   };
 
+  const { className: triggerPropsClassName, ...triggerRestProps } = triggerProps ?? {};
   const trigger = asChild ? (
     children
   ) : (
     <span
+      {...triggerRestProps}
       className={cn(
         'cursor-help border-b border-dotted border-gray-400 transition-colors hover:border-gray-600 dark:border-gray-500 dark:hover:border-gray-400',
-        className
+        className,
+        triggerPropsClassName
       )}
     >
       {children}
@@ -85,7 +92,7 @@ export default function Tooltip({
         <TooltipPrimitive.Trigger
           asChild
           onClick={(e) => {
-            if (!isHoverOnly && !asChild) {
+            if ((!isHoverOnly || clickToToggle) && !asChild) {
               e.preventDefault();
               setOpen((prev) => !prev);
             }

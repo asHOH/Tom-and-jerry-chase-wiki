@@ -2,7 +2,6 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import some from 'lodash-es/some';
-import uniq from 'lodash-es/uniq';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { cn, getCardRankColors } from '@/lib/design';
@@ -34,6 +33,7 @@ import { characters } from '@/data';
 
 import CharacterSection from './CharacterSection';
 import KnowledgeCardGroupSetDisplay from './KnowledgeCardGroupSetDisplay';
+import PriorityWarningBadge from './PriorityWarningBadge';
 import TreeCardDisplay from './TreeCardDisplay';
 
 const e = editable('characters');
@@ -76,26 +76,13 @@ const getWarningTagStyles = (isDarkMode: boolean) =>
     ? { background: '#dc2626', color: '#fef2f2' }
     : { background: '#fef2f2', color: '#dc2626' };
 
-const getPriorityTagStyles = (isDarkMode: boolean) =>
-  isDarkMode
-    ? { background: '#92400e', color: '#fff7ed' }
-    : { background: '#fef3c7', color: '#92400e' };
-
 interface WarningMessagesInput {
   warnTieXue: boolean;
   warnJiuJiuWo: boolean;
   warnRescue: boolean;
-  highPriorityCardNames: string[];
-  isEditMode: boolean;
 }
 
-const buildWarningMessages = ({
-  warnTieXue,
-  warnJiuJiuWo,
-  warnRescue,
-  highPriorityCardNames,
-  isEditMode,
-}: WarningMessagesInput) => {
+const buildWarningMessages = ({ warnTieXue, warnJiuJiuWo, warnRescue }: WarningMessagesInput) => {
   const missingWarnings: string[] = [];
   if (warnTieXue) missingWarnings.push('无铁血');
   if (warnJiuJiuWo) missingWarnings.push('无救救我');
@@ -104,12 +91,21 @@ const buildWarningMessages = ({
   const missingWarningMessage = missingWarnings.length
     ? `该卡组${missingWarnings.join('、')}，慎用`
     : null;
-  const priorityWarning =
-    highPriorityCardNames.length > 0 && !isEditMode
-      ? `${highPriorityCardNames.join('、')}建议升到三级再佩戴`
-      : null;
 
-  return { missingWarningMessage, priorityWarning };
+  return { missingWarningMessage };
+};
+
+const getPriorityWarningMessage = (
+  cardId: string,
+  getCardPriority: (cardId: string) => string | undefined,
+  isEditMode: boolean
+) => {
+  if (isEditMode || getCardPriority(cardId) !== '3级质变') {
+    return null;
+  }
+
+  const cardName = cardId.split('-')[1];
+  return cardName ? `${cardName}建议升到三级再佩戴` : null;
 };
 
 interface GroupMetaRowProps {
@@ -118,7 +114,6 @@ interface GroupMetaRowProps {
   isEditMode: boolean;
   isDarkMode: boolean;
   missingWarningMessage: string | null;
-  priorityWarning: string | null;
 }
 
 const GroupMetaRow = ({
@@ -127,15 +122,13 @@ const GroupMetaRow = ({
   isEditMode,
   isDarkMode,
   missingWarningMessage,
-  priorityWarning,
 }: GroupMetaRowProps) => {
   const shouldShowContributor = !!contributor && !isEditMode;
-  if (!shouldShowContributor && !missingWarningMessage && !priorityWarning) {
+  if (!shouldShowContributor && !missingWarningMessage) {
     return null;
   }
 
   const warningTagStyles = getWarningTagStyles(isDarkMode);
-  const priorityTagStyles = getPriorityTagStyles(isDarkMode);
 
   return (
     <div className='ml-11 flex flex-wrap items-center gap-1 sm:ml-12 md:ml-13 lg:ml-14'>
@@ -167,16 +160,6 @@ const GroupMetaRow = ({
           colorStyles={warningTagStyles}
         >
           {missingWarningMessage}
-        </Tag>
-      )}
-      {priorityWarning && (
-        <Tag
-          size='xs'
-          margin='micro'
-          className='items-center gap-1 opacity-80'
-          colorStyles={priorityTagStyles}
-        >
-          {priorityWarning}
         </Tag>
       )}
     </div>
@@ -281,19 +264,10 @@ function KnowledgeCardGroupFlat({
   const shouldWarnMissingJiuJiuWo = !isEditMode && isMouseFaction && !hasJiuJiuWo;
   const shouldWarnMissingTieXue = !isEditMode && isMouseFaction && !hasTieXue;
 
-  const highPriorityCards = cards.filter((cardId) => {
-    const priority = getCardPriority(cardId);
-    return priority === '3级质变';
-  });
-  const highPriorityCardNames = highPriorityCards
-    .map((id) => id.split('-')[1])
-    .filter((name): name is string => Boolean(name));
-  const { missingWarningMessage, priorityWarning } = buildWarningMessages({
+  const { missingWarningMessage } = buildWarningMessages({
     warnTieXue: shouldWarnMissingTieXue,
     warnJiuJiuWo: shouldWarnMissingJiuJiuWo,
     warnRescue: shouldWarnMissingRescueSkill,
-    highPriorityCardNames,
-    isEditMode,
   });
 
   return (
@@ -323,7 +297,9 @@ function KnowledgeCardGroupFlat({
         <div
           className={cn(
             'flex min-w-0 flex-1',
-            isSqueezedView ? 'flex-wrap gap-1' : 'flex-wrap gap-0 sm:gap-0.5 md:gap-1 lg:gap-2'
+            isSqueezedView
+              ? 'flex-wrap gap-x-2 gap-y-1.5'
+              : 'flex-wrap gap-0 sm:gap-0.5 md:gap-1 lg:gap-2'
           )}
         >
           {cards.map((cardId) => {
@@ -331,58 +307,64 @@ function KnowledgeCardGroupFlat({
             const cardRank = getCardRank(cardId);
             const rankColors = getCardRankColors(cardRank, false, isDarkMode);
             const isOptional = isCardOptional(cardId, costInfo.hasOptionalCard, costInfo.totalCost);
+            const priorityWarning = getPriorityWarningMessage(cardId, getCardPriority, isEditMode);
 
             if (isSqueezedView) {
               return (
-                <GotoLink key={cardId} name={cardName} className='no-underline' asPreviewOnly>
-                  <span
-                    onClick={() => {
-                      if (isEditMode) return;
-                      handleSelectCard(cardName, characterId);
-                    }}
-                    className='cursor-pointer'
-                  >
-                    <Tag
-                      colorStyles={rankColors}
-                      size='sm'
-                      margin='compact'
-                      className={cn(
-                        'transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm',
-                        isOptional && 'opacity-50'
-                      )}
+                <span
+                  key={cardId}
+                  className={cn('relative inline-flex', priorityWarning && 'pr-2')}
+                >
+                  <GotoLink name={cardName} className='no-underline' asPreviewOnly>
+                    <span
+                      onClick={() => {
+                        if (isEditMode) return;
+                        handleSelectCard(cardName, characterId);
+                      }}
+                      className='cursor-pointer'
                     >
-                      {cardName}
-                    </Tag>
-                  </span>
-                </GotoLink>
+                      <Tag
+                        colorStyles={rankColors}
+                        size='sm'
+                        margin='compact'
+                        className={cn(
+                          'transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm',
+                          isOptional && 'opacity-50'
+                        )}
+                      >
+                        {cardName}
+                      </Tag>
+                    </span>
+                  </GotoLink>
+                  {priorityWarning && <PriorityWarningBadge content={priorityWarning} />}
+                </span>
               );
             } else {
               return (
-                <GotoLink
-                  key={cardId}
-                  name={cardName}
-                  className='no-underline'
-                  asPreviewOnly
-                  hideImagePreview
-                >
-                  <div
-                    className={cn(
-                      'relative h-20 w-20 cursor-pointer transition-transform duration-200 hover:scale-105 sm:h-24 sm:w-24',
-                      isOptional && 'opacity-50'
-                    )}
-                    onClick={() => {
-                      if (isEditMode) return;
-                      handleSelectCard(cardName, characterId);
-                    }}
-                  >
-                    <Image
-                      src={`${imageBasePath}${cardId}.png`}
-                      alt={cardId}
-                      fill
-                      className='object-contain'
-                    />
-                  </div>
-                </GotoLink>
+                <div key={cardId} className='relative inline-flex'>
+                  <GotoLink name={cardName} className='no-underline' asPreviewOnly hideImagePreview>
+                    <div
+                      className={cn(
+                        'relative h-20 w-20 cursor-pointer transition-transform duration-200 hover:scale-105 sm:h-24 sm:w-24',
+                        isOptional && 'opacity-50'
+                      )}
+                      onClick={() => {
+                        if (isEditMode) return;
+                        handleSelectCard(cardName, characterId);
+                      }}
+                    >
+                      <Image
+                        src={`${imageBasePath}${cardId}.png`}
+                        alt={cardId}
+                        fill
+                        className='object-contain'
+                      />
+                    </div>
+                  </GotoLink>
+                  {priorityWarning && (
+                    <PriorityWarningBadge content={priorityWarning} placement='image' />
+                  )}
+                </div>
               );
             }
           })}
@@ -428,7 +410,6 @@ function KnowledgeCardGroupFlat({
         isEditMode={isEditMode}
         isDarkMode={isDarkMode}
         missingWarningMessage={missingWarningMessage}
-        priorityWarning={priorityWarning}
       />
 
       <GroupDescriptionBlock
@@ -509,21 +490,10 @@ export function KnowledgeCardGroupDisplay({
     const shouldWarnMissingJiuJiuWo = !isEditMode && isMouseFaction && lacksJiuJiuWo;
     const shouldWarnMissingTieXue = !isEditMode && isMouseFaction && lacksTieXue;
 
-    const uniqueCards = uniq(allFlatCombinations.flat());
-    const highPriorityCards = uniqueCards.filter((cardId) => {
-      const priority = getCardPriority(cardId);
-      return priority === '3级质变';
-    });
-    const highPriorityCardNames = highPriorityCards
-      .map((id) => id.split('-')[1])
-      .filter((name): name is string => Boolean(name));
-
-    const { missingWarningMessage, priorityWarning } = buildWarningMessages({
+    const { missingWarningMessage } = buildWarningMessages({
       warnTieXue: shouldWarnMissingTieXue,
       warnJiuJiuWo: shouldWarnMissingJiuJiuWo,
       warnRescue: shouldWarnMissingRescueSkill,
-      highPriorityCardNames,
-      isEditMode,
     });
 
     const { containerClass, tooltipContent } = getKnowledgeCardCostStyles(
@@ -559,6 +529,9 @@ export function KnowledgeCardGroupDisplay({
               isFoldedMode={isMobile}
               isDarkMode={isDarkMode}
               isHybridMode={isHybridMode}
+              getCardPriorityWarning={(cardId) =>
+                getPriorityWarningMessage(cardId, getCardPriority, isEditMode)
+              }
             />
           </div>
 
@@ -603,7 +576,6 @@ export function KnowledgeCardGroupDisplay({
           isEditMode={isEditMode}
           isDarkMode={isDarkMode}
           missingWarningMessage={missingWarningMessage}
-          priorityWarning={priorityWarning}
         />
 
         <GroupDescriptionBlock

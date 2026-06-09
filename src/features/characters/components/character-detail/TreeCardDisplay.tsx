@@ -7,6 +7,8 @@ import Tag from '@/components/ui/Tag';
 import GotoLink from '@/components/GotoLink';
 import Image from '@/components/Image';
 
+import PriorityWarningBadge from './PriorityWarningBadge';
+
 interface TreeCardDisplayProps {
   tree: TreeNode[];
   isEditMode: boolean;
@@ -19,6 +21,7 @@ interface TreeCardDisplayProps {
   isFoldedMode?: boolean;
   isDarkMode?: boolean;
   isHybridMode?: boolean;
+  getCardPriorityWarning?: (cardId: string) => string | null;
 }
 
 interface CardDisplayProps {
@@ -33,6 +36,7 @@ interface CardDisplayProps {
   isDarkMode: boolean;
   isHybridMode?: boolean;
   depth: number;
+  priorityWarning: string | null;
 }
 
 const CardDisplay: React.FC<CardDisplayProps> = ({
@@ -47,6 +51,7 @@ const CardDisplay: React.FC<CardDisplayProps> = ({
   isDarkMode,
   isHybridMode,
   depth,
+  priorityWarning,
 }) => {
   'use no memo';
   const cardName = cardId.split('-')[1]!;
@@ -58,45 +63,62 @@ const CardDisplay: React.FC<CardDisplayProps> = ({
 
   if (shouldUseTags) {
     return (
-      <GotoLink key={cardId} name={cardName} className='no-underline' asPreviewOnly>
-        <span
-          onClick={() => {
-            if (isEditMode) return;
-            handleSelectCard(cardName, characterId);
-          }}
-          className='cursor-pointer'
-        >
-          <Tag
-            colorStyles={rankColors}
-            size='sm'
-            margin='compact'
-            className={cn(
-              'transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm',
-              isOptional && 'opacity-50'
-            )}
+      <span className={cn('relative inline-flex', priorityWarning && 'pr-2')}>
+        <GotoLink key={cardId} name={cardName} className='no-underline' asPreviewOnly>
+          <span
+            onClick={() => {
+              if (isEditMode) return;
+              handleSelectCard(cardName, characterId);
+            }}
+            className='cursor-pointer'
           >
-            {cardName}
-          </Tag>
-        </span>
-      </GotoLink>
+            <Tag
+              colorStyles={rankColors}
+              size='sm'
+              margin='compact'
+              className={cn(
+                'transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm',
+                isOptional && 'opacity-50'
+              )}
+            >
+              {cardName}
+            </Tag>
+          </span>
+        </GotoLink>
+        {priorityWarning && <PriorityWarningBadge content={priorityWarning} />}
+      </span>
     );
   }
 
   return (
-    <GotoLink key={cardId} name={cardName} className='no-underline' asPreviewOnly hideImagePreview>
-      <div
-        className={cn(
-          'relative h-20 w-20 cursor-pointer transition-transform duration-200 hover:scale-105 sm:h-24 sm:w-24',
-          isOptional && 'opacity-50'
-        )}
-        onClick={() => {
-          if (isEditMode) return;
-          handleSelectCard(cardName, characterId);
-        }}
+    <div className='relative inline-flex'>
+      <GotoLink
+        key={cardId}
+        name={cardName}
+        className='no-underline'
+        asPreviewOnly
+        hideImagePreview
       >
-        <Image src={`${imageBasePath}${cardId}.png`} alt={cardId} fill className='object-contain' />
-      </div>
-    </GotoLink>
+        <div
+          className={cn(
+            'relative h-20 w-20 cursor-pointer transition-transform duration-200 hover:scale-105 sm:h-24 sm:w-24',
+            isOptional && 'opacity-50'
+          )}
+          onClick={() => {
+            if (isEditMode) return;
+            handleSelectCard(cardName, characterId);
+          }}
+        >
+          <Image
+            src={`${imageBasePath}${cardId}.png`}
+            alt={cardId}
+            fill
+            className='object-contain'
+          />
+        </div>
+      </GotoLink>
+      {priorityWarning && <PriorityWarningBadge content={priorityWarning} placement='image' />}
+    </div>
   );
 };
 
@@ -193,6 +215,7 @@ const TreeNodeDisplay: React.FC<
 
   if (node.type === 'card' && node.cardId) {
     const isOptional = props.isOptionalCard(node.cardId);
+    const priorityWarning = props.getCardPriorityWarning?.(node.cardId) ?? null;
     return (
       <CardDisplay
         cardId={node.cardId}
@@ -206,6 +229,7 @@ const TreeNodeDisplay: React.FC<
         isDarkMode={isDarkMode}
         isHybridMode={props.isHybridMode ?? false}
         depth={depth}
+        priorityWarning={priorityWarning}
       />
     );
   }
@@ -213,7 +237,10 @@ const TreeNodeDisplay: React.FC<
   if (node.type === 'and-group' && node.children) {
     return (
       <div
-        className={cn('flex flex-wrap items-center', props.isSqueezedView ? 'gap-1' : 'sm:gap-1')}
+        className={cn(
+          'flex flex-wrap items-center',
+          props.isSqueezedView ? 'gap-x-2 gap-y-1.5' : 'sm:gap-1'
+        )}
       >
         {node.children.map((child, index) => (
           <TreeNodeDisplay
@@ -242,7 +269,12 @@ const TreeCardDisplay: React.FC<TreeCardDisplayProps> = (props) => {
   const [isDarkMode] = useDarkMode();
 
   return (
-    <div className={cn('flex flex-wrap items-center', props.isSqueezedView ? 'gap-1' : 'sm:gap-1')}>
+    <div
+      className={cn(
+        'flex flex-wrap items-center',
+        props.isSqueezedView ? 'gap-x-2 gap-y-1.5' : 'sm:gap-1'
+      )}
+    >
       {props.tree.map((node, index) => (
         <TreeNodeDisplay
           key={index}
