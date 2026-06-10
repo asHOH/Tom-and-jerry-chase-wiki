@@ -86,10 +86,7 @@ export default function TextWithHoverTooltips({ text: rawText }: TextWithHoverTo
           );
 
           intermediateParts.push(
-            <Tooltip
-              key={`hover-${part.sourceIndex}-${part.matchIndex}`}
-              content={tooltipRendered}
-            >
+            <Tooltip key={`hover-${part.sourceIndex}-${part.matchIndex}`} content={tooltipRendered}>
               {part.isQuoted ? (
                 <span className='text-orange-500'>{visibleRendered}</span>
               ) : (

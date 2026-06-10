@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import some from 'lodash-es/some';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
-import { cn, getCardRankColors } from '@/lib/design';
+import { cn } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
@@ -26,14 +26,12 @@ import { editable } from '@/components/ui/editable';
 import KnowledgeCardPicker from '@/components/ui/KnowledgeCardPicker';
 import Tag from '@/components/ui/Tag';
 import Tooltip from '@/components/ui/Tooltip';
-import GotoLink from '@/components/GotoLink';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
-import Image from '@/components/Image';
 import { characters } from '@/data';
 
 import CharacterSection from './CharacterSection';
 import KnowledgeCardGroupSetDisplay from './KnowledgeCardGroupSetDisplay';
-import PriorityWarningBadge from './PriorityWarningBadge';
+import KnowledgeCardLinkDisplay from './KnowledgeCardLinkDisplay';
 import TreeCardDisplay from './TreeCardDisplay';
 
 const e = editable('characters');
@@ -303,81 +301,24 @@ function KnowledgeCardGroupFlat({
           )}
         >
           {cards.map((cardId) => {
-            const cardName = cardId.split('-')[1]!;
-            const cardRank = getCardRank(cardId);
-            const rankColors = getCardRankColors(cardRank, false, isDarkMode);
             const isOptional = isCardOptional(cardId, costInfo.hasOptionalCard, costInfo.totalCost);
             const priorityWarning = getPriorityWarningMessage(cardId, getCardPriority, isEditMode);
 
-            if (isSqueezedView) {
-              return (
-                <span
-                  key={cardId}
-                  className={cn('relative inline-flex', priorityWarning && 'pr-2')}
-                >
-                  <GotoLink
-                    name={cardName}
-                    categoryHint='知识卡'
-                    className='no-underline'
-                    asPreviewOnly
-                  >
-                    <span
-                      onClick={() => {
-                        if (isEditMode) return;
-                        handleSelectCard(cardName, characterId);
-                      }}
-                      className='cursor-pointer'
-                    >
-                      <Tag
-                        colorStyles={rankColors}
-                        size='sm'
-                        margin='compact'
-                        className={cn(
-                          'transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm',
-                          isOptional && 'opacity-50'
-                        )}
-                      >
-                        {cardName}
-                      </Tag>
-                    </span>
-                  </GotoLink>
-                  {priorityWarning && <PriorityWarningBadge content={priorityWarning} />}
-                </span>
-              );
-            } else {
-              return (
-                <div key={cardId} className='relative inline-flex'>
-                  <GotoLink
-                    name={cardName}
-                    categoryHint='知识卡'
-                    className='no-underline'
-                    asPreviewOnly
-                    hideImagePreview
-                  >
-                    <div
-                      className={cn(
-                        'relative h-20 w-20 cursor-pointer transition-transform duration-200 hover:scale-105 sm:h-24 sm:w-24',
-                        isOptional && 'opacity-50'
-                      )}
-                      onClick={() => {
-                        if (isEditMode) return;
-                        handleSelectCard(cardName, characterId);
-                      }}
-                    >
-                      <Image
-                        src={`${imageBasePath}${cardId}.png`}
-                        alt={cardId}
-                        fill
-                        className='object-contain'
-                      />
-                    </div>
-                  </GotoLink>
-                  {priorityWarning && (
-                    <PriorityWarningBadge content={priorityWarning} placement='image' />
-                  )}
-                </div>
-              );
-            }
+            return (
+              <KnowledgeCardLinkDisplay
+                key={cardId}
+                cardId={cardId}
+                variant={isSqueezedView ? 'tag' : 'image'}
+                imageBasePath={imageBasePath}
+                isOptional={isOptional}
+                isEditMode={isEditMode}
+                isDarkMode={isDarkMode}
+                characterId={characterId}
+                getCardRank={getCardRank}
+                handleSelectCard={handleSelectCard}
+                priorityWarning={priorityWarning}
+              />
+            );
           })}
         </div>
         {isEditMode && (

@@ -1,13 +1,10 @@
 import React, { useState } from 'react';
 
-import { cn, getCardRankColors } from '@/lib/design';
+import { cn } from '@/lib/design';
 import { useDarkMode } from '@/context/DarkModeContext';
 import type { TreeNode } from '@/features/knowledge-cards/utils/sections';
-import Tag from '@/components/ui/Tag';
-import GotoLink from '@/components/GotoLink';
-import Image from '@/components/Image';
 
-import PriorityWarningBadge from './PriorityWarningBadge';
+import KnowledgeCardLinkDisplay from './KnowledgeCardLinkDisplay';
 
 interface TreeCardDisplayProps {
   tree: TreeNode[];
@@ -54,78 +51,22 @@ const CardDisplay: React.FC<CardDisplayProps> = ({
   priorityWarning,
 }) => {
   'use no memo';
-  const cardName = cardId.split('-')[1]!;
-  const cardRank = getCardRank(cardId);
-  const rankColors = getCardRankColors(cardRank, false, isDarkMode);
-
   // In hybrid mode, show tags for branches (depth > 0), images for root (depth === 0)
   const shouldUseTags = isSqueezedView || (isHybridMode && depth > 0);
 
-  if (shouldUseTags) {
-    return (
-      <span className={cn('relative inline-flex', priorityWarning && 'pr-2')}>
-        <GotoLink
-          key={cardId}
-          name={cardName}
-          categoryHint='知识卡'
-          className='no-underline'
-          asPreviewOnly
-        >
-          <span
-            onClick={() => {
-              if (isEditMode) return;
-              handleSelectCard(cardName, characterId);
-            }}
-            className='cursor-pointer'
-          >
-            <Tag
-              colorStyles={rankColors}
-              size='sm'
-              margin='compact'
-              className={cn(
-                'transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm',
-                isOptional && 'opacity-50'
-              )}
-            >
-              {cardName}
-            </Tag>
-          </span>
-        </GotoLink>
-        {priorityWarning && <PriorityWarningBadge content={priorityWarning} />}
-      </span>
-    );
-  }
-
   return (
-    <div className='relative inline-flex'>
-      <GotoLink
-        key={cardId}
-        name={cardName}
-        categoryHint='知识卡'
-        className='no-underline'
-        asPreviewOnly
-        hideImagePreview
-      >
-        <div
-          className={cn(
-            'relative h-20 w-20 cursor-pointer transition-transform duration-200 hover:scale-105 sm:h-24 sm:w-24',
-            isOptional && 'opacity-50'
-          )}
-          onClick={() => {
-            if (isEditMode) return;
-            handleSelectCard(cardName, characterId);
-          }}
-        >
-          <Image
-            src={`${imageBasePath}${cardId}.png`}
-            alt={cardId}
-            fill
-            className='object-contain'
-          />
-        </div>
-      </GotoLink>
-      {priorityWarning && <PriorityWarningBadge content={priorityWarning} placement='image' />}
-    </div>
+    <KnowledgeCardLinkDisplay
+      cardId={cardId}
+      variant={shouldUseTags ? 'tag' : 'image'}
+      imageBasePath={imageBasePath}
+      isOptional={isOptional}
+      isEditMode={isEditMode}
+      isDarkMode={isDarkMode}
+      characterId={characterId}
+      getCardRank={getCardRank}
+      handleSelectCard={handleSelectCard}
+      priorityWarning={priorityWarning}
+    />
   );
 };
 
