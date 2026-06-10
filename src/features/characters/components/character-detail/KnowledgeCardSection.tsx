@@ -315,7 +315,12 @@ function KnowledgeCardGroupFlat({
                   key={cardId}
                   className={cn('relative inline-flex', priorityWarning && 'pr-2')}
                 >
-                  <GotoLink name={cardName} className='no-underline' asPreviewOnly>
+                  <GotoLink
+                    name={cardName}
+                    categoryHint='知识卡'
+                    className='no-underline'
+                    asPreviewOnly
+                  >
                     <span
                       onClick={() => {
                         if (isEditMode) return;
@@ -342,7 +347,13 @@ function KnowledgeCardGroupFlat({
             } else {
               return (
                 <div key={cardId} className='relative inline-flex'>
-                  <GotoLink name={cardName} className='no-underline' asPreviewOnly hideImagePreview>
+                  <GotoLink
+                    name={cardName}
+                    categoryHint='知识卡'
+                    className='no-underline'
+                    asPreviewOnly
+                    hideImagePreview
+                  >
                     <div
                       className={cn(
                         'relative h-20 w-20 cursor-pointer transition-transform duration-200 hover:scale-105 sm:h-24 sm:w-24',

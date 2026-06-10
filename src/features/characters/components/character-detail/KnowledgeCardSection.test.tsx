@@ -7,7 +7,19 @@ import { KnowledgeCardGroupDisplay } from './KnowledgeCardSection';
 
 jest.mock('@/components/GotoLink', () => ({
   __esModule: true,
-  default: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  default: ({
+    categoryHint,
+    children,
+    name,
+  }: {
+    categoryHint?: string;
+    children: React.ReactNode;
+    name: string;
+  }) => (
+    <span data-category-hint={categoryHint} data-goto-name={name}>
+      {children}
+    </span>
+  ),
 }));
 
 jest.mock('@/components/Image', () => ({
@@ -69,7 +81,7 @@ describe('KnowledgeCard nested persistence (sanity tests)', () => {
 
 describe('KnowledgeCardGroupDisplay', () => {
   const defaultProps = {
-    group: ['C-飞跃', 'C-追风'] as const,
+    group: ['S-绝地反击', 'C-飞跃'] as const,
     index: 0,
     description: undefined,
     isEditMode: false,
@@ -94,7 +106,34 @@ describe('KnowledgeCardGroupDisplay', () => {
     expect(screen.queryByText('飞跃建议升到三级再佩戴')).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: '飞跃建议升到三级再佩戴' })).toBeInTheDocument();
     expect(
-      screen.queryByRole('button', { name: '追风建议升到三级再佩戴' })
+      screen.queryByRole('button', { name: '绝地反击建议升到三级再佩戴' })
     ).not.toBeInTheDocument();
+  });
+
+  it('uses the knowledge card category hint for tree image links', () => {
+    render(<KnowledgeCardGroupDisplay {...defaultProps} />);
+
+    expect(screen.getByLabelText('S-绝地反击').closest('[data-goto-name]')).toHaveAttribute(
+      'data-category-hint',
+      '知识卡'
+    );
+  });
+
+  it('uses the knowledge card category hint for squeezed links', () => {
+    render(<KnowledgeCardGroupDisplay {...defaultProps} viewMode='compact' />);
+
+    expect(screen.getByText('绝地反击').closest('[data-goto-name]')).toHaveAttribute(
+      'data-category-hint',
+      '知识卡'
+    );
+  });
+
+  it('uses the knowledge card category hint for legacy image links', () => {
+    render(<KnowledgeCardGroupDisplay {...defaultProps} viewMode={'image' as any} />);
+
+    expect(screen.getByLabelText('S-绝地反击').closest('[data-goto-name]')).toHaveAttribute(
+      'data-category-hint',
+      '知识卡'
+    );
   });
 });

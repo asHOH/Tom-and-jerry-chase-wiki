@@ -64,7 +64,13 @@ const CardDisplay: React.FC<CardDisplayProps> = ({
   if (shouldUseTags) {
     return (
       <span className={cn('relative inline-flex', priorityWarning && 'pr-2')}>
-        <GotoLink key={cardId} name={cardName} className='no-underline' asPreviewOnly>
+        <GotoLink
+          key={cardId}
+          name={cardName}
+          categoryHint='知识卡'
+          className='no-underline'
+          asPreviewOnly
+        >
           <span
             onClick={() => {
               if (isEditMode) return;
@@ -95,6 +101,7 @@ const CardDisplay: React.FC<CardDisplayProps> = ({
       <GotoLink
         key={cardId}
         name={cardName}
+        categoryHint='知识卡'
         className='no-underline'
         asPreviewOnly
         hideImagePreview
