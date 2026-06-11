@@ -173,6 +173,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, mutateUsers }) =
                       onChange={(e) => {
                         handleRoleUpdate(user.id, e.target.value);
                       }}
+                      fullWidth={false}
                       size='sm'
                     >
                       <option value='Reviewer'>管理员</option>

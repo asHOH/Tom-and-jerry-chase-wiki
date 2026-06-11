@@ -695,15 +695,18 @@ export type FormControlSize = keyof typeof formControlSizes;
 export function getFormControlClasses(options?: {
   size?: FormControlSize;
   invalid?: boolean;
+  fullWidth?: boolean;
   className?: string | undefined;
 }): string {
   const size = options?.size ?? 'md';
   const state = options?.invalid
     ? formControlStateClasses.invalid
     : formControlStateClasses.default;
+  const width = (options?.fullWidth ?? true) ? 'w-full' : 'w-auto';
 
   return cn(
-    'w-full border bg-white text-gray-900 placeholder-gray-500 transition-all duration-200 focus:ring-2 disabled:cursor-not-allowed disabled:opacity-70 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-400',
+    'border bg-white text-gray-900 placeholder-gray-500 transition-all duration-200 focus:ring-2 disabled:cursor-not-allowed disabled:opacity-70 dark:bg-slate-900 dark:text-gray-100 dark:placeholder-gray-400',
+    width,
     formControlSizes[size],
     state,
     options?.className

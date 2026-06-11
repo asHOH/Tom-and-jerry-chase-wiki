@@ -304,6 +304,7 @@ const GameDataActionModerationPanel = ({
             title='过滤状态'
             value={actionStatus}
             onChange={(e) => setActionStatus(e.target.value as ActionStatusFilter)}
+            fullWidth={false}
             size='sm'
           >
             <option value='pending'>待审核</option>
@@ -318,6 +319,7 @@ const GameDataActionModerationPanel = ({
             title='过滤实体类型'
             value={actionEntityType}
             onChange={(e) => setActionEntityType(e.target.value)}
+            fullWidth={false}
             size='sm'
           >
             <option value='all'>全部</option>

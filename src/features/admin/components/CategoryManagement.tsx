@@ -173,6 +173,7 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
                 parent_category_id: e.target.value === '' ? undefined : e.target.value,
               })
             }
+            className='sm:w-auto'
             size='sm'
           >
             {categories.map((cat) => (
@@ -190,6 +191,7 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
                 default_visibility: e.target.value as Category['default_visibility'],
               })
             }
+            className='sm:w-auto'
             size='sm'
           >
             <option value='approved'>修改直接通过</option>
@@ -301,6 +303,7 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
                     parent_category_id: e.target.value === '' ? null : e.target.value,
                   }))
                 }
+                className='sm:w-auto'
                 size='sm'
               >
                 {categories
@@ -321,6 +324,7 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
                   default_visibility: e.target.value as Category['default_visibility'],
                 }))
               }
+              className='sm:w-auto'
               size='sm'
             >
               <option value='approved'>修改直接通过</option>
