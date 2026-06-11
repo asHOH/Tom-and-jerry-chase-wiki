@@ -25,11 +25,30 @@ type GameDataActionModerationPanelProps = {
   mutatePendingActions: () => Promise<unknown> | unknown;
 };
 
+type ModerationAction = 'approve' | 'reject';
+
+type ModerationFailure = {
+  actionId: string;
+  message: string;
+};
+
 const ACTION_STATUS_META: Record<ActionStatus, { label: string; className: string }> = {
   pending: { label: '待审核', className: 'text-orange-700 dark:text-orange-300' },
   approved: { label: '已批准', className: 'text-green-700 dark:text-green-300' },
   rejected: { label: '已拒绝', className: 'text-red-700 dark:text-red-300' },
   synced: { label: '已同步', className: 'text-purple-700 dark:text-purple-300' },
+};
+
+const getModerationFailureMessage = (failure: unknown): string =>
+  failure instanceof Error ? failure.message : '操作失败';
+
+const summarizeModerationFailures = (failures: ModerationFailure[]): string => {
+  const preview = failures
+    .slice(0, 3)
+    .map(({ actionId, message }) => `${actionId}: ${message}`)
+    .join('；');
+  const suffix = failures.length > 3 ? `；另有 ${failures.length - 3} 条失败` : '';
+  return `${preview}${suffix}`;
 };
 
 const GameDataActionModerationPanel = ({
@@ -59,49 +78,54 @@ const GameDataActionModerationPanel = ({
     window.prompt('复制以下内容：', text);
   };
 
+  const submitModerationRequest = async (
+    actionId: string,
+    action: ModerationAction,
+    reason?: string | null
+  ) => {
+    const url = `/api/game-data-actions/moderation/${encodeURIComponent(actionId)}?action=${action}`;
+    const init: RequestInit = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    };
+
+    if (action === 'reject') {
+      const body = reason?.trim() ? { reason: reason.trim() } : {};
+      init.body = JSON.stringify(body);
+    }
+
+    const res = await fetch(url, init);
+
+    if (!res.ok) {
+      const responseBody = (await res.json().catch(() => null)) as { error?: string } | null;
+      throw new Error(responseBody?.error || '操作失败');
+    }
+  };
+
   const moderateAction = async (
     actionId: string,
-    action: 'approve' | 'reject',
+    action: ModerationAction,
     opts?: { reason?: string | null; skipPrompt?: boolean }
   ) => {
     if (isModerating) return;
 
-    setModeratingActionId(actionId);
-
     try {
-      let body: unknown = undefined;
+      setModeratingActionId(actionId);
+      let reason: string | null = null;
 
       if (action === 'reject') {
         const provided = typeof opts?.reason === 'string' ? opts.reason : '';
-        const reason =
+        reason =
           opts?.skipPrompt === true
             ? provided
             : (window.prompt('拒绝原因（可选）', provided) ?? '');
-        body = reason.trim() ? { reason: reason.trim() } : {};
       }
 
-      const url = `/api/game-data-actions/moderation/${encodeURIComponent(actionId)}?action=${action}`;
-      const init: RequestInit = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-      };
-
-      if (body) {
-        init.body = JSON.stringify(body);
-      }
-
-      const res = await fetch(url, init);
-
-      if (!res.ok) {
-        const responseBody = (await res.json().catch(() => null)) as { error?: string } | null;
-        throw new Error(responseBody?.error || '操作失败');
-      }
-
+      await submitModerationRequest(actionId, action, reason);
       success(action === 'approve' ? '已批准，该改动已公开' : '已拒绝');
       await mutatePendingActions();
-    } catch (e) {
-      const message = e instanceof Error ? e.message : '操作失败';
-      error(message);
+    } catch (failure) {
+      error(getModerationFailureMessage(failure));
     } finally {
       setModeratingActionId(null);
     }
@@ -166,7 +190,7 @@ const GameDataActionModerationPanel = ({
     });
   }, [pendingActions]);
 
-  const moderateMany = async (action: 'approve' | 'reject') => {
+  const moderateMany = async (action: ModerationAction) => {
     if (isModerating || selectedPendingActions.length === 0) return;
 
     const confirmed = window.confirm(
@@ -181,15 +205,40 @@ const GameDataActionModerationPanel = ({
       reason = window.prompt('批量拒绝原因（可选，将应用于全部）') ?? '';
     }
 
-    for (const submission of selectedPendingActions) {
-      if (action === 'reject') {
-        await moderateAction(submission.action_id, action, {
-          reason,
-          skipPrompt: true,
-        });
-      } else {
-        await moderateAction(submission.action_id, action, { skipPrompt: true });
+    setModeratingActionId('batch');
+
+    const failures: ModerationFailure[] = [];
+    let successCount = 0;
+
+    try {
+      for (const submission of selectedPendingActions) {
+        try {
+          await submitModerationRequest(submission.action_id, action, reason);
+          successCount += 1;
+        } catch (failure) {
+          failures.push({
+            actionId: submission.action_id,
+            message: getModerationFailureMessage(failure),
+          });
+        }
       }
+
+      await mutatePendingActions();
+
+      const actionLabel = action === 'approve' ? '批准' : '拒绝';
+      if (failures.length === 0) {
+        success(`已批量${actionLabel} ${successCount} 条`);
+      } else if (successCount > 0) {
+        error(
+          `已${actionLabel} ${successCount} 条，失败 ${failures.length} 条：${summarizeModerationFailures(failures)}`
+        );
+      } else {
+        error(`批量${actionLabel}失败：${summarizeModerationFailures(failures)}`);
+      }
+    } catch (failure) {
+      error(getModerationFailureMessage(failure));
+    } finally {
+      setModeratingActionId(null);
     }
   };
 
