@@ -290,14 +290,7 @@ const GameDataActionModerationPanel = ({
 
   return (
     <div className='space-y-4'>
-      <div className='flex items-center justify-between'>
-        <h2 className='text-xl font-semibold text-gray-900 dark:text-gray-100'>待审核改动</h2>
-        <div className='text-sm text-gray-500 dark:text-gray-400'>
-          共 {pendingActions.length} 条
-        </div>
-      </div>
-
-      <div className='flex flex-col gap-3 rounded-md border border-gray-200 bg-white p-4 md:flex-row md:items-center md:justify-between dark:border-slate-700 dark:bg-slate-800'>
+      <div className='flex flex-col gap-3 rounded-md bg-white p-4 md:flex-row md:items-center md:justify-between dark:bg-slate-800'>
         <div className='flex flex-wrap items-center gap-2'>
           <label className='text-sm text-gray-600 dark:text-slate-300'>状态</label>
           <FormSelect
@@ -339,15 +332,15 @@ const GameDataActionModerationPanel = ({
             size='sm'
           />
 
-          <div className='text-sm text-gray-500 dark:text-gray-400'>
-            显示 {filteredActions.length} / {pendingActions.length}
+          <div className='flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400'>
+            <span>
+              显示 {filteredActions.length} / {pendingActions.length}
+            </span>
+            <span>(已选 {selectedPendingActions.length} 条)</span>
           </div>
         </div>
 
         <div className='flex flex-wrap items-center gap-2'>
-          <div className='mr-1 text-sm text-gray-500 dark:text-gray-400'>
-            已勾选 {selectedPendingActions.length} 条
-          </div>
           <Button
             type='button'
             disabled={isModerating || actionableActions.length === 0}
@@ -397,7 +390,7 @@ const GameDataActionModerationPanel = ({
       </div>
 
       {pendingActions.length === 0 ? (
-        <div className='rounded-md border border-gray-200 bg-white p-4 text-gray-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300'>
+        <div className='rounded-md bg-white p-4 text-gray-600 dark:bg-slate-800 dark:text-slate-300'>
           暂无待审核改动
         </div>
       ) : (
@@ -408,10 +401,7 @@ const GameDataActionModerationPanel = ({
             const isExpanded = expandedActionIds.has(submission.action_id);
 
             return (
-              <div
-                key={submission.action_id}
-                className='rounded-md border border-gray-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800'
-              >
+              <div key={submission.action_id} className='rounded-md bg-white p-4 dark:bg-slate-800'>
                 <div className='flex items-start gap-3'>
                   <div className='pt-1'>
                     {submission.status === 'pending' ? (
@@ -517,7 +507,7 @@ const GameDataActionModerationPanel = ({
                     </div>
 
                     {submission.message && (
-                      <div className='mt-3 rounded border border-blue-100 bg-blue-50 p-2 text-sm text-blue-800 dark:border-blue-900/50 dark:bg-blue-900/30 dark:text-blue-200'>
+                      <div className='mt-3 rounded bg-blue-50 p-2 text-sm text-blue-800 dark:bg-blue-900/30 dark:text-blue-200'>
                         <span className='font-semibold'>留言：</span>
                         {submission.message}
                       </div>
