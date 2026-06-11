@@ -4,8 +4,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import { cn } from '@/lib/design';
 import { RTE_IMAGE_ALLOWED_MIME_TYPES, RTE_IMAGE_MAX_BYTES } from '@/lib/richtext/imagePolicy';
+import Button from '@/components/ui/Button';
+import { FormInput } from '@/components/ui/FormControls';
 
 import { LoadingSpinnerIcon } from '../RichTextEditorIcons';
 
@@ -247,19 +248,15 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
   }
 
   const TabButton = ({ id, label }: { id: TabId; label: string }) => (
-    <button
+    <Button
       type='button'
       onClick={() => setActiveTab(id)}
-      className={cn(
-        'rounded-md px-4 py-2 text-sm font-medium transition-colors duration-150',
-        activeTab === id
-          ? 'bg-blue-600 text-white shadow-sm'
-          : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
-      )}
+      variant={activeTab === id ? 'primary' : 'secondary'}
+      size='sm'
       aria-pressed={activeTab === id}
     >
       {label}
-    </button>
+    </Button>
   );
 
   const renderUploadTab = () => (
@@ -294,9 +291,9 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
           若已知图片 URL，可直接粘贴（仅支持站内/网站数据库的 URL）：
         </p>
         <div className='mt-2 flex gap-2'>
-          <input
+          <FormInput
             type='text'
-            className='flex-1 rounded-md border border-gray-300 bg-white px-3 py-2 text-xs leading-snug text-gray-900 placeholder:text-[11px] focus:border-blue-500 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100'
+            className='flex-1 text-xs leading-snug placeholder:text-[11px]'
             placeholder={allowedSourcesDescription}
             value={manualInput}
             onChange={(event) => setManualInput(event.target.value)}
@@ -307,14 +304,14 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
               }
             }}
           />
-          <button
+          <Button
             type='button'
-            className='rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60'
             onClick={handleManualSubmit}
             disabled={!manualInput.trim()}
+            size='sm'
           >
             插入
-          </button>
+          </Button>
         </div>
       </div>
     </div>
@@ -323,20 +320,16 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
   const renderLibraryTab = () => (
     <div className='space-y-4'>
       <div className='flex items-center justify-between gap-2'>
-        <input
+        <FormInput
           type='search'
-          className='flex-1 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100'
+          className='flex-1'
           placeholder='搜索文件名'
           value={librarySearchTerm}
           onChange={(event) => setLibrarySearchTerm(event.target.value)}
         />
-        <button
-          type='button'
-          onClick={fetchLibraryItems}
-          className='rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800'
-        >
+        <Button type='button' onClick={fetchLibraryItems} variant='secondary' size='sm'>
           刷新
-        </button>
+        </Button>
       </div>
       {libraryError && <p className='text-sm text-red-600 dark:text-red-400'>{libraryError}</p>}
       {libraryLoading ? (
@@ -394,21 +387,18 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
           </span>
         </div>
         <div className='space-x-2'>
-          <button
-            type='button'
-            onClick={() => fetchSiteEntries('')}
-            className='rounded-md border border-gray-300 px-3 py-1 hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-800'
-          >
+          <Button type='button' onClick={() => fetchSiteEntries('')} variant='secondary' size='sm'>
             回到根目录
-          </button>
-          <button
+          </Button>
+          <Button
             type='button'
             onClick={handleNavigateUp}
             disabled={!siteParentPath && siteParentPath !== ''}
-            className='rounded-md border border-gray-300 px-3 py-1 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:hover:bg-gray-800'
+            variant='secondary'
+            size='sm'
           >
             返回上一级
-          </button>
+          </Button>
         </div>
       </div>
       {siteError && <p className='text-sm text-red-600 dark:text-red-400'>{siteError}</p>}
@@ -496,13 +486,9 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
           {activeTab === 'site' && renderSiteTab()}
         </div>
         <div className='flex justify-end border-t border-gray-200 px-6 py-3 dark:border-gray-700'>
-          <button
-            type='button'
-            onClick={onClose}
-            className='rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800'
-          >
+          <Button type='button' onClick={onClose} variant='secondary'>
             关闭
-          </button>
+          </Button>
         </div>
       </div>
     </div>,

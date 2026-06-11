@@ -12,6 +12,8 @@ import {
   shouldShowGameActionValueTransition,
   summarizeGameActionValue,
 } from '@/features/admin/utils/gameActionPreview';
+import Button from '@/components/ui/Button';
+import { FormInput, FormSelect } from '@/components/ui/FormControls';
 import { ChevronRightIcon } from '@/components/icons/CommonIcons';
 
 type ActionStatus = Database['public']['Enums']['game_data_action_status'];
@@ -33,12 +35,6 @@ const ACTION_STATUS_META: Record<ActionStatus, { label: string; className: strin
   rejected: { label: '已拒绝', className: 'text-red-700 dark:text-red-300' },
   synced: { label: '已同步', className: 'text-purple-700 dark:text-purple-300' },
 };
-
-const getActionButtonClassName = (
-  isDisabled: boolean,
-  enabledClassName: string,
-  disabledClassName: string
-) => cn('rounded px-3 py-1 text-sm text-white', isDisabled ? disabledClassName : enabledClassName);
 
 const GameDataActionModerationPanel = ({
   pendingActions,
@@ -259,25 +255,25 @@ const GameDataActionModerationPanel = ({
       <div className='flex flex-col gap-3 rounded-md border border-gray-200 bg-white p-4 md:flex-row md:items-center md:justify-between dark:border-slate-700 dark:bg-slate-800'>
         <div className='flex flex-wrap items-center gap-2'>
           <label className='text-sm text-gray-600 dark:text-slate-300'>状态</label>
-          <select
+          <FormSelect
             title='过滤状态'
             value={actionStatus}
             onChange={(e) => setActionStatus(e.target.value as ActionStatusFilter)}
-            className='rounded border border-gray-300 bg-white px-2 py-1 text-sm text-gray-800 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100'
+            size='sm'
           >
             <option value='pending'>待审核</option>
             <option value='approved'>已批准</option>
             <option value='rejected'>已拒绝</option>
             <option value='synced'>已同步</option>
             <option value='all'>全部</option>
-          </select>
+          </FormSelect>
 
           <label className='text-sm text-gray-600 dark:text-slate-300'>实体类型</label>
-          <select
+          <FormSelect
             title='过滤实体类型'
             value={actionEntityType}
             onChange={(e) => setActionEntityType(e.target.value)}
-            className='rounded border border-gray-300 bg-white px-2 py-1 text-sm text-gray-800 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100'
+            size='sm'
           >
             <option value='all'>全部</option>
             {uniqueEntityTypes.map((type) => (
@@ -285,14 +281,15 @@ const GameDataActionModerationPanel = ({
                 {type}
               </option>
             ))}
-          </select>
+          </FormSelect>
 
           <label className='ml-2 text-sm text-gray-600 dark:text-slate-300'>搜索</label>
-          <input
+          <FormInput
             value={actionQuery}
             onChange={(e) => setActionQuery(e.target.value)}
             placeholder='action_id / 类型 / 提交者'
-            className='w-full rounded border border-gray-300 bg-white px-2 py-1 text-sm text-gray-800 md:w-64 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100'
+            className='md:w-64'
+            size='sm'
           />
 
           <div className='text-sm text-gray-500 dark:text-gray-400'>
@@ -304,66 +301,51 @@ const GameDataActionModerationPanel = ({
           <div className='mr-1 text-sm text-gray-500 dark:text-gray-400'>
             已勾选 {selectedPendingActions.length} 条
           </div>
-          <button
+          <Button
             type='button'
             disabled={isModerating || actionableActions.length === 0}
             onClick={toggleSelectAllVisiblePending}
-            className={getActionButtonClassName(
-              isModerating || actionableActions.length === 0,
-              'bg-slate-600 hover:bg-slate-700',
-              'bg-gray-400 opacity-60'
-            )}
+            variant='secondary'
+            size='sm'
           >
             {allVisiblePendingSelected ? '取消全选待审核' : '全选待审核'}
-          </button>
-          <button
+          </Button>
+          <Button
             type='button'
             disabled={isModerating || selectedActionIds.size === 0}
             onClick={clearSelectedActions}
-            className={getActionButtonClassName(
-              isModerating || selectedActionIds.size === 0,
-              'bg-gray-600 hover:bg-gray-700',
-              'bg-gray-400 opacity-60'
-            )}
+            variant='secondary'
+            size='sm'
           >
             清空勾选
-          </button>
-          <button
+          </Button>
+          <Button
             type='button'
             disabled={isModerating}
             onClick={() => void mutatePendingActions()}
-            className={getActionButtonClassName(
-              isModerating,
-              'bg-gray-700 hover:bg-gray-800',
-              'bg-gray-400 opacity-60'
-            )}
+            variant='secondary'
+            size='sm'
           >
             刷新
-          </button>
-          <button
+          </Button>
+          <Button
             type='button'
             disabled={isModerating || selectedPendingActions.length === 0}
             onClick={() => void moderateMany('approve')}
-            className={getActionButtonClassName(
-              isModerating || selectedPendingActions.length === 0,
-              'bg-green-600 hover:bg-green-700',
-              'bg-green-400 opacity-60'
-            )}
+            variant='success'
+            size='sm'
           >
             批量批准
-          </button>
-          <button
+          </Button>
+          <Button
             type='button'
             disabled={isModerating || selectedPendingActions.length === 0}
             onClick={() => void moderateMany('reject')}
-            className={getActionButtonClassName(
-              isModerating || selectedPendingActions.length === 0,
-              'bg-red-600 hover:bg-red-700',
-              'bg-red-400 opacity-60'
-            )}
+            variant='danger'
+            size='sm'
           >
             批量拒绝
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -438,7 +420,7 @@ const GameDataActionModerationPanel = ({
                       <div className='flex items-center gap-2'>
                         {submission.status === 'pending' && (
                           <>
-                            <button
+                            <Button
                               type='button'
                               disabled={isModerating}
                               onClick={() => {
@@ -446,15 +428,12 @@ const GameDataActionModerationPanel = ({
                                 if (!confirmed) return;
                                 void moderateAction(submission.action_id, 'approve');
                               }}
-                              className={getActionButtonClassName(
-                                isModerating,
-                                'bg-green-600 hover:bg-green-700',
-                                'bg-green-400 opacity-60'
-                              )}
+                              variant='success'
+                              size='sm'
                             >
                               批准
-                            </button>
-                            <button
+                            </Button>
+                            <Button
                               type='button'
                               disabled={isModerating}
                               onClick={() => {
@@ -462,26 +441,22 @@ const GameDataActionModerationPanel = ({
                                 if (!confirmed) return;
                                 void moderateAction(submission.action_id, 'reject');
                               }}
-                              className={getActionButtonClassName(
-                                isModerating,
-                                'bg-red-600 hover:bg-red-700',
-                                'bg-red-400 opacity-60'
-                              )}
+                              variant='danger'
+                              size='sm'
                             >
                               拒绝
-                            </button>
+                            </Button>
                           </>
                         )}
-                        <button
+                        <Button
                           type='button'
                           onClick={() => toggleExpanded(submission.action_id)}
                           aria-label={isExpanded ? '收起详情' : '展开详情'}
                           aria-expanded={isExpanded}
                           title={isExpanded ? '收起详情' : '展开详情'}
-                          className={cn(
-                            'flex h-8 w-8 items-center justify-center rounded-md text-sm transition-colors',
-                            'bg-blue-50 text-blue-700 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-200 dark:hover:bg-blue-900/40'
-                          )}
+                          variant='secondary'
+                          size='sm'
+                          className='h-8 w-8 p-0'
                         >
                           <ChevronRightIcon
                             className={cn(
@@ -490,7 +465,7 @@ const GameDataActionModerationPanel = ({
                             )}
                             aria-hidden='true'
                           />
-                        </button>
+                        </Button>
                       </div>
                     </div>
 
@@ -514,28 +489,22 @@ const GameDataActionModerationPanel = ({
                             )}
                           </div>
                           <div className='flex items-center gap-2'>
-                            <button
+                            <Button
                               type='button'
                               onClick={() => void copyText(submission.action_id)}
-                              className={getActionButtonClassName(
-                                false,
-                                'bg-gray-600 hover:bg-gray-700',
-                                'bg-gray-400 opacity-60'
-                              )}
+                              variant='secondary'
+                              size='sm'
                             >
                               复制ID
-                            </button>
-                            <button
+                            </Button>
+                            <Button
                               type='button'
                               onClick={() => void copyText(JSON.stringify(submission, null, 2))}
-                              className={getActionButtonClassName(
-                                false,
-                                'bg-gray-600 hover:bg-gray-700',
-                                'bg-gray-400 opacity-60'
-                              )}
+                              variant='secondary'
+                              size='sm'
                             >
                               复制JSON
-                            </button>
+                            </Button>
                           </div>
                         </div>
 

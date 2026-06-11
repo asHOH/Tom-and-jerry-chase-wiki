@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import { cn } from '@/lib/design';
+import Button from '@/components/ui/Button';
+import { FormInput } from '@/components/ui/FormControls';
 
 interface LinkDialogProps {
   isOpen: boolean;
@@ -60,33 +61,20 @@ export default function LinkDialog({
             >
               链接地址
             </label>
-            <input
+            <FormInput
               ref={inputRef}
               type='text'
               id='link-url'
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               placeholder='https://example.com'
-              className={cn(
-                'w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500',
-                'dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400'
-              )}
             />
           </div>
           <div className='flex justify-end space-x-3'>
-            <button
-              type='button'
-              onClick={onClose}
-              className='rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
-            >
+            <Button type='button' onClick={onClose} variant='secondary'>
               取消
-            </button>
-            <button
-              type='submit'
-              className='rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none dark:bg-blue-500 dark:hover:bg-blue-600'
-            >
-              确认
-            </button>
+            </Button>
+            <Button type='submit'>确认</Button>
           </div>
         </form>
       </div>

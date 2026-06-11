@@ -10,6 +10,8 @@ import { cn } from '@/lib/design';
 import { toChineseNumeral } from '@/lib/textUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useUser } from '@/hooks/useUser';
+import Button from '@/components/ui/Button';
+import ButtonLink from '@/components/ui/ButtonLink';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
 import CommentsSection from '@/components/comments/CommentsSection';
 import {
@@ -543,24 +545,25 @@ export default function ArticleClient({
                 </div>
 
                 {boundCharacter && (
-                  <Link
+                  <ButtonLink
                     href={`/characters/${encodeURIComponent(boundCharacter.id)}`}
-                    className='flex items-center gap-2 rounded-lg bg-blue-50 px-3 py-1.5 transition-colors hover:bg-blue-100 dark:bg-blue-900/30 dark:hover:bg-blue-900/50'
+                    variant='secondary'
+                    size='sm'
+                    leadingIcon={
+                      <Image
+                        src={AssetManager.getCharacterImageUrl(
+                          boundCharacter.id,
+                          boundCharacter.factionId ?? 'cat'
+                        )}
+                        alt={boundCharacter.id}
+                        width={24}
+                        height={24}
+                        className='h-6 w-6 rounded-full object-cover ring-1 ring-blue-400 dark:ring-blue-500'
+                      />
+                    }
                   >
-                    <Image
-                      src={AssetManager.getCharacterImageUrl(
-                        boundCharacter.id,
-                        boundCharacter.factionId ?? 'cat'
-                      )}
-                      alt={boundCharacter.id}
-                      width={24}
-                      height={24}
-                      className='h-6 w-6 rounded-full object-cover ring-1 ring-blue-400 dark:ring-blue-500'
-                    />
-                    <span className='text-sm font-medium text-blue-600 dark:text-blue-400'>
-                      查看{boundCharacter.id}详情
-                    </span>
-                  </Link>
+                    查看{boundCharacter.id}详情
+                  </ButtonLink>
                 )}
 
                 <div className='flex items-center gap-2'>
@@ -589,35 +592,29 @@ export default function ArticleClient({
 
               {/* Action Buttons */}
               <div className='mt-4 flex flex-wrap gap-3 border-t border-gray-200 pt-4 dark:border-gray-700'>
-                <button
+                <Button
                   onClick={() => setShowAutoNumbering(!showAutoNumbering)}
                   type='button'
-                  className={cn(
-                    'inline-flex items-center gap-2 rounded-lg px-4 py-2 transition-colors',
-                    showAutoNumbering
-                      ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-200'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
-                  )}
+                  variant={showAutoNumbering ? 'primary' : 'secondary'}
                 >
                   {showAutoNumbering ? '隐藏编号' : '自动编号'}
-                </button>
+                </Button>
 
-                <Link
+                <ButtonLink
                   href={`/articles/${articleId}/history`}
-                  className='inline-flex items-center gap-2 rounded-lg bg-gray-100 px-4 py-2 text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+                  variant='secondary'
+                  leadingIcon={<ClockIcon className='size-4' strokeWidth={1.5} />}
                 >
-                  <ClockIcon className='size-4' strokeWidth={1.5} />
                   历史版本
-                </Link>
+                </ButtonLink>
 
                 {canEdit && (
-                  <Link
+                  <ButtonLink
                     href={`/articles/${articleId}/edit`}
-                    className='inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700'
+                    leadingIcon={<PencilSquareIcon className='size-4' strokeWidth={1.5} />}
                   >
-                    <PencilSquareIcon className='size-4' strokeWidth={1.5} />
                     编辑文章
-                  </Link>
+                  </ButtonLink>
                 )}
               </div>
             </div>
@@ -669,12 +666,9 @@ export default function ArticleClient({
               </Link>
 
               {canEdit && (
-                <Link
-                  href='/articles/new'
-                  className='rounded-lg bg-green-600 px-4 py-2 text-white transition-colors hover:bg-green-700'
-                >
+                <ButtonLink href='/articles/new' variant='success'>
                   创建新文章
-                </Link>
+                </ButtonLink>
               )}
             </div>
           </div>

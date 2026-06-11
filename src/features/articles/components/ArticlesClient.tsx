@@ -16,13 +16,14 @@ import { useEditMode } from '@/context/EditModeContext';
 import { useToast } from '@/context/ToastContext';
 import { Article, ArticlesData, Category } from '@/data/types';
 import BaseCard from '@/components/ui/BaseCard';
+import Button from '@/components/ui/Button';
+import ButtonLink from '@/components/ui/ButtonLink';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
 import { SkeletonArticleCard } from '@/components/ui/Skeleton';
 import { ClockIcon, PlusIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
-import Link from '@/components/Link';
 import { characters } from '@/data';
 
 import ArticleFilters from './ArticleFilters';
@@ -324,29 +325,31 @@ export default function ArticlesClient({ articles: data, description }: Articles
             {userRole ? (
               <>
                 {userRole !== 'Contributor' && (
-                  <Link
+                  <ButtonLink
                     href='/articles/pending'
-                    className='inline-flex items-center gap-2 rounded-lg bg-yellow-600 px-4 py-2 text-sm text-white transition-all duration-200 hover:bg-yellow-700'
+                    variant='warning'
+                    size='sm'
+                    leadingIcon={<ClockIcon className='size-4' strokeWidth={1.5} />}
                   >
-                    <ClockIcon className='size-4' strokeWidth={1.5} />
                     待审核
-                  </Link>
+                  </ButtonLink>
                 )}
-                <Link
+                <ButtonLink
                   href='/articles/new'
-                  className='inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm text-white transition-all duration-200 hover:bg-blue-700'
+                  size='sm'
+                  leadingIcon={<PlusIcon className='size-4' strokeWidth={1.5} aria-hidden='true' />}
                 >
-                  <PlusIcon className='size-4' strokeWidth={1.5} aria-hidden='true' />
                   新建文章
-                </Link>
+                </ButtonLink>
               </>
             ) : (
-              <Link
+              <ButtonLink
                 href='/usages/edit' /*'http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=k06ydVKmTrT3BV8fYX8zOeve10bXcxR0&authKey=Dqg2BaUpTZVCaSDyRcFPeovGCDtwjpyAbNLPaoss0p3gmWO3sQe9pncD5uk1dZNO&noverify=0&group_code=615882730'*/
-                className='rounded-lg border border-gray-200 bg-gray-50 px-4 py-2 text-sm text-gray-600 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400'
+                variant='secondary'
+                size='sm'
               >
                 💡 登录后才可发表文章
-              </Link>
+              </ButtonLink>
             )}
           </div>
         </div>
@@ -372,22 +375,11 @@ export default function ArticlesClient({ articles: data, description }: Articles
           </p>
           <div className='flex flex-wrap justify-center gap-3'>
             {selectedCategories.size > 0 && (
-              <button
-                type='button'
-                onClick={handleClearFilters}
-                className='rounded-lg bg-gray-100 px-6 py-2 text-gray-700 transition-all duration-200 hover:bg-gray-200 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:outline-none dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:focus:ring-offset-gray-900'
-              >
+              <Button type='button' onClick={handleClearFilters} variant='secondary'>
                 清除筛选
-              </button>
+              </Button>
             )}
-            {userRole && (
-              <Link
-                href='/articles/new'
-                className='rounded-lg bg-blue-600 px-6 py-2 text-white transition-all duration-200 hover:bg-blue-700'
-              >
-                创建文章
-              </Link>
-            )}
+            {userRole && <ButtonLink href='/articles/new'>创建文章</ButtonLink>}
           </div>
         </div>
       ) : (
@@ -479,13 +471,15 @@ export default function ArticlesClient({ articles: data, description }: Articles
                         <object className='my-auto ml-auto'>
                           <div className='flex items-center gap-2'>
                             <div className='flex-1' />
-                            <Link
+                            <ButtonLink
                               href={`/articles/${article.id}/history`}
-                              className='rounded-lg bg-gray-100 px-2 py-2 text-sm text-gray-700 transition-all duration-200 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+                              variant='secondary'
+                              size='sm'
+                              aria-label='查看历史版本'
                               title='查看历史版本'
                             >
                               <ClockIcon className='size-4' strokeWidth={1.5} />
-                            </Link>
+                            </ButtonLink>
                           </div>
                         </object>
                       </div>

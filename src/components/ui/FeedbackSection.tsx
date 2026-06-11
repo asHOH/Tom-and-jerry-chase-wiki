@@ -5,6 +5,7 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 're
 import ActionTile from '@/components/ui/ActionTile';
 import { BaseDialog } from '@/components/ui/BaseDialog';
 import Button from '@/components/ui/Button';
+import { FormInput, FormSelect, FormTextarea } from '@/components/ui/FormControls';
 import { HOME_ACTION_TILE_PROPS } from '@/components/ui/homeActionTileStyles';
 import { ChatBubbleIcon } from '@/components/icons/CommonIcons';
 import { env } from '@/env';
@@ -115,16 +116,15 @@ const FeedbackSection =
                     感谢您的反馈！
                   </h3>
                   <p className='mb-4 text-gray-600 dark:text-gray-400'>我们会认真考虑您的建议。</p>
-                  <button
+                  <Button
                     type='button'
                     onClick={() => {
                       setSubmitted(false);
                       setIsFeedbackOpen(false);
                     }}
-                    className='rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700'
                   >
                     关闭
-                  </button>
+                  </Button>
                 </div>
               ) : (
                 <form onSubmit={handleFeedbackSubmit} className='p-6'>
@@ -159,13 +159,9 @@ const FeedbackSection =
                           </div>
                         </div>
                       </div>
-                      <button
-                        type='button'
-                        onClick={handleQQGroupClick}
-                        className='rounded bg-blue-600 px-2 py-1 text-xs text-white hover:bg-blue-700'
-                      >
+                      <Button type='button' onClick={handleQQGroupClick} size='sm'>
                         加入
-                      </button>
+                      </Button>
                     </div>
                   </div>
                   <div className='space-y-4'>
@@ -173,12 +169,11 @@ const FeedbackSection =
                       <label className='mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300'>
                         反馈类型
                       </label>
-                      <select
+                      <FormSelect
                         value={feedbackFormData.type}
                         onChange={(e) =>
                           setFeedbackFormData({ ...feedbackFormData, type: e.target.value })
                         }
-                        className='w-full rounded-lg border border-gray-300 bg-white p-2 text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100'
                         aria-label='反馈类型'
                         title='选择反馈类型'
                       >
@@ -186,21 +181,21 @@ const FeedbackSection =
                         <option value='bug'>网站错误</option>
                         <option value='data'>数据建议</option>
                         <option value='other'>其他</option>
-                      </select>
+                      </FormSelect>
                     </div>
 
                     <div>
                       <label className='mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300'>
                         详细描述
                       </label>
-                      <textarea
+                      <FormTextarea
                         ref={textareaRef}
                         value={feedbackFormData.content}
                         onChange={(e) =>
                           setFeedbackFormData({ ...feedbackFormData, content: e.target.value })
                         }
                         placeholder='请详细描述您的建议或遇到的问题...'
-                        className='h-32 w-full resize-none rounded-lg border border-gray-300 bg-white p-3 text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100'
+                        className='h-32 resize-none'
                         required
                       />
                     </div>
@@ -233,7 +228,7 @@ const FeedbackSection =
                           匿名
                         </label>
                       </div>
-                      <input
+                      <FormInput
                         id='contact'
                         type='text'
                         value={feedbackFormData.contact}
@@ -241,7 +236,7 @@ const FeedbackSection =
                           setFeedbackFormData({ ...feedbackFormData, contact: e.target.value })
                         }
                         placeholder={isAnonymous ? '已匿名' : '请填写QQ号或其他联系方式，便于回复'}
-                        className='w-full rounded-lg border border-gray-300 bg-white p-2 text-gray-900 disabled:bg-gray-100 disabled:text-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 disabled:dark:bg-gray-700/60 disabled:dark:text-gray-500'
+                        className='disabled:bg-gray-100 disabled:text-gray-400 disabled:dark:bg-gray-700/60 disabled:dark:text-gray-500'
                         disabled={isAnonymous}
                         aria-disabled={isAnonymous}
                         aria-describedby='contact-help'

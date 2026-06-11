@@ -7,6 +7,7 @@ import { m, useReducedMotion } from 'motion/react';
 import { checkPasswordStrength, PasswordStrength } from '@/lib/passwordUtils';
 import { useToast } from '@/context/ToastContext';
 import Button from '@/components/ui/Button';
+import { FormInput } from '@/components/ui/FormControls';
 import { CloseIcon } from '@/components/icons/CommonIcons';
 
 type ChangePasswordDialogProps = {
@@ -106,14 +107,16 @@ export default function ChangePasswordDialog({ onClose }: ChangePasswordDialogPr
       >
         <div className='mb-3 flex items-center justify-between'>
           <h2 className='text-lg font-bold text-gray-900 dark:text-white'>修改密码</h2>
-          <button
+          <Button
             type='button'
             aria-label='关闭'
-            className='rounded p-1 text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-slate-700'
+            variant='ghost'
+            size='sm'
+            className='h-8 w-8 p-0'
             onClick={onClose}
           >
             <CloseIcon className='size-5' />
-          </button>
+          </Button>
         </div>
 
         {!!errMsg && <div className='mb-3 text-sm text-red-600 dark:text-red-400'>{errMsg}</div>}
@@ -123,9 +126,8 @@ export default function ChangePasswordDialog({ onClose }: ChangePasswordDialogPr
             <label className='mb-1 block text-sm text-gray-700 dark:text-gray-200'>
               旧密码（如果已设置）
             </label>
-            <input
+            <FormInput
               type='password'
-              className='w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 dark:border-gray-600 dark:bg-slate-900 dark:text-white'
               value={oldPassword}
               onChange={(e) => setOldPassword(e.target.value)}
               placeholder='旧密码'
@@ -135,9 +137,8 @@ export default function ChangePasswordDialog({ onClose }: ChangePasswordDialogPr
 
           <div>
             <label className='mb-1 block text-sm text-gray-700 dark:text-gray-200'>新密码</label>
-            <input
+            <FormInput
               type='password'
-              className='w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 dark:border-gray-600 dark:bg-slate-900 dark:text-white'
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               placeholder='新密码'

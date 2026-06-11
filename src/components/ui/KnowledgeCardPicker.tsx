@@ -8,6 +8,7 @@ import { useMobile } from '@/hooks/useMediaQuery';
 import { Card, FactionId } from '@/data/types';
 import { catKnowledgeCards } from '@/features/knowledge-cards/data/catKnowledgeCards';
 import { mouseKnowledgeCards } from '@/features/knowledge-cards/data/mouseKnowledgeCards';
+import Button from '@/components/ui/Button';
 import Image from '@/components/Image';
 
 import Tooltip from './Tooltip';
@@ -173,18 +174,17 @@ const KnowledgeCardPicker: React.FC<KnowledgeCardPickerProps> = ({
               )}
             </div>
             <div className='flex w-full sm:w-auto'>
-              <button
+              <Button
+                type='button'
                 onClick={onClose}
-                className='mr-2 flex-1 rounded bg-gray-300 px-4 py-2 text-gray-800 hover:bg-gray-400 sm:flex-none dark:bg-slate-600 dark:text-gray-200 dark:hover:bg-slate-500'
+                variant='secondary'
+                className='mr-2 flex-1 sm:flex-none'
               >
                 取消
-              </button>
-              <button
-                onClick={handleSave}
-                className='flex-1 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 sm:flex-none dark:bg-blue-600 dark:hover:bg-blue-700'
-              >
+              </Button>
+              <Button type='button' onClick={handleSave} className='flex-1 sm:flex-none'>
                 保存
-              </button>
+              </Button>
             </div>
           </div>
         </div>

@@ -5,6 +5,9 @@ import React, { useState } from 'react';
 import { cn } from '@/lib/design';
 import { supabase } from '@/lib/supabase/client';
 import { Database } from '@/data/database.types';
+import Button from '@/components/ui/Button';
+import Card from '@/components/ui/Card';
+import { FormInput, FormSelect } from '@/components/ui/FormControls';
 
 type Category = Database['public']['Tables']['categories']['Row'];
 
@@ -150,34 +153,35 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
         </div>
       )}
 
-      <div className='mb-6 rounded bg-white p-4 shadow dark:bg-slate-800 dark:text-slate-200'>
+      <Card className='mb-6 dark:text-slate-200'>
         <h2 className='mb-3 text-xl font-semibold text-gray-900 dark:text-gray-100'>创建新分类</h2>
         <div className='flex flex-col gap-3 sm:flex-row sm:items-center'>
-          <input
+          <FormInput
             type='text'
             placeholder='分类名称'
             value={newCategory.name}
             onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
-            className='flex-1 rounded border border-gray-300 bg-white p-2 text-gray-900 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100'
+            className='flex-1'
+            size='sm'
           />
-          <select
+          <FormSelect
             title='选择父分类'
             value={newCategory.parent_category_id ?? ''}
             onChange={(e) =>
               setNewCategory({
                 ...newCategory,
-                parent_category_id: e.target.value === '' ? undefined : (e.target.value as string),
+                parent_category_id: e.target.value === '' ? undefined : e.target.value,
               })
             }
-            className='rounded border border-gray-300 bg-white p-2 text-gray-900 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100'
+            size='sm'
           >
             {categories.map((cat) => (
               <option key={cat.id} value={cat.id}>
                 {cat.name}
               </option>
             ))}
-          </select>
-          <select
+          </FormSelect>
+          <FormSelect
             title='选择默认可见性'
             value={newCategory.default_visibility || ''}
             onChange={(e) =>
@@ -186,24 +190,19 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
                 default_visibility: e.target.value as Category['default_visibility'],
               })
             }
-            className='rounded border border-gray-300 bg-white p-2 text-gray-900 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100'
+            size='sm'
           >
             <option value='approved'>修改直接通过</option>
             <option value='pending'>修改需要审核</option>
             <option value='rejected'>禁止修改</option>
-          </select>
-          <button
-            type='button'
-            onClick={handleCreateCategory}
-            className='rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700'
-            disabled={loading}
-          >
+          </FormSelect>
+          <Button type='button' onClick={handleCreateCategory} disabled={loading}>
             创建
-          </button>
+          </Button>
         </div>
-      </div>
+      </Card>
 
-      <div className='rounded bg-white p-4 shadow dark:bg-slate-800 dark:text-slate-200'>
+      <Card className='dark:text-slate-200'>
         <div className='mb-3 flex items-center justify-between'>
           <h2 className='text-xl font-semibold text-gray-900 dark:text-gray-100'>现有分类</h2>
           <div className='text-sm text-gray-600 dark:text-gray-400'>
@@ -243,19 +242,23 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
                   </td>
                   <td className='px-4 py-3 text-sm'>
                     <div className='flex gap-2'>
-                      <button
+                      <Button
+                        type='button'
                         onClick={() => setEditingCategory(category)}
-                        className='rounded bg-yellow-500 px-3 py-1 text-white hover:bg-yellow-600'
+                        variant='warning'
+                        size='sm'
                       >
                         编辑
-                      </button>
+                      </Button>
                       {category.name !== '根分类' && (
-                        <button
+                        <Button
+                          type='button'
                           onClick={() => handleDeleteCategory(category.id)}
-                          className='rounded bg-red-600 px-3 py-1 text-white hover:bg-red-700'
+                          variant='danger'
+                          size='sm'
                         >
                           删除
-                        </button>
+                        </Button>
                       )}
                     </div>
                   </td>
@@ -274,41 +277,42 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
             </tbody>
           </table>
         </div>
-      </div>
+      </Card>
 
       {editingCategory && (
-        <div className='mt-6 rounded bg-white p-4 shadow'>
+        <Card className='mt-6'>
           <h2 className='mb-3 text-xl font-semibold'>编辑分类</h2>
           <div className='flex flex-col gap-3 sm:flex-row sm:items-center'>
-            <input
+            <FormInput
               type='text'
               placeholder='分类名称'
               value={editingCategory.name ?? ''}
               onChange={(e) => setEditingCategory({ ...editingCategory, name: e.target.value })}
-              className='flex-1 rounded border p-2'
+              className='flex-1'
+              size='sm'
             />
             {editingCategory.name != '根分类' && (
-              <select
+              <FormSelect
                 title='选择父分类'
                 value={editingCategory.parent_category_id ?? ''}
                 onChange={(e) =>
                   setEditingCategory((prev) => ({
                     ...prev,
-                    parent_category_id: e.target.value === '' ? null : (e.target.value as string),
+                    parent_category_id: e.target.value === '' ? null : e.target.value,
                   }))
                 }
-                className='rounded border p-2'
+                size='sm'
               >
                 {categories
-                  .filter((c) => c.id !== editingCategory.id) // avoid choosing itself as parent
+                  .filter((c) => c.id !== editingCategory.id)
                   .map((cat) => (
                     <option key={cat.id} value={cat.id}>
                       {cat.name}
                     </option>
                   ))}
-              </select>
+              </FormSelect>
             )}
-            <select
+            <FormSelect
               title='选择默认可见性'
               value={editingCategory.default_visibility ?? ''}
               onChange={(e) =>
@@ -317,31 +321,27 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
                   default_visibility: e.target.value as Category['default_visibility'],
                 }))
               }
-              className='rounded border p-2'
+              size='sm'
             >
               <option value='approved'>修改直接通过</option>
               <option value='pending'>修改需要审核</option>
               <option value='rejected'>禁止修改</option>
-            </select>
+            </FormSelect>
             <div className='flex gap-2'>
-              <button
+              <Button
                 type='button'
                 onClick={handleEditCategory}
-                className='rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700'
+                variant='success'
                 disabled={loading}
               >
                 保存
-              </button>
-              <button
-                type='button'
-                onClick={() => setEditingCategory(null)}
-                className='rounded bg-gray-300 px-4 py-2 text-gray-800 hover:bg-gray-400'
-              >
+              </Button>
+              <Button type='button' onClick={() => setEditingCategory(null)} variant='secondary'>
                 取消
-              </button>
+              </Button>
             </div>
           </div>
-        </div>
+        </Card>
       )}
     </>
   );

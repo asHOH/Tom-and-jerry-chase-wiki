@@ -6,6 +6,8 @@ import useSWR from 'swr';
 import { formatArticleDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
 import { useUser } from '@/hooks/useUser';
+import Button from '@/components/ui/Button';
+import ButtonLink from '@/components/ui/ButtonLink';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
@@ -201,12 +203,7 @@ export default function PendingClient() {
               ? '您可以查看自己的待审核提交，但不能进行审核操作'
               : '请检查您的登录状态或联系管理员获取相应权限'}
           </p>
-          <Link
-            href='/articles'
-            className='inline-flex items-center rounded-lg bg-blue-600 px-6 py-2 text-white transition-colors hover:bg-blue-700'
-          >
-            返回文章列表
-          </Link>
+          <ButtonLink href='/articles'>返回文章列表</ButtonLink>
         </div>
       </div>
     );
@@ -236,46 +233,40 @@ export default function PendingClient() {
             </div>
 
             <div className='flex items-center gap-2'>
-              <button
+              <Button
+                type='button'
                 onClick={() => setFilter('all')}
-                className={cn(
-                  'rounded-lg px-3 py-1.5 text-sm transition-colors',
-                  filter === 'all'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
-                )}
+                variant={filter === 'all' ? 'primary' : 'secondary'}
+                size='sm'
               >
                 全部
-              </button>
-              <button
+              </Button>
+              <Button
+                type='button'
                 onClick={() => setFilter('pending')}
-                className={cn(
-                  'rounded-lg px-3 py-1.5 text-sm transition-colors',
-                  filter === 'pending'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
-                )}
+                variant={filter === 'pending' ? 'primary' : 'secondary'}
+                size='sm'
               >
                 待审核
-              </button>
-              <button
+              </Button>
+              <Button
+                type='button'
                 onClick={() => setFilter('rejected')}
-                className={cn(
-                  'rounded-lg px-3 py-1.5 text-sm transition-colors',
-                  filter === 'rejected'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
-                )}
+                variant={filter === 'rejected' ? 'primary' : 'secondary'}
+                size='sm'
               >
                 已拒绝
-              </button>
+              </Button>
 
-              <button
+              <Button
+                type='button'
                 onClick={() => mutate()}
-                className='ml-2 rounded-lg bg-gray-100 px-3 py-1.5 text-sm text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+                variant='secondary'
+                size='sm'
+                className='ml-2'
               >
                 刷新
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -295,18 +286,10 @@ export default function PendingClient() {
             {filter === 'all' ? '所有提交都已处理完成' : '尝试切换其他筛选条件查看更多内容'}
           </p>
           <div className='flex flex-wrap justify-center gap-3'>
-            <Link
-              href='/articles'
-              className='inline-flex items-center rounded-lg bg-blue-600 px-6 py-2 text-white transition-colors hover:bg-blue-700'
-            >
-              返回文章列表
-            </Link>
-            <button
-              onClick={() => mutate()}
-              className='inline-flex items-center rounded-lg bg-gray-100 px-6 py-2 text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
-            >
+            <ButtonLink href='/articles'>返回文章列表</ButtonLink>
+            <Button type='button' onClick={() => mutate()} variant='secondary'>
               刷新
-            </button>
+            </Button>
           </div>
         </div>
       ) : (
@@ -355,22 +338,25 @@ export default function PendingClient() {
                 </div>
 
                 <div className='flex flex-col gap-3 lg:w-48'>
-                  <Link
+                  <ButtonLink
                     href={`/articles/preview?token=${
                       submission.preview_token || submission.version_id
                     }`}
-                    className='inline-flex items-center justify-center gap-2 rounded-lg bg-blue-100 px-4 py-2 text-sm text-blue-700 transition-colors hover:bg-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:hover:bg-blue-900/40'
+                    variant='secondary'
+                    size='sm'
+                    leadingIcon={<EyeIcon className='size-4' strokeWidth={1.5} />}
                   >
-                    <EyeIcon className='size-4' strokeWidth={1.5} />
                     预览内容
-                  </Link>
+                  </ButtonLink>
 
                   {canModerate && submission.status === 'pending' && (
                     <>
-                      <button
+                      <Button
+                        type='button'
                         onClick={() => handleModerationAction(submission.version_id, 'approve')}
                         disabled={processingVersions.has(submission.version_id)}
-                        className='inline-flex items-center justify-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm text-white transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50'
+                        variant='success'
+                        size='sm'
                       >
                         {processingVersions.has(submission.version_id) ? (
                           <LoadingSpinner size='sm' />
@@ -378,12 +364,14 @@ export default function PendingClient() {
                           <CheckBadgeIcon className='size-4' strokeWidth={1.5} />
                         )}
                         批准
-                      </button>
+                      </Button>
 
-                      <button
+                      <Button
+                        type='button'
                         onClick={() => handleModerationAction(submission.version_id, 'reject')}
                         disabled={processingVersions.has(submission.version_id)}
-                        className='inline-flex items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm text-white transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50'
+                        variant='danger'
+                        size='sm'
                       >
                         {processingVersions.has(submission.version_id) ? (
                           <LoadingSpinner size='sm' />
@@ -391,26 +379,28 @@ export default function PendingClient() {
                           <CloseIcon className='size-4' strokeWidth={1.5} />
                         )}
                         拒绝
-                      </button>
+                      </Button>
                     </>
                   )}
 
                   {!canModerate && (
-                    <Link
+                    <ButtonLink
                       href={`/articles/${submission.article_id}/edit`}
-                      className='inline-flex items-center justify-center gap-2 rounded-lg bg-gray-100 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+                      variant='secondary'
+                      size='sm'
                     >
                       继续编辑
-                    </Link>
+                    </ButtonLink>
                   )}
 
-                  <Link
+                  <ButtonLink
                     href={`/articles/${submission.article_id}/history`}
-                    className='inline-flex items-center justify-center gap-2 rounded-lg bg-gray-100 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+                    variant='secondary'
+                    size='sm'
+                    leadingIcon={<ClockIcon className='size-4' strokeWidth={1.5} />}
                   >
-                    <ClockIcon className='size-4' strokeWidth={1.5} />
                     查看历史
-                  </Link>
+                  </ButtonLink>
                 </div>
               </div>
             </div>

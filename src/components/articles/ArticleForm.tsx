@@ -8,6 +8,7 @@ import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
 import BaseCard from '@/components/ui/BaseCard';
 import Button from '@/components/ui/Button';
 import { ArticleCharacterSelector } from '@/components/ui/CharacterSelector';
+import { FormInput, FormSelect } from '@/components/ui/FormControls';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import RichTextEditor from '@/components/ui/RichTextEditor';
 import { ArticleLintNotice, getArticleLintResults } from '@/components/articles/ArticleLintNotice';
@@ -144,13 +145,13 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
             >
               文章标题 <span className='text-red-500'>*</span>
             </label>
-            <input
+            <FormInput
               id='title'
               type='text'
               value={title}
               onChange={(e) => onTitleChange(e.target.value)}
               placeholder='请保证标题清晰准确'
-              className='form-control md:px-4'
+              className='md:px-4'
               disabled={isSubmitting}
             />
           </div>
@@ -168,11 +169,11 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
                 <span className='text-gray-600 dark:text-gray-400'>加载分类中...</span>
               </div>
             ) : (
-              <select
+              <FormSelect
                 id='category'
                 value={category}
                 onChange={(e) => onCategoryChange(e.target.value)}
-                className='form-control md:px-4'
+                className='md:px-4'
                 disabled={isSubmitting}
               >
                 <option value=''>请选择分类</option>
@@ -181,7 +182,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
                     {cat.name}
                   </option>
                 ))}
-              </select>
+              </FormSelect>
             )}
           </div>
 
@@ -234,30 +235,26 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
                   </p>
                 </div>
 
-                <button
+                <Button
                   type='button'
                   onClick={toggleTypoFixPrefix}
                   disabled={isSubmitting || !onCommitMessageChange}
-                  className={cn(
-                    'shrink-0 rounded-lg border px-3 py-2 text-sm font-medium transition-colors',
-                    isTypoFixActive
-                      ? 'border-blue-600 bg-blue-50 text-blue-700 dark:border-blue-500 dark:bg-blue-900/30 dark:text-blue-200'
-                      : 'border-gray-200 text-gray-700 hover:border-blue-500 hover:text-blue-600 dark:border-gray-700 dark:text-gray-300 dark:hover:border-blue-400 dark:hover:text-blue-200',
-                    isSubmitting && 'cursor-not-allowed opacity-70'
-                  )}
+                  variant={isTypoFixActive ? 'primary' : 'secondary'}
+                  size='sm'
+                  className={cn('shrink-0', isSubmitting && 'cursor-not-allowed opacity-70')}
                   aria-pressed={isTypoFixActive}
                 >
                   “修正笔误”
-                </button>
+                </Button>
               </div>
 
-              <input
+              <FormInput
                 id='commit-message'
                 type='text'
                 value={commitMessage}
                 onChange={(e) => onCommitMessageChange?.(e.target.value)}
                 placeholder='如：修正笔误、更新数据、补充说明等'
-                className='form-control md:px-4'
+                className='md:px-4'
                 disabled={isSubmitting}
               />
             </div>

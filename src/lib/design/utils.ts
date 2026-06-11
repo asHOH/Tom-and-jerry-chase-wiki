@@ -87,12 +87,26 @@ const actionButtonVariants = {
     'bg-gray-100 text-gray-800 hover:bg-gray-200 border border-gray-200 dark:bg-slate-700 dark:text-gray-100 dark:hover:bg-slate-600 dark:border-slate-600',
   ghost: 'text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700',
   danger: 'bg-red-600 text-white shadow-sm hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600',
+  success:
+    'bg-green-600 text-white shadow-sm hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600',
+  warning:
+    'bg-yellow-500 text-white shadow-sm hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-500',
 };
 
 const actionButtonSizes = {
   sm: 'text-sm px-3 py-2 rounded-md',
   md: 'text-base px-4 py-2.5 rounded-lg',
   lg: 'text-lg px-5 py-3 rounded-lg',
+};
+
+const formControlSizes = {
+  sm: 'px-2 py-2 text-sm rounded-lg',
+  md: 'px-3 py-3 text-lg rounded-lg',
+};
+
+const formControlStateClasses = {
+  default: 'border-gray-300 focus:border-transparent focus:ring-blue-500 dark:border-gray-600',
+  invalid: 'border-red-500 focus:border-transparent focus:ring-red-500 dark:border-red-500',
 };
 
 // ============================================================================
@@ -657,5 +671,25 @@ export function getActionButtonClasses(
     actionButtonSizes[size],
     options?.fullWidth && 'w-full',
     options?.loading && 'cursor-progress'
+  );
+}
+
+export type FormControlSize = keyof typeof formControlSizes;
+
+export function getFormControlClasses(options?: {
+  size?: FormControlSize;
+  invalid?: boolean;
+  className?: string | undefined;
+}): string {
+  const size = options?.size ?? 'md';
+  const state = options?.invalid
+    ? formControlStateClasses.invalid
+    : formControlStateClasses.default;
+
+  return cn(
+    'w-full border bg-white text-gray-900 placeholder-gray-500 transition-all duration-200 focus:ring-2 disabled:cursor-not-allowed disabled:opacity-70 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-400',
+    formControlSizes[size],
+    state,
+    options?.className
   );
 }

@@ -11,6 +11,7 @@ import { checkPasswordStrength, PasswordStrength } from '@/lib/passwordUtils';
 import { convertToPinyin } from '@/lib/pinyinUtils';
 import { USER_API_KEY } from '@/hooks/useUser';
 import Button from '@/components/ui/Button';
+import { FormInput } from '@/components/ui/FormControls';
 import { CloseIcon } from '@/components/icons/CommonIcons';
 
 import CaptchaComponent from './CaptchaComponent';
@@ -231,10 +232,9 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
               aria-hidden='true'
               readOnly
             />
-            <input
+            <FormInput
               type='password'
               placeholder='密码'
-              className='w-full rounded-md border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white'
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               autoFocus
@@ -259,26 +259,25 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
               aria-hidden='true'
               readOnly
             />
-            <input
+            <FormInput
               type='text'
               placeholder='昵称'
-              className='mb-2 w-full rounded-md border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white'
+              className='mb-2'
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
               autoFocus
             />
-            <input
+            <FormInput
               type='password'
               placeholder='密码'
-              className='w-full rounded-md border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white'
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               autoComplete='new-password'
             />
-            <input
+            <FormInput
               type='password'
               placeholder='确认密码'
-              className='mt-2 w-full rounded-md border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white'
+              className='mt-2'
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               autoComplete='new-password'
@@ -334,10 +333,9 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
         return (
           <>
             <h2 className='mb-4 text-xl font-bold text-gray-900 dark:text-white'>登录或注册</h2>
-            <input
+            <FormInput
               type='text'
               placeholder='用户名，支持汉字、拉丁字母、数字和._-+'
-              className='w-full rounded-md border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white'
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               autoFocus

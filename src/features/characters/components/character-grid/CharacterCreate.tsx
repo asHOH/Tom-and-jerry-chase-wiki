@@ -9,6 +9,8 @@ import type { CharacterWithFaction } from '@/lib/types';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
 import BaseCard from '@/components/ui/BaseCard';
+import Button from '@/components/ui/Button';
+import { FormInput } from '@/components/ui/FormControls';
 import { PlusIcon } from '@/components/icons/CommonIcons';
 import { characters, FactionId } from '@/data';
 
@@ -120,10 +122,9 @@ export default function CharacterCreate() {
           style={{ height: containerHeight }}
         >
           <p className='mb-4 text-center dark:text-gray-200'>请输入角色名称:</p>
-          <input
+          <FormInput
             ref={inputRef}
             type='text'
-            className='w-full rounded border border-gray-400 p-2 dark:border-gray-600 dark:bg-slate-700 dark:text-gray-200'
             placeholder='角色名称'
             value={characterName}
             onChange={(e) => setCharacterName(e.target.value)}
@@ -140,27 +141,27 @@ export default function CharacterCreate() {
             }}
           />
           <div className='mt-4 flex justify-end'>
-            <button
+            <Button
               type='button'
               data-submit-button='true'
               aria-label='确认创建角色'
-              className='mr-2 rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700'
+              className='mr-2'
               onClick={handleSubmit}
               disabled={!characterName.trim()}
             >
               确认创建
-            </button>
-            <button
+            </Button>
+            <Button
               type='button'
               aria-label='取消创建角色'
-              className='rounded bg-gray-200 px-4 py-2 font-bold text-black hover:bg-gray-300 dark:bg-slate-600 dark:text-gray-200 dark:hover:bg-slate-500'
+              variant='secondary'
               onClick={() => {
                 setShowInput(false);
                 setCharacterName('');
               }}
             >
               取消
-            </button>
+            </Button>
           </div>
         </div>
       )}

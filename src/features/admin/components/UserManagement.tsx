@@ -3,6 +3,9 @@
 import React, { useState } from 'react';
 
 import { cn } from '@/lib/design';
+import Button from '@/components/ui/Button';
+import Card from '@/components/ui/Card';
+import { FormInput, FormSelect } from '@/components/ui/FormControls';
 
 interface User {
   id: string;
@@ -95,35 +98,34 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, mutateUsers }) =
 
       {modalOpen && selectedUser && (
         <div className='bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black'>
-          <div className='mx-4 w-full max-w-md rounded bg-white p-6 shadow-lg dark:bg-slate-800 dark:text-slate-100'>
+          <Card className='mx-4 w-full max-w-md p-6 dark:text-slate-100'>
             <h2 className='mb-4 text-xl font-bold text-gray-900 dark:text-gray-100'>编辑用户</h2>
             <label className='mb-2 block'>
               昵称:
-              <input
+              <FormInput
                 type='text'
-                className='mt-1 w-full rounded border border-gray-300 bg-white px-2 py-1 text-gray-900 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100'
+                className='mt-1'
+                size='sm'
                 defaultValue={selectedUser.nickname}
                 id='nickname'
               />
             </label>
             <label className='mb-4 block'>
               密码:
-              <input
+              <FormInput
                 type='password'
-                className='mt-1 w-full rounded border border-gray-300 bg-white px-2 py-1 text-gray-900 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100'
+                className='mt-1'
+                size='sm'
                 placeholder='留空则不修改密码'
                 id='password'
               />
             </label>
             <div className='flex justify-end gap-2'>
-              <button
-                className='rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-600'
-                onClick={handleCloseModal}
-              >
+              <Button type='button' variant='secondary' onClick={handleCloseModal}>
                 取消
-              </button>
-              <button
-                className='rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600'
+              </Button>
+              <Button
+                type='button'
                 onClick={() => {
                   const nicknameInput = document.getElementById('nickname') as HTMLInputElement;
                   const passwordInput = document.getElementById('password') as HTMLInputElement;
@@ -131,13 +133,13 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, mutateUsers }) =
                 }}
               >
                 保存
-              </button>
+              </Button>
             </div>
-          </div>
+          </Card>
         </div>
       )}
 
-      <div className='rounded bg-white p-4 shadow dark:bg-slate-800 dark:text-slate-200'>
+      <Card className='dark:text-slate-200'>
         <div className='mb-4 flex items-center justify-between'>
           <h2 className='text-xl font-semibold text-gray-900 dark:text-gray-100'>用户管理</h2>
           <div className='text-sm text-gray-600 dark:text-gray-400'>{users.length} 个用户</div>
@@ -165,27 +167,23 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, mutateUsers }) =
                     {user.nickname}
                   </td>
                   <td className='px-4 py-3 text-sm text-gray-600 dark:text-gray-300'>
-                    <select
+                    <FormSelect
                       title='修改角色'
-                      className='rounded border border-gray-300 bg-white px-2 py-1 text-gray-900 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100'
                       value={user.role ?? 'Contributor'}
                       onChange={(e) => {
-                        const newRole = e.target.value;
-                        handleRoleUpdate(user.id, newRole);
+                        handleRoleUpdate(user.id, e.target.value);
                       }}
+                      size='sm'
                     >
                       <option value='Reviewer'>管理员</option>
                       <option value='Coordinator'>超管</option>
                       <option value='Contributor'>用户</option>
-                    </select>
+                    </FormSelect>
                   </td>
                   <td className='px-4 py-3 text-sm'>
-                    <button
-                      className='rounded bg-blue-500 px-3 py-1 text-white hover:bg-blue-600'
-                      onClick={() => handleOpenModal(user)}
-                    >
+                    <Button type='button' size='sm' onClick={() => handleOpenModal(user)}>
                       编辑
-                    </button>
+                    </Button>
                   </td>
                 </tr>
               ))}
@@ -202,7 +200,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, mutateUsers }) =
             </tbody>
           </table>
         </div>
-      </div>
+      </Card>
     </>
   );
 };

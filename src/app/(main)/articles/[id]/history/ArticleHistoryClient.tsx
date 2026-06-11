@@ -8,6 +8,8 @@ import { formatArticleDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
 import { useUser } from '@/hooks/useUser';
 import BaseCard from '@/components/ui/BaseCard';
+import Button from '@/components/ui/Button';
+import ButtonLink from '@/components/ui/ButtonLink';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import PageTitle from '@/components/ui/PageTitle';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
@@ -118,12 +120,7 @@ export default function ArticleHistoryClient() {
             {error ? '加载历史版本失败' : '历史版本未找到'}
           </h2>
           <p className='mb-6 text-gray-600 dark:text-gray-400'>无法加载此文章的历史版本</p>
-          <Link
-            href={`/articles/${articleId}`}
-            className='inline-flex items-center rounded-lg bg-blue-600 px-6 py-2 text-white transition-colors hover:bg-blue-700'
-          >
-            返回文章
-          </Link>
+          <ButtonLink href={`/articles/${articleId}`}>返回文章</ButtonLink>
         </BaseCard>
       </div>
     );
@@ -160,21 +157,18 @@ export default function ArticleHistoryClient() {
               已选择 {selectedVersions.length} 个版本进行比较
             </div>
             <div className='flex gap-3'>
-              <button
-                onClick={() => setSelectedVersions([])}
-                className='px-4 py-2 text-gray-600 transition-colors hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'
-              >
+              <Button type='button' onClick={() => setSelectedVersions([])} variant='ghost'>
                 清除选择
-              </button>
-              <button
-                className='rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700'
+              </Button>
+              <Button
+                type='button'
                 onClick={() => {
                   // TODO: Implement diff viewer
                   alert('差异比较功能即将推出');
                 }}
               >
                 比较差异
-              </button>
+              </Button>
             </div>
           </div>
         </BaseCard>
@@ -243,15 +237,17 @@ export default function ArticleHistoryClient() {
 
               {/* Actions */}
               <div className='ml-4 flex flex-col gap-2'>
-                <Link
+                <ButtonLink
                   href={`/articles/${articleId}?version=${version.id}`}
-                  className='rounded bg-gray-100 px-3 py-1.5 text-center text-sm text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+                  variant='secondary'
+                  size='sm'
                 >
                   查看完整版本
-                </Link>
+                </ButtonLink>
 
                 {canRevoke && version.status === 'approved' && index === 0 && (
-                  <button
+                  <Button
+                    type='button'
                     onClick={async () => {
                       if (confirm('确定要撤销这个版本吗？这将回退到上一个已发布的版本。')) {
                         try {
@@ -276,10 +272,11 @@ export default function ArticleHistoryClient() {
                         }
                       }
                     }}
-                    className='rounded bg-red-100 px-3 py-1.5 text-center text-sm text-red-700 transition-colors hover:bg-red-200 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/40'
+                    variant='danger'
+                    size='sm'
                   >
                     撤销版本
-                  </button>
+                  </Button>
                 )}
               </div>
             </div>
@@ -290,12 +287,7 @@ export default function ArticleHistoryClient() {
       {/* Footer */}
       <div className='mt-8 text-center'>
         <div className='flex flex-wrap justify-center gap-3'>
-          <Link
-            href={`/articles/${articleId}`}
-            className='rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700'
-          >
-            返回文章
-          </Link>
+          <ButtonLink href={`/articles/${articleId}`}>返回文章</ButtonLink>
 
           <Link
             href='/articles'
