@@ -54,7 +54,7 @@ const ArticleFilters: React.FC<ArticleFiltersProps> = ({
             getButtonClassName={(id, active) => (
               void id,
               active
-                ? 'bg-blue-600 text-white hover:bg-blue-700'
+                ? 'bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-gray-300'
             )}
           />
@@ -108,7 +108,7 @@ const ArticleFilters: React.FC<ArticleFiltersProps> = ({
         getButtonClassName={(opt, active) => (
           void opt,
           active
-            ? 'bg-green-600 text-white hover:bg-green-700'
+            ? 'bg-green-600 text-white hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-700'
             : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-gray-300'
         )}
       />
