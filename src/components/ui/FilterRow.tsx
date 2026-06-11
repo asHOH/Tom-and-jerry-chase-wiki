@@ -1,7 +1,7 @@
 import React, { ReactNode, useId } from 'react';
 import { m, MotionStyle } from 'motion/react';
 
-import { cn } from '@/lib/design';
+import { cn, getFilterButtonActiveToneClasses, type FilterButtonTone } from '@/lib/design';
 
 import FilterLabel from './FilterLabel';
 
@@ -16,6 +16,7 @@ export type FilterRowProps<T extends string | number> = {
   renderOption?: ((opt: T, button: ReactNode) => ReactNode) | undefined;
   getButtonClassName?: ((opt: T, active: boolean) => string) | undefined;
   getButtonStyle?: ((opt: T, active: boolean) => React.CSSProperties | undefined) | undefined;
+  activeTone?: FilterButtonTone | ((opt: T) => FilterButtonTone) | undefined;
   // Option can be disabled (e.g., interlocks)
   getButtonDisabled?: ((opt: T, active: boolean) => boolean | undefined) | undefined;
   // Container overrides
@@ -35,6 +36,7 @@ export default function FilterRow<T extends string | number>(props: FilterRowPro
     renderOption,
     getButtonClassName,
     getButtonStyle,
+    activeTone = 'default',
     getButtonDisabled,
     className,
     innerClassName,
@@ -59,6 +61,8 @@ export default function FilterRow<T extends string | number>(props: FilterRowPro
         >
           {options.map((opt) => {
             const active = isActive(opt as T);
+            const resolvedActiveTone =
+              typeof activeTone === 'function' ? activeTone(opt as T) : activeTone;
             const provided = getButtonStyle?.(opt as T, active);
             const finalStyle = provided;
             const labelNode = getOptionLabel ? getOptionLabel(opt as T, active) : String(opt);
@@ -70,7 +74,7 @@ export default function FilterRow<T extends string | number>(props: FilterRowPro
                 className={cn(
                   'filter-button cursor-pointer rounded-lg border-none px-3 py-2 text-sm font-medium transition-all duration-200 ease-in-out',
                   active
-                    ? 'bg-gray-200 text-gray-900 dark:bg-gray-700 dark:text-gray-100'
+                    ? getFilterButtonActiveToneClasses(resolvedActiveTone)
                     : 'bg-gray-100 text-gray-400 dark:bg-slate-800 dark:text-gray-500',
                   getButtonClassName?.(opt as T, active)
                 )}

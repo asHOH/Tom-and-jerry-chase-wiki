@@ -191,6 +191,7 @@ export default function EntityClient({ description }: Props) {
             label='阵营筛选:'
             options={['cat', 'mouse', 'other']}
             isActive={(f) => selectedFactions.includes(f)}
+            activeTone={(f) => (f === 'other' ? 'neutral' : 'default')}
             onToggle={(f) =>
               setSelectedFactions((prev) =>
                 prev.includes(f) ? prev.filter((x) => x !== f) : [...prev, f]
@@ -208,11 +209,6 @@ export default function EntityClient({ description }: Props) {
               }
               return active ? getFactionButtonColors(f, isDarkMode) : undefined;
             }}
-            getButtonClassName={(f, active) =>
-              active && f === 'other'
-                ? 'bg-gray-400 text-gray-800 border border-gray-400 dark:bg-gray-500 dark:text-gray-100 dark:border-gray-500'
-                : ''
-            }
           />
 
           {/* 控制区域：显示标签筛选 + 精确匹配 */}

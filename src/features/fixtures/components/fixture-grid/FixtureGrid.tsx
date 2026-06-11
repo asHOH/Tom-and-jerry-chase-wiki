@@ -3,8 +3,10 @@
 import { useMemo, useState } from 'react';
 import { useSnapshot } from 'valtio';
 
+import { getFixtureSourceColors, getFixtureTypeColors } from '@/lib/design';
 import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
+import { useDarkMode } from '@/context/DarkModeContext';
 import type { Fixture, FixtureSourceList, FixtureTypeList } from '@/data/types';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
@@ -32,6 +34,7 @@ export default function FixtureClient({ description }: Props) {
   const [selectedTypes, setSelectedTypes] = useState<FixtureTypeList[]>([]);
   const [selectedSources, setSelectedSources] = useState<FixtureSourceList[]>([]);
   const isMobile = useMobile();
+  const [isDarkMode] = useDarkMode();
 
   const fixturesSnapshot = useSnapshot(fixturesEdit);
   const filteredFixtures = Object.values(fixturesSnapshot as Record<string, Fixture>).filter(
@@ -80,8 +83,8 @@ export default function FixtureClient({ description }: Props) {
               )
             }
             getOptionLabel={(opt) => (isMobile ? opt.slice(0, 3) : opt)}
-            getButtonStyle={(_, active) =>
-              active ? { backgroundColor: '#3b82f6', color: '#fff' } : undefined
+            getButtonStyle={(type, active) =>
+              active ? getFixtureTypeColors(type, isDarkMode) : undefined
             }
             renderOption={(tag, button) => (
               <Tooltip
@@ -104,8 +107,8 @@ export default function FixtureClient({ description }: Props) {
               )
             }
             getOptionLabel={(opt) => (isMobile ? opt.slice(0, 2) : opt)}
-            getButtonStyle={(_, active) =>
-              active ? { backgroundColor: '#10b981', color: '#fff' } : undefined
+            getButtonStyle={(source, active) =>
+              active ? getFixtureSourceColors(source, isDarkMode) : undefined
             }
             renderOption={(tag, button) => (
               <Tooltip

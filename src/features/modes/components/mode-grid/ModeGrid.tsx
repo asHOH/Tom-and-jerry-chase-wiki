@@ -3,6 +3,8 @@
 import { useMemo, useState } from 'react';
 import { useSnapshot } from 'valtio';
 
+import { getModeTypeColors } from '@/lib/design';
+import { useDarkMode } from '@/context/DarkModeContext';
 import type { Mode, ModeTypeList } from '@/data/types';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
@@ -17,6 +19,7 @@ const MODE_TYPE_OPTIONS: ModeTypeList[] = ['经典模式', '休闲模式', '特�
 
 export default function ModeClient({ description }: Props) {
   const [selectedTypes, setSelectedTypes] = useState<ModeTypeList[]>([]);
+  const [isDarkMode] = useDarkMode();
 
   const modesSnapshot = useSnapshot(modesEdit);
   const filteredModes = Object.values(modesSnapshot as Record<string, Mode>).filter(
@@ -61,8 +64,8 @@ export default function ModeClient({ description }: Props) {
             )
           }
           getOptionLabel={(opt) => opt}
-          getButtonStyle={(_, active) =>
-            active ? { backgroundColor: '#3b82f6', color: '#fff' } : undefined
+          getButtonStyle={(type, active) =>
+            active ? getModeTypeColors(type, isDarkMode) : undefined
           }
         />
       }

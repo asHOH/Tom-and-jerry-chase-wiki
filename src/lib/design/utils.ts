@@ -99,6 +99,18 @@ const actionButtonSizes = {
   lg: 'text-lg px-5 py-3 rounded-lg',
 };
 
+export type FilterButtonTone = 'default' | 'blue' | 'green' | 'neutral';
+
+const filterButtonActiveToneClasses: Record<FilterButtonTone, string> = {
+  default:
+    'bg-gray-200 text-gray-900 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-700',
+  blue: 'bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-600 dark:text-white dark:hover:bg-blue-700',
+  green:
+    'bg-green-600 text-white hover:bg-green-700 dark:bg-green-600 dark:text-white dark:hover:bg-green-700',
+  neutral:
+    'border border-gray-400 bg-gray-400 text-gray-800 hover:bg-gray-500 dark:border-gray-500 dark:bg-gray-500 dark:text-gray-100 dark:hover:bg-gray-400',
+};
+
 const formControlSizes = {
   sm: 'px-2 py-2 text-sm rounded-lg',
   md: 'px-3 py-3 text-lg rounded-lg',
@@ -672,6 +684,10 @@ export function getActionButtonClasses(
     options?.fullWidth && 'w-full',
     options?.loading && 'cursor-progress'
   );
+}
+
+export function getFilterButtonActiveToneClasses(tone: FilterButtonTone = 'default'): string {
+  return filterButtonActiveToneClasses[tone];
 }
 
 export type FormControlSize = keyof typeof formControlSizes;

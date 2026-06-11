@@ -40,6 +40,7 @@ const ArticleFilters: React.FC<ArticleFiltersProps> = ({
             label='分类筛选:'
             options={categoryOptions}
             isActive={(id) => hasCategoryFilter(String(id))}
+            activeTone='blue'
             onToggle={(id) => {
               handleCategoryToggle(String(id));
             }}
@@ -51,12 +52,11 @@ const ArticleFilters: React.FC<ArticleFiltersProps> = ({
                 categoryId
               );
             }}
-            getButtonClassName={(id, active) => (
-              void id,
+            getButtonClassName={(_, active) =>
               active
-                ? 'bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700'
+                ? ''
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-gray-300'
-            )}
+            }
           />
           {selectedCategories.size > 0 && (
             <div className='mt-2 flex justify-center md:mt-4'>
@@ -84,6 +84,7 @@ const ArticleFilters: React.FC<ArticleFiltersProps> = ({
           'view_count-asc',
         ]}
         isActive={(opt) => `${sortBy}-${sortOrder}` === opt}
+        activeTone='green'
         onToggle={(opt) => {
           const [newSortBy, newSortOrder] = opt.split('-') as [
             'created_at' | 'title' | 'view_count',
@@ -105,12 +106,11 @@ const ArticleFilters: React.FC<ArticleFiltersProps> = ({
                     ? '浏览量最少'
                     : '浏览量最多'
         }
-        getButtonClassName={(opt, active) => (
-          void opt,
+        getButtonClassName={(_, active) =>
           active
-            ? 'bg-green-600 text-white hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-700'
+            ? ''
             : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-gray-300'
-        )}
+        }
       />
     </>
   );

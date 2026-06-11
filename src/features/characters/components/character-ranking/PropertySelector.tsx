@@ -57,14 +57,12 @@ function PropertySelector({ currentProperty, onPropertyChange }: PropertySelecto
             label='通用属性:'
             options={commonProperties.map((p) => p.key)}
             isActive={(opt) => currentProperty === opt}
+            activeTone='blue'
             onToggle={(opt) => handlePropertySelect(opt)}
             getOptionLabel={(opt) => {
               const p = commonProperties.find((x) => x.key === opt)!;
               return propertyLabel(p);
             }}
-            getButtonClassName={(_, active) =>
-              active ? 'bg-blue-600 text-white dark:bg-blue-600 dark:text-white' : ''
-            }
           />
 
           {/* 阵营专属属性 */}
@@ -79,14 +77,12 @@ function PropertySelector({ currentProperty, onPropertyChange }: PropertySelecto
               }
               options={factionSpecificProperties.map((p) => p.key)}
               isActive={(opt) => currentProperty === opt}
+              activeTone='blue'
               onToggle={(opt) => handlePropertySelect(opt)}
               getOptionLabel={(opt) => {
                 const p = factionSpecificProperties.find((x) => x.key === opt)!;
                 return propertyLabel(p);
               }}
-              getButtonClassName={(_, active) =>
-                active ? 'bg-blue-600 text-white dark:bg-blue-600 dark:text-white' : ''
-              }
             />
           )}
 

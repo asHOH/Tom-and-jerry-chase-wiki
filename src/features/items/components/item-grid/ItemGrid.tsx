@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import { useSnapshot } from 'valtio';
 
-import { getFactionButtonColors } from '@/lib/design';
+import { getFactionButtonColors, getItemSourceColors, getItemTypeColors } from '@/lib/design';
 import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
@@ -81,8 +81,8 @@ export default function ItemClient({ description }: Props) {
               )
             }
             getOptionLabel={(opt) => (isMobile ? opt.slice(0, 2) : opt)}
-            getButtonStyle={(_, active) =>
-              active ? { backgroundColor: '#3b82f6', color: '#fff' } : undefined
+            getButtonStyle={(type, active) =>
+              active ? getItemTypeColors(type, isDarkMode) : undefined
             }
             renderOption={(tag, button) => (
               <Tooltip
@@ -105,8 +105,8 @@ export default function ItemClient({ description }: Props) {
               )
             }
             getOptionLabel={(opt) => (isMobile ? opt.slice(0, 2) : opt)}
-            getButtonStyle={(_, active) =>
-              active ? { backgroundColor: '#10b981', color: '#fff' } : undefined
+            getButtonStyle={(source, active) =>
+              active ? getItemSourceColors(source, isDarkMode) : undefined
             }
             renderOption={(tag, button) => (
               <Tooltip
