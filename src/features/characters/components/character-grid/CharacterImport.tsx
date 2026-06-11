@@ -103,7 +103,7 @@ const PasteInputModal: React.FC<PasteInputModalProps> = ({
       <p className='mb-4 text-center'>请将内容粘贴到下方文本框:</p>
       <FormTextarea
         ref={pasteInputRef}
-        className='flex-grow resize-none'
+        className='grow resize-none'
         placeholder='在此处粘贴内容...'
         value={textareaContent} // Bind value to state
         onChange={handleTextareaChange} // Use onChange for controlled component
@@ -275,7 +275,7 @@ export default function CharacterImport() {
               variant='ghost'
               size='lg'
               fullWidth
-              className='flex-grow rounded-none border-b border-gray-400 text-xl font-bold dark:border-gray-600'
+              className='grow rounded-none border-b border-gray-400 text-xl font-bold dark:border-gray-600'
               onClick={(e) => {
                 e.stopPropagation();
                 fileInputRef.current?.click();
@@ -289,7 +289,7 @@ export default function CharacterImport() {
               variant='ghost'
               size='lg'
               fullWidth
-              className='flex-grow rounded-none text-xl font-bold'
+              className='grow rounded-none text-xl font-bold'
               onClick={handlePasteClick}
             >
               从剪贴板上传
