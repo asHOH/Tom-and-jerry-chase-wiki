@@ -6,17 +6,11 @@ import { formatCompactDateTime } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
 import { useToast } from '@/context/ToastContext';
 import { Database } from '@/data/database.types';
-import type { TraitRelationKind } from '@/data/types';
-import {
-  diffGameActionIdArray,
-  hasVisibleIdArrayDiff,
-  shouldShowGameActionValueTransition,
-  summarizeGameActionValue,
-} from '@/features/admin/utils/gameActionPreview';
-import { getCharacterRelation } from '@/features/characters/utils/relationReadModel';
 import Button from '@/components/ui/Button';
 import { FormInput, FormSelect } from '@/components/ui/FormControls';
 import { ChevronRightIcon } from '@/components/icons/CommonIcons';
+
+import GameDataActionPreviewList from './GameDataActionPreviewList';
 
 type ActionStatus = Database['public']['Enums']['game_data_action_status'];
 type ActionStatusFilter = 'all' | ActionStatus;
@@ -37,49 +31,6 @@ const ACTION_STATUS_META: Record<ActionStatus, { label: string; className: strin
   rejected: { label: '已拒绝', className: 'text-red-700 dark:text-red-300' },
   synced: { label: '已同步', className: 'text-purple-700 dark:text-purple-300' },
 };
-
-const CHARACTER_RELATION_KINDS = [
-  'counters',
-  'counteredBy',
-  'counterEachOther',
-  'collaborators',
-  'countersKnowledgeCards',
-  'counteredByKnowledgeCards',
-  'countersSpecialSkills',
-  'counteredBySpecialSkills',
-  'advantageMaps',
-  'advantageModes',
-  'disadvantageMaps',
-  'disadvantageModes',
-] as const satisfies readonly TraitRelationKind[];
-
-const CHARACTER_RELATION_KIND_SET = new Set<TraitRelationKind>(CHARACTER_RELATION_KINDS);
-
-type PreviewAction = {
-  op?: string;
-  path?: string;
-  oldValue?: unknown;
-  newValue?: unknown;
-};
-
-function getProjectedCharacterRelationPreviewOldValue(path: string | undefined): unknown {
-  const parts = path?.split('.') ?? [];
-  if (parts.length !== 2) return undefined;
-
-  const [characterId, relationKind] = parts;
-  if (!characterId || !CHARACTER_RELATION_KIND_SET.has(relationKind as TraitRelationKind)) {
-    return undefined;
-  }
-
-  return getCharacterRelation(characterId)[relationKind as TraitRelationKind];
-}
-
-function getPreviewOldValue(entityType: string, action: PreviewAction): unknown {
-  if (action.oldValue !== null && action.oldValue !== undefined) return action.oldValue;
-  if (entityType !== 'characters') return action.oldValue;
-
-  return getProjectedCharacterRelationPreviewOldValue(action.path) ?? action.oldValue;
-}
 
 const GameDataActionModerationPanel = ({
   pendingActions,
@@ -551,111 +502,10 @@ const GameDataActionModerationPanel = ({
                           </div>
                         )}
 
-                        <ul className='space-y-1 text-xs'>
-                          {(Array.isArray(submission.entry) ? submission.entry : [submission.entry])
-                            .filter((entry) => {
-                              if (!entry || typeof entry !== 'object') return true;
-
-                              const action = entry as PreviewAction;
-                              const previewOldValue = getPreviewOldValue(
-                                submission.entity_type,
-                                action
-                              );
-                              const noOld =
-                                previewOldValue === null || previewOldValue === undefined;
-                              const newIsEmptyArray =
-                                Array.isArray(action.newValue) && action.newValue.length === 0;
-                              return !(noOld && newIsEmptyArray);
-                            })
-                            .map((entry, idx) => {
-                              if (!entry || typeof entry !== 'object') {
-                                return (
-                                  <li
-                                    key={idx}
-                                    className='rounded bg-white/60 px-2 py-1 text-gray-700 ring-1 ring-gray-100 dark:bg-slate-800/60 dark:text-slate-100 dark:ring-slate-700'
-                                  >
-                                    非法记录
-                                  </li>
-                                );
-                              }
-
-                              const action = entry as PreviewAction;
-                              const op = action.op ?? 'set';
-                              const path = action.path ?? '<无路径>';
-                              const previewOldValue = getPreviewOldValue(
-                                submission.entity_type,
-                                action
-                              );
-                              const oldSummary = summarizeGameActionValue(previewOldValue);
-                              const newSummary = summarizeGameActionValue(action.newValue);
-                              const idDiff = diffGameActionIdArray(
-                                previewOldValue,
-                                action.newValue
-                              );
-                              const showValueTransition = shouldShowGameActionValueTransition(
-                                oldSummary,
-                                newSummary,
-                                idDiff
-                              );
-                              const showIdDiff = hasVisibleIdArrayDiff(idDiff);
-
-                              return (
-                                <li
-                                  key={idx}
-                                  className='rounded bg-white/80 px-2 py-1 text-gray-800 shadow-sm ring-1 ring-amber-100 dark:bg-slate-800/60 dark:text-slate-100 dark:ring-amber-900/50'
-                                >
-                                  <div className='flex flex-wrap items-center gap-2'>
-                                    {op !== 'set' && (
-                                      <span className='rounded bg-amber-600 px-1.5 py-0.5 text-[11px] font-semibold text-white'>
-                                        {op.toUpperCase()}
-                                      </span>
-                                    )}
-                                    <span className='font-medium'>{path}</span>
-                                  </div>
-                                  {showValueTransition && (
-                                    <div className='mt-1 grid grid-cols-[1fr_auto_1fr] items-center gap-1 text-[11px] text-gray-800 dark:text-slate-100'>
-                                      <div className='truncate text-gray-700 dark:text-slate-200'>
-                                        {oldSummary}
-                                      </div>
-                                      <span className='text-gray-500 dark:text-slate-400'>→</span>
-                                      <div className='truncate text-green-700 dark:text-green-200'>
-                                        {newSummary}
-                                      </div>
-                                    </div>
-                                  )}
-                                  {showIdDiff && (
-                                    <div className='mt-1 space-y-1 text-[11px]'>
-                                      <div className='flex flex-wrap gap-2'>
-                                        {idDiff.added.length > 0 && (
-                                          <span className='rounded bg-green-100 px-1.5 py-0.5 text-green-700 dark:bg-green-900/40 dark:text-green-200'>
-                                            新增ID：{idDiff.added.join('、')}
-                                          </span>
-                                        )}
-                                        {idDiff.removed.length > 0 && (
-                                          <span className='rounded bg-red-100 px-1.5 py-0.5 text-red-700 dark:bg-red-900/40 dark:text-red-200'>
-                                            移除ID：{idDiff.removed.join('、')}
-                                          </span>
-                                        )}
-                                      </div>
-                                      {idDiff.changed.length > 0 && (
-                                        <div className='rounded bg-blue-50 px-2 py-1 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200'>
-                                          <div className='font-medium'>变更字段：</div>
-                                          <ul className='mt-1 space-y-0.5'>
-                                            {idDiff.changed.map((change) => (
-                                              <li key={change.id} className='wrap-break-word'>
-                                                <span className='font-medium'>{change.id}</span>：
-                                                {change.fields.join('、')}
-                                              </li>
-                                            ))}
-                                          </ul>
-                                        </div>
-                                      )}
-                                    </div>
-                                  )}
-                                </li>
-                              );
-                            })}
-                        </ul>
+                        <GameDataActionPreviewList
+                          entry={submission.entry}
+                          entityType={submission.entity_type}
+                        />
 
                         <pre className='max-h-64 overflow-auto rounded bg-gray-50 p-3 text-xs text-gray-800 dark:bg-slate-900/40 dark:text-slate-100'>
                           {JSON.stringify(submission.entry, null, 2)}
