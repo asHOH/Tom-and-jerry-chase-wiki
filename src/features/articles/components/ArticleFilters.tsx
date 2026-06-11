@@ -52,11 +52,6 @@ const ArticleFilters: React.FC<ArticleFiltersProps> = ({
                 categoryId
               );
             }}
-            getButtonClassName={(_, active) =>
-              active
-                ? ''
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-gray-300'
-            }
           />
           {selectedCategories.size > 0 && (
             <div className='mt-2 flex justify-center md:mt-4'>
@@ -105,11 +100,6 @@ const ArticleFilters: React.FC<ArticleFiltersProps> = ({
                   : opt === 'view_count-asc'
                     ? '浏览量最少'
                     : '浏览量最多'
-        }
-        getButtonClassName={(_, active) =>
-          active
-            ? ''
-            : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-gray-300'
         }
       />
     </>

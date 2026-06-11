@@ -75,7 +75,7 @@ export default function FilterRow<T extends string | number>(props: FilterRowPro
                   'filter-button cursor-pointer rounded-lg border-none px-3 py-2 text-sm font-medium transition-all duration-200 ease-in-out',
                   active
                     ? getFilterButtonActiveToneClasses(resolvedActiveTone)
-                    : 'bg-gray-100 text-gray-400 dark:bg-slate-800 dark:text-gray-500',
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-800 dark:text-gray-500 dark:hover:bg-slate-700',
                   getButtonClassName?.(opt as T, active)
                 )}
                 style={finalStyle as MotionStyle}
