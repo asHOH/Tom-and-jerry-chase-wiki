@@ -33,8 +33,9 @@ jest.mock('@/hooks/useLocalEditEntity', () => ({
   useLocalCharacter: () => ({ characterId: '汤姆' }),
 }));
 
-// Mock the design-tokens module
-jest.mock('../../../../lib/design/tokens', () => ({
+// Mock the public design module used by SkillAllocationDisplay.
+jest.mock('@/lib/design', () => ({
+  ...jest.requireActual('@/lib/design'),
   getSkillLevelColors: jest.fn(() => ({
     backgroundColor: '#f0f0f0',
     borderColor: '#333',

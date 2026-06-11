@@ -1,6 +1,7 @@
 import type { buffTypelist, FactionId } from '@/data/types';
 
-import { designTokens, sharedPositioningTagPalettes } from './tokens';
+import { designTokens } from './designTokens';
+import { sharedPositioningTagPalettes } from './palettes';
 import type { PositioningTagColorStyle } from './types';
 
 // ============================================================================
