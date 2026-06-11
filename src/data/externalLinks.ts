@@ -26,9 +26,16 @@ export const EXTERNAL_LINK_GROUPS: ExternalLinkGroup[] = [
     ],
   },
   {
-    title: '网易官方账号',
+    title: '网易官方资源',
     hideDescriptions: true,
     items: [
+      {
+        title: '官方网站',
+        description: '游戏官网与公告',
+        ariaLabel: '打开猫和老鼠手游官方网站',
+        href: 'https://tom.163.com/',
+        iconType: 'netease',
+      },
       {
         title: '网易大神',
         description: '官方号动态与活动',
