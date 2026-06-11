@@ -10,7 +10,7 @@ import Button from '@/components/ui/Button';
 import { FormInput, FormSelect } from '@/components/ui/FormControls';
 import { ChevronRightIcon } from '@/components/icons/CommonIcons';
 
-import GameDataActionPreviewList from './GameDataActionPreviewList';
+import GameDataActionPreviewList, { GameDataActionRawPreview } from './GameDataActionPreviewList';
 
 type ActionStatus = Database['public']['Enums']['game_data_action_status'];
 type ActionStatusFilter = 'all' | ActionStatus;
@@ -507,9 +507,7 @@ const GameDataActionModerationPanel = ({
                           entityType={submission.entity_type}
                         />
 
-                        <pre className='max-h-64 overflow-auto rounded bg-gray-50 p-3 text-xs text-gray-800 dark:bg-slate-900/40 dark:text-slate-100'>
-                          {JSON.stringify(submission.entry, null, 2)}
-                        </pre>
+                        <GameDataActionRawPreview entry={submission.entry} />
                       </div>
                     )}
                   </div>

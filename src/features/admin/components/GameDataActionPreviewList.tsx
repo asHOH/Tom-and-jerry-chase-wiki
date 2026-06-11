@@ -19,6 +19,10 @@ type GameDataActionPreviewListProps = {
   entityType: string;
 };
 
+type GameDataActionRawPreviewProps = {
+  entry: unknown;
+};
+
 const CHARACTER_RELATION_KINDS = [
   'counters',
   'counteredBy',
@@ -57,6 +61,10 @@ function getPreviewOldValue(entityType: string, action: PreviewAction): unknown 
 
 function isPreviewAction(entry: unknown): entry is PreviewAction {
   return entry !== null && typeof entry === 'object';
+}
+
+function formatJsonValue(value: unknown): string {
+  return JSON.stringify(value, null, 2) ?? String(value);
 }
 
 function shouldShowPreviewEntry(entityType: string, entry: unknown): boolean {
@@ -141,6 +149,60 @@ const GameDataActionPreviewItem = ({ action, entityType }: GameDataActionPreview
     </li>
   );
 };
+
+function getRawActionMetadata(action: PreviewAction): Record<string, unknown> {
+  const metadata: Record<string, unknown> = {};
+
+  for (const [key, value] of Object.entries(action)) {
+    if (key === 'path' || key === 'oldValue' || key === 'newValue') continue;
+    if (key === 'op' && (value === undefined || value === 'set')) continue;
+    metadata[key] = value;
+  }
+
+  return metadata;
+}
+
+const RawValueBox = ({ value }: { value: unknown }) => (
+  <pre className='max-h-64 min-h-12 overflow-auto rounded bg-gray-50 p-3 text-xs whitespace-pre-wrap text-gray-800 dark:bg-slate-900/40 dark:text-slate-100'>
+    {formatJsonValue(value)}
+  </pre>
+);
+
+const RawPreviewAction = ({ action }: { action: PreviewAction }) => {
+  const metadata = getRawActionMetadata(action);
+  const hasMetadata = Object.keys(metadata).length > 0;
+  const hasValueDiff = 'oldValue' in action || 'newValue' in action;
+
+  if (!hasValueDiff) {
+    return <RawValueBox value={metadata} />;
+  }
+
+  return (
+    <div className='space-y-1'>
+      {hasMetadata && <RawValueBox value={metadata} />}
+      <div className='grid gap-1 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:items-center'>
+        <RawValueBox value={action.oldValue} />
+        <span className='flex justify-center text-sm text-gray-500 dark:text-slate-400'>→</span>
+        <RawValueBox value={action.newValue} />
+      </div>
+    </div>
+  );
+};
+
+const RawPreviewEntry = ({ entry }: { entry: unknown }) =>
+  isPreviewAction(entry) ? <RawPreviewAction action={entry} /> : <RawValueBox value={entry} />;
+
+export function GameDataActionRawPreview({ entry }: GameDataActionRawPreviewProps) {
+  const entries = Array.isArray(entry) ? entry : [entry];
+
+  return (
+    <div className='space-y-2'>
+      {entries.map((item, index) => (
+        <RawPreviewEntry key={index} entry={item} />
+      ))}
+    </div>
+  );
+}
 
 export default function GameDataActionPreviewList({
   entry,
