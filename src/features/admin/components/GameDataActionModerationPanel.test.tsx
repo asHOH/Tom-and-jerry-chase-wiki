@@ -1,5 +1,8 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
+import { summarizeGameActionValue } from '@/features/admin/utils/gameActionPreview';
+import { getCharacterRelation } from '@/features/characters/utils/relationReadModel';
+
 import GameDataActionModerationPanel, {
   type PendingGameDataAction,
 } from './GameDataActionModerationPanel';
@@ -134,6 +137,53 @@ describe('GameDataActionModerationPanel', () => {
     expect(screen.getByText(/舍己.*isMinor/)).toBeInTheDocument();
     expect(screen.queryByText('数组(4: 回家、护佑、无畏 等)')).not.toBeInTheDocument();
     expect(screen.queryByText('→')).not.toBeInTheDocument();
+  });
+
+  it('uses projected character relations as the old preview value when relation overlays are first set', () => {
+    const projectedCounters = getCharacterRelation('恶魔汤姆').counters;
+    const existingCounterId = projectedCounters[0]?.id;
+
+    expect(projectedCounters.length).toBeGreaterThan(0);
+    expect(existingCounterId).toBeDefined();
+
+    const actionWithMissingRelationOldValue: PendingGameDataAction = {
+      ...sampleAction,
+      action_id: 'action-character-relation-overlay',
+      entity_type: 'characters',
+      entry: {
+        op: 'set',
+        path: '恶魔汤姆.counters',
+        newValue: [
+          ...projectedCounters,
+          {
+            id: '__preview_added__',
+            isMinor: false,
+            description: 'new preview relation',
+          },
+        ],
+      },
+    };
+
+    render(
+      <GameDataActionModerationPanel
+        pendingActions={[actionWithMissingRelationOldValue]}
+        mutatePendingActions={jest.fn()}
+      />
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: '展开详情' }));
+
+    expect(screen.getByText(summarizeGameActionValue(projectedCounters))).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        (content) => content.includes('新增ID') && content.includes('__preview_added__')
+      )
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText(
+        (content) => content.includes('新增ID') && content.includes(existingCounterId!)
+      )
+    ).not.toBeInTheDocument();
   });
 
   it('keeps read-only controls enabled while moderation is in flight', async () => {

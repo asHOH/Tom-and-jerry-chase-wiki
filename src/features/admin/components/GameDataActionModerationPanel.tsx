@@ -6,12 +6,14 @@ import { formatCompactDateTime } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
 import { useToast } from '@/context/ToastContext';
 import { Database } from '@/data/database.types';
+import type { TraitRelationKind } from '@/data/types';
 import {
   diffGameActionIdArray,
   hasVisibleIdArrayDiff,
   shouldShowGameActionValueTransition,
   summarizeGameActionValue,
 } from '@/features/admin/utils/gameActionPreview';
+import { getCharacterRelation } from '@/features/characters/utils/relationReadModel';
 import Button from '@/components/ui/Button';
 import { FormInput, FormSelect } from '@/components/ui/FormControls';
 import { ChevronRightIcon } from '@/components/icons/CommonIcons';
@@ -35,6 +37,49 @@ const ACTION_STATUS_META: Record<ActionStatus, { label: string; className: strin
   rejected: { label: '已拒绝', className: 'text-red-700 dark:text-red-300' },
   synced: { label: '已同步', className: 'text-purple-700 dark:text-purple-300' },
 };
+
+const CHARACTER_RELATION_KINDS = [
+  'counters',
+  'counteredBy',
+  'counterEachOther',
+  'collaborators',
+  'countersKnowledgeCards',
+  'counteredByKnowledgeCards',
+  'countersSpecialSkills',
+  'counteredBySpecialSkills',
+  'advantageMaps',
+  'advantageModes',
+  'disadvantageMaps',
+  'disadvantageModes',
+] as const satisfies readonly TraitRelationKind[];
+
+const CHARACTER_RELATION_KIND_SET = new Set<TraitRelationKind>(CHARACTER_RELATION_KINDS);
+
+type PreviewAction = {
+  op?: string;
+  path?: string;
+  oldValue?: unknown;
+  newValue?: unknown;
+};
+
+function getProjectedCharacterRelationPreviewOldValue(path: string | undefined): unknown {
+  const parts = path?.split('.') ?? [];
+  if (parts.length !== 2) return undefined;
+
+  const [characterId, relationKind] = parts;
+  if (!characterId || !CHARACTER_RELATION_KIND_SET.has(relationKind as TraitRelationKind)) {
+    return undefined;
+  }
+
+  return getCharacterRelation(characterId)[relationKind as TraitRelationKind];
+}
+
+function getPreviewOldValue(entityType: string, action: PreviewAction): unknown {
+  if (action.oldValue !== null && action.oldValue !== undefined) return action.oldValue;
+  if (entityType !== 'characters') return action.oldValue;
+
+  return getProjectedCharacterRelationPreviewOldValue(action.path) ?? action.oldValue;
+}
 
 const GameDataActionModerationPanel = ({
   pendingActions,
@@ -519,9 +564,13 @@ const GameDataActionModerationPanel = ({
                             .filter((entry) => {
                               if (!entry || typeof entry !== 'object') return true;
 
-                              const action = entry as { oldValue?: unknown; newValue?: unknown };
+                              const action = entry as PreviewAction;
+                              const previewOldValue = getPreviewOldValue(
+                                submission.entity_type,
+                                action
+                              );
                               const noOld =
-                                action.oldValue === null || action.oldValue === undefined;
+                                previewOldValue === null || previewOldValue === undefined;
                               const newIsEmptyArray =
                                 Array.isArray(action.newValue) && action.newValue.length === 0;
                               return !(noOld && newIsEmptyArray);
@@ -538,18 +587,17 @@ const GameDataActionModerationPanel = ({
                                 );
                               }
 
-                              const action = entry as {
-                                op?: string;
-                                path?: string;
-                                oldValue?: unknown;
-                                newValue?: unknown;
-                              };
+                              const action = entry as PreviewAction;
                               const op = action.op ?? 'set';
                               const path = action.path ?? '<无路径>';
-                              const oldSummary = summarizeGameActionValue(action.oldValue);
+                              const previewOldValue = getPreviewOldValue(
+                                submission.entity_type,
+                                action
+                              );
+                              const oldSummary = summarizeGameActionValue(previewOldValue);
                               const newSummary = summarizeGameActionValue(action.newValue);
                               const idDiff = diffGameActionIdArray(
-                                action.oldValue,
+                                previewOldValue,
                                 action.newValue
                               );
                               const showValueTransition = shouldShowGameActionValueTransition(
