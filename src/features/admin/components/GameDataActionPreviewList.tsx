@@ -1,3 +1,5 @@
+import { Fragment } from 'react';
+
 import type { TraitRelationKind } from '@/data/types';
 import {
   diffGameActionIdArray,
@@ -22,6 +24,15 @@ type GameDataActionPreviewListProps = {
 type GameDataActionRawPreviewProps = {
   entry: unknown;
 };
+
+const JSON_QUOTE_CLASS = 'text-gray-400 dark:text-slate-500';
+const JSON_FIRST_LEVEL_KEY_CLASS =
+  'text-amber-700 md:text-gray-800 dark:text-amber-300 md:dark:text-slate-100';
+const JSON_NESTED_KEY_CLASS = 'text-blue-700 dark:text-blue-300';
+const JSON_STRING_CLASS = 'text-green-700 dark:text-green-300';
+const JSON_LITERAL_CLASS = 'text-purple-700 dark:text-purple-300';
+const JSON_NULL_CLASS = 'text-gray-500 dark:text-slate-400';
+const JSON_INDENT = '  ';
 
 const CHARACTER_RELATION_KINDS = [
   'counters',
@@ -61,10 +72,6 @@ function getPreviewOldValue(entityType: string, action: PreviewAction): unknown 
 
 function isPreviewAction(entry: unknown): entry is PreviewAction {
   return entry !== null && typeof entry === 'object';
-}
-
-function formatJsonValue(value: unknown): string {
-  return JSON.stringify(value, null, 2) ?? String(value);
 }
 
 function shouldShowPreviewEntry(entityType: string, entry: unknown): boolean {
@@ -162,9 +169,105 @@ function getRawActionMetadata(action: PreviewAction): Record<string, unknown> {
   return metadata;
 }
 
-const RawValueBox = ({ value }: { value: unknown }) => (
+const JsonQuote = () => <span className={JSON_QUOTE_CLASS}>{'"'}</span>;
+
+const JsonKey = ({ name, depth }: { name: string; depth: number }) => (
+  <>
+    <JsonQuote />
+    <span className={depth === 0 ? JSON_FIRST_LEVEL_KEY_CLASS : JSON_NESTED_KEY_CLASS}>{name}</span>
+    <JsonQuote />
+  </>
+);
+
+const JsonString = ({ value }: { value: string }) => {
+  const encoded = JSON.stringify(value);
+  return (
+    <>
+      <JsonQuote />
+      <span className={JSON_STRING_CLASS}>{encoded.slice(1, -1)}</span>
+      <JsonQuote />
+    </>
+  );
+};
+
+const JsonValue = ({
+  value,
+  keyDepth = 0,
+  indent = 0,
+}: {
+  value: unknown;
+  keyDepth?: number;
+  indent?: number;
+}) => {
+  if (typeof value === 'string') return <JsonString value={value} />;
+  if (typeof value === 'number' || typeof value === 'boolean') {
+    return <span className={JSON_LITERAL_CLASS}>{String(value)}</span>;
+  }
+  if (value === null) return <span className={JSON_NULL_CLASS}>null</span>;
+  if (value === undefined) return <span className={JSON_NULL_CLASS}>undefined</span>;
+
+  if (Array.isArray(value)) {
+    if (value.length === 0) return <>[]</>;
+
+    return (
+      <>
+        [
+        {value.map((item, index) => (
+          <Fragment key={index}>
+            {'\n'}
+            {JSON_INDENT.repeat(indent + 1)}
+            <JsonValue value={item} keyDepth={keyDepth} indent={indent + 1} />
+            {index < value.length - 1 && ','}
+          </Fragment>
+        ))}
+        {'\n'}
+        {JSON_INDENT.repeat(indent)}]
+      </>
+    );
+  }
+
+  if (typeof value === 'object') {
+    const entries = Object.entries(value);
+    if (entries.length === 0) return <>{'{}'}</>;
+
+    return (
+      <>
+        {'{'}
+        {entries.map(([key, item], index) => (
+          <Fragment key={key}>
+            {'\n'}
+            {JSON_INDENT.repeat(indent + 1)}
+            <JsonKey name={key} depth={keyDepth} />:{' '}
+            <JsonValue value={item} keyDepth={keyDepth + 1} indent={indent + 1} />
+            {index < entries.length - 1 && ','}
+          </Fragment>
+        ))}
+        {'\n'}
+        {JSON_INDENT.repeat(indent)}
+        {'}'}
+      </>
+    );
+  }
+
+  return <>{String(value)}</>;
+};
+
+const RawValueBox = ({
+  value,
+  label,
+  keyDepth = 0,
+}: {
+  value: unknown;
+  label?: string;
+  keyDepth?: number;
+}) => (
   <pre className='max-h-64 min-h-12 overflow-auto rounded bg-gray-50 p-3 text-xs whitespace-pre-wrap text-gray-800 dark:bg-slate-900/40 dark:text-slate-100'>
-    {formatJsonValue(value)}
+    {label && (
+      <span className='md:hidden'>
+        <JsonKey name={label} depth={0} />:{' '}
+      </span>
+    )}
+    <JsonValue value={value} keyDepth={keyDepth} />
   </pre>
 );
 
@@ -181,9 +284,9 @@ const RawPreviewAction = ({ action }: { action: PreviewAction }) => {
     <div className='space-y-1'>
       {hasMetadata && <RawValueBox value={metadata} />}
       <div className='grid gap-1 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:items-center'>
-        <RawValueBox value={action.oldValue} />
+        <RawValueBox value={action.oldValue} label='oldValue' keyDepth={1} />
         <span className='flex justify-center text-sm text-gray-500 dark:text-slate-400'>→</span>
-        <RawValueBox value={action.newValue} />
+        <RawValueBox value={action.newValue} label='newValue' keyDepth={1} />
       </div>
     </div>
   );
