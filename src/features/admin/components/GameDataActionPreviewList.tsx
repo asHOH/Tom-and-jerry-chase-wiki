@@ -32,6 +32,8 @@ const JSON_NESTED_KEY_CLASS = 'text-blue-700 dark:text-blue-300';
 const JSON_STRING_CLASS = 'text-green-700 dark:text-green-300';
 const JSON_LITERAL_CLASS = 'text-purple-700 dark:text-purple-300';
 const JSON_NULL_CLASS = 'text-gray-500 dark:text-slate-400';
+const JSON_SHARED_ARRAY_ITEM_CLASS =
+  'block -mx-1 rounded-sm bg-amber-100/70 px-1 dark:bg-amber-900/25';
 const JSON_INDENT = '  ';
 
 const CHARACTER_RELATION_KINDS = [
@@ -72,6 +74,40 @@ function getPreviewOldValue(entityType: string, action: PreviewAction): unknown 
 
 function isPreviewAction(entry: unknown): entry is PreviewAction {
   return entry !== null && typeof entry === 'object';
+}
+
+function isPlainRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+
+function sortJsonValue(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(sortJsonValue);
+  if (!isPlainRecord(value)) return value;
+
+  return Object.fromEntries(
+    Object.keys(value)
+      .sort((a, b) => a.localeCompare(b))
+      .map((key) => [key, sortJsonValue(value[key])])
+  );
+}
+
+function getArrayEntitySignature(value: unknown): string | null {
+  if (!isPlainRecord(value)) return null;
+  return JSON.stringify(sortJsonValue(value));
+}
+
+function getArrayEntitySignatures(value: unknown[]): string[] {
+  return value.flatMap((item) => {
+    const signature = getArrayEntitySignature(item);
+    return signature ? [signature] : [];
+  });
+}
+
+function getSharedArrayEntitySignatures(oldValue: unknown, newValue: unknown): ReadonlySet<string> {
+  if (!Array.isArray(oldValue) || !Array.isArray(newValue)) return new Set();
+
+  const oldSignatures = new Set(getArrayEntitySignatures(oldValue));
+  return new Set(getArrayEntitySignatures(newValue).filter((value) => oldSignatures.has(value)));
 }
 
 function shouldShowPreviewEntry(entityType: string, entry: unknown): boolean {
@@ -194,10 +230,12 @@ const JsonValue = ({
   value,
   keyDepth = 0,
   indent = 0,
+  highlightedArrayItemSignatures,
 }: {
   value: unknown;
   keyDepth?: number;
   indent?: number;
+  highlightedArrayItemSignatures?: ReadonlySet<string> | undefined;
 }) => {
   if (typeof value === 'string') return <JsonString value={value} />;
   if (typeof value === 'number' || typeof value === 'boolean') {
@@ -215,8 +253,27 @@ const JsonValue = ({
         {value.map((item, index) => (
           <Fragment key={index}>
             {'\n'}
-            {JSON_INDENT.repeat(indent + 1)}
-            <JsonValue value={item} keyDepth={keyDepth} indent={indent + 1} />
+            {highlightedArrayItemSignatures?.has(getArrayEntitySignature(item) ?? '') ? (
+              <span className={JSON_SHARED_ARRAY_ITEM_CLASS}>
+                {JSON_INDENT.repeat(indent + 1)}
+                <JsonValue
+                  value={item}
+                  keyDepth={keyDepth}
+                  indent={indent + 1}
+                  highlightedArrayItemSignatures={highlightedArrayItemSignatures}
+                />
+              </span>
+            ) : (
+              <>
+                {JSON_INDENT.repeat(indent + 1)}
+                <JsonValue
+                  value={item}
+                  keyDepth={keyDepth}
+                  indent={indent + 1}
+                  highlightedArrayItemSignatures={highlightedArrayItemSignatures}
+                />
+              </>
+            )}
             {index < value.length - 1 && ','}
           </Fragment>
         ))}
@@ -238,7 +295,12 @@ const JsonValue = ({
             {'\n'}
             {JSON_INDENT.repeat(indent + 1)}
             <JsonKey name={key} depth={keyDepth} />:{' '}
-            <JsonValue value={item} keyDepth={keyDepth + 1} indent={indent + 1} />
+            <JsonValue
+              value={item}
+              keyDepth={keyDepth + 1}
+              indent={indent + 1}
+              highlightedArrayItemSignatures={highlightedArrayItemSignatures}
+            />
             {index < entries.length - 1 && ','}
           </Fragment>
         ))}
@@ -256,10 +318,12 @@ const RawValueBox = ({
   value,
   label,
   keyDepth = 0,
+  highlightedArrayItemSignatures,
 }: {
   value: unknown;
   label?: string;
   keyDepth?: number;
+  highlightedArrayItemSignatures?: ReadonlySet<string> | undefined;
 }) => (
   <pre className='max-h-64 min-h-12 overflow-auto rounded bg-gray-50 p-3 text-xs whitespace-pre-wrap text-gray-800 dark:bg-slate-900/40 dark:text-slate-100'>
     {label && (
@@ -267,7 +331,11 @@ const RawValueBox = ({
         <JsonKey name={label} depth={0} />:{' '}
       </span>
     )}
-    <JsonValue value={value} keyDepth={keyDepth} />
+    <JsonValue
+      value={value}
+      keyDepth={keyDepth}
+      highlightedArrayItemSignatures={highlightedArrayItemSignatures}
+    />
   </pre>
 );
 
@@ -275,6 +343,10 @@ const RawPreviewAction = ({ action }: { action: PreviewAction }) => {
   const metadata = getRawActionMetadata(action);
   const hasMetadata = Object.keys(metadata).length > 0;
   const hasValueDiff = 'oldValue' in action || 'newValue' in action;
+  const sharedArrayItemSignatures = getSharedArrayEntitySignatures(
+    action.oldValue,
+    action.newValue
+  );
 
   if (!hasValueDiff) {
     return <RawValueBox value={metadata} />;
@@ -284,9 +356,19 @@ const RawPreviewAction = ({ action }: { action: PreviewAction }) => {
     <div className='space-y-1'>
       {hasMetadata && <RawValueBox value={metadata} />}
       <div className='grid gap-1 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:items-center'>
-        <RawValueBox value={action.oldValue} label='oldValue' keyDepth={1} />
+        <RawValueBox
+          value={action.oldValue}
+          label='oldValue'
+          keyDepth={1}
+          highlightedArrayItemSignatures={sharedArrayItemSignatures}
+        />
         <span className='flex justify-center text-sm text-gray-500 dark:text-slate-400'>→</span>
-        <RawValueBox value={action.newValue} label='newValue' keyDepth={1} />
+        <RawValueBox
+          value={action.newValue}
+          label='newValue'
+          keyDepth={1}
+          highlightedArrayItemSignatures={sharedArrayItemSignatures}
+        />
       </div>
     </div>
   );
