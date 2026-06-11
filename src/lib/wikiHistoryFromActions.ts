@@ -32,8 +32,7 @@ function opToChangeType(op: string, path: string): WikiChangeType {
     return pathParts.length === 1 ? WikiChangeType.CREATE : WikiChangeType.ADD;
   }
   if (op === 'delete') {
-    // If deleting at root level, it's REMOVE; otherwise it could be UPDATE
-    return pathParts.length === 1 ? WikiChangeType.REMOVE : WikiChangeType.REMOVE;
+    return WikiChangeType.REMOVE;
   }
   // 'set' operation is UPDATE
   return WikiChangeType.UPDATE;

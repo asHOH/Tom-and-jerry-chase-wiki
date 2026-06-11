@@ -91,7 +91,7 @@ export default function ChangePasswordDialog({ onClose }: ChangePasswordDialogPr
       }}
       initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0 }}
       animate={{ opacity: 1 }}
-      exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0 }}
+      exit={{ opacity: 0 }}
       transition={{ duration: 0.16, ease: 'easeOut' }}
     >
       <m.div

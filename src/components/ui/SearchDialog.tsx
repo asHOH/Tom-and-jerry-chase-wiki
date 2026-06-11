@@ -4,7 +4,6 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { m } from 'motion/react';
 
 import { cn, getTypeLabelColors } from '@/lib/design';
-import { isOriginalCharacter } from '@/lib/editUtils';
 import { performSearch, SearchResult } from '@/lib/searchUtils';
 import { useChat } from '@/hooks/useChat';
 import { useNavigation } from '@/hooks/useNavigation';
@@ -153,13 +152,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
     (result: SearchResult) => {
       switch (result.type) {
         case 'character':
-          // Check if this is an original character that has a static page
-          if (isOriginalCharacter(result.id)) {
-            handleSelectCharacter(result.id);
-          } else {
-            // Navigate to the user character edit page
-            handleSelectCharacter(result.id);
-          }
+          handleSelectCharacter(result.id);
           break;
         case 'card':
           handleSelectCard(result.id);
