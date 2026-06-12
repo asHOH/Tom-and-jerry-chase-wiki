@@ -6,6 +6,7 @@ import { useSnapshot } from 'valtio';
 import { getBuffTypeColors } from '@/lib/design';
 import { useDarkMode } from '@/context/DarkModeContext';
 import type { Buff } from '@/data/types';
+import { CatalogGridItem } from '@/components/ui/CatalogGrid';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
 import { buffsEdit } from '@/data';
@@ -127,12 +128,9 @@ export default function BuffClient({ description }: Props) {
                     className='auto-fit-grid grid-container grid w-full grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-1! md:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]'
                   >
                     {group.buffs.map((buff) => (
-                      <div
-                        key={buff.name}
-                        className='character-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
-                      >
+                      <CatalogGridItem key={buff.name} clip>
                         <BuffCardDisplay buff={buff} />
-                      </div>
+                      </CatalogGridItem>
                     ))}
                   </div>
                 </div>
@@ -142,12 +140,9 @@ export default function BuffClient({ description }: Props) {
           {nonClassBuffs.length > 0 && (
             <div className='auto-fit-grid grid-container mt-2 grid w-full grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-2! md:mt-8 md:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]'>
               {nonClassBuffs.map((buff) => (
-                <div
-                  key={buff.name}
-                  className='character-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
-                >
+                <CatalogGridItem key={buff.name} clip>
                   <BuffCardDisplay buff={buff} />
-                </div>
+                </CatalogGridItem>
               ))}
             </div>
           )}
@@ -180,12 +175,9 @@ export default function BuffClient({ description }: Props) {
                     className='auto-fit-grid grid-container grid w-full grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-1! md:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]'
                   >
                     {group.buffs.map((buff) => (
-                      <div
-                        key={buff.name}
-                        className='character-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
-                      >
+                      <CatalogGridItem key={buff.name} clip>
                         <BuffCardDisplay buff={buff} />
-                      </div>
+                      </CatalogGridItem>
                     ))}
                   </div>
                 </div>
@@ -195,12 +187,9 @@ export default function BuffClient({ description }: Props) {
           {nonClassEffects.length > 0 && (
             <div className='auto-fit-grid grid-container mt-2 grid w-full grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-2! md:mt-8 md:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]'>
               {nonClassEffects.map((buff) => (
-                <div
-                  key={buff.name}
-                  className='character-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
-                >
+                <CatalogGridItem key={buff.name} clip>
                   <BuffCardDisplay buff={buff} />
-                </div>
+                </CatalogGridItem>
               ))}
             </div>
           )}

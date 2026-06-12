@@ -7,9 +7,9 @@ import { getFactionButtonColors } from '@/lib/design';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { achievementsEdit } from '@/data/store';
 import type { Achievement } from '@/data/types';
+import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
-import { VirtualGrid } from '@/components/ui/VirtualGrid';
 
 import AchievementCardDisplay from './AchievementCardDisplay';
 
@@ -27,19 +27,16 @@ export default function AchievementGridClient() {
 
   const achievementCardNodes = useMemo(() => {
     return filteredAchievements.map((achievement) => (
-      <div
-        key={achievement.name}
-        className='character-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
-      >
+      <CatalogGridItem key={achievement.name} clip>
         <AchievementCardDisplay achievement={achievement} />
-      </div>
+      </CatalogGridItem>
     ));
   }, [filteredAchievements]);
 
   return (
     <CatalogPageShell
       title='对局成就'
-      description='获取对局评分的有效方式'
+      description='获取对局评分的方式'
       filters={
         <FilterRow<'cat' | 'mouse'>
           label='阵营筛选:'
@@ -57,9 +54,8 @@ export default function AchievementGridClient() {
         />
       }
     >
-      <VirtualGrid
+      <CatalogGrid
         items={achievementCardNodes}
-        rowClassName='auto-fit-grid grid-container grid'
         minItemWidth={120}
         gapPx={16}
         estimatedRowHeight={200}

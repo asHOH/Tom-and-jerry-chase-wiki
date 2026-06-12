@@ -10,11 +10,11 @@ import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
 import type { FactionId } from '@/data/types';
+import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import CostRangeSlider from '@/components/ui/CostRangeSlider';
 import FilterLabel from '@/components/ui/FilterLabel';
 import FilterRow from '@/components/ui/FilterRow';
-import { VirtualGrid } from '@/components/ui/VirtualGrid';
 import { cards, cardsEdit } from '@/data';
 
 import KnowledgeCardDisplay from './KnowledgeCardDisplay';
@@ -45,10 +45,7 @@ export default function KnowledgeCardGrid({ description }: Props) {
 
   const cardNodes = useMemo(() => {
     return filteredAndSortedCards.map((card, index) => (
-      <div
-        key={card.id}
-        className='character-card transform transition-transform hover:-translate-y-1'
-      >
+      <CatalogGridItem key={card.id}>
         <KnowledgeCardDisplay
           id={card.id}
           name={card.id}
@@ -58,7 +55,7 @@ export default function KnowledgeCardGrid({ description }: Props) {
           onClick={handleSelectCard}
           preload={index < 6}
         />
-      </div>
+      </CatalogGridItem>
     ));
   }, [filteredAndSortedCards, handleSelectCard]);
 
@@ -114,13 +111,7 @@ export default function KnowledgeCardGrid({ description }: Props) {
         </>
       }
     >
-      <VirtualGrid
-        items={cardNodes}
-        rowClassName='auto-fit-grid grid-container grid'
-        minItemWidth={120}
-        gapPx={16}
-        estimatedRowHeight={200}
-      />
+      <CatalogGrid items={cardNodes} minItemWidth={120} gapPx={16} estimatedRowHeight={200} />
     </CatalogPageShell>
   );
 }

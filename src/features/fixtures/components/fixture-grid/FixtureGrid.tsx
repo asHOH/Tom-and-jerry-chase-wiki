@@ -8,10 +8,10 @@ import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import type { Fixture, FixtureSourceList, FixtureTypeList } from '@/data/types';
+import { CatalogGrid } from '@/components/ui/CatalogGrid';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
 import Tooltip from '@/components/ui/Tooltip';
-import { VirtualGrid } from '@/components/ui/VirtualGrid';
 import { fixturesEdit } from '@/data';
 
 import FixtureCardDisplay from './FixtureCardDisplay';
@@ -123,9 +123,8 @@ export default function FixtureClient({ description }: Props) {
         </>
       }
     >
-      <VirtualGrid
+      <CatalogGrid
         items={fixtureCardNodes}
-        rowClassName='auto-fit-grid grid-container grid'
         minItemWidth={isMobile ? 120 : 150}
         gapPx={16}
         estimatedRowHeight={isMobile ? 200 : 230}

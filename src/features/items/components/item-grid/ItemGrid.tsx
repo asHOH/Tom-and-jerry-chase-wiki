@@ -8,10 +8,10 @@ import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import type { Item, Itemsourcelist, Itemtypelist } from '@/data/types';
+import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
 import Tooltip from '@/components/ui/Tooltip';
-import { VirtualGrid } from '@/components/ui/VirtualGrid';
 import { itemsEdit } from '@/data';
 
 import ItemCardDisplay from './ItemCardDisplay';
@@ -56,12 +56,9 @@ export default function ItemClient({ description }: Props) {
 
   const itemCardNodes = useMemo(() => {
     return filteredItems.map((item) => (
-      <div
-        key={item.name}
-        className='character-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
-      >
+      <CatalogGridItem key={item.name} clip>
         <ItemCardDisplay item={item} />
-      </div>
+      </CatalogGridItem>
     ));
   }, [filteredItems]);
 
@@ -152,9 +149,8 @@ export default function ItemClient({ description }: Props) {
         </>
       }
     >
-      <VirtualGrid
+      <CatalogGrid
         items={itemCardNodes}
-        rowClassName='auto-fit-grid grid-container grid'
         minItemWidth={isMobile ? 120 : 150}
         gapPx={16}
         estimatedRowHeight={isMobile ? 190 : 230}

@@ -9,10 +9,10 @@ import { useDarkMode } from '@/context/DarkModeContext';
 import { specialSkillsEdit } from '@/data/store';
 import type { FactionId } from '@/data/types';
 import BaseCard from '@/components/ui/BaseCard';
+import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
 import GameImage from '@/components/ui/GameImage';
-import { VirtualGrid } from '@/components/ui/VirtualGrid';
 
 type Props = { description?: string };
 
@@ -33,10 +33,7 @@ export default function SpecialSkillClient({ description }: Props) {
 
   const skillCardNodes = useMemo(() => {
     return filteredSkills.map((skill) => (
-      <div
-        key={skill.factionId + skill.name}
-        className='character-card transform transition-transform hover:-translate-y-1'
-      >
+      <CatalogGridItem key={skill.factionId + skill.name}>
         <BaseCard
           variant='item'
           href={`/special-skills/${encodeURIComponent(skill.factionId)}/${encodeURIComponent(skill.name)}`}
@@ -52,7 +49,7 @@ export default function SpecialSkillClient({ description }: Props) {
             <div className='font-semibold dark:text-white'>{skill.name}</div>
           </div>
         </BaseCard>
-      </div>
+      </CatalogGridItem>
     ));
   }, [filteredSkills]);
 
@@ -73,9 +70,8 @@ export default function SpecialSkillClient({ description }: Props) {
         />
       }
     >
-      <VirtualGrid
+      <CatalogGrid
         items={skillCardNodes}
-        rowClassName='auto-fit-grid grid-container grid'
         minItemWidth={isMobile ? 120 : 150}
         gapPx={16}
         estimatedRowHeight={isMobile ? 210 : 250}

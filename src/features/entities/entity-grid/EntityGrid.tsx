@@ -8,10 +8,10 @@ import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import type { Entity, Entitytaglist, Entitytypelist } from '@/data/types';
+import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
 import Tooltip from '@/components/ui/Tooltip';
-import { VirtualGrid } from '@/components/ui/VirtualGrid';
 import { entitiesEdit } from '@/data';
 
 import getEntityFactionId from '../lib/getEntityFactionId';
@@ -144,12 +144,9 @@ export default function EntityClient({ description }: Props) {
 
   const entityCardNodes = useMemo(() => {
     return filteredEntities.map((entity) => (
-      <div
-        key={entity.name}
-        className='character-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
-      >
+      <CatalogGridItem key={entity.name} clip>
         <EntityCardDisplay entity={entity} showTags={showTagFilter} />
-      </div>
+      </CatalogGridItem>
     ));
   }, [filteredEntities, showTagFilter]);
 
@@ -277,9 +274,8 @@ export default function EntityClient({ description }: Props) {
       }
     >
       {entityCardNodes.length > 0 ? (
-        <VirtualGrid
+        <CatalogGrid
           items={entityCardNodes}
-          rowClassName='auto-fit-grid grid-container grid'
           minItemWidth={isMobile ? 120 : 150}
           gapPx={isMobile ? 12 : 16}
           estimatedRowHeight={isMobile ? 190 : 230}

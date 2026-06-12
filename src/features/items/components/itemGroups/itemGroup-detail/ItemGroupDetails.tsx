@@ -4,21 +4,18 @@ import { useMemo } from 'react';
 
 import type { ItemGroup } from '@/data/types';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
+import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
-import { VirtualGrid } from '@/components/ui/VirtualGrid';
 
 import SingleItemCardDisplay from './SingleItemCardDisplay';
 
 export default function ItemGroupClient({ itemGroup }: { itemGroup: ItemGroup }) {
   const singleItemCardNodes = useMemo(() => {
     return itemGroup.group.map((singleItem) => (
-      <div
-        key={singleItem.name}
-        className='character-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
-      >
+      <CatalogGridItem key={singleItem.name} clip>
         <SingleItemCardDisplay singleItem={singleItem} />
-      </div>
+      </CatalogGridItem>
     ));
   }, [itemGroup.group]);
 
@@ -30,10 +27,9 @@ export default function ItemGroupClient({ itemGroup }: { itemGroup: ItemGroup })
           <TextWithHoverTooltips text={itemGroup.description || ''} />
         </PageDescription>
       </header>
-      <VirtualGrid
+      <CatalogGrid
         items={singleItemCardNodes}
         className='mt-8'
-        rowClassName='auto-fit-grid grid-container grid'
         minItemWidth={120}
         gapPx={16}
         estimatedRowHeight={210}

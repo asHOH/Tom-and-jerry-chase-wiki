@@ -2,8 +2,8 @@
 
 import { useMemo } from 'react';
 
+import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
-import { VirtualGrid } from '@/components/ui/VirtualGrid';
 import { itemGroups } from '@/data';
 
 import ItemGroupCardDisplay from './ItemGroupCardDisplay';
@@ -14,12 +14,9 @@ export default function ItemGroupClient({ description }: Props) {
   const filteredItemGroups = Object.values(itemGroups);
   const itemGroupCardNodes = useMemo(() => {
     return filteredItemGroups.map((itemGroup) => (
-      <div
-        key={itemGroup.name}
-        className='character-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
-      >
+      <CatalogGridItem key={itemGroup.name} clip>
         <ItemGroupCardDisplay itemGroup={itemGroup} />
-      </div>
+      </CatalogGridItem>
     ));
   }, [filteredItemGroups]);
 
@@ -29,9 +26,8 @@ export default function ItemGroupClient({ description }: Props) {
       description={description ?? '列举目前支持的所有组合'}
       descriptionVisibility='desktop'
     >
-      <VirtualGrid
+      <CatalogGrid
         items={itemGroupCardNodes}
-        rowClassName='auto-fit-grid grid-container grid'
         minItemWidth={100}
         gapPx={16}
         estimatedRowHeight={210}

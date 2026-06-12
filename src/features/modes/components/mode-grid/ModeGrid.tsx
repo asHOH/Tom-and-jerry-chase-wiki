@@ -6,9 +6,9 @@ import { useSnapshot } from 'valtio';
 import { getModeTypeColors } from '@/lib/design';
 import { useDarkMode } from '@/context/DarkModeContext';
 import type { Mode, ModeTypeList } from '@/data/types';
+import { CatalogGrid } from '@/components/ui/CatalogGrid';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
-import { VirtualGrid } from '@/components/ui/VirtualGrid';
 import { modesEdit } from '@/data';
 
 import ModeCardDisplay from './ModeCardDisplay';
@@ -70,13 +70,7 @@ export default function ModeClient({ description }: Props) {
         />
       }
     >
-      <VirtualGrid
-        items={modeCardNodes}
-        rowClassName='auto-fit-grid grid-container grid'
-        minItemWidth={120}
-        gapPx={16}
-        estimatedRowHeight={210}
-      />
+      <CatalogGrid items={modeCardNodes} minItemWidth={120} gapPx={16} estimatedRowHeight={210} />
     </CatalogPageShell>
   );
 }

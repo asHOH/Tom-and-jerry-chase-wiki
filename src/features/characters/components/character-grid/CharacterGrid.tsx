@@ -14,10 +14,10 @@ import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { sortPositioningTagNames } from '@/constants/positioningTagSequences';
+import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
 import Tooltip from '@/components/ui/Tooltip';
-import { VirtualGrid } from '@/components/ui/VirtualGrid';
 import { characters as allCharacters, characters, FactionId, PositioningTagName } from '@/data';
 
 import CharacterCreate from './CharacterCreate';
@@ -146,29 +146,20 @@ export default function CharacterGrid({ factionId }: FactionCharactersProps) {
 
     if (isEditMode) {
       nodes.push(
-        <div
-          key='character-import'
-          className='character-card transform transition-transform hover:-translate-y-1'
-        >
+        <CatalogGridItem key='character-import'>
           <CharacterImport />
-        </div>
+        </CatalogGridItem>
       );
 
       nodes.push(
-        <div
-          key='character-create'
-          className='character-card transform transition-transform hover:-translate-y-1'
-        >
+        <CatalogGridItem key='character-create'>
           <CharacterCreate />
-        </div>
+        </CatalogGridItem>
       );
 
       originalCharacters.forEach((character) => {
         nodes.push(
-          <div
-            key={`${character.id}-entry`}
-            className='character-card transform transition-transform hover:-translate-y-1'
-          >
+          <CatalogGridItem key={`${character.id}-entry`}>
             <CharacterDisplay
               id={character.id}
               name={character.id}
@@ -177,17 +168,14 @@ export default function CharacterGrid({ factionId }: FactionCharactersProps) {
               factionId={faction.id}
               isEntryCard
             />
-          </div>
+          </CatalogGridItem>
         );
       });
     }
 
     filteredCharacters.forEach((character, index) => {
       nodes.push(
-        <div
-          key={character.id}
-          className='character-card transform transition-transform hover:-translate-y-1'
-        >
+        <CatalogGridItem key={character.id}>
           <CharacterDisplay
             id={character.id}
             name={character.id}
@@ -200,7 +188,7 @@ export default function CharacterGrid({ factionId }: FactionCharactersProps) {
             factionId={faction.id}
             preload={index < 4}
           />
-        </div>
+        </CatalogGridItem>
       );
     });
 
@@ -260,9 +248,8 @@ export default function CharacterGrid({ factionId }: FactionCharactersProps) {
         </>
       }
     >
-      <VirtualGrid
+      <CatalogGrid
         items={cardNodes}
-        rowClassName='auto-fit-grid grid-container grid'
         minItemWidth={isMobile ? 120 : 200}
         gapPx={isMobile ? 12 : 32}
         estimatedRowHeight={isMobile ? 270 : 340}

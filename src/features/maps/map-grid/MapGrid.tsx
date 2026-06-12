@@ -7,10 +7,10 @@ import { getMapLevelColors, getMapSizeColors, getMapTypeColors } from '@/lib/des
 import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { type Map, type MapSize, type mapTypes, type studyLevel } from '@/data/types';
+import { CatalogGrid } from '@/components/ui/CatalogGrid';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
 import Tooltip from '@/components/ui/Tooltip';
-import { VirtualGrid } from '@/components/ui/VirtualGrid';
 import { mapsEdit } from '@/data';
 
 import MapCardDisplay from './MapCardDisplay';
@@ -118,13 +118,7 @@ export default function MapClient({ description }: Props) {
         </>
       }
     >
-      <VirtualGrid
-        items={mapCardNodes}
-        rowClassName='auto-fit-grid grid-container grid'
-        minItemWidth={120}
-        gapPx={16}
-        estimatedRowHeight={210}
-      />
+      <CatalogGrid items={mapCardNodes} minItemWidth={120} gapPx={16} estimatedRowHeight={210} />
     </CatalogPageShell>
   );
 }
