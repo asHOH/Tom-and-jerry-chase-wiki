@@ -134,9 +134,13 @@ describe('GameDataActionModerationPanel', () => {
 
     expect(screen.getByText('侍卫汤姆.countersKnowledgeCards')).toBeInTheDocument();
     expect(screen.getByText('变更字段：')).toBeInTheDocument();
-    expect(screen.getByText(/舍己.*isMinor/)).toBeInTheDocument();
+    expect(
+      screen.getAllByText(
+        (_content, element) =>
+          element?.textContent?.includes('舍己') === true && element.textContent.includes('isMinor')
+      ).length
+    ).toBeGreaterThan(0);
     expect(screen.queryByText('数组(4: 回家、护佑、无畏 等)')).not.toBeInTheDocument();
-    expect(screen.queryByText('→')).not.toBeInTheDocument();
   });
 
   it('uses projected character relations as the old preview value when relation overlays are first set', () => {
@@ -184,6 +188,8 @@ describe('GameDataActionModerationPanel', () => {
         (content) => content.includes('新增ID') && content.includes(existingCounterId!)
       )
     ).not.toBeInTheDocument();
+    expect(screen.queryByText('undefined')).not.toBeInTheDocument();
+    expect(screen.getAllByText(projectedCounters[0]!.id).length).toBeGreaterThan(0);
   });
 
   it('keeps read-only controls enabled while moderation is in flight', async () => {

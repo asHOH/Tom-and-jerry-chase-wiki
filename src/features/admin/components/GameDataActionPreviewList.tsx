@@ -23,6 +23,7 @@ type GameDataActionPreviewListProps = {
 
 type GameDataActionRawPreviewProps = {
   entry: unknown;
+  entityType: string;
 };
 
 const JSON_QUOTE_CLASS = 'text-gray-400 dark:text-slate-500';
@@ -339,12 +340,19 @@ const RawValueBox = ({
   </pre>
 );
 
-const RawPreviewAction = ({ action }: { action: PreviewAction }) => {
+const RawPreviewAction = ({
+  action,
+  entityType,
+}: {
+  action: PreviewAction;
+  entityType: string;
+}) => {
   const metadata = getRawActionMetadata(action);
   const hasMetadata = Object.keys(metadata).length > 0;
   const hasValueDiff = 'oldValue' in action || 'newValue' in action;
+  const previewOldValue = getPreviewOldValue(entityType, action);
   const sharedArrayItemSignatures = getSharedArrayEntitySignatures(
-    action.oldValue,
+    previewOldValue,
     action.newValue
   );
 
@@ -357,7 +365,7 @@ const RawPreviewAction = ({ action }: { action: PreviewAction }) => {
       {hasMetadata && <RawValueBox value={metadata} />}
       <div className='grid gap-1 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:items-center'>
         <RawValueBox
-          value={action.oldValue}
+          value={previewOldValue}
           label='oldValue'
           keyDepth={1}
           highlightedArrayItemSignatures={sharedArrayItemSignatures}
@@ -374,16 +382,20 @@ const RawPreviewAction = ({ action }: { action: PreviewAction }) => {
   );
 };
 
-const RawPreviewEntry = ({ entry }: { entry: unknown }) =>
-  isPreviewAction(entry) ? <RawPreviewAction action={entry} /> : <RawValueBox value={entry} />;
+const RawPreviewEntry = ({ entry, entityType }: { entry: unknown; entityType: string }) =>
+  isPreviewAction(entry) ? (
+    <RawPreviewAction action={entry} entityType={entityType} />
+  ) : (
+    <RawValueBox value={entry} />
+  );
 
-export function GameDataActionRawPreview({ entry }: GameDataActionRawPreviewProps) {
+export function GameDataActionRawPreview({ entry, entityType }: GameDataActionRawPreviewProps) {
   const entries = Array.isArray(entry) ? entry : [entry];
 
   return (
     <div className='space-y-2'>
       {entries.map((item, index) => (
-        <RawPreviewEntry key={index} entry={item} />
+        <RawPreviewEntry key={index} entry={item} entityType={entityType} />
       ))}
     </div>
   );

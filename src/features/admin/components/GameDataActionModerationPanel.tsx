@@ -556,7 +556,10 @@ const GameDataActionModerationPanel = ({
                           entityType={submission.entity_type}
                         />
 
-                        <GameDataActionRawPreview entry={submission.entry} />
+                        <GameDataActionRawPreview
+                          entry={submission.entry}
+                          entityType={submission.entity_type}
+                        />
                       </div>
                     )}
                   </div>
