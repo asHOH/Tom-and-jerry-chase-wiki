@@ -141,7 +141,7 @@
     "@types/web-push": "^3.6.4",
     "cross-env": "^10.1.0",
     "depcheck": "^1.4.7",
-    "esbuild": "^0.28.0",
+    "esbuild": "^0.28.1",
     "eslint": "^9.39.2",
     "eslint-config-next": "^16.2.6",
     "eslint-config-prettier": "^10.1.8",
