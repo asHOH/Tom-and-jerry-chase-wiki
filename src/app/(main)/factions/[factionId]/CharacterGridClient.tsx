@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 
 import { FactionCharactersProps } from '@/lib/types';
 import { LOADING_COUNTS } from '@/constants/loadingCounts';
-import { PageLoadingState } from '@/components/ui/LoadingState';
+import { CatalogPageLoadingState } from '@/components/ui/LoadingState';
 
 const CharacterGridCat = dynamic(
   () =>
@@ -13,8 +13,7 @@ const CharacterGridCat = dynamic(
     })),
   {
     loading: () => (
-      <PageLoadingState
-        layout='catalog'
+      <CatalogPageLoadingState
         type='character-grid'
         message='加载角色列表中...'
         count={LOADING_COUNTS.factionCharacters.cat}
@@ -30,8 +29,7 @@ const CharacterGridMouse = dynamic(
     })),
   {
     loading: () => (
-      <PageLoadingState
-        layout='catalog'
+      <CatalogPageLoadingState
         type='character-grid'
         message='加载角色列表中...'
         count={LOADING_COUNTS.factionCharacters.mouse}

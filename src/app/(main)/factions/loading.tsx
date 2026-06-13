@@ -3,14 +3,13 @@
 import { usePathname } from 'next/navigation';
 
 import { getFactionLoadingCount } from '@/constants/loadingCounts';
-import { PageLoadingState } from '@/components/ui/LoadingState';
+import { CatalogPageLoadingState } from '@/components/ui/LoadingState';
 
 export default function Loading() {
   const pathname = usePathname();
 
   return (
-    <PageLoadingState
-      layout='catalog'
+    <CatalogPageLoadingState
       type='character-grid'
       message='加载角色列表中...'
       count={getFactionLoadingCount(pathname)}

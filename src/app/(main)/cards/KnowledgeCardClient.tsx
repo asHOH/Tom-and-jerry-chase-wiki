@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic';
 
 import { LOADING_COUNTS } from '@/constants/loadingCounts';
-import { PageLoadingState } from '@/components/ui/LoadingState';
+import { CatalogPageLoadingState } from '@/components/ui/LoadingState';
 
 type Props = { description?: string };
 
@@ -11,8 +11,7 @@ const KnowledgeCardGrid = dynamic<Props>(
   () => import('@/features/knowledge-cards/components/knowledge-card-grid/KnowledgeCardGrid'),
   {
     loading: () => (
-      <PageLoadingState
-        layout='catalog'
+      <CatalogPageLoadingState
         type='knowledge-cards'
         message='加载知识卡列表中...'
         count={LOADING_COUNTS.knowledgeCards}

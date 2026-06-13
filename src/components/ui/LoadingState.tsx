@@ -340,7 +340,7 @@ export function PageLoadingState({
 }: PageLoadingStateProps) {
   return (
     <div className={getPageLoadingStateClassName(layout, className)}>
-      {children || (
+      {children ?? (
         <LoadingState
           type={type}
           message={message}
@@ -349,4 +349,8 @@ export function PageLoadingState({
       )}
     </div>
   );
+}
+
+export function CatalogPageLoadingState(props: Omit<PageLoadingStateProps, 'layout'>) {
+  return <PageLoadingState {...props} layout='catalog' />;
 }

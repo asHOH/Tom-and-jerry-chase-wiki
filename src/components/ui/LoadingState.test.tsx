@@ -196,6 +196,13 @@ describe('PageLoadingState', () => {
     expect(screen.queryByTestId('loading-spinner')).not.toBeInTheDocument();
   });
 
+  it('preserves falsy custom children instead of rendering the default loading state', () => {
+    const { container } = render(<PageLoadingState>{0}</PageLoadingState>);
+
+    expect(container.firstChild).toHaveTextContent('0');
+    expect(screen.queryByTestId('loading-spinner')).not.toBeInTheDocument();
+  });
+
   it('exports a helper for page loading shell class names', () => {
     const getPageLoadingStateClassName = (
       LoadingStateModule as {
@@ -210,5 +217,29 @@ describe('PageLoadingState', () => {
     expect(getPageLoadingStateClassName?.('catalog', 'pt-10')).toContain('space-y-8');
     expect(getPageLoadingStateClassName?.('catalog', 'pt-10')).toContain('dark:text-slate-200');
     expect(getPageLoadingStateClassName?.('catalog', 'pt-10')).toContain('pt-10');
+  });
+});
+
+describe('CatalogPageLoadingState', () => {
+  it('renders a catalog shell without requiring the layout prop at call sites', () => {
+    const CatalogPageLoadingState = (
+      LoadingStateModule as {
+        CatalogPageLoadingState?: typeof PageLoadingState;
+      }
+    ).CatalogPageLoadingState;
+
+    expect(CatalogPageLoadingState).toBeInstanceOf(Function);
+
+    const Component = CatalogPageLoadingState ?? PageLoadingState;
+    const { container } = render(<Component type='item-grid' message='Loading catalog' />);
+
+    expect(container.firstChild).toHaveClass(
+      'mx-auto',
+      'max-w-6xl',
+      'space-y-8',
+      'p-6',
+      'dark:text-slate-200'
+    );
+    expect(screen.getAllByTestId('skeleton-item-card')).toHaveLength(8);
   });
 });
