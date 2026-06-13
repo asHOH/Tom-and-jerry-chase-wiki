@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useSnapshot } from 'valtio';
 
 import { modesEdit } from '@/data/store';
 import type { CharacterRelationItem } from '@/data/types';
-import { PlusIcon } from '@/components/icons/CommonIcons';
-import Image from '@/components/Image';
+
+import RelationItemSelector from './RelationItemSelector';
 
 type Props = {
   selected: CharacterRelationItem[];
@@ -15,60 +15,21 @@ type Props = {
 };
 
 const ModeSelector: React.FC<Props> = ({ selected, onSelect, disabled }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
   const modesSnapshot = useSnapshot(modesEdit);
-
-  const availableModes = Object.values(modesSnapshot).filter(
-    ({ name }) => !selected.some((selection) => selection.id === name)
-  );
-
-  const handleSelect = (modeName: string) => {
-    onSelect(modeName);
-    setIsOpen(false);
-  };
-
-  if (availableModes.length === 0) {
-    return null;
-  }
+  const selectedIds = new Set(selected.map(({ id }) => id));
+  const options = Object.values(modesSnapshot)
+    .filter(({ name }) => !selectedIds.has(name))
+    .map(({ name, imageUrl }) => ({ id: name, imageUrl, imageClassName: 'rounded' }));
 
   return (
-    <div className='relative inline-block'>
-      <button
-        type='button'
-        onClick={() => !disabled && setIsOpen(!isOpen)}
-        className='flex h-8 w-8 items-center justify-center rounded-md bg-purple-500 text-xs text-white hover:bg-purple-600 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-purple-600 dark:hover:bg-purple-700'
-        aria-label='添加模式'
-        disabled={disabled}
-      >
-        <PlusIcon className='h-4 w-4' aria-hidden='true' />
-      </button>
-
-      {isOpen && (
-        <div className='absolute top-full right-0 z-50 mt-1 max-h-48 w-48 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800'>
-          {availableModes.map(({ name, imageUrl }) => (
-            <button
-              key={name}
-              type='button'
-              onClick={() => handleSelect(name)}
-              className='flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700'
-              aria-label={`选择模式 ${name}`}
-            >
-              {imageUrl && (
-                <Image
-                  src={imageUrl}
-                  alt={name}
-                  width={20}
-                  height={20}
-                  className='h-5 w-5 rounded'
-                />
-              )}
-              <span className='text-gray-700 dark:text-gray-300'>{name}</span>
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
+    <RelationItemSelector
+      options={options}
+      triggerAriaLabel='添加模式'
+      optionAriaLabel={(id) => `选择模式 ${id}`}
+      tone='purple'
+      onSelect={onSelect}
+      disabled={disabled}
+    />
   );
 };
 
