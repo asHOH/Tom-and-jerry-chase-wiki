@@ -10,8 +10,6 @@ import { useEditMode } from '@/context/EditModeContext';
 import { characters, mapsEdit, modesEdit, specialSkillsEdit } from '@/data/store';
 import type { CharacterRelationItem, FactionId, TraitRelationKind } from '@/data/types';
 import {
-  addCharacterRelationItem,
-  createCharacterRelationItem,
   getCharacterRelationDescriptionPath,
   getEditableCharacterRelations,
   removeCharacterRelationItem,
@@ -33,6 +31,11 @@ import { createEditableRelationItemOptions } from './characterRelationItemOption
 import CharacterRelationPanel, {
   type CharacterRelationPanelSection,
 } from './CharacterRelationPanel';
+import {
+  createRelationSelectHandler,
+  RelationSelectorSlot,
+  RelationSelectorToolbar,
+} from './characterRelationSelectorControls';
 import {
   buildCharacterItems,
   buildKnowledgeCardItems,
@@ -79,6 +82,11 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       onToggleMinor: toggleCharacterRelationMinor,
       onRemove: removeCharacterRelationItem,
       onUpdateDescription: updateCharacterRelationDescription,
+    });
+  const createSelectHandler = (relationKind: TraitRelationKind) =>
+    createRelationSelectHandler({
+      characterId: id,
+      relationKind,
     });
 
   const countersItems = sortByImportance([
@@ -207,45 +215,31 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       icon: <HappyFaceIcon aria-hidden='true' />,
       items: countersItems,
       selectors: (
-        <div className='flex items-center gap-2'>
-          <div title='添加角色'>
+        <RelationSelectorToolbar>
+          <RelationSelectorSlot title='添加角色'>
             <CharacterSelector
               currentCharacterId={id}
               factionId={factionId}
               relationType='counters'
               existingRelations={char.counters}
-              onSelect={(characterId: string) =>
-                addCharacterRelationItem(id, 'counters', createCharacterRelationItem(characterId))
-              }
+              onSelect={createSelectHandler('counters')}
             />
-          </div>
-          <div title='添加知识卡'>
+          </RelationSelectorSlot>
+          <RelationSelectorSlot title='添加知识卡'>
             <KnowledgeCardSelector
               selected={char.countersKnowledgeCards}
-              onSelect={(cardId) =>
-                addCharacterRelationItem(
-                  id,
-                  'countersKnowledgeCards',
-                  createCharacterRelationItem(cardId)
-                )
-              }
+              onSelect={createSelectHandler('countersKnowledgeCards')}
               factionId={oppositeFactionId}
             />
-          </div>
-          <div title='添加特技'>
+          </RelationSelectorSlot>
+          <RelationSelectorSlot title='添加特技'>
             <SpecialSkillSelector
               selected={char.countersSpecialSkills}
               factionId={factionId}
-              onSelect={(skillId) =>
-                addCharacterRelationItem(
-                  id,
-                  'countersSpecialSkills',
-                  createCharacterRelationItem(skillId)
-                )
-              }
+              onSelect={createSelectHandler('countersSpecialSkills')}
             />
-          </div>
-        </div>
+          </RelationSelectorSlot>
+        </RelationSelectorToolbar>
       ),
       show: true,
       showEditControls: true,
@@ -257,23 +251,17 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       icon: <NeutralFaceIcon aria-hidden='true' />,
       items: counterEachOtherItems,
       selectors: (
-        <div className='flex items-center gap-2'>
-          <div title='添加角色'>
+        <RelationSelectorToolbar>
+          <RelationSelectorSlot title='添加角色'>
             <CharacterSelector
               currentCharacterId={id}
               factionId={factionId}
               relationType='counterEachOther'
               existingRelations={char.counterEachOther}
-              onSelect={(characterId: string) =>
-                addCharacterRelationItem(
-                  id,
-                  'counterEachOther',
-                  createCharacterRelationItem(characterId)
-                )
-              }
+              onSelect={createSelectHandler('counterEachOther')}
             />
-          </div>
-        </div>
+          </RelationSelectorSlot>
+        </RelationSelectorToolbar>
       ),
       show: isEditMode || counterEachOtherItems.length > 0,
       showEditControls: true,
@@ -285,49 +273,31 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       icon: <SadFaceIcon aria-hidden='true' />,
       items: counteredByItems,
       selectors: (
-        <div className='flex items-center gap-2'>
-          <div title='添加角色'>
+        <RelationSelectorToolbar>
+          <RelationSelectorSlot title='添加角色'>
             <CharacterSelector
               currentCharacterId={id}
               factionId={factionId}
               relationType='counteredBy'
               existingRelations={char.counteredBy}
-              onSelect={(characterId: string) =>
-                addCharacterRelationItem(
-                  id,
-                  'counteredBy',
-                  createCharacterRelationItem(characterId)
-                )
-              }
+              onSelect={createSelectHandler('counteredBy')}
             />
-          </div>
-          <div title='添加知识卡'>
+          </RelationSelectorSlot>
+          <RelationSelectorSlot title='添加知识卡'>
             <KnowledgeCardSelector
               selected={char.counteredByKnowledgeCards}
-              onSelect={(cardId) =>
-                addCharacterRelationItem(
-                  id,
-                  'counteredByKnowledgeCards',
-                  createCharacterRelationItem(cardId)
-                )
-              }
+              onSelect={createSelectHandler('counteredByKnowledgeCards')}
               factionId={oppositeFactionId}
             />
-          </div>
-          <div title='添加特技'>
+          </RelationSelectorSlot>
+          <RelationSelectorSlot title='添加特技'>
             <SpecialSkillSelector
               selected={char.counteredBySpecialSkills}
               factionId={factionId}
-              onSelect={(skillId) =>
-                addCharacterRelationItem(
-                  id,
-                  'counteredBySpecialSkills',
-                  createCharacterRelationItem(skillId)
-                )
-              }
+              onSelect={createSelectHandler('counteredBySpecialSkills')}
             />
-          </div>
-        </div>
+          </RelationSelectorSlot>
+        </RelationSelectorToolbar>
       ),
       show: true,
       showEditControls: true,
@@ -339,23 +309,17 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       icon: <HeartIcon aria-hidden='true' />,
       items: collaboratorItems,
       selectors: (
-        <div className='flex items-center gap-2'>
-          <div title='添加角色'>
+        <RelationSelectorToolbar>
+          <RelationSelectorSlot title='添加角色'>
             <CharacterSelector
               currentCharacterId={id}
               factionId={factionId}
               relationType='collaborators'
               existingRelations={char.collaborators}
-              onSelect={(characterId: string) =>
-                addCharacterRelationItem(
-                  id,
-                  'collaborators',
-                  createCharacterRelationItem(characterId)
-                )
-              }
+              onSelect={createSelectHandler('collaborators')}
             />
-          </div>
-        </div>
+          </RelationSelectorSlot>
+        </RelationSelectorToolbar>
       ),
       show: factionId === 'mouse',
       showEditControls: true,
@@ -372,24 +336,20 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       ),
       items: advantageItems,
       selectors: (
-        <div className='flex items-center gap-2'>
-          <div title='添加地图'>
+        <RelationSelectorToolbar>
+          <RelationSelectorSlot title='添加地图'>
             <MapSelector
               selected={char.advantageMaps}
-              onSelect={(mapId) =>
-                addCharacterRelationItem(id, 'advantageMaps', createCharacterRelationItem(mapId))
-              }
+              onSelect={createSelectHandler('advantageMaps')}
             />
-          </div>
-          <div title='添加模式'>
+          </RelationSelectorSlot>
+          <RelationSelectorSlot title='添加模式'>
             <ModeSelector
               selected={char.advantageModes}
-              onSelect={(modeId) =>
-                addCharacterRelationItem(id, 'advantageModes', createCharacterRelationItem(modeId))
-              }
+              onSelect={createSelectHandler('advantageModes')}
             />
-          </div>
-        </div>
+          </RelationSelectorSlot>
+        </RelationSelectorToolbar>
       ),
       show: isEditMode || advantageItems.length > 0,
       showEditControls: true,
@@ -406,28 +366,20 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       ),
       items: disadvantageItems,
       selectors: (
-        <div className='flex items-center gap-2'>
-          <div title='添加地图'>
+        <RelationSelectorToolbar>
+          <RelationSelectorSlot title='添加地图'>
             <MapSelector
               selected={char.disadvantageMaps}
-              onSelect={(mapId) =>
-                addCharacterRelationItem(id, 'disadvantageMaps', createCharacterRelationItem(mapId))
-              }
+              onSelect={createSelectHandler('disadvantageMaps')}
             />
-          </div>
-          <div title='添加模式'>
+          </RelationSelectorSlot>
+          <RelationSelectorSlot title='添加模式'>
             <ModeSelector
               selected={char.disadvantageModes}
-              onSelect={(modeId) =>
-                addCharacterRelationItem(
-                  id,
-                  'disadvantageModes',
-                  createCharacterRelationItem(modeId)
-                )
-              }
+              onSelect={createSelectHandler('disadvantageModes')}
             />
-          </div>
-        </div>
+          </RelationSelectorSlot>
+        </RelationSelectorToolbar>
       ),
       show: isEditMode || disadvantageItems.length > 0,
       showEditControls: true,
