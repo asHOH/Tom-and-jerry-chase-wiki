@@ -4,16 +4,12 @@ import dynamic from 'next/dynamic';
 
 import type { FactionId, SpecialSkill } from '@/data/types';
 import EditModePageShell from '@/components/ui/EditModePageShell';
-import LoadingState from '@/components/ui/LoadingState';
+import { PageLoadingState } from '@/components/ui/LoadingState';
 
 const SpecialSkillDetails = dynamic(
   () => import('@/features/special-skills/components/special-skill-detail/SpecialSkillDetails'),
   {
-    loading: () => (
-      <div className='mx-auto max-w-6xl space-y-6 p-6'>
-        <LoadingState type='detail' message='加载特技详情中...' />
-      </div>
-    ),
+    loading: () => <PageLoadingState type='detail' message='加载特技详情中...' />,
   }
 );
 

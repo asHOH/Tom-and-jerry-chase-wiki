@@ -1,6 +1,8 @@
+import { PageLoadingState } from '@/components/ui/LoadingState';
+
 export default function Loading() {
   return (
-    <div className='mx-auto max-w-6xl space-y-6 p-6'>
+    <PageLoadingState>
       <div className='space-y-6'>
         {/* Back link skeleton */}
         <div className='h-4 w-24 rounded bg-gray-200 dark:bg-gray-700'></div>
@@ -56,6 +58,6 @@ export default function Loading() {
           </div>
         </div>
       </div>
-    </div>
+    </PageLoadingState>
   );
 }

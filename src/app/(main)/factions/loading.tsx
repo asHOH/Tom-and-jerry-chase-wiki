@@ -10,6 +10,7 @@ export default function Loading() {
 
   return (
     <PageLoadingState
+      layout='catalog'
       type='character-grid'
       message='加载角色列表中...'
       count={getFactionLoadingCount(pathname)}

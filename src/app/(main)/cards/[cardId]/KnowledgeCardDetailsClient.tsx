@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 
 import { KnowledgeCardDetailsProps } from '@/lib/types';
 import EditModePageShell from '@/components/ui/EditModePageShell';
-import LoadingState from '@/components/ui/LoadingState';
+import { PageLoadingState } from '@/components/ui/LoadingState';
 
 // Dynamic import for KnowledgeCardDetails component
 const KnowledgeCardDetails = dynamic(
@@ -13,11 +13,7 @@ const KnowledgeCardDetails = dynamic(
       default: mod.KnowledgeCardDetails,
     })),
   {
-    loading: () => (
-      <div className='mx-auto max-w-6xl space-y-6 p-6'>
-        <LoadingState type='detail' message='加载知识卡详情中...' />
-      </div>
-    ),
+    loading: () => <PageLoadingState type='detail' message='加载知识卡详情中...' />,
   }
 );
 

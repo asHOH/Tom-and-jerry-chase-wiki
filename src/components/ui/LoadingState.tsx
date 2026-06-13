@@ -14,7 +14,7 @@ import {
   SkeletonSpecialSkillCard,
 } from './Skeleton';
 
-interface LoadingStateProps {
+type LoadingStateProps = {
   type?:
     | 'spinner'
     | 'skeleton'
@@ -30,7 +30,18 @@ interface LoadingStateProps {
   className?: string;
   count?: number; // For grid layouts
   animate?: boolean;
-}
+};
+
+type PageLoadingLayout = 'detail' | 'catalog';
+
+type PageLoadingStateProps = {
+  type?: LoadingStateProps['type'];
+  message?: string;
+  count?: number;
+  layout?: PageLoadingLayout;
+  className?: string;
+  children?: React.ReactNode;
+};
 
 const gridItemClasses = [
   'grid-item-1',
@@ -44,6 +55,16 @@ const gridItemClasses = [
 ] as const;
 
 const getGridItemClass = (index: number) => gridItemClasses[index % gridItemClasses.length];
+
+const pageLoadingLayoutClasses: Record<PageLoadingLayout, string> = {
+  detail: 'mx-auto max-w-6xl space-y-6 p-6',
+  catalog: 'mx-auto max-w-6xl space-y-8 p-6 dark:text-slate-200',
+};
+
+export const getPageLoadingStateClassName = (
+  layout: PageLoadingLayout = 'detail',
+  className?: string
+) => cn(pageLoadingLayoutClasses[layout], className);
 
 /**
  * Unified loading state component that provides consistent loading UI across the app
@@ -313,15 +334,12 @@ export function PageLoadingState({
   type = 'spinner',
   message = '加载中...',
   count,
+  layout = 'detail',
+  className,
   children,
-}: {
-  type?: LoadingStateProps['type'];
-  message?: string;
-  count?: number;
-  children?: React.ReactNode;
-}) {
+}: PageLoadingStateProps) {
   return (
-    <div className='mx-auto max-w-6xl space-y-6 p-6'>
+    <div className={getPageLoadingStateClassName(layout, className)}>
       {children || (
         <LoadingState
           type={type}

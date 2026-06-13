@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 
 import LoadingState, { PageLoadingState } from './LoadingState';
+import * as LoadingStateModule from './LoadingState';
 
 jest.mock('./LoadingSpinner', () => ({
   __esModule: true,
@@ -145,6 +146,39 @@ describe('LoadingState', () => {
 });
 
 describe('PageLoadingState', () => {
+  it('uses the detail shell classes by default', () => {
+    const { container } = render(<PageLoadingState type='detail' />);
+
+    expect(container.firstChild).toHaveClass('mx-auto', 'max-w-6xl', 'space-y-6', 'p-6');
+    expect(container.firstChild).not.toHaveClass('space-y-8', 'dark:text-slate-200');
+  });
+
+  it('uses the catalog shell classes for catalog layout', () => {
+    const { container } = render(
+      <PageLoadingState type='item-grid' layout='catalog' message='Loading catalog' />
+    );
+
+    expect(container.firstChild).toHaveClass(
+      'mx-auto',
+      'max-w-6xl',
+      'space-y-8',
+      'p-6',
+      'dark:text-slate-200'
+    );
+  });
+
+  it('merges custom classes into the selected shell', () => {
+    const { container } = render(<PageLoadingState className='pt-10 md:p-8' />);
+
+    expect(container.firstChild).toHaveClass(
+      'mx-auto',
+      'max-w-6xl',
+      'space-y-6',
+      'pt-10',
+      'md:p-8'
+    );
+  });
+
   it('renders the requested loading branch when children are absent', () => {
     render(<PageLoadingState type='character-grid' />);
 
@@ -160,5 +194,21 @@ describe('PageLoadingState', () => {
 
     expect(screen.getByTestId('custom-loading')).toBeInTheDocument();
     expect(screen.queryByTestId('loading-spinner')).not.toBeInTheDocument();
+  });
+
+  it('exports a helper for page loading shell class names', () => {
+    const getPageLoadingStateClassName = (
+      LoadingStateModule as {
+        getPageLoadingStateClassName?: (
+          layout?: 'detail' | 'catalog',
+          className?: string
+        ) => string;
+      }
+    ).getPageLoadingStateClassName;
+
+    expect(getPageLoadingStateClassName).toBeInstanceOf(Function);
+    expect(getPageLoadingStateClassName?.('catalog', 'pt-10')).toContain('space-y-8');
+    expect(getPageLoadingStateClassName?.('catalog', 'pt-10')).toContain('dark:text-slate-200');
+    expect(getPageLoadingStateClassName?.('catalog', 'pt-10')).toContain('pt-10');
   });
 });
