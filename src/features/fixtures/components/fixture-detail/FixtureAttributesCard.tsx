@@ -42,8 +42,8 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
   /* -------- */
 
   const collisionOptions = ['角色', '道具', '墙壁', '平台', '地面'] as const;
-  const activeCollision = Array.isArray(effectiveFixture?.collsion)
-    ? effectiveFixture.collsion
+  const activeCollision = Array.isArray(effectiveFixture?.collision)
+    ? effectiveFixture.collision
     : [];
 
   function putTypeTagOn(currentFixture: Fixture) {
@@ -247,7 +247,7 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
           {(isEditMode ||
             effectiveFixture.move !== undefined ||
             effectiveFixture.gravity !== undefined ||
-            effectiveFixture.collsion !== undefined) && (
+            effectiveFixture.collision !== undefined) && (
             <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
               <span className='text-lg font-bold whitespace-pre'>移动信息</span>
               <div className='auto-fill-grid grid-container grid grid-cols-[repeat(2,minmax(80px,1fr))] grid-rows-2 items-center justify-center gap-1 text-sm font-normal'>
@@ -296,17 +296,17 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
                             checked={activeCollision.includes(opt)}
                             onChange={(e) => {
                               if (!rawFixture) return;
-                              const current = Array.isArray(rawFixture.collsion)
-                                ? rawFixture.collsion
+                              const current = Array.isArray(rawFixture.collision)
+                                ? rawFixture.collision
                                 : [];
                               const next = new Set(current);
                               if (e.target.checked) next.add(opt);
                               else next.delete(opt);
                               const arr = Array.from(next);
                               if (arr.length === 0) {
-                                delete rawFixture.collsion;
+                                delete rawFixture.collision;
                               } else {
-                                rawFixture.collsion = arr;
+                                rawFixture.collision = arr;
                               }
                             }}
                             className='h-3 w-3'
@@ -339,10 +339,10 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
                       </span>
                     )}
                     <span className='text-sm whitespace-pre'>
-                      {effectiveFixture.collsion ? (
+                      {effectiveFixture.collision ? (
                         <>
                           <span className='text-orange-600 dark:text-orange-400'>会</span>与
-                          {effectiveFixture.collsion.map((string, key, array) => {
+                          {effectiveFixture.collision.map((string, key, array) => {
                             return (
                               <span key={key}>
                                 <span

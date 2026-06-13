@@ -11,7 +11,7 @@ import PageTitle from '@/components/ui/PageTitle';
 const processStrings = (input: string | string[]): string =>
   Array.isArray(input) ? input.join('\n') : input;
 
-export default function TraitCollsion() {
+export default function TraitCollision() {
   const allTraits = Object.values(traits).filter((trait) => !trait.relation);
   const topRef = useRef<HTMLDivElement>(null);
 
@@ -83,7 +83,7 @@ export default function TraitCollsion() {
       </header>
 
       <div className='grid items-center justify-center'>
-        <div className='mt-3 mb-6 flex flex-col flex-wrap gap-4 rounded-lg border-1 border-dashed border-gray-400 bg-gradient-to-br from-white to-gray-50 px-2 py-3 text-sm font-normal dark:border-gray-600 dark:from-slate-800 dark:to-slate-900 dark:text-slate-200 [&_img]:select-none'>
+        <div className='mt-3 mb-6 flex flex-col flex-wrap gap-4 rounded-lg border border-dashed border-gray-400 bg-linear-to-br from-white to-gray-50 px-2 py-3 text-sm font-normal dark:border-gray-600 dark:from-slate-800 dark:to-slate-900 dark:text-slate-200 [&_img]:select-none'>
           {currentPageTraits.map((trait, index) => (
             <div key={startIndex + index} className='text-base whitespace-pre-wrap'>
               <TextWithHoverTooltips

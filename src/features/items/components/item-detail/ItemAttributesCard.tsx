@@ -39,7 +39,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
   /* -------- */
 
   const collisionOptions = ['角色', '道具', '墙壁', '平台', '地面'] as const;
-  const activeCollision = Array.isArray(effectiveItem?.collsion) ? effectiveItem.collsion : [];
+  const activeCollision = Array.isArray(effectiveItem?.collision) ? effectiveItem.collision : [];
 
   const aliasesEditor = isEditMode ? (
     <div className='flex items-center gap-1'>
@@ -265,7 +265,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
           {(isEditMode ||
             effectiveItem.move !== undefined ||
             effectiveItem.gravity !== undefined ||
-            effectiveItem.collsion !== undefined) && (
+            effectiveItem.collision !== undefined) && (
             <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
               <span className='text-lg font-bold whitespace-pre'>移动信息</span>
               <div className='auto-fill-grid grid-container grid grid-cols-[repeat(2,minmax(80px,1fr))] grid-rows-2 items-center justify-center gap-1 text-sm font-normal'>
@@ -314,17 +314,17 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                             checked={activeCollision.includes(opt)}
                             onChange={(e) => {
                               if (!rawItem) return;
-                              const current = Array.isArray(rawItem.collsion)
-                                ? rawItem.collsion
+                              const current = Array.isArray(rawItem.collision)
+                                ? rawItem.collision
                                 : [];
                               const next = new Set(current);
                               if (e.target.checked) next.add(opt);
                               else next.delete(opt);
                               const arr = Array.from(next);
                               if (arr.length === 0) {
-                                delete rawItem.collsion;
+                                delete rawItem.collision;
                               } else {
-                                rawItem.collsion = arr;
+                                rawItem.collision = arr;
                               }
                             }}
                             className='h-3 w-3'
@@ -357,10 +357,10 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                       </span>
                     )}
                     <span className='text-sm whitespace-pre'>
-                      {effectiveItem.collsion ? (
+                      {effectiveItem.collision ? (
                         <>
                           <span className='text-orange-600 dark:text-orange-400'>会</span>与
-                          {effectiveItem.collsion.map((string, key, array) => {
+                          {effectiveItem.collision.map((string, key, array) => {
                             return (
                               <span key={key}>
                                 <span

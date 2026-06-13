@@ -44,7 +44,9 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
   /* -------- */
 
   const collisionOptions = ['角色', '道具', '墙壁', '平台', '地面'] as const;
-  const activeCollision = Array.isArray(effectiveEntity?.collsion) ? effectiveEntity.collsion : [];
+  const activeCollision = Array.isArray(effectiveEntity?.collision)
+    ? effectiveEntity.collision
+    : [];
 
   const factionId = getEntityFactionId(entity);
 
@@ -252,7 +254,7 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
           {(isEditMode ||
             effectiveEntity.move !== undefined ||
             effectiveEntity.gravity !== undefined ||
-            effectiveEntity.collsion !== undefined) && (
+            effectiveEntity.collision !== undefined) && (
             <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
               <span className='text-lg font-bold whitespace-pre'>移动信息</span>
               <div className='auto-fill-grid grid-container grid grid-cols-[repeat(2,minmax(80px,1fr))] grid-rows-2 items-center justify-center gap-1 text-sm font-normal'>
@@ -301,17 +303,17 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
                             checked={activeCollision.includes(opt)}
                             onChange={(e) => {
                               if (!rawEntity) return;
-                              const current = Array.isArray(rawEntity.collsion)
-                                ? rawEntity.collsion
+                              const current = Array.isArray(rawEntity.collision)
+                                ? rawEntity.collision
                                 : [];
                               const next = new Set(current);
                               if (e.target.checked) next.add(opt);
                               else next.delete(opt);
                               const arr = Array.from(next);
                               if (arr.length === 0) {
-                                delete rawEntity.collsion;
+                                delete rawEntity.collision;
                               } else {
-                                rawEntity.collsion = arr;
+                                rawEntity.collision = arr;
                               }
                             }}
                             className='h-3 w-3'
@@ -344,10 +346,10 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
                       </span>
                     )}
                     <span className='text-sm whitespace-pre'>
-                      {effectiveEntity.collsion ? (
+                      {effectiveEntity.collision ? (
                         <>
                           <span className='text-orange-600 dark:text-orange-400'>会</span>与
-                          {effectiveEntity.collsion.map((string, key, array) => {
+                          {effectiveEntity.collision.map((string, key, array) => {
                             return (
                               <span key={key}>
                                 <span

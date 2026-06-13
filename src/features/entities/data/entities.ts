@@ -1,7 +1,5 @@
 import { Entity, EntityDefinition, Entitytaglist, Entitytypelist } from '@/data/types';
 
-//原catEntities与mouseEntities已合并
-
 const figureDescription: string =
   '\n\n{莱恩}在{蓝图(衍生物)}上绘制图形（包括{圆形}、{三角}、{方块}及各自的强化图形）时，两种图形碰撞可合成其他老鼠的技能衍生物。\n蓝图合成配方：\n△+○={火药桶(衍生物)}（1级）\n△+□={花洒(衍生物)}（1级）\n○+□={感应雷(衍生物)}（1级）\n○+○={披萨(衍生物)}（1级）\n△+△={藤蔓(衍生物)}（2级）\n□+□={烟雾(衍生物)}（1级）';
 const getEntityImageUrl = (name: string, specialImageUrl: string | undefined): string => {
@@ -53,7 +51,7 @@ export const entityDefinitions = {
     create: '角色与果盘交互时被投出。果盘每投出10个果子会进入10秒CD。',
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
   },
   子弹: {
     entitytag: ['抛掷', '命中', '伤害'],
@@ -63,7 +61,7 @@ export const entityDefinitions = {
     create: '角色使用玩具枪时被射出。每把玩具枪可射出5发子弹。',
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
   },
   碎片: {
     entitytag: ['触发', '硬控'],
@@ -83,7 +81,7 @@ export const entityDefinitions = {
       '{易碎道具}在未命中角色或墙缝的情况下破碎时生成。其中，{非控制易碎道具}破碎产生2个碎片，{花瓶}破碎产生4个碎片。',
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
   },
   香水烟雾: {
     entitytag: ['触发', '群体', '复用'],
@@ -93,7 +91,7 @@ export const entityDefinitions = {
     create: '香水瓶在未命中角色、墙缝的情况下破碎时生成。',
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
   },
   胡椒烟雾: {
     entitytag: ['触发', '群体', '复用'],
@@ -103,7 +101,7 @@ export const entityDefinitions = {
     create: '胡椒瓶在未命中角色、墙缝的情况下破碎时生成。',
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
   },
   烂番茄: {
     entitytag: ['触发', '群体', '复用'],
@@ -115,7 +113,7 @@ export const entityDefinitions = {
     create: '番茄在未命中角色、墙缝的情况下破碎时生成。',
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
   },
   冰面: {
     entitytag: ['触发', '硬控', '群体', '复用'],
@@ -128,7 +126,7 @@ export const entityDefinitions = {
     create: '冰块在未命中角色、墙缝或其它道具的情况下破碎时生成。',
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
   },
   面粉烟雾: {
     entitytag: ['触发', '增益', '群体', '复用'],
@@ -138,7 +136,7 @@ export const entityDefinitions = {
     create: '冰块在未命中角色、墙缝或其它道具的情况下破碎时生成。',
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
   },
   带电残骸: {
     entitytag: ['触发', '伤害', '硬控', '群体', '复用'],
@@ -150,7 +148,7 @@ export const entityDefinitions = {
       '电风扇受到[道具伤害或爪刀攻击](不包括无伤害的道具，以及非道具造成的技能伤害)时强制进行吹风，之后损毁变为带电残骸。\n在5V5及多元乱斗模式中，电风扇永不损毁，因而带电残骸无法生成。',
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
   },
   打开的老鼠夹: {
     entitytag: ['触发', '硬控'],
@@ -163,7 +161,7 @@ export const entityDefinitions = {
     create: '猫咪使用{老鼠夹}时生成。此外也有小概率从{大纸盒}或{小纸盒}中开出。',
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
   },
   猫咪泡泡: {
     entitytag: ['特殊', '硬控', '群体'],
@@ -200,7 +198,7 @@ export const entityDefinitions = {
     create: '猫角色使用遥控器时召唤。',
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
   },
   遥控机器鼠: {
     entitytag: ['触发', '伤害', '硬控', '巡逻', '群体'],
@@ -213,7 +211,7 @@ export const entityDefinitions = {
     create: '鼠角色使用遥控器时召唤。',
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
   },
   泰克: {
     entitytag: ['伤害', '硬控', 'NPC', '巡逻'],
@@ -226,7 +224,7 @@ export const entityDefinitions = {
     create: '狗骨头接触地面后召唤，所属阵营归属于狗骨头的投掷者。',
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
   },
 
   //-------------------------------猫道具-------------------------------------//
@@ -246,7 +244,7 @@ export const entityDefinitions = {
     owner: { name: '平底锅', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
     description: '对命中的老鼠造成伤害和{失明}，并降低其救援速度。',
     detailedDescription:
       '对命中的老鼠造成{15*,可致伤}点伤害，并附加5秒{失明}（[有特殊显示特效](特效为一块煎蛋蒙蔽双眼，与常规失明不同)）和55%救援减速效果。Lv.2后，附加状态持续时间延长至7.5秒，且命中时刷新汤姆的爪刀CD。',
@@ -258,7 +256,7 @@ export const entityDefinitions = {
     aliases: ['长条汤姆'],
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description:
       '进入和解除该状态期间进入短暂{眩晕}。变身期间移速大幅加快，移动时撞击到老鼠会使其受到高额伤害并受到较长时间的眩晕，眩晕期间保持惯性。变身期间无法使用技能、道具，也无法进行大部分交互，且爪刀键会被替换为“嘲讽”，使用后不会进行攻击，而是做出趣味动作。',
     create:
@@ -281,7 +279,7 @@ export const entityDefinitions = {
     owner: { name: '旋转桶盖', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
     description: '伤害并眩晕命中的敌方；友方再次碰到桶盖时将其拾取，使自身受到的伤害降低一段时间。',
     detailedDescription:
       '对命中的敌方造成{30*,不可致伤}伤害(伤害来源为布奇，其基础攻击增伤为25，实战中需计入)并{眩晕}1.5秒；友方再次碰到桶盖时将其拾取，使自身受到的伤害降低20，持续6秒。桶盖被投掷时的初速度较快，会被道具和墙壁反弹。Lv.2及以上时，命中敌方减少旋转桶盖技能6秒CD（每次施放只生效1次）。Lv.3时，桶盖飞行速度增加；捡到桶盖会获得[霸体](免疫虚弱和绝大多数控制效果)。',
@@ -293,7 +291,7 @@ export const entityDefinitions = {
     aliases: ['桌子猫'],
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description:
       '进入和解除该状态期间进入短暂{眩晕}。变身期间受到的伤害小幅降低，爪刀CD极大幅降低，且爪刀对目标附带长时间眩晕。变身期间无法使用技能、道具，也无法进行大部分交互。可以使用交互键进行“嘲讽”，使用后会做出趣味动作。',
     create:
@@ -317,7 +315,7 @@ export const entityDefinitions = {
     aliases: ['分身', '弟弟'],
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description:
       '分身爪刀伤害提高，爪刀CD减少，免疫碎片和老鼠夹，且[继承部分知识卡](大多数知识卡均可继承，其中一部分知识卡效果还能和本体叠加（如“捕鼠夹”的伤害和控制时间延长效果可以二次叠加）；但部分特殊知识卡则无法继承或继承后无效果（如“熊熊燃烧”等）)。分身[共享小地图视野](由于人工智能类角色具有能看到隐身角色的特性，因此分身也能在小地图上透视周围隐身的老鼠，但不会主动攻击)，但[受到的伤害增加](包括受到部分环境伤害时)。本体[获得部分增益时](包括食物、药水效果，以及部分地图道具效果（如太空堡垒-科研舱药水等）)，分身也会获得。\n\n分身存在期间本体获得额外技能，点击可指挥分身出击或跟随（有CD）。\n再次使用主动技能可与分身换位（有[单独CD](与技能原本的CD无关；不受增加/缩减冷却的效果影响)）。',
     detailedDescription:
@@ -336,7 +334,7 @@ export const entityDefinitions = {
     owner: { name: '泡泡棒', type: 'skill' },
     move: true,
     gravity: false,
-    collsion: ['墙壁', '地面'],
+    collision: ['墙壁', '地面'],
     description:
       '[鼠方碰到泡泡时会被困住](若有护盾则消耗一层护盾)，需通过挣脱才能离开。[泡泡存在一段时间后消失](有老鼠在其内被困住时则不会自然消失)，可以提前被道具砸破。泡泡被砸破或因挣脱破碎时，对周围的老鼠造成伤害和短暂的爆炸眩晕。',
     detailedDescription:
@@ -348,7 +346,7 @@ export const entityDefinitions = {
     owner: { name: '垃圾桶', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: ['角色', '道具', '墙壁', '平台', '地面'],
+    collision: ['角色', '道具', '墙壁', '平台', '地面'],
     description:
       '阻挡道路，可被推动且被猫推动时的力度更大，可被爪刀打飞，受到4次攻击后会摧毁。垃圾桶的异味会使老鼠受到减速和伤害，由此造成伤害时会减少爪刀CD，每秒只生效一次。垃圾桶造成的伤害不会使老鼠虚弱。',
     detailedDescription:
@@ -360,7 +358,7 @@ export const entityDefinitions = {
     owner: { name: '咸鱼', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
     description:
       '鼠方踩到后会受到小幅全属性减益。莱特宁爪刀命中[带有咸鱼效果的敌方](包括虚弱老鼠)时，将重置瞬移闪击CD、减少爪刀CD，并回复Hp。瞬移闪击将优先追踪带有咸鱼效果的敌方；手中有老鼠时，则优先追踪最近的咸鱼。',
     detailedDescription:
@@ -372,7 +370,7 @@ export const entityDefinitions = {
     owner: { name: '咸鱼', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
     description: '命中老鼠后产生与{咸鱼}相同的效果，命中其它物体则会直接消失。',
     create: '由莱特宁-咸鱼的二段技能掷出。',
     specialImageUrl: '/images/entities/咸鱼.png',
@@ -383,7 +381,7 @@ export const entityDefinitions = {
     aliases: ['手风琴猫'],
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description:
       '进入和解除该状态期间进入短暂{眩晕}。变身期间在地面时无法移动，在空中移动时碰撞老鼠会使其受到高额伤害和长时间眩晕。变身期间无法使用技能、道具，也无法进行大部分交互，且爪刀键会被替换为“嘲讽”，使用后会做出趣味动作。也可以使用交互键进行“嘲讽”，效果相同。',
     create:
@@ -406,7 +404,7 @@ export const entityDefinitions = {
     owner: { name: '斗牛', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description:
       '斗牛会来回冲撞，破坏[部分道具](包括玻璃杯/碗/盘子/扁盘/灰花瓶/蓝花瓶/香水瓶/胡椒瓶，以及纸盒、吊灯、牛仔杰瑞的仙人掌等)，并对老鼠造成伤害和[眩晕](内置CD：4秒)。被牛眩晕的老鼠可以被直接抓取。斗牛每次撞墙或老鼠减少1秒持续时间，撞到墙体或插入地板的叉子会掉头，会带走已经布置的老鼠夹。',
     detailedDescription:
@@ -433,7 +431,7 @@ export const entityDefinitions = {
     owner: { name: '仙人掌弹弓', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
     description:
       '在碰触实体时爆炸，对周围的敌方造成伤害和眩晕，同时分裂成10颗{小仙人掌球}飞向不同方向。',
     detailedDescription:
@@ -445,7 +443,7 @@ export const entityDefinitions = {
     owner: { name: '魅惑之吻', type: 'skill' },
     move: true,
     gravity: false,
-    collsion: ['墙壁', '地面'],
+    collision: ['墙壁', '地面'],
     description:
       '飞吻会锁定并追踪附近的老鼠，命中老鼠后施加永久存在的“吻痕”，其移动、跳跃、搬动奶酪等行为期间会受到持续伤害，只有受到其他[伤害或部分控制效果](包括爪刀攻击（指甲油外刀除外）、碎片的僵直、夹子、虚弱、部分变身效果（包括变身饮料效果）等，不包括香水反向、烟雾失明、场景物-轮胎造成的击退等)才能解除。',
     detailedDescription:
@@ -517,7 +515,7 @@ export const entityDefinitions = {
     aliases: ['胡椒粉', '胡椒罐'],
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
     description:
       '米特将其拿在手中时持续受到轻微伤害，并因此获得"刺激"状态，增加移速和跳跃速度。再次使用技能将投掷胡椒粉、造成伤害并形成{胡椒罐头烟雾}，持续对范围内角色造成伤害。米特在烟雾中也会获得"刺激"状态。',
     detailedDescription:
@@ -543,7 +541,7 @@ export const entityDefinitions = {
     owner: { name: '饭盒陷阱', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
     description:
       '被老鼠踩中或被砸中后，饭盒会爆炸，对附近所有老鼠造成伤害和眩晕，并使其暴露小地图视野、大量减少推速。',
     detailedDescription:
@@ -609,7 +607,7 @@ export const entityDefinitions = {
     aliases: ['天梯'],
     move: false,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description:
       '在地面时：任何角色均可与其交互进入天堂，最多同时存在2个。\n在天堂时：猫咪与其交互可获知所有老鼠的位置，并任意选择房间传送；老鼠则可传送到随机洞口。',
     detailedDescription:
@@ -647,7 +645,7 @@ export const entityDefinitions = {
     aliases: ['书', '书籍'],
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
     description:
       '命中时造成伤害；落地后书籍会打开，一段时间后或再次施放技能会让书籍闭合，造成伤害并将老鼠夹住。书籍闭合后存在一定时间，凯特可以通过交互键捡起书籍，返还部分CD、回复一定Hp、提高绑火箭和放置{老鼠夹}的速度、将被夹住的老鼠{直接抓起}在手中。\n当书籍在凯特附近闭合时，{追求者}会快速冲向书籍将其捡起并送还凯特。',
     detailedDescription:
@@ -659,7 +657,7 @@ export const entityDefinitions = {
     owner: { name: '瑜伽球', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description:
       '掷出并落地后沿指定方向滑动。苏蕊再次使用技能可使其膨胀，膨胀的瞬间对周围的敌方造成伤害和{眩晕}，并弹飞对方。',
     detailedDescription:
@@ -671,7 +669,7 @@ export const entityDefinitions = {
     owner: { name: '猎', type: 'skill' },
     move: true,
     gravity: false,
-    collsion: ['墙壁', '地面'],
+    collision: ['墙壁', '地面'],
     description: '用于标示斯飞即将飞去的位置。',
     create: '由斯飞-猎召唤并投掷。',
   },
@@ -739,7 +737,7 @@ export const entityDefinitions = {
     owner: { name: '胡萝卜', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description:
       '出现时造成范围伤害和{眩晕}，随后降低附近老鼠移速和推奶酪速度且阻碍奶酪推进，老鼠可通过交互吃掉巨型胡萝卜。兔八哥可消耗1层“胜利”提高伤害并将奶酪冲出洞口（最后一块奶酪只能被冲出一次）。',
     detailedDescription:
@@ -751,7 +749,7 @@ export const entityDefinitions = {
     owner: { name: '追风双翼', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description:
       '对敌方造成伤害和{击退}。击退期间对触碰到的[敌方单位](过去版本曾经也会对追风汤姆本身造成伤害，现已修复)造成伤害和{眩晕}。',
     detailedDescription:
@@ -763,7 +761,7 @@ export const entityDefinitions = {
     owner: { name: '追风双翼', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: ['墙壁', '地面'],
+    collision: ['墙壁', '地面'],
     description: '砸中敌方造成少量伤害和短暂眩晕。',
     detailedDescription:
       '铁砧下落1.6秒或命中后将消失并对附近小范围敌方造成{18*,固定,不可致伤}/{18*,固定,不可致伤}/{30*,固定,不可致伤}伤害和1.2秒{眩晕}（老鼠被铁砧眩晕期间及其效果结束后1秒内不会再受到铁砧效果）。铁砧可穿越平台，会被部分可被攻击的[中立生物](如森林牧场的鸭爸爸、鸭妈妈)阻挡。\n当手中有老鼠时，会[一同扔出老鼠](该操作会正常消耗一次技能)，老鼠将回复60Hp且随着被扔出的飓风/铁砧一同移动，自动绑上碰到的火箭；当该飓风/铁砧命中敌方或部分可被攻击的[中立生物](如森林牧场的鸭爸爸、鸭妈妈)后，被带走的老鼠才能正常行动；若以铁砧的形式扔出老鼠，则在铁砧命中或提前结束时同样会给予老鼠铁砧效果；老鼠在被扔出期间可使用技能和道具及进行交互，[免疫大多数伤害](追风的俯冲伤害、猫携带知识卡-长爪造成的普攻伤害除外)但不免疫控制，且[不可逃离](无法离开该范围，部分技能效果或被狗抓除外)。',
@@ -803,7 +801,7 @@ export const entityDefinitions = {
     aliases: ['炸弹', '鸟哨炸弹'],
     move: true,
     gravity: true,
-    collsion: ['墙壁', '地面'],
+    collision: ['墙壁', '地面'],
     description:
       '命中敌方时爆炸，造成伤害和眩晕，被命中的目标短暂免疫该道具效果；掉落一定时间后也会自行爆炸。',
     detailedDescription:
@@ -816,7 +814,7 @@ export const entityDefinitions = {
     aliases: ['华夫饼杰瑞', '鼠饼'],
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description:
       '进入和解除该状态期间进入短暂{眩晕}。变身期间移速增加。变身期间无法使用技能、道具，也无法进行大部分交互，可以使用交互键进行“嘲讽”，使用后会做出趣味动作。',
     create: '属于彩蛋，只会在高级学业以下的地图触发。杰瑞被{苍蝇拍}命中时，有一定概率变身为鼠片。',
@@ -849,7 +847,7 @@ export const entityDefinitions = {
     owner: { name: '视觉干扰器', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: ['墙壁', '地面'],
+    collision: ['墙壁', '地面'],
     description: '干扰器落地时，使小范围内的友方老鼠获得短暂隐身。',
     detailedDescription:
       '干扰器落地时，使小范围内的友方老鼠获得3.5秒隐身。Lv.1干扰器提供的隐身会被部分交互行为破除。Lv.2干扰器提供的隐身不再会被交互破除，且能免疫香水反向、烟雾失明、魅力香水烟雾的效果。Lv.3干扰器提供的隐身附带移速提高20%的效果。',
@@ -860,7 +858,7 @@ export const entityDefinitions = {
     owner: { name: '飞翔金币', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: ['墙壁', '地面'],
+    collision: ['墙壁', '地面'],
     description:
       '金币命中敌方造成眩晕，被命中的敌方短暂免疫该道具效果。金币不会因虚弱而从手中掉落。',
     detailedDescription:
@@ -873,7 +871,7 @@ export const entityDefinitions = {
     aliases: ['桶', '炸药桶'],
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
     description:
       '延迟数秒后爆炸，对周围造成不分敌我的伤害和眩晕，对墙缝造成伤害，并炸毁范围内的火箭，因此救下老鼠时可以触发相关知识卡，但不获得相关局内金币。猫咪可以通过交互拆除火药桶，老鼠可以通过交互推动火药桶。',
     detailedDescription:
@@ -886,7 +884,7 @@ export const entityDefinitions = {
     owner: { name: '舰艇火炮', type: 'skill' },
     move: false,
     gravity: false,
-    collsion: ['道具', '墙壁', '地面'],
+    collision: ['道具', '墙壁', '地面'],
     description:
       '老鼠可通过交互键进入火炮，通过投掷键发射自身，对碰到的敌方造成伤害与眩晕，碰到绑在火箭上的队友时自动进行救援交互。火炮内不会被投掷道具及部分技能命中。若火炮内老鼠进入虚弱，则火炮会提前消失。同一房间最多出现两个火炮。火炮持续数秒后消失。火炮会在小地图上全程暴露位置。',
     detailedDescription:
@@ -898,7 +896,7 @@ export const entityDefinitions = {
     owner: { name: '国王战旗', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description:
       '碰触的友方攻击增伤提高一段时间。被碰触若干次后获得强化，之后碰触的友方额外使墙缝增伤提高，并免疫受伤。获得战旗效果后的15秒内无法再次获得同类型的效果。同一时间游戏内只能存在一面战旗。',
     detailedDescription:
@@ -910,7 +908,7 @@ export const entityDefinitions = {
     owner: { name: '国王战旗', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description:
       '碰触的友方救援速度短暂提高。被碰触若干次后获得强化，之后碰触的友方额外获得瞬息救援能力（碰触火箭自动救援成功）。获得战旗效果后的15秒内无法再次获得同类型的效果。同一时间游戏内只能存在一面战旗。',
     detailedDescription:
@@ -922,7 +920,7 @@ export const entityDefinitions = {
     owner: { name: '国王战旗', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description:
       '碰触的友方解除虚弱，且Hp低于上限的30%时获得短暂恢复效果。被碰触若干次后获得强化，之后碰触的友方额外获得一层护盾。获得战旗效果后的15秒内无法再次获得同类型的效果。同一时间游戏内只能存在一面战旗。',
     detailedDescription:
@@ -934,7 +932,7 @@ export const entityDefinitions = {
     owner: { name: '国王战旗', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description:
       '碰触的友方隐藏自身在敌方小地图上的位置一段时间。被碰触若干次后获得强化，之后碰触的友方额外短暂获知猫的位置。获得战旗效果后的15秒内无法再次获得同类型的效果。同一时间游戏内只能存在一面战旗。',
     detailedDescription:
@@ -946,7 +944,7 @@ export const entityDefinitions = {
     owner: { name: '国王战旗', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description:
       '碰触的友方短暂提高跳跃高度。被碰触若干次后获得强化，之后碰触的友方获得二段跳状态。获得战旗效果后的15秒内无法再次获得同类型的效果。同一时间游戏内只能存在一面战旗。',
     detailedDescription:
@@ -959,7 +957,7 @@ export const entityDefinitions = {
     aliases: ['炮', '炮弹', '弹头'],
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
     description:
       '直接命中敌方或墙缝时造成一段伤害，命中后爆炸再对一定范围内敌方和墙缝造成伤害和眩晕。爆炸产生的冲击波可以炸飞老鼠夹、叉子等道具。',
     detailedDescription:
@@ -972,7 +970,7 @@ export const entityDefinitions = {
     aliases: ['地雷', '隐形雷'],
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
     description:
       '被放置一小段时间后进入隐身状态，敌方靠近时现身，并在短暂延迟后飞向敌方并爆炸，对小范围内的敌方造成伤害和眩晕，对墙缝造成伤害，对范围内所有角色产生小幅度的爆炸击退效果。感应雷被道具击中会原地倒计时并爆炸。感应雷30秒后自然消失。',
     detailedDescription:
@@ -993,7 +991,7 @@ export const entityDefinitions = {
     aliases: ['球形泰菲'],
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description:
       '进入和解除该状态期间进入短暂{眩晕}。变身期间获得额外技能。变身期间无法使用道具，也无法进行大部分交互，可以使用交互键进行“嘲讽”，使用后会做出趣味动作。',
     create:
@@ -1037,7 +1035,7 @@ export const entityDefinitions = {
     owner: { name: '头盔', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description: '期间{无敌}，但惯性增大；小范围内的队友也{无敌}，但{禁用技能}。',
     detailedDescription:
       '期间{无敌}，但惯性增大、移速降低3.5%、跳跃速度降低15%；小范围内的队友也{无敌}，但{禁用技能}。3级头盔可以[更灵活地移动](不再受惯性影响，不会降低移速和跳跃速度)。\n注：该效果属于{1类变身}（详见"变身"的效果描述）。',
@@ -1049,7 +1047,7 @@ export const entityDefinitions = {
     aliases: ['长矛'],
     move: true,
     gravity: false,
-    collsion: ['墙壁', '地面'],
+    collision: ['墙壁', '地面'],
     description:
       '对触碰的敌方造成伤害和控制效果，可携带触碰的1名友方角色和1个指定道具，以及再次使用技能的剑客泰菲一同飞行。长枪的速度和部分特性可随蓄力时间改变。携带的易碎道具碰到敌方自动产生投掷效果。',
     detailedDescription:
@@ -1062,7 +1060,7 @@ export const entityDefinitions = {
     aliases: ['仙人掌'],
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
     description:
       '被猫咪踩踏时消失，并对其造成短暂硬直，使其移速降低且每秒受到伤害，减速效果可叠加；被老鼠踩踏数次后消失；存在较长时间后会自然消失。同一角色踩踏有内置CD。',
     detailedDescription:
@@ -1077,7 +1075,7 @@ export const entityDefinitions = {
     ],
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
     description:
       '被猫咪踩踏时消失，并对其造成短暂硬直，使其移速降低且每秒受到伤害，减速效果可叠加；被老鼠踩踏数次后消失；存在较长时间后会自然消失。同一角色踩踏有内置CD。',
     detailedDescription:
@@ -1122,7 +1120,7 @@ export const entityDefinitions = {
     aliases: ['蓝恶魔', '蓝色小恶魔'],
     move: true,
     gravity: false,
-    collsion: ['地面'],
+    collision: ['地面'],
     description:
       '被投掷后留在原地，范围内出现敌方时自动飞向对方，命中时造成少量伤害，并短暂禁用敌方的技能和道具键。',
     detailedDescription:
@@ -1138,7 +1136,7 @@ export const entityDefinitions = {
     aliases: ['红恶魔', '红色小恶魔'],
     move: true,
     gravity: false,
-    collsion: ['地面'],
+    collision: ['地面'],
     description: '被投掷后沿直线飞行，命中时造成少量伤害，并强制将敌方向当前背对方向击退一段距离。',
     detailedDescription:
       '被投掷后沿直线飞行，命中时造成{20*}伤害，并强制将敌方向当前背对方向击退一段距离，击退期间无法进行移动等操作。红色小淘气造成的伤害以被投掷者为伤害来源，可受其攻击增伤影响。',
@@ -1153,7 +1151,7 @@ export const entityDefinitions = {
     aliases: ['绿恶魔', '绿色小恶魔'],
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
     description:
       '具有{高尔夫球}的大部分特点，但伤害更低，弹性更大。被恶魔泰菲投掷时，命中敌方不会消耗恶魔泰菲的黑暗印记。',
     detailedDescription:
@@ -1165,7 +1163,7 @@ export const entityDefinitions = {
     owner: { name: '爱心之吻', type: 'skill' },
     move: true,
     gravity: false,
-    collsion: ['墙壁', '地面'],
+    collision: ['墙壁', '地面'],
     description:
       '释放后飘向最近的队友，队友被爱心触碰后与雪梨建立友好关系，持续恢复Hp；友好关系持续20秒后，同伴额外获得全面的强化效果，同时免疫反向和失明，直到友好关系中断。友好关系期间，雪梨可通过特殊技能按键[远程治疗同伴](每次建立关系只可使用一次，可被打断。CD：5秒)，且若雪梨隐身，则双方都隐身。',
     detailedDescription:
@@ -1189,7 +1187,7 @@ export const entityDefinitions = {
     owner: { name: '爱心花束', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: ['墙壁', '地面'],
+    collision: ['墙壁', '地面'],
     description:
       '花束为命中的友方回复Hp，并弹向最近的另一个友方。若首先命中的友方已建立友好关系，则双方额外回复Hp，且双方各获得一个一次性传送技能（点击技能后立刻飞向同伴，传送期间获得无法被任何道具、技能命中；友好关系解除时该技能同步失效）。若已建立友好关系，但花束首先命中的不是友好关系的友方，则与之建立友好关系并获得传送技能、之前的友好关系消失。',
     detailedDescription:
@@ -1271,7 +1269,7 @@ export const entityDefinitions = {
     aliases: ['小兔子'],
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description:
       '魔术师可对其下达救援、搬奶酪、推奶酪、拾取、投掷、治疗或跟随指令。兔子继承魔术师的部分效果。详见{魔术师}技能描述。',
     create: '通过魔术师-兔子先生召唤.',
@@ -1291,7 +1289,7 @@ export const entityDefinitions = {
     aliases: ['大兔子', '兔表哥', '蛋白兔'],
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description:
       '魔术师可对其下达举火箭、指卧撑或保镖指令。兔表哥被卡牌命中时会储存该效果，并在通过技能出拳命中猫咪时对其附加。详见{魔术师}技能描述。',
     create: '通过魔术师-兔子大表哥召唤。',
@@ -1310,7 +1308,7 @@ export const entityDefinitions = {
     owner: { name: '比萨斜塔', type: 'skill' },
     move: false,
     gravity: false,
-    collsion: ['角色', '墙壁'],
+    collision: ['角色', '墙壁'],
     description: '出现时弹飞碰到的敌方；存在期间阻挡角色通行。',
     detailedDescription:
       '斜塔出现时弹飞碰到的敌方，使其[以850的速度被击退，并眩晕1.5秒](正常情况下最终位移距离1275，若弹飞过程中眩晕结束则停止弹飞。可破盾，可击飞跳舞中的苏蕊)。[斜塔与墙壁和地板类似，塔顶可站立，塔身会阻挡道路](朝右的斜塔允许鼠方从右往左通过；空中释放时概率出现无法站立的"飘塔")。斜塔存在3.5/3.5/6秒后崩毁。',
@@ -1322,7 +1320,7 @@ export const entityDefinitions = {
     aliases: ['披萨饼', '大饼'],
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description:
       '老鼠可通过交互键骑乘并一同移动，滚动的披萨撞到敌方时破碎，对撞到的敌方和在披萨上驾驶的老鼠造成伤害和[眩晕](可掉落道具和老鼠)，并生成{披萨块}，老鼠碰到后会缓慢恢复Hp。披萨块存在一定时间后消失；披萨存在一定时间后也会自然破碎，但不生成披萨块。\n静止的披萨不会与敌方产生碰撞。',
     detailedDescription:
@@ -1338,7 +1336,7 @@ export const entityDefinitions = {
     ],
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description:
       '老鼠碰到后会缓慢恢复Hp。披萨块存在一定时间后消失。Lv.2及以上的披萨块可以解除一些不良状态。',
     detailedDescription:
@@ -1351,7 +1349,7 @@ export const entityDefinitions = {
     aliases: ['足球'],
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
     description:
       '命中敌方时造成"强光耀眼"状态（受到伤害，并且{失明}，降低交互速度，再次受到来自拿坡里鼠的伤害会眩晕2秒（眩晕有8秒内置CD））。足球存在时间与蓄力时间有关。足球可以反复弹跳。足球仅可触发{缴械}/{投手}。',
     detailedDescription:
@@ -1364,7 +1362,7 @@ export const entityDefinitions = {
     aliases: ['分身'],
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description: '分身会自由走动，被击倒时使敌方短暂失明。',
     detailedDescription:
       '分身存在6.9/6.9/11.9秒，被击倒时使敌方失明1.75秒，但不会破盾或减少护盾时间。分身Hp上限为25并[按比例继承本体Hp](如本体Hp为24，分身Hp将为8.33)、继承角色Hp恢复速度、不继承本体状态和知识卡、免疫捕鼠夹；Hp归零或持续时间结束时将原地消失；会在地图内四处走动，可能会钻管道；若半径800范围内出现猫咪，分身会尝试远离之。Lv.3分身存在期间，侦探泰菲可以再次点击技能键与分身换位（CD：8秒），但爬梯子、被眩晕时无法换位。',
@@ -1376,7 +1374,7 @@ export const entityDefinitions = {
     owner: { name: '追踪饮料', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description:
       '一旦印记与猫咪处在同一个房间，印记会召唤1个[模拟侦探泰菲或队友外形](只包括存活的鼠方队友)的{饮料分身}。分身被击倒时使敌方短暂失明。存在{侦探泰菲分身}或{饮料分身}时，印记不会召唤新的分身；使用分身大师将使饮料分身立即消失。\n猫咪靠近印记时，侦探泰菲获得加速和跳跃高度提升，印记召唤出分身后立即结束此状态。',
     detailedDescription:
@@ -1392,7 +1390,7 @@ export const entityDefinitions = {
     aliases: ['分身'],
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description:
       '饮料分身会[模拟侦探泰菲或队友外形](只包括存活的鼠方队友)，会自由走动，被击倒时使敌方短暂失明。',
     detailedDescription:
@@ -1404,7 +1402,7 @@ export const entityDefinitions = {
     entitytag: ['阻挡', '群体', '复用'],
     owner: { name: '御风剑舞', type: 'skill' },
     aliases: ['风墙'],
-    collsion: ['角色'],
+    collision: ['角色'],
     move: false,
     gravity: false,
     description:
@@ -1418,7 +1416,7 @@ export const entityDefinitions = {
     owner: { name: '幻影剑气', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description:
       '击中平台形成{幻影}，剑客莉莉再次点击技能可传送至幻影处；击中墙壁则不生成幻影。剑气首次击中角色/{小黄鸭}时将反弹，击中敌方造成伤害和减速；击中友方将给予移速、救援及跳跃高度提升，且获得持续5秒且仅可使用一次的额外技能：使用额外技能将瞬移至幻影处。',
     detailedDescription:
@@ -1443,7 +1441,7 @@ export const entityDefinitions = {
     owner: { name: '藤蔓', type: 'skill' },
     move: false,
     gravity: false,
-    collsion: ['墙壁'],
+    collision: ['墙壁'],
     description:
       '藤蔓顶端会生成平台和{藤蔓纸盒}。藤蔓可攀爬，且被友方攀爬的速度大幅提高。敌方登上藤蔓顶端时受到1秒减速效果，且其在藤蔓顶端跳跃时会使藤蔓持续时间减少。',
     detailedDescription:
@@ -1458,7 +1456,7 @@ export const entityDefinitions = {
     ],
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
     description: '与{大纸盒}类似，但只会开出部分投掷物或{奶酪}。',
     detailedDescription:
       '与{大纸盒}类似，但只会开出以下8种道具：{盘子}、{扁盘}、{玻璃杯}、{碗}、{叉子}、{高尔夫球}、{灰花瓶}、{奶酪}。携带"美食家"知识卡时，改为开出{牛奶}或{蛋糕}，与{小纸盒}/{大纸盒}共计次数。',
@@ -1473,7 +1471,7 @@ export const entityDefinitions = {
     aliases: ['愤怒大老鼠', '巨大比利鼠', '巨型比例鼠', '巨大比例鼠'],
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description: '与{比利鼠}机制和特性基本相同，但体型更大，攻击力更高，持续时间往往更短。',
     create: '米雪儿-{小情绪}能将队友变为比利鼠。',
     skills: [
@@ -1500,7 +1498,7 @@ export const entityDefinitions = {
     owner: { name: '军团战车', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description:
       '战车拥有独立Hp，且持有{霸体}（免疫{虚弱}和大部分控制状态，但不免疫{禁用技能}）。乘坐战车期间可以使用"投掷战矛"（替代原本的武器技能）和原本的主动技能，但无法交互、使用道具或回复Hp。当战车Hp归零、持续时间结束、蒙金奇主动脱离时，战车进入自毁倒计时，期间{禁用主动、武器技能}，结束时爆炸对范围内所有单位造成伤害和{爆炸}，对未脱离战车的蒙金奇造成极高伤害。',
     detailedDescription:
@@ -1542,7 +1540,7 @@ export const entityDefinitions = {
     ],
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description: '有自毁倒计时，结束时爆炸对范围内所有单位造成伤害和{爆炸}。',
     detailedDescription:
       '有自毁倒计时，结束时爆炸对范围内所有单位造成{50*}伤害（伤害来源为蒙金奇，其基础攻击增伤为25，实战中需加入。对蒙金奇自身的伤害改为“不受来源影响”）和2秒{爆炸}。',
@@ -1557,7 +1555,7 @@ export const entityDefinitions = {
     aliases: ['矛', '长矛'],
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
     description: '命中敌方或墙缝造成伤害。',
     detailedDescription:
       '命中敌方造成{30*,不受来源影响}，命中墙缝造成{_5*,不受来源影响}，可触发{投掷命中效果}（{追风}除外）。',
@@ -1594,7 +1592,7 @@ export const entityDefinitions = {
     aliases: ['电球'],
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
     description: '命中敌方造成电击伤害和眩晕。可二次充能。',
     detailedDescription:
       '命中敌方造成{70*,电击}伤害（伤害来源为投掷者，被朵朵投掷时需计入朵朵自身的10基础攻击增伤）和1.2秒眩晕，命中墙缝造成{_1.5*}伤害（同前，被朵朵投掷时需计入1基础墙缝增伤）。可像其他投掷物一样被{强能灌注}充能，充能效果相同。\n与{大电球}效果相同，仅存在外观差异。',
@@ -1606,7 +1604,7 @@ export const entityDefinitions = {
     aliases: ['电球'],
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
     description: '命中敌方造成电击伤害和眩晕。可二次充能。',
     detailedDescription:
       '命中敌方造成{70*,电击}伤害（伤害来源为投掷者，被朵朵投掷时需计入朵朵自身的10基础攻击增伤）和1.2秒眩晕，命中墙缝造成{_1.5*}伤害（同前，被朵朵投掷时需计入1基础墙缝增伤）。可像其他投掷物一样被{强能灌注}充能，充能效果相同。\n与{小电球}效果相同，仅存在外观差异。',
@@ -1617,7 +1615,7 @@ export const entityDefinitions = {
     owner: { name: '能源装置', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
     description:
       '朵朵碰触时解除虚弱并恢复Hp和电量，同时对周围放电（造成电击伤害和眩晕）；被其他老鼠拾取和投掷时，命中敌方破碎并放电。电池存在一定时间后自行消失。',
     detailedDescription:
@@ -1664,7 +1662,7 @@ export const entityDefinitions = {
     owner: { name: '仙女棒', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description:
       '变身时解除{常规眩晕}、{虚弱}等效果，并{掉落手中道具}。小星星持有{无敌}，但无法使用原本的角色技能，且无法进行大部分交互并{禁用道具键}。',
     detailedDescription:
@@ -1690,7 +1688,7 @@ export const entityDefinitions = {
     owner: { name: '仙女棒', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description:
       '变身时解除{常规眩晕}、{虚弱}等效果，并{掉落手中道具/老鼠}。大星星持有{无敌}，但无法使用原本的角色技能，且无法进行大部分交互并{禁用道具键}。大星星拥有比普通猫咪更大的体型。大星星拥有爪刀，爪刀判定范围与附加效果不受影响。',
     detailedDescription:
@@ -1768,7 +1766,7 @@ export const entityDefinitions = {
     aliases: ['坤坤袋', '袋子'],
     move: true,
     gravity: true,
-    collsion: ['墙壁', '地面'],
+    collision: ['墙壁', '地面'],
     description:
       '未落地时可命中猫咪造成减速，或命中墙缝造成伤害；落地后生成{乾坤袋}。霜月再次使用技能时，乾坤袋变回投射物形态并飞回。',
     detailedDescription:
@@ -1784,7 +1782,7 @@ export const entityDefinitions = {
     aliases: ['坤坤袋', '胖呆呆', '袋子', '乾坤袋NPC'],
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description:
       '小地图会显示位置。常态持有{霸体}，受到两次伤害后会进入20秒特殊的{猫虚弱}（Hp恢复速度为0.1/秒）。拥有吞噬和激励两个技能，且老鼠可与其进行融合。\n融合：属于{变身}。老鼠[与乾坤袋融合](融合后该老鼠状态栏和小地图的头像会变为胖呆呆)，融合后可操纵乾坤袋移动、跳跃、[进行部分交互](开/关门，抱起队友，钻少数管道等)、释放技能。可抱起队友并通过投掷将其扔出，命中敌方造成伤害和眩晕。无法主动拾取道具。',
     detailedDescription:
@@ -1840,7 +1838,7 @@ export const entityDefinitions = {
     owner: { name: '喜剧之王', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
     description: '命中敌方造成极少量伤害和减速。',
     detailedDescription:
       '命中敌方造成{2.5*,不受来源影响}伤害并在2.5秒内降低10%移速，可触发投掷类知识卡和特技：{缴械}、{投手}、{追风}、{精准投射}、{干扰投掷}、{勇气投掷}。',
@@ -1852,7 +1850,7 @@ export const entityDefinitions = {
     owner: { name: '蓝图', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: ['墙壁', '地面'],
+    collision: ['墙壁', '地面'],
     description:
       '落地后生成一张{蓝图(衍生物)}。接触蓝图的{火箭}变为{线条火箭}（燃烧速度减半），猫咪[隐身状态暂时失效](离开蓝图时恢复)且受到伤害时会短暂变为线条猫（有内置CD），并使手中老鼠掉落。莱恩再次使用技能或持续较长时间后收回蓝图。\n{线条猫}：只可使用移动、跳跃和爪刀，但受到的伤害、爪刀CD、受控时间、虚弱时间减半。' +
       figureDescription,
@@ -1884,7 +1882,7 @@ export const entityDefinitions = {
     aliases: ['粉笔猫'],
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description:
       '变身时解除{常规眩晕}、{虚弱}等效果，并{掉落手中道具/老鼠}；变身期间只可使用移动、跳跃和爪刀，但受到的伤害、爪刀CD、受控时间、虚弱时间减少。变身结束后一段时间内{免疫线条猫效果}。',
     detailedDescription:
@@ -1897,7 +1895,7 @@ export const entityDefinitions = {
     aliases: ['粉笔火箭', '蓝图火箭'],
     move: false,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description: '与{火箭}的特性类似，但引线燃烧速度降低。',
     detailedDescription: '与{火箭}的特性类似，但引线燃烧速度降低20%/20%/50%。',
     create: '接触{蓝图(衍生物)}的{火箭}变为{线条火箭}，离开范围时恢复。',
@@ -1907,7 +1905,7 @@ export const entityDefinitions = {
     owner: { name: '蘸水笔', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: ['角色', '道具', '墙壁', '平台', '地面'],
+    collision: ['角色', '道具', '墙壁', '平台', '地面'],
     description:
       '释放后向莱恩的朝向方向滚动，产生阻挡并对触碰的敌方造成伤害、并击落道具。' +
       figureDescription,
@@ -1921,7 +1919,7 @@ export const entityDefinitions = {
     owner: { name: '蘸水笔', type: 'skill' },
     move: true,
     gravity: true,
-    collsion: ['角色', '道具', '墙壁', '平台', '地面'],
+    collision: ['角色', '道具', '墙壁', '平台', '地面'],
     description:
       '释放后向莱恩的朝向方向**弹跳（横向速度比圆形慢）**，产生阻挡并对触碰的敌方造成**更高**伤害、并击落道具。' +
       figureDescription,
@@ -1936,7 +1934,7 @@ export const entityDefinitions = {
     aliases: ['三角形'],
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description: '对踩中的敌方造成少量伤害，并降低移速和绑火箭速度。' + figureDescription,
     detailedDescription:
       '对踩中的敌方造成{15*,不受来源影响}伤害，且移速降低12.5%、绑火箭速度下降35%，持续7秒；被敌方踩中或持续10秒后消失。' +
@@ -1949,7 +1947,7 @@ export const entityDefinitions = {
     aliases: ['三角形'],
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description:
       '对踩中的敌方造成少量伤害，并降低移速和绑火箭速度。**踩中后将飞出3个普通三角**。' +
       figureDescription,
@@ -1964,7 +1962,7 @@ export const entityDefinitions = {
     aliases: ['正方形'],
     move: true,
     gravity: false,
-    collsion: ['角色', '道具', '墙壁', '平台', '地面'],
+    collision: ['角色', '道具', '墙壁', '平台', '地面'],
     description:
       '停留在生成位置，可被推动，可作为平台或墙壁使用，被爪刀攻击后消失。' + figureDescription,
     detailedDescription:
@@ -1978,7 +1976,7 @@ export const entityDefinitions = {
     aliases: ['正方形'],
     move: true,
     gravity: false,
-    collsion: ['角色', '道具', '墙壁', '平台', '地面'],
+    collision: ['角色', '道具', '墙壁', '平台', '地面'],
     description:
       '停留在生成位置，可被推动，可作为平台或墙壁使用，被爪刀攻击后消失。**会击退碰到的敌方**。' +
       figureDescription,
@@ -1993,7 +1991,7 @@ export const entityDefinitions = {
     aliases: ['毛线团'],
     move: true,
     gravity: true,
-    collsion: ['墙壁', '地面'],
+    collision: ['墙壁', '地面'],
     description:
       '{毛线球}与{梦游杰瑞}通过{毛线}连接。毛线球与敌方碰撞时使其受到减速，拉出的毛线也能使敌方受到减速。毛线球分为抛出、滞留和收回三个阶段。1.抛出：抛出毛线球，无视平台，会被敌方或墙壁反弹，坠落至地面时进入滞留状态；2.滞留：暂时不移动；3.收回：沿着毛线的轨迹进行移动，带回自身碰到的部分道具（有数量上限）。',
     detailedDescription:
@@ -2019,7 +2017,7 @@ export const entityDefinitions = {
     aliases: ['圆球状态', '圆球形态', '巨大球形泰菲'],
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description:
       '变身时恢复大量Hp但掉落手持道具，随后免疫部分控制且获得{减伤}，但无法进行部分交互。可使用技能撞击敌方，造成伤害、减速并恢复自身Hp，短时间命中三次会额外造成{眩晕}。变身时间耗尽或Hp归零时解除变身。',
     detailedDescription:
@@ -2060,7 +2058,7 @@ export const entityDefinitions = {
     aliases: ['玩具枪头'],
     move: true,
     gravity: false,
-    collsion: ['墙壁', '地面'],
+    collision: ['墙壁', '地面'],
     description:
       '朝圣者泰菲瞄准时可操作枪头向前延长及转向，枪头被猫咪爪刀命中时会对朝圣者泰菲造成伤害。再次使用技能发射一枚{木塞子}。',
     detailedDescription:
@@ -2076,7 +2074,7 @@ export const entityDefinitions = {
     aliases: ['木塞子子弹'],
     move: true,
     gravity: false,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description:
       '被发射后在房间内反弹直至存在时间结束，命中敌方造成伤害和减速，命中头部则造成更高伤害并额外补充1发(内置10秒CD)、但目标2秒内免疫其它木塞子效果。木塞子从下方或侧方命中平台时也会被反弹。',
     detailedDescription:
@@ -2089,7 +2087,7 @@ export const entityDefinitions = {
     factionId: 'mouse',
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description:
       '持有{霸体}但无法进行部分交互，且受到伤害（部分伤害除外）时会自爆并弹出驾驶员，若被猫咪击毁则会为其提供额外经验值。',
     detailedDescription:
@@ -2142,7 +2140,7 @@ export const entityDefinitions = {
     owner: { name: '机器鼠', type: 'entity' },
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
     description: '对命中的敌方造成{减速}，对命中的墙缝造成伤害。',
     detailedDescription: '对命中的敌方造成{减速}，对命中的墙缝造成2伤害。',
     create: '由{机器鼠(衍生物)}使用主动技能发射。',
@@ -2154,7 +2152,7 @@ export const entityDefinitions = {
     aliases: ['比例鼠', '肌肉鼠'],
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description:
       '{无敌}，但无法进行交互（开、关门除外）或使用技能、道具；可以进机器鼠；可使用道具键发起攻击，对猫咪造成伤害和减速，对墙缝造成伤害。',
     detailedDescription:
@@ -2185,7 +2183,7 @@ export const entityDefinitions = {
     factionId: 'cat',
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description:
       '挥动强壮的拳头，对敌人造成强烈的击飞效果，若敌方老鼠处于虚弱状态，将直接击飞到附近的火箭。\n属于猫方多元角色。可使用爪刀键进行普通攻击，CD为2秒。\n多元变身均属于{2类变身}（详见“变身”描述），变身期间无法拾取道具，无法进行推奶酪、救援、使用阁楼-庭院管道的交互。',
     create: '猫咪在多元乱斗中拾取变身星后有概率变身，Hp归零后解除变身。',
@@ -2224,7 +2222,7 @@ export const entityDefinitions = {
     factionId: 'mouse',
     move: false,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description:
       '扔出哑铃，可对敌方造成短暂眩晕，在哑铃眩晕期间肌肉杰瑞的普通攻击命中将触发“摔打汤姆”效果。\n属于鼠方多元角色。可使用道具键进行普通攻击，CD为2秒，命中待推入的奶酪将立即将其推入一部分，命中{火箭}将积累1/3摧毁进度，摧毁进度满后将该火箭摧毁。\n多元变身均属于{2类变身}（详见“变身”描述），变身期间无法拾取道具，无法进行推奶酪、救援、使用阁楼-庭院管道的交互。',
     create: '老鼠在多元乱斗中拾取变身星后有概率变身，Hp归零后解除变身。',
@@ -2262,7 +2260,7 @@ export const entityDefinitions = {
     factionId: 'mouse',
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description:
       '甩动鼻子发射水弹，放大敌方和友方。\n属于鼠方多元角色。可使用道具键进行普通攻击，CD为2秒，命中待推入的奶酪将立即将其推入一部分，命中{火箭}将积累1/3摧毁进度，摧毁进度满后将该火箭摧毁。\n多元变身均属于{2类变身}（详见“变身”描述），变身期间无法拾取道具，无法进行推奶酪、救援、使用阁楼-庭院管道的交互。',
     create: '局外解锁后，老鼠在多元乱斗中拾取变身星后有概率变身，Hp归零后解除变身。',
@@ -2298,7 +2296,7 @@ export const entityDefinitions = {
     factionId: 'cat',
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description:
       '发射激光，变小敌方和友方。\n属于猫方多元角色。可使用爪刀键进行普通攻击，CD为2秒。\n多元变身均属于{2类变身}（详见“变身”描述），变身期间无法拾取道具，无法进行推奶酪、救援、使用阁楼-庭院管道的交互。',
     create: '局外解锁后，猫咪在多元乱斗中拾取变身星后有概率变身，Hp归零后解除变身。',
@@ -2335,7 +2333,7 @@ export const entityDefinitions = {
     owner: { name: '多元乱斗', type: 'mode' },
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description:
       '自己逐渐膨胀后爆炸，对附近玩家造成眩晕，并掉落{大大胡萝卜}。自身解除变身时失去变身期间获得的部分星星积分，同时掉落3个{大大胡萝卜}。\n属于中立多元角色。可使用爪刀键进行普通攻击，CD为2秒，正常命中敌方角色时跳出2个{大大胡萝卜}，命中处于虚弱或因自身技能眩晕的角色时，将“啰嗦”对方，夺取其一定星星积分（该效果对每名角色有单独内置CD）。\n多元变身均属于{2类变身}（详见“变身”描述），变身期间无法拾取道具，无法进行推奶酪、救援、使用阁楼-庭院管道的交互。\n该角色为联动角色，不计入“伙伴星元力”。',
     create: '局外解锁后，全体角色在多元乱斗中拾取变身星后有概率变身，Hp归零后解除变身。',
@@ -2371,7 +2369,7 @@ export const entityDefinitions = {
     aliases: ['正气守护斯派克', '“正气守护”斯派克', '多元乱斗斯派克', '策划'],
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description:
       '抓住坏人，扔出去。当游戏存在“正气守护”斯派克时，攻击别人会被视为“违纪”。斯派克可将违纪的敌方抓入狗窝。斯派克不会被{打开的老鼠夹}夹住。\n属于中立多元角色。可使用爪刀键进行普通攻击，CD为2秒。\n多元变身均属于{2类变身}（详见“变身”描述），变身期间无法拾取道具，无法进行推奶酪、救援、使用阁楼-庭院管道的交互。',
     create: '局外解锁后，全体角色在多元乱斗中拾取变身星后有概率变身，Hp归零后解除变身。',
@@ -2409,7 +2407,7 @@ export const entityDefinitions = {
     aliases: ['多元乱斗柠檬杰瑞'],
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description:
       '看，有个柠檬！套住敌人形成柠檬表情。\n属于中立多元角色。可使用爪刀键进行普通攻击，CD为2秒，该角色普通攻击改为投掷柠檬，可拖动爪刀键选择投掷方向，柠檬命中敌方造成伤害和{反向}，并累计1层负面效果，满3层后使敌方被柠檬套中（可受到所有人攻击，无法使用技能，攻击变弱，受到的伤害增加，柠檬表情随Hp变化）。\n多元变身均属于{2类变身}（详见“变身”描述），变身期间无法拾取道具，无法进行推奶酪、救援、使用阁楼-庭院管道的交互。',
     create: '局外解锁后，全体角色在多元乱斗中拾取变身星后有概率变身，Hp归零后解除变身。',
@@ -2450,7 +2448,7 @@ export const entityDefinitions = {
     ],
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
     description: '生成时向随机方向弹飞，落地并停止移动后可被拾取，立即使拾取者获得一定星星积分。',
     create: '在{多元乱斗}中，{兔八哥}或{兔霸哥}的部分攻击命中敌方时，自动生成数个大大胡萝卜。',
   },

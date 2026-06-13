@@ -16,7 +16,7 @@ const damage50Object = {
   exp: 200,
   move: true,
   gravity: true,
-  collsion: ['道具', '墙壁', '平台', '地面'],
+  collision: ['道具', '墙壁', '平台', '地面'],
 };
 const pandaFoodObject = {
   itemtype: '物件类' as const,
@@ -27,7 +27,7 @@ const pandaFoodObject = {
     '可被大熊猫或小熊猫拾取并吃掉，大熊猫吃掉4个[食物](包括竹笋，萝卜墩，窝窝头)后起身，若被投喂的4个食物均未被鼠方交互过，则不帮助任何阵营，反之则[帮助鼠方阵营](当猫咪靠近时对其进行攻击，造成眩晕)；小熊猫吃掉食物后为旁边的角色随机提供1~4个强力效果（获得50攻击增伤；受到的伤害减少20；移动速度和跳跃高度增加20%；获得5/秒的恢复效果），持续30秒。鼠方可通过交互将其缓慢向一个方向推行。此类道具不与部分其它道具产生碰撞，且在因受外力而被动滑行时，会眩晕并击退碰到自身的老鼠。',
   move: true,
   gravity: true,
-  collsion: ['道具', '墙壁', '平台', '地面'],
+  collision: ['道具', '墙壁', '平台', '地面'],
 };
 
 const itemDefinitions: Record<string, ItemDefinition> = {
@@ -86,7 +86,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     exp: 200,
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
   },
   高尔夫球: {
     itemtype: '投掷类' as const,
@@ -105,7 +105,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     exp: 200,
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
   },
   香水瓶: {
     itemtype: '投掷类' as const,
@@ -121,7 +121,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     exp: 0,
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
   },
   胡椒瓶: {
     itemtype: '投掷类' as const,
@@ -138,7 +138,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     exp: 0,
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
   },
   番茄: {
     itemtype: '投掷类' as const,
@@ -155,7 +155,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     exp: 50,
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
   },
   冰块: {
     itemtype: '投掷类' as const,
@@ -174,7 +174,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     exp: 100,
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
   },
   小鞭炮: {
     itemtype: '投掷类' as const,
@@ -194,7 +194,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     exp: 100,
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
   },
   鞭炮束: {
     itemtype: '投掷类' as const,
@@ -214,7 +214,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     exp: 100,
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
   },
   灰花瓶: {
     itemtype: '投掷类' as const,
@@ -233,7 +233,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     exp: 0,
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
   },
   蓝花瓶: {
     itemtype: '投掷类' as const,
@@ -252,7 +252,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     exp: 0,
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
   },
   /* ----------------------------------- 手持类常规道具 ----------------------------------- */
   遥控器: {
@@ -268,7 +268,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     exp: 0,
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
   },
   玩具枪: {
     itemtype: '手持类' as const,
@@ -288,7 +288,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     exp: 100,
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
   },
   老鼠夹: {
     itemtype: '手持类' as const,
@@ -307,7 +307,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     exp: 400,
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
   },
   苍蝇拍: {
     itemtype: '手持类' as const,
@@ -327,7 +327,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     exp: 200,
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
   },
   修理锤: {
     itemtype: '手持类' as const,
@@ -346,7 +346,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     unlocktime: '墙缝期 03:50',
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
   },
   黄金修理锤: {
     itemtype: '手持类' as const,
@@ -361,7 +361,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     store: false,
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
   },
   /* ----------------------------------- 物件类常规道具 ----------------------------------- */
   泡泡机: {
@@ -380,7 +380,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     unlocktime: '墙缝期 03:30',
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
   },
   果盘: {
     itemtype: '物件类' as const,
@@ -403,7 +403,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     teamCD: true,
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
   },
   冰桶: {
     itemtype: '物件类' as const,
@@ -421,7 +421,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     teamCD: true,
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
   },
   鞭炮堆: {
     itemtype: '物件类' as const,
@@ -437,7 +437,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     storeCD: 120,
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
   },
   面粉袋: {
     itemtype: '物件类' as const,
@@ -451,7 +451,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     store: false,
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
   },
   小纸盒: {
     itemtype: '物件类' as const,
@@ -464,7 +464,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     store: false,
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
   },
   大纸盒: {
     itemtype: '物件类' as const,
@@ -477,7 +477,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     store: false,
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
   },
   空投包裹: {
     itemtype: '物件类' as const,
@@ -491,7 +491,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     store: false,
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
   },
   /* ----------------------------------- 食物类常规道具 ----------------------------------- */
   牛奶: {
@@ -506,7 +506,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     storeCD: 120,
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
   },
   蛋糕: {
     itemtype: '食物类' as const,
@@ -521,7 +521,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     storeCD: 120,
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
   },
   '蛋糕-旧版': {
     itemtype: '食物类' as const,
@@ -536,7 +536,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     store: false,
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
 
     specialImageUrl: '/images/items/蛋糕.png',
   },
@@ -555,7 +555,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     storeCD: 180,
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
   },
   隐身饮料: {
     itemtype: '食物类' as const,
@@ -571,7 +571,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     storeCD: 240,
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
   },
   护盾饮料: {
     itemtype: '食物类' as const,
@@ -587,7 +587,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     storeCD: 240,
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
   },
   兴奋饮料: {
     itemtype: '食物类' as const,
@@ -603,7 +603,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     unlocktime: '墙缝期 03:30',
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
   },
   变身饮料: {
     itemtype: '食物类' as const,
@@ -621,7 +621,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     teamCD: true,
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
   },
   神秘饮料: {
     itemtype: '食物类' as const,
@@ -639,7 +639,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     teamCD: true,
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
   },
   /* ----------------------------------- 流程类常规道具 ----------------------------------- */
   奶酪: {
@@ -660,7 +660,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     unlocktime: '奶酪期 08:00',
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
   },
   火箭: {
     itemtype: '流程类' as const,
@@ -681,7 +681,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     exp: 200,
     move: false,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
   },
   /* ----------------------------------- 其它常规道具 ----------------------------------- */
   拳套盒: {
@@ -696,7 +696,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     store: false,
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
   },
   电风扇: {
     itemtype: '特殊类' as const,
@@ -710,7 +710,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     store: false,
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
     itemAttributesAsCharacter: { type: 'special', factionBelong: 'other', maxHp: '一击即溃' },
   },
   净化萝卜: {
@@ -725,7 +725,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     storeCD: 180,
     move: false,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
   },
   经验蛋糕: {
     itemtype: '特殊类' as const,
@@ -739,7 +739,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
       '经典模式已不再刷新经验蛋糕。5V5模式中仍会刷新经验蛋糕，但猫咪无法拾取，且不会有经验衰减。如需查阅由{魔镜}召唤的相似道具，请查看{魔镜经验蛋糕}。',
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
   },
   灭火器: {
     itemtype: '特殊类' as const,
@@ -750,7 +750,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     create: '只在高级学业以下的地图中刷新。',
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
   },
   /* ----------------------------------- 地图道具 ----------------------------------- */
   狗骨头: {
@@ -766,7 +766,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
       '通常只能通过击倒{斯派克}后掉落，若游戏内已存在其他狗骨头/小泰克，则不掉落。也可以通过3级{魔镜}许愿概率获得。',
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
   },
   竹笋: Object.assign(
     {
@@ -806,7 +806,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
       '在御门酒店-走廊房间会初始存在大量礼物盒和{礼物袋}，且不会刷新除{奶酪}外的其它道具；当该房间刷新奶酪时，不会因此刷新新的礼物盒/礼物袋；当该房间刷新{墙缝}时，会重新刷新大量礼物盒/礼物袋。初始自然刷新的礼物盒中会固定刷新[一块额外奶酪](不算入游戏自然刷新的奶酪数中，即游戏仍会刷新三块奶酪，且依然可能会在走廊房间再次刷奶酪)和一个火箭，墙缝期刷新的礼物盒/礼物袋中也会存在相应的墙缝期道具。',
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
   },
   礼物袋: {
     itemtype: '物件类' as const,
@@ -820,7 +820,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
       '在御门酒店-走廊房间会初始存在大量{礼物盒}和礼物袋，且不会刷新除{奶酪}外的其它道具；当该房间刷新奶酪时，不会因此刷新新的礼物盒/礼物袋；当该房间刷新{墙缝}时，会重新刷新大量礼物盒/礼物袋。墙缝期刷新的礼物盒/礼物袋中也会存在相应的墙缝期道具。',
     move: true,
     gravity: true,
-    collsion: ['道具', '墙壁', '平台', '地面'],
+    collision: ['道具', '墙壁', '平台', '地面'],
   },
   '萝卜墩-天宫': {
     itemtype: '物件类' as const,
@@ -830,7 +830,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     create: '在天宫地图中的广寒宫固定位置刷新。',
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
   },
   钥匙: {
     itemtype: '手持类' as const,
@@ -841,7 +841,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
       '只在雪夜古堡-侍卫房顶端短平台刷新（包括{雪夜古堡I}、{雪夜古堡II}、{雪夜古堡III}，其中雪堡III左右侍卫房会各刷新1把）。',
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
   },
   金钥匙: {
     itemtype: '手持类' as const,
@@ -853,7 +853,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
       '在{黄金钥匙赛}或{多元乱斗}中，鼠方推入全部奶酪后，在地图[随机位置](实际每张地图有数个固定的刷新点，并非完全随机。这点与其它道具类似)刷新，其中多元乱斗会一次性刷新2把金钥匙。',
     move: true,
     gravity: true,
-    collsion: ['墙壁', '平台', '地面'],
+    collision: ['墙壁', '平台', '地面'],
   },
 };
 

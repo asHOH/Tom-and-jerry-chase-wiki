@@ -76,7 +76,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['平面', '水平面'],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: allMaps.filter((map) => map !== '阳光沙滩'),
     description:
       '平台不会移动，可承载物体。平台是构成大多数地形的基础。平台与{地面}类似，但更容易被穿越。',
@@ -89,7 +89,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['地板'],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: allMaps,
     description:
       '地面不会移动，可承载物体。地面是构成房间底部及部分地形的基础。地面与{平台}类似，但更难被穿越。',
@@ -102,7 +102,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['墙', '墙面'],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: allMaps,
     description:
       '墙壁不会移动，会阻挡物体。墙壁是构成房间边界及部分地形的基础。（[绝大部分天花板](特殊：大都会-音乐厅天花板实际上属于地面，不会阻挡自下而上的物体。部分会飞行的角色可从下方直接穿越地面到达露天餐厅)及部分会阻挡物体且无法移动的障碍物，在特性上与墙壁高度一致，可视为墙壁，此处不再细分词条）',
@@ -113,7 +113,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['斜坡', '斜向平台', '斜向地面', '斜向墙壁'],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: [
       '经典之家I',
       '经典之家II',
@@ -145,7 +145,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['沙发', '弹簧', '弹椅', '坐垫', '垫子'],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: [
       ...regularMaps,
       '经典之家-疯狂奶酪赛',
@@ -177,7 +177,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     ],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: [
       '夏日游轮I',
       '夏日游轮II',
@@ -199,7 +199,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['传送平台'],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: [
       '雪夜古堡I',
       '雪夜古堡II',
@@ -230,7 +230,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     ],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: [
       '夏日游轮I',
       '夏日游轮II',
@@ -320,7 +320,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['鼠洞', '洞口'],
     move: false,
     gravity: true,
-    collsion: ['地面'],
+    collision: ['地面'],
     supportedMaps: [
       ...regularMaps,
       '经典之家-疯狂奶酪赛',
@@ -461,7 +461,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['冰柜'],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: [
       '经典之家I',
       '经典之家II',
@@ -482,7 +482,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['烤炉', '炉子'],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: ['经典之家I', '经典之家II', '经典之家III', '经典之家-疯狂奶酪赛', '家之典经'],
     description:
       '烤箱初始关闭，角色可通过交互键打开/关闭烤箱。打开的烤箱会使附近角色加速但间歇性{硬直}。',
@@ -495,7 +495,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['暖气'],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: ['经典之家I', '经典之家II', '经典之家III', '家之典经'],
     description:
       '暖气片初始关闭，角色可通过交互键打开暖气片，一段时间后自行关闭。打开的暖气片会使附近角色间歇性{硬直}。',
@@ -549,7 +549,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     source: '地图组件',
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: ['经典之家I', '经典之家II', '经典之家III', '大都会', '5V5大都会', '家之典经'],
     description: '钢琴是一种特殊的{平台}，角色接触时会根据接触位置发出不同音调的音效。',
     detailedDescription:
@@ -571,7 +571,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['灯'],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: ['经典之家I', '经典之家II', '经典之家III', '经典之家-疯狂奶酪赛', '家之典经'],
     description:
       '初始情况下提供落脚点和灯光。角色可将其打落，对碰到的其他角色造成伤害和眩晕，坠地后生成数个{碎片}。',
@@ -601,7 +601,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     source: '地图组件',
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: ['经典之家I', '经典之家II', '经典之家III', '家之典经'],
     description: '餐车会来回移动，{击退}正面碰到的角色（对每名角色有内置CD）。',
     detailedDescription:
@@ -612,7 +612,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     source: '地图组件',
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: ['经典之家I', '经典之家II', '经典之家III'],
     description:
       '进入洗碗池内的角色会受到短暂{减速}和{跳跃高度降低}状态。洗碗池的左/右/下方与{墙壁}类似，无法被通过。',
@@ -623,7 +623,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['双向挡板', '厨房挡板', '碗柜挡板'],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: ['经典之家I', '经典之家II', '经典之家III'],
     description:
       '挡板一上一下成对出现，阻挡角色和道具。可推倒挡板并使另一侧挡板立起，{击退}并{眩晕}运动期间碰到的角色。挡板被交互数次后进入冷却。',
@@ -636,7 +636,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['烫板', '板子', '板皇'],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: ['经典之家I', '经典之家II', '经典之家III', '家之典经'],
     description:
       '熨衣板周期性收起/落下，状态交替前会有短暂预警，交替时会对接触的角色造成{眩晕}，落下期间可以充当{平台}。',
@@ -731,7 +731,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     move: false,
     gravity: false,
     supportedMaps: ['雪夜古堡I', '雪夜古堡II', '雪夜古堡III'],
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     description:
       '碰撞及钟声会吵醒国王，国王被吵醒后会生气地吼叫，对同房间内的角色造成少量伤害和短暂{眩晕}（不掉落道具）（有内置CD）。',
     detailedDescription:
@@ -742,7 +742,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     source: '地图组件',
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: ['雪夜古堡I', '雪夜古堡II', '雪夜古堡III'],
     description: '角色可通过交互打开/关闭活板门，可通过活板门进入下层空间。',
     detailedDescription:
@@ -765,7 +765,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['盔甲'],
     move: true,
     gravity: true,
-    collsion: ['平台', '地面', '墙壁'],
+    collision: ['平台', '地面', '墙壁'],
     supportedMaps: ['雪夜古堡I', '雪夜古堡II', '雪夜古堡III'],
     description:
       '角色可通过交互钻进并操控盔甲人移动和攻击。盔甲人的攻击会对面前角色造成一定伤害和强力控制效果。盔甲人可被攻击并击毁。',
@@ -830,7 +830,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     ],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: ['雪夜古堡II'],
     description:
       '密道上方初始有实体{地面}覆盖。角色从空中落到密道地面处若干次后，实体地面将[消失](不再阻挡角色和道具，但外观贴图无变化)，角色可通过密道进入彩蛋区域，该区域有多个高级道具及四个单向{管道}。',
@@ -842,7 +842,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     source: '地图组件',
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: ['夏日游轮I', '夏日游轮II', '夏日游轮III'],
     description:
       '角色可通过交互打开望远镜（有30秒内置CD），令所有角色（含友方）短暂{暴露位置}。望远镜上方可被当作{斜面}。',
@@ -852,7 +852,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     source: '地图组件',
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: ['夏日游轮I', '夏日游轮II', '夏日游轮III'],
     description:
       '驾驶舵平时可被当作数个短{平台}。{控制阀}被交互时，驾驶舵短暂旋转，期间平台短暂[消失](不再阻挡角色和道具，但外观贴图无变化)且使碰触的角色短暂{眩晕}（不掉落道具）。',
@@ -873,7 +873,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     source: '地图组件',
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: ['夏日游轮I', '夏日游轮II', '夏日游轮III'],
     description:
       '角色可通过交互调整控制阀方向（有30秒内置CD），交换{喷气口}的激活状态，并使{驾驶舵}短暂旋转。控制阀上方可被当作{平台}。',
@@ -917,7 +917,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['投影机', '投影仪', '放映设备'],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: ['夏日游轮I', '夏日游轮II', '夏日游轮III'],
     description:
       '放映机开启时，{荧幕}上会投射出实体画面。放映机初始为开启状态，角色可通过交互关闭/开启放映机。放映机上方可被当作{平台}。',
@@ -928,7 +928,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['投影机', '投影仪', '放映设备'],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: ['夏日游轮I', '夏日游轮II', '夏日游轮III'],
     description:
       '{放映机}开启时，荧幕上会投射出实体画面，角色可以站在画面中的平台上。实体画面共3种，每次会随机投射其中一种，且有低概率在画面左上角附带本局{仪表盘开关}的正确密码（为由0和1构成的3*3矩阵，其中0=红灯，1=绿灯）。',
@@ -939,7 +939,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['喷泉水池'],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: ['夏日游轮I', '夏日游轮II', '夏日游轮III'],
     description:
       '喷泉的水流会使接触的角色{减速}但解除由胡椒瓶造成的{失明}，还能够引爆{感电}状态。喷泉水池边缘和上方水流可被当作{平台}。',
@@ -950,7 +950,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['沙滩椅', '躺椅', '折椅'],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: ['夏日游轮I', '夏日游轮II', '夏日游轮III'],
     description:
       '折叠椅可被当作{弹性平台}，但每当被角色踩踏第3次时将折叠，折叠椅处的所有角色受到伤害和短暂{眩晕}（不掉落道具）；折叠期间平台短暂[消失](不再阻挡角色和道具，但外观贴图无变化)。',
@@ -963,7 +963,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['游泳圈滑轮组', '悬吊游泳圈', '游泳圈天平'],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: ['夏日游轮I', '夏日游轮II', '夏日游轮III'],
     description:
       '游泳圈组中的两个游泳圈均可被当做{平台}，但其中较高的游泳圈被角色踩踏时将[向下坠落](会播放动画以作提示；动画期间有角色踩踏另一侧游泳圈时不会导致游泳圈组位置变化)，并使另一侧游泳圈升起（与{移动平台}类似）。',
@@ -983,7 +983,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['瞭望窗'],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: ['夏日游轮I'],
     description:
       '船锚可被当做{平台}和{梯子}，且可以通过{船锚开关}进行收起/放下。船锚初始为放下状态。',
@@ -1003,7 +1003,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['瞭望窗'],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: ['夏日游轮I', '夏日游轮II'],
     description: '舷窗周期性开启/关闭。开启的舷窗上方可被当做{平台}。',
   },
@@ -1013,7 +1013,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['燃气灶', '铁锅', '锅', '锅盖'],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: ['夏日游轮I', '夏日游轮II'],
     description:
       '灶台及其上方铁锅的锅盖均可被当作{平台}，碰到灶台平台上的火焰的角色会受到短暂{硬直}（有内置CD）。铁锅会周期性开锅并将锅盖平台向上顶起（与{移动平台}类似）。每个铁锅下方均有一个开关，与其交互可使对应铁锅提前进入/结束开锅状态。',
@@ -1031,7 +1031,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     source: '地图组件',
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: ['太空堡垒I', '太空堡垒II', '太空堡垒III'],
     description:
       '角色可通过交互打开监视器（有30秒内置CD），令敌方角色短暂{暴露位置}。部分监视器只能被指定阵营的角色使用。监视器上方可被当作{平台}。',
@@ -1042,7 +1042,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['燃料罐', '染料罐', '药水调配台'],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: ['太空堡垒I', '太空堡垒III'],
     description:
       '两个药水罐与一个{喷洒间}成组出现。药水罐初始为黄色，角色可以通过交互按黄-红-蓝的顺序切换药水颜色。药水颜色组合将影响角色使用喷洒间时获得的状态。药水罐有1秒使用CD。\n黄+黄：加速（猫）/提升跳跃能力（鼠）；\n红+红：受到大量伤害和一段时间的爆炸眩晕；\n蓝+蓝：受到少量伤害和极长时间的冰冻眩晕；\n红+黄：提高攻击力（猫）/变为{比利鼠}（鼠）\n红+蓝：获得隐身；\n黄+蓝：回复大量Hp并获得霸体（猫）/回复大量Hp（鼠）。',
@@ -1082,7 +1082,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['绿色机油', '绿色机油罐', '绿色液体罐', '绿色润滑油'],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: ['太空堡垒I', '太空堡垒III'],
     description:
       '绿色机油桶被角色踩踏后，内部的机油会流到下方地板上。角色踩踏流出的绿色机油后会获得大幅度加速。机油桶被踩踏后将进入较长时间的内置CD，期间被踩踏不会产生效果。流出的机油在一段时间后消失。',
@@ -1093,7 +1093,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['红色机油', '红色机油罐', '红色液体罐', '红色润滑油'],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: ['太空堡垒I', '太空堡垒III'],
     description:
       '红色机油桶被角色踩踏后，内部的机油会流到下方地板上。角色踩踏流出的红色机油后会间歇性不受控制地滑行。机油桶被踩踏后将进入较长时间的内置CD，期间被踩踏不会产生效果。流出的机油在一段时间后消失。',
@@ -1104,7 +1104,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['工具台'],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: ['太空堡垒I', '太空堡垒III'],
     description:
       '角色可通过交互打开工具箱，随机生成一个道具。工具箱将保持被打开状态一段时间，随后重新合上。工具箱的上方可被当做{平台}。',
@@ -1135,7 +1135,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['调酒台', '玻璃杯彩蛋', '调酒台彩蛋', '吧台彩蛋'],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: ['太空堡垒II'],
     description:
       '吧台位于休闲舱，其上方初始会刷新7个呈梯形摆放的{玻璃杯}。当有玻璃杯被放在距吧台上方一定距离（略高于2个玻璃杯）的位置时，在短暂延迟后该玻璃杯将被销毁，并原地生成一瓶{神秘饮料}。',
@@ -1155,7 +1155,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['打碟台'],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: ['太空堡垒II'],
     description: 'DJ操作台是一个娱乐设施，玩家可通过交互来播放音乐并进行滑步表演。',
   },
@@ -1175,7 +1175,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['水池'],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: ['游乐场'],
     description:
       '角色踏入水池后，移动和跳跃能力会小幅降低，且清除并免疫由道具造成的反向及失明，并引爆自身持有的{感电}状态。',
@@ -1216,7 +1216,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['鸟窝'],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: ['森林牧场'],
     description:
       '当鸟巢上方有指定类型的道具时，鸟巢将在短暂延迟后销毁该道具，并按规则生成一个新道具（若有多种目标道具，则随机生成一个）。鸟巢在成功转化道具后会进入CD，较长时间内无法转化道具。\n\n兑换规则：\n{玻璃杯}/{盘子}/{碗}/{扁盘}→{香水瓶}/{胡椒瓶}→{高尔夫球}/{叉子}→{苍蝇拍}/{老鼠夹}；\n{苍蝇拍}→{老鼠夹}→{苍蝇拍}；\n{冰块}→{灰花瓶}→{蓝花瓶}→{神秘饮料}；\n任意{饮料}→{玩具枪}→{奶酪}；\n{小鞭炮}→{鞭炮束}；\n{果盘}→{冰桶}/{玩具枪}。',
@@ -1374,7 +1374,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['大型仙人掌', '仙人树'],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: ['森林牧场'],
     description: '仙人掌树会对站在上方的角色造成硬直。（与{碎片}相同，会被相关效果免疫）',
   },
@@ -1459,7 +1459,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['酒瓶'],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: ['大都会', '5V5大都会'],
     description: '碎酒瓶会对接触自身的角色造成硬直。（与{碎片}相同，会被相关效果免疫）',
   },
@@ -1469,7 +1469,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['袜子', '晾晒处', '晾晒的袜子'],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: ['大都会', '5V5大都会'],
     description: '老鼠落到晾衣架上的袜子里时，会在短暂延迟后被弹出去。',
   },
@@ -1507,7 +1507,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['油', '油调料罐', '调料罐油', '油罐'],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: ['熊猫馆'],
     description:
       '调料罐-油被角色踩踏后将喷出调料，使自身范围内的所有角色在一段时间内不受控制地间歇性滑行。调料罐被踩踏后将进入30秒内置CD，期间被踩踏不会产生效果。',
@@ -1518,7 +1518,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['盐', '盐调料罐', '调料罐盐', '盐罐'],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: ['熊猫馆'],
     description:
       '调料罐-盐被角色踩踏后将喷出调料，使自身范围内的所有角色回复大量Hp，解除鼠虚弱及部分反向、失明等状态，随后在一段时间内提高跳跃能力。调料罐被踩踏后将进入30秒内置CD，期间被踩踏不会产生效果。',
@@ -1529,7 +1529,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['水', '水调料罐', '调料罐水', '水罐'],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: ['熊猫馆'],
     description:
       '调料罐-水被角色踩踏后将喷出调料，使自身范围内的所有角色解除由道具造成的反向和失明状态并引爆{感电}状态，但随后在一段时间内降低移速和跳跃能力。调料罐被踩踏后将进入30秒内置CD，期间被踩踏不会产生效果。',
@@ -1540,7 +1540,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['糖', '糖调料罐', '调料罐糖', '糖罐'],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: ['熊猫馆'],
     description:
       '调料罐-糖被角色踩踏后将喷出调料，使自身范围内的所有角色在一段时间内提高攻击力。调料罐被踩踏后将进入30秒内置CD，期间被踩踏不会产生效果。',
@@ -1551,7 +1551,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['钙', '钙调料罐', '调料罐钙', '钙罐'],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: ['熊猫馆'],
     description:
       '调料罐-钙被角色踩踏后将喷出调料，使自身范围内的所有角色在一段时间内提高Hp上限。调料罐被踩踏后将进入30秒内置CD，期间被踩踏不会产生效果。',
@@ -1625,7 +1625,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['炉子', '檀香炉', '檀香'],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: ['天宫', '天宫-云上'],
     description:
       '香炉会间歇性散发檀香的香气。当角色在檀香范围内待一段时间后，将清除远视及部分反向、失明状态，并在一段时间内提高视野，但期间免疫部分远视状态。',
@@ -1645,7 +1645,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['炉子', '丹炉'],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: ['天宫', '天宫-云上'],
     description:
       '角色与丹炉交互后，将尝试把[一个当前持有的道具](优先手持道具，其次饮料)投入炼丹炉进行炼制。炼丹炉炼制完毕后一段时间内无法再次炼制，且若炼制未失败，则在炼制冷却期间丹炉将持续燃烧，使附近的角色被烫伤。\n炼制可能出现三种结果：\n大成功（10%）：炼制出一瓶{神秘饮料}；\n成功：按兑换规则炼制出产物；\n失败：没有任何产物。\n\n兑换规则：\n{玻璃杯}/{盘子}/{碗}/{扁盘}→{香水瓶}/{胡椒瓶}→{高尔夫球}/{叉子}→{苍蝇拍}/{老鼠夹}；\n{苍蝇拍}→{老鼠夹}→{苍蝇拍}；\n{冰块}→{灰花瓶}→{蓝花瓶}→{神秘饮料}；\n任意{饮料}→{玩具枪}→{奶酪}；\n{小鞭炮}→{鞭炮束}；\n{果盘}→{冰桶}/{玩具枪}（与{鸟巢}相同，但该配方疑似无法实现）。',
@@ -1656,7 +1656,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['禅座'],
     move: false,
     gravity: false,
-    collsion: ['道具', '角色'],
+    collision: ['道具', '角色'],
     supportedMaps: ['天宫', '天宫-云上'],
     description:
       '蒲团具有{弹性平台}的特点。此外，角色在蒲团上待一段时间后，将清除受伤、鼠虚弱及部分反向、失明等状态，并在一段时间内持续恢复Hp。',
