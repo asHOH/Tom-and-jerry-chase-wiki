@@ -4,21 +4,21 @@ import { useSnapshot } from 'valtio';
 
 import { getItemSourceColors /* , getCardCostColors */, getItemTypeColors } from '@/lib/design';
 import { getSingleItemPrototype, getSingleItemVariant } from '@/lib/singleItemTools';
-import { getTooltipContent } from '@/lib/tooltipUtils';
 import { useLocalItem } from '@/hooks/useLocalEditEntity';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { Item } from '@/data/types';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
+import AddAliasButton from '@/features/shared/detail-view/AddAliasButton';
 import AttributesCardLayout from '@/features/shared/detail-view/AttributesCardLayout';
+import CharacterLikeAttributesSection from '@/features/shared/detail-view/CharacterLikeAttributesSection';
+import PhysicalAttributesSection from '@/features/shared/detail-view/PhysicalAttributesSection';
 import { editable } from '@/components/ui/editable';
 import NavigationButtonsRow from '@/components/ui/NavigationButtonsRow';
 import SingleItemAccordionCard from '@/components/ui/SingleItemAccordionCard';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import Tag from '@/components/ui/Tag';
-import Tooltip from '@/components/ui/Tooltip';
-import { PlusIcon } from '@/components/icons/CommonIcons';
 import { itemsEdit } from '@/data';
 
 export default function ItemAttributesCard({ item }: { item: Item }) {
@@ -37,9 +37,6 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
   const prototype = getSingleItemPrototype({ name: item.name, type: 'item' });
   const variant = getSingleItemVariant({ name: item.name, type: 'item' });
   /* -------- */
-
-  const collisionOptions = ['角色', '道具', '墙壁', '平台', '地面'] as const;
-  const activeCollision = Array.isArray(effectiveItem?.collision) ? effectiveItem.collision : [];
 
   const aliasesEditor = isEditMode ? (
     <div className='flex items-center gap-1'>
@@ -68,20 +65,15 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
       ) : (
         <span>{'<无内容>'}</span>
       )}
-      <button
-        type='button'
-        aria-label='添加别名'
-        onClick={() => {
+      <AddAliasButton
+        onAdd={() => {
           if (!rawItem) return;
           if (!rawItem.aliases) rawItem.aliases = [];
           if (!rawItem.aliases.includes('新别名')) {
             rawItem.aliases.push('新别名');
           }
         }}
-        className='ml-2 flex h-4 w-4 items-center justify-center rounded-md bg-yellow-500 text-xs text-white hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
-      >
-        <PlusIcon className='h-3 w-3' aria-hidden='true' />
-      </button>
+      />
     </div>
   ) : undefined;
 
@@ -172,226 +164,16 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
               </span>
             )
           ) : null}
-          {effectiveItem.itemAttributesAsCharacter !== undefined && (
-            <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
-              <span className='text-sm font-bold'>
-                该道具特性与<span className='text-fuchsia-600 dark:text-fuchsia-400'>角色</span>
-                类似，可看作
-                {effectiveItem.itemAttributesAsCharacter.factionBelong === 'cat' ? (
-                  <span className='text-sky-600 dark:text-sky-400'>猫阵营</span>
-                ) : effectiveItem.itemAttributesAsCharacter.factionBelong === 'mouse' ? (
-                  <span className='text-amber-700 dark:text-amber-600'>鼠阵营</span>
-                ) : (
-                  <span className='text-fuchsia-600 dark:text-fuchsia-400'>第三阵营</span>
-                )}
-                的
-                {effectiveItem.itemAttributesAsCharacter.type === 'cat' ? (
-                  <span className='text-sky-600 dark:text-sky-400'>猫角色</span>
-                ) : effectiveItem.itemAttributesAsCharacter.type === 'mouse' ? (
-                  <span className='text-amber-700 dark:text-amber-600'>鼠角色</span>
-                ) : (
-                  <span className='text-fuchsia-600 dark:text-fuchsia-400'>特殊角色</span>
-                )}
-              </span>
-              <div className='auto-fill-grid grid-container grid grid-cols-[repeat(2,minmax(80px,1fr))] items-center justify-center gap-1 text-sm font-normal'>
-                {[
-                  effectiveItem.itemAttributesAsCharacter.maxHp === undefined
-                    ? { title: null, text: null }
-                    : {
-                        title: 'Hp上限',
-                        text: effectiveItem.itemAttributesAsCharacter.maxHp,
-                      },
-                  effectiveItem.itemAttributesAsCharacter.hpRecovery === undefined
-                    ? { title: null, text: null }
-                    : {
-                        title: 'Hp恢复',
-                        text: effectiveItem.itemAttributesAsCharacter.hpRecovery,
-                      },
-                  effectiveItem.itemAttributesAsCharacter.moveSpeed === undefined
-                    ? { title: null, text: null }
-                    : {
-                        title: '移速',
-                        text: effectiveItem.itemAttributesAsCharacter.moveSpeed,
-                      },
-                  effectiveItem.itemAttributesAsCharacter.jumpHeight === undefined
-                    ? { title: null, text: null }
-                    : {
-                        title: '跳跃',
-                        text: effectiveItem.itemAttributesAsCharacter.jumpHeight,
-                      },
-                  effectiveItem.itemAttributesAsCharacter.attackBoost === undefined
-                    ? { title: null, text: null }
-                    : {
-                        title: '攻击增伤',
-                        text: effectiveItem.itemAttributesAsCharacter.attackBoost,
-                      },
-                  effectiveItem.itemAttributesAsCharacter.clawKnifeCdHit === undefined
-                    ? { title: null, text: null }
-                    : {
-                        title: '攻击CD',
-                        text: effectiveItem.itemAttributesAsCharacter.clawKnifeCdHit,
-                      },
-                  effectiveItem.itemAttributesAsCharacter.clawKnifeCdUnhit === undefined
-                    ? { title: null, text: null }
-                    : {
-                        title: '未命中CD',
-                        text: effectiveItem.itemAttributesAsCharacter.clawKnifeCdUnhit,
-                      },
-                  effectiveItem.itemAttributesAsCharacter.clawKnifeRange === undefined
-                    ? { title: null, text: null }
-                    : {
-                        title: '攻击范围',
-                        text: effectiveItem.itemAttributesAsCharacter.clawKnifeRange,
-                      },
-                ].map(({ title, text }) =>
-                  title === null ? null : (
-                    <span className='text-sm whitespace-pre' key={title}>
-                      <Tooltip
-                        content={getTooltipContent(
-                          title,
-                          effectiveItem.itemAttributesAsCharacter?.type === 'cat' ? 'cat' : 'mouse',
-                          isDetailed
-                        )}
-                      >
-                        {title}
-                      </Tooltip>
-                      ：<span className='text-indigo-700 dark:text-indigo-400'>{text}</span>
-                    </span>
-                  )
-                )}
-              </div>
-            </div>
-          )}
-          {(isEditMode ||
-            effectiveItem.move !== undefined ||
-            effectiveItem.gravity !== undefined ||
-            effectiveItem.collision !== undefined) && (
-            <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
-              <span className='text-lg font-bold whitespace-pre'>移动信息</span>
-              <div className='auto-fill-grid grid-container grid grid-cols-[repeat(2,minmax(80px,1fr))] grid-rows-2 items-center justify-center gap-1 text-sm font-normal'>
-                {isEditMode ? (
-                  <>
-                    <div className='flex items-center gap-1 text-xs'>
-                      <span className='text-xs text-gray-400 dark:text-gray-500'>移动:</span>
-                      <label className='flex cursor-pointer items-center gap-1'>
-                        <input
-                          type='checkbox'
-                          checked={effectiveItem.move ?? false}
-                          onChange={(e) => {
-                            if (!rawItem) return;
-                            rawItem.move = e.target.checked;
-                          }}
-                          className='h-3 w-3'
-                        />
-                        <span className='font-bold'>
-                          {(effectiveItem.move ?? false) ? '可移动' : '不可移动'}
-                        </span>
-                      </label>
-                    </div>
-                    <div className='flex items-center gap-1 text-xs'>
-                      <span className='text-xs text-gray-400 dark:text-gray-500'>重力:</span>
-                      <label className='flex cursor-pointer items-center gap-1'>
-                        <input
-                          type='checkbox'
-                          checked={effectiveItem.gravity ?? false}
-                          onChange={(e) => {
-                            if (!rawItem) return;
-                            rawItem.gravity = e.target.checked;
-                          }}
-                          className='h-3 w-3'
-                        />
-                        <span className='font-bold'>
-                          {(effectiveItem.gravity ?? false) ? '会受重力影响' : '不受重力影响'}
-                        </span>
-                      </label>
-                    </div>
-                    <div className='col-span-2 flex flex-wrap items-center gap-2 text-xs'>
-                      <span className='text-xs text-gray-400 dark:text-gray-500'>碰撞:</span>
-                      {collisionOptions.map((opt) => (
-                        <label key={opt} className='flex cursor-pointer items-center gap-1'>
-                          <input
-                            type='checkbox'
-                            checked={activeCollision.includes(opt)}
-                            onChange={(e) => {
-                              if (!rawItem) return;
-                              const current = Array.isArray(rawItem.collision)
-                                ? rawItem.collision
-                                : [];
-                              const next = new Set(current);
-                              if (e.target.checked) next.add(opt);
-                              else next.delete(opt);
-                              const arr = Array.from(next);
-                              if (arr.length === 0) {
-                                delete rawItem.collision;
-                              } else {
-                                rawItem.collision = arr;
-                              }
-                            }}
-                            className='h-3 w-3'
-                          />
-                          <span className='font-bold'>{opt}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    {effectiveItem.move !== undefined && (
-                      <span className='text-sm whitespace-pre'>
-                        {effectiveItem.move === true ? (
-                          <span className='text-green-600 dark:text-green-500'>可</span>
-                        ) : (
-                          <span className='text-red-600 dark:text-red-500'>不可</span>
-                        )}
-                        移动
-                      </span>
-                    )}
-                    {effectiveItem.gravity !== undefined && (
-                      <span className='text-sm whitespace-pre'>
-                        {effectiveItem.gravity === true ? (
-                          <span className='text-orange-600 dark:text-orange-400'>会受</span>
-                        ) : (
-                          <span className='text-indigo-700 dark:text-indigo-400'>不受</span>
-                        )}
-                        重力影响
-                      </span>
-                    )}
-                    <span className='text-sm whitespace-pre'>
-                      {effectiveItem.collision ? (
-                        <>
-                          <span className='text-orange-600 dark:text-orange-400'>会</span>与
-                          {effectiveItem.collision.map((string, key, array) => {
-                            return (
-                              <span key={key}>
-                                <span
-                                  className={
-                                    string === '角色'
-                                      ? 'text-red-600 dark:text-red-500'
-                                      : string === '道具'
-                                        ? 'text-indigo-700 dark:text-indigo-400'
-                                        : 'text-fuchsia-600 dark:text-fuchsia-400'
-                                  }
-                                >
-                                  {string}
-                                </span>
-                                {key < array.length - 1 ? '、' : ''}
-                              </span>
-                            );
-                          })}
-                          产生碰撞
-                        </>
-                      ) : (
-                        <>
-                          <span className='text-indigo-700 dark:text-indigo-400'>不会</span>
-                          产生碰撞
-                        </>
-                      )}
-                    </span>
-                  </>
-                )}
-              </div>
-            </div>
-          )}
+          <CharacterLikeAttributesSection
+            attributes={effectiveItem.itemAttributesAsCharacter}
+            intro='该道具特性与'
+            isDetailed={isDetailed}
+          />
+          <PhysicalAttributesSection
+            attributes={effectiveItem}
+            draftAttributes={rawItem}
+            isEditMode={isEditMode}
+          />
           {(isEditMode || effectiveItem?.store !== undefined) && (
             <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
               {isEditMode ? (
