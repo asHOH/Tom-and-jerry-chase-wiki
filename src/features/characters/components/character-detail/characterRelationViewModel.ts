@@ -1,7 +1,7 @@
 import { cards } from '@/data/static';
 import type { CharacterRelationItem, FactionId, TraitRelationKind } from '@/data/types';
 
-type RelationItemOptions = {
+export type RelationItemOptions = {
   relationKind: TraitRelationKind;
   isEditable: boolean;
   getDescriptionPath?: (index: number, id: string) => string | undefined;

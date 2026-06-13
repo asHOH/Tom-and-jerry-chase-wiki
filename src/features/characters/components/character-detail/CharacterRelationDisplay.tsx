@@ -29,6 +29,7 @@ import {
   NeutralFaceIcon,
   SadFaceIcon,
 } from './CharacterRelationIcons';
+import { createEditableRelationItemOptions } from './characterRelationItemOptions';
 import CharacterRelationPanel, {
   type CharacterRelationPanelSection,
 } from './CharacterRelationPanel';
@@ -70,6 +71,15 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
   const { navigate } = useNavigation();
 
   const oppositeFactionId = factionId === 'cat' ? 'mouse' : 'cat';
+  const createRelationOptions = (relationKind: TraitRelationKind) =>
+    createEditableRelationItemOptions({
+      characterId: id,
+      relationKind,
+      getDescriptionPath: getCharacterRelationDescriptionPath,
+      onToggleMinor: toggleCharacterRelationMinor,
+      onRemove: removeCharacterRelationItem,
+      onUpdateDescription: updateCharacterRelationDescription,
+    });
 
   const countersItems = sortByImportance([
     ...buildCharacterItems(
@@ -80,30 +90,12 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
         view: (targetId: string) => `选择角色 ${targetId}`,
         edit: (targetId: string) => `克制 ${targetId} 的关系`,
       },
-      {
-        relationKind: 'counters',
-        isEditable: true,
-        getDescriptionPath: (index) => getCharacterRelationDescriptionPath('counters', index),
-        onToggleMinor: (itemId) => toggleCharacterRelationMinor(id, 'counters', itemId),
-        onRemove: (itemId) => removeCharacterRelationItem(id, 'counters', itemId),
-        onUpdateDescription: (itemId, description) =>
-          updateCharacterRelationDescription(id, 'counters', itemId, description),
-      }
+      createRelationOptions('counters')
     ),
     ...buildKnowledgeCardItems(
       char.countersKnowledgeCards,
       (cardId: string) => navigate(`/cards/${encodeURIComponent(cardId)}`),
-      {
-        relationKind: 'countersKnowledgeCards',
-        isEditable: true,
-        getDescriptionPath: (index) =>
-          getCharacterRelationDescriptionPath('countersKnowledgeCards', index),
-        onToggleMinor: (itemId) =>
-          toggleCharacterRelationMinor(id, 'countersKnowledgeCards', itemId),
-        onRemove: (itemId) => removeCharacterRelationItem(id, 'countersKnowledgeCards', itemId),
-        onUpdateDescription: (itemId, description) =>
-          updateCharacterRelationDescription(id, 'countersKnowledgeCards', itemId, description),
-      }
+      createRelationOptions('countersKnowledgeCards')
     ),
     ...buildSpecialSkillItems(
       char.countersSpecialSkills,
@@ -111,17 +103,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
         navigate(`/special-skills/${oppositeFactionId}/${encodeURIComponent(skillId)}`),
       oppositeFactionId,
       specialSkillsSnapshot as unknown as Record<FactionId, Record<string, { imageUrl?: string }>>,
-      {
-        relationKind: 'countersSpecialSkills',
-        isEditable: true,
-        getDescriptionPath: (index) =>
-          getCharacterRelationDescriptionPath('countersSpecialSkills', index),
-        onToggleMinor: (itemId) =>
-          toggleCharacterRelationMinor(id, 'countersSpecialSkills', itemId),
-        onRemove: (itemId) => removeCharacterRelationItem(id, 'countersSpecialSkills', itemId),
-        onUpdateDescription: (itemId, description) =>
-          updateCharacterRelationDescription(id, 'countersSpecialSkills', itemId, description),
-      }
+      createRelationOptions('countersSpecialSkills')
     ),
   ]);
 
@@ -134,16 +116,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
         view: (targetId: string) => `选择角色 ${targetId}`,
         edit: (targetId: string) => `与 ${targetId} 互有克制的关系`,
       },
-      {
-        relationKind: 'counterEachOther',
-        isEditable: true,
-        getDescriptionPath: (index) =>
-          getCharacterRelationDescriptionPath('counterEachOther', index),
-        onToggleMinor: (itemId) => toggleCharacterRelationMinor(id, 'counterEachOther', itemId),
-        onRemove: (itemId) => removeCharacterRelationItem(id, 'counterEachOther', itemId),
-        onUpdateDescription: (itemId, description) =>
-          updateCharacterRelationDescription(id, 'counterEachOther', itemId, description),
-      }
+      createRelationOptions('counterEachOther')
     )
   );
 
@@ -156,30 +129,12 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
         view: (targetId: string) => `选择角色 ${targetId}`,
         edit: (targetId: string) => `被 ${targetId} 克制的关系`,
       },
-      {
-        relationKind: 'counteredBy',
-        isEditable: true,
-        getDescriptionPath: (index) => getCharacterRelationDescriptionPath('counteredBy', index),
-        onToggleMinor: (itemId) => toggleCharacterRelationMinor(id, 'counteredBy', itemId),
-        onRemove: (itemId) => removeCharacterRelationItem(id, 'counteredBy', itemId),
-        onUpdateDescription: (itemId, description) =>
-          updateCharacterRelationDescription(id, 'counteredBy', itemId, description),
-      }
+      createRelationOptions('counteredBy')
     ),
     ...buildKnowledgeCardItems(
       char.counteredByKnowledgeCards,
       (cardId: string) => navigate(`/cards/${encodeURIComponent(cardId)}`),
-      {
-        relationKind: 'counteredByKnowledgeCards',
-        isEditable: true,
-        getDescriptionPath: (index) =>
-          getCharacterRelationDescriptionPath('counteredByKnowledgeCards', index),
-        onToggleMinor: (itemId) =>
-          toggleCharacterRelationMinor(id, 'counteredByKnowledgeCards', itemId),
-        onRemove: (itemId) => removeCharacterRelationItem(id, 'counteredByKnowledgeCards', itemId),
-        onUpdateDescription: (itemId, description) =>
-          updateCharacterRelationDescription(id, 'counteredByKnowledgeCards', itemId, description),
-      }
+      createRelationOptions('counteredByKnowledgeCards')
     ),
     ...buildSpecialSkillItems(
       char.counteredBySpecialSkills,
@@ -187,17 +142,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
         navigate(`/special-skills/${oppositeFactionId}/${encodeURIComponent(skillId)}`),
       oppositeFactionId,
       specialSkillsSnapshot as unknown as Record<FactionId, Record<string, { imageUrl?: string }>>,
-      {
-        relationKind: 'counteredBySpecialSkills',
-        isEditable: true,
-        getDescriptionPath: (index) =>
-          getCharacterRelationDescriptionPath('counteredBySpecialSkills', index),
-        onToggleMinor: (itemId) =>
-          toggleCharacterRelationMinor(id, 'counteredBySpecialSkills', itemId),
-        onRemove: (itemId) => removeCharacterRelationItem(id, 'counteredBySpecialSkills', itemId),
-        onUpdateDescription: (itemId, description) =>
-          updateCharacterRelationDescription(id, 'counteredBySpecialSkills', itemId, description),
-      }
+      createRelationOptions('counteredBySpecialSkills')
     ),
   ]);
 
@@ -210,15 +155,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
         view: (targetId: string) => `选择角色 ${targetId}`,
         edit: (targetId: string) => `与 ${targetId} 的协作关系`,
       },
-      {
-        relationKind: 'collaborators',
-        isEditable: true,
-        getDescriptionPath: (index) => getCharacterRelationDescriptionPath('collaborators', index),
-        onToggleMinor: (itemId) => toggleCharacterRelationMinor(id, 'collaborators', itemId),
-        onRemove: (itemId) => removeCharacterRelationItem(id, 'collaborators', itemId),
-        onUpdateDescription: (itemId, description) =>
-          updateCharacterRelationDescription(id, 'collaborators', itemId, description),
-      }
+      createRelationOptions('collaborators')
     )
   );
 
@@ -227,15 +164,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       char.advantageMaps,
       (mapId: string) => navigate(`/maps/${encodeURIComponent(mapId)}`),
       mapsSnapshot as unknown as Record<string, { imageUrl?: string }>,
-      {
-        relationKind: 'advantageMaps',
-        isEditable: true,
-        getDescriptionPath: (index) => getCharacterRelationDescriptionPath('advantageMaps', index),
-        onToggleMinor: (itemId) => toggleCharacterRelationMinor(id, 'advantageMaps', itemId),
-        onRemove: (itemId) => removeCharacterRelationItem(id, 'advantageMaps', itemId),
-        onUpdateDescription: (itemId, description) =>
-          updateCharacterRelationDescription(id, 'advantageMaps', itemId, description),
-      }
+      createRelationOptions('advantageMaps')
     )
   );
 
@@ -244,15 +173,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       char.advantageModes,
       (modeId: string) => navigate(`/modes/${encodeURIComponent(modeId)}`),
       modesSnapshot as unknown as Record<string, { imageUrl?: string }>,
-      {
-        relationKind: 'advantageModes',
-        isEditable: true,
-        getDescriptionPath: (index) => getCharacterRelationDescriptionPath('advantageModes', index),
-        onToggleMinor: (itemId) => toggleCharacterRelationMinor(id, 'advantageModes', itemId),
-        onRemove: (itemId) => removeCharacterRelationItem(id, 'advantageModes', itemId),
-        onUpdateDescription: (itemId, description) =>
-          updateCharacterRelationDescription(id, 'advantageModes', itemId, description),
-      }
+      createRelationOptions('advantageModes')
     )
   );
 
@@ -261,16 +182,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       char.disadvantageMaps,
       (mapId: string) => navigate(`/maps/${encodeURIComponent(mapId)}`),
       mapsSnapshot as unknown as Record<string, { imageUrl?: string }>,
-      {
-        relationKind: 'disadvantageMaps',
-        isEditable: true,
-        getDescriptionPath: (index) =>
-          getCharacterRelationDescriptionPath('disadvantageMaps', index),
-        onToggleMinor: (itemId) => toggleCharacterRelationMinor(id, 'disadvantageMaps', itemId),
-        onRemove: (itemId) => removeCharacterRelationItem(id, 'disadvantageMaps', itemId),
-        onUpdateDescription: (itemId, description) =>
-          updateCharacterRelationDescription(id, 'disadvantageMaps', itemId, description),
-      }
+      createRelationOptions('disadvantageMaps')
     )
   );
 
@@ -279,16 +191,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       char.disadvantageModes,
       (modeId: string) => navigate(`/modes/${encodeURIComponent(modeId)}`),
       modesSnapshot as unknown as Record<string, { imageUrl?: string }>,
-      {
-        relationKind: 'disadvantageModes',
-        isEditable: true,
-        getDescriptionPath: (index) =>
-          getCharacterRelationDescriptionPath('disadvantageModes', index),
-        onToggleMinor: (itemId) => toggleCharacterRelationMinor(id, 'disadvantageModes', itemId),
-        onRemove: (itemId) => removeCharacterRelationItem(id, 'disadvantageModes', itemId),
-        onUpdateDescription: (itemId, description) =>
-          updateCharacterRelationDescription(id, 'disadvantageModes', itemId, description),
-      }
+      createRelationOptions('disadvantageModes')
     )
   );
 
