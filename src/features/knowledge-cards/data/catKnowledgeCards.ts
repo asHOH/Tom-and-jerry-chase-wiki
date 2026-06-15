@@ -519,14 +519,15 @@ export const catKnowledgeCards: Record<string, Card> = {
     id: '铁手',
     rank: 'C',
     cost: 4,
-    description: '**降低**猫咪手中老鼠的挣扎的速度。抓住老鼠时获得6秒{霸体}，每30秒最多触发1次。',
-    // detailedDescription: '',
+    description: '**降低**猫咪手中老鼠的挣扎速度。抓住老鼠时获得6秒弱{霸体}，每30秒最多触发1次。',
+    detailedDescription:
+      '**降低**猫咪手中老鼠的挣扎速度。抓住老鼠时获得6秒弱{霸体}，每30秒最多触发1次。老鼠以任何形式脱离都将提前结束霸体效果。',
     levels: [
-      { level: 1, description: '降低**4%**。' },
-      { level: 2, description: '降低**6%**。' },
-      { level: 3, description: '降低**10%**。' },
+      { level: 1, description: '降低**4%**挣扎速度。' },
+      { level: 2, description: '降低**6%**挣扎速度。' },
+      { level: 3, description: '降低**10%**挣扎速度。' },
     ],
-    priority: '本身无用',
+    priority: '几乎无提升',
   },
 
   震慑: {
