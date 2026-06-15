@@ -74,4 +74,28 @@ describe('squashActions', () => {
       setAction('Tuffy.mousePositioningTags', ['cheese'], ['cheese', 'rescue.']),
     ]);
   });
+
+  it('should fold descendant sets into a newly set parent object', () => {
+    const newKnowledgeCardGroup = setAction('剑客杰瑞.knowledgeCardGroups.4', undefined, {
+      cards: [],
+      description: '待补充',
+    });
+    const updatedDescription = setAction(
+      '剑客杰瑞.knowledgeCardGroups.4.description',
+      '待补充',
+      '打苏蕊，逃窜可换应激反应，不屈可换绝地反击'
+    );
+    const updatedCards = setAction(
+      '剑客杰瑞.knowledgeCardGroups.4.cards',
+      [],
+      ['S-缴械', 'S-舍己', 'C-不屈', 'C-救救我', 'A-逃窜']
+    );
+
+    expect(squashActions([newKnowledgeCardGroup, updatedDescription, updatedCards])).toEqual([
+      setAction('剑客杰瑞.knowledgeCardGroups.4', undefined, {
+        cards: ['S-缴械', 'S-舍己', 'C-不屈', 'C-救救我', 'A-逃窜'],
+        description: '打苏蕊，逃窜可换应激反应，不屈可换绝地反击',
+      }),
+    ]);
+  });
 });
