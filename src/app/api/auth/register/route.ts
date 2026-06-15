@@ -10,6 +10,8 @@ import { authRegisterSchema, formatZodError } from '@/lib/validation/schemas';
 import { TablesInsert } from '@/data/database.types';
 import { env } from '@/env';
 
+import { getAuthCreateUserFailure } from './authErrorUtils';
+
 const hashUsername = (username: string) => {
   return createHash('sha256').update(username).digest('hex');
 };
@@ -108,14 +110,12 @@ export async function POST(request: NextRequest) {
     });
 
     if (authError || !authData.user) {
-      if (authError?.message?.includes('already registered')) {
-        return NextResponse.json(
-          { error: 'Username or nickname is already taken.' },
-          { status: 409 }
-        );
-      }
       console.error('Error creating auth user:', authError);
-      return NextResponse.json({ error: 'Could not create authentication user.' }, { status: 500 });
+      const failure = getAuthCreateUserFailure(authError);
+      return NextResponse.json(
+        { error: failure.error, reason: failure.reason },
+        { status: failure.status }
+      );
     }
     const authUserId = authData.user.id;
 
