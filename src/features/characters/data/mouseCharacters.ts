@@ -3466,14 +3466,14 @@ const mouseCharacterDefinitions = {
     skillAllocations: [
       {
         id: '干扰',
-        pattern: '0110(0)1222',
+        pattern: '0110(0)222-1',
         weaponType: 'weapon1',
         description:
           '6级后留加点升3级被动，铁血期间可点出3级被动，三级魔音眩晕时间长但击退少，根据需要自己加点。',
       },
       {
         id: '打架队',
-        pattern: '02202(0)111',
+        pattern: '02202(0)11-1',
         weaponType: 'weapon1',
         description: '队友干扰能力较强但推速较慢时，可以考虑做辅助位主点琴加推速。（注意配合）',
       },
@@ -3487,7 +3487,7 @@ const mouseCharacterDefinitions = {
         id: '优先武器',
         pattern: '1212002(0)-1',
         weaponType: 'weapon1',
-        description: '着急推奶酪/队友推速慢时可选，但3级被动会稍晚点出。（注意配合）',
+        description: '着急推奶酪/队友推速慢/车队配合时可选，但3级被动会稍晚出。（注意配合）',
       },
     ],
     knowledgeCardGroups: [
@@ -5371,7 +5371,7 @@ const mouseCharacterDefinitions = {
       },
       {
         name: '尼宝的朋友',
-        aliases: ['钩子'],
+        aliases: ['钩子', '尼宝的狐朋狗友'],
         type: 'weapon1',
         description:
           '附近没有自身召唤的{尼宝的朋友(衍生物)}时，在面前召唤一个朋友（技能不会进入CD），朋友持续一段时间后消失；反之则使附近的朋友向尼宝扔出{鱼钩}。鱼钩碰到道具会携带之；碰到角色会将其勾回，并救下敌方猫咪手中的老鼠。',
