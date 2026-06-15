@@ -2886,8 +2886,7 @@ const mouseCharacterDefinitions = {
           {
             level: 1,
             description: '受到来自猫咪的伤害时，短暂禁用其爪刀。',
-            detailedDescription:
-              '受到来自猫咪的伤害时，[短暂](原为5秒，于20260409已削弱，待测试)禁用其爪刀。（CD：10秒）',
+            detailedDescription: '受到来自猫咪的伤害时，禁用其爪刀[2.5s](待确认)。（CD：10秒）',
           },
           {
             level: 2,

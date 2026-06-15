@@ -3750,13 +3750,13 @@ export const characterRelationTraits: Trait[] = [
   },
   {
     description:
-      '天使杰瑞1级被动和3级被动让追汤无法快速拿刀，雷云减伤可以放大追汤缺伤害的缺点，打团也很强。祝福可以一定程度上反制追汤飞行强上火箭；同时追汤缺伤害，不易处理复活体。',
+      '追风汤姆无限霸体克制天使杰瑞武器技能，且复活体容易被追风汤姆秒杀。但天使杰瑞1级被动和3级被动让追汤无法快速击倒。',
     group: [
       { name: '天使杰瑞', type: 'character' },
       { name: '追风汤姆', type: 'character' },
     ],
     relation: {
-      kind: 'counters',
+      kind: 'counterEachOther',
       subject: { name: '天使杰瑞', type: 'character' },
       target: { name: '追风汤姆', type: 'character' },
       isMinor: false,
@@ -6276,16 +6276,16 @@ export const characterRelationTraits: Trait[] = [
   },
   {
     description:
-      '天使杰瑞1级被动对如玉无效；如玉前刺回马枪能直接击倒使用2级主动的天使杰瑞；如玉可借助天使杰瑞武器技能造成的伤害进行反击但3级被动禁用技能可以反制如玉的甩花枪反击',
+      '天使杰瑞1级被动对如玉无效；如玉前刺回马枪能直接击倒使用2级主动的天使杰瑞；如玉可借助天使杰瑞武器技能造成的伤害进行反击。',
     group: [
       { name: '如玉', type: 'character' },
       { name: '天使杰瑞', type: 'character' },
     ],
     relation: {
-      kind: 'counterEachOther',
+      kind: 'counters',
       subject: { name: '如玉', type: 'character' },
       target: { name: '天使杰瑞', type: 'character' },
-      isMinor: false,
+      isMinor: true,
     },
   },
   {
@@ -6904,6 +6904,19 @@ export const characterRelationTraits: Trait[] = [
       kind: 'countersKnowledgeCards',
       subject: { name: '朵朵', type: 'character' },
       target: { name: '皮糙肉厚', type: 'knowledgeCard', factionId: 'cat' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '',
+    group: [
+      { name: '天使杰瑞', type: 'character' },
+      { name: '蓄势一击', type: 'knowledgeCard', factionId: 'cat' },
+    ],
+    relation: {
+      kind: 'counteredByKnowledgeCards',
+      subject: { name: '天使杰瑞', type: 'character' },
+      target: { name: '蓄势一击', type: 'knowledgeCard', factionId: 'cat' },
       isMinor: true,
     },
   },
