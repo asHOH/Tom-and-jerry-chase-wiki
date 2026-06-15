@@ -585,6 +585,7 @@ export type Database = {
         Args: { p_action_id: string };
         Returns: undefined;
       };
+      auth_email_exists: { Args: { p_email: string }; Returns: boolean };
       create_category: {
         Args: {
           _default_visibility?: Database['public']['Enums']['version_status'];

@@ -1,15 +1,13 @@
-import { createHash } from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 
+import {
+  checkUsernameAvailability,
+  createSupabaseUsernameAvailabilityDataSource,
+} from '@/lib/auth/usernameAvailability';
 import { generateCaptchaProof, verifyCaptchaToken } from '@/lib/captchaUtils';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { supabaseAdmin } from '@/lib/supabase/admin';
-
-// Helper function to hash the username
-// In a real-world scenario, ensure this matches the hashing strategy used during user creation.
-const hashUsername = (username: string) => {
-  return createHash('sha256').update(username).digest('hex');
-};
+import { env } from '@/env';
 
 export async function POST(request: NextRequest) {
   try {
@@ -33,32 +31,37 @@ export async function POST(request: NextRequest) {
 
     const captchaProof = generateCaptchaProof(username);
 
-    const usernameHash = hashUsername(username);
-
     if (!supabaseAdmin) {
       console.error('Supabase admin client is not configured (missing service role key).');
       return NextResponse.json({ error: 'Server misconfigured' }, { status: 500 });
     }
 
-    // Query the users table to find a user with the matching username_hash
-    const { data: user, error } = await supabaseAdmin
-      .from('users')
-      .select('password_hash')
-      .eq('username_hash', usernameHash)
-      .single();
+    const authEmailDomain = env.NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN;
+    if (!authEmailDomain) {
+      console.error('Supabase auth user email domain is not configured.');
+      return NextResponse.json({ error: 'Server misconfigured' }, { status: 500 });
+    }
 
-    if (error && error.code !== 'PGRST116') {
-      // PGRST116: "The result contains 0 rows"
-      // We handle the "not found" case below, so we only throw for other errors.
-      console.error('Supabase error:', error);
+    const availability = await checkUsernameAvailability({
+      username,
+      authEmailDomain,
+      dataSource: createSupabaseUsernameAvailabilityDataSource(supabaseAdmin),
+    });
+
+    if (availability.status === 'lookup_error') {
+      console.error('Supabase username availability error:', availability.error);
       return NextResponse.json({ error: 'Database error' }, { status: 500 });
     }
 
-    if (!user) {
+    if (availability.status === 'available') {
       return NextResponse.json({ status: 'not_exists', captchaProof });
     }
 
-    if (user.password_hash) {
+    if (availability.status === 'auth_email_unavailable') {
+      return NextResponse.json({ status: 'unavailable', reason: 'auth_email_already_exists' });
+    }
+
+    if (availability.passwordHash) {
       return NextResponse.json({ status: 'exists_with_password', captchaProof });
     }
 

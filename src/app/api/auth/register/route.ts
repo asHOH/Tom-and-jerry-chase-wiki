@@ -1,9 +1,13 @@
-import { createHash, pbkdf2Sync, randomBytes } from 'crypto';
+import { pbkdf2Sync, randomBytes } from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 
+import {
+  checkUsernameAvailability,
+  createSupabaseUsernameAvailabilityDataSource,
+  hashUsername,
+} from '@/lib/auth/usernameAvailability';
 import { verifyCaptchaProof } from '@/lib/captchaUtils';
 import { checkPasswordStrength } from '@/lib/passwordUtils';
-import { convertToPinyin } from '@/lib/pinyinUtils';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { authRegisterSchema, formatZodError } from '@/lib/validation/schemas';
@@ -11,10 +15,6 @@ import { TablesInsert } from '@/data/database.types';
 import { env } from '@/env';
 
 import { getAuthCreateUserFailure } from './authErrorUtils';
-
-const hashUsername = (username: string) => {
-  return createHash('sha256').update(username).digest('hex');
-};
 
 const hashPassword = (password: string, salt: string) => {
   return pbkdf2Sync(password, salt, 100000, 64, 'sha512').toString('hex');
@@ -47,8 +47,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Password is required.' }, { status: 400 });
     }
 
-    const usernamePinyin = await convertToPinyin(username);
-    const usernameHash = hashUsername(username);
     const authPassword = password;
 
     // Requirement 6.6: Nickname and username must not be the same for passwordless accounts
@@ -57,23 +55,38 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: `Password too weak: ${strength.reason}` }, { status: 400 });
     }
 
-    const { data: existingByUsername, error: usernameLookupError } = await supabaseAdmin
-      .from('users')
-      .select('id')
-      .eq('username_hash', usernameHash)
-      .maybeSingle();
+    const authEmailDomain = env.NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN;
+    if (!authEmailDomain) {
+      console.error('Supabase auth user email domain is not configured.');
+      return NextResponse.json({ error: 'Server misconfigured' }, { status: 500 });
+    }
 
-    if (usernameLookupError && usernameLookupError.code !== 'PGRST116') {
-      console.error('Error checking existing username:', usernameLookupError);
+    const availability = await checkUsernameAvailability({
+      username,
+      authEmailDomain,
+      dataSource: createSupabaseUsernameAvailabilityDataSource(supabaseAdmin),
+    });
+
+    if (availability.status === 'lookup_error') {
+      console.error('Error checking username availability:', availability.error);
       return NextResponse.json(
         { error: 'Could not verify username availability.' },
         { status: 500 }
       );
     }
 
-    if (existingByUsername) {
+    if (
+      availability.status === 'existing_user' ||
+      availability.status === 'auth_email_unavailable'
+    ) {
       return NextResponse.json(
-        { error: 'Username or nickname is already taken.' },
+        {
+          error: 'Username or nickname is already taken.',
+          reason:
+            availability.status === 'auth_email_unavailable'
+              ? 'auth_email_already_exists'
+              : 'username_already_exists',
+        },
         { status: 409 }
       );
     }
@@ -102,7 +115,7 @@ export async function POST(request: NextRequest) {
     const salt = randomBytes(16).toString('hex');
     const passwordHash = password ? hashPassword(password, salt) : '';
 
-    const authUserEmail = `${usernamePinyin}@${env.NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN}`;
+    const authUserEmail = availability.authEmail;
     const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
       email: authUserEmail,
       password: authPassword,
@@ -121,7 +134,7 @@ export async function POST(request: NextRequest) {
 
     const { error: insertError } = await supabaseAdmin.from('users').insert({
       id: authUserId, // Use the ID from auth.users
-      username_hash: usernameHash,
+      username_hash: hashUsername(username),
       nickname,
       password_hash: passwordHash,
       salt,

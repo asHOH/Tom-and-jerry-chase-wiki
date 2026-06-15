@@ -89,10 +89,13 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
           setStep('password');
           break;
         case 'requires_password_reset':
-          setError('该账户需要重置密码，请联系支持或使用找回流程。');
+          setError('该账户需重置密码，请联系管理员。');
           break;
         case 'not_exists':
           setStep('register');
+          break;
+        case 'unavailable':
+          setError('该用户名不可用，请更改。');
           break;
         default:
           setError('从服务器收到意外响应。');
