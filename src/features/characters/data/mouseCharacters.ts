@@ -5330,7 +5330,7 @@ const mouseCharacterDefinitions = {
       },
       {
         cards: ['S-舍己', 'S-铁血', 'C-不屈', 'B-夹不住我', 'C-救救我'],
-        description: '没有21点的情况下，可以用这个进行过渡 ，夹不住我也可以应对很多放夹子的猫。',
+        description: '无21点知识量时的卡组。',
       },
     ],
     skills: [
