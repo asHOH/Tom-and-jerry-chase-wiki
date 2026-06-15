@@ -1158,17 +1158,24 @@ const traits: Record<string, Trait> = {
       { name: '鞭炮', type: 'itemGroup' },
     ],
   },
-
-  '20260504-04': {
+  '20260502-01': {
     description:
-      '天梯中，天宫、森林牧场、熊猫馆、游乐场地图中奶酪期的道具在第一次刷新后，将不再多批次的补充刷新，同时当放入奶酪、推入奶酪、绑上火箭、放飞火箭时将在附近少量刷新道具作为补偿，调整后场景直接刷新的眩晕道具将变得相对稀有，饮料暂不受影响，局内商店购买的眩晕道具不受影响。',
+      '剑客莉莉在使用幻影剑气传送时，会重置国王怒吼和图茨喵喵叫技能层数从而规避眩晕和伤害',
     group: [
-      { name: '天梯', type: 'mode' },
+      { name: '幻影剑气', type: 'skill' },
       [
-        { name: '天宫', type: 'map' },
-        { name: '森林牧场', type: 'map' },
-        { name: '熊猫馆', type: 'map' },
-        { name: '游乐场', type: 'map' },
+        { name: '国王', type: 'itemGroup' },
+        { name: '喵喵叫', type: 'skill' },
+      ],
+    ],
+  },
+  '20260608-01': {
+    description: '如玉在变成线条猫或大星星时可释放正常爪刀',
+    group: [
+      { name: '如玉', type: 'character' },
+      [
+        { name: '线条猫', type: 'entity' },
+        { name: '大星星', type: 'entity' },
       ],
     ],
   },
