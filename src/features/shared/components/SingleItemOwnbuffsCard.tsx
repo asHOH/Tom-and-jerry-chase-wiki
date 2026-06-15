@@ -8,7 +8,10 @@ interface SingleItemOwnbuffsTextProps {
 }
 
 export default function SingleItemOwnbuffsCard({ singleItem }: SingleItemOwnbuffsTextProps) {
-  const allStrings = singleItemOwnbuffs(singleItem);
+  const allStrings = [
+    '（部分相关信息可查阅 状态效果 或 机制-状态 页面）',
+    ...singleItemOwnbuffs(singleItem),
+  ];
 
   if (allStrings.length === 0) {
     return (

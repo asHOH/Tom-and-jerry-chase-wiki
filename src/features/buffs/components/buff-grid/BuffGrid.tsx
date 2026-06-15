@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { useSnapshot } from 'valtio';
+import Link from 'next/link';
 
 import { getBuffTypeColors } from '@/lib/design';
 import { useDarkMode } from '@/context/DarkModeContext';
@@ -101,6 +102,18 @@ export default function BuffClient({ description }: Props) {
         />
       }
     >
+      {/* 提示栏：界面迭代信息 */}
+      <div className='mb-4 rounded-md border border-gray-200 bg-gray-50 p-3 text-sm text-gray-700 dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-300'>
+        <span>该界面部分内容已迭代，具体可查阅 </span>
+        <Link
+          href='/mechanics/buff/'
+          className='font-medium text-blue-600 underline decoration-blue-400 underline-offset-2 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300'
+        >
+          状态效果机制页
+        </Link>
+        <span>。</span>
+      </div>
+
       {filteredBuffs.length > 0 && (
         <>
           <div className='relative py-4'>
