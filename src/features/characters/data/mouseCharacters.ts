@@ -1371,7 +1371,7 @@ const mouseCharacterDefinitions = {
       {
         id: '隐形感应雷（自保）',
         pattern: '131003301',
-        weaponType: 'weapon1',
+        weaponType: 'weapon2',
         description: '',
       },
     ],

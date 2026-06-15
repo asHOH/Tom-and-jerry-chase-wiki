@@ -1744,7 +1744,7 @@ export const characterRelationTraits: Trait[] = [
   },
   {
     description:
-      '泰菲的圆滚滚可以解控，克制恶汤火车头控制、被动控制，泰菲的火箭筒有两段伤害，克制恶汤的的火车盾（盾只有一层）；恶汤的火车有强制位移，克制泰菲被动霸体减伤推奶酪，恶汤的打碟有霸体，克制泰菲的火箭筒打控制，恶汤的绑火箭速度快，打碟有霸体，克制泰菲的地雷拖延绑火箭',
+      '泰菲的圆滚滚可以解控，克制恶汤的打碟、被动控制和红温爪刀，泰菲的火箭筒有两段伤害，克制恶汤的的火车盾（盾只有一层）；恶汤的火车有强制位移，克制泰菲被动霸体减伤推奶酪，恶汤的打碟有霸体，克制泰菲的火箭筒打控制，恶汤的绑火箭速度快，打碟有霸体，克制泰菲的地雷拖延绑火箭',
     group: [
       { name: '泰菲', type: 'character' },
       { name: '恶魔汤姆', type: 'character' },
@@ -2194,7 +2194,7 @@ export const characterRelationTraits: Trait[] = [
     },
   },
   {
-    description: '三级烟雾弹禁用技能。',
+    description: '速推克制恶魔汤姆死守，三级烟雾弹禁用技能。',
     group: [
       { name: '侦探杰瑞', type: 'character' },
       { name: '恶魔汤姆', type: 'character' },
@@ -2207,16 +2207,15 @@ export const characterRelationTraits: Trait[] = [
     },
   },
   {
-    description:
-      '恶汤可以利用火车刷护盾，导致音乐家的共鸣难以生效；同时音乐家自保较弱，容易成为恶汤的突破口。但小恶魔绑火箭期间，火箭被摧毁会直接让老鼠下来，音乐家可以利用这一点实现救援。',
+    description: '因为独特的上火箭机制，在小恶魔上火箭期间，很容易会被拆火箭，从而救下人',
     group: [
-      { name: '恶魔汤姆', type: 'character' },
       { name: '音乐家杰瑞', type: 'character' },
+      { name: '恶魔汤姆', type: 'character' },
     ],
     relation: {
       kind: 'counters',
-      subject: { name: '恶魔汤姆', type: 'character' },
-      target: { name: '音乐家杰瑞', type: 'character' },
+      subject: { name: '音乐家杰瑞', type: 'character' },
+      target: { name: '恶魔汤姆', type: 'character' },
       isMinor: true,
     },
   },
@@ -2435,7 +2434,7 @@ export const characterRelationTraits: Trait[] = [
     },
   },
   {
-    description: '罗宾汉杰瑞没有破局能力，打防守猫比较吃力。',
+    description: '罗宾汉杰瑞没有破局能力，打防守猫较吃力。',
     group: [
       { name: '恶魔汤姆', type: 'character' },
       { name: '罗宾汉杰瑞', type: 'character' },
@@ -7380,7 +7379,21 @@ export const characterRelationTraits: Trait[] = [
     },
   },
   {
-    description: '火车头克制刷盾强推强救，但传送门流放克制定点防守。',
+    description:
+      '火车头配合我生气了，克制国王护盾。但权杖的无敌，进攻战旗的高伤，救援战旗的速救，克制恶汤。',
+    group: [
+      { name: '恶魔汤姆', type: 'character' },
+      { name: '国王杰瑞', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '恶魔汤姆', type: 'character' },
+      target: { name: '国王杰瑞', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '火车头红温克制刷盾强推强救，但传送门流放克制死守，',
     group: [
       { name: '恶魔汤姆', type: 'character' },
       { name: '恶魔杰瑞', type: 'character' },
@@ -7394,7 +7407,7 @@ export const characterRelationTraits: Trait[] = [
   },
   {
     description:
-      '恶魔汤姆用火车头打大兔子较快，防小兔子强推强就有反制能力。但怕魔术师的红牌，且打碟不防卡牌',
+      '恶魔汤姆携带特技我生气了配合二级火车撞击兔子带来的爪刀CD缩减可以使用无限爪刀，但魔术师可以在恶魔汤姆释放火车前摇丢红牌、使此次火车释放失败，让恶魔汤姆防守奶酪和火箭压力倍增。另外恶魔汤姆的跳舞不能免疫魔术师的卡牌，容易被抓住机会。',
     group: [
       { name: '恶魔汤姆', type: 'character' },
       { name: '魔术师', type: 'character' },
@@ -7403,6 +7416,20 @@ export const characterRelationTraits: Trait[] = [
       kind: 'counterEachOther',
       subject: { name: '恶魔汤姆', type: 'character' },
       target: { name: '魔术师', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '普通圆和强化圆都具有破盾打伤害，而有蓝图在一定程度上可以拦截恶汤上火箭；但因为自己血脆，也怕恶汤的火车。',
+    group: [
+      { name: '恶魔汤姆', type: 'character' },
+      { name: '莱恩', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '恶魔汤姆', type: 'character' },
+      target: { name: '莱恩', type: 'character' },
       isMinor: true,
     },
   },
