@@ -2512,6 +2512,12 @@ const mouseCharacterDefinitions = {
         description: '灵活加点',
         additionaldescription: '',
       },
+      {
+        id: '自保加点',
+        pattern: '10020[12][12]',
+        weaponType: 'weapon1',
+        description: '优先点出三级被动',
+      },
     ],
     knowledgeCardGroups: [
       {
@@ -2737,6 +2743,12 @@ const mouseCharacterDefinitions = {
         description:
           '（天使杰瑞于20260402有一次改版，本加点可能已过时）加点灵活，开局队友暴毙、刷二手火箭则优先祝福，否则被动。后期打部分[技能输出猫](如牛仔汤姆)可以优先点出{3级被动}。',
         additionaldescription: '',
+      },
+      {
+        id: '新版雷云',
+        pattern: '(1)3(1)(1)33000',
+        weaponType: 'weapon2',
+        description: '某个教学的加点，待补充',
       },
     ],
     knowledgeCardGroups: [
