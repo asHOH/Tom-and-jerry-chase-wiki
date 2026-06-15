@@ -2,6 +2,7 @@
 
 import StyledMDX from '@/components/ui/StyledMDX';
 
+import BuffMDX from '../articles/Buff.mdx';
 import CharacterMDX from '../articles/Character.mdx';
 import DamageMDX from '../articles/Damage.mdx';
 import ExpMDX from '../articles/Exp.mdx';
@@ -72,6 +73,13 @@ export function Prepare() {
   return (
     <StyledMDX className='article-content'>
       <PrepareMDX />
+    </StyledMDX>
+  );
+}
+export function Buff() {
+  return (
+    <StyledMDX className='article-content'>
+      <BuffMDX />
     </StyledMDX>
   );
 }

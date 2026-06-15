@@ -1,4 +1,15 @@
-import { Character, Damage, Exp, Hp, Item, Map, Move, Object, Prepare } from './ArticlesIndex';
+import {
+  Buff,
+  Character,
+  Damage,
+  Exp,
+  Hp,
+  Item,
+  Map,
+  Move,
+  Object,
+  Prepare,
+} from './ArticlesIndex';
 import TraitCollection from './TraitCollection';
 
 //维护说明：添加新模块时，先修改ArticlesIndex，随后在本文件添加新的导入，并修改mechanicsSections和NAV_ITEM_CONFIGS
@@ -24,6 +35,7 @@ export const mechanicsSections = {
   item: Item,
   prepare: Prepare,
   map: Map,
+  buff: Buff,
   // 在此处添加新的模块
   // newSection: NewSectionComponent,
 } as const;
@@ -90,6 +102,12 @@ export const NAV_ITEM_CONFIGS: readonly NavItemConfig[] = [
     label: '备战',
     iconSrc: '/images/icons/prepare.png',
     iconAlt: '备战图标',
+  },
+  {
+    id: 'buff',
+    label: '状态',
+    iconSrc: '/images/icons/buff.png',
+    iconAlt: '状态图标',
   },
   {
     id: 'traitCollection',
