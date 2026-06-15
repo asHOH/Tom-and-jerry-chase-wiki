@@ -902,13 +902,6 @@ const catCharacterDefinitions = {
         additionalDescription: '',
         weapon: 2,
       },
-      {
-        tagName: '追击',
-        isMinor: false,
-        description: '',
-        additionalDescription: '鞭子带来的移速提高与爪刀CD缩短有助于牛仔汤姆持续追击',
-        weapon: 1,
-      },
     ],
     skillAllocations: [
       {
