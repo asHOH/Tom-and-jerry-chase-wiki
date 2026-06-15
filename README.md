@@ -136,9 +136,8 @@ npm run analyze         # 包分析
    git checkout -b feature/your-feature-name
    ```
 
-3. 提交 Pull Request 到 `develop` 分支。提交前，建议运行本地检查以确保代码质量：
-   - **Windows (PowerShell)**: `.\scripts\test-github-workflows.ps1`
-   - **macOS/Linux**: `./scripts/test-github-workflows.bash`
+3. 提交 Pull Request 到 `develop` 分支。提交前，建议运行 `npm run lint`、
+   `npm run type-check` 和 `npm test`。
 
 ## 📁 项目结构
 

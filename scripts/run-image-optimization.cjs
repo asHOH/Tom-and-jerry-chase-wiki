@@ -6,7 +6,7 @@ const sharp = require('sharp');
 // The top-level directory containing your images
 const imagesBaseDir = path.join(process.cwd(), 'public', 'images');
 // Supported image extensions
-const supportedExtensions = ['.png', '.jpg', 'jpeg'];
+const supportedExtensions = ['.png', '.jpg', '.jpeg'];
 
 /**
  * Recursively finds all files with supported extensions in a directory.

@@ -21,7 +21,7 @@ async function importContributorsFromTS() {
     return contributors;
   } catch (error) {
     console.error('❌ Failed to import contributors from compiled TypeScript:', error.message);
-    console.error('Make sure to run "npm run compile-contributors" first');
+    console.error('Make sure src/data/contributors.ts can be loaded by jiti');
     process.exit(1);
   }
 }

@@ -17,7 +17,7 @@
  * Environment Variables (from .env or .env.example):
  *   - OPENAI_API_KEY: Your OpenAI API key (required)
  *   - OPENAI_BASE_URL: Custom base URL for OpenAI-compatible providers (optional)
- *   - NEXT_PUBLIC_AI_CHAT_MODEL: Model to use (default: gpt-4o-mini)
+ *   - NEXT_PUBLIC_AI_CHAT_MODEL: Model to use (default: gpt-5.4)
  *
  * Output Format:
  *   - JSON array of daily changelogs
@@ -38,7 +38,7 @@ loadEnvConfig(projectDir);
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const OPENAI_BASE_URL = process.env.OPENAI_BASE_URL;
-const AI_CHAT_MODEL = process.env.NEXT_PUBLIC_AI_CHAT_MODEL || 'gpt-5.5';
+const AI_CHAT_MODEL = process.env.NEXT_PUBLIC_AI_CHAT_MODEL || 'gpt-5.4';
 
 const openai = createOpenAI({
   apiKey: OPENAI_API_KEY,
