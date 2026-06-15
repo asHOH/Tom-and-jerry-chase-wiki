@@ -1,8 +1,8 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { useSnapshot } from 'valtio';
 import Link from 'next/link';
+import { useSnapshot } from 'valtio';
 
 import { getBuffTypeColors } from '@/lib/design';
 import { useDarkMode } from '@/context/DarkModeContext';
