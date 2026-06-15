@@ -905,16 +905,11 @@ const catCharacterDefinitions = {
     ],
     skillAllocations: [
       {
-        id: '鞭子（控制）',
-        pattern: '120021120',
+        id: '鞭子',
+        pattern: '2[10]001122',
         weaponType: 'weapon1',
-        description: '以技能的控制和1级被动的快爪刀为主要进攻手段',
-      },
-      {
-        id: '鞭子（高伤）',
-        pattern: '120002112',
-        weaponType: 'weapon1',
-        description: '以3级被动的高伤为主要进攻手段',
+        description:
+          '前期以1级被动的快爪刀为主要进攻手段，后期以3级被动为主要进攻手段。若有穷追猛打则可先点出1级斗牛，否则先点1级被动。',
       },
       {
         id: '弹弓（常规）',
@@ -935,16 +930,17 @@ const catCharacterDefinitions = {
         description: '',
         groups: [
           {
-            cards: ['S-击晕', 'S-知识渊博', 'S-乘胜追击'],
+            cards: [
+              'S-击晕',
+              [CardGroupType.Or, 'S-知识渊博', 'A-熊熊燃烧'],
+              'A-穷追猛打',
+              'B-皮糙肉厚',
+            ],
             description: '常规卡组。',
           },
           {
-            cards: ['S-击晕', 'S-知识渊博', 'A-穷追猛打', 'B-皮糙肉厚'],
-            description: '敌方攻击性不大时可使用。',
-          },
-          {
-            cards: ['S-击晕', 'S-乾坤一掷', 'B-皮糙肉厚', 'A-穷追猛打'],
-            description: '',
+            cards: ['S-击晕', 'A-加大火力', 'A-穷追猛打', 'B-皮糙肉厚', 'C-猫是液体'],
+            description: '管道图可用。',
           },
         ],
         defaultFolded: false,
@@ -955,11 +951,11 @@ const catCharacterDefinitions = {
         groups: [
           {
             cards: ['S-知识渊博', 'A-熊熊燃烧', 'A-细心', 'A-穷追猛打'],
-            description: '常规卡组',
+            description: '常规卡组。',
           },
           {
             cards: ['S-知识渊博', 'A-细心', 'A-穷追猛打', 'B-皮糙肉厚', 'B-反侦察'],
-            description: '反侦察',
+            description: '反侦察提供额外经验。',
           },
         ],
         defaultFolded: false,
@@ -979,11 +975,7 @@ const catCharacterDefinitions = {
           },
         ],
         defaultFolded: false,
-      } /*
-      {
-        cards: ['S-猛攻', 'A-越挫越勇', 'A-熊熊燃烧', 'B-皮糙肉厚', 'C-猫是液体'],
-        description: '遇到有米可的打架队时使用',
-      },*/,
+      },
     ],
     skills: [
       {
