@@ -1249,7 +1249,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     gravity: false,
     supportedMaps: ['森林牧场', '御门酒店'],
     description:
-      '角色可通过交互采摘红色花，一段时间内提高自身攻击力。\n花朵被采摘后需等待一段时间才会重新长出。',
+      '可通过交互采摘，一段时间内提高自身攻击力。\n花朵被采摘后需等待一段时间才会重新长出。',
   },
   黄色花: {
     type: ['组件类', '可交互'],
@@ -1259,7 +1259,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     gravity: false,
     supportedMaps: ['森林牧场', '御门酒店'],
     description:
-      '角色可通过交互采摘黄色花，一段时间内提高自身移速和跳跃能力。\n花朵被采摘后需等待一段时间才会重新长出。',
+      '可通过交互采摘，一段时间内提高自身移速和跳跃能力。\n花朵被采摘后需等待一段时间才会重新长出。',
   },
   金色花: {
     type: ['组件类', '可交互'],
@@ -1269,7 +1269,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     gravity: false,
     supportedMaps: ['森林牧场', '御门酒店'],
     description:
-      '角色可通过交互采摘金色花，一段时间内降低受到的伤害。\n花朵被采摘后需等待一段时间才会重新长出。',
+      '可通过交互采摘，一段时间内降低受到的伤害、免疫缴械等少量负面效果。\n花朵被采摘后需等待一段时间才会重新长出。',
   },
   蓝色花: {
     type: ['组件类', '可交互'],
@@ -1278,8 +1278,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     move: false,
     gravity: false,
     supportedMaps: ['森林牧场', '御门酒店'],
-    description:
-      '角色可通过交互采摘蓝色花，使敌方短暂暴露位置。\n花朵被采摘后需等待一段时间才会重新长出。',
+    description: '可通过交互采摘，使敌方短暂暴露位置。\n花朵被采摘后需等待一段时间才会重新长出。',
   },
   青色花: {
     type: ['组件类', '可交互'],
@@ -1288,8 +1287,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     move: false,
     gravity: false,
     supportedMaps: ['森林牧场', '御门酒店'],
-    description:
-      '角色可通过交互采摘青色花，一段时间内持续恢复Hp。\n花朵被采摘后需等待一段时间才会重新长出。',
+    description: '可通过交互采摘，一段时间内持续恢复Hp。\n花朵被采摘后需等待一段时间才会重新长出。',
   },
   银色花: {
     type: ['组件类', '可交互'],
@@ -1299,7 +1297,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     gravity: false,
     supportedMaps: ['森林牧场', '御门酒店'],
     description:
-      '角色可通过交互采摘银色花，一段时间内获得以下效果：不会显示在敌方小地图上、不会使敌方产生害怕、开关门不产生声音。\n花朵被采摘后需等待一段时间才会重新长出。',
+      '可通过交互采摘，一段时间内获得以下效果：不会显示在敌方小地图上、不会使敌方产生害怕、开关门不产生声音。\n花朵被采摘后需等待一段时间才会重新长出。',
   },
   紫色花: {
     type: ['组件类', '可交互'],
@@ -1308,8 +1306,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     move: false,
     gravity: false,
     supportedMaps: ['森林牧场', '御门酒店'],
-    description:
-      '角色可通过交互采摘紫色花，立即恢复大量Hp。\n花朵被采摘后需等待一段时间才会重新长出。',
+    description: '可通过交互采摘，立即恢复大量Hp。\n花朵被采摘后需等待一段时间才会重新长出。',
   },
   七色花: {
     type: ['组件类', '可交互'],
@@ -1319,7 +1316,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     gravity: false,
     supportedMaps: ['森林牧场', '御门酒店'],
     description:
-      '角色可通过交互采摘七色花，同时获得{红色花}、{橙色花}、{金色花}、{蓝色花}、{青色花}、{银色花}、{紫色花}的效果。\n七色被采摘后需等待更长时间才会重新长出。',
+      '可通过交互采摘，同时获得{红色花}、{橙色花}、{金色花}、{蓝色花}、{青色花}、{银色花}、{紫色花}的效果。\n七色被采摘后需等待较长时间才会重新长出。',
   },
   树丛: {
     type: '组件类',
