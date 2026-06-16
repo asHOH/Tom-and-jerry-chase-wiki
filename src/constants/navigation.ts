@@ -101,6 +101,14 @@ export const NAV_ITEMS: readonly NavGroup[] = [
         iconAlt: '',
       },
       {
+        id: 'fixtures',
+        label: '组件',
+        description: '地图组件列表',
+        href: '/fixtures',
+        iconSrc: '/images/icons/fixture.png',
+        iconAlt: '',
+      },
+      {
         id: 'modes',
         label: '模式',
         description: '游戏模式列表',
@@ -213,14 +221,6 @@ export const TOOL_NAV_ITEMS: readonly NavItem[] = [
     iconAlt: '',
   },
   //建设中界面
-  {
-    id: 'fixtures',
-    label: '地图组件',
-    description: '地图组件列表',
-    href: '/fixtures',
-    iconSrc: '/images/catSpecialSkills/%E7%BB%9D%E5%9C%B0%E5%8F%8D%E5%87%BB.png',
-    iconAlt: '',
-  },
   {
     id: 'achievements',
     label: '对局成就',
