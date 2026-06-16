@@ -3129,7 +3129,7 @@ export const characterRelationTraits: Trait[] = [
     },
   },
   {
-    description: '罗宾汉杰瑞可以为团队提供二段跳，增强拉扯和自保能力，而776锅汤前期不好找节奏，',
+    description: '罗宾汉杰瑞可以为团队提供二段跳，增强拉扯和自保能力，而776锅汤前期不好找节奏。',
     group: [
       { name: '罗宾汉杰瑞', type: 'character' },
       { name: '汤姆', type: 'character' },
