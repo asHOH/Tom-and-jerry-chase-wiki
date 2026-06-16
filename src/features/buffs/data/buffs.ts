@@ -438,7 +438,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     class: '移动与跳跃',
     aliases: ['不受重力', '无视重力'],
     description: '持续期间，使角色完全不受重力影响。',
-    stack: '本效果生效优先级高于{完全失重}。',
+    stack: '本效果生效优先级高于{重力缩放倍率}。',
     unuseImage: true,
   },
   受力: {
