@@ -65,7 +65,8 @@ const regularMaps: string[] = [
   '经典之家-谁是外星人',
 ];*/
 
-const getFixtureImageUrl = (name: string): string => {
+const getFixtureImageUrl = (name: string, specialImageUrl: string | undefined): string => {
+  if (specialImageUrl !== undefined) return specialImageUrl;
   return `/images/fixtures/${encodeURIComponent(name)}.png`;
 };
 
@@ -511,6 +512,8 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     supportedMaps: ['经典之家I', '经典之家II', '经典之家III', '家之典经'],
     description:
       '百叶窗初始为展开状态，与{梯子}类似。角色可通过交互收起/展开百叶窗。百叶窗在收起的瞬间会对附近的角色造成伤害和{眩晕}。',
+
+    specialImageUrl: '/images/maps/%E7%BB%8F%E5%85%B8%E4%B9%8B%E5%AE%B6.png',
   },
   水潭: {
     type: ['平台类'],
@@ -836,6 +839,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
       '密道上方初始有实体{地面}覆盖。角色从空中落到密道地面处若干次后，实体地面将[消失](不再阻挡角色和道具，但外观贴图无变化)，角色可通过密道进入彩蛋区域，该区域有多个高级道具及四个单向{管道}。',
     detailedDescription:
       '密道所在位置与普通雪地地面无异。密道上方初始有实体{地面}覆盖，无法通行。\n若想打开密道，角色需[从空中落到密道地面处](从高空下落到密道处即可计数。从平地走到密道处不计数。部分会飞行的角色在飞行状态时，落到密道上方也会计数)若干次（根据角色类型有所不同：猫20次，鼠50次）。达到所需次数后，密道上方实体地面将[消失](不再阻挡角色和道具，但外观贴图无变化)，角色可通过密道跳入下方的彩蛋区域。\n彩蛋区域内会刷新{神秘饮料}、{兴奋饮料}、{远视饮料}、{护盾饮料}、{变身饮料}、{隐身饮料}各一瓶，以及高级道具（随机从{遥控器}、{蓝花瓶}、{鞭炮束}、{玩具枪}、{苍蝇拍}中刷新）共6个。该区域内还有四个单向{管道}，分别通向庭院、卧室、盔甲房、侍卫房。',
+    specialImageUrl: '/images/maps/%E9%9B%AA%E5%A4%9C%E5%8F%A4%E5%A0%A1.png',
   },
   望远镜: {
     type: ['平台类', '组件类', '可交互'],
@@ -867,6 +871,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     supportedMaps: ['夏日游轮I', '夏日游轮II', '夏日游轮III'],
     description:
       '喷气口一左一右成对出现，靠右的喷气口初始被激活。被激活的喷气口会间歇性喷出蒸汽，向下{击退}角色。可通过{控制阀}交换喷气口的激活状态。',
+    specialImageUrl: '/images/maps/%E5%A4%8F%E6%97%A5%E6%B8%B8%E8%BD%AE.png',
   },
   控制阀: {
     type: ['平台类', '组件类', '可交互'],
@@ -877,6 +882,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     supportedMaps: ['夏日游轮I', '夏日游轮II', '夏日游轮III'],
     description:
       '角色可通过交互调整控制阀方向（有30秒内置CD），交换{喷气口}的激活状态，并使{驾驶舵}短暂旋转。控制阀上方可被当作{平台}。',
+    specialImageUrl: '/images/maps/%E5%A4%8F%E6%97%A5%E6%B8%B8%E8%BD%AE.png',
   },
   仪表盘开关: {
     type: ['组件类', '可交互'],
@@ -889,6 +895,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
       '仪表盘开关九个一组，呈3×3排布，其开关状态代表了一串密码，可从{荧幕}处获知本局游戏的密码。当密码正确时，{船长室大门}将被打开，彩蛋区域开放，该区域内有多个高级道具及一个{监视开关}。',
     detailedDescription:
       '仪表盘开关以九个一组出现，呈3×3排布，其开关状态代表了一串密码，且[初始至少有1个按钮的开/关状态错误](目前暂未出现“彩蛋房初始开启”的报告。若发现反例，欢迎更正)。\n角色可操作{放映机}，从{荧幕}处获得本局的密码，据其调整仪表盘开关的开/关状态（其中0=红灯、1=绿灯）。当所有按钮的开关状态均正确时，{船长室大门}将被打开，彩蛋区域开放，该区域内有多个高级道具及一个{监视开关}（详见船长室大门的详细描述）。',
+    specialImageUrl: '/images/maps/%E5%A4%8F%E6%97%A5%E6%B8%B8%E8%BD%AE.png',
   },
   船长室大门: {
     type: ['墙壁类', '可交互'],
@@ -901,6 +908,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
       '船长室大门初始关闭，此时船长室彩蛋区域不开放。当{仪表盘开关}开启状态正确时，大门打开，彩蛋区域开放，该区域内有多个高级道具及一个{监视开关}。',
     detailedDescription:
       '船长室大门初始关闭，此时船长室彩蛋区域被黑暗笼罩，角色无法查看或进入船长室的彩蛋区域。\n角色可操作{放映机}，从{荧幕}处获得本局的密码，据其调整{仪表盘开关}的开/关状态（其中0=红灯、1=绿灯）。当开关正确时，大门将打开，彩蛋区域将开放，其内部的道具也将刷新。\n彩蛋区域内会刷新{神秘饮料}、{兴奋饮料}、{远视饮料}、{护盾饮料}、{变身饮料}、{隐身饮料}各一瓶，以及高级道具（随机从{遥控器}、{蓝花瓶}、{鞭炮束}、{玩具枪}、{苍蝇拍}中刷新）共9个。该区域内还有一个{监视开关}，打开后令所有敌方角色短暂{暴露位置}。\n\n极少数情况下，角色可通过bug进入未开放的彩蛋房，此时其内部不会刷新道具。（注意：请不要在正常游戏中恶意进入未开放的彩蛋房）',
+    specialImageUrl: '/images/maps/%E5%A4%8F%E6%97%A5%E6%B8%B8%E8%BD%AE.png',
   },
   监视开关: {
     type: ['组件类', '可交互'],
@@ -910,6 +918,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     supportedMaps: ['夏日游轮I', '夏日游轮II', '夏日游轮III'],
     description:
       '角色可通过交互开启监视器（有60秒内置CD），打开后令所有敌方角色短暂{暴露位置}。（该组件仅位于船长室彩蛋区域内，详见{船长室大门}）',
+    specialImageUrl: '/images/maps/%E5%A4%8F%E6%97%A5%E6%B8%B8%E8%BD%AE.png',
   },
   放映机: {
     type: ['平台类', '组件类', '可交互'],
@@ -921,6 +930,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     supportedMaps: ['夏日游轮I', '夏日游轮II', '夏日游轮III'],
     description:
       '放映机开启时，{荧幕}上会投射出实体画面。放映机初始为开启状态，角色可通过交互关闭/开启放映机。放映机上方可被当作{平台}。',
+    specialImageUrl: '/images/maps/%E5%A4%8F%E6%97%A5%E6%B8%B8%E8%BD%AE.png',
   },
   荧幕: {
     type: ['平台类', '组件类'],
@@ -932,6 +942,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     supportedMaps: ['夏日游轮I', '夏日游轮II', '夏日游轮III'],
     description:
       '{放映机}开启时，荧幕上会投射出实体画面，角色可以站在画面中的平台上。实体画面共3种，每次会随机投射其中一种，且有低概率在画面左上角附带本局{仪表盘开关}的正确密码（为由0和1构成的3*3矩阵，其中0=红灯，1=绿灯）。',
+    specialImageUrl: '/images/maps/%E5%A4%8F%E6%97%A5%E6%B8%B8%E8%BD%AE.png',
   },
   喷泉: {
     type: ['平台类', '组件类'],
@@ -943,6 +954,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     supportedMaps: ['夏日游轮I', '夏日游轮II', '夏日游轮III'],
     description:
       '喷泉的水流会使接触的角色{减速}但解除由胡椒瓶造成的{失明}，还能够引爆{感电}状态。喷泉水池边缘和上方水流可被当作{平台}。',
+    specialImageUrl: '/images/maps/%E5%A4%8F%E6%97%A5%E6%B8%B8%E8%BD%AE.png',
   },
   折叠椅: {
     type: ['平台类', '组件类'],
@@ -956,6 +968,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
       '折叠椅可被当作{弹性平台}，但每当被角色踩踏第3次时将折叠，折叠椅处的所有角色受到伤害和短暂{眩晕}（不掉落道具）；折叠期间平台短暂[消失](不再阻挡角色和道具，但外观贴图无变化)。',
     detailedDescription:
       '折叠椅可被当作{弹性平台}，但[每当被角色踩踏时将累计计数](会播放“弹性”动画以作提示；动画期间有角色踩踏时不会计数)，计数累积到3时折叠自身，折叠椅处的所有角色受到伤害和短暂{眩晕}（不掉落道具）；折叠期间平台短暂[消失](不再阻挡角色和道具，但外观贴图无变化)；随后折叠椅重新展开并重置计数。',
+    specialImageUrl: '/images/maps/%E5%A4%8F%E6%97%A5%E6%B8%B8%E8%BD%AE.png',
   },
   游泳圈组: {
     type: ['平台类', '组件类'],
@@ -967,6 +980,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     supportedMaps: ['夏日游轮I', '夏日游轮II', '夏日游轮III'],
     description:
       '游泳圈组中的两个游泳圈均可被当做{平台}，但其中较高的游泳圈被角色踩踏时将[向下坠落](会播放动画以作提示；动画期间有角色踩踏另一侧游泳圈时不会导致游泳圈组位置变化)，并使另一侧游泳圈升起（与{移动平台}类似）。',
+    specialImageUrl: '/images/maps/%E5%A4%8F%E6%97%A5%E6%B8%B8%E8%BD%AE.png',
   },
   消防栓: {
     type: ['组件类', '可交互'],
@@ -987,6 +1001,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     supportedMaps: ['夏日游轮I'],
     description:
       '船锚可被当做{平台}和{梯子}，且可以通过{船锚开关}进行收起/放下。船锚初始为放下状态。',
+    specialImageUrl: '/images/maps/%E5%A4%8F%E6%97%A5%E6%B8%B8%E8%BD%AE.png',
   },
   船锚开关: {
     type: ['组件类', '可交互'],
@@ -996,6 +1011,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     gravity: false,
     supportedMaps: ['夏日游轮I'],
     description: '船锚开关可操作{船锚}进行收起/放下。船锚初始为放下状态。',
+    specialImageUrl: '/images/maps/%E5%A4%8F%E6%97%A5%E6%B8%B8%E8%BD%AE.png',
   },
   舷窗: {
     type: ['平台类', '组件类'],
@@ -1017,6 +1033,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     supportedMaps: ['夏日游轮I', '夏日游轮II'],
     description:
       '灶台及其上方铁锅的锅盖均可被当作{平台}，碰到灶台平台上的火焰的角色会受到短暂{硬直}（有内置CD）。铁锅会周期性开锅并将锅盖平台向上顶起（与{移动平台}类似）。每个铁锅下方均有一个开关，与其交互可使对应铁锅提前进入/结束开锅状态。',
+    specialImageUrl: '/images/maps/%E5%A4%8F%E6%97%A5%E6%B8%B8%E8%BD%AE.png',
   },
   太空: {
     type: '组件类',
@@ -1025,6 +1042,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     gravity: false,
     supportedMaps: ['太空堡垒I', '太空堡垒II', '太空堡垒III'],
     description: '太空中的角色会失重，且间歇性受到伤害。',
+    specialImageUrl: '/images/maps/%E5%A4%AA%E7%A9%BA%E5%A0%A1%E5%9E%92.png',
   },
   监视器: {
     type: ['平台类', '组件类', '可交互'],
@@ -1046,6 +1064,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     supportedMaps: ['太空堡垒I', '太空堡垒III'],
     description:
       '两个药水罐与一个{喷洒间}成组出现。药水罐初始为黄色，角色可以通过交互按黄-红-蓝的顺序切换药水颜色。药水颜色组合将影响角色使用喷洒间时获得的状态。药水罐有1秒使用CD。\n黄+黄：加速（猫）/提升跳跃能力（鼠）；\n红+红：受到大量伤害和一段时间的爆炸眩晕；\n蓝+蓝：受到少量伤害和极长时间的冰冻眩晕；\n红+黄：提高攻击力（猫）/变为{比利鼠}（鼠）\n红+蓝：获得隐身；\n黄+蓝：回复大量Hp并获得霸体（猫）/回复大量Hp（鼠）。',
+    specialImageUrl: '/images/maps/%E5%A4%AA%E7%A9%BA%E5%A0%A1%E5%9E%92.png',
   },
   喷洒间: {
     type: ['组件类', '可交互'],
@@ -1056,6 +1075,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     supportedMaps: ['太空堡垒I', '太空堡垒III'],
     description:
       '两个{药水罐}与一个喷洒间成组出现。角色可使用喷洒间，根据使用时的药水罐颜色组获得对应状态。喷洒间有30秒使用CD。\n黄+黄：加速（猫）/提升跳跃能力（鼠）；\n红+红：受到大量伤害和一段时间的爆炸眩晕；\n蓝+蓝：受到少量伤害和极长时间的冰冻眩晕；\n红+黄：提高攻击力（猫）/变为{比利鼠}（鼠）\n红+蓝：获得隐身；\n黄+蓝：回复大量Hp并获得霸体（猫）/回复大量Hp（鼠）。',
+    specialImageUrl: '/images/maps/%E5%A4%AA%E7%A9%BA%E5%A0%A1%E5%9E%92.png',
   },
   发射台: {
     type: ['组件类', '可交互'],
@@ -1066,6 +1086,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     supportedMaps: ['太空堡垒I', '太空堡垒II', '太空堡垒III'],
     description:
       '发射台与{管道}类似，但单次使用间隔更长（需20秒）。\n在太空堡垒I或III中使用发射台后，将传送到[奶酪星房间](特殊房间，为太空堡垒彩蛋房)，内有1瓶{神秘饮料}、1个{老鼠夹}与1个{苍蝇拍}，以及一个{返回舱}。\n在太空堡垒II中使用发射台后，将传送到左太空的右上角。\n发射台可以享受到{猫是液体}的交互速度及无视使用间隔的效果。',
+    specialImageUrl: '/images/maps/%E5%A4%AA%E7%A9%BA%E5%A0%A1%E5%9E%92.png',
   },
   返回舱: {
     type: ['组件类', '可交互'],
@@ -1075,6 +1096,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     supportedMaps: ['太空堡垒I', '太空堡垒III'],
     description:
       '返回舱在[奶酪星房间](特殊房间，为太空堡垒彩蛋房)自然生成，与{管道}类似，但单次使用间隔更长（需20秒）。\n使用返回舱后，将传送到货舱左侧。\n返回舱可以享受到{猫是液体}的交互速度及无视使用间隔的效果。',
+    specialImageUrl: '/images/maps/%E5%A4%AA%E7%A9%BA%E5%A0%A1%E5%9E%92.png',
   },
   绿色机油桶: {
     type: ['平台类', '组件类'],
@@ -1118,6 +1140,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     supportedMaps: ['太空堡垒I', '太空堡垒II', '太空堡垒III'],
     description:
       '与{道具生成口}类似，但生成频率与内容不同。只会生成以下道具：{冰块}、{叉子}、{玻璃杯}、{牛奶}、{蛋糕}、{奶酪}。（奶酪有最大生成数量限制：堡垒I和III为3块，堡垒II为0块）',
+    specialImageUrl: '/images/maps/%E5%A4%AA%E7%A9%BA%E5%A0%A1%E5%9E%92.png',
   },
   货物生成口: {
     type: ['组件类'],
@@ -1128,6 +1151,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     supportedMaps: ['太空堡垒I', '太空堡垒II', '太空堡垒III'],
     description:
       '位于货舱，会间歇性生成货物。在太空堡垒II中，每次生成货物时有概率改为生成{奶酪}，单局游戏至多三块。',
+    specialImageUrl: '/images/maps/%E5%A4%AA%E7%A9%BA%E5%A0%A1%E5%9E%92.png',
   },
   吧台: {
     type: ['平台类', '组件类'],
@@ -1139,6 +1163,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     supportedMaps: ['太空堡垒II'],
     description:
       '吧台位于休闲舱，其上方初始会刷新7个呈梯形摆放的{玻璃杯}。当有玻璃杯被放在距吧台上方一定距离（略高于2个玻璃杯）的位置时，在短暂延迟后该玻璃杯将被销毁，并原地生成一瓶{神秘饮料}。',
+    specialImageUrl: '/images/maps/%E5%A4%AA%E7%A9%BA%E5%A0%A1%E5%9E%92.png',
   },
   休闲舱开关: {
     type: ['组件类', '可交互'],
@@ -1148,6 +1173,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     supportedMaps: ['太空堡垒II'],
     description:
       '休闲舱开关有红色/绿色/紫色三种状态，初始默认为绿色状态，玩家可通过交互切换开关状态。\n红色状态下，本房间绝大区域内的灯光消失。（无灯光时，角色只能看到自身周围小范围视野）\n绿色状态下，本房间仅有右侧部分区域未被灯光照亮。\n紫色状态下，本房间被全部照亮，且房间中的彩灯会出现闪耀特效。',
+    specialImageUrl: '/images/maps/%E5%A4%AA%E7%A9%BA%E5%A0%A1%E5%9E%92.png',
   },
   DJ操作台: {
     type: ['平台类', '组件类', '可交互'],
@@ -1158,6 +1184,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     collision: ['道具', '角色'],
     supportedMaps: ['太空堡垒II'],
     description: 'DJ操作台是一个娱乐设施，玩家可通过交互来播放音乐并进行滑步表演。',
+    specialImageUrl: '/images/maps/%E5%A4%AA%E7%A9%BA%E5%A0%A1%E5%9E%92.png',
   },
   货物: {
     type: ['组件类'],
@@ -1179,6 +1206,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     supportedMaps: ['游乐场'],
     description:
       '角色踏入水池后，移动和跳跃能力会小幅降低，且清除并免疫由道具造成的反向及失明，并引爆自身持有的{感电}状态。',
+    specialImageUrl: '/images/maps/%E6%B8%B8%E4%B9%90%E5%9C%BA.png',
   },
   湖泊: {
     type: ['组件类'],
@@ -1189,6 +1217,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     supportedMaps: ['森林牧场'],
     description:
       '角色进入湖泊区域后会失重，且清除并免疫由道具造成的反向及失明，并引爆自身持有的{感电}状态。\n角色在湖泊内会逐渐减少氧气值，当氧气归零时则会快速减少Hp。角色可通过在湖底换气口停留，或是离开湖泊补充氧气值。',
+    specialImageUrl: '/images/maps/%E6%A3%AE%E6%9E%97%E7%89%A7%E5%9C%BA.png',
   },
   唤猫铃: {
     type: ['组件类', '可交互'],
@@ -1199,6 +1228,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     supportedMaps: ['森林牧场'],
     description:
       '角色可通过交互敲响唤猫铃，使附近范围内除自身以外的角色减速并不受控制地向唤猫铃方向移动，持续一段时间。',
+    specialImageUrl: '/images/maps/%E6%A3%AE%E6%9E%97%E7%89%A7%E5%9C%BA.png',
   },
   壁炉: {
     type: ['组件类', '可交互'],
@@ -1209,6 +1239,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     supportedMaps: ['森林牧场'],
     description:
       '壁炉会间歇性燃烧，角色在燃烧期间碰触壁炉会受到短暂硬直。壁炉与屋顶上的烟囱通过{管道}连接，角色在壁炉燃烧期间使用壁炉处的管道时将受到一段时间的失明。',
+    specialImageUrl: '/images/maps/%E6%A3%AE%E6%9E%97%E7%89%A7%E5%9C%BA.png',
   },
   鸟巢: {
     type: ['平台类', '组件类'],
@@ -1230,6 +1261,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     supportedMaps: ['森林牧场'],
     description:
       '鸭爸爸与{鸭妈妈}一同出现，在主人房区域内游荡。当一方受到攻击时，另一方会尝试追击攻击者，直到攻击落空数次或攻击者离开主人房范围。攻击将使范围内的所有角色在一段时间内降低跳跃能力。',
+    specialImageUrl: '/images/maps/%E6%A3%AE%E6%9E%97%E7%89%A7%E5%9C%BA.png',
   },
   鸭妈妈: {
     type: 'NPC',
@@ -1240,6 +1272,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     supportedMaps: ['森林牧场'],
     description:
       '鸭妈妈与{鸭爸爸}一同出现，在主人房区域内游荡。当一方受到攻击时，另一方会尝试追击攻击者，直到攻击落空数次或攻击者离开主人房范围。攻击将使范围内的所有角色在一段时间内降低跳跃能力。',
+    specialImageUrl: '/images/maps/%E6%A3%AE%E6%9E%97%E7%89%A7%E5%9C%BA.png',
   },
   红色花: {
     type: ['组件类', '可交互'],
@@ -1354,6 +1387,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     supportedMaps: ['森林牧场'],
     description:
       '剑鱼游弋在湖泊区域。当剑鱼发现目标时，将原地短暂蓄力，随后发起一段冲刺，对命中的所有角色造成眩晕（不掉落老鼠）。',
+    specialImageUrl: '/images/maps/%E6%A3%AE%E6%9E%97%E7%89%A7%E5%9C%BA.png',
   },
   公牛: {
     type: 'NPC',
@@ -1383,6 +1417,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     supportedMaps: ['大都会', '5V5大都会'],
     description:
       '老鼠角色接触到口香糖时会被黏住，掉落手持道具且无法进行大部分交互，需向一侧持续移动才能挣脱。每块口香糖同时只能黏住一个角色。老鼠摆脱口香糖的控制后，对应的口香糖会进入较长时间的CD，期间不会黏住角色。',
+    specialImageUrl: '/images/maps/%E5%A4%A7%E9%83%BD%E4%BC%9A.png',
   },
   珠宝展示柜: {
     type: ['地面类', '墙壁类', '组件类'],
@@ -1420,6 +1455,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     supportedMaps: ['大都会', '5V5大都会'],
     description:
       '电梯在电梯间内周期性运行，承载角色往返于露天餐厅-音乐厅-大厅区域。电梯到站后将开启电梯门，一段时间后关闭电梯门并前往下一站。',
+    specialImageUrl: '/images/maps/%E5%A4%A7%E9%83%BD%E4%BC%9A.png',
   },
   保安: {
     type: 'NPC',
@@ -1439,6 +1475,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     supportedMaps: ['大都会', '5V5大都会'],
     description:
       '礼帽有扁-正常-高三种状态，初始为扁状态。角色踩到礼帽上将被弹起，同时礼帽按顺序切换到下一形态。当礼帽由“正常”切换到“高”状态时，弹起的角色的同时会使其获得“弹跳”状态（与鼠使用黄+黄的{喷洒间}获得的状态相同）。',
+    specialImageUrl: '/images/maps/%E5%A4%A7%E9%83%BD%E4%BC%9A.png',
   },
   野猫: {
     type: 'NPC',
@@ -1459,6 +1496,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     collision: ['道具', '角色'],
     supportedMaps: ['大都会', '5V5大都会'],
     description: '碎酒瓶会对接触自身的角色造成硬直。（与{碎片}相同，会被相关效果免疫）',
+    specialImageUrl: '/images/maps/%E5%A4%A7%E9%83%BD%E4%BC%9A.png',
   },
   晾衣架: {
     type: ['组件类'],
@@ -1469,6 +1507,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     collision: ['道具', '角色'],
     supportedMaps: ['大都会', '5V5大都会'],
     description: '老鼠落到晾衣架上的袜子里时，会在短暂延迟后被弹出去。',
+    specialImageUrl: '/images/maps/%E5%A4%A7%E9%83%BD%E4%BC%9A.png',
   },
   站牌: {
     type: ['组件类', '可交互'],
@@ -1615,6 +1654,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     supportedMaps: ['天宫'],
     description:
       '玉璧可被鼠方角色持续缓慢推动/被猫方角色一次性大力推动。玉璧在坠落时碰到敌方角色将对其造成伤害及眩晕，坠落至地面时销毁。',
+    specialImageUrl: '/images/maps/%E5%A4%A9%E5%AE%AB.png',
   },
   香炉: {
     type: ['平台类', '组件类'],
@@ -1646,6 +1686,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     supportedMaps: ['天宫', '天宫-云上'],
     description:
       '角色与丹炉交互后，将尝试把[一个当前持有的道具](优先手持道具，其次饮料)投入炼丹炉进行炼制。炼丹炉炼制完毕后一段时间内无法再次炼制，且若炼制未失败，则在炼制冷却期间丹炉将持续燃烧，使附近的角色被烫伤。\n炼制可能出现三种结果：\n大成功（10%）：炼制出一瓶{神秘饮料}；\n成功：按兑换规则炼制出产物；\n失败：没有任何产物。\n\n兑换规则：\n{玻璃杯}/{盘子}/{碗}/{扁盘}→{香水瓶}/{胡椒瓶}→{高尔夫球}/{叉子}→{苍蝇拍}/{老鼠夹}；\n{苍蝇拍}→{老鼠夹}→{苍蝇拍}；\n{冰块}→{灰花瓶}→{蓝花瓶}→{神秘饮料}；\n任意{饮料}→{玩具枪}→{奶酪}；\n{小鞭炮}→{鞭炮束}；\n{果盘}→{冰桶}/{玩具枪}（与{鸟巢}相同，但该配方疑似无法实现）。',
+    specialImageUrl: '/images/maps/%E5%A4%A9%E5%AE%AB.png',
   },
   蒲团: {
     type: ['平台类', '组件类'],
@@ -1667,6 +1708,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     supportedMaps: ['天宫', '天宫-云上'],
     description:
       '嫦娥怀抱玉兔在广寒宫来回散步。\n当任意{鞭炮}在广寒宫房间内被引爆时，嫦娥将会生气，周身在一段时间内被寒气环绕，对范围内的所有角色持续地施加“深寒”状态，该状态下移速降低且会熄灭鞭炮，可叠加，叠加至第5层时清除并造成伤害和冰冻控制（与{冰块}状态完全相同）。\n当嫦娥接触到{萝卜墩-天宫}时，她怀中的玉兔将会进食，随后为周围所有角色提供增益状态，并平息嫦娥的怒火。',
+    specialImageUrl: '/images/maps/%E5%A4%A9%E5%AE%AB.png',
   },
   吴刚: {
     type: ['NPC', '平台类'],
@@ -1677,6 +1719,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     supportedMaps: ['天宫'],
     description:
       '吴刚挥舞木斧，周期性伐向桂树，使此时站在桂树上的角色被硬直（与{碎片}相同，会被相关效果免疫）。',
+    specialImageUrl: '/images/maps/%E5%A4%A9%E5%AE%AB.png',
   },
   金洞: {
     type: ['组件类', '流程类', '可交互'],
@@ -1747,7 +1790,7 @@ const FixtureWithImages: Record<string, Fixture> = Object.fromEntries(
     {
       ...item,
       name: itemName,
-      imageUrl: getFixtureImageUrl(itemName),
+      imageUrl: getFixtureImageUrl(itemName, item.specialImageUrl),
     },
   ])
 );

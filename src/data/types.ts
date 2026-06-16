@@ -546,6 +546,8 @@ export type FixtureDefinition = {
   detailedDescription?: string;
 
   fixtureAttributesAsCharacter?: ItemAttributesAsCharacter;
+
+  specialImageUrl?: string; // (interim) use other image instead of missing image
 } & PhysicalAttributes;
 
 export type Fixture = FixtureDefinition & { name: string; imageUrl: string };
