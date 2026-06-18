@@ -116,7 +116,7 @@ export default function CharacterAttributesSection({ factionId }: CharacterAttri
 
   const specificAttributes: CharacterAttribute[] = [
     {
-      label: '商店购买道具时间',
+      label: '商店购物时间',
       value: character.storePurchaseTime || 0,
       condition: factionId === 'cat' && !!character.storePurchaseTime,
       path: `storePurchaseTime`,
