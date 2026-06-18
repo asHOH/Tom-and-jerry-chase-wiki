@@ -359,7 +359,7 @@ const mapDefinitions: Record<string, MapDefinition> = {
     studyLevelUnlock: '大师学业',
     roomCount: 5,
     pipeCount: 1,
-    supportedModes: ['经典奶酪赛', '天梯'],
+    supportedModes: ['经典奶酪赛', '天梯', '房间'],
   },
   森林牧场: {
     type: '常规地图',
