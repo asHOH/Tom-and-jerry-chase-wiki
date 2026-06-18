@@ -11,9 +11,9 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     id: '回家',
     rank: 'S',
     cost: 6,
-    description: '墙缝出现后立刻解除虚弱和受伤，回满Hp，并额外获得**增益**。',
+    description: '墙缝出现后立刻解除{虚弱}和{受伤}，回满Hp，并额外获得**增益**。',
     detailedDescription:
-      '为所有爱执着的痛，再痛我也要回家！墙缝出现后立刻解除虚弱和受伤，回复200Hp，并额外获得**增益**。',
+      '为所有爱执着的痛，再痛我也要回家！墙缝出现后立刻解除{鼠虚弱}和{受伤}，回复200Hp，并额外获得**增益**。',
     levels: [
       {
         level: 1,
@@ -29,8 +29,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
       {
         level: 3,
         description: '再额外**获得2层护盾**。',
-        detailedDescription:
-          '再额外**获得2层护盾**（该护盾与护佑或护盾药水效果不同，持续时间无限，但会被碎片消耗）。',
+        detailedDescription: '再额外**获得2层护盾**（该护盾持续时间无限，但会被碎片消耗）。',
       },
     ],
     priority: '3级质变',
@@ -41,9 +40,9 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     rank: 'S',
     cost: 6,
     description:
-      '出洞时获得特殊护盾，持续**较长**时间。该护盾生效时，免疫碎片、烫伤、烟雾、香水、烤箱加速、冰箱减速。',
+      '出洞时获得特殊{护盾}，持续**较长**时间。该护盾生效时，免疫{碎片}、烫伤、{胡椒烟雾}、{香水烟雾}、{冰箱}减速。',
     detailedDescription:
-      '得到仙女鼠护佑的老鼠，出洞进入房间时获得特殊护盾，持续**较长**时间。该护盾生效时，免疫碎片、烫伤、烟雾、香水、烤箱加速、冰箱减速。',
+      '得到仙女鼠护佑的老鼠，出洞进入房间时获得特殊{护盾}，持续**较长**时间。该护盾生效时，免疫{碎片}、烫伤、{胡椒烟雾}、{香水烟雾}、{烤箱}加速、{冰箱}减速。',
     levels: [
       { level: 1, description: '护佑持续**240**秒。' },
       { level: 2, description: '护佑持续**270**秒。' },
@@ -57,9 +56,9 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     rank: 'S',
     cost: 6,
     description:
-      '从火箭上救下队友后，对方获得**短暂**的无敌，自己获得3秒无敌，无敌期间固定增加推速，但此期间无法使用技能和道具；对方的无敌结束后陷入短暂的眩晕。(CD: 60秒)',
+      '从火箭上救下队友后，对方获得**短暂**的{无敌(状态)}，自己获得3秒{无敌(状态)}，无敌期间固定增加推速，但此期间无法使用技能与道具；对方的无敌结束后陷入短暂的眩晕。(CD: 60秒)',
     detailedDescription:
-      '从火箭上救下队友后，对方获得**短暂**的无敌，自己获得3秒无敌，无敌期间[固定增加推速2.5%/秒](该类效果不受其他任何百分比推速增/减效果影响，独立结算)，但此期间无法使用技能和道具；对方的无敌结束后眩晕1.2秒。(CD: 60秒)',
+      '从火箭上救下队友后，对方获得**短暂**的{无敌(状态)}，自己获得3秒{无敌(状态)}，无敌期间[固定增加推速2.5%/秒](该类效果不受其他任何百分比推速增/减效果影响，独立结算)，但此期间无法使用技能与道具；对方的无敌结束后眩晕1.2秒。(CD: 60秒)',
     levels: [
       { level: 1, description: '无畏持续**6**秒。' },
       { level: 2, description: '无畏持续**6.5**秒。' },
@@ -74,7 +73,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     cost: 5,
     description: 'Hp在一半以上时，[牺牲自己的Hp](不会致死)为附近队友减伤。有内置**CD**。',
     detailedDescription:
-      '当自身Hp超过Hp上限的一半，且半径1150范围内队友受到猫咪伤害时，队友受到的伤害减免为原来的30%，然后该伤害每有5点，自身失去剩余Hp的3%（至少保留10Hp）。之后10秒内，逐渐恢复失去Hp的50%。有内置**CD**。“为众人抱薪者，不可使其冻毙于风雪。”',
+      '当自身Hp超过Hp上限的一半，且半径1150范围内队友受到猫咪伤害时，队友受到的伤害减免为原来的30%，然后该伤害每有5点，自身失去剩余Hp的3%（至少保留10Hp）。之后10秒内，逐渐恢复失去Hp的一半。有内置**CD**。“为众人抱薪者，不可使其冻毙于风雪。”',
     levels: [
       { level: 1, description: 'CD：**40**秒。' },
       { level: 2, description: 'CD：**35**秒。' },
@@ -87,9 +86,9 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     id: '缴械',
     rank: 'S',
     cost: 6,
-    description: '投掷道具命中猫咪后，使猫咪**一段时间**内无法使用爪刀。',
+    description: '道具命中猫咪后，使猫咪**一段时间**内禁用爪刀。',
     detailedDescription:
-      '投掷道具命中猫咪后，使猫咪**一段时间**内无法使用爪刀。猫咪被缴械后，30秒内不会再次被缴械。',
+      '道具命中猫咪后，使猫咪**一段时间**内禁用爪刀。猫咪被缴械后，30秒内不会再次被缴械。',
     levels: [
       { level: 1, description: '缴械持续**3.5**秒。' },
       { level: 2, description: '缴械持续**4**秒。' },
@@ -102,7 +101,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     id: '舍己',
     rank: 'S',
     cost: 5,
-    description: '从火箭上救下队友后，与队友互换Hp，并给予队友**短暂**的无敌。(CD: 50秒)',
+    description: '从火箭上救下队友后，与队友互换Hp，并给予队友**短暂**的{无敌(状态)}。(CD: 50秒)',
     // detailedDescription: '',
     levels: [
       { level: 1, description: '无敌持续**4**秒。' },
@@ -116,9 +115,9 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     id: '铁血',
     rank: 'S',
     cost: 6,
-    description: '即将虚弱时，可以继续行动**一段时间**，但无法使用技能和道具。(CD: 60秒)',
+    description: '即将虚弱时，可以继续行动**一段时间**，但无法使用技能与道具。(CD: 60秒)',
     detailedDescription:
-      '即将虚弱时，可以继续行动**一段时间**，但无法使用技能和道具，也无法获得护盾和无敌，随后再进入虚弱。(CD: 60秒)',
+      '即将虚弱时，可以继续行动**一段时间**，但无法使用技能与道具，也无法获得{护盾}和{无敌(状态)}，随后再进入{鼠虚弱}。(CD: 60秒)',
     levels: [
       { level: 1, description: '铁血持续**4**秒。' },
       { level: 2, description: '铁血持续**4.5**秒。' },
@@ -132,7 +131,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     id: '冲冠一怒',
     rank: 'A',
     cost: 4,
-    description: '当队友被猫咪抓住时，攻击力提升；如果猫咪不在附近，额外**提升**移动和跳跃速度。',
+    description: '当队友被猫咪抓住时，如果猫咪不在附近，额外**提升**移动和跳跃速度。',
     detailedDescription:
       '当队友被猫咪抓住时，[角色基础攻击增伤提升15%](该效果只对角色基础属性中的“攻击增伤”生效，对道具/技能的基础伤害，以及其他来源的攻击增伤均不生效，因此实际加成极低)；如果猫咪不在自身半径1100范围内，额外**提升**移动和跳跃速度。',
     levels: [
@@ -147,7 +146,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     id: '团队领袖',
     rank: 'A',
     cost: 5,
-    description: '处于健康状态时，自己和附近队友推速**提升**。（效果不可叠加）',
+    description: '处于健康状态时，自己和附近队友推速**提升**。',
     detailedDescription:
       '处于健康状态时，自己和半径1700范围内队友推速**提升**（多张团队领袖的效果不可叠加）。',
     levels: [
@@ -163,7 +162,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     rank: 'A',
     cost: 4,
     description: '投掷道具额外**减速**猫咪。',
-    detailedDescription: '投掷道具额外**减速**猫咪，持续5秒，最多叠加2层（每层效果间独立乘算）。',
+    detailedDescription: '投掷道具额外**减速**猫咪，持续5秒，最多叠加2层（每层效果间乘算）。',
     levels: [
       { level: 1, description: '减速**6%**。' },
       { level: 2, description: '减速**8%**。' },
@@ -176,8 +175,8 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     id: '泡泡浴',
     rank: 'A',
     cost: 4,
-    description: '每隔**一段时间**解除受伤、反向、失明。',
-    detailedDescription: '我爱洗澡，皮肤好好！每隔**一段时间**解除受伤、反向、失明。',
+    description: '每隔**一段时间**解除{受伤}、{反向}、{失明}。',
+    detailedDescription: '我爱洗澡，皮肤好好！每隔**一段时间**解除{受伤}、{反向}、{失明}。',
     levels: [
       { level: 1, description: '每隔**60**秒触发。' },
       { level: 2, description: '每隔**55**秒触发。' },
@@ -194,9 +193,9 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     detailedDescription:
       '这是心的呼唤，这是爱的奉献！自己[被放飞](部分复活类效果触发时依然算作被放飞，此时复活体因被击倒而放飞时不再触发祝愿效果)时，全体队友回复50Hp、平分2500经验，并**短暂**提升14%移动和跳跃速度。',
     levels: [
-      { level: 1, description: '队友移动和跳跃速度提升持续**10**秒。' },
-      { level: 2, description: '队友移动和跳跃速度提升持续**11**秒。' },
-      { level: 3, description: '队友移动和跳跃速度提升持续**12**秒。' },
+      { level: 1, description: '队友的增益持续**10**秒。' },
+      { level: 2, description: '队友的增益持续**11**秒。' },
+      { level: 3, description: '队友的增益持续**12**秒。' },
     ],
     priority: '几乎无提升',
   },
@@ -336,7 +335,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     id: '精准投射',
     rank: 'B',
     cost: 4,
-    description: '投掷道具击中猫咪后，**降低**自身技能CD。(CD：5秒)',
+    description: '道具击中猫咪后，**降低**自身技能CD。(CD：5秒)',
     // detailedDescription: '',
     levels: [
       { level: 1, description: '降低**2**秒CD。' },
@@ -422,7 +421,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     id: '食物力量',
     rank: 'B',
     cost: 3,
-    description: '老鼠喝牛奶或吃蛋糕后，永久**提升**推速，最多叠加5层。',
+    description: '喝牛奶或吃蛋糕后，永久**提升**推速，最多叠加5层。',
     levels: [
       { level: 1, description: '每层提升**1%**推速。' },
       { level: 2, description: '每层提升**2%**推速。' },
@@ -436,7 +435,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     id: '不屈',
     rank: 'C',
     cost: 3,
-    description: '每被放飞一名队友，自己的Hp上限、推速、**移速**得到提升。最多叠加3层。',
+    description: '每被放飞一名队友，自己的Hp上限、推速、**移速**提升。最多叠加3层。',
     detailedDescription:
       '每被放飞一名队友，自己的Hp上限提高12，推速提升10%，**移速**提升。最多叠加3层（每层移速和推速加成间独立乘算，其他加成为加算）。',
     levels: [
@@ -451,8 +450,8 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     id: '吃货',
     rank: 'C',
     cost: 3,
-    description: '**延长**牛奶的增益。',
-    detailedDescription: '这世上唯有美食不可辜负！**延长**牛奶和天宫仙丹的增益。',
+    description: '**延长**{牛奶}的增益。',
+    detailedDescription: '这世上唯有美食不可辜负！**延长**{牛奶}和天宫仙丹的增益。',
     levels: [
       { level: 1, description: '延长**20%**。' },
       { level: 2, description: '延长**30%**。' },
@@ -466,7 +465,7 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     rank: 'C',
     cost: 4,
     description: '**减少**虚弱时间。虚弱期间移速提高15%。',
-    detailedDescription: '年轻鼠恢复的速度就是快！**减少**虚弱时间。虚弱期间移速提高15%。',
+    detailedDescription: '年轻鼠恢复的速度就是快！**减少**{鼠虚弱}时间。虚弱期间移速提高15%。',
     levels: [
       { level: 1, description: '减少**20%**。' },
       { level: 2, description: '减少**25%**。' },
@@ -479,8 +478,8 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     id: '救救我',
     rank: 'C',
     cost: 3,
-    description: '当自己被绑在火箭上时，队友推速下降，但救援速度**提升**。',
-    detailedDescription: '当自己被绑在火箭上时，队友推速下降10%，但救援速度**提升**。',
+    description: '当自己被绑在火箭上时，被救援速度**提升**，但队友推速小幅下降。',
+    detailedDescription: '当自己被绑在火箭上时，被救援速度**提升**，但队友推速下降10%。',
     levels: [
       { level: 1, description: '提升**30%**。' },
       { level: 2, description: '提升**35%**。' },
