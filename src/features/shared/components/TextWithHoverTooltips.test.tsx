@@ -65,7 +65,11 @@ describe('TextWithHoverTooltips', () => {
   it('renders markdown bold text', () => {
     render(<TextWithHoverTooltips text='造成**眩晕**效果' />);
 
-    expect(screen.getByText('眩晕')).toHaveClass('underline', 'decoration-2', 'underline-offset-2');
+    expect(screen.getByText('眩晕')).toHaveClass(
+      'box-decoration-clone',
+      'bg-amber-100/70',
+      'font-medium'
+    );
   });
 
   it('renders bracket tooltip text', () => {

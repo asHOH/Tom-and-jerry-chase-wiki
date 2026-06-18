@@ -17,6 +17,9 @@ type TextWithHoverTooltipsProps = {
 
 const emptyObject = proxy({ attackBoost: 0 });
 
+const markdownHighlightClassName =
+  'box-decoration-clone rounded-[2px] bg-amber-100/70 px-0.5 font-medium text-amber-950 dark:bg-amber-300/15 dark:text-amber-100';
+
 const shouldMeasureTooltipParsing = (): boolean => {
   if (process.env.NODE_ENV === 'production' || typeof window === 'undefined') {
     return false;
@@ -58,10 +61,7 @@ export default function TextWithHoverTooltips({ text: rawText }: TextWithHoverTo
           break;
         case 'markdownHighlight':
           intermediateParts.push(
-            <span
-              key={`markdown-highlight-${index}`}
-              className='underline decoration-2 underline-offset-2'
-            >
+            <span key={`markdown-highlight-${index}`} className={markdownHighlightClassName}>
               {part.text}
             </span>
           );

@@ -3,7 +3,6 @@
 import { useSearchParams } from 'next/navigation';
 import { useSnapshot } from 'valtio';
 
-import { renderTextWithHighlights } from '@/lib/textUtils';
 import type { KnowledgeCardDetailsProps, KnowledgeCardWithFaction } from '@/lib/types';
 import { useLocalCard } from '@/hooks/useLocalEditEntity';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
@@ -11,6 +10,7 @@ import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
 import type { KnowledgeCardGroup, KnowledgeCardGroupSet } from '@/data/types';
 import { flattenCardGroup } from '@/features/knowledge-cards/utils/sections';
+import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 import DetailOwnbuffsCard from '@/features/shared/detail-view/DetaidOwnbuffsCard';
 import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
 import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';
@@ -153,11 +153,13 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
                       }
                     />
                   ) : (
-                    renderTextWithHighlights(
-                      isDetailedView && level.detailedDescription
-                        ? level.detailedDescription
-                        : level.description
-                    )
+                    <TextWithHoverTooltips
+                      text={
+                        isDetailedView && level.detailedDescription
+                          ? level.detailedDescription
+                          : level.description
+                      }
+                    />
                   )}
                 </p>
               </div>
