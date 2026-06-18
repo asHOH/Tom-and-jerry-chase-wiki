@@ -36,10 +36,9 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
   // Keyboard navigation
   useSpecifyTypeKeyboardNavigation(effectiveCard.id, 'knowledgeCard');
 
-  const { isDetailedView } = useAppContext();
+  const { handleSelectCharacter, isDetailedView } = useAppContext();
   const searchParams = useSearchParams();
   const fromCharacterId = searchParams ? searchParams.get('from') : null; // Add null check
-  const { handleSelectCharacter } = useAppContext();
 
   const fromCharacter = fromCharacterId ? characters[fromCharacterId] : null;
 
