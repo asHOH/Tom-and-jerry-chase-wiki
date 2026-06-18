@@ -73,7 +73,6 @@ export default function SpecialSkillClient({ description }: Props) {
       <CatalogGrid
         items={skillCardNodes}
         minItemWidth={isMobile ? 120 : 150}
-        gapPx={16}
         estimatedRowHeight={isMobile ? 210 : 250}
       />
     </CatalogPageShell>

@@ -26,12 +26,7 @@ export default function ItemGroupClient({ description }: Props) {
       description={description ?? '列举目前支持的所有组合'}
       descriptionVisibility='desktop'
     >
-      <CatalogGrid
-        items={itemGroupCardNodes}
-        minItemWidth={100}
-        gapPx={16}
-        estimatedRowHeight={210}
-      />
+      <CatalogGrid items={itemGroupCardNodes} minItemWidth={100} estimatedRowHeight={210} />
     </CatalogPageShell>
   );
 }

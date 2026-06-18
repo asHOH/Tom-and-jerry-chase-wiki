@@ -54,12 +54,7 @@ export default function AchievementGridClient() {
         />
       }
     >
-      <CatalogGrid
-        items={achievementCardNodes}
-        minItemWidth={120}
-        gapPx={16}
-        estimatedRowHeight={200}
-      />
+      <CatalogGrid items={achievementCardNodes} minItemWidth={120} estimatedRowHeight={200} />
     </CatalogPageShell>
   );
 }

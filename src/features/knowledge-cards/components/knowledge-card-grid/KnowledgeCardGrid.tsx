@@ -111,7 +111,7 @@ export default function KnowledgeCardGrid({ description }: Props) {
         </>
       }
     >
-      <CatalogGrid items={cardNodes} minItemWidth={120} gapPx={16} estimatedRowHeight={200} />
+      <CatalogGrid items={cardNodes} minItemWidth={120} estimatedRowHeight={200} />
     </CatalogPageShell>
   );
 }

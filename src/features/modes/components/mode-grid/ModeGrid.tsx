@@ -70,7 +70,7 @@ export default function ModeClient({ description }: Props) {
         />
       }
     >
-      <CatalogGrid items={modeCardNodes} minItemWidth={120} gapPx={16} estimatedRowHeight={210} />
+      <CatalogGrid items={modeCardNodes} minItemWidth={120} estimatedRowHeight={210} />
     </CatalogPageShell>
   );
 }

@@ -277,7 +277,6 @@ export default function EntityClient({ description }: Props) {
         <CatalogGrid
           items={entityCardNodes}
           minItemWidth={isMobile ? 120 : 150}
-          gapPx={isMobile ? 12 : 16}
           estimatedRowHeight={isMobile ? 190 : 230}
         />
       ) : (

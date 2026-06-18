@@ -152,7 +152,6 @@ export default function ItemClient({ description }: Props) {
       <CatalogGrid
         items={itemCardNodes}
         minItemWidth={isMobile ? 120 : 150}
-        gapPx={16}
         estimatedRowHeight={isMobile ? 190 : 230}
       />
     </CatalogPageShell>

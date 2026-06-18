@@ -251,7 +251,6 @@ export default function CharacterGrid({ factionId }: FactionCharactersProps) {
       <CatalogGrid
         items={cardNodes}
         minItemWidth={isMobile ? 120 : 200}
-        gapPx={isMobile ? 12 : 32}
         estimatedRowHeight={isMobile ? 270 : 340}
       />
     </CatalogPageShell>

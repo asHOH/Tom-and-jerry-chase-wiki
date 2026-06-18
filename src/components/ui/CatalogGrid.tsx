@@ -3,10 +3,11 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 
 import { cn } from '@/lib/design';
+import { useMobile } from '@/hooks/useMediaQuery';
 
 import { VirtualGrid, type VirtualGridProps } from './VirtualGrid';
 
-export type CatalogGridProps = Omit<VirtualGridProps, 'rowClassName'> & {
+export type CatalogGridProps = Omit<VirtualGridProps, 'gapPx' | 'rowClassName'> & {
   rowClassName?: string | undefined;
 };
 
@@ -33,7 +34,15 @@ export function getCatalogGridItemClassName({
 }
 
 export function CatalogGrid({ rowClassName, ...props }: CatalogGridProps) {
-  return <VirtualGrid rowClassName={getCatalogGridRowClassName(rowClassName)} {...props} />;
+  const isMobile = useMobile();
+
+  return (
+    <VirtualGrid
+      {...props}
+      gapPx={isMobile ? 12 : 16}
+      rowClassName={getCatalogGridRowClassName(rowClassName)}
+    />
+  );
 }
 
 export function CatalogGridItem({

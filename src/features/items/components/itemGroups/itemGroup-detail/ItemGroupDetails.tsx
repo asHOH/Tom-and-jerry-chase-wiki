@@ -31,7 +31,6 @@ export default function ItemGroupClient({ itemGroup }: { itemGroup: ItemGroup })
         items={singleItemCardNodes}
         className='mt-8'
         minItemWidth={120}
-        gapPx={16}
         estimatedRowHeight={210}
       />
     </div>
