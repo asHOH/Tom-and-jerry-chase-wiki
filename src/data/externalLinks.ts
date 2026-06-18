@@ -3,7 +3,7 @@ type ExternalLinkItem = {
   description: string;
   ariaLabel: string;
   href?: string;
-  iconType?: 'fandom' | 'netease' | 'weibo' | 'bilibili';
+  iconType?: 'fandom' | 'netease' | 'weibo' | 'bilibili' | 'site';
 };
 
 export type ExternalLinkGroup = {
@@ -22,6 +22,13 @@ export const EXTERNAL_LINK_GROUPS: ExternalLinkGroup[] = [
         ariaLabel: '打开 Tom and Jerry: Chase Fandom Wiki',
         href: 'https://tom-and-jerry-chase.fandom.com/wiki/Tom_and_Jerry:_Chase_Wiki',
         iconType: 'fandom',
+      },
+      {
+        title: 'トムチェ攻略',
+        description: '日文资料站',
+        ariaLabel: '打开 トムチェ攻略wiki',
+        href: 'https://tjwiki.net/',
+        iconType: 'site',
       },
     ],
   },
