@@ -28,10 +28,6 @@ jest.mock('@/data', () => ({
   },
 }));
 
-jest.mock('@/lib/textUtils', () => ({
-  renderTextWithHighlights: jest.fn((text: string) => [text]),
-}));
-
 jest.mock('./replaceBuffIds', () => ({
   replaceBuffIds: jest.fn((text: string) => text),
 }));
