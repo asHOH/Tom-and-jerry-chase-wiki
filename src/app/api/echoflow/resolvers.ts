@@ -11,7 +11,6 @@ import {
   getArticlesPageData,
 } from '@/lib/articles/serverQueries';
 import { GameDataManager } from '@/lib/dataManager';
-import characterRelations from '@/data/characterRelations';
 import { contributors } from '@/data/contributors';
 import { historyData } from '@/data/history';
 import traits from '@/data/traits';
@@ -616,7 +615,7 @@ export const resolvers: Record<string, PathResolver> = {
     list: () => {
       const characters = GameDataManager.getCharacters();
       const recommendedData = Object.entries(characters).map(([id, char]) => {
-        const relations = characterRelations[id] || {};
+        const relations = getCharacterRelation(id);
         return {
           id,
           name: id,
@@ -630,7 +629,7 @@ export const resolvers: Record<string, PathResolver> = {
     fullData: () => {
       const characters = GameDataManager.getCharacters();
       const recommendedData = Object.entries(characters).map(([id, char]) => {
-        const relations = characterRelations[id] || {};
+        const relations = getCharacterRelation(id);
         return {
           id,
           name: id,
