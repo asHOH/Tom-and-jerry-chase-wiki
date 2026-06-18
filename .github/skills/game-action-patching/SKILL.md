@@ -19,7 +19,7 @@ Safely patch approved game_data_actions into code, verify, and set synced; defer
 
 ## Relation Mapping (src/data/characterRelationData/\*.ts)
 
-Pick the split file by relation target type: character edges in `characters.ts`, knowledge card edges in `knowledgeCards.ts`, special skill edges in `specialSkills.ts`, map edges in `maps.ts`, and mode edges in `modes.ts`.
+Pick the split file by relation target type: character counter-style edges in `characterCounters.ts`, collaborator edges in `characterCollaborators.ts`, knowledge card edges in `knowledgeCards.ts`, special skill edges in `specialSkills.ts`, map edges in `maps.ts`, and mode edges in `modes.ts`.
 
 | Action Path                 | Target kind                               | subject | target                         |
 | --------------------------- | ----------------------------------------- | ------- | ------------------------------ |

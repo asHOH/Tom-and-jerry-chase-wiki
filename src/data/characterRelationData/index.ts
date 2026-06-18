@@ -1,13 +1,15 @@
 import type { Trait } from '@/data/types';
 
-import { characterRelationCharacterTraits } from './characters';
+import { characterRelationCharacterCollaboratorTraits } from './characterCollaborators';
+import { characterRelationCharacterCounterTraits } from './characterCounters';
 import { characterRelationKnowledgeCardTraits } from './knowledgeCards';
 import { characterRelationMapTraits } from './maps';
 import { characterRelationModeTraits } from './modes';
 import { characterRelationSpecialSkillTraits } from './specialSkills';
 
 export const characterRelationTraitGroups = {
-  characters: characterRelationCharacterTraits,
+  characterCounters: characterRelationCharacterCounterTraits,
+  characterCollaborators: characterRelationCharacterCollaboratorTraits,
   knowledgeCards: characterRelationKnowledgeCardTraits,
   maps: characterRelationMapTraits,
   modes: characterRelationModeTraits,

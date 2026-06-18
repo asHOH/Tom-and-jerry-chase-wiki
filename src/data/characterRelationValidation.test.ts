@@ -41,8 +41,15 @@ describe('characterRelationValidation', () => {
   it('should compose character relation traits from focused split data groups', () => {
     expect(characterRelationTraits).toEqual(Object.values(characterRelationTraitGroups).flat());
     expect(
-      characterRelationTraitGroups.characters.every(
-        (trait) => trait.relation?.target.type === 'character'
+      characterRelationTraitGroups.characterCounters.every(
+        (trait) =>
+          trait.relation?.target.type === 'character' && trait.relation.kind !== 'collaborators'
+      )
+    ).toBe(true);
+    expect(
+      characterRelationTraitGroups.characterCollaborators.every(
+        (trait) =>
+          trait.relation?.target.type === 'character' && trait.relation.kind === 'collaborators'
       )
     ).toBe(true);
     expect(
