@@ -30,8 +30,10 @@ export default function ItemGroupClient({ itemGroup }: { itemGroup: ItemGroup })
       <CatalogGrid
         items={singleItemCardNodes}
         className='mt-8'
-        minItemWidth={120}
-        estimatedRowHeight={210}
+        minItemWidth={150}
+        mobileMinItemWidth={110}
+        estimatedRowHeight={240}
+        mobileEstimatedRowHeight={180}
       />
     </div>
   );

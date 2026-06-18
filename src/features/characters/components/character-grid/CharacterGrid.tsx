@@ -9,7 +9,6 @@ import { getOriginalCharacterIds } from '@/lib/editUtils';
 import { useFilterState } from '@/lib/filterUtils';
 import { getPositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { FactionCharactersProps } from '@/lib/types';
-import { useMobile } from '@/hooks/useMediaQuery';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
@@ -33,7 +32,6 @@ export default function CharacterGrid({ factionId }: FactionCharactersProps) {
   const { isEditMode } = useEditMode();
   const [isDarkMode] = useDarkMode();
   const originalCharacterIds = getOriginalCharacterIds();
-  const isMobile = useMobile();
 
   const originalCharacters = useMemo(() => {
     return originalCharacterIds
@@ -250,8 +248,10 @@ export default function CharacterGrid({ factionId }: FactionCharactersProps) {
     >
       <CatalogGrid
         items={cardNodes}
-        minItemWidth={isMobile ? 120 : 200}
-        estimatedRowHeight={isMobile ? 270 : 340}
+        minItemWidth={200}
+        mobileMinItemWidth={120}
+        estimatedRowHeight={340}
+        mobileEstimatedRowHeight={240}
       />
     </CatalogPageShell>
   );

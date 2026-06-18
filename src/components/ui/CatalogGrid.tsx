@@ -8,6 +8,8 @@ import { useMobile } from '@/hooks/useMediaQuery';
 import { VirtualGrid, type VirtualGridProps } from './VirtualGrid';
 
 export type CatalogGridProps = Omit<VirtualGridProps, 'gapPx' | 'rowClassName'> & {
+  mobileEstimatedRowHeight?: number | undefined;
+  mobileMinItemWidth?: number | undefined;
   rowClassName?: string | undefined;
 };
 
@@ -33,13 +35,28 @@ export function getCatalogGridItemClassName({
   );
 }
 
-export function CatalogGrid({ rowClassName, ...props }: CatalogGridProps) {
+export function CatalogGrid({
+  estimatedRowHeight,
+  minItemWidth,
+  mobileEstimatedRowHeight,
+  mobileMinItemWidth,
+  rowClassName,
+  ...props
+}: CatalogGridProps) {
   const isMobile = useMobile();
+  const effectiveEstimatedRowHeight =
+    isMobile && mobileEstimatedRowHeight !== undefined
+      ? mobileEstimatedRowHeight
+      : estimatedRowHeight;
+  const effectiveMinItemWidth =
+    isMobile && mobileMinItemWidth !== undefined ? mobileMinItemWidth : minItemWidth;
 
   return (
     <VirtualGrid
       {...props}
+      estimatedRowHeight={effectiveEstimatedRowHeight}
       gapPx={isMobile ? 12 : 16}
+      minItemWidth={effectiveMinItemWidth}
       rowClassName={getCatalogGridRowClassName(rowClassName)}
     />
   );

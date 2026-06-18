@@ -118,7 +118,13 @@ export default function MapClient({ description }: Props) {
         </>
       }
     >
-      <CatalogGrid items={mapCardNodes} minItemWidth={120} estimatedRowHeight={210} />
+      <CatalogGrid
+        items={mapCardNodes}
+        minItemWidth={150}
+        mobileMinItemWidth={110}
+        estimatedRowHeight={240}
+        mobileEstimatedRowHeight={180}
+      />
     </CatalogPageShell>
   );
 }

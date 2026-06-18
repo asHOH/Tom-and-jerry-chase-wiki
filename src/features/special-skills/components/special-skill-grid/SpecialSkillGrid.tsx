@@ -4,7 +4,6 @@ import { useMemo, useState } from 'react';
 import { useSnapshot } from 'valtio';
 
 import { getFactionButtonColors } from '@/lib/design';
-import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { specialSkillsEdit } from '@/data/store';
 import type { FactionId } from '@/data/types';
@@ -19,7 +18,6 @@ type Props = { description?: string };
 export default function SpecialSkillClient({ description }: Props) {
   const [selectedFaction, setSelectedFaction] = useState<FactionId | null>(null);
   const [isDarkMode] = useDarkMode();
-  const isMobile = useMobile();
 
   const specialSkillsSnapshot = useSnapshot(specialSkillsEdit);
   const allSkills = [
@@ -72,8 +70,10 @@ export default function SpecialSkillClient({ description }: Props) {
     >
       <CatalogGrid
         items={skillCardNodes}
-        minItemWidth={isMobile ? 120 : 150}
-        estimatedRowHeight={isMobile ? 210 : 250}
+        minItemWidth={150}
+        mobileMinItemWidth={110}
+        estimatedRowHeight={240}
+        mobileEstimatedRowHeight={180}
       />
     </CatalogPageShell>
   );

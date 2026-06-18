@@ -276,8 +276,10 @@ export default function EntityClient({ description }: Props) {
       {entityCardNodes.length > 0 ? (
         <CatalogGrid
           items={entityCardNodes}
-          minItemWidth={isMobile ? 120 : 150}
-          estimatedRowHeight={isMobile ? 190 : 230}
+          minItemWidth={150}
+          mobileMinItemWidth={110}
+          estimatedRowHeight={240}
+          mobileEstimatedRowHeight={180}
         />
       ) : (
         <div className='col-span-full flex items-center justify-center py-12 text-lg text-gray-500 dark:text-gray-400'>

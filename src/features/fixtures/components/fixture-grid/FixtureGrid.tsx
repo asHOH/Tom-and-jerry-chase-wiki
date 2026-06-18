@@ -125,8 +125,10 @@ export default function FixtureClient({ description }: Props) {
     >
       <CatalogGrid
         items={fixtureCardNodes}
-        minItemWidth={isMobile ? 120 : 150}
-        estimatedRowHeight={isMobile ? 200 : 230}
+        minItemWidth={150}
+        mobileMinItemWidth={110}
+        estimatedRowHeight={240}
+        mobileEstimatedRowHeight={180}
       />
     </CatalogPageShell>
   );

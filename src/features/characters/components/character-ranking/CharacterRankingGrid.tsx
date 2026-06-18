@@ -216,7 +216,9 @@ export default function CharacterRankingGrid({
         items={rankingCardNodes}
         className='mt-8'
         minItemWidth={160}
-        estimatedRowHeight={250}
+        mobileMinItemWidth={120}
+        estimatedRowHeight={260}
+        mobileEstimatedRowHeight={200}
       />
 
       {/* Additional Stats */}
