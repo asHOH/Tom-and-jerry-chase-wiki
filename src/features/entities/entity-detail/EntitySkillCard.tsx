@@ -44,6 +44,9 @@ export default function EntitySkillCard({ skill }: SkillCardProps) {
   const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
 
+  const getLevelDescription = (level: SkillLevel): string =>
+    isDetailed && level.detailedDescription?.trim() ? level.detailedDescription : level.description;
+
   const getSkillTypeLabel = (type: string) => {
     const typeMap = {
       active: '主动技能',
@@ -219,11 +222,7 @@ export default function EntitySkillCard({ skill }: SkillCardProps) {
             .filter((level: SkillLevel) => {
               // Hide Lv.1 if: 1) mobile layout, 2) edit mode off, 3) description is empty for current detailed mode
               if (level.level === 1 && isMobile) {
-                const levelDescription =
-                  isDetailed && level.detailedDescription?.trim()
-                    ? level.detailedDescription
-                    : level.description;
-                return levelDescription?.trim() !== '';
+                return getLevelDescription(level)?.trim() !== '';
               }
               return true;
             })
@@ -243,13 +242,7 @@ export default function EntitySkillCard({ skill }: SkillCardProps) {
                     Lv.{level.level}:
                   </span>{' '}
                   <SkillDescriptionPrefix skill={skill} level={level.level} />
-                  <TextWithHoverTooltips
-                    text={
-                      isDetailed && level.detailedDescription?.trim()
-                        ? level.detailedDescription
-                        : level.description
-                    }
-                  />
+                  <TextWithHoverTooltips text={getLevelDescription(level)} />
                 </p>
               </div>
             ))}

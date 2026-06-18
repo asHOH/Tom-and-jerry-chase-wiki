@@ -320,6 +320,9 @@ export default function SkillCard({
   const [isDarkMode] = useDarkMode();
   const skillTypeLabel = getSkillTypeLabel(skill.type, isSingleWeapon);
 
+  const getLevelDescription = (level: SkillLevel): string =>
+    isDetailed && level.detailedDescription?.trim() ? level.detailedDescription : level.description;
+
   const getCooldownProperty = () => {
     if (!skill.skillLevels.some((level: SkillLevel) => level.cooldown)) return null;
 
@@ -957,11 +960,7 @@ export default function SkillCard({
             .filter((level: SkillLevel) => {
               // Hide Lv.1 if: 1) mobile layout, 2) edit mode off, 3) description is empty for current detailed mode
               if (level.level === 1 && isMobile && !isEditMode) {
-                const levelDescription =
-                  isDetailed && level.detailedDescription?.trim()
-                    ? level.detailedDescription
-                    : level.description;
-                return levelDescription?.trim() !== '';
+                return getLevelDescription(level)?.trim() !== '';
               }
               return true;
             })
@@ -982,11 +981,7 @@ export default function SkillCard({
                   </span>{' '}
                   <SkillDescriptionPrefix skill={skill} level={level.level} />
                   <e.span
-                    initialValue={
-                      isDetailed && level.detailedDescription?.trim()
-                        ? level.detailedDescription
-                        : level.description
-                    }
+                    initialValue={getLevelDescription(level)}
                     path={`skills.${skillIndex}.skillLevels.${level.level - 1}.${isDetailed ? 'detailedDescription' : 'description'}`}
                   />
                 </p>

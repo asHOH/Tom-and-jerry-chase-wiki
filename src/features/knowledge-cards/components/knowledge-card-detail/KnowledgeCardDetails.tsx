@@ -38,7 +38,7 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
 
   const { handleSelectCharacter, isDetailedView } = useAppContext();
   const searchParams = useSearchParams();
-  const fromCharacterId = searchParams ? searchParams.get('from') : null; // Add null check
+  const fromCharacterId = searchParams ? searchParams.get('from') : null;
 
   const fromCharacter = fromCharacterId ? characters[fromCharacterId] : null;
 
@@ -131,38 +131,31 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
           }
         >
           <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
-            {effectiveCard.levels.map((level, index) => (
-              <div
-                key={`${effectiveCard.id}-${level.level}`}
-                className='rounded bg-gray-100 p-4 dark:bg-slate-700'
-              >
-                <p className='px-2 py-1 text-black dark:text-gray-200'>
-                  <span className='font-bold'>Lv.{level.level}:</span>{' '}
-                  {isEditMode ? (
-                    <ed.span
-                      path={
-                        isDetailedView
-                          ? (`levels.${index}.detailedDescription` as const)
-                          : (`levels.${index}.description` as const)
-                      }
-                      initialValue={
-                        isDetailedView
-                          ? (level.detailedDescription ?? level.description)
-                          : level.description
-                      }
-                    />
-                  ) : (
-                    <TextWithHoverTooltips
-                      text={
-                        isDetailedView && level.detailedDescription
-                          ? level.detailedDescription
-                          : level.description
-                      }
-                    />
-                  )}
-                </p>
-              </div>
-            ))}
+            {effectiveCard.levels.map((level, index) => {
+              const levelDescription =
+                isDetailedView && level.detailedDescription
+                  ? level.detailedDescription
+                  : level.description;
+              const levelDescriptionPath = isDetailedView
+                ? (`levels.${index}.detailedDescription` as const)
+                : (`levels.${index}.description` as const);
+
+              return (
+                <div
+                  key={`${effectiveCard.id}-${level.level}`}
+                  className='rounded bg-gray-100 p-4 dark:bg-slate-700'
+                >
+                  <p className='px-2 py-1 text-black dark:text-gray-200'>
+                    <span className='font-bold'>Lv.{level.level}:</span>{' '}
+                    {isEditMode ? (
+                      <ed.span path={levelDescriptionPath} initialValue={levelDescription} />
+                    ) : (
+                      <TextWithHoverTooltips text={levelDescription} />
+                    )}
+                  </p>
+                </div>
+              );
+            })}
           </div>
           <div className='mt-4 space-y-2'>
             <DetailTraitsCard singleItem={{ name: effectiveCard.id, type: 'knowledgeCard' }} />
