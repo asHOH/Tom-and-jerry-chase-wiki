@@ -95,8 +95,9 @@ scripts/                    # Build scripts (generate-doc-pages.mjs, image optim
 
 ## Encoding
 
-- Source files are UTF-8. Chinese text may display as mojibake in Windows PowerShell or agent terminal output when the console decodes UTF-8 bytes with a legacy code page. Treat terminal mojibake as a display issue unless the file bytes or browser output prove corruption.
-- Do not "fix" Chinese strings, comments, or generated text solely because `Get-Content`, `rg`, or command output rendered them incorrectly in the terminal.
+- Source files are UTF-8. Treat Chinese mojibake in Windows PowerShell or agent terminal output as a display/decoding issue unless UTF-8-aware reads, file bytes, or browser output prove real corruption; do not "fix" Chinese strings, comments, or generated text based only on mojibake terminal output.
+- Before inspecting Chinese text in PowerShell, normalize the same command/session to UTF-8, then prefer `rg` for targeted checks or `Get-Content -Encoding UTF8` for file reads:
+  `[Console]::InputEncoding = [System.Text.UTF8Encoding]::new($false); [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false); $OutputEncoding = [System.Text.UTF8Encoding]::new($false); chcp 65001 | Out-Null`
 
 ## Components
 
