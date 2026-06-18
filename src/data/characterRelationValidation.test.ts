@@ -1,3 +1,4 @@
+import { characterRelationTraitGroups } from './characterRelationData';
 import characterRelations, {
   buildCharacterRelationMap,
   characterRelationTraits,
@@ -35,6 +36,31 @@ describe('characterRelationValidation', () => {
     expect(Object.keys(characterRelations)).toHaveLength(characterRelationTraits.length);
     expect(Object.values(characterRelations)).toEqual(characterRelationTraits);
     expect(characterRelationTraits.every((trait) => trait.relation)).toBe(true);
+  });
+
+  it('should compose character relation traits from focused split data groups', () => {
+    expect(characterRelationTraits).toEqual(Object.values(characterRelationTraitGroups).flat());
+    expect(
+      characterRelationTraitGroups.characters.every(
+        (trait) => trait.relation?.target.type === 'character'
+      )
+    ).toBe(true);
+    expect(
+      characterRelationTraitGroups.knowledgeCards.every(
+        (trait) => trait.relation?.target.type === 'knowledgeCard'
+      )
+    ).toBe(true);
+    expect(
+      characterRelationTraitGroups.maps.every((trait) => trait.relation?.target.type === 'map')
+    ).toBe(true);
+    expect(
+      characterRelationTraitGroups.modes.every((trait) => trait.relation?.target.type === 'mode')
+    ).toBe(true);
+    expect(
+      characterRelationTraitGroups.specialSkills.every(
+        (trait) => trait.relation?.target.type === 'specialSkill'
+      )
+    ).toBe(true);
   });
 
   it('should detect duplicate relation edges', () => {

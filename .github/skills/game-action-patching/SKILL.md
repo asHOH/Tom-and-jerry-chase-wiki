@@ -13,11 +13,13 @@ Safely patch approved game_data_actions into code, verify, and set synced; defer
 
 ## Target Files
 
-1. **Primary**: src/features/characters/data/\*Characters.ts (character skills, aliases, descriptions, positioning tags, allocations, special skills), src/data/characterRelations.ts (Cross-character/mode/map/card relation graph like counter/collaborator/advantage/disadvantage)
+1. **Primary**: src/features/characters/data/\*Characters.ts (character skills, aliases, descriptions, positioning tags, allocations, special skills), src/data/characterRelationData/\*.ts (Cross-character/mode/map/card relation graph like counter/collaborator/advantage/disadvantage; src/data/characterRelations.ts is only the facade/export builder, not the source of truth).
 2. **Secondary**: src/features/entities/data/_, src/features/special-skills/data/_, etc.
    _Heuristic_: Prefer feature-local over generic files. Ask if ambiguous.
 
-## Relation Mapping (src/data/characterRelations.ts)
+## Relation Mapping (src/data/characterRelationData/\*.ts)
+
+Pick the split file by relation target type: character edges in `characters.ts`, knowledge card edges in `knowledgeCards.ts`, special skill edges in `specialSkills.ts`, map edges in `maps.ts`, and mode edges in `modes.ts`.
 
 | Action Path                 | Target kind                               | subject | target                         |
 | --------------------------- | ----------------------------------------- | ------- | ------------------------------ |
