@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { AnimatePresence, m, useReducedMotion } from 'motion/react';
+import { m, useReducedMotion } from 'motion/react';
+import { Masonry } from 'react-plock';
 
 import { AssetManager } from '@/lib/assetManager';
 import { formatCompactDate } from '@/lib/dateUtils';
@@ -385,13 +386,17 @@ export default function ArticlesClient({ articles: data, description }: Articles
       ) : (
         <div
           ref={isMobile ? (swipeContainerRef as React.RefObject<HTMLDivElement>) : articlesGridRef}
-          className={cn(
-            'auto-fit-grid grid-container grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))]',
-            'md:mt-8 md:gap-6 md:px-4'
-          )}
+          className='md:mt-8 md:px-4'
         >
-          <AnimatePresence initial={false}>
-            {visibleArticles.map((article) => {
+          <Masonry
+            items={visibleArticles}
+            config={{
+              columns: [1, 2, 3],
+              gap: [16, 24, 24],
+              media: [640, 1024, 1280],
+              useBalancedLayout: true,
+            }}
+            render={(article) => {
               const latestVersion = article.latest_approved_version[0];
               const boundCharacter = article.character_id ? characters[article.character_id] : null;
               return (
@@ -399,9 +404,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
                   key={article.id}
                   initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -8 }}
                   transition={{ duration: 0.16, ease: 'easeOut' }}
-                  layout={!shouldReduceMotion && !isMobile ? 'position' : false}
                 >
                   <BaseCard
                     variant='character'
@@ -487,8 +490,8 @@ export default function ArticlesClient({ articles: data, description }: Articles
                   </BaseCard>
                 </m.div>
               );
-            })}
-          </AnimatePresence>
+            }}
+          />
         </div>
       )}
 
