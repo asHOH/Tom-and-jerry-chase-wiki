@@ -47,12 +47,12 @@ Row faction selector:
 
 Column category selector:
 
-- `mouse`
-- `cat`
-- `knowledge card`
-- `special skill`
-- `map`
-- `mode`
+- `mouse` (`鼠角色`)
+- `cat` (`猫角色`)
+- `knowledge card` (`知识卡`)
+- `special skill` (`特技`)
+- `map` (`地图`)
+- `mode` (`模式`)
 
 Legal column categories depend on the selected row faction:
 
@@ -68,7 +68,6 @@ Defaults:
 - Column category: `cat`.
 - If a row-faction switch makes the selected column category illegal, use the faction-opposite
   character category as fallback:
-  - row `mouse` falls back to column `cat`.
   - row `cat` falls back to column `mouse`.
 - Selector state should stay local to the page. Do not sync the selected row faction or column
   category into URL query params.
@@ -147,7 +146,12 @@ Relation constraints already confirmed by validation:
 - Use `src/components/ui/Tooltip.tsx`.
 - Desktop: hover opens tooltip.
 - Mobile: click or touch interaction should reveal tooltip using the existing tooltip behavior.
-- Tooltip content should use the relation description from `characterRelations.ts`.
+- Use the default non-`asChild` tooltip trigger unless `Tooltip` is updated to support click/touch
+  toggling for `asChild` triggers.
+- Tooltip content should use `trait.relation.description ?? trait.description`, matching
+  `src/features/shared/traits/relationIndex.ts` normalization. Current relation data generally
+  stores the human-readable text on the parent trait description, while relation descriptions are
+  optional edge-specific overrides.
 - Tooltip prefix:
   - `克制：` for counter.
   - `被克制：` for counteredBy.
@@ -218,11 +222,15 @@ The view-model should be pure and responsible for:
 - Resolving symmetric and inverse character-character relations.
 - Mapping map/mode advantage relations into counter/counteredBy display semantics.
 - Producing a stable cell lookup keyed by row item and column item.
+- Defensively throwing on duplicate cell keys, even though validated relation data should prevent
+  them.
 
 Implementation should use static relation traits from `src/data/characterRelations.ts` as the
 canonical source. The existing `getCharacterRelation()` read model in
 `src/features/characters/utils/relationReadModel.ts` is useful reference material, but the matrix
-should not depend on character-detail edit overlay behavior.
+should not depend on character-detail edit overlay behavior. `characterRelationOverlay.ts` writes
+page-local editable relation arrays into the character store for the character-detail edit flow; it
+does not patch `relationIndex.ts`.
 
 ## Testing Plan
 
@@ -270,8 +278,12 @@ Component tests are optional at first, but useful if the layout component grows:
     arrays from shared relation traits.
   - Currently no legacy relation arrays were found in character data, but the read model still
     supports them.
+- `src/features/characters/utils/characterRelationOverlay.ts`
+  - Confirms edit-mode relation writes are page-local overlays under character records.
+  - These overlays are not part of the canonical static relation matrix source.
 - `src/features/shared/traits/relationIndex.ts`
   - Confirms an existing static relation index by subject, target, and kind.
+  - Normalizes relation descriptions with `trait.relation.description ?? trait.description`.
 - `src/features/characters/components/character-detail/character-relations/CharacterRelationDisplay.tsx`
   - Confirms current relation section colors and map/mode grouping semantics.
 - `src/features/characters/components/character-detail/character-relations/CharacterRelationPanel.tsx`
