@@ -1,4 +1,4 @@
-import type { SingleItem, Trait, TraitRelation, TraitRelationKind } from './types';
+import type { FactionId, SingleItem, Trait, TraitRelation, TraitRelationKind } from './types';
 
 const contradictoryCharacterRelationKinds: ReadonlyArray<
   readonly [TraitRelationKind, TraitRelationKind]
@@ -12,6 +12,28 @@ const symmetricCharacterRelationKinds = new Set<TraitRelationKind>([
   'collaborators',
   'counterEachOther',
 ]);
+
+const characterCounterKinds = new Set<TraitRelationKind>([
+  'counters',
+  'counteredBy',
+  'counterEachOther',
+]);
+
+const knowledgeCardCounterKinds = new Set<TraitRelationKind>([
+  'countersKnowledgeCards',
+  'counteredByKnowledgeCards',
+]);
+
+const specialSkillCounterKinds = new Set<TraitRelationKind>([
+  'countersSpecialSkills',
+  'counteredBySpecialSkills',
+]);
+
+export type CharacterRelationValidationContext = {
+  getCharacterFactionId?: (characterId: string) => FactionId | undefined;
+  getKnowledgeCardFactionId?: (cardId: string) => FactionId | undefined;
+  getSpecialSkillFactionId?: (item: SingleItem) => FactionId | undefined;
+};
 
 const toSingleItemKey = (item: SingleItem) => `${item.type}:${item.name}:${item.factionId ?? ''}`;
 
@@ -42,7 +64,82 @@ const buildSemanticCharacterRelationKey = (relation: TraitRelation) => {
   return null;
 };
 
-export const findCharacterRelationValidationErrors = (traits: Trait[]): string[] => {
+const describeRelation = (relation: TraitRelation) =>
+  `${relation.kind}::${toSingleItemKey(relation.subject)}::${toSingleItemKey(relation.target)}`;
+
+const getResolvedFactionId = (item: SingleItem, context: CharacterRelationValidationContext) => {
+  if (item.type === 'character') {
+    return context.getCharacterFactionId?.(item.name);
+  }
+
+  if (item.type === 'knowledgeCard') {
+    return context.getKnowledgeCardFactionId?.(item.name);
+  }
+
+  if (item.type === 'specialSkill') {
+    return context.getSpecialSkillFactionId?.(item);
+  }
+
+  return undefined;
+};
+
+const findRelationBoundValidationError = (
+  relation: TraitRelation,
+  context: CharacterRelationValidationContext
+) => {
+  if (relation.kind === 'collaborators') {
+    if (relation.subject.type !== 'character' || relation.target.type !== 'character') {
+      return `Invalid collaborator relation ${describeRelation(relation)}: collaborators must connect two mouse characters.`;
+    }
+
+    const subjectFactionId = getResolvedFactionId(relation.subject, context);
+    const targetFactionId = getResolvedFactionId(relation.target, context);
+
+    if (!subjectFactionId || !targetFactionId) return null;
+
+    if (subjectFactionId !== 'mouse' || targetFactionId !== 'mouse') {
+      return `Invalid collaborator relation ${describeRelation(relation)}: collaborators must connect two mouse characters.`;
+    }
+
+    return null;
+  }
+
+  const isCharacterCounter = characterCounterKinds.has(relation.kind);
+  const isKnowledgeCardCounter = knowledgeCardCounterKinds.has(relation.kind);
+  const isSpecialSkillCounter = specialSkillCounterKinds.has(relation.kind);
+
+  if (!isCharacterCounter && !isKnowledgeCardCounter && !isSpecialSkillCounter) return null;
+
+  if (relation.subject.type !== 'character') {
+    return `Invalid counter relation ${describeRelation(relation)}: subject must be a character.`;
+  }
+
+  const expectedTargetType = isCharacterCounter
+    ? 'character'
+    : isKnowledgeCardCounter
+      ? 'knowledgeCard'
+      : 'specialSkill';
+
+  if (relation.target.type !== expectedTargetType) {
+    return `Invalid counter relation ${describeRelation(relation)}: target must be a ${expectedTargetType}.`;
+  }
+
+  const subjectFactionId = getResolvedFactionId(relation.subject, context);
+  const targetFactionId = getResolvedFactionId(relation.target, context);
+
+  if (!subjectFactionId || !targetFactionId) return null;
+
+  if (subjectFactionId === targetFactionId) {
+    return `Invalid counter relation ${describeRelation(relation)}: ${relation.subject.name} and ${relation.target.name} are both ${subjectFactionId} faction.`;
+  }
+
+  return null;
+};
+
+export const findCharacterRelationValidationErrors = (
+  traits: Trait[],
+  context: CharacterRelationValidationContext = {}
+): string[] => {
   const errors: string[] = [];
   const seenEdges = new Map<string, number>();
   const seenSemanticCharacterEdges = new Map<string, { index: number; relation: TraitRelation }>();
@@ -60,6 +157,11 @@ export const findCharacterRelationValidationErrors = (traits: Trait[]): string[]
       );
     } else {
       seenEdges.set(edgeKey, index);
+    }
+
+    const relationBoundError = findRelationBoundValidationError(relation, context);
+    if (relationBoundError) {
+      errors.push(`${relationBoundError} Entry #${index + 1}.`);
     }
 
     const semanticCharacterEdgeKey = buildSemanticCharacterRelationKey(relation);
@@ -107,8 +209,11 @@ export const findCharacterRelationValidationErrors = (traits: Trait[]): string[]
   return errors;
 };
 
-export const assertValidCharacterRelations = (traits: Trait[]) => {
-  const errors = findCharacterRelationValidationErrors(traits);
+export const assertValidCharacterRelations = (
+  traits: Trait[],
+  context: CharacterRelationValidationContext = {}
+) => {
+  const errors = findCharacterRelationValidationErrors(traits, context);
   if (errors.length === 0) return;
 
   throw new Error(

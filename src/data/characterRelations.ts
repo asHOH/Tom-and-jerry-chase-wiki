@@ -1,7 +1,12 @@
 import type { SingleItem, Trait } from '@/data/types';
+import { characterFactionById } from '@/features/characters/data/characterMetadata';
 
 import { splitCharacterRelationTraits } from './characterRelationData';
-import { assertValidCharacterRelations } from './characterRelationValidation';
+import {
+  assertValidCharacterRelations,
+  type CharacterRelationValidationContext,
+} from './characterRelationValidation';
+import { cards, specialSkills } from './static';
 
 type CharacterRelationTrait = Trait & { relation: NonNullable<Trait['relation']> };
 
@@ -12,8 +17,27 @@ const toCharacterRelationExportKey = (trait: CharacterRelationTrait) =>
 
 const hasRelation = (trait: Trait): trait is CharacterRelationTrait => !!trait.relation;
 
-export function buildCharacterRelationMap(traits: Trait[]) {
-  assertValidCharacterRelations(traits);
+export const characterRelationValidationContext = {
+  getCharacterFactionId: (characterId: string) => characterFactionById[characterId],
+  getKnowledgeCardFactionId: (cardId: string) => cards[cardId]?.factionId,
+  getSpecialSkillFactionId: ({ name, factionId }: SingleItem) => {
+    if (factionId && specialSkills[factionId][name]) return factionId;
+
+    const hasCatSkill = !!specialSkills.cat[name];
+    const hasMouseSkill = !!specialSkills.mouse[name];
+
+    if (hasCatSkill && !hasMouseSkill) return 'cat';
+    if (hasMouseSkill && !hasCatSkill) return 'mouse';
+
+    return undefined;
+  },
+} satisfies CharacterRelationValidationContext;
+
+export function buildCharacterRelationMap(
+  traits: Trait[],
+  validationContext: CharacterRelationValidationContext = characterRelationValidationContext
+) {
+  assertValidCharacterRelations(traits, validationContext);
 
   const relationTraits = traits.map((trait, index) => {
     if (hasRelation(trait)) return trait;
