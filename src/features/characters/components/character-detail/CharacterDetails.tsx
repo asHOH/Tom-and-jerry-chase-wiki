@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AnimatePresence, m } from 'motion/react'; // smaller bundle size than framer-motion
 
 import { createPortal } from 'react-dom';
@@ -11,7 +11,6 @@ import singleItemRreverse from '@/lib/singleItemReverse';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { EditModeContext, useEditMode } from '@/context/EditModeContext';
-import traits from '@/data/traits';
 import { Skill } from '@/data/types';
 import SingleItemReverseCard from '@/features/shared/components/SingleItemReverseCard';
 import SingleItemTraitsText from '@/features/shared/components/SingleItemTraitsText';
@@ -85,19 +84,6 @@ export default function CharacterDetails({
   const characterSingleItem = { name: localCharacter.id, type: 'character' as const };
   const characterTraitCount = filterTraitsBySingleItem(characterSingleItem).length;
   const characterReverseCount = singleItemRreverse(characterSingleItem).length;
-
-  const displayCharacterRelationSection = useMemo(
-    () =>
-      isEditMode ||
-      !!~Object.values(traits).findIndex(
-        (trait) =>
-          (trait.relation?.subject.type == 'character' &&
-            trait.relation.subject.name == localCharacter.id) ||
-          (trait.relation?.target.type == 'character' &&
-            trait.relation.target.name == localCharacter.id)
-      ),
-    [localCharacter.id, isEditMode]
-  );
 
   return (
     <EditModeContext
@@ -429,13 +415,11 @@ export default function CharacterDetails({
                 ) : null}
               </div>
             </CharacterSection>
-            {displayCharacterRelationSection && (
-              <CharacterSection
-                title={localCharacter.factionId == 'cat' ? '克制关系' : '克制/协作关系'}
-              >
-                <CharacterRelationDisplay id={localCharacter.id} factionId={factionId} />
-              </CharacterSection>
-            )}
+            <CharacterSection
+              title={localCharacter.factionId == 'cat' ? '克制关系' : '克制/协作关系'}
+            >
+              <CharacterRelationDisplay id={localCharacter.id} factionId={factionId} />
+            </CharacterSection>
             {children}
           </div>
         </div>
