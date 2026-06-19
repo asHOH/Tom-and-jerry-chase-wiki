@@ -5,7 +5,7 @@ import { Article, WithContext } from 'schema-dts';
 import { getApprovedArticleVersion, getArticleBasicInfo } from '@/lib/articles/serverQueries';
 import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { supabaseAdmin } from '@/lib/supabase/admin';
-import { sanitizeHTMLOnServer } from '@/lib/xssServer';
+import { sanitizeHTML } from '@/lib/xssUtils';
 import { SITE_URL } from '@/constants/seo';
 import StructuredData from '@/components/StructuredData';
 
@@ -126,7 +126,7 @@ export default async function ArticlePage({
     notFound();
   }
 
-  const sanitizedContent = sanitizeHTMLOnServer(response.article.latest_version?.content ?? '');
+  const sanitizedContent = sanitizeHTML(response.article.latest_version?.content ?? '');
 
   return (
     <>

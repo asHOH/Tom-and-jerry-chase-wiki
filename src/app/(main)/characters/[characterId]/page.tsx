@@ -5,7 +5,7 @@ import { Article, WithContext } from 'schema-dts';
 
 import { GameDataManager } from '@/lib/dataManager';
 import { generatePageMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
-import { sanitizeHTMLOnServer } from '@/lib/xssServer';
+import { sanitizeHTML } from '@/lib/xssUtils';
 import { SITE_URL } from '@/constants/seo';
 import { getTutorialPage } from '@/features/articles/utils/docs';
 import StructuredData from '@/components/StructuredData';
@@ -176,9 +176,7 @@ export default async function CharacterPage({
             return {
               id: item.id,
               title: item.title,
-              content: latest?.content
-                ? sanitizeHTMLOnServer(latest.content, { removeH1: true })
-                : null,
+              content: latest?.content ? sanitizeHTML(latest.content, { removeH1: true }) : null,
               authors,
             };
           })
