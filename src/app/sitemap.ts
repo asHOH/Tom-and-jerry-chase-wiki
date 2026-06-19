@@ -132,6 +132,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly',
       priority: 0.8,
     },
+    {
+      url: `${baseUrl}/relations`,
+      lastModified: buildTime,
+      changeFrequency: 'weekly',
+      priority: 0.7,
+    },
     ...charactersMap,
     // Knowledge Cards
     {
