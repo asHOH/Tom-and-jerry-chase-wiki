@@ -117,6 +117,9 @@ export default async function CharacterPage({
     type CharacterArticleMetaRow = {
       id: string;
       title: string;
+      created_at: string | null;
+      view_count: number | null;
+      categories: { name: string } | null;
       users_public_view: { nickname: string | null } | null;
     };
 
@@ -130,7 +133,9 @@ export default async function CharacterPage({
       ? Promise.resolve([] as CharacterArticleMetaRow[])
       : supabaseAdmin
           .from('articles')
-          .select('id, title, users_public_view!author_id(nickname)')
+          .select(
+            'id, title, created_at, view_count, categories(name), users_public_view!author_id(nickname)'
+          )
           .eq('character_id', characterId)
           .order('created_at', { ascending: false })
           .then((result) => (result?.data ?? []) as CharacterArticleMetaRow[]);
@@ -154,6 +159,7 @@ export default async function CharacterPage({
           string,
           {
             content: string | null;
+            created_at: string | null;
           }
         >();
 
@@ -162,6 +168,7 @@ export default async function CharacterPage({
           if (!latestByArticleId.has(version.article_id)) {
             latestByArticleId.set(version.article_id, {
               content: version.content ?? null,
+              created_at: version.created_at ?? null,
             });
           }
         }
@@ -178,6 +185,10 @@ export default async function CharacterPage({
               title: item.title,
               content: latest?.content ? sanitizeHTML(latest.content, { removeH1: true }) : null,
               authors,
+              createdAt: latest?.created_at ?? null,
+              viewCount: item.view_count,
+              categoryName: item.categories?.name ?? null,
+              articleCreatedAt: item.created_at,
             };
           })
           .filter((item) => Boolean(item.content));

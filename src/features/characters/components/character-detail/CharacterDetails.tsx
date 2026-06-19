@@ -352,7 +352,7 @@ export default function CharacterDetails({
             </Card>
           </div>
 
-          <div className='md:w-2/3'>
+          <div className='overflow-y-hidden md:w-2/3'>
             <SkillAllocationSection factionId={factionId} />
 
             <KnowledgeCardManager factionId={factionId} />

@@ -2,16 +2,23 @@
 
 import { use } from 'react';
 
+import { formatCompactDate } from '@/lib/dateUtils';
+import { sanitizeHTML } from '@/lib/xssUtils';
 import CharacterSection from '@/features/characters/components/character-detail/CharacterSection';
 import AccordionCard from '@/components/ui/AccordionCard';
-import CollapseCard from '@/components/ui/CollapseCard';
+import ButtonLink from '@/components/ui/ButtonLink';
 import StyledMDX from '@/components/ui/StyledMDX';
+import { ClockIcon, EyeIcon, FolderIcon, UserCircleIcon } from '@/components/icons/CommonIcons';
 
 type CharacterArticleItem = {
   id: string | null;
   title?: string | null;
   content: string | null;
   authors: string[];
+  createdAt?: string | null;
+  viewCount?: number | null;
+  categoryName?: string | null;
+  articleCreatedAt?: string | null;
 };
 
 type CharacterArticleResult = CharacterArticleItem | CharacterArticleItem[] | null;
@@ -39,19 +46,74 @@ export default function CharacterArticle({
     const single = articles[0];
     if (!single?.id || !single.content) return null;
 
+    const title = single.title?.trim() || DEFAULT_ARTICLE_TITLE;
     const authors = single.authors ?? [];
+    const dateText = single.createdAt
+      ? formatCompactDate(single.createdAt, { invalidFallback: '' })
+      : '';
+    const categoryName = single.categoryName ?? null;
+    const viewCount = single.viewCount ?? null;
+
     return (
-      <CharacterSection title={SECTION_TITLE} to={`/articles/${encodeURIComponent(single.id)}`}>
-        {authors.length > 0 && (
-          <div className='mx-2 mb-2 text-sm text-gray-500 dark:text-gray-400'>
-            {AUTHOR_LABEL}
-            {authors.join(AUTHOR_SEPARATOR)}
+      <CharacterSection title={SECTION_TITLE}>
+        <div className='mt-2 space-y-3'>
+          <h1 className='py-3 text-center text-4xl font-bold text-blue-600 dark:text-blue-400'>
+            {title}
+          </h1>
+
+          {/* Meta Info */}
+          <div className='mt-6 rounded-lg border border-gray-200 p-4 dark:border-gray-700'>
+            <div className='flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400'>
+              <div className='flex items-center gap-2'>
+                <UserCircleIcon className='size-4' strokeWidth={1.5} />
+                <span>
+                  {AUTHOR_LABEL}
+                  {authors.length > 0 ? authors.join(AUTHOR_SEPARATOR) : UNKNOWN_AUTHOR}
+                </span>
+              </div>
+              {categoryName && (
+                <div className='flex items-center gap-2'>
+                  <FolderIcon className='size-4' strokeWidth={1.5} />
+                  <span>分类: {categoryName}</span>
+                </div>
+              )}
+              {viewCount != null && (
+                <div className='flex items-center gap-2'>
+                  <EyeIcon className='size-4' strokeWidth={1.5} />
+                  <span>浏览: {viewCount}</span>
+                </div>
+              )}
+              {dateText && (
+                <div className='flex items-center gap-2'>
+                  <ClockIcon className='size-4' strokeWidth={1.5} />
+                  <span>更新于 {dateText}</span>
+                </div>
+              )}
+            </div>
+            <div className='mt-3 flex flex-wrap gap-2 border-t border-gray-200 pt-3 dark:border-gray-700'>
+              <ButtonLink
+                href={`/articles/${encodeURIComponent(single.id)}`}
+                size='sm'
+                variant='secondary'
+              >
+                查看全文
+              </ButtonLink>
+              <ButtonLink
+                href={`/articles/${encodeURIComponent(single.id)}/history`}
+                size='sm'
+                variant='secondary'
+                leadingIcon={<ClockIcon className='size-4' strokeWidth={1.5} />}
+              >
+                历史版本
+              </ButtonLink>
+            </div>
           </div>
-        )}
-        <StyledMDX
-          className='mx-0 max-w-none p-0 sm:p-0'
-          dangerouslySetInnerHTML={{ __html: single.content }}
-        />
+
+          <StyledMDX
+            className='mx-0 max-w-none p-0 sm:p-0'
+            dangerouslySetInnerHTML={{ __html: sanitizeHTML(single.content) }}
+          />
+        </div>
       </CharacterSection>
     );
   }
@@ -74,34 +136,78 @@ export default function CharacterArticle({
           titleClassName='rounded-md'
           contentContainerClassName='mt-2'
           buttonClassName='px-2'
-          activeButtonClassName='italic underline'
           items={normalizedArticles.map((article) => {
             const title = article.title?.trim() || DEFAULT_ARTICLE_TITLE;
             const authorsText =
               article.authors && article.authors.length > 0
                 ? article.authors.join(AUTHOR_SEPARATOR)
                 : UNKNOWN_AUTHOR;
+            const dateText = article.createdAt
+              ? formatCompactDate(article.createdAt, { invalidFallback: '' })
+              : '';
+            const articleCategoryName = article.categoryName ?? null;
+            const articleViewCount = article.viewCount ?? null;
 
             return {
               id: article.id,
-              title: authorsText,
+              title,
               className: 'py-2',
               children: (
-                <CollapseCard
-                  title={title}
-                  size='xs'
-                  color='default'
-                  className='rounded-md border-x border-b border-gray-300 px-1 pb-1 dark:border-gray-700'
-                >
-                  <div className='px-1 py-2'>
-                    {article.content ? (
-                      <StyledMDX
-                        className='mx-0 max-w-none p-0 sm:p-0'
-                        dangerouslySetInnerHTML={{ __html: article.content }}
-                      />
-                    ) : null}
+                <div className='space-y-3 px-1 py-2'>
+                  {/* Meta Info */}
+                  <div className='rounded-lg border border-gray-200 p-3 dark:border-gray-700'>
+                    <div className='flex flex-wrap items-center gap-3 text-sm text-gray-600 dark:text-gray-400'>
+                      <div className='flex items-center gap-2'>
+                        <UserCircleIcon className='size-4' strokeWidth={1.5} />
+                        <span>
+                          {AUTHOR_LABEL}
+                          {authorsText}
+                        </span>
+                      </div>
+                      {articleCategoryName && (
+                        <div className='flex items-center gap-2'>
+                          <FolderIcon className='size-4' strokeWidth={1.5} />
+                          <span>分类: {articleCategoryName}</span>
+                        </div>
+                      )}
+                      {articleViewCount != null && (
+                        <div className='flex items-center gap-2'>
+                          <EyeIcon className='size-4' strokeWidth={1.5} />
+                          <span>浏览: {articleViewCount}</span>
+                        </div>
+                      )}
+                      {dateText && (
+                        <div className='flex items-center gap-2'>
+                          <ClockIcon className='size-4' strokeWidth={1.5} />
+                          <span>更新于 {dateText}</span>
+                        </div>
+                      )}
+                    </div>
+                    <div className='mt-3 flex flex-wrap gap-2 border-t border-gray-200 pt-3 dark:border-gray-700'>
+                      <ButtonLink
+                        href={`/articles/${encodeURIComponent(article.id)}`}
+                        size='sm'
+                        variant='secondary'
+                      >
+                        查看全文
+                      </ButtonLink>
+                      <ButtonLink
+                        href={`/articles/${encodeURIComponent(article.id)}/history`}
+                        size='sm'
+                        variant='secondary'
+                        leadingIcon={<ClockIcon className='size-4' strokeWidth={1.5} />}
+                      >
+                        历史版本
+                      </ButtonLink>
+                    </div>
                   </div>
-                </CollapseCard>
+                  {article.content ? (
+                    <StyledMDX
+                      className='mx-0 max-w-none p-0 sm:p-0'
+                      dangerouslySetInnerHTML={{ __html: sanitizeHTML(article.content) }}
+                    />
+                  ) : null}
+                </div>
               ),
             };
           })}
