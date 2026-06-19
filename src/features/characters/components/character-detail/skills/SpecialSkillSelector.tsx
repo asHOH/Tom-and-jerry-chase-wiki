@@ -6,7 +6,7 @@ import { useSnapshot } from 'valtio';
 import { specialSkillsEdit } from '@/data/store';
 import type { CharacterRelationItem, FactionId } from '@/data/types';
 
-import RelationItemSelector from './RelationItemSelector';
+import RelationItemSelector from '../character-relations/RelationItemSelector';
 
 type Props = {
   selected: CharacterRelationItem[];

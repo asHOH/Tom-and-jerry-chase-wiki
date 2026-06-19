@@ -110,62 +110,62 @@ jest.mock('@/features/shared/traits/filterTraitsBySingleItem', () => ({
   filterTraitsBySingleItem: () => [],
 }));
 
-jest.mock('./CharacterAttributesSection', () => ({
+jest.mock('./character-attributes/CharacterAttributesSection', () => ({
   __esModule: true,
   default: () => <div />,
 }));
 
-jest.mock('./CharacterHistoryDisplay', () => ({
+jest.mock('./info-displays/CharacterHistoryDisplay', () => ({
   __esModule: true,
   default: () => <div />,
 }));
 
-jest.mock('./CharacterRelationDisplay', () => ({
+jest.mock('./character-relations/CharacterRelationDisplay', () => ({
   __esModule: true,
   default: () => <div />,
 }));
 
-jest.mock('./CharacterSection', () => ({
+jest.mock('./sections/CharacterSection', () => ({
   __esModule: true,
   default: ({ children }: { children: ReactNode }) => <section>{children}</section>,
 }));
 
-jest.mock('./CharacterSectionIndex', () => ({
+jest.mock('./sections/CharacterSectionIndex', () => ({
   __esModule: true,
   default: () => <div />,
 }));
 
-jest.mock('./ContentWriterDisplay', () => ({
+jest.mock('./info-displays/ContentWriterDisplay', () => ({
   __esModule: true,
   default: () => <div />,
 }));
 
-jest.mock('./CreateDateDisplay', () => ({
+jest.mock('./info-displays/CreateDateDisplay', () => ({
   __esModule: true,
   default: () => <div />,
 }));
 
-jest.mock('./KnowledgeCardManager', () => ({
+jest.mock('./knowledge-cards/KnowledgeCardManager', () => ({
   __esModule: true,
   default: () => <div />,
 }));
 
-jest.mock('./PositioningTagsSection', () => ({
+jest.mock('./positioning-tags/PositioningTagsSection', () => ({
   __esModule: true,
   default: () => <div />,
 }));
 
-jest.mock('./SkillAllocationSection', () => ({
+jest.mock('./skills/SkillAllocationSection', () => ({
   __esModule: true,
   default: () => <div />,
 }));
 
-jest.mock('./SkillCard', () => ({
+jest.mock('./skills/SkillCard', () => ({
   __esModule: true,
   default: () => <div />,
 }));
 
-jest.mock('./SpecialSkillsSection', () => ({
+jest.mock('./skills/SpecialSkillsSection', () => ({
   __esModule: true,
   default: () => <div />,
 }));
@@ -177,7 +177,7 @@ jest.mock('./useCharacterActions', () => ({
   }),
 }));
 
-jest.mock('./WinRatesDisplay', () => ({
+jest.mock('./info-displays/WinRatesDisplay', () => ({
   __esModule: true,
   default: () => <div />,
 }));

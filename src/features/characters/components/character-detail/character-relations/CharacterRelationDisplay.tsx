@@ -18,6 +18,8 @@ import {
 } from '@/features/characters/utils/characterRelationOverlay';
 import { CharacterSelector } from '@/components/ui/CharacterSelector';
 
+import KnowledgeCardSelector from '../knowledge-cards/KnowledgeCardSelector';
+import SpecialSkillSelector from '../skills/SpecialSkillSelector';
 import {
   AdvantageIcon,
   DisadvantageIcon,
@@ -44,10 +46,8 @@ import {
   buildSpecialSkillItems,
   sortByImportance,
 } from './characterRelationViewModel';
-import KnowledgeCardSelector from './KnowledgeCardSelector';
 import MapSelector from './MapSelector';
 import ModeSelector from './ModeSelector';
-import SpecialSkillSelector from './SpecialSkillSelector';
 
 type Props = {
   id: string;

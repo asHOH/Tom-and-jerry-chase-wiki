@@ -5,7 +5,7 @@ import React from 'react';
 import { cards } from '@/data/static';
 import type { CharacterRelationItem } from '@/data/types';
 
-import RelationItemSelector from './RelationItemSelector';
+import RelationItemSelector from '../character-relations/RelationItemSelector';
 
 type Props = {
   selected: CharacterRelationItem[];

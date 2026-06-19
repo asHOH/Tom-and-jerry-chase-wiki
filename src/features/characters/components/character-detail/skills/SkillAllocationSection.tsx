@@ -11,7 +11,7 @@ import Card from '@/components/ui/Card';
 import { PlusIcon } from '@/components/icons/CommonIcons';
 import { characters } from '@/data';
 
-import CharacterSection from './CharacterSection';
+import CharacterSection from '../sections/CharacterSection';
 import SkillAllocationDisplay from './SkillAllocationDisplay';
 
 const useSkillAllocationManagement = () => {

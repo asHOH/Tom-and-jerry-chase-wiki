@@ -26,20 +26,20 @@ import { CloseIcon, PlusIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 import { characters } from '@/data';
 
-import CharacterAttributesSection from './CharacterAttributesSection';
-import CharacterHistoryDisplay from './CharacterHistoryDisplay';
-import CharacterRelationDisplay from './CharacterRelationDisplay';
-import CharacterSection from './CharacterSection';
-import CharacterSectionIndex from './CharacterSectionIndex';
-import ContentWriterDisplay from './ContentWriterDisplay';
-import CreateDateDisplay from './CreateDateDisplay';
-import KnowledgeCardManager from './KnowledgeCardManager';
-import PositioningTagsSection from './PositioningTagsSection';
-import SkillAllocationSection from './SkillAllocationSection';
-import SkillCard from './SkillCard';
-import SpecialSkillsSection from './SpecialSkillsSection';
+import CharacterAttributesSection from './character-attributes/CharacterAttributesSection';
+import CharacterRelationDisplay from './character-relations/CharacterRelationDisplay';
+import CharacterHistoryDisplay from './info-displays/CharacterHistoryDisplay';
+import ContentWriterDisplay from './info-displays/ContentWriterDisplay';
+import CreateDateDisplay from './info-displays/CreateDateDisplay';
+import WinRatesDisplay from './info-displays/WinRatesDisplay';
+import KnowledgeCardManager from './knowledge-cards/KnowledgeCardManager';
+import PositioningTagsSection from './positioning-tags/PositioningTagsSection';
+import CharacterSection from './sections/CharacterSection';
+import CharacterSectionIndex from './sections/CharacterSectionIndex';
+import SkillAllocationSection from './skills/SkillAllocationSection';
+import SkillCard from './skills/SkillCard';
+import SpecialSkillsSection from './skills/SpecialSkillsSection';
 import { useCharacterActions } from './useCharacterActions';
-import WinRatesDisplay from './WinRatesDisplay';
 
 const e = editable('characters');
 

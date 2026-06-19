@@ -4,7 +4,7 @@ import { use } from 'react';
 
 import { formatCompactDate } from '@/lib/dateUtils';
 import { sanitizeHTML } from '@/lib/xssUtils';
-import CharacterSection from '@/features/characters/components/character-detail/CharacterSection';
+import CharacterSection from '@/features/characters/components/character-detail/sections/CharacterSection';
 import AccordionCard from '@/components/ui/AccordionCard';
 import ButtonLink from '@/components/ui/ButtonLink';
 import StyledMDX from '@/components/ui/StyledMDX';
