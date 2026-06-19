@@ -29,6 +29,10 @@ const specialSkillCounterKinds = new Set<TraitRelationKind>([
   'counteredBySpecialSkills',
 ]);
 
+const mapRelationKinds = new Set<TraitRelationKind>(['advantageMaps', 'disadvantageMaps']);
+
+const modeRelationKinds = new Set<TraitRelationKind>(['advantageModes', 'disadvantageModes']);
+
 export type CharacterRelationValidationContext = {
   getCharacterFactionId?: (characterId: string) => FactionId | undefined;
   getKnowledgeCardFactionId?: (cardId: string) => FactionId | undefined;
@@ -45,6 +49,71 @@ const buildDirectedPairKey = (relation: TraitRelation) =>
 
 const isCharacterPairRelation = (relation: TraitRelation) =>
   relation.subject.type === 'character' && relation.target.type === 'character';
+
+const isProjectedCharacterCounterKind = (kind: TraitRelationKind) =>
+  kind === 'counters' || kind === 'counteredBy' || kind === 'counterEachOther';
+
+const buildProjectedCharacterCellKey = (subject: SingleItem, target: SingleItem) =>
+  `${toSingleItemKey(subject)}::${toSingleItemKey(target)}`;
+
+const getProjectedCharacterCells = (relation: TraitRelation) => {
+  if (!isCharacterPairRelation(relation) || !isProjectedCharacterCounterKind(relation.kind)) {
+    return [];
+  }
+
+  if (relation.kind === 'counters') {
+    return [
+      { key: buildProjectedCharacterCellKey(relation.subject, relation.target), kind: 'counters' },
+      {
+        key: buildProjectedCharacterCellKey(relation.target, relation.subject),
+        kind: 'counteredBy',
+      },
+    ] as const;
+  }
+
+  if (relation.kind === 'counteredBy') {
+    return [
+      {
+        key: buildProjectedCharacterCellKey(relation.subject, relation.target),
+        kind: 'counteredBy',
+      },
+      { key: buildProjectedCharacterCellKey(relation.target, relation.subject), kind: 'counters' },
+    ] as const;
+  }
+
+  return [
+    {
+      key: buildProjectedCharacterCellKey(relation.subject, relation.target),
+      kind: 'counterEachOther',
+    },
+    {
+      key: buildProjectedCharacterCellKey(relation.target, relation.subject),
+      kind: 'counterEachOther',
+    },
+  ] as const;
+};
+
+const buildNonCharacterRelationCellKey = (relation: TraitRelation) => {
+  if (isCharacterPairRelation(relation)) return null;
+
+  if (knowledgeCardCounterKinds.has(relation.kind)) {
+    return `knowledgeCardCounters::${buildDirectedPairKey(relation)}`;
+  }
+
+  if (specialSkillCounterKinds.has(relation.kind)) {
+    return `specialSkillCounters::${buildDirectedPairKey(relation)}`;
+  }
+
+  if (mapRelationKinds.has(relation.kind)) {
+    return `maps::${buildDirectedPairKey(relation)}`;
+  }
+
+  if (modeRelationKinds.has(relation.kind)) {
+    return `modes::${buildDirectedPairKey(relation)}`;
+  }
+
+  return null;
+};
 
 const buildSemanticCharacterRelationKey = (relation: TraitRelation) => {
   if (!isCharacterPairRelation(relation)) return null;
@@ -143,6 +212,14 @@ export const findCharacterRelationValidationErrors = (
   const errors: string[] = [];
   const seenEdges = new Map<string, number>();
   const seenSemanticCharacterEdges = new Map<string, { index: number; relation: TraitRelation }>();
+  const seenProjectedCharacterCells = new Map<
+    string,
+    { index: number; relation: TraitRelation; kind: TraitRelationKind }
+  >();
+  const seenNonCharacterRelationCells = new Map<
+    string,
+    { index: number; relation: TraitRelation }
+  >();
   const kindsByPair = new Map<string, Map<TraitRelationKind, number[]>>();
 
   traits.forEach((trait, index) => {
@@ -176,6 +253,35 @@ export const findCharacterRelationValidationErrors = (
         );
       } else {
         seenSemanticCharacterEdges.set(semanticCharacterEdgeKey, { index, relation });
+      }
+    }
+
+    getProjectedCharacterCells(relation).forEach((cell) => {
+      const existingCell = seenProjectedCharacterCells.get(cell.key);
+
+      if (existingCell && existingCell.kind !== cell.kind) {
+        errors.push(
+          `Contradictory projected character relation cell ${cell.key} at entries #${
+            existingCell.index + 1
+          } and #${index + 1} (${existingCell.kind} conflicts with ${cell.kind}).`
+        );
+      } else if (!existingCell) {
+        seenProjectedCharacterCells.set(cell.key, { index, relation, kind: cell.kind });
+      }
+    });
+
+    const nonCharacterRelationCellKey = buildNonCharacterRelationCellKey(relation);
+    if (nonCharacterRelationCellKey) {
+      const existingCell = seenNonCharacterRelationCells.get(nonCharacterRelationCellKey);
+
+      if (existingCell && existingCell.relation.kind !== relation.kind) {
+        errors.push(
+          `Contradictory non-character relation cell ${nonCharacterRelationCellKey} at entries #${
+            existingCell.index + 1
+          } and #${index + 1} (${existingCell.relation.kind} conflicts with ${relation.kind}).`
+        );
+      } else if (!existingCell) {
+        seenNonCharacterRelationCells.set(nonCharacterRelationCellKey, { index, relation });
       }
     }
 

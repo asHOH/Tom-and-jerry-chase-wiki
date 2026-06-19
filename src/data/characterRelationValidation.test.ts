@@ -163,6 +163,75 @@ describe('characterRelationValidation', () => {
     );
   });
 
+  it('should reject contradictory non-character relation cells', () => {
+    const subject = { name: 'MouseA', type: 'character' } as const;
+    const contradictoryCellTraits = [
+      createRelationTrait('countersKnowledgeCards', subject, {
+        name: 'CatCard',
+        type: 'knowledgeCard',
+      }),
+      createRelationTrait('counteredByKnowledgeCards', subject, {
+        name: 'CatCard',
+        type: 'knowledgeCard',
+      }),
+      createRelationTrait('countersSpecialSkills', subject, {
+        name: 'CatSkill',
+        type: 'specialSkill',
+        factionId: 'cat',
+      }),
+      createRelationTrait('counteredBySpecialSkills', subject, {
+        name: 'CatSkill',
+        type: 'specialSkill',
+        factionId: 'cat',
+      }),
+      createRelationTrait('advantageMaps', subject, { name: '经典之家', type: 'map' }),
+      createRelationTrait('disadvantageMaps', subject, { name: '经典之家', type: 'map' }),
+      createRelationTrait('advantageModes', subject, { name: '经典模式', type: 'mode' }),
+      createRelationTrait('disadvantageModes', subject, { name: '经典模式', type: 'mode' }),
+    ];
+
+    expect(
+      findCharacterRelationValidationErrors(contradictoryCellTraits, testValidationContext)
+    ).toEqual(
+      expect.arrayContaining([
+        expect.stringContaining(
+          'Contradictory non-character relation cell knowledgeCardCounters::character:MouseA:::knowledgeCard:CatCard:'
+        ),
+        expect.stringContaining(
+          'Contradictory non-character relation cell specialSkillCounters::character:MouseA:::specialSkill:CatSkill:cat'
+        ),
+        expect.stringContaining(
+          'Contradictory non-character relation cell maps::character:MouseA:::map:经典之家:'
+        ),
+        expect.stringContaining(
+          'Contradictory non-character relation cell modes::character:MouseA:::mode:经典模式:'
+        ),
+      ])
+    );
+  });
+
+  it('should reject contradictory projected character relation cells', () => {
+    const contradictoryCellTraits = [
+      createCharacterRelationTrait('counters', 'MouseA', 'CatA'),
+      createCharacterRelationTrait('counters', 'CatA', 'MouseA'),
+      createCharacterRelationTrait('counterEachOther', 'MouseB', 'CatB'),
+      createCharacterRelationTrait('counteredBy', 'CatB', 'MouseB'),
+    ];
+
+    expect(
+      findCharacterRelationValidationErrors(contradictoryCellTraits, testValidationContext)
+    ).toEqual(
+      expect.arrayContaining([
+        expect.stringContaining(
+          'Contradictory projected character relation cell character:MouseA:::character:CatA:'
+        ),
+        expect.stringContaining(
+          'Contradictory projected character relation cell character:MouseB:::character:CatB:'
+        ),
+      ])
+    );
+  });
+
   it('should detect duplicate relation edges', () => {
     const duplicateTraits = [
       createCharacterRelationTrait('counters', 'Alpha', 'Beta'),

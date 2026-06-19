@@ -133,19 +133,6 @@ export const characterRelationModeTraits: Trait[] = [
     },
   },
   {
-    description: '',
-    group: [
-      { name: '牛仔汤姆', type: 'character' },
-      { name: '5V5经典奶酪赛', type: 'mode' },
-    ],
-    relation: {
-      kind: 'disadvantageModes',
-      subject: { name: '牛仔汤姆', type: 'character' },
-      target: { name: '5V5经典奶酪赛', type: 'mode' },
-      isMinor: false,
-    },
-  },
-  {
     description: '火炮可以强势守家，但需注意该技能可被敌方老鼠使用',
     group: [
       { name: '航海士杰瑞', type: 'character' },
