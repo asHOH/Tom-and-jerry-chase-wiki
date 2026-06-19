@@ -64,6 +64,11 @@ const SkillAllocationSection: React.FC<SkillAllocationSectionProps> = ({ faction
   const { characterId } = useLocalCharacter();
   const skillAllocations = useSnapshot(characters[characterId]?.skillAllocations ?? []);
   const { handleAddSkillAllocation, handleRemoveSkillAllocation } = useSkillAllocationManagement();
+
+  if (!isEditMode && (!skillAllocations || skillAllocations.length === 0)) {
+    return null;
+  }
+
   return (
     <div>
       <CharacterSection title='推荐加点'>
