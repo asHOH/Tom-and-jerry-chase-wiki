@@ -1393,16 +1393,16 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
   },
   {
     description:
-      '侦探泰菲分身带来的失明时长跟斯飞进入疾冲状态时间差不多，同时侦探泰菲隐身期间不容易逃脱斯飞追击范围',
+      '侦探泰菲分身带来的失明时长跟斯飞进入疾冲状态时间相近，影响斯飞追击；但侦探泰菲隐身期间也难以逃脱斯飞追击范围。',
     group: [
       { name: '斯飞', type: 'character' },
       { name: '侦探泰菲', type: 'character' },
     ],
     relation: {
-      kind: 'counters',
+      kind: 'counterEachOther',
       subject: { name: '斯飞', type: 'character' },
       target: { name: '侦探泰菲', type: 'character' },
-      isMinor: false,
+      isMinor: true,
     },
   },
   {
@@ -1580,7 +1580,7 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
   },
   {
     description:
-      '国王杰瑞的护盾能够被斯飞疾冲状态的感电效果轻易破掉，同时国王杰瑞无法轻易逃离斯飞追击',
+      '国王杰瑞的护盾能够被斯飞疾冲状态的感电效果轻易破掉，同时国王杰瑞难以逃离斯飞追击。',
     group: [
       { name: '斯飞', type: 'character' },
       { name: '国王杰瑞', type: 'character' },
@@ -1740,19 +1740,6 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
     },
   },
   {
-    description: '国王杰瑞自保与救援能力强，同时能展开战旗给予老鼠增益，容易使斯飞对局节奏拉长',
-    group: [
-      { name: '国王杰瑞', type: 'character' },
-      { name: '斯飞', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '国王杰瑞', type: 'character' },
-      target: { name: '斯飞', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
     description:
       '航海士杰瑞的一级被动搭配知识卡投手能让满层乘胜追击知识卡的斯飞打断疾冲姿态，火药桶炸火箭也让斯飞十分头疼。',
     group: [
@@ -1831,20 +1818,6 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
       subject: { name: '牛仔杰瑞', type: 'character' },
       target: { name: '塔拉', type: 'character' },
       isMinor: false,
-    },
-  },
-  {
-    description:
-      '米特的野性叠加到7层可以一刀秒泰菲，并且当手持胡椒粉抓着老鼠时，即使被火箭炮或地雷炸下来，残血老鼠也会被胡椒粉毒死，绑火箭的时候还有野性层数赋予的霸体。',
-    group: [
-      { name: '米特', type: 'character' },
-      { name: '泰菲', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '米特', type: 'character' },
-      target: { name: '泰菲', type: 'character' },
-      isMinor: true,
     },
   },
   {
@@ -2167,16 +2140,17 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
     },
   },
   {
-    description: '米可拥有高额减伤，图多打不死。',
+    description:
+      '米可拥有高额减伤，图多盖洛难以打死；但图多盖洛甲油3级后的霸体让米可打不出干扰效果、大后期3级魅惑之吻也可以直接废掉米可。',
     group: [
       { name: '米可', type: 'character' },
       { name: '图多盖洛', type: 'character' },
     ],
     relation: {
-      kind: 'counters',
+      kind: 'counterEachOther',
       subject: { name: '米可', type: 'character' },
       target: { name: '图多盖洛', type: 'character' },
-      isMinor: true,
+      isMinor: false,
     },
   },
   {
@@ -3076,19 +3050,6 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
     },
   },
   {
-    description: '格挡的主动反击可以反击如玉的反击，使其反击无效的同时还能牵制如玉。',
-    group: [
-      { name: '剑客杰瑞', type: 'character' },
-      { name: '如玉', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '剑客杰瑞', type: 'character' },
-      target: { name: '如玉', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
     description: '华尔兹无敌与格挡无敌可有效规避喵喵叫，高伤能快速击倒血脆的图茨。',
     group: [
       { name: '剑客杰瑞', type: 'character' },
@@ -3825,19 +3786,6 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
     },
   },
   {
-    description: '击退和高伤有一定能力反制跳舞。',
-    group: [
-      { name: '佩克斯', type: 'character' },
-      { name: '苏蕊', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '佩克斯', type: 'character' },
-      target: { name: '苏蕊', type: 'character' },
-      isMinor: true,
-    },
-  },
-  {
     description: '击退有一定能力反制无敌。',
     group: [
       { name: '佩克斯', type: 'character' },
@@ -4268,20 +4216,6 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
     },
   },
   {
-    description:
-      '图多盖洛甲油3级后的霸体可以让米可打不出干扰效果；即使没有猛攻，后期图多捏好拍子，把3级被动点出来，也相对并不缺少处理后期米可的常态高坦度的手段；大后期3级魅惑之吻也是可以直接废掉米可。',
-    group: [
-      { name: '图多盖洛', type: 'character' },
-      { name: '米可', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '图多盖洛', type: 'character' },
-      target: { name: '米可', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
     description: '兔八哥二被可以躲掉充能道具，地洞给的减伤也可以防止被秒。',
     group: [
       { name: '兔八哥', type: 'character' },
@@ -4550,19 +4484,6 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
       kind: 'counterEachOther',
       subject: { name: '国王杰瑞', type: 'character' },
       target: { name: '布奇', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
-    description: '奔跑状态斯飞下会受到分身带来的失明效果，影响追击',
-    group: [
-      { name: '侦探泰菲', type: 'character' },
-      { name: '斯飞', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '侦探泰菲', type: 'character' },
-      target: { name: '斯飞', type: 'character' },
       isMinor: false,
     },
   },
