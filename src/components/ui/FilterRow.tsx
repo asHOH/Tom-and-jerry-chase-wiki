@@ -70,6 +70,7 @@ export default function FilterRow<T extends string | number>(props: FilterRowPro
               <m.button
                 key={String(opt)}
                 type='button'
+                aria-pressed={active}
                 onClick={() => onToggle(opt as T)}
                 className={cn(
                   'filter-button cursor-pointer rounded-lg border-none px-3 py-2 text-sm font-medium transition-all duration-200 ease-in-out',
