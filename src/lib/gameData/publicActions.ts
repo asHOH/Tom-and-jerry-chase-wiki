@@ -35,7 +35,6 @@ const appliedPublicActionIds = new Set<string>();
 
 const serverPublicActionTargetRegistry: PublicActionTargetRegistry = {
   characters: [characters as unknown as Record<string, unknown>],
-  factions: [],
   cards: [
     cards as unknown as Record<string, unknown>,
     cardsEdit as unknown as Record<string, unknown>,

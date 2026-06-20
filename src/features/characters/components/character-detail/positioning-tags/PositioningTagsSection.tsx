@@ -284,7 +284,7 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
                     )}
                   </Tag>
                   {hasWeapon && !isEditMode && (
-                    <div className='absolute top-1/2 -right-6 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800'>
+                    <div className='absolute top-1/2 -right-7 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800'>
                       {(() => {
                         const weaponImageUrl = getWeaponSkillImageUrl(
                           charactersSnap,

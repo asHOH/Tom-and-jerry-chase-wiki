@@ -5,6 +5,7 @@ import { AnimatePresence, m, useDragControls, useReducedMotion } from 'motion/re
 import { createPortal } from 'react-dom';
 
 import { cn } from '@/lib/design';
+import { useUser } from '@/hooks/useUser';
 import { CheckBadgeIcon, CloseIcon, FolderIcon, TrashIcon } from '@/components/icons/CommonIcons';
 
 export interface EditModeToolbarProps {
@@ -46,6 +47,8 @@ export default function EditModeToolbar({
   onExitEditMode,
   entityName,
 }: EditModeToolbarProps) {
+  const { role: userRole } = useUser();
+  const isAdmin = userRole === 'Coordinator' || userRole === 'Reviewer';
   const shouldReduceMotion = useReducedMotion();
   const dragControls = useDragControls();
   const [showMessageInput, setShowMessageInput] = useState(false);
@@ -228,6 +231,9 @@ export default function EditModeToolbar({
                     CC BY 4.0 许可协议
                   </a>{' '}
                   进行授权发布。
+                  {userRole && isAdmin
+                    ? '，提交后将自动审核通过并公开显示。'
+                    : '，管理员审核通过后将公开显示。'}
                 </label>
               </div>
             </m.div>
