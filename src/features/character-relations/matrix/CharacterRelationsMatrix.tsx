@@ -97,7 +97,7 @@ const columnHeaderChunkPattern = /[A-Za-z0-9]+|./gu;
 
 const getColumnHeaderChunks = (label: string): string[] => {
   const rawChunks = label.match(columnHeaderChunkPattern) ?? [label];
-  if (Array.from(label).length <= 5) return rawChunks;
+  if (Array.from(label).length <= 6) return rawChunks;
 
   const compactChunks: string[] = [];
   let chineseBuffer = '';
@@ -185,7 +185,7 @@ const ColumnHeader = ({
       name={column.label}
       href={column.href}
       categoryHint={getColumnCategoryHint(column, columnCategory)}
-      className='flex h-28 w-7 items-end justify-center overflow-hidden px-0.5 py-1 text-center text-[11px] leading-tight font-medium text-gray-700 no-underline hover:text-blue-600 focus:ring-2 focus:ring-blue-400 focus:outline-none dark:text-gray-200 dark:hover:text-blue-300'
+      className='flex h-28 w-7 items-end justify-center overflow-hidden px-0.5 py-1 text-center text-[12px] leading-tight font-medium text-gray-700 no-underline hover:text-blue-600 focus:ring-2 focus:ring-blue-400 focus:outline-none dark:text-gray-200 dark:hover:text-blue-300'
     >
       <span className='flex max-h-full flex-col items-center justify-end gap-0.5 overflow-hidden'>
         {getColumnHeaderChunks(column.label).map((chunk, index) => (
