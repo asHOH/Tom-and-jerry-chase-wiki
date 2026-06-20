@@ -198,7 +198,7 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
             <option value='pending'>修改需要审核</option>
             <option value='rejected'>禁止修改</option>
           </FormSelect>
-          <Button type='button' onClick={handleCreateCategory} disabled={loading}>
+          <Button onClick={handleCreateCategory} disabled={loading}>
             创建
           </Button>
         </div>
@@ -245,7 +245,6 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
                   <td className='px-4 py-3 text-sm'>
                     <div className='flex gap-2'>
                       <Button
-                        type='button'
                         onClick={() => setEditingCategory(category)}
                         variant='warning'
                         size='sm'
@@ -254,7 +253,6 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
                       </Button>
                       {category.name !== '根分类' && (
                         <Button
-                          type='button'
                           onClick={() => handleDeleteCategory(category.id)}
                           variant='danger'
                           size='sm'
@@ -332,15 +330,10 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
               <option value='rejected'>禁止修改</option>
             </FormSelect>
             <div className='flex gap-2'>
-              <Button
-                type='button'
-                onClick={handleEditCategory}
-                variant='success'
-                disabled={loading}
-              >
+              <Button onClick={handleEditCategory} variant='success' disabled={loading}>
                 保存
               </Button>
-              <Button type='button' onClick={() => setEditingCategory(null)} variant='secondary'>
+              <Button onClick={() => setEditingCategory(null)} variant='secondary'>
                 取消
               </Button>
             </div>

@@ -121,11 +121,10 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, mutateUsers }) =
               />
             </label>
             <div className='flex justify-end gap-2'>
-              <Button type='button' variant='secondary' onClick={handleCloseModal}>
+              <Button variant='secondary' onClick={handleCloseModal}>
                 取消
               </Button>
               <Button
-                type='button'
                 onClick={() => {
                   const nicknameInput = document.getElementById('nickname') as HTMLInputElement;
                   const passwordInput = document.getElementById('password') as HTMLInputElement;
@@ -182,7 +181,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, mutateUsers }) =
                     </FormSelect>
                   </td>
                   <td className='px-4 py-3 text-sm'>
-                    <Button type='button' size='sm' onClick={() => handleOpenModal(user)}>
+                    <Button size='sm' onClick={() => handleOpenModal(user)}>
                       编辑
                     </Button>
                   </td>

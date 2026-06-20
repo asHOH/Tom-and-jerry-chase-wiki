@@ -142,7 +142,6 @@ export default function CharacterCreate() {
           />
           <div className='mt-4 flex justify-end'>
             <Button
-              type='button'
               data-submit-button='true'
               aria-label='确认创建角色'
               className='mr-2'
@@ -152,7 +151,6 @@ export default function CharacterCreate() {
               确认创建
             </Button>
             <Button
-              type='button'
               aria-label='取消创建角色'
               variant='secondary'
               onClick={() => {

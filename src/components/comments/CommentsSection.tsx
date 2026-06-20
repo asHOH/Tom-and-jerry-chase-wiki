@@ -213,18 +213,12 @@ export default function CommentsSection({
 
         <div className='mt-3 flex items-center justify-end gap-2'>
           {!userRole ? (
-            <Button
-              type='button'
-              variant='primary'
-              size='sm'
-              onClick={() => setShowLoginDialog(true)}
-            >
+            <Button variant='primary' size='sm' onClick={() => setShowLoginDialog(true)}>
               登录
             </Button>
           ) : null}
 
           <Button
-            type='button'
             onClick={handleSubmit}
             disabled={!userRole || isSubmitting}
             loading={isSubmitting}

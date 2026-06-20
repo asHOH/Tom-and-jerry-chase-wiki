@@ -174,15 +174,10 @@ const KnowledgeCardPicker: React.FC<KnowledgeCardPickerProps> = ({
               )}
             </div>
             <div className='flex w-full sm:w-auto'>
-              <Button
-                type='button'
-                onClick={onClose}
-                variant='secondary'
-                className='mr-2 flex-1 sm:flex-none'
-              >
+              <Button onClick={onClose} variant='secondary' className='mr-2 flex-1 sm:flex-none'>
                 取消
               </Button>
-              <Button type='button' onClick={handleSave} className='flex-1 sm:flex-none'>
+              <Button onClick={handleSave} className='flex-1 sm:flex-none'>
                 保存
               </Button>
             </div>

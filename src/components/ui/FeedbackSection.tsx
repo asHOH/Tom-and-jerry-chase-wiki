@@ -117,7 +117,6 @@ const FeedbackSection =
                   </h3>
                   <p className='mb-4 text-gray-600 dark:text-gray-400'>我们会认真考虑您的建议。</p>
                   <Button
-                    type='button'
                     onClick={() => {
                       setSubmitted(false);
                       setIsFeedbackOpen(false);
@@ -159,7 +158,7 @@ const FeedbackSection =
                           </div>
                         </div>
                       </div>
-                      <Button type='button' onClick={handleQQGroupClick} size='sm'>
+                      <Button onClick={handleQQGroupClick} size='sm'>
                         加入
                       </Button>
                     </div>
@@ -257,7 +256,6 @@ const FeedbackSection =
 
                   <div className='mt-6 flex space-x-3'>
                     <Button
-                      type='button'
                       variant='secondary'
                       size='md'
                       fullWidth

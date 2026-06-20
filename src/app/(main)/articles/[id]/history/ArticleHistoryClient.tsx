@@ -157,11 +157,10 @@ export default function ArticleHistoryClient() {
               已选择 {selectedVersions.length} 个版本进行比较
             </div>
             <div className='flex gap-3'>
-              <Button type='button' onClick={() => setSelectedVersions([])} variant='ghost'>
+              <Button onClick={() => setSelectedVersions([])} variant='ghost'>
                 清除选择
               </Button>
               <Button
-                type='button'
                 onClick={() => {
                   // TODO: Implement diff viewer
                   alert('差异比较功能即将推出');
@@ -247,7 +246,6 @@ export default function ArticleHistoryClient() {
 
                 {canRevoke && version.status === 'approved' && index === 0 && (
                   <Button
-                    type='button'
                     onClick={async () => {
                       if (confirm('确定要撤销这个版本吗？这将回退到上一个已发布的版本。')) {
                         try {

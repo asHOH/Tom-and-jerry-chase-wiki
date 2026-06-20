@@ -71,7 +71,7 @@ export default function LinkDialog({
             />
           </div>
           <div className='flex justify-end space-x-3'>
-            <Button type='button' onClick={onClose} variant='secondary'>
+            <Button onClick={onClose} variant='secondary'>
               取消
             </Button>
             <Button type='submit'>确认</Button>

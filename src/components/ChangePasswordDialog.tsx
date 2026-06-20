@@ -108,7 +108,6 @@ export default function ChangePasswordDialog({ onClose }: ChangePasswordDialogPr
         <div className='mb-3 flex items-center justify-between'>
           <h2 className='text-lg font-bold text-gray-900 dark:text-white'>修改密码</h2>
           <Button
-            type='button'
             aria-label='关闭'
             variant='ghost'
             size='sm'
@@ -150,7 +149,6 @@ export default function ChangePasswordDialog({ onClose }: ChangePasswordDialogPr
           </div>
 
           <Button
-            type='button'
             onClick={submit}
             loading={isLoading}
             disabled={isLoading}

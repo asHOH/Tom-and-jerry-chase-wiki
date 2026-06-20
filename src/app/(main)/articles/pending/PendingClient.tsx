@@ -236,7 +236,6 @@ export default function PendingClient() {
 
             <div className='flex items-center gap-2'>
               <Button
-                type='button'
                 onClick={() => setFilter('all')}
                 variant={filter === 'all' ? 'primary' : 'secondary'}
                 size='sm'
@@ -244,7 +243,6 @@ export default function PendingClient() {
                 全部
               </Button>
               <Button
-                type='button'
                 onClick={() => setFilter('pending')}
                 variant={filter === 'pending' ? 'primary' : 'secondary'}
                 size='sm'
@@ -252,7 +250,6 @@ export default function PendingClient() {
                 待审核
               </Button>
               <Button
-                type='button'
                 onClick={() => setFilter('rejected')}
                 variant={filter === 'rejected' ? 'primary' : 'secondary'}
                 size='sm'
@@ -260,13 +257,7 @@ export default function PendingClient() {
                 已拒绝
               </Button>
 
-              <Button
-                type='button'
-                onClick={() => mutate()}
-                variant='secondary'
-                size='sm'
-                className='ml-2'
-              >
+              <Button onClick={() => mutate()} variant='secondary' size='sm' className='ml-2'>
                 刷新
               </Button>
             </div>
@@ -289,7 +280,7 @@ export default function PendingClient() {
           </p>
           <div className='flex flex-wrap justify-center gap-3'>
             <ButtonLink href='/articles'>返回文章列表</ButtonLink>
-            <Button type='button' onClick={() => mutate()} variant='secondary'>
+            <Button onClick={() => mutate()} variant='secondary'>
               刷新
             </Button>
           </div>
@@ -354,7 +345,6 @@ export default function PendingClient() {
                   {canModerate && submission.status === 'pending' && (
                     <>
                       <Button
-                        type='button'
                         onClick={() => handleModerationAction(submission.version_id, 'approve')}
                         disabled={processingVersions.has(submission.version_id)}
                         variant='success'
@@ -369,7 +359,6 @@ export default function PendingClient() {
                       </Button>
 
                       <Button
-                        type='button'
                         onClick={() => handleModerationAction(submission.version_id, 'reject')}
                         disabled={processingVersions.has(submission.version_id)}
                         variant='danger'

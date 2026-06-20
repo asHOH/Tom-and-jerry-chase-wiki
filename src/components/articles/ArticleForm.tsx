@@ -236,7 +236,6 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
                 </div>
 
                 <Button
-                  type='button'
                   onClick={toggleTypoFixPrefix}
                   disabled={isSubmitting || !onCommitMessageChange}
                   variant={isTypoFixActive ? 'primary' : 'secondary'}
@@ -295,7 +294,6 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
 
           <div className='flex flex-col gap-4 border-t border-gray-200 pt-6 md:flex-row dark:border-gray-700'>
             <Button
-              type='button'
               onClick={onSave}
               disabled={isSaveDisabled}
               loading={isSubmitting}
@@ -308,7 +306,6 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
             </Button>
 
             <Button
-              type='button'
               onClick={onCancel}
               disabled={isSubmitting}
               variant='secondary'

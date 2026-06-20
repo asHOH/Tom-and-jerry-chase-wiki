@@ -112,10 +112,10 @@ const PasteInputModal: React.FC<PasteInputModalProps> = ({
       <div className='mt-4 flex justify-end'>
         {' '}
         {/* Container for buttons */}
-        <Button type='button' aria-label='确认上传角色数据' className='mr-2' onClick={handleSubmit}>
+        <Button aria-label='确认上传角色数据' className='mr-2' onClick={handleSubmit}>
           确认上传
         </Button>
-        <Button type='button' aria-label='取消上传角色数据' variant='secondary' onClick={onCancel}>
+        <Button aria-label='取消上传角色数据' variant='secondary' onClick={onCancel}>
           取消
         </Button>
       </div>
@@ -270,7 +270,6 @@ export default function CharacterImport() {
             style={{ height: containerHeight }}
           >
             <Button
-              type='button'
               aria-label='从文件上传角色数据'
               variant='ghost'
               size='lg'
@@ -284,7 +283,6 @@ export default function CharacterImport() {
               从文件上传
             </Button>
             <Button
-              type='button'
               aria-label='从剪贴板上传角色数据'
               variant='ghost'
               size='lg'

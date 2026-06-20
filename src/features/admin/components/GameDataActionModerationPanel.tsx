@@ -342,7 +342,6 @@ const GameDataActionModerationPanel = ({
 
         <div className='flex flex-wrap items-center gap-2'>
           <Button
-            type='button'
             disabled={isModerating || actionableActions.length === 0}
             onClick={toggleSelectAllVisiblePending}
             variant='secondary'
@@ -351,7 +350,6 @@ const GameDataActionModerationPanel = ({
             {allVisiblePendingSelected ? '取消全选待审核' : '全选待审核'}
           </Button>
           <Button
-            type='button'
             disabled={isModerating || selectedActionIds.size === 0}
             onClick={clearSelectedActions}
             variant='secondary'
@@ -360,7 +358,6 @@ const GameDataActionModerationPanel = ({
             清空勾选
           </Button>
           <Button
-            type='button'
             disabled={isModerating}
             onClick={() => void mutatePendingActions()}
             variant='secondary'
@@ -369,7 +366,6 @@ const GameDataActionModerationPanel = ({
             刷新
           </Button>
           <Button
-            type='button'
             disabled={isModerating || selectedPendingActions.length === 0}
             onClick={() => void moderateMany('approve')}
             variant='success'
@@ -378,7 +374,6 @@ const GameDataActionModerationPanel = ({
             批量批准
           </Button>
           <Button
-            type='button'
             disabled={isModerating || selectedPendingActions.length === 0}
             onClick={() => void moderateMany('reject')}
             variant='danger'
@@ -458,7 +453,6 @@ const GameDataActionModerationPanel = ({
                         {submission.status === 'pending' && (
                           <>
                             <Button
-                              type='button'
                               disabled={isModerating}
                               onClick={() => {
                                 const confirmed = window.confirm('确认批准并公开该改动？');
@@ -471,7 +465,6 @@ const GameDataActionModerationPanel = ({
                               批准
                             </Button>
                             <Button
-                              type='button'
                               disabled={isModerating}
                               onClick={() => {
                                 const confirmed = window.confirm('确认拒绝该改动？');
@@ -486,7 +479,6 @@ const GameDataActionModerationPanel = ({
                           </>
                         )}
                         <Button
-                          type='button'
                           onClick={() => toggleExpanded(submission.action_id)}
                           aria-label={isExpanded ? '收起详情' : '展开详情'}
                           aria-expanded={isExpanded}
@@ -527,7 +519,6 @@ const GameDataActionModerationPanel = ({
                           </div>
                           <div className='flex items-center gap-2'>
                             <Button
-                              type='button'
                               onClick={() => void copyText(submission.action_id)}
                               variant='secondary'
                               size='sm'
@@ -535,7 +526,6 @@ const GameDataActionModerationPanel = ({
                               复制ID
                             </Button>
                             <Button
-                              type='button'
                               onClick={() => void copyText(JSON.stringify(submission, null, 2))}
                               variant='secondary'
                               size='sm'

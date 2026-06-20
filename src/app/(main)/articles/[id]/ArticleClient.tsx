@@ -596,7 +596,6 @@ export default function ArticleClient({
               <div className='mt-4 flex flex-wrap gap-3 border-t border-gray-200 pt-4 dark:border-gray-700'>
                 <Button
                   onClick={() => setShowAutoNumbering(!showAutoNumbering)}
-                  type='button'
                   variant={showAutoNumbering ? 'primary' : 'secondary'}
                 >
                   {showAutoNumbering ? '隐藏编号' : '自动编号'}

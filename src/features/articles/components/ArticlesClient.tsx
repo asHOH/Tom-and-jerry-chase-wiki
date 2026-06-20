@@ -378,7 +378,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
           </p>
           <div className='flex flex-wrap justify-center gap-3'>
             {selectedCategories.size > 0 && (
-              <Button type='button' onClick={handleClearFilters} variant='secondary'>
+              <Button onClick={handleClearFilters} variant='secondary'>
                 清除筛选
               </Button>
             )}

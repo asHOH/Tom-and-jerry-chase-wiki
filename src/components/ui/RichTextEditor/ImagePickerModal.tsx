@@ -249,7 +249,6 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
 
   const TabButton = ({ id, label }: { id: TabId; label: string }) => (
     <Button
-      type='button'
       onClick={() => setActiveTab(id)}
       variant={activeTab === id ? 'primary' : 'secondary'}
       size='sm'
@@ -304,12 +303,7 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
               }
             }}
           />
-          <Button
-            type='button'
-            onClick={handleManualSubmit}
-            disabled={!manualInput.trim()}
-            size='sm'
-          >
+          <Button onClick={handleManualSubmit} disabled={!manualInput.trim()} size='sm'>
             插入
           </Button>
         </div>
@@ -327,7 +321,7 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
           value={librarySearchTerm}
           onChange={(event) => setLibrarySearchTerm(event.target.value)}
         />
-        <Button type='button' onClick={fetchLibraryItems} variant='secondary' size='sm'>
+        <Button onClick={fetchLibraryItems} variant='secondary' size='sm'>
           刷新
         </Button>
       </div>
@@ -387,11 +381,10 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
           </span>
         </div>
         <div className='space-x-2'>
-          <Button type='button' onClick={() => fetchSiteEntries('')} variant='secondary' size='sm'>
+          <Button onClick={() => fetchSiteEntries('')} variant='secondary' size='sm'>
             回到根目录
           </Button>
           <Button
-            type='button'
             onClick={handleNavigateUp}
             disabled={!siteParentPath && siteParentPath !== ''}
             variant='secondary'
@@ -486,7 +479,7 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
           {activeTab === 'site' && renderSiteTab()}
         </div>
         <div className='flex justify-end border-t border-gray-200 px-6 py-3 dark:border-gray-700'>
-          <Button type='button' onClick={onClose} variant='secondary'>
+          <Button onClick={onClose} variant='secondary'>
             关闭
           </Button>
         </div>
