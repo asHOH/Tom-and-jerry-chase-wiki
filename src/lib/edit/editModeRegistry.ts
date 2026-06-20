@@ -33,7 +33,6 @@ import {
 
 export const PUBLISHABLE_ENTITY_TYPES = [
   'characters',
-  'factions',
   'cards',
   'entities',
   'buffs',
@@ -49,10 +48,7 @@ export type PublishableEntityType = (typeof PUBLISHABLE_ENTITY_TYPES)[number];
 
 unstable_enableOp(true);
 
-/**
- * Entity registry mapping entity types to their proxy objects.
- */
-export const entityRegistry = new Map<string, Record<string, unknown>>([
+const entityRegistry = new Map<string, Record<string, unknown>>([
   ['achievements', achievementsEdit as unknown as Record<string, unknown>],
   ['characters', characters],
   ['cards', cardsEdit],
@@ -190,10 +186,7 @@ function restoreEntitiesToCanonical(): void {
     buffs: buffs as Record<string, unknown>,
     cards: GameDataManager.getCards() as Record<string, unknown>,
     characters: GameDataManager.getCharacters() as Record<string, unknown>,
-    entities: {
-      ...entities.cat,
-      ...entities.mouse,
-    } as Record<string, unknown>,
+    entities: entities as Record<string, unknown>,
     fixtures: fixtures as Record<string, unknown>,
     items: items as Record<string, unknown>,
     maps: maps as Record<string, unknown>,
@@ -229,13 +222,26 @@ function restoreEntitiesToCanonical(): void {
  * Call this when the user explicitly discards all changes.
  */
 export function clearAllEditModeData(): void {
-  clearActionHistoriesFromStorage();
-  restoreEntitiesToCanonical();
+  const hadSubscribers = Object.keys(subscribers).length > 0;
+
+  if (hadSubscribers) {
+    // Pause subscriptions so the restore does not append a fresh history.
+    teardownSubscribers();
+  }
+
+  try {
+    clearActionHistoriesFromStorage();
+    restoreEntitiesToCanonical();
+  } finally {
+    if (hadSubscribers) {
+      setupEntitySubscribers();
+    }
+  }
 }
 
 /**
- * Get entity registry for external access (e.g., for bulk operations).
+ * Get a snapshot of the entity registry for external access.
  */
-export function getEntityRegistry(): Map<string, Record<string, unknown>> {
-  return entityRegistry;
+export function getEntityRegistry(): ReadonlyMap<string, Record<string, unknown>> {
+  return new Map(entityRegistry);
 }

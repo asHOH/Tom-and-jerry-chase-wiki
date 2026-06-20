@@ -21,7 +21,7 @@ import {
   type DraftSummaryItem,
 } from '@/lib/edit/editModeDrafts';
 import {
-  entityRegistry,
+  getEntityRegistry as getEntityRegistrySnapshot,
   PUBLISHABLE_ENTITY_TYPES,
   type PublishableEntityType,
 } from '@/lib/edit/editModeRegistry';
@@ -29,6 +29,8 @@ import { isPushSubscribedLocally, subscribeToPushNotifications } from '@/lib/pus
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { useEditMode } from '@/context/EditModeContext';
 import { useToast } from '@/context/ToastContext';
+
+const entityRegistry = getEntityRegistrySnapshot();
 
 export type PageEditModeOptions = {
   entityType: PublishableEntityType;

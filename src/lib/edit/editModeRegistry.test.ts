@@ -46,7 +46,6 @@ describe('editModeRegistry', () => {
   it('should expose all publishable entity registries', () => {
     expect(PUBLISHABLE_ENTITY_TYPES).toEqual([
       'characters',
-      'factions',
       'cards',
       'entities',
       'buffs',
@@ -58,6 +57,15 @@ describe('editModeRegistry', () => {
       'achievements',
     ]);
     expect(getEntityRegistry().get('characters')).toBe(characters);
+    expect(getEntityRegistry().get('items')).toBe(itemsEdit);
+  });
+
+  it('should return a read-only snapshot of the registry', () => {
+    const registry = getEntityRegistry();
+    const mutableRegistry = registry as Map<string, Record<string, unknown>>;
+
+    mutableRegistry.set('items', {});
+
     expect(getEntityRegistry().get('items')).toBe(itemsEdit);
   });
 
@@ -114,5 +122,31 @@ describe('editModeRegistry', () => {
     expect((itemsEdit as Record<string, { name?: string }>)[itemId]?.name).toBe(
       (items as Record<string, { name?: string }>)[itemId]?.name
     );
+  });
+
+  it('should not record restore mutations when clearing all edit mode data', () => {
+    setupEntitySubscribers();
+
+    clearAllEditModeData();
+
+    expect(readActionHistory(getActionsStorageKey('items'))).toEqual([]);
+    expect(readActionHistory(getActionsStorageKey('characters'))).toEqual([]);
+  });
+
+  it('should restore the entity store from the canonical entities record', () => {
+    const entityId = Object.keys(getEntityRegistry().get('entities') ?? {})[0]!;
+    const entityStore = getEntityRegistry().get('entities') as Record<string, { name?: string }>;
+    const originalName = entityStore[entityId]?.name;
+
+    entityStore[entityId] = {
+      ...entityStore[entityId],
+      name: 'mutated entity',
+    };
+
+    clearAllEditModeData();
+
+    expect(
+      (getEntityRegistry().get('entities') as Record<string, { name?: string }>)[entityId]?.name
+    ).toBe(originalName);
   });
 });
