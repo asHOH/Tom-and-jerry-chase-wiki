@@ -49,8 +49,8 @@ function RowFactionSelector({
   onSelect: (rowFaction: RelationMatrixRowFaction) => void;
 }) {
   return (
-    <div className='flex flex-wrap items-center gap-2' role='group' aria-label='行角色阵营'>
-      <span className='text-sm font-medium text-gray-600 dark:text-gray-300'>行角色</span>
+    <div className='flex flex-wrap items-center gap-2' role='group' aria-label='行目标类型'>
+      <span className='text-sm font-medium text-gray-600 dark:text-gray-300'>行</span>
       {ROW_FACTION_OPTIONS.map((option) => (
         <button
           key={option.id}
@@ -77,7 +77,7 @@ function ColumnCategorySelector({
 }) {
   return (
     <div className='flex flex-wrap items-center gap-2' role='group' aria-label='列目标类型'>
-      <span className='text-sm font-medium text-gray-600 dark:text-gray-300'>列目标</span>
+      <span className='text-sm font-medium text-gray-600 dark:text-gray-300'>列</span>
       {options.map((option) => (
         <button
           key={option.id}

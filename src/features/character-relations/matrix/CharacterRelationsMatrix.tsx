@@ -205,17 +205,17 @@ export const RelationMatrixLegend = () => (
       <span key={item.kind} className='inline-flex items-center gap-1'>
         <span
           aria-hidden='true'
-          className={cn('h-2.5 w-2.5 rounded-sm', RELATION_COLOR_CLASSES[item.kind])}
+          className={cn('h-2.5 w-2.5 rounded-xs', RELATION_COLOR_CLASSES[item.kind])}
         />
         {item.label}
       </span>
     ))}
     <span className='inline-flex items-center gap-1'>
-      <span aria-hidden='true' className='h-2.5 w-2.5 rounded-sm bg-gray-400' />
+      <span aria-hidden='true' className='h-2.5 w-2.5 rounded-xs bg-gray-400' />
       主要关系为整格填色
     </span>
     <span className='inline-flex items-center gap-1'>
-      <span aria-hidden='true' className='h-2.5 w-2.5 rounded-full bg-gray-400' />
+      <span aria-hidden='true' className='h-2 w-2 rounded-full bg-gray-400' />
       次要关系为圆点
     </span>
   </div>
