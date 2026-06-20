@@ -1,13 +1,12 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { proxy } from 'valtio';
 
 import {
   hasUserSeenCharacterDetailsTutorial,
   resetCharacterDetailsTutorial,
 } from '@/lib/tutorialUtils';
-import { CharacterDetailsProps, CharacterWithFaction } from '@/lib/types';
+import { CharacterDetailsProps } from '@/lib/types';
 import { useKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { usePageEditMode } from '@/hooks/usePageEditMode';
@@ -17,25 +16,6 @@ import { useToast } from '@/context/ToastContext';
 import { CharacterDetails } from '@/features/characters/components/character-detail';
 import EditModeToolbar from '@/components/ui/EditModeToolbar';
 import OnboardingTutorial from '@/components/OnboardingTutorial';
-import { characters } from '@/data';
-
-const syncCharacterStoreEntry = (
-  characterId: string,
-  value: CharacterDetailsProps['character']
-) => {
-  const nextValue = structuredClone(value) as Record<string, unknown>;
-  const existing = characters[characterId];
-  if (existing) {
-    Object.keys(existing as Record<string, unknown>).forEach((key) => {
-      if (!(key in nextValue)) {
-        delete (existing as Record<string, unknown>)[key];
-      }
-    });
-    Object.assign(existing as Record<string, unknown>, nextValue);
-  } else {
-    characters[characterId] = proxy(nextValue as CharacterWithFaction);
-  }
-};
 
 export default function CharacterDetailsClient(props: CharacterDetailsProps) {
   const { isEditMode } = useEditMode();
@@ -58,14 +38,6 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
     entityId: currentCharacterId,
     showToast: info,
   });
-
-  useEffect(() => {
-    if (isEditMode) {
-      return;
-    }
-
-    syncCharacterStoreEntry(props.character.id, props.character);
-  }, [props.character, isEditMode]);
   const [showTutorial, setShowTutorial] = useState(false);
 
   // Keyboard navigation
