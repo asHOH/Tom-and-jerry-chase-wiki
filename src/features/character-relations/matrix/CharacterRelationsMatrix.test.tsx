@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { render, screen, within } from '@testing-library/react';
 
 import CharacterRelationsMatrix from './CharacterRelationsMatrix';
@@ -6,6 +7,32 @@ import {
   getRelationMatrixCell,
   type RelationMatrixViewModel,
 } from './relationMatrixViewModel';
+
+jest.mock('@/components/GotoLink', () => ({
+  __esModule: true,
+  default: ({
+    name,
+    href,
+    className,
+    categoryHint,
+    children,
+  }: {
+    name: string;
+    href?: string;
+    className?: string;
+    categoryHint?: string;
+    children: ReactNode;
+  }) => (
+    <a
+      href={href}
+      className={className}
+      data-category-hint={categoryHint}
+      data-testid={`goto-link-${name}`}
+    >
+      {children}
+    </a>
+  ),
+}));
 
 const getEntityKey = (
   entities: RelationMatrixViewModel['rows'] | RelationMatrixViewModel['columns'],
@@ -28,14 +55,15 @@ describe('CharacterRelationsMatrix', () => {
 
     render(<CharacterRelationsMatrix viewModel={viewModel} />);
 
-    expect(screen.getByRole('link', { name: '杰瑞' })).toHaveAttribute(
-      'href',
-      '/characters/%E6%9D%B0%E7%91%9E'
-    );
-    expect(screen.getByRole('link', { name: '汤姆' })).toHaveAttribute(
-      'href',
-      '/characters/%E6%B1%A4%E5%A7%86'
-    );
+    const rowLink = screen.getByTestId('goto-link-杰瑞');
+    expect(rowLink).toHaveAttribute('href', '/characters/%E6%9D%B0%E7%91%9E');
+    expect(rowLink).toHaveAttribute('data-category-hint', '鼠角色');
+    expect(rowLink).toHaveClass('no-underline');
+
+    const columnLink = screen.getByTestId('goto-link-汤姆');
+    expect(columnLink).toHaveAttribute('href', '/characters/%E6%B1%A4%E5%A7%86');
+    expect(columnLink).toHaveAttribute('data-category-hint', '猫角色');
+    expect(columnLink).toHaveClass('no-underline');
   });
 
   it('should render blank empty cells, filled major cells, and dotted minor cells', () => {

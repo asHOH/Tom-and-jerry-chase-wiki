@@ -1,15 +1,17 @@
 'use client';
 
-import Link from 'next/link';
-
 import { cn } from '@/lib/design';
+import type { CategoryHint } from '@/lib/types';
 import Tooltip from '@/components/ui/Tooltip';
+import GotoLink from '@/components/GotoLink';
 
 import {
   getRelationMatrixCell,
   type RelationMatrixCell,
+  type RelationMatrixColumnCategory,
   type RelationMatrixDisplayKind,
   type RelationMatrixEntity,
+  type RelationMatrixRowFaction,
   type RelationMatrixViewModel,
 } from './relationMatrixViewModel';
 
@@ -52,6 +54,44 @@ const RELATION_LEGEND_ITEMS = [
   { kind: 'counterEachOther', label: '互克' },
   { kind: 'collaborator', label: '协作' },
 ] satisfies readonly { kind: RelationMatrixDisplayKind; label: string }[];
+
+const CHARACTER_CATEGORY_HINT_BY_FACTION = {
+  mouse: '鼠角色',
+  cat: '猫角色',
+} satisfies Record<RelationMatrixRowFaction, CategoryHint>;
+
+const getFactionScopedCategoryHint = (
+  factionId: RelationMatrixEntity['factionId'],
+  hints: Record<RelationMatrixRowFaction, CategoryHint>,
+  fallbackHint: CategoryHint
+): CategoryHint => (factionId ? hints[factionId] : fallbackHint);
+
+const getColumnCategoryHint = (
+  column: RelationMatrixEntity,
+  columnCategory: RelationMatrixColumnCategory
+): CategoryHint => {
+  switch (columnCategory) {
+    case 'mouse':
+    case 'cat':
+      return CHARACTER_CATEGORY_HINT_BY_FACTION[columnCategory];
+    case 'knowledgeCard':
+      return getFactionScopedCategoryHint(
+        column.factionId,
+        { mouse: '鼠知识卡', cat: '猫知识卡' },
+        '知识卡'
+      );
+    case 'specialSkill':
+      return getFactionScopedCategoryHint(
+        column.factionId,
+        { mouse: '鼠特技', cat: '猫特技' },
+        '特技'
+      );
+    case 'map':
+      return '地图';
+    case 'mode':
+      return '游戏模式';
+  }
+};
 
 const columnHeaderChunkPattern = /[A-Za-z0-9]+|./gu;
 
@@ -130,16 +170,22 @@ const MatrixCell = ({
   );
 };
 
-const ColumnHeader = ({ column }: { column: RelationMatrixEntity }) => (
+const ColumnHeader = ({
+  column,
+  columnCategory,
+}: {
+  column: RelationMatrixEntity;
+  columnCategory: RelationMatrixColumnCategory;
+}) => (
   <th
     scope='col'
     className='sticky top-0 z-20 h-28 w-7 min-w-7 border border-gray-200 bg-white p-0 align-bottom dark:border-slate-700 dark:bg-slate-900'
   >
-    <Link
+    <GotoLink
+      name={column.label}
       href={column.href}
-      aria-label={column.label}
-      title={column.label}
-      className='flex h-28 w-7 items-end justify-center overflow-hidden px-0.5 py-1 text-center text-[11px] leading-tight font-medium text-gray-700 hover:text-blue-600 focus:ring-2 focus:ring-blue-400 focus:outline-none dark:text-gray-200 dark:hover:text-blue-300'
+      categoryHint={getColumnCategoryHint(column, columnCategory)}
+      className='flex h-28 w-7 items-end justify-center overflow-hidden px-0.5 py-1 text-center text-[11px] leading-tight font-medium text-gray-700 no-underline hover:text-blue-600 focus:ring-2 focus:ring-blue-400 focus:outline-none dark:text-gray-200 dark:hover:text-blue-300'
     >
       <span className='flex max-h-full flex-col items-center justify-end gap-0.5 overflow-hidden'>
         {getColumnHeaderChunks(column.label).map((chunk, index) => (
@@ -148,23 +194,29 @@ const ColumnHeader = ({ column }: { column: RelationMatrixEntity }) => (
           </span>
         ))}
       </span>
-    </Link>
+    </GotoLink>
   </th>
 );
 
-const RowHeader = ({ row }: { row: RelationMatrixEntity }) => (
+const RowHeader = ({
+  row,
+  rowFaction,
+}: {
+  row: RelationMatrixEntity;
+  rowFaction: RelationMatrixRowFaction;
+}) => (
   <th
     scope='row'
     className='sticky left-0 z-10 h-7 max-w-28 min-w-24 border border-gray-200 bg-white p-0 dark:border-slate-700 dark:bg-slate-900'
   >
-    <Link
+    <GotoLink
+      name={row.label}
       href={row.href}
-      aria-label={row.label}
-      title={row.label}
-      className='block max-w-28 truncate px-2 py-1 text-left text-[12px] leading-5 font-medium whitespace-nowrap text-gray-700 hover:text-blue-600 focus:ring-2 focus:ring-blue-400 focus:outline-none dark:text-gray-200 dark:hover:text-blue-300'
+      categoryHint={CHARACTER_CATEGORY_HINT_BY_FACTION[rowFaction]}
+      className='block max-w-28 truncate px-2 py-1 text-left text-[12px] leading-5 font-medium whitespace-nowrap text-gray-700 no-underline hover:text-blue-600 focus:ring-2 focus:ring-blue-400 focus:outline-none dark:text-gray-200 dark:hover:text-blue-300'
     >
       {row.label}
-    </Link>
+    </GotoLink>
   </th>
 );
 
@@ -206,14 +258,18 @@ export default function CharacterRelationsMatrix({ viewModel }: CharacterRelatio
               角色
             </th>
             {viewModel.columns.map((column) => (
-              <ColumnHeader key={column.key} column={column} />
+              <ColumnHeader
+                key={column.key}
+                column={column}
+                columnCategory={viewModel.columnCategory}
+              />
             ))}
           </tr>
         </thead>
         <tbody>
           {viewModel.rows.map((row) => (
             <tr key={row.key}>
-              <RowHeader row={row} />
+              <RowHeader row={row} rowFaction={viewModel.rowFaction} />
               {viewModel.columns.map((column) => (
                 <MatrixCell key={column.key} row={row} column={column} viewModel={viewModel} />
               ))}
