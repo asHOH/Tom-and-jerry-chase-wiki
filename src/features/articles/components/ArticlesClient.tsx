@@ -386,9 +386,12 @@ export default function ArticlesClient({ articles: data, description }: Articles
           </div>
         </div>
       ) : (
-        <div
+        <m.div
           ref={isMobile ? (swipeContainerRef as React.RefObject<HTMLDivElement>) : articlesGridRef}
           className='md:mt-8 md:px-4'
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.16, ease: 'easeOut' }}
         >
           <Masonry
             items={visibleArticles}
@@ -396,6 +399,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
               columns: [1, 2, 3],
               gap: [16, 24, 24],
               media: [640, 1024, 1280],
+              useBalancedLayout: true,
             }}
             render={(article) => {
               const latestVersion = article.latest_approved_version[0];
@@ -403,99 +407,93 @@ export default function ArticlesClient({ articles: data, description }: Articles
                 ? charactersSnap[article.character_id]
                 : null;
               return (
-                <m.div
+                <BaseCard
+                  variant='character'
+                  aria-label={`查看文章 ${article.title}`}
+                  className='character-card shover:shadow-lg transform transition-transform! hover:-translate-y-1'
+                  href={`/articles/${article.id}`}
                   key={article.id}
-                  initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.16, ease: 'easeOut' }}
                 >
-                  <BaseCard
-                    variant='character'
-                    aria-label={`查看文章 ${article.title}`}
-                    className='character-card shover:shadow-lg transform transition-transform! hover:-translate-y-1'
-                    href={`/articles/${article.id}`}
-                  >
-                    <div className='flex h-full flex-col px-4 py-3 text-left'>
-                      {/* Character badge for game strategy articles */}
-                      {boundCharacter && (
-                        <div className='mb-2 flex items-center gap-2'>
-                          <Image
-                            src={AssetManager.getCharacterImageUrl(
-                              boundCharacter.id,
-                              boundCharacter.factionId ?? 'cat'
-                            )}
-                            alt={boundCharacter.id}
-                            width={32}
-                            height={32}
-                            className='h-8 w-8 rounded-lg object-cover ring-2 ring-blue-400 dark:ring-blue-500'
-                          />
-                          <span className='text-sm font-medium text-blue-600 dark:text-blue-400'>
-                            {boundCharacter.id}攻略
-                          </span>
-                        </div>
-                      )}
-
-                      <h3 className='mb-2 line-clamp-2 text-xl font-bold dark:text-white'>
-                        {article.title}
-                      </h3>
-
-                      <div className='mb-3 flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400'>
-                        <span>作者: {article.users_public_view?.nickname || '未知'}</span>
-                        <span
-                          className='rounded bg-blue-100 px-2 py-1 text-xs text-blue-700 transition-colors hover:bg-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:hover:bg-blue-800/50'
-                          onClick={(ev) => {
-                            ev.preventDefault();
-                            setCategoryFilters(new Set([article.category_id]));
-                          }}
-                          role='button'
-                        >
-                          {article.categories?.name || '未分类'}
+                  <div className='flex h-full flex-col px-4 py-3 text-left'>
+                    {/* Character badge for game strategy articles */}
+                    {boundCharacter && (
+                      <div className='mb-2 flex items-center gap-2'>
+                        <Image
+                          src={AssetManager.getCharacterImageUrl(
+                            boundCharacter.id,
+                            boundCharacter.factionId ?? 'cat'
+                          )}
+                          alt={boundCharacter.id}
+                          width={32}
+                          height={32}
+                          className='h-8 w-8 rounded-lg object-cover ring-2 ring-blue-400 dark:ring-blue-500'
+                        />
+                        <span className='text-sm font-medium text-blue-600 dark:text-blue-400'>
+                          {boundCharacter.id}攻略
                         </span>
                       </div>
+                    )}
 
-                      <RichTextDisplay content={latestVersion?.content} preview />
+                    <h3 className='mb-2 line-clamp-2 text-xl font-bold dark:text-white'>
+                      {article.title}
+                    </h3>
 
-                      <div className='mt-auto mb-2 flex'>
-                        <div className='items-left flex flex-col justify-between text-xs text-gray-600 dark:text-gray-400'>
+                    <div className='mb-3 flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400'>
+                      <span>作者: {article.users_public_view?.nickname || '未知'}</span>
+                      <span
+                        className='rounded bg-blue-100 px-2 py-1 text-xs text-blue-700 transition-colors hover:bg-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:hover:bg-blue-800/50'
+                        onClick={(ev) => {
+                          ev.preventDefault();
+                          setCategoryFilters(new Set([article.category_id]));
+                        }}
+                        role='button'
+                      >
+                        {article.categories?.name || '未分类'}
+                      </span>
+                    </div>
+
+                    <RichTextDisplay content={latestVersion?.content} preview />
+
+                    <div className='mt-auto mb-2 flex'>
+                      <div className='items-left flex flex-col justify-between text-xs text-gray-600 dark:text-gray-400'>
+                        <span>
+                          发布:{' '}
+                          {formatCompactDate(article.created_at, {
+                            invalidFallback: '日期未知',
+                          })}
+                        </span>
+                        {latestVersion && (
                           <span>
-                            发布:{' '}
-                            {formatCompactDate(article.created_at, {
+                            更新:{' '}
+                            {formatCompactDate(latestVersion.created_at, {
                               invalidFallback: '日期未知',
                             })}
                           </span>
-                          {latestVersion && (
-                            <span>
-                              更新:{' '}
-                              {formatCompactDate(latestVersion.created_at, {
-                                invalidFallback: '日期未知',
-                              })}
-                            </span>
-                          )}
-                          <span>浏览: {article.view_count ?? 0}</span>
-                        </div>
-
-                        <object className='my-auto ml-auto'>
-                          <div className='flex items-center gap-2'>
-                            <div className='flex-1' />
-                            <ButtonLink
-                              href={`/articles/${article.id}/history`}
-                              variant='secondary'
-                              size='sm'
-                              aria-label='查看历史版本'
-                              title='查看历史版本'
-                            >
-                              <ClockIcon className='size-4' strokeWidth={1.5} />
-                            </ButtonLink>
-                          </div>
-                        </object>
+                        )}
+                        <span>浏览: {article.view_count ?? 0}</span>
                       </div>
+
+                      <object className='my-auto ml-auto'>
+                        <div className='flex items-center gap-2'>
+                          <div className='flex-1' />
+                          <ButtonLink
+                            href={`/articles/${article.id}/history`}
+                            variant='secondary'
+                            size='sm'
+                            aria-label='查看历史版本'
+                            title='查看历史版本'
+                          >
+                            <ClockIcon className='size-4' strokeWidth={1.5} />
+                          </ButtonLink>
+                        </div>
+                      </object>
                     </div>
-                  </BaseCard>
-                </m.div>
+                  </div>
+                </BaseCard>
               );
             }}
           />
-        </div>
+        </m.div>
       )}
 
       {/* Pagination */}
