@@ -212,7 +212,7 @@ export const RelationMatrixLegend = () => (
     ))}
     <span className='inline-flex items-center gap-1'>
       <span aria-hidden='true' className='h-2.5 w-2.5 rounded-xs bg-gray-400' />
-      主要关系为整格填色
+      主要关系为整格
     </span>
     <span className='inline-flex items-center gap-1'>
       <span aria-hidden='true' className='h-2 w-2 rounded-full bg-gray-400' />
@@ -223,19 +223,17 @@ export const RelationMatrixLegend = () => (
 
 export default function CharacterRelationsMatrix({ viewModel }: CharacterRelationsMatrixProps) {
   return (
-    <div className='max-h-[calc(100vh-15rem)] overflow-auto rounded-md border border-gray-200 bg-white dark:border-slate-700 dark:bg-slate-900'>
+    <div className='mx-auto max-h-[calc(100vh-15rem)] w-fit max-w-full overflow-auto border border-gray-200 bg-white dark:border-slate-700 dark:bg-slate-900'>
       <table
         aria-label='角色关系矩阵'
-        className='border-separate border-spacing-0 text-xs text-gray-700 dark:text-gray-200'
+        className='w-max border-separate border-spacing-0 text-xs text-gray-700 dark:text-gray-200'
       >
         <thead>
           <tr>
             <th
               scope='col'
-              className='sticky top-0 left-0 z-30 h-28 min-w-24 border border-gray-200 bg-white p-2 text-left align-bottom text-xs font-semibold text-gray-500 dark:border-slate-700 dark:bg-slate-900 dark:text-gray-400'
-            >
-              角色
-            </th>
+              className='sticky top-0 left-0 z-30 h-28 min-w-24 border border-gray-200 bg-white p-2 text-left align-bottom dark:border-slate-700 dark:bg-slate-900'
+            ></th>
             {viewModel.columns.map((column) => (
               <ColumnHeader
                 key={column.key}

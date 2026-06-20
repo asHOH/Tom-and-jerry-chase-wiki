@@ -135,8 +135,6 @@ export default function RelationsClient({ description }: RelationsClientProps) {
         </div>
       }
       filtersClassName='max-w-5xl'
-      contentTopSpacing='default'
-      contentClassName='px-0 md:px-2'
     >
       <CharacterRelationsMatrix viewModel={viewModel} />
     </CatalogPageShell>
