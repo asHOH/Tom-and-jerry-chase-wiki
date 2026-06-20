@@ -7,8 +7,7 @@ import RelationsClient from './RelationsClient';
 
 export const dynamic = 'force-static';
 
-const DESCRIPTION =
-  '查看猫和老鼠手游角色间，及角色与知识卡、特技、地图、模式之间的克制和协作关系。';
+const DESCRIPTION = '查看角色间，及角色与知识卡、特技、地图、模式之间的克制和协作关系。';
 
 export const metadata: Metadata = generatePageMetadata({
   title: '角色关系',
