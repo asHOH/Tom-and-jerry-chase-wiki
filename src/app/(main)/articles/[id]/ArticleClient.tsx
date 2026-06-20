@@ -9,7 +9,6 @@ import { AssetManager } from '@/lib/assetManager';
 import { formatArticleDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
 import { toChineseNumeral } from '@/lib/textUtils';
-import { useMobile } from '@/hooks/useMediaQuery';
 import { useUser } from '@/hooks/useUser';
 import Button from '@/components/ui/Button';
 import ButtonLink from '@/components/ui/ButtonLink';
@@ -180,7 +179,6 @@ export default function ArticleClient({
   const params = useParams();
   const { role: userRole } = useUser();
   const articleId = params?.id as string;
-  const isMobile = useMobile();
   const charactersSnap = useSnapshot(characters);
   const contentRef = useRef<HTMLDivElement | null>(null);
   const [tocItems, setTocItems] = useState<TocItem[]>([]);
@@ -454,7 +452,7 @@ export default function ArticleClient({
 
   const canEdit =
     userRole === 'Contributor' || userRole === 'Reviewer' || userRole === 'Coordinator';
-  const titleSize = !isMobile ? 'text-4xl' : article.title.length <= 10 ? 'text-3xl' : 'text-2xl';
+  const titleSize = article.title.length <= 10 ? 'text-3xl md:text-4xl' : 'text-2xl md:text-3xl';
   const hasToc = tocItems.length > 0;
   const minHeadingLevel = useMemo(() => {
     if (!tocItems.length) {
@@ -499,7 +497,7 @@ export default function ArticleClient({
   );
 
   return (
-    <div className={cn('container mx-auto max-w-7xl', isMobile ? 'px-1 py-2' : 'px-6 py-8')}>
+    <div className='container mx-auto max-w-7xl px-1 py-2 md:px-6 md:py-8'>
       {/* Reading Progress Bar - Teleported to body to escape transformed containers */}
       {mounted &&
         createPortal(
@@ -529,11 +527,7 @@ export default function ArticleClient({
             </header>
 
             {/* Article Meta */}
-            <div
-              className={
-                isMobile ? 'p-2' : 'mt-6 rounded-lg border border-gray-200 p-6 dark:border-gray-700'
-              }
-            >
+            <div className='p-2 md:mt-6 md:rounded-lg md:border md:border-gray-200 md:p-6 dark:md:border-gray-700'>
               <div className='flex flex-wrap items-center gap-6 text-sm text-gray-600 dark:text-gray-400'>
                 <div className='flex items-center gap-2'>
                   <UserCircleIcon className='size-4' strokeWidth={1.5} />
@@ -636,9 +630,7 @@ export default function ArticleClient({
           <div
             ref={contentRef}
             className={cn(
-              'article-content',
-              !isMobile &&
-                'rounded-lg border border-transparent p-0 lg:bg-white/70 lg:p-8 lg:shadow-sm dark:lg:border-gray-800 dark:lg:bg-gray-900/40',
+              'article-content md:rounded-lg md:border md:border-transparent md:p-0 lg:bg-white/70 lg:p-8 lg:shadow-sm dark:lg:border-gray-800 dark:lg:bg-gray-900/40',
               showAutoNumbering && 'article-content-auto-numbered'
             )}
           >
