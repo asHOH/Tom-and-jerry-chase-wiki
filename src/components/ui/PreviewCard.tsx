@@ -4,6 +4,7 @@ import type { GotoDisambiguationCandidate } from '@/lib/types';
 import { useDarkMode } from '@/context/DarkModeContext';
 import type { FactionId, SkillType } from '@/data/types';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
+import Image from '@/components/Image';
 import Link from '@/components/Link';
 
 import BaseCard from './BaseCard';
@@ -111,11 +112,13 @@ export default function PreviewCard({
       tabIndex={-1}
     >
       {!hideImage && imageUrl ? (
-        <div className='mr-4 flex h-24 w-24 shrink-0 items-center justify-center rounded-lg bg-gray-100 md:h-28 md:w-28 lg:h-32 lg:w-32 dark:bg-gray-800'>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+        <div className='mr-4 flex h-24 w-24 shrink-0 items-center justify-center rounded-lg bg-gray-100 md:h-28 md:w-28 lg:h-36 lg:w-36 dark:bg-gray-800'>
+          <Image
             src={imageUrl}
             alt={name}
+            width={128}
+            height={128}
+            sizes='(min-width: 1024px) 128px, (min-width: 768px) 112px, 96px'
             className='h-full w-full object-contain'
             loading='lazy'
             draggable={false}
