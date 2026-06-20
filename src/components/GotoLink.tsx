@@ -15,6 +15,7 @@ type GotoLinkProps = {
   href?: string; // optional explicit target; useful for disambiguation candidates
   prefetchedPreview?: GotoPreviewCardProps; // optional preview payload to avoid extra fetch
   className?: string;
+  triggerClassName?: string; // optional class for the Radix trigger wrapper
   children: React.ReactNode;
   asPreviewOnly?: boolean; // when true, do not navigate; only show preview tooltip
   hideImagePreview?: boolean; // when true, hide image in preview content
@@ -27,6 +28,7 @@ export default function GotoLink({
   href,
   prefetchedPreview,
   className,
+  triggerClassName,
   children,
   asPreviewOnly = false,
   hideImagePreview = false,
@@ -259,7 +261,7 @@ export default function GotoLink({
       <TooltipPrimitive.Root open={open} onOpenChange={handleOpenChange}>
         <TooltipPrimitive.Trigger asChild>
           <span
-            className='inline-block'
+            className={triggerClassName ?? 'inline-block'}
             ref={triggerRef}
             onPointerDown={handlePointerDown}
             onTouchStart={handleTouchStart}

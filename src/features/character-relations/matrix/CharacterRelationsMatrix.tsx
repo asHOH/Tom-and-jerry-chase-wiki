@@ -191,7 +191,8 @@ const RowHeader = ({
       name={row.label}
       href={row.href}
       categoryHint={CHARACTER_CATEGORY_HINT_BY_FACTION[rowFaction]}
-      className='block max-w-28 truncate px-2 py-1 text-left text-[12px] leading-5 font-medium whitespace-nowrap text-gray-700 no-underline hover:text-blue-600 focus:ring-2 focus:ring-blue-400 focus:outline-none dark:text-gray-200 dark:hover:text-blue-300'
+      triggerClassName='block h-7 leading-none'
+      className='block h-7 max-w-28 truncate px-2 py-1 text-left text-[12px] leading-5 font-medium whitespace-nowrap text-gray-700 no-underline hover:text-blue-600 focus:ring-2 focus:ring-blue-400 focus:outline-none dark:text-gray-200 dark:hover:text-blue-300'
     >
       {row.label}
     </GotoLink>

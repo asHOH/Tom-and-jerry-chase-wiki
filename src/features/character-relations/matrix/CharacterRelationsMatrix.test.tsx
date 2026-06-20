@@ -15,18 +15,21 @@ jest.mock('@/components/GotoLink', () => ({
     href,
     className,
     categoryHint,
+    triggerClassName,
     children,
   }: {
     name: string;
     href?: string;
     className?: string;
     categoryHint?: string;
+    triggerClassName?: string;
     children: ReactNode;
   }) => (
     <a
       href={href}
       className={className}
       data-category-hint={categoryHint}
+      data-trigger-class={triggerClassName}
       data-testid={`goto-link-${name}`}
     >
       {children}
@@ -58,6 +61,7 @@ describe('CharacterRelationsMatrix', () => {
     const rowLink = screen.getByTestId('goto-link-杰瑞');
     expect(rowLink).toHaveAttribute('href', '/characters/%E6%9D%B0%E7%91%9E');
     expect(rowLink).toHaveAttribute('data-category-hint', '鼠角色');
+    expect(rowLink).toHaveAttribute('data-trigger-class', 'block h-7 leading-none');
     expect(rowLink).toHaveClass('no-underline');
 
     const columnLink = screen.getByTestId('goto-link-汤姆');
