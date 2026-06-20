@@ -111,7 +111,7 @@ export default function PreviewCard({
       tabIndex={-1}
     >
       {!hideImage && imageUrl ? (
-        <div className='mr-4 flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-gray-100 md:h-28 md:w-28 lg:h-32 lg:w-32 dark:bg-gray-800'>
+        <div className='mr-4 flex h-24 w-24 shrink-0 items-center justify-center rounded-lg bg-gray-100 md:h-28 md:w-28 lg:h-32 lg:w-32 dark:bg-gray-800'>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={imageUrl}
