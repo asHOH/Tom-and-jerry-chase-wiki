@@ -5,6 +5,10 @@ import { cn, getFilterButtonActiveToneClasses, type FilterButtonTone } from '@/l
 
 import FilterLabel from './FilterLabel';
 
+type FilterButtonStyle = React.CSSProperties & {
+  '--filter-button-hover-color'?: string;
+};
+
 export type FilterRowProps<T extends string | number> = {
   label: string;
   options: readonly T[] | T[];
@@ -64,7 +68,18 @@ export default function FilterRow<T extends string | number>(props: FilterRowPro
             const resolvedActiveTone =
               typeof activeTone === 'function' ? activeTone(opt as T) : activeTone;
             const provided = getButtonStyle?.(opt as T, active);
-            const finalStyle = provided;
+            const activeStyle = active ? undefined : getButtonStyle?.(opt as T, true);
+            const activeTextColor = activeStyle?.color;
+            const hoverStyle =
+              typeof activeTextColor === 'string'
+                ? ({ '--filter-button-hover-color': activeTextColor } satisfies FilterButtonStyle)
+                : undefined;
+            const finalStyle = hoverStyle
+              ? ({ ...provided, ...hoverStyle } satisfies FilterButtonStyle)
+              : provided;
+            const inactiveHoverTextClassName = hoverStyle
+              ? 'hover:text-[var(--filter-button-hover-color)]'
+              : 'hover:text-gray-900 dark:hover:text-gray-100';
             const labelNode = getOptionLabel ? getOptionLabel(opt as T, active) : String(opt);
             const button = (
               <m.button
@@ -76,12 +91,14 @@ export default function FilterRow<T extends string | number>(props: FilterRowPro
                   'filter-button cursor-pointer rounded-lg border-none px-3 py-2 text-sm font-medium transition-all duration-200 ease-in-out',
                   active
                     ? getFilterButtonActiveToneClasses(resolvedActiveTone)
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-800 dark:text-gray-500 dark:hover:bg-slate-700',
+                    : cn(
+                        'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-800 dark:text-gray-500 dark:hover:bg-slate-700',
+                        inactiveHoverTextClassName
+                      ),
                   getButtonClassName?.(opt as T, active)
                 )}
                 style={finalStyle as MotionStyle}
                 disabled={getButtonDisabled?.(opt as T, active)}
-                whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
                 {labelNode}
