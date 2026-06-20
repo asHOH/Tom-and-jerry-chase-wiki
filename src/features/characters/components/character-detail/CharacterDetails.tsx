@@ -21,7 +21,7 @@ import CharacterNavigationButtons from '@/components/ui/CharacterNavigationButto
 import CollapseCard from '@/components/ui/CollapseCard';
 import { editable } from '@/components/ui/editable';
 import EditButton from '@/components/ui/EditButton';
-import { CloseIcon, PlusIcon } from '@/components/icons/CommonIcons';
+import { PlusIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 import { characters } from '@/data';
 
@@ -44,18 +44,12 @@ const e = editable('characters');
 
 interface CharacterDetailsWithTutorialProps {
   children?: React.ReactNode;
-  onTutorialTrigger?: () => void;
 }
 
-export default function CharacterDetails({
-  onTutorialTrigger,
-  children,
-}: CharacterDetailsWithTutorialProps) {
+export default function CharacterDetails({ children }: CharacterDetailsWithTutorialProps) {
   const { isEditMode } = useEditMode();
   const isMobile = useMobile();
-  const [isLocalEditMode, setIsLocalEditMode] = useState(true);
-  const { addSecondWeapon, exportCharacter } = useCharacterActions();
-  const [copyMessage, setCopyMessage] = useState('');
+  const { addSecondWeapon } = useCharacterActions();
   const { characterId } = useLocalCharacter();
   const localCharacter = useSnapshot(characters[characterId]!);
   const factionId = localCharacter.factionId!;
@@ -88,7 +82,7 @@ export default function CharacterDetails({
   return (
     <EditModeContext
       value={{
-        isEditMode: isEditMode && isLocalEditMode,
+        isEditMode,
         isLoading: false,
       }}
     >
@@ -128,139 +122,6 @@ export default function CharacterDetails({
                       </span>
                     </h1>
                     {!isEditMode && <EditButton compact className='ml-2' />}
-                    {isEditMode && (
-                      <div className='flex overflow-hidden rounded-md border border-gray-300 dark:border-gray-600'>
-                        <button
-                          type='button'
-                          aria-label='教程'
-                          onClick={onTutorialTrigger}
-                          className='focus:ring-opacity-50 flex h-8 w-8 items-center justify-center bg-green-500 text-white hover:bg-green-600 focus:ring-2 focus:ring-green-500 focus:outline-none dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-400'
-                          data-tutorial-id='character-tutorial'
-                        >
-                          <svg
-                            xmlns='http://www.w3.org/2000/svg'
-                            fill='none'
-                            viewBox='0 0 24 24'
-                            strokeWidth={1.5}
-                            stroke='currentColor'
-                            className='h-5 w-5'
-                          >
-                            <path strokeLinecap='round' strokeLinejoin='round' d='M12 6v6l4 2' />
-                            <circle
-                              cx='12'
-                              cy='12'
-                              r='9'
-                              stroke='currentColor'
-                              strokeWidth='1.5'
-                              fill='none'
-                            />
-                          </svg>
-                        </button>
-                        <button
-                          type='button'
-                          aria-label='预览'
-                          onClick={() => setIsLocalEditMode(!isLocalEditMode)}
-                          className='focus:ring-opacity-50 flex h-8 w-8 items-center justify-center border-l border-gray-300 bg-purple-500 text-white hover:bg-purple-600 focus:ring-2 focus:ring-purple-500 focus:outline-none dark:border-gray-600 dark:bg-purple-700 dark:hover:bg-purple-800 dark:focus:ring-purple-400'
-                          data-tutorial-id='character-preview'
-                        >
-                          <svg
-                            xmlns='http://www.w3.org/2000/svg'
-                            fill='none'
-                            viewBox='0 0 24 24'
-                            strokeWidth={1.5}
-                            stroke='currentColor'
-                            className='size-5'
-                          >
-                            <path
-                              strokeLinecap='round'
-                              strokeLinejoin='round'
-                              d='m21 7.5-2.25-1.313M21 7.5v2.25m0-2.25-2.25 1.313M3 7.5l2.25-1.313M3 7.5l2.25 1.313M3 7.5v2.25m9 3 2.25-1.313M12 12.75l-2.25-1.313M12 12.75V15m0 6.75 2.25-1.313M12 21.75V19.5m0 2.25-2.25-1.313m0-16.875L12 2.25l2.25 1.313M21 14.25v2.25l-2.25 1.313m-13.5 0L3 16.5v-2.25'
-                            />
-                          </svg>
-                        </button>
-                        <button
-                          type='button'
-                          aria-label='导出角色数据'
-                          onClick={async () => {
-                            setCopyMessage('saving');
-                            try {
-                              await exportCharacter();
-                              setCopyMessage('success');
-                              setTimeout(() => setCopyMessage(''), 2000);
-                            } catch (err) {
-                              console.error('Failed to copy: ', err);
-                              setCopyMessage('error');
-                              setTimeout(() => setCopyMessage(''), 2000);
-                            }
-                          }}
-                          className='focus:ring-opacity-50 flex h-8 w-8 items-center justify-center rounded-r-md bg-blue-500 text-white hover:bg-blue-600 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-400'
-                          data-tutorial-id='character-export'
-                        >
-                          {copyMessage === 'saving' && (
-                            // Save icon
-                            <svg
-                              xmlns='http://www.w3.org/2000/svg'
-                              className='h-5 w-5 animate-spin'
-                              fill='none'
-                              viewBox='0 0 24 24'
-                              stroke='currentColor'
-                            >
-                              <circle
-                                className='opacity-25'
-                                cx='12'
-                                cy='12'
-                                r='10'
-                                stroke='currentColor'
-                                strokeWidth='4'
-                              ></circle>
-                              <path
-                                className='opacity-75'
-                                fill='currentColor'
-                                d='M4 12a8 8 0 018-8v8z'
-                              ></path>
-                            </svg>
-                          )}
-                          {copyMessage === 'success' && (
-                            // Success icon
-                            <svg
-                              xmlns='http://www.w3.org/2000/svg'
-                              className='h-5 w-5 text-green-400'
-                              fill='none'
-                              viewBox='0 0 24 24'
-                              stroke='currentColor'
-                            >
-                              <path
-                                strokeLinecap='round'
-                                strokeLinejoin='round'
-                                strokeWidth='3'
-                                d='M5 13l4 4L19 7'
-                              />
-                            </svg>
-                          )}
-                          {copyMessage === 'error' && (
-                            // Error icon
-                            <CloseIcon className='h-5 w-5 text-red-500' strokeWidth={3} />
-                          )}
-                          {!copyMessage && (
-                            // Download icon
-                            <svg
-                              xmlns='http://www.w3.org/2000/svg'
-                              fill='none'
-                              viewBox='0 0 24 24'
-                              strokeWidth={1.5}
-                              stroke='currentColor'
-                              className='h-4 w-4'
-                            >
-                              <path
-                                strokeLinecap='round'
-                                strokeLinejoin='round'
-                                d='M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3'
-                              />
-                            </svg>
-                          )}
-                        </button>
-                      </div>
-                    )}
                   </div>
                   <ContentWriterDisplay characterId={localCharacter.id} />
                   <CreateDateDisplay createDate={localCharacter.createDate} />
@@ -376,7 +237,7 @@ export default function CharacterDetails({
                       />
                     ))
                     .concat(
-                      isSingleWeapon && isLocalEditMode && isEditMode ? (
+                      isSingleWeapon && isEditMode ? (
                         <button
                           type='button'
                           aria-label='添加第二武器'
