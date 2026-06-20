@@ -2,10 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
-import {
-  hasUserSeenCharacterDetailsTutorial,
-  resetCharacterDetailsTutorial,
-} from '@/lib/tutorialUtils';
+import { hasUserSeenCharacterDetailsTutorial } from '@/lib/tutorialUtils';
 import { CharacterDetailsProps } from '@/lib/types';
 import { useKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
@@ -55,11 +52,6 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
     setShowTutorial(false);
   }, []);
 
-  const handleTutorialTrigger = useCallback(() => {
-    resetCharacterDetailsTutorial();
-    setShowTutorial(true);
-  }, []);
-
   const handlePublish = useCallback(
     (message?: string) => publishChanges(message),
     [publishChanges]
@@ -68,9 +60,7 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
   return (
     <>
       <div className='min-h-screen'>
-        <CharacterDetails onTutorialTrigger={handleTutorialTrigger}>
-          {props.children}
-        </CharacterDetails>
+        <CharacterDetails>{props.children}</CharacterDetails>
       </div>
 
       {showTutorial && (
