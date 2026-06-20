@@ -19,34 +19,12 @@ type CharacterRelationsMatrixProps = {
   viewModel: RelationMatrixViewModel;
 };
 
-type RelationStyleClasses = {
-  fill: string;
-  dot: string;
-  legend: string;
-};
-
-const RELATION_STYLE_CLASSES = {
-  collaborator: {
-    fill: 'bg-green-500 dark:bg-green-500/80',
-    dot: 'bg-green-500 dark:bg-green-400',
-    legend: 'bg-green-500',
-  },
-  counter: {
-    fill: 'bg-blue-500 dark:bg-blue-500/80',
-    dot: 'bg-blue-500 dark:bg-blue-400',
-    legend: 'bg-blue-500',
-  },
-  counteredBy: {
-    fill: 'bg-red-500 dark:bg-red-500/80',
-    dot: 'bg-red-500 dark:bg-red-400',
-    legend: 'bg-red-500',
-  },
-  counterEachOther: {
-    fill: 'bg-amber-400 dark:bg-amber-500/80',
-    dot: 'bg-amber-500 dark:bg-amber-400',
-    legend: 'bg-amber-400',
-  },
-} satisfies Record<RelationMatrixDisplayKind, RelationStyleClasses>;
+const RELATION_COLOR_CLASSES = {
+  collaborator: 'bg-green-500 dark:bg-green-500/90',
+  counter: 'bg-blue-500 dark:bg-blue-500/90',
+  counteredBy: 'bg-red-500 dark:bg-red-500/90',
+  counterEachOther: 'bg-amber-400 dark:bg-amber-500/90',
+} satisfies Record<RelationMatrixDisplayKind, string>;
 
 const RELATION_LEGEND_ITEMS = [
   { kind: 'counter', label: '克制' },
@@ -133,7 +111,7 @@ const CellMarker = ({ cell }: { cell: RelationMatrixCell }) => {
     <span
       data-testid='relation-minor-dot'
       aria-hidden='true'
-      className={cn('block h-3 w-3 rounded-full', RELATION_STYLE_CLASSES[cell.displayKind].dot)}
+      className={cn('block h-3 w-3 rounded-full', RELATION_COLOR_CLASSES[cell.displayKind])}
     />
   );
 };
@@ -159,7 +137,7 @@ const MatrixCell = ({
           content={cell.tooltipContent}
           className={cn(
             'flex h-7 w-7 cursor-help items-center justify-center border-b-0 transition-opacity hover:opacity-85',
-            !cell.isMinor && RELATION_STYLE_CLASSES[cell.displayKind].fill
+            !cell.isMinor && RELATION_COLOR_CLASSES[cell.displayKind]
           )}
           triggerProps={{ 'aria-label': cell.tooltipContent }}
         >
@@ -226,7 +204,7 @@ export const RelationMatrixLegend = () => (
       <span key={item.kind} className='inline-flex items-center gap-1'>
         <span
           aria-hidden='true'
-          className={cn('h-2.5 w-2.5 rounded-sm', RELATION_STYLE_CLASSES[item.kind].legend)}
+          className={cn('h-2.5 w-2.5 rounded-sm', RELATION_COLOR_CLASSES[item.kind])}
         />
         {item.label}
       </span>

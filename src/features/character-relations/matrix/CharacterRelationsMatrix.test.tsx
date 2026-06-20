@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { render, screen, within } from '@testing-library/react';
 
-import CharacterRelationsMatrix from './CharacterRelationsMatrix';
+import CharacterRelationsMatrix, { RelationMatrixLegend } from './CharacterRelationsMatrix';
 import {
   buildRelationMatrixViewModel,
   getRelationMatrixCell,
@@ -91,7 +91,36 @@ describe('CharacterRelationsMatrix', () => {
 
     const minorCell = screen.getByTestId(getCellTestId(viewModel, '鲍姆', '托普斯'));
     const minorTrigger = within(minorCell).getByLabelText(/互克：二者克制关系主要取决于托普斯/);
-    expect(minorTrigger).not.toHaveClass('bg-amber-400');
-    expect(within(minorCell).getByTestId('relation-minor-dot')).toHaveClass('bg-amber-500');
+    expect(minorTrigger).not.toHaveClass('bg-amber-400', 'dark:bg-amber-500/90');
+    expect(within(minorCell).getByTestId('relation-minor-dot')).toHaveClass(
+      'bg-amber-400',
+      'dark:bg-amber-500/90'
+    );
+  });
+
+  it('should reuse one relation color class for fills, dots, and legend markers', () => {
+    const viewModel = buildRelationMatrixViewModel({
+      rowFaction: 'mouse',
+      columnCategory: 'cat',
+    });
+
+    render(
+      <>
+        <RelationMatrixLegend />
+        <CharacterRelationsMatrix viewModel={viewModel} />
+      </>
+    );
+
+    const majorCell = screen.getByTestId(getCellTestId(viewModel, '杰瑞', '汤姆'));
+    const majorTrigger = within(majorCell).getByLabelText(/被克制：杰瑞自保能力差/);
+    expect(majorTrigger).toHaveClass('bg-red-500', 'dark:bg-red-500/90');
+
+    const minorCell = screen.getByTestId(getCellTestId(viewModel, '鲍姆', '托普斯'));
+    const minorDot = within(minorCell).getByTestId('relation-minor-dot');
+    expect(minorDot).toHaveClass('bg-amber-400', 'dark:bg-amber-500/90');
+    expect(minorDot).not.toHaveClass('bg-amber-500', 'dark:bg-amber-400');
+
+    const counterEachOtherLegendMarker = screen.getByText('互克').querySelector('[aria-hidden]');
+    expect(counterEachOtherLegendMarker).toHaveClass('bg-amber-400', 'dark:bg-amber-500/90');
   });
 });
