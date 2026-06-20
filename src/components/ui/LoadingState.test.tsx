@@ -149,7 +149,7 @@ describe('PageLoadingState', () => {
   it('uses the detail shell classes by default', () => {
     const { container } = render(<PageLoadingState type='detail' />);
 
-    expect(container.firstChild).toHaveClass('mx-auto', 'max-w-6xl', 'space-y-6', 'p-6');
+    expect(container.firstChild).toHaveClass('mx-auto', 'max-w-7xl', 'space-y-6', 'p-6');
     expect(container.firstChild).not.toHaveClass('space-y-8', 'dark:text-slate-200');
   });
 
@@ -160,7 +160,7 @@ describe('PageLoadingState', () => {
 
     expect(container.firstChild).toHaveClass(
       'mx-auto',
-      'max-w-6xl',
+      'max-w-7xl',
       'space-y-8',
       'p-6',
       'dark:text-slate-200'
@@ -172,7 +172,7 @@ describe('PageLoadingState', () => {
 
     expect(container.firstChild).toHaveClass(
       'mx-auto',
-      'max-w-6xl',
+      'max-w-7xl',
       'space-y-6',
       'pt-10',
       'md:p-8'
@@ -235,7 +235,7 @@ describe('CatalogPageLoadingState', () => {
 
     expect(container.firstChild).toHaveClass(
       'mx-auto',
-      'max-w-6xl',
+      'max-w-7xl',
       'space-y-8',
       'p-6',
       'dark:text-slate-200'

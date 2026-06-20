@@ -57,8 +57,8 @@ const gridItemClasses = [
 const getGridItemClass = (index: number) => gridItemClasses[index % gridItemClasses.length];
 
 const pageLoadingLayoutClasses: Record<PageLoadingLayout, string> = {
-  detail: 'mx-auto max-w-6xl space-y-6 p-6',
-  catalog: 'mx-auto max-w-6xl space-y-8 p-6 dark:text-slate-200',
+  detail: 'mx-auto max-w-7xl space-y-6 p-6',
+  catalog: 'mx-auto max-w-7xl space-y-8 p-6 dark:text-slate-200',
 };
 
 export const getPageLoadingStateClassName = (

@@ -499,7 +499,7 @@ export default function ArticleClient({
   );
 
   return (
-    <div className={cn('container mx-auto max-w-6xl', isMobile ? 'px-1 py-2' : 'px-6 py-8')}>
+    <div className={cn('container mx-auto max-w-7xl', isMobile ? 'px-1 py-2' : 'px-6 py-8')}>
       {/* Reading Progress Bar - Teleported to body to escape transformed containers */}
       {mounted &&
         createPortal(

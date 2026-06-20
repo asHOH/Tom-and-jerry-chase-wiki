@@ -127,7 +127,7 @@ export default function ArticleHistoryClient() {
   }
 
   return (
-    <div className='container mx-auto max-w-6xl px-4 py-8'>
+    <div className='container mx-auto max-w-7xl px-4 py-8'>
       {/* Header */}
       <header className='mb-8 text-center'>
         {/* <div className='flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mb-4'>

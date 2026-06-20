@@ -123,7 +123,7 @@ describe('CatalogPageShell', () => {
     const contentWrapper = screen.getByText('Content').parentElement;
 
     expect(section).toHaveClass('max-w-4xl');
-    expect(section).not.toHaveClass('max-w-6xl');
+    expect(section).not.toHaveClass('max-w-7xl');
     expect(header).toHaveClass('mb-2');
     expect(filtersWrapper).toHaveClass('max-w-xl');
     expect(filtersWrapper).not.toHaveClass('max-w-2xl');

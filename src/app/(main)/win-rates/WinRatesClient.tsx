@@ -370,7 +370,7 @@ export default function WinRatesClient({ description }: WinRatesClientProps) {
   };
 
   return (
-    <div className='mx-auto max-w-3xl space-y-2 p-2 md:max-w-6xl md:space-y-8 md:p-6 dark:text-slate-200'>
+    <div className='mx-auto max-w-3xl space-y-2 p-2 md:max-w-7xl md:space-y-8 md:p-6 dark:text-slate-200'>
       <header className='mb-4 space-y-2 px-2 text-center md:mb-8 md:space-y-4 md:px-4'>
         <PageTitle>胜率数据统计</PageTitle>
         <PageDescription>{description}</PageDescription>

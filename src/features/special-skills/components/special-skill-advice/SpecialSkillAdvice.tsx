@@ -107,7 +107,7 @@ export default function SpecialSkillAdviceClient() {
     : allSkills;
 
   return (
-    <div className='mx-auto max-w-6xl space-y-8 p-6 dark:text-slate-200'>
+    <div className='mx-auto max-w-7xl space-y-8 p-6 dark:text-slate-200'>
       <header className='mb-8 space-y-4 px-4 text-center'>
         <PageTitle>特技推荐</PageTitle>
         <PageDescription>根据各特技的应用场合和克制关系，选择最合适的特技</PageDescription>

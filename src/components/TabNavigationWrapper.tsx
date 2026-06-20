@@ -17,7 +17,7 @@ export default function TabNavigationWrapper({
       <TabNavigation showDetailToggle={showDetailToggle} />
 
       {/* Content with padding for the fixed navbar */}
-      <div className='mx-auto max-w-300 p-6 pt-[calc(var(--nav-height)+20px)]'>{children}</div>
+      <div className='mx-auto max-w-7xl p-6 pt-[calc(var(--nav-height)+20px)]'>{children}</div>
     </div>
   );
 }

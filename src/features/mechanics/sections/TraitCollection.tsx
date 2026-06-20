@@ -71,7 +71,7 @@ export default function TraitCollision() {
   };
 
   return (
-    <div ref={topRef} className={'mx-auto max-w-6xl space-y-2 pt-4 dark:text-slate-200'}>
+    <div ref={topRef} className={'mx-auto max-w-7xl space-y-2 pt-4 dark:text-slate-200'}>
       <header className={'mb-2 space-y-2 px-2 text-center'}>
         <PageTitle>特性大全</PageTitle>
         <PageDescription>

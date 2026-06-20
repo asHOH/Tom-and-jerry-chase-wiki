@@ -69,7 +69,7 @@ describe('ToolGrid', () => {
       'max-w-3xl',
       'space-y-2',
       'p-2',
-      'md:max-w-6xl',
+      'md:max-w-7xl',
       'md:space-y-8',
       'md:p-6'
     );
@@ -105,7 +105,7 @@ describe('ToolGrid', () => {
     const root = container.firstElementChild as HTMLElement;
     const header = container.querySelector('header') as HTMLElement | null;
 
-    expect(root).toHaveClass('max-w-3xl', 'space-y-2', 'p-2', 'md:max-w-6xl');
+    expect(root).toHaveClass('max-w-3xl', 'space-y-2', 'p-2', 'md:max-w-7xl');
     expect(header).toHaveClass(
       'mb-4',
       'space-y-2',

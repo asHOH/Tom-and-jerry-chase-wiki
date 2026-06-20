@@ -58,7 +58,7 @@ export default function MechanicsNavigation({ children, description }: Mechanics
   const hasActiveMechanicsTab = MECHANICS_NAV_ITEMS.some((tab) => isTabActive(tab.href));
 
   return (
-    <div className='mx-auto max-w-3xl space-y-4 md:max-w-6xl md:space-y-8 md:p-6 dark:text-slate-200'>
+    <div className='mx-auto max-w-3xl space-y-4 md:max-w-7xl md:space-y-8 md:p-6 dark:text-slate-200'>
       <header className='mb-2 text-center md:mb-4 md:space-y-4 md:px-4'>
         <PageTitle>局内机制</PageTitle>
         <PageDescription>{description}</PageDescription>

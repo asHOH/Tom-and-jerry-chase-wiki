@@ -79,7 +79,7 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
     );
 
   return (
-    <div className='mx-auto max-w-6xl p-6 dark:text-slate-200'>
+    <div className='mx-auto max-w-7xl p-6 dark:text-slate-200'>
       <h1 className='mb-6 text-3xl font-bold text-gray-900 dark:text-gray-100'>管理面板</h1>
 
       <div className='mb-6 flex border-b border-gray-200 dark:border-slate-700'>
