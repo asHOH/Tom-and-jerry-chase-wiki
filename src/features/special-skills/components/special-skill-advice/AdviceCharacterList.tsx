@@ -9,8 +9,8 @@ interface Character {
 }
 
 interface CharacterListProps {
-  characters: Character[];
-  isMinorCharacters?: Character[];
+  characters: readonly Character[];
+  isMinorCharacters?: readonly Character[];
   showList?: boolean;
   color?: 'default' | 'red' | 'blue' | 'green';
 }

@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import { useSnapshot } from 'valtio';
 
+import type { DeepReadonly } from '@/types/deep-readonly';
 import { designTokens, getFactionButtonColors } from '@/lib/design';
 import { CharacterWithFaction } from '@/lib/types';
 import { useDarkMode } from '@/context/DarkModeContext';
@@ -24,35 +25,44 @@ type SnapshotSpecialSkill = Omit<SpecialSkill, 'aliases'> & {
 };
 
 // Filter characters
-function allCounters(skill: SnapshotSpecialSkill) {
-  const summary = getSpecialSkillRelationSummary(skill.name, skill.factionId);
+function allCounters(
+  skill: SnapshotSpecialSkill,
+  charactersRecord: DeepReadonly<Record<string, CharacterWithFaction>>
+) {
+  const summary = getSpecialSkillRelationSummary(charactersRecord, skill.name, skill.factionId);
   const minorNames = new Set(summary.counters.minor);
   const majorNames = new Set(summary.counters.major);
 
-  const IsMinor: CharacterWithFaction[] = Object.values(characters).filter((character) =>
+  const IsMinor = Object.values(charactersRecord).filter((character) =>
     minorNames.has(character.id)
   );
-  const UnIsMinor: CharacterWithFaction[] = Object.values(characters).filter((character) =>
+  const UnIsMinor = Object.values(charactersRecord).filter((character) =>
     majorNames.has(character.id)
   );
   return { 0: UnIsMinor, 1: IsMinor };
 }
-function allCounteredBy(skill: SnapshotSpecialSkill) {
-  const summary = getSpecialSkillRelationSummary(skill.name, skill.factionId);
+function allCounteredBy(
+  skill: SnapshotSpecialSkill,
+  charactersRecord: DeepReadonly<Record<string, CharacterWithFaction>>
+) {
+  const summary = getSpecialSkillRelationSummary(charactersRecord, skill.name, skill.factionId);
   const minorNames = new Set(summary.counteredBy.minor);
   const majorNames = new Set(summary.counteredBy.major);
 
-  const IsMinor: CharacterWithFaction[] = Object.values(characters).filter((character) =>
+  const IsMinor = Object.values(charactersRecord).filter((character) =>
     minorNames.has(character.id)
   );
-  const UnIsMinor: CharacterWithFaction[] = Object.values(characters).filter((character) =>
+  const UnIsMinor = Object.values(charactersRecord).filter((character) =>
     majorNames.has(character.id)
   );
   return { 0: UnIsMinor, 1: IsMinor };
 }
 
-function allUsers(skill: SnapshotSpecialSkill) {
-  const Return: CharacterWithFaction[] = Object.values(characters).filter(
+function allUsers(
+  skill: SnapshotSpecialSkill,
+  charactersRecord: DeepReadonly<Record<string, CharacterWithFaction>>
+) {
+  const Return = Object.values(charactersRecord).filter(
     (character) =>
       character.specialSkills?.some((s) => s.name === skill.name) &&
       character.factionId === skill.factionId
@@ -60,13 +70,16 @@ function allUsers(skill: SnapshotSpecialSkill) {
   return Return;
 }
 
-function userQuantity(skill: SnapshotSpecialSkill) {
+function userQuantity(
+  skill: SnapshotSpecialSkill,
+  charactersRecord: DeepReadonly<Record<string, CharacterWithFaction>>
+) {
   return (
-    allCounters(skill)[0].length +
-    allCounters(skill)[1].length +
-    allCounteredBy(skill)[0].length +
-    allCounteredBy(skill)[1].length +
-    allUsers(skill).length
+    allCounters(skill, charactersRecord)[0].length +
+    allCounters(skill, charactersRecord)[1].length +
+    allCounteredBy(skill, charactersRecord)[0].length +
+    allCounteredBy(skill, charactersRecord)[1].length +
+    allUsers(skill, charactersRecord).length
   );
 }
 
@@ -75,14 +88,17 @@ export default function SpecialSkillAdviceClient() {
   const [isDarkMode] = useDarkMode();
 
   const specialSkillsSnapshot = useSnapshot(specialSkillsEdit);
+  const charactersSnap = useSnapshot(characters);
   const allSkills = useMemo(
     () => [
-      ...Object.values(specialSkillsSnapshot.cat).sort((a, b) => userQuantity(b) - userQuantity(a)),
+      ...Object.values(specialSkillsSnapshot.cat).sort(
+        (a, b) => userQuantity(b, charactersSnap) - userQuantity(a, charactersSnap)
+      ),
       ...Object.values(specialSkillsSnapshot.mouse).sort(
-        (a, b) => userQuantity(b) - userQuantity(a)
+        (a, b) => userQuantity(b, charactersSnap) - userQuantity(a, charactersSnap)
       ),
     ],
-    [specialSkillsSnapshot]
+    [specialSkillsSnapshot, charactersSnap]
   );
 
   // Filter skills by faction if selected
@@ -160,7 +176,8 @@ export default function SpecialSkillAdviceClient() {
               )}
 
               {/*counteredBy*/}
-              {(allCounteredBy(skill)[0].length != 0 || allCounteredBy(skill)[1].length != 0) && (
+              {(allCounteredBy(skill, charactersSnap)[0].length != 0 ||
+                allCounteredBy(skill, charactersSnap)[1].length != 0) && (
                 <div>
                   <span className='flex items-center gap-1 text-sm font-semibold text-blue-700 dark:text-blue-300'>
                     <span className='mr-1 flex h-5 w-5 items-center justify-center rounded-full bg-blue-200'>
@@ -186,15 +203,16 @@ export default function SpecialSkillAdviceClient() {
                     被{skill.name}克制的{skill.factionId == 'cat' ? '老鼠' : '猫咪'}：
                   </span>
                   <AdviceCharacterList
-                    characters={allCounteredBy(skill)[0]}
-                    isMinorCharacters={allCounteredBy(skill)[1]}
+                    characters={allCounteredBy(skill, charactersSnap)[0]}
+                    isMinorCharacters={allCounteredBy(skill, charactersSnap)[1]}
                     color='blue'
                   />
                 </div>
               )}
 
               {/*counters*/}
-              {(allCounters(skill)[0].length != 0 || allCounters(skill)[1].length != 0) && (
+              {(allCounters(skill, charactersSnap)[0].length != 0 ||
+                allCounters(skill, charactersSnap)[1].length != 0) && (
                 <div>
                   <span className='flex items-center gap-1 text-sm font-semibold text-red-700 dark:text-red-300'>
                     <span className='mr-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-200'>
@@ -220,15 +238,15 @@ export default function SpecialSkillAdviceClient() {
                     克制{skill.name}的{skill.factionId == 'cat' ? '老鼠' : '猫咪'}：
                   </span>
                   <AdviceCharacterList
-                    characters={allCounters(skill)[0]}
-                    isMinorCharacters={allCounters(skill)[1]}
+                    characters={allCounters(skill, charactersSnap)[0]}
+                    isMinorCharacters={allCounters(skill, charactersSnap)[1]}
                     color='red'
                   />
                 </div>
               )}
 
               {/*users*/}
-              {allUsers(skill).length != 0 && (
+              {allUsers(skill, charactersSnap).length != 0 && (
                 <div>
                   <span className='flex items-center gap-1 text-sm font-semibold text-green-700 dark:text-green-300'>
                     <span className='mr-1 flex h-5 w-5 items-center justify-center rounded-full bg-green-200'>
@@ -252,7 +270,7 @@ export default function SpecialSkillAdviceClient() {
                     </span>
                     适合携带{skill.name}的{skill.factionId == 'cat' ? '猫咪' : '老鼠'}：
                   </span>
-                  <AdviceCharacterList characters={allUsers(skill)} color='green' />
+                  <AdviceCharacterList characters={allUsers(skill, charactersSnap)} color='green' />
                 </div>
               )}
             </div>

@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useSnapshot } from 'valtio';
 
 import { getCardRankColors } from '@/lib/design';
 import { useDarkMode } from '@/context/DarkModeContext';
@@ -35,6 +36,7 @@ export default function CharacterRankingGrid({
 
   const factionId = (useSearchParams().get('faction') ?? undefined) as FactionId | undefined;
   const [isDarkMode] = useDarkMode();
+  const charactersSnap = useSnapshot(characters);
 
   // Helpers to create softer backgrounds from token colors
   const hexToRgba = (hex: string, alpha: number) => {
@@ -77,11 +79,11 @@ export default function CharacterRankingGrid({
 
   // Get all characters as array and filter by faction if specified
   const allCharacters = useMemo(() => {
-    const characterArray = Object.values(characters);
+    const characterArray = Object.values(charactersSnap);
     return factionId
       ? characterArray.filter((char) => char.factionId === factionId)
       : characterArray;
-  }, [factionId]);
+  }, [factionId, charactersSnap]);
 
   // Get ranked characters for the selected property
   const rankedCharacters = useMemo(() => {

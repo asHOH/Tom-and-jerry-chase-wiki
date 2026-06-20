@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { m, useReducedMotion } from 'motion/react';
 import { Masonry } from 'react-plock';
+import { useSnapshot } from 'valtio';
 
 import { AssetManager } from '@/lib/assetManager';
 import { formatCompactDate } from '@/lib/dateUtils';
@@ -44,6 +45,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
   const { info } = useToast();
   const articlesGridRef = useRef<HTMLDivElement>(null);
   const shouldReduceMotion = useReducedMotion();
+  const charactersSnap = useSnapshot(characters);
 
   // Use centralized filter state management
   const {
@@ -394,11 +396,12 @@ export default function ArticlesClient({ articles: data, description }: Articles
               columns: [1, 2, 3],
               gap: [16, 24, 24],
               media: [640, 1024, 1280],
-              useBalancedLayout: true,
             }}
             render={(article) => {
               const latestVersion = article.latest_approved_version[0];
-              const boundCharacter = article.character_id ? characters[article.character_id] : null;
+              const boundCharacter = article.character_id
+                ? charactersSnap[article.character_id]
+                : null;
               return (
                 <m.div
                   key={article.id}

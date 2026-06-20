@@ -1,9 +1,12 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { useSnapshot } from 'valtio';
 
+import type { DeepReadonly } from '@/types/deep-readonly';
 import { cn, getFactionButtonColors } from '@/lib/design';
 import { useFilterState } from '@/lib/filterUtils';
+import type { CharacterWithFaction } from '@/lib/types';
 import { useDarkMode } from '@/context/DarkModeContext';
 import type { FactionId } from '@/data/types';
 import { CharacterTable, summarySymbol, winRatesData } from '@/data/winRates';
@@ -83,8 +86,11 @@ function getRankOrder(rank: string): number {
   return idx === -1 ? Number.MAX_SAFE_INTEGER : idx;
 }
 
-function getFactionIdFromCharacters(characterName: string): FactionId | null {
-  const factionId = characters[characterName]?.factionId;
+function getFactionIdFromCharacters(
+  characterName: string,
+  charactersRecord: DeepReadonly<Record<string, CharacterWithFaction>>
+): FactionId | null {
+  const factionId = charactersRecord[characterName]?.factionId;
   return factionId === 'cat' || factionId === 'mouse' ? factionId : null;
 }
 
@@ -94,7 +100,10 @@ function normalizeTableFaction(tableFaction: unknown): FactionId | null {
   return null;
 }
 
-function enrichCharacterData(tables: CharacterTable[]): EnrichedCharacterRow[] {
+function enrichCharacterData(
+  tables: CharacterTable[],
+  charactersRecord: DeepReadonly<Record<string, CharacterWithFaction>>
+): EnrichedCharacterRow[] {
   const enriched: EnrichedCharacterRow[] = [];
 
   for (const table of tables) {
@@ -107,7 +116,8 @@ function enrichCharacterData(tables: CharacterTable[]): EnrichedCharacterRow[] {
     );
 
     for (const row of table.rows) {
-      const faction = getFactionIdFromCharacters(row.character) ?? factionFromTable ?? 'mouse';
+      const faction =
+        getFactionIdFromCharacters(row.character, charactersRecord) ?? factionFromTable ?? 'mouse';
       enriched.push({
         rank,
         rankOrder,
@@ -153,6 +163,7 @@ function getRanksFromSeason(seasonIndex: number): string[] {
 
 export default function WinRatesClient({ description }: WinRatesClientProps) {
   const [isDarkMode] = useDarkMode();
+  const charactersSnap = useSnapshot(characters);
 
   const seasons = useMemo(() => getSeasons(), []);
 
@@ -195,8 +206,8 @@ export default function WinRatesClient({ description }: WinRatesClientProps) {
       });
     }
 
-    return enrichCharacterData(tables);
-  }, [selectedSeason]);
+    return enrichCharacterData(tables, charactersSnap);
+  }, [selectedSeason, charactersSnap]);
 
   const filteredAndSortedData = useMemo(() => {
     let filtered = enrichedData;

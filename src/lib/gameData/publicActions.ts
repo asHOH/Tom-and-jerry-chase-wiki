@@ -158,6 +158,7 @@ export async function fetchPublicGameDataActions(): Promise<PublicActionRow[]> {
         .from('game_data_actions')
         .select('id, entity_type, entry, created_at, status, message, reviewed_at, created_by')
         .eq('is_public', true)
+        .eq('status', 'approved')
         .order('created_at', { ascending: true });
 
       if (error) {

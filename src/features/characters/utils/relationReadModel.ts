@@ -1,4 +1,5 @@
-import { characters } from '@/data/store';
+import type { DeepReadonly } from '@/types/deep-readonly';
+import type { CharacterWithFaction } from '@/lib/types';
 import type {
   CharacterRelation,
   CharacterRelationItem,
@@ -65,9 +66,12 @@ const createEmptyRelation = (): CharacterRelation =>
     return acc;
   }, {} as CharacterRelation);
 
-const buildLegacyOverlayRelations = (id: string): CharacterRelation => {
+const buildLegacyOverlayRelations = (
+  charactersRecord: DeepReadonly<Record<string, CharacterWithFaction>>,
+  id: string
+): CharacterRelation => {
   const legacy = createEmptyRelation();
-  const current = characters[id] as Partial<CharacterRelation> | undefined;
+  const current = charactersRecord[id] as Partial<CharacterRelation> | undefined;
 
   if (current) {
     relationKeys.forEach((key) => {
@@ -94,7 +98,7 @@ const buildLegacyOverlayRelations = (id: string): CharacterRelation => {
     legacy[targetKey] = mergeRelationItems(legacy[targetKey], inverseItems);
   };
 
-  Object.entries(characters).forEach(([otherId, other]) => {
+  Object.entries(charactersRecord).forEach(([otherId, other]) => {
     if (otherId === id) return;
     const otherLegacy = other as Partial<CharacterRelation>;
     addInverse(otherLegacy.counters, 'counteredBy', otherId);
@@ -222,17 +226,21 @@ const mergeCharacterRelationProjection = (
 
 // The character detail page reads a hybrid projection: shared relation traits,
 // inverse shared character links, and page-local legacy overlay arrays.
-export function getCharacterRelation(id: string): CharacterRelation {
-  if (!characters[id]) return defaultRelation;
+export function getCharacterRelation(
+  charactersRecord: DeepReadonly<Record<string, CharacterWithFaction>>,
+  id: string
+): CharacterRelation {
+  if (!charactersRecord[id]) return defaultRelation;
 
   return mergeCharacterRelationProjection(
     buildSharedTraitRelations(id),
     buildSharedInverseCharacterRelations(id),
-    buildLegacyOverlayRelations(id)
+    buildLegacyOverlayRelations(charactersRecord, id)
   );
 }
 
 export const getSpecialSkillRelationSummary = (
+  charactersRecord: DeepReadonly<Record<string, CharacterWithFaction>>,
   skillName: string,
   factionId: SingleItem['factionId']
 ) => {
@@ -264,7 +272,7 @@ export const getSpecialSkillRelationSummary = (
     relations
       .filter((relation) => relation.subject.type === 'character')
       .map((relation) => relation.subject.name)
-      .filter((name) => characters[name]?.factionId !== factionId);
+      .filter((name) => charactersRecord[name]?.factionId !== factionId);
 
   return {
     counters: {

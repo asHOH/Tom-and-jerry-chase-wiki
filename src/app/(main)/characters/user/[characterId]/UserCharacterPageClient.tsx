@@ -2,6 +2,7 @@
 
 import { useLayoutEffect } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useSnapshot } from 'valtio';
 
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useEditMode } from '@/context/EditModeContext';
@@ -16,7 +17,8 @@ import { characters } from '@/data';
 export default function UserCharacterPageClient() {
   const { isLoading, isEditMode } = useEditMode();
   const { characterId } = useLocalCharacter();
-  const character = characterId ? (characters[characterId] ?? null) : null;
+  const charactersSnap = useSnapshot(characters);
+  const character = characterId ? (charactersSnap[characterId] ?? null) : null;
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();

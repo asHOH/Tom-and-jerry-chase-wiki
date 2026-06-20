@@ -6,6 +6,7 @@
 import { ReactNode } from 'react';
 import type { Snapshot } from 'valtio';
 
+import type { DeepReadonly } from '@/types/deep-readonly';
 import { SkillType } from '@/data/types';
 import { Card, Character, FactionId, PositioningTag } from '@/data';
 
@@ -34,7 +35,7 @@ export type CharacterDisplayProps = {
   id: string;
   name: string;
   imageUrl: string;
-  positioningTags: PositioningTag[];
+  positioningTags: readonly DeepReadonly<PositioningTag>[];
   factionId: string;
 };
 
@@ -44,7 +45,7 @@ export type KnowledgeCardDetailsProps = {
 };
 
 export type CharacterDetailsProps = {
-  character: CharacterWithFaction;
+  character: DeepReadonly<CharacterWithFaction>;
   children?: ReactNode;
 };
 

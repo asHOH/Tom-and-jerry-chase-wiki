@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
+import { useSnapshot } from 'valtio';
 
 import { AssetManager } from '@/lib/assetManager';
 import { cn } from '@/lib/design';
@@ -27,9 +28,13 @@ export function CharacterSelector({
   disabled?: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(false);
+  const charactersSnap = useSnapshot(characters);
 
   const availableCharacters = useMemo(() => {
-    const allCharacters = Object.values(characters) as Array<{ id: string; factionId: FactionId }>;
+    const allCharacters = Object.values(charactersSnap) as Array<{
+      id: string;
+      factionId: FactionId;
+    }>;
 
     let filteredCharacters = allCharacters;
     if (relationType === 'collaborators') {
@@ -42,7 +47,7 @@ export function CharacterSelector({
     return filteredCharacters.filter(
       (char) => char.id !== currentCharacterId && !existingIds.includes(char.id)
     );
-  }, [currentCharacterId, existingRelations, factionId, relationType]);
+  }, [currentCharacterId, existingRelations, factionId, relationType, charactersSnap]);
 
   const handleSelect = (characterId: string) => {
     onSelect(characterId);
@@ -248,10 +253,11 @@ export function ArticleCharacterSelector({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const charactersSnapAr = useSnapshot(characters);
 
   const allCharacters = useMemo(() => {
-    return Object.values(characters) as Array<{ id: string; factionId: FactionId }>;
-  }, []);
+    return Object.values(charactersSnapAr) as Array<{ id: string; factionId: FactionId }>;
+  }, [charactersSnapAr]);
 
   const filteredCharacters = useMemo(() => {
     if (!searchQuery.trim()) return allCharacters;

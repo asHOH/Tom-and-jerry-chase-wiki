@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import some from 'lodash-es/some';
+import { useSnapshot } from 'valtio';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { cn } from '@/lib/design';
@@ -244,6 +245,8 @@ function KnowledgeCardGroupFlat({
   isDarkMode: boolean;
   getCardPriority: (cardId: string) => string | undefined;
 }) {
+  const charSnap = useSnapshot(characters[characterId]!);
+
   if (cards.length === 0 && !isEditMode) {
     return null;
   }
@@ -254,7 +257,7 @@ function KnowledgeCardGroupFlat({
     costInfo.hasOptionalCard,
     costInfo.totalCost
   );
-  const isMouseFaction = characters[characterId]?.factionId === 'mouse';
+  const isMouseFaction = charSnap?.factionId === 'mouse';
   const hasJiuJiuWo = cards.includes('C-救救我');
   const hasRescueSkill = cards.includes('S-舍己') || cards.includes('S-无畏');
   const hasTieXue = cards.includes('S-铁血');
@@ -411,6 +414,7 @@ export function KnowledgeCardGroupDisplay({
   isDarkMode: boolean;
   getCardPriority: (cardId: string) => string | undefined;
 }) {
+  const charSnap = useSnapshot(characters[characterId]!);
   const normalizedGroup = group as unknown as readonly CardGroup[];
   const isSqueezedView = viewMode === 'compact';
   const isTreeView =
@@ -422,7 +426,7 @@ export function KnowledgeCardGroupDisplay({
   const isHybridMode = viewMode === 'hybrid';
 
   const isMobile = useMobile();
-  const isMouseFaction = characters[characterId]?.factionId === 'mouse';
+  const isMouseFaction = charSnap?.factionId === 'mouse';
 
   if (isTreeView) {
     // Tree mode: show tree structure with max cost

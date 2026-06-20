@@ -22,6 +22,7 @@ import {
   achievements,
   buffs,
   cards,
+  characters,
   entities,
   fixtures,
   itemGroups,
@@ -269,7 +270,7 @@ export const resolvers: Record<string, PathResolver> = {
       const character = charactersRecord[decodedId];
       if (!character) return null;
 
-      const relations = getCharacterRelation(decodedId);
+      const relations = getCharacterRelation(characters, decodedId);
       const updateInfo = await getMergedUpdateTime('characters', decodedId);
 
       return createDetailResult(
@@ -300,7 +301,7 @@ export const resolvers: Record<string, PathResolver> = {
     fullData: () => {
       const charactersRecord = GameDataManager.getCharacters();
       const fullCharacters = Object.entries(charactersRecord).map(([id, character]) => {
-        const relations = getCharacterRelation(id);
+        const relations = getCharacterRelation(characters, id);
         return {
           ...character,
           id,
@@ -615,7 +616,7 @@ export const resolvers: Record<string, PathResolver> = {
     list: () => {
       const characters = GameDataManager.getCharacters();
       const recommendedData = Object.entries(characters).map(([id, char]) => {
-        const relations = getCharacterRelation(id);
+        const relations = getCharacterRelation(characters, id);
         return {
           id,
           name: id,
@@ -629,7 +630,7 @@ export const resolvers: Record<string, PathResolver> = {
     fullData: () => {
       const characters = GameDataManager.getCharacters();
       const recommendedData = Object.entries(characters).map(([id, char]) => {
-        const relations = getCharacterRelation(id);
+        const relations = getCharacterRelation(characters, id);
         return {
           id,
           name: id,
@@ -660,7 +661,7 @@ export const resolvers: Record<string, PathResolver> = {
       const charactersRecord = GameDataManager.getCharacters();
       const relationsList = Object.keys(charactersRecord).map((characterId) => ({
         id: characterId,
-        relations: getCharacterRelation(characterId),
+        relations: getCharacterRelation(characters, characterId),
       }));
       return createListResult(relationsList, 'CharacterRelation', '/character-relations', true);
     },
@@ -668,7 +669,7 @@ export const resolvers: Record<string, PathResolver> = {
       const decodedId = decodeURIComponent(id);
       const charactersRecord = GameDataManager.getCharacters();
       if (!charactersRecord[decodedId]) return null;
-      const relations = getCharacterRelation(decodedId);
+      const relations = getCharacterRelation(characters, decodedId);
       return createDetailResult(
         { id: decodedId, relations },
         'CharacterRelation',
@@ -679,7 +680,7 @@ export const resolvers: Record<string, PathResolver> = {
       const charactersRecord = GameDataManager.getCharacters();
       const relationsList = Object.keys(charactersRecord).map((characterId) => ({
         id: characterId,
-        relations: getCharacterRelation(characterId),
+        relations: getCharacterRelation(characters, characterId),
       }));
       return createFullDataResult(relationsList, 'CharacterRelation', '/character-relations');
     },

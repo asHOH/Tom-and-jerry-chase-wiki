@@ -2,6 +2,7 @@
  * Character ranking utilities for sorting and displaying character stats
  */
 
+import type { DeepReadonly } from '@/types/deep-readonly';
 import { Character, FactionId } from '@/data/types';
 
 export type RankableProperty =
@@ -103,7 +104,7 @@ export const RANKABLE_PROPERTIES: PropertyInfo[] = [
 ];
 
 export type RankedCharacter = {
-  character: Character;
+  character: DeepReadonly<Character>;
   rank: number;
   value: number;
   formattedValue: string;
@@ -120,10 +121,10 @@ export function getPropertyInfo(property: RankableProperty): PropertyInfo | unde
  * Get characters that have a specific property defined
  */
 export function getCharactersWithProperty(
-  characters: Character[],
+  characters: readonly DeepReadonly<Character>[],
   property: RankableProperty,
   factionId?: FactionId
-): Character[] {
+): readonly DeepReadonly<Character>[] {
   return characters
     .filter((char) => {
       const value = char[property];
@@ -136,7 +137,7 @@ export function getCharactersWithProperty(
  * Rank characters by a specific property
  */
 export function rankCharactersByProperty(
-  characters: Character[],
+  characters: readonly DeepReadonly<Character>[],
   property: RankableProperty
 ): RankedCharacter[] {
   const propertyInfo = getPropertyInfo(property);
@@ -147,8 +148,8 @@ export function rankCharactersByProperty(
   // Filter characters that have the property
   const charactersWithProperty = getCharactersWithProperty(characters, property);
 
-  // Sort by property value
-  const sorted = charactersWithProperty.sort((a, b) => {
+  // Sort by property value (create a mutable copy first)
+  const sorted = [...charactersWithProperty].sort((a, b) => {
     const valueA = a[property] as number;
     const valueB = b[property] as number;
 

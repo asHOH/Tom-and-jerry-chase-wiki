@@ -8,6 +8,7 @@ import {
   summarizeGameActionValue,
 } from '@/features/admin/utils/gameActionPreview';
 import { getCharacterRelation } from '@/features/characters/utils/relationReadModel';
+import { characters } from '@/data';
 
 type PreviewAction = {
   op?: string;
@@ -63,7 +64,7 @@ function getProjectedCharacterRelationPreviewOldValue(path: string | undefined):
     return undefined;
   }
 
-  return getCharacterRelation(characterId)[relationKind as TraitRelationKind];
+  return getCharacterRelation(characters, characterId)[relationKind as TraitRelationKind];
 }
 
 function getPreviewOldValue(entityType: string, action: PreviewAction): unknown {

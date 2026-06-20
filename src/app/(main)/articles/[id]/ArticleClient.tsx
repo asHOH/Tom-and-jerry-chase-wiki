@@ -3,6 +3,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { createPortal } from 'react-dom';
+import { useSnapshot } from 'valtio';
 
 import { AssetManager } from '@/lib/assetManager';
 import { formatArticleDate } from '@/lib/dateUtils';
@@ -180,6 +181,7 @@ export default function ArticleClient({
   const { role: userRole } = useUser();
   const articleId = params?.id as string;
   const isMobile = useMobile();
+  const charactersSnap = useSnapshot(characters);
   const contentRef = useRef<HTMLDivElement | null>(null);
   const [tocItems, setTocItems] = useState<TocItem[]>([]);
   const [activeHeadingId, setActiveHeadingId] = useState<string>('');
@@ -463,7 +465,7 @@ export default function ArticleClient({
   }, [tocItems]);
 
   // Get bound character info if this is a game strategy article
-  const boundCharacter = article.character_id ? characters[article.character_id] : null;
+  const boundCharacter = article.character_id ? charactersSnap[article.character_id] : null;
 
   const renderTocList = (itemClassName: string, showHeadingLabel = true) => (
     <nav aria-label='文章目录'>

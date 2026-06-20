@@ -3,6 +3,7 @@
 import { useSearchParams } from 'next/navigation';
 import { useSnapshot } from 'valtio';
 
+import type { DeepReadonly } from '@/types/deep-readonly';
 import type { KnowledgeCardDetailsProps, KnowledgeCardWithFaction } from '@/lib/types';
 import { useLocalCard } from '@/hooks/useLocalEditEntity';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
@@ -39,12 +40,15 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
   const { handleSelectCharacter, isDetailedView } = useAppContext();
   const searchParams = useSearchParams();
   const fromCharacterId = searchParams ? searchParams.get('from') : null;
+  const charactersSnap = useSnapshot(characters);
 
-  const fromCharacter = fromCharacterId ? characters[fromCharacterId] : null;
+  const fromCharacter = fromCharacterId ? charactersSnap[fromCharacterId] : null;
 
   // Find characters that use this knowledge card
   // Helper to check if a group or group set contains the card
-  function groupContainsCard(group: KnowledgeCardGroup | KnowledgeCardGroupSet): boolean {
+  function groupContainsCard(
+    group: DeepReadonly<KnowledgeCardGroup | KnowledgeCardGroupSet>
+  ): boolean {
     if ('cards' in group && Array.isArray(group.cards)) {
       // Flatten the CardGroup[] to get all possible card combinations
       const allCombinations = flattenCardGroup(group.cards);
@@ -58,13 +62,13 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
     return false;
   }
 
-  const usedCharacters = Object.values(characters).filter(
+  const usedCharacters = Object.values(charactersSnap).filter(
     (character) =>
       character.factionId === effectiveCard.factionId &&
       character.knowledgeCardGroups?.some(groupContainsCard)
   );
 
-  const unusedCharacters = Object.values(characters).filter(
+  const unusedCharacters = Object.values(charactersSnap).filter(
     (character) =>
       character.factionId === effectiveCard.factionId &&
       !character.knowledgeCardGroups?.some(groupContainsCard)

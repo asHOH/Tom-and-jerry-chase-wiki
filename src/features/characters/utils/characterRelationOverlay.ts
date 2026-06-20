@@ -41,7 +41,7 @@ export const getEditableCharacterRelations = (
   const relationRecord = characterRecord as Partial<
     Record<TraitRelationKind, CharacterRelationItem[]>
   >;
-  const projectedRelations = getCharacterRelation(characterId);
+  const projectedRelations = getCharacterRelation(characters, characterId);
 
   if (!characterRecord) {
     return projectedRelations as EditableCharacterRelations;

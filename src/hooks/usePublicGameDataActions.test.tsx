@@ -118,7 +118,7 @@ describe('usePublicGameDataActions', () => {
     render(<HookHarness actions={actions} />);
 
     await waitFor(() => {
-      expect(getCharacterRelation(characterId).counteredBy).toEqual(
+      expect(getCharacterRelation(characters, characterId).counteredBy).toEqual(
         expect.arrayContaining([publicRelationItem])
       );
     });

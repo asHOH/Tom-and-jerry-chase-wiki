@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { render, screen } from '@testing-library/react';
+import { proxy } from 'valtio';
 
 import { characters } from '@/data';
 
@@ -37,7 +38,7 @@ describe('KnowledgeCard nested persistence (sanity tests)', () => {
   beforeEach(() => {
     // reset test character in the Valtio characters store
     // minimal shape used by the components
-    (characters as any)[charId] = {
+    (characters as any)[charId] = proxy({
       id: charId,
       knowledgeCardGroups: [
         {
@@ -51,7 +52,7 @@ describe('KnowledgeCard nested persistence (sanity tests)', () => {
           ],
         },
       ],
-    };
+    });
   });
 
   afterEach(() => {
@@ -80,6 +81,14 @@ describe('KnowledgeCard nested persistence (sanity tests)', () => {
 });
 
 describe('KnowledgeCardGroupDisplay', () => {
+  beforeEach(() => {
+    (characters as any)['test-character'] = proxy({ id: 'test-character' });
+  });
+
+  afterEach(() => {
+    delete (characters as any)['test-character'];
+  });
+
   const defaultProps = {
     group: ['S-绝地反击', 'C-飞跃'] as const,
     index: 0,

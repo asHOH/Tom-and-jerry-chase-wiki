@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { useSnapshot } from 'valtio';
 
 import { cn } from '@/lib/design';
 import { CharacterWinRateEntry, getCharacterWinRates } from '@/data/winRates';
@@ -12,14 +13,15 @@ interface WinRatesDisplayProps {
 
 export default function WinRatesDisplay({ characterName }: WinRatesDisplayProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const charactersSnap = useSnapshot(characters);
 
   const winRates = useMemo(
     () =>
       getCharacterWinRates(
-        [characterName, ...(characters[characterName]?.aliases ?? [])],
-        characters[characterName]?.factionId
+        [characterName, ...(charactersSnap[characterName]?.aliases ?? [])],
+        charactersSnap[characterName]?.factionId
       ),
-    [characterName]
+    [characterName, charactersSnap]
   );
 
   const groupedByTimeRange = useMemo(() => {

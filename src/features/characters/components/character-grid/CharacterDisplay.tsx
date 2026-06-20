@@ -1,8 +1,8 @@
 'use client';
 
 import { useMemo } from 'react';
+import { useSnapshot } from 'valtio';
 
-import { GameDataManager } from '@/lib/dataManager';
 import { cn, getPositioningTagColors } from '@/lib/design';
 import { CharacterDisplayProps } from '@/lib/types';
 import { useMobile } from '@/hooks/useMediaQuery';
@@ -14,6 +14,7 @@ import BaseCard from '@/components/ui/BaseCard';
 import GameImage from '@/components/ui/GameImage';
 import Tag from '@/components/ui/Tag';
 import Image from '@/components/Image';
+import { characters } from '@/data';
 
 export default function CharacterDisplay({
   id,
@@ -26,6 +27,7 @@ export default function CharacterDisplay({
 }: CharacterDisplayProps & { preload?: boolean; isEntryCard?: boolean }) {
   const [isDarkMode] = useDarkMode();
   const isMobile = useMobile();
+  const charactersSnap = useSnapshot(characters);
 
   // Sort positioning tags according to sequence (main tags first, then by sequence)
   const sortedPositioningTags = useMemo(() => {
@@ -33,7 +35,7 @@ export default function CharacterDisplay({
     return sortPositioningTags(positioningTags, factionId as FactionId);
   }, [positioningTags, factionId]);
 
-  const computedId = id in GameDataManager.getCharacters() ? id : `user/${id}`;
+  const computedId = id in charactersSnap ? id : `user/${id}`;
   const isUserCharacter = computedId.startsWith('user/');
   const href = isUserCharacter ? `/characters/${computedId}?edit=1` : `/characters/${computedId}`;
 
@@ -74,7 +76,7 @@ export default function CharacterDisplay({
           >
             {sortedPositioningTags.map((tag, index) => {
               const weaponImageUrl = tag.weapon
-                ? getWeaponSkillImageUrl(id, tag.weapon, factionId as FactionId)
+                ? getWeaponSkillImageUrl(charactersSnap, id, tag.weapon, factionId as FactionId)
                 : null;
 
               return (

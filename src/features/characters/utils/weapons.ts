@@ -1,16 +1,18 @@
+import type { DeepReadonly } from '@/types/deep-readonly';
 import { AssetManager } from '@/lib/assetManager';
+import type { CharacterWithFaction } from '@/lib/types';
 import type { FactionId, Skill } from '@/data/types';
-import { characters } from '@/data';
 
 /**
  * Get weapon skill image URL for a character
  */
 export const getWeaponSkillImageUrl = (
+  charactersRecord: DeepReadonly<Record<string, CharacterWithFaction>>,
   characterId: string,
   weaponNumber: 1 | 2,
   factionId: FactionId
 ): string | null => {
-  const character = characters[characterId];
+  const character = charactersRecord[characterId];
   if (!character) return null;
 
   // Find the weapon skill based on weapon number

@@ -44,15 +44,17 @@ export default function SpecialSkillDetailClient({ skill }: SpecialSkillDetailCl
   );
 
   const { isDetailedView } = useAppContext();
+  const charactersSnap = useSnapshot(characters);
+
   if (!effectiveSkill) return null;
 
-  const usedCharacters = Object.values(characters).filter(
+  const usedCharacters = Object.values(charactersSnap).filter(
     (character) =>
       character.specialSkills?.some((s) => s.name === effectiveSkill.name) &&
       character.factionId === effectiveSkill.factionId
   );
 
-  const unusedCharacters = Object.values(characters).filter(
+  const unusedCharacters = Object.values(charactersSnap).filter(
     (character) =>
       !character.specialSkills?.some((s) => s.name === effectiveSkill.name) &&
       character.factionId === effectiveSkill.factionId

@@ -1,4 +1,5 @@
 import { getCharacterRelation } from '@/features/characters/utils/relations';
+import { characters } from '@/data';
 
 import { resolvers, type ResolverResult } from './resolvers';
 
@@ -30,7 +31,7 @@ const getRecommendedData = async (): Promise<RecommendedCharacter[]> => {
 describe('echoflow resolvers', () => {
   it('should expose projected character relations in recommended data', async () => {
     const characterId = '恶魔汤姆';
-    const expectedRelations = getCharacterRelation(characterId);
+    const expectedRelations = getCharacterRelation(characters, characterId);
 
     expect(expectedRelations.counters.length).toBeGreaterThan(0);
 

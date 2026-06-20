@@ -2,6 +2,7 @@ import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 
 import { summarizeGameActionValue } from '@/features/admin/utils/gameActionPreview';
 import { getCharacterRelation } from '@/features/characters/utils/relationReadModel';
+import { characters } from '@/data';
 
 import GameDataActionModerationPanel, {
   type PendingGameDataAction,
@@ -144,7 +145,7 @@ describe('GameDataActionModerationPanel', () => {
   });
 
   it('uses projected character relations as the old preview value when relation overlays are first set', () => {
-    const projectedCounters = getCharacterRelation('恶魔汤姆').counters;
+    const projectedCounters = getCharacterRelation(characters, '恶魔汤姆').counters;
     const existingCounterId = projectedCounters[0]?.id;
 
     expect(projectedCounters.length).toBeGreaterThan(0);

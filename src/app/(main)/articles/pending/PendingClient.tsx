@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import useSWR from 'swr';
+import { useSnapshot } from 'valtio';
 
 import { formatArticleDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
@@ -73,6 +74,7 @@ export default function PendingClient() {
   const { role: userRole } = useUser();
   const [processingVersions, setProcessingVersions] = useState<Set<string>>(new Set());
   const [filter, setFilter] = useState<'all' | 'pending' | 'rejected'>('all');
+  const charactersSnap = useSnapshot(characters);
 
   const canModerate = userRole === 'Reviewer' || userRole === 'Coordinator';
 
@@ -310,7 +312,7 @@ export default function PendingClient() {
                         {submission.proposed_character_id && (
                           <span>
                             关联角色:{' '}
-                            {characters[submission.proposed_character_id]?.id ||
+                            {charactersSnap[submission.proposed_character_id]?.id ||
                               submission.proposed_character_id}
                           </span>
                         )}

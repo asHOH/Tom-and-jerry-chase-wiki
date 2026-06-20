@@ -63,7 +63,7 @@ describe('getCharacterRelation', () => {
   });
 
   it('should preserve graph-derived inverse relations for the current target page', () => {
-    const relations = getCharacterRelation('恶魔杰瑞');
+    const relations = getCharacterRelation(characters, '恶魔杰瑞');
 
     expect(relations.counteredBy).toEqual(
       expect.arrayContaining([
@@ -87,7 +87,7 @@ describe('getCharacterRelation', () => {
       },
     ];
 
-    const relations = getCharacterRelation('莱特宁');
+    const relations = getCharacterRelation(characters, '莱特宁');
 
     expect(relations.counteredBy).toEqual(
       expect.arrayContaining([
@@ -110,7 +110,7 @@ describe('getCharacterRelation', () => {
 
     setLegacyRelationItems(relation.subject.name, 'counters', [overlayItem]);
 
-    const relations = getCharacterRelation(relation.subject.name);
+    const relations = getCharacterRelation(characters, relation.subject.name);
     const matches = relations.counters.filter((item) => item.id === relation.target.name);
 
     expect(matches).toEqual([overlayItem]);
@@ -129,7 +129,7 @@ describe('getCharacterRelation', () => {
       },
     ];
 
-    const relations = getCharacterRelation('莱特宁');
+    const relations = getCharacterRelation(characters, '莱特宁');
 
     expect(relations.counters).toEqual(
       expect.arrayContaining([
@@ -159,7 +159,7 @@ describe('getCharacterRelation', () => {
       },
     ]);
 
-    const relations = getCharacterRelation(relation.target.name);
+    const relations = getCharacterRelation(characters, relation.target.name);
     const matches = relations.counteredBy.filter((item) => item.id === relation.subject.name);
 
     expect(matches).toEqual([directItem]);
@@ -172,11 +172,11 @@ describe('getCharacterRelation', () => {
     const initialIndex = getRelationIndex();
 
     for (let i = 0; i < 5; i += 1) {
-      const characterRelations = getCharacterRelation('莱特宁');
+      const characterRelations = getCharacterRelation(characters, '莱特宁');
       expect(characterRelations.counters.length).toBeGreaterThan(0);
     }
 
-    const summary = getSpecialSkillRelationSummary('应急治疗', 'mouse');
+    const summary = getSpecialSkillRelationSummary(characters, '应急治疗', 'mouse');
     expect(summary).toHaveProperty('counters');
     expect(summary).toHaveProperty('counteredBy');
 

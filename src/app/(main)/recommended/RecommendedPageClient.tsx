@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { useSnapshot } from 'valtio';
 
 import { AssetManager } from '@/lib/assetManager';
 import CharacterDisplay from '@/features/characters/components/character-grid/CharacterDisplay';
@@ -13,14 +14,15 @@ import { characters, maps } from '@/data';
 export default function RecommendedPageClient() {
   const [selectedMice, setSelectedMice] = useState<(string | null)[]>([null, null, null, null]);
   const [selectedMapName, setSelectedMapName] = useState<string>('');
+  const charactersSnap = useSnapshot(characters);
 
   const allMice = useMemo(() => {
-    return Object.values(characters).filter((c) => c.factionId === 'mouse');
-  }, []);
+    return Object.values(charactersSnap).filter((c) => c.factionId === 'mouse');
+  }, [charactersSnap]);
 
   const allCats = useMemo(() => {
-    return Object.values(characters).filter((c) => c.factionId === 'cat');
-  }, []);
+    return Object.values(charactersSnap).filter((c) => c.factionId === 'cat');
+  }, [charactersSnap]);
 
   const classicCheeseMaps = useMemo(() => {
     return Object.values(maps)
@@ -34,7 +36,7 @@ export default function RecommendedPageClient() {
 
     const scores = allCats.map((cat) => {
       let score = 0;
-      const relations = getCharacterRelation(cat.id);
+      const relations = getCharacterRelation(charactersSnap, cat.id);
 
       activeMice.forEach((mouseId) => {
         // Check if Cat counters Mouse
@@ -74,7 +76,7 @@ export default function RecommendedPageClient() {
 
     // Sort by score desc
     return scores.sort((a, b) => b.score - a.score).slice(0, 5);
-  }, [selectedMice, allCats, selectedMapName]);
+  }, [selectedMice, allCats, selectedMapName, charactersSnap]);
 
   return (
     <div className='min-h-screen'>

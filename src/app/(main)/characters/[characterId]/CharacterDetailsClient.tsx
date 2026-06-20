@@ -7,7 +7,7 @@ import {
   hasUserSeenCharacterDetailsTutorial,
   resetCharacterDetailsTutorial,
 } from '@/lib/tutorialUtils';
-import { CharacterDetailsProps } from '@/lib/types';
+import { CharacterDetailsProps, CharacterWithFaction } from '@/lib/types';
 import { useKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { usePageEditMode } from '@/hooks/usePageEditMode';
@@ -33,7 +33,7 @@ const syncCharacterStoreEntry = (
     });
     Object.assign(existing as Record<string, unknown>, nextValue);
   } else {
-    characters[characterId] = proxy(nextValue as CharacterDetailsProps['character']);
+    characters[characterId] = proxy(nextValue as CharacterWithFaction);
   }
 };
 
