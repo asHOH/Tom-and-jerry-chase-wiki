@@ -1,15 +1,18 @@
 /**
  * Skill effect extraction and anonymization for the Guess Character game.
  *
- * Extracts skill descriptions, strips wiki markup, and replaces identifying
- * names (skill names, character names) with placeholders while preserving
- * the numerical/mechanical details that serve as clues.
+ * Uses buff descriptions (via singleItemOwnbuffs) as the skill clue source.
+ * Strips wiki markup and replaces Chinese-quoted text (…) with
+ * numbered placeholders (#1, #2, …) — same quoted text gets the same
+ * placeholder across all skills.
  */
-import type { Buff } from '@/data/types';
+import singleItemOwnbuffs from '@/lib/singleItemOwnbuffs';
+import type { Buff, SingleItem } from '@/data/types';
 
 // Use a more permissive type that accepts both readonly (Valtio snapshot) and mutable records
 type CharacterLike = {
   id: string;
+  factionId?: string;
   aliases?: readonly string[] | string[];
   skills?: readonly {
     name: string;
@@ -31,61 +34,46 @@ type CharacterLike = {
 export type SkillClue = {
   /** Index of this skill in the character's skill array (0-based) */
   skillIndex: number;
+  /** Skill type: 'active' | 'weapon1' | 'weapon2' | 'passive' */
+  skillType: string;
   /** Anonymized effect text for display */
   anonymizedText: string;
   /** Map from placeholder → real name (for debugging / admin display) */
   placeholderMap: Record<string, string>;
 };
 
-/**
- * Extract all character names from the character data record.
- * Used to detect character references in skill descriptions.
- */
-function getAllCharacterNames(characters: Record<string, CharacterLike>): Set<string> {
-  const names = new Set<string>();
-  for (const char of Object.values(characters)) {
-    names.add(char.id);
-    if (char.aliases) {
-      for (const alias of char.aliases) {
-        names.add(alias);
-      }
-    }
-  }
-  return names;
-}
-
-/**
- * Normalize a name for comparison: strip parenthetical suffixes like "(衍生物)".
- */
-function normalizeName(name: string): string {
-  return name.replace(/\([^)]*\)/g, '').trim();
-}
-
-const SKILL_PLACEHOLDER_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-const OTHER_CHAR_LETTERS = '甲乙丙丁戊己庚辛壬癸子丑寅卯辰巳午未申酉戌亥';
+// Marker character for internal text processing. U+FFFF is a Unicode
+// non-character — guaranteed never to appear in game data. Differences
+// from \x00: printable in some contexts, not a control character so it
+// doesn't trigger ESLint no-control-regex.
+const M = '￿';
+// Regex-safe form: ￿ as one char class-safe code unit
+const MR = '\\uFFFF';
 
 /**
  * Build anonymized skill clues for a character.
  *
  * For each skill (sorted: active → weapon1 → weapon2 → passive):
- *   1. Takes the `detailedDescription` (falling back to `description`)
- *   2. Strips `{...}` wiki markup (keeps the inner text)
- *   3. Replaces skill names → [技能A], character name → [该角色],
- *      other character names → [其他角色甲], etc.
+ *   1. Looks up buff descriptions via {@link singleItemOwnbuffs}
+ *   2. Strips `{…}` wiki markup (keeps the inner text)
+ *   3. Replaces all Chinese-quoted text (“…”) with numbered placeholders
+ *      (#1, #2, …) — identical quoted strings share the same placeholder
+ *      number across all skills in this character.
  *
- * @param character - The target character (with enriched fields from GameDataManager)
- * @param allCharacters - Full character record for detecting cross-references
- * @returns SkillClue[] — one per skill
+ * Skills with no associated buffs are skipped.
+ *
+ * @param character - The target character
+ * @param allCharacters - Full character record (unused, kept for signature compatibility)
+ * @returns SkillClue[] — one per skill with buffs
  */
 export function buildSkillCluesForCharacter(
   character: CharacterLike,
-  allCharacters: Record<string, CharacterLike>,
+  _allCharacters: Record<string, CharacterLike>,
   _allBuffs: Record<string, Buff>
 ): SkillClue[] {
   const skills = character.skills;
   if (!skills || skills.length === 0) return [];
 
-  const allCharNames = getAllCharacterNames(allCharacters);
   const clues: SkillClue[] = [];
 
   // Sort skills: active, weapon1, weapon2, passive
@@ -97,104 +85,144 @@ export function buildSkillCluesForCharacter(
   };
   const sorted = [...skills].sort((a, b) => (skillOrder[a.type] ?? 9) - (skillOrder[b.type] ?? 9));
 
+  // Global quote → placeholder map so the same quoted text
+  // gets the same #N across all skills
+  const globalQuoteMap = new Map<string, string>();
+  let quoteIndex = 0;
+
   for (let i = 0; i < sorted.length; i++) {
     const skill = sorted[i]!;
-    const placeholderMap: Record<string, string> = {};
 
-    // Get the richest description available
-    let text = skill.detailedDescription || skill.description || '';
-    if (!text.trim()) {
-      // Try the first skill level with a non-empty description
-      for (const level of skill.skillLevels ?? []) {
-        const levelText = level.detailedDescription || level.description || '';
-        if (levelText.trim()) {
-          text = levelText;
-          break;
-        }
+    // Build a SingleItem for buff lookup
+    const factionId = character.factionId as SingleItem['factionId'];
+    const singleItem: SingleItem = {
+      name: skill.name,
+      type: 'skill',
+      ...(factionId ? { factionId } : {}),
+    };
+    const buffDescs = singleItemOwnbuffs(singleItem);
+    if (buffDescs.length === 0) continue;
+
+    // Join all buff descriptions for this skill
+    let processed = buffDescs.join('\n');
+
+    // Strip wiki markup {name} → name (keep the inner text)
+    processed = processed.replace(/\{([^}]+)\}/g, '$1');
+
+    // --- Phase 1: Extract ALL Chinese-quoted text first ---
+    // This must happen BEFORE tooltip extraction because buff names like
+    // "[name](不在状态栏显示)" contain [...] (...) that would be
+    // incorrectly parsed as hover-tooltip patterns.
+    const quoteRegex = /“([^”]*)”/g;
+    const quoteContents: string[] = [];
+
+    const textWithQuoteMarkers = processed.replace(quoteRegex, (_full, inner) => {
+      const idx = quoteContents.length;
+      quoteContents.push(inner);
+      return `${M}Q${idx}${M}`;
+    });
+
+    // --- Phase 2: Extract [visible](tooltip-content) patterns ---
+    // Now that Chinese quotes are replaced with markers, [name](note)
+    // patterns inside quotes won't be confused with hover tooltips.
+    const tooltipPattern = /\[([^\]]+?)\]\(([^)]+?)\)/g;
+    const tooltipContents: string[] = [];
+
+    const textWithTooltipMarkers = textWithQuoteMarkers.replace(
+      tooltipPattern,
+      (_full, visible, tooltip) => {
+        const idx = tooltipContents.length;
+        tooltipContents.push(tooltip);
+        return `[${visible}](${M}T${idx}${M})`;
       }
-    }
-    if (!text.trim()) continue; // Skip skills with no description
+    );
 
-    // Step 1: Strip wiki markup {name} → name
-    let processed = text.replace(/\{([^}]+)\}/g, '$1');
-
-    // Step 2: Build replacement map
-    const skillPlaceholder = `[技能${SKILL_PLACEHOLDER_LETTERS[i]}]`;
-    placeholderMap[skillPlaceholder] = skill.name;
-
-    // Step 3: Replace the skill's own name and its normalized form
-    const escapedSkillName = escapeRegex(skill.name);
-
-    // Replace full skill name references
-    processed = processed.replace(new RegExp(escapedSkillName, 'g'), skillPlaceholder);
-
-    // Also replace the skill's aliases if any
-    if (skill.aliases) {
-      for (const alias of skill.aliases) {
-        if (alias && alias.length > 0) {
-          processed = processed.replace(new RegExp(escapeRegex(alias), 'g'), skillPlaceholder);
-        }
-      }
+    // --- Phase 3: Determine which quotes are in main text ---
+    // Main text = everything outside tooltip-content markers.
+    // Build quote→placeholder map for all quotes that appear in main text.
+    //
+    // First, map out every tooltip-content region: each occurrence of
+    // (M T_N M) marks a region that is tooltip-only.
+    const tooltipRegionRegex = new RegExp(`\\(${MR}T\\d+${MR}\\)`, 'g');
+    const tooltipRegions: Array<{ start: number; end: number }> = [];
+    let tr: RegExpExecArray | null;
+    while ((tr = tooltipRegionRegex.exec(textWithTooltipMarkers)) !== null) {
+      tooltipRegions.push({ start: tr.index, end: tr.index + tr[0].length });
     }
 
-    // Step 4: Replace the character's own name
-    const charPlaceholder = '[该角色]';
-    placeholderMap[charPlaceholder] = character.id;
-    processed = processed.replace(new RegExp(escapeRegex(character.id), 'g'), charPlaceholder);
-    // Also replace normalized form (in case used without parenthetical)
-    const normalizedCharName = normalizeName(character.id);
-    if (normalizedCharName !== character.id) {
-      processed = processed.replace(new RegExp(escapeRegex(normalizedCharName), 'g'), '[该角色]');
-    }
-    // Replace character aliases
-    if (character.aliases) {
-      for (const alias of character.aliases) {
-        if (alias && alias.length > 0) {
-          processed = processed.replace(new RegExp(escapeRegex(alias), 'g'), charPlaceholder);
-        }
-      }
-    }
-
-    // Step 5: Replace other character names with [其他角色X]
-    let otherCharIndex = 0;
-    const otherCharMap = new Map<string, string>();
-
-    for (const name of allCharNames) {
-      if (
-        name === character.id ||
-        name === normalizedCharName ||
-        name === skill.name ||
-        character.aliases?.includes(name) ||
-        skill.aliases?.includes(name)
-      ) {
-        continue; // Already handled above
-      }
-      if (processed.includes(name)) {
-        let placeholder = otherCharMap.get(name);
-        if (!placeholder) {
-          placeholder = `[其他角色${OTHER_CHAR_LETTERS[otherCharIndex] ?? '?'}]`;
-          otherCharMap.set(name, placeholder);
-          otherCharIndex++;
-        }
-        processed = processed.replace(new RegExp(escapeRegex(name), 'g'), placeholder);
-        placeholderMap[placeholder] = name;
+    const mainTextSet = new Set<number>();
+    const mainTextQuoteRegex = new RegExp(`${MR}Q(\\d+)${MR}`, 'g');
+    let mm: RegExpExecArray | null;
+    while ((mm = mainTextQuoteRegex.exec(textWithTooltipMarkers)) !== null) {
+      const pos = mm.index;
+      const isInsideTooltip = tooltipRegions.some((r) => r.start < pos && pos < r.end);
+      if (!isInsideTooltip) {
+        const quoteIdx = parseInt(mm[1]!, 10);
+        mainTextSet.add(quoteIdx);
       }
     }
 
-    // Step 6: Clean up excessive whitespace
+    // Build this clue's quote→placeholder map (only main-text quotes)
+    const perClueQuoteMap = new Map<string, string>();
+    for (const idx of mainTextSet) {
+      const quote = quoteContents[idx];
+      if (quote === undefined) continue;
+      let placeholder = globalQuoteMap.get(quote);
+      if (!placeholder) {
+        quoteIndex++;
+        placeholder = `#${quoteIndex}`;
+        globalQuoteMap.set(quote, placeholder);
+      }
+      perClueQuoteMap.set(placeholder, quote);
+    }
+
+    // --- Phase 4: Replace quote markers in main text & tooltips ---
+    const quoteMarkerRegex = new RegExp(`${MR}Q(\\d+)${MR}`, 'g');
+
+    // In main text: M Q_N M → #N (if assigned) or original "…"
+    const mainTextProcessed = textWithTooltipMarkers.replace(quoteMarkerRegex, (_full, idxStr) => {
+      const idx = parseInt(idxStr, 10);
+      const quote = quoteContents[idx];
+      if (quote === undefined) return _full;
+      const placeholder = globalQuoteMap.get(quote);
+      return placeholder ? placeholder : `“${quote}”`;
+    });
+
+    // Process each tooltip content the same way
+    const processedTooltips = tooltipContents.map((tooltip) =>
+      tooltip.replace(quoteMarkerRegex, (_full, idxStr) => {
+        const idx = parseInt(idxStr, 10);
+        const quote = quoteContents[idx];
+        if (quote === undefined) return _full;
+        const placeholder = globalQuoteMap.get(quote);
+        return placeholder ? placeholder : `“${quote}”`;
+      })
+    );
+
+    // --- Phase 5: Reconstruct tooltip markers ---
+    const tooltipMarkerRegex = new RegExp(`\\[([^\\]]+?)\\]\\(${MR}T(\\d+)${MR}\\)`, 'g');
+    processed = mainTextProcessed.replace(tooltipMarkerRegex, (_full, visible, idxStr) => {
+      const idx = parseInt(idxStr, 10);
+      const tooltipContent = processedTooltips[idx];
+      return tooltipContent !== undefined ? `[${visible}](${tooltipContent})` : _full;
+    });
+
+    // Clean up excessive whitespace
     processed = processed.replace(/\s+/g, ' ').trim();
+
+    // Build placeholderMap only for placeholders used in this clue
+    const placeholderMap: Record<string, string> = {};
+    for (const [placeholder, real] of perClueQuoteMap) {
+      placeholderMap[placeholder] = real;
+    }
 
     clues.push({
       skillIndex: i,
+      skillType: skill.type,
       anonymizedText: processed,
       placeholderMap,
     });
   }
 
   return clues;
-}
-
-/** Escape special regex characters in a string. */
-function escapeRegex(str: string): string {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }

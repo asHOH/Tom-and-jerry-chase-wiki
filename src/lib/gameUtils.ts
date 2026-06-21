@@ -65,62 +65,10 @@ export function getDailyCharacterId(
 }
 
 /**
- * Generate a Wordle-style result grid for the Guess Character game.
- *
- * □ = faction hint (always shown at start)
- * ○ = wrong guess
- * ● = correct guess
- */
-export function generateEmojiGrid(
-  guesses: string[],
-  correctGuessIndex: number | null,
-  _maxClues: number
-): string {
-  const lines: string[] = [];
-
-  for (let i = 0; i < guesses.length; i++) {
-    if (correctGuessIndex !== null && i === correctGuessIndex) {
-      // Correct guess — show row of ●
-      lines.push('●'.repeat(i + 1));
-      break;
-    } else {
-      // Wrong guess — show □ for faction + ○ for each wrong
-      const row = '□' + '○'.repeat(i);
-      lines.push(row);
-    }
-  }
-
-  // If never guessed correctly
-  if (correctGuessIndex === null && guesses.length > 0) {
-    lines.push('□' + '○'.repeat(guesses.length));
-  }
-
-  return lines.join('\n');
-}
-
-/**
  * Generate the full shareable result text for Game 1 (Guess Character).
  */
-export function generateGuessShareText(
-  puzzleNumber: number,
-  guesses: string[],
-  correctGuessIndex: number | null,
-  characterName: string,
-  maxClues: number
-): string {
-  const resultLine =
-    correctGuessIndex !== null
-      ? `${correctGuessIndex + 1}/${maxClues} 猜中`
-      : `未猜中 (答案是 ${characterName})`;
-
-  return [
-    `猜角色 #${puzzleNumber}`,
-    generateEmojiGrid(guesses, correctGuessIndex, maxClues),
-    `→ ${characterName}`,
-    resultLine,
-    '',
-    '来试试：tjwiki.com/games/guess-character/',
-  ].join('\n');
+export function generateGuessShareText(puzzleNumber: number): string {
+  return [`猜角色 #${puzzleNumber}`, '来试试：tjwiki.com/games/guess-character/'].join('\n');
 }
 
 /**

@@ -29,9 +29,9 @@ export default function ResultDialog({
   characterName,
   characterImageUrl,
   characterFaction,
-  guesses,
+  guesses: _guesses,
   correctGuessIndex,
-  maxClues,
+  maxClues: _maxClues,
   onPlayAgain,
   isDaily,
 }: ResultDialogProps) {
@@ -57,10 +57,7 @@ export default function ResultDialog({
 
         {/* Result grid */}
         <pre className='rounded-lg bg-gray-50 p-4 text-center font-mono text-sm leading-relaxed whitespace-pre-wrap text-gray-800 dark:bg-gray-800 dark:text-gray-200'>
-          {generateGuessShareText(puzzleNumber, guesses, correctGuessIndex, characterName, maxClues)
-            .split('\n')
-            .filter((l) => !l.startsWith('来试试'))
-            .join('\n')}
+          {generateGuessShareText(puzzleNumber)}
         </pre>
 
         {/* Action buttons */}

@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/design';
+import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 
 /** A single clue entry */
 export type ClueEntry = {
@@ -48,7 +49,7 @@ export default function CluePanel({ clues, revealedCount, maxClues }: CluePanelP
                   </span>
                   {clue.isSkillEffect ? (
                     <div className='mt-1 text-sm leading-relaxed whitespace-pre-line text-gray-800 dark:text-gray-200'>
-                      {clue.value}
+                      <TextWithHoverTooltips text={clue.value} />
                     </div>
                   ) : (
                     <p className='text-gray-800 dark:text-gray-200'>{clue.value}</p>

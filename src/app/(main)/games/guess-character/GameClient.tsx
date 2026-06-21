@@ -34,9 +34,37 @@ type StreakState = {
 const ALL_CHARACTER_IDS = [...mouseCharacterIds, ...catCharacterIds];
 const MAX_WRONG_GUESSES = 8;
 
-/** Bucket a number to the nearest 50 for HP range display */
-function bucketHp(hp: number | undefined): string {
+/** Simple deterministic hash of a string (for picking tags/display values) */
+function hashString(str: string): number {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash + str.charCodeAt(i)) | 0;
+  }
+  return Math.abs(hash);
+}
+
+/** Bucket a number to the nearest 50 for HP range display (cats), or to specific tiers (mice) */
+function bucketHp(hp: number | undefined, factionId?: string): string {
   if (hp == null) return '未知';
+
+  if (factionId === 'mouse') {
+    const tiers = [
+      { ref: 72, label: '70–75' },
+      { ref: 100, label: '99–101' },
+      { ref: 124, label: '124' },
+    ];
+    let best = tiers[0]!;
+    let bestDist = Math.abs(hp - best.ref);
+    for (const tier of tiers) {
+      const dist = Math.abs(hp - tier.ref);
+      if (dist < bestDist) {
+        best = tier;
+        bestDist = dist;
+      }
+    }
+    return best.label;
+  }
+
   const low = Math.floor(hp / 50) * 50;
   const high = Math.ceil(hp / 50) * 50;
   return `${low}–${high}`;
@@ -97,23 +125,34 @@ export default function GuessCharacterClient({ description }: Props) {
 
     const entries: ClueEntry[] = [];
 
-    // Clue 0: Faction + Gender
+    // Clue 0: Faction + weapon count
     const factionLabel = character.factionId === 'cat' ? '猫阵营' : '鼠阵营';
-    const genderStr =
-      character.gender === 'male' ? '男' : character.gender === 'female' ? '女' : '未知';
-    entries.push({ label: '阵营 & 性别', value: `${factionLabel} · 性别: ${genderStr}` });
+    const weaponCount =
+      character.skills?.filter((s) => s.type === 'weapon1' || s.type === 'weapon2').length ?? 0;
+    entries.push({
+      label: '阵营 · 武器数',
+      value: weaponCount > 0 ? `${factionLabel} · ${weaponCount}` : factionLabel,
+    });
 
-    // Clue 1: Positioning tags
+    // Clue 1: Single positioning tag (deterministic pick based on character name)
     const tags =
       character.factionId === 'cat' ? character.catPositioningTags : character.mousePositioningTags;
     const tagNames = tags?.map((t) => t.tagName) ?? [];
+    const pickedTag =
+      tagNames.length > 0 ? tagNames[hashString(character.id) % tagNames.length] : null;
     entries.push({
-      label: '定位标签',
-      value: tagNames.length > 0 ? tagNames.join(' · ') : '无定位标签',
+      label: '定位标签之一',
+      value: pickedTag ?? '无定位标签',
     });
 
     // Clues 2...N: Skill effects (anonymized)
     // Cast from Valtio readonly snapshot to mutable types expected by skillEffectUtils
+    const skillTypeLabel: Record<string, string> = {
+      active: '主动技能效果',
+      weapon1: '武器技能1效果',
+      weapon2: '武器技能2效果',
+      passive: '被动技能效果',
+    };
     const skillClues = buildSkillCluesForCharacter(
       character as unknown as Parameters<typeof buildSkillCluesForCharacter>[0],
       charsSnap as unknown as Parameters<typeof buildSkillCluesForCharacter>[1],
@@ -121,14 +160,14 @@ export default function GuessCharacterClient({ description }: Props) {
     );
     for (const sc of skillClues) {
       entries.push({
-        label: `技能效果 #${sc.skillIndex + 1}`,
+        label: skillTypeLabel[sc.skillType] ?? `技能效果 #${sc.skillIndex + 1}`,
         value: sc.anonymizedText,
         isSkillEffect: true,
       });
     }
 
     // HP range
-    entries.push({ label: '血量范围', value: bucketHp(character.maxHp) });
+    entries.push({ label: '血量范围', value: bucketHp(character.maxHp, character.factionId) });
 
     // Move speed + Jump height
     const ms = character.moveSpeed ?? '?';
@@ -146,8 +185,8 @@ export default function GuessCharacterClient({ description }: Props) {
     return entries;
   }, [activeCharacterId, charsSnap]);
 
-  // How many clues are currently revealed
-  const revealedCount = Math.min(guesses.length, clues.length);
+  // How many clues are currently revealed (always at least 1)
+  const revealedCount = Math.min(guesses.length + 1, clues.length);
 
   // Has the player guessed correctly?
   const correctGuessIndex = (() => {
