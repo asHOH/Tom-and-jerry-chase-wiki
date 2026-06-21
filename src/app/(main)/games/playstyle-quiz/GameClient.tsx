@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useSnapshot } from 'valtio';
 
 import { useDarkMode } from '@/context/DarkModeContext';
@@ -28,6 +28,7 @@ export default function PlaystyleQuizClient({ description }: Props) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<QuizOption[]>([]);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const isTransitioning = useRef(false);
 
   const questions = faction === 'cat' ? catQuestions : mouseQuestions;
   const totalQuestions = questions.length;
@@ -60,19 +61,23 @@ export default function PlaystyleQuizClient({ description }: Props) {
 
   const handleAnswer = useCallback(
     (answerIndex: number) => {
+      // Guard against rapid clicks during the transition animation
+      if (isTransitioning.current) return;
+
       const currentQ = questions[currentQuestion];
       if (!currentQ) return;
 
       const selected = currentQ.answers[answerIndex];
       if (!selected) return;
 
+      isTransitioning.current = true;
       setSelectedAnswer(answerIndex);
 
       // Brief delay before advancing to show the selection
       setTimeout(() => {
-        const newAnswers = [...answers, selected];
-        setAnswers(newAnswers);
+        setAnswers((prev) => [...prev, selected]);
         setSelectedAnswer(null);
+        isTransitioning.current = false;
 
         if (currentQuestion + 1 >= totalQuestions) {
           setPhase('result');
@@ -81,7 +86,7 @@ export default function PlaystyleQuizClient({ description }: Props) {
         }
       }, 400);
     },
-    [answers, currentQuestion, questions, totalQuestions]
+    [currentQuestion, questions, totalQuestions]
   );
 
   const handleRetake = useCallback(() => {

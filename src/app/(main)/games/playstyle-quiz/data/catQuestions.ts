@@ -143,28 +143,6 @@ const catQuestions: QuizQuestion[] = [
   },
   {
     id: 'cat-q6',
-    text: '队友（其他猫）在追一只老鼠，你在附近，你通常会？',
-    answers: [
-      { text: '配合队友包夹，堵住老鼠的逃跑路线', tags: [{ tagName: '追击', weight: 2 }] },
-      { text: '让队友去追，你去守奶酪区防止其他老鼠推', tags: [{ tagName: '防守', weight: 2 }] },
-      {
-        text: '一起上，用技能连招直接秒杀',
-        tags: [
-          { tagName: '打架', weight: 1 },
-          { tagName: '进攻', weight: 1 },
-        ],
-      },
-      {
-        text: '在附近布置陷阱，防止老鼠逃跑',
-        tags: [
-          { tagName: '防守', weight: 1 },
-          { tagName: '追击', weight: 1 },
-        ],
-      },
-    ],
-  },
-  {
-    id: 'cat-q7',
     text: '关于知识卡搭配，你更倾向于哪种风格？',
     answers: [
       {
@@ -192,7 +170,7 @@ const catQuestions: QuizQuestion[] = [
     ],
   },
   {
-    id: 'cat-q8',
+    id: 'cat-q7',
     text: '老鼠踩中了你放的夹子，你离它有段距离，你会？',
     answers: [
       {
@@ -223,7 +201,7 @@ const catQuestions: QuizQuestion[] = [
     ],
   },
   {
-    id: 'cat-q9',
+    id: 'cat-q8',
     text: '在55（5v5）模式中，作为猫方你的打法是？',
     answers: [
       {
@@ -251,7 +229,7 @@ const catQuestions: QuizQuestion[] = [
     ],
   },
   {
-    id: 'cat-q10',
+    id: 'cat-q9',
     text: '你觉得一个优秀的猫玩家最重要的品质是？',
     answers: [
       {

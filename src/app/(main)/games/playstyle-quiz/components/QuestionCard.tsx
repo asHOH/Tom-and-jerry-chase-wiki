@@ -29,6 +29,7 @@ export default function QuestionCard({ question, onAnswer, selectedAnswer }: Que
             <button
               key={index}
               onClick={() => onAnswer(index)}
+              disabled={selectedAnswer !== null}
               className={cn(
                 'rounded-lg border-2 px-5 py-4 text-left transition-all duration-150',
                 'min-h-[44px] touch-manipulation', // Mobile touch target
