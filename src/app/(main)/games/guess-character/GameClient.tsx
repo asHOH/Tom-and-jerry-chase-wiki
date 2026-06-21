@@ -9,6 +9,7 @@ import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { catCharacterIds, mouseCharacterIds } from '@/features/characters/data/characterMetadata';
 import GameLayout from '@/features/games/components/GameLayout';
 import StreakCounter from '@/features/games/components/StreakCounter';
+import { getRelationsBySubject } from '@/features/shared/traits/relationIndex';
 import { buffs, characters } from '@/data';
 
 import CluePanel, { type ClueEntry } from './components/CluePanel';
@@ -164,6 +165,35 @@ export default function GuessCharacterClient({ description }: Props) {
         value: sc.anonymizedText,
         isSkillEffect: true,
       });
+    }
+
+    // Counter relation clue — inserted before the first skill effect clue
+    const firstSkillClueIndex = entries.findIndex((e) => e.isSkillEffect);
+    if (firstSkillClueIndex >= 0) {
+      const allCounters = [
+        ...getRelationsBySubject('counters', { name: activeCharacterId, type: 'character' }),
+        ...getRelationsBySubject('counteredBy', { name: activeCharacterId, type: 'character' }),
+        ...getRelationsBySubject('counterEachOther', {
+          name: activeCharacterId,
+          type: 'character',
+        }),
+      ].filter((r) => !r.isMinor);
+
+      if (allCounters.length > 0) {
+        const picked = allCounters[hashString(character.id) % allCounters.length]!;
+        const targetName = picked.target.name;
+        const clueLabels: Record<string, string> = {
+          counters: `克制 ${targetName}`,
+          counteredBy: `被 ${targetName} 克制`,
+          counterEachOther: `与 ${targetName} 互相克制`,
+        };
+        const clueValue = clueLabels[picked.kind] ?? `${picked.kind} ${targetName}`;
+
+        entries.splice(firstSkillClueIndex, 0, {
+          label: '克制关系',
+          value: clueValue,
+        });
+      }
     }
 
     // HP range

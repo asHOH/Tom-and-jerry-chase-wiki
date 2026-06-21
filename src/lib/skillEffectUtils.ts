@@ -114,12 +114,12 @@ export function buildSkillCluesForCharacter(
 
   const clues: SkillClue[] = [];
 
-  // Sort skills: active, weapon1, weapon2, passive
+  // Sort skills: passive, active, weapon1, weapon2
   const skillOrder: Record<string, number> = {
-    active: 0,
-    weapon1: 1,
-    weapon2: 2,
-    passive: 3,
+    passive: 0,
+    active: 1,
+    weapon1: 2,
+    weapon2: 3,
   };
   const sorted = [...skills].sort((a, b) => (skillOrder[a.type] ?? 9) - (skillOrder[b.type] ?? 9));
 
