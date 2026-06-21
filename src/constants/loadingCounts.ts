@@ -16,7 +16,7 @@ export const LOADING_COUNTS = {
   rankings: 55,
   mechanicsSections: 9,
   usagesSections: 2,
-  tools: 8,
+  tools: 11,
 } as const;
 
 export function getFactionLoadingCount(pathname: string | null | undefined) {

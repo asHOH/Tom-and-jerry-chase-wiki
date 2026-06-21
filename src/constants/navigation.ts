@@ -237,6 +237,31 @@ export const TOOL_NAV_ITEMS: readonly NavItem[] = [
     iconSrc: '/images/icons/mode.png', // Temporary icon
     iconAlt: '',
   },
+  //小游戏
+  {
+    id: 'guess-character',
+    label: '猜角色',
+    description: '根据线索找出当天的神秘角色',
+    href: '/games/guess-character/',
+    iconSrc: '/images/icons/game.png',
+    iconAlt: '',
+  },
+  {
+    id: 'stat-showdown',
+    label: '能力对决',
+    description: '比较角色属性 - 更高还是更低？',
+    href: '/games/stat-showdown/',
+    iconSrc: '/images/icons/game.png',
+    iconAlt: '',
+  },
+  {
+    id: 'playstyle-quiz',
+    label: '人格测试',
+    description: '回答情境问题找到最适合你的角色',
+    href: '/games/playstyle-quiz/',
+    iconSrc: '/images/icons/game.png',
+    iconAlt: '',
+  },
   //以下为编辑模式专用工具，正常情况不显示
   {
     id: 'item-maker',

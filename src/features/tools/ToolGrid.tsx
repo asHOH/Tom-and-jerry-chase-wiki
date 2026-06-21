@@ -27,6 +27,10 @@ export default function CharacterRankingGrid({ description }: CharacterRankingGr
       items: ['ranks', 'win-rates', 'special-skill-advices', 'traitCollection'],
     },
     {
+      title: '小游戏',
+      items: ['guess-character', 'stat-showdown', 'playstyle-quiz'],
+    },
+    {
       title: '建设中界面',
       items: ['fixtures', 'achievements'],
     },
