@@ -11,11 +11,16 @@ import { characters } from '@/data';
 
 import ComparisonCard from './components/ComparisonCard';
 import GameOverDialog from './components/GameOverDialog';
-import ModeSelector, { type GameMode } from './components/ModeSelector';
+import { type GameMode } from './components/ModeSelector';
 import StatLabel from './components/StatLabel';
 import TimerDisplay from './components/TimerDisplay';
 
-type Props = { description?: string };
+type Props = {
+  mode: GameMode;
+  description?: string;
+  /** Navigation tabs for switching between modes (rendered above the game) */
+  modeNav?: React.ReactNode;
+};
 
 /** Stat keys available per mode */
 const MODE_STATS: Record<GameMode, string[]> = {
@@ -28,8 +33,24 @@ const MODE_STATS: Record<GameMode, string[]> = {
     'cheesePushSpeed',
     'wallCrackDamageBoost',
   ],
-  all: ['maxHp', 'attackBoost', 'moveSpeed', 'jumpHeight'],
-  blitz: ['maxHp', 'attackBoost', 'moveSpeed', 'jumpHeight'],
+  all: [
+    'maxHp',
+    'attackBoost',
+    'moveSpeed',
+    'jumpHeight',
+    'clawKnifeCdHit',
+    'cheesePushSpeed',
+    'wallCrackDamageBoost',
+  ],
+  blitz: [
+    'maxHp',
+    'attackBoost',
+    'moveSpeed',
+    'jumpHeight',
+    'clawKnifeCdHit',
+    'cheesePushSpeed',
+    'wallCrackDamageBoost',
+  ],
 };
 
 type HighScores = { cats: number; mice: number; all: number; blitz: number };
@@ -62,10 +83,9 @@ function pickRandomStat(stats: string[]): string {
   return stats[Math.floor(Math.random() * stats.length)]!;
 }
 
-export default function StatShowdownClient({ description }: Props) {
+export default function StatShowdownClient({ mode, description, modeNav }: Props) {
   const charsSnap = useSnapshot(characters);
 
-  const [mode, setMode] = useState<GameMode>('all');
   const [score, setScore] = useState(0);
   const [isJudging, setIsJudging] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
@@ -81,6 +101,17 @@ export default function StatShowdownClient({ description }: Props) {
   const [canAdvance, setCanAdvance] = useState(false);
   const advanceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Blitz timer starts only after first choice
+  const [timerStarted, setTimerStarted] = useState(false);
+  // Escalating penalty: wrong count increases penalty each time
+  const [wrongCount, setWrongCount] = useState(0);
+  // Feedback badge next to timer in blitz mode
+  const [blitzFeedback, setBlitzFeedback] = useState<{
+    text: string;
+    type: 'correct' | 'wrong';
+  } | null>(null);
+  const blitzFeedbackTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const [highScores, setHighScores] = useLocalStorage<HighScores>('stat-showdown-scores', {
     cats: 0,
     mice: 0,
@@ -90,14 +121,7 @@ export default function StatShowdownClient({ description }: Props) {
 
   const highScore = highScores[mode];
 
-  // Blitz timer
-  const onBlitzEnd = useCallback(() => {
-    endGame(score, true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [score]);
-  const timer = useTimer(30, mode === 'blitz' ? onBlitzEnd : undefined);
-
-  // Build character pool on mount / mode change
+  // Build character pool based on mode
   const pool = useMemo<CharacterSummary[]>(() => {
     const all = Object.values(charsSnap).map((c) => ({
       id: c.id,
@@ -134,10 +158,29 @@ export default function StatShowdownClient({ description }: Props) {
     [highScore, mode, setHighScores]
   );
 
+  // Keep endGame in a ref so onBlitzEnd never captures a stale version
+  const endGameRef = useRef(endGame);
+  useEffect(() => {
+    endGameRef.current = endGame;
+  }, [endGame]);
+
+  // Blitz timer — onEnd callback uses ref to avoid stale closures
+  const onBlitzEnd = useCallback(() => {
+    endGameRef.current(score, true);
+  }, [score]);
+
+  const timer = useTimer(30, mode === 'blitz' ? onBlitzEnd : undefined);
+  const { reset: resetTimer, start: startTimer, pause: pauseTimer, adjust: adjustTimer } = timer;
+  const timerTimeLeft = timer.timeLeft;
+
   const clearAdvanceTimeout = useCallback(() => {
     if (advanceTimeoutRef.current) {
       clearTimeout(advanceTimeoutRef.current);
       advanceTimeoutRef.current = null;
+    }
+    if (blitzFeedbackTimeoutRef.current) {
+      clearTimeout(blitzFeedbackTimeoutRef.current);
+      blitzFeedbackTimeoutRef.current = null;
     }
   }, []);
 
@@ -157,7 +200,6 @@ export default function StatShowdownClient({ description }: Props) {
     // All other stats require same-faction characters.
     let candidates = withStat;
     if (CROSS_FACTION_MODES.has(mode) && statName !== 'attackBoost') {
-      // Try each faction; prefer the one with more characters
       const cats = candidates.filter((c) => c.factionId === 'cat');
       const mice = candidates.filter((c) => c.factionId === 'mouse');
       candidates = cats.length >= mice.length ? cats : mice;
@@ -189,17 +231,25 @@ export default function StatShowdownClient({ description }: Props) {
     setLeftWinner(null);
   }, [pool, mode, clearAdvanceTimeout]);
 
-  // Initialize game
+  // Initialize / reset game when mode changes or game is restarted
   useEffect(() => {
     if (!isGameOver) {
       generatePair();
-      if (mode === 'blitz') {
-        timer.reset(30);
-        timer.start();
-      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, isGameOver]);
+
+  // Dedicated timer management — blitz starts only after first choice
+  useEffect(() => {
+    if (mode === 'blitz' && !isGameOver && timerStarted) {
+      startTimer();
+    } else {
+      pauseTimer();
+      if (mode === 'blitz' && !isGameOver && !timerStarted) {
+        resetTimer(30);
+      }
+    }
+  }, [mode, isGameOver, timerStarted, resetTimer, startTimer, pauseTimer]);
 
   const handleAdvance = useCallback(() => {
     generatePair();
@@ -232,16 +282,29 @@ export default function StatShowdownClient({ description }: Props) {
       setLeftWinner(correct === 'left');
 
       if (mode === 'blitz') {
-        // Blitz: correct = instant advance, wrong = 3s delay then advance (don't end game)
+        // Start timer on first choice
+        if (!timerStarted) setTimerStarted(true);
+        const currentTime = timerTimeLeft;
         if (winner) {
           setScore((prev) => prev + 1);
+          adjustTimer(currentTime + 1);
+          setBlitzFeedback({ text: '+1s', type: 'correct' });
           generatePair();
         } else {
-          setCanAdvance(true);
-          advanceTimeoutRef.current = setTimeout(() => {
+          const penalty = 4 + wrongCount;
+          const newTime = currentTime - penalty;
+          setWrongCount((prev) => prev + 1);
+          if (newTime <= 0) {
+            endGame(score);
+          } else {
+            adjustTimer(newTime);
+            setBlitzFeedback({ text: `-${penalty}s`, type: 'wrong' });
             generatePair();
-          }, 3000);
+          }
         }
+        // Clear feedback after 1.5s
+        if (blitzFeedbackTimeoutRef.current) clearTimeout(blitzFeedbackTimeoutRef.current);
+        blitzFeedbackTimeoutRef.current = setTimeout(() => setBlitzFeedback(null), 1500);
       } else {
         // Non-blitz: correct = can manually skip or auto-advance after 1.5s, wrong = game over
         if (winner) {
@@ -267,6 +330,10 @@ export default function StatShowdownClient({ description }: Props) {
       generatePair,
       endGame,
       handleAdvance,
+      timerStarted,
+      wrongCount,
+      timerTimeLeft,
+      adjustTimer,
     ]
   );
 
@@ -279,44 +346,33 @@ export default function StatShowdownClient({ description }: Props) {
     setIsJudging(false);
     setLeftWinner(null);
     setFlipped(false);
-    if (mode === 'blitz') {
-      timer.reset(30);
-      timer.start();
-    }
+    setTimerStarted(false);
+    setWrongCount(0);
+    // Timer is reset and waits for first choice in blitz mode
     generatePair();
-  }, [mode, generatePair, timer, clearAdvanceTimeout]);
-
-  const handleModeChange = useCallback(
-    (newMode: GameMode) => {
-      clearAdvanceTimeout();
-      setCanAdvance(false);
-      setMode(newMode);
-      setScore(0);
-      setIsGameOver(false);
-      setShowDialog(false);
-      setIsJudging(false);
-      setLeftWinner(null);
-      setFlipped(false);
-    },
-    [clearAdvanceTimeout]
-  );
+  }, [generatePair, clearAdvanceTimeout]);
 
   const leftValue = leftChar?.stats[currentStat];
   const rightValue = rightChar?.stats[currentStat];
 
   return (
     <GameLayout title='能力对决' description={description}>
-      <ModeSelector currentMode={mode} onSelect={handleModeChange} />
+      {/* Mode navigation tabs */}
+      {modeNav}
 
+      {/* Blitz timer */}
       {mode === 'blitz' && (
         <TimerDisplay
           timeLeft={timer.timeLeft}
           formattedTime={timer.formattedTime}
           isWarning={timer.timeLeft <= 10}
+          started={timerStarted}
+          feedbackText={blitzFeedback?.text ?? null}
+          feedbackType={blitzFeedback?.type ?? null}
         />
       )}
 
-      <StreakCounter current={score} best={highScore} size='md' />
+      <StreakCounter current={score} best={highScore} size='md' label='得分' />
 
       <StatLabel statName={currentStat} />
 

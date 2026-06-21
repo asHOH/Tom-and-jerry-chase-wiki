@@ -1,7 +1,6 @@
 'use client';
 
 import { generateGuessShareText } from '@/lib/gameUtils';
-import ShareButton from '@/features/games/components/ShareButton';
 import { BaseDialog } from '@/components/ui/BaseDialog';
 import GameImage from '@/components/ui/GameImage';
 
@@ -36,14 +35,6 @@ export default function ResultDialog({
   onPlayAgain,
   isDaily,
 }: ResultDialogProps) {
-  const shareText = generateGuessShareText(
-    puzzleNumber,
-    guesses,
-    correctGuessIndex,
-    characterName,
-    maxClues
-  );
-
   return (
     <BaseDialog
       open={open}
@@ -71,9 +62,6 @@ export default function ResultDialog({
             .filter((l) => !l.startsWith('来试试'))
             .join('\n')}
         </pre>
-
-        {/* Share button */}
-        <ShareButton getShareText={() => shareText} label='分享结果' />
 
         {/* Action buttons */}
         <button

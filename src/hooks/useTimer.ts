@@ -12,6 +12,8 @@ type TimerActions = {
   start: () => void;
   pause: () => void;
   reset: (newTime?: number) => void;
+  /** Set timeLeft without stopping/restarting the timer */
+  adjust: (newTime: number) => void;
 };
 
 /**
@@ -57,6 +59,19 @@ export function useTimer(initialSeconds: number, onEnd?: () => void): TimerState
     [clearTimer, initialSeconds]
   );
 
+  /** Adjust timeLeft without interrupting the ticking timer */
+  const adjust = useCallback(
+    (newTime: number) => {
+      setTimeLeft(Math.max(0, newTime));
+      if (newTime <= 0) {
+        setIsRunning(false);
+        clearTimer();
+        queueMicrotask(() => onEndRef.current?.());
+      }
+    },
+    [clearTimer]
+  );
+
   // Tick logic
   useEffect(() => {
     if (!isRunning) {
@@ -88,5 +103,5 @@ export function useTimer(initialSeconds: number, onEnd?: () => void): TimerState
   const seconds = timeLeft % 60;
   const formattedTime = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 
-  return { timeLeft, isRunning, formattedTime, start, pause, reset };
+  return { timeLeft, isRunning, formattedTime, start, pause, reset, adjust };
 }

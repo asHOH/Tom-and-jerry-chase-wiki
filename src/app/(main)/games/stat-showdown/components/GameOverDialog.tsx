@@ -1,6 +1,5 @@
 'use client';
 
-import ShareButton from '@/features/games/components/ShareButton';
 import { BaseDialog } from '@/components/ui/BaseDialog';
 
 type GameOverDialogProps = {
@@ -23,15 +22,6 @@ export default function GameOverDialog({
 }: GameOverDialogProps) {
   const isNewHigh = score > 0 && score >= highScore;
 
-  const getShareText = () =>
-    [
-      `能力对决`,
-      `最终得分: ${score} 连胜`,
-      isNewHigh ? '新纪录！' : `最高纪录: ${highScore}`,
-      '',
-      '来试试：tjwiki.com/games/stat-showdown/',
-    ].join('\n');
-
   return (
     <BaseDialog
       open={open}
@@ -44,7 +34,7 @@ export default function GameOverDialog({
 
         <div className='space-y-1'>
           <p className='text-4xl font-bold text-blue-600 dark:text-blue-400'>{score}</p>
-          <p className='text-sm text-gray-500 dark:text-gray-400'>连胜次数</p>
+          <p className='text-sm text-gray-500 dark:text-gray-400'>得分</p>
         </div>
 
         {isNewHigh && (
@@ -67,8 +57,6 @@ export default function GameOverDialog({
         )}
 
         <p className='text-sm text-gray-500 dark:text-gray-400'>最高纪录: {highScore}</p>
-
-        <ShareButton getShareText={getShareText} label='分享成绩' />
 
         <button
           onClick={onPlayAgain}

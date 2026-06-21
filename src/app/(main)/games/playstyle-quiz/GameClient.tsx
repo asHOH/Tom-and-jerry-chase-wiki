@@ -5,7 +5,6 @@ import { useSnapshot } from 'valtio';
 
 import { useDarkMode } from '@/context/DarkModeContext';
 import GameLayout from '@/features/games/components/GameLayout';
-import ShareButton from '@/features/games/components/ShareButton';
 import { characters } from '@/data';
 
 import QuestionCard from './components/QuestionCard';
@@ -14,11 +13,7 @@ import QuizSelector from './components/QuizSelector';
 import ResultCard from './components/ResultCard';
 import catQuestions, { type QuizOption } from './data/catQuestions';
 import mouseQuestions from './data/mouseQuestions';
-import {
-  buildUserProfile,
-  findClosestCharacters,
-  generateQuizShareText,
-} from './utils/matchCalculator';
+import { buildUserProfile, findClosestCharacters } from './utils/matchCalculator';
 
 type GamePhase = 'select' | 'quiz' | 'result';
 
@@ -97,15 +92,6 @@ export default function PlaystyleQuizClient({ description }: Props) {
     setSelectedAnswer(null);
   }, []);
 
-  const getShareText = useCallback(() => {
-    if (!result || !faction) return '';
-    return generateQuizShareText(
-      faction === 'cat' ? '猫阵营' : '鼠阵营',
-      result.character?.id ?? result.topMatch.characterId,
-      result.similarMatches.map((m) => m.characterId)
-    );
-  }, [result, faction]);
-
   return (
     <GameLayout title='人格测试' description={description}>
       {phase === 'select' && <QuizSelector onSelect={handleFactionSelect} />}
@@ -134,7 +120,6 @@ export default function PlaystyleQuizClient({ description }: Props) {
             allCharacters={charsSnap}
           />
           <div className='flex justify-center gap-4'>
-            <ShareButton getShareText={getShareText} />
             <button
               onClick={handleRetake}
               className='rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
