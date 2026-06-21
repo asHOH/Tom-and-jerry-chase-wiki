@@ -102,6 +102,21 @@ describe('CharacterRelationsMatrix', () => {
     );
   });
 
+  it('should apply caller-controlled matrix sizing to cells and filled triggers', () => {
+    const viewModel = buildRelationMatrixViewModel({
+      rowFaction: 'mouse',
+      columnCategory: 'cat',
+    });
+
+    render(<CharacterRelationsMatrix viewModel={viewModel} cellSize={36} />);
+
+    const majorCell = screen.getByTestId(getCellTestId(viewModel, '杰瑞', '汤姆'));
+    expect(majorCell).toHaveStyle('height: 36px; width: 36px; min-width: 36px');
+
+    const majorTrigger = within(majorCell).getByLabelText(/被克制：杰瑞自保能力差/);
+    expect(majorTrigger).toHaveStyle('height: 36px; width: 36px');
+  });
+
   it('should reuse one relation color class for fills, dots, and legend markers', () => {
     const viewModel = buildRelationMatrixViewModel({
       rowFaction: 'mouse',

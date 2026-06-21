@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useId, useMemo, useState } from 'react';
 
 import { getFactionButtonColors } from '@/lib/design';
 import { useDarkMode } from '@/context/DarkModeContext';
@@ -16,6 +16,7 @@ import {
   type RelationMatrixRowFaction,
 } from '@/features/character-relations/matrix/relationMatrixViewModel';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
+import FilterLabel from '@/components/ui/FilterLabel';
 import FilterRow from '@/components/ui/FilterRow';
 
 type RelationsClientProps = {
@@ -28,6 +29,11 @@ const ROW_FACTION_LABELS = {
   mouse: '鼠阵营',
   cat: '猫阵营',
 } satisfies Record<RelationMatrixRowFaction, string>;
+
+const MATRIX_SIZE_MIN = 22;
+const MATRIX_SIZE_MAX = 40;
+const MATRIX_SIZE_STEP = 2;
+const DEFAULT_MATRIX_SIZE = 28;
 
 const targetSelectorClassName = 'mt-0 justify-start md:mt-0';
 
@@ -91,10 +97,43 @@ function ColumnCategorySelector({
   );
 }
 
+function MatrixSizeSlider({
+  value,
+  onChange,
+}: {
+  value: number;
+  onChange: (value: number) => void;
+}) {
+  const labelId = useId();
+
+  return (
+    <div
+      className='mt-0 flex items-center justify-start gap-2 md:mt-0'
+      role='group'
+      aria-labelledby={labelId}
+    >
+      <FilterLabel id={labelId} full='表格大小' />
+      <div className='flex w-full max-w-xs min-w-0 px-1'>
+        <input
+          type='range'
+          min={MATRIX_SIZE_MIN}
+          max={MATRIX_SIZE_MAX}
+          step={MATRIX_SIZE_STEP}
+          value={value}
+          onChange={(event) => onChange(Number(event.currentTarget.value))}
+          className='h-8 w-full cursor-pointer accent-blue-500 dark:accent-blue-400'
+          aria-labelledby={labelId}
+        />
+      </div>
+    </div>
+  );
+}
+
 export default function RelationsClient({ description }: RelationsClientProps) {
   const [isDarkMode] = useDarkMode();
   const [rowFaction, setRowFaction] = useState<RelationMatrixRowFaction>('mouse');
   const [columnCategory, setColumnCategory] = useState<RelationMatrixColumnCategory>('cat');
+  const [matrixSize, setMatrixSize] = useState(DEFAULT_MATRIX_SIZE);
   const coercedColumnCategory = coerceColumnCategory(rowFaction, columnCategory);
   const columnCategoryOptions = getLegalColumnCategories(rowFaction);
   const viewModel = useMemo(
@@ -131,12 +170,13 @@ export default function RelationsClient({ description }: RelationsClientProps) {
             onSelect={setColumnCategory}
             isDarkMode={isDarkMode}
           />
+          <MatrixSizeSlider value={matrixSize} onChange={setMatrixSize} />
           <RelationMatrixLegend />
         </div>
       }
       filtersClassName='max-w-5xl'
     >
-      <CharacterRelationsMatrix viewModel={viewModel} />
+      <CharacterRelationsMatrix viewModel={viewModel} cellSize={matrixSize} />
     </CatalogPageShell>
   );
 }

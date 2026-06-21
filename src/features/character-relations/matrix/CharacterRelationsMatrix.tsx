@@ -1,5 +1,7 @@
 'use client';
 
+import type { CSSProperties } from 'react';
+
 import { cn } from '@/lib/design';
 import type { CategoryHint } from '@/lib/types';
 import Tooltip from '@/components/ui/Tooltip';
@@ -17,6 +19,43 @@ import {
 
 type CharacterRelationsMatrixProps = {
   viewModel: RelationMatrixViewModel;
+  cellSize?: number;
+};
+
+const DEFAULT_RELATION_MATRIX_CELL_SIZE = 28;
+const MIN_RELATION_MATRIX_CELL_SIZE = 22;
+const MAX_RELATION_MATRIX_CELL_SIZE = 40;
+
+type RelationMatrixSizing = {
+  cell: CSSProperties;
+  columnHeader: CSSProperties;
+  cornerHeader: CSSProperties;
+  rowHeader: CSSProperties;
+  minorDot: CSSProperties;
+};
+
+const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
+
+const createRelationMatrixSizing = (cellSize: number): RelationMatrixSizing => {
+  const normalizedCellSize = clamp(
+    cellSize,
+    MIN_RELATION_MATRIX_CELL_SIZE,
+    MAX_RELATION_MATRIX_CELL_SIZE
+  );
+  const columnHeaderHeight = clamp(normalizedCellSize * 4, 96, 152);
+  const minorDotSize = clamp(Math.round(normalizedCellSize * 0.45), 10, 16);
+
+  return {
+    cell: { height: normalizedCellSize, minWidth: normalizedCellSize, width: normalizedCellSize },
+    columnHeader: {
+      height: columnHeaderHeight,
+      minWidth: normalizedCellSize,
+      width: normalizedCellSize,
+    },
+    cornerHeader: { height: columnHeaderHeight },
+    rowHeader: { height: normalizedCellSize },
+    minorDot: { height: minorDotSize, width: minorDotSize },
+  };
 };
 
 const RELATION_COLOR_CLASSES = {
@@ -102,7 +141,7 @@ const getColumnHeaderChunks = (label: string): string[] => {
   return compactChunks;
 };
 
-const CellMarker = ({ cell }: { cell: RelationMatrixCell }) => {
+const CellMarker = ({ cell, dotStyle }: { cell: RelationMatrixCell; dotStyle: CSSProperties }) => {
   if (!cell.isMinor) {
     return <span className='sr-only'>{cell.tooltipContent}</span>;
   }
@@ -111,7 +150,8 @@ const CellMarker = ({ cell }: { cell: RelationMatrixCell }) => {
     <span
       data-testid='relation-minor-dot'
       aria-hidden='true'
-      className={cn('block h-3 w-3 rounded-full', RELATION_COLOR_CLASSES[cell.displayKind])}
+      className={cn('block rounded-full', RELATION_COLOR_CLASSES[cell.displayKind])}
+      style={dotStyle}
     />
   );
 };
@@ -120,28 +160,31 @@ const MatrixCell = ({
   row,
   column,
   viewModel,
+  sizing,
 }: {
   row: RelationMatrixEntity;
   column: RelationMatrixEntity;
   viewModel: RelationMatrixViewModel;
+  sizing: RelationMatrixSizing;
 }) => {
   const cell = getRelationMatrixCell(viewModel, row.key, column.key);
 
   return (
     <td
       data-testid={`relation-cell-${row.key}-${column.key}`}
-      className='h-7 w-7 min-w-7 border border-gray-200 p-0 align-middle dark:border-slate-700'
+      className='border border-gray-200 p-0 align-middle dark:border-slate-700'
+      style={sizing.cell}
     >
       {cell ? (
         <Tooltip
           content={cell.tooltipContent}
           className={cn(
-            'flex h-7 w-7 cursor-help items-center justify-center border-b-0 transition-opacity hover:opacity-85',
+            'flex cursor-help items-center justify-center border-b-0 transition-opacity hover:opacity-85',
             !cell.isMinor && RELATION_COLOR_CLASSES[cell.displayKind]
           )}
-          triggerProps={{ 'aria-label': cell.tooltipContent }}
+          triggerProps={{ 'aria-label': cell.tooltipContent, style: sizing.cell }}
         >
-          <CellMarker cell={cell} />
+          <CellMarker cell={cell} dotStyle={sizing.minorDot} />
         </Tooltip>
       ) : null}
     </td>
@@ -151,23 +194,26 @@ const MatrixCell = ({
 const ColumnHeader = ({
   column,
   columnCategory,
+  sizing,
 }: {
   column: RelationMatrixEntity;
   columnCategory: RelationMatrixColumnCategory;
+  sizing: RelationMatrixSizing;
 }) => (
   <th
     scope='col'
-    className='sticky top-0 z-20 h-28 w-7 min-w-7 border border-gray-200 bg-white p-0 align-bottom dark:border-slate-700 dark:bg-slate-900'
+    className='sticky top-0 z-20 border border-gray-200 bg-white p-0 align-bottom dark:border-slate-700 dark:bg-slate-900'
+    style={sizing.columnHeader}
   >
     <GotoLink
       name={column.label}
       href={column.href}
       categoryHint={getColumnCategoryHint(column, columnCategory)}
-      className='flex h-28 w-7 items-end justify-center overflow-hidden px-0.5 py-1 text-center text-[12px] leading-tight font-medium text-gray-700 no-underline hover:text-blue-600 focus:ring-2 focus:ring-blue-400 focus:outline-none dark:text-gray-200 dark:hover:text-blue-300'
+      className='flex h-full w-full items-end justify-center overflow-hidden px-0.5 py-1 text-center text-[12px] leading-tight font-medium text-gray-700 no-underline hover:text-blue-600 focus:ring-2 focus:ring-blue-400 focus:outline-none dark:text-gray-200 dark:hover:text-blue-300'
     >
       <span className='flex max-h-full flex-col items-center justify-end gap-0.5 overflow-hidden'>
         {getColumnHeaderChunks(column.label).map((chunk, index) => (
-          <span key={`${column.key}-${chunk}-${index}`} className='max-w-6 truncate'>
+          <span key={`${column.key}-${chunk}-${index}`} className='max-w-full truncate'>
             {chunk}
           </span>
         ))}
@@ -179,13 +225,16 @@ const ColumnHeader = ({
 const RowHeader = ({
   row,
   rowFaction,
+  sizing,
 }: {
   row: RelationMatrixEntity;
   rowFaction: RelationMatrixRowFaction;
+  sizing: RelationMatrixSizing;
 }) => (
   <th
     scope='row'
-    className='sticky left-0 z-10 h-7 max-w-28 min-w-24 border border-gray-200 bg-white p-0 dark:border-slate-700 dark:bg-slate-900'
+    className='sticky left-0 z-10 max-w-28 min-w-24 border border-gray-200 bg-white p-0 dark:border-slate-700 dark:bg-slate-900'
+    style={sizing.rowHeader}
   >
     <GotoLink
       name={row.label}
@@ -221,7 +270,12 @@ export const RelationMatrixLegend = () => (
   </div>
 );
 
-export default function CharacterRelationsMatrix({ viewModel }: CharacterRelationsMatrixProps) {
+export default function CharacterRelationsMatrix({
+  viewModel,
+  cellSize = DEFAULT_RELATION_MATRIX_CELL_SIZE,
+}: CharacterRelationsMatrixProps) {
+  const sizing = createRelationMatrixSizing(cellSize);
+
   return (
     <div className='mx-auto max-h-[calc(100vh-15rem)] w-fit max-w-full overflow-auto border border-gray-200 bg-white dark:border-slate-700 dark:bg-slate-900'>
       <table
@@ -232,13 +286,15 @@ export default function CharacterRelationsMatrix({ viewModel }: CharacterRelatio
           <tr>
             <th
               scope='col'
-              className='sticky top-0 left-0 z-30 h-28 min-w-24 border border-gray-200 bg-white p-2 text-left align-bottom dark:border-slate-700 dark:bg-slate-900'
+              className='sticky top-0 left-0 z-30 min-w-24 border border-gray-200 bg-white p-2 text-left align-bottom dark:border-slate-700 dark:bg-slate-900'
+              style={sizing.cornerHeader}
             ></th>
             {viewModel.columns.map((column) => (
               <ColumnHeader
                 key={column.key}
                 column={column}
                 columnCategory={viewModel.columnCategory}
+                sizing={sizing}
               />
             ))}
           </tr>
@@ -246,9 +302,15 @@ export default function CharacterRelationsMatrix({ viewModel }: CharacterRelatio
         <tbody>
           {viewModel.rows.map((row) => (
             <tr key={row.key}>
-              <RowHeader row={row} rowFaction={viewModel.rowFaction} />
+              <RowHeader row={row} rowFaction={viewModel.rowFaction} sizing={sizing} />
               {viewModel.columns.map((column) => (
-                <MatrixCell key={column.key} row={row} column={column} viewModel={viewModel} />
+                <MatrixCell
+                  key={column.key}
+                  row={row}
+                  column={column}
+                  viewModel={viewModel}
+                  sizing={sizing}
+                />
               ))}
             </tr>
           ))}
