@@ -51,21 +51,59 @@ const M = '￿';
 const MR = '\\uFFFF';
 
 /**
- * Build anonymized skill clues for a character.
+ * Strip status-mechanic clauses from buff description text.
  *
- * For each skill (sorted: active → weapon1 → weapon2 → passive):
- *   1. Looks up buff descriptions via {@link singleItemOwnbuffs}
- *   2. Strips `{…}` wiki markup (keeps the inner text)
- *   3. Replaces all Chinese-quoted text (“…”) with numbered placeholders
- *      (#1, #2, …) — identical quoted strings share the same placeholder
- *      number across all skills in this character.
+ * Removes clauses that describe status-immunity, status-clearing, and
+ * status-group mechanics — these are game-engine details that don't help
+ * players identify a character.
  *
- * Skills with no associated buffs are skipped.
- *
- * @param character - The target character
- * @param allCharacters - Full character record (unused, kept for signature compatibility)
- * @returns SkillClue[] — one per skill with buffs
+ * Applied after `{…}` wiki markup has been stripped but before Chinese-quote
+ * extraction, so the text still has `[…](tooltip)` wiki tooltips and
+ * Chinese quotation marks `` … '' intact.
  */
+export function stripStatusClauses(text: string): string {
+  // Phase A: wiki-tooltip patterns ([…](…) format)
+  text = text.replace(/可被\[免疫\]\([^)]+\)[；;]?/g, '');
+  text = text.replace(/可被\[清除\]\([^)]+\)[；;]?/g, '');
+  // 免疫/清除[部分状态](…) — may appear at the start of a description (after ：)
+  // so match an optional leading separator and preserve it via the callback
+  text = text.replace(/([：。；;])?免疫\[部分状态\]\([^)]+\)[；;]?/g, (_full, sep) => sep ?? '');
+  text = text.replace(/([：。；;])?清除\[部分状态\]\([^)]+\)[；;]?/g, (_full, sep) => sep ?? '');
+
+  // Phase B: Chinese-quoted patterns
+  // Use a captured optional leading separator — when the clause sits between
+  // two skill effects (e.g.  effectA；会被"x"免疫；effectB) the leading ；
+  // is preserved so the surrounding clauses stay separated.  When two status
+  // clauses are adjacent (会被"x"免疫；会被"y"清除) the first removal
+  // returns the leading ；, and the second clause still has its separator.
+  // 会被"x"免疫 / 会被"x"、"y"免疫 (standalone, not inside a tooltip)
+  text = text.replace(
+    /([；;])?会被“[^”]+”(?:[、，]“[^”]+”)*免疫[；;]?/g,
+    (_full, sep) => sep ?? ''
+  );
+  // 会被"x"清除 / 会被"x"、"y"清除
+  text = text.replace(
+    /([；;])?会被“[^”]+”(?:[、，]“[^”]+”)*清除[；;]?/g,
+    (_full, sep) => sep ?? ''
+  );
+  // 免疫"x" / 免疫"x"、"y"
+  text = text.replace(/([；;])?免疫“[^”]+”(?:[、，]“[^”]+”)*[；;]?/g, (_full, sep) => sep ?? '');
+  // 清除"x" / 清除"x"、"y"
+  text = text.replace(/([；;])?清除“[^”]+”(?:[、，]“[^”]+”)*[；;]?/g, (_full, sep) => sep ?? '');
+
+  // Phase C: plain-text patterns
+  // 该状态隶属于分组N,M,…
+  text = text.replace(/该状态隶属于分组[\d,]+[。；;]?/g, '');
+  // 清除xxx (plain text after {…} stripping, e.g. 清除吻痕)
+  text = text.replace(/[；;]清除(?!\[)[^；;。]{1,40}[；;]?/g, '');
+
+  // Cleanup: collapse consecutive separators and trim trailing punctuation
+  text = text.replace(/[；;]{2,}/g, '；');
+  text = text.replace(/[。；;]+$/g, '');
+
+  return text;
+}
+
 export function buildSkillCluesForCharacter(
   character: CharacterLike,
   _allCharacters: Record<string, CharacterLike>,
@@ -108,6 +146,9 @@ export function buildSkillCluesForCharacter(
 
     // Strip wiki markup {name} → name (keep the inner text)
     processed = processed.replace(/\{([^}]+)\}/g, '$1');
+
+    // Strip status-mechanic clauses (immunity, clearing, grouping)
+    processed = stripStatusClauses(processed);
 
     // --- Phase 1: Extract ALL Chinese-quoted text first ---
     // This must happen BEFORE tooltip extraction because buff names like
