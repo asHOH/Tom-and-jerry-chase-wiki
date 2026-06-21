@@ -69,34 +69,6 @@ const mouseQuestions: MouseQuizQuestion[] = [
   },
   {
     id: 'mouse-q3',
-    text: '当你是团队最后一个存活的老鼠时，你会？',
-    answers: [
-      {
-        text: '躲起来等墙缝期，找机会砸墙翻盘',
-        tags: [
-          { tagName: '砸墙', weight: 1 },
-          { tagName: '后期', weight: 1 },
-        ],
-      },
-      {
-        text: '继续骚扰猫，找机会救援被绑的队友',
-        tags: [{ tagName: '救援', weight: 2 }],
-      },
-      {
-        text: '继续推奶酪，即使只剩自己也要完成任务',
-        tags: [{ tagName: '奶酪', weight: 2 }],
-      },
-      {
-        text: '利用地形和道具拖延时间，争取墙缝期到来',
-        tags: [
-          { tagName: '干扰', weight: 1 },
-          { tagName: '破局', weight: 1 },
-        ],
-      },
-    ],
-  },
-  {
-    id: 'mouse-q4',
     text: '墙缝出现了，你通常会怎么做？',
     answers: [
       { text: '全力砸墙，我的破坏力很高', tags: [{ tagName: '砸墙', weight: 2 }] },
@@ -124,7 +96,7 @@ const mouseQuestions: MouseQuizQuestion[] = [
     ],
   },
   {
-    id: 'mouse-q5',
+    id: 'mouse-q4',
     text: '队友在推奶酪时猫来了，你通常会怎么做？',
     answers: [
       { text: '牺牲自己引开猫，让队友继续推', tags: [{ tagName: '干扰', weight: 2 }] },
@@ -149,7 +121,7 @@ const mouseQuestions: MouseQuizQuestion[] = [
     ],
   },
   {
-    id: 'mouse-q6',
+    id: 'mouse-q5',
     text: '关于知识卡搭配，你更倾向于哪种风格？',
     answers: [
       {
@@ -174,7 +146,7 @@ const mouseQuestions: MouseQuizQuestion[] = [
     ],
   },
   {
-    id: 'mouse-q7',
+    id: 'mouse-q6',
     text: '如果你发现某个队友总是被抓，你会？',
     answers: [
       { text: '专门去保护它，帮它摆脱猫的追击', tags: [{ tagName: '辅助', weight: 2 }] },
@@ -196,7 +168,7 @@ const mouseQuestions: MouseQuizQuestion[] = [
     ],
   },
   {
-    id: 'mouse-q8',
+    id: 'mouse-q7',
     text: '在55（5v5）模式中，你更喜欢打什么位置？',
     answers: [
       { text: '主推奶酪，保证任务进度', tags: [{ tagName: '奶酪', weight: 2 }] },
@@ -212,7 +184,7 @@ const mouseQuestions: MouseQuizQuestion[] = [
     ],
   },
   {
-    id: 'mouse-q9',
+    id: 'mouse-q8',
     text: '在墙缝期你的团队落后很多，你的心态是？',
     answers: [
       {
@@ -243,7 +215,7 @@ const mouseQuestions: MouseQuizQuestion[] = [
     ],
   },
   {
-    id: 'mouse-q10',
+    id: 'mouse-q9',
     text: '你觉得一个优秀的老鼠玩家最重要的品质是？',
     answers: [
       {
