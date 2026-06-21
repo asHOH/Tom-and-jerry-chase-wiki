@@ -14,6 +14,8 @@ type ComparisonCardProps = {
   isWinner: boolean | null; // null = not yet judged, true = higher, false = lower
   onSelect: () => void;
   disabled: boolean;
+  /** When true, show "点击继续" hint (useful after a correct guess to skip to next round) */
+  showAdvanceHint?: boolean;
 };
 
 /**
@@ -29,6 +31,7 @@ export default function ComparisonCard({
   isWinner,
   onSelect,
   disabled,
+  showAdvanceHint = false,
 }: ComparisonCardProps) {
   const shouldReduceMotion = useReducedMotion();
 
@@ -74,9 +77,10 @@ export default function ComparisonCard({
         >
           <GameImage src={imageUrl} alt={characterName} size='CHARACTER_CARD' />
           <p className='text-sm font-semibold text-gray-800 dark:text-gray-200'>{characterName}</p>
-          {!isFlipped && !disabled && (
+          {!isFlipped && !disabled && !showAdvanceHint && (
             <p className='text-xs text-gray-400 dark:text-gray-500'>点击选择</p>
           )}
+          {showAdvanceHint && <p className='text-xs text-blue-500 dark:text-blue-400'>点击继续</p>}
         </div>
 
         {/* Back face — stat value */}

@@ -8,8 +8,7 @@ type GuessHistoryProps = {
 };
 
 /**
- * Displays the list of previous guesses with emoji indicators.
- * 🟨 = wrong guess, 🟩 = correct guess.
+ * Displays the list of previous guesses with colored indicators.
  */
 export default function GuessHistory({ guesses, correctGuessIndex }: GuessHistoryProps) {
   if (guesses.length === 0) return null;
@@ -32,7 +31,7 @@ export default function GuessHistory({ guesses, correctGuessIndex }: GuessHistor
                   : 'bg-yellow-50 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-300'
               )}
             >
-              {isCorrect ? '🟩' : '🟨'} {guess}
+              {isCorrect ? '✓' : '✗'} {guess}
             </span>
           );
         })}

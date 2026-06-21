@@ -1,5 +1,5 @@
 /**
- * Game utilities: seeded PRNG, daily puzzle rotation, emoji grids, share text.
+ * Game utilities: seeded PRNG, daily puzzle rotation, result grids, share text.
  *
  * All game pages import from here for consistent daily puzzle behavior.
  */
@@ -65,11 +65,11 @@ export function getDailyCharacterId(
 }
 
 /**
- * Generate a Wordle-style emoji grid for the Guess Character game.
+ * Generate a Wordle-style result grid for the Guess Character game.
  *
- * ⬜ = faction hint (always shown at start)
- * 🟨 = wrong guess
- * 🟩 = correct guess
+ * □ = faction hint (always shown at start)
+ * ○ = wrong guess
+ * ● = correct guess
  */
 export function generateEmojiGrid(
   guesses: string[],
@@ -80,19 +80,19 @@ export function generateEmojiGrid(
 
   for (let i = 0; i < guesses.length; i++) {
     if (correctGuessIndex !== null && i === correctGuessIndex) {
-      // Correct guess — show row of 🟩
-      lines.push('🟩'.repeat(i + 1));
+      // Correct guess — show row of ●
+      lines.push('●'.repeat(i + 1));
       break;
     } else {
-      // Wrong guess — show ⬜ for faction + 🟨 for each wrong
-      const row = '⬜' + '🟨'.repeat(i);
+      // Wrong guess — show □ for faction + ○ for each wrong
+      const row = '□' + '○'.repeat(i);
       lines.push(row);
     }
   }
 
   // If never guessed correctly
   if (correctGuessIndex === null && guesses.length > 0) {
-    lines.push('⬜' + '🟨'.repeat(guesses.length));
+    lines.push('□' + '○'.repeat(guesses.length));
   }
 
   return lines.join('\n');
@@ -114,7 +114,7 @@ export function generateGuessShareText(
       : `未猜中 (答案是 ${characterName})`;
 
   return [
-    `🎮 猜角色 #${puzzleNumber}`,
+    `猜角色 #${puzzleNumber}`,
     generateEmojiGrid(guesses, correctGuessIndex, maxClues),
     `→ ${characterName}`,
     resultLine,

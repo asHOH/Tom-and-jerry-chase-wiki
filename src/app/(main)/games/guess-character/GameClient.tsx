@@ -98,7 +98,7 @@ export default function GuessCharacterClient({ description }: Props) {
     const entries: ClueEntry[] = [];
 
     // Clue 0: Faction + Gender
-    const factionLabel = character.factionId === 'cat' ? '🐱 猫阵营' : '🐭 鼠阵营';
+    const factionLabel = character.factionId === 'cat' ? '猫阵营' : '鼠阵营';
     const genderStr =
       character.gender === 'male' ? '男' : character.gender === 'female' ? '女' : '未知';
     entries.push({ label: '阵营 & 性别', value: `${factionLabel} · 性别: ${genderStr}` });
@@ -287,23 +287,49 @@ export default function GuessCharacterClient({ description }: Props) {
             setMode('daily');
             setShowResult(todayPlayed);
           }}
-          className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
+          className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
             mode === 'daily'
               ? 'bg-blue-500 text-white'
               : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300'
           }`}
         >
-          📅 每日挑战
+          <svg
+            className='h-4 w-4'
+            fill='none'
+            viewBox='0 0 24 24'
+            stroke='currentColor'
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z'
+            />
+          </svg>
+          每日挑战
         </button>
         <button
           onClick={switchToPractice}
-          className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
+          className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
             mode === 'practice'
               ? 'bg-blue-500 text-white'
               : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300'
           }`}
         >
-          ♾️ 无限练习
+          <svg
+            className='h-4 w-4'
+            fill='none'
+            viewBox='0 0 24 24'
+            stroke='currentColor'
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              d='M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15'
+            />
+          </svg>
+          无限练习
         </button>
       </div>
 
@@ -338,7 +364,7 @@ export default function GuessCharacterClient({ description }: Props) {
       {/* Already solved today */}
       {todayPlayed && !showResult && (
         <p className='text-center text-green-600 dark:text-green-400'>
-          ✅ 今天的每日挑战已完成！答案是 <strong>{dailyCharacterId}</strong>
+          今天的每日挑战已完成！答案是 <strong>{dailyCharacterId}</strong>
         </p>
       )}
 

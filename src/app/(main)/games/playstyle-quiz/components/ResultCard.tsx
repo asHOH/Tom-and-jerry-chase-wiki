@@ -55,7 +55,7 @@ export default function ResultCard({
         )}
         {character.gender && (
           <span className='text-sm text-gray-500 dark:text-gray-400'>
-            {character.gender === 'male' ? '♂' : '♀'}
+            {character.gender === 'male' ? '男' : '女'}
           </span>
         )}
       </div>

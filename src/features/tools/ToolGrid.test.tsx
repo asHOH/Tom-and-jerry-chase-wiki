@@ -73,7 +73,7 @@ describe('ToolGrid', () => {
       'md:space-y-8',
       'md:p-6'
     );
-    expect(sectionHeadings).toHaveLength(4);
+    expect(sectionHeadings).toHaveLength(5);
     expect(screen.getByTestId('feedback-section')).toBeInTheDocument();
     expect(screen.getByTestId('change-logs')).toBeInTheDocument();
 

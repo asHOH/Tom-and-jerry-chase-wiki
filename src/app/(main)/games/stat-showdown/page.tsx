@@ -7,8 +7,7 @@ import GameClient from './GameClient';
 
 export const dynamic = 'force-static';
 
-const DESCRIPTION =
-  '能力对决 — 比较角色属性，选择数值更高的角色。支持猫/鼠/全部角色模式及限时挑战。';
+const DESCRIPTION = '能力对决 — 比较角色属性，支持猫/鼠/全部角色模式及限时挑战。';
 
 export const metadata: Metadata = generatePageMetadata({
   title: '能力对决',

@@ -21,7 +21,7 @@ type ResultDialogProps = {
 
 /**
  * Result modal shown when the game ends (win or lose).
- * Displays the character reveal and a shareable emoji grid.
+ * Displays the character reveal and a shareable result grid.
  */
 export default function ResultDialog({
   open,
@@ -54,7 +54,7 @@ export default function ResultDialog({
       <div className='flex flex-col items-center gap-4 text-center'>
         {/* Result header */}
         <h2 className='text-2xl font-bold text-gray-900 dark:text-white'>
-          {correctGuessIndex !== null ? '🎉 猜对了！' : '😅 再接再厉'}
+          {correctGuessIndex !== null ? '猜对了！' : '再接再厉'}
         </h2>
 
         {/* Character reveal */}
@@ -64,7 +64,7 @@ export default function ResultDialog({
           <p className='text-sm text-gray-500 dark:text-gray-400'>{characterFaction}</p>
         </div>
 
-        {/* Emoji grid */}
+        {/* Result grid */}
         <pre className='rounded-lg bg-gray-50 p-4 text-center font-mono text-sm leading-relaxed whitespace-pre-wrap text-gray-800 dark:bg-gray-800 dark:text-gray-200'>
           {generateGuessShareText(puzzleNumber, guesses, correctGuessIndex, characterName, maxClues)
             .split('\n')

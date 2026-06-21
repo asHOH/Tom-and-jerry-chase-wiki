@@ -1,5 +1,7 @@
 'use client';
 
+import Image from 'next/image';
+
 import Button from '@/components/ui/Button';
 
 type QuizSelectorProps = {
@@ -24,16 +26,20 @@ export default function QuizSelector({ onSelect }: QuizSelectorProps) {
           variant='primary'
           size='lg'
           className='min-w-36 text-lg'
+          leadingIcon={<Image src='/images/icons/cat-faction.png' alt='' width={24} height={24} />}
         >
-          🐱 猫问卷
+          猫问卷
         </Button>
         <Button
           onClick={() => onSelect('mouse')}
           variant='secondary'
           size='lg'
           className='min-w-36 text-lg'
+          leadingIcon={
+            <Image src='/images/icons/mouse-faction.png' alt='' width={24} height={24} />
+          }
         >
-          🐭 鼠问卷
+          鼠问卷
         </Button>
       </div>
     </div>

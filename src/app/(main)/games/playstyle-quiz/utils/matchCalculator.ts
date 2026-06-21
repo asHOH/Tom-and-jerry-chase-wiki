@@ -123,7 +123,7 @@ export function generateQuizShareText(
   const similar = similarCharacters.length > 0 ? `\n近似角色：${similarCharacters.join('、')}` : '';
 
   return [
-    `🧠 猫鼠人格测试`,
+    `猫鼠人格测试`,
     ``,
     `我（${faction}）的本命角色是：${characterName}${similar}`,
     ``,
