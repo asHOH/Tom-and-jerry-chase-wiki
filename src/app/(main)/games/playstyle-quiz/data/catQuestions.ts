@@ -30,9 +30,9 @@ const catQuestions: QuizQuestion[] = [
     text: '游戏开始后，你的第一个行动通常是？',
     answers: [
       { text: '直奔老鼠洞口，趁老鼠还没推进就抓一只', tags: [{ tagName: '进攻', weight: 2 }] },
-      { text: '先在地图关键位置布置陷阱和夹子', tags: [{ tagName: '防守', weight: 2 }] },
-      { text: '快速打掉机械鼠获取经验，尽快升到高等级', tags: [{ tagName: '速通', weight: 2 }] },
-      { text: '观察老鼠的动向，判断谁是突破口', tags: [{ tagName: '追击', weight: 2 }] },
+      { text: '先在地图关键位置布置夹子', tags: [{ tagName: '防守', weight: 2 }] },
+      { text: '尽量多打机械鼠和老鼠获取经验，尽快升到高等级', tags: [{ tagName: '速通', weight: 2 }] },
+      { text: '优先控药水，在药水拿完前先不管老鼠', tags: [{ tagName: '追击', weight: 2 }] },
     ],
   },
   {
@@ -41,16 +41,13 @@ const catQuestions: QuizQuestion[] = [
     answers: [
       {
         text: '立刻绑上最近的火箭，然后继续追下一只',
-        tags: [
-          { tagName: '进攻', weight: 1 },
-          { tagName: '速通', weight: 1 },
-        ],
+        tags: [{ tagName: '进攻', weight: 2 }],
       },
       {
-        text: '观察周围有没有来救援的老鼠，准备拦截',
-        tags: [{ tagName: '防守', weight: 2 }],
+        text: '观察周围有没有来救援的老鼠，尽量打出双倒',
+        tags: [{ tagName: '速通', weight: 2 }],
       },
-      { text: '故意等老鼠队友来救，趁机再抓一个', tags: [{ tagName: '打架', weight: 2 }] },
+      { text: '先不抓，利用穷追多打死几只老鼠刷经验和乘胜层数', tags: [{ tagName: '打架', weight: 2 }] },
       {
         text: '抱到远离奶酪区的地方绑，拖延老鼠推奶酪的节奏',
         tags: [
@@ -79,25 +76,25 @@ const catQuestions: QuizQuestion[] = [
         ],
       },
       {
-        text: '守住奶酪区附近的火箭，等老鼠来送',
+        text: '守住奶酪附近的火箭，等老鼠来送',
         tags: [{ tagName: '防守', weight: 2 }],
       },
       {
-        text: '放弃追击，转去防守奶酪区，拖到后期再说',
+        text: '放弃追击，转去防守奶酪，拖到后期再说',
         tags: [{ tagName: '后期', weight: 2 }],
       },
     ],
   },
   {
     id: 'cat-q4',
-    text: '墙缝期即将到来，你目前只放飞了1-2只老鼠，你会？',
+    text: '墙缝期即将到来，你目前只放飞了0-1只老鼠，你会？',
     answers: [
       {
-        text: '全力抓一只老鼠，争取在墙缝出来前再放飞一只',
+        text: '全力抓一只老鼠，争取在墙缝出来时多放飞一只',
         tags: [{ tagName: '进攻', weight: 2 }],
       },
       {
-        text: '提前在墙缝位置布置好道具和陷阱，做好墙缝期准备',
+        text: '提前在墙缝位置清果盘、道具，布置夹子，做好墙缝期准备',
         tags: [
           { tagName: '防守', weight: 1 },
           { tagName: '后期', weight: 1 },
@@ -108,7 +105,7 @@ const catQuestions: QuizQuestion[] = [
         tags: [{ tagName: '翻盘', weight: 2 }],
       },
       {
-        text: '继续压制老鼠，不让它们安心推墙缝',
+        text: '继续跟老鼠打架，不让它们靠近墙缝',
         tags: [
           { tagName: '打架', weight: 1 },
           { tagName: '后期', weight: 1 },
@@ -128,7 +125,7 @@ const catQuestions: QuizQuestion[] = [
         ],
       },
       {
-        text: '用道具和远程技能消耗它的血量，等它失误',
+        text: '用道具和远程技能消耗它的血量，磨掉他的血量',
         tags: [
           { tagName: '打架', weight: 1 },
           { tagName: '追击', weight: 1 },
@@ -136,7 +133,7 @@ const catQuestions: QuizQuestion[] = [
       },
       { text: '不管它，去守奶酪防止它推奶酪', tags: [{ tagName: '防守', weight: 2 }] },
       {
-        text: '利用地形和视野死角，等它进入狭窄区域再出手',
+        text: '利用药水和技能（如隐身、闪现或传送、远程技能），在他推奶酪、喝药水等交互时，出其不意抓',
         tags: [{ tagName: '追击', weight: 2 }],
       },
     ],
@@ -146,22 +143,22 @@ const catQuestions: QuizQuestion[] = [
     text: '关于知识卡搭配，你更倾向于哪种风格？',
     answers: [
       {
-        text: '带满输出卡，追求最强的击杀能力',
+        text: '带输出卡（如击晕、蓄势一击），追求最强的击杀能力',
         tags: [
           { tagName: '进攻', weight: 1 },
           { tagName: '打架', weight: 1 },
         ],
       },
       {
-        text: '带防守和控制卡，延长火箭时间、削弱老鼠救援',
-        tags: [{ tagName: '防守', weight: 2 }],
+        text: '带双烧（即熊熊燃烧、加大火力），缩短火箭时间、追求尽快使老鼠减员',
+        tags: [{ tagName: '速通', weight: 2 }],
       },
       {
-        text: '带机动性卡，提高移速和跳跃，方便追击',
+        text: '带机动性卡（如乘胜追击、攻其不备），提高移速和跳跃，方便追击',
         tags: [{ tagName: '追击', weight: 2 }],
       },
       {
-        text: '带通用增益卡，提高后期作战能力',
+        text: '带后期卡（如铜墙、暴怒），提高墙缝期作战能力',
         tags: [
           { tagName: '后期', weight: 1 },
           { tagName: '翻盘', weight: 1 },
@@ -202,34 +199,6 @@ const catQuestions: QuizQuestion[] = [
   },
   {
     id: 'cat-q8',
-    text: '在55（5v5）模式中，作为猫方你的打法是？',
-    answers: [
-      {
-        text: '积极游走抓人，保持高强度施压',
-        tags: [
-          { tagName: '进攻', weight: 1 },
-          { tagName: '追击', weight: 1 },
-        ],
-      },
-      {
-        text: '和另一个猫配合，一人守奶酪一人抓人',
-        tags: [
-          { tagName: '防守', weight: 1 },
-          { tagName: '速通', weight: 1 },
-        ],
-      },
-      {
-        text: '多打架消耗，利用技能连招打出优势',
-        tags: [{ tagName: '打架', weight: 2 }],
-      },
-      {
-        text: '前期稳住，后期靠装备和等级碾压',
-        tags: [{ tagName: '后期', weight: 2 }],
-      },
-    ],
-  },
-  {
-    id: 'cat-q9',
     text: '你觉得一个优秀的猫玩家最重要的品质是？',
     answers: [
       {
