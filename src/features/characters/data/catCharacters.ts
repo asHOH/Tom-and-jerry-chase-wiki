@@ -4262,8 +4262,26 @@ const catCharacterDefinitions = {
         additionalDescription: '',
       },
     ],
-    skillAllocations: [],
-    knowledgeCardGroups: [],
+    skillAllocations: [
+      {
+        id: '加点方案 1',
+        pattern: '202121100',
+        weaponType: 'weapon1',
+        description: '前期更快收集线索，点出二级放大镜并增加击倒能力，后期通过锁定来增加追击能力',
+      },
+    ],
+    knowledgeCardGroups: [
+      {
+        cards: ['S-乘胜追击', 'S-击晕', 'B-恐吓', 'C-猫是液体'],
+        description:
+          '乘胜追击使其拥有更好的追击能力，击晕使其更好补伤害，恐吓增加对局时长使其更好发挥，猫是液体凑费用，并且更好面对管道图',
+      },
+      {
+        cards: ['S-乘胜追击', 'S-猛攻', 'A-穷追猛打', 'B-恐吓'],
+        description:
+          '利用猛攻和放大镜来处理，很多依赖技能并且棘手的角色，穷追弥补了前期没击晕没二级放大镜，不好补伤害',
+      },
+    ],
     specialSkills: [
       {
         name: '蓄力重击',
@@ -4273,6 +4291,10 @@ const catCharacterDefinitions = {
         name: '我生气了！',
         description:
           '侦探汤姆依赖爪刀造成伤害，{我生气了！}能提高容错。此外，命中“被看穿”的老鼠能减少爪刀CD，配合{击晕}能产生连续控制。',
+      },
+      {
+        name: '全垒打',
+        description: '进一步的提高移速和伤害，并且与道具产生的反应，实战中利用好，能打出不错的效果',
       },
     ],
     skills: [
