@@ -62,10 +62,10 @@ describe('getCharacterRelation', () => {
     restoreCharacters(snapshot);
   });
 
-  it('should preserve graph-derived inverse relations for the current target page', () => {
+  it('should preserve graph-derived mutual relations for the current target page', () => {
     const relations = getCharacterRelation(characters, '恶魔杰瑞');
 
-    expect(relations.counteredBy).toEqual(
+    expect(relations.counterEachOther).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
           id: '莱特宁',

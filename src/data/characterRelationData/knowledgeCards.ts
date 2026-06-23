@@ -135,7 +135,7 @@ export const characterRelationKnowledgeCardTraits: Trait[] = [
     },
   },
   {
-    description: '总结头盔克制守奶酪，守奶酪。断节奏，破局强，ban位买房。',
+    description: '头盔几乎无视救援时长的增加。',
     group: [
       { name: '剑客泰菲', type: 'character' },
       { name: '严防死守', type: 'knowledgeCard', factionId: 'cat' },
@@ -543,19 +543,6 @@ export const characterRelationKnowledgeCardTraits: Trait[] = [
     },
   },
   {
-    description: '猫在抓着老鼠时，可以通过屈打看到泰菲的位置，从而堤防泰菲的远程炮',
-    group: [
-      { name: '泰菲', type: 'character' },
-      { name: '屈打成招', type: 'knowledgeCard', factionId: 'cat' },
-    ],
-    relation: {
-      kind: 'counteredByKnowledgeCards',
-      subject: { name: '泰菲', type: 'character' },
-      target: { name: '屈打成招', type: 'knowledgeCard', factionId: 'cat' },
-      isMinor: true,
-    },
-  },
-  {
     description: '泰菲血量低，前期三级自保较弱，容易被伤害高的穷追猫针对',
     group: [
       { name: '泰菲', type: 'character' },
@@ -657,6 +644,61 @@ export const characterRelationKnowledgeCardTraits: Trait[] = [
       kind: 'counteredByKnowledgeCards',
       subject: { name: '梦游杰瑞', type: 'character' },
       target: { name: '长爪', type: 'knowledgeCard', factionId: 'cat' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '有3级被动的表演者杰瑞如同烫手的山芋。强占视野，主动踩破夹子，贴在猫身边，不好打死，抓到了启新火箭不值。上老火箭浪费秒飞，10秒铁血强推强救，复活体不怕减员',
+    group: [
+      { name: '表演者•杰瑞', type: 'character' },
+      { name: '熊熊燃烧', type: 'knowledgeCard', factionId: 'cat' },
+    ],
+    relation: {
+      kind: 'countersKnowledgeCards',
+      subject: { name: '表演者•杰瑞', type: 'character' },
+      target: { name: '熊熊燃烧', type: 'knowledgeCard', factionId: 'cat' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '圆形快速破盾，方形实体阻挡，蓝图粉笔猫无视霸体，制造炸药桶摧毁火箭，使猫咪上火箭十分困难。',
+    group: [
+      { name: '莱恩', type: 'character' },
+      { name: '铁手', type: 'knowledgeCard', factionId: 'cat' },
+    ],
+    relation: {
+      kind: 'countersKnowledgeCards',
+      subject: { name: '莱恩', type: 'character' },
+      target: { name: '铁手', type: 'knowledgeCard', factionId: 'cat' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '运用高尔夫球使用不会被消耗的机制，使用毛线球将多个高尔夫体串联，最后将线引到墙缝上反复移动。使在拉线的过程中被带动的高尔夫球每次都会撞击在墙缝上，对墙缝造成伤害：\n正如开头所说，由于高尔夫球不会被消耗，墙缝将会反复受到高尔夫球撞击一次的伤害。使得墙缝快速被打破。',
+    group: [
+      { name: '梦游杰瑞', type: 'character' },
+      { name: '铜墙', type: 'knowledgeCard', factionId: 'cat' },
+    ],
+    relation: {
+      kind: 'countersKnowledgeCards',
+      subject: { name: '梦游杰瑞', type: 'character' },
+      target: { name: '铜墙', type: 'knowledgeCard', factionId: 'cat' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '有毛线球独特的推奶酪机制，在香甜梦境，隐身或护盾可以强推奶酪进洞破局',
+    group: [
+      { name: '梦游杰瑞', type: 'character' },
+      { name: '恐吓', type: 'knowledgeCard', factionId: 'cat' },
+    ],
+    relation: {
+      kind: 'countersKnowledgeCards',
+      subject: { name: '梦游杰瑞', type: 'character' },
+      target: { name: '恐吓', type: 'knowledgeCard', factionId: 'cat' },
       isMinor: false,
     },
   },

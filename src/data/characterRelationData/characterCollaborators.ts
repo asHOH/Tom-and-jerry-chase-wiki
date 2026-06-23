@@ -267,6 +267,20 @@ export const characterRelationCharacterCollaboratorTraits: Trait[] = [
   },
   {
     description:
+      '附身状态下的米雪儿可以抓住剑客泰菲的长枪，使剑客太妃能带着拥有长枪的米雪儿通过来回接触猫咪反复触发长枪伤害',
+    group: [
+      { name: '剑客泰菲', type: 'character' },
+      { name: '米雪儿', type: 'character' },
+    ],
+    relation: {
+      kind: 'collaborators',
+      subject: { name: '剑客泰菲', type: 'character' },
+      target: { name: '米雪儿', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
       '莱恩容易死，仙女鼠变六星提高下限，并且在遇到汤姆无敌强上火箭时，可强制造成伤害变线条，线条猫与八星一块干扰猫，使对面露出破绽。',
     group: [
       { name: '莱恩', type: 'character' },

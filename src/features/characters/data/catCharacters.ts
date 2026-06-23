@@ -1114,10 +1114,6 @@ const catCharacterDefinitions = {
         name: '绝地反击',
         description: '弥补缺霸体的短板。',
       },
-      {
-        name: '蓄力重击',
-        description: '斗牛撞击及大仙人掌球可造成眩晕效果，与蓄力重击有一定配合。',
-      },
     ],
   },
 

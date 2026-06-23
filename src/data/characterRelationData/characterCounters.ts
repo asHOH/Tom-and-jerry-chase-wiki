@@ -181,7 +181,7 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
     },
   },
   {
-    description: '',
+    description: '牛仔汤姆害怕剑客泰菲的稳救、强推与墙缝期的破局能力。',
     group: [
       { name: '牛仔汤姆', type: 'character' },
       { name: '剑客泰菲', type: 'character' },
@@ -190,6 +190,32 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
       kind: 'counteredBy',
       subject: { name: '牛仔汤姆', type: 'character' },
       target: { name: '剑客泰菲', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '托普斯害怕剑客泰菲的稳救、强推能力。',
+    group: [
+      { name: '剑客泰菲', type: 'character' },
+      { name: '托普斯', type: 'character' },
+    ],
+    relation: {
+      kind: 'counters',
+      subject: { name: '剑客泰菲', type: 'character' },
+      target: { name: '托普斯', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '兔八哥害怕剑客泰菲的稳救、强推能力。',
+    group: [
+      { name: '剑客泰菲', type: 'character' },
+      { name: '兔八哥', type: 'character' },
+    ],
+    relation: {
+      kind: 'counters',
+      subject: { name: '剑客泰菲', type: 'character' },
+      target: { name: '兔八哥', type: 'character' },
       isMinor: false,
     },
   },
@@ -444,16 +470,16 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
     },
   },
   {
-    description: '佩克斯的琴可以眩晕苏蕊，但如果在苏蕊跳舞中被击倒会使三级被动失效。',
+    description: '击退和高伤有一定能力反制跳舞。',
     group: [
-      { name: '苏蕊', type: 'character' },
       { name: '佩克斯', type: 'character' },
+      { name: '苏蕊', type: 'character' },
     ],
     relation: {
-      kind: 'counterEachOther',
-      subject: { name: '苏蕊', type: 'character' },
-      target: { name: '佩克斯', type: 'character' },
-      isMinor: false,
+      kind: 'counters',
+      subject: { name: '佩克斯', type: 'character' },
+      target: { name: '苏蕊', type: 'character' },
+      isMinor: true,
     },
   },
   {
@@ -1236,7 +1262,7 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
     },
   },
   {
-    description: '侦探泰菲的隐身克制莱特宁的闪现。',
+    description: '侦探泰菲听莱特林闪现放隐身阻止追击',
     group: [
       { name: '侦探泰菲', type: 'character' },
       { name: '莱特宁', type: 'character' },
@@ -1245,6 +1271,19 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
       kind: 'counters',
       subject: { name: '侦探泰菲', type: 'character' },
       target: { name: '莱特宁', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '侦探泰菲无前摇的隐身使库博难以捕捉。',
+    group: [
+      { name: '侦探泰菲', type: 'character' },
+      { name: '库博', type: 'character' },
+    ],
+    relation: {
+      kind: 'counters',
+      subject: { name: '侦探泰菲', type: 'character' },
+      target: { name: '库博', type: 'character' },
       isMinor: false,
     },
   },
@@ -1810,7 +1849,7 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
   },
   {
     description:
-      '侍卫汤姆移速快，且在Lv.2被动加成下伤害高，克制血量少的泰菲；侍卫视野大，远程火箭筒被克死；侍卫可以用火炮刷盾，每打中一次就有两层盾，可抵消火箭筒的两段伤害；侍卫火炮可以禁用技能、解除增益效果，克制泰菲的圆滚滚解控和被动',
+      '侍卫汤姆移速快，且在Lv.2被动加成下能一击击倒泰菲。并且侍卫视野大，远程火箭筒被克死，侍卫还能用火炮刷新护盾，每打中一次就有两层盾，可抵消火箭筒的两段伤害。',
     group: [
       { name: '侍卫汤姆', type: 'character' },
       { name: '泰菲', type: 'character' },
@@ -1819,7 +1858,7 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
       kind: 'counters',
       subject: { name: '侍卫汤姆', type: 'character' },
       target: { name: '泰菲', type: 'character' },
-      isMinor: false,
+      isMinor: true,
     },
   },
   {
@@ -2557,7 +2596,7 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
     },
   },
   {
-    description: '',
+    description: '无法触发塔拉被动。',
     group: [
       { name: '塔拉', type: 'character' },
       { name: '玛丽', type: 'character' },
@@ -2986,6 +3025,32 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
     },
   },
   {
+    description: '恶魔杰瑞可刷盾强推或流放门破局，反制兔八哥的防守。',
+    group: [
+      { name: '恶魔杰瑞', type: 'character' },
+      { name: '兔八哥', type: 'character' },
+    ],
+    relation: {
+      kind: 'counters',
+      subject: { name: '恶魔杰瑞', type: 'character' },
+      target: { name: '兔八哥', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '恶魔杰瑞可刷盾强推或流放门破局，反制恶魔汤姆的防守。',
+    group: [
+      { name: '恶魔杰瑞', type: 'character' },
+      { name: '恶魔汤姆', type: 'character' },
+    ],
+    relation: {
+      kind: 'counters',
+      subject: { name: '恶魔杰瑞', type: 'character' },
+      target: { name: '恶魔汤姆', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
     description: '列车克制霸体角色，表演者跳舞期间易被火车连撞。',
     group: [
       { name: '恶魔汤姆', type: 'character' },
@@ -3039,15 +3104,15 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
     },
   },
   {
-    description: '现版本恶汤武器技能释放频繁，可以抵挡魔术师的卡牌；且兔子大表哥容易被恶汤击倒。',
+    description: '恶魔汤姆用火车头打兔子较快，但怕魔术师的红牌锁技能，且打碟不免疫卡牌。',
     group: [
-      { name: '恶魔汤姆', type: 'character' },
       { name: '魔术师', type: 'character' },
+      { name: '恶魔汤姆', type: 'character' },
     ],
     relation: {
-      kind: 'counters',
-      subject: { name: '恶魔汤姆', type: 'character' },
-      target: { name: '魔术师', type: 'character' },
+      kind: 'counterEachOther',
+      subject: { name: '魔术师', type: 'character' },
+      target: { name: '恶魔汤姆', type: 'character' },
       isMinor: true,
     },
   },
@@ -3801,7 +3866,7 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
     },
   },
   {
-    description: '击退有一定能力反制无敌。',
+    description: '佩克斯团队增益较强，击退也有一定能力反制汤姆的无敌。',
     group: [
       { name: '佩克斯', type: 'character' },
       { name: '汤姆', type: 'character' },
@@ -3843,15 +3908,15 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
   },
   {
     description:
-      '剑客泰菲开启头盔移动期间能被回马枪沿移动方向戳飞，他的长枪和冲刺可以触发如玉的“花枪反击”。不过剑菲勇气释放期间的长枪有禁用技能效果，能反制如玉的反击。此外，如玉的二级舞花枪可以通过高频伤害快速消耗头盔的持续时间。',
+      '剑客泰菲开启头盔移动期间能被回马枪沿移动方向戳飞；他的长枪和冲刺可以触发如玉的“花枪反击”。此外，如玉的二级舞花枪可以通过高频伤害快速消耗头盔的持续时间。不过剑菲勇气释放期间的长枪有禁用技能效果，能反制如玉的反击。',
     group: [
-      { name: '如玉', type: 'character' },
       { name: '剑客泰菲', type: 'character' },
+      { name: '如玉', type: 'character' },
     ],
     relation: {
-      kind: 'counters',
-      subject: { name: '如玉', type: 'character' },
-      target: { name: '剑客泰菲', type: 'character' },
+      kind: 'counterEachOther',
+      subject: { name: '剑客泰菲', type: 'character' },
+      target: { name: '如玉', type: 'character' },
       isMinor: false,
     },
   },
@@ -3906,20 +3971,6 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
       kind: 'counters',
       subject: { name: '如玉', type: 'character' },
       target: { name: '拿坡里鼠', type: 'character' },
-      isMinor: true,
-    },
-  },
-  {
-    description:
-      '天使杰瑞1级被动对如玉无效；如玉前刺回马枪能直接击倒使用2级主动的天使杰瑞；如玉可借助天使杰瑞武器技能造成的伤害进行反击。',
-    group: [
-      { name: '如玉', type: 'character' },
-      { name: '天使杰瑞', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '如玉', type: 'character' },
-      target: { name: '天使杰瑞', type: 'character' },
       isMinor: true,
     },
   },
@@ -4086,7 +4137,7 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
   },
   {
     description:
-      '地雷的强制位移能带走垃圾桶，咸鱼可以被圆滚滚强行踩掉，莱特宁闪现过来泰菲也可以秒开圆滚滚躲避攻击，被三级闪震慑到，泰菲也可以开圆滚滚解控。',
+      '地雷的强制位移能带走垃圾桶，咸鱼可以被圆滚滚强行踩掉，莱特宁闪现过来泰菲也可以秒开圆滚滚躲避攻击。',
     group: [
       { name: '泰菲', type: 'character' },
       { name: '莱特宁', type: 'character' },
@@ -4366,6 +4417,19 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
     },
   },
   {
+    description: '捕虫网无视3级被动直接抓取。',
+    group: [
+      { name: '托普斯', type: 'character' },
+      { name: '佩克斯', type: 'character' },
+    ],
+    relation: {
+      kind: 'counters',
+      subject: { name: '托普斯', type: 'character' },
+      target: { name: '佩克斯', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
     description:
       '托普斯的捕虫网可以直接抓取灵活跳跃后霸体的尼宝，使尼宝很难救人。同时分身换位也会让泥宝钩子的效果大打折扣。',
     group: [
@@ -4513,19 +4577,6 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
       kind: 'counterEachOther',
       subject: { name: '恶魔汤姆', type: 'character' },
       target: { name: '国王杰瑞', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
-    description: '火车头红温克制刷盾强推强救，但传送门流放克制死守，',
-    group: [
-      { name: '恶魔汤姆', type: 'character' },
-      { name: '恶魔杰瑞', type: 'character' },
-    ],
-    relation: {
-      kind: 'counterEachOther',
-      subject: { name: '恶魔汤姆', type: 'character' },
-      target: { name: '恶魔杰瑞', type: 'character' },
       isMinor: false,
     },
   },
