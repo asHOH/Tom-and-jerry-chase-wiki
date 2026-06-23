@@ -2,6 +2,34 @@ import type { Trait } from '@/data/types';
 
 export const characterRelationMapTraits: Trait[] = [
   {
+    description:
+      '拥有四个特殊放飞机制的火箭，在积累50线索值情况下可以帮助自身更快的放飞老鼠。且地图平台分布较为集中，便于侦探汤姆收集线索。',
+    group: [
+      { name: '侦探汤姆', type: 'character' },
+      { name: '天宫-云上', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '侦探汤姆', type: 'character' },
+      target: { name: '天宫-云上', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '拥有两个特殊放飞机制的火箭，在积累50线索值情况下可以帮助自身更快的放飞老鼠。但地图上下跨度大，不利于轮椅状态中的侦探汤姆追捕或绑火箭，不具有明显优势。',
+    group: [
+      { name: '侦探汤姆', type: 'character' },
+      { name: '天宫', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '侦探汤姆', type: 'character' },
+      target: { name: '天宫', type: 'map' },
+      isMinor: true,
+    },
+  },
+  {
     description: '',
     group: [
       { name: '塔拉', type: 'character' },

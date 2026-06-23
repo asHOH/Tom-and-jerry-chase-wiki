@@ -2,6 +2,156 @@ import type { Trait } from '@/data/types';
 
 export const characterRelationCharacterCounterTraits: Trait[] = [
   {
+    description:
+      '玛丽可以对侦探汤姆施加反向与失明效果，能够克制其主动技能。且玛丽可以使其禁用爪刀或技能，一级被动可以在关键情况下免疫一次虚弱，武器技能也可以给追捕中的队友提供移速加成和取消虚弱，不利于侦探汤姆的追捕。但玛丽自身机动性较弱，并不特别克制侦探汤姆。',
+    group: [
+      { name: '侦探汤姆', type: 'character' },
+      { name: '玛丽', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '侦探汤姆', type: 'character' },
+      target: { name: '玛丽', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description:
+      '米雪儿可以使用第二武器帮助队友抵挡武器技能的光线。其提供的减伤和移速加成也可以帮助队友逃脱追捕。',
+    group: [
+      { name: '侦探汤姆', type: 'character' },
+      { name: '米雪儿', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '侦探汤姆', type: 'character' },
+      target: { name: '米雪儿', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '天使泰菲具备较高的减伤效果，在走位优秀的情况下不易被击倒。',
+    group: [
+      { name: '侦探汤姆', type: 'character' },
+      { name: '天使泰菲', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '侦探汤姆', type: 'character' },
+      target: { name: '天使泰菲', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '侦探汤姆可以无视距离显示老鼠的小地图位置并暴露行踪，克制侦探杰瑞的隐身。',
+    group: [
+      { name: '侦探汤姆', type: 'character' },
+      { name: '侦探杰瑞', type: 'character' },
+    ],
+    relation: {
+      kind: 'counters',
+      subject: { name: '侦探汤姆', type: 'character' },
+      target: { name: '侦探杰瑞', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '侦探汤姆可以无视距离显示老鼠的小地图位置并暴露行踪，克制侦探泰菲的隐身。',
+    group: [
+      { name: '侦探汤姆', type: 'character' },
+      { name: '侦探泰菲', type: 'character' },
+    ],
+    relation: {
+      kind: 'counters',
+      subject: { name: '侦探汤姆', type: 'character' },
+      target: { name: '侦探泰菲', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '侦探汤姆可以移除国王杰瑞的护盾状态，不利于其进行单救。',
+    group: [
+      { name: '侦探汤姆', type: 'character' },
+      { name: '国王杰瑞', type: 'character' },
+    ],
+    relation: {
+      kind: 'counters',
+      subject: { name: '侦探汤姆', type: 'character' },
+      target: { name: '国王杰瑞', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description:
+      '侦探汤姆的武器技能可以无视圆滚滚的无敌状态直接添加“被看穿”状态，且泰菲自身Hp较低容易被击倒。',
+    group: [
+      { name: '侦探汤姆', type: 'character' },
+      { name: '泰菲', type: 'character' },
+    ],
+    relation: {
+      kind: 'counters',
+      subject: { name: '侦探汤姆', type: 'character' },
+      target: { name: '泰菲', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description:
+      '恶魔泰菲自保较差，且Hp较低容易被击倒。侦探汤姆的Hp较高，可以主动进入轮椅状态回复Hp并免疫一次致命伤害，使得不易被攻击至虚弱。',
+    group: [
+      { name: '侦探汤姆', type: 'character' },
+      { name: '恶魔泰菲', type: 'character' },
+    ],
+    relation: {
+      kind: 'counters',
+      subject: { name: '侦探汤姆', type: 'character' },
+      target: { name: '恶魔泰菲', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '牛仔杰瑞自身干扰和生存能力强，“被看穿”状态下会增大自身武器技能的生效范围，配合二级武器技能或二级被动可以很好的逃脱追捕。但侦探汤姆可以主动进入轮椅状态并回复Hp，能够明显克制仙人掌的效果。',
+    group: [
+      { name: '侦探汤姆', type: 'character' },
+      { name: '牛仔杰瑞', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '侦探汤姆', type: 'character' },
+      target: { name: '牛仔杰瑞', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '罗宾汉杰瑞的降落伞可以免疫“被看穿”效果，即使自身或队友被添加了“被看穿”效果，依然可以凭借二段跳逃脱。不过罗宾汉杰瑞干扰能力偏弱，侦探汤姆可以主动进入轮椅状态追捕罗宾汉杰瑞。',
+    group: [
+      { name: '侦探汤姆', type: 'character' },
+      { name: '罗宾汉杰瑞', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '侦探汤姆', type: 'character' },
+      target: { name: '罗宾汉杰瑞', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description:
+      '罗宾汉泰菲走位灵活，由于轮椅状态中的侦探汤姆无法进行攀爬，因此在平台高度差较为明显的地图中可以通过藤曼拉开距离。但罗宾汉泰菲的Hp较低，且弹球可被侦探放大镜打断，容易被击倒。',
+    group: [
+      { name: '侦探汤姆', type: 'character' },
+      { name: '罗宾汉泰菲', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '侦探汤姆', type: 'character' },
+      target: { name: '罗宾汉泰菲', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
     description: '鲍姆爆炸会打断喵喵叫，但前提条件是鲍姆需要近身攻击图茨。',
     group: [
       { name: '鲍姆', type: 'character' },
