@@ -812,7 +812,7 @@ export const characterRelationMapTraits: Trait[] = [
     },
   },
   {
-    description: '典型的拉扯图容易苟到后期',
+    description: '典型的拉扯图容易苟到后期。',
     group: [
       { name: '天使泰菲', type: 'character' },
       { name: '经典之家II', type: 'map' },
@@ -825,7 +825,7 @@ export const characterRelationMapTraits: Trait[] = [
     },
   },
   {
-    description: '<拉扯图',
+    description: '拉扯图，易于走位。',
     group: [
       { name: '天使泰菲', type: 'character' },
       { name: '雪夜古堡III', type: 'map' },
@@ -834,24 +834,11 @@ export const characterRelationMapTraits: Trait[] = [
       kind: 'advantageMaps',
       subject: { name: '天使泰菲', type: 'character' },
       target: { name: '雪夜古堡III', type: 'map' },
-      isMinor: false,
+      isMinor: true,
     },
   },
   {
-    description: '易拉扯',
-    group: [
-      { name: '天使泰菲', type: 'character' },
-      { name: '天宫', type: 'map' },
-    ],
-    relation: {
-      kind: 'advantageMaps',
-      subject: { name: '天使泰菲', type: 'character' },
-      target: { name: '天宫', type: 'map' },
-      isMinor: false,
-    },
-  },
-  {
-    description: '中期易拉扯',
+    description: '中期易拉扯。',
     group: [
       { name: '天使泰菲', type: 'character' },
       { name: '森林牧场', type: 'map' },
@@ -864,7 +851,7 @@ export const characterRelationMapTraits: Trait[] = [
     },
   },
   {
-    description: '好拉扯，猫死追一边必定亏奶酪',
+    description: '比较好拉扯，猫死追一边必定亏奶酪。可以处理一些高危火箭。',
     group: [
       { name: '天使泰菲', type: 'character' },
       { name: '游乐场', type: 'map' },
@@ -874,6 +861,32 @@ export const characterRelationMapTraits: Trait[] = [
       subject: { name: '天使泰菲', type: 'character' },
       target: { name: '游乐场', type: 'map' },
       isMinor: false,
+    },
+  },
+  {
+    description: '平台高低差大，配合漂浮可以很大程度上遛猫。',
+    group: [
+      { name: '天使泰菲', type: 'character' },
+      { name: '夏日游轮III', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '天使泰菲', type: 'character' },
+      target: { name: '夏日游轮III', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '庇护可以防坐车踩夹，但不好跑。',
+    group: [
+      { name: '天使泰菲', type: 'character' },
+      { name: '熊猫馆', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '天使泰菲', type: 'character' },
+      target: { name: '熊猫馆', type: 'map' },
+      isMinor: true,
     },
   },
   {

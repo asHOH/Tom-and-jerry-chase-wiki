@@ -3,6 +3,129 @@ import type { Trait } from '@/data/types';
 export const characterRelationCharacterCounterTraits: Trait[] = [
   {
     description:
+      '托普斯的网可以无视天使泰菲的技能。可能被托普斯利用{击晕}、{我生气了！}和{1级被动}进行连续控制。',
+    group: [
+      { name: '天使泰菲', type: 'character' },
+      { name: '托普斯', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '天使泰菲', type: 'character' },
+      target: { name: '托普斯', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '侍卫汤姆伤害高，天使泰菲容易被炮击倒。',
+    group: [
+      { name: '天使泰菲', type: 'character' },
+      { name: '侍卫汤姆', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '天使泰菲', type: 'character' },
+      target: { name: '侍卫汤姆', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '天使汤姆的救援减速对天使泰菲的影响较大。',
+    group: [
+      { name: '天使泰菲', type: 'character' },
+      { name: '天使汤姆', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '天使泰菲', type: 'character' },
+      target: { name: '天使汤姆', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description:
+      '天使泰菲的庇护免疫三级{闪现}的控制效果，适合用来克制有闪现接爪刀习惯的莱特宁玩家。',
+    group: [
+      { name: '天使泰菲', type: 'character' },
+      { name: '莱特宁', type: 'character' },
+    ],
+    relation: {
+      kind: 'counters',
+      subject: { name: '天使泰菲', type: 'character' },
+      target: { name: '莱特宁', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '牛仔汤姆前期难以处理天使泰菲，但后期三被容易打死天使泰菲，但弹弓伤害刮，后期天使泰菲免死免控牛仔汤姆不好处理。',
+    group: [
+      { name: '天使泰菲', type: 'character' },
+      { name: '牛仔汤姆', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '天使泰菲', type: 'character' },
+      target: { name: '牛仔汤姆', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '天使泰菲的庇护能够免疫眩晕，三级翅膀能解除眩晕。但天使泰菲仍然容易被汤姆打死。',
+    group: [
+      { name: '天使泰菲', type: 'character' },
+      { name: '汤姆', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '天使泰菲', type: 'character' },
+      target: { name: '汤姆', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '天使泰菲的庇护可以免疫饭盒的控制效果，但天菲改版后不再克制持续伤害，容易被米特击倒。拥有三级翅膀的天菲在米特拥有二级{胡椒粉罐头}的情况下可以直接逃脱免受一次虚弱。',
+    group: [
+      { name: '天使泰菲', type: 'character' },
+      { name: '米特', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '天使泰菲', type: 'character' },
+      target: { name: '米特', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '天使泰菲庇护的伪霸体使剑汤无法将其挑起，也不怕推奶酪时剑汤的突袭。但剑客汤姆的{旋刃剑舞}能够带走天菲并且直接连斩，打断天使泰菲救援、甚至直接将其击倒；并且新版天菲无法大量反伤。',
+    group: [
+      { name: '天使泰菲', type: 'character' },
+      { name: '剑客汤姆', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '天使泰菲', type: 'character' },
+      target: { name: '剑客汤姆', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '庇护状态下的天菲不受恶汤被动的眩晕影响。但恶汤伤的{迷乱列车}伤害高，容易击倒天使泰菲。',
+    group: [
+      { name: '天使泰菲', type: 'character' },
+      { name: '恶魔汤姆', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '天使泰菲', type: 'character' },
+      target: { name: '恶魔汤姆', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description:
       '玛丽可以对侦探汤姆施加反向与失明效果，能够克制其主动技能。且玛丽可以使其禁用爪刀或技能，一级被动可以在关键情况下免疫一次虚弱，武器技能也可以给追捕中的队友提供移速加成和取消虚弱，不利于侦探汤姆的追捕。但玛丽自身机动性较弱，并不特别克制侦探汤姆。',
     group: [
       { name: '侦探汤姆', type: 'character' },
@@ -482,17 +605,16 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
     },
   },
   {
-    description:
-      '如玉自身的高额伤害在一定程度上克制天菲的减伤，但如玉无法用拍子直接抓起老鼠，因此后期难以处理天菲。',
+    description: '如玉伤害高，容易击倒天使泰菲。',
     group: [
       { name: '如玉', type: 'character' },
       { name: '天使泰菲', type: 'character' },
     ],
     relation: {
-      kind: 'counterEachOther',
+      kind: 'counters',
       subject: { name: '如玉', type: 'character' },
       target: { name: '天使泰菲', type: 'character' },
-      isMinor: true,
+      isMinor: false,
     },
   },
   {
@@ -2707,7 +2829,7 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
     },
   },
   {
-    description: '<缺伤害>',
+    description: '塔拉缺伤害。庇护的伪霸体几乎使得塔拉的{牛仔鞭索}和{牛仔的礼物}的功能全部失效。',
     group: [
       { name: '塔拉', type: 'character' },
       { name: '天使泰菲', type: 'character' },
@@ -2866,14 +2988,13 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
     },
   },
   {
-    description:
-      '天使泰菲的主动技能能够转移斯飞的伤害与控制，同时能够减慢火箭燃烧时间，并且天使泰菲能够通过武器技能获得霸体',
+    description: '天菲机动性不高，容易被追上。',
     group: [
       { name: '斯飞', type: 'character' },
       { name: '天使泰菲', type: 'character' },
     ],
     relation: {
-      kind: 'counteredBy',
+      kind: 'counters',
       subject: { name: '斯飞', type: 'character' },
       target: { name: '天使泰菲', type: 'character' },
       isMinor: true,
@@ -4353,33 +4474,6 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
   },
   {
     description:
-      '天菲前期开启任意一个技能就能极大幅削减（无“穷追猛打”情况下的）剑客连斩的伤害，后期霸体让控制多伤害偏低的剑汤十分棘手，庇护还可以保队友，转移控制的效果还能让范围内的队友通过卡内刀/使用控制道具/直接脱离的方式中断剑汤连招。并且剑汤较惧怕“后期”定位的角色，墙缝期剑汤怕碎片怕满地道具怕高伤怕有自保和保队友能力的老鼠。并且剑汤前期一旦虚弱会导致乘胜层数减半，对局面影响很大，而天菲的翅膀反伤是个很好压血线的工具——哪怕把天菲刮死了，剑汤本身血条不多，容错也很低。不过天菲技能较为被动，确实有被高熟练度剑汤通过操作弥补克制关系的可能，还是要小心。',
-    group: [
-      { name: '天使泰菲', type: 'character' },
-      { name: '剑客汤姆', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '天使泰菲', type: 'character' },
-      target: { name: '剑客汤姆', type: 'character' },
-      isMinor: true,
-    },
-  },
-  {
-    description: '天菲技能提供的减伤能大幅降低甚至免疫胡椒粉的伤害，还能反伤。',
-    group: [
-      { name: '天使泰菲', type: 'character' },
-      { name: '米特', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '天使泰菲', type: 'character' },
-      target: { name: '米特', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
-    description:
       '天汤飞行，导致投掷物不容易而命中获得2级被动无敌，同时武器技能投掷也会影响莉莉救援。',
     group: [
       { name: '天使汤姆', type: 'character' },
@@ -4608,20 +4702,6 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
   },
   {
     description:
-      '托普斯的网可以无视天使泰菲两个技能。即便是开启3级友情庇护的天菲，也可能被托普斯利用{击晕}、{“我生气了！”}和{1级元气满满}进行连续控制。',
-    group: [
-      { name: '托普斯', type: 'character' },
-      { name: '天使泰菲', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '托普斯', type: 'character' },
-      target: { name: '天使泰菲', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
-    description:
       '音乐家可以利用礼服撞开{垃圾桶}，避免莱特宁抓起老鼠后用垃圾桶鞭尸，而且由于莱特宁缺少控制手段，音乐家可以安全的使用礼服拆火箭。但由于莱特宁的高机动性还是得注意闪现爪刀和交互闪，防止被打死',
     group: [
       { name: '音乐家杰瑞', type: 'character' },
@@ -4773,20 +4853,6 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
     },
   },
   {
-    description:
-      '牛汤难处理后期几乎无敌的天菲，但鞭子加强后前期直接抓取好打天菲，后期三被也容易打没免死状态的天菲，但弹弓伤害刮，后期天菲免死免控牛汤不好处理',
-    group: [
-      { name: '天使泰菲', type: 'character' },
-      { name: '牛仔汤姆', type: 'character' },
-    ],
-    relation: {
-      kind: 'counterEachOther',
-      subject: { name: '天使泰菲', type: 'character' },
-      target: { name: '牛仔汤姆', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
     description: '图多三级甲油免疫优先级极高，可以无视蓝恶魔的沉默和绿恶魔的高伤。',
     group: [
       { name: '图多盖洛', type: 'character' },
@@ -4826,7 +4892,8 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
     },
   },
   {
-    description: '技能免疫控制和虚弱，还能反伤削减追汤飞行时间。',
+    description:
+      '技能免疫控制，还能反伤削减追汤飞行时间。三级翅膀还可以在庇护结束时无缝衔接，帮助逃脱。',
     group: [
       { name: '追风汤姆', type: 'character' },
       { name: '天使泰菲', type: 'character' },

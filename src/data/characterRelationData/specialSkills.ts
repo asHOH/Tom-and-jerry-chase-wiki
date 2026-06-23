@@ -315,8 +315,7 @@ export const characterRelationSpecialSkillTraits: Trait[] = [
     },
   },
   {
-    description:
-      '蓄力重击可以直接击倒天菲；不过天菲后期的三级庇护的免死效果持续期间能抗下蓄力重击。',
+    description: '蓄力重击可以直接击倒天使泰菲，但在特定情况下庇护会使蓄力重击的伤害受限。',
     group: [
       { name: '天使泰菲', type: 'character' },
       { name: '蓄力重击', type: 'specialSkill', factionId: 'cat' },
@@ -650,19 +649,6 @@ export const characterRelationSpecialSkillTraits: Trait[] = [
       kind: 'countersSpecialSkills',
       subject: { name: '追风汤姆', type: 'character' },
       target: { name: '魔术漂浮', type: 'specialSkill', factionId: 'mouse' },
-      isMinor: true,
-    },
-  },
-  {
-    description: '前期一刀秒，后期不怕',
-    group: [
-      { name: '天使泰菲', type: 'character' },
-      { name: '全垒打', type: 'specialSkill', factionId: 'cat' },
-    ],
-    relation: {
-      kind: 'counteredBySpecialSkills',
-      subject: { name: '天使泰菲', type: 'character' },
-      target: { name: '全垒打', type: 'specialSkill', factionId: 'cat' },
       isMinor: true,
     },
   },

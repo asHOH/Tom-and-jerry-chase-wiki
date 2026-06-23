@@ -146,7 +146,7 @@ export const characterRelationModeTraits: Trait[] = [
     },
   },
   {
-    description: '前期一起推两块天菲等级就起来了，不怕10级猫咪',
+    description: '前期一起推几块天菲等级就起来了，几乎不怕猫咪。并且可以救援一些刁钻的火箭。',
     group: [
       { name: '天使泰菲', type: 'character' },
       { name: '疯狂奶酪赛', type: 'mode' },
@@ -159,16 +159,16 @@ export const characterRelationModeTraits: Trait[] = [
     },
   },
   {
-    description: '只要节奏不大崩就死不掉，不过玩起来挺无聊的',
+    description: '抢到钥匙后可以强开洞，但前期容易被针对',
     group: [
       { name: '天使泰菲', type: 'character' },
-      { name: '5V5经典奶酪赛', type: 'mode' },
+      { name: '黄金钥匙赛', type: 'mode' },
     ],
     relation: {
       kind: 'advantageModes',
       subject: { name: '天使泰菲', type: 'character' },
-      target: { name: '5V5经典奶酪赛', type: 'mode' },
-      isMinor: false,
+      target: { name: '黄金钥匙赛', type: 'mode' },
+      isMinor: true,
     },
   },
   {

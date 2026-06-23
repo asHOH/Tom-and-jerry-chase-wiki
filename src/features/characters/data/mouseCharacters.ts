@@ -2944,95 +2944,72 @@ const mouseCharacterDefinitions = {
     EnglishName: 'Angel Tuffy',
     mousePositioningTags: [
       {
-        tagName: '辅助',
-        isMinor: false,
-        description: '{友情庇护}可以保护队友；升到{2级友情庇护}后能使队友完全不受伤害和控制效果。',
-        additionalDescription: '',
-      },
-      {
         tagName: '救援',
-        isMinor: true,
-        description: '{3级天使翅膀}霸体和{3级友情庇护}免死，后期救人十分强势。',
+        isMinor: false,
+        description:
+          '{友情庇护}提供伪霸体并且免疫老鼠夹，救援能力十分突出，可以担任队伍的救人核心。',
         additionalDescription: '',
       },
       {
         tagName: '破局',
-        isMinor: false,
-        description: '{友情庇护}能保护队友强推最后一块奶酪。',
+        isMinor: true,
+        description: '{友情庇护}能在猫缺乏输出手段的情况下强推最后一块奶酪。',
         additionalDescription: '',
       },
       {
         tagName: '后期',
-        isMinor: false,
-        description: '{3级天使翅膀}霸体和{3级友情庇护}免死极其强大，后期生存和支援能力十分突出。',
+        isMinor: true,
+        description: '{天使翅膀}和{友情庇护}提供的自保十分强大，能够适应多种极端情况下的对局环境。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '奶酪',
+        isMinor: true,
+        description: '自身推速较快，可以担任队伍的副推位。',
         additionalDescription: '',
       },
     ],
     skillAllocations: [
       {
+        id: '庇护加点',
+        pattern: '121212000',
+        weaponType: 'weapon1',
+        description: '在应对高伤猫时可考虑使用，但续航偏低，容错空间不高。',
+      },
+      {
         id: '常规加点',
         pattern: '1221[12]000',
         weaponType: 'weapon1',
-        description:
-          '（天使泰菲于20260402有一次改版，本加点可能已过时）最正常的加点，最适合打克制天菲的猫，但容错率和续航相对较低。',
-        additionaldescription: '',
+        description: '最正常的加点，优先保证续航。遇到控制多的猫可以优先点出三级翅膀。',
       },
       {
-        id: '翅膀流加点',
-        pattern: '202121100',
-        weaponType: 'weapon2',
-        description:
-          '（天使泰菲于20260402有一次改版，本加点可能已过时）适合打以控制技能为主的猫，例如{汤姆}、{剑客汤姆}、{追风汤姆}。',
-        additionaldescription: '',
-      },
-      {
-        id: '庇护流加点',
-        pattern: '121012200',
-        weaponType: 'weapon1',
-        description: '（天使泰菲于20260402有一次改版，本加点可能已过时）',
-      },
-      {
-        id: '偏门加点（偶有奇效）',
-        pattern: '200221110',
+        id: '机动加点',
+        pattern: '120121200',
         weaponType: 'weapon1',
         description:
-          '（天使泰菲于20260402有一次改版，本加点可能已过时）适合救完人后立刻点{2级被动}，续航自保很高但对队友实力要求高。',
+          '此加点用于增加前期移速，在怜悯值清零状态下使用一级翅膀获得的怜悯值刚好满足一被的触发条件。在应对高移速猫的情况下偶有奇效。',
       },
     ],
     knowledgeCardGroups: [
       {
-        id: '旧卡组',
-        description: '天使泰菲在20260402有一次大幅度改版，这些卡组为改版前的推荐卡组。',
-        groups: [
-          {
-            cards: ['S-铁血', 'S-舍己', 'A-逃窜', 'C-不屈', 'C-救救我'],
-            description: '有救援卡，{逃窜}适合打控制多的猫，{不屈}增加后期容错。',
-          },
-          {
-            cards: ['S-护佑', 'S-舍己', 'S-铁血', 'C-救救我'],
-            description:
-              '适合单排打{库博}、{苏蕊}这种前期优势大但怕盾的猫，也可以在某些特别烂的阵容充当前期救人位。',
-          },
-          {
-            cards: ['S-舍己', 'S-铁血', 'C-救救我', 'A-祝愿', 'B-夹不住我'],
-            description:
-              '适合车队打法，因为后期天菲强度高可能被某些打后期老鼠乏力的猫针对，适用于主点{友情庇护}的玩法。',
-          },
-          {
-            cards: ['S-舍己', 'S-铁血', 'C-救救我', 'B-精准投射', 'B-夹不住我'],
-            description: '很流行的打法，很适配庇护流，{精准投射}能很好解决技能真空期的问题。',
-          },
-          {
-            cards: ['S-舍己', 'C-救救我', 'B-破墙', 'C-不屈', 'B-幸运'],
-            description: '打逆风局很好用的卡，和队友说清楚没带{铁血}。',
-          },
-          {
-            cards: ['S-舍己', 'S-铁血', 'C-救救我', 'A-投手', 'B-夹不住我'],
-            description:
-              '天菲理论上限较高的一套卡，打习惯了牵制位和救援位的可以尝试一下，同时也是打斯飞剑汤布奇的对策卡之一',
-          },
-        ],
-        defaultFolded: false,
+        cards: ['S-舍己', 'A-逃窜', 'B-逃之夭夭', 'B-飞跃', 'C-救救我'],
+        description:
+          '适合用于充当救人位的卡组。机动性较高，也可以用于应对移速偏慢的猫，如{如玉}、{布奇}。但没有铁血，容错较低。',
+      },
+      {
+        cards: ['S-无畏', 'S-铁血', 'B-食物力量', 'C-不屈', 'C-救救我'],
+        description:
+          '用于应对{米特}、{图多盖洛}等防守角色的卡组，也可在单排时考虑使用。在未获得21知识点的情况下可以选择舍弃{食物力量}或{不屈}。',
+      },
+      {
+        cards: ['S-舍己', 'S-铁血', 'A-祝愿', 'B-食物力量', 'C-救救我'],
+        description:
+          '多排时可以考虑的祝愿流卡组，前期被针对时有大用处，较为少见。使用时建议队伍中至少保留一到两个妥当的救人位。新手不建议使用。',
+      },
+      {
+        cards: ['S-缴械', 'S-舍己', 'B-精准投射', 'B-应激反应', 'C-救救我'],
+        description:
+          '对付{苏蕊}、{托普斯}、{恶魔汤姆}等角色时优先考虑的卡组。在未获得21知识点知识量时，{应激反应}也可替换为{孤军奋战}。',
       },
     ],
     skills: [
@@ -3066,7 +3043,7 @@ const mouseCharacterDefinitions = {
             cooldown: 5,
           },
         ],
-        cueRange: '无音效',
+        cueRange: '全图可见',
       },
       {
         name: '天使翅膀',
@@ -3081,6 +3058,7 @@ const mouseCharacterDefinitions = {
         cancelableAftercast: '无后摇',
         cooldownTiming: '释放时',
         canHitInPipe: false,
+        cueRange: '全图可见',
         skillLevels: [
           {
             level: 1,
@@ -3129,19 +3107,15 @@ const mouseCharacterDefinitions = {
     specialSkills: [
       {
         name: '魔术漂浮',
-        description: '最适配主点翅膀的特技。',
+        description: '辅助自身逃脱。',
       },
       {
         name: '绝处逢生',
-        description: '增强自保，或用于破捕鼠夹。',
+        description: '增强自保，或用于抵消结算的眩晕效果。',
       },
       {
         name: '应急治疗',
-        description: '配合减伤提高生存能力。',
-      },
-      {
-        name: '冰冻保鲜',
-        description: '冰保加强后可以抵挡一次致命伤害及控制，非常契合后期有技能真空期的天菲',
+        description: '配合减伤提高生存能力。在骗刀、骗技能后舍己救人并使用此特技会有奇效。',
       },
     ],
 

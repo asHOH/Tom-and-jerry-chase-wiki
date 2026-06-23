@@ -823,46 +823,7 @@ export const characterRelationCharacterCollaboratorTraits: Trait[] = [
     },
   },
   {
-    description: '米雪儿和天使泰菲的技能搭配能大幅提高生存能力。',
-    group: [
-      { name: '天使泰菲', type: 'character' },
-      { name: '米雪儿', type: 'character' },
-    ],
-    relation: {
-      kind: 'collaborators',
-      subject: { name: '天使泰菲', type: 'character' },
-      target: { name: '米雪儿', type: 'character' },
-      isMinor: true,
-    },
-  },
-  {
-    description: '天使泰菲后期强力。魔术师二武器能提供大量经验，帮助到达后期。',
-    group: [
-      { name: '天使泰菲', type: 'character' },
-      { name: '魔术师', type: 'character' },
-    ],
-    relation: {
-      kind: 'collaborators',
-      subject: { name: '天使泰菲', type: 'character' },
-      target: { name: '魔术师', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
-    description: '天使泰菲后期强力。佩克斯能提供大量经验，帮助到达后期。',
-    group: [
-      { name: '天使泰菲', type: 'character' },
-      { name: '佩克斯', type: 'character' },
-    ],
-    relation: {
-      kind: 'collaborators',
-      subject: { name: '天使泰菲', type: 'character' },
-      target: { name: '佩克斯', type: 'character' },
-      isMinor: true,
-    },
-  },
-  {
-    description: '雪梨帮天使泰菲免于拍抓，天使泰菲帮雪梨提高生存能力。',
+    description: '雪梨帮天使泰菲提高生存能力，可以远程辅助其救援。',
     group: [
       { name: '天使泰菲', type: 'character' },
       { name: '雪梨', type: 'character' },
@@ -875,15 +836,57 @@ export const characterRelationCharacterCollaboratorTraits: Trait[] = [
     },
   },
   {
-    description: '侦探杰瑞的推奶酪和破局能力很强，推奶酪提供的经验能帮助天使泰菲到达后期。',
+    description:
+      '带有{漂浮气球}的米雪儿和天使泰菲的技能搭配能极大提高生存能力，两者组合后几乎无法被击倒。',
     group: [
       { name: '天使泰菲', type: 'character' },
-      { name: '侦探杰瑞', type: 'character' },
+      { name: '米雪儿', type: 'character' },
     ],
     relation: {
       kind: 'collaborators',
       subject: { name: '天使泰菲', type: 'character' },
-      target: { name: '侦探杰瑞', type: 'character' },
+      target: { name: '米雪儿', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '二段跳的辅助非常强力，且天菲自身跳跃能力较弱，很大程度上解决了舍己救人不好跑的问题。',
+    group: [
+      { name: '天使泰菲', type: 'character' },
+      { name: '罗宾汉杰瑞', type: 'character' },
+    ],
+    relation: {
+      kind: 'collaborators',
+      subject: { name: '天使泰菲', type: 'character' },
+      target: { name: '罗宾汉杰瑞', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '罗菲的藤曼可以回复Hp，提高天菲的生存能力和技能续航能力。',
+    group: [
+      { name: '天使泰菲', type: 'character' },
+      { name: '罗宾汉泰菲', type: 'character' },
+    ],
+    relation: {
+      kind: 'collaborators',
+      subject: { name: '天使泰菲', type: 'character' },
+      target: { name: '罗宾汉泰菲', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description:
+      '两者可以叠加火箭燃烧的减缓速度，组合守火箭非常强势。并且天菲的庇护可以避免猫打断莱恩释放技能。',
+    group: [
+      { name: '天使泰菲', type: 'character' },
+      { name: '莱恩', type: 'character' },
+    ],
+    relation: {
+      kind: 'collaborators',
+      subject: { name: '天使泰菲', type: 'character' },
+      target: { name: '莱恩', type: 'character' },
       isMinor: true,
     },
   },
