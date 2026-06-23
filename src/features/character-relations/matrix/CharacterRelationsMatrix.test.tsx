@@ -61,7 +61,7 @@ describe('CharacterRelationsMatrix', () => {
     const rowLink = screen.getByTestId('goto-link-杰瑞');
     expect(rowLink).toHaveAttribute('href', '/characters/%E6%9D%B0%E7%91%9E');
     expect(rowLink).toHaveAttribute('data-category-hint', '鼠角色');
-    expect(rowLink).toHaveAttribute('data-trigger-class', 'block h-7 leading-none');
+    expect(rowLink).toHaveAttribute('data-trigger-class', 'block h-full leading-none');
     expect(rowLink).toHaveClass('no-underline');
 
     const columnLink = screen.getByTestId('goto-link-汤姆');
@@ -115,6 +115,20 @@ describe('CharacterRelationsMatrix', () => {
 
     const majorTrigger = within(majorCell).getByLabelText(/被克制：杰瑞自保能力差/);
     expect(majorTrigger).toHaveStyle('height: 36px; width: 36px');
+  });
+
+  it('should let row header links follow caller-controlled matrix sizing', () => {
+    const viewModel = buildRelationMatrixViewModel({
+      rowFaction: 'mouse',
+      columnCategory: 'cat',
+    });
+
+    render(<CharacterRelationsMatrix viewModel={viewModel} cellSize={36} />);
+
+    const rowLink = screen.getByTestId('goto-link-杰瑞');
+    expect(rowLink).toHaveAttribute('data-trigger-class', 'block h-full leading-none');
+    expect(rowLink).toHaveClass('h-full');
+    expect(rowLink).not.toHaveClass('h-7');
   });
 
   it('should reuse one relation color class for fills, dots, and legend markers', () => {

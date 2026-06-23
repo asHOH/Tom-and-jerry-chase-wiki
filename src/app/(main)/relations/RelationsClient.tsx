@@ -112,7 +112,12 @@ function MatrixSizeSlider({
       role='group'
       aria-labelledby={labelId}
     >
-      <FilterLabel id={labelId} full='表格大小' />
+      <FilterLabel
+        id={labelId}
+        full='表格大小'
+        short='大小'
+        className='shrink-0 whitespace-nowrap'
+      />
       <div className='flex w-full max-w-xs min-w-0 px-1'>
         <input
           type='range'

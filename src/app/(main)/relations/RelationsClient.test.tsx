@@ -46,6 +46,7 @@ describe('RelationsClient', () => {
     expect(slider).toHaveAttribute('min', '22');
     expect(slider).toHaveAttribute('max', '40');
     expect(slider).toHaveAttribute('step', '2');
+    expect(screen.getByText('大小')).toHaveClass('shrink-0', 'whitespace-nowrap');
 
     fireEvent.change(slider, { target: { value: '36' } });
 
