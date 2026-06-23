@@ -45,7 +45,7 @@ Pick the split file by relation target type: character counter-style edges in `c
 
 1. **Conflicts**: Process created_at ASC; same timestamp parent paths before child paths; child/later overlaps win; remove obsolete twins; defer ambiguities.
 2. **Env**: Year: 2026. TZ: Beijing (UTC+8). Source files are UTF-8. Chinese text may display as mojibake in Windows PowerShell or agent terminal output when UTF-8 bytes are decoded with a legacy code page. Treat terminal mojibake from `Get-Content`, `rg`, or command output as a display issue unless file bytes, the editor, or browser output prove corruption. Do not "fix" Chinese strings solely because terminal output rendered them incorrectly. In inline scripts, avoid raw Chinese literals; use Unicode escapes, IDs, or DB/file values.
-3. **Git**: Branch must be data-sync. Run git merge develop first.
+3. **Git**: Stay on the current development branch.
 4. **Execution**: Map to current structure; do not blindly replay paths. Chunk if >10 actions.
 5. **Status**: Valid statuses: pending, approved, rejected, synced. Never set synced if code edit/check fails, mapping is fuzzy, or skipped.
 

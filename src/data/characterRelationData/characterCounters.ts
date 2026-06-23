@@ -597,7 +597,7 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
   },
   {
     description:
-      '泰菲的圆滚滚可以解控，克制恶汤的打碟、被动控制和红温爪刀，泰菲的火箭筒有两段伤害，克制恶汤的的火车盾（盾只有一层）；恶汤的火车有强制位移，克制泰菲被动霸体减伤推奶酪，恶汤的打碟有霸体，克制泰菲的火箭筒打控制，恶汤的绑火箭速度快，打碟有霸体，克制泰菲的地雷拖延绑火箭',
+      '泰菲的圆滚滚可以解控，克制恶汤火车头控制、被动控制，泰菲的火箭筒有两段伤害，克制恶汤的的火车盾（盾只有一层）；恶汤的火车有强制位移，克制泰菲被动霸体减伤推奶酪，恶汤的打碟有霸体，克制泰菲的火箭筒打控制，恶汤的绑火箭速度快，打碟有霸体，克制泰菲的地雷拖延绑火箭',
     group: [
       { name: '泰菲', type: 'character' },
       { name: '恶魔汤姆', type: 'character' },
@@ -1034,7 +1034,8 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
     },
   },
   {
-    description: '因为独特的上火箭机制，在小恶魔上火箭期间，很容易会被拆火箭，从而救下人',
+    description:
+      '音乐家杰瑞可以在恶魔汤姆的小恶魔绑火箭期间拆火箭救人；音乐家的被动也能迅速消耗恶汤的火车盾。',
     group: [
       { name: '音乐家杰瑞', type: 'character' },
       { name: '恶魔汤姆', type: 'character' },
@@ -1043,19 +1044,6 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
       kind: 'counters',
       subject: { name: '音乐家杰瑞', type: 'character' },
       target: { name: '恶魔汤姆', type: 'character' },
-      isMinor: true,
-    },
-  },
-  {
-    description: '怕稳救',
-    group: [
-      { name: '恶魔汤姆', type: 'character' },
-      { name: '剑客泰菲', type: 'character' },
-    ],
-    relation: {
-      kind: 'counteredBy',
-      subject: { name: '恶魔汤姆', type: 'character' },
-      target: { name: '剑客泰菲', type: 'character' },
       isMinor: false,
     },
   },
@@ -3011,7 +2999,7 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
     },
   },
   {
-    description: '恶魔汤姆技能免控，列车冲撞会给予其护盾，列车克制霸体角色。',
+    description: '恶魔汤姆技能免控，列车冲撞会给予其护盾，使米可采访无效。同时列车克制米可的霸体。',
     group: [
       { name: '恶魔汤姆', type: 'character' },
       { name: '米可', type: 'character' },
@@ -3034,6 +3022,33 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
       subject: { name: '恶魔汤姆', type: 'character' },
       target: { name: '牛仔杰瑞', type: 'character' },
       isMinor: false,
+    },
+  },
+  {
+    description:
+      '剑客泰菲的头盔较笨重，容易被火车撞走从而影响救援；且剑菲救完人自保差，易被恶汤击倒。',
+    group: [
+      { name: '恶魔汤姆', type: 'character' },
+      { name: '剑客泰菲', type: 'character' },
+    ],
+    relation: {
+      kind: 'counters',
+      subject: { name: '恶魔汤姆', type: 'character' },
+      target: { name: '剑客泰菲', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '现版本恶汤武器技能释放频繁，可以抵挡魔术师的卡牌；且兔子大表哥容易被恶汤击倒。',
+    group: [
+      { name: '恶魔汤姆', type: 'character' },
+      { name: '魔术师', type: 'character' },
+    ],
+    relation: {
+      kind: 'counters',
+      subject: { name: '恶魔汤姆', type: 'character' },
+      target: { name: '魔术师', type: 'character' },
+      isMinor: true,
     },
   },
   {
@@ -4511,20 +4526,6 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
       kind: 'counterEachOther',
       subject: { name: '恶魔汤姆', type: 'character' },
       target: { name: '恶魔杰瑞', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
-    description:
-      '恶魔汤姆携带特技我生气了配合二级火车撞击兔子带来的爪刀CD缩减可以使用无限爪刀，但魔术师可以在恶魔汤姆释放火车前摇丢红牌、使此次火车释放失败，让恶魔汤姆防守奶酪和火箭压力倍增。另外恶魔汤姆的跳舞不能免疫魔术师的卡牌，容易被抓住机会。',
-    group: [
-      { name: '恶魔汤姆', type: 'character' },
-      { name: '魔术师', type: 'character' },
-    ],
-    relation: {
-      kind: 'counterEachOther',
-      subject: { name: '恶魔汤姆', type: 'character' },
-      target: { name: '魔术师', type: 'character' },
       isMinor: false,
     },
   },

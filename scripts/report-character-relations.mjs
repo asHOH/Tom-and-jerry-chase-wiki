@@ -7,6 +7,9 @@ import ts from 'typescript';
 const jiti = createJiti(import.meta.url);
 
 const sourcePath = path.join(process.cwd(), 'src/data/characterRelations.ts');
+const sourceJiti = createJiti(sourcePath, {
+  tsconfigPaths: path.join(process.cwd(), 'tsconfig.json'),
+});
 
 const loadRawCharacterRelationTraits = () => {
   const source = fs.readFileSync(sourcePath, 'utf8');
@@ -30,7 +33,7 @@ const loadRawCharacterRelationTraits = () => {
         };
       }
 
-      throw new Error(`Unsupported require in characterRelations report loader: ${specifier}`);
+      return sourceJiti(specifier);
     },
   });
 

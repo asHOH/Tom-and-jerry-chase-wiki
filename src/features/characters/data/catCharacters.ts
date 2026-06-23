@@ -3507,7 +3507,8 @@ const catCharacterDefinitions = {
       },
       {
         name: '绝地反击',
-        description: '绝地反击可以提高恶魔汤姆对控制效果的容错。',
+        description:
+          '绝地反击可以提高恶魔汤姆对控制效果的容错。但恶汤不缺护盾和霸体，因此该技能只做衔接使用。',
       },
     ],
     skills: [
