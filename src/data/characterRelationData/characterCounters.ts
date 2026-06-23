@@ -1534,7 +1534,7 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
     },
   },
   {
-    description: '侦探泰菲听莱特林闪现放隐身阻止追击',
+    description: '侦探泰菲的隐身克制莱特宁的闪现，分身还能吸闪；被动回血提供续航',
     group: [
       { name: '侦探泰菲', type: 'character' },
       { name: '莱特宁', type: 'character' },
@@ -4326,6 +4326,19 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
     },
   },
   {
+    description: '侍卫汤姆的警戒可使侦探泰菲显形。',
+    group: [
+      { name: '侍卫汤姆', type: 'character' },
+      { name: '侦探泰菲', type: 'character' },
+    ],
+    relation: {
+      kind: 'counters',
+      subject: { name: '侍卫汤姆', type: 'character' },
+      target: { name: '侦探泰菲', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
     description: '侍卫汤姆警戒会导致国王杰瑞的小盾、大盾失效',
     group: [
       { name: '侍卫汤姆', type: 'character' },
@@ -4470,6 +4483,33 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
       subject: { name: '汤姆', type: 'character' },
       target: { name: '牛仔杰瑞', type: 'character' },
       isMinor: false,
+    },
+  },
+  {
+    description: '无敌抵挡金币且为修火箭提供充足时间；海盗放桶时易被点了被动的汤姆拦截',
+    group: [
+      { name: '汤姆', type: 'character' },
+      { name: '航海士杰瑞', type: 'character' },
+    ],
+    relation: {
+      kind: 'counters',
+      subject: { name: '汤姆', type: 'character' },
+      target: { name: '航海士杰瑞', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description:
+      '3级武器直接抓取米可，主动无敌可以使米可叠不上素材；但汤姆参与有米可的鼠队打架会比较吃力。',
+    group: [
+      { name: '汤姆', type: 'character' },
+      { name: '米可', type: 'character' },
+    ],
+    relation: {
+      kind: 'counters',
+      subject: { name: '汤姆', type: 'character' },
+      target: { name: '米可', type: 'character' },
+      isMinor: true,
     },
   },
   {

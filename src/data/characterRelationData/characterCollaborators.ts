@@ -505,6 +505,20 @@ export const characterRelationCharacterCollaboratorTraits: Trait[] = [
     },
   },
   {
+    description:
+      '梦游在拉毛线时，米雪儿使用小情绪，梦游杰瑞安抚后变大不会让毛线消失，可以强行破局。',
+    group: [
+      { name: '梦游杰瑞', type: 'character' },
+      { name: '米雪儿', type: 'character' },
+    ],
+    relation: {
+      kind: 'collaborators',
+      subject: { name: '梦游杰瑞', type: 'character' },
+      target: { name: '米雪儿', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
     description: '二级鼓舞可以在米可采访时帮米可回血和加速，提高续航。',
     group: [
       { name: '米可', type: 'character' },

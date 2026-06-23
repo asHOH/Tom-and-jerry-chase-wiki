@@ -924,4 +924,31 @@ export const characterRelationKnowledgeCardTraits: Trait[] = [
       isMinor: false,
     },
   },
+  {
+    description:
+      '侦探泰菲血量较少，被携带乾坤一掷的猫咪道具击中后容错率低；且隐身接近奶酪的侦探泰菲被猫不经意间道具击中概率较高',
+    group: [
+      { name: '侦探泰菲', type: 'character' },
+      { name: '乾坤一掷', type: 'knowledgeCard', factionId: 'cat' },
+    ],
+    relation: {
+      kind: 'counteredByKnowledgeCards',
+      subject: { name: '侦探泰菲', type: 'character' },
+      target: { name: '乾坤一掷', type: 'knowledgeCard', factionId: 'cat' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '猫可看到侦菲位置从而拦截侦菲隐身救援',
+    group: [
+      { name: '侦探泰菲', type: 'character' },
+      { name: '屈打成招', type: 'knowledgeCard', factionId: 'cat' },
+    ],
+    relation: {
+      kind: 'counteredByKnowledgeCards',
+      subject: { name: '侦探泰菲', type: 'character' },
+      target: { name: '屈打成招', type: 'knowledgeCard', factionId: 'cat' },
+      isMinor: false,
+    },
+  },
 ];

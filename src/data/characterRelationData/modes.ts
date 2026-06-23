@@ -172,6 +172,45 @@ export const characterRelationModeTraits: Trait[] = [
     },
   },
   {
+    description: '侦菲后期自保极强，借助3级被动能苟在角落持续隐身从而不被抓到',
+    group: [
+      { name: '侦探泰菲', type: 'character' },
+      { name: '5V5经典奶酪赛', type: 'mode' },
+    ],
+    relation: {
+      kind: 'advantageModes',
+      subject: { name: '侦探泰菲', type: 'character' },
+      target: { name: '5V5经典奶酪赛', type: 'mode' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '侦菲后期自保极强，配合3级被动与3级分身可实现全程拉扯猫咪',
+    group: [
+      { name: '侦探泰菲', type: 'character' },
+      { name: '黄金钥匙赛', type: 'mode' },
+    ],
+    relation: {
+      kind: 'advantageModes',
+      subject: { name: '侦探泰菲', type: 'character' },
+      target: { name: '黄金钥匙赛', type: 'mode' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '侦菲技能在本模式起不到任何作用，且自身会被一下炸死',
+    group: [
+      { name: '侦探泰菲', type: 'character' },
+      { name: '烟花大作战', type: 'mode' },
+    ],
+    relation: {
+      kind: 'disadvantageModes',
+      subject: { name: '侦探泰菲', type: 'character' },
+      target: { name: '烟花大作战', type: 'mode' },
+      isMinor: false,
+    },
+  },
+  {
     description: '恶菲跑得快、跳得高、后期三被伤害高。',
     group: [
       { name: '恶魔泰菲', type: 'character' },
