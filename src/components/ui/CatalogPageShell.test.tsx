@@ -89,7 +89,7 @@ describe('CatalogPageShell', () => {
 
     expect(section).not.toHaveClass('space-y-2', 'md:space-y-8');
     expect(header).not.toHaveClass('mb-4', 'md:mb-8');
-    expect(contentWrapper).toHaveClass('mt-8');
+    expect(contentWrapper).toHaveClass('mt-6', 'md:mt-8');
   });
 
   it('skips shell top spacing when contentTopSpacing is none', () => {
@@ -100,7 +100,7 @@ describe('CatalogPageShell', () => {
     );
 
     const contentWrapper = screen.getByText('Content').parentElement;
-    expect(contentWrapper).not.toHaveClass('mt-8');
+    expect(contentWrapper).not.toHaveClass('mt-6', 'md:mt-8');
   });
 
   it('merges class overrides with cn', () => {

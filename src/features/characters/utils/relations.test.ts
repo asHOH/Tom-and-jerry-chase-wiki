@@ -63,12 +63,13 @@ describe('getCharacterRelation', () => {
   });
 
   it('should preserve graph-derived mutual relations for the current target page', () => {
-    const relations = getCharacterRelation(characters, '恶魔杰瑞');
+    const relation = findSharedCharacterRelation('counterEachOther');
+    const relations = getCharacterRelation(characters, relation.target.name);
 
     expect(relations.counterEachOther).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          id: '莱特宁',
+          id: relation.subject.name,
         }),
       ])
     );
