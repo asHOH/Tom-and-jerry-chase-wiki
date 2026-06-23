@@ -703,10 +703,6 @@ const catCharacterDefinitions = {
         cards: ['S-击晕', 'A-熊熊燃烧', 'A-细心', 'B-皮糙肉厚'],
         description: '主布局，防守。',
       },
-      {
-        cards: ['S-猛攻', 'A-细心', 'A-穷追猛打', 'B-恐吓', 'B-皮糙肉厚'],
-        description: '防守流。',
-      },
     ],
     specialSkills: [
       {
@@ -3008,6 +3004,7 @@ const catCharacterDefinitions = {
         ],
         forecast: 0,
         aftercast: 0,
+        cueRange: '随距离远近变化',
       },
       {
         name: '瑜伽球',
@@ -3310,11 +3307,6 @@ const catCharacterDefinitions = {
       },
     ],
     knowledgeCardGroups: [
-      {
-        cards: ['S-乘胜追击', 'S-暴怒', 'A-熊熊燃烧'],
-        description:
-          '萌新玩家可快速凑出本卡组度过开荒期，当资源足够或熟练后不推荐。管道图中，《暴怒》可替换为《加大火力》+《猫是液体》。',
-      },
       {
         cards: ['S-乘胜追击', 'S-击晕', 'A-熊熊燃烧'],
         description: '经典776卡组，击晕依赖玩家选择，略有过时。',

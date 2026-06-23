@@ -234,7 +234,7 @@ const mouseCharacterDefinitions = {
       {
         tagName: '奶酪',
         isMinor: false,
-        description: '基础推速与侦探泰菲并列第一。若携带烟雾弹则能进一步提高团队推速。',
+        description: '基础推速与{侦探泰菲}并列第一。若携带烟雾弹则能进一步提高团队推速。',
         additionalDescription: '',
       },
       {
