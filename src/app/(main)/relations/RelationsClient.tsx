@@ -26,8 +26,8 @@ type RelationsClientProps = {
 const ROW_FACTION_OPTIONS = ['mouse', 'cat'] as const satisfies readonly RelationMatrixRowFaction[];
 
 const ROW_FACTION_LABELS = {
-  mouse: '鼠阵营',
-  cat: '猫阵营',
+  mouse: '鼠',
+  cat: '猫',
 } satisfies Record<RelationMatrixRowFaction, string>;
 
 const MATRIX_SIZE_MIN = 22;

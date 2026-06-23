@@ -66,8 +66,8 @@ export const DEFAULT_RELATION_MATRIX_ROW_FACTION = 'mouse' satisfies RelationMat
 export const DEFAULT_RELATION_MATRIX_COLUMN_CATEGORY = 'cat' satisfies RelationMatrixColumnCategory;
 
 const COLUMN_CATEGORY_OPTIONS: readonly RelationMatrixColumnCategoryOption[] = [
-  { id: 'mouse', label: '鼠角色' },
-  { id: 'cat', label: '猫角色' },
+  { id: 'mouse', label: '鼠' },
+  { id: 'cat', label: '猫' },
   { id: 'knowledgeCard', label: '知识卡' },
   { id: 'specialSkill', label: '特技' },
   { id: 'map', label: '地图' },

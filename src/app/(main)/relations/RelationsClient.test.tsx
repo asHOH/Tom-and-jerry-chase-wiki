@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 
 import RelationsClient from './RelationsClient';
 
@@ -25,14 +25,30 @@ describe('RelationsClient', () => {
     render(<RelationsClient description='查看角色之间的关系。' />);
 
     expect(screen.getByRole('heading', { name: '角色关系' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '鼠阵营' })).toHaveAttribute('aria-pressed', 'true');
-    expect(screen.getByRole('button', { name: '猫角色' })).toHaveAttribute('aria-pressed', 'true');
-
-    fireEvent.click(screen.getByRole('button', { name: '猫阵营' }));
-
-    expect(screen.getByRole('button', { name: '猫阵营' })).toHaveAttribute('aria-pressed', 'true');
+    const rowGroup = screen.getByRole('group', { name: '行' });
+    const columnGroup = screen.getByRole('group', { name: '列' });
+    expect(within(rowGroup).getByRole('button', { name: '鼠' })).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    );
+    expect(within(columnGroup).getByRole('button', { name: '猫' })).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    );
+    expect(screen.queryByRole('button', { name: '鼠阵营' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: '猫角色' })).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '鼠角色' })).toHaveAttribute('aria-pressed', 'true');
+
+    fireEvent.click(within(rowGroup).getByRole('button', { name: '猫' }));
+
+    expect(within(rowGroup).getByRole('button', { name: '猫' })).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    );
+    expect(within(columnGroup).queryByRole('button', { name: '猫' })).not.toBeInTheDocument();
+    expect(within(columnGroup).getByRole('button', { name: '鼠' })).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    );
   });
 
   it('should control matrix size with a table-size slider without rendering the current value', () => {
