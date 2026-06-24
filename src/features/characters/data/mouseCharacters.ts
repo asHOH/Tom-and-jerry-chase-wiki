@@ -2325,6 +2325,10 @@ const mouseCharacterDefinitions = {
         cards: ['S-回家', 'S-缴械', 'S-舍己', 'C-救救我'],
         description: '专门打苏蕊的卡组，舍弃铁血。',
       },
+      {
+        cards: ['S-舍己', 'S-铁血', 'A-逃窜', 'C-不屈', 'C-救救我'],
+        description: '恶菲打如玉/兔八哥等依赖技能输出且非首刀控制一套秒类猫咪时的首选卡组',
+      },
     ],
 
     skills: [
@@ -2338,6 +2342,7 @@ const mouseCharacterDefinitions = {
         canUseInAir: true,
         cancelableSkill: '不可主动打断',
         cancelableAftercast: '不可取消',
+        cueRange: '全图可见',
         skillLevels: [
           {
             level: 1,
@@ -2396,6 +2401,7 @@ const mouseCharacterDefinitions = {
         canUseInAir: true,
         cancelableSkill: ['道具键*'],
         cancelableAftercast: ['道具键*'],
+        cueRange: '全图可见',
         skillLevels: [
           {
             level: 1,
