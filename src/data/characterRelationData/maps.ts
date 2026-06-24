@@ -30,6 +30,162 @@ export const characterRelationMapTraits: Trait[] = [
     },
   },
   {
+    description: '鼠方不容易拉扯',
+    group: [
+      { name: '侦探汤姆', type: 'character' },
+      { name: '经典之家I', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '侦探汤姆', type: 'character' },
+      target: { name: '经典之家I', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '鼠方不容易拉扯',
+    group: [
+      { name: '侦探汤姆', type: 'character' },
+      { name: '雪夜古堡I', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '侦探汤姆', type: 'character' },
+      target: { name: '雪夜古堡I', type: 'map' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '鼠方不容易拉扯',
+    group: [
+      { name: '侦探汤姆', type: 'character' },
+      { name: '雪夜古堡II', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '侦探汤姆', type: 'character' },
+      target: { name: '雪夜古堡II', type: 'map' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '鼠方不容易拉扯',
+    group: [
+      { name: '侦探汤姆', type: 'character' },
+      { name: '夏日游轮I', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '侦探汤姆', type: 'character' },
+      target: { name: '夏日游轮I', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '鼠方不容易拉扯',
+    group: [
+      { name: '侦探汤姆', type: 'character' },
+      { name: '夏日游轮II', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '侦探汤姆', type: 'character' },
+      target: { name: '夏日游轮II', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '鼠方不容易拉扯',
+    group: [
+      { name: '侦探汤姆', type: 'character' },
+      { name: '夏日游轮III', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '侦探汤姆', type: 'character' },
+      target: { name: '夏日游轮III', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '鼠方不容易拉扯',
+    group: [
+      { name: '侦探汤姆', type: 'character' },
+      { name: '熊猫馆', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '侦探汤姆', type: 'character' },
+      target: { name: '熊猫馆', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '拉扯之家',
+    group: [
+      { name: '侦探汤姆', type: 'character' },
+      { name: '经典之家II', type: 'map' },
+    ],
+    relation: {
+      kind: 'disadvantageMaps',
+      subject: { name: '侦探汤姆', type: 'character' },
+      target: { name: '经典之家II', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '地图太大，鼠方容易拉扯',
+    group: [
+      { name: '侦探汤姆', type: 'character' },
+      { name: '雪夜古堡III', type: 'map' },
+    ],
+    relation: {
+      kind: 'disadvantageMaps',
+      subject: { name: '侦探汤姆', type: 'character' },
+      target: { name: '雪夜古堡III', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '地图太大，鼠方容易拉扯',
+    group: [
+      { name: '侦探汤姆', type: 'character' },
+      { name: '游乐场', type: 'map' },
+    ],
+    relation: {
+      kind: 'disadvantageMaps',
+      subject: { name: '侦探汤姆', type: 'character' },
+      target: { name: '游乐场', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '地图太大，鼠方容易拉扯，且侦探汤姆不容易抢七色花',
+    group: [
+      { name: '侦探汤姆', type: 'character' },
+      { name: '森林牧场', type: 'map' },
+    ],
+    relation: {
+      kind: 'disadvantageMaps',
+      subject: { name: '侦探汤姆', type: 'character' },
+      target: { name: '森林牧场', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '地图太大，鼠方容易拉扯，但侦探汤姆容易抢七色花',
+    group: [
+      { name: '侦探汤姆', type: 'character' },
+      { name: '御门酒店', type: 'map' },
+    ],
+    relation: {
+      kind: 'disadvantageMaps',
+      subject: { name: '侦探汤姆', type: 'character' },
+      target: { name: '御门酒店', type: 'map' },
+      isMinor: true,
+    },
+  },
+  {
     description: '',
     group: [
       { name: '塔拉', type: 'character' },

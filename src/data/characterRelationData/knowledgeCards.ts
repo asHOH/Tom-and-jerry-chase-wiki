@@ -28,6 +28,19 @@ export const characterRelationKnowledgeCardTraits: Trait[] = [
     },
   },
   {
+    description: '侦探汤姆主要用爪刀输出。',
+    group: [
+      { name: '侦探汤姆', type: 'character' },
+      { name: '缴械', type: 'knowledgeCard', factionId: 'mouse' },
+    ],
+    relation: {
+      kind: 'counteredByKnowledgeCards',
+      subject: { name: '侦探汤姆', type: 'character' },
+      target: { name: '缴械', type: 'knowledgeCard', factionId: 'mouse' },
+      isMinor: false,
+    },
+  },
+  {
     description: '缴械禁用爪刀，影响关键时刻的衔接。',
     group: [
       { name: '布奇', type: 'character' },
