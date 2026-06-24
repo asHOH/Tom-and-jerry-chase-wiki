@@ -8,7 +8,7 @@ interface InlineExternalLinkProps {
 }
 
 const baseLinkClasses =
-  'rounded-[2px] text-blue-600 underline hover:text-blue-800 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none dark:text-blue-400 dark:hover:text-blue-300';
+  'rounded-0.5 text-blue-600 underline hover:text-blue-800 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none dark:text-blue-400 dark:hover:text-blue-300';
 
 export const InlineExternalLink = ({
   href,

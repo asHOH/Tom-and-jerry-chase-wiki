@@ -103,7 +103,7 @@ export default function ModeSelector({ currentMode, onSelect }: ModeSelectorProp
           onClick={() => onSelect(m.id)}
           className={cn(
             'flex flex-col items-center gap-1 rounded-xl border-2 px-4 py-2.5 transition-all',
-            'min-w-[80px] touch-manipulation',
+            'min-w-20 touch-manipulation',
             currentMode === m.id
               ? 'border-blue-500 bg-blue-50 dark:border-blue-400 dark:bg-blue-900/30'
               : 'border-gray-200 bg-white hover:border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:hover:border-gray-500'

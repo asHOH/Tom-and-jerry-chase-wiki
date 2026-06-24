@@ -11,7 +11,7 @@ function FactionButtonGroup({ children, className = '' }: FactionButtonGroupProp
   return (
     <div
       className={cn(
-        'mx-auto flex w-full max-w-[700px] flex-row flex-wrap justify-center gap-3 md:gap-4',
+        'mx-auto flex w-full max-w-175 flex-row flex-wrap justify-center gap-3 md:gap-4',
         className
       )}
     >

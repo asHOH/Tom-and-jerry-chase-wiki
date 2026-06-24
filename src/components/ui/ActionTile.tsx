@@ -28,8 +28,8 @@ const sizeClasses = {
     md: 'h-12 gap-2 px-2',
   },
   stacked: {
-    sm: 'min-w-[180px] gap-1 px-4 py-3',
-    md: 'min-w-[180px] gap-2 px-6 py-4',
+    sm: 'min-w-45 gap-1 px-4 py-3',
+    md: 'min-w-45 gap-2 px-6 py-4',
   },
 } as const;
 

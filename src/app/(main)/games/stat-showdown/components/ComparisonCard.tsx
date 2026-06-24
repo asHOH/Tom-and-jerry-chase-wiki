@@ -49,7 +49,7 @@ export default function ComparisonCard({
       onClick={onSelect}
       disabled={disabled}
       className={cn(
-        'relative w-full max-w-[200px] touch-manipulation',
+        'relative w-full max-w-50 touch-manipulation',
         'rounded-xl bg-white shadow-md dark:bg-gray-800',
         'transition-all duration-200',
         'focus:ring-2 focus:ring-blue-400 focus:outline-none',

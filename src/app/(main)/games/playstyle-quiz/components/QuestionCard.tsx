@@ -32,7 +32,7 @@ export default function QuestionCard({ question, onAnswer, selectedAnswer }: Que
               disabled={selectedAnswer !== null}
               className={cn(
                 'rounded-lg border-2 px-5 py-4 text-left transition-all duration-150',
-                'min-h-[44px] touch-manipulation', // Mobile touch target
+                'min-h-11 touch-manipulation', // Mobile touch target
                 'focus:ring-2 focus:ring-blue-400 focus:outline-none',
                 isSelected
                   ? 'border-blue-500 bg-blue-50 dark:border-blue-400 dark:bg-blue-900/30'

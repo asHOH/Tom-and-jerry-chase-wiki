@@ -52,7 +52,7 @@ export const ProjectStatement = ({ onFeedbackClick }: ProjectStatementProps) => 
           <InlineExternalLink
             href={PROJECT_INFO.url}
             ariaLabel={`${PROJECT_INFO.title}（在新标签页打开）`}
-            className='inline-flex -translate-y-[2px] items-center gap-1 align-middle font-medium'
+            className='inline-flex -translate-y-0.5 items-center gap-1 align-middle font-medium'
           >
             <svg
               className='h-4 w-4'
@@ -74,7 +74,7 @@ export const ProjectStatement = ({ onFeedbackClick }: ProjectStatementProps) => 
             <button
               type='button'
               onClick={onFeedbackClick}
-              className='font-inherit cursor-pointer rounded-[2px] border-none bg-transparent p-0 text-blue-600 underline hover:text-blue-800 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none dark:text-blue-400 dark:hover:text-blue-300'
+              className='font-inherit rounded-0.5 cursor-pointer border-none bg-transparent p-0 text-blue-600 underline hover:text-blue-800 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none dark:text-blue-400 dark:hover:text-blue-300'
             >
               {projectInfo.description.feedbackLinkText}
             </button>

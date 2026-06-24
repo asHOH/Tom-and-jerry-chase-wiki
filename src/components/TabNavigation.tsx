@@ -201,7 +201,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   const primaryTabs = items.slice(startIndex, startIndex + visibleCount);
   const overflowTabs = [...items.slice(0, startIndex), ...items.slice(startIndex + visibleCount)];
 
-  const tabMinWidthClass = 'min-w-[40px]';
+  const tabMinWidthClass = 'min-w-10';
   const tabButtonClassName =
     'h-10 min-h-0 px-1 md:h-11 md:gap-1 md:px-2 md:text-base lg:text-[17px]';
   const tabIconWrapperClassName = cn(

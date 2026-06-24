@@ -60,7 +60,7 @@ export function getNavigationButtonClasses(
 ): string {
   const layout = isSquare
     ? 'flex h-10 w-10 items-center justify-center rounded-md border-none p-2 md:h-11 md:w-11 lg:p-2.5 transition-colors'
-    : 'flex min-h-[40px] items-center justify-center whitespace-nowrap rounded-md border-none px-2 py-2 text-sm transition-colors md:min-h-[44px] md:px-2.5 lg:px-3.5 lg:text-base';
+    : 'flex min-h-10 items-center justify-center whitespace-nowrap rounded-md border-none px-2 py-2 text-sm transition-colors md:min-h-11 md:px-2.5 lg:px-3.5 lg:text-base';
   const focus =
     'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 focus-visible:dark:outline-blue-300';
 
