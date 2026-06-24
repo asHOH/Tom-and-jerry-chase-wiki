@@ -162,10 +162,27 @@ build_output_is_valid() {
   [ -f ".next/BUILD_ID" ] && [ -d ".next/server" ] && [ -d ".next/static" ]
 }
 
-stop_pm2_process_for_build() {
-  if ! command -v pm2 >/dev/null 2>&1; then
+ensure_pm2_cli() {
+  if command -v pm2 >/dev/null 2>&1; then
     return 0
   fi
+
+  echo "PM2 is not available for the active Node.js version. Installing PM2 globally..."
+  if ! npm install -g pm2; then
+    echo "Fatal: failed to install PM2 globally for the active Node.js version."
+    exit 1
+  fi
+
+  hash -r 2>/dev/null || true
+
+  if ! command -v pm2 >/dev/null 2>&1; then
+    echo "Fatal: pm2 is still not available after npm install -g pm2."
+    exit 1
+  fi
+}
+
+stop_pm2_process_for_build() {
+  ensure_pm2_cli
 
   if pm2 describe "$PM2_APP_NAME" >/dev/null 2>&1; then
     echo "Stopping PM2 app '$PM2_APP_NAME' before rebuilding .next..."
@@ -180,10 +197,7 @@ clean_build_output() {
 }
 
 ensure_pm2_process() {
-  if ! command -v pm2 >/dev/null 2>&1; then
-    echo "Fatal: pm2 is not installed. Install PM2 before running deployments."
-    exit 1
-  fi
+  ensure_pm2_cli
 
   if pm2 describe "$PM2_APP_NAME" >/dev/null 2>&1; then
     echo "Reloading PM2 app '$PM2_APP_NAME'..."
