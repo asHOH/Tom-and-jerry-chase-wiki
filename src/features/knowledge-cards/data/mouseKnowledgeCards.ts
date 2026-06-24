@@ -250,11 +250,11 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     id: '夹不住我',
     rank: 'B',
     cost: 3,
-    description: '增加挣脱捕鼠夹速度。',
+    description: '提升挣脱捕鼠夹的速度。',
     levels: [
-      { level: 1, description: '提升**20%**挣脱速度。' },
-      { level: 2, description: '提升**25%**挣脱速度。' },
-      { level: 3, description: '提升**30%**挣脱速度。' },
+      { level: 1, description: '提升**20%**。' },
+      { level: 2, description: '提升**25%**。' },
+      { level: 3, description: '提升**30%**。' },
     ],
     priority: '提升较小',
   },
@@ -279,7 +279,8 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     rank: 'B',
     cost: 5,
     description: '上火箭后可以从火箭上挣扎下来，每局限1次；墙缝期不可触发。',
-    detailedDescription: '幸运的老鼠，上火箭后可以从火箭上挣扎下来，每局限1次；墙缝期不可触发。',
+    detailedDescription:
+      '幸运的老鼠，上火箭后可以从火箭上挣扎下来，每局限1次；墙缝期不可触发。（注：星星棒需要21次挣扎）',
     levels: [
       { level: 1, description: '首次挣扎速度提升**10%**。' },
       { level: 2, description: '首次挣扎速度提升**20%**。' },
@@ -349,8 +350,8 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     id: '绝地反击',
     rank: 'B',
     cost: 3,
-    description: 'Hp**较低**时，提升攻击增伤。',
-    detailedDescription: 'Hp**较低**时，攻击增伤提升25点。',
+    description: 'Hp**较低**时，提升攻击力。',
+    detailedDescription: 'Hp**较低**时，攻击力提升25点。',
     levels: [
       { level: 1, description: 'Hp不高于**25%**时触发。' },
       { level: 2, description: 'Hp不高于**30%**时触发。' },
@@ -365,7 +366,6 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     cost: 4,
     description: '使用道具击中猫后，获得短暂**加速**。',
     detailedDescription: '使用道具击中猫后，获得3秒**加速**。',
-    // detailedDescription: '',
     levels: [
       { level: 1, description: '加速**5%**。' },
       { level: 2, description: '加速**7%**。' },
@@ -464,8 +464,9 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     id: '强健',
     rank: 'C',
     cost: 4,
-    description: '**减少**虚弱时间。虚弱期间移速提高15%。',
-    detailedDescription: '年轻鼠恢复的速度就是快！**减少**{鼠虚弱}时间。虚弱期间移速提高15%。',
+    description: '**减少**虚弱时间；虚弱期间移速提高15%。',
+    detailedDescription:
+      '年轻鼠恢复的速度就是快！**减少**{鼠虚弱}时间；虚弱期间移速提高15%。（注：基础虚弱时长为10s、基础虚弱移速为0.2倍）',
     levels: [
       { level: 1, description: '减少**20%**。' },
       { level: 2, description: '减少**25%**。' },
@@ -478,8 +479,9 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     id: '救救我',
     rank: 'C',
     cost: 3,
-    description: '当自己被绑在火箭上时，被救援速度**提升**，但队友推速小幅下降。',
-    detailedDescription: '当自己被绑在火箭上时，被救援速度**提升**，但队友推速下降10%。',
+    description: '当自己被绑在{火箭}上时，被救援速度**提升**，但队友推速小幅降低。',
+    detailedDescription:
+      '当自己被绑在{火箭}上时，被救援速度**提升**，但队友推速降低10%。（注：基础救援时长为1s）',
     levels: [
       { level: 1, description: '提升**30%**。' },
       { level: 2, description: '提升**35%**。' },
@@ -493,7 +495,8 @@ export const mouseKnowledgeCards: Record<string, Card> = {
     rank: 'C',
     cost: 4,
     description: '**提高**自己和附近队友的治疗、救援速度。',
-    detailedDescription: '守望相助的老鼠们，**提升**自己和附近队友的治疗、救援速度。',
+    detailedDescription:
+      '守望相助的老鼠们，**提升**自己和附近队友的治疗、救援速度。（注：基础救援时长为1s，基础治疗时长为2.4s）',
     levels: [
       { level: 1, description: '提升**8%**。' },
       { level: 2, description: '提升**12%**。' },

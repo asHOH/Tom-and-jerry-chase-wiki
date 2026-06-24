@@ -118,9 +118,9 @@ export const catKnowledgeCards: Record<string, Card> = {
     id: '猛攻',
     rank: 'S',
     cost: 5,
-    description: '猫咪的爪刀和拍子攻击将**短暂**禁用老鼠的技能与道具，并使其掉落手中道具。',
+    description: '爪刀和拍子攻击将**短暂**禁用老鼠的技能与道具，并使其掉落手中道具。',
     detailedDescription:
-      '猫咪的爪刀和拍子攻击将**短暂**禁用老鼠的技能与道具，并使其掉落手中道具。{图多盖洛}-{魅力甲油}的额外爪刀区域也可以触发该效果。',
+      '爪刀和拍子攻击将**短暂**禁用老鼠的技能与道具，并使其掉落手中道具。{图多盖洛}-{魅力甲油}的额外爪刀区域也可以触发该效果。',
     levels: [
       { level: 1, description: '猛攻效果持续**5**秒。' },
       { level: 2, description: '猛攻效果持续**6**秒。' },
@@ -167,7 +167,7 @@ export const catKnowledgeCards: Record<string, Card> = {
     cost: 4,
     description: '**提升**布置捕鼠夹、绑火箭、修复火箭的交互速度。',
     detailedDescription:
-      '那些笨手笨脚的老鼠！心灵手巧的猫咪在布置捕鼠夹、绑火箭、修复火箭时，**提升**交互速度。',
+      '那些笨手笨脚的老鼠！心灵手巧的猫咪在布置捕鼠夹、绑火箭、修复火箭时，**提升**交互速度。（注：基础绑火箭时间为1.75s）',
     levels: [
       { level: 1, description: '提升**26%**。' },
       { level: 2, description: '提升**28%**。' },
@@ -270,7 +270,7 @@ export const catKnowledgeCards: Record<string, Card> = {
     id: '严防死守',
     rank: 'B',
     cost: 4,
-    description: '火箭附近老鼠越多，救援速度越**慢**。',
+    description: '火箭附近老鼠越多，救援速度越**慢**。（注：基础救援速度为1s）',
     levels: [
       { level: 1, description: '每只老鼠降低**11%**救援速度。' },
       { level: 2, description: '每只老鼠降低**18%**救援速度。' },
@@ -298,6 +298,7 @@ export const catKnowledgeCards: Record<string, Card> = {
     rank: 'B',
     cost: 3,
     description: '破坏机器鼠将获得**额外**经验。',
+    detailedDescription: '破坏机器鼠将获得**额外**经验。（注：破坏机器鼠的基础经验为1000）',
     levels: [
       { level: 1, description: '额外获得**400**经验。' },
       { level: 2, description: '额外获得**500**经验。' },
@@ -323,11 +324,11 @@ export const catKnowledgeCards: Record<string, Card> = {
     id: '寻踪',
     rank: 'B',
     cost: 3,
-    description: '能看到{虚弱}老鼠的小地图位置。',
+    description: '展示{虚弱}老鼠的小地图位置。',
     levels: [
-      { level: 1, description: '最多看到**2**只老鼠。' },
-      { level: 2, description: '最多看到**3**只老鼠。' },
-      { level: 3, description: '最多看到**4**只老鼠。' },
+      { level: 1, description: '最多展示**2**只老鼠。' },
+      { level: 2, description: '最多展示**3**只老鼠。' },
+      { level: 3, description: '最多展示**4**只老鼠。' },
     ],
     priority: '几乎无提升',
   },
@@ -351,8 +352,8 @@ export const catKnowledgeCards: Record<string, Card> = {
     id: '捕鼠夹',
     rank: 'B',
     cost: 3,
-    description: '捕鼠夹被踩中时将造成伤害，且**更难**挣脱。',
-    detailedDescription: '布置更强力的捕鼠夹，捕鼠夹被踩中时将造成30伤害，且**更难**挣脱。',
+    description: '捕鼠夹被老鼠踩中时将造成伤害，且**更难**挣脱。',
+    detailedDescription: '布置更强力的捕鼠夹，捕鼠夹被老鼠踩中时将造成30伤害，且**更难**挣脱。',
     levels: [
       { level: 1, description: '老鼠挣脱捕鼠夹的速度降低**10%**。' },
       { level: 2, description: '老鼠挣脱捕鼠夹的速度降低**15%**。' },
@@ -409,9 +410,9 @@ export const catKnowledgeCards: Record<string, Card> = {
     id: '观察员',
     rank: 'B',
     cost: 3,
-    description: '游戏开始后**一段时间**内，猫咪可以看到所有机器鼠的位置。',
+    description: '游戏开始后，猫咪可以**短暂**看到所有机器鼠的位置。',
     detailedDescription:
-      '猫咪通过监控设备得知机器鼠的动向。游戏开始后**一段时间**内，猫咪可以看到所有机器鼠的位置。',
+      '猫咪通过监控设备得知机器鼠的动向。游戏开始后，猫咪可以**短暂**看到所有机器鼠的位置。',
     levels: [
       { level: 1, description: '持续到游戏开始后**20**秒。' },
       { level: 2, description: '持续到游戏开始后**25**秒。' },
@@ -441,7 +442,7 @@ export const catKnowledgeCards: Record<string, Card> = {
     cost: 4,
     description: '手握老鼠时，**提升**移动、跳跃速度，并免疫捕鼠夹和碎片，且绑火箭速度提高15%。',
     detailedDescription:
-      '终于抓住了一只小老鼠！手握老鼠时，**提升**移动、跳跃速度，并免疫捕鼠夹和碎片，且绑火箭速度提高15%。',
+      '终于抓住了一只小老鼠！手握老鼠时，**提升**移动、跳跃速度，并免疫捕鼠夹和碎片，且绑火箭速度提高15%。（注：基础绑火箭时间为1.75s）',
     levels: [
       { level: 1, description: '移动、跳跃速度提升**5%**。' },
       { level: 2, description: '移动、跳跃速度提升**6%**。' },
@@ -502,7 +503,7 @@ export const catKnowledgeCards: Record<string, Card> = {
     description:
       '不再受到斯派克的攻击，且靠近斯派克时**略微**加速，持续10秒，每30秒至多触发1次。此外，免疫女主人的眩晕效果。',
     detailedDescription:
-      '猫咪与斯派克成为塑料朋友后，不会再受到斯派克的攻击，且附近1050范围内有斯派克时，**略微**加速，持续10秒，每30秒至多触发1次。此外，免疫女主人的眩晕效果。',
+      '猫咪与斯派克成为塑料朋友后，不再受到斯派克的攻击，且附近1050范围内有斯派克时，**略微**加速，持续10秒，每30秒至多触发1次。此外，免疫女主人的眩晕效果。',
     levels: [
       { level: 1, description: '靠近斯派克时加速**5%**。' },
       { level: 2, description: '靠近斯派克时加速**7%**。' },
