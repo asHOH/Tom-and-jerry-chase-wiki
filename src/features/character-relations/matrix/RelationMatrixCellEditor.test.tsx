@@ -89,17 +89,29 @@ describe('RelationMatrixCellEditor', () => {
 
     const saveButton = screen.getByRole('button', { name: '保存' });
     expect(saveButton).toBeDisabled();
+    expect(screen.queryByRole('button', { name: '移除' })).not.toBeInTheDocument();
 
     fireEvent.change(screen.getByLabelText('关系类型'), { target: { value: 'counters' } });
 
     expect(saveButton).not.toBeDisabled();
   });
 
+  it('renders the relation picker inline between the two targets', () => {
+    renderEditor({ selection: createSelection(undefined) });
+
+    expect(screen.getByRole('heading', { name: '编辑角色关系' })).toBeInTheDocument();
+    expect(screen.getByText('杰瑞')).toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: '关系类型' })).toHaveDisplayValue('选择关系');
+    expect(screen.getByText('汤姆')).toBeInTheDocument();
+    expect(screen.queryByText('杰瑞 与 汤姆')).not.toBeInTheDocument();
+    expect(screen.queryByText('关系类型')).not.toBeInTheDocument();
+  });
+
   it('preselects existing relation kind and description', () => {
     renderEditor({ selection: createSelection(createCell('counteredBy', '原说明')) });
 
     expect(screen.getByLabelText('关系类型')).toHaveValue('counteredBy');
-    expect(screen.getByLabelText('说明')).toHaveValue('原说明');
+    expect(screen.getByLabelText(/^说明/)).toHaveValue('原说明');
     expect(screen.getByRole('button', { name: '次要' })).toHaveAttribute('aria-pressed', 'true');
   });
 

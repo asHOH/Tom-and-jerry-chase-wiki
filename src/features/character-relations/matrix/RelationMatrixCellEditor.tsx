@@ -74,6 +74,7 @@ export default function RelationMatrixCellEditor({
 
   const isCharacterTarget = selection.column.type === 'character';
   const canSave = selectedKind !== '';
+  const canRemove = selection.cell !== undefined;
 
   const handleSave = () => {
     if (!selectedKind) return;
@@ -142,32 +143,34 @@ export default function RelationMatrixCellEditor({
       <div className='flex flex-col gap-4 overflow-y-auto p-4'>
         <div>
           <h2 className='text-base font-semibold text-gray-900 dark:text-white'>编辑角色关系</h2>
-          <p className='mt-1 text-sm text-gray-600 dark:text-gray-300'>
-            {selection.row.label} 与 {selection.column.label}
-          </p>
-        </div>
-
-        {legalKinds.length > 1 ? (
-          <label className='flex flex-col gap-1 text-sm font-medium text-gray-700 dark:text-gray-200'>
-            关系类型
-            <select
-              value={selectedKind}
-              onChange={(event) => setSelectedKind(event.currentTarget.value as TraitRelationKind)}
-              className='rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-800 dark:text-white'
-            >
-              <option value=''>请选择关系类型</option>
-              {legalKinds.map((kind) => (
-                <option key={kind} value={kind}>
-                  {getRelationKindLabel(kind)}
-                </option>
-              ))}
-            </select>
-          </label>
-        ) : (
-          <div className='text-sm text-gray-700 dark:text-gray-200'>
-            关系类型：{selectedKind ? getRelationKindLabel(selectedKind) : '不可编辑'}
+          <div className='mt-2 flex flex-wrap items-center gap-2 text-sm text-gray-700 dark:text-gray-200'>
+            <span className='font-medium text-gray-900 dark:text-white'>{selection.row.label}</span>
+            {legalKinds.length > 1 ? (
+              <select
+                aria-label='关系类型'
+                value={selectedKind}
+                onChange={(event) =>
+                  setSelectedKind(event.currentTarget.value as TraitRelationKind)
+                }
+                className='h-9 min-w-28 rounded-md border border-gray-300 bg-white px-2.5 text-sm font-medium text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-800 dark:text-white'
+              >
+                <option value=''>选择关系</option>
+                {legalKinds.map((kind) => (
+                  <option key={kind} value={kind}>
+                    {getRelationKindLabel(kind)}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <span className='inline-flex h-9 items-center rounded-md border border-gray-200 bg-gray-50 px-2.5 text-sm font-medium text-gray-700 dark:border-slate-700 dark:bg-slate-800 dark:text-gray-200'>
+                {selectedKind ? getRelationKindLabel(selectedKind) : '不可编辑'}
+              </span>
+            )}
+            <span className='font-medium text-gray-900 dark:text-white'>
+              {selection.column.label}
+            </span>
           </div>
-        )}
+        </div>
 
         <div className='flex items-center gap-2' role='group' aria-label='关系强度'>
           {[
@@ -192,7 +195,7 @@ export default function RelationMatrixCellEditor({
         </div>
 
         <label className='flex flex-col gap-1 text-sm font-medium text-gray-700 dark:text-gray-200'>
-          说明
+          说明（建议以角色名开头）
           <textarea
             value={description}
             onChange={(event) => setDescription(event.currentTarget.value)}
@@ -203,9 +206,13 @@ export default function RelationMatrixCellEditor({
       </div>
 
       <div className='flex items-center justify-between border-t border-gray-200 p-4 dark:border-slate-700'>
-        <Button variant='danger' size='sm' onClick={handleRemove}>
-          移除
-        </Button>
+        {canRemove ? (
+          <Button variant='danger' size='sm' onClick={handleRemove}>
+            移除
+          </Button>
+        ) : (
+          <div />
+        )}
         <div className='flex items-center gap-2'>
           <Button variant='secondary' size='sm' onClick={() => onOpenChange(false)}>
             取消
