@@ -1,12 +1,19 @@
 'use client';
 
-import { useId, useMemo, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import { useSnapshot } from 'valtio';
 
 import { getFactionButtonColors } from '@/lib/design';
+import { useSearchParamEditMode } from '@/hooks/useSearchParamEditMode';
+import { useUser } from '@/hooks/useUser';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { useToast } from '@/context/ToastContext';
+import { characters } from '@/data/store';
 import CharacterRelationsMatrix, {
   RelationMatrixLegend,
+  type RelationMatrixCellSelection,
 } from '@/features/character-relations/matrix/CharacterRelationsMatrix';
+import RelationMatrixCellEditor from '@/features/character-relations/matrix/RelationMatrixCellEditor';
 import {
   buildRelationMatrixViewModel,
   coerceColumnCategory,
@@ -15,7 +22,12 @@ import {
   type RelationMatrixColumnCategoryOption,
   type RelationMatrixRowFaction,
 } from '@/features/character-relations/matrix/relationMatrixViewModel';
+import { useRelationMatrixEditMode } from '@/features/character-relations/matrix/useRelationMatrixEditMode';
+import { getEditableCharacterRelations } from '@/features/characters/utils/characterRelationOverlay';
+import { getCharacterRelation } from '@/features/characters/utils/relationReadModel';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
+import EditButton from '@/components/ui/EditButton';
+import EditModeToolbar from '@/components/ui/EditModeToolbar';
 import FilterLabel from '@/components/ui/FilterLabel';
 import FilterRow from '@/components/ui/FilterRow';
 
@@ -36,6 +48,7 @@ const MATRIX_SIZE_STEP = 2;
 const DEFAULT_MATRIX_SIZE = 28;
 
 const targetSelectorClassName = 'mt-0 justify-start md:mt-0';
+const RELATION_EDIT_ROLES = new Set(['Contributor', 'Reviewer', 'Coordinator']);
 
 const isFactionTarget = (
   target: RelationMatrixColumnCategory
@@ -136,9 +149,25 @@ function MatrixSizeSlider({
 
 export default function RelationsClient({ description }: RelationsClientProps) {
   const [isDarkMode] = useDarkMode();
+  const { role: userRole } = useUser();
+  const { isEditMode, exitEditMode } = useSearchParamEditMode();
+  const { info } = useToast();
+  const charactersSnapshot = useSnapshot(characters);
   const [rowFaction, setRowFaction] = useState<RelationMatrixRowFaction>('mouse');
   const [columnCategory, setColumnCategory] = useState<RelationMatrixColumnCategory>('cat');
   const [matrixSize, setMatrixSize] = useState(DEFAULT_MATRIX_SIZE);
+  const [selectedCell, setSelectedCell] = useState<RelationMatrixCellSelection | null>(null);
+  const {
+    isDirty,
+    isPublishing,
+    draftInfo,
+    draftsSummary,
+    discardChanges,
+    publishChanges,
+    getActionCount,
+  } = useRelationMatrixEditMode();
+  const canEditRelations = userRole !== null && RELATION_EDIT_ROLES.has(userRole);
+  const isRelationEditMode = isEditMode && canEditRelations;
   const coercedColumnCategory = coerceColumnCategory(rowFaction, columnCategory);
   const columnCategoryOptions = getLegalColumnCategories(rowFaction);
   const viewModel = useMemo(
@@ -146,9 +175,42 @@ export default function RelationsClient({ description }: RelationsClientProps) {
       buildRelationMatrixViewModel({
         rowFaction,
         columnCategory: coercedColumnCategory,
+        getRelationsForRow: isRelationEditMode
+          ? (characterId) =>
+              getEditableCharacterRelations(characterId, charactersSnapshot[characterId])
+          : (characterId) => getCharacterRelation(characters, characterId),
       }),
-    [coercedColumnCategory, rowFaction]
+    [charactersSnapshot, coercedColumnCategory, isRelationEditMode, rowFaction]
   );
+  const actionCount = getActionCount();
+
+  useEffect(() => {
+    if (!isEditMode || canEditRelations) return;
+
+    exitEditMode();
+    info('您没有权限编辑角色关系');
+  }, [canEditRelations, exitEditMode, info, isEditMode]);
+
+  useEffect(() => {
+    if (isRelationEditMode) return;
+
+    setSelectedCell(null);
+  }, [isRelationEditMode]);
+
+  const handleEditorOpenChange = useCallback((open: boolean) => {
+    if (open) return;
+
+    setSelectedCell(null);
+  }, []);
+
+  const handleCellSelect = useCallback((selection: RelationMatrixCellSelection) => {
+    setSelectedCell(selection);
+  }, []);
+
+  const handleExitEditMode = useCallback(() => {
+    setSelectedCell(null);
+    exitEditMode();
+  }, [exitEditMode]);
 
   const handleRowFactionSelect = (nextRowFaction: RelationMatrixRowFaction) => {
     setRowFaction(nextRowFaction);
@@ -162,6 +224,7 @@ export default function RelationsClient({ description }: RelationsClientProps) {
       title='角色关系'
       description={description}
       descriptionVisibility='desktop'
+      actions={canEditRelations && !isEditMode ? <EditButton /> : undefined}
       filters={
         <div className='flex flex-col gap-3 rounded-md border border-gray-200 bg-gray-50 p-3 dark:border-slate-700 dark:bg-slate-900/60'>
           <RowFactionSelector
@@ -181,7 +244,33 @@ export default function RelationsClient({ description }: RelationsClientProps) {
       }
       filtersClassName='max-w-5xl'
     >
-      <CharacterRelationsMatrix viewModel={viewModel} cellSize={matrixSize} />
+      <CharacterRelationsMatrix
+        viewModel={viewModel}
+        cellSize={matrixSize}
+        isEditMode={isRelationEditMode}
+        {...(isRelationEditMode ? { onCellSelect: handleCellSelect } : {})}
+      />
+      {isRelationEditMode ? (
+        <>
+          <RelationMatrixCellEditor
+            open={selectedCell !== null}
+            selection={selectedCell}
+            columnCategory={coercedColumnCategory}
+            onOpenChange={handleEditorOpenChange}
+          />
+          <EditModeToolbar
+            isDirty={isDirty}
+            actionCount={actionCount}
+            draftInfo={draftInfo}
+            draftsSummary={draftsSummary}
+            isPublishing={isPublishing}
+            onDiscard={discardChanges}
+            onPublish={publishChanges}
+            onExitEditMode={handleExitEditMode}
+            entityName='角色关系'
+          />
+        </>
+      ) : null}
     </CatalogPageShell>
   );
 }

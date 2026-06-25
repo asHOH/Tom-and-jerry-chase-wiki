@@ -5,8 +5,13 @@ import type { CharacterRelationItem, TraitRelationKind } from '@/data/types';
 import { getCharacterRelation } from '@/features/characters/utils/relationReadModel';
 
 export type EditableCharacterRelations = Record<TraitRelationKind, CharacterRelationItem[]>;
+type CharacterRelationOverlayRecord = Partial<
+  Record<TraitRelationKind, readonly Readonly<CharacterRelationItem>[]>
+>;
 
-const normalizeCharacterRelationItem = (item: CharacterRelationItem): CharacterRelationItem => ({
+const normalizeCharacterRelationItem = (
+  item: Readonly<CharacterRelationItem>
+): CharacterRelationItem => ({
   id: item.id,
   description: item.description ?? '',
   isMinor: !!item.isMinor,
@@ -37,18 +42,16 @@ export const getCharacterRelationDescriptionPath = (
 
 export const getEditableCharacterRelations = (
   characterId: string,
-  character?: Partial<Record<TraitRelationKind, CharacterRelationItem[]>>
+  character?: unknown
 ): EditableCharacterRelations => {
   const characterRecord = character ?? characters[characterId];
-  const relationRecord = characterRecord as Partial<
-    Record<TraitRelationKind, CharacterRelationItem[]>
-  >;
   const projectedRelations = getCharacterRelation(characters, characterId);
 
-  if (!characterRecord) {
+  if (!characterRecord || typeof characterRecord !== 'object') {
     return projectedRelations as EditableCharacterRelations;
   }
 
+  const relationRecord = characterRecord as CharacterRelationOverlayRecord;
   const next = { ...projectedRelations } as EditableCharacterRelations;
 
   CHARACTER_RELATION_KINDS.forEach((relationKind) => {
