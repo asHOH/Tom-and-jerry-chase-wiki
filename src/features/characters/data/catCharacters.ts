@@ -4069,6 +4069,12 @@ const catCharacterDefinitions = {
           '技能和特殊爪刀均能造成伤害，前刺回马枪同时命中更是能造成极高额伤害。手中有老鼠时也能攻击。此外自身还拥有10攻击增伤。',
         additionalDescription: '',
       },
+      {
+        tagName: '翻盘',
+        isMinor: false,
+        description: '如玉的知识卡适配暴怒，且墙缝期道具多，容易触发花枪反击。',
+        additionalDescription: '',
+      },
     ],
     skillAllocations: [
       {

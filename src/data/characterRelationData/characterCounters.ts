@@ -275,6 +275,19 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
     },
   },
   {
+    description: '泥宝翻滚期间如果被放大镜照射会无法进行第二次翻滚。',
+    group: [
+      { name: '侦探汤姆', type: 'character' },
+      { name: '尼宝', type: 'character' },
+    ],
+    relation: {
+      kind: 'counters',
+      subject: { name: '侦探汤姆', type: 'character' },
+      target: { name: '尼宝', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
     description: '鲍姆爆炸会打断喵喵叫，但前提条件是鲍姆需要近身攻击图茨。',
     group: [
       { name: '鲍姆', type: 'character' },

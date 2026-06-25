@@ -410,7 +410,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
   小黄鸭: {
     type: 'NPC',
     source: '通用组件',
-    aliases: ['鸭子', '小鸭子', '鸭皇', '鸭黄'],
+    aliases: ['小鸭子', '无敌鸭皇'],
     move: true,
     gravity: true,
     supportedMaps: regularMaps, //[...regularMaps, ['5V5大都会', '家之典经']],
@@ -990,6 +990,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     gravity: false,
     supportedMaps: ['夏日游轮I', '夏日游轮II', '夏日游轮III'],
     description: '角色可通过交互打开消防栓，对水流范围内的所有角色造成击退。',
+    detailedDescription: '角色可通过交互打开消防栓，对水流范围内的所有角色造成击退和减速。',
   },
   船锚: {
     type: ['平台类', '组件类'],

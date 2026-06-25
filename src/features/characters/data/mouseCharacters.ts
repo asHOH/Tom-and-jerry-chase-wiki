@@ -3456,7 +3456,13 @@ const mouseCharacterDefinitions = {
         tagName: '救援',
         isMinor: true,
         description: '高Hp，可弹开夹子，有免虚和复活甲，舍己救援后可接琴。',
-        additionalDescription: '小心[直接抓取](拍子、斗牛、三级枪)',
+        additionalDescription: '小心[直接抓取](拍子、斗牛、三级枪等)',
+      },
+      {
+        tagName: '后期',
+        isMinor: true,
+        description: '后期3级被动和3级武器容错高',
+        additionalDescription: '但部分直接抓取技能可无视免疫虚弱和复活甲',
       },
     ],
     skillAllocations: [
