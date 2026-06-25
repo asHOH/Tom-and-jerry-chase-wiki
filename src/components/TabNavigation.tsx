@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { AnimatePresence, m, useReducedMotion } from 'motion/react';
 import { useMediaQuery } from 'usehooks-ts';
@@ -13,7 +13,7 @@ import { useNavigationProgress } from '@/hooks/useNavigationProgress';
 import { useNavigationTabs } from '@/hooks/useNavigationTabs';
 import { useUser } from '@/hooks/useUser';
 import { useAppContext } from '@/context/AppContext';
-import { isNavGroup, NavEntry } from '@/constants/navigation';
+import { isNavGroup, NavEntry, NavItem } from '@/constants/navigation';
 import ChangePasswordDialog from '@/components/ChangePasswordDialog';
 import { HomeIcon, UserCircleIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
@@ -36,6 +36,37 @@ const MOBILE_STACK_COLLAPSE_WIDTHS = [420, 376, 332] as const;
 const DETAIL_TOGGLE_WIDTH = 56;
 const USER_BUTTON_WIDTH = 44;
 const dropdownMenuIconClassName = '!h-6 !w-6 shrink-0 object-contain';
+const dropdownMenuLinkBaseClassName =
+  'flex min-h-10 items-center gap-2 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700';
+
+type DropdownNavLinkProps = {
+  item: NavItem;
+  isActive: boolean;
+  paddingClassName: string;
+  onClick(): void;
+};
+
+const shouldShowNavItem = (item: NavItem) =>
+  env.NEXT_PUBLIC_DISABLE_ARTICLES !== '1' || item.id !== 'articles';
+
+function DropdownNavLink({ item, isActive, paddingClassName, onClick }: DropdownNavLinkProps) {
+  return (
+    <Link
+      href={item.href}
+      className={cn(dropdownMenuLinkBaseClassName, paddingClassName, isActive && 'font-semibold')}
+      onClick={onClick}
+    >
+      <Image
+        src={item.iconSrc}
+        alt={item.iconAlt}
+        width={64}
+        height={64}
+        className={dropdownMenuIconClassName}
+      />
+      <span>{item.label}</span>
+    </Link>
+  );
+}
 
 export default function TabNavigation({ showDetailToggle = false }: TabNavigationProps) {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
@@ -55,8 +86,9 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   const isLg = useMediaQuery('(min-width: 1024px)', { initializeWithValue: false });
   const shouldReduceMotion = useReducedMotion();
   const { isNavigatingTo } = useNavigationProgress();
-  const items = rawItems.flatMap<NavEntry>((entry) =>
-    entry.shouldExpand ? entry.children : entry
+  const items = useMemo(
+    () => rawItems.flatMap<NavEntry>((entry) => (entry.shouldExpand ? entry.children : entry)),
+    [rawItems]
   );
   const { shouldPrompt: showToggleHint, dismiss: dismissToggleHint } =
     useFeatureDiscovery('detail_toggle');
@@ -302,31 +334,16 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                         style={{ transformOrigin: 'top' }}
                       >
                         <ul className='py-1'>
-                          {entry.children.map(
-                            (child) =>
-                              (env.NEXT_PUBLIC_DISABLE_ARTICLES !== '1' ||
-                                child.id != 'articles') && (
-                                <li key={child.id}>
-                                  <Link
-                                    href={child.href}
-                                    className={cn(
-                                      'flex min-h-10 items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700',
-                                      isTabActive(child.href) && 'font-semibold'
-                                    )}
-                                    onClick={() => setOpenGroupId(null)}
-                                  >
-                                    <Image
-                                      src={child.iconSrc}
-                                      alt={child.iconAlt}
-                                      width={64}
-                                      height={64}
-                                      className={dropdownMenuIconClassName}
-                                    />
-                                    <span>{child.label}</span>
-                                  </Link>
-                                </li>
-                              )
-                          )}
+                          {entry.children.filter(shouldShowNavItem).map((child) => (
+                            <li key={child.id}>
+                              <DropdownNavLink
+                                item={child}
+                                isActive={isTabActive(child.href)}
+                                paddingClassName='px-4'
+                                onClick={() => setOpenGroupId(null)}
+                              />
+                            </li>
+                          ))}
                         </ul>
                       </m.div>
                     )}
@@ -416,55 +433,27 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                               <div className='px-4 py-1 text-xs font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-400'>
                                 {entry.label}
                               </div>
-                              {entry.children.map(
-                                (child) =>
-                                  (env.NEXT_PUBLIC_DISABLE_ARTICLES !== '1' ||
-                                    child.id != 'articles') && (
-                                    <Link
-                                      key={child.id}
-                                      href={child.href}
-                                      className={cn(
-                                        'flex min-h-10 items-center gap-2 py-2 pr-4 pl-7 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700',
-                                        isTabActive(child.href) && 'font-semibold'
-                                      )}
-                                      onClick={() => setOverflowOpen(false)}
-                                    >
-                                      <Image
-                                        src={child.iconSrc}
-                                        alt={child.iconAlt}
-                                        width={64}
-                                        height={64}
-                                        className={dropdownMenuIconClassName}
-                                      />
-                                      <span>{child.label}</span>
-                                    </Link>
-                                  )
-                              )}
+                              {entry.children.filter(shouldShowNavItem).map((child) => (
+                                <DropdownNavLink
+                                  key={child.id}
+                                  item={child}
+                                  isActive={isTabActive(child.href)}
+                                  paddingClassName='pr-4 pl-7'
+                                  onClick={() => setOverflowOpen(false)}
+                                />
+                              ))}
                             </li>
                           );
                         }
                         const tab = entry;
                         return (
                           <li key={tab.id}>
-                            <Link
-                              href={tab.href}
-                              className={cn(
-                                'flex min-h-10 items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700',
-                                isTabActive(tab.href) && 'font-semibold'
-                              )}
-                              onClick={() => {
-                                setOverflowOpen(false);
-                              }}
-                            >
-                              <Image
-                                src={tab.iconSrc}
-                                alt={tab.iconAlt}
-                                width={64}
-                                height={64}
-                                className={dropdownMenuIconClassName}
-                              />
-                              <span>{tab.label}</span>
-                            </Link>
+                            <DropdownNavLink
+                              item={tab}
+                              isActive={isTabActive(tab.href)}
+                              paddingClassName='px-4'
+                              onClick={() => setOverflowOpen(false)}
+                            />
                           </li>
                         );
                       })}
