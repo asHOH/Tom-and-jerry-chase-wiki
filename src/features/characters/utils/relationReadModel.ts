@@ -66,17 +66,24 @@ const createEmptyRelation = (): CharacterRelation =>
     return acc;
   }, {} as CharacterRelation);
 
+type LegacyOverlayProjection = {
+  relations: CharacterRelation;
+  ownedRelationKinds: ReadonlySet<keyof CharacterRelation>;
+};
+
 const buildLegacyOverlayRelations = (
   charactersRecord: DeepReadonly<Record<string, CharacterWithFaction>>,
   id: string
-): CharacterRelation => {
+): LegacyOverlayProjection => {
   const legacy = createEmptyRelation();
+  const ownedRelationKinds = new Set<keyof CharacterRelation>();
   const current = charactersRecord[id] as Partial<CharacterRelation> | undefined;
 
   if (current) {
     relationKeys.forEach((key) => {
       const stored = current[key];
       if (Array.isArray(stored)) {
+        ownedRelationKinds.add(key);
         legacy[key] = normalizeLegacyItems(stored);
       }
     });
@@ -107,7 +114,7 @@ const buildLegacyOverlayRelations = (
     addInverse(otherLegacy.collaborators, 'collaborators', otherId);
   });
 
-  return legacy;
+  return { relations: legacy, ownedRelationKinds };
 };
 
 const buildSharedTraitRelations = (id: string): CharacterRelation => {
@@ -192,7 +199,7 @@ const mergeCharacterRelationProjection = (
     CharacterRelation,
     'collaborators' | 'counterEachOther' | 'counteredBy' | 'counters'
   >,
-  legacyOverlayRelations: CharacterRelation
+  legacyOverlayProjection: LegacyOverlayProjection
 ): CharacterRelation => {
   const merged = {
     ...sharedTraitRelations,
@@ -215,7 +222,12 @@ const mergeCharacterRelationProjection = (
   };
 
   relationKeys.forEach((key) => {
-    const legacyItems = legacyOverlayRelations[key];
+    const legacyItems = legacyOverlayProjection.relations[key];
+    if (legacyOverlayProjection.ownedRelationKinds.has(key)) {
+      merged[key] = legacyItems;
+      return;
+    }
+
     if (legacyItems.length > 0) {
       merged[key] = mergeRelationItems(legacyItems, merged[key]);
     }

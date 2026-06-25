@@ -6,8 +6,10 @@ import {
   getCharacterRelationDescriptionPath,
   getEditableCharacterRelations,
   removeCharacterRelationItem,
+  removeCharacterRelationItemFromKinds,
   toggleCharacterRelationMinor,
   updateCharacterRelationDescription,
+  upsertCharacterRelationItem,
 } from './characterRelationOverlay';
 
 const cloneCharacters = () => structuredClone(characters);
@@ -112,5 +114,70 @@ describe('characterRelationOverlay', () => {
         isMinor: false,
       },
     ]);
+  });
+
+  it('should upsert relation items without duplicating unchanged entries', () => {
+    upsertCharacterRelationItem('莱特宁', 'counteredBy', {
+      id: '__upsert__',
+      description: 'first',
+      isMinor: false,
+    });
+    upsertCharacterRelationItem('莱特宁', 'counteredBy', {
+      id: '__upsert__',
+      description: 'updated',
+      isMinor: true,
+    });
+
+    const beforeNoop = (
+      characters['莱特宁'] as unknown as {
+        counteredBy?: Array<{ id: string; description: string; isMinor: boolean }>;
+      }
+    ).counteredBy;
+
+    upsertCharacterRelationItem('莱特宁', 'counteredBy', {
+      id: '__upsert__',
+      description: 'updated',
+      isMinor: true,
+    });
+
+    const afterNoop = (
+      characters['莱特宁'] as unknown as {
+        counteredBy?: Array<{ id: string; description: string; isMinor: boolean }>;
+      }
+    ).counteredBy;
+
+    expect(afterNoop).toBe(beforeNoop);
+    expect(afterNoop?.filter((item) => item.id === '__upsert__')).toEqual([
+      {
+        id: '__upsert__',
+        description: 'updated',
+        isMinor: true,
+      },
+    ]);
+  });
+
+  it('should remove an item from multiple relation kinds while preserving projected items', () => {
+    const projected = getEditableCharacterRelations('莱特宁').counteredBy;
+    expect(projected.length).toBeGreaterThan(0);
+
+    const removeId = projected[0]!.id;
+    removeCharacterRelationItemFromKinds('莱特宁', ['counteredBy', 'counters'], removeId);
+
+    const writtenCounteredBy = (
+      characters['莱特宁'] as unknown as {
+        counteredBy?: Array<{ id: string; description: string; isMinor: boolean }>;
+      }
+    ).counteredBy;
+    const writtenCounters = (
+      characters['莱特宁'] as unknown as {
+        counters?: Array<{ id: string; description: string; isMinor: boolean }>;
+      }
+    ).counters;
+
+    expect(writtenCounteredBy).toEqual(projected.filter((item) => item.id !== removeId));
+    expect(writtenCounteredBy).not.toEqual(
+      expect.arrayContaining([expect.objectContaining({ id: removeId })])
+    );
+    expect(writtenCounters).toBeUndefined();
   });
 });

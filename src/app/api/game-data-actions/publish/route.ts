@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server';
 import z from 'zod';
 
+import {
+  publishGameDataActions,
+  PublishGameDataActionsError,
+} from '@/lib/gameData/publishGameDataActions';
 import { createClient } from '@/lib/supabase/server';
 import type { Json } from '@/data/database.types';
 import { env } from '@/env';
@@ -90,30 +94,18 @@ export async function POST(req: Request) {
 
   try {
     const supabase = await createClient();
-    const allResults: Array<{ id: string; is_public: boolean; status: string }> = [];
-
-    for (const action of actionList) {
-      const { data, error } = await supabase.rpc('publish_game_data_actions', {
-        p_entity_type: action.entityType,
-        p_entries: action.entries,
-        p_message: message!,
-      });
-
-      if (error) {
-        console.error(`Error publishing game data actions for ${action.entityType}:`, error);
-        return NextResponse.json(
-          { error: `Failed to publish actions for ${action.entityType}` },
-          { status: 500 }
-        );
-      }
-
-      if (data) {
-        allResults.push(...data);
-      }
-    }
+    const allResults = await publishGameDataActions(supabase, actionList, message);
 
     return NextResponse.json({ result: allResults });
   } catch (err) {
+    if (err instanceof PublishGameDataActionsError) {
+      console.error(`Error publishing game data actions for ${err.entityType}:`, err.cause);
+      return NextResponse.json(
+        { error: `Failed to publish actions for ${err.entityType}` },
+        { status: 500 }
+      );
+    }
+
     console.error('API error:', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }

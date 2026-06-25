@@ -117,6 +117,15 @@ describe('getCharacterRelation', () => {
     expect(matches).toEqual([overlayItem]);
   });
 
+  it('should use owned relation arrays as authoritative overrides even when empty', () => {
+    const relation = findSharedCharacterRelation('counters');
+    setLegacyRelationItems(relation.subject.name, 'counters', []);
+
+    expect(getCharacterRelation(characters, relation.subject.name).counters).not.toEqual(
+      expect.arrayContaining([expect.objectContaining({ id: relation.target.name })])
+    );
+  });
+
   it('should synthesize inverse legacy character links by scanning other character overlays', () => {
     (
       characters['恶魔杰瑞'] as unknown as {
