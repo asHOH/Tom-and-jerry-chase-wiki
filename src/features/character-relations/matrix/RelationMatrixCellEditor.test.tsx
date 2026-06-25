@@ -13,9 +13,19 @@ import type {
   RelationMatrixEntity,
 } from './relationMatrixViewModel';
 
+type MockBaseDialogProps = {
+  open: boolean;
+  children: React.ReactNode;
+  closeOnEsc?: boolean;
+  closeOnOutsideClick?: boolean;
+};
+
+const mockBaseDialog = jest.fn(({ open, children }: MockBaseDialogProps) =>
+  open ? <div role='dialog'>{children}</div> : null
+);
+
 jest.mock('@/components/ui/BaseDialog', () => ({
-  BaseDialog: ({ open, children }: { open: boolean; children: React.ReactNode }) =>
-    open ? <div role='dialog'>{children}</div> : null,
+  BaseDialog: (props: MockBaseDialogProps) => mockBaseDialog(props),
 }));
 
 jest.mock('@/features/characters/utils/characterRelationOverlay', () => ({
@@ -79,6 +89,12 @@ const renderEditor = ({
   return { onOpenChange };
 };
 
+const getLatestBaseDialogProps = (): MockBaseDialogProps => {
+  const call = mockBaseDialog.mock.calls[mockBaseDialog.mock.calls.length - 1];
+  if (!call) throw new Error('BaseDialog was not rendered');
+  return call[0];
+};
+
 describe('RelationMatrixCellEditor', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -105,6 +121,14 @@ describe('RelationMatrixCellEditor', () => {
     expect(screen.getByText('汤姆')).toBeInTheDocument();
     expect(screen.queryByText('杰瑞 与 汤姆')).not.toBeInTheDocument();
     expect(screen.queryByText('关系类型')).not.toBeInTheDocument();
+  });
+
+  it('prevents accidental dismissal while editing', () => {
+    renderEditor({ selection: createSelection(undefined) });
+
+    const dialogProps = getLatestBaseDialogProps();
+    expect(dialogProps.closeOnEsc).toBe(false);
+    expect(dialogProps.closeOnOutsideClick).toBe(false);
   });
 
   it('preselects existing relation kind and description', () => {
