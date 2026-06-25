@@ -65,7 +65,7 @@ export default function HomeContentClient({ description, hasServiceKey }: Props)
     <div className='space-y-6'>
       <header className='space-y-2 text-center'>
         <PageTitle>猫和老鼠手游wiki</PageTitle>
-        <PageDescription>{description}</PageDescription>
+        {!isMobile && <PageDescription>{description}</PageDescription>}
       </header>
 
       {NAV_ITEMS.map((section, index) => {

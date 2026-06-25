@@ -599,19 +599,6 @@ export const characterRelationMapTraits: Trait[] = [
     },
   },
   {
-    description: '无敌无视烟花伤害',
-    group: [
-      { name: '牛仔汤姆', type: 'character' },
-      { name: '熊猫馆-烟花大作战', type: 'map' },
-    ],
-    relation: {
-      kind: 'advantageMaps',
-      subject: { name: '牛仔汤姆', type: 'character' },
-      target: { name: '熊猫馆-烟花大作战', type: 'map' },
-      isMinor: true,
-    },
-  },
-  {
     description: '斯飞能够利用武器技能从甲板飞上电影院，同时地形利于斯飞追击',
     group: [
       { name: '斯飞', type: 'character' },

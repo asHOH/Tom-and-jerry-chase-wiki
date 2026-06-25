@@ -342,7 +342,7 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
   },
   {
     description:
-      '米特一级被动绑火箭获得的霸体不会因为子弹击中头部而获得爆头间隔。可以连续灌伤让米特剩丝血,但朝圣者极易被米特击倒并且缺乏逃脱手段。',
+      '米特一级被动绑火箭获得的霸体不会因为子弹击中头部而获得爆头间隔。可以连续灌伤让米特剩丝血，但朝圣者极易被米特击倒并且缺乏逃脱手段。',
     group: [
       { name: '朝圣者泰菲', type: 'character' },
       { name: '米特', type: 'character' },

@@ -250,4 +250,17 @@ export const characterRelationModeTraits: Trait[] = [
       isMinor: false,
     },
   },
+  {
+    description: '无敌无视烟花伤害',
+    group: [
+      { name: '汤姆', type: 'character' },
+      { name: '烟花大作战', type: 'mode' },
+    ],
+    relation: {
+      kind: 'disadvantageModes',
+      subject: { name: '汤姆', type: 'character' },
+      target: { name: '烟花大作战', type: 'mode' },
+      isMinor: false,
+    },
+  },
 ];
