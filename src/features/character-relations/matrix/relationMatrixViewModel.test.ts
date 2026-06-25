@@ -1,5 +1,6 @@
 import { cards, specialSkills } from '@/data/static';
-import type { SingleItem, Trait, TraitRelationKind } from '@/data/types';
+import { characters } from '@/data/store';
+import type { CharacterRelation, CharacterRelationItem, TraitRelationKind } from '@/data/types';
 
 import {
   buildRelationMatrixViewModel,
@@ -25,22 +26,37 @@ const getCell = (
     findEntityKey(viewModel.columns, columnId)
   );
 
-const createRelationTrait = (
-  kind: TraitRelationKind,
-  subject: SingleItem,
-  target: SingleItem
-): Trait => ({
-  description: `${subject.name} relation ${target.name}`,
-  group: [subject, target],
-  relation: {
-    kind,
-    subject,
-    target,
-    isMinor: false,
-  },
-});
+const cloneCharacters = () => structuredClone(characters);
+
+const restoreCharacters = (snapshot: Record<string, unknown>) => {
+  Object.keys(characters).forEach((key) => {
+    delete (characters as Record<string, unknown>)[key];
+  });
+
+  Object.entries(snapshot).forEach(([key, value]) => {
+    (characters as Record<string, unknown>)[key] = structuredClone(value);
+  });
+};
+
+const setRelationItems = (
+  characterId: string,
+  relationKind: TraitRelationKind,
+  items: CharacterRelationItem[]
+) => {
+  (characters[characterId] as Partial<CharacterRelation>)[relationKind] = items;
+};
 
 describe('relationMatrixViewModel', () => {
+  let snapshot: Record<string, unknown>;
+
+  beforeEach(() => {
+    snapshot = cloneCharacters() as Record<string, unknown>;
+  });
+
+  afterEach(() => {
+    restoreCharacters(snapshot);
+  });
+
   it('should expose legal column categories and coerce illegal selections', () => {
     expect(getLegalColumnCategories('mouse').map((option) => option.id)).toEqual([
       'mouse',
@@ -186,25 +202,83 @@ describe('relationMatrixViewModel', () => {
     });
   });
 
-  it('should reject duplicate projected matrix cells', () => {
-    const duplicateTraits = [
-      createRelationTrait(
-        'counters',
-        { name: '杰瑞', type: 'character' },
-        { name: '汤姆', type: 'character' }
-      ),
-      createRelationTrait(
-        'counters',
-        { name: '杰瑞', type: 'character' },
-        { name: '汤姆', type: 'character' }
-      ),
-    ];
+  it('should display approved row-local relation overlays', () => {
+    const beforeOverlay = buildRelationMatrixViewModel({
+      rowFaction: 'mouse',
+      columnCategory: 'cat',
+    });
+    const emptyColumn = beforeOverlay.columns.find(
+      (column) =>
+        !getRelationMatrixCell(beforeOverlay, findEntityKey(beforeOverlay.rows, '杰瑞'), column.key)
+    );
+
+    if (!emptyColumn) throw new Error('Expected at least one empty cat column for 杰瑞');
+
+    setRelationItems('杰瑞', 'counters', [
+      {
+        id: emptyColumn.id,
+        description: '本地覆盖关系',
+        isMinor: true,
+      },
+    ]);
+
+    const viewModel = buildRelationMatrixViewModel({
+      rowFaction: 'mouse',
+      columnCategory: 'cat',
+    });
+
+    expect(getCell(viewModel, '杰瑞', emptyColumn.id)).toMatchObject({
+      displayKind: 'counter',
+      sourceKind: 'counters',
+      description: '本地覆盖关系',
+      tooltipContent: '克制：本地覆盖关系',
+      isMinor: true,
+    });
+  });
+
+  it('should hide row-local relations removed by authoritative overlays', () => {
+    const baseline = buildRelationMatrixViewModel({
+      rowFaction: 'mouse',
+      columnCategory: 'cat',
+    });
+    expect(getCell(baseline, '杰瑞', '汤姆')).toBeDefined();
+
+    setRelationItems('杰瑞', 'counteredBy', []);
+
+    const viewModel = buildRelationMatrixViewModel({
+      rowFaction: 'mouse',
+      columnCategory: 'cat',
+    });
+
+    expect(getCell(viewModel, '杰瑞', '汤姆')).toBeUndefined();
+  });
+
+  it('should reject duplicate row-local matrix cells', () => {
+    const duplicateItem = {
+      id: '汤姆',
+      description: 'duplicate',
+      isMinor: false,
+    };
 
     expect(() =>
       buildRelationMatrixViewModel({
         rowFaction: 'mouse',
         columnCategory: 'cat',
-        traits: duplicateTraits,
+        getRelationsForRow: () =>
+          ({
+            counters: [duplicateItem, duplicateItem],
+            counteredBy: [],
+            counterEachOther: [],
+            collaborators: [],
+            countersKnowledgeCards: [],
+            counteredByKnowledgeCards: [],
+            countersSpecialSkills: [],
+            counteredBySpecialSkills: [],
+            advantageMaps: [],
+            advantageModes: [],
+            disadvantageMaps: [],
+            disadvantageModes: [],
+          }) satisfies CharacterRelation,
       })
     ).toThrow('Duplicate relation matrix cell');
   });

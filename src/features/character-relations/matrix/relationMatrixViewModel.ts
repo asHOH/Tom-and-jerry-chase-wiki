@@ -1,7 +1,8 @@
-import { characterRelationTraits } from '@/data/characterRelations';
 import { cards, maps, modes, specialSkills } from '@/data/static';
-import type { FactionId, SingleItem, Trait, TraitRelationKind } from '@/data/types';
+import { characters } from '@/data/store';
+import type { CharacterRelation, FactionId, SingleItem, TraitRelationKind } from '@/data/types';
 import { catCharacterIds, mouseCharacterIds } from '@/features/characters/data/characterMetadata';
+import { getCharacterRelation } from '@/features/characters/utils/relationReadModel';
 
 export type RelationMatrixRowFaction = FactionId;
 
@@ -54,12 +55,7 @@ export type RelationMatrixViewModel = {
 export type RelationMatrixViewModelOptions = {
   rowFaction?: RelationMatrixRowFaction;
   columnCategory?: RelationMatrixColumnCategory;
-  traits?: readonly Trait[];
-};
-
-type ProjectedRelationCell = RelationMatrixCell & {
-  rowItem: SingleItem;
-  columnItem: SingleItem;
+  getRelationsForRow?: (characterId: string) => CharacterRelation;
 };
 
 export const DEFAULT_RELATION_MATRIX_ROW_FACTION = 'mouse' satisfies RelationMatrixRowFaction;
@@ -187,60 +183,37 @@ const getDisplayKind = (relationKind: TraitRelationKind): RelationMatrixDisplayK
   }
 };
 
-const getInverseDisplayKind = (
-  displayKind: RelationMatrixDisplayKind
-): RelationMatrixDisplayKind => {
-  switch (displayKind) {
-    case 'collaborator':
-    case 'counterEachOther':
-      return displayKind;
-    case 'counter':
-      return 'counteredBy';
-    case 'counteredBy':
-      return 'counter';
-  }
-};
-
-const createCell = (trait: Trait, displayKind: RelationMatrixDisplayKind): RelationMatrixCell => {
-  const relation = trait.relation;
-  if (!relation) {
-    throw new Error('Relation matrix traits must include relation metadata.');
-  }
-
-  const description = relation.description ?? trait.description;
-
+const createCell = (
+  relationKind: TraitRelationKind,
+  item: { description?: string; isMinor?: boolean }
+): RelationMatrixCell => {
+  const displayKind = getDisplayKind(relationKind);
+  const description = item.description ?? '';
   return {
     displayKind,
-    isMinor: !!relation.isMinor,
+    isMinor: !!item.isMinor,
     description,
     tooltipContent: `${TOOLTIP_PREFIX_BY_DISPLAY_KIND[displayKind]}${description}`,
-    sourceKind: relation.kind,
+    sourceKind: relationKind,
   };
 };
 
-const projectTraitToCells = (trait: Trait): ProjectedRelationCell[] => {
-  const relation = trait.relation;
-  if (!relation || relation.subject.type !== 'character') return [];
-
-  const displayKind = getDisplayKind(relation.kind);
-  const forwardCell = {
-    ...createCell(trait, displayKind),
-    rowItem: relation.subject,
-    columnItem: relation.target,
-  };
-
-  if (relation.target.type !== 'character') {
-    return [forwardCell];
+const getRelationKindsForColumnCategory = (
+  columnCategory: RelationMatrixColumnCategory
+): readonly TraitRelationKind[] => {
+  switch (columnCategory) {
+    case 'mouse':
+    case 'cat':
+      return ['counters', 'counteredBy', 'counterEachOther', 'collaborators'];
+    case 'knowledgeCard':
+      return ['countersKnowledgeCards', 'counteredByKnowledgeCards'];
+    case 'specialSkill':
+      return ['countersSpecialSkills', 'counteredBySpecialSkills'];
+    case 'map':
+      return ['advantageMaps', 'disadvantageMaps'];
+    case 'mode':
+      return ['advantageModes', 'disadvantageModes'];
   }
-
-  return [
-    forwardCell,
-    {
-      ...createCell(trait, getInverseDisplayKind(displayKind)),
-      rowItem: relation.target,
-      columnItem: relation.subject,
-    },
-  ];
 };
 
 export const getLegalColumnCategories = (
@@ -277,23 +250,27 @@ export const buildRelationMatrixViewModel = (
   );
   const rows = createCharacterEntities(rowFaction);
   const columns = createColumnEntities(rowFaction, columnCategory);
-  const rowKeys = new Set(rows.map((row) => row.key));
-  const columnKeys = new Set(columns.map((column) => column.key));
+  const columnKeyById = new Map(columns.map((column) => [column.id, column.key]));
+  const relationKinds = getRelationKindsForColumnCategory(columnCategory);
+  const getRelationsForRow =
+    options.getRelationsForRow ??
+    ((characterId: string) => getCharacterRelation(characters, characterId));
   const cells = new Map<string, RelationMatrixCell>();
 
-  for (const trait of options.traits ?? characterRelationTraits) {
-    for (const projectedCell of projectTraitToCells(trait)) {
-      const rowItemKey = toItemKey(projectedCell.rowItem);
-      const columnItemKey = toItemKey(projectedCell.columnItem);
-      if (!rowKeys.has(rowItemKey) || !columnKeys.has(columnItemKey)) continue;
+  for (const row of rows) {
+    const relations = getRelationsForRow(row.id);
+    for (const relationKind of relationKinds) {
+      for (const item of relations[relationKind]) {
+        const columnKey = columnKeyById.get(item.id);
+        if (!columnKey) continue;
 
-      const cellKey = toCellKey(rowItemKey, columnItemKey);
-      if (cells.has(cellKey)) {
-        throw new Error(`Duplicate relation matrix cell: ${cellKey}`);
+        const cellKey = toCellKey(row.key, columnKey);
+        if (cells.has(cellKey)) {
+          throw new Error(`Duplicate relation matrix cell: ${cellKey}`);
+        }
+
+        cells.set(cellKey, createCell(relationKind, item));
       }
-
-      const { rowItem: _rowItem, columnItem: _columnItem, ...cell } = projectedCell;
-      cells.set(cellKey, cell);
     }
   }
 

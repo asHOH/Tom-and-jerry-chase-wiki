@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 
 import CharacterRelationsMatrix, { RelationMatrixLegend } from './CharacterRelationsMatrix';
 import {
@@ -155,5 +155,91 @@ describe('CharacterRelationsMatrix', () => {
 
     const counterEachOtherLegendMarker = screen.getByText('互克').querySelector('[aria-hidden]');
     expect(counterEachOtherLegendMarker).toHaveClass('bg-amber-400', 'dark:bg-amber-500/90');
+  });
+
+  it('should render legal empty cells as edit buttons in edit mode', () => {
+    const viewModel = buildRelationMatrixViewModel({
+      rowFaction: 'mouse',
+      columnCategory: 'mouse',
+    });
+    const row = viewModel.rows.find((item) => item.id === '杰瑞');
+    const emptyColumn = viewModel.columns.find(
+      (column) =>
+        column.id !== '杰瑞' &&
+        !getRelationMatrixCell(viewModel, getEntityKey(viewModel.rows, '杰瑞'), column.key)
+    );
+    const onCellSelect = jest.fn();
+
+    if (!row || !emptyColumn) throw new Error('Expected editable empty mouse-mouse cell');
+
+    render(
+      <CharacterRelationsMatrix viewModel={viewModel} isEditMode onCellSelect={onCellSelect} />
+    );
+
+    const emptyCell = screen.getByTestId(
+      `relation-cell-${getEntityKey(viewModel.rows, '杰瑞')}-${emptyColumn.key}`
+    );
+    const editButton = within(emptyCell).getByRole('button', {
+      name: `编辑 杰瑞 与 ${emptyColumn.id} 的关系`,
+    });
+
+    fireEvent.click(editButton);
+
+    expect(onCellSelect).toHaveBeenCalledWith({
+      row,
+      column: emptyColumn,
+      cell: undefined,
+    });
+  });
+
+  it('should render filled edit buttons without tooltip triggers and preserve relation visuals', () => {
+    const viewModel = buildRelationMatrixViewModel({
+      rowFaction: 'mouse',
+      columnCategory: 'cat',
+    });
+    const onCellSelect = jest.fn();
+
+    render(
+      <CharacterRelationsMatrix viewModel={viewModel} isEditMode onCellSelect={onCellSelect} />
+    );
+
+    const majorCell = screen.getByTestId(getCellTestId(viewModel, '杰瑞', '汤姆'));
+    const majorButton = within(majorCell).getByRole('button', {
+      name: '编辑 杰瑞 与 汤姆 的关系',
+    });
+    expect(majorButton).toHaveClass('bg-red-500', 'dark:bg-red-500/90');
+    expect(within(majorCell).queryByLabelText(/被克制：杰瑞自保能力差/)).not.toBeInTheDocument();
+
+    fireEvent.click(majorButton);
+
+    expect(onCellSelect).toHaveBeenCalledWith({
+      row: expect.objectContaining({ id: '杰瑞' }),
+      column: expect.objectContaining({ id: '汤姆' }),
+      cell: expect.objectContaining({ displayKind: 'counteredBy' }),
+    });
+
+    const minorCell = screen.getByTestId(getCellTestId(viewModel, '鲍姆', '托普斯'));
+    const minorButton = within(minorCell).getByRole('button', {
+      name: '编辑 鲍姆 与 托普斯 的关系',
+    });
+    expect(minorButton).not.toHaveClass('bg-amber-400', 'dark:bg-amber-500/90');
+    expect(within(minorButton).getByTestId('relation-minor-dot')).toHaveClass(
+      'bg-amber-400',
+      'dark:bg-amber-500/90'
+    );
+  });
+
+  it('should not render invalid self-cells as edit buttons', () => {
+    const viewModel = buildRelationMatrixViewModel({
+      rowFaction: 'mouse',
+      columnCategory: 'mouse',
+    });
+
+    render(<CharacterRelationsMatrix viewModel={viewModel} isEditMode />);
+
+    const selfCell = screen.getByTestId(getCellTestId(viewModel, '杰瑞', '杰瑞'));
+    expect(
+      within(selfCell).queryByRole('button', { name: '编辑 杰瑞 与 杰瑞 的关系' })
+    ).not.toBeInTheDocument();
   });
 });

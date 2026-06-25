@@ -7,6 +7,7 @@ import type { CategoryHint } from '@/lib/types';
 import Tooltip from '@/components/ui/Tooltip';
 import GotoLink from '@/components/GotoLink';
 
+import { getLegalRelationKinds } from './relationMatrixEditing';
 import {
   getRelationMatrixCell,
   type RelationMatrixCell,
@@ -20,6 +21,14 @@ import {
 type CharacterRelationsMatrixProps = {
   viewModel: RelationMatrixViewModel;
   cellSize?: number;
+  isEditMode?: boolean;
+  onCellSelect?: (selection: RelationMatrixCellSelection) => void;
+};
+
+export type RelationMatrixCellSelection = {
+  row: RelationMatrixEntity;
+  column: RelationMatrixEntity;
+  cell: RelationMatrixCell | undefined;
 };
 
 const DEFAULT_RELATION_MATRIX_CELL_SIZE = 28;
@@ -161,13 +170,19 @@ const MatrixCell = ({
   column,
   viewModel,
   sizing,
+  isEditMode,
+  onCellSelect,
 }: {
   row: RelationMatrixEntity;
   column: RelationMatrixEntity;
   viewModel: RelationMatrixViewModel;
   sizing: RelationMatrixSizing;
+  isEditMode: boolean;
+  onCellSelect: ((selection: RelationMatrixCellSelection) => void) | undefined;
 }) => {
   const cell = getRelationMatrixCell(viewModel, row.key, column.key);
+  const isEditableCell =
+    isEditMode && getLegalRelationKinds(row, column, viewModel.columnCategory).length > 0;
 
   return (
     <td
@@ -175,7 +190,20 @@ const MatrixCell = ({
       className='border border-gray-200 p-0 align-middle dark:border-slate-700'
       style={sizing.cell}
     >
-      {cell ? (
+      {isEditableCell ? (
+        <button
+          type='button'
+          aria-label={`编辑 ${row.label} 与 ${column.label} 的关系`}
+          className={cn(
+            'flex items-center justify-center border-0 p-0 transition-opacity hover:opacity-85 focus:ring-2 focus:ring-blue-400 focus:outline-none',
+            cell && !cell.isMinor && RELATION_COLOR_CLASSES[cell.displayKind]
+          )}
+          style={sizing.cell}
+          onClick={() => onCellSelect?.({ row, column, cell })}
+        >
+          {cell ? <CellMarker cell={cell} dotStyle={sizing.minorDot} /> : null}
+        </button>
+      ) : cell ? (
         <Tooltip
           content={cell.tooltipContent}
           className={cn(
@@ -273,6 +301,8 @@ export const RelationMatrixLegend = () => (
 export default function CharacterRelationsMatrix({
   viewModel,
   cellSize = DEFAULT_RELATION_MATRIX_CELL_SIZE,
+  isEditMode = false,
+  onCellSelect,
 }: CharacterRelationsMatrixProps) {
   const sizing = createRelationMatrixSizing(cellSize);
 
@@ -310,6 +340,8 @@ export default function CharacterRelationsMatrix({
                   column={column}
                   viewModel={viewModel}
                   sizing={sizing}
+                  isEditMode={isEditMode}
+                  onCellSelect={onCellSelect}
                 />
               ))}
             </tr>
