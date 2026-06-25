@@ -35,6 +35,7 @@ const MOBILE_STACK_COLLAPSE_WIDTHS = [420, 376, 332] as const;
 
 const DETAIL_TOGGLE_WIDTH = 56;
 const USER_BUTTON_WIDTH = 44;
+const dropdownMenuIconClassName = '!h-6 !w-6 shrink-0 object-contain';
 
 export default function TabNavigation({ showDetailToggle = false }: TabNavigationProps) {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
@@ -309,7 +310,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                                   <Link
                                     href={child.href}
                                     className={cn(
-                                      'flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700',
+                                      'flex min-h-10 items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700',
                                       isTabActive(child.href) && 'font-semibold'
                                     )}
                                     onClick={() => setOpenGroupId(null)}
@@ -319,7 +320,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                                       alt={child.iconAlt}
                                       width={64}
                                       height={64}
-                                      className='h-6 w-6 shrink-0 object-contain'
+                                      className={dropdownMenuIconClassName}
                                     />
                                     <span>{child.label}</span>
                                   </Link>
@@ -423,7 +424,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                                       key={child.id}
                                       href={child.href}
                                       className={cn(
-                                        'flex items-center gap-2 py-2 pr-4 pl-7 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700',
+                                        'flex min-h-10 items-center gap-2 py-2 pr-4 pl-7 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700',
                                         isTabActive(child.href) && 'font-semibold'
                                       )}
                                       onClick={() => setOverflowOpen(false)}
@@ -433,7 +434,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                                         alt={child.iconAlt}
                                         width={64}
                                         height={64}
-                                        className='h-6 w-6 shrink-0 object-contain'
+                                        className={dropdownMenuIconClassName}
                                       />
                                       <span>{child.label}</span>
                                     </Link>
@@ -448,7 +449,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                             <Link
                               href={tab.href}
                               className={cn(
-                                'flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700',
+                                'flex min-h-10 items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700',
                                 isTabActive(tab.href) && 'font-semibold'
                               )}
                               onClick={() => {
@@ -460,7 +461,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                                 alt={tab.iconAlt}
                                 width={64}
                                 height={64}
-                                className='h-6 w-6 shrink-0 object-contain'
+                                className={dropdownMenuIconClassName}
                               />
                               <span>{tab.label}</span>
                             </Link>
