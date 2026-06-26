@@ -1,22 +1,19 @@
-// Defining the structure for a contributor
 export interface Contributor {
-  id: string; // Unique identifier
+  id: string;
   name: string; // Display name
-  description?: string; //Contributor's description.For example:"S24赛季第4恶魔汤姆，段位榜第24"
-  url?: string; // Link to their personal homepage
-  roles: Role[]; // Array of roles they have fulfilled
+  description?: string; // E.g., "S24赛季第4恶魔汤姆，段位榜第24"
+  url?: string; // Link to personal homepage
+  roles: Role[]; // Fulfilled roles
 }
 
-// Defining the structure for roles
 interface Role {
   type: RoleType;
-  characters?: string[]; // Optional: characters they have worked on
-  isMinor?: boolean; // Optional: to quantify the contribution, defaults to major (false)
+  characters?: string[]; // Characters they have worked on
+  isMinor?: boolean;
 }
 
-// Enum for the different types of roles
 export enum RoleType {
-  ProjectMaintainer = '项目维护者', // Special role for project maintainers - excluded from acknowledgments
+  ProjectMaintainer = '项目维护者', // Excluded from acknowledgments
   ArtProvider = '分享图片素材',
   DataTester = '提供测试数据',
   ContentWriter = '撰写角色文案',
@@ -626,6 +623,16 @@ export const contributors: Contributor[] = [
     roles: [
       {
         type: RoleType.DataTester,
+      },
+    ],
+  },
+  {
+    id: 'beeboo',
+    name: 'Beeboo',
+    url: 'https://tom-and-jerry-chase.fandom.com/wiki/User:BeebooTNJC',
+    roles: [
+      {
+        type: RoleType.ArtProvider,
       },
     ],
   },
