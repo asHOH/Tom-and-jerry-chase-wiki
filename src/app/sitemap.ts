@@ -4,7 +4,9 @@ import { normalizeUrlWithTrailingSlash } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
 import { RANKABLE_PROPERTIES } from '@/features/characters/utils/ranking';
 import { mechanicsSectionsList } from '@/features/mechanics/sections';
+import { usagesSectionsList } from '@/features/usages/sections';
 import {
+  achievements,
   buffs,
   cards,
   characters,
@@ -110,6 +112,30 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified: buildTime,
     changeFrequency: 'weekly',
     priority: 0.5,
+  }));
+
+  const achievementsMap: MetadataRoute.Sitemap = Object.keys(achievements).map(
+    (achievementName) => ({
+      url: `${baseUrl}/achievements/${encodeURIComponent(achievementName)}`,
+      lastModified: buildTime,
+      changeFrequency: 'monthly',
+      priority: 0.4,
+    })
+  );
+
+  const usagesMap: MetadataRoute.Sitemap = usagesSectionsList.map((section) => ({
+    url: `${baseUrl}/usages/${section}`,
+    lastModified: buildTime,
+    changeFrequency: 'monthly',
+    priority: 0.3,
+  }));
+
+  const statShowdownModes = ['all', 'cats', 'mice', 'blitz'] as const;
+  const statShowdownModesMap: MetadataRoute.Sitemap = statShowdownModes.map((mode) => ({
+    url: `${baseUrl}/games/stat-showdown/${mode}`,
+    lastModified: buildTime,
+    changeFrequency: 'monthly',
+    priority: 0.3,
   }));
 
   const entries: MetadataRoute.Sitemap = [
@@ -239,6 +265,48 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly',
       priority: 0.6,
     },
+    // Games
+    {
+      url: `${baseUrl}/games`,
+      lastModified: buildTime,
+      changeFrequency: 'weekly',
+      priority: 0.6,
+    },
+    {
+      url: `${baseUrl}/games/guess-character`,
+      lastModified: buildTime,
+      changeFrequency: 'weekly',
+      priority: 0.5,
+    },
+    {
+      url: `${baseUrl}/games/playstyle-quiz`,
+      lastModified: buildTime,
+      changeFrequency: 'monthly',
+      priority: 0.5,
+    },
+    {
+      url: `${baseUrl}/games/stat-showdown`,
+      lastModified: buildTime,
+      changeFrequency: 'weekly',
+      priority: 0.5,
+    },
+    ...statShowdownModesMap,
+    // Achievements
+    {
+      url: `${baseUrl}/achievements`,
+      lastModified: buildTime,
+      changeFrequency: 'monthly',
+      priority: 0.5,
+    },
+    ...achievementsMap,
+    // Usage Guides
+    {
+      url: `${baseUrl}/usages`,
+      lastModified: buildTime,
+      changeFrequency: 'monthly',
+      priority: 0.5,
+    },
+    ...usagesMap,
     // Other
     {
       url: `${baseUrl}/win-rates`,
@@ -247,9 +315,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.6,
     },
     // Note: /recommended/ is excluded because it has noindex.
-    // /docs/* is excluded because those MDX pages inherit docs layout noindex.
-    // /achievements/, /itemGroups/, and /usages/ are omitted intentionally because
-    // they are visitable utility/reference pages, not part of the primary search surface.
+    // /docs/* sub-pages are excluded because they inherit docs layout noindex.
+    // /articles/* (new, edit, pending, preview, history) are editor/management pages.
+    // /admin/ is auth-protected. /offline/ is a PWA fallback.
+    // /goto/:name is an internal redirect utility.
+    // /characters/user/:characterId is user-generated content (force-dynamic).
   ];
 
   return normalizeSitemapEntries(entries);
