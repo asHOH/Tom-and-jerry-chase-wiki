@@ -16,7 +16,7 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
     },
   },
   {
-    description: '侍卫汤姆伤害高，天使泰菲容易被炮击倒。',
+    description: '侍卫汤姆兼具机动性和远程消耗能力，而天使泰菲机动性差，很容易变成活靶子。',
     group: [
       { name: '天使泰菲', type: 'character' },
       { name: '侍卫汤姆', type: 'character' },
@@ -153,7 +153,7 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
     },
   },
   {
-    description: '天使泰菲具备较高的减伤效果，在走位优秀的情况下不易被击倒。',
+    description: '天使泰菲可用庇护来限制和承担伤害，相对来说更不易被击倒。',
     group: [
       { name: '侦探汤姆', type: 'character' },
       { name: '天使泰菲', type: 'character' },
@@ -1319,7 +1319,7 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
   },
   {
     description:
-      '天使Lv.1被动禁用爪刀使红温流恶汤无法发挥效果；雷云使被动流恶汤一直遭雷劈；后期3级被动禁用技能，对于恶汤技能型防守特别难受；主动技能复活，能够避免恶汤的死守火箭救不下来而减员，也能尽可能的拖时间，恶魔汤姆没有很强的追击性，很难再把复活的人击倒。',
+      '天使雷云使被动流恶汤一直遭雷劈；后期3级被动禁用技能，对于恶汤技能型防守特别难受；主动技能复活能够避免恶汤的死守火箭救不下来而减员，也能尽可能的拖时间，恶魔汤姆机动性较差，难以再把复活的人击倒。',
     group: [
       { name: '天使杰瑞', type: 'character' },
       { name: '恶魔汤姆', type: 'character' },
@@ -1359,7 +1359,7 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
     },
   },
   {
-    description: '怕稳救',
+    description: '尼宝相对于其它鼠角色，能够更稳定地救援恶魔汤姆防守的火箭。',
     group: [
       { name: '恶魔汤姆', type: 'character' },
       { name: '尼宝', type: 'character' },
@@ -1368,7 +1368,7 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
       kind: 'counteredBy',
       subject: { name: '恶魔汤姆', type: 'character' },
       target: { name: '尼宝', type: 'character' },
-      isMinor: false,
+      isMinor: true,
     },
   },
   {
@@ -3043,12 +3043,12 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
   {
     description: '跳舞中的表演者杰瑞可以免疫咸鱼的效果，并且强大的自保可以主动帮助队友吸闪。',
     group: [
-      { name: '斯飞', type: 'character' },
+      { name: '莱特宁', type: 'character' },
       { name: '表演者•杰瑞', type: 'character' },
     ],
     relation: {
       kind: 'counteredBy',
-      subject: { name: '斯飞', type: 'character' },
+      subject: { name: '莱特宁', type: 'character' },
       target: { name: '表演者•杰瑞', type: 'character' },
       isMinor: false,
     },
@@ -4850,8 +4850,7 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
     },
   },
   {
-    description:
-      '火车头配合我生气了，克制国王护盾。但权杖的无敌，进攻战旗的高伤，救援战旗的速救，克制恶汤。',
+    description: '恶魔汤姆的列车兼具冲撞位移及打破护盾的作用，一定程度上能让国王难以救援。',
     group: [
       { name: '恶魔汤姆', type: 'character' },
       { name: '国王杰瑞', type: 'character' },
