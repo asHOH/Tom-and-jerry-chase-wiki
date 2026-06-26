@@ -48,7 +48,7 @@ export const NAV_ITEMS: readonly NavGroup[] = [
         label: '角色关系',
         description: '角色克制与协作关系矩阵',
         href: '/relations',
-        iconSrc: '/images/icons/mouse-faction.png',
+        iconSrc: '/images/icons/relation.png',
         iconAlt: '',
       },
     ],
