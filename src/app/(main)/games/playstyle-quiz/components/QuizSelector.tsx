@@ -16,7 +16,7 @@ export default function QuizSelector({ onSelect }: QuizSelectorProps) {
   return (
     <div className='flex flex-col items-center gap-6 py-12'>
       <p className='text-center text-lg text-gray-600 dark:text-gray-300'>
-        选择一个阵营，回答 10 道游戏情境问题，
+        选择一个阵营，回答游戏情境问题（每题可多选），
         <br />
         我们将为你匹配最适合的角色！
       </p>

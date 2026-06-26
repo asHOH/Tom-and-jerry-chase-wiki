@@ -41,7 +41,7 @@ const mouseQuestions: MouseQuizQuestion[] = [
   },
   {
     id: 'mouse-q2',
-    text: '队友被猫抓住正在抱向火箭，你会？',
+    text: '队友被猫抓住猫正在赶往火箭，你会？',
     answers: [
       {
         text: '继续推奶酪，相信其他队友会去救',
@@ -55,7 +55,7 @@ const mouseQuestions: MouseQuizQuestion[] = [
         tags: [{ tagName: '救援', weight: 2 }],
       },
       {
-        text: '用道具或技能拖延猫的行动，给队友创造救援机会',
+        text: '用道具或技能拖延猫的行动，使队友能够挣扎下来',
         tags: [
           { tagName: '干扰', weight: 1 },
           { tagName: '辅助', weight: 1 },
@@ -80,11 +80,8 @@ const mouseQuestions: MouseQuizQuestion[] = [
         ],
       },
       {
-        text: '保持推奶酪，墙缝期的奶酪加成很重要',
-        tags: [
-          { tagName: '奶酪', weight: 1 },
-          { tagName: '后期', weight: 1 },
-        ],
+        text: '偷锤子，拿药水，开彩蛋',
+        tags: [{ tagName: '后期', weight: 2 }],
       },
       {
         text: '去救被绑在火箭上的队友，然后一起砸墙',
@@ -125,19 +122,19 @@ const mouseQuestions: MouseQuizQuestion[] = [
     text: '关于知识卡搭配，你更倾向于哪种风格？',
     answers: [
       {
-        text: '带满救援和团队卡，确保队友不轻易被放飞',
-        tags: [{ tagName: '救援', weight: 2 }],
+        text: '带幸运流（幸运、{脱身}），确保队友不轻易被放飞',
+        tags: [{ tagName: '破局', weight: 2 }],
       },
       {
-        text: '带干扰和控制卡，最大化对猫的骚扰能力',
+        text: '带干扰和控制卡（如缴械、投手、绝地反击），最大化对猫的骚扰能力',
         tags: [{ tagName: '干扰', weight: 2 }],
       },
       {
-        text: '带推奶酪加速卡，以最快速度完成任务',
-        tags: [{ tagName: '奶酪', weight: 2 }],
+        text: '带后期知识卡（如回家、不屈、祝愿），保证自己在后期的生存能力',
+        tags: [{ tagName: '后期', weight: 2 }],
       },
       {
-        text: '带生存和破局卡，确保自己在关键时刻能站得住',
+        text: '带生存和破局卡（如护佑、逃窜），确保自己在关键时刻能站得住',
         tags: [
           { tagName: '破局', weight: 1 },
           { tagName: '后期', weight: 1 },
@@ -155,15 +152,15 @@ const mouseQuestions: MouseQuizQuestion[] = [
         tags: [{ tagName: '救援', weight: 2 }],
       },
       {
-        text: '趁机多推奶酪，用任务进度弥补劣势',
+        text: '趁机多推奶酪，用奶酪进度弥补劣势',
         tags: [
           { tagName: '奶酪', weight: 1 },
           { tagName: '破局', weight: 1 },
         ],
       },
       {
-        text: '用道具和技能疯狂骚扰猫，让它没空抓人',
-        tags: [{ tagName: '干扰', weight: 2 }],
+        text: '放弃队友，专注于自己的任务和生存',
+        tags: [{ tagName: '破局', weight: 2 }],
       },
     ],
   },
@@ -173,9 +170,9 @@ const mouseQuestions: MouseQuizQuestion[] = [
     answers: [
       { text: '主推奶酪，保证任务进度', tags: [{ tagName: '奶酪', weight: 2 }] },
       { text: '负责救人，确保队友不被放飞', tags: [{ tagName: '救援', weight: 2 }] },
-      { text: '骚扰猫，让它没空管其他人', tags: [{ tagName: '干扰', weight: 2 }] },
+      { text: '干扰猫，让它没空管其他人', tags: [{ tagName: '干扰', weight: 2 }] },
       {
-        text: '万金油位置，哪里需要就去哪里',
+        text: '补位，哪里需要就去哪里',
         tags: [
           { tagName: '辅助', weight: 1 },
           { tagName: '破局', weight: 1 },
@@ -185,37 +182,6 @@ const mouseQuestions: MouseQuizQuestion[] = [
   },
   {
     id: 'mouse-q8',
-    text: '在墙缝期你的团队落后很多，你的心态是？',
-    answers: [
-      {
-        text: '全力砸墙，相信只要墙开了就有翻盘机会',
-        tags: [
-          { tagName: '砸墙', weight: 1 },
-          { tagName: '破局', weight: 1 },
-        ],
-      },
-      {
-        text: '稳扎稳打，找一波完美的救援时机扭转局势',
-        tags: [
-          { tagName: '救援', weight: 1 },
-          { tagName: '后期', weight: 1 },
-        ],
-      },
-      {
-        text: '拖时间，我有翻盘的本事',
-        tags: [
-          { tagName: '后期', weight: 1 },
-          { tagName: '破局', weight: 1 },
-        ],
-      },
-      {
-        text: '拼命骚扰猫为队友创造机会',
-        tags: [{ tagName: '干扰', weight: 2 }],
-      },
-    ],
-  },
-  {
-    id: 'mouse-q9',
     text: '你觉得一个优秀的老鼠玩家最重要的品质是？',
     answers: [
       {
@@ -233,7 +199,7 @@ const mouseQuestions: MouseQuizQuestion[] = [
         ],
       },
       {
-        text: '任务优先，永远记得推奶酪是第一目标',
+        text: '任务优先，保证奶酪进度',
         tags: [{ tagName: '奶酪', weight: 2 }],
       },
       {

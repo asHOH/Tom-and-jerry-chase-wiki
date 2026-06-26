@@ -27,7 +27,8 @@ export default function PlaystyleQuizClient({ description }: Props) {
   const [faction, setFaction] = useState<'cat' | 'mouse' | null>(null);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<QuizOption[]>([]);
-  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [selectedAnswers, setSelectedAnswers] = useState<Set<number>>(new Set());
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const isTransitioning = useRef(false);
 
   const questions = faction === 'cat' ? catQuestions : mouseQuestions;
@@ -35,7 +36,7 @@ export default function PlaystyleQuizClient({ description }: Props) {
 
   // Compute results once all answers are collected
   const result = useMemo(() => {
-    if (phase !== 'result' || !faction || answers.length !== totalQuestions) return null;
+    if (phase !== 'result' || !faction || answers.length === 0) return null;
 
     const userProfile = buildUserProfile(answers);
     const matches = findClosestCharacters(userProfile, faction, charsSnap);
@@ -49,52 +50,66 @@ export default function PlaystyleQuizClient({ description }: Props) {
       character,
       similarMatches: matches.slice(1),
     };
-  }, [phase, faction, answers, totalQuestions, charsSnap]);
+  }, [phase, faction, answers, charsSnap]);
 
   const handleFactionSelect = useCallback((f: 'cat' | 'mouse') => {
     setFaction(f);
     setPhase('quiz');
     setCurrentQuestion(0);
     setAnswers([]);
-    setSelectedAnswer(null);
+    setSelectedAnswers(new Set());
   }, []);
 
-  const handleAnswer = useCallback(
-    (answerIndex: number) => {
-      // Guard against rapid clicks during the transition animation
-      if (isTransitioning.current) return;
+  const handleToggleAnswer = useCallback((answerIndex: number) => {
+    if (isTransitioning.current) return;
+    setSelectedAnswers((prev) => {
+      const next = new Set(prev);
+      if (next.has(answerIndex)) {
+        next.delete(answerIndex);
+      } else {
+        next.add(answerIndex);
+      }
+      return next;
+    });
+  }, []);
 
-      const currentQ = questions[currentQuestion];
-      if (!currentQ) return;
+  const handleSubmit = useCallback(() => {
+    if (isTransitioning.current || selectedAnswers.size === 0) return;
 
-      const selected = currentQ.answers[answerIndex];
-      if (!selected) return;
+    const currentQ = questions[currentQuestion];
+    if (!currentQ) return;
 
-      isTransitioning.current = true;
-      setSelectedAnswer(answerIndex);
+    isTransitioning.current = true;
+    setIsSubmitting(true);
 
-      // Brief delay before advancing to show the selection
-      setTimeout(() => {
-        setAnswers((prev) => [...prev, selected]);
-        setSelectedAnswer(null);
-        isTransitioning.current = false;
+    // Build selected options from the current Set (safe — guard prevents re-entry)
+    const selected: QuizOption[] = [];
+    for (const index of selectedAnswers) {
+      const opt = currentQ.answers[index];
+      if (opt) selected.push(opt);
+    }
 
-        if (currentQuestion + 1 >= totalQuestions) {
-          setPhase('result');
-        } else {
-          setCurrentQuestion((prev) => prev + 1);
-        }
-      }, 400);
-    },
-    [currentQuestion, questions, totalQuestions]
-  );
+    setAnswers((prev) => [...prev, ...selected]);
+    setSelectedAnswers(new Set());
+
+    // Brief delay to show the confirmed state before advancing
+    setTimeout(() => {
+      if (currentQuestion + 1 >= totalQuestions) {
+        setPhase('result');
+      } else {
+        setCurrentQuestion((prev) => prev + 1);
+      }
+      setIsSubmitting(false);
+      isTransitioning.current = false;
+    }, 200);
+  }, [currentQuestion, questions, totalQuestions, selectedAnswers]);
 
   const handleRetake = useCallback(() => {
     setPhase('select');
     setFaction(null);
     setCurrentQuestion(0);
     setAnswers([]);
-    setSelectedAnswer(null);
+    setSelectedAnswers(new Set());
   }, []);
 
   return (
@@ -107,8 +122,10 @@ export default function PlaystyleQuizClient({ description }: Props) {
           {questions[currentQuestion] && (
             <QuestionCard
               question={questions[currentQuestion]}
-              onAnswer={handleAnswer}
-              selectedAnswer={selectedAnswer}
+              selectedAnswers={selectedAnswers}
+              onToggleAnswer={handleToggleAnswer}
+              onSubmit={handleSubmit}
+              isSubmitting={isSubmitting}
             />
           )}
         </div>

@@ -42,27 +42,31 @@ function buildCharacterTagProfile(
 }
 
 /**
- * Compute weighted Jaccard similarity between two tag profiles.
+ * Compute cosine similarity between two tag profiles.
  *
- * weighted Jaccard = Σ min(userWeight, charWeight) / Σ max(userWeight, charWeight)
- * Ranges from 0 (no overlap) to 1 (identical profiles).
+ * Measures the angle between tag weight vectors — invariant to magnitude,
+ * so multi-select and single-select users get fair comparisons.
+ * Range: 0 (no shared tags) to 1 (identical emphasis pattern).
  */
-function weightedJaccardSimilarity(a: TagProfile, b: TagProfile): number {
+function cosineSimilarity(a: TagProfile, b: TagProfile): number {
   const allKeys = new Set([...Object.keys(a), ...Object.keys(b)]);
   if (allKeys.size === 0) return 0;
 
-  let numerator = 0;
-  let denominator = 0;
+  let dotProduct = 0;
+  let normA = 0;
+  let normB = 0;
 
   for (const key of allKeys) {
     const aVal = a[key] ?? 0;
     const bVal = b[key] ?? 0;
-    numerator += Math.min(aVal, bVal);
-    denominator += Math.max(aVal, bVal);
+    dotProduct += aVal * bVal;
+    normA += aVal * aVal;
+    normB += bVal * bVal;
   }
 
-  if (denominator === 0) return 0;
-  return numerator / denominator;
+  const magnitude = Math.sqrt(normA) * Math.sqrt(normB);
+  if (magnitude === 0) return 0;
+  return dotProduct / magnitude;
 }
 
 /**
@@ -94,13 +98,9 @@ export function findClosestCharacters(
     const charTags = factionId === 'cat' ? char.catPositioningTags : char.mousePositioningTags;
     const charProfile = buildCharacterTagProfile(charTags);
 
-    const score = weightedJaccardSimilarity(userProfile, charProfile);
+    const score = cosineSimilarity(userProfile, charProfile);
 
-    // Boost score slightly for characters with more matching tags
-    // to break ties meaningfully
-    const adjustedScore = score > 0 ? score : 0;
-
-    candidates.push({ characterId: char.id, score: adjustedScore });
+    candidates.push({ characterId: char.id, score });
   }
 
   // Sort by score descending, break ties by character ID for determinism
