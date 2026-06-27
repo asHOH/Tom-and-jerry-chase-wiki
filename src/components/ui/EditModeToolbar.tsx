@@ -230,7 +230,7 @@ export default function EditModeToolbar({
                   >
                     CC BY 4.0 许可协议
                   </a>{' '}
-                  进行授权发布。
+                  进行授权发布
                   {userRole && isAdmin
                     ? '，提交后将自动审核通过并公开显示。'
                     : '，管理员审核通过后将公开显示。'}
