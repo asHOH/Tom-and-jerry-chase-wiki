@@ -1,12 +1,12 @@
 'use client';
 
-/* oxlint-disable nextjs/no-img-element */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { RTE_IMAGE_ALLOWED_MIME_TYPES, RTE_IMAGE_MAX_BYTES } from '@/lib/richtext/imagePolicy';
 import Button from '@/components/ui/Button';
 import { FormInput } from '@/components/ui/FormControls';
+import { Img } from '@/components/Image';
 
 import { LoadingSpinnerIcon } from '../RichTextEditorIcons';
 
@@ -344,7 +344,7 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
               onClick={() => handleSupabaseSelect(item)}
             >
               <div className='relative aspect-video w-full overflow-hidden bg-gray-100 dark:bg-gray-800'>
-                <img
+                <Img
                   src={item.publicUrl}
                   alt={item.name}
                   className='h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.02]'
@@ -418,7 +418,7 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
                 </div>
               ) : (
                 <div className='flex h-12 w-12 items-center justify-center overflow-hidden rounded-md bg-gray-100 dark:bg-gray-800'>
-                  <img
+                  <Img
                     src={entry.publicPath ?? ''}
                     alt={entry.name}
                     className='max-h-full max-w-full object-contain'
