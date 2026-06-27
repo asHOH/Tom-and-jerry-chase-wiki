@@ -46,7 +46,7 @@ jest.mock('@/lib/design', () => ({
 // Mock Next.js Image component
 jest.mock('next/image', () => {
   return function MockImage({ src, alt }: { src: string; alt: string }) {
-    // eslint-disable-next-line @next/next/no-img-element
+    // oxlint-disable-next-line nextjs/no-img-element
     return <img src={src} alt={alt} />;
   };
 });

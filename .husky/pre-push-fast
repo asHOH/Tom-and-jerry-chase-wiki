@@ -21,7 +21,7 @@ fi
 # Quick lint check first (fail fast)
 echo "[pre-push-fast] Quick lint check (npm run lint -- --max-warnings=0)..."
 if ! npm run lint -- --max-warnings=0 > /dev/null 2>&1; then
-  echo "[pre-push-fast] ESLint errors found. Fix them before pushing."
+  echo "[pre-push-fast] Oxlint errors found. Fix them before pushing."
   exit 1
 fi
 

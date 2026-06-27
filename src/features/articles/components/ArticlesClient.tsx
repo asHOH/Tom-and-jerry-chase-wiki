@@ -99,7 +99,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
       }
     }
     setIsInitialized(true);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []); // oxlint-disable-line react/exhaustive-deps
 
   // Sync state to URL
   const updateURL = useCallback(

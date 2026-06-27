@@ -20,7 +20,7 @@ jest.mock('@/components/ui/EditButton', () => {
 
 jest.mock('@/components/ui/GameImage', () => {
   return function MockGameImage({ alt }: { alt: string }) {
-    // eslint-disable-next-line @next/next/no-img-element
+    // oxlint-disable-next-line nextjs/no-img-element
     return <img alt={alt} />;
   };
 });

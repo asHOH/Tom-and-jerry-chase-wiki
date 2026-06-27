@@ -244,7 +244,7 @@ export default function GuessCharacterClient({ description }: Props) {
     if (dailyState.date === todayStr && dailyState.solved) {
       setShowResult(true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react/exhaustive-deps
   }, []);
 
   // Handle a guess submission

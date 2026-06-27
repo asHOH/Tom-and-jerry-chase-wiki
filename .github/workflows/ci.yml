@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main, develop ]
+    branches: [main, develop]
 
 jobs:
   setup:
@@ -19,8 +19,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
 
       - name: Cache dependencies
         id: cache
@@ -40,7 +40,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        check: [prettier, eslint, typescript]
+        check: [prettier, oxlint, typescript]
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -48,8 +48,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
 
       - name: Restore dependencies
         uses: actions/cache@v5
@@ -65,15 +65,13 @@ jobs:
         if: matrix.check == 'prettier'
         run: npm run prettier:check
 
-      - name: Run ESLint
-        if: matrix.check == 'eslint'
+      - name: Run Oxlint
+        if: matrix.check == 'oxlint'
         run: npm run lint
 
       - name: Run TypeScript check
         if: matrix.check == 'typescript'
         run: npm run type-check
-
-
 
   test:
     name: Tests & Coverage
@@ -86,8 +84,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
 
       - name: Restore dependencies
         uses: actions/cache@v5
@@ -144,8 +142,6 @@ jobs:
       - name: No tests found
         if: steps.check-tests.outputs.tests-exist == 'false'
         run: echo "⚠️ No tests found in the project. Consider adding tests for better code quality."
-
-
 
   summary:
     name: CI Summary

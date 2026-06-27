@@ -61,7 +61,7 @@ const SAVE_DEBOUNCE_MS = 1500;
 
 const localStorageProvider = () => {
   // When initializing, we restore the data from `localStorage` into a map.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   let initialEntries: Array<[string, any]> = [];
   if (typeof window !== 'undefined') {
     try {
@@ -72,7 +72,7 @@ const localStorageProvider = () => {
           console.warn('SWR cache exceeds size limit, clearing');
           localStorage.removeItem(CACHE_KEY);
         } else {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          // oxlint-disable-next-line typescript/no-explicit-any
           const parsed = JSON.parse(stored) as Array<[string, any]>;
           if (Array.isArray(parsed)) {
             // Filter out user data to avoid hydration mismatch with server-rendered HTML
@@ -87,7 +87,7 @@ const localStorageProvider = () => {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   const map = new Map<string, any>(initialEntries);
   let saveTimer: number | undefined;
 
@@ -156,7 +156,7 @@ const localStorageProvider = () => {
 
   // Patch mutating methods to trigger incremental persistence
   const originalSet = map.set.bind(map);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   map.set = (key: string, value: any) => {
     const result = originalSet(key, value);
     scheduleSave();

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-require-imports */
+/* oxlint-disable typescript/no-require-imports */
 const fs = require('fs').promises;
 const path = require('path');
 const sharp = require('sharp');

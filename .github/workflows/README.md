@@ -9,7 +9,7 @@ This directory contains automated workflows for the project.
 - **Triggers**: Push/PR to main/develop branches
 - **Purpose**: Code quality checks and testing
 - **Jobs**:
-  - Code Quality: Prettier formatting, ESLint, TypeScript compilation
+  - Code Quality: Prettier formatting, Oxlint, TypeScript compilation
   - Tests & Coverage: Run tests and generate coverage reports
 
 ### 2. **Security Audit (dependency-check.yml)**
@@ -32,7 +32,7 @@ This directory contains automated workflows for the project.
 All workflows ensure:
 
 - ✅ Code formatting (Prettier) - _Handled by Husky pre-commit hooks_
-- ✅ Linting (ESLint) - _Handled by Husky pre-commit hooks_
+- ✅ Linting (Oxlint) - _Handled by Husky pre-commit hooks_
 - ✅ Type checking (TypeScript)
 - ✅ Test execution and coverage
 - ✅ Security compliance

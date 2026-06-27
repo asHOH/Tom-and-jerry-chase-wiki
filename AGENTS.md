@@ -17,10 +17,10 @@ npm run build                      # Full build: generate-doc-pages → next bui
 npm run build:skip-images          # Build without post-build image optimization
 
 # Quality (run after every edit)
-npm run lint                       # ESLint (cached). Zero warnings required for push.
+npm run lint                       # Oxlint (cached). Zero warnings required for push.
 npm run lint:fast                  # Oxlint (quick sanity check)
 npm run type-check                 # tsc --noEmit (strict mode + noUncheckedIndexedAccess)
-npm run format                     # Prettier + ESLint auto-fix
+npm run format                     # Prettier + Oxlint auto-fix
 
 # Test
 npm test                           # Jest (all tests)
@@ -82,7 +82,7 @@ scripts/                    # Build scripts (generate-doc-pages.mjs, image optim
 
 - **Strict mode** with extra checks: `noUnusedLocals`, `noUnusedParameters`, `exactOptionalPropertyTypes`, `noImplicitReturns`, `noFallthroughCasesInSwitch`, `noUncheckedIndexedAccess`.
 - Use `type` keyword for type aliases (not `interface` unless extending). Props are typed inline: `type FooProps = { ... }`.
-- Prefix unused params with `_` (enforced by ESLint `unused-imports` plugin).
+- Prefix unused params with `_` (enforced by Oxlint `unused-imports` plugin).
 - Path alias: `@/` maps to `src/`. Always use it for non-relative imports.
 - Never use `as any`, `@ts-ignore`, or `@ts-expect-error`.
 
@@ -200,7 +200,7 @@ Commit format: `type(scope): description` — e.g., `feat(characters): add win r
 
 GitHub Actions on push/PR to `main`/`develop`:
 
-1. **Code Quality** (parallel matrix): Prettier check, ESLint, TypeScript type-check
+1. **Code Quality** (parallel matrix): Prettier check, Oxlint, TypeScript type-check
 2. **Tests & Coverage**: Jest with coverage report → Codecov
 
 CI test detection scans `src/`, `tests/`, and `__tests__/` for `*.test.ts`, `*.test.tsx`, `*.spec.ts`, and `*.spec.tsx`. If matches exist, CI runs tests and coverage; otherwise it reports no tests found.

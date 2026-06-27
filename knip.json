@@ -15,7 +15,6 @@
     "@tailwindcss/typography",
     "depcheck",
     "esbuild-wasm",
-    "eslint-config-next",
     "rimraf",
     "tailwindcss",
     "postcss",

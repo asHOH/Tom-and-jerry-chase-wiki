@@ -54,7 +54,7 @@
 - **状态管理**: [Valtio](https://valtio.pmnd.rs/) & [SWR](https://swr.vercel.app/)
 - **测试**: [Jest](https://jestjs.io/) & [React Testing Library](https://testing-library.com/)
 - **部署**: [Vercel](https://vercel.com/)
-- **代码规范**: [ESLint](https://eslint.org/), [Oxlint](https://oxc.rs/docs/guide/usage/linter.html) & [Prettier](https://prettier.io/)
+- **代码规范**: [Oxlint](https://oxc.rs/docs/guide/usage/linter.html) & [Prettier](https://prettier.io/)
 - **认证与数据**: [Supabase](https://supabase.com/) (Auth、Postgres、RPC)
 
 ## 💻 本地开发
@@ -106,9 +106,9 @@ npm run build           # 构建生产版本
 npm run start           # 启动生产服务器
 
 # 代码质量
-npm run lint            # 运行 ESLint
-npm run lint:fix        # 修复 ESLint 问题
-npm run format          # 格式化代码 (Prettier + ESLint)
+npm run lint            # 运行 Oxlint
+npm run lint:fix        # 修复 Oxlint 问题
+npm run format          # 格式化代码 (Prettier + Oxlint)
 npm run type-check      # TypeScript 类型检查
 
 # 测试

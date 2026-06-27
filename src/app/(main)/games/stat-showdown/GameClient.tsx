@@ -236,7 +236,7 @@ export default function StatShowdownClient({ mode, description, modeNav }: Props
     if (!isGameOver) {
       generatePair();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react/exhaustive-deps
   }, [mode, isGameOver]);
 
   // Dedicated timer management — blitz starts only after first choice

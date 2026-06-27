@@ -1,6 +1,6 @@
 'use client';
 
-/* eslint-disable @next/next/no-img-element */
+/* oxlint-disable nextjs/no-img-element */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -184,7 +184,7 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
   useEffect(() => {
     if (!isOpen || activeTab !== 'site') return;
     fetchSiteEntries(sitePath);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react/exhaustive-deps
   }, [isOpen, activeTab, fetchSiteEntries]);
 
   const handleOverlayClick = useCallback(() => {

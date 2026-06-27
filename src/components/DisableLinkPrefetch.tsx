@@ -11,12 +11,12 @@ export function DisableLinkPrefetch() {
   const router = useRouter();
 
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     const routerWithPrefetch = router as any;
     const originalPrefetch = routerWithPrefetch.prefetch;
 
     // Safe to override in this runtime: we only need to short-circuit Link prefetch.
-    // eslint-disable-next-line react-hooks/immutability
+    // oxlint-disable-next-line react-hooks/immutability
     routerWithPrefetch.prefetch = () => Promise.resolve();
 
     return () => {
