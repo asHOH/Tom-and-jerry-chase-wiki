@@ -249,7 +249,7 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
     },
   },
   {
-    description: '泥宝翻滚期间如果被放大镜照射会无法进行第二次翻滚。',
+    description: '尼宝翻滚期间如果被放大镜照射会无法进行第二次翻滚。',
     group: [
       { name: '侦探汤姆', type: 'character' },
       { name: '尼宝', type: 'character' },
@@ -2203,7 +2203,7 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
   },
   {
     description:
-      '泥巴的钩子在一定程度上影响汤姆无敌上火箭（无敌也会被勾到位移），翻滚救援拦截不了。',
+      '尼宝的钩子在一定程度上影响汤姆无敌上火箭（无敌也会被勾到位移），翻滚救援拦截不了。',
     group: [
       { name: '尼宝', type: 'character' },
       { name: '汤姆', type: 'character' },
@@ -4702,7 +4702,7 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
   },
   {
     description:
-      '托普斯的捕虫网可以直接抓取灵活跳跃后霸体的尼宝，使尼宝很难救人。同时分身换位也会让泥宝钩子的效果大打折扣。',
+      '托普斯的捕虫网可以直接抓取灵活跳跃后霸体的尼宝，使尼宝很难救人。同时分身换位也会让尼宝钩子的效果大打折扣。',
     group: [
       { name: '托普斯', type: 'character' },
       { name: '尼宝', type: 'character' },
