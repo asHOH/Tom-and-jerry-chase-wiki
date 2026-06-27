@@ -28,7 +28,7 @@ export const characterRelationSpecialSkillTraits: Trait[] = [
     },
   },
   {
-    description: '可躲吻',
+    description: '可躲吻或直接消除未3级的吻。',
     group: [
       { name: '图多盖洛', type: 'character' },
       { name: '冰冻保鲜', type: 'specialSkill', factionId: 'mouse' },

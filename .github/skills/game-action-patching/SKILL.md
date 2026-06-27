@@ -14,7 +14,7 @@ Safely patch approved game_data_actions into code, verify, and set synced; defer
 ## Target Files
 
 1. **Primary**: src/features/characters/data/\*Characters.ts (character skills, aliases, descriptions, positioning tags, allocations, special skills), src/data/characterRelationData/\*.ts (Cross-character/mode/map/card relation graph like counter/collaborator/advantage/disadvantage; src/data/characterRelations.ts is only the facade/export builder, not the source of truth).
-2. **Secondary**: src/features/entities/data/_, src/features/special-skills/data/_, etc.
+2. **Secondary**: `src/features/entities/data/*.ts`, `src/features/special-skills/data/*.ts`, etc.
    _Heuristic_: Prefer feature-local over generic files. Ask if ambiguous.
 
 ## Relation Mapping (src/data/characterRelationData/\*.ts)
@@ -44,7 +44,7 @@ Pick the split file by relation target type: character counter-style edges in `c
 ## Core Rules & Conflict Resolution
 
 1. **Conflicts**: Process created_at ASC; same timestamp parent paths before child paths; child/later overlaps win; remove obsolete twins; defer ambiguities.
-2. **Env**: Year: 2026. TZ: Beijing (UTC+8). Source files are UTF-8. Chinese text may display as mojibake in Windows PowerShell or agent terminal output when UTF-8 bytes are decoded with a legacy code page. Treat terminal mojibake from `Get-Content`, `rg`, or command output as a display issue unless file bytes, the editor, or browser output prove corruption. Do not "fix" Chinese strings solely because terminal output rendered them incorrectly. In inline scripts, avoid raw Chinese literals; use Unicode escapes, IDs, or DB/file values.
+2. **Env**: Use the current date from the environment/context. TZ: Beijing (UTC+8). Source files are UTF-8. Chinese text may display as mojibake in Windows PowerShell or agent terminal output when UTF-8 bytes are decoded with a legacy code page. Treat terminal mojibake from `Get-Content`, `rg`, or command output as a display issue unless file bytes, the editor, or browser output prove corruption. Do not "fix" Chinese strings solely because terminal output rendered them incorrectly. In inline scripts, avoid raw Chinese literals; use Unicode escapes, IDs, or DB/file values.
 3. **Git**: Stay on the current development branch.
 4. **Execution**: Map to current structure; do not blindly replay paths. Chunk if >10 actions.
 5. **Status**: Valid statuses: pending, approved, rejected, synced. Never set synced if code edit/check fails, mapping is fuzzy, or skipped.

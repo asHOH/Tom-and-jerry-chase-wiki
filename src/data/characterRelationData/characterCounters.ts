@@ -3818,6 +3818,19 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
     },
   },
   {
+    description: '米特擅长破盾，恶魔难以刷盾破局。',
+    group: [
+      { name: '米特', type: 'character' },
+      { name: '恶魔杰瑞', type: 'character' },
+    ],
+    relation: {
+      kind: 'counters',
+      subject: { name: '米特', type: 'character' },
+      target: { name: '恶魔杰瑞', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
     description:
       '米特在六层野性后能够一刀秒莱恩，而且米特被变线条猫后，不会掉落胡椒粉，还能减少爪刀CD。然而莱恩也是为数不多可以破胡椒粉守火箭的干扰型角色。',
     group: [
