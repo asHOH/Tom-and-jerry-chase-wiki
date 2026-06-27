@@ -61,14 +61,15 @@ const MR = '\\uFFFF';
  * extraction, so the text still has `[…](tooltip)` wiki tooltips and
  * Chinese quotation marks `` … '' intact.
  */
-export function stripStatusClauses(text: string): string {
+function stripOneLineStatusClauses(text: string): string {
+  const text0 = text;
   // Phase A: wiki-tooltip patterns ([…](…) format)
-  text = text.replace(/可被\[免疫\]\([^)]+\)[；;]?/g, '');
-  text = text.replace(/可被\[清除\]\([^)]+\)[；;]?/g, '');
+  text = text.replace(/可被\[免疫\]\([^)]+\)[；;。]?/g, '');
+  text = text.replace(/可被\[清除\]\([^)]+\)[；;。]?/g, '');
   // 免疫/清除[部分状态](…) — may appear at the start of a description (after ：)
   // so match an optional leading separator and preserve it via the callback
-  text = text.replace(/([：。；;])?免疫\[部分状态\]\([^)]+\)[；;]?/g, (_full, sep) => sep ?? '');
-  text = text.replace(/([：。；;])?清除\[部分状态\]\([^)]+\)[；;]?/g, (_full, sep) => sep ?? '');
+  text = text.replace(/([：。；;])?免疫\[部分状态\]\([^)]+\)[；;。]?/g, (_full, sep) => sep ?? '');
+  text = text.replace(/([：。；;])?清除\[部分状态\]\([^)]+\)[；;。]?/g, (_full, sep) => sep ?? '');
 
   // Phase B: Chinese-quoted patterns
   // Use a captured optional leading separator — when the clause sits between
@@ -78,18 +79,18 @@ export function stripStatusClauses(text: string): string {
   // returns the leading ；, and the second clause still has its separator.
   // 会被"x"免疫 / 会被"x"、"y"免疫 (standalone, not inside a tooltip)
   text = text.replace(
-    /([；;])?会被“[^”]+”(?:[、，]“[^”]+”)*免疫[；;]?/g,
+    /([；;])?会被“[^”]+”(?:[、，]“[^”]+”)*免疫[；;。]?/g,
     (_full, sep) => sep ?? ''
   );
   // 会被"x"清除 / 会被"x"、"y"清除
   text = text.replace(
-    /([；;])?会被“[^”]+”(?:[、，]“[^”]+”)*清除[；;]?/g,
+    /([；;])?会被“[^”]+”(?:[、，]“[^”]+”)*清除[；;。]?/g,
     (_full, sep) => sep ?? ''
   );
   // 免疫"x" / 免疫"x"、"y"
-  text = text.replace(/([；;])?免疫“[^”]+”(?:[、，]“[^”]+”)*[；;]?/g, (_full, sep) => sep ?? '');
+  text = text.replace(/([；;])?免疫“[^”]+”(?:[、，]“[^”]+”)*[；;。]?/g, (_full, sep) => sep ?? '');
   // 清除"x" / 清除"x"、"y"
-  text = text.replace(/([；;])?清除“[^”]+”(?:[、，]“[^”]+”)*[；;]?/g, (_full, sep) => sep ?? '');
+  text = text.replace(/([；;])?清除“[^”]+”(?:[、，]“[^”]+”)*[；;。]?/g, (_full, sep) => sep ?? '');
 
   // Phase C: plain-text patterns
   // 该状态隶属于分组N,M,…
@@ -99,9 +100,15 @@ export function stripStatusClauses(text: string): string {
 
   // Cleanup: collapse consecutive separators and trim trailing punctuation
   text = text.replace(/[；;]{2,}/g, '；');
-  text = text.replace(/[。；;]+$/g, '');
+  text = text.replace(/[。；;]*$/g, '');
+  text = text + '。';
 
+  console.log(text0, text);
   return text;
+}
+
+export function stripStatusClauses(text: string): string {
+  return text.split('\n').map(stripOneLineStatusClauses).join('\n');
 }
 
 export function buildSkillCluesForCharacter(
