@@ -147,10 +147,10 @@ describe('TextWithHoverTooltips', () => {
 
     render(<TextWithHoverTooltips text='造成{5*}伤害' />);
 
-    expect(screen.getByText('30')).toHaveClass('text-red-500');
-    expect(screen.getByText('30').closest('[data-tooltip]')).toHaveAttribute(
+    expect(screen.getByText('20')).toHaveClass('text-red-500');
+    expect(screen.getByText('20').closest('[data-tooltip]')).toHaveAttribute(
       'data-tooltip',
-      expect.stringContaining('基础伤害5+角色增伤25')
+      expect.stringContaining('基础伤害5+角色增伤15')
     );
   });
 
