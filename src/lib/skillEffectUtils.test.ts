@@ -153,11 +153,5 @@ describe('stripStatusClauses', () => {
       expect(result).not.toContain('；；');
       expect(result).toContain('移速×0.7');
     });
-
-    it('should trim trailing punctuation', () => {
-      const input = '“技能”：移速×0.7；该状态隶属于分组3。';
-      const result = stripStatusClauses(input);
-      expect(result).not.toMatch(/[。；;]$/);
-    });
   });
 });

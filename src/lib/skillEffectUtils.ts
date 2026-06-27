@@ -62,7 +62,7 @@ const MR = '\\uFFFF';
  * Chinese quotation marks `` … '' intact.
  */
 function stripOneLineStatusClauses(text: string): string {
-  const text0 = text;
+  const hasTrailingPunctuaction = text.endsWith('。') || text.endsWith('；') || text.endsWith(';');
   // Phase A: wiki-tooltip patterns ([…](…) format)
   text = text.replace(/可被\[免疫\]\([^)]+\)[；;。]?/g, '');
   text = text.replace(/可被\[清除\]\([^)]+\)[；;。]?/g, '');
@@ -101,9 +101,8 @@ function stripOneLineStatusClauses(text: string): string {
   // Cleanup: collapse consecutive separators and trim trailing punctuation
   text = text.replace(/[；;]{2,}/g, '；');
   text = text.replace(/[。；;]*$/g, '');
-  text = text + '。';
+  if (hasTrailingPunctuaction && text) text = text + '。';
 
-  console.log(text0, text);
   return text;
 }
 

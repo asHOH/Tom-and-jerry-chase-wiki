@@ -31,7 +31,10 @@ const catQuestions: QuizQuestion[] = [
     answers: [
       { text: '直奔老鼠洞口，趁老鼠还没推进就抓一只', tags: [{ tagName: '进攻', weight: 2 }] },
       { text: '先在地图关键位置布置夹子', tags: [{ tagName: '防守', weight: 2 }] },
-      { text: '尽量多打机械鼠和老鼠获取经验，尽快升到高等级', tags: [{ tagName: '速通', weight: 2 }] },
+      {
+        text: '尽量多打机械鼠和老鼠获取经验，尽快升到高等级',
+        tags: [{ tagName: '速通', weight: 2 }],
+      },
       { text: '优先控药水，在药水拿完前先不管老鼠', tags: [{ tagName: '追击', weight: 2 }] },
     ],
   },
@@ -47,7 +50,10 @@ const catQuestions: QuizQuestion[] = [
         text: '观察周围有没有来救援的老鼠，尽量打出双倒',
         tags: [{ tagName: '速通', weight: 2 }],
       },
-      { text: '先不抓，利用穷追多打死几只老鼠刷经验和乘胜层数', tags: [{ tagName: '打架', weight: 2 }] },
+      {
+        text: '先不抓，利用穷追多打死几只老鼠刷经验和乘胜层数',
+        tags: [{ tagName: '打架', weight: 2 }],
+      },
       {
         text: '抱到远离奶酪区的地方绑，拖延老鼠推奶酪的节奏',
         tags: [
