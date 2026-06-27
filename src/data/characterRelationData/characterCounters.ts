@@ -166,32 +166,6 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
     },
   },
   {
-    description: '侦探汤姆可以无视距离显示老鼠的小地图位置并暴露行踪，克制侦探杰瑞的隐身。',
-    group: [
-      { name: '侦探汤姆', type: 'character' },
-      { name: '侦探杰瑞', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '侦探汤姆', type: 'character' },
-      target: { name: '侦探杰瑞', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
-    description: '侦探汤姆可以无视距离显示老鼠的小地图位置并暴露行踪，克制侦探泰菲的隐身。',
-    group: [
-      { name: '侦探汤姆', type: 'character' },
-      { name: '侦探泰菲', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '侦探汤姆', type: 'character' },
-      target: { name: '侦探泰菲', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
     description: '侦探汤姆可以移除国王杰瑞的护盾状态，不利于其进行单救。',
     group: [
       { name: '侦探汤姆', type: 'character' },

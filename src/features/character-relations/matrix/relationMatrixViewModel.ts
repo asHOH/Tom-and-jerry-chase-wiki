@@ -266,6 +266,11 @@ export const buildRelationMatrixViewModel = (
 
         const cellKey = toCellKey(row.key, columnKey);
         if (cells.has(cellKey)) {
+          console.log({
+            cellKey,
+            oldCell: cells.get(cellKey),
+            newCell: createCell(relationKind, item),
+          });
           throw new Error(`Duplicate relation matrix cell: ${cellKey}`);
         }
 
