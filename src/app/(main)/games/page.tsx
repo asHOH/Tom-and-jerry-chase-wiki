@@ -19,7 +19,7 @@ export const metadata: Metadata = generatePageMetadata({
 
 const GAME_BUTTONS = [
   {
-    imageSrc: '/images/icons/game.png',
+    imageSrc: '/images/icons/cat-faction.png',
     imageAlt: '',
     title: '猜角色',
     description: '每日挑战 — 根据线索找出当天的神秘角色',
@@ -27,7 +27,7 @@ const GAME_BUTTONS = [
     ariaLabel: '猜角色每日挑战',
   },
   {
-    imageSrc: '/images/icons/game.png',
+    imageSrc: '/images/icons/relation.png',
     imageAlt: '',
     title: '能力对决',
     description: '比较角色属性 — 选择数值更高的角色',
@@ -35,7 +35,7 @@ const GAME_BUTTONS = [
     ariaLabel: '能力对决',
   },
   {
-    imageSrc: '/images/icons/game.png',
+    imageSrc: '/images/icons/mouse-faction.png',
     imageAlt: '',
     title: '人格测试',
     description: '回答情境问题 — 找到最适合你的角色',

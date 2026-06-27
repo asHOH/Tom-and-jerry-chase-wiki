@@ -33,7 +33,8 @@ export async function subscribeToPushNotifications(): Promise<boolean> {
   if (
     typeof window === 'undefined' ||
     !('serviceWorker' in navigator) ||
-    !('PushManager' in window)
+    !('PushManager' in window) ||
+    !('Notification' in window)
   ) {
     console.warn('Push notifications are not supported in this browser.');
     return false;
