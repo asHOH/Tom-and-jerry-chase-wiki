@@ -153,7 +153,7 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
     },
   },
   {
-    description: '天使泰菲可用庇护来限制和承担伤害，相对来说更不易被击倒。',
+    description: '天使泰菲具备较高的减伤效果，在走位优秀的情况下不易被击倒。',
     group: [
       { name: '侦探汤姆', type: 'character' },
       { name: '天使泰菲', type: 'character' },
@@ -4941,6 +4941,114 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
       kind: 'counteredBy',
       subject: { name: '追风汤姆', type: 'character' },
       target: { name: '天使泰菲', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '米特的二被禁疗和高伤害反制雪梨的高回复。',
+    group: [
+      { name: '米特', type: 'character' },
+      { name: '雪梨', type: 'character' },
+    ],
+    relation: {
+      kind: 'counters',
+      subject: { name: '米特', type: 'character' },
+      target: { name: '雪梨', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '米特的饭盒有效反制大表哥救援；胡椒粉还能防止大表哥闪拳拦截绑火箭。',
+    group: [
+      { name: '米特', type: 'character' },
+      { name: '马索尔', type: 'character' },
+    ],
+    relation: {
+      kind: 'counters',
+      subject: { name: '米特', type: 'character' },
+      target: { name: '马索尔', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '杰瑞的鸟哨在一定程度上克制米特死守，且容易压低米特血线造成虚弱。主动技能的加速使杰瑞有一定逃离米特的能力。',
+    group: [
+      { name: '米特', type: 'character' },
+      { name: '杰瑞', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '米特', type: 'character' },
+      target: { name: '杰瑞', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '侦探杰瑞的烟雾弹克制米特死守。',
+    group: [
+      { name: '米特', type: 'character' },
+      { name: '侦探杰瑞', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '米特', type: 'character' },
+      target: { name: '侦探杰瑞', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '航海士杰瑞的金币能让米特掉落胡椒粉；火炮和火药桶可拦截米特上火箭，二被给的护盾还能有效反制米特鞭尸。',
+    group: [
+      { name: '米特', type: 'character' },
+      { name: '航海士杰瑞', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '米特', type: 'character' },
+      target: { name: '航海士杰瑞', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '侦探汤姆可以无视距离显示老鼠的小地图位置并暴露行踪，克制侦探杰瑞的隐身。但侦探自身的极快推速与烟雾弹的破局能力能使鼠方快速结束奶酪期，需要特别针对。',
+    group: [
+      { name: '侦探汤姆', type: 'character' },
+      { name: '侦探杰瑞', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '侦探汤姆', type: 'character' },
+      target: { name: '侦探杰瑞', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '侦探汤姆可以无视距离显示老鼠的小地图位置并暴露行踪，克制侦探泰菲的隐身。但侦菲自身的极快推速能使鼠方快速结束奶酪期，需要特别针对。',
+    group: [
+      { name: '侦探汤姆', type: 'character' },
+      { name: '侦探泰菲', type: 'character' },
+    ],
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '侦探汤姆', type: 'character' },
+      target: { name: '侦探泰菲', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '复活可以克制侦汤秒放飞的机制，大幅提高老鼠的容错空间，更好地应对后期乏力的侦汤。',
+    group: [
+      { name: '侦探汤姆', type: 'character' },
+      { name: '天使杰瑞', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '侦探汤姆', type: 'character' },
+      target: { name: '天使杰瑞', type: 'character' },
       isMinor: false,
     },
   },

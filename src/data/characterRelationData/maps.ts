@@ -399,7 +399,7 @@ export const characterRelationMapTraits: Trait[] = [
     },
   },
   {
-    description: '三个游轮图的船长室与电影院均有贯穿线点位，但需要鞭炮辅助，实用性较古堡图低',
+    description: '五个奶酪洞口均有贯穿线点位，但均需借助鞭炮，有练习成本',
     group: [
       { name: '梦游杰瑞', type: 'character' },
       { name: '夏日游轮I', type: 'map' },
@@ -1150,6 +1150,32 @@ export const characterRelationMapTraits: Trait[] = [
       subject: { name: '布奇', type: 'character' },
       target: { name: '天宫-云上', type: 'map' },
       isMinor: false,
+    },
+  },
+  {
+    description: '船长室，电影院有贯穿线点位，但均需借助鞭炮，有练习成本',
+    group: [
+      { name: '梦游杰瑞', type: 'character' },
+      { name: '夏日游轮II', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '梦游杰瑞', type: 'character' },
+      target: { name: '夏日游轮II', type: 'map' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '船长室，电影院有贯穿线点位，但均需借助鞭炮，有练习成本',
+    group: [
+      { name: '梦游杰瑞', type: 'character' },
+      { name: '夏日游轮III', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '梦游杰瑞', type: 'character' },
+      target: { name: '夏日游轮III', type: 'map' },
+      isMinor: true,
     },
   },
 ];

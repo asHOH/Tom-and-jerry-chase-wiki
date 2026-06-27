@@ -4248,8 +4248,8 @@ const catCharacterDefinitions = {
     //hpRecovery: 2.5, //?
     //moveSpeed: 760, //?
     jumpHeight: 420,
-    clawKnifeCdHit: 5,
-    clawKnifeCdUnhit: 2.5,
+    clawKnifeCdHit: 5.6,
+    clawKnifeCdUnhit: 1.2,
     //clawKnifeRange: 270, //?
     gender: 'male',
     EnglishName: 'Detective Tom',

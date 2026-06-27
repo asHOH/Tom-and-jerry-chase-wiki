@@ -691,4 +691,17 @@ export const characterRelationSpecialSkillTraits: Trait[] = [
       isMinor: false,
     },
   },
+  {
+    description: '易被连控',
+    group: [
+      { name: '米特', type: 'character' },
+      { name: '干扰投掷', type: 'specialSkill', factionId: 'mouse' },
+    ],
+    relation: {
+      kind: 'counteredBySpecialSkills',
+      subject: { name: '米特', type: 'character' },
+      target: { name: '干扰投掷', type: 'specialSkill', factionId: 'mouse' },
+      isMinor: false,
+    },
+  },
 ];
