@@ -70,6 +70,8 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
     fetchPendingGameDataActions
   );
 
+  const pendingCount = pendingActions.filter((a) => a.status === 'pending').length;
+
   const getTabClassName = (tab: 'users' | 'categories' | 'actions') =>
     cn(
       'border-b-2 px-4 py-2 text-sm font-medium transition-colors',
@@ -86,6 +88,11 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
         {enableUserAccess && (
           <button onClick={() => setActiveTab('users')} className={getTabClassName('users')}>
             用户管理
+            {users.length > 0 && (
+              <span className='ml-1.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-blue-100 px-1.5 text-xs font-medium text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'>
+                {users.length}
+              </span>
+            )}
           </button>
         )}
         <button
@@ -97,6 +104,11 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
         {enableActionModeration && (
           <button onClick={() => setActiveTab('actions')} className={getTabClassName('actions')}>
             改动审核
+            {pendingCount > 0 && (
+              <span className='ml-1.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-orange-100 px-1.5 text-xs font-medium text-orange-600 dark:bg-orange-900/30 dark:text-orange-400'>
+                {pendingCount}
+              </span>
+            )}
           </button>
         )}
       </div>
