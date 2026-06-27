@@ -33,7 +33,7 @@ export default function CatalogPageShell({
   children,
 }: CatalogPageShellProps) {
   return (
-    <section className={cn('mx-auto w-full max-w-7xl px-2 md:p-6 dark:text-slate-200', className)}>
+    <section className={cn('mx-auto w-full max-w-6xl px-2 md:p-6 dark:text-slate-200', className)}>
       <header className={cn('space-y-2 px-2 text-center md:space-y-4 md:px-4', headerClassName)}>
         <PageTitle>{title}</PageTitle>
         {description ? (
