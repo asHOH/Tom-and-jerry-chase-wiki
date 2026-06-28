@@ -46,6 +46,26 @@ interface CharacterDetailsWithTutorialProps {
   children?: React.ReactNode;
 }
 
+function generateSpecialImageUrl(characterId: string): string {
+  return `/images/specialCharacters/${characterId}.png`;
+}
+
+function CharacterImage({ characterId, imageUrl }: { characterId: string; imageUrl: string }) {
+  const [useSpecialImage, setUseSpecialImage] = useState(false);
+  const [specialImageExists, setSpecialImageExists] = useState(true);
+  return (
+    <Image
+      src={useSpecialImage && specialImageExists ? generateSpecialImageUrl(characterId) : imageUrl}
+      alt={characterId}
+      width={200}
+      height={200}
+      className='object-contain'
+      onClick={() => setUseSpecialImage((prev) => !prev)}
+      onError={() => setSpecialImageExists(false)}
+    />
+  );
+}
+
 export default function CharacterDetails({ children }: CharacterDetailsWithTutorialProps) {
   const { isEditMode } = useEditMode();
   const isMobile = useMobile();
@@ -94,18 +114,9 @@ export default function CharacterDetails({ children }: CharacterDetailsWithTutor
                 <>
                   <div className='image-container relative -mx-4 -mt-4 mb-4 h-64 rounded-t-lg bg-gray-200 dark:bg-slate-700'>
                     <div className='flex h-full items-center justify-center p-3'>
-                      <Image
-                        src={localCharacter.imageUrl}
-                        alt={localCharacter.id}
-                        width={200}
-                        height={200}
-                        style={{
-                          objectFit: 'contain',
-                          // maxHeight: '100%',
-                          // maxWidth: '100%',
-                          // width: 'auto',
-                          // height: 'auto',
-                        }}
+                      <CharacterImage
+                        characterId={localCharacter.id}
+                        imageUrl={localCharacter.imageUrl}
                       />
                     </div>
                   </div>
