@@ -59,7 +59,7 @@ function CharacterImage({ characterId, imageUrl }: { characterId: string; imageU
       alt={characterId}
       width={200}
       height={200}
-      className='object-contain'
+      className='max-h-full max-w-full object-contain'
       onClick={() => setUseSpecialImage((prev) => !prev)}
       onError={() => setSpecialImageExists(false)}
     />
@@ -156,14 +156,9 @@ export default function CharacterDetails({ children }: CharacterDetailsWithTutor
                   >
                     <div className='image-container relative -mt-4 -ml-4 rounded-tl-lg bg-gray-200 dark:bg-slate-700'>
                       <div className='flex h-full items-center justify-center'>
-                        <Image
-                          src={localCharacter.imageUrl}
-                          alt={localCharacter.id}
-                          width={200}
-                          height={200}
-                          style={{
-                            objectFit: 'contain',
-                          }}
+                        <CharacterImage
+                          characterId={localCharacter.id}
+                          imageUrl={localCharacter.imageUrl}
                         />
                       </div>
                     </div>

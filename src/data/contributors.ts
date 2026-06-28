@@ -636,4 +636,9 @@ export const contributors: Contributor[] = [
       },
     ],
   },
+  {
+    id: 'baojiangzhupai',
+    name: '爆浆猪排',
+    roles: [{ type: RoleType.ArtProvider }],
+  },
 ];
