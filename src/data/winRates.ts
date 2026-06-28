@@ -9208,7 +9208,6 @@ export function getCharacterWinRates(
         if (firstRow && 'character' in firstRow) {
           const charTable = table as CharacterTable;
           for (const row of charTable.rows) {
-            console.log(row.character, characterNames);
             if (characterNames.includes(row.character)) {
               if (charTable.rank !== summarySymbol) {
                 const rank = factionId

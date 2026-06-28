@@ -66,12 +66,16 @@ function parseRate(rate: string | undefined): number {
 }
 
 const RANK_ORDER: readonly string[] = [
+  '全部',
   '无敌猫鼠皇',
   '皇2000分以上',
   '皇0分-皇2000分',
   '至尊传奇',
   '霸气钻石',
   '酷炫铂金',
+  '机智黄金',
+  '顽皮白银',
+  '呆萌青铜',
 ];
 
 const FACTION_ORDER_VALUE: Readonly<Record<FactionId, number>> = {
@@ -125,7 +129,7 @@ function enrichCharacterData(
         faction,
         pickRate: row.pickRate,
         winRate: row.winRate,
-        banRate: row.banRate || '0.00%',
+        banRate: row.banRate || '',
         pickRateNum: parseRate(row.pickRate),
         winRateNum: parseRate(row.winRate),
         banRateNum: parseRate(row.banRate),
