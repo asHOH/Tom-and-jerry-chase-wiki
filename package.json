@@ -2,6 +2,7 @@
   "name": "tom-and-jerry-chase-wiki",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "npm@11.18.0",
   "description": "专为《猫和老鼠手游》玩家打造的数据查询网站",
   "homepage": "https://tjwiki.com",
   "repository": {
@@ -62,8 +63,20 @@
     "prepare": "husky"
   },
   "engines": {
-    "node": ">=20.3.0",
-    "npm": ">=10.0.0"
+    "node": "^20.17.0 || >=22.9.0",
+    "npm": "11.18.0"
+  },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "^20.17.0 || >=22.9.0",
+      "onFail": "error"
+    },
+    "packageManager": {
+      "name": "npm",
+      "version": "11.18.0",
+      "onFail": "error"
+    }
   },
   "dependencies": {
     "@ai-sdk/openai": "^3.0.71",

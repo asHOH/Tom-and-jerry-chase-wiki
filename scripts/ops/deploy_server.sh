@@ -11,6 +11,7 @@ TARGET_BRANCH="develop"
 TARGET_COMMIT=""
 # Node.js memory limit in MB. Leave empty to auto-detect from available RAM.
 NODE_MEMORY_LIMIT="${NODE_MEMORY_LIMIT:-auto}"
+PINNED_NPM_VERSION="11.18.0"
 ENV_FILE=".env.production"
 PM2_APP_NAME="tjwiki"
 START_SCRIPT="scripts/ops/start_server.sh"
@@ -127,8 +128,30 @@ ensure_nvm() {
   nvm use --silent >/dev/null
 }
 
+ensure_pinned_npm() {
+  local current_npm
+
+  current_npm="$(npm --version 2>/dev/null || echo "")"
+  if [ "$current_npm" = "$PINNED_NPM_VERSION" ]; then
+    return 0
+  fi
+
+  echo "Installing pinned npm version $PINNED_NPM_VERSION..."
+  if ! (cd "${TMPDIR:-/tmp}" && npm install -g "npm@$PINNED_NPM_VERSION"); then
+    echo "Fatal: failed to install npm@$PINNED_NPM_VERSION."
+    exit 1
+  fi
+
+  hash -r 2>/dev/null || true
+  current_npm="$(npm --version 2>/dev/null || echo "")"
+  if [ "$current_npm" != "$PINNED_NPM_VERSION" ]; then
+    echo "Fatal: expected npm $PINNED_NPM_VERSION, found ${current_npm:-unknown}."
+    exit 1
+  fi
+}
+
 install_dependencies() {
-  echo "Installing or updating project dependencies..."
+  echo "Installing project dependencies from package-lock.json..."
 
   local attempt=1
   while [ "$attempt" -le 3 ]; do
@@ -142,17 +165,17 @@ install_dependencies() {
       echo "Falling back to registry.npmjs.org..."
     fi
 
-    if npm install --ignore-scripts --registry "$registry"; then
+    if npm ci --ignore-scripts --registry "$registry"; then
       echo "Dependencies installed successfully."
       return 0
     fi
 
     if [ "$attempt" -eq 3 ]; then
-      echo "Fatal: npm install failed after 3 attempts."
+      echo "Fatal: npm ci failed after 3 attempts."
       exit 1
     fi
 
-    echo "npm install failed. Retrying in 2 seconds..."
+    echo "npm ci failed. Retrying in 2 seconds..."
     sleep 2
     attempt=$((attempt + 1))
   done
@@ -254,6 +277,7 @@ load_env_file
 
 # 3. Ensure Node.js is available.
 ensure_nvm
+ensure_pinned_npm
 
 # 4. Install dependencies.
 install_dependencies

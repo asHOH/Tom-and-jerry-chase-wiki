@@ -3,7 +3,7 @@
 
 Write-Host "⚠️  WARNING: This script will modify your node_modules folder!" -ForegroundColor Yellow
 Write-Host "It will run 'npm prune --production' which removes all devDependencies."
-Write-Host "To restore them later, you will need to run 'npm install' again."
+Write-Host "To restore them later, you will need to run 'npm ci' again."
 Write-Host ""
 
 $confirmation = Read-Host "Do you want to continue? (y/n)"
@@ -14,8 +14,8 @@ if ($confirmation -ne 'y') {
 
 # 1. Install all dependencies (ensure we can build)
 Write-Host "`n📦 Step 1: Installing all dependencies..." -ForegroundColor Cyan
-npm install
-if ($LASTEXITCODE -ne 0) { Write-Error "npm install failed"; exit 1 }
+npm ci
+if ($LASTEXITCODE -ne 0) { Write-Error "npm ci failed"; exit 1 }
 
 # 2. Build the application (skip images to save time)
 Write-Host "`n🏗️  Step 2: Building the application..." -ForegroundColor Cyan
@@ -31,7 +31,7 @@ if (Test-Path "node_modules") {
 }
 # Use --ignore-scripts to prevent 'prepare' (husky) from running and failing
 # Then run npm rebuild to ensure dependencies like sharp run their install scripts
-npm install --omit=dev --ignore-scripts
+npm ci --omit=dev --ignore-scripts
 if ($LASTEXITCODE -ne 0) { Write-Error "Install prod deps failed"; exit 1 }
 
 Write-Host "Rebuilding dependencies (for native modules)..."
