@@ -27,11 +27,9 @@ export function transposeTable(editor: Editor | null) {
       const name = cell.type.name;
       if (name !== 'tableCell' && name !== 'tableHeader') return;
       const colspanVal = (cell.attrs && (cell.attrs as Record<string, unknown>)['colspan']) as
-        | number
-        | undefined;
+        number | undefined;
       const rowspanVal = (cell.attrs && (cell.attrs as Record<string, unknown>)['rowspan']) as
-        | number
-        | undefined;
+        number | undefined;
       const colspan = typeof colspanVal === 'number' ? colspanVal : 1;
       const rowspan = typeof rowspanVal === 'number' ? rowspanVal : 1;
       if (colspan > 1 || rowspan > 1) {

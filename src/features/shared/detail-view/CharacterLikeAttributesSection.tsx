@@ -27,8 +27,7 @@ type CharacterLikeAttributesSectionProps = {
   intro: string;
   isDetailed: boolean;
   renderValue?:
-    | ((field: CharacterLikeAttributeField, value: number | string) => ReactNode)
-    | undefined;
+    ((field: CharacterLikeAttributeField, value: number | string) => ReactNode) | undefined;
 };
 
 const ATTRIBUTE_ROWS = [

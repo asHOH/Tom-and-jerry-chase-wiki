@@ -27,8 +27,7 @@ const isSameCharacterRelationItem = (
 
 const ownsCharacterRelationKind = (characterId: string, relationKind: TraitRelationKind) => {
   const characterRecord = characters[characterId] as
-    | Partial<Record<TraitRelationKind, CharacterRelationItem[]>>
-    | undefined;
+    Partial<Record<TraitRelationKind, CharacterRelationItem[]>> | undefined;
 
   return Array.isArray(characterRecord?.[relationKind]);
 };

@@ -12,13 +12,7 @@ export type ParsedName = {
 export type RenderTextPart = string | React.ReactElement;
 
 export type DamageTagCategory =
-  | 'source'
-  | 'calculation'
-  | 'electric'
-  | 'shield'
-  | 'injure'
-  | 'bubble'
-  | 'protection';
+  'source' | 'calculation' | 'electric' | 'shield' | 'injure' | 'bubble' | 'protection';
 
 export type DamageTagEffects = {
   displayPrefixElements: React.ReactElement[];

@@ -21,9 +21,7 @@ type HoverTooltipPlanPart = {
 };
 
 export type TextWithHoverTooltipToken =
-  | PlainTextPlanPart
-  | MarkdownHighlightPlanPart
-  | HoverTooltipPlanPart;
+  PlainTextPlanPart | MarkdownHighlightPlanPart | HoverTooltipPlanPart;
 
 export type TextWithHoverTooltipTokens = {
   text: string;

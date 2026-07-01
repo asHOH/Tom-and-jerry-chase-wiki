@@ -44,13 +44,7 @@ export type SkillAllocation = {
 // Skill types - both for definitions and final processed skills
 export type SkillType = 'active' | 'weapon1' | 'weapon2' | 'passive';
 type CancellableKeyType =
-  | '道具键'
-  | '道具键*'
-  | '跳跃键'
-  | '移动键'
-  | '药水键'
-  | '本技能键'
-  | '其他技能键';
+  '道具键' | '道具键*' | '跳跃键' | '移动键' | '药水键' | '本技能键' | '其他技能键';
 
 export type CancelableSkillType = CancellableKeyType[] | '无前摇' | '不可主动打断';
 export type CancelableAftercastType = CancellableKeyType[] | '无后摇' | '不可取消';
@@ -528,13 +522,7 @@ export type MapDefinition = {
 export type Map = MapDefinition & { name: string; imageUrl: string };
 
 export type FixtureTypeList =
-  | '平台类'
-  | '地面类'
-  | '墙壁类'
-  | '组件类'
-  | '流程类'
-  | 'NPC'
-  | '可交互';
+  '平台类' | '地面类' | '墙壁类' | '组件类' | '流程类' | 'NPC' | '可交互';
 export type FixtureSourceList = '通用组件' | '地图组件' | '模式组件';
 
 export type FixtureDefinition = {

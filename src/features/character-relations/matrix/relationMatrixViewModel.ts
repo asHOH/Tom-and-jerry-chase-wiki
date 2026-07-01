@@ -7,17 +7,10 @@ import { getCharacterRelation } from '@/features/characters/utils/relationReadMo
 export type RelationMatrixRowFaction = FactionId;
 
 export type RelationMatrixColumnCategory =
-  | FactionId
-  | 'knowledgeCard'
-  | 'specialSkill'
-  | 'map'
-  | 'mode';
+  FactionId | 'knowledgeCard' | 'specialSkill' | 'map' | 'mode';
 
 export type RelationMatrixDisplayKind =
-  | 'collaborator'
-  | 'counter'
-  | 'counteredBy'
-  | 'counterEachOther';
+  'collaborator' | 'counter' | 'counteredBy' | 'counterEachOther';
 
 type RelationMatrixItemType = 'character' | 'knowledgeCard' | 'specialSkill' | 'map' | 'mode';
 
