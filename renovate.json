@@ -1,0 +1,38 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "enabledManagers": ["custom.regex"],
+  "labels": ["dependencies"],
+  "packageRules": [
+    {
+      "matchManagers": ["custom.regex"],
+      "matchPackageNames": ["npm"],
+      "groupName": "npm toolchain",
+      "commitMessageTopic": "npm toolchain"
+    }
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Keep the pinned npm toolchain version in sync across package metadata, CI, deployment, and docs.",
+      "managerFilePatterns": [
+        "/(^|/)package\\.json$/",
+        "/(^|/)package-lock\\.json$/",
+        "/(^|/)README\\.md$/",
+        "/(^|/)\\.github/workflows/.+\\.ya?ml$/",
+        "/(^|/)scripts/ops/deploy_server\\.sh$/"
+      ],
+      "matchStrings": [
+        "\"packageManager\"\\s*:\\s*\"npm@(?<currentValue>\\d+\\.\\d+\\.\\d+)\"",
+        "\"npm\"\\s*:\\s*\"(?<currentValue>\\d+\\.\\d+\\.\\d+)\"",
+        "\"version\"\\s*:\\s*\"(?<currentValue>\\d+\\.\\d+\\.\\d+)\"\\s*,\\s*\"onFail\"\\s*:\\s*\"error\"",
+        "npm install -g npm@(?<currentValue>\\d+\\.\\d+\\.\\d+)",
+        "PINNED_NPM_VERSION=\"(?<currentValue>\\d+\\.\\d+\\.\\d+)\"",
+        "\\| \\*\\*npm\\*\\*\\s*\\| `(?<currentValue>\\d+\\.\\d+\\.\\d+)`"
+      ],
+      "datasourceTemplate": "npm",
+      "depNameTemplate": "npm",
+      "versioningTemplate": "npm"
+    }
+  ]
+}
