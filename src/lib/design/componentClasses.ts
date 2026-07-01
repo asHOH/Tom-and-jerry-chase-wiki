@@ -62,7 +62,7 @@ export function getNavigationButtonClasses(
     ? 'flex h-10 w-10 items-center justify-center rounded-md border-none p-2 md:h-11 md:w-11 lg:p-2.5 transition-colors'
     : 'flex min-h-10 items-center justify-center whitespace-nowrap rounded-md border-none px-2 py-2 text-sm transition-colors md:min-h-11 md:px-2.5 lg:px-3.5 lg:text-base';
   const focus =
-    'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 focus-visible:dark:outline-blue-300';
+    'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 focus-visible:dark:outline-blue-300';
 
   let state = navButtonThemes.inactive;
   if (isNavigating) {
@@ -83,7 +83,7 @@ export function getActionButtonClasses(
   options?: { fullWidth?: boolean; loading?: boolean }
 ): string {
   const base =
-    'inline-flex items-center justify-center gap-2 font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 focus-visible:dark:outline-blue-300 disabled:cursor-not-allowed disabled:opacity-60';
+    'inline-flex items-center justify-center gap-2 font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 focus-visible:dark:outline-blue-300 disabled:cursor-not-allowed disabled:opacity-60';
   return cn(
     base,
     actionButtonVariants[variant],
