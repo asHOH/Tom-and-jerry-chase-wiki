@@ -32,6 +32,18 @@ const aliasIconPrimitiveTargets = [
   'src/features/special-skills/components/special-skill-detail/SpecialSkillAttributesCard.tsx',
 ] as const;
 
+const characterDetailIconPrimitiveTargets = [
+  'src/features/characters/components/character-detail/CharacterDetails.tsx',
+  'src/features/characters/components/character-detail/positioning-tags/PositioningTagsSection.tsx',
+  'src/features/characters/components/character-detail/knowledge-cards/KnowledgeCardSection.tsx',
+  'src/features/characters/components/character-detail/knowledge-cards/KnowledgeCardGroupSetDisplay.tsx',
+  'src/features/characters/components/character-detail/skills/SkillAllocationDisplay.tsx',
+  'src/features/characters/components/character-detail/skills/SkillAllocationSection.tsx',
+  'src/features/characters/components/character-detail/skills/SkillCard.tsx',
+  'src/features/characters/components/character-detail/skills/SpecialSkillsSection.tsx',
+  'src/features/characters/components/character-detail/character-relations/CharacterRelationPanel.tsx',
+] as const;
+
 const rawActionPattern =
   /<(?:button|Link)\b(?=[^>]*\bclassName=)[^>]*\b(?:bg-blue|bg-green|bg-red|bg-yellow|bg-gray-100|bg-gray-200|bg-gray-300|bg-gray-500|bg-gray-600)/;
 
@@ -39,6 +51,11 @@ const rawAliasAddButtonPattern =
   /<button\b(?=[\s\S]{0,800}aria-label='添加别名')(?=[\s\S]{0,800}<\/button>)[\s\S]{0,800}<\/button>/;
 
 const hasRawAliasAddButton = (source: string) => rawAliasAddButtonPattern.test(source);
+
+const rawMigratedIconButtonPattern =
+  /<button\b(?=[\s\S]{0,800}(?:h-4 w-4|h-7 w-7|h-8 w-8))(?=[\s\S]{0,800}(?:bg-yellow-500|bg-red-500|bg-blue-500|bg-green-600|dark:bg-yellow-600|dark:bg-red-600|dark:bg-blue-600))(?=[\s\S]{0,800}<\/button>)[\s\S]{0,800}<\/button>/;
+
+const hasRawMigratedIconButton = (source: string) => rawMigratedIconButtonPattern.test(source);
 
 const tailwindConflictTargets = ['src/lib/design/componentClasses.ts'] as const;
 
@@ -59,6 +76,15 @@ describe('UI style consistency', () => {
     const offenders = aliasIconPrimitiveTargets.filter((relativePath) => {
       const source = fs.readFileSync(path.join(projectRoot, relativePath), 'utf8');
       return !source.includes('<AddAliasButton') || hasRawAliasAddButton(source);
+    });
+
+    expect(offenders).toEqual([]);
+  });
+
+  it('uses IconButton for migrated character detail edit controls', () => {
+    const offenders = characterDetailIconPrimitiveTargets.filter((relativePath) => {
+      const source = fs.readFileSync(path.join(projectRoot, relativePath), 'utf8');
+      return !source.includes('<IconButton') || hasRawMigratedIconButton(source);
     });
 
     expect(offenders).toEqual([]);

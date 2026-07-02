@@ -4,6 +4,7 @@ import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useEditMode } from '@/context/EditModeContext';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 import { editable } from '@/components/ui/editable';
+import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 import Link from '@/components/Link';
@@ -78,14 +79,19 @@ export default function SpecialSkillsSection() {
                     </Link>
 
                     {isEditMode && (
-                      <button
+                      <IconButton
                         type='button'
                         aria-label='移除特技'
                         onClick={() => characters[characterId]!.specialSkills!.splice(index, 1)}
-                        className='ml-auto flex h-8 w-8 items-center justify-center rounded-md bg-red-500 text-xs text-white hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
+                        variant='delete'
+                        size='md'
+                        className='ml-auto'
                       >
-                        <TrashIcon className='h-4 w-4' aria-hidden='true' />
-                      </button>
+                        <TrashIcon
+                          className={getIconButtonIconClassName('md')}
+                          aria-hidden='true'
+                        />
+                      </IconButton>
                     )}
                   </div>
 
@@ -108,7 +114,7 @@ export default function SpecialSkillsSection() {
       </ul>
       {isEditMode && (
         <div className='mt-4'>
-          <button
+          <IconButton
             type='button'
             aria-label='添加特技'
             onClick={() => {
@@ -120,10 +126,11 @@ export default function SpecialSkillsSection() {
                 description: '',
               });
             }}
-            className='flex h-8 w-8 items-center justify-center rounded-md bg-yellow-500 text-xs text-white hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
+            variant='add'
+            size='md'
           >
-            <PlusIcon className='h-4 w-4' aria-hidden='true' />
-          </button>
+            <PlusIcon className={getIconButtonIconClassName('md')} aria-hidden='true' />
+          </IconButton>
         </div>
       )}
     </div>

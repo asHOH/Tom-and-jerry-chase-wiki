@@ -7,6 +7,7 @@ import { useDarkMode } from '@/context/DarkModeContext';
 import { contributors } from '@/data/contributors';
 import type { KnowledgeCardGroupSet } from '@/data/types';
 import { editable } from '@/components/ui/editable';
+import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import { TrashIcon } from '@/components/icons/CommonIcons';
 
 import { KnowledgeCardGroupDisplay, type ViewMode } from './KnowledgeCardSection';
@@ -104,14 +105,15 @@ const KnowledgeCardGroupSetDisplay: React.FC<KnowledgeCardGroupSetDisplayProps> 
                 </span>
               </label>
             </div>
-            <button
+            <IconButton
               type='button'
               aria-label='移除知识卡组集合'
               onClick={() => onRemoveGroup(topIndex)}
-              className='flex h-8 w-8 items-center justify-center rounded-md bg-red-500 text-xs text-white hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
+              variant='delete'
+              size='md'
             >
-              <TrashIcon className='h-4 w-4' aria-hidden='true' />
-            </button>
+              <TrashIcon className={getIconButtonIconClassName('md')} aria-hidden='true' />
+            </IconButton>
           </div>
         )}
       </div>

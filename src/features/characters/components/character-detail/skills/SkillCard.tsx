@@ -25,6 +25,7 @@ import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
 import DetailTraitsCard from '@/features/shared/detail-view/DetailTraitsCard';
 import Card from '@/components/ui/Card';
 import { editable } from '@/components/ui/editable';
+import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import { TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 import { characters } from '@/data';
@@ -186,7 +187,7 @@ function updateSkillName({
 
 function RemoveWeaponButton({ characterId }: { characterId: string }) {
   return (
-    <button
+    <IconButton
       type='button'
       aria-label='移除技能'
       onClick={() => {
@@ -194,10 +195,12 @@ function RemoveWeaponButton({ characterId }: { characterId: string }) {
           ({ type }: Skill) => type != 'weapon2'
         );
       }}
-      className='ml-auto flex h-8 w-8 items-center justify-center rounded-md bg-red-500 text-xs text-white hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
+      variant='delete'
+      size='md'
+      className='ml-auto'
     >
-      <TrashIcon className='h-4 w-4' aria-hidden='true' />
-    </button>
+      <TrashIcon className={getIconButtonIconClassName('md')} aria-hidden='true' />
+    </IconButton>
   );
 }
 

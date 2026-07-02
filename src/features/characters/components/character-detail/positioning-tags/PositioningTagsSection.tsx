@@ -14,6 +14,7 @@ import { sortPositioningTags } from '@/constants/positioningTagSequences';
 import type { FactionId } from '@/data/types';
 import { getWeaponSkillImageUrl } from '@/features/characters/utils/weapons';
 import { editable } from '@/components/ui/editable';
+import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import Tag from '@/components/ui/Tag';
 import Tooltip from '@/components/ui/Tooltip';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
@@ -335,14 +336,16 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
                   )
                 )}
                 {isEditMode && (
-                  <button
+                  <IconButton
                     type='button'
                     aria-label='移除定位标签'
                     onClick={() => handleRemovePositioningTags(originalIndex)}
-                    className='ml-auto flex h-8 w-8 items-center justify-center rounded-md bg-red-500 text-xs text-white hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
+                    variant='delete'
+                    size='md'
+                    className='ml-auto'
                   >
-                    <TrashIcon className='h-4 w-4' aria-hidden='true' />
-                  </button>
+                    <TrashIcon className={getIconButtonIconClassName('md')} aria-hidden='true' />
+                  </IconButton>
                 )}
               </div>
               <e.p
@@ -369,14 +372,15 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
         })}
         {isEditMode && (
           <div className='mt-4'>
-            <button
+            <IconButton
               type='button'
               aria-label='添加定位标签'
               onClick={handleAddPositioningTags}
-              className='flex h-8 w-8 items-center justify-center rounded-md bg-yellow-500 text-xs text-white hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
+              variant='add'
+              size='md'
             >
-              <PlusIcon className='h-4 w-4' aria-hidden='true' />
-            </button>
+              <PlusIcon className={getIconButtonIconClassName('md')} aria-hidden='true' />
+            </IconButton>
           </div>
         )}
       </div>

@@ -17,6 +17,7 @@ import {
 } from '@/features/characters/utils/skillAllocation';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 import { editable } from '@/components/ui/editable';
+import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import Tooltip from '@/components/ui/Tooltip';
 import { TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
@@ -712,14 +713,15 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
         </div>
         {isEditMode && (
           <div className='flex flex-col gap-2'>
-            <button
+            <IconButton
               type='button'
               aria-label='移除技能加点'
               onClick={() => onRemove(allocation.id)}
-              className='flex h-8 w-8 items-center justify-center rounded-md bg-red-500 text-xs text-white hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
+              variant='delete'
+              size='md'
             >
-              <TrashIcon className='h-4 w-4' aria-hidden='true' />
-            </button>
+              <TrashIcon className={getIconButtonIconClassName('md')} aria-hidden='true' />
+            </IconButton>
           </div>
         )}
       </div>

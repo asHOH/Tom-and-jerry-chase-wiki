@@ -21,6 +21,7 @@ import CharacterNavigationButtons from '@/components/ui/CharacterNavigationButto
 import CollapseCard from '@/components/ui/CollapseCard';
 import { editable } from '@/components/ui/editable';
 import EditButton from '@/components/ui/EditButton';
+import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import { PlusIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 import { characters } from '@/data';
@@ -244,15 +245,19 @@ export default function CharacterDetails({ children }: CharacterDetailsWithTutor
                     ))
                     .concat(
                       isSingleWeapon && isEditMode ? (
-                        <button
+                        <IconButton
                           type='button'
                           aria-label='添加第二武器'
                           onClick={addSecondWeapon}
-                          className='flex h-8 w-8 items-center justify-center rounded-md bg-yellow-500 text-xs text-white hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
+                          variant='add'
+                          size='md'
                           key='new-weapon-button'
                         >
-                          <PlusIcon className='h-4 w-4' aria-hidden='true' />
-                        </button>
+                          <PlusIcon
+                            className={getIconButtonIconClassName('md')}
+                            aria-hidden='true'
+                          />
+                        </IconButton>
                       ) : null
                     );
                 })()}

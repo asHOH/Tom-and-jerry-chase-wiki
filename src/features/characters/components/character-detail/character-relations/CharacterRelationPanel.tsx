@@ -3,6 +3,7 @@ import React from 'react';
 import { cn } from '@/lib/design';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 import { editable } from '@/components/ui/editable';
+import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import { TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 
@@ -227,14 +228,16 @@ function RelationItemCard({
             item.isMinor && <span className={minorLabelClassName}>(次要)</span>
           )}
           {canEdit && item.onRemove && (
-            <button
+            <IconButton
               type='button'
               aria-label='移除关系'
               onClick={() => item.onRemove?.()}
-              className='ml-auto flex h-7 w-7 items-center justify-center rounded-md bg-red-500 text-xs text-white hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700'
+              variant='delete'
+              size='sm'
+              className='ml-auto'
             >
-              <TrashIcon className='h-3.5 w-3.5' aria-hidden='true' />
-            </button>
+              <TrashIcon className={getIconButtonIconClassName('sm')} aria-hidden='true' />
+            </IconButton>
           )}
         </div>
         {canEdit && canEditDescription ? (

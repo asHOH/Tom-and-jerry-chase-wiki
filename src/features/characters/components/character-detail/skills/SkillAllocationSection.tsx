@@ -8,6 +8,7 @@ import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useEditMode } from '@/context/EditModeContext';
 import { FactionId, SkillAllocation } from '@/data/types';
 import Card from '@/components/ui/Card';
+import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import { PlusIcon } from '@/components/icons/CommonIcons';
 import { characters } from '@/data';
 
@@ -91,14 +92,15 @@ const SkillAllocationSection: React.FC<SkillAllocationSectionProps> = ({ faction
               )}
           {isEditMode && (
             <div className='mt-4'>
-              <button
+              <IconButton
                 type='button'
                 aria-label='添加技能加点'
                 onClick={handleAddSkillAllocation}
-                className='flex h-8 w-8 items-center justify-center rounded-md bg-yellow-500 text-xs text-white hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
+                variant='add'
+                size='md'
               >
-                <PlusIcon className='h-4 w-4' aria-hidden='true' />
-              </button>
+                <PlusIcon className={getIconButtonIconClassName('md')} aria-hidden='true' />
+              </IconButton>
             </div>
           )}
         </div>
