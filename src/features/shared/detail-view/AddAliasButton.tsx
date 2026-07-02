@@ -1,3 +1,4 @@
+import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import { PlusIcon } from '@/components/icons/CommonIcons';
 
 type AddAliasButtonProps = {
@@ -6,13 +7,15 @@ type AddAliasButtonProps = {
 
 export default function AddAliasButton({ onAdd }: AddAliasButtonProps) {
   return (
-    <button
+    <IconButton
       type='button'
       aria-label='添加别名'
+      variant='add'
+      size='xs'
+      className='ml-2'
       onClick={onAdd}
-      className='ml-2 flex h-4 w-4 items-center justify-center rounded-md bg-yellow-500 text-xs text-white hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
     >
-      <PlusIcon className='h-3 w-3' aria-hidden='true' />
-    </button>
+      <PlusIcon className={getIconButtonIconClassName('xs')} aria-hidden='true' />
+    </IconButton>
   );
 }
