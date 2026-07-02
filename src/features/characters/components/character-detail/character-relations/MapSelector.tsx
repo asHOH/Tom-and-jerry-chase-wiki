@@ -26,7 +26,6 @@ const MapSelector: React.FC<Props> = ({ selected, onSelect, disabled }) => {
       options={options}
       triggerAriaLabel='添加地图'
       optionAriaLabel={(id) => `选择地图 ${id}`}
-      tone='blue'
       onSelect={onSelect}
       disabled={disabled}
     />

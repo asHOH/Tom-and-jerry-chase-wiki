@@ -44,6 +44,11 @@ const characterDetailIconPrimitiveTargets = [
   'src/features/characters/components/character-detail/character-relations/CharacterRelationPanel.tsx',
 ] as const;
 
+const relationSelectorIconPrimitiveTargets = [
+  'src/features/characters/components/character-detail/character-relations/RelationItemSelector.tsx',
+  'src/components/ui/CharacterSelector.tsx',
+] as const;
+
 const rawActionPattern =
   /<(?:button|Link)\b(?=[^>]*\bclassName=)[^>]*\b(?:bg-blue|bg-green|bg-red|bg-yellow|bg-gray-100|bg-gray-200|bg-gray-300|bg-gray-500|bg-gray-600)/;
 
@@ -56,6 +61,12 @@ const rawMigratedIconButtonPattern =
   /<button\b(?=[\s\S]{0,800}(?:h-4 w-4|h-7 w-7|h-8 w-8))(?=[\s\S]{0,800}(?:bg-yellow-500|bg-red-500|bg-blue-500|bg-green-600|dark:bg-yellow-600|dark:bg-red-600|dark:bg-blue-600))(?=[\s\S]{0,800}<\/button>)[\s\S]{0,800}<\/button>/;
 
 const hasRawMigratedIconButton = (source: string) => rawMigratedIconButtonPattern.test(source);
+
+const rawRelationSelectorAddButtonPattern =
+  /<button\b(?=[\s\S]{0,800}(?:aria-label=\{triggerAriaLabel\}|aria-label=\{`添加\$\{relationType\}关系`\}))(?=[\s\S]{0,800}h-8 w-8)(?=[\s\S]{0,800}(?:bg-yellow-500|bg-blue-500|bg-purple-500|dark:bg-yellow-600|dark:bg-blue-600|dark:bg-purple-600))(?=[\s\S]{0,800}<\/button>)[\s\S]{0,800}<\/button>/;
+
+const hasRawRelationSelectorAddButton = (source: string) =>
+  rawRelationSelectorAddButtonPattern.test(source);
 
 const tailwindConflictTargets = ['src/lib/design/componentClasses.ts'] as const;
 
@@ -101,6 +112,15 @@ describe('UI style consistency', () => {
 
     expect(source).toContain('dark:hover:bg-green-600');
     expect(source).not.toContain('dark:hover:bg-[#16a34a]');
+  });
+
+  it('uses IconButton for relation selector add triggers', () => {
+    const offenders = relationSelectorIconPrimitiveTargets.filter((relativePath) => {
+      const source = fs.readFileSync(path.join(projectRoot, relativePath), 'utf8');
+      return !source.includes('<IconButton') || hasRawRelationSelectorAddButton(source);
+    });
+
+    expect(offenders).toEqual([]);
   });
 
   it('does not combine conflicting focus-visible outline utilities', () => {

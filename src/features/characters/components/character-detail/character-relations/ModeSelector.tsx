@@ -26,7 +26,6 @@ const ModeSelector: React.FC<Props> = ({ selected, onSelect, disabled }) => {
       options={options}
       triggerAriaLabel='添加模式'
       optionAriaLabel={(id) => `选择模式 ${id}`}
-      tone='purple'
       onSelect={onSelect}
       disabled={disabled}
     />

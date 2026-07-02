@@ -18,7 +18,6 @@ describe('RelationItemSelector', () => {
         options={[]}
         triggerAriaLabel='添加项目'
         optionAriaLabel={(id) => `选择项目 ${id}`}
-        tone='yellow'
         onSelect={jest.fn()}
       />
     );
@@ -32,12 +31,14 @@ describe('RelationItemSelector', () => {
         options={options}
         triggerAriaLabel='添加项目'
         optionAriaLabel={(id) => `选择项目 ${id}`}
-        tone='yellow'
         onSelect={jest.fn()}
       />
     );
 
-    fireEvent.click(screen.getByRole('button', { name: '添加项目' }));
+    const trigger = screen.getByRole('button', { name: '添加项目' });
+    expect(trigger).toHaveClass('h-8', 'w-8', 'bg-green-100', 'text-green-800');
+
+    fireEvent.click(trigger);
 
     expect(screen.getByRole('button', { name: '选择项目 选项一' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '选择项目 选项二' })).toBeInTheDocument();
@@ -49,7 +50,6 @@ describe('RelationItemSelector', () => {
         options={[{ id: '带图选项', imageUrl: '/images/option.png', imageClassName: 'rounded' }]}
         triggerAriaLabel='添加项目'
         optionAriaLabel={(id) => `选择项目 ${id}`}
-        tone='blue'
         onSelect={jest.fn()}
       />
     );
@@ -68,7 +68,6 @@ describe('RelationItemSelector', () => {
         options={options}
         triggerAriaLabel='添加项目'
         optionAriaLabel={(id) => `选择项目 ${id}`}
-        tone='purple'
         onSelect={onSelect}
       />
     );
@@ -86,7 +85,6 @@ describe('RelationItemSelector', () => {
         options={options}
         triggerAriaLabel='添加项目'
         optionAriaLabel={(id) => `选择项目 ${id}`}
-        tone='yellow'
         onSelect={jest.fn()}
         disabled
       />

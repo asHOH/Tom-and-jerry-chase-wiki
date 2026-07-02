@@ -25,7 +25,6 @@ const KnowledgeCardSelector: React.FC<Props> = ({ selected, onSelect, factionId,
       options={options}
       triggerAriaLabel='添加知识卡'
       optionAriaLabel={(id) => `选择知识卡 ${id}`}
-      tone='yellow'
       onSelect={onSelect}
       disabled={disabled}
     />

@@ -7,6 +7,7 @@ import { AssetManager } from '@/lib/assetManager';
 import { cn } from '@/lib/design';
 import { characters } from '@/data/store';
 import type { CharacterRelationItem, FactionId } from '@/data/types';
+import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 
@@ -60,15 +61,16 @@ export function CharacterSelector({
 
   return (
     <div className='relative inline-block'>
-      <button
+      <IconButton
         type='button'
         onClick={() => !disabled && setIsOpen(!isOpen)}
-        className='flex h-8 w-8 items-center justify-center rounded-md bg-yellow-500 text-xs text-white hover:bg-yellow-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400/60 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-yellow-500 dark:hover:bg-yellow-400 dark:focus-visible:ring-yellow-300/70'
+        variant='add'
+        size='md'
         aria-label={`添加${relationType}关系`}
         disabled={disabled}
       >
-        <PlusIcon className='h-4 w-4' aria-hidden='true' />
-      </button>
+        <PlusIcon className={getIconButtonIconClassName('md')} aria-hidden='true' />
+      </IconButton>
 
       {isOpen && (
         <div className='absolute top-full right-0 z-50 mt-1 max-h-60 w-56 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg ring-1 ring-black/5 dark:border-gray-700 dark:bg-slate-900 dark:ring-white/10'>

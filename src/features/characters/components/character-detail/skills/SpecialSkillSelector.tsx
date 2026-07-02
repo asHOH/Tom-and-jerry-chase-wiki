@@ -32,7 +32,6 @@ const SpecialSkillSelector: React.FC<Props> = ({ selected, factionId, onSelect, 
       options={options}
       triggerAriaLabel='添加特技'
       optionAriaLabel={(id) => `选择特技 ${id}`}
-      tone='yellow'
       onSelect={onSelect}
       disabled={disabled}
     />
