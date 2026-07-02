@@ -7,7 +7,7 @@ import { getMapLevelColors, getMapSizeColors, getMapTypeColors } from '@/lib/des
 import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { type Map, type MapSize, type mapTypes, type studyLevel } from '@/data/types';
-import { CatalogGrid } from '@/components/ui/CatalogGrid';
+import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
 import Tooltip from '@/components/ui/Tooltip';
@@ -47,12 +47,9 @@ export default function MapClient({ description }: Props) {
 
   const mapCardNodes = useMemo(() => {
     return filteredMaps.map((map) => (
-      <div
-        key={map.name}
-        className='map-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
-      >
+      <CatalogGridItem key={map.name} clip>
         <MapCardDisplay map={map} />
-      </div>
+      </CatalogGridItem>
     ));
   }, [filteredMaps]);
 

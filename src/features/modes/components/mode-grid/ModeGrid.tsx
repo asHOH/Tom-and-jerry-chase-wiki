@@ -6,7 +6,7 @@ import { useSnapshot } from 'valtio';
 import { getModeTypeColors } from '@/lib/design';
 import { useDarkMode } from '@/context/DarkModeContext';
 import type { Mode, ModeTypeList } from '@/data/types';
-import { CatalogGrid } from '@/components/ui/CatalogGrid';
+import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
 import { modesEdit } from '@/data';
@@ -39,12 +39,9 @@ export default function ModeClient({ description }: Props) {
 
   const modeCardNodes = useMemo(() => {
     return filteredModes.map((mode) => (
-      <div
-        key={mode.name}
-        className='mode-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
-      >
+      <CatalogGridItem key={mode.name} clip>
         <ModeCardDisplay mode={mode} />
-      </div>
+      </CatalogGridItem>
     ));
   }, [filteredModes]);
 

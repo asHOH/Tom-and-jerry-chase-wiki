@@ -15,8 +15,25 @@ const gridFiles = [
 
 const linkBlockPattern = /<Link\b[\s\S]*?<\/Link>/gu;
 const cardDisplayPattern = /<\w+CardDisplay\b/u;
+const catalogGridItemWrapperExpectations = [
+  {
+    file: 'src/features/fixtures/components/fixture-grid/FixtureGrid.tsx',
+    wrapper: '<CatalogGridItem key={fixture.name} clip>',
+  },
+  {
+    file: 'src/features/maps/map-grid/MapGrid.tsx',
+    wrapper: '<CatalogGridItem key={map.name} clip>',
+  },
+  {
+    file: 'src/features/modes/components/mode-grid/ModeGrid.tsx',
+    wrapper: '<CatalogGridItem key={mode.name} clip>',
+  },
+] as const;
+
+const localCatalogCardWrapperClassPattern = /\b(?:fixture-card|map-card|mode-card)\b/u;
 
 const getLinkBlocks = (source: string) => source.match(linkBlockPattern) ?? [];
+const countOccurrences = (source: string, needle: string) => source.split(needle).length - 1;
 
 describe('grid card navigation conventions', () => {
   it('allows ordinary links outside card displays', () => {
@@ -50,5 +67,20 @@ describe('grid card navigation conventions', () => {
     expect(getLinkBlocks(source)).not.toEqual(
       expect.arrayContaining([expect.stringMatching(cardDisplayPattern)])
     );
+  });
+
+  it('uses CatalogGridItem for migrated map, fixture, and mode card wrappers', () => {
+    const offenders = catalogGridItemWrapperExpectations
+      .filter(({ file, wrapper }) => {
+        const source = readFileSync(path.join(process.cwd(), file), 'utf8');
+        return (
+          countOccurrences(source, wrapper) !== 1 ||
+          countOccurrences(source, '</CatalogGridItem>') !== 1 ||
+          localCatalogCardWrapperClassPattern.test(source)
+        );
+      })
+      .map(({ file }) => file);
+
+    expect(offenders).toEqual([]);
   });
 });

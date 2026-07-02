@@ -8,7 +8,7 @@ import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import type { Fixture, FixtureSourceList, FixtureTypeList } from '@/data/types';
-import { CatalogGrid } from '@/components/ui/CatalogGrid';
+import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
 import Tooltip from '@/components/ui/Tooltip';
@@ -58,12 +58,9 @@ export default function FixtureClient({ description }: Props) {
 
   const fixtureCardNodes = useMemo(() => {
     return filteredFixtures.map((fixture) => (
-      <div
-        key={fixture.name}
-        className='fixture-card transform overflow-hidden rounded-lg transition-transform hover:-translate-y-1'
-      >
+      <CatalogGridItem key={fixture.name} clip>
         <FixtureCardDisplay fixture={fixture} />
-      </div>
+      </CatalogGridItem>
     ));
   }, [filteredFixtures]);
 
