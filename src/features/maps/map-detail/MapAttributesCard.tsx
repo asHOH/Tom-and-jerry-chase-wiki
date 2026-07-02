@@ -8,6 +8,7 @@ import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { Map, SingleItem } from '@/data/types';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
+import AddAliasButton from '@/features/shared/detail-view/AddAliasButton';
 import AttributesCardLayout from '@/features/shared/detail-view/AttributesCardLayout';
 import { editable } from '@/components/ui/editable';
 import NavigationButtonsRow from '@/components/ui/NavigationButtonsRow';
@@ -15,7 +16,6 @@ import SingleItemAccordionCard from '@/components/ui/SingleItemAccordionCard';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import Tag from '@/components/ui/Tag';
 import Tooltip from '@/components/ui/Tooltip';
-import { PlusIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 import { mapsEdit, modesEdit } from '@/data';
 
@@ -71,20 +71,15 @@ export default function MapAttributesCard({ map }: { map: Map }) {
             ) : (
               <span>{'<无内容>'}</span>
             )}
-            <button
-              type='button'
-              aria-label='添加别名'
-              onClick={() => {
+            <AddAliasButton
+              onAdd={() => {
                 if (!rawMap) return;
                 if (!rawMap.aliases) rawMap.aliases = [];
                 if (!rawMap.aliases.includes('新别名')) {
                   rawMap.aliases.push('新别名');
                 }
               }}
-              className='ml-2 flex h-4 w-4 items-center justify-center rounded-md bg-yellow-500 text-xs text-white hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
-            >
-              <PlusIcon className='h-3 w-3' aria-hidden='true' />
-            </button>
+            />
           </div>
         ) : undefined
       }

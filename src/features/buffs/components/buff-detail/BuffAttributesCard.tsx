@@ -7,13 +7,13 @@ import { useLocalBuff } from '@/hooks/useLocalEditEntity';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { Buff, SingleItem } from '@/data/types';
+import AddAliasButton from '@/features/shared/detail-view/AddAliasButton';
 import AttributesCardLayout from '@/features/shared/detail-view/AttributesCardLayout';
 import { editable } from '@/components/ui/editable';
 import NavigationButtonsRow from '@/components/ui/NavigationButtonsRow';
 import SingleItemAccordionCard from '@/components/ui/SingleItemAccordionCard';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import Tag from '@/components/ui/Tag';
-import { PlusIcon } from '@/components/icons/CommonIcons';
 import { buffsEdit } from '@/data';
 
 import '@/lib/design';
@@ -65,20 +65,15 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
       ) : (
         <span>{'<无内容>'}</span>
       )}
-      <button
-        type='button'
-        aria-label='添加别名'
-        onClick={() => {
+      <AddAliasButton
+        onAdd={() => {
           if (!rawBuff) return;
           if (!rawBuff.aliases) rawBuff.aliases = [];
           if (!rawBuff.aliases.includes('新别名')) {
             rawBuff.aliases.push('新别名');
           }
         }}
-        className='ml-2 flex h-4 w-4 items-center justify-center rounded-md bg-yellow-500 text-xs text-white hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
-      >
-        <PlusIcon className='h-3 w-3' aria-hidden='true' />
-      </button>
+      />
     </div>
   ) : undefined;
 

@@ -7,9 +7,9 @@ import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useEditMode } from '@/context/EditModeContext';
 import type { FactionId } from '@/data/types';
 import { RANKABLE_PROPERTIES, RankableProperty } from '@/features/characters/utils/ranking';
+import AddAliasButton from '@/features/shared/detail-view/AddAliasButton';
 import { editable } from '@/components/ui/editable';
 import Tooltip from '@/components/ui/Tooltip';
-import { PlusIcon } from '@/components/icons/CommonIcons';
 import Link from '@/components/Link';
 import { characters } from '@/data';
 
@@ -171,10 +171,8 @@ export default function AttributeDisplay({
           {index < localCharacter.aliases!.length - 1 && <span className='text-gray-400'>、</span>}
         </Fragment>
       ))}
-      <button
-        type='button'
-        aria-label='添加别名'
-        onClick={() => {
+      <AddAliasButton
+        onAdd={() => {
           const character = characters[characterId]!;
           if (!character.aliases) {
             character.aliases = [];
@@ -183,11 +181,7 @@ export default function AttributeDisplay({
             character.aliases.push('新别名');
           }
         }}
-        className='ml-2 flex h-4 w-4 items-center justify-center rounded-md bg-yellow-500 text-xs text-white hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
-        key='new-weapon-button'
-      >
-        <PlusIcon className='h-3 w-3' aria-hidden='true' />
-      </button>
+      />
       {suffix && <GrayUnit>{suffix}</GrayUnit>}
     </>
   );

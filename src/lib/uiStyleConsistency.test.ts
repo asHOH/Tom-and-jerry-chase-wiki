@@ -21,8 +21,24 @@ const actionPrimitiveTargets = [
   'src/components/ui/RichTextEditor/ImagePickerModal.tsx',
 ] as const;
 
+const aliasIconPrimitiveTargets = [
+  'src/features/achievements/achievement-detail/AchievementAttributesCard.tsx',
+  'src/features/buffs/components/buff-detail/BuffAttributesCard.tsx',
+  'src/features/characters/components/character-detail/character-attributes/AttributeDisplay.tsx',
+  'src/features/characters/components/character-detail/skills/SkillCard.tsx',
+  'src/features/knowledge-cards/components/knowledge-card-detail/KnowledgeCardAttributesCard.tsx',
+  'src/features/maps/map-detail/MapAttributesCard.tsx',
+  'src/features/modes/components/mode-detail/ModeAttributesCard.tsx',
+  'src/features/special-skills/components/special-skill-detail/SpecialSkillAttributesCard.tsx',
+] as const;
+
 const rawActionPattern =
   /<(?:button|Link)\b(?=[^>]*\bclassName=)[^>]*\b(?:bg-blue|bg-green|bg-red|bg-yellow|bg-gray-100|bg-gray-200|bg-gray-300|bg-gray-500|bg-gray-600)/;
+
+const rawAliasAddButtonPattern =
+  /<button\b(?=[\s\S]{0,800}aria-label='添加别名')(?=[\s\S]{0,800}<\/button>)[\s\S]{0,800}<\/button>/;
+
+const hasRawAliasAddButton = (source: string) => rawAliasAddButtonPattern.test(source);
 
 const tailwindConflictTargets = ['src/lib/design/componentClasses.ts'] as const;
 
@@ -34,6 +50,15 @@ describe('UI style consistency', () => {
     const offenders = actionPrimitiveTargets.filter((relativePath) => {
       const source = fs.readFileSync(path.join(projectRoot, relativePath), 'utf8');
       return rawActionPattern.test(source);
+    });
+
+    expect(offenders).toEqual([]);
+  });
+
+  it('uses AddAliasButton for migrated alias add controls', () => {
+    const offenders = aliasIconPrimitiveTargets.filter((relativePath) => {
+      const source = fs.readFileSync(path.join(projectRoot, relativePath), 'utf8');
+      return !source.includes('<AddAliasButton') || hasRawAliasAddButton(source);
     });
 
     expect(offenders).toEqual([]);

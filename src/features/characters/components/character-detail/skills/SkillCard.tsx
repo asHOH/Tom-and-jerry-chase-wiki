@@ -19,12 +19,13 @@ import {
 } from '@/features/characters/utils/skills';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
 import TextWithItemKeyTooltips from '@/features/shared/components/TextWithItemKeyTooltips';
+import AddAliasButton from '@/features/shared/detail-view/AddAliasButton';
 import DetailOwnbuffsCard from '@/features/shared/detail-view/DetaidOwnbuffsCard';
 import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
 import DetailTraitsCard from '@/features/shared/detail-view/DetailTraitsCard';
 import Card from '@/components/ui/Card';
 import { editable } from '@/components/ui/editable';
-import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
+import { TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 import { characters } from '@/data';
 
@@ -466,10 +467,8 @@ export default function SkillCard({
                 {index < skill.aliases!.length - 1 && <span className='text-gray-400'>、</span>}
               </Fragment>
             ))}
-          <button
-            type='button'
-            aria-label='添加别名'
-            onClick={() => {
+          <AddAliasButton
+            onAdd={() => {
               const skill = characters[characterId]!.skills[skillIndex]!;
               if (!skill.aliases) {
                 skill.aliases = [];
@@ -478,11 +477,7 @@ export default function SkillCard({
                 skill.aliases.push('新别名');
               }
             }}
-            className='ml-2 flex h-4 w-4 items-center justify-center rounded-md bg-yellow-500 text-xs text-white hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
-            key='new-weapon-button'
-          >
-            <PlusIcon className='h-3 w-3' aria-hidden='true' />
-          </button>
+          />
         </div>
       );
     }
