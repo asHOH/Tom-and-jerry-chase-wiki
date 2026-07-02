@@ -90,6 +90,19 @@ describe('UI style consistency', () => {
     expect(offenders).toEqual([]);
   });
 
+  it('allows non-icon relation toggles to keep semantic Tailwind color classes', () => {
+    const source = fs.readFileSync(
+      path.join(
+        projectRoot,
+        'src/features/characters/components/character-detail/character-relations/CharacterRelationPanel.tsx'
+      ),
+      'utf8'
+    );
+
+    expect(source).toContain('dark:hover:bg-green-600');
+    expect(source).not.toContain('dark:hover:bg-[#16a34a]');
+  });
+
   it('does not combine conflicting focus-visible outline utilities', () => {
     const offenders = tailwindConflictTargets.filter((relativePath) => {
       const source = fs.readFileSync(path.join(projectRoot, relativePath), 'utf8');
