@@ -4,7 +4,7 @@ import { render, screen } from '@testing-library/react';
 import { FormInput, FormSelect, FormTextarea } from './FormControls';
 
 describe('FormControls', () => {
-  it('renders an input with shared form-control styling and ref forwarding', () => {
+  it('renders an input with shared form styling and ref forwarding', () => {
     const ref = React.createRef<HTMLInputElement>();
 
     render(<FormInput ref={ref} aria-label='标题' className='md:px-4' />);
