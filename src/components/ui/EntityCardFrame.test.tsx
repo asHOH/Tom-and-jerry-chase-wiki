@@ -19,7 +19,7 @@ jest.mock('@/components/Link', () => ({
   },
 }));
 
-describe('BaseCard', () => {
+describe('EntityCardFrame', () => {
   it('puts the accessible label only on the link for linked cards', () => {
     render(
       <EntityCardFrame href='/cards/jump' aria-label='查看飞跃知识卡详情'>

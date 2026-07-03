@@ -16,8 +16,8 @@ import { normalizeHeadingLevels } from '@/lib/richTextUtils';
 import { useUser } from '@/hooks/useUser';
 import { useToast } from '@/context/ToastContext';
 import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
-import EntityCardFrame from '@/components/ui/EntityCardFrame';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import Notice from '@/components/ui/Notice';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
 import ArticleForm, { CategoryOption } from '@/components/articles/ArticleForm';
@@ -310,12 +310,10 @@ const EditArticleClient: React.FC = () => {
 
       {showSourcePicker && approvedSource && pendingSource && (
         <div className='mx-auto max-w-4xl px-4'>
-          <EntityCardFrame className='space-y-4 border border-amber-200 bg-amber-50 p-4 dark:border-amber-900/60 dark:bg-amber-900/10'>
+          <Notice variant='warning' className='space-y-4 p-4'>
             <div>
-              <p className='text-sm font-semibold text-amber-900 dark:text-amber-200'>
-                检测到您有更新的待审核版本
-              </p>
-              <p className='mt-1 text-xs text-amber-800 dark:text-amber-300'>请选择编辑起点。</p>
+              <p className='text-sm font-semibold'>检测到您有更新的待审核版本</p>
+              <p className='mt-1 text-xs'>请选择编辑起点。</p>
             </div>
 
             <div className='grid gap-3 md:grid-cols-2'>
@@ -360,7 +358,7 @@ const EditArticleClient: React.FC = () => {
                 )}
               </button>
             </div>
-          </EntityCardFrame>
+          </Notice>
         </div>
       )}
 

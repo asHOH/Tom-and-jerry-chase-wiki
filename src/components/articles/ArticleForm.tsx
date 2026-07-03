@@ -7,9 +7,9 @@ import { normalizeHeadingLevels } from '@/lib/richTextUtils';
 import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
 import Button from '@/components/ui/Button';
 import { ArticleCharacterSelector } from '@/components/ui/CharacterSelector';
-import EntityCardFrame from '@/components/ui/EntityCardFrame';
 import { FormInput, FormSelect } from '@/components/ui/FormControls';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import Notice from '@/components/ui/Notice';
 import RichTextEditor from '@/components/ui/RichTextEditor';
 import { ArticleLintNotice, getArticleLintResults } from '@/components/articles/ArticleLintNotice';
 import { CheckBadgeIcon, CloseIcon } from '@/components/icons/CommonIcons';
@@ -118,7 +118,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
   return (
     <div className='mx-auto max-w-4xl md:px-4'>
       {errorMessage && (
-        <EntityCardFrame className='mb-6 border border-red-200 bg-red-50 md:p-4 dark:border-red-800 dark:bg-red-900/20'>
+        <Notice variant='error' className='mb-6 md:p-4'>
           <div className='flex items-center gap-3'>
             <svg
               className='size-5 text-red-600 dark:text-red-400'
@@ -131,9 +131,9 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
                 clipRule='evenodd'
               />
             </svg>
-            <p className='text-red-800 dark:text-red-200'>{errorMessage}</p>
+            <p>{errorMessage}</p>
           </div>
-        </EntityCardFrame>
+        </Notice>
       )}
 
       <div className='md:p-8'>
@@ -260,9 +260,9 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
           )}
 
           {submitNoticeMessage && (
-            <EntityCardFrame className='border border-amber-200 bg-amber-50 p-3 dark:border-amber-900/60 dark:bg-amber-900/10'>
-              <p className='text-sm text-amber-900 dark:text-amber-200'>{submitNoticeMessage}</p>
-            </EntityCardFrame>
+            <Notice variant='warning' className='p-3'>
+              <p>{submitNoticeMessage}</p>
+            </Notice>
           )}
 
           <div className='mt-4 flex items-start gap-2 py-2'>

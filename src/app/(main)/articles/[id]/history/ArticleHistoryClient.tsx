@@ -7,9 +7,10 @@ import useSWR from 'swr';
 import { formatArticleDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
 import { useUser } from '@/hooks/useUser';
+import { useToast } from '@/context/ToastContext';
 import Button from '@/components/ui/Button';
 import ButtonLink from '@/components/ui/ButtonLink';
-import EntityCardFrame from '@/components/ui/EntityCardFrame';
+import Card from '@/components/ui/Card';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import PageTitle from '@/components/ui/PageTitle';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
@@ -40,6 +41,7 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 export default function ArticleHistoryClient() {
   const params = useParams();
   const { role: userRole } = useUser();
+  const { info, success, error: showError } = useToast();
   const articleId = params?.id as string;
 
   const { data, error } = useSWR<ArticleHistoryData>(
@@ -114,14 +116,14 @@ export default function ArticleHistoryClient() {
   if (error || !data) {
     return (
       <div className='container mx-auto px-4 py-8'>
-        <EntityCardFrame className='py-12 text-center'>
+        <Card className='py-12 text-center'>
           <div className='mb-4 text-6xl'>📚</div>
           <h2 className='mb-2 text-2xl font-bold text-gray-800 dark:text-gray-200'>
             {error ? '加载历史版本失败' : '历史版本未找到'}
           </h2>
           <p className='mb-6 text-gray-600 dark:text-gray-400'>无法加载此文章的历史版本</p>
           <ButtonLink href={`/articles/${articleId}`}>返回文章</ButtonLink>
-        </EntityCardFrame>
+        </Card>
       </div>
     );
   }
@@ -151,7 +153,7 @@ export default function ArticleHistoryClient() {
 
       {/* Comparison Actions */}
       {selectedVersions.length === 2 && (
-        <EntityCardFrame className='mb-6 p-4'>
+        <Card className='mb-6 p-4'>
           <div className='flex items-center justify-between'>
             <div className='text-sm text-gray-600 dark:text-gray-400'>
               已选择 {selectedVersions.length} 个版本进行比较
@@ -163,14 +165,14 @@ export default function ArticleHistoryClient() {
               <Button
                 onClick={() => {
                   // TODO: Implement diff viewer
-                  alert('差异比较功能即将推出');
+                  info('差异比较功能即将推出');
                 }}
               >
                 比较差异
               </Button>
             </div>
           </div>
-        </EntityCardFrame>
+        </Card>
       )}
 
       {/* Version List */}
@@ -261,12 +263,16 @@ export default function ArticleHistoryClient() {
                             throw new Error(errorData.error || '撤销操作失败');
                           }
 
-                          alert('版本已成功撤销');
+                          success('版本已成功撤销，正在刷新...');
                           // Refresh the history data
-                          window.location.reload();
+                          setTimeout(() => {
+                            window.location.reload();
+                          }, 800);
                         } catch (err) {
                           console.error('Error revoking version:', err);
-                          alert(`撤销操作失败: ${err instanceof Error ? err.message : '未知错误'}`);
+                          showError(
+                            `撤销操作失败: ${err instanceof Error ? err.message : '未知错误'}`
+                          );
                         }
                       }
                     }}

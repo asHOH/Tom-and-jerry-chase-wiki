@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { cn } from '@/lib/design';
+import Notice from '@/components/ui/Notice';
 
 type ArticleLintSeverity = 'error' | 'warning';
 
@@ -14,17 +14,6 @@ interface ArticleLintNoticeProps {
   results: ArticleLintResult[];
   onFixHeadings?: () => void;
 }
-
-const severityStyles: Record<ArticleLintSeverity, { container: string }> = {
-  error: {
-    container:
-      'border-red-200 bg-red-50 text-red-800 dark:border-red-900/60 dark:bg-red-900/15 dark:text-red-200',
-  },
-  warning: {
-    container:
-      'border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-900/60 dark:bg-amber-900/15 dark:text-amber-200',
-  },
-};
 
 export const ArticleLintNotice: React.FC<ArticleLintNoticeProps> = ({ results, onFixHeadings }) => {
   if (!results.length) return null;
@@ -43,14 +32,8 @@ export const ArticleLintNotice: React.FC<ArticleLintNoticeProps> = ({ results, o
       {(['error', 'warning'] as ArticleLintSeverity[]).map((severity) => {
         const items = grouped[severity];
         if (!items.length) return null;
-        const styles = severityStyles[severity];
         return (
-          <div
-            key={severity}
-            className={cn('rounded-lg border px-4 py-3 text-sm', styles.container)}
-            role={severity === 'error' ? 'alert' : 'status'}
-            aria-live={severity === 'error' ? 'assertive' : 'polite'}
-          >
+          <Notice key={severity} variant={severity}>
             <div className='space-y-1'>
               {items.map((item) => (
                 <div key={item.id} className='leading-relaxed'>
@@ -70,7 +53,7 @@ export const ArticleLintNotice: React.FC<ArticleLintNoticeProps> = ({ results, o
                 </div>
               ))}
             </div>
-          </div>
+          </Notice>
         );
       })}
     </div>
