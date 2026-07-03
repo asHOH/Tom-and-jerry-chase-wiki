@@ -1,7 +1,7 @@
 import { cn, getBuffTypeColors } from '@/lib/design';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Buff } from '@/data/types';
-import BaseCard from '@/components/ui/BaseCard';
+import EntityCardFrame from '@/components/ui/EntityCardFrame';
 import Tag from '@/components/ui/Tag';
 import Image from '@/components/Image';
 
@@ -15,7 +15,7 @@ export default function BuffCardDisplay({ buff }: { buff: Buff }) {
   const [isDarkMode] = useDarkMode();
 
   return (
-    <BaseCard
+    <EntityCardFrame
       variant='item'
       href={`/buffs/${encodeURIComponent(buff.name)}`}
       aria-label={`查看${buff.name}效果详情`}
@@ -64,6 +64,6 @@ export default function BuffCardDisplay({ buff }: { buff: Buff }) {
           </div>
         </div>
       </div>
-    </BaseCard>
+    </EntityCardFrame>
   );
 }

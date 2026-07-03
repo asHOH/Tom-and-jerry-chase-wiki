@@ -7,9 +7,9 @@ import useSWR from 'swr';
 import { formatArticleDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
 import { useUser } from '@/hooks/useUser';
-import BaseCard from '@/components/ui/BaseCard';
 import Button from '@/components/ui/Button';
 import ButtonLink from '@/components/ui/ButtonLink';
+import EntityCardFrame from '@/components/ui/EntityCardFrame';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import PageTitle from '@/components/ui/PageTitle';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
@@ -114,14 +114,14 @@ export default function ArticleHistoryClient() {
   if (error || !data) {
     return (
       <div className='container mx-auto px-4 py-8'>
-        <BaseCard className='py-12 text-center'>
+        <EntityCardFrame className='py-12 text-center'>
           <div className='mb-4 text-6xl'>📚</div>
           <h2 className='mb-2 text-2xl font-bold text-gray-800 dark:text-gray-200'>
             {error ? '加载历史版本失败' : '历史版本未找到'}
           </h2>
           <p className='mb-6 text-gray-600 dark:text-gray-400'>无法加载此文章的历史版本</p>
           <ButtonLink href={`/articles/${articleId}`}>返回文章</ButtonLink>
-        </BaseCard>
+        </EntityCardFrame>
       </div>
     );
   }
@@ -151,7 +151,7 @@ export default function ArticleHistoryClient() {
 
       {/* Comparison Actions */}
       {selectedVersions.length === 2 && (
-        <BaseCard className='mb-6 p-4'>
+        <EntityCardFrame className='mb-6 p-4'>
           <div className='flex items-center justify-between'>
             <div className='text-sm text-gray-600 dark:text-gray-400'>
               已选择 {selectedVersions.length} 个版本进行比较
@@ -170,7 +170,7 @@ export default function ArticleHistoryClient() {
               </Button>
             </div>
           </div>
-        </BaseCard>
+        </EntityCardFrame>
       )}
 
       {/* Version List */}

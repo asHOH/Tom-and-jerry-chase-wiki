@@ -10,7 +10,7 @@ import { useDarkMode } from '@/context/DarkModeContext';
 import { sortPositioningTags } from '@/constants/positioningTagSequences';
 import type { FactionId } from '@/data/types';
 import { getWeaponSkillImageUrl } from '@/features/characters/utils/weapons';
-import BaseCard from '@/components/ui/BaseCard';
+import EntityCardFrame from '@/components/ui/EntityCardFrame';
 import GameImage from '@/components/ui/GameImage';
 import Tag from '@/components/ui/Tag';
 import Image from '@/components/Image';
@@ -40,7 +40,7 @@ export default function CharacterDisplay({
   const href = isUserCharacter ? `/characters/${computedId}?edit=1` : `/characters/${computedId}`;
 
   return (
-    <BaseCard
+    <EntityCardFrame
       variant='character'
       href={href}
       preserveEditParam={isUserCharacter}
@@ -110,6 +110,6 @@ export default function CharacterDisplay({
           </div>
         )}
       </div>
-    </BaseCard>
+    </EntityCardFrame>
   );
 }

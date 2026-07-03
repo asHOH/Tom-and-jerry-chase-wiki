@@ -17,9 +17,9 @@ import { useUser } from '@/hooks/useUser';
 import { useEditMode } from '@/context/EditModeContext';
 import { useToast } from '@/context/ToastContext';
 import { Article, ArticlesData, Category } from '@/data/types';
-import BaseCard from '@/components/ui/BaseCard';
 import Button from '@/components/ui/Button';
 import ButtonLink from '@/components/ui/ButtonLink';
+import EntityCardFrame from '@/components/ui/EntityCardFrame';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
@@ -407,7 +407,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
                 ? charactersSnap[article.character_id]
                 : null;
               return (
-                <BaseCard
+                <EntityCardFrame
                   variant='character'
                   aria-label={`查看文章 ${article.title}`}
                   className='character-card shover:shadow-lg transform transition-transform! hover:-translate-y-1'
@@ -489,7 +489,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
                       </object>
                     </div>
                   </div>
-                </BaseCard>
+                </EntityCardFrame>
               );
             }}
           />

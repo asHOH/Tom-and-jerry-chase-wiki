@@ -10,8 +10,8 @@ import { useDarkMode } from '@/context/DarkModeContext';
 import type { FactionId, SpecialSkill } from '@/data/types';
 import { getSpecialSkillRelationSummary } from '@/features/characters/utils/relationReadModel';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
-import BaseCard from '@/components/ui/BaseCard';
 import Card from '@/components/ui/Card';
+import EntityCardFrame from '@/components/ui/EntityCardFrame';
 import FilterRow from '@/components/ui/FilterRow';
 import GameImage from '@/components/ui/GameImage';
 import PageDescription from '@/components/ui/PageDescription';
@@ -132,7 +132,7 @@ export default function SpecialSkillAdviceClient() {
             className='character-card flex transform flex-col p-4 transition-transform hover:-translate-y-1 md:flex-row'
           >
             <div className='md:w-1/5'>
-              <BaseCard
+              <EntityCardFrame
                 variant='item'
                 href={`/special-skills/${encodeURIComponent(skill.factionId)}/${encodeURIComponent(
                   skill.name
@@ -149,7 +149,7 @@ export default function SpecialSkillAdviceClient() {
                 <div className='px-3 pt-1 pb-3 text-center'>
                   <div className='font-semibold dark:text-white'>{skill.name}</div>
                 </div>
-              </BaseCard>
+              </EntityCardFrame>
             </div>
             <div
               className='md:w-4/5'

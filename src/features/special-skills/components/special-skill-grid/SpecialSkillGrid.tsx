@@ -7,9 +7,9 @@ import { getFactionButtonColors } from '@/lib/design';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { specialSkillsEdit } from '@/data/store';
 import type { FactionId } from '@/data/types';
-import BaseCard from '@/components/ui/BaseCard';
 import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
+import EntityCardFrame from '@/components/ui/EntityCardFrame';
 import FilterRow from '@/components/ui/FilterRow';
 import GameImage from '@/components/ui/GameImage';
 
@@ -32,7 +32,7 @@ export default function SpecialSkillClient({ description }: Props) {
   const skillCardNodes = useMemo(() => {
     return filteredSkills.map((skill) => (
       <CatalogGridItem key={skill.factionId + skill.name}>
-        <BaseCard
+        <EntityCardFrame
           variant='item'
           href={`/special-skills/${encodeURIComponent(skill.factionId)}/${encodeURIComponent(skill.name)}`}
           aria-label={`查看${skill.name}特技详情`}
@@ -46,7 +46,7 @@ export default function SpecialSkillClient({ description }: Props) {
           <div className='px-3 pt-1 pb-3 text-center'>
             <div className='font-semibold dark:text-white'>{skill.name}</div>
           </div>
-        </BaseCard>
+        </EntityCardFrame>
       </CatalogGridItem>
     ));
   }, [filteredSkills]);

@@ -5,7 +5,7 @@ import { memo } from 'react';
 import { getCardRankColors } from '@/lib/design';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { getRankDisplayName, RankedCharacter } from '@/features/characters/utils/ranking';
-import BaseCard from '@/components/ui/BaseCard';
+import EntityCardFrame from '@/components/ui/EntityCardFrame';
 import Tag from '@/components/ui/Tag';
 import Image from '@/components/Image';
 
@@ -38,7 +38,7 @@ function CharacterRankingCard({
   const valueColors = rankColors;
 
   return (
-    <BaseCard
+    <EntityCardFrame
       variant='item'
       href={`/characters/${character.id}`}
       role='button'
@@ -76,7 +76,7 @@ function CharacterRankingCard({
           </Tag>
         </div>
       </div>
-    </BaseCard>
+    </EntityCardFrame>
   );
 }
 

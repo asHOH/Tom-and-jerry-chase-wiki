@@ -7,7 +7,7 @@ import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverToo
 import Image from '@/components/Image';
 import Link from '@/components/Link';
 
-import BaseCard from './BaseCard';
+import EntityCardFrame from './EntityCardFrame';
 import Tag from './Tag';
 
 export type GotoPreviewCardProps = {
@@ -102,7 +102,7 @@ export default function PreviewCard({
     ) : null;
 
   const content = (
-    <BaseCard
+    <EntityCardFrame
       className={cn(
         'flex w-full max-w-xs cursor-pointer flex-row items-start p-4 shadow-md transition-shadow duration-200 hover:shadow-lg sm:max-w-sm md:max-w-md md:p-5 lg:max-w-lg lg:p-6',
         className
@@ -227,7 +227,7 @@ export default function PreviewCard({
               );
             })()}
       </div>
-    </BaseCard>
+    </EntityCardFrame>
   );
 
   if (!clickable) {

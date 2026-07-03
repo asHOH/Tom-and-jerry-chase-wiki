@@ -4,7 +4,7 @@ import type { ReactNode } from 'react';
 
 import { cn, componentTokens } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
-import BaseCard from '@/components/ui/BaseCard';
+import EntityCardFrame from '@/components/ui/EntityCardFrame';
 import GameImage from '@/components/ui/GameImage';
 
 type CatalogCardImageSize = keyof typeof componentTokens.image.dimensions;
@@ -65,7 +65,7 @@ export default function CatalogCard({
     : {};
 
   return (
-    <BaseCard
+    <EntityCardFrame
       variant='item'
       aria-label={ariaLabel}
       className={className ?? ''}
@@ -104,6 +104,6 @@ export default function CatalogCard({
           </div>
         )}
       </div>
-    </BaseCard>
+    </EntityCardFrame>
   );
 }

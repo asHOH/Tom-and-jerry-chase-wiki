@@ -16,7 +16,7 @@ import { normalizeHeadingLevels } from '@/lib/richTextUtils';
 import { useUser } from '@/hooks/useUser';
 import { useToast } from '@/context/ToastContext';
 import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
-import BaseCard from '@/components/ui/BaseCard';
+import EntityCardFrame from '@/components/ui/EntityCardFrame';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
@@ -310,7 +310,7 @@ const EditArticleClient: React.FC = () => {
 
       {showSourcePicker && approvedSource && pendingSource && (
         <div className='mx-auto max-w-4xl px-4'>
-          <BaseCard className='space-y-4 border border-amber-200 bg-amber-50 p-4 dark:border-amber-900/60 dark:bg-amber-900/10'>
+          <EntityCardFrame className='space-y-4 border border-amber-200 bg-amber-50 p-4 dark:border-amber-900/60 dark:bg-amber-900/10'>
             <div>
               <p className='text-sm font-semibold text-amber-900 dark:text-amber-200'>
                 检测到您有更新的待审核版本
@@ -360,7 +360,7 @@ const EditArticleClient: React.FC = () => {
                 )}
               </button>
             </div>
-          </BaseCard>
+          </EntityCardFrame>
         </div>
       )}
 

@@ -5,8 +5,8 @@ import { ReactNode, type CSSProperties } from 'react';
 import { componentTokens, designTokens } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useEditMode } from '@/context/EditModeContext';
-import BaseCard from '@/components/ui/BaseCard';
 import EditButton from '@/components/ui/EditButton';
+import EntityCardFrame from '@/components/ui/EntityCardFrame';
 import GameImage from '@/components/ui/GameImage';
 
 interface AttributesCardLayoutProps {
@@ -46,7 +46,7 @@ export default function AttributesCardLayout({
 
   return (
     <div style={spacingVars as CSSProperties}>
-      <BaseCard variant='details'>
+      <EntityCardFrame variant='details'>
         {isMobile ? (
           <div>
             <div
@@ -122,7 +122,7 @@ export default function AttributesCardLayout({
         </div>
 
         {navigation}
-      </BaseCard>
+      </EntityCardFrame>
     </div>
   );
 }

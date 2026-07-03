@@ -5,9 +5,9 @@ import React, { useState } from 'react';
 import { cn } from '@/lib/design';
 import { normalizeHeadingLevels } from '@/lib/richTextUtils';
 import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
-import BaseCard from '@/components/ui/BaseCard';
 import Button from '@/components/ui/Button';
 import { ArticleCharacterSelector } from '@/components/ui/CharacterSelector';
+import EntityCardFrame from '@/components/ui/EntityCardFrame';
 import { FormInput, FormSelect } from '@/components/ui/FormControls';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import RichTextEditor from '@/components/ui/RichTextEditor';
@@ -118,7 +118,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
   return (
     <div className='mx-auto max-w-4xl md:px-4'>
       {errorMessage && (
-        <BaseCard className='mb-6 border border-red-200 bg-red-50 md:p-4 dark:border-red-800 dark:bg-red-900/20'>
+        <EntityCardFrame className='mb-6 border border-red-200 bg-red-50 md:p-4 dark:border-red-800 dark:bg-red-900/20'>
           <div className='flex items-center gap-3'>
             <svg
               className='size-5 text-red-600 dark:text-red-400'
@@ -133,7 +133,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
             </svg>
             <p className='text-red-800 dark:text-red-200'>{errorMessage}</p>
           </div>
-        </BaseCard>
+        </EntityCardFrame>
       )}
 
       <div className='md:p-8'>
@@ -260,9 +260,9 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
           )}
 
           {submitNoticeMessage && (
-            <BaseCard className='border border-amber-200 bg-amber-50 p-3 dark:border-amber-900/60 dark:bg-amber-900/10'>
+            <EntityCardFrame className='border border-amber-200 bg-amber-50 p-3 dark:border-amber-900/60 dark:bg-amber-900/10'>
               <p className='text-sm text-amber-900 dark:text-amber-200'>{submitNoticeMessage}</p>
-            </BaseCard>
+            </EntityCardFrame>
           )}
 
           <div className='mt-4 flex items-start gap-2 py-2'>

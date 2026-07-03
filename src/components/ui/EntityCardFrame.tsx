@@ -1,7 +1,7 @@
 import { cn, componentTokens, createStyleFromTokens, designTokens } from '@/lib/design';
 import Link from '@/components/Link';
 
-type BaseCardProps = {
+type EntityCardFrameProps = {
   children: React.ReactNode;
   onClick?: () => void;
   className?: string;
@@ -15,7 +15,7 @@ type BaseCardProps = {
   href?: string;
 };
 
-export default function BaseCard({
+export default function EntityCardFrame({
   children,
   onClick,
   className = '',
@@ -26,22 +26,22 @@ export default function BaseCard({
   onKeyDown,
   href,
   'aria-label': ariaLabel,
-}: BaseCardProps) {
+}: EntityCardFrameProps) {
   const isClickable = !!onClick || !!href;
 
   const getVariantStyles = () => {
-    const baseCardStyle = createStyleFromTokens(componentTokens.card.base);
-    const finalBaseStyle = {
-      ...baseCardStyle,
+    const entityCardFrameStyle = createStyleFromTokens(componentTokens.card.base);
+    const finalStyle = {
+      ...entityCardFrameStyle,
       ...(isClickable && { cursor: 'pointer' }),
     };
     // The background is removed from here and will be handled by Tailwind classes.
-    delete (finalBaseStyle as { background?: string }).background;
+    delete (finalStyle as { background?: string }).background;
 
     switch (variant) {
       case 'character':
         return {
-          ...finalBaseStyle,
+          ...finalStyle,
           display: 'flex',
           flexDirection: 'column' as const,
           alignItems: 'center',
@@ -51,7 +51,7 @@ export default function BaseCard({
         };
       case 'item':
         return {
-          ...finalBaseStyle,
+          ...finalStyle,
           position: 'relative' as const,
           overflow: 'hidden',
           padding: 0,
@@ -59,12 +59,12 @@ export default function BaseCard({
         };
       case 'details':
         return {
-          ...finalBaseStyle,
+          ...finalStyle,
           height: '100%',
           overflow: 'hidden',
         };
       default:
-        return finalBaseStyle;
+        return finalStyle;
     }
   };
 

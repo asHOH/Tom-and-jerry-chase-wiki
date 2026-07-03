@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 
-import BaseCard from './BaseCard';
+import EntityCardFrame from './EntityCardFrame';
 
 jest.mock('@/components/Link', () => ({
   __esModule: true,
@@ -22,9 +22,9 @@ jest.mock('@/components/Link', () => ({
 describe('BaseCard', () => {
   it('puts the accessible label only on the link for linked cards', () => {
     render(
-      <BaseCard href='/cards/jump' aria-label='查看飞跃知识卡详情'>
+      <EntityCardFrame href='/cards/jump' aria-label='查看飞跃知识卡详情'>
         <span>飞跃</span>
-      </BaseCard>
+      </EntityCardFrame>
     );
 
     expect(screen.getByRole('link', { name: '查看飞跃知识卡详情' })).toHaveAttribute(

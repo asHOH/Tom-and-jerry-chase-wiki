@@ -8,8 +8,8 @@ import { handleCharacterIdChange } from '@/lib/editUtils';
 import type { CharacterWithFaction } from '@/lib/types';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
-import BaseCard from '@/components/ui/BaseCard';
 import Button from '@/components/ui/Button';
+import EntityCardFrame from '@/components/ui/EntityCardFrame';
 import { FormInput } from '@/components/ui/FormControls';
 import { PlusIcon } from '@/components/icons/CommonIcons';
 import { characters, FactionId } from '@/data';
@@ -73,7 +73,7 @@ export default function CharacterCreate() {
   }
 
   return (
-    <BaseCard
+    <EntityCardFrame
       variant='character'
       onClick={!showInput ? () => setShowInput(true) : () => {}}
       role='button'
@@ -163,6 +163,6 @@ export default function CharacterCreate() {
           </div>
         </div>
       )}
-    </BaseCard>
+    </EntityCardFrame>
   );
 }

@@ -13,8 +13,8 @@ import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { useToast } from '@/context/ToastContext';
 import { processCharacters } from '@/features/characters/utils/skillId';
-import BaseCard from '@/components/ui/BaseCard';
 import Button from '@/components/ui/Button';
+import EntityCardFrame from '@/components/ui/EntityCardFrame';
 import { FormTextarea } from '@/components/ui/FormControls';
 import { characters, FactionId } from '@/data';
 
@@ -207,7 +207,7 @@ export default function CharacterImport() {
 
   return (
     <>
-      <BaseCard
+      <EntityCardFrame
         variant='character'
         onClick={
           !showImportOptions && !showPasteInput ? () => setShowImportOptions(true) : () => {}
@@ -308,7 +308,7 @@ export default function CharacterImport() {
             containerHeight={containerHeight}
           />
         )}
-      </BaseCard>
+      </EntityCardFrame>
     </>
   );
 }
