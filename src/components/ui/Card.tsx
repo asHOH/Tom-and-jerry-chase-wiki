@@ -8,8 +8,7 @@ type CardProps<E extends React.ElementType = 'div'> = {
   as?: E;
 } & React.ComponentPropsWithoutRef<E>;
 
-const baseClasses =
-  'rounded-lg bg-white p-4 shadow-md transition-shadow duration-300 hover:shadow-lg dark:bg-slate-800 dark:border-slate-700';
+const baseClasses = 'rounded-lg bg-white p-4 shadow-md dark:bg-slate-800 dark:border-slate-700';
 
 export default function Card<E extends React.ElementType = 'div'>({
   as,
