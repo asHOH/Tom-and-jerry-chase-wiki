@@ -39,7 +39,7 @@ export default function ModeDetailClient({ mode }: { mode: Mode }) {
       ? [
           {
             key: 'description',
-            render: () => (
+            content: (
               <DetailTextSection
                 title='模式背景'
                 value={effectiveMode.description ?? null}
@@ -64,7 +64,7 @@ export default function ModeDetailClient({ mode }: { mode: Mode }) {
       : []),
     {
       key: 'rules',
-      render: () => (
+      content: (
         <DetailTextSection
           title='模式规则'
           value={effectiveMode.rules ?? null}

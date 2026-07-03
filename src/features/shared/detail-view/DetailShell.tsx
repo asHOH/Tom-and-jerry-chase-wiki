@@ -3,38 +3,16 @@
 import React from 'react';
 
 import { cn, designTokens } from '@/lib/design';
-import Card from '@/components/ui/Card';
 import SectionHeader from '@/components/ui/SectionHeader';
 
-type CardVariant = 'default' | 'ghost' | 'none';
-
-type CardOptions = {
-  variant?: CardVariant;
-  className?: string;
-  style?: React.CSSProperties;
-  testId?: string;
-};
-
-type BaseSection = {
+export type DetailSection = {
   key?: React.Key;
   title?: string;
   headerContent?: React.ReactNode;
-  cardOptions?: CardOptions;
+  content: React.ReactNode;
   containerClassName?: string;
   containerStyle?: React.CSSProperties;
 };
-
-type ContentSection = BaseSection & {
-  content: React.ReactNode;
-  render?: never;
-};
-
-type RenderSection = BaseSection & {
-  content?: never;
-  render: () => React.ReactNode;
-};
-
-export type DetailSection = ContentSection | RenderSection;
 
 type SharedProps = React.HTMLAttributes<HTMLDivElement>;
 
@@ -78,46 +56,6 @@ function DetailShell({
     ...rightColumnProps?.style,
   };
 
-  const renderSectionCard = (section: DetailSection, children: React.ReactNode) => {
-    const variant = section.cardOptions?.variant ?? 'default';
-
-    if (variant === 'none') {
-      return children;
-    }
-
-    if (variant === 'default') {
-      return (
-        <Card
-          className={cn('mb-8', section.cardOptions?.className)}
-          style={{
-            padding: designTokens.spacing.lg,
-            ...section.cardOptions?.style,
-          }}
-          data-testid={section.cardOptions?.testId}
-        >
-          {children}
-        </Card>
-      );
-    }
-
-    if (variant === 'ghost') {
-      return (
-        <div
-          className={cn(
-            'mb-8 rounded-lg border border-dashed border-slate-400/60 p-6',
-            section.cardOptions?.className
-          )}
-          style={section.cardOptions?.style}
-          data-testid={section.cardOptions?.testId}
-        >
-          {children}
-        </div>
-      );
-    }
-
-    return children;
-  };
-
   return (
     <div {...containerProps} className={cn(containerProps?.className)} style={containerStyle}>
       <div
@@ -140,10 +78,6 @@ function DetailShell({
           {sections.map((section, index) => {
             const key = section.key ?? index;
 
-            if ('render' in section) {
-              return <React.Fragment key={key}>{section.render()}</React.Fragment>;
-            }
-
             return (
               <div
                 key={key}
@@ -153,7 +87,7 @@ function DetailShell({
                 {section.title ? (
                   <SectionHeader title={section.title}>{section.headerContent}</SectionHeader>
                 ) : null}
-                {renderSectionCard(section, section.content)}
+                {section.content}
               </div>
             );
           })}

@@ -34,7 +34,7 @@ export default function ItemDetailClient({ item }: { item: Item }) {
   const sections: DetailSection[] = [
     {
       key: 'description',
-      render: () => (
+      content: (
         <DetailTextSection
           title='道具描述'
           value={effectiveItem.description ?? null}
@@ -63,7 +63,7 @@ export default function ItemDetailClient({ item }: { item: Item }) {
     },
     {
       key: 'create',
-      render: () => (
+      content: (
         <DetailTextSection
           title='生成方式'
           value={effectiveItem.create ?? null}

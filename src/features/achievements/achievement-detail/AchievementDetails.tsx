@@ -36,7 +36,7 @@ export default function AchievementDetailClient({ achievement }: { achievement: 
   const sections: DetailSection[] = [
     {
       key: 'description',
-      render: () => (
+      content: (
         <DetailTextSection
           title='成就描述'
           value={effectiveAchievement.description ?? null}

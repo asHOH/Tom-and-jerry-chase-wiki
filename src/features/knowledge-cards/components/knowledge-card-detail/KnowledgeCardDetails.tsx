@@ -94,7 +94,7 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
   const sections: DetailSection[] = [
     {
       key: 'effect',
-      render: () => (
+      content: (
         <DetailTextSection
           title='知识卡效果'
           value={effectiveCard.description ?? null}
@@ -171,7 +171,6 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
     },
     {
       title: getCharacterSectionTitle(),
-      cardOptions: { variant: 'none' },
       content: (
         <CharacterList
           characters={displayUsedCharacters ? usedCharacters : unusedCharacters}

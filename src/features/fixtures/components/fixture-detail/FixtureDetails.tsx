@@ -37,7 +37,7 @@ export default function FixtureDetailClient({ fixture }: { fixture: Fixture }) {
   const sections: DetailSection[] = [
     {
       key: 'description',
-      render: () => (
+      content: (
         <DetailTextSection
           title='物件描述'
           value={effectiveFixture.description ?? null}
@@ -68,7 +68,7 @@ export default function FixtureDetailClient({ fixture }: { fixture: Fixture }) {
   if (effectiveFixture.supportedMaps !== undefined && effectiveFixture.supportedMaps.length > 0) {
     sections.push({
       key: 'maps',
-      render: () => (
+      content: (
         <DetailTextSection
           title='相关地图'
           value={`共收录 $${effectiveFixture.supportedMaps?.length}$text-indigo-700 dark:text-indigo-400# 个出现 $${effectiveFixture.name}$text-fuchsia-600 dark:text-fuchsia-400# 的地图，点击下方按钮即可跳转。`}

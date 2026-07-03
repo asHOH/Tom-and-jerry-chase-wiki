@@ -37,7 +37,7 @@ export default function EntityDetailClient({ entity }: { entity: Entity }) {
   const sections: DetailSection[] = [
     {
       key: 'description',
-      render: () => (
+      content: (
         <DetailTextSection
           title='衍生物描述'
           value={effectiveEntity.description ?? null}
@@ -66,7 +66,7 @@ export default function EntityDetailClient({ entity }: { entity: Entity }) {
     },
     {
       key: 'create',
-      render: () => (
+      content: (
         <DetailTextSection
           title='生成方式'
           value={effectiveEntity.create ?? null}
@@ -92,7 +92,6 @@ export default function EntityDetailClient({ entity }: { entity: Entity }) {
   if (effectiveEntity.skills !== undefined) {
     sections.push({
       title: '衍生物技能',
-      cardOptions: { variant: 'none' },
       content: (
         <div className='space-y-4'>
           {effectiveEntity.skills

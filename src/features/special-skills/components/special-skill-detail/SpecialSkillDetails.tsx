@@ -80,7 +80,7 @@ export default function SpecialSkillDetailClient({ skill }: SpecialSkillDetailCl
   const sections: DetailSection[] = [
     {
       key: 'description',
-      render: () => (
+      content: (
         <DetailTextSection
           title='技能描述'
           value={effectiveSkill.description ?? null}
@@ -127,7 +127,6 @@ export default function SpecialSkillDetailClient({ skill }: SpecialSkillDetailCl
     },
     {
       title: getCharacterSectionTitle(),
-      cardOptions: { variant: 'none' },
       content: (
         <CharacterList
           characters={displayUsedCharacters ? usedCharacters : unusedCharacters}

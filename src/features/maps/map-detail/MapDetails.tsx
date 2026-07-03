@@ -84,7 +84,7 @@ export default function MapDetailClient({ map }: { map: MapType }) {
   const sections: DetailSection[] = [
     {
       key: 'description',
-      render: () => (
+      content: (
         <DetailTextSection
           title='地图描述'
           value={effectiveMap.description ?? null}
@@ -115,7 +115,7 @@ export default function MapDetailClient({ map }: { map: MapType }) {
   if (ownFixtures.length > 0) {
     sections.push({
       key: 'fixtures',
-      render: () => (
+      content: (
         <DetailTextSection
           title='相关组件'
           value={`共收录 $${ownFixtures.length}$text-indigo-700 dark:text-indigo-400# 个 $${effectiveMap.name}$text-fuchsia-600 dark:text-fuchsia-400# 存在的地图组件，点击下方按钮即可跳转。`}
@@ -144,7 +144,6 @@ export default function MapDetailClient({ map }: { map: MapType }) {
   if (effectiveMap.mapImageUrl) {
     sections.push({
       title: '地图预览',
-      cardOptions: { variant: 'none' },
       content: (
         <Card>
           {/* 图片容器 */}

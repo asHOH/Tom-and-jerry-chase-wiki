@@ -36,7 +36,7 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
   const sections: DetailSection[] = [
     {
       key: 'description',
-      render: () => (
+      content: (
         <DetailTextSection
           title='详细介绍'
           value={effectiveBuff.description}
@@ -67,7 +67,7 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
   if (effectiveBuff.stack !== undefined) {
     sections.push({
       key: 'stack',
-      render: () => (
+      content: (
         <DetailTextSection
           title='叠加/结算细节'
           value={effectiveBuff.stack}
@@ -95,7 +95,7 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
 
     sections.push({
       key: 'source',
-      render: () => (
+      content: (
         <DetailTextSection
           title={`具体来源（${sourceItems.length}个）`}
           value={effectiveBuff.sourceDescription ?? ''}
@@ -156,7 +156,7 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
   } else if (effectiveBuff.sourceDescription !== undefined) {
     sections.push({
       key: 'sourceDescription',
-      render: () => (
+      content: (
         <DetailTextSection
           title='具体来源'
           value={effectiveBuff.sourceDescription}
