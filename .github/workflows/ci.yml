@@ -147,7 +147,8 @@ jobs:
         if: steps.check-tests.outputs.tests-exist == 'true'
         uses: codecov/codecov-action@v7
         with:
-          file: ./coverage/lcov.info
+          files: ./coverage/lcov.info
+          disable_search: true
           flags: unittests
           name: codecov-umbrella
 
