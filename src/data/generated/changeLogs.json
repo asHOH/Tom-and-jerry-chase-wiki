@@ -1,7 +1,2190 @@
 [
   {
+    "date": "2026-07-03",
+    "changes": [
+      {
+        "type": "refactor",
+        "scope": "目录",
+        "message": "使用共享网格项包装器",
+        "hashes": ["01e3c167"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "角色信息",
+        "message": "标准化关系操作",
+        "hashes": ["ab31e9f3"],
+        "author": "asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "界面",
+        "message": "添加图标按钮基础组件并统一图标按钮样式和相关操作",
+        "hashes": [
+          "08c50d8e",
+          "4492b9ea",
+          "282ef42a",
+          "e76dfd45",
+          "64dd8efd",
+          "c0f86ffc",
+          "3f4170c3"
+        ],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-07-02",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "计划",
+        "message": "添加计划",
+        "hashes": ["4db8aa37"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-06-29",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "鼠方角色",
+        "message": "完善牛仔杰瑞信息",
+        "hashes": ["5f5041f7"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-06-28",
+    "changes": [
+      {
+        "type": "fix",
+        "scope": "胜率",
+        "message": "修复胜率显示问题",
+        "hashes": ["6332fb97"],
+        "author": "3swordman"
+      },
+      {
+        "type": "docs",
+        "scope": "贡献者清单",
+        "message": "添加新贡献者",
+        "hashes": ["206b92f4"],
+        "author": "3swordman"
+      },
+      {
+        "type": "fix",
+        "scope": "角色信息",
+        "message": "修复图片缩放错误",
+        "hashes": ["69a7824a"],
+        "author": "3swordman"
+      },
+      {
+        "type": "docs",
+        "scope": "胜率",
+        "message": "添加新胜率数据",
+        "hashes": ["fa21a780"],
+        "author": "3swordman"
+      },
+      {
+        "type": "docs",
+        "scope": "鼠方角色",
+        "message": "完善牛仔杰瑞信息",
+        "hashes": ["9bbbf7d6"],
+        "author": "asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "角色信息",
+        "message": "添加额外角色图片显示",
+        "hashes": ["d4bd2a7a"],
+        "author": "3swordman"
+      },
+      {
+        "type": "docs",
+        "scope": "数据同步",
+        "message": "应用截止至2026年6月27日的游戏数据更新（含部分批次）",
+        "hashes": ["622b5064", "88531899", "8eceba0b", "af7de082"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "界面",
+        "message": "调整模式网格每行最多显示6项",
+        "hashes": ["dca4d733"],
+        "author": "3swordman"
+      },
+      {
+        "type": "fix",
+        "scope": "角色关系",
+        "message": "修复尼宝相关错别字并移除废弃的关系",
+        "hashes": ["4f8e0742", "62e9cdc2"],
+        "author": "3swordman"
+      }
+    ]
+  },
+  {
+    "date": "2026-06-27",
+    "changes": [
+      {
+        "type": "refactor",
+        "scope": "依赖",
+        "message": "将ESLint迁移至oxlint提升检查速度",
+        "hashes": ["d271f4a9"],
+        "author": "3swordman"
+      },
+      {
+        "type": "style",
+        "scope": "管理",
+        "message": "优化仪表盘界面：添加徽章、悬停状态和紧凑布局",
+        "hashes": ["b381e7ab"],
+        "author": "3swordman"
+      },
+      {
+        "type": "fix",
+        "scope": "编辑模式",
+        "message": "修复错别字、通知错误并优化游戏图标",
+        "hashes": ["2398ca68", "91a83b11"],
+        "author": "3swordman"
+      },
+      {
+        "type": "feat",
+        "scope": "小游戏",
+        "message": "优化小游戏",
+        "hashes": ["71dea8cd"],
+        "author": "3swordman"
+      },
+      {
+        "type": "feat",
+        "scope": "玩法测试",
+        "message": "支持多选答案并优化相似度算法",
+        "hashes": ["cf4f6465"],
+        "author": "3swordman"
+      }
+    ]
+  },
+  {
+    "date": "2026-06-26",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "搜索引擎优化",
+        "message": "更新网站地图",
+        "hashes": ["281b0ab8"],
+        "author": "3swordman"
+      },
+      {
+        "type": "docs",
+        "scope": "图片",
+        "message": "添加并使用新图片",
+        "hashes": ["ddd071b9"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "角色克制",
+        "message": "修正一些错误",
+        "hashes": ["10ef224c"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "贡献者清单",
+        "message": "添加贡献者",
+        "hashes": ["7fe30007"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "关系矩阵",
+        "message": "优化关系矩阵：点击外部不关闭对话框并改进界面",
+        "hashes": ["3c0289ea", "0d61fca7"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-06-25",
+    "changes": [
+      {
+        "type": "feat",
+        "scope": "关系矩阵",
+        "message": "实现关系矩阵功能（分阶段）并添加编辑计划",
+        "hashes": ["3bc761b8", "14ce7ff7", "d44f1a7f", "0456c917"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "导航栏",
+        "message": "优化导航栏链接渲染并统一下拉菜单高度",
+        "hashes": ["0df3ca7a", "6f350af7"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "杂项",
+        "message": "修正错别字并优化首页布局",
+        "hashes": ["d153249e"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "数据同步",
+        "message": "应用截止至2026年6月24日、21日、15日、14日的游戏数据更新",
+        "hashes": ["40bb846f", "61aa0616", "6cc46187", "436c17db"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "知识卡",
+        "message": "添加改进基线",
+        "hashes": ["cbbf3f74"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-06-24",
+    "changes": [
+      {
+        "type": "refactor",
+        "scope": "类名",
+        "message": "统一文件中的类名",
+        "hashes": ["77b6f987"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "数据同步",
+        "message": "应用截止至2026年6月14日、12日、11日的游戏数据更新（含部分批次）",
+        "hashes": ["80bc65c8", "48ff0c9e", "1b242864", "6abac87f"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "测试",
+        "message": "修复测试失败",
+        "hashes": ["8ee14706"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "数据同步",
+        "message": "应用截止至2026年6月8日的游戏数据更新",
+        "hashes": ["67e9fab4"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "猫方角色",
+        "message": "完善剑客汤姆信息",
+        "hashes": ["2dd07efa"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "数据同步",
+        "message": "应用截止至2026年5月31日和30日的游戏数据更新",
+        "hashes": ["b8e12da0", "53c8940f"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-06-23",
+    "changes": [
+      {
+        "type": "feat",
+        "scope": "关系矩阵",
+        "message": "优化关系矩阵：缩短筛选名称、改进样式并支持调整大小",
+        "hashes": ["d57abc12", "391ddb3d", "f792b2b8"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-06-21",
+    "changes": [
+      {
+        "type": "feat",
+        "scope": "小游戏",
+        "message": "添加猜角色、属性对决、玩法测试三个小游戏并持续优化交互和数据",
+        "hashes": [
+          "5dbeda7c",
+          "eeb89c3d",
+          "90199e6b",
+          "f9cff789",
+          "6fe049ff",
+          "8c3e1220",
+          "4760930d",
+          "5966cb0c",
+          "8e23b73a"
+        ],
+        "author": "3swordman"
+      },
+      {
+        "type": "refactor",
+        "scope": "文章列表",
+        "message": "使用响应式样式替代useMobile",
+        "hashes": ["8b52ce37"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "界面",
+        "message": "将最大宽度扩大到7xl",
+        "hashes": ["d0513ef7"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "关系矩阵",
+        "message": "居中显示关系矩阵",
+        "hashes": ["6c4c6567"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "预览卡片",
+        "message": "防止图片被裁剪",
+        "hashes": ["371fa0a9"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "按钮",
+        "message": "吸收type='button'属性",
+        "hashes": ["71a68cf6"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "筛选行",
+        "message": "调整筛选行样式",
+        "hashes": ["edbbce67"],
+        "author": "asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "关系矩阵",
+        "message": "优化关系矩阵：调整样式、对齐颜色、确保正方形单元格并使用快速跳转链接",
+        "hashes": [
+          "be5b6bce",
+          "7487d24f",
+          "892d7deb",
+          "6c9acdba",
+          "a5c9bdf9",
+          "83e42667",
+          "fda9ba59"
+        ],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-06-20",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "文档",
+        "message": "更新米特操作技巧",
+        "hashes": ["67c40dcf"],
+        "author": "3swordman"
+      },
+      {
+        "type": "feat",
+        "scope": "文章功能",
+        "message": "优化文章显示",
+        "hashes": ["67177385"],
+        "author": "3swordman"
+      },
+      {
+        "type": "feat",
+        "scope": "编辑模式",
+        "message": "优化编辑模式：移除废弃按钮、添加更清晰的标签文本并优化代码质量",
+        "hashes": ["61cc810e", "71bef188", "538cc18b"],
+        "author": "3swordman"
+      },
+      {
+        "type": "feat",
+        "scope": "界面",
+        "message": "优化知识卡预览卡片样式",
+        "hashes": ["e6c609f3"],
+        "author": "3swordman"
+      },
+      {
+        "type": "fix",
+        "scope": "角色信息",
+        "message": "修复游戏数据操作未应用的问题",
+        "hashes": ["83e6da6e"],
+        "author": "3swordman"
+      },
+      {
+        "type": "refactor",
+        "scope": "编辑模式",
+        "message": "使用useSnapshot确保编辑模式数据同步",
+        "hashes": ["e12f153b"],
+        "author": "3swordman"
+      },
+      {
+        "type": "feat",
+        "scope": "关系矩阵",
+        "message": "添加关系矩阵页面",
+        "hashes": ["115c477e"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "关系矩阵",
+        "message": "细化计划",
+        "hashes": ["6961f786"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "角色克制",
+        "message": "修正冲突的克制关系",
+        "hashes": ["ed56edd4"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "数据",
+        "message": "拒绝冲突的关系单元格",
+        "hashes": ["72d3ff05"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "关系矩阵",
+        "message": "添加计划",
+        "hashes": ["8830c113"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "数据",
+        "message": "强制角色关系阵营边界",
+        "hashes": ["e231882a"],
+        "author": "asHOH"
+      },
+      {
+        "type": "revert",
+        "scope": "界面",
+        "message": "回滚'隐藏空角色关系'的更改",
+        "hashes": ["cebcd7ac"],
+        "author": "3swordman"
+      },
+      {
+        "type": "refactor",
+        "scope": "角色信息",
+        "message": "优化目录结构",
+        "hashes": ["80e11b0a"],
+        "author": "3swordman"
+      },
+      {
+        "type": "feat",
+        "scope": "界面",
+        "message": "隐藏空角色关系",
+        "hashes": ["a2a3fe48"],
+        "author": "3swordman"
+      },
+      {
+        "type": "feat",
+        "scope": "界面",
+        "message": "优化角色文章显示并使用瀑布流布局",
+        "hashes": ["cbb98169", "ea43288d"],
+        "author": "3swordman"
+      },
+      {
+        "type": "refactor",
+        "scope": "XSS防御",
+        "message": "统一客户端和服务端使用HTML清理",
+        "hashes": ["9b05255c"],
+        "author": "3swordman"
+      },
+      {
+        "type": "feat",
+        "scope": "角色信息",
+        "message": "当技能加点为空时隐藏显示",
+        "hashes": ["e825f962"],
+        "author": "3swordman"
+      }
+    ]
+  },
+  {
+    "date": "2026-06-19",
+    "changes": [
+      {
+        "type": "feat",
+        "scope": "目录网格",
+        "message": "改进目录网格响应式并移除未使用的间距参数",
+        "hashes": ["2a16ca34", "ada205b1"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "图标",
+        "message": "复用全局图标",
+        "hashes": ["8321460d"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "首页",
+        "message": "更新官方和友情链接",
+        "hashes": ["eaab5679"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "角色关系",
+        "message": "拆分角色关系文件并优化按关系分组",
+        "hashes": ["ee25fedd", "105c4bbb"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "EchoFlow",
+        "message": "在推荐中使用投影的角色关系",
+        "hashes": ["4ee23673"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "属性提示",
+        "message": "更新数据并简化购买时间显示",
+        "hashes": ["b839b388"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "角色技能",
+        "message": "去重描述逻辑",
+        "hashes": ["5dac5f49"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "知识卡详情",
+        "message": "去重useAppContext",
+        "hashes": ["1ccbaf9d"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "AGENTS",
+        "message": "澄清中文乱码处理",
+        "hashes": ["39808285"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "鼠方知识卡",
+        "message": "完善文档",
+        "hashes": ["e54e0a28"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "文本工具",
+        "message": "移除过时的文本解析工具",
+        "hashes": ["d3d02ab9"],
+        "author": "asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "知识卡详情",
+        "message": "增强高亮显示",
+        "hashes": ["d35dd5b3"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "地图",
+        "message": "为游乐场添加房间到支持模式",
+        "hashes": ["d3d76dd5"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "鼠方知识卡",
+        "message": "完善文档",
+        "hashes": ["a528bef1"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-06-18",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "角色关系",
+        "message": "修复错别字",
+        "hashes": ["de925d52"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-06-16",
+    "changes": [
+      {
+        "type": "feat",
+        "scope": "地图组件",
+        "message": "将地图组件导航按钮从工具页移至首页和导航栏",
+        "hashes": ["1fe39d6c"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "地图组件",
+        "message": "使用地图图片代替缺失图片",
+        "hashes": ["09cb8157"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "状态",
+        "message": "更新部分数据",
+        "hashes": ["936f1eb8"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "猫方角色",
+        "message": "完善剑客汤姆主动技能",
+        "hashes": ["1a012169"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "状态",
+        "message": "修复小错误",
+        "hashes": ["5367d4bb"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "状态",
+        "message": "更新状态、衍生物和地图组件数据",
+        "hashes": ["8a8671fe"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "猫方角色",
+        "message": "完善如玉被动技能",
+        "hashes": ["3dc7daba"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "数据同步",
+        "message": "应用截止至2026年5月27日的游戏数据更新",
+        "hashes": ["25de7628"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "猫方知识卡",
+        "message": "完善铁手信息",
+        "hashes": ["3ec2c4a9"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "数据同步",
+        "message": "应用截止至2026年5月25日的游戏数据更新",
+        "hashes": ["c4bf4a21"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "数据同步",
+        "message": "应用截止至2026年5月21日的游戏数据更新",
+        "hashes": ["3e5665f6"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "猫方角色",
+        "message": "完善牛仔汤姆知识卡和技能加点",
+        "hashes": ["17b5498c"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "游戏操作",
+        "message": "修复压缩操作将后代设置操作合并到父级的问题",
+        "hashes": ["7bb74b41"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "猫方角色",
+        "message": "移除牛仔汤姆的追击标签",
+        "hashes": ["3f4b0a8e"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "数据同步",
+        "message": "应用截止至2026年5月17日的游戏数据更新",
+        "hashes": ["1aae3fef"],
+        "author": "asHOH"
+      },
+      {
+        "type": "test",
+        "scope": "网格卡片导航",
+        "message": "修复测试失败",
+        "hashes": ["2d269c0f"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-06-15",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "猫方角色",
+        "message": "完善侦探汤姆信息",
+        "hashes": ["adf7d690"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "鼠方角色",
+        "message": "完善尼宝知识卡",
+        "hashes": ["b94b38a7"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "鼠方角色",
+        "message": "完善恶魔泰菲信息",
+        "hashes": ["4bc0c35a"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "地图组件",
+        "message": "更新花朵描述",
+        "hashes": ["27ebda99"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "认证",
+        "message": "修复用户名策略并在认证错误时报告更多信息",
+        "hashes": ["c91c4d93", "3585657e"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "状态",
+        "message": "为状态网格和单个状态卡添加提示",
+        "hashes": ["c5b31ce7"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "机制",
+        "message": "添加新文章",
+        "hashes": ["79571b6b"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "特性",
+        "message": "添加2个特性",
+        "hashes": ["3143dae2"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
+    "date": "2026-06-14",
+    "changes": [
+      {
+        "type": "fix",
+        "scope": "知识卡",
+        "message": "修复应激反应消耗图片",
+        "hashes": ["129eb38d"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "角色关系",
+        "message": "提取角色关系中重复的工具栏和编辑选项逻辑",
+        "hashes": ["66832d16", "097b212f"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-06-13",
+    "changes": [
+      {
+        "type": "refactor",
+        "scope": "关系项选择器",
+        "message": "提取共享选择器逻辑",
+        "hashes": ["ad08da15"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "属性卡片",
+        "message": "提取共享逻辑",
+        "hashes": ["cd64e62c"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "碰撞",
+        "message": "修正错别字",
+        "hashes": ["2217f577"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "页面加载",
+        "message": "提取加载组件的共享逻辑",
+        "hashes": ["46139945", "8b4f54f0"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-06-12",
+    "changes": [
+      {
+        "type": "refactor",
+        "scope": "目录网格",
+        "message": "提取目录页面共享逻辑",
+        "hashes": ["6c74d664"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "管理",
+        "message": "修复数组的旧值未定义为undefined",
+        "hashes": ["34dcea3c"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "角色关系",
+        "message": "拆分并去重关系显示",
+        "hashes": ["0ab40a0c"],
+        "author": "asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "外部链接",
+        "message": "添加官方网站",
+        "hashes": ["3449643f"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "设计",
+        "message": "拆分设计令牌和工具文件",
+        "hashes": ["b1ad4819", "ba6483a9"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "管理",
+        "message": "改进审核差异界面：报告批量审核失败、合并相同项、添加颜色并增强显示",
+        "hashes": ["91fcda71", "31d042d5", "f0b21a9f", "aa1d76ff"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "管理",
+        "message": "提取操作预览逻辑",
+        "hashes": ["6e21b8c7"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "管理",
+        "message": "微调界面",
+        "hashes": ["644de3fd"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "界面",
+        "message": "调整表单控件宽度和颜色",
+        "hashes": ["acd2d1c7"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-06-11",
+    "changes": [
+      {
+        "type": "fix",
+        "scope": "管理",
+        "message": "防止计数器游戏操作的旧值未定义",
+        "hashes": ["6c5db6fc"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "筛选行",
+        "message": "添加非活动筛选样式",
+        "hashes": ["9d55e883"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "角色导入",
+        "message": "修复过时的类名",
+        "hashes": ["3df47f45"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "筛选行",
+        "message": "集中管理筛选样式",
+        "hashes": ["ea545264"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "文章筛选",
+        "message": "修复暗色模式下活动筛选颜色",
+        "hashes": ["f94b23e3"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "界面",
+        "message": "统一按钮样式",
+        "hashes": ["2f7cb6ea"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "文章功能",
+        "message": "移除未使用的条件判断",
+        "hashes": ["a8ed5e25"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "搜索",
+        "message": "全局启用搜索",
+        "hashes": ["e5bcaceb"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "角色的推荐知识卡",
+        "message": "提取链接显示组件、添加分类提示并将优先级警告整合为徽章",
+        "hashes": ["e912b7a4", "342472f1", "1f107e8f"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-06-10",
+    "changes": [
+      {
+        "type": "fix",
+        "scope": "界面",
+        "message": "增强数字显示颜色",
+        "hashes": ["3e7a6606"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-06-09",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "地图组件",
+        "message": "完善折叠椅信息",
+        "hashes": ["7d54997c"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "角色信息",
+        "message": "标准化措辞",
+        "hashes": ["7d5f646e"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "猫方角色",
+        "message": "完善汤姆信息",
+        "hashes": ["f060d442"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "猫方角色",
+        "message": "完善侦探汤姆信息",
+        "hashes": ["ffcdf093"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "HTML清理",
+        "message": "使用html-sanitizer替代jsdom避免文章渲染错误",
+        "hashes": ["ab593e95"],
+        "author": "asHOH"
+      },
+      {
+        "type": "perf",
+        "scope": "注释",
+        "message": "优化注释性能：预处理自动换行、提取解析逻辑、记忆化组件并修复重复高亮键",
+        "hashes": ["e641c3a8", "8154e4c1", "22c1e562", "bc880125"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-06-07",
+    "changes": [
+      {
+        "type": "fix",
+        "scope": "角色ID",
+        "message": "添加缺失的侦探汤姆ID",
+        "hashes": ["b6a836f3"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "注释",
+        "message": "重构注释组件：提取辅助函数和类型、增强测试并修复键冲突",
+        "hashes": [
+          "a972f714",
+          "1e177fb3",
+          "1b05d7dc",
+          "563bb759",
+          "9b46295b",
+          "78d1d205",
+          "82147dbd",
+          "c20117e4"
+        ],
+        "author": "asHOH, 3swordman"
+      }
+    ]
+  },
+  {
+    "date": "2026-06-04",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "角色信息",
+        "message": "修改侦探汤姆描述",
+        "hashes": ["c335eb55"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "状态",
+        "message": "更新页面通知",
+        "hashes": ["bee39e3e"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "fix",
+        "scope": "注释",
+        "message": "修复显示错误",
+        "hashes": ["3e9346e3"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "猫方角色",
+        "message": "添加新角色侦探汤姆",
+        "hashes": ["ec0fb4eb"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
+    "date": "2026-06-03",
+    "changes": [
+      {
+        "type": "feat",
+        "scope": "注释",
+        "message": "为注释添加数值和状态颜色，支持在文本中显示状态描述并全局展示对应状态",
+        "hashes": ["dc54321d", "e9a5ad76", "01d2a175"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "状态",
+        "message": "更新状态数据",
+        "hashes": ["93445f87"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
+    "date": "2026-06-02",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "特技",
+        "message": "减少冗余",
+        "hashes": ["67be2b3e"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-06-01",
+    "changes": [
+      {
+        "type": "perf",
+        "scope": "构建",
+        "message": "优化构建：使用Turbopack和serwist CLI，修复预缓存配置",
+        "hashes": ["1c7b7f67", "15cf3932"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "数据同步",
+        "message": "应用截止至2026年5月31日、17日、16日、15日以及10日（牛仔汤姆）的游戏数据更新",
+        "hashes": ["7c54ee13", "88f5dd90", "4a3c4712", "3c1cf152", "829dd8d3"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-05-31",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "角色信息",
+        "message": "移除占位符",
+        "hashes": ["383da452"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "猫方角色",
+        "message": "屏蔽有争议的知识卡",
+        "hashes": ["f01f5d34"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "状态",
+        "message": "更新数据",
+        "hashes": ["98e0a41c"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
+    "date": "2026-05-30",
+    "changes": [
+      {
+        "type": "fix",
+        "scope": "网站部署",
+        "message": "更新部署链接使用develop分支并修复部署错误",
+        "hashes": ["bc3018ae", "8e06cccd"],
+        "author": "3swordman"
+      },
+      {
+        "type": "refactor",
+        "scope": "ai",
+        "message": "从Gemini迁移到Vercel AI SDK并使用OpenAI提供程序",
+        "hashes": ["a36eb03b"],
+        "author": "3swordman"
+      },
+      {
+        "type": "fix",
+        "scope": "官方站点",
+        "message": "移除长时间无法访问的tjwiki.net1.work",
+        "hashes": ["d8c5b9d8"],
+        "author": "3swordman"
+      }
+    ]
+  },
+  {
+    "date": "2026-05-28",
+    "changes": [
+      {
+        "type": "refactor",
+        "scope": "状态",
+        "message": "适配新数据类型并大幅调整状态类型和数据",
+        "hashes": ["505850f3", "462147c8"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
+    "date": "2026-05-22",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "地图组件",
+        "message": "添加新地图组件、图片并修改描述",
+        "hashes": ["5e53b9fc", "1bee4aa5", "f0fc912d"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
+    "date": "2026-05-20",
+    "changes": [
+      {
+        "type": "fix",
+        "scope": "文章列表",
+        "message": "微调文章卡片样式",
+        "hashes": ["fb31ffac"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "富文本编辑器",
+        "message": "为文章内容类添加清理白名单、保留对齐样式并移除富文本模式生成的内联样式",
+        "hashes": ["a6054e88", "9a989cac", "25baae9d"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-05-19",
+    "changes": [
+      {
+        "type": "fix",
+        "scope": "测试",
+        "message": "解决jest中jsdom 29导入失败",
+        "hashes": ["ead30007"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "数据",
+        "message": "收紧数据模式并增强测试，运行prettier",
+        "hashes": ["d83519e3"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-05-12",
+    "changes": [
+      {
+        "type": "fix",
+        "scope": "地图详情",
+        "message": "简化图片属性",
+        "hashes": ["76f0576a"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "图片",
+        "message": "优化图片替代文本和无障碍标签，移除重复模式并为富文本图片添加空alt",
+        "hashes": ["86c6e487", "9fb8c593", "2b1e5aef", "f4b99283"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "单个道具按钮",
+        "message": "移除不必要的边框",
+        "hashes": ["42b7e977"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "审核面板",
+        "message": "隐藏预览中的重复信息",
+        "hashes": ["11b99f07"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "日期工具",
+        "message": "提取共享的日期和时间戳格式化函数",
+        "hashes": ["babaeee8", "8af5b445"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "审核面板",
+        "message": "改进游戏数据操作审核面板：隐藏重复信息、条件显示年份并简化界面",
+        "hashes": ["0c2b1b42", "7e12d993", "206cb862"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "编辑模式",
+        "message": "修复编辑模式：使用压缩计数作为总操作数并保留第一个旧值",
+        "hashes": ["6871d534", "af093f23"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-05-11",
+    "changes": [
+      {
+        "type": "fix",
+        "scope": "键盘导航",
+        "message": "简化键盘快捷键守卫并修复输入框聚焦时的导航问题",
+        "hashes": ["9334c481", "0c07222c"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "编辑模式",
+        "message": "重构编辑模式：拆分状态门面、提取路由标识和存储同步逻辑并迁移上下文使用",
+        "hashes": [
+          "07ba1267",
+          "9a72772c",
+          "d8a4f688",
+          "885aa196",
+          "23998b8b",
+          "138265e4",
+          "833661a2",
+          "20c3b4dc",
+          "73461b53",
+          "39ab43c7"
+        ],
+        "author": "asHOH"
+      },
+      {
+        "type": "test",
+        "scope": "编辑模式",
+        "message": "增强测试",
+        "hashes": ["ef0634f6"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-05-10",
+    "changes": [
+      {
+        "type": "refactor",
+        "scope": "可编辑",
+        "message": "简化存储适配器路由、隔离角色和卡片的读写路由并拆分文件",
+        "hashes": ["5f14b6ee", "025f798e", "a896b9c3", "b6749830", "1b076ce8"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "服务端渲染",
+        "message": "移除路由级ssr:false",
+        "hashes": ["a8d940dd"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "公开操作",
+        "message": "简化公开操作上下文",
+        "hashes": ["b27f6c4f"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-05-09",
+    "changes": [
+      {
+        "type": "fix",
+        "scope": "机制",
+        "message": "更新页面描述文本并在无激活机制时隐藏底部按钮行",
+        "hashes": ["4ee03160", "6e00c4ed"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "TypeScript配置",
+        "message": "排除Next开发生成的路由类型",
+        "hashes": ["bdfe7b2f"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "路由",
+        "message": "移除未使用的客户端包装器",
+        "hashes": ["c2e7dd1b"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "游戏数据",
+        "message": "重构游戏数据操作回放、使用注册表和操作日志统一草稿持久化与压缩行为",
+        "hashes": [
+          "99e04205",
+          "c3a05df1",
+          "47e45e64",
+          "457ab5ba",
+          "43307c20",
+          "6a7caa97",
+          "2b9570ab"
+        ],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "游戏数据",
+        "message": "添加公开游戏数据操作简化计划",
+        "hashes": ["8c0415ce"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "游戏数据",
+        "message": "共享公开操作条目规范化",
+        "hashes": ["8bea6d70"],
+        "author": "asHOH"
+      },
+      {
+        "type": "perf",
+        "scope": "数据",
+        "message": "避免关系编辑路径中的桶导入",
+        "hashes": ["ae365cad"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "数据",
+        "message": "强化角色关系导出构建器",
+        "hashes": ["0644d11a"],
+        "author": "asHOH"
+      },
+      {
+        "type": "test",
+        "scope": "关系",
+        "message": "覆盖公开操作关系投影的测试",
+        "hashes": ["b8da616b"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "ESLint",
+        "message": "启用no-empty和no-unreachable规则",
+        "hashes": ["608b2b22"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "数据同步",
+        "message": "应用截止至2026年5月5日、4日、3日、2日、1日的游戏数据更新",
+        "hashes": ["0540f419", "41e8528d", "8c578074", "eb03e930", "b69c2798"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "游戏操作补丁",
+        "message": "增强冲突解决和清理指南",
+        "hashes": ["94e365c0"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "数据同步",
+        "message": "应用截止至2026年4月25日的游戏数据更新",
+        "hashes": ["964f2e24"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "游戏操作补丁",
+        "message": "澄清等效逆操作保留",
+        "hashes": ["890ecb91"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "数据同步",
+        "message": "应用截止至2026年4月24日的游戏数据更新",
+        "hashes": ["b85c1af1"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "数据同步",
+        "message": "应用截止至2026年4月12日的游戏数据更新",
+        "hashes": ["d38f2a02"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "游戏操作补丁",
+        "message": "更新游戏操作补丁规则：压缩技能、分组规则、更新工具策略并添加合并develop说明",
+        "hashes": ["930315c2", "f8b83456", "cba6c2c3", "8d7df9da"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-05-05",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "衍生物",
+        "message": "更新一些属性",
+        "hashes": ["cca29cd6"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "refactor",
+        "scope": "类型",
+        "message": "将猫专属属性添加到角色物品属性中",
+        "hashes": ["41cbd5ae"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "角色信息",
+        "message": "更新生命回复",
+        "hashes": ["a2952414"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "猫方角色",
+        "message": "更新爪刀范围",
+        "hashes": ["71eb651f"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "游戏操作补丁",
+        "message": "添加无操作语义重写规则",
+        "hashes": ["22359caf"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "数据同步",
+        "message": "应用截止至2026年4月11日的游戏数据更新",
+        "hashes": ["db734d86"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "数据同步",
+        "message": "应用2026年4月8日的游戏数据更新",
+        "hashes": ["4c2256dc"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "数据同步",
+        "message": "应用2026年4月5日的游戏数据更新",
+        "hashes": ["7554914f"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-05-04",
+    "changes": [
+      {
+        "type": "test",
+        "scope": "维基历史显示",
+        "message": "修正测试",
+        "hashes": ["e0c8a433"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "上下文",
+        "message": "防止详情切换状态重置",
+        "hashes": ["ba1af07e"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "角色信息",
+        "message": "更新鲍姆和米雪儿的描述",
+        "hashes": ["639ad45c"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "地图组件",
+        "message": "修订一个描述",
+        "hashes": ["ac11ff52"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "变体",
+        "message": "删除错误变体",
+        "hashes": ["f438628e"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "角色关系",
+        "message": "删除过时内容",
+        "hashes": ["00be02ba"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "衍生物",
+        "message": "修正错别字",
+        "hashes": ["0f7fb810"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "角色信息",
+        "message": "修改部分标签和描述",
+        "hashes": ["38dd1cf7"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "特性",
+        "message": "添加新特性",
+        "hashes": ["0e600e00"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "道具组",
+        "message": "重构部分分组",
+        "hashes": ["343428ed"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "fix",
+        "scope": "角色详情",
+        "message": "仅当数量大于0时渲染特性和反向卡片",
+        "hashes": ["c82ed0b0"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "角色技能",
+        "message": "移除重复的桌面/移动端渲染块",
+        "hashes": ["47c1a4fd"],
+        "author": "asHOH"
+      },
+      {
+        "type": "test",
+        "scope": "数据验证",
+        "message": "添加技能描述一致性验证",
+        "hashes": ["0b831cc2"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "年鉴",
+        "message": "对齐文本并修剪历史显示",
+        "hashes": ["a2975441", "6095a485"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "水合",
+        "message": "延迟客户端偏好直到挂载",
+        "hashes": ["6d5d8c48"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "界面",
+        "message": "提取共享目录卡片布局并修复类名",
+        "hashes": ["51de6304", "ef7379cc", "c0a23a31"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "文章功能",
+        "message": "在列表预览中显示最新批准版本",
+        "hashes": ["e18b6def"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-05-01",
+    "changes": [
+      {
+        "type": "fix",
+        "scope": "公开操作",
+        "message": "修复历史记录提取的两个问题",
+        "hashes": ["5ebcdaa9"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "fix",
+        "scope": "路由",
+        "message": "拒绝不合法的裸百分号编码",
+        "hashes": ["4f064553"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "fix",
+        "scope": "跳转工具",
+        "message": "改进技能槽解析的正则表达式并将等级上限扩展到3",
+        "hashes": ["1a4610e4", "88b196a9"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "角色信息",
+        "message": "延迟回到顶部入口直到客户端挂载",
+        "hashes": ["ff095b36"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "界面",
+        "message": "修复尺寸选项不匹配",
+        "hashes": ["d05f7891"],
+        "author": "asHOH"
+      },
+      {
+        "type": "refactor",
+        "scope": "界面",
+        "message": "重构类名处理：替换isMobile为md:响应式断点，统一使用cn函数",
+        "hashes": ["a67b2a19", "0e97eb51", "03c33d1f", "e7c41de3"],
+        "author": "asHOH"
+      },
+      {
+        "type": "fix",
+        "scope": "审核面板",
+        "message": "移除废弃的PR功能并压缩差异界面",
+        "hashes": ["16fafa7c", "48cb29e6"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "数据同步",
+        "message": "应用截止至2026年4月4日的游戏数据更新",
+        "hashes": ["9441c153"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-04-29",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "状态",
+        "message": "添加击飞状态",
+        "hashes": ["7168f281"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "角色信息",
+        "message": "更新猫角色18-20号伤害描述",
+        "hashes": ["f092c5fb"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
+    "date": "2026-04-26",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "角色信息",
+        "message": "更新魔术戏法描述",
+        "hashes": ["0cd05112"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "道具",
+        "message": "更新空投包裹详细描述",
+        "hashes": ["5e84467a"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "角色信息",
+        "message": "更新猫角色16-17号伤害描述",
+        "hashes": ["923bc869"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
+    "date": "2026-04-24",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "角色信息",
+        "message": "更新猫角色14-15号伤害描述",
+        "hashes": ["6fbfa6e5"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
+    "date": "2026-04-23",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "角色信息",
+        "message": "更新猫角色11-13号伤害描述",
+        "hashes": ["08802ea9"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
+    "date": "2026-04-21",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "角色信息",
+        "message": "更新牛仔的礼物信息",
+        "hashes": ["912392fa"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
+    "date": "2026-04-19",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "角色信息",
+        "message": "更新猫角色8-10号伤害描述",
+        "hashes": ["32a0853f"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "fix",
+        "scope": "注释",
+        "message": "伤害值显示两位小数",
+        "hashes": ["a2778749"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "角色信息",
+        "message": "更新猫角色6-7号伤害描述",
+        "hashes": ["c8508b46"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
+    "date": "2026-04-18",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "角色信息",
+        "message": "更新猫角色1-5号伤害描述",
+        "hashes": ["87971880"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "feat",
+        "scope": "EchoFlow API",
+        "message": "安全修复与编辑历史支持",
+        "hashes": ["8bf0a724"],
+        "author": "YYTZ666"
+      },
+      {
+        "type": "docs",
+        "scope": "角色信息",
+        "message": "更新鼠方角色25-35号伤害描述",
+        "hashes": ["ecf231c5", "7042628e", "7f25b0db"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
+    "date": "2026-04-16",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "角色信息",
+        "message": "修改恶魔泰菲特技",
+        "hashes": ["ec50753b"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "道具",
+        "message": "将水果盘重命名为果盘",
+        "hashes": ["5fa8f631"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "fix",
+        "scope": "反馈建议",
+        "message": "修正关闭按钮错别字",
+        "hashes": ["f5542d16"],
+        "author": "3swordman"
+      }
+    ]
+  },
+  {
+    "date": "2026-04-15",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "角色信息",
+        "message": "更新鼠方角色21-24号伤害描述",
+        "hashes": ["49f8e1c4"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
+    "date": "2026-04-14",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "角色信息",
+        "message": "更新部分伤害描述",
+        "hashes": ["c9e3be6d"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
+    "date": "2026-04-13",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "用法",
+        "message": "更新文章《编辑》",
+        "hashes": ["4e55ed3e"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "机制",
+        "message": "添加新文章《地图》",
+        "hashes": ["2d92f273"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "机制",
+        "message": "更新文章《伤害》",
+        "hashes": ["a2f8a3fa"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
+    "date": "2026-04-12",
+    "changes": [
+      {
+        "type": "docs",
+        "scope": "角色信息",
+        "message": "更新一些描述",
+        "hashes": ["a0c8bc4e"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
+    "date": "2026-04-11",
+    "changes": [
+      {
+        "type": "feat",
+        "scope": "页面加载",
+        "message": "优化加载页面",
+        "hashes": ["df4e2fca"],
+        "author": "3swordman"
+      },
+      {
+        "type": "perf",
+        "scope": "网格",
+        "message": "在移动端虚拟化部分网格",
+        "hashes": ["868b1506"],
+        "author": "3swordman"
+      },
+      {
+        "type": "fix",
+        "scope": "注释",
+        "message": "解决ESLint prefer-const错误",
+        "hashes": ["f3bb20e2"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "道具",
+        "message": "修改部分伤害描述",
+        "hashes": ["b6596a2b"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "fix",
+        "scope": "搜索",
+        "message": "优化搜索结果展示",
+        "hashes": ["02411d7d"],
+        "author": "3swordman"
+      },
+      {
+        "type": "fix",
+        "scope": "界面",
+        "message": "使用正确的网易图标",
+        "hashes": ["bab01859"],
+        "author": "3swordman"
+      }
+    ]
+  },
+  {
+    "date": "2026-04-10",
+    "changes": [
+      {
+        "type": "refactor",
+        "scope": "注释",
+        "message": "添加伤害标签类型并优化默认标签选择，隐藏冗余前缀",
+        "hashes": ["37c41513"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "角色信息",
+        "message": "修改部分伤害描述",
+        "hashes": ["efd2ff5f"],
+        "author": "ConductorJerry"
+      },
+      {
+        "type": "docs",
+        "scope": "数据同步",
+        "message": "应用截止至2026年4月10日的游戏数据更新",
+        "hashes": ["ca293bbe", "e49e9257"],
+        "author": "3swordman"
+      },
+      {
+        "type": "feat",
+        "scope": "注释",
+        "message": "支持为伤害样式添加标签",
+        "hashes": ["d3535cc2"],
+        "author": "ConductorJerry"
+      }
+    ]
+  },
+  {
+    "date": "2026-04-07",
+    "changes": [
+      {
+        "type": "fix",
+        "scope": "EchoFlow",
+        "message": "修复Origin检查阻断合法调用及多个bug",
+        "hashes": ["0f2347c8"],
+        "author": "YYTZ666"
+      }
+    ]
+  },
+  {
+    "date": "2026-04-06",
+    "changes": [
+      {
+        "type": "test",
+        "scope": "管理",
+        "message": "修复类型",
+        "hashes": ["055428ab"],
+        "author": "asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "EchoFlow",
+        "message": "完善API端点支持",
+        "hashes": ["afb6dbb0"],
+        "author": "YYTZ666"
+      },
+      {
+        "type": "fix",
+        "scope": "搜索引擎优化",
+        "message": "调整优先级、避免多个h1并更新文档页元数据生成",
+        "hashes": ["3191039d", "aa63d442", "c521faa4"],
+        "author": "asHOH"
+      },
+      {
+        "type": "test",
+        "scope": "测试",
+        "message": "增强测试：替换为语义断言、添加组件测试并更新过时测试",
+        "hashes": [
+          "f236fc35",
+          "c47ea9e1",
+          "63fe6a3c",
+          "12da9c7c",
+          "d8c1cea0",
+          "c864380c",
+          "dae56c61"
+        ],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "网站部署",
+        "message": "更新DEPLOY.md匹配新部署脚本",
+        "hashes": ["db2b020c"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
+    "date": "2026-04-05",
+    "changes": [
+      {
+        "type": "fix",
+        "scope": "角色信息",
+        "message": "为角色关系添加注释悬浮提示",
+        "hashes": ["c76a27ee"],
+        "author": "3swordman"
+      },
+      {
+        "type": "docs",
+        "scope": "游戏操作补丁",
+        "message": "简化描述并添加数组索引路径规则",
+        "hashes": ["a1a3c781", "801068ba"],
+        "author": "asHOH"
+      },
+      {
+        "type": "docs",
+        "scope": "数据同步",
+        "message": "应用2026年3月30日的游戏数据更新",
+        "hashes": ["b373f589"],
+        "author": "asHOH"
+      },
+      {
+        "type": "feat",
+        "scope": "管理",
+        "message": "提取操作审核面板、改进预览并使用复选框批量审核",
+        "hashes": ["99bdac0a", "c39feebd", "ff69d596"],
+        "author": "asHOH"
+      }
+    ]
+  },
+  {
     "date": "2026-04-04",
     "changes": [
+      {
+        "type": "feat",
+        "scope": "编辑模式",
+        "message": "实验性支持创建角色",
+        "hashes": ["c9aebcee"],
+        "author": "3swordman"
+      },
+      {
+        "type": "feat",
+        "scope": "更新日志",
+        "message": "更新日志至4月4日",
+        "hashes": ["a7d1ce92"],
+        "author": "3swordman"
+      },
       {
         "type": "feat",
         "message": "添加新的分站",
@@ -40,6 +2223,13 @@
   {
     "date": "2026-04-03",
     "changes": [
+      {
+        "type": "fix",
+        "scope": "配置",
+        "message": "添加FLOWKEY环境变量说明并改为从环境变量读取域名",
+        "hashes": ["551b7848", "7f179bdc", "479c9e78"],
+        "author": "YYTZ666"
+      },
       {
         "type": "feat",
         "scope": "界面",
