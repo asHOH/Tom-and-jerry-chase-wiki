@@ -33,7 +33,7 @@ export default function SpecialSkillClient({ description }: Props) {
     return filteredSkills.map((skill) => (
       <CatalogGridItem key={skill.factionId + skill.name}>
         <EntityCardFrame
-          variant='item'
+          variant='catalog'
           href={`/special-skills/${encodeURIComponent(skill.factionId)}/${encodeURIComponent(skill.name)}`}
           aria-label={`查看${skill.name}特技详情`}
         >

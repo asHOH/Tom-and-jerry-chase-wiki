@@ -5,7 +5,7 @@ type EntityCardFrameProps = {
   children: React.ReactNode;
   onClick?: () => void;
   className?: string;
-  variant?: 'character' | 'item' | 'details';
+  variant?: 'portrait' | 'catalog' | 'detail';
   preserveEditParam?: boolean;
   // Accessibility props
   role?: string;
@@ -19,7 +19,7 @@ export default function EntityCardFrame({
   children,
   onClick,
   className = '',
-  variant = 'character',
+  variant = 'portrait',
   preserveEditParam = false,
   role,
   tabIndex,
@@ -39,7 +39,7 @@ export default function EntityCardFrame({
     delete (finalStyle as { background?: string }).background;
 
     switch (variant) {
-      case 'character':
+      case 'portrait':
         return {
           ...finalStyle,
           display: 'flex',
@@ -49,7 +49,7 @@ export default function EntityCardFrame({
           overflow: 'hidden',
           transition: designTokens.transitions.hover,
         };
-      case 'item':
+      case 'catalog':
         return {
           ...finalStyle,
           position: 'relative' as const,
@@ -57,7 +57,7 @@ export default function EntityCardFrame({
           padding: 0,
           transition: designTokens.transitions.hover,
         };
-      case 'details':
+      case 'detail':
         return {
           ...finalStyle,
           height: '100%',

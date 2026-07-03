@@ -107,7 +107,7 @@ export default function PreviewCard({
         'flex w-full max-w-xs cursor-pointer flex-row items-start p-4 shadow-md transition-shadow duration-200 hover:shadow-lg sm:max-w-sm md:max-w-md md:p-5 lg:max-w-lg lg:p-6',
         className
       )}
-      variant='details'
+      variant='detail'
       role='link'
       tabIndex={-1}
     >

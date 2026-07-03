@@ -66,7 +66,7 @@ export default function CatalogCard({
 
   return (
     <EntityCardFrame
-      variant='item'
+      variant='catalog'
       aria-label={ariaLabel}
       className={className ?? ''}
       {...navigationProps}

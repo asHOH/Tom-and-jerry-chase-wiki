@@ -133,7 +133,7 @@ export default function SpecialSkillAdviceClient() {
           >
             <div className='md:w-1/5'>
               <EntityCardFrame
-                variant='item'
+                variant='catalog'
                 href={`/special-skills/${encodeURIComponent(skill.factionId)}/${encodeURIComponent(
                   skill.name
                 )}`}

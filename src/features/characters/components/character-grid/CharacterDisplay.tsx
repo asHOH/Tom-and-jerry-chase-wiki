@@ -41,7 +41,7 @@ export default function CharacterDisplay({
 
   return (
     <EntityCardFrame
-      variant='character'
+      variant='portrait'
       href={href}
       preserveEditParam={isUserCharacter}
       role='button'

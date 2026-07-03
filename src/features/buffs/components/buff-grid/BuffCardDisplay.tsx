@@ -16,7 +16,7 @@ export default function BuffCardDisplay({ buff }: { buff: Buff }) {
 
   return (
     <EntityCardFrame
-      variant='item'
+      variant='catalog'
       href={`/buffs/${encodeURIComponent(buff.name)}`}
       aria-label={`查看${buff.name}效果详情`}
     >

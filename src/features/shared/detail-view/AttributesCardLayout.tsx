@@ -46,7 +46,7 @@ export default function AttributesCardLayout({
 
   return (
     <div style={spacingVars as CSSProperties}>
-      <EntityCardFrame variant='details'>
+      <EntityCardFrame variant='detail'>
         {isMobile ? (
           <div>
             <div

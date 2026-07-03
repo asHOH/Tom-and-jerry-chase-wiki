@@ -208,7 +208,7 @@ export default function CharacterImport() {
   return (
     <>
       <EntityCardFrame
-        variant='character'
+        variant='portrait'
         onClick={
           !showImportOptions && !showPasteInput ? () => setShowImportOptions(true) : () => {}
         }

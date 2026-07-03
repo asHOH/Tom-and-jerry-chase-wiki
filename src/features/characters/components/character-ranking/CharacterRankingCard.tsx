@@ -39,7 +39,7 @@ function CharacterRankingCard({
 
   return (
     <EntityCardFrame
-      variant='item'
+      variant='catalog'
       href={`/characters/${character.id}`}
       role='button'
       aria-label={`查看${character.id}角色详情，排名第${rank}名，数值${formattedValue}`}
