@@ -244,6 +244,26 @@ export const designTokens = {
       },
     },
 
+    // Knowledge card group metadata colors
+    knowledgeCardGroupMeta: {
+      contributor: {
+        text: '#1e293b', // slate-800
+        background: '#e0e7ef', // slate-200 adjusted
+        dark: {
+          text: '#e0e7ef', // slate-200 adjusted
+          background: '#334155', // slate-700
+        },
+      },
+      missingWarning: {
+        text: '#dc2626', // red-600
+        background: '#fef2f2', // red-50
+        dark: {
+          text: '#fef2f2', // red-50
+          background: '#dc2626', // red-600
+        },
+      },
+    },
+
     // Positioning tag colors
     positioningTags: {
       // Cat tags

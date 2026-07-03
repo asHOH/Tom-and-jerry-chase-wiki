@@ -272,6 +272,21 @@ export const getBuffTypeColors = (type: buffTypelist, isDarkMode: boolean) => {
   };
 };
 
+type KnowledgeCardGroupMetaColor = keyof typeof designTokens.colors.knowledgeCardGroupMeta;
+
+export const getKnowledgeCardGroupMetaColors = (
+  role: KnowledgeCardGroupMetaColor,
+  isDarkMode: boolean
+) => {
+  const scheme = designTokens.colors.knowledgeCardGroupMeta[role];
+  const theme = isDarkMode ? scheme.dark : scheme;
+
+  return {
+    color: theme.text,
+    backgroundColor: theme.background,
+  };
+};
+
 /**
  * Avatar filter color utility
  * - 杰瑞: use the same brownish colors as the "砸墙" positioning tag

@@ -18,7 +18,7 @@ const PriorityWarningBadge = ({ content, placement = 'text' }: PriorityWarningBa
   >
     <span
       aria-hidden='true'
-      className='flex h-5 w-5 items-center justify-center rounded-full bg-[#fef3c7] text-xs leading-none font-bold text-[#92400e] shadow-sm ring-1 ring-amber-300/70 dark:bg-[#92400e] dark:text-[#fff7ed] dark:ring-orange-500/40'
+      className='flex h-5 w-5 items-center justify-center rounded-full bg-amber-100 text-xs leading-none font-bold text-amber-800 shadow-sm ring-1 ring-amber-300/70 dark:bg-amber-800 dark:text-orange-50 dark:ring-orange-500/40'
     >
       !
     </span>

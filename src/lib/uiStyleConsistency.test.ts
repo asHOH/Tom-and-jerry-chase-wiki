@@ -49,6 +49,11 @@ const relationSelectorIconPrimitiveTargets = [
   'src/components/ui/CharacterSelector.tsx',
 ] as const;
 
+const knowledgeCardSemanticColorTargets = [
+  'src/features/characters/components/character-detail/knowledge-cards/KnowledgeCardSection.tsx',
+  'src/features/characters/components/character-detail/knowledge-cards/PriorityWarningBadge.tsx',
+] as const;
+
 const rawActionPattern =
   /<(?:button|Link)\b(?=[^>]*\bclassName=)[^>]*\b(?:bg-blue|bg-green|bg-red|bg-yellow|bg-gray-100|bg-gray-200|bg-gray-300|bg-gray-500|bg-gray-600)/;
 
@@ -72,6 +77,8 @@ const tailwindConflictTargets = ['src/lib/design/componentClasses.ts'] as const;
 
 const duplicateFocusVisibleOutlinePattern =
   /(?:^|[\s'"])focus-visible:outline(?!-)\s+focus-visible:outline-2(?!-)|(?:^|[\s'"])focus-visible:outline-2(?!-)\s+focus-visible:outline(?!-)/;
+
+const hardCodedSemanticHexPattern = /#[0-9A-Fa-f]{3,8}|(?:bg|text|border)-\[#/;
 
 describe('UI style consistency', () => {
   it('uses shared action primitives in migrated article, admin, and modal surfaces', () => {
@@ -118,6 +125,15 @@ describe('UI style consistency', () => {
     const offenders = relationSelectorIconPrimitiveTargets.filter((relativePath) => {
       const source = fs.readFileSync(path.join(projectRoot, relativePath), 'utf8');
       return !source.includes('<IconButton') || hasRawRelationSelectorAddButton(source);
+    });
+
+    expect(offenders).toEqual([]);
+  });
+
+  it('keeps knowledge card semantic colors in design helpers or Tailwind palette classes', () => {
+    const offenders = knowledgeCardSemanticColorTargets.filter((relativePath) => {
+      const source = fs.readFileSync(path.join(projectRoot, relativePath), 'utf8');
+      return hardCodedSemanticHexPattern.test(source);
     });
 
     expect(offenders).toEqual([]);

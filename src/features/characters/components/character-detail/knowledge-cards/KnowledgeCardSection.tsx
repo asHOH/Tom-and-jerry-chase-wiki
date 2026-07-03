@@ -5,7 +5,7 @@ import some from 'lodash-es/some';
 import { useSnapshot } from 'valtio';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
-import { cn } from '@/lib/design';
+import { cn, getKnowledgeCardGroupMetaColors } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
@@ -71,11 +71,6 @@ const isKnowledgeCardGroupSet = (
   group: DeepReadonly<KnowledgeCardGroup | KnowledgeCardGroupSet>
 ): group is DeepReadonly<KnowledgeCardGroupSet> => group != undefined && 'groups' in group;
 
-const getWarningTagStyles = (isDarkMode: boolean) =>
-  isDarkMode
-    ? { background: '#dc2626', color: '#fef2f2' }
-    : { background: '#fef2f2', color: '#dc2626' };
-
 interface WarningMessagesInput {
   warnTieXue: boolean;
   warnJiuJiuWo: boolean;
@@ -128,21 +123,13 @@ const GroupMetaRow = ({
     return null;
   }
 
-  const warningTagStyles = getWarningTagStyles(isDarkMode);
+  const contributorTagStyles = getKnowledgeCardGroupMetaColors('contributor', isDarkMode);
+  const warningTagStyles = getKnowledgeCardGroupMetaColors('missingWarning', isDarkMode);
 
   return (
     <div className='ml-11 flex flex-wrap items-center gap-1 sm:ml-12 md:ml-13 lg:ml-14'>
       {shouldShowContributor && (
-        <Tag
-          size='xs'
-          margin='micro'
-          className='opacity-80'
-          colorStyles={
-            isDarkMode
-              ? { background: '#334155', color: '#e0e7ef' }
-              : { background: '#e0e7ef', color: '#1e293b' }
-          }
-        >
+        <Tag size='xs' margin='micro' className='opacity-80' colorStyles={contributorTagStyles}>
           推荐人：
           {(contributorInformation?.description !== undefined && (
             <Tooltip content={contributorInformation.description}>
