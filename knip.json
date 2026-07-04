@@ -13,7 +13,7 @@
   "ignore": ["**/*.stories.tsx", "**/*.test.tsx", "src/data/database.types.ts"],
   "ignoreDependencies": [
     "@tailwindcss/typography",
-    "depcheck",
+    "esbuild",
     "esbuild-wasm",
     "rimraf",
     "tailwindcss",
