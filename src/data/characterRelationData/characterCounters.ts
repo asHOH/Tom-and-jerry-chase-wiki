@@ -4369,7 +4369,7 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
   },
   {
     description:
-      '剑汤的连招会被圆滚滚的无敌和解控死死克制，并且泰菲的角色模型矮，连斩很多情况无法锁定。',
+      '剑汤的连招被泰菲的圆滚滚的无敌和解控死死克制，并且泰菲的角色模型矮，连斩很多情况无法锁定；在剑客汤姆连斩友方过程中布雷，可能炸飞队友或眩晕剑汤，也有少量帮助',
     group: [
       { name: '泰菲', type: 'character' },
       { name: '剑客汤姆', type: 'character' },

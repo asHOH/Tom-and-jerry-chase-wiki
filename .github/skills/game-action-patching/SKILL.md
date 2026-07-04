@@ -41,6 +41,7 @@ Pick the split file by relation target type: character counter-style edges in `c
 - **Duplicate cleanup**: If an action removes a redundant edge that is already covered by another relation, remove only the redundant edge. Do not rewrite the other one.
 - **Indices**: Treat 0, 1 literally. Defer if oldValue mismatches.
 - **Flattened children**: If a parent `set` row is applied and child-path rows describe the same final value, verify against the final source once and sync all covered rows.
+- **Placeholder defaults**: If a child action only writes a likely UI default/placeholder value (e.g. `新别名`) and no later action replaces it with a real value, do not sync it; report it as a likely mis-add.
 
 ## Core Rules & Conflict Resolution
 

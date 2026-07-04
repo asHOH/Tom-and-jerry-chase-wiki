@@ -810,6 +810,19 @@ export const characterRelationCharacterCollaboratorTraits: Trait[] = [
     },
   },
   {
+    description: '感应雷可以和斜塔搭配守火箭，拖延时间，在一些吃地形的图有奇效',
+    group: [
+      { name: '泰菲', type: 'character' },
+      { name: '拿坡里鼠', type: 'character' },
+    ],
+    relation: {
+      kind: 'collaborators',
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '拿坡里鼠', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
     description:
       '天使杰瑞的Lv.2被动可以夺取猫身上的星星，供仙女鼠使用；雷云还能降低对方伤害，提高二者的容错率。但这一组合中的仙女鼠压力极大，很怕空技能和猛攻，相对来说操作和收益并不完全对等，慎用。',
     group: [
