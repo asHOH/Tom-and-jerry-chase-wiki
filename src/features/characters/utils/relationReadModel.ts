@@ -3,8 +3,10 @@ import type { CharacterWithFaction } from '@/lib/types';
 import type {
   CharacterRelation,
   CharacterRelationItem,
+  FactionId,
   SingleItem,
   TraitRelation,
+  TraitRelationKind,
 } from '@/data/types';
 import {
   getRelationsByKind,
@@ -28,6 +30,181 @@ const defaultRelation: CharacterRelation = {
 };
 
 const relationKeys = Object.keys(defaultRelation) as Array<keyof CharacterRelation>;
+
+const characterTargetRelationKinds = [
+  'counters',
+  'counteredBy',
+  'counterEachOther',
+  'collaborators',
+] satisfies readonly TraitRelationKind[];
+
+const nonCharacterTargetRelationGroups = [
+  {
+    domain: 'knowledgeCard',
+    kinds: ['countersKnowledgeCards', 'counteredByKnowledgeCards'],
+  },
+  {
+    domain: 'specialSkill',
+    kinds: ['countersSpecialSkills', 'counteredBySpecialSkills'],
+  },
+  {
+    domain: 'map',
+    kinds: ['advantageMaps', 'disadvantageMaps'],
+  },
+  {
+    domain: 'mode',
+    kinds: ['advantageModes', 'disadvantageModes'],
+  },
+] satisfies ReadonlyArray<{
+  domain: RelationTargetDomain;
+  kinds: readonly TraitRelationKind[];
+}>;
+
+type RelationTargetDomain = 'character' | 'knowledgeCard' | 'specialSkill' | 'map' | 'mode';
+type RelationDropReason = 'illegal' | 'conflicting';
+
+type RelationProjectionDropWarning = {
+  rowCharacterId: string;
+  targetDomain: RelationTargetDomain;
+  targetId: string;
+  droppedKind: TraitRelationKind;
+  keptKind?: TraitRelationKind;
+  reason: RelationDropReason;
+};
+
+type NormalizeCharacterRelationProjectionOptions = {
+  getCharacterFactionId: (characterId: string) => FactionId | undefined;
+};
+
+const warnedProjectionDropKeys = new Set<string>();
+
+const warnProjectionDrop = (warning: RelationProjectionDropWarning) => {
+  if (process.env.NODE_ENV !== 'development') return;
+
+  const warningKey = [
+    warning.rowCharacterId,
+    warning.targetDomain,
+    warning.targetId,
+    warning.droppedKind,
+    warning.keptKind ?? '',
+    warning.reason,
+  ].join('::');
+  if (warnedProjectionDropKeys.has(warningKey)) return;
+  warnedProjectionDropKeys.add(warningKey);
+
+  console.warn('[relationReadModel] Dropped relation projection item.', warning);
+};
+
+const isLegalCharacterTargetRelation = (
+  rowCharacterId: string,
+  targetId: string,
+  relationKind: TraitRelationKind,
+  getCharacterFactionId: (characterId: string) => FactionId | undefined
+) => {
+  if (rowCharacterId === targetId) return false;
+
+  const rowFactionId = getCharacterFactionId(rowCharacterId);
+  const targetFactionId = getCharacterFactionId(targetId);
+
+  if (!rowFactionId || !targetFactionId) return true;
+
+  if (rowFactionId === 'mouse' && targetFactionId === 'mouse') {
+    return relationKind === 'collaborators';
+  }
+
+  if (rowFactionId === 'cat' && targetFactionId === 'cat') {
+    return false;
+  }
+
+  return (
+    relationKind === 'counters' ||
+    relationKind === 'counteredBy' ||
+    relationKind === 'counterEachOther'
+  );
+};
+
+const normalizeRelationTargetDomain = (
+  source: CharacterRelation,
+  target: CharacterRelation,
+  rowCharacterId: string,
+  targetDomain: RelationTargetDomain,
+  relationKinds: readonly TraitRelationKind[]
+) => {
+  const keptKindByTargetId = new Map<string, TraitRelationKind>();
+
+  relationKinds.forEach((relationKind) => {
+    source[relationKind].forEach((item) => {
+      const keptKind = keptKindByTargetId.get(item.id);
+      if (keptKind) {
+        warnProjectionDrop({
+          rowCharacterId,
+          targetDomain,
+          targetId: item.id,
+          droppedKind: relationKind,
+          keptKind,
+          reason: 'conflicting',
+        });
+        return;
+      }
+
+      keptKindByTargetId.set(item.id, relationKind);
+      target[relationKind].push(item);
+    });
+  });
+};
+
+export const normalizeCharacterRelationProjection = (
+  rowCharacterId: string,
+  relation: CharacterRelation,
+  options: NormalizeCharacterRelationProjectionOptions
+): CharacterRelation => {
+  const normalized = createEmptyRelation();
+  const keptCharacterKindByTargetId = new Map<string, TraitRelationKind>();
+
+  characterTargetRelationKinds.forEach((relationKind) => {
+    relation[relationKind].forEach((item) => {
+      if (
+        !isLegalCharacterTargetRelation(
+          rowCharacterId,
+          item.id,
+          relationKind,
+          options.getCharacterFactionId
+        )
+      ) {
+        warnProjectionDrop({
+          rowCharacterId,
+          targetDomain: 'character',
+          targetId: item.id,
+          droppedKind: relationKind,
+          reason: 'illegal',
+        });
+        return;
+      }
+
+      const keptKind = keptCharacterKindByTargetId.get(item.id);
+      if (keptKind) {
+        warnProjectionDrop({
+          rowCharacterId,
+          targetDomain: 'character',
+          targetId: item.id,
+          droppedKind: relationKind,
+          keptKind,
+          reason: 'conflicting',
+        });
+        return;
+      }
+
+      keptCharacterKindByTargetId.set(item.id, relationKind);
+      normalized[relationKind].push(item);
+    });
+  });
+
+  nonCharacterTargetRelationGroups.forEach(({ domain, kinds }) => {
+    normalizeRelationTargetDomain(relation, normalized, rowCharacterId, domain, kinds);
+  });
+
+  return normalized;
+};
 
 const toRelationItem = (
   relation: TraitRelation,
@@ -244,11 +421,15 @@ export function getCharacterRelation(
 ): CharacterRelation {
   if (!charactersRecord[id]) return defaultRelation;
 
-  return mergeCharacterRelationProjection(
+  const mergedRelation = mergeCharacterRelationProjection(
     buildSharedTraitRelations(id),
     buildSharedInverseCharacterRelations(id),
     buildLegacyOverlayRelations(charactersRecord, id)
   );
+
+  return normalizeCharacterRelationProjection(id, mergedRelation, {
+    getCharacterFactionId: (characterId) => charactersRecord[characterId]?.factionId,
+  });
 }
 
 export const getSpecialSkillRelationSummary = (

@@ -78,6 +78,8 @@ const TOOLTIP_PREFIX_BY_DISPLAY_KIND = {
   counterEachOther: '互克：',
 } satisfies Record<RelationMatrixDisplayKind, string>;
 
+const warnedDuplicateCellKeys = new Set<string>();
+
 const getOppositeFaction = (factionId: FactionId): FactionId =>
   factionId === 'mouse' ? 'cat' : 'mouse';
 
@@ -191,6 +193,21 @@ const createCell = (
   };
 };
 
+const warnDuplicateMatrixCell = (
+  cellKey: string,
+  oldCell: RelationMatrixCell | undefined,
+  newCell: RelationMatrixCell
+) => {
+  if (process.env.NODE_ENV !== 'development' || warnedDuplicateCellKeys.has(cellKey)) return;
+  warnedDuplicateCellKeys.add(cellKey);
+
+  console.warn('[relationMatrixViewModel] Duplicate relation matrix cell ignored.', {
+    cellKey,
+    oldCell,
+    newCell,
+  });
+};
+
 const getRelationKindsForColumnCategory = (
   columnCategory: RelationMatrixColumnCategory
 ): readonly TraitRelationKind[] => {
@@ -259,12 +276,8 @@ export const buildRelationMatrixViewModel = (
 
         const cellKey = toCellKey(row.key, columnKey);
         if (cells.has(cellKey)) {
-          console.log({
-            cellKey,
-            oldCell: cells.get(cellKey),
-            newCell: createCell(relationKind, item),
-          });
-          throw new Error(`Duplicate relation matrix cell: ${cellKey}`);
+          warnDuplicateMatrixCell(cellKey, cells.get(cellKey), createCell(relationKind, item));
+          continue;
         }
 
         cells.set(cellKey, createCell(relationKind, item));

@@ -23,10 +23,7 @@ const restoreCharacters = (snapshot: Record<string, unknown>) => {
 
 const setLegacyRelationItems = (
   id: string,
-  key: keyof Pick<
-    CharacterRelation,
-    'collaborators' | 'counterEachOther' | 'counteredBy' | 'counters'
-  >,
+  key: keyof CharacterRelation,
   items: CharacterRelation[keyof CharacterRelation]
 ) => {
   (characters[id] as Partial<CharacterRelation>)[key] = items;
@@ -173,6 +170,100 @@ describe('getCharacterRelation', () => {
     const matches = relations.counteredBy.filter((item) => item.id === relation.subject.name);
 
     expect(matches).toEqual([directItem]);
+  });
+
+  it('should normalize stale overlays that conflict with canonical character relations', () => {
+    const staleOverlayItem = {
+      id: '兔八哥',
+      description: 'stale local mutual counter overlay',
+      isMinor: true,
+    };
+
+    setLegacyRelationItems('侦探杰瑞', 'counterEachOther', [staleOverlayItem]);
+
+    const relations = getCharacterRelation(characters, '侦探杰瑞');
+
+    expect(relations.counters).toEqual(
+      expect.arrayContaining([expect.objectContaining({ id: '兔八哥' })])
+    );
+    expect(relations.counterEachOther).not.toEqual(
+      expect.arrayContaining([expect.objectContaining({ id: '兔八哥' })])
+    );
+  });
+
+  it('should drop illegal character relation overlays for the row and target factions', () => {
+    setLegacyRelationItems('杰瑞', 'counters', [
+      {
+        id: '侦探杰瑞',
+        description: 'mouse cannot counter mouse',
+        isMinor: false,
+      },
+    ]);
+    setLegacyRelationItems('图多盖洛', 'collaborators', [
+      {
+        id: '兔八哥',
+        description: 'cats cannot collaborate',
+        isMinor: false,
+      },
+    ]);
+
+    expect(getCharacterRelation(characters, '杰瑞').counters).not.toEqual(
+      expect.arrayContaining([expect.objectContaining({ id: '侦探杰瑞' })])
+    );
+    expect(getCharacterRelation(characters, '图多盖洛').collaborators).not.toEqual(
+      expect.arrayContaining([expect.objectContaining({ id: '兔八哥' })])
+    );
+  });
+
+  it('should keep the first same-kind duplicate target in a relation domain', () => {
+    const firstItem = {
+      id: '汤姆',
+      description: 'first duplicate wins',
+      isMinor: false,
+    };
+    const secondItem = {
+      id: '汤姆',
+      description: 'second duplicate is dropped',
+      isMinor: true,
+    };
+
+    setLegacyRelationItems('杰瑞', 'counters', [firstItem, secondItem]);
+
+    const matches = getCharacterRelation(characters, '杰瑞').counters.filter(
+      (item) => item.id === '汤姆'
+    );
+
+    expect(matches).toEqual([firstItem]);
+  });
+
+  it('should resolve mutually exclusive non-character relation domains by target id', () => {
+    const keptItem = {
+      id: '__same_card__',
+      description: 'first knowledge-card relation wins',
+      isMinor: false,
+    };
+    const duplicateItem = {
+      id: '__same_card__',
+      description: 'same-kind duplicate is dropped',
+      isMinor: true,
+    };
+    const conflictingItem = {
+      id: '__same_card__',
+      description: 'opposite knowledge-card relation is dropped',
+      isMinor: true,
+    };
+
+    setLegacyRelationItems('杰瑞', 'countersKnowledgeCards', [keptItem, duplicateItem]);
+    setLegacyRelationItems('杰瑞', 'counteredByKnowledgeCards', [conflictingItem]);
+
+    const relations = getCharacterRelation(characters, '杰瑞');
+
+    expect(relations.countersKnowledgeCards.filter((item) => item.id === keptItem.id)).toEqual([
+      keptItem,
+    ]);
+    expect(relations.counteredByKnowledgeCards).not.toEqual(
+      expect.arrayContaining([expect.objectContaining({ id: keptItem.id })])
+    );
   });
 
   it('should not rebuild the relation index on repeated read-only relation queries', () => {

@@ -253,33 +253,61 @@ describe('relationMatrixViewModel', () => {
     expect(getCell(viewModel, '杰瑞', '汤姆')).toBeUndefined();
   });
 
-  it('should reject duplicate row-local matrix cells', () => {
+  it('should not throw when stale overlays conflict with canonical relation cells', () => {
+    setRelationItems('侦探杰瑞', 'counterEachOther', [
+      {
+        id: '兔八哥',
+        description: 'stale mutual counter overlay',
+        isMinor: true,
+      },
+    ]);
+
+    const viewModel = buildRelationMatrixViewModel({
+      rowFaction: 'mouse',
+      columnCategory: 'cat',
+    });
+
+    expect(getCell(viewModel, '侦探杰瑞', '兔八哥')).toMatchObject({
+      sourceKind: 'counters',
+    });
+  });
+
+  it('should keep the first row-local matrix cell when duplicate cells leak through', () => {
+    const firstItem = {
+      id: '汤姆',
+      description: 'first duplicate',
+      isMinor: false,
+    };
     const duplicateItem = {
       id: '汤姆',
       description: 'duplicate',
-      isMinor: false,
+      isMinor: true,
     };
 
-    expect(() =>
-      buildRelationMatrixViewModel({
-        rowFaction: 'mouse',
-        columnCategory: 'cat',
-        getRelationsForRow: () =>
-          ({
-            counters: [duplicateItem, duplicateItem],
-            counteredBy: [],
-            counterEachOther: [],
-            collaborators: [],
-            countersKnowledgeCards: [],
-            counteredByKnowledgeCards: [],
-            countersSpecialSkills: [],
-            counteredBySpecialSkills: [],
-            advantageMaps: [],
-            advantageModes: [],
-            disadvantageMaps: [],
-            disadvantageModes: [],
-          }) satisfies CharacterRelation,
-      })
-    ).toThrow('Duplicate relation matrix cell');
+    const viewModel = buildRelationMatrixViewModel({
+      rowFaction: 'mouse',
+      columnCategory: 'cat',
+      getRelationsForRow: () =>
+        ({
+          counters: [firstItem, duplicateItem],
+          counteredBy: [],
+          counterEachOther: [],
+          collaborators: [],
+          countersKnowledgeCards: [],
+          counteredByKnowledgeCards: [],
+          countersSpecialSkills: [],
+          counteredBySpecialSkills: [],
+          advantageMaps: [],
+          advantageModes: [],
+          disadvantageMaps: [],
+          disadvantageModes: [],
+        }) satisfies CharacterRelation,
+    });
+
+    expect(getCell(viewModel, '杰瑞', '汤姆')).toMatchObject({
+      description: 'first duplicate',
+      isMinor: false,
+      sourceKind: 'counters',
+    });
   });
 });
