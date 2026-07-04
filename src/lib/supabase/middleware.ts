@@ -1,11 +1,10 @@
 import { NextResponse, type NextRequest } from 'next/server';
 
-import { env } from '@/env';
-
+import { hasSupabasePublicConfig } from './config';
 import { createSupabaseProxyClient } from './ssrClient';
 
 export async function updateSession(request: NextRequest) {
-  if (env.NEXT_PUBLIC_DISABLE_ARTICLES === '1' || !env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+  if (!hasSupabasePublicConfig()) {
     return NextResponse.next({ request });
   }
 

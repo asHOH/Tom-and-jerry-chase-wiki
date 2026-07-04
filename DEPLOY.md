@@ -150,13 +150,13 @@ NEXT_PUBLIC_DISABLE_ARTICLES=1
 # 2. Supabase 配置 (可选)
 # ------------------------------
 # 仅当 NEXT_PUBLIC_DISABLE_ARTICLES=0 时需要配置。
-# 如需启用文章功能（只读），请联系本站维护者获取生产环境的 URL 和 ANON_KEY。
+# 如需启用文章功能（只读），请联系本站维护者获取生产环境的 URL 和 Publishable key。
 
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your_supabase_publishable_key
 
 # 服务端密钥 (考虑到安全风险，该密钥暂不开放)
-SUPABASE_SERVICE_ROLE_KEY=
+SUPABASE_SECRET_KEY=
 
 # 邮箱域名限制 (如需开放登录)
 NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN=email.tjwiki.com

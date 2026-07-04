@@ -9,9 +9,9 @@ import {
   publishGameDataActions,
   PublishGameDataActionsError,
 } from '@/lib/gameData/publishGameDataActions';
+import { hasSupabasePublicConfig } from '@/lib/supabase/config';
 import { actionHistorySchema } from '@/lib/validation/schemas';
 import type { Json } from '@/data/database.types';
-import { env } from '@/env';
 
 const schema = z.object({
   entries: actionHistorySchema,
@@ -19,7 +19,7 @@ const schema = z.object({
 });
 
 export async function POST(req: Request) {
-  if (env.NEXT_PUBLIC_DISABLE_ARTICLES === '1' || !env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+  if (!hasSupabasePublicConfig()) {
     return NextResponse.json({ error: 'Supabase is disabled' }, { status: 501 });
   }
 

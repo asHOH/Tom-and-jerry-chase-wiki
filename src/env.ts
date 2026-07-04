@@ -13,6 +13,7 @@ export const env = createEnv({
     RESEND_FROM_EMAIL: z.email().optional(),
 
     // Supabase
+    SUPABASE_SECRET_KEY: z.string().optional(),
     SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
 
     FLOWKEY: z.string().optional(),
@@ -72,6 +73,7 @@ export const env = createEnv({
 
     // Supabase
     NEXT_PUBLIC_SUPABASE_URL: z.url().optional(),
+    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: z.string().optional(),
     NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().optional(),
     NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN: z.string().optional(),
     NEXT_PUBLIC_SUPABASE_RTE_IMAGE_BUCKET: z.string().optional(),
@@ -100,6 +102,7 @@ export const env = createEnv({
     NEXT_PUBLIC_DISABLE_WIKITEXT_EDITOR: process.env.NEXT_PUBLIC_DISABLE_WIKITEXT_EDITOR,
     NEXT_PUBLIC_DISABLE_IMAGE_OPTIMIZATION: process.env.NEXT_PUBLIC_DISABLE_IMAGE_OPTIMIZATION,
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
+    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN:
       process.env.NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN,

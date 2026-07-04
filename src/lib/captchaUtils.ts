@@ -1,5 +1,6 @@
 import { createHmac, timingSafeEqual } from 'crypto';
 
+import { supabasePublishableKey } from '@/lib/supabase/config';
 import { env } from '@/env';
 
 export async function verifyCaptchaToken(token: string | null | undefined): Promise<boolean> {
@@ -54,7 +55,7 @@ export async function verifyCaptchaToken(token: string | null | undefined): Prom
 }
 
 export function generateCaptchaProof(username: string): string {
-  const secret: string = env.CAPTCHA_SECRET_KEY || env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+  const secret: string = env.CAPTCHA_SECRET_KEY || supabasePublishableKey || '';
   const timestamp = Date.now();
   const payload = `${username}:${timestamp}`;
   const signature = createHmac('sha256', secret).update(payload).digest('hex');
@@ -76,7 +77,7 @@ export function verifyCaptchaProof(token: string, username: string): boolean {
   // Token expires in 10 minutes
   if (Date.now() - timestamp > 10 * 60 * 1000) return false;
 
-  const secret: string = env.CAPTCHA_SECRET_KEY || env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+  const secret: string = env.CAPTCHA_SECRET_KEY || supabasePublishableKey || '';
   const payload = `${username}:${timestamp}`;
   const expectedSignature = createHmac('sha256', secret).update(payload).digest('hex');
   if (expectedSignature.length != signature.length) return false;

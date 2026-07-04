@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 
 import { generatePageMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
+import { resolveSupabaseSecretKey } from '@/lib/supabase/config';
 import { getSiteJsonLd } from '@/constants/seo';
 import StructuredData from '@/components/StructuredData';
 import { env } from '@/env';
@@ -23,7 +24,7 @@ export default function Home() {
       <StructuredData data={getSiteJsonLd()} />
       <HomeContentClient
         description={DESCRIPTION}
-        hasServiceKey={!!env.SUPABASE_SERVICE_ROLE_KEY}
+        hasServiceKey={!!resolveSupabaseSecretKey(env)}
       />
     </>
   );

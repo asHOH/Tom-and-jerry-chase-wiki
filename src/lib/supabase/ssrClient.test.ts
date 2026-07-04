@@ -72,7 +72,7 @@ jest.mock('@supabase/ssr', () => ({
 jest.mock('@/env', () => ({
   env: {
     NEXT_PUBLIC_SUPABASE_URL: 'https://supabase.test',
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: 'anon-key',
+    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: 'publishable-key',
   },
 }));
 

@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     const captchaProof = generateCaptchaProof(username);
 
     if (!supabaseAdmin) {
-      console.error('Supabase admin client is not configured (missing service role key).');
+      console.error('Supabase admin client is not configured (missing secret key).');
       return NextResponse.json({ error: 'Server misconfigured' }, { status: 500 });
     }
 

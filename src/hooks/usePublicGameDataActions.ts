@@ -8,6 +8,7 @@ import {
   type PublicActionTargetRegistry,
 } from '@/lib/gameData/actionReplay';
 import type { PublicActionRow } from '@/lib/gameData/publicActionsTypes';
+import { hasSupabasePublicConfig } from '@/lib/supabase/config';
 import {
   buffsEdit,
   cardsEdit,
@@ -19,7 +20,6 @@ import {
   modesEdit,
   specialSkillsEdit,
 } from '@/data/store';
-import { env } from '@/env';
 
 import { GameDataManager } from '../lib/dataManager';
 import { getActionsStorageKey, withRecordingSuppressed } from '../lib/edit/diffUtils';
@@ -76,7 +76,7 @@ export function usePublicGameDataActions(options?: { initialPublicActions?: Publ
 
   const [{ isEditMode, enabledAtMs }, setEditModeState] = useState(() => readEditModeState());
 
-  const enabled = env.NEXT_PUBLIC_DISABLE_ARTICLES !== '1' && !!env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const enabled = hasSupabasePublicConfig();
 
   const actions = enabled ? options?.initialPublicActions : undefined;
 

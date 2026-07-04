@@ -10,7 +10,7 @@ import type { Database } from '@/data/database.types';
 import type { Article as ArticleListItem, ArticlesData, Category } from '@/data/types';
 
 function getPublicReadClient(): SupabaseClient<Database> | undefined {
-  // Prefer service-role (faster/consistent, bypasses any RLS quirks), fall back to anon server client.
+  // Prefer secret-key admin access for consistency, fall back to the publishable-key client.
   return (
     (supabaseAdmin as unknown as SupabaseClient<Database> | undefined) ??
     (supabaseServerPublic as unknown as SupabaseClient<Database> | undefined)

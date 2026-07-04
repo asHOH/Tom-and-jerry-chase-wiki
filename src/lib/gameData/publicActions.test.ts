@@ -9,7 +9,8 @@ jest.mock('server-only', () => ({}), { virtual: true });
 jest.mock('@/env', () => ({
   env: {
     NEXT_PUBLIC_DISABLE_ARTICLES: '0',
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: 'test-anon-key',
+    NEXT_PUBLIC_SUPABASE_URL: 'https://supabase.test',
+    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: 'test-publishable-key',
   },
 }));
 

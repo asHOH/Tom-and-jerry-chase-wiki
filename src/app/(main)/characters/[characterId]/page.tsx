@@ -5,6 +5,7 @@ import { Article, WithContext } from 'schema-dts';
 
 import { GameDataManager } from '@/lib/dataManager';
 import { generatePageMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
+import { hasSupabasePublicConfig } from '@/lib/supabase/config';
 import { sanitizeHTML } from '@/lib/xssUtils';
 import { SITE_URL } from '@/constants/seo';
 import { getTutorialPage } from '@/features/articles/utils/docs';
@@ -12,7 +13,6 @@ import StructuredData from '@/components/StructuredData';
 import CharacterDetailsClient from '@/app/(main)/characters/[characterId]/CharacterDetailsClient';
 import { getContentWritersByCharacter } from '@/constants';
 import { characters } from '@/data';
-import { env } from '@/env';
 
 import CharacterArticle from './CharacterArticle';
 import CharacterDocs from './CharacterDocs';
@@ -104,7 +104,7 @@ export default async function CharacterPage({
       notFound();
     }
 
-    if (env.NEXT_PUBLIC_DISABLE_ARTICLES === '1' || !env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    if (!hasSupabasePublicConfig()) {
       return (
         <CharacterDetailsClient character={character}>
           {docPage ? <CharacterDocs docPage={docPage}></CharacterDocs> : null}

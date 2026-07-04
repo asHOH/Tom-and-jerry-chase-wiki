@@ -17,7 +17,8 @@ jest.mock('next/server', () => ({
 jest.mock('@/env', () => ({
   env: {
     NEXT_PUBLIC_DISABLE_ARTICLES: '0',
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: 'test-anon-key',
+    NEXT_PUBLIC_SUPABASE_URL: 'https://supabase.test',
+    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: 'test-publishable-key',
   },
 }));
 
@@ -33,7 +34,7 @@ const requireRoleMock = jest.mocked(requireRole);
 const publishGameDataActionsMock = jest.mocked(publishGameDataActions);
 const mutableEnv = env as unknown as {
   NEXT_PUBLIC_DISABLE_ARTICLES?: string;
-  NEXT_PUBLIC_SUPABASE_ANON_KEY?: string;
+  NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY?: string;
 };
 
 const createRequest = (body: unknown) =>
@@ -44,7 +45,7 @@ const createRequest = (body: unknown) =>
 describe('publish-relations route', () => {
   beforeEach(() => {
     mutableEnv.NEXT_PUBLIC_DISABLE_ARTICLES = '0';
-    mutableEnv.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
+    mutableEnv.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY = 'test-publishable-key';
     requireRoleMock.mockResolvedValue({ supabase: { rpc: jest.fn() } as never });
     publishGameDataActionsMock.mockResolvedValue([
       { id: 'action-1', is_public: false, status: 'pending' },

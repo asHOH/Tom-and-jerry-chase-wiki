@@ -1,11 +1,10 @@
 'use server';
 
-import { env } from '@/env';
-
+import { hasSupabasePublicConfig } from './supabase/config';
 import { createClient } from './supabase/server';
 
 export async function getUserData() {
-  if (env.NEXT_PUBLIC_DISABLE_ARTICLES === '1' || !env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+  if (!hasSupabasePublicConfig()) {
     return {
       role: null,
       nickname: null,

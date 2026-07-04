@@ -7,6 +7,7 @@ import { useMediaQuery } from 'usehooks-ts';
 
 import { cn, getNavigationButtonClasses } from '@/lib/design';
 import { supabase } from '@/lib/supabase/client';
+import { hasSupabasePublicConfig } from '@/lib/supabase/config';
 import { useFeatureDiscovery } from '@/hooks/useFeatureDiscovery';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useNavigationProgress } from '@/hooks/useNavigationProgress';
@@ -532,91 +533,85 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
             </Tooltip>
           )}
           {/* User Settings Dropdown (deferred until mounted to avoid hydration mismatch) */}
-          {mounted &&
-            !!nickname &&
-            shouldDisplayUserSettings &&
-            env.NEXT_PUBLIC_DISABLE_ARTICLES !== '1' &&
-            !!env.NEXT_PUBLIC_SUPABASE_ANON_KEY && (
-              <div className='relative' data-user-dropdown-root>
-                <Tooltip content='用户设置' className='border-none'>
-                  <m.button
-                    type='button'
-                    aria-label='用户设置'
-                    className={getNavigationButtonClasses(false, userDropdownOpen, true)}
-                    onClick={() => setUserDropdownOpen((prev) => !prev)}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+          {mounted && !!nickname && shouldDisplayUserSettings && hasSupabasePublicConfig() && (
+            <div className='relative' data-user-dropdown-root>
+              <Tooltip content='用户设置' className='border-none'>
+                <m.button
+                  type='button'
+                  aria-label='用户设置'
+                  className={getNavigationButtonClasses(false, userDropdownOpen, true)}
+                  onClick={() => setUserDropdownOpen((prev) => !prev)}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <UserCircleIcon className='size-6' strokeWidth={1.5} />
+                </m.button>
+              </Tooltip>
+              <AnimatePresence initial={false}>
+                {userDropdownOpen && (
+                  <m.div
+                    key='user-settings-dropdown'
+                    className='absolute right-0 z-99999 mt-2 w-48 rounded-md bg-white shadow-lg dark:bg-slate-800'
+                    initial={
+                      shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: -6, scale: 0.98 }
+                    }
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -6, scale: 0.98 }}
+                    transition={{ duration: 0.14, ease: 'easeOut' }}
+                    style={{ transformOrigin: 'top right' }}
                   >
-                    <UserCircleIcon className='size-6' strokeWidth={1.5} />
-                  </m.button>
-                </Tooltip>
-                <AnimatePresence initial={false}>
-                  {userDropdownOpen && (
-                    <m.div
-                      key='user-settings-dropdown'
-                      className='absolute right-0 z-99999 mt-2 w-48 rounded-md bg-white shadow-lg dark:bg-slate-800'
-                      initial={
-                        shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: -6, scale: 0.98 }
-                      }
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={
-                        shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -6, scale: 0.98 }
-                      }
-                      transition={{ duration: 0.14, ease: 'easeOut' }}
-                      style={{ transformOrigin: 'top right' }}
-                    >
-                      <ul className='py-1'>
-                        <li className='px-4 py-2 text-sm text-gray-800 dark:text-gray-200'>
-                          你好，{nickname}
-                        </li>
+                    <ul className='py-1'>
+                      <li className='px-4 py-2 text-sm text-gray-800 dark:text-gray-200'>
+                        你好，{nickname}
+                      </li>
+                      <li>
+                        <button
+                          type='button'
+                          className='w-full cursor-pointer px-4 py-2 text-left text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700'
+                          onClick={() => {
+                            setUserDropdownOpen(false);
+                            setChangePasswordOpen(true);
+                          }}
+                        >
+                          修改密码
+                        </button>
+                      </li>
+                      {(role == 'Coordinator' || role == 'Reviewer') && (
                         <li>
-                          <button
-                            type='button'
-                            className='w-full cursor-pointer px-4 py-2 text-left text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700'
-                            onClick={() => {
-                              setUserDropdownOpen(false);
-                              setChangePasswordOpen(true);
-                            }}
+                          <Link
+                            href='/admin/'
+                            className='block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700'
                           >
-                            修改密码
-                          </button>
+                            进入管理面板
+                          </Link>
                         </li>
-                        {(role == 'Coordinator' || role == 'Reviewer') && (
-                          <li>
-                            <Link
-                              href='/admin/'
-                              className='block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700'
-                            >
-                              进入管理面板
-                            </Link>
-                          </li>
-                        )}
-                        {!!signOutError && (
-                          <li className='px-4 py-2 text-sm text-red-600 dark:text-red-400'>
-                            {signOutError}
-                          </li>
-                        )}
-                        <li>
-                          <button
-                            type='button'
-                            className={cn(
-                              'w-full cursor-pointer rounded-b-md px-4 py-2 text-left text-sm text-gray-800 dark:text-gray-200',
-                              signingOut
-                                ? 'pointer-events-none bg-gray-100 opacity-60 dark:bg-slate-700'
-                                : 'hover:bg-gray-100 dark:hover:bg-slate-700'
-                            )}
-                            onClick={handleSignOut}
-                            disabled={signingOut}
-                          >
-                            {signingOut ? '正在退出…' : '退出登录'}
-                          </button>
+                      )}
+                      {!!signOutError && (
+                        <li className='px-4 py-2 text-sm text-red-600 dark:text-red-400'>
+                          {signOutError}
                         </li>
-                      </ul>
-                    </m.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            )}
+                      )}
+                      <li>
+                        <button
+                          type='button'
+                          className={cn(
+                            'w-full cursor-pointer rounded-b-md px-4 py-2 text-left text-sm text-gray-800 dark:text-gray-200',
+                            signingOut
+                              ? 'pointer-events-none bg-gray-100 opacity-60 dark:bg-slate-700'
+                              : 'hover:bg-gray-100 dark:hover:bg-slate-700'
+                          )}
+                          onClick={handleSignOut}
+                          disabled={signingOut}
+                        >
+                          {signingOut ? '正在退出…' : '退出登录'}
+                        </button>
+                      </li>
+                    </ul>
+                  </m.div>
+                )}
+              </AnimatePresence>
+            </div>
+          )}
         </div>
       </div>
 

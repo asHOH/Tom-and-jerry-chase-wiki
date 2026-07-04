@@ -25,10 +25,13 @@ const jiti = createJiti(import.meta.url);
 const { squashActions } = jiti('../src/lib/edit/actionSquash.ts');
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const SERVICE_KEY = process.env.SUPABASE_SECRET_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!SUPABASE_URL || !SERVICE_KEY) {
-  console.error('Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY in env');
+  console.error(
+    'Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SECRET_KEY in env ' +
+      '(legacy SUPABASE_SERVICE_ROLE_KEY is still accepted)'
+  );
   process.exit(1);
 }
 

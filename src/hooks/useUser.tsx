@@ -4,14 +4,14 @@ import { ReactNode, useEffect } from 'react';
 import useSWR, { SWRConfig, useSWRConfig } from 'swr';
 
 import { supabase } from '@/lib/supabase/client';
-import { env } from '@/env';
+import { hasSupabasePublicConfig } from '@/lib/supabase/config';
 
 type UserType = { role: string | null; nickname: string | null };
 
 export const USER_API_KEY = '/api/auth/me';
 
 async function getUserData() {
-  if (env.NEXT_PUBLIC_DISABLE_ARTICLES === '1' || !env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+  if (!hasSupabasePublicConfig()) {
     return {
       role: null,
       nickname: null,
@@ -180,25 +180,24 @@ const localStorageProvider = () => {
   return map;
 };
 
-export const UserProvider =
-  env.NEXT_PUBLIC_DISABLE_ARTICLES === '1' || !env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-    ? ({ children }: { children: ReactNode; initialValue: UserType }) => {
-        return children;
-      }
-    : ({ children, initialValue }: { children: ReactNode; initialValue: UserType }) => {
-        return (
-          <SWRConfig
-            value={{
-              fallback: { [USER_API_KEY]: initialValue },
-              provider: localStorageProvider,
-              dedupingInterval: 10000,
-            }}
-          >
-            <AuthListener />
-            {children}
-          </SWRConfig>
-        );
-      };
+export const UserProvider = !hasSupabasePublicConfig()
+  ? ({ children }: { children: ReactNode; initialValue: UserType }) => {
+      return children;
+    }
+  : ({ children, initialValue }: { children: ReactNode; initialValue: UserType }) => {
+      return (
+        <SWRConfig
+          value={{
+            fallback: { [USER_API_KEY]: initialValue },
+            provider: localStorageProvider,
+            dedupingInterval: 10000,
+          }}
+        >
+          <AuthListener />
+          {children}
+        </SWRConfig>
+      );
+    };
 
 export const useUser = () => {
   const { data, mutate, isLoading, isValidating } = useSWR<UserType>(USER_API_KEY, getUserData);

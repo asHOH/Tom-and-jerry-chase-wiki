@@ -7,6 +7,7 @@ import {
   type PublicActionTargetRegistry,
 } from '@/lib/gameData/actionReplay';
 import { cached } from '@/lib/serverCache';
+import { hasSupabasePublicConfig } from '@/lib/supabase/config';
 import { supabaseServerPublic } from '@/lib/supabase/public';
 import {
   buffs,
@@ -26,7 +27,6 @@ import {
   specialSkills,
   specialSkillsEdit,
 } from '@/data';
-import { env } from '@/env';
 
 import { normalizePublicActionEntries } from './actionEntries';
 import type { PublicActionRow } from './publicActionsTypes';
@@ -146,7 +146,7 @@ export async function getEntityUpdateHistory(): Promise<Map<string, EntityUpdate
 }
 
 export async function fetchPublicGameDataActions(): Promise<PublicActionRow[]> {
-  if (env.NEXT_PUBLIC_DISABLE_ARTICLES === '1' || !env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+  if (!hasSupabasePublicConfig()) {
     return [];
   }
 
