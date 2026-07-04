@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { verifyCaptchaProof } from '@/lib/captchaUtils';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { supabaseAdmin } from '@/lib/supabase/admin';
-import { env } from '@/env';
+import { createSupabaseRouteClient } from '@/lib/supabase/ssrClient';
 
 const hashUsername = (username: string) => {
   return createHash('sha256').update(username).digest('hex');
@@ -88,27 +88,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid username or password' }, { status: 401 });
     }
     // Password-based user is valid, create session and attach cookies to response
-    type CreateServerClient = (typeof import('@supabase/ssr'))['createServerClient'];
-    const { createServerClient }: { createServerClient: CreateServerClient } =
-      await import('@supabase/ssr/dist/module/createServerClient.js');
     const response = NextResponse.json({ message: 'Login successful' });
-    const supabase = createServerClient(
-      env.NEXT_PUBLIC_SUPABASE_URL!,
-      env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() {
-            return request.cookies.getAll();
-          },
-          setAll(cookiesToSet) {
-            // Reflect cookie writes onto the response
-            cookiesToSet.forEach(({ name, value, options }) =>
-              response.cookies.set(name, value, options)
-            );
-          },
-        },
-      }
-    );
+    const supabase = createSupabaseRouteClient(request, response);
 
     const { error: sessionError } = await supabase.auth.signInWithPassword({
       email: authUser.email,

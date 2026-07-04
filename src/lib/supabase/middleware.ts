@@ -2,49 +2,14 @@ import { NextResponse, type NextRequest } from 'next/server';
 
 import { env } from '@/env';
 
-import { fetchWithRetry } from './fetch-retry';
-
-// Maintainer note:
-// We dynamically deep-import createServerClient from @supabase/ssr to prevent the Edge
-// bundle from including browser/realtime code (which relies on Node APIs). This avoids
-// Edge runtime warnings. Package version is pinned in package.json for stability.
+import { createSupabaseProxyClient } from './ssrClient';
 
 export async function updateSession(request: NextRequest) {
   if (env.NEXT_PUBLIC_DISABLE_ARTICLES === '1' || !env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return NextResponse.next({ request });
   }
-  type CreateServerClient = (typeof import('@supabase/ssr'))['createServerClient'];
-  const { createServerClient }: { createServerClient: CreateServerClient } = await import(
-    // Deep import to avoid pulling createBrowserClient into the Edge bundle
-    '@supabase/ssr/dist/module/createServerClient.js'
-  );
-  let supabaseResponse = NextResponse.next({
-    request,
-  });
 
-  const supabase = createServerClient(
-    env.NEXT_PUBLIC_SUPABASE_URL!,
-    env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
-          supabaseResponse = NextResponse.next({
-            request,
-          });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
-          );
-        },
-      },
-      global: {
-        fetch: fetchWithRetry,
-      },
-    }
-  );
+  const { supabase, getResponse } = createSupabaseProxyClient(request);
 
   // Do not run code between createServerClient and
   // supabase.auth.getUser(). A simple mistake could make it very hard to debug
@@ -54,5 +19,5 @@ export async function updateSession(request: NextRequest) {
 
   await supabase.auth.getUser();
 
-  return supabaseResponse;
+  return getResponse();
 }

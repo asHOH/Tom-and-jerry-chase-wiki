@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { checkPasswordStrength } from '@/lib/passwordUtils';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { supabaseAdmin } from '@/lib/supabase/admin';
-import { env } from '@/env';
+import { createSupabaseRouteClient } from '@/lib/supabase/ssrClient';
 
 const hashPassword = (password: string, salt: string) =>
   pbkdf2Sync(password, salt, 100000, 64, 'sha512').toString('hex');
@@ -26,28 +26,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    type CreateServerClient = (typeof import('@supabase/ssr'))['createServerClient'];
-    const { createServerClient }: { createServerClient: CreateServerClient } =
-      await import('@supabase/ssr/dist/module/createServerClient.js');
-
     // Bind cookie writes to the response so password updates don't log out the current session.
     const response = NextResponse.json({ message: '密码修改成功。' });
-    const supabase = createServerClient(
-      env.NEXT_PUBLIC_SUPABASE_URL!,
-      env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() {
-            return request.cookies.getAll();
-          },
-          setAll(cookiesToSet) {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              response.cookies.set(name, value, options)
-            );
-          },
-        },
-      }
-    );
+    const supabase = createSupabaseRouteClient(request, response);
 
     const {
       data: { user },

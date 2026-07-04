@@ -10,6 +10,7 @@ import { verifyCaptchaProof } from '@/lib/captchaUtils';
 import { checkPasswordStrength } from '@/lib/passwordUtils';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { supabaseAdmin } from '@/lib/supabase/admin';
+import { createSupabaseRouteClient } from '@/lib/supabase/ssrClient';
 import { authRegisterSchema, formatZodError } from '@/lib/validation/schemas';
 import { TablesInsert } from '@/data/database.types';
 import { env } from '@/env';
@@ -156,26 +157,8 @@ export async function POST(request: NextRequest) {
     }
 
     // After successful registration, sign in the user and attach cookies to response
-    type CreateServerClient = (typeof import('@supabase/ssr'))['createServerClient'];
-    const { createServerClient }: { createServerClient: CreateServerClient } =
-      await import('@supabase/ssr/dist/module/createServerClient.js');
     const response = NextResponse.json({ message: 'User created successfully' }, { status: 201 });
-    const supabase = createServerClient(
-      env.NEXT_PUBLIC_SUPABASE_URL!,
-      env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() {
-            return request.cookies.getAll();
-          },
-          setAll(cookiesToSet) {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              response.cookies.set(name, value, options)
-            );
-          },
-        },
-      }
-    );
+    const supabase = createSupabaseRouteClient(request, response);
     const { error: sessionError } = await supabase.auth.signInWithPassword({
       email: authUserEmail,
       password: authPassword,
