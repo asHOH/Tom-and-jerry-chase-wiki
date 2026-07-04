@@ -15,7 +15,7 @@ export const characterRelationSpecialSkillTraits: Trait[] = [
     },
   },
   {
-    description: '冰冻保鲜可以躲过布奇的一波冲撞。',
+    description: '冰冻保鲜可以躲过布奇的冲撞和桶盖。',
     group: [
       { name: '布奇', type: 'character' },
       { name: '冰冻保鲜', type: 'specialSkill', factionId: 'mouse' },

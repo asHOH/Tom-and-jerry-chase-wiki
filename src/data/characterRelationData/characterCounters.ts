@@ -1095,6 +1095,19 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
     },
   },
   {
+    description: '莱恩可以使用技能阻止拥有三级桶盖的布奇上火箭',
+    group: [
+      { name: '莱恩', type: 'character' },
+      { name: '布奇', type: 'character' },
+    ],
+    relation: {
+      kind: 'counters',
+      subject: { name: '莱恩', type: 'character' },
+      target: { name: '布奇', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
     description: '主动技能无敌可免疫朝圣者泰菲伤害。',
     group: [
       { name: '汤姆', type: 'character' },
@@ -3057,7 +3070,7 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
   },
   {
     description:
-      '布奇的爪刀可以秒恶魔泰菲，冲飞洞口的奶酪也能克制恶菲的游击策略，且加强后可以无限霸体不怕蓝恶魔和绿恶魔，冲刺刀可以秒回家恶菲。',
+      '布奇的爪刀可以对恶魔泰菲造成大量伤害，冲飞洞口的奶酪也能克制恶菲的游击策略，且加强后可以无限霸体不怕蓝恶魔和绿恶魔，冲刺刀可以秒回家恶菲。',
     group: [
       { name: '布奇', type: 'character' },
       { name: '恶魔泰菲', type: 'character' },
@@ -3071,7 +3084,7 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
   },
   {
     description:
-      '布奇的爪刀可以秒罗宾汉泰菲，且罗菲在近距离干扰时容易被布奇抓到机会，但罗菲可以远距离拉扯。',
+      '布奇的爪刀可以对罗宾汉泰菲造成大量伤害，且罗菲在近距离干扰时容易被布奇抓到机会，但罗菲可以远距离拉扯。',
     group: [
       { name: '布奇', type: 'character' },
       { name: '罗宾汉泰菲', type: 'character' },
@@ -3084,7 +3097,8 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
     },
   },
   {
-    description: '布奇伤害较高，相对能更好的处理米可。',
+    description:
+      '布奇伤害较高，相对能更好的处理米可，但米可的采访叠多层后伤害也可对布奇造成大量伤害',
     group: [
       { name: '布奇', type: 'character' },
       { name: '米可', type: 'character' },
@@ -3112,7 +3126,7 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
   },
   {
     description:
-      '布奇的爪刀可以秒侦探泰菲，冲飞洞口的奶酪也能克制侦菲的游击策略。同时缺少强推和干扰能力，救援也容易被桶盖干扰。',
+      '布奇的爪刀可以对侦探泰菲造成大量伤害，冲飞洞口的奶酪也能克制侦菲的游击策略。同时缺少强推和干扰能力，救援也容易被桶盖干扰。',
     group: [
       { name: '布奇', type: 'character' },
       { name: '侦探泰菲', type: 'character' },
