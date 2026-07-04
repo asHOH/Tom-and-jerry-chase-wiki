@@ -922,68 +922,28 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
   },
   {
     description:
-      '大表哥三级拳头打奶酪克制兔八哥死守，且拳头不怕兔子二被；大表哥二被的霸体也可以减少被秒的概率。但兔八哥小跳放地洞可以反制大表哥火箭闪现救援。',
+      '大表哥三级拳头打奶酪克制兔八哥死守，且拳头不怕兔子二被；大表哥二被的霸体也可以减少被秒的概率。但兔八哥小跳放地洞可以勉强反制大表哥火箭闪现救援。',
     group: [
-      { name: '兔八哥', type: 'character' },
       { name: '马索尔', type: 'character' },
-    ],
-    relation: {
-      kind: 'counterEachOther',
-      subject: { name: '兔八哥', type: 'character' },
-      target: { name: '马索尔', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
-    description: '后期毛线球可以秒奶酪，且不怕兔子把奶酪挤出洞口。',
-    group: [
       { name: '兔八哥', type: 'character' },
-      { name: '梦游杰瑞', type: 'character' },
     ],
     relation: {
-      kind: 'counterEachOther',
-      subject: { name: '兔八哥', type: 'character' },
-      target: { name: '梦游杰瑞', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
-    description: '米可前期不好救援，但后期高减伤加霸体很难被兔八哥击倒。',
-    group: [
-      { name: '兔八哥', type: 'character' },
-      { name: '米可', type: 'character' },
-    ],
-    relation: {
-      kind: 'counterEachOther',
-      subject: { name: '兔八哥', type: 'character' },
-      target: { name: '米可', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
-    description:
-      '仙女鼠被宣战后比较难受，但仙女鼠Lv.1被动克制胡萝卜飞镖，以及兔八哥Lv2被动不免疫星星。',
-    group: [
-      { name: '兔八哥', type: 'character' },
-      { name: '仙女鼠', type: 'character' },
-    ],
-    relation: {
-      kind: 'counterEachOther',
-      subject: { name: '兔八哥', type: 'character' },
-      target: { name: '仙女鼠', type: 'character' },
+      kind: 'counters',
+      subject: { name: '马索尔', type: 'character' },
+      target: { name: '兔八哥', type: 'character' },
       isMinor: true,
     },
   },
   {
-    description: '侦探三级烟雾弹可强推，但兔子也可用洞反制。',
+    description: '侦探三级烟雾弹可强推，但兔子也可用洞勉强反制。',
     group: [
-      { name: '兔八哥', type: 'character' },
       { name: '侦探杰瑞', type: 'character' },
+      { name: '兔八哥', type: 'character' },
     ],
     relation: {
-      kind: 'counterEachOther',
-      subject: { name: '兔八哥', type: 'character' },
-      target: { name: '侦探杰瑞', type: 'character' },
+      kind: 'counters',
+      subject: { name: '侦探杰瑞', type: 'character' },
+      target: { name: '兔八哥', type: 'character' },
       isMinor: false,
     },
   },
@@ -2506,58 +2466,6 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
     },
   },
   {
-    description: '尼宝提供稳定救援，克制兔八哥。',
-    group: [
-      { name: '尼宝', type: 'character' },
-      { name: '兔八哥', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '尼宝', type: 'character' },
-      target: { name: '兔八哥', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
-    description: '牛仔杰瑞二级吉他给的移速较快，可以躲过胡萝卜飞镖。',
-    group: [
-      { name: '牛仔杰瑞', type: 'character' },
-      { name: '兔八哥', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '牛仔杰瑞', type: 'character' },
-      target: { name: '兔八哥', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
-    description: '霜月的滑铲和袋子使兔八哥难以绑火箭，且滑铲可以将兔子从洞中顶出来。',
-    group: [
-      { name: '霜月', type: 'character' },
-      { name: '兔八哥', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '霜月', type: 'character' },
-      target: { name: '兔八哥', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
-    description: '侦菲主动技能无前摇隐身和三级后的换位提供很强自保，兔八哥很难抓。',
-    group: [
-      { name: '侦探泰菲', type: 'character' },
-      { name: '兔八哥', type: 'character' },
-    ],
-    relation: {
-      kind: 'counters',
-      subject: { name: '侦探泰菲', type: 'character' },
-      target: { name: '兔八哥', type: 'character' },
-      isMinor: true,
-    },
-  },
-  {
     description: '朵朵伤害较高，能较好的处理托普斯的分身。',
     group: [
       { name: '朵朵', type: 'character' },
@@ -2744,6 +2652,32 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
       subject: { name: '泰菲', type: 'character' },
       target: { name: '兔八哥', type: 'character' },
       isMinor: true,
+    },
+  },
+  {
+    description: '兔八哥爆发伤害高，可以强行击倒天使泰菲。',
+    group: [
+      { name: '天使泰菲', type: 'character' },
+      { name: '兔八哥', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '天使泰菲', type: 'character' },
+      target: { name: '兔八哥', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '兔八哥不怕圆球形态强行救援，且2级洞不怕高伤害。',
+    group: [
+      { name: '朝圣者泰菲', type: 'character' },
+      { name: '兔八哥', type: 'character' },
+    ],
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '朝圣者泰菲', type: 'character' },
+      target: { name: '兔八哥', type: 'character' },
+      isMinor: false,
     },
   },
   {
@@ -3291,6 +3225,19 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
     relation: {
       kind: 'counters',
       subject: { name: '恶魔杰瑞', type: 'character' },
+      target: { name: '兔八哥', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '拿坡里的足球和塔都无视兔八哥二被；塔还能把兔子从洞里顶出来。',
+    group: [
+      { name: '拿坡里鼠', type: 'character' },
+      { name: '兔八哥', type: 'character' },
+    ],
+    relation: {
+      kind: 'counters',
+      subject: { name: '拿坡里鼠', type: 'character' },
       target: { name: '兔八哥', type: 'character' },
       isMinor: true,
     },
@@ -4606,13 +4553,13 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
     },
   },
   {
-    description: '莱恩Hp较低，且因技能可宣战容错较低。',
+    description: '莱恩Hp较低，且因技能可被宣战，容错较低；但莱恩能无视兔八哥二被守火箭。',
     group: [
       { name: '兔八哥', type: 'character' },
       { name: '莱恩', type: 'character' },
     ],
     relation: {
-      kind: 'counters',
+      kind: 'counterEachOther',
       subject: { name: '兔八哥', type: 'character' },
       target: { name: '莱恩', type: 'character' },
       isMinor: false,
