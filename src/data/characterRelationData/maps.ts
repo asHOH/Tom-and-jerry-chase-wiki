@@ -3,6 +3,113 @@ import type { Trait } from '@/data/types';
 export const characterRelationMapTraits: Trait[] = [
   {
     description:
+      '地图房间分布呈树状 利于泰菲卡视野伏击；地图为中型，房间紧凑，利于机动性差的泰菲发挥',
+    group: [
+      { name: '泰菲', type: 'character' },
+      { name: '夏日游轮III', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '夏日游轮III', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '地图存在的门较多，有利于泰菲使用卡门雷牵制猫；地图适合拉扯，可避免泰菲被猫针对',
+    group: [
+      { name: '泰菲', type: 'character' },
+      { name: '经典之家II', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '经典之家II', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '圆滚滚赋予的跳跃加成有利于泰菲在森林行动；各个房间之间存在的双向管道多，有利于泰菲在各个房间之间穿梭',
+    group: [
+      { name: '泰菲', type: 'character' },
+      { name: '森林牧场', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '森林牧场', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '地图整体十分开阔，有利于泰菲远程架狙；地图两端有双向管道连通，有利于泰菲快速移动',
+    group: [
+      { name: '泰菲', type: 'character' },
+      { name: '游乐场', type: 'map' },
+    ],
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '游乐场', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '地图体积大，两个古堡之间无双向管道连通，不利于机动性差的泰菲移动；地图整体封闭，障碍物多，不利于泰菲架狙',
+    group: [
+      { name: '泰菲', type: 'character' },
+      { name: '雪夜古堡III', type: 'map' },
+    ],
+    relation: {
+      kind: 'disadvantageMaps',
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '雪夜古堡III', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '地图体积大，整体跨度大，不利于泰菲移动',
+    group: [
+      { name: '泰菲', type: 'character' },
+      { name: '大都会', type: 'map' },
+    ],
+    relation: {
+      kind: 'disadvantageMaps',
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '大都会', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '地图体积大，左右跨度大，不利于泰菲移动；地图障碍物多，不利于泰菲架狙',
+    group: [
+      { name: '泰菲', type: 'character' },
+      { name: '天宫', type: 'map' },
+    ],
+    relation: {
+      kind: 'disadvantageMaps',
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '天宫', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '地图体积大，左右跨度大，不利于泰菲移动；地图障碍物多，不利于泰菲架狙',
+    group: [
+      { name: '泰菲', type: 'character' },
+      { name: '御门酒店', type: 'map' },
+    ],
+    relation: {
+      kind: 'disadvantageMaps',
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '御门酒店', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
       '拥有四个特殊放飞机制的火箭，在积累50线索值情况下可以帮助自身更快的放飞老鼠。且地图平台分布较为集中，便于侦探汤姆收集线索。',
     group: [
       { name: '侦探汤姆', type: 'character' },

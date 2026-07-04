@@ -619,7 +619,7 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
   },
   {
     description:
-      '泰菲的隐形感应雷会触发如玉的花枪反击，Hp上限低，如玉的花枪反击能秒杀泰菲。但是泰菲的圆滚滚可以提供解控，在被反击打上火箭的失重状态下可以使用圆滚滚解控。2级主动提供的无敌效果也可以有效反制如玉的花枪反击。',
+      '泰菲的隐形感应雷会触发如玉的花枪反击，Hp上限低，被如玉的高伤克制。但是泰菲的圆滚滚可以提供解控，在被反击打上火箭的失重状态下可以使用圆滚滚解控。2级主动提供的无敌效果也可以有效反制如玉的花枪反击。',
     group: [
       { name: '如玉', type: 'character' },
       { name: '泰菲', type: 'character' },
@@ -3097,15 +3097,16 @@ export const characterRelationCharacterCounterTraits: Trait[] = [
     },
   },
   {
-    description: '布奇的爪刀理由秒泰菲，同时泰菲推速较慢，干扰能力不够，救援能力较差。',
+    description:
+      '泰菲的圆滚滚有无敌，可以解控，克制布奇的冲撞和桶盖；泰菲的地雷有强制位移，克制布奇利用桶盖霸体强行绑火箭；泰菲的地雷有碰撞体积，可撞走桶盖规避伤害',
     group: [
-      { name: '布奇', type: 'character' },
       { name: '泰菲', type: 'character' },
+      { name: '布奇', type: 'character' },
     ],
     relation: {
       kind: 'counters',
-      subject: { name: '布奇', type: 'character' },
-      target: { name: '泰菲', type: 'character' },
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '布奇', type: 'character' },
       isMinor: false,
     },
   },

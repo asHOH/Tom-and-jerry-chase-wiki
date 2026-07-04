@@ -1104,6 +1104,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     unuseImage: true,
   },
   真视: {
+    aliases: ['透视'],
     type: '持续效果',
     description: '持续期间，角色能看到{隐身}或{间歇性隐身}状态下的敌方。',
     unuseImage: true,

@@ -1418,7 +1418,7 @@ const mouseCharacterDefinitions = {
       {
         cards: ['S-舍己', 'B-精准投射', 'C-不屈', 'C-救救我', 'B-孤军奋战', 'B-应激反应'],
         description:
-          '生存卡组，在打{布奇}、{米特}等高伤害的猫的对局中可用，精准投射可以减{圆滚滚}冷却，不屈增加续航，孤军奋战提高移速，被针对时和猫拉开距离，被道具打中之后，应激反应可以增加逃跑速度。没有铁血，需要走位技术，容错低，新手不建议带',
+          '生存卡组，在打{布奇}、{米特}等高伤害的猫的对局中可用，精准投射可以减{圆滚滚}冷却，不屈增加续航，孤军奋战提高移速，被针对时和猫拉开距离，被道具打中之后，应激反应可以增加逃跑速度。没有铁血，需要走位技术，容错低，建议四排时带，新手不建议带',
       },
     ],
     skills: [
@@ -1509,6 +1509,8 @@ const mouseCharacterDefinitions = {
         canUseInAir: true,
         cancelableSkill: ['道具键*'],
         cancelableAftercast: '无后摇',
+        forecast: 0.2,
+        aftercast: 0,
         videoUrl: 'https://www.bilibili.com/video/BV1fM411A7YF?t=73.05',
         skillLevels: [
           {
