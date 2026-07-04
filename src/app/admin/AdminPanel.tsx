@@ -123,6 +123,7 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
 
       {enableActionModeration && activeTab === 'actions' && (
         <GameDataActionModerationPanel
+          canMarkActionsSynced={enableUserAccess}
           pendingActions={pendingActions}
           mutatePendingActions={mutatePendingActions}
         />

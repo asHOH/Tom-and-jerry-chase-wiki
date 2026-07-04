@@ -21,11 +21,13 @@ export type PendingGameDataAction =
   };
 
 type GameDataActionModerationPanelProps = {
+  canMarkActionsSynced?: boolean;
   pendingActions: PendingGameDataAction[];
   mutatePendingActions: () => Promise<unknown> | unknown;
 };
 
-type ModerationAction = 'approve' | 'reject';
+type PendingModerationAction = 'approve' | 'reject';
+type ModerationAction = PendingModerationAction | 'mark-synced';
 
 type ModerationFailure = {
   actionId: string;
@@ -37,6 +39,12 @@ const ACTION_STATUS_META: Record<ActionStatus, { label: string; className: strin
   approved: { label: '已批准', className: 'text-green-700 dark:text-green-300' },
   rejected: { label: '已拒绝', className: 'text-red-700 dark:text-red-300' },
   synced: { label: '已同步', className: 'text-purple-700 dark:text-purple-300' },
+};
+
+const MODERATION_ACTION_SUCCESS_MESSAGE: Record<ModerationAction, string> = {
+  approve: '已批准，该改动已公开',
+  reject: '已拒绝',
+  'mark-synced': '已标记为已同步',
 };
 
 const getModerationFailureMessage = (failure: unknown): string =>
@@ -52,6 +60,7 @@ const summarizeModerationFailures = (failures: ModerationFailure[]): string => {
 };
 
 const GameDataActionModerationPanel = ({
+  canMarkActionsSynced: canMarkActionsSynced = false,
   pendingActions,
   mutatePendingActions,
 }: GameDataActionModerationPanelProps) => {
@@ -122,7 +131,7 @@ const GameDataActionModerationPanel = ({
       }
 
       await submitModerationRequest(actionId, action, reason);
-      success(action === 'approve' ? '已批准，该改动已公开' : '已拒绝');
+      success(MODERATION_ACTION_SUCCESS_MESSAGE[action]);
       await mutatePendingActions();
     } catch (failure) {
       error(getModerationFailureMessage(failure));
@@ -190,7 +199,7 @@ const GameDataActionModerationPanel = ({
     });
   }, [pendingActions]);
 
-  const moderateMany = async (action: ModerationAction) => {
+  const moderateMany = async (action: PendingModerationAction) => {
     if (isModerating || selectedPendingActions.length === 0) return;
 
     const confirmed = window.confirm(
@@ -477,6 +486,20 @@ const GameDataActionModerationPanel = ({
                               拒绝
                             </Button>
                           </>
+                        )}
+                        {canMarkActionsSynced && submission.status === 'approved' && (
+                          <Button
+                            disabled={isModerating}
+                            onClick={() => {
+                              const confirmed = window.confirm('确认将该改动标记为已同步？');
+                              if (!confirmed) return;
+                              void moderateAction(submission.action_id, 'mark-synced');
+                            }}
+                            variant='secondary'
+                            size='sm'
+                          >
+                            标为已同步
+                          </Button>
                         )}
                         <Button
                           onClick={() => toggleExpanded(submission.action_id)}
