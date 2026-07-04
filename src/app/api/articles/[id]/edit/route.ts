@@ -9,11 +9,10 @@ export async function POST(request: Request, { params }: { params: Promise<{ id?
   const id = (await params)?.id;
 
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: claimsData } = await supabase.auth.getClaims();
+  const userId = claimsData?.claims.sub;
 
-  if (!user) {
+  if (!userId) {
     return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
   }
 
@@ -39,9 +38,9 @@ export async function POST(request: Request, { params }: { params: Promise<{ id?
       return NextResponse.json({ error: 'Article not found' }, { status: 404 });
     }
 
-    const { data: userRole } = await supabaseAdmin.rpc('get_user_role', { p_user_id: user.id });
+    const { data: userRole } = await supabaseAdmin.rpc('get_user_role', { p_user_id: userId });
 
-    if (article.author_id !== user.id && userRole !== 'Coordinator' && userRole !== 'Reviewer') {
+    if (article.author_id !== userId && userRole !== 'Coordinator' && userRole !== 'Reviewer') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 

@@ -78,11 +78,10 @@ export async function GET(request: NextRequest) {
   }
 
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: claimsData } = await supabase.auth.getClaims();
+  const userId = claimsData?.claims.sub;
 
-  if (!user) {
+  if (!userId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -101,7 +100,7 @@ export async function GET(request: NextRequest) {
   const { limit = 30, scope, search } = parsed.data;
 
   const normalizedSearch = search ? search.toLowerCase() : null;
-  const prefixes = scope === 'mine' ? [user.id] : [''];
+  const prefixes = scope === 'mine' ? [userId] : [''];
   const maxDepth = scope === 'mine' ? 2 : 3;
   const aggregated: Array<{ entry: StorageEntry; path: string }> = [];
 
@@ -169,11 +168,10 @@ export async function POST(request: Request) {
   }
 
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: claimsData } = await supabase.auth.getClaims();
+  const userId = claimsData?.claims.sub;
 
-  if (!user) {
+  if (!userId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -200,7 +198,7 @@ export async function POST(request: Request) {
   const folder = `${today.getUTCFullYear()}-${String(today.getUTCMonth() + 1).padStart(2, '0')}-${String(
     today.getUTCDate()
   ).padStart(2, '0')}`;
-  const objectKey = `${user.id}/${folder}/${randomUUID()}.${extension}`;
+  const objectKey = `${userId}/${folder}/${randomUUID()}.${extension}`;
 
   const { error: uploadError } = await supabaseAdmin.storage
     .from(RTE_IMAGE_BUCKET)

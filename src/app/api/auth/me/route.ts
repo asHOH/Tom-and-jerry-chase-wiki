@@ -9,18 +9,17 @@ export async function GET() {
   }
 
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: claimsData } = await supabase.auth.getClaims();
+  const userId = claimsData?.claims.sub;
 
-  if (!user) {
+  if (!userId) {
     return NextResponse.json({ role: null, nickname: null });
   }
 
   const { data, error } = await supabase
     .from('users')
     .select('role, nickname')
-    .eq('id', user.id)
+    .eq('id', userId)
     .single();
 
   if (error) {

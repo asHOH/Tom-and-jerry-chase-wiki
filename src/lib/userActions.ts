@@ -12,18 +12,17 @@ export async function getUserData() {
   }
 
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: claimsData } = await supabase.auth.getClaims();
+  const userId = claimsData?.claims.sub;
 
-  if (!user) {
+  if (!userId) {
     return {
       role: null,
       nickname: null,
     };
   }
 
-  const { data } = await supabase.from('users').select('role, nickname').eq('id', user.id).single();
+  const { data } = await supabase.from('users').select('role, nickname').eq('id', userId).single();
   return {
     role: data?.role || null,
     nickname: data?.nickname || null,

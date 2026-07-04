@@ -8,12 +8,6 @@ export async function GET(request: NextRequest) {
     const guard = await requireRole(['Contributor', 'Reviewer', 'Coordinator']);
     if ('error' in guard) return guard.error;
     const { supabase } = guard;
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
-    }
 
     // Use the new function to get pending versions with full details
     const { data: pendingVersions, error: fetchError } = await supabase.rpc(

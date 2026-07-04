@@ -8,11 +8,10 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   void request;
   try {
     const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const { data: claimsData } = await supabase.auth.getClaims();
+    const userId = claimsData?.claims.sub;
 
-    if (!user) {
+    if (!userId) {
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
 
@@ -34,7 +33,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     const { data: userRole, error: roleError } = await supabaseAdmin.rpc('get_user_role', {
-      p_user_id: user.id,
+      p_user_id: userId,
     });
 
     if (roleError) {
@@ -42,7 +41,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ error: 'Failed to fetch user role' }, { status: 500 });
     }
 
-    if (article.author_id !== user.id && userRole !== 'Coordinator' && userRole !== 'Reviewer') {
+    if (article.author_id !== userId && userRole !== 'Coordinator' && userRole !== 'Reviewer') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
@@ -66,7 +65,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         'id, content, created_at, commit_message, proposed_title, proposed_category_id, proposed_character_id'
       )
       .eq('article_id', id)
-      .eq('editor_id', user.id)
+      .eq('editor_id', userId)
       .eq('status', 'pending')
       .order('created_at', { ascending: false })
       .limit(1)

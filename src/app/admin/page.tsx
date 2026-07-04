@@ -8,22 +8,21 @@ export const dynamic = 'force-dynamic';
 
 export default async function AdminPage() {
   const supabase = await createClient();
-  const {
-    data: { user: authUser },
-  } = await supabase.auth.getUser();
+  const { data: claimsData } = await supabase.auth.getClaims();
+  const userId = claimsData?.claims.sub;
 
-  if (!authUser) {
+  if (!userId) {
     notFound();
   }
 
   const { data: userData } = await supabase
     .from('users')
     .select('role, nickname')
-    .eq('id', authUser.id)
+    .eq('id', userId)
     .single();
 
   const user = {
-    id: authUser.id,
+    id: userId,
     nickname: userData?.nickname ?? '',
     role: userData?.role ?? null,
   };

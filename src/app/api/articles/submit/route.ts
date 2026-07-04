@@ -13,11 +13,10 @@ export async function POST(req: Request) {
   }
 
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: claimsData } = await supabase.auth.getClaims();
+  const userId = claimsData?.claims.sub;
 
-  if (!user) {
+  if (!userId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -37,7 +36,7 @@ export async function POST(req: Request) {
       .insert({
         title,
         category_id: category,
-        author_id: user.id,
+        author_id: userId,
         character_id: character_id || null,
       })
       .select('id')

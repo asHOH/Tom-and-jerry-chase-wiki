@@ -31,12 +31,6 @@ export async function POST(
     const guard = await requireRole(['Reviewer', 'Coordinator']);
     if ('error' in guard) return guard.error;
     const { supabase } = guard;
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
-    }
 
     let functionName: `${'approve' | 'reject' | 'revoke'}_article_version`;
     switch (action) {

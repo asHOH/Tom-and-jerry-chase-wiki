@@ -68,12 +68,13 @@ export async function subscribeToPushNotifications(): Promise<boolean> {
       return false;
     }
 
-    const { data: userData } = await supabase.auth.getUser();
-    if (!userData.user) return false;
+    const { data: claimsData } = await supabase.auth.getClaims();
+    const userId = claimsData?.claims.sub;
+    if (!userId) return false;
 
     const { error } = await supabase.from('push_subscriptions').upsert(
       {
-        user_id: userData.user.id,
+        user_id: userId,
         endpoint: sb.endpoint,
         keys_p256dh: sb.keys.p256dh,
         keys_auth: sb.keys.auth,

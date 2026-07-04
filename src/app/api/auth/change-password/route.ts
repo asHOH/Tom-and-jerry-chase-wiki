@@ -30,12 +30,10 @@ export async function POST(request: NextRequest) {
     const response = NextResponse.json({ message: '密码修改成功。' });
     const supabase = createSupabaseRouteClient(request, response);
 
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    const { data: claimsData, error: authError } = await supabase.auth.getClaims();
+    const userId = claimsData?.claims.sub;
 
-    if (authError || !user) {
+    if (authError || !userId) {
       return NextResponse.json({ error: '需要先登录。' }, { status: 401 });
     }
 
@@ -57,7 +55,7 @@ export async function POST(request: NextRequest) {
     const { data: current, error: fetchError } = await supabaseAdmin
       .from('users')
       .select('password_hash, salt')
-      .eq('id', user.id)
+      .eq('id', userId)
       .single();
 
     if (fetchError || !current) {
@@ -89,7 +87,7 @@ export async function POST(request: NextRequest) {
     const { error: updateError } = await supabaseAdmin
       .from('users')
       .update({ password_hash: nextPasswordHash, salt: nextSalt })
-      .eq('id', user.id);
+      .eq('id', userId);
 
     if (updateError) {
       console.error('Failed to update custom user password hash:', updateError);
@@ -108,7 +106,7 @@ export async function POST(request: NextRequest) {
       const { error: revertError } = await supabaseAdmin
         .from('users')
         .update({ password_hash: previousPasswordHash, salt: previousSalt })
-        .eq('id', user.id);
+        .eq('id', userId);
 
       if (revertError) {
         console.error('Failed to revert custom user password hash:', revertError);

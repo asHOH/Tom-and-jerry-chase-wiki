@@ -132,11 +132,10 @@ export async function POST(req: Request) {
   }
 
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: claimsData } = await supabase.auth.getClaims();
+  const userId = claimsData?.claims.sub;
 
-  if (!user) {
+  if (!userId) {
     return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
   }
 
