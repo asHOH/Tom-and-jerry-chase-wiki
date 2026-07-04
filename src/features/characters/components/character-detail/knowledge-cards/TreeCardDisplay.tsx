@@ -5,6 +5,7 @@ import { useDarkMode } from '@/context/DarkModeContext';
 import type { TreeNode } from '@/features/knowledge-cards/utils/sections';
 
 import KnowledgeCardLinkDisplay from './KnowledgeCardLinkDisplay';
+import { AndGroupLines, OrGroupLines } from './TreeLines';
 
 interface TreeCardDisplayProps {
   tree: TreeNode[];
@@ -136,20 +137,30 @@ const OrGroupDisplay: React.FC<
     );
   }
 
-  // Normal mode: Render children in a vertical column
-  return (
-    <div className='flex flex-col items-center gap-1'>
-      {nodes.map((child, index) => (
-        <TreeNodeDisplay
-          key={index}
-          node={child}
-          depth={depth + 1}
-          isDarkMode={props.isDarkMode ?? false}
-          {...props}
-        />
-      ))}
-    </div>
-  );
+  // Normal mode: Render children in a vertical column with tree lines
+  const shouldDrawLines = !props.isSqueezedView;
+  const orGroupChildren = nodes.map((child, index) => (
+    <TreeNodeDisplay
+      key={index}
+      node={child}
+      depth={depth + 1}
+      isDarkMode={props.isDarkMode ?? false}
+      {...props}
+    />
+  ));
+
+  if (shouldDrawLines && nodes.length >= 2) {
+    return (
+      <OrGroupLines
+        isDarkMode={props.isDarkMode ?? false}
+        className='flex flex-col items-center gap-1'
+      >
+        {orGroupChildren}
+      </OrGroupLines>
+    );
+  }
+
+  return <div className='flex flex-col items-center gap-1'>{orGroupChildren}</div>;
 };
 
 const TreeNodeDisplay: React.FC<
@@ -183,24 +194,30 @@ const TreeNodeDisplay: React.FC<
   }
 
   if (node.type === 'and-group' && node.children) {
-    return (
-      <div
-        className={cn(
-          'flex flex-wrap items-center',
-          props.isSqueezedView ? 'gap-x-2 gap-y-1.5' : 'sm:gap-1'
-        )}
-      >
-        {node.children.map((child, index) => (
-          <TreeNodeDisplay
-            key={index}
-            node={child}
-            depth={depth + 1}
-            isDarkMode={isDarkMode}
-            {...props}
-          />
-        ))}
-      </div>
+    const andChildren = node.children.map((child, index) => (
+      <TreeNodeDisplay
+        key={index}
+        node={child}
+        depth={depth + 1}
+        isDarkMode={isDarkMode}
+        {...props}
+      />
+    ));
+
+    const groupClassName = cn(
+      'flex flex-wrap items-center',
+      props.isSqueezedView ? 'gap-x-2 gap-y-1.5' : 'sm:gap-1'
     );
+
+    if (!props.isSqueezedView && node.children.length >= 2) {
+      return (
+        <AndGroupLines isDarkMode={isDarkMode} className={groupClassName}>
+          {andChildren}
+        </AndGroupLines>
+      );
+    }
+
+    return <div className={groupClassName}>{andChildren}</div>;
   }
 
   if (node.type === 'or-group' && node.children) {
@@ -216,24 +233,31 @@ const TreeCardDisplay: React.FC<TreeCardDisplayProps> = (props) => {
   'use no memo';
   const [isDarkMode] = useDarkMode();
 
-  return (
-    <div
-      className={cn(
-        'flex flex-wrap items-center',
-        props.isSqueezedView ? 'gap-x-2 gap-y-1.5' : 'sm:gap-1'
-      )}
-    >
-      {props.tree.map((node, index) => (
-        <TreeNodeDisplay
-          key={index}
-          node={node}
-          depth={0}
-          isDarkMode={props.isDarkMode ?? isDarkMode}
-          {...props}
-        />
-      ))}
-    </div>
+  const treeChildren = props.tree.map((node, index) => (
+    <TreeNodeDisplay
+      key={index}
+      node={node}
+      depth={0}
+      isDarkMode={props.isDarkMode ?? isDarkMode}
+      {...props}
+    />
+  ));
+
+  const topClassName = cn(
+    'flex flex-wrap items-center',
+    props.isSqueezedView ? 'gap-x-2 gap-y-1.5' : 'sm:gap-1'
   );
+
+  // Top-level is an implicit AND group — draw lines in tree/hybrid modes
+  if (!props.isSqueezedView && props.tree.length >= 2) {
+    return (
+      <AndGroupLines isDarkMode={props.isDarkMode ?? isDarkMode} className={topClassName}>
+        {treeChildren}
+      </AndGroupLines>
+    );
+  }
+
+  return <div className={topClassName}>{treeChildren}</div>;
 };
 
 export default TreeCardDisplay;
