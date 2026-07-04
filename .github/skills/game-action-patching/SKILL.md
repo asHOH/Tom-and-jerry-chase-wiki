@@ -40,13 +40,14 @@ Pick the split file by relation target type: character counter-style edges in `c
 - **No-op**: Don't reorder collaborators or rewrite equivalent relations when the represented edge and material fields are unchanged.
 - **Duplicate cleanup**: If an action removes a redundant edge that is already covered by another relation, remove only the redundant edge. Do not rewrite the other one.
 - **Indices**: Treat 0, 1 literally. Defer if oldValue mismatches.
+- **Flattened children**: If a parent `set` row is applied and child-path rows describe the same final value, verify against the final source once and sync all covered rows.
 
 ## Core Rules & Conflict Resolution
 
 1. **Conflicts**: Process created_at ASC; same timestamp parent paths before child paths; child/later overlaps win; remove obsolete twins; defer ambiguities.
 2. **Env**: Use the current date from the environment/context. TZ: Beijing (UTC+8). Source files are UTF-8. Chinese text may display as mojibake in Windows PowerShell or agent terminal output when UTF-8 bytes are decoded with a legacy code page. Treat terminal mojibake from `Get-Content`, `rg`, or command output as a display issue unless file bytes, the editor, or browser output prove corruption. Do not "fix" Chinese strings solely because terminal output rendered them incorrectly. In inline scripts, avoid raw Chinese literals; use Unicode escapes, IDs, or DB/file values.
 3. **Git**: Stay on the current development branch.
-4. **Execution**: Map to current structure; do not blindly replay paths. Chunk if >10 actions.
+4. **Execution**: Map to current structure; do not blindly replay paths. For `sync M.D changes`, query that Beijing calendar day exactly. If <=25 approved rows all map clearly to known files, process without asking; otherwise chunk and present a plan.
 5. **Status**: Valid statuses: pending, approved, rejected, synced. Never set synced if code edit/check fails, mapping is fuzzy, or skipped.
 
 ## Workflow
@@ -67,5 +68,5 @@ Pick the split file by relation target type: character counter-style edges in `c
 - Check newValue placement and schema shape.
 - Verify message intent (e.g. relation added and old deleted).
 - Check `npm run report:character-relations` if modifying relations.
-- For relation-only chunks, targeted grep/read checks plus `npm run report:character-relations`
-  are sufficient, unless shared code, validation logic, or non-relation data files changed.
+- For relation-only chunks, targeted grep/read checks plus `npm run report:character-relations` are sufficient.
+- For static character data changes, run targeted projection checks, `npm run lint`, and `npm run type-check`; run full `npm test` only when shared logic/components changed or the user requests full validation.
