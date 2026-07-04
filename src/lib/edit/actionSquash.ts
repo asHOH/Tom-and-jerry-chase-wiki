@@ -122,7 +122,12 @@ function foldDescendantSets(flat: FlatItem[], structuralParents: Set<string>): S
       if (!relativePath) continue;
 
       const parentNewValue = structuredClone(parentAction.newValue) as Container;
-      if (!isEqual(getAtRelativePath(parentNewValue, relativePath), action.oldValue)) continue;
+      const currentValue = getAtRelativePath(parentNewValue, relativePath);
+      if (isEqual(currentValue, action.newValue)) {
+        foldedIndexes.add(item.flatIndex);
+        break;
+      }
+      if (!isEqual(currentValue, action.oldValue)) continue;
       if (!setAtRelativePath(parentNewValue, relativePath, action.newValue)) continue;
 
       flat[parentPosition] = {
@@ -146,7 +151,8 @@ function foldDescendantSets(flat: FlatItem[], structuralParents: Set<string>): S
  * Safety rules:
  * - Always keep structural ops (`add`/`delete`) as-is.
  * - Do not squash sets inside the parent subtree of any structural op.
- * - Fold descendant sets into an earlier parent set when oldValue matches the parent snapshot.
+ * - Fold descendant sets into an earlier parent set when oldValue matches the parent snapshot,
+ *   or when the descendant newValue is already represented by that snapshot.
  * - Drop no-op sets where oldValue === newValue.
  */
 export function squashActions(entries: ActionHistoryEntry[]): ActionHistoryEntry[] {

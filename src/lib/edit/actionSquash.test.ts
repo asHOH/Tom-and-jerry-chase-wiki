@@ -98,4 +98,16 @@ describe('squashActions', () => {
       }),
     ]);
   });
+
+  it('should drop descendant sets that are already represented by a parent array snapshot', () => {
+    const addedAliasBatch: ActionHistoryEntry = [
+      setAction('真视.aliases', undefined, ['新别名']),
+      setAction('真视.aliases.0', undefined, '新别名'),
+    ];
+    const renamedAlias = setAction('真视.aliases.0', '新别名', '透视');
+
+    expect(squashActions([addedAliasBatch, renamedAlias])).toEqual([
+      setAction('真视.aliases', undefined, ['透视']),
+    ]);
+  });
 });
