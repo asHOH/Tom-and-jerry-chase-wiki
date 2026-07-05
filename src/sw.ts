@@ -21,6 +21,9 @@ declare global {
 
 declare const self: ServiceWorkerGlobalScope;
 
+const isScriptOrStyleRequest = (request: Request) =>
+  request.destination === 'script' || request.destination === 'style';
+
 // Custom runtime caching strategies (migrated from @ducanh2912/next-pwa config)
 const customRuntimeCaching: RuntimeCaching[] = [
   // Version API - always network, never cache
@@ -41,9 +44,14 @@ const customRuntimeCaching: RuntimeCaching[] = [
       ],
     }),
   },
+  // Extension/AV-injected third-party scripts should not enter app static caches.
+  {
+    matcher: ({ request, sameOrigin }) => !sameOrigin && isScriptOrStyleRequest(request),
+    handler: new NetworkOnly(),
+  },
   // Static resources (JS/CSS) - stale while revalidate with 1 day expiration
   {
-    matcher: ({ request }) => request.destination === 'script' || request.destination === 'style',
+    matcher: ({ request, sameOrigin }) => sameOrigin && isScriptOrStyleRequest(request),
     handler: new StaleWhileRevalidate({
       cacheName: 'static-resources',
       plugins: [
