@@ -144,8 +144,10 @@ const AndGroupLines: React.FC<AndGroupLinesProps> = ({ children, isDarkMode, cla
 
       if (yDiff < threshold) {
         // Straight horizontal connection
-        const nextIsOrGroup = childElements[i + 1]?.hasAttribute('data-group-type');
-        if (!nextIsOrGroup) {
+        const isOrGroup =
+          childElements[i]?.hasAttribute('data-group-type') ||
+          childElements[i + 1]?.hasAttribute('data-group-type');
+        if (!isOrGroup) {
           result.push(`M ${x1} ${y1} L ${(x1 + x2) / 2} ${(y1 + y2) / 2}`);
         }
       } else {
