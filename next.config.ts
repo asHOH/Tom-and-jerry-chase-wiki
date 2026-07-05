@@ -51,6 +51,8 @@ const nextConfig: NextConfig = {
       process.env.NEXT_PUBLIC_BUILD_TIMESTAMP || new Date().toISOString(),
   },
   async rewrites() {
+    const supabasePublicKey =
+      process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     const rewriteContents = [
       {
         source: '/version.json',
@@ -58,7 +60,11 @@ const nextConfig: NextConfig = {
       },
     ];
 
-    if (process.env.NEXT_PUBLIC_DISABLE_ARTICLES || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    if (
+      process.env.NEXT_PUBLIC_DISABLE_ARTICLES === '1' ||
+      !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+      !supabasePublicKey
+    ) {
       rewriteContents.push(
         { source: '/api/articles', destination: '/404' },
         { source: '/api/articles/:path*', destination: '/404' },
