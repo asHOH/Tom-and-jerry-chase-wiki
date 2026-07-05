@@ -10,6 +10,7 @@ import { cn } from '@/lib/design';
 
 interface TreeLineMeasurement {
   childRects: DOMRect[];
+  childElements: HTMLElement[];
   containerWidth: number;
   containerHeight: number;
 }
@@ -20,6 +21,7 @@ function useTreeLineMeasurement(
 ): TreeLineMeasurement {
   const [result, setResult] = useState<TreeLineMeasurement>({
     childRects: [],
+    childElements: [],
     containerWidth: 0,
     containerHeight: 0,
   });
@@ -27,7 +29,7 @@ function useTreeLineMeasurement(
   useLayoutEffect(() => {
     const container = containerRef.current;
     if (!container || childCount < 2) {
-      setResult({ childRects: [], containerWidth: 0, containerHeight: 0 });
+      setResult({ childRects: [], childElements: [], containerWidth: 0, containerHeight: 0 });
       return;
     }
 
@@ -47,6 +49,7 @@ function useTreeLineMeasurement(
             r.height
           );
         }),
+        childElements: domChildren,
         containerWidth: containerRect.width,
         containerHeight: containerRect.height,
       });
@@ -119,7 +122,7 @@ interface AndGroupLinesProps {
 const AndGroupLines: React.FC<AndGroupLinesProps> = ({ children, isDarkMode, className }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const childCount = React.Children.count(children);
-  const { childRects } = useTreeLineMeasurement(containerRef, childCount);
+  const { childRects, childElements } = useTreeLineMeasurement(containerRef, childCount);
 
   const paths = useMemo(() => {
     if (childRects.length < 2) return [];
@@ -141,7 +144,10 @@ const AndGroupLines: React.FC<AndGroupLinesProps> = ({ children, isDarkMode, cla
 
       if (yDiff < threshold) {
         // Straight horizontal connection
-        result.push(`M ${x1} ${y1} L ${x2} ${y2}`);
+        const nextIsOrGroup = childElements[i + 1]?.hasAttribute('data-group-type');
+        if (!nextIsOrGroup) {
+          result.push(`M ${x1} ${y1} L ${(x1 + x2) / 2} ${(y1 + y2) / 2}`);
+        }
       } else {
         // Wrapped to next row – smooth S-curve
         const midY = (y1 + y2) / 2;
@@ -153,7 +159,7 @@ const AndGroupLines: React.FC<AndGroupLinesProps> = ({ children, isDarkMode, cla
     }
 
     return result;
-  }, [childRects]);
+  }, [childRects, childElements]);
 
   const strokeColor = isDarkMode ? '#4a5565' : '#9ca3af';
 
@@ -186,11 +192,7 @@ const OrGroupLines: React.FC<OrGroupLinesProps> = ({ children, isDarkMode, class
     const result: string[] = [];
     const first = childRects[0]!;
     const last = childRects[childRects.length - 1]!;
-
-    // Position the stem to the left of all children (may be negative when children
-    // touch the container's left edge; overflow-visible ensures it still renders)
-    const minChildLeft = Math.min(...childRects.map((r) => r.left));
-    const stemX = minChildLeft - 8;
+    const stemX = -4;
 
     const firstCenterY = first.top + first.height / 2;
     const lastCenterY = last.top + last.height / 2;
@@ -216,7 +218,7 @@ const OrGroupLines: React.FC<OrGroupLinesProps> = ({ children, isDarkMode, class
     // Horizontal receiving line at the container's vertical midpoint
     // so it aligns with the parent AND group's line (which arrives at container.height/2)
     const containerMidY = containerHeight / 2;
-    result.push(`M ${stemX} ${containerMidY} L 0 ${containerMidY}`);
+    result.push(`M ${stemX} ${containerMidY} L ${stemX * 2} ${containerMidY}`);
 
     return result;
   }, [childRects, containerHeight]);
@@ -224,7 +226,7 @@ const OrGroupLines: React.FC<OrGroupLinesProps> = ({ children, isDarkMode, class
   const strokeColor = isDarkMode ? '#4a5565' : '#9ca3af';
 
   return (
-    <div ref={containerRef} className={cn('relative', className)}>
+    <div ref={containerRef} className={cn('relative', className)} data-group-type='or'>
       {children}
       <TreeLinesSvg paths={paths} strokeColor={strokeColor} />
     </div>
