@@ -65,6 +65,10 @@
       "type": "entity"
     },
     {
+      "name": "弓箭",
+      "type": "entity"
+    },
+    {
       "name": "弹簧仙人球",
       "type": "entity"
     },
@@ -713,7 +717,7 @@
       "type": "skill"
     },
     {
-      "name": "魔音穿耳",
+      "name": "魔音贯耳",
       "type": "skill"
     },
     {
@@ -821,6 +825,10 @@
       "type": "skill"
     },
     {
+      "name": "明察秋毫",
+      "type": "skill"
+    },
+    {
       "name": "暗中观察",
       "type": "skill"
     },
@@ -921,6 +929,10 @@
       "type": "mode"
     },
     {
+      "name": "侦探放大镜",
+      "type": "skill"
+    },
+    {
       "name": "奇思妙想",
       "type": "skill"
     },
@@ -947,7 +959,15 @@
   ],
   "护盾": [
     {
+      "name": "列车",
+      "type": "entity"
+    },
+    {
       "name": "守护战旗",
+      "type": "entity"
+    },
+    {
+      "name": "弓箭",
       "type": "entity"
     },
     {
@@ -964,6 +984,10 @@
     },
     {
       "name": "皇家火炮",
+      "type": "entity"
+    },
+    {
+      "name": "蓄力箭",
       "type": "entity"
     },
     {
@@ -992,6 +1016,10 @@
     },
     {
       "name": "三叉戟",
+      "type": "skill"
+    },
+    {
+      "name": "丘比特之箭",
       "type": "skill"
     },
     {
@@ -1031,11 +1059,19 @@
       "type": "skill"
     },
     {
+      "name": "狂欢时刻",
+      "type": "skill"
+    },
+    {
       "name": "皇家火炮",
       "type": "skill"
     },
     {
       "name": "超级变！变！变！",
+      "type": "skill"
+    },
+    {
+      "name": "迷乱列车",
       "type": "skill"
     },
     {
@@ -1126,6 +1162,10 @@
     },
     {
       "name": "攻无不克",
+      "type": "skill"
+    },
+    {
+      "name": "明察秋毫",
       "type": "skill"
     },
     {
@@ -1258,10 +1298,6 @@
     },
     {
       "name": "灵气修为",
-      "type": "skill"
-    },
-    {
-      "name": "牛仔吉他",
       "type": "skill"
     },
     {
@@ -1807,6 +1843,10 @@
       "type": "knowledgeCard"
     },
     {
+      "name": "攻其不备",
+      "type": "knowledgeCard"
+    },
+    {
       "name": "春风得意",
       "type": "knowledgeCard"
     },
@@ -1848,6 +1888,10 @@
     },
     {
       "name": "逃窜",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "都是朋友",
       "type": "knowledgeCard"
     },
     {
@@ -1928,6 +1972,14 @@
     },
     {
       "name": "优雅从容",
+      "type": "skill"
+    },
+    {
+      "name": "侦探放大镜",
+      "type": "skill"
+    },
+    {
+      "name": "侦探锁定",
       "type": "skill"
     },
     {
@@ -2084,6 +2136,10 @@
     },
     {
       "name": "无坚不摧",
+      "type": "skill"
+    },
+    {
+      "name": "明察秋毫",
       "type": "skill"
     },
     {
@@ -2385,7 +2441,15 @@
   ],
   "移速保底": [
     {
+      "name": "强健",
+      "type": "knowledgeCard"
+    },
+    {
       "name": "优雅从容",
+      "type": "skill"
+    },
+    {
+      "name": "明察秋毫",
       "type": "skill"
     },
     {
@@ -2420,10 +2484,6 @@
     },
     {
       "name": "咸鱼-投射物",
-      "type": "entity"
-    },
-    {
-      "name": "垃圾桶",
       "type": "entity"
     },
     {
@@ -2619,6 +2679,10 @@
       "type": "skill"
     },
     {
+      "name": "侦探放大镜",
+      "type": "skill"
+    },
+    {
       "name": "兔子先生",
       "type": "skill"
     },
@@ -2648,10 +2712,6 @@
     },
     {
       "name": "地狱裂隙",
-      "type": "skill"
-    },
-    {
-      "name": "垃圾桶",
       "type": "skill"
     },
     {
@@ -2692,6 +2752,10 @@
     },
     {
       "name": "无坚不摧",
+      "type": "skill"
+    },
+    {
+      "name": "明察秋毫",
       "type": "skill"
     },
     {
@@ -2863,6 +2927,10 @@
     {
       "name": "灵巧战旗",
       "type": "entity"
+    },
+    {
+      "name": "飞跃",
+      "type": "knowledgeCard"
     },
     {
       "name": "沙滩排球",
@@ -3291,7 +3359,7 @@
       "type": "skill"
     },
     {
-      "name": "魔音穿耳",
+      "name": "魔音贯耳",
       "type": "skill"
     }
   ],
@@ -3431,11 +3499,11 @@
       "type": "skill"
     },
     {
-      "name": "律动时间",
+      "name": "感同身受",
       "type": "skill"
     },
     {
-      "name": "感同身受",
+      "name": "横冲直撞",
       "type": "skill"
     },
     {
@@ -3493,10 +3561,6 @@
   ],
   "攻击增伤倍率": [
     {
-      "name": "必备专业素养",
-      "type": "skill"
-    },
-    {
       "name": "羊角锤",
       "type": "skill"
     },
@@ -3506,6 +3570,10 @@
     }
   ],
   "攻击增伤固定值": [
+    {
+      "name": "狂欢时刻",
+      "type": "skill"
+    },
     {
       "name": "羊角锤",
       "type": "skill"
@@ -3561,10 +3629,6 @@
       "type": "skill"
     },
     {
-      "name": "幻风礼服",
-      "type": "skill"
-    },
-    {
       "name": "必备专业素养",
       "type": "skill"
     },
@@ -3606,6 +3670,10 @@
     }
   ],
   "受击减伤固定值": [
+    {
+      "name": "列车",
+      "type": "entity"
+    },
     {
       "name": "托普斯分身",
       "type": "entity"
@@ -3663,10 +3731,6 @@
       "type": "skill"
     },
     {
-      "name": "灵活跳跃",
-      "type": "skill"
-    },
-    {
       "name": "穷追不舍",
       "type": "skill"
     },
@@ -3676,6 +3740,10 @@
     },
     {
       "name": "虚幻梦影",
+      "type": "skill"
+    },
+    {
+      "name": "迷乱列车",
       "type": "skill"
     },
     {
@@ -3710,6 +3778,10 @@
     },
     {
       "name": "兔子先生",
+      "type": "skill"
+    },
+    {
+      "name": "漂浮气球",
       "type": "skill"
     },
     {
@@ -3883,6 +3955,10 @@
       "type": "skill"
     },
     {
+      "name": "狂欢时刻",
+      "type": "skill"
+    },
+    {
       "name": "野性迸发",
       "type": "skill"
     },
@@ -4041,10 +4117,6 @@
       "type": "skill"
     },
     {
-      "name": "天使祝福",
-      "type": "skill"
-    },
-    {
       "name": "奇思妙想",
       "type": "skill"
     },
@@ -4070,6 +4142,10 @@
     },
     {
       "name": "指甲油",
+      "type": "skill"
+    },
+    {
+      "name": "明察秋毫",
       "type": "skill"
     },
     {
@@ -4321,6 +4397,10 @@
       "type": "skill"
     },
     {
+      "name": "最佳表演",
+      "type": "skill"
+    },
+    {
       "name": "梦幻舞步",
       "type": "skill"
     },
@@ -4330,6 +4410,10 @@
     },
     {
       "name": "滑步踢",
+      "type": "skill"
+    },
+    {
+      "name": "漂浮气球",
       "type": "skill"
     },
     {
@@ -4407,10 +4491,6 @@
       "type": "skill"
     },
     {
-      "name": "最佳表演",
-      "type": "skill"
-    },
-    {
       "name": "烟雾弹",
       "type": "skill"
     },
@@ -4438,10 +4518,6 @@
     },
     {
       "name": "托普斯分身",
-      "type": "entity"
-    },
-    {
-      "name": "烟雾",
       "type": "entity"
     },
     {
@@ -4477,6 +4553,10 @@
       "type": "mode"
     },
     {
+      "name": "侦探放大镜",
+      "type": "skill"
+    },
+    {
       "name": "元气满满",
       "type": "skill"
     },
@@ -4497,11 +4577,7 @@
       "type": "skill"
     },
     {
-      "name": "梦幻舞步",
-      "type": "skill"
-    },
-    {
-      "name": "烟雾弹",
+      "name": "明察秋毫",
       "type": "skill"
     },
     {
@@ -4577,6 +4653,10 @@
       "type": "item"
     },
     {
+      "name": "侦探锁定",
+      "type": "skill"
+    },
+    {
       "name": "警戒",
       "type": "skill"
     },
@@ -4631,6 +4711,10 @@
       "type": "skill"
     },
     {
+      "name": "明察秋毫",
+      "type": "skill"
+    },
+    {
       "name": "神之惩戒",
       "type": "skill"
     },
@@ -4662,6 +4746,10 @@
     },
     {
       "name": "定身符",
+      "type": "entity"
+    },
+    {
+      "name": "巨大泰菲球",
       "type": "entity"
     },
     {
@@ -4745,6 +4833,10 @@
       "type": "knowledgeCard"
     },
     {
+      "name": "春风得意",
+      "type": "knowledgeCard"
+    },
+    {
       "name": "求生欲",
       "type": "knowledgeCard"
     },
@@ -4765,7 +4857,15 @@
       "type": "skill"
     },
     {
+      "name": "丰收盛宴",
+      "type": "skill"
+    },
+    {
       "name": "侠义相助",
+      "type": "skill"
+    },
+    {
+      "name": "侦探放大镜",
       "type": "skill"
     },
     {
@@ -4826,6 +4926,10 @@
     },
     {
       "name": "灵气修为",
+      "type": "skill"
+    },
+    {
+      "name": "灵活跳跃",
       "type": "skill"
     },
     {
@@ -5055,11 +5159,19 @@
       "type": "skill"
     },
     {
+      "name": "明察秋毫",
+      "type": "skill"
+    },
+    {
       "name": "机械身躯",
       "type": "skill"
     },
     {
       "name": "梦幻舞步",
+      "type": "skill"
+    },
+    {
+      "name": "漂浮气球",
       "type": "skill"
     },
     {
@@ -5229,6 +5341,10 @@
       "type": "skill"
     },
     {
+      "name": "侦探放大镜",
+      "type": "skill"
+    },
+    {
       "name": "军团战车",
       "type": "skill"
     },
@@ -5258,6 +5374,10 @@
     },
     {
       "name": "我，兔八哥",
+      "type": "skill"
+    },
+    {
+      "name": "明察秋毫",
       "type": "skill"
     },
     {
@@ -5385,6 +5505,10 @@
       "type": "skill"
     },
     {
+      "name": "侦探放大镜",
+      "type": "skill"
+    },
+    {
       "name": "军团战车",
       "type": "skill"
     },
@@ -5418,6 +5542,10 @@
     },
     {
       "name": "捕鼠专家",
+      "type": "skill"
+    },
+    {
+      "name": "明察秋毫",
       "type": "skill"
     },
     {
@@ -5519,11 +5647,19 @@
       "type": "skill"
     },
     {
+      "name": "侦探放大镜",
+      "type": "skill"
+    },
+    {
       "name": "军团战车",
       "type": "skill"
     },
     {
       "name": "勇者无惧",
+      "type": "skill"
+    },
+    {
+      "name": "友情庇护",
       "type": "skill"
     },
     {
@@ -5662,6 +5798,10 @@
     },
     {
       "name": "戏剧转折",
+      "type": "skill"
+    },
+    {
+      "name": "捕鼠专家",
       "type": "skill"
     },
     {
@@ -5899,6 +6039,10 @@
       "type": "skill"
     },
     {
+      "name": "侦探锁定",
+      "type": "skill"
+    },
+    {
       "name": "双重猫格",
       "type": "skill"
     },
@@ -5928,6 +6072,10 @@
     },
     {
       "name": "我，兔八哥",
+      "type": "skill"
+    },
+    {
+      "name": "明察秋毫",
       "type": "skill"
     },
     {
@@ -6113,6 +6261,10 @@
       "type": "skill"
     },
     {
+      "name": "漂浮气球",
+      "type": "skill"
+    },
+    {
       "name": "灵活跳跃",
       "type": "skill"
     },
@@ -6165,6 +6317,10 @@
       "type": "entity"
     },
     {
+      "name": "铁手",
+      "type": "knowledgeCard"
+    },
+    {
       "name": "丰收盛宴",
       "type": "skill"
     },
@@ -6194,6 +6350,10 @@
     },
     {
       "name": "圆滚滚",
+      "type": "skill"
+    },
+    {
+      "name": "天使翅膀",
       "type": "skill"
     },
     {
@@ -6355,6 +6515,10 @@
       "type": "mode"
     },
     {
+      "name": "侦探放大镜",
+      "type": "skill"
+    },
+    {
       "name": "喜剧之王",
       "type": "skill"
     },
@@ -6384,10 +6548,6 @@
     },
     {
       "name": "乾坤袋",
-      "type": "entity"
-    },
-    {
-      "name": "兔子大表哥",
       "type": "entity"
     },
     {
@@ -6592,10 +6752,6 @@
     },
     {
       "name": "管道猫",
-      "type": "entity"
-    },
-    {
-      "name": "红色卡牌",
       "type": "entity"
     },
     {
@@ -6847,7 +7003,7 @@
       "type": "skill"
     },
     {
-      "name": "兔子大表哥",
+      "name": "侦探放大镜",
       "type": "skill"
     },
     {
@@ -6895,7 +7051,7 @@
       "type": "skill"
     },
     {
-      "name": "奇思妙想",
+      "name": "天使翅膀",
       "type": "skill"
     },
     {
@@ -6924,6 +7080,10 @@
     },
     {
       "name": "律动时间",
+      "type": "skill"
+    },
+    {
+      "name": "怜悯之心",
       "type": "skill"
     },
     {
@@ -7020,10 +7180,6 @@
     },
     {
       "name": "火药桶",
-      "type": "skill"
-    },
-    {
-      "name": "牛仔吉他",
       "type": "skill"
     },
     {
@@ -7167,7 +7323,7 @@
       "type": "skill"
     },
     {
-      "name": "魔音穿耳",
+      "name": "魔音贯耳",
       "type": "skill"
     },
     {
@@ -7457,6 +7613,10 @@
       "type": "skill"
     },
     {
+      "name": "狂欢时刻",
+      "type": "skill"
+    },
+    {
       "name": "登山飞镐",
       "type": "skill"
     },
@@ -7566,6 +7726,10 @@
     {
       "name": "牛仔鞭索",
       "type": "skill"
+    },
+    {
+      "name": "野生体格",
+      "type": "skill"
     }
   ],
   "掉落道具和老鼠": [
@@ -7619,6 +7783,10 @@
     },
     {
       "name": "带电残骸",
+      "type": "entity"
+    },
+    {
+      "name": "弓箭",
       "type": "entity"
     },
     {
@@ -7926,6 +8094,10 @@
       "type": "skill"
     },
     {
+      "name": "侦探放大镜",
+      "type": "skill"
+    },
+    {
       "name": "共鸣",
       "type": "skill"
     },
@@ -7995,6 +8167,10 @@
     },
     {
       "name": "捕虫网",
+      "type": "skill"
+    },
+    {
+      "name": "捕鼠专家",
       "type": "skill"
     },
     {
@@ -8126,10 +8302,6 @@
       "type": "skill"
     },
     {
-      "name": "野生体格",
-      "type": "skill"
-    },
-    {
       "name": "隐形感应雷",
       "type": "skill"
     },
@@ -8154,7 +8326,7 @@
       "type": "skill"
     },
     {
-      "name": "魔音穿耳",
+      "name": "魔音贯耳",
       "type": "skill"
     },
     {
