@@ -137,6 +137,7 @@ const AndGroupLines: React.FC<AndGroupLinesProps> = ({ children, isDarkMode, cla
       const y1 = curr.top + curr.height / 2;
       const x2 = next.left;
       const y2 = next.top + next.height / 2;
+      if (y1 != y2) continue;
 
       // Same row detection: y-diff less than half the smaller element height
       const yDiff = Math.abs(y2 - y1);
@@ -145,7 +146,7 @@ const AndGroupLines: React.FC<AndGroupLinesProps> = ({ children, isDarkMode, cla
       if (yDiff < threshold) {
         // Straight horizontal connection
         const isOrGroup =
-          childElements[i]?.hasAttribute('data-group-type') ||
+          // childElements[i]?.hasAttribute('data-group-type') ||
           childElements[i + 1]?.hasAttribute('data-group-type');
         if (!isOrGroup) {
           const mx = (x1 + x2) / 2;
