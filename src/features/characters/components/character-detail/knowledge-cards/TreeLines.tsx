@@ -148,15 +148,16 @@ const AndGroupLines: React.FC<AndGroupLinesProps> = ({ children, isDarkMode, cla
           childElements[i]?.hasAttribute('data-group-type') ||
           childElements[i + 1]?.hasAttribute('data-group-type');
         if (!isOrGroup) {
-          result.push(`M ${x1} ${y1} L ${(x1 + x2) / 2} ${(y1 + y2) / 2}`);
+          const mx = (x1 + x2) / 2;
+          const my = (y1 + y2) / 2;
+          result.push(`M ${x1} ${y1} Q ${mx} ${y1} ${mx} ${my}`);
         }
       } else {
-        // Wrapped to next row – smooth S-curve
-        const midY = (y1 + y2) / 2;
-        const offset = 12;
-        result.push(
-          `M ${x1} ${y1} Q ${x1 + offset} ${y1} ${x1 + offset} ${midY} Q ${x1 + offset} ${y2} ${x2} ${y2}`
-        );
+        // Wrapped to next row – smooth sigmoid S-curve using cubic bezier
+        const dx = x2 - x1;
+        const cpx1 = x1 + dx * 0.45;
+        const cpx2 = x2 - dx * 0.45;
+        result.push(`M ${x1} ${y1} C ${cpx1} ${y1}, ${cpx2} ${y2}, ${x2} ${y2}`);
       }
     }
 
@@ -208,13 +209,18 @@ const OrGroupLines: React.FC<OrGroupLinesProps> = ({ children, isDarkMode, class
       const childCenterY = rect.top + rect.height / 2;
       const childLeft = rect.left;
 
-      // Curve the branch slightly by offsetting the control point vertically
-      // based on the child's position in the stack
-      const arcOffset = (i - (childRects.length - 1) / 2) * 3;
-      const cpX = stemX + (childLeft - stemX) * 0.6;
-      const cpY = childCenterY + arcOffset;
+      // Smooth cubic bezier branch from stem to child
+      // First control point keeps the curve moving horizontally from the stem,
+      // second control point adds a subtle dip before arriving at the child
+      const dx = childLeft - stemX;
+      const arcDip = (i - (childRects.length - 1) / 2) * 4;
+      const cpx1 = stemX + dx * 0.35;
+      const cpx2 = stemX + dx * 0.7;
+      const cpy2 = childCenterY + arcDip;
 
-      result.push(`M ${stemX} ${childCenterY} Q ${cpX} ${cpY} ${childLeft} ${childCenterY}`);
+      result.push(
+        `M ${stemX} ${childCenterY} C ${cpx1} ${childCenterY}, ${cpx2} ${cpy2}, ${childLeft} ${childCenterY}`
+      );
     }
 
     // Horizontal receiving line at the container's vertical midpoint
