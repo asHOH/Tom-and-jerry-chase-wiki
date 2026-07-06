@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+import { incrementArticleViewCount } from '@/lib/articles/serverQueries';
 import { CACHE_TAGS } from '@/lib/cacheTags';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { cached } from '@/lib/serverCache';
@@ -32,18 +33,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   }
 
   try {
-    // Increment view count
-    const adminClient = supabaseAdmin as unknown as typeof supabaseAdmin | undefined;
-    if (adminClient) {
-      const { error: incrementError } = await adminClient.rpc('increment_article_view_count', {
-        p_article_id: id,
-      });
-
-      if (incrementError) {
-        // Log the error but don't block the request
-        console.error('Error incrementing view count:', incrementError);
-      }
-    }
+    await incrementArticleViewCount(id);
 
     const response = await cached(
       ['api', 'articles', id],

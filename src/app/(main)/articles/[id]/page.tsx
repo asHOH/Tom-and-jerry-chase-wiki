@@ -2,9 +2,12 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Article, WithContext } from 'schema-dts';
 
-import { getApprovedArticleVersion, getArticleBasicInfo } from '@/lib/articles/serverQueries';
+import {
+  getApprovedArticleVersion,
+  getArticleBasicInfo,
+  incrementArticleViewCount,
+} from '@/lib/articles/serverQueries';
 import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
-import { supabaseAdmin } from '@/lib/supabase/admin';
 import { sanitizeHTML } from '@/lib/xssUtils';
 import { SITE_URL } from '@/constants/seo';
 import StructuredData from '@/components/StructuredData';
@@ -84,18 +87,7 @@ export default async function ArticlePage({
   let response;
 
   try {
-    // Increment view count
-    const adminClient = supabaseAdmin as unknown as typeof supabaseAdmin | undefined;
-    if (adminClient) {
-      const { error: incrementError } = await adminClient.rpc('increment_article_view_count', {
-        p_article_id: id,
-      });
-
-      if (incrementError) {
-        // Log the error but don't block the request
-        console.error('Error incrementing view count:', incrementError);
-      }
-    }
+    await incrementArticleViewCount(id);
 
     // Get the article basic info
     const article = await getArticleBasicInfo(id);
