@@ -2,6 +2,7 @@ import { supabaseAdmin } from '@/lib/supabase/admin';
 
 import {
   getArticleDetailData,
+  getArticleHistory,
   getArticlesPageData,
   getEmbeddedArticlesForCharacter,
   getPaginatedArticles,
@@ -343,6 +344,87 @@ describe('serverQueries', () => {
     } finally {
       consoleErrorSpy.mockRestore();
     }
+  });
+
+  it('should return article history with approved versions', async () => {
+    const articleQuery = createSingleQuery({
+      data: {
+        id: 'article-1',
+        title: 'Guide',
+        categories: { name: 'Tips' },
+      },
+      error: null,
+    });
+    const versionQuery = {
+      select: jest.fn(),
+      eq: jest.fn(),
+      order: jest.fn(),
+    };
+
+    versionQuery.select.mockReturnValue(versionQuery);
+    versionQuery.eq.mockReturnValue(versionQuery);
+    versionQuery.order.mockResolvedValue({
+      data: [
+        {
+          id: 'version-2',
+          content: '<p>New</p>',
+          created_at: '2026-01-02',
+          editor_id: 'user-2',
+          status: 'approved',
+          commit_message: 'Update article',
+          users: { nickname: 'Bob' },
+        },
+        {
+          id: 'version-1',
+          content: '<p>Old</p>',
+          created_at: '2026-01-01',
+          editor_id: 'user-1',
+          status: 'approved',
+          commit_message: null,
+          users: { nickname: 'Alice' },
+        },
+      ],
+      error: null,
+    });
+
+    mockSupabaseAdmin.from.mockImplementation((table: string) => {
+      if (table === 'articles') return articleQuery;
+      if (table === 'article_versions_public_view') return versionQuery;
+      throw new Error(`Unexpected table: ${table}`);
+    });
+
+    await expect(getArticleHistory('article-1')).resolves.toEqual({
+      article: {
+        id: 'article-1',
+        title: 'Guide',
+        categories: { name: 'Tips' },
+      },
+      versions: [
+        {
+          id: 'version-2',
+          content: '<p>New</p>',
+          created_at: '2026-01-02',
+          editor_id: 'user-2',
+          status: 'approved',
+          commit_message: 'Update article',
+          users: { nickname: 'Bob' },
+        },
+        {
+          id: 'version-1',
+          content: '<p>Old</p>',
+          created_at: '2026-01-01',
+          editor_id: 'user-1',
+          status: 'approved',
+          commit_message: null,
+          users: { nickname: 'Alice' },
+        },
+      ],
+      total_count: 2,
+    });
+    expect(articleQuery.eq).toHaveBeenCalledWith('id', 'article-1');
+    expect(versionQuery.eq).toHaveBeenCalledWith('article_id', 'article-1');
+    expect(versionQuery.eq).toHaveBeenCalledWith('status', 'approved');
+    expect(versionQuery.order).toHaveBeenCalledWith('created_at', { ascending: false });
   });
 
   it('should increment article view count through the article RPC', async () => {

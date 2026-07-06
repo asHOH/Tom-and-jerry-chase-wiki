@@ -397,6 +397,97 @@ export async function getArticleDetailData(
   );
 }
 
+export type ArticleHistoryData = {
+  article: {
+    id: string;
+    title: string;
+    categories: { name: string } | null;
+  };
+  versions: Array<{
+    id: string;
+    content: string | null;
+    created_at: string | null;
+    editor_id: string | null;
+    status: string | null;
+    commit_message: string | null;
+    users: { nickname: string | null } | null;
+  }>;
+  total_count: number;
+};
+
+export type ArticleHistoryError =
+  | { error: 'Articles disabled' }
+  | { error: 'Article not found' }
+  | { error: 'Failed to fetch article history' };
+
+type ArticleHistoryArticleRow = {
+  id: string;
+  title: string;
+  categories: { name: string } | null;
+};
+
+export async function getArticleHistory(
+  articleId: string
+): Promise<ArticleHistoryData | ArticleHistoryError> {
+  const supabase = getPublicReadClient();
+  if (!supabase) return { error: 'Articles disabled' };
+
+  return cached(
+    ['api', 'articles', articleId, 'history'],
+    async () => {
+      const { data: article, error: articleError } = await supabase
+        .from('articles')
+        .select('id, title, categories(name)')
+        .eq('id', articleId)
+        .single();
+
+      if (articleError || !article) {
+        console.error('Error fetching article:', articleError);
+        return { error: 'Article not found' } as const;
+      }
+
+      const { data: versions, error: versionsError } = await supabase
+        .from('article_versions_public_view')
+        .select(
+          `
+            id,
+            content,
+            created_at,
+            editor_id,
+            status,
+            commit_message,
+            users:users_public_view!editor_id(nickname)
+          `
+        )
+        .eq('article_id', articleId)
+        .eq('status', 'approved')
+        .order('created_at', { ascending: false });
+
+      if (versionsError) {
+        console.error('Error fetching versions:', versionsError);
+        return { error: 'Failed to fetch article history' } as const;
+      }
+
+      const articleRow = article as unknown as ArticleHistoryArticleRow;
+      const historyVersions = (versions ?? []) as ArticleHistoryData['versions'];
+
+      return {
+        article: {
+          id: articleRow.id,
+          title: articleRow.title,
+          categories: articleRow.categories,
+        },
+        versions: historyVersions,
+        total_count: historyVersions.length,
+      };
+    },
+    {
+      revalidate: 300,
+      tags: [CACHE_TAGS.article(articleId), CACHE_TAGS.articleVersions(articleId)],
+    }
+  );
+}
+
 type CharacterArticleMetaRow = {
   id: string;
   title: string;
