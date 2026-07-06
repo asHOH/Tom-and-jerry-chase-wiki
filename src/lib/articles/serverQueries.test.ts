@@ -1,6 +1,7 @@
 import { supabaseAdmin } from '@/lib/supabase/admin';
 
 import {
+  getArticleDetailData,
   getArticlesPageData,
   getEmbeddedArticlesForCharacter,
   getPaginatedArticles,
@@ -65,6 +66,24 @@ function createThenableQuery<T>(result: T) {
   query.order.mockReturnValue(query);
   query.range.mockReturnValue(query);
   query.ilike.mockReturnValue(query);
+
+  return query;
+}
+
+function createSingleQuery<T>(result: T) {
+  const query = {
+    select: jest.fn(),
+    eq: jest.fn(),
+    order: jest.fn(),
+    limit: jest.fn(),
+    single: jest.fn(),
+  };
+
+  query.select.mockReturnValue(query);
+  query.eq.mockReturnValue(query);
+  query.order.mockReturnValue(query);
+  query.limit.mockReturnValue(query);
+  query.single.mockResolvedValue(result);
 
   return query;
 }
@@ -237,6 +256,93 @@ describe('serverQueries', () => {
     ]);
     expect(articleQuery.eq).toHaveBeenCalledWith('character_id', 'tom');
     expect(versionQuery.in).toHaveBeenCalledWith('article_id', ['article-1', 'article-2']);
+  });
+
+  it('should return article detail data with the latest approved version', async () => {
+    const articleQuery = createSingleQuery({
+      data: {
+        id: 'article-1',
+        title: 'Guide',
+        category_id: 'category-1',
+        author_id: 'user-1',
+        created_at: '2026-01-01',
+        view_count: 3,
+        categories: { name: 'Tips' },
+        users_public_view: { nickname: 'Alice' },
+      },
+      error: null,
+    });
+    const versionQuery = createSingleQuery({
+      data: {
+        id: 'version-1',
+        content: '<p>Guide content</p>',
+        created_at: '2026-01-02',
+        editor_id: 'user-2',
+        users_public_view: { nickname: 'Bob' },
+      },
+      error: null,
+    });
+
+    mockSupabaseAdmin.from.mockImplementation((table: string) => {
+      if (table === 'articles') return articleQuery;
+      if (table === 'article_versions_public_view') return versionQuery;
+      throw new Error(`Unexpected table: ${table}`);
+    });
+
+    await expect(getArticleDetailData('article-1')).resolves.toEqual({
+      article: {
+        id: 'article-1',
+        title: 'Guide',
+        category_id: 'category-1',
+        author_id: 'user-1',
+        created_at: '2026-01-01',
+        view_count: 3,
+        categories: { name: 'Tips' },
+        users_public_view: { nickname: 'Alice' },
+        latest_version: {
+          id: 'version-1',
+          content: '<p>Guide content</p>',
+          created_at: '2026-01-02',
+          editor_id: 'user-2',
+          users_public_view: { nickname: 'Bob' },
+        },
+      },
+    });
+    expect(articleQuery.eq).toHaveBeenCalledWith('id', 'article-1');
+    expect(versionQuery.eq).toHaveBeenCalledWith('article_id', 'article-1');
+    expect(versionQuery.eq).toHaveBeenCalledWith('status', 'approved');
+    expect(versionQuery.order).toHaveBeenCalledWith('created_at', { ascending: false });
+    expect(versionQuery.limit).toHaveBeenCalledWith(1);
+  });
+
+  it('should return validation details for invalid article detail payloads', async () => {
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    const articleQuery = createSingleQuery({
+      data: {
+        id: 'article-1',
+        title: '',
+        category_id: 'category-1',
+        author_id: 'user-1',
+        created_at: '2026-01-01',
+        categories: { name: 'Tips' },
+        users_public_view: { nickname: 'Alice' },
+      },
+      error: null,
+    });
+
+    mockSupabaseAdmin.from.mockImplementation((table: string) => {
+      if (table === 'articles') return articleQuery;
+      throw new Error(`Unexpected table: ${table}`);
+    });
+
+    try {
+      await expect(getArticleDetailData('article-1')).resolves.toEqual({
+        error: 'Article data invalid',
+        details: [{ path: 'title', message: 'Too small: expected string to have >=1 characters' }],
+      });
+    } finally {
+      consoleErrorSpy.mockRestore();
+    }
   });
 
   it('should increment article view count through the article RPC', async () => {

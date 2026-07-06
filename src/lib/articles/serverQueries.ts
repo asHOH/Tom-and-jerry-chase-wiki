@@ -1,11 +1,17 @@
 import 'server-only';
 
 import type { SupabaseClient } from '@supabase/supabase-js';
+import type { z } from 'zod';
 
 import { CACHE_TAGS } from '@/lib/cacheTags';
 import { cached } from '@/lib/serverCache';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { supabaseServerPublic } from '@/lib/supabase/public';
+import {
+  articleRecordSchema,
+  articleVersionSchema,
+  formatZodError,
+} from '@/lib/validation/schemas';
 import { sanitizeHTML } from '@/lib/xssUtils';
 import type { Database } from '@/data/database.types';
 import type { Article as ArticleListItem, ArticlesData, Category } from '@/data/types';
@@ -283,6 +289,110 @@ export async function getApprovedArticleVersion(args: {
     {
       revalidate: 60,
       tags: [CACHE_TAGS.articleVersions(articleId), CACHE_TAGS.article(articleId)],
+    }
+  );
+}
+
+type ArticleDetailValidationDetails = ReturnType<typeof formatZodError>;
+
+export type ArticleDetailData = {
+  article: z.infer<typeof articleRecordSchema> & {
+    latest_version: z.infer<typeof articleVersionSchema>;
+  };
+};
+
+export type ArticleDetailError =
+  | { error: 'Articles disabled' }
+  | { error: 'Article not found' }
+  | { error: 'Article data invalid'; details: ArticleDetailValidationDetails }
+  | { error: 'No approved version found' }
+  | { error: 'Article version data invalid'; details: ArticleDetailValidationDetails };
+
+export async function getArticleDetailData(
+  articleId: string
+): Promise<ArticleDetailData | ArticleDetailError> {
+  const supabase = getPublicReadClient();
+  if (!supabase) return { error: 'Articles disabled' };
+
+  return cached(
+    ['api', 'articles', articleId],
+    async () => {
+      const { data: article, error: articleError } = await supabase
+        .from('articles')
+        .select(
+          `
+            id,
+            title,
+            category_id,
+            author_id,
+            created_at,
+            view_count,
+            categories(name),
+            users_public_view!author_id(nickname)
+          `
+        )
+        .eq('id', articleId)
+        .single();
+
+      if (articleError) {
+        console.error('Error fetching article:', articleError);
+        return { error: 'Article not found' } as const;
+      }
+
+      const parsedArticle = articleRecordSchema.safeParse(article);
+      if (!parsedArticle.success) {
+        console.error('Article payload validation failed', parsedArticle.error.format());
+        return {
+          error: 'Article data invalid',
+          details: formatZodError(parsedArticle.error),
+        } as const;
+      }
+
+      const { data: latestVersion, error: versionError } = await supabase
+        .from('article_versions_public_view')
+        .select(
+          `
+            id,
+            content,
+            created_at,
+            editor_id,
+            users_public_view!editor_id(nickname)
+          `
+        )
+        .eq('article_id', articleId)
+        .eq('status', 'approved')
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (versionError) {
+        console.error('Error fetching latest version:', versionError);
+        return { error: 'No approved version found' } as const;
+      }
+
+      const parsedVersion = articleVersionSchema.safeParse(latestVersion);
+      if (!parsedVersion.success) {
+        console.error('Article version payload validation failed', parsedVersion.error.format());
+        return {
+          error: 'Article version data invalid',
+          details: formatZodError(parsedVersion.error),
+        } as const;
+      }
+
+      return {
+        article: {
+          ...parsedArticle.data,
+          latest_version: parsedVersion.data,
+        },
+      };
+    },
+    {
+      revalidate: 60,
+      tags: [
+        CACHE_TAGS.article(articleId),
+        CACHE_TAGS.articleVersions(articleId),
+        CACHE_TAGS.articles,
+      ],
     }
   );
 }
