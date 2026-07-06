@@ -3,13 +3,17 @@ import { supabaseAdmin } from '@/lib/supabase/admin';
 import {
   getArticlesPageData,
   getEmbeddedArticlesForCharacter,
+  getPaginatedArticles,
   incrementArticleViewCount,
 } from './serverQueries';
 
 jest.mock('server-only', () => ({}), { virtual: true });
 
 jest.mock('@/lib/serverCache', () => ({
-  cached: (_keyParts: string[], fn: () => Promise<unknown>) => fn(),
+  cached: (
+    _keyParts: Array<string | number | boolean | null | undefined>,
+    fn: () => Promise<unknown>
+  ) => fn(),
 }));
 
 jest.mock('@/lib/cacheTags', () => ({
@@ -46,8 +50,29 @@ jest.mock('@/lib/supabase/public', () => ({
 
 const mockSupabaseAdmin = supabaseAdmin as unknown as { from: jest.Mock; rpc: jest.Mock };
 
+function createThenableQuery<T>(result: T) {
+  const query = {
+    select: jest.fn(),
+    eq: jest.fn(),
+    order: jest.fn(),
+    range: jest.fn(),
+    ilike: jest.fn(),
+    then: jest.fn((resolve: (value: T) => unknown) => Promise.resolve(resolve(result))),
+  };
+
+  query.select.mockReturnValue(query);
+  query.eq.mockReturnValue(query);
+  query.order.mockReturnValue(query);
+  query.range.mockReturnValue(query);
+  query.ilike.mockReturnValue(query);
+
+  return query;
+}
+
 describe('serverQueries', () => {
   beforeEach(() => {
+    jest.clearAllMocks();
+
     query.select.mockReturnValue(query);
     query.eq.mockReturnValue(query);
     query.order.mockReturnValue(query);
@@ -74,6 +99,63 @@ describe('serverQueries', () => {
     expect(query.limit).toHaveBeenCalledWith(1, {
       referencedTable: 'article_versions_public_view',
     });
+  });
+
+  it('should return paginated articles with filters and categories', async () => {
+    const listQuery = createThenableQuery({
+      data: [{ id: 'article-1', title: 'Guide' }],
+      error: null,
+    });
+    const countQuery = createThenableQuery({
+      count: 20,
+      error: null,
+    });
+    const categoryQuery = {
+      select: jest.fn(),
+      order: jest.fn(),
+    };
+
+    categoryQuery.select.mockReturnValue(categoryQuery);
+    categoryQuery.order.mockResolvedValue({
+      data: [{ id: 'category-1', name: 'Tips' }],
+      error: null,
+    });
+
+    mockSupabaseAdmin.from
+      .mockImplementationOnce(() => listQuery)
+      .mockImplementationOnce(() => countQuery)
+      .mockImplementationOnce(() => categoryQuery);
+
+    await expect(
+      getPaginatedArticles({
+        page: 2,
+        limit: 5,
+        category: 'category-1',
+        search: 'tom',
+        sortBy: 'created_at',
+        sortOrder: 'asc',
+      })
+    ).resolves.toEqual({
+      articles: [{ id: 'article-1', title: 'Guide' }],
+      total_count: 20,
+      current_page: 2,
+      total_pages: 4,
+      categories: [{ id: 'category-1', name: 'Tips' }],
+      has_next: true,
+      has_prev: true,
+    });
+
+    expect(listQuery.order).toHaveBeenCalledWith('created_at', { ascending: true });
+    expect(listQuery.range).toHaveBeenCalledWith(5, 9);
+    expect(listQuery.eq).toHaveBeenCalledWith('category_id', 'category-1');
+    expect(listQuery.ilike).toHaveBeenCalledWith('title', '%tom%');
+    expect(countQuery.select).toHaveBeenCalledWith('id, article_versions_public_view!inner(id)', {
+      count: 'exact',
+      head: true,
+    });
+    expect(countQuery.eq).toHaveBeenCalledWith('category_id', 'category-1');
+    expect(countQuery.ilike).toHaveBeenCalledWith('title', '%tom%');
+    expect(categoryQuery.order).toHaveBeenCalledWith('name');
   });
 
   it('should return sanitized embedded articles for a character', async () => {
