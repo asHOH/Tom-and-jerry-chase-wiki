@@ -195,6 +195,14 @@ interface KnowledgeCardSectionProps {
 
 export type ViewMode = 'compact' | 'tree' | 'hybrid';
 
+const normalizeViewMode = (viewMode: string | null): ViewMode => {
+  if (viewMode === 'compact' || viewMode === 'tree' || viewMode === 'hybrid') {
+    return viewMode;
+  }
+
+  return 'tree';
+};
+
 /** Flat knowledge card group component - renders a simple string[] group */
 function KnowledgeCardGroupFlat({
   cards,
@@ -560,10 +568,10 @@ export default function KnowledgeCardSection({
     innerIndex?: number;
     isGroupSet: boolean;
   } | null>(null);
-  const [viewMode, setViewMode] = useState<ViewMode>(
-    () =>
-      ((typeof localStorage != 'undefined' && localStorage.getItem('view-mode')) ||
-        ('tree' as const)) as ViewMode
+  const [viewMode, setViewMode] = useState<ViewMode>(() =>
+    normalizeViewMode(
+      typeof localStorage !== 'undefined' ? localStorage.getItem('view-mode') : null
+    )
   );
   const hasTreeStructure = useMemo(() => {
     return knowledgeCardGroups.some((group) => {

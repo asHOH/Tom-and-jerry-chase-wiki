@@ -1,10 +1,25 @@
 /* oxlint-disable typescript/no-explicit-any */
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { proxy } from 'valtio';
 
 import { characters } from '@/data';
 
-import { KnowledgeCardGroupDisplay } from './KnowledgeCardSection';
+import KnowledgeCardSection, { KnowledgeCardGroupDisplay } from './KnowledgeCardSection';
+
+jest.mock('@/context/AppContext', () => ({
+  useAppContext: () => ({
+    handleSelectCard: jest.fn(),
+    isDetailedView: false,
+  }),
+}));
+
+jest.mock('@/context/DarkModeContext', () => ({
+  useDarkMode: () => [false, jest.fn()] as const,
+}));
+
+jest.mock('@/context/EditModeContext', () => ({
+  useEditMode: () => ({ isEditMode: false }),
+}));
 
 jest.mock('@/components/GotoLink', () => ({
   __esModule: true,
@@ -136,13 +151,40 @@ describe('KnowledgeCardGroupDisplay', () => {
       '知识卡'
     );
   });
+});
 
-  it('uses the knowledge card category hint for legacy image links', () => {
-    render(<KnowledgeCardGroupDisplay {...defaultProps} viewMode={'image' as any} />);
+describe('KnowledgeCardSection', () => {
+  const characterId = 'test-character-with-view-mode';
 
-    expect(screen.getByLabelText('S-绝地反击').closest('[data-goto-name]')).toHaveAttribute(
-      'data-category-hint',
-      '知识卡'
-    );
+  beforeEach(() => {
+    (characters as any)[characterId] = proxy({
+      id: characterId,
+      factionId: 'mouse',
+    });
   });
+
+  afterEach(() => {
+    localStorage.clear();
+    delete (characters as any)[characterId];
+  });
+
+  it.each(['image', 'flat', 'tree-folded', 'invalid'])(
+    'normalizes unsupported stored view mode "%s" to tree',
+    async (storedViewMode) => {
+      localStorage.setItem('view-mode', storedViewMode);
+
+      render(
+        <KnowledgeCardSection
+          knowledgeCardGroups={[{ cards: ['C-飞跃'] }]}
+          factionId='mouse'
+          characterId={characterId}
+          onCreateGroup={jest.fn()}
+          onRemoveGroup={jest.fn()}
+        />
+      );
+
+      expect(screen.getByRole('button', { name: '当前: 图片视图' })).toBeInTheDocument();
+      await waitFor(() => expect(localStorage.getItem('view-mode')).toBe('tree'));
+    }
+  );
 });
