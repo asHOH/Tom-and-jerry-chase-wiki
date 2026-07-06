@@ -60,7 +60,7 @@ function CharacterImage({ characterId, imageUrl }: { characterId: string; imageU
       alt={characterId}
       width={200}
       height={200}
-      className='max-h-200! max-w-200! object-contain'
+      className='max-h-200 max-w-200 object-contain'
       onClick={() => setUseSpecialImage((prev) => !prev)}
       onError={() => setSpecialImageExists(false)}
     />
