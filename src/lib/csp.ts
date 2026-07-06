@@ -1,7 +1,6 @@
-// oxlint-disable-next-line typescript/ban-ts-comment
-// @ts-ignore – reuse shared CSP config authored as .mjs
 import { isVercelAnalyticsEnabled } from '@/lib/platform';
-import { buildCspHeader } from '@/../csp.config.mjs';
+
+import { buildCspHeader } from '../../csp.config';
 
 export function getRuntimeCspHeader(): string {
   const csp = buildCspHeader({

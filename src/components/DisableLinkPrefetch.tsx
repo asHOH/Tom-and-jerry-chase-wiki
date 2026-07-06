@@ -11,16 +11,17 @@ export function DisableLinkPrefetch() {
   const router = useRouter();
 
   useEffect(() => {
-    // oxlint-disable-next-line typescript/no-explicit-any
-    const routerWithPrefetch = router as any;
-    const originalPrefetch = routerWithPrefetch.prefetch;
+    type RouterPrefetch = typeof router.prefetch;
+
+    const originalPrefetch = router.prefetch;
+    const disabledPrefetch: RouterPrefetch = () => {};
 
     // Safe to override in this runtime: we only need to short-circuit Link prefetch.
     // oxlint-disable-next-line react-hooks/immutability
-    routerWithPrefetch.prefetch = () => Promise.resolve();
+    router.prefetch = disabledPrefetch;
 
     return () => {
-      routerWithPrefetch.prefetch = originalPrefetch;
+      router.prefetch = originalPrefetch;
     };
   }, [router]);
 

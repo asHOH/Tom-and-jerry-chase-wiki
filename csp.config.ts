@@ -1,11 +1,6 @@
-// @ts-check
+type Directives = Record<string, string[]>;
 
-/** @typedef {Record<string, string[]>} Directives */
-
-/**
- * @type {Directives}
- */
-const directives = {
+const directives: Directives = {
   'default-src': ["'self'"],
   'script-src': [
     "'self'",
@@ -52,10 +47,7 @@ const directives = {
   'frame-ancestors': ["'none'"],
 };
 
-/**
- * @param {Directives} map
- */
-function serializeCsp(map) {
+function serializeCsp(map: Directives): string {
   return Object.entries(map)
     .map(([key, value]) => `${key} ${value.join(' ')}`)
     .join('; ');
@@ -64,10 +56,7 @@ function serializeCsp(map) {
 export const cspDirectives = directives;
 export const cspHeaderValue = serializeCsp(directives);
 
-/**
- * @param {Directives} additionalDirectives
- */
-export function extendCsp(additionalDirectives = {}) {
+export function extendCsp(additionalDirectives: Directives = {}): string {
   const merged = { ...directives };
   for (const [key, value] of Object.entries(additionalDirectives)) {
     const base = new Set(merged[key] ?? []);
@@ -77,7 +66,7 @@ export function extendCsp(additionalDirectives = {}) {
   return serializeCsp(merged);
 }
 
-const vercelAnalyticsDirectives = {
+const vercelAnalyticsDirectives: Directives = {
   'script-src': ['https://vercel.live', 'https://va.vercel-scripts.com'],
   'img-src': ['https://vitals.vercel-insights.com'],
   'connect-src': [
@@ -89,10 +78,15 @@ const vercelAnalyticsDirectives = {
   'child-src': ['https://vercel.live'],
 };
 
-/**
- * @param {{ includeVercelAnalytics?: boolean, allowUnsafeEval?: boolean }} options `allowUnsafeEval` is designed for development only.
- */
-export function buildCspHeader({ includeVercelAnalytics = false, allowUnsafeEval = false } = {}) {
+type BuildCspHeaderOptions = {
+  includeVercelAnalytics?: boolean;
+  allowUnsafeEval?: boolean;
+};
+
+export function buildCspHeader({
+  includeVercelAnalytics = false,
+  allowUnsafeEval = false,
+}: BuildCspHeaderOptions = {}): string {
   let header = cspHeaderValue;
   if (includeVercelAnalytics) {
     header = extendCsp(vercelAnalyticsDirectives);

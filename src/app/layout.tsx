@@ -102,7 +102,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                   }
                 }
 
-                // @ts-ignore
                 self.TransformStream = SimpleTransformStream;
               } catch (err) {
                 // Swallow: if this fails, the page will still surface the original error.

@@ -1,6 +1,6 @@
 import createMDX from '@next/mdx';
 
-import { buildCspHeader } from './csp.config.mjs';
+import { buildCspHeader } from './csp.config';
 
 import './src/env';
 
