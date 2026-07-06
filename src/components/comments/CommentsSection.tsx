@@ -3,12 +3,12 @@
 import { useMemo, useState } from 'react';
 import useSWR from 'swr';
 
-import { useMobile } from '../../hooks/useMediaQuery';
-import { useUser } from '../../hooks/useUser';
-import { formatArticleDate } from '../../lib/dateUtils';
-import LoginDialog from '../LoginDialog';
-import Button from '../ui/Button';
-import LoadingSpinner from '../ui/LoadingSpinner';
+import { formatArticleDate } from '@/lib/dateUtils';
+import { useMobile } from '@/hooks/useMediaQuery';
+import { useUser } from '@/hooks/useUser';
+import Button from '@/components/ui/Button';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import LoginDialog from '@/components/LoginDialog';
 
 type CommentScope = 'articles';
 

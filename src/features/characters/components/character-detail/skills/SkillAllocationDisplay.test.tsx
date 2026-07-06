@@ -5,16 +5,16 @@ import '@testing-library/jest-dom';
 
 import { proxy } from 'valtio';
 
+import type { CharacterWithFaction } from '@/lib/types';
 import { EditModeProvider } from '@/context/EditModeContext';
+import type { SkillAllocation } from '@/data/types';
+import * as skillAllocationUtils from '@/features/characters/utils/skillAllocation';
+import { characters } from '@/data';
 
-import { characters } from '../../../../../data';
-import type { SkillAllocation } from '../../../../../data/types';
-import type { CharacterWithFaction } from '../../../../../lib/types';
-import * as skillAllocationUtils from '../../../utils/skillAllocation';
 import SkillAllocationDisplay from './SkillAllocationDisplay';
 
 // Mock the skillAllocationUtils module
-jest.mock('../../../utils/skillAllocation', () => ({
+jest.mock('@/features/characters/utils/skillAllocation', () => ({
   parseSkillAllocationPattern: jest.fn(),
   safeParseSkillAllocationPattern: jest.fn(),
   validateSkillAllocationPattern: jest.fn(() => ({ isValid: true, errors: [], warnings: [] })),
