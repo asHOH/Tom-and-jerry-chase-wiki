@@ -3,10 +3,13 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Article, WithContext } from 'schema-dts';
 
+import {
+  getEmbeddedArticlesForCharacter,
+  incrementArticleViewCount,
+} from '@/lib/articles/serverQueries';
 import { GameDataManager } from '@/lib/dataManager';
 import { generatePageMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
-import { sanitizeHTML } from '@/lib/xssUtils';
 import { SITE_URL } from '@/constants/seo';
 import { getTutorialPage } from '@/features/articles/utils/docs';
 import StructuredData from '@/components/StructuredData';
@@ -112,94 +115,13 @@ export default async function CharacterPage({
       );
     }
 
-    const { supabaseAdmin } = await import('@/lib/supabase/admin');
-
-    type CharacterArticleMetaRow = {
-      id: string;
-      title: string;
-      created_at: string | null;
-      view_count: number | null;
-      categories: { name: string } | null;
-      users_public_view: { nickname: string | null } | null;
-    };
-
-    type CharacterArticleVersionRow = {
-      article_id: string | null;
-      content: string | null;
-      created_at: string | null;
-    };
-
-    const articles = docPage
-      ? Promise.resolve([] as CharacterArticleMetaRow[])
-      : supabaseAdmin
-          .from('articles')
-          .select(
-            'id, title, created_at, view_count, categories(name), users_public_view!author_id(nickname)'
-          )
-          .eq('character_id', characterId)
-          .order('created_at', { ascending: false })
-          .then((result) => (result?.data ?? []) as CharacterArticleMetaRow[]);
-
-    const articleContent = Promise.resolve(
-      articles.then(async (items) => {
-        if (!items || items.length === 0) {
-          return [];
-        }
-
-        const articleIds = items.map((item) => item.id);
-
-        const { data: versions } = await supabaseAdmin
-          .from('article_versions_public_view')
-          .select('article_id, content, created_at')
-          .in('article_id', articleIds)
-          .eq('status', 'approved')
-          .order('created_at', { ascending: false });
-
-        const latestByArticleId = new Map<
-          string,
-          {
-            content: string | null;
-            created_at: string | null;
-          }
-        >();
-
-        for (const version of (versions ?? []) as CharacterArticleVersionRow[]) {
-          if (!version.article_id) continue;
-          if (!latestByArticleId.has(version.article_id)) {
-            latestByArticleId.set(version.article_id, {
-              content: version.content ?? null,
-              created_at: version.created_at ?? null,
-            });
-          }
-        }
-
-        return items
-          .map((item) => {
-            const latest = latestByArticleId.get(item.id);
-            const authorNickname =
-              (item.users_public_view as { nickname: string | null } | null)?.nickname ?? null;
-            const authors = authorNickname ? [authorNickname] : [];
-
-            return {
-              id: item.id,
-              title: item.title,
-              content: latest?.content ? sanitizeHTML(latest.content, { removeH1: true }) : null,
-              authors,
-              createdAt: latest?.created_at ?? null,
-              viewCount: item.view_count,
-              categoryName: item.categories?.name ?? null,
-              articleCreatedAt: item.created_at,
-            };
-          })
-          .filter((item) => Boolean(item.content));
-      })
-    );
+    const articleContent = docPage
+      ? Promise.resolve([])
+      : getEmbeddedArticlesForCharacter(characterId);
 
     // Keep existing behavior: the first visible embedded article counts as a view.
     articleContent.then((result) =>
-      result?.[0]?.id
-        ? supabaseAdmin.rpc('increment_article_view_count', { p_article_id: result[0].id })
-        : null
+      result?.[0]?.id ? incrementArticleViewCount(result[0].id) : null
     );
 
     return (
