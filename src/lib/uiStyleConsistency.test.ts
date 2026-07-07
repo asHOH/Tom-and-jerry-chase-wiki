@@ -25,7 +25,7 @@ const aliasIconPrimitiveTargets = [
   'src/features/achievements/achievement-detail/AchievementAttributesCard.tsx',
   'src/features/buffs/components/buff-detail/BuffAttributesCard.tsx',
   'src/features/characters/components/character-detail/character-attributes/AttributeDisplay.tsx',
-  'src/features/characters/components/character-detail/skills/SkillCard.tsx',
+  'src/features/characters/components/character-detail/skills/SkillCardProperties.tsx',
   'src/features/knowledge-cards/components/knowledge-card-detail/KnowledgeCardAttributesCard.tsx',
   'src/features/maps/map-detail/MapAttributesCard.tsx',
   'src/features/modes/components/mode-detail/ModeAttributesCard.tsx',
