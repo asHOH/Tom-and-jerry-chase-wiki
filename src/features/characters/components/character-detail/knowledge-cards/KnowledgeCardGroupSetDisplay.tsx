@@ -1,10 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { cn } from '@/lib/design';
 import { useAppContext } from '@/context/AppContext';
-import { useDarkMode } from '@/context/DarkModeContext';
-import { contributors } from '@/data/contributors';
 import type { KnowledgeCardGroupSet } from '@/data/types';
 import { editable } from '@/components/ui/editable';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
@@ -14,7 +12,7 @@ import { KnowledgeCardGroupDisplay, type ViewMode } from './KnowledgeCardGroupDi
 
 const e = editable('characters');
 
-interface KnowledgeCardGroupSetDisplayProps {
+type KnowledgeCardGroupSetDisplayProps = {
   groupSet: DeepReadonly<KnowledgeCardGroupSet>;
   topIndex: number;
   isEditMode: boolean;
@@ -33,9 +31,9 @@ interface KnowledgeCardGroupSetDisplayProps {
   getCardRank: (cardId: string) => string;
   imageBasePath: string;
   getCardPriority: (cardId: string) => string | undefined;
-}
+};
 
-const KnowledgeCardGroupSetDisplay: React.FC<KnowledgeCardGroupSetDisplayProps> = ({
+const KnowledgeCardGroupSetDisplay = ({
   groupSet,
   topIndex,
   isEditMode,
@@ -50,9 +48,8 @@ const KnowledgeCardGroupSetDisplay: React.FC<KnowledgeCardGroupSetDisplayProps> 
   getCardRank,
   imageBasePath,
   getCardPriority,
-}) => {
+}: KnowledgeCardGroupSetDisplayProps) => {
   const { isDetailedView } = useAppContext();
-  const [isDarkMode] = useDarkMode();
   const [isOpen, setIsOpen] = useState(() => !groupSet.defaultFolded || isEditMode);
 
   const toggleOpen = () => {
@@ -165,10 +162,6 @@ const KnowledgeCardGroupSetDisplay: React.FC<KnowledgeCardGroupSetDisplayProps> 
                 imageBasePath={imageBasePath}
                 descriptionPath={`knowledgeCardGroups.${topIndex}.groups.${index}.description`}
                 contributor={group.contributor}
-                contributorInformation={contributors.find(
-                  (a) => a.id === group.contributor || a.name === group.contributor
-                )}
-                isDarkMode={isDarkMode}
                 getCardPriority={getCardPriority}
               />
             ))}

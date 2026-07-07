@@ -7,7 +7,8 @@ import { useSnapshot } from 'valtio';
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { cn, getKnowledgeCardGroupMetaColors } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
-import type { Contributor } from '@/data/contributors';
+import { useDarkMode } from '@/context/DarkModeContext';
+import { contributors, type Contributor } from '@/data/contributors';
 import type { CardGroup } from '@/data/types';
 import {
   buildTreeStructure,
@@ -154,8 +155,6 @@ type KnowledgeCardGroupDisplayProps = {
   imageBasePath: string;
   descriptionPath: string;
   contributor: string | undefined;
-  contributorInformation: Contributor | undefined;
-  isDarkMode: boolean;
   getCardPriority: (cardId: string) => string | undefined;
 };
 
@@ -341,11 +340,10 @@ export function KnowledgeCardGroupDisplay({
   imageBasePath,
   descriptionPath,
   contributor,
-  contributorInformation,
-  isDarkMode,
   getCardPriority,
 }: KnowledgeCardGroupDisplayProps) {
   const charSnap = useSnapshot(characters[characterId]!);
+  const [isDarkMode] = useDarkMode();
   const normalizedGroup = group as unknown as readonly CardGroup[];
   const isSqueezedView = viewMode === 'compact';
   const isTreeView =
@@ -358,6 +356,9 @@ export function KnowledgeCardGroupDisplay({
 
   const isMobile = useMobile();
   const isMouseFaction = charSnap?.factionId === 'mouse';
+  const contributorInformation = contributors.find(
+    (item) => item.id === contributor || item.name === contributor
+  );
 
   if (isTreeView) {
     // Tree mode: show tree structure with max cost

@@ -120,8 +120,6 @@ describe('KnowledgeCardGroupDisplay', () => {
     imageBasePath: '/images/mouseCards/',
     descriptionPath: 'knowledgeCardGroups.0.description',
     contributor: undefined,
-    contributorInformation: undefined,
-    isDarkMode: false,
     getCardPriority: (cardId: string) => (cardId === 'C-飞跃' ? '3级质变' : undefined),
   };
 

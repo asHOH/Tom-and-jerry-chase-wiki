@@ -5,9 +5,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { cn } from '@/lib/design';
 import { useAppContext } from '@/context/AppContext';
-import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
-import { contributors } from '@/data/contributors';
 import type { CardGroup, FactionId, KnowledgeCardGroup, KnowledgeCardGroupSet } from '@/data/types';
 import { catKnowledgeCards } from '@/features/knowledge-cards/data/catKnowledgeCards';
 import { mouseKnowledgeCards } from '@/features/knowledge-cards/data/mouseKnowledgeCards';
@@ -80,7 +78,6 @@ export default function KnowledgeCardSection({
 }: KnowledgeCardSectionProps) {
   const { handleSelectCard } = useAppContext();
   const { isEditMode } = useEditMode();
-  const [isDarkMode] = useDarkMode();
   const [isPickerOpen, setPickerOpen] = useState(false);
   const [currentTarget, setCurrentTarget] = useState<{
     topIndex: number;
@@ -353,10 +350,6 @@ export default function KnowledgeCardSection({
                   imageBasePath={imageBasePath}
                   descriptionPath={`knowledgeCardGroups.${index}.description`}
                   contributor={group.contributor}
-                  contributorInformation={contributors.find(
-                    (a) => a.id === group.contributor || a.name === group.contributor
-                  )}
-                  isDarkMode={isDarkMode}
                   getCardPriority={getCardPriority}
                 />
                 {index < knowledgeCardGroups.length - 1 && (
