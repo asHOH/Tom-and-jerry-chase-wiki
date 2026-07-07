@@ -4,7 +4,8 @@ import { proxy } from 'valtio';
 
 import { characters } from '@/data';
 
-import KnowledgeCardSection, { KnowledgeCardGroupDisplay } from './KnowledgeCardSection';
+import { KnowledgeCardGroupDisplay } from './KnowledgeCardGroupDisplay';
+import KnowledgeCardSection from './KnowledgeCardSection';
 
 jest.mock('@/context/AppContext', () => ({
   useAppContext: () => ({

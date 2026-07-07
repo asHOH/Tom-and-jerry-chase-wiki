@@ -35,6 +35,7 @@ const aliasIconPrimitiveTargets = [
 const characterDetailIconPrimitiveTargets = [
   'src/features/characters/components/character-detail/CharacterDetails.tsx',
   'src/features/characters/components/character-detail/positioning-tags/PositioningTagsSection.tsx',
+  'src/features/characters/components/character-detail/knowledge-cards/KnowledgeCardGroupDisplay.tsx',
   'src/features/characters/components/character-detail/knowledge-cards/KnowledgeCardSection.tsx',
   'src/features/characters/components/character-detail/knowledge-cards/KnowledgeCardGroupSetDisplay.tsx',
   'src/features/characters/components/character-detail/skills/SkillAllocationDisplay.tsx',

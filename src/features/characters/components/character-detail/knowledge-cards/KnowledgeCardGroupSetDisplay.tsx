@@ -10,7 +10,7 @@ import { editable } from '@/components/ui/editable';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import { TrashIcon } from '@/components/icons/CommonIcons';
 
-import { KnowledgeCardGroupDisplay, type ViewMode } from './KnowledgeCardSection';
+import { KnowledgeCardGroupDisplay, type ViewMode } from './KnowledgeCardGroupDisplay';
 
 const e = editable('characters');
 

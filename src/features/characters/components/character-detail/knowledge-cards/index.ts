@@ -1,6 +1,7 @@
 export { default as KnowledgeCardManager } from './KnowledgeCardManager';
-export { default as KnowledgeCardSection, KnowledgeCardGroupDisplay } from './KnowledgeCardSection';
-export type { ViewMode } from './KnowledgeCardSection';
+export { KnowledgeCardGroupDisplay } from './KnowledgeCardGroupDisplay';
+export type { ViewMode } from './KnowledgeCardGroupDisplay';
+export { default as KnowledgeCardSection } from './KnowledgeCardSection';
 export { default as KnowledgeCardGroupSetDisplay } from './KnowledgeCardGroupSetDisplay';
 export { default as KnowledgeCardLinkDisplay } from './KnowledgeCardLinkDisplay';
 export type { KnowledgeCardLinkVariant } from './KnowledgeCardLinkDisplay';
