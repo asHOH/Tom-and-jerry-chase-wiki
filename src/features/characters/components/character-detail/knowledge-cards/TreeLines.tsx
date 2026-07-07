@@ -91,7 +91,7 @@ const TreeLinesSvg: React.FC<TreeLinesSvgProps> = ({ paths, strokeColor }) => {
   return (
     <svg
       data-tree-overlay
-      className='hidden pointer-events-none absolute inset-0 overflow-visible'
+      className='pointer-events-none absolute inset-0 hidden overflow-visible'
       style={{ zIndex: 10 }}
     >
       {paths.map((d, i) => (
