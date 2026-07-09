@@ -19,6 +19,7 @@ interface KnowledgeCardPickerProps {
   onSave: (newCards: readonly string[]) => void;
   factionId: FactionId;
   initialSelectedCards: readonly string[];
+  onSwitchToAdvancedEditor?: (selectedCards: readonly string[]) => void;
 }
 
 let scrollLockCount = 0;
@@ -48,6 +49,7 @@ const KnowledgeCardPicker: React.FC<KnowledgeCardPickerProps> = ({
   onSave,
   factionId,
   initialSelectedCards,
+  onSwitchToAdvancedEditor,
 }) => {
   const [selectedCards, setSelectedCards] = useState<readonly string[]>(initialSelectedCards);
   const isMobile = useMobile();
@@ -173,7 +175,16 @@ const KnowledgeCardPicker: React.FC<KnowledgeCardPickerProps> = ({
                 <span className='ml-2 text-amber-500 dark:text-amber-400'>(需开启+1上限)</span>
               )}
             </div>
-            <div className='flex w-full sm:w-auto'>
+            <div className='flex w-full items-center gap-2 sm:w-auto'>
+              {onSwitchToAdvancedEditor && (
+                <Button
+                  onClick={() => onSwitchToAdvancedEditor(selectedCards)}
+                  variant='secondary'
+                  className='flex-1 sm:flex-none'
+                >
+                  切换到高级编辑
+                </Button>
+              )}
               <Button onClick={onClose} variant='secondary' className='mr-2 flex-1 sm:flex-none'>
                 取消
               </Button>

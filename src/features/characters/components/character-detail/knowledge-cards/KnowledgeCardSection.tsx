@@ -17,6 +17,7 @@ import { PlusIcon } from '@/components/icons/CommonIcons';
 import { characters } from '@/data';
 
 import CharacterSection from '../sections/CharacterSection';
+import AdvancedCardGroupEditor from './AdvancedCardGroupEditor';
 import { KnowledgeCardGroupDisplay, type ViewMode } from './KnowledgeCardGroupDisplay';
 import KnowledgeCardGroupSetDisplay from './KnowledgeCardGroupSetDisplay';
 
@@ -83,6 +84,12 @@ export default function KnowledgeCardSection({
     topIndex: number;
     innerIndex?: number;
     isGroupSet: boolean;
+  } | null>(null);
+  const [isAdvancedEditorOpen, setAdvancedEditorOpen] = useState(false);
+  const [advancedEditorData, setAdvancedEditorData] = useState<{
+    cards: CardGroup[];
+    topIndex: number;
+    innerIndex?: number;
   } | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>(() =>
     normalizeViewMode(
@@ -164,11 +171,30 @@ export default function KnowledgeCardSection({
   };
 
   const handleEditClick = (topIndex: number, innerIndex?: number) => {
-    if (innerIndex === undefined) {
-      setCurrentTarget({ topIndex, isGroupSet: false });
-    } else {
-      setCurrentTarget({ topIndex, innerIndex, isGroupSet: true });
+    const group: KnowledgeCardGroup | undefined =
+      innerIndex === undefined
+        ? (knowledgeCardGroups[topIndex] as KnowledgeCardGroup)
+        : (knowledgeCardGroups[topIndex] as KnowledgeCardGroupSet)?.groups[innerIndex];
+
+    // If the group has tree structure, open the advanced editor
+    if (group && 'cards' in group && knowledgeGroupHasTreeStructure(group)) {
+      const data: { cards: CardGroup[]; topIndex: number; innerIndex?: number } = {
+        cards: [...group.cards] as CardGroup[],
+        topIndex,
+      };
+      if (innerIndex !== undefined) {
+        data.innerIndex = innerIndex;
+      }
+      setAdvancedEditorData(data);
+      setAdvancedEditorOpen(true);
+      return;
     }
+
+    setCurrentTarget({
+      topIndex,
+      isGroupSet: innerIndex !== undefined,
+      ...(innerIndex !== undefined ? { innerIndex } : {}),
+    });
     setPickerOpen(true);
   };
 
@@ -179,6 +205,76 @@ export default function KnowledgeCardSection({
     persistGroupCards(target.topIndex, target.innerIndex, newCards);
     setPickerOpen(false);
     setCurrentTarget(null);
+  };
+
+  const handleSwitchToAdvanced = (selectedCards: readonly string[]) => {
+    if (!currentTarget) return;
+    setPickerOpen(false);
+    const data: { cards: CardGroup[]; topIndex: number; innerIndex?: number } = {
+      cards: selectedCards as unknown as CardGroup[],
+      topIndex: currentTarget.topIndex,
+    };
+    if (currentTarget.innerIndex !== undefined) {
+      data.innerIndex = currentTarget.innerIndex;
+    }
+    setAdvancedEditorData(data);
+    setAdvancedEditorOpen(true);
+  };
+
+  /** Persist CardGroup[] preserving tree structure to Valtio store. */
+  const persistTreeGroupCards = (
+    topIndex: number,
+    innerIndex: number | undefined,
+    newCards: CardGroup[]
+  ) => {
+    if (innerIndex === undefined) {
+      (characters[characterId]!.knowledgeCardGroups[topIndex] as KnowledgeCardGroup).cards =
+        newCards;
+    } else {
+      const entry = characters[characterId]!.knowledgeCardGroups[topIndex];
+      if (entry && 'groups' in entry && Array.isArray(entry.groups)) {
+        entry.groups[innerIndex]!.cards = newCards;
+      }
+    }
+  };
+
+  const handleAdvancedEditorSave = (newCards: CardGroup[]) => {
+    const data = advancedEditorData;
+    if (!data) return;
+    persistTreeGroupCards(data.topIndex, data.innerIndex, newCards);
+    setAdvancedEditorOpen(false);
+    setAdvancedEditorData(null);
+  };
+
+  /** Convert a top-level KnowledgeCardGroup into a KnowledgeCardGroupSet. */
+  const handleConvertToGroupSet = (topIndex: number) => {
+    const entry = characters[characterId]!.knowledgeCardGroups[topIndex];
+    if (!entry || !('cards' in entry)) return;
+
+    const group = entry as KnowledgeCardGroup;
+    const innerGroup: KnowledgeCardGroup = { cards: [...group.cards], description: '待补充' };
+    if (group.description !== undefined) {
+      innerGroup.description = group.description;
+    }
+    if (group.contributor !== undefined) {
+      innerGroup.contributor = group.contributor;
+    }
+    const newSet: KnowledgeCardGroupSet = {
+      id: group.description ?? '新集合',
+      description: group.description ?? '',
+      groups: [innerGroup, { cards: [], description: '待补充' }],
+      defaultFolded: false,
+    };
+    characters[characterId]!.knowledgeCardGroups[topIndex] = newSet;
+  };
+
+  /** Add a new empty inner group to an existing KnowledgeCardGroupSet. */
+  const handleAddInnerGroup = (topIndex: number) => {
+    const entry = characters[characterId]!.knowledgeCardGroups[topIndex];
+    if (!entry || !('groups' in entry)) return;
+
+    const set = entry as KnowledgeCardGroupSet;
+    set.groups = [...set.groups, { cards: [], description: '待补充' }];
   };
 
   // Get initial selected cards - flatten for picker
@@ -351,6 +447,7 @@ export default function KnowledgeCardSection({
                   descriptionPath={`knowledgeCardGroups.${index}.description`}
                   contributor={group.contributor}
                   getCardPriority={getCardPriority}
+                  onConvertToGroupSet={handleConvertToGroupSet}
                 />
                 {index < knowledgeCardGroups.length - 1 && (
                   <div className='my-4 border-t border-gray-200 dark:border-slate-700'></div>
@@ -369,6 +466,7 @@ export default function KnowledgeCardSection({
                   onRemoveInnerGroup={(top: number, inner: number) => onRemoveGroup(top, inner)}
                   onRemoveGroup={onRemoveGroup}
                   onEditGroupSetMetadata={updateGroupSetMetadata}
+                  onAddInnerGroup={handleAddInnerGroup}
                   getCardCost={getCardCost}
                   getCardRank={getCardRank}
                   imageBasePath={imageBasePath}
@@ -388,6 +486,19 @@ export default function KnowledgeCardSection({
         onSave={handlePickerSave}
         factionId={factionId}
         initialSelectedCards={initialSelectedCards}
+        onSwitchToAdvancedEditor={handleSwitchToAdvanced}
+      />
+      <AdvancedCardGroupEditor
+        isOpen={isAdvancedEditorOpen}
+        initialCards={advancedEditorData?.cards ?? []}
+        factionId={factionId}
+        getCardCost={getCardCost}
+        imageBasePath={imageBasePath}
+        onClose={() => {
+          setAdvancedEditorOpen(false);
+          setAdvancedEditorData(null);
+        }}
+        onSave={handleAdvancedEditorSave}
       />
     </div>
   );

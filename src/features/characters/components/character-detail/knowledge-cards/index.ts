@@ -8,3 +8,4 @@ export type { KnowledgeCardLinkVariant } from './KnowledgeCardLinkDisplay';
 export { default as KnowledgeCardSelector } from './KnowledgeCardSelector';
 export { default as TreeCardDisplay } from './TreeCardDisplay';
 export { default as PriorityWarningBadge } from './PriorityWarningBadge';
+export { default as AdvancedCardGroupEditor } from './AdvancedCardGroupEditor';

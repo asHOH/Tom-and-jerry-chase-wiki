@@ -22,7 +22,7 @@ import { editable } from '@/components/ui/editable';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import Tag from '@/components/ui/Tag';
 import Tooltip from '@/components/ui/Tooltip';
-import { PencilSquareIcon, TrashIcon } from '@/components/icons/CommonIcons';
+import { PencilSquareIcon, PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 import { characters } from '@/data';
 
 import KnowledgeCardLinkDisplay from './KnowledgeCardLinkDisplay';
@@ -138,6 +138,7 @@ type KnowledgeCardGroupFlatProps = {
   contributorInformation: Contributor | undefined;
   isDarkMode: boolean;
   getCardPriority: (cardId: string) => string | undefined;
+  onConvertToGroupSet?: (index: number) => void;
 };
 
 type KnowledgeCardGroupDisplayProps = {
@@ -156,6 +157,7 @@ type KnowledgeCardGroupDisplayProps = {
   descriptionPath: string;
   contributor: string | undefined;
   getCardPriority: (cardId: string) => string | undefined;
+  onConvertToGroupSet?: (index: number) => void;
 };
 
 const GroupDescriptionBlock = ({
@@ -203,6 +205,7 @@ function KnowledgeCardGroupFlat({
   contributorInformation,
   isDarkMode,
   getCardPriority,
+  onConvertToGroupSet,
 }: KnowledgeCardGroupFlatProps) {
   const charSnap = useSnapshot(characters[characterId]!);
 
@@ -296,6 +299,15 @@ function KnowledgeCardGroupFlat({
             </IconButton>
             <IconButton
               type='button'
+              aria-label='添加内部卡组'
+              onClick={() => onConvertToGroupSet?.(index)}
+              variant='add'
+              size='md'
+            >
+              <PlusIcon className={getIconButtonIconClassName('md')} aria-hidden='true' />
+            </IconButton>
+            <IconButton
+              type='button'
               aria-label='移除知识卡组'
               onClick={() => onRemoveGroup(index)}
               variant='delete'
@@ -341,6 +353,7 @@ export function KnowledgeCardGroupDisplay({
   descriptionPath,
   contributor,
   getCardPriority,
+  onConvertToGroupSet,
 }: KnowledgeCardGroupDisplayProps) {
   const charSnap = useSnapshot(characters[characterId]!);
   const [isDarkMode] = useDarkMode();
@@ -436,6 +449,15 @@ export function KnowledgeCardGroupDisplay({
               </IconButton>
               <IconButton
                 type='button'
+                aria-label='添加内部卡组'
+                onClick={() => onConvertToGroupSet?.(index)}
+                variant='add'
+                size='md'
+              >
+                <PlusIcon className={getIconButtonIconClassName('md')} aria-hidden='true' />
+              </IconButton>
+              <IconButton
+                type='button'
                 aria-label='移除知识卡组'
                 onClick={() => onRemoveGroup(index)}
                 variant='delete'
@@ -488,6 +510,7 @@ export function KnowledgeCardGroupDisplay({
               contributorInformation={contributorInformation}
               isDarkMode={isDarkMode}
               getCardPriority={getCardPriority}
+              {...(onConvertToGroupSet ? { onConvertToGroupSet } : {})}
             />
             {subIndex < flattenedCombinations.length - 1 && (
               <div className='my-2 border-t border-gray-300 dark:border-slate-600'></div>

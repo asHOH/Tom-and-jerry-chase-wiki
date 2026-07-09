@@ -6,7 +6,7 @@ import { useAppContext } from '@/context/AppContext';
 import type { KnowledgeCardGroupSet } from '@/data/types';
 import { editable } from '@/components/ui/editable';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
-import { TrashIcon } from '@/components/icons/CommonIcons';
+import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 
 import { KnowledgeCardGroupDisplay, type ViewMode } from './KnowledgeCardGroupDisplay';
 
@@ -27,6 +27,7 @@ type KnowledgeCardGroupSetDisplayProps = {
     field: 'id' | 'description' | 'detailedDescription' | 'defaultFolded',
     value: string | boolean | undefined
   ) => void;
+  onAddInnerGroup?: (topIndex: number) => void;
   getCardCost: (cardId: string) => number;
   getCardRank: (cardId: string) => string;
   imageBasePath: string;
@@ -44,6 +45,7 @@ const KnowledgeCardGroupSetDisplay = ({
   onRemoveInnerGroup,
   onRemoveGroup,
   onEditGroupSetMetadata,
+  onAddInnerGroup,
   getCardCost,
   getCardRank,
   imageBasePath,
@@ -165,6 +167,19 @@ const KnowledgeCardGroupSetDisplay = ({
                 getCardPriority={getCardPriority}
               />
             ))}
+            {isEditMode && onAddInnerGroup && (
+              <div className='mt-2'>
+                <IconButton
+                  type='button'
+                  aria-label='添加内部卡组'
+                  onClick={() => onAddInnerGroup(topIndex)}
+                  variant='add'
+                  size='sm'
+                >
+                  <PlusIcon className={getIconButtonIconClassName('sm')} />
+                </IconButton>
+              </div>
+            )}
           </div>
         </div>
       </div>
