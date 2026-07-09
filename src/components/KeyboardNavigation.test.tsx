@@ -21,7 +21,14 @@ describe('KeyboardNavigation', () => {
 
   it('should not navigate back while edit mode is active', () => {
     render(
-      <EditModeContext.Provider value={{ isEditMode: true, isLoading: false }}>
+      <EditModeContext.Provider
+        value={{
+          isEditMode: true,
+          isLoading: false,
+          isPreviewMode: false,
+          setIsPreviewMode: () => {},
+        }}
+      >
         <KeyboardNavigation />
       </EditModeContext.Provider>
     );

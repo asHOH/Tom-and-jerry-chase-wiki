@@ -57,7 +57,14 @@ function PageEditModeProbe() {
 
 function renderInEditMode() {
   render(
-    <EditModeContext.Provider value={{ isEditMode: true, isLoading: false }}>
+    <EditModeContext.Provider
+      value={{
+        isEditMode: true,
+        isLoading: false,
+        isPreviewMode: false,
+        setIsPreviewMode: () => {},
+      }}
+    >
       <PageEditModeProbe />
     </EditModeContext.Provider>
   );

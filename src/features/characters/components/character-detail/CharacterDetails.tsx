@@ -105,6 +105,8 @@ export default function CharacterDetails({ children }: CharacterDetailsWithTutor
       value={{
         isEditMode,
         isLoading: false,
+        isPreviewMode: false,
+        setIsPreviewMode: () => {},
       }}
     >
       <div className='space-y-8'>

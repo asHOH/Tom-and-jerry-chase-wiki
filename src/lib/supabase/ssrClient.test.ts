@@ -95,7 +95,8 @@ describe('supabase ssr clients', () => {
     createSupabaseRouteClient(request, response);
 
     const cookies = jest.mocked(createServerClient).mock.calls[0]?.[2]?.cookies as
-      CookieController | undefined;
+      | CookieController
+      | undefined;
     if (!cookies) throw new Error('Expected Supabase cookies adapter');
 
     expect(cookies.getAll()).toEqual(
@@ -121,7 +122,8 @@ describe('supabase ssr clients', () => {
 
     const proxyClient = createSupabaseProxyClient(request);
     const cookies = jest.mocked(createServerClient).mock.calls[0]?.[2]?.cookies as
-      CookieController | undefined;
+      | CookieController
+      | undefined;
     if (!cookies) throw new Error('Expected Supabase cookies adapter');
 
     cookies.setAll([

@@ -16,7 +16,9 @@ const mockUseSpecifyTypeNavigation = useSpecifyTypeNavigation as jest.MockedFunc
 function renderNavigationHook(isEditMode: boolean = false) {
   return renderHook(() => useSpecifyTypeKeyboardNavigation('current', 'item'), {
     wrapper: ({ children }) => (
-      <EditModeContext.Provider value={{ isEditMode, isLoading: false }}>
+      <EditModeContext.Provider
+        value={{ isEditMode, isLoading: false, isPreviewMode: false, setIsPreviewMode: () => {} }}
+      >
         {children}
       </EditModeContext.Provider>
     ),
