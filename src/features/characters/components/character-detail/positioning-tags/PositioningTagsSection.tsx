@@ -71,6 +71,8 @@ function WeaponDropdown({
   onSelect: (value: 1 | 2 | null) => void;
 }) {
   const character = useSnapshot(characters[characterId]!);
+  if (!~character.skills?.findIndex((skill) => skill.type === 'weapon2') && currentValue == null)
+    return;
 
   // Get weapon names from character skills
   const getWeaponName = (weaponNumber: 1 | 2): string => {
