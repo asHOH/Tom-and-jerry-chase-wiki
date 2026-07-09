@@ -9,7 +9,7 @@ import { useFilterState } from '@/lib/filterUtils';
 import type { CharacterWithFaction } from '@/lib/types';
 import { useDarkMode } from '@/context/DarkModeContext';
 import type { FactionId } from '@/data/types';
-import { CharacterTable, summarySymbol, winRatesData } from '@/data/winRates';
+import { CharacterTable, winRatesData } from '@/data/winRates';
 import FilterRow from '@/components/ui/FilterRow';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
@@ -111,8 +111,6 @@ function enrichCharacterData(
   const enriched: EnrichedCharacterRow[] = [];
 
   for (const table of tables) {
-    if (table.rank === summarySymbol) continue;
-
     const rank = String(table.rank);
     const rankOrder = getRankOrder(rank);
     const factionFromTable = normalizeTableFaction(
@@ -152,13 +150,13 @@ function getRanksFromSeason(seasonIndex: number): string[] {
 
   if (entry.characterTables) {
     entry.characterTables.forEach((table) => {
-      if (table.rank !== summarySymbol) ranks.add(String(table.rank));
+      ranks.add(String(table.rank));
     });
   }
 
   if (entry.tables) {
     entry.tables.forEach((table) => {
-      if ('rank' in table && table.rank !== summarySymbol) ranks.add(String(table.rank));
+      if ('rank' in table) ranks.add(String(table.rank));
     });
   }
 
@@ -556,7 +554,7 @@ export default function WinRatesClient({ description }: WinRatesClientProps) {
                   ) => (
                     <tr key={index} className='hover:bg-gray-50 dark:hover:bg-gray-700'>
                       <td className='border border-gray-300 px-4 py-2 dark:border-gray-600'>
-                        {summary.rank === summarySymbol ? '总计' : String(summary.rank)}
+                        {String(summary.rank)}
                       </td>
                       <td className='border border-gray-300 px-4 py-2 dark:border-gray-600'>
                         {summary.teamType}
