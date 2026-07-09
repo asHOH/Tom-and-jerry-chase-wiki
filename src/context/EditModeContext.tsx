@@ -15,6 +15,10 @@ type EditModeContextType = {
   isEditMode: boolean;
   /** Loading state during initialization */
   isLoading: boolean;
+  /** Whether the page is in preview mode */
+  isPreviewMode: boolean;
+  /** Set preview mode */
+  setIsPreviewMode: (value: boolean) => void;
 };
 
 export const EditModeContext = createContext<EditModeContextType | undefined>(undefined);
@@ -24,6 +28,8 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
   const [hasInitialized, setHasInitialized] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const previousEditModeRef = useRef<boolean>(false);
+
+  const [isPreviewMode, setIsPreviewMode] = useState<boolean>(false);
 
   // Edit mode is now determined by URL param
   const isEditMode = useMemo(() => {
@@ -90,8 +96,10 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
     () => ({
       isEditMode,
       isLoading,
+      isPreviewMode,
+      setIsPreviewMode,
     }),
-    [isEditMode, isLoading]
+    [isEditMode, isLoading, isPreviewMode]
   );
 
   return <EditModeContext.Provider value={contextValue}>{children}</EditModeContext.Provider>;

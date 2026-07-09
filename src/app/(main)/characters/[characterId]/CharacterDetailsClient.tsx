@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { hasUserSeenCharacterDetailsTutorial } from '@/lib/tutorialUtils';
 import { CharacterDetailsProps } from '@/lib/types';
@@ -8,14 +8,14 @@ import { useKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { usePageEditMode } from '@/hooks/usePageEditMode';
 import { useSearchParamEditMode } from '@/hooks/useSearchParamEditMode';
-import { useEditMode } from '@/context/EditModeContext';
+import { EditModeContext, useEditMode } from '@/context/EditModeContext';
 import { useToast } from '@/context/ToastContext';
 import { CharacterDetails } from '@/features/characters/components/character-detail';
 import EditModeToolbar from '@/components/ui/EditModeToolbar';
 import OnboardingTutorial from '@/components/OnboardingTutorial';
 
 export default function CharacterDetailsClient(props: CharacterDetailsProps) {
-  const { isEditMode } = useEditMode();
+  const { isEditMode, isLoading, isPreviewMode, setIsPreviewMode } = useEditMode();
   const { characterId } = useLocalCharacter();
   const { exitEditMode } = useSearchParamEditMode();
   const { info } = useToast();
@@ -56,11 +56,22 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
     (message?: string) => publishChanges(message),
     [publishChanges]
   );
+  const editModeContextValue = useMemo(
+    () => ({
+      isEditMode: isEditMode && !isPreviewMode,
+      isLoading,
+      isPreviewMode,
+      setIsPreviewMode,
+    }),
+    [isEditMode, isLoading, isPreviewMode, setIsPreviewMode]
+  );
 
   return (
     <>
       <div className='min-h-screen'>
-        <CharacterDetails>{props.children}</CharacterDetails>
+        <EditModeContext value={editModeContextValue}>
+          <CharacterDetails>{props.children}</CharacterDetails>
+        </EditModeContext>
       </div>
 
       {showTutorial && (

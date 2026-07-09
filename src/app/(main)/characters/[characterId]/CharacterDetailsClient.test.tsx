@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { createContext, type ReactNode } from 'react';
 import { render } from '@testing-library/react';
 
 import type { CharacterWithFaction } from '@/lib/types';
@@ -10,9 +10,14 @@ const mockExitEditMode = jest.fn();
 const mockUseEditMode = jest.fn();
 const TEST_CHARACTER_ID = '__character_details_client_character__';
 
-jest.mock('@/context/EditModeContext', () => ({
-  useEditMode: () => mockUseEditMode(),
-}));
+jest.mock('@/context/EditModeContext', () => {
+  const MockEditModeContext = createContext<unknown>(undefined);
+  MockEditModeContext.displayName = 'MockEditModeContext';
+  return {
+    EditModeContext: MockEditModeContext,
+    useEditMode: () => mockUseEditMode(),
+  };
+});
 
 jest.mock('@/hooks/useLocalEditEntity', () => ({
   useLocalCharacter: () => ({ characterId: 'Tom' }),

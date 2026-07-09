@@ -1,7 +1,24 @@
 import React, { type JSX } from 'react';
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 
+import { EditModeContext } from '@/context/EditModeContext';
+
 import EditModeToolbar, { type EditModeToolbarProps } from './EditModeToolbar';
+
+function renderToolbar(props: EditModeToolbarProps) {
+  return render(
+    <EditModeContext
+      value={{
+        isEditMode: true,
+        isLoading: false,
+        isPreviewMode: false,
+        setIsPreviewMode: jest.fn(),
+      }}
+    >
+      <EditModeToolbar {...props} />
+    </EditModeContext>
+  );
+}
 
 jest.mock('react-dom', () => ({
   ...jest.requireActual('react-dom'),
@@ -71,7 +88,7 @@ describe('EditModeToolbar', () => {
     const props = createProps();
     props.onPublish.mockResolvedValue(false);
 
-    render(<EditModeToolbar {...props} />);
+    renderToolbar(props);
 
     fireEvent.click(getPublishButton());
     fireEvent.change(screen.getByRole('textbox'), {
@@ -92,7 +109,7 @@ describe('EditModeToolbar', () => {
     const props = createProps();
     props.onPublish.mockResolvedValue(true);
 
-    render(<EditModeToolbar {...props} />);
+    renderToolbar(props);
 
     fireEvent.click(getPublishButton());
     fireEvent.click(screen.getByRole('checkbox'));
@@ -124,7 +141,7 @@ describe('EditModeToolbar', () => {
       },
     ];
 
-    render(<EditModeToolbar {...props} />);
+    renderToolbar(props);
 
     const [, draftsButton] = screen.getAllByRole('button');
     fireEvent.click(draftsButton!);

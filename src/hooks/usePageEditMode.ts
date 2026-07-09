@@ -83,12 +83,13 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
   const { entityType, entityId, showToast } = options;
   const { successWithAction, success, error: showError } = useToast();
   const entityKey = entityId.trim();
-  const { isEditMode } = useEditMode();
+  const { isEditMode: originalIsEditMode, isPreviewMode } = useEditMode();
   const [isPublishing, setIsPublishing] = useState(false);
   const [_actionCountTrigger, setActionCountTrigger] = useState(0);
   const draftLoadedRef = useRef(false);
   const [draftInfo, setDraftInfo] = useState<PageEditModeResult['draftInfo']>(null);
   const [draftsSummary, setDraftsSummary] = useState<PageEditModeResult['draftsSummary']>([]);
+  const isEditMode = originalIsEditMode && !isPreviewMode;
   const prevEditModeRef = useRef(isEditMode);
 
   // Subscribe to entity changes to track dirty state
@@ -205,12 +206,12 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
     [entityType, entityKey, isEditMode, showToast]
   );
 
-  // Reset draft loaded flag when exiting edit mode
+  // Reset draft loaded flag when exiting edit mode (not on preview toggle)
   useEffect(() => {
     const wasEditMode = prevEditModeRef.current;
-    prevEditModeRef.current = isEditMode;
+    prevEditModeRef.current = originalIsEditMode;
 
-    if (!isEditMode) {
+    if (!originalIsEditMode) {
       draftLoadedRef.current = false;
       setDraftInfo(null);
       setDraftsSummary([]);
@@ -219,7 +220,7 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
         discardChanges({ showToast: false, suppressSync: true });
       }
     }
-  }, [isEditMode, discardChanges]);
+  }, [originalIsEditMode, discardChanges]);
 
   const publishChanges = useCallback(
     async (message?: string): Promise<boolean> => {

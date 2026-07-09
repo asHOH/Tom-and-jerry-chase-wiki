@@ -1,5 +1,7 @@
 import { render, screen } from '@testing-library/react';
 
+import { EditModeContext } from '@/context/EditModeContext';
+
 import EditModePageShell from './EditModePageShell';
 import type { EditModeToolbarProps } from './EditModeToolbar';
 
@@ -7,6 +9,7 @@ const mockUsePageEditMode = jest.fn();
 const mockInfo = jest.fn();
 const mockExitEditMode = jest.fn();
 const mockEditModeToolbar = jest.fn();
+const mockSetIsPreviewMode = jest.fn();
 
 jest.mock('@/hooks/usePageEditMode', () => ({
   usePageEditMode: (options: unknown) => mockUsePageEditMode(options),
@@ -32,6 +35,18 @@ jest.mock('./EditModeToolbar', () => {
 });
 
 describe('EditModePageShell', () => {
+  const wrapper = ({ children }: { children: React.ReactNode }) => (
+    <EditModeContext
+      value={{
+        isEditMode: true,
+        isLoading: false,
+        isPreviewMode: false,
+        setIsPreviewMode: mockSetIsPreviewMode,
+      }}
+    >
+      {children}
+    </EditModeContext>
+  );
   beforeEach(() => {
     jest.clearAllMocks();
     mockUsePageEditMode.mockReturnValue({
@@ -50,7 +65,8 @@ describe('EditModePageShell', () => {
     render(
       <EditModePageShell entityType='items' entityId='fork' entityName='Fork'>
         <div>content</div>
-      </EditModePageShell>
+      </EditModePageShell>,
+      { wrapper }
     );
 
     expect(mockUsePageEditMode).toHaveBeenCalledWith({
@@ -93,7 +109,8 @@ describe('EditModePageShell', () => {
     render(
       <EditModePageShell entityType='items' entityId='fork' entityName='Fork'>
         <div>content</div>
-      </EditModePageShell>
+      </EditModePageShell>,
+      { wrapper }
     );
 
     expect(screen.getByTestId('edit-mode-toolbar')).toBeInTheDocument();

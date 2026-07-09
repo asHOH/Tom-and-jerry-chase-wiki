@@ -6,7 +6,14 @@ import { createPortal } from 'react-dom';
 
 import { cn } from '@/lib/design';
 import { useUser } from '@/hooks/useUser';
-import { CheckBadgeIcon, CloseIcon, FolderIcon, TrashIcon } from '@/components/icons/CommonIcons';
+import { useEditMode } from '@/context/EditModeContext';
+import {
+  CheckBadgeIcon,
+  CloseIcon,
+  EyeIcon,
+  FolderIcon,
+  TrashIcon,
+} from '@/components/icons/CommonIcons';
 
 export interface EditModeToolbarProps {
   /** Whether there are unsaved changes */
@@ -57,6 +64,7 @@ export default function EditModeToolbar({
   const [isDraftsOpen, setIsDraftsOpen] = useState(false);
   const [agreedToLicense, setAgreedToLicense] = useState(false);
   const discardResetTimerRef = useRef<number | null>(null);
+  const { isPreviewMode, setIsPreviewMode } = useEditMode();
 
   useEffect(() => {
     return () => {
@@ -331,6 +339,21 @@ export default function EditModeToolbar({
 
           {/* Spacer */}
           <div className='flex-1' />
+
+          {/* Preview */}
+          <button
+            type='button'
+            onClick={() => setIsPreviewMode(!isPreviewMode)}
+            className={cn(
+              'flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium transition-colors',
+              isPreviewMode
+                ? 'bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700 dark:text-gray-300 dark:hover:bg-slate-600'
+            )}
+          >
+            <EyeIcon size={16} strokeWidth={2} />
+            <span>{isPreviewMode ? '退出预览' : '预览'}</span>
+          </button>
 
           {/* Publish */}
           <button

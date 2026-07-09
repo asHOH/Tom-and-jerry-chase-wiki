@@ -1,10 +1,11 @@
 'use client';
 
-import { ReactNode, useCallback } from 'react';
+import { ReactNode, useCallback, useMemo } from 'react';
 
 import type { PublishableEntityType } from '@/lib/edit/editModeRegistry';
 import { usePageEditMode } from '@/hooks/usePageEditMode';
 import { useSearchParamEditMode } from '@/hooks/useSearchParamEditMode';
+import { EditModeContext, useEditMode } from '@/context/EditModeContext';
 import { useToast } from '@/context/ToastContext';
 
 import EditModeToolbar from './EditModeToolbar';
@@ -38,6 +39,16 @@ export default function EditModePageShell({
     entityId,
     showToast: info,
   });
+  const { isLoading, isPreviewMode, setIsPreviewMode } = useEditMode();
+  const editModeContextValue = useMemo(
+    () => ({
+      isEditMode: isEditMode && !isPreviewMode,
+      isLoading,
+      isPreviewMode,
+      setIsPreviewMode,
+    }),
+    [isEditMode, isLoading, isPreviewMode, setIsPreviewMode]
+  );
 
   const handlePublish = useCallback(
     (message?: string) => publishChanges(message),
@@ -46,7 +57,7 @@ export default function EditModePageShell({
 
   return (
     <>
-      {children}
+      <EditModeContext value={editModeContextValue}>{children}</EditModeContext>
       {isEditMode ? (
         <EditModeToolbar
           isDirty={isDirty}
