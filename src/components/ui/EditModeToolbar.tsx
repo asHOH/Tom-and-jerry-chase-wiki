@@ -4,8 +4,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, m, useDragControls, useReducedMotion } from 'motion/react';
 import { createPortal } from 'react-dom';
 
+import { useAbility } from '@/lib/auth/AbilityProvider';
 import { cn } from '@/lib/design';
-import { useUser } from '@/hooks/useUser';
 import { useEditMode } from '@/context/EditModeContext';
 import {
   CheckBadgeIcon,
@@ -54,8 +54,8 @@ export default function EditModeToolbar({
   onExitEditMode,
   entityName,
 }: EditModeToolbarProps) {
-  const { role: userRole } = useUser();
-  const isAdmin = userRole === 'Coordinator' || userRole === 'Reviewer';
+  const ability = useAbility();
+  const isAdmin = ability.can('edit_any', 'Article');
   const shouldReduceMotion = useReducedMotion();
   const dragControls = useDragControls();
   const [showMessageInput, setShowMessageInput] = useState(false);
@@ -239,7 +239,7 @@ export default function EditModeToolbar({
                     CC BY 4.0 许可协议
                   </a>{' '}
                   进行授权发布
-                  {userRole && isAdmin
+                  {isAdmin
                     ? '，提交后将自动审核通过并公开显示。'
                     : '，管理员审核通过后将公开显示。'}
                 </label>

@@ -3,9 +3,9 @@
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { useSnapshot } from 'valtio';
 
+import { useAbility } from '@/lib/auth/AbilityProvider';
 import { getFactionButtonColors } from '@/lib/design';
 import { useSearchParamEditMode } from '@/hooks/useSearchParamEditMode';
-import { useUser } from '@/hooks/useUser';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useToast } from '@/context/ToastContext';
 import { characters } from '@/data/store';
@@ -48,8 +48,6 @@ const MATRIX_SIZE_STEP = 2;
 const DEFAULT_MATRIX_SIZE = 28;
 
 const targetSelectorClassName = 'mt-0 justify-start md:mt-0';
-const RELATION_EDIT_ROLES = new Set(['Contributor', 'Reviewer', 'Coordinator']);
-
 const isFactionTarget = (
   target: RelationMatrixColumnCategory
 ): target is RelationMatrixRowFaction => target === 'mouse' || target === 'cat';
@@ -149,7 +147,7 @@ function MatrixSizeSlider({
 
 export default function RelationsClient({ description }: RelationsClientProps) {
   const [isDarkMode] = useDarkMode();
-  const { role: userRole } = useUser();
+  const ability = useAbility();
   const { isEditMode, exitEditMode } = useSearchParamEditMode();
   const { info } = useToast();
   const charactersSnapshot = useSnapshot(characters);
@@ -166,7 +164,7 @@ export default function RelationsClient({ description }: RelationsClientProps) {
     publishChanges,
     getActionCount,
   } = useRelationMatrixEditMode();
-  const canEditRelations = userRole !== null && RELATION_EDIT_ROLES.has(userRole);
+  const canEditRelations = ability.can('edit_own', 'Relation');
   const isRelationEditMode = isEditMode && canEditRelations;
   const coercedColumnCategory = coerceColumnCategory(rowFaction, columnCategory);
   const columnCategoryOptions = getLegalColumnCategories(rowFaction);

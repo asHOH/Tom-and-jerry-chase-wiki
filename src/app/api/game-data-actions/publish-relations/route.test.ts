@@ -1,4 +1,5 @@
-import { requireRole } from '@/lib/auth/requireRole';
+import { abilityFor } from '@/lib/auth/permissions';
+import { requireAbility } from '@/lib/auth/requireAbility';
 import { publishGameDataActions } from '@/lib/gameData/publishGameDataActions';
 import { env } from '@/env';
 
@@ -22,15 +23,15 @@ jest.mock('@/env', () => ({
   },
 }));
 
-jest.mock('@/lib/auth/requireRole', () => ({
-  requireRole: jest.fn(),
+jest.mock('@/lib/auth/requireAbility', () => ({
+  requireAbility: jest.fn(),
 }));
 
 jest.mock('@/lib/gameData/publishGameDataActions', () => ({
   publishGameDataActions: jest.fn(),
 }));
 
-const requireRoleMock = jest.mocked(requireRole);
+const requireAbilityMock = jest.mocked(requireAbility);
 const publishGameDataActionsMock = jest.mocked(publishGameDataActions);
 const mutableEnv = env as unknown as {
   NEXT_PUBLIC_DISABLE_ARTICLES?: string;
@@ -42,18 +43,25 @@ const createRequest = (body: unknown) =>
     json: async () => body,
   }) as Request;
 
+const mockSuccess = () =>
+  requireAbilityMock.mockResolvedValue({
+    supabase: { rpc: jest.fn() } as never,
+    userId: 'test-user',
+    ability: abilityFor('Contributor'),
+  } as never);
+
 describe('publish-relations route', () => {
   beforeEach(() => {
     mutableEnv.NEXT_PUBLIC_DISABLE_ARTICLES = '0';
     mutableEnv.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY = 'test-publishable-key';
-    requireRoleMock.mockResolvedValue({ supabase: { rpc: jest.fn() } as never });
+    mockSuccess();
     publishGameDataActionsMock.mockResolvedValue([
       { id: 'action-1', is_public: false, status: 'pending' },
     ]);
   });
 
   it('returns 401 for unauthenticated requests', async () => {
-    requireRoleMock.mockResolvedValueOnce({
+    requireAbilityMock.mockResolvedValueOnce({
       error: jsonResponse({ error: 'Unauthorized' }, { status: 401 }) as never,
     });
     const { POST } = await import('./route');
@@ -65,7 +73,7 @@ describe('publish-relations route', () => {
   });
 
   it('returns 403 for unauthorized roles', async () => {
-    requireRoleMock.mockResolvedValueOnce({
+    requireAbilityMock.mockResolvedValueOnce({
       error: jsonResponse({ error: 'Forbidden' }, { status: 403 }) as never,
     });
     const { POST } = await import('./route');
@@ -84,7 +92,7 @@ describe('publish-relations route', () => {
 
     expect(response.status).toBe(501);
     await expect(response.json()).resolves.toEqual({ error: 'Supabase is disabled' });
-    expect(requireRoleMock).not.toHaveBeenCalled();
+    expect(requireAbilityMock).not.toHaveBeenCalled();
   });
 
   it('rejects non-relation character paths', async () => {
@@ -113,7 +121,7 @@ describe('publish-relations route', () => {
     await expect(response.json()).resolves.toEqual({
       result: [{ id: 'action-1', is_public: false, status: 'pending' }],
     });
-    expect(requireRoleMock).toHaveBeenCalledWith(['Contributor', 'Reviewer', 'Coordinator']);
+    expect(requireAbilityMock).toHaveBeenCalledWith('publish_relations', 'GameDataAction');
     expect(publishGameDataActionsMock).toHaveBeenCalledWith(
       { rpc: expect.any(Function) },
       [{ entityType: 'characters', entries }],

@@ -1,9 +1,10 @@
 import { revalidateTag } from 'next/cache';
 import { NextResponse } from 'next/server';
 
+import { Actions, Subjects } from '@/lib/auth/permissions';
+import { requireAbility } from '@/lib/auth/requireAbility';
 import { CACHE_TAGS } from '@/lib/cacheTags';
 import { supabaseAdmin } from '@/lib/supabase/admin';
-import { createClient } from '@/lib/supabase/server';
 import { articleEditPendingSchema, formatZodError } from '@/lib/validation/schemas';
 
 export async function POST(
@@ -16,13 +17,9 @@ export async function POST(
     return NextResponse.json({ error: 'Missing version ID' }, { status: 400 });
   }
 
-  const supabase = await createClient();
-  const { data: claimsData } = await supabase.auth.getClaims();
-  const userId = claimsData?.claims.sub;
-
-  if (!userId) {
-    return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
-  }
+  const guard = await requireAbility(Actions.EDIT_OWN, Subjects.ARTICLE);
+  if ('error' in guard) return guard.error;
+  const { supabase } = guard;
 
   const parsed = articleEditPendingSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) {

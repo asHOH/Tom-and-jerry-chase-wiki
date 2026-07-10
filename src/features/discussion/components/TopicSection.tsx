@@ -10,6 +10,7 @@ type TopicSectionProps = {
   topic: CommentNode;
   scope: string;
   targetId: string;
+  isAdmin: boolean;
   userRole: string | null;
   userNickname: string | null;
   onMutate: () => void;
@@ -20,6 +21,7 @@ export function TopicSection({
   topic,
   scope,
   targetId,
+  isAdmin,
   userRole,
   userNickname,
   onMutate,
@@ -29,8 +31,6 @@ export function TopicSection({
   const [replyContent, setReplyContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const isAdmin = userRole === 'Reviewer' || userRole === 'Coordinator';
 
   const handleSubmitReply = async (parentId: string) => {
     const trimmed = replyContent.trim();

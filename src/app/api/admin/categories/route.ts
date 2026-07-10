@@ -1,11 +1,12 @@
 import { revalidateTag } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 
-import { requireRole } from '@/lib/auth/requireRole';
+import { Actions, Subjects } from '@/lib/auth/permissions';
+import { requireAbility } from '@/lib/auth/requireAbility';
 import { CACHE_TAGS } from '@/lib/cacheTags';
 
 export async function GET() {
-  const guard = await requireRole(['Coordinator', 'Reviewer']);
+  const guard = await requireAbility(Actions.UPDATE, Subjects.CATEGORY);
   if ('error' in guard) return guard.error;
   const { supabase } = guard;
 
@@ -17,7 +18,7 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  const guard = await requireRole(['Coordinator', 'Reviewer']);
+  const guard = await requireAbility(Actions.CREATE, Subjects.CATEGORY);
   if ('error' in guard) return guard.error;
   const { supabase } = guard;
 
@@ -41,7 +42,7 @@ export async function POST(request: NextRequest) {
 }
 
 export async function PUT(request: NextRequest) {
-  const guard = await requireRole(['Coordinator', 'Reviewer']);
+  const guard = await requireAbility(Actions.UPDATE, Subjects.CATEGORY);
   if ('error' in guard) return guard.error;
   const { supabase } = guard;
 
@@ -66,7 +67,7 @@ export async function PUT(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
-  const guard = await requireRole(['Coordinator', 'Reviewer']);
+  const guard = await requireAbility(Actions.DELETE, Subjects.CATEGORY);
   if ('error' in guard) return guard.error;
   const { supabase } = guard;
 

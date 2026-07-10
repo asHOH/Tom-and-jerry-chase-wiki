@@ -4,6 +4,7 @@ import { useCallback, useMemo, useState } from 'react';
 import Link from 'next/link';
 import useSWR from 'swr';
 
+import { useAbility } from '@/lib/auth/AbilityProvider';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useUser } from '@/hooks/useUser';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
@@ -73,7 +74,9 @@ export function TalkPageClient({
   parentUrl,
 }: TalkPageClientProps) {
   const { role: userRole } = useUser();
+  const ability = useAbility();
   const isMobile = useMobile();
+  const isAdmin = ability.can('moderate', 'Comment');
 
   const [showNewTopicForm, setShowNewTopicForm] = useState(false);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
@@ -242,6 +245,7 @@ export function TalkPageClient({
               scope={scope}
               targetId={targetId}
               userRole={userRole}
+              isAdmin={isAdmin}
               userNickname={null}
               onMutate={handleMutate}
               onLoginRequired={handleLoginRequired}

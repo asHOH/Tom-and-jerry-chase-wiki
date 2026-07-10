@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 
+import { Actions, Subjects } from '../../../lib/auth/permissions';
+import { requireAbility } from '../../../lib/auth/requireAbility';
 import { shouldAllowComment } from '../../../lib/comments/moderation';
 import { checkRateLimit } from '../../../lib/rateLimit';
 import { supabaseAdmin } from '../../../lib/supabase/admin';
@@ -253,13 +255,9 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ error: 'Comments are disabled' }, { status: 503 });
   }
 
-  const supabase = await createClient();
-  const { data: claimsData } = await supabase.auth.getClaims();
-  const userId = claimsData?.claims.sub;
-
-  if (!userId) {
-    return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
-  }
+  const guard = await requireAbility(Actions.MODERATE, Subjects.COMMENT);
+  if ('error' in guard) return guard.error;
+  const { supabase } = guard;
 
   const parsed = patchCommentSchema.safeParse(await req.json().catch(() => null));
   if (!parsed.success) {

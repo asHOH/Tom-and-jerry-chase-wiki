@@ -4,9 +4,9 @@ import { useMemo, useState } from 'react';
 import useSWR from 'swr';
 import { useSnapshot } from 'valtio';
 
+import { useAbility } from '@/lib/auth/AbilityProvider';
 import { formatArticleDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
-import { useUser } from '@/hooks/useUser';
 import Button from '@/components/ui/Button';
 import ButtonLink from '@/components/ui/ButtonLink';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
@@ -71,18 +71,18 @@ const fetcher = (url: string) =>
   });
 
 export default function PendingClient() {
-  const { role: userRole } = useUser();
+  const ability = useAbility();
   const [processingVersions, setProcessingVersions] = useState<Set<string>>(new Set());
   const [filter, setFilter] = useState<'all' | 'pending' | 'rejected'>('all');
   const charactersSnap = useSnapshot(characters);
 
-  const canModerate = userRole === 'Reviewer' || userRole === 'Coordinator';
+  const canModerate = ability.can('approve', 'ArticleVersion');
 
   const apiEndpoint = useMemo(() => {
     if (canModerate) return '/api/moderation/pending';
-    if (userRole === 'Contributor') return '/api/articles/pending';
+    if (ability.can('edit_own', 'Article')) return '/api/articles/pending';
     return null;
-  }, [userRole, canModerate]);
+  }, [canModerate, ability]);
 
   const {
     data: rawData,
@@ -201,7 +201,7 @@ export default function PendingClient() {
               : '加载待审核内容失败'}
           </h2>
           <p className='mb-6 text-gray-600 dark:text-gray-400'>
-            {userRole === 'Contributor'
+            {ability.can('edit_own', 'Article') && !ability.can('approve', 'ArticleVersion')
               ? '您可以查看自己的待审核提交，但不能进行审核操作'
               : '请检查您的登录状态或联系管理员获取相应权限'}
           </p>

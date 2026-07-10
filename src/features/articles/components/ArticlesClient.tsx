@@ -7,13 +7,13 @@ import { Masonry } from 'react-plock';
 import { useSnapshot } from 'valtio';
 
 import { AssetManager } from '@/lib/assetManager';
+import { useAbility } from '@/lib/auth/AbilityProvider';
 import { formatCompactDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
 import { useFilterState } from '@/lib/filterUtils';
 import { shouldIgnorePageNavigationKey } from '@/lib/keyboardNavigation';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useSwipeGesture } from '@/hooks/useSwipeGesture';
-import { useUser } from '@/hooks/useUser';
 import { useEditMode } from '@/context/EditModeContext';
 import { useToast } from '@/context/ToastContext';
 import { Article, ArticlesData, Category } from '@/data/types';
@@ -37,7 +37,7 @@ interface ArticlesClientProps {
 }
 
 export default function ArticlesClient({ articles: data, description }: ArticlesClientProps) {
-  const { role: userRole } = useUser();
+  const ability = useAbility();
   const isMobile = useMobile();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -325,9 +325,9 @@ export default function ArticlesClient({ articles: data, description }: Articles
 
           {/* Quick Actions */}
           <div className='flex items-center justify-center gap-3'>
-            {userRole ? (
+            {ability.can('edit_own', 'Article') ? (
               <>
-                {userRole !== 'Contributor' && (
+                {ability.can('approve', 'ArticleVersion') && (
                   <ButtonLink
                     href='/articles/pending'
                     variant='warning'
@@ -382,7 +382,9 @@ export default function ArticlesClient({ articles: data, description }: Articles
                 清除筛选
               </Button>
             )}
-            {userRole && <ButtonLink href='/articles/new'>创建文章</ButtonLink>}
+            {ability.can('create', 'Article') && (
+              <ButtonLink href='/articles/new'>创建文章</ButtonLink>
+            )}
           </div>
         </div>
       ) : (

@@ -5,6 +5,14 @@ import { EditModeContext } from '@/context/EditModeContext';
 
 import EditModeToolbar, { type EditModeToolbarProps } from './EditModeToolbar';
 
+jest.mock('@/lib/auth/AbilityProvider', () => {
+  const actual = jest.requireActual('@/lib/auth/permissions');
+  return {
+    AbilityProvider: ({ children }: { children: React.ReactNode }) => children,
+    useAbility: () => actual.abilityFor('Contributor'),
+  };
+});
+
 function renderToolbar(props: EditModeToolbarProps) {
   return render(
     <EditModeContext

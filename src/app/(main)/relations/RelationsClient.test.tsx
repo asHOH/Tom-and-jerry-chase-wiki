@@ -112,6 +112,15 @@ jest.mock('@/hooks/useUser', () => ({
   }),
 }));
 
+jest.mock('@/lib/auth/AbilityProvider', () => {
+  const actual = jest.requireActual('@/lib/auth/permissions');
+  return {
+    AbilityProvider: ({ children }: { children: React.ReactNode }) => children,
+    useAbility: () =>
+      actual.abilityFor(mockUserRole as 'Contributor' | 'Reviewer' | 'Coordinator' | null),
+  };
+});
+
 jest.mock('@/hooks/useSearchParamEditMode', () => ({
   useSearchParamEditMode: () => ({
     isEditMode: mockIsEditMode,

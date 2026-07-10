@@ -3,8 +3,9 @@
 import { useState } from 'react';
 import useSWR from 'swr';
 
+import { useAbility } from '@/lib/auth/AbilityProvider';
 import { cn } from '@/lib/design';
-import { Database } from '@/data/database.types';
+import type { Database } from '@/data/database.types';
 import CategoryManagement from '@/features/admin/components/CategoryManagement';
 import GameDataActionModerationPanel, {
   PendingGameDataAction,
@@ -17,10 +18,6 @@ type User = {
   id: string;
   nickname: string;
   role: string | null;
-};
-
-type AdminPanelProps = {
-  user: User;
 };
 
 const fetchUsers = async (): Promise<User[]> => {
@@ -52,11 +49,12 @@ const fetchPendingGameDataActions = async (): Promise<PendingGameDataAction[]> =
   return data.submissions ?? [];
 };
 
-const AdminPanel = ({ user }: AdminPanelProps) => {
+const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState<'users' | 'categories' | 'actions'>('categories');
+  const ability = useAbility();
 
-  const enableUserAccess = user.role === 'Coordinator';
-  const enableActionModeration = user.role === 'Coordinator' || user.role === 'Reviewer';
+  const enableUserAccess = ability.can('view_users', 'User');
+  const enableActionModeration = ability.can('approve', 'GameDataAction');
 
   const { data: users = [], mutate: mutateUsers } = useSWR(
     enableUserAccess ? 'users' : null,
@@ -123,7 +121,7 @@ const AdminPanel = ({ user }: AdminPanelProps) => {
 
       {enableActionModeration && activeTab === 'actions' && (
         <GameDataActionModerationPanel
-          canMarkActionsSynced={enableUserAccess}
+          canMarkActionsSynced={ability.can('mark_synced', 'GameDataAction')}
           pendingActions={pendingActions}
           mutatePendingActions={mutatePendingActions}
         />

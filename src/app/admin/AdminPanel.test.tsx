@@ -1,6 +1,8 @@
+import { type ReactNode } from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import useSWR from 'swr';
 
+import type { Role } from '@/lib/auth/permissions';
 import type { PendingGameDataAction } from '@/features/admin/components/GameDataActionModerationPanel';
 
 import AdminPanel from './AdminPanel';
@@ -9,6 +11,16 @@ jest.mock('swr');
 
 const mockUseSWR = useSWR as jest.MockedFunction<typeof useSWR>;
 const mockModerationPanel = jest.fn();
+
+let currentRole: Role | null = null;
+
+jest.mock('@/lib/auth/AbilityProvider', () => {
+  const actual = jest.requireActual('@/lib/auth/permissions');
+  return {
+    AbilityProvider: ({ children }: { children: ReactNode }) => children,
+    useAbility: () => actual.abilityFor(currentRole),
+  };
+});
 
 jest.mock('@/context/ToastContext', () => ({
   useToast: () => ({
@@ -77,20 +89,15 @@ const createSWRResponse = <T,>(data: T, mutate: jest.Mock) =>
     mutate,
   }) as never;
 
-const renderAdminPanel = (role: string | null) =>
-  render(
-    <AdminPanel
-      user={{
-        id: 'user-1',
-        nickname: 'Tester',
-        role,
-      }}
-    />
-  );
+const renderAdminPanel = (role: Role | null) => {
+  currentRole = role;
+  return render(<AdminPanel />);
+};
 
 describe('AdminPanel', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    currentRole = null;
 
     mockUseSWR.mockImplementation((key) => {
       if (key === 'users') {

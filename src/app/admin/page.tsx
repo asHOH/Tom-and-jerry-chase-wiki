@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 
+import { abilityFor, type Role } from '@/lib/auth/permissions';
 import { createClient } from '@/lib/supabase/server';
 
 import AdminPanel from './AdminPanel';
@@ -21,19 +22,12 @@ export default async function AdminPage() {
     .eq('id', userId)
     .single();
 
-  const user = {
-    id: userId,
-    nickname: userData?.nickname ?? '',
-    role: userData?.role ?? null,
-  };
-
-  // Check roles server-side
-  if (user.role === 'Contributor' || !user.role) {
-    // Only Coordinator and Reviewer can access
-    // Note: The client component also checks this, but we double check here
-    // to prevent access to the shell.
+  // Check permissions server-side: only Reviewer+ can access admin
+  const role = (userData?.role as Role | null) ?? null;
+  const ability = abilityFor(role);
+  if (!ability.can('approve', 'ArticleVersion')) {
     notFound();
   }
 
-  return <AdminPanel user={user} />;
+  return <AdminPanel />;
 }

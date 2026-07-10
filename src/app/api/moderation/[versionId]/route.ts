@@ -4,7 +4,8 @@ import {
   mapModerationActionError,
   type ModerationAction,
 } from '@/lib/articles/moderationActionError';
-import { requireRole } from '@/lib/auth/requireRole';
+import { Actions, Subjects } from '@/lib/auth/permissions';
+import { requireAbility } from '@/lib/auth/requireAbility';
 import { CACHE_TAGS, invalidateCache } from '@/lib/cacheTags';
 import { sendPushNotification } from '@/lib/push';
 
@@ -28,7 +29,7 @@ export async function POST(
   }
 
   try {
-    const guard = await requireRole(['Reviewer', 'Coordinator']);
+    const guard = await requireAbility(Actions.APPROVE, Subjects.ARTICLE_VERSION);
     if ('error' in guard) return guard.error;
     const { supabase } = guard;
 

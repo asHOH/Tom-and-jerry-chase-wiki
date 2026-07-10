@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import z from 'zod';
 
-import { requireRole } from '@/lib/auth/requireRole';
+import { Actions, Subjects } from '@/lib/auth/permissions';
+import { requireAbility } from '@/lib/auth/requireAbility';
 import { isCharacterRelationAction } from '@/lib/edit/characterRelationActions';
 import type { ActionHistoryEntry } from '@/lib/edit/diffUtils';
 import { flattenActionEntries } from '@/lib/gameData/actionEntries';
@@ -24,7 +25,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    const guard = await requireRole(['Contributor', 'Reviewer', 'Coordinator']);
+    const guard = await requireAbility(Actions.PUBLISH_RELATIONS, Subjects.GAME_DATA_ACTION);
     if ('error' in guard) return guard.error;
 
     let body: { entries: ActionHistoryEntry[]; message?: string };

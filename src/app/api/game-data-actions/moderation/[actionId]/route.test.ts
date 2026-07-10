@@ -1,6 +1,6 @@
 import type { NextRequest } from 'next/server';
 
-import { requireRole } from '@/lib/auth/requireRole';
+import { requireAbility } from '@/lib/auth/requireAbility';
 import { sendPushNotification } from '@/lib/push';
 
 const jsonResponse = (body: unknown, init?: { status?: number }) =>
@@ -15,15 +15,15 @@ jest.mock('next/server', () => ({
   },
 }));
 
-jest.mock('@/lib/auth/requireRole', () => ({
-  requireRole: jest.fn(),
+jest.mock('@/lib/auth/requireAbility', () => ({
+  requireAbility: jest.fn(),
 }));
 
 jest.mock('@/lib/push', () => ({
   sendPushNotification: jest.fn(),
 }));
 
-const requireRoleMock = jest.mocked(requireRole);
+const requireAbilityMock = jest.mocked(requireAbility);
 const sendPushNotificationMock = jest.mocked(sendPushNotification);
 
 type SupabaseMockOptions = {
@@ -121,7 +121,7 @@ describe('game data action moderation route', () => {
   it('marks approved actions as synced for coordinators', async () => {
     const { POST } = await import('./route');
     const { supabase, updateEqCalls, updatePayloads } = createSupabaseMock();
-    requireRoleMock.mockResolvedValue({ supabase } as never);
+    requireAbilityMock.mockResolvedValue({ supabase, userId: 'coordinator-1' } as never);
 
     const response = await POST(createRequest('mark-synced'), {
       params: Promise.resolve({ actionId: 'action-1' }),
@@ -133,7 +133,7 @@ describe('game data action moderation route', () => {
       action_id: 'action-1',
       message: 'Action marked as synced',
     });
-    expect(requireRoleMock).toHaveBeenCalledWith(['Coordinator']);
+    expect(requireAbilityMock).toHaveBeenCalledWith('mark_synced', 'GameDataAction');
     expect(updatePayloads).toEqual([
       {
         is_public: true,
@@ -149,17 +149,17 @@ describe('game data action moderation route', () => {
     ]);
   });
 
-  it('keeps regular approve and reject available to reviewers', async () => {
+  it('keeps regular approve available to reviewers', async () => {
     const { POST } = await import('./route');
     const { supabase } = createSupabaseMock({ existingStatus: 'pending' });
-    requireRoleMock.mockResolvedValue({ supabase } as never);
+    requireAbilityMock.mockResolvedValue({ supabase, userId: 'reviewer-1' } as never);
 
     const response = await POST(createRequest('approve'), {
       params: Promise.resolve({ actionId: 'action-1' }),
     });
 
     expect(response.status).toBe(200);
-    expect(requireRoleMock).toHaveBeenCalledWith(['Reviewer', 'Coordinator']);
+    expect(requireAbilityMock).toHaveBeenCalledWith('approve', 'GameDataAction');
     expect(supabase.rpc).toHaveBeenCalledWith('approve_game_data_action', {
       p_action_id: 'action-1',
     });
@@ -168,14 +168,14 @@ describe('game data action moderation route', () => {
   it('keeps regular reject available to reviewers', async () => {
     const { POST } = await import('./route');
     const { supabase } = createSupabaseMock({ existingStatus: 'pending' });
-    requireRoleMock.mockResolvedValue({ supabase } as never);
+    requireAbilityMock.mockResolvedValue({ supabase, userId: 'reviewer-1' } as never);
 
     const response = await POST(createRequest('reject', { reason: '不通过' }), {
       params: Promise.resolve({ actionId: 'action-1' }),
     });
 
     expect(response.status).toBe(200);
-    expect(requireRoleMock).toHaveBeenCalledWith(['Reviewer', 'Coordinator']);
+    expect(requireAbilityMock).toHaveBeenCalledWith('approve', 'GameDataAction');
     expect(supabase.rpc).toHaveBeenCalledWith('reject_game_data_action', {
       p_action_id: 'action-1',
       p_reason: '不通过',

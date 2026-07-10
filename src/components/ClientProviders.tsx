@@ -3,6 +3,7 @@
 import type { ReactNode } from 'react';
 import { LazyMotion } from 'motion/react';
 
+import { AbilityProvider } from '@/lib/auth/AbilityProvider';
 import type { PublicActionRow } from '@/lib/gameData/publicActionsTypes';
 import { usePublicGameDataActions } from '@/hooks/usePublicGameDataActions';
 import { ToastProvider } from '@/context/ToastContext';
@@ -22,7 +23,9 @@ export function ClientProviders({ children, initialPublicActions }: ClientProvid
   return (
     <LazyMotion features={loadMotionFeatures} strict>
       <ToastProvider>
-        <WikiHistoryProvider publicActions={initialPublicActions}>{children}</WikiHistoryProvider>
+        <AbilityProvider>
+          <WikiHistoryProvider publicActions={initialPublicActions}>{children}</WikiHistoryProvider>
+        </AbilityProvider>
         <ServiceWorkerRegistration />
         <CacheDebugPanel />
         <VersionChecker />

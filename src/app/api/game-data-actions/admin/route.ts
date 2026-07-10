@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { requireRole } from '@/lib/auth/requireRole';
+import { Actions, Subjects } from '@/lib/auth/permissions';
+import { requireAbility } from '@/lib/auth/requireAbility';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 
 const ALLOWED_STATUSES = ['pending', 'approved', 'rejected', 'synced', 'all'] as const;
@@ -9,7 +10,7 @@ type AllowedStatus = (typeof ALLOWED_STATUSES)[number];
 
 export async function GET(request: NextRequest) {
   try {
-    const guard = await requireRole(['Reviewer', 'Coordinator']);
+    const guard = await requireAbility(Actions.APPROVE, Subjects.GAME_DATA_ACTION);
     if ('error' in guard) return guard.error;
 
     const { searchParams } = new URL(request.url);

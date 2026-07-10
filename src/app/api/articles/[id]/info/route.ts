@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { buildEditSourcePolicy, type EditSourceSnapshot } from '@/lib/articles/editSources';
+import { abilityFor, type Role } from '@/lib/auth/permissions';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { createClient } from '@/lib/supabase/server';
 
@@ -41,7 +42,10 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ error: 'Failed to fetch user role' }, { status: 500 });
     }
 
-    if (article.author_id !== userId && userRole !== 'Coordinator' && userRole !== 'Reviewer') {
+    const role = (userRole as Role | undefined) ?? null;
+    const ability = abilityFor(role);
+
+    if (article.author_id !== userId && !ability.can('edit_any', 'Article')) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 

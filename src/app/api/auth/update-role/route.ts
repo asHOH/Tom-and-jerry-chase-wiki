@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
 
-import { requireRole } from '@/lib/auth/requireRole';
+import { Actions, Subjects } from '@/lib/auth/permissions';
+import { requireAbility } from '@/lib/auth/requireAbility';
 
 export async function POST(request: Request) {
-  const guard = await requireRole(['Coordinator']);
+  const guard = await requireAbility(Actions.UPDATE_ROLE, Subjects.USER);
   if ('error' in guard) return guard.error;
   const { supabase } = guard;
 

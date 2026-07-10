@@ -1,6 +1,7 @@
 import { revalidateTag } from 'next/cache';
 import { NextResponse } from 'next/server';
 
+import { abilityFor, type Role } from '@/lib/auth/permissions';
 import { CACHE_TAGS } from '@/lib/cacheTags';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { createClient } from '@/lib/supabase/server';
@@ -16,18 +17,12 @@ export async function POST(request: Request, { params }: { params: Promise<{ id?
     return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
   }
 
-  const body = await request.json().catch(() => null);
-  const title = body?.title;
-  const category = body?.category;
-  const content = body?.content;
-  const character_id = body?.character_id ?? null;
-  const commit_message = body?.commit_message;
-
-  if (!id || !title || !category || !content) {
-    return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+  if (!id) {
+    return NextResponse.json({ error: 'Missing article ID' }, { status: 400 });
   }
 
   try {
+    // Authorize before parsing body — fail fast on missing article or insufficient permissions
     const { data: article, error: articleError } = await supabaseAdmin
       .from('articles')
       .select('author_id')
@@ -40,8 +35,23 @@ export async function POST(request: Request, { params }: { params: Promise<{ id?
 
     const { data: userRole } = await supabaseAdmin.rpc('get_user_role', { p_user_id: userId });
 
-    if (article.author_id !== userId && userRole !== 'Coordinator' && userRole !== 'Reviewer') {
+    const role = (userRole as Role | undefined) ?? null;
+    const ability = abilityFor(role);
+
+    if (article.author_id !== userId && !ability.can('edit_any', 'Article')) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    // Authorization passed — now parse and validate the body
+    const body = await request.json().catch(() => null);
+    const title = body?.title;
+    const category = body?.category;
+    const content = body?.content;
+    const character_id = body?.character_id ?? null;
+    const commit_message = body?.commit_message;
+
+    if (!title || !category || !content) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
     const { data, error } = await supabase.rpc('submit_article', {
