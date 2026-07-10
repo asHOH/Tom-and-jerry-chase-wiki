@@ -242,4 +242,108 @@ describe('CharacterRelationsMatrix', () => {
       within(selfCell).queryByRole('button', { name: '编辑 杰瑞 与 杰瑞 的关系' })
     ).not.toBeInTheDocument();
   });
+
+  describe('cell click highlighting', () => {
+    it('should highlight the row and column when clicking a cell', () => {
+      const viewModel = buildRelationMatrixViewModel({
+        rowFaction: 'mouse',
+        columnCategory: 'cat',
+      });
+
+      render(<CharacterRelationsMatrix viewModel={viewModel} />);
+
+      const jerryTomCell = screen.getByTestId(getCellTestId(viewModel, '杰瑞', '汤姆'));
+      fireEvent.click(jerryTomCell);
+
+      // The clicked cell should have both row and col highlight attributes
+      expect(jerryTomCell).toHaveAttribute('data-highlighted-row', '');
+      expect(jerryTomCell).toHaveAttribute('data-highlighted-col', '');
+
+      // Another cell in the same row should have row highlight
+      const jerryTopsyCell = screen.getByTestId(getCellTestId(viewModel, '杰瑞', '托普斯'));
+      expect(jerryTopsyCell).toHaveAttribute('data-highlighted-row', '');
+      expect(jerryTopsyCell).not.toHaveAttribute('data-highlighted-col');
+
+      // Another cell in the same column should have col highlight
+      const robinTomCell = screen.getByTestId(getCellTestId(viewModel, '罗宾汉杰瑞', '汤姆'));
+      expect(robinTomCell).not.toHaveAttribute('data-highlighted-row');
+      expect(robinTomCell).toHaveAttribute('data-highlighted-col', '');
+
+      // A cell in a different row and column should not be highlighted
+      const robinTopsyCell = screen.getByTestId(getCellTestId(viewModel, '罗宾汉杰瑞', '托普斯'));
+      expect(robinTopsyCell).not.toHaveAttribute('data-highlighted-row');
+      expect(robinTopsyCell).not.toHaveAttribute('data-highlighted-col');
+    });
+
+    it('should toggle off when clicking the same cell again', () => {
+      const viewModel = buildRelationMatrixViewModel({
+        rowFaction: 'mouse',
+        columnCategory: 'cat',
+      });
+
+      render(<CharacterRelationsMatrix viewModel={viewModel} />);
+
+      const cell = screen.getByTestId(getCellTestId(viewModel, '杰瑞', '汤姆'));
+
+      fireEvent.click(cell);
+      expect(cell).toHaveAttribute('data-highlighted-row', '');
+
+      fireEvent.click(cell);
+      expect(cell).not.toHaveAttribute('data-highlighted-row');
+      expect(cell).not.toHaveAttribute('data-highlighted-col');
+    });
+
+    it('should move highlight to a new cell when clicking a different cell', () => {
+      const viewModel = buildRelationMatrixViewModel({
+        rowFaction: 'mouse',
+        columnCategory: 'cat',
+      });
+
+      render(<CharacterRelationsMatrix viewModel={viewModel} />);
+
+      const firstCell = screen.getByTestId(getCellTestId(viewModel, '杰瑞', '汤姆'));
+      const secondCell = screen.getByTestId(getCellTestId(viewModel, '罗宾汉杰瑞', '托普斯'));
+
+      fireEvent.click(firstCell);
+      expect(firstCell).toHaveAttribute('data-highlighted-row', '');
+
+      fireEvent.click(secondCell);
+      expect(firstCell).not.toHaveAttribute('data-highlighted-row');
+      expect(secondCell).toHaveAttribute('data-highlighted-row', '');
+      expect(secondCell).toHaveAttribute('data-highlighted-col', '');
+    });
+
+    it('should not trigger highlight in edit mode', () => {
+      const viewModel = buildRelationMatrixViewModel({
+        rowFaction: 'mouse',
+        columnCategory: 'mouse',
+      });
+      const row = viewModel.rows.find((item) => item.id === '杰瑞');
+      const emptyColumn = viewModel.columns.find(
+        (column) =>
+          column.id !== '杰瑞' &&
+          !getRelationMatrixCell(viewModel, getEntityKey(viewModel.rows, '杰瑞'), column.key)
+      );
+      const onCellSelect = jest.fn();
+
+      if (!row || !emptyColumn) throw new Error('Expected editable empty mouse-mouse cell');
+
+      render(
+        <CharacterRelationsMatrix viewModel={viewModel} isEditMode onCellSelect={onCellSelect} />
+      );
+
+      const emptyCell = screen.getByTestId(
+        `relation-cell-${getEntityKey(viewModel.rows, '杰瑞')}-${emptyColumn.key}`
+      );
+      const editButton = within(emptyCell).getByRole('button', {
+        name: `编辑 杰瑞 与 ${emptyColumn.id} 的关系`,
+      });
+
+      fireEvent.click(editButton);
+
+      // Edit mode click should call onCellSelect instead of highlighting
+      expect(onCellSelect).toHaveBeenCalled();
+      expect(emptyCell).not.toHaveAttribute('data-highlighted-row');
+    });
+  });
 });

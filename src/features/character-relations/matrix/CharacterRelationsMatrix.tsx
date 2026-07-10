@@ -1,6 +1,6 @@
 'use client';
 
-import type { CSSProperties } from 'react';
+import { useCallback, useState, type CSSProperties } from 'react';
 
 import { cn } from '@/lib/design';
 import type { CategoryHint } from '@/lib/types';
@@ -172,6 +172,8 @@ const MatrixCell = ({
   sizing,
   isEditMode,
   onCellSelect,
+  highlightedCell,
+  onCellClick,
 }: {
   row: RelationMatrixEntity;
   column: RelationMatrixEntity;
@@ -179,16 +181,33 @@ const MatrixCell = ({
   sizing: RelationMatrixSizing;
   isEditMode: boolean;
   onCellSelect: ((selection: RelationMatrixCellSelection) => void) | undefined;
+  highlightedCell: { rowKey: string; columnKey: string } | null;
+  onCellClick: (rowKey: string, columnKey: string) => void;
 }) => {
   const cell = getRelationMatrixCell(viewModel, row.key, column.key);
   const isEditableCell =
     isEditMode && getLegalRelationKinds(row, column, viewModel.columnCategory).length > 0;
+  const isRowHighlighted = highlightedCell !== null && highlightedCell.rowKey === row.key;
+  const isColumnHighlighted = highlightedCell !== null && highlightedCell.columnKey === column.key;
 
   return (
     <td
       data-testid={`relation-cell-${row.key}-${column.key}`}
-      className='border border-gray-200 p-0 align-middle dark:border-slate-700'
+      data-highlighted-row={isRowHighlighted ? '' : undefined}
+      data-highlighted-col={isColumnHighlighted ? '' : undefined}
+      className={cn(
+        'border border-gray-200 p-0 align-middle dark:border-slate-700',
+        !isEditMode && 'cursor-pointer',
+        isRowHighlighted &&
+          isColumnHighlighted &&
+          'bg-blue-100 ring-2 ring-blue-500 ring-inset dark:bg-blue-900',
+        isRowHighlighted && !isColumnHighlighted && 'bg-blue-50 dark:bg-blue-950',
+        !isRowHighlighted && isColumnHighlighted && 'bg-blue-50 dark:bg-blue-950'
+      )}
       style={sizing.cell}
+      onClick={() => {
+        if (!isEditMode) onCellClick(row.key, column.key);
+      }}
     >
       {isEditableCell ? (
         <button
@@ -223,14 +242,19 @@ const ColumnHeader = ({
   column,
   columnCategory,
   sizing,
+  isHighlighted,
 }: {
   column: RelationMatrixEntity;
   columnCategory: RelationMatrixColumnCategory;
   sizing: RelationMatrixSizing;
+  isHighlighted: boolean;
 }) => (
   <th
     scope='col'
-    className='sticky top-0 z-20 border border-gray-200 bg-white p-0 align-bottom dark:border-slate-700 dark:bg-slate-900'
+    className={cn(
+      'sticky top-0 z-20 border border-gray-200 p-0 align-bottom dark:border-slate-700',
+      isHighlighted ? 'bg-blue-100 dark:bg-blue-900' : 'bg-white dark:bg-slate-900'
+    )}
     style={sizing.columnHeader}
   >
     <GotoLink
@@ -254,14 +278,19 @@ const RowHeader = ({
   row,
   rowFaction,
   sizing,
+  isHighlighted,
 }: {
   row: RelationMatrixEntity;
   rowFaction: RelationMatrixRowFaction;
   sizing: RelationMatrixSizing;
+  isHighlighted: boolean;
 }) => (
   <th
     scope='row'
-    className='sticky left-0 z-10 max-w-28 min-w-24 border border-gray-200 bg-white p-0 dark:border-slate-700 dark:bg-slate-900'
+    className={cn(
+      'sticky left-0 z-10 max-w-28 min-w-24 border border-gray-200 p-0 dark:border-slate-700',
+      isHighlighted ? 'bg-blue-100 dark:bg-blue-900' : 'bg-white dark:bg-slate-900'
+    )}
     style={sizing.rowHeader}
   >
     <GotoLink
@@ -305,6 +334,16 @@ export default function CharacterRelationsMatrix({
   onCellSelect,
 }: CharacterRelationsMatrixProps) {
   const sizing = createRelationMatrixSizing(cellSize);
+  const [highlightedCell, setHighlightedCell] = useState<{
+    rowKey: string;
+    columnKey: string;
+  } | null>(null);
+
+  const handleCellClick = useCallback((rowKey: string, columnKey: string) => {
+    setHighlightedCell((prev) =>
+      prev?.rowKey === rowKey && prev?.columnKey === columnKey ? null : { rowKey, columnKey }
+    );
+  }, []);
 
   return (
     <div className='mx-auto max-h-[calc(100vh-15rem)] w-fit max-w-full overflow-auto border border-gray-200 bg-white dark:border-slate-700 dark:bg-slate-900'>
@@ -325,6 +364,7 @@ export default function CharacterRelationsMatrix({
                 column={column}
                 columnCategory={viewModel.columnCategory}
                 sizing={sizing}
+                isHighlighted={highlightedCell?.columnKey === column.key}
               />
             ))}
           </tr>
@@ -332,7 +372,12 @@ export default function CharacterRelationsMatrix({
         <tbody>
           {viewModel.rows.map((row) => (
             <tr key={row.key}>
-              <RowHeader row={row} rowFaction={viewModel.rowFaction} sizing={sizing} />
+              <RowHeader
+                row={row}
+                rowFaction={viewModel.rowFaction}
+                sizing={sizing}
+                isHighlighted={highlightedCell?.rowKey === row.key}
+              />
               {viewModel.columns.map((column) => (
                 <MatrixCell
                   key={column.key}
@@ -342,6 +387,8 @@ export default function CharacterRelationsMatrix({
                   sizing={sizing}
                   isEditMode={isEditMode}
                   onCellSelect={onCellSelect}
+                  highlightedCell={highlightedCell}
+                  onCellClick={handleCellClick}
                 />
               ))}
             </tr>
