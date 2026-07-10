@@ -1,5 +1,10 @@
-import traits from '@/data/traits';
-import type { SingleItem, Trait, TraitRelation, TraitRelationKind } from '@/data/types';
+import characterRelations from '@/data/characterRelations';
+import type {
+  CharacterRelationTrait,
+  SingleItem,
+  TraitRelation,
+  TraitRelationKind,
+} from '@/data/types';
 
 type RelationKey = string;
 type RelationIndex = {
@@ -27,7 +32,7 @@ const relationKindSet = new Set<TraitRelationKind>(relationKindOrder);
 const relationKey = (kind: TraitRelationKind, item: SingleItem) =>
   `${kind}::${item.type}::${item.name}::${item.factionId ?? ''}`;
 
-const normalizeTraitRelation = (trait: Trait): TraitRelation | null => {
+const normalizeTraitRelation = (trait: CharacterRelationTrait): TraitRelation | null => {
   if (!trait.relation) return null;
   const { kind, subject, target, isMinor } = trait.relation;
   if (!relationKindSet.has(kind)) return null;
@@ -48,7 +53,7 @@ const buildRelationIndex = (): RelationIndex => {
   const bySubject = new Map<RelationKey, TraitRelation[]>();
   const byTarget = new Map<RelationKey, TraitRelation[]>();
 
-  Object.values(traits).forEach((trait) => {
+  Object.values(characterRelations).forEach((trait) => {
     const relation = normalizeTraitRelation(trait);
     if (!relation) return;
 

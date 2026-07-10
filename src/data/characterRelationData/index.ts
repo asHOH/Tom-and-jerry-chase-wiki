@@ -1,4 +1,4 @@
-import type { Trait } from '@/data/types';
+import type { CharacterRelationTrait } from '@/data/types';
 
 import { characterRelationCharacterCollaboratorTraits } from './characterCollaborators';
 import { characterRelationCharacterCounterTraits } from './characterCounters';
@@ -14,8 +14,8 @@ export const characterRelationTraitGroups = {
   maps: characterRelationMapTraits,
   modes: characterRelationModeTraits,
   specialSkills: characterRelationSpecialSkillTraits,
-} satisfies Record<string, Trait[]>;
+} satisfies Record<string, CharacterRelationTrait[]>;
 
-export const splitCharacterRelationTraits: Trait[] = Object.values(
+export const splitCharacterRelationTraits: CharacterRelationTrait[] = Object.values(
   characterRelationTraitGroups
 ).flat();

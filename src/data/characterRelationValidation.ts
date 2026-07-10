@@ -1,4 +1,10 @@
-import type { FactionId, SingleItem, Trait, TraitRelation, TraitRelationKind } from './types';
+import type {
+  CharacterRelationTrait,
+  FactionId,
+  SingleItem,
+  TraitRelation,
+  TraitRelationKind,
+} from './types';
 
 const contradictoryCharacterRelationKinds: ReadonlyArray<
   readonly [TraitRelationKind, TraitRelationKind]
@@ -206,7 +212,7 @@ const findRelationBoundValidationError = (
 };
 
 export const findCharacterRelationValidationErrors = (
-  traits: Trait[],
+  traits: CharacterRelationTrait[],
   context: CharacterRelationValidationContext = {}
 ): string[] => {
   const errors: string[] = [];
@@ -316,7 +322,7 @@ export const findCharacterRelationValidationErrors = (
 };
 
 export const assertValidCharacterRelations = (
-  traits: Trait[],
+  traits: CharacterRelationTrait[],
   context: CharacterRelationValidationContext = {}
 ) => {
   const errors = findCharacterRelationValidationErrors(traits, context);

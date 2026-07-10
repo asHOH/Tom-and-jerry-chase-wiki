@@ -8,7 +8,7 @@ import {
   findCharacterRelationValidationErrors,
   type CharacterRelationValidationContext,
 } from './characterRelationValidation';
-import type { FactionId, SingleItem, Trait, TraitRelationKind } from './types';
+import type { CharacterRelationTrait, FactionId, SingleItem, TraitRelationKind } from './types';
 
 const testCharacterFactionById: Record<string, FactionId> = {
   CatA: 'cat',
@@ -38,9 +38,8 @@ const createRelationTrait = (
   kind: TraitRelationKind,
   subject: SingleItem,
   target: SingleItem
-): Trait => ({
+): CharacterRelationTrait => ({
   description: `${subject.name} ${String(kind)} ${target.name}`,
-  group: [subject, target],
   relation: {
     kind,
     subject,
@@ -53,7 +52,7 @@ const createCharacterRelationTrait = (
   kind: TraitRelationKind,
   subjectName: string,
   targetName: string
-): Trait =>
+): CharacterRelationTrait =>
   createRelationTrait(
     kind,
     { name: subjectName, type: 'character' },
@@ -76,37 +75,45 @@ describe('characterRelationValidation', () => {
     expect(characterRelations).toEqual(rebuiltRelations);
     expect(Object.keys(characterRelations)).toHaveLength(characterRelationTraits.length);
     expect(Object.values(characterRelations)).toEqual(characterRelationTraits);
-    expect(characterRelationTraits.every((trait) => trait.relation)).toBe(true);
+    expect(
+      characterRelationTraits.every((CharacterRelationTrait) => CharacterRelationTrait.relation)
+    ).toBe(true);
   });
 
   it('should compose character relation traits from focused split data groups', () => {
     expect(characterRelationTraits).toEqual(Object.values(characterRelationTraitGroups).flat());
     expect(
       characterRelationTraitGroups.characterCounters.every(
-        (trait) =>
-          trait.relation?.target.type === 'character' && trait.relation.kind !== 'collaborators'
+        (CharacterRelationTrait) =>
+          CharacterRelationTrait.relation?.target.type === 'character' &&
+          CharacterRelationTrait.relation.kind !== 'collaborators'
       )
     ).toBe(true);
     expect(
       characterRelationTraitGroups.characterCollaborators.every(
-        (trait) =>
-          trait.relation?.target.type === 'character' && trait.relation.kind === 'collaborators'
+        (CharacterRelationTrait) =>
+          CharacterRelationTrait.relation?.target.type === 'character' &&
+          CharacterRelationTrait.relation.kind === 'collaborators'
       )
     ).toBe(true);
     expect(
       characterRelationTraitGroups.knowledgeCards.every(
-        (trait) => trait.relation?.target.type === 'knowledgeCard'
+        (CharacterRelationTrait) => CharacterRelationTrait.relation?.target.type === 'knowledgeCard'
       )
     ).toBe(true);
     expect(
-      characterRelationTraitGroups.maps.every((trait) => trait.relation?.target.type === 'map')
+      characterRelationTraitGroups.maps.every(
+        (CharacterRelationTrait) => CharacterRelationTrait.relation?.target.type === 'map'
+      )
     ).toBe(true);
     expect(
-      characterRelationTraitGroups.modes.every((trait) => trait.relation?.target.type === 'mode')
+      characterRelationTraitGroups.modes.every(
+        (CharacterRelationTrait) => CharacterRelationTrait.relation?.target.type === 'mode'
+      )
     ).toBe(true);
     expect(
       characterRelationTraitGroups.specialSkills.every(
-        (trait) => trait.relation?.target.type === 'specialSkill'
+        (CharacterRelationTrait) => CharacterRelationTrait.relation?.target.type === 'specialSkill'
       )
     ).toBe(true);
   });
