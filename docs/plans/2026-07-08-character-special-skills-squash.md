@@ -92,6 +92,15 @@ This gives moderation one semantic array change without requiring a new persiste
 
 ## 4. Scope
 
+### Revision after `develop` sync
+
+After syncing `develop` past `6ad88958ef51e7b3808328809986ef0ef2c33524`, the plan still applies. The new commits do not replace the `actionSquash` structural-zone behavior, but they add two integration details that the implementation must preserve:
+
+- `src/hooks/usePageEditMode.ts` now derives active edit mode from `originalIsEditMode && !isPreviewMode`. When wiring `currentRoot` into `squashActions`, keep the preview-mode behavior and the "do not discard on preview toggle" effect logic intact.
+- `src/hooks/usePageEditMode.test.tsx` now provides `isPreviewMode` and `setIsPreviewMode` through `EditModeContext`. Any new hook test fixtures must include those provider fields.
+- `src/features/character-relations/matrix/useRelationMatrixEditMode.ts` still squashes relation actions without a current root, and `src/lib/edit/characterRelationActions.ts` still splits relation arrays by current relation-kind paths. The relation smoke test should use current paths such as `杰瑞.counters`.
+- Rebase or merge the implementation onto current local `develop` before final verification so the preview-mode changes and character-relation refactor are not overwritten.
+
 Modify:
 
 - `src/lib/edit/actionSquash.ts`
