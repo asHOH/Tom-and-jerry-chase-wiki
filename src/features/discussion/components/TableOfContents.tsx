@@ -15,7 +15,7 @@ export function TableOfContents({ topics }: TableOfContentsProps) {
       aria-label='目录'
     >
       <h2 className='mb-2 text-sm font-semibold text-gray-800 dark:text-gray-200'>目录</h2>
-      <ol className='list-decimal space-y-1 pl-5 text-sm'>
+      <ol className='list-decimal space-y-1 pl-5 text-sm text-gray-700 dark:text-gray-300'>
         {topics.map((topic) => (
           <li key={topic.id}>
             <a

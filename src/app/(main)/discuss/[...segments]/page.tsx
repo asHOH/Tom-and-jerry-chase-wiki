@@ -22,14 +22,16 @@ export async function generateMetadata({
     return {};
   }
 
+  const label = ENTITY_LABELS[entityType] ?? entityType;
+
   if (segments.length === 1) {
-    return { title: `${ENTITY_LABELS[entityType] ?? entityType} - 讨论` };
+    return { title: `${label} - 讨论` };
   }
 
   const entityId = decodeURIComponent(segments.slice(1).join('/'));
   const entity = getEntityByTypeAndId(entityType, entityId);
   if (!entity) return {};
-  return { title: `${entity.name} - 讨论` };
+  return { title: `${entity.name} (${label}) - 讨论` };
 }
 
 export default async function DiscussPage({ params }: { params: Promise<{ segments: string[] }> }) {
@@ -39,9 +41,20 @@ export default async function DiscussPage({ params }: { params: Promise<{ segmen
     notFound();
   }
 
+  const entityTypeLabel = ENTITY_LABELS[entityType] ?? entityType;
+
   if (segments.length === 1) {
-    const label = ENTITY_LABELS[entityType] ?? entityType;
-    return <TalkPage scope='list_pages' targetId={entityType} entityTitle={label} />;
+    const label = entityTypeLabel;
+    const parentUrl = `/${entityType}/`;
+    return (
+      <TalkPage
+        scope='list_pages'
+        targetId={entityType}
+        entityTitle={label}
+        entityTypeLabel={entityTypeLabel}
+        parentUrl={parentUrl}
+      />
+    );
   }
 
   const entityId = decodeURIComponent(segments.slice(1).join('/'));
@@ -49,5 +62,14 @@ export default async function DiscussPage({ params }: { params: Promise<{ segmen
   if (!entity) notFound();
 
   const scope = routeSegmentToScope(entityType);
-  return <TalkPage scope={scope} targetId={entityId} entityTitle={entity.name} />;
+  const parentUrl = `/${entityType}/${segments.slice(1).join('/')}/`;
+  return (
+    <TalkPage
+      scope={scope}
+      targetId={entityId}
+      entityTitle={entity.name}
+      entityTypeLabel={entityTypeLabel}
+      parentUrl={parentUrl}
+    />
+  );
 }

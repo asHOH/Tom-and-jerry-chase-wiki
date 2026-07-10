@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useMemo, useState } from 'react';
+import Link from 'next/link';
 import useSWR from 'swr';
 
 import { useMobile } from '@/hooks/useMediaQuery';
@@ -60,9 +61,17 @@ type TalkPageClientProps = {
   scope: string;
   targetId: string;
   entityTitle: string;
+  entityTypeLabel: string;
+  parentUrl: string;
 };
 
-export function TalkPageClient({ scope, targetId, entityTitle }: TalkPageClientProps) {
+export function TalkPageClient({
+  scope,
+  targetId,
+  entityTitle,
+  entityTypeLabel,
+  parentUrl,
+}: TalkPageClientProps) {
   const { role: userRole } = useUser();
   const isMobile = useMobile();
 
@@ -168,9 +177,24 @@ export function TalkPageClient({ scope, targetId, entityTitle }: TalkPageClientP
   return (
     <div className='mx-auto max-w-4xl px-4 py-6'>
       {/* Page header */}
+      <nav className='mb-1'>
+        <Link
+          href={parentUrl}
+          className='text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-200'
+        >
+          ← 返回至 {entityTitle}
+          {entityTitle !== entityTypeLabel && <span> ({entityTypeLabel})</span>}
+        </Link>
+      </nav>
+
       <div className='mb-6 flex items-center justify-between'>
         <div>
-          <h1 className='text-2xl font-bold text-gray-900 dark:text-gray-100'>{entityTitle}</h1>
+          <h1 className='text-2xl font-bold text-gray-900 dark:text-gray-100'>
+            {entityTitle}
+            {entityTitle !== entityTypeLabel && (
+              <span className='text-gray-500 dark:text-gray-400'> ({entityTypeLabel})</span>
+            )}
+          </h1>
           <p className='mt-1 text-sm text-gray-500 dark:text-gray-400'>讨论</p>
         </div>
         <button
@@ -183,7 +207,7 @@ export function TalkPageClient({ scope, targetId, entityTitle }: TalkPageClientP
       </div>
 
       {/* Info banner */}
-      <DiscussionInfoBanner entityTitle={entityTitle} />
+      <DiscussionInfoBanner entityTitle={entityTitle} entityTypeLabel={entityTypeLabel} />
 
       {/* New topic form */}
       {showNewTopicForm && (

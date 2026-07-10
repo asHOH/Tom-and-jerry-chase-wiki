@@ -27,7 +27,6 @@ export function routeSegmentToScope(segment: string): string {
     cards: 'knowledge_cards',
     'special-skills': 'special_skills',
     characters: 'characters',
-    articles: 'articles',
   };
   return mapping[segment] ?? segment;
 }
@@ -44,7 +43,6 @@ export const ENTITY_LABELS: Record<string, string> = {
   cards: '知识卡',
   'special-skills': '特技',
   characters: '角色',
-  articles: '文章',
 };
 
 /** All valid entity types for notFound() gating on discussion routes. */
@@ -59,7 +57,6 @@ export const VALID_ENTITY_TYPES = [
   'cards',
   'special-skills',
   'characters',
-  'articles',
 ] as const;
 
 type EntityWithName = { name: string };
@@ -126,8 +123,6 @@ export function getEntityByTypeAndId(
       }
       return undefined;
     }
-    case 'articles':
-      return { name: entityId };
     default:
       return undefined;
   }
