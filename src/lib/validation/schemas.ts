@@ -30,27 +30,62 @@ export const articleEditPendingSchema = z.object({
   content: trimmedString,
 });
 
+export const COMMENT_SCOPES = [
+  'articles',
+  'characters',
+  'knowledge_cards',
+  'entities',
+  'items',
+  'buffs',
+  'maps',
+  'fixtures',
+  'modes',
+  'achievements',
+  'special_skills',
+  'list_pages',
+] as const;
+
+export type CommentScope = (typeof COMMENT_SCOPES)[number];
+
 export const commentsListQuerySchema = z.object({
-  scope: z.enum(['articles']),
-  targetId: z.uuid().trim(),
+  scope: z.enum(COMMENT_SCOPES),
+  targetId: z.string().trim().min(1),
+  topicsOnly: z
+    .string()
+    .trim()
+    .transform((val) => val === 'true')
+    .optional(),
   limit: z
     .string()
     .trim()
     .transform((val) => Number.parseInt(val, 10))
-    .pipe(z.number().int().min(1).max(50))
+    .pipe(z.number().int().min(1).max(200))
     .catch(50)
     .optional(),
 });
 
 export const createCommentSchema = z.object({
-  scope: z.enum(['articles']),
-  targetId: z.uuid().trim(),
+  scope: z.enum(COMMENT_SCOPES),
+  targetId: z.string().trim().min(1),
   parentId: z
+    .string()
     .uuid()
     .trim()
     .optional()
     .transform((value) => (value && value.length > 0 ? value : undefined)),
   content: z.string().trim().min(1).max(2000),
+  title: z
+    .string()
+    .trim()
+    .min(1)
+    .max(200)
+    .optional()
+    .transform((value) => (value && value.length > 0 ? value : undefined)),
+});
+
+export const patchCommentSchema = z.object({
+  commentId: z.string().uuid().trim(),
+  status: z.enum(['visible', 'hidden', 'deleted']),
 });
 
 export const feedbackSchema = z.object({

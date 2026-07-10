@@ -89,6 +89,23 @@ const nextConfig: NextConfig = {
       rewriteContents.push({ source: '/api/feedback', destination: '/404' });
     }
 
+    // Discussion page rewrites — map sub-route discussion URLs to a single catch-all handler
+    // More-specific patterns (literal segments) take priority over generic :entityType ones
+    rewriteContents.push(
+      // Special skills: 4 segments
+      {
+        source: '/special-skills/:factionId/:skillId/discussion/',
+        destination: '/discuss/special-skills/:factionId/:skillId/',
+      },
+      // Standard detail discussions: 3 segments
+      {
+        source: '/:entityType/:entityId/discussion/',
+        destination: '/discuss/:entityType/:entityId/',
+      },
+      // List discussions: 2 segments
+      { source: '/:entityType/discussion/', destination: '/discuss/:entityType/' }
+    );
+
     return rewriteContents;
   },
   async headers() {

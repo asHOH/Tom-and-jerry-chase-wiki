@@ -234,6 +234,7 @@ export type Database = {
           scope: Database['public']['Enums']['comment_scope'];
           status: Database['public']['Enums']['comment_status'];
           target_id: string;
+          title: string | null;
         };
         Insert: {
           author_id: string;
@@ -244,6 +245,7 @@ export type Database = {
           scope: Database['public']['Enums']['comment_scope'];
           status?: Database['public']['Enums']['comment_status'];
           target_id: string;
+          title?: string | null;
         };
         Update: {
           author_id?: string;
@@ -254,6 +256,7 @@ export type Database = {
           scope?: Database['public']['Enums']['comment_scope'];
           status?: Database['public']['Enums']['comment_status'];
           target_id?: string;
+          title?: string | null;
         };
         Relationships: [
           {
@@ -508,6 +511,7 @@ export type Database = {
           scope: Database['public']['Enums']['comment_scope'] | null;
           status: Database['public']['Enums']['comment_status'] | null;
           target_id: string | null;
+          title: string | null;
         };
         Insert: {
           author_id?: string | null;
@@ -518,6 +522,7 @@ export type Database = {
           scope?: Database['public']['Enums']['comment_scope'] | null;
           status?: Database['public']['Enums']['comment_status'] | null;
           target_id?: string | null;
+          title?: string | null;
         };
         Update: {
           author_id?: string | null;
@@ -528,6 +533,7 @@ export type Database = {
           scope?: Database['public']['Enums']['comment_scope'] | null;
           status?: Database['public']['Enums']['comment_status'] | null;
           target_id?: string | null;
+          title?: string | null;
         };
         Relationships: [
           {
@@ -600,8 +606,16 @@ export type Database = {
           p_parent_id?: string;
           p_scope: Database['public']['Enums']['comment_scope'];
           p_target_id: string;
+          p_title?: string;
         };
         Returns: string;
+      };
+      set_comment_status: {
+        Args: {
+          p_comment_id: string;
+          p_status: Database['public']['Enums']['comment_status'];
+        };
+        Returns: undefined;
       };
       delete_category: { Args: { _id: string }; Returns: undefined };
       generate_salt: { Args: never; Returns: string };
@@ -744,7 +758,19 @@ export type Database = {
       };
     };
     Enums: {
-      comment_scope: 'articles' | 'characters' | 'knowledge_cards';
+      comment_scope:
+        | 'articles'
+        | 'characters'
+        | 'knowledge_cards'
+        | 'entities'
+        | 'items'
+        | 'buffs'
+        | 'maps'
+        | 'fixtures'
+        | 'modes'
+        | 'achievements'
+        | 'special_skills'
+        | 'list_pages';
       comment_status: 'visible' | 'hidden' | 'deleted';
       game_data_action_status: 'pending' | 'approved' | 'rejected' | 'synced';
       role_type: 'Contributor' | 'Reviewer' | 'Coordinator';
@@ -873,7 +899,20 @@ export const Constants = {
   },
   public: {
     Enums: {
-      comment_scope: ['articles', 'characters', 'knowledge_cards'],
+      comment_scope: [
+        'articles',
+        'characters',
+        'knowledge_cards',
+        'entities',
+        'items',
+        'buffs',
+        'maps',
+        'fixtures',
+        'modes',
+        'achievements',
+        'special_skills',
+        'list_pages',
+      ],
       comment_status: ['visible', 'hidden', 'deleted'],
       game_data_action_status: ['pending', 'approved', 'rejected', 'synced'],
       role_type: ['Contributor', 'Reviewer', 'Coordinator'],
