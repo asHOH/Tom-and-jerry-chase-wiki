@@ -69,13 +69,13 @@ export const useRelationMatrixEditMode = (): RelationMatrixEditModeResult => {
 
   const getActionCount = useCallback((): number => {
     const { matching } = getRelationActions();
-    return squashActions(matching).length;
+    return squashActions(matching, { currentRoot: characters }).length;
   }, [getRelationActions]);
 
   const squashedRelationActions = useMemo(() => {
     void actionCountTrigger;
     const { matching } = getRelationActions();
-    return squashActions(matching);
+    return squashActions(matching, { currentRoot: characters });
   }, [actionCountTrigger, getRelationActions]);
 
   const isDirty = squashedRelationActions.length > 0;
@@ -107,7 +107,7 @@ export const useRelationMatrixEditMode = (): RelationMatrixEditModeResult => {
   const publishChanges = useCallback(
     async (message?: string): Promise<boolean> => {
       const { matching, remaining } = getRelationActions();
-      const squashed = squashActions(matching);
+      const squashed = squashActions(matching, { currentRoot: characters });
 
       if (squashed.length === 0) {
         writeRemainingCharacterActions(remaining);

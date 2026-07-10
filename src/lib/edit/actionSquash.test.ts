@@ -15,6 +15,13 @@ const deleteAction = (path: string, oldValue: unknown): Action => ({
   newValue: undefined,
 });
 
+const marySpecialSkillsOriginal = [
+  { name: '魔术漂浮', description: '通用特技。' },
+  { name: '干扰投掷', description: '提高干扰能力和技能命中率。' },
+];
+
+const marySpecialSkillsFinal = [{ name: '魔术漂浮', description: '通用特技。' }];
+
 describe('squashActions', () => {
   it('should only protect the parent subtree of nested structural edits', () => {
     const deleteSkill = deleteAction('Tom.skills.1', { name: 'old skill' });
@@ -108,6 +115,153 @@ describe('squashActions', () => {
 
     expect(squashActions([addedAliasBatch, renamedAlias])).toEqual([
       setAction('真视.aliases', undefined, ['透视']),
+    ]);
+  });
+
+  it('should collapse special skill delete/add churn to no action when final array equals the derived original', () => {
+    expect(
+      squashActions(
+        [
+          deleteAction('玛丽.specialSkills.1', marySpecialSkillsOriginal[1]),
+          setAction('玛丽.specialSkills.length', 2, 1),
+          setAction('玛丽.specialSkills.1', undefined, marySpecialSkillsOriginal[1]),
+        ],
+        {
+          currentRoot: {
+            玛丽: {
+              specialSkills: marySpecialSkillsOriginal,
+            },
+          },
+        }
+      )
+    ).toEqual([]);
+  });
+
+  it('should collapse a real special skill deletion to one parent array set', () => {
+    expect(
+      squashActions(
+        [
+          deleteAction('玛丽.specialSkills.1', marySpecialSkillsOriginal[1]),
+          setAction('玛丽.specialSkills.length', 2, 1),
+        ],
+        {
+          currentRoot: {
+            玛丽: {
+              specialSkills: marySpecialSkillsFinal,
+            },
+          },
+        }
+      )
+    ).toEqual([setAction('玛丽.specialSkills', marySpecialSkillsOriginal, marySpecialSkillsFinal)]);
+  });
+
+  it('should reconstruct dense oldValue for Valtio delete-index plus length-set array histories', () => {
+    const [result] = squashActions(
+      [
+        deleteAction('玛丽.specialSkills.1', marySpecialSkillsOriginal[1]),
+        setAction('玛丽.specialSkills.length', 2, 1),
+      ],
+      {
+        currentRoot: {
+          玛丽: {
+            specialSkills: marySpecialSkillsFinal,
+          },
+        },
+      }
+    );
+
+    expect(result).toEqual(
+      setAction('玛丽.specialSkills', marySpecialSkillsOriginal, marySpecialSkillsFinal)
+    );
+
+    const oldValue = (result as Action).oldValue;
+    expect(Array.isArray(oldValue)).toBe(true);
+    expect(Object.keys(oldValue as unknown[])).toEqual(['0', '1']);
+  });
+
+  it('should collapse Valtio push-style numeric-index set into one parent array set', () => {
+    expect(
+      squashActions([setAction('玛丽.specialSkills.1', undefined, marySpecialSkillsOriginal[1])], {
+        currentRoot: {
+          玛丽: {
+            specialSkills: marySpecialSkillsOriginal,
+          },
+        },
+      })
+    ).toEqual([setAction('玛丽.specialSkills', marySpecialSkillsFinal, marySpecialSkillsOriginal)]);
+  });
+
+  it('should collapse middle-index array deletion with shifted items to one parent array set', () => {
+    const oldSkills = [{ name: 'A' }, { name: 'B' }, { name: 'C' }];
+    const newSkills = [{ name: 'A' }, { name: 'C' }];
+
+    expect(
+      squashActions(
+        [
+          setAction('汤姆.skills.1', { name: 'B' }, { name: 'C' }),
+          deleteAction('汤姆.skills.2', { name: 'C' }),
+          setAction('汤姆.skills.length', 3, 2),
+        ],
+        {
+          currentRoot: {
+            汤姆: {
+              skills: newSkills,
+            },
+          },
+        }
+      )
+    ).toEqual([setAction('汤姆.skills', oldSkills, newSkills)]);
+  });
+
+  it('should preserve detailed structural actions when no current root is provided', () => {
+    const actions = [
+      deleteAction('玛丽.specialSkills.1', marySpecialSkillsOriginal[1]),
+      setAction('玛丽.specialSkills.length', 2, 1),
+    ];
+
+    expect(squashActions(actions)).toEqual(actions);
+  });
+
+  it('should preserve detailed structural actions when the candidate parent is not an array', () => {
+    const actions = [
+      deleteAction('玛丽.specialSkills.1', marySpecialSkillsOriginal[1]),
+      setAction('玛丽.specialSkills.length', 2, 1),
+    ];
+
+    expect(
+      squashActions(actions, {
+        currentRoot: {
+          玛丽: {
+            specialSkills: {
+              length: 1,
+            },
+          },
+        },
+      })
+    ).toEqual(actions);
+  });
+
+  it('should continue squashing unrelated scalar sets while normalizing a structural array parent', () => {
+    expect(
+      squashActions(
+        [
+          deleteAction('玛丽.specialSkills.1', marySpecialSkillsOriginal[1]),
+          setAction('玛丽.specialSkills.length', 2, 1),
+          setAction('玛丽.description', 'old', 'draft'),
+          setAction('玛丽.description', 'draft', 'final'),
+        ],
+        {
+          currentRoot: {
+            玛丽: {
+              description: 'final',
+              specialSkills: marySpecialSkillsFinal,
+            },
+          },
+        }
+      )
+    ).toEqual([
+      setAction('玛丽.specialSkills', marySpecialSkillsOriginal, marySpecialSkillsFinal),
+      setAction('玛丽.description', 'old', 'final'),
     ]);
   });
 });

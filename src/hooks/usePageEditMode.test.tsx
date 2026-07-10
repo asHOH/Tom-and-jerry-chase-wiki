@@ -28,6 +28,11 @@ jest.mock('@/lib/pushClient', () => ({
 }));
 
 const TEST_CHARACTER_ID = '__page_edit_mode_character__';
+const marySpecialSkillsOriginal = [
+  { name: '魔术漂浮', description: '通用特技。' },
+  { name: '干扰投掷', description: '提高干扰能力和技能命中率。' },
+];
+const marySpecialSkillsFinal = [{ name: '魔术漂浮', description: '通用特技。' }];
 
 function PageEditModeProbe() {
   const [refreshCount, setRefreshCount] = useState(0);
@@ -230,6 +235,68 @@ describe('usePageEditMode', () => {
           newValue: 'other draft description',
         }),
       ]);
+    });
+  });
+
+  it('should normalize structural array churn for action counts and publishing', async () => {
+    const fetchMock = jest.fn().mockResolvedValue({
+      ok: true,
+      json: jest.fn(),
+    });
+    global.fetch = fetchMock;
+    characters[TEST_CHARACTER_ID] = {
+      id: TEST_CHARACTER_ID,
+      name: '玛丽',
+      specialSkills: marySpecialSkillsFinal,
+    } as unknown as (typeof characters)[string];
+
+    renderInEditMode();
+
+    window.localStorage.setItem(
+      getActionsStorageKey('characters'),
+      JSON.stringify([
+        {
+          op: 'delete',
+          path: `${TEST_CHARACTER_ID}.specialSkills.1`,
+          oldValue: marySpecialSkillsOriginal[1],
+        },
+        {
+          op: 'set',
+          path: `${TEST_CHARACTER_ID}.specialSkills.length`,
+          oldValue: 2,
+          newValue: 1,
+        },
+      ])
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'refresh' }));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('page-action-count')).toHaveTextContent('1');
+    });
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'publish' }));
+      await Promise.resolve();
+    });
+
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledWith('/api/game-data-actions/publish', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          entityType: 'characters',
+          entries: [
+            {
+              op: 'set',
+              path: `${TEST_CHARACTER_ID}.specialSkills`,
+              oldValue: marySpecialSkillsOriginal,
+              newValue: marySpecialSkillsFinal,
+            },
+          ],
+          message: 'hook publish',
+        }),
+      });
     });
   });
 });

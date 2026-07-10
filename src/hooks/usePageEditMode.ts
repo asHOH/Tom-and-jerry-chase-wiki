@@ -111,7 +111,8 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
     const storageKey = getActionsStorageKey(entityType);
     const history = readActionHistory(storageKey);
     const { matching } = splitActionHistoryByEntity(history, entityKey);
-    return squashActions(matching).length;
+    const currentRoot = entityRegistry.get(entityType);
+    return squashActions(matching, currentRoot ? { currentRoot } : undefined).length;
   }, [entityType, entityKey]);
 
   const isDirty = useMemo(() => {
@@ -144,7 +145,8 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
       PUBLISHABLE_ENTITY_TYPES.flatMap((type) => {
         const storageKey = getActionsStorageKey(type);
         const history = readActionHistory(storageKey);
-        const squashed = squashActions(history);
+        const currentRoot = entityRegistry.get(type);
+        const squashed = squashActions(history, currentRoot ? { currentRoot } : undefined);
         return buildDraftSummaryItemsForType(type, squashed, ({ entityId, factionId }) =>
           resolveDraftItemLabel(type, entityId, factionId)
         );
@@ -227,7 +229,8 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
       const storageKey = getActionsStorageKey(entityType);
       const history = readActionHistory(storageKey);
       const { matching, remaining } = splitActionHistoryByEntity(history, entityKey);
-      const squashed = squashActions(matching);
+      const currentRoot = entityRegistry.get(entityType);
+      const squashed = squashActions(matching, currentRoot ? { currentRoot } : undefined);
 
       if (squashed.length === 0) {
         if (showToast) showToast('没有需要发布的修改');

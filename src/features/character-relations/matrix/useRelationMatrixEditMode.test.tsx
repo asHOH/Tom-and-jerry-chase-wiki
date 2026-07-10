@@ -18,6 +18,8 @@ jest.mock('@/context/ToastContext', () => ({
 }));
 
 const storageKey = getActionsStorageKey('characters');
+const relationCountersOriginal = [{ id: '汤姆' }, { id: '布奇' }];
+const relationCountersFinal = [{ id: '汤姆' }];
 
 function RelationEditModeProbe() {
   const {
@@ -121,6 +123,56 @@ describe('useRelationMatrixEditMode', () => {
       expect(readActionHistory(storageKey)).toEqual([
         { op: 'set', path: '杰瑞.description', oldValue: 'old', newValue: 'new' },
       ]);
+    });
+  });
+
+  it('normalizes relation structural arrays with the current characters root when publishing', async () => {
+    const fetchMock = jest.fn().mockResolvedValue({
+      ok: true,
+      json: jest.fn(),
+    });
+    global.fetch = fetchMock;
+    (characters['杰瑞'] as unknown as { counters?: unknown }).counters = relationCountersFinal;
+    writeActionHistory(storageKey, [
+      {
+        op: 'delete',
+        path: '杰瑞.counters.1',
+        oldValue: relationCountersOriginal[1],
+        newValue: undefined,
+      },
+      {
+        op: 'set',
+        path: '杰瑞.counters.length',
+        oldValue: 2,
+        newValue: 1,
+      },
+    ]);
+
+    renderProbe();
+
+    expect(screen.getByTestId('count')).toHaveTextContent('1');
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'publish' }));
+      await Promise.resolve();
+    });
+
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledWith('/api/game-data-actions/publish-relations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          entries: [
+            {
+              op: 'set',
+              path: '杰瑞.counters',
+              oldValue: relationCountersOriginal,
+              newValue: relationCountersFinal,
+            },
+          ],
+          message: '关系更新',
+        }),
+      });
     });
   });
 
