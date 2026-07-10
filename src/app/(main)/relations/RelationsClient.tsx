@@ -164,7 +164,7 @@ export default function RelationsClient({ description }: RelationsClientProps) {
     publishChanges,
     getActionCount,
   } = useRelationMatrixEditMode();
-  const canEditRelations = ability.can('edit_own', 'Relation');
+  const canEditRelations = ability.can('update', 'Relation');
   const isRelationEditMode = isEditMode && canEditRelations;
   const coercedColumnCategory = coerceColumnCategory(rowFaction, columnCategory);
   const columnCategoryOptions = getLegalColumnCategories(rowFaction);

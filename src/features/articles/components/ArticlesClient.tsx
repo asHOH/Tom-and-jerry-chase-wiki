@@ -325,7 +325,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
 
           {/* Quick Actions */}
           <div className='flex items-center justify-center gap-3'>
-            {ability.can('edit_own', 'Article') ? (
+            {ability.can('update', 'Article') ? (
               <>
                 {ability.can('approve', 'ArticleVersion') && (
                   <ButtonLink

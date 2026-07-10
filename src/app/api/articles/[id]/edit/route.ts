@@ -1,5 +1,6 @@
 import { revalidateTag } from 'next/cache';
 import { NextResponse } from 'next/server';
+import { subject } from '@casl/ability';
 
 import { abilityFor, type Role } from '@/lib/auth/permissions';
 import { CACHE_TAGS } from '@/lib/cacheTags';
@@ -36,9 +37,9 @@ export async function POST(request: Request, { params }: { params: Promise<{ id?
     const { data: userRole } = await supabaseAdmin.rpc('get_user_role', { p_user_id: userId });
 
     const role = (userRole as Role | undefined) ?? null;
-    const ability = abilityFor(role);
+    const ability = abilityFor(role, userId);
 
-    if (article.author_id !== userId && !ability.can('edit_any', 'Article')) {
+    if (!ability.can('update', subject('Article', article))) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 

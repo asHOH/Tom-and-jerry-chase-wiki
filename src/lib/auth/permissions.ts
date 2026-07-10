@@ -15,10 +15,6 @@ export const Actions = {
   UPDATE: 'update',
   DELETE: 'delete',
 
-  // Article editing (ownership-aware)
-  EDIT_OWN: 'edit_own',
-  EDIT_ANY: 'edit_any',
-
   // Article version moderation
   APPROVE: 'approve',
   REJECT: 'reject',
@@ -61,110 +57,78 @@ export type Subject = (typeof Subjects)[keyof typeof Subjects];
 // App ability type
 // ---------------------------------------------------------------------------
 
-export type AppAbility = MongoAbility<[Action, Subject]>;
+export type AppAbility = MongoAbility;
 
 // ---------------------------------------------------------------------------
-// Permission definitions per role
+// abilityFor — build an AppAbility from a role + optional userId
 // ---------------------------------------------------------------------------
-
-type Permission = [Action, Subject];
-
-const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
-  Contributor: [
-    // Articles
-    [Actions.READ, Subjects.ARTICLE],
-    [Actions.CREATE, Subjects.ARTICLE],
-    [Actions.EDIT_OWN, Subjects.ARTICLE],
-    // Article versions (own pending only — RLS enforces the filter)
-    [Actions.READ, Subjects.ARTICLE_VERSION],
-    // Comments
-    [Actions.READ, Subjects.COMMENT],
-    [Actions.CREATE, Subjects.COMMENT],
-    // Game data actions
-    [Actions.CREATE, Subjects.GAME_DATA_ACTION],
-    [Actions.PUBLISH_RELATIONS, Subjects.GAME_DATA_ACTION],
-    // Categories (read-only)
-    [Actions.READ, Subjects.CATEGORY],
-    // Relations
-    [Actions.READ, Subjects.RELATION],
-    [Actions.EDIT_OWN, Subjects.RELATION],
-  ],
-
-  Reviewer: [
-    // Articles
-    [Actions.EDIT_ANY, Subjects.ARTICLE],
-    // Article version moderation
-    [Actions.APPROVE, Subjects.ARTICLE_VERSION],
-    [Actions.REJECT, Subjects.ARTICLE_VERSION],
-    [Actions.REVOKE, Subjects.ARTICLE_VERSION],
-    // Comment moderation
-    [Actions.MODERATE, Subjects.COMMENT],
-    // Game data action moderation
-    [Actions.APPROVE, Subjects.GAME_DATA_ACTION],
-    [Actions.REJECT, Subjects.GAME_DATA_ACTION],
-    // Category management
-    [Actions.CREATE, Subjects.CATEGORY],
-    [Actions.UPDATE, Subjects.CATEGORY],
-    [Actions.DELETE, Subjects.CATEGORY],
-  ],
-
-  Coordinator: [
-    // Game data action finalization
-    [Actions.MARK_SYNCED, Subjects.GAME_DATA_ACTION],
-    // User management
-    [Actions.UPDATE_ROLE, Subjects.USER],
-    [Actions.UPDATE_USER, Subjects.USER],
-    [Actions.VIEW_USERS, Subjects.USER],
-  ],
-};
-
-// ---------------------------------------------------------------------------
-// Unauthenticated (public) permissions
-// ---------------------------------------------------------------------------
-
-const PUBLIC_PERMISSIONS: Permission[] = [
-  [Actions.READ, Subjects.ARTICLE],
-  [Actions.READ, Subjects.ARTICLE_VERSION],
-  [Actions.READ, Subjects.COMMENT],
-  [Actions.READ, Subjects.CATEGORY],
-  [Actions.READ, Subjects.RELATION],
-];
-
-// ---------------------------------------------------------------------------
-// abilityFor — build an AppAbility from a role
-// ---------------------------------------------------------------------------
-
-/** Role hierarchy order (lowest → highest). */
-const ROLE_HIERARCHY: Role[] = ['Contributor', 'Reviewer', 'Coordinator'];
 
 /**
  * Build a CASL ability for the given role.
  *
+ * When `userId` is supplied, ownership-based rules use CASL conditions
+ * (e.g. `{ author_id: userId }`) so that instance-level checks like
+ * `ability.can('update', subject('Article', article))` automatically
+ * verify ownership.
+ *
+ * Without `userId`, the same actions are granted unconditionally —
+ * suitable for client-side subject-type checks (e.g. "can I edit SOME article?").
+ *
+ * Role hierarchy (lowest → highest):
  * - `null`              → unauthenticated (public read-only)
- * - `'Contributor'`     → base write permissions
- * - `'Reviewer'`        → Contributor + moderation + category CRUD
+ * - `'Contributor'`     → create articles/comments/actions; update own
+ * - `'Reviewer'`        → Contributor + moderation + category CRUD + update any
  * - `'Coordinator'`     → Reviewer + user management + mark_synced
  */
-export function abilityFor(role: Role | null): AppAbility {
+export function abilityFor(role: Role | null, userId?: string): AppAbility {
   const { can, build } = new AbilityBuilder<AppAbility>(createMongoAbility);
 
-  // Unauthenticated — public read-only
-  if (!role) {
-    for (const [action, subject] of PUBLIC_PERMISSIONS) {
-      can(action, subject);
-    }
-    return build();
+  // ---- Public (unauthenticated) ----
+  can(Actions.READ, Subjects.ARTICLE);
+  can(Actions.READ, Subjects.ARTICLE_VERSION);
+  can(Actions.READ, Subjects.COMMENT);
+  can(Actions.READ, Subjects.CATEGORY);
+  can(Actions.READ, Subjects.RELATION);
+
+  if (!role) return build();
+
+  // ---- Contributor ----
+  can(Actions.CREATE, Subjects.ARTICLE);
+  can(Actions.CREATE, Subjects.COMMENT);
+  can(Actions.CREATE, Subjects.GAME_DATA_ACTION);
+  can(Actions.PUBLISH_RELATIONS, Subjects.GAME_DATA_ACTION);
+
+  // Ownership-based update: conditions when userId is available,
+  // unconditional grant otherwise (subject-type check on the client).
+  if (userId) {
+    can(Actions.UPDATE, Subjects.ARTICLE, undefined, { author_id: userId });
+    can(Actions.UPDATE, Subjects.RELATION, undefined, { editor_id: userId });
+  } else {
+    can(Actions.UPDATE, Subjects.ARTICLE);
+    can(Actions.UPDATE, Subjects.RELATION);
   }
 
-  // Apply hierarchy: for the given role, include permissions from that role
-  // and all roles below it.
-  const maxIndex = ROLE_HIERARCHY.indexOf(role);
+  // ---- Reviewer ----
+  if (role === 'Reviewer' || role === 'Coordinator') {
+    // Unconditional update overrides Contributor's ownership conditions
+    can(Actions.UPDATE, Subjects.ARTICLE);
+    can(Actions.APPROVE, Subjects.ARTICLE_VERSION);
+    can(Actions.REJECT, Subjects.ARTICLE_VERSION);
+    can(Actions.REVOKE, Subjects.ARTICLE_VERSION);
+    can(Actions.MODERATE, Subjects.COMMENT);
+    can(Actions.APPROVE, Subjects.GAME_DATA_ACTION);
+    can(Actions.REJECT, Subjects.GAME_DATA_ACTION);
+    can(Actions.CREATE, Subjects.CATEGORY);
+    can(Actions.UPDATE, Subjects.CATEGORY);
+    can(Actions.DELETE, Subjects.CATEGORY);
+  }
 
-  for (let i = 0; i <= maxIndex; i++) {
-    const r = ROLE_HIERARCHY[i]!;
-    for (const [action, subject] of ROLE_PERMISSIONS[r]) {
-      can(action, subject);
-    }
+  // ---- Coordinator ----
+  if (role === 'Coordinator') {
+    can(Actions.MARK_SYNCED, Subjects.GAME_DATA_ACTION);
+    can(Actions.UPDATE_ROLE, Subjects.USER);
+    can(Actions.UPDATE_USER, Subjects.USER);
+    can(Actions.VIEW_USERS, Subjects.USER);
   }
 
   return build();

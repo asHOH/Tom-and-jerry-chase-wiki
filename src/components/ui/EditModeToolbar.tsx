@@ -55,7 +55,7 @@ export default function EditModeToolbar({
   entityName,
 }: EditModeToolbarProps) {
   const ability = useAbility();
-  const isAdmin = ability.can('edit_any', 'Article');
+  const isAdmin = ability.can('update', 'Article');
   const shouldReduceMotion = useReducedMotion();
   const dragControls = useDragControls();
   const [showMessageInput, setShowMessageInput] = useState(false);

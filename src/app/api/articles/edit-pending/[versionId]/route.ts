@@ -17,7 +17,7 @@ export async function POST(
     return NextResponse.json({ error: 'Missing version ID' }, { status: 400 });
   }
 
-  const guard = await requireAbility(Actions.EDIT_OWN, Subjects.ARTICLE);
+  const guard = await requireAbility(Actions.UPDATE, Subjects.ARTICLE);
   if ('error' in guard) return guard.error;
   const { supabase } = guard;
 

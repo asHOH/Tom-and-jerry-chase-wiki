@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { subject } from '@casl/ability';
 
 import { buildEditSourcePolicy, type EditSourceSnapshot } from '@/lib/articles/editSources';
 import { abilityFor, type Role } from '@/lib/auth/permissions';
@@ -43,9 +44,9 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     const role = (userRole as Role | undefined) ?? null;
-    const ability = abilityFor(role);
+    const ability = abilityFor(role, userId);
 
-    if (article.author_id !== userId && !ability.can('edit_any', 'Article')) {
+    if (!ability.can('update', subject('Article', article))) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 

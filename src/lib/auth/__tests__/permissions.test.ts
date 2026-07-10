@@ -1,3 +1,5 @@
+import { subject } from '@casl/ability';
+
 import { abilityFor, Actions, Subjects, type Action, type Subject } from '@/lib/auth/permissions';
 
 describe('abilityFor', () => {
@@ -17,8 +19,7 @@ describe('abilityFor', () => {
 
     it('should not allow any write or moderation actions', () => {
       expect(ability.can(Actions.CREATE, Subjects.ARTICLE)).toBe(false);
-      expect(ability.can(Actions.EDIT_OWN, Subjects.ARTICLE)).toBe(false);
-      expect(ability.can(Actions.EDIT_ANY, Subjects.ARTICLE)).toBe(false);
+      expect(ability.can(Actions.UPDATE, Subjects.ARTICLE)).toBe(false);
       expect(ability.can(Actions.CREATE, Subjects.COMMENT)).toBe(false);
       expect(ability.can(Actions.MODERATE, Subjects.COMMENT)).toBe(false);
       expect(ability.can(Actions.APPROVE, Subjects.ARTICLE_VERSION)).toBe(false);
@@ -37,9 +38,9 @@ describe('abilityFor', () => {
       expect(ability.can(Actions.READ, Subjects.CATEGORY)).toBe(true);
     });
 
-    it('should allow create and edit_own on articles', () => {
+    it('should allow create and update on articles (subject type check)', () => {
       expect(ability.can(Actions.CREATE, Subjects.ARTICLE)).toBe(true);
-      expect(ability.can(Actions.EDIT_OWN, Subjects.ARTICLE)).toBe(true);
+      expect(ability.can(Actions.UPDATE, Subjects.ARTICLE)).toBe(true);
     });
 
     it('should allow create comments', () => {
@@ -51,12 +52,11 @@ describe('abilityFor', () => {
       expect(ability.can(Actions.PUBLISH_RELATIONS, Subjects.GAME_DATA_ACTION)).toBe(true);
     });
 
-    it('should allow edit_own on relations', () => {
-      expect(ability.can(Actions.EDIT_OWN, Subjects.RELATION)).toBe(true);
+    it('should allow update on relations (subject type check)', () => {
+      expect(ability.can(Actions.UPDATE, Subjects.RELATION)).toBe(true);
     });
 
     it('should NOT allow moderation or admin actions', () => {
-      expect(ability.can(Actions.EDIT_ANY, Subjects.ARTICLE)).toBe(false);
       expect(ability.can(Actions.APPROVE, Subjects.ARTICLE_VERSION)).toBe(false);
       expect(ability.can(Actions.REJECT, Subjects.ARTICLE_VERSION)).toBe(false);
       expect(ability.can(Actions.MODERATE, Subjects.COMMENT)).toBe(false);
@@ -71,6 +71,30 @@ describe('abilityFor', () => {
   });
 
   // -----------------------------------------------------------------------
+  // Contributor with userId — instance-level ownership checks
+  // -----------------------------------------------------------------------
+  describe('Contributor with userId (conditions)', () => {
+    const userId = 'user-1';
+    const ability = abilityFor('Contributor', userId);
+
+    it('should allow update on own article (instance check)', () => {
+      expect(ability.can('update', subject('Article', { author_id: userId }))).toBe(true);
+    });
+
+    it('should deny update on another author article (instance check)', () => {
+      expect(ability.can('update', subject('Article', { author_id: 'other' }))).toBe(false);
+    });
+
+    it('should allow update on own relation (instance check)', () => {
+      expect(ability.can('update', subject('Relation', { editor_id: userId }))).toBe(true);
+    });
+
+    it('should deny update on another editor relation (instance check)', () => {
+      expect(ability.can('update', subject('Relation', { editor_id: 'other' }))).toBe(false);
+    });
+  });
+
+  // -----------------------------------------------------------------------
   // Reviewer
   // -----------------------------------------------------------------------
   describe('Reviewer', () => {
@@ -78,12 +102,13 @@ describe('abilityFor', () => {
 
     it('should inherit all Contributor permissions', () => {
       expect(ability.can(Actions.CREATE, Subjects.ARTICLE)).toBe(true);
-      expect(ability.can(Actions.EDIT_OWN, Subjects.ARTICLE)).toBe(true);
+      expect(ability.can(Actions.UPDATE, Subjects.ARTICLE)).toBe(true);
       expect(ability.can(Actions.CREATE, Subjects.COMMENT)).toBe(true);
     });
 
-    it('should allow edit_any on articles', () => {
-      expect(ability.can(Actions.EDIT_ANY, Subjects.ARTICLE)).toBe(true);
+    it('should allow update on any article regardless of ownership', () => {
+      // Reviewer has unconditional update — overrides Contributor conditions
+      expect(ability.can(Actions.UPDATE, Subjects.ARTICLE)).toBe(true);
     });
 
     it('should allow article version moderation', () => {
@@ -116,13 +141,25 @@ describe('abilityFor', () => {
   });
 
   // -----------------------------------------------------------------------
+  // Reviewer with userId — instance checks override conditions
+  // -----------------------------------------------------------------------
+  describe('Reviewer with userId (conditions overridden)', () => {
+    const ability = abilityFor('Reviewer', 'user-1');
+
+    it('should allow update on any article regardless of author_id', () => {
+      expect(ability.can('update', subject('Article', { author_id: 'user-1' }))).toBe(true);
+      expect(ability.can('update', subject('Article', { author_id: 'other' }))).toBe(true);
+    });
+  });
+
+  // -----------------------------------------------------------------------
   // Coordinator
   // -----------------------------------------------------------------------
   describe('Coordinator', () => {
     const ability = abilityFor('Coordinator');
 
     it('should inherit all Reviewer permissions', () => {
-      expect(ability.can(Actions.EDIT_ANY, Subjects.ARTICLE)).toBe(true);
+      expect(ability.can(Actions.UPDATE, Subjects.ARTICLE)).toBe(true);
       expect(ability.can(Actions.APPROVE, Subjects.ARTICLE_VERSION)).toBe(true);
       expect(ability.can(Actions.MODERATE, Subjects.COMMENT)).toBe(true);
     });
@@ -144,7 +181,7 @@ describe('abilityFor', () => {
   describe('cannot (negative assertions)', () => {
     it('should match the inverse of can', () => {
       const ability = abilityFor('Contributor');
-      expect(ability.cannot(Actions.EDIT_ANY, Subjects.ARTICLE)).toBe(true);
+      expect(ability.cannot(Actions.APPROVE, Subjects.ARTICLE_VERSION)).toBe(true);
       expect(ability.cannot(Actions.CREATE, Subjects.ARTICLE)).toBe(false);
     });
   });
@@ -157,13 +194,11 @@ describe('abilityFor', () => {
       const coordinator = abilityFor('Coordinator');
       const contributor = abilityFor('Contributor');
 
-      // Spot-check a few Contributor-specific permissions
       expect(coordinator.can(Actions.CREATE, Subjects.ARTICLE)).toBe(true);
-      expect(coordinator.can(Actions.EDIT_OWN, Subjects.ARTICLE)).toBe(true);
+      expect(coordinator.can(Actions.UPDATE, Subjects.ARTICLE)).toBe(true);
       expect(coordinator.can(Actions.CREATE, Subjects.COMMENT)).toBe(true);
       expect(coordinator.can(Actions.PUBLISH_RELATIONS, Subjects.GAME_DATA_ACTION)).toBe(true);
 
-      // Also verify coordinator has everything contributor has
       for (const rule of contributor.rules) {
         expect(coordinator.can(rule.action as Action, rule.subject as Subject)).toBe(true);
       }
@@ -188,6 +223,13 @@ describe('abilityFor', () => {
       expect(() => abilityFor('Reviewer')).not.toThrow();
       expect(() => abilityFor('Coordinator')).not.toThrow();
       expect(() => abilityFor(null)).not.toThrow();
+    });
+
+    it('should not throw when userId is provided with any role', () => {
+      expect(() => abilityFor('Contributor', 'user-1')).not.toThrow();
+      expect(() => abilityFor('Reviewer', 'user-1')).not.toThrow();
+      expect(() => abilityFor('Coordinator', 'user-1')).not.toThrow();
+      expect(() => abilityFor(null, 'user-1')).not.toThrow();
     });
   });
 });

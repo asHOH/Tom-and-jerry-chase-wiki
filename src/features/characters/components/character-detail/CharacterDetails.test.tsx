@@ -75,6 +75,7 @@ jest.mock('@/components/ui/EditButton', () => ({
 }));
 
 jest.mock('@/components/icons/CommonIcons', () => ({
+  ChatBubbleIcon: () => <span />,
   CloseIcon: () => <span />,
   PlusIcon: () => <span />,
 }));

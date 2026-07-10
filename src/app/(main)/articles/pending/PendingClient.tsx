@@ -80,7 +80,7 @@ export default function PendingClient() {
 
   const apiEndpoint = useMemo(() => {
     if (canModerate) return '/api/moderation/pending';
-    if (ability.can('edit_own', 'Article')) return '/api/articles/pending';
+    if (ability.can('update', 'Article')) return '/api/articles/pending';
     return null;
   }, [canModerate, ability]);
 
@@ -201,7 +201,7 @@ export default function PendingClient() {
               : '加载待审核内容失败'}
           </h2>
           <p className='mb-6 text-gray-600 dark:text-gray-400'>
-            {ability.can('edit_own', 'Article') && !ability.can('approve', 'ArticleVersion')
+            {ability.can('update', 'Article') && !ability.can('approve', 'ArticleVersion')
               ? '您可以查看自己的待审核提交，但不能进行审核操作'
               : '请检查您的登录状态或联系管理员获取相应权限'}
           </p>

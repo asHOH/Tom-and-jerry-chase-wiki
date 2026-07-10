@@ -37,7 +37,7 @@ export async function requireAbility(
   const { data: roleData } = await supabase.from('users').select('role').eq('id', userId).single();
 
   const role = (roleData?.role as Role | undefined) ?? null;
-  const ability = abilityFor(role);
+  const ability = abilityFor(role, userId);
 
   if (!ability.can(action, subject)) {
     return { error: NextResponse.json({ error: 'Forbidden' }, { status: 403 }) } as const;
