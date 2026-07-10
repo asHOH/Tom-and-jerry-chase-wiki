@@ -8,9 +8,11 @@ import { useUser } from '@/hooks/useUser';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import LoginDialog from '@/components/LoginDialog';
 
+import { DiscussionInfoBanner } from './components/DiscussionInfoBanner';
 import { NewTopicForm } from './components/NewTopicForm';
-import { TopicList } from './components/TopicList';
-import { TopicView } from './components/TopicView';
+import { TableOfContents } from './components/TableOfContents';
+import { TopicSection } from './components/TopicSection';
+import type { CommentNode } from './types';
 
 type ApiComment = {
   id: string;
@@ -37,6 +39,23 @@ const fetcher = (url: string) =>
     return res.json();
   });
 
+/** Build a nested reply tree from flat comments. */
+function buildReplyTree(comments: ApiComment[], parentId: string, depth: number): CommentNode[] {
+  return comments
+    .filter((c) => c.parent_id === parentId)
+    .map((c) => ({
+      id: c.id,
+      parentId: c.parent_id,
+      content: c.content,
+      createdAt: c.created_at,
+      title: c.title,
+      status: c.status,
+      author: c.author,
+      children: buildReplyTree(comments, c.id, depth + 1),
+      depth,
+    }));
+}
+
 type TalkPageClientProps = {
   scope: string;
   targetId: string;
@@ -44,11 +63,9 @@ type TalkPageClientProps = {
 };
 
 export function TalkPageClient({ scope, targetId, entityTitle }: TalkPageClientProps) {
-  const { role: userRole, nickname: userNickname } = useUser();
+  const { role: userRole } = useUser();
   const isMobile = useMobile();
 
-  const [viewMode, setViewMode] = useState<'list' | 'topic'>('list');
-  const [activeTopicId, setActiveTopicId] = useState<string | null>(null);
   const [showNewTopicForm, setShowNewTopicForm] = useState(false);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
 
@@ -89,10 +106,23 @@ export function TalkPageClient({ scope, targetId, entityTitle }: TalkPageClientP
       .sort((a, b) => new Date(b.lastActivityAt).getTime() - new Date(a.lastActivityAt).getTime());
   }, [comments]);
 
-  const activeTopic = useMemo(
-    () => topics.find((t) => t.id === activeTopicId) ?? null,
-    [topics, activeTopicId]
-  );
+  const topicTrees = useMemo(() => {
+    return topics.map((topic) => {
+      const topicComment = comments.find((c) => c.id === topic.id);
+      if (!topicComment) return null;
+      return {
+        id: topicComment.id,
+        parentId: topicComment.parent_id,
+        content: topicComment.content,
+        createdAt: topicComment.created_at,
+        title: topicComment.title,
+        status: topicComment.status,
+        author: topicComment.author,
+        children: buildReplyTree(comments, topicComment.id, 1),
+        depth: 0,
+      } satisfies CommentNode;
+    });
+  }, [topics, comments]);
 
   const handleCreateTopic = useCallback(() => {
     if (!userRole) {
@@ -102,19 +132,13 @@ export function TalkPageClient({ scope, targetId, entityTitle }: TalkPageClientP
     setShowNewTopicForm(true);
   }, [userRole]);
 
-  const handleTopicClick = useCallback((topicId: string) => {
-    setActiveTopicId(topicId);
-    setViewMode('topic');
-  }, []);
-
-  const handleBackToList = useCallback(() => {
-    setViewMode('list');
-    setActiveTopicId(null);
-  }, []);
-
   const handleMutate = useCallback(() => {
     void mutate();
   }, [mutate]);
+
+  const handleLoginRequired = useCallback(() => {
+    setShowLoginDialog(true);
+  }, []);
 
   // Loading state
   if (isLoading) {
@@ -147,48 +171,22 @@ export function TalkPageClient({ scope, targetId, entityTitle }: TalkPageClientP
       <div className='mb-6 flex items-center justify-between'>
         <div>
           <h1 className='text-2xl font-bold text-gray-900 dark:text-gray-100'>{entityTitle}</h1>
-          <p className='mt-1 text-sm text-gray-500 dark:text-gray-400'>
-            {viewMode === 'topic' ? (
-              <button
-                type='button'
-                onClick={handleBackToList}
-                className='hover:text-gray-700 dark:hover:text-gray-300'
-              >
-                讨论
-              </button>
-            ) : (
-              '讨论'
-            )}
-            {viewMode === 'topic' && activeTopic?.title ? (
-              <>
-                <span className='mx-1'>/</span>
-                <span className='text-gray-700 dark:text-gray-300'>{activeTopic.title}</span>
-              </>
-            ) : null}
-          </p>
+          <p className='mt-1 text-sm text-gray-500 dark:text-gray-400'>讨论</p>
         </div>
-        {viewMode === 'list' && (
-          <button
-            type='button'
-            onClick={handleCreateTopic}
-            className='rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600'
-          >
-            新建话题
-          </button>
-        )}
-        {viewMode === 'topic' && (
-          <button
-            type='button'
-            onClick={handleBackToList}
-            className='rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700'
-          >
-            返回列表
-          </button>
-        )}
+        <button
+          type='button'
+          onClick={handleCreateTopic}
+          className='rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600'
+        >
+          新建话题
+        </button>
       </div>
 
+      {/* Info banner */}
+      <DiscussionInfoBanner entityTitle={entityTitle} />
+
       {/* New topic form */}
-      {viewMode === 'list' && showNewTopicForm && (
+      {showNewTopicForm && (
         <NewTopicForm
           scope={scope}
           targetId={targetId}
@@ -200,28 +198,31 @@ export function TalkPageClient({ scope, targetId, entityTitle }: TalkPageClientP
         />
       )}
 
-      {/* Topic list view */}
-      {viewMode === 'list' && (
-        <TopicList
-          topics={topics}
-          onTopicClick={handleTopicClick}
-          userRole={userRole}
-          userNickname={userNickname}
-          onMutate={handleMutate}
-        />
+      {/* Table of contents */}
+      {topics.length > 1 && <TableOfContents topics={topics} />}
+
+      {/* Empty state */}
+      {topics.length === 0 && (
+        <div className='rounded-lg border border-gray-200 bg-white/70 p-8 text-center dark:border-gray-700 dark:bg-gray-900/40'>
+          <p className='text-gray-500 dark:text-gray-400'>暂无讨论，来创建第一个话题吧</p>
+        </div>
       )}
 
-      {/* Topic detail view */}
-      {viewMode === 'topic' && activeTopic && (
-        <TopicView
-          topic={activeTopic}
-          comments={comments}
-          scope={scope}
-          targetId={targetId}
-          userRole={userRole}
-          userNickname={userNickname}
-          onMutate={handleMutate}
-        />
+      {/* Topic sections */}
+      {topicTrees.map(
+        (node) =>
+          node && (
+            <TopicSection
+              key={node.id}
+              topic={node}
+              scope={scope}
+              targetId={targetId}
+              userRole={userRole}
+              userNickname={null}
+              onMutate={handleMutate}
+              onLoginRequired={handleLoginRequired}
+            />
+          )
       )}
 
       {showLoginDialog && (

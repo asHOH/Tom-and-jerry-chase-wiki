@@ -19,6 +19,7 @@ import { filterTraitsBySingleItem } from '@/features/shared/traits/filterTraitsB
 import Card from '@/components/ui/Card';
 import CharacterNavigationButtons from '@/components/ui/CharacterNavigationButtons';
 import CollapseCard from '@/components/ui/CollapseCard';
+import DiscussButton from '@/components/ui/DiscussButton';
 import { editable } from '@/components/ui/editable';
 import EditButton from '@/components/ui/EditButton';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
@@ -135,7 +136,10 @@ export default function CharacterDetails({ children }: CharacterDetailsWithTutor
                         ({localCharacter.factionId == 'cat' ? '猫' : '鼠'}阵营)
                       </span>
                     </h1>
-                    {!isEditMode && <EditButton compact className='ml-2' />}
+                    <span className='ml-2 inline-flex rounded-md'>
+                      <DiscussButton compact className='rounded-r-none' />
+                      {!isEditMode && <EditButton compact className='-ml-px rounded-l-none' />}
+                    </span>
                   </div>
                   <ContentWriterDisplay characterId={localCharacter.id} />
                   <CreateDateDisplay createDate={localCharacter.createDate} />
@@ -181,7 +185,10 @@ export default function CharacterDetails({ children }: CharacterDetailsWithTutor
                             )
                           </p>
                         </div>
-                        <EditButton compact />
+                        <span className='inline-flex rounded-md'>
+                          <DiscussButton compact className='rounded-r-none' />
+                          <EditButton compact className='-ml-px rounded-l-none' />
+                        </span>
                       </div>
                       <ContentWriterDisplay characterId={localCharacter.id} type='isMobile' />
                       <CreateDateDisplay createDate={localCharacter.createDate} />

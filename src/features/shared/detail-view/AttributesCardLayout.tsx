@@ -5,6 +5,7 @@ import { ReactNode, type CSSProperties } from 'react';
 import { componentTokens, designTokens } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useEditMode } from '@/context/EditModeContext';
+import DiscussButton from '@/components/ui/DiscussButton';
 import EditButton from '@/components/ui/EditButton';
 import EntityCardFrame from '@/components/ui/EntityCardFrame';
 import GameImage from '@/components/ui/GameImage';
@@ -69,7 +70,14 @@ export default function AttributesCardLayout({
               />
               <div>
                 <h1 className='pt-(--space-xs) text-2xl font-bold dark:text-white'>{title} </h1>
-                {!isEditMode ? <EditButton compact className='mt-1' /> : null}
+                {!isEditMode ? (
+                  <span className='mt-1 inline-flex rounded-md'>
+                    <DiscussButton compact className='rounded-r-none' />
+                    <EditButton compact className='-ml-px rounded-l-none' />
+                  </span>
+                ) : (
+                  <DiscussButton compact className='mt-1' />
+                )}
                 {subtitle && (
                   <p className='text-lg font-normal text-gray-400 dark:text-gray-500'>{subtitle}</p>
                 )}
@@ -99,7 +107,14 @@ export default function AttributesCardLayout({
                   </span>
                 )}
               </h1>
-              {!isEditMode ? <EditButton compact className='mt-2' /> : null}
+              {!isEditMode ? (
+                <span className='mt-2 inline-flex rounded-md'>
+                  <DiscussButton compact className='rounded-r-none' />
+                  <EditButton compact className='-ml-px rounded-l-none' />
+                </span>
+              ) : (
+                <DiscussButton compact className='mt-2' />
+              )}
             </div>
             {aliasList.length > 0 && (
               <div className='mx-(--space-md) text-sm text-gray-400 dark:text-gray-500'>

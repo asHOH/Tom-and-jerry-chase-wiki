@@ -20,4 +20,15 @@ export type DiscussionPost = {
   status: string;
 };
 
-export type ViewMode = 'list' | 'topic';
+/** Comment node in a reply tree, with nested children and indentation depth. */
+export type CommentNode = {
+  id: string;
+  parentId: string | null;
+  content: string;
+  createdAt: string;
+  title: string | null;
+  status: string;
+  author: { id: string; nickname: string | null };
+  children: CommentNode[];
+  depth: number;
+};
