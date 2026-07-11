@@ -53,7 +53,7 @@ const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState<'users' | 'categories' | 'actions'>('categories');
   const ability = useAbility();
 
-  const enableUserAccess = ability.can('view_users', 'User');
+  const enableUserAccess = ability.can('read', 'User');
   const enableActionModeration = ability.can('approve', 'GameDataAction');
 
   const { data: users = [], mutate: mutateUsers } = useSWR(

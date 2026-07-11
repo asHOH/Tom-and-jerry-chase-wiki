@@ -11,7 +11,7 @@ const hashPassword = (password: string, salt: string) =>
 const generateSalt = () => randomBytes(16).toString('hex');
 
 export async function POST(request: Request) {
-  const guard = await requireAbility(Actions.UPDATE_USER, Subjects.USER);
+  const guard = await requireAbility(Actions.UPDATE, Subjects.USER, 'user');
   if ('error' in guard) return guard.error;
   const { supabase } = guard;
 

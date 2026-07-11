@@ -4,7 +4,7 @@ import { Actions, Subjects } from '@/lib/auth/permissions';
 import { requireAbility } from '@/lib/auth/requireAbility';
 
 export async function POST(request: Request) {
-  const guard = await requireAbility(Actions.UPDATE_ROLE, Subjects.USER);
+  const guard = await requireAbility(Actions.UPDATE, Subjects.USER);
   if ('error' in guard) return guard.error;
   const { supabase } = guard;
 

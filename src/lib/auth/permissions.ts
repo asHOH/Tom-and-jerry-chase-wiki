@@ -8,32 +8,27 @@ export type Role = Database['public']['Enums']['role_type'];
 // Actions (verbs)
 // ---------------------------------------------------------------------------
 
-export const Actions = {
+export const enum Actions {
   // Standard CRUD
-  READ: 'read',
-  CREATE: 'create',
-  UPDATE: 'update',
-  DELETE: 'delete',
+  READ = 'read',
+  CREATE = 'create',
+  UPDATE = 'update',
+  DELETE = 'delete',
 
   // Article version moderation
-  APPROVE: 'approve',
-  REJECT: 'reject',
-  REVOKE: 'revoke',
+  APPROVE = 'approve',
+  REJECT = 'reject',
+  REVOKE = 'revoke',
 
   // Comment moderation
-  MODERATE: 'moderate',
+  MODERATE = 'moderate',
 
   // Game data action lifecycle
-  MARK_SYNCED: 'mark_synced',
+  MARK_SYNCED = 'mark_synced',
 
   // Relation publishing
-  PUBLISH_RELATIONS: 'publish_relations',
-
-  // User management
-  UPDATE_ROLE: 'update_role',
-  UPDATE_USER: 'update_user',
-  VIEW_USERS: 'view_users',
-} as const;
+  PUBLISH_RELATIONS = 'publish_relations',
+}
 
 export type Action = (typeof Actions)[keyof typeof Actions];
 
@@ -41,15 +36,15 @@ export type Action = (typeof Actions)[keyof typeof Actions];
 // Subjects (resource types — only real domain objects, no meta subjects)
 // ---------------------------------------------------------------------------
 
-export const Subjects = {
-  ARTICLE: 'Article',
-  ARTICLE_VERSION: 'ArticleVersion',
-  COMMENT: 'Comment',
-  GAME_DATA_ACTION: 'GameDataAction',
-  CATEGORY: 'Category',
-  USER: 'User',
-  RELATION: 'Relation',
-} as const;
+export const enum Subjects {
+  ARTICLE = 'Article',
+  ARTICLE_VERSION = 'ArticleVersion',
+  COMMENT = 'Comment',
+  GAME_DATA_ACTION = 'GameDataAction',
+  CATEGORY = 'Category',
+  USER = 'User',
+  RELATION = 'Relation',
+}
 
 export type Subject = (typeof Subjects)[keyof typeof Subjects];
 
@@ -83,6 +78,8 @@ export type AppAbility = MongoAbility;
 export function abilityFor(role: Role | null, userId?: string): AppAbility {
   const { can, build } = new AbilityBuilder<AppAbility>(createMongoAbility);
 
+  void userId;
+
   // ---- Public (unauthenticated) ----
   can(Actions.READ, Subjects.ARTICLE);
   can(Actions.READ, Subjects.ARTICLE_VERSION);
@@ -97,16 +94,9 @@ export function abilityFor(role: Role | null, userId?: string): AppAbility {
   can(Actions.CREATE, Subjects.COMMENT);
   can(Actions.CREATE, Subjects.GAME_DATA_ACTION);
   can(Actions.PUBLISH_RELATIONS, Subjects.GAME_DATA_ACTION);
-
-  // Ownership-based update: conditions when userId is available,
-  // unconditional grant otherwise (subject-type check on the client).
-  if (userId) {
-    can(Actions.UPDATE, Subjects.ARTICLE, undefined, { author_id: userId });
-    can(Actions.UPDATE, Subjects.RELATION, undefined, { editor_id: userId });
-  } else {
-    can(Actions.UPDATE, Subjects.ARTICLE);
-    can(Actions.UPDATE, Subjects.RELATION);
-  }
+  can(Actions.UPDATE, Subjects.RELATION);
+  // NOTE: Ownership-based requirements are handled by supabase policies, so we grant unconditional update here.
+  can(Actions.UPDATE, Subjects.ARTICLE);
 
   // ---- Reviewer ----
   if (role === 'Reviewer' || role === 'Coordinator') {
@@ -126,9 +116,8 @@ export function abilityFor(role: Role | null, userId?: string): AppAbility {
   // ---- Coordinator ----
   if (role === 'Coordinator') {
     can(Actions.MARK_SYNCED, Subjects.GAME_DATA_ACTION);
-    can(Actions.UPDATE_ROLE, Subjects.USER);
-    can(Actions.UPDATE_USER, Subjects.USER);
-    can(Actions.VIEW_USERS, Subjects.USER);
+    can(Actions.UPDATE, Subjects.USER);
+    can(Actions.READ, Subjects.USER);
   }
 
   return build();

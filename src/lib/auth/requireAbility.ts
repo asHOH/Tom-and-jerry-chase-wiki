@@ -24,7 +24,8 @@ type RequireAbilityResult =
  */
 export async function requireAbility(
   action: Action,
-  subject: Subject
+  subject: Subject,
+  field?: string
 ): Promise<RequireAbilityResult> {
   const supabase = await createClient();
   const { data: claimsData } = await supabase.auth.getClaims();
@@ -39,7 +40,7 @@ export async function requireAbility(
   const role = (roleData?.role as Role | undefined) ?? null;
   const ability = abilityFor(role, userId);
 
-  if (!ability.can(action, subject)) {
+  if (!ability.can(action, subject, field)) {
     return { error: NextResponse.json({ error: 'Forbidden' }, { status: 403 }) } as const;
   }
 

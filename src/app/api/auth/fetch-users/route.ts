@@ -4,7 +4,7 @@ import { Actions, Subjects } from '@/lib/auth/permissions';
 import { requireAbility } from '@/lib/auth/requireAbility';
 
 export async function GET() {
-  const guard = await requireAbility(Actions.VIEW_USERS, Subjects.USER);
+  const guard = await requireAbility(Actions.READ, Subjects.USER);
   if ('error' in guard) return guard.error;
   const { supabase } = guard;
 
