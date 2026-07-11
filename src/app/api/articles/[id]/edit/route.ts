@@ -2,7 +2,7 @@ import { revalidateTag } from 'next/cache';
 import { NextResponse } from 'next/server';
 import { subject } from '@casl/ability';
 
-import { abilityFor, type Role } from '@/lib/auth/permissions';
+import { abilityFor, Actions, Subjects, type Role } from '@/lib/auth/permissions';
 import { CACHE_TAGS } from '@/lib/cacheTags';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { createClient } from '@/lib/supabase/server';
@@ -39,7 +39,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id?
     const role = (userRole as Role | undefined) ?? null;
     const ability = abilityFor(role, userId);
 
-    if (!ability.can('update', subject('Article', article))) {
+    if (!ability.can(Actions.UPDATE, subject(Subjects.ARTICLE, article))) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 

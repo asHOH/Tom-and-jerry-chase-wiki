@@ -73,11 +73,15 @@ describe('abilityFor', () => {
     const ability = abilityFor('Contributor', userId);
 
     it('should allow update on own article (instance check)', () => {
-      expect(ability.can('update', subject('Article', { author_id: userId }))).toBe(true);
+      expect(ability.can(Actions.UPDATE, subject(Subjects.ARTICLE, { author_id: userId }))).toBe(
+        true
+      );
     });
 
     it('should allow update on own relation (instance check)', () => {
-      expect(ability.can('update', subject('Relation', { editor_id: userId }))).toBe(true);
+      expect(ability.can(Actions.UPDATE, subject(Subjects.RELATION, { editor_id: userId }))).toBe(
+        true
+      );
     });
   });
 
@@ -134,8 +138,12 @@ describe('abilityFor', () => {
     const ability = abilityFor('Reviewer', 'user-1');
 
     it('should allow update on any article regardless of author_id', () => {
-      expect(ability.can('update', subject('Article', { author_id: 'user-1' }))).toBe(true);
-      expect(ability.can('update', subject('Article', { author_id: 'other' }))).toBe(true);
+      expect(ability.can(Actions.UPDATE, subject(Subjects.ARTICLE, { author_id: 'user-1' }))).toBe(
+        true
+      );
+      expect(ability.can(Actions.UPDATE, subject(Subjects.ARTICLE, { author_id: 'other' }))).toBe(
+        true
+      );
     });
   });
 

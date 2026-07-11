@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 
-import { abilityFor, type Role } from '@/lib/auth/permissions';
+import { abilityFor, Actions, Subjects, type Role } from '@/lib/auth/permissions';
 import { createClient } from '@/lib/supabase/server';
 
 import AdminPanel from './AdminPanel';
@@ -25,7 +25,7 @@ export default async function AdminPage() {
   // Check permissions server-side: only Reviewer+ can access admin
   const role = (userData?.role as Role | null) ?? null;
   const ability = abilityFor(role);
-  if (!ability.can('approve', 'ArticleVersion')) {
+  if (!ability.can(Actions.APPROVE, Subjects.ARTICLE_VERSION)) {
     notFound();
   }
 

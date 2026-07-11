@@ -1,4 +1,9 @@
-import { AbilityBuilder, createMongoAbility, type MongoAbility } from '@casl/ability';
+import {
+  AbilityBuilder,
+  createMongoAbility,
+  ForcedSubject,
+  type MongoAbility,
+} from '@casl/ability';
 
 import type { Database } from '@/data/database.types';
 
@@ -14,6 +19,7 @@ export const enum Actions {
   CREATE = 'create',
   UPDATE = 'update',
   DELETE = 'delete',
+  MANAGE = 'manage', // Wildcard for any action
 
   // Article version moderation
   APPROVE = 'approve',
@@ -30,7 +36,7 @@ export const enum Actions {
   PUBLISH_RELATIONS = 'publish_relations',
 }
 
-export type Action = (typeof Actions)[keyof typeof Actions];
+export type Action = Actions;
 
 // ---------------------------------------------------------------------------
 // Subjects (resource types — only real domain objects, no meta subjects)
@@ -39,6 +45,7 @@ export type Action = (typeof Actions)[keyof typeof Actions];
 export const enum Subjects {
   ARTICLE = 'Article',
   ARTICLE_VERSION = 'ArticleVersion',
+  ALL = 'all', // Wildcard for all subjects
   COMMENT = 'Comment',
   GAME_DATA_ACTION = 'GameDataAction',
   CATEGORY = 'Category',
@@ -46,13 +53,13 @@ export const enum Subjects {
   RELATION = 'Relation',
 }
 
-export type Subject = (typeof Subjects)[keyof typeof Subjects];
+export type Subject = Subjects | ForcedSubject<Subjects>;
 
 // ---------------------------------------------------------------------------
 // App ability type
 // ---------------------------------------------------------------------------
 
-export type AppAbility = MongoAbility;
+export type AppAbility = MongoAbility<[Actions, Subject]>;
 
 // ---------------------------------------------------------------------------
 // abilityFor — build an AppAbility from a role + optional userId
