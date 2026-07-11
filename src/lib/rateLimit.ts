@@ -1,6 +1,7 @@
 import type { NextRequest } from 'next/server';
 import { Ratelimit, type Duration } from '@upstash/ratelimit';
 
+import { getClientIp } from './clientIp';
 import { getUpstashRedis } from './upstash';
 
 export type RateLimitProfile = 'auth' | 'read' | 'write' | 'expensive';
@@ -45,30 +46,6 @@ function getRatelimit(profile: RateLimitProfile): Ratelimit | null {
   return instance;
 }
 
-function getClientIp(request: Request | NextRequest): string {
-  const headers = request.headers;
-  const cf = headers.get('cf-connecting-ip');
-  if (cf) {
-    return cf.trim();
-  }
-
-  const xff = headers.get('x-forwarded-for');
-  if (xff) {
-    // May contain a comma-separated list; take the first hop.
-    const first = xff.split(',')[0]?.trim();
-    if (first) {
-      return first;
-    }
-  }
-
-  const realIp = headers.get('x-real-ip');
-  if (realIp) {
-    return realIp.trim();
-  }
-
-  return 'unknown';
-}
-
 export async function checkRateLimit(
   request: Request | NextRequest,
   profile: RateLimitProfile,
@@ -81,7 +58,7 @@ export async function checkRateLimit(
     return { allowed: true };
   }
 
-  const ip = getClientIp(request);
+  const ip = getClientIp(request) ?? 'unknown';
   const identifier = `${profile}:${bucket}:${ip}`;
 
   const result = await ratelimit.limit(identifier);

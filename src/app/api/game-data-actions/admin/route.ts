@@ -37,6 +37,24 @@ export async function GET(request: NextRequest) {
     }
 
     const rows = data ?? [];
+    const actionIds = rows.map((row) => row.id);
+    const anonymousIpByActionId = new Map<string, string>();
+
+    if (actionIds.length > 0) {
+      const { data: attributions, error: attributionError } = await supabaseAdmin
+        .from('game_data_action_attribution')
+        .select('action_id, ip_address')
+        .in('action_id', actionIds);
+
+      if (attributionError) {
+        console.error('Error fetching game data action attribution:', attributionError);
+        return NextResponse.json({ error: 'Failed to fetch action attribution' }, { status: 500 });
+      }
+
+      for (const attribution of attributions ?? []) {
+        anonymousIpByActionId.set(attribution.action_id, String(attribution.ip_address));
+      }
+    }
 
     const userIds = Array.from(
       new Set(
@@ -71,6 +89,7 @@ export async function GET(request: NextRequest) {
 
       return {
         action_id: row.id,
+        anonymous_ip: anonymousIpByActionId.get(row.id) ?? null,
         created_at: row.created_at,
         created_by: row.created_by ?? '',
         created_by_nickname: createdByNickname,

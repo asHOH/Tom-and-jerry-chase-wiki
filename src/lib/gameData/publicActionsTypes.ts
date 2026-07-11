@@ -17,4 +17,5 @@ export type PublicActionRow = {
   message: string | null;
   reviewed_at: string | null;
   created_by: string | null;
+  anonymous_contributor_label?: string | null;
 };

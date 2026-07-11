@@ -155,7 +155,9 @@ export async function fetchPublicGameDataActions(): Promise<PublicActionRow[]> {
     async () => {
       const { data, error } = await supabaseServerPublic
         .from('game_data_actions')
-        .select('id, entity_type, entry, created_at, status, message, reviewed_at, created_by')
+        .select(
+          'id, entity_type, entry, created_at, status, message, reviewed_at, created_by, anonymous_contributor_label'
+        )
         .eq('is_public', true)
         .eq('status', 'approved')
         .order('created_at', { ascending: true });

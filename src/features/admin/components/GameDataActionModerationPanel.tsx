@@ -17,6 +17,7 @@ type ActionStatusFilter = 'all' | ActionStatus;
 
 export type PendingGameDataAction =
   Database['public']['Functions']['get_pending_game_data_actions']['Returns'][number] & {
+    anonymous_ip?: string | null;
     message?: string | null;
   };
 
@@ -157,10 +158,12 @@ const GameDataActionModerationPanel = ({
       if (!q) return true;
 
       const createdBy = (submission.created_by_nickname ?? '').toLowerCase();
+      const anonymousIp = (submission.anonymous_ip ?? '').toLowerCase();
       return (
         submission.action_id.toLowerCase().includes(q) ||
         submission.entity_type.toLowerCase().includes(q) ||
-        createdBy.includes(q)
+        createdBy.includes(q) ||
+        anonymousIp.includes(q)
       );
     });
   }, [pendingActions, actionEntityType, actionQuery, actionStatus]);
@@ -432,7 +435,9 @@ const GameDataActionModerationPanel = ({
                         <span>
                           {submission.created_by_nickname
                             ? `由 ${submission.created_by_nickname} 提交`
-                            : '匿名提交'}
+                            : submission.anonymous_ip
+                              ? `由 IP ${submission.anonymous_ip} 提交`
+                              : '匿名提交'}
                         </span>
                         <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
                         <span>

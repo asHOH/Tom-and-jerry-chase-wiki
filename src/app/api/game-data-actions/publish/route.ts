@@ -1,10 +1,12 @@
 import { NextResponse } from 'next/server';
 import z from 'zod';
 
+import { getClientIp } from '@/lib/clientIp';
 import {
-  publishGameDataActions,
+  publishAttributedGameDataActions,
   PublishGameDataActionsError,
 } from '@/lib/gameData/publishGameDataActions';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
 import { createClient } from '@/lib/supabase/server';
 import type { Json } from '@/data/database.types';
@@ -94,7 +96,15 @@ export async function POST(req: Request) {
 
   try {
     const supabase = await createClient();
-    const allResults = await publishGameDataActions(supabase, actionList, message);
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    const allResults = await publishAttributedGameDataActions(
+      supabaseAdmin,
+      actionList,
+      { createdBy: user?.id ?? null, anonymousIp: user ? null : getClientIp(req) },
+      message
+    );
 
     return NextResponse.json({ result: allResults });
   } catch (err) {

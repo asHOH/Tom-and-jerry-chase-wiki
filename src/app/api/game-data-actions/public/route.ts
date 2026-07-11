@@ -13,7 +13,7 @@ export async function GET() {
 
     const { data, error } = await supabase
       .from('game_data_actions')
-      .select('id, entity_type, entry, created_at')
+      .select('id, entity_type, entry, created_at, anonymous_contributor_label')
       .eq('is_public', true)
       .order('created_at', { ascending: true });
 

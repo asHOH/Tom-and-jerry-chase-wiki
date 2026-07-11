@@ -48,3 +48,27 @@ export const publishGameDataActions = async (
 
   return allResults;
 };
+
+export const publishAttributedGameDataActions = async (
+  supabase: SupabaseClient<Database>,
+  actions: readonly PublishGameDataActionItem[],
+  attribution: { createdBy: string | null; anonymousIp: string | null },
+  message?: string
+): Promise<PublishGameDataActionResult[]> => {
+  const allResults: PublishGameDataActionResult[] = [];
+
+  for (const action of actions) {
+    const { data, error } = await supabase.rpc('publish_game_data_actions_server', {
+      p_entity_type: action.entityType,
+      p_entries: action.entries,
+      ...(attribution.createdBy ? { p_created_by: attribution.createdBy } : {}),
+      ...(attribution.anonymousIp ? { p_anonymous_ip: attribution.anonymousIp } : {}),
+      ...(message ? { p_message: message } : {}),
+    });
+
+    if (error) throw new PublishGameDataActionsError(action.entityType, error);
+    if (data) allResults.push(...data);
+  }
+
+  return allResults;
+};

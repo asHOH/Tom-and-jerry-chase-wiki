@@ -324,6 +324,7 @@ export type Database = {
       };
       game_data_actions: {
         Row: {
+          anonymous_contributor_label: string | null;
           created_at: string;
           created_by: string | null;
           entity_type: string;
@@ -337,6 +338,7 @@ export type Database = {
           status: Database['public']['Enums']['game_data_action_status'];
         };
         Insert: {
+          anonymous_contributor_label?: string | null;
           created_at?: string;
           created_by?: string | null;
           entity_type: string;
@@ -350,6 +352,7 @@ export type Database = {
           status: Database['public']['Enums']['game_data_action_status'];
         };
         Update: {
+          anonymous_contributor_label?: string | null;
           created_at?: string;
           created_by?: string | null;
           entity_type?: string;
@@ -389,6 +392,29 @@ export type Database = {
             columns: ['reviewed_by'];
             isOneToOne: false;
             referencedRelation: 'users_public_view';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      game_data_action_attribution: {
+        Row: {
+          action_id: string;
+          ip_address: unknown;
+        };
+        Insert: {
+          action_id: string;
+          ip_address: unknown;
+        };
+        Update: {
+          action_id?: string;
+          ip_address?: unknown;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'game_data_action_attribution_action_id_fkey';
+            columns: ['action_id'];
+            isOneToOne: true;
+            referencedRelation: 'game_data_actions';
             referencedColumns: ['id'];
           },
         ];
@@ -708,6 +734,20 @@ export type Database = {
       };
       publish_game_data_actions: {
         Args: { p_entity_type: string; p_entries: Json; p_message?: string };
+        Returns: {
+          id: string;
+          is_public: boolean;
+          status: Database['public']['Enums']['game_data_action_status'];
+        }[];
+      };
+      publish_game_data_actions_server: {
+        Args: {
+          p_anonymous_ip?: unknown;
+          p_created_by?: string;
+          p_entity_type: string;
+          p_entries: Json;
+          p_message?: string;
+        };
         Returns: {
           id: string;
           is_public: boolean;

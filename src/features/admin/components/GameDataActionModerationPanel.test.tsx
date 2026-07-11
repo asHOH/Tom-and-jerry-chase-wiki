@@ -41,6 +41,28 @@ describe('GameDataActionModerationPanel', () => {
     jest.restoreAllMocks();
   });
 
+  it('should display and search the full IP for an anonymous submission', () => {
+    const anonymousAction: PendingGameDataAction = {
+      ...sampleAction,
+      created_by: '',
+      created_by_nickname: '',
+      anonymous_ip: '203.0.113.42',
+    };
+
+    render(
+      <GameDataActionModerationPanel
+        pendingActions={[anonymousAction]}
+        mutatePendingActions={jest.fn()}
+      />
+    );
+
+    expect(screen.getByText('由 IP 203.0.113.42 提交')).toBeInTheDocument();
+    fireEvent.change(screen.getByPlaceholderText('action_id / 类型 / 提交者'), {
+      target: { value: '113.42' },
+    });
+    expect(screen.getByText('由 IP 203.0.113.42 提交')).toBeInTheDocument();
+  });
+
   it('hides the year for current-year submit and review dates', () => {
     const currentYear = new Date().getFullYear();
     const previousYear = currentYear - 1;

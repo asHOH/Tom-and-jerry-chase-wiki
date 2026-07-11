@@ -61,7 +61,8 @@ interface WikiHistoryFromAction {
 function actionToWikiHistoryInfo(
   action: Action,
   entityType: string,
-  createdAt: Date
+  createdAt: Date,
+  contributorLabel: string | null
 ): WikiHistoryFromAction | null {
   const singleItemType = ENTITY_TYPE_TO_SINGLE_ITEM_TYPE[entityType];
   if (!singleItemType) return null;
@@ -98,7 +99,7 @@ function actionToWikiHistoryInfo(
     date,
     item: { name: itemName, type: singleItemType },
     changeType,
-    description,
+    description: contributorLabel ? `${description}（由 ${contributorLabel} 提交）` : description,
   };
 }
 
@@ -122,7 +123,12 @@ export function publicActionsToWikiHistory(actions: PublicActionRow[]): WikiYear
     const dateKey = `${month}.${day}`;
 
     for (const action of actionsArray) {
-      const info = actionToWikiHistoryInfo(action, row.entity_type, createdAt);
+      const info = actionToWikiHistoryInfo(
+        action,
+        row.entity_type,
+        createdAt,
+        row.anonymous_contributor_label ?? null
+      );
       if (!info) continue;
 
       if (!yearMap.has(year)) {

@@ -100,4 +100,19 @@ describe('publicActionsToWikiHistory', () => {
 
     expect(changes.map((change) => change.item.name)).toEqual(['Tom']);
   });
+
+  it('should include only the masked anonymous contributor label', () => {
+    const action = row('anonymous-action', {
+      op: 'set',
+      path: 'Tom.description',
+      oldValue: 'old',
+      newValue: 'new',
+    });
+    action.anonymous_contributor_label = 'IP 203.0.113.*';
+
+    const [change] = getBatchChanges([action]);
+
+    expect(change?.description).toContain('由 IP 203.0.113.* 提交');
+    expect(change?.description).not.toContain('203.0.113.42');
+  });
 });
