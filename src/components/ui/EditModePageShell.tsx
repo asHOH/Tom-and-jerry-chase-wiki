@@ -26,7 +26,6 @@ export default function EditModePageShell({
   const { exitEditMode } = useSearchParamEditMode();
   const { info } = useToast();
   const {
-    isEditMode,
     isDirty,
     isPublishing,
     draftInfo,
@@ -39,7 +38,7 @@ export default function EditModePageShell({
     entityId,
     showToast: info,
   });
-  const { isLoading, isPreviewMode, setIsPreviewMode } = useEditMode();
+  const { isEditMode, isLoading, isPreviewMode, setIsPreviewMode } = useEditMode();
   const editModeContextValue = useMemo(
     () => ({
       isEditMode: isEditMode && !isPreviewMode,

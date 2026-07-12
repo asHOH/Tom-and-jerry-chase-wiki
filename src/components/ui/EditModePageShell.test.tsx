@@ -35,18 +35,22 @@ jest.mock('./EditModeToolbar', () => {
 });
 
 describe('EditModePageShell', () => {
-  const wrapper = ({ children }: { children: React.ReactNode }) => (
-    <EditModeContext
-      value={{
-        isEditMode: true,
-        isLoading: false,
-        isPreviewMode: false,
-        setIsPreviewMode: mockSetIsPreviewMode,
-      }}
-    >
-      {children}
-    </EditModeContext>
-  );
+  const createWrapper = (isEditMode: boolean, isPreviewMode = false) => {
+    const EditModeTestWrapper = ({ children }: { children: React.ReactNode }) => (
+      <EditModeContext
+        value={{
+          isEditMode,
+          isLoading: false,
+          isPreviewMode,
+          setIsPreviewMode: mockSetIsPreviewMode,
+        }}
+      >
+        {children}
+      </EditModeContext>
+    );
+    EditModeTestWrapper.displayName = 'EditModeTestWrapper';
+    return EditModeTestWrapper;
+  };
   beforeEach(() => {
     jest.clearAllMocks();
     mockUsePageEditMode.mockReturnValue({
@@ -66,7 +70,7 @@ describe('EditModePageShell', () => {
       <EditModePageShell entityType='items' entityId='fork' entityName='Fork'>
         <div>content</div>
       </EditModePageShell>,
-      { wrapper }
+      { wrapper: createWrapper(false) }
     );
 
     expect(mockUsePageEditMode).toHaveBeenCalledWith({
@@ -110,7 +114,7 @@ describe('EditModePageShell', () => {
       <EditModePageShell entityType='items' entityId='fork' entityName='Fork'>
         <div>content</div>
       </EditModePageShell>,
-      { wrapper }
+      { wrapper: createWrapper(true) }
     );
 
     expect(screen.getByTestId('edit-mode-toolbar')).toBeInTheDocument();
@@ -133,5 +137,17 @@ describe('EditModePageShell', () => {
 
     toolbarProps?.onExitEditMode();
     expect(mockExitEditMode).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps the toolbar visible while previewing in edit mode', () => {
+    render(
+      <EditModePageShell entityType='items' entityId='fork' entityName='Fork'>
+        <div>content</div>
+      </EditModePageShell>,
+      { wrapper: createWrapper(true, true) }
+    );
+
+    expect(screen.getByTestId('edit-mode-toolbar')).toBeInTheDocument();
+    expect(mockEditModeToolbar).toHaveBeenCalledTimes(1);
   });
 });
