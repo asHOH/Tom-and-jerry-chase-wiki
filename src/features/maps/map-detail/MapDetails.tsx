@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import dynamic from 'next/dynamic';
 import { useSnapshot } from 'valtio';
 
 import { useLocalMap } from '@/hooks/useLocalEditEntity';
@@ -9,7 +8,7 @@ import { useMobile } from '@/hooks/useMediaQuery';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
-import { InteractiveMapConfig, Map as MapType, SingleItem } from '@/data/types';
+import type { Map as MapType, SingleItem } from '@/data/types';
 import DetailOwnbuffsCard from '@/features/shared/detail-view/DetaidOwnbuffsCard';
 import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
 import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';
@@ -19,11 +18,10 @@ import Card from '@/components/ui/Card';
 import { editable } from '@/components/ui/editable';
 import SingleItemButton from '@/components/ui/SingleItemButton';
 import Image from '@/components/Image';
+import Link from '@/components/Link';
 import { fixtures, mapsEdit } from '@/data';
 
 import MapAttributesCard from './MapAttributesCard';
-
-const InteractiveMap = dynamic(() => import('../interactive-map/InteractiveMap'), { ssr: false });
 
 export default function MapDetailClient({ map }: { map: MapType }) {
   const { isEditMode } = useEditMode();
@@ -145,23 +143,32 @@ export default function MapDetailClient({ map }: { map: MapType }) {
     });
   }
   if (effectiveMap.interactiveMap) {
+    const previewUrl = effectiveMap.interactiveMap.previewUrl ?? effectiveMap.mapImageUrl;
     sections.push({
       title: '交互地图',
       content: (
         <Card className='overflow-hidden p-0'>
-          <InteractiveMap
-            config={effectiveMap.interactiveMap}
-            mapName={effectiveMap.name}
-            isEditMode={isEditMode}
-            fallbackImageUrl={effectiveMap.mapImageUrl}
-            onConfigChange={
-              isEditMode && rawLocalMap
-                ? (config: InteractiveMapConfig) => {
-                    rawLocalMap.interactiveMap = config;
-                  }
-                : undefined
-            }
-          />
+          <Link
+            href={`/maps/${encodeURIComponent(effectiveMap.name)}/interactive`}
+            preserveEditParam
+            className='group relative block h-[min(62vh,480px)] min-h-60 overflow-hidden bg-slate-950'
+          >
+            {previewUrl && (
+              <Image
+                src={previewUrl}
+                alt={`${effectiveMap.name}交互地图预览`}
+                fill
+                sizes='100vw'
+                className='object-cover opacity-65 transition-opacity duration-200 group-hover:opacity-80'
+              />
+            )}
+            <div className='absolute inset-0 bg-slate-950/45' />
+            <div className='absolute inset-0 flex items-center justify-center'>
+              <span className='rounded-md bg-slate-950/90 px-4 py-2 text-sm text-white shadow-lg'>
+                进入全屏交互地图
+              </span>
+            </div>
+          </Link>
         </Card>
       ),
     });

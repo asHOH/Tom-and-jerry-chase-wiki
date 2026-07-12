@@ -56,6 +56,7 @@ type InteractiveMapProps = {
   config: InteractiveMapConfig;
   mapName: string;
   isEditMode: boolean;
+  alwaysFullscreen?: boolean | undefined;
   fallbackImageUrl?: string | undefined;
   onConfigChange?: ((config: InteractiveMapConfig) => void) | undefined;
 };
@@ -300,7 +301,6 @@ function MinimapDiagram({
               if (!center) return null;
 
               const labelStyle: CSSProperties = {
-                direction: 'ltr',
                 left: `${center.x * 100}%`,
                 top: `${center.y * 100}%`,
                 writingMode: 'horizontal-tb',
@@ -308,9 +308,8 @@ function MinimapDiagram({
 
               return (
                 <span
-                  className='absolute -translate-x-1/2 -translate-y-1/2 text-center text-[10px] leading-none font-normal whitespace-nowrap text-white opacity-100 sm:text-xs'
+                  className='absolute -translate-x-1/2 -translate-y-1/2 text-center text-[10px] leading-none font-normal whitespace-nowrap text-gray-100 opacity-80 sm:text-xs'
                   style={labelStyle}
-                  dir='ltr'
                 >
                   {room.name}
                 </span>
@@ -446,6 +445,7 @@ export default function InteractiveMap({
   config: incomingConfig,
   mapName,
   isEditMode,
+  alwaysFullscreen = false,
   fallbackImageUrl,
   onConfigChange,
 }: InteractiveMapProps) {
@@ -466,6 +466,7 @@ export default function InteractiveMap({
   const [roomName, setRoomName] = useState('');
   const [draftPolygon, setDraftPolygon] = useState<[number, number][]>([]);
   const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
+  const isFullscreenActive = alwaysFullscreen || isFullscreen;
   const undoStack = useRef<InteractiveMapConfig[]>([]);
   const redoStack = useRef<InteractiveMapConfig[]>([]);
   const mainMapRef = useRef<L.Map | null>(null);
@@ -520,7 +521,7 @@ export default function InteractiveMap({
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && isFullscreen) {
+      if (event.key === 'Escape' && isFullscreen && !alwaysFullscreen) {
         if (window.history.state?.interactiveMapFullscreen) window.history.back();
         else setIsFullscreen(false);
       }
@@ -532,7 +533,7 @@ export default function InteractiveMap({
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('popstate', handlePopState);
     };
-  }, [isFullscreen]);
+  }, [alwaysFullscreen, isFullscreen]);
 
   const updateConfig = useCallback(
     (next: InteractiveMapConfig, recordHistory = true) => {
@@ -684,7 +685,9 @@ export default function InteractiveMap({
   }
 
   const map = (
-    <div className='relative h-full min-h-[420px] overflow-hidden rounded-lg bg-slate-950'>
+    <div
+      className={`relative h-full overflow-hidden bg-slate-950 ${alwaysFullscreen ? '' : 'min-h-[420px] rounded-lg'}`}
+    >
       <MapContainer
         crs={L.CRS.Simple}
         bounds={mapBounds}
@@ -694,7 +697,7 @@ export default function InteractiveMap({
         maxZoom={config.maxZoom + 2}
         zoomControl
         doubleClickZoom
-        className='h-full min-h-[420px] w-full bg-slate-950'
+        className={`h-full w-full bg-slate-950 ${alwaysFullscreen ? '' : 'min-h-[420px]'}`}
       >
         <PictureTileLayer
           url={webpTileUrl}
@@ -813,26 +816,28 @@ export default function InteractiveMap({
         onNavigate={navigateFromMinimap}
       />
 
-      <div className='absolute top-3 right-3 z-500 flex gap-2'>
-        <button
-          type='button'
-          className='rounded-md bg-slate-900/90 px-3 py-2 text-sm text-white shadow hover:bg-slate-800'
-          onClick={() => {
-            if (isFullscreen) {
-              if (window.history.state?.interactiveMapFullscreen) window.history.back();
-              else setIsFullscreen(false);
-            } else {
-              window.history.pushState(
-                { ...window.history.state, interactiveMapFullscreen: true },
-                ''
-              );
-              setIsFullscreen(true);
-            }
-          }}
-        >
-          {isFullscreen ? '退出全屏' : '全屏地图'}
-        </button>
-      </div>
+      {!alwaysFullscreen && (
+        <div className='absolute top-3 right-3 z-500 flex gap-2'>
+          <button
+            type='button'
+            className='rounded-md bg-slate-900/90 px-3 py-2 text-sm text-white shadow hover:bg-slate-800'
+            onClick={() => {
+              if (isFullscreen) {
+                if (window.history.state?.interactiveMapFullscreen) window.history.back();
+                else setIsFullscreen(false);
+              } else {
+                window.history.pushState(
+                  { ...window.history.state, interactiveMapFullscreen: true },
+                  ''
+                );
+                setIsFullscreen(true);
+              }
+            }}
+          >
+            {isFullscreen ? '退出全屏' : '全屏地图'}
+          </button>
+        </div>
+      )}
 
       <FilterPanel
         config={config}
@@ -921,10 +926,10 @@ export default function InteractiveMap({
     </div>
   );
 
-  return isFullscreen ? (
+  return isFullscreenActive ? (
     <div
       data-main-map
-      className='fixed inset-0 z-1000 bg-black p-0 sm:p-3'
+      className={`fixed inset-0 z-1000 bg-black ${alwaysFullscreen ? 'h-dvh w-screen overflow-hidden p-0' : 'p-0 sm:p-3'}`}
       role='dialog'
       aria-modal='true'
       aria-label={`${mapName}交互地图`}
@@ -1077,7 +1082,7 @@ function EditorPanel(props: EditorPanelProps) {
           <input
             value={props.pointName}
             onChange={(event) => props.onPointName(event.target.value)}
-            placeholder='点位名称'
+            aria-label='点位名称'
             className='w-full rounded bg-white/10 px-2 py-2'
           />
           <select
