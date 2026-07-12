@@ -6,6 +6,7 @@ import {
   cloneInteractiveMap,
   coordinateToLatLng,
   DEFAULT_VISIBLE_CATEGORIES,
+  getInteractiveMapAssetUrl,
   isPointVisible,
   latLngToCoordinate,
 } from './mapUtils';
@@ -49,5 +50,17 @@ describe('interactive map utilities', () => {
 
     expect(cloned).toEqual(config);
     expect(cloned).not.toBe(config);
+  });
+
+  it('should select the requested map image format', () => {
+    expect(getInteractiveMapAssetUrl('/tiles/{z}/{y}/{x}.webp', 'avif')).toBe(
+      '/tiles/{z}/{y}/{x}.avif'
+    );
+    expect(getInteractiveMapAssetUrl('/tiles/{z}/{y}/{x}.avif', 'webp')).toBe(
+      '/tiles/{z}/{y}/{x}.webp'
+    );
+    expect(getInteractiveMapAssetUrl('/tiles/{z}/{y}/{x}.png', 'avif')).toBe(
+      '/tiles/{z}/{y}/{x}.png'
+    );
   });
 });

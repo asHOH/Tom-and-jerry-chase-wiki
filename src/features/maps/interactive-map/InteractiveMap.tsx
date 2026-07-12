@@ -1,14 +1,18 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import L, { type LeafletMouseEvent } from 'leaflet';
+import L, {
+  type Coords,
+  type DoneCallback,
+  type LeafletMouseEvent,
+  type TileLayerOptions,
+} from 'leaflet';
 import {
   ImageOverlay,
   MapContainer,
   Marker,
   Polygon,
   Rectangle,
-  TileLayer,
   Tooltip,
   useMap,
   useMapEvents,
@@ -29,6 +33,7 @@ import {
   cloneInteractiveMap,
   coordinateToLatLng,
   DEFAULT_VISIBLE_CATEGORIES,
+  getInteractiveMapAssetUrl,
   getMapBounds,
   isPointVisible,
   latLngToCoordinate,
@@ -87,6 +92,72 @@ const vertexIcon = L.divIcon({
   iconSize: [18, 18],
   iconAnchor: [9, 9],
 });
+
+const isAvifUrl = (url: string) => {
+  const urlWithoutQuery = url.split(/[?#]/u)[0] ?? url;
+  return urlWithoutQuery.toLowerCase().endsWith('.avif');
+};
+
+class NativePictureTileLayer extends L.TileLayer {
+  protected override createTile(coords: Coords, done: DoneCallback): HTMLElement {
+    const picture = document.createElement('picture');
+    const source = document.createElement('source');
+    const image = document.createElement('img');
+    const webpUrl = this.getTileUrl(coords);
+    const avifUrl = getInteractiveMapAssetUrl(webpUrl, 'avif');
+
+    picture.className = 'leaflet-picture-tile';
+    image.className = 'leaflet-picture-tile-image';
+    image.alt = '';
+    image.decoding = 'async';
+
+    if (avifUrl && avifUrl !== webpUrl) {
+      source.type = 'image/avif';
+      source.srcset = avifUrl;
+      picture.append(source);
+    }
+
+    let avifFailed = false;
+    image.onload = () => done(undefined, picture);
+    image.onerror = () => {
+      if (!avifFailed && isAvifUrl(image.currentSrc || image.src)) {
+        avifFailed = true;
+        source.removeAttribute('srcset');
+        image.src = webpUrl;
+        return;
+      }
+
+      done(new Error('地图瓦片加载失败'), picture);
+    };
+    image.src = webpUrl;
+    picture.append(image);
+
+    return picture;
+  }
+}
+
+type PictureTileLayerProps = {
+  url: string;
+  options: TileLayerOptions;
+  onTileError: () => void;
+};
+
+function PictureTileLayer({ url, options, onTileError }: PictureTileLayerProps) {
+  const map = useMap();
+
+  useEffect(() => {
+    const layer = new NativePictureTileLayer(url, options);
+    layer.on('tileerror', onTileError);
+    layer.addTo(map);
+
+    return () => {
+      layer.off('tileerror', onTileError);
+      map.removeLayer(layer);
+    };
+  }, [map, onTileError, options, url]);
+
+  return null;
+}
 
 function MainMapEvents({
   config,
@@ -207,9 +278,45 @@ export default function InteractiveMap({
   const redoStack = useRef<InteractiveMapConfig[]>([]);
   const mainMapRef = useRef<L.Map | null>(null);
   const selectedPoint = config.points.find((point) => point.id === selectedPointId) ?? null;
-  const mapBounds = useMemo(() => getMapBounds(config), [config]);
+  const mapBounds = useMemo(
+    () =>
+      getMapBounds({
+        height: config.height,
+        maxZoom: config.maxZoom,
+        width: config.width,
+      }),
+    [config.height, config.maxZoom, config.width]
+  );
+  const webpTileUrl = getInteractiveMapAssetUrl(config.tileUrl, 'webp') ?? config.tileUrl;
+  const previewUrl = getInteractiveMapAssetUrl(config.previewUrl, 'webp');
+  const mainTileOptions = useMemo<TileLayerOptions>(
+    () => ({
+      tileSize: config.tileSize,
+      minZoom: config.minZoom,
+      maxNativeZoom: config.maxZoom,
+      maxZoom: config.maxZoom + 2,
+      bounds: mapBounds,
+      noWrap: true,
+    }),
+    [config.maxZoom, config.minZoom, config.tileSize, mapBounds]
+  );
+  const minimapTileOptions = useMemo<TileLayerOptions>(
+    () => ({
+      tileSize: config.tileSize,
+      minZoom: config.minZoom - 4,
+      minNativeZoom: config.minZoom,
+      maxNativeZoom: config.maxZoom,
+      bounds: mapBounds,
+      noWrap: true,
+    }),
+    [config.maxZoom, config.minZoom, config.tileSize, mapBounds]
+  );
   const handleMapReady = useCallback((mainMap: L.Map) => {
     mainMapRef.current = mainMap;
+  }, []);
+
+  const handleMapTileError = useCallback(() => {
+    setTileFailed(true);
   }, []);
 
   useEffect(() => {
@@ -398,18 +505,13 @@ export default function InteractiveMap({
         doubleClickZoom
         className='h-full min-h-[420px] w-full bg-slate-950'
       >
-        <TileLayer
-          url={config.tileUrl}
-          tileSize={config.tileSize}
-          minZoom={config.minZoom}
-          maxNativeZoom={config.maxZoom}
-          maxZoom={config.maxZoom + 2}
-          bounds={mapBounds}
-          noWrap
-          eventHandlers={{ tileerror: () => setTileFailed(true) }}
+        <PictureTileLayer
+          url={webpTileUrl}
+          options={mainTileOptions}
+          onTileError={handleMapTileError}
         />
-        {config.previewUrl && (
-          <ImageOverlay url={config.previewUrl} bounds={mapBounds} pane='tilePane' zIndex={0} />
+        {previewUrl && (
+          <ImageOverlay url={previewUrl} bounds={mapBounds} pane='tilePane' zIndex={0} />
         )}
         <MainMapEvents
           config={config}
@@ -526,17 +628,13 @@ export default function InteractiveMap({
           scrollWheelZoom={false}
           className='h-full w-full bg-slate-950'
         >
-          <TileLayer
-            url={config.tileUrl}
-            tileSize={config.tileSize}
-            minZoom={config.minZoom - 4}
-            minNativeZoom={config.minZoom}
-            maxNativeZoom={config.maxZoom}
-            bounds={mapBounds}
-            noWrap
+          <PictureTileLayer
+            url={webpTileUrl}
+            options={minimapTileOptions}
+            onTileError={handleMapTileError}
           />
-          {config.previewUrl && (
-            <ImageOverlay url={config.previewUrl} bounds={mapBounds} pane='tilePane' zIndex={0} />
+          {previewUrl && (
+            <ImageOverlay url={previewUrl} bounds={mapBounds} pane='tilePane' zIndex={0} />
           )}
           <MinimapViewport config={config} isExpanded={isMinimapExpanded} />
           {config.rooms.flatMap((room) =>

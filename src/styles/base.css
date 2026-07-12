@@ -72,3 +72,7 @@ img {
   -ms-user-select: inherit !important;
   user-select: inherit !important;
 }
+
+.leaflet-control-attribution {
+  display: none;
+}
