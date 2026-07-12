@@ -26,6 +26,138 @@ const mapDefinitions: Record<string, MapDefinition> = {
       '创意玩法',
     ],
     randomizedRoom: true,
+    interactiveMap: {
+      width: 12722,
+      height: 5443,
+      tileSize: 512,
+      minZoom: 0,
+      maxZoom: 4,
+      tileUrl: '/images/map-tiles/classic-home-i/{z}/{y}/{x}.webp',
+      rooms: [
+        {
+          id: 'yard',
+          name: '院子',
+          polygons: [
+            [
+              { x: 0, y: 0.38 },
+              { x: 0.29, y: 0.38 },
+              { x: 0.29, y: 0.72 },
+              { x: 0, y: 0.72 },
+            ],
+          ],
+        },
+        {
+          id: 'living-room',
+          name: '客厅',
+          polygons: [
+            [
+              { x: 0.29, y: 0.45 },
+              { x: 0.53, y: 0.45 },
+              { x: 0.53, y: 0.72 },
+              { x: 0.29, y: 0.72 },
+            ],
+          ],
+        },
+        {
+          id: 'bedroom',
+          name: '卧室',
+          polygons: [
+            [
+              { x: 0.35, y: 0.24 },
+              { x: 0.53, y: 0.24 },
+              { x: 0.53, y: 0.45 },
+              { x: 0.35, y: 0.45 },
+            ],
+          ],
+        },
+        {
+          id: 'stairs',
+          name: '楼梯',
+          polygons: [
+            [
+              { x: 0.53, y: 0.17 },
+              { x: 0.68, y: 0.17 },
+              { x: 0.68, y: 0.72 },
+              { x: 0.53, y: 0.72 },
+            ],
+          ],
+        },
+        {
+          id: 'attic',
+          name: '阁楼',
+          polygons: [
+            [
+              { x: 0.68, y: 0 },
+              { x: 1, y: 0 },
+              { x: 1, y: 0.19 },
+              { x: 0.68, y: 0.19 },
+            ],
+          ],
+        },
+        {
+          id: 'kitchen',
+          name: '厨房',
+          polygons: [
+            [
+              { x: 0.68, y: 0.19 },
+              { x: 0.88, y: 0.19 },
+              { x: 0.88, y: 0.45 },
+              { x: 0.68, y: 0.45 },
+            ],
+          ],
+        },
+        {
+          id: 'dining-room',
+          name: '餐厅',
+          polygons: [
+            [
+              { x: 0.68, y: 0.47 },
+              { x: 0.91, y: 0.47 },
+              { x: 0.91, y: 0.72 },
+              { x: 0.68, y: 0.72 },
+            ],
+          ],
+        },
+        {
+          id: 'storage-room',
+          name: '杂物间',
+          polygons: [
+            [
+              { x: 0.65, y: 0.73 },
+              { x: 1, y: 0.73 },
+              { x: 1, y: 1 },
+              { x: 0.65, y: 1 },
+            ],
+          ],
+        },
+        {
+          id: 'right-storage-room',
+          name: '杂物间（右）',
+          polygons: [
+            [
+              { x: 0.91, y: 0.55 },
+              { x: 1, y: 0.55 },
+              { x: 1, y: 0.9 },
+              { x: 0.91, y: 0.9 },
+            ],
+          ],
+        },
+        {
+          id: 'unnamed-passage',
+          name: '过渡区域',
+          showLabel: false,
+          polygons: [
+            [
+              { x: 0.29, y: 0.24 },
+              { x: 0.35, y: 0.24 },
+              { x: 0.35, y: 0.45 },
+              { x: 0.29, y: 0.45 },
+            ],
+          ],
+        },
+      ],
+      points: [],
+    },
     description:
       '$地形更改1$text-fuchsia-600 dark:text-fuchsia-400#：楼梯间通往阁楼的楼梯会随学业等级变化（楼梯→斜坡）。\n$地形更改2$text-fuchsia-600 dark:text-fuchsia-400#：各房间地形均有至少2种预设方案，游戏开始时每个房间会随机选取一种方案并生成。',
     specialImageUrl: '/images/maps/经典之家.png',

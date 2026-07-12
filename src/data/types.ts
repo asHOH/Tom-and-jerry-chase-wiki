@@ -499,6 +499,43 @@ export type Trait = {
 export type mapTypes = '常规地图' | '娱乐地图' | '广场地图';
 export type MapSize = '微型' | '小型' | '中型' | '大型';
 export type studyLevel = '见习学业' | '高级学业' | '特级学业' | '大师学业';
+export type MapPointCategory =
+  | 'teleport'
+  | 'cheese'
+  | 'rocket'
+  | 'mouseHole'
+  | 'pipe'
+  | 'fixture'
+  | 'geometryBarrel'
+  | 'specialMode';
+export type MapCoordinate = { x: number; y: number };
+export type InteractiveMapRoom = {
+  id: string;
+  name: string;
+  showLabel?: boolean;
+  polygons: MapCoordinate[][];
+};
+export type InteractiveMapPoint = {
+  id: string;
+  name: string;
+  category: MapPointCategory;
+  subtype?: string;
+  position: MapCoordinate;
+  description?: string;
+  isRandomCandidate?: boolean;
+  minZoom?: number;
+  relatedEntries?: SingleItem[];
+};
+export type InteractiveMapConfig = {
+  width: number;
+  height: number;
+  tileSize: number;
+  minZoom: number;
+  maxZoom: number;
+  tileUrl: string;
+  rooms: InteractiveMapRoom[];
+  points: InteractiveMapPoint[];
+};
 export type MapDefinition = {
   aliases?: string[];
   mapSkin?: { name: string; imageUrl: string; description: string }[]; //地图换肤变种名
@@ -521,6 +558,7 @@ export type MapDefinition = {
   specialImageUrl?: string;
 
   mapImageUrl?: string;
+  interactiveMap?: InteractiveMapConfig;
 };
 
 export type Map = MapDefinition & { name: string; imageUrl: string };

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import dynamic from 'next/dynamic';
 import { useSnapshot } from 'valtio';
 
 import { useLocalMap } from '@/hooks/useLocalEditEntity';
@@ -8,7 +9,7 @@ import { useMobile } from '@/hooks/useMediaQuery';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
-import { Map as MapType, SingleItem } from '@/data/types';
+import { InteractiveMapConfig, Map as MapType, SingleItem } from '@/data/types';
 import DetailOwnbuffsCard from '@/features/shared/detail-view/DetaidOwnbuffsCard';
 import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
 import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';
@@ -21,6 +22,8 @@ import Image from '@/components/Image';
 import { fixtures, mapsEdit } from '@/data';
 
 import MapAttributesCard from './MapAttributesCard';
+
+const InteractiveMap = dynamic(() => import('../interactive-map/InteractiveMap'), { ssr: false });
 
 export default function MapDetailClient({ map }: { map: MapType }) {
   const { isEditMode } = useEditMode();
@@ -141,7 +144,28 @@ export default function MapDetailClient({ map }: { map: MapType }) {
       ),
     });
   }
-  if (effectiveMap.mapImageUrl) {
+  if (effectiveMap.interactiveMap) {
+    sections.push({
+      title: '交互地图',
+      content: (
+        <Card className='overflow-hidden p-0'>
+          <InteractiveMap
+            config={effectiveMap.interactiveMap}
+            mapName={effectiveMap.name}
+            isEditMode={isEditMode}
+            fallbackImageUrl={effectiveMap.mapImageUrl}
+            onConfigChange={
+              isEditMode && rawLocalMap
+                ? (config: InteractiveMapConfig) => {
+                    rawLocalMap.interactiveMap = config;
+                  }
+                : undefined
+            }
+          />
+        </Card>
+      ),
+    });
+  } else if (effectiveMap.mapImageUrl) {
     sections.push({
       title: '地图预览',
       content: (
