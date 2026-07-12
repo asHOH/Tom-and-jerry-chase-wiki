@@ -1,7 +1,9 @@
+import { revalidateTag } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { Actions, Subjects } from '@/lib/auth/permissions';
 import { requireAbility } from '@/lib/auth/requireAbility';
+import { PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG } from '@/lib/gameData/publicActions';
 import { sendPushNotification } from '@/lib/push';
 import type { Database } from '@/data/database.types';
 
@@ -94,6 +96,7 @@ export async function POST(
         return NextResponse.json({ error: 'Failed to update action status' }, { status: 500 });
       }
 
+      revalidateTag(PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG, 'max');
       return NextResponse.json({ message: 'Action marked as synced', action, action_id: actionId });
     }
 
@@ -104,6 +107,7 @@ export async function POST(
         return NextResponse.json({ error: 'Failed to approve action' }, { status: 500 });
       }
 
+      revalidateTag(PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG, 'max');
       if (recordData?.created_by) {
         await sendPushNotification(recordData.created_by, {
           title: '审核通过',

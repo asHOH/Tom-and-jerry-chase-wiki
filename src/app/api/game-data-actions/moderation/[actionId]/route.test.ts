@@ -1,3 +1,4 @@
+import { revalidateTag } from 'next/cache';
 import type { NextRequest } from 'next/server';
 
 import { requireAbility } from '@/lib/auth/requireAbility';
@@ -15,6 +16,12 @@ jest.mock('next/server', () => ({
   },
 }));
 
+jest.mock('next/cache', () => ({ revalidateTag: jest.fn() }));
+
+jest.mock('@/lib/gameData/publicActions', () => ({
+  PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG: 'public-game-data-actions',
+}));
+
 jest.mock('@/lib/auth/requireAbility', () => ({
   requireAbility: jest.fn(),
 }));
@@ -25,6 +32,7 @@ jest.mock('@/lib/push', () => ({
 
 const requireAbilityMock = jest.mocked(requireAbility);
 const sendPushNotificationMock = jest.mocked(sendPushNotification);
+const revalidateTagMock = jest.mocked(revalidateTag);
 
 type SupabaseMockOptions = {
   currentUserId?: string;
@@ -147,6 +155,7 @@ describe('game data action moderation route', () => {
       ['id', 'action-1'],
       ['status', 'approved'],
     ]);
+    expect(revalidateTagMock).toHaveBeenCalledWith('public-game-data-actions', 'max');
   });
 
   it('keeps regular approve available to reviewers', async () => {
@@ -163,6 +172,7 @@ describe('game data action moderation route', () => {
     expect(supabase.rpc).toHaveBeenCalledWith('approve_game_data_action', {
       p_action_id: 'action-1',
     });
+    expect(revalidateTagMock).toHaveBeenCalledWith('public-game-data-actions', 'max');
   });
 
   it('keeps regular reject available to reviewers', async () => {

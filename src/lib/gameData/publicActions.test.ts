@@ -15,7 +15,7 @@ jest.mock('@/env', () => ({
 }));
 
 jest.mock('@/lib/serverCache', () => ({
-  cached: (_keyParts: string[], fn: () => Promise<unknown>) => fn(),
+  cached: jest.fn((_keyParts: string[], fn: () => Promise<unknown>) => fn()),
 }));
 
 const query = {
@@ -123,6 +123,9 @@ describe('public game data actions', () => {
   });
 
   it('should fetch all public rows without applying them', async () => {
+    const { cached: cachedMock } = jest.requireMock('@/lib/serverCache') as {
+      cached: jest.Mock;
+    };
     const { characters } = jest.requireMock('@/data') as {
       characters: Record<string, { description: string }>;
     };
@@ -131,6 +134,10 @@ describe('public game data actions', () => {
 
     expect(characters.Tom).toEqual({ description: 'old' });
     expect(publicRows.map((row) => row.entity_type)).toEqual(['characters', 'factions', 'unknown']);
+    expect(cachedMock).toHaveBeenCalledWith(['public-game-data-actions'], expect.any(Function), {
+      revalidate: false,
+      tags: ['public-game-data-actions'],
+    });
   });
 
   it('should fetch and apply public rows when explicitly requested', async () => {

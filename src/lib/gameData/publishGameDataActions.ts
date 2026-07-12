@@ -1,5 +1,7 @@
+import { revalidateTag } from 'next/cache';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
+import { PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG } from '@/lib/gameData/publicActions';
 import type { Database, Json } from '@/data/database.types';
 
 export type PublishGameDataActionItem = {
@@ -29,20 +31,30 @@ export const publishGameDataActions = async (
   message?: string
 ): Promise<PublishGameDataActionResult[]> => {
   const allResults: PublishGameDataActionResult[] = [];
+  let hasPublishedPublicAction = false;
 
-  for (const action of actions) {
-    const { data, error } = await supabase.rpc('publish_game_data_actions', {
-      p_entity_type: action.entityType,
-      p_entries: action.entries,
-      ...(message ? { p_message: message } : {}),
-    });
+  try {
+    for (const action of actions) {
+      const { data, error } = await supabase.rpc('publish_game_data_actions', {
+        p_entity_type: action.entityType,
+        p_entries: action.entries,
+        ...(message ? { p_message: message } : {}),
+      });
 
-    if (error) {
-      throw new PublishGameDataActionsError(action.entityType, error);
+      if (error) {
+        throw new PublishGameDataActionsError(action.entityType, error);
+      }
+
+      if (data) {
+        allResults.push(...data);
+        hasPublishedPublicAction ||= data.some(
+          (result) => result.is_public && result.status === 'approved'
+        );
+      }
     }
-
-    if (data) {
-      allResults.push(...data);
+  } finally {
+    if (hasPublishedPublicAction) {
+      revalidateTag(PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG, 'max');
     }
   }
 
