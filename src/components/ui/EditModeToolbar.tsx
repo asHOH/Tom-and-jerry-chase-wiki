@@ -14,6 +14,7 @@ import {
   FolderIcon,
   TrashIcon,
 } from '@/components/icons/CommonIcons';
+import OnboardingTutorial from '@/components/OnboardingTutorial';
 
 export interface EditModeToolbarProps {
   /** Whether there are unsaved changes */
@@ -41,6 +42,8 @@ export interface EditModeToolbarProps {
   onExitEditMode: () => void;
   /** Entity display name for better UX */
   entityName?: string;
+  /** Whether the one-time toolbar tutorial may be shown */
+  isTutorialEnabled?: boolean;
 }
 
 export default function EditModeToolbar({
@@ -53,6 +56,7 @@ export default function EditModeToolbar({
   onPublish,
   onExitEditMode,
   entityName,
+  isTutorialEnabled = false,
 }: EditModeToolbarProps) {
   const ability = useAbility();
   const isAdmin = ability.can('update', 'Article');
@@ -148,6 +152,7 @@ export default function EditModeToolbar({
       <div className='relative rounded-xl bg-white/95 py-3 pr-4 pl-10 shadow-lg ring-1 ring-gray-200 backdrop-blur-sm dark:bg-slate-800/95 dark:ring-slate-700'>
         {/* Drag handle */}
         <div
+          data-tutorial-id='edit-mode-toolbar-drag'
           className='absolute top-0 bottom-0 left-0 flex w-8 cursor-grab items-center justify-center rounded-l-xl transition-colors hover:bg-gray-100/50 active:cursor-grabbing dark:hover:bg-slate-700/50'
           onPointerDown={(e) => dragControls.start(e)}
           style={{ touchAction: 'none' }}
@@ -282,6 +287,7 @@ export default function EditModeToolbar({
           {/* Drafts dropdown */}
           <div className='relative' data-drafts-dropdown-root>
             <button
+              data-tutorial-id='edit-mode-toolbar-drafts'
               type='button'
               onClick={() => setIsDraftsOpen((prev) => !prev)}
               disabled={draftsSummary.length === 0}
@@ -342,6 +348,7 @@ export default function EditModeToolbar({
 
           {/* Preview */}
           <button
+            data-tutorial-id='edit-mode-toolbar-preview'
             type='button'
             onClick={() => setIsPreviewMode(!isPreviewMode)}
             className={cn(
@@ -357,6 +364,7 @@ export default function EditModeToolbar({
 
           {/* Publish */}
           <button
+            data-tutorial-id='edit-mode-toolbar-publish'
             type='button'
             onClick={handlePublish}
             disabled={!isDirty || isPublishing || (showMessageInput && !agreedToLicense)}
@@ -399,7 +407,12 @@ export default function EditModeToolbar({
   );
 
   if (typeof document !== 'undefined') {
-    return createPortal(toolbarContent, document.body);
+    return (
+      <>
+        {createPortal(toolbarContent, document.body)}
+        <OnboardingTutorial tutorial='edit-mode-toolbar' isEnabled={isTutorialEnabled} />
+      </>
+    );
   }
 
   return null;

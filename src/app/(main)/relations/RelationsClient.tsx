@@ -262,6 +262,7 @@ export default function RelationsClient({ description }: RelationsClientProps) {
             actionCount={actionCount}
             draftInfo={draftInfo}
             draftsSummary={draftsSummary}
+            isTutorialEnabled
             isPublishing={isPublishing}
             onDiscard={discardChanges}
             onPublish={publishChanges}

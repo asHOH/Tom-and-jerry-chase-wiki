@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { hasUserSeenCharacterDetailsTutorial } from '@/lib/tutorialUtils';
+import { hasUserSeenTutorial } from '@/lib/tutorialUtils';
 import { CharacterDetailsProps } from '@/lib/types';
 import { useKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
@@ -35,21 +35,27 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
     entityId: currentCharacterId,
     showToast: info,
   });
-  const [showTutorial, setShowTutorial] = useState(false);
+  const [showCharacterTutorial, setShowCharacterTutorial] = useState(false);
+  const [isToolbarTutorialEnabled, setIsToolbarTutorialEnabled] = useState(false);
 
   // Keyboard navigation
   useKeyboardNavigation(currentCharacterId, isEditMode);
 
   useEffect(() => {
-    if (isEditMode && !hasUserSeenCharacterDetailsTutorial()) {
-      setShowTutorial(true);
-    } else {
-      setShowTutorial(false);
+    if (!isEditMode) {
+      setShowCharacterTutorial(false);
+      setIsToolbarTutorialEnabled(false);
+      return;
     }
+
+    const shouldShowCharacterTutorial = !hasUserSeenTutorial('character-edit');
+    setShowCharacterTutorial(shouldShowCharacterTutorial);
+    setIsToolbarTutorialEnabled(!shouldShowCharacterTutorial);
   }, [isEditMode]);
 
   const handleTutorialClose = useCallback(() => {
-    setShowTutorial(false);
+    setShowCharacterTutorial(false);
+    setIsToolbarTutorialEnabled(true);
   }, []);
 
   const handlePublish = useCallback(
@@ -74,8 +80,12 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
         </EditModeContext>
       </div>
 
-      {showTutorial && (
-        <OnboardingTutorial onClose={handleTutorialClose} isEnabled={showTutorial} />
+      {showCharacterTutorial && (
+        <OnboardingTutorial
+          tutorial='character-edit'
+          onClose={handleTutorialClose}
+          isEnabled={showCharacterTutorial}
+        />
       )}
 
       {/* Edit mode toolbar */}
@@ -91,6 +101,7 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
             entityName={currentCharacterId}
             draftInfo={draftInfo}
             draftsSummary={draftsSummary}
+            isTutorialEnabled={isToolbarTutorialEnabled}
           />
         </>
       )}
