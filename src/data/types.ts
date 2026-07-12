@@ -510,7 +510,6 @@ export type MapPointCategory =
   | 'specialMode';
 export type MapCoordinate = { x: number; y: number };
 export type InteractiveMapRoom = {
-  id: string;
   name: string;
   showLabel?: boolean;
   polygons: MapCoordinate[][];

@@ -1,14 +1,17 @@
 import { proxy } from 'valtio';
 
-import type { InteractiveMapConfig, InteractiveMapPoint } from '@/data/types';
+import type { InteractiveMapConfig, InteractiveMapPoint, InteractiveMapRoom } from '@/data/types';
 
 import {
   cloneInteractiveMap,
   coordinateToLatLng,
   DEFAULT_VISIBLE_CATEGORIES,
   getInteractiveMapAssetUrl,
+  getRoomCenter,
+  isMinimapPointVisible,
   isPointVisible,
   latLngToCoordinate,
+  minimapPixelsToCoordinate,
 } from './mapUtils';
 
 const config: InteractiveMapConfig = {
@@ -43,6 +46,55 @@ describe('interactive map utilities', () => {
 
   it('should always show built-in pipe hotspots', () => {
     expect(isPointVisible({ ...point, category: 'pipe' }, 2, new Set(), new Set())).toBe(true);
+  });
+
+  it('should keep selected minimap points visible regardless of minZoom', () => {
+    expect(isMinimapPointVisible(point, DEFAULT_VISIBLE_CATEGORIES, new Set())).toBe(true);
+  });
+
+  it('should apply category and subtype filters to minimap points', () => {
+    const fixturePoint: InteractiveMapPoint = {
+      ...point,
+      category: 'fixture',
+      subtype: '七色花',
+    };
+
+    expect(isMinimapPointVisible(fixturePoint, new Set(['fixture']), new Set())).toBe(true);
+    expect(isMinimapPointVisible(fixturePoint, new Set(), new Set())).toBe(false);
+    expect(isMinimapPointVisible(fixturePoint, new Set(['fixture']), new Set(['七色花']))).toBe(
+      false
+    );
+  });
+
+  it('should calculate a room center from all polygon vertices', () => {
+    const room: InteractiveMapRoom = {
+      name: '房间',
+      polygons: [
+        [
+          { x: 0, y: 0 },
+          { x: 0.4, y: 0 },
+          { x: 0.4, y: 0.2 },
+          { x: 0, y: 0.2 },
+        ],
+        [
+          { x: 0.6, y: 0.6 },
+          { x: 0.8, y: 0.6 },
+          { x: 0.8, y: 0.8 },
+        ],
+      ],
+    };
+
+    const center = getRoomCenter(room);
+    expect(center?.x).toBeCloseTo(3 / 7);
+    expect(center?.y).toBeCloseTo(12 / 35);
+    expect(getRoomCenter({ ...room, polygons: [] })).toBeNull();
+  });
+
+  it('should convert minimap pixels to clamped normalized coordinates', () => {
+    const bounds = { left: 100, top: 50, width: 200, height: 100 };
+
+    expect(minimapPixelsToCoordinate(200, 100, bounds)).toEqual({ x: 0.5, y: 0.5 });
+    expect(minimapPixelsToCoordinate(0, 200, bounds)).toEqual({ x: 0, y: 1 });
   });
 
   it('should clone Valtio-backed map data into editable plain data', () => {

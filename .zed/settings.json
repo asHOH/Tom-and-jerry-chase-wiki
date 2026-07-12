@@ -1,19 +1,54 @@
 {
   "languages": {
     "JavaScript": {
-      "language_servers": ["!oxlint", "!oxfmt", "!biome", "..."]
+      "language_servers": [
+        "!oxlint",
+        "!oxfmt",
+        "!biome",
+        "!vtsls",
+        "!typescript-language-server",
+        "..."
+      ]
     },
     "TypeScript": {
-      "language_servers": ["!oxlint", "!oxfmt", "!biome", "..."]
+      "language_servers": [
+        "!oxlint",
+        "!oxfmt",
+        "!biome",
+        "!vtsls",
+        "!typescript-language-server",
+        "..."
+      ]
     },
     "TSX": {
-      "language_servers": ["!oxlint", "!oxfmt", "!biome", "..."]
+      "language_servers": [
+        "!oxlint",
+        "!oxfmt",
+        "!biome",
+        "!vtsls",
+        "!typescript-language-server",
+        "..."
+      ]
     },
     "JSON": {
-      "language_servers": ["!oxlint", "!oxfmt", "!biome", "..."]
+      "language_servers": [
+        "!oxlint",
+        "!oxfmt",
+        "!biome",
+        "!vtsls",
+        "!typescript-language-server",
+        "..."
+      ]
     },
     "JSONC": {
-      "language_servers": ["!oxlint", "!oxfmt", "!biome", "..."]
+      "language_servers": [
+        "!oxlint",
+        "!oxfmt",
+        "!biome",
+        "!vtsls",
+        "!typescript-language-server",
+        "..."
+      ]
     }
   }
 }

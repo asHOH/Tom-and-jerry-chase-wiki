@@ -36,8 +36,7 @@ const mapDefinitions: Record<string, MapDefinition> = {
       previewUrl: '/images/map-tiles/classic-home-i/preview.webp',
       rooms: [
         {
-          id: 'yard',
-          name: '院子',
+          name: '庭院',
           polygons: [
             [
               { x: 0, y: 0.38 },
@@ -48,7 +47,6 @@ const mapDefinitions: Record<string, MapDefinition> = {
           ],
         },
         {
-          id: 'living-room',
           name: '客厅',
           polygons: [
             [
@@ -60,7 +58,6 @@ const mapDefinitions: Record<string, MapDefinition> = {
           ],
         },
         {
-          id: 'bedroom',
           name: '卧室',
           polygons: [
             [
@@ -72,8 +69,7 @@ const mapDefinitions: Record<string, MapDefinition> = {
           ],
         },
         {
-          id: 'stairs',
-          name: '楼梯',
+          name: '楼梯间',
           polygons: [
             [
               { x: 0.53, y: 0.17 },
@@ -84,7 +80,6 @@ const mapDefinitions: Record<string, MapDefinition> = {
           ],
         },
         {
-          id: 'attic',
           name: '阁楼',
           polygons: [
             [
@@ -96,7 +91,6 @@ const mapDefinitions: Record<string, MapDefinition> = {
           ],
         },
         {
-          id: 'kitchen',
           name: '厨房',
           polygons: [
             [
@@ -108,7 +102,6 @@ const mapDefinitions: Record<string, MapDefinition> = {
           ],
         },
         {
-          id: 'dining-room',
           name: '餐厅',
           polygons: [
             [
@@ -120,7 +113,6 @@ const mapDefinitions: Record<string, MapDefinition> = {
           ],
         },
         {
-          id: 'storage-room',
           name: '杂物间',
           polygons: [
             [
@@ -132,8 +124,8 @@ const mapDefinitions: Record<string, MapDefinition> = {
           ],
         },
         {
-          id: 'right-storage-room',
           name: '杂物间（右）',
+          showLabel: false,
           polygons: [
             [
               { x: 0.91, y: 0.55 },
@@ -144,7 +136,6 @@ const mapDefinitions: Record<string, MapDefinition> = {
           ],
         },
         {
-          id: 'unnamed-passage',
           name: '过渡区域',
           showLabel: false,
           polygons: [

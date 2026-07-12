@@ -1,6 +1,7 @@
 import type {
   InteractiveMapConfig,
   InteractiveMapPoint,
+  InteractiveMapRoom,
   MapCoordinate,
   MapPointCategory,
 } from '@/data/types';
@@ -70,6 +71,35 @@ export const isPointVisible = (
   if (!visibleCategories.has(point.category)) return false;
   return !point.subtype || !hiddenSubtypes.has(point.subtype);
 };
+
+export const isMinimapPointVisible = (
+  point: InteractiveMapPoint,
+  visibleCategories: ReadonlySet<MapPointCategory>,
+  hiddenSubtypes: ReadonlySet<string>
+) => {
+  if (ALWAYS_VISIBLE_CATEGORIES.has(point.category)) return true;
+  if (!visibleCategories.has(point.category)) return false;
+  return !point.subtype || !hiddenSubtypes.has(point.subtype);
+};
+
+export const getRoomCenter = (room: InteractiveMapRoom): MapCoordinate | null => {
+  const coordinates = room.polygons.flat();
+  if (coordinates.length === 0) return null;
+
+  return {
+    x: coordinates.reduce((sum, point) => sum + point.x, 0) / coordinates.length,
+    y: coordinates.reduce((sum, point) => sum + point.y, 0) / coordinates.length,
+  };
+};
+
+export const minimapPixelsToCoordinate = (
+  clientX: number,
+  clientY: number,
+  bounds: Pick<DOMRect, 'left' | 'top' | 'width' | 'height'>
+): MapCoordinate => ({
+  x: Math.min(1, Math.max(0, (clientX - bounds.left) / bounds.width)),
+  y: Math.min(1, Math.max(0, (clientY - bounds.top) / bounds.height)),
+});
 
 export const cloneInteractiveMap = (config: InteractiveMapConfig): InteractiveMapConfig =>
   JSON.parse(JSON.stringify(config)) as InteractiveMapConfig;

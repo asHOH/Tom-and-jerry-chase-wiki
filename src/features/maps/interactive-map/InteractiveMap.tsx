@@ -1,6 +1,14 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+  type MouseEvent as ReactMouseEvent,
+} from 'react';
 import L, {
   type Coords,
   type DoneCallback,
@@ -12,7 +20,6 @@ import {
   MapContainer,
   Marker,
   Polygon,
-  Rectangle,
   Tooltip,
   useMap,
   useMapEvents,
@@ -21,7 +28,7 @@ import {
 import type {
   InteractiveMapConfig,
   InteractiveMapPoint,
-  InteractiveMapRoom,
+  MapCoordinate,
   MapPointCategory,
   SingleItemTypeName,
 } from '@/data/types';
@@ -35,9 +42,12 @@ import {
   DEFAULT_VISIBLE_CATEGORIES,
   getInteractiveMapAssetUrl,
   getMapBounds,
+  getRoomCenter,
+  isMinimapPointVisible,
   isPointVisible,
   latLngToCoordinate,
   MAP_CATEGORY_LABELS,
+  minimapPixelsToCoordinate,
 } from './mapUtils';
 
 import 'leaflet/dist/leaflet.css';
@@ -164,14 +174,12 @@ function MainMapEvents({
   editorMode,
   onMapClick,
   onZoom,
-  onViewChange,
   onReady,
 }: {
   config: InteractiveMapConfig;
   editorMode: EditorMode;
   onMapClick: (event: LeafletMouseEvent) => void;
   onZoom: (zoom: number) => void;
-  onViewChange: (bounds: L.LatLngBounds) => void;
   onReady: (map: L.Map) => void;
 }) {
   const map = useMap();
@@ -180,10 +188,8 @@ function MainMapEvents({
     click: (event) => {
       if (editorMode !== 'browse') onMapClick(event);
     },
-    move: () => onViewChange(map.getBounds()),
     zoom: () => {
       onZoom(map.getZoom());
-      onViewChange(map.getBounds());
     },
   });
 
@@ -198,8 +204,7 @@ function MainMapEvents({
       { animate: false, padding: [8, 8] }
     );
     onZoom(map.getZoom());
-    onViewChange(map.getBounds());
-  }, [height, map, maxZoom, onReady, onViewChange, onZoom, width]);
+  }, [height, map, maxZoom, onReady, onZoom, width]);
   return null;
 }
 
@@ -220,34 +225,222 @@ function LocatePoint({
   return null;
 }
 
-function MinimapViewport({
-  config,
-  isExpanded,
-}: {
+type MinimapDiagramProps = {
   config: InteractiveMapConfig;
-  isExpanded: boolean;
-}) {
-  const map = useMap();
+  previewUrl?: string | undefined;
+  visibleCategories: ReadonlySet<MapPointCategory>;
+  hiddenSubtypes: ReadonlySet<string>;
+  interactive: boolean;
+  onNavigate?: ((coordinate: MapCoordinate) => void) | undefined;
+};
 
-  useEffect(() => {
-    const fitMap = () => {
-      map.invalidateSize({ animate: false });
-      map.fitBounds(getMapBounds(config), { animate: false, padding: [4, 4] });
-    };
-    fitMap();
-    const timeoutId = window.setTimeout(fitMap, 180);
-    return () => window.clearTimeout(timeoutId);
-  }, [config, isExpanded, map]);
+function MinimapDiagram({
+  config,
+  previewUrl,
+  visibleCategories,
+  hiddenSubtypes,
+  interactive,
+  onNavigate,
+}: MinimapDiagramProps) {
+  const handleClick = (event: ReactMouseEvent<HTMLDivElement>) => {
+    if (!interactive || !onNavigate) return;
+    event.stopPropagation();
+    onNavigate(
+      minimapPixelsToCoordinate(
+        event.clientX,
+        event.clientY,
+        event.currentTarget.getBoundingClientRect()
+      )
+    );
+  };
 
-  return null;
+  const handlePointClick = (event: ReactMouseEvent<HTMLButtonElement>, position: MapCoordinate) => {
+    if (!interactive || !onNavigate) return;
+    event.stopPropagation();
+    onNavigate(position);
+  };
+
+  return (
+    <div
+      className={`relative h-full w-full overflow-hidden bg-slate-950/50 ${interactive ? 'cursor-crosshair' : ''}`}
+      role='group'
+      aria-label='地图房间示意图'
+      onClick={handleClick}
+    >
+      {previewUrl && (
+        <div className='pointer-events-none absolute inset-0'>
+          <Image
+            src={previewUrl}
+            alt=''
+            fill
+            sizes='(max-width: 640px) 176px, 256px'
+            className='object-fill opacity-65'
+            aria-hidden='true'
+          />
+        </div>
+      )}
+      <div className='pointer-events-none absolute inset-0 bg-slate-950/35' aria-hidden='true' />
+      {config.rooms.map((room) => (
+        <div key={room.name} className='pointer-events-none absolute inset-0'>
+          {room.polygons.map((polygon, index) => {
+            const clipPath = `polygon(${polygon.map((point) => `${point.x * 100}% ${point.y * 100}%`).join(', ')})`;
+
+            return (
+              <div
+                key={`${room.name}-${index}`}
+                className='absolute inset-0 bg-slate-800/45 drop-shadow-[0_0_2px_rgba(255,255,255,0.75)]'
+                style={{ clipPath }}
+                aria-hidden='true'
+              />
+            );
+          })}
+          {room.showLabel !== false &&
+            (() => {
+              const center = getRoomCenter(room);
+              if (!center) return null;
+
+              const labelStyle: CSSProperties = {
+                direction: 'ltr',
+                left: `${center.x * 100}%`,
+                top: `${center.y * 100}%`,
+                writingMode: 'horizontal-tb',
+              };
+
+              return (
+                <span
+                  className='absolute -translate-x-1/2 -translate-y-1/2 text-center text-[10px] leading-none font-normal whitespace-nowrap text-white opacity-100 sm:text-xs'
+                  style={labelStyle}
+                  dir='ltr'
+                >
+                  {room.name}
+                </span>
+              );
+            })()}
+        </div>
+      ))}
+      {config.points
+        .filter((point) => isMinimapPointVisible(point, visibleCategories, hiddenSubtypes))
+        .map((point) => {
+          const source = CATEGORY_ICONS[point.category];
+          const pointStyle: CSSProperties = {
+            left: `${point.position.x * 100}%`,
+            top: `${point.position.y * 100}%`,
+          };
+          const pointContent = source ? (
+            <Image
+              src={encodeURI(source)}
+              alt=''
+              width={24}
+              height={24}
+              className='size-5 object-contain drop-shadow-md sm:size-6'
+              aria-hidden='true'
+            />
+          ) : point.category === 'teleport' ? (
+            <span className='block size-4 rounded-full border-2 border-violet-200 bg-violet-600/90 shadow sm:size-5' />
+          ) : (
+            <span className='block size-3 rounded-full border border-cyan-50 bg-cyan-400 shadow sm:size-4' />
+          );
+
+          const pointChildren = (
+            <>
+              {point.isRandomCandidate && (
+                <span className='absolute inset-1/2 block size-7 -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-yellow-300 sm:size-8' />
+              )}
+              {pointContent}
+            </>
+          );
+          const pointClassName = `absolute -translate-x-1/2 -translate-y-1/2 ${interactive ? 'cursor-pointer appearance-none border-0 bg-transparent p-0' : 'pointer-events-none'}`;
+
+          return interactive ? (
+            <button
+              type='button'
+              key={point.id}
+              className={pointClassName}
+              style={pointStyle}
+              aria-label={point.name}
+              onClick={(event) => handlePointClick(event, point.position)}
+            >
+              {pointChildren}
+            </button>
+          ) : (
+            <span key={point.id} className={pointClassName} style={pointStyle} aria-hidden='true'>
+              {pointChildren}
+            </span>
+          );
+        })}
+    </div>
+  );
 }
 
-const boundsCenter = (room: InteractiveMapRoom, config: InteractiveMapConfig) => {
-  const coordinates = room.polygons.flat();
-  const x = coordinates.reduce((sum, point) => sum + point.x, 0) / coordinates.length;
-  const y = coordinates.reduce((sum, point) => sum + point.y, 0) / coordinates.length;
-  return coordinateToLatLng({ x, y }, config);
+type MinimapProps = Omit<MinimapDiagramProps, 'interactive'> & {
+  isExpanded: boolean;
+  onExpand: () => void;
+  onCollapse: () => void;
+  onNavigate: (coordinate: MapCoordinate) => void;
 };
+
+function Minimap({
+  config,
+  previewUrl,
+  visibleCategories,
+  hiddenSubtypes,
+  isExpanded,
+  onExpand,
+  onCollapse,
+  onNavigate,
+}: MinimapProps) {
+  const minimapRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isExpanded) return;
+
+    const handlePointerDown = (event: PointerEvent) => {
+      const target = event.target;
+      if (!(target instanceof Node) || !minimapRef.current?.contains(target)) onCollapse();
+    };
+
+    document.addEventListener('pointerdown', handlePointerDown, true);
+    return () => document.removeEventListener('pointerdown', handlePointerDown, true);
+  }, [isExpanded, onCollapse]);
+
+  return (
+    <div
+      ref={minimapRef}
+      className={`absolute top-3 left-12 z-500 overflow-hidden rounded-lg border-2 border-white/70 bg-slate-950/50 shadow-xl transition-[width,height] ${isExpanded ? 'h-48 w-72 sm:h-64 sm:w-96' : 'h-28 w-44 sm:h-40 sm:w-64'}`}
+    >
+      {isExpanded ? (
+        <div className='relative h-full w-full'>
+          <MinimapDiagram
+            config={config}
+            previewUrl={previewUrl}
+            visibleCategories={visibleCategories}
+            hiddenSubtypes={hiddenSubtypes}
+            interactive
+            onNavigate={onNavigate}
+          />
+        </div>
+      ) : (
+        <button
+          type='button'
+          className='relative h-full w-full text-left'
+          aria-label='展开小地图'
+          onClick={(event) => {
+            event.stopPropagation();
+            onExpand();
+          }}
+        >
+          <MinimapDiagram
+            config={config}
+            previewUrl={previewUrl}
+            visibleCategories={visibleCategories}
+            hiddenSubtypes={hiddenSubtypes}
+            interactive={false}
+          />
+        </button>
+      )}
+    </div>
+  );
+}
 
 export default function InteractiveMap({
   config: incomingConfig,
@@ -260,7 +453,6 @@ export default function InteractiveMap({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isMinimapExpanded, setIsMinimapExpanded] = useState(false);
   const [zoom, setZoom] = useState(incomingConfig.minZoom);
-  const [viewBounds, setViewBounds] = useState<L.LatLngBounds | null>(null);
   const [selectedPointId, setSelectedPointId] = useState<string | null>(null);
   const [tileFailed, setTileFailed] = useState(false);
   const [useFallback, setUseFallback] = useState(false);
@@ -295,17 +487,6 @@ export default function InteractiveMap({
       minZoom: config.minZoom,
       maxNativeZoom: config.maxZoom,
       maxZoom: config.maxZoom + 2,
-      bounds: mapBounds,
-      noWrap: true,
-    }),
-    [config.maxZoom, config.minZoom, config.tileSize, mapBounds]
-  );
-  const minimapTileOptions = useMemo<TileLayerOptions>(
-    () => ({
-      tileSize: config.tileSize,
-      minZoom: config.minZoom - 4,
-      minNativeZoom: config.minZoom,
-      maxNativeZoom: config.maxZoom,
       bounds: mapBounds,
       noWrap: true,
     }),
@@ -438,7 +619,6 @@ export default function InteractiveMap({
     if (existingRoom) existingRoom.polygons.push(polygon);
     else {
       next.rooms.push({
-        id: `${roomName.trim()}-${Date.now().toString(36)}`,
         name: roomName.trim(),
         polygons: [polygon],
       });
@@ -466,6 +646,17 @@ export default function InteractiveMap({
   const subtypes = useMemo(
     () => [...new Set(config.points.map((point) => point.subtype).filter(Boolean) as string[])],
     [config.points]
+  );
+
+  const navigateFromMinimap = useCallback(
+    (coordinate: MapCoordinate) => {
+      const map = mainMapRef.current;
+      if (!map) return;
+
+      const targetZoom = Math.min(config.maxZoom + 2, Math.max(map.getZoom(), config.minZoom + 2));
+      map.flyTo(coordinateToLatLng(coordinate, config), targetZoom, { duration: 0.5 });
+    },
+    [config]
   );
 
   if (useFallback && fallbackImageUrl) {
@@ -518,26 +709,25 @@ export default function InteractiveMap({
           editorMode={editorMode}
           onMapClick={handleMapClick}
           onZoom={setZoom}
-          onViewChange={setViewBounds}
           onReady={handleMapReady}
         />
         <LocatePoint point={selectedPoint} config={config} />
         {config.rooms.flatMap((room) =>
           room.polygons.map((polygon, index) => (
             <Polygon
-              key={`${room.id}-${index}`}
+              key={`${room.name}-${index}`}
               positions={polygon.map((point) => coordinateToLatLng(point, config))}
               pathOptions={{
-                color: selectedRoomId === room.id ? '#22d3ee' : '#f8fafc',
-                fillOpacity: selectedRoomId === room.id ? 0.12 : 0.015,
+                color: selectedRoomId === room.name ? '#22d3ee' : '#f8fafc',
+                fillOpacity: selectedRoomId === room.name ? 0.12 : 0.015,
                 opacity: isEditMode ? 0.65 : 0,
-                weight: selectedRoomId === room.id ? 3 : 1,
+                weight: selectedRoomId === room.name ? 3 : 1,
               }}
               eventHandlers={{
                 click: (event) => {
                   if (!isEditMode) return;
                   L.DomEvent.stopPropagation(event.originalEvent);
-                  setSelectedRoomId(room.id);
+                  setSelectedRoomId(room.name);
                 },
               }}
             >
@@ -583,7 +773,7 @@ export default function InteractiveMap({
         {isEditMode &&
           selectedRoomId &&
           config.rooms
-            .find((room) => room.id === selectedRoomId)
+            .find((room) => room.name === selectedRoomId)
             ?.polygons.flatMap((polygon, polygonIndex) =>
               polygon.map((point, pointIndex) => (
                 <Marker
@@ -595,7 +785,9 @@ export default function InteractiveMap({
                     dragend: (event) => {
                       const marker = event.target as L.Marker;
                       const next = cloneInteractiveMap(config);
-                      const room = next.rooms.find((candidate) => candidate.id === selectedRoomId);
+                      const room = next.rooms.find(
+                        (candidate) => candidate.name === selectedRoomId
+                      );
                       const vertex = room?.polygons[polygonIndex]?.[pointIndex];
                       if (!vertex) return;
                       Object.assign(
@@ -610,55 +802,16 @@ export default function InteractiveMap({
             )}
       </MapContainer>
 
-      <div
-        className={`absolute top-3 left-12 z-500 overflow-hidden rounded-lg border-2 border-white/80 bg-slate-900 shadow-xl transition-[width,height] ${isMinimapExpanded ? 'h-48 w-72' : 'h-28 w-40'}`}
-        onDoubleClick={() => setIsMinimapExpanded((value) => !value)}
-        title='双击展开或收起小地图'
-      >
-        <MapContainer
-          crs={L.CRS.Simple}
-          bounds={mapBounds}
-          minZoom={config.minZoom - 4}
-          maxZoom={config.minZoom}
-          zoomSnap={0}
-          zoomControl={false}
-          attributionControl={false}
-          dragging={false}
-          doubleClickZoom={false}
-          scrollWheelZoom={false}
-          className='h-full w-full bg-slate-950'
-        >
-          <PictureTileLayer
-            url={webpTileUrl}
-            options={minimapTileOptions}
-            onTileError={handleMapTileError}
-          />
-          {previewUrl && (
-            <ImageOverlay url={previewUrl} bounds={mapBounds} pane='tilePane' zIndex={0} />
-          )}
-          <MinimapViewport config={config} isExpanded={isMinimapExpanded} />
-          {config.rooms.flatMap((room) =>
-            room.polygons.map((polygon, index) => (
-              <Polygon
-                key={`${room.id}-mini-${index}`}
-                positions={polygon.map((point) => coordinateToLatLng(point, config))}
-                pathOptions={{ color: '#f8fafc', fillOpacity: 0.05, weight: 1 }}
-                eventHandlers={{
-                  click: (event) => {
-                    L.DomEvent.stopPropagation(event.originalEvent);
-                    mainMapRef.current?.flyTo(boundsCenter(room, config), 3, { duration: 0.5 });
-                  },
-                }}
-              >
-                {room.showLabel !== false && <Tooltip permanent>{room.name}</Tooltip>}
-              </Polygon>
-            ))
-          )}
-          {viewBounds && (
-            <Rectangle bounds={viewBounds} pathOptions={{ color: '#22d3ee', weight: 2 }} />
-          )}
-        </MapContainer>
-      </div>
+      <Minimap
+        config={config}
+        previewUrl={previewUrl}
+        visibleCategories={visibleCategories}
+        hiddenSubtypes={hiddenSubtypes}
+        isExpanded={isMinimapExpanded}
+        onExpand={() => setIsMinimapExpanded(true)}
+        onCollapse={() => setIsMinimapExpanded(false)}
+        onNavigate={navigateFromMinimap}
+      />
 
       <div className='absolute top-3 right-3 z-500 flex gap-2'>
         <button
@@ -729,14 +882,14 @@ export default function InteractiveMap({
           onDeleteRoom={() => {
             if (!selectedRoomId) return;
             const next = cloneInteractiveMap(config);
-            next.rooms = next.rooms.filter((room) => room.id !== selectedRoomId);
+            next.rooms = next.rooms.filter((room) => room.name !== selectedRoomId);
             updateConfig(next);
             setSelectedRoomId(null);
           }}
           onMoveRoom={(x, y) => {
             if (!selectedRoomId) return;
             const next = cloneInteractiveMap(config);
-            const room = next.rooms.find((candidate) => candidate.id === selectedRoomId);
+            const room = next.rooms.find((candidate) => candidate.name === selectedRoomId);
             if (!room) return;
             room.polygons.forEach((polygon) =>
               polygon.forEach((point) => {
@@ -808,13 +961,17 @@ function FilterPanel({
       <div className='space-y-2 border-t border-white/10 p-3'>
         {(Object.keys(MAP_CATEGORY_LABELS) as MapPointCategory[]).map((category) => {
           const isAlwaysVisible = ALWAYS_VISIBLE_CATEGORIES.has(category);
+          const isDefaultVisible = DEFAULT_VISIBLE_CATEGORIES.has(category);
           const hasSupportedPoint = config.points.some((point) => point.category === category);
           return (
             <label key={category} className='flex items-center gap-2'>
               <input
                 type='checkbox'
                 checked={isAlwaysVisible || visibleCategories.has(category)}
-                disabled={isAlwaysVisible || (!hasSupportedPoint && category !== 'teleport')}
+                disabled={
+                  isAlwaysVisible ||
+                  (!hasSupportedPoint && !isDefaultVisible && category !== 'teleport')
+                }
                 onChange={() => onToggleCategory(category)}
               />
               <span>{MAP_CATEGORY_LABELS[category]}</span>
