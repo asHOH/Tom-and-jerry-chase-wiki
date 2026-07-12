@@ -31,6 +31,8 @@ import {
 import { normalizePublicActionEntries } from './actionEntries';
 import type { PublicActionRow } from './publicActionsTypes';
 
+export const PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG = 'public-game-data-actions';
+
 const appliedPublicActionIds = new Set<string>();
 
 const serverPublicActionTargetRegistry: PublicActionTargetRegistry = {
@@ -151,7 +153,7 @@ export async function fetchPublicGameDataActions(): Promise<PublicActionRow[]> {
   }
 
   const actions = await cached(
-    ['public-game-data-actions'],
+    [PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG],
     async () => {
       const { data, error } = await supabaseServerPublic
         .from('game_data_actions')
@@ -168,8 +170,10 @@ export async function fetchPublicGameDataActions(): Promise<PublicActionRow[]> {
       return data ?? [];
     },
     {
-      revalidate: 600,
-      tags: ['public-game-data-actions'],
+      // Public actions change only through server mutations, which explicitly
+      // revalidate this tag. Avoid periodic database reads on public page requests.
+      revalidate: false,
+      tags: [PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG],
     }
   );
 
