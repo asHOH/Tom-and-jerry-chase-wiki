@@ -2,9 +2,8 @@
 
 import { usePathname } from 'next/navigation';
 
-import ButtonLink from '@/components/ui/ButtonLink';
+import { cn, getActionButtonClasses } from '@/lib/design';
 import { ChatBubbleIcon } from '@/components/icons/CommonIcons';
-import Link from '@/components/Link';
 
 export type DiscussButtonProps = {
   className?: string;
@@ -20,27 +19,32 @@ export default function DiscussButton({ className, compact = false }: DiscussBut
 
   if (compact) {
     return (
-      <Link
+      <a
         href={discussUrl}
         aria-label={title}
         title={title}
-        className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md border-none bg-teal-100 text-xs font-semibold text-teal-700 transition-colors hover:bg-teal-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-500 dark:bg-teal-900/80 dark:text-teal-200 dark:hover:bg-teal-800/90 ${className ?? ''}`}
+        className={cn(
+          'inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md border-none bg-teal-100 text-xs font-semibold text-teal-700 transition-colors hover:bg-teal-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-500 dark:bg-teal-900/80 dark:text-teal-200 dark:hover:bg-teal-800/90',
+          className
+        )}
       >
         <ChatBubbleIcon className='h-3.5 w-3.5' aria-hidden='true' />
-      </Link>
+      </a>
     );
   }
 
   return (
-    <ButtonLink
-      variant='primary'
-      size='sm'
-      className={`bg-teal-600 text-white hover:bg-teal-700 dark:bg-teal-700 dark:hover:bg-teal-600 ${className ?? ''}`}
+    <a
       href={discussUrl}
-      leadingIcon={<ChatBubbleIcon className='h-4 w-4' aria-hidden='true' />}
+      className={cn(
+        getActionButtonClasses('primary', 'sm'),
+        'bg-teal-600 text-white hover:bg-teal-700 dark:bg-teal-700 dark:hover:bg-teal-600',
+        className
+      )}
       title={title}
     >
+      <ChatBubbleIcon className='h-4 w-4' aria-hidden='true' />
       讨论
-    </ButtonLink>
+    </a>
   );
 }
