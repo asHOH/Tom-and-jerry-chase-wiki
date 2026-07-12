@@ -1273,15 +1273,7 @@ export const entityDefinitions = {
     description:
       '魔术师可对其下达救援、搬奶酪、推奶酪、拾取、投掷、治疗或跟随指令。兔子继承魔术师的部分效果。详见{魔术师}技能描述。',
     create: '通过魔术师-兔子先生召唤.',
-    entityAttributesAsCharacter: {
-      type: 'mouse',
-      factionBelong: 'mouse',
-      maxHp: 110,
-      hpRecovery: 2.5,
-      moveSpeed: 820,
-      jumpHeight: 550,
-      attackBoost: 20,
-    },
+    characterRoleName: '兔子先生',
   },
   兔子大表哥: {
     entitytag: ['NPC', '巡逻', '遥控'],
@@ -1293,15 +1285,7 @@ export const entityDefinitions = {
     description:
       '魔术师可对其下达举火箭、指卧撑或保镖指令。兔表哥被卡牌命中时会储存该效果，并在通过技能出拳命中猫咪时对其附加。详见{魔术师}技能描述。',
     create: '通过魔术师-兔子大表哥召唤。',
-    entityAttributesAsCharacter: {
-      type: 'cat',
-      factionBelong: 'mouse',
-      hpRecovery: 3,
-      moveSpeed: 820,
-      jumpHeight: 550,
-      attackBoost: 0,
-      clawKnifeRange: 300,
-    },
+    characterRoleName: '兔子大表哥',
   },
   斜塔: {
     entitytag: ['阻挡', '硬控', '群体'],
@@ -1831,7 +1815,7 @@ export const entityDefinitions = {
         imageUrl: '/images/mouseSkills/霜月2-乾坤袋.png',
       },
     ],
-    entityAttributesAsCharacter: { type: 'cat', factionBelong: 'mouse', maxHp: 2 },
+    characterRoleName: '胖呆呆',
   },
   柠檬: {
     entitytag: ['抛掷', '命中', '伤害'],
@@ -2133,7 +2117,7 @@ export const entityDefinitions = {
         skillLevels: [],
       },
     ],
-    entityAttributesAsCharacter: { type: 'special', factionBelong: 'mouse', maxHp: '一击即溃' },
+    characterRoleName: '机器鼠',
   },
   激光: {
     entitytag: '抛掷',
@@ -2187,14 +2171,7 @@ export const entityDefinitions = {
     description:
       '挥动强壮的拳头，对敌人造成强烈的击飞效果，若敌方老鼠处于虚弱状态，将直接击飞到附近的火箭。\n属于猫方多元角色。可使用爪刀键进行普通攻击，CD为2秒。\n变身期间无法拾取道具，无法进行推奶酪、救援、使用阁楼-庭院管道的交互。',
     create: '猫咪在多元乱斗中拾取变身星后有概率变身，Hp归零后解除变身。',
-    entityAttributesAsCharacter: {
-      type: 'cat',
-      factionBelong: 'cat',
-      hpRecovery: 3.8,
-      clawKnifeRange: 320,
-      clawKnifeCdHit: 2,
-      clawKnifeCdUnhit: 2,
-    },
+    characterRoleName: '肌肉汤姆',
     skills: [
       {
         name: '硬汉猛击',
@@ -2226,13 +2203,7 @@ export const entityDefinitions = {
     description:
       '扔出哑铃，可对敌方造成短暂眩晕，在哑铃眩晕期间肌肉杰瑞的普通攻击命中将触发“摔打汤姆”效果。\n属于鼠方多元角色。可使用道具键进行普通攻击，CD为2秒，命中待推入的奶酪将立即将其推入一部分，命中{火箭}将积累1/3摧毁进度，摧毁进度满后将该火箭摧毁。\n变身期间无法拾取道具，无法进行推奶酪、救援、使用阁楼-庭院管道的交互。',
     create: '老鼠在多元乱斗中拾取变身星后有概率变身，Hp归零后解除变身。',
-    entityAttributesAsCharacter: {
-      type: 'mouse',
-      factionBelong: 'mouse',
-      hpRecovery: 0,
-      clawKnifeCdHit: 2,
-      clawKnifeCdUnhit: 2,
-    },
+    characterRoleName: '肌肉杰瑞',
     skills: [
       {
         name: '哑铃投掷',
@@ -2264,13 +2235,7 @@ export const entityDefinitions = {
     description:
       '甩动鼻子发射水弹，放大敌方和友方。\n属于鼠方多元角色。可使用道具键进行普通攻击，CD为2秒，命中待推入的奶酪将立即将其推入一部分，命中{火箭}将积累1/3摧毁进度，摧毁进度满后将该火箭摧毁。\n变身期间无法拾取道具，无法进行推奶酪、救援、使用阁楼-庭院管道的交互。',
     create: '局外解锁后，老鼠在多元乱斗中拾取变身星后有概率变身，Hp归零后解除变身。',
-    entityAttributesAsCharacter: {
-      type: 'mouse',
-      factionBelong: 'mouse',
-      hpRecovery: 0,
-      clawKnifeCdHit: 2,
-      clawKnifeCdUnhit: 2,
-    },
+    characterRoleName: '小象',
     skills: [
       {
         name: '水弹攻击',
@@ -2300,14 +2265,7 @@ export const entityDefinitions = {
     description:
       '发射激光，变小敌方和友方。\n属于猫方多元角色。可使用爪刀键进行普通攻击，CD为2秒。\n变身期间无法拾取道具，无法进行推奶酪、救援、使用阁楼-庭院管道的交互。',
     create: '局外解锁后，猫咪在多元乱斗中拾取变身星后有概率变身，Hp归零后解除变身。',
-    entityAttributesAsCharacter: {
-      type: 'cat',
-      factionBelong: 'cat',
-      hpRecovery: 0,
-      clawKnifeRange: 320,
-      clawKnifeCdHit: 2,
-      clawKnifeCdUnhit: 2,
-    },
+    characterRoleName: '机甲汤姆',
     skills: [
       {
         name: '激光射击',
@@ -2337,13 +2295,7 @@ export const entityDefinitions = {
     description:
       '自己逐渐膨胀后爆炸，对附近玩家造成眩晕，并掉落{大大胡萝卜}。自身解除变身时失去变身期间获得的部分星星积分，同时掉落3个{大大胡萝卜}。\n属于中立多元角色。可使用爪刀键进行普通攻击，CD为2秒，正常命中敌方角色时跳出2个{大大胡萝卜}，命中处于虚弱或因自身技能眩晕的角色时，将“啰嗦”对方，夺取其一定星星积分（该效果对每名角色有单独内置CD）。\n变身期间无法拾取道具，无法进行推奶酪、救援、使用阁楼-庭院管道的交互。\n该角色为联动角色，不计入“伙伴星元力”。',
     create: '局外解锁后，全体角色在多元乱斗中拾取变身星后有概率变身，Hp归零后解除变身。',
-    entityAttributesAsCharacter: {
-      type: 'cat',
-      factionBelong: 'other',
-      hpRecovery: 0,
-      clawKnifeCdHit: 2,
-      clawKnifeCdUnhit: 2,
-    },
+    characterRoleName: '兔霸哥',
     skills: [
       {
         name: '兔霸哥的霸道',
@@ -2373,13 +2325,7 @@ export const entityDefinitions = {
     description:
       '抓住坏人，扔出去。当游戏存在“正气守护”斯派克时，攻击别人会被视为“违纪”。斯派克可将违纪的敌方抓入狗窝。斯派克不会被{打开的老鼠夹}夹住。\n属于中立多元角色。可使用爪刀键进行普通攻击，CD为2秒。\n变身期间无法拾取道具，无法进行推奶酪、救援、使用阁楼-庭院管道的交互。',
     create: '局外解锁后，全体角色在多元乱斗中拾取变身星后有概率变身，Hp归零后解除变身。',
-    entityAttributesAsCharacter: {
-      type: 'cat',
-      factionBelong: 'other',
-      hpRecovery: 3.8,
-      clawKnifeCdHit: 2,
-      clawKnifeCdUnhit: 2,
-    },
+    characterRoleName: '\\\"正气守护\\\"斯派克',
     skills: [
       {
         name: '正气守护',
@@ -2411,13 +2357,7 @@ export const entityDefinitions = {
     description:
       '看，有个柠檬！套住敌人形成柠檬表情。\n属于中立多元角色。可使用爪刀键进行普通攻击，CD为2秒，该角色普通攻击改为投掷柠檬，可拖动爪刀键选择投掷方向，柠檬命中敌方造成伤害和{反向}，并累计1层负面效果，满3层后使敌方被柠檬套中（可受到所有人攻击，无法使用技能，攻击变弱，受到的伤害增加，柠檬表情随Hp变化）。\n变身期间无法拾取道具，无法进行推奶酪、救援、使用阁楼-庭院管道的交互。',
     create: '局外解锁后，全体角色在多元乱斗中拾取变身星后有概率变身，Hp归零后解除变身。',
-    entityAttributesAsCharacter: {
-      type: 'cat',
-      factionBelong: 'other',
-      hpRecovery: 3.8,
-      clawKnifeCdHit: 2,
-      clawKnifeCdUnhit: 2,
-    },
+    characterRoleName: '柠檬杰瑞',
     skills: [
       {
         name: '超大柠檬',

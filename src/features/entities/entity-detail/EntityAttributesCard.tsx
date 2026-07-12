@@ -19,6 +19,7 @@ import NavigationButtonsRow from '@/components/ui/NavigationButtonsRow';
 import SingleItemAccordionCard from '@/components/ui/SingleItemAccordionCard';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import Tag from '@/components/ui/Tag';
+import CharacterRoleAttributes from '@/components/CharacterRoleAttrubutesCard';
 import { entitiesEdit } from '@/data';
 
 import getEntityFactionId from '../lib/getEntityFactionId';
@@ -144,6 +145,12 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
               />
             )}
           />
+          {effectiveEntity.characterRoleName !== undefined ? (
+            <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
+              <span className='text-sm font-bold'>该物件属于特殊角色，具有以下属性：</span>
+              <CharacterRoleAttributes name={effectiveEntity.characterRoleName} />
+            </div>
+          ) : null}
           <PhysicalAttributesSection
             attributes={effectiveEntity}
             draftAttributes={rawEntity}

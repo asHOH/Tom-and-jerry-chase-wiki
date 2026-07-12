@@ -682,6 +682,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     move: false,
     gravity: true,
     collision: ['墙壁', '平台', '地面'],
+    characterRoleName: '火箭',
   },
   /* ----------------------------------- 其它常规道具 ----------------------------------- */
   拳套盒: {
@@ -711,7 +712,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     move: true,
     gravity: true,
     collision: ['道具', '墙壁', '平台', '地面'],
-    itemAttributesAsCharacter: { type: 'special', factionBelong: 'other', maxHp: '一击即溃' },
+    characterRoleName: '电风扇',
   },
   净化萝卜: {
     itemtype: '特殊类' as const,
