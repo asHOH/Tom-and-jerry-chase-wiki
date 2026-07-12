@@ -33,6 +33,7 @@ const mapDefinitions: Record<string, MapDefinition> = {
       minZoom: 0,
       maxZoom: 4,
       tileUrl: '/images/map-tiles/classic-home-i/{z}/{y}/{x}.webp',
+      previewUrl: '/images/map-tiles/classic-home-i/preview.webp',
       rooms: [
         {
           id: 'yard',

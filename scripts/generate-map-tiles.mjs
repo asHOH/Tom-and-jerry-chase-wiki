@@ -1,12 +1,15 @@
-import { mkdir, rm, writeFile } from 'node:fs/promises';
+import { access, mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import sharp from 'sharp';
 
-const [, , sourceArg, mapIdArg, outputArg] = process.argv;
+const args = process.argv.slice(2);
+const force = args.includes('--force');
+const positionalArgs = args.filter((arg) => arg !== '--force');
+const [sourceArg, mapIdArg, outputArg] = positionalArgs;
 
 if (!sourceArg || !mapIdArg) {
   console.error(
-    '用法: npm run generate:map-tiles -- <源图片> <地图标识> [输出目录，默认 public/images/map-tiles]'
+    '用法: npm run generate:map-tiles -- <源图片> <地图标识> [输出目录，默认 public/images/map-tiles] [--force]'
   );
   process.exit(1);
 }
@@ -16,12 +19,28 @@ const outputRoot = path.resolve(outputArg ?? 'public/images/map-tiles');
 const outputDirectory = path.join(outputRoot, mapIdArg);
 const tileSize = 512;
 const maxZoom = 4;
+const formats = ['webp', 'avif'];
 const metadata = await sharp(source).metadata();
+let generatedTileCount = 0;
+let generatedPreviewCount = 0;
 
 if (!metadata.width || !metadata.height) throw new Error('无法读取地图图片尺寸');
 
-await rm(outputDirectory, { recursive: true, force: true });
 await mkdir(outputDirectory, { recursive: true });
+
+const fileExists = async (filePath) => {
+  try {
+    await access(filePath);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+const encodeImage = (image, format) =>
+  format === 'avif'
+    ? image.avif({ quality: 52, effort: 5 })
+    : image.webp({ quality: 84, alphaQuality: 90, effort: 5 });
 
 for (let zoom = 0; zoom <= maxZoom; zoom += 1) {
   const scale = 2 ** (zoom - maxZoom);
@@ -30,10 +49,7 @@ for (let zoom = 0; zoom <= maxZoom; zoom += 1) {
   const zoomDirectory = path.join(outputDirectory, String(zoom));
   await mkdir(zoomDirectory, { recursive: true });
 
-  const level = await sharp(source)
-    .resize(width, height, { fit: 'fill', kernel: sharp.kernel.lanczos3 })
-    .webp({ quality: 84, alphaQuality: 90, effort: 5 })
-    .toBuffer();
+  const pendingTiles = [];
 
   for (let y = 0; y < Math.ceil(height / tileSize); y += 1) {
     const rowDirectory = path.join(zoomDirectory, String(y));
@@ -43,17 +59,71 @@ for (let zoom = 0; zoom <= maxZoom; zoom += 1) {
       const top = y * tileSize;
       const extractWidth = Math.min(tileSize, width - left);
       const extractHeight = Math.min(tileSize, height - top);
-      await sharp(level)
-        .extract({ left, top, width: extractWidth, height: extractHeight })
-        .extend({
-          right: tileSize - extractWidth,
-          bottom: tileSize - extractHeight,
-          background: { r: 0, g: 0, b: 0, alpha: 0 },
-        })
-        .webp({ quality: 84, alphaQuality: 90, effort: 5 })
-        .toFile(path.join(rowDirectory, `${x}.webp`));
+      const pendingFormats = [];
+      for (const format of formats) {
+        const outputPath = path.join(rowDirectory, `${x}.${format}`);
+        if (force || !(await fileExists(outputPath))) pendingFormats.push(format);
+      }
+      if (pendingFormats.length > 0) {
+        pendingTiles.push({
+          left,
+          top,
+          extractWidth,
+          extractHeight,
+          pendingFormats,
+          rowDirectory,
+          x,
+        });
+      }
     }
   }
+
+  const pendingPreviewFormats =
+    zoom === 0
+      ? await Promise.all(
+          formats.map(async (format) => {
+            const outputPath = path.join(outputDirectory, `preview.${format}`);
+            return force || !(await fileExists(outputPath)) ? format : null;
+          })
+        ).then((results) => results.filter((format) => format !== null))
+      : [];
+
+  if (pendingTiles.length === 0 && pendingPreviewFormats.length === 0) continue;
+
+  const level = await sharp(source)
+    .resize(width, height, { fit: 'fill', kernel: sharp.kernel.lanczos3 })
+    .webp({ quality: 84, alphaQuality: 90, effort: 5 })
+    .toBuffer();
+
+  for (const tile of pendingTiles) {
+    const image = sharp(level)
+      .extract({
+        left: tile.left,
+        top: tile.top,
+        width: tile.extractWidth,
+        height: tile.extractHeight,
+      })
+      .extend({
+        right: tileSize - tile.extractWidth,
+        bottom: tileSize - tile.extractHeight,
+        background: { r: 0, g: 0, b: 0, alpha: 0 },
+      });
+    await Promise.all(
+      tile.pendingFormats.map((format) =>
+        encodeImage(image.clone(), format).toFile(
+          path.join(tile.rowDirectory, `${tile.x}.${format}`)
+        )
+      )
+    );
+    generatedTileCount += tile.pendingFormats.length;
+  }
+
+  await Promise.all(
+    pendingPreviewFormats.map((format) =>
+      encodeImage(sharp(level), format).toFile(path.join(outputDirectory, `preview.${format}`))
+    )
+  );
+  generatedPreviewCount += pendingPreviewFormats.length;
 }
 
 await writeFile(
@@ -65,10 +135,15 @@ await writeFile(
       tileSize,
       minZoom: 0,
       maxZoom,
-      format: 'webp',
+      formats,
     },
     null,
     2
   )}\n`
 );
-console.log(`已生成 ${mapIdArg} 地图瓦片：${outputDirectory}`);
+const generatedCount = generatedTileCount + generatedPreviewCount;
+console.log(
+  generatedCount > 0
+    ? `已生成 ${generatedCount} 个 ${mapIdArg} 地图资源：${outputDirectory}`
+    : `${mapIdArg} 地图资源已齐全，跳过生成。`
+);

@@ -533,6 +533,7 @@ export type InteractiveMapConfig = {
   minZoom: number;
   maxZoom: number;
   tileUrl: string;
+  previewUrl?: string;
   rooms: InteractiveMapRoom[];
   points: InteractiveMapPoint[];
 };

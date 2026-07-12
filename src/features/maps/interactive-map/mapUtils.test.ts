@@ -1,6 +1,9 @@
+import { proxy } from 'valtio';
+
 import type { InteractiveMapConfig, InteractiveMapPoint } from '@/data/types';
 
 import {
+  cloneInteractiveMap,
   coordinateToLatLng,
   DEFAULT_VISIBLE_CATEGORIES,
   isPointVisible,
@@ -39,5 +42,12 @@ describe('interactive map utilities', () => {
 
   it('should always show built-in pipe hotspots', () => {
     expect(isPointVisible({ ...point, category: 'pipe' }, 2, new Set(), new Set())).toBe(true);
+  });
+
+  it('should clone Valtio-backed map data into editable plain data', () => {
+    const cloned = cloneInteractiveMap(proxy(config));
+
+    expect(cloned).toEqual(config);
+    expect(cloned).not.toBe(config);
   });
 });

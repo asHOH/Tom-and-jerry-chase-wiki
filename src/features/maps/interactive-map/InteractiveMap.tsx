@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import L, { type LeafletMouseEvent } from 'leaflet';
 import {
+  ImageOverlay,
   MapContainer,
   Marker,
   Polygon,
@@ -145,6 +146,28 @@ function LocatePoint({
       duration: 0.5,
     });
   }, [config, map, point]);
+  return null;
+}
+
+function MinimapViewport({
+  config,
+  isExpanded,
+}: {
+  config: InteractiveMapConfig;
+  isExpanded: boolean;
+}) {
+  const map = useMap();
+
+  useEffect(() => {
+    const fitMap = () => {
+      map.invalidateSize({ animate: false });
+      map.fitBounds(getMapBounds(config), { animate: false, padding: [4, 4] });
+    };
+    fitMap();
+    const timeoutId = window.setTimeout(fitMap, 180);
+    return () => window.clearTimeout(timeoutId);
+  }, [config, isExpanded, map]);
+
   return null;
 }
 
@@ -385,6 +408,9 @@ export default function InteractiveMap({
           noWrap
           eventHandlers={{ tileerror: () => setTileFailed(true) }}
         />
+        {config.previewUrl && (
+          <ImageOverlay url={config.previewUrl} bounds={mapBounds} pane='tilePane' zIndex={0} />
+        )}
         <MainMapEvents
           config={config}
           editorMode={editorMode}
@@ -490,8 +516,9 @@ export default function InteractiveMap({
         <MapContainer
           crs={L.CRS.Simple}
           bounds={mapBounds}
-          minZoom={config.minZoom}
-          maxZoom={config.minZoom + 1}
+          minZoom={config.minZoom - 4}
+          maxZoom={config.minZoom}
+          zoomSnap={0}
           zoomControl={false}
           attributionControl={false}
           dragging={false}
@@ -502,11 +529,16 @@ export default function InteractiveMap({
           <TileLayer
             url={config.tileUrl}
             tileSize={config.tileSize}
-            minZoom={config.minZoom}
+            minZoom={config.minZoom - 4}
+            minNativeZoom={config.minZoom}
             maxNativeZoom={config.maxZoom}
             bounds={mapBounds}
             noWrap
           />
+          {config.previewUrl && (
+            <ImageOverlay url={config.previewUrl} bounds={mapBounds} pane='tilePane' zIndex={0} />
+          )}
+          <MinimapViewport config={config} isExpanded={isMinimapExpanded} />
           {config.rooms.flatMap((room) =>
             room.polygons.map((polygon, index) => (
               <Polygon

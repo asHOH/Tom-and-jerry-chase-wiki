@@ -4,5 +4,5 @@
   "tileSize": 512,
   "minZoom": 0,
   "maxZoom": 4,
-  "format": "webp"
+  "formats": ["webp", "avif"]
 }

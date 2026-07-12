@@ -58,4 +58,4 @@ export const isPointVisible = (
 };
 
 export const cloneInteractiveMap = (config: InteractiveMapConfig): InteractiveMapConfig =>
-  structuredClone(config);
+  JSON.parse(JSON.stringify(config)) as InteractiveMapConfig;
