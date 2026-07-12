@@ -23,11 +23,11 @@ import DiscussButton from '@/components/ui/DiscussButton';
 import { editable } from '@/components/ui/editable';
 import EditButton from '@/components/ui/EditButton';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
+import CharacterRoleAttributesCard from '@/components/CharacterRoleAttrubutesCard';
 import { PlusIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 import { characters } from '@/data';
 
-import CharacterAttributesSection from './character-attributes/CharacterAttributesSection';
 import CharacterRelationDisplay from './character-relations/CharacterRelationDisplay';
 import CharacterHistoryDisplay from './info-displays/CharacterHistoryDisplay';
 import ContentWriterDisplay from './info-displays/ContentWriterDisplay';
@@ -211,7 +211,14 @@ export default function CharacterDetails({ children }: CharacterDetailsWithTutor
               />
 
               <div className='mt-6 space-y-3'>
-                <CharacterAttributesSection factionId={factionId} />
+                {localCharacter.EnglishName !== undefined ? (
+                  <CharacterRoleAttributesCard
+                    name={localCharacter.id}
+                    EnglishName={localCharacter.EnglishName}
+                  />
+                ) : (
+                  <CharacterRoleAttributesCard name={localCharacter.id} />
+                )}
 
                 <PositioningTagsSection tags={positioningTags} factionId={factionId} />
 
