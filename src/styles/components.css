@@ -25,6 +25,50 @@
   transform-origin: var(--interactive-map-marker-anchor-x) var(--interactive-map-marker-anchor-y);
 }
 
+.interactive-map-pipe-badge {
+  display: flex;
+  width: 32px;
+  height: 32px;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 13px;
+  font-weight: 800;
+  background: rgb(109 40 217 / 92%);
+  border: 2px solid rgb(221 214 254);
+  border-radius: 9999px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 70%);
+}
+
+.interactive-map-marker--selected .interactive-map-pipe-badge,
+.interactive-map-marker--connection-endpoint .interactive-map-pipe-badge {
+  background: rgb(8 145 178 / 95%);
+  border-color: rgb(207 250 254);
+  box-shadow:
+    0 0 0 5px rgb(34 211 238 / 35%),
+    0 2px 8px rgb(0 0 0 / 70%);
+  animation: interactive-map-pipe-pulse 1.6s ease-in-out infinite;
+}
+
+.interactive-map-marker--connection-unrelated {
+  opacity: 0.32;
+}
+
+@keyframes interactive-map-pipe-pulse {
+  50% {
+    box-shadow:
+      0 0 0 9px rgb(34 211 238 / 8%),
+      0 2px 8px rgb(0 0 0 / 70%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .interactive-map-marker--selected .interactive-map-pipe-badge,
+  .interactive-map-marker--connection-endpoint .interactive-map-pipe-badge {
+    animation: none;
+  }
+}
+
 .leaflet-zoom-anim .interactive-map-marker-content {
   transition: transform 0.25s cubic-bezier(0, 0, 0.25, 1);
 }

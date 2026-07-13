@@ -6,6 +6,7 @@ import {
   cloneInteractiveMap,
   coordinateToLatLng,
   DEFAULT_VISIBLE_CATEGORIES,
+  getConnectedMapPoint,
   getInteractiveMapAssetUrl,
   getMapPointScale,
   getRoomCenter,
@@ -100,6 +101,37 @@ describe('interactive map utilities', () => {
     expect(center?.x).toBeCloseTo(3 / 7);
     expect(center?.y).toBeCloseTo(12 / 35);
     expect(getRoomCenter({ ...room, polygons: [] })).toBeNull();
+  });
+
+  it('should resolve a connected point by its stable id', () => {
+    const entrance: InteractiveMapPoint = {
+      id: 'pipe-a-entrance',
+      category: 'pipe',
+      position: { x: 0.1, y: 0.2 },
+      connection: {
+        targetPointId: 'pipe-a-exit',
+        direction: 'both',
+        label: 'A',
+      },
+    };
+    const exit: InteractiveMapPoint = {
+      id: 'pipe-a-exit',
+      category: 'pipe',
+      position: { x: 0.8, y: 0.7 },
+    };
+    const mapWithConnection = { ...config, points: [entrance, exit] };
+
+    expect(getConnectedMapPoint(mapWithConnection, entrance)).toEqual({
+      point: exit,
+      pointIndex: 1,
+    });
+    expect(getConnectedMapPoint(mapWithConnection, exit)).toBeNull();
+    expect(
+      getConnectedMapPoint(mapWithConnection, {
+        ...entrance,
+        connection: { targetPointId: 'missing', direction: 'both', label: 'A' },
+      })
+    ).toBeNull();
   });
 
   it('should convert minimap pixels to clamped normalized coordinates', () => {

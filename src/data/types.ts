@@ -515,10 +515,16 @@ export type InteractiveMapRoom = {
   polygons: MapCoordinate[][];
 };
 export type InteractiveMapPoint = {
+  id?: string;
   category: MapPointCategory;
   subtype?: string;
   position: MapCoordinate;
   description?: string;
+  connection?: {
+    targetPointId: string;
+    direction: 'both' | 'outbound';
+    label?: string;
+  };
   isInvisible?: boolean;
   isRandomCandidate?: boolean;
   minZoom?: number;

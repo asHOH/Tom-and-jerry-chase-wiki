@@ -96,6 +96,19 @@ export const getRoomCenter = (room: InteractiveMapRoom): MapCoordinate | null =>
   };
 };
 
+export const getConnectedMapPoint = (
+  config: InteractiveMapConfig,
+  point: InteractiveMapPoint
+): { point: InteractiveMapPoint; pointIndex: number } | null => {
+  if (!point.connection) return null;
+
+  const pointIndex = config.points.findIndex(
+    (candidate) => candidate.id === point.connection?.targetPointId
+  );
+  const connectedPoint = config.points[pointIndex];
+  return connectedPoint ? { point: connectedPoint, pointIndex } : null;
+};
+
 export const minimapPixelsToCoordinate = (
   clientX: number,
   clientY: number,

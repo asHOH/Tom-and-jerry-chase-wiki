@@ -20,6 +20,7 @@ import {
   MapContainer,
   Marker,
   Polygon,
+  Polyline,
   Tooltip,
   useMap,
   useMapEvents,
@@ -40,6 +41,7 @@ import {
   cloneInteractiveMap,
   coordinateToLatLng,
   DEFAULT_VISIBLE_CATEGORIES,
+  getConnectedMapPoint,
   getInteractiveMapAssetUrl,
   getMapBounds,
   getMapPointScale,
@@ -81,22 +83,38 @@ const teleportSvg = `
     <path d="M15 25c4-8 14-10 20-4M33 16l2 5-5 1M33 25c-4 8-14 10-20 4M15 34l-2-5 5-1" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
   </svg>`;
 
-const makeIcon = (point: InteractiveMapPoint, selected: boolean, isEditMode: boolean) => {
+type ConnectionHighlight = 'endpoint' | 'unrelated' | undefined;
+
+const escapeHtml = (value: string) =>
+  value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
+
+const makeIcon = (
+  point: InteractiveMapPoint,
+  selected: boolean,
+  isEditMode: boolean,
+  connectionHighlight?: ConnectionHighlight
+) => {
   const isHotspot = ALWAYS_VISIBLE_CATEGORIES.has(point.category);
   const source = CATEGORY_ICONS[point.category];
   const isInvisible = point.isInvisible ?? false;
-  const content = isInvisible
-    ? `<span class="block h-full w-full rounded-full border-2 ${selected ? 'border-cyan-300 bg-cyan-300/25' : isEditMode ? 'border-dashed border-cyan-300/70 bg-cyan-300/10' : 'border-transparent'}"></span>`
-    : isHotspot
-      ? `<span class="block h-full w-full rounded-full border-2 ${selected ? 'border-cyan-300 bg-cyan-300/25' : 'border-transparent'}"></span>`
-      : point.category === 'teleport'
-        ? teleportSvg
-        : source
-          ? `<img src="${encodeURI(source)}" alt="" class="h-full w-full object-contain drop-shadow-md" />`
-          : '';
+  const connectionBadge =
+    point.category === 'pipe' && point.connection
+      ? `<span class="interactive-map-pipe-badge" aria-hidden="true">${escapeHtml(point.connection.label ?? '↔')}</span>`
+      : null;
+  const content = connectionBadge
+    ? connectionBadge
+    : isInvisible
+      ? `<span class="block h-full w-full rounded-full border-2 ${selected ? 'border-cyan-300 bg-cyan-300/25' : isEditMode ? 'border-dashed border-cyan-300/70 bg-cyan-300/10' : 'border-transparent'}"></span>`
+      : isHotspot
+        ? `<span class="block h-full w-full rounded-full border-2 ${selected ? 'border-cyan-300 bg-cyan-300/25' : 'border-transparent'}"></span>`
+        : point.category === 'teleport'
+          ? teleportSvg
+          : source
+            ? `<img src="${encodeURI(source)}" alt="" class="h-full w-full object-contain drop-shadow-md" />`
+            : '';
   const [width, height] = isHotspot || isInvisible ? [32, 32] : [42, 42];
   const [anchorX, anchorY] = isHotspot || isInvisible ? [16, 16] : [21, 36];
-  const html = `<span class="interactive-map-marker-content ${point.isRandomCandidate ? 'interactive-map-marker--random' : ''}" style="width:${width}px;height:${height}px;--interactive-map-marker-anchor-x:${anchorX}px;--interactive-map-marker-anchor-y:${anchorY}px">${content}</span>`;
+  const html = `<span class="interactive-map-marker-content ${point.isRandomCandidate ? 'interactive-map-marker--random' : ''} ${selected ? 'interactive-map-marker--selected' : ''} ${connectionHighlight === 'endpoint' ? 'interactive-map-marker--connection-endpoint' : ''} ${connectionHighlight === 'unrelated' ? 'interactive-map-marker--connection-unrelated' : ''}" style="width:${width}px;height:${height}px;--interactive-map-marker-anchor-x:${anchorX}px;--interactive-map-marker-anchor-y:${anchorY}px">${content}</span>`;
 
   return L.divIcon({
     className: 'interactive-map-marker',
@@ -260,6 +278,7 @@ type MinimapDiagramProps = {
   previewUrl?: string | undefined;
   visibleCategories: ReadonlySet<MapPointCategory>;
   hiddenSubtypes: ReadonlySet<string>;
+  highlightedPointIds: ReadonlySet<string>;
   interactive: boolean;
   onNavigate?: ((coordinate: MapCoordinate) => void) | undefined;
 };
@@ -269,6 +288,7 @@ function MinimapDiagram({
   previewUrl,
   visibleCategories,
   hiddenSubtypes,
+  highlightedPointIds,
   interactive,
   onNavigate,
 }: MinimapDiagramProps) {
@@ -355,27 +375,42 @@ function MinimapDiagram({
         </div>
       ))}
       {config.points
-        .filter((point) => isMinimapPointVisible(point, visibleCategories, hiddenSubtypes))
+        .filter(
+          (point) =>
+            (point.id && highlightedPointIds.has(point.id)) ||
+            isMinimapPointVisible(point, visibleCategories, hiddenSubtypes)
+        )
         .map((point, pointIndex) => {
           const source = CATEGORY_ICONS[point.category];
           const pointStyle: CSSProperties = {
             left: `${point.position.x * 100}%`,
             top: `${point.position.y * 100}%`,
           };
-          const pointContent = source ? (
-            <Image
-              src={encodeURI(source)}
-              alt=''
-              width={24}
-              height={24}
-              className='size-5 object-contain drop-shadow-md sm:size-6'
-              aria-hidden='true'
-            />
-          ) : point.category === 'teleport' ? (
-            <span className='block size-4 rounded-full border-2 border-violet-200 bg-violet-600/90 shadow sm:size-5' />
-          ) : (
-            <span className='block size-3 rounded-full border border-cyan-50 bg-cyan-400 shadow sm:size-4' />
-          );
+          const pointContent =
+            point.category === 'pipe' && point.connection ? (
+              <span
+                className={`flex size-5 items-center justify-center rounded-full border text-[10px] font-bold text-white shadow sm:size-6 sm:text-xs ${
+                  point.id && highlightedPointIds.has(point.id)
+                    ? 'border-cyan-200 bg-cyan-500 ring-2 ring-cyan-300/70'
+                    : 'border-violet-200 bg-violet-700/90'
+                }`}
+              >
+                {point.connection.label ?? '↔'}
+              </span>
+            ) : source ? (
+              <Image
+                src={encodeURI(source)}
+                alt=''
+                width={24}
+                height={24}
+                className='size-5 object-contain drop-shadow-md sm:size-6'
+                aria-hidden='true'
+              />
+            ) : point.category === 'teleport' ? (
+              <span className='block size-4 rounded-full border-2 border-violet-200 bg-violet-600/90 shadow sm:size-5' />
+            ) : (
+              <span className='block size-3 rounded-full border border-cyan-50 bg-cyan-400 shadow sm:size-4' />
+            );
 
           const pointChildren = (
             <>
@@ -420,6 +455,7 @@ function Minimap({
   previewUrl,
   visibleCategories,
   hiddenSubtypes,
+  highlightedPointIds,
   isExpanded,
   onExpand,
   onCollapse,
@@ -451,6 +487,7 @@ function Minimap({
             previewUrl={previewUrl}
             visibleCategories={visibleCategories}
             hiddenSubtypes={hiddenSubtypes}
+            highlightedPointIds={highlightedPointIds}
             interactive
             onNavigate={onNavigate}
           />
@@ -470,6 +507,7 @@ function Minimap({
             previewUrl={previewUrl}
             visibleCategories={visibleCategories}
             hiddenSubtypes={hiddenSubtypes}
+            highlightedPointIds={highlightedPointIds}
             interactive={false}
           />
         </button>
@@ -508,6 +546,13 @@ export default function InteractiveMap({
   const mainMapRef = useRef<L.Map | null>(null);
   const selectedPoint =
     selectedPointIndex === null ? null : (config.points[selectedPointIndex] ?? null);
+  const connectedPoint = selectedPoint ? getConnectedMapPoint(config, selectedPoint) : null;
+  const highlightedPointIds = useMemo(() => {
+    const ids = new Set<string>();
+    if (selectedPoint?.id && connectedPoint) ids.add(selectedPoint.id);
+    if (connectedPoint?.point.id) ids.add(connectedPoint.point.id);
+    return ids;
+  }, [connectedPoint, selectedPoint]);
   const mapBounds = useMemo(
     () =>
       getMapBounds({
@@ -639,6 +684,7 @@ export default function InteractiveMap({
     if (editorMode === 'addPoint') {
       const next = cloneInteractiveMap(config);
       next.points.push({
+        id: `map-point-${crypto.randomUUID()}`,
         category: pointCategory,
         position: latLngToCoordinate(event.latlng.lat, event.latlng.lng, config),
       });
@@ -699,6 +745,56 @@ export default function InteractiveMap({
     },
     [config]
   );
+
+  const navigateToConnectedPoint = () => {
+    if (!connectedPoint) return;
+    openPoint(connectedPoint.pointIndex);
+  };
+
+  const connectSelectedPoint = (targetPointId: string) => {
+    if (selectedPointIndex === null || !selectedPoint?.id) return;
+    const next = cloneInteractiveMap(config);
+    const point = next.points[selectedPointIndex];
+    const pointId = point?.id;
+    if (!point || !pointId) return;
+
+    const previousTargetId = point.connection?.targetPointId;
+    const previousTarget = next.points.find((candidate) => candidate.id === previousTargetId);
+    if (previousTarget && previousTarget.connection?.targetPointId === pointId) {
+      delete previousTarget.connection;
+    }
+
+    if (!targetPointId) {
+      delete point.connection;
+      updateConfig(next);
+      return;
+    }
+
+    const target = next.points.find((candidate) => candidate.id === targetPointId);
+    if (!target) return;
+    const label =
+      point.connection?.label ??
+      target.connection?.label ??
+      String.fromCharCode(65 + (selectedPointIndex % 26));
+    point.connection = { targetPointId, direction: 'both', label };
+    target.connection = { targetPointId: pointId, direction: 'both', label };
+    updateConfig(next);
+  };
+
+  const updateSelectedConnectionLabel = (label: string) => {
+    if (selectedPointIndex === null || !selectedPoint?.connection) return;
+    const next = cloneInteractiveMap(config);
+    const point = next.points[selectedPointIndex];
+    if (!point?.connection || !point.id) return;
+    point.connection.label = label;
+    const targetPointId = point.connection.targetPointId;
+    const target = next.points.find((candidate) => candidate.id === targetPointId);
+    const targetConnection = target?.connection;
+    if (targetConnection?.targetPointId === point.id) {
+      targetConnection.label = label;
+    }
+    updateConfig(next);
+  };
 
   if (useFallback && fallbackImageUrl) {
     return (
@@ -785,6 +881,25 @@ export default function InteractiveMap({
         {draftPolygon.length > 1 && (
           <Polygon positions={draftPolygon} pathOptions={{ color: '#22d3ee', dashArray: '6 6' }} />
         )}
+        {selectedPoint && connectedPoint && (
+          <Polyline
+            positions={[
+              coordinateToLatLng(selectedPoint.position, config),
+              coordinateToLatLng(connectedPoint.point.position, config),
+            ]}
+            pathOptions={{
+              color: '#67e8f9',
+              dashArray: selectedPoint.connection?.direction === 'outbound' ? undefined : '10 10',
+              opacity: 0.9,
+              weight: 4,
+            }}
+          >
+            <Tooltip sticky>
+              管道 {selectedPoint.connection?.label ?? ''} ·{' '}
+              {selectedPoint.connection?.direction === 'outbound' ? '单向' : '双向'}
+            </Tooltip>
+          </Polyline>
+        )}
         {config.points
           .map((point, pointIndex) => ({ point, pointIndex }))
           .filter(({ point }) => isPointVisible(point, zoom, visibleCategories, hiddenSubtypes))
@@ -792,12 +907,23 @@ export default function InteractiveMap({
             <Marker
               key={pointIndex}
               position={coordinateToLatLng(point.position, config)}
-              icon={makeIcon(point, selectedPointIndex === pointIndex, isEditMode)}
+              icon={makeIcon(
+                point,
+                selectedPointIndex === pointIndex,
+                isEditMode,
+                connectedPoint
+                  ? pointIndex === selectedPointIndex || pointIndex === connectedPoint.pointIndex
+                    ? 'endpoint'
+                    : point.category === 'pipe'
+                      ? 'unrelated'
+                      : undefined
+                  : undefined
+              )}
               draggable={isEditMode}
               eventHandlers={{
                 click: (event) => {
                   L.DomEvent.stopPropagation(event.originalEvent);
-                  if ('ontouchstart' in window || isEditMode) openPoint(pointIndex);
+                  openPoint(pointIndex);
                 },
                 dblclick: (event) => {
                   L.DomEvent.stopPropagation(event.originalEvent);
@@ -861,6 +987,7 @@ export default function InteractiveMap({
         previewUrl={previewUrl}
         visibleCategories={visibleCategories}
         hiddenSubtypes={hiddenSubtypes}
+        highlightedPointIds={highlightedPointIds}
         isExpanded={isMinimapExpanded}
         onExpand={() => setIsMinimapExpanded(true)}
         onCollapse={() => setIsMinimapExpanded(false)}
@@ -926,6 +1053,8 @@ export default function InteractiveMap({
           onUndo={undo}
           onRedo={redo}
           onUpdatePoint={updateSelectedPoint}
+          onConnectPoint={connectSelectedPoint}
+          onUpdateConnectionLabel={updateSelectedConnectionLabel}
           onDeletePoint={() => {
             if (selectedPointIndex === null) return;
             const next = cloneInteractiveMap(config);
@@ -957,7 +1086,13 @@ export default function InteractiveMap({
       )}
 
       {selectedPoint && (
-        <PointDetails point={selectedPoint} isEditMode={isEditMode} onClose={closePoint} />
+        <PointDetails
+          point={selectedPoint}
+          connectedPoint={connectedPoint?.point ?? null}
+          isEditMode={isEditMode}
+          onNavigateToConnectedPoint={navigateToConnectedPoint}
+          onClose={closePoint}
+        />
       )}
       {tileFailed && (
         <div className='absolute inset-x-4 bottom-4 z-600 rounded-lg bg-red-950/95 p-3 text-center text-sm text-white shadow-xl'>
@@ -1071,6 +1206,8 @@ type EditorPanelProps = {
   onUndo: () => void;
   onRedo: () => void;
   onUpdatePoint: (changes: Partial<InteractiveMapPoint>) => void;
+  onConnectPoint: (targetPointId: string) => void;
+  onUpdateConnectionLabel: (label: string) => void;
   onDeletePoint: () => void;
   onDeleteRoom: () => void;
   onMoveRoom: (x: number, y: number) => void;
@@ -1198,6 +1335,41 @@ function EditorPanel(props: EditorPanelProps) {
             placeholder='介绍'
             className='w-full rounded bg-white/10 px-2 py-2'
           />
+          {props.selectedPoint.category === 'pipe' && props.selectedPoint.id && (
+            <div className='rounded border border-white/10 p-2'>
+              <p className='mb-2 text-xs text-white/65'>对应管道</p>
+              <select
+                value={props.selectedPoint.connection?.targetPointId ?? ''}
+                onChange={(event) => props.onConnectPoint(event.target.value)}
+                className='w-full rounded bg-slate-800 px-2 py-2'
+              >
+                <option value=''>未连接</option>
+                {props.config.points
+                  .filter(
+                    (candidate) =>
+                      candidate.category === 'pipe' &&
+                      candidate.id &&
+                      candidate.id !== props.selectedPoint?.id
+                  )
+                  .map((candidate) => (
+                    <option key={candidate.id} value={candidate.id}>
+                      {candidate.subtype ?? candidate.id}
+                    </option>
+                  ))}
+              </select>
+              {props.selectedPoint.connection && (
+                <label className='mt-2 block'>
+                  <span className='text-xs text-white/65'>配对标记</span>
+                  <input
+                    value={props.selectedPoint.connection.label ?? ''}
+                    maxLength={3}
+                    onChange={(event) => props.onUpdateConnectionLabel(event.target.value)}
+                    className='mt-1 w-full rounded bg-white/10 px-2 py-2'
+                  />
+                </label>
+              )}
+            </div>
+          )}
           <label className='flex gap-2'>
             <input
               type='checkbox'
@@ -1340,11 +1512,15 @@ function EditorPanel(props: EditorPanelProps) {
 
 function PointDetails({
   point,
+  connectedPoint,
   isEditMode,
+  onNavigateToConnectedPoint,
   onClose,
 }: {
   point: InteractiveMapPoint;
+  connectedPoint: InteractiveMapPoint | null;
   isEditMode: boolean;
+  onNavigateToConnectedPoint: () => void;
   onClose: () => void;
 }) {
   return (
@@ -1365,6 +1541,30 @@ function PointDetails({
         <span className='mt-2 inline-block rounded-full bg-amber-100 px-2 py-1 text-xs text-amber-900'>
           随机候选点，同局不一定出现
         </span>
+      )}
+      {connectedPoint && point.connection && (
+        <div className='mt-4 rounded-xl border border-cyan-200 bg-cyan-50 p-3 dark:border-cyan-800 dark:bg-cyan-950/50'>
+          <div className='flex items-center gap-2'>
+            <span className='flex size-7 shrink-0 items-center justify-center rounded-full bg-violet-700 text-xs font-bold text-white'>
+              {point.connection.label ?? '↔'}
+            </span>
+            <div className='min-w-0'>
+              <p className='text-xs text-slate-500 dark:text-slate-400'>
+                {point.connection.direction === 'outbound' ? '单向通行' : '双向通行'}
+              </p>
+              <p className='truncate text-sm font-semibold'>
+                通往：{connectedPoint.subtype ?? '对应管道'}
+              </p>
+            </div>
+          </div>
+          <button
+            type='button'
+            onClick={onNavigateToConnectedPoint}
+            className='mt-3 w-full rounded-lg bg-cyan-700 px-3 py-2 text-sm font-medium text-white hover:bg-cyan-600'
+          >
+            查看对应管道
+          </button>
+        </div>
       )}
       <p className='mt-4 text-sm leading-6 whitespace-pre-wrap text-slate-700 dark:text-slate-200'>
         {point.description || (isEditMode ? '请在标注面板中补充介绍。' : '暂无介绍。')}
