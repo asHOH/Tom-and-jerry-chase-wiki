@@ -1,0 +1,637 @@
+{
+  "summary": {
+    "playableCharacterCount": 56,
+    "coveredFieldCount": 12,
+    "reviewedCorrectionCount": 41,
+    "unexplainedDifferenceCount": 0,
+    "jumpHeightChangeCount": 56
+  },
+  "reviewedCorrections": [
+    {
+      "characterId": "汤姆",
+      "field": "storePurchaseTime",
+      "legacyValue": 2.6,
+      "canonicalValue": 2.5,
+      "reason": "Reviewed correction: the new JSON data is authoritative."
+    },
+    {
+      "characterId": "布奇",
+      "field": "storePurchaseTime",
+      "legacyValue": 2.6,
+      "canonicalValue": 2.5,
+      "reason": "Reviewed correction: the new JSON data is authoritative."
+    },
+    {
+      "characterId": "托普斯",
+      "field": "storePurchaseTime",
+      "legacyValue": 2.6,
+      "canonicalValue": 2.5,
+      "reason": "Reviewed correction: the new JSON data is authoritative."
+    },
+    {
+      "characterId": "莱特宁",
+      "field": "moveSpeed",
+      "legacyValue": 775,
+      "canonicalValue": 780,
+      "reason": "Reviewed correction: the new JSON data is authoritative."
+    },
+    {
+      "characterId": "莱特宁",
+      "field": "storePurchaseTime",
+      "legacyValue": 2.6,
+      "canonicalValue": 2.5,
+      "reason": "Reviewed correction: the new JSON data is authoritative."
+    },
+    {
+      "characterId": "牛仔汤姆",
+      "field": "storePurchaseTime",
+      "legacyValue": 2.6,
+      "canonicalValue": 2.5,
+      "reason": "Reviewed correction: the new JSON data is authoritative."
+    },
+    {
+      "characterId": "图多盖洛",
+      "field": "storePurchaseTime",
+      "legacyValue": 2.6,
+      "canonicalValue": 2.5,
+      "reason": "Reviewed correction: the new JSON data is authoritative."
+    },
+    {
+      "characterId": "侍卫汤姆",
+      "field": "moveSpeed",
+      "legacyValue": 745,
+      "canonicalValue": 750,
+      "reason": "Reviewed correction: the new JSON data is authoritative."
+    },
+    {
+      "characterId": "侍卫汤姆",
+      "field": "storePurchaseTime",
+      "legacyValue": 2.6,
+      "canonicalValue": 2.5,
+      "reason": "Reviewed correction: the new JSON data is authoritative."
+    },
+    {
+      "characterId": "图茨",
+      "field": "storePurchaseTime",
+      "legacyValue": 2.6,
+      "canonicalValue": 2.5,
+      "reason": "Reviewed correction: the new JSON data is authoritative."
+    },
+    {
+      "characterId": "米特",
+      "field": "hpRecovery",
+      "legacyValue": 5,
+      "canonicalValue": 3,
+      "reason": "Reviewed correction: the new JSON data is authoritative."
+    },
+    {
+      "characterId": "米特",
+      "field": "storePurchaseTime",
+      "legacyValue": 2.6,
+      "canonicalValue": 2.5,
+      "reason": "Reviewed correction: the new JSON data is authoritative."
+    },
+    {
+      "characterId": "塔拉",
+      "field": "storePurchaseTime",
+      "legacyValue": 2.6,
+      "canonicalValue": 2.5,
+      "reason": "Reviewed correction: the new JSON data is authoritative."
+    },
+    {
+      "characterId": "剑客汤姆",
+      "field": "clawKnifeCdUnhit",
+      "legacyValue": 2,
+      "canonicalValue": 1.98,
+      "reason": "Reviewed correction: the new JSON data is authoritative."
+    },
+    {
+      "characterId": "剑客汤姆",
+      "field": "storePurchaseTime",
+      "legacyValue": 2.6,
+      "canonicalValue": 2.5,
+      "reason": "Reviewed correction: the new JSON data is authoritative."
+    },
+    {
+      "characterId": "库博",
+      "field": "storePurchaseTime",
+      "legacyValue": 2.6,
+      "canonicalValue": 2.5,
+      "reason": "Reviewed correction: the new JSON data is authoritative."
+    },
+    {
+      "characterId": "凯特",
+      "field": "storePurchaseTime",
+      "legacyValue": 2.6,
+      "canonicalValue": 2.5,
+      "reason": "Reviewed correction: the new JSON data is authoritative."
+    },
+    {
+      "characterId": "苏蕊",
+      "field": "clawKnifeCdUnhit",
+      "legacyValue": 5,
+      "canonicalValue": 4.9,
+      "reason": "Reviewed correction: the new JSON data is authoritative."
+    },
+    {
+      "characterId": "苏蕊",
+      "field": "storePurchaseTime",
+      "legacyValue": 4.1,
+      "canonicalValue": 4,
+      "reason": "Reviewed correction: the new JSON data is authoritative."
+    },
+    {
+      "characterId": "天使汤姆",
+      "field": "hpRecovery",
+      "legacyValue": 3.5,
+      "canonicalValue": 2,
+      "reason": "Reviewed correction: the new JSON data is authoritative."
+    },
+    {
+      "characterId": "天使汤姆",
+      "field": "moveSpeed",
+      "legacyValue": 760,
+      "canonicalValue": 770,
+      "reason": "Reviewed correction: the new JSON data is authoritative."
+    },
+    {
+      "characterId": "天使汤姆",
+      "field": "storePurchaseTime",
+      "legacyValue": 2.6,
+      "canonicalValue": 2.5,
+      "reason": "Reviewed correction: the new JSON data is authoritative."
+    },
+    {
+      "characterId": "斯飞",
+      "field": "maxHp",
+      "legacyValue": 225,
+      "canonicalValue": 245,
+      "reason": "Reviewed correction: the new JSON data is authoritative."
+    },
+    {
+      "characterId": "斯飞",
+      "field": "clawKnifeCdUnhit",
+      "legacyValue": 3.1,
+      "canonicalValue": 3.2,
+      "reason": "Reviewed correction: the new JSON data is authoritative."
+    },
+    {
+      "characterId": "斯飞",
+      "field": "storePurchaseTime",
+      "legacyValue": 4.1,
+      "canonicalValue": 4,
+      "reason": "Reviewed correction: the new JSON data is authoritative."
+    },
+    {
+      "characterId": "恶魔汤姆",
+      "field": "hpRecovery",
+      "legacyValue": 1.5,
+      "canonicalValue": 2,
+      "reason": "Reviewed correction: the new JSON data is authoritative."
+    },
+    {
+      "characterId": "恶魔汤姆",
+      "field": "moveSpeed",
+      "legacyValue": 760,
+      "canonicalValue": 770,
+      "reason": "Reviewed correction: the new JSON data is authoritative."
+    },
+    {
+      "characterId": "恶魔汤姆",
+      "field": "storePurchaseTime",
+      "legacyValue": 2.6,
+      "canonicalValue": 2.5,
+      "reason": "Reviewed correction: the new JSON data is authoritative."
+    },
+    {
+      "characterId": "兔八哥",
+      "field": "storePurchaseTime",
+      "legacyValue": 2.6,
+      "canonicalValue": 2.5,
+      "reason": "Reviewed correction: the new JSON data is authoritative."
+    },
+    {
+      "characterId": "追风汤姆",
+      "field": "storePurchaseTime",
+      "legacyValue": 2.6,
+      "canonicalValue": 2.5,
+      "reason": "Reviewed correction: the new JSON data is authoritative."
+    },
+    {
+      "characterId": "如玉",
+      "field": "clawKnifeCdUnhit",
+      "legacyValue": 4,
+      "canonicalValue": 0.8,
+      "reason": "Reviewed correction: the new JSON data is authoritative."
+    },
+    {
+      "characterId": "如玉",
+      "field": "storePurchaseTime",
+      "legacyValue": 4.1,
+      "canonicalValue": 4,
+      "reason": "Reviewed correction: the new JSON data is authoritative."
+    },
+    {
+      "characterId": "侦探汤姆",
+      "field": "maxHp",
+      "legacyValue": 210,
+      "canonicalValue": 225,
+      "reason": "Reviewed correction: the new JSON data is authoritative."
+    },
+    {
+      "characterId": "侦探汤姆",
+      "field": "hpRecovery",
+      "legacyValue": null,
+      "canonicalValue": 2,
+      "reason": "Reviewed correction: the new JSON data is authoritative."
+    },
+    {
+      "characterId": "侦探汤姆",
+      "field": "moveSpeed",
+      "legacyValue": null,
+      "canonicalValue": 780,
+      "reason": "Reviewed correction: the new JSON data is authoritative."
+    },
+    {
+      "characterId": "侦探汤姆",
+      "field": "clawKnifeCdHit",
+      "legacyValue": 5.6,
+      "canonicalValue": 5.8,
+      "reason": "Reviewed correction: the new JSON data is authoritative."
+    },
+    {
+      "characterId": "侦探汤姆",
+      "field": "clawKnifeCdUnhit",
+      "legacyValue": 1.2,
+      "canonicalValue": 1.16,
+      "reason": "Reviewed correction: the new JSON data is authoritative."
+    },
+    {
+      "characterId": "侦探汤姆",
+      "field": "clawKnifeRange",
+      "legacyValue": null,
+      "canonicalValue": 300,
+      "reason": "Reviewed correction: the new JSON data is authoritative."
+    },
+    {
+      "characterId": "侦探汤姆",
+      "field": "storePurchaseTime",
+      "legacyValue": 2.6,
+      "canonicalValue": 2.5,
+      "reason": "Reviewed correction: the new JSON data is authoritative."
+    },
+    {
+      "characterId": "仙女鼠",
+      "field": "moveSpeed",
+      "legacyValue": 585,
+      "canonicalValue": 640,
+      "reason": "Reviewed correction: the new JSON data is authoritative."
+    },
+    {
+      "characterId": "莱恩",
+      "field": "moveSpeed",
+      "legacyValue": 680,
+      "canonicalValue": 685,
+      "reason": "Reviewed correction: the new JSON data is authoritative."
+    }
+  ],
+  "unexplainedDifferences": [],
+  "jumpHeights": [
+    {
+      "characterId": "汤姆",
+      "legacyValue": 420,
+      "canonicalValue": 483,
+      "changed": true
+    },
+    {
+      "characterId": "布奇",
+      "legacyValue": 420,
+      "canonicalValue": 483,
+      "changed": true
+    },
+    {
+      "characterId": "托普斯",
+      "legacyValue": 420,
+      "canonicalValue": 470,
+      "changed": true
+    },
+    {
+      "characterId": "莱特宁",
+      "legacyValue": 420,
+      "canonicalValue": 483,
+      "changed": true
+    },
+    {
+      "characterId": "牛仔汤姆",
+      "legacyValue": 420,
+      "canonicalValue": 483,
+      "changed": true
+    },
+    {
+      "characterId": "图多盖洛",
+      "legacyValue": 420,
+      "canonicalValue": 483,
+      "changed": true
+    },
+    {
+      "characterId": "侍卫汤姆",
+      "legacyValue": 420,
+      "canonicalValue": 483,
+      "changed": true
+    },
+    {
+      "characterId": "图茨",
+      "legacyValue": 420,
+      "canonicalValue": 470,
+      "changed": true
+    },
+    {
+      "characterId": "米特",
+      "legacyValue": 420,
+      "canonicalValue": 483,
+      "changed": true
+    },
+    {
+      "characterId": "塔拉",
+      "legacyValue": 420,
+      "canonicalValue": 483,
+      "changed": true
+    },
+    {
+      "characterId": "剑客汤姆",
+      "legacyValue": 420,
+      "canonicalValue": 483,
+      "changed": true
+    },
+    {
+      "characterId": "库博",
+      "legacyValue": 420,
+      "canonicalValue": 483,
+      "changed": true
+    },
+    {
+      "characterId": "凯特",
+      "legacyValue": 420,
+      "canonicalValue": 483,
+      "changed": true
+    },
+    {
+      "characterId": "苏蕊",
+      "legacyValue": 420,
+      "canonicalValue": 483,
+      "changed": true
+    },
+    {
+      "characterId": "天使汤姆",
+      "legacyValue": 420,
+      "canonicalValue": 483,
+      "changed": true
+    },
+    {
+      "characterId": "斯飞",
+      "legacyValue": 420,
+      "canonicalValue": 483,
+      "changed": true
+    },
+    {
+      "characterId": "恶魔汤姆",
+      "legacyValue": 420,
+      "canonicalValue": 483,
+      "changed": true
+    },
+    {
+      "characterId": "兔八哥",
+      "legacyValue": 420,
+      "canonicalValue": 483,
+      "changed": true
+    },
+    {
+      "characterId": "追风汤姆",
+      "legacyValue": 420,
+      "canonicalValue": 483,
+      "changed": true
+    },
+    {
+      "characterId": "如玉",
+      "legacyValue": 420,
+      "canonicalValue": 483,
+      "changed": true
+    },
+    {
+      "characterId": "侦探汤姆",
+      "legacyValue": 420,
+      "canonicalValue": 483,
+      "changed": true
+    },
+    {
+      "characterId": "杰瑞",
+      "legacyValue": 400,
+      "canonicalValue": 438,
+      "changed": true
+    },
+    {
+      "characterId": "侦探杰瑞",
+      "legacyValue": 380,
+      "canonicalValue": 425,
+      "changed": true
+    },
+    {
+      "characterId": "罗宾汉杰瑞",
+      "legacyValue": 400,
+      "canonicalValue": 438,
+      "changed": true
+    },
+    {
+      "characterId": "航海士杰瑞",
+      "legacyValue": 380,
+      "canonicalValue": 425,
+      "changed": true
+    },
+    {
+      "characterId": "国王杰瑞",
+      "legacyValue": 380,
+      "canonicalValue": 425,
+      "changed": true
+    },
+    {
+      "characterId": "剑客杰瑞",
+      "legacyValue": 380,
+      "canonicalValue": 425,
+      "changed": true
+    },
+    {
+      "characterId": "泰菲",
+      "legacyValue": 380,
+      "canonicalValue": 425,
+      "changed": true
+    },
+    {
+      "characterId": "剑客泰菲",
+      "legacyValue": 380,
+      "canonicalValue": 425,
+      "changed": true
+    },
+    {
+      "characterId": "牛仔杰瑞",
+      "legacyValue": 400,
+      "canonicalValue": 438,
+      "changed": true
+    },
+    {
+      "characterId": "恶魔杰瑞",
+      "legacyValue": 400,
+      "canonicalValue": 438,
+      "changed": true
+    },
+    {
+      "characterId": "恶魔泰菲",
+      "legacyValue": 400,
+      "canonicalValue": 438,
+      "changed": true
+    },
+    {
+      "characterId": "雪梨",
+      "legacyValue": 380,
+      "canonicalValue": 425,
+      "changed": true
+    },
+    {
+      "characterId": "天使杰瑞",
+      "legacyValue": 420,
+      "canonicalValue": 451,
+      "changed": true
+    },
+    {
+      "characterId": "天使泰菲",
+      "legacyValue": 380,
+      "canonicalValue": 438,
+      "changed": true
+    },
+    {
+      "characterId": "魔术师",
+      "legacyValue": 400,
+      "canonicalValue": 443,
+      "changed": true
+    },
+    {
+      "characterId": "佩克斯",
+      "legacyValue": 380,
+      "canonicalValue": 425,
+      "changed": true
+    },
+    {
+      "characterId": "拿坡里鼠",
+      "legacyValue": 400,
+      "canonicalValue": 425,
+      "changed": true
+    },
+    {
+      "characterId": "侦探泰菲",
+      "legacyValue": 380,
+      "canonicalValue": 425,
+      "changed": true
+    },
+    {
+      "characterId": "剑客莉莉",
+      "legacyValue": 380,
+      "canonicalValue": 425,
+      "changed": true
+    },
+    {
+      "characterId": "罗宾汉泰菲",
+      "legacyValue": 380,
+      "canonicalValue": 425,
+      "changed": true
+    },
+    {
+      "characterId": "玛丽",
+      "legacyValue": 380,
+      "canonicalValue": 425,
+      "changed": true
+    },
+    {
+      "characterId": "马索尔",
+      "legacyValue": 400,
+      "canonicalValue": 438,
+      "changed": true
+    },
+    {
+      "characterId": "米雪儿",
+      "legacyValue": 400,
+      "canonicalValue": 438,
+      "changed": true
+    },
+    {
+      "characterId": "音乐家杰瑞",
+      "legacyValue": 400,
+      "canonicalValue": 438,
+      "changed": true
+    },
+    {
+      "characterId": "蒙金奇",
+      "legacyValue": 380,
+      "canonicalValue": 425,
+      "changed": true
+    },
+    {
+      "characterId": "尼宝",
+      "legacyValue": 400,
+      "canonicalValue": 438,
+      "changed": true
+    },
+    {
+      "characterId": "朵朵",
+      "legacyValue": 380,
+      "canonicalValue": 425,
+      "changed": true
+    },
+    {
+      "characterId": "仙女鼠",
+      "legacyValue": 400,
+      "canonicalValue": 438,
+      "changed": true
+    },
+    {
+      "characterId": "米可",
+      "legacyValue": 400,
+      "canonicalValue": 438,
+      "changed": true
+    },
+    {
+      "characterId": "霜月",
+      "legacyValue": 400,
+      "canonicalValue": 438,
+      "changed": true
+    },
+    {
+      "characterId": "表演者•杰瑞",
+      "legacyValue": 380,
+      "canonicalValue": 425,
+      "changed": true
+    },
+    {
+      "characterId": "莱恩",
+      "legacyValue": 400,
+      "canonicalValue": 441,
+      "changed": true
+    },
+    {
+      "characterId": "梦游杰瑞",
+      "legacyValue": 380,
+      "canonicalValue": 425,
+      "changed": true
+    },
+    {
+      "characterId": "鲍姆",
+      "legacyValue": 400,
+      "canonicalValue": 425,
+      "changed": true
+    },
+    {
+      "characterId": "朝圣者泰菲",
+      "legacyValue": 380,
+      "canonicalValue": 425,
+      "changed": true
+    }
+  ]
+}
