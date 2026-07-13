@@ -6646,7 +6646,7 @@ const mouseCharacterDefinitions = {
   朝圣者泰菲: {
     description:
       '特意前来参与感恩节晚宴的小鼠，从朝圣者人偶身上拿走了塑料枪、带上朝圣者帽、在餐桌上嬉戏玩耍，但眼睛却紧盯着那热气腾腾的美味烤鸡。',
-    EnglishName: '',
+    EnglishName: 'Pilgrim Tuffy',
     mousePositioningTags: [
       {
         tagName: '干扰',

@@ -27,16 +27,22 @@ describe('CharacterRoleAttributesCard', () => {
       />
     );
 
-    expect(screen.getByText('性别')).toBeInTheDocument();
-    expect(screen.getByText('英文名')).toBeInTheDocument();
+    expect(screen.queryByText('性别')).not.toBeInTheDocument();
+    expect(screen.queryByText('英文名')).not.toBeInTheDocument();
     expect(screen.queryByText('跳跃高度')).not.toBeInTheDocument();
     expect(screen.queryByText('角色类型')).not.toBeInTheDocument();
     expect(screen.queryByText('物理特质')).not.toBeInTheDocument();
     expect(screen.queryByText('重力参数')).not.toBeInTheDocument();
     expect(screen.queryByText('攻击力')).not.toBeInTheDocument();
+    expect(screen.getByText('跳跃速度').closest('p')).toHaveTextContent('跳跃速度: 1850/s');
     expect(getRankingLink(container, 'maxHp', 'cat')).toHaveTextContent('255');
     expect(getRankingLink(container, 'jumpHeight', 'cat')).toBeUndefined();
     expect(getRankingLink(container, 'jumpSpeed', 'cat')).toBeUndefined();
+
+    fireEvent.click(screen.getByRole('button', { name: '展开' }));
+
+    expect(screen.getByText('性别')).toBeInTheDocument();
+    expect(screen.getByText('英文名')).toBeInTheDocument();
   });
 
   it('should expose folding state, focus visibility, and reduced-motion styling', () => {
@@ -59,7 +65,7 @@ describe('CharacterRoleAttributesCard', () => {
   it('should omit non-applicable summary mechanics without substitution', () => {
     render(<CharacterRoleAttributesCard name='盔甲人' context='object' />);
 
-    expect(screen.getByText('爪刀CD').closest('p')).toHaveTextContent('爪刀CD: 命中 2 秒');
+    expect(screen.getByText('爪刀CD').closest('p')).toHaveTextContent('爪刀CD: 命中 2 s');
     expect(screen.queryByText(/未命中/)).not.toBeInTheDocument();
     expect(screen.queryByText('爪刀范围')).not.toBeInTheDocument();
   });
@@ -78,7 +84,7 @@ describe('CharacterRoleAttributesCard', () => {
     fireEvent.click(screen.getByRole('button', { name: '展开' }));
 
     const cooldownRow = screen.getByText('爪刀CD').closest('p');
-    expect(cooldownRow).toHaveTextContent('爪刀CD: 未命中 4.9（特殊 4）秒 / 命中 7（特殊 8）秒');
+    expect(cooldownRow).toHaveTextContent('爪刀CD: 未命中 4.9（特殊 4）s / 命中 7（特殊 8）s');
     expect(getRankingLink(container, 'clawKnifeCdUnhit', 'cat')).toHaveTextContent('4.9');
     expect(getRankingLink(container, 'clawKnifeCdHit', 'cat')).toHaveTextContent('7');
     expect(cooldownRow?.querySelectorAll('a')).toHaveLength(2);

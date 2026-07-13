@@ -33,9 +33,9 @@ describe('character role domain', () => {
     expect(formatCharacterRoleSex('none')).toBe('无性别');
     expect(formatCharacterRoleSize({ width: 85, height: 130 })).toBe('85 × 130');
     expect(formatCharacterRoleAttackCooldown({ hit: 4.5, miss: 2.25 })).toBe(
-      '未命中 2.25 秒 / 命中 4.5 秒'
+      '未命中 2.25 s / 命中 4.5 s'
     );
-    expect(formatCharacterRoleAttackCooldown({ hit: 2 })).toBe('命中 2 秒');
+    expect(formatCharacterRoleAttackCooldown({ hit: 2 })).toBe('命中 2 s');
   });
 
   it('should determine gravity uniformity from playable faction membership', () => {

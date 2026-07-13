@@ -34,5 +34,5 @@ export const formatCharacterRoleAttackCooldown = (
   value: CharacterRole['attackCooldown']
 ): string =>
   value.miss === undefined
-    ? `命中 ${formatCharacterRoleNumber(value.hit)} 秒`
-    : `未命中 ${formatCharacterRoleNumber(value.miss)} 秒 / 命中 ${formatCharacterRoleNumber(value.hit)} 秒`;
+    ? `命中 ${formatCharacterRoleNumber(value.hit)} s`
+    : `未命中 ${formatCharacterRoleNumber(value.miss)} s / 命中 ${formatCharacterRoleNumber(value.hit)} s`;
