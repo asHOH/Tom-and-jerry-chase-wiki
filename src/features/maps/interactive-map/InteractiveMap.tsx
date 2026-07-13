@@ -412,15 +412,8 @@ function MinimapDiagram({
               <span className='block size-3 rounded-full border border-cyan-50 bg-cyan-400 shadow sm:size-4' />
             );
 
-          const pointChildren = (
-            <>
-              {point.isRandomCandidate && (
-                <span className='absolute inset-1/2 block size-7 -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-yellow-300 sm:size-8' />
-              )}
-              {pointContent}
-            </>
-          );
-          const pointClassName = `absolute -translate-x-1/2 -translate-y-1/2 ${interactive ? 'cursor-pointer appearance-none border-0 bg-transparent p-0' : 'pointer-events-none'}`;
+          const pointChildren = pointContent;
+          const pointClassName = `absolute -translate-x-1/2 -translate-y-1/2 ${point.isRandomCandidate ? 'opacity-50' : ''} ${interactive ? 'cursor-pointer appearance-none border-0 bg-transparent p-0' : 'pointer-events-none'}`;
 
           return interactive ? (
             <button
@@ -1429,17 +1422,17 @@ function EditorPanel(props: EditorPanelProps) {
                     </button>
                   </div>
                 ))}
-                <div className='grid grid-cols-[1fr_auto] gap-1'>
+                <div className='grid grid-cols-[minmax(0,1fr)_4.5rem] gap-1'>
                   <input
                     value={relatedName}
                     onChange={(event) => setRelatedName(event.target.value)}
                     placeholder='条目名称'
-                    className='rounded bg-white/10 px-2 py-1'
+                    className='min-w-0 rounded bg-white/10 px-2 py-1'
                   />
                   <select
                     value={relatedType}
                     onChange={(event) => setRelatedType(event.target.value as SingleItemTypeName)}
-                    className='rounded bg-slate-800 px-1'
+                    className='w-full min-w-0 rounded bg-slate-800 px-1'
                   >
                     <option value='fixture'>组件</option>
                     <option value='item'>道具</option>
