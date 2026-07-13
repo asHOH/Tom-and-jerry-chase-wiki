@@ -162,27 +162,37 @@ const mapDefinitions: Record<string, MapDefinition> = {
         },
         {
           category: 'mouseHole',
-          position: { x: 0.7747, y: 0.4515 },
+          position: { x: 0.7709, y: 0.4406 },
           isInvisible: true,
         },
         {
           category: 'mouseHole',
-          position: { x: 0.8646, y: 0.7015 },
+          position: { x: 0.8807, y: 0.711 },
           isInvisible: true,
         },
         {
           category: 'mouseHole',
-          position: { x: 0.8153, y: 0.9341 },
+          position: { x: 0.8279, y: 0.9601 },
           isInvisible: true,
         },
         {
           category: 'pipe',
-          position: { x: 0.5851, y: 0.4292 },
+          position: { x: 0.5872, y: 0.4347 },
           isInvisible: true,
         },
         {
           category: 'pipe',
           position: { x: 0.6606, y: 0.8922 },
+          isInvisible: true,
+        },
+        {
+          category: 'pipe',
+          position: { x: 0.876, y: 0.0926 },
+          isInvisible: true,
+        },
+        {
+          category: 'pipe',
+          position: { x: 0.0041, y: 0.6459 },
           isInvisible: true,
         },
       ],
