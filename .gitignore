@@ -67,6 +67,9 @@ GEMINI.md
 implementation_plan.md
 implementation_notes.md
 
+# Private normalization inputs
+/src/data/roles.json
+
 # Personal git workflow helpers
 /git-helpers/
 

@@ -1,0 +1,32 @@
+import { execFileSync } from 'node:child_process';
+import { readFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
+
+import { EXCLUDED_CHARACTER_ROLE_NAMES } from '../src/features/character-roles/normalization';
+import { assertCharacterRoleData } from '../src/features/character-roles/schema';
+import { getCharacterRoleReferences, getPlayableCharacterRoles } from './character-role-context';
+
+const CANONICAL_PATH = resolve(
+  process.cwd(),
+  'src/features/character-roles/data/characterRoles.json'
+);
+const RAW_PATH = 'src/data/roles.json';
+
+const main = async () => {
+  const canonicalInput = JSON.parse(await readFile(CANONICAL_PATH, 'utf8')) as unknown;
+  const roles = assertCharacterRoleData(canonicalInput, {
+    playableCharacters: getPlayableCharacterRoles(),
+    references: await getCharacterRoleReferences(),
+    excludedNames: EXCLUDED_CHARACTER_ROLE_NAMES,
+  });
+
+  const trackedRawPath = execFileSync('git', ['ls-files', '--', RAW_PATH], {
+    encoding: 'utf8',
+  }).trim();
+  if (trackedRawPath.length > 0) throw new Error(`${RAW_PATH} must not be tracked`);
+
+  execFileSync('git', ['check-ignore', '--quiet', '--', RAW_PATH]);
+  console.log(`Validated ${roles.length} canonical character roles`);
+};
+
+await main();

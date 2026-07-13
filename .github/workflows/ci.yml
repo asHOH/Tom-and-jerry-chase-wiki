@@ -37,6 +37,9 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
 
+      - name: Validate character roles
+        run: npm run validate:character-roles
+
   code-quality:
     name: Code Quality
     runs-on: ubuntu-latest

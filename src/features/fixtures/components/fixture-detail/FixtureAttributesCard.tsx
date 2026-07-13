@@ -9,6 +9,7 @@ import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { Fixture } from '@/data/types';
+import CharacterRoleAttributes from '@/features/character-roles/components/CharacterRoleAttributesCard';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
 import AddAliasButton from '@/features/shared/detail-view/AddAliasButton';
 import AttributesCardLayout from '@/features/shared/detail-view/AttributesCardLayout';
@@ -19,7 +20,6 @@ import NavigationButtonsRow from '@/components/ui/NavigationButtonsRow';
 import SingleItemAccordionCard from '@/components/ui/SingleItemAccordionCard';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import Tag from '@/components/ui/Tag';
-import CharacterRoleAttributes from '@/components/CharacterRoleAttributesCard';
 import { fixturesEdit } from '@/data';
 
 export default function FixtureAttributesCard({ fixture }: { fixture: Fixture }) {
@@ -151,7 +151,7 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
           {effectiveFixture.characterRoleName !== undefined ? (
             <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
               <span className='text-sm font-bold'>该物件属于特殊角色，具有以下属性：</span>
-              <CharacterRoleAttributes name={effectiveFixture.characterRoleName} />
+              <CharacterRoleAttributes name={effectiveFixture.characterRoleName} context='object' />
             </div>
           ) : null}
           <PhysicalAttributesSection

@@ -12,6 +12,7 @@ import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { EditModeContext, useEditMode } from '@/context/EditModeContext';
 import { Skill } from '@/data/types';
+import CharacterRoleAttributesCard from '@/features/character-roles/components/CharacterRoleAttributesCard';
 import SingleItemReverseCard from '@/features/shared/components/SingleItemReverseCard';
 import SingleItemTraitsText from '@/features/shared/components/SingleItemTraitsText';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
@@ -23,7 +24,6 @@ import DiscussButton from '@/components/ui/DiscussButton';
 import { editable } from '@/components/ui/editable';
 import EditButton from '@/components/ui/EditButton';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
-import CharacterRoleAttributesCard from '@/components/CharacterRoleAttributesCard';
 import { PlusIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 import { characters } from '@/data';
@@ -215,9 +215,15 @@ export default function CharacterDetails({ children }: CharacterDetailsWithTutor
                   <CharacterRoleAttributesCard
                     name={localCharacter.id}
                     EnglishName={localCharacter.EnglishName}
+                    context='character'
+                    factionId={factionId}
                   />
                 ) : (
-                  <CharacterRoleAttributesCard name={localCharacter.id} />
+                  <CharacterRoleAttributesCard
+                    name={localCharacter.id}
+                    context='character'
+                    factionId={factionId}
+                  />
                 )}
 
                 <PositioningTagsSection tags={positioningTags} factionId={factionId} />

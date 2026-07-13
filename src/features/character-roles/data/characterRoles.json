@@ -1,0 +1,2061 @@
+[
+  {
+    "name": "汤姆",
+    "roleType": "cat",
+    "physicsType": "cat",
+    "sex": "male",
+    "size": {
+      "width": 180,
+      "height": 264
+    },
+    "runSpeed": 760,
+    "jumpSpeed": 1850,
+    "climbSpeed": 350,
+    "visionScale": 0.55,
+    "gravity": -3543.22,
+    "baseHp": 255,
+    "maxHp": 255,
+    "hpRecovery": 3.5,
+    "attack": 0,
+    "wallDamage": 0,
+    "attackRange": 275,
+    "attackCooldown": {
+      "hit": 4.5,
+      "miss": 2.25
+    },
+    "pushCheeseSpeed": 0,
+    "initialItem": "老鼠夹",
+    "deformCooldown": 60,
+    "shoppingCooldown": 10,
+    "shoppingDelay": 2.5
+  },
+  {
+    "name": "布奇",
+    "roleType": "cat",
+    "physicsType": "cat",
+    "sex": "male",
+    "size": {
+      "width": 180,
+      "height": 264
+    },
+    "runSpeed": 750,
+    "jumpSpeed": 1850,
+    "climbSpeed": 350,
+    "visionScale": 0.55,
+    "gravity": -3543.22,
+    "baseHp": 220,
+    "maxHp": 220,
+    "hpRecovery": 2,
+    "attack": 15,
+    "wallDamage": 0,
+    "attackRange": 270,
+    "attackCooldown": {
+      "hit": 6,
+      "miss": 4.8
+    },
+    "pushCheeseSpeed": 0,
+    "initialItem": "老鼠夹",
+    "deformCooldown": 60,
+    "shoppingCooldown": 10,
+    "shoppingDelay": 2.5
+  },
+  {
+    "name": "托普斯",
+    "roleType": "cat",
+    "physicsType": "cat",
+    "sex": "male",
+    "size": {
+      "width": 126,
+      "height": 209
+    },
+    "runSpeed": 780,
+    "jumpSpeed": 1825,
+    "climbSpeed": 350,
+    "visionScale": 0.53,
+    "gravity": -3543.22,
+    "baseHp": 200,
+    "maxHp": 200,
+    "hpRecovery": 2.5,
+    "attack": 0,
+    "wallDamage": 0,
+    "attackRange": 210,
+    "attackCooldown": {
+      "hit": 5,
+      "miss": 3.5
+    },
+    "pushCheeseSpeed": 0,
+    "initialItem": "老鼠夹",
+    "shoppingCooldown": 10,
+    "shoppingDelay": 2.5
+  },
+  {
+    "name": "莱特宁",
+    "roleType": "cat",
+    "physicsType": "cat",
+    "sex": "male",
+    "size": {
+      "width": 180,
+      "height": 264
+    },
+    "runSpeed": 780,
+    "jumpSpeed": 1850,
+    "climbSpeed": 350,
+    "visionScale": 0.55,
+    "gravity": -3543.22,
+    "baseHp": 260,
+    "maxHp": 260,
+    "hpRecovery": 3,
+    "attack": 0,
+    "wallDamage": 0,
+    "attackRange": 270,
+    "attackCooldown": {
+      "hit": 6.5,
+      "miss": 4.55
+    },
+    "pushCheeseSpeed": 0,
+    "initialItem": "老鼠夹",
+    "deformCooldown": 60,
+    "shoppingCooldown": 10,
+    "shoppingDelay": 2.5
+  },
+  {
+    "name": "牛仔汤姆",
+    "roleType": "cat",
+    "physicsType": "cat",
+    "sex": "male",
+    "size": {
+      "width": 180,
+      "height": 264
+    },
+    "runSpeed": 760,
+    "jumpSpeed": 1850,
+    "climbSpeed": 350,
+    "visionScale": 0.55,
+    "gravity": -3543.22,
+    "baseHp": 225,
+    "maxHp": 225,
+    "hpRecovery": 2.5,
+    "attack": 0,
+    "wallDamage": 0,
+    "attackRange": 275,
+    "attackCooldown": {
+      "hit": 5,
+      "miss": 3.5
+    },
+    "pushCheeseSpeed": 0,
+    "initialItem": "老鼠夹",
+    "shoppingCooldown": 10,
+    "shoppingDelay": 2.5
+  },
+  {
+    "name": "图多盖洛",
+    "roleType": "cat",
+    "physicsType": "cat",
+    "sex": "female",
+    "size": {
+      "width": 180,
+      "height": 264
+    },
+    "runSpeed": 770,
+    "jumpSpeed": 1850,
+    "climbSpeed": 350,
+    "visionScale": 0.54,
+    "gravity": -3543.22,
+    "baseHp": 230,
+    "maxHp": 230,
+    "hpRecovery": 2,
+    "attack": 0,
+    "wallDamage": 0,
+    "attackRange": 235,
+    "attackCooldown": {
+      "hit": 3.5,
+      "miss": 3.5
+    },
+    "pushCheeseSpeed": 0,
+    "initialItem": "老鼠夹",
+    "shoppingCooldown": 10,
+    "shoppingDelay": 2.5
+  },
+  {
+    "name": "侍卫汤姆",
+    "roleType": "cat",
+    "physicsType": "cat",
+    "sex": "male",
+    "size": {
+      "width": 180,
+      "height": 264
+    },
+    "runSpeed": 750,
+    "jumpSpeed": 1850,
+    "climbSpeed": 350,
+    "visionScale": 0.55,
+    "gravity": -3543.22,
+    "baseHp": 270,
+    "maxHp": 270,
+    "hpRecovery": 1.5,
+    "attack": 0,
+    "wallDamage": 0,
+    "attackRange": 275,
+    "attackCooldown": {
+      "hit": 5.5,
+      "miss": 2.2
+    },
+    "pushCheeseSpeed": 0,
+    "initialItem": "老鼠夹",
+    "shoppingCooldown": 10,
+    "shoppingDelay": 2.5
+  },
+  {
+    "name": "图茨",
+    "roleType": "cat",
+    "physicsType": "cat",
+    "sex": "female",
+    "size": {
+      "width": 126,
+      "height": 209
+    },
+    "runSpeed": 740,
+    "jumpSpeed": 1825,
+    "climbSpeed": 350,
+    "visionScale": 0.56,
+    "gravity": -3543.22,
+    "baseHp": 225,
+    "maxHp": 225,
+    "hpRecovery": 4.5,
+    "attack": 0,
+    "wallDamage": 0,
+    "attackRange": 180,
+    "attackCooldown": {
+      "hit": 2.5,
+      "miss": 2
+    },
+    "pushCheeseSpeed": 0,
+    "initialItem": "老鼠夹",
+    "shoppingCooldown": 10,
+    "shoppingDelay": 2.5
+  },
+  {
+    "name": "米特",
+    "roleType": "cat",
+    "physicsType": "cat",
+    "sex": "male",
+    "size": {
+      "width": 180,
+      "height": 264
+    },
+    "runSpeed": 750,
+    "jumpSpeed": 1850,
+    "climbSpeed": 350,
+    "visionScale": 0.55,
+    "gravity": -3543.22,
+    "baseHp": 325,
+    "maxHp": 325,
+    "hpRecovery": 3,
+    "attack": 0,
+    "wallDamage": 0,
+    "attackRange": 275,
+    "attackCooldown": {
+      "hit": 5.5,
+      "miss": 3.3
+    },
+    "pushCheeseSpeed": 0,
+    "initialItem": "老鼠夹",
+    "shoppingCooldown": 10,
+    "shoppingDelay": 2.5
+  },
+  {
+    "name": "塔拉",
+    "roleType": "cat",
+    "physicsType": "cat",
+    "sex": "female",
+    "size": {
+      "width": 180,
+      "height": 264
+    },
+    "runSpeed": 760,
+    "jumpSpeed": 1850,
+    "climbSpeed": 350,
+    "visionScale": 0.55,
+    "gravity": -3543.22,
+    "baseHp": 250,
+    "maxHp": 250,
+    "hpRecovery": 2.5,
+    "attack": 0,
+    "wallDamage": 0,
+    "attackRange": 275,
+    "attackCooldown": {
+      "hit": 5,
+      "miss": 4
+    },
+    "pushCheeseSpeed": 0,
+    "initialItem": "老鼠夹",
+    "shoppingCooldown": 10,
+    "shoppingDelay": 2.5
+  },
+  {
+    "name": "剑客汤姆",
+    "roleType": "cat",
+    "physicsType": "cat",
+    "sex": "male",
+    "size": {
+      "width": 180,
+      "height": 264
+    },
+    "runSpeed": 770,
+    "jumpSpeed": 1850,
+    "climbSpeed": 350,
+    "visionScale": 0.54,
+    "gravity": -3543.22,
+    "baseHp": 270,
+    "maxHp": 270,
+    "hpRecovery": 1.5,
+    "attack": 0,
+    "wallDamage": 0,
+    "attackRange": 275,
+    "attackCooldown": {
+      "hit": 6,
+      "miss": 1.98
+    },
+    "pushCheeseSpeed": 0,
+    "initialItem": "老鼠夹",
+    "shoppingCooldown": 10,
+    "shoppingDelay": 2.5
+  },
+  {
+    "name": "库博",
+    "roleType": "cat",
+    "physicsType": "cat",
+    "sex": "male",
+    "size": {
+      "width": 180,
+      "height": 264
+    },
+    "runSpeed": 735,
+    "jumpSpeed": 1850,
+    "climbSpeed": 350,
+    "visionScale": 0.54,
+    "gravity": -3543.22,
+    "baseHp": 210,
+    "maxHp": 210,
+    "hpRecovery": 1.5,
+    "attack": 0,
+    "wallDamage": 0,
+    "attackRange": 210,
+    "attackCooldown": {
+      "hit": 5,
+      "miss": 1.65
+    },
+    "pushCheeseSpeed": 0,
+    "initialItem": "老鼠夹",
+    "shoppingCooldown": 10,
+    "shoppingDelay": 2.5
+  },
+  {
+    "name": "凯特",
+    "roleType": "cat",
+    "physicsType": "cat",
+    "sex": "female",
+    "size": {
+      "width": 180,
+      "height": 264
+    },
+    "runSpeed": 760,
+    "jumpSpeed": 1850,
+    "climbSpeed": 350,
+    "visionScale": 0.55,
+    "gravity": -3543.22,
+    "baseHp": 250,
+    "maxHp": 250,
+    "hpRecovery": 3.5,
+    "attack": 0,
+    "wallDamage": 0,
+    "attackRange": 275,
+    "attackCooldown": {
+      "hit": 5,
+      "miss": 3.5
+    },
+    "pushCheeseSpeed": 0,
+    "initialItem": "老鼠夹",
+    "shoppingCooldown": 10,
+    "shoppingDelay": 2.5
+  },
+  {
+    "name": "苏蕊",
+    "roleType": "cat",
+    "physicsType": "cat",
+    "sex": "female",
+    "size": {
+      "width": 180,
+      "height": 264
+    },
+    "runSpeed": 770,
+    "jumpSpeed": 1850,
+    "climbSpeed": 350,
+    "visionScale": 0.55,
+    "gravity": -3543.22,
+    "baseHp": 200,
+    "maxHp": 200,
+    "hpRecovery": 2.5,
+    "attack": 0,
+    "wallDamage": 0,
+    "attackRange": 250,
+    "attackCooldown": {
+      "hit": 7,
+      "miss": 4.9
+    },
+    "pushCheeseSpeed": 0,
+    "initialItem": "鞭炮束",
+    "shoppingCooldown": 10,
+    "shoppingDelay": 4
+  },
+  {
+    "name": "天使汤姆",
+    "roleType": "cat",
+    "physicsType": "cat",
+    "sex": "male",
+    "size": {
+      "width": 180,
+      "height": 264
+    },
+    "runSpeed": 770,
+    "jumpSpeed": 1850,
+    "climbSpeed": 350,
+    "visionScale": 0.54,
+    "gravity": -3543.22,
+    "baseHp": 230,
+    "maxHp": 230,
+    "hpRecovery": 2,
+    "attack": 15,
+    "wallDamage": 0,
+    "attackRange": 275,
+    "attackCooldown": {
+      "hit": 8,
+      "miss": 4
+    },
+    "pushCheeseSpeed": 0,
+    "initialItem": "老鼠夹",
+    "shoppingCooldown": 10,
+    "shoppingDelay": 2.5
+  },
+  {
+    "name": "斯飞",
+    "roleType": "cat",
+    "physicsType": "cat",
+    "sex": "male",
+    "size": {
+      "width": 180,
+      "height": 264
+    },
+    "runSpeed": 780,
+    "jumpSpeed": 1850,
+    "climbSpeed": 350,
+    "visionScale": 0.55,
+    "gravity": -3543.22,
+    "baseHp": 245,
+    "maxHp": 245,
+    "hpRecovery": 2,
+    "attack": 0,
+    "wallDamage": 0,
+    "attackRange": 270,
+    "attackCooldown": {
+      "hit": 4,
+      "miss": 3.2
+    },
+    "pushCheeseSpeed": 0,
+    "initialItem": "老鼠夹",
+    "shoppingCooldown": 10,
+    "shoppingDelay": 4
+  },
+  {
+    "name": "恶魔汤姆",
+    "roleType": "cat",
+    "physicsType": "cat",
+    "sex": "male",
+    "size": {
+      "width": 180,
+      "height": 264
+    },
+    "runSpeed": 770,
+    "jumpSpeed": 1850,
+    "climbSpeed": 350,
+    "visionScale": 0.54,
+    "gravity": -3543.22,
+    "baseHp": 200,
+    "maxHp": 200,
+    "hpRecovery": 2,
+    "attack": 0,
+    "wallDamage": 0,
+    "attackRange": 275,
+    "attackCooldown": {
+      "hit": 6,
+      "miss": 3
+    },
+    "pushCheeseSpeed": 0,
+    "initialItem": "老鼠夹",
+    "shoppingCooldown": 10,
+    "shoppingDelay": 2.5
+  },
+  {
+    "name": "兔八哥",
+    "roleType": "cat",
+    "physicsType": "cat",
+    "sex": "male",
+    "size": {
+      "width": 180,
+      "height": 264
+    },
+    "runSpeed": 800,
+    "jumpSpeed": 1850,
+    "climbSpeed": 350,
+    "visionScale": 0.54,
+    "gravity": -3543.22,
+    "baseHp": 200,
+    "maxHp": 200,
+    "hpRecovery": 2,
+    "attack": 0,
+    "wallDamage": 0,
+    "attackRange": 275,
+    "attackCooldown": {
+      "hit": 5,
+      "miss": 2.5
+    },
+    "pushCheeseSpeed": 0,
+    "initialItem": "老鼠夹",
+    "shoppingCooldown": 10,
+    "shoppingDelay": 2.5
+  },
+  {
+    "name": "追风汤姆",
+    "roleType": "cat",
+    "physicsType": "cat",
+    "sex": "male",
+    "size": {
+      "width": 180,
+      "height": 264
+    },
+    "runSpeed": 800,
+    "jumpSpeed": 1850,
+    "climbSpeed": 350,
+    "visionScale": 0.54,
+    "gravity": -3543.22,
+    "baseHp": 240,
+    "maxHp": 240,
+    "hpRecovery": 1,
+    "attack": 0,
+    "wallDamage": 0,
+    "attackRange": 275,
+    "attackCooldown": {
+      "hit": 7,
+      "miss": 3.85
+    },
+    "pushCheeseSpeed": 0,
+    "initialItem": "老鼠夹",
+    "shoppingCooldown": 10,
+    "shoppingDelay": 2.5
+  },
+  {
+    "name": "如玉",
+    "roleType": "cat",
+    "physicsType": "cat",
+    "sex": "female",
+    "size": {
+      "width": 180,
+      "height": 264
+    },
+    "runSpeed": 780,
+    "jumpSpeed": 1850,
+    "climbSpeed": 350,
+    "visionScale": 0.55,
+    "gravity": -3543.22,
+    "baseHp": 185,
+    "maxHp": 185,
+    "hpRecovery": 3.5,
+    "attack": 10,
+    "wallDamage": 0,
+    "attackRange": 250,
+    "attackCooldown": {
+      "hit": 4,
+      "miss": 0.8
+    },
+    "pushCheeseSpeed": 0,
+    "initialItem": "鞭炮束",
+    "shoppingCooldown": 10,
+    "shoppingDelay": 4
+  },
+  {
+    "name": "侦探汤姆",
+    "roleType": "cat",
+    "physicsType": "cat",
+    "sex": "male",
+    "size": {
+      "width": 180,
+      "height": 264
+    },
+    "runSpeed": 780,
+    "jumpSpeed": 1850,
+    "climbSpeed": 350,
+    "visionScale": 0.55,
+    "gravity": -3543.22,
+    "baseHp": 225,
+    "maxHp": 225,
+    "hpRecovery": 2,
+    "attack": 0,
+    "wallDamage": 0,
+    "attackRange": 300,
+    "attackCooldown": {
+      "hit": 5.8,
+      "miss": 1.16
+    },
+    "pushCheeseSpeed": 0,
+    "initialItem": "老鼠夹",
+    "shoppingCooldown": 10,
+    "shoppingDelay": 2.5
+  },
+  {
+    "name": "杰瑞",
+    "roleType": "mouse",
+    "physicsType": "mouse",
+    "sex": "male",
+    "size": {
+      "width": 85,
+      "height": 130
+    },
+    "runSpeed": 650,
+    "jumpSpeed": 1675,
+    "climbSpeed": 300,
+    "visionScale": 0.64,
+    "gravity": -3202.94,
+    "baseHp": 99,
+    "maxHp": 99,
+    "hpRecovery": 2,
+    "attack": 15,
+    "wallDamage": 1,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 5,
+    "deformCooldown": 20,
+    "shoppingCooldown": 10,
+    "shoppingDelay": 4
+  },
+  {
+    "name": "侦探杰瑞",
+    "roleType": "mouse",
+    "physicsType": "mouse",
+    "sex": "male",
+    "size": {
+      "width": 85,
+      "height": 130
+    },
+    "runSpeed": 640,
+    "jumpSpeed": 1650,
+    "climbSpeed": 300,
+    "visionScale": 0.65,
+    "gravity": -3202.94,
+    "baseHp": 99,
+    "maxHp": 99,
+    "hpRecovery": 1.7,
+    "attack": 10,
+    "wallDamage": 0.5,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 5.75,
+    "shoppingCooldown": 10,
+    "shoppingDelay": 4
+  },
+  {
+    "name": "罗宾汉杰瑞",
+    "roleType": "mouse",
+    "physicsType": "mouse",
+    "sex": "male",
+    "size": {
+      "width": 85,
+      "height": 130
+    },
+    "runSpeed": 660,
+    "jumpSpeed": 1675,
+    "climbSpeed": 350,
+    "visionScale": 0.63,
+    "gravity": -3202.94,
+    "baseHp": 99,
+    "maxHp": 99,
+    "hpRecovery": 1.7,
+    "attack": 10,
+    "wallDamage": 1,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 4.5,
+    "shoppingCooldown": 10,
+    "shoppingDelay": 4
+  },
+  {
+    "name": "航海士杰瑞",
+    "roleType": "mouse",
+    "physicsType": "mouse",
+    "sex": "male",
+    "size": {
+      "width": 85,
+      "height": 130
+    },
+    "runSpeed": 640,
+    "jumpSpeed": 1650,
+    "climbSpeed": 300,
+    "visionScale": 0.65,
+    "gravity": -3202.94,
+    "baseHp": 99,
+    "maxHp": 99,
+    "hpRecovery": 1.7,
+    "attack": 20,
+    "wallDamage": 1.5,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 3.25,
+    "shoppingCooldown": 10,
+    "shoppingDelay": 4
+  },
+  {
+    "name": "国王杰瑞",
+    "roleType": "mouse",
+    "physicsType": "mouse",
+    "sex": "male",
+    "size": {
+      "width": 85,
+      "height": 130
+    },
+    "runSpeed": 600,
+    "jumpSpeed": 1650,
+    "climbSpeed": 300,
+    "visionScale": 0.69,
+    "gravity": -3202.94,
+    "baseHp": 99,
+    "maxHp": 99,
+    "hpRecovery": 1.7,
+    "attack": 10,
+    "wallDamage": 1,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 3.75,
+    "shoppingCooldown": 10,
+    "shoppingDelay": 4
+  },
+  {
+    "name": "剑客杰瑞",
+    "roleType": "mouse",
+    "physicsType": "mouse",
+    "sex": "male",
+    "size": {
+      "width": 85,
+      "height": 130
+    },
+    "runSpeed": 640,
+    "jumpSpeed": 1650,
+    "climbSpeed": 300,
+    "visionScale": 0.65,
+    "gravity": -3202.94,
+    "baseHp": 124,
+    "maxHp": 124,
+    "hpRecovery": 0,
+    "attack": 25,
+    "wallDamage": 1,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 3,
+    "shoppingCooldown": 10,
+    "shoppingDelay": 4
+  },
+  {
+    "name": "泰菲",
+    "roleType": "mouse",
+    "physicsType": "mouse",
+    "sex": "male",
+    "size": {
+      "width": 66,
+      "height": 101
+    },
+    "runSpeed": 630,
+    "jumpSpeed": 1650,
+    "climbSpeed": 300,
+    "visionScale": 0.66,
+    "gravity": -3202.94,
+    "baseHp": 74,
+    "maxHp": 74,
+    "hpRecovery": 2.5,
+    "attack": 5,
+    "wallDamage": 0.5,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 4.75,
+    "deformCooldown": 60,
+    "shoppingCooldown": 10,
+    "shoppingDelay": 4
+  },
+  {
+    "name": "剑客泰菲",
+    "roleType": "mouse",
+    "physicsType": "mouse",
+    "sex": "male",
+    "size": {
+      "width": 66,
+      "height": 101
+    },
+    "runSpeed": 600,
+    "jumpSpeed": 1650,
+    "climbSpeed": 300,
+    "visionScale": 0.69,
+    "gravity": -3202.94,
+    "baseHp": 99,
+    "maxHp": 99,
+    "hpRecovery": 1,
+    "attack": 10,
+    "wallDamage": 1,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 3,
+    "deformCooldown": 60,
+    "shoppingCooldown": 10,
+    "shoppingDelay": 4
+  },
+  {
+    "name": "牛仔杰瑞",
+    "roleType": "mouse",
+    "physicsType": "mouse",
+    "sex": "male",
+    "size": {
+      "width": 85,
+      "height": 130
+    },
+    "runSpeed": 650,
+    "jumpSpeed": 1675,
+    "climbSpeed": 300,
+    "visionScale": 0.64,
+    "gravity": -3202.94,
+    "baseHp": 124,
+    "maxHp": 124,
+    "hpRecovery": 1.7,
+    "attack": 10,
+    "wallDamage": 1,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 4,
+    "shoppingCooldown": 10,
+    "shoppingDelay": 4
+  },
+  {
+    "name": "恶魔杰瑞",
+    "roleType": "mouse",
+    "physicsType": "mouse",
+    "sex": "male",
+    "size": {
+      "width": 85,
+      "height": 130
+    },
+    "runSpeed": 640,
+    "jumpSpeed": 1675,
+    "climbSpeed": 300,
+    "visionScale": 0.65,
+    "gravity": -3202.94,
+    "baseHp": 99,
+    "maxHp": 99,
+    "hpRecovery": 5,
+    "attack": 5,
+    "wallDamage": 1,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 3.75,
+    "shoppingCooldown": 10,
+    "shoppingDelay": 4
+  },
+  {
+    "name": "恶魔泰菲",
+    "roleType": "mouse",
+    "physicsType": "mouse",
+    "sex": "male",
+    "size": {
+      "width": 85,
+      "height": 130
+    },
+    "runSpeed": 645,
+    "jumpSpeed": 1675,
+    "climbSpeed": 300,
+    "visionScale": 0.64,
+    "gravity": -3202.94,
+    "baseHp": 74,
+    "maxHp": 74,
+    "hpRecovery": 2.5,
+    "attack": 15,
+    "wallDamage": 1,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 4.5,
+    "deformCooldown": 60,
+    "shoppingCooldown": 10,
+    "shoppingDelay": 4
+  },
+  {
+    "name": "雪梨",
+    "roleType": "mouse",
+    "physicsType": "mouse",
+    "sex": "female",
+    "size": {
+      "width": 85,
+      "height": 130
+    },
+    "runSpeed": 680,
+    "jumpSpeed": 1650,
+    "climbSpeed": 300,
+    "visionScale": 0.61,
+    "gravity": -3202.94,
+    "baseHp": 99,
+    "maxHp": 99,
+    "hpRecovery": 2,
+    "attack": 0,
+    "wallDamage": 0.5,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 4.75,
+    "shoppingCooldown": 10,
+    "shoppingDelay": 4
+  },
+  {
+    "name": "天使杰瑞",
+    "roleType": "mouse",
+    "physicsType": "mouse",
+    "sex": "male",
+    "size": {
+      "width": 85,
+      "height": 130
+    },
+    "runSpeed": 665,
+    "jumpSpeed": 1700,
+    "climbSpeed": 300,
+    "visionScale": 0.62,
+    "gravity": -3202.94,
+    "baseHp": 99,
+    "maxHp": 99,
+    "hpRecovery": 5,
+    "attack": 5,
+    "wallDamage": 0.5,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 4.5,
+    "shoppingCooldown": 10,
+    "shoppingDelay": 4
+  },
+  {
+    "name": "天使泰菲",
+    "roleType": "mouse",
+    "physicsType": "mouse",
+    "sex": "male",
+    "size": {
+      "width": 66,
+      "height": 101
+    },
+    "runSpeed": 650,
+    "jumpSpeed": 1675,
+    "climbSpeed": 300,
+    "visionScale": 0.64,
+    "gravity": -3202.94,
+    "baseHp": 74,
+    "maxHp": 74,
+    "hpRecovery": 2.5,
+    "attack": 5,
+    "wallDamage": 0.5,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 4.25,
+    "deformCooldown": 60,
+    "shoppingCooldown": 10,
+    "shoppingDelay": 4
+  },
+  {
+    "name": "魔术师",
+    "roleType": "mouse",
+    "physicsType": "mouse",
+    "sex": "male",
+    "size": {
+      "width": 85,
+      "height": 130
+    },
+    "runSpeed": 645,
+    "jumpSpeed": 1685,
+    "climbSpeed": 300,
+    "visionScale": 0.64,
+    "gravity": -3202.94,
+    "baseHp": 99,
+    "maxHp": 99,
+    "hpRecovery": 2,
+    "attack": 0,
+    "wallDamage": 0,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 0.5,
+    "shoppingCooldown": 10,
+    "shoppingDelay": 4
+  },
+  {
+    "name": "佩克斯",
+    "roleType": "mouse",
+    "physicsType": "mouse",
+    "sex": "male",
+    "size": {
+      "width": 66,
+      "height": 101
+    },
+    "runSpeed": 650,
+    "jumpSpeed": 1650,
+    "climbSpeed": 300,
+    "visionScale": 0.64,
+    "gravity": -3202.94,
+    "baseHp": 124,
+    "maxHp": 124,
+    "hpRecovery": 2.5,
+    "attack": 10,
+    "wallDamage": 0.5,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 3.5,
+    "shoppingCooldown": 10,
+    "shoppingDelay": 4
+  },
+  {
+    "name": "拿坡里鼠",
+    "roleType": "mouse",
+    "physicsType": "mouse",
+    "sex": "male",
+    "size": {
+      "width": 66,
+      "height": 101
+    },
+    "runSpeed": 635,
+    "jumpSpeed": 1650,
+    "climbSpeed": 300,
+    "visionScale": 0.65,
+    "gravity": -3202.94,
+    "baseHp": 99,
+    "maxHp": 99,
+    "hpRecovery": 2.5,
+    "attack": 10,
+    "wallDamage": 0.5,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 4.25,
+    "shoppingCooldown": 10,
+    "shoppingDelay": 4
+  },
+  {
+    "name": "侦探泰菲",
+    "roleType": "mouse",
+    "physicsType": "mouse",
+    "sex": "male",
+    "size": {
+      "width": 85,
+      "height": 130
+    },
+    "runSpeed": 635,
+    "jumpSpeed": 1650,
+    "climbSpeed": 300,
+    "visionScale": 0.65,
+    "gravity": -3202.94,
+    "baseHp": 74,
+    "maxHp": 74,
+    "hpRecovery": 2.5,
+    "attack": 5,
+    "wallDamage": 0.5,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 5.75,
+    "deformCooldown": 60,
+    "shoppingCooldown": 10,
+    "shoppingDelay": 4
+  },
+  {
+    "name": "剑客莉莉",
+    "roleType": "mouse",
+    "physicsType": "mouse",
+    "sex": "female",
+    "size": {
+      "width": 85,
+      "height": 130
+    },
+    "runSpeed": 645,
+    "jumpSpeed": 1650,
+    "climbSpeed": 300,
+    "visionScale": 0.64,
+    "gravity": -3202.94,
+    "baseHp": 124,
+    "maxHp": 124,
+    "hpRecovery": 1,
+    "attack": 20,
+    "wallDamage": 1,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 3.25,
+    "shoppingCooldown": 10,
+    "shoppingDelay": 4
+  },
+  {
+    "name": "罗宾汉泰菲",
+    "roleType": "mouse",
+    "physicsType": "mouse",
+    "sex": "male",
+    "size": {
+      "width": 66,
+      "height": 101
+    },
+    "runSpeed": 630,
+    "jumpSpeed": 1650,
+    "climbSpeed": 300,
+    "visionScale": 0.66,
+    "gravity": -3202.94,
+    "baseHp": 74,
+    "maxHp": 74,
+    "hpRecovery": 2.5,
+    "attack": 5,
+    "wallDamage": 0.5,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 4.75,
+    "deformCooldown": 60,
+    "shoppingCooldown": 10,
+    "shoppingDelay": 4
+  },
+  {
+    "name": "玛丽",
+    "roleType": "mouse",
+    "physicsType": "mouse",
+    "sex": "female",
+    "size": {
+      "width": 85,
+      "height": 130
+    },
+    "runSpeed": 635,
+    "jumpSpeed": 1650,
+    "climbSpeed": 300,
+    "visionScale": 0.64,
+    "gravity": -3202.94,
+    "baseHp": 99,
+    "maxHp": 99,
+    "hpRecovery": 2.5,
+    "attack": 0,
+    "wallDamage": 1,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 4.25,
+    "shoppingCooldown": 10,
+    "shoppingDelay": 4
+  },
+  {
+    "name": "马索尔",
+    "roleType": "mouse",
+    "physicsType": "mouse",
+    "sex": "male",
+    "size": {
+      "width": 85,
+      "height": 130
+    },
+    "runSpeed": 650,
+    "jumpSpeed": 1675,
+    "climbSpeed": 300,
+    "visionScale": 0.64,
+    "gravity": -3202.94,
+    "baseHp": 99,
+    "maxHp": 99,
+    "hpRecovery": 2,
+    "attack": 0,
+    "wallDamage": 1,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 0.75,
+    "shoppingCooldown": 10,
+    "shoppingDelay": 4
+  },
+  {
+    "name": "米雪儿",
+    "roleType": "mouse",
+    "physicsType": "mouse",
+    "sex": "female",
+    "size": {
+      "width": 85,
+      "height": 130
+    },
+    "runSpeed": 650,
+    "jumpSpeed": 1675,
+    "climbSpeed": 300,
+    "visionScale": 0.64,
+    "gravity": -3202.94,
+    "baseHp": 99,
+    "maxHp": 99,
+    "hpRecovery": 2,
+    "attack": 10,
+    "wallDamage": 1,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 3.75,
+    "shoppingCooldown": 10,
+    "shoppingDelay": 4
+  },
+  {
+    "name": "音乐家杰瑞",
+    "roleType": "mouse",
+    "physicsType": "mouse",
+    "sex": "male",
+    "size": {
+      "width": 85,
+      "height": 130
+    },
+    "runSpeed": 600,
+    "jumpSpeed": 1675,
+    "climbSpeed": 300,
+    "visionScale": 0.64,
+    "gravity": -3202.94,
+    "baseHp": 99,
+    "maxHp": 99,
+    "hpRecovery": 1,
+    "attack": 10,
+    "wallDamage": 1,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 3.1,
+    "shoppingCooldown": 10,
+    "shoppingDelay": 4
+  },
+  {
+    "name": "蒙金奇",
+    "roleType": "mouse",
+    "physicsType": "mouse",
+    "sex": "male",
+    "size": {
+      "width": 85,
+      "height": 130
+    },
+    "runSpeed": 640,
+    "jumpSpeed": 1650,
+    "climbSpeed": 300,
+    "visionScale": 0.65,
+    "gravity": -3202.94,
+    "baseHp": 99,
+    "maxHp": 99,
+    "hpRecovery": 0.5,
+    "attack": 25,
+    "wallDamage": 1,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 3,
+    "shoppingCooldown": 10,
+    "shoppingDelay": 4
+  },
+  {
+    "name": "尼宝",
+    "roleType": "mouse",
+    "physicsType": "mouse",
+    "sex": "male",
+    "size": {
+      "width": 85,
+      "height": 130
+    },
+    "runSpeed": 640,
+    "jumpSpeed": 1675,
+    "climbSpeed": 300,
+    "visionScale": 0.64,
+    "gravity": -3202.94,
+    "baseHp": 99,
+    "maxHp": 99,
+    "hpRecovery": 2,
+    "attack": 10,
+    "wallDamage": 1,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 3.5,
+    "shoppingCooldown": 10,
+    "shoppingDelay": 4
+  },
+  {
+    "name": "朵朵",
+    "roleType": "mouse",
+    "physicsType": "mouse",
+    "sex": "female",
+    "size": {
+      "width": 85,
+      "height": 130
+    },
+    "runSpeed": 630,
+    "jumpSpeed": 1650,
+    "climbSpeed": 300,
+    "visionScale": 0.66,
+    "gravity": -3202.94,
+    "baseHp": 99,
+    "maxHp": 99,
+    "hpRecovery": 1,
+    "attack": 10,
+    "wallDamage": 1,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 3,
+    "shoppingCooldown": 10,
+    "shoppingDelay": 4
+  },
+  {
+    "name": "仙女鼠",
+    "roleType": "mouse",
+    "physicsType": "mouse",
+    "sex": "female",
+    "size": {
+      "width": 85,
+      "height": 130
+    },
+    "runSpeed": 640,
+    "jumpSpeed": 1675,
+    "climbSpeed": 300,
+    "visionScale": 0.64,
+    "gravity": -3202.94,
+    "baseHp": 99,
+    "maxHp": 99,
+    "hpRecovery": 2,
+    "attack": 10,
+    "wallDamage": 1,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 3.5,
+    "shoppingCooldown": 10,
+    "shoppingDelay": 4
+  },
+  {
+    "name": "米可",
+    "roleType": "mouse",
+    "physicsType": "mouse",
+    "sex": "male",
+    "size": {
+      "width": 85,
+      "height": 130
+    },
+    "runSpeed": 640,
+    "jumpSpeed": 1675,
+    "climbSpeed": 300,
+    "visionScale": 0.64,
+    "gravity": -3202.94,
+    "baseHp": 99,
+    "maxHp": 99,
+    "hpRecovery": 2.5,
+    "attack": 10,
+    "wallDamage": 1,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 3.25,
+    "shoppingCooldown": 10,
+    "shoppingDelay": 4
+  },
+  {
+    "name": "霜月",
+    "roleType": "mouse",
+    "physicsType": "mouse",
+    "sex": "female",
+    "size": {
+      "width": 85,
+      "height": 130
+    },
+    "runSpeed": 640,
+    "jumpSpeed": 1675,
+    "climbSpeed": 300,
+    "visionScale": 0.64,
+    "gravity": -3202.94,
+    "baseHp": 75,
+    "maxHp": 75,
+    "hpRecovery": 2,
+    "attack": 10,
+    "wallDamage": 1,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 3,
+    "shoppingCooldown": 10,
+    "shoppingDelay": 4
+  },
+  {
+    "name": "表演者•杰瑞",
+    "roleType": "mouse",
+    "physicsType": "mouse",
+    "sex": "male",
+    "size": {
+      "width": 66,
+      "height": 101
+    },
+    "runSpeed": 650,
+    "jumpSpeed": 1650,
+    "climbSpeed": 300,
+    "visionScale": 0.64,
+    "gravity": -3202.94,
+    "baseHp": 124,
+    "maxHp": 124,
+    "hpRecovery": 2.5,
+    "attack": 5,
+    "wallDamage": 0.5,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 3.25,
+    "shoppingCooldown": 10,
+    "shoppingDelay": 4
+  },
+  {
+    "name": "莱恩",
+    "roleType": "mouse",
+    "physicsType": "mouse",
+    "sex": "male",
+    "size": {
+      "width": 66,
+      "height": 101
+    },
+    "runSpeed": 685,
+    "jumpSpeed": 1680,
+    "climbSpeed": 330,
+    "visionScale": 0.64,
+    "gravity": -3202.93,
+    "baseHp": 70,
+    "maxHp": 70,
+    "hpRecovery": 1,
+    "attack": 5,
+    "wallDamage": 0.5,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 3.5,
+    "shoppingCooldown": 10,
+    "shoppingDelay": 4
+  },
+  {
+    "name": "梦游杰瑞",
+    "roleType": "mouse",
+    "physicsType": "mouse",
+    "sex": "male",
+    "size": {
+      "width": 66,
+      "height": 101
+    },
+    "runSpeed": 650,
+    "jumpSpeed": 1650,
+    "climbSpeed": 300,
+    "visionScale": 0.64,
+    "gravity": -3202.94,
+    "baseHp": 101,
+    "maxHp": 101,
+    "hpRecovery": 1,
+    "attack": 5,
+    "wallDamage": 0.5,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 4.25,
+    "shoppingCooldown": 10,
+    "shoppingDelay": 4
+  },
+  {
+    "name": "鲍姆",
+    "roleType": "mouse",
+    "physicsType": "mouse",
+    "sex": "male",
+    "size": {
+      "width": 66,
+      "height": 101
+    },
+    "runSpeed": 640,
+    "jumpSpeed": 1650,
+    "climbSpeed": 300,
+    "visionScale": 0.64,
+    "gravity": -3202.94,
+    "baseHp": 110,
+    "maxHp": 110,
+    "hpRecovery": 2.5,
+    "attack": 0,
+    "wallDamage": 1,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 3.5,
+    "shoppingCooldown": 10,
+    "shoppingDelay": 4
+  },
+  {
+    "name": "朝圣者泰菲",
+    "roleType": "mouse",
+    "physicsType": "mouse",
+    "sex": "male",
+    "size": {
+      "width": 66,
+      "height": 101
+    },
+    "runSpeed": 650,
+    "jumpSpeed": 1650,
+    "climbSpeed": 300,
+    "visionScale": 0.66,
+    "gravity": -3202.94,
+    "baseHp": 74,
+    "maxHp": 74,
+    "hpRecovery": 1.5,
+    "attack": 5,
+    "wallDamage": 0.5,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 4.75,
+    "deformCooldown": 60,
+    "shoppingCooldown": 10,
+    "shoppingDelay": 4
+  },
+  {
+    "name": "“正气守护”斯派克",
+    "roleType": "special",
+    "physicsType": "cat",
+    "sex": "none",
+    "size": {
+      "width": 163,
+      "height": 153
+    },
+    "runSpeed": 800,
+    "jumpSpeed": 2200,
+    "climbSpeed": 200,
+    "visionScale": 0.52,
+    "gravity": -3543.22,
+    "baseHp": 380,
+    "maxHp": 380,
+    "hpRecovery": 3.8,
+    "attack": 0,
+    "wallDamage": 0,
+    "attackRange": 320,
+    "attackCooldown": {
+      "hit": 2
+    }
+  },
+  {
+    "name": "仙女星星",
+    "roleType": "special",
+    "physicsType": "special",
+    "sex": "male",
+    "size": {
+      "width": 163,
+      "height": 153
+    },
+    "runSpeed": 630,
+    "jumpSpeed": 1675,
+    "climbSpeed": 200,
+    "visionScale": 0.7,
+    "gravity": -3202.94,
+    "baseHp": 200,
+    "maxHp": 200,
+    "hpRecovery": 0,
+    "attack": 0,
+    "wallDamage": 0,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 0
+  },
+  {
+    "name": "兔子先生",
+    "roleType": "special",
+    "physicsType": "mouse",
+    "sex": "none",
+    "size": {
+      "width": 85,
+      "height": 130
+    },
+    "runSpeed": 800,
+    "jumpSpeed": 2100,
+    "climbSpeed": 1000,
+    "visionScale": 0.7,
+    "gravity": -3202.94,
+    "baseHp": 110,
+    "maxHp": 110,
+    "hpRecovery": 2.5,
+    "attack": 20,
+    "wallDamage": 2,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 2
+  },
+  {
+    "name": "兔子大表哥",
+    "roleType": "special",
+    "physicsType": "cat",
+    "sex": "none",
+    "size": {
+      "width": 236,
+      "height": 290
+    },
+    "runSpeed": 800,
+    "jumpSpeed": 2100,
+    "climbSpeed": 1000,
+    "visionScale": 0.7,
+    "gravity": -3202.94,
+    "baseHp": 130,
+    "maxHp": 130,
+    "hpRecovery": 3,
+    "wallDamage": 5,
+    "attackRange": 300,
+    "attackCooldown": {
+      "hit": 2.5,
+      "miss": 2.5
+    }
+  },
+  {
+    "name": "兔霸哥",
+    "roleType": "special",
+    "physicsType": "cat",
+    "sex": "none",
+    "size": {
+      "width": 85,
+      "height": 130
+    },
+    "runSpeed": 700,
+    "jumpSpeed": 2200,
+    "climbSpeed": 200,
+    "visionScale": 0.7,
+    "gravity": -3202.94,
+    "baseHp": 380,
+    "maxHp": 380,
+    "hpRecovery": 0,
+    "attack": 0,
+    "wallDamage": 0,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 0
+  },
+  {
+    "name": "小象",
+    "roleType": "special",
+    "physicsType": "mouse",
+    "sex": "none",
+    "size": {
+      "width": 85,
+      "height": 130
+    },
+    "runSpeed": 700,
+    "jumpSpeed": 2200,
+    "climbSpeed": 200,
+    "visionScale": 0.7,
+    "gravity": -3202.94,
+    "baseHp": 310,
+    "maxHp": 310,
+    "hpRecovery": 0,
+    "attack": 0,
+    "wallDamage": 0,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 0
+  },
+  {
+    "name": "小黄鸭",
+    "roleType": "special",
+    "physicsType": "special",
+    "sex": "none",
+    "size": {
+      "width": 60,
+      "height": 60
+    },
+    "runSpeed": 650,
+    "jumpSpeed": 1675,
+    "climbSpeed": 200,
+    "visionScale": 0.7,
+    "gravity": -3202.94,
+    "baseHp": 1,
+    "maxHp": 1,
+    "hpRecovery": 0,
+    "attack": 0,
+    "wallDamage": 0,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 0
+  },
+  {
+    "name": "年兽",
+    "roleType": "special",
+    "physicsType": "special",
+    "sex": "none",
+    "size": {
+      "width": 300,
+      "height": 300
+    },
+    "runSpeed": 650,
+    "jumpSpeed": 1675,
+    "climbSpeed": 200,
+    "visionScale": 0.7,
+    "gravity": -3202.94,
+    "baseHp": 20000,
+    "maxHp": 20000,
+    "hpRecovery": 0,
+    "attack": 0,
+    "wallDamage": 0,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 0
+  },
+  {
+    "name": "斯派克之家",
+    "roleType": "special",
+    "physicsType": "cat",
+    "sex": "none",
+    "size": {
+      "width": 180,
+      "height": 264
+    },
+    "runSpeed": 800,
+    "jumpSpeed": 2200,
+    "climbSpeed": 200,
+    "visionScale": 0.52,
+    "gravity": -3543.22,
+    "baseHp": 500,
+    "maxHp": 500,
+    "hpRecovery": 3.8,
+    "attack": 0,
+    "wallDamage": 0,
+    "attackRange": 320,
+    "attackCooldown": {
+      "hit": 2
+    }
+  },
+  {
+    "name": "机器鼠",
+    "roleType": "special",
+    "physicsType": "special",
+    "sex": "none",
+    "size": {
+      "width": 85,
+      "height": 130
+    },
+    "runSpeed": 660,
+    "jumpSpeed": 1800,
+    "climbSpeed": 200,
+    "visionScale": 0.7,
+    "gravity": -3202.94,
+    "baseHp": 1,
+    "maxHp": 1,
+    "hpRecovery": 0,
+    "attack": 0,
+    "wallDamage": 0,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 0
+  },
+  {
+    "name": "机甲汤姆",
+    "roleType": "special",
+    "physicsType": "cat",
+    "sex": "male",
+    "size": {
+      "width": 163,
+      "height": 153
+    },
+    "runSpeed": 810,
+    "jumpSpeed": 2200,
+    "climbSpeed": 200,
+    "visionScale": 0.7,
+    "gravity": -3202.94,
+    "baseHp": 400,
+    "maxHp": 400,
+    "hpRecovery": 0,
+    "attack": 0,
+    "wallDamage": 0,
+    "attackRange": 320,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 0
+  },
+  {
+    "name": "柠檬杰瑞",
+    "roleType": "special",
+    "physicsType": "cat",
+    "sex": "none",
+    "size": {
+      "width": 85,
+      "height": 130
+    },
+    "runSpeed": 800,
+    "jumpSpeed": 2200,
+    "climbSpeed": 200,
+    "visionScale": 0.7,
+    "gravity": -3543.22,
+    "baseHp": 330,
+    "maxHp": 330,
+    "hpRecovery": 3.8,
+    "attack": 0,
+    "wallDamage": 0,
+    "attackRange": 320,
+    "attackCooldown": {
+      "hit": 2
+    }
+  },
+  {
+    "name": "熊猫",
+    "roleType": "special",
+    "physicsType": "special",
+    "sex": "none",
+    "size": {
+      "width": 100,
+      "height": 80
+    },
+    "runSpeed": 400,
+    "jumpSpeed": 1675,
+    "climbSpeed": 200,
+    "visionScale": 0.7,
+    "gravity": -3202.94,
+    "baseHp": 1,
+    "maxHp": 1,
+    "hpRecovery": 0,
+    "attack": 0,
+    "wallDamage": 0,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 0
+  },
+  {
+    "name": "燃烧的仙女星",
+    "roleType": "special",
+    "physicsType": "special",
+    "sex": "male",
+    "size": {
+      "width": 163,
+      "height": 153
+    },
+    "runSpeed": 630,
+    "jumpSpeed": 1675,
+    "climbSpeed": 200,
+    "visionScale": 0.7,
+    "gravity": -3202.94,
+    "baseHp": 300,
+    "maxHp": 300,
+    "hpRecovery": 0,
+    "attack": 0,
+    "wallDamage": 0,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 0
+  },
+  {
+    "name": "电风扇",
+    "roleType": "special",
+    "physicsType": "special",
+    "sex": "none",
+    "size": {
+      "width": 60,
+      "height": 60
+    },
+    "runSpeed": 650,
+    "jumpSpeed": 1675,
+    "climbSpeed": 200,
+    "visionScale": 0.7,
+    "gravity": -3202.94,
+    "baseHp": 1,
+    "maxHp": 1,
+    "hpRecovery": 0,
+    "attack": 0,
+    "wallDamage": 0,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 0
+  },
+  {
+    "name": "盔甲人",
+    "roleType": "special",
+    "physicsType": "special",
+    "sex": "none",
+    "size": {
+      "width": 180,
+      "height": 264
+    },
+    "runSpeed": 700,
+    "jumpSpeed": 1675,
+    "climbSpeed": 200,
+    "visionScale": 0.59,
+    "gravity": -3543.22,
+    "baseHp": 99,
+    "maxHp": 99,
+    "hpRecovery": 0,
+    "attack": 0,
+    "wallDamage": 0,
+    "attackRange": 275,
+    "attackCooldown": {
+      "hit": 2
+    }
+  },
+  {
+    "name": "肌肉杰瑞",
+    "roleType": "special",
+    "physicsType": "mouse",
+    "sex": "none",
+    "size": {
+      "width": 85,
+      "height": 130
+    },
+    "runSpeed": 700,
+    "jumpSpeed": 2200,
+    "climbSpeed": 1000,
+    "visionScale": 0.7,
+    "gravity": -3202.94,
+    "baseHp": 295,
+    "maxHp": 295,
+    "hpRecovery": 0,
+    "attack": 0,
+    "wallDamage": 2,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 2
+  },
+  {
+    "name": "肌肉汤姆",
+    "roleType": "special",
+    "physicsType": "cat",
+    "sex": "none",
+    "size": {
+      "width": 180,
+      "height": 264
+    },
+    "runSpeed": 800,
+    "jumpSpeed": 2200,
+    "climbSpeed": 200,
+    "visionScale": 0.52,
+    "gravity": -3543.22,
+    "baseHp": 380,
+    "maxHp": 380,
+    "hpRecovery": 3.8,
+    "attack": 0,
+    "wallDamage": 0,
+    "attackRange": 320,
+    "attackCooldown": {
+      "hit": 2
+    }
+  },
+  {
+    "name": "胖呆呆",
+    "roleType": "special",
+    "physicsType": "special",
+    "sex": "male",
+    "size": {
+      "width": 163,
+      "height": 153
+    },
+    "runSpeed": 630,
+    "jumpSpeed": 1675,
+    "climbSpeed": 200,
+    "visionScale": 0.7,
+    "gravity": -3202.94,
+    "baseHp": 2,
+    "maxHp": 2,
+    "hpRecovery": 0,
+    "attack": 0,
+    "wallDamage": 0,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 0
+  },
+  {
+    "name": "超级仙女星",
+    "roleType": "special",
+    "physicsType": "special",
+    "sex": "male",
+    "size": {
+      "width": 163,
+      "height": 153
+    },
+    "runSpeed": 630,
+    "jumpSpeed": 1675,
+    "climbSpeed": 200,
+    "visionScale": 0.7,
+    "gravity": -3202.94,
+    "baseHp": 300,
+    "maxHp": 300,
+    "hpRecovery": 0,
+    "attack": 0,
+    "wallDamage": 0,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 0
+  },
+  {
+    "name": "鸭妈妈",
+    "roleType": "special",
+    "physicsType": "special",
+    "sex": "none",
+    "size": {
+      "width": 180,
+      "height": 264
+    },
+    "runSpeed": 700,
+    "jumpSpeed": 1750,
+    "climbSpeed": 200,
+    "visionScale": 0.7,
+    "gravity": -3202.94,
+    "baseHp": 1,
+    "maxHp": 1,
+    "hpRecovery": 0,
+    "attack": 0,
+    "wallDamage": 0,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 0
+  },
+  {
+    "name": "鸭爸爸",
+    "roleType": "special",
+    "physicsType": "special",
+    "sex": "none",
+    "size": {
+      "width": 180,
+      "height": 264
+    },
+    "runSpeed": 700,
+    "jumpSpeed": 1750,
+    "climbSpeed": 200,
+    "visionScale": 0.7,
+    "gravity": -3202.94,
+    "baseHp": 1,
+    "maxHp": 1,
+    "hpRecovery": 0,
+    "attack": 0,
+    "wallDamage": 0,
+    "attackCooldown": {
+      "hit": 2
+    },
+    "pushCheeseSpeed": 0
+  }
+]

@@ -682,7 +682,6 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     move: false,
     gravity: true,
     collision: ['墙壁', '平台', '地面'],
-    characterRoleName: '火箭',
   },
   /* ----------------------------------- 其它常规道具 ----------------------------------- */
   拳套盒: {

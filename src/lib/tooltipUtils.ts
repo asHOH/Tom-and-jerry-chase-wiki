@@ -170,32 +170,6 @@ const fixturePositioningTagTooltips = {
   模式组件: '只在指定模式出现的组件，往往具有更加特殊的效果',
 };
 
-const rolePositioningTagTooltips = {
-  角色类型: '角色类型：猫、鼠、以及特殊角色',
-  物理特质: '物理特质会决定角色是否可进行某些交互，以及实际的交互方式',
-  性别: '会影响塔拉等角色技能的实际效果',
-  体型: '角色的判定区域大小，会影响碰撞及部分效果范围判定内容',
-  移动速度: '角色在平地进行横向移动时的基础速度；速度默认单位为“单位长/秒”；1“米”=32“单位长”',
-  跳跃速度: '角色在平地进行完整的纵向跳跃时的初速度；速度默认单位为“单位长/秒”；1“米”=32“单位长”',
-  攀爬速度: '角色通过持续交互进行攀爬梯子时的基础速度；速度默认单位为“单位长/秒”；1“米”=32“单位长”',
-  Hp上限: '健康值上限，即"血条"',
-  Hp恢复: '每秒恢复的健康值',
-  攻击力: '角色的基础攻击力，会在对其他角色造成伤害时使伤害提高相应数值（部分伤害除外）',
-  破坏力: '角色的基础破坏力，会在对墙缝造成伤害时时使伤害提高相应数值（部分伤害除外）',
-  攻击范围: '角色的基础攻击范围',
-  攻击冷却: '角色进行常规攻击后的冷却时间，冷却期间无法进行常规攻击',
-  空刀CD比例:
-    '角色进行常规攻击时，若攻击落空，则实际进入的冷却时间为原始冷却时间×本数值；本属性对非常规攻击（例如如玉的花枪）不生效',
-  推奶酪速度:
-    '简称“推速”，为角色的基础推奶酪速度，已折算为“%/秒”单位；本单位与游戏内的推速单位“点”的换算关系为：1“点”=5“%/秒”',
-  视野缩放: '决定角色的基础视野范围大小；注意：该属性与实际视野大小呈反比，即本属性越大，视野越小',
-  重力参数: '决定角色受到的重力大小',
-  初始道具: '角色初始的手持道具',
-  购物所需时间: '角色开始进行购物至购物到货所需的时长',
-  变形彩蛋CD: '部分角色拥有特殊角色变形彩蛋，该属性为其内置触发CD',
-  英文名: '角色的英文译名',
-};
-
 /**
  * Get tooltip content with fallback logic for character properties
  * @param property - Property name to get tooltip for
@@ -248,14 +222,13 @@ export const getPositioningTagTooltipContent = (
 
 export const getSpecifyTypePositioningTagTooltipContent = (
   tagName: string,
-  type: 'item' | 'entity' | 'map' | 'fixture' | 'role'
+  type: 'item' | 'entity' | 'map' | 'fixture'
 ): string => {
   const tooltips = {
     item: itemPositioningTagTooltips,
     entity: entityPositioningTagTooltips,
     map: mapPositioningTagTooltips,
     fixture: fixturePositioningTagTooltips,
-    role: rolePositioningTagTooltips,
   }[type];
 
   if (tooltips[tagName as keyof typeof tooltips]) {

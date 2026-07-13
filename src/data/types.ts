@@ -176,7 +176,7 @@ export type CharacterDefinition = {
 
   //specific attributes
   gender?: 'male' | 'female';
-  EnglishName?: string; //20260712注：此属性未在characterRoles中体现，后续调整时可能需注意保留
+  EnglishName?: string; // Official translation retained outside canonical role statistics
 };
 
 export type CharacterRelation = Record<TraitRelationKind, CharacterRelationItem[]>;
@@ -719,31 +719,4 @@ export type VariantEdge = {
 export type CharacterRelationTrait = {
   description: string;
   relation: TraitRelation;
-};
-
-export type characterRoles = {
-  //the truly attributes of characters
-  name: string;
-  roleType?: number; //角色类型：0=老鼠，1＝猫，2=特殊
-  sex?: number; //角色性别：1=男性，2=女性，0=特殊
-  runSpeed?: number; //移动速度
-  jumpSpeed?: number; //跳跃速度
-  climbSpeed?: number; //攀爬速度
-  vision?: number; //视野大小参数。该参数与实际视野大小呈反比
-  gravity?: number; //默认重力大小
-  hpRecover?: number; //Hp恢复速度
-  baseHp?: number; //初始Hp（目前版本中所有内容的baseHp均与maxHp一致，此处仅做未来占位用）
-  maxHp?: number; // Hp上限
-  attack?: number; //攻击力
-  attackGoldGate?: number; //破坏力
-  attackRange?: number; //攻击范围
-  attackCd?: number; //攻击冷却
-  attackMissCdRate?: number; //攻击落空时的CD比例变为
-  pushCheese?: number; //推奶酪速度（内部单位；与“%/s”的换算比例为1:5）
-  item?: string; //初始手持物
-  size?: string; //体型：“长;高”
-  physicsTag?: number; //角色物理特质：1=鼠，2=猫，1009=特殊
-  deformCD?: number; //角色变形彩蛋触发CD（另注：原文件中有deformCom属性，为角色变形彩蛋代号，此处省略）
-  buyCD?: number; //成功购物后CD（目前版本中所有内容的buyCD均为10，此处仅做未来占位用）
-  buyDelay?: number; //购物所需时间
 };

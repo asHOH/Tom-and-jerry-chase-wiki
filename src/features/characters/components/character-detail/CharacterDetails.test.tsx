@@ -21,8 +21,8 @@ jest.mock('@/data', () => ({
     const { proxy } = jest.requireActual<typeof import('valtio')>('valtio');
 
     return {
-      testCharacter: proxy({
-        id: 'testCharacter',
+      汤姆: proxy({
+        id: '汤姆',
         factionId: 'cat',
         description: 'test description',
         imageUrl: '/test-character.png',
@@ -31,6 +31,7 @@ jest.mock('@/data', () => ({
         skills: [],
         knowledgeCardGroups: [],
         catPositioningTags: [],
+        EnglishName: 'Tom',
       }),
     };
   })(),
@@ -42,7 +43,7 @@ jest.mock('@/context/EditModeContext', () => ({
 }));
 
 jest.mock('@/hooks/useLocalEditEntity', () => ({
-  useLocalCharacter: () => ({ characterId: 'testCharacter' }),
+  useLocalCharacter: () => ({ characterId: '汤姆' }),
 }));
 
 jest.mock('@/hooks/useMediaQuery', () => ({
@@ -76,6 +77,7 @@ jest.mock('@/components/ui/EditButton', () => ({
 
 jest.mock('@/components/icons/CommonIcons', () => ({
   ChatBubbleIcon: () => <span />,
+  ChevronDownIcon: () => <span />,
   CloseIcon: () => <span />,
   PlusIcon: () => <span />,
 }));
@@ -109,11 +111,6 @@ jest.mock('@/features/shared/components/SingleItemWikiHistoryDisplay', () => ({
 
 jest.mock('@/features/shared/traits/filterTraitsBySingleItem', () => ({
   filterTraitsBySingleItem: () => [],
-}));
-
-jest.mock('./character-attributes/CharacterAttributesSection', () => ({
-  __esModule: true,
-  default: () => <div />,
 }));
 
 jest.mock('./info-displays/CharacterHistoryDisplay', () => ({
