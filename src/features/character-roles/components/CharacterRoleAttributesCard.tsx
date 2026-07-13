@@ -20,7 +20,6 @@ import {
 import type { CharacterRole } from '../schema';
 import {
   getCharacterRole,
-  getCharacterRoleJumpHeight,
   getDisplayedCharacterRoleGravity,
   isFactionDisplayedGravityUniform,
 } from '../selectors';
@@ -62,7 +61,7 @@ const RANKING_LINK_CLASS = 'cursor-pointer hover:underline focus-visible:underli
 const SUMMARY_KEYS: Readonly<
   Record<CharacterRoleAttributesContext, readonly CharacterRoleAttributeKey[]>
 > = {
-  character: ['sex', 'EnglishName', 'maxHp', 'hpRecovery', 'runSpeed', 'jumpHeight'],
+  character: ['maxHp', 'hpRecovery', 'runSpeed', 'jumpSpeed'],
   object: ['roleType', 'physicsType', 'maxHp', 'hpRecovery', 'runSpeed', 'attackCooldown'],
 };
 
@@ -83,8 +82,6 @@ const getRankableProperty = (
       return 'hpRecovery';
     case 'runSpeed':
       return 'moveSpeed';
-    case 'jumpHeight':
-      return 'jumpHeight';
     case 'attack':
       return 'attackBoost';
     case 'wallDamage':
@@ -182,13 +179,6 @@ const createAttributeItems = (
   },
   { key: 'sex', label: '性别', value: formatCharacterRoleSex(role.sex), numeric: false },
   { key: 'EnglishName', label: '英文名', value: EnglishName, numeric: false },
-  { key: 'size', label: '体型', value: formatCharacterRoleSize(role.size), numeric: false },
-  {
-    key: 'baseHp',
-    label: '基础Hp',
-    value: role.baseHp === role.maxHp ? undefined : formatCharacterRoleNumber(role.baseHp),
-    numeric: true,
-  },
   {
     key: 'maxHp',
     label: 'Hp上限',
@@ -216,13 +206,7 @@ const createAttributeItems = (
     suffix: '/秒',
     numeric: true,
   },
-  {
-    key: 'jumpHeight',
-    label: '跳跃高度',
-    value: formatCharacterRoleNumber(getCharacterRoleJumpHeight(role)),
-    suffix: '单位长',
-    numeric: true,
-  },
+  { key: 'size', label: '体型', value: formatCharacterRoleSize(role.size), numeric: false },
   {
     key: 'climbSpeed',
     label: '攀爬速度',
@@ -280,13 +264,6 @@ const createAttributeItems = (
     key: 'deformCooldown',
     label: '变形彩蛋CD',
     value: optionalNumber(role.deformCooldown),
-    suffix: '秒',
-    numeric: true,
-  },
-  {
-    key: 'shoppingCooldown',
-    label: '购物CD',
-    value: optionalNumber(role.shoppingCooldown),
     suffix: '秒',
     numeric: true,
   },
