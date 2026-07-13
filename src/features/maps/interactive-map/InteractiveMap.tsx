@@ -1081,7 +1081,7 @@ export default function InteractiveMap({
         />
       )}
 
-      {selectedPoint && (
+      {selectedPoint && !isEditMode && (
         <PointDetails
           point={selectedPoint}
           connectedPoint={connectedPoint?.point ?? null}

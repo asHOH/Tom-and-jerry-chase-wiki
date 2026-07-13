@@ -18,7 +18,7 @@ export async function generateMetadata({
   const mapName = decodeURIComponent((await params).mapName);
   const map = maps[mapName];
 
-  return map?.interactiveMap ? { title: `${map.name}交互地图` } : {};
+  return map?.interactiveMap ? { title: map.name } : {};
 }
 
 export default async function InteractiveMapRoute({
