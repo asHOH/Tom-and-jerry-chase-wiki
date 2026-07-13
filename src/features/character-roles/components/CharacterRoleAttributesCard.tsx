@@ -58,11 +58,38 @@ type AttributeItem = {
 const NUMBER_VALUE_CLASS = 'text-blue-500 dark:text-sky-300';
 const RANKING_LINK_CLASS = 'cursor-pointer hover:underline focus-visible:underline';
 
-const SUMMARY_KEYS: Readonly<
-  Record<CharacterRoleAttributesContext, readonly CharacterRoleAttributeKey[]>
-> = {
-  character: ['maxHp', 'hpRecovery', 'runSpeed', 'jumpSpeed'],
-  object: ['roleType', 'physicsType', 'maxHp', 'hpRecovery', 'runSpeed', 'attackCooldown'],
+const OBJECT_SUMMARY_KEYS: readonly CharacterRoleAttributeKey[] = [
+  'roleType',
+  'physicsType',
+  'maxHp',
+  'hpRecovery',
+  'runSpeed',
+  'attackCooldown',
+];
+
+const MOUSE_SUMMARY_KEYS: readonly CharacterRoleAttributeKey[] = [
+  'maxHp',
+  'pushCheeseSpeed',
+  'runSpeed',
+  'jumpSpeed',
+  'attack',
+  'wallDamage',
+];
+
+const CAT_SECONDARY_SUMMARY_KEYS = ['attack', 'initialItem', 'hpRecovery'] as const;
+
+const getSummaryKeys = (
+  context: CharacterRoleAttributesContext,
+  factionId: FactionId | undefined,
+  attributesByKey: ReadonlyMap<CharacterRoleAttributeKey, AttributeItem>
+): readonly CharacterRoleAttributeKey[] => {
+  if (context === 'object') return OBJECT_SUMMARY_KEYS;
+  if (factionId === 'mouse') return MOUSE_SUMMARY_KEYS;
+
+  const secondaryKey =
+    CAT_SECONDARY_SUMMARY_KEYS.find((key) => attributesByKey.has(key)) ?? 'hpRecovery';
+
+  return ['maxHp', secondaryKey, 'runSpeed', 'jumpSpeed', 'attackCooldown', 'attackRange'];
 };
 
 const optionalNumber = (value: number | undefined): string | undefined =>
@@ -325,7 +352,8 @@ export default function CharacterRoleAttributesCard({
   const attributesByKey = new Map(
     visibleAttributes.map((attribute) => [attribute.key, attribute] as const)
   );
-  const collapsedAttributes = SUMMARY_KEYS[context].flatMap((key) => {
+  const summaryKeys = getSummaryKeys(context, factionId, attributesByKey);
+  const collapsedAttributes = summaryKeys.flatMap((key) => {
     const attribute = attributesByKey.get(key);
     return attribute ? [attribute] : [];
   });

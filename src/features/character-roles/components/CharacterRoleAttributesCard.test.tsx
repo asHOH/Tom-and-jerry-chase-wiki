@@ -16,6 +16,9 @@ const getRankingLink = (
     );
   });
 
+const getDisplayedAttributeLabels = (container: HTMLElement): string[] =>
+  Array.from(container.querySelectorAll('p'), (row) => row.textContent?.split(':', 1)[0] ?? '');
+
 describe('CharacterRoleAttributesCard', () => {
   it('should use the explicit character summary and show only applicable cat fields for Tom', () => {
     const { container } = render(
@@ -35,6 +38,14 @@ describe('CharacterRoleAttributesCard', () => {
     expect(screen.queryByText('重力参数')).not.toBeInTheDocument();
     expect(screen.queryByText('攻击力')).not.toBeInTheDocument();
     expect(screen.getByText('跳跃速度').closest('p')).toHaveTextContent('跳跃速度: 1850/s');
+    expect(getDisplayedAttributeLabels(container)).toEqual([
+      'Hp上限',
+      'Hp恢复',
+      '移速',
+      '跳跃速度',
+      '爪刀CD',
+      '爪刀范围',
+    ]);
     expect(getRankingLink(container, 'maxHp', 'cat')).toHaveTextContent('255');
     expect(getRankingLink(container, 'jumpHeight', 'cat')).toBeUndefined();
     expect(getRankingLink(container, 'jumpSpeed', 'cat')).toBeUndefined();
@@ -82,10 +93,16 @@ describe('CharacterRoleAttributesCard', () => {
       <CharacterRoleAttributesCard name='布奇' context='character' factionId='cat' />
     );
 
-    fireEvent.click(screen.getByRole('button', { name: '展开' }));
-
     const attackRow = screen.getByText('攻击力').closest('p');
     const attackLink = getRankingLink(container, 'attackBoost', 'cat');
+    expect(getDisplayedAttributeLabels(container)).toEqual([
+      'Hp上限',
+      '攻击力',
+      '移速',
+      '跳跃速度',
+      '爪刀CD',
+      '爪刀范围',
+    ]);
     expect(attackRow).toHaveClass('text-amber-600', 'dark:text-amber-400');
     expect(attackLink).toHaveTextContent('15');
     expect(attackLink).toHaveClass('text-blue-500', 'dark:text-sky-300');
@@ -102,9 +119,15 @@ describe('CharacterRoleAttributesCard', () => {
       />
     );
 
-    fireEvent.click(screen.getByRole('button', { name: '展开' }));
-
     const cooldownRow = screen.getByText('爪刀CD').closest('p');
+    expect(getDisplayedAttributeLabels(container)).toEqual([
+      'Hp上限',
+      '初始道具',
+      '移速',
+      '跳跃速度',
+      '爪刀CD',
+      '爪刀范围',
+    ]);
     expect(screen.getByText('初始道具').closest('p')).toHaveTextContent('初始道具: 鞭炮束');
     expect(cooldownRow).toHaveTextContent('爪刀CD: 4.9 (4) / 7 (8) s');
     expect(getRankingLink(container, 'clawKnifeCdUnhit', 'cat')).toHaveTextContent('4.9');
@@ -116,6 +139,15 @@ describe('CharacterRoleAttributesCard', () => {
     const { container } = render(
       <CharacterRoleAttributesCard name='杰瑞' context='character' factionId='mouse' />
     );
+
+    expect(getDisplayedAttributeLabels(container)).toEqual([
+      'Hp上限',
+      '推速',
+      '移速',
+      '跳跃速度',
+      '攻击力',
+      '破坏力',
+    ]);
 
     fireEvent.click(screen.getByRole('button', { name: '展开' }));
 
@@ -137,8 +169,6 @@ describe('CharacterRoleAttributesCard', () => {
     const { container } = render(
       <CharacterRoleAttributesCard name='雪梨' context='character' factionId='mouse' />
     );
-
-    fireEvent.click(screen.getByRole('button', { name: '展开' }));
 
     expect(screen.getByText('攻击力').closest('p')).toHaveTextContent('攻击力: 0');
     expect(getRankingLink(container, 'attackBoost', 'mouse')).toHaveTextContent('0');
