@@ -77,13 +77,7 @@ const CATEGORY_ICONS: Partial<Record<MapPointCategory, string>> = {
 };
 
 const FILTER_STORAGE_KEY = 'interactive-map:visible-categories';
-
-const teleportSvg = `
-  <svg class="block h-full w-full" viewBox="0 0 48 48" aria-hidden="true">
-    <defs><linearGradient id="portal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#67e8f9"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs>
-    <circle cx="24" cy="24" r="19" fill="#111827" fill-opacity=".88" stroke="url(#portal)" stroke-width="4"/>
-    <path d="M15 25c4-8 14-10 20-4M33 16l2 5-5 1M33 25c-4 8-14 10-20 4M15 34l-2-5 5-1" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-  </svg>`;
+const HOTSPOT_CATEGORIES = new Set<MapPointCategory>(['teleport', ...ALWAYS_VISIBLE_CATEGORIES]);
 
 type ConnectionHighlight = 'endpoint' | 'unrelated' | undefined;
 
@@ -96,7 +90,7 @@ const makeIcon = (
   isEditMode: boolean,
   connectionHighlight?: ConnectionHighlight
 ) => {
-  const isHotspot = ALWAYS_VISIBLE_CATEGORIES.has(point.category);
+  const isHotspot = HOTSPOT_CATEGORIES.has(point.category);
   const source = CATEGORY_ICONS[point.category];
   const isInvisible = point.isInvisible ?? false;
   const connectionBadge =
@@ -107,10 +101,10 @@ const makeIcon = (
     ? connectionBadge
     : isInvisible
       ? `<span class="block h-full w-full rounded-full border-2 ${selected ? 'border-cyan-300 bg-cyan-300/25' : isEditMode ? 'border-dashed border-cyan-300/70 bg-cyan-300/10' : 'border-transparent'}"></span>`
-      : isHotspot
-        ? `<span class="block h-full w-full rounded-full border-2 ${selected ? 'border-cyan-300 bg-cyan-300/25' : 'border-transparent'}"></span>`
-        : point.category === 'teleport'
-          ? teleportSvg
+      : point.category === 'teleport'
+        ? '<span class="interactive-map-teleport-hotspot" aria-hidden="true"></span>'
+        : isHotspot
+          ? `<span class="block h-full w-full rounded-full border-2 ${selected ? 'border-cyan-300 bg-cyan-300/25' : 'border-transparent'}"></span>`
           : source
             ? `<img src="${encodeURI(source)}" alt="" class="h-full w-full object-contain drop-shadow-md" />`
             : '';
@@ -407,7 +401,7 @@ function MinimapDiagram({
                 aria-hidden='true'
               />
             ) : point.category === 'teleport' ? (
-              <span className='block size-4 rounded-full border-2 border-violet-200 bg-violet-600/90 shadow sm:size-5' />
+              <span className='block size-4 rounded-full border-2 border-fuchsia-200 bg-violet-600/80 shadow sm:size-5' />
             ) : (
               <span className='block size-3 rounded-full border border-cyan-50 bg-cyan-400 shadow sm:size-4' />
             );

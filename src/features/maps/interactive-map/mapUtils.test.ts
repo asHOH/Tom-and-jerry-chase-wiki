@@ -42,6 +42,7 @@ describe('interactive map utilities', () => {
     expect(isRandomCandidateByDefault('rocket')).toBe(true);
     expect(isRandomCandidateByDefault('pipe')).toBe(false);
     expect(isRandomCandidateByDefault('mouseHole')).toBe(false);
+    expect(isRandomCandidateByDefault('teleport')).toBe(false);
   });
 
   it('should return the default wiki entry for common map point categories', () => {
@@ -100,8 +101,18 @@ describe('interactive map utilities', () => {
     expect(getMapPointScale(config.maxZoom + 2, config)).toBe(4);
   });
 
-  it('should always show built-in pipe hotspots', () => {
+  it('should always show built-in pipe and mouse-hole hotspots', () => {
     expect(isPointVisible({ ...point, category: 'pipe' }, 2, new Set(), new Set())).toBe(true);
+    expect(isPointVisible({ ...point, category: 'mouseHole' }, 2, new Set(), new Set())).toBe(true);
+  });
+
+  it('should apply the category filter to teleport hotspots', () => {
+    const teleportPoint: InteractiveMapPoint = { ...point, category: 'teleport' };
+
+    expect(isPointVisible(teleportPoint, 2, new Set(), new Set())).toBe(false);
+    expect(isPointVisible(teleportPoint, 2, new Set(['teleport']), new Set())).toBe(true);
+    expect(isMinimapPointVisible(teleportPoint, new Set(), new Set())).toBe(false);
+    expect(isMinimapPointVisible(teleportPoint, new Set(['teleport']), new Set())).toBe(true);
   });
 
   it('should omit invisible points from the minimap', () => {

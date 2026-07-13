@@ -40,6 +40,26 @@
   box-shadow: 0 2px 8px rgb(0 0 0 / 70%);
 }
 
+.interactive-map-teleport-hotspot {
+  display: block;
+  width: 32px;
+  height: 32px;
+  background: rgb(124 58 237 / 28%);
+  border: 2px solid rgb(240 171 252 / 90%);
+  border-radius: 9999px;
+  box-shadow:
+    0 0 0 3px rgb(168 85 247 / 16%),
+    0 2px 8px rgb(0 0 0 / 55%);
+}
+
+.interactive-map-marker--selected .interactive-map-teleport-hotspot {
+  background: rgb(147 51 234 / 48%);
+  border-color: rgb(250 232 255);
+  box-shadow:
+    0 0 0 5px rgb(217 70 239 / 32%),
+    0 2px 8px rgb(0 0 0 / 65%);
+}
+
 .interactive-map-marker--selected .interactive-map-pipe-badge,
 .interactive-map-marker--connection-endpoint .interactive-map-pipe-badge {
   background: rgb(8 145 178 / 95%);
