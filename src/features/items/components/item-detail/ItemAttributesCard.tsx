@@ -19,7 +19,7 @@ import NavigationButtonsRow from '@/components/ui/NavigationButtonsRow';
 import SingleItemAccordionCard from '@/components/ui/SingleItemAccordionCard';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import Tag from '@/components/ui/Tag';
-import CharacterRoleAttributes from '@/components/CharacterRoleAttrubutesCard';
+import CharacterRoleAttributes from '@/components/CharacterRoleAttributesCard';
 import { itemsEdit } from '@/data';
 
 export default function ItemAttributesCard({ item }: { item: Item }) {

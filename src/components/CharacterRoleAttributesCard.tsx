@@ -1,5 +1,6 @@
 // src/features/characters/components/CharacterRoleAttributes.tsx
 import { Component } from 'react';
+import { m } from 'motion/react';
 
 import { cn } from '@/lib/design';
 import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
@@ -185,10 +186,24 @@ export default class CharacterRoleAttributes extends Component<
             <div className='flex-1 border-t border-gray-200 dark:border-gray-700' />
             {/* 切换按钮 - 字体放大，居中悬浮 */}
             <button
+              type='button'
               onClick={this.toggleExpanded}
-              className='flex-shrink-0 text-base font-medium text-gray-500 transition-colors hover:text-gray-700 focus:outline-none dark:text-gray-400 dark:hover:text-gray-200'
+              aria-expanded={expanded}
+              className='flex flex-shrink-0 items-center gap-1 text-base font-medium text-gray-500 transition-colors hover:text-gray-700 focus:outline-none dark:text-gray-400 dark:hover:text-gray-200'
             >
-              {expanded ? '收起 ▲' : '展开全部 ▼'}
+              <span>{expanded ? '收起' : '展开全部'}</span>
+              <m.svg
+                aria-hidden='true'
+                animate={{ rotate: expanded ? 180 : 0 }}
+                className='size-4'
+                fill='none'
+                transition={{ duration: 0.2, ease: 'easeInOut' }}
+                viewBox='0 0 24 24'
+                stroke='currentColor'
+                strokeWidth='2'
+              >
+                <path strokeLinecap='round' strokeLinejoin='round' d='m6 9 6 6 6-6' />
+              </m.svg>
             </button>
             {/* 右侧分隔线 */}
             <div className='flex-1 border-t border-gray-200 dark:border-gray-700' />

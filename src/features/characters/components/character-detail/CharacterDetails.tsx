@@ -23,7 +23,7 @@ import DiscussButton from '@/components/ui/DiscussButton';
 import { editable } from '@/components/ui/editable';
 import EditButton from '@/components/ui/EditButton';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
-import CharacterRoleAttributesCard from '@/components/CharacterRoleAttrubutesCard';
+import CharacterRoleAttributesCard from '@/components/CharacterRoleAttributesCard';
 import { PlusIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 import { characters } from '@/data';
