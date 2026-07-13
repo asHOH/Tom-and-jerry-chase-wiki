@@ -1,4 +1,6 @@
-import { preprocessText, wrapAutoNamesInText } from './characterText';
+import { characters } from '@/data';
+
+import { preprocessText, resolveCharacterExpression, wrapAutoNamesInText } from './characterText';
 
 describe('wrapAutoNamesInText', () => {
   it('prefers higher-priority overlapping names over earlier lower-priority matches', () => {
@@ -30,5 +32,18 @@ describe('preprocessText', () => {
   it('leaves already marked up text unchanged', () => {
     expect(preprocessText('布奇{隐身}', '汤姆')).toBe('布奇{隐身}');
     expect(preprocessText('布奇《主动技能》', '汤姆')).toBe('布奇《主动技能》');
+  });
+});
+
+describe('resolveCharacterExpression', () => {
+  it('resolves covered placeholders from canonical role data', () => {
+    expect(resolveCharacterExpression(':maxHp', characters['侦探汤姆'])).toBe(225);
+    expect(resolveCharacterExpression(':jumpHeight', characters['汤姆'])).toBe(483);
+    expect(resolveCharacterExpression(':clawKnifeCdUnhit', characters['如玉'])).toBe(0.8);
+  });
+
+  it('keeps skill-specific cooldown placeholders on the character definition', () => {
+    expect(resolveCharacterExpression(':specialClawKnifeCdHit', characters['苏蕊'])).toBe(8);
+    expect(resolveCharacterExpression(':specialClawKnifeCdUnhit', characters['苏蕊'])).toBe(4);
   });
 });

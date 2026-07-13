@@ -77,6 +77,7 @@ For requests that are harmful, unethical, inappropriate, your only response MUST
 **1. Purpose:**
 The executeCode tool allows you to run JavaScript code to query the game database. You have direct access to these objects in the execution context:
 - \`characters\`: Record<string, Character> - Character data indexed by Chinese names
+- \`characterRoles\`: Record<string, CharacterRole> - Canonical role statistics indexed by Chinese names
 - \`cards\`: Record<string, Card> - Knowledge card data indexed by Chinese names
 - \`specialSkills\`: { cat: Record<string, SpecialSkill>, mouse: Record<string, SpecialSkill> } - Special skills for each faction
 - \`items\`: Record<string, Item> - Game items indexed by Chinese names
@@ -94,6 +95,7 @@ Many entities have an \`aliases\` field containing alternative names for searchi
 
 **Examples:**
 - Get a character by name or aliases: \`return characters["汤姆"]\` or search by alias
+- Get canonical role statistics: \`return characterRoles["汤姆"]\`
 - Get a card by name or aliases: \`return cards["乘胜追击"]\` or search by alias
 - Get cat special skills by name or aliases: \`return Object.values(specialSkills.cat)\` or search by alias
 - Get an item by name or aliases: \`return items["火箭"]\` or search by alias
@@ -101,7 +103,7 @@ Many entities have an \`aliases\` field containing alternative names for searchi
 - Get a buff by name or aliases: \`return buffs["眩晕"]\` or search by alias
 - Get history events: \`return historyData.find(y => y.year === 2020)?.events\`
 - Get balance changes for a character: \`return historyData.flatMap(y => y.events.filter(e => e.details.balance?.characterChanges?.some(c => c.name === "汤姆")))\`
-- Sort characters by HP: \`return Object.values(characters).sort((a,b) => a.maxHp - b.maxHp).map(c => ({id: c.id, maxHp: c.maxHp}))\`
+- Sort roles by HP: \`return Object.values(characterRoles).sort((a,b) => a.maxHp - b.maxHp).map(role => ({id: role.name, maxHp: role.maxHp}))\`
 - Filter by faction: \`return Object.values(characters).filter(c => c.factionId === "cat").map(c => c.id)\`
 
 **4. Data Reliance:**
@@ -116,6 +118,35 @@ The tool returns whatever your JavaScript code returns. Typically this will be a
 \`\`\`typescript
 // The unique identifier for a character's faction.
 type FactionId = 'cat' | 'mouse';
+
+type RoleType = 'mouse' | 'cat' | 'special';
+type PhysicsType = FactionId | 'special';
+
+// Canonical role mechanics. Use this data for character statistics.
+type CharacterRole = {
+  name: string;
+  roleType: RoleType; // Raw role category; not the playable faction.
+  physicsType: PhysicsType;
+  sex: 'male' | 'female' | 'none';
+  size: { width: number; height: number };
+  runSpeed: number;
+  jumpSpeed: number;
+  climbSpeed: number;
+  visionScale: number;
+  gravity: number;
+  baseHp: number;
+  maxHp: number;
+  hpRecovery: number;
+  attack?: number;
+  wallDamage: number;
+  attackRange?: number;
+  attackCooldown: { hit: number; miss?: number };
+  pushCheeseSpeed?: number;
+  initialItem?: string;
+  deformCooldown?: number;
+  shoppingCooldown?: number;
+  shoppingDelay?: number;
+};
 
 // --- Positioning Tags ---
 // These tags categorize a character's primary role or playstyle.
@@ -237,24 +268,9 @@ type CharacterDefinition = {
   imageUrl?: string; // Image URL for the character (auto-generated).
   aliases?: string[]; // Alternative names for the character, used for searching.
 
-  // --- Base Character Attributes ---
-  maxHp?: number; // Maximum health points.
-  attackBoost?: number; // Bonus attack damage percentage.
-  hpRecovery?: number; // Health recovery rate.
-  moveSpeed?: number; // Base movement speed.
-  jumpHeight?: number; // Base jump height.
-
-  // --- Cat-Specific Attributes ---
-  clawKnifeCdHit?: number; // Cooldown of the basic claw attack on a successful hit.
-  clawKnifeCdUnhit?: number; // Cooldown of the basic claw attack on a miss.
+  // Skill-specific exceptions remain here; ordinary role mechanics are in characterRoles.
   specialClawKnifeCdHit?: number; // Cooldown of the special claw attack on a successful hit.
   specialClawKnifeCdUnhit?: number; // Cooldown of the special claw attack on a miss.
-  clawKnifeRange?: number; // The range of the basic claw attack.
-  initialItem?: string; // The item the cat starts the match with, "老鼠夹" if unspecified.
-
-  // --- Mouse-Specific Attributes ---
-  cheesePushSpeed?: number; // The character's speed when pushing cheese (the speed in within 3 minutes after the beginning of a game).
-  wallCrackDamageBoost?: number; // Bonus damage dealt to the final wall crack.
 
   // --- Character Build and Strategy Information ---
   catPositioningTags?: CatPositioningTag[]; // List of positioning tags if the character is a cat.
@@ -447,12 +463,12 @@ export type GameHistory = YearData[];
 // No execute handler — tool calls are streamed to the client for sandboxed iframe execution
 const executeCodeTool = {
   description:
-    'Execute JavaScript code to query the Tom and Jerry: Chase game database. The code has access to multiple game data objects including characters, cards, specialSkills, items, entities, buffs, itemGroups, and historyData.',
+    'Execute JavaScript code to query the Tom and Jerry: Chase game database. The code has access to multiple game data objects including characters, characterRoles, cards, specialSkills, items, entities, buffs, itemGroups, and historyData.',
   inputSchema: z.object({
     code: z
       .string()
       .describe(
-        'JavaScript code to execute. Must include a return statement. Available variables: characters (Record<string, Character>), cards (Record<string, Card>), specialSkills ({cat: Record<string, SpecialSkill>, mouse: Record<string, SpecialSkill>}), items (Record<string, Item>), entities ({cat: Record<string, Entity>, mouse: Record<string, Entity>}), buffs (Record<string, Buff>), itemGroups (Record<string, ItemGroup>), historyData (GameHistory). Examples: return characters["汤姆"]; return Object.values(specialSkills.cat); return items["火箭"]; return historyData.find(y => y.year === 2020)'
+        'JavaScript code to execute. Must include a return statement. Available variables: characters (Record<string, Character>), characterRoles (Record<string, CharacterRole>), cards (Record<string, Card>), specialSkills ({cat: Record<string, SpecialSkill>, mouse: Record<string, SpecialSkill>}), items (Record<string, Item>), entities ({cat: Record<string, Entity>, mouse: Record<string, Entity>}), buffs (Record<string, Buff>), itemGroups (Record<string, ItemGroup>), historyData (GameHistory). Examples: return characters["汤姆"]; return characterRoles["汤姆"]; return Object.values(specialSkills.cat); return items["火箭"]; return historyData.find(y => y.year === 2020)'
       ),
   }),
 };

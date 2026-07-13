@@ -1,8 +1,8 @@
 import { Fragment, useMemo } from 'react';
-import { proxy, useSnapshot } from 'valtio';
 
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { getCharacterRole } from '@/features/character-roles/selectors';
 import Tooltip from '@/components/ui/Tooltip';
 import { characters } from '@/data';
 
@@ -14,8 +14,6 @@ import type { RenderTextPart } from './text-with-hover-tooltips/types';
 type TextWithHoverTooltipsProps = {
   text: string;
 };
-
-const emptyObject = proxy({ attackBoost: 0 });
 
 const markdownHighlightClassName =
   'box-decoration-clone rounded-[2px] bg-amber-100/70 px-0.5 font-medium text-amber-950 dark:bg-amber-300/15 dark:text-amber-100';
@@ -39,11 +37,10 @@ export default function TextWithHoverTooltips({ text: rawText }: TextWithHoverTo
   const [isDarkMode] = useDarkMode();
   const localCharacterCtx = useLocalCharacter();
   const currentCharacterId = localCharacterCtx.characterId;
-  const rawLocalCharacter = characters[currentCharacterId];
-  const localCharacter = useSnapshot(rawLocalCharacter ?? emptyObject);
-  const attackBoost = localCharacter.attackBoost ?? null;
-  const wallCrackDamageBoost =
-    'wallCrackDamageBoost' in localCharacter ? localCharacter.wallCrackDamageBoost : undefined;
+  const localCharacter = characters[currentCharacterId];
+  const role = localCharacter ? getCharacterRole(currentCharacterId) : undefined;
+  const attackBoost = role?.attack ?? null;
+  const wallCrackDamageBoost = localCharacter?.factionId === 'mouse' ? role?.wallDamage : undefined;
   const parsedText = useMemo(
     () => buildTextWithHoverTooltipTokens(rawText, currentCharacterId),
     [currentCharacterId, rawText]
@@ -135,7 +132,7 @@ export default function TextWithHoverTooltips({ text: rawText }: TextWithHoverTo
         tokenCount: parsedText.tokens.length,
         intermediatePartCount: intermediateParts.length,
         finalPartCount: renderedParts.length,
-        characterSnapshotAvailable: localCharacter != null,
+        characterRoleAvailable: role !== undefined,
       });
     }
 
@@ -144,9 +141,9 @@ export default function TextWithHoverTooltips({ text: rawText }: TextWithHoverTo
     attackBoost,
     currentCharacterId,
     isDarkMode,
-    localCharacter,
     rawText,
     parsedText,
+    role,
     wallCrackDamageBoost,
   ]);
 

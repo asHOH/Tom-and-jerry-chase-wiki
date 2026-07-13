@@ -6,6 +6,7 @@ import { DefaultChatTransport, lastAssistantMessageIsCompleteWithToolCalls } fro
 import { snapshot } from 'valtio';
 
 import { historyData } from '@/data/history';
+import { serializedCharacterRoles } from '@/features/character-roles/serialization';
 import { buffs, cards, characters, entities, itemGroups, items, specialSkills } from '@/data';
 import { env } from '@/env';
 
@@ -44,6 +45,7 @@ async function executeCode({ code }: { code: string }): Promise<unknown> {
                   try {
                     // Receive data from parent
                     var characters = ${JSON.stringify(snapshot(characters))};
+                    var characterRoles = ${JSON.stringify(serializedCharacterRoles)};
                     var cards = ${JSON.stringify(cards)};
                     var specialSkills = ${JSON.stringify(specialSkills)};
                     var items = ${JSON.stringify(items)};

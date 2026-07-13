@@ -1,4 +1,6 @@
 import { autoWrapNames } from '@/data/autoWrapNames';
+import type { CharacterRole } from '@/features/character-roles/schema';
+import { getCharacterRole, getCharacterRoleJumpHeight } from '@/features/character-roles/selectors';
 import { characters } from '@/data';
 
 import type { CharacterRecord } from './types';
@@ -13,6 +15,25 @@ type AutoWrapCandidate = {
   start: number;
   end: number;
   priority: number;
+};
+
+type CanonicalCharacterExpression = (role: CharacterRole, character: CharacterRecord) => unknown;
+
+const CANONICAL_CHARACTER_EXPRESSIONS: Readonly<Record<string, CanonicalCharacterExpression>> = {
+  maxHp: (role) => role.maxHp,
+  attackBoost: (role) => role.attack,
+  hpRecovery: (role) => role.hpRecovery,
+  moveSpeed: (role) => role.runSpeed,
+  jumpHeight: (role) => getCharacterRoleJumpHeight(role),
+  clawKnifeCdHit: (role) => role.attackCooldown.hit,
+  clawKnifeCdUnhit: (role) => role.attackCooldown.miss,
+  clawKnifeRange: (role) => role.attackRange,
+  initialItem: (role) => role.initialItem,
+  storePurchaseTime: (role) => role.shoppingDelay,
+  cheesePushSpeed: (role) => role.pushCheeseSpeed,
+  wallCrackDamageBoost: (role, character) =>
+    character.factionId === 'mouse' ? role.wallDamage : undefined,
+  gender: (role) => (role.sex === 'none' ? undefined : role.sex),
 };
 
 const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -135,8 +156,18 @@ export const resolveCharacterExpression = (
     else if (match[3]) tokens.push(Number(match[3]));
   }
 
-  let current: unknown = character;
-  for (const key of tokens) {
+  const [firstToken, ...remainingTokens] = tokens;
+  const canonicalExpression =
+    typeof firstToken === 'string' ? CANONICAL_CHARACTER_EXPRESSIONS[firstToken] : undefined;
+  let current: unknown;
+  if (canonicalExpression) {
+    current = canonicalExpression(getCharacterRole(character.id), character);
+  } else {
+    current = character;
+    remainingTokens.unshift(firstToken!);
+  }
+
+  for (const key of remainingTokens) {
     if (current == null || (typeof current !== 'object' && typeof current !== 'function')) {
       return undefined;
     }

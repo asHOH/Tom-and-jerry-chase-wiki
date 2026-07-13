@@ -29,6 +29,21 @@ const getRecommendedData = async (): Promise<RecommendedCharacter[]> => {
 };
 
 describe('echoflow resolvers', () => {
+  it('should expose canonical role data with characters', async () => {
+    const characterResolver = resolvers.characters;
+    if (!characterResolver) throw new Error('Expected character resolver to be registered.');
+
+    const result = await characterResolver.list();
+    if (!Array.isArray(result.data)) throw new Error('Expected character list data.');
+    const detectiveTom = result.data.find(
+      (character: { id?: string }) => character.id === '侦探汤姆'
+    );
+    expect(detectiveTom).toMatchObject({
+      id: '侦探汤姆',
+      role: { name: '侦探汤姆', maxHp: 225, runSpeed: 780 },
+    });
+  });
+
   it('should expose projected character relations in recommended data', async () => {
     const characterId = '恶魔汤姆';
     const expectedRelations = getCharacterRelation(characters, characterId);

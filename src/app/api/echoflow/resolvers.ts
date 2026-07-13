@@ -17,6 +17,7 @@ import traits from '@/data/traits';
 import { WikiChangeType } from '@/data/types';
 import { wikiHistoryData } from '@/data/wikiHistory';
 import { winRatesData } from '@/data/winRates';
+import { getCharacterRole } from '@/features/character-roles/selectors';
 import { getCharacterRelation } from '@/features/characters/utils/relations';
 import {
   achievements,
@@ -261,7 +262,10 @@ export const resolvers: Record<string, PathResolver> = {
     description: '游戏角色列表（猫和老鼠）',
     list: () => {
       const charactersRecord = GameDataManager.getCharacters();
-      const charactersList = recordToArray(charactersRecord, 'id');
+      const charactersList = recordToArray(charactersRecord, 'id').map((character) => ({
+        ...character,
+        role: getCharacterRole(character.id),
+      }));
       return createListResult(charactersList, 'Character', '/characters', true);
     },
     detail: async (id: string) => {
@@ -277,6 +281,7 @@ export const resolvers: Record<string, PathResolver> = {
         {
           ...character,
           id: decodedId,
+          role: getCharacterRole(decodedId),
           relations:
             relations.counters.length > 0 ||
             relations.counteredBy.length > 0 ||

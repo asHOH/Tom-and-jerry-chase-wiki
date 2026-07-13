@@ -27,7 +27,6 @@ type CharacterLike = {
       cooldown?: number;
     }[];
   }[];
-  gender?: 'male' | 'female' | undefined;
 };
 
 /** A single anonymized skill clue */
