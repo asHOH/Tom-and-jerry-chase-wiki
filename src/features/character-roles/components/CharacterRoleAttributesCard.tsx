@@ -145,7 +145,7 @@ const AttackCooldownValue = ({ role, factionId, specialHit, specialMiss }: Coold
           factionId={factionId}
         />
         <SpecialCooldown value={specialMiss} />
-        {specialMiss === undefined ? ' 秒' : '秒'} /{' '}
+        {specialMiss === undefined ? ' s' : 's'} /{' '}
       </>
     )}
     命中{' '}
@@ -155,7 +155,7 @@ const AttackCooldownValue = ({ role, factionId, specialHit, specialMiss }: Coold
       factionId={factionId}
     />
     <SpecialCooldown value={specialHit} />
-    {specialHit === undefined ? ' 秒' : '秒'}
+    {specialHit === undefined ? ' s' : 's'}
   </span>
 );
 
@@ -189,21 +189,21 @@ const createAttributeItems = (
     key: 'hpRecovery',
     label: 'Hp恢复',
     value: formatCharacterRoleNumber(role.hpRecovery),
-    suffix: 'Hp/秒',
+    suffix: 'Hp/s',
     numeric: true,
   },
   {
     key: 'runSpeed',
     label: '移速',
     value: formatCharacterRoleNumber(role.runSpeed),
-    suffix: '/秒',
+    suffix: '/s',
     numeric: true,
   },
   {
     key: 'jumpSpeed',
     label: '跳跃速度',
     value: formatCharacterRoleNumber(role.jumpSpeed),
-    suffix: '/秒',
+    suffix: '/s',
     numeric: true,
   },
   { key: 'size', label: '体型', value: formatCharacterRoleSize(role.size), numeric: false },
@@ -211,7 +211,7 @@ const createAttributeItems = (
     key: 'climbSpeed',
     label: '攀爬速度',
     value: formatCharacterRoleNumber(role.climbSpeed),
-    suffix: '/秒',
+    suffix: '/s',
     numeric: true,
   },
   {
@@ -251,7 +251,7 @@ const createAttributeItems = (
     key: 'pushCheeseSpeed',
     label: '推速',
     value: optionalNumber(role.pushCheeseSpeed),
-    suffix: '%/秒',
+    suffix: '%/s',
     numeric: true,
   },
   {
@@ -264,14 +264,14 @@ const createAttributeItems = (
     key: 'deformCooldown',
     label: '变形彩蛋CD',
     value: optionalNumber(role.deformCooldown),
-    suffix: '秒',
+    suffix: 's',
     numeric: true,
   },
   {
     key: 'shoppingDelay',
     label: '购物到货时间',
     value: optionalNumber(role.shoppingDelay),
-    suffix: '秒',
+    suffix: 's',
     numeric: true,
   },
 ];
