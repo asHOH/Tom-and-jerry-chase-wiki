@@ -5,6 +5,14 @@ import { useSnapshot } from 'valtio';
 
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { useTimer } from '@/hooks/useTimer';
+import type { FactionId } from '@/data/types';
+import {
+  CHARACTER_GAME_STAT_INFO,
+  compareCharacterGameStatValues,
+  getCharacterGameStats,
+  type CharacterGameStatKey,
+  type CharacterGameStats,
+} from '@/features/games/characterRoleStats';
 import GameLayout from '@/features/games/components/GameLayout';
 import StreakCounter from '@/features/games/components/StreakCounter';
 import { characters } from '@/data';
@@ -23,7 +31,7 @@ type Props = {
 };
 
 /** Stat keys available per mode */
-const MODE_STATS: Record<GameMode, string[]> = {
+const MODE_STATS: Readonly<Record<GameMode, readonly CharacterGameStatKey[]>> = {
   cats: ['maxHp', 'attackBoost', 'moveSpeed', 'jumpHeight', 'clawKnifeCdHit'],
   mice: [
     'maxHp',
@@ -55,31 +63,21 @@ const MODE_STATS: Record<GameMode, string[]> = {
 
 type HighScores = { cats: number; mice: number; all: number; blitz: number };
 
-const STAT_LABELS: Record<string, string> = {
-  maxHp: '最大血量',
-  attackBoost: '攻击增伤 (%)',
-  moveSpeed: '移动速度',
-  jumpHeight: '跳跃高度',
-  clawKnifeCdHit: '爪刀CD (命中)',
-  cheesePushSpeed: '推奶酪速度',
-  wallCrackDamageBoost: '砸墙破坏力',
-};
-
 /** Modes that allow cross-faction comparison ONLY for attackBoost */
 const CROSS_FACTION_MODES: Set<GameMode> = new Set(['all', 'blitz']);
 
 type CharacterSummary = {
   id: string;
   imageUrl: string;
-  factionId: string;
-  stats: Record<string, number | undefined>;
+  factionId: FactionId;
+  stats: CharacterGameStats;
 };
 
 function pickRandom<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)]!;
 }
 
-function pickRandomStat(stats: string[]): string {
+function pickRandomStat(stats: readonly CharacterGameStatKey[]): CharacterGameStatKey {
   return stats[Math.floor(Math.random() * stats.length)]!;
 }
 
@@ -94,7 +92,7 @@ export default function StatShowdownClient({ mode, description, modeNav }: Props
 
   const [leftChar, setLeftChar] = useState<CharacterSummary | null>(null);
   const [rightChar, setRightChar] = useState<CharacterSummary | null>(null);
-  const [currentStat, setCurrentStat] = useState('maxHp');
+  const [currentStat, setCurrentStat] = useState<CharacterGameStatKey>('maxHp');
   const [flipped, setFlipped] = useState(false);
 
   // Manual advance: allow clicking to skip to next round after a correct guess
@@ -123,20 +121,17 @@ export default function StatShowdownClient({ mode, description, modeNav }: Props
 
   // Build character pool based on mode
   const pool = useMemo<CharacterSummary[]>(() => {
-    const all = Object.values(charsSnap).map((c) => ({
-      id: c.id,
-      imageUrl: c.imageUrl,
-      factionId: c.factionId ?? 'mouse',
-      stats: {
-        maxHp: c.maxHp,
-        attackBoost: c.attackBoost,
-        moveSpeed: c.moveSpeed,
-        jumpHeight: c.jumpHeight,
-        clawKnifeCdHit: c.factionId === 'cat' ? c.clawKnifeCdHit : undefined,
-        cheesePushSpeed: c.factionId === 'mouse' ? c.cheesePushSpeed : undefined,
-        wallCrackDamageBoost: c.factionId === 'mouse' ? c.wallCrackDamageBoost : undefined,
-      },
-    }));
+    const all = Object.values(charsSnap).map((character) => {
+      if (!character.factionId) {
+        throw new Error(`Character ${character.id} is missing its factionId`);
+      }
+      return {
+        id: character.id,
+        imageUrl: character.imageUrl,
+        factionId: character.factionId,
+        stats: getCharacterGameStats({ id: character.id, factionId: character.factionId }),
+      };
+    });
 
     if (mode === 'cats') return all.filter((c) => c.factionId === 'cat');
     if (mode === 'mice') return all.filter((c) => c.factionId === 'mouse');
@@ -273,10 +268,11 @@ export default function StatShowdownClient({ mode, description, modeNav }: Props
 
       if (leftVal == null || rightVal == null) return;
 
-      // clawKnifeCdHit is a cooldown — lower is better
-      const lowerIsBetter = currentStat === 'clawKnifeCdHit';
-      const correct =
-        leftVal > rightVal ? (lowerIsBetter ? 'right' : 'left') : lowerIsBetter ? 'left' : 'right';
+      const correct = compareCharacterGameStatValues(leftVal, rightVal, currentStat);
+      if (correct === 'tie') {
+        generatePair();
+        return;
+      }
       const winner = side === correct;
 
       setLeftWinner(correct === 'left');
@@ -383,7 +379,7 @@ export default function StatShowdownClient({ mode, description, modeNav }: Props
             characterName={leftChar.id}
             imageUrl={leftChar.imageUrl}
             statValue={leftValue}
-            statLabel={STAT_LABELS[currentStat] ?? currentStat}
+            statLabel={CHARACTER_GAME_STAT_INFO[currentStat].label}
             isFlipped={flipped}
             isWinner={isJudging ? leftWinner : null}
             onSelect={() => handleSelect('left')}
@@ -399,7 +395,7 @@ export default function StatShowdownClient({ mode, description, modeNav }: Props
             characterName={rightChar.id}
             imageUrl={rightChar.imageUrl}
             statValue={rightValue}
-            statLabel={STAT_LABELS[currentStat] ?? currentStat}
+            statLabel={CHARACTER_GAME_STAT_INFO[currentStat].label}
             isFlipped={flipped}
             isWinner={isJudging ? (leftWinner === null ? null : !leftWinner) : null}
             onSelect={() => handleSelect('right')}

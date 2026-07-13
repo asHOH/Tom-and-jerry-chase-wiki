@@ -6,6 +6,7 @@ import { useSnapshot } from 'valtio';
 import { formatDateKey, getDailyCharacterId, getGameDate, getPuzzleNumber } from '@/lib/gameUtils';
 import { buildSkillCluesForCharacter } from '@/lib/skillEffectUtils';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { getCharacterRole, getCharacterRoleJumpHeight } from '@/features/character-roles/selectors';
 import { catCharacterIds, mouseCharacterIds } from '@/features/characters/data/characterMetadata';
 import GameLayout from '@/features/games/components/GameLayout';
 import StreakCounter from '@/features/games/components/StreakCounter';
@@ -123,6 +124,7 @@ export default function GuessCharacterClient({ description }: Props) {
   const clues = useMemo<ClueEntry[]>(() => {
     const character = charsSnap[activeCharacterId];
     if (!character) return [];
+    const role = getCharacterRole(activeCharacterId);
 
     const entries: ClueEntry[] = [];
 
@@ -197,16 +199,16 @@ export default function GuessCharacterClient({ description }: Props) {
     }
 
     // HP range
-    entries.push({ label: '血量范围', value: bucketHp(character.maxHp, character.factionId) });
+    entries.push({ label: '血量范围', value: bucketHp(role.maxHp, character.factionId) });
 
     // Move speed + Jump height
-    const ms = character.moveSpeed ?? '?';
-    const jh = character.jumpHeight ?? '?';
-    entries.push({ label: '移速 & 跳跃', value: `移速: ${ms} · 跳跃: ${jh}` });
+    entries.push({
+      label: '移速 & 跳跃',
+      value: `移速: ${role.runSpeed} · 跳跃: ${getCharacterRoleJumpHeight(role)}`,
+    });
 
     // Attack boost
-    const atk = character.attackBoost ?? 0;
-    entries.push({ label: '攻击增伤', value: `${atk}%` });
+    entries.push({ label: '攻击增伤', value: `${role.attack ?? 0}%` });
 
     // Description snippet
     const desc = character.description?.slice(0, 40) ?? '暂无简介';

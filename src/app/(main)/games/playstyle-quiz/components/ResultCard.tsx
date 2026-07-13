@@ -2,6 +2,7 @@
 
 import { getPositioningTagColors } from '@/lib/design';
 import type { FactionId } from '@/data/types';
+import { getCharacterRole } from '@/features/character-roles/selectors';
 import GameImage from '@/components/ui/GameImage';
 import Tag from '@/components/ui/Tag';
 
@@ -12,7 +13,6 @@ type CharacterResult = {
   imageUrl: string;
   description?: string;
   EnglishName?: string;
-  gender?: 'male' | 'female';
   catPositioningTags?: readonly { tagName: string; isMinor: boolean }[];
   mousePositioningTags?: readonly { tagName: string; isMinor: boolean }[];
   skills?: readonly { name: string; type: string }[];
@@ -41,6 +41,7 @@ export default function ResultCard({
 }: ResultCardProps) {
   const tags = faction === 'cat' ? character.catPositioningTags : character.mousePositioningTags;
   const topSkills = character.skills?.slice(0, 3) ?? [];
+  const sex = getCharacterRole(character.id).sex;
 
   return (
     <div className='mx-auto max-w-lg space-y-6'>
@@ -53,9 +54,9 @@ export default function ResultCard({
         {character.EnglishName && (
           <p className='text-sm text-gray-500 dark:text-gray-400'>{character.EnglishName}</p>
         )}
-        {character.gender && (
+        {sex !== 'none' && (
           <span className='text-sm text-gray-500 dark:text-gray-400'>
-            {character.gender === 'male' ? '男' : '女'}
+            {sex === 'male' ? '男' : '女'}
           </span>
         )}
       </div>
