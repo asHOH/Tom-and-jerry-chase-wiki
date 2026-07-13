@@ -135,7 +135,7 @@ export default class CharacterRoleAttributes extends Component<
         formatter: formatPushCheese,
         suffix: ' %/秒',
       },
-      { label: '视野参数', value: data.vision },
+      { label: '视野缩放', value: data.vision },
       { label: '重力参数', value: data.gravity },
       { label: '初始道具', value: data.item, formatter: formatItemTag },
       { label: '购物所需时间', value: data.buyDelay, suffix: ' 秒' },
