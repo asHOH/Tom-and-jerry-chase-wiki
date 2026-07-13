@@ -10,6 +10,7 @@ import { changeLogs, type ChangeType } from '@/data/generated/changeLogs';
 import ActionTile from '@/components/ui/ActionTile';
 import { BaseDialog } from '@/components/ui/BaseDialog';
 import { HOME_ACTION_TILE_PROPS } from '@/components/ui/homeActionTileStyles';
+import { ChevronDownIcon } from '@/components/icons/CommonIcons';
 
 const typeColors: Record<ChangeType, string> = {
   feat: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
@@ -258,22 +259,12 @@ const ChangeLogs = forwardRef<ChangeLogsRef>((_props, ref) => {
                                   ))}
                                 </div>
                               </div>
-                              <svg
+                              <ChevronDownIcon
                                 className={cn(
-                                  'h-4 w-4 transition-transform',
+                                  'h-4 w-4 transition-transform motion-reduce:transition-none',
                                   isMinorExpanded && 'rotate-180'
                                 )}
-                                fill='none'
-                                stroke='currentColor'
-                                viewBox='0 0 24 24'
-                              >
-                                <path
-                                  strokeLinecap='round'
-                                  strokeLinejoin='round'
-                                  strokeWidth={2}
-                                  d='M19 9l-7 7-7-7'
-                                />
-                              </svg>
+                              />
                             </button>
                             {isMinorExpanded && (
                               <div className='divide-y divide-gray-200 border-t border-gray-200 dark:divide-gray-700 dark:border-gray-700'>

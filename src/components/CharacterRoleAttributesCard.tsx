@@ -1,11 +1,11 @@
 // src/features/characters/components/CharacterRoleAttributes.tsx
 import { Component } from 'react';
-import { m } from 'motion/react';
 
 import { cn } from '@/lib/design';
 import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import rawRoles from '@/data/roles.json';
 import type { characterRoles } from '@/data/types';
+import { ChevronDownIcon } from '@/components/icons/CommonIcons';
 
 import Tooltip from './ui/Tooltip';
 
@@ -192,18 +192,12 @@ export default class CharacterRoleAttributes extends Component<
               className='flex flex-shrink-0 items-center gap-1 text-base font-medium text-gray-500 transition-colors hover:text-gray-700 focus:outline-none dark:text-gray-400 dark:hover:text-gray-200'
             >
               <span>{expanded ? '收起' : '展开全部'}</span>
-              <m.svg
-                aria-hidden='true'
-                animate={{ rotate: expanded ? 180 : 0 }}
-                className='size-4'
-                fill='none'
-                transition={{ duration: 0.2, ease: 'easeInOut' }}
-                viewBox='0 0 24 24'
-                stroke='currentColor'
-                strokeWidth='2'
-              >
-                <path strokeLinecap='round' strokeLinejoin='round' d='m6 9 6 6 6-6' />
-              </m.svg>
+              <ChevronDownIcon
+                className={cn(
+                  'size-4 transition-transform motion-reduce:transition-none',
+                  expanded && 'rotate-180'
+                )}
+              />
             </button>
             {/* 右侧分隔线 */}
             <div className='flex-1 border-t border-gray-200 dark:border-gray-700' />

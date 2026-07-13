@@ -4,6 +4,7 @@ import { ReactNode, useState } from 'react';
 
 import { cn } from '@/lib/design';
 import { useNavigation } from '@/hooks/useNavigation';
+import { ChevronDownIcon } from '@/components/icons/CommonIcons';
 
 export default function CharacterSection({
   title,
@@ -66,23 +67,12 @@ export default function CharacterSection({
             />
           </svg>
         ) : (
-          <svg
+          <ChevronDownIcon
             className={cn(
-              'h-6 w-6 transform transition-transform duration-200 ease-out',
+              'h-6 w-6 transform transition-transform duration-200 ease-out motion-reduce:transition-none',
               isOpen ? 'rotate-0' : '-rotate-90'
             )}
-            fill='none'
-            stroke='currentColor'
-            viewBox='0 0 24 24'
-            xmlns='http://www.w3.org/2000/svg'
-          >
-            <path
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              strokeWidth='2'
-              d='M19 9l-7 7-7-7'
-            ></path>
-          </svg>
+          />
         )}
       </button>
       {isMounted && (

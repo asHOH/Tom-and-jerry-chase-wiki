@@ -6,6 +6,7 @@ import { cn } from '@/lib/design';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useScrollSpy } from '@/hooks/useScrollSpy';
 import type { Skill } from '@/data/types';
+import { ChevronDownIcon } from '@/components/icons/CommonIcons';
 import { characters } from '@/data';
 
 function CharacterSectionIndexItem({
@@ -92,23 +93,12 @@ export default function CharacterSectionIndex() {
             onClick={() => setSkillsOpen((open) => !open)}
           >
             <span>技能描述</span>
-            <svg
+            <ChevronDownIcon
               className={cn(
-                'h-4 w-4 transform transition-transform duration-200 ease-out',
+                'h-4 w-4 transform transition-transform duration-200 ease-out motion-reduce:transition-none',
                 shouldExpandSkills ? 'rotate-0' : '-rotate-90'
               )}
-              fill='none'
-              stroke='currentColor'
-              viewBox='0 0 24 24'
-              xmlns='http://www.w3.org/2000/svg'
-            >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth='2'
-                d='M19 9l-7 7-7-7'
-              ></path>
-            </svg>
+            />
           </button>
           <div
             className={cn(

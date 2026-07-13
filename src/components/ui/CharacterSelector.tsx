@@ -8,7 +8,7 @@ import { cn } from '@/lib/design';
 import { characters } from '@/data/store';
 import type { CharacterRelationItem, FactionId } from '@/data/types';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
-import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
+import { ChevronDownIcon, PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 
 export type RelationKey = 'counters' | 'counteredBy' | 'counterEachOther' | 'collaborators';
@@ -316,15 +316,12 @@ export function ArticleCharacterSelector({
         ) : (
           <span className='text-gray-500 dark:text-gray-400'>请选择角色</span>
         )}
-        <svg
-          className={cn('h-5 w-5 text-gray-400 transition-transform', isOpen && 'rotate-180')}
-          fill='none'
-          stroke='currentColor'
-          viewBox='0 0 24 24'
-          aria-hidden='true'
-        >
-          <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M19 9l-7 7-7-7' />
-        </svg>
+        <ChevronDownIcon
+          className={cn(
+            'h-5 w-5 text-gray-400 transition-transform motion-reduce:transition-none',
+            isOpen && 'rotate-180'
+          )}
+        />
       </button>
 
       {selectedCharacter && !disabled && (

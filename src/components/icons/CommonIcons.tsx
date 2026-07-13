@@ -69,6 +69,12 @@ export const ChevronRightIcon = ({ strokeWidth = 2, ...props }: IconProps) => (
   </SvgIcon>
 );
 
+export const ChevronDownIcon = ({ strokeWidth = 2, ...props }: IconProps) => (
+  <SvgIcon strokeWidth={strokeWidth} {...props}>
+    <path strokeLinecap='round' strokeLinejoin='round' d='M19 9l-7 7-7-7' />
+  </SvgIcon>
+);
+
 export const SearchIcon = ({ strokeWidth = 2, ...props }: IconProps) => (
   <SvgIcon strokeWidth={strokeWidth} {...props}>
     <path

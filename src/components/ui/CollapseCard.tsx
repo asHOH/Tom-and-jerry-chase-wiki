@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import { cn } from '@/lib/design';
+import { ChevronDownIcon } from '@/components/icons/CommonIcons';
 
 type CollapseCardProps = {
   children: React.ReactNode;
@@ -79,25 +80,13 @@ export default function CollapseCard({
         aria-expanded={isExpanded}
       >
         <span className={titleSizeClassName}>{title}</span>
-        <svg
+        <ChevronDownIcon
           className={cn(
-            'transform transition-transform duration-200 ease-in-out',
+            'transform transition-transform duration-200 ease-in-out motion-reduce:transition-none',
             isExpanded ? 'rotate-0' : '-rotate-90'
           )}
-          width={width}
-          height={width}
-          fill='none'
-          stroke='currentColor'
-          viewBox='0 0 24 24'
-          xmlns='http://www.w3.org/2000/svg'
-        >
-          <path
-            strokeLinecap='round'
-            strokeLinejoin='round'
-            strokeWidth='2'
-            d='M19 9l-7 7-7-7'
-          ></path>
-        </svg>
+          size={width}
+        />
       </button>
 
       {/* 动画容器 */}
