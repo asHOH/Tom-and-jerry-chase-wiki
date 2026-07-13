@@ -217,12 +217,24 @@ export default function CharacterDetails({ children }: CharacterDetailsWithTutor
                     EnglishName={localCharacter.EnglishName}
                     context='character'
                     factionId={factionId}
+                    {...(localCharacter.specialClawKnifeCdHit === undefined
+                      ? {}
+                      : { specialClawKnifeCdHit: localCharacter.specialClawKnifeCdHit })}
+                    {...(localCharacter.specialClawKnifeCdUnhit === undefined
+                      ? {}
+                      : { specialClawKnifeCdUnhit: localCharacter.specialClawKnifeCdUnhit })}
                   />
                 ) : (
                   <CharacterRoleAttributesCard
                     name={localCharacter.id}
                     context='character'
                     factionId={factionId}
+                    {...(localCharacter.specialClawKnifeCdHit === undefined
+                      ? {}
+                      : { specialClawKnifeCdHit: localCharacter.specialClawKnifeCdHit })}
+                    {...(localCharacter.specialClawKnifeCdUnhit === undefined
+                      ? {}
+                      : { specialClawKnifeCdUnhit: localCharacter.specialClawKnifeCdUnhit })}
                   />
                 )}
 

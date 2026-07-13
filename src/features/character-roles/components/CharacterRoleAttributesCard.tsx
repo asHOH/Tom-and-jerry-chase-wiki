@@ -4,35 +4,42 @@ import { useId, useState } from 'react';
 
 import { cn } from '@/lib/design';
 import type { FactionId } from '@/data/types';
+import type { RankableProperty } from '@/features/characters/utils/ranking';
 import Tooltip from '@/components/ui/Tooltip';
 import { ChevronDownIcon } from '@/components/icons/CommonIcons';
+import Link from '@/components/Link';
 
 import {
-  CHARACTER_ROLE_ATTRIBUTE_TOOLTIPS,
   formatCharacterRoleAttackCooldown,
   formatCharacterRoleNumber,
   formatCharacterRolePhysicsType,
   formatCharacterRoleSex,
   formatCharacterRoleSize,
   formatCharacterRoleType,
+} from '../formatters';
+import type { CharacterRole } from '../schema';
+import {
   getCharacterRole,
   getCharacterRoleJumpHeight,
   getDisplayedCharacterRoleGravity,
   isFactionDisplayedGravityUniform,
-  type CharacterRole,
-  type CharacterRoleAttributeKey,
-} from '..';
+} from '../selectors';
+import { CHARACTER_ROLE_ATTRIBUTE_TOOLTIPS, type CharacterRoleAttributeKey } from '../tooltips';
 
 export type CharacterRoleAttributesContext = 'character' | 'object';
 
 type CharacterContextProps = {
   context: 'character';
   factionId: FactionId;
+  specialClawKnifeCdHit?: number;
+  specialClawKnifeCdUnhit?: number;
 };
 
 type ObjectContextProps = {
   context: 'object';
   factionId?: never;
+  specialClawKnifeCdHit?: never;
+  specialClawKnifeCdUnhit?: never;
 };
 
 type CharacterRoleAttributesCardProps = {
@@ -50,6 +57,7 @@ type AttributeItem = {
 };
 
 const NUMBER_VALUE_CLASS = 'text-blue-500 dark:text-sky-300';
+const RANKING_LINK_CLASS = 'cursor-pointer hover:underline focus-visible:underline';
 
 const SUMMARY_KEYS: Readonly<
   Record<CharacterRoleAttributesContext, readonly CharacterRoleAttributeKey[]>
@@ -60,6 +68,99 @@ const SUMMARY_KEYS: Readonly<
 
 const optionalNumber = (value: number | undefined): string | undefined =>
   value === undefined ? undefined : formatCharacterRoleNumber(value);
+
+const getRankableProperty = (
+  key: CharacterRoleAttributeKey,
+  context: CharacterRoleAttributesContext,
+  factionId: FactionId | undefined
+): RankableProperty | undefined => {
+  if (context !== 'character' || !factionId) return undefined;
+
+  switch (key) {
+    case 'maxHp':
+      return 'maxHp';
+    case 'hpRecovery':
+      return 'hpRecovery';
+    case 'runSpeed':
+      return 'moveSpeed';
+    case 'jumpHeight':
+      return 'jumpHeight';
+    case 'attack':
+      return 'attackBoost';
+    case 'wallDamage':
+      return factionId === 'mouse' ? 'wallCrackDamageBoost' : undefined;
+    case 'attackRange':
+      return factionId === 'cat' ? 'clawKnifeRange' : undefined;
+    case 'pushCheeseSpeed':
+      return factionId === 'mouse' ? 'cheesePushSpeed' : undefined;
+    default:
+      return undefined;
+  }
+};
+
+const getRankingHref = (property: RankableProperty, factionId: FactionId): string =>
+  `/ranks/${property}/?faction=${factionId}`;
+
+type CooldownValueProps = {
+  role: CharacterRole;
+  factionId: FactionId | undefined;
+  specialHit: number | undefined;
+  specialMiss: number | undefined;
+};
+
+const CooldownNumber = ({
+  value,
+  property,
+  factionId,
+}: {
+  value: number;
+  property: 'clawKnifeCdHit' | 'clawKnifeCdUnhit';
+  factionId: FactionId | undefined;
+}) => {
+  const formattedValue = formatCharacterRoleNumber(value);
+  return factionId === 'cat' ? (
+    <Link
+      href={getRankingHref(property, factionId)}
+      className={cn(NUMBER_VALUE_CLASS, RANKING_LINK_CLASS)}
+    >
+      {formattedValue}
+    </Link>
+  ) : (
+    <span className={NUMBER_VALUE_CLASS}>{formattedValue}</span>
+  );
+};
+
+const SpecialCooldown = ({ value }: { value: number | undefined }) =>
+  value === undefined ? null : (
+    <>
+      （特殊 <span className={NUMBER_VALUE_CLASS}>{formatCharacterRoleNumber(value)}</span>）
+    </>
+  );
+
+const AttackCooldownValue = ({ role, factionId, specialHit, specialMiss }: CooldownValueProps) => (
+  <span>
+    {role.attackCooldown.miss === undefined ? null : (
+      <>
+        未命中{' '}
+        <CooldownNumber
+          value={role.attackCooldown.miss}
+          property='clawKnifeCdUnhit'
+          factionId={factionId}
+        />
+        <SpecialCooldown value={specialMiss} />
+        {specialMiss === undefined ? ' 秒' : '秒'} /{' '}
+      </>
+    )}
+    命中{' '}
+    <CooldownNumber
+      value={role.attackCooldown.hit}
+      property='clawKnifeCdHit'
+      factionId={factionId}
+    />
+    <SpecialCooldown value={specialHit} />
+    {specialHit === undefined ? ' 秒' : '秒'}
+  </span>
+);
 
 const createAttributeItems = (
   role: CharacterRole,
@@ -204,6 +305,8 @@ export default function CharacterRoleAttributesCard({
   EnglishName,
   context,
   factionId,
+  specialClawKnifeCdHit,
+  specialClawKnifeCdUnhit,
 }: CharacterRoleAttributesCardProps) {
   const [expanded, setExpanded] = useState(false);
   const contentId = useId();
@@ -225,25 +328,51 @@ export default function CharacterRoleAttributesCard({
   return (
     <div className={cn('space-y-3', className)}>
       <div id={contentId} className='grid grid-cols-2 gap-3'>
-        {displayedAttributes.map((attribute) => (
-          <p
-            key={attribute.key}
-            className='flex items-baseline gap-1 py-1 text-sm text-gray-700 dark:text-gray-300'
-          >
-            <Tooltip content={CHARACTER_ROLE_ATTRIBUTE_TOOLTIPS[attribute.key]}>
-              {attribute.label}
-            </Tooltip>
-            {': '}
-            <span className={cn('truncate', attribute.numeric && NUMBER_VALUE_CLASS)}>
-              {attribute.value}
-            </span>
-            {attribute.suffix ? (
-              <span className='flex-shrink-0 text-xs text-gray-400 dark:text-gray-500'>
-                {attribute.suffix}
+        {displayedAttributes.map((attribute) => {
+          const rankableProperty = getRankableProperty(attribute.key, context, factionId);
+          const value =
+            attribute.key === 'attackCooldown' ? (
+              <AttackCooldownValue
+                role={role}
+                factionId={context === 'character' ? factionId : undefined}
+                specialHit={specialClawKnifeCdHit}
+                specialMiss={specialClawKnifeCdUnhit}
+              />
+            ) : rankableProperty && factionId ? (
+              <Link
+                href={getRankingHref(rankableProperty, factionId)}
+                className={cn(
+                  'truncate',
+                  attribute.numeric && NUMBER_VALUE_CLASS,
+                  RANKING_LINK_CLASS
+                )}
+              >
+                {attribute.value}
+              </Link>
+            ) : (
+              <span className={cn('truncate', attribute.numeric && NUMBER_VALUE_CLASS)}>
+                {attribute.value}
               </span>
-            ) : null}
-          </p>
-        ))}
+            );
+
+          return (
+            <p
+              key={attribute.key}
+              className='flex items-baseline gap-1 py-1 text-sm text-gray-700 dark:text-gray-300'
+            >
+              <Tooltip content={CHARACTER_ROLE_ATTRIBUTE_TOOLTIPS[attribute.key]}>
+                {attribute.label}
+              </Tooltip>
+              {': '}
+              {value}
+              {attribute.suffix ? (
+                <span className='flex-shrink-0 text-xs text-gray-400 dark:text-gray-500'>
+                  {attribute.suffix}
+                </span>
+              ) : null}
+            </p>
+          );
+        })}
       </div>
 
       {hasMore ? (

@@ -2,9 +2,22 @@ import { fireEvent, render, screen } from '@testing-library/react';
 
 import CharacterRoleAttributesCard from './CharacterRoleAttributesCard';
 
+const getRankingLink = (
+  container: HTMLElement,
+  property: string,
+  factionId: 'cat' | 'mouse'
+): HTMLAnchorElement | undefined =>
+  Array.from(container.querySelectorAll('a')).find((link) => {
+    const url = new URL(link.href);
+    return (
+      url.pathname.replace(/\/$/, '') === `/ranks/${property}` &&
+      url.searchParams.get('faction') === factionId
+    );
+  });
+
 describe('CharacterRoleAttributesCard', () => {
   it('should use the explicit character summary and hide character-only fields', () => {
-    render(
+    const { container } = render(
       <CharacterRoleAttributesCard
         name='汤姆'
         EnglishName='Tom'
@@ -20,6 +33,9 @@ describe('CharacterRoleAttributesCard', () => {
     expect(screen.queryByText('物理特质')).not.toBeInTheDocument();
     expect(screen.queryByText('重力参数')).not.toBeInTheDocument();
     expect(screen.queryByText('攻击力')).not.toBeInTheDocument();
+    expect(getRankingLink(container, 'maxHp', 'cat')).toHaveTextContent('255');
+    expect(getRankingLink(container, 'jumpHeight', 'cat')).toHaveTextContent('483');
+    expect(getRankingLink(container, 'jumpSpeed', 'cat')).toBeUndefined();
   });
 
   it('should expose folding state, focus visibility, and reduced-motion styling', () => {
@@ -39,8 +55,40 @@ describe('CharacterRoleAttributesCard', () => {
   it('should omit non-applicable summary mechanics without substitution', () => {
     render(<CharacterRoleAttributesCard name='盔甲人' context='object' />);
 
-    expect(screen.getByText('命中 2 秒')).toBeInTheDocument();
+    expect(screen.getByText('攻击冷却').closest('p')).toHaveTextContent('攻击冷却: 命中 2 秒');
     expect(screen.queryByText(/未命中/)).not.toBeInTheDocument();
     expect(screen.queryByText('攻击范围')).not.toBeInTheDocument();
+  });
+
+  it('should link ordinary cooldowns independently and keep special cooldowns unlinked', () => {
+    const { container } = render(
+      <CharacterRoleAttributesCard
+        name='苏蕊'
+        context='character'
+        factionId='cat'
+        specialClawKnifeCdHit={8}
+        specialClawKnifeCdUnhit={4}
+      />
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: '展开全部' }));
+
+    const cooldownRow = screen.getByText('攻击冷却').closest('p');
+    expect(cooldownRow).toHaveTextContent('攻击冷却: 未命中 4.9（特殊 4）秒 / 命中 7（特殊 8）秒');
+    expect(getRankingLink(container, 'clawKnifeCdUnhit', 'cat')).toHaveTextContent('4.9');
+    expect(getRankingLink(container, 'clawKnifeCdHit', 'cat')).toHaveTextContent('7');
+    expect(cooldownRow?.querySelectorAll('a')).toHaveLength(2);
+  });
+
+  it('should apply mouse ranking links only to compatible displayed mechanics', () => {
+    const { container } = render(
+      <CharacterRoleAttributesCard name='杰瑞' context='character' factionId='mouse' />
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: '展开全部' }));
+
+    expect(getRankingLink(container, 'cheesePushSpeed', 'mouse')).toHaveTextContent('5');
+    expect(getRankingLink(container, 'wallCrackDamageBoost', 'mouse')).toHaveTextContent('1');
+    expect(container.querySelector('a[href*="clawKnifeCd"]')).toBeNull();
   });
 });
