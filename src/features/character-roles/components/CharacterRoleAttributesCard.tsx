@@ -204,16 +204,16 @@ const createAttributeItems = (
   },
   {
     key: 'runSpeed',
-    label: '移动速度',
+    label: '移速',
     value: formatCharacterRoleNumber(role.runSpeed),
-    suffix: '单位长/秒',
+    suffix: '/秒',
     numeric: true,
   },
   {
     key: 'jumpSpeed',
     label: '跳跃速度',
     value: formatCharacterRoleNumber(role.jumpSpeed),
-    suffix: '单位长/秒',
+    suffix: '/秒',
     numeric: true,
   },
   {
@@ -227,7 +227,7 @@ const createAttributeItems = (
     key: 'climbSpeed',
     label: '攀爬速度',
     value: formatCharacterRoleNumber(role.climbSpeed),
-    suffix: '单位长/秒',
+    suffix: '/秒',
     numeric: true,
   },
   {
@@ -253,19 +253,19 @@ const createAttributeItems = (
   },
   {
     key: 'attackRange',
-    label: '攻击范围',
+    label: '爪刀范围',
     value: optionalNumber(role.attackRange),
     numeric: true,
   },
   {
     key: 'attackCooldown',
-    label: '攻击冷却',
+    label: '爪刀CD',
     value: formatCharacterRoleAttackCooldown(role.attackCooldown),
     numeric: true,
   },
   {
     key: 'pushCheeseSpeed',
-    label: '推奶酪速度',
+    label: '推速',
     value: optionalNumber(role.pushCheeseSpeed),
     suffix: '%/秒',
     numeric: true,
@@ -292,7 +292,7 @@ const createAttributeItems = (
   },
   {
     key: 'shoppingDelay',
-    label: '购物所需时间',
+    label: '购物到货时间',
     value: optionalNumber(role.shoppingDelay),
     suffix: '秒',
     numeric: true,
@@ -366,7 +366,7 @@ export default function CharacterRoleAttributesCard({
               {': '}
               {value}
               {attribute.suffix ? (
-                <span className='flex-shrink-0 text-xs text-gray-400 dark:text-gray-500'>
+                <span className='shrink-0 text-xs text-gray-400 dark:text-gray-500'>
                   {attribute.suffix}
                 </span>
               ) : null}
@@ -383,9 +383,9 @@ export default function CharacterRoleAttributesCard({
             onClick={() => setExpanded((current) => !current)}
             aria-controls={contentId}
             aria-expanded={expanded}
-            className='flex flex-shrink-0 items-center gap-1 rounded-sm text-base font-medium text-gray-500 transition-colors hover:text-gray-700 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:outline-none dark:text-gray-400 dark:hover:text-gray-200 dark:focus-visible:ring-blue-400 dark:focus-visible:ring-offset-slate-800'
+            className='flex shrink-0 items-center gap-1 rounded-sm text-base font-medium text-gray-500 transition-colors hover:text-gray-700 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:outline-none dark:text-gray-400 dark:hover:text-gray-200 dark:focus-visible:ring-blue-400 dark:focus-visible:ring-offset-slate-800'
           >
-            <span>{expanded ? '收起' : '展开全部'}</span>
+            <span>{expanded ? '收起' : '展开'}</span>
             <ChevronDownIcon
               className={cn(
                 'size-4 transition-transform motion-reduce:transition-none',
