@@ -218,10 +218,10 @@ function MainMapEvents({
         .getContainer()
         .style.setProperty(
           '--interactive-map-point-scale',
-          String(getMapPointScale(nextZoom, config))
+          String(getMapPointScale(nextZoom, { height, maxZoom, width }))
         );
     },
-    [config, map]
+    [height, map, maxZoom, width]
   );
 
   useMapEvents({
@@ -1373,94 +1373,101 @@ function EditorPanel(props: EditorPanelProps) {
               )}
             </div>
           )}
-          <label className='flex gap-2'>
-            <input
-              type='checkbox'
-              checked={props.selectedPoint.isInvisible ?? false}
-              onChange={(event) => props.onUpdatePoint({ isInvisible: event.target.checked })}
-            />
-            隐藏点位图标
-          </label>
-          <label className='flex gap-2'>
-            <input
-              type='checkbox'
-              checked={props.selectedPoint.isRandomCandidate ?? false}
-              onChange={(event) => props.onUpdatePoint({ isRandomCandidate: event.target.checked })}
-            />
-            随机候选点
-          </label>
-          <label className='block'>
-            最低显示级别
-            <input
-              type='number'
-              min={0}
-              max={props.config.maxZoom + 2}
-              value={props.selectedPoint.minZoom ?? 0}
-              onChange={(event) => props.onUpdatePoint({ minZoom: Number(event.target.value) })}
-              className='ml-2 w-16 rounded bg-white/10 px-2 py-1'
-            />
-          </label>
-          <div className='rounded border border-white/10 p-2'>
-            <p className='mb-2 text-xs text-white/65'>关联百科条目</p>
-            {props.selectedPoint.relatedEntries?.map((entry, index) => (
-              <div
-                key={`${entry.type}-${entry.name}-${index}`}
-                className='mb-1 flex justify-between gap-2'
-              >
-                <span>{entry.name}</span>
+          <details className='rounded border border-white/10'>
+            <summary className='cursor-pointer px-2 py-1.5 text-xs text-white/70'>高级设置</summary>
+            <div className='space-y-2 border-t border-white/10 p-2'>
+              <label className='flex gap-2'>
+                <input
+                  type='checkbox'
+                  checked={props.selectedPoint.isInvisible ?? false}
+                  onChange={(event) => props.onUpdatePoint({ isInvisible: event.target.checked })}
+                />
+                隐藏点位图标
+              </label>
+              <label className='flex gap-2'>
+                <input
+                  type='checkbox'
+                  checked={props.selectedPoint.isRandomCandidate ?? false}
+                  onChange={(event) =>
+                    props.onUpdatePoint({ isRandomCandidate: event.target.checked })
+                  }
+                />
+                随机候选点
+              </label>
+              <label className='block'>
+                最低显示级别
+                <input
+                  type='number'
+                  min={0}
+                  max={props.config.maxZoom + 2}
+                  value={props.selectedPoint.minZoom ?? 0}
+                  onChange={(event) => props.onUpdatePoint({ minZoom: Number(event.target.value) })}
+                  className='ml-2 w-16 rounded bg-white/10 px-2 py-1'
+                />
+              </label>
+              <div className='rounded border border-white/10 p-2'>
+                <p className='mb-2 text-xs text-white/65'>关联百科条目</p>
+                {props.selectedPoint.relatedEntries?.map((entry, index) => (
+                  <div
+                    key={`${entry.type}-${entry.name}-${index}`}
+                    className='mb-1 flex justify-between gap-2'
+                  >
+                    <span>{entry.name}</span>
+                    <button
+                      type='button'
+                      className='text-red-300'
+                      onClick={() =>
+                        props.onUpdatePoint({
+                          relatedEntries:
+                            props.selectedPoint?.relatedEntries?.filter(
+                              (_, itemIndex) => itemIndex !== index
+                            ) ?? [],
+                        })
+                      }
+                    >
+                      删除
+                    </button>
+                  </div>
+                ))}
+                <div className='grid grid-cols-[1fr_auto] gap-1'>
+                  <input
+                    value={relatedName}
+                    onChange={(event) => setRelatedName(event.target.value)}
+                    placeholder='条目名称'
+                    className='rounded bg-white/10 px-2 py-1'
+                  />
+                  <select
+                    value={relatedType}
+                    onChange={(event) => setRelatedType(event.target.value as SingleItemTypeName)}
+                    className='rounded bg-slate-800 px-1'
+                  >
+                    <option value='fixture'>组件</option>
+                    <option value='item'>道具</option>
+                    <option value='character'>角色</option>
+                    <option value='map'>地图</option>
+                    <option value='mode'>模式</option>
+                    <option value='entity'>衍生物</option>
+                  </select>
+                </div>
                 <button
                   type='button'
-                  className='text-red-300'
-                  onClick={() =>
+                  className='mt-2 underline'
+                  onClick={() => {
+                    if (!relatedName.trim()) return;
                     props.onUpdatePoint({
-                      relatedEntries:
-                        props.selectedPoint?.relatedEntries?.filter(
-                          (_, itemIndex) => itemIndex !== index
-                        ) ?? [],
-                    })
-                  }
+                      relatedEntries: [
+                        ...(props.selectedPoint?.relatedEntries ?? []),
+                        { name: relatedName.trim(), type: relatedType },
+                      ],
+                    });
+                    setRelatedName('');
+                  }}
                 >
-                  删除
+                  添加关联
                 </button>
               </div>
-            ))}
-            <div className='grid grid-cols-[1fr_auto] gap-1'>
-              <input
-                value={relatedName}
-                onChange={(event) => setRelatedName(event.target.value)}
-                placeholder='条目名称'
-                className='rounded bg-white/10 px-2 py-1'
-              />
-              <select
-                value={relatedType}
-                onChange={(event) => setRelatedType(event.target.value as SingleItemTypeName)}
-                className='rounded bg-slate-800 px-1'
-              >
-                <option value='fixture'>组件</option>
-                <option value='item'>道具</option>
-                <option value='character'>角色</option>
-                <option value='map'>地图</option>
-                <option value='mode'>模式</option>
-                <option value='entity'>衍生物</option>
-              </select>
             </div>
-            <button
-              type='button'
-              className='mt-2 underline'
-              onClick={() => {
-                if (!relatedName.trim()) return;
-                props.onUpdatePoint({
-                  relatedEntries: [
-                    ...(props.selectedPoint?.relatedEntries ?? []),
-                    { name: relatedName.trim(), type: relatedType },
-                  ],
-                });
-                setRelatedName('');
-              }}
-            >
-              添加关联
-            </button>
-          </div>
+          </details>
           <button type='button' onClick={props.onDeletePoint} className='text-red-300 underline'>
             删除点位
           </button>
