@@ -17,7 +17,7 @@ const getRankingLink = (
   });
 
 describe('CharacterRoleAttributesCard', () => {
-  it('should use the explicit character summary and hide character-only fields', () => {
+  it('should use the explicit character summary and show only applicable cat fields for Tom', () => {
     const { container } = render(
       <CharacterRoleAttributesCard
         name='汤姆'
@@ -43,6 +43,13 @@ describe('CharacterRoleAttributesCard', () => {
 
     expect(screen.getByText('性别')).toBeInTheDocument();
     expect(screen.getByText('英文名')).toBeInTheDocument();
+    expect(screen.getByText('爪刀CD').closest('p')).toHaveTextContent('爪刀CD: 2.25 / 4.5 s');
+    expect(screen.getByText('购物到货时间').closest('p')).toHaveTextContent('购物到货时间: 2.5s');
+    expect(screen.queryByText('攻击力')).not.toBeInTheDocument();
+    expect(screen.queryByText('破坏力')).not.toBeInTheDocument();
+    expect(screen.queryByText('推速')).not.toBeInTheDocument();
+    expect(screen.queryByText('初始道具')).not.toBeInTheDocument();
+    expect(screen.queryByText('老鼠夹')).not.toBeInTheDocument();
   });
 
   it('should expose folding state, focus visibility, and reduced-motion styling', () => {
@@ -70,6 +77,20 @@ describe('CharacterRoleAttributesCard', () => {
     expect(screen.queryByText('爪刀范围')).not.toBeInTheDocument();
   });
 
+  it('should emphasize a nonzero cat attack while preserving its ranking link', () => {
+    const { container } = render(
+      <CharacterRoleAttributesCard name='布奇' context='character' factionId='cat' />
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: '展开' }));
+
+    const attackRow = screen.getByText('攻击力').closest('p');
+    const attackLink = getRankingLink(container, 'attackBoost', 'cat');
+    expect(attackRow).toHaveClass('text-amber-600', 'dark:text-amber-400');
+    expect(attackLink).toHaveTextContent('15');
+    expect(attackLink).toHaveClass('text-blue-500', 'dark:text-sky-300');
+  });
+
   it('should link ordinary cooldowns independently and keep special cooldowns unlinked', () => {
     const { container } = render(
       <CharacterRoleAttributesCard
@@ -84,7 +105,8 @@ describe('CharacterRoleAttributesCard', () => {
     fireEvent.click(screen.getByRole('button', { name: '展开' }));
 
     const cooldownRow = screen.getByText('爪刀CD').closest('p');
-    expect(cooldownRow).toHaveTextContent('爪刀CD: 未命中 4.9（特殊 4）s / 命中 7（特殊 8）s');
+    expect(screen.getByText('初始道具').closest('p')).toHaveTextContent('初始道具: 鞭炮束');
+    expect(cooldownRow).toHaveTextContent('爪刀CD: 4.9 (4) / 7 (8) s');
     expect(getRankingLink(container, 'clawKnifeCdUnhit', 'cat')).toHaveTextContent('4.9');
     expect(getRankingLink(container, 'clawKnifeCdHit', 'cat')).toHaveTextContent('7');
     expect(cooldownRow?.querySelectorAll('a')).toHaveLength(2);
@@ -98,8 +120,27 @@ describe('CharacterRoleAttributesCard', () => {
     fireEvent.click(screen.getByRole('button', { name: '展开' }));
 
     expect(screen.queryByText('跳跃高度')).not.toBeInTheDocument();
+    expect(screen.getByText('攻击力').closest('p')).toHaveTextContent('攻击力: 15');
+    expect(screen.getByText('破坏力').closest('p')).toHaveTextContent('破坏力: 1');
+    expect(screen.getByText('推速').closest('p')).toHaveTextContent('推速: 5%/s');
+    expect(getRankingLink(container, 'attackBoost', 'mouse')).toHaveTextContent('15');
     expect(getRankingLink(container, 'cheesePushSpeed', 'mouse')).toHaveTextContent('5');
     expect(getRankingLink(container, 'wallCrackDamageBoost', 'mouse')).toHaveTextContent('1');
+    expect(screen.queryByText('爪刀范围')).not.toBeInTheDocument();
+    expect(screen.queryByText('爪刀CD')).not.toBeInTheDocument();
+    expect(screen.queryByText('初始道具')).not.toBeInTheDocument();
+    expect(screen.queryByText('购物到货时间')).not.toBeInTheDocument();
     expect(container.querySelector('a[href*="clawKnifeCd"]')).toBeNull();
+  });
+
+  it('should keep a legitimate zero mouse attack visible', () => {
+    const { container } = render(
+      <CharacterRoleAttributesCard name='雪梨' context='character' factionId='mouse' />
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: '展开' }));
+
+    expect(screen.getByText('攻击力').closest('p')).toHaveTextContent('攻击力: 0');
+    expect(getRankingLink(container, 'attackBoost', 'mouse')).toHaveTextContent('0');
   });
 });
