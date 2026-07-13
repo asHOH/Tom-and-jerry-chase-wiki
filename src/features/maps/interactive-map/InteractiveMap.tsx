@@ -80,18 +80,21 @@ const teleportSvg = `
     <path d="M15 25c4-8 14-10 20-4M33 16l2 5-5 1M33 25c-4 8-14 10-20 4M15 34l-2-5 5-1" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
   </svg>`;
 
-const makeIcon = (point: InteractiveMapPoint, selected: boolean) => {
+const makeIcon = (point: InteractiveMapPoint, selected: boolean, isEditMode: boolean) => {
   const isHotspot = ALWAYS_VISIBLE_CATEGORIES.has(point.category);
   const source = CATEGORY_ICONS[point.category];
-  const content = isHotspot
-    ? `<span class="block h-full w-full rounded-full border-2 ${selected ? 'border-cyan-300 bg-cyan-300/25' : 'border-transparent'}"></span>`
-    : point.category === 'teleport'
-      ? teleportSvg
-      : source
-        ? `<img src="${encodeURI(source)}" alt="" class="h-full w-full object-contain drop-shadow-md" />`
-        : '';
-  const [width, height] = isHotspot ? [32, 32] : [42, 42];
-  const [anchorX, anchorY] = isHotspot ? [16, 16] : [21, 36];
+  const isInvisible = point.isInvisible ?? false;
+  const content = isInvisible
+    ? `<span class="block h-full w-full rounded-full border-2 ${selected ? 'border-cyan-300 bg-cyan-300/25' : isEditMode ? 'border-dashed border-cyan-300/70 bg-cyan-300/10' : 'border-transparent'}"></span>`
+    : isHotspot
+      ? `<span class="block h-full w-full rounded-full border-2 ${selected ? 'border-cyan-300 bg-cyan-300/25' : 'border-transparent'}"></span>`
+      : point.category === 'teleport'
+        ? teleportSvg
+        : source
+          ? `<img src="${encodeURI(source)}" alt="" class="h-full w-full object-contain drop-shadow-md" />`
+          : '';
+  const [width, height] = isHotspot || isInvisible ? [32, 32] : [42, 42];
+  const [anchorX, anchorY] = isHotspot || isInvisible ? [16, 16] : [21, 36];
   const html = `<span class="interactive-map-marker-content ${point.isRandomCandidate ? 'interactive-map-marker--random' : ''}" style="width:${width}px;height:${height}px;--interactive-map-marker-anchor-x:${anchorX}px;--interactive-map-marker-anchor-y:${anchorY}px">${content}</span>`;
 
   return L.divIcon({
@@ -781,7 +784,7 @@ export default function InteractiveMap({
             <Marker
               key={pointIndex}
               position={coordinateToLatLng(point.position, config)}
-              icon={makeIcon(point, selectedPointIndex === pointIndex)}
+              icon={makeIcon(point, selectedPointIndex === pointIndex, isEditMode)}
               draggable={isEditMode}
               eventHandlers={{
                 click: (event) => {
@@ -1169,6 +1172,14 @@ function EditorPanel(props: EditorPanelProps) {
             placeholder='介绍'
             className='w-full rounded bg-white/10 px-2 py-2'
           />
+          <label className='flex gap-2'>
+            <input
+              type='checkbox'
+              checked={props.selectedPoint.isInvisible ?? false}
+              onChange={(event) => props.onUpdatePoint({ isInvisible: event.target.checked })}
+            />
+            隐藏点位图标
+          </label>
           <label className='flex gap-2'>
             <input
               type='checkbox'

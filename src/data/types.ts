@@ -519,6 +519,7 @@ export type InteractiveMapPoint = {
   subtype?: string;
   position: MapCoordinate;
   description?: string;
+  isInvisible?: boolean;
   isRandomCandidate?: boolean;
   minZoom?: number;
   relatedEntries?: SingleItem[];

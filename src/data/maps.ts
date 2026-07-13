@@ -149,7 +149,43 @@ const mapDefinitions: Record<string, MapDefinition> = {
           ],
         },
       ],
-      points: [],
+      points: [
+        {
+          category: 'mouseHole',
+          position: { x: 0.3734, y: 0.4393 },
+          isInvisible: true,
+        },
+        {
+          category: 'mouseHole',
+          position: { x: 0.4556, y: 0.7103 },
+          isInvisible: true,
+        },
+        {
+          category: 'mouseHole',
+          position: { x: 0.7747, y: 0.4515 },
+          isInvisible: true,
+        },
+        {
+          category: 'mouseHole',
+          position: { x: 0.8646, y: 0.7015 },
+          isInvisible: true,
+        },
+        {
+          category: 'mouseHole',
+          position: { x: 0.8153, y: 0.9341 },
+          isInvisible: true,
+        },
+        {
+          category: 'pipe',
+          position: { x: 0.5851, y: 0.4292 },
+          isInvisible: true,
+        },
+        {
+          category: 'pipe',
+          position: { x: 0.6606, y: 0.8922 },
+          isInvisible: true,
+        },
+      ],
     },
     description:
       '$地形更改1$text-fuchsia-600 dark:text-fuchsia-400#：楼梯间通往阁楼的楼梯会随学业等级变化（楼梯→斜坡）。\n$地形更改2$text-fuchsia-600 dark:text-fuchsia-400#：各房间地形均有至少2种预设方案，游戏开始时每个房间会随机选取一种方案并生成。',

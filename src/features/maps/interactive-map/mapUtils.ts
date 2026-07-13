@@ -80,6 +80,7 @@ export const isMinimapPointVisible = (
   visibleCategories: ReadonlySet<MapPointCategory>,
   hiddenSubtypes: ReadonlySet<string>
 ) => {
+  if (point.isInvisible) return false;
   if (ALWAYS_VISIBLE_CATEGORIES.has(point.category)) return true;
   if (!visibleCategories.has(point.category)) return false;
   return !point.subtype || !hiddenSubtypes.has(point.subtype);

@@ -53,6 +53,12 @@ describe('interactive map utilities', () => {
     expect(isPointVisible({ ...point, category: 'pipe' }, 2, new Set(), new Set())).toBe(true);
   });
 
+  it('should omit invisible points from the minimap', () => {
+    expect(
+      isMinimapPointVisible({ ...point, isInvisible: true }, DEFAULT_VISIBLE_CATEGORIES, new Set())
+    ).toBe(false);
+  });
+
   it('should keep selected minimap points visible regardless of minZoom', () => {
     expect(isMinimapPointVisible(point, DEFAULT_VISIBLE_CATEGORIES, new Set())).toBe(true);
   });
