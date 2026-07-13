@@ -515,8 +515,6 @@ export type InteractiveMapRoom = {
   polygons: MapCoordinate[][];
 };
 export type InteractiveMapPoint = {
-  id: string;
-  name: string;
   category: MapPointCategory;
   subtype?: string;
   position: MapCoordinate;

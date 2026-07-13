@@ -36,6 +36,9 @@ export const getInteractiveMapAssetUrl = (
 
 export const getMapScale = (config: InteractiveMapGeometry) => 2 ** config.maxZoom;
 
+export const getMapPointScale = (zoom: number, config: InteractiveMapGeometry) =>
+  2 ** (zoom - config.maxZoom);
+
 export const coordinateToLatLng = (
   coordinate: MapCoordinate,
   config: InteractiveMapGeometry

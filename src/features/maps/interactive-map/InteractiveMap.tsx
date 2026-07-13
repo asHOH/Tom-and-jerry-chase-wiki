@@ -42,6 +42,7 @@ import {
   DEFAULT_VISIBLE_CATEGORIES,
   getInteractiveMapAssetUrl,
   getMapBounds,
+  getMapPointScale,
   getRoomCenter,
   isMinimapPointVisible,
   isPointVisible,
@@ -73,7 +74,7 @@ const CATEGORY_ICONS: Partial<Record<MapPointCategory, string>> = {
 const FILTER_STORAGE_KEY = 'interactive-map:visible-categories';
 
 const teleportSvg = `
-  <svg viewBox="0 0 48 48" aria-hidden="true">
+  <svg class="block h-full w-full" viewBox="0 0 48 48" aria-hidden="true">
     <defs><linearGradient id="portal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#67e8f9"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs>
     <circle cx="24" cy="24" r="19" fill="#111827" fill-opacity=".88" stroke="url(#portal)" stroke-width="4"/>
     <path d="M15 25c4-8 14-10 20-4M33 16l2 5-5 1M33 25c-4 8-14 10-20 4M15 34l-2-5 5-1" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
@@ -82,18 +83,22 @@ const teleportSvg = `
 const makeIcon = (point: InteractiveMapPoint, selected: boolean) => {
   const isHotspot = ALWAYS_VISIBLE_CATEGORIES.has(point.category);
   const source = CATEGORY_ICONS[point.category];
-  const html = isHotspot
-    ? `<span class="block h-8 w-8 rounded-full border-2 ${selected ? 'border-cyan-300 bg-cyan-300/25' : 'border-transparent'}"></span>`
+  const content = isHotspot
+    ? `<span class="block h-full w-full rounded-full border-2 ${selected ? 'border-cyan-300 bg-cyan-300/25' : 'border-transparent'}"></span>`
     : point.category === 'teleport'
       ? teleportSvg
       : source
         ? `<img src="${encodeURI(source)}" alt="" class="h-full w-full object-contain drop-shadow-md" />`
         : '';
+  const [width, height] = isHotspot ? [32, 32] : [42, 42];
+  const [anchorX, anchorY] = isHotspot ? [16, 16] : [21, 36];
+  const html = `<span class="interactive-map-marker-content ${point.isRandomCandidate ? 'interactive-map-marker--random' : ''}" style="width:${width}px;height:${height}px;--interactive-map-marker-anchor-x:${anchorX}px;--interactive-map-marker-anchor-y:${anchorY}px">${content}</span>`;
+
   return L.divIcon({
-    className: `interactive-map-marker ${point.isRandomCandidate ? 'interactive-map-marker--random' : ''}`,
+    className: 'interactive-map-marker',
     html,
-    iconSize: isHotspot ? [32, 32] : [42, 42],
-    iconAnchor: isHotspot ? [16, 16] : [21, 36],
+    iconSize: [width, height],
+    iconAnchor: [anchorX, anchorY],
   });
 };
 
@@ -185,12 +190,28 @@ function MainMapEvents({
 }) {
   const map = useMap();
   const { height, maxZoom, width } = config;
+  const updatePointScale = useCallback(
+    (nextZoom: number) => {
+      map
+        .getContainer()
+        .style.setProperty(
+          '--interactive-map-point-scale',
+          String(getMapPointScale(nextZoom, config))
+        );
+    },
+    [config, map]
+  );
+
   useMapEvents({
     click: (event) => {
       if (editorMode !== 'browse') onMapClick(event);
     },
     zoom: () => {
+      updatePointScale(map.getZoom());
       onZoom(map.getZoom());
+    },
+    zoomanim: (event) => {
+      updatePointScale(event.zoom);
     },
   });
 
@@ -204,8 +225,12 @@ function MainMapEvents({
       ],
       { animate: false, padding: [8, 8] }
     );
+    updatePointScale(map.getZoom());
     onZoom(map.getZoom());
-  }, [height, map, maxZoom, onReady, onZoom, width]);
+    return () => {
+      map.getContainer().style.removeProperty('--interactive-map-point-scale');
+    };
+  }, [height, map, maxZoom, onReady, onZoom, updatePointScale, width]);
   return null;
 }
 
@@ -275,26 +300,34 @@ function MinimapDiagram({
             alt=''
             fill
             sizes='(max-width: 640px) 176px, 256px'
-            className='object-fill opacity-65'
+            className='object-fill opacity-55 blur-[0.5px] saturate-50'
             aria-hidden='true'
           />
         </div>
       )}
-      <div className='pointer-events-none absolute inset-0 bg-slate-950/35' aria-hidden='true' />
+      <div className='pointer-events-none absolute inset-0 bg-slate-950/45' aria-hidden='true' />
+      <svg
+        className='pointer-events-none absolute inset-0 h-full w-full'
+        viewBox='0 0 1000 1000'
+        preserveAspectRatio='none'
+        aria-hidden='true'
+      >
+        {config.rooms.flatMap((room) =>
+          room.polygons.map((polygon, index) => (
+            <polygon
+              key={`${room.name}-${index}`}
+              points={polygon.map((point) => `${point.x * 1000},${point.y * 1000}`).join(' ')}
+              fill='rgb(15 23 42 / 48%)'
+              stroke='rgb(203 213 225 / 55%)'
+              strokeWidth='2'
+              vectorEffect='non-scaling-stroke'
+              strokeLinejoin='round'
+            />
+          ))
+        )}
+      </svg>
       {config.rooms.map((room) => (
         <div key={room.name} className='pointer-events-none absolute inset-0'>
-          {room.polygons.map((polygon, index) => {
-            const clipPath = `polygon(${polygon.map((point) => `${point.x * 100}% ${point.y * 100}%`).join(', ')})`;
-
-            return (
-              <div
-                key={`${room.name}-${index}`}
-                className='absolute inset-0 bg-slate-800/45 drop-shadow-[0_0_2px_rgba(255,255,255,0.75)]'
-                style={{ clipPath }}
-                aria-hidden='true'
-              />
-            );
-          })}
           {room.showLabel !== false &&
             (() => {
               const center = getRoomCenter(room);
@@ -308,7 +341,7 @@ function MinimapDiagram({
 
               return (
                 <span
-                  className='absolute -translate-x-1/2 -translate-y-1/2 text-center text-[10px] leading-none font-normal whitespace-nowrap text-gray-100 opacity-80 sm:text-xs'
+                  className='absolute -translate-x-1/2 -translate-y-1/2 text-center text-[11px] leading-none font-semibold whitespace-nowrap text-slate-200/60 drop-shadow-[0_1px_2px_rgb(0_0_0/0.9)] sm:text-sm'
                   style={labelStyle}
                 >
                   {room.name}
@@ -319,7 +352,7 @@ function MinimapDiagram({
       ))}
       {config.points
         .filter((point) => isMinimapPointVisible(point, visibleCategories, hiddenSubtypes))
-        .map((point) => {
+        .map((point, pointIndex) => {
           const source = CATEGORY_ICONS[point.category];
           const pointStyle: CSSProperties = {
             left: `${point.position.x * 100}%`,
@@ -353,16 +386,16 @@ function MinimapDiagram({
           return interactive ? (
             <button
               type='button'
-              key={point.id}
+              key={pointIndex}
               className={pointClassName}
               style={pointStyle}
-              aria-label={point.name}
+              aria-label={MAP_CATEGORY_LABELS[point.category]}
               onClick={(event) => handlePointClick(event, point.position)}
             >
               {pointChildren}
             </button>
           ) : (
-            <span key={point.id} className={pointClassName} style={pointStyle} aria-hidden='true'>
+            <span key={pointIndex} className={pointClassName} style={pointStyle} aria-hidden='true'>
               {pointChildren}
             </span>
           );
@@ -405,7 +438,7 @@ function Minimap({
   return (
     <div
       ref={minimapRef}
-      className={`absolute top-3 left-12 z-500 overflow-hidden rounded-lg border-2 border-white/70 bg-slate-950/50 shadow-xl transition-[width,height] ${isExpanded ? 'h-48 w-72 sm:h-64 sm:w-96' : 'h-28 w-44 sm:h-40 sm:w-64'}`}
+      className={`absolute top-3 left-12 z-500 overflow-hidden rounded-md border border-slate-400/30 bg-slate-950/70 shadow-[0_4px_18px_rgb(0_0_0/0.55)] transition-[width,height] ${isExpanded ? 'h-[13.5rem] w-[22.5rem] sm:h-72 sm:w-[30rem]' : 'h-36 w-60 sm:h-48 sm:w-80'}`}
     >
       {isExpanded ? (
         <div className='relative h-full w-full'>
@@ -453,7 +486,7 @@ export default function InteractiveMap({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isMinimapExpanded, setIsMinimapExpanded] = useState(false);
   const [zoom, setZoom] = useState(incomingConfig.minZoom);
-  const [selectedPointId, setSelectedPointId] = useState<string | null>(null);
+  const [selectedPointIndex, setSelectedPointIndex] = useState<number | null>(null);
   const [tileFailed, setTileFailed] = useState(false);
   const [useFallback, setUseFallback] = useState(false);
   const [visibleCategories, setVisibleCategories] = useState<Set<MapPointCategory>>(
@@ -461,7 +494,6 @@ export default function InteractiveMap({
   );
   const [hiddenSubtypes, setHiddenSubtypes] = useState<Set<string>>(new Set());
   const [editorMode, setEditorMode] = useState<EditorMode>('browse');
-  const [pointName, setPointName] = useState('');
   const [pointCategory, setPointCategory] = useState<MapPointCategory>('cheese');
   const [roomName, setRoomName] = useState('');
   const [draftPolygon, setDraftPolygon] = useState<[number, number][]>([]);
@@ -470,7 +502,8 @@ export default function InteractiveMap({
   const undoStack = useRef<InteractiveMapConfig[]>([]);
   const redoStack = useRef<InteractiveMapConfig[]>([]);
   const mainMapRef = useRef<L.Map | null>(null);
-  const selectedPoint = config.points.find((point) => point.id === selectedPointId) ?? null;
+  const selectedPoint =
+    selectedPointIndex === null ? null : (config.points[selectedPointIndex] ?? null);
   const mapBounds = useMemo(
     () =>
       getMapBounds({
@@ -515,8 +548,13 @@ export default function InteractiveMap({
   }, []);
 
   useEffect(() => {
-    const pointId = new URLSearchParams(window.location.search).get('point');
-    if (pointId && config.points.some((point) => point.id === pointId)) setSelectedPointId(pointId);
+    const pointIndex = Number.parseInt(
+      new URLSearchParams(window.location.search).get('point') ?? '',
+      10
+    );
+    if (Number.isInteger(pointIndex) && pointIndex >= 0 && pointIndex < config.points.length) {
+      setSelectedPointIndex(pointIndex);
+    }
   }, [config.points]);
 
   useEffect(() => {
@@ -548,9 +586,9 @@ export default function InteractiveMap({
   );
 
   const updateSelectedPoint = (changes: Partial<InteractiveMapPoint>) => {
-    if (!selectedPointId) return;
+    if (selectedPointIndex === null) return;
     const next = cloneInteractiveMap(config);
-    const point = next.points.find((candidate) => candidate.id === selectedPointId);
+    const point = next.points[selectedPointIndex];
     if (!point) return;
     Object.assign(point, changes);
     updateConfig(next);
@@ -568,10 +606,10 @@ export default function InteractiveMap({
     }
   };
 
-  const openPoint = (point: InteractiveMapPoint) => {
-    setSelectedPointId(point.id);
+  const openPoint = (pointIndex: number) => {
+    setSelectedPointIndex(pointIndex);
     const url = new URL(window.location.href);
-    url.searchParams.set('point', point.id);
+    url.searchParams.set('point', String(pointIndex));
     window.history.replaceState(
       window.history.state,
       '',
@@ -580,7 +618,7 @@ export default function InteractiveMap({
   };
 
   const closePoint = () => {
-    setSelectedPointId(null);
+    setSelectedPointIndex(null);
     const url = new URL(window.location.href);
     url.searchParams.delete('point');
     window.history.replaceState(
@@ -592,18 +630,13 @@ export default function InteractiveMap({
 
   const handleMapClick = (event: LeafletMouseEvent) => {
     if (editorMode === 'addPoint') {
-      if (!pointName.trim()) return;
       const next = cloneInteractiveMap(config);
-      const id = `${pointCategory}-${Date.now().toString(36)}`;
       next.points.push({
-        id,
-        name: pointName.trim(),
         category: pointCategory,
         position: latLngToCoordinate(event.latlng.lat, event.latlng.lng, config),
       });
       updateConfig(next);
-      setSelectedPointId(id);
-      setPointName('');
+      setSelectedPointIndex(next.points.length - 1);
       setEditorMode('browse');
       return;
     }
@@ -742,21 +775,22 @@ export default function InteractiveMap({
           <Polygon positions={draftPolygon} pathOptions={{ color: '#22d3ee', dashArray: '6 6' }} />
         )}
         {config.points
-          .filter((point) => isPointVisible(point, zoom, visibleCategories, hiddenSubtypes))
-          .map((point) => (
+          .map((point, pointIndex) => ({ point, pointIndex }))
+          .filter(({ point }) => isPointVisible(point, zoom, visibleCategories, hiddenSubtypes))
+          .map(({ point, pointIndex }) => (
             <Marker
-              key={point.id}
+              key={pointIndex}
               position={coordinateToLatLng(point.position, config)}
-              icon={makeIcon(point, selectedPointId === point.id)}
+              icon={makeIcon(point, selectedPointIndex === pointIndex)}
               draggable={isEditMode}
               eventHandlers={{
                 click: (event) => {
                   L.DomEvent.stopPropagation(event.originalEvent);
-                  if ('ontouchstart' in window || isEditMode) openPoint(point);
+                  if ('ontouchstart' in window || isEditMode) openPoint(pointIndex);
                 },
                 dblclick: (event) => {
                   L.DomEvent.stopPropagation(event.originalEvent);
-                  openPoint(point);
+                  openPoint(pointIndex);
                 },
                 dragend: (event) => {
                   const marker = event.target as L.Marker;
@@ -770,7 +804,10 @@ export default function InteractiveMap({
                 },
               }}
             >
-              <Tooltip>{point.name}</Tooltip>
+              <Tooltip>
+                {MAP_CATEGORY_LABELS[point.category]}
+                {point.subtype ? ` · ${point.subtype}` : ''}
+              </Tooltip>
             </Marker>
           ))}
         {isEditMode &&
@@ -857,7 +894,6 @@ export default function InteractiveMap({
         <EditorPanel
           config={config}
           editorMode={editorMode}
-          pointName={pointName}
           pointCategory={pointCategory}
           roomName={roomName}
           draftPointCount={draftPolygon.length}
@@ -866,7 +902,6 @@ export default function InteractiveMap({
           canUndo={undoStack.current.length > 0}
           canRedo={redoStack.current.length > 0}
           onEditorMode={setEditorMode}
-          onPointName={setPointName}
           onPointCategory={setPointCategory}
           onRoomName={setRoomName}
           onFinishRoom={finishRoom}
@@ -878,9 +913,9 @@ export default function InteractiveMap({
           onRedo={redo}
           onUpdatePoint={updateSelectedPoint}
           onDeletePoint={() => {
-            if (!selectedPointId) return;
+            if (selectedPointIndex === null) return;
             const next = cloneInteractiveMap(config);
-            next.points = next.points.filter((point) => point.id !== selectedPointId);
+            next.points = next.points.filter((_, pointIndex) => pointIndex !== selectedPointIndex);
             updateConfig(next);
             closePoint();
           }}
@@ -1007,7 +1042,6 @@ function FilterPanel({
 type EditorPanelProps = {
   config: InteractiveMapConfig;
   editorMode: EditorMode;
-  pointName: string;
   pointCategory: MapPointCategory;
   roomName: string;
   draftPointCount: number;
@@ -1016,7 +1050,6 @@ type EditorPanelProps = {
   canUndo: boolean;
   canRedo: boolean;
   onEditorMode: (mode: EditorMode) => void;
-  onPointName: (value: string) => void;
   onPointCategory: (value: MapPointCategory) => void;
   onRoomName: (value: string) => void;
   onFinishRoom: () => void;
@@ -1079,12 +1112,6 @@ function EditorPanel(props: EditorPanelProps) {
       )}
       {props.editorMode === 'addPoint' && (
         <div className='space-y-2'>
-          <input
-            value={props.pointName}
-            onChange={(event) => props.onPointName(event.target.value)}
-            aria-label='点位名称'
-            className='w-full rounded bg-white/10 px-2 py-2'
-          />
           <select
             value={props.pointCategory}
             onChange={(event) => props.onPointCategory(event.target.value as MapPointCategory)}
@@ -1096,7 +1123,7 @@ function EditorPanel(props: EditorPanelProps) {
               </option>
             ))}
           </select>
-          <p className='text-xs text-white/65'>填写名称后，在地图上点击放置。</p>
+          <p className='text-xs text-white/65'>选择类型后，在地图上点击放置。</p>
           <button type='button' onClick={props.onCancelDrawing} className='underline'>
             取消
           </button>
@@ -1130,11 +1157,6 @@ function EditorPanel(props: EditorPanelProps) {
       {props.selectedPoint && props.editorMode === 'browse' && (
         <div className='mt-3 space-y-2 border-t border-white/10 pt-3'>
           <strong>编辑点位</strong>
-          <input
-            value={props.selectedPoint.name}
-            onChange={(event) => props.onUpdatePoint({ name: event.target.value })}
-            className='w-full rounded bg-white/10 px-2 py-2'
-          />
           <input
             value={props.selectedPoint.subtype ?? ''}
             onChange={(event) => props.onUpdatePoint({ subtype: event.target.value })}
@@ -1299,10 +1321,9 @@ function PointDetails({
         ×
       </button>
       <p className='text-xs font-medium text-cyan-600 dark:text-cyan-300'>
-        {MAP_CATEGORY_LABELS[point.category]}
-        {point.subtype ? ` · ${point.subtype}` : ''}
+        {point.subtype ?? MAP_CATEGORY_LABELS[point.category]}
       </p>
-      <h3 className='mt-1 pr-8 text-xl font-bold'>{point.name}</h3>
+      <h3 className='mt-1 pr-8 text-xl font-bold'>{MAP_CATEGORY_LABELS[point.category]}</h3>
       {point.isRandomCandidate && (
         <span className='mt-2 inline-block rounded-full bg-amber-100 px-2 py-1 text-xs text-amber-900'>
           随机候选点，同局不一定出现

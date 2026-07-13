@@ -70,11 +70,12 @@ const mapDefinitions: Record<string, MapDefinition> = {
         },
         {
           name: '楼梯间',
+          showLabel: false,
           polygons: [
             [
-              { x: 0.53, y: 0.17 },
-              { x: 0.68, y: 0.17 },
-              { x: 0.68, y: 0.72 },
+              { x: 0.53, y: 0.11 },
+              { x: 0.6722, y: 0.11 },
+              { x: 0.6722, y: 0.72 },
               { x: 0.53, y: 0.72 },
             ],
           ],
@@ -83,10 +84,10 @@ const mapDefinitions: Record<string, MapDefinition> = {
           name: '阁楼',
           polygons: [
             [
-              { x: 0.68, y: 0 },
-              { x: 1, y: 0 },
-              { x: 1, y: 0.19 },
-              { x: 0.68, y: 0.19 },
+              { x: 0.6722, y: 0 },
+              { x: 0.88, y: 0 },
+              { x: 0.88, y: 0.22 },
+              { x: 0.6722, y: 0.22 },
             ],
           ],
         },
@@ -94,10 +95,10 @@ const mapDefinitions: Record<string, MapDefinition> = {
           name: '厨房',
           polygons: [
             [
-              { x: 0.68, y: 0.19 },
-              { x: 0.88, y: 0.19 },
-              { x: 0.88, y: 0.45 },
-              { x: 0.68, y: 0.45 },
+              { x: 0.6722, y: 0.22 },
+              { x: 0.8634, y: 0.22 },
+              { x: 0.8634, y: 0.4762 },
+              { x: 0.6722, y: 0.4762 },
             ],
           ],
         },
@@ -105,10 +106,10 @@ const mapDefinitions: Record<string, MapDefinition> = {
           name: '餐厅',
           polygons: [
             [
-              { x: 0.68, y: 0.47 },
-              { x: 0.91, y: 0.47 },
-              { x: 0.91, y: 0.72 },
-              { x: 0.68, y: 0.72 },
+              { x: 0.6722, y: 0.4762 },
+              { x: 0.9, y: 0.4762 },
+              { x: 0.9, y: 0.72 },
+              { x: 0.6722, y: 0.72 },
             ],
           ],
         },
@@ -116,9 +117,9 @@ const mapDefinitions: Record<string, MapDefinition> = {
           name: '杂物间',
           polygons: [
             [
-              { x: 0.65, y: 0.73 },
-              { x: 1, y: 0.73 },
-              { x: 1, y: 1 },
+              { x: 0.65, y: 0.72 },
+              { x: 0.9, y: 0.72 },
+              { x: 0.9, y: 1 },
               { x: 0.65, y: 1 },
             ],
           ],
@@ -128,10 +129,10 @@ const mapDefinitions: Record<string, MapDefinition> = {
           showLabel: false,
           polygons: [
             [
-              { x: 0.91, y: 0.55 },
-              { x: 1, y: 0.55 },
-              { x: 1, y: 0.9 },
-              { x: 0.91, y: 0.9 },
+              { x: 0.9, y: 0.5982 },
+              { x: 1, y: 0.5982 },
+              { x: 1, y: 1 },
+              { x: 0.9, y: 1 },
             ],
           ],
         },

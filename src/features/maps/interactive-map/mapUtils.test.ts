@@ -7,6 +7,7 @@ import {
   coordinateToLatLng,
   DEFAULT_VISIBLE_CATEGORIES,
   getInteractiveMapAssetUrl,
+  getMapPointScale,
   getRoomCenter,
   isMinimapPointVisible,
   isPointVisible,
@@ -26,8 +27,6 @@ const config: InteractiveMapConfig = {
 };
 
 const point: InteractiveMapPoint = {
-  id: 'cheese-1',
-  name: '奶酪候选点',
   category: 'cheese',
   position: { x: 0.25, y: 0.75 },
   minZoom: 2,
@@ -42,6 +41,12 @@ describe('interactive map utilities', () => {
   it('should hide points below their minimum zoom', () => {
     expect(isPointVisible(point, 1, DEFAULT_VISIBLE_CATEGORIES, new Set())).toBe(false);
     expect(isPointVisible(point, 2, DEFAULT_VISIBLE_CATEGORIES, new Set())).toBe(true);
+  });
+
+  it('should scale point markers with the map', () => {
+    expect(getMapPointScale(config.maxZoom, config)).toBe(1);
+    expect(getMapPointScale(config.maxZoom - 1, config)).toBe(0.5);
+    expect(getMapPointScale(config.maxZoom + 2, config)).toBe(4);
   });
 
   it('should always show built-in pipe hotspots', () => {
