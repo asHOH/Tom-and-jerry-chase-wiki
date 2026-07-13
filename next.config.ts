@@ -120,7 +120,10 @@ const nextConfig: NextConfig = {
             value: 'max-age=63072000; includeSubDomains; preload',
           },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-          { key: 'Permissions-Policy', value: 'geolocation=(), microphone=(), camera=()' },
+          {
+            key: 'Permissions-Policy',
+            value: 'fullscreen=(self), geolocation=(), microphone=(), camera=()',
+          },
           {
             key: 'Content-Security-Policy',
             value: buildCspHeader({

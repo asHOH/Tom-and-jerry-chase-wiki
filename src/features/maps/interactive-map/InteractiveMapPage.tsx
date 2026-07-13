@@ -1,5 +1,6 @@
 'use client';
 
+import { useRef } from 'react';
 import dynamic from 'next/dynamic';
 import { useSnapshot } from 'valtio';
 
@@ -10,6 +11,8 @@ import EditModePageShell from '@/components/ui/EditModePageShell';
 import Link from '@/components/Link';
 import { mapsEdit } from '@/data';
 
+import LandscapeOrientationPrompt from './LandscapeOrientationPrompt';
+
 const InteractiveMap = dynamic(() => import('./InteractiveMap'), { ssr: false });
 
 type InteractiveMapPageProps = {
@@ -19,6 +22,7 @@ type InteractiveMapPageProps = {
 
 function InteractiveMapPageContent({ map, mapName }: InteractiveMapPageProps) {
   const { isEditMode, isPreviewMode } = useEditMode();
+  const orientationContainerRef = useRef<HTMLDivElement>(null);
   const rawLocalMap = mapsEdit[mapName];
   const localMapSnapshot = useSnapshot(rawLocalMap ?? ({} as MapType));
   const effectiveMap =
@@ -28,7 +32,11 @@ function InteractiveMapPageContent({ map, mapName }: InteractiveMapPageProps) {
   if (!interactiveMap) return null;
 
   return (
-    <div className='relative h-dvh w-screen overflow-hidden bg-slate-950'>
+    <div
+      ref={orientationContainerRef}
+      className='relative h-dvh w-screen overflow-hidden bg-slate-950'
+    >
+      <LandscapeOrientationPrompt fullscreenTargetRef={orientationContainerRef} />
       <InteractiveMap
         config={interactiveMap}
         mapName={effectiveMap.name}
