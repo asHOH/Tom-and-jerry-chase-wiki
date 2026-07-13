@@ -13,6 +13,7 @@ import {
   isPointVisible,
   latLngToCoordinate,
   minimapPixelsToCoordinate,
+  updateInteractiveMapPoint,
 } from './mapUtils';
 
 const config: InteractiveMapConfig = {
@@ -113,6 +114,22 @@ describe('interactive map utilities', () => {
 
     expect(cloned).toEqual(config);
     expect(cloned).not.toBe(config);
+  });
+
+  it('should update the dragged point by its own index without mutating the map', () => {
+    const mapWithPoints: InteractiveMapConfig = {
+      ...config,
+      points: [point, { ...point, position: { x: 0.8, y: 0.2 } }],
+    };
+
+    const updated = updateInteractiveMapPoint(mapWithPoints, 1, {
+      position: { x: 0.6, y: 0.4 },
+    });
+
+    expect(updated?.points[0]?.position).toEqual(point.position);
+    expect(updated?.points[1]?.position).toEqual({ x: 0.6, y: 0.4 });
+    expect(mapWithPoints.points[1]?.position).toEqual({ x: 0.8, y: 0.2 });
+    expect(updateInteractiveMapPoint(mapWithPoints, 2, {})).toBeNull();
   });
 
   it('should select the requested map image format', () => {

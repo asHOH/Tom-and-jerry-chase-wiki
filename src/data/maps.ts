@@ -182,7 +182,7 @@ const mapDefinitions: Record<string, MapDefinition> = {
         },
         {
           category: 'pipe',
-          position: { x: 0.6606, y: 0.8922 },
+          position: { x: 0.6606, y: 0.915 },
           isInvisible: true,
         },
         {

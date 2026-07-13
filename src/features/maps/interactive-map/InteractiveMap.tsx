@@ -49,6 +49,7 @@ import {
   latLngToCoordinate,
   MAP_CATEGORY_LABELS,
   minimapPixelsToCoordinate,
+  updateInteractiveMapPoint,
 } from './mapUtils';
 
 import 'leaflet/dist/leaflet.css';
@@ -62,7 +63,7 @@ type InteractiveMapProps = {
   onConfigChange?: ((config: InteractiveMapConfig) => void) | undefined;
 };
 
-type EditorMode = 'browse' | 'addPoint' | 'drawRoom';
+type EditorMode = 'browse' | 'selectRoom' | 'addPoint' | 'drawRoom';
 
 const CATEGORY_ICONS: Partial<Record<MapPointCategory, string>> = {
   cheese: '/images/items/奶酪.png',
@@ -590,10 +591,12 @@ export default function InteractiveMap({
 
   const updateSelectedPoint = (changes: Partial<InteractiveMapPoint>) => {
     if (selectedPointIndex === null) return;
-    const next = cloneInteractiveMap(config);
-    const point = next.points[selectedPointIndex];
-    if (!point) return;
-    Object.assign(point, changes);
+    updatePoint(selectedPointIndex, changes);
+  };
+
+  const updatePoint = (pointIndex: number, changes: Partial<InteractiveMapPoint>) => {
+    const next = updateInteractiveMapPoint(config, pointIndex, changes);
+    if (!next) return;
     updateConfig(next);
   };
 
@@ -610,6 +613,7 @@ export default function InteractiveMap({
   };
 
   const openPoint = (pointIndex: number) => {
+    setSelectedRoomId(null);
     setSelectedPointIndex(pointIndex);
     const url = new URL(window.location.href);
     url.searchParams.set('point', String(pointIndex));
@@ -639,7 +643,7 @@ export default function InteractiveMap({
         position: latLngToCoordinate(event.latlng.lat, event.latlng.lng, config),
       });
       updateConfig(next);
-      setSelectedPointIndex(next.points.length - 1);
+      openPoint(next.points.length - 1);
       setEditorMode('browse');
       return;
     }
@@ -758,15 +762,19 @@ export default function InteractiveMap({
               positions={polygon.map((point) => coordinateToLatLng(point, config))}
               pathOptions={{
                 color: selectedRoomId === room.name ? '#22d3ee' : '#f8fafc',
-                fillOpacity: selectedRoomId === room.name ? 0.12 : 0.015,
+                fillOpacity:
+                  selectedRoomId === room.name ? 0.12 : editorMode === 'selectRoom' ? 0.06 : 0.015,
+                interactive: isEditMode && editorMode === 'selectRoom',
                 opacity: isEditMode ? 0.65 : 0,
                 weight: selectedRoomId === room.name ? 3 : 1,
               }}
               eventHandlers={{
                 click: (event) => {
-                  if (!isEditMode) return;
+                  if (!isEditMode || editorMode !== 'selectRoom') return;
                   L.DomEvent.stopPropagation(event.originalEvent);
+                  closePoint();
                   setSelectedRoomId(room.name);
+                  setEditorMode('browse');
                 },
               }}
             >
@@ -795,9 +803,12 @@ export default function InteractiveMap({
                   L.DomEvent.stopPropagation(event.originalEvent);
                   openPoint(pointIndex);
                 },
+                dragstart: () => {
+                  openPoint(pointIndex);
+                },
                 dragend: (event) => {
                   const marker = event.target as L.Marker;
-                  updateSelectedPoint({
+                  updatePoint(pointIndex, {
                     position: latLngToCoordinate(
                       marker.getLatLng().lat,
                       marker.getLatLng().lng,
@@ -1107,9 +1118,24 @@ function EditorPanel(props: EditorPanelProps) {
           <button
             type='button'
             className='rounded bg-cyan-700 px-2 py-2'
+            onClick={() => props.onEditorMode('selectRoom')}
+          >
+            选择区域
+          </button>
+          <button
+            type='button'
+            className='rounded bg-cyan-700 px-2 py-2'
             onClick={() => props.onEditorMode('drawRoom')}
           >
             绘制区域
+          </button>
+        </div>
+      )}
+      {props.editorMode === 'selectRoom' && (
+        <div className='space-y-2'>
+          <p className='text-xs text-white/65'>点击地图上的区域以选择并编辑。</p>
+          <button type='button' onClick={props.onCancelDrawing} className='underline'>
+            取消
           </button>
         </div>
       )}

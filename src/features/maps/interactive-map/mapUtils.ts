@@ -107,3 +107,16 @@ export const minimapPixelsToCoordinate = (
 
 export const cloneInteractiveMap = (config: InteractiveMapConfig): InteractiveMapConfig =>
   JSON.parse(JSON.stringify(config)) as InteractiveMapConfig;
+
+export const updateInteractiveMapPoint = (
+  config: InteractiveMapConfig,
+  pointIndex: number,
+  changes: Partial<InteractiveMapPoint>
+): InteractiveMapConfig | null => {
+  const next = cloneInteractiveMap(config);
+  const point = next.points[pointIndex];
+  if (!point) return null;
+
+  Object.assign(point, changes);
+  return next;
+};
