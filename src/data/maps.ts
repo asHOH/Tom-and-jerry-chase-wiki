@@ -154,26 +154,31 @@ const mapDefinitions: Record<string, MapDefinition> = {
           category: 'mouseHole',
           position: { x: 0.3734, y: 0.4393 },
           isInvisible: true,
+          relatedEntries: [{ name: '老鼠洞', type: 'fixture' }],
         },
         {
           category: 'mouseHole',
           position: { x: 0.4556, y: 0.7103 },
           isInvisible: true,
+          relatedEntries: [{ name: '老鼠洞', type: 'fixture' }],
         },
         {
           category: 'mouseHole',
           position: { x: 0.7709, y: 0.4406 },
           isInvisible: true,
+          relatedEntries: [{ name: '老鼠洞', type: 'fixture' }],
         },
         {
           category: 'mouseHole',
           position: { x: 0.8807, y: 0.711 },
           isInvisible: true,
+          relatedEntries: [{ name: '老鼠洞', type: 'fixture' }],
         },
         {
           category: 'mouseHole',
           position: { x: 0.8279, y: 0.9601 },
           isInvisible: true,
+          relatedEntries: [{ name: '老鼠洞', type: 'fixture' }],
         },
         {
           id: 'classic-home-pipe-b-stairwell',
@@ -186,6 +191,7 @@ const mapDefinitions: Record<string, MapDefinition> = {
             label: 'B',
           },
           isInvisible: true,
+          relatedEntries: [{ name: '管道', type: 'fixture' }],
         },
         {
           id: 'classic-home-pipe-b-storage',
@@ -198,6 +204,7 @@ const mapDefinitions: Record<string, MapDefinition> = {
             label: 'B',
           },
           isInvisible: true,
+          relatedEntries: [{ name: '管道', type: 'fixture' }],
         },
         {
           id: 'classic-home-pipe-a-attic',
@@ -210,6 +217,7 @@ const mapDefinitions: Record<string, MapDefinition> = {
             label: 'A',
           },
           isInvisible: true,
+          relatedEntries: [{ name: '管道', type: 'fixture' }],
         },
         {
           id: 'classic-home-pipe-a-courtyard',
@@ -222,6 +230,7 @@ const mapDefinitions: Record<string, MapDefinition> = {
             label: 'A',
           },
           isInvisible: true,
+          relatedEntries: [{ name: '管道', type: 'fixture' }],
         },
       ],
     },

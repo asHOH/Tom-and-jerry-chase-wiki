@@ -42,12 +42,14 @@ import {
   coordinateToLatLng,
   DEFAULT_VISIBLE_CATEGORIES,
   getConnectedMapPoint,
+  getDefaultMapPointRelatedEntries,
   getInteractiveMapAssetUrl,
   getMapBounds,
   getMapPointScale,
   getRoomCenter,
   isMinimapPointVisible,
   isPointVisible,
+  isRandomCandidateByDefault,
   latLngToCoordinate,
   MAP_CATEGORY_LABELS,
   minimapPixelsToCoordinate,
@@ -155,11 +157,9 @@ class NativePictureTileLayer extends L.TileLayer {
       picture.append(source);
     }
 
-    let avifFailed = false;
     image.onload = () => done(undefined, picture);
     image.onerror = () => {
-      if (!avifFailed && isAvifUrl(image.currentSrc || image.src)) {
-        avifFailed = true;
+      if (isAvifUrl(image.currentSrc || image.src)) {
         source.removeAttribute('srcset');
         image.src = webpUrl;
         return;
@@ -683,11 +683,14 @@ export default function InteractiveMap({
   const handleMapClick = (event: LeafletMouseEvent) => {
     if (editorMode === 'addPoint') {
       const next = cloneInteractiveMap(config);
-      next.points.push({
+      const point: InteractiveMapPoint = {
         id: `map-point-${crypto.randomUUID()}`,
         category: pointCategory,
         position: latLngToCoordinate(event.latlng.lat, event.latlng.lng, config),
-      });
+        isRandomCandidate: isRandomCandidateByDefault(pointCategory),
+        relatedEntries: getDefaultMapPointRelatedEntries({ category: pointCategory }),
+      };
+      next.points.push(point);
       updateConfig(next);
       openPoint(next.points.length - 1);
       setEditorMode('browse');
@@ -1392,7 +1395,7 @@ function EditorPanel(props: EditorPanelProps) {
               type='number'
               min={0}
               max={props.config.maxZoom + 2}
-              value={props.selectedPoint.minZoom ?? 1}
+              value={props.selectedPoint.minZoom ?? 0}
               onChange={(event) => props.onUpdatePoint({ minZoom: Number(event.target.value) })}
               className='ml-2 w-16 rounded bg-white/10 px-2 py-1'
             />

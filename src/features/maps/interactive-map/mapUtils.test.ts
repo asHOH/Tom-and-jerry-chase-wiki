@@ -7,11 +7,13 @@ import {
   coordinateToLatLng,
   DEFAULT_VISIBLE_CATEGORIES,
   getConnectedMapPoint,
+  getDefaultMapPointRelatedEntries,
   getInteractiveMapAssetUrl,
   getMapPointScale,
   getRoomCenter,
   isMinimapPointVisible,
   isPointVisible,
+  isRandomCandidateByDefault,
   latLngToCoordinate,
   minimapPixelsToCoordinate,
   updateInteractiveMapPoint,
@@ -35,6 +37,42 @@ const point: InteractiveMapPoint = {
 };
 
 describe('interactive map utilities', () => {
+  it('should mark cheese and rocket points as random candidates by default', () => {
+    expect(isRandomCandidateByDefault('cheese')).toBe(true);
+    expect(isRandomCandidateByDefault('rocket')).toBe(true);
+    expect(isRandomCandidateByDefault('pipe')).toBe(false);
+    expect(isRandomCandidateByDefault('mouseHole')).toBe(false);
+  });
+
+  it('should return the default wiki entry for common map point categories', () => {
+    expect(getDefaultMapPointRelatedEntries({ category: 'cheese' })).toEqual([
+      { name: '奶酪', type: 'item' },
+    ]);
+    expect(getDefaultMapPointRelatedEntries({ category: 'rocket' })).toEqual([
+      { name: '火箭', type: 'item' },
+    ]);
+    expect(getDefaultMapPointRelatedEntries({ category: 'mouseHole' })).toEqual([
+      { name: '老鼠洞', type: 'fixture' },
+    ]);
+    expect(getDefaultMapPointRelatedEntries({ category: 'pipe' })).toEqual([
+      { name: '管道', type: 'fixture' },
+    ]);
+  });
+
+  it('should use the subtype for fixture and special-mode point entries', () => {
+    expect(getDefaultMapPointRelatedEntries({ category: 'fixture', subtype: '七色花' })).toEqual([
+      { name: '七色花', type: 'fixture' },
+    ]);
+    expect(
+      getDefaultMapPointRelatedEntries({ category: 'specialMode', subtype: '经典奶酪赛' })
+    ).toEqual([{ name: '经典奶酪赛', type: 'mode' }]);
+  });
+
+  it('should leave point categories without a wiki entry unlinked', () => {
+    expect(getDefaultMapPointRelatedEntries({ category: 'teleport' })).toEqual([]);
+    expect(getDefaultMapPointRelatedEntries({ category: 'geometryBarrel' })).toEqual([]);
+  });
+
   it('should round-trip normalized coordinates', () => {
     const [lat, lng] = coordinateToLatLng(point.position, config);
     expect(latLngToCoordinate(lat, lng, config)).toEqual(point.position);
@@ -43,6 +81,17 @@ describe('interactive map utilities', () => {
   it('should hide points below their minimum zoom', () => {
     expect(isPointVisible(point, 1, DEFAULT_VISIBLE_CATEGORIES, new Set())).toBe(false);
     expect(isPointVisible(point, 2, DEFAULT_VISIBLE_CATEGORIES, new Set())).toBe(true);
+  });
+
+  it('should show points without an explicit minimum zoom at level 0', () => {
+    const pointWithDefaultMinZoom: InteractiveMapPoint = {
+      category: 'cheese',
+      position: point.position,
+    };
+
+    expect(isPointVisible(pointWithDefaultMinZoom, 0, DEFAULT_VISIBLE_CATEGORIES, new Set())).toBe(
+      true
+    );
   });
 
   it('should scale point markers with the map', () => {

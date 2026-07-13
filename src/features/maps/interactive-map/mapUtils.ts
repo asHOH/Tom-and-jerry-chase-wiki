@@ -4,6 +4,7 @@ import type {
   InteractiveMapRoom,
   MapCoordinate,
   MapPointCategory,
+  SingleItem,
 } from '@/data/types';
 
 export type InteractiveMapImageFormat = 'avif' | 'webp';
@@ -22,6 +23,32 @@ export const MAP_CATEGORY_LABELS: Record<MapPointCategory, string> = {
 
 export const ALWAYS_VISIBLE_CATEGORIES = new Set<MapPointCategory>(['mouseHole', 'pipe']);
 export const DEFAULT_VISIBLE_CATEGORIES = new Set<MapPointCategory>(['cheese', 'rocket']);
+export const DEFAULT_RANDOM_CANDIDATE_CATEGORIES = new Set<MapPointCategory>(['cheese', 'rocket']);
+
+export const isRandomCandidateByDefault = (category: MapPointCategory): boolean =>
+  DEFAULT_RANDOM_CANDIDATE_CATEGORIES.has(category);
+
+const DEFAULT_MAP_POINT_RELATED_ENTRIES: Partial<Record<MapPointCategory, SingleItem>> = {
+  cheese: { name: '奶酪', type: 'item' },
+  rocket: { name: '火箭', type: 'item' },
+  mouseHole: { name: '老鼠洞', type: 'fixture' },
+  pipe: { name: '管道', type: 'fixture' },
+};
+
+export const getDefaultMapPointRelatedEntries = (
+  point: Pick<InteractiveMapPoint, 'category' | 'subtype'>
+): SingleItem[] => {
+  if (point.category === 'fixture' && point.subtype) {
+    return [{ name: point.subtype, type: 'fixture' }];
+  }
+
+  if (point.category === 'specialMode' && point.subtype) {
+    return [{ name: point.subtype, type: 'mode' }];
+  }
+
+  const defaultEntry = DEFAULT_MAP_POINT_RELATED_ENTRIES[point.category];
+  return defaultEntry ? [defaultEntry] : [];
+};
 
 export const getInteractiveMapAssetUrl = (
   url: string | undefined,
@@ -69,7 +96,7 @@ export const isPointVisible = (
   visibleCategories: ReadonlySet<MapPointCategory>,
   hiddenSubtypes: ReadonlySet<string>
 ) => {
-  if ((point.minZoom ?? 1) > zoom) return false;
+  if ((point.minZoom ?? 0) > zoom) return false;
   if (ALWAYS_VISIBLE_CATEGORIES.has(point.category)) return true;
   if (!visibleCategories.has(point.category)) return false;
   return !point.subtype || !hiddenSubtypes.has(point.subtype);
