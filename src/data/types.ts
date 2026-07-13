@@ -139,25 +139,8 @@ export type CharacterDefinition = {
   imageUrl?: string; // We'll generate it automatically
   aliases?: string[]; // Alternative names for search
 
-  // Common attributes for all characters
-  maxHp?: number; // Hp上限
-  attackBoost?: number; // 攻击增伤
-  hpRecovery?: number; // Hp恢复
-  moveSpeed?: number; // 移速
-  jumpHeight?: number; // 跳跃
-
-  // Cat-specific attributes
-  clawKnifeCdHit?: number; // 爪刀CD (命中)
-  clawKnifeCdUnhit?: number; // 爪刀CD (未命中)
   specialClawKnifeCdHit?: number; // 特殊爪刀CD (命中)
   specialClawKnifeCdUnhit?: number; // 特殊爪刀CD (未命中)
-  clawKnifeRange?: number; // 爪刀范围
-  initialItem?: string; // 初始道具
-  storePurchaseTime?: number; // 商店购物时间（秒）
-
-  // Mouse-specific attributes
-  cheesePushSpeed?: number; // 推速
-  wallCrackDamageBoost?: number; // 墙缝增伤
 
   // Positioning tags (faction-specific)
   catPositioningTags?: CatPositioningTag[]; // For cat characters
@@ -174,8 +157,6 @@ export type CharacterDefinition = {
   // special skill suggestions
   specialSkills?: SuggestedSpecialSkillItem[];
 
-  //specific attributes
-  gender?: 'male' | 'female';
   EnglishName?: string; // Official translation retained outside canonical role statistics
 };
 

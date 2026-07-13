@@ -36,7 +36,6 @@
     "set-runtime:node": "node scripts/set-api-runtime.mjs nodejs",
     "build:skip-images": "npm run validate:character-roles && node scripts/generate-doc-pages.mjs && next build && serwist build serwist.config.mjs",
     "normalize:character-roles": "jiti scripts/normalize-character-roles.ts",
-    "report:character-role-parity": "jiti scripts/report-character-role-parity.ts",
     "validate:character-roles": "jiti scripts/validate-character-roles.ts",
     "start": "next start",
     "lint": "oxlint",

@@ -6,14 +6,6 @@ const mouseCharacterDefinitions = {
   /* ----------------------------------- 杰瑞 ----------------------------------- */
   杰瑞: {
     description: '一只古灵精怪的小老鼠，总喜欢戏弄汤姆，和汤姆是一对欢喜冤家。',
-    maxHp: 99,
-    attackBoost: 15,
-    hpRecovery: 2,
-    moveSpeed: 650,
-    jumpHeight: 400,
-    cheesePushSpeed: 5,
-    wallCrackDamageBoost: 1,
-    gender: 'male',
     EnglishName: 'Jerry',
     mousePositioningTags: [
       {
@@ -220,14 +212,6 @@ const mouseCharacterDefinitions = {
     description:
       '谨慎机警的侦探杰瑞，来自19世纪末的英国，为了更快地抓到凶手，他极善于隐藏自己的踪迹。',
 
-    maxHp: 99,
-    attackBoost: 10,
-    hpRecovery: 1.7,
-    moveSpeed: 640,
-    jumpHeight: 380,
-    cheesePushSpeed: 5.75,
-    wallCrackDamageBoost: 0.5,
-    gender: 'male',
     EnglishName: 'Detective Jerry',
 
     mousePositioningTags: [
@@ -424,14 +408,6 @@ const mouseCharacterDefinitions = {
   /* ----------------------------------- 罗宾汉杰瑞 ----------------------------------- */
   罗宾汉杰瑞: {
     description: '来自12世纪英国的侠盗罗宾汉，身手敏捷，快迅如风，拥有在空中二段跳的能力。',
-    maxHp: 99,
-    attackBoost: 10,
-    hpRecovery: 1.7,
-    moveSpeed: 660,
-    jumpHeight: 400,
-    cheesePushSpeed: 4.5,
-    wallCrackDamageBoost: 1,
-    gender: 'male',
     EnglishName: 'Robin Hood Jerry',
     mousePositioningTags: [
       {
@@ -675,14 +651,6 @@ const mouseCharacterDefinitions = {
     description:
       '公海上向往自由的航海士杰瑞，是最强大的航海家，他浑身充满野性，常年与火炮打交道的他，善于破坏火箭。',
 
-    maxHp: 99,
-    attackBoost: 20,
-    hpRecovery: 1.7,
-    moveSpeed: 640,
-    jumpHeight: 380,
-    cheesePushSpeed: 3.25,
-    wallCrackDamageBoost: 1.5,
-    gender: 'male',
     EnglishName: 'Pirate Jerry',
 
     mousePositioningTags: [
@@ -902,14 +870,6 @@ const mouseCharacterDefinitions = {
   国王杰瑞: {
     description:
       '国王杰瑞是玩具国的王，他胸怀天下，对自己的子民良善，但对破坏国家安定的野猫毫不留情。',
-    maxHp: 99,
-    attackBoost: 10,
-    hpRecovery: 1.7,
-    moveSpeed: 600,
-    jumpHeight: 380,
-    cheesePushSpeed: 3.75,
-    wallCrackDamageBoost: 1,
-    gender: 'male',
     EnglishName: 'King Jerry',
     mousePositioningTags: [
       {
@@ -1097,14 +1057,6 @@ const mouseCharacterDefinitions = {
   剑客杰瑞: {
     description:
       '来自法国的剑客杰瑞，是顶级的剑术大师，他常常冲锋陷阵在最前，是所有老鼠敬仰的英雄。',
-    maxHp: 124,
-    attackBoost: 25,
-    hpRecovery: 0,
-    moveSpeed: 640,
-    jumpHeight: 380,
-    cheesePushSpeed: 3,
-    wallCrackDamageBoost: 1,
-    gender: 'male',
     EnglishName: 'Mouseketeer Jerry',
     mousePositioningTags: [
       {
@@ -1308,14 +1260,6 @@ const mouseCharacterDefinitions = {
   泰菲: {
     description:
       '可爱的小婴儿泰菲，总是将自己吃得圆滚滚的，他非常依赖叔叔杰瑞，火箭筒是他最爱的玩具。',
-    maxHp: 74,
-    attackBoost: 5,
-    hpRecovery: 2.5,
-    moveSpeed: 630,
-    jumpHeight: 380,
-    cheesePushSpeed: 4.75,
-    wallCrackDamageBoost: 0.5,
-    gender: 'male',
     EnglishName: 'Tuffy',
     mousePositioningTags: [
       {
@@ -1597,14 +1541,6 @@ const mouseCharacterDefinitions = {
   剑客泰菲: {
     aliases: ['剑菲'],
     description: '剑客泰菲虽然平时惹祸不断，但在学剑之余，他勤加练习掌握了操控盔甲人的技巧。',
-    maxHp: 99,
-    attackBoost: 10,
-    hpRecovery: 1,
-    moveSpeed: 600,
-    jumpHeight: 380,
-    cheesePushSpeed: 3,
-    wallCrackDamageBoost: 1,
-    gender: 'male',
     EnglishName: 'Mouseketeer Tuffy',
     mousePositioningTags: [
       {
@@ -1832,14 +1768,6 @@ const mouseCharacterDefinitions = {
   牛仔杰瑞: {
     description:
       '牛仔杰瑞拥有很高的音乐天赋，擅长使用吉他鸣奏，热爱自由的他，在草原上过着与世无争的生活。',
-    maxHp: 124,
-    attackBoost: 10,
-    hpRecovery: 1.7,
-    moveSpeed: 650,
-    jumpHeight: 400,
-    cheesePushSpeed: 4,
-    wallCrackDamageBoost: 1,
-    gender: 'male',
     EnglishName: 'Cowboy Jerry',
     mousePositioningTags: [
       {
@@ -2027,14 +1955,6 @@ const mouseCharacterDefinitions = {
   /* ----------------------------------- 恶魔杰瑞 ----------------------------------- */
   恶魔杰瑞: {
     description: '他是来自神秘之地的恶魔杰瑞，拥有不凡的力量。',
-    maxHp: 99,
-    attackBoost: 5,
-    hpRecovery: 5,
-    moveSpeed: 640,
-    jumpHeight: 400,
-    cheesePushSpeed: 3.75,
-    wallCrackDamageBoost: 1,
-    gender: 'male',
     EnglishName: 'Devil Jerry',
     mousePositioningTags: [
       {
@@ -2240,14 +2160,6 @@ const mouseCharacterDefinitions = {
     aliases: ['恶菲'],
     description:
       '迷人又危险的小恶魔泰菲！为了帮助玩具城的国王杰瑞，恶魔泰菲挺身而出，将霸占玩具国的邪恶猫咪团的猫咪们耍得团团转，成功拯救了玩具国的子民们。',
-    maxHp: 74,
-    attackBoost: 15,
-    hpRecovery: 2.5,
-    moveSpeed: 645,
-    jumpHeight: 400,
-    cheesePushSpeed: 4.5,
-    wallCrackDamageBoost: 1,
-    gender: 'male',
     EnglishName: 'Devil Tuffy',
     mousePositioningTags: [
       {
@@ -2475,14 +2387,6 @@ const mouseCharacterDefinitions = {
   /* ----------------------------------- 雪梨 ----------------------------------- */
   雪梨: {
     description: '雪梨是温柔可爱的女孩子，她喜欢一切漂亮美好的东西。',
-    maxHp: 99,
-    attackBoost: 0,
-    hpRecovery: 2,
-    moveSpeed: 680,
-    jumpHeight: 380,
-    cheesePushSpeed: 4.75,
-    wallCrackDamageBoost: 0.5,
-    gender: 'female',
     EnglishName: 'Cherie',
     mousePositioningTags: [
       {
@@ -2697,14 +2601,6 @@ const mouseCharacterDefinitions = {
   /* ----------------------------------- 天使杰瑞 ----------------------------------- */
   天使杰瑞: {
     description: '拥有一颗善良之心的天使，总会在汤姆遇上危险的时候，对他施以援手。',
-    maxHp: 99,
-    attackBoost: 5,
-    hpRecovery: 5,
-    moveSpeed: 665,
-    jumpHeight: 420,
-    cheesePushSpeed: 4.5,
-    wallCrackDamageBoost: 0.5,
-    gender: 'male',
     EnglishName: 'Angel Jerry',
     mousePositioningTags: [
       {
@@ -2943,14 +2839,6 @@ const mouseCharacterDefinitions = {
   /* ----------------------------------- 天使泰菲 ----------------------------------- */
   天使泰菲: {
     description: '在王位争夺战中，泰菲化身为天使泰菲，用他的善良感动了汤姆，成功救下了国王杰瑞。',
-    maxHp: 74,
-    attackBoost: 5,
-    hpRecovery: 2.5,
-    moveSpeed: 650,
-    jumpHeight: 380,
-    cheesePushSpeed: 4.25,
-    wallCrackDamageBoost: 0.5,
-    gender: 'male',
     EnglishName: 'Angel Tuffy',
     mousePositioningTags: [
       {
@@ -3137,14 +3025,6 @@ const mouseCharacterDefinitions = {
     aliases: ['二表哥'],
     description:
       '魔术师是杰瑞的表哥之一，他出身高贵，动作优雅，是一位不折不扣的绅士，他拥有强大的魔法能力，能够将猫玩弄于股掌之间。',
-    maxHp: 99,
-    attackBoost: 0,
-    hpRecovery: 2,
-    moveSpeed: 645,
-    jumpHeight: 400,
-    cheesePushSpeed: 0.5,
-    wallCrackDamageBoost: 0,
-    gender: 'male',
     EnglishName: 'Magician',
     mousePositioningTags: [
       {
@@ -3427,14 +3307,6 @@ const mouseCharacterDefinitions = {
     aliases: ['舅舅'],
     description:
       '头戴黑色牛仔帽，穿着亮闪闪高皮靴的佩克斯，踏着精准的乐点，手持玫瑰木吉他，在属于他的舞台上舞动、歌唱、奔跑，让人无限怀念那属于西部的浪漫与自由。',
-    maxHp: 124,
-    attackBoost: 10,
-    hpRecovery: 2.5,
-    moveSpeed: 650,
-    jumpHeight: 380,
-    cheesePushSpeed: 3.5,
-    wallCrackDamageBoost: 0.5,
-    gender: 'male',
     EnglishName: 'Pecos',
     mousePositioningTags: [
       {
@@ -3624,14 +3496,6 @@ const mouseCharacterDefinitions = {
   拿坡里鼠: {
     description:
       '拿坡里鼠来自意大利，他是一只喜爱吃各种意大利美食的小老鼠，他生活在一个热闹的街道上，平时最喜欢打抱不平、帮助弱小，他是汤姆和杰瑞的好朋友。',
-    maxHp: 99,
-    attackBoost: 10,
-    hpRecovery: 2.5,
-    moveSpeed: 635,
-    jumpHeight: 400,
-    cheesePushSpeed: 4.25,
-    wallCrackDamageBoost: 0.5,
-    gender: 'male',
     EnglishName: 'Topo',
     mousePositioningTags: [
       {
@@ -3836,14 +3700,6 @@ const mouseCharacterDefinitions = {
     aliases: ['侦菲'],
     description:
       '侦探泰菲最擅长分析各类疑难问题和数据测算，在日常的探案中，侦探泰菲是侦探杰瑞最有力的助手!',
-    maxHp: 74,
-    attackBoost: 5,
-    hpRecovery: 2.5,
-    moveSpeed: 635,
-    jumpHeight: 380,
-    cheesePushSpeed: 5.75,
-    wallCrackDamageBoost: 0.5,
-    gender: 'male',
     EnglishName: 'Detective Tuffy',
     mousePositioningTags: [
       {
@@ -3992,14 +3848,6 @@ const mouseCharacterDefinitions = {
     aliases: ['剑莉'],
     description:
       '来自法国第一女剑客莉莉，她的剑招低调不失气势，华丽而不失潇洒，她是坏人们最害怕的敌人。',
-    maxHp: 124,
-    attackBoost: 20,
-    hpRecovery: 1,
-    moveSpeed: 645,
-    jumpHeight: 380,
-    cheesePushSpeed: 3.25,
-    wallCrackDamageBoost: 1,
-    gender: 'female',
     EnglishName: 'Mouseketeer Lilli',
     mousePositioningTags: [
       {
@@ -4146,14 +3994,6 @@ const mouseCharacterDefinitions = {
     aliases: ['罗菲'],
     description:
       '来自12世纪英国的侠盗罗宾汉泰菲，他身形灵敏，擅长利用草丛隐蔽自己，是罗宾汉杰瑞的好帮手。',
-    maxHp: 74,
-    attackBoost: 5,
-    hpRecovery: 2.5,
-    moveSpeed: 630,
-    jumpHeight: 380,
-    cheesePushSpeed: 4.75,
-    wallCrackDamageBoost: 0.5,
-    gender: 'male',
     EnglishName: 'Robin Hood Tuffy',
     mousePositioningTags: [
       {
@@ -4383,14 +4223,6 @@ const mouseCharacterDefinitions = {
   玛丽: {
     description:
       '高贵优雅的贵族成熟女性，头戴星光闪耀的王冠，她的真实身份其实是公主，肩负责任的她有自己的原则和处事方式。',
-    maxHp: 99,
-    attackBoost: 0,
-    hpRecovery: 2.5,
-    moveSpeed: 635,
-    jumpHeight: 380,
-    cheesePushSpeed: 4.25,
-    wallCrackDamageBoost: 1,
-    gender: 'female',
     EnglishName: 'Marie',
     mousePositioningTags: [
       {
@@ -4552,14 +4384,6 @@ const mouseCharacterDefinitions = {
   马索尔: {
     description:
       '黄色黑纹衣服，头戴绿色帽子，和杰瑞长相很相似。他是杰瑞的大表哥，实力强悍，勇敢威猛，是所有猫咪的克星。',
-    maxHp: 99,
-    attackBoost: 0,
-    hpRecovery: 2,
-    moveSpeed: 650,
-    jumpHeight: 400,
-    cheesePushSpeed: 0.75,
-    wallCrackDamageBoost: 1,
-    gender: 'male',
     EnglishName: 'Muscles',
     mousePositioningTags: [
       {
@@ -4741,14 +4565,6 @@ const mouseCharacterDefinitions = {
   米雪儿: {
     description:
       '米雪儿和图多盖洛居住在一个富有的家庭中，是一名富有的千金小姐。她喜欢吃甜品，但她不喜欢火炮类的东西，热爱自然的花草树木，尤其喜爱花朵类的装饰品。',
-    maxHp: 99,
-    attackBoost: 10,
-    hpRecovery: 2,
-    moveSpeed: 650,
-    jumpHeight: 400,
-    cheesePushSpeed: 3.75,
-    wallCrackDamageBoost: 1,
-    gender: 'female',
     EnglishName: 'Michelle',
     aliases: ['米雪'],
     mousePositioningTags: [
@@ -4953,14 +4769,6 @@ const mouseCharacterDefinitions = {
     aliases: ['音杰'],
     description:
       '他是艺术的宠儿，音乐家杰瑞拥有优雅帅气的外表，他精湛的技艺能够指挥乐队演绎世界上最华丽的乐章，那些或舒缓、或激昂的音乐不断撩动观众的心弦，激起人们内心深处的灵魂共鸣。',
-    maxHp: 99,
-    attackBoost: 10,
-    hpRecovery: 1,
-    moveSpeed: 600,
-    jumpHeight: 400,
-    cheesePushSpeed: 3.1,
-    wallCrackDamageBoost: 1,
-    gender: 'male',
     EnglishName: 'Conductor Jerry',
     mousePositioningTags: [
       {
@@ -5153,14 +4961,6 @@ const mouseCharacterDefinitions = {
   蒙金奇: {
     aliases: ['马嘉祺'],
     description: '军团指挥官蒙金奇。',
-    maxHp: 99,
-    attackBoost: 25,
-    hpRecovery: 0.5,
-    moveSpeed: 640,
-    jumpHeight: 380,
-    cheesePushSpeed: 3,
-    wallCrackDamageBoost: 1,
-    gender: 'male',
     EnglishName: 'Guardsman',
     mousePositioningTags: [
       {
@@ -5303,14 +5103,6 @@ const mouseCharacterDefinitions = {
   尼宝: {
     aliases: ['泥巴'],
     description: '爱捣蛋、爱运动的机灵鬼',
-    maxHp: 99,
-    attackBoost: 10,
-    hpRecovery: 2,
-    moveSpeed: 640,
-    jumpHeight: 400,
-    cheesePushSpeed: 3.5,
-    wallCrackDamageBoost: 1,
-    gender: 'male',
     EnglishName: 'Nipper',
     mousePositioningTags: [
       {
@@ -5473,14 +5265,6 @@ const mouseCharacterDefinitions = {
   朵朵: {
     description:
       '朵朵原本是汤姆制造出来捕捉杰瑞的机器母鼠，但是在和杰瑞的友好相处中，她被杰瑞的善良勇敢热情打动，喜欢上了杰瑞。最终朵朵获得了人工智能，帮助杰瑞打败了汤姆。',
-    maxHp: 99,
-    attackBoost: 10,
-    hpRecovery: 1,
-    moveSpeed: 630,
-    jumpHeight: 380,
-    cheesePushSpeed: 3,
-    wallCrackDamageBoost: 1,
-    gender: 'female',
     EnglishName: 'Dodo',
     mousePositioningTags: [
       {
@@ -5667,14 +5451,6 @@ const mouseCharacterDefinitions = {
     aliases: ['大表姐'],
     description:
       '仙女鼠来自于神秘的地方，优雅又充满智慧的她，对小老鼠们充满了怜悯。在杰瑞遇到困难的时候，她悄然出现，好像灰姑娘的教母，满足杰瑞的愿望，帮助杰瑞战胜强敌。',
-    maxHp: 99,
-    attackBoost: 10,
-    hpRecovery: 2,
-    moveSpeed: 585,
-    jumpHeight: 400,
-    cheesePushSpeed: 3.5,
-    wallCrackDamageBoost: 1,
-    gender: 'female',
     EnglishName: 'Fairy Godmother',
     mousePositioningTags: [
       {
@@ -5834,14 +5610,6 @@ const mouseCharacterDefinitions = {
   米可: {
     description:
       '米可是米雪儿的哥哥，出身良好的他立志成为一个优秀的新闻人。以优异成绩毕业后，米可投身新闻事业，总是第一时间出现在新闻现场，向观众提供专业权威的新闻报道。',
-    maxHp: 99,
-    attackBoost: 10,
-    hpRecovery: 2.5,
-    moveSpeed: 640,
-    jumpHeight: 400,
-    cheesePushSpeed: 3.25,
-    wallCrackDamageBoost: 1,
-    gender: 'male',
     EnglishName: 'Miko',
     mousePositioningTags: [
       {
@@ -6050,14 +5818,6 @@ const mouseCharacterDefinitions = {
   霜月: {
     description:
       '外表秀气，内心坚强果敢的霜月是百年来唯一一个通过自己努力进入瑶池，参与仙考的鼠族。自幼和弟弟相依为命的她为了提升自己的修为，曾在幼年时期离开仙界，前往下界独自历练数年，回来的时候已经变成一个法力高强的仙子，身边还多了一个贪吃又可爱的小迷袋——胖呆呆。',
-    maxHp: 75,
-    attackBoost: 10,
-    hpRecovery: 2,
-    moveSpeed: 640,
-    jumpHeight: 400,
-    cheesePushSpeed: 3,
-    wallCrackDamageBoost: 1,
-    gender: 'female',
     EnglishName: 'Celeste',
     mousePositioningTags: [
       {
@@ -6239,14 +5999,6 @@ const mouseCharacterDefinitions = {
     aliases: ['表演者杰瑞', '柠檬杰瑞'],
     description:
       '[来自神秘平行时空的另一位杰瑞](原型是查克琼斯画风的杰瑞)，曾因意外从西方漂洋过海来到东方戏院，立志成为一名优秀的演员。最终因一段奇妙际遇跟随汤姆和杰瑞来到它们的时空，不断磨砺演技，追寻着艺术梦想。',
-    maxHp: 124,
-    attackBoost: 5,
-    hpRecovery: 2.5,
-    moveSpeed: 650,
-    jumpHeight: 380,
-    cheesePushSpeed: 3.25,
-    wallCrackDamageBoost: 0.5,
-    gender: 'male',
     EnglishName: 'Performer Jerry',
     mousePositioningTags: [
       {
@@ -6394,14 +6146,6 @@ const mouseCharacterDefinitions = {
   莱恩: {
     description:
       '来自平面二维空间中的神秘之鼠，诞生于蘸水笔在蓝图上勾勒的几笔线条，获得生命后便决心将自己的灵感挥洒在每个角落。莱恩从画板中一跃而下，属于艺术家的创作从此揭开序幕。',
-    maxHp: 70,
-    attackBoost: 5,
-    hpRecovery: 1,
-    moveSpeed: 680,
-    jumpHeight: 400,
-    cheesePushSpeed: 3.5,
-    wallCrackDamageBoost: 0.5,
-    gender: 'male',
     EnglishName: 'Line',
     mousePositioningTags: [
       {
@@ -6565,14 +6309,6 @@ const mouseCharacterDefinitions = {
   梦游杰瑞: {
     description:
       '杰瑞起初并不知道自己为何总是在奇怪的地方醒来。一天，他在梦中打包火腿时惊醒，而眼前是被毛线绑住的可怜汤姆。这时他才意识到自己似乎患上了严重的梦游症。“不要睡着，太危险了……” 梦游杰瑞一边干嚼咖啡豆。一边不断呢喃着，最终……沉沉地睡去。',
-    maxHp: 101,
-    attackBoost: 5,
-    hpRecovery: 1,
-    moveSpeed: 650,
-    jumpHeight: 380,
-    cheesePushSpeed: 4.25,
-    wallCrackDamageBoost: 0.5,
-    gender: 'male',
     EnglishName: 'Sleepwalker Jerry',
     mousePositioningTags: [
       {
@@ -6741,14 +6477,6 @@ const mouseCharacterDefinitions = {
   鲍姆: {
     description:
       '名为鲍姆的小白鼠，是从实验室出逃的实验鼠之一，身上装有强大的炸药，任何小碰撞或摔倒都有可能引发爆炸。因此，他们大多小心翼翼，生怕引发意外。不过，鲍姆与众不同。他性格捉摸不透，脑中充满跳跃的想法，手里拿着能引发小爆炸的羊角锤，乐于为新生活增添一些乐趣。别觉得他的行为奇怪，那都是他从实验室外的老鼠身上学来的。',
-    maxHp: 110,
-    attackBoost: 0,
-    hpRecovery: 2.5,
-    moveSpeed: 640,
-    jumpHeight: 400,
-    cheesePushSpeed: 3.5,
-    wallCrackDamageBoost: 1,
-    gender: 'male',
     EnglishName: 'Baum',
     mousePositioningTags: [
       {
@@ -6918,14 +6646,6 @@ const mouseCharacterDefinitions = {
   朝圣者泰菲: {
     description:
       '特意前来参与感恩节晚宴的小鼠，从朝圣者人偶身上拿走了塑料枪、带上朝圣者帽、在餐桌上嬉戏玩耍，但眼睛却紧盯着那热气腾腾的美味烤鸡。',
-    maxHp: 74,
-    attackBoost: 5,
-    hpRecovery: 1.5,
-    moveSpeed: 650,
-    jumpHeight: 380,
-    cheesePushSpeed: 4.75,
-    wallCrackDamageBoost: 0.5,
-    gender: 'male',
     EnglishName: '',
     mousePositioningTags: [
       {

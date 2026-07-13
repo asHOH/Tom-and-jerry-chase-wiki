@@ -12,15 +12,6 @@ const catCharacterDefinitions = {
     description:
       '全能男神汤姆，开得了大型演唱会，造得出飞行翅膀，弹琴舞蹈样样精通，除了不会抓老鼠什么都会。',
     aliases: ['蓝猫'],
-    maxHp: 255,
-    attackBoost: 0,
-    hpRecovery: 3.5,
-    moveSpeed: 760,
-    jumpHeight: 420,
-    clawKnifeCdHit: 4.5,
-    clawKnifeCdUnhit: 2.25,
-    clawKnifeRange: 275,
-    gender: 'male',
     EnglishName: 'Tom',
     catPositioningTags: [
       {
@@ -218,15 +209,6 @@ const catCharacterDefinitions = {
     description:
       '"流浪猫铁三角"中的老大。在街头流浪的黑猫布奇，总是喜欢和汤姆争夺千金母猫“图多盖洛”，最终成功逆袭为亿万富豪。',
     aliases: ['黑猫', '黑鼠'],
-    maxHp: 220,
-    attackBoost: 15,
-    hpRecovery: 2,
-    moveSpeed: 750,
-    jumpHeight: 420,
-    clawKnifeCdHit: 6,
-    clawKnifeCdUnhit: 4.8,
-    clawKnifeRange: 270,
-    gender: 'male',
     EnglishName: 'Butch',
     catPositioningTags: [
       {
@@ -419,15 +401,6 @@ const catCharacterDefinitions = {
     aliases: ['托斯', '奶猫', '仓鼠', '哈基米'],
     description:
       '"流浪猫铁三角"中的一员。托普斯是一只呆萌的小灰猫，喜欢和老鼠交朋友，他智商很高，经常捣鼓出一些令人意想不到的发明。',
-    maxHp: 200,
-    attackBoost: 0,
-    hpRecovery: 2.5,
-    moveSpeed: 780,
-    jumpHeight: 420,
-    clawKnifeCdHit: 5,
-    clawKnifeCdUnhit: 3.5,
-    clawKnifeRange: 210,
-    gender: 'male',
     EnglishName: 'Topsy',
     catPositioningTags: [
       {
@@ -641,15 +614,6 @@ const catCharacterDefinitions = {
     aliases: ['橘猫', '橘鼠'],
     description:
       '"流浪猫铁三角"中的一员。莱特宁是一只橙红色的猫，喜欢与汤姆争夺女主人的宠爱，他移动速度快如闪电，没有任何老鼠能逃脱他的追击。',
-    maxHp: 260,
-    attackBoost: 0,
-    hpRecovery: 3,
-    moveSpeed: 775,
-    jumpHeight: 420,
-    clawKnifeCdHit: 6.5,
-    clawKnifeCdUnhit: 4.55,
-    clawKnifeRange: 270,
-    gender: 'male',
     EnglishName: 'Lightning',
     catPositioningTags: [
       {
@@ -859,15 +823,6 @@ const catCharacterDefinitions = {
     aliases: ['牛汤', '牛肉汤', '牛唐'],
     description:
       '牛仔汤姆身手敏捷、深藏不露，擅长使用绳索御牛，热爱自由的他，在草原上过着与世无争的生活。',
-    maxHp: 225,
-    attackBoost: 0,
-    hpRecovery: 2.5,
-    moveSpeed: 760,
-    jumpHeight: 420,
-    clawKnifeCdHit: 5,
-    clawKnifeCdUnhit: 3.5,
-    clawKnifeRange: 275,
-    gender: 'male',
     EnglishName: 'Cowboy Tom',
     catPositioningTags: [
       {
@@ -1115,15 +1070,6 @@ const catCharacterDefinitions = {
   /* ----------------------------------- 图多盖洛 ----------------------------------- */
   图多盖洛: {
     description: '拥有惊人美貌的图多盖洛是上东区知名度最高的千金小姐，她的追求者从纽约排到了巴黎。',
-    maxHp: 230,
-    attackBoost: 0,
-    hpRecovery: 2,
-    moveSpeed: 770,
-    jumpHeight: 420,
-    clawKnifeCdHit: 3.5,
-    clawKnifeCdUnhit: 3.5,
-    clawKnifeRange: 235,
-    gender: 'female',
     EnglishName: 'Toodles Galore',
     catPositioningTags: [
       {
@@ -1415,15 +1361,6 @@ const catCharacterDefinitions = {
   /* ----------------------------------- 侍卫汤姆 ----------------------------------- */
   侍卫汤姆: {
     description: '侍卫汤姆始终守护在皇宫内，负责保护国王的安全。',
-    maxHp: 270,
-    attackBoost: 0,
-    hpRecovery: 1.5,
-    moveSpeed: 745,
-    jumpHeight: 420,
-    clawKnifeCdHit: 5.5,
-    clawKnifeCdUnhit: 2.2,
-    clawKnifeRange: 275,
-    gender: 'male',
     EnglishName: 'Guard Tom',
     catPositioningTags: [
       {
@@ -1616,15 +1553,6 @@ const catCharacterDefinitions = {
     aliases: ['小黄'],
     description:
       '图茨拥有娇小的身材和靓丽的脸庞，因为被富养，她性格可爱温柔，广受所有猫和老鼠的喜爱。',
-    maxHp: 225,
-    attackBoost: 0,
-    hpRecovery: 4.5,
-    moveSpeed: 740,
-    jumpHeight: 420, // FIXME: 梦回说跟托普斯一样是467.6、其他猫是481.7，但靠谱吗？
-    clawKnifeCdHit: 2.5,
-    clawKnifeCdUnhit: 2,
-    clawKnifeRange: 180,
-    gender: 'female',
     EnglishName: 'Toots',
     catPositioningTags: [
       {
@@ -1848,15 +1776,6 @@ const catCharacterDefinitions = {
   米特: {
     description:
       '米特是一只流浪猫，他的尾巴曾在一场流浪猫战争中受过伤，但他十分勇猛，从来不会向敌人认输。',
-    maxHp: 325,
-    attackBoost: 0,
-    hpRecovery: 5,
-    moveSpeed: 750,
-    jumpHeight: 420,
-    clawKnifeCdHit: 5.5,
-    clawKnifeCdUnhit: 3.3,
-    clawKnifeRange: 275,
-    gender: 'male',
     EnglishName: 'Meathead',
     catPositioningTags: [
       {
@@ -2015,15 +1934,6 @@ const catCharacterDefinitions = {
   /* ----------------------------------- 塔拉 ----------------------------------- */
   塔拉: {
     description: '塔拉是西部最美丽的牛仔母猫，她拥有俏丽的脸庞和苗条的身姿，吸引了无数人的目光。',
-    maxHp: 250,
-    attackBoost: 0,
-    hpRecovery: 2.5,
-    moveSpeed: 760,
-    jumpHeight: 420,
-    clawKnifeCdHit: 5,
-    clawKnifeCdUnhit: 4,
-    clawKnifeRange: 275,
-    gender: 'female',
     EnglishName: 'Tara',
     catPositioningTags: [
       {
@@ -2235,15 +2145,6 @@ const catCharacterDefinitions = {
   剑客汤姆: {
     description: '拥有超群剑术的大师剑客汤姆，是法国万千少女心中的偶像。',
     aliases: ['剑汤'],
-    maxHp: 270,
-    attackBoost: 0,
-    hpRecovery: 1.5,
-    moveSpeed: 770,
-    jumpHeight: 420,
-    clawKnifeCdHit: 6,
-    clawKnifeCdUnhit: 2,
-    clawKnifeRange: 275,
-    gender: 'male',
     EnglishName: 'Musketeer Tom',
     catPositioningTags: [
       {
@@ -2454,15 +2355,6 @@ const catCharacterDefinitions = {
   库博: {
     description:
       '天空列车站的站长，拥有能够看穿他人内心的力量。他博学多才，善于思考，同时也是知识的化身。',
-    maxHp: 210,
-    attackBoost: 0,
-    hpRecovery: 1.5,
-    moveSpeed: 735,
-    jumpHeight: 420,
-    clawKnifeCdHit: 5,
-    clawKnifeCdUnhit: 1.65,
-    clawKnifeRange: 210,
-    gender: 'male',
     EnglishName: 'Cooper',
     catPositioningTags: [
       {
@@ -2667,15 +2559,6 @@ const catCharacterDefinitions = {
   凯特: {
     description:
       '她是博学多才的都市美少女，冷静知性，是智慧与美貌并存的化身。她是校园中靓丽的风景线，也是学生眼中博学多识的师长。拥有无限魅力她，其爱慕者多如过江之鲫。',
-    maxHp: 250,
-    attackBoost: 0,
-    hpRecovery: 3.5,
-    moveSpeed: 760,
-    jumpHeight: 420,
-    clawKnifeCdHit: 5,
-    clawKnifeCdUnhit: 3.5,
-    clawKnifeRange: 275,
-    gender: 'female',
     EnglishName: 'Kate',
     catPositioningTags: [
       {
@@ -2850,18 +2733,8 @@ const catCharacterDefinitions = {
     aliases: ['苏三心'],
     description:
       '苏蕊是最受欢迎的啦啦队队长，充满活力的她，脸上时时刻刻都洋溢着灿烂的笑容。她热爱生活，享受美食，认识她的猫和老鼠都会被她吸引，和她成为朋友。',
-    maxHp: 200,
-    attackBoost: 0,
-    hpRecovery: 2.5,
-    moveSpeed: 770,
-    jumpHeight: 420,
-    clawKnifeCdHit: 7,
-    clawKnifeCdUnhit: 5,
     specialClawKnifeCdHit: 8,
     specialClawKnifeCdUnhit: 4,
-    clawKnifeRange: 250,
-    initialItem: '鞭炮束',
-    gender: 'female',
     EnglishName: 'Zuri',
     catPositioningTags: [
       {
@@ -3071,15 +2944,6 @@ const catCharacterDefinitions = {
   天使汤姆: {
     description:
       '天使汤姆乘坐库博的天国火车，从神秘的天堂中而来。身穿纯白色长袍，头戴天使光环的他认为猫和老鼠都应该有快乐的空间，温柔善良的他脸上始终带着一抹浅浅的微笑，手持小竖琴时不时传来悠扬的乐声，让猫猫鼠鼠们忍不住靠近。',
-    maxHp: 230,
-    attackBoost: 15,
-    hpRecovery: 3.5,
-    moveSpeed: 760,
-    jumpHeight: 420,
-    clawKnifeCdHit: 8,
-    clawKnifeCdUnhit: 4,
-    clawKnifeRange: 275,
-    gender: 'male',
     EnglishName: 'Angel Tom',
     catPositioningTags: [
       {
@@ -3260,15 +3124,6 @@ const catCharacterDefinitions = {
     aliases: [],
     description:
       '因为与众不同的花色，斯飞在其他猫的眼里是个十足的怪猫。习惯独来独往的他从不和其他猫交流，独自一人住在城市的最中心，充满了神秘感。[夜深人静的时候，他总会拿着一个挂坠，似乎在思念着谁](猫鼠动画里毛色相似的小猫是他妹妹)。',
-    maxHp: 225,
-    attackBoost: 0,
-    hpRecovery: 2,
-    moveSpeed: 780,
-    jumpHeight: 420,
-    clawKnifeCdHit: 4,
-    clawKnifeCdUnhit: 3.1,
-    clawKnifeRange: 270,
-    gender: 'male',
     EnglishName: 'Syrus',
     catPositioningTags: [
       {
@@ -3438,15 +3293,6 @@ const catCharacterDefinitions = {
   恶魔汤姆: {
     description:
       '恶魔汤姆驾驶着列车从深渊呼啸而来。他通体火红，脑袋上有一对略显狡黠的小触角，手持三叉戟的他一直鼓动着汤姆在老鼠面前找回场子。狡黠的恶魔汤姆身边还有一群忠诚的仆从，他们会不遗余力地完成主人的任何指令。',
-    maxHp: 200,
-    attackBoost: 0,
-    hpRecovery: 1.5,
-    moveSpeed: 760,
-    jumpHeight: 420,
-    clawKnifeCdHit: 6,
-    clawKnifeCdUnhit: 3,
-    clawKnifeRange: 275,
-    gender: 'male',
     EnglishName: 'Devil Tom',
     catPositioningTags: [
       {
@@ -3610,15 +3456,6 @@ const catCharacterDefinitions = {
   兔八哥: {
     description:
       '身为一只疯狂又理智的免子，免八哥在每个紧要关头都能凭借自己的勇气和智慧战胜对手，获得胜利。闲暇之余的他，一边啃着造型和口味都堪称完美的胡萝卜，一边到处挖洞为自己寻找满意的小窝。',
-    maxHp: 200,
-    attackBoost: 0,
-    hpRecovery: 2,
-    moveSpeed: 800,
-    jumpHeight: 420,
-    clawKnifeCdHit: 5,
-    clawKnifeCdUnhit: 2.5,
-    clawKnifeRange: 275,
-    gender: 'male',
     EnglishName: 'Bugs Bunny',
     catPositioningTags: [
       {
@@ -3806,15 +3643,6 @@ const catCharacterDefinitions = {
   追风汤姆: {
     description:
       '因为一场神秘的实验意外而降落于猫鼠五周年特别纪念展的不速之客，天生充满了对蓝天的向往，热爱钻研新奇的发明，脑袋里充满稀奇古怪的创意，立志成为猫咪界第一位飞行员，在汤姆和杰瑞的陪伴下被纪念展的内容所打动，来到这里继续进行新的创意发明。',
-    maxHp: 240,
-    attackBoost: 0,
-    hpRecovery: 1,
-    moveSpeed: 800,
-    jumpHeight: 420,
-    clawKnifeCdHit: 7,
-    clawKnifeCdUnhit: 3.85,
-    clawKnifeRange: 275,
-    gender: 'male',
     EnglishName: 'Wind Chaser Tom',
     catPositioningTags: [
       {
@@ -4013,16 +3841,6 @@ const catCharacterDefinitions = {
   如玉: {
     description:
       '畅音阁的当家旦角如玉，身段灵动优雅，唱腔娴熟婉转，在多年苦练后，终于如愿在戏台上展现自己的风姿。作为一只猫，优秀的柔韧性，使得如玉的青旦角色身姿优雅，更将水袖与扇子舞动的如天外来仙。极佳的弹跳能力，更是帮助她的刀马旦角色在戏台上下翻飞，如同一位除暴安良的侠女。怀揣着心中的正义与对金城的眷恋，如玉手中常持一杆花枪。尽管没有法力，可她依旧尝试保卫自己的家园，守护金城的和平和安定。',
-    maxHp: 185,
-    attackBoost: 10,
-    hpRecovery: 3.5,
-    moveSpeed: 780,
-    jumpHeight: 420,
-    clawKnifeCdHit: 4,
-    clawKnifeCdUnhit: 4,
-    clawKnifeRange: 250,
-    initialItem: '鞭炮束',
-    gender: 'female',
     EnglishName: 'Jade',
     catPositioningTags: [
       {
@@ -4213,15 +4031,6 @@ const catCharacterDefinitions = {
     description:
       '夜幕笼罩时，神秘侦探社悄然营业。这里活跃着两位声名远播的侦探：侦探汤姆与侦探杰瑞。每当夜色降临，他们便压低帽檐，调试好随身设备，静候那些光怪陆离的案件上门。',
     aliases: ['侦汤'],
-    maxHp: 210,
-    attackBoost: 0,
-    //hpRecovery: 2.5, //?
-    //moveSpeed: 760, //?
-    jumpHeight: 420,
-    clawKnifeCdHit: 5.6,
-    clawKnifeCdUnhit: 1.2,
-    //clawKnifeRange: 270, //?
-    gender: 'male',
     EnglishName: 'Detective Tom',
     catPositioningTags: [
       {
@@ -4390,8 +4199,6 @@ const catCharacterDefinitions = {
 // Process character definitions to assign IDs and process skills
 const catCharacters = processCharacters(catCharacterDefinitions);
 
-const catsWithLongStorePurchaseTime = new Set(['如玉', '苏蕊', '斯飞']);
-
 // Generate characters with faction ID and image URLs applied in bulk
 export const catCharactersWithImages = Object.fromEntries(
   Object.entries(catCharacters).map(([characterId, character]) => [
@@ -4399,8 +4206,6 @@ export const catCharactersWithImages = Object.fromEntries(
     {
       ...character,
       factionId: 'cat' as const,
-      storePurchaseTime:
-        character.storePurchaseTime ?? (catsWithLongStorePurchaseTime.has(characterId) ? 4.1 : 2.6),
       imageUrl: AssetManager.getCharacterImageUrl(characterId, 'cat'),
       skills: AssetManager.addSkillImageUrls(characterId, character.skills, 'cat'),
     },
