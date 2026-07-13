@@ -14,7 +14,10 @@ const customJestConfig = {
     '<rootDir>/src/**/*.(test|spec).{js,jsx,ts,tsx}',
   ],
   // Transform ESM packages that ship untranspiled code
-  transformIgnorePatterns: ['node_modules/(?!(lodash-es|@t3-oss/env-nextjs)/)'],
+  // Keep the sanitize-html parser packages in sync with next.config.ts transpilePackages.
+  transformIgnorePatterns: [
+    'node_modules/(?!(lodash-es|@t3-oss/env-nextjs|sanitize-html|htmlparser2|domhandler|domutils|dom-serializer|domelementtype|entities)/)',
+  ],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '^lodash-es$': 'lodash',

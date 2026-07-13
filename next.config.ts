@@ -39,7 +39,19 @@ const shouldIncludeVercelAnalytics = () => {
 
 const nextConfig: NextConfig = {
   pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
-  transpilePackages: ['motion', 'pinyin-pro', 'valtio'],
+  transpilePackages: [
+    'motion',
+    'pinyin-pro',
+    'valtio',
+    // sanitize-html 2.17.6 is CommonJS but depends on an ESM-only parser chain.
+    'sanitize-html',
+    'htmlparser2',
+    'domhandler',
+    'domutils',
+    'dom-serializer',
+    'domelementtype',
+    'entities',
+  ],
   // Required for Serwist to work with Turbopack
   serverExternalPackages: ['esbuild-wasm'],
   typescript: {
