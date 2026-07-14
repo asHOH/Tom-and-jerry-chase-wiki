@@ -1,5 +1,5 @@
 import type { Character } from '@/data/types';
-import { getActorJumpHeight, getActorProfile } from '@/features/character-roles/selectors';
+import { getActorJumpHeight, getActorProfile } from '@/features/actor-profiles/selectors';
 import { catCharactersWithImages } from '@/features/characters/data/catCharacters';
 import { mouseCharactersWithImages } from '@/features/characters/data/mouseCharacters';
 

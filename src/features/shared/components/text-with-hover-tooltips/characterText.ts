@@ -1,6 +1,6 @@
 import { autoWrapNames } from '@/data/autoWrapNames';
-import type { ActorProfile } from '@/features/character-roles/schema';
-import { getActorJumpHeight, getActorProfile } from '@/features/character-roles/selectors';
+import type { ActorProfile } from '@/features/actor-profiles/schema';
+import { getActorJumpHeight, getActorProfile } from '@/features/actor-profiles/selectors';
 import { characters } from '@/data';
 
 import type { CharacterRecord } from './types';

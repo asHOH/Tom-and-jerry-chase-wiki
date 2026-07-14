@@ -2,7 +2,7 @@
 
 import { getPositioningTagColors } from '@/lib/design';
 import type { FactionId } from '@/data/types';
-import { getActorProfile } from '@/features/character-roles/selectors';
+import { getActorProfile } from '@/features/actor-profiles/selectors';
 import GameImage from '@/components/ui/GameImage';
 import Tag from '@/components/ui/Tag';
 

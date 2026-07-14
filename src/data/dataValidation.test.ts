@@ -1,4 +1,4 @@
-import { getActorProfile } from '@/features/character-roles/selectors';
+import { getActorProfile } from '@/features/actor-profiles/selectors';
 
 import { cardData, characters } from '.';
 import {

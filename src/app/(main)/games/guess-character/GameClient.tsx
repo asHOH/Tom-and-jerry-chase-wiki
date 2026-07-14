@@ -6,7 +6,7 @@ import { useSnapshot } from 'valtio';
 import { formatDateKey, getDailyCharacterId, getGameDate, getPuzzleNumber } from '@/lib/gameUtils';
 import { buildSkillCluesForCharacter } from '@/lib/skillEffectUtils';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
-import { getActorJumpHeight, getActorProfile } from '@/features/character-roles/selectors';
+import { getActorJumpHeight, getActorProfile } from '@/features/actor-profiles/selectors';
 import { catCharacterIds, mouseCharacterIds } from '@/features/characters/data/characterMetadata';
 import GameLayout from '@/features/games/components/GameLayout';
 import StreakCounter from '@/features/games/components/StreakCounter';

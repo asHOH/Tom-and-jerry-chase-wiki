@@ -6,7 +6,7 @@ import { DefaultChatTransport, lastAssistantMessageIsCompleteWithToolCalls } fro
 import { snapshot } from 'valtio';
 
 import { historyData } from '@/data/history';
-import { actorProfileLookup } from '@/features/character-roles/serialization';
+import { actorProfileLookup } from '@/features/actor-profiles/serialization';
 import { buffs, cards, characters, entities, itemGroups, items, specialSkills } from '@/data';
 import { env } from '@/env';
 

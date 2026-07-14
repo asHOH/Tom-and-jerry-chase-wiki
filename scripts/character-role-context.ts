@@ -4,7 +4,7 @@ import { createJiti } from 'jiti';
 import type {
   ActorProfileReference,
   PlayableCharacterRef,
-} from '../src/features/character-roles/schema';
+} from '../src/features/actor-profiles/schema';
 import {
   catCharacterIds,
   mouseCharacterIds,

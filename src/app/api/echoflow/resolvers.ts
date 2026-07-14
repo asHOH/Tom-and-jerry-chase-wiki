@@ -17,7 +17,7 @@ import traits from '@/data/traits';
 import { WikiChangeType } from '@/data/types';
 import { wikiHistoryData } from '@/data/wikiHistory';
 import { winRatesData } from '@/data/winRates';
-import { getActorProfile } from '@/features/character-roles/selectors';
+import { getActorProfile } from '@/features/actor-profiles/selectors';
 import { getCharacterRelation } from '@/features/characters/utils/relations';
 import {
   achievements,

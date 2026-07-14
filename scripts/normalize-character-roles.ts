@@ -4,7 +4,7 @@ import { dirname, resolve } from 'node:path';
 import {
   normalizeActorProfiles,
   serializeActorProfiles,
-} from '../src/features/character-roles/normalization';
+} from '../src/features/actor-profiles/normalization';
 import { getActorProfileReferences, getPlayableCharacterRoles } from './character-role-context';
 
 const OUTPUT_PATH = resolve(process.cwd(), 'src/features/character-roles/data/characterRoles.json');

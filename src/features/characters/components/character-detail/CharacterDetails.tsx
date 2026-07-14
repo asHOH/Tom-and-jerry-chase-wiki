@@ -12,7 +12,7 @@ import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { EditModeContext, useEditMode } from '@/context/EditModeContext';
 import { Skill } from '@/data/types';
-import ActorAttributesSection from '@/features/character-roles/components/ActorAttributesSection';
+import ActorAttributesSection from '@/features/actor-profiles/components/ActorAttributesSection';
 import SingleItemReverseCard from '@/features/shared/components/SingleItemReverseCard';
 import SingleItemTraitsText from '@/features/shared/components/SingleItemTraitsText';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';

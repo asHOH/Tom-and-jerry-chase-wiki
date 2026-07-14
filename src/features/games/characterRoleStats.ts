@@ -1,6 +1,6 @@
 import type { FactionId } from '@/data/types';
-import type { ActorProfile } from '@/features/character-roles/schema';
-import { getActorJumpHeight, getActorProfile } from '@/features/character-roles/selectors';
+import type { ActorProfile } from '@/features/actor-profiles/schema';
+import { getActorJumpHeight, getActorProfile } from '@/features/actor-profiles/selectors';
 
 export type CharacterGameStatKey =
   | 'maxHp'

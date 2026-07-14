@@ -2,8 +2,8 @@ import { execFileSync } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
-import { EXCLUDED_CHARACTER_ROLE_NAMES } from '../src/features/character-roles/normalization';
-import { assertValidActorProfiles } from '../src/features/character-roles/schema';
+import { EXCLUDED_CHARACTER_ROLE_NAMES } from '../src/features/actor-profiles/normalization';
+import { assertValidActorProfiles } from '../src/features/actor-profiles/schema';
 import { getActorProfileReferences, getPlayableCharacterRoles } from './character-role-context';
 
 const CANONICAL_PATH = resolve(
