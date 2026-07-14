@@ -97,6 +97,7 @@ const makeIcon = (
     point.category === 'pipe' && point.connection
       ? `<span class="interactive-map-pipe-badge" aria-hidden="true">${escapeHtml(point.connection.label ?? '↔')}</span>`
       : null;
+  const zoom = point.category == 'cheese' ? 0.68 : point.category == 'rocket' ? 0.5 : 1;
   const content = connectionBadge
     ? connectionBadge
     : isInvisible
@@ -106,7 +107,7 @@ const makeIcon = (
         : isHotspot
           ? `<span class="block h-full w-full rounded-full border-2 ${selected ? 'border-cyan-300 bg-cyan-300/25' : 'border-transparent'}"></span>`
           : source
-            ? `<img src="${encodeURI(source)}" alt="" class="h-full w-full object-contain drop-shadow-md" />`
+            ? `<img src="${encodeURI(source)}" alt="" class="h-full w-full object-contain drop-shadow-md" style="zoom: ${zoom};" />`
             : '';
   const [width, height] = isHotspot || isInvisible ? [32, 32] : [42, 42];
   const [anchorX, anchorY] = isHotspot || isInvisible ? [16, 16] : [21, 36];
