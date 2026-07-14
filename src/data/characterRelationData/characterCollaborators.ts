@@ -641,4 +641,14 @@ export const characterRelationCharacterCollaboratorTraits: CharacterRelationTrai
       isMinor: true,
     },
   },
+  {
+    description:
+      '恶魔泰菲一武可以帮梦游杰瑞复制高尔夫球，且在梦游杰瑞收回毛线球时恶魔泰菲吸附高尔夫球可以使高尔夫球对墙缝多次撞击。',
+    relation: {
+      kind: 'collaborators',
+      subject: { name: '恶魔泰菲', type: 'character' },
+      target: { name: '梦游杰瑞', type: 'character' },
+      isMinor: true,
+    },
+  },
 ];

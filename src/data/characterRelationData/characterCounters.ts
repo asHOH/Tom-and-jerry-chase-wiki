@@ -186,6 +186,16 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
     },
   },
   {
+    description:
+      '侦探汤姆被动直接放飞能力克制剑客泰菲稳救，剑客泰菲推奶酪刷勇气会刷大量线索被侦探汤姆克制。',
+    relation: {
+      kind: 'counters',
+      subject: { name: '侦探汤姆', type: 'character' },
+      target: { name: '剑客泰菲', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
     description: '鲍姆爆炸会打断喵喵叫，但前提条件是鲍姆需要近身攻击图茨。',
     relation: {
       kind: 'counterEachOther',
@@ -3520,6 +3530,24 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       subject: { name: '侦探汤姆', type: 'character' },
       target: { name: '天使杰瑞', type: 'character' },
       isMinor: false,
+    },
+  },
+  {
+    description: '朝圣者泰菲长枪高伤和主动技能的变形可以快速处理托普斯的分身。',
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '托普斯', type: 'character' },
+      target: { name: '朝圣者泰菲', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '航海士杰瑞的金币可以打断图茨的喵喵叫，如果图茨跳起来躲金币的话，也会打断喵喵叫。',
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '图茨', type: 'character' },
+      target: { name: '航海士杰瑞', type: 'character' },
+      isMinor: true,
     },
   },
 ];

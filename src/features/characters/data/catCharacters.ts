@@ -667,6 +667,15 @@ const catCharacterDefinitions = {
         cards: ['S-击晕', 'A-熊熊燃烧', 'A-细心', 'B-皮糙肉厚'],
         description: '主布局，防守。',
       },
+      {
+        cards: [
+          'S-乾坤一掷',
+          'S-猛攻',
+          'B-皮糙肉厚',
+          [CardGroupType.Or, 'A-熊熊燃烧', [CardGroupType.And, 'A-心灵手巧', 'B-猫是液体']],
+        ],
+        description: '伤害高，但需要一定基本功。',
+      },
     ],
     specialSkills: [
       {
@@ -3166,6 +3175,10 @@ const catCharacterDefinitions = {
         description: '经典776卡组，击晕依赖玩家选择，略有过时。',
       },
       {
+        cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
+        description: '主流卡组，穷追猛打可以提供第一波节奏，皮糙肉厚可以提高前期容错。',
+      },
+      {
         cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-心灵手巧', 'A-加大火力'],
         description:
           '主流卡组，心灵手巧可以使感电效果几乎持续到绑完火箭。可将最后两张换为《穷追猛打》，快速打开前期节奏；如遇打架队则可换为《皮糙肉厚》。',
@@ -3175,9 +3188,18 @@ const catCharacterDefinitions = {
         description: '主流卡组，管道图用。',
       },
       {
-        cards: ['S-乘胜追击', 'S-屈打成招', 'S-乾坤一掷', 'C-猫是液体'],
+        cards: [
+          'S-乘胜追击',
+          [CardGroupType.Or, 'S-屈打成招', 'A-熊熊燃烧'],
+          'S-乾坤一掷',
+          'C-猫是液体',
+        ],
         description:
           '可以一定程度上反制减速，但是可能会牺牲放飞速度，建议有一定基本功再考虑带{屈打成招}，若不适应可换为{熊熊燃烧}。',
+      },
+      {
+        cards: ['S-乘胜追击', 'S-蓄势一击', 'A-熊熊燃烧', 'C-猫是液体'],
+        description: '蓄势一击可以弥补斯飞在削弱后缺失的伤害。',
       },
     ],
     skills: [

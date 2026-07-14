@@ -3382,10 +3382,6 @@ const mouseCharacterDefinitions = {
         cards: ['S-缴械', 'S-铁血', 'S-舍己', 'C-救救我'],
         description: '{缴械}卡组。',
       },
-      {
-        cards: ['S-无畏', 'S-铁血', 'C-不屈', 'C-美食家', 'C-救救我'],
-        description: '美食家可用于开蛋糕，重置3级被动',
-      },
     ],
     skills: [
       {
@@ -3730,10 +3726,6 @@ const mouseCharacterDefinitions = {
         cards: ['S-铁血', 'S-舍己', 'S-护佑', 'C-救救我'],
         description: '常用，可拉扯。',
       },
-      {
-        cards: ['S-护佑', 'S-铁血', 'A-逃窜', 'C-救救我'],
-        description: '强自保。',
-      },
     ],
     skills: [
       {
@@ -3882,6 +3874,10 @@ const mouseCharacterDefinitions = {
       },
     ],
     knowledgeCardGroups: [
+      {
+        cards: ['S-铁血', 'S-护佑', 'S-舍己', 'C-救救我'],
+        description: '常规卡组，护佑提高前期救援能力。',
+      },
       {
         cards: ['S-铁血', 'S-舍己', 'B-逃之夭夭', 'C-不屈', 'C-救救我'],
         description: '常规卡组，逃之夭夭和不屈提供较强的机动性。',
@@ -4833,6 +4829,10 @@ const mouseCharacterDefinitions = {
         cards: ['S-铁血', 'S-舍己', 'B-精准投射', 'B-绝地反击', 'C-救救我'],
         description:
           '打架特化卡组，可以频繁的干扰猫的进攻节奏，但是丧失了部分功能性及自保，推荐四排且队伍里没有干扰位时使用',
+      },
+      {
+        cards: ['S-铁血', 'S-舍己', 'A-逃窜', 'B-应激反应', 'C-救救我'],
+        description: '自保卡组。',
       },
     ],
     specialSkills: [
@@ -6035,6 +6035,18 @@ const mouseCharacterDefinitions = {
       {
         cards: ['S-舍己', 'S-铁血', 'B-绝地反击', 'B-夹不住我', 'C-救救我'],
         description: '武器技能搭配绝地反击可以对猫造成大量伤害，21点时可将夹不住我换成精准投射',
+      },
+      {
+        cards: ['S-舍己', 'S-铁血', 'B-幸运', 'C-救救我'],
+        description: '低端局适用大部分猫，除剑客汤姆等。',
+      },
+      {
+        cards: ['S-舍己', 'S-铁血', 'B-幸运', 'A-逃窜', 'C-脱身'],
+        description: '低端局高容错。',
+      },
+      {
+        cards: ['S-舍己', 'S-铁血', 'A-逃窜', 'C-不屈', 'C-救救我'],
+        description: '低端局用于针对剑客汤姆这一类猫。',
       },
     ],
     specialSkills: [
