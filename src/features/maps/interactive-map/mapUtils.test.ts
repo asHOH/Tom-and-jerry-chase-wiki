@@ -250,18 +250,30 @@ describe('interactive map utilities', () => {
     const barrel: InteractiveMapPoint = {
       category: 'geometryBarrel',
       position: { x: 0.1, y: 0.2 },
-      geometryBarrelRoute: { barrelRemainingSecondsAtFirecrackerExplosion: 2.5 },
+      geometryBarrelRoute: { barrelCountdownDisplayAtFirecrackerExplosion: 2 },
     };
 
     expect(getGeometryBarrelInstructions(barrel)).toBe(
-      '1. 火药桶倒计时剩余 7.5 秒时点燃小鞭炮。\n' +
+      '1. 火药桶倒计时显示 7 时点燃小鞭炮；点燃后，小鞭炮从 4 开始倒计时。\n' +
         '2. 将已点燃的小鞭炮放到地图标注位置。\n' +
-        '3. 小鞭炮爆炸时火药桶倒计时剩余 2.5 秒，并使火药桶产生位移；火药桶随后沿标注路线飞向火箭，最终爆炸摧毁火箭。'
+        '3. 小鞭炮的 0 显示完毕并爆炸时，火药桶倒计时显示 2；爆炸使火药桶产生位移，火药桶随后沿标注路线飞向火箭，最终爆炸摧毁火箭。'
     );
     expect(
       getGeometryBarrelInstructions({
         ...barrel,
-        geometryBarrelRoute: { barrelRemainingSecondsAtFirecrackerExplosion: -1 },
+        geometryBarrelRoute: { barrelCountdownDisplayAtFirecrackerExplosion: -1 },
+      })
+    ).toBeNull();
+    expect(
+      getGeometryBarrelInstructions({
+        ...barrel,
+        geometryBarrelRoute: { barrelCountdownDisplayAtFirecrackerExplosion: 2.5 },
+      })
+    ).toBeNull();
+    expect(
+      getGeometryBarrelInstructions({
+        ...barrel,
+        geometryBarrelRoute: { barrelCountdownDisplayAtFirecrackerExplosion: 3 },
       })
     ).toBeNull();
   });
@@ -284,7 +296,7 @@ describe('interactive map utilities', () => {
     const dragged = updateGeometryBarrelRoute(placed!, 0, {
       firecrackerPosition: { x: 0.12, y: 0.2 },
       targetRocketPointId: 'rocket',
-      barrelRemainingSecondsAtFirecrackerExplosion: 2.5,
+      barrelCountdownDisplayAtFirecrackerExplosion: 2,
     });
 
     expect(dragged?.points[0]?.geometryBarrelRoute?.firecrackerPosition).toEqual({

@@ -209,25 +209,23 @@ export const getGeometryBarrelTarget = (
   return target ? { point: target, pointIndex } : null;
 };
 
-const formatSeconds = (seconds: number): string =>
-  Number(seconds.toFixed(3)).toLocaleString('zh-CN', { useGrouping: false });
-
 export const getGeometryBarrelInstructions = (point: InteractiveMapPoint): string | null => {
   if (point.category !== 'geometryBarrel') return null;
 
-  const remainingSeconds = point.geometryBarrelRoute?.barrelRemainingSecondsAtFirecrackerExplosion;
+  const barrelCountdown = point.geometryBarrelRoute?.barrelCountdownDisplayAtFirecrackerExplosion;
   if (
-    remainingSeconds === undefined ||
-    !Number.isFinite(remainingSeconds) ||
-    remainingSeconds < 0
+    barrelCountdown === undefined ||
+    !Number.isInteger(barrelCountdown) ||
+    barrelCountdown < 0 ||
+    barrelCountdown > 2
   ) {
     return null;
   }
 
   return [
-    `1. 火药桶倒计时剩余 ${formatSeconds(remainingSeconds + 5)} 秒时点燃小鞭炮。`,
+    `1. 火药桶倒计时显示 ${barrelCountdown + 5} 时点燃小鞭炮；点燃后，小鞭炮从 4 开始倒计时。`,
     '2. 将已点燃的小鞭炮放到地图标注位置。',
-    `3. 小鞭炮爆炸时火药桶倒计时剩余 ${formatSeconds(remainingSeconds)} 秒，并使火药桶产生位移；火药桶随后沿标注路线飞向火箭，最终爆炸摧毁火箭。`,
+    `3. 小鞭炮的 0 显示完毕并爆炸时，火药桶倒计时显示 ${barrelCountdown}；爆炸使火药桶产生位移，火药桶随后沿标注路线飞向火箭，最终爆炸摧毁火箭。`,
   ].join('\n');
 };
 
@@ -236,13 +234,14 @@ export const isGeometryBarrelRouteComplete = (
   point: InteractiveMapPoint
 ): boolean => {
   const route = point.geometryBarrelRoute;
-  const remainingSeconds = route?.barrelRemainingSecondsAtFirecrackerExplosion;
+  const barrelCountdown = route?.barrelCountdownDisplayAtFirecrackerExplosion;
   return Boolean(
     point.category === 'geometryBarrel' &&
     route?.firecrackerPosition &&
-    remainingSeconds !== undefined &&
-    Number.isFinite(remainingSeconds) &&
-    remainingSeconds >= 0 &&
+    barrelCountdown !== undefined &&
+    Number.isInteger(barrelCountdown) &&
+    barrelCountdown >= 0 &&
+    barrelCountdown <= 2 &&
     getGeometryBarrelTarget(config, point)
   );
 };

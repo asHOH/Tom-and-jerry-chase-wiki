@@ -499,7 +499,8 @@ export type InteractiveMapRoom = {
 export type GeometryBarrelRoute = {
   firecrackerPosition?: MapCoordinate;
   targetRocketPointId?: string;
-  barrelRemainingSecondsAtFirecrackerExplosion?: number;
+  /** 小鞭炮爆炸瞬间火药桶显示的倒计时数字，只能为 0、1 或 2。 */
+  barrelCountdownDisplayAtFirecrackerExplosion?: number;
 };
 export type InteractiveMapPoint = {
   id?: string;

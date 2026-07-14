@@ -1253,16 +1253,16 @@ export default function InteractiveMap({
           onUpdatePoint={updateSelectedPoint}
           onConnectPoint={connectSelectedPoint}
           onUpdateConnectionLabel={updateSelectedConnectionLabel}
-          onGeometryBarrelRemainingSeconds={(value) => {
+          onGeometryBarrelCountdownDisplay={(value) => {
             if (selectedPointIndex === null) return;
             const next = cloneInteractiveMap(config);
             const point = next.points[selectedPointIndex];
             if (!point || point.category !== 'geometryBarrel') return;
             point.geometryBarrelRoute ??= {};
             if (value === null) {
-              delete point.geometryBarrelRoute.barrelRemainingSecondsAtFirecrackerExplosion;
+              delete point.geometryBarrelRoute.barrelCountdownDisplayAtFirecrackerExplosion;
             } else {
-              point.geometryBarrelRoute.barrelRemainingSecondsAtFirecrackerExplosion = value;
+              point.geometryBarrelRoute.barrelCountdownDisplayAtFirecrackerExplosion = value;
             }
             updateConfig(next);
           }}
@@ -1432,7 +1432,7 @@ type EditorPanelProps = {
   onUpdatePoint: (changes: Partial<InteractiveMapPoint>) => void;
   onConnectPoint: (targetPointId: string) => void;
   onUpdateConnectionLabel: (label: string) => void;
-  onGeometryBarrelRemainingSeconds: (value: number | null) => void;
+  onGeometryBarrelCountdownDisplay: (value: number | null) => void;
   onPlaceGeometryBarrelFirecracker: () => void;
   onSelectGeometryBarrelRocket: () => void;
   onClearGeometryBarrelTarget: () => void;
@@ -1590,23 +1590,24 @@ function EditorPanel(props: EditorPanelProps) {
                 </span>
               </div>
               <label className='block'>
-                <span className='text-xs text-white/65'>鞭炮爆炸时桶剩余秒数</span>
+                <span className='text-xs text-white/65'>鞭炮爆炸时火药桶显示数字</span>
                 <input
                   type='number'
                   min={0}
-                  step={0.1}
+                  max={2}
+                  step={1}
                   value={
                     props.selectedPoint.geometryBarrelRoute
-                      ?.barrelRemainingSecondsAtFirecrackerExplosion ?? ''
+                      ?.barrelCountdownDisplayAtFirecrackerExplosion ?? ''
                   }
                   onChange={(event) => {
                     if (!event.target.value) {
-                      props.onGeometryBarrelRemainingSeconds(null);
+                      props.onGeometryBarrelCountdownDisplay(null);
                       return;
                     }
                     const value = Number(event.target.value);
-                    if (Number.isFinite(value) && value >= 0) {
-                      props.onGeometryBarrelRemainingSeconds(value);
+                    if (Number.isInteger(value) && value >= 0 && value <= 2) {
+                      props.onGeometryBarrelCountdownDisplay(value);
                     }
                   }}
                   className='mt-1 w-full rounded bg-white/10 px-2 py-2'
