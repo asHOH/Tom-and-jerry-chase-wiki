@@ -302,13 +302,13 @@ function MainMapEvents({
   config,
   editorMode,
   onMapClick,
-  onZoom,
+  onZoomEnd,
   onReady,
 }: {
   config: InteractiveMapConfig;
   editorMode: EditorMode;
   onMapClick: (event: LeafletMouseEvent) => void;
-  onZoom: (zoom: number) => void;
+  onZoomEnd: (zoom: number) => void;
   onReady: (map: L.Map) => void;
 }) {
   const map = useMap();
@@ -331,10 +331,12 @@ function MainMapEvents({
     },
     zoom: () => {
       updatePointScale(map.getZoom());
-      onZoom(map.getZoom());
     },
     zoomanim: (event) => {
       updatePointScale(event.zoom);
+    },
+    zoomend: () => {
+      onZoomEnd(map.getZoom());
     },
   });
 
@@ -349,11 +351,11 @@ function MainMapEvents({
       { animate: false, padding: [8, 8] }
     );
     updatePointScale(map.getZoom());
-    onZoom(map.getZoom());
+    onZoomEnd(map.getZoom());
     return () => {
       map.getContainer().style.removeProperty('--interactive-map-point-scale');
     };
-  }, [height, map, maxZoom, onReady, onZoom, updatePointScale, width]);
+  }, [height, map, maxZoom, onReady, onZoomEnd, updatePointScale, width]);
   return null;
 }
 
@@ -1026,7 +1028,7 @@ export default function InteractiveMap({
           config={config}
           editorMode={editorMode}
           onMapClick={handleMapClick}
-          onZoom={setZoom}
+          onZoomEnd={setZoom}
           onReady={handleMapReady}
         />
         <LocatePoint point={selectedPoint} config={config} />
