@@ -8,21 +8,19 @@ import { useMediaQuery } from 'usehooks-ts';
 import { cn, getNavigationButtonClasses } from '@/lib/design';
 import { supabase } from '@/lib/supabase/client';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
-import { useFeatureDiscovery } from '@/hooks/useFeatureDiscovery';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useNavigationProgress } from '@/hooks/useNavigationProgress';
 import { useNavigationTabs } from '@/hooks/useNavigationTabs';
 import { useNotificationCount } from '@/hooks/useNotificationCount';
 import { useUser } from '@/hooks/useUser';
-import { useAppContext } from '@/context/AppContext';
 import { isNavGroup, NavEntry, NavItem } from '@/constants/navigation';
 import ChangePasswordDialog from '@/components/ChangePasswordDialog';
+import DetailViewToggle from '@/components/DetailViewToggle';
 import { HomeIcon, UserCircleIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 import Link from '@/components/Link';
 import { env } from '@/env';
 
-import AttentionDot from './ui/AttentionDot';
 import { DarkModeToggleButton } from './ui/DarkModeToggleButton';
 import SearchBar from './ui/SearchBar';
 import Tooltip from './ui/Tooltip';
@@ -80,7 +78,6 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   const [mounted, setMounted] = useState(false);
   const [collapsedCount, setCollapsedCount] = useState(0);
   const pathname = usePathname();
-  const { isDetailedView, toggleDetailedView } = useAppContext();
   const { nickname, role, clearData: clearUserData } = useUser();
   const unreadNotificationCount = useNotificationCount(!!nickname);
   const { items: rawItems, isActive } = useNavigationTabs();
@@ -93,9 +90,6 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     () => rawItems.flatMap<NavEntry>((entry) => (entry.shouldExpand ? entry.children : entry)),
     [rawItems]
   );
-  const { shouldPrompt: showToggleHint, dismiss: dismissToggleHint } =
-    useFeatureDiscovery('detail_toggle');
-
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -472,68 +466,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
         <div className='flex items-center gap-1 md:gap-2 lg:gap-2.5'>
           <SearchBar />
           <DarkModeToggleButton />
-          {showDetailToggle && (
-            <Tooltip
-              content={isDetailedView ? '切换至简明描述' : '切换至详细描述'}
-              className='border-none'
-            >
-              <button
-                type='button'
-                aria-pressed={isDetailedView}
-                aria-label={isDetailedView ? '切换至简明描述' : '切换至详细描述'}
-                className={cn(
-                  'relative flex min-h-10 cursor-pointer rounded-lg border-none bg-gray-100 p-1 transition-all duration-200',
-                  'focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-blue-500',
-                  'md:min-h-11 dark:border-gray-600 dark:bg-slate-800 dark:focus-visible:outline-blue-300'
-                )}
-                onClick={() => {
-                  toggleDetailedView();
-                  if (showToggleHint) dismissToggleHint();
-                }}
-              >
-                <AttentionDot
-                  visible={showToggleHint && showDetailToggle}
-                  color={isDetailedView ? 'orange' : 'blue'}
-                  className='-top-1 -right-1'
-                />
-                {/* Background slider */}
-                <div
-                  className={cn(
-                    'absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-md shadow-sm transition-all duration-200 ease-out',
-                    isDetailedView
-                      ? 'left-1 translate-x-full transform bg-orange-100 dark:bg-orange-900'
-                      : 'left-1 translate-x-0 transform bg-blue-100 dark:bg-blue-900'
-                  )}
-                />
-
-                {/* Simple option */}
-                <div
-                  className={cn(
-                    'relative z-10 flex items-center justify-center px-2 py-1 text-xs font-medium whitespace-nowrap transition-colors duration-200 md:py-1.5 md:text-sm lg:py-2',
-                    !isDetailedView
-                      ? 'text-blue-600 dark:text-blue-400'
-                      : 'text-gray-500 dark:text-gray-500'
-                  )}
-                >
-                  <span className='lg:hidden'>简</span>
-                  <span className='hidden lg:inline'>简明</span>
-                </div>
-
-                {/* Detailed option */}
-                <div
-                  className={cn(
-                    'relative z-10 flex items-center justify-center px-2 py-1 text-xs font-medium whitespace-nowrap transition-colors duration-200 md:py-1.5 md:text-sm lg:py-2',
-                    isDetailedView
-                      ? 'text-orange-600 dark:text-orange-400'
-                      : 'text-gray-500 dark:text-gray-500'
-                  )}
-                >
-                  <span className='lg:hidden'>详</span>
-                  <span className='hidden lg:inline'>详细</span>
-                </div>
-              </button>
-            </Tooltip>
-          )}
+          {showDetailToggle ? <DetailViewToggle /> : null}
           {/* User Settings Dropdown (deferred until mounted to avoid hydration mismatch) */}
           {mounted && !!nickname && shouldDisplayUserSettings && hasSupabasePublicConfig() && (
             <div className='relative' data-user-dropdown-root>
