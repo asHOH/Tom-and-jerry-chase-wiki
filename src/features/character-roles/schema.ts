@@ -1,11 +1,11 @@
 import type { FactionId } from '@/data/types';
 
-export type RoleType = 'mouse' | 'cat' | 'special';
+export type ActorType = 'mouse' | 'cat' | 'special';
 export type PhysicsType = FactionId | 'special';
 
-export type CharacterRole = {
+export type ActorProfile = {
   name: string;
-  roleType: RoleType;
+  actorType: ActorType;
   physicsType: PhysicsType;
   sex: 'male' | 'female' | 'none';
   size: { width: number; height: number };
@@ -31,9 +31,9 @@ export type CharacterRole = {
   shoppingDelay?: number;
 };
 
-export type RawCharacterRole = {
+export type RawActorProfile = {
   name: string;
-  roleType?: 0 | 1 | 2;
+  actorType?: 0 | 1 | 2;
   physicsTag?: 1 | 2 | 1009;
   sex?: 0 | 1 | 2;
   size?: string;
@@ -57,26 +57,26 @@ export type RawCharacterRole = {
   buyDelay?: number;
 };
 
-export type PlayableCharacterRole = {
+export type PlayableCharacterRef = {
   id: string;
   factionId: FactionId;
 };
 
-export type CharacterRoleReference = {
+export type ActorProfileReference = {
   source: string;
   name: string;
   hasLegacyRepresentation: boolean;
 };
 
-export type CharacterRoleValidationContext = {
-  playableCharacters: readonly PlayableCharacterRole[];
-  references: readonly CharacterRoleReference[];
+export type ActorProfileValidationContext = {
+  playableCharacters: readonly PlayableCharacterRef[];
+  references: readonly ActorProfileReference[];
   excludedNames: ReadonlySet<string>;
 };
 
-const RAW_KEYS = new Set<keyof RawCharacterRole>([
+const RAW_KEYS = new Set<keyof RawActorProfile>([
   'name',
-  'roleType',
+  'actorType',
   'physicsTag',
   'sex',
   'size',
@@ -100,9 +100,9 @@ const RAW_KEYS = new Set<keyof RawCharacterRole>([
   'buyDelay',
 ]);
 
-const CANONICAL_KEYS = new Set<keyof CharacterRole>([
+const CANONICAL_KEYS = new Set<keyof ActorProfile>([
   'name',
-  'roleType',
+  'actorType',
   'physicsType',
   'sex',
   'size',
@@ -127,7 +127,7 @@ const CANONICAL_KEYS = new Set<keyof CharacterRole>([
 
 const REQUIRED_CANONICAL_KEYS = [
   'name',
-  'roleType',
+  'actorType',
   'physicsType',
   'sex',
   'size',
@@ -141,7 +141,7 @@ const REQUIRED_CANONICAL_KEYS = [
   'hpRecovery',
   'wallDamage',
   'attackCooldown',
-] as const satisfies readonly (keyof CharacterRole)[];
+] as const satisfies readonly (keyof ActorProfile)[];
 
 const RAW_NUMBER_KEYS = [
   'runSpeed',
@@ -160,7 +160,7 @@ const RAW_NUMBER_KEYS = [
   'deformCD',
   'buyCD',
   'buyDelay',
-] as const satisfies readonly (keyof RawCharacterRole)[];
+] as const satisfies readonly (keyof RawActorProfile)[];
 
 const CANONICAL_NUMBER_KEYS = [
   'runSpeed',
@@ -178,7 +178,7 @@ const CANONICAL_NUMBER_KEYS = [
   'deformCooldown',
   'shoppingCooldown',
   'shoppingDelay',
-] as const satisfies readonly (keyof CharacterRole)[];
+] as const satisfies readonly (keyof ActorProfile)[];
 
 type UnknownRecord = Record<string, unknown>;
 
@@ -235,7 +235,7 @@ export const normalizeCharacterRoleName = (name: string): string => {
   return name;
 };
 
-export const parseRawCharacterRoles = (input: unknown): readonly RawCharacterRole[] => {
+export const parseRawActorProfiles = (input: unknown): readonly RawActorProfile[] => {
   if (!Array.isArray(input)) {
     fail('roles', 'expected an array');
   }
@@ -248,8 +248,8 @@ export const parseRawCharacterRoles = (input: unknown): readonly RawCharacterRol
     assertString(record.name, `${path}.name`);
     if (record.name.trim().length === 0) fail(`${path}.name`, 'expected a nonempty name');
 
-    if ('roleType' in record) {
-      assertEnum(record.roleType, new Set([0, 1, 2]), `${path}.roleType`);
+    if ('actorType' in record) {
+      assertEnum(record.actorType, new Set([0, 1, 2]), `${path}.actorType`);
     }
     if ('physicsTag' in record) {
       assertEnum(record.physicsTag, new Set([1, 2, 1009]), `${path}.physicsTag`);
@@ -269,11 +269,11 @@ export const parseRawCharacterRoles = (input: unknown): readonly RawCharacterRol
       assertOptionalFiniteNumber(record, key, path);
     }
 
-    return record as RawCharacterRole;
+    return record as RawActorProfile;
   });
 };
 
-export const parseCharacterRoleCollection = (input: unknown): readonly CharacterRole[] => {
+export const parseCharacterRoleCollection = (input: unknown): readonly ActorProfile[] => {
   if (!Array.isArray(input)) {
     fail('roles', 'expected an array');
   }
@@ -290,7 +290,7 @@ export const parseCharacterRoleCollection = (input: unknown): readonly Character
 
     assertString(record.name, `${path}.name`);
     if (record.name.trim().length === 0) fail(`${path}.name`, 'expected a nonempty name');
-    assertEnum(record.roleType, new Set(['mouse', 'cat', 'special']), `${path}.roleType`);
+    assertEnum(record.actorType, new Set(['mouse', 'cat', 'special']), `${path}.actorType`);
     assertEnum(record.physicsType, new Set(['mouse', 'cat', 'special']), `${path}.physicsType`);
     assertEnum(record.sex, new Set(['male', 'female', 'none']), `${path}.sex`);
 
@@ -321,15 +321,15 @@ export const parseCharacterRoleCollection = (input: unknown): readonly Character
     }
   });
 
-  return values as readonly CharacterRole[];
+  return values as readonly ActorProfile[];
 };
 
 export const assertCharacterRoleData = (
   input: unknown,
-  context: CharacterRoleValidationContext
-): readonly CharacterRole[] => {
+  context: ActorProfileValidationContext
+): readonly ActorProfile[] => {
   const roles = parseCharacterRoleCollection(input);
-  const rolesByName = new Map<string, CharacterRole>();
+  const rolesByName = new Map<string, ActorProfile>();
 
   for (const role of roles) {
     if (role.name.trim() !== role.name || normalizeCharacterRoleName(role.name) !== role.name) {

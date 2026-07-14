@@ -54,7 +54,7 @@ describe('character role domain', () => {
   it('should join by character id without inferring faction from role fields', () => {
     const role = getCharacterRoleForCharacter({ id: '兔子大表哥', factionId: 'mouse' });
 
-    expect(role.roleType).toBe('special');
+    expect(role.actorType).toBe('special');
     expect(role.physicsType).toBe('cat');
   });
 

@@ -1,8 +1,8 @@
-import { characterRoles } from './data';
-import type { CharacterRole } from './schema';
+import { actorProfiles } from './data';
+import type { ActorProfile } from './schema';
 
-export type SerializedCharacterRoles = Readonly<Record<string, CharacterRole>>;
+export type SerializedCharacterRoles = Readonly<Record<string, ActorProfile>>;
 
 export const serializedCharacterRoles: SerializedCharacterRoles = Object.fromEntries(
-  characterRoles.map((role) => [role.name, role])
+  actorProfiles.map((role) => [role.name, role])
 );

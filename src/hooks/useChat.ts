@@ -45,7 +45,7 @@ async function executeCode({ code }: { code: string }): Promise<unknown> {
                   try {
                     // Receive data from parent
                     var characters = ${JSON.stringify(snapshot(characters))};
-                    var characterRoles = ${JSON.stringify(serializedCharacterRoles)};
+                    var actorProfiles = ${JSON.stringify(serializedCharacterRoles)};
                     var cards = ${JSON.stringify(cards)};
                     var specialSkills = ${JSON.stringify(specialSkills)};
                     var items = ${JSON.stringify(items)};

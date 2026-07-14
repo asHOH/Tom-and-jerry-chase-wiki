@@ -1,11 +1,11 @@
 import type { FactionId } from '@/data/types';
 import { characterFactionById } from '@/features/characters/data/characterMetadata';
 
-import { characterRolesByName } from './data';
-import type { CharacterRole } from './schema';
+import { actorProfilesByName } from './data';
+import type { ActorProfile } from './schema';
 
-export const getCharacterRole = (name: string): CharacterRole => {
-  const role = characterRolesByName.get(name);
+export const getCharacterRole = (name: string): ActorProfile => {
+  const role = actorProfilesByName.get(name);
   if (!role) throw new Error(`Missing canonical character role: ${name}`);
   return role;
 };
@@ -13,15 +13,15 @@ export const getCharacterRole = (name: string): CharacterRole => {
 export const getCharacterRoleForCharacter = (character: {
   id: string;
   factionId: FactionId;
-}): CharacterRole => getCharacterRole(character.id);
+}): ActorProfile => getCharacterRole(character.id);
 
-export const getCharacterRoleJumpHeight = (role: CharacterRole): number =>
+export const getCharacterRoleJumpHeight = (role: ActorProfile): number =>
   Math.round(role.jumpSpeed ** 2 / (2 * Math.abs(role.gravity)));
 
-export const getDisplayedCharacterRoleGravity = (role: CharacterRole): number =>
+export const getDisplayedCharacterRoleGravity = (role: ActorProfile): number =>
   Math.round(role.gravity);
 
-export const haveUniformDisplayedGravity = (roles: readonly CharacterRole[]): boolean =>
+export const haveUniformDisplayedGravity = (roles: readonly ActorProfile[]): boolean =>
   new Set(roles.map(getDisplayedCharacterRoleGravity)).size <= 1;
 
 export const isFactionDisplayedGravityUniform = (factionId: FactionId): boolean => {

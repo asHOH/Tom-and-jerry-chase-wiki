@@ -4,7 +4,7 @@
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import type { Character, FactionId } from '@/data/types';
-import type { CharacterRole } from '@/features/character-roles/schema';
+import type { ActorProfile } from '@/features/character-roles/schema';
 import { getCharacterRole, getCharacterRoleJumpHeight } from '@/features/character-roles/selectors';
 
 export type RankableProperty =
@@ -21,7 +21,7 @@ export type RankableProperty =
 
 export type PropertyInfo = {
   key: RankableProperty;
-  getValue: (role: CharacterRole) => number | undefined;
+  getValue: (role: ActorProfile) => number | undefined;
   formatValue: (value: number) => string;
   label: string;
   description: string;
@@ -135,7 +135,7 @@ export type RankedCharacter = {
 
 type CharacterWithRole = {
   character: DeepReadonly<Character>;
-  role: CharacterRole;
+  role: ActorProfile;
 };
 
 const getRequiredFactionId = (character: DeepReadonly<Character>): FactionId => {

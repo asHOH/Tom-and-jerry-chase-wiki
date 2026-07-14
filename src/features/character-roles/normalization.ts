@@ -1,17 +1,17 @@
 import {
   assertCharacterRoleData,
   normalizeCharacterRoleName,
-  parseRawCharacterRoles,
-  type CharacterRole,
-  type CharacterRoleValidationContext,
+  parseRawActorProfiles,
+  type ActorProfile,
+  type ActorProfileValidationContext,
+  type ActorType,
   type PhysicsType,
-  type RawCharacterRole,
-  type RoleType,
+  type RawActorProfile,
 } from './schema';
 
 export const EXCLUDED_CHARACTER_ROLE_NAMES = new Set(['火箭']);
 
-const ROLE_TYPES: Readonly<Record<0 | 1 | 2, RoleType>> = {
+const ROLE_TYPES: Readonly<Record<0 | 1 | 2, ActorType>> = {
   0: 'mouse',
   1: 'cat',
   2: 'special',
@@ -34,7 +34,7 @@ const INITIAL_ITEMS: Readonly<Record<string, string>> = {
   dazhadan: '鞭炮束',
 };
 
-const requireNumber = (role: RawCharacterRole, key: keyof RawCharacterRole): number => {
+const requireNumber = (role: RawActorProfile, key: keyof RawActorProfile): number => {
   const value = role[key];
   if (typeof value !== 'number' || !Number.isFinite(value)) {
     throw new Error(`role ${role.name}.${key}: missing required finite number`);
@@ -43,15 +43,15 @@ const requireNumber = (role: RawCharacterRole, key: keyof RawCharacterRole): num
 };
 
 const requireCode = <T extends number>(
-  role: RawCharacterRole,
-  key: 'roleType' | 'physicsTag' | 'sex'
+  role: RawActorProfile,
+  key: 'actorType' | 'physicsTag' | 'sex'
 ): T => {
   const value = role[key];
   if (typeof value !== 'number') throw new Error(`role ${role.name}.${key}: missing required enum`);
   return value as T;
 };
 
-const parseSize = (role: RawCharacterRole): CharacterRole['size'] => {
+const parseSize = (role: RawActorProfile): ActorProfile['size'] => {
   if (typeof role.size !== 'string')
     throw new Error(`role ${role.name}.size: missing required size`);
   const match = /^(\d+(?:\.\d+)?);(\d+(?:\.\d+)?)$/.exec(role.size);
@@ -61,7 +61,7 @@ const parseSize = (role: RawCharacterRole): CharacterRole['size'] => {
   return { width: Number(match[1]), height: Number(match[2]) };
 };
 
-const normalizeJumpSpeed = (role: RawCharacterRole): number => {
+const normalizeJumpSpeed = (role: RawActorProfile): number => {
   if (typeof role.jumpSpeed === 'number') return role.jumpSpeed;
   if (role.name === '罗宾汉杰瑞' && role.jumpSpeed === '1675;1450') return 1675;
   throw new Error(`role ${role.name}.jumpSpeed: unexpected nonnumeric value`);
@@ -69,15 +69,15 @@ const normalizeJumpSpeed = (role: RawCharacterRole): number => {
 
 const roundAtMostSixDecimals = (value: number): number => Number(value.toFixed(6));
 
-const normalizeInitialItem = (role: RawCharacterRole): string | undefined => {
+const normalizeInitialItem = (role: RawActorProfile): string | undefined => {
   if (role.item === undefined) return undefined;
   const item = INITIAL_ITEMS[role.item];
   if (!item) throw new Error(`role ${role.name}.item: unknown item identifier ${role.item}`);
   return item;
 };
 
-const normalizeRole = (role: RawCharacterRole): CharacterRole => {
-  const roleType = requireCode<0 | 1 | 2>(role, 'roleType');
+const normalizeRole = (role: RawActorProfile): ActorProfile => {
+  const actorType = requireCode<0 | 1 | 2>(role, 'actorType');
   const physicsTag = requireCode<1 | 2 | 1009>(role, 'physicsTag');
   const sex = requireCode<0 | 1 | 2>(role, 'sex');
   const attackCooldownHit = requireNumber(role, 'attackCd');
@@ -89,7 +89,7 @@ const normalizeRole = (role: RawCharacterRole): CharacterRole => {
 
   return {
     name: normalizeCharacterRoleName(role.name),
-    roleType: ROLE_TYPES[roleType],
+    actorType: ROLE_TYPES[actorType],
     physicsType: PHYSICS_TYPES[physicsTag],
     sex: SEXES[sex],
     size: parseSize(role),
@@ -128,15 +128,15 @@ const compareCodePoints = (left: string, right: string): number => {
   return leftPoints.length - rightPoints.length;
 };
 
-export const normalizeCharacterRoles = (
+export const normalizeActorProfiles = (
   input: unknown,
-  context: Omit<CharacterRoleValidationContext, 'excludedNames'>
-): readonly CharacterRole[] => {
-  const rawRoles = parseRawCharacterRoles(input);
+  context: Omit<ActorProfileValidationContext, 'excludedNames'>
+): readonly ActorProfile[] => {
+  const rawProfiles = parseRawActorProfiles(input);
   const normalizedNames = new Set<string>();
-  const includedRoles: CharacterRole[] = [];
+  const includedProfiles: ActorProfile[] = [];
 
-  for (const rawRole of rawRoles) {
+  for (const rawRole of rawProfiles) {
     const normalizedName = normalizeCharacterRoleName(rawRole.name);
     if (normalizedName.trim() !== normalizedName) {
       throw new Error(`role ${rawRole.name}: name contains surrounding whitespace`);
@@ -148,22 +148,22 @@ export const normalizeCharacterRoles = (
 
     if (normalizedName === '火箭') {
       // 火箭 is a process item, not a character. Only its known near-empty placeholder is excluded.
-      if (rawRole.roleType !== 2 || Object.keys(rawRole).length !== 2) {
+      if (rawRole.actorType !== 2 || Object.keys(rawRole).length !== 2) {
         throw new Error('role 火箭: exclusion only permits the documented near-empty placeholder');
       }
       continue;
     }
-    includedRoles.push(normalizeRole(rawRole));
+    includedProfiles.push(normalizeRole(rawRole));
   }
 
-  const rolesByName = new Map(includedRoles.map((role) => [role.name, role]));
+  const rolesByName = new Map(includedProfiles.map((role) => [role.name, role]));
   const playableNames = new Set(context.playableCharacters.map((character) => character.id));
   const playableRoles = context.playableCharacters.map((character) => {
     const role = rolesByName.get(character.id);
     if (!role) throw new Error(`character ${character.id}: missing canonical role`);
     return role;
   });
-  const remainingRoles = includedRoles
+  const remainingRoles = includedProfiles
     .filter((role) => !playableNames.has(role.name))
     .sort((left, right) => compareCodePoints(left.name, right.name));
   const roles = [...playableRoles, ...remainingRoles];
@@ -174,5 +174,5 @@ export const normalizeCharacterRoles = (
   });
 };
 
-export const serializeCharacterRoles = (roles: readonly CharacterRole[]): string =>
+export const serializeCharacterRoles = (roles: readonly ActorProfile[]): string =>
   `${JSON.stringify(roles, null, 2)}\n`;

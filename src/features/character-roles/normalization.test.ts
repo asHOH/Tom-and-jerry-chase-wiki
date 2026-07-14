@@ -1,15 +1,15 @@
-import { normalizeCharacterRoles, serializeCharacterRoles } from './normalization';
+import { normalizeActorProfiles, serializeCharacterRoles } from './normalization';
 import {
   assertCharacterRoleData,
   parseCharacterRoleCollection,
-  type CharacterRole,
-  type CharacterRoleValidationContext,
-  type RawCharacterRole,
+  type ActorProfile,
+  type ActorProfileValidationContext,
+  type RawActorProfile,
 } from './schema';
 
-const createRawRole = (overrides: Partial<RawCharacterRole> = {}): RawCharacterRole => ({
+const createRawRole = (overrides: Partial<RawActorProfile> = {}): RawActorProfile => ({
   name: '测试角色',
-  roleType: 0,
+  actorType: 0,
   physicsTag: 1,
   sex: 1,
   size: '85;130',
@@ -37,14 +37,14 @@ const createRawRole = (overrides: Partial<RawCharacterRole> = {}): RawCharacterR
 const createContext = (
   id = '测试角色',
   factionId: 'cat' | 'mouse' = 'mouse'
-): Omit<CharacterRoleValidationContext, 'excludedNames'> => ({
+): Omit<ActorProfileValidationContext, 'excludedNames'> => ({
   playableCharacters: [{ id, factionId }],
   references: [],
 });
 
-const createCanonicalRole = (overrides: Partial<CharacterRole> = {}): CharacterRole => ({
+const createCanonicalRole = (overrides: Partial<ActorProfile> = {}): ActorProfile => ({
   name: '测试角色',
-  roleType: 'mouse',
+  actorType: 'mouse',
   physicsType: 'mouse',
   sex: 'male',
   size: { width: 85, height: 130 },
@@ -64,11 +64,11 @@ const createCanonicalRole = (overrides: Partial<CharacterRole> = {}): CharacterR
 
 describe('character role normalization', () => {
   it('should map every raw field and normalize floating-point cooldown noise', () => {
-    const [role] = normalizeCharacterRoles([createRawRole()], createContext());
+    const [role] = normalizeActorProfiles([createRawRole()], createContext());
 
     expect(role).toEqual({
       name: '测试角色',
-      roleType: 'mouse',
+      actorType: 'mouse',
       physicsType: 'mouse',
       sex: 'male',
       size: { width: 85, height: 130 },
@@ -93,7 +93,7 @@ describe('character role normalization', () => {
   });
 
   it('should map dazhadan to the site-facing 鞭炮束 identifier', () => {
-    const [role] = normalizeCharacterRoles([createRawRole({ item: 'dazhadan' })], createContext());
+    const [role] = normalizeActorProfiles([createRawRole({ item: 'dazhadan' })], createContext());
 
     expect(role?.initialItem).toBe('鞭炮束');
   });
@@ -101,17 +101,17 @@ describe('character role normalization', () => {
   it('should apply the allowlisted corrections and explicitly exclude 火箭', () => {
     const specialRole = createRawRole({
       name: '\\"正气守护\\"斯派克',
-      roleType: 2,
+      actorType: 2,
       physicsTag: 2,
       sex: 0,
     });
     delete specialRole.pushCheese;
-    const roles = normalizeCharacterRoles(
+    const roles = normalizeActorProfiles(
       [
         createRawRole({ name: '罗宾汉杰瑞', jumpSpeed: '1675;1450' }),
         createRawRole({ name: '表演者▪杰瑞' }),
         specialRole,
-        { name: '火箭', roleType: 2 },
+        { name: '火箭', actorType: 2 },
       ],
       {
         playableCharacters: [
@@ -137,7 +137,7 @@ describe('character role normalization', () => {
   });
 
   it('should serialize playable roles first and remaining roles in code-point order', () => {
-    const roles = normalizeCharacterRoles(
+    const roles = normalizeActorProfiles(
       [
         createRawRole({ name: '乙' }),
         createRawRole({ name: '可玩乙' }),
@@ -158,7 +158,7 @@ describe('character role normalization', () => {
   });
 
   it.each([
-    ['invalid enum', () => ({ ...createRawRole(), roleType: 9 }), 'unknown enum value'],
+    ['invalid enum', () => ({ ...createRawRole(), actorType: 9 }), 'unknown enum value'],
     ['malformed size', () => createRawRole({ size: '85,130' }), 'width;height'],
     [
       'unexpected jump punctuation',
@@ -175,12 +175,12 @@ describe('character role normalization', () => {
       'missing required finite number',
     ],
   ])('should reject %s', (_name, createInvalidRole, message) => {
-    expect(() => normalizeCharacterRoles([createInvalidRole()], createContext())).toThrow(message);
+    expect(() => normalizeActorProfiles([createInvalidRole()], createContext())).toThrow(message);
   });
 
   it('should reject duplicate names after correction', () => {
     expect(() =>
-      normalizeCharacterRoles(
+      normalizeActorProfiles(
         [createRawRole({ name: '表演者▪杰瑞' }), createRawRole({ name: '表演者•杰瑞' })],
         createContext('表演者•杰瑞')
       )
@@ -191,20 +191,20 @@ describe('character role normalization', () => {
     const catWithoutAttack = createRawRole();
     delete catWithoutAttack.attack;
     expect(() =>
-      normalizeCharacterRoles([catWithoutAttack], createContext('测试角色', 'cat'))
+      normalizeActorProfiles([catWithoutAttack], createContext('测试角色', 'cat'))
     ).toThrow('playable cat requires attack');
 
     const mouseWithoutPushSpeed = createRawRole();
     delete mouseWithoutPushSpeed.pushCheese;
     expect(() =>
-      normalizeCharacterRoles([mouseWithoutPushSpeed], createContext('测试角色', 'mouse'))
+      normalizeActorProfiles([mouseWithoutPushSpeed], createContext('测试角色', 'mouse'))
     ).toThrow('playable mouse requires pushCheeseSpeed');
   });
 
   it('should preserve an omitted non-applicable miss cooldown', () => {
     const rawRole = createRawRole();
     delete rawRole.attackMissCdRate;
-    const [role] = normalizeCharacterRoles([rawRole], createContext());
+    const [role] = normalizeActorProfiles([rawRole], createContext());
     expect(role?.attackCooldown).toEqual({ hit: 4.5 });
   });
 });

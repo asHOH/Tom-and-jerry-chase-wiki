@@ -20,7 +20,7 @@ import {
   formatCharacterRoleSize,
   formatCharacterRoleType,
 } from '../formatters';
-import type { CharacterRole } from '../schema';
+import type { ActorProfile } from '../schema';
 import {
   getCharacterRole,
   getDisplayedCharacterRoleGravity,
@@ -60,14 +60,14 @@ type AttributeItem =
     })
   | (AttributeItemBase & {
       renderKind: 'attackCooldown';
-      value: CharacterRole['attackCooldown'] | undefined;
+      value: ActorProfile['attackCooldown'] | undefined;
     });
 
 const NUMBER_VALUE_CLASS = 'text-blue-500 dark:text-sky-300';
 const RANKING_LINK_CLASS = 'cursor-pointer hover:underline focus-visible:underline';
 
 const OBJECT_SUMMARY_KEYS: readonly CharacterRoleAttributeKey[] = [
-  'roleType',
+  'actorType',
   'physicsType',
   'maxHp',
   'hpRecovery',
@@ -134,7 +134,7 @@ const getRankingHref = (property: RankableProperty, factionId: FactionId): strin
   `/ranks/${property}/?faction=${factionId}`;
 
 type CooldownValueProps = {
-  cooldown: CharacterRole['attackCooldown'] | undefined;
+  cooldown: ActorProfile['attackCooldown'] | undefined;
   factionId: FactionId | undefined;
   specialHit: number | undefined;
   specialMiss: number | undefined;
@@ -199,7 +199,7 @@ const AttackCooldownValue = ({
 };
 
 const createAttributeItems = (
-  role: CharacterRole,
+  role: ActorProfile,
   context: CharacterRoleAttributesContext,
   factionId: FactionId | undefined,
   EnglishName: string | undefined,
@@ -211,8 +211,8 @@ const createAttributeItems = (
 
   return [
     {
-      key: 'roleType',
-      value: isObject ? formatCharacterRoleType(role.roleType) : undefined,
+      key: 'actorType',
+      value: isObject ? formatCharacterRoleType(role.actorType) : undefined,
     },
     {
       key: 'physicsType',

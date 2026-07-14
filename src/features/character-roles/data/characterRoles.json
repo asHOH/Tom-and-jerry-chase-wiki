@@ -1,7 +1,7 @@
 [
   {
     "name": "汤姆",
-    "roleType": "cat",
+    "actorType": "cat",
     "physicsType": "cat",
     "sex": "male",
     "size": {
@@ -31,7 +31,7 @@
   },
   {
     "name": "布奇",
-    "roleType": "cat",
+    "actorType": "cat",
     "physicsType": "cat",
     "sex": "male",
     "size": {
@@ -61,7 +61,7 @@
   },
   {
     "name": "托普斯",
-    "roleType": "cat",
+    "actorType": "cat",
     "physicsType": "cat",
     "sex": "male",
     "size": {
@@ -90,7 +90,7 @@
   },
   {
     "name": "莱特宁",
-    "roleType": "cat",
+    "actorType": "cat",
     "physicsType": "cat",
     "sex": "male",
     "size": {
@@ -120,7 +120,7 @@
   },
   {
     "name": "牛仔汤姆",
-    "roleType": "cat",
+    "actorType": "cat",
     "physicsType": "cat",
     "sex": "male",
     "size": {
@@ -149,7 +149,7 @@
   },
   {
     "name": "图多盖洛",
-    "roleType": "cat",
+    "actorType": "cat",
     "physicsType": "cat",
     "sex": "female",
     "size": {
@@ -178,7 +178,7 @@
   },
   {
     "name": "侍卫汤姆",
-    "roleType": "cat",
+    "actorType": "cat",
     "physicsType": "cat",
     "sex": "male",
     "size": {
@@ -207,7 +207,7 @@
   },
   {
     "name": "图茨",
-    "roleType": "cat",
+    "actorType": "cat",
     "physicsType": "cat",
     "sex": "female",
     "size": {
@@ -236,7 +236,7 @@
   },
   {
     "name": "米特",
-    "roleType": "cat",
+    "actorType": "cat",
     "physicsType": "cat",
     "sex": "male",
     "size": {
@@ -265,7 +265,7 @@
   },
   {
     "name": "塔拉",
-    "roleType": "cat",
+    "actorType": "cat",
     "physicsType": "cat",
     "sex": "female",
     "size": {
@@ -294,7 +294,7 @@
   },
   {
     "name": "剑客汤姆",
-    "roleType": "cat",
+    "actorType": "cat",
     "physicsType": "cat",
     "sex": "male",
     "size": {
@@ -323,7 +323,7 @@
   },
   {
     "name": "库博",
-    "roleType": "cat",
+    "actorType": "cat",
     "physicsType": "cat",
     "sex": "male",
     "size": {
@@ -352,7 +352,7 @@
   },
   {
     "name": "凯特",
-    "roleType": "cat",
+    "actorType": "cat",
     "physicsType": "cat",
     "sex": "female",
     "size": {
@@ -381,7 +381,7 @@
   },
   {
     "name": "苏蕊",
-    "roleType": "cat",
+    "actorType": "cat",
     "physicsType": "cat",
     "sex": "female",
     "size": {
@@ -410,7 +410,7 @@
   },
   {
     "name": "天使汤姆",
-    "roleType": "cat",
+    "actorType": "cat",
     "physicsType": "cat",
     "sex": "male",
     "size": {
@@ -439,7 +439,7 @@
   },
   {
     "name": "斯飞",
-    "roleType": "cat",
+    "actorType": "cat",
     "physicsType": "cat",
     "sex": "male",
     "size": {
@@ -468,7 +468,7 @@
   },
   {
     "name": "恶魔汤姆",
-    "roleType": "cat",
+    "actorType": "cat",
     "physicsType": "cat",
     "sex": "male",
     "size": {
@@ -497,7 +497,7 @@
   },
   {
     "name": "兔八哥",
-    "roleType": "cat",
+    "actorType": "cat",
     "physicsType": "cat",
     "sex": "male",
     "size": {
@@ -526,7 +526,7 @@
   },
   {
     "name": "追风汤姆",
-    "roleType": "cat",
+    "actorType": "cat",
     "physicsType": "cat",
     "sex": "male",
     "size": {
@@ -555,7 +555,7 @@
   },
   {
     "name": "如玉",
-    "roleType": "cat",
+    "actorType": "cat",
     "physicsType": "cat",
     "sex": "female",
     "size": {
@@ -584,7 +584,7 @@
   },
   {
     "name": "侦探汤姆",
-    "roleType": "cat",
+    "actorType": "cat",
     "physicsType": "cat",
     "sex": "male",
     "size": {
@@ -613,7 +613,7 @@
   },
   {
     "name": "杰瑞",
-    "roleType": "mouse",
+    "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
     "size": {
@@ -640,7 +640,7 @@
   },
   {
     "name": "侦探杰瑞",
-    "roleType": "mouse",
+    "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
     "size": {
@@ -666,7 +666,7 @@
   },
   {
     "name": "罗宾汉杰瑞",
-    "roleType": "mouse",
+    "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
     "size": {
@@ -692,7 +692,7 @@
   },
   {
     "name": "航海士杰瑞",
-    "roleType": "mouse",
+    "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
     "size": {
@@ -718,7 +718,7 @@
   },
   {
     "name": "国王杰瑞",
-    "roleType": "mouse",
+    "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
     "size": {
@@ -744,7 +744,7 @@
   },
   {
     "name": "剑客杰瑞",
-    "roleType": "mouse",
+    "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
     "size": {
@@ -770,7 +770,7 @@
   },
   {
     "name": "泰菲",
-    "roleType": "mouse",
+    "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
     "size": {
@@ -797,7 +797,7 @@
   },
   {
     "name": "剑客泰菲",
-    "roleType": "mouse",
+    "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
     "size": {
@@ -824,7 +824,7 @@
   },
   {
     "name": "牛仔杰瑞",
-    "roleType": "mouse",
+    "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
     "size": {
@@ -850,7 +850,7 @@
   },
   {
     "name": "恶魔杰瑞",
-    "roleType": "mouse",
+    "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
     "size": {
@@ -876,7 +876,7 @@
   },
   {
     "name": "恶魔泰菲",
-    "roleType": "mouse",
+    "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
     "size": {
@@ -903,7 +903,7 @@
   },
   {
     "name": "雪梨",
-    "roleType": "mouse",
+    "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "female",
     "size": {
@@ -929,7 +929,7 @@
   },
   {
     "name": "天使杰瑞",
-    "roleType": "mouse",
+    "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
     "size": {
@@ -955,7 +955,7 @@
   },
   {
     "name": "天使泰菲",
-    "roleType": "mouse",
+    "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
     "size": {
@@ -982,7 +982,7 @@
   },
   {
     "name": "魔术师",
-    "roleType": "mouse",
+    "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
     "size": {
@@ -1008,7 +1008,7 @@
   },
   {
     "name": "佩克斯",
-    "roleType": "mouse",
+    "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
     "size": {
@@ -1034,7 +1034,7 @@
   },
   {
     "name": "拿坡里鼠",
-    "roleType": "mouse",
+    "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
     "size": {
@@ -1060,7 +1060,7 @@
   },
   {
     "name": "侦探泰菲",
-    "roleType": "mouse",
+    "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
     "size": {
@@ -1087,7 +1087,7 @@
   },
   {
     "name": "剑客莉莉",
-    "roleType": "mouse",
+    "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "female",
     "size": {
@@ -1113,7 +1113,7 @@
   },
   {
     "name": "罗宾汉泰菲",
-    "roleType": "mouse",
+    "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
     "size": {
@@ -1140,7 +1140,7 @@
   },
   {
     "name": "玛丽",
-    "roleType": "mouse",
+    "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "female",
     "size": {
@@ -1166,7 +1166,7 @@
   },
   {
     "name": "马索尔",
-    "roleType": "mouse",
+    "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
     "size": {
@@ -1192,7 +1192,7 @@
   },
   {
     "name": "米雪儿",
-    "roleType": "mouse",
+    "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "female",
     "size": {
@@ -1218,7 +1218,7 @@
   },
   {
     "name": "音乐家杰瑞",
-    "roleType": "mouse",
+    "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
     "size": {
@@ -1244,7 +1244,7 @@
   },
   {
     "name": "蒙金奇",
-    "roleType": "mouse",
+    "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
     "size": {
@@ -1270,7 +1270,7 @@
   },
   {
     "name": "尼宝",
-    "roleType": "mouse",
+    "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
     "size": {
@@ -1296,7 +1296,7 @@
   },
   {
     "name": "朵朵",
-    "roleType": "mouse",
+    "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "female",
     "size": {
@@ -1322,7 +1322,7 @@
   },
   {
     "name": "仙女鼠",
-    "roleType": "mouse",
+    "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "female",
     "size": {
@@ -1348,7 +1348,7 @@
   },
   {
     "name": "米可",
-    "roleType": "mouse",
+    "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
     "size": {
@@ -1374,7 +1374,7 @@
   },
   {
     "name": "霜月",
-    "roleType": "mouse",
+    "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "female",
     "size": {
@@ -1400,7 +1400,7 @@
   },
   {
     "name": "表演者•杰瑞",
-    "roleType": "mouse",
+    "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
     "size": {
@@ -1426,7 +1426,7 @@
   },
   {
     "name": "莱恩",
-    "roleType": "mouse",
+    "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
     "size": {
@@ -1452,7 +1452,7 @@
   },
   {
     "name": "梦游杰瑞",
-    "roleType": "mouse",
+    "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
     "size": {
@@ -1478,7 +1478,7 @@
   },
   {
     "name": "鲍姆",
-    "roleType": "mouse",
+    "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
     "size": {
@@ -1504,7 +1504,7 @@
   },
   {
     "name": "朝圣者泰菲",
-    "roleType": "mouse",
+    "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
     "size": {
@@ -1531,7 +1531,7 @@
   },
   {
     "name": "“正气守护”斯派克",
-    "roleType": "special",
+    "actorType": "special",
     "physicsType": "cat",
     "sex": "none",
     "size": {
@@ -1555,7 +1555,7 @@
   },
   {
     "name": "仙女星星",
-    "roleType": "special",
+    "actorType": "special",
     "physicsType": "special",
     "sex": "male",
     "size": {
@@ -1579,7 +1579,7 @@
   },
   {
     "name": "兔子先生",
-    "roleType": "special",
+    "actorType": "special",
     "physicsType": "mouse",
     "sex": "none",
     "size": {
@@ -1603,7 +1603,7 @@
   },
   {
     "name": "兔子大表哥",
-    "roleType": "special",
+    "actorType": "special",
     "physicsType": "cat",
     "sex": "none",
     "size": {
@@ -1627,7 +1627,7 @@
   },
   {
     "name": "兔霸哥",
-    "roleType": "special",
+    "actorType": "special",
     "physicsType": "cat",
     "sex": "none",
     "size": {
@@ -1651,7 +1651,7 @@
   },
   {
     "name": "小象",
-    "roleType": "special",
+    "actorType": "special",
     "physicsType": "mouse",
     "sex": "none",
     "size": {
@@ -1675,7 +1675,7 @@
   },
   {
     "name": "小黄鸭",
-    "roleType": "special",
+    "actorType": "special",
     "physicsType": "special",
     "sex": "none",
     "size": {
@@ -1699,7 +1699,7 @@
   },
   {
     "name": "年兽",
-    "roleType": "special",
+    "actorType": "special",
     "physicsType": "special",
     "sex": "none",
     "size": {
@@ -1723,7 +1723,7 @@
   },
   {
     "name": "斯派克之家",
-    "roleType": "special",
+    "actorType": "special",
     "physicsType": "cat",
     "sex": "none",
     "size": {
@@ -1747,7 +1747,7 @@
   },
   {
     "name": "机器鼠",
-    "roleType": "special",
+    "actorType": "special",
     "physicsType": "special",
     "sex": "none",
     "size": {
@@ -1771,7 +1771,7 @@
   },
   {
     "name": "机甲汤姆",
-    "roleType": "special",
+    "actorType": "special",
     "physicsType": "cat",
     "sex": "male",
     "size": {
@@ -1796,7 +1796,7 @@
   },
   {
     "name": "柠檬杰瑞",
-    "roleType": "special",
+    "actorType": "special",
     "physicsType": "cat",
     "sex": "none",
     "size": {
@@ -1820,7 +1820,7 @@
   },
   {
     "name": "熊猫",
-    "roleType": "special",
+    "actorType": "special",
     "physicsType": "special",
     "sex": "none",
     "size": {
@@ -1844,7 +1844,7 @@
   },
   {
     "name": "燃烧的仙女星",
-    "roleType": "special",
+    "actorType": "special",
     "physicsType": "special",
     "sex": "male",
     "size": {
@@ -1868,7 +1868,7 @@
   },
   {
     "name": "电风扇",
-    "roleType": "special",
+    "actorType": "special",
     "physicsType": "special",
     "sex": "none",
     "size": {
@@ -1892,7 +1892,7 @@
   },
   {
     "name": "盔甲人",
-    "roleType": "special",
+    "actorType": "special",
     "physicsType": "special",
     "sex": "none",
     "size": {
@@ -1916,7 +1916,7 @@
   },
   {
     "name": "肌肉杰瑞",
-    "roleType": "special",
+    "actorType": "special",
     "physicsType": "mouse",
     "sex": "none",
     "size": {
@@ -1940,7 +1940,7 @@
   },
   {
     "name": "肌肉汤姆",
-    "roleType": "special",
+    "actorType": "special",
     "physicsType": "cat",
     "sex": "none",
     "size": {
@@ -1964,7 +1964,7 @@
   },
   {
     "name": "胖呆呆",
-    "roleType": "special",
+    "actorType": "special",
     "physicsType": "special",
     "sex": "male",
     "size": {
@@ -1988,7 +1988,7 @@
   },
   {
     "name": "超级仙女星",
-    "roleType": "special",
+    "actorType": "special",
     "physicsType": "special",
     "sex": "male",
     "size": {
@@ -2012,7 +2012,7 @@
   },
   {
     "name": "鸭妈妈",
-    "roleType": "special",
+    "actorType": "special",
     "physicsType": "special",
     "sex": "none",
     "size": {
@@ -2036,7 +2036,7 @@
   },
   {
     "name": "鸭爸爸",
-    "roleType": "special",
+    "actorType": "special",
     "physicsType": "special",
     "sex": "none",
     "size": {

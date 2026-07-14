@@ -1,5 +1,5 @@
 import type { FactionId } from '@/data/types';
-import type { CharacterRole } from '@/features/character-roles/schema';
+import type { ActorProfile } from '@/features/character-roles/schema';
 import { getCharacterRole, getCharacterRoleJumpHeight } from '@/features/character-roles/selectors';
 
 export type CharacterGameStatKey =
@@ -16,7 +16,7 @@ export type CharacterGameStatInfo = {
   label: string;
   faction?: FactionId;
   higherIsBetter: boolean;
-  getValue: (role: CharacterRole) => number | undefined;
+  getValue: (role: ActorProfile) => number | undefined;
 };
 
 export type CharacterGameStats = Readonly<Record<CharacterGameStatKey, number | undefined>>;
@@ -77,7 +77,7 @@ export const CHARACTER_GAME_STAT_INFO: Readonly<
 };
 
 const getApplicableValue = (
-  role: CharacterRole,
+  role: ActorProfile,
   factionId: FactionId,
   stat: CharacterGameStatInfo
 ): number | undefined => {

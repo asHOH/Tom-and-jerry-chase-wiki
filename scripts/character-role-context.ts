@@ -2,8 +2,8 @@ import { resolve } from 'node:path';
 import { createJiti } from 'jiti';
 
 import type {
-  CharacterRoleReference,
-  PlayableCharacterRole,
+  ActorProfileReference,
+  PlayableCharacterRef,
 } from '../src/features/character-roles/schema';
 import {
   catCharacterIds,
@@ -35,7 +35,7 @@ const collectReferences = (
   definitions: Readonly<Record<string, RoleReferencingDefinition>>,
   legacyKey:
     'itemAttributesAsCharacter' | 'entityAttributesAsCharacter' | 'fixtureAttributesAsCharacter'
-): CharacterRoleReference[] =>
+): ActorProfileReference[] =>
   Object.entries(definitions).flatMap(([name, definition]) => {
     if (definition.characterRoleName === undefined) return [];
     if (typeof definition.characterRoleName !== 'string') {
@@ -50,12 +50,12 @@ const collectReferences = (
     ];
   });
 
-export const getPlayableCharacterRoles = (): readonly PlayableCharacterRole[] => [
+export const getPlayableCharacterRoles = (): readonly PlayableCharacterRef[] => [
   ...catCharacterIds.map((id) => ({ id, factionId: 'cat' as const })),
   ...mouseCharacterIds.map((id) => ({ id, factionId: 'mouse' as const })),
 ];
 
-export const getCharacterRoleReferences = async (): Promise<readonly CharacterRoleReference[]> => {
+export const getActorProfileReferences = async (): Promise<readonly ActorProfileReference[]> => {
   const [itemsModule, entitiesModule, fixturesModule] = await Promise.all([
     loadDataModule('src/features/items/data/items.ts'),
     loadDataModule('src/features/entities/data/entities.ts'),

@@ -4,7 +4,7 @@ import { resolve } from 'node:path';
 
 import { EXCLUDED_CHARACTER_ROLE_NAMES } from '../src/features/character-roles/normalization';
 import { assertCharacterRoleData } from '../src/features/character-roles/schema';
-import { getCharacterRoleReferences, getPlayableCharacterRoles } from './character-role-context';
+import { getActorProfileReferences, getPlayableCharacterRoles } from './character-role-context';
 
 const CANONICAL_PATH = resolve(
   process.cwd(),
@@ -16,7 +16,7 @@ const main = async () => {
   const canonicalInput = JSON.parse(await readFile(CANONICAL_PATH, 'utf8')) as unknown;
   const roles = assertCharacterRoleData(canonicalInput, {
     playableCharacters: getPlayableCharacterRoles(),
-    references: await getCharacterRoleReferences(),
+    references: await getActorProfileReferences(),
     excludedNames: EXCLUDED_CHARACTER_ROLE_NAMES,
   });
 

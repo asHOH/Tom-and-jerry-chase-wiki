@@ -1,4 +1,4 @@
-export { characterRoles, characterRolesByName } from './data';
+export { actorProfiles, actorProfilesByName } from './data';
 export {
   formatCharacterRoleAttackCooldown,
   formatCharacterRoleNumber,
@@ -15,7 +15,7 @@ export {
   haveUniformDisplayedGravity,
   isFactionDisplayedGravityUniform,
 } from './selectors';
-export type { CharacterRole, PhysicsType, RoleType } from './schema';
+export type { ActorProfile, PhysicsType, ActorType } from './schema';
 export {
   CHARACTER_ROLE_ATTRIBUTE_KEYS,
   CHARACTER_ROLE_ATTRIBUTE_META,

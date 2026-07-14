@@ -1,5 +1,5 @@
 import { autoWrapNames } from '@/data/autoWrapNames';
-import type { CharacterRole } from '@/features/character-roles/schema';
+import type { ActorProfile } from '@/features/character-roles/schema';
 import { getCharacterRole, getCharacterRoleJumpHeight } from '@/features/character-roles/selectors';
 import { characters } from '@/data';
 
@@ -17,7 +17,7 @@ type AutoWrapCandidate = {
   priority: number;
 };
 
-type CanonicalCharacterExpression = (role: CharacterRole, character: CharacterRecord) => unknown;
+type CanonicalCharacterExpression = (role: ActorProfile, character: CharacterRecord) => unknown;
 
 const CANONICAL_CHARACTER_EXPRESSIONS: Readonly<Record<string, CanonicalCharacterExpression>> = {
   maxHp: (role) => role.maxHp,

@@ -2,10 +2,10 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 
 import {
-  normalizeCharacterRoles,
+  normalizeActorProfiles,
   serializeCharacterRoles,
 } from '../src/features/character-roles/normalization';
-import { getCharacterRoleReferences, getPlayableCharacterRoles } from './character-role-context';
+import { getActorProfileReferences, getPlayableCharacterRoles } from './character-role-context';
 
 const OUTPUT_PATH = resolve(process.cwd(), 'src/features/character-roles/data/characterRoles.json');
 
@@ -17,9 +17,9 @@ const main = async () => {
 
   const inputPath = resolve(process.cwd(), inputArguments[0]);
   const rawInput = JSON.parse(await readFile(inputPath, 'utf8')) as unknown;
-  const roles = normalizeCharacterRoles(rawInput, {
+  const roles = normalizeActorProfiles(rawInput, {
     playableCharacters: getPlayableCharacterRoles(),
-    references: await getCharacterRoleReferences(),
+    references: await getActorProfileReferences(),
   });
   const serializedRoles = serializeCharacterRoles(roles);
 
