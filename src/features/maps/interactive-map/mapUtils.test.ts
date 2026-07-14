@@ -3,21 +3,27 @@ import { proxy } from 'valtio';
 import type { InteractiveMapConfig, InteractiveMapPoint, InteractiveMapRoom } from '@/data/types';
 
 import {
+  clearGeometryBarrelTarget,
   cloneInteractiveMap,
   coordinateToLatLng,
   DEFAULT_VISIBLE_CATEGORIES,
+  deleteInteractiveMapPoint,
   getConnectedMapPoint,
   getDefaultMapPointRelatedEntries,
+  getGeometryBarrelInstructions,
+  getGeometryBarrelTarget,
   getInteractiveMapAssetUrl,
   getMapPointRelatedEntryDescriptionUrl,
   getMapPointScale,
   getRoomCenter,
+  isGeometryBarrelRouteComplete,
   isMinimapPointVisible,
   isPointVisible,
   isRandomCandidateByDefault,
   latLngToCoordinate,
   MAP_CATEGORY_LABELS,
   minimapPixelsToCoordinate,
+  updateGeometryBarrelRoute,
   updateInteractiveMapPoint,
 } from './mapUtils';
 
@@ -87,7 +93,13 @@ describe('interactive map utilities', () => {
 
   it('should leave point categories without a wiki entry unlinked', () => {
     expect(getDefaultMapPointRelatedEntries({ category: 'teleport' })).toEqual([]);
-    expect(getDefaultMapPointRelatedEntries({ category: 'geometryBarrel' })).toEqual([]);
+  });
+
+  it('should link geometry barrel points to the firecracker and barrel entries', () => {
+    expect(getDefaultMapPointRelatedEntries({ category: 'geometryBarrel' })).toEqual([
+      { name: '小鞭炮', type: 'item' },
+      { name: '火药桶', type: 'entity' },
+    ]);
   });
 
   it('should round-trip normalized coordinates', () => {
@@ -208,6 +220,105 @@ describe('interactive map utilities', () => {
         connection: { targetPointId: 'missing', direction: 'both', label: 'A' },
       })
     ).toBeNull();
+  });
+
+  it('should resolve only a rocket as a geometry barrel target', () => {
+    const barrel: InteractiveMapPoint = {
+      id: 'barrel',
+      category: 'geometryBarrel',
+      position: { x: 0.1, y: 0.2 },
+      geometryBarrelRoute: { targetRocketPointId: 'rocket' },
+    };
+    const rocket: InteractiveMapPoint = {
+      id: 'rocket',
+      category: 'rocket',
+      position: { x: 0.8, y: 0.7 },
+    };
+    const mapWithRoute = { ...config, points: [barrel, rocket] };
+
+    expect(getGeometryBarrelTarget(mapWithRoute, barrel)).toEqual({ point: rocket, pointIndex: 1 });
+    expect(getGeometryBarrelTarget({ ...config, points: [barrel] }, barrel)).toBeNull();
+    expect(
+      getGeometryBarrelTarget(
+        { ...config, points: [barrel, { ...rocket, category: 'cheese' }] },
+        barrel
+      )
+    ).toBeNull();
+  });
+
+  it('should generate geometry barrel instructions from the firecracker explosion timing', () => {
+    const barrel: InteractiveMapPoint = {
+      category: 'geometryBarrel',
+      position: { x: 0.1, y: 0.2 },
+      geometryBarrelRoute: { barrelRemainingSecondsAtFirecrackerExplosion: 2.5 },
+    };
+
+    expect(getGeometryBarrelInstructions(barrel)).toBe(
+      '1. 火药桶倒计时剩余 7.5 秒时点燃小鞭炮。\n' +
+        '2. 将已点燃的小鞭炮放到地图标注位置。\n' +
+        '3. 小鞭炮爆炸时火药桶倒计时剩余 2.5 秒，并使火药桶产生位移；火药桶随后沿标注路线飞向火箭，最终爆炸摧毁火箭。'
+    );
+    expect(
+      getGeometryBarrelInstructions({
+        ...barrel,
+        geometryBarrelRoute: { barrelRemainingSecondsAtFirecrackerExplosion: -1 },
+      })
+    ).toBeNull();
+  });
+
+  it('should support progressive geometry barrel route editing', () => {
+    const barrel: InteractiveMapPoint = {
+      id: 'barrel',
+      category: 'geometryBarrel',
+      position: { x: 0.1, y: 0.2 },
+    };
+    const rocket: InteractiveMapPoint = {
+      id: 'rocket',
+      category: 'rocket',
+      position: { x: 0.8, y: 0.7 },
+    };
+    const initial = { ...config, points: [barrel, rocket] };
+    const placed = updateGeometryBarrelRoute(initial, 0, {
+      firecrackerPosition: { x: 0.08, y: 0.2 },
+    });
+    const dragged = updateGeometryBarrelRoute(placed!, 0, {
+      firecrackerPosition: { x: 0.12, y: 0.2 },
+      targetRocketPointId: 'rocket',
+      barrelRemainingSecondsAtFirecrackerExplosion: 2.5,
+    });
+
+    expect(dragged?.points[0]?.geometryBarrelRoute?.firecrackerPosition).toEqual({
+      x: 0.12,
+      y: 0.2,
+    });
+    expect(isGeometryBarrelRouteComplete(dragged!, dragged!.points[0]!)).toBe(true);
+    expect(isGeometryBarrelRouteComplete(placed!, placed!.points[0]!)).toBe(false);
+
+    const cleared = clearGeometryBarrelTarget(dragged!, 0);
+    expect(cleared?.points[0]?.geometryBarrelRoute?.targetRocketPointId).toBeUndefined();
+    expect(updateGeometryBarrelRoute(initial, 1, {})).toBeNull();
+    expect(clearGeometryBarrelTarget(initial, 1)).toBeNull();
+  });
+
+  it('should clear geometry barrel routes that target a deleted rocket', () => {
+    const rocket: InteractiveMapPoint = {
+      id: 'rocket',
+      category: 'rocket',
+      position: { x: 0.8, y: 0.7 },
+    };
+    const barrels: InteractiveMapPoint[] = [0.1, 0.2].map((x, index) => ({
+      id: `barrel-${index}`,
+      category: 'geometryBarrel',
+      position: { x, y: 0.2 },
+      geometryBarrelRoute: { targetRocketPointId: 'rocket' },
+    }));
+
+    const updated = deleteInteractiveMapPoint({ ...config, points: [rocket, ...barrels] }, 0);
+
+    expect(updated?.points).toHaveLength(2);
+    expect(updated?.points[0]?.geometryBarrelRoute?.targetRocketPointId).toBeUndefined();
+    expect(updated?.points[1]?.geometryBarrelRoute?.targetRocketPointId).toBeUndefined();
+    expect(deleteInteractiveMapPoint(config, 1)).toBeNull();
   });
 
   it('should convert minimap pixels to clamped normalized coordinates', () => {

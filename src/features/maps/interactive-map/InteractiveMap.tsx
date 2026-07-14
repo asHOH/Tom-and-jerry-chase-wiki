@@ -3,6 +3,7 @@
 import {
   useCallback,
   useEffect,
+  useId,
   useMemo,
   useRef,
   useState,
@@ -12,7 +13,6 @@ import {
 import L, {
   type Coords,
   type DoneCallback,
-  type GridLayerOptions,
   type LeafletMouseEvent,
   type TileLayerOptions,
 } from 'leaflet';
@@ -20,9 +20,9 @@ import {
   ImageOverlay,
   MapContainer,
   Marker,
-  Pane,
   Polygon,
   Polyline,
+  SVGOverlay,
   Tooltip,
   useMap,
   useMapEvents,
@@ -41,22 +41,28 @@ import Image from '@/components/Image';
 
 import {
   ALWAYS_VISIBLE_CATEGORIES,
+  clearGeometryBarrelTarget,
   cloneInteractiveMap,
   coordinateToLatLng,
   DEFAULT_VISIBLE_CATEGORIES,
+  deleteInteractiveMapPoint,
   getConnectedMapPoint,
   getDefaultMapPointRelatedEntries,
+  getGeometryBarrelInstructions,
+  getGeometryBarrelTarget,
   getInteractiveMapAssetUrl,
   getMapBounds,
   getMapPointRelatedEntryDescriptionUrl,
   getMapPointScale,
   getRoomCenter,
+  isGeometryBarrelRouteComplete,
   isMinimapPointVisible,
   isPointVisible,
   isRandomCandidateByDefault,
   latLngToCoordinate,
   MAP_CATEGORY_LABELS,
   minimapPixelsToCoordinate,
+  updateGeometryBarrelRoute,
   updateInteractiveMapPoint,
 } from './mapUtils';
 
@@ -73,14 +79,20 @@ type InteractiveMapProps = {
   onConfigChange?: ((config: InteractiveMapConfig) => void) | undefined;
 };
 
-type EditorMode = 'browse' | 'selectRoom' | 'addPoint' | 'drawRoom';
+type EditorMode =
+  | 'browse'
+  | 'selectRoom'
+  | 'addPoint'
+  | 'drawRoom'
+  | 'placeGeometryBarrelFirecracker'
+  | 'selectGeometryBarrelRocket';
 
 const CATEGORY_ICONS: Partial<Record<MapPointCategory, string>> = {
   cheese: '/images/items/奶酪.png',
   rocket: '/images/items/火箭.png',
   drink: '/images/items/神秘饮料.png',
   fixture: '/images/fixtures/七色花.png',
-  geometryBarrel: '/images/fixtures/桶.png',
+  geometryBarrel: '/images/entities/火药桶.png',
 };
 
 const FILTER_STORAGE_KEY = 'interactive-map:visible-categories';
@@ -129,7 +141,9 @@ const makeIcon = (
         ? 0.5
         : point.category === 'drink'
           ? 1.1
-          : 1;
+          : point.category === 'geometryBarrel'
+            ? 0.5
+            : 1;
   const content = connectionBadge
     ? connectionBadge
     : isInvisible
@@ -158,6 +172,13 @@ const vertexIcon = L.divIcon({
   html: '<span></span>',
   iconSize: [18, 18],
   iconAnchor: [9, 9],
+});
+
+const firecrackerIcon = L.divIcon({
+  className: 'interactive-map-marker',
+  html: `<span class="interactive-map-marker-content" style="width:34px;height:34px;--interactive-map-marker-anchor-x:17px;--interactive-map-marker-anchor-y:17px"><img src="${encodeURI('/images/items/小鞭炮.png')}" alt="" class="h-full w-full object-contain drop-shadow-md" /></span>`,
+  iconSize: [34, 34],
+  iconAnchor: [17, 17],
 });
 
 const isAvifUrl = (url: string) => {
@@ -224,65 +245,61 @@ function PictureTileLayer({ url, options, onTileError }: PictureTileLayerProps) 
   return null;
 }
 
-class NativeMapGridLayer extends L.GridLayer {
-  private readonly mapMaxZoom: number;
-
-  constructor(mapMaxZoom: number, options: GridLayerOptions) {
-    super(options);
-    this.mapMaxZoom = mapMaxZoom;
-  }
-
-  override createTile(coords: Coords): HTMLElement {
-    const tile = document.createElement('div');
-    const tileSize = this.getTileSize();
-    const zoomScale = 2 ** (coords.z - this.mapMaxZoom);
-    const backgroundPosition = `${-(coords.x * tileSize.x)}px ${-(coords.y * tileSize.y)}px`;
-
-    tile.className = 'interactive-map-grid-tile';
-    tile.setAttribute('aria-hidden', 'true');
-    tile.style.setProperty('--interactive-map-grid-minor-size', `${128 * zoomScale}px`);
-    tile.style.setProperty('--interactive-map-grid-major-size', `${512 * zoomScale}px`);
-    tile.style.setProperty('--interactive-map-grid-position', backgroundPosition);
-
-    return tile;
-  }
-}
-
-type MapGridLayerProps = {
-  mapMaxZoom: number;
-  maxZoom: number;
-  minZoom: number;
-  tileSize: number;
+type MapGridBackgroundProps = {
+  bounds: [[number, number], [number, number]];
+  height: number;
+  width: number;
 };
 
-function MapGridLayer({ mapMaxZoom, maxZoom, minZoom, tileSize }: MapGridLayerProps) {
-  const map = useMap();
+function MapGridBackground({ bounds, height, width }: MapGridBackgroundProps) {
+  const gridId = useId().replaceAll(':', '');
+  const minorGridId = `${gridId}-minor`;
+  const majorGridId = `${gridId}-major`;
 
-  useEffect(() => {
-    const layer = new NativeMapGridLayer(mapMaxZoom, {
-      pane: 'interactiveMapGridPane',
-      tileSize,
-      minZoom,
-      maxZoom,
-      updateWhenZooming: true,
-    });
-    layer.addTo(map);
-
-    return () => {
-      map.removeLayer(layer);
-    };
-  }, [map, mapMaxZoom, maxZoom, minZoom, tileSize]);
-
-  return null;
-}
-
-function MapGridBackground(props: MapGridLayerProps) {
   return (
-    <Pane name='interactiveMapGridPane' style={{ zIndex: 150, pointerEvents: 'none' }}>
-      <MapGridLayer {...props} />
-    </Pane>
+    <SVGOverlay
+      bounds={bounds}
+      pane='tilePane'
+      zIndex={-1}
+      interactive={false}
+      className='interactive-map-grid'
+      attributes={{
+        viewBox: `0 0 ${width} ${height}`,
+        preserveAspectRatio: 'none',
+        'aria-hidden': 'true',
+        focusable: 'false',
+      }}
+    >
+      <defs>
+        <pattern id={minorGridId} width='128' height='128' patternUnits='userSpaceOnUse'>
+          <path
+            d='M 128 0 L 0 0 0 128'
+            fill='none'
+            stroke='#94a3b8'
+            strokeOpacity='0.12'
+            strokeWidth='1'
+            vectorEffect='non-scaling-stroke'
+          />
+        </pattern>
+        <pattern id={majorGridId} width='512' height='512' patternUnits='userSpaceOnUse'>
+          <rect width='512' height='512' fill={`url(#${minorGridId})`} />
+          <path
+            d='M 512 0 L 0 0 0 512'
+            fill='none'
+            stroke='#cbd5e1'
+            strokeOpacity='0.24'
+            strokeWidth='1.5'
+            vectorEffect='non-scaling-stroke'
+          />
+        </pattern>
+      </defs>
+      <rect width={width} height={height} fill='#020617' />
+      <rect width={width} height={height} fill={`url(#${majorGridId})`} />
+    </SVGOverlay>
   );
 }
+
+void MapGridBackground;
 
 function MainMapEvents({
   config,
@@ -627,12 +644,20 @@ export default function InteractiveMap({
   const selectedPoint =
     selectedPointIndex === null ? null : (config.points[selectedPointIndex] ?? null);
   const connectedPoint = selectedPoint ? getConnectedMapPoint(config, selectedPoint) : null;
+  const geometryBarrelTarget = selectedPoint
+    ? getGeometryBarrelTarget(config, selectedPoint)
+    : null;
+  const isSelectedGeometryBarrelRouteComplete = selectedPoint
+    ? isGeometryBarrelRouteComplete(config, selectedPoint)
+    : false;
   const highlightedPointIds = useMemo(() => {
     const ids = new Set<string>();
     if (selectedPoint?.id && connectedPoint) ids.add(selectedPoint.id);
     if (connectedPoint?.point.id) ids.add(connectedPoint.point.id);
+    if (selectedPoint?.id && geometryBarrelTarget) ids.add(selectedPoint.id);
+    if (geometryBarrelTarget?.point.id) ids.add(geometryBarrelTarget.point.id);
     return ids;
-  }, [connectedPoint, selectedPoint]);
+  }, [connectedPoint, geometryBarrelTarget, selectedPoint]);
   const mapBounds = useMemo(
     () =>
       getMapBounds({
@@ -719,6 +744,14 @@ export default function InteractiveMap({
     updatePoint(selectedPointIndex, changes);
   };
 
+  const updateSelectedGeometryBarrelRoute = (
+    changes: NonNullable<InteractiveMapPoint['geometryBarrelRoute']>
+  ) => {
+    if (selectedPointIndex === null || selectedPoint?.category !== 'geometryBarrel') return;
+    const next = updateGeometryBarrelRoute(config, selectedPointIndex, changes);
+    if (next) updateConfig(next);
+  };
+
   const updatePoint = (pointIndex: number, changes: Partial<InteractiveMapPoint>) => {
     const next = updateInteractiveMapPoint(config, pointIndex, changes);
     if (!next) return;
@@ -773,6 +806,13 @@ export default function InteractiveMap({
       next.points.push(point);
       updateConfig(next);
       openPoint(next.points.length - 1);
+      setEditorMode('browse');
+      return;
+    }
+    if (editorMode === 'placeGeometryBarrelFirecracker') {
+      updateSelectedGeometryBarrelRoute({
+        firecrackerPosition: latLngToCoordinate(event.latlng.lat, event.latlng.lng, config),
+      });
       setEditorMode('browse');
       return;
     }
@@ -832,6 +872,17 @@ export default function InteractiveMap({
   const navigateToConnectedPoint = () => {
     if (!connectedPoint) return;
     openPoint(connectedPoint.pointIndex);
+  };
+
+  const navigateToGeometryBarrelTarget = () => {
+    if (!geometryBarrelTarget) return;
+    openPoint(geometryBarrelTarget.pointIndex);
+  };
+
+  const selectGeometryBarrelTarget = (targetPoint: InteractiveMapPoint) => {
+    if (targetPoint.category !== 'rocket' || !targetPoint.id) return;
+    updateSelectedGeometryBarrelRoute({ targetRocketPointId: targetPoint.id });
+    setEditorMode('browse');
   };
 
   const connectSelectedPoint = (targetPointId: string) => {
@@ -918,12 +969,12 @@ export default function InteractiveMap({
         doubleClickZoom
         className={`h-full w-full bg-slate-950 ${alwaysFullscreen ? '' : 'min-h-[420px]'}`}
       >
-        <MapGridBackground
-          mapMaxZoom={config.maxZoom}
-          minZoom={config.minZoom}
-          maxZoom={config.maxZoom + 2}
-          tileSize={config.tileSize}
-        />
+        {/*<MapGridBackground
+          key={`${config.width}x${config.height}`}
+          bounds={mapBounds}
+          height={config.height}
+          width={config.width}
+        />*/}
         <PictureTileLayer
           url={webpTileUrl}
           options={mainTileOptions}
@@ -989,9 +1040,55 @@ export default function InteractiveMap({
             </Tooltip>
           </Polyline>
         )}
+        {selectedPoint?.category === 'geometryBarrel' &&
+          geometryBarrelTarget &&
+          (isEditMode || isSelectedGeometryBarrelRouteComplete) && (
+            <Polyline
+              positions={[
+                coordinateToLatLng(selectedPoint.position, config),
+                coordinateToLatLng(geometryBarrelTarget.point.position, config),
+              ]}
+              pathOptions={{ color: '#fb923c', opacity: 0.9, weight: 4 }}
+            >
+              <Tooltip sticky>火药桶受击后的飞行路线</Tooltip>
+            </Polyline>
+          )}
+        {selectedPoint?.category === 'geometryBarrel' &&
+          selectedPoint.geometryBarrelRoute?.firecrackerPosition &&
+          (isEditMode || isSelectedGeometryBarrelRouteComplete) && (
+            <Marker
+              position={coordinateToLatLng(
+                selectedPoint.geometryBarrelRoute.firecrackerPosition,
+                config
+              )}
+              icon={firecrackerIcon}
+              draggable={isEditMode}
+              eventHandlers={{
+                click: (event) => {
+                  L.DomEvent.stopPropagation(event.originalEvent);
+                },
+                dragend: (event) => {
+                  const marker = event.target as L.Marker;
+                  updateSelectedGeometryBarrelRoute({
+                    firecrackerPosition: latLngToCoordinate(
+                      marker.getLatLng().lat,
+                      marker.getLatLng().lng,
+                      config
+                    ),
+                  });
+                },
+              }}
+            >
+              <Tooltip>小鞭炮放置位置</Tooltip>
+            </Marker>
+          )}
         {config.points
           .map((point, pointIndex) => ({ point, pointIndex }))
-          .filter(({ point }) => isPointVisible(point, zoom, visibleCategories, hiddenSubtypes))
+          .filter(
+            ({ point }) =>
+              (editorMode === 'selectGeometryBarrelRocket' && point.category === 'rocket') ||
+              isPointVisible(point, zoom, visibleCategories, hiddenSubtypes)
+          )
           .map(({ point, pointIndex }) => (
             <Marker
               key={pointIndex}
@@ -1006,19 +1103,30 @@ export default function InteractiveMap({
                     : point.category === 'pipe'
                       ? 'unrelated'
                       : undefined
-                  : undefined
+                  : editorMode === 'selectGeometryBarrelRocket' && point.category === 'rocket'
+                    ? 'endpoint'
+                    : undefined
               )}
-              draggable={isEditMode}
+              draggable={isEditMode && editorMode === 'browse'}
               eventHandlers={{
                 click: (event) => {
                   L.DomEvent.stopPropagation(event.originalEvent);
+                  if (editorMode === 'selectGeometryBarrelRocket') {
+                    selectGeometryBarrelTarget(point);
+                    return;
+                  }
                   openPoint(pointIndex);
                 },
                 dblclick: (event) => {
                   L.DomEvent.stopPropagation(event.originalEvent);
+                  if (editorMode === 'selectGeometryBarrelRocket') {
+                    selectGeometryBarrelTarget(point);
+                    return;
+                  }
                   openPoint(pointIndex);
                 },
                 dragstart: () => {
+                  if (editorMode !== 'browse') return;
                   openPoint(pointIndex);
                 },
                 dragend: (event) => {
@@ -1128,6 +1236,7 @@ export default function InteractiveMap({
           roomName={roomName}
           draftPointCount={draftPolygon.length}
           selectedPoint={selectedPoint}
+          isGeometryBarrelRouteComplete={isSelectedGeometryBarrelRouteComplete}
           selectedRoomId={selectedRoomId}
           canUndo={undoStack.current.length > 0}
           canRedo={redoStack.current.length > 0}
@@ -1144,10 +1253,30 @@ export default function InteractiveMap({
           onUpdatePoint={updateSelectedPoint}
           onConnectPoint={connectSelectedPoint}
           onUpdateConnectionLabel={updateSelectedConnectionLabel}
-          onDeletePoint={() => {
+          onGeometryBarrelRemainingSeconds={(value) => {
             if (selectedPointIndex === null) return;
             const next = cloneInteractiveMap(config);
-            next.points = next.points.filter((_, pointIndex) => pointIndex !== selectedPointIndex);
+            const point = next.points[selectedPointIndex];
+            if (!point || point.category !== 'geometryBarrel') return;
+            point.geometryBarrelRoute ??= {};
+            if (value === null) {
+              delete point.geometryBarrelRoute.barrelRemainingSecondsAtFirecrackerExplosion;
+            } else {
+              point.geometryBarrelRoute.barrelRemainingSecondsAtFirecrackerExplosion = value;
+            }
+            updateConfig(next);
+          }}
+          onPlaceGeometryBarrelFirecracker={() => setEditorMode('placeGeometryBarrelFirecracker')}
+          onSelectGeometryBarrelRocket={() => setEditorMode('selectGeometryBarrelRocket')}
+          onClearGeometryBarrelTarget={() => {
+            if (selectedPointIndex === null) return;
+            const next = clearGeometryBarrelTarget(config, selectedPointIndex);
+            if (next) updateConfig(next);
+          }}
+          onDeletePoint={() => {
+            if (selectedPointIndex === null) return;
+            const next = deleteInteractiveMapPoint(config, selectedPointIndex);
+            if (!next) return;
             updateConfig(next);
             closePoint();
           }}
@@ -1178,8 +1307,13 @@ export default function InteractiveMap({
         <PointDetails
           point={selectedPoint}
           connectedPoint={connectedPoint?.point ?? null}
+          geometryBarrelTarget={
+            isSelectedGeometryBarrelRouteComplete ? (geometryBarrelTarget?.point ?? null) : null
+          }
+          isGeometryBarrelRouteComplete={isSelectedGeometryBarrelRouteComplete}
           isEditMode={isEditMode}
           onNavigateToConnectedPoint={navigateToConnectedPoint}
+          onNavigateToGeometryBarrelTarget={navigateToGeometryBarrelTarget}
           onClose={closePoint}
         />
       )}
@@ -1284,6 +1418,7 @@ type EditorPanelProps = {
   roomName: string;
   draftPointCount: number;
   selectedPoint: InteractiveMapPoint | null;
+  isGeometryBarrelRouteComplete: boolean;
   selectedRoomId: string | null;
   canUndo: boolean;
   canRedo: boolean;
@@ -1297,6 +1432,10 @@ type EditorPanelProps = {
   onUpdatePoint: (changes: Partial<InteractiveMapPoint>) => void;
   onConnectPoint: (targetPointId: string) => void;
   onUpdateConnectionLabel: (label: string) => void;
+  onGeometryBarrelRemainingSeconds: (value: number | null) => void;
+  onPlaceGeometryBarrelFirecracker: () => void;
+  onSelectGeometryBarrelRocket: () => void;
+  onClearGeometryBarrelTarget: () => void;
   onDeletePoint: () => void;
   onDeleteRoom: () => void;
   onMoveRoom: (x: number, y: number) => void;
@@ -1384,6 +1523,22 @@ function EditorPanel(props: EditorPanelProps) {
           </button>
         </div>
       )}
+      {props.editorMode === 'placeGeometryBarrelFirecracker' && (
+        <div className='space-y-2'>
+          <p className='text-xs text-white/65'>点击地图放置小鞭炮，放置后可拖动微调。</p>
+          <button type='button' onClick={props.onCancelDrawing} className='underline'>
+            取消
+          </button>
+        </div>
+      )}
+      {props.editorMode === 'selectGeometryBarrelRocket' && (
+        <div className='space-y-2'>
+          <p className='text-xs text-white/65'>点击地图上高亮的火箭，设为飞行路线终点。</p>
+          <button type='button' onClick={props.onCancelDrawing} className='underline'>
+            取消
+          </button>
+        </div>
+      )}
       {props.editorMode === 'drawRoom' && (
         <div className='space-y-2'>
           <input
@@ -1424,6 +1579,68 @@ function EditorPanel(props: EditorPanelProps) {
             placeholder='介绍'
             className='w-full rounded bg-white/10 px-2 py-2'
           />
+          {props.selectedPoint.category === 'geometryBarrel' && (
+            <div className='space-y-3 rounded border border-orange-300/30 bg-orange-950/20 p-2'>
+              <div className='flex items-center justify-between gap-2'>
+                <p className='text-xs font-medium text-orange-200'>几何桶路线</p>
+                <span
+                  className={`text-xs ${props.isGeometryBarrelRouteComplete ? 'text-emerald-300' : 'text-amber-300'}`}
+                >
+                  {props.isGeometryBarrelRouteComplete ? '配置完整' : '待补充'}
+                </span>
+              </div>
+              <label className='block'>
+                <span className='text-xs text-white/65'>鞭炮爆炸时桶剩余秒数</span>
+                <input
+                  type='number'
+                  min={0}
+                  step={0.1}
+                  value={
+                    props.selectedPoint.geometryBarrelRoute
+                      ?.barrelRemainingSecondsAtFirecrackerExplosion ?? ''
+                  }
+                  onChange={(event) => {
+                    if (!event.target.value) {
+                      props.onGeometryBarrelRemainingSeconds(null);
+                      return;
+                    }
+                    const value = Number(event.target.value);
+                    if (Number.isFinite(value) && value >= 0) {
+                      props.onGeometryBarrelRemainingSeconds(value);
+                    }
+                  }}
+                  className='mt-1 w-full rounded bg-white/10 px-2 py-2'
+                />
+              </label>
+              <button
+                type='button'
+                className='w-full rounded bg-orange-700 px-2 py-2 hover:bg-orange-600'
+                onClick={props.onPlaceGeometryBarrelFirecracker}
+              >
+                {props.selectedPoint.geometryBarrelRoute?.firecrackerPosition
+                  ? '重新放置小鞭炮'
+                  : '放置小鞭炮'}
+              </button>
+              <button
+                type='button'
+                className='w-full rounded bg-orange-700 px-2 py-2 hover:bg-orange-600'
+                onClick={props.onSelectGeometryBarrelRocket}
+              >
+                {props.selectedPoint.geometryBarrelRoute?.targetRocketPointId
+                  ? '重新选择目标火箭'
+                  : '选择目标火箭'}
+              </button>
+              {props.selectedPoint.geometryBarrelRoute?.targetRocketPointId && (
+                <button
+                  type='button'
+                  className='text-xs text-red-300 underline'
+                  onClick={props.onClearGeometryBarrelTarget}
+                >
+                  清除目标火箭
+                </button>
+              )}
+            </div>
+          )}
           {props.selectedPoint.category === 'pipe' && props.selectedPoint.id && (
             <div className='rounded border border-white/10 p-2'>
               <p className='mb-2 text-xs text-white/65'>对应管道</p>
@@ -1612,30 +1829,41 @@ function EditorPanel(props: EditorPanelProps) {
 function PointDetails({
   point,
   connectedPoint,
+  geometryBarrelTarget,
+  isGeometryBarrelRouteComplete,
   isEditMode,
   onNavigateToConnectedPoint,
+  onNavigateToGeometryBarrelTarget,
   onClose,
 }: {
   point: InteractiveMapPoint;
   connectedPoint: InteractiveMapPoint | null;
+  geometryBarrelTarget: InteractiveMapPoint | null;
+  isGeometryBarrelRouteComplete: boolean;
   isEditMode: boolean;
   onNavigateToConnectedPoint: () => void;
+  onNavigateToGeometryBarrelTarget: () => void;
   onClose: () => void;
 }) {
   const hasCustomDescription = Boolean(point.description?.trim());
+  const geometryBarrelInstructions = isGeometryBarrelRouteComplete
+    ? getGeometryBarrelInstructions(point)
+    : null;
   const relatedEntry = point.relatedEntries?.[0];
   const relatedEntryDescriptionUrl =
-    !hasCustomDescription && relatedEntry
+    !hasCustomDescription && !geometryBarrelInstructions && relatedEntry
       ? getMapPointRelatedEntryDescriptionUrl(relatedEntry)
       : null;
   const { data: relatedEntryDescription, isLoading: isRelatedEntryDescriptionLoading } = useSWR<
     string | undefined
   >(relatedEntryDescriptionUrl, fetchRelatedEntryDescription);
 
-  const description = hasCustomDescription
-    ? point.description
-    : (relatedEntryDescription ??
-      (isRelatedEntryDescriptionLoading ? '' : isEditMode ? '请在标注面板中补充介绍。' : ''));
+  const description = geometryBarrelInstructions
+    ? `${geometryBarrelInstructions}${hasCustomDescription ? `\n\n补充说明：\n${point.description}` : ''}`
+    : hasCustomDescription
+      ? point.description
+      : (relatedEntryDescription ??
+        (isRelatedEntryDescriptionLoading ? '' : isEditMode ? '请在标注面板中补充介绍。' : ''));
 
   return (
     <aside className='absolute right-0 bottom-0 left-0 z-700 max-h-[52%] overflow-auto rounded-t-2xl bg-white p-5 text-slate-900 shadow-2xl md:top-0 md:left-auto md:h-full md:max-h-none md:w-80 md:rounded-none md:pt-14 dark:bg-slate-900 dark:text-white'>
@@ -1677,6 +1905,19 @@ function PointDetails({
             className='mt-3 w-full rounded-lg bg-cyan-700 px-3 py-2 text-sm font-medium text-white hover:bg-cyan-600'
           >
             查看对应管道
+          </button>
+        </div>
+      )}
+      {geometryBarrelTarget && (
+        <div className='mt-4 rounded-xl border border-orange-200 bg-orange-50 p-3 dark:border-orange-800 dark:bg-orange-950/50'>
+          <p className='text-xs text-slate-500 dark:text-slate-400'>火药桶飞行路线</p>
+          <p className='mt-1 truncate text-sm font-semibold'>终点：目标火箭</p>
+          <button
+            type='button'
+            onClick={onNavigateToGeometryBarrelTarget}
+            className='mt-3 w-full rounded-lg bg-orange-700 px-3 py-2 text-sm font-medium text-white hover:bg-orange-600'
+          >
+            查看目标火箭
           </button>
         </div>
       )}

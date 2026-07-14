@@ -1,5 +1,6 @@
 import type { CategoryHint } from '@/lib/types';
 import type {
+  GeometryBarrelRoute,
   InteractiveMapConfig,
   InteractiveMapPoint,
   InteractiveMapRoom,
@@ -54,6 +55,12 @@ export const getDefaultMapPointRelatedEntries = (
   }
 
   const defaultEntry = DEFAULT_MAP_POINT_RELATED_ENTRIES[point.category];
+  if (point.category === 'geometryBarrel') {
+    return [
+      { name: '小鞭炮', type: 'item' },
+      { name: '火药桶', type: 'entity' },
+    ];
+  }
   return defaultEntry ? [defaultEntry] : [];
 };
 
@@ -186,6 +193,60 @@ export const getConnectedMapPoint = (
   return connectedPoint ? { point: connectedPoint, pointIndex } : null;
 };
 
+export const getGeometryBarrelTarget = (
+  config: InteractiveMapConfig,
+  point: InteractiveMapPoint
+): { point: InteractiveMapPoint; pointIndex: number } | null => {
+  if (point.category !== 'geometryBarrel') return null;
+
+  const targetPointId = point.geometryBarrelRoute?.targetRocketPointId;
+  if (!targetPointId) return null;
+
+  const pointIndex = config.points.findIndex(
+    (candidate) => candidate.id === targetPointId && candidate.category === 'rocket'
+  );
+  const target = config.points[pointIndex];
+  return target ? { point: target, pointIndex } : null;
+};
+
+const formatSeconds = (seconds: number): string =>
+  Number(seconds.toFixed(3)).toLocaleString('zh-CN', { useGrouping: false });
+
+export const getGeometryBarrelInstructions = (point: InteractiveMapPoint): string | null => {
+  if (point.category !== 'geometryBarrel') return null;
+
+  const remainingSeconds = point.geometryBarrelRoute?.barrelRemainingSecondsAtFirecrackerExplosion;
+  if (
+    remainingSeconds === undefined ||
+    !Number.isFinite(remainingSeconds) ||
+    remainingSeconds < 0
+  ) {
+    return null;
+  }
+
+  return [
+    `1. 火药桶倒计时剩余 ${formatSeconds(remainingSeconds + 5)} 秒时点燃小鞭炮。`,
+    '2. 将已点燃的小鞭炮放到地图标注位置。',
+    `3. 小鞭炮爆炸时火药桶倒计时剩余 ${formatSeconds(remainingSeconds)} 秒，并使火药桶产生位移；火药桶随后沿标注路线飞向火箭，最终爆炸摧毁火箭。`,
+  ].join('\n');
+};
+
+export const isGeometryBarrelRouteComplete = (
+  config: InteractiveMapConfig,
+  point: InteractiveMapPoint
+): boolean => {
+  const route = point.geometryBarrelRoute;
+  const remainingSeconds = route?.barrelRemainingSecondsAtFirecrackerExplosion;
+  return Boolean(
+    point.category === 'geometryBarrel' &&
+    route?.firecrackerPosition &&
+    remainingSeconds !== undefined &&
+    Number.isFinite(remainingSeconds) &&
+    remainingSeconds >= 0 &&
+    getGeometryBarrelTarget(config, point)
+  );
+};
+
 export const minimapPixelsToCoordinate = (
   clientX: number,
   clientY: number,
@@ -208,5 +269,51 @@ export const updateInteractiveMapPoint = (
   if (!point) return null;
 
   Object.assign(point, changes);
+  return next;
+};
+
+export const updateGeometryBarrelRoute = (
+  config: InteractiveMapConfig,
+  pointIndex: number,
+  changes: GeometryBarrelRoute
+): InteractiveMapConfig | null => {
+  const next = cloneInteractiveMap(config);
+  const point = next.points[pointIndex];
+  if (!point || point.category !== 'geometryBarrel') return null;
+
+  point.geometryBarrelRoute = { ...point.geometryBarrelRoute, ...changes };
+  return next;
+};
+
+export const clearGeometryBarrelTarget = (
+  config: InteractiveMapConfig,
+  pointIndex: number
+): InteractiveMapConfig | null => {
+  const next = cloneInteractiveMap(config);
+  const point = next.points[pointIndex];
+  if (!point || point.category !== 'geometryBarrel') return null;
+
+  if (point.geometryBarrelRoute) delete point.geometryBarrelRoute.targetRocketPointId;
+  return next;
+};
+
+export const deleteInteractiveMapPoint = (
+  config: InteractiveMapConfig,
+  pointIndex: number
+): InteractiveMapConfig | null => {
+  const point = config.points[pointIndex];
+  if (!point) return null;
+
+  const next = cloneInteractiveMap(config);
+  const deletedPointId = point.id;
+  next.points.splice(pointIndex, 1);
+
+  if (deletedPointId) {
+    next.points.forEach((candidate) => {
+      if (candidate.geometryBarrelRoute?.targetRocketPointId !== deletedPointId) return;
+      delete candidate.geometryBarrelRoute.targetRocketPointId;
+    });
+  }
+
   return next;
 };

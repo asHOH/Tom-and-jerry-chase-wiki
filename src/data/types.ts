@@ -496,12 +496,18 @@ export type InteractiveMapRoom = {
   showLabel?: boolean;
   polygons: MapCoordinate[][];
 };
+export type GeometryBarrelRoute = {
+  firecrackerPosition?: MapCoordinate;
+  targetRocketPointId?: string;
+  barrelRemainingSecondsAtFirecrackerExplosion?: number;
+};
 export type InteractiveMapPoint = {
   id?: string;
   category: MapPointCategory;
   subtype?: string;
   position: MapCoordinate;
   description?: string;
+  geometryBarrelRoute?: GeometryBarrelRoute;
   connection?: {
     targetPointId: string;
     direction: 'both' | 'outbound';
