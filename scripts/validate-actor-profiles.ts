@@ -11,7 +11,7 @@ import {
 
 const CANONICAL_PATH = resolve(
   process.cwd(),
-  'src/features/character-roles/data/actorProfiles.json'
+  'src/features/actor-profiles/data/actorProfiles.json'
 );
 const RAW_PATH = 'src/data/roles.json';
 
@@ -29,7 +29,7 @@ const main = async () => {
   if (trackedRawPath.length > 0) throw new Error(`${RAW_PATH} must not be tracked`);
 
   execFileSync('git', ['check-ignore', '--quiet', '--', RAW_PATH]);
-  console.log(`Validated ${roles.length} canonical character roles`);
+  console.log(`Validated ${roles.length} canonical actor profiles`);
 };
 
 await main();
