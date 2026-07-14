@@ -10,7 +10,6 @@ import { ChevronDownIcon } from '@/components/icons/CommonIcons';
 import Link from '@/components/Link';
 
 import {
-  formatCharacterRoleAttackCooldown,
   formatCharacterRoleNumber,
   formatCharacterRolePhysicsType,
   formatCharacterRoleSex,
@@ -47,13 +46,22 @@ type CharacterRoleAttributesCardProps = {
   EnglishName?: string;
 } & (CharacterContextProps | ObjectContextProps);
 
-type AttributeItem = {
+type AttributeItemBase = {
   key: CharacterRoleAttributeKey;
   label: string;
-  value: string | undefined;
   suffix?: string;
   numeric: boolean;
 };
+
+type AttributeItem =
+  | (AttributeItemBase & {
+      renderKind?: 'text';
+      value: string | undefined;
+    })
+  | (AttributeItemBase & {
+      renderKind: 'attackCooldown';
+      value: CharacterRole['attackCooldown'] | undefined;
+    });
 
 const NUMBER_VALUE_CLASS = 'text-blue-500 dark:text-sky-300';
 const RANKING_LINK_CLASS = 'cursor-pointer hover:underline focus-visible:underline';
@@ -126,7 +134,7 @@ const getRankingHref = (property: RankableProperty, factionId: FactionId): strin
   `/ranks/${property}/?faction=${factionId}`;
 
 type CooldownValueProps = {
-  role: CharacterRole;
+  cooldown: CharacterRole['attackCooldown'] | undefined;
   factionId: FactionId | undefined;
   specialHit: number | undefined;
   specialMiss: number | undefined;
@@ -162,36 +170,33 @@ const SpecialCooldown = ({ value }: { value: number | undefined }) =>
     </>
   );
 
-const AttackCooldownValue = ({ role, factionId, specialHit, specialMiss }: CooldownValueProps) => (
-  <span>
-    {role.attackCooldown.miss === undefined ? (
-      <>
-        命中{' '}
-        <CooldownNumber
-          value={role.attackCooldown.hit}
-          property='clawKnifeCdHit'
-          factionId={factionId}
-        />
-        <SpecialCooldown value={specialHit} /> s
-      </>
-    ) : (
-      <>
-        <CooldownNumber
-          value={role.attackCooldown.miss}
-          property='clawKnifeCdUnhit'
-          factionId={factionId}
-        />
-        <SpecialCooldown value={specialMiss} /> /{' '}
-        <CooldownNumber
-          value={role.attackCooldown.hit}
-          property='clawKnifeCdHit'
-          factionId={factionId}
-        />
-        <SpecialCooldown value={specialHit} /> s
-      </>
-    )}
-  </span>
-);
+const AttackCooldownValue = ({
+  cooldown,
+  factionId,
+  specialHit,
+  specialMiss,
+}: CooldownValueProps) => {
+  if (cooldown === undefined) return null;
+
+  return (
+    <span>
+      {cooldown.miss === undefined ? (
+        <>
+          命中{' '}
+          <CooldownNumber value={cooldown.hit} property='clawKnifeCdHit' factionId={factionId} />
+          <SpecialCooldown value={specialHit} /> s
+        </>
+      ) : (
+        <>
+          <CooldownNumber value={cooldown.miss} property='clawKnifeCdUnhit' factionId={factionId} />
+          <SpecialCooldown value={specialMiss} /> /{' '}
+          <CooldownNumber value={cooldown.hit} property='clawKnifeCdHit' factionId={factionId} />
+          <SpecialCooldown value={specialHit} /> s
+        </>
+      )}
+    </span>
+  );
+};
 
 const createAttributeItems = (
   role: CharacterRole,
@@ -290,10 +295,8 @@ const createAttributeItems = (
     {
       key: 'attackCooldown',
       label: '爪刀CD',
-      value:
-        isObject || isCatCharacter
-          ? formatCharacterRoleAttackCooldown(role.attackCooldown)
-          : undefined,
+      value: isObject || isCatCharacter ? role.attackCooldown : undefined,
+      renderKind: 'attackCooldown',
       numeric: true,
     },
     {
@@ -366,9 +369,9 @@ export default function CharacterRoleAttributesCard({
         {displayedAttributes.map((attribute) => {
           const rankableProperty = getRankableProperty(attribute.key, context, factionId);
           const value =
-            attribute.key === 'attackCooldown' ? (
+            attribute.renderKind === 'attackCooldown' ? (
               <AttackCooldownValue
-                role={role}
+                cooldown={attribute.value}
                 factionId={context === 'character' ? factionId : undefined}
                 specialHit={specialClawKnifeCdHit}
                 specialMiss={specialClawKnifeCdUnhit}
