@@ -3,6 +3,7 @@
 /// <reference lib="webworker" />
 import { defaultCache } from '@serwist/next/worker';
 import {
+  CacheFirst,
   ExpirationPlugin,
   NetworkFirst,
   NetworkOnly,
@@ -23,6 +24,8 @@ declare const self: ServiceWorkerGlobalScope;
 
 const isScriptOrStyleRequest = (request: Request) =>
   request.destination === 'script' || request.destination === 'style';
+// Bump this when generated tile contents change without changing their URLs.
+const MAP_TILE_CACHE_VERSION = 1;
 
 // Custom runtime caching strategies (migrated from @ducanh2912/next-pwa config)
 const customRuntimeCaching: RuntimeCaching[] = [
@@ -30,6 +33,19 @@ const customRuntimeCaching: RuntimeCaching[] = [
   {
     matcher: ({ url }) => /^https?:\/\/[^/]+\/api\/version.*$/.test(url.href),
     handler: new NetworkOnly(),
+  },
+  // Map tiles are numerous and immutable within a cache version, so keep them out of the shared image cache.
+  {
+    matcher: ({ sameOrigin, url }) => sameOrigin && url.pathname.startsWith('/images/map-tiles/'),
+    handler: new CacheFirst({
+      cacheName: `map-tiles-v${MAP_TILE_CACHE_VERSION}`,
+      plugins: [
+        new ExpirationPlugin({
+          maxEntries: 450,
+          maxAgeSeconds: 2592000, // 30 days
+        }),
+      ],
+    }),
   },
   // Images - stale while revalidate with 30 day expiration
   {

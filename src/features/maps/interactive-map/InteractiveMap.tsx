@@ -99,6 +99,10 @@ const CATEGORY_ICONS: Partial<Record<MapPointCategory, string>> = {
 
 const FILTER_STORAGE_KEY = 'interactive-map:visible-categories';
 const HOTSPOT_CATEGORIES = new Set<MapPointCategory>(['teleport', ...ALWAYS_VISIBLE_CATEGORIES]);
+const DETAILS_PANEL_DESKTOP_BREAKPOINT = 768;
+const DETAILS_PANEL_DESKTOP_WIDTH = 320;
+const DETAILS_PANEL_MOBILE_HEIGHT_RATIO = 0.52;
+const LOCATE_POINT_PADDING = 16;
 
 const fetchRelatedEntryDescription = async (url: string): Promise<string | undefined> => {
   const response = await fetch(url);
@@ -381,17 +385,34 @@ function MainMapEvents({
 function LocatePoint({
   point,
   config,
+  avoidDetailsPanel,
 }: {
   point: InteractiveMapPoint | null;
   config: InteractiveMapConfig;
+  avoidDetailsPanel: boolean;
 }) {
   const map = useMap();
   useEffect(() => {
     if (!point) return;
-    map.flyTo(coordinateToLatLng(point.position, config), Math.max(map.getZoom(), 3), {
-      duration: 0.5,
+    const container = map.getContainer();
+    const paddingBottomRight: [number, number] =
+      avoidDetailsPanel && container.clientWidth >= DETAILS_PANEL_DESKTOP_BREAKPOINT
+        ? [DETAILS_PANEL_DESKTOP_WIDTH + LOCATE_POINT_PADDING, LOCATE_POINT_PADDING]
+        : [
+            LOCATE_POINT_PADDING,
+            avoidDetailsPanel
+              ? Math.ceil(container.clientHeight * DETAILS_PANEL_MOBILE_HEIGHT_RATIO) +
+                LOCATE_POINT_PADDING
+              : LOCATE_POINT_PADDING,
+          ];
+
+    map.panInside(coordinateToLatLng(point.position, config), {
+      animate: true,
+      duration: 0.35,
+      paddingTopLeft: [LOCATE_POINT_PADDING, LOCATE_POINT_PADDING],
+      paddingBottomRight,
     });
-  }, [config, map, point]);
+  }, [avoidDetailsPanel, config, map, point]);
   return null;
 }
 
@@ -880,6 +901,10 @@ export default function InteractiveMap({
       maxZoom: config.maxZoom + 2,
       bounds: mapBounds,
       noWrap: true,
+      updateWhenIdle: L.Browser.mobile,
+      updateWhenZooming: !L.Browser.mobile,
+      updateInterval: L.Browser.mobile ? 250 : 200,
+      keepBuffer: L.Browser.mobile ? 1 : 2,
     }),
     [config.maxZoom, config.minZoom, config.tileSize, mapBounds]
   );
@@ -1211,7 +1236,11 @@ export default function InteractiveMap({
           onZoomEnd={setZoom}
           onReady={handleMapReady}
         />
-        <LocatePoint point={selectedPoint} config={config} />
+        <LocatePoint
+          point={selectedPoint}
+          config={config}
+          avoidDetailsPanel={Boolean(selectedPoint && !isEditMode)}
+        />
         {config.rooms.flatMap((room) =>
           room.polygons.map((polygon, index) => (
             <Polygon
