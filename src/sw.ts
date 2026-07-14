@@ -24,6 +24,32 @@ declare const self: ServiceWorkerGlobalScope;
 
 const isScriptOrStyleRequest = (request: Request) =>
   request.destination === 'script' || request.destination === 'style';
+
+const LEGACY_API_CACHE_NAME = 'api-cache';
+const PUBLIC_API_CACHE_NAME = 'public-api-cache-v1';
+const CACHEABLE_PUBLIC_API_PATHS = new Set([
+  '/api/articles',
+  '/api/categories',
+  '/api/comments',
+  '/api/entities/export',
+  '/api/game-data-actions/public',
+  '/api/options',
+]);
+const NON_PUBLIC_ARTICLE_API_SEGMENTS = new Set(['edit-pending', 'pending', 'preview', 'submit']);
+
+const isCacheablePublicApiPath = (pathname: string) => {
+  const normalizedPath = pathname.length > 1 ? pathname.replace(/\/$/, '') : pathname;
+  const articlePathMatch = normalizedPath.match(/^\/api\/articles\/([^/]+)(?:\/history)?$/);
+  const articleId = articlePathMatch?.[1];
+
+  return (
+    CACHEABLE_PUBLIC_API_PATHS.has(normalizedPath) ||
+    normalizedPath.startsWith('/api/echoflow/') ||
+    normalizedPath.startsWith('/api/goto/') ||
+    (articleId !== undefined && !NON_PUBLIC_ARTICLE_API_SEGMENTS.has(articleId))
+  );
+};
+
 // Bump this when generated tile contents change without changing their URLs.
 const MAP_TILE_CACHE_VERSION = 1;
 
@@ -78,12 +104,18 @@ const customRuntimeCaching: RuntimeCaching[] = [
       ],
     }),
   },
-  // API calls (except version) - network first with 5 minute cache
+  // Private and unclassified APIs must never enter Cache Storage. Keeping this rule deny-by-default
+  // prevents new authenticated endpoints from being cached unless they are explicitly reviewed above.
   {
-    matcher: ({ url }) =>
-      url.pathname.startsWith('/api/') && !url.pathname.startsWith('/api/version'),
+    matcher: ({ sameOrigin, url }) =>
+      url.pathname.startsWith('/api/') && (!sameOrigin || !isCacheablePublicApiPath(url.pathname)),
+    handler: new NetworkOnly(),
+  },
+  // Explicitly public API reads - network first with 5 minute cache
+  {
+    matcher: ({ sameOrigin, url }) => sameOrigin && isCacheablePublicApiPath(url.pathname),
     handler: new NetworkFirst({
-      cacheName: 'api-cache',
+      cacheName: PUBLIC_API_CACHE_NAME,
       networkTimeoutSeconds: 3,
       plugins: [
         new ExpirationPlugin({
@@ -122,6 +154,10 @@ self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(self.caches.delete(LEGACY_API_CACHE_NAME));
 });
 
 serwist.addEventListeners();

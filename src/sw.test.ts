@@ -131,4 +131,39 @@ describe('service worker runtime caching', () => {
       findFirstMatchingRoute('/images/maps/经典之家.avif', 'image')?.handler.strategyName
     ).toBe('StaleWhileRevalidate');
   });
+
+  it.each([
+    '/api/auth/me',
+    '/api/notifications',
+    '/api/notifications/email',
+    '/api/articles/pending',
+    '/api/articles/preview?token=secret',
+    '/api/articles/submit',
+    '/api/articles/edit-pending/version-id',
+    '/api/moderation/pending',
+    '/api/game-data-actions/admin?status=all',
+    '/api/site-images',
+    '/api/uploads/rte-image',
+    'https://api.example.test/api/options',
+  ])('should never cache private API response %s', (url) => {
+    expect(findFirstMatchingRoute(url, '')?.handler.strategyName).toBe('NetworkOnly');
+  });
+
+  it.each([
+    '/api/articles',
+    '/api/articles/article-id',
+    '/api/articles/article-id/history',
+    '/api/categories',
+    '/api/comments?scope=article&targetId=article-id',
+    '/api/echoflow/items/cheese',
+    '/api/entities/export',
+    '/api/game-data-actions/public',
+    '/api/goto/cheese',
+    '/api/options',
+  ])('should cache explicitly public API response %s', (url) => {
+    const route = findFirstMatchingRoute(url, '');
+
+    expect(route?.handler.strategyName).toBe('NetworkFirst');
+    expect(route?.handler.options).toMatchObject({ cacheName: 'public-api-cache-v1' });
+  });
 });
