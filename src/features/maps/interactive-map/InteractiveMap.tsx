@@ -274,8 +274,8 @@ function MapGridBackground({ bounds, height, width }: MapGridBackgroundProps) {
             <path
               d='M 128 0 L 0 0 0 128'
               fill='none'
-              stroke='#94a3b8'
-              strokeOpacity='0.12'
+              stroke='#cbd5e1'
+              strokeOpacity='0.32'
               strokeWidth='1'
               vectorEffect='non-scaling-stroke'
             />
@@ -285,8 +285,8 @@ function MapGridBackground({ bounds, height, width }: MapGridBackgroundProps) {
             <path
               d='M 512 0 L 0 0 0 512'
               fill='none'
-              stroke='#cbd5e1'
-              strokeOpacity='0.24'
+              stroke='#f1f5f9'
+              strokeOpacity='0.6'
               strokeWidth='1.5'
               vectorEffect='non-scaling-stroke'
             />
