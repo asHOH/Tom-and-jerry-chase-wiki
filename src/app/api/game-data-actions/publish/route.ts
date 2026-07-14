@@ -5,6 +5,7 @@ import {
   publishGameDataActions,
   PublishGameDataActionsError,
 } from '@/lib/gameData/publishGameDataActions';
+import { publishNotification } from '@/lib/notificationUtils';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
 import { createClient } from '@/lib/supabase/server';
 import type { Json } from '@/data/database.types';
@@ -94,7 +95,37 @@ export async function POST(req: Request) {
 
   try {
     const supabase = await createClient();
+    const { data: claimsData } = await supabase.auth.getClaims();
+    const userId = claimsData?.claims.sub;
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const allResults = await publishGameDataActions(supabase, actionList, message);
+
+    const finalResults = allResults.filter(
+      (result) => result.status === 'approved' || result.status === 'rejected'
+    );
+    for (const status of ['approved', 'rejected'] as const) {
+      const matching = finalResults.filter((result) => result.status === status);
+      if (matching.length === 0) continue;
+      const approved = status === 'approved';
+      try {
+        await publishNotification({
+          recipientUserId: userId,
+          kind: approved ? 'game_data_action_approved' : 'game_data_action_rejected',
+          decisionOrigin: 'automatic',
+          title: approved ? '游戏数据改动已自动通过' : '游戏数据改动未通过',
+          body: approved
+            ? `您提交的 ${matching.length} 条游戏数据改动已自动通过审核。`
+            : `您提交的 ${matching.length} 条游戏数据改动未通过自动审核。`,
+          sourceIds: matching.map((result) => result.id),
+          dedupeKey: `game-data-actions:auto:${status}:${matching
+            .map((result) => result.id)
+            .sort()
+            .join(',')}`,
+        });
+      } catch (notificationError) {
+        console.error('Failed to publish automatic game data notification:', notificationError);
+      }
+    }
 
     return NextResponse.json({ result: allResults });
   } catch (err) {

@@ -8,25 +8,7 @@ import { characters } from '@/data';
 
 import { EditModeProvider, useEditMode } from './EditModeContext';
 
-const mockSuccessWithAction = jest.fn();
-const mockSuccess = jest.fn();
-const mockError = jest.fn();
 const mockShowToast = jest.fn();
-const mockIsPushSubscribedLocally = jest.fn();
-const mockSubscribeToPushNotifications = jest.fn();
-
-jest.mock('@/context/ToastContext', () => ({
-  useToast: () => ({
-    successWithAction: mockSuccessWithAction,
-    success: mockSuccess,
-    error: mockError,
-  }),
-}));
-
-jest.mock('@/lib/pushClient', () => ({
-  isPushSubscribedLocally: () => mockIsPushSubscribedLocally(),
-  subscribeToPushNotifications: () => mockSubscribeToPushNotifications(),
-}));
 
 jest.mock('next/navigation', () => ({
   usePathname: () => '/',
@@ -99,12 +81,7 @@ describe('EditModeProvider', () => {
 
   beforeEach(() => {
     characterSnapshot = structuredClone(characters) as Record<string, unknown>;
-    mockSuccessWithAction.mockClear();
-    mockSuccess.mockClear();
-    mockError.mockClear();
     mockShowToast.mockClear();
-    mockIsPushSubscribedLocally.mockReturnValue(true);
-    mockSubscribeToPushNotifications.mockResolvedValue(true);
     mockUseSearchParams.mockReturnValue(
       new URLSearchParams('edit=1') as ReturnType<typeof useSearchParams>
     );

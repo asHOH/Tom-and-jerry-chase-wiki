@@ -393,29 +393,77 @@ export type Database = {
           },
         ];
       };
-      push_subscriptions: {
+      notification_email_settings: {
         Row: {
+          user_id: string;
+          email: string | null;
+          email_enabled: boolean;
+          email_verified_at: string | null;
+          pending_email: string | null;
+          updated_at: string;
+          verification_expires_at: string | null;
+          verification_sent_at: string | null;
+          verification_token_hash: string | null;
+        };
+        Insert: {
+          user_id: string;
+          email?: string | null;
+          email_enabled?: boolean;
+          email_verified_at?: string | null;
+          pending_email?: string | null;
+          updated_at?: string;
+          verification_expires_at?: string | null;
+          verification_sent_at?: string | null;
+          verification_token_hash?: string | null;
+        };
+        Update: {
+          user_id?: string;
+          email?: string | null;
+          email_enabled?: boolean;
+          email_verified_at?: string | null;
+          pending_email?: string | null;
+          updated_at?: string;
+          verification_expires_at?: string | null;
+          verification_sent_at?: string | null;
+          verification_token_hash?: string | null;
+        };
+        Relationships: [];
+      };
+      notifications: {
+        Row: {
+          body: string;
           created_at: string;
-          endpoint: string;
+          dedupe_key: string;
+          href: string | null;
           id: string;
-          keys_auth: string;
-          keys_p256dh: string;
+          kind: string;
+          read_at: string | null;
+          source_ids: string[];
+          title: string;
           user_id: string;
         };
         Insert: {
+          body: string;
           created_at?: string;
-          endpoint: string;
+          dedupe_key: string;
+          href?: string | null;
           id?: string;
-          keys_auth: string;
-          keys_p256dh: string;
+          kind: string;
+          read_at?: string | null;
+          source_ids?: string[];
+          title: string;
           user_id: string;
         };
         Update: {
+          body?: string;
           created_at?: string;
-          endpoint?: string;
+          dedupe_key?: string;
+          href?: string | null;
           id?: string;
-          keys_auth?: string;
-          keys_p256dh?: string;
+          kind?: string;
+          read_at?: string | null;
+          source_ids?: string[];
+          title?: string;
           user_id?: string;
         };
         Relationships: [];
@@ -735,7 +783,10 @@ export type Database = {
           p_content: string;
           p_title: string;
         };
-        Returns: undefined;
+        Returns: {
+          submitted_status: Database['public']['Enums']['version_status'];
+          submitted_version_id: string;
+        }[];
       };
       update_category: {
         Args: {

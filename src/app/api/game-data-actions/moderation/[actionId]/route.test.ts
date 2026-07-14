@@ -2,7 +2,7 @@ import { revalidateTag } from 'next/cache';
 import type { NextRequest } from 'next/server';
 
 import { requireAbility } from '@/lib/auth/requireAbility';
-import { sendPushNotification } from '@/lib/push';
+import { publishNotification } from '@/lib/notificationUtils';
 
 const jsonResponse = (body: unknown, init?: { status?: number }) =>
   ({
@@ -26,12 +26,12 @@ jest.mock('@/lib/auth/requireAbility', () => ({
   requireAbility: jest.fn(),
 }));
 
-jest.mock('@/lib/push', () => ({
-  sendPushNotification: jest.fn(),
+jest.mock('@/lib/notificationUtils', () => ({
+  publishNotification: jest.fn(),
 }));
 
 const requireAbilityMock = jest.mocked(requireAbility);
-const sendPushNotificationMock = jest.mocked(sendPushNotification);
+const publishNotificationMock = jest.mocked(publishNotification);
 const revalidateTagMock = jest.mocked(revalidateTag);
 
 type SupabaseMockOptions = {
@@ -123,7 +123,11 @@ const createRequest = (action: string, body?: unknown) =>
 describe('game data action moderation route', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    sendPushNotificationMock.mockResolvedValue(undefined);
+    publishNotificationMock.mockResolvedValue({
+      created: true,
+      suppressed: false,
+      emailStatus: 'skipped',
+    });
   });
 
   it('marks approved actions as synced for coordinators', async () => {
@@ -156,6 +160,7 @@ describe('game data action moderation route', () => {
       ['status', 'approved'],
     ]);
     expect(revalidateTagMock).toHaveBeenCalledWith('public-game-data-actions', 'max');
+    expect(publishNotificationMock).not.toHaveBeenCalled();
   });
 
   it('keeps regular approve available to reviewers', async () => {
@@ -173,6 +178,13 @@ describe('game data action moderation route', () => {
       p_action_id: 'action-1',
     });
     expect(revalidateTagMock).toHaveBeenCalledWith('public-game-data-actions', 'max');
+    expect(publishNotificationMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        recipientUserId: 'user-2',
+        kind: 'game_data_action_approved',
+        decisionOrigin: 'manual',
+      })
+    );
   });
 
   it('keeps regular reject available to reviewers', async () => {
@@ -190,5 +202,12 @@ describe('game data action moderation route', () => {
       p_action_id: 'action-1',
       p_reason: '不通过',
     });
+    expect(publishNotificationMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        recipientUserId: 'user-2',
+        kind: 'game_data_action_rejected',
+        body: expect.stringContaining('不通过'),
+      })
+    );
   });
 });

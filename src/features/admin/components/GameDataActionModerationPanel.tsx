@@ -216,21 +216,27 @@ const GameDataActionModerationPanel = ({
 
     setModeratingActionId('batch');
 
-    const failures: ModerationFailure[] = [];
-    let successCount = 0;
-
     try {
-      for (const submission of selectedPendingActions) {
-        try {
-          await submitModerationRequest(submission.action_id, action, reason);
-          successCount += 1;
-        } catch (failure) {
-          failures.push({
-            actionId: submission.action_id,
-            message: getModerationFailureMessage(failure),
-          });
-        }
+      const response = await fetch('/api/game-data-actions/moderation/batch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          actionIds: selectedPendingActions.map((submission) => submission.action_id),
+          action,
+          ...(reason?.trim() ? { reason: reason.trim() } : {}),
+        }),
+      });
+      const result = (await response.json().catch(() => null)) as {
+        error?: string;
+        failures?: ModerationFailure[];
+        succeeded?: string[];
+      } | null;
+      if (!response.ok) {
+        throw new Error(result?.error || '批量操作失败');
       }
+
+      const failures = result?.failures ?? [];
+      const successCount = result?.succeeded?.length ?? 0;
 
       await mutatePendingActions();
 

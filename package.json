@@ -138,7 +138,6 @@
     "tailwind-merge": "^3.6.0",
     "usehooks-ts": "^3.1.1",
     "valtio": "^2.3.2",
-    "web-push": "^3.6.7",
     "zod": "^4.4.3"
   },
   "devDependencies": {
@@ -159,7 +158,6 @@
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@types/sanitize-html": "^2.16.1",
-    "@types/web-push": "^3.6.4",
     "babel-plugin-react-compiler": "^1.0.0",
     "cross-env": "^10.1.0",
     "esbuild": "^0.28.1",

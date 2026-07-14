@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Actions, Subjects } from '@/lib/auth/permissions';
 import { requireAbility } from '@/lib/auth/requireAbility';
 import { PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG } from '@/lib/gameData/publicActions';
-import { sendPushNotification } from '@/lib/push';
+import { publishNotification } from '@/lib/notificationUtils';
 import type { Database } from '@/data/database.types';
 
 type GameDataActionUpdate = Database['public']['Tables']['game_data_actions']['Update'];
@@ -109,11 +109,19 @@ export async function POST(
 
       revalidateTag(PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG, 'max');
       if (recordData?.created_by) {
-        await sendPushNotification(recordData.created_by, {
-          title: '审核通过',
-          body: `您的 ${recordData.entity_type || '数据'} 修改已通过审核。`,
-          url: '/admin',
-        });
+        try {
+          await publishNotification({
+            recipientUserId: recordData.created_by,
+            kind: 'game_data_action_approved',
+            decisionOrigin: 'manual',
+            title: '游戏数据改动审核通过',
+            body: `您的 ${recordData.entity_type || '数据'} 修改已通过审核。`,
+            sourceIds: [actionId],
+            dedupeKey: `game-data-action:${actionId}:approved`,
+          });
+        } catch (notificationError) {
+          console.error('Failed to publish game data approval notification:', notificationError);
+        }
       }
 
       return NextResponse.json({ message: 'Action approved', action, action_id: actionId });
@@ -133,11 +141,20 @@ export async function POST(
     }
 
     if (recordData?.created_by) {
-      await sendPushNotification(recordData.created_by, {
-        title: '修改被驳回',
-        body: `您的 ${recordData.entity_type || '数据'} 修改被驳回。`,
-        url: '/admin',
-      });
+      try {
+        const reasonSuffix = reason ? `原因：${reason}` : '';
+        await publishNotification({
+          recipientUserId: recordData.created_by,
+          kind: 'game_data_action_rejected',
+          decisionOrigin: 'manual',
+          title: '游戏数据改动未通过审核',
+          body: `您的 ${recordData.entity_type || '数据'} 修改未通过审核。${reasonSuffix}`,
+          sourceIds: [actionId],
+          dedupeKey: `game-data-action:${actionId}:rejected`,
+        });
+      } catch (notificationError) {
+        console.error('Failed to publish game data rejection notification:', notificationError);
+      }
     }
 
     return NextResponse.json({ message: 'Action rejected', action, action_id: actionId });

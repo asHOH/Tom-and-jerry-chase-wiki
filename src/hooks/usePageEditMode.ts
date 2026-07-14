@@ -25,10 +25,8 @@ import {
   PUBLISHABLE_ENTITY_TYPES,
   type PublishableEntityType,
 } from '@/lib/edit/editModeRegistry';
-import { isPushSubscribedLocally, subscribeToPushNotifications } from '@/lib/pushClient';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { useEditMode } from '@/context/EditModeContext';
-import { useToast } from '@/context/ToastContext';
 
 const entityRegistry = getEntityRegistrySnapshot();
 
@@ -81,7 +79,6 @@ function resolveDraftItemLabel(
  */
 export function usePageEditMode(options: PageEditModeOptions): PageEditModeResult {
   const { entityType, entityId, showToast } = options;
-  const { successWithAction, success, error: showError } = useToast();
   const entityKey = entityId.trim();
   const { isEditMode: originalIsEditMode, isPreviewMode } = useEditMode();
   const [isPublishing, setIsPublishing] = useState(false);
@@ -275,19 +272,7 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
         setDraftInfo(null);
         setActionCountTrigger((prev) => prev + 1);
 
-        if (!isPushSubscribedLocally()) {
-          successWithAction('改动已提交，等待审核。是否需要接收审核结果通知？', '订阅通知', () => {
-            subscribeToPushNotifications().then((isSuccess) => {
-              if (isSuccess) {
-                success('通知订阅成功！');
-              } else {
-                showError('通知订阅失败或被拒绝。');
-              }
-            });
-          });
-        } else if (showToast) {
-          showToast('改动已提交，等待审核');
-        }
+        if (showToast) showToast('改动已提交，等待审核');
 
         return true;
       } catch (e) {
@@ -298,7 +283,7 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
         setIsPublishing(false);
       }
     },
-    [entityType, entityKey, showToast, successWithAction, success, showError]
+    [entityType, entityKey, showToast]
   );
 
   return {

@@ -12,6 +12,7 @@ import { useFeatureDiscovery } from '@/hooks/useFeatureDiscovery';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useNavigationProgress } from '@/hooks/useNavigationProgress';
 import { useNavigationTabs } from '@/hooks/useNavigationTabs';
+import { useNotificationCount } from '@/hooks/useNotificationCount';
 import { useUser } from '@/hooks/useUser';
 import { useAppContext } from '@/context/AppContext';
 import { isNavGroup, NavEntry, NavItem } from '@/constants/navigation';
@@ -81,6 +82,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   const pathname = usePathname();
   const { isDetailedView, toggleDetailedView } = useAppContext();
   const { nickname, role, clearData: clearUserData } = useUser();
+  const unreadNotificationCount = useNotificationCount(!!nickname);
   const { items: rawItems, isActive } = useNavigationTabs();
   const isMobile = useMobile();
   const isMd = useMediaQuery('(min-width: 768px)', { initializeWithValue: false });
@@ -563,6 +565,19 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                     <ul className='py-1'>
                       <li className='px-4 py-2 text-sm text-gray-800 dark:text-gray-200'>
                         你好，{nickname}
+                      </li>
+                      <li>
+                        <Link
+                          href='/notifications/'
+                          className='flex items-center justify-between px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700'
+                        >
+                          <span>通知</span>
+                          {unreadNotificationCount > 0 && (
+                            <span className='rounded-full bg-red-500 px-2 py-0.5 text-xs font-semibold text-white'>
+                              {unreadNotificationCount > 99 ? '99+' : unreadNotificationCount}
+                            </span>
+                          )}
+                        </Link>
                       </li>
                       <li>
                         <button

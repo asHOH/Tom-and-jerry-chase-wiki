@@ -4,6 +4,7 @@ import { subject } from '@casl/ability';
 
 import { abilityFor, Actions, Subjects, type Role } from '@/lib/auth/permissions';
 import { CACHE_TAGS } from '@/lib/cacheTags';
+import { publishNotification } from '@/lib/notificationUtils';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { createClient } from '@/lib/supabase/server';
 
@@ -73,6 +74,31 @@ export async function POST(request: Request, { params }: { params: Promise<{ id?
     revalidateTag(CACHE_TAGS.articleVersions(id), 'max');
     revalidateTag(CACHE_TAGS.articles, 'max');
     revalidateTag(CACHE_TAGS.sitemapArticles, 'max');
+
+    const submittedVersion = data?.[0];
+    if (
+      submittedVersion &&
+      (submittedVersion.submitted_status === 'approved' ||
+        submittedVersion.submitted_status === 'rejected')
+    ) {
+      const approved = submittedVersion.submitted_status === 'approved';
+      try {
+        await publishNotification({
+          recipientUserId: userId,
+          kind: approved ? 'article_version_approved' : 'article_version_rejected',
+          decisionOrigin: 'automatic',
+          title: approved ? '文章修改已自动通过审核' : '文章修改未通过审核',
+          body: approved
+            ? `您对《${title}》的修改已自动通过审核并发布。`
+            : `您对《${title}》的修改未通过自动审核。`,
+          href: approved ? `/articles/${id}/` : '/articles/pending/',
+          sourceIds: [submittedVersion.submitted_version_id],
+          dedupeKey: `article-version:${submittedVersion.submitted_version_id}:${submittedVersion.submitted_status}`,
+        });
+      } catch (notificationError) {
+        console.error('Failed to publish automatic article edit notification:', notificationError);
+      }
+    }
 
     return NextResponse.json({ message: 'Article updated successfully', data }, { status: 200 });
   } catch (err) {

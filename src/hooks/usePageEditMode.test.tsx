@@ -7,25 +7,7 @@ import { characters } from '@/data';
 
 import { usePageEditMode } from './usePageEditMode';
 
-const mockSuccessWithAction = jest.fn();
-const mockSuccess = jest.fn();
-const mockError = jest.fn();
 const mockShowToast = jest.fn();
-const mockIsPushSubscribedLocally = jest.fn();
-const mockSubscribeToPushNotifications = jest.fn();
-
-jest.mock('@/context/ToastContext', () => ({
-  useToast: () => ({
-    successWithAction: mockSuccessWithAction,
-    success: mockSuccess,
-    error: mockError,
-  }),
-}));
-
-jest.mock('@/lib/pushClient', () => ({
-  isPushSubscribedLocally: () => mockIsPushSubscribedLocally(),
-  subscribeToPushNotifications: () => mockSubscribeToPushNotifications(),
-}));
 
 const TEST_CHARACTER_ID = '__page_edit_mode_character__';
 const marySpecialSkillsOriginal = [
@@ -80,12 +62,7 @@ describe('usePageEditMode', () => {
 
   beforeEach(() => {
     characterSnapshot = structuredClone(characters) as Record<string, unknown>;
-    mockSuccessWithAction.mockClear();
-    mockSuccess.mockClear();
-    mockError.mockClear();
     mockShowToast.mockClear();
-    mockIsPushSubscribedLocally.mockReturnValue(true);
-    mockSubscribeToPushNotifications.mockResolvedValue(true);
     window.localStorage.clear();
     global.fetch = jest.fn();
   });

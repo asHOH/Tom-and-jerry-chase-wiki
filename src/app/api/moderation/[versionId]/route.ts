@@ -7,7 +7,7 @@ import {
 import { Actions, Subjects } from '@/lib/auth/permissions';
 import { requireAbility } from '@/lib/auth/requireAbility';
 import { CACHE_TAGS, invalidateCache } from '@/lib/cacheTags';
-import { sendPushNotification } from '@/lib/push';
+import { publishNotification } from '@/lib/notificationUtils';
 
 export async function POST(
   request: NextRequest,
@@ -62,7 +62,7 @@ export async function POST(
       return NextResponse.json({ error: `Failed to ${action} article version` }, { status: 500 });
     }
 
-    // Best-effort: lookup article_id and author for targeted revalidation and push notification.
+    // Best-effort: lookup article_id and author for targeted revalidation and notification.
     try {
       const { data: versionRow, error: lookupError } = await supabase
         .from('article_versions')
@@ -71,7 +71,7 @@ export async function POST(
         .single();
 
       if (lookupError) {
-        console.error('Failed to lookup article for revalidation/push:', lookupError);
+        console.error('Failed to lookup article for revalidation/notification:', lookupError);
       } else if (versionRow) {
         const { article_id, editor_id, proposed_title } = versionRow;
         if (article_id) {
@@ -80,25 +80,19 @@ export async function POST(
           await invalidateCache(CACHE_TAGS.articleVersions(article_id), 'nuke');
         }
 
-        if (editor_id) {
-          let pushTitle = '审核结果';
-          let pushBody = `关于《${proposed_title || '文章'}》的审核已完成。`;
-
-          if (action === 'approve') {
-            pushTitle = '文章已发布';
-            pushBody = `您的文章《${proposed_title || '文章'}》已通过审核并发布！`;
-          } else if (action === 'reject') {
-            pushTitle = '文章已被驳回';
-            pushBody = `您的文章《${proposed_title || '文章'}》未通过审核，已被驳回。`;
-          } else if (action === 'revoke') {
-            pushTitle = '文章已被撤下';
-            pushBody = `您的文章《${proposed_title || '文章'}》已被撤下。`;
-          }
-
-          await sendPushNotification(editor_id, {
-            title: pushTitle,
-            body: pushBody,
-            url: article_id ? `/articles/${article_id}` : '/articles',
+        if (editor_id && (action === 'approve' || action === 'reject')) {
+          const approved = action === 'approve';
+          await publishNotification({
+            recipientUserId: editor_id,
+            kind: approved ? 'article_version_approved' : 'article_version_rejected',
+            decisionOrigin: 'manual',
+            title: approved ? '文章已通过审核' : '文章未通过审核',
+            body: approved
+              ? `您的文章《${proposed_title || '文章'}》已通过审核并发布。`
+              : `您的文章《${proposed_title || '文章'}》未通过审核。`,
+            href: approved && article_id ? `/articles/${article_id}/` : '/articles/pending/',
+            sourceIds: [versionId],
+            dedupeKey: `article-version:${versionId}:${approved ? 'approved' : 'rejected'}`,
           });
         }
       }
