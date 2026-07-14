@@ -25,6 +25,7 @@ import {
   useMap,
   useMapEvents,
 } from 'react-leaflet';
+import useSWR from 'swr';
 
 import type {
   InteractiveMapConfig,
@@ -45,6 +46,7 @@ import {
   getDefaultMapPointRelatedEntries,
   getInteractiveMapAssetUrl,
   getMapBounds,
+  getMapPointRelatedEntryDescriptionUrl,
   getMapPointScale,
   getRoomCenter,
   isMinimapPointVisible,
@@ -57,6 +59,8 @@ import {
 } from './mapUtils';
 
 import 'leaflet/dist/leaflet.css';
+
+import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 
 type InteractiveMapProps = {
   config: InteractiveMapConfig;
@@ -79,6 +83,24 @@ const CATEGORY_ICONS: Partial<Record<MapPointCategory, string>> = {
 
 const FILTER_STORAGE_KEY = 'interactive-map:visible-categories';
 const HOTSPOT_CATEGORIES = new Set<MapPointCategory>(['teleport', ...ALWAYS_VISIBLE_CATEGORIES]);
+
+const fetchRelatedEntryDescription = async (url: string): Promise<string | undefined> => {
+  const response = await fetch(url);
+  if (!response.ok) return undefined;
+
+  const result: unknown = await response.json();
+  if (
+    result &&
+    typeof result === 'object' &&
+    'description' in result &&
+    typeof result.description === 'string' &&
+    result.description.trim()
+  ) {
+    return result.description;
+  }
+
+  return undefined;
+};
 
 type ConnectionHighlight = 'endpoint' | 'unrelated' | undefined;
 
@@ -1532,6 +1554,21 @@ function PointDetails({
   onNavigateToConnectedPoint: () => void;
   onClose: () => void;
 }) {
+  const hasCustomDescription = Boolean(point.description?.trim());
+  const relatedEntry = point.relatedEntries?.[0];
+  const relatedEntryDescriptionUrl =
+    !hasCustomDescription && relatedEntry
+      ? getMapPointRelatedEntryDescriptionUrl(relatedEntry)
+      : null;
+  const { data: relatedEntryDescription, isLoading: isRelatedEntryDescriptionLoading } = useSWR<
+    string | undefined
+  >(relatedEntryDescriptionUrl, fetchRelatedEntryDescription);
+
+  const description = hasCustomDescription
+    ? point.description
+    : (relatedEntryDescription ??
+      (isRelatedEntryDescriptionLoading ? '' : isEditMode ? '请在标注面板中补充介绍。' : ''));
+
   return (
     <aside className='absolute right-0 bottom-0 left-0 z-700 max-h-[52%] overflow-auto rounded-t-2xl bg-white p-5 text-slate-900 shadow-2xl md:top-0 md:left-auto md:h-full md:max-h-none md:w-80 md:rounded-none md:pt-14 dark:bg-slate-900 dark:text-white'>
       <button
@@ -1576,7 +1613,7 @@ function PointDetails({
         </div>
       )}
       <p className='mt-4 text-sm leading-6 whitespace-pre-wrap text-slate-700 dark:text-slate-200'>
-        {point.description || (isEditMode ? '请在标注面板中补充介绍。' : '暂无介绍。')}
+        <TextWithHoverTooltips text={description ?? ''} />
       </p>
       {point.relatedEntries && point.relatedEntries.length > 0 && (
         <div className='mt-4 grid gap-2'>

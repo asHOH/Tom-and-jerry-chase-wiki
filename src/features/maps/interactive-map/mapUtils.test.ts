@@ -9,6 +9,7 @@ import {
   getConnectedMapPoint,
   getDefaultMapPointRelatedEntries,
   getInteractiveMapAssetUrl,
+  getMapPointRelatedEntryDescriptionUrl,
   getMapPointScale,
   getRoomCenter,
   isMinimapPointVisible,
@@ -76,6 +77,12 @@ describe('interactive map utilities', () => {
     expect(
       getDefaultMapPointRelatedEntries({ category: 'specialMode', subtype: '经典奶酪赛' })
     ).toEqual([{ name: '经典奶酪赛', type: 'mode' }]);
+  });
+
+  it('should build a description lookup URL for a related wiki entry', () => {
+    expect(getMapPointRelatedEntryDescriptionUrl({ name: '奶酪', type: 'item' })).toBe(
+      '/api/goto/%E5%A5%B6%E9%85%AA?category=%E9%81%93%E5%85%B7&descMode=description'
+    );
   });
 
   it('should leave point categories without a wiki entry unlinked', () => {

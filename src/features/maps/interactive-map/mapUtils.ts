@@ -1,3 +1,4 @@
+import type { CategoryHint } from '@/lib/types';
 import type {
   InteractiveMapConfig,
   InteractiveMapPoint,
@@ -54,6 +55,49 @@ export const getDefaultMapPointRelatedEntries = (
 
   const defaultEntry = DEFAULT_MAP_POINT_RELATED_ENTRIES[point.category];
   return defaultEntry ? [defaultEntry] : [];
+};
+
+const getMapPointRelatedEntryCategoryHint = (
+  entry: SingleItemOrGroup
+): CategoryHint | undefined => {
+  const factionId = 'factionId' in entry ? entry.factionId : undefined;
+
+  switch (entry.type) {
+    case 'character':
+      return factionId === 'cat' ? '猫角色' : factionId === 'mouse' ? '鼠角色' : undefined;
+    case 'knowledgeCard':
+      return factionId === 'cat' ? '猫知识卡' : factionId === 'mouse' ? '鼠知识卡' : '知识卡';
+    case 'specialSkill':
+      return factionId === 'cat' ? '猫特技' : factionId === 'mouse' ? '鼠特技' : '特技';
+    case 'item':
+      return '道具';
+    case 'entity':
+      return '衍生物';
+    case 'buff':
+      return '状态';
+    case 'map':
+      return '地图';
+    case 'fixture':
+      return '地图组件';
+    case 'mode':
+      return '游戏模式';
+    case 'achievement':
+      return '对局成就';
+    case 'itemGroup':
+      return '组合';
+    case 'skill':
+      return '技能';
+  }
+
+  return undefined;
+};
+
+export const getMapPointRelatedEntryDescriptionUrl = (entry: SingleItemOrGroup): string => {
+  const params = new URLSearchParams();
+  const categoryHint = getMapPointRelatedEntryCategoryHint(entry);
+  if (categoryHint) params.set('category', categoryHint);
+  params.set('descMode', 'description');
+  return `/api/goto/${encodeURIComponent(entry.name)}?${params.toString()}`;
 };
 
 export const getInteractiveMapAssetUrl = (
