@@ -2,11 +2,11 @@ import { execFileSync } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
-import { EXCLUDED_CHARACTER_ROLE_NAMES } from '../src/features/actor-profiles/normalization';
+import { EXCLUDED_ACTOR_PROFILE_NAMES } from '../src/features/actor-profiles/normalization';
 import { assertValidActorProfiles } from '../src/features/actor-profiles/schema';
 import {
   getActorProfileReferences,
-  getPlayableCharacterRoles,
+  getPlayableCharacterRefs,
 } from './actor-profile-validation-context';
 
 const CANONICAL_PATH = resolve(
@@ -18,9 +18,9 @@ const RAW_PATH = 'src/data/roles.json';
 const main = async () => {
   const canonicalInput = JSON.parse(await readFile(CANONICAL_PATH, 'utf8')) as unknown;
   const roles = assertValidActorProfiles(canonicalInput, {
-    playableCharacters: getPlayableCharacterRoles(),
+    playableCharacters: getPlayableCharacterRefs(),
     references: await getActorProfileReferences(),
-    excludedNames: EXCLUDED_CHARACTER_ROLE_NAMES,
+    excludedNames: EXCLUDED_ACTOR_PROFILE_NAMES,
   });
 
   const trackedRawPath = execFileSync('git', ['ls-files', '--', RAW_PATH], {

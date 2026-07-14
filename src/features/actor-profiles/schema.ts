@@ -229,7 +229,7 @@ function assertEnum<T extends string | number>(
   }
 }
 
-export const normalizeCharacterRoleName = (name: string): string => {
+export const normalizeActorProfileName = (name: string): string => {
   if (name === '表演者▪杰瑞') return '表演者•杰瑞';
   if (name === '\\"正气守护\\"斯派克') return '“正气守护”斯派克';
   return name;
@@ -332,7 +332,7 @@ export const assertValidActorProfiles = (
   const rolesByName = new Map<string, ActorProfile>();
 
   for (const role of roles) {
-    if (role.name.trim() !== role.name || normalizeCharacterRoleName(role.name) !== role.name) {
+    if (role.name.trim() !== role.name || normalizeActorProfileName(role.name) !== role.name) {
       fail(`role ${role.name}`, 'name is not normalized');
     }
     if (rolesByName.has(role.name)) fail(`role ${role.name}`, 'duplicate normalized name');
@@ -359,7 +359,7 @@ export const assertValidActorProfiles = (
 
   for (const reference of context.references) {
     if (reference.hasLegacyRepresentation) {
-      fail(reference.source, 'cannot combine characterRoleName with a legacy representation');
+      fail(reference.source, 'cannot combine actorProfileName with a legacy representation');
     }
     if (context.excludedNames.has(reference.name)) {
       fail(reference.source, `references excluded role ${reference.name}`);

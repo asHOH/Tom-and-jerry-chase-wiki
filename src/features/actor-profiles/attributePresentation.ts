@@ -1,15 +1,15 @@
-type CharacterRoleAttributePresentation = {
+type ActorAttributePresentation = {
   label: string;
   tooltip: string;
   suffix?: string;
   numeric: boolean;
 };
 
-const defineCharacterRoleAttributeMeta = <TKey extends string>(
-  metadata: Record<TKey, CharacterRoleAttributePresentation>
-): Readonly<Record<TKey, CharacterRoleAttributePresentation>> => metadata;
+const defineActorAttributePresentation = <TKey extends string>(
+  metadata: Record<TKey, ActorAttributePresentation>
+): Readonly<Record<TKey, ActorAttributePresentation>> => metadata;
 
-export const ACTOR_ATTRIBUTE_PRESENTATION = defineCharacterRoleAttributeMeta({
+export const ACTOR_ATTRIBUTE_PRESENTATION = defineActorAttributePresentation({
   actorType: {
     label: '角色类型',
     tooltip: '角色类型：猫、鼠、特殊角色',

@@ -7,7 +7,7 @@ import {
 } from '../src/features/actor-profiles/normalization';
 import {
   getActorProfileReferences,
-  getPlayableCharacterRoles,
+  getPlayableCharacterRefs,
 } from './actor-profile-validation-context';
 
 const OUTPUT_PATH = resolve(process.cwd(), 'src/features/actor-profiles/data/actorProfiles.json');
@@ -21,7 +21,7 @@ const main = async () => {
   const inputPath = resolve(process.cwd(), inputArguments[0]);
   const rawInput = JSON.parse(await readFile(inputPath, 'utf8')) as unknown;
   const roles = normalizeActorProfiles(rawInput, {
-    playableCharacters: getPlayableCharacterRoles(),
+    playableCharacters: getPlayableCharacterRefs(),
     references: await getActorProfileReferences(),
   });
   const serializedProfiles = serializeActorProfiles(roles);

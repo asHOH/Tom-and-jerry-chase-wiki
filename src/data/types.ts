@@ -252,7 +252,7 @@ export type ItemDefinition = {
   teamCD?: boolean; //if item's CD in store is team shared
   exp?: number; //(cat) get exp when item hit mouse
 
-  characterRoleName?: string;
+  actorProfileName?: string;
 
   itemAttributesAsCharacter?: ItemAttributesAsCharacter;
   specialImageUrl?: string; // use other image instead of buff's image
@@ -302,7 +302,7 @@ export type EntityDefinition = {
   skills?: (SkillDefinition & { cooldown?: number })[]; // cooldown: optional fallback CD when level data omits cooldown
   specialImageUrl?: string; // (interim) use other image instead of entity's missing image
 
-  characterRoleName?: string;
+  actorProfileName?: string;
 
   entityAttributesAsCharacter?: ItemAttributesAsCharacter;
 } & PhysicalAttributes;
@@ -561,7 +561,7 @@ export type FixtureDefinition = {
   description?: string;
   detailedDescription?: string;
 
-  characterRoleName?: string;
+  actorProfileName?: string;
 
   fixtureAttributesAsCharacter?: ItemAttributesAsCharacter;
 

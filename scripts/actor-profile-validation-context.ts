@@ -11,7 +11,7 @@ import {
 } from '../src/features/characters/data/characterMetadata';
 
 type RoleReferencingDefinition = {
-  characterRoleName?: string;
+  actorProfileName?: string;
   itemAttributesAsCharacter?: unknown;
   entityAttributesAsCharacter?: unknown;
   fixtureAttributesAsCharacter?: unknown;
@@ -37,20 +37,20 @@ const collectReferences = (
     'itemAttributesAsCharacter' | 'entityAttributesAsCharacter' | 'fixtureAttributesAsCharacter'
 ): ActorProfileReference[] =>
   Object.entries(definitions).flatMap(([name, definition]) => {
-    if (definition.characterRoleName === undefined) return [];
-    if (typeof definition.characterRoleName !== 'string') {
-      throw new Error(`${collectionName} ${name}: characterRoleName must be a string`);
+    if (definition.actorProfileName === undefined) return [];
+    if (typeof definition.actorProfileName !== 'string') {
+      throw new Error(`${collectionName} ${name}: actorProfileName must be a string`);
     }
     return [
       {
         source: `${collectionName} ${name}`,
-        name: definition.characterRoleName,
+        name: definition.actorProfileName,
         hasLegacyRepresentation: definition[legacyKey] !== undefined,
       },
     ];
   });
 
-export const getPlayableCharacterRoles = (): readonly PlayableCharacterRef[] => [
+export const getPlayableCharacterRefs = (): readonly PlayableCharacterRef[] => [
   ...catCharacterIds.map((id) => ({ id, factionId: 'cat' as const })),
   ...mouseCharacterIds.map((id) => ({ id, factionId: 'mouse' as const })),
 ];

@@ -132,7 +132,7 @@ export default function TextWithHoverTooltips({ text: rawText }: TextWithHoverTo
         tokenCount: parsedText.tokens.length,
         intermediatePartCount: intermediateParts.length,
         finalPartCount: renderedParts.length,
-        characterRoleAvailable: role !== undefined,
+        actorProfileAvailable: role !== undefined,
       });
     }
 

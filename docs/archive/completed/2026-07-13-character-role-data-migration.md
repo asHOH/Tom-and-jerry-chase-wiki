@@ -142,7 +142,7 @@ unknown punctuation:
 - Normalize the escaped raw identifier `\"正气守护\"斯派克` and its site reference to one canonical
   identifier using Chinese quotation marks.
 - Explicitly exclude the near-empty `火箭` role record with a documented reason.
-- Remove `characterRoleName: '火箭'` from the item definition in the same commit. Preserve all
+- Remove `actorProfileName: '火箭'` from the item definition in the same commit. Preserve all
   existing ordinary item data for `火箭`; its page must no longer render a role-attributes panel.
 - Do not use a generic “too few fields” filter that could silently discard future broken records.
 
@@ -160,10 +160,10 @@ Validation must:
   the domain establishes applicability. In particular, playable cats must have their applicable
   attack fields and playable mice must have their applicable cheese-pushing fields.
 - Require negative, nonzero gravity so derived jump height is finite.
-- Verify that every playable character and every remaining `characterRoleName` reference resolves.
-- Verify that excluded records, including `火箭`, have no remaining `characterRoleName` reference.
+- Verify that every playable character and every remaining `actorProfileName` reference resolves.
+- Verify that excluded records, including `火箭`, have no remaining `actorProfileName` reference.
 - Reject definitions that contain both a legacy character-like representation and
-  `characterRoleName`.
+  `actorProfileName`.
 
 Add explicit package scripts such as `normalize:character-roles` and
 `validate:character-roles`. Enforcement is fail-fast at every boundary that consumes or produces the
@@ -220,7 +220,7 @@ Refactor `ActorAttributesSection` in this same commit to:
 Use explicit presentation contexts:
 
 ```ts
-type CharacterRoleAttributesContext = 'character' | 'object';
+type ActorAttributesSectionContext = 'character' | 'object';
 ```
 
 On character detail pages:
@@ -380,7 +380,7 @@ Delete unused UI after migration:
 
 Leave the remaining legacy `entityAttributesAsCharacter` records in place until canonical source
 data exists for them. Keep validation that prevents an entry from using both that legacy
-representation and `characterRoleName`.
+representation and `actorProfileName`.
 
 ## Required final coverage
 

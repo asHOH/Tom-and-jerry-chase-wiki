@@ -1,6 +1,6 @@
 import {
   assertValidActorProfiles,
-  normalizeCharacterRoleName,
+  normalizeActorProfileName,
   parseRawActorProfiles,
   type ActorProfile,
   type ActorProfileValidationContext,
@@ -9,7 +9,7 @@ import {
   type RawActorProfile,
 } from './schema';
 
-export const EXCLUDED_CHARACTER_ROLE_NAMES = new Set(['火箭']);
+export const EXCLUDED_ACTOR_PROFILE_NAMES = new Set(['火箭']);
 
 const ROLE_TYPES: Readonly<Record<0 | 1 | 2, ActorType>> = {
   0: 'mouse',
@@ -88,7 +88,7 @@ const normalizeRole = (role: RawActorProfile): ActorProfile => {
   const initialItem = normalizeInitialItem(role);
 
   return {
-    name: normalizeCharacterRoleName(role.name),
+    name: normalizeActorProfileName(role.name),
     actorType: ROLE_TYPES[actorType],
     physicsType: PHYSICS_TYPES[physicsTag],
     sex: SEXES[sex],
@@ -137,7 +137,7 @@ export const normalizeActorProfiles = (
   const includedProfiles: ActorProfile[] = [];
 
   for (const rawRole of rawProfiles) {
-    const normalizedName = normalizeCharacterRoleName(rawRole.name);
+    const normalizedName = normalizeActorProfileName(rawRole.name);
     if (normalizedName.trim() !== normalizedName) {
       throw new Error(`role ${rawRole.name}: name contains surrounding whitespace`);
     }
@@ -170,7 +170,7 @@ export const normalizeActorProfiles = (
 
   return assertValidActorProfiles(roles, {
     ...context,
-    excludedNames: EXCLUDED_CHARACTER_ROLE_NAMES,
+    excludedNames: EXCLUDED_ACTOR_PROFILE_NAMES,
   });
 };
 

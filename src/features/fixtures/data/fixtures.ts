@@ -418,7 +418,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
       '小黄鸭会在局内游荡，接触猫/鼠时提供一件对其阵营有益的道具（有内置CD）。小黄鸭会显示在放大后的小地图上。',
     detailedDescription:
       '小黄鸭会[在局内四处游荡](每张地图小黄鸭的生成位置固定，但移动路线随机，寻路机制与人工智能角色类似。小黄鸭不会使用管道，这会导致他在熊猫馆等地图被困住)，且会自动打开{木门}；接触猫咪/[老鼠](包括被绑在火箭上的老鼠)时在自身位置生成一件对其阵营有益的道具（有45秒内置CD，CD期间接触任何角色均不会提供道具）。小黄鸭会显示在放大后的小地图上。\n猫方道具：{老鼠夹}、{苍蝇拍}。\n鼠方道具：{冰块}、{灰花瓶}、{遥控器}、{玩具枪}（低概率）。\n\n现版本小黄鸭不会被爪刀攻击，也通常不与其它物体产生碰撞，但由于旧版本碰撞逻辑暂未完全迭代，目前仍有部分技能效果会与其碰撞或触发其攻击效果。\n旧版本“寻仇”机制：小黄鸭被攻击后，会尝试追击攻击者，掏出木锤攻击范围内所有角色，造成{眩晕}。若3次攻击仍未命中攻击者，或累计追击过长时间，或再被攻击3次，则小黄鸭将放弃寻仇。',
-    characterRoleName: '小黄鸭',
+    actorProfileName: '小黄鸭',
   },
   斯派克: {
     type: 'NPC',
@@ -775,7 +775,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
       '角色可通过交互钻进并操控盔甲人移动和攻击。盔甲人的攻击会对面前角色造成一定伤害和强力控制效果。盔甲人可被攻击并击毁。',
     detailedDescription:
       '盔甲人初始为未被穿戴状态，角色可与该状态的盔甲人交互，{变身}为该盔甲人。\n盔甲人可自由移动，免疫部分负面效果，但跳跃高度相比正常角色更低。盔甲人可挥剑进行攻击，对面前敌方造成高额伤害，对老鼠额外造成长时间{眩晕}，对猫咪额外造成强力{减速}。\n每具盔甲人拥有99点独立Hp，被穿戴状态下可被敌方道具和爪刀攻击，Hp归零时被击毁并使其内角色掉出。未被穿戴状态的盔甲人无法被攻击。\n角色可通过额外技能离开盔甲人，该盔甲人的Hp会被保留。\n变身及解除变身时有一定时间的前摇。',
-    characterRoleName: '盔甲人',
+    actorProfileName: '盔甲人',
   },
   盔甲兵: {
     type: ['组件类'],
@@ -1265,7 +1265,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     description:
       '鸭爸爸与{鸭妈妈}一同出现，在主人房区域内游荡。当一方受到攻击时，另一方会尝试追击攻击者，直到攻击落空数次或攻击者离开主人房范围。攻击将使范围内的所有角色在一段时间内降低跳跃能力。',
     specialImageUrl: '/images/maps/%E6%A3%AE%E6%9E%97%E7%89%A7%E5%9C%BA.png',
-    characterRoleName: '鸭爸爸',
+    actorProfileName: '鸭爸爸',
   },
   鸭妈妈: {
     type: 'NPC',
@@ -1277,7 +1277,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     description:
       '鸭妈妈与{鸭爸爸}一同出现，在主人房区域内游荡。当一方受到攻击时，另一方会尝试追击攻击者，直到攻击落空数次或攻击者离开主人房范围。攻击将使范围内的所有角色在一段时间内降低跳跃能力。',
     specialImageUrl: '/images/maps/%E6%A3%AE%E6%9E%97%E7%89%A7%E5%9C%BA.png',
-    characterRoleName: '鸭妈妈',
+    actorProfileName: '鸭妈妈',
   },
   红色花: {
     type: ['组件类', '可交互'],
@@ -1541,7 +1541,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     supportedMaps: ['熊猫馆'],
     description:
       '小熊猫在熊猫家园区域内嬉戏。当小熊猫接触到{熊猫食物}时，将原地将其吃掉，随后为周围的角色施加增益状态。',
-    //考虑到实际情况，未添加characterRoleName属性
+    //考虑到实际情况，未添加actorProfileName属性
   },
   '调料罐-油': {
     type: ['平台类', '组件类'],

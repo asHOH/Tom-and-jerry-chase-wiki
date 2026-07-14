@@ -711,7 +711,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
     move: true,
     gravity: true,
     collision: ['道具', '墙壁', '平台', '地面'],
-    characterRoleName: '电风扇',
+    actorProfileName: '电风扇',
   },
   净化萝卜: {
     itemtype: '特殊类' as const,

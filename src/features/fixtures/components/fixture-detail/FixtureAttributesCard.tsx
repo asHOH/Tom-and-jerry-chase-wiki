@@ -9,7 +9,7 @@ import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { Fixture } from '@/data/types';
-import CharacterRoleAttributes from '@/features/actor-profiles/components/ActorAttributesSection';
+import ActorAttributesSection from '@/features/actor-profiles/components/ActorAttributesSection';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
 import AddAliasButton from '@/features/shared/detail-view/AddAliasButton';
 import AttributesCardLayout from '@/features/shared/detail-view/AttributesCardLayout';
@@ -148,10 +148,10 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
             intro='该物件特性与'
             isDetailed={isDetailed}
           />
-          {effectiveFixture.characterRoleName !== undefined ? (
+          {effectiveFixture.actorProfileName !== undefined ? (
             <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
               <span className='text-sm font-bold'>该物件属于特殊角色，具有以下属性：</span>
-              <CharacterRoleAttributes name={effectiveFixture.characterRoleName} context='object' />
+              <ActorAttributesSection name={effectiveFixture.actorProfileName} context='object' />
             </div>
           ) : null}
           <PhysicalAttributesSection
