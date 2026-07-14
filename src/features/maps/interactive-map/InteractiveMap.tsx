@@ -1521,12 +1521,12 @@ function PointDetails({
   onClose: () => void;
 }) {
   return (
-    <aside className='absolute right-0 bottom-0 left-0 z-700 max-h-[52%] overflow-auto rounded-t-2xl bg-white p-5 text-slate-900 shadow-2xl md:top-0 md:left-auto md:h-full md:max-h-none md:w-80 md:rounded-none dark:bg-slate-900 dark:text-white'>
+    <aside className='absolute right-0 bottom-0 left-0 z-700 max-h-[52%] overflow-auto rounded-t-2xl bg-white p-5 text-slate-900 shadow-2xl md:top-0 md:left-auto md:h-full md:max-h-none md:w-80 md:rounded-none md:pt-14 dark:bg-slate-900 dark:text-white'>
       <button
         type='button'
         onClick={onClose}
         aria-label='关闭点位介绍'
-        className='absolute top-3 right-3 text-2xl'
+        className='absolute top-3 right-3 rounded-full bg-slate-200/90 px-2 text-2xl leading-none text-slate-700 shadow-sm md:right-auto md:left-3 dark:bg-slate-800/90 dark:text-white'
       >
         ×
       </button>
