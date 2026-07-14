@@ -36,7 +36,7 @@ describe('preprocessText', () => {
 });
 
 describe('resolveCharacterExpression', () => {
-  it('resolves covered placeholders from canonical role data', () => {
+  it('resolves covered placeholders from canonical actor profile data', () => {
     expect(resolveCharacterExpression(':maxHp', characters['侦探汤姆'])).toBe(225);
     expect(resolveCharacterExpression(':jumpHeight', characters['汤姆'])).toBe(483);
     expect(resolveCharacterExpression(':clawKnifeCdUnhit', characters['如玉'])).toBe(0.8);

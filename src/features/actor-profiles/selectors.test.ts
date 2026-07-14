@@ -13,10 +13,10 @@ import {
   isFactionDisplayedGravityUniform,
 } from '.';
 
-describe('character role domain', () => {
-  it('should strictly resolve canonical roles', () => {
+describe('actor profile domain', () => {
+  it('should strictly resolve canonical profiles', () => {
     expect(getActorProfile('汤姆').name).toBe('汤姆');
-    expect(() => getActorProfile('不存在的角色')).toThrow('Missing canonical character role');
+    expect(() => getActorProfile('不存在的角色')).toThrow('Missing canonical actor profile');
   });
 
   it('should calculate one integer jump height selector', () => {
@@ -49,14 +49,14 @@ describe('character role domain', () => {
     ).toBe(false);
   });
 
-  it('should join by character id without inferring faction from role fields', () => {
+  it('should join by character id without inferring faction from profile fields', () => {
     const profile = getActorProfileForCharacter({ id: '兔子大表哥', factionId: 'mouse' });
 
     expect(profile.actorType).toBe('special');
     expect(profile.physicsType).toBe('cat');
   });
 
-  it('should provide a tooltip for every role attribute key', () => {
+  it('should provide presentation metadata for every actor attribute key', () => {
     expect(Object.keys(ACTOR_ATTRIBUTE_PRESENTATION).sort()).toEqual(
       [...ACTOR_ATTRIBUTE_KEYS].sort()
     );

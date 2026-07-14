@@ -11,7 +11,7 @@ import {
 
 export const EXCLUDED_ACTOR_PROFILE_NAMES = new Set(['火箭']);
 
-const ROLE_TYPES: Readonly<Record<0 | 1 | 2, ActorType>> = {
+const ACTOR_TYPES: Readonly<Record<0 | 1 | 2, ActorType>> = {
   0: 'mouse',
   1: 'cat',
   2: 'special',
@@ -91,7 +91,7 @@ const normalizeProfile = (profile: RawActorProfile): ActorProfile => {
 
   return {
     name: normalizeActorProfileName(profile.name),
-    actorType: ROLE_TYPES[actorType],
+    actorType: ACTOR_TYPES[actorType],
     physicsType: PHYSICS_TYPES[physicsTag],
     sex: SEXES[sex],
     size: parseSize(profile),

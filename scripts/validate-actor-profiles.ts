@@ -17,7 +17,7 @@ const RAW_PATH = 'src/data/roles.json';
 
 const main = async () => {
   const canonicalInput = JSON.parse(await readFile(CANONICAL_PATH, 'utf8')) as unknown;
-  const roles = assertValidActorProfiles(canonicalInput, {
+  const profiles = assertValidActorProfiles(canonicalInput, {
     playableCharacters: getPlayableCharacterRefs(),
     references: await getActorProfileReferences(),
     excludedNames: EXCLUDED_ACTOR_PROFILE_NAMES,
@@ -29,7 +29,7 @@ const main = async () => {
   if (trackedRawPath.length > 0) throw new Error(`${RAW_PATH} must not be tracked`);
 
   execFileSync('git', ['check-ignore', '--quiet', '--', RAW_PATH]);
-  console.log(`Validated ${roles.length} canonical actor profiles`);
+  console.log(`Validated ${profiles.length} canonical actor profiles`);
 };
 
 await main();

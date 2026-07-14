@@ -196,7 +196,7 @@ const AttackCooldownValue = ({
 };
 
 const createDisplayedActorAttributes = (
-  role: ActorProfile,
+  profile: ActorProfile,
   context: ActorContext,
   factionId: FactionId | undefined,
   EnglishName: string | undefined,
@@ -209,79 +209,84 @@ const createDisplayedActorAttributes = (
   return [
     {
       key: 'actorType',
-      value: isObject ? formatActorType(role.actorType) : undefined,
+      value: isObject ? formatActorType(profile.actorType) : undefined,
     },
     {
       key: 'physicsType',
-      value: isObject ? formatActorPhysicsType(role.physicsType) : undefined,
+      value: isObject ? formatActorPhysicsType(profile.physicsType) : undefined,
     },
-    { key: 'sex', value: formatActorSex(role.sex) },
+    { key: 'sex', value: formatActorSex(profile.sex) },
     { key: 'EnglishName', value: EnglishName },
     {
       key: 'maxHp',
-      value: formatActorAttributeNumber(role.maxHp),
+      value: formatActorAttributeNumber(profile.maxHp),
     },
     {
       key: 'hpRecovery',
-      value: formatActorAttributeNumber(role.hpRecovery),
+      value: formatActorAttributeNumber(profile.hpRecovery),
     },
     {
       key: 'runSpeed',
-      value: formatActorAttributeNumber(role.runSpeed),
+      value: formatActorAttributeNumber(profile.runSpeed),
     },
     {
       key: 'jumpSpeed',
-      value: formatActorAttributeNumber(role.jumpSpeed),
+      value: formatActorAttributeNumber(profile.jumpSpeed),
     },
-    { key: 'size', value: formatActorSize(role.size) },
+    { key: 'size', value: formatActorSize(profile.size) },
     {
       key: 'climbSpeed',
-      value: formatActorAttributeNumber(role.climbSpeed),
+      value: formatActorAttributeNumber(profile.climbSpeed),
     },
     {
       key: 'visionScale',
-      value: formatActorAttributeNumber(role.visionScale),
+      value: formatActorAttributeNumber(profile.visionScale),
     },
     {
       key: 'gravity',
-      value: hideGravity ? undefined : formatActorAttributeNumber(getDisplayedActorGravity(role)),
+      value: hideGravity
+        ? undefined
+        : formatActorAttributeNumber(getDisplayedActorGravity(profile)),
     },
     {
       key: 'attack',
       value:
-        isObject || isMouseCharacter || role.attack !== 0 ? optionalNumber(role.attack) : undefined,
+        isObject || isMouseCharacter || profile.attack !== 0
+          ? optionalNumber(profile.attack)
+          : undefined,
     },
     {
       key: 'wallDamage',
-      value: isObject || isMouseCharacter ? formatActorAttributeNumber(role.wallDamage) : undefined,
+      value:
+        isObject || isMouseCharacter ? formatActorAttributeNumber(profile.wallDamage) : undefined,
     },
     {
       key: 'attackRange',
-      value: isObject || isCatCharacter ? optionalNumber(role.attackRange) : undefined,
+      value: isObject || isCatCharacter ? optionalNumber(profile.attackRange) : undefined,
     },
     {
       key: 'attackCooldown',
-      value: isObject || isCatCharacter ? role.attackCooldown : undefined,
+      value: isObject || isCatCharacter ? profile.attackCooldown : undefined,
       renderKind: 'attackCooldown',
     },
     {
       key: 'pushCheeseSpeed',
-      value: isObject || isMouseCharacter ? optionalNumber(role.pushCheeseSpeed) : undefined,
+      value: isObject || isMouseCharacter ? optionalNumber(profile.pushCheeseSpeed) : undefined,
     },
     {
       key: 'initialItem',
       value:
-        isObject || (isCatCharacter && role.initialItem !== '老鼠夹')
-          ? role.initialItem
+        isObject || (isCatCharacter && profile.initialItem !== '老鼠夹')
+          ? profile.initialItem
           : undefined,
     },
     {
       key: 'deformCooldown',
-      value: optionalNumber(role.deformCooldown),
+      value: optionalNumber(profile.deformCooldown),
     },
     {
       key: 'shoppingDelay',
-      value: isObject || isCatCharacter ? optionalNumber(role.shoppingDelay) : undefined,
+      value: isObject || isCatCharacter ? optionalNumber(profile.shoppingDelay) : undefined,
     },
   ];
 };
@@ -297,10 +302,10 @@ export default function ActorAttributesSection({
 }: ActorAttributesSectionProps) {
   const [expanded, setExpanded] = useState(false);
   const contentId = useId();
-  const role = getActorProfile(name);
+  const profile = getActorProfile(name);
   const hideGravity = context === 'character' && isFactionDisplayedGravityUniform(factionId);
   const visibleAttributes = createDisplayedActorAttributes(
-    role,
+    profile,
     context,
     factionId,
     EnglishName,

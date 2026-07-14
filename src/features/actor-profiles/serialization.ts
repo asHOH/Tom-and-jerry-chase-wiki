@@ -4,5 +4,5 @@ import type { ActorProfile } from './schema';
 export type ActorProfileLookup = Readonly<Record<string, ActorProfile>>;
 
 export const actorProfileLookup: ActorProfileLookup = Object.fromEntries(
-  actorProfiles.map((role) => [role.name, role])
+  actorProfiles.map((profile) => [profile.name, profile])
 );

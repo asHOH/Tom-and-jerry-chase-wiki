@@ -20,16 +20,16 @@ const main = async () => {
 
   const inputPath = resolve(process.cwd(), inputArguments[0]);
   const rawInput = JSON.parse(await readFile(inputPath, 'utf8')) as unknown;
-  const roles = normalizeActorProfiles(rawInput, {
+  const profiles = normalizeActorProfiles(rawInput, {
     playableCharacters: getPlayableCharacterRefs(),
     references: await getActorProfileReferences(),
   });
-  const serializedProfiles = serializeActorProfiles(roles);
+  const serializedProfiles = serializeActorProfiles(profiles);
 
   // The complete artifact is parsed, normalized, validated, and serialized before replacement.
   await mkdir(dirname(OUTPUT_PATH), { recursive: true });
   await writeFile(OUTPUT_PATH, serializedProfiles, 'utf8');
-  console.log(`Wrote ${roles.length} canonical actor profiles to ${OUTPUT_PATH}`);
+  console.log(`Wrote ${profiles.length} canonical actor profiles to ${OUTPUT_PATH}`);
 };
 
 await main();

@@ -38,9 +38,10 @@ export default function TextWithHoverTooltips({ text: rawText }: TextWithHoverTo
   const localCharacterCtx = useLocalCharacter();
   const currentCharacterId = localCharacterCtx.characterId;
   const localCharacter = characters[currentCharacterId];
-  const role = localCharacter ? getActorProfile(currentCharacterId) : undefined;
-  const attackBoost = role?.attack ?? null;
-  const wallCrackDamageBoost = localCharacter?.factionId === 'mouse' ? role?.wallDamage : undefined;
+  const actorProfile = localCharacter ? getActorProfile(currentCharacterId) : undefined;
+  const attackBoost = actorProfile?.attack ?? null;
+  const wallCrackDamageBoost =
+    localCharacter?.factionId === 'mouse' ? actorProfile?.wallDamage : undefined;
   const parsedText = useMemo(
     () => buildTextWithHoverTooltipTokens(rawText, currentCharacterId),
     [currentCharacterId, rawText]
@@ -132,7 +133,7 @@ export default function TextWithHoverTooltips({ text: rawText }: TextWithHoverTo
         tokenCount: parsedText.tokens.length,
         intermediatePartCount: intermediateParts.length,
         finalPartCount: renderedParts.length,
-        actorProfileAvailable: role !== undefined,
+        actorProfileAvailable: actorProfile !== undefined,
       });
     }
 
@@ -143,7 +144,7 @@ export default function TextWithHoverTooltips({ text: rawText }: TextWithHoverTo
     isDarkMode,
     rawText,
     parsedText,
-    role,
+    actorProfile,
     wallCrackDamageBoost,
   ]);
 

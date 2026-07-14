@@ -42,7 +42,7 @@ const createContext = (
   references: [],
 });
 
-const createCanonicalRole = (overrides: Partial<ActorProfile> = {}): ActorProfile => ({
+const createCanonicalProfile = (overrides: Partial<ActorProfile> = {}): ActorProfile => ({
   name: '测试角色',
   actorType: 'mouse',
   physicsType: 'mouse',
@@ -62,7 +62,7 @@ const createCanonicalRole = (overrides: Partial<ActorProfile> = {}): ActorProfil
   ...overrides,
 });
 
-describe('character role normalization', () => {
+describe('actor profile normalization', () => {
   it('should map every raw field and normalize floating-point cooldown noise', () => {
     const [profile] = normalizeActorProfiles([createRawProfile()], createContext());
 
@@ -102,18 +102,18 @@ describe('character role normalization', () => {
   });
 
   it('should apply the allowlisted corrections and explicitly exclude 火箭', () => {
-    const specialRole = createRawProfile({
+    const specialProfile = createRawProfile({
       name: '\\"正气守护\\"斯派克',
       actorType: 2,
       physicsTag: 2,
       sex: 0,
     });
-    delete specialRole.pushCheese;
+    delete specialProfile.pushCheese;
     const profile = normalizeActorProfiles(
       [
         createRawProfile({ name: '罗宾汉杰瑞', jumpSpeed: '1675;1450' }),
         createRawProfile({ name: '表演者▪杰瑞' }),
-        specialRole,
+        specialProfile,
         { name: '火箭', actorType: 2 },
       ],
       {
@@ -139,7 +139,7 @@ describe('character role normalization', () => {
     expect(profile[0]?.jumpSpeed).toBe(1675);
   });
 
-  it('should serialize playable roles first and remaining roles in code-point order', () => {
+  it('should serialize playable profiles first and remaining profiles in code-point order', () => {
     const profiles = normalizeActorProfiles(
       [
         createRawProfile({ name: '乙' }),
@@ -177,8 +177,10 @@ describe('character role normalization', () => {
       },
       'missing required finite number',
     ],
-  ])('should reject %s', (_name, createInvalidRole, message) => {
-    expect(() => normalizeActorProfiles([createInvalidRole()], createContext())).toThrow(message);
+  ])('should reject %s', (_name, createInvalidProfile, message) => {
+    expect(() => normalizeActorProfiles([createInvalidProfile()], createContext())).toThrow(
+      message
+    );
   });
 
   it('should reject duplicate names after correction', () => {
@@ -212,12 +214,12 @@ describe('character role normalization', () => {
   });
 });
 
-describe('character role validation', () => {
+describe('actor profile validation', () => {
   it('should reject unknown keys and non-finite values', () => {
-    expect(() => parseActorProfiles([{ ...createCanonicalRole(), extra: true }])).toThrow(
+    expect(() => parseActorProfiles([{ ...createCanonicalProfile(), extra: true }])).toThrow(
       'unknown key'
     );
-    expect(() => parseActorProfiles([createCanonicalRole({ runSpeed: Number.NaN })])).toThrow(
+    expect(() => parseActorProfiles([createCanonicalProfile({ runSpeed: Number.NaN })])).toThrow(
       'expected a finite number'
     );
   });
@@ -227,20 +229,20 @@ describe('character role validation', () => {
       playableCharacters: [{ id: '测试角色', factionId: 'mouse' as const }],
       excludedNames: new Set(['火箭']),
     };
-    const profile = createCanonicalRole();
+    const profile = createCanonicalProfile();
 
     expect(() =>
       assertValidActorProfiles([profile], {
         ...baseContext,
         references: [{ source: 'entity 缺失', name: '不存在', hasLegacyRepresentation: false }],
       })
-    ).toThrow('references missing canonical role');
+    ).toThrow('references missing canonical profile');
     expect(() =>
       assertValidActorProfiles([profile], {
         ...baseContext,
         references: [{ source: 'item 火箭', name: '火箭', hasLegacyRepresentation: false }],
       })
-    ).toThrow('references excluded role');
+    ).toThrow('references excluded profile');
     expect(() =>
       assertValidActorProfiles([profile], {
         ...baseContext,

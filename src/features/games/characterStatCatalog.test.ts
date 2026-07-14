@@ -4,7 +4,7 @@ import {
   getCharacterGameStats,
 } from './characterStatCatalog';
 
-describe('characterRoleStats', () => {
+describe('characterStatCatalog', () => {
   it('omits mechanics that do not apply to the playable character faction', () => {
     const tom = getCharacterGameStats({ id: '汤姆', factionId: 'cat' });
     const jerry = getCharacterGameStats({ id: '杰瑞', factionId: 'mouse' });

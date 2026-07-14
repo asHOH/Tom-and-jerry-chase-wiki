@@ -5,7 +5,7 @@ import { resolve } from 'node:path';
 import { catCharactersWithImages } from '@/features/characters/data/catCharacters';
 import { mouseCharactersWithImages } from '@/features/characters/data/mouseCharacters';
 
-const LEGACY_ROLE_FIELDS = [
+const LEGACY_ACTOR_PROFILE_FIELDS = [
   'maxHp',
   'attackBoost',
   'hpRecovery',
@@ -26,10 +26,10 @@ const characters = [
   ...Object.values(mouseCharactersWithImages),
 ];
 
-describe('legacy character role data removal', () => {
+describe('legacy actor profile data removal', () => {
   it('should leave no covered legacy field on a playable character definition', () => {
     for (const character of characters) {
-      for (const field of LEGACY_ROLE_FIELDS) {
+      for (const field of LEGACY_ACTOR_PROFILE_FIELDS) {
         expect(Object.hasOwn(character, field)).toBe(false);
       }
     }
@@ -52,7 +52,7 @@ describe('legacy character role data removal', () => {
     expect(report.unexplainedDifferences).toEqual([]);
   });
 
-  it('should ignore the raw role source without tracking it', () => {
+  it('should ignore the raw actor-profile source without tracking it', () => {
     const rawPath = 'src/data/roles.json';
     const ignoredPath = execFileSync('git', ['check-ignore', '--', rawPath], {
       encoding: 'utf8',

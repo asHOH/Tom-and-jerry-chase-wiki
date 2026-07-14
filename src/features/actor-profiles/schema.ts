@@ -237,12 +237,12 @@ export const normalizeActorProfileName = (name: string): string => {
 
 export const parseRawActorProfiles = (input: unknown): readonly RawActorProfile[] => {
   if (!Array.isArray(input)) {
-    fail('roles', 'expected an array');
+    fail('profiles', 'expected an array');
   }
 
   const values: unknown[] = input;
   return values.map((value, index) => {
-    const path = `roles[${index}]`;
+    const path = `profiles[${index}]`;
     const record = requireRecord(value, path);
     assertExactKeys(record, RAW_KEYS, path);
     assertString(record.name, `${path}.name`);
@@ -275,12 +275,12 @@ export const parseRawActorProfiles = (input: unknown): readonly RawActorProfile[
 
 export const parseActorProfiles = (input: unknown): readonly ActorProfile[] => {
   if (!Array.isArray(input)) {
-    fail('roles', 'expected an array');
+    fail('profiles', 'expected an array');
   }
 
   const values: unknown[] = input;
   values.forEach((value, index) => {
-    const path = `roles[${index}]`;
+    const path = `profiles[${index}]`;
     const record = requireRecord(value, path);
     assertExactKeys(record, CANONICAL_KEYS, path);
 

@@ -1,6 +1,6 @@
 import type { ActorProfile, ActorType, PhysicsType } from './schema';
 
-const ROLE_TYPE_LABELS: Readonly<Record<ActorType, string>> = {
+const ACTOR_TYPE_LABELS: Readonly<Record<ActorType, string>> = {
   mouse: '老鼠',
   cat: '猫咪',
   special: '特殊',
@@ -20,7 +20,7 @@ const SEX_LABELS: Readonly<Record<ActorProfile['sex'], string>> = {
 
 export const formatActorAttributeNumber = (value: number): string => String(value);
 
-export const formatActorType = (value: ActorType): string => ROLE_TYPE_LABELS[value];
+export const formatActorType = (value: ActorType): string => ACTOR_TYPE_LABELS[value];
 
 export const formatActorPhysicsType = (value: PhysicsType): string => PHYSICS_TYPE_LABELS[value];
 

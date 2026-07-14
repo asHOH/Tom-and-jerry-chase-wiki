@@ -17,23 +17,23 @@ type AutoWrapCandidate = {
   priority: number;
 };
 
-type CanonicalCharacterExpression = (role: ActorProfile, character: CharacterRecord) => unknown;
+type ActorProfileExpression = (profile: ActorProfile, character: CharacterRecord) => unknown;
 
-const CANONICAL_CHARACTER_EXPRESSIONS: Readonly<Record<string, CanonicalCharacterExpression>> = {
-  maxHp: (role) => role.maxHp,
-  attackBoost: (role) => role.attack,
-  hpRecovery: (role) => role.hpRecovery,
-  moveSpeed: (role) => role.runSpeed,
-  jumpHeight: (role) => getActorJumpHeight(role),
-  clawKnifeCdHit: (role) => role.attackCooldown.hit,
-  clawKnifeCdUnhit: (role) => role.attackCooldown.miss,
-  clawKnifeRange: (role) => role.attackRange,
-  initialItem: (role) => role.initialItem,
-  storePurchaseTime: (role) => role.shoppingDelay,
-  cheesePushSpeed: (role) => role.pushCheeseSpeed,
-  wallCrackDamageBoost: (role, character) =>
-    character.factionId === 'mouse' ? role.wallDamage : undefined,
-  gender: (role) => (role.sex === 'none' ? undefined : role.sex),
+const ACTOR_PROFILE_EXPRESSIONS: Readonly<Record<string, ActorProfileExpression>> = {
+  maxHp: (profile) => profile.maxHp,
+  attackBoost: (profile) => profile.attack,
+  hpRecovery: (profile) => profile.hpRecovery,
+  moveSpeed: (profile) => profile.runSpeed,
+  jumpHeight: (profile) => getActorJumpHeight(profile),
+  clawKnifeCdHit: (profile) => profile.attackCooldown.hit,
+  clawKnifeCdUnhit: (profile) => profile.attackCooldown.miss,
+  clawKnifeRange: (profile) => profile.attackRange,
+  initialItem: (profile) => profile.initialItem,
+  storePurchaseTime: (profile) => profile.shoppingDelay,
+  cheesePushSpeed: (profile) => profile.pushCheeseSpeed,
+  wallCrackDamageBoost: (profile, character) =>
+    character.factionId === 'mouse' ? profile.wallDamage : undefined,
+  gender: (profile) => (profile.sex === 'none' ? undefined : profile.sex),
 };
 
 const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -157,11 +157,11 @@ export const resolveCharacterExpression = (
   }
 
   const [firstToken, ...remainingTokens] = tokens;
-  const canonicalExpression =
-    typeof firstToken === 'string' ? CANONICAL_CHARACTER_EXPRESSIONS[firstToken] : undefined;
+  const actorProfileExpression =
+    typeof firstToken === 'string' ? ACTOR_PROFILE_EXPRESSIONS[firstToken] : undefined;
   let current: unknown;
-  if (canonicalExpression) {
-    current = canonicalExpression(getActorProfile(character.id), character);
+  if (actorProfileExpression) {
+    current = actorProfileExpression(getActorProfile(character.id), character);
   } else {
     current = character;
     remainingTokens.unshift(firstToken!);

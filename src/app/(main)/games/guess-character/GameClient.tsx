@@ -124,7 +124,7 @@ export default function GuessCharacterClient({ description }: Props) {
   const clues = useMemo<ClueEntry[]>(() => {
     const character = charsSnap[activeCharacterId];
     if (!character) return [];
-    const role = getActorProfile(activeCharacterId);
+    const profile = getActorProfile(activeCharacterId);
 
     const entries: ClueEntry[] = [];
 
@@ -199,16 +199,16 @@ export default function GuessCharacterClient({ description }: Props) {
     }
 
     // HP range
-    entries.push({ label: '血量范围', value: bucketHp(role.maxHp, character.factionId) });
+    entries.push({ label: '血量范围', value: bucketHp(profile.maxHp, character.factionId) });
 
     // Move speed + Jump height
     entries.push({
       label: '移速 & 跳跃',
-      value: `移速: ${role.runSpeed} · 跳跃: ${getActorJumpHeight(role)}`,
+      value: `移速: ${profile.runSpeed} · 跳跃: ${getActorJumpHeight(profile)}`,
     });
 
     // Attack boost
-    entries.push({ label: '攻击增伤', value: `${role.attack ?? 0}%` });
+    entries.push({ label: '攻击增伤', value: `${profile.attack ?? 0}%` });
 
     // Description snippet
     const desc = character.description?.slice(0, 40) ?? '暂无简介';

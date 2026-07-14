@@ -16,7 +16,7 @@ export type CharacterGameStatInfo = {
   label: string;
   faction?: FactionId;
   higherIsBetter: boolean;
-  getValue: (role: ActorProfile) => number | undefined;
+  getValue: (profile: ActorProfile) => number | undefined;
 };
 
 export type CharacterGameStats = Readonly<Record<CharacterGameStatKey, number | undefined>>;
@@ -33,19 +33,19 @@ export const CHARACTER_GAME_STAT_INFO: Readonly<
     key: 'maxHp',
     label: '最大血量',
     higherIsBetter: true,
-    getValue: (role) => role.maxHp,
+    getValue: (profile) => profile.maxHp,
   },
   attackBoost: {
     key: 'attackBoost',
     label: '攻击增伤 (%)',
     higherIsBetter: true,
-    getValue: (role) => role.attack,
+    getValue: (profile) => profile.attack,
   },
   moveSpeed: {
     key: 'moveSpeed',
     label: '移动速度',
     higherIsBetter: true,
-    getValue: (role) => role.runSpeed,
+    getValue: (profile) => profile.runSpeed,
   },
   jumpHeight: {
     key: 'jumpHeight',
@@ -58,47 +58,51 @@ export const CHARACTER_GAME_STAT_INFO: Readonly<
     label: '爪刀CD (命中)',
     faction: 'cat',
     higherIsBetter: false,
-    getValue: (role) => role.attackCooldown.hit,
+    getValue: (profile) => profile.attackCooldown.hit,
   },
   cheesePushSpeed: {
     key: 'cheesePushSpeed',
     label: '推奶酪速度',
     faction: 'mouse',
     higherIsBetter: true,
-    getValue: (role) => role.pushCheeseSpeed,
+    getValue: (profile) => profile.pushCheeseSpeed,
   },
   wallCrackDamageBoost: {
     key: 'wallCrackDamageBoost',
     label: '砸墙破坏力',
     faction: 'mouse',
     higherIsBetter: true,
-    getValue: (role) => role.wallDamage,
+    getValue: (profile) => profile.wallDamage,
   },
 };
 
 const getApplicableValue = (
-  role: ActorProfile,
+  profile: ActorProfile,
   factionId: FactionId,
   stat: CharacterGameStatInfo
 ): number | undefined => {
   if (stat.faction !== undefined && stat.faction !== factionId) return undefined;
-  return stat.getValue(role);
+  return stat.getValue(profile);
 };
 
 export const getCharacterGameStats = ({
   id,
   factionId,
 }: PlayableCharacterReference): CharacterGameStats => {
-  const role = getActorProfile(id);
+  const profile = getActorProfile(id);
   return {
-    maxHp: getApplicableValue(role, factionId, CHARACTER_GAME_STAT_INFO.maxHp),
-    attackBoost: getApplicableValue(role, factionId, CHARACTER_GAME_STAT_INFO.attackBoost),
-    moveSpeed: getApplicableValue(role, factionId, CHARACTER_GAME_STAT_INFO.moveSpeed),
-    jumpHeight: getApplicableValue(role, factionId, CHARACTER_GAME_STAT_INFO.jumpHeight),
-    clawKnifeCdHit: getApplicableValue(role, factionId, CHARACTER_GAME_STAT_INFO.clawKnifeCdHit),
-    cheesePushSpeed: getApplicableValue(role, factionId, CHARACTER_GAME_STAT_INFO.cheesePushSpeed),
+    maxHp: getApplicableValue(profile, factionId, CHARACTER_GAME_STAT_INFO.maxHp),
+    attackBoost: getApplicableValue(profile, factionId, CHARACTER_GAME_STAT_INFO.attackBoost),
+    moveSpeed: getApplicableValue(profile, factionId, CHARACTER_GAME_STAT_INFO.moveSpeed),
+    jumpHeight: getApplicableValue(profile, factionId, CHARACTER_GAME_STAT_INFO.jumpHeight),
+    clawKnifeCdHit: getApplicableValue(profile, factionId, CHARACTER_GAME_STAT_INFO.clawKnifeCdHit),
+    cheesePushSpeed: getApplicableValue(
+      profile,
+      factionId,
+      CHARACTER_GAME_STAT_INFO.cheesePushSpeed
+    ),
     wallCrackDamageBoost: getApplicableValue(
-      role,
+      profile,
       factionId,
       CHARACTER_GAME_STAT_INFO.wallCrackDamageBoost
     ),

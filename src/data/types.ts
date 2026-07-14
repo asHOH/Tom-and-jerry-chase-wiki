@@ -157,7 +157,7 @@ export type CharacterDefinition = {
   // special skill suggestions
   specialSkills?: SuggestedSpecialSkillItem[];
 
-  EnglishName?: string; // Official translation retained outside canonical role statistics
+  EnglishName?: string; // Official translation retained outside canonical actor profile data
 };
 
 export type CharacterRelation = Record<TraitRelationKind, CharacterRelationItem[]>;
