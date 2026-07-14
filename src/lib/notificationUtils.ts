@@ -2,8 +2,9 @@ import 'server-only';
 
 import { createHash, createHmac, timingSafeEqual } from 'crypto';
 
+import { renderWikiEmailTemplate } from '@/lib/emailTemplate';
 import { supabaseAdmin } from '@/lib/supabase/admin';
-import { SITE_NAME, SITE_URL } from '@/constants/seo';
+import { SITE_URL } from '@/constants/seo';
 import { env } from '@/env';
 
 export type NotificationKind =
@@ -28,18 +29,6 @@ export type PublishNotificationResult = {
   suppressed: boolean;
   emailStatus: 'sent' | 'skipped' | 'failed';
 };
-
-const escapeHtml = (value: string) =>
-  value.replace(/[&<>"']/g, (character) => {
-    const entities: Record<string, string> = {
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      '"': '&quot;',
-      "'": '&#039;',
-    };
-    return entities[character] ?? character;
-  });
 
 const absoluteHref = (href?: string) => (href ? new URL(href, SITE_URL).toString() : SITE_URL);
 
@@ -196,15 +185,23 @@ export const publishNotification = async (
   const unsubscribeUrl = new URL('/api/notifications/email/unsubscribe', SITE_URL);
   unsubscribeUrl.searchParams.set('token', unsubscribeToken);
   const unsubscribeLink = unsubscribeUrl.toString();
-  const escapedTitle = escapeHtml(input.title);
-  const escapedBody = escapeHtml(input.body).replace(/\n/g, '<br>');
+  const approved = input.kind.endsWith('_approved');
 
   try {
     const sent = await sendEmail({
       to: emailSettings.email,
       subject: `[猫鼠Wiki] ${input.title}`,
       text: `${input.title}\n\n${input.body}\n\n${link}\n\n取消订阅审核结果邮件：${unsubscribeLink}`,
-      html: `<h2>${escapedTitle}</h2><p>${escapedBody}</p><p><a href="${escapeHtml(link)}">前往${escapeHtml(SITE_NAME)}查看</a></p><hr><p style="color:#666;font-size:12px">不希望继续收到审核结果邮件？<a href="${escapeHtml(unsubscribeLink)}">取消订阅</a></p>`,
+      html: renderWikiEmailTemplate({
+        preheader: `${input.title}：${input.body}`,
+        eyebrow: approved ? '审核通过' : '审核结果',
+        title: input.title,
+        message: input.body,
+        tone: approved ? 'success' : 'danger',
+        action: { label: '查看详情', url: link },
+        notice: '您可以随时在 Wiki 的通知页面管理邮件通知设置。',
+        unsubscribeUrl: unsubscribeLink,
+      }),
       headers: {
         'List-Unsubscribe': `<${unsubscribeLink}>`,
         'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
@@ -235,7 +232,15 @@ export const sendNotificationEmailVerification = async (
     to: email,
     subject: '[猫鼠Wiki] 验证通知邮箱',
     text: `请在 30 分钟内验证您的通知邮箱：${link}`,
-    html: `<p>请在 30 分钟内验证您的通知邮箱：</p><p><a href="${escapeHtml(link)}">验证邮箱</a></p>`,
+    html: renderWikiEmailTemplate({
+      preheader: '验证您的猫鼠 Wiki 通知邮箱',
+      eyebrow: '邮箱验证',
+      title: '验证通知邮箱',
+      message: '请确认这是您希望用于接收审核结果通知的邮箱地址。',
+      tone: 'info',
+      action: { label: '验证邮箱', url: link },
+      notice: '此验证链接将在 30 分钟后失效。如果这不是您的操作，可以安全忽略本邮件。',
+    }),
   });
 
   if (!sent) throw new Error('Email delivery is not configured');

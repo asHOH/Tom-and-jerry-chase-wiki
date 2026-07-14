@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+import {
+  renderWikiEmailCallout,
+  renderWikiEmailDetails,
+  renderWikiEmailTemplate,
+} from '@/lib/emailTemplate';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { feedbackSchema, formatZodError } from '@/lib/validation/schemas';
@@ -103,22 +108,23 @@ async function sendFeedbackEmail(feedbackData: FeedbackData) {
         from: env.RESEND_FROM_EMAIL || 'feedback@resend.dev', // Use your domain or Resend's shared domain
         to: [env.FEEDBACK_EMAIL || 'your-email@example.com'],
         subject: `[猫鼠Wiki] ${getFeedbackTypeText(feedbackData.type)}`,
-        html: `
-          <h2>用户反馈</h2>
-          <p><strong>类型:</strong> ${getFeedbackTypeText(feedbackData.type)}</p>
-          <p><strong>时间:</strong> ${feedbackData.timestamp}</p>
-          <p><strong>内容:</strong></p>
-          <div style="background: #f5f5f5; padding: 15px; border-radius: 5px; margin: 10px 0;">
-            ${feedbackData.content.replace(/\n/g, '<br>')}
-          </div>
-          <p><strong>联系方式:</strong> ${feedbackData.contact}</p>
-          <hr>
-          <p style="color: #666; font-size: 12px;">
-            <strong>技术信息:</strong><br>
-            用户代理: ${feedbackData.userAgent}<br>
-            IP地址: ${feedbackData.ip}
-          </p>
-        `,
+        text: `收到新的用户反馈\n\n类型：${getFeedbackTypeText(feedbackData.type)}\n时间：${feedbackData.timestamp}\n联系方式：${feedbackData.contact}\n\n反馈内容：\n${feedbackData.content}\n\n用户代理：${feedbackData.userAgent}\nIP 地址：${feedbackData.ip}`,
+        html: renderWikiEmailTemplate({
+          preheader: `新的${getFeedbackTypeText(feedbackData.type)}：${feedbackData.content}`,
+          eyebrow: '站点反馈',
+          title: `收到新的${getFeedbackTypeText(feedbackData.type)}`,
+          message: '一位 Wiki 用户提交了新的反馈，详细信息如下。',
+          tone: 'warning',
+          contentHtml: `${renderWikiEmailDetails([
+            { label: '反馈类型', value: getFeedbackTypeText(feedbackData.type) },
+            { label: '提交时间', value: feedbackData.timestamp },
+            { label: '联系方式', value: feedbackData.contact },
+          ])}${renderWikiEmailCallout(feedbackData.content)}${renderWikiEmailDetails([
+            { label: '用户代理', value: feedbackData.userAgent },
+            { label: 'IP 地址', value: feedbackData.ip },
+          ])}`,
+          notice: '此邮件包含用户提交的内容，请谨慎处理其中的联系方式和技术信息。',
+        }),
       }),
     });
 
