@@ -17,6 +17,7 @@ import traits from '@/data/traits';
 import { WikiChangeType } from '@/data/types';
 import { wikiHistoryData } from '@/data/wikiHistory';
 import { winRatesData } from '@/data/winRates';
+import type { ActorProfile } from '@/features/actor-profiles/schema';
 import { getActorProfile } from '@/features/actor-profiles/selectors';
 import { getCharacterRelation } from '@/features/characters/utils/relations';
 import {
@@ -199,6 +200,17 @@ function safeDecode(value: string): string {
   }
 }
 
+type ActorProfilePayload = {
+  actorProfile: ActorProfile;
+  /** @deprecated Use actorProfile instead. */
+  role: ActorProfile;
+};
+
+function createActorProfilePayload(characterId: string): ActorProfilePayload {
+  const actorProfile = getActorProfile(characterId);
+  return { actorProfile, role: actorProfile };
+}
+
 function findByKey<T>(record: Record<string, T>, key: string): (T & { name: string }) | null {
   const decodedKey = safeDecode(key);
   const item = record[decodedKey];
@@ -264,7 +276,7 @@ export const resolvers: Record<string, PathResolver> = {
       const charactersRecord = GameDataManager.getCharacters();
       const charactersList = recordToArray(charactersRecord, 'id').map((character) => ({
         ...character,
-        role: getActorProfile(character.id),
+        ...createActorProfilePayload(character.id),
       }));
       return createListResult(charactersList, 'Character', '/characters', true);
     },
@@ -281,7 +293,7 @@ export const resolvers: Record<string, PathResolver> = {
         {
           ...character,
           id: decodedId,
-          role: getActorProfile(decodedId),
+          ...createActorProfilePayload(decodedId),
           relations:
             relations.counters.length > 0 ||
             relations.counteredBy.length > 0 ||

@@ -1,5 +1,5 @@
 /**
- * Character ranking utilities for sorting and displaying canonical role statistics.
+ * Character ranking utilities for sorting and displaying canonical actor profile statistics.
  */
 
 import type { DeepReadonly } from '@/types/deep-readonly';
@@ -21,7 +21,7 @@ export type RankableProperty =
 
 export type PropertyInfo = {
   key: RankableProperty;
-  getValue: (role: ActorProfile) => number | undefined;
+  getValue: (profile: ActorProfile) => number | undefined;
   formatValue: (value: number) => string;
   label: string;
   description: string;
@@ -38,7 +38,7 @@ const createValueFormatter = (unit?: string) => (value: number) => {
 export const RANKABLE_PROPERTIES: readonly PropertyInfo[] = [
   {
     key: 'maxHp',
-    getValue: (role) => role.maxHp,
+    getValue: (profile) => profile.maxHp,
     formatValue: createValueFormatter(),
     label: 'Hp上限',
     description: '角色的健康值上限',
@@ -46,7 +46,7 @@ export const RANKABLE_PROPERTIES: readonly PropertyInfo[] = [
   },
   {
     key: 'attackBoost',
-    getValue: (role) => role.attack,
+    getValue: (profile) => profile.attack,
     formatValue: createValueFormatter(),
     label: '攻击增伤',
     description: '角色的攻击力加成',
@@ -54,7 +54,7 @@ export const RANKABLE_PROPERTIES: readonly PropertyInfo[] = [
   },
   {
     key: 'hpRecovery',
-    getValue: (role) => role.hpRecovery,
+    getValue: (profile) => profile.hpRecovery,
     formatValue: createValueFormatter(),
     label: 'Hp恢复',
     description: '角色的健康值恢复速度',
@@ -62,7 +62,7 @@ export const RANKABLE_PROPERTIES: readonly PropertyInfo[] = [
   },
   {
     key: 'moveSpeed',
-    getValue: (role) => role.runSpeed,
+    getValue: (profile) => profile.runSpeed,
     formatValue: createValueFormatter(),
     label: '移速',
     description: '角色的移动速度',
@@ -78,7 +78,7 @@ export const RANKABLE_PROPERTIES: readonly PropertyInfo[] = [
   },
   {
     key: 'clawKnifeCdHit',
-    getValue: (role) => role.attackCooldown.hit,
+    getValue: (profile) => profile.attackCooldown.hit,
     formatValue: createValueFormatter('s'),
     label: '爪刀CD(命中)',
     description: '猫角色爪刀命中后的冷却时间',
@@ -88,7 +88,7 @@ export const RANKABLE_PROPERTIES: readonly PropertyInfo[] = [
   },
   {
     key: 'clawKnifeCdUnhit',
-    getValue: (role) => role.attackCooldown.miss,
+    getValue: (profile) => profile.attackCooldown.miss,
     formatValue: createValueFormatter('s'),
     label: '爪刀CD(未命中)',
     description: '猫角色爪刀未命中后的冷却时间',
@@ -98,7 +98,7 @@ export const RANKABLE_PROPERTIES: readonly PropertyInfo[] = [
   },
   {
     key: 'clawKnifeRange',
-    getValue: (role) => role.attackRange,
+    getValue: (profile) => profile.attackRange,
     formatValue: createValueFormatter(),
     label: '爪刀范围',
     description: '猫角色爪刀的攻击范围',
@@ -107,7 +107,7 @@ export const RANKABLE_PROPERTIES: readonly PropertyInfo[] = [
   },
   {
     key: 'cheesePushSpeed',
-    getValue: (role) => role.pushCheeseSpeed,
+    getValue: (profile) => profile.pushCheeseSpeed,
     formatValue: createValueFormatter('%/s'),
     label: '推速',
     description: '鼠角色推奶酪的速度',
@@ -117,7 +117,7 @@ export const RANKABLE_PROPERTIES: readonly PropertyInfo[] = [
   },
   {
     key: 'wallCrackDamageBoost',
-    getValue: (role) => role.wallDamage,
+    getValue: (profile) => profile.wallDamage,
     formatValue: createValueFormatter(),
     label: '墙缝增伤',
     description: '鼠角色对墙缝的伤害加成',
@@ -133,9 +133,9 @@ export type RankedCharacter = {
   formattedValue: string;
 };
 
-type CharacterWithRole = {
+type CharacterWithActorProfile = {
   character: DeepReadonly<Character>;
-  role: ActorProfile;
+  actorProfile: ActorProfile;
 };
 
 const getRequiredFactionId = (character: DeepReadonly<Character>): FactionId => {
@@ -145,9 +145,11 @@ const getRequiredFactionId = (character: DeepReadonly<Character>): FactionId => 
   return character.factionId;
 };
 
-const joinCharacterWithRole = (character: DeepReadonly<Character>): CharacterWithRole => ({
+const joinCharacterWithActorProfile = (
+  character: DeepReadonly<Character>
+): CharacterWithActorProfile => ({
   character,
-  role: getActorProfile(character.id),
+  actorProfile: getActorProfile(character.id),
 });
 
 export function getPropertyInfo(property: RankableProperty): PropertyInfo | undefined {
@@ -163,7 +165,7 @@ export function getCharactersWithProperty(
   if (!propertyInfo) return [];
 
   return characters
-    .map(joinCharacterWithRole)
+    .map(joinCharacterWithActorProfile)
     .filter(({ character }) => {
       const characterFactionId = getRequiredFactionId(character);
       return (
@@ -171,7 +173,7 @@ export function getCharactersWithProperty(
         (factionId === undefined || factionId === characterFactionId)
       );
     })
-    .filter(({ role }) => propertyInfo.getValue(role) !== undefined)
+    .filter(({ actorProfile }) => propertyInfo.getValue(actorProfile) !== undefined)
     .map(({ character }) => character);
 }
 
@@ -183,14 +185,14 @@ export function rankCharactersByProperty(
   if (!propertyInfo) return [];
 
   const sorted = characters
-    .map(joinCharacterWithRole)
+    .map(joinCharacterWithActorProfile)
     .filter(({ character }) => {
       const factionId = getRequiredFactionId(character);
       return propertyInfo.faction === undefined || propertyInfo.faction === factionId;
     })
-    .map(({ character, role }) => ({
+    .map(({ character, actorProfile }) => ({
       character,
-      value: propertyInfo.getValue(role),
+      value: propertyInfo.getValue(actorProfile),
     }))
     .filter(
       (entry): entry is { character: DeepReadonly<Character>; value: number } =>
