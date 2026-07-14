@@ -19,14 +19,6 @@ export const ServiceWorkerRegistration: React.FC = () => {
 
     let disposed = false;
 
-    const handleBlockedNavigation = (event: Event) => {
-      const customEvent = event as CustomEvent<{ message?: string }>;
-      const message = customEvent.detail?.message;
-      if (message) {
-        warning(message);
-      }
-    };
-
     const handleServiceWorkerMessage = (event: MessageEvent) => {
       const data = event.data as { type?: string; pathname?: string } | undefined;
       if (data?.type === 'OFFLINE_RESOURCE_NOT_CACHED') {
@@ -117,7 +109,6 @@ export const ServiceWorkerRegistration: React.FC = () => {
       }
     };
 
-    window.addEventListener('offline-navigation-blocked', handleBlockedNavigation);
     navigator.serviceWorker.addEventListener('message', handleServiceWorkerMessage);
 
     const onLoad = () => {
@@ -132,7 +123,6 @@ export const ServiceWorkerRegistration: React.FC = () => {
 
     return () => {
       disposed = true;
-      window.removeEventListener('offline-navigation-blocked', handleBlockedNavigation);
       navigator.serviceWorker.removeEventListener('message', handleServiceWorkerMessage);
       window.removeEventListener('load', onLoad);
     };

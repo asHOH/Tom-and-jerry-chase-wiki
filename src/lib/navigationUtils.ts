@@ -1,92 +1,31 @@
-/**
- * Utility function for handling offline-aware navigation
- * Can be used in non-hook contexts or event handlers
- */
-
-/**
- * Check if a page is cached for offline navigation
- * @param targetPath - The path to check
- * @returns Promise<boolean> - true if cached, false if not
- */
-const isPageCached = async (targetPath: string): Promise<boolean> => {
-  if (!('caches' in window)) {
-    return false;
+const getDocumentNavigationPath = (targetPath: string) => {
+  if (!targetPath.startsWith('/') || targetPath.startsWith('//') || targetPath === '/') {
+    return targetPath;
   }
 
-  try {
-    const cacheNames = await caches.keys();
-    const staticCache = cacheNames.find((key) => key.includes('static-'));
-    const appRoutesCache = cacheNames.find((key) => key.includes('app-routes'));
+  const suffixIndex = targetPath.search(/[?#]/);
+  const pathname = suffixIndex === -1 ? targetPath : targetPath.slice(0, suffixIndex);
+  const suffix = suffixIndex === -1 ? '' : targetPath.slice(suffixIndex);
 
-    // Check both static cache and app routes cache
-    for (const cacheName of [staticCache, appRoutesCache].filter(Boolean)) {
-      if (cacheName) {
-        const cache = await caches.open(cacheName);
-
-        // Check exact path first
-        let cached = await cache.match(targetPath);
-        if (cached) return true;
-
-        // For routes ending with /, also check without trailing slash
-        if (targetPath.endsWith('/') && targetPath !== '/') {
-          cached = await cache.match(targetPath.slice(0, -1));
-          if (cached) return true;
-        }
-
-        // For routes not ending with /, also check with trailing slash
-        if (!targetPath.endsWith('/')) {
-          cached = await cache.match(targetPath + '/');
-          if (cached) return true;
-        }
-      }
-    }
-
-    return false;
-  } catch {
-    return false;
-  }
+  return pathname.endsWith('/') ? targetPath : `${pathname}/${suffix}`;
 };
 
 /**
- * Navigate with offline check - standalone function version
+ * Use client navigation while online and document navigation while offline.
+ * The document request lets the service worker resolve its own caches or offline fallback.
  * @param targetPath - The path to navigate to
- * @param navigateFn - The navigation function (e.g., router.push)
- * @returns Promise<boolean> - true if navigation occurred, false if blocked
+ * @param navigateClient - The client navigation function (e.g., router.push)
+ * @param navigateDocument - The document navigation function (e.g., window.location.assign)
  */
-export const navigate = async (
+export const navigate = (
   targetPath: string,
-  navigateFn: (path: string) => void
-): Promise<boolean> => {
-  // If online, always navigate
+  navigateClient: (path: string) => void,
+  navigateDocument: (path: string) => void
+): void => {
   if (navigator.onLine) {
-    navigateFn(targetPath);
-    return true;
+    navigateClient(targetPath);
+    return;
   }
 
-  // If offline, check cache first
-  const cached = await isPageCached(targetPath);
-
-  if (cached) {
-    // Page is cached, safe to navigate
-    navigateFn(targetPath);
-    return true;
-  } else {
-    // Page not cached, show notification and stay - DO NOT navigate
-    const decodedPath = decodeURIComponent(targetPath);
-    window.dispatchEvent(
-      new CustomEvent('offline-navigation-blocked', {
-        detail: {
-          targetPath,
-          message: `页面 "${decodedPath}" 未缓存，请在联网时访问`,
-        },
-      })
-    );
-    return false;
-  }
+  navigateDocument(getDocumentNavigationPath(targetPath));
 };
-
-/**
- * Dispatch offline navigation blocked event
- * @param targetPath - The path that was blocked
- * @param customMessage - Optional custom message
- */
