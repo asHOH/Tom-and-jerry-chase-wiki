@@ -2,7 +2,7 @@ import {
   CHARACTER_GAME_STAT_INFO,
   compareCharacterGameStatValues,
   getCharacterGameStats,
-} from './characterRoleStats';
+} from './characterStatCatalog';
 
 describe('characterRoleStats', () => {
   it('omits mechanics that do not apply to the playable character faction', () => {

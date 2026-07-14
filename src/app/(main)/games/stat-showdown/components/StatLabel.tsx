@@ -3,7 +3,7 @@
 import {
   CHARACTER_GAME_STAT_INFO,
   type CharacterGameStatKey,
-} from '@/features/games/characterRoleStats';
+} from '@/features/games/characterStatCatalog';
 
 type StatLabelProps = {
   statName: CharacterGameStatKey;

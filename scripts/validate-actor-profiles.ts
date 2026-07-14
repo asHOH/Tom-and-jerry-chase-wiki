@@ -4,11 +4,14 @@ import { resolve } from 'node:path';
 
 import { EXCLUDED_CHARACTER_ROLE_NAMES } from '../src/features/actor-profiles/normalization';
 import { assertValidActorProfiles } from '../src/features/actor-profiles/schema';
-import { getActorProfileReferences, getPlayableCharacterRoles } from './character-role-context';
+import {
+  getActorProfileReferences,
+  getPlayableCharacterRoles,
+} from './actor-profile-validation-context';
 
 const CANONICAL_PATH = resolve(
   process.cwd(),
-  'src/features/character-roles/data/characterRoles.json'
+  'src/features/character-roles/data/actorProfiles.json'
 );
 const RAW_PATH = 'src/data/roles.json';
 

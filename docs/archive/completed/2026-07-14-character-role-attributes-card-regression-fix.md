@@ -6,7 +6,7 @@ Restore the confirmed character-page attribute behavior without changing the can
 pipeline. Keep the work in two reviewable commits: first resolve low-risk data, unit-format, and stale
 test chores; then change the card's faction-aware display behavior and cooldown presentation.
 
-The generated `src/features/character-roles/data/characterRoles.json`, its normalizer, and its schema
+The generated `src/features/character-roles/data/actorProfiles.json`, its normalizer, and its schema
 remain unchanged. Canonical role data continues to retain normalized raw values; the card decides
 which values are applicable and useful in playable-character context.
 
@@ -126,7 +126,7 @@ npm test
 
 ## Non-goals
 
-- Do not edit `characterRoles.json` manually or change raw-role normalization.
+- Do not edit `actorProfiles.json` manually or change raw-role normalization.
 - Do not make `attackCooldown`, `wallDamage`, or other canonical fields optional.
 - Do not introduce a shared faction-applicability selector for a single component.
 - Do not restore removed edit-mode support.

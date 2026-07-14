@@ -5,9 +5,12 @@ import {
   normalizeActorProfiles,
   serializeActorProfiles,
 } from '../src/features/actor-profiles/normalization';
-import { getActorProfileReferences, getPlayableCharacterRoles } from './character-role-context';
+import {
+  getActorProfileReferences,
+  getPlayableCharacterRoles,
+} from './actor-profile-validation-context';
 
-const OUTPUT_PATH = resolve(process.cwd(), 'src/features/character-roles/data/characterRoles.json');
+const OUTPUT_PATH = resolve(process.cwd(), 'src/features/character-roles/data/actorProfiles.json');
 
 const main = async () => {
   const inputArguments = process.argv.slice(2);

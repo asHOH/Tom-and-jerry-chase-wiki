@@ -12,7 +12,7 @@ import {
   getCharacterGameStats,
   type CharacterGameStatKey,
   type CharacterGameStats,
-} from '@/features/games/characterRoleStats';
+} from '@/features/games/characterStatCatalog';
 import GameLayout from '@/features/games/components/GameLayout';
 import StreakCounter from '@/features/games/components/StreakCounter';
 import { characters } from '@/data';

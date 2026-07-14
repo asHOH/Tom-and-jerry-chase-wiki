@@ -1,4 +1,4 @@
-import canonicalCharacterRoles from './data/characterRoles.json';
+import canonicalCharacterRoles from './data/actorProfiles.json';
 import { parseActorProfiles, type ActorProfile } from './schema';
 
 export const actorProfiles: readonly ActorProfile[] = Object.freeze(
