@@ -207,7 +207,7 @@ strictly resolved role by character ID; they must not derive faction from `roleT
 
 ### Component migration
 
-Refactor `CharacterRoleAttributesCard` in this same commit to:
+Refactor `ActorAttributesSection` in this same commit to:
 
 - Use a functional component with `useState`.
 - Consume canonical role data through the strict domain module.

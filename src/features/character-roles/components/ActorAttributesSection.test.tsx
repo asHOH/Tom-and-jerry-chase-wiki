@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { CHARACTER_ROLE_ATTRIBUTE_KEYS } from '../attributePresentation';
-import CharacterRoleAttributesCard from './CharacterRoleAttributesCard';
+import ActorAttributesSection from './ActorAttributesSection';
 
 const getRankingLink = (
   container: HTMLElement,
@@ -19,15 +19,10 @@ const getRankingLink = (
 const getDisplayedAttributeLabels = (container: HTMLElement): string[] =>
   Array.from(container.querySelectorAll('p'), (row) => row.textContent?.split(':', 1)[0] ?? '');
 
-describe('CharacterRoleAttributesCard', () => {
+describe('ActorAttributesSection', () => {
   it('should use the explicit character summary and show only applicable cat fields for Tom', () => {
     const { container } = render(
-      <CharacterRoleAttributesCard
-        name='汤姆'
-        EnglishName='Tom'
-        context='character'
-        factionId='cat'
-      />
+      <ActorAttributesSection name='汤姆' EnglishName='Tom' context='character' factionId='cat' />
     );
 
     expect(screen.queryByText('性别')).not.toBeInTheDocument();
@@ -64,7 +59,7 @@ describe('CharacterRoleAttributesCard', () => {
   });
 
   it('should expose folding state, focus visibility, and reduced-motion styling', () => {
-    render(<CharacterRoleAttributesCard name='兔子大表哥' context='object' />);
+    render(<ActorAttributesSection name='兔子大表哥' context='object' />);
 
     const button = screen.getByRole('button', { name: '展开' });
     expect(button).toHaveAttribute('aria-expanded', 'false');
@@ -81,7 +76,7 @@ describe('CharacterRoleAttributesCard', () => {
   });
 
   it('should omit non-applicable summary mechanics without substitution', () => {
-    render(<CharacterRoleAttributesCard name='盔甲人' context='object' />);
+    render(<ActorAttributesSection name='盔甲人' context='object' />);
 
     expect(screen.getByText('爪刀CD').closest('p')).toHaveTextContent('爪刀CD: 命中 2 s');
     expect(screen.queryByText(/未命中/)).not.toBeInTheDocument();
@@ -90,7 +85,7 @@ describe('CharacterRoleAttributesCard', () => {
 
   it('should emphasize a nonzero cat attack while preserving its ranking link', () => {
     const { container } = render(
-      <CharacterRoleAttributesCard name='布奇' context='character' factionId='cat' />
+      <ActorAttributesSection name='布奇' context='character' factionId='cat' />
     );
 
     const attackRow = screen.getByText('攻击力').closest('p');
@@ -110,7 +105,7 @@ describe('CharacterRoleAttributesCard', () => {
 
   it('should link ordinary cooldowns independently and keep special cooldowns unlinked', () => {
     const { container } = render(
-      <CharacterRoleAttributesCard
+      <ActorAttributesSection
         name='苏蕊'
         context='character'
         factionId='cat'
@@ -137,7 +132,7 @@ describe('CharacterRoleAttributesCard', () => {
 
   it('should apply mouse ranking links only to compatible displayed mechanics', () => {
     const { container } = render(
-      <CharacterRoleAttributesCard name='杰瑞' context='character' factionId='mouse' />
+      <ActorAttributesSection name='杰瑞' context='character' factionId='mouse' />
     );
 
     expect(getDisplayedAttributeLabels(container)).toEqual([
@@ -167,7 +162,7 @@ describe('CharacterRoleAttributesCard', () => {
 
   it('should keep a legitimate zero mouse attack visible', () => {
     const { container } = render(
-      <CharacterRoleAttributesCard name='雪梨' context='character' factionId='mouse' />
+      <ActorAttributesSection name='雪梨' context='character' factionId='mouse' />
     );
 
     expect(screen.getByText('攻击力').closest('p')).toHaveTextContent('攻击力: 0');

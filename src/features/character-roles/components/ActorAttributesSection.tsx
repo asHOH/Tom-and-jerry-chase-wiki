@@ -43,7 +43,7 @@ type ObjectContextProps = {
   specialClawKnifeCdUnhit?: never;
 };
 
-type CharacterRoleAttributesCardProps = {
+type ActorAttributesSectionProps = {
   name: string;
   className?: string;
   EnglishName?: string;
@@ -289,7 +289,7 @@ const createAttributeItems = (
   ];
 };
 
-export default function CharacterRoleAttributesCard({
+export default function ActorAttributesSection({
   name,
   className,
   EnglishName,
@@ -297,7 +297,7 @@ export default function CharacterRoleAttributesCard({
   factionId,
   specialClawKnifeCdHit,
   specialClawKnifeCdUnhit,
-}: CharacterRoleAttributesCardProps) {
+}: ActorAttributesSectionProps) {
   const [expanded, setExpanded] = useState(false);
   const contentId = useId();
   const role = getActorProfile(name);

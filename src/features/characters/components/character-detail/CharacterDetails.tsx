@@ -12,7 +12,7 @@ import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { EditModeContext, useEditMode } from '@/context/EditModeContext';
 import { Skill } from '@/data/types';
-import CharacterRoleAttributesCard from '@/features/character-roles/components/CharacterRoleAttributesCard';
+import ActorAttributesSection from '@/features/character-roles/components/ActorAttributesSection';
 import SingleItemReverseCard from '@/features/shared/components/SingleItemReverseCard';
 import SingleItemTraitsText from '@/features/shared/components/SingleItemTraitsText';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
@@ -212,7 +212,7 @@ export default function CharacterDetails({ children }: CharacterDetailsWithTutor
 
               <div className='mt-6 space-y-3'>
                 {localCharacter.EnglishName !== undefined ? (
-                  <CharacterRoleAttributesCard
+                  <ActorAttributesSection
                     name={localCharacter.id}
                     EnglishName={localCharacter.EnglishName}
                     context='character'
@@ -225,7 +225,7 @@ export default function CharacterDetails({ children }: CharacterDetailsWithTutor
                       : { specialClawKnifeCdUnhit: localCharacter.specialClawKnifeCdUnhit })}
                   />
                 ) : (
-                  <CharacterRoleAttributesCard
+                  <ActorAttributesSection
                     name={localCharacter.id}
                     context='character'
                     factionId={factionId}

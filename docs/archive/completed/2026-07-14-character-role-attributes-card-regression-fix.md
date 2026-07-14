@@ -44,7 +44,7 @@ Run:
 
 ```powershell
 npm test -- src/features/character-roles/selectors.test.ts --runInBand
-npm test -- src/features/character-roles/components/CharacterRoleAttributesCard.test.tsx --runInBand
+npm test -- src/features/character-roles/components/ActorAttributesSection.test.tsx --runInBand
 npm run lint
 npm run type-check
 ```
@@ -56,7 +56,7 @@ The relevant tests must be green before starting Step 2.
 Commit: `fix(character-roles): restore faction-aware attribute display`
 
 Confine the production change primarily to
-`src/features/character-roles/components/CharacterRoleAttributesCard.tsx`. Do not add a shared
+`src/features/character-roles/components/ActorAttributesSection.tsx`. Do not add a shared
 applicability abstraction or change generated canonical data for this fix.
 
 ### Attribute visibility
@@ -99,7 +99,7 @@ context differences unchanged.
 
 ### Regression tests
 
-Expand `CharacterRoleAttributesCard.test.tsx` with explicit label and value assertions:
+Expand `ActorAttributesSection.test.tsx` with explicit label and value assertions:
 
 - `汤姆`: shows cat cooldown and shopping time; hides zero attack, wall damage, push speed, and the
   default mouse trap.
@@ -118,7 +118,7 @@ Prefer assertions on visible labels and link destinations over snapshots.
 Run:
 
 ```powershell
-npm test -- src/features/character-roles/components/CharacterRoleAttributesCard.test.tsx --runInBand
+npm test -- src/features/character-roles/components/ActorAttributesSection.test.tsx --runInBand
 npm run lint
 npm run type-check
 npm test
