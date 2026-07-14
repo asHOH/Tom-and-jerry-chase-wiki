@@ -136,6 +136,11 @@
   box-shadow: 0 1px 4px rgb(0 0 0 / 60%);
 }
 
+.leaflet-pane.interactive-map-grid-pane {
+  z-index: 199;
+  pointer-events: none;
+}
+
 .leaflet-picture-tile {
   display: block;
 }

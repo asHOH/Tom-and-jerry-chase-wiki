@@ -20,6 +20,7 @@ import {
   ImageOverlay,
   MapContainer,
   Marker,
+  Pane,
   Polygon,
   Polyline,
   SVGOverlay,
@@ -256,49 +257,46 @@ function MapGridBackground({ bounds, height, width }: MapGridBackgroundProps) {
   const majorGridId = `${gridId}-major`;
 
   return (
-    <SVGOverlay
-      bounds={bounds}
-      pane='tilePane'
-      zIndex={-1}
-      interactive={false}
-      className='interactive-map-grid'
-      attributes={{
-        viewBox: `0 0 ${width} ${height}`,
-        preserveAspectRatio: 'none',
-        'aria-hidden': 'true',
-        focusable: 'false',
-      }}
-    >
-      <defs>
-        <pattern id={minorGridId} width='128' height='128' patternUnits='userSpaceOnUse'>
-          <path
-            d='M 128 0 L 0 0 0 128'
-            fill='none'
-            stroke='#94a3b8'
-            strokeOpacity='0.12'
-            strokeWidth='1'
-            vectorEffect='non-scaling-stroke'
-          />
-        </pattern>
-        <pattern id={majorGridId} width='512' height='512' patternUnits='userSpaceOnUse'>
-          <rect width='512' height='512' fill={`url(#${minorGridId})`} />
-          <path
-            d='M 512 0 L 0 0 0 512'
-            fill='none'
-            stroke='#cbd5e1'
-            strokeOpacity='0.24'
-            strokeWidth='1.5'
-            vectorEffect='non-scaling-stroke'
-          />
-        </pattern>
-      </defs>
-      <rect width={width} height={height} fill='#020617' />
-      <rect width={width} height={height} fill={`url(#${majorGridId})`} />
-    </SVGOverlay>
+    <Pane name='mapGrid' className='interactive-map-grid-pane'>
+      <SVGOverlay
+        bounds={bounds}
+        interactive={false}
+        className='interactive-map-grid'
+        attributes={{
+          viewBox: `0 0 ${width} ${height}`,
+          preserveAspectRatio: 'none',
+          'aria-hidden': 'true',
+          focusable: 'false',
+        }}
+      >
+        <defs>
+          <pattern id={minorGridId} width='128' height='128' patternUnits='userSpaceOnUse'>
+            <path
+              d='M 128 0 L 0 0 0 128'
+              fill='none'
+              stroke='#94a3b8'
+              strokeOpacity='0.12'
+              strokeWidth='1'
+              vectorEffect='non-scaling-stroke'
+            />
+          </pattern>
+          <pattern id={majorGridId} width='512' height='512' patternUnits='userSpaceOnUse'>
+            <rect width='512' height='512' fill={`url(#${minorGridId})`} />
+            <path
+              d='M 512 0 L 0 0 0 512'
+              fill='none'
+              stroke='#cbd5e1'
+              strokeOpacity='0.24'
+              strokeWidth='1.5'
+              vectorEffect='non-scaling-stroke'
+            />
+          </pattern>
+        </defs>
+        <rect width={width} height={height} fill={`url(#${majorGridId})`} />
+      </SVGOverlay>
+    </Pane>
   );
 }
-
-void MapGridBackground;
 
 function MainMapEvents({
   config,
@@ -612,6 +610,47 @@ function Minimap({
   );
 }
 
+type MinimapVisibilityButtonProps = {
+  isVisible: boolean;
+  onToggle: () => void;
+};
+
+function MinimapVisibilityButton({ isVisible, onToggle }: MinimapVisibilityButtonProps) {
+  const label = isVisible ? '隐藏小地图' : '显示小地图';
+
+  return (
+    <button
+      type='button'
+      className='absolute top-[76px] left-[10px] z-500 flex size-[30px] items-center justify-center rounded-sm border-2 border-black/20 bg-white text-slate-800 shadow-sm hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-500'
+      aria-label={label}
+      aria-pressed={isVisible}
+      title={label}
+      onClick={onToggle}
+    >
+      <svg viewBox='0 0 24 24' className='size-[18px]' aria-hidden='true'>
+        <path
+          d='m3.5 5.5 5-2 7 2 5-2v15l-5 2-7-2-5 2v-15Z'
+          fill='none'
+          stroke='currentColor'
+          strokeLinecap='round'
+          strokeLinejoin='round'
+          strokeWidth='1.8'
+        />
+        <path d='M8.5 3.5v15m7-13v15' fill='none' stroke='currentColor' strokeWidth='1.8' />
+        {!isVisible && (
+          <path
+            d='m3 3 18 18'
+            fill='none'
+            stroke='currentColor'
+            strokeLinecap='round'
+            strokeWidth='2.4'
+          />
+        )}
+      </svg>
+    </button>
+  );
+}
+
 export default function InteractiveMap({
   config: incomingConfig,
   mapName,
@@ -622,6 +661,7 @@ export default function InteractiveMap({
 }: InteractiveMapProps) {
   const [config, setConfig] = useState(() => cloneInteractiveMap(incomingConfig));
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isMinimapVisible, setIsMinimapVisible] = useState(true);
   const [isMinimapExpanded, setIsMinimapExpanded] = useState(false);
   const [zoom, setZoom] = useState(incomingConfig.minZoom);
   const [selectedPointIndex, setSelectedPointIndex] = useState<number | null>(null);
@@ -968,12 +1008,12 @@ export default function InteractiveMap({
         doubleClickZoom
         className={`h-full w-full bg-slate-950 ${alwaysFullscreen ? '' : 'min-h-[420px]'}`}
       >
-        {/*<MapGridBackground
+        <MapGridBackground
           key={`${config.width}x${config.height}`}
           bounds={mapBounds}
           height={config.height}
           width={config.width}
-        />*/}
+        />
         <PictureTileLayer
           url={webpTileUrl}
           options={mainTileOptions}
@@ -1178,17 +1218,27 @@ export default function InteractiveMap({
             )}
       </MapContainer>
 
-      <Minimap
-        config={config}
-        previewUrl={previewUrl}
-        visibleCategories={visibleCategories}
-        hiddenSubtypes={hiddenSubtypes}
-        highlightedPointIds={highlightedPointIds}
-        isExpanded={isMinimapExpanded}
-        onExpand={() => setIsMinimapExpanded(true)}
-        onCollapse={() => setIsMinimapExpanded(false)}
-        onNavigate={navigateFromMinimap}
+      <MinimapVisibilityButton
+        isVisible={isMinimapVisible}
+        onToggle={() => {
+          if (isMinimapVisible) setIsMinimapExpanded(false);
+          setIsMinimapVisible((visible) => !visible);
+        }}
       />
+
+      {isMinimapVisible && (
+        <Minimap
+          config={config}
+          previewUrl={previewUrl}
+          visibleCategories={visibleCategories}
+          hiddenSubtypes={hiddenSubtypes}
+          highlightedPointIds={highlightedPointIds}
+          isExpanded={isMinimapExpanded}
+          onExpand={() => setIsMinimapExpanded(true)}
+          onCollapse={() => setIsMinimapExpanded(false)}
+          onNavigate={navigateFromMinimap}
+        />
+      )}
 
       {!alwaysFullscreen && (
         <div className='absolute top-3 right-3 z-500 flex gap-2'>
