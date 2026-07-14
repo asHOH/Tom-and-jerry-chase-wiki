@@ -9,10 +9,7 @@ import Tooltip from '@/components/ui/Tooltip';
 import { ChevronDownIcon } from '@/components/icons/CommonIcons';
 import Link from '@/components/Link';
 
-import {
-  CHARACTER_ROLE_ATTRIBUTE_META,
-  type CharacterRoleAttributeKey,
-} from '../attributePresentation';
+import { ACTOR_ATTRIBUTE_PRESENTATION, type ActorAttributeKey } from '../attributePresentation';
 import {
   formatActorAttributeNumber,
   formatActorPhysicsType,
@@ -27,7 +24,7 @@ import {
   isFactionDisplayedGravityUniform,
 } from '../selectors';
 
-export type CharacterRoleAttributesContext = 'character' | 'object';
+export type ActorContext = 'character' | 'object';
 
 type CharacterContextProps = {
   context: 'character';
@@ -49,16 +46,16 @@ type ActorAttributesSectionProps = {
   EnglishName?: string;
 } & (CharacterContextProps | ObjectContextProps);
 
-type AttributeItemBase = {
-  key: CharacterRoleAttributeKey;
+type DisplayedActorAttributeBase = {
+  key: ActorAttributeKey;
 };
 
-type AttributeItem =
-  | (AttributeItemBase & {
+type DisplayedActorAttribute =
+  | (DisplayedActorAttributeBase & {
       renderKind?: 'text';
       value: string | undefined;
     })
-  | (AttributeItemBase & {
+  | (DisplayedActorAttributeBase & {
       renderKind: 'attackCooldown';
       value: ActorProfile['attackCooldown'] | undefined;
     });
@@ -66,7 +63,7 @@ type AttributeItem =
 const NUMBER_VALUE_CLASS = 'text-blue-500 dark:text-sky-300';
 const RANKING_LINK_CLASS = 'cursor-pointer hover:underline focus-visible:underline';
 
-const OBJECT_SUMMARY_KEYS: readonly CharacterRoleAttributeKey[] = [
+const OBJECT_SUMMARY_KEYS: readonly ActorAttributeKey[] = [
   'actorType',
   'physicsType',
   'maxHp',
@@ -75,7 +72,7 @@ const OBJECT_SUMMARY_KEYS: readonly CharacterRoleAttributeKey[] = [
   'attackCooldown',
 ];
 
-const MOUSE_SUMMARY_KEYS: readonly CharacterRoleAttributeKey[] = [
+const MOUSE_SUMMARY_KEYS: readonly ActorAttributeKey[] = [
   'maxHp',
   'pushCheeseSpeed',
   'runSpeed',
@@ -87,10 +84,10 @@ const MOUSE_SUMMARY_KEYS: readonly CharacterRoleAttributeKey[] = [
 const CAT_SECONDARY_SUMMARY_KEYS = ['attack', 'initialItem', 'hpRecovery'] as const;
 
 const getSummaryKeys = (
-  context: CharacterRoleAttributesContext,
+  context: ActorContext,
   factionId: FactionId | undefined,
-  attributesByKey: ReadonlyMap<CharacterRoleAttributeKey, AttributeItem>
-): readonly CharacterRoleAttributeKey[] => {
+  attributesByKey: ReadonlyMap<ActorAttributeKey, DisplayedActorAttribute>
+): readonly ActorAttributeKey[] => {
   if (context === 'object') return OBJECT_SUMMARY_KEYS;
   if (factionId === 'mouse') return MOUSE_SUMMARY_KEYS;
 
@@ -104,8 +101,8 @@ const optionalNumber = (value: number | undefined): string | undefined =>
   value === undefined ? undefined : formatActorAttributeNumber(value);
 
 const getRankableProperty = (
-  key: CharacterRoleAttributeKey,
-  context: CharacterRoleAttributesContext,
+  key: ActorAttributeKey,
+  context: ActorContext,
   factionId: FactionId | undefined
 ): RankableProperty | undefined => {
   if (context !== 'character' || !factionId) return undefined;
@@ -198,13 +195,13 @@ const AttackCooldownValue = ({
   );
 };
 
-const createAttributeItems = (
+const createDisplayedActorAttributes = (
   role: ActorProfile,
-  context: CharacterRoleAttributesContext,
+  context: ActorContext,
   factionId: FactionId | undefined,
   EnglishName: string | undefined,
   hideGravity: boolean
-): readonly AttributeItem[] => {
+): readonly DisplayedActorAttribute[] => {
   const isObject = context === 'object';
   const isMouseCharacter = context === 'character' && factionId === 'mouse';
   const isCatCharacter = context === 'character' && factionId === 'cat';
@@ -302,7 +299,7 @@ export default function ActorAttributesSection({
   const contentId = useId();
   const role = getActorProfile(name);
   const hideGravity = context === 'character' && isFactionDisplayedGravityUniform(factionId);
-  const visibleAttributes = createAttributeItems(
+  const visibleAttributes = createDisplayedActorAttributes(
     role,
     context,
     factionId,
@@ -324,7 +321,7 @@ export default function ActorAttributesSection({
     <div className={cn('space-y-3', className)}>
       <div id={contentId} className='grid grid-cols-2 gap-3'>
         {displayedAttributes.map((attribute) => {
-          const presentation = CHARACTER_ROLE_ATTRIBUTE_META[attribute.key];
+          const presentation = ACTOR_ATTRIBUTE_PRESENTATION[attribute.key];
           const rankableProperty = getRankableProperty(attribute.key, context, factionId);
           const value =
             attribute.renderKind === 'attackCooldown' ? (

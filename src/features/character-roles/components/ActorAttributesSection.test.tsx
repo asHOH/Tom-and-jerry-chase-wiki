@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 
-import { CHARACTER_ROLE_ATTRIBUTE_KEYS } from '../attributePresentation';
+import { ACTOR_ATTRIBUTE_KEYS } from '../attributePresentation';
 import ActorAttributesSection from './ActorAttributesSection';
 
 const getRankingLink = (
@@ -69,10 +69,10 @@ describe('ActorAttributesSection', () => {
     fireEvent.click(button);
     expect(screen.getByRole('button', { name: '收起' })).toHaveAttribute('aria-expanded', 'true');
     expect(screen.getByText('重力参数').closest('p')).toHaveTextContent('重力参数: -3203');
-    expect(CHARACTER_ROLE_ATTRIBUTE_KEYS).toContain('gravity');
-    expect(CHARACTER_ROLE_ATTRIBUTE_KEYS).not.toContain('jumpHeight');
-    expect(CHARACTER_ROLE_ATTRIBUTE_KEYS).not.toContain('baseHp');
-    expect(CHARACTER_ROLE_ATTRIBUTE_KEYS).not.toContain('shoppingCooldown');
+    expect(ACTOR_ATTRIBUTE_KEYS).toContain('gravity');
+    expect(ACTOR_ATTRIBUTE_KEYS).not.toContain('jumpHeight');
+    expect(ACTOR_ATTRIBUTE_KEYS).not.toContain('baseHp');
+    expect(ACTOR_ATTRIBUTE_KEYS).not.toContain('shoppingCooldown');
   });
 
   it('should omit non-applicable summary mechanics without substitution', () => {

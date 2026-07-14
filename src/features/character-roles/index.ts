@@ -17,7 +17,7 @@ export {
 } from './selectors';
 export type { ActorProfile, PhysicsType, ActorType } from './schema';
 export {
-  CHARACTER_ROLE_ATTRIBUTE_KEYS,
-  CHARACTER_ROLE_ATTRIBUTE_META,
-  type CharacterRoleAttributeKey,
+  ACTOR_ATTRIBUTE_KEYS,
+  ACTOR_ATTRIBUTE_PRESENTATION,
+  type ActorAttributeKey,
 } from './attributePresentation';

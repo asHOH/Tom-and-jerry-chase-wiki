@@ -9,7 +9,7 @@ const defineCharacterRoleAttributeMeta = <TKey extends string>(
   metadata: Record<TKey, CharacterRoleAttributePresentation>
 ): Readonly<Record<TKey, CharacterRoleAttributePresentation>> => metadata;
 
-export const CHARACTER_ROLE_ATTRIBUTE_META = defineCharacterRoleAttributeMeta({
+export const ACTOR_ATTRIBUTE_PRESENTATION = defineCharacterRoleAttributeMeta({
   actorType: {
     label: '角色类型',
     tooltip: '角色类型：猫、鼠、特殊角色',
@@ -119,8 +119,8 @@ export const CHARACTER_ROLE_ATTRIBUTE_META = defineCharacterRoleAttributeMeta({
   },
 });
 
-export type CharacterRoleAttributeKey = keyof typeof CHARACTER_ROLE_ATTRIBUTE_META;
+export type ActorAttributeKey = keyof typeof ACTOR_ATTRIBUTE_PRESENTATION;
 
-export const CHARACTER_ROLE_ATTRIBUTE_KEYS: readonly CharacterRoleAttributeKey[] = Object.keys(
-  CHARACTER_ROLE_ATTRIBUTE_META
-) as CharacterRoleAttributeKey[];
+export const ACTOR_ATTRIBUTE_KEYS: readonly ActorAttributeKey[] = Object.keys(
+  ACTOR_ATTRIBUTE_PRESENTATION
+) as ActorAttributeKey[];

@@ -1,6 +1,6 @@
 import {
-  CHARACTER_ROLE_ATTRIBUTE_KEYS,
-  CHARACTER_ROLE_ATTRIBUTE_META,
+  ACTOR_ATTRIBUTE_KEYS,
+  ACTOR_ATTRIBUTE_PRESENTATION,
   formatActorAttackCooldown,
   formatActorPhysicsType,
   formatActorSex,
@@ -57,11 +57,11 @@ describe('character role domain', () => {
   });
 
   it('should provide a tooltip for every role attribute key', () => {
-    expect(Object.keys(CHARACTER_ROLE_ATTRIBUTE_META).sort()).toEqual(
-      [...CHARACTER_ROLE_ATTRIBUTE_KEYS].sort()
+    expect(Object.keys(ACTOR_ATTRIBUTE_PRESENTATION).sort()).toEqual(
+      [...ACTOR_ATTRIBUTE_KEYS].sort()
     );
-    expect(CHARACTER_ROLE_ATTRIBUTE_META.visionScale.tooltip).toContain('视野');
-    expect(CHARACTER_ROLE_ATTRIBUTE_META.hpRecovery).toMatchObject({
+    expect(ACTOR_ATTRIBUTE_PRESENTATION.visionScale.tooltip).toContain('视野');
+    expect(ACTOR_ATTRIBUTE_PRESENTATION.hpRecovery).toMatchObject({
       label: 'Hp恢复',
       suffix: 'Hp/s',
       numeric: true,

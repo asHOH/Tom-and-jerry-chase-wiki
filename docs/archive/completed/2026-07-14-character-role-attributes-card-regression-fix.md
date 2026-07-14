@@ -61,7 +61,7 @@ applicability abstraction or change generated canonical data for this fix.
 
 ### Attribute visibility
 
-Make `createAttributeItems` account for `context` and, for character context, `factionId`. Preserve
+Make `createDisplayedActorAttributes` account for `context` and, for character context, `factionId`. Preserve
 the existing field-presence behavior for object context.
 
 For playable mice:
