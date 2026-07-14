@@ -11,6 +11,7 @@ export const env = createEnv({
     RESEND_API_KEY: z.string().optional(),
     FEEDBACK_EMAIL: z.email().optional(),
     RESEND_FROM_EMAIL: z.email().optional(),
+    NOTIFICATION_UNSUBSCRIBE_SECRET: z.string().min(32).optional(),
 
     // Supabase
     SUPABASE_SECRET_KEY: z.string().optional(),

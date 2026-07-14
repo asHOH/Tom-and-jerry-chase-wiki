@@ -1,4 +1,8 @@
-import { publishNotification } from '@/lib/notificationUtils';
+import {
+  createNotificationUnsubscribeToken,
+  getNotificationUnsubscribeUserId,
+  publishNotification,
+} from '@/lib/notificationUtils';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 
 jest.mock('@/constants/seo', () => ({
@@ -10,6 +14,7 @@ jest.mock('@/env', () => ({
   env: {
     RESEND_API_KEY: 'resend-key',
     RESEND_FROM_EMAIL: 'notify@tjwiki.test',
+    NOTIFICATION_UNSUBSCRIBE_SECRET: 'test-unsubscribe-secret-at-least-32-characters',
   },
 }));
 
@@ -115,6 +120,20 @@ describe('publishNotification', () => {
       'https://api.resend.com/emails',
       expect.objectContaining({ method: 'POST' })
     );
+    const request = fetchMock.mock.calls[0]?.[1] as RequestInit | undefined;
+    const emailBody = JSON.parse(String(request?.body)) as {
+      headers?: Record<string, string>;
+      html?: string;
+      text?: string;
+    };
+    expect(emailBody.html).toContain('取消订阅');
+    expect(emailBody.text).toContain('取消订阅审核结果邮件');
+    expect(emailBody.headers).toEqual(
+      expect.objectContaining({
+        'List-Unsubscribe': expect.stringContaining('/api/notifications/email/unsubscribe?token='),
+        'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+      })
+    );
   });
 
   it('suppresses automatic staff notifications', async () => {
@@ -168,5 +187,20 @@ describe('publishNotification', () => {
       'Failed to create in-site notification: insert failed'
     );
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+});
+
+describe('notification unsubscribe tokens', () => {
+  it('authenticates the recipient without exposing their email address', () => {
+    const token = createNotificationUnsubscribeToken('user-1', 'private@example.com');
+
+    expect(token).not.toContain('private@example.com');
+    expect(getNotificationUnsubscribeUserId(token)).toBe('user-1');
+  });
+
+  it('rejects a modified token', () => {
+    const token = createNotificationUnsubscribeToken('user-1', 'private@example.com');
+
+    expect(getNotificationUnsubscribeUserId(`${token}changed`)).toBeNull();
   });
 });

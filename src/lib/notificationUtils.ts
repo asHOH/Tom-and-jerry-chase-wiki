@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { createHash } from 'crypto';
+import { createHash, createHmac, timingSafeEqual } from 'crypto';
 
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { SITE_NAME, SITE_URL } from '@/constants/seo';
@@ -48,9 +48,16 @@ type SendEmailInput = {
   subject: string;
   text: string;
   html: string;
+  headers?: Record<string, string>;
 };
 
-const sendEmail = async ({ to, subject, text, html }: SendEmailInput): Promise<boolean> => {
+const sendEmail = async ({
+  to,
+  subject,
+  text,
+  html,
+  headers,
+}: SendEmailInput): Promise<boolean> => {
   if (!env.RESEND_API_KEY || !env.RESEND_FROM_EMAIL) return false;
 
   const response = await fetch('https://api.resend.com/emails', {
@@ -65,6 +72,7 @@ const sendEmail = async ({ to, subject, text, html }: SendEmailInput): Promise<b
       subject,
       text,
       html,
+      ...(headers ? { headers } : {}),
     }),
   });
 
@@ -74,6 +82,48 @@ const sendEmail = async ({ to, subject, text, html }: SendEmailInput): Promise<b
   }
 
   return true;
+};
+
+const getUnsubscribeSecret = () =>
+  env.NOTIFICATION_UNSUBSCRIBE_SECRET ?? env.SUPABASE_SECRET_KEY ?? env.SUPABASE_SERVICE_ROLE_KEY;
+
+const getEmailFingerprint = (email: string) =>
+  createHash('sha256').update(email.trim().toLowerCase()).digest('hex').slice(0, 24);
+
+export const createNotificationUnsubscribeToken = (userId: string, email: string): string => {
+  const secret = getUnsubscribeSecret();
+  if (!secret) throw new Error('Notification unsubscribe signing secret is not configured');
+
+  const payload = Buffer.from(`${userId}:${getEmailFingerprint(email)}`).toString('base64url');
+  const signature = createHmac('sha256', secret).update(payload).digest('base64url');
+  return `${payload}.${signature}`;
+};
+
+export const getNotificationUnsubscribeUserId = (token: string): string | null => {
+  const secret = getUnsubscribeSecret();
+  if (!secret) return null;
+
+  const [payload, signature, extra] = token.split('.');
+  if (!payload || !signature || extra) return null;
+
+  const expected = createHmac('sha256', secret).update(payload).digest('base64url');
+  const actualBuffer = Buffer.from(signature);
+  const expectedBuffer = Buffer.from(expected);
+  if (
+    actualBuffer.length !== expectedBuffer.length ||
+    !timingSafeEqual(actualBuffer, expectedBuffer)
+  ) {
+    return null;
+  }
+
+  try {
+    const decoded = Buffer.from(payload, 'base64url').toString('utf8');
+    const separatorIndex = decoded.indexOf(':');
+    const userId = decoded.slice(0, separatorIndex);
+    return separatorIndex > 0 && userId ? userId : null;
+  } catch {
+    return null;
+  }
 };
 
 export const publishNotification = async (
@@ -139,6 +189,13 @@ export const publishNotification = async (
   }
 
   const link = absoluteHref(input.href);
+  const unsubscribeToken = createNotificationUnsubscribeToken(
+    input.recipientUserId,
+    emailSettings.email
+  );
+  const unsubscribeUrl = new URL('/api/notifications/email/unsubscribe', SITE_URL);
+  unsubscribeUrl.searchParams.set('token', unsubscribeToken);
+  const unsubscribeLink = unsubscribeUrl.toString();
   const escapedTitle = escapeHtml(input.title);
   const escapedBody = escapeHtml(input.body).replace(/\n/g, '<br>');
 
@@ -146,8 +203,12 @@ export const publishNotification = async (
     const sent = await sendEmail({
       to: emailSettings.email,
       subject: `[猫鼠Wiki] ${input.title}`,
-      text: `${input.title}\n\n${input.body}\n\n${link}`,
-      html: `<h2>${escapedTitle}</h2><p>${escapedBody}</p><p><a href="${escapeHtml(link)}">前往${escapeHtml(SITE_NAME)}查看</a></p>`,
+      text: `${input.title}\n\n${input.body}\n\n${link}\n\n取消订阅审核结果邮件：${unsubscribeLink}`,
+      html: `<h2>${escapedTitle}</h2><p>${escapedBody}</p><p><a href="${escapeHtml(link)}">前往${escapeHtml(SITE_NAME)}查看</a></p><hr><p style="color:#666;font-size:12px">不希望继续收到审核结果邮件？<a href="${escapeHtml(unsubscribeLink)}">取消订阅</a></p>`,
+      headers: {
+        'List-Unsubscribe': `<${unsubscribeLink}>`,
+        'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+      },
     });
     return {
       created: true,
