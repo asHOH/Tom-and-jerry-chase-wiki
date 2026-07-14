@@ -91,7 +91,6 @@ const CATEGORY_ICONS: Partial<Record<MapPointCategory, string>> = {
   cheese: '/images/items/奶酪.png',
   rocket: '/images/items/火箭.png',
   drink: '/images/items/神秘饮料.png',
-  fixture: '/images/fixtures/七色花.png',
   geometryBarrel: '/images/entities/火药桶.png',
 };
 

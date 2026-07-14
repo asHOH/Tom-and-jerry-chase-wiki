@@ -481,15 +481,7 @@ export type mapTypes = '常规地图' | '娱乐地图' | '广场地图';
 export type MapSize = '微型' | '小型' | '中型' | '大型';
 export type studyLevel = '见习学业' | '高级学业' | '特级学业' | '大师学业';
 export type MapPointCategory =
-  | 'teleport'
-  | 'cheese'
-  | 'rocket'
-  | 'drink'
-  | 'mouseHole'
-  | 'pipe'
-  | 'fixture'
-  | 'geometryBarrel'
-  | 'specialMode';
+  'teleport' | 'cheese' | 'rocket' | 'drink' | 'mouseHole' | 'pipe' | 'geometryBarrel';
 export type MapCoordinate = { x: number; y: number };
 export type InteractiveMapRoom = {
   name: string;

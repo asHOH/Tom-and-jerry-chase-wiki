@@ -19,9 +19,7 @@ export const MAP_CATEGORY_LABELS: Record<MapPointCategory, string> = {
   drink: '饮料',
   mouseHole: '奶酪洞口',
   pipe: '管道',
-  fixture: '特殊组件',
   geometryBarrel: '几何桶',
-  specialMode: '特殊玩法',
 };
 
 export const ALWAYS_VISIBLE_CATEGORIES = new Set<MapPointCategory>(['mouseHole', 'pipe']);
@@ -46,14 +44,6 @@ const DEFAULT_MAP_POINT_RELATED_ENTRIES: Partial<Record<MapPointCategory, Single
 export const getDefaultMapPointRelatedEntries = (
   point: Pick<InteractiveMapPoint, 'category' | 'subtype'>
 ): SingleItemOrGroup[] => {
-  if (point.category === 'fixture' && point.subtype) {
-    return [{ name: point.subtype, type: 'fixture' }];
-  }
-
-  if (point.category === 'specialMode' && point.subtype) {
-    return [{ name: point.subtype, type: 'mode' }];
-  }
-
   const defaultEntry = DEFAULT_MAP_POINT_RELATED_ENTRIES[point.category];
   if (point.category === 'geometryBarrel') {
     return [

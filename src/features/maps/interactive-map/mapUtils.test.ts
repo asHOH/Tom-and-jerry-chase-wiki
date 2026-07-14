@@ -76,15 +76,6 @@ describe('interactive map utilities', () => {
     expect(MAP_CATEGORY_LABELS.drink).toBe('饮料');
   });
 
-  it('should use the subtype for fixture and special-mode point entries', () => {
-    expect(getDefaultMapPointRelatedEntries({ category: 'fixture', subtype: '七色花' })).toEqual([
-      { name: '七色花', type: 'fixture' },
-    ]);
-    expect(
-      getDefaultMapPointRelatedEntries({ category: 'specialMode', subtype: '经典奶酪赛' })
-    ).toEqual([{ name: '经典奶酪赛', type: 'mode' }]);
-  });
-
   it('should build a description lookup URL for a related wiki entry', () => {
     expect(getMapPointRelatedEntryDescriptionUrl({ name: '奶酪', type: 'item' })).toBe(
       '/api/goto/%E5%A5%B6%E9%85%AA?category=%E9%81%93%E5%85%B7&descMode=description'
@@ -151,20 +142,6 @@ describe('interactive map utilities', () => {
 
   it('should keep selected minimap points visible regardless of minZoom', () => {
     expect(isMinimapPointVisible(point, DEFAULT_VISIBLE_CATEGORIES, new Set())).toBe(true);
-  });
-
-  it('should apply category and subtype filters to minimap points', () => {
-    const fixturePoint: InteractiveMapPoint = {
-      ...point,
-      category: 'fixture',
-      subtype: '七色花',
-    };
-
-    expect(isMinimapPointVisible(fixturePoint, new Set(['fixture']), new Set())).toBe(true);
-    expect(isMinimapPointVisible(fixturePoint, new Set(), new Set())).toBe(false);
-    expect(isMinimapPointVisible(fixturePoint, new Set(['fixture']), new Set(['七色花']))).toBe(
-      false
-    );
   });
 
   it('should calculate a room center from all polygon vertices', () => {
