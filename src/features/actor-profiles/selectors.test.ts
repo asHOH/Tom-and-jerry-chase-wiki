@@ -20,11 +20,11 @@ describe('character role domain', () => {
   });
 
   it('should calculate one integer jump height selector', () => {
-    const role = getActorProfile('汤姆');
-    expect(getActorJumpHeight(role)).toBe(
-      Math.round(role.jumpSpeed ** 2 / (2 * Math.abs(role.gravity)))
+    const profile = getActorProfile('汤姆');
+    expect(getActorJumpHeight(profile)).toBe(
+      Math.round(profile.jumpSpeed ** 2 / (2 * Math.abs(profile.gravity)))
     );
-    expect(Number.isInteger(getActorJumpHeight(role))).toBe(true);
+    expect(Number.isInteger(getActorJumpHeight(profile))).toBe(true);
   });
 
   it('should format canonical values without unknown fallbacks', () => {
@@ -40,20 +40,20 @@ describe('character role domain', () => {
     expect(isFactionDisplayedGravityUniform('cat')).toBe(true);
     expect(isFactionDisplayedGravityUniform('mouse')).toBe(true);
 
-    const baseRole = getActorProfile('汤姆');
+    const baseProfile = getActorProfile('汤姆');
     expect(
       haveUniformDisplayedGravity([
-        baseRole,
-        { ...baseRole, name: '未来角色', gravity: baseRole.gravity - 100 },
+        baseProfile,
+        { ...baseProfile, name: '未来角色', gravity: baseProfile.gravity - 100 },
       ])
     ).toBe(false);
   });
 
   it('should join by character id without inferring faction from role fields', () => {
-    const role = getActorProfileForCharacter({ id: '兔子大表哥', factionId: 'mouse' });
+    const profile = getActorProfileForCharacter({ id: '兔子大表哥', factionId: 'mouse' });
 
-    expect(role.actorType).toBe('special');
-    expect(role.physicsType).toBe('cat');
+    expect(profile.actorType).toBe('special');
+    expect(profile.physicsType).toBe('cat');
   });
 
   it('should provide a tooltip for every role attribute key', () => {

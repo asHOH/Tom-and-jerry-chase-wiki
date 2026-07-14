@@ -328,31 +328,35 @@ export const assertValidActorProfiles = (
   input: unknown,
   context: ActorProfileValidationContext
 ): readonly ActorProfile[] => {
-  const roles = parseActorProfiles(input);
-  const rolesByName = new Map<string, ActorProfile>();
+  const profiles = parseActorProfiles(input);
+  const profilesByName = new Map<string, ActorProfile>();
 
-  for (const role of roles) {
-    if (role.name.trim() !== role.name || normalizeActorProfileName(role.name) !== role.name) {
-      fail(`role ${role.name}`, 'name is not normalized');
+  for (const profile of profiles) {
+    if (
+      profile.name.trim() !== profile.name ||
+      normalizeActorProfileName(profile.name) !== profile.name
+    ) {
+      fail(`profile ${profile.name}`, 'name is not normalized');
     }
-    if (rolesByName.has(role.name)) fail(`role ${role.name}`, 'duplicate normalized name');
-    rolesByName.set(role.name, role);
+    if (profilesByName.has(profile.name))
+      fail(`profile ${profile.name}`, 'duplicate normalized name');
+    profilesByName.set(profile.name, profile);
   }
 
   for (const character of context.playableCharacters) {
-    const role = rolesByName.get(character.id);
-    if (!role) fail(`character ${character.id}`, 'missing canonical role');
+    const profile = profilesByName.get(character.id);
+    if (!profile) fail(`character ${character.id}`, 'missing canonical profile');
 
     if (character.factionId === 'cat') {
-      if (role.attack === undefined)
+      if (profile.attack === undefined)
         fail(`character ${character.id}`, 'playable cat requires attack');
-      if (role.attackRange === undefined) {
+      if (profile.attackRange === undefined) {
         fail(`character ${character.id}`, 'playable cat requires attackRange');
       }
-      if (role.attackCooldown.miss === undefined) {
+      if (profile.attackCooldown.miss === undefined) {
         fail(`character ${character.id}`, 'playable cat requires attackCooldown.miss');
       }
-    } else if (role.pushCheeseSpeed === undefined) {
+    } else if (profile.pushCheeseSpeed === undefined) {
       fail(`character ${character.id}`, 'playable mouse requires pushCheeseSpeed');
     }
   }
@@ -362,16 +366,17 @@ export const assertValidActorProfiles = (
       fail(reference.source, 'cannot combine actorProfileName with a legacy representation');
     }
     if (context.excludedNames.has(reference.name)) {
-      fail(reference.source, `references excluded role ${reference.name}`);
+      fail(reference.source, `references excluded profile ${reference.name}`);
     }
-    if (!rolesByName.has(reference.name)) {
-      fail(reference.source, `references missing canonical role ${reference.name}`);
+    if (!profilesByName.has(reference.name)) {
+      fail(reference.source, `references missing canonical profile ${reference.name}`);
     }
   }
 
   for (const excludedName of context.excludedNames) {
-    if (rolesByName.has(excludedName)) fail(`role ${excludedName}`, 'excluded role is present');
+    if (profilesByName.has(excludedName))
+      fail(`profile ${excludedName}`, 'excluded profile is present');
   }
 
-  return roles;
+  return profiles;
 };

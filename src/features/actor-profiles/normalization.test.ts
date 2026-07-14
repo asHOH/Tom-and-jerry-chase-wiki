@@ -7,7 +7,7 @@ import {
   type RawActorProfile,
 } from './schema';
 
-const createRawRole = (overrides: Partial<RawActorProfile> = {}): RawActorProfile => ({
+const createRawProfile = (overrides: Partial<RawActorProfile> = {}): RawActorProfile => ({
   name: '测试角色',
   actorType: 0,
   physicsTag: 1,
@@ -64,9 +64,9 @@ const createCanonicalRole = (overrides: Partial<ActorProfile> = {}): ActorProfil
 
 describe('character role normalization', () => {
   it('should map every raw field and normalize floating-point cooldown noise', () => {
-    const [role] = normalizeActorProfiles([createRawRole()], createContext());
+    const [profile] = normalizeActorProfiles([createRawProfile()], createContext());
 
-    expect(role).toEqual({
+    expect(profile).toEqual({
       name: '测试角色',
       actorType: 'mouse',
       physicsType: 'mouse',
@@ -93,23 +93,26 @@ describe('character role normalization', () => {
   });
 
   it('should map dazhadan to the site-facing 鞭炮束 identifier', () => {
-    const [role] = normalizeActorProfiles([createRawRole({ item: 'dazhadan' })], createContext());
+    const [profile] = normalizeActorProfiles(
+      [createRawProfile({ item: 'dazhadan' })],
+      createContext()
+    );
 
-    expect(role?.initialItem).toBe('鞭炮束');
+    expect(profile?.initialItem).toBe('鞭炮束');
   });
 
   it('should apply the allowlisted corrections and explicitly exclude 火箭', () => {
-    const specialRole = createRawRole({
+    const specialRole = createRawProfile({
       name: '\\"正气守护\\"斯派克',
       actorType: 2,
       physicsTag: 2,
       sex: 0,
     });
     delete specialRole.pushCheese;
-    const roles = normalizeActorProfiles(
+    const profile = normalizeActorProfiles(
       [
-        createRawRole({ name: '罗宾汉杰瑞', jumpSpeed: '1675;1450' }),
-        createRawRole({ name: '表演者▪杰瑞' }),
+        createRawProfile({ name: '罗宾汉杰瑞', jumpSpeed: '1675;1450' }),
+        createRawProfile({ name: '表演者▪杰瑞' }),
         specialRole,
         { name: '火箭', actorType: 2 },
       ],
@@ -128,21 +131,21 @@ describe('character role normalization', () => {
       }
     );
 
-    expect(roles.map((role) => role.name)).toEqual([
+    expect(profile.map((profile) => profile.name)).toEqual([
       '罗宾汉杰瑞',
       '表演者•杰瑞',
       '“正气守护”斯派克',
     ]);
-    expect(roles[0]?.jumpSpeed).toBe(1675);
+    expect(profile[0]?.jumpSpeed).toBe(1675);
   });
 
   it('should serialize playable roles first and remaining roles in code-point order', () => {
-    const roles = normalizeActorProfiles(
+    const profiles = normalizeActorProfiles(
       [
-        createRawRole({ name: '乙' }),
-        createRawRole({ name: '可玩乙' }),
-        createRawRole({ name: '甲' }),
-        createRawRole({ name: '可玩甲' }),
+        createRawProfile({ name: '乙' }),
+        createRawProfile({ name: '可玩乙' }),
+        createRawProfile({ name: '甲' }),
+        createRawProfile({ name: '可玩甲' }),
       ],
       {
         playableCharacters: [
@@ -153,24 +156,24 @@ describe('character role normalization', () => {
       }
     );
 
-    expect(roles.map((role) => role.name)).toEqual(['可玩甲', '可玩乙', '乙', '甲']);
-    expect(serializeActorProfiles(roles)).toBe(`${JSON.stringify(roles, null, 2)}\n`);
+    expect(profiles.map((profile) => profile.name)).toEqual(['可玩甲', '可玩乙', '乙', '甲']);
+    expect(serializeActorProfiles(profiles)).toBe(`${JSON.stringify(profiles, null, 2)}\n`);
   });
 
   it.each([
-    ['invalid enum', () => ({ ...createRawRole(), actorType: 9 }), 'unknown enum value'],
-    ['malformed size', () => createRawRole({ size: '85,130' }), 'width;height'],
+    ['invalid enum', () => ({ ...createRawProfile(), actorType: 9 }), 'unknown enum value'],
+    ['malformed size', () => createRawProfile({ size: '85,130' }), 'width;height'],
     [
       'unexpected jump punctuation',
-      () => createRawRole({ jumpSpeed: '1675,1450' }),
+      () => createRawProfile({ jumpSpeed: '1675,1450' }),
       'unexpected nonnumeric',
     ],
     [
       'missing core field',
       () => {
-        const role = createRawRole();
-        delete role.gravity;
-        return role;
+        const profile = createRawProfile();
+        delete profile.gravity;
+        return profile;
       },
       'missing required finite number',
     ],
@@ -181,20 +184,20 @@ describe('character role normalization', () => {
   it('should reject duplicate names after correction', () => {
     expect(() =>
       normalizeActorProfiles(
-        [createRawRole({ name: '表演者▪杰瑞' }), createRawRole({ name: '表演者•杰瑞' })],
+        [createRawProfile({ name: '表演者▪杰瑞' }), createRawProfile({ name: '表演者•杰瑞' })],
         createContext('表演者•杰瑞')
       )
     ).toThrow('duplicate normalized name');
   });
 
   it('should reject missing faction-specific mechanics', () => {
-    const catWithoutAttack = createRawRole();
+    const catWithoutAttack = createRawProfile();
     delete catWithoutAttack.attack;
     expect(() =>
       normalizeActorProfiles([catWithoutAttack], createContext('测试角色', 'cat'))
     ).toThrow('playable cat requires attack');
 
-    const mouseWithoutPushSpeed = createRawRole();
+    const mouseWithoutPushSpeed = createRawProfile();
     delete mouseWithoutPushSpeed.pushCheese;
     expect(() =>
       normalizeActorProfiles([mouseWithoutPushSpeed], createContext('测试角色', 'mouse'))
@@ -202,10 +205,10 @@ describe('character role normalization', () => {
   });
 
   it('should preserve an omitted non-applicable miss cooldown', () => {
-    const rawRole = createRawRole();
-    delete rawRole.attackMissCdRate;
-    const [role] = normalizeActorProfiles([rawRole], createContext());
-    expect(role?.attackCooldown).toEqual({ hit: 4.5 });
+    const rawProfile = createRawProfile();
+    delete rawProfile.attackMissCdRate;
+    const [profile] = normalizeActorProfiles([rawProfile], createContext());
+    expect(profile?.attackCooldown).toEqual({ hit: 4.5 });
   });
 });
 
@@ -224,22 +227,22 @@ describe('character role validation', () => {
       playableCharacters: [{ id: '测试角色', factionId: 'mouse' as const }],
       excludedNames: new Set(['火箭']),
     };
-    const role = createCanonicalRole();
+    const profile = createCanonicalRole();
 
     expect(() =>
-      assertValidActorProfiles([role], {
+      assertValidActorProfiles([profile], {
         ...baseContext,
         references: [{ source: 'entity 缺失', name: '不存在', hasLegacyRepresentation: false }],
       })
     ).toThrow('references missing canonical role');
     expect(() =>
-      assertValidActorProfiles([role], {
+      assertValidActorProfiles([profile], {
         ...baseContext,
         references: [{ source: 'item 火箭', name: '火箭', hasLegacyRepresentation: false }],
       })
     ).toThrow('references excluded role');
     expect(() =>
-      assertValidActorProfiles([role], {
+      assertValidActorProfiles([profile], {
         ...baseContext,
         references: [{ source: 'entity 混合', name: '测试角色', hasLegacyRepresentation: true }],
       })
