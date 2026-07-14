@@ -3,18 +3,18 @@ import { useMemo } from 'react';
 import { cn, getTypeLabelColors } from '@/lib/design';
 import { getSingleItemHref, getSingleItemImageUrl } from '@/lib/singleItemTools';
 import { useDarkMode } from '@/context/DarkModeContext';
-import { SingleItem } from '@/data/types';
+import { SingleItemOrGroup } from '@/data/types';
 import Image from '@/components/Image';
 
 interface SingleItemButtonProps {
-  singleItem: SingleItem;
+  singleItem: SingleItemOrGroup;
   size?: 'default' | 'small';
 }
 
 export default function SingleItemButton({ singleItem, size = 'default' }: SingleItemButtonProps) {
   const [isDarkMode] = useDarkMode();
 
-  function getSingleItemButtonColor(singleItem: SingleItem) {
+  function getSingleItemButtonColor(singleItem: SingleItemOrGroup) {
     const getOriginalKey = (key: string): string => {
       const SpecificKeyMap: Record<string, string> = {
         skill: 'character-skill',

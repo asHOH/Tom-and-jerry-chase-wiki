@@ -4,7 +4,7 @@ import type {
   InteractiveMapRoom,
   MapCoordinate,
   MapPointCategory,
-  SingleItem,
+  SingleItemOrGroup,
 } from '@/data/types';
 
 export type InteractiveMapImageFormat = 'avif' | 'webp';
@@ -14,6 +14,7 @@ export const MAP_CATEGORY_LABELS: Record<MapPointCategory, string> = {
   teleport: '角色传送',
   cheese: '奶酪',
   rocket: '火箭',
+  drink: '饮料',
   mouseHole: '奶酪洞口',
   pipe: '管道',
   fixture: '特殊组件',
@@ -22,22 +23,27 @@ export const MAP_CATEGORY_LABELS: Record<MapPointCategory, string> = {
 };
 
 export const ALWAYS_VISIBLE_CATEGORIES = new Set<MapPointCategory>(['mouseHole', 'pipe']);
-export const DEFAULT_VISIBLE_CATEGORIES = new Set<MapPointCategory>(['cheese', 'rocket']);
-export const DEFAULT_RANDOM_CANDIDATE_CATEGORIES = new Set<MapPointCategory>(['cheese', 'rocket']);
+export const DEFAULT_VISIBLE_CATEGORIES = new Set<MapPointCategory>(['cheese', 'rocket', 'drink']);
+export const DEFAULT_RANDOM_CANDIDATE_CATEGORIES = new Set<MapPointCategory>([
+  'cheese',
+  'rocket',
+  'drink',
+]);
 
 export const isRandomCandidateByDefault = (category: MapPointCategory): boolean =>
   DEFAULT_RANDOM_CANDIDATE_CATEGORIES.has(category);
 
-const DEFAULT_MAP_POINT_RELATED_ENTRIES: Partial<Record<MapPointCategory, SingleItem>> = {
+const DEFAULT_MAP_POINT_RELATED_ENTRIES: Partial<Record<MapPointCategory, SingleItemOrGroup>> = {
   cheese: { name: '奶酪', type: 'item' },
   rocket: { name: '火箭', type: 'item' },
+  drink: { name: '饮料', type: 'itemGroup' },
   mouseHole: { name: '老鼠洞', type: 'fixture' },
   pipe: { name: '管道', type: 'fixture' },
 };
 
 export const getDefaultMapPointRelatedEntries = (
   point: Pick<InteractiveMapPoint, 'category' | 'subtype'>
-): SingleItem[] => {
+): SingleItemOrGroup[] => {
   if (point.category === 'fixture' && point.subtype) {
     return [{ name: point.subtype, type: 'fixture' }];
   }

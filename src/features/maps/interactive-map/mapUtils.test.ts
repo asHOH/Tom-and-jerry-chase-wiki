@@ -15,6 +15,7 @@ import {
   isPointVisible,
   isRandomCandidateByDefault,
   latLngToCoordinate,
+  MAP_CATEGORY_LABELS,
   minimapPixelsToCoordinate,
   updateInteractiveMapPoint,
 } from './mapUtils';
@@ -37,9 +38,10 @@ const point: InteractiveMapPoint = {
 };
 
 describe('interactive map utilities', () => {
-  it('should mark cheese and rocket points as random candidates by default', () => {
+  it('should mark cheese, rocket, and drink points as random candidates by default', () => {
     expect(isRandomCandidateByDefault('cheese')).toBe(true);
     expect(isRandomCandidateByDefault('rocket')).toBe(true);
+    expect(isRandomCandidateByDefault('drink')).toBe(true);
     expect(isRandomCandidateByDefault('pipe')).toBe(false);
     expect(isRandomCandidateByDefault('mouseHole')).toBe(false);
     expect(isRandomCandidateByDefault('teleport')).toBe(false);
@@ -52,12 +54,19 @@ describe('interactive map utilities', () => {
     expect(getDefaultMapPointRelatedEntries({ category: 'rocket' })).toEqual([
       { name: '火箭', type: 'item' },
     ]);
+    expect(getDefaultMapPointRelatedEntries({ category: 'drink' })).toEqual([
+      { name: '饮料', type: 'itemGroup' },
+    ]);
     expect(getDefaultMapPointRelatedEntries({ category: 'mouseHole' })).toEqual([
       { name: '老鼠洞', type: 'fixture' },
     ]);
     expect(getDefaultMapPointRelatedEntries({ category: 'pipe' })).toEqual([
       { name: '管道', type: 'fixture' },
     ]);
+  });
+
+  it('should label drink points in Chinese', () => {
+    expect(MAP_CATEGORY_LABELS.drink).toBe('饮料');
   });
 
   it('should use the subtype for fixture and special-mode point entries', () => {

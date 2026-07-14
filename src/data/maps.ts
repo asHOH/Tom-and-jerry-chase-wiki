@@ -346,6 +346,111 @@ const mapDefinitions: Record<string, MapDefinition> = {
           isRandomCandidate: true,
           relatedEntries: [{ name: '火箭', type: 'item' }],
         },
+        {
+          id: 'map-point-15ce3ba6-ba5f-4ea2-8ef9-26a5e93d62f4',
+          category: 'drink',
+          position: {
+            x: 0.3835874862443012,
+            y: 0.27925740340911626,
+          },
+          isRandomCandidate: true,
+          relatedEntries: [
+            {
+              name: '饮料',
+              type: 'itemGroup',
+            },
+          ],
+        },
+        {
+          id: 'map-point-55ce0971-618c-4543-ab9e-dc22a7c6e740',
+          category: 'drink',
+          position: {
+            x: 0.6932872189907248,
+            y: 0.323718178716851,
+          },
+          isRandomCandidate: true,
+          relatedEntries: [
+            {
+              name: '饮料',
+              type: 'itemGroup',
+            },
+          ],
+        },
+        {
+          id: 'map-point-fe9d8835-3a8e-467b-872f-77d6381e5103',
+          category: 'drink',
+          position: {
+            x: 0.4788555258607137,
+            y: 0.5444607080225456,
+          },
+          isRandomCandidate: true,
+          relatedEntries: [
+            {
+              name: '饮料',
+              type: 'itemGroup',
+            },
+          ],
+        },
+        {
+          id: 'map-point-76ffe864-9008-4180-bf79-d490ae3877c5',
+          category: 'drink',
+          position: {
+            x: 0.8768713267082189,
+            y: 0.5681668045332292,
+          },
+          isRandomCandidate: true,
+          relatedEntries: [
+            {
+              name: '饮料',
+              type: 'itemGroup',
+            },
+          ],
+        },
+        {
+          id: 'map-point-96bba343-2d7d-452f-b8a7-a88b1d0181e5',
+          category: 'drink',
+          position: {
+            x: 0.8378701442423554,
+            y: 0.8456447217804728,
+          },
+          isRandomCandidate: true,
+          relatedEntries: [
+            {
+              name: '饮料',
+              type: 'itemGroup',
+            },
+          ],
+        },
+        {
+          id: 'map-point-a925143a-2be8-4eb7-b4b8-a887ec834c0e',
+          category: 'drink',
+          position: {
+            x: 0.1272645917895208,
+            y: 0.6078626380194684,
+          },
+          isRandomCandidate: true,
+          relatedEntries: [
+            {
+              name: '饮料',
+              type: 'itemGroup',
+            },
+          ],
+        },
+        {
+          id: 'map-point-e2b70990-4238-4260-a1c8-b42df5aa23e7',
+          category: 'drink',
+          position: {
+            x: 0.8454147967704697,
+            y: 0.08486809832311268,
+          },
+          isRandomCandidate: true,
+          relatedEntries: [
+            {
+              name: '饮料',
+              type: 'itemGroup',
+            },
+          ],
+        },
       ],
     },
     description:

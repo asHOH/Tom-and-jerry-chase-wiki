@@ -484,6 +484,7 @@ export type MapPointCategory =
   | 'teleport'
   | 'cheese'
   | 'rocket'
+  | 'drink'
   | 'mouseHole'
   | 'pipe'
   | 'fixture'
@@ -509,7 +510,7 @@ export type InteractiveMapPoint = {
   isInvisible?: boolean;
   isRandomCandidate?: boolean;
   minZoom?: number;
-  relatedEntries?: SingleItem[];
+  relatedEntries?: SingleItemOrGroup[];
 };
 export type InteractiveMapConfig = {
   width: number;

@@ -31,7 +31,7 @@ import type {
   InteractiveMapPoint,
   MapCoordinate,
   MapPointCategory,
-  SingleItemTypeName,
+  SingleItemOrGroup,
 } from '@/data/types';
 import SingleItemButton from '@/components/ui/SingleItemButton';
 import Image from '@/components/Image';
@@ -72,6 +72,7 @@ type EditorMode = 'browse' | 'selectRoom' | 'addPoint' | 'drawRoom';
 const CATEGORY_ICONS: Partial<Record<MapPointCategory, string>> = {
   cheese: '/images/items/奶酪.png',
   rocket: '/images/items/火箭.png',
+  drink: '/images/items/神秘饮料.png',
   fixture: '/images/fixtures/七色花.png',
   geometryBarrel: '/images/fixtures/桶.png',
 };
@@ -97,7 +98,14 @@ const makeIcon = (
     point.category === 'pipe' && point.connection
       ? `<span class="interactive-map-pipe-badge" aria-hidden="true">${escapeHtml(point.connection.label ?? '↔')}</span>`
       : null;
-  const zoom = point.category == 'cheese' ? 0.68 : point.category == 'rocket' ? 0.5 : 1;
+  const zoom =
+    point.category === 'cheese'
+      ? 0.68
+      : point.category === 'rocket'
+        ? 0.5
+        : point.category === 'drink'
+          ? 1.1
+          : 1;
   const content = connectionBadge
     ? connectionBadge
     : isInvisible
@@ -1206,7 +1214,7 @@ type EditorPanelProps = {
 
 function EditorPanel(props: EditorPanelProps) {
   const [relatedName, setRelatedName] = useState('');
-  const [relatedType, setRelatedType] = useState<SingleItemTypeName>('fixture');
+  const [relatedType, setRelatedType] = useState<SingleItemOrGroup['type']>('fixture');
   const supportedCategories = (Object.keys(MAP_CATEGORY_LABELS) as MapPointCategory[]).filter(
     (category) =>
       category === 'teleport' || ALWAYS_VISIBLE_CATEGORIES.has(category) || CATEGORY_ICONS[category]
@@ -1426,11 +1434,14 @@ function EditorPanel(props: EditorPanelProps) {
                   />
                   <select
                     value={relatedType}
-                    onChange={(event) => setRelatedType(event.target.value as SingleItemTypeName)}
+                    onChange={(event) =>
+                      setRelatedType(event.target.value as SingleItemOrGroup['type'])
+                    }
                     className='w-full min-w-0 rounded bg-slate-800 px-1'
                   >
                     <option value='fixture'>组件</option>
                     <option value='item'>道具</option>
+                    <option value='itemGroup'>道具组合</option>
                     <option value='character'>角色</option>
                     <option value='map'>地图</option>
                     <option value='mode'>模式</option>

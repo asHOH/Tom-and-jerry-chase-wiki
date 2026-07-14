@@ -1,4 +1,4 @@
-import type { FactionId, SingleItem } from '@/data/types';
+import type { FactionId, SingleItem, SingleItemOrGroup } from '@/data/types';
 import getEntityFactionId from '@/features/entities/lib/getEntityFactionId';
 import {
   achievements,
@@ -7,6 +7,7 @@ import {
   characters,
   entities,
   fixtures,
+  itemGroups,
   items,
   maps,
   modes,
@@ -15,10 +16,12 @@ import {
 
 import { variantEdges } from '../data/variants';
 
-export const getSingleItemHref = (singleItem: SingleItem): string => {
+export const getSingleItemHref = (singleItem: SingleItemOrGroup): string => {
   let result: string | undefined;
 
-  if (singleItem.type === 'character') {
+  if (singleItem.type === 'itemGroup') {
+    result = `/itemGroups/${singleItem.name}`;
+  } else if (singleItem.type === 'character') {
     result = `/characters/${singleItem.name}`;
   } else if (singleItem.type === 'knowledgeCard') {
     result = `/cards/${singleItem.name}`;
@@ -61,10 +64,16 @@ export const getSingleItemHref = (singleItem: SingleItem): string => {
   return result || '/error';
 };
 
-export const getSingleItemImageUrl = (singleItem: SingleItem): string => {
+export const getSingleItemImageUrl = (singleItem: SingleItemOrGroup): string => {
   let result: string | undefined;
 
-  if (singleItem.type === 'character') {
+  if (singleItem.type === 'itemGroup') {
+    const itemGroup = itemGroups[singleItem.name];
+    if (itemGroup?.specialImageUrl) return itemGroup.specialImageUrl;
+
+    const firstItem = itemGroup?.group[0];
+    return firstItem ? getSingleItemImageUrl(firstItem) : '/images/icons/cat-faction.png';
+  } else if (singleItem.type === 'character') {
     result = characters[singleItem.name]?.imageUrl;
   } else if (singleItem.type === 'knowledgeCard') {
     result = cards[singleItem.name]?.imageUrl;
