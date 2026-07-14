@@ -3,7 +3,7 @@ import { dirname, resolve } from 'node:path';
 
 import {
   normalizeActorProfiles,
-  serializeCharacterRoles,
+  serializeActorProfiles,
 } from '../src/features/character-roles/normalization';
 import { getActorProfileReferences, getPlayableCharacterRoles } from './character-role-context';
 
@@ -21,11 +21,11 @@ const main = async () => {
     playableCharacters: getPlayableCharacterRoles(),
     references: await getActorProfileReferences(),
   });
-  const serializedRoles = serializeCharacterRoles(roles);
+  const serializedProfiles = serializeActorProfiles(roles);
 
   // The complete artifact is parsed, normalized, validated, and serialized before replacement.
   await mkdir(dirname(OUTPUT_PATH), { recursive: true });
-  await writeFile(OUTPUT_PATH, serializedRoles, 'utf8');
+  await writeFile(OUTPUT_PATH, serializedProfiles, 'utf8');
   console.log(`Wrote ${roles.length} canonical character roles to ${OUTPUT_PATH}`);
 };
 

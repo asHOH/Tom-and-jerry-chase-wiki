@@ -14,16 +14,16 @@ import {
   type CharacterRoleAttributeKey,
 } from '../attributePresentation';
 import {
-  formatCharacterRoleNumber,
-  formatCharacterRolePhysicsType,
-  formatCharacterRoleSex,
-  formatCharacterRoleSize,
-  formatCharacterRoleType,
+  formatActorAttributeNumber,
+  formatActorPhysicsType,
+  formatActorSex,
+  formatActorSize,
+  formatActorType,
 } from '../formatters';
 import type { ActorProfile } from '../schema';
 import {
-  getCharacterRole,
-  getDisplayedCharacterRoleGravity,
+  getActorProfile,
+  getDisplayedActorGravity,
   isFactionDisplayedGravityUniform,
 } from '../selectors';
 
@@ -101,7 +101,7 @@ const getSummaryKeys = (
 };
 
 const optionalNumber = (value: number | undefined): string | undefined =>
-  value === undefined ? undefined : formatCharacterRoleNumber(value);
+  value === undefined ? undefined : formatActorAttributeNumber(value);
 
 const getRankableProperty = (
   key: CharacterRoleAttributeKey,
@@ -149,7 +149,7 @@ const CooldownNumber = ({
   property: 'clawKnifeCdHit' | 'clawKnifeCdUnhit';
   factionId: FactionId | undefined;
 }) => {
-  const formattedValue = formatCharacterRoleNumber(value);
+  const formattedValue = formatActorAttributeNumber(value);
   return factionId === 'cat' ? (
     <Link
       href={getRankingHref(property, factionId)}
@@ -166,7 +166,7 @@ const SpecialCooldown = ({ value }: { value: number | undefined }) =>
   value === undefined ? null : (
     <>
       {' ('}
-      <span className={NUMBER_VALUE_CLASS}>{formatCharacterRoleNumber(value)}</span>)
+      <span className={NUMBER_VALUE_CLASS}>{formatActorAttributeNumber(value)}</span>)
     </>
   );
 
@@ -212,44 +212,42 @@ const createAttributeItems = (
   return [
     {
       key: 'actorType',
-      value: isObject ? formatCharacterRoleType(role.actorType) : undefined,
+      value: isObject ? formatActorType(role.actorType) : undefined,
     },
     {
       key: 'physicsType',
-      value: isObject ? formatCharacterRolePhysicsType(role.physicsType) : undefined,
+      value: isObject ? formatActorPhysicsType(role.physicsType) : undefined,
     },
-    { key: 'sex', value: formatCharacterRoleSex(role.sex) },
+    { key: 'sex', value: formatActorSex(role.sex) },
     { key: 'EnglishName', value: EnglishName },
     {
       key: 'maxHp',
-      value: formatCharacterRoleNumber(role.maxHp),
+      value: formatActorAttributeNumber(role.maxHp),
     },
     {
       key: 'hpRecovery',
-      value: formatCharacterRoleNumber(role.hpRecovery),
+      value: formatActorAttributeNumber(role.hpRecovery),
     },
     {
       key: 'runSpeed',
-      value: formatCharacterRoleNumber(role.runSpeed),
+      value: formatActorAttributeNumber(role.runSpeed),
     },
     {
       key: 'jumpSpeed',
-      value: formatCharacterRoleNumber(role.jumpSpeed),
+      value: formatActorAttributeNumber(role.jumpSpeed),
     },
-    { key: 'size', value: formatCharacterRoleSize(role.size) },
+    { key: 'size', value: formatActorSize(role.size) },
     {
       key: 'climbSpeed',
-      value: formatCharacterRoleNumber(role.climbSpeed),
+      value: formatActorAttributeNumber(role.climbSpeed),
     },
     {
       key: 'visionScale',
-      value: formatCharacterRoleNumber(role.visionScale),
+      value: formatActorAttributeNumber(role.visionScale),
     },
     {
       key: 'gravity',
-      value: hideGravity
-        ? undefined
-        : formatCharacterRoleNumber(getDisplayedCharacterRoleGravity(role)),
+      value: hideGravity ? undefined : formatActorAttributeNumber(getDisplayedActorGravity(role)),
     },
     {
       key: 'attack',
@@ -258,7 +256,7 @@ const createAttributeItems = (
     },
     {
       key: 'wallDamage',
-      value: isObject || isMouseCharacter ? formatCharacterRoleNumber(role.wallDamage) : undefined,
+      value: isObject || isMouseCharacter ? formatActorAttributeNumber(role.wallDamage) : undefined,
     },
     {
       key: 'attackRange',
@@ -302,7 +300,7 @@ export default function CharacterRoleAttributesCard({
 }: CharacterRoleAttributesCardProps) {
   const [expanded, setExpanded] = useState(false);
   const contentId = useId();
-  const role = getCharacterRole(name);
+  const role = getActorProfile(name);
   const hideGravity = context === 'character' && isFactionDisplayedGravityUniform(factionId);
   const visibleAttributes = createAttributeItems(
     role,

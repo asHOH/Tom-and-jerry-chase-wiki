@@ -5,7 +5,7 @@
 import type { DeepReadonly } from '@/types/deep-readonly';
 import type { Character, FactionId } from '@/data/types';
 import type { ActorProfile } from '@/features/character-roles/schema';
-import { getCharacterRole, getCharacterRoleJumpHeight } from '@/features/character-roles/selectors';
+import { getActorJumpHeight, getActorProfile } from '@/features/character-roles/selectors';
 
 export type RankableProperty =
   | 'maxHp'
@@ -70,7 +70,7 @@ export const RANKABLE_PROPERTIES: readonly PropertyInfo[] = [
   },
   {
     key: 'jumpHeight',
-    getValue: getCharacterRoleJumpHeight,
+    getValue: getActorJumpHeight,
     formatValue: createValueFormatter(),
     label: '跳跃',
     description: '角色的跳跃高度',
@@ -147,7 +147,7 @@ const getRequiredFactionId = (character: DeepReadonly<Character>): FactionId => 
 
 const joinCharacterWithRole = (character: DeepReadonly<Character>): CharacterWithRole => ({
   character,
-  role: getCharacterRole(character.id),
+  role: getActorProfile(character.id),
 });
 
 export function getPropertyInfo(property: RankableProperty): PropertyInfo | undefined {

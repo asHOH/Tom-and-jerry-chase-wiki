@@ -1,4 +1,4 @@
-import { getCharacterRole } from '@/features/character-roles/selectors';
+import { getActorProfile } from '@/features/character-roles/selectors';
 
 import { cardData, characters } from '.';
 import {
@@ -39,7 +39,7 @@ describe('Data Validation', () => {
 
     it('should have valid HP values for all characters', () => {
       characterArray.forEach((character: Character) => {
-        const maxHp = getCharacterRole(character.id).maxHp;
+        const maxHp = getActorProfile(character.id).maxHp;
         expect(maxHp).toBeGreaterThan(0);
         expect(maxHp).toBeLessThan(1000); // Reasonable upper limit
       });

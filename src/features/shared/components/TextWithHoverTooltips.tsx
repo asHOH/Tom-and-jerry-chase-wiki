@@ -2,7 +2,7 @@ import { Fragment, useMemo } from 'react';
 
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useDarkMode } from '@/context/DarkModeContext';
-import { getCharacterRole } from '@/features/character-roles/selectors';
+import { getActorProfile } from '@/features/character-roles/selectors';
 import Tooltip from '@/components/ui/Tooltip';
 import { characters } from '@/data';
 
@@ -38,7 +38,7 @@ export default function TextWithHoverTooltips({ text: rawText }: TextWithHoverTo
   const localCharacterCtx = useLocalCharacter();
   const currentCharacterId = localCharacterCtx.characterId;
   const localCharacter = characters[currentCharacterId];
-  const role = localCharacter ? getCharacterRole(currentCharacterId) : undefined;
+  const role = localCharacter ? getActorProfile(currentCharacterId) : undefined;
   const attackBoost = role?.attack ?? null;
   const wallCrackDamageBoost = localCharacter?.factionId === 'mouse' ? role?.wallDamage : undefined;
   const parsedText = useMemo(

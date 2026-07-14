@@ -1,7 +1,7 @@
-import { normalizeActorProfiles, serializeCharacterRoles } from './normalization';
+import { normalizeActorProfiles, serializeActorProfiles } from './normalization';
 import {
-  assertCharacterRoleData,
-  parseCharacterRoleCollection,
+  assertValidActorProfiles,
+  parseActorProfiles,
   type ActorProfile,
   type ActorProfileValidationContext,
   type RawActorProfile,
@@ -154,7 +154,7 @@ describe('character role normalization', () => {
     );
 
     expect(roles.map((role) => role.name)).toEqual(['可玩甲', '可玩乙', '乙', '甲']);
-    expect(serializeCharacterRoles(roles)).toBe(`${JSON.stringify(roles, null, 2)}\n`);
+    expect(serializeActorProfiles(roles)).toBe(`${JSON.stringify(roles, null, 2)}\n`);
   });
 
   it.each([
@@ -211,12 +211,12 @@ describe('character role normalization', () => {
 
 describe('character role validation', () => {
   it('should reject unknown keys and non-finite values', () => {
-    expect(() => parseCharacterRoleCollection([{ ...createCanonicalRole(), extra: true }])).toThrow(
+    expect(() => parseActorProfiles([{ ...createCanonicalRole(), extra: true }])).toThrow(
       'unknown key'
     );
-    expect(() =>
-      parseCharacterRoleCollection([createCanonicalRole({ runSpeed: Number.NaN })])
-    ).toThrow('expected a finite number');
+    expect(() => parseActorProfiles([createCanonicalRole({ runSpeed: Number.NaN })])).toThrow(
+      'expected a finite number'
+    );
   });
 
   it('should reject broken, excluded, and mixed legacy references', () => {
@@ -227,19 +227,19 @@ describe('character role validation', () => {
     const role = createCanonicalRole();
 
     expect(() =>
-      assertCharacterRoleData([role], {
+      assertValidActorProfiles([role], {
         ...baseContext,
         references: [{ source: 'entity 缺失', name: '不存在', hasLegacyRepresentation: false }],
       })
     ).toThrow('references missing canonical role');
     expect(() =>
-      assertCharacterRoleData([role], {
+      assertValidActorProfiles([role], {
         ...baseContext,
         references: [{ source: 'item 火箭', name: '火箭', hasLegacyRepresentation: false }],
       })
     ).toThrow('references excluded role');
     expect(() =>
-      assertCharacterRoleData([role], {
+      assertValidActorProfiles([role], {
         ...baseContext,
         references: [{ source: 'entity 混合', name: '测试角色', hasLegacyRepresentation: true }],
       })

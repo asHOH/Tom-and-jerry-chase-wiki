@@ -1,5 +1,5 @@
 import {
-  assertCharacterRoleData,
+  assertValidActorProfiles,
   normalizeCharacterRoleName,
   parseRawActorProfiles,
   type ActorProfile,
@@ -168,11 +168,11 @@ export const normalizeActorProfiles = (
     .sort((left, right) => compareCodePoints(left.name, right.name));
   const roles = [...playableRoles, ...remainingRoles];
 
-  return assertCharacterRoleData(roles, {
+  return assertValidActorProfiles(roles, {
     ...context,
     excludedNames: EXCLUDED_CHARACTER_ROLE_NAMES,
   });
 };
 
-export const serializeCharacterRoles = (roles: readonly ActorProfile[]): string =>
+export const serializeActorProfiles = (roles: readonly ActorProfile[]): string =>
   `${JSON.stringify(roles, null, 2)}\n`;

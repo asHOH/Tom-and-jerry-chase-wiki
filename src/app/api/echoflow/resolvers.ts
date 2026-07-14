@@ -17,7 +17,7 @@ import traits from '@/data/traits';
 import { WikiChangeType } from '@/data/types';
 import { wikiHistoryData } from '@/data/wikiHistory';
 import { winRatesData } from '@/data/winRates';
-import { getCharacterRole } from '@/features/character-roles/selectors';
+import { getActorProfile } from '@/features/character-roles/selectors';
 import { getCharacterRelation } from '@/features/characters/utils/relations';
 import {
   achievements,
@@ -264,7 +264,7 @@ export const resolvers: Record<string, PathResolver> = {
       const charactersRecord = GameDataManager.getCharacters();
       const charactersList = recordToArray(charactersRecord, 'id').map((character) => ({
         ...character,
-        role: getCharacterRole(character.id),
+        role: getActorProfile(character.id),
       }));
       return createListResult(charactersList, 'Character', '/characters', true);
     },
@@ -281,7 +281,7 @@ export const resolvers: Record<string, PathResolver> = {
         {
           ...character,
           id: decodedId,
-          role: getCharacterRole(decodedId),
+          role: getActorProfile(decodedId),
           relations:
             relations.counters.length > 0 ||
             relations.counteredBy.length > 0 ||

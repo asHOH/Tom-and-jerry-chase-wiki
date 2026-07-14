@@ -273,7 +273,7 @@ export const parseRawActorProfiles = (input: unknown): readonly RawActorProfile[
   });
 };
 
-export const parseCharacterRoleCollection = (input: unknown): readonly ActorProfile[] => {
+export const parseActorProfiles = (input: unknown): readonly ActorProfile[] => {
   if (!Array.isArray(input)) {
     fail('roles', 'expected an array');
   }
@@ -324,11 +324,11 @@ export const parseCharacterRoleCollection = (input: unknown): readonly ActorProf
   return values as readonly ActorProfile[];
 };
 
-export const assertCharacterRoleData = (
+export const assertValidActorProfiles = (
   input: unknown,
   context: ActorProfileValidationContext
 ): readonly ActorProfile[] => {
-  const roles = parseCharacterRoleCollection(input);
+  const roles = parseActorProfiles(input);
   const rolesByName = new Map<string, ActorProfile>();
 
   for (const role of roles) {

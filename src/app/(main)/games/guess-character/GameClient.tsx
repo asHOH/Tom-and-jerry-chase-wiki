@@ -6,7 +6,7 @@ import { useSnapshot } from 'valtio';
 import { formatDateKey, getDailyCharacterId, getGameDate, getPuzzleNumber } from '@/lib/gameUtils';
 import { buildSkillCluesForCharacter } from '@/lib/skillEffectUtils';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
-import { getCharacterRole, getCharacterRoleJumpHeight } from '@/features/character-roles/selectors';
+import { getActorJumpHeight, getActorProfile } from '@/features/character-roles/selectors';
 import { catCharacterIds, mouseCharacterIds } from '@/features/characters/data/characterMetadata';
 import GameLayout from '@/features/games/components/GameLayout';
 import StreakCounter from '@/features/games/components/StreakCounter';
@@ -124,7 +124,7 @@ export default function GuessCharacterClient({ description }: Props) {
   const clues = useMemo<ClueEntry[]>(() => {
     const character = charsSnap[activeCharacterId];
     if (!character) return [];
-    const role = getCharacterRole(activeCharacterId);
+    const role = getActorProfile(activeCharacterId);
 
     const entries: ClueEntry[] = [];
 
@@ -204,7 +204,7 @@ export default function GuessCharacterClient({ description }: Props) {
     // Move speed + Jump height
     entries.push({
       label: '移速 & 跳跃',
-      value: `移速: ${role.runSpeed} · 跳跃: ${getCharacterRoleJumpHeight(role)}`,
+      value: `移速: ${role.runSpeed} · 跳跃: ${getActorJumpHeight(role)}`,
     });
 
     // Attack boost

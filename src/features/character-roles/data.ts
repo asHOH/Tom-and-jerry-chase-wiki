@@ -1,8 +1,8 @@
 import canonicalCharacterRoles from './data/characterRoles.json';
-import { parseCharacterRoleCollection, type ActorProfile } from './schema';
+import { parseActorProfiles, type ActorProfile } from './schema';
 
 export const actorProfiles: readonly ActorProfile[] = Object.freeze(
-  parseCharacterRoleCollection(canonicalCharacterRoles)
+  parseActorProfiles(canonicalCharacterRoles)
 );
 
 export const actorProfilesByName: ReadonlyMap<string, ActorProfile> = new Map(

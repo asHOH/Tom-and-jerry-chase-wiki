@@ -1,6 +1,6 @@
 import type { FactionId } from '@/data/types';
 import type { ActorProfile } from '@/features/character-roles/schema';
-import { getCharacterRole, getCharacterRoleJumpHeight } from '@/features/character-roles/selectors';
+import { getActorJumpHeight, getActorProfile } from '@/features/character-roles/selectors';
 
 export type CharacterGameStatKey =
   | 'maxHp'
@@ -51,7 +51,7 @@ export const CHARACTER_GAME_STAT_INFO: Readonly<
     key: 'jumpHeight',
     label: '跳跃高度',
     higherIsBetter: true,
-    getValue: getCharacterRoleJumpHeight,
+    getValue: getActorJumpHeight,
   },
   clawKnifeCdHit: {
     key: 'clawKnifeCdHit',
@@ -89,7 +89,7 @@ export const getCharacterGameStats = ({
   id,
   factionId,
 }: PlayableCharacterReference): CharacterGameStats => {
-  const role = getCharacterRole(id);
+  const role = getActorProfile(id);
   return {
     maxHp: getApplicableValue(role, factionId, CHARACTER_GAME_STAT_INFO.maxHp),
     attackBoost: getApplicableValue(role, factionId, CHARACTER_GAME_STAT_INFO.attackBoost),

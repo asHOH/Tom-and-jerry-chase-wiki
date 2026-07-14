@@ -1,5 +1,5 @@
 import type { Character } from '@/data/types';
-import { getCharacterRole, getCharacterRoleJumpHeight } from '@/features/character-roles/selectors';
+import { getActorJumpHeight, getActorProfile } from '@/features/character-roles/selectors';
 import { catCharactersWithImages } from '@/features/characters/data/catCharacters';
 import { mouseCharactersWithImages } from '@/features/characters/data/mouseCharacters';
 
@@ -24,21 +24,21 @@ const selectCharacters = (...ids: string[]): Character[] =>
 
 describe('character ranking utilities', () => {
   it.each<[RankableProperty, (roleId: string) => number | undefined]>([
-    ['maxHp', (id) => getCharacterRole(id).maxHp],
-    ['attackBoost', (id) => getCharacterRole(id).attack],
-    ['hpRecovery', (id) => getCharacterRole(id).hpRecovery],
-    ['moveSpeed', (id) => getCharacterRole(id).runSpeed],
-    ['jumpHeight', (id) => getCharacterRoleJumpHeight(getCharacterRole(id))],
-    ['clawKnifeCdHit', (id) => getCharacterRole(id).attackCooldown.hit],
-    ['clawKnifeCdUnhit', (id) => getCharacterRole(id).attackCooldown.miss],
-    ['clawKnifeRange', (id) => getCharacterRole(id).attackRange],
-    ['cheesePushSpeed', (id) => getCharacterRole(id).pushCheeseSpeed],
-    ['wallCrackDamageBoost', (id) => getCharacterRole(id).wallDamage],
+    ['maxHp', (id) => getActorProfile(id).maxHp],
+    ['attackBoost', (id) => getActorProfile(id).attack],
+    ['hpRecovery', (id) => getActorProfile(id).hpRecovery],
+    ['moveSpeed', (id) => getActorProfile(id).runSpeed],
+    ['jumpHeight', (id) => getActorJumpHeight(getActorProfile(id))],
+    ['clawKnifeCdHit', (id) => getActorProfile(id).attackCooldown.hit],
+    ['clawKnifeCdUnhit', (id) => getActorProfile(id).attackCooldown.miss],
+    ['clawKnifeRange', (id) => getActorProfile(id).attackRange],
+    ['cheesePushSpeed', (id) => getActorProfile(id).pushCheeseSpeed],
+    ['wallCrackDamageBoost', (id) => getActorProfile(id).wallDamage],
   ])('keeps the %s route key backed by its canonical selector', (property, getExpectedValue) => {
     const propertyInfo = getPropertyInfo(property);
     expect(propertyInfo).toBeDefined();
-    expect(propertyInfo?.getValue(getCharacterRole('汤姆'))).toBe(getExpectedValue('汤姆'));
-    expect(propertyInfo?.getValue(getCharacterRole('杰瑞'))).toBe(getExpectedValue('杰瑞'));
+    expect(propertyInfo?.getValue(getActorProfile('汤姆'))).toBe(getExpectedValue('汤姆'));
+    expect(propertyInfo?.getValue(getActorProfile('杰瑞'))).toBe(getExpectedValue('杰瑞'));
   });
 
   it('sorts lower cooldowns first', () => {

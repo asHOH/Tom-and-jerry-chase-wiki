@@ -1,17 +1,17 @@
 export { actorProfiles, actorProfilesByName } from './data';
 export {
-  formatCharacterRoleAttackCooldown,
-  formatCharacterRoleNumber,
-  formatCharacterRolePhysicsType,
-  formatCharacterRoleSex,
-  formatCharacterRoleSize,
-  formatCharacterRoleType,
+  formatActorAttackCooldown,
+  formatActorAttributeNumber,
+  formatActorPhysicsType,
+  formatActorSex,
+  formatActorSize,
+  formatActorType,
 } from './formatters';
 export {
-  getCharacterRole,
-  getCharacterRoleForCharacter,
-  getCharacterRoleJumpHeight,
-  getDisplayedCharacterRoleGravity,
+  getActorProfile,
+  getActorProfileForCharacter,
+  getActorJumpHeight,
+  getDisplayedActorGravity,
   haveUniformDisplayedGravity,
   isFactionDisplayedGravityUniform,
 } from './selectors';

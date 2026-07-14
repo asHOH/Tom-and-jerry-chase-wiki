@@ -1,6 +1,6 @@
 import { autoWrapNames } from '@/data/autoWrapNames';
 import type { ActorProfile } from '@/features/character-roles/schema';
-import { getCharacterRole, getCharacterRoleJumpHeight } from '@/features/character-roles/selectors';
+import { getActorJumpHeight, getActorProfile } from '@/features/character-roles/selectors';
 import { characters } from '@/data';
 
 import type { CharacterRecord } from './types';
@@ -24,7 +24,7 @@ const CANONICAL_CHARACTER_EXPRESSIONS: Readonly<Record<string, CanonicalCharacte
   attackBoost: (role) => role.attack,
   hpRecovery: (role) => role.hpRecovery,
   moveSpeed: (role) => role.runSpeed,
-  jumpHeight: (role) => getCharacterRoleJumpHeight(role),
+  jumpHeight: (role) => getActorJumpHeight(role),
   clawKnifeCdHit: (role) => role.attackCooldown.hit,
   clawKnifeCdUnhit: (role) => role.attackCooldown.miss,
   clawKnifeRange: (role) => role.attackRange,
@@ -161,7 +161,7 @@ export const resolveCharacterExpression = (
     typeof firstToken === 'string' ? CANONICAL_CHARACTER_EXPRESSIONS[firstToken] : undefined;
   let current: unknown;
   if (canonicalExpression) {
-    current = canonicalExpression(getCharacterRole(character.id), character);
+    current = canonicalExpression(getActorProfile(character.id), character);
   } else {
     current = character;
     remainingTokens.unshift(firstToken!);

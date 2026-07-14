@@ -2,7 +2,7 @@
 
 import { getPositioningTagColors } from '@/lib/design';
 import type { FactionId } from '@/data/types';
-import { getCharacterRole } from '@/features/character-roles/selectors';
+import { getActorProfile } from '@/features/character-roles/selectors';
 import GameImage from '@/components/ui/GameImage';
 import Tag from '@/components/ui/Tag';
 
@@ -41,7 +41,7 @@ export default function ResultCard({
 }: ResultCardProps) {
   const tags = faction === 'cat' ? character.catPositioningTags : character.mousePositioningTags;
   const topSkills = character.skills?.slice(0, 3) ?? [];
-  const sex = getCharacterRole(character.id).sex;
+  const sex = getActorProfile(character.id).sex;
 
   return (
     <div className='mx-auto max-w-lg space-y-6'>

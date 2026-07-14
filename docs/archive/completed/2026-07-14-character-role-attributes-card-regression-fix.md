@@ -25,7 +25,7 @@ This step should not change faction visibility or the card's attribute-selection
 
 ### Timing units
 
-- Change `formatCharacterRoleAttackCooldown` to use `s` instead of `秒`.
+- Change `formatActorAttackCooldown` to use `s` instead of `秒`.
 - Update its unit tests for both hit-only and hit/miss cooldowns.
 - Update existing card-test expectations from `秒` to `s`. Natural-language tooltip prose such as
   “每秒恢复” remains Chinese; only displayed units use `s`.

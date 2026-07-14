@@ -18,19 +18,18 @@ const SEX_LABELS: Readonly<Record<ActorProfile['sex'], string>> = {
   none: '无性别',
 };
 
-export const formatCharacterRoleNumber = (value: number): string => String(value);
+export const formatActorAttributeNumber = (value: number): string => String(value);
 
-export const formatCharacterRoleType = (value: ActorType): string => ROLE_TYPE_LABELS[value];
+export const formatActorType = (value: ActorType): string => ROLE_TYPE_LABELS[value];
 
-export const formatCharacterRolePhysicsType = (value: PhysicsType): string =>
-  PHYSICS_TYPE_LABELS[value];
+export const formatActorPhysicsType = (value: PhysicsType): string => PHYSICS_TYPE_LABELS[value];
 
-export const formatCharacterRoleSex = (value: ActorProfile['sex']): string => SEX_LABELS[value];
+export const formatActorSex = (value: ActorProfile['sex']): string => SEX_LABELS[value];
 
-export const formatCharacterRoleSize = (value: ActorProfile['size']): string =>
+export const formatActorSize = (value: ActorProfile['size']): string =>
   `${value.width} × ${value.height}`;
 
-export const formatCharacterRoleAttackCooldown = (value: ActorProfile['attackCooldown']): string =>
+export const formatActorAttackCooldown = (value: ActorProfile['attackCooldown']): string =>
   value.miss === undefined
-    ? `命中 ${formatCharacterRoleNumber(value.hit)} s`
-    : `未命中 ${formatCharacterRoleNumber(value.miss)} s / 命中 ${formatCharacterRoleNumber(value.hit)} s`;
+    ? `命中 ${formatActorAttributeNumber(value.hit)} s`
+    : `未命中 ${formatActorAttributeNumber(value.miss)} s / 命中 ${formatActorAttributeNumber(value.hit)} s`;
