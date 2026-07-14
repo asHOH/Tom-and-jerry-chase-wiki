@@ -4,6 +4,29 @@
 import { useEffect } from 'react';
 
 import { useToast } from '@/context/ToastContext';
+import { env } from '@/env';
+
+const OFFLINE_ROUTE_CACHE_NAME = 'app-routes';
+const OFFLINE_WARMUP_ROUTES = ['/', '/factions/cat/', '/factions/mouse/'] as const;
+
+const waitForServiceWorkerControl = async (): Promise<boolean> => {
+  if (navigator.serviceWorker.controller) return true;
+
+  return await new Promise<boolean>((resolve) => {
+    const handleControllerChange = () => {
+      window.clearTimeout(timeoutId);
+      navigator.serviceWorker.removeEventListener('controllerchange', handleControllerChange);
+      resolve(true);
+    };
+    const timeoutId = window.setTimeout(() => {
+      navigator.serviceWorker.removeEventListener('controllerchange', handleControllerChange);
+      resolve(false);
+    }, 5000);
+
+    navigator.serviceWorker.addEventListener('controllerchange', handleControllerChange);
+    if (navigator.serviceWorker.controller) handleControllerChange();
+  });
+};
 
 export const ServiceWorkerRegistration: React.FC = () => {
   const { warning, info } = useToast();
@@ -37,20 +60,35 @@ export const ServiceWorkerRegistration: React.FC = () => {
       if (!('caches' in window)) return;
 
       try {
-        const cache = await caches.open('app-routes');
-        const urls = ['/', '/factions/cat/', '/factions/mouse/'];
+        const cache = await caches.open(OFFLINE_ROUTE_CACHE_NAME);
 
         await Promise.allSettled(
-          urls.map(async (url) => {
-            try {
-              await cache.add(url);
-            } catch {
-              // Best-effort: never fail the app due to cache/storage quirks (iOS/private mode).
-            }
+          OFFLINE_WARMUP_ROUTES.map(async (url) => {
+            if (!(await cache.match(url))) await cache.add(url);
           })
         );
-      } catch {
-        // Best-effort
+      } catch (error) {
+        console.warn('Unable to warm offline routes:', error);
+      }
+    };
+
+    const precacheImagesBestEffort = async () => {
+      if (!(await waitForServiceWorkerControl())) return;
+
+      const { warmOfflineImages } = await import('@/lib/offlineWarmup');
+      await warmOfflineImages(env.NEXT_PUBLIC_DISABLE_IMAGE_OPTIMIZATION !== '1');
+    };
+
+    const warmOfflineContentBestEffort = async () => {
+      const results = await Promise.allSettled([
+        precacheRoutesBestEffort(),
+        precacheImagesBestEffort(),
+      ]);
+
+      for (const result of results) {
+        if (result.status === 'rejected') {
+          console.warn('Unable to complete offline content warmup:', result.reason);
+        }
       }
     };
 
@@ -97,8 +135,8 @@ export const ServiceWorkerRegistration: React.FC = () => {
 
         console.log('Service Worker registered successfully:', registration.scope);
 
-        // Best-effort warmup; do not crash on iOS storage restrictions.
-        await precacheRoutesBestEffort();
+        // Run warmup in the background so registration and update checks are not delayed.
+        void warmOfflineContentBestEffort();
 
         // Best-effort: request a single update check. VersionChecker coordinates reload behavior.
         void registration.update().catch(() => {
