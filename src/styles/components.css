@@ -13,6 +13,22 @@
   }
 }
 /* Interactive game maps */
+.interactive-map-grid-tile {
+  background-image:
+    linear-gradient(to right, rgb(203 213 225 / 24%) 1.5px, transparent 1.5px),
+    linear-gradient(to bottom, rgb(203 213 225 / 24%) 1.5px, transparent 1.5px),
+    linear-gradient(to right, rgb(148 163 184 / 12%) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(148 163 184 / 12%) 1px, transparent 1px);
+  background-position:
+    var(--interactive-map-grid-position), var(--interactive-map-grid-position),
+    var(--interactive-map-grid-position), var(--interactive-map-grid-position);
+  background-size:
+    var(--interactive-map-grid-major-size) var(--interactive-map-grid-major-size),
+    var(--interactive-map-grid-major-size) var(--interactive-map-grid-major-size),
+    var(--interactive-map-grid-minor-size) var(--interactive-map-grid-minor-size),
+    var(--interactive-map-grid-minor-size) var(--interactive-map-grid-minor-size);
+}
+
 .interactive-map-marker {
   background: transparent;
   border: 0;

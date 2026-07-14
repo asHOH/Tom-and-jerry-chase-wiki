@@ -12,6 +12,7 @@ import {
 import L, {
   type Coords,
   type DoneCallback,
+  type GridLayerOptions,
   type LeafletMouseEvent,
   type TileLayerOptions,
 } from 'leaflet';
@@ -19,6 +20,7 @@ import {
   ImageOverlay,
   MapContainer,
   Marker,
+  Pane,
   Polygon,
   Polyline,
   Tooltip,
@@ -220,6 +222,66 @@ function PictureTileLayer({ url, options, onTileError }: PictureTileLayerProps) 
   }, [map, onTileError, options, url]);
 
   return null;
+}
+
+class NativeMapGridLayer extends L.GridLayer {
+  private readonly mapMaxZoom: number;
+
+  constructor(mapMaxZoom: number, options: GridLayerOptions) {
+    super(options);
+    this.mapMaxZoom = mapMaxZoom;
+  }
+
+  override createTile(coords: Coords): HTMLElement {
+    const tile = document.createElement('div');
+    const tileSize = this.getTileSize();
+    const zoomScale = 2 ** (coords.z - this.mapMaxZoom);
+    const backgroundPosition = `${-(coords.x * tileSize.x)}px ${-(coords.y * tileSize.y)}px`;
+
+    tile.className = 'interactive-map-grid-tile';
+    tile.setAttribute('aria-hidden', 'true');
+    tile.style.setProperty('--interactive-map-grid-minor-size', `${128 * zoomScale}px`);
+    tile.style.setProperty('--interactive-map-grid-major-size', `${512 * zoomScale}px`);
+    tile.style.setProperty('--interactive-map-grid-position', backgroundPosition);
+
+    return tile;
+  }
+}
+
+type MapGridLayerProps = {
+  mapMaxZoom: number;
+  maxZoom: number;
+  minZoom: number;
+  tileSize: number;
+};
+
+function MapGridLayer({ mapMaxZoom, maxZoom, minZoom, tileSize }: MapGridLayerProps) {
+  const map = useMap();
+
+  useEffect(() => {
+    const layer = new NativeMapGridLayer(mapMaxZoom, {
+      pane: 'interactiveMapGridPane',
+      tileSize,
+      minZoom,
+      maxZoom,
+      updateWhenZooming: true,
+    });
+    layer.addTo(map);
+
+    return () => {
+      map.removeLayer(layer);
+    };
+  }, [map, mapMaxZoom, maxZoom, minZoom, tileSize]);
+
+  return null;
+}
+
+function MapGridBackground(props: MapGridLayerProps) {
+  return (
+    <Pane name='interactiveMapGridPane' style={{ zIndex: 150, pointerEvents: 'none' }}>
+      <MapGridLayer {...props} />
+    </Pane>
+  );
 }
 
 function MainMapEvents({
@@ -856,6 +918,12 @@ export default function InteractiveMap({
         doubleClickZoom
         className={`h-full w-full bg-slate-950 ${alwaysFullscreen ? '' : 'min-h-[420px]'}`}
       >
+        <MapGridBackground
+          mapMaxZoom={config.maxZoom}
+          minZoom={config.minZoom}
+          maxZoom={config.maxZoom + 2}
+          tileSize={config.tileSize}
+        />
         <PictureTileLayer
           url={webpTileUrl}
           options={mainTileOptions}
