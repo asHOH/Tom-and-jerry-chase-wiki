@@ -3,6 +3,7 @@
 import { useId, useState } from 'react';
 
 import { cn } from '@/lib/design';
+import { useAppContext } from '@/context/AppContext';
 import type { FactionId } from '@/data/types';
 import type { RankableProperty } from '@/features/characters/utils/ranking';
 import Tooltip from '@/components/ui/Tooltip';
@@ -302,6 +303,7 @@ export default function ActorAttributesSection({
 }: ActorAttributesSectionProps) {
   const [expanded, setExpanded] = useState(false);
   const contentId = useId();
+  const { isDetailedView } = useAppContext();
   const profile = getActorProfile(name);
   const hideGravity = context === 'character' && isFactionDisplayedGravityUniform(factionId);
   const visibleAttributes = createDisplayedActorAttributes(
@@ -364,7 +366,11 @@ export default function ActorAttributesSection({
                   'text-amber-600 dark:text-amber-400'
               )}
             >
-              <Tooltip content={presentation.tooltip}>{presentation.label}</Tooltip>
+              <Tooltip
+                content={isDetailedView ? presentation.detailedTooltip : presentation.tooltip}
+              >
+                {presentation.label}
+              </Tooltip>
               {': '}
               {value}
               {presentation.suffix ? (

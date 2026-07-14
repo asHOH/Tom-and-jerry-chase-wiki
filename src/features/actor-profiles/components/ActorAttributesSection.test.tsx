@@ -1,7 +1,25 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 
-import { ACTOR_ATTRIBUTE_KEYS } from '../attributePresentation';
+import { ACTOR_ATTRIBUTE_KEYS, ACTOR_ATTRIBUTE_PRESENTATION } from '../attributePresentation';
 import ActorAttributesSection from './ActorAttributesSection';
+
+let mockIsDetailedView = false;
+
+jest.mock('@/context/AppContext', () => ({
+  useAppContext: () => ({ isDetailedView: mockIsDetailedView }),
+}));
+
+jest.mock('@/components/ui/Tooltip', () => {
+  return function MockTooltip({
+    children,
+    content,
+  }: {
+    children: React.ReactNode;
+    content: React.ReactNode;
+  }) {
+    return <span data-tooltip={String(content)}>{children}</span>;
+  };
+});
 
 const getRankingLink = (
   container: HTMLElement,
@@ -20,6 +38,21 @@ const getDisplayedAttributeLabels = (container: HTMLElement): string[] =>
   Array.from(container.querySelectorAll('p'), (row) => row.textContent?.split(':', 1)[0] ?? '');
 
 describe('ActorAttributesSection', () => {
+  beforeEach(() => {
+    mockIsDetailedView = false;
+  });
+
+  it('should use detailed attribute tooltips in detailed mode', () => {
+    mockIsDetailedView = true;
+
+    render(<ActorAttributesSection name='汤姆' context='character' factionId='cat' />);
+
+    expect(screen.getByText('Hp上限')).toHaveAttribute(
+      'data-tooltip',
+      ACTOR_ATTRIBUTE_PRESENTATION.maxHp.detailedTooltip
+    );
+  });
+
   it('should use the explicit character summary and show only applicable cat fields for Tom', () => {
     const { container } = render(
       <ActorAttributesSection name='汤姆' EnglishName='Tom' context='character' factionId='cat' />

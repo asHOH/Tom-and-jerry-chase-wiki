@@ -61,6 +61,11 @@ describe('actor profile domain', () => {
       [...ACTOR_ATTRIBUTE_KEYS].sort()
     );
     expect(ACTOR_ATTRIBUTE_PRESENTATION.visionScale.tooltip).toContain('视野');
+    expect(
+      Object.values(ACTOR_ATTRIBUTE_PRESENTATION).every(
+        ({ detailedTooltip }) => detailedTooltip.length > 0
+      )
+    ).toBe(true);
     expect(ACTOR_ATTRIBUTE_PRESENTATION.hpRecovery).toMatchObject({
       label: 'Hp恢复',
       suffix: 'Hp/s',
