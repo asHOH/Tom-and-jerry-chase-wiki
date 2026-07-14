@@ -10,6 +10,10 @@ import { ChevronDownIcon } from '@/components/icons/CommonIcons';
 import Link from '@/components/Link';
 
 import {
+  CHARACTER_ROLE_ATTRIBUTE_META,
+  type CharacterRoleAttributeKey,
+} from '../attributePresentation';
+import {
   formatCharacterRoleNumber,
   formatCharacterRolePhysicsType,
   formatCharacterRoleSex,
@@ -22,7 +26,6 @@ import {
   getDisplayedCharacterRoleGravity,
   isFactionDisplayedGravityUniform,
 } from '../selectors';
-import { CHARACTER_ROLE_ATTRIBUTE_TOOLTIPS, type CharacterRoleAttributeKey } from '../tooltips';
 
 export type CharacterRoleAttributesContext = 'character' | 'object';
 
@@ -48,9 +51,6 @@ type CharacterRoleAttributesCardProps = {
 
 type AttributeItemBase = {
   key: CharacterRoleAttributeKey;
-  label: string;
-  suffix?: string;
-  numeric: boolean;
 };
 
 type AttributeItem =
@@ -212,122 +212,81 @@ const createAttributeItems = (
   return [
     {
       key: 'roleType',
-      label: '角色类型',
       value: isObject ? formatCharacterRoleType(role.roleType) : undefined,
-      numeric: false,
     },
     {
       key: 'physicsType',
-      label: '物理特质',
       value: isObject ? formatCharacterRolePhysicsType(role.physicsType) : undefined,
-      numeric: false,
     },
-    { key: 'sex', label: '性别', value: formatCharacterRoleSex(role.sex), numeric: false },
-    { key: 'EnglishName', label: '英文名', value: EnglishName, numeric: false },
+    { key: 'sex', value: formatCharacterRoleSex(role.sex) },
+    { key: 'EnglishName', value: EnglishName },
     {
       key: 'maxHp',
-      label: 'Hp上限',
       value: formatCharacterRoleNumber(role.maxHp),
-      numeric: true,
     },
     {
       key: 'hpRecovery',
-      label: 'Hp恢复',
       value: formatCharacterRoleNumber(role.hpRecovery),
-      suffix: 'Hp/s',
-      numeric: true,
     },
     {
       key: 'runSpeed',
-      label: '移速',
       value: formatCharacterRoleNumber(role.runSpeed),
-      suffix: '/s',
-      numeric: true,
     },
     {
       key: 'jumpSpeed',
-      label: '跳跃速度',
       value: formatCharacterRoleNumber(role.jumpSpeed),
-      suffix: '/s',
-      numeric: true,
     },
-    { key: 'size', label: '体型', value: formatCharacterRoleSize(role.size), numeric: false },
+    { key: 'size', value: formatCharacterRoleSize(role.size) },
     {
       key: 'climbSpeed',
-      label: '攀爬速度',
       value: formatCharacterRoleNumber(role.climbSpeed),
-      suffix: '/s',
-      numeric: true,
     },
     {
       key: 'visionScale',
-      label: '视野缩放',
       value: formatCharacterRoleNumber(role.visionScale),
-      numeric: true,
     },
     {
       key: 'gravity',
-      label: '重力参数',
       value: hideGravity
         ? undefined
         : formatCharacterRoleNumber(getDisplayedCharacterRoleGravity(role)),
-      numeric: true,
     },
     {
       key: 'attack',
-      label: '攻击力',
       value:
         isObject || isMouseCharacter || role.attack !== 0 ? optionalNumber(role.attack) : undefined,
-      numeric: true,
     },
     {
       key: 'wallDamage',
-      label: '破坏力',
       value: isObject || isMouseCharacter ? formatCharacterRoleNumber(role.wallDamage) : undefined,
-      numeric: true,
     },
     {
       key: 'attackRange',
-      label: '爪刀范围',
       value: isObject || isCatCharacter ? optionalNumber(role.attackRange) : undefined,
-      numeric: true,
     },
     {
       key: 'attackCooldown',
-      label: '爪刀CD',
       value: isObject || isCatCharacter ? role.attackCooldown : undefined,
       renderKind: 'attackCooldown',
-      numeric: true,
     },
     {
       key: 'pushCheeseSpeed',
-      label: '推速',
       value: isObject || isMouseCharacter ? optionalNumber(role.pushCheeseSpeed) : undefined,
-      suffix: '%/s',
-      numeric: true,
     },
     {
       key: 'initialItem',
-      label: '初始道具',
       value:
         isObject || (isCatCharacter && role.initialItem !== '老鼠夹')
           ? role.initialItem
           : undefined,
-      numeric: false,
     },
     {
       key: 'deformCooldown',
-      label: '变形彩蛋CD',
       value: optionalNumber(role.deformCooldown),
-      suffix: 's',
-      numeric: true,
     },
     {
       key: 'shoppingDelay',
-      label: '购物到货时间',
       value: isObject || isCatCharacter ? optionalNumber(role.shoppingDelay) : undefined,
-      suffix: 's',
-      numeric: true,
     },
   ];
 };
@@ -367,6 +326,7 @@ export default function CharacterRoleAttributesCard({
     <div className={cn('space-y-3', className)}>
       <div id={contentId} className='grid grid-cols-2 gap-3'>
         {displayedAttributes.map((attribute) => {
+          const presentation = CHARACTER_ROLE_ATTRIBUTE_META[attribute.key];
           const rankableProperty = getRankableProperty(attribute.key, context, factionId);
           const value =
             attribute.renderKind === 'attackCooldown' ? (
@@ -381,14 +341,14 @@ export default function CharacterRoleAttributesCard({
                 href={getRankingHref(rankableProperty, factionId)}
                 className={cn(
                   'truncate',
-                  attribute.numeric && NUMBER_VALUE_CLASS,
+                  presentation.numeric && NUMBER_VALUE_CLASS,
                   RANKING_LINK_CLASS
                 )}
               >
                 {attribute.value}
               </Link>
             ) : (
-              <span className={cn('truncate', attribute.numeric && NUMBER_VALUE_CLASS)}>
+              <span className={cn('truncate', presentation.numeric && NUMBER_VALUE_CLASS)}>
                 {attribute.value}
               </span>
             );
@@ -404,14 +364,12 @@ export default function CharacterRoleAttributesCard({
                   'text-amber-600 dark:text-amber-400'
               )}
             >
-              <Tooltip content={CHARACTER_ROLE_ATTRIBUTE_TOOLTIPS[attribute.key]}>
-                {attribute.label}
-              </Tooltip>
+              <Tooltip content={presentation.tooltip}>{presentation.label}</Tooltip>
               {': '}
               {value}
-              {attribute.suffix ? (
+              {presentation.suffix ? (
                 <span className='shrink-0 text-xs text-gray-400 dark:text-gray-500'>
-                  {attribute.suffix}
+                  {presentation.suffix}
                 </span>
               ) : null}
             </p>

@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 
-import { CHARACTER_ROLE_ATTRIBUTE_KEYS } from '../tooltips';
+import { CHARACTER_ROLE_ATTRIBUTE_KEYS } from '../attributePresentation';
 import CharacterRoleAttributesCard from './CharacterRoleAttributesCard';
 
 const getRankingLink = (

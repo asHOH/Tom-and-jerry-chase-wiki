@@ -18,6 +18,6 @@ export {
 export type { CharacterRole, PhysicsType, RoleType } from './schema';
 export {
   CHARACTER_ROLE_ATTRIBUTE_KEYS,
-  CHARACTER_ROLE_ATTRIBUTE_TOOLTIPS,
+  CHARACTER_ROLE_ATTRIBUTE_META,
   type CharacterRoleAttributeKey,
-} from './tooltips';
+} from './attributePresentation';
