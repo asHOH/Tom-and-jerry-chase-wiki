@@ -15,7 +15,6 @@
 
 # Environment variables
 .env
-.env.local
 .env*.local
 
 # Logs
@@ -37,7 +36,6 @@ next-env.d.ts
 # Caches
 .eslintcache
 .jest-cache
-.next/cache/
 
 # Turbo
 .turbo/
@@ -60,12 +58,9 @@ dist/
 .tmp/
 .temp/
 tmp/
-pnpm-lock.yaml
 .gemini/
 GEMINI.md
 .codex/
-implementation_plan.md
-implementation_notes.md
 
 # Private normalization inputs
 /src/data/roles.json
@@ -73,13 +68,7 @@ implementation_notes.md
 # Personal git workflow helpers
 /git-helpers/
 
-# Test artifacts and coverage reports
-.nyc_output/
-coverage/
-*.lcov
-
 # Build analysis files
-.next/analyze/
 bundle-analyzer-report.html
 
 # Performance monitoring
