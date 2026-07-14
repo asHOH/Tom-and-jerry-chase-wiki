@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  memo,
   useCallback,
   useEffect,
   useId,
@@ -13,6 +14,7 @@ import {
 import L, {
   type Coords,
   type DoneCallback,
+  type LeafletEventHandlerFnMap,
   type LeafletMouseEvent,
   type TileLayerOptions,
 } from 'leaflet';
@@ -121,12 +123,27 @@ type ConnectionHighlight = 'endpoint' | 'unrelated' | undefined;
 const escapeHtml = (value: string) =>
   value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
 
+const markerIconCache = new Map<string, L.DivIcon>();
+
 const makeIcon = (
   point: InteractiveMapPoint,
   selected: boolean,
   isEditMode: boolean,
   connectionHighlight?: ConnectionHighlight
 ) => {
+  const cacheKey = JSON.stringify([
+    point.category,
+    point.connection?.label,
+    Boolean(point.connection),
+    point.isInvisible ?? false,
+    point.isRandomCandidate ?? false,
+    selected,
+    isEditMode,
+    connectionHighlight,
+  ]);
+  const cachedIcon = markerIconCache.get(cacheKey);
+  if (cachedIcon) return cachedIcon;
+
   const isHotspot = HOTSPOT_CATEGORIES.has(point.category);
   const source = CATEGORY_ICONS[point.category];
   const isInvisible = point.isInvisible ?? false;
@@ -159,12 +176,14 @@ const makeIcon = (
   const [anchorX, anchorY] = isHotspot || isInvisible ? [16, 16] : [21, 36];
   const html = `<span class="interactive-map-marker-content ${point.isRandomCandidate ? 'interactive-map-marker--random' : ''} ${selected ? 'interactive-map-marker--selected' : ''} ${connectionHighlight === 'endpoint' ? 'interactive-map-marker--connection-endpoint' : ''} ${connectionHighlight === 'unrelated' ? 'interactive-map-marker--connection-unrelated' : ''}" style="width:${width}px;height:${height}px;--interactive-map-marker-anchor-x:${anchorX}px;--interactive-map-marker-anchor-y:${anchorY}px">${content}</span>`;
 
-  return L.divIcon({
+  const icon = L.divIcon({
     className: 'interactive-map-marker',
     html,
     iconSize: [width, height],
     iconAnchor: [anchorX, anchorY],
   });
+  markerIconCache.set(cacheKey, icon);
+  return icon;
 };
 
 const vertexIcon = L.divIcon({
@@ -375,6 +394,149 @@ function LocatePoint({
   }, [config, map, point]);
   return null;
 }
+
+type MapPointMarkerProps = {
+  config: InteractiveMapConfig;
+  connectionHighlight: ConnectionHighlight;
+  editorMode: EditorMode;
+  isEditMode: boolean;
+  onMovePoint: (pointIndex: number, position: MapCoordinate) => void;
+  onOpenPoint: (pointIndex: number) => void;
+  onSelectGeometryBarrelTarget?: ((pointIndex: number) => void) | undefined;
+  point: InteractiveMapPoint;
+  pointIndex: number;
+  selected: boolean;
+};
+
+const MapPointMarker = memo(function MapPointMarker({
+  config,
+  connectionHighlight,
+  editorMode,
+  isEditMode,
+  onMovePoint,
+  onOpenPoint,
+  onSelectGeometryBarrelTarget,
+  point,
+  pointIndex,
+  selected,
+}: MapPointMarkerProps) {
+  const position = useMemo(
+    () => coordinateToLatLng(point.position, config),
+    [config, point.position]
+  );
+  const icon = useMemo(
+    () => makeIcon(point, selected, isEditMode, connectionHighlight),
+    [connectionHighlight, isEditMode, point, selected]
+  );
+  const eventHandlers = useMemo<LeafletEventHandlerFnMap>(() => {
+    const handleActivation = (event: LeafletMouseEvent) => {
+      L.DomEvent.stopPropagation(event.originalEvent);
+      if (editorMode === 'selectGeometryBarrelRocket') {
+        onSelectGeometryBarrelTarget?.(pointIndex);
+        return;
+      }
+      onOpenPoint(pointIndex);
+    };
+
+    return {
+      click: handleActivation,
+      dblclick: handleActivation,
+      dragstart: () => {
+        if (editorMode === 'browse') onOpenPoint(pointIndex);
+      },
+      dragend: (event) => {
+        const marker = event.target as L.Marker;
+        const markerPosition = marker.getLatLng();
+        onMovePoint(pointIndex, latLngToCoordinate(markerPosition.lat, markerPosition.lng, config));
+      },
+    };
+  }, [config, editorMode, onMovePoint, onOpenPoint, onSelectGeometryBarrelTarget, pointIndex]);
+
+  return (
+    <Marker
+      position={position}
+      icon={icon}
+      draggable={isEditMode && editorMode === 'browse'}
+      eventHandlers={eventHandlers}
+    >
+      <Tooltip>
+        {MAP_CATEGORY_LABELS[point.category]}
+        {point.subtype ? ` · ${point.subtype}` : ''}
+      </Tooltip>
+    </Marker>
+  );
+});
+
+type MapPointLayerProps = {
+  config: InteractiveMapConfig;
+  connectedPointIndex: number | null;
+  editorMode: EditorMode;
+  hiddenSubtypes: ReadonlySet<string>;
+  isEditMode: boolean;
+  onMovePoint: (pointIndex: number, position: MapCoordinate) => void;
+  onOpenPoint: (pointIndex: number) => void;
+  onSelectGeometryBarrelTarget: (pointIndex: number) => void;
+  selectedPointIndex: number | null;
+  visibleCategories: ReadonlySet<MapPointCategory>;
+  zoom: number;
+};
+
+const MapPointLayer = memo(function MapPointLayer({
+  config,
+  connectedPointIndex,
+  editorMode,
+  hiddenSubtypes,
+  isEditMode,
+  onMovePoint,
+  onOpenPoint,
+  onSelectGeometryBarrelTarget,
+  selectedPointIndex,
+  visibleCategories,
+  zoom,
+}: MapPointLayerProps) {
+  const visiblePoints = useMemo(
+    () =>
+      config.points
+        .map((point, pointIndex) => ({ point, pointIndex }))
+        .filter(
+          ({ point }) =>
+            (editorMode === 'selectGeometryBarrelRocket' && point.category === 'rocket') ||
+            isPointVisible(point, zoom, visibleCategories, hiddenSubtypes)
+        ),
+    [config.points, editorMode, hiddenSubtypes, visibleCategories, zoom]
+  );
+
+  return visiblePoints.map(({ point, pointIndex }) => {
+    const connectionHighlight: ConnectionHighlight =
+      connectedPointIndex !== null
+        ? pointIndex === selectedPointIndex || pointIndex === connectedPointIndex
+          ? 'endpoint'
+          : point.category === 'pipe'
+            ? 'unrelated'
+            : undefined
+        : editorMode === 'selectGeometryBarrelRocket' && point.category === 'rocket'
+          ? 'endpoint'
+          : undefined;
+
+    return (
+      <MapPointMarker
+        key={point.id ?? `legacy-${point.category}-${pointIndex}`}
+        config={config}
+        connectionHighlight={connectionHighlight}
+        editorMode={editorMode}
+        isEditMode={isEditMode}
+        onMovePoint={onMovePoint}
+        onOpenPoint={onOpenPoint}
+        onSelectGeometryBarrelTarget={
+          editorMode === 'selectGeometryBarrelRocket' ? onSelectGeometryBarrelTarget : undefined
+        }
+        point={point}
+        pointIndex={pointIndex}
+        selected={selectedPointIndex === pointIndex}
+      />
+    );
+  });
+});
 
 type MinimapDiagramProps = {
   config: InteractiveMapConfig;
@@ -780,24 +942,38 @@ export default function InteractiveMap({
     [config, onConfigChange]
   );
 
-  const updateSelectedPoint = (changes: Partial<InteractiveMapPoint>) => {
-    if (selectedPointIndex === null) return;
-    updatePoint(selectedPointIndex, changes);
-  };
+  const updatePoint = useCallback(
+    (pointIndex: number, changes: Partial<InteractiveMapPoint>) => {
+      const next = updateInteractiveMapPoint(config, pointIndex, changes);
+      if (!next) return;
+      updateConfig(next);
+    },
+    [config, updateConfig]
+  );
 
-  const updateSelectedGeometryBarrelRoute = (
-    changes: NonNullable<InteractiveMapPoint['geometryBarrelRoute']>
-  ) => {
-    if (selectedPointIndex === null || selectedPoint?.category !== 'geometryBarrel') return;
-    const next = updateGeometryBarrelRoute(config, selectedPointIndex, changes);
-    if (next) updateConfig(next);
-  };
+  const movePoint = useCallback(
+    (pointIndex: number, position: MapCoordinate) => {
+      updatePoint(pointIndex, { position });
+    },
+    [updatePoint]
+  );
 
-  const updatePoint = (pointIndex: number, changes: Partial<InteractiveMapPoint>) => {
-    const next = updateInteractiveMapPoint(config, pointIndex, changes);
-    if (!next) return;
-    updateConfig(next);
-  };
+  const updateSelectedPoint = useCallback(
+    (changes: Partial<InteractiveMapPoint>) => {
+      if (selectedPointIndex === null) return;
+      updatePoint(selectedPointIndex, changes);
+    },
+    [selectedPointIndex, updatePoint]
+  );
+
+  const updateSelectedGeometryBarrelRoute = useCallback(
+    (changes: NonNullable<InteractiveMapPoint['geometryBarrelRoute']>) => {
+      if (selectedPointIndex === null || selectedPoint?.category !== 'geometryBarrel') return;
+      const next = updateGeometryBarrelRoute(config, selectedPointIndex, changes);
+      if (next) updateConfig(next);
+    },
+    [config, selectedPoint, selectedPointIndex, updateConfig]
+  );
 
   const toggleCategory = (category: MapPointCategory) => {
     const next = new Set(visibleCategories);
@@ -811,7 +987,7 @@ export default function InteractiveMap({
     }
   };
 
-  const openPoint = (pointIndex: number) => {
+  const openPoint = useCallback((pointIndex: number) => {
     setSelectedRoomId(null);
     setSelectedPointIndex(pointIndex);
     const url = new URL(window.location.href);
@@ -821,9 +997,9 @@ export default function InteractiveMap({
       '',
       `${url.pathname}${url.search}${url.hash}`
     );
-  };
+  }, []);
 
-  const closePoint = () => {
+  const closePoint = useCallback(() => {
     setSelectedPointIndex(null);
     const url = new URL(window.location.href);
     url.searchParams.delete('point');
@@ -832,7 +1008,7 @@ export default function InteractiveMap({
       '',
       `${url.pathname}${url.search}${url.hash}`
     );
-  };
+  }, []);
 
   const handleMapClick = (event: LeafletMouseEvent) => {
     if (editorMode === 'addPoint') {
@@ -920,11 +1096,15 @@ export default function InteractiveMap({
     openPoint(geometryBarrelTarget.pointIndex);
   };
 
-  const selectGeometryBarrelTarget = (targetPoint: InteractiveMapPoint) => {
-    if (targetPoint.category !== 'rocket' || !targetPoint.id) return;
-    updateSelectedGeometryBarrelRoute({ targetRocketPointId: targetPoint.id });
-    setEditorMode('browse');
-  };
+  const selectGeometryBarrelTarget = useCallback(
+    (targetPointIndex: number) => {
+      const targetPoint = config.points[targetPointIndex];
+      if (!targetPoint || targetPoint.category !== 'rocket' || !targetPoint.id) return;
+      updateSelectedGeometryBarrelRoute({ targetRocketPointId: targetPoint.id });
+      setEditorMode('browse');
+    },
+    [config.points, updateSelectedGeometryBarrelRoute]
+  );
 
   const connectSelectedPoint = (targetPointId: string) => {
     if (selectedPointIndex === null || !selectedPoint?.id) return;
@@ -1123,71 +1303,19 @@ export default function InteractiveMap({
               <Tooltip>小鞭炮放置位置</Tooltip>
             </Marker>
           )}
-        {config.points
-          .map((point, pointIndex) => ({ point, pointIndex }))
-          .filter(
-            ({ point }) =>
-              (editorMode === 'selectGeometryBarrelRocket' && point.category === 'rocket') ||
-              isPointVisible(point, zoom, visibleCategories, hiddenSubtypes)
-          )
-          .map(({ point, pointIndex }) => (
-            <Marker
-              key={pointIndex}
-              position={coordinateToLatLng(point.position, config)}
-              icon={makeIcon(
-                point,
-                selectedPointIndex === pointIndex,
-                isEditMode,
-                connectedPoint
-                  ? pointIndex === selectedPointIndex || pointIndex === connectedPoint.pointIndex
-                    ? 'endpoint'
-                    : point.category === 'pipe'
-                      ? 'unrelated'
-                      : undefined
-                  : editorMode === 'selectGeometryBarrelRocket' && point.category === 'rocket'
-                    ? 'endpoint'
-                    : undefined
-              )}
-              draggable={isEditMode && editorMode === 'browse'}
-              eventHandlers={{
-                click: (event) => {
-                  L.DomEvent.stopPropagation(event.originalEvent);
-                  if (editorMode === 'selectGeometryBarrelRocket') {
-                    selectGeometryBarrelTarget(point);
-                    return;
-                  }
-                  openPoint(pointIndex);
-                },
-                dblclick: (event) => {
-                  L.DomEvent.stopPropagation(event.originalEvent);
-                  if (editorMode === 'selectGeometryBarrelRocket') {
-                    selectGeometryBarrelTarget(point);
-                    return;
-                  }
-                  openPoint(pointIndex);
-                },
-                dragstart: () => {
-                  if (editorMode !== 'browse') return;
-                  openPoint(pointIndex);
-                },
-                dragend: (event) => {
-                  const marker = event.target as L.Marker;
-                  updatePoint(pointIndex, {
-                    position: latLngToCoordinate(
-                      marker.getLatLng().lat,
-                      marker.getLatLng().lng,
-                      config
-                    ),
-                  });
-                },
-              }}
-            >
-              <Tooltip>
-                {MAP_CATEGORY_LABELS[point.category]}
-                {point.subtype ? ` · ${point.subtype}` : ''}
-              </Tooltip>
-            </Marker>
-          ))}
+        <MapPointLayer
+          config={config}
+          connectedPointIndex={connectedPoint?.pointIndex ?? null}
+          editorMode={editorMode}
+          hiddenSubtypes={hiddenSubtypes}
+          isEditMode={isEditMode}
+          onMovePoint={movePoint}
+          onOpenPoint={openPoint}
+          onSelectGeometryBarrelTarget={selectGeometryBarrelTarget}
+          selectedPointIndex={selectedPointIndex}
+          visibleCategories={visibleCategories}
+          zoom={zoom}
+        />
         {isEditMode &&
           selectedRoomId &&
           config.rooms
