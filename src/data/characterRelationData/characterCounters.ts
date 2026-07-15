@@ -1220,15 +1220,6 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
     },
   },
   {
-    description: '航海士杰瑞的控制与墙缝期的高速破墙使牛仔汤姆压力倍增。',
-    relation: {
-      kind: 'counters',
-      subject: { name: '航海士杰瑞', type: 'character' },
-      target: { name: '牛仔汤姆', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
     description: '剑客杰瑞的格挡使斗牛立即消失（我不吃牛肉！）。',
     relation: {
       kind: 'counters',
