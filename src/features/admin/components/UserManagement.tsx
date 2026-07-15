@@ -8,6 +8,7 @@ import { USER_API_KEY } from '@/hooks/useUser';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import { FormInput } from '@/components/ui/FormControls';
+import { ChevronDownIcon } from '@/components/icons/CommonIcons';
 
 import type { PermissionGroup } from './PermissionGroupManagement';
 
@@ -35,6 +36,7 @@ const UserManagement: React.FC<UserManagementProps> = ({
   const { mutate: mutateCache } = useSWRConfig();
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [openGroupUserId, setOpenGroupUserId] = useState<string | null>(null);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   const handleOpenModal = (user: User) => {
@@ -82,12 +84,12 @@ const UserManagement: React.FC<UserManagementProps> = ({
         throw new Error('Failed to update groups');
       }
 
-      setMessage({ type: 'success', text: '权限组已更新' });
+      setMessage({ type: 'success', text: '用户组已更新' });
       mutateUsers(); // Revalidate the users data
       await mutateCache(USER_API_KEY);
     } catch (err) {
       console.error('Error updating groups:', err);
-      setMessage({ type: 'error', text: '更新权限组失败' });
+      setMessage({ type: 'error', text: '更新用户组失败' });
       // Revert the local change by re-fetching data
       mutateUsers();
     }
@@ -167,7 +169,7 @@ const UserManagement: React.FC<UserManagementProps> = ({
                   昵称
                 </th>
                 <th className='px-4 py-2 text-left text-sm font-medium text-gray-700 dark:text-slate-200'>
-                  权限组
+                  用户组
                 </th>
                 <th className='px-4 py-2 text-left text-sm font-medium text-gray-700 dark:text-slate-200'>
                   操作
@@ -181,29 +183,68 @@ const UserManagement: React.FC<UserManagementProps> = ({
                     {user.nickname}
                   </td>
                   <td className='px-4 py-3 text-sm text-gray-600 dark:text-gray-300'>
-                    <div className='flex min-w-48 flex-wrap gap-2'>
-                      {groups.map((group) => {
-                        const checked = user.groupIds.includes(group.id);
-                        return (
-                          <label
-                            key={group.id}
-                            className='inline-flex items-center gap-1 rounded border px-2 py-1'
-                          >
-                            <input
-                              type='checkbox'
-                              checked={checked}
-                              disabled={!canAssignGroups}
-                              onChange={() => {
-                                const next = checked
-                                  ? user.groupIds.filter((id) => id !== group.id)
-                                  : [...user.groupIds, group.id];
-                                void handleGroupUpdate(user.id, next);
-                              }}
-                            />
-                            {group.name}
-                          </label>
-                        );
-                      })}
+                    <div className='w-52'>
+                      <button
+                        type='button'
+                        aria-expanded={openGroupUserId === user.id}
+                        onClick={() =>
+                          setOpenGroupUserId((current) => (current === user.id ? null : user.id))
+                        }
+                        className='flex min-h-9 w-full cursor-pointer items-center justify-between gap-2 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 transition-colors hover:border-blue-400 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:border-blue-500'
+                      >
+                        <span
+                          className='truncate'
+                          title={
+                            groups
+                              .filter((group) => user.groupIds.includes(group.id))
+                              .map((group) => group.name)
+                              .join('、') || '未分配用户组'
+                          }
+                        >
+                          {groups
+                            .filter((group) => user.groupIds.includes(group.id))
+                            .map((group) => group.name)
+                            .join('、') || '未分配用户组'}
+                        </span>
+                        <ChevronDownIcon
+                          size={16}
+                          className={cn(
+                            'shrink-0 transition-transform',
+                            openGroupUserId === user.id && 'rotate-180'
+                          )}
+                        />
+                      </button>
+                      {openGroupUserId === user.id && (
+                        <div className='mt-1 max-h-64 w-full overflow-y-auto rounded-md border border-gray-200 bg-white p-1 shadow-lg dark:border-slate-600 dark:bg-slate-800'>
+                          {groups.map((group) => {
+                            const checked = user.groupIds.includes(group.id);
+                            return (
+                              <label
+                                key={group.id}
+                                className='flex cursor-pointer items-center gap-2 rounded px-2 py-2 text-sm hover:bg-gray-100 dark:hover:bg-slate-700'
+                              >
+                                <input
+                                  type='checkbox'
+                                  checked={checked}
+                                  disabled={!canAssignGroups}
+                                  onChange={() => {
+                                    const next = checked
+                                      ? user.groupIds.filter((id) => id !== group.id)
+                                      : [...user.groupIds, group.id];
+                                    void handleGroupUpdate(user.id, next);
+                                  }}
+                                />
+                                <span className='truncate'>{group.name}</span>
+                              </label>
+                            );
+                          })}
+                          {groups.length === 0 && (
+                            <p className='px-2 py-3 text-center text-sm text-gray-500 dark:text-gray-400'>
+                              暂无用户组
+                            </p>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </td>
                   <td className='px-4 py-3 text-sm'>

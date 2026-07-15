@@ -144,7 +144,7 @@ const AdminPanel = () => {
         )}
         {enableGroupAccess && (
           <button onClick={() => setActiveTab('groups')} className={getTabClassName('groups')}>
-            权限组
+            用户组
           </button>
         )}
         {enableCategoryAccess && (
