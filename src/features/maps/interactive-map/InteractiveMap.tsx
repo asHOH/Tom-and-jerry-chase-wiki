@@ -169,7 +169,7 @@ const makeIcon = (
           : point.category === 'wallCrack'
             ? 0.65
             : point.category === 'idleFruitPlate'
-              ? 0.75
+              ? 1.2
               : point.category === 'geometryBarrel'
                 ? 0.5
                 : 1;

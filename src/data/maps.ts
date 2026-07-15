@@ -478,6 +478,37 @@ const mapDefinitions: Record<string, MapDefinition> = {
             barrelCountdownDisplayAtFirecrackerExplosion: 1,
           },
         },
+        {
+          id: 'map-point-967d07cc-773f-470f-996e-7ffefd2ed8e6',
+          category: 'wallCrack',
+          position: {
+            x: 0.8677883180994929,
+            y: 0.9406575460918446,
+          },
+          isRandomCandidate: true,
+          relatedEntries: [
+            {
+              name: '墙缝',
+              type: 'fixture',
+            },
+          ],
+        },
+        {
+          id: 'map-point-4a3924e2-4d81-4c13-8d24-e1080323bff3',
+          category: 'idleFruitPlate',
+          position: {
+            x: 0.9872660163494194,
+            y: 0.960866181991274,
+          },
+          isRandomCandidate: false,
+          relatedEntries: [
+            {
+              name: '果盘',
+              type: 'item',
+            },
+          ],
+          targetWallCrackPointId: 'map-point-967d07cc-773f-470f-996e-7ffefd2ed8e6',
+        },
       ],
     },
     description:
