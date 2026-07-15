@@ -7,6 +7,8 @@ import SectionHeader from '@/components/ui/SectionHeader';
 
 import TextWithHoverTooltips from '../components/TextWithHoverTooltips';
 
+const hasText = (text?: string | null): text is string => Boolean(text?.trim());
+
 type DetailTextSectionProps = {
   title: string;
   value?: string | null | undefined;
@@ -28,15 +30,12 @@ function DetailTextSection({
   renderValue,
   children,
 }: DetailTextSectionProps) {
-  const displayText = (() => {
-    if (isDetailedView && detailedValue) {
-      return detailedValue;
-    }
-    if (value && value.trim().length > 0) {
-      return value;
-    }
-    return fallbackText;
-  })();
+  const displayText =
+    isDetailedView && hasText(detailedValue)
+      ? detailedValue
+      : hasText(value)
+        ? value
+        : fallbackText;
 
   return (
     <div>
