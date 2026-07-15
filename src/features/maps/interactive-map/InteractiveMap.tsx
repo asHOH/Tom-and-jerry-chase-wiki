@@ -94,6 +94,7 @@ const CATEGORY_ICONS: Partial<Record<MapPointCategory, string>> = {
   cheese: '/images/items/奶酪.png',
   rocket: '/images/items/火箭.png',
   drink: '/images/items/神秘饮料.png',
+  wallCrack: '/images/fixtures/墙缝.png',
   geometryBarrel: '/images/entities/火药桶.png',
 };
 
@@ -162,9 +163,11 @@ const makeIcon = (
         ? 0.5
         : point.category === 'drink'
           ? 1.1
-          : point.category === 'geometryBarrel'
-            ? 0.5
-            : 1;
+          : point.category === 'wallCrack'
+            ? 0.65
+            : point.category === 'geometryBarrel'
+              ? 0.5
+              : 1;
   const content = connectionBadge
     ? connectionBadge
     : isInvisible

@@ -45,10 +45,11 @@ const point: InteractiveMapPoint = {
 };
 
 describe('interactive map utilities', () => {
-  it('should mark cheese, rocket, and drink points as random candidates by default', () => {
+  it('should mark randomized spawn points as random candidates by default', () => {
     expect(isRandomCandidateByDefault('cheese')).toBe(true);
     expect(isRandomCandidateByDefault('rocket')).toBe(true);
     expect(isRandomCandidateByDefault('drink')).toBe(true);
+    expect(isRandomCandidateByDefault('wallCrack')).toBe(true);
     expect(isRandomCandidateByDefault('pipe')).toBe(false);
     expect(isRandomCandidateByDefault('mouseHole')).toBe(false);
     expect(isRandomCandidateByDefault('teleport')).toBe(false);
@@ -64,6 +65,9 @@ describe('interactive map utilities', () => {
     expect(getDefaultMapPointRelatedEntries({ category: 'drink' })).toEqual([
       { name: '饮料', type: 'itemGroup' },
     ]);
+    expect(getDefaultMapPointRelatedEntries({ category: 'wallCrack' })).toEqual([
+      { name: '墙缝', type: 'fixture' },
+    ]);
     expect(getDefaultMapPointRelatedEntries({ category: 'mouseHole' })).toEqual([
       { name: '老鼠洞', type: 'fixture' },
     ]);
@@ -74,6 +78,10 @@ describe('interactive map utilities', () => {
 
   it('should label drink points in Chinese', () => {
     expect(MAP_CATEGORY_LABELS.drink).toBe('饮料');
+  });
+
+  it('should label wall crack points in Chinese', () => {
+    expect(MAP_CATEGORY_LABELS.wallCrack).toBe('墙缝');
   });
 
   it('should build a description lookup URL for a related wiki entry', () => {

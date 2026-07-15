@@ -17,17 +17,24 @@ export const MAP_CATEGORY_LABELS: Record<MapPointCategory, string> = {
   cheese: '奶酪',
   rocket: '火箭',
   drink: '饮料',
+  wallCrack: '墙缝',
   mouseHole: '奶酪洞口',
   pipe: '管道',
   geometryBarrel: '几何桶',
 };
 
 export const ALWAYS_VISIBLE_CATEGORIES = new Set<MapPointCategory>(['mouseHole', 'pipe']);
-export const DEFAULT_VISIBLE_CATEGORIES = new Set<MapPointCategory>(['cheese', 'rocket', 'drink']);
+export const DEFAULT_VISIBLE_CATEGORIES = new Set<MapPointCategory>([
+  'cheese',
+  'rocket',
+  'drink',
+  'wallCrack',
+]);
 export const DEFAULT_RANDOM_CANDIDATE_CATEGORIES = new Set<MapPointCategory>([
   'cheese',
   'rocket',
   'drink',
+  'wallCrack',
 ]);
 
 export const isRandomCandidateByDefault = (category: MapPointCategory): boolean =>
@@ -37,6 +44,7 @@ const DEFAULT_MAP_POINT_RELATED_ENTRIES: Partial<Record<MapPointCategory, Single
   cheese: { name: '奶酪', type: 'item' },
   rocket: { name: '火箭', type: 'item' },
   drink: { name: '饮料', type: 'itemGroup' },
+  wallCrack: { name: '墙缝', type: 'fixture' },
   mouseHole: { name: '老鼠洞', type: 'fixture' },
   pipe: { name: '管道', type: 'fixture' },
 };
