@@ -10,6 +10,7 @@ import { usePageEditMode } from '@/hooks/usePageEditMode';
 import { useSearchParamEditMode } from '@/hooks/useSearchParamEditMode';
 import { EditModeContext, useEditMode } from '@/context/EditModeContext';
 import { useToast } from '@/context/ToastContext';
+import { useRelationMatrixEditMode } from '@/features/character-relations/matrix/useRelationMatrixEditMode';
 import { CharacterDetails } from '@/features/characters/components/character-detail';
 import EditModeToolbar from '@/components/ui/EditModeToolbar';
 import OnboardingTutorial from '@/components/OnboardingTutorial';
@@ -22,19 +23,23 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
   const currentCharacterId = characterId || props.character.id;
 
   // Page-level edit mode management
-  const {
-    isDirty,
-    isPublishing,
-    draftInfo,
-    draftsSummary,
-    discardChanges,
-    publishChanges,
-    getActionCount,
-  } = usePageEditMode({
+  const characterEditMode = usePageEditMode({
     entityType: 'characters',
     entityId: currentCharacterId,
     showToast: info,
   });
+  const relationEditMode = useRelationMatrixEditMode(currentCharacterId);
+  const isDirty = characterEditMode.isDirty || relationEditMode.isDirty;
+  const isPublishing = characterEditMode.isPublishing || relationEditMode.isPublishing;
+  const actionCount = characterEditMode.getActionCount() + relationEditMode.getActionCount();
+  const draftInfo = actionCount > 0 ? { actionCount } : null;
+  const draftsSummary = useMemo(
+    () => [
+      ...characterEditMode.draftsSummary.filter((item) => item.entityType !== 'characterRelations'),
+      ...relationEditMode.draftsSummary,
+    ],
+    [characterEditMode.draftsSummary, relationEditMode.draftsSummary]
+  );
   const [showCharacterTutorial, setShowCharacterTutorial] = useState(false);
   const [isToolbarTutorialEnabled, setIsToolbarTutorialEnabled] = useState(false);
 
@@ -59,9 +64,21 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
   }, []);
 
   const handlePublish = useCallback(
-    (message?: string) => publishChanges(message),
-    [publishChanges]
+    async (message?: string) => {
+      const characterPublished = characterEditMode.isDirty
+        ? await characterEditMode.publishChanges(message)
+        : true;
+      const relationsPublished = relationEditMode.isDirty
+        ? await relationEditMode.publishChanges(message)
+        : true;
+      return characterPublished && relationsPublished;
+    },
+    [characterEditMode, relationEditMode]
   );
+  const handleDiscard = useCallback(() => {
+    if (characterEditMode.isDirty) characterEditMode.discardChanges();
+    if (relationEditMode.isDirty) relationEditMode.discardChanges();
+  }, [characterEditMode, relationEditMode]);
   const editModeContextValue = useMemo(
     () => ({
       isEditMode: isEditMode && !isPreviewMode,
@@ -93,9 +110,9 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
         <>
           <EditModeToolbar
             isDirty={isDirty}
-            actionCount={getActionCount()}
+            actionCount={actionCount}
             isPublishing={isPublishing}
-            onDiscard={discardChanges}
+            onDiscard={handleDiscard}
             onPublish={handlePublish}
             onExitEditMode={exitEditMode}
             entityName={currentCharacterId}

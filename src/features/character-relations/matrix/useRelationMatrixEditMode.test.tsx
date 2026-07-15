@@ -1,7 +1,9 @@
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { getActionsStorageKey, readActionHistory, writeActionHistory } from '@/lib/edit/diffUtils';
-import { characters } from '@/data/store';
+import { getCharacterRelationKey } from '@/data/characterRelations';
+import { characterRelationsEdit } from '@/data/store';
+import type { CharacterRelationTrait } from '@/data/types';
 
 import { useRelationMatrixEditMode } from './useRelationMatrixEditMode';
 
@@ -10,147 +12,88 @@ const mockSuccess = jest.fn();
 const mockError = jest.fn();
 
 jest.mock('@/context/ToastContext', () => ({
-  useToast: () => ({
-    info: mockInfo,
-    success: mockSuccess,
-    error: mockError,
-  }),
+  useToast: () => ({ info: mockInfo, success: mockSuccess, error: mockError }),
 }));
 
-const storageKey = getActionsStorageKey('characters');
-const relationCountersOriginal = [{ id: '汤姆' }, { id: '布奇' }];
-const relationCountersFinal = [{ id: '汤姆' }];
+const storageKey = getActionsStorageKey('characterRelations');
 
 function RelationEditModeProbe() {
-  const {
-    isDirty,
-    isPublishing,
-    draftInfo,
-    draftsSummary,
-    discardChanges,
-    publishChanges,
-    getActionCount,
-  } = useRelationMatrixEditMode();
-
+  const editMode = useRelationMatrixEditMode();
   return (
     <div>
-      <div data-testid='dirty'>{String(isDirty)}</div>
-      <div data-testid='publishing'>{String(isPublishing)}</div>
-      <div data-testid='count'>{getActionCount()}</div>
-      <div data-testid='draft-info'>{draftInfo?.actionCount ?? 0}</div>
-      <div data-testid='draft-summary'>{draftsSummary.map((item) => item.itemLabel).join(',')}</div>
-      <button type='button' onClick={() => discardChanges()}>
+      <div data-testid='dirty'>{String(editMode.isDirty)}</div>
+      <div data-testid='count'>{editMode.getActionCount()}</div>
+      <div data-testid='draft-info'>{editMode.draftInfo?.actionCount ?? 0}</div>
+      <div data-testid='draft-summary'>
+        {editMode.draftsSummary.map((item) => item.itemLabel).join(',')}
+      </div>
+      <button type='button' onClick={() => editMode.discardChanges()}>
         discard
       </button>
-      <button type='button' onClick={() => void publishChanges('关系更新')}>
+      <button type='button' onClick={() => void editMode.publishChanges('关系更新')}>
         publish
       </button>
     </div>
   );
 }
 
-const renderProbe = () => render(<RelationEditModeProbe />);
-
 describe('useRelationMatrixEditMode', () => {
-  let characterSnapshot: Record<string, unknown>;
+  let relationSnapshot: Record<string, unknown>;
+  let relationKey: string;
+  let originalTrait: CharacterRelationTrait;
+  let updatedTrait: CharacterRelationTrait;
 
   beforeEach(() => {
-    characterSnapshot = structuredClone(characters) as Record<string, unknown>;
+    relationSnapshot = structuredClone(characterRelationsEdit) as Record<string, unknown>;
+    const entry = Object.entries(characterRelationsEdit)[0]!;
+    relationKey = entry[0];
+    originalTrait = structuredClone(entry[1]);
+    updatedTrait = { ...originalTrait, description: `${originalTrait.description}（已更新）` };
     window.localStorage.clear();
-    mockInfo.mockClear();
-    mockSuccess.mockClear();
-    mockError.mockClear();
+    jest.clearAllMocks();
     global.fetch = jest.fn();
   });
 
   afterEach(() => {
     cleanup();
-    Object.keys(characters).forEach((key) => {
-      delete (characters as Record<string, unknown>)[key];
-    });
-    Object.entries(characterSnapshot).forEach(([key, value]) => {
-      (characters as Record<string, unknown>)[key] = value;
+    Object.keys(characterRelationsEdit).forEach((key) => delete characterRelationsEdit[key]);
+    Object.entries(relationSnapshot).forEach(([key, value]) => {
+      characterRelationsEdit[key] = structuredClone(value) as CharacterRelationTrait;
     });
     window.localStorage.clear();
     jest.restoreAllMocks();
   });
 
-  it('counts relation actions and excludes unrelated character drafts', () => {
-    writeActionHistory(storageKey, [
-      { op: 'set', path: '杰瑞.counters', oldValue: [], newValue: [{ id: '汤姆' }] },
-      { op: 'set', path: '杰瑞.description', oldValue: 'old', newValue: 'new' },
-      [
-        { op: 'set', path: '汤姆.counteredBy', oldValue: [], newValue: [{ id: '杰瑞' }] },
-        { op: 'set', path: '汤姆.description', oldValue: 'old', newValue: 'new' },
-      ],
-    ]);
-
-    renderProbe();
-
-    expect(screen.getByTestId('count')).toHaveTextContent('2');
-    expect(screen.getByTestId('dirty')).toHaveTextContent('true');
-    expect(screen.getByTestId('draft-info')).toHaveTextContent('2');
-    expect(screen.getByTestId('draft-summary')).toHaveTextContent('杰瑞');
-    expect(screen.getByTestId('draft-summary')).toHaveTextContent('汤姆');
+  const relationAction = () => ({
+    op: 'set' as const,
+    path: relationKey,
+    oldValue: originalTrait,
+    newValue: updatedTrait,
   });
 
-  it('publishes only relation actions and preserves unrelated character drafts', async () => {
-    const fetchMock = jest.fn().mockResolvedValue({
-      ok: true,
-      json: jest.fn(),
-    });
-    global.fetch = fetchMock;
-    writeActionHistory(storageKey, [
-      { op: 'set', path: '杰瑞.counters', oldValue: [], newValue: [{ id: '汤姆' }] },
-      { op: 'set', path: '杰瑞.description', oldValue: 'old', newValue: 'new' },
-    ]);
-    renderProbe();
+  it('counts canonical relation actions and labels both participants', () => {
+    writeActionHistory(storageKey, [relationAction()]);
+    characterRelationsEdit[relationKey] = updatedTrait;
 
-    await act(async () => {
-      fireEvent.click(screen.getByRole('button', { name: 'publish' }));
-      await Promise.resolve();
-    });
-
-    await waitFor(() => {
-      expect(fetchMock).toHaveBeenCalledWith('/api/game-data-actions/publish-relations', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          entries: [{ op: 'set', path: '杰瑞.counters', oldValue: [], newValue: [{ id: '汤姆' }] }],
-          message: '关系更新',
-        }),
-      });
-      expect(readActionHistory(storageKey)).toEqual([
-        { op: 'set', path: '杰瑞.description', oldValue: 'old', newValue: 'new' },
-      ]);
-    });
-  });
-
-  it('normalizes relation structural arrays with the current characters root when publishing', async () => {
-    const fetchMock = jest.fn().mockResolvedValue({
-      ok: true,
-      json: jest.fn(),
-    });
-    global.fetch = fetchMock;
-    (characters['杰瑞'] as unknown as { counters?: unknown }).counters = relationCountersFinal;
-    writeActionHistory(storageKey, [
-      {
-        op: 'delete',
-        path: '杰瑞.counters.1',
-        oldValue: relationCountersOriginal[1],
-        newValue: undefined,
-      },
-      {
-        op: 'set',
-        path: '杰瑞.counters.length',
-        oldValue: 2,
-        newValue: 1,
-      },
-    ]);
-
-    renderProbe();
+    render(<RelationEditModeProbe />);
 
     expect(screen.getByTestId('count')).toHaveTextContent('1');
+    expect(screen.getByTestId('dirty')).toHaveTextContent('true');
+    expect(screen.getByTestId('draft-info')).toHaveTextContent('1');
+    expect(screen.getByTestId('draft-summary')).toHaveTextContent(
+      originalTrait.relation.subject.name
+    );
+    expect(screen.getByTestId('draft-summary')).toHaveTextContent(
+      originalTrait.relation.target.name
+    );
+  });
+
+  it('publishes characterRelations actions through the relation endpoint', async () => {
+    const fetchMock = jest.fn().mockResolvedValue({ ok: true, json: jest.fn() });
+    global.fetch = fetchMock;
+    writeActionHistory(storageKey, [relationAction()]);
+    characterRelationsEdit[relationKey] = updatedTrait;
+    render(<RelationEditModeProbe />);
 
     await act(async () => {
       fireEvent.click(screen.getByRole('button', { name: 'publish' }));
@@ -161,28 +104,16 @@ describe('useRelationMatrixEditMode', () => {
       expect(fetchMock).toHaveBeenCalledWith('/api/game-data-actions/publish-relations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          entries: [
-            {
-              op: 'set',
-              path: '杰瑞.counters',
-              oldValue: relationCountersOriginal,
-              newValue: relationCountersFinal,
-            },
-          ],
-          message: '关系更新',
-        }),
+        body: JSON.stringify({ entries: [relationAction()], message: '关系更新' }),
       });
+      expect(readActionHistory(storageKey)).toEqual([]);
     });
   });
 
-  it('discards relation actions with suppressed inverse replay and preserves unrelated drafts', async () => {
-    (characters['杰瑞'] as unknown as { counters?: unknown }).counters = [{ id: '汤姆' }];
-    writeActionHistory(storageKey, [
-      { op: 'set', path: '杰瑞.counters', oldValue: [], newValue: [{ id: '汤姆' }] },
-      { op: 'set', path: '杰瑞.description', oldValue: 'old', newValue: 'new' },
-    ]);
-    renderProbe();
+  it('discards canonical relation changes by replaying their inverse', async () => {
+    writeActionHistory(storageKey, [relationAction()]);
+    characterRelationsEdit[relationKey] = updatedTrait;
+    render(<RelationEditModeProbe />);
 
     await act(async () => {
       fireEvent.click(screen.getByRole('button', { name: 'discard' }));
@@ -190,24 +121,19 @@ describe('useRelationMatrixEditMode', () => {
     });
 
     await waitFor(() => {
-      expect((characters['杰瑞'] as unknown as { counters?: unknown }).counters).toEqual([]);
-      expect(readActionHistory(storageKey)).toEqual([
-        { op: 'set', path: '杰瑞.description', oldValue: 'old', newValue: 'new' },
-      ]);
+      expect(characterRelationsEdit[relationKey]).toEqual(originalTrait);
+      expect(readActionHistory(storageKey)).toEqual([]);
       expect(screen.getByTestId('dirty')).toHaveTextContent('false');
     });
   });
 
-  it('updates dirty state and draft info after relation overlay writes touch the characters store', async () => {
-    renderProbe();
+  it('updates dirty state when characterRelations changes', async () => {
+    render(<RelationEditModeProbe />);
     expect(screen.getByTestId('dirty')).toHaveTextContent('false');
-
-    writeActionHistory(storageKey, [
-      { op: 'set', path: '杰瑞.counters', oldValue: [], newValue: [{ id: '汤姆' }] },
-    ]);
+    writeActionHistory(storageKey, [relationAction()]);
 
     await act(async () => {
-      (characters['杰瑞'] as unknown as { counters?: unknown }).counters = [{ id: '汤姆' }];
+      characterRelationsEdit[relationKey] = updatedTrait;
       await Promise.resolve();
     });
 
@@ -215,5 +141,9 @@ describe('useRelationMatrixEditMode', () => {
       expect(screen.getByTestId('dirty')).toHaveTextContent('true');
       expect(screen.getByTestId('draft-info')).toHaveTextContent('1');
     });
+  });
+
+  it('uses canonical relation keys generated from the trait', () => {
+    expect(relationKey).toBe(getCharacterRelationKey(originalTrait));
   });
 });

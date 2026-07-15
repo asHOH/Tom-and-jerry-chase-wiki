@@ -94,6 +94,13 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'No actions to publish' }, { status: 400 });
   }
 
+  if (actionList.some((action) => action.entityType === 'characterRelations')) {
+    return NextResponse.json(
+      { error: 'Character relation actions must use the relation publish endpoint' },
+      { status: 400 }
+    );
+  }
+
   try {
     const contexts = actionList.flatMap((action) =>
       getGameActionResourceContexts(action.entityType, action.entries)

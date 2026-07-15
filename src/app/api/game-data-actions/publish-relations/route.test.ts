@@ -1,5 +1,7 @@
 import { requirePermission } from '@/lib/auth/requirePermission';
 import { publishGameDataActions } from '@/lib/gameData/publishGameDataActions';
+import { getCharacterRelationKey } from '@/data/characterRelations';
+import type { CharacterRelationTrait } from '@/data/types';
 import { env } from '@/env';
 
 const jsonResponse = (body: unknown, init?: { status?: number }) =>
@@ -49,8 +51,22 @@ const mockSuccess = () =>
     grants: [],
   } as never);
 
+const relationTrait: CharacterRelationTrait = {
+  description: '杰瑞克制汤姆',
+  relation: {
+    kind: 'counters',
+    subject: { name: '杰瑞', type: 'character' },
+    target: { name: '汤姆', type: 'character' },
+    isMinor: false,
+  },
+};
 const validEntries = [
-  { op: 'set', path: '杰瑞.counters', oldValue: [], newValue: [{ id: '汤姆' }] },
+  {
+    op: 'add',
+    path: getCharacterRelationKey(relationTrait),
+    oldValue: undefined,
+    newValue: relationTrait,
+  },
 ];
 
 describe('publish-relations route', () => {
@@ -124,12 +140,15 @@ describe('publish-relations route', () => {
     });
     expect(requirePermissionMock).toHaveBeenCalledWith(
       'game_data_action.publish_relations',
-      [{ resourceType: 'characters', resourceId: '杰瑞' }],
+      [
+        { resourceType: 'characters', resourceId: '杰瑞' },
+        { resourceType: 'characters', resourceId: '汤姆' },
+      ],
       'all'
     );
     expect(publishGameDataActionsMock).toHaveBeenCalledWith(
       { rpc: expect.any(Function) },
-      [{ entityType: 'characters', entries }],
+      [{ entityType: 'characterRelations', entries }],
       '更新关系'
     );
   });

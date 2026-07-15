@@ -11,10 +11,12 @@ import catSpecialSkillsStatic from '@/features/special-skills/data/catSpecialSki
 import mouseSpecialSkillsStatic from '@/features/special-skills/data/mouseSpecialSkills';
 
 import achievementsStatic from './achievements';
+import characterRelationsStatic from './characterRelations';
 import mapsStatic from './maps';
 import type {
   Achievement,
   Buff,
+  CharacterRelationTrait,
   Entity,
   Fixture,
   Item,
@@ -29,6 +31,10 @@ function createEditableStore<T extends Record<string, unknown>>(record: T): T {
 
 export const characters: Record<string, CharacterWithFaction> = createEditableStore(
   GameDataManager.getCharacters() as Record<string, CharacterWithFaction>
+);
+
+export const characterRelationsEdit: Record<string, CharacterRelationTrait> = createEditableStore(
+  characterRelationsStatic as Record<string, CharacterRelationTrait>
 );
 
 // Knowledge cards are exported as a read-only static object in src/data/static.ts.

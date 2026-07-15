@@ -8,7 +8,7 @@ import { getFactionButtonColors } from '@/lib/design';
 import { useSearchParamEditMode } from '@/hooks/useSearchParamEditMode';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useToast } from '@/context/ToastContext';
-import { characters } from '@/data/store';
+import { characterRelationsEdit, characters } from '@/data/store';
 import CharacterRelationsMatrix, {
   RelationMatrixLegend,
   type RelationMatrixCellSelection,
@@ -151,6 +151,7 @@ export default function RelationsClient({ description }: RelationsClientProps) {
   const { isEditMode, exitEditMode } = useSearchParamEditMode();
   const { info } = useToast();
   const charactersSnapshot = useSnapshot(characters);
+  const characterRelationsSnapshot = useSnapshot(characterRelationsEdit);
   const [rowFaction, setRowFaction] = useState<RelationMatrixRowFaction>('mouse');
   const [columnCategory, setColumnCategory] = useState<RelationMatrixColumnCategory>('cat');
   const [matrixSize, setMatrixSize] = useState(DEFAULT_MATRIX_SIZE);
@@ -168,18 +169,23 @@ export default function RelationsClient({ description }: RelationsClientProps) {
   const isRelationEditMode = isEditMode && canEditRelations;
   const coercedColumnCategory = coerceColumnCategory(rowFaction, columnCategory);
   const columnCategoryOptions = getLegalColumnCategories(rowFaction);
-  const viewModel = useMemo(
-    () =>
-      buildRelationMatrixViewModel({
-        rowFaction,
-        columnCategory: coercedColumnCategory,
-        getRelationsForRow: isRelationEditMode
-          ? (characterId) =>
-              getEditableCharacterRelations(characterId, charactersSnapshot[characterId])
-          : (characterId) => getCharacterRelation(characters, characterId),
-      }),
-    [charactersSnapshot, coercedColumnCategory, isRelationEditMode, rowFaction]
-  );
+  const viewModel = useMemo(() => {
+    void characterRelationsSnapshot;
+    void charactersSnapshot;
+    return buildRelationMatrixViewModel({
+      rowFaction,
+      columnCategory: coercedColumnCategory,
+      getRelationsForRow: isRelationEditMode
+        ? (characterId) => getEditableCharacterRelations(characterId)
+        : (characterId) => getCharacterRelation(characters, characterId),
+    });
+  }, [
+    characterRelationsSnapshot,
+    charactersSnapshot,
+    coercedColumnCategory,
+    isRelationEditMode,
+    rowFaction,
+  ]);
   const actionCount = getActionCount();
 
   useEffect(() => {

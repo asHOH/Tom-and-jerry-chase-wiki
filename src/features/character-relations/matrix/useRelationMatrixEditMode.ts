@@ -3,7 +3,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { subscribe } from 'valtio';
 
-import { splitCharacterRelationActionHistory } from '@/lib/edit/characterRelationActions';
+import {
+  getCharacterRelationActionCharacterIds,
+  splitCharacterRelationActionHistory,
+} from '@/lib/edit/characterRelationActions';
 import {
   applyActionEntry,
   getActionsStorageKey,
@@ -19,7 +22,7 @@ import {
   type DraftSummaryItem,
 } from '@/lib/edit/editModeDrafts';
 import { useToast } from '@/context/ToastContext';
-import { characters } from '@/data/store';
+import { characterRelationsEdit } from '@/data/store';
 
 type RelationMatrixEditModeResult = {
   isDirty: boolean;
@@ -31,9 +34,9 @@ type RelationMatrixEditModeResult = {
   getActionCount: () => number;
 };
 
-const RELATION_ACTIONS_STORAGE_KEY = getActionsStorageKey('characters');
+const RELATION_ACTIONS_STORAGE_KEY = getActionsStorageKey('characterRelations');
 
-const writeRemainingCharacterActions = (remaining: ReturnType<typeof readActionHistory>) => {
+const writeRemainingRelationActions = (remaining: ReturnType<typeof readActionHistory>) => {
   if (typeof window === 'undefined') return;
 
   if (remaining.length === 0) {
@@ -44,18 +47,19 @@ const writeRemainingCharacterActions = (remaining: ReturnType<typeof readActionH
   writeActionHistory(RELATION_ACTIONS_STORAGE_KEY, remaining);
 };
 
-const resolveCharacterLabel = ({ entityId }: { entityId: string }) => {
-  const character = characters[entityId] as { name?: string; id?: string } | undefined;
-  return character?.name ?? character?.id ?? entityId;
+const resolveRelationLabel = ({ entityId }: { entityId: string }) => {
+  const trait = characterRelationsEdit[entityId];
+  if (!trait) return entityId;
+  return `${trait.relation.subject.name} → ${trait.relation.target.name}`;
 };
 
-export const useRelationMatrixEditMode = (): RelationMatrixEditModeResult => {
+export const useRelationMatrixEditMode = (characterId?: string): RelationMatrixEditModeResult => {
   const { info, success, error } = useToast();
   const [isPublishing, setIsPublishing] = useState(false);
   const [actionCountTrigger, setActionCountTrigger] = useState(0);
 
   useEffect(() => {
-    const unsubscribe = subscribe(characters, () => {
+    const unsubscribe = subscribe(characterRelationsEdit, () => {
       setActionCountTrigger((current) => current + 1);
     });
 
@@ -64,18 +68,27 @@ export const useRelationMatrixEditMode = (): RelationMatrixEditModeResult => {
 
   const getRelationActions = useCallback(() => {
     const history = readActionHistory(RELATION_ACTIONS_STORAGE_KEY);
-    return splitCharacterRelationActionHistory(history);
-  }, []);
+    const { matching, remaining } = splitCharacterRelationActionHistory(history);
+    if (!characterId) return { matching, remaining };
+
+    const scoped = matching.filter((action) =>
+      getCharacterRelationActionCharacterIds(action).includes(characterId)
+    );
+    const outsideScope = matching.filter(
+      (action) => !getCharacterRelationActionCharacterIds(action).includes(characterId)
+    );
+    return { matching: scoped, remaining: [...remaining, ...outsideScope] };
+  }, [characterId]);
 
   const getActionCount = useCallback((): number => {
     const { matching } = getRelationActions();
-    return squashActions(matching, { currentRoot: characters }).length;
+    return squashActions(matching, { currentRoot: characterRelationsEdit }).length;
   }, [getRelationActions]);
 
   const squashedRelationActions = useMemo(() => {
     void actionCountTrigger;
     const { matching } = getRelationActions();
-    return squashActions(matching, { currentRoot: characters });
+    return squashActions(matching, { currentRoot: characterRelationsEdit });
   }, [actionCountTrigger, getRelationActions]);
 
   const isDirty = squashedRelationActions.length > 0;
@@ -83,7 +96,11 @@ export const useRelationMatrixEditMode = (): RelationMatrixEditModeResult => {
   const draftsSummary = useMemo(
     () =>
       sortDraftSummaryItems(
-        buildDraftSummaryItemsForType('characters', squashedRelationActions, resolveCharacterLabel)
+        buildDraftSummaryItemsForType(
+          'characterRelations',
+          squashedRelationActions,
+          resolveRelationLabel
+        )
       ),
     [squashedRelationActions]
   );
@@ -94,12 +111,12 @@ export const useRelationMatrixEditMode = (): RelationMatrixEditModeResult => {
     if (matching.length > 0) {
       withRecordingSuppressed(RELATION_ACTIONS_STORAGE_KEY, () => {
         for (let i = matching.length - 1; i >= 0; i -= 1) {
-          applyActionEntry(characters, invertActionEntry(matching[i]!));
+          applyActionEntry(characterRelationsEdit, invertActionEntry(matching[i]!));
         }
       });
     }
 
-    writeRemainingCharacterActions(remaining);
+    writeRemainingRelationActions(remaining);
     setActionCountTrigger((current) => current + 1);
     info('已放弃关系修改');
   }, [getRelationActions, info]);
@@ -107,10 +124,10 @@ export const useRelationMatrixEditMode = (): RelationMatrixEditModeResult => {
   const publishChanges = useCallback(
     async (message?: string): Promise<boolean> => {
       const { matching, remaining } = getRelationActions();
-      const squashed = squashActions(matching, { currentRoot: characters });
+      const squashed = squashActions(matching, { currentRoot: characterRelationsEdit });
 
       if (squashed.length === 0) {
-        writeRemainingCharacterActions(remaining);
+        writeRemainingRelationActions(remaining);
         setActionCountTrigger((current) => current + 1);
         info('没有需要发布的关系修改');
         return false;
@@ -129,7 +146,7 @@ export const useRelationMatrixEditMode = (): RelationMatrixEditModeResult => {
           throw new Error(body?.error || '发布失败');
         }
 
-        writeRemainingCharacterActions(remaining);
+        writeRemainingRelationActions(remaining);
         setActionCountTrigger((current) => current + 1);
         success('关系修改已提交，等待审核');
         return true;

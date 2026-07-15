@@ -13,7 +13,6 @@ import Button from '@/components/ui/Button';
 
 import type { RelationMatrixCellSelection } from './CharacterRelationsMatrix';
 import {
-  getInverseCharacterRelationKind,
   getLegalRelationKinds,
   getRelationKindLabel,
   getSiblingRelationKinds,
@@ -35,15 +34,6 @@ const getInitialRelationKind = (
   if (sourceKind && legalKinds.includes(sourceKind)) return sourceKind;
   if (legalKinds.length === 1) return legalKinds[0]!;
   return '';
-};
-
-const toInverseRelationKinds = (legalKinds: readonly TraitRelationKind[]): TraitRelationKind[] => {
-  const inverseKinds: TraitRelationKind[] = [];
-  legalKinds.forEach((kind) => {
-    const inverseKind = getInverseCharacterRelationKind(kind);
-    if (inverseKind) inverseKinds.push(inverseKind);
-  });
-  return inverseKinds;
 };
 
 export default function RelationMatrixCellEditor({
@@ -72,7 +62,6 @@ export default function RelationMatrixCellEditor({
     return null;
   }
 
-  const isCharacterTarget = selection.column.type === 'character';
   const canSave = selectedKind !== '';
   const canRemove = selection.cell !== undefined;
 
@@ -92,43 +81,13 @@ export default function RelationMatrixCellEditor({
       selection.column.id
     );
 
-    if (isCharacterTarget) {
-      const inverseSelectedKind = getInverseCharacterRelationKind(selectedKind);
-      if (inverseSelectedKind) {
-        removeCharacterRelationItemFromKinds(
-          selection.column.id,
-          getSiblingRelationKinds(inverseSelectedKind, toInverseRelationKinds(legalKinds)),
-          selection.row.id
-        );
-      }
-    }
-
     upsertCharacterRelationItem(selection.row.id, selectedKind, item);
-
-    if (isCharacterTarget) {
-      const inverseSelectedKind = getInverseCharacterRelationKind(selectedKind);
-      if (inverseSelectedKind) {
-        upsertCharacterRelationItem(selection.column.id, inverseSelectedKind, {
-          id: selection.row.id,
-          description: trimmedDescription,
-          isMinor,
-        });
-      }
-    }
 
     onOpenChange(false);
   };
 
   const handleRemove = () => {
     removeCharacterRelationItemFromKinds(selection.row.id, legalKinds, selection.column.id);
-
-    if (isCharacterTarget) {
-      removeCharacterRelationItemFromKinds(
-        selection.column.id,
-        toInverseRelationKinds(legalKinds),
-        selection.row.id
-      );
-    }
 
     onOpenChange(false);
   };

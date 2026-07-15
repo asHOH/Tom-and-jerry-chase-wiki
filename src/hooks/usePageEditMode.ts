@@ -68,6 +68,21 @@ function resolveDraftItemLabel(
     return skill?.name ?? skill?.id;
   }
 
+  if (entityType === 'characterRelations') {
+    const relationRoot = entityRegistry.get(entityType);
+    const trait = relationRoot?.[entityId] as
+      | {
+          relation?: {
+            subject?: { name?: string };
+            target?: { name?: string };
+          };
+        }
+      | undefined;
+    const subjectName = trait?.relation?.subject?.name;
+    const targetName = trait?.relation?.target?.name;
+    if (subjectName && targetName) return `${subjectName} → ${targetName}`;
+  }
+
   const store = entityRegistry.get(entityType) as Record<string, unknown> | undefined;
   const item = store?.[entityId] as { name?: string; id?: string } | undefined;
   return item?.name ?? item?.id;

@@ -3,8 +3,8 @@ import z from 'zod';
 
 import { requirePermission } from '@/lib/auth/requirePermission';
 import {
+  getCharacterRelationActionCharacterIds,
   isCharacterRelationAction,
-  parseCharacterRelationActionPath,
 } from '@/lib/edit/characterRelationActions';
 import type { ActionHistoryEntry } from '@/lib/edit/diffUtils';
 import { flattenActionEntries } from '@/lib/gameData/actionEntries';
@@ -47,9 +47,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Only relation actions are allowed' }, { status: 400 });
     }
 
-    const contexts = flattenedEntries.map((entry) => ({
+    const characterIds = new Set(flattenedEntries.flatMap(getCharacterRelationActionCharacterIds));
+    const contexts = [...characterIds].map((resourceId) => ({
       resourceType: 'characters',
-      resourceId: parseCharacterRelationActionPath(entry.path)!.characterId,
+      resourceId,
     }));
     const guard = await requirePermission('game_data_action.publish_relations', contexts, 'all');
     if ('error' in guard) return guard.error;
@@ -57,7 +58,7 @@ export async function POST(req: Request) {
     const message = typeof body.message === 'string' ? body.message.trim() : undefined;
     const result = await publishGameDataActions(
       guard.supabase,
-      [{ entityType: 'characters', entries: body.entries as unknown as Json[] }],
+      [{ entityType: 'characterRelations', entries: body.entries as unknown as Json[] }],
       message
     );
 

@@ -1,7 +1,7 @@
-import { characterRelationTraits } from '@/data/characterRelations';
-import type { CharacterRelation, TraitRelation } from '@/data/types';
+import { characterRelationTraits, getCharacterRelationKey } from '@/data/characterRelations';
+import type { CharacterRelation, CharacterRelationTrait, TraitRelation } from '@/data/types';
 import { getRelationIndex } from '@/features/shared/traits/relationIndex';
-import { characters } from '@/data';
+import { characterRelationsEdit, characters } from '@/data';
 
 import {
   getAllSpecialSkillRelations,
@@ -9,24 +9,11 @@ import {
   getSpecialSkillRelationSummary,
 } from './relationReadModel';
 
-const cloneCharacters = () => structuredClone(characters);
-
-const restoreCharacters = (snapshot: Record<string, unknown>) => {
-  Object.keys(characters).forEach((key) => {
-    delete (characters as Record<string, unknown>)[key];
-  });
-
+const restoreRecord = (target: Record<string, unknown>, snapshot: Record<string, unknown>) => {
+  Object.keys(target).forEach((key) => delete target[key]);
   Object.entries(snapshot).forEach(([key, value]) => {
-    (characters as Record<string, unknown>)[key] = structuredClone(value);
+    target[key] = structuredClone(value);
   });
-};
-
-const setLegacyRelationItems = (
-  id: string,
-  key: keyof CharacterRelation,
-  items: CharacterRelation[keyof CharacterRelation]
-) => {
-  (characters[id] as Partial<CharacterRelation>)[key] = items;
 };
 
 const findSharedCharacterRelation = (
@@ -34,256 +21,87 @@ const findSharedCharacterRelation = (
 ): TraitRelation => {
   const relation = characterRelationTraits.find(
     (trait): trait is typeof trait & { relation: TraitRelation } =>
-      trait.relation?.kind === kind &&
+      trait.relation.kind === kind &&
       trait.relation.subject.type === 'character' &&
       trait.relation.target.type === 'character' &&
       trait.relation.subject.name in characters &&
       trait.relation.target.name in characters
   )?.relation;
 
-  if (!relation) {
-    throw new Error(`Missing shared character relation fixture for ${kind}.`);
-  }
-
+  if (!relation) throw new Error(`Missing shared character relation fixture for ${kind}.`);
   return relation;
 };
 
 describe('getCharacterRelation', () => {
-  let snapshot: Record<string, unknown>;
+  let relationSnapshot: Record<string, unknown>;
+  let characterSnapshot: Record<string, unknown>;
 
   beforeEach(() => {
-    snapshot = cloneCharacters() as Record<string, unknown>;
+    relationSnapshot = structuredClone(characterRelationsEdit) as Record<string, unknown>;
+    characterSnapshot = structuredClone(characters) as Record<string, unknown>;
   });
 
   afterEach(() => {
-    restoreCharacters(snapshot);
+    restoreRecord(characterRelationsEdit as Record<string, unknown>, relationSnapshot);
+    restoreRecord(characters as Record<string, unknown>, characterSnapshot);
   });
 
-  it('should preserve graph-derived mutual relations for the current target page', () => {
+  it('should preserve graph-derived mutual relations for both character pages', () => {
     const relation = findSharedCharacterRelation('counterEachOther');
-    const relations = getCharacterRelation(characters, relation.target.name);
 
-    expect(relations.counterEachOther).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          id: relation.subject.name,
-        }),
-      ])
-    );
-  });
-
-  it('should merge page-local legacy overlays into the projected relation view', () => {
-    (
-      characters['莱特宁'] as unknown as {
-        counteredBy?: Array<{ id: string; description: string; isMinor: boolean }>;
-      }
-    ).counteredBy = [
-      {
-        id: '__test_overlay__',
-        description: 'legacy overlay relation',
-        isMinor: true,
-      },
-    ];
-
-    const relations = getCharacterRelation(characters, '莱特宁');
-
-    expect(relations.counteredBy).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          id: '__test_overlay__',
-          description: 'legacy overlay relation',
-          isMinor: true,
-        }),
-      ])
-    );
-  });
-
-  it('should let page-local overlays override duplicate shared relation entries by id', () => {
-    const relation = findSharedCharacterRelation('counters');
-    const overlayItem = {
-      id: relation.target.name,
-      description: 'legacy overlay wins duplicate shared edge',
-      isMinor: true,
-    };
-
-    setLegacyRelationItems(relation.subject.name, 'counters', [overlayItem]);
-
-    const relations = getCharacterRelation(characters, relation.subject.name);
-    const matches = relations.counters.filter((item) => item.id === relation.target.name);
-
-    expect(matches).toEqual([overlayItem]);
-  });
-
-  it('should use owned relation arrays as authoritative overrides even when empty', () => {
-    const relation = findSharedCharacterRelation('counters');
-    setLegacyRelationItems(relation.subject.name, 'counters', []);
-
-    expect(getCharacterRelation(characters, relation.subject.name).counters).not.toEqual(
+    expect(getCharacterRelation(characters, relation.subject.name).counterEachOther).toEqual(
       expect.arrayContaining([expect.objectContaining({ id: relation.target.name })])
     );
+    expect(getCharacterRelation(characters, relation.target.name).counterEachOther).toEqual(
+      expect.arrayContaining([expect.objectContaining({ id: relation.subject.name })])
+    );
   });
 
-  it('should synthesize inverse legacy character links by scanning other character overlays', () => {
-    (
-      characters['恶魔杰瑞'] as unknown as {
-        counteredBy?: Array<{ id: string; description: string; isMinor: boolean }>;
-      }
-    ).counteredBy = [
-      {
-        id: '莱特宁',
-        description: 'legacy inverse relation',
-        isMinor: true,
-      },
+  it('should project directed relations onto the inverse character page', () => {
+    const relation = findSharedCharacterRelation('counters');
+
+    expect(getCharacterRelation(characters, relation.subject.name).counters).toEqual(
+      expect.arrayContaining([expect.objectContaining({ id: relation.target.name })])
+    );
+    expect(getCharacterRelation(characters, relation.target.name).counteredBy).toEqual(
+      expect.arrayContaining([expect.objectContaining({ id: relation.subject.name })])
+    );
+  });
+
+  it('should ignore deprecated Character relation arrays', () => {
+    (characters['莱特宁'] as unknown as Partial<CharacterRelation>).counteredBy = [
+      { id: '__legacy__', description: 'legacy relation', isMinor: true },
     ];
 
-    const relations = getCharacterRelation(characters, '莱特宁');
-
-    expect(relations.counters).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          id: '恶魔杰瑞',
-          description: 'legacy inverse relation',
-          isMinor: true,
-        }),
-      ])
+    expect(getCharacterRelation(characters, '莱特宁').counteredBy).not.toEqual(
+      expect.arrayContaining([expect.objectContaining({ id: '__legacy__' })])
     );
   });
 
-  it('should dedupe direct and synthesized legacy entries for the same character id', () => {
+  it('should rebuild the shared relation index when characterRelations changes', () => {
     const relation = findSharedCharacterRelation('counters');
-    const directItem = {
-      id: relation.subject.name,
-      description: 'direct legacy relation wins synthesized inverse duplicate',
-      isMinor: false,
+    const key = getCharacterRelationKey({ description: '', relation });
+    const original = characterRelationsEdit[key]!;
+    const previousIndex = getRelationIndex();
+    const updated: CharacterRelationTrait = {
+      ...original,
+      description: '__updated_relation_description__',
     };
 
-    setLegacyRelationItems(relation.target.name, 'counteredBy', [directItem]);
-    setLegacyRelationItems(relation.subject.name, 'counters', [
-      {
-        id: relation.target.name,
-        description: 'synthesized inverse duplicate',
-        isMinor: true,
-      },
-    ]);
+    characterRelationsEdit[key] = updated;
 
-    const relations = getCharacterRelation(characters, relation.target.name);
-    const matches = relations.counteredBy.filter((item) => item.id === relation.subject.name);
-
-    expect(matches).toEqual([directItem]);
+    expect(getRelationIndex()).not.toBe(previousIndex);
+    expect(
+      getCharacterRelation(characters, relation.subject.name).counters.find(
+        (item) => item.id === relation.target.name
+      )?.description
+    ).toBe('__updated_relation_description__');
   });
 
-  it('should normalize stale overlays that conflict with canonical character relations', () => {
-    const staleOverlayItem = {
-      id: '兔八哥',
-      description: 'stale local mutual counter overlay',
-      isMinor: true,
-    };
-
-    setLegacyRelationItems('侦探杰瑞', 'counterEachOther', [staleOverlayItem]);
-
-    const relations = getCharacterRelation(characters, '侦探杰瑞');
-
-    expect(relations.counters).toEqual(
-      expect.arrayContaining([expect.objectContaining({ id: '兔八哥' })])
-    );
-    expect(relations.counterEachOther).not.toEqual(
-      expect.arrayContaining([expect.objectContaining({ id: '兔八哥' })])
-    );
-  });
-
-  it('should drop illegal character relation overlays for the row and target factions', () => {
-    setLegacyRelationItems('杰瑞', 'counters', [
-      {
-        id: '侦探杰瑞',
-        description: 'mouse cannot counter mouse',
-        isMinor: false,
-      },
-    ]);
-    setLegacyRelationItems('图多盖洛', 'collaborators', [
-      {
-        id: '兔八哥',
-        description: 'cats cannot collaborate',
-        isMinor: false,
-      },
-    ]);
-
-    expect(getCharacterRelation(characters, '杰瑞').counters).not.toEqual(
-      expect.arrayContaining([expect.objectContaining({ id: '侦探杰瑞' })])
-    );
-    expect(getCharacterRelation(characters, '图多盖洛').collaborators).not.toEqual(
-      expect.arrayContaining([expect.objectContaining({ id: '兔八哥' })])
-    );
-  });
-
-  it('should keep the first same-kind duplicate target in a relation domain', () => {
-    const firstItem = {
-      id: '汤姆',
-      description: 'first duplicate wins',
-      isMinor: false,
-    };
-    const secondItem = {
-      id: '汤姆',
-      description: 'second duplicate is dropped',
-      isMinor: true,
-    };
-
-    setLegacyRelationItems('杰瑞', 'counters', [firstItem, secondItem]);
-
-    const matches = getCharacterRelation(characters, '杰瑞').counters.filter(
-      (item) => item.id === '汤姆'
-    );
-
-    expect(matches).toEqual([firstItem]);
-  });
-
-  it('should resolve mutually exclusive non-character relation domains by target id', () => {
-    const keptItem = {
-      id: '__same_card__',
-      description: 'first knowledge-card relation wins',
-      isMinor: false,
-    };
-    const duplicateItem = {
-      id: '__same_card__',
-      description: 'same-kind duplicate is dropped',
-      isMinor: true,
-    };
-    const conflictingItem = {
-      id: '__same_card__',
-      description: 'opposite knowledge-card relation is dropped',
-      isMinor: true,
-    };
-
-    setLegacyRelationItems('杰瑞', 'countersKnowledgeCards', [keptItem, duplicateItem]);
-    setLegacyRelationItems('杰瑞', 'counteredByKnowledgeCards', [conflictingItem]);
-
-    const relations = getCharacterRelation(characters, '杰瑞');
-
-    expect(relations.countersKnowledgeCards.filter((item) => item.id === keptItem.id)).toEqual([
-      keptItem,
-    ]);
-    expect(relations.counteredByKnowledgeCards).not.toEqual(
-      expect.arrayContaining([expect.objectContaining({ id: keptItem.id })])
-    );
-  });
-
-  it('should not rebuild the relation index on repeated read-only relation queries', () => {
-    // Trait-backed shared relation data is assumed static during read-only
-    // queries. If a future runtime flow starts mutating traits, it must call
-    // refreshRelationIndex() explicitly and this expectation should change.
-    const initialIndex = getRelationIndex();
-
-    for (let i = 0; i < 5; i += 1) {
-      const characterRelations = getCharacterRelation(characters, '莱特宁');
-      expect(characterRelations.counters.length).toBeGreaterThan(0);
-    }
-
+  it('should keep special-skill relation summaries backed by the canonical store', () => {
     const summary = getSpecialSkillRelationSummary(characters, '应急治疗', 'mouse');
     expect(summary).toHaveProperty('counters');
     expect(summary).toHaveProperty('counteredBy');
-
-    const allSkillRelations = getAllSpecialSkillRelations();
-    expect(allSkillRelations.length).toBeGreaterThan(0);
-
-    expect(getRelationIndex()).toBe(initialIndex);
+    expect(getAllSpecialSkillRelations().length).toBeGreaterThan(0);
   });
 });

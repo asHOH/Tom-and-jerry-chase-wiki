@@ -1,6 +1,10 @@
 import { cards, specialSkills } from '@/data/static';
-import { characters } from '@/data/store';
+import { characterRelationsEdit, characters } from '@/data/store';
 import type { CharacterRelation, CharacterRelationItem, TraitRelationKind } from '@/data/types';
+import {
+  removeCharacterRelationItemFromKinds,
+  upsertCharacterRelationItem,
+} from '@/features/characters/utils/characterRelationOverlay';
 
 import {
   buildRelationMatrixViewModel,
@@ -48,13 +52,19 @@ const setRelationItems = (
 
 describe('relationMatrixViewModel', () => {
   let snapshot: Record<string, unknown>;
+  let relationSnapshot: Record<string, unknown>;
 
   beforeEach(() => {
     snapshot = cloneCharacters() as Record<string, unknown>;
+    relationSnapshot = structuredClone(characterRelationsEdit) as Record<string, unknown>;
   });
 
   afterEach(() => {
     restoreCharacters(snapshot);
+    Object.keys(characterRelationsEdit).forEach((key) => delete characterRelationsEdit[key]);
+    Object.entries(relationSnapshot).forEach(([key, value]) => {
+      (characterRelationsEdit as Record<string, unknown>)[key] = structuredClone(value);
+    });
   });
 
   it('should expose legal column categories and coerce illegal selections', () => {
@@ -202,7 +212,7 @@ describe('relationMatrixViewModel', () => {
     });
   });
 
-  it('should display approved row-local relation overlays', () => {
+  it('should display relation edits from the canonical characterRelations store', () => {
     const beforeOverlay = buildRelationMatrixViewModel({
       rowFaction: 'mouse',
       columnCategory: 'cat',
@@ -214,13 +224,11 @@ describe('relationMatrixViewModel', () => {
 
     if (!emptyColumn) throw new Error('Expected at least one empty cat column for 杰瑞');
 
-    setRelationItems('杰瑞', 'counters', [
-      {
-        id: emptyColumn.id,
-        description: '本地覆盖关系',
-        isMinor: true,
-      },
-    ]);
+    upsertCharacterRelationItem('杰瑞', 'counters', {
+      id: emptyColumn.id,
+      description: '规范关系修改',
+      isMinor: true,
+    });
 
     const viewModel = buildRelationMatrixViewModel({
       rowFaction: 'mouse',
@@ -230,20 +238,20 @@ describe('relationMatrixViewModel', () => {
     expect(getCell(viewModel, '杰瑞', emptyColumn.id)).toMatchObject({
       displayKind: 'counter',
       sourceKind: 'counters',
-      description: '本地覆盖关系',
-      tooltipContent: '克制：本地覆盖关系',
+      description: '规范关系修改',
+      tooltipContent: '克制：规范关系修改',
       isMinor: true,
     });
   });
 
-  it('should hide row-local relations removed by authoritative overlays', () => {
+  it('should hide relations removed from the canonical characterRelations store', () => {
     const baseline = buildRelationMatrixViewModel({
       rowFaction: 'mouse',
       columnCategory: 'cat',
     });
     expect(getCell(baseline, '杰瑞', '汤姆')).toBeDefined();
 
-    setRelationItems('杰瑞', 'counteredBy', []);
+    removeCharacterRelationItemFromKinds('杰瑞', ['counteredBy'], '汤姆');
 
     const viewModel = buildRelationMatrixViewModel({
       rowFaction: 'mouse',
@@ -253,7 +261,7 @@ describe('relationMatrixViewModel', () => {
     expect(getCell(viewModel, '杰瑞', '汤姆')).toBeUndefined();
   });
 
-  it('should not throw when stale overlays conflict with canonical relation cells', () => {
+  it('should ignore stale Character relation fields in favor of canonical relation cells', () => {
     setRelationItems('侦探杰瑞', 'counterEachOther', [
       {
         id: '兔八哥',

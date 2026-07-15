@@ -1,9 +1,11 @@
 import { render, waitFor } from '@testing-library/react';
 
 import { GameDataManager } from '@/lib/dataManager';
-import { PublicActionRow } from '@/lib/gameData/publicActionsTypes';
+import type { PublicActionRow } from '@/lib/gameData/publicActionsTypes';
+import { getCharacterRelationKey } from '@/data/characterRelations';
+import type { CharacterRelationTrait } from '@/data/types';
 import { getCharacterRelation } from '@/features/characters/utils/relationReadModel';
-import { characters } from '@/data';
+import { characterRelationsEdit, characters } from '@/data';
 
 import { usePublicGameDataActions } from './usePublicGameDataActions';
 
@@ -15,17 +17,32 @@ jest.mock('@/env', () => ({
   },
 }));
 
-const cloneCharacters = () => structuredClone(characters);
-
-const restoreCharacters = (snapshot: Record<string, unknown>) => {
-  Object.keys(characters).forEach((key) => {
-    delete (characters as Record<string, unknown>)[key];
-  });
-
-  Object.entries(snapshot).forEach(([key, value]) => {
-    (characters as Record<string, unknown>)[key] = structuredClone(value);
-  });
+const relationTrait: CharacterRelationTrait = {
+  description: 'public replay relation',
+  relation: {
+    kind: 'counteredBy',
+    subject: { name: '莱特宁', type: 'character' },
+    target: { name: '杰瑞', type: 'character' },
+    isMinor: true,
+  },
 };
+const relationKey = getCharacterRelationKey(relationTrait);
+
+const createRelationAction = (id: string, createdAt: string): PublicActionRow => ({
+  id,
+  entity_type: 'characterRelations',
+  created_at: createdAt,
+  entry: {
+    op: 'add',
+    path: relationKey,
+    oldValue: undefined,
+    newValue: relationTrait,
+  },
+  status: 'approved',
+  message: null,
+  reviewed_at: null,
+  created_by: null,
+});
 
 const HookHarness = ({ actions }: { actions: PublicActionRow[] }) => {
   usePublicGameDataActions({ initialPublicActions: actions });
@@ -36,91 +53,49 @@ describe('usePublicGameDataActions', () => {
   let snapshot: Record<string, unknown>;
 
   beforeEach(() => {
-    snapshot = cloneCharacters() as Record<string, unknown>;
+    snapshot = structuredClone(characterRelationsEdit) as Record<string, unknown>;
+    delete characterRelationsEdit[relationKey];
     window.localStorage.clear();
     jest.spyOn(GameDataManager, 'invalidate').mockImplementation(() => {});
   });
 
   afterEach(() => {
-    restoreCharacters(snapshot);
+    Object.keys(characterRelationsEdit).forEach((key) => delete characterRelationsEdit[key]);
+    Object.entries(snapshot).forEach(([key, value]) => {
+      characterRelationsEdit[key] = structuredClone(value) as CharacterRelationTrait;
+    });
     jest.restoreAllMocks();
     window.localStorage.clear();
   });
 
-  it('should apply public character relation actions when edit mode is inactive', async () => {
-    const actions: PublicActionRow[] = [
-      {
-        id: 'public-relation-1',
-        entity_type: 'characters',
-        created_at: '2026-04-02T00:00:00.000Z',
-        entry: {
-          op: 'set',
-          path: '莱特宁.counteredBy',
-          oldValue: undefined,
-          newValue: [
-            {
-              id: '__public_overlay__',
-              description: 'public replay relation',
-              isMinor: false,
-            },
-          ],
-        },
-        status: 'approved',
-        message: null,
-        reviewed_at: null,
-        created_by: null,
-      },
-    ];
-
-    render(<HookHarness actions={actions} />);
+  it('should apply public characterRelations actions when edit mode is inactive', async () => {
+    render(
+      <HookHarness
+        actions={[createRelationAction('public-relation-1', '2026-04-02T00:00:00.000Z')]}
+      />
+    );
 
     await waitFor(() => {
-      expect(
-        (
-          characters['莱特宁'] as unknown as {
-            counteredBy?: Array<{ id: string; description: string; isMinor: boolean }>;
-          }
-        ).counteredBy
-      ).toEqual([
-        {
-          id: '__public_overlay__',
-          description: 'public replay relation',
-          isMinor: false,
-        },
-      ]);
+      expect(characterRelationsEdit[relationKey]).toEqual(relationTrait);
     });
   });
 
-  it('should expose public character relation actions through the relation read model', async () => {
-    const characterId = Object.keys(characters)[0]!;
-    const publicRelationItem = {
-      id: '__public_relation_projection__',
-      description: 'public replay projection relation',
-      isMinor: true,
-    };
-    const actions: PublicActionRow[] = [
-      {
-        id: 'public-relation-projection',
-        entity_type: 'characters',
-        created_at: '2026-04-02T00:00:00.000Z',
-        entry: {
-          op: 'set',
-          path: `${characterId}.counteredBy`,
-          oldValue: undefined,
-          newValue: [publicRelationItem],
-        },
-        status: 'approved',
-        message: null,
-        reviewed_at: null,
-        created_by: null,
-      },
-    ];
-
-    render(<HookHarness actions={actions} />);
+  it('should expose public characterRelations actions through the relation read model', async () => {
+    render(
+      <HookHarness
+        actions={[createRelationAction('public-relation-projection', '2026-04-02T00:00:00.000Z')]}
+      />
+    );
 
     await waitFor(() => {
-      expect(getCharacterRelation(characters, characterId).counteredBy).toEqual(
-        expect.arrayContaining([publicRelationItem])
+      expect(getCharacterRelation(characters, '莱特宁').counteredBy).toEqual(
+        expect.arrayContaining([
+          {
+            id: '杰瑞',
+            description: 'public replay relation',
+            isMinor: true,
+          },
+        ])
       );
     });
   });
@@ -129,40 +104,14 @@ describe('usePublicGameDataActions', () => {
     window.localStorage.setItem('isEditMode', JSON.stringify(true));
     window.localStorage.setItem('editmode:enabledAt', String(Date.parse('2026-04-02T00:00:00Z')));
 
-    const actions: PublicActionRow[] = [
-      {
-        id: 'public-relation-2',
-        entity_type: 'characters',
-        created_at: '2026-04-02T00:10:00.000Z',
-        entry: {
-          op: 'set',
-          path: '莱特宁.counteredBy',
-          oldValue: undefined,
-          newValue: [
-            {
-              id: '__should_not_apply__',
-              description: 'new public replay relation',
-              isMinor: false,
-            },
-          ],
-        },
-        status: 'approved',
-        message: null,
-        reviewed_at: null,
-        created_by: null,
-      },
-    ];
-
-    render(<HookHarness actions={actions} />);
+    render(
+      <HookHarness
+        actions={[createRelationAction('public-relation-2', '2026-04-02T00:10:00.000Z')]}
+      />
+    );
 
     await waitFor(() => {
-      expect(
-        (
-          characters['莱特宁'] as unknown as {
-            counteredBy?: Array<{ id: string; description: string; isMinor: boolean }>;
-          }
-        ).counteredBy
-      ).toBeUndefined();
+      expect(characterRelationsEdit[relationKey]).toBeUndefined();
     });
   });
 });

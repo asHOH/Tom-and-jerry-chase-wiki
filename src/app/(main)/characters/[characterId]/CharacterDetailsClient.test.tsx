@@ -1,5 +1,5 @@
 import { createContext, type ReactNode } from 'react';
-import { render } from '@testing-library/react';
+import { act, render } from '@testing-library/react';
 
 import type { CharacterWithFaction } from '@/lib/types';
 import { characters } from '@/data';
@@ -8,6 +8,34 @@ import CharacterDetailsClient from './CharacterDetailsClient';
 
 const mockExitEditMode = jest.fn();
 const mockUseEditMode = jest.fn();
+const mockCharacterDiscard = jest.fn();
+const mockCharacterPublish = jest.fn();
+const mockRelationDiscard = jest.fn();
+const mockRelationPublish = jest.fn();
+const mockEditModeToolbar = jest.fn((_props: unknown) => null);
+const mockCharacterEditMode = {
+  isDirty: false,
+  isPublishing: false,
+  draftsSummary: [] as Array<{ entityType: string }>,
+  discardChanges: mockCharacterDiscard,
+  publishChanges: mockCharacterPublish,
+  getActionCount: () => 0,
+};
+const mockRelationEditMode = {
+  isDirty: false,
+  isPublishing: false,
+  draftInfo: null,
+  draftsSummary: [] as Array<{
+    entityType: 'characterRelations';
+    entityLabel: string;
+    entityId: string;
+    itemLabel: string;
+    count: number;
+  }>,
+  discardChanges: mockRelationDiscard,
+  publishChanges: mockRelationPublish,
+  getActionCount: () => 0,
+};
 const TEST_CHARACTER_ID = '__character_details_client_character__';
 
 jest.mock('@/context/EditModeContext', () => {
@@ -24,15 +52,11 @@ jest.mock('@/hooks/useLocalEditEntity', () => ({
 }));
 
 jest.mock('@/hooks/usePageEditMode', () => ({
-  usePageEditMode: () => ({
-    isDirty: false,
-    isPublishing: false,
-    draftInfo: null,
-    draftsSummary: [],
-    discardChanges: jest.fn(),
-    publishChanges: jest.fn(),
-    getActionCount: () => 0,
-  }),
+  usePageEditMode: () => mockCharacterEditMode,
+}));
+
+jest.mock('@/features/character-relations/matrix/useRelationMatrixEditMode', () => ({
+  useRelationMatrixEditMode: () => mockRelationEditMode,
 }));
 
 jest.mock('@/hooks/useSearchParamEditMode', () => ({
@@ -53,7 +77,7 @@ jest.mock('@/features/characters/components/character-detail', () => ({
 
 jest.mock('@/components/ui/EditModeToolbar', () => ({
   __esModule: true,
-  default: () => null,
+  default: (props: unknown) => mockEditModeToolbar(props),
 }));
 
 jest.mock('@/components/OnboardingTutorial', () => ({
@@ -67,7 +91,23 @@ describe('CharacterDetailsClient', () => {
   beforeEach(() => {
     snapshot = structuredClone(characters) as Record<string, unknown>;
     mockExitEditMode.mockReset();
-    mockUseEditMode.mockReturnValue({ isEditMode: false });
+    mockCharacterDiscard.mockReset();
+    mockCharacterPublish.mockReset();
+    mockRelationDiscard.mockReset();
+    mockRelationPublish.mockReset();
+    mockEditModeToolbar.mockClear();
+    mockCharacterEditMode.isDirty = false;
+    mockCharacterEditMode.getActionCount = () => 0;
+    mockCharacterEditMode.draftsSummary = [];
+    mockRelationEditMode.isDirty = false;
+    mockRelationEditMode.getActionCount = () => 0;
+    mockRelationEditMode.draftsSummary = [];
+    mockUseEditMode.mockReturnValue({
+      isEditMode: false,
+      isLoading: false,
+      isPreviewMode: false,
+      setIsPreviewMode: jest.fn(),
+    });
 
     (characters as Record<string, CharacterWithFaction>)[TEST_CHARACTER_ID] = {
       id: TEST_CHARACTER_ID,
@@ -108,5 +148,59 @@ describe('CharacterDetailsClient', () => {
     );
 
     expect(characterStore[TEST_CHARACTER_ID]!.description).toBe('public update');
+  });
+
+  it('includes canonical relation drafts in character detail edit controls', async () => {
+    mockUseEditMode.mockReturnValue({
+      isEditMode: true,
+      isLoading: false,
+      isPreviewMode: false,
+      setIsPreviewMode: jest.fn(),
+    });
+    mockRelationEditMode.isDirty = true;
+    mockRelationEditMode.getActionCount = () => 1;
+    mockRelationEditMode.draftsSummary = [
+      {
+        entityType: 'characterRelations',
+        entityLabel: '角色关系',
+        entityId: 'relation-key',
+        itemLabel: '杰瑞 → 汤姆',
+        count: 1,
+      },
+    ];
+    mockRelationPublish.mockResolvedValue(true);
+
+    render(
+      <CharacterDetailsClient
+        character={{
+          id: TEST_CHARACTER_ID,
+          description: 'canonical props',
+          factionId: 'cat',
+          imageUrl: '',
+          createDate: null,
+          skills: [],
+          knowledgeCardGroups: [],
+        }}
+      />
+    );
+
+    const toolbarProps = mockEditModeToolbar.mock.calls.at(-1)?.[0] as {
+      isDirty: boolean;
+      actionCount: number;
+      draftsSummary: Array<{ entityType: string }>;
+      onDiscard: () => void;
+      onPublish: (message?: string) => Promise<boolean>;
+    };
+    expect(toolbarProps.isDirty).toBe(true);
+    expect(toolbarProps.actionCount).toBe(1);
+    expect(toolbarProps.draftsSummary).toEqual(mockRelationEditMode.draftsSummary);
+
+    toolbarProps.onDiscard();
+    expect(mockRelationDiscard).toHaveBeenCalledTimes(1);
+    await act(async () => {
+      await expect(toolbarProps.onPublish('关系更新')).resolves.toBe(true);
+    });
+    expect(mockRelationPublish).toHaveBeenCalledWith('关系更新');
+    expect(mockCharacterPublish).not.toHaveBeenCalled();
   });
 });

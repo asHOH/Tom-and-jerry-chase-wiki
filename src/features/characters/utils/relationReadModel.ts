@@ -226,73 +226,11 @@ const mergeRelationItems = (
   return [...primary, ...secondary.filter((item) => !primary.some((p) => p.id === item.id))];
 };
 
-const normalizeLegacyItems = (
-  items: CharacterRelationItem[] | undefined
-): CharacterRelationItem[] => {
-  if (!Array.isArray(items)) return [];
-  return items.map((item) => ({
-    id: item.id,
-    description: item.description ?? '',
-    isMinor: !!item.isMinor,
-  }));
-};
-
 const createEmptyRelation = (): CharacterRelation =>
   relationKeys.reduce((acc, key) => {
     acc[key] = [];
     return acc;
   }, {} as CharacterRelation);
-
-type LegacyOverlayProjection = {
-  relations: CharacterRelation;
-  ownedRelationKinds: ReadonlySet<keyof CharacterRelation>;
-};
-
-const buildLegacyOverlayRelations = (
-  charactersRecord: DeepReadonly<Record<string, CharacterWithFaction>>,
-  id: string
-): LegacyOverlayProjection => {
-  const legacy = createEmptyRelation();
-  const ownedRelationKinds = new Set<keyof CharacterRelation>();
-  const current = charactersRecord[id] as Partial<CharacterRelation> | undefined;
-
-  if (current) {
-    relationKeys.forEach((key) => {
-      const stored = current[key];
-      if (Array.isArray(stored)) {
-        ownedRelationKinds.add(key);
-        legacy[key] = normalizeLegacyItems(stored);
-      }
-    });
-  }
-
-  const addInverse = (
-    source: CharacterRelationItem[] | undefined,
-    targetKey: keyof CharacterRelation,
-    otherId: string
-  ) => {
-    if (!Array.isArray(source)) return;
-    const matches = source.filter((item) => item.id === id);
-    if (matches.length === 0) return;
-    const inverseItems = matches.map((item) => ({
-      id: otherId,
-      description: item.description ?? '',
-      isMinor: !!item.isMinor,
-    }));
-    legacy[targetKey] = mergeRelationItems(legacy[targetKey], inverseItems);
-  };
-
-  Object.entries(charactersRecord).forEach(([otherId, other]) => {
-    if (otherId === id) return;
-    const otherLegacy = other as Partial<CharacterRelation>;
-    addInverse(otherLegacy.counters, 'counteredBy', otherId);
-    addInverse(otherLegacy.counteredBy, 'counters', otherId);
-    addInverse(otherLegacy.counterEachOther, 'counterEachOther', otherId);
-    addInverse(otherLegacy.collaborators, 'collaborators', otherId);
-  });
-
-  return { relations: legacy, ownedRelationKinds };
-};
 
 const buildSharedTraitRelations = (id: string): CharacterRelation => {
   const subject: SingleItem = { name: id, type: 'character' };
@@ -375,10 +313,9 @@ const mergeCharacterRelationProjection = (
   sharedInverseCharacterRelations: Pick<
     CharacterRelation,
     'collaborators' | 'counterEachOther' | 'counteredBy' | 'counters'
-  >,
-  legacyOverlayProjection: LegacyOverlayProjection
+  >
 ): CharacterRelation => {
-  const merged = {
+  return {
     ...sharedTraitRelations,
     collaborators: mergeRelationItems(
       sharedTraitRelations.collaborators,
@@ -397,24 +334,10 @@ const mergeCharacterRelationProjection = (
       sharedInverseCharacterRelations.counters
     ),
   };
-
-  relationKeys.forEach((key) => {
-    const legacyItems = legacyOverlayProjection.relations[key];
-    if (legacyOverlayProjection.ownedRelationKinds.has(key)) {
-      merged[key] = legacyItems;
-      return;
-    }
-
-    if (legacyItems.length > 0) {
-      merged[key] = mergeRelationItems(legacyItems, merged[key]);
-    }
-  });
-
-  return merged;
 };
 
-// The character detail page reads a hybrid projection: shared relation traits,
-// inverse shared character links, and page-local legacy overlay arrays.
+// Character pages project the canonical relation-trait store into row-oriented
+// relation arrays. Character records no longer participate in relation reads.
 export function getCharacterRelation(
   charactersRecord: DeepReadonly<Record<string, CharacterWithFaction>>,
   id: string
@@ -423,8 +346,7 @@ export function getCharacterRelation(
 
   const mergedRelation = mergeCharacterRelationProjection(
     buildSharedTraitRelations(id),
-    buildSharedInverseCharacterRelations(id),
-    buildLegacyOverlayRelations(charactersRecord, id)
+    buildSharedInverseCharacterRelations(id)
   );
 
   return normalizeCharacterRelationProjection(id, mergedRelation, {

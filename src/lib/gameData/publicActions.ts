@@ -9,11 +9,13 @@ import {
 import { cached } from '@/lib/serverCache';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
 import { supabaseServerPublic } from '@/lib/supabase/public';
+import characterRelations from '@/data/characterRelations';
 import {
   buffs,
   buffsEdit,
   cards,
   cardsEdit,
+  characterRelationsEdit,
   characters,
   entities,
   fixtures,
@@ -37,6 +39,10 @@ const appliedPublicActionIds = new Set<string>();
 
 const serverPublicActionTargetRegistry: PublicActionTargetRegistry = {
   characters: [characters as unknown as Record<string, unknown>],
+  characterRelations: [
+    characterRelations as unknown as Record<string, unknown>,
+    characterRelationsEdit as unknown as Record<string, unknown>,
+  ],
   cards: [
     cards as unknown as Record<string, unknown>,
     cardsEdit as unknown as Record<string, unknown>,
