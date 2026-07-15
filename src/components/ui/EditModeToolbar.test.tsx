@@ -5,11 +5,21 @@ import { EditModeContext } from '@/context/EditModeContext';
 
 import EditModeToolbar, { type EditModeToolbarProps } from './EditModeToolbar';
 
-jest.mock('@/lib/auth/AbilityProvider', () => {
+jest.mock('@/lib/auth/PermissionProvider', () => {
   const actual = jest.requireActual('@/lib/auth/permissions');
+  const fixtures = jest.requireActual('@/testUtils/permissionFixtures');
   return {
-    AbilityProvider: ({ children }: { children: React.ReactNode }) => children,
-    useAbility: () => actual.abilityFor('Contributor'),
+    usePermissions: () => {
+      const grants = fixtures.permissionGrantsForProfile('contributor');
+      return {
+        grants,
+        has: (permission: string) => actual.hasPermission(grants, permission),
+        can: (permission: string, context?: unknown) =>
+          actual.canAccess(grants, permission, context),
+        canAll: (permission: string, contexts: unknown[]) =>
+          actual.canAccessAll(grants, permission, contexts),
+      };
+    },
   };
 });
 

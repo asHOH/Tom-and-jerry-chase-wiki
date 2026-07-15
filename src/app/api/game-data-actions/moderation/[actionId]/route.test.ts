@@ -1,7 +1,7 @@
 import { revalidateTag } from 'next/cache';
 import type { NextRequest } from 'next/server';
 
-import { requireAbility } from '@/lib/auth/requireAbility';
+import { requirePermission } from '@/lib/auth/requirePermission';
 import { publishNotification } from '@/lib/notificationUtils';
 
 const jsonResponse = (body: unknown, init?: { status?: number }) =>
@@ -22,15 +22,15 @@ jest.mock('@/lib/gameData/publicActions', () => ({
   PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG: 'public-game-data-actions',
 }));
 
-jest.mock('@/lib/auth/requireAbility', () => ({
-  requireAbility: jest.fn(),
+jest.mock('@/lib/auth/requirePermission', () => ({
+  requirePermission: jest.fn(),
 }));
 
 jest.mock('@/lib/notificationUtils', () => ({
   publishNotification: jest.fn(),
 }));
 
-const requireAbilityMock = jest.mocked(requireAbility);
+const requirePermissionMock = jest.mocked(requirePermission);
 const publishNotificationMock = jest.mocked(publishNotification);
 const revalidateTagMock = jest.mocked(revalidateTag);
 
@@ -47,6 +47,7 @@ type RecordQuery = {
     data: {
       created_by: string;
       entity_type: string;
+      entry: { op: string; path: string };
       status: SupabaseMockOptions['existingStatus'];
     };
     error: null;
@@ -90,6 +91,7 @@ const createSupabaseMock = ({
       data: {
         created_by: 'user-2',
         entity_type: 'characters',
+        entry: { op: 'set', path: '杰瑞.name' },
         status: existingStatus,
       },
       error: null,
@@ -133,7 +135,18 @@ describe('game data action moderation route', () => {
   it('marks approved actions as synced for coordinators', async () => {
     const { POST } = await import('./route');
     const { supabase, updateEqCalls, updatePayloads } = createSupabaseMock();
-    requireAbilityMock.mockResolvedValue({ supabase, userId: 'coordinator-1' } as never);
+    requirePermissionMock.mockResolvedValue({
+      supabase,
+      userId: 'coordinator-1',
+      grants: [
+        {
+          permission: 'game_data_action.mark_synced',
+          scope: 'global',
+          resourceType: null,
+          resourceId: null,
+        },
+      ],
+    } as never);
 
     const response = await POST(createRequest('mark-synced'), {
       params: Promise.resolve({ actionId: 'action-1' }),
@@ -145,7 +158,7 @@ describe('game data action moderation route', () => {
       action_id: 'action-1',
       message: 'Action marked as synced',
     });
-    expect(requireAbilityMock).toHaveBeenCalledWith('mark_synced', 'GameDataAction');
+    expect(requirePermissionMock).toHaveBeenCalledWith('game_data_action.mark_synced');
     expect(updatePayloads).toEqual([
       {
         is_public: true,
@@ -166,14 +179,25 @@ describe('game data action moderation route', () => {
   it('keeps regular approve available to reviewers', async () => {
     const { POST } = await import('./route');
     const { supabase } = createSupabaseMock({ existingStatus: 'pending' });
-    requireAbilityMock.mockResolvedValue({ supabase, userId: 'reviewer-1' } as never);
+    requirePermissionMock.mockResolvedValue({
+      supabase,
+      userId: 'reviewer-1',
+      grants: [
+        {
+          permission: 'game_data_action.approve',
+          scope: 'global',
+          resourceType: null,
+          resourceId: null,
+        },
+      ],
+    } as never);
 
     const response = await POST(createRequest('approve'), {
       params: Promise.resolve({ actionId: 'action-1' }),
     });
 
     expect(response.status).toBe(200);
-    expect(requireAbilityMock).toHaveBeenCalledWith('approve', 'GameDataAction');
+    expect(requirePermissionMock).toHaveBeenCalledWith('game_data_action.approve');
     expect(supabase.rpc).toHaveBeenCalledWith('approve_game_data_action', {
       p_action_id: 'action-1',
     });
@@ -190,14 +214,25 @@ describe('game data action moderation route', () => {
   it('keeps regular reject available to reviewers', async () => {
     const { POST } = await import('./route');
     const { supabase } = createSupabaseMock({ existingStatus: 'pending' });
-    requireAbilityMock.mockResolvedValue({ supabase, userId: 'reviewer-1' } as never);
+    requirePermissionMock.mockResolvedValue({
+      supabase,
+      userId: 'reviewer-1',
+      grants: [
+        {
+          permission: 'game_data_action.reject',
+          scope: 'global',
+          resourceType: null,
+          resourceId: null,
+        },
+      ],
+    } as never);
 
     const response = await POST(createRequest('reject', { reason: '不通过' }), {
       params: Promise.resolve({ actionId: 'action-1' }),
     });
 
     expect(response.status).toBe(200);
-    expect(requireAbilityMock).toHaveBeenCalledWith('approve', 'GameDataAction');
+    expect(requirePermissionMock).toHaveBeenCalledWith('game_data_action.reject');
     expect(supabase.rpc).toHaveBeenCalledWith('reject_game_data_action', {
       p_action_id: 'action-1',
       p_reason: '不通过',

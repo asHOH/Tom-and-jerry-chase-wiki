@@ -105,19 +105,31 @@ jest.mock('@/context/ToastContext', () => ({
 
 jest.mock('@/hooks/useUser', () => ({
   useUser: () => ({
-    role: mockUserRole,
     nickname: null,
+    grants: [],
+    groups: [],
     isLoading: false,
     isValidating: false,
   }),
 }));
 
-jest.mock('@/lib/auth/AbilityProvider', () => {
+jest.mock('@/lib/auth/PermissionProvider', () => {
   const actual = jest.requireActual('@/lib/auth/permissions');
+  const fixtures = jest.requireActual('@/testUtils/permissionFixtures');
   return {
-    AbilityProvider: ({ children }: { children: React.ReactNode }) => children,
-    useAbility: () =>
-      actual.abilityFor(mockUserRole as 'Contributor' | 'Reviewer' | 'Coordinator' | null),
+    usePermissions: () => {
+      const profile = mockUserRole?.toLowerCase() as
+        'contributor' | 'reviewer' | 'coordinator' | null;
+      const grants = fixtures.permissionGrantsForProfile(profile);
+      return {
+        grants,
+        has: (permission: string) => actual.hasPermission(grants, permission),
+        can: (permission: string, context?: unknown) =>
+          actual.canAccess(grants, permission, context),
+        canAll: (permission: string, contexts: unknown[]) =>
+          actual.canAccessAll(grants, permission, contexts),
+      };
+    },
   };
 });
 

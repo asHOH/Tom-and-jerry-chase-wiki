@@ -1,15 +1,20 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useSWR from 'swr';
 
-import { useAbility } from '@/lib/auth/AbilityProvider';
+import { usePermissions } from '@/lib/auth/PermissionProvider';
+import type { PermissionResourceOption } from '@/lib/auth/permissionResources';
 import { cn } from '@/lib/design';
 import type { Database } from '@/data/database.types';
 import CategoryManagement from '@/features/admin/components/CategoryManagement';
 import GameDataActionModerationPanel, {
   PendingGameDataAction,
 } from '@/features/admin/components/GameDataActionModerationPanel';
+import PermissionGroupManagement, {
+  type PermissionCatalogEntry,
+  type PermissionGroup,
+} from '@/features/admin/components/PermissionGroupManagement';
 import UserManagement from '@/features/admin/components/UserManagement';
 
 type Category = Database['public']['Tables']['categories']['Row'];
@@ -17,7 +22,13 @@ type Category = Database['public']['Tables']['categories']['Row'];
 type User = {
   id: string;
   nickname: string;
-  role: string | null;
+  groupIds: string[];
+};
+
+type GroupsResponse = {
+  catalog: PermissionCatalogEntry[];
+  groups: PermissionGroup[];
+  resourceOptions: Record<string, PermissionResourceOption[]>;
 };
 
 const fetchUsers = async (): Promise<User[]> => {
@@ -36,6 +47,12 @@ const fetchCategories = async (): Promise<Category[]> => {
   return response.json();
 };
 
+const fetchGroups = async (): Promise<GroupsResponse> => {
+  const response = await fetch('/api/admin/groups');
+  if (!response.ok) throw new Error('Failed to fetch groups');
+  return response.json();
+};
+
 const fetchPendingGameDataActions = async (): Promise<PendingGameDataAction[]> => {
   const response = await fetch('/api/game-data-actions/admin?status=all');
   if (!response.ok) {
@@ -50,18 +67,50 @@ const fetchPendingGameDataActions = async (): Promise<PendingGameDataAction[]> =
 };
 
 const AdminPanel = () => {
-  const [activeTab, setActiveTab] = useState<'users' | 'categories' | 'actions'>('categories');
-  const ability = useAbility();
+  const [activeTab, setActiveTab] = useState<'users' | 'groups' | 'categories' | 'actions'>(
+    'categories'
+  );
+  const permissions = usePermissions();
 
-  const enableUserAccess = ability.can('read', 'User');
-  const enableActionModeration = ability.can('approve', 'GameDataAction');
+  const enableUserAccess =
+    permissions.has('user.read') ||
+    permissions.has('user.update') ||
+    permissions.has('group.assign');
+  const enableActionModeration =
+    permissions.has('game_data_action.approve') || permissions.has('game_data_action.reject');
+  const enableGroupAccess = permissions.has('group.manage') || permissions.has('group.assign');
+  const enableCategoryAccess =
+    permissions.has('category.create') ||
+    permissions.has('category.update') ||
+    permissions.has('category.delete');
+
+  useEffect(() => {
+    if (activeTab === 'categories' && !enableCategoryAccess) {
+      if (enableGroupAccess) setActiveTab('groups');
+      else if (enableUserAccess) setActiveTab('users');
+      else if (enableActionModeration) setActiveTab('actions');
+    }
+  }, [
+    activeTab,
+    enableActionModeration,
+    enableCategoryAccess,
+    enableGroupAccess,
+    enableUserAccess,
+  ]);
 
   const { data: users = [], mutate: mutateUsers } = useSWR(
     enableUserAccess ? 'users' : null,
     fetchUsers
   );
 
-  const { data: categories = [], mutate: mutateCategories } = useSWR('categories', fetchCategories);
+  const { data: categories = [], mutate: mutateCategories } = useSWR(
+    enableCategoryAccess ? 'categories' : null,
+    fetchCategories
+  );
+  const { data: groupsData, mutate: mutateGroups } = useSWR(
+    enableGroupAccess ? 'permission-groups' : null,
+    fetchGroups
+  );
 
   const { data: pendingActions = [], mutate: mutatePendingActions } = useSWR(
     enableActionModeration ? 'game-data-actions-admin' : null,
@@ -70,7 +119,7 @@ const AdminPanel = () => {
 
   const pendingCount = pendingActions.filter((a) => a.status === 'pending').length;
 
-  const getTabClassName = (tab: 'users' | 'categories' | 'actions') =>
+  const getTabClassName = (tab: 'users' | 'groups' | 'categories' | 'actions') =>
     cn(
       'border-b-2 px-4 py-2 text-sm font-medium transition-colors',
       activeTab === tab
@@ -93,12 +142,19 @@ const AdminPanel = () => {
             )}
           </button>
         )}
-        <button
-          onClick={() => setActiveTab('categories')}
-          className={getTabClassName('categories')}
-        >
-          分类管理
-        </button>
+        {enableGroupAccess && (
+          <button onClick={() => setActiveTab('groups')} className={getTabClassName('groups')}>
+            权限组
+          </button>
+        )}
+        {enableCategoryAccess && (
+          <button
+            onClick={() => setActiveTab('categories')}
+            className={getTabClassName('categories')}
+          >
+            分类管理
+          </button>
+        )}
         {enableActionModeration && (
           <button onClick={() => setActiveTab('actions')} className={getTabClassName('actions')}>
             改动审核
@@ -112,16 +168,38 @@ const AdminPanel = () => {
       </div>
 
       {enableUserAccess && activeTab === 'users' && (
-        <UserManagement users={users} mutateUsers={mutateUsers} />
+        <UserManagement
+          users={users}
+          groups={groupsData?.groups ?? []}
+          canAssignGroups={permissions.has('group.assign')}
+          canUpdateUsers={permissions.has('user.update')}
+          mutateUsers={mutateUsers}
+        />
       )}
 
-      {activeTab === 'categories' && (
-        <CategoryManagement categories={categories} mutateCategories={mutateCategories} />
+      {enableGroupAccess && activeTab === 'groups' && (
+        <PermissionGroupManagement
+          groups={groupsData?.groups ?? []}
+          catalog={groupsData?.catalog ?? []}
+          resourceOptions={groupsData?.resourceOptions ?? {}}
+          canManage={permissions.has('group.manage')}
+          mutateGroups={mutateGroups}
+        />
+      )}
+
+      {enableCategoryAccess && activeTab === 'categories' && (
+        <CategoryManagement
+          categories={categories}
+          canCreate={permissions.has('category.create')}
+          canUpdate={permissions.has('category.update')}
+          canDelete={permissions.has('category.delete')}
+          mutateCategories={mutateCategories}
+        />
       )}
 
       {enableActionModeration && activeTab === 'actions' && (
         <GameDataActionModerationPanel
-          canMarkActionsSynced={ability.can('mark_synced', 'GameDataAction')}
+          canMarkActionsSynced={permissions.has('game_data_action.mark_synced')}
           pendingActions={pendingActions}
           mutatePendingActions={mutatePendingActions}
         />

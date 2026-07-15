@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import useSWR from 'swr';
 
+import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { formatArticleDate } from '@/lib/dateUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useUser } from '@/hooks/useUser';
@@ -58,7 +59,12 @@ export default function CommentsSection({
   scope: CommentScope;
   targetId: string;
 }) {
-  const { role: userRole, nickname: userNickname } = useUser();
+  const { nickname: userNickname } = useUser();
+  const permissions = usePermissions();
+  const canComment = permissions.can('comment.create', {
+    resourceType: `comments/${scope}`,
+    resourceId: targetId,
+  });
   const isMobile = useMobile();
 
   const [replyTo, setReplyTo] = useState<{ id: string; nickname: string | null } | null>(null);
@@ -83,7 +89,7 @@ export default function CommentsSection({
   const tree = useMemo(() => buildTree(comments), [comments]);
 
   const handleSubmit = async () => {
-    if (!userRole) {
+    if (!canComment) {
       setShowLoginDialog(true);
       return;
     }
@@ -197,22 +203,22 @@ export default function CommentsSection({
           </div>
         ) : null}
 
-        {!userRole ? (
+        {!canComment ? (
           <div className='mb-3 text-sm text-gray-600 dark:text-gray-400'>登录后可发表评论。</div>
         ) : null}
 
         <textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          placeholder={userRole ? '写下你的评论…' : '请先登录后发表评论'}
-          disabled={!userRole || isSubmitting}
+          placeholder={canComment ? '写下你的评论…' : '请先登录后发表评论'}
+          disabled={!canComment || isSubmitting}
           className='h-24 w-full resize-none rounded-lg border border-gray-300 bg-white p-3 text-sm text-gray-900 disabled:opacity-60 dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100'
         />
 
         {error ? <div className='mt-2 text-sm text-red-600 dark:text-red-400'>{error}</div> : null}
 
         <div className='mt-3 flex items-center justify-end gap-2'>
-          {!userRole ? (
+          {!canComment ? (
             <Button variant='primary' size='sm' onClick={() => setShowLoginDialog(true)}>
               登录
             </Button>
@@ -220,7 +226,7 @@ export default function CommentsSection({
 
           <Button
             onClick={handleSubmit}
-            disabled={!userRole || isSubmitting}
+            disabled={!canComment || isSubmitting}
             loading={isSubmitting}
             variant='primary'
             size='sm'

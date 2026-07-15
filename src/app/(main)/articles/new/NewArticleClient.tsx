@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import useSWR from 'swr';
 
+import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { useUser } from '@/hooks/useUser';
 import { useToast } from '@/context/ToastContext';
 import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
@@ -36,7 +37,9 @@ const fetcher = async (url: string) => {
 
 const NewArticleClient: React.FC = () => {
   const router = useRouter();
-  const { role: userRole, isLoading: isUserLoading, isValidating: isUserValidating } = useUser();
+  const { isLoading: isUserLoading, isValidating: isUserValidating } = useUser();
+  const permissions = usePermissions();
+  const canCreateArticle = permissions.has('article.create');
   const { success: showSuccess, error: showError } = useToast();
 
   const [title, setTitle] = useState('');
@@ -47,11 +50,18 @@ const NewArticleClient: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const { data: categoriesData, error: categoriesError } = useSWR<{ categories: Category[] }>(
-    userRole ? '/api/categories' : null,
+    canCreateArticle ? '/api/categories' : null,
     fetcher
   );
   const categories: Category[] =
-    categoriesData?.categories.filter((category) => category.name != '根分类') || [];
+    categoriesData?.categories.filter(
+      (category) =>
+        category.name != '根分类' &&
+        permissions.can('article.create', {
+          resourceType: 'categories',
+          resourceId: category.id,
+        })
+    ) || [];
   const isLoadingCategories = !categoriesData && !categoriesError;
 
   // Check if selected category is "角色攻略" (game strategy) - requires character binding
@@ -75,10 +85,10 @@ const NewArticleClient: React.FC = () => {
   };
 
   useEffect(() => {
-    if (!userRole && !isUserLoading && !isUserValidating) {
+    if (!canCreateArticle && !isUserLoading && !isUserValidating) {
       router.push('/articles');
     }
-  }, [userRole, isUserLoading, isUserValidating, router]);
+  }, [canCreateArticle, isUserLoading, isUserValidating, router]);
 
   const handleContentChange = (newContent: string) => {
     setContent(newContent);
@@ -166,7 +176,7 @@ const NewArticleClient: React.FC = () => {
   };
 
   // Loading state for user authentication
-  if (isUserLoading || (isUserValidating && !userRole)) {
+  if (isUserLoading || (isUserValidating && !canCreateArticle)) {
     return (
       <div className='space-y-8 dark:text-slate-200'>
         <div className='flex min-h-100 items-center justify-center'>
@@ -177,7 +187,7 @@ const NewArticleClient: React.FC = () => {
   }
 
   // Redirect if user doesn't have permission
-  if (!userRole) {
+  if (!canCreateArticle) {
     return null;
   }
 

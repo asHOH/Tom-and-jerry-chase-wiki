@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { Actions, Subjects } from '@/lib/auth/permissions';
-import { requireAbility } from '@/lib/auth/requireAbility';
+import { requirePermission } from '@/lib/auth/requirePermission';
 
 export async function GET(request: NextRequest) {
   void request;
   try {
-    const guard = await requireAbility(Actions.APPROVE, Subjects.GAME_DATA_ACTION);
+    const guard = await requirePermission(['game_data_action.approve', 'game_data_action.reject']);
     if ('error' in guard) return guard.error;
     const { supabase } = guard;
 

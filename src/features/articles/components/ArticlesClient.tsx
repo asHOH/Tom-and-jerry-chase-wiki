@@ -7,7 +7,7 @@ import { Masonry } from 'react-plock';
 import { useSnapshot } from 'valtio';
 
 import { AssetManager } from '@/lib/assetManager';
-import { useAbility } from '@/lib/auth/AbilityProvider';
+import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { formatCompactDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
 import { useFilterState } from '@/lib/filterUtils';
@@ -37,7 +37,7 @@ interface ArticlesClientProps {
 }
 
 export default function ArticlesClient({ articles: data, description }: ArticlesClientProps) {
-  const ability = useAbility();
+  const permissions = usePermissions();
   const isMobile = useMobile();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -325,9 +325,11 @@ export default function ArticlesClient({ articles: data, description }: Articles
 
           {/* Quick Actions */}
           <div className='flex items-center justify-center gap-3'>
-            {ability.can('update', 'Article') ? (
+            {permissions.has('article.create') ||
+            permissions.has('article.update_own') ||
+            permissions.has('article.update_any') ? (
               <>
-                {ability.can('approve', 'ArticleVersion') && (
+                {permissions.has('article_version.approve') && (
                   <ButtonLink
                     href='/articles/pending'
                     variant='warning'
@@ -337,13 +339,17 @@ export default function ArticlesClient({ articles: data, description }: Articles
                     待审核
                   </ButtonLink>
                 )}
-                <ButtonLink
-                  href='/articles/new'
-                  size='sm'
-                  leadingIcon={<PlusIcon className='size-4' strokeWidth={1.5} aria-hidden='true' />}
-                >
-                  新建文章
-                </ButtonLink>
+                {permissions.has('article.create') && (
+                  <ButtonLink
+                    href='/articles/new'
+                    size='sm'
+                    leadingIcon={
+                      <PlusIcon className='size-4' strokeWidth={1.5} aria-hidden='true' />
+                    }
+                  >
+                    新建文章
+                  </ButtonLink>
+                )}
               </>
             ) : (
               <ButtonLink
@@ -382,7 +388,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
                 清除筛选
               </Button>
             )}
-            {ability.can('create', 'Article') && (
+            {permissions.has('article.create') && (
               <ButtonLink href='/articles/new'>创建文章</ButtonLink>
             )}
           </div>

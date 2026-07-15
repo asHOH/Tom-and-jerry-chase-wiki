@@ -120,7 +120,7 @@ export const publishNotification = async (
 ): Promise<PublishNotificationResult> => {
   const { data: recipient, error: recipientError } = await supabaseAdmin
     .from('users')
-    .select('role')
+    .select('id')
     .eq('id', input.recipientUserId)
     .single();
 
@@ -130,10 +130,20 @@ export const publishNotification = async (
     );
   }
 
-  if (
-    input.decisionOrigin === 'automatic' &&
-    (recipient.role === 'Reviewer' || recipient.role === 'Coordinator')
-  ) {
+  const { data: canApproveArticles, error: permissionError } = await supabaseAdmin.rpc(
+    'user_has_permission',
+    {
+      p_user_id: input.recipientUserId,
+      p_permission_key: 'article_version.approve',
+    }
+  );
+  if (permissionError) {
+    throw new Error(
+      `Failed to load notification recipient permissions: ${permissionError.message}`
+    );
+  }
+
+  if (input.decisionOrigin === 'automatic' && canApproveArticles) {
     return { created: false, suppressed: true, emailStatus: 'skipped' };
   }
 

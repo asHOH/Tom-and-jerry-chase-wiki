@@ -9,7 +9,7 @@ type ReplyFormProps = {
   replyToNickname: string | null;
   onSuccess: () => void;
   onCancel: () => void;
-  userRole: string | null;
+  isAuthenticated: boolean;
 };
 
 export function ReplyForm({
@@ -19,7 +19,7 @@ export function ReplyForm({
   replyToNickname,
   onSuccess,
   onCancel,
-  userRole,
+  isAuthenticated,
 }: ReplyFormProps) {
   const [content, setContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -82,15 +82,15 @@ export function ReplyForm({
         </div>
       )}
 
-      {!userRole && (
+      {!isAuthenticated && (
         <div className='mb-3 text-sm text-gray-600 dark:text-gray-400'>登录后可参与讨论。</div>
       )}
 
       <textarea
         value={content}
         onChange={(e) => setContent(e.target.value)}
-        placeholder={userRole ? '写下你的回复…' : '请先登录后发表回复'}
-        disabled={!userRole || isSubmitting}
+        placeholder={isAuthenticated ? '写下你的回复…' : '请先登录后发表回复'}
+        disabled={!isAuthenticated || isSubmitting}
         maxLength={2000}
         className='h-24 w-full resize-none rounded-lg border border-gray-300 bg-white p-3 text-sm text-gray-900 disabled:opacity-60 dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100'
       />
@@ -108,7 +108,7 @@ export function ReplyForm({
         <button
           type='button'
           onClick={() => void handleSubmit()}
-          disabled={!userRole || isSubmitting}
+          disabled={!isAuthenticated || isSubmitting}
           className='rounded-md bg-green-600 px-3 py-1.5 text-sm text-white hover:bg-green-700 disabled:opacity-60 dark:bg-green-700 dark:hover:bg-green-600'
         >
           {isSubmitting ? '发送中…' : '发表回复'}

@@ -9,6 +9,7 @@ import {
   type ArticleEditInfoResponse,
   type EditSourceKey,
 } from '@/lib/articles/editSources';
+import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { formatArticleDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
 import { normalizeHeadingLevels } from '@/lib/richTextUtils';
@@ -47,7 +48,10 @@ const EditArticleClient: React.FC = () => {
   const params = useParams();
   const id = params?.id as string;
   const router = useRouter();
-  const { role: userRole, isLoading: isUserLoading, isValidating: isUserValidating } = useUser();
+  const { isLoading: isUserLoading, isValidating: isUserValidating } = useUser();
+  const permissions = usePermissions();
+  const canEditArticle =
+    permissions.has('article.update_own') || permissions.has('article.update_any');
   const { success: showSuccess, error: showError } = useToast();
 
   const [title, setTitle] = useState('');
@@ -62,7 +66,7 @@ const EditArticleClient: React.FC = () => {
   const [selectedSource, setSelectedSource] = useState<EditSourceKey>('approved');
 
   const { data: categoriesData, error: categoriesError } = useSWR<{ categories: Category[] }>(
-    userRole ? '/api/categories' : null,
+    canEditArticle ? '/api/categories' : null,
     fetcher
   );
   const categories: Category[] = categoriesData?.categories || [];
@@ -78,7 +82,7 @@ const EditArticleClient: React.FC = () => {
   const showCharacterSelector = isGameStrategyCategory(category);
 
   const { data: articleData, error: articleError } = useSWR<ArticleEditInfoResponse>(
-    id && userRole ? `/api/articles/${id}/info` : null,
+    id && canEditArticle ? `/api/articles/${id}/info` : null,
     fetcher
   );
 
@@ -108,10 +112,10 @@ const EditArticleClient: React.FC = () => {
   }, [articleData, isInitialized, applySourceToForm]);
 
   useEffect(() => {
-    if (!userRole && !isUserLoading && !isUserValidating) {
+    if (!canEditArticle && !isUserLoading && !isUserValidating) {
       router.push('/articles');
     }
-  }, [userRole, isUserLoading, isUserValidating, router]);
+  }, [canEditArticle, isUserLoading, isUserValidating, router]);
 
   const handleContentChange = (newContent: string) => {
     setContent(newContent);
@@ -221,7 +225,7 @@ const EditArticleClient: React.FC = () => {
   };
 
   const isArticleLoading = !!id && !articleData && !articleError;
-  const isLoading = isArticleLoading || isUserLoading || (isUserValidating && !userRole);
+  const isLoading = isArticleLoading || isUserLoading || (isUserValidating && !canEditArticle);
 
   // Loading state for user authentication and article data
   if (isLoading) {
@@ -235,7 +239,7 @@ const EditArticleClient: React.FC = () => {
   }
 
   // Redirect if user doesn't have permission
-  if (!userRole) {
+  if (!canEditArticle) {
     return null;
   }
 

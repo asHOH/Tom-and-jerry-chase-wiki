@@ -3,19 +3,23 @@
 import { ReactNode, useEffect } from 'react';
 import useSWR, { SWRConfig, useSWRConfig } from 'swr';
 
+import type { PermissionGrant } from '@/lib/auth/permissions';
 import { supabase } from '@/lib/supabase/client';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
 
-type UserType = { role: string | null; nickname: string | null };
+export type UserType = {
+  nickname: string | null;
+  grants: PermissionGrant[];
+  groups: Array<{ id: string; name: string }>;
+};
+
+const EMPTY_USER: UserType = { nickname: null, grants: [], groups: [] };
 
 export const USER_API_KEY = '/api/auth/me';
 
 async function getUserData() {
   if (!hasSupabasePublicConfig()) {
-    return {
-      role: null,
-      nickname: null,
-    };
+    return EMPTY_USER;
   }
 
   const res = await fetch(USER_API_KEY, {
@@ -24,17 +28,19 @@ async function getUserData() {
   });
 
   if (!res.ok) {
-    return { role: null, nickname: null };
+    return EMPTY_USER;
   }
 
   const data = (await res.json().catch(() => null)) as {
-    role?: string | null;
     nickname?: string | null;
+    grants?: PermissionGrant[];
+    groups?: Array<{ id: string; name: string }>;
   } | null;
 
   return {
-    role: data?.role ?? null,
     nickname: data?.nickname ?? null,
+    grants: data?.grants ?? [],
+    groups: data?.groups ?? [],
   };
 }
 
@@ -203,12 +209,13 @@ export const useUser = () => {
   const { data, mutate, isLoading, isValidating } = useSWR<UserType>(USER_API_KEY, getUserData);
 
   const clearData = () => {
-    mutate({ role: null, nickname: null }, false);
+    mutate(EMPTY_USER, false);
   };
 
   return {
-    role: data?.role ?? null,
     nickname: data?.nickname ?? null,
+    grants: data?.grants ?? [],
+    groups: data?.groups ?? [],
     isLoading,
     isValidating,
     mutate,

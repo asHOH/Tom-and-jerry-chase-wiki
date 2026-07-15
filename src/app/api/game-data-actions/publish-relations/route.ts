@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server';
 import z from 'zod';
 
-import { Actions, Subjects } from '@/lib/auth/permissions';
-import { requireAbility } from '@/lib/auth/requireAbility';
-import { isCharacterRelationAction } from '@/lib/edit/characterRelationActions';
+import { requirePermission } from '@/lib/auth/requirePermission';
+import {
+  isCharacterRelationAction,
+  parseCharacterRelationActionPath,
+} from '@/lib/edit/characterRelationActions';
 import type { ActionHistoryEntry } from '@/lib/edit/diffUtils';
 import { flattenActionEntries } from '@/lib/gameData/actionEntries';
 import {
@@ -25,9 +27,6 @@ export async function POST(req: Request) {
   }
 
   try {
-    const guard = await requireAbility(Actions.PUBLISH_RELATIONS, Subjects.GAME_DATA_ACTION);
-    if ('error' in guard) return guard.error;
-
     let body: { entries: ActionHistoryEntry[]; message?: string };
     try {
       const parsed = schema.parse(await req.json());
@@ -47,6 +46,13 @@ export async function POST(req: Request) {
     if (!flattenedEntries.every(isCharacterRelationAction)) {
       return NextResponse.json({ error: 'Only relation actions are allowed' }, { status: 400 });
     }
+
+    const contexts = flattenedEntries.map((entry) => ({
+      resourceType: 'characters',
+      resourceId: parseCharacterRelationActionPath(entry.path)!.characterId,
+    }));
+    const guard = await requirePermission('game_data_action.publish_relations', contexts, 'all');
+    if ('error' in guard) return guard.error;
 
     const message = typeof body.message === 'string' ? body.message.trim() : undefined;
     const result = await publishGameDataActions(

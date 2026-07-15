@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { subject } from '@casl/ability';
 
 import { buildEditSourcePolicy, type EditSourceSnapshot } from '@/lib/articles/editSources';
-import { abilityFor, Actions, Subjects, type Role } from '@/lib/auth/permissions';
+import { canAccess } from '@/lib/auth/permissions';
+import { loadPermissionGrants } from '@/lib/auth/requirePermission';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { createClient } from '@/lib/supabase/server';
 
@@ -34,19 +34,18 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ error: 'Article not found' }, { status: 404 });
     }
 
-    const { data: userRole, error: roleError } = await supabaseAdmin.rpc('get_user_role', {
-      p_user_id: userId,
-    });
-
-    if (roleError) {
-      console.error('Supabase role query error:', roleError);
-      return NextResponse.json({ error: 'Failed to fetch user role' }, { status: 500 });
-    }
-
-    const role = (userRole as Role | undefined) ?? null;
-    const ability = abilityFor(role, userId);
-
-    if (!ability.can(Actions.UPDATE, subject(Subjects.ARTICLE, article))) {
+    const grants = await loadPermissionGrants(supabase);
+    const contexts = [
+      { resourceType: 'articles', resourceId: id },
+      { resourceType: 'categories', resourceId: article.category_id },
+    ];
+    const canUpdateAny = contexts.some((context) =>
+      canAccess(grants, 'article.update_any', context)
+    );
+    const canUpdateOwn =
+      article.author_id === userId &&
+      contexts.some((context) => canAccess(grants, 'article.update_own', context));
+    if (!canUpdateAny && !canUpdateOwn) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 

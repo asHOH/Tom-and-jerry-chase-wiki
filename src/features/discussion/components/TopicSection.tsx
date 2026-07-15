@@ -11,7 +11,7 @@ type TopicSectionProps = {
   scope: string;
   targetId: string;
   isAdmin: boolean;
-  userRole: string | null;
+  isAuthenticated: boolean;
   userNickname: string | null;
   onMutate: () => void;
   onLoginRequired: () => void;
@@ -22,7 +22,7 @@ export function TopicSection({
   scope,
   targetId,
   isAdmin,
-  userRole,
+  isAuthenticated,
   userNickname,
   onMutate,
   onLoginRequired,
@@ -92,7 +92,7 @@ export function TopicSection({
   };
 
   const startReply = (targetId: string) => {
-    if (!userRole) {
+    if (!isAuthenticated) {
       onLoginRequired();
       return;
     }

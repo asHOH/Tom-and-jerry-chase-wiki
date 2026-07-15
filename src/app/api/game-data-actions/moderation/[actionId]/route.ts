@@ -1,8 +1,9 @@
 import { revalidateTag } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 
-import { Actions, Subjects } from '@/lib/auth/permissions';
-import { requireAbility } from '@/lib/auth/requireAbility';
+import { canAccessAll } from '@/lib/auth/permissions';
+import { requirePermission } from '@/lib/auth/requirePermission';
+import { getGameActionResourceContexts } from '@/lib/auth/resourceContexts';
 import { PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG } from '@/lib/gameData/publicActions';
 import { publishNotification } from '@/lib/notificationUtils';
 import type { Database } from '@/data/database.types';
@@ -47,16 +48,28 @@ export async function POST(
   }
 
   try {
-    const requiredAction = action === 'mark-synced' ? Actions.MARK_SYNCED : Actions.APPROVE;
-    const guard = await requireAbility(requiredAction, Subjects.GAME_DATA_ACTION);
+    const requiredPermission =
+      action === 'mark-synced'
+        ? 'game_data_action.mark_synced'
+        : action === 'reject'
+          ? 'game_data_action.reject'
+          : 'game_data_action.approve';
+    const guard = await requirePermission(requiredPermission);
     if ('error' in guard) return guard.error;
     const { supabase } = guard;
 
     const { data: recordData } = await supabase
       .from('game_data_actions')
-      .select('created_by, entity_type, status')
+      .select('created_by, entity_type, entry, status')
       .eq('id', actionId)
       .single();
+
+    const contexts = recordData
+      ? getGameActionResourceContexts(recordData.entity_type, [recordData.entry])
+      : [];
+    if (contexts.length === 0 || !canAccessAll(guard.grants, requiredPermission, contexts)) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
 
     if (action === 'mark-synced') {
       if (!recordData) {

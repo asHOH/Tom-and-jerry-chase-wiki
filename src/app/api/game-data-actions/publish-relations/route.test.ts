@@ -1,5 +1,4 @@
-import { abilityFor } from '@/lib/auth/permissions';
-import { requireAbility } from '@/lib/auth/requireAbility';
+import { requirePermission } from '@/lib/auth/requirePermission';
 import { publishGameDataActions } from '@/lib/gameData/publishGameDataActions';
 import { env } from '@/env';
 
@@ -23,15 +22,15 @@ jest.mock('@/env', () => ({
   },
 }));
 
-jest.mock('@/lib/auth/requireAbility', () => ({
-  requireAbility: jest.fn(),
+jest.mock('@/lib/auth/requirePermission', () => ({
+  requirePermission: jest.fn(),
 }));
 
 jest.mock('@/lib/gameData/publishGameDataActions', () => ({
   publishGameDataActions: jest.fn(),
 }));
 
-const requireAbilityMock = jest.mocked(requireAbility);
+const requirePermissionMock = jest.mocked(requirePermission);
 const publishGameDataActionsMock = jest.mocked(publishGameDataActions);
 const mutableEnv = env as unknown as {
   NEXT_PUBLIC_DISABLE_ARTICLES?: string;
@@ -44,11 +43,15 @@ const createRequest = (body: unknown) =>
   }) as Request;
 
 const mockSuccess = () =>
-  requireAbilityMock.mockResolvedValue({
+  requirePermissionMock.mockResolvedValue({
     supabase: { rpc: jest.fn() } as never,
     userId: 'test-user',
-    ability: abilityFor('Contributor'),
+    grants: [],
   } as never);
+
+const validEntries = [
+  { op: 'set', path: '杰瑞.counters', oldValue: [], newValue: [{ id: '汤姆' }] },
+];
 
 describe('publish-relations route', () => {
   beforeEach(() => {
@@ -61,24 +64,24 @@ describe('publish-relations route', () => {
   });
 
   it('returns 401 for unauthenticated requests', async () => {
-    requireAbilityMock.mockResolvedValueOnce({
+    requirePermissionMock.mockResolvedValueOnce({
       error: jsonResponse({ error: 'Unauthorized' }, { status: 401 }) as never,
     });
     const { POST } = await import('./route');
 
-    const response = await POST(createRequest({ entries: [] }));
+    const response = await POST(createRequest({ entries: validEntries }));
 
     expect(response.status).toBe(401);
     await expect(response.json()).resolves.toEqual({ error: 'Unauthorized' });
   });
 
   it('returns 403 for unauthorized roles', async () => {
-    requireAbilityMock.mockResolvedValueOnce({
+    requirePermissionMock.mockResolvedValueOnce({
       error: jsonResponse({ error: 'Forbidden' }, { status: 403 }) as never,
     });
     const { POST } = await import('./route');
 
-    const response = await POST(createRequest({ entries: [] }));
+    const response = await POST(createRequest({ entries: validEntries }));
 
     expect(response.status).toBe(403);
     await expect(response.json()).resolves.toEqual({ error: 'Forbidden' });
@@ -92,7 +95,7 @@ describe('publish-relations route', () => {
 
     expect(response.status).toBe(501);
     await expect(response.json()).resolves.toEqual({ error: 'Supabase is disabled' });
-    expect(requireAbilityMock).not.toHaveBeenCalled();
+    expect(requirePermissionMock).not.toHaveBeenCalled();
   });
 
   it('rejects non-relation character paths', async () => {
@@ -111,9 +114,7 @@ describe('publish-relations route', () => {
 
   it('publishes valid relation actions as a characters action item', async () => {
     const { POST } = await import('./route');
-    const entries = [
-      { op: 'set', path: '杰瑞.counters', oldValue: [], newValue: [{ id: '汤姆' }] },
-    ];
+    const entries = validEntries;
 
     const response = await POST(createRequest({ entries, message: '  更新关系  ' }));
 
@@ -121,7 +122,11 @@ describe('publish-relations route', () => {
     await expect(response.json()).resolves.toEqual({
       result: [{ id: 'action-1', is_public: false, status: 'pending' }],
     });
-    expect(requireAbilityMock).toHaveBeenCalledWith('publish_relations', 'GameDataAction');
+    expect(requirePermissionMock).toHaveBeenCalledWith(
+      'game_data_action.publish_relations',
+      [{ resourceType: 'characters', resourceId: '杰瑞' }],
+      'all'
+    );
     expect(publishGameDataActionsMock).toHaveBeenCalledWith(
       { rpc: expect.any(Function) },
       [{ entityType: 'characters', entries }],

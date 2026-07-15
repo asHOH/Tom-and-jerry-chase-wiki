@@ -5,6 +5,8 @@ import { usePathname } from 'next/navigation';
 import { AnimatePresence, m, useReducedMotion } from 'motion/react';
 import { useMediaQuery } from 'usehooks-ts';
 
+import { usePermissions } from '@/lib/auth/PermissionProvider';
+import type { PermissionKey } from '@/lib/auth/permissions';
 import { cn, getNavigationButtonClasses } from '@/lib/design';
 import { supabase } from '@/lib/supabase/client';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
@@ -78,7 +80,21 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   const [mounted, setMounted] = useState(false);
   const [collapsedCount, setCollapsedCount] = useState(0);
   const pathname = usePathname();
-  const { nickname, role, clearData: clearUserData } = useUser();
+  const { nickname, clearData: clearUserData } = useUser();
+  const permissions = usePermissions();
+  const adminPermissions: PermissionKey[] = [
+    'article_version.approve',
+    'category.create',
+    'category.update',
+    'category.delete',
+    'game_data_action.approve',
+    'game_data_action.reject',
+    'user.read',
+    'user.update',
+    'group.manage',
+    'group.assign',
+  ];
+  const canAccessAdmin = adminPermissions.some(permissions.has);
   const unreadNotificationCount = useNotificationCount(!!nickname);
   const { items: rawItems, isActive } = useNavigationTabs();
   const isMobile = useMobile();
@@ -524,7 +540,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                           修改密码
                         </button>
                       </li>
-                      {(role == 'Coordinator' || role == 'Reviewer') && (
+                      {canAccessAdmin && (
                         <li>
                           <Link
                             href='/admin/'

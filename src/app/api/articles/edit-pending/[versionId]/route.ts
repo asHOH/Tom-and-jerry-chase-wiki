@@ -1,8 +1,7 @@
 import { revalidateTag } from 'next/cache';
 import { NextResponse } from 'next/server';
 
-import { Actions, Subjects } from '@/lib/auth/permissions';
-import { requireAbility } from '@/lib/auth/requireAbility';
+import { requirePermission } from '@/lib/auth/requirePermission';
 import { CACHE_TAGS } from '@/lib/cacheTags';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { articleEditPendingSchema, formatZodError } from '@/lib/validation/schemas';
@@ -17,7 +16,7 @@ export async function POST(
     return NextResponse.json({ error: 'Missing version ID' }, { status: 400 });
   }
 
-  const guard = await requireAbility(Actions.UPDATE, Subjects.ARTICLE);
+  const guard = await requirePermission(['article.update_own', 'article.update_any']);
   if ('error' in guard) return guard.error;
   const { supabase } = guard;
 

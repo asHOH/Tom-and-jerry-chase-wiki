@@ -1,8 +1,8 @@
 import { revalidateTag } from 'next/cache';
 import { NextResponse } from 'next/server';
-import { subject } from '@casl/ability';
 
-import { abilityFor, Actions, Subjects, type Role } from '@/lib/auth/permissions';
+import { canAccess } from '@/lib/auth/permissions';
+import { loadPermissionGrants } from '@/lib/auth/requirePermission';
 import { CACHE_TAGS } from '@/lib/cacheTags';
 import { publishNotification } from '@/lib/notificationUtils';
 import { supabaseAdmin } from '@/lib/supabase/admin';
@@ -27,7 +27,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id?
     // Authorize before parsing body — fail fast on missing article or insufficient permissions
     const { data: article, error: articleError } = await supabaseAdmin
       .from('articles')
-      .select('author_id')
+      .select('author_id, category_id')
       .eq('id', id)
       .single();
 
@@ -35,12 +35,17 @@ export async function POST(request: Request, { params }: { params: Promise<{ id?
       return NextResponse.json({ error: 'Article not found' }, { status: 404 });
     }
 
-    const { data: userRole } = await supabaseAdmin.rpc('get_user_role', { p_user_id: userId });
-
-    const role = (userRole as Role | undefined) ?? null;
-    const ability = abilityFor(role, userId);
-
-    if (!ability.can(Actions.UPDATE, subject(Subjects.ARTICLE, article))) {
+    const grants = await loadPermissionGrants(supabase);
+    const articleContext = { resourceType: 'articles', resourceId: id };
+    const categoryContext = { resourceType: 'categories', resourceId: article.category_id };
+    const canUpdateAny =
+      canAccess(grants, 'article.update_any', articleContext) ||
+      canAccess(grants, 'article.update_any', categoryContext);
+    const canUpdateOwn =
+      article.author_id === userId &&
+      (canAccess(grants, 'article.update_own', articleContext) ||
+        canAccess(grants, 'article.update_own', categoryContext));
+    if (!canUpdateAny && !canUpdateOwn) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
@@ -54,6 +59,15 @@ export async function POST(request: Request, { params }: { params: Promise<{ id?
 
     if (!title || !category || !content) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    }
+    if (
+      category !== article.category_id &&
+      !canAccess(grants, canUpdateAny ? 'article.update_any' : 'article.update_own', {
+        resourceType: 'categories',
+        resourceId: category,
+      })
+    ) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     const { data, error } = await supabase.rpc('submit_article', {

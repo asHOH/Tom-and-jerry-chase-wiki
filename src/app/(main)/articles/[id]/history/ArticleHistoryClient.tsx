@@ -4,9 +4,9 @@ import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import useSWR from 'swr';
 
+import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { formatArticleDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
-import { useUser } from '@/hooks/useUser';
 import { useToast } from '@/context/ToastContext';
 import Button from '@/components/ui/Button';
 import ButtonLink from '@/components/ui/ButtonLink';
@@ -40,7 +40,7 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function ArticleHistoryClient() {
   const params = useParams();
-  const { role: userRole } = useUser();
+  const permissions = usePermissions();
   const { info, success, error: showError } = useToast();
   const articleId = params?.id as string;
 
@@ -101,7 +101,7 @@ export default function ArticleHistoryClient() {
     );
   };
 
-  const canRevoke = userRole === 'Reviewer' || userRole === 'Coordinator';
+  const canRevoke = permissions.has('article_version.revoke');
 
   if (loading) {
     return (

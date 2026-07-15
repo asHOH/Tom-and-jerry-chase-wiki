@@ -13,6 +13,9 @@ type Category = Database['public']['Tables']['categories']['Row'];
 
 interface CategoryManagementProps {
   categories: Category[];
+  canCreate: boolean;
+  canUpdate: boolean;
+  canDelete: boolean;
   mutateCategories: () => void;
 }
 
@@ -32,6 +35,9 @@ const visibilityLabel = (v: Category['default_visibility']) => {
 
 const CategoryManagement: React.FC<CategoryManagementProps> = ({
   categories,
+  canCreate,
+  canUpdate,
+  canDelete,
   mutateCategories,
 }) => {
   const [loading, setLoading] = useState(false);
@@ -153,56 +159,60 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
         </div>
       )}
 
-      <Card className='mb-6 dark:text-slate-200'>
-        <h2 className='mb-3 text-xl font-semibold text-gray-900 dark:text-gray-100'>创建新分类</h2>
-        <div className='flex flex-col gap-3 sm:flex-row sm:items-center'>
-          <FormInput
-            type='text'
-            placeholder='分类名称'
-            value={newCategory.name}
-            onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
-            className='flex-1'
-            size='sm'
-          />
-          <FormSelect
-            title='选择父分类'
-            value={newCategory.parent_category_id ?? ''}
-            onChange={(e) =>
-              setNewCategory({
-                ...newCategory,
-                parent_category_id: e.target.value === '' ? undefined : e.target.value,
-              })
-            }
-            className='sm:w-auto'
-            size='sm'
-          >
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.name}
-              </option>
-            ))}
-          </FormSelect>
-          <FormSelect
-            title='选择默认可见性'
-            value={newCategory.default_visibility || ''}
-            onChange={(e) =>
-              setNewCategory({
-                ...newCategory,
-                default_visibility: e.target.value as Category['default_visibility'],
-              })
-            }
-            className='sm:w-auto'
-            size='sm'
-          >
-            <option value='approved'>修改直接通过</option>
-            <option value='pending'>修改需要审核</option>
-            <option value='rejected'>禁止修改</option>
-          </FormSelect>
-          <Button onClick={handleCreateCategory} disabled={loading}>
-            创建
-          </Button>
-        </div>
-      </Card>
+      {canCreate && (
+        <Card className='mb-6 dark:text-slate-200'>
+          <h2 className='mb-3 text-xl font-semibold text-gray-900 dark:text-gray-100'>
+            创建新分类
+          </h2>
+          <div className='flex flex-col gap-3 sm:flex-row sm:items-center'>
+            <FormInput
+              type='text'
+              placeholder='分类名称'
+              value={newCategory.name}
+              onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
+              className='flex-1'
+              size='sm'
+            />
+            <FormSelect
+              title='选择父分类'
+              value={newCategory.parent_category_id ?? ''}
+              onChange={(e) =>
+                setNewCategory({
+                  ...newCategory,
+                  parent_category_id: e.target.value === '' ? undefined : e.target.value,
+                })
+              }
+              className='sm:w-auto'
+              size='sm'
+            >
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
+              ))}
+            </FormSelect>
+            <FormSelect
+              title='选择默认可见性'
+              value={newCategory.default_visibility || ''}
+              onChange={(e) =>
+                setNewCategory({
+                  ...newCategory,
+                  default_visibility: e.target.value as Category['default_visibility'],
+                })
+              }
+              className='sm:w-auto'
+              size='sm'
+            >
+              <option value='approved'>修改直接通过</option>
+              <option value='pending'>修改需要审核</option>
+              <option value='rejected'>禁止修改</option>
+            </FormSelect>
+            <Button onClick={handleCreateCategory} disabled={loading}>
+              创建
+            </Button>
+          </div>
+        </Card>
+      )}
 
       <Card className='dark:text-slate-200'>
         <div className='mb-3 flex items-center justify-between'>
@@ -244,14 +254,16 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
                   </td>
                   <td className='px-4 py-3 text-sm'>
                     <div className='flex gap-2'>
-                      <Button
-                        onClick={() => setEditingCategory(category)}
-                        variant='warning'
-                        size='sm'
-                      >
-                        编辑
-                      </Button>
-                      {category.name !== '根分类' && (
+                      {canUpdate && (
+                        <Button
+                          onClick={() => setEditingCategory(category)}
+                          variant='warning'
+                          size='sm'
+                        >
+                          编辑
+                        </Button>
+                      )}
+                      {canDelete && category.name !== '根分类' && (
                         <Button
                           onClick={() => handleDeleteCategory(category.id)}
                           variant='danger'
@@ -279,7 +291,7 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
         </div>
       </Card>
 
-      {editingCategory && (
+      {canUpdate && editingCategory && (
         <Card className='mt-6'>
           <h2 className='mb-3 text-xl font-semibold'>编辑分类</h2>
           <div className='flex flex-col gap-3 sm:flex-row sm:items-center'>

@@ -1,8 +1,7 @@
 import { pbkdf2Sync, randomBytes } from 'crypto';
 import { NextResponse } from 'next/server';
 
-import { Actions, Subjects } from '@/lib/auth/permissions';
-import { requireAbility } from '@/lib/auth/requireAbility';
+import { requirePermission } from '@/lib/auth/requirePermission';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 
 const hashPassword = (password: string, salt: string) =>
@@ -11,7 +10,7 @@ const hashPassword = (password: string, salt: string) =>
 const generateSalt = () => randomBytes(16).toString('hex');
 
 export async function POST(request: Request) {
-  const guard = await requireAbility(Actions.UPDATE, Subjects.USER, 'user');
+  const guard = await requirePermission('user.update');
   if ('error' in guard) return guard.error;
   const { supabase } = guard;
 

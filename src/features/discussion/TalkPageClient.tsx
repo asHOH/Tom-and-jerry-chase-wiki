@@ -4,7 +4,7 @@ import { useCallback, useMemo, useState } from 'react';
 import Link from 'next/link';
 import useSWR from 'swr';
 
-import { useAbility } from '@/lib/auth/AbilityProvider';
+import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useUser } from '@/hooks/useUser';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
@@ -73,10 +73,13 @@ export function TalkPageClient({
   entityTypeLabel,
   parentUrl,
 }: TalkPageClientProps) {
-  const { role: userRole } = useUser();
-  const ability = useAbility();
+  const { nickname } = useUser();
+  const permissions = usePermissions();
   const isMobile = useMobile();
-  const isAdmin = ability.can('moderate', 'Comment');
+  const isAdmin = permissions.can('comment.moderate', {
+    resourceType: `comments/${scope}`,
+    resourceId: targetId,
+  });
 
   const [showNewTopicForm, setShowNewTopicForm] = useState(false);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
@@ -137,12 +140,12 @@ export function TalkPageClient({
   }, [topics, comments]);
 
   const handleCreateTopic = useCallback(() => {
-    if (!userRole) {
+    if (!nickname) {
       setShowLoginDialog(true);
       return;
     }
     setShowNewTopicForm(true);
-  }, [userRole]);
+  }, [nickname]);
 
   const handleMutate = useCallback(() => {
     void mutate();
@@ -244,7 +247,7 @@ export function TalkPageClient({
               topic={node}
               scope={scope}
               targetId={targetId}
-              userRole={userRole}
+              isAuthenticated={Boolean(nickname)}
               isAdmin={isAdmin}
               userNickname={null}
               onMutate={handleMutate}

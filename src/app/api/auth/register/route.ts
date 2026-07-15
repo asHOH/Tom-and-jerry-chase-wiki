@@ -139,7 +139,6 @@ export async function POST(request: NextRequest) {
       nickname,
       password_hash: passwordHash,
       salt,
-      role: 'Contributor',
     } as TablesInsert<'users'>);
 
     if (insertError) {

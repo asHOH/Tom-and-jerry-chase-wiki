@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 
-import { Actions, Subjects } from '../../../lib/auth/permissions';
-import { requireAbility } from '../../../lib/auth/requireAbility';
+import { requirePermission } from '../../../lib/auth/requirePermission';
 import { shouldAllowComment } from '../../../lib/comments/moderation';
 import { checkRateLimit } from '../../../lib/rateLimit';
 import { supabaseAdmin } from '../../../lib/supabase/admin';
@@ -148,14 +147,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429, headers: rl.headers });
   }
 
-  const supabase = await createClient();
-  const { data: claimsData } = await supabase.auth.getClaims();
-  const userId = claimsData?.claims.sub;
-
-  if (!userId) {
-    return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
-  }
-
   const parsed = createCommentSchema.safeParse(await req.json().catch(() => null));
   if (!parsed.success) {
     return NextResponse.json(
@@ -165,6 +156,12 @@ export async function POST(req: Request) {
   }
 
   const { scope, targetId, parentId, content, title } = parsed.data;
+  const guard = await requirePermission('comment.create', {
+    resourceType: `comments/${scope}`,
+    resourceId: targetId,
+  });
+  if ('error' in guard) return guard.error;
+  const { supabase } = guard;
 
   const allowed = await shouldAllowComment({
     scope,
@@ -189,6 +186,9 @@ export async function POST(req: Request) {
       const msg = rpcError?.message ?? '';
       if (msg.includes('unauthorized')) {
         return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+      }
+      if (msg.includes('forbidden')) {
+        return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 });
       }
       if (msg.includes('scope_not_supported')) {
         return NextResponse.json({ error: 'Scope not supported' }, { status: 400 });
@@ -255,10 +255,6 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ error: 'Comments are disabled' }, { status: 503 });
   }
 
-  const guard = await requireAbility(Actions.MODERATE, Subjects.COMMENT);
-  if ('error' in guard) return guard.error;
-  const { supabase } = guard;
-
   const parsed = patchCommentSchema.safeParse(await req.json().catch(() => null));
   if (!parsed.success) {
     return NextResponse.json(
@@ -268,6 +264,18 @@ export async function PATCH(req: Request) {
   }
 
   const { commentId, status } = parsed.data;
+  const { data: target } = await supabaseAdmin
+    .from('comments')
+    .select('scope, target_id')
+    .eq('id', commentId)
+    .maybeSingle();
+  if (!target) return NextResponse.json({ error: 'Comment not found' }, { status: 404 });
+  const guard = await requirePermission('comment.moderate', {
+    resourceType: `comments/${target.scope}`,
+    resourceId: target.target_id,
+  });
+  if ('error' in guard) return guard.error;
+  const { supabase } = guard;
 
   try {
     const { error: rpcError } = await supabase.rpc('set_comment_status', {

@@ -1,14 +1,12 @@
 'use server';
 
+import { loadPermissionGrants } from './auth/requirePermission';
 import { hasSupabasePublicConfig } from './supabase/config';
 import { createClient } from './supabase/server';
 
 export async function getUserData() {
   if (!hasSupabasePublicConfig()) {
-    return {
-      role: null,
-      nickname: null,
-    };
+    return { nickname: null, grants: [], groups: [] };
   }
 
   const supabase = await createClient();
@@ -16,15 +14,21 @@ export async function getUserData() {
   const userId = claimsData?.claims.sub;
 
   if (!userId) {
-    return {
-      role: null,
-      nickname: null,
-    };
+    return { nickname: null, grants: [], groups: [] };
   }
 
-  const { data } = await supabase.from('users').select('role, nickname').eq('id', userId).single();
+  const [{ data }, grants, { data: memberships }] = await Promise.all([
+    supabase.from('users').select('nickname').eq('id', userId).single(),
+    loadPermissionGrants(supabase),
+    supabase.from('user_group_memberships').select('group_id').eq('user_id', userId),
+  ]);
+  const groupIds = memberships?.map(({ group_id }) => group_id) ?? [];
+  const { data: groups } = groupIds.length
+    ? await supabase.from('user_groups').select('id, name').in('id', groupIds)
+    : { data: [] };
   return {
-    role: data?.role || null,
     nickname: data?.nickname || null,
+    grants,
+    groups: groups ?? [],
   };
 }

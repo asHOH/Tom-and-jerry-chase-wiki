@@ -1,24 +1,38 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useSWRConfig } from 'swr';
 
 import { cn } from '@/lib/design';
+import { USER_API_KEY } from '@/hooks/useUser';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
-import { FormInput, FormSelect } from '@/components/ui/FormControls';
+import { FormInput } from '@/components/ui/FormControls';
 
-interface User {
+import type { PermissionGroup } from './PermissionGroupManagement';
+
+type User = {
   id: string;
   nickname: string;
-  role: string | null;
-}
+  groupIds: string[];
+};
 
-interface UserManagementProps {
+type UserManagementProps = {
   users: User[];
+  groups: PermissionGroup[];
+  canAssignGroups: boolean;
+  canUpdateUsers: boolean;
   mutateUsers: () => void;
-}
+};
 
-const UserManagement: React.FC<UserManagementProps> = ({ users, mutateUsers }) => {
+const UserManagement: React.FC<UserManagementProps> = ({
+  users,
+  groups,
+  canAssignGroups,
+  canUpdateUsers,
+  mutateUsers,
+}) => {
+  const { mutate: mutateCache } = useSWRConfig();
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -56,23 +70,24 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, mutateUsers }) =
     }
   };
 
-  const handleRoleUpdate = async (userId: string, newRole: string) => {
+  const handleGroupUpdate = async (userId: string, groupIds: string[]) => {
     try {
-      const response = await fetch('/api/auth/update-role', {
-        method: 'POST',
+      const response = await fetch(`/api/admin/users/${userId}/groups`, {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, role: newRole }),
+        body: JSON.stringify({ groupIds }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update role');
+        throw new Error('Failed to update groups');
       }
 
-      setMessage({ type: 'success', text: '角色已更新' });
+      setMessage({ type: 'success', text: '权限组已更新' });
       mutateUsers(); // Revalidate the users data
+      await mutateCache(USER_API_KEY);
     } catch (err) {
-      console.error('Error updating role:', err);
-      setMessage({ type: 'error', text: '更新角色失败' });
+      console.error('Error updating groups:', err);
+      setMessage({ type: 'error', text: '更新权限组失败' });
       // Revert the local change by re-fetching data
       mutateUsers();
     }
@@ -152,7 +167,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, mutateUsers }) =
                   昵称
                 </th>
                 <th className='px-4 py-2 text-left text-sm font-medium text-gray-700 dark:text-slate-200'>
-                  角色
+                  权限组
                 </th>
                 <th className='px-4 py-2 text-left text-sm font-medium text-gray-700 dark:text-slate-200'>
                   操作
@@ -166,24 +181,37 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, mutateUsers }) =
                     {user.nickname}
                   </td>
                   <td className='px-4 py-3 text-sm text-gray-600 dark:text-gray-300'>
-                    <FormSelect
-                      title='修改角色'
-                      value={user.role ?? 'Contributor'}
-                      onChange={(e) => {
-                        handleRoleUpdate(user.id, e.target.value);
-                      }}
-                      fullWidth={false}
-                      size='sm'
-                    >
-                      <option value='Reviewer'>管理员</option>
-                      <option value='Coordinator'>超管</option>
-                      <option value='Contributor'>用户</option>
-                    </FormSelect>
+                    <div className='flex min-w-48 flex-wrap gap-2'>
+                      {groups.map((group) => {
+                        const checked = user.groupIds.includes(group.id);
+                        return (
+                          <label
+                            key={group.id}
+                            className='inline-flex items-center gap-1 rounded border px-2 py-1'
+                          >
+                            <input
+                              type='checkbox'
+                              checked={checked}
+                              disabled={!canAssignGroups}
+                              onChange={() => {
+                                const next = checked
+                                  ? user.groupIds.filter((id) => id !== group.id)
+                                  : [...user.groupIds, group.id];
+                                void handleGroupUpdate(user.id, next);
+                              }}
+                            />
+                            {group.name}
+                          </label>
+                        );
+                      })}
+                    </div>
                   </td>
                   <td className='px-4 py-3 text-sm'>
-                    <Button size='sm' onClick={() => handleOpenModal(user)}>
-                      编辑
-                    </Button>
+                    {canUpdateUsers && (
+                      <Button size='sm' onClick={() => handleOpenModal(user)}>
+                        编辑
+                      </Button>
+                    )}
                   </td>
                 </tr>
               ))}

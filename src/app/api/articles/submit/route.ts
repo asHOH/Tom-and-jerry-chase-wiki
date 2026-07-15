@@ -1,24 +1,16 @@
 import { NextResponse } from 'next/server';
 
+import { requirePermission } from '@/lib/auth/requirePermission';
 import { CACHE_TAGS, invalidateCache } from '@/lib/cacheTags';
 import { publishNotification } from '@/lib/notificationUtils';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { supabaseAdmin } from '@/lib/supabase/admin';
-import { createClient } from '@/lib/supabase/server';
 import { articleSubmitSchema, formatZodError } from '@/lib/validation/schemas';
 
 export async function POST(req: Request) {
   const rl = await checkRateLimit(req, 'write', 'articles-submit');
   if (!rl.allowed) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429, headers: rl.headers });
-  }
-
-  const supabase = await createClient();
-  const { data: claimsData } = await supabase.auth.getClaims();
-  const userId = claimsData?.claims.sub;
-
-  if (!userId) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   const parsed = articleSubmitSchema.safeParse(await req.json());
@@ -29,6 +21,12 @@ export async function POST(req: Request) {
     );
   }
   const { title, category, content, character_id } = parsed.data;
+  const guard = await requirePermission('article.create', {
+    resourceType: 'categories',
+    resourceId: category,
+  });
+  if ('error' in guard) return guard.error;
+  const { supabase, userId } = guard;
 
   try {
     // First, create the article and get its ID

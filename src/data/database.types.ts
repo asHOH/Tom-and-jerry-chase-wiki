@@ -468,6 +468,93 @@ export type Database = {
         };
         Relationships: [];
       };
+      permission_catalog: {
+        Row: {
+          category: string;
+          global_only: boolean;
+          key: string;
+          label_zh: string;
+          sort_order: number;
+        };
+        Insert: {
+          category: string;
+          global_only?: boolean;
+          key: string;
+          label_zh: string;
+          sort_order?: number;
+        };
+        Update: {
+          category?: string;
+          global_only?: boolean;
+          key?: string;
+          label_zh?: string;
+          sort_order?: number;
+        };
+        Relationships: [];
+      };
+      user_groups: {
+        Row: {
+          created_at: string;
+          description: string;
+          id: string;
+          is_default: boolean;
+          legacy_role: Database['public']['Enums']['role_type'] | null;
+          name: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          description?: string;
+          id?: string;
+          is_default?: boolean;
+          legacy_role?: Database['public']['Enums']['role_type'] | null;
+          name: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          description?: string;
+          id?: string;
+          is_default?: boolean;
+          legacy_role?: Database['public']['Enums']['role_type'] | null;
+          name?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      group_permission_grants: {
+        Row: {
+          created_at: string;
+          group_id: string;
+          permission_key: string;
+          resource_id: string;
+          resource_type: string;
+          scope: Database['public']['Enums']['permission_scope'];
+        };
+        Insert: {
+          created_at?: string;
+          group_id: string;
+          permission_key: string;
+          resource_id: string;
+          resource_type: string;
+          scope?: Database['public']['Enums']['permission_scope'];
+        };
+        Update: {
+          created_at?: string;
+          group_id?: string;
+          permission_key?: string;
+          resource_id?: string;
+          resource_type?: string;
+          scope?: Database['public']['Enums']['permission_scope'];
+        };
+        Relationships: [];
+      };
+      user_group_memberships: {
+        Row: { created_at: string; group_id: string; user_id: string };
+        Insert: { created_at?: string; group_id: string; user_id: string };
+        Update: { created_at?: string; group_id?: string; user_id?: string };
+        Relationships: [];
+      };
       users: {
         Row: {
           id: string;
@@ -631,6 +718,54 @@ export type Database = {
       };
     };
     Functions: {
+      create_permission_group: {
+        Args: { p_description?: string; p_grants?: Json; p_is_default?: boolean; p_name: string };
+        Returns: string;
+      };
+      delete_permission_group: { Args: { p_group_id: string }; Returns: undefined };
+      get_my_permission_grants: {
+        Args: never;
+        Returns: {
+          permission_key: string;
+          resource_id: string | null;
+          resource_type: string | null;
+          scope: Database['public']['Enums']['permission_scope'];
+        }[];
+      };
+      has_permission: {
+        Args: { p_permission_key: string; p_resource_id?: string; p_resource_type?: string };
+        Returns: boolean;
+      };
+      set_group_grants: { Args: { p_grants: Json; p_group_id: string }; Returns: undefined };
+      save_permission_group: {
+        Args: {
+          p_description: string;
+          p_grants: Json;
+          p_group_id: string;
+          p_is_default: boolean;
+          p_name: string;
+        };
+        Returns: undefined;
+      };
+      set_user_groups: { Args: { p_group_ids: string[]; p_user_id: string }; Returns: undefined };
+      update_permission_group: {
+        Args: {
+          p_description: string;
+          p_group_id: string;
+          p_is_default: boolean;
+          p_name: string;
+        };
+        Returns: undefined;
+      };
+      user_has_permission: {
+        Args: {
+          p_permission_key: string;
+          p_resource_id?: string;
+          p_resource_type?: string;
+          p_user_id: string;
+        };
+        Returns: boolean;
+      };
       approve_article_version: {
         Args: { p_version_id: string };
         Returns: undefined;
@@ -824,6 +959,7 @@ export type Database = {
         | 'list_pages';
       comment_status: 'visible' | 'hidden' | 'deleted';
       game_data_action_status: 'pending' | 'approved' | 'rejected' | 'synced';
+      permission_scope: 'global' | 'resource_type' | 'resource';
       role_type: 'Contributor' | 'Reviewer' | 'Coordinator';
       version_status: 'pending' | 'approved' | 'rejected' | 'revoked';
     };
@@ -966,6 +1102,7 @@ export const Constants = {
       ],
       comment_status: ['visible', 'hidden', 'deleted'],
       game_data_action_status: ['pending', 'approved', 'rejected', 'synced'],
+      permission_scope: ['global', 'resource_type', 'resource'],
       role_type: ['Contributor', 'Reviewer', 'Coordinator'],
       version_status: ['pending', 'approved', 'rejected', 'revoked'],
     },

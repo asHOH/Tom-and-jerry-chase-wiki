@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { useSnapshot } from 'valtio';
 
-import { useAbility } from '@/lib/auth/AbilityProvider';
+import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { getFactionButtonColors } from '@/lib/design';
 import { useSearchParamEditMode } from '@/hooks/useSearchParamEditMode';
 import { useDarkMode } from '@/context/DarkModeContext';
@@ -147,7 +147,7 @@ function MatrixSizeSlider({
 
 export default function RelationsClient({ description }: RelationsClientProps) {
   const [isDarkMode] = useDarkMode();
-  const ability = useAbility();
+  const permissions = usePermissions();
   const { isEditMode, exitEditMode } = useSearchParamEditMode();
   const { info } = useToast();
   const charactersSnapshot = useSnapshot(characters);
@@ -164,8 +164,7 @@ export default function RelationsClient({ description }: RelationsClientProps) {
     publishChanges,
     getActionCount,
   } = useRelationMatrixEditMode();
-  const canEditRelations = ability.can('update', 'Relation');
-  console.log('canEditRelations', canEditRelations, ability);
+  const canEditRelations = permissions.has('relation.update');
   const isRelationEditMode = isEditMode && canEditRelations;
   const coercedColumnCategory = coerceColumnCategory(rowFaction, columnCategory);
   const columnCategoryOptions = getLegalColumnCategories(rowFaction);

@@ -131,6 +131,16 @@ type ConnectionHighlight = 'endpoint' | 'unrelated' | undefined;
 const escapeHtml = (value: string) =>
   value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
 
+const getMarkerPictureHtml = (source: string, zoom = 1) => {
+  const lastDotIndex = source.lastIndexOf('.');
+  const sourceWithoutExtension = lastDotIndex === -1 ? source : source.slice(0, lastDotIndex);
+  const encodedSource = encodeURI(source);
+  const encodedAvifSource = encodeURI(`${sourceWithoutExtension}.avif`);
+  const encodedWebpSource = encodeURI(`${sourceWithoutExtension}.webp`);
+
+  return `<picture class="block h-full w-full"><source srcset="${encodedAvifSource}" type="image/avif" /><source srcset="${encodedWebpSource}" type="image/webp" /><img src="${encodedSource}" alt="" class="h-full w-full object-contain drop-shadow-md" style="zoom: ${zoom};" /></picture>`;
+};
+
 const markerIconCache = new Map<string, L.DivIcon>();
 
 const makeIcon = (
@@ -182,7 +192,7 @@ const makeIcon = (
         : isHotspot
           ? `<span class="block h-full w-full rounded-full border-2 ${selected ? 'border-cyan-300 bg-cyan-300/25' : 'border-transparent'}"></span>`
           : source
-            ? `<img src="${encodeURI(source)}" alt="" class="h-full w-full object-contain drop-shadow-md" style="zoom: ${zoom};" />`
+            ? getMarkerPictureHtml(source, zoom)
             : '';
   const [width, height] = isHotspot || isInvisible ? [32, 32] : [42, 42];
   const [anchorX, anchorY] = isHotspot || isInvisible ? [16, 16] : [21, 36];
@@ -207,7 +217,7 @@ const vertexIcon = L.divIcon({
 
 const firecrackerIcon = L.divIcon({
   className: 'interactive-map-marker',
-  html: `<span class="interactive-map-marker-content" style="width:34px;height:34px;--interactive-map-marker-anchor-x:17px;--interactive-map-marker-anchor-y:17px"><img src="${encodeURI('/images/items/小鞭炮.png')}" alt="" class="h-full w-full object-contain drop-shadow-md" /></span>`,
+  html: `<span class="interactive-map-marker-content" style="width:34px;height:34px;--interactive-map-marker-anchor-x:17px;--interactive-map-marker-anchor-y:17px">${getMarkerPictureHtml('/images/items/小鞭炮.png')}</span>`,
   iconSize: [34, 34],
   iconAnchor: [17, 17],
 });

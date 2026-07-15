@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, m, useDragControls, useReducedMotion } from 'motion/react';
 import { createPortal } from 'react-dom';
 
-import { useAbility } from '@/lib/auth/AbilityProvider';
+import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { cn } from '@/lib/design';
 import { useEditMode } from '@/context/EditModeContext';
 import {
@@ -58,8 +58,8 @@ export default function EditModeToolbar({
   entityName,
   isTutorialEnabled = false,
 }: EditModeToolbarProps) {
-  const ability = useAbility();
-  const isAdmin = ability.can('update', 'Article');
+  const permissions = usePermissions();
+  const isAdmin = permissions.has('article.update_any');
   const shouldReduceMotion = useReducedMotion();
   const dragControls = useDragControls();
   const [showMessageInput, setShowMessageInput] = useState(false);

@@ -6,10 +6,10 @@ import { createPortal } from 'react-dom';
 import { useSnapshot } from 'valtio';
 
 import { AssetManager } from '@/lib/assetManager';
+import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { formatArticleDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
 import { toChineseNumeral } from '@/lib/textUtils';
-import { useUser } from '@/hooks/useUser';
 import Button from '@/components/ui/Button';
 import ButtonLink from '@/components/ui/ButtonLink';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
@@ -177,7 +177,7 @@ export default function ArticleClient({
   sanitizedContent: string;
 }) {
   const params = useParams();
-  const { role: userRole } = useUser();
+  const permissions = usePermissions();
   const articleId = params?.id as string;
   const charactersSnap = useSnapshot(characters);
   const contentRef = useRef<HTMLDivElement | null>(null);
@@ -450,8 +450,7 @@ export default function ArticleClient({
     };
   }, [tocItems]);
 
-  const canEdit =
-    userRole === 'Contributor' || userRole === 'Reviewer' || userRole === 'Coordinator';
+  const canEdit = permissions.has('article.update_own') || permissions.has('article.update_any');
   const titleSize = article.title.length <= 10 ? 'text-3xl md:text-4xl' : 'text-2xl md:text-3xl';
   const hasToc = tocItems.length > 0;
   const minHeadingLevel = useMemo(() => {

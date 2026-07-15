@@ -1,13 +1,14 @@
 import { NextResponse } from 'next/server';
 import z from 'zod';
 
+import { requirePermission } from '@/lib/auth/requirePermission';
+import { getGameActionResourceContexts } from '@/lib/auth/resourceContexts';
 import {
   publishGameDataActions,
   PublishGameDataActionsError,
 } from '@/lib/gameData/publishGameDataActions';
 import { publishNotification } from '@/lib/notificationUtils';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
-import { createClient } from '@/lib/supabase/server';
 import type { Json } from '@/data/database.types';
 
 type ActionItem = {
@@ -94,10 +95,12 @@ export async function POST(req: Request) {
   }
 
   try {
-    const supabase = await createClient();
-    const { data: claimsData } = await supabase.auth.getClaims();
-    const userId = claimsData?.claims.sub;
-    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const contexts = actionList.flatMap((action) =>
+      getGameActionResourceContexts(action.entityType, action.entries)
+    );
+    const guard = await requirePermission('game_data_action.create', contexts, 'all');
+    if ('error' in guard) return guard.error;
+    const { supabase, userId } = guard;
     const allResults = await publishGameDataActions(supabase, actionList, message);
 
     const finalResults = allResults.filter(

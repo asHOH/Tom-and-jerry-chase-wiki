@@ -1,12 +1,11 @@
 import { revalidateTag } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 
-import { Actions, Subjects } from '@/lib/auth/permissions';
-import { requireAbility } from '@/lib/auth/requireAbility';
+import { requirePermission } from '@/lib/auth/requirePermission';
 import { CACHE_TAGS } from '@/lib/cacheTags';
 
 export async function GET() {
-  const guard = await requireAbility(Actions.UPDATE, Subjects.CATEGORY);
+  const guard = await requirePermission(['category.create', 'category.update', 'category.delete']);
   if ('error' in guard) return guard.error;
   const { supabase } = guard;
 
@@ -18,11 +17,15 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  const guard = await requireAbility(Actions.CREATE, Subjects.CATEGORY);
+  const body = await request.json();
+  const { name, parent_category_id, default_visibility } = body;
+  const guard = await requirePermission(
+    'category.create',
+    parent_category_id ? { resourceType: 'categories', resourceId: parent_category_id } : undefined
+  );
   if ('error' in guard) return guard.error;
   const { supabase } = guard;
 
-  const { name, parent_category_id, default_visibility } = await request.json();
   if (!name || !default_visibility) {
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
   }
@@ -42,11 +45,15 @@ export async function POST(request: NextRequest) {
 }
 
 export async function PUT(request: NextRequest) {
-  const guard = await requireAbility(Actions.UPDATE, Subjects.CATEGORY);
+  const body = await request.json();
+  const { id, name, parent_category_id, default_visibility } = body;
+  const contexts = [id, parent_category_id]
+    .filter((value): value is string => typeof value === 'string' && value.length > 0)
+    .map((resourceId) => ({ resourceType: 'categories', resourceId }));
+  const guard = await requirePermission('category.update', contexts);
   if ('error' in guard) return guard.error;
   const { supabase } = guard;
 
-  const { id, name, parent_category_id, default_visibility } = await request.json();
   if (!id || !name || !default_visibility) {
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
   }
@@ -67,11 +74,15 @@ export async function PUT(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
-  const guard = await requireAbility(Actions.DELETE, Subjects.CATEGORY);
+  const body = await request.json();
+  const { id } = body;
+  const guard = await requirePermission(
+    'category.delete',
+    id ? { resourceType: 'categories', resourceId: id } : undefined
+  );
   if ('error' in guard) return guard.error;
   const { supabase } = guard;
 
-  const { id } = await request.json();
   if (!id) {
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
   }

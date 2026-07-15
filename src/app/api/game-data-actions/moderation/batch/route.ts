@@ -2,8 +2,9 @@ import { revalidateTag } from 'next/cache';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
-import { Actions, Subjects } from '@/lib/auth/permissions';
-import { requireAbility } from '@/lib/auth/requireAbility';
+import { canAccessAll } from '@/lib/auth/permissions';
+import { requirePermission } from '@/lib/auth/requirePermission';
+import { getGameActionResourceContexts } from '@/lib/auth/resourceContexts';
 import { PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG } from '@/lib/gameData/publicActions';
 import { publishNotification } from '@/lib/notificationUtils';
 
@@ -16,6 +17,7 @@ const schema = z.object({
 type ModerationRecord = {
   created_by: string | null;
   entity_type: string;
+  entry: import('@/data/database.types').Json;
   id: string;
 };
 
@@ -23,19 +25,30 @@ export async function POST(request: Request) {
   const parsed = schema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
 
-  const guard = await requireAbility(Actions.APPROVE, Subjects.GAME_DATA_ACTION);
+  const guard = await requirePermission(
+    parsed.data.action === 'approve' ? 'game_data_action.approve' : 'game_data_action.reject'
+  );
   if ('error' in guard) return guard.error;
   const { supabase } = guard;
   const { actionIds, action, reason } = parsed.data;
 
   const { data: records, error: recordsError } = await supabase
     .from('game_data_actions')
-    .select('id, created_by, entity_type')
+    .select('id, created_by, entity_type, entry')
     .in('id', actionIds)
     .eq('status', 'pending');
 
   if (recordsError) {
     return NextResponse.json({ error: 'Failed to load actions' }, { status: 500 });
+  }
+
+  const requiredPermission =
+    action === 'approve' ? 'game_data_action.approve' : 'game_data_action.reject';
+  const contexts = (records ?? []).flatMap((record) =>
+    getGameActionResourceContexts(record.entity_type, [record.entry])
+  );
+  if (!canAccessAll(guard.grants, requiredPermission, contexts)) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
   const recordsById = new Map(

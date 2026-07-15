@@ -1,8 +1,6 @@
-import { type ReactNode } from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import useSWR from 'swr';
 
-import type { Role } from '@/lib/auth/permissions';
 import type { PendingGameDataAction } from '@/features/admin/components/GameDataActionModerationPanel';
 
 import AdminPanel from './AdminPanel';
@@ -12,13 +10,23 @@ jest.mock('swr');
 const mockUseSWR = useSWR as jest.MockedFunction<typeof useSWR>;
 const mockModerationPanel = jest.fn();
 
-let currentRole: Role | null = null;
+let currentProfile: 'contributor' | 'reviewer' | 'coordinator' | null = null;
 
-jest.mock('@/lib/auth/AbilityProvider', () => {
+jest.mock('@/lib/auth/PermissionProvider', () => {
   const actual = jest.requireActual('@/lib/auth/permissions');
+  const fixtures = jest.requireActual('@/testUtils/permissionFixtures');
   return {
-    AbilityProvider: ({ children }: { children: ReactNode }) => children,
-    useAbility: () => actual.abilityFor(currentRole),
+    usePermissions: () => {
+      const grants = fixtures.permissionGrantsForProfile(currentProfile);
+      return {
+        grants,
+        has: (permission: string) => actual.hasPermission(grants, permission),
+        can: (permission: string, context?: unknown) =>
+          actual.canAccess(grants, permission, context),
+        canAll: (permission: string, contexts: unknown[]) =>
+          actual.canAccessAll(grants, permission, contexts),
+      };
+    },
   };
 });
 
@@ -89,15 +97,15 @@ const createSWRResponse = <T,>(data: T, mutate: jest.Mock) =>
     mutate,
   }) as never;
 
-const renderAdminPanel = (role: Role | null) => {
-  currentRole = role;
+const renderAdminPanel = (role: 'Contributor' | 'Reviewer' | 'Coordinator' | null) => {
+  currentProfile = role?.toLowerCase() as typeof currentProfile;
   return render(<AdminPanel />);
 };
 
 describe('AdminPanel', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    currentRole = null;
+    currentProfile = null;
 
     mockUseSWR.mockImplementation((key) => {
       if (key === 'users') {
@@ -127,6 +135,7 @@ describe('AdminPanel', () => {
     expect(mockUseSWR.mock.calls).toEqual([
       [null, expect.any(Function)],
       ['categories', expect.any(Function)],
+      [null, expect.any(Function)],
       ['game-data-actions-admin', expect.any(Function)],
     ]);
   });
@@ -139,10 +148,11 @@ describe('AdminPanel', () => {
     expect(mockUseSWR.mock.calls).toEqual([
       ['users', expect.any(Function)],
       ['categories', expect.any(Function)],
+      ['permission-groups', expect.any(Function)],
       ['game-data-actions-admin', expect.any(Function)],
     ]);
 
-    const [usersTab, categoriesTab, actionsTab] = screen.getAllByRole('button');
+    const [usersTab, , categoriesTab, actionsTab] = screen.getAllByRole('button');
 
     fireEvent.click(usersTab!);
     expect(screen.getByText('User Management')).toBeInTheDocument();
@@ -165,14 +175,15 @@ describe('AdminPanel', () => {
   it('keeps both user management and moderation hidden for unprivileged roles', () => {
     renderAdminPanel(null);
 
-    expect(screen.getByText('Category Management')).toBeInTheDocument();
+    expect(screen.queryByText('Category Management')).not.toBeInTheDocument();
     expect(screen.queryByText('User Management')).not.toBeInTheDocument();
     expect(screen.queryByTestId('moderation-panel')).not.toBeInTheDocument();
-    expect(screen.getAllByRole('button')).toHaveLength(1);
+    expect(screen.queryAllByRole('button')).toHaveLength(0);
 
     expect(mockUseSWR.mock.calls).toEqual([
       [null, expect.any(Function)],
-      ['categories', expect.any(Function)],
+      [null, expect.any(Function)],
+      [null, expect.any(Function)],
       [null, expect.any(Function)],
     ]);
   });

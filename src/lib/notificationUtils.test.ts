@@ -19,11 +19,11 @@ jest.mock('@/env', () => ({
 }));
 
 jest.mock('@/lib/supabase/admin', () => ({
-  supabaseAdmin: { from: jest.fn() },
+  supabaseAdmin: { from: jest.fn(), rpc: jest.fn() },
 }));
 
 type MockState = {
-  role?: 'Contributor' | 'Reviewer' | 'Coordinator';
+  canApprove?: boolean;
   recipientError?: { message: string } | null;
   notification?: { id: string } | null;
   insertError?: { message: string } | null;
@@ -36,7 +36,7 @@ type MockState = {
 };
 
 const configureSupabase = ({
-  role = 'Contributor',
+  canApprove = false,
   recipientError = null,
   notification = { id: 'notification-1' },
   insertError = null,
@@ -51,7 +51,7 @@ const configureSupabase = ({
     select: jest.fn(),
     eq: jest.fn(),
     single: jest.fn().mockResolvedValue({
-      data: recipientError ? null : { role },
+      data: recipientError ? null : { id: 'user-1' },
       error: recipientError,
     }),
   };
@@ -80,6 +80,7 @@ const configureSupabase = ({
     if (table === 'notification_email_settings') return settingsQuery as never;
     throw new Error(`Unexpected table: ${table}`);
   });
+  jest.mocked(supabaseAdmin.rpc).mockResolvedValue({ data: canApprove, error: null } as never);
 
   return { notificationQuery };
 };
@@ -137,7 +138,7 @@ describe('publishNotification', () => {
   });
 
   it('suppresses automatic staff notifications', async () => {
-    configureSupabase({ role: 'Reviewer' });
+    configureSupabase({ canApprove: true });
 
     await expect(publishNotification({ ...input, decisionOrigin: 'automatic' })).resolves.toEqual({
       created: false,

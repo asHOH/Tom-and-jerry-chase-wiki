@@ -61,8 +61,18 @@ jest.mock('@/components/Image', () => ({
 jest.mock('@/hooks/useUser', () => ({
   useUser: () => ({
     nickname: null,
-    role: null,
+    grants: [],
+    groups: [],
     clearData: jest.fn(),
+  }),
+}));
+
+jest.mock('@/lib/auth/PermissionProvider', () => ({
+  usePermissions: () => ({
+    grants: [],
+    has: () => false,
+    can: () => false,
+    canAll: () => false,
   }),
 }));
 
