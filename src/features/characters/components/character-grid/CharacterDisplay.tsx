@@ -7,7 +7,12 @@ import { cn, getPositioningTagColors } from '@/lib/design';
 import { CharacterDisplayProps } from '@/lib/types';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
-import { sortPositioningTags } from '@/constants/positioningTagSequences';
+import { useEditMode } from '@/context/EditModeContext';
+import {
+  getPositioningTagLevel,
+  isPositioningTagVisible,
+  sortPositioningTags,
+} from '@/constants/positioningTagSequences';
 import type { FactionId } from '@/data/types';
 import { getWeaponSkillImageUrl } from '@/features/characters/utils/weapons';
 import EntityCardFrame from '@/components/ui/EntityCardFrame';
@@ -26,14 +31,19 @@ export default function CharacterDisplay({
   isEntryCard = false, // Add the new prop
 }: CharacterDisplayProps & { preload?: boolean; isEntryCard?: boolean }) {
   const [isDarkMode] = useDarkMode();
+  const { isEditMode } = useEditMode();
   const isMobile = useMobile();
   const charactersSnap = useSnapshot(characters);
 
-  // Sort positioning tags according to sequence (main tags first, then by sequence)
   const sortedPositioningTags = useMemo(() => {
     if (!positioningTags || positioningTags.length === 0) return [];
-    return sortPositioningTags(positioningTags, factionId as FactionId);
-  }, [positioningTags, factionId]);
+    return sortPositioningTags(
+      positioningTags.filter((tag) =>
+        isPositioningTagVisible(getPositioningTagLevel(tag), isEditMode)
+      ),
+      factionId as FactionId
+    );
+  }, [positioningTags, factionId, isEditMode]);
 
   const computedId = id in charactersSnap ? id : `user/${id}`;
   const isUserCharacter = computedId.startsWith('user/');
@@ -84,7 +94,7 @@ export default function CharacterDisplay({
                   <Tag
                     colorStyles={getPositioningTagColors(
                       tag.tagName,
-                      tag.isMinor,
+                      getPositioningTagLevel(tag),
                       false,
                       factionId as FactionId,
                       isDarkMode

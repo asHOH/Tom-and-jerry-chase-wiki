@@ -16,20 +16,20 @@ const catCharacterDefinitions = {
     catPositioningTags: [
       {
         tagName: '进攻',
-        isMinor: false,
+        level: 4,
         description: '{主动技能}的无敌有很强的上火箭能力。',
         additionalDescription:
           '{手型枪}+{蓄力重击}，或{1级被动}+{平底锅}，都能极大威胁守火箭的老鼠。',
       },
       {
         tagName: '打架',
-        isMinor: false,
+        level: 4,
         description: '{主动技能}提供无敌和解控，{1级被动}提供续航，克制打架阵容。',
         additionalDescription: '',
       },
       {
         tagName: '翻盘',
-        isMinor: true,
+        level: 2,
         description: '{手型枪}和{平底锅}的直接抓取提供了一定的翻盘能力。',
         additionalDescription: '',
       },
@@ -213,13 +213,13 @@ const catCharacterDefinitions = {
     catPositioningTags: [
       {
         tagName: '防守',
-        isMinor: false,
+        level: 4,
         description: '{主动技能}可以将奶酪推离洞口；旋转桶盖可以有效守火箭或奶酪。',
         additionalDescription: '',
       },
       {
         tagName: '打架',
-        isMinor: false,
+        level: 4,
         description: '{1级被动}快速起身和{3级旋转桶盖}的霸体提供了较强的打架能力。',
         additionalDescription: '',
       },
@@ -405,32 +405,32 @@ const catCharacterDefinitions = {
     catPositioningTags: [
       {
         tagName: '追击',
-        isMinor: false,
+        level: 4,
         description: '分身提供额外的视野和极强的机动性。',
         additionalDescription: '',
       },
       {
         tagName: '翻盘',
-        isMinor: false,
+        level: 4,
         weapon: 2,
         description: '捕虫网的直接抓取提供了一定的翻盘手段。',
         additionalDescription: '',
       },
       {
         tagName: '防守',
-        isMinor: true,
+        level: 2,
         description: '分身提供反隐和霸体，配合1级被动和击晕，可以高效守火箭或奶酪。',
         additionalDescription: '',
       },
       {
         tagName: '打架',
-        isMinor: true,
+        level: 2,
         description: '通过换位和{3级主动}提供的霸体反制老鼠的控制。',
         additionalDescription: '但难以应对爆发输出。',
       },
       {
         tagName: '后期',
-        isMinor: true,
+        level: 2,
         weapon: 2,
         description: '6级时{3级主动}提供霸体和续航，8级时{3级被动}还能清除老鼠增益。',
         additionalDescription: '',
@@ -618,20 +618,20 @@ const catCharacterDefinitions = {
     catPositioningTags: [
       {
         tagName: '追击',
-        isMinor: false,
+        level: 4,
         description: '{主动技能}闪现老鼠。',
         additionalDescription: '{1级被动}还可以减速老鼠并标记视野。',
       },
       {
         tagName: '防守',
-        isMinor: false,
+        level: 4,
         weapon: 1,
         description: '{垃圾桶}可阻止老鼠推奶酪，且能无缝衔接。',
         additionalDescription: '',
       },
       {
         tagName: '翻盘',
-        isMinor: true,
+        level: 2,
         description: '{主动技能}的直接抓取有一定翻盘能力。',
         additionalDescription: '',
       },
@@ -836,26 +836,26 @@ const catCharacterDefinitions = {
     catPositioningTags: [
       {
         tagName: '进攻',
-        isMinor: false,
+        level: 4,
         description: '牛的干扰、鞭子的减速、弹弓的射程及被动的加持使牛汤拥有较强的攻击性。',
         additionalDescription: '',
       },
       {
         tagName: '翻盘',
-        isMinor: false,
+        level: 4,
         description: '技能的控制抓取与2、3级被动的加持使牛汤拥有极强的翻盘能力。',
         additionalDescription: '',
       },
       {
         tagName: '后期',
-        isMinor: false,
+        level: 4,
         description: '压制力随着等级的提高呈现质的飞升（6 7 8 10级）。',
         additionalDescription: '',
         weapon: 2,
       },
       {
         tagName: '防守',
-        isMinor: false,
+        level: 4,
         description:
           '斗牛可清理道具并对敌方眩晕，2级被动可减少技能CD，在防守时拥有较高的伤害和续航。弹弓的攻击范围很大，鞭子能够打掉老鼠手中道具。',
         additionalDescription: '',
@@ -1083,27 +1083,27 @@ const catCharacterDefinitions = {
     catPositioningTags: [
       {
         tagName: '防守',
-        isMinor: false,
+        level: 4,
         description: '香水有强悍的后期防守强度。',
         additionalDescription: '',
         weapon: 1,
       },
       {
         tagName: '打架',
-        isMinor: false,
+        level: 4,
         description: '指甲油的高频率霸体有强大的打架能力。',
         additionalDescription: '',
         weapon: 2,
       },
       {
         tagName: '后期',
-        isMinor: false,
+        level: 4,
         description: '图多后期有高额伤害和打架能力。',
         additionalDescription: '',
       },
       {
         tagName: '翻盘',
-        isMinor: true,
+        level: 2,
         description: '指甲油和被动的后期强度有一定的翻盘能力。',
         additionalDescription: '',
         weapon: 2,
@@ -1374,25 +1374,25 @@ const catCharacterDefinitions = {
     catPositioningTags: [
       {
         tagName: '翻盘',
-        isMinor: false,
+        level: 4,
         description: '3级被动减控免死，3级炮有一定强度，有一定的翻盘能力',
         additionalDescription: '',
       },
       {
         tagName: '追击',
-        isMinor: false,
+        level: 4,
         description: '1级被动加速，炮打中后加速，警戒能看到老鼠位置。',
         additionalDescription: '',
       },
       {
         tagName: '后期',
-        isMinor: false,
+        level: 4,
         description: '3级炮成型后，侍卫的强度才开始体现',
         additionalDescription: '',
       },
       {
         tagName: '防守',
-        isMinor: true,
+        level: 2,
         description: '3级炮提供的守奶酪以及墙缝能力很强',
         additionalDescription: '',
       },
@@ -1566,26 +1566,26 @@ const catCharacterDefinitions = {
     catPositioningTags: [
       {
         tagName: '防守',
-        isMinor: false,
+        level: 4,
         description:
           '{汽水罐}放在火箭上可以妨碍救援；{喵喵叫}大范围伤害搭配汽水可以防守最后一块奶酪',
         additionalDescription: '对打架阵容有很强的反制能力。',
       },
       {
         tagName: '进攻',
-        isMinor: false,
+        level: 4,
         description: '{喵喵叫}的大范围伤害和控制是有力的进攻手段。',
         additionalDescription: '',
       },
       {
         tagName: '打架',
-        isMinor: true,
+        level: 2,
         description: '{喵喵叫}的大范围群体伤害和控制在打团时有一定发挥。',
         additionalDescription: '',
       },
       {
         tagName: '翻盘',
-        isMinor: true,
+        level: 2,
         description: '鼠方一旦失误，{喵喵叫}的大范围群体伤害和控制可以对鼠方造成重创。',
         additionalDescription: '',
       },
@@ -1789,13 +1789,13 @@ const catCharacterDefinitions = {
     catPositioningTags: [
       {
         tagName: '防守',
-        isMinor: false,
+        level: 4,
         description: '胡椒粉和罐头都可用于防守火箭或奶酪，尤其克制舍己救援。',
         additionalDescription: '',
       },
       {
         tagName: '进攻',
-        isMinor: true,
+        level: 2,
         description: '由于胡椒粉和绑火箭霸体的存在，老鼠一旦被抓住很难全身而退。',
         additionalDescription: '',
       },
@@ -1947,20 +1947,20 @@ const catCharacterDefinitions = {
     catPositioningTags: [
       {
         tagName: '速通',
-        isMinor: false,
+        level: 4,
         description: '{武器技能}可甩火箭。',
         additionalDescription: '配合熊熊燃烧，9秒火箭可直接甩。',
         weapon: 1,
       },
       {
         tagName: '追击',
-        isMinor: false,
+        level: 4,
         description: '要移速有移速，要视野有视野，要霸体有霸体。',
         additionalDescription: '',
       },
       {
         tagName: '防守',
-        isMinor: false,
+        level: 4,
         description: '仙人球陷阱提供了防守能力，并且可根据实际需要变换防守策略。',
         additionalDescription: '',
         weapon: 2,
@@ -2158,25 +2158,25 @@ const catCharacterDefinitions = {
     catPositioningTags: [
       {
         tagName: '进攻',
-        isMinor: false,
+        level: 4,
         description: '{主动技能}以及{3级被动}可打出高额伤害。',
         additionalDescription: '',
       },
       {
         tagName: '防守',
-        isMinor: false,
+        level: 4,
         description: '[武器技能](尤其是二武)拥有极强的守火箭能力。',
         additionalDescription: '二武连无敌也能卷走，克制大多数救人位。',
       },
       {
         tagName: '速通',
-        isMinor: false,
+        level: 4,
         description: '猫方第一的放飞速度。',
         additionalDescription: '',
       },
       {
         tagName: '翻盘',
-        isMinor: true,
+        level: 2,
         description: '后期{3级被动}刷新{主动技能}拥有极高的上限，可能成为翻盘的点。',
         additionalDescription: '',
       },
@@ -2368,21 +2368,21 @@ const catCharacterDefinitions = {
     catPositioningTags: [
       {
         tagName: '追击',
-        isMinor: false,
+        level: 4,
         description: '库博在天堂能看到所有老鼠的位置。可以偷袭，也可以追击自保不强的老鼠。',
         additionalDescription:
           '传送点和猫开局时在各房间的出生点相同，熟记它们的具体位置是追击的关键。',
       },
       {
         tagName: '翻盘',
-        isMinor: true,
+        level: 2,
         description:
           '库博能利用天堂强制放飞老鼠，或是快速位移将老鼠绑到难以救援的角落，挽回不利局势。',
         additionalDescription: '',
       },
       {
         tagName: '速通',
-        isMinor: true,
+        level: 2,
         description: '在大图，库博能利用天堂将老鼠绑得非常远，让鼠方疲于奔命。',
         additionalDescription: '',
       },
@@ -2572,20 +2572,20 @@ const catCharacterDefinitions = {
     catPositioningTags: [
       {
         tagName: '进攻',
-        isMinor: false,
+        level: 4,
         description: '主动被动武器技能都是伤害性技能，在对局中可造成大量伤害。',
         additionalDescription:
           '{主动技能}可以对一条直线内的敌人造成伤害；{武器技能}可以单独造成伤害或者夹住老鼠，也可以配合{主动技能}造成多段伤害；{1级被动}可以对老鼠造成更多伤害。',
       },
       {
         tagName: '打架',
-        isMinor: false,
+        level: 4,
         description: '{2级被动}可以减少被控时间；{主动技能}为范围伤害，打架时命中率高。',
         additionalDescription: '{3级被动}命中破绽可减少技能CD，进一步提高打架优势。',
       },
       {
         tagName: '翻盘',
-        isMinor: true,
+        level: 2,
         description: '在墙缝期混战中{主动技能}在小范围内的命中率高，更大概率造成多倒。',
         additionalDescription: '',
       },
@@ -2748,19 +2748,19 @@ const catCharacterDefinitions = {
     catPositioningTags: [
       {
         tagName: '进攻',
-        isMinor: false,
+        level: 4,
         description: '律动时间提供增伤和更大的爪刀范围，瑜伽球提供了强力的控制。',
         additionalDescription: '',
       },
       {
         tagName: '速通',
-        isMinor: false,
+        level: 4,
         description: '律动时间使多个老鼠跟随提供了在前期杀穿老鼠的可能。',
         additionalDescription: '',
       },
       {
         tagName: '翻盘',
-        isMinor: true,
+        level: 2,
         description: '律动时间使多个老鼠跟随提供了一定的翻盘手段。',
         additionalDescription: '',
       },
@@ -2957,32 +2957,32 @@ const catCharacterDefinitions = {
     catPositioningTags: [
       {
         tagName: '打架',
-        isMinor: true,
+        level: 2,
         description: '伤害高应对高Hp老鼠，{2级被动}为打架提高霸体和回血。',
         additionalDescription: '对打架阵容有很强的反制能力。',
       },
       {
         tagName: '追击',
-        isMinor: false,
+        level: 4,
         description: '飞行状态速度快，追击能力强。',
         additionalDescription: '',
       },
       {
         tagName: '速通',
-        isMinor: false,
+        level: 4,
         description: '前期压制力强，很容易抓住机会打多倒。',
         additionalDescription: '',
       },
       {
         tagName: '进攻',
-        isMinor: false,
+        level: 4,
         description:
           '伤害高，很容易处理124Hp老鼠；{2级被动}提供霸体以及飞行吸火箭，上火箭能力较强。',
         additionalDescription: '',
       },
       {
         tagName: '翻盘',
-        isMinor: true,
+        level: 2,
         description: '抓住机会打多倒，飞行快速吸火箭，逆转劣势。',
         additionalDescription: '',
       },
@@ -3137,20 +3137,20 @@ const catCharacterDefinitions = {
     catPositioningTags: [
       {
         tagName: '追击',
-        isMinor: false,
+        level: 4,
         description: '{1级被动}和{2级被动}的加速使追击老鼠较为轻松。',
         additionalDescription: '',
       },
       {
         tagName: '进攻',
-        isMinor: false,
+        level: 4,
         description:
           '{主动技能}和{武器技能}均有伤害和控制，轻松击倒老鼠；{1级被动}的感电增强上火箭能力。',
         additionalDescription: '',
       },
       {
         tagName: '翻盘',
-        isMinor: true,
+        level: 2,
         description: '{3级武器}命中刷新CD，有一定翻盘能力。',
         additionalDescription: '',
       },
@@ -3320,13 +3320,13 @@ const catCharacterDefinitions = {
       {
         tagName: '防守',
         weapon: 1,
-        isMinor: false,
+        level: 4,
         description: '列车可用于守火箭和上火箭，并且列车可以为恶魔汤姆提供护盾效果。',
         additionalDescription: '',
       },
       {
         tagName: '打架',
-        isMinor: false,
+        level: 4,
         description: '前期可利用穷追猛打刷出优势，鼠方没稳救很难打。',
         additionalDescription: '',
       },
@@ -3482,13 +3482,13 @@ const catCharacterDefinitions = {
     catPositioningTags: [
       {
         tagName: '防守',
-        isMinor: true,
+        level: 2,
         description: '兔子技能真空期短，爆发高，相对不怕强推',
         additionalDescription: '现版本防守能力不错但还是有角色可以克制。',
       },
       {
         tagName: '打架',
-        isMinor: false,
+        level: 4,
         description: '萝卜爆发高且有续航，除了控死以外很难杀死',
         additionalDescription: '你知道这意味着宣战！',
       },
@@ -3669,20 +3669,20 @@ const catCharacterDefinitions = {
     catPositioningTags: [
       {
         tagName: '速通',
-        isMinor: false,
+        level: 4,
         description:
           '追风三级成型，在前期对鼠方的压制力很大。同时追风等级提升很小，因此需要快速减员，尽早赢下比赛。',
         additionalDescription: '',
       },
       {
         tagName: '追击',
-        isMinor: true,
+        level: 2,
         description: '飞行时不受常规地形约束且移速快，提供很好的追击手段。',
         additionalDescription: '',
       },
       {
         tagName: '防守',
-        isMinor: true,
+        level: 2,
         description:
           '守火箭能力强，风的范围大，易命中并击退前来救援的老鼠，且CD短；飞行时自身的碰撞箱可以打断老鼠跳救使其踩夹。',
         additionalDescription: '',
@@ -3867,21 +3867,21 @@ const catCharacterDefinitions = {
     catPositioningTags: [
       {
         tagName: '打架',
-        isMinor: false,
+        level: 4,
         description: '{主动技能}提供解控，被动技能提供免疫眩晕和延迟虚弱，使如玉有很强的打架能力。',
         additionalDescription:
           '注意“舞花枪"期间没有霸体，可被敌方禁用技能类效果封锁而无法释放反击；"花枪反击"落地时没有霸体，可能被敌方道具或技能打断。',
       },
       {
         tagName: '进攻',
-        isMinor: false,
+        level: 4,
         description:
           '技能和特殊爪刀均能造成伤害，前刺回马枪同时命中更是能造成极高额伤害。手中有老鼠时也能攻击。此外自身还拥有10攻击增伤。',
         additionalDescription: '',
       },
       {
         tagName: '翻盘',
-        isMinor: false,
+        level: 4,
         description: '如玉的知识卡适配暴怒，且墙缝期道具多，容易触发花枪反击。',
         additionalDescription: '',
       },
@@ -4057,14 +4057,14 @@ const catCharacterDefinitions = {
     catPositioningTags: [
       {
         tagName: '追击',
-        isMinor: false,
+        level: 4,
         description:
           '{主动技能}可锁定老鼠侦查/追击，{武器技能}能对目标造成强力负面状态，轮椅能避免因自身虚弱导致被拉开距离，此外10线索值提供的主动轮椅也能用于拉进距离或躲避关键控制。',
         additionalDescription: '',
       },
       {
         tagName: '翻盘',
-        isMinor: false,
+        level: 4,
         description: '积累50点线索值后，第二次绑同一老鼠可直接被放飞，一旦鼠方出现失误即可翻盘。',
         additionalDescription: '',
       },

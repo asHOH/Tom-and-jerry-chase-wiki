@@ -50,7 +50,7 @@ describe('Data Validation', () => {
         if (character.factionId === 'cat' && character.catPositioningTags) {
           character.catPositioningTags.forEach((tag) => {
             expect(tag.tagName).toBeDefined();
-            expect(typeof tag.isMinor).toBe('boolean');
+            expect(tag.level === undefined || [0, 1, 2, 3, 4].includes(tag.level)).toBe(true);
             expect(tag.description).toBeDefined();
           });
         }
@@ -58,7 +58,7 @@ describe('Data Validation', () => {
         if (character.factionId === 'mouse' && character.mousePositioningTags) {
           character.mousePositioningTags.forEach((tag) => {
             expect(tag.tagName).toBeDefined();
-            expect(typeof tag.isMinor).toBe('boolean');
+            expect(tag.level === undefined || [0, 1, 2, 3, 4].includes(tag.level)).toBe(true);
             expect(tag.description).toBeDefined();
           });
         }

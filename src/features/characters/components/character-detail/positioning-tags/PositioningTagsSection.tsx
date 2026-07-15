@@ -10,8 +10,13 @@ import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
-import { sortPositioningTags } from '@/constants/positioningTagSequences';
-import type { FactionId } from '@/data/types';
+import {
+  getPositioningTagLevel,
+  isPositioningTagMinor,
+  isPositioningTagVisible,
+  sortPositioningTags,
+} from '@/constants/positioningTagSequences';
+import type { FactionId, PositioningTagLevel } from '@/data/types';
 import { getWeaponSkillImageUrl } from '@/features/characters/utils/weapons';
 import { editable } from '@/components/ui/editable';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
@@ -54,6 +59,37 @@ function TagNameDropdown({
       {availableTags.map((tagName) => (
         <option key={tagName} value={tagName}>
           {tagName}
+        </option>
+      ))}
+    </select>
+  );
+}
+
+function TagLevelDropdown({
+  currentValue,
+  onSelect,
+}: {
+  currentValue: PositioningTagLevel | undefined;
+  onSelect: (value: PositioningTagLevel) => void;
+}) {
+  const levelLabels: Record<PositioningTagLevel, string> = {
+    0: '0（无）',
+    1: '1（仅编辑模式）',
+    2: '2（次要）',
+    3: '3（主要）',
+    4: '4（主要）',
+  };
+
+  return (
+    <select
+      value={currentValue ?? 0}
+      onChange={(event) => onSelect(Number(event.target.value) as PositioningTagLevel)}
+      className='font-inherit cursor-pointer border-none bg-transparent text-xs text-inherit outline-none'
+      aria-label='选择标签等级'
+    >
+      {([0, 1, 2, 3, 4] as const).map((level) => (
+        <option key={level} value={level}>
+          {levelLabels[level]}
         </option>
       ))}
     </select>
@@ -126,7 +162,7 @@ function usePositioningTags({ factionId }: { factionId: FactionId }) {
       prevChar: DeepReadonly<CharacterWithFaction>,
       updatedTags: {
         tagName: string;
-        isMinor: boolean;
+        level?: PositioningTagLevel;
         description: string;
         additionalDescription: string;
       }[]
@@ -168,11 +204,20 @@ function usePositioningTags({ factionId }: { factionId: FactionId }) {
     },
     [localCharacter, updateTags]
   );
+  const handleLevelUpdate = useCallback(
+    (tagIndex: number, level: PositioningTagLevel) => {
+      const updatedTags = getTags(localCharacter).map((tag, index) =>
+        index === tagIndex ? { ...tag, level } : tag
+      );
+      updateTags(localCharacter, updatedTags);
+    },
+    [localCharacter, updateTags]
+  );
   const handleAddPositioningTags = useCallback(() => {
     // Removed setLocalCharacter call due to missing function.
     const updatedTags = getTags(localCharacter).concat({
       tagName: factionId == 'mouse' ? '奶酪' : ('进攻' as const),
-      isMinor: false,
+      level: 4,
       description: '新增标签介绍',
       additionalDescription: '新增标签介绍',
     });
@@ -186,22 +231,12 @@ function usePositioningTags({ factionId }: { factionId: FactionId }) {
     },
     [localCharacter, updateTags]
   );
-  const toggleIsMinor = useCallback(
-    (tagIndex: number) => {
-      // Removed setLocalCharacter call due to missing function.
-      const updatedTags = getTags(localCharacter).map((tag, index) =>
-        index == tagIndex ? { ...tag, isMinor: !tag.isMinor } : tag
-      );
-      updateTags(localCharacter, updatedTags);
-    },
-    [localCharacter, updateTags]
-  );
   return {
     handleUpdate,
     handleWeaponUpdate,
+    handleLevelUpdate,
     handleAddPositioningTags,
     handleRemovePositioningTags,
-    toggleIsMinor,
   };
 }
 
@@ -220,19 +255,21 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
   const {
     handleUpdate,
     handleWeaponUpdate,
+    handleLevelUpdate,
     handleAddPositioningTags,
     handleRemovePositioningTags,
-    toggleIsMinor,
   } = usePositioningTags({ factionId });
   const [isDarkMode] = useDarkMode();
 
-  // Sort tags according to sequence (main tags first, then by sequence)
   const sortedTags = React.useMemo(() => {
     if (!tags || tags.length === 0) return [];
-    return sortPositioningTags(tags, factionId);
-  }, [tags, factionId]);
+    return sortPositioningTags(
+      tags.filter((tag) => isPositioningTagVisible(getPositioningTagLevel(tag), isEditMode)),
+      factionId
+    );
+  }, [tags, factionId, isEditMode]);
 
-  if ((!tags || tags.length === 0) && !isEditMode) return null;
+  if (sortedTags.length === 0 && !isEditMode) return null;
 
   return (
     <div className='mt-6 border-t border-gray-200 pt-4 dark:border-gray-700'>
@@ -243,7 +280,7 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
           const originalIndex = tags.findIndex(
             (t) =>
               t.tagName === tag.tagName &&
-              t.isMinor === tag.isMinor &&
+              getPositioningTagLevel(t) === getPositioningTagLevel(tag) &&
               t.description === tag.description
           );
           const hasWeapon = 'weapon' in tag && !!tag.weapon;
@@ -253,7 +290,7 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
               key={index}
               className={cn(
                 'rounded-lg p-3',
-                getPositioningTagContainerColor(tag.tagName, tag.isMinor, factionId)
+                getPositioningTagContainerColor(tag.tagName, getPositioningTagLevel(tag), factionId)
               )}
             >
               <div className='mb-2 flex items-center gap-2'>
@@ -261,7 +298,7 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
                   <Tag
                     colorStyles={getPositioningTagColors(
                       tag.tagName,
-                      tag.isMinor,
+                      getPositioningTagLevel(tag),
                       true,
                       factionId,
                       isDarkMode
@@ -309,14 +346,12 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
                 </div>
                 {isEditMode ? (
                   <>
-                    <button
-                      type='button'
-                      className='cursor-pointer text-xs text-gray-500 dark:text-gray-400'
-                      onClick={() => toggleIsMinor(originalIndex)}
-                      aria-label={`切换为${tag.isMinor ? '主要' : '次要'}标签`}
-                    >
-                      {tag.isMinor ? '(次要)' : '(主要)'}
-                    </button>
+                    <div className='text-xs text-gray-500 dark:text-gray-400'>
+                      <TagLevelDropdown
+                        currentValue={getPositioningTagLevel(tag)}
+                        onSelect={(level) => handleLevelUpdate(originalIndex, level)}
+                      />
+                    </div>
                     <div className='text-xs text-gray-500 dark:text-gray-400'>
                       <WeaponDropdown
                         currentValue={tag.weapon}
@@ -326,7 +361,7 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
                     </div>
                   </>
                 ) : (
-                  tag.isMinor && (
+                  isPositioningTagMinor(getPositioningTagLevel(tag)) && (
                     <span
                       className={cn(
                         'text-xs text-gray-500 dark:text-gray-400',

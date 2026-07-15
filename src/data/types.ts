@@ -11,11 +11,12 @@ export type Faction = {
 // Positioning tag types separated by faction
 export type CatPositioningTagName = '进攻' | '防守' | '追击' | '打架' | '速通' | '翻盘' | '后期';
 export type MousePositioningTagName = '奶酪' | '干扰' | '辅助' | '救援' | '破局' | '砸墙' | '后期';
+export type PositioningTagLevel = 0 | 1 | 2 | 3 | 4;
 
 type CatPositioningTag = {
   tagName: CatPositioningTagName;
   weapon?: 1 | 2;
-  isMinor: boolean; // Whether the character only partially exhibits this positioning's characteristics
+  level?: PositioningTagLevel; // 0 or omitted: absent; 1: edit-only; 2: minor; 3-4: major
   description: string; // Brief explanation of why this character has this specific positioning
   additionalDescription: string; // Extended description for detailed view mode
 };
@@ -23,7 +24,7 @@ type CatPositioningTag = {
 type MousePositioningTag = {
   tagName: MousePositioningTagName;
   weapon?: 1 | 2;
-  isMinor: boolean; // Whether the character only partially exhibits this positioning's characteristics
+  level?: PositioningTagLevel; // 0 or omitted: absent; 1: edit-only; 2: minor; 3-4: major
   description: string; // Brief explanation of why this character has this specific positioning
   additionalDescription: string; // Extended description for detailed view mode
 };

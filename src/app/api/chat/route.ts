@@ -160,7 +160,7 @@ type MousePositioningTagName = '奶酪' | '干扰' | '辅助' | '救援' | '破�
 type CatPositioningTag = {
   tagName: CatPositioningTagName; // The name of the tag from the predefined list.
   weapon?: 1 | 2; // Associates the tag with weapon 1 or weapon 2, if applicable.
-  isMinor: boolean; // True if this is a secondary or less prominent role for the character.
+  level?: 0 | 1 | 2 | 3 | 4; // 0 or omitted: absent; 1: edit-only; 2: minor; 3-4: major.
   description: string; // A brief explanation of why the character fits this positioning.
   additionalDescription: string; // An extended description for a more detailed view.
 };
@@ -169,7 +169,7 @@ type CatPositioningTag = {
 type MousePositioningTag = {
   tagName: MousePositioningTagName; // The name of the tag from the predefined list.
   weapon?: 1 | 2; // Associates the tag with weapon 1 or weapon 2, if applicable.
-  isMinor: boolean; // True if this is a secondary or less prominent role for the character.
+  level?: 0 | 1 | 2 | 3 | 4; // 0 or omitted: absent; 1: edit-only; 2: minor; 3-4: major.
   description: string; // A brief explanation of why the character fits this positioning.
   additionalDescription: string; // An extended description for a more detailed view.
 };

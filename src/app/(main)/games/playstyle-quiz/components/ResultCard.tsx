@@ -1,7 +1,12 @@
 'use client';
 
 import { getPositioningTagColors } from '@/lib/design';
-import type { FactionId } from '@/data/types';
+import {
+  getPositioningTagLevel,
+  isPositioningTagMinor,
+  isPositioningTagVisible,
+} from '@/constants/positioningTagSequences';
+import type { FactionId, PositioningTagLevel } from '@/data/types';
 import { getActorProfile } from '@/features/actor-profiles/selectors';
 import GameImage from '@/components/ui/GameImage';
 import Tag from '@/components/ui/Tag';
@@ -13,8 +18,8 @@ type CharacterResult = {
   imageUrl: string;
   description?: string;
   EnglishName?: string;
-  catPositioningTags?: readonly { tagName: string; isMinor: boolean }[];
-  mousePositioningTags?: readonly { tagName: string; isMinor: boolean }[];
+  catPositioningTags?: readonly { tagName: string; level?: PositioningTagLevel }[];
+  mousePositioningTags?: readonly { tagName: string; level?: PositioningTagLevel }[];
   skills?: readonly { name: string; type: string }[];
 };
 
@@ -39,7 +44,9 @@ export default function ResultCard({
   similarMatches,
   allCharacters,
 }: ResultCardProps) {
-  const tags = faction === 'cat' ? character.catPositioningTags : character.mousePositioningTags;
+  const tags = (
+    faction === 'cat' ? character.catPositioningTags : character.mousePositioningTags
+  )?.filter((tag) => isPositioningTagVisible(getPositioningTagLevel(tag)));
   const topSkills = character.skills?.slice(0, 3) ?? [];
   const sex = getActorProfile(character.id).sex;
 
@@ -83,7 +90,7 @@ export default function ResultCard({
             {tags.map((tag) => {
               const colors = getPositioningTagColors(
                 tag.tagName,
-                tag.isMinor,
+                getPositioningTagLevel(tag),
                 false,
                 faction,
                 isDarkMode
@@ -91,7 +98,7 @@ export default function ResultCard({
               return (
                 <Tag key={tag.tagName} colorStyles={colors} size='sm'>
                   {tag.tagName}
-                  {tag.isMinor ? ' (副)' : ''}
+                  {isPositioningTagMinor(getPositioningTagLevel(tag)) ? ' (副)' : ''}
                 </Tag>
               );
             })}

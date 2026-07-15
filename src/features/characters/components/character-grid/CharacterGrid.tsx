@@ -12,7 +12,11 @@ import { FactionCharactersProps } from '@/lib/types';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
-import { sortPositioningTagNames } from '@/constants/positioningTagSequences';
+import {
+  getPositioningTagLevel,
+  isPositioningTagVisible,
+  sortPositioningTagNames,
+} from '@/constants/positioningTagSequences';
 import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
@@ -68,7 +72,9 @@ export default function CharacterGrid({ factionId }: FactionCharactersProps) {
             ? character.catPositioningTags
             : character.mousePositioningTags) || [];
         tagsToAdd.forEach((tag) => {
-          tags.add(tag.tagName);
+          if (isPositioningTagVisible(getPositioningTagLevel(tag))) {
+            tags.add(tag.tagName);
+          }
         });
       }
     });
@@ -116,26 +122,27 @@ export default function CharacterGrid({ factionId }: FactionCharactersProps) {
           (character.factionId === 'cat'
             ? character.catPositioningTags
             : character.mousePositioningTags) || [];
-        return tags.some((charTag) => charTag.tagName === selectedTag);
+        return tags.some(
+          (charTag) =>
+            charTag.tagName === selectedTag &&
+            isPositioningTagVisible(getPositioningTagLevel(charTag))
+        );
       })
     );
 
-    // Sort: not isMinor first, isMinor second (for the selected tags)
     return filtered.sort((a, b) => {
-      const getIsMinor = (char: (typeof allCharacters)[keyof typeof allCharacters]) => {
+      const getHighestSelectedLevel = (
+        char: (typeof allCharacters)[keyof typeof allCharacters]
+      ) => {
         const tags =
           (char.factionId === 'cat' ? char.catPositioningTags : char.mousePositioningTags) || [];
-        // If any tag matching the selected filter is not minor, treat as not minor
-        return Array.from(selectedPositioningTags).every((selectedTag) => {
-          const tag = tags.find(
-            (t: { tagName: string; isMinor?: boolean }) => t.tagName === selectedTag
-          );
-          return tag ? tag.isMinor : true;
-        });
+        return Math.max(
+          ...Array.from(selectedPositioningTags).map((selectedTag) =>
+            getPositioningTagLevel(tags.find((tag) => tag.tagName === selectedTag) ?? {})
+          )
+        );
       };
-      const aIsMinor = getIsMinor(a);
-      const bIsMinor = getIsMinor(b);
-      return Number(aIsMinor) - Number(bIsMinor);
+      return getHighestSelectedLevel(b) - getHighestSelectedLevel(a);
     });
   }, [faction.id, selectedPositioningTags, isEditMode, originalCharacterIds, selectedAvatar]);
 
@@ -221,7 +228,7 @@ export default function CharacterGrid({ factionId }: FactionCharactersProps) {
               const isActive = hasPositioningTagFilter(tag as PositioningTagName);
               const tagColors = getPositioningTagColors(
                 tag as PositioningTagName,
-                false,
+                4,
                 false,
                 faction.id as FactionId,
                 isDarkMode

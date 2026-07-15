@@ -1,3 +1,8 @@
+import {
+  getPositioningTagLevel,
+  isPositioningTagMinor,
+  isPositioningTagVisible,
+} from '@/constants/positioningTagSequences';
 import type { FactionId, PositioningTag } from '@/data/types';
 
 import type { QuizOption } from '../data/catQuestions';
@@ -35,7 +40,9 @@ function buildCharacterTagProfile(
   const profile: TagProfile = {};
   if (!positioningTags) return profile;
   for (const tag of positioningTags) {
-    const weight = tag.isMinor ? 1 : 2;
+    const level = getPositioningTagLevel(tag);
+    if (!isPositioningTagVisible(level)) continue;
+    const weight = isPositioningTagMinor(level) ? 1 : 2;
     profile[tag.tagName] = (profile[tag.tagName] ?? 0) + weight;
   }
   return profile;

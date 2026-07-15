@@ -1,4 +1,5 @@
-import type { buffTypelist, FactionId } from '@/data/types';
+import { isPositioningTagMinor } from '@/constants/positioningTagSequences';
+import type { buffTypelist, FactionId, PositioningTagLevel } from '@/data/types';
 
 import { designTokens } from './designTokens';
 import { sharedPositioningTagPalettes } from './palettes';
@@ -141,19 +142,20 @@ export const getTypeLabelColors = (type: string, isDarkMode = false) => {
 // Positioning tag utility functions
 export const getPositioningTagColors = (
   tagName: string,
-  isMinor: boolean,
+  level: PositioningTagLevel | undefined,
   includeBorder: boolean,
   faction: FactionId,
   isDarkMode: boolean
 ): PositioningTagColorStyle => {
   const tagKey = resolvePositioningTagKey(tagName, faction);
-  const colorScheme = tagKey
-    ? designTokens.colors.positioningTags[tagKey]
-    : designTokens.colors.positioningTags.minor;
+  const colorScheme =
+    (level ?? 0) < 2 || !tagKey
+      ? designTokens.colors.positioningTags.minor
+      : designTokens.colors.positioningTags[tagKey];
 
   // Base style object with consistent properties
 
-  if (isMinor && tagKey) {
+  if (isPositioningTagMinor(level) && tagKey) {
     // For minor tags, create diagonal gradient background
     const originalColorScheme = designTokens.colors.positioningTags[tagKey];
     const greyColorScheme = designTokens.colors.positioningTags.minor;
@@ -180,7 +182,7 @@ export const getPositioningTagColors = (
     };
   }
 
-  if (isMinor) {
+  if (isPositioningTagMinor(level)) {
     // Fallback for minor tags without recognized tag name
     const greyColorScheme = designTokens.colors.positioningTags.minor;
     return {
@@ -363,10 +365,10 @@ export const getSkillLevelContainerColor = (level: number): string => {
 
 export const getPositioningTagContainerColor = (
   tagName: string,
-  isMinor: boolean,
+  level: PositioningTagLevel | undefined,
   faction: FactionId
 ): string => {
-  if (isMinor) {
+  if ((level ?? 0) < 3) {
     return positioningTagContainerClasses.minor;
   }
 

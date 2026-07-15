@@ -1,5 +1,9 @@
 // Character search logic extracted from searchUtils.ts
 
+import {
+  getPositioningTagLevel,
+  isPositioningTagVisible,
+} from '@/constants/positioningTagSequences';
 import { characters } from '@/data';
 
 import { convertToPinyin } from '../pinyinUtils';
@@ -100,6 +104,7 @@ export async function* searchCharacters(
     }
     if (!matchContext && character.catPositioningTags) {
       for (const tag of character.catPositioningTags) {
+        if (!isPositioningTagVisible(getPositioningTagLevel(tag))) continue;
         const tagNameLowerCase = tag.tagName.toLowerCase();
         const tagNamePinyin = await convertToPinyin(tag.tagName);
 
@@ -118,6 +123,7 @@ export async function* searchCharacters(
     }
     if (!matchContext && character.mousePositioningTags) {
       for (const tag of character.mousePositioningTags) {
+        if (!isPositioningTagVisible(getPositioningTagLevel(tag))) continue;
         const tagNameLowerCase = tag.tagName.toLowerCase();
         const tagNamePinyin = await convertToPinyin(tag.tagName);
 
@@ -136,6 +142,7 @@ export async function* searchCharacters(
     }
     if (!matchContext && character.catPositioningTags) {
       for (const tag of character.catPositioningTags) {
+        if (!isPositioningTagVisible(getPositioningTagLevel(tag))) continue;
         const tagDescriptionLowerCase = tag.description.toLowerCase();
         const tagDescriptionPinyin = await convertToPinyin(tag.description);
 
@@ -154,6 +161,7 @@ export async function* searchCharacters(
     }
     if (!matchContext && character.mousePositioningTags) {
       for (const tag of character.mousePositioningTags) {
+        if (!isPositioningTagVisible(getPositioningTagLevel(tag))) continue;
         const tagDescriptionLowerCase = tag.description.toLowerCase();
         const tagDescriptionPinyin = await convertToPinyin(tag.description);
 
@@ -172,6 +180,7 @@ export async function* searchCharacters(
     }
     if (!matchContext && character.catPositioningTags) {
       for (const tag of character.catPositioningTags) {
+        if (!isPositioningTagVisible(getPositioningTagLevel(tag))) continue;
         const additionalDescriptionLowerCase = tag.additionalDescription?.toLowerCase();
         const additionalDescriptionPinyin = await convertToPinyin(tag.additionalDescription);
 
@@ -190,6 +199,7 @@ export async function* searchCharacters(
     }
     if (!matchContext && character.mousePositioningTags) {
       for (const tag of character.mousePositioningTags) {
+        if (!isPositioningTagVisible(getPositioningTagLevel(tag))) continue;
         const additionalDescriptionLowerCase = tag.additionalDescription?.toLowerCase();
         const additionalDescriptionPinyin = await convertToPinyin(tag.additionalDescription);
 

@@ -6,6 +6,10 @@ import { useSnapshot } from 'valtio';
 import { formatDateKey, getDailyCharacterId, getGameDate, getPuzzleNumber } from '@/lib/gameUtils';
 import { buildSkillCluesForCharacter } from '@/lib/skillEffectUtils';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
+import {
+  getPositioningTagLevel,
+  isPositioningTagVisible,
+} from '@/constants/positioningTagSequences';
 import { getActorJumpHeight, getActorProfile } from '@/features/actor-profiles/selectors';
 import { catCharacterIds, mouseCharacterIds } from '@/features/characters/data/characterMetadata';
 import GameLayout from '@/features/games/components/GameLayout';
@@ -140,7 +144,10 @@ export default function GuessCharacterClient({ description }: Props) {
     // Clue 1: Single positioning tag (deterministic pick based on character name)
     const tags =
       character.factionId === 'cat' ? character.catPositioningTags : character.mousePositioningTags;
-    const tagNames = tags?.map((t) => t.tagName) ?? [];
+    const tagNames =
+      tags
+        ?.filter((tag) => isPositioningTagVisible(getPositioningTagLevel(tag)))
+        .map((t) => t.tagName) ?? [];
     const pickedTag =
       tagNames.length > 0 ? tagNames[hashString(character.id) % tagNames.length] : null;
     entries.push({

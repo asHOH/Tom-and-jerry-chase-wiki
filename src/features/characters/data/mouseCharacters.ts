@@ -10,13 +10,13 @@ const mouseCharacterDefinitions = {
     mousePositioningTags: [
       {
         tagName: '奶酪',
-        isMinor: false,
+        level: 4,
         description: '推速快。',
         additionalDescription: '此外还有被动提供推速加成和搬奶酪速度。',
       },
       {
         tagName: '辅助',
-        isMinor: true,
+        level: 2,
         description: '鼓舞为队友提供增益、处理二手火箭；鸟哨限制猫的走位。',
         additionalDescription: '',
       },
@@ -217,20 +217,20 @@ const mouseCharacterDefinitions = {
     mousePositioningTags: [
       {
         tagName: '奶酪',
-        isMinor: false,
+        level: 4,
         description: '基础推速与{侦探泰菲}并列第一。若携带烟雾弹则能进一步提高团队推速。',
         additionalDescription: '',
       },
       {
         tagName: '辅助',
-        isMinor: true,
+        level: 2,
         weapon: 2,
         description: '干扰器能提供短暂的群体隐身，而且前摇较短。',
         additionalDescription: '',
       },
       {
         tagName: '破局',
-        isMinor: false,
+        level: 4,
         weapon: 1,
         description:
           '烟雾弹的禁用技能和巨额推速加成能使鼠方快速地推完最后一块奶酪，克制大多数守奶酪的猫咪。',
@@ -412,19 +412,19 @@ const mouseCharacterDefinitions = {
     mousePositioningTags: [
       {
         tagName: '奶酪',
-        isMinor: true,
+        level: 2,
         description: '罗宾汉推速较快，自身灵活性也高，可作为队伍副推位。',
         additionalDescription: '',
       },
       {
         tagName: '辅助',
-        isMinor: false,
+        level: 4,
         description: '二段跳的全图支援非常强力。',
         additionalDescription: '',
       },
       {
         tagName: '后期',
-        isMinor: true,
+        level: 2,
         description: '罗宾汉速度很快且非常灵活，后期猫咪很难追上他。',
         additionalDescription: '',
       },
@@ -656,19 +656,19 @@ const mouseCharacterDefinitions = {
     mousePositioningTags: [
       {
         tagName: '干扰',
-        isMinor: false,
+        level: 4,
         description: '金币和火药桶能有效拦截猫咪上火箭、抓队友。',
         additionalDescription: '火炮也能连控猫咪，1级被动的减速配合{投手}可以让很多猫追不上老鼠。',
       },
       {
         tagName: '砸墙',
-        isMinor: false,
+        level: 4,
         description: '拥有高额的基础破墙数值，3级被动进一步增强破坏墙缝能力。',
         additionalDescription: '火药桶也能对墙缝造成巨大破坏。',
       },
       {
         tagName: '救援',
-        isMinor: true,
+        level: 2,
         description: '使用金币砸晕猫咪或用火药桶炸毁火箭后即可救下。',
         additionalDescription: '怕霸体猫、怕拦截，依赖药水。',
       },
@@ -874,21 +874,21 @@ const mouseCharacterDefinitions = {
     mousePositioningTags: [
       {
         tagName: '救援',
-        isMinor: false,
+        level: 4,
         description: '{主动技能}是救援的强力手段。',
         additionalDescription:
           '护盾瞬发、权杖无敌、战旗秒救，开局就拥有一定救援能力，成型后更难被拦截。',
       },
       {
         tagName: '辅助',
-        isMinor: false,
+        level: 4,
         description: '一武团队无敌，二武多种团队增益。',
         additionalDescription:
           '权杖可以给范围内的队友施加群体无敌，是接应与抗伤的好手段；战旗集视野、输出、破局、自保等多种强效团队增益于一体，拥有极高的上限。',
       },
       {
         tagName: '砸墙',
-        isMinor: false,
+        level: 4,
         weapon: 2,
         description: '攻击战旗可以提供强大的团队破坏墙缝能力。',
         additionalDescription: '',
@@ -1061,14 +1061,14 @@ const mouseCharacterDefinitions = {
     mousePositioningTags: [
       {
         tagName: '干扰',
-        isMinor: false,
+        level: 4,
         description: '拥有极高的输出和武器的控制，技能提供续航。',
         additionalDescription:
           '高等级时可在打出大量伤害的同时控制猫数秒；双武器均可与{干扰投掷}配合。',
       },
       {
         tagName: '后期',
-        isMinor: true,
+        level: 2,
         weapon: 1,
         description:
           '高等级{剑舞华尔兹}能先手打出控制，配合{主动技能}更能造成连续控制；{3级被动}提供极高Hp加成。',
@@ -1264,35 +1264,35 @@ const mouseCharacterDefinitions = {
     mousePositioningTags: [
       {
         tagName: '破局',
-        isMinor: false,
+        level: 4,
         weapon: 1,
         description: '火箭炮能炸开捕鼠夹和叉子，被动推奶酪有霸体减伤',
         additionalDescription: '',
       },
       {
         tagName: '砸墙',
-        isMinor: false,
+        level: 4,
         description:
           '火箭筒及用道具触发地雷可以提供可观的砸墙伤害；三级被动免疫鞭炮和泡泡爆炸，可辅助砸墙。',
         additionalDescription: '',
       },
       {
         tagName: '奶酪',
-        isMinor: true,
+        level: 2,
         description:
           '推速适中（对比其它奶酪位，泰菲推速较慢），且被动推奶酪有霸体和减伤，适合做副推位。',
         additionalDescription: '',
       },
       {
         tagName: '干扰',
-        isMinor: true,
+        level: 2,
         description:
           '远程火箭炮可以减少队友溜猫的压力；地雷可以进行威慑，逼迫猫离开地雷追踪爆炸范围或交技能进行防御；圆滚滚大大增加泰菲的容错率\n（缺点是两个武器CD都较长，圆滚滚真空期内容易被击倒）',
         additionalDescription: '',
       },
       {
         tagName: '救援',
-        isMinor: true,
+        level: 2,
         description:
           '多在单排无稳救阵容中体现，冰保或自起加圆滚滚可以大幅增加泰菲的容错，抵挡攻击，再加上地雷威慑，操作得当能够实现稳定救援',
         additionalDescription: '缺点是怕高伤，怕猫的攻击、控制手段多，冰保、自起冷却较长',
@@ -1546,13 +1546,13 @@ const mouseCharacterDefinitions = {
       {
         tagName: '救援',
         weapon: 1,
-        isMinor: false,
+        level: 4,
         description: '头盔的长时间防御使得剑客泰菲具有十分优秀的救援能力。',
         additionalDescription: '',
       },
       {
         tagName: '破局',
-        isMinor: false,
+        level: 4,
         description:
           '头盔的全体无敌可支持强推，后期也能用无敌砸墙。长枪可以带走夹子，也可以携带队友绕后进攻（如船长室）。',
         additionalDescription: '',
@@ -1560,13 +1560,13 @@ const mouseCharacterDefinitions = {
       {
         tagName: '干扰',
         weapon: 2,
-        isMinor: false,
+        level: 4,
         description: '携带剑客长枪的剑客泰菲具有较强的机动性和干扰能力。',
         additionalDescription: '',
       },
       {
         tagName: '辅助',
-        isMinor: false,
+        level: 4,
         description:
           '2级及以上且有勇气的长枪可以解除队友和自己的受伤和虚弱效果，也可以带着队友转移。',
         additionalDescription: '',
@@ -1574,7 +1574,7 @@ const mouseCharacterDefinitions = {
       },
       {
         tagName: '后期',
-        isMinor: true,
+        level: 2,
         description: '后期6级8级带来的减少cd和护盾的质变能对长枪剑菲带来很强的后期作战能力。',
         additionalDescription: '',
         weapon: 2,
@@ -1772,20 +1772,20 @@ const mouseCharacterDefinitions = {
     mousePositioningTags: [
       {
         tagName: '奶酪',
-        isMinor: true,
+        level: 2,
         description: '基础推速中上，二级琴加推速。',
         additionalDescription: '二级琴加速后推速达到5.5%每秒，且琴真空期只有5秒。',
       },
       {
         tagName: '干扰',
-        isMinor: false,
+        level: 4,
         description: '仙人掌和琴的干扰频率高，效果也不错。',
         additionalDescription:
           '但牛仔杰瑞的干扰能力比较偏后期，同时大部分也不是强控，无法直接把老鼠从猫手上救下来。',
       },
       {
         tagName: '后期',
-        isMinor: false,
+        level: 4,
         description: '后期生存能力和干扰能力大幅提升',
         additionalDescription:
           '高等级牛仔杰瑞可以更加频繁的干扰，从而触发更多霸体，也可以给猫提供更多负面状态。',
@@ -1959,32 +1959,32 @@ const mouseCharacterDefinitions = {
     mousePositioningTags: [
       {
         tagName: '后期',
-        isMinor: false,
+        level: 4,
         description: '在后期，{3级被动}和{地狱裂隙}的护盾能提供极强的存活能力。',
         additionalDescription: '',
       },
       {
         tagName: '奶酪',
-        isMinor: true,
+        level: 2,
         description: '{1级被动}增加推速，但整体推速并不突出。',
         additionalDescription: '',
       },
       {
         tagName: '救援',
-        isMinor: true,
+        level: 2,
         description:
           '{地狱裂隙}的护盾、加速和传送，配合{3级被动}，有效提高救人成功率，后期可作为替补救人位。',
         additionalDescription: '',
       },
       {
         tagName: '辅助',
-        isMinor: true,
+        level: 2,
         description: '{恶魔之门}可提供多种增益，并且可以强制传送猫咪和帮助队友逃生。',
         additionalDescription: '辅助效果在车队中明显，单排效果较小。',
       },
       {
         tagName: '破局',
-        isMinor: false,
+        level: 4,
         description:
           '{恶魔之门}可将猫咪直接传送走，阻止其防守奶酪或墙缝；{3级被动}和{地狱裂隙}的护盾也能提供强推最后一块奶酪的能力。',
         additionalDescription: '',
@@ -2164,21 +2164,21 @@ const mouseCharacterDefinitions = {
     mousePositioningTags: [
       {
         tagName: '奶酪',
-        isMinor: false,
+        level: 4,
         description: '本身推速不慢，且在经典之家、古堡一二、天宫有很强的搬奶酪能力。',
         additionalDescription: '',
       },
       {
         weapon: 1,
         tagName: '砸墙',
-        isMinor: false,
+        level: 4,
         description:
           '一武复制果盘道具，主动也能吸附道具快速砸墙，二武三级可直接对墙缝造成固伤和易伤，但对泡泡无效。',
         additionalDescription: '',
       },
       {
         tagName: '干扰',
-        isMinor: true,
+        level: 2,
         weapon: 2,
         description:
           '蓝色小淘气减速猫咪、红色小淘气与猫咪拉开距离，绿色小淘气后期有爆发伤害，拥有很强的干扰能力。',
@@ -2391,13 +2391,13 @@ const mouseCharacterDefinitions = {
     mousePositioningTags: [
       {
         tagName: '辅助',
-        isMinor: false,
+        level: 4,
         description: '可为队友回复Hp、远程治疗。',
         additionalDescription: '',
       },
       {
         tagName: '砸墙',
-        isMinor: false,
+        level: 4,
         description:
           '花洒能持续对道具施加推力，可通过让高尔夫球在墙缝与花洒右侧水流之间来回弹射进行破墙。',
         additionalDescription: '该操作通常要站在墙缝的左边，并且要把控距离，因此需要一定的熟练度。',
@@ -2405,13 +2405,13 @@ const mouseCharacterDefinitions = {
       },
       {
         tagName: '救援',
-        isMinor: true,
+        level: 2,
         description: '花洒搭配精准投掷可以无限浇灭火箭；花束+舍己，救下队友后双方均有较高Hp。',
         additionalDescription: '',
       },
       {
         tagName: '奶酪',
-        isMinor: true,
+        level: 2,
         description: '基础推速相对较高，适合推奶酪。',
         additionalDescription: '',
       },
@@ -2605,34 +2605,34 @@ const mouseCharacterDefinitions = {
     mousePositioningTags: [
       {
         tagName: '辅助',
-        isMinor: false,
+        level: 4,
         description: '独一无二的复活机制，会给猫很大的压力。',
         additionalDescription:
           '虽然复活体尽量不会再去参与救人但是仍然可以保证奶酪进度，还能废掉一个秒飞，有不错的辅助能力。',
       },
       {
         tagName: '奶酪',
-        isMinor: true,
+        level: 2,
         description: '推速较高，有一定自保。',
         additionalDescription: '本身牵制、救人能力不突出，无秒飞火箭时一般当奶酪位。',
       },
       {
         tagName: '破局',
-        isMinor: true,
+        level: 2,
         description: '雷云的减伤和控制可以用于强推最后一块奶酪。',
         additionalDescription: '',
         weapon: 2,
       },
       {
         tagName: '干扰',
-        isMinor: true,
+        level: 2,
         description:
           '弓箭可以远距离进行控制干扰；雷云可以降低敌方的移速和伤害，还能对敌方造成伤害和控制；被动可以暂时封锁敌方的爪刀或技能。',
         additionalDescription: '',
       },
       {
         tagName: '后期',
-        isMinor: true,
+        level: 2,
         description:
           '天使杰瑞后期的生存能力有质的飞跃，被动的禁用爪刀和技能以及{武器技能}的高频控制也让猫咪非常头疼。',
         additionalDescription: '需注意：某些拥有霸体的猫反而能将天使杰瑞作为突破口。',
@@ -2843,26 +2843,26 @@ const mouseCharacterDefinitions = {
     mousePositioningTags: [
       {
         tagName: '救援',
-        isMinor: false,
+        level: 4,
         description:
           '{友情庇护}提供伪霸体并且免疫老鼠夹，救援能力十分突出，可以担任队伍的救人核心。',
         additionalDescription: '',
       },
       {
         tagName: '破局',
-        isMinor: true,
+        level: 2,
         description: '{友情庇护}能在猫缺乏输出手段的情况下强推最后一块奶酪。',
         additionalDescription: '',
       },
       {
         tagName: '后期',
-        isMinor: true,
+        level: 2,
         description: '{天使翅膀}和{友情庇护}提供的自保十分强大，能够适应多种极端情况下的对局环境。',
         additionalDescription: '',
       },
       {
         tagName: '奶酪',
-        isMinor: true,
+        level: 2,
         description: '自身推速较快，可以担任队伍的副推位。',
         additionalDescription: '',
       },
@@ -3029,35 +3029,35 @@ const mouseCharacterDefinitions = {
     mousePositioningTags: [
       {
         tagName: '奶酪',
-        isMinor: true,
+        level: 2,
         description: '兔子可以安全地运送和推入奶酪，而兔子大表哥可以提高魔术师的推速。',
         additionalDescription:
           '兔子的推速并不占优，不过可以通过反复拉扯来创造推奶酪机会。{1级兔子大表哥}增加的推速数值较低，但额外推速不受其他状态影响的特点也能规避前期队友上火箭导致的推速降低，且如果队友被放飞则自身推速会有质的飞跃。',
       },
       {
         tagName: '干扰',
-        isMinor: false,
+        level: 4,
         description: '卡牌和兔子大表哥可以干扰猫咪。',
         additionalDescription:
           '卡牌可以超远程支援，且控制时间长，但并非硬性控制，实际使用时更偏向于用它创造更多的拉扯机会。',
       },
       {
         tagName: '救援',
-        isMinor: true,
+        level: 2,
         description:
           '兔子先生[可以进行火箭救援](通常需携带“无畏”知识卡，否则可能无法进行有效救援)；兔子大表哥[可以阻止秒飞火箭起飞](需要魔术师在附近，实战时需抉择)，还能大幅增加自身的救援速度。',
         additionalDescription: '兔子先生救援时建议搭配红牌干扰，提高稳定性。',
       },
       {
         tagName: '辅助',
-        isMinor: true,
+        level: 2,
         description: '分别点出Lv.1的主动、武器、被动技能后，可以向兔子大表哥投掷卡牌以刷取经验。',
         additionalDescription: '吃蛋糕可减少被动和{主动技能}的CD，可以用这个方法提高刷经验效率。',
         weapon: 2,
       },
       {
         tagName: '破局',
-        isMinor: true,
+        level: 2,
         description:
           '兔子先生可以强行对最后一块奶酪进行攻坚，哪怕被击倒也可以通过升级技能、吃蛋糕、[卡牌命中](需有Lv.1被动)等方式减少CD，快速召唤下一只兔子进行攻坚。红色卡牌暂时性的封锁技能，能克制部分以技能为主的防守猫。\n兔子大表哥失去队友后变强，弥补了局势上减员的劣势',
         additionalDescription: '',
@@ -3311,32 +3311,32 @@ const mouseCharacterDefinitions = {
     mousePositioningTags: [
       {
         tagName: '干扰',
-        isMinor: false,
+        level: 4,
         description: '魔音有眩晕远击退高伤害。',
         additionalDescription: '',
       },
       {
         tagName: '破局',
-        isMinor: false,
+        level: 4,
         description:
           '魔音可弹开[绝大多数猫的布局](捕鼠夹、兔八哥萝卜、图多香水等)，琴可为队友加推速。',
         additionalDescription: '三级琴可比肩烟雾弹。',
       },
       {
         tagName: '辅助',
-        isMinor: true,
+        level: 2,
         description: '2级被动和琴可为队友加推速和回复Hp。',
         additionalDescription: '',
       },
       {
         tagName: '救援',
-        isMinor: true,
+        level: 2,
         description: '高Hp，可弹开夹子，有免虚和复活甲，舍己救援后可接琴。',
         additionalDescription: '小心[直接抓取](拍子、斗牛、三级枪等)',
       },
       {
         tagName: '后期',
-        isMinor: true,
+        level: 2,
         description: '后期3级被动和3级武器容错高',
         additionalDescription: '但部分直接抓取技能可无视免疫虚弱和复活甲',
       },
@@ -3496,13 +3496,13 @@ const mouseCharacterDefinitions = {
     mousePositioningTags: [
       {
         tagName: '干扰',
-        isMinor: false,
+        level: 4,
         description: '斜塔封路，足球和饼都有一定的干扰能力。',
         additionalDescription: '此外还有被动提供推速加成和搬奶酪速度。',
       },
       {
         tagName: '奶酪',
-        isMinor: true,
+        level: 2,
         weapon: 2,
         description: '本身推速较快，且可以通过食物力量进一步加速。',
         additionalDescription: '多见于打架队',
@@ -3700,14 +3700,14 @@ const mouseCharacterDefinitions = {
     mousePositioningTags: [
       {
         tagName: '奶酪',
-        isMinor: false,
+        level: 4,
         description:
           '基础推速与侦探杰瑞并列第一。另外后期可以用{3级主动}的换位进行超远程搬运奶酪。',
         additionalDescription: '',
       },
       {
         tagName: '救援',
-        isMinor: true,
+        level: 2,
         description: '主动技能的隐身效果可以方便救援，但是在火箭下有老鼠夹时侦探泰菲难以应对。',
         additionalDescription: '',
       },
@@ -3844,21 +3844,21 @@ const mouseCharacterDefinitions = {
     mousePositioningTags: [
       {
         tagName: '救援',
-        isMinor: false,
+        level: 4,
         description:
           '{2级被动}提供短暂无敌，可提前生成剑气幻影，救下队友后立刻传送，达成无伤救援。',
         additionalDescription: '稳救不稳走，依赖隐身；被{捕虫网}和各种强制位移技能克制。',
       },
       {
         tagName: '干扰',
-        isMinor: true,
+        level: 2,
         description:
           '风墙可以困住或阻挡猫咪；剑气命中敌方有高额减速；自身攻击增伤也较高，适合投掷道具干扰。',
         additionalDescription: '',
       },
       {
         tagName: '辅助',
-        isMinor: true,
+        level: 2,
         description: '{2级主动}的风墙可以让队友快速起身，避免被抓。',
         additionalDescription:
           '若有需要，也可以尝试用剑气命中[队友](甚至包括虚弱的队友)，让其获得位移能力。但老鼠模型小，剑气很难命中。',
@@ -3994,25 +3994,25 @@ const mouseCharacterDefinitions = {
     mousePositioningTags: [
       {
         tagName: '干扰',
-        isMinor: false,
+        level: 4,
         description: '弹球可干扰猫咪，藤蔓能提供投掷道具。',
         additionalDescription: '藤蔓还能在狭窄的垂直地形堵住猫咪。自身Hp上限低，干扰时需注意安全。',
       },
       {
         tagName: '辅助',
-        isMinor: false,
+        level: 4,
         description: '藤蔓可制造特殊地形进行支援，{2级藤蔓}还能为全队提供恢复。',
         additionalDescription: '',
       },
       {
         tagName: '砸墙',
-        isMinor: false,
+        level: 4,
         description: '弹球可对墙缝造成高额伤害，并且每次进出墙缝边缘都会造成伤害。',
         additionalDescription: '尽量选择合适角度来多次反弹，必要时可制造平台来辅助。',
       },
       {
         tagName: '奶酪',
-        isMinor: true,
+        level: 2,
         description: '推速相对较快，且擅长搬奶酪，偶尔还能开出奶酪。',
         additionalDescription: '',
       },
@@ -4223,25 +4223,25 @@ const mouseCharacterDefinitions = {
     mousePositioningTags: [
       {
         tagName: '辅助',
-        isMinor: false,
+        level: 4,
         description: '2级扇子可以解除队友的虚弱状态并回血。',
         additionalDescription: '',
       },
       {
         tagName: '破局',
-        isMinor: false,
+        level: 4,
         description: '三级扇子可以吹飞夹子、图多盖洛的香水等。',
         additionalDescription: '',
       },
       {
         tagName: '奶酪',
-        isMinor: true,
+        level: 2,
         description: '自身的推速较快、2级扇子有推速加成。',
         additionalDescription: '',
       },
       {
         tagName: '干扰',
-        isMinor: true,
+        level: 2,
         description: '后期三级礼仪可干扰猫绑火箭。',
         additionalDescription: '',
       },
@@ -4384,25 +4384,25 @@ const mouseCharacterDefinitions = {
     mousePositioningTags: [
       {
         tagName: '救援',
-        isMinor: false,
+        level: 4,
         description: '闪拳可拦截，传送可救援，有药水可以稳救。',
         additionalDescription: '',
       },
       {
         tagName: '干扰',
-        isMinor: false,
+        level: 4,
         description: '拳头可干扰霸体上火箭。',
         additionalDescription: '',
       },
       {
         tagName: '破局',
-        isMinor: false,
+        level: 4,
         description: '发怒拳头可以强推奶酪。',
         additionalDescription: '后期发怒时可无视夹子和叉子。',
       },
       {
         tagName: '砸墙',
-        isMinor: true,
+        level: 2,
         description: '{3级沙包拳头}能对墙缝造成伤害，发怒期间的拳头伤害更高。',
         additionalDescription: '',
       },
@@ -4566,21 +4566,21 @@ const mouseCharacterDefinitions = {
     mousePositioningTags: [
       {
         tagName: '辅助',
-        isMinor: false,
+        level: 4,
         description:
           '队友{铁血}时，可用{主动技能}救活队友；一武器可为队友提供“额外”道具，二武器可为队友/对手提供增益/削弱。建议车队配合。',
         additionalDescription: '',
       },
       {
         tagName: '砸墙',
-        isMinor: false,
+        level: 4,
         weapon: 1,
         description: '主动技能后期15秒一个变大；武器技能3级后能提供很可观的墙缝增伤。',
         additionalDescription: '',
       },
       {
         tagName: '奶酪',
-        isMinor: true,
+        level: 2,
         weapon: 1,
         description: '二级被动可压血线增加推速；气球可给队友一定推速加成。',
         additionalDescription: '',
@@ -4769,25 +4769,25 @@ const mouseCharacterDefinitions = {
     mousePositioningTags: [
       {
         tagName: '救援',
-        isMinor: true,
+        level: 2,
         description: '可利用{2级被动}摧毁火箭，快速将老鼠救下。',
         additionalDescription: '但在此期间容易吃到控制导致礼服被断。',
       },
       {
         tagName: '干扰',
-        isMinor: false,
+        level: 4,
         description: '利用一级被动可以造成大量伤害和拦截猫上火箭。',
         additionalDescription: '被知识卡-皮糙肉厚大大克制。',
       },
       {
         tagName: '辅助',
-        isMinor: true,
+        level: 2,
         description: '主动技能可以带来不错的团队收益。',
         additionalDescription: '',
       },
       {
         tagName: '砸墙',
-        isMinor: true,
+        level: 2,
         description: '利用{3级被动}可快速破墙。',
         additionalDescription: '若4只老鼠均在墙缝附近可以技能全交做到秒破。',
       },
@@ -4965,13 +4965,13 @@ const mouseCharacterDefinitions = {
     mousePositioningTags: [
       {
         tagName: '破局',
-        isMinor: false,
+        level: 4,
         description: '战车自带霸体，冲撞可撞开[绝大多数猫的布局](捕鼠夹、兔八哥萝卜、图多香水等)。',
         additionalDescription: '',
       },
       {
         tagName: '干扰',
-        isMinor: false,
+        level: 4,
         description: '战矛与冲撞配合，能安全地对猫咪进行较长时间的控制。',
         additionalDescription:
           '战矛配合干扰投掷与部分知识卡（如投手）可以进一步提高控制成功率；冲撞也能救下队友。',
@@ -5107,13 +5107,13 @@ const mouseCharacterDefinitions = {
     mousePositioningTags: [
       {
         tagName: '救援',
-        isMinor: false,
+        level: 4,
         description: '二级翻滚免控免死，钩子也能进行一定程度的拦截。',
         additionalDescription: '稳救不稳走，依赖隐身；被托普斯的捕虫网和各种强制位移技能克制。',
       },
       {
         tagName: '砸墙',
-        isMinor: true,
+        level: 2,
         description: '2级被动提供超高墙缝增伤，配合果盘蒸发墙缝，一套就能打掉一半Hp。',
         additionalDescription: '触发条件较为苛刻，且需要与队友有一定沟通。',
       },
@@ -5269,20 +5269,20 @@ const mouseCharacterDefinitions = {
     mousePositioningTags: [
       {
         tagName: '干扰',
-        isMinor: false,
+        level: 4,
         description: '技能伤害极高，控制手段也很多。过载期间还能提供高额攻击增伤',
         additionalDescription: '',
       },
       {
         tagName: '后期',
-        isMinor: false,
+        level: 4,
         description:
           '后期连招能打出极高额爆发伤害，堪称全游之最。此外被动技能和电池自起也提供了不俗的自保能力。',
         additionalDescription: '',
       },
       {
         tagName: '破局',
-        isMinor: true,
+        level: 2,
         description: '高额爆发提供破局能力，直接将试图防守的猫咪强行击倒。',
         additionalDescription: '',
       },
@@ -5455,19 +5455,19 @@ const mouseCharacterDefinitions = {
     mousePositioningTags: [
       {
         tagName: '干扰',
-        isMinor: false,
+        level: 4,
         description: '一星造成伤害、八星造成干扰；三级被动击中猫咪强制反向。',
         additionalDescription: '',
       },
       {
         tagName: '辅助',
-        isMinor: true,
+        level: 2,
         description: '四星帮队友回血；六星将队友变星星。',
         additionalDescription: '',
       },
       {
         tagName: '破局',
-        isMinor: true,
+        level: 2,
         description: '将猫变为大星星后使其暂时失去部分攻击和防守能力，可以抱团强行推奶酪。',
         additionalDescription: '',
       },
@@ -5614,26 +5614,26 @@ const mouseCharacterDefinitions = {
     mousePositioningTags: [
       {
         tagName: '干扰',
-        isMinor: false,
+        level: 4,
         description: '{主动技能}可以对猫造成减速、伤害、控制效果。',
         additionalDescription: '',
       },
       {
         tagName: '辅助',
-        isMinor: true,
+        level: 2,
         description: '{主动技能}以及{2级被动}、{3级被动}可以减少猫造成的伤害。',
         additionalDescription: '',
       },
       {
         tagName: '救援',
-        isMinor: false,
+        level: 4,
         description:
           '米可救援可以在远处先使用{武器技能}拍照，舍己救人后通过二段回溯逃离并回溯血量。',
         additionalDescription: '',
       },
       {
         tagName: '后期',
-        isMinor: false,
+        level: 4,
         description:
           '米可{主动技能}和{2级被动}、{3级被动}的降低伤害效果可加算叠加，完全体状态下能使受到的伤害总共降低75%，并且还有霸体和回溯，几乎无法被常规手段击倒；{主动技能}还能造成很强的干扰效果。',
         additionalDescription: '',
@@ -5822,19 +5822,19 @@ const mouseCharacterDefinitions = {
     mousePositioningTags: [
       {
         tagName: '干扰',
-        isMinor: false,
+        level: 4,
         description: '可拦截猫或干扰绑火箭。',
         additionalDescription: '',
       },
       {
         tagName: '破局',
-        isMinor: false,
+        level: 4,
         description: '滑铲可铲飞图多盖洛香水或夹子。',
         additionalDescription: '',
       },
       {
         tagName: '救援',
-        isMinor: true,
+        level: 2,
         description:
           '滑铲可铲飞并熄灭火箭，还能踢走夹子；铲飞猫咪并补上定身符即可相对安全地进行救援。',
         additionalDescription:
@@ -5842,7 +5842,7 @@ const mouseCharacterDefinitions = {
       },
       {
         tagName: '辅助',
-        isMinor: true,
+        level: 2,
         description:
           '乾坤袋可以抱起倒地的队友逃跑，或是吞吐食物帮助队友快速恢复Hp。队友也可以使用乾坤袋。',
         additionalDescription: '',
@@ -6003,14 +6003,14 @@ const mouseCharacterDefinitions = {
     mousePositioningTags: [
       {
         tagName: '救援',
-        isMinor: false,
+        level: 4,
         description:
           '{主动技能}可以安全地接近火箭，即便不慎被击倒也可以用{1级被动}及{铁血}效果强行救援。',
         additionalDescription: '',
       },
       {
         tagName: '辅助',
-        isMinor: true,
+        level: 2,
         description: '可以提升队友的推速。',
         additionalDescription: '',
       },
@@ -6162,13 +6162,13 @@ const mouseCharacterDefinitions = {
     mousePositioningTags: [
       {
         tagName: '辅助',
-        isMinor: true,
+        level: 2,
         description: '圆形可以使猫手中道具掉落，3级被动减少队友技能CD。',
         additionalDescription: '',
       },
       {
         tagName: '干扰',
-        isMinor: false,
+        level: 4,
         description: '守火箭能力一流，配合蓝图，猫很难绑上火箭；方块可以封走位。',
         additionalDescription: '',
       },
@@ -6325,19 +6325,19 @@ const mouseCharacterDefinitions = {
     mousePositioningTags: [
       {
         tagName: '奶酪',
-        isMinor: false,
+        level: 4,
         description: '推速高，{香甜梦境}进一步提高自身推速，{毛线球}进一步加快奶酪进度。',
         additionalDescription: '',
       },
       {
         tagName: '砸墙',
-        isMinor: false,
+        level: 4,
         description: '{毛线球}可拉动道具，利用高尔夫球和毛线球可实现快速破墙。',
         additionalDescription: '',
       },
       {
         tagName: '破局',
-        isMinor: false,
+        level: 4,
         description: '{毛线球}拉动道具砸入奶酪进度的特性使其克制大部分防守猫。',
         additionalDescription: '最后一块奶酪时请  不  要  和  梦  游  抢  高  尔  夫！！！谢谢！！',
       },
@@ -6493,19 +6493,19 @@ const mouseCharacterDefinitions = {
     mousePositioningTags: [
       {
         tagName: '干扰',
-        isMinor: false,
+        level: 4,
         description: '主动技能能频繁造成爆炸，干扰敌方或短暂炸毁火箭。',
         additionalDescription: '',
       },
       {
         tagName: '救援',
-        isMinor: true,
+        level: 2,
         description: '主动技能炸毁火箭可救下队友，但救人之后自己难以逃跑。',
         additionalDescription: '',
       },
       {
         tagName: '砸墙',
-        isMinor: true,
+        level: 2,
         description:
           '2级自爆能持续对道具施加推力，可通过让高尔夫球在墙缝与冲击波之间来回弹射进行破墙。3级自爆也可直接对墙缝造成伤害。',
         additionalDescription: '该操作需要一定的熟练度。',
@@ -6662,20 +6662,20 @@ const mouseCharacterDefinitions = {
     mousePositioningTags: [
       {
         tagName: '干扰',
-        isMinor: false,
+        level: 4,
         description: '武器技能搭配一级被动可提供高伤害，且打出的子弹若未命中敌方可以长时间回弹。',
         additionalDescription: '',
         weapon: 1,
       },
       {
         tagName: '奶酪',
-        isMinor: true,
+        level: 2,
         description: '本身基础推速较快，若队内无奶酪位一定程度上可作为补位奶酪位。',
         additionalDescription: '',
       },
       {
         tagName: '破局',
-        isMinor: false,
+        level: 4,
         description:
           '武器技能可对猫造成较高伤害，主动技能可以吃掉插在地上的叉子，两技能均可对墙缝造成伤害。可在较大程度上抑制防守猫。',
         additionalDescription: '',
