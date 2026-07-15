@@ -18,6 +18,7 @@ export const MAP_CATEGORY_LABELS: Record<MapPointCategory, string> = {
   rocket: '火箭',
   drink: '饮料',
   wallCrack: '墙缝',
+  idleFruitPlate: '挂机果盘点位',
   mouseHole: '奶酪洞口',
   pipe: '管道',
   geometryBarrel: '几何桶',
@@ -29,6 +30,7 @@ export const DEFAULT_VISIBLE_CATEGORIES = new Set<MapPointCategory>([
   'rocket',
   'drink',
   'wallCrack',
+  'idleFruitPlate',
 ]);
 export const DEFAULT_RANDOM_CANDIDATE_CATEGORIES = new Set<MapPointCategory>([
   'cheese',
@@ -45,6 +47,7 @@ const DEFAULT_MAP_POINT_RELATED_ENTRIES: Partial<Record<MapPointCategory, Single
   rocket: { name: '火箭', type: 'item' },
   drink: { name: '饮料', type: 'itemGroup' },
   wallCrack: { name: '墙缝', type: 'fixture' },
+  idleFruitPlate: { name: '果盘', type: 'item' },
   mouseHole: { name: '老鼠洞', type: 'fixture' },
   pipe: { name: '管道', type: 'fixture' },
 };
@@ -207,6 +210,20 @@ export const getGeometryBarrelTarget = (
   return target ? { point: target, pointIndex } : null;
 };
 
+export const getIdleFruitPlateTarget = (
+  config: InteractiveMapConfig,
+  point: InteractiveMapPoint
+): { point: InteractiveMapPoint; pointIndex: number } | null => {
+  if (point.category !== 'idleFruitPlate' || !point.targetWallCrackPointId) return null;
+
+  const pointIndex = config.points.findIndex(
+    (candidate) =>
+      candidate.id === point.targetWallCrackPointId && candidate.category === 'wallCrack'
+  );
+  const target = config.points[pointIndex];
+  return target ? { point: target, pointIndex } : null;
+};
+
 export const getGeometryBarrelInstructions = (point: InteractiveMapPoint): string | null => {
   if (point.category !== 'geometryBarrel') return null;
 
@@ -307,8 +324,12 @@ export const deleteInteractiveMapPoint = (
 
   if (deletedPointId) {
     next.points.forEach((candidate) => {
-      if (candidate.geometryBarrelRoute?.targetRocketPointId !== deletedPointId) return;
-      delete candidate.geometryBarrelRoute.targetRocketPointId;
+      if (candidate.geometryBarrelRoute?.targetRocketPointId === deletedPointId) {
+        delete candidate.geometryBarrelRoute.targetRocketPointId;
+      }
+      if (candidate.targetWallCrackPointId === deletedPointId) {
+        delete candidate.targetWallCrackPointId;
+      }
     });
   }
 

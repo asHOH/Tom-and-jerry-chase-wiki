@@ -12,6 +12,7 @@ import {
   getDefaultMapPointRelatedEntries,
   getGeometryBarrelInstructions,
   getGeometryBarrelTarget,
+  getIdleFruitPlateTarget,
   getInteractiveMapAssetUrl,
   getMapPointRelatedEntryDescriptionUrl,
   getMapPointScale,
@@ -50,6 +51,7 @@ describe('interactive map utilities', () => {
     expect(isRandomCandidateByDefault('rocket')).toBe(true);
     expect(isRandomCandidateByDefault('drink')).toBe(true);
     expect(isRandomCandidateByDefault('wallCrack')).toBe(true);
+    expect(isRandomCandidateByDefault('idleFruitPlate')).toBe(false);
     expect(isRandomCandidateByDefault('pipe')).toBe(false);
     expect(isRandomCandidateByDefault('mouseHole')).toBe(false);
     expect(isRandomCandidateByDefault('teleport')).toBe(false);
@@ -67,6 +69,9 @@ describe('interactive map utilities', () => {
     ]);
     expect(getDefaultMapPointRelatedEntries({ category: 'wallCrack' })).toEqual([
       { name: '墙缝', type: 'fixture' },
+    ]);
+    expect(getDefaultMapPointRelatedEntries({ category: 'idleFruitPlate' })).toEqual([
+      { name: '果盘', type: 'item' },
     ]);
     expect(getDefaultMapPointRelatedEntries({ category: 'mouseHole' })).toEqual([
       { name: '老鼠洞', type: 'fixture' },
@@ -231,6 +236,31 @@ describe('interactive map utilities', () => {
     ).toBeNull();
   });
 
+  it('should resolve only a wall crack as an idle fruit plate target', () => {
+    const fruitPlate: InteractiveMapPoint = {
+      id: 'fruit-plate',
+      category: 'idleFruitPlate',
+      position: { x: 0.1, y: 0.2 },
+      targetWallCrackPointId: 'wall-crack',
+    };
+    const wallCrack: InteractiveMapPoint = {
+      id: 'wall-crack',
+      category: 'wallCrack',
+      position: { x: 0.8, y: 0.7 },
+    };
+
+    expect(
+      getIdleFruitPlateTarget({ ...config, points: [fruitPlate, wallCrack] }, fruitPlate)
+    ).toEqual({ point: wallCrack, pointIndex: 1 });
+    expect(
+      getIdleFruitPlateTarget(
+        { ...config, points: [fruitPlate, { ...wallCrack, category: 'cheese' }] },
+        fruitPlate
+      )
+    ).toBeNull();
+    expect(getIdleFruitPlateTarget({ ...config, points: [wallCrack] }, wallCrack)).toBeNull();
+  });
+
   it('should generate geometry barrel instructions from the firecracker explosion timing', () => {
     const barrel: InteractiveMapPoint = {
       category: 'geometryBarrel',
@@ -316,6 +346,24 @@ describe('interactive map utilities', () => {
     expect(updated?.points[0]?.geometryBarrelRoute?.targetRocketPointId).toBeUndefined();
     expect(updated?.points[1]?.geometryBarrelRoute?.targetRocketPointId).toBeUndefined();
     expect(deleteInteractiveMapPoint(config, 1)).toBeNull();
+  });
+
+  it('should clear idle fruit plate matches that target a deleted wall crack', () => {
+    const wallCrack: InteractiveMapPoint = {
+      id: 'wall-crack',
+      category: 'wallCrack',
+      position: { x: 0.8, y: 0.7 },
+    };
+    const fruitPlate: InteractiveMapPoint = {
+      id: 'fruit-plate',
+      category: 'idleFruitPlate',
+      position: { x: 0.1, y: 0.2 },
+      targetWallCrackPointId: 'wall-crack',
+    };
+
+    const updated = deleteInteractiveMapPoint({ ...config, points: [wallCrack, fruitPlate] }, 0);
+
+    expect(updated?.points[0]?.targetWallCrackPointId).toBeUndefined();
   });
 
   it('should convert minimap pixels to clamped normalized coordinates', () => {

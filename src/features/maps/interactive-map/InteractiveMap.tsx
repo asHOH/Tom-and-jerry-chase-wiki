@@ -53,6 +53,7 @@ import {
   getDefaultMapPointRelatedEntries,
   getGeometryBarrelInstructions,
   getGeometryBarrelTarget,
+  getIdleFruitPlateTarget,
   getInteractiveMapAssetUrl,
   getMapBounds,
   getMapPointRelatedEntryDescriptionUrl,
@@ -88,17 +89,19 @@ type EditorMode =
   | 'addPoint'
   | 'drawRoom'
   | 'placeGeometryBarrelFirecracker'
-  | 'selectGeometryBarrelRocket';
+  | 'selectGeometryBarrelRocket'
+  | 'selectIdleFruitPlateWallCrack';
 
 const CATEGORY_ICONS: Partial<Record<MapPointCategory, string>> = {
   cheese: '/images/items/奶酪.png',
   rocket: '/images/items/火箭.png',
   drink: '/images/items/神秘饮料.png',
   wallCrack: '/images/fixtures/墙缝.png',
+  idleFruitPlate: '/images/items/果盘.png',
   geometryBarrel: '/images/entities/火药桶.png',
 };
 
-const FILTER_STORAGE_KEY = 'interactive-map:visible-categories';
+const FILTER_STORAGE_KEY = 'interactive-map:visible-categories:v2';
 const HOTSPOT_CATEGORIES = new Set<MapPointCategory>(['teleport', ...ALWAYS_VISIBLE_CATEGORIES]);
 const DETAILS_PANEL_DESKTOP_BREAKPOINT = 768;
 const DETAILS_PANEL_DESKTOP_WIDTH = 320;
@@ -165,9 +168,11 @@ const makeIcon = (
           ? 1.1
           : point.category === 'wallCrack'
             ? 0.65
-            : point.category === 'geometryBarrel'
-              ? 0.5
-              : 1;
+            : point.category === 'idleFruitPlate'
+              ? 0.75
+              : point.category === 'geometryBarrel'
+                ? 0.5
+                : 1;
   const content = connectionBadge
     ? connectionBadge
     : isInvisible
@@ -427,6 +432,7 @@ type MapPointMarkerProps = {
   onMovePoint: (pointIndex: number, position: MapCoordinate) => void;
   onOpenPoint: (pointIndex: number) => void;
   onSelectGeometryBarrelTarget?: ((pointIndex: number) => void) | undefined;
+  onSelectIdleFruitPlateTarget?: ((pointIndex: number) => void) | undefined;
   point: InteractiveMapPoint;
   pointIndex: number;
   selected: boolean;
@@ -440,6 +446,7 @@ const MapPointMarker = memo(function MapPointMarker({
   onMovePoint,
   onOpenPoint,
   onSelectGeometryBarrelTarget,
+  onSelectIdleFruitPlateTarget,
   point,
   pointIndex,
   selected,
@@ -459,6 +466,10 @@ const MapPointMarker = memo(function MapPointMarker({
         onSelectGeometryBarrelTarget?.(pointIndex);
         return;
       }
+      if (editorMode === 'selectIdleFruitPlateWallCrack') {
+        onSelectIdleFruitPlateTarget?.(pointIndex);
+        return;
+      }
       onOpenPoint(pointIndex);
     };
 
@@ -474,7 +485,15 @@ const MapPointMarker = memo(function MapPointMarker({
         onMovePoint(pointIndex, latLngToCoordinate(markerPosition.lat, markerPosition.lng, config));
       },
     };
-  }, [config, editorMode, onMovePoint, onOpenPoint, onSelectGeometryBarrelTarget, pointIndex]);
+  }, [
+    config,
+    editorMode,
+    onMovePoint,
+    onOpenPoint,
+    onSelectGeometryBarrelTarget,
+    onSelectIdleFruitPlateTarget,
+    pointIndex,
+  ]);
 
   return (
     <Marker
@@ -500,6 +519,7 @@ type MapPointLayerProps = {
   onMovePoint: (pointIndex: number, position: MapCoordinate) => void;
   onOpenPoint: (pointIndex: number) => void;
   onSelectGeometryBarrelTarget: (pointIndex: number) => void;
+  onSelectIdleFruitPlateTarget: (pointIndex: number) => void;
   selectedPointIndex: number | null;
   visibleCategories: ReadonlySet<MapPointCategory>;
   zoom: number;
@@ -514,6 +534,7 @@ const MapPointLayer = memo(function MapPointLayer({
   onMovePoint,
   onOpenPoint,
   onSelectGeometryBarrelTarget,
+  onSelectIdleFruitPlateTarget,
   selectedPointIndex,
   visibleCategories,
   zoom,
@@ -525,6 +546,7 @@ const MapPointLayer = memo(function MapPointLayer({
         .filter(
           ({ point }) =>
             (editorMode === 'selectGeometryBarrelRocket' && point.category === 'rocket') ||
+            (editorMode === 'selectIdleFruitPlateWallCrack' && point.category === 'wallCrack') ||
             isPointVisible(point, zoom, visibleCategories, hiddenSubtypes)
         ),
     [config.points, editorMode, hiddenSubtypes, visibleCategories, zoom]
@@ -540,7 +562,9 @@ const MapPointLayer = memo(function MapPointLayer({
             : undefined
         : editorMode === 'selectGeometryBarrelRocket' && point.category === 'rocket'
           ? 'endpoint'
-          : undefined;
+          : editorMode === 'selectIdleFruitPlateWallCrack' && point.category === 'wallCrack'
+            ? 'endpoint'
+            : undefined;
 
     return (
       <MapPointMarker
@@ -553,6 +577,9 @@ const MapPointLayer = memo(function MapPointLayer({
         onOpenPoint={onOpenPoint}
         onSelectGeometryBarrelTarget={
           editorMode === 'selectGeometryBarrelRocket' ? onSelectGeometryBarrelTarget : undefined
+        }
+        onSelectIdleFruitPlateTarget={
+          editorMode === 'selectIdleFruitPlateWallCrack' ? onSelectIdleFruitPlateTarget : undefined
         }
         point={point}
         pointIndex={pointIndex}
@@ -874,6 +901,9 @@ export default function InteractiveMap({
   const geometryBarrelTarget = selectedPoint
     ? getGeometryBarrelTarget(config, selectedPoint)
     : null;
+  const idleFruitPlateTarget = selectedPoint
+    ? getIdleFruitPlateTarget(config, selectedPoint)
+    : null;
   const isSelectedGeometryBarrelRouteComplete = selectedPoint
     ? isGeometryBarrelRouteComplete(config, selectedPoint)
     : false;
@@ -883,8 +913,10 @@ export default function InteractiveMap({
     if (connectedPoint?.point.id) ids.add(connectedPoint.point.id);
     if (selectedPoint?.id && geometryBarrelTarget) ids.add(selectedPoint.id);
     if (geometryBarrelTarget?.point.id) ids.add(geometryBarrelTarget.point.id);
+    if (selectedPoint?.id && idleFruitPlateTarget) ids.add(selectedPoint.id);
+    if (idleFruitPlateTarget?.point.id) ids.add(idleFruitPlateTarget.point.id);
     return ids;
-  }, [connectedPoint, geometryBarrelTarget, selectedPoint]);
+  }, [connectedPoint, geometryBarrelTarget, idleFruitPlateTarget, selectedPoint]);
   const mapBounds = useMemo(
     () =>
       getMapBounds({
@@ -1124,6 +1156,11 @@ export default function InteractiveMap({
     openPoint(geometryBarrelTarget.pointIndex);
   };
 
+  const navigateToIdleFruitPlateTarget = () => {
+    if (!idleFruitPlateTarget) return;
+    openPoint(idleFruitPlateTarget.pointIndex);
+  };
+
   const selectGeometryBarrelTarget = useCallback(
     (targetPointIndex: number) => {
       const targetPoint = config.points[targetPointIndex];
@@ -1132,6 +1169,23 @@ export default function InteractiveMap({
       setEditorMode('browse');
     },
     [config.points, updateSelectedGeometryBarrelRoute]
+  );
+
+  const selectIdleFruitPlateTarget = useCallback(
+    (targetPointIndex: number) => {
+      const targetPoint = config.points[targetPointIndex];
+      if (
+        selectedPointIndex === null ||
+        !targetPoint ||
+        targetPoint.category !== 'wallCrack' ||
+        !targetPoint.id
+      ) {
+        return;
+      }
+      updatePoint(selectedPointIndex, { targetWallCrackPointId: targetPoint.id });
+      setEditorMode('browse');
+    },
+    [config.points, selectedPointIndex, updatePoint]
   );
 
   const connectSelectedPoint = (targetPointId: string) => {
@@ -1335,6 +1389,17 @@ export default function InteractiveMap({
               <Tooltip>小鞭炮放置位置</Tooltip>
             </Marker>
           )}
+        {selectedPoint?.category === 'idleFruitPlate' && idleFruitPlateTarget && (
+          <Polyline
+            positions={[
+              coordinateToLatLng(selectedPoint.position, config),
+              coordinateToLatLng(idleFruitPlateTarget.point.position, config),
+            ]}
+            pathOptions={{ color: '#a3e635', dashArray: '10 10', opacity: 0.9, weight: 4 }}
+          >
+            <Tooltip sticky>果盘可攻击的对应墙缝</Tooltip>
+          </Polyline>
+        )}
         <MapPointLayer
           config={config}
           connectedPointIndex={connectedPoint?.pointIndex ?? null}
@@ -1344,6 +1409,7 @@ export default function InteractiveMap({
           onMovePoint={movePoint}
           onOpenPoint={openPoint}
           onSelectGeometryBarrelTarget={selectGeometryBarrelTarget}
+          onSelectIdleFruitPlateTarget={selectIdleFruitPlateTarget}
           selectedPointIndex={selectedPointIndex}
           visibleCategories={visibleCategories}
           zoom={zoom}
@@ -1479,6 +1545,15 @@ export default function InteractiveMap({
           }}
           onPlaceGeometryBarrelFirecracker={() => setEditorMode('placeGeometryBarrelFirecracker')}
           onSelectGeometryBarrelRocket={() => setEditorMode('selectGeometryBarrelRocket')}
+          onSelectIdleFruitPlateWallCrack={() => setEditorMode('selectIdleFruitPlateWallCrack')}
+          onClearIdleFruitPlateTarget={() => {
+            if (selectedPointIndex === null) return;
+            const next = cloneInteractiveMap(config);
+            const point = next.points[selectedPointIndex];
+            if (!point || point.category !== 'idleFruitPlate') return;
+            delete point.targetWallCrackPointId;
+            updateConfig(next);
+          }}
           onClearGeometryBarrelTarget={() => {
             if (selectedPointIndex === null) return;
             const next = clearGeometryBarrelTarget(config, selectedPointIndex);
@@ -1521,10 +1596,12 @@ export default function InteractiveMap({
           geometryBarrelTarget={
             isSelectedGeometryBarrelRouteComplete ? (geometryBarrelTarget?.point ?? null) : null
           }
+          idleFruitPlateTarget={idleFruitPlateTarget?.point ?? null}
           isGeometryBarrelRouteComplete={isSelectedGeometryBarrelRouteComplete}
           isEditMode={isEditMode}
           onNavigateToConnectedPoint={navigateToConnectedPoint}
           onNavigateToGeometryBarrelTarget={navigateToGeometryBarrelTarget}
+          onNavigateToIdleFruitPlateTarget={navigateToIdleFruitPlateTarget}
           onClose={closePoint}
         />
       )}
@@ -1647,6 +1724,8 @@ type EditorPanelProps = {
   onPlaceGeometryBarrelFirecracker: () => void;
   onSelectGeometryBarrelRocket: () => void;
   onClearGeometryBarrelTarget: () => void;
+  onSelectIdleFruitPlateWallCrack: () => void;
+  onClearIdleFruitPlateTarget: () => void;
   onDeletePoint: () => void;
   onDeleteRoom: () => void;
   onMoveRoom: (x: number, y: number) => void;
@@ -1745,6 +1824,14 @@ function EditorPanel(props: EditorPanelProps) {
       {props.editorMode === 'selectGeometryBarrelRocket' && (
         <div className='space-y-2'>
           <p className='text-xs text-white/65'>点击地图上高亮的火箭，设为飞行路线终点。</p>
+          <button type='button' onClick={props.onCancelDrawing} className='underline'>
+            取消
+          </button>
+        </div>
+      )}
+      {props.editorMode === 'selectIdleFruitPlateWallCrack' && (
+        <div className='space-y-2'>
+          <p className='text-xs text-white/65'>点击地图上高亮的墙缝，设为果盘可远程攻击的目标。</p>
           <button type='button' onClick={props.onCancelDrawing} className='underline'>
             取消
           </button>
@@ -1849,6 +1936,27 @@ function EditorPanel(props: EditorPanelProps) {
                   onClick={props.onClearGeometryBarrelTarget}
                 >
                   清除目标火箭
+                </button>
+              )}
+            </div>
+          )}
+          {props.selectedPoint.category === 'idleFruitPlate' && (
+            <div className='space-y-2 rounded border border-lime-300/30 bg-lime-950/20 p-2'>
+              <p className='text-xs font-medium text-lime-200'>对应墙缝</p>
+              <button
+                type='button'
+                className='w-full rounded bg-lime-700 px-2 py-2 hover:bg-lime-600'
+                onClick={props.onSelectIdleFruitPlateWallCrack}
+              >
+                {props.selectedPoint.targetWallCrackPointId ? '重新选择墙缝' : '选择墙缝'}
+              </button>
+              {props.selectedPoint.targetWallCrackPointId && (
+                <button
+                  type='button'
+                  className='text-xs text-red-300 underline'
+                  onClick={props.onClearIdleFruitPlateTarget}
+                >
+                  清除对应墙缝
                 </button>
               )}
             </div>
@@ -2042,28 +2150,39 @@ function PointDetails({
   point,
   connectedPoint,
   geometryBarrelTarget,
+  idleFruitPlateTarget,
   isGeometryBarrelRouteComplete,
   isEditMode,
   onNavigateToConnectedPoint,
   onNavigateToGeometryBarrelTarget,
+  onNavigateToIdleFruitPlateTarget,
   onClose,
 }: {
   point: InteractiveMapPoint;
   connectedPoint: InteractiveMapPoint | null;
   geometryBarrelTarget: InteractiveMapPoint | null;
+  idleFruitPlateTarget: InteractiveMapPoint | null;
   isGeometryBarrelRouteComplete: boolean;
   isEditMode: boolean;
   onNavigateToConnectedPoint: () => void;
   onNavigateToGeometryBarrelTarget: () => void;
+  onNavigateToIdleFruitPlateTarget: () => void;
   onClose: () => void;
 }) {
   const hasCustomDescription = Boolean(point.description?.trim());
   const geometryBarrelInstructions = isGeometryBarrelRouteComplete
     ? getGeometryBarrelInstructions(point)
     : null;
+  const idleFruitPlateInstructions =
+    point.category === 'idleFruitPlate'
+      ? '老鼠在此点位购买果盘后，可使用果盘攻击地图标注的对应墙缝。'
+      : null;
   const relatedEntry = point.relatedEntries?.[0];
   const relatedEntryDescriptionUrl =
-    !hasCustomDescription && !geometryBarrelInstructions && relatedEntry
+    !hasCustomDescription &&
+    !geometryBarrelInstructions &&
+    !idleFruitPlateInstructions &&
+    relatedEntry
       ? getMapPointRelatedEntryDescriptionUrl(relatedEntry)
       : null;
   const { data: relatedEntryDescription, isLoading: isRelatedEntryDescriptionLoading } = useSWR<
@@ -2072,10 +2191,12 @@ function PointDetails({
 
   const description = geometryBarrelInstructions
     ? `${geometryBarrelInstructions}${hasCustomDescription ? `\n\n补充说明：\n${point.description}` : ''}`
-    : hasCustomDescription
-      ? point.description
-      : (relatedEntryDescription ??
-        (isRelatedEntryDescriptionLoading ? '' : isEditMode ? '请在标注面板中补充介绍。' : ''));
+    : idleFruitPlateInstructions
+      ? `${idleFruitPlateInstructions}${hasCustomDescription ? `\n\n补充说明：\n${point.description}` : ''}`
+      : hasCustomDescription
+        ? point.description
+        : (relatedEntryDescription ??
+          (isRelatedEntryDescriptionLoading ? '' : isEditMode ? '请在标注面板中补充介绍。' : ''));
 
   return (
     <aside className='absolute right-0 bottom-0 left-0 z-700 max-h-[52%] overflow-auto rounded-t-2xl bg-white p-5 text-slate-900 shadow-2xl md:top-0 md:left-auto md:h-full md:max-h-none md:w-80 md:rounded-none md:pt-14 dark:bg-slate-900 dark:text-white'>
@@ -2130,6 +2251,21 @@ function PointDetails({
             className='mt-3 w-full rounded-lg bg-orange-700 px-3 py-2 text-sm font-medium text-white hover:bg-orange-600'
           >
             查看目标火箭
+          </button>
+        </div>
+      )}
+      {idleFruitPlateTarget && (
+        <div className='mt-4 rounded-xl border border-lime-200 bg-lime-50 p-3 dark:border-lime-800 dark:bg-lime-950/50'>
+          <p className='text-xs text-slate-500 dark:text-slate-400'>果盘攻击路线</p>
+          <p className='mt-1 truncate text-sm font-semibold'>
+            目标：{idleFruitPlateTarget.subtype ?? '对应墙缝'}
+          </p>
+          <button
+            type='button'
+            onClick={onNavigateToIdleFruitPlateTarget}
+            className='mt-3 w-full rounded-lg bg-lime-700 px-3 py-2 text-sm font-medium text-white hover:bg-lime-600'
+          >
+            查看对应墙缝
           </button>
         </div>
       )}

@@ -486,6 +486,7 @@ export type MapPointCategory =
   | 'rocket'
   | 'drink'
   | 'wallCrack'
+  | 'idleFruitPlate'
   | 'mouseHole'
   | 'pipe'
   | 'geometryBarrel';
@@ -507,6 +508,7 @@ export type InteractiveMapPoint = {
   subtype?: string;
   position: MapCoordinate;
   description?: string;
+  targetWallCrackPointId?: string;
   geometryBarrelRoute?: GeometryBarrelRoute;
   connection?: {
     targetPointId: string;
