@@ -378,26 +378,28 @@ async function buildGotoIndex(): Promise<GotoIndex> {
   }
 
   // Achievements
-  for (const [name, ach] of Object.entries(achievements)) {
-    const goto: GotoResult = {
-      url: `/achievements/${encodeURIComponent(name)}`,
-      type: 'achievement',
-      name: ach.name,
-      description: ach.description,
-      imageUrl: ach.imageUrl,
-      ...(ach.factionId ? { factionId: ach.factionId } : {}),
-    };
-    push(byName, normalizeName(name), {
-      kind: 'achievement',
-      priority: PRIORITY.achievement.name,
-      goto,
-    });
-    for (const a of ach.aliases ?? []) {
-      push(byName, normalizeName(a), {
+  for (const factionId of ['cat', 'mouse'] as const) {
+    for (const [name, achievement] of Object.entries(achievements[factionId])) {
+      const goto: GotoResult = {
+        url: `/achievements/${factionId}/${encodeURIComponent(name)}`,
+        type: 'achievement',
+        name: achievement.name,
+        description: achievement.description,
+        imageUrl: achievement.imageUrl,
+        factionId,
+      };
+      push(byName, normalizeName(name), {
         kind: 'achievement',
-        priority: PRIORITY.achievement.alias,
+        priority: PRIORITY.achievement.name,
         goto,
       });
+      for (const alias of achievement.aliases ?? []) {
+        push(byName, normalizeName(alias), {
+          kind: 'achievement',
+          priority: PRIORITY.achievement.alias,
+          goto,
+        });
+      }
     }
   }
 

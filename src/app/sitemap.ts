@@ -114,13 +114,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.5,
   }));
 
-  const achievementsMap: MetadataRoute.Sitemap = Object.keys(achievements).map(
-    (achievementName) => ({
-      url: `${baseUrl}/achievements/${encodeURIComponent(achievementName)}`,
+  const achievementsMap: MetadataRoute.Sitemap = (['cat', 'mouse'] as const).flatMap((factionId) =>
+    Object.keys(achievements[factionId]).map((achievementName) => ({
+      url: `${baseUrl}/achievements/${factionId}/${encodeURIComponent(achievementName)}`,
       lastModified: buildTime,
-      changeFrequency: 'monthly',
+      changeFrequency: 'monthly' as const,
       priority: 0.4,
-    })
+    }))
   );
 
   const usagesMap: MetadataRoute.Sitemap = usagesSectionsList.map((section) => ({

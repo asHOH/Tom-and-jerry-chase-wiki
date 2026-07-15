@@ -67,7 +67,7 @@ type EntityWithName = { name: string };
  *
  * Special cases:
  * - `cards`: uses `id` as the name (Card type uses `id` not `name`)
- * - `special-skills`: entityId is split by `.` into factionId + skillId
+ * - `special-skills` and `achievements`: entityId is split by `.` into factionId + entity name
  * - `articles`: returns a synthetic object (Supabase-backed, no static data)
  */
 export function getEntityByTypeAndId(
@@ -100,8 +100,13 @@ export function getEntityByTypeAndId(
       return e ? { name: e.name } : undefined;
     }
     case 'achievements': {
-      const e = achievements[entityId];
-      return e ? { name: e.name } : undefined;
+      const dotIndex = entityId.indexOf('.');
+      if (dotIndex === -1) return undefined;
+      const factionId = entityId.slice(0, dotIndex);
+      const achievementName = entityId.slice(dotIndex + 1);
+      if (factionId !== 'cat' && factionId !== 'mouse') return undefined;
+      const achievement = achievements[factionId][achievementName];
+      return achievement ? { name: achievement.name } : undefined;
     }
     case 'cards': {
       const e = cards[entityId];

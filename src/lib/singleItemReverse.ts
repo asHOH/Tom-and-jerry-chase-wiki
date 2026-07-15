@@ -266,7 +266,10 @@ export function getCategorizedKeywords(singleItem: SingleItem): CategorizedKeywo
     } else if (singleItem.type == 'mode') {
       R = modes[singleItem.name]?.aliases;
     } else if (singleItem.type == 'achievement') {
-      R = achievements[singleItem.name]?.aliases;
+      const factionId = singleItem.factionId;
+      R = factionId
+        ? achievements[factionId][singleItem.name]?.aliases
+        : (achievements.cat[singleItem.name] ?? achievements.mouse[singleItem.name])?.aliases;
     } else if (singleItem.type == 'skill') {
       const skill = Object.values(characters)
         .flatMap((c) => c.skills)
@@ -494,7 +497,10 @@ export default function singleItemRreverse(
       return { name: a?.name || '', type: 'fixture', description };
     });
 
-  const AchievementResult = Object.values(achievements)
+  const AchievementResult = [
+    ...Object.values(achievements.cat),
+    ...Object.values(achievements.mouse),
+  ]
     .filter((a) => {
       return [a?.description, a?.detailedDescription]
         .filter((d): d is string => d != null)
@@ -505,7 +511,12 @@ export default function singleItemRreverse(
         [a?.description, a?.detailedDescription].filter((d): d is string => d != null),
         allKeywords
       );
-      return { name: a?.name || '', type: 'achievement', description };
+      return {
+        name: a?.name || '',
+        type: 'achievement',
+        factionId: a.factionId,
+        description,
+      };
     });
 
   const Result = [

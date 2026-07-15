@@ -186,7 +186,9 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
           );
           break;
         case 'achievement':
-          navigate(`/achievements/${encodeURIComponent(result.name)}`);
+          navigate(
+            `/achievements/${encodeURIComponent(result.factionId)}/${encodeURIComponent(result.name)}`
+          );
           break;
         case 'doc':
           navigate(result.path);

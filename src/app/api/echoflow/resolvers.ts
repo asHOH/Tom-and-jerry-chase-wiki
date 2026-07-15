@@ -476,24 +476,49 @@ export const resolvers: Record<string, PathResolver> = {
   },
 
   achievements: {
-    description: '成就列表',
+    description: '成就列表（猫/鼠阵营）',
     list: () => {
-      const achievementsList = recordToArray(achievements, 'name');
+      const achievementsList = (['cat', 'mouse'] as const).flatMap((factionId) =>
+        recordToArray(achievements[factionId], 'name').map((achievement) => ({
+          ...achievement,
+          factionId,
+        }))
+      );
       return createListResult(achievementsList, 'Achievement', '/achievements', true);
     },
     detail: async (id: string) => {
-      const achievement = findByKey(achievements, id);
+      const decodedId = decodeURIComponent(id);
+      const separatorIndex = decodedId.indexOf('.');
+      const requestedFaction =
+        separatorIndex === -1 ? undefined : decodedId.slice(0, separatorIndex);
+      const achievementName =
+        separatorIndex === -1 ? decodedId : decodedId.slice(separatorIndex + 1);
+      const factionId =
+        requestedFaction === 'cat' || requestedFaction === 'mouse'
+          ? requestedFaction
+          : achievements.cat[achievementName]
+            ? 'cat'
+            : 'mouse';
+      const achievement = achievements[factionId][achievementName];
       if (!achievement) return null;
-      const updateInfo = await getMergedUpdateTime('achievements', achievement.name);
+      const updateInfo = await getMergedUpdateTime(
+        'achievements',
+        `${factionId}.${achievementName}`
+      );
       return createDetailResult(
         achievement,
         'Achievement',
-        `/achievements/${achievement.name}`,
+        `/achievements/${factionId}/${achievementName}`,
         updateInfo?.date
       );
     },
     fullData: () => {
-      const fullAchievements = recordToArray(achievements, 'name');
+      const fullAchievements = (['cat', 'mouse'] as const).flatMap((factionId) =>
+        recordToArray(achievements[factionId], 'name').map((achievement) => ({
+          ...achievement,
+          factionId,
+        }))
+      );
       return createFullDataResult(fullAchievements, 'Achievement', '/achievements');
     },
   },
@@ -848,7 +873,11 @@ function getDetailIds(resourcePath: string): string[] {
         return Object.keys(modes);
       }
       case 'achievements': {
-        return Object.keys(achievements);
+        return (['cat', 'mouse'] as const).flatMap((factionId) =>
+          Object.keys(achievements[factionId]).map(
+            (achievementName) => `${factionId}.${achievementName}`
+          )
+        );
       }
       case 'special-skills': {
         const catSkills = Object.keys(specialSkills.cat);

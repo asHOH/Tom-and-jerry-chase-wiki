@@ -169,7 +169,8 @@ async function buildEditableAutocompleteCandidates(): Promise<EditableAutocomple
   addFromRecord(fixturesEdit as unknown as Record<string, unknown>, '场景');
   addFromRecord(mapsEdit as unknown as Record<string, unknown>, '地图');
   addFromRecord(modesEdit as unknown as Record<string, unknown>, '模式');
-  addFromRecord(achievementsEdit as unknown as Record<string, unknown>, '成就');
+  addFromRecord(achievementsEdit.cat as unknown as Record<string, unknown>, '成就');
+  addFromRecord(achievementsEdit.mouse as unknown as Record<string, unknown>, '成就');
   addFromRecord(specialSkillsEdit.cat as unknown as Record<string, unknown>, '特技');
   addFromRecord(specialSkillsEdit.mouse as unknown as Record<string, unknown>, '特技');
 

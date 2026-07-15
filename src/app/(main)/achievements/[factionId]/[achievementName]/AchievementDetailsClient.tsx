@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic';
 
-import type { Achievement } from '@/data/types';
+import type { Achievement, FactionId } from '@/data/types';
 import EditModePageShell from '@/components/ui/EditModePageShell';
 import { PageLoadingState } from '@/components/ui/LoadingState';
 
@@ -15,17 +15,17 @@ const AchievementDetails = dynamic(
 
 export default function AchievementDetailsClient({
   achievement,
+  factionId,
   achievementName,
 }: {
   achievement: Achievement;
+  factionId: FactionId;
   achievementName: string;
 }) {
+  const entityId = `${factionId}.${achievementName}`;
+
   return (
-    <EditModePageShell
-      entityType='achievements'
-      entityId={achievementName}
-      entityName={achievementName}
-    >
+    <EditModePageShell entityType='achievements' entityId={entityId} entityName={achievementName}>
       <AchievementDetails achievement={achievement} />
     </EditModePageShell>
   );

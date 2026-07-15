@@ -83,7 +83,7 @@ export const useSpecifyTypeNavigation = (
       return Object.keys(modes);
     }, []),
     achievement: useMemo(() => {
-      return Object.keys(achievements);
+      return [...Object.keys(achievements.cat), ...Object.keys(achievements.mouse)];
     }, []),
   };
 
@@ -137,32 +137,32 @@ export const useSpecifyTypeNavigation = (
     };
   }, []);
 
-  //adopt specialSkill's url
-  const specialUrl = useMemo(() => {
-    if (specifyType != 'specialSkill') return ['', ''];
-    const length = Object.keys(specialSkills['cat']).length;
-    if (currentIndex < length - 1) return ['cat/', 'cat/'];
-    if (currentIndex == length - 1 || currentIndex == length) return ['cat/', 'mouse/'];
-    if (currentIndex > length - 1) return ['mouse/', 'mouse/'];
-    return ['', ''];
+  const factionUrl = useMemo(() => {
+    if (specifyType !== 'specialSkill' && specifyType !== 'achievement') return ['', ''];
+    const catLength =
+      specifyType === 'specialSkill'
+        ? Object.keys(specialSkills.cat).length
+        : Object.keys(achievements.cat).length;
+    const getPrefix = (index: number) => (index < catLength ? 'cat/' : 'mouse/');
+    return [getPrefix(currentIndex - 1), getPrefix(currentIndex + 1)];
   }, [currentIndex, specifyType]);
 
   // Navigation functions
   const navigateToPrevious = useCallback(() => {
     if (previousTarget?.id) {
       router.push(
-        `/${specifyTypeUrl[specifyType]}/${specialUrl[0]}${encodeURIComponent(previousTarget.id)}`
+        `/${specifyTypeUrl[specifyType]}/${factionUrl[0]}${encodeURIComponent(previousTarget.id)}`
       );
     }
-  }, [previousTarget, router, specifyType, specifyTypeUrl, specialUrl]);
+  }, [previousTarget, router, specifyType, specifyTypeUrl, factionUrl]);
 
   const navigateToNext = useCallback(() => {
     if (nextTarget?.id) {
       router.push(
-        `/${specifyTypeUrl[specifyType]}/${specialUrl[1]}${encodeURIComponent(nextTarget.id)}`
+        `/${specifyTypeUrl[specifyType]}/${factionUrl[1]}${encodeURIComponent(nextTarget.id)}`
       );
     }
-  }, [nextTarget, router, specifyType, specifyTypeUrl, specialUrl]);
+  }, [nextTarget, router, specifyType, specifyTypeUrl, factionUrl]);
 
   return {
     previousTarget,

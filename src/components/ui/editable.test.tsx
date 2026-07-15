@@ -18,7 +18,7 @@ jest.mock('@/context/EditModeContext', () => ({
 }));
 
 jest.mock('@/hooks/useLocalEditEntity', () => ({
-  useLocalAchievement: () => ({ achievementName: 'test-achievement' }),
+  useLocalAchievement: () => ({ achievementName: 'test-achievement', factionId: 'cat' }),
   useLocalBuff: () => ({ buffName: 'test-buff' }),
   useLocalCard: () => ({ cardId: 'test-card' }),
   useLocalCharacter: () => ({ characterId: 'test-character' }),

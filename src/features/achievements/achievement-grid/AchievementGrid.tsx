@@ -18,16 +18,18 @@ export default function AchievementGridClient() {
   const [isDarkMode] = useDarkMode();
 
   const achievementsSnapshot = useSnapshot(achievementsEdit);
-  const filteredAchievements = Object.values(
-    achievementsSnapshot as Record<string, Achievement>
-  ).filter((achievement: Achievement) => {
+  const allAchievements = [
+    ...Object.values(achievementsSnapshot.cat),
+    ...Object.values(achievementsSnapshot.mouse),
+  ] as unknown as Achievement[];
+  const filteredAchievements = allAchievements.filter((achievement) => {
     if (selectedFactions.length === 0) return true;
     return selectedFactions.includes(achievement.factionId);
   });
 
   const achievementCardNodes = useMemo(() => {
     return filteredAchievements.map((achievement) => (
-      <CatalogGridItem key={achievement.name} clip>
+      <CatalogGridItem key={`${achievement.factionId}-${achievement.name}`} clip>
         <AchievementCardDisplay achievement={achievement} />
       </CatalogGridItem>
     ));

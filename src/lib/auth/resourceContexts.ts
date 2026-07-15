@@ -88,7 +88,8 @@ const collectRoots = (entityType: string, value: Json, roots: Set<string>) => {
   let foundRoot = false;
   if (typeof path === 'string') {
     const parts = path.split('.').filter(Boolean);
-    const root = entityType === 'specialSkills' ? parts[1] : parts[0];
+    const root =
+      entityType === 'specialSkills' || entityType === 'achievements' ? parts[1] : parts[0];
     if (root) {
       roots.add(root);
       foundRoot = true;
@@ -97,7 +98,8 @@ const collectRoots = (entityType: string, value: Json, roots: Set<string>) => {
     const parts = path.filter(
       (part): part is string => typeof part === 'string' && part.length > 0
     );
-    const root = entityType === 'specialSkills' ? parts[1] : parts[0];
+    const root =
+      entityType === 'specialSkills' || entityType === 'achievements' ? parts[1] : parts[0];
     if (root) {
       roots.add(root);
       foundRoot = true;

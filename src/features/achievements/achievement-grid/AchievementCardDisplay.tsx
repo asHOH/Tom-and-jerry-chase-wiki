@@ -12,17 +12,26 @@ export default function AchievementCardDisplay({ achievement }: { achievement: A
       title={achievement.name}
       imageSrc={achievement.imageUrl}
       imageAlt=''
-      href={`/achievements/${encodeURIComponent(achievement.name)}`}
+      href={`/achievements/${achievement.factionId}/${encodeURIComponent(achievement.name)}`}
       ariaLabel={`查看${achievement.name}成就详情`}
       tagsAriaLabel='成就阵营'
       tags={
-        <Tag
-          size='xs'
-          margin='compact'
-          colorStyles={getFactionButtonColors(achievement.factionId, isDarkMode)}
-        >
-          {achievement.factionId === 'cat' ? '猫阵营' : '鼠阵营'}
-        </Tag>
+        <>
+          <Tag
+            size='xs'
+            margin='compact'
+            colorStyles={getFactionButtonColors(achievement.factionId, isDarkMode)}
+          >
+            {achievement.factionId === 'cat' ? '猫阵营' : '鼠阵营'}
+          </Tag>
+          <Tag
+            size='xs'
+            margin='compact'
+            colorStyles={getFactionButtonColors(achievement.factionId, isDarkMode)}
+          >
+            {achievement.score}分
+          </Tag>
+        </>
       }
     />
   );

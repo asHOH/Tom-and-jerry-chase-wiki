@@ -71,5 +71,5 @@ export type SearchResult =
     }
   | ({ type: 'achievement'; matchContext: string; priority: number; isPinyinMatch: boolean } & Pick<
       Achievement,
-      'name' | 'imageUrl'
+      'name' | 'imageUrl' | 'factionId'
     >);

@@ -16,6 +16,11 @@ import {
 
 import { variantEdges } from '../data/variants';
 
+const findAchievement = (singleItem: SingleItem) => {
+  if (singleItem.factionId) return achievements[singleItem.factionId][singleItem.name];
+  return achievements.cat[singleItem.name] ?? achievements.mouse[singleItem.name];
+};
+
 export const getSingleItemHref = (singleItem: SingleItemOrGroup): string => {
   let result: string | undefined;
 
@@ -44,7 +49,8 @@ export const getSingleItemHref = (singleItem: SingleItemOrGroup): string => {
   } else if (singleItem.type === 'mode') {
     result = `/modes/${singleItem.name}`;
   } else if (singleItem.type === 'achievement') {
-    result = `/achievements/${singleItem.name}`;
+    const factionId = singleItem.factionId ?? findAchievement(singleItem)?.factionId;
+    result = `/achievements/${factionId}/${singleItem.name}`;
   } else if (singleItem.type === 'skill') {
     const skill = Object.values(characters)
       .flatMap((character) => character.skills)
@@ -98,7 +104,7 @@ export const getSingleItemImageUrl = (singleItem: SingleItemOrGroup): string => 
   } else if (singleItem.type === 'mode') {
     result = modes[singleItem.name]?.imageUrl;
   } else if (singleItem.type === 'achievement') {
-    result = achievements[singleItem.name]?.imageUrl;
+    result = findAchievement(singleItem)?.imageUrl;
   } else if (singleItem.type === 'skill') {
     const skill = Object.values(characters)
       .flatMap((character) => character.skills)
@@ -148,7 +154,7 @@ export const getSingleItemFactionId = (
     }
 
     if (singleItem.type === 'achievement') {
-      return achievements[singleItem.name]?.factionId;
+      return findAchievement(singleItem)?.factionId;
     }
 
     return undefined;

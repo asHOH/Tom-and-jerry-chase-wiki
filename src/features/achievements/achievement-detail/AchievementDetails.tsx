@@ -18,17 +18,26 @@ import AchievementAttributesCard from './AchievementAttributesCard';
 
 export default function AchievementDetailClient({ achievement }: { achievement: Achievement }) {
   const { isEditMode } = useEditMode();
-  const { achievementName } = useLocalAchievement();
+  const { achievementName, factionId } = useLocalAchievement();
   const ed = editable('achievements');
 
-  const rawLocalAchievement = achievementsEdit[achievementName];
+  const rawLocalAchievement =
+    factionId === 'cat'
+      ? achievementsEdit.cat[achievementName]
+      : factionId === 'mouse'
+        ? achievementsEdit.mouse[achievementName]
+        : undefined;
   const localAchievementSnapshot = useSnapshot(rawLocalAchievement ?? ({} as Achievement));
   const effectiveAchievement = rawLocalAchievement
     ? (localAchievementSnapshot as Achievement)
     : achievement;
 
   // Keyboard navigation
-  useSpecifyTypeKeyboardNavigation(effectiveAchievement.name, 'achievement');
+  useSpecifyTypeKeyboardNavigation(
+    effectiveAchievement.name,
+    'achievement',
+    effectiveAchievement.factionId === 'mouse'
+  );
 
   const { isDetailedView } = useAppContext();
   if (!effectiveAchievement) return null;
@@ -59,10 +68,18 @@ export default function AchievementDetailClient({ achievement }: { achievement: 
         >
           <div className='-mt-4 space-y-2'>
             <DetailTraitsCard
-              singleItem={{ name: effectiveAchievement.name, type: 'achievement' }}
+              singleItem={{
+                name: effectiveAchievement.name,
+                type: 'achievement',
+                factionId: effectiveAchievement.factionId,
+              }}
             />
             <DetailReverseCard
-              singleItem={{ name: effectiveAchievement.name, type: 'achievement' }}
+              singleItem={{
+                name: effectiveAchievement.name,
+                type: 'achievement',
+                factionId: effectiveAchievement.factionId,
+              }}
             />
           </div>
         </DetailTextSection>

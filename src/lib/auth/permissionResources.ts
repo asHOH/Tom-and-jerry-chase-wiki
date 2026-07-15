@@ -41,6 +41,13 @@ const specialSkillOptions = Object.entries(specialSkills).flatMap(([faction, ski
   }))
 );
 
+const achievementOptions = Object.entries(achievements).flatMap(([faction, entries]) =>
+  toOptions(entries as Record<string, unknown>).map((option) => ({
+    id: `${faction}.${option.id}`,
+    label: option.label,
+  }))
+);
+
 const staticOptions: Record<string, PermissionResourceOption[]> = {
   characters: toOptions(characters),
   cards: toOptions(cards),
@@ -51,7 +58,7 @@ const staticOptions: Record<string, PermissionResourceOption[]> = {
   maps: toOptions(maps),
   fixtures: toOptions(fixtures),
   modes: toOptions(modes),
-  achievements: toOptions(achievements),
+  achievements: achievementOptions,
   specialSkills: specialSkillOptions.map((option) => ({
     id: option.id.slice(option.id.indexOf('.') + 1),
     label: option.label,

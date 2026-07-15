@@ -182,7 +182,6 @@ function restoreEntitiesToCanonical(): void {
   GameDataManager.invalidate({ characters: true, cards: true });
 
   const canonicalRecordSources: Partial<Record<PublishableEntityType, Record<string, unknown>>> = {
-    achievements: achievements as Record<string, unknown>,
     buffs: buffs as Record<string, unknown>,
     cards: GameDataManager.getCards() as Record<string, unknown>,
     characters: GameDataManager.getCharacters() as Record<string, unknown>,
@@ -194,17 +193,18 @@ function restoreEntitiesToCanonical(): void {
   };
 
   Array.from(entityRegistry.entries()).forEach(([entityType, entity]) => {
-    if (entityType === 'specialSkills') {
+    if (entityType === 'specialSkills' || entityType === 'achievements') {
       const root = entity as unknown as {
         cat?: Record<string, unknown>;
         mouse?: Record<string, unknown>;
       };
+      const source = entityType === 'specialSkills' ? specialSkills : achievements;
 
       if (!root.cat) root.cat = {};
       if (!root.mouse) root.mouse = {};
 
-      replaceProxyRecord(root.cat, specialSkills.cat as Record<string, unknown>);
-      replaceProxyRecord(root.mouse, specialSkills.mouse as Record<string, unknown>);
+      replaceProxyRecord(root.cat, source.cat as Record<string, unknown>);
+      replaceProxyRecord(root.mouse, source.mouse as Record<string, unknown>);
       return;
     }
 

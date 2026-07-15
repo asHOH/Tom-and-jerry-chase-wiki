@@ -32,9 +32,6 @@ describe('useLocalEditEntity', () => {
     expect(renderHook(() => useLocalFixture()).result.current).toEqual({ fixtureName: '叉子' });
     expect(renderHook(() => useLocalMap()).result.current).toEqual({ mapName: '叉子' });
     expect(renderHook(() => useLocalMode()).result.current).toEqual({ modeName: '叉子' });
-    expect(renderHook(() => useLocalAchievement()).result.current).toEqual({
-      achievementName: '叉子',
-    });
   });
 
   it('should derive special skill faction id from the previous route segment', () => {
@@ -43,6 +40,15 @@ describe('useLocalEditEntity', () => {
     expect(renderHook(() => useLocalSpecialSkill()).result.current).toEqual({
       factionId: 'cat',
       skillId: '武器',
+    });
+  });
+
+  it('should derive achievement faction id from the previous route segment', () => {
+    mockUsePathname.mockReturnValue('/achievements/mouse/%E7%BF%BB%E7%9B%98/');
+
+    expect(renderHook(() => useLocalAchievement()).result.current).toEqual({
+      achievementName: '翻盘',
+      factionId: 'mouse',
     });
   });
 

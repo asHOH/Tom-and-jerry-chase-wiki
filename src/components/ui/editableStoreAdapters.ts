@@ -109,13 +109,26 @@ function getRecordWriteTarget(
         pathPrefix: routeKeys.entityName,
         record: entitiesEdit[routeKeys.entityName] as Record<string, unknown> | undefined,
       };
-    case 'achievements':
+    case 'achievements': {
+      const factionRoot =
+        routeKeys.factionId === 'cat'
+          ? achievementsEdit.cat
+          : routeKeys.factionId === 'mouse'
+            ? achievementsEdit.mouse
+            : undefined;
+      const pathPrefix =
+        routeKeys.factionId && routeKeys.achievementName
+          ? `${routeKeys.factionId}.${routeKeys.achievementName}`
+          : '';
       return {
-        entityId: routeKeys.achievementName,
+        entityId:
+          pathPrefix ||
+          `${routeKeys.factionId || '<unknown>'}.${routeKeys.achievementName || '<unknown>'}`,
         root: achievementsEdit as unknown as Record<string, unknown>,
-        pathPrefix: routeKeys.achievementName,
-        record: achievementsEdit[routeKeys.achievementName] as Record<string, unknown> | undefined,
+        pathPrefix,
+        record: factionRoot?.[routeKeys.achievementName] as Record<string, unknown> | undefined,
       };
+    }
     case 'buffs':
       return {
         entityId: routeKeys.buffName,

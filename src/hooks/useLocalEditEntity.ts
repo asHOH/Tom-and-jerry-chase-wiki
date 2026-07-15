@@ -58,5 +58,6 @@ export const useLocalSpecialSkill = () => {
 
 export const useLocalAchievement = () => {
   const achievementName = useRouteParamFromEnd(0);
-  return { achievementName };
+  const factionId = useRouteParamFromEnd(1);
+  return { achievementName, factionId };
 };

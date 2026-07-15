@@ -120,7 +120,7 @@ function parseDraftPath(entityType: DraftEntityType, path: string): DraftPathPar
   const parts = path.split('.').filter(Boolean);
   if (parts.length === 0) return null;
 
-  if (entityType === 'specialSkills') {
+  if (entityType === 'specialSkills' || entityType === 'achievements') {
     const factionPart = parts[0];
     const skillId = parts[1];
     if (!skillId) return null;

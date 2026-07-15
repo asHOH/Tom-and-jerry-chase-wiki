@@ -19,15 +19,23 @@ import Tag from '@/components/ui/Tag';
 export default function AchievementAttributesCard({ achievement }: { achievement: Achievement }) {
   const [isDarkMode] = useDarkMode();
   const { isEditMode } = useEditMode();
-  const { achievementName } = useLocalAchievement();
+  const { achievementName, factionId } = useLocalAchievement();
   const ed = editable('achievements');
 
   const achievementsSnapshot = useSnapshot(achievementsEdit);
   if (!achievement) return null;
 
-  const rawAchievement = achievementsEdit[achievementName];
+  const factionAchievements =
+    factionId === 'cat'
+      ? achievementsEdit.cat
+      : factionId === 'mouse'
+        ? achievementsEdit.mouse
+        : undefined;
+  const rawAchievement = factionAchievements?.[achievementName];
   const effectiveAchievement = (
-    isEditMode ? (achievementsSnapshot[achievementName] ?? achievement) : achievement
+    isEditMode && (factionId === 'cat' || factionId === 'mouse')
+      ? (achievementsSnapshot[factionId][achievementName] ?? achievement)
+      : achievement
   ) as Achievement;
 
   return (
@@ -83,6 +91,7 @@ export default function AchievementAttributesCard({ achievement }: { achievement
       }
       attributes={
         <>
+          <div className='text-sm font-normal'>成就分: {effectiveAchievement.score}</div>
           <div className='flex flex-wrap items-center gap-1 text-sm font-normal'>
             <span className='text-sm whitespace-pre'>阵营: </span>
             <Tag
@@ -97,12 +106,20 @@ export default function AchievementAttributesCard({ achievement }: { achievement
       }
       navigation={
         <NavigationButtonsRow>
-          <SpecifyTypeNavigationButtons currentId={achievement.name} specifyType='achievement' />
+          <SpecifyTypeNavigationButtons
+            currentId={achievement.name}
+            specifyType='achievement'
+            under={achievement.factionId === 'mouse'}
+          />
         </NavigationButtonsRow>
       }
       wikiHistory={
         <SingleItemWikiHistoryDisplay
-          singleItem={{ name: achievement.name, type: 'achievement' }}
+          singleItem={{
+            name: achievement.name,
+            type: 'achievement',
+            factionId: achievement.factionId,
+          }}
         />
       }
     />

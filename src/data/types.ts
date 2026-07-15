@@ -629,7 +629,7 @@ export type ModeDefinition = {
 export type Mode = ModeDefinition & { name: string; imageUrl: string };
 
 export type AchievementDefinition = {
-  factionId: FactionId;
+  score: number;
   description: string;
   detailedDescription?: string;
   imageUrl?: string; // We'll generate it automatically
@@ -639,7 +639,11 @@ export type AchievementDefinition = {
   specialImageUrl?: string;
 };
 
-export type Achievement = AchievementDefinition & { name: string; imageUrl: string };
+export type Achievement = AchievementDefinition & {
+  name: string;
+  factionId: FactionId;
+  imageUrl: string;
+};
 
 /**
  * Defines the type of data file change applied in the wiki.

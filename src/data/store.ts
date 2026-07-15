@@ -2,6 +2,8 @@ import { proxy } from 'valtio';
 
 import { GameDataManager } from '@/lib/dataManager';
 import { CharacterWithFaction, KnowledgeCardWithFaction } from '@/lib/types';
+import catAchievementsStatic from '@/features/achievements/data/catAchievements';
+import mouseAchievementsStatic from '@/features/achievements/data/mouseAchievements';
 import buffsStatic from '@/features/buffs/data/buffs';
 import entitiesStatic from '@/features/entities/data/entities';
 import fixturesStatic from '@/features/fixtures/data/fixtures';
@@ -10,7 +12,6 @@ import modesStatic from '@/features/modes/data/modes';
 import catSpecialSkillsStatic from '@/features/special-skills/data/catSpecialSkills';
 import mouseSpecialSkillsStatic from '@/features/special-skills/data/mouseSpecialSkills';
 
-import achievementsStatic from './achievements';
 import mapsStatic from './maps';
 import type {
   Achievement,
@@ -69,6 +70,10 @@ export const specialSkillsEdit: {
   mouse: createEditableStore(mouseSpecialSkillsStatic as Record<string, SpecialSkill>),
 });
 
-export const achievementsEdit: Record<string, Achievement> = createEditableStore(
-  achievementsStatic as Record<string, Achievement>
-);
+export const achievementsEdit: {
+  cat: Record<string, Achievement>;
+  mouse: Record<string, Achievement>;
+} = proxy({
+  cat: createEditableStore(catAchievementsStatic as Record<string, Achievement>),
+  mouse: createEditableStore(mouseAchievementsStatic as Record<string, Achievement>),
+});
