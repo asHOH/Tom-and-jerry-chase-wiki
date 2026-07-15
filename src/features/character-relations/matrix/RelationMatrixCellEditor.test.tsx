@@ -167,26 +167,17 @@ describe('RelationMatrixCellEditor', () => {
       ['counteredBy', 'counterEachOther'],
       '汤姆'
     );
-    expect(removeCharacterRelationItemFromKindsMock).toHaveBeenNthCalledWith(
-      2,
-      '汤姆',
-      ['counters', 'counterEachOther'],
-      '杰瑞'
-    );
-    expect(upsertCharacterRelationItemMock).toHaveBeenNthCalledWith(1, '杰瑞', 'counters', {
+    expect(removeCharacterRelationItemFromKindsMock).toHaveBeenCalledTimes(1);
+    expect(upsertCharacterRelationItemMock).toHaveBeenCalledWith('杰瑞', 'counters', {
       id: '汤姆',
       description: '保留说明',
       isMinor: true,
     });
-    expect(upsertCharacterRelationItemMock).toHaveBeenNthCalledWith(2, '汤姆', 'counteredBy', {
-      id: '杰瑞',
-      description: '保留说明',
-      isMinor: true,
-    });
+    expect(upsertCharacterRelationItemMock).toHaveBeenCalledTimes(1);
     expect(onOpenChange).toHaveBeenCalledWith(false);
   });
 
-  it('removes row and mirrored character relations', () => {
+  it('removes the canonical relation through its row projection', () => {
     const { onOpenChange } = renderEditor({
       selection: createSelection(createCell('counters')),
       onOpenChange: jest.fn(),
@@ -200,12 +191,7 @@ describe('RelationMatrixCellEditor', () => {
       ['counters', 'counteredBy', 'counterEachOther'],
       '汤姆'
     );
-    expect(removeCharacterRelationItemFromKindsMock).toHaveBeenNthCalledWith(
-      2,
-      '汤姆',
-      ['counteredBy', 'counters', 'counterEachOther'],
-      '杰瑞'
-    );
+    expect(removeCharacterRelationItemFromKindsMock).toHaveBeenCalledTimes(1);
     expect(upsertCharacterRelationItemMock).not.toHaveBeenCalled();
     expect(onOpenChange).toHaveBeenCalledWith(false);
   });

@@ -10,7 +10,7 @@ import { cards, specialSkills } from './static';
 
 const toItemKey = (item: SingleItem) => `${item.type}-${item.name}-${item.factionId ?? ''}`;
 
-const toCharacterRelationExportKey = (trait: CharacterRelationTrait) =>
+export const getCharacterRelationKey = (trait: CharacterRelationTrait) =>
   `${trait.relation.kind}-${toItemKey(trait.relation.subject)}-${toItemKey(trait.relation.target)}`;
 
 export const characterRelationValidationContext = {
@@ -35,7 +35,7 @@ export function buildCharacterRelationMap(
 ) {
   assertValidCharacterRelations(traits, validationContext);
 
-  return Object.fromEntries(traits.map((trait) => [toCharacterRelationExportKey(trait), trait]));
+  return Object.fromEntries(traits.map((trait) => [getCharacterRelationKey(trait), trait]));
 }
 
 export const characterRelationTraits: CharacterRelationTrait[] = splitCharacterRelationTraits;

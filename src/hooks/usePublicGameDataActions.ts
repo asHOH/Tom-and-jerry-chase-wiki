@@ -12,6 +12,7 @@ import { hasSupabasePublicConfig } from '@/lib/supabase/config';
 import {
   buffsEdit,
   cardsEdit,
+  characterRelationsEdit,
   characters,
   entitiesEdit,
   fixturesEdit,
@@ -26,6 +27,7 @@ import { getActionsStorageKey, withRecordingSuppressed } from '../lib/edit/diffU
 
 const clientPublicActionTargetRegistry: PublicActionTargetRegistry = {
   characters: [characters as unknown as Record<string, unknown>],
+  characterRelations: [characterRelationsEdit as unknown as Record<string, unknown>],
   cards: [cardsEdit as unknown as Record<string, unknown>],
   entities: [entitiesEdit as unknown as Record<string, unknown>],
   buffs: [buffsEdit as unknown as Record<string, unknown>],

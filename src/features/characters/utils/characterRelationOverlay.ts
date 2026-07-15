@@ -1,13 +1,16 @@
-import { CHARACTER_RELATION_KINDS } from '@/lib/edit/characterRelationActions';
-import { setNestedProperty } from '@/lib/editUtils';
-import { characters } from '@/data/store';
-import type { CharacterRelationItem, TraitRelationKind } from '@/data/types';
+import { getCharacterRelationKey } from '@/data/characterRelations';
+import { cardsEdit, characterRelationsEdit, characters, specialSkillsEdit } from '@/data/store';
+import type {
+  CharacterRelation,
+  CharacterRelationItem,
+  CharacterRelationTrait,
+  FactionId,
+  SingleItem,
+  TraitRelationKind,
+} from '@/data/types';
 import { getCharacterRelation } from '@/features/characters/utils/relationReadModel';
 
-export type EditableCharacterRelations = Record<TraitRelationKind, CharacterRelationItem[]>;
-type CharacterRelationOverlayRecord = Partial<
-  Record<TraitRelationKind, readonly Readonly<CharacterRelationItem>[]>
->;
+export type EditableCharacterRelations = CharacterRelation;
 
 const normalizeCharacterRelationItem = (
   item: Readonly<CharacterRelationItem>
@@ -25,53 +28,196 @@ const isSameCharacterRelationItem = (
   (left.description ?? '') === (right.description ?? '') &&
   !!left.isMinor === !!right.isMinor;
 
-const ownsCharacterRelationKind = (characterId: string, relationKind: TraitRelationKind) => {
-  const characterRecord = characters[characterId] as
-    Partial<Record<TraitRelationKind, CharacterRelationItem[]>> | undefined;
-
-  return Array.isArray(characterRecord?.[relationKind]);
+const getInverseCharacterRelationKind = (
+  relationKind: TraitRelationKind
+): TraitRelationKind | null => {
+  switch (relationKind) {
+    case 'counters':
+      return 'counteredBy';
+    case 'counteredBy':
+      return 'counters';
+    case 'counterEachOther':
+    case 'collaborators':
+      return relationKind;
+    case 'countersKnowledgeCards':
+    case 'counteredByKnowledgeCards':
+    case 'countersSpecialSkills':
+    case 'counteredBySpecialSkills':
+    case 'advantageMaps':
+    case 'advantageModes':
+    case 'disadvantageMaps':
+    case 'disadvantageModes':
+      return null;
+  }
 };
 
-// Edit-mode relation writes remain page-local overlays under characters.<id>.<relationKind>
-// so draft counting, publish payloads, and public replay keep the existing path contract.
-export const getCharacterRelationDescriptionPath = (
+const getRelationTargetType = (relationKind: TraitRelationKind): SingleItem['type'] => {
+  switch (relationKind) {
+    case 'counters':
+    case 'counteredBy':
+    case 'counterEachOther':
+    case 'collaborators':
+      return 'character';
+    case 'countersKnowledgeCards':
+    case 'counteredByKnowledgeCards':
+      return 'knowledgeCard';
+    case 'countersSpecialSkills':
+    case 'counteredBySpecialSkills':
+      return 'specialSkill';
+    case 'advantageMaps':
+    case 'disadvantageMaps':
+      return 'map';
+    case 'advantageModes':
+    case 'disadvantageModes':
+      return 'mode';
+  }
+};
+
+const getOppositeFactionId = (factionId: FactionId): FactionId =>
+  factionId === 'cat' ? 'mouse' : 'cat';
+
+const getTargetFactionId = (
+  characterId: string,
   relationKind: TraitRelationKind,
-  index: number
-) => `${relationKind}.${index}`;
+  targetId: string
+): FactionId | undefined => {
+  const targetType = getRelationTargetType(relationKind);
+  if (targetType === 'knowledgeCard') {
+    return cardsEdit[targetId]?.factionId;
+  }
+
+  if (targetType !== 'specialSkill') return undefined;
+
+  const characterFactionId = characters[characterId]?.factionId;
+  if (characterFactionId) {
+    const oppositeFactionId = getOppositeFactionId(characterFactionId);
+    if (specialSkillsEdit[oppositeFactionId][targetId]) return oppositeFactionId;
+  }
+
+  const hasCatSkill = !!specialSkillsEdit.cat[targetId];
+  const hasMouseSkill = !!specialSkillsEdit.mouse[targetId];
+  if (hasCatSkill !== hasMouseSkill) return hasCatSkill ? 'cat' : 'mouse';
+  return undefined;
+};
+
+const createTarget = (
+  characterId: string,
+  relationKind: TraitRelationKind,
+  targetId: string
+): SingleItem => {
+  const type = getRelationTargetType(relationKind);
+  const factionId = getTargetFactionId(characterId, relationKind, targetId);
+  return {
+    name: targetId,
+    type,
+    ...(factionId ? { factionId } : {}),
+  };
+};
+
+const isProjectedRelation = (
+  trait: CharacterRelationTrait,
+  characterId: string,
+  relationKind: TraitRelationKind,
+  targetId: string
+): boolean => {
+  const { relation } = trait;
+  if (
+    relation.kind === relationKind &&
+    relation.subject.type === 'character' &&
+    relation.subject.name === characterId &&
+    relation.target.name === targetId
+  ) {
+    return true;
+  }
+
+  if (
+    relation.target.type !== 'character' ||
+    relation.target.name !== characterId ||
+    relation.subject.type !== 'character' ||
+    relation.subject.name !== targetId
+  ) {
+    return false;
+  }
+
+  return getInverseCharacterRelationKind(relation.kind) === relationKind;
+};
+
+const findProjectedRelations = (
+  characterId: string,
+  relationKinds: readonly TraitRelationKind[],
+  targetId: string
+): Array<[string, CharacterRelationTrait]> =>
+  Object.entries(characterRelationsEdit).filter(([, trait]) =>
+    relationKinds.some((relationKind) =>
+      isProjectedRelation(trait, characterId, relationKind, targetId)
+    )
+  );
+
+// Relation descriptions are saved through the callbacks below. Returning no
+// character path prevents the generic inline editor from reading legacy fields.
+export const getCharacterRelationDescriptionPath = (
+  _relationKind: TraitRelationKind,
+  _index: number
+): undefined => undefined;
 
 export const getEditableCharacterRelations = (
   characterId: string,
-  character?: unknown
-): EditableCharacterRelations => {
-  const characterRecord = character ?? characters[characterId];
-  const projectedRelations = getCharacterRelation(characters, characterId);
+  _character?: unknown
+): EditableCharacterRelations => getCharacterRelation(characters, characterId);
 
-  if (!characterRecord || typeof characterRecord !== 'object') {
-    return projectedRelations as EditableCharacterRelations;
-  }
+export const createCharacterRelationItem = (id: string): CharacterRelationItem => ({
+  id,
+  description: '',
+  isMinor: false,
+});
 
-  const relationRecord = characterRecord as CharacterRelationOverlayRecord;
-  const next = { ...projectedRelations } as EditableCharacterRelations;
-
-  CHARACTER_RELATION_KINDS.forEach((relationKind) => {
-    const stored = relationRecord[relationKind];
-    if (Array.isArray(stored)) {
-      next[relationKind] = stored.map(normalizeCharacterRelationItem);
-    }
-  });
-
-  return next;
-};
-
-const writeCharacterRelationItems = (
+export const upsertCharacterRelationItem = (
   characterId: string,
   relationKind: TraitRelationKind,
-  items: CharacterRelationItem[]
+  item: CharacterRelationItem
 ) => {
-  setNestedProperty(characters, `${characterId}.${relationKind}`, items);
-  if (characters[characterId]) {
-    (characters[characterId] as Record<string, unknown>)[relationKind] = items;
+  const normalizedItem = normalizeCharacterRelationItem(item);
+  const existing = findProjectedRelations(characterId, [relationKind], normalizedItem.id)[0];
+
+  if (existing) {
+    const [key, trait] = existing;
+    const currentItem = {
+      id: normalizedItem.id,
+      description: trait.relation.description ?? trait.description ?? '',
+      isMinor: !!trait.relation.isMinor,
+    };
+    if (isSameCharacterRelationItem(currentItem, normalizedItem)) return;
+
+    const { description: _relationDescription, ...relation } = trait.relation;
+    characterRelationsEdit[key] = {
+      description: normalizedItem.description ?? '',
+      relation: {
+        ...relation,
+        isMinor: normalizedItem.isMinor,
+      },
+    };
+    return;
   }
+
+  const trait: CharacterRelationTrait = {
+    description: normalizedItem.description ?? '',
+    relation: {
+      kind: relationKind,
+      subject: { name: characterId, type: 'character' },
+      target: createTarget(characterId, relationKind, normalizedItem.id),
+      isMinor: normalizedItem.isMinor,
+    },
+  };
+  characterRelationsEdit[getCharacterRelationKey(trait)] = trait;
+};
+
+export const addCharacterRelationItem = (
+  characterId: string,
+  relationKind: TraitRelationKind,
+  item: CharacterRelationItem
+) => {
+  if (findProjectedRelations(characterId, [relationKind], item.id).length > 0) return;
+  upsertCharacterRelationItem(characterId, relationKind, item);
 };
 
 const updateCharacterRelationItem = (
@@ -80,54 +226,11 @@ const updateCharacterRelationItem = (
   itemId: string,
   updater: (item: CharacterRelationItem) => CharacterRelationItem
 ) => {
-  const current = getEditableCharacterRelations(characterId)[relationKind] ?? [];
-  writeCharacterRelationItems(
-    characterId,
-    relationKind,
-    current.map((item) => (item.id === itemId ? updater(item) : item))
+  const current = getEditableCharacterRelations(characterId)[relationKind].find(
+    (item) => item.id === itemId
   );
-};
-
-export const createCharacterRelationItem = (id: string): CharacterRelationItem => ({
-  id,
-  description: '',
-  isMinor: false,
-});
-
-export const addCharacterRelationItem = (
-  characterId: string,
-  relationKind: TraitRelationKind,
-  item: CharacterRelationItem
-) => {
-  const current = getEditableCharacterRelations(characterId)[relationKind] ?? [];
-  if (current.some((existing) => existing.id === item.id)) return;
-  writeCharacterRelationItems(characterId, relationKind, [...current, item]);
-};
-
-export const upsertCharacterRelationItem = (
-  characterId: string,
-  relationKind: TraitRelationKind,
-  item: CharacterRelationItem
-) => {
-  const normalizedItem = normalizeCharacterRelationItem(item);
-  const current = getEditableCharacterRelations(characterId)[relationKind] ?? [];
-  const currentIndex = current.findIndex((existing) => existing.id === normalizedItem.id);
-
-  if (currentIndex === -1) {
-    writeCharacterRelationItems(characterId, relationKind, [...current, normalizedItem]);
-    return;
-  }
-
-  const currentItem = current[currentIndex];
-  if (currentItem && isSameCharacterRelationItem(currentItem, normalizedItem)) {
-    return;
-  }
-
-  writeCharacterRelationItems(
-    characterId,
-    relationKind,
-    current.map((existing, index) => (index === currentIndex ? normalizedItem : existing))
-  );
+  if (!current) return;
+  upsertCharacterRelationItem(characterId, relationKind, updater(current));
 };
 
 export const updateCharacterRelationDescription = (
@@ -159,12 +262,9 @@ export const removeCharacterRelationItem = (
   relationKind: TraitRelationKind,
   itemId: string
 ) => {
-  const current = getEditableCharacterRelations(characterId)[relationKind] ?? [];
-  writeCharacterRelationItems(
-    characterId,
-    relationKind,
-    current.filter((item) => item.id !== itemId)
-  );
+  findProjectedRelations(characterId, [relationKind], itemId).forEach(([key]) => {
+    delete characterRelationsEdit[key];
+  });
 };
 
 export const removeCharacterRelationItemFromKinds = (
@@ -172,18 +272,7 @@ export const removeCharacterRelationItemFromKinds = (
   relationKinds: readonly TraitRelationKind[],
   itemId: string
 ) => {
-  relationKinds.forEach((relationKind) => {
-    const current = getEditableCharacterRelations(characterId)[relationKind] ?? [];
-    const hasTargetItem = current.some((item) => item.id === itemId);
-
-    if (!hasTargetItem && !ownsCharacterRelationKind(characterId, relationKind)) {
-      return;
-    }
-
-    writeCharacterRelationItems(
-      characterId,
-      relationKind,
-      current.filter((item) => item.id !== itemId)
-    );
+  findProjectedRelations(characterId, relationKinds, itemId).forEach(([key]) => {
+    delete characterRelationsEdit[key];
   });
 };

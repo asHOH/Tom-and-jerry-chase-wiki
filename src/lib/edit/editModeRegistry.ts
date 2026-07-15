@@ -10,12 +10,14 @@ import {
   subscribers,
   withRecordingSuppressed,
 } from '@/lib/edit/diffUtils';
+import characterRelations from '@/data/characterRelations';
 import {
   achievements,
   achievementsEdit,
   buffs,
   buffsEdit,
   cardsEdit,
+  characterRelationsEdit,
   characters,
   entities,
   entitiesEdit,
@@ -33,6 +35,7 @@ import {
 
 export const PUBLISHABLE_ENTITY_TYPES = [
   'characters',
+  'characterRelations',
   'cards',
   'entities',
   'buffs',
@@ -51,6 +54,7 @@ unstable_enableOp(true);
 const entityRegistry = new Map<string, Record<string, unknown>>([
   ['achievements', achievementsEdit as unknown as Record<string, unknown>],
   ['characters', characters],
+  ['characterRelations', characterRelationsEdit as unknown as Record<string, unknown>],
   ['cards', cardsEdit],
   ['entities', entitiesEdit as unknown as Record<string, unknown>],
   ['buffs', buffsEdit as unknown as Record<string, unknown>],
@@ -185,6 +189,7 @@ function restoreEntitiesToCanonical(): void {
     achievements: achievements as Record<string, unknown>,
     buffs: buffs as Record<string, unknown>,
     cards: GameDataManager.getCards() as Record<string, unknown>,
+    characterRelations: characterRelations as Record<string, unknown>,
     characters: GameDataManager.getCharacters() as Record<string, unknown>,
     entities: entities as Record<string, unknown>,
     fixtures: fixtures as Record<string, unknown>,

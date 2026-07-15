@@ -1,4 +1,6 @@
-import characterRelations from '@/data/characterRelations';
+import { subscribe } from 'valtio';
+
+import { characterRelationsEdit } from '@/data/store';
 import type {
   CharacterRelationTrait,
   SingleItem,
@@ -53,7 +55,7 @@ const buildRelationIndex = (): RelationIndex => {
   const bySubject = new Map<RelationKey, TraitRelation[]>();
   const byTarget = new Map<RelationKey, TraitRelation[]>();
 
-  Object.values(characterRelations).forEach((trait) => {
+  Object.values(characterRelationsEdit).forEach((trait) => {
     const relation = normalizeTraitRelation(trait);
     if (!relation) return;
 
@@ -72,10 +74,15 @@ const buildRelationIndex = (): RelationIndex => {
   return { bySubject, byTarget };
 };
 
-// Relation traits are treated as static runtime data, so the shared index is
-// snapshotted once at module load and only rebuilt when a caller explicitly
-// opts into refresh after mutating the trait source.
-const relationIndex = buildRelationIndex();
+let relationIndex = buildRelationIndex();
+
+subscribe(
+  characterRelationsEdit,
+  () => {
+    relationIndex = buildRelationIndex();
+  },
+  true
+);
 
 const sortRelations = (relations: TraitRelation[]): TraitRelation[] => {
   const kindOrder = new Map(relationKindOrder.map((kind, index) => [kind, index]));

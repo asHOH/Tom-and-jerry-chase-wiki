@@ -26,4 +26,26 @@ describe('resourceContexts', () => {
       getGameActionResourceContexts('specialSkills', [{ path: 'cat.主动技能.冷却时间', value: 1 }])
     ).toEqual([{ resourceType: 'specialSkills', resourceId: '主动技能' }]);
   });
+
+  it('scopes characterRelations actions to every participating character', () => {
+    expect(
+      getGameActionResourceContexts('characterRelations', [
+        {
+          op: 'add',
+          path: 'relation-key',
+          newValue: {
+            description: '关系说明',
+            relation: {
+              kind: 'counters',
+              subject: { name: '杰瑞', type: 'character' },
+              target: { name: '汤姆', type: 'character' },
+            },
+          },
+        },
+      ])
+    ).toEqual([
+      { resourceType: 'characters', resourceId: '杰瑞' },
+      { resourceType: 'characters', resourceId: '汤姆' },
+    ]);
+  });
 });

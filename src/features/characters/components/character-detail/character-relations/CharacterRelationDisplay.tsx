@@ -7,8 +7,8 @@ import { AssetManager } from '@/lib/assetManager';
 import { useNavigation } from '@/hooks/useNavigation';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
-import { characters, mapsEdit, modesEdit, specialSkillsEdit } from '@/data/store';
-import type { CharacterRelationItem, FactionId, TraitRelationKind } from '@/data/types';
+import { characterRelationsEdit, mapsEdit, modesEdit, specialSkillsEdit } from '@/data/store';
+import type { FactionId, TraitRelationKind } from '@/data/types';
 import {
   getCharacterRelationDescriptionPath,
   getEditableCharacterRelations,
@@ -60,16 +60,14 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
   const mapsSnapshot = useSnapshot(mapsEdit);
   const modesSnapshot = useSnapshot(modesEdit);
   const specialSkillsSnapshot = useSnapshot(specialSkillsEdit);
+  const characterRelationsSnapshot = useSnapshot(characterRelationsEdit);
   const getImageUrl = React.useCallback(
     (targetId: string) =>
       AssetManager.getCharacterImageUrl(targetId, factionId === 'cat' ? 'mouse' : 'cat'),
     [factionId]
   );
-  const characterSnapshot = useSnapshot(characters[id]!);
-  const char = getEditableCharacterRelations(
-    id,
-    characterSnapshot as Partial<Record<TraitRelationKind, CharacterRelationItem[]>>
-  );
+  void characterRelationsSnapshot;
+  const char = getEditableCharacterRelations(id);
   const { handleSelectCharacter } = useAppContext();
   const { navigate } = useNavigation();
 

@@ -2,6 +2,7 @@ import type { Action, ActionHistoryEntry } from './diffUtils';
 
 export type DraftEntityType =
   | 'characters'
+  | 'characterRelations'
   | 'factions'
   | 'cards'
   | 'entities'
@@ -30,6 +31,7 @@ export type DraftItemLabelResolver = (draftPathParts: {
 
 const ENTITY_LABELS: Record<DraftEntityType, string> = {
   characters: '角色',
+  characterRelations: '角色关系',
   factions: '阵营',
   cards: '知识卡',
   entities: '衍生物',

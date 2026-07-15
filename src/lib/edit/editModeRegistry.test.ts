@@ -1,6 +1,6 @@
 import { waitFor } from '@testing-library/react';
 
-import { characters, items, itemsEdit } from '@/data';
+import { characterRelationsEdit, characters, items, itemsEdit } from '@/data';
 
 import { getActionsStorageKey, readActionHistory } from './diffUtils';
 import {
@@ -46,6 +46,7 @@ describe('editModeRegistry', () => {
   it('should expose all publishable entity registries', () => {
     expect(PUBLISHABLE_ENTITY_TYPES).toEqual([
       'characters',
+      'characterRelations',
       'cards',
       'entities',
       'buffs',
@@ -57,6 +58,7 @@ describe('editModeRegistry', () => {
       'achievements',
     ]);
     expect(getEntityRegistry().get('characters')).toBe(characters);
+    expect(getEntityRegistry().get('characterRelations')).toBe(characterRelationsEdit);
     expect(getEntityRegistry().get('items')).toBe(itemsEdit);
   });
 

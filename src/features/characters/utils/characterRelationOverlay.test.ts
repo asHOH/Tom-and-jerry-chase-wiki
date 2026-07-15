@@ -1,4 +1,5 @@
-import { characters } from '@/data';
+import type { CharacterRelationTrait, TraitRelationKind } from '@/data/types';
+import { characterRelationsEdit, characters } from '@/data';
 
 import {
   addCharacterRelationItem,
@@ -12,172 +13,121 @@ import {
   upsertCharacterRelationItem,
 } from './characterRelationOverlay';
 
-const cloneCharacters = () => structuredClone(characters);
-
-const restoreCharacters = (snapshot: Record<string, unknown>) => {
-  Object.keys(characters).forEach((key) => {
-    delete (characters as Record<string, unknown>)[key];
-  });
-
+const restoreRecord = (target: Record<string, unknown>, snapshot: Record<string, unknown>) => {
+  Object.keys(target).forEach((key) => delete target[key]);
   Object.entries(snapshot).forEach(([key, value]) => {
-    (characters as Record<string, unknown>)[key] = structuredClone(value);
+    target[key] = structuredClone(value);
   });
 };
 
+const findRelation = (
+  subjectId: string,
+  kind: TraitRelationKind,
+  targetId: string
+): [string, CharacterRelationTrait] | undefined =>
+  Object.entries(characterRelationsEdit).find(
+    ([, trait]) =>
+      trait.relation.subject.name === subjectId &&
+      trait.relation.kind === kind &&
+      trait.relation.target.name === targetId
+  );
+
 describe('characterRelationOverlay', () => {
-  let snapshot: Record<string, unknown>;
+  let relationSnapshot: Record<string, unknown>;
+  let characterSnapshot: Record<string, unknown>;
 
   beforeEach(() => {
-    snapshot = cloneCharacters() as Record<string, unknown>;
+    relationSnapshot = structuredClone(characterRelationsEdit) as Record<string, unknown>;
+    characterSnapshot = structuredClone(characters) as Record<string, unknown>;
   });
 
   afterEach(() => {
-    restoreCharacters(snapshot);
+    restoreRecord(characterRelationsEdit as Record<string, unknown>, relationSnapshot);
+    restoreRecord(characters as Record<string, unknown>, characterSnapshot);
   });
 
-  it('should expose relation description paths relative to the current character overlay', () => {
-    expect(getCharacterRelationDescriptionPath('counteredBy', 2)).toBe('counteredBy.2');
+  it('should not expose deprecated character relation description paths', () => {
+    expect(getCharacterRelationDescriptionPath('counteredBy', 2)).toBeUndefined();
   });
 
-  it('should prefer page-local overlay items over projected read-model items for editable views', () => {
-    const editableRelations = getEditableCharacterRelations('莱特宁', {
-      counteredBy: [
-        {
-          id: '__overlay_only__',
-          description: 'overlay relation',
-          isMinor: true,
-        },
-      ],
+  it('should ignore deprecated character relation fields in editable views', () => {
+    const expected = getEditableCharacterRelations('莱特宁');
+    const actual = getEditableCharacterRelations('莱特宁', {
+      counteredBy: [{ id: '__legacy__', description: 'legacy', isMinor: true }],
     });
 
-    expect(editableRelations.counteredBy).toEqual([
-      {
-        id: '__overlay_only__',
-        description: 'overlay relation',
-        isMinor: true,
-      },
-    ]);
+    expect(actual).toEqual(expected);
+    expect(actual.counteredBy).not.toEqual(
+      expect.arrayContaining([expect.objectContaining({ id: '__legacy__' })])
+    );
   });
 
-  it('should write relation overlay updates under characters.<id>.<relationKind>', () => {
+  it('should add and update canonical characterRelations entries without touching Character', () => {
     addCharacterRelationItem('莱特宁', 'counteredBy', createCharacterRelationItem('__added__'));
-    updateCharacterRelationDescription('莱特宁', 'counteredBy', '__added__', '  overlay note  ');
+    updateCharacterRelationDescription('莱特宁', 'counteredBy', '__added__', '  canonical note  ');
     toggleCharacterRelationMinor('莱特宁', 'counteredBy', '__added__');
 
-    expect(
-      (
-        characters['莱特宁'] as unknown as {
-          counteredBy?: Array<{ id: string; description: string; isMinor: boolean }>;
-        }
-      ).counteredBy
-    ).toEqual(
-      expect.arrayContaining([
-        {
-          id: '__added__',
-          description: 'overlay note',
-          isMinor: true,
-        },
-      ])
-    );
-  });
-
-  it('should remove relation overlay items without affecting other entries', () => {
-    (
-      characters['莱特宁'] as unknown as {
-        counteredBy?: Array<{ id: string; description: string; isMinor: boolean }>;
-      }
-    ).counteredBy = [
-      {
-        id: '__keep__',
-        description: 'keep me',
-        isMinor: false,
-      },
-      {
-        id: '__remove__',
-        description: 'remove me',
+    expect(findRelation('莱特宁', 'counteredBy', '__added__')?.[1]).toEqual({
+      description: 'canonical note',
+      relation: {
+        kind: 'counteredBy',
+        subject: { name: '莱特宁', type: 'character' },
+        target: { name: '__added__', type: 'character' },
         isMinor: true,
       },
-    ];
+    });
+    expect(
+      (characters['莱特宁'] as unknown as Record<string, unknown>).counteredBy
+    ).toBeUndefined();
+  });
 
+  it('should update inverse projections by replacing the existing canonical edge', () => {
+    const projected = getEditableCharacterRelations('莱特宁').counteredBy[0]!;
+    const existing = Object.entries(characterRelationsEdit).find(([, trait]) => {
+      const relation = trait.relation;
+      return (
+        (relation.subject.name === '莱特宁' &&
+          relation.target.name === projected.id &&
+          relation.kind === 'counteredBy') ||
+        (relation.subject.name === projected.id &&
+          relation.target.name === '莱特宁' &&
+          relation.kind === 'counters')
+      );
+    });
+    expect(existing).toBeDefined();
+
+    upsertCharacterRelationItem('莱特宁', 'counteredBy', {
+      ...projected,
+      description: 'updated through inverse projection',
+      isMinor: !projected.isMinor,
+    });
+
+    expect(characterRelationsEdit[existing![0]]?.description).toBe(
+      'updated through inverse projection'
+    );
+    expect(Object.keys(characterRelationsEdit)).toHaveLength(Object.keys(relationSnapshot).length);
+  });
+
+  it('should avoid duplicate no-op upserts', () => {
+    const item = { id: '__upsert__', description: 'updated', isMinor: true };
+    upsertCharacterRelationItem('莱特宁', 'counteredBy', item);
+    const beforeNoop = findRelation('莱特宁', 'counteredBy', item.id)?.[1];
+
+    upsertCharacterRelationItem('莱特宁', 'counteredBy', item);
+
+    expect(findRelation('莱特宁', 'counteredBy', item.id)?.[1]).toBe(beforeNoop);
+  });
+
+  it('should remove canonical entries through direct and inverse projections', () => {
+    const projected = getEditableCharacterRelations('莱特宁').counteredBy[0]!;
+    removeCharacterRelationItemFromKinds('莱特宁', ['counteredBy', 'counters'], projected.id);
+
+    expect(getEditableCharacterRelations('莱特宁').counteredBy).not.toEqual(
+      expect.arrayContaining([expect.objectContaining({ id: projected.id })])
+    );
+
+    addCharacterRelationItem('莱特宁', 'counteredBy', createCharacterRelationItem('__remove__'));
     removeCharacterRelationItem('莱特宁', 'counteredBy', '__remove__');
-
-    expect(
-      (
-        characters['莱特宁'] as unknown as {
-          counteredBy?: Array<{ id: string; description: string; isMinor: boolean }>;
-        }
-      ).counteredBy
-    ).toEqual([
-      {
-        id: '__keep__',
-        description: 'keep me',
-        isMinor: false,
-      },
-    ]);
-  });
-
-  it('should upsert relation items without duplicating unchanged entries', () => {
-    upsertCharacterRelationItem('莱特宁', 'counteredBy', {
-      id: '__upsert__',
-      description: 'first',
-      isMinor: false,
-    });
-    upsertCharacterRelationItem('莱特宁', 'counteredBy', {
-      id: '__upsert__',
-      description: 'updated',
-      isMinor: true,
-    });
-
-    const beforeNoop = (
-      characters['莱特宁'] as unknown as {
-        counteredBy?: Array<{ id: string; description: string; isMinor: boolean }>;
-      }
-    ).counteredBy;
-
-    upsertCharacterRelationItem('莱特宁', 'counteredBy', {
-      id: '__upsert__',
-      description: 'updated',
-      isMinor: true,
-    });
-
-    const afterNoop = (
-      characters['莱特宁'] as unknown as {
-        counteredBy?: Array<{ id: string; description: string; isMinor: boolean }>;
-      }
-    ).counteredBy;
-
-    expect(afterNoop).toBe(beforeNoop);
-    expect(afterNoop?.filter((item) => item.id === '__upsert__')).toEqual([
-      {
-        id: '__upsert__',
-        description: 'updated',
-        isMinor: true,
-      },
-    ]);
-  });
-
-  it('should remove an item from multiple relation kinds while preserving projected items', () => {
-    const projected = getEditableCharacterRelations('莱特宁').counteredBy;
-    expect(projected.length).toBeGreaterThan(0);
-
-    const removeId = projected[0]!.id;
-    removeCharacterRelationItemFromKinds('莱特宁', ['counteredBy', 'counters'], removeId);
-
-    const writtenCounteredBy = (
-      characters['莱特宁'] as unknown as {
-        counteredBy?: Array<{ id: string; description: string; isMinor: boolean }>;
-      }
-    ).counteredBy;
-    const writtenCounters = (
-      characters['莱特宁'] as unknown as {
-        counters?: Array<{ id: string; description: string; isMinor: boolean }>;
-      }
-    ).counters;
-
-    expect(writtenCounteredBy).toEqual(projected.filter((item) => item.id !== removeId));
-    expect(writtenCounteredBy).not.toEqual(
-      expect.arrayContaining([expect.objectContaining({ id: removeId })])
-    );
-    expect(writtenCounters).toBeUndefined();
+    expect(findRelation('莱特宁', 'counteredBy', '__remove__')).toBeUndefined();
   });
 });

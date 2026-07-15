@@ -113,6 +113,38 @@ export const getGameActionResourceContexts = (
   entityType: string,
   entries: readonly Json[]
 ): ResourceContext[] => {
+  if (entityType === 'characterRelations') {
+    const characterIds = new Set<string>();
+    const collectCharacterIds = (value: Json): void => {
+      if (Array.isArray(value)) {
+        value.forEach(collectCharacterIds);
+        return;
+      }
+      if (!value || typeof value !== 'object') return;
+
+      const relation = value.relation;
+      if (relation && typeof relation === 'object' && !Array.isArray(relation)) {
+        [relation.subject, relation.target].forEach((item) => {
+          if (!item || typeof item !== 'object' || Array.isArray(item)) return;
+          if (item.type === 'character' && typeof item.name === 'string') {
+            characterIds.add(item.name);
+          }
+        });
+      }
+
+      Object.values(value).forEach((child) => {
+        if (child !== undefined) collectCharacterIds(child);
+      });
+    };
+
+    entries.forEach(collectCharacterIds);
+    if (characterIds.size === 0) return [{ resourceType: 'characters' }];
+    return [...characterIds].map((resourceId) => ({
+      resourceType: 'characters',
+      resourceId,
+    }));
+  }
+
   const roots = new Set<string>();
   entries.forEach((entry) => collectRoots(entityType, entry, roots));
   if (roots.size === 0) return [{ resourceType: entityType }];
