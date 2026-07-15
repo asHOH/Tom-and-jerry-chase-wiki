@@ -97,8 +97,8 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
       content: (
         <DetailTextSection
           title='知识卡效果'
-          value={effectiveCard.description ?? null}
-          detailedValue={effectiveCard.detailedDescription ?? null}
+          value={effectiveCard.description}
+          detailedValue={effectiveCard.detailedDescription}
           isDetailedView={isDetailedView}
           renderValue={
             isEditMode ? (

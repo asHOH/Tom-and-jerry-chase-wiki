@@ -37,8 +37,8 @@ export default function ItemDetailClient({ item }: { item: Item }) {
       content: (
         <DetailTextSection
           title='道具描述'
-          value={effectiveItem.description ?? null}
-          detailedValue={effectiveItem.detailedDescription ?? null}
+          value={effectiveItem.description}
+          detailedValue={effectiveItem.detailedDescription}
           isDetailedView={isDetailedView}
           renderValue={
             isEditMode ? (
@@ -66,8 +66,8 @@ export default function ItemDetailClient({ item }: { item: Item }) {
       content: (
         <DetailTextSection
           title='生成方式'
-          value={effectiveItem.create ?? null}
-          detailedValue={effectiveItem.detailedCreate ?? null}
+          value={effectiveItem.create}
+          detailedValue={effectiveItem.detailedCreate}
           isDetailedView={isDetailedView}
           renderValue={
             isEditMode ? (

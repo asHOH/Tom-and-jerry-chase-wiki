@@ -40,8 +40,8 @@ export default function EntityDetailClient({ entity }: { entity: Entity }) {
       content: (
         <DetailTextSection
           title='衍生物描述'
-          value={effectiveEntity.description ?? null}
-          detailedValue={effectiveEntity.detailedDescription ?? null}
+          value={effectiveEntity.description}
+          detailedValue={effectiveEntity.detailedDescription}
           isDetailedView={isDetailedView}
           renderValue={
             isEditMode ? (
@@ -69,8 +69,8 @@ export default function EntityDetailClient({ entity }: { entity: Entity }) {
       content: (
         <DetailTextSection
           title='生成方式'
-          value={effectiveEntity.create ?? null}
-          detailedValue={effectiveEntity.detailedCreate ?? null}
+          value={effectiveEntity.create}
+          detailedValue={effectiveEntity.detailedCreate}
           isDetailedView={isDetailedView}
           renderValue={
             isEditMode ? (

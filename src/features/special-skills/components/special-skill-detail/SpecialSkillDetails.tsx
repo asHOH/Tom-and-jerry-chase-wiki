@@ -83,8 +83,8 @@ export default function SpecialSkillDetailClient({ skill }: SpecialSkillDetailCl
       content: (
         <DetailTextSection
           title='技能描述'
-          value={effectiveSkill.description ?? null}
-          detailedValue={effectiveSkill.detailedDescription ?? null}
+          value={effectiveSkill.description}
+          detailedValue={effectiveSkill.detailedDescription}
           isDetailedView={isDetailedView}
           renderValue={
             isEditMode ? (

@@ -40,8 +40,8 @@ export default function FixtureDetailClient({ fixture }: { fixture: Fixture }) {
       content: (
         <DetailTextSection
           title='物件描述'
-          value={effectiveFixture.description ?? null}
-          detailedValue={effectiveFixture.detailedDescription ?? null}
+          value={effectiveFixture.description}
+          detailedValue={effectiveFixture.detailedDescription}
           isDetailedView={isDetailedView}
           renderValue={
             isEditMode ? (

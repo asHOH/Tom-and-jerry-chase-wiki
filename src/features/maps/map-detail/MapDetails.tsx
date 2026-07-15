@@ -88,8 +88,8 @@ export default function MapDetailClient({ map }: { map: MapType }) {
       content: (
         <DetailTextSection
           title='地图描述'
-          value={effectiveMap.description ?? null}
-          detailedValue={effectiveMap.detailedDescription ?? null}
+          value={effectiveMap.description}
+          detailedValue={effectiveMap.detailedDescription}
           isDetailedView={isDetailedView}
           renderValue={
             isEditMode ? (

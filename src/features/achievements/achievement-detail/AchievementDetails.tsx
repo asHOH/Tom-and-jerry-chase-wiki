@@ -48,8 +48,8 @@ export default function AchievementDetailClient({ achievement }: { achievement: 
       content: (
         <DetailTextSection
           title='成就描述'
-          value={effectiveAchievement.description ?? null}
-          detailedValue={effectiveAchievement.detailedDescription ?? null}
+          value={effectiveAchievement.description}
+          detailedValue={effectiveAchievement.detailedDescription}
           isDetailedView={isDetailedView}
           renderValue={
             isEditMode ? (

@@ -24,7 +24,7 @@ type CharacterArticleVersionRow = {
 export type EmbeddedCharacterArticle = {
   id: string;
   title: string;
-  content: string | null;
+  content: string;
   authors: string[];
   createdAt: string | null;
   viewCount: number | null;
@@ -81,24 +81,29 @@ export async function getEmbeddedArticlesForCharacter(
         }
       }
 
-      return articles
-        .map((article): EmbeddedCharacterArticle => {
-          const latest = latestByArticleId.get(article.id);
-          const authorNickname = article.users_public_view?.nickname ?? null;
-          const authors = authorNickname ? [authorNickname] : [];
+      return articles.flatMap((article): EmbeddedCharacterArticle[] => {
+        const latest = latestByArticleId.get(article.id);
+        if (!latest?.content) return [];
 
-          return {
+        const content = sanitizeHTML(latest.content, { removeH1: true });
+        if (!content) return [];
+
+        const authorNickname = article.users_public_view?.nickname ?? null;
+        const authors = authorNickname ? [authorNickname] : [];
+
+        return [
+          {
             id: article.id,
             title: article.title,
-            content: latest?.content ? sanitizeHTML(latest.content, { removeH1: true }) : null,
+            content,
             authors,
-            createdAt: latest?.created_at ?? null,
+            createdAt: latest.created_at ?? null,
             viewCount: article.view_count,
             categoryName: article.categories?.name ?? null,
             articleCreatedAt: article.created_at,
-          };
-        })
-        .filter((article) => Boolean(article.content));
+          },
+        ];
+      });
     },
     {
       revalidate: 60,

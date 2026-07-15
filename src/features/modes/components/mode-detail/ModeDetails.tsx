@@ -42,8 +42,8 @@ export default function ModeDetailClient({ mode }: { mode: Mode }) {
             content: (
               <DetailTextSection
                 title='模式背景'
-                value={effectiveMode.description ?? null}
-                detailedValue={effectiveMode.detailedDescription ?? null}
+                value={effectiveMode.description}
+                detailedValue={effectiveMode.detailedDescription}
                 isDetailedView={isDetailedView}
                 renderValue={
                   isEditMode ? (
@@ -67,8 +67,8 @@ export default function ModeDetailClient({ mode }: { mode: Mode }) {
       content: (
         <DetailTextSection
           title='模式规则'
-          value={effectiveMode.rules ?? null}
-          detailedValue={effectiveMode.detailedRules ?? null}
+          value={effectiveMode.rules}
+          detailedValue={effectiveMode.detailedRules}
           isDetailedView={isDetailedView}
           renderValue={
             isEditMode ? (
