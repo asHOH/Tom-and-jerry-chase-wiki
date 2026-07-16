@@ -6,6 +6,8 @@ export type Faction = {
   name: string;
   description: string;
   detailedDescription?: string;
+  generalKnowledgeCardGroups: readonly (KnowledgeCardGroup | KnowledgeCardGroupSet)[];
+  generalSpecialSkills: readonly SuggestedSpecialSkillItem[];
 };
 
 // Positioning tag types separated by faction
@@ -123,7 +125,7 @@ export type KnowledgeCardGroupSet = {
   defaultFolded: boolean;
 };
 
-type SuggestedSpecialSkillItem = {
+export type SuggestedSpecialSkillItem = {
   name: string;
   description: string;
 };

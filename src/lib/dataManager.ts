@@ -3,8 +3,13 @@ import { historyData } from '@/data/history';
 import { Card, Character, Faction, FactionId } from '@/data/types';
 import { catCharactersWithImages } from '@/features/characters/data/catCharacters';
 import { mouseCharactersWithImages } from '@/features/characters/data/mouseCharacters';
+import { mergeCharacterRecommendations } from '@/features/characters/utils/recommendations';
+import catGeneralKnowledgeCardGroups from '@/features/knowledge-cards/data/catGeneralKnowledgeCardGroups';
 import { catCardsWithImages } from '@/features/knowledge-cards/data/catKnowledgeCards';
+import mouseGeneralKnowledgeCardGroups from '@/features/knowledge-cards/data/mouseGeneralKnowledgeCardGroups';
 import { mouseCardsWithImages } from '@/features/knowledge-cards/data/mouseKnowledgeCards';
+import catGeneralSpecialSkills from '@/features/special-skills/data/catGeneralSpecialSkills';
+import mouseGeneralSpecialSkills from '@/features/special-skills/data/mouseGeneralSpecialSkills';
 
 // Raw data aggregation
 const rawCharacterData = {
@@ -22,11 +27,15 @@ const rawFactionData: Record<FactionId, Faction> = {
     id: 'cat',
     name: '猫阵营',
     description: '猫阵营需要阻止老鼠推奶酪，并将老鼠绑上火箭放飞',
+    generalKnowledgeCardGroups: catGeneralKnowledgeCardGroups,
+    generalSpecialSkills: catGeneralSpecialSkills,
   },
   mouse: {
     id: 'mouse',
     name: '鼠阵营',
     description: '鼠阵营共四名角色，需要合作躲避猫的攻击、推完5块奶酪并砸开墙缝',
+    generalKnowledgeCardGroups: mouseGeneralKnowledgeCardGroups,
+    generalSpecialSkills: mouseGeneralSpecialSkills,
   },
 };
 
@@ -141,11 +150,13 @@ export class GameDataManager {
       Object.entries(rawCharacterData).map(([characterId, character]) => {
         const factionId = character.factionId as FactionId;
         const faction = rawFactionData[factionId];
+        const recommendations = mergeCharacterRecommendations(character, faction);
 
         return [
           characterId,
           {
             ...character,
+            ...recommendations,
             imageUrl: character.imageUrl!,
             faction: { id: faction.id, name: faction.name },
             createDate: getCreateTime(character.id),

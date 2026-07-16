@@ -45,6 +45,7 @@ next-env.d.ts
 .vscode/
 *.code-workspace
 *.swp
+.nvimlog
 
 # Vercel
 .vercel
