@@ -28,6 +28,7 @@ import { ClockIcon, PlusIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 import { characters } from '@/data';
 
+import { useArticleListScrollRestoration } from '../hooks/useArticleListScrollRestoration';
 import ArticleFilters from './ArticleFilters';
 import ArticlePagination from './ArticlePagination';
 
@@ -88,6 +89,8 @@ export default function ArticlesClient({ articles: data, description }: Articles
     return order === 'asc' ? 'asc' : 'desc';
   });
   const [isInitialized, setIsInitialized] = useState(false);
+
+  useArticleListScrollRestoration(isInitialized);
 
   // Initialize category filters from URL on mount
   useEffect(() => {
