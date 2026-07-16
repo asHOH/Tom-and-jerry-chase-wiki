@@ -1,10 +1,13 @@
+import { getVersion, snapshot } from 'valtio/vanilla';
+
 import { applyActionEntry, type ActionHistoryEntry } from '@/lib/edit/diffUtils';
 
-import { normalizePublicActionEntries } from './actionEntries';
+import { flattenActionEntries, normalizePublicActionEntries } from './actionEntries';
 import type { PublicActionRow } from './publicActionsTypes';
 
-export type PublicActionApplyResult = 'mutated' | 'handled' | 'skipped';
 export type PublicActionTargetRegistry = Record<string, Record<string, unknown>[]>;
+
+type PublicActionApplyResult = 'mutated' | 'handled';
 
 type ApplyPublicActionRowsOptions = {
   rows: PublicActionRow[];
@@ -12,7 +15,6 @@ type ApplyPublicActionRowsOptions = {
   resolveTargets: (entityType: string) => Record<string, unknown>[] | null;
   shouldApply?: (row: PublicActionRow) => boolean;
   applyWithin?: (row: PublicActionRow, fn: () => void) => void;
-  applyEntry?: (row: PublicActionRow, entry: ActionHistoryEntry) => PublicActionApplyResult;
   onError?: (row: PublicActionRow, error: unknown) => void;
 };
 
@@ -34,23 +36,75 @@ function markHandled(rowId: string, handledIds: Set<string>, newlyHandledIds: st
   newlyHandledIds.push(rowId);
 }
 
-function applyWithCustomHandler(
-  row: PublicActionRow,
-  entries: ActionHistoryEntry[],
-  applyEntry: (row: PublicActionRow, entry: ActionHistoryEntry) => PublicActionApplyResult
-): PublicActionApplyResult {
-  let sawHandled = false;
-  let sawMutated = false;
+type ReplayBranchBackup = {
+  key: string;
+  existed: boolean;
+  value: unknown;
+};
 
-  for (const entry of entries) {
-    const result = applyEntry(row, entry);
-    if (result === 'skipped') return 'skipped';
-    if (result === 'mutated') sawMutated = true;
-    if (result === 'handled') sawHandled = true;
+type ReplayTargetBackup = {
+  target: Record<string, unknown>;
+  branches: ReplayBranchBackup[];
+};
+
+function cloneReplayValue(value: unknown): unknown {
+  if (value !== null && typeof value === 'object' && getVersion(value) !== undefined) {
+    return structuredClone(snapshot(value));
   }
 
-  if (sawMutated) return 'mutated';
-  return sawHandled ? 'handled' : 'skipped';
+  return structuredClone(value);
+}
+
+function getTouchedRootKeys(entries: ActionHistoryEntry[]): string[] {
+  const keys = new Set<string>();
+
+  for (const action of flattenActionEntries(entries)) {
+    const rootKey = action.path.split('.')[0];
+    if (rootKey) keys.add(rootKey);
+  }
+
+  return Array.from(keys);
+}
+
+function captureReplayTargets(
+  targets: Record<string, unknown>[],
+  rootKeys: string[]
+): ReplayTargetBackup[] {
+  return targets.map((target) => ({
+    target,
+    branches: rootKeys.map((key) => {
+      const existed = Object.prototype.hasOwnProperty.call(target, key);
+      return {
+        key,
+        existed,
+        value: existed ? cloneReplayValue(target[key]) : undefined,
+      };
+    }),
+  }));
+}
+
+function restoreReplayTargets(backups: ReplayTargetBackup[]): void {
+  const rollbackErrors: unknown[] = [];
+
+  for (let targetIndex = backups.length - 1; targetIndex >= 0; targetIndex -= 1) {
+    const { target, branches } = backups[targetIndex]!;
+    for (let branchIndex = branches.length - 1; branchIndex >= 0; branchIndex -= 1) {
+      const { key, existed, value } = branches[branchIndex]!;
+      try {
+        if (existed) {
+          target[key] = value;
+        } else {
+          delete target[key];
+        }
+      } catch (error) {
+        rollbackErrors.push(error);
+      }
+    }
+  }
+
+  if (rollbackErrors.length > 0) {
+    throw new AggregateError(rollbackErrors, 'Failed to roll back public action row');
+  }
 }
 
 function applyWithResolvedTargets(
@@ -61,11 +115,24 @@ function applyWithResolvedTargets(
 ): PublicActionApplyResult {
   if (targets.length === 0) return 'handled';
 
+  const backups = captureReplayTargets(targets, getTouchedRootKeys(entries));
   const apply = () => {
-    for (const entry of entries) {
-      for (const target of targets) {
-        applyActionEntry(target, entry);
+    try {
+      for (const entry of entries) {
+        for (const target of targets) {
+          applyActionEntry(target, entry);
+        }
       }
+    } catch (error) {
+      try {
+        restoreReplayTargets(backups);
+      } catch (rollbackError) {
+        throw new AggregateError(
+          [error, rollbackError],
+          'Public action row failed and could not be fully rolled back'
+        );
+      }
+      throw error;
     }
   };
 
@@ -92,16 +159,9 @@ export function applyPublicActionRows(
     if (entries.length === 0) continue;
 
     try {
-      let result: PublicActionApplyResult;
-      if (options.applyEntry) {
-        result = applyWithCustomHandler(row, entries, options.applyEntry);
-      } else {
-        const targets = options.resolveTargets(row.entity_type);
-        if (targets === null) continue;
-        result = applyWithResolvedTargets(row, entries, targets, options.applyWithin);
-      }
-
-      if (result === 'skipped') continue;
+      const targets = options.resolveTargets(row.entity_type);
+      if (targets === null) continue;
+      const result = applyWithResolvedTargets(row, entries, targets, options.applyWithin);
 
       markHandled(row.id, options.handledIds, newlyHandledIds);
       if (result === 'mutated') mutatedCount += 1;

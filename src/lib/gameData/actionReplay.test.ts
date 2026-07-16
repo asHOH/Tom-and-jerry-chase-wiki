@@ -1,9 +1,6 @@
-import type { ActionHistoryEntry } from '@/lib/edit/diffUtils';
-
 import {
   applyPublicActionRows,
   resolvePublicActionTargets,
-  type PublicActionApplyResult,
   type PublicActionTargetRegistry,
 } from './actionReplay';
 import type { PublicActionRow } from './publicActionsTypes';
@@ -77,32 +74,72 @@ describe('applyPublicActionRows', () => {
     expect(result).toEqual({ handledCount: 1, mutatedCount: 1, handledIds: ['multi-target'] });
   });
 
-  it('should allow custom applyEntry behavior', () => {
-    const applied: Array<{ rowId: string; entry: ActionHistoryEntry }> = [];
+  it('should roll back earlier entries when a later entry fails', () => {
+    const target: Record<string, unknown> = {
+      Locked: Object.freeze({ description: 'locked' }),
+      Tom: { description: 'old' },
+    };
     const handledIds = new Set<string>();
+    const onError = jest.fn();
 
     const result = applyPublicActionRows({
       rows: [
-        row('custom-apply', [
+        row('partially-failing-row', [
           {
             op: 'set',
             path: 'Tom.description',
             oldValue: 'old',
             newValue: 'new',
           },
+          {
+            op: 'set',
+            path: 'Locked.description',
+            oldValue: 'locked',
+            newValue: 'unlocked',
+          },
         ]),
       ],
       handledIds,
-      resolveTargets: () => null,
-      applyEntry: (actionRow, entry): PublicActionApplyResult => {
-        applied.push({ rowId: actionRow.id, entry });
-        return 'mutated';
-      },
+      resolveTargets: () => [target],
+      onError,
     });
 
-    expect(applied).toHaveLength(1);
-    expect(applied[0]?.rowId).toBe('custom-apply');
-    expect(result).toEqual({ handledCount: 1, mutatedCount: 1, handledIds: ['custom-apply'] });
+    expect(target).toEqual({
+      Locked: { description: 'locked' },
+      Tom: { description: 'old' },
+    });
+    expect(handledIds.has('partially-failing-row')).toBe(false);
+    expect(result).toEqual({ handledCount: 0, mutatedCount: 0, handledIds: [] });
+    expect(onError).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 'partially-failing-row' }),
+      expect.any(TypeError)
+    );
+  });
+
+  it('should roll back earlier targets when a later target fails', () => {
+    const firstTarget: Record<string, unknown> = { Tom: { description: 'old' } };
+    const failingTarget: Record<string, unknown> = {
+      Tom: Object.freeze({ description: 'old' }),
+    };
+    const handledIds = new Set<string>();
+
+    const result = applyPublicActionRows({
+      rows: [
+        row('multi-target-failure', {
+          op: 'set',
+          path: 'Tom.description',
+          oldValue: 'old',
+          newValue: 'new',
+        }),
+      ],
+      handledIds,
+      resolveTargets: () => [firstTarget, failingTarget],
+    });
+
+    expect(firstTarget).toEqual({ Tom: { description: 'old' } });
+    expect(failingTarget).toEqual({ Tom: { description: 'old' } });
+    expect(handledIds.has('multi-target-failure')).toBe(false);
+    expect(result).toEqual({ handledCount: 0, mutatedCount: 0, handledIds: [] });
   });
 
   it('should preserve known no-op rows as handled without counting mutations', () => {
