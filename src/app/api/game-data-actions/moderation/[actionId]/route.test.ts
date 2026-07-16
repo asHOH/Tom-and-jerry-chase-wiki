@@ -1,7 +1,7 @@
-import { revalidateTag } from 'next/cache';
 import type { NextRequest } from 'next/server';
 
 import { requirePermission } from '@/lib/auth/requirePermission';
+import { invalidatePublicGameDataActionsCache } from '@/lib/gameData/publicActionsCache';
 import { publishNotification } from '@/lib/notificationUtils';
 
 const jsonResponse = (body: unknown, init?: { status?: number }) =>
@@ -16,10 +16,8 @@ jest.mock('next/server', () => ({
   },
 }));
 
-jest.mock('next/cache', () => ({ revalidateTag: jest.fn() }));
-
-jest.mock('@/lib/gameData/publicActions', () => ({
-  PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG: 'public-game-data-actions',
+jest.mock('@/lib/gameData/publicActionsCache', () => ({
+  invalidatePublicGameDataActionsCache: jest.fn(),
 }));
 
 jest.mock('@/lib/auth/requirePermission', () => ({
@@ -32,7 +30,7 @@ jest.mock('@/lib/notificationUtils', () => ({
 
 const requirePermissionMock = jest.mocked(requirePermission);
 const publishNotificationMock = jest.mocked(publishNotification);
-const revalidateTagMock = jest.mocked(revalidateTag);
+const invalidatePublicGameDataActionsCacheMock = jest.mocked(invalidatePublicGameDataActionsCache);
 
 type SupabaseMockOptions = {
   currentUserId?: string;
@@ -172,7 +170,7 @@ describe('game data action moderation route', () => {
       ['id', 'action-1'],
       ['status', 'approved'],
     ]);
-    expect(revalidateTagMock).toHaveBeenCalledWith('public-game-data-actions', 'max');
+    expect(invalidatePublicGameDataActionsCacheMock).toHaveBeenCalledTimes(1);
     expect(publishNotificationMock).not.toHaveBeenCalled();
   });
 
@@ -201,7 +199,7 @@ describe('game data action moderation route', () => {
     expect(supabase.rpc).toHaveBeenCalledWith('approve_game_data_action', {
       p_action_id: 'action-1',
     });
-    expect(revalidateTagMock).toHaveBeenCalledWith('public-game-data-actions', 'max');
+    expect(invalidatePublicGameDataActionsCacheMock).toHaveBeenCalledTimes(1);
     expect(publishNotificationMock).toHaveBeenCalledWith(
       expect.objectContaining({
         recipientUserId: 'user-2',

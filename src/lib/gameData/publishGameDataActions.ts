@@ -1,7 +1,6 @@
-import { revalidateTag } from 'next/cache';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
-import { PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG } from '@/lib/gameData/publicActions';
+import { invalidatePublicGameDataActionsCache } from '@/lib/gameData/publicActionsCache';
 import type { Database, Json } from '@/data/database.types';
 
 export type PublishGameDataActionItem = {
@@ -54,7 +53,7 @@ export const publishGameDataActions = async (
     }
   } finally {
     if (hasPublishedPublicAction) {
-      revalidateTag(PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG, 'max');
+      invalidatePublicGameDataActionsCache();
     }
   }
 

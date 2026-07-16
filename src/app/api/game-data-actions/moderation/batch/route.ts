@@ -1,11 +1,10 @@
-import { revalidateTag } from 'next/cache';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import { canAccessAll } from '@/lib/auth/permissions';
 import { requirePermission } from '@/lib/auth/requirePermission';
 import { getGameActionResourceContexts } from '@/lib/auth/resourceContexts';
-import { PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG } from '@/lib/gameData/publicActions';
+import { invalidatePublicGameDataActionsCache } from '@/lib/gameData/publicActionsCache';
 import { publishNotification } from '@/lib/notificationUtils';
 
 const schema = z.object({
@@ -77,7 +76,7 @@ export async function POST(request: Request) {
   }
 
   if (action === 'approve' && succeeded.length > 0) {
-    revalidateTag(PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG, 'max');
+    invalidatePublicGameDataActionsCache();
   }
 
   const grouped = new Map<string, ModerationRecord[]>();

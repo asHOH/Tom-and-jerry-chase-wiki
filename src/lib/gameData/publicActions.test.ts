@@ -18,6 +18,10 @@ jest.mock('@/lib/serverCache', () => ({
   cached: jest.fn((_keyParts: string[], fn: () => Promise<unknown>) => fn()),
 }));
 
+jest.mock('@/lib/gameData/publicActionsCache', () => ({
+  PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG: 'public-game-data-actions',
+}));
+
 const query = {
   select: jest.fn(),
   eq: jest.fn(),

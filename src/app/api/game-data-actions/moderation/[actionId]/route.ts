@@ -1,10 +1,9 @@
-import { revalidateTag } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { canAccessAll } from '@/lib/auth/permissions';
 import { requirePermission } from '@/lib/auth/requirePermission';
 import { getGameActionResourceContexts } from '@/lib/auth/resourceContexts';
-import { PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG } from '@/lib/gameData/publicActions';
+import { invalidatePublicGameDataActionsCache } from '@/lib/gameData/publicActionsCache';
 import { publishNotification } from '@/lib/notificationUtils';
 import type { Database } from '@/data/database.types';
 
@@ -109,7 +108,7 @@ export async function POST(
         return NextResponse.json({ error: 'Failed to update action status' }, { status: 500 });
       }
 
-      revalidateTag(PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG, 'max');
+      invalidatePublicGameDataActionsCache();
       return NextResponse.json({ message: 'Action marked as synced', action, action_id: actionId });
     }
 
@@ -120,7 +119,7 @@ export async function POST(
         return NextResponse.json({ error: 'Failed to approve action' }, { status: 500 });
       }
 
-      revalidateTag(PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG, 'max');
+      invalidatePublicGameDataActionsCache();
       if (recordData?.created_by) {
         try {
           await publishNotification({

@@ -1,14 +1,11 @@
-import { revalidateTag } from 'next/cache';
-
+import { invalidatePublicGameDataActionsCache } from './publicActionsCache';
 import { publishGameDataActions } from './publishGameDataActions';
 
-jest.mock('next/cache', () => ({ revalidateTag: jest.fn() }));
-
-jest.mock('./publicActions', () => ({
-  PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG: 'public-game-data-actions',
+jest.mock('./publicActionsCache', () => ({
+  invalidatePublicGameDataActionsCache: jest.fn(),
 }));
 
-const revalidateTagMock = jest.mocked(revalidateTag);
+const invalidatePublicGameDataActionsCacheMock = jest.mocked(invalidatePublicGameDataActionsCache);
 
 describe('publishGameDataActions', () => {
   afterEach(() => {
@@ -25,7 +22,7 @@ describe('publishGameDataActions', () => {
 
     await publishGameDataActions(supabase as never, [{ entityType: 'characters', entries: [] }]);
 
-    expect(revalidateTagMock).toHaveBeenCalledWith('public-game-data-actions', 'max');
+    expect(invalidatePublicGameDataActionsCacheMock).toHaveBeenCalledTimes(1);
   });
 
   it('should keep the cache when publishing creates pending actions', async () => {
@@ -38,6 +35,6 @@ describe('publishGameDataActions', () => {
 
     await publishGameDataActions(supabase as never, [{ entityType: 'characters', entries: [] }]);
 
-    expect(revalidateTagMock).not.toHaveBeenCalled();
+    expect(invalidatePublicGameDataActionsCacheMock).not.toHaveBeenCalled();
   });
 });

@@ -6,6 +6,7 @@ import {
   resolvePublicActionTargets,
   type PublicActionTargetRegistry,
 } from '@/lib/gameData/actionReplay';
+import { PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG } from '@/lib/gameData/publicActionsCache';
 import { cached } from '@/lib/serverCache';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
 import { supabaseServerPublic } from '@/lib/supabase/public';
@@ -31,7 +32,7 @@ import {
 import { normalizePublicActionEntries } from './actionEntries';
 import type { PublicActionRow } from './publicActionsTypes';
 
-export const PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG = 'public-game-data-actions';
+export { PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG } from '@/lib/gameData/publicActionsCache';
 
 const appliedPublicActionIds = new Set<string>();
 
