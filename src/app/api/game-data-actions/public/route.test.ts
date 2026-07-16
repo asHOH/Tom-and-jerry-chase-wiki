@@ -43,13 +43,29 @@ describe('public game data actions route', () => {
     createClient.mockResolvedValue({ from: jest.fn(() => query) });
   });
 
-  it('should use the action id as the deterministic timestamp tie-breaker', async () => {
+  it('should select approved replay rows in deterministic order', async () => {
     const { GET } = await import('./route');
 
     const response = await GET();
 
     expect(response.status).toBe(200);
+    expect(query.eq).toHaveBeenNthCalledWith(1, 'is_public', true);
+    expect(query.eq).toHaveBeenNthCalledWith(2, 'status', 'approved');
     expect(query.order).toHaveBeenNthCalledWith(1, 'created_at', { ascending: true });
     expect(query.order).toHaveBeenNthCalledWith(2, 'id', { ascending: true });
+  });
+
+  it('should preserve the error response when the replay query fails', async () => {
+    query.order.mockImplementation((column: string) =>
+      column === 'id' ? Promise.resolve({ data: null, error: { message: 'query failed' } }) : query
+    );
+    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    const { GET } = await import('./route');
+
+    const response = await GET();
+
+    expect(response.status).toBe(500);
+    await expect(response.json()).resolves.toEqual({ error: 'Failed to fetch public actions' });
+    consoleError.mockRestore();
   });
 });

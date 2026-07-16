@@ -26,6 +26,7 @@ jest.mock('@/lib/gameData/publicActionsCache', () => ({
 const query = {
   select: jest.fn(),
   eq: jest.fn(),
+  in: jest.fn(),
   order: jest.fn(),
 };
 
@@ -118,6 +119,7 @@ describe('public game data actions', () => {
     queryRows = publicRows;
     query.select.mockReturnValue(query);
     query.eq.mockReturnValue(query);
+    query.in.mockReturnValue(query);
     query.order.mockImplementation((column: string) =>
       column === 'id' ? Promise.resolve({ data: queryRows, error: null }) : query
     );
@@ -144,6 +146,8 @@ describe('public game data actions', () => {
 
     expect(characters.Tom).toEqual({ description: 'old' });
     expect(publicRows.map((row) => row.entity_type)).toEqual(['characters', 'factions', 'unknown']);
+    expect(query.eq).toHaveBeenNthCalledWith(1, 'is_public', true);
+    expect(query.eq).toHaveBeenNthCalledWith(2, 'status', 'approved');
     expect(query.order).toHaveBeenNthCalledWith(1, 'created_at', { ascending: true });
     expect(query.order).toHaveBeenNthCalledWith(2, 'id', { ascending: true });
     expect(cachedMock).toHaveBeenCalledWith(['public-game-data-actions'], expect.any(Function), {
@@ -190,6 +194,36 @@ describe('public game data actions', () => {
 
     expect(history.get('characters:Tom')).toMatchObject({
       actionId: '00000000-0000-4000-8000-000000000002',
+      affectedPath: 'Tom.name',
+    });
+    expect(query.eq).toHaveBeenCalledWith('is_public', true);
+    expect(query.in).toHaveBeenCalledWith('status', ['approved', 'synced']);
+    expect(query.order).toHaveBeenNthCalledWith(1, 'created_at', { ascending: true });
+    expect(query.order).toHaveBeenNthCalledWith(2, 'id', { ascending: true });
+  });
+
+  it('should retain synced rows in entity update history', async () => {
+    queryRows = [
+      publicRows[0]!,
+      {
+        ...publicRows[0]!,
+        id: 'synced-character-row',
+        created_at: '2026-05-10T00:00:00.000Z',
+        status: 'synced',
+        entry: {
+          op: 'set',
+          path: 'Tom.name',
+          oldValue: 'Tom',
+          newValue: 'Thomas',
+        },
+      },
+    ];
+
+    const history = await getEntityUpdateHistory();
+
+    expect(history.get('characters:Tom')).toMatchObject({
+      actionId: 'synced-character-row',
+      status: 'synced',
       affectedPath: 'Tom.name',
     });
   });

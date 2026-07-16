@@ -15,6 +15,7 @@ export async function GET() {
       .from('game_data_actions')
       .select('id, entity_type, entry, created_at')
       .eq('is_public', true)
+      .eq('status', 'approved')
       .order('created_at', { ascending: true })
       .order('id', { ascending: true });
 

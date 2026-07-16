@@ -120,7 +120,7 @@ function extractEntryId(entityType: string, path: string): string | undefined {
 }
 
 export async function getEntityUpdateHistory(): Promise<Map<string, EntityUpdateHistory>> {
-  const actions = await fetchPublicGameDataActions();
+  const actions = await fetchPublicGameDataActionHistoryRows();
   const historyMap = new Map<string, EntityUpdateHistory>();
 
   for (const action of actions) {
@@ -158,6 +158,36 @@ export async function getEntityUpdateHistory(): Promise<Map<string, EntityUpdate
   }
 
   return historyMap;
+}
+
+async function fetchPublicGameDataActionHistoryRows(): Promise<PublicActionRow[]> {
+  if (!hasSupabasePublicConfig()) {
+    return [];
+  }
+
+  return cached(
+    [PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG, 'history'],
+    async () => {
+      const { data, error } = await supabaseServerPublic
+        .from('game_data_actions')
+        .select('id, entity_type, entry, created_at, status, message, reviewed_at, created_by')
+        .eq('is_public', true)
+        .in('status', ['approved', 'synced'])
+        .order('created_at', { ascending: true })
+        .order('id', { ascending: true });
+
+      if (error) {
+        console.error('Error fetching public game data action history:', error);
+        return [];
+      }
+
+      return data ?? [];
+    },
+    {
+      revalidate: false,
+      tags: [PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG],
+    }
+  );
 }
 
 export async function fetchPublicGameDataActions(): Promise<PublicActionRow[]> {
