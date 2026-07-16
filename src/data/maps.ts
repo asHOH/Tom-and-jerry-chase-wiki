@@ -151,6 +151,13 @@ const mapDefinitions: Record<string, MapDefinition> = {
       ],
       points: [
         {
+          id: 'classic-home-scouting-canary',
+          category: 'scoutingCanary',
+          position: { x: 0.018, y: 0.56 },
+          minimapPaths: [],
+          relatedEntries: [{ name: '侦查金丝雀', type: 'fixture' }],
+        },
+        {
           category: 'mouseHole',
           position: { x: 0.3734, y: 0.4393 },
           isInvisible: true,

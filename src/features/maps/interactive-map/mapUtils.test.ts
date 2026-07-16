@@ -55,6 +55,7 @@ describe('interactive map utilities', () => {
     expect(isRandomCandidateByDefault('pipe')).toBe(false);
     expect(isRandomCandidateByDefault('mouseHole')).toBe(false);
     expect(isRandomCandidateByDefault('teleport')).toBe(false);
+    expect(isRandomCandidateByDefault('scoutingCanary')).toBe(false);
   });
 
   it('should return the default wiki entry for common map point categories', () => {
@@ -79,6 +80,9 @@ describe('interactive map utilities', () => {
     expect(getDefaultMapPointRelatedEntries({ category: 'pipe' })).toEqual([
       { name: '管道', type: 'fixture' },
     ]);
+    expect(getDefaultMapPointRelatedEntries({ category: 'scoutingCanary' })).toEqual([
+      { name: '侦查金丝雀', type: 'fixture' },
+    ]);
   });
 
   it('should label drink points in Chinese', () => {
@@ -87,6 +91,17 @@ describe('interactive map utilities', () => {
 
   it('should label wall crack points in Chinese', () => {
     expect(MAP_CATEGORY_LABELS.wallCrack).toBe('墙缝');
+  });
+
+  it('should show scouting canary points on the minimap by default', () => {
+    expect(MAP_CATEGORY_LABELS.scoutingCanary).toBe('侦查金丝雀');
+    expect(
+      isMinimapPointVisible(
+        { category: 'scoutingCanary', position: { x: 0.2, y: 0.3 } },
+        DEFAULT_VISIBLE_CATEGORIES,
+        new Set()
+      )
+    ).toBe(true);
   });
 
   it('should build a description lookup URL for a related wiki entry', () => {

@@ -22,6 +22,7 @@ export const MAP_CATEGORY_LABELS: Record<MapPointCategory, string> = {
   mouseHole: '奶酪洞口',
   pipe: '管道',
   geometryBarrel: '几何桶',
+  scoutingCanary: '侦查金丝雀',
 };
 
 export const ALWAYS_VISIBLE_CATEGORIES = new Set<MapPointCategory>(['mouseHole', 'pipe']);
@@ -31,6 +32,7 @@ export const DEFAULT_VISIBLE_CATEGORIES = new Set<MapPointCategory>([
   'drink',
   'wallCrack',
   'idleFruitPlate',
+  'scoutingCanary',
 ]);
 export const DEFAULT_RANDOM_CANDIDATE_CATEGORIES = new Set<MapPointCategory>([
   'cheese',
@@ -50,6 +52,7 @@ const DEFAULT_MAP_POINT_RELATED_ENTRIES: Partial<Record<MapPointCategory, Single
   idleFruitPlate: { name: '果盘', type: 'item' },
   mouseHole: { name: '老鼠洞', type: 'fixture' },
   pipe: { name: '管道', type: 'fixture' },
+  scoutingCanary: { name: '侦查金丝雀', type: 'fixture' },
 };
 
 export const getDefaultMapPointRelatedEntries = (

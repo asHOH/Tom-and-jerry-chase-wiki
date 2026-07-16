@@ -99,9 +99,10 @@ const CATEGORY_ICONS: Partial<Record<MapPointCategory, string>> = {
   wallCrack: '/images/fixtures/墙缝.png',
   idleFruitPlate: '/images/items/果盘.png',
   geometryBarrel: '/images/entities/火药桶.png',
+  scoutingCanary: '/images/fixtures/侦查金丝雀.png',
 };
 
-const FILTER_STORAGE_KEY = 'interactive-map:visible-categories:v2';
+const FILTER_STORAGE_KEY = 'interactive-map:visible-categories:v3';
 const HOTSPOT_CATEGORIES = new Set<MapPointCategory>(['teleport', ...ALWAYS_VISIBLE_CATEGORIES]);
 const DETAILS_PANEL_DESKTOP_BREAKPOINT = 768;
 const DETAILS_PANEL_DESKTOP_WIDTH = 320;
@@ -636,6 +637,13 @@ function MinimapDiagram({
     onNavigate(position);
   };
 
+  const pointsToDisplay = config.points.filter(
+    (point) =>
+      (point.id && highlightedPointIds.has(point.id)) ||
+      isMinimapPointVisible(point, visibleCategories, hiddenSubtypes)
+  );
+  const pathsToDisplay = pointsToDisplay.flatMap((point) => point.minimapPaths ?? []);
+
   return (
     <div
       className={`relative h-full w-full overflow-hidden bg-slate-950/50 ${interactive ? 'cursor-crosshair' : ''}`}
@@ -675,6 +683,29 @@ function MinimapDiagram({
             />
           ))
         )}
+        {pathsToDisplay.map((path, pathIndex) => (
+          <g key={`minimap-path-${pathIndex}`} aria-hidden='true'>
+            <polyline
+              points={path.map((point) => `${point.x * 1000},${point.y * 1000}`).join(' ')}
+              fill='none'
+              stroke='rgb(250 204 21 / 38%)'
+              strokeWidth='10'
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              vectorEffect='non-scaling-stroke'
+            />
+            <polyline
+              points={path.map((point) => `${point.x * 1000},${point.y * 1000}`).join(' ')}
+              fill='none'
+              stroke='rgb(253 224 71 / 95%)'
+              strokeWidth='4'
+              strokeDasharray='12 8'
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              vectorEffect='non-scaling-stroke'
+            />
+          </g>
+        ))}
       </svg>
       {config.rooms.map((room) => (
         <div key={room.name} className='pointer-events-none absolute inset-0'>
@@ -700,64 +731,58 @@ function MinimapDiagram({
             })()}
         </div>
       ))}
-      {config.points
-        .filter(
-          (point) =>
-            (point.id && highlightedPointIds.has(point.id)) ||
-            isMinimapPointVisible(point, visibleCategories, hiddenSubtypes)
-        )
-        .map((point, pointIndex) => {
-          const source = CATEGORY_ICONS[point.category];
-          const pointStyle: CSSProperties = {
-            left: `${point.position.x * 100}%`,
-            top: `${point.position.y * 100}%`,
-          };
-          const pointContent =
-            point.category === 'pipe' && point.connection ? (
-              <span
-                className={`flex size-5 items-center justify-center rounded-full border text-[10px] font-bold text-white shadow sm:size-6 sm:text-xs ${
-                  point.id && highlightedPointIds.has(point.id)
-                    ? 'border-cyan-200 bg-cyan-500 ring-2 ring-cyan-300/70'
-                    : 'border-violet-200 bg-violet-700/90'
-                }`}
-              >
-                {point.connection.label ?? '↔'}
-              </span>
-            ) : source ? (
-              <Image
-                src={encodeURI(source)}
-                alt=''
-                width={24}
-                height={24}
-                className='size-5 object-contain drop-shadow-md sm:size-6'
-                aria-hidden='true'
-              />
-            ) : point.category === 'teleport' ? (
-              <span className='block size-4 rounded-full border-2 border-fuchsia-200 bg-violet-600/80 shadow sm:size-5' />
-            ) : (
-              <span className='block size-3 rounded-full border border-cyan-50 bg-cyan-400 shadow sm:size-4' />
-            );
-
-          const pointChildren = pointContent;
-          const pointClassName = `absolute -translate-x-1/2 -translate-y-1/2 ${point.isRandomCandidate ? 'opacity-50' : ''} ${interactive ? 'cursor-pointer appearance-none border-0 bg-transparent p-0' : 'pointer-events-none'}`;
-
-          return interactive ? (
-            <button
-              type='button'
-              key={pointIndex}
-              className={pointClassName}
-              style={pointStyle}
-              aria-label={MAP_CATEGORY_LABELS[point.category]}
-              onClick={(event) => handlePointClick(event, point.position)}
+      {pointsToDisplay.map((point, pointIndex) => {
+        const source = CATEGORY_ICONS[point.category];
+        const pointStyle: CSSProperties = {
+          left: `${point.position.x * 100}%`,
+          top: `${point.position.y * 100}%`,
+        };
+        const pointContent =
+          point.category === 'pipe' && point.connection ? (
+            <span
+              className={`flex size-5 items-center justify-center rounded-full border text-[10px] font-bold text-white shadow sm:size-6 sm:text-xs ${
+                point.id && highlightedPointIds.has(point.id)
+                  ? 'border-cyan-200 bg-cyan-500 ring-2 ring-cyan-300/70'
+                  : 'border-violet-200 bg-violet-700/90'
+              }`}
             >
-              {pointChildren}
-            </button>
-          ) : (
-            <span key={pointIndex} className={pointClassName} style={pointStyle} aria-hidden='true'>
-              {pointChildren}
+              {point.connection.label ?? '↔'}
             </span>
+          ) : source ? (
+            <Image
+              src={encodeURI(source)}
+              alt=''
+              width={24}
+              height={24}
+              className='size-5 object-contain drop-shadow-md sm:size-6'
+              aria-hidden='true'
+            />
+          ) : point.category === 'teleport' ? (
+            <span className='block size-4 rounded-full border-2 border-fuchsia-200 bg-violet-600/80 shadow sm:size-5' />
+          ) : (
+            <span className='block size-3 rounded-full border border-cyan-50 bg-cyan-400 shadow sm:size-4' />
           );
-        })}
+
+        const pointChildren = pointContent;
+        const pointClassName = `absolute -translate-x-1/2 -translate-y-1/2 ${point.isRandomCandidate ? 'opacity-50' : ''} ${interactive ? 'cursor-pointer appearance-none border-0 bg-transparent p-0' : 'pointer-events-none'}`;
+
+        return interactive ? (
+          <button
+            type='button'
+            key={pointIndex}
+            className={pointClassName}
+            style={pointStyle}
+            aria-label={MAP_CATEGORY_LABELS[point.category]}
+            onClick={(event) => handlePointClick(event, point.position)}
+          >
+            {pointChildren}
+          </button>
+        ) : (
+          <span key={pointIndex} className={pointClassName} style={pointStyle} aria-hidden='true'>
+            {pointChildren}
+          </span>
+        );
+      })}
     </div>
   );
 }

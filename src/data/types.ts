@@ -492,7 +492,8 @@ export type MapPointCategory =
   | 'idleFruitPlate'
   | 'mouseHole'
   | 'pipe'
-  | 'geometryBarrel';
+  | 'geometryBarrel'
+  | 'scoutingCanary';
 export type MapCoordinate = { x: number; y: number };
 export type InteractiveMapRoom = {
   name: string;
@@ -510,6 +511,8 @@ export type InteractiveMapPoint = {
   category: MapPointCategory;
   subtype?: string;
   position: MapCoordinate;
+  /** 仅显示在小地图上的可能移动路径。 */
+  minimapPaths?: MapCoordinate[][];
   description?: string;
   targetWallCrackPointId?: string;
   geometryBarrelRoute?: GeometryBarrelRoute;
