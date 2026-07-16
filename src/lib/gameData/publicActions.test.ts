@@ -1,5 +1,6 @@
 import {
   fetchPublicGameDataActions,
+  getEntityUpdateHistory,
   getPublicGameDataActionsAndApplyToServerData,
 } from './publicActions';
 import type { PublicActionRow } from './publicActionsTypes';
@@ -105,6 +106,8 @@ const publicRows: PublicActionRow[] = [
   },
 ];
 
+let queryRows = publicRows;
+
 describe('public game data actions', () => {
   beforeEach(() => {
     const { characters } = jest.requireMock('@/data') as {
@@ -112,9 +115,12 @@ describe('public game data actions', () => {
     };
 
     characters.Tom = { description: 'old' };
+    queryRows = publicRows;
     query.select.mockReturnValue(query);
     query.eq.mockReturnValue(query);
-    query.order.mockResolvedValue({ data: publicRows, error: null });
+    query.order.mockImplementation((column: string) =>
+      column === 'id' ? Promise.resolve({ data: queryRows, error: null }) : query
+    );
 
     const { supabaseServerPublic } = jest.requireMock('@/lib/supabase/public') as {
       supabaseServerPublic: { from: jest.Mock };
@@ -138,6 +144,8 @@ describe('public game data actions', () => {
 
     expect(characters.Tom).toEqual({ description: 'old' });
     expect(publicRows.map((row) => row.entity_type)).toEqual(['characters', 'factions', 'unknown']);
+    expect(query.order).toHaveBeenNthCalledWith(1, 'created_at', { ascending: true });
+    expect(query.order).toHaveBeenNthCalledWith(2, 'id', { ascending: true });
     expect(cachedMock).toHaveBeenCalledWith(['public-game-data-actions'], expect.any(Function), {
       revalidate: false,
       tags: ['public-game-data-actions'],
@@ -152,5 +160,37 @@ describe('public game data actions', () => {
     await expect(getPublicGameDataActionsAndApplyToServerData()).resolves.toEqual(publicRows);
 
     expect(characters.Tom).toEqual({ description: 'new' });
+  });
+
+  it('should use the action id to break update-history timestamp ties', async () => {
+    queryRows = [
+      {
+        ...publicRows[0]!,
+        id: '00000000-0000-4000-8000-000000000001',
+        entry: {
+          op: 'set',
+          path: 'Tom.description',
+          oldValue: 'old',
+          newValue: 'first',
+        },
+      },
+      {
+        ...publicRows[0]!,
+        id: '00000000-0000-4000-8000-000000000002',
+        entry: {
+          op: 'set',
+          path: 'Tom.name',
+          oldValue: 'Tom',
+          newValue: 'Thomas',
+        },
+      },
+    ];
+
+    const history = await getEntityUpdateHistory();
+
+    expect(history.get('characters:Tom')).toMatchObject({
+      actionId: '00000000-0000-4000-8000-000000000002',
+      affectedPath: 'Tom.name',
+    });
   });
 });

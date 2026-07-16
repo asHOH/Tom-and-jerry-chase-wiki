@@ -130,7 +130,13 @@ export async function getEntityUpdateHistory(): Promise<Map<string, EntityUpdate
         const historyKey = `${action.entity_type}:${entryId}`;
 
         const existing = historyMap.get(historyKey);
-        if (!existing || new Date(action.created_at) > new Date(existing.updatedAt)) {
+        const isLaterAction =
+          !existing ||
+          new Date(action.created_at) > new Date(existing.updatedAt) ||
+          (action.created_at === existing.updatedAt &&
+            action.id.localeCompare(existing.actionId) > 0);
+
+        if (isLaterAction) {
           historyMap.set(historyKey, {
             updatedAt: action.created_at,
             actionId: action.id,
@@ -161,7 +167,8 @@ export async function fetchPublicGameDataActions(): Promise<PublicActionRow[]> {
         .select('id, entity_type, entry, created_at, status, message, reviewed_at, created_by')
         .eq('is_public', true)
         .eq('status', 'approved')
-        .order('created_at', { ascending: true });
+        .order('created_at', { ascending: true })
+        .order('id', { ascending: true });
 
       if (error) {
         console.error('Error fetching public game data actions:', error);

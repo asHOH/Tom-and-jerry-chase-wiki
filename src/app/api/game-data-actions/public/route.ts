@@ -15,7 +15,8 @@ export async function GET() {
       .from('game_data_actions')
       .select('id, entity_type, entry, created_at')
       .eq('is_public', true)
-      .order('created_at', { ascending: true });
+      .order('created_at', { ascending: true })
+      .order('id', { ascending: true });
 
     if (error) {
       console.error('Error fetching public game data actions:', error);
