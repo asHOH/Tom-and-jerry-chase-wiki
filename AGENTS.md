@@ -1,208 +1,167 @@
-# Project Info
+# Project
 
-Tom and Jerry Chase Wiki — a game data wiki for 猫和老鼠手游 (Tom and Jerry Chase mobile game).
-Next.js 16 (App Router), React 19, TypeScript (strict), Tailwind CSS 4.
+Tom and Jerry Chase Wiki is a Chinese game-data wiki for 猫和老鼠手游 (Tom and Jerry Chase mobile game). It uses
+Next.js 16 App Router, React 19, strict TypeScript, and Tailwind CSS 4.
 
-- **Production**: Container → Cloudflare Tunnel → tjwiki.com
-- **Dev preview**: Vercel → dev.tjwiki.com
-- **Language**: zh-CN (all user-facing text is Chinese)
-- **Audience**: Mobile-heavy (70%+ mobile traffic). Mobile-first design.
+- Production: <https://tjwiki.com>
+- Development preview: <https://dev.tjwiki.com>
+- Primary UI language: `zh-CN`; user-facing copy should be Chinese.
+- Design mobile-first; desktop layouts enhance the mobile baseline.
+- Use the Node.js and npm versions declared in `package.json` (`engines`, `packageManager`, and `devEngines`).
+- `DEPLOY.md` holds deployment options and environment setup; do not duplicate those details here.
 
 # Commands
 
 ```powershell
-# Dev
-npm run dev                        # Start dev server (localhost:3000)
-npm run build                      # Full build: generate-doc-pages → next build → image optimization
-npm run build:skip-images          # Build without post-build image optimization
+# Development and builds
+npm run dev                    # Next.js dev server on localhost:3000
+npm run build                  # Validate actor profiles, generate docs, build Next/Serwist, optimize images
+npm run build:skip-images      # Same build without post-build image optimization
 
-# Quality (run after every edit)
-npm run lint                       # Oxlint (cached). Zero warnings required for push.
-npm run lint:fast                  # Oxlint (quick sanity check)
-npm run type-check                 # tsc --noEmit (strict mode + noUncheckedIndexedAccess)
-npm run format                     # Prettier + Oxlint auto-fix
+# Quality
+npm run lint                   # Oxlint
+npm run lint:fix               # Oxlint auto-fix
+npm run prettier:check         # Check formatting
+npm run prettier:fix           # Format the repository
+npm run format                 # Prettier, then Oxlint auto-fix
+npm run type-check             # tsc --noEmit
+npm run validate:actor-profiles
 
-# Test
-npm test                           # Jest (all tests)
-npm test -- --testPathPatterns=filterUtils   # Single test file by name (Jest 30: plural)
-npm test -- path/to/file.test.ts   # Single test file by path
-npm run test:watch                 # Watch mode
-npm run test:changed               # Only tests for changed files (used by pre-push on branches)
-npm run test:coverage              # Generate coverage report
-npm run test:ci                    # CI mode: --ci --coverage --maxWorkers=50%
+# Tests
+npm test                       # All Jest tests
+npm test -- path/to/file.test.ts
+npm test -- --testPathPatterns=filterUtils
+npm run test:watch
+npm run test:changed           # Tests related to changed files; passes when none are found
+npm run test:coverage
+npm run test:ci                # CI Jest mode with coverage and 50% workers
 ```
 
-Test files live next to source: `src/lib/foo.test.ts`, `src/components/ui/Foo.test.tsx`. Pattern: `describe('ModuleName', () => { it('should ...') })`. Use React Testing Library for components, plain Jest for utils.
-
-# Git Hooks (Husky)
-
-- **pre-commit**: `lint-staged` runs `oxlint --deny-warnings` + `prettier --write` on staged JS/TS files; `prettier --write` on JSON/CSS/MD.
-- **commit-msg**: Enforces conventional commits: `type(scope): description`. Types: `feat|fix|docs|style|refactor|perf|test|chore`. Merge/Revert commits exempt.
-- **pre-push**: Lint (zero warnings) → Prettier check → type-check + tests in parallel. Feature branches run `test:changed`; main/master run full `test:ci`.
+Tests are colocated with source as `*.test.ts` or `*.test.tsx`. Use React Testing Library for
+components and plain Jest for utilities. Jest only discovers tests under `src/`; `test/` currently
+contains mocks and support files.
 
 # Project Structure
 
-```
+```text
 src/
-├── app/                    # Next.js App Router
-│   ├── (main)/             # Route group: all public pages (characters, cards, items, etc.)
-│   ├── admin/              # Admin panel pages
-│   ├── api/                # API route handlers
-│   ├── layout.tsx          # Root layout (fonts, providers, CSP)
-│   └── globals.css         # Tailwind entry point
-├── features/               # Feature modules (self-contained)
-│   ├── characters/         # components/, data/, hooks/, utils/
-│   ├── entities/           # Entity grid/detail
-│   ├── special-skills/     # Special skill grid/detail/data
-│   ├── modes/              # Game modes
-│   ├── shared/             # Cross-feature: DetailShell, traits, tooltips
-│   └── ...
-├── components/             # Shared UI components
-│   ├── ui/                 # Primitives: Button, Card, SearchBar, etc.
-│   └── *.tsx               # App-level: ErrorBoundary, TabNavigation, LoginDialog
-├── data/                   # Static game data & types
-│   ├── types.ts            # Core type definitions (Character, Skill, KnowledgeCard, etc.)
-│   ├── index.ts            # Re-exports all data
-│   ├── generated/          # Build-time generated (docPages.json — don't edit manually)
-│   └── *.ts                # achievements, maps, traits, winRates, etc.
-├── lib/                    # Utils & business logic
-│   ├── supabase/           # client.ts (browser), server.ts (RSC), admin.ts (service-role)
-│   ├── design.ts           # Design tokens, button/color utilities
-│   └── *.ts                # filterUtils, textUtils, assetManager, etc.
-├── hooks/                  # Custom React hooks (useUser, useSwipeGesture, useChat, etc.)
-├── context/                # React Context providers (DarkMode, EditMode, App, Toast)
-├── constants/              # SEO metadata, config constants
-└── env.ts                  # t3-oss/env-nextjs validation (Zod schemas for all env vars)
-scripts/                    # Build scripts (generate-doc-pages.mjs, image optimization, etc.)
+├── app/                      # App Router pages, layouts, metadata, and route handlers
+│   ├── (main)/               # Public routes using GlobalLayout
+│   ├── admin/                # Dynamic admin UI
+│   ├── api/                  # Route handlers
+│   ├── maps/                 # Full-screen interactive map route outside (main)
+│   ├── layout.tsx            # Root providers, fonts, analytics, and error boundary
+│   └── globals.css           # Tailwind entry point; imports src/styles/*
+├── features/                 # Domain modules: data, components, hooks, and helpers
+├── components/               # Cross-feature and app-level components
+│   └── ui/                   # Shared UI primitives
+├── data/                     # Shared static data, generated data, types, and Valtio edit stores
+├── lib/                      # Business logic and integrations
+│   ├── edit/                 # Local editing, diffs, persistence, and action squashing
+│   ├── gameData/             # Public game-data action replay and cache invalidation
+│   └── supabase/             # Browser, RSC, public, admin, and proxy clients
+├── hooks/                    # Cross-feature hooks
+├── context/                  # Theme, edit mode, toast, and wiki-history providers
+├── styles/                   # Global theme, base, typography, component, pattern, and animation CSS
+├── testUtils/                # Shared test fixtures
+└── env.ts                    # t3-oss/env-nextjs validation
+
+scripts/                      # Generation, validation, reports, image processing, and ops scripts
+supabase/migrations/          # Database schema history; add migrations rather than editing old ones
+test/__mocks__/               # Jest-only mocks outside Jest's test discovery roots
 ```
 
-# Code Style
+# Architecture
 
-## TypeScript
+## Game Data
 
-- **Strict mode** with extra checks: `noUnusedLocals`, `noUnusedParameters`, `exactOptionalPropertyTypes`, `noImplicitReturns`, `noFallthroughCasesInSwitch`, `noUncheckedIndexedAccess`.
-- Use `type` keyword for type aliases (not `interface` unless extending). Props are typed inline: `type FooProps = { ... }`.
-- Prefix unused params with `_` (enforced by Oxlint `unused-imports` plugin).
-- Path alias: `@/` maps to `src/`. Always use it for non-relative imports.
-- Never use `as any`, `@ts-ignore`, or `@ts-expect-error`.
+- TypeScript and JSON data under `src/data/` and `src/features/*/data/` form the checked-in baseline.
+- Approved public rows from Supabase `game_data_actions` are replayed over that baseline on the server and client. Keep server targets in `src/lib/gameData/publicActions.ts` and client targets in `src/hooks/usePublicGameDataActions.ts` aligned when adding an editable entity type.
+- Valtio proxies in `src/data/store.ts` back local edit mode. Edit persistence, diff recording, and action replay live under `src/lib/edit/`; do not mutate the static baseline ad hoc.
+- `scripts/generate-doc-pages.mjs` writes `src/data/generated/docPages.json`. Changelog generation writes `src/data/generated/changeLogs.json`. Do not edit generated JSON by hand.
+- Actor-profile changes must pass `npm run validate:actor-profiles`; use the normalization script only when intentionally performing its mechanical rewrite.
 
-## Formatting (Prettier)
+## Rendering and Routing
 
-- Single quotes, JSX single quotes, semicolons, trailing commas (es5).
-- Print width: 100. Tab width: 2. End of line: LF.
-- Tailwind class sorting via `prettier-plugin-tailwindcss`.
-- Import order automated by `@ianvs/prettier-plugin-sort-imports`
+- Server Components are the default. Add `'use client'` only where browser APIs, client state, or event handlers require it.
+- Public catalog pages are generally static and detail routes commonly use `generateStaticParams`. Preserve each route's existing `dynamic` or `revalidate` contract when editing it.
+- `trailingSlash: true` and `typedRoutes: true` are enabled. Use typed `Route` values where Next.js navigation needs help proving a dynamic path.
+- React Compiler uses annotation mode. Preserve deliberate compiler directives such as `'use no memo'`; do not add compiler annotations casually.
+- `src/proxy.ts` is the request proxy. It refreshes Supabase sessions and applies preview no-index behavior; this project does not use a legacy root `middleware.ts`.
+
+## Dynamic Services and State
+
+- Supabase-backed articles, comments, users, permissions, notifications, and game-data actions are dynamic. Client-side API reads generally use SWR.
+- `src/lib/supabase/client.ts`: browser singleton.
+- `src/lib/supabase/server.ts`: cookie-aware, cached RSC/route-handler client; call await createClient()`.
+- `src/lib/supabase/public.ts`: server-only publishable-key client for unauthenticated public reads.
+- `src/lib/supabase/admin.ts`: server-only secret-key client with elevated privileges. Never import it into client code or expose its key.
+- Auth routes implement password hashing, rate limiting, and configurable hCaptcha or Turnstile. Preserve the existing helpers and the optional CAPTCHA behavior when provider secrets are absent.
+- Valtio handles shared reactive/editable state. React context and `next-themes` handle scoped UI state. SWR handles API caching; do not introduce another state layer without a clear need.
+
+## Environment and PWA
+
+- Add or change environment variables in `src/env.ts` and mirror public variables in `experimental__runtimeEnv`. Keep `.env.example` and relevant deployment documentation in sync.
+- `SKIP_ENV_VALIDATION=1` bypasses validation. `SKIP_BUILD_CHECKS=true` only controls Next's TypeScript build-error handling; neither should be a normal development default.
+- Serwist builds `public/sw.js` from `src/sw.ts` using `serwist.config.mjs`. The service worker is disabled in development. Do not hand-maintain generated service-worker output.
+
+# Code Conventions
+
+Formatting and lint-enforced details are intentionally omitted here. Treat Prettier and Oxlint as their source of truth.
+
+## TypeScript and Imports
+
+- Strict checks include `noUnusedLocals`, `noUnusedParameters`, `exactOptionalPropertyTypes`, `noImplicitReturns`, `noFallthroughCasesInSwitch`, and `noUncheckedIndexedAccess`.
+- Prefer `type` aliases for new local shapes. Use `interface` where extension, declaration merging, generated definitions, or established adjacent code makes it clearer.
+- Prefix intentionally unused parameters with `_`.
+- Use `@/` for imports across project areas. Use relative imports for files in the same local module.
+
+## React and Components
+
+- Use functional components. Define props directly above the component and extend native element attributes when wrapping an HTML element.
+- Page modules and UI primitives generally use default exports. Utilities, hooks, and types use named
+  exports. Follow the established pattern in the directory you are editing.
+- Use `cn` from `@/lib/design` for conditional classes, reusable class composition, or merging an
+  incoming `className`.
+- Prefer Tailwind for static styling. Use global CSS in `src/styles/` for shared tokens and patterns,
+  and inline `style` only for runtime-computed values or values Tailwind cannot express cleanly.
+- Keep dark-mode behavior via `dark:` variants and the existing theme tokens. Test both themes when
+  changing colors.
+- Use responsive Tailwind prefixes and existing media/gesture hooks for mobile behavior.
+
+## Error Handling and Security
+
+- Route handlers return structured `NextResponse.json({ error: '...' }, { status })` failures.
+- Do not leave empty `catch` blocks. Log, rethrow, or include a comment only when ignoring the error is intentional and safe.
+- Preserve permission checks, rate limits, input validation, RLS/RPC boundaries, and `server-only` imports when modifying APIs or Supabase access.
+- Treat rendered rich text and user-controlled URLs as untrusted; use the existing sanitization and URL-validation helpers.
 
 ## Encoding
 
-- Source files are UTF-8. Treat Chinese mojibake in Windows PowerShell or agent terminal output as a display/decoding issue unless UTF-8-aware reads, file bytes, or browser output prove real corruption; do not "fix" Chinese strings, comments, or generated text based only on mojibake terminal output.
-- Before inspecting Chinese text in PowerShell, normalize the same command/session to UTF-8, then prefer `rg` for targeted checks or `Get-Content -Encoding UTF8` for file reads:
-  `[Console]::InputEncoding = [System.Text.UTF8Encoding]::new($false); [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false); $OutputEncoding = [System.Text.UTF8Encoding]::new($false); chcp 65001 | Out-Null`
+- Source files are UTF-8. Treat Chinese mojibake in Windows PowerShell as a display problem.
+- Before inspecting Chinese text in PowerShell, set the session to UTF-8, then prefer `rg` or `Get-Content -Encoding UTF8`:
 
-## Components
+  ```powershell
+  [Console]::InputEncoding = [System.Text.UTF8Encoding]::new($false)
+  [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false)
+  $OutputEncoding = [System.Text.UTF8Encoding]::new($false)
+  chcp 65001 | Out-Null
+  ```
 
-- Functional components only. Arrow functions or `forwardRef` pattern.
-- Client components: `'use client'` directive at top. Server components are the default.
-- Props: `type FooProps = { ... }` above the component. Extend HTML attributes when wrapping native elements.
-- Default exports for page-level and UI primitive components. Named exports for utilities and types.
-- Use `cn` from `@/lib/design` for conditional or composed classes. It wraps `clsx` and `tailwind-merge`.
+# Validation, Git Hooks, and CI
 
-## Naming
+Choose validation in proportion to the change:
 
-- Components: `PascalCase.tsx` (e.g., `SearchBar.tsx`, `CharacterGrid.tsx`)
-- Hooks: `camelCase.ts` starting with `use` (e.g., `useSwipeGesture.ts`)
-- Utils/lib: `camelCase.ts` (e.g., `filterUtils.ts`, `textUtils.ts`)
-- Data files: `camelCase.ts` (e.g., `catCharacters.ts`)
-- Test files: `*.test.ts` / `*.test.tsx` co-located with source
-- Feature directories: `kebab-case` (e.g., `character-detail/`, `special-skill-grid/`)
-- Barrel exports: `index.ts` files in feature component directories
+- Source changes: run `npm run lint`, `npm run type-check`, and relevant tests.
+- Broad or cross-cutting changes: run full `npm test` suite.
+- Markdown-only changes: run Prettier on/check the changed file; source tests are unnecessary.
+- Actor-profile data changes: also run `npm run validate:actor-profiles`.
+- Build/config/generation changes: run `npm run build:skip-images` when practical.
 
-## Error Handling
+Git hooks:
 
-- API routes: Return `NextResponse.json({ error: '...' }, { status: 4xx/5xx })`.
-- Client: `ErrorBoundary` component wraps the app. Component-level try/catch where needed.
-- Empty `catch {}` blocks are forbidden. At minimum, log or re-throw.
+- `pre-commit`: resets a generated service-worker cache version when necessary, then runs lint-staged Oxlint with warnings denied and Prettier with write mode.
+- `commit-msg`: enforces `type(scope): description`; allowed types are `feat|fix|docs|style|refactor|perf|test|chore`. Breaking-change `!`, merge, and revert commits are supported.
+- `pre-push`: syncs README acknowledgments when contributors change, runs Oxlint and Prettier, then type-checks in parallel with changed tests on feature/development branches or full CI tests on main-like branches.
 
-## Comments
-
-- Prefer semantic names over comments.
-- Add comments only for complex logic, non-obvious algorithms, or public API contracts.
-
-# Architecture Notes
-
-## Data Layer
-
-- **Static game data**: TypeScript files in `src/data/` and `src/features/*/data/`. Imported directly — no runtime fetch needed.
-- **Dynamic content** (articles, user data): Supabase via API routes. Client fetches with SWR.
-- **Build-time generated**: `scripts/generate-doc-pages.mjs` produces `src/data/generated/docPages.json`. Import the JSON file; never use `fs` in RSC.
-- **Static-first rendering**: Default to SSG via `generateStaticParams`. Use ISR only when data changes outside deploys. Characters detail uses ISR (`revalidate = 28800`).
-
-## Supabase
-
-- **Browser client** (`src/lib/supabase/client.ts`): Singleton. Used in client components/hooks.
-- **Server client** (`src/lib/supabase/server.ts`): `await createClient()` in RSC/Route Handlers. Uses `cookies()` bridge + `fetchWithRetry`.
-- **Public client** (`src/lib/supabase/public.ts`): Anon key, no cookies/session. For safe server-only public reads.
-- **Admin client** (`src/lib/supabase/admin.ts`): Service-role key. Server-only. **Never import in client code.**
-- **Session middleware** (`src/lib/supabase/middleware.ts`): Deep-imports `createServerClient` for Edge-safe session cookie sync. Called from Next middleware if present.
-- Auth uses SHA-256/PBKDF2 password hashing. Captcha required on auth routes.
-- Reads use views (`users_public_view`, `article_versions_public_view`). Writes use RPCs with RLS.
-
-## State Management
-
-- **Valtio**: Global reactive state (user info, app context). Stores in `src/context/` and `src/data/store.ts`.
-- **SWR**: Data fetching with caching for API-backed content.
-- **React Context**: Theme (DarkMode), EditMode, Toast notifications.
-
-## Environment
-
-- Validated at build time via `src/env.ts` (t3-oss/env-nextjs + Zod).
-- Feature flags: `NEXT_PUBLIC_DISABLE_ARTICLES`, `NEXT_PUBLIC_DISABLE_FEEDBACK_EMAIL`, etc.
-- Skip validation: `SKIP_ENV_VALIDATION=1`.
-
-## React Compiler
-
-- Enabled in `annotation` mode (`next.config.ts → reactCompiler.compilationMode: 'annotation'`).
-- Only compiles components/hooks annotated with `'use memo'` or similar directives.
-
-## PWA
-
-- Service worker via `@serwist/next` (`src/sw.ts` → `public/sw.js`).
-- Disabled in development. Pre-commit hook resets SW cache version placeholder.
-
-## Key Config
-
-- `trailingSlash: true` in Next.js config — all routes end with `/`.
-- `typedRoutes: true` — use `Route` type for navigation safety.
-- Webpack fallback: `fs`, `net`, `tls` set to `false` for client bundles.
-
-# UI Rules
-
-- Tailwind classes for all static styling. No CSS modules, no styled-components.
-- Static one-off `className` strings can stay inline. Use `cn(...)` when classes are conditional, merged with incoming `className`, or assembled from reusable constants.
-- Avoid template literals for `className`; prefer `cn('base classes', condition && 'conditional classes', className)`.
-- Reusable component variants should use typed maps or helper functions, not repeated ad hoc class strings.
-- Inline `style` prop: ONLY for runtime-computed values (dynamic transforms, positions).
-- Mobile-first: Use Tailwind responsive prefixes (`sm:`, `md:`, `lg:`). `useMobile` hook for gesture behavior.
-- Dark mode: Tailwind `dark:` variant. `DarkModeProvider` context.
-- Animations: `motion` library (Framer Motion successor).
-
-# Post-Edit Checklist
-
-```powershell
-npm run lint            # Must pass with zero warnings
-npm run type-check      # Must pass
-npm test                # Run relevant tests
-```
-
-Commit format: `type(scope): description` — e.g., `feat(characters): add win rate display`
-
-# CI Pipeline
-
-GitHub Actions on push/PR to `main`/`develop`:
-
-1. **Code Quality** (parallel matrix): Prettier check, Oxlint, TypeScript type-check
-2. **Tests & Coverage**: Jest with coverage report → Codecov
-
-CI test detection scans `src/`, `tests/`, and `__tests__/` for `*.test.ts`, `*.test.tsx`, `*.spec.ts`, and `*.spec.tsx`. If matches exist, CI runs tests and coverage; otherwise it reports no tests found.
-
-Branches: `develop` (dev preview), `main` (production).
+GitHub Actions runs on pushes and pull requests to `main` and `develop`. CI validates actor profiles, runs Prettier/Oxlint/TypeScript in parallel, then runs Jest and coverage with Codecov upload. Use `develop` for the development.
