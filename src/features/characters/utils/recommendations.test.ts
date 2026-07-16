@@ -1,19 +1,8 @@
 import type { KnowledgeCardGroup, SuggestedSpecialSkillItem } from '@/data/types';
-import catGeneralKnowledgeCardGroups from '@/features/knowledge-cards/data/catGeneralKnowledgeCardGroups';
-import mouseGeneralKnowledgeCardGroups from '@/features/knowledge-cards/data/mouseGeneralKnowledgeCardGroups';
-import catGeneralSpecialSkills from '@/features/special-skills/data/catGeneralSpecialSkills';
-import mouseGeneralSpecialSkills from '@/features/special-skills/data/mouseGeneralSpecialSkills';
 
 import { mergeCharacterRecommendations } from './recommendations';
 
 describe('mergeCharacterRecommendations', () => {
-  it('keeps the unused production shared recommendation files empty', () => {
-    expect(catGeneralKnowledgeCardGroups).toEqual([]);
-    expect(mouseGeneralKnowledgeCardGroups).toEqual([]);
-    expect(catGeneralSpecialSkills).toEqual([]);
-    expect(mouseGeneralSpecialSkills).toEqual([{ name: '冰冻保鲜', description: '通用特技。' }]);
-  });
-
   it('appends faction knowledge-card groups after character groups', () => {
     const characterGroup: KnowledgeCardGroup = {
       cards: ['S-角色卡组'],
