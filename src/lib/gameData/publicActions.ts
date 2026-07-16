@@ -11,6 +11,8 @@ import { cached } from '@/lib/serverCache';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
 import { supabaseServerPublic } from '@/lib/supabase/public';
 import {
+  achievements,
+  achievementsEdit,
   buffs,
   buffsEdit,
   cards,
@@ -37,6 +39,10 @@ export { PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG } from '@/lib/gameData/publicActions
 const appliedPublicActionIds = new Set<string>();
 
 const serverPublicActionTargetRegistry: PublicActionTargetRegistry = {
+  achievements: [
+    achievements as unknown as Record<string, unknown>,
+    achievementsEdit as unknown as Record<string, unknown>,
+  ],
   characters: [characters as unknown as Record<string, unknown>],
   cards: [
     cards as unknown as Record<string, unknown>,

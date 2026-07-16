@@ -10,6 +10,7 @@ import {
 import type { PublicActionRow } from '@/lib/gameData/publicActionsTypes';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
 import {
+  achievementsEdit,
   buffsEdit,
   cardsEdit,
   characters,
@@ -25,6 +26,7 @@ import { GameDataManager } from '../lib/dataManager';
 import { getActionsStorageKey, withRecordingSuppressed } from '../lib/edit/diffUtils';
 
 const clientPublicActionTargetRegistry: PublicActionTargetRegistry = {
+  achievements: [achievementsEdit as unknown as Record<string, unknown>],
   characters: [characters as unknown as Record<string, unknown>],
   cards: [cardsEdit as unknown as Record<string, unknown>],
   entities: [entitiesEdit as unknown as Record<string, unknown>],
