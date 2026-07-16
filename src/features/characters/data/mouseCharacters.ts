@@ -5,6 +5,7 @@ import { processCharacters } from '@/features/characters/utils/skillId';
 const mouseCharacterDefinitions = {
   /* ----------------------------------- 杰瑞 ----------------------------------- */
   杰瑞: {
+    aliases: ['撅瑞'],
     description: '一只古灵精怪的小老鼠，总喜欢戏弄汤姆，和汤姆是一对欢喜冤家。',
     EnglishName: 'Jerry',
     mousePositioningTags: [
@@ -203,7 +204,6 @@ const mouseCharacterDefinitions = {
         description: '所有技能均可主动中断漂浮，灵活性高。',
       },
     ],
-    aliases: ['撅瑞'],
   },
 
   /* ----------------------------------- 侦探杰瑞 ----------------------------------- */
@@ -640,7 +640,7 @@ const mouseCharacterDefinitions = {
       },
       {
         name: '魔术漂浮',
-        description: '在被猫针对的时候可以用漂浮拉开距离，便于拉扯。',
+        description: '配合降落伞和二段跳进一步拉开距离，便于拉扯和逃离。',
       },
     ],
   },
@@ -860,7 +860,6 @@ const mouseCharacterDefinitions = {
       },
     ],
     specialSkills: [
-      { name: '魔术漂浮', description: '提高自保能力。' },
       { name: '绝处逢生', description: '铁血拉距快速起身。' },
       { name: '干扰投掷', description: '提高干扰能力。' },
     ],
@@ -1047,10 +1046,7 @@ const mouseCharacterDefinitions = {
         ],
       },
     ],
-    specialSkills: [
-      { name: '魔术漂浮', description: '通用特技。' },
-      { name: '绝处逢生', description: '通用特技。' },
-    ],
+    specialSkills: [{ name: '绝处逢生', description: '通用特技。' }],
   },
 
   /* ----------------------------------- 剑客杰瑞 ----------------------------------- */
@@ -1943,7 +1939,7 @@ const mouseCharacterDefinitions = {
     specialSkills: [
       {
         name: '魔术漂浮',
-        description: '仙人掌和琴都可以主动取消漂浮，通用性强',
+        description: '仙人掌和琴都可以主动取消漂浮',
       },
       {
         name: '干扰投掷',
@@ -2366,16 +2362,8 @@ const mouseCharacterDefinitions = {
 
     specialSkills: [
       {
-        name: '魔术漂浮',
-        description: '通用特技。',
-      },
-      {
         name: '绝处逢生',
         description: '用于自保或破坏老鼠夹，有一定救援能力。',
-      },
-      {
-        name: '冰冻保鲜',
-        description: '提高前期自保，手快可以当一层盾，有一定救援能力。',
       },
       {
         name: '急速翻滚',
@@ -2590,12 +2578,7 @@ const mouseCharacterDefinitions = {
         ],
       },
     ],
-    specialSkills: [
-      {
-        name: '魔术漂浮',
-        description: '加强自保能力。',
-      },
-    ],
+    specialSkills: [],
   },
 
   /* ----------------------------------- 天使杰瑞 ----------------------------------- */
@@ -3004,10 +2987,6 @@ const mouseCharacterDefinitions = {
     ],
     specialSkills: [
       {
-        name: '魔术漂浮',
-        description: '辅助自身逃脱。',
-      },
-      {
         name: '绝处逢生',
         description: '增强自保，或用于抵消结算的眩晕效果。',
       },
@@ -3288,12 +3267,8 @@ const mouseCharacterDefinitions = {
 
     specialSkills: [
       {
-        name: '魔术漂浮',
-        description: '通用特技。',
-      },
-      {
         name: '绝处逢生',
-        description: '通用特技。',
+        description: '配合兔子大表哥快速起身逃离。',
       },
       {
         name: '干扰投掷',
@@ -3484,7 +3459,6 @@ const mouseCharacterDefinitions = {
         name: '干扰投掷',
         description: '干扰投掷能提高佩克斯的干扰能力，还能让主动技能更容易命中敌方。',
       },
-      { name: '魔术漂浮', description: '通用特技。' },
       { name: '绝处逢生', description: '通用特技。' },
     ],
   },
@@ -3831,7 +3805,6 @@ const mouseCharacterDefinitions = {
     ],
     specialSkills: [
       { name: '绝处逢生', description: '绝处逢生和隐身搭配能大幅提高生存能力，还能用来清理夹子。' },
-      { name: '魔术漂浮', description: '通用特技。' },
     ],
   },
 
@@ -4210,7 +4183,7 @@ const mouseCharacterDefinitions = {
       {
         name: '魔术漂浮',
         description:
-          '部分高低差较多的地图可考虑携带，补充容错。不过罗菲本身就有藤蔓和[圆球二段跳](在空中向上释放弹力圆球，达到二段跳的效果)，并不特别依赖漂浮。',
+          '仅在高低差多的地图可考虑携带，补充容错。不过罗菲本身就有藤蔓和[圆球二段跳](在空中向上释放弹力圆球，达到二段跳的效果)，并不特别依赖漂浮。',
       },
     ],
   },
@@ -4365,10 +4338,6 @@ const mouseCharacterDefinitions = {
       },
     ],
     specialSkills: [
-      {
-        name: '魔术漂浮',
-        description: '通用特技。',
-      },
       {
         name: '干扰投掷',
         description: '提高干扰能力和技能命中率。',
@@ -4757,7 +4726,7 @@ const mouseCharacterDefinitions = {
         ],
       },
     ],
-    specialSkills: [{ name: '魔术漂浮', description: '通用特技。' }],
+    specialSkills: [],
   },
 
   /* ----------------------------------- 音乐家杰瑞 ----------------------------------- */
@@ -4844,10 +4813,6 @@ const mouseCharacterDefinitions = {
         name: '冰冻保鲜',
         description:
           '现版本冰冻保鲜在释放和解除时均能触发共鸣，可在短时间内放出4段共鸣，可用于打伤害或拆火箭。',
-      },
-      {
-        name: '魔术漂浮',
-        description: '通用特技，兼具一定对策，但与被动技能相性较差。',
       },
     ],
     skills: [
@@ -5439,10 +5404,6 @@ const mouseCharacterDefinitions = {
         name: '干扰投掷',
         description: '道具起手的特技道具-过载电流-充能道具连招。',
       },
-      {
-        name: '魔术漂浮',
-        description: '通用特技。',
-      },
     ],
     aliases: ['朵帝', '雷电法王', '电耗子'],
   },
@@ -5595,10 +5556,6 @@ const mouseCharacterDefinitions = {
       },
     ],
     specialSkills: [
-      {
-        name: '魔术漂浮',
-        description: '通用特技。',
-      },
       {
         name: '绝处逢生',
         description: '通用特技。',
@@ -5804,10 +5761,6 @@ const mouseCharacterDefinitions = {
         description: '加强生存能力，与被动减伤配合较好。',
       },
       {
-        name: '魔术漂浮',
-        description: '通用特技。',
-      },
-      {
         name: '勇气投掷',
         description: '用于缩短采访CD。',
       },
@@ -5981,7 +5934,7 @@ const mouseCharacterDefinitions = {
     specialSkills: [
       {
         name: '魔术漂浮',
-        description: '漂浮空中可扔出多个符，且乾坤袋可主动中断漂浮。',
+        description: '乾坤袋可主动中断漂浮，且漂浮空中可扔出多个符。',
       },
       {
         name: '干扰投掷',
@@ -6304,7 +6257,7 @@ const mouseCharacterDefinitions = {
     specialSkills: [
       {
         name: '魔术漂浮',
-        description: '拉到高点放方块使猫上不来，拖时间。',
+        description: '拉到高点放方块使猫上不来，逃离追击。',
       },
       {
         name: '急速翻滚',
@@ -6816,10 +6769,6 @@ const mouseCharacterDefinitions = {
       },
     ],
     specialSkills: [
-      {
-        name: '魔术漂浮',
-        description: '通用特技。',
-      },
       {
         name: '绝处逢生',
         description: '通用特技。',
