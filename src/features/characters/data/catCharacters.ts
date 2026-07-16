@@ -1193,10 +1193,6 @@ const catCharacterDefinitions = {
     ],
     specialSkills: [
       {
-        name: '绝地反击',
-        description: '通用特技。',
-      },
-      {
         name: '蓄力重击',
         description: '绑定击晕。',
       },
@@ -1451,12 +1447,7 @@ const catCharacterDefinitions = {
         defaultFolded: true,
       },
     ],
-    specialSkills: [
-      {
-        name: '绝地反击',
-        description: '通用特技。',
-      },
-    ],
+    specialSkills: [],
     skills: [
       {
         name: '警戒',
@@ -1834,10 +1825,6 @@ const catCharacterDefinitions = {
 
     specialSkills: [
       {
-        name: '绝地反击',
-        description: '通用特技。',
-      },
-      {
         name: '应急治疗',
         description: '提高续航，防止被胡椒粉毒死。',
       },
@@ -2007,10 +1994,6 @@ const catCharacterDefinitions = {
       {
         name: '蓄力重击',
         description: '配合击晕或套索，提高伤害。',
-      },
-      {
-        name: '绝地反击',
-        description: '通用特技。',
       },
     ],
     skills: [
@@ -2849,6 +2832,10 @@ const catCharacterDefinitions = {
         description:
           '主动技能全程霸体，所以对于特技霸体的需求较低。翻滚能弥补机动性不足的短板，也能用于快速控位出刀。',
       },
+      {
+        name: '绝地反击',
+        description: '适配乘胜追击和乾坤一掷。但苏蕊不缺霸体，较不推荐。',
+      },
     ],
     skills: [
       {
@@ -3360,8 +3347,7 @@ const catCharacterDefinitions = {
       },
       {
         name: '绝地反击',
-        description:
-          '绝地反击可以提高恶魔汤姆对控制效果的容错。但恶汤不缺护盾和霸体，因此该技能只做衔接使用。',
+        description: '提高恶魔汤姆对控制效果的容错。但恶汤不缺护盾和霸体，因此该技能较不推荐。',
       },
     ],
     skills: [
@@ -3733,10 +3719,6 @@ const catCharacterDefinitions = {
 
     specialSkills: [
       {
-        name: '绝地反击',
-        description: '适用于一般情况，用于残血强绑。',
-      },
-      {
         name: '蓄力重击',
         description:
           '推荐在对面选出魔术师时带，用于秒杀兔子大表哥，防止因为缺伤害导致处理不了兔子举秒飞而无法及时减员。',
@@ -3932,10 +3914,6 @@ const catCharacterDefinitions = {
       },
     ],
     specialSkills: [
-      {
-        name: '绝地反击',
-        description: '增强如玉的打架和绑火箭能力。',
-      },
       { name: '急速翻滚', description: '增强如玉的机动性。' },
       {
         name: '我生气了！',
