@@ -67,8 +67,11 @@ export default function LinkDialog({
               id='link-url'
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              placeholder='https://example.com'
+              placeholder='/characters/汤姆/ 或 https://example.com'
             />
+            <p className='mt-2 text-xs text-gray-500 dark:text-gray-400'>
+              站内链接可填写以“/”开头的路径，例如 /characters/汤姆/；发布后会使用站内客户端跳转。
+            </p>
           </div>
           <div className='flex justify-end space-x-3'>
             <Button onClick={onClose} variant='secondary'>

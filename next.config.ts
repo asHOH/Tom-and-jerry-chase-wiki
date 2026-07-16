@@ -45,6 +45,10 @@ const nextConfig: NextConfig = {
     'valtio',
     // sanitize-html 2.17.6 is CommonJS but depends on an ESM-only parser chain.
     'sanitize-html',
+    'html-react-parser',
+    'html-dom-parser',
+    'style-to-js',
+    'style-to-object',
     'htmlparser2',
     'domhandler',
     'domutils',

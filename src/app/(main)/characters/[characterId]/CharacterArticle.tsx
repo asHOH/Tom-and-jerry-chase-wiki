@@ -7,6 +7,7 @@ import { sanitizeHTML } from '@/lib/xssUtils';
 import CharacterSection from '@/features/characters/components/character-detail/sections/CharacterSection';
 import AccordionCard from '@/components/ui/AccordionCard';
 import ButtonLink from '@/components/ui/ButtonLink';
+import { renderRichTextContent } from '@/components/ui/RichTextContent';
 import StyledMDX from '@/components/ui/StyledMDX';
 import { ClockIcon, EyeIcon, FolderIcon, UserCircleIcon } from '@/components/icons/CommonIcons';
 
@@ -109,10 +110,9 @@ export default function CharacterArticle({
             </div>
           </div>
 
-          <StyledMDX
-            className='mx-0 max-w-none p-0 sm:p-0'
-            dangerouslySetInnerHTML={{ __html: sanitizeHTML(single.content) }}
-          />
+          <StyledMDX className='mx-0 max-w-none p-0 sm:p-0'>
+            {renderRichTextContent(sanitizeHTML(single.content))}
+          </StyledMDX>
         </div>
       </CharacterSection>
     );
@@ -202,10 +202,9 @@ export default function CharacterArticle({
                     </div>
                   </div>
                   {article.content ? (
-                    <StyledMDX
-                      className='mx-0 max-w-none p-0 sm:p-0'
-                      dangerouslySetInnerHTML={{ __html: sanitizeHTML(article.content) }}
-                    />
+                    <StyledMDX className='mx-0 max-w-none p-0 sm:p-0'>
+                      {renderRichTextContent(sanitizeHTML(article.content))}
+                    </StyledMDX>
                   ) : null}
                 </div>
               ),
