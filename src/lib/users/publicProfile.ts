@@ -114,7 +114,7 @@ export async function getPublicUserProfile(userId: string): Promise<PublicUserPr
       .from('game_data_actions')
       .select('id', { count: 'exact', head: true })
       .eq('created_by', userId)
-      .eq('status', 'approved')
+      .in('status', ['approved', 'synced'])
       .eq('is_public', true),
     supabaseAdmin
       .from('game_data_actions')
@@ -133,7 +133,7 @@ export async function getPublicUserProfile(userId: string): Promise<PublicUserPr
       .from('game_data_actions')
       .select('id, entity_type, message, created_at')
       .eq('created_by', userId)
-      .eq('status', 'approved')
+      .in('status', ['approved', 'synced'])
       .eq('is_public', true)
       .order('created_at', { ascending: false })
       .limit(RECENT_CONTRIBUTION_LIMIT),
