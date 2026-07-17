@@ -9,6 +9,16 @@ export type PublicActionTargetRegistry = Record<string, Record<string, unknown>[
 
 type PublicActionApplyResult = 'mutated' | 'handled';
 
+export class PublicActionReplayInvariantError extends AggregateError {
+  constructor(rowId: string, applyError: unknown, rollbackError: unknown) {
+    super(
+      [applyError, rollbackError],
+      `Public action row ${rowId} failed and could not be fully rolled back`
+    );
+    this.name = 'PublicActionReplayInvariantError';
+  }
+}
+
 type ApplyPublicActionRowsOptions = {
   rows: PublicActionRow[];
   handledIds: Set<string>;
@@ -127,10 +137,7 @@ function applyWithResolvedTargets(
       try {
         restoreReplayTargets(backups);
       } catch (rollbackError) {
-        throw new AggregateError(
-          [error, rollbackError],
-          'Public action row failed and could not be fully rolled back'
-        );
+        throw new PublicActionReplayInvariantError(row.id, error, rollbackError);
       }
       throw error;
     }
@@ -166,6 +173,7 @@ export function applyPublicActionRows(
       markHandled(row.id, options.handledIds, newlyHandledIds);
       if (result === 'mutated') mutatedCount += 1;
     } catch (error) {
+      if (error instanceof PublicActionReplayInvariantError) throw error;
       options.onError?.(row, error);
     }
   }

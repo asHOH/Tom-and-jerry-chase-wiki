@@ -1,5 +1,6 @@
 import {
   applyPublicActionRows,
+  PublicActionReplayInvariantError,
   resolvePublicActionTargets,
   type PublicActionTargetRegistry,
 } from './actionReplay';
@@ -140,6 +141,59 @@ describe('applyPublicActionRows', () => {
     expect(failingTarget).toEqual({ Tom: { description: 'old' } });
     expect(handledIds.has('multi-target-failure')).toBe(false);
     expect(result).toEqual({ handledCount: 0, mutatedCount: 0, handledIds: [] });
+  });
+
+  it('should abort replay when rollback cannot restore the target', () => {
+    const baseTarget: Record<string, unknown> = {
+      Locked: Object.freeze({ description: 'locked' }),
+      Tom: { description: 'old' },
+    };
+    const target = new Proxy(baseTarget, {
+      set() {
+        throw new Error('rollback assignment failed');
+      },
+    });
+    const handledIds = new Set<string>();
+    const onError = jest.fn();
+    const laterTarget: Record<string, unknown> = { Jerry: { description: 'old' } };
+
+    expect(() =>
+      applyPublicActionRows({
+        rows: [
+          row('rollback-failure', [
+            {
+              op: 'set',
+              path: 'Tom.description',
+              oldValue: 'old',
+              newValue: 'new',
+            },
+            {
+              op: 'set',
+              path: 'Locked.description',
+              oldValue: 'locked',
+              newValue: 'unlocked',
+            },
+          ]),
+          row(
+            'later-row',
+            {
+              op: 'set',
+              path: 'Jerry.description',
+              oldValue: 'old',
+              newValue: 'new',
+            },
+            'items'
+          ),
+        ],
+        handledIds,
+        resolveTargets: (entityType) => (entityType === 'characters' ? [target] : [laterTarget]),
+        onError,
+      })
+    ).toThrow(PublicActionReplayInvariantError);
+
+    expect(onError).not.toHaveBeenCalled();
+    expect(handledIds.has('rollback-failure')).toBe(false);
+    expect(laterTarget).toEqual({ Jerry: { description: 'old' } });
   });
 
   it('should preserve known no-op rows as handled without counting mutations', () => {
