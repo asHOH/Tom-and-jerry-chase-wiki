@@ -10,6 +10,10 @@ import { fetchWithRetry } from './fetch-retry';
 
 const supabaseSecretKey = resolveSupabaseSecretKey(env);
 
+export function hasSupabaseAdminConfig(): boolean {
+  return env.NEXT_PUBLIC_DISABLE_ARTICLES !== '1' && !!supabaseUrl && !!supabaseSecretKey;
+}
+
 // Note: this client is a singleton and can be used across the server-side of the app.
 // It has elevated privileges and should be used with caution.
 export const supabaseAdmin =

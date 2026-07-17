@@ -530,7 +530,19 @@ export default function ArticleClient({
               <div className='flex flex-wrap items-center gap-6 text-sm text-gray-600 dark:text-gray-400'>
                 <div className='flex items-center gap-2'>
                   <UserCircleIcon className='size-4' strokeWidth={1.5} />
-                  <span>作者: {article.users_public_view?.nickname || '未知用户'}</span>
+                  <span>
+                    作者:{' '}
+                    {article.users_public_view?.nickname ? (
+                      <Link
+                        href={`/users/${article.author_id}`}
+                        className='hover:text-blue-600 hover:underline dark:hover:text-blue-400'
+                      >
+                        {article.users_public_view.nickname}
+                      </Link>
+                    ) : (
+                      '未知用户'
+                    )}
+                  </span>
                 </div>
 
                 <div className='flex items-center gap-2'>
@@ -579,7 +591,17 @@ export default function ArticleClient({
                     <span>
                       最后编辑: {formatArticleDate(article.latest_version.created_at!)}
                       {article.latest_version.users_public_view?.nickname &&
-                        ` 由 ${article.latest_version.users_public_view.nickname}`}
+                        article.latest_version.editor_id && (
+                          <>
+                            {' 由 '}
+                            <Link
+                              href={`/users/${article.latest_version.editor_id}`}
+                              className='hover:text-blue-600 hover:underline dark:hover:text-blue-400'
+                            >
+                              {article.latest_version.users_public_view.nickname}
+                            </Link>
+                          </>
+                        )}
                     </span>
                   </div>
                 )}
