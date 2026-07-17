@@ -15,13 +15,14 @@ export async function GET(request: NextRequest) {
       'game_data_action.mark_synced',
     ]);
     if ('error' in guard) return guard.error;
+    const { supabase } = guard;
 
     const { searchParams } = new URL(request.url);
     const statusParam = (searchParams.get('status') ?? 'all').trim() as AllowedStatus;
 
     const status: AllowedStatus = ALLOWED_STATUSES.includes(statusParam) ? statusParam : 'all';
 
-    let query = supabaseAdmin
+    let query = supabase
       .from('game_data_actions')
       .select(
         'id, created_at, created_by, entity_type, entry, is_public, message, rejection_reason, reviewed_at, reviewed_by, status'
