@@ -1,6 +1,8 @@
 import type { Action } from '@/lib/edit/diffUtils';
 
 import type { ActionDecodeErrorCode } from './actionErrors';
+import { parseActionPath } from './actionPath';
+import { cloneGameDataValue } from './cloneGameDataValue';
 import type { PublicActionRow } from './publicActionsTypes';
 
 const ACTION_FIELDS = new Set(['op', 'path', 'oldValue', 'newValue']);
@@ -54,8 +56,6 @@ type FlattenedCandidates = {
   preserveSingleShape: boolean;
 };
 
-type CloneResult = { success: true; value: unknown } | { success: false };
-
 function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
@@ -90,54 +90,8 @@ function createError(
   };
 }
 
-function cloneSupportedValue(value: unknown, ancestors = new WeakSet<object>()): CloneResult {
-  if (
-    value === undefined ||
-    value === null ||
-    typeof value === 'string' ||
-    typeof value === 'boolean'
-  ) {
-    return { success: true, value };
-  }
-  if (typeof value === 'number') {
-    return Number.isFinite(value) ? { success: true, value } : { success: false };
-  }
-  if (typeof value !== 'object' || ancestors.has(value)) return { success: false };
-
-  const prototype = Object.getPrototypeOf(value);
-  if (!Array.isArray(value) && prototype !== Object.prototype && prototype !== null) {
-    return { success: false };
-  }
-
-  ancestors.add(value);
-  if (Array.isArray(value)) {
-    const result: unknown[] = [];
-    for (const item of value) {
-      const cloned = cloneSupportedValue(item, ancestors);
-      if (!cloned.success) return cloned;
-      result.push(cloned.value);
-    }
-    ancestors.delete(value);
-    return { success: true, value: result };
-  }
-
-  const result: Record<string, unknown> = Object.create(prototype);
-  for (const [key, item] of Object.entries(value)) {
-    const cloned = cloneSupportedValue(item, ancestors);
-    if (!cloned.success) return cloned;
-    Object.defineProperty(result, key, {
-      configurable: true,
-      enumerable: true,
-      value: cloned.value,
-      writable: true,
-    });
-  }
-  ancestors.delete(value);
-  return { success: true, value: result };
-}
-
 function cloneInput(rawEntry: unknown, context: DecodeContext): ActionDecodeResult<unknown> {
-  const cloned = cloneSupportedValue(rawEntry);
+  const cloned = cloneGameDataValue(rawEntry);
   if (!cloned.success) {
     return createError(context, 'clone_failed', 'Action row entry could not be copied');
   }
@@ -247,13 +201,14 @@ function parseAction(
     });
   }
 
-  const path = candidate.path.trim();
-  if (path.length === 0 || path.split('.').some((segment) => segment.trim().length === 0)) {
-    return createError(context, 'invalid_path', 'Action path contains an empty segment', {
+  const parsedPath = parseActionPath(candidate.path);
+  if (!parsedPath.success) {
+    return createError(context, 'invalid_path', parsedPath.error.message, {
       actionIndex,
       field: 'path',
     });
   }
+  const path = parsedPath.value.path;
 
   const op = operation as Action['op'];
   const hasDefinedNewValue = hasOwn(candidate, 'newValue') && candidate.newValue !== undefined;
