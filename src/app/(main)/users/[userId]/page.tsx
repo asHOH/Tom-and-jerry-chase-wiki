@@ -91,7 +91,13 @@ export default async function PublicUserPage({ params }: { params: Promise<{ use
         <h2 id='contribution-totals-heading' className='mb-3 text-xl font-semibold'>
           贡献统计
         </h2>
-        <div className='grid grid-cols-2 gap-3'>
+        <div
+          className={
+            profile.reviewCount > 0
+              ? 'grid grid-cols-2 gap-3 sm:grid-cols-3'
+              : 'grid grid-cols-2 gap-3'
+          }
+        >
           <Card className='border border-gray-200 text-center dark:border-gray-700'>
             <div className='text-2xl font-bold'>{profile.contributionTotals.articles}</div>
             <div className='mt-1 text-sm text-gray-500 dark:text-gray-400'>文章编辑</div>
@@ -100,6 +106,12 @@ export default async function PublicUserPage({ params }: { params: Promise<{ use
             <div className='text-2xl font-bold'>{profile.contributionTotals.gameData}</div>
             <div className='mt-1 text-sm text-gray-500 dark:text-gray-400'>游戏数据编辑</div>
           </Card>
+          {profile.reviewCount > 0 && (
+            <Card className='col-span-2 border border-gray-200 text-center sm:col-span-1 dark:border-gray-700'>
+              <div className='text-2xl font-bold'>{profile.reviewCount}</div>
+              <div className='mt-1 text-sm text-gray-500 dark:text-gray-400'>审核</div>
+            </Card>
+          )}
         </div>
       </section>
 

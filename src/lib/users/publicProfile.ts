@@ -31,6 +31,7 @@ export type PublicUserProfile = {
   nickname: string;
   groups: string[];
   registeredAt: string;
+  reviewCount: number;
   contributionTotals: {
     articles: number;
     gameData: number;
@@ -98,6 +99,7 @@ export async function getPublicUserProfile(userId: string): Promise<PublicUserPr
     membershipsResult,
     articleCountResult,
     gameDataCountResult,
+    reviewCountResult,
     articleRowsResult,
     gameDataRowsResult,
   ] = await Promise.all([
@@ -114,6 +116,12 @@ export async function getPublicUserProfile(userId: string): Promise<PublicUserPr
       .eq('created_by', userId)
       .eq('status', 'approved')
       .eq('is_public', true),
+    supabaseAdmin
+      .from('game_data_actions')
+      .select('id', { count: 'exact', head: true })
+      .eq('reviewed_by', userId)
+      .neq('created_by', userId)
+      .not('reviewed_at', 'is', null),
     supabaseAdmin
       .from('article_versions')
       .select('id, article_id, commit_message, created_at, articles(title)')
@@ -138,6 +146,7 @@ export async function getPublicUserProfile(userId: string): Promise<PublicUserPr
     membershipsResult.error,
     articleCountResult.error,
     gameDataCountResult.error,
+    reviewCountResult.error,
     articleRowsResult.error,
     gameDataRowsResult.error,
   ].filter((error) => error !== null);
@@ -163,6 +172,7 @@ export async function getPublicUserProfile(userId: string): Promise<PublicUserPr
     nickname: userRow.nickname,
     groups,
     registeredAt: authResult.data.user.created_at,
+    reviewCount: reviewCountResult.count ?? 0,
     contributionTotals: {
       articles: articleTotal,
       gameData: gameDataTotal,
