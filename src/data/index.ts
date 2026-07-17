@@ -8,6 +8,7 @@ export type {
   KnowledgeCardGroup,
   KnowledgeCardGroupSet,
   SuggestedSpecialSkillItem,
+  RecommendedStorePlan,
   PositioningTag,
   PositioningTagName,
 } from './types';

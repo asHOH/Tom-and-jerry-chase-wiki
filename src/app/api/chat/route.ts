@@ -261,6 +261,10 @@ type SuggestedSpecialSkillItem = {
   description: string; // A description of why this skill is recommended.
 };
 
+// A set of four items recommended for purchase from the in-game store.
+type RecommendedStorePlan = {
+  items: [string, string, string, string];
+};
 
 // The main data structure for a single character.
 type CharacterDefinition = {
@@ -279,6 +283,7 @@ type CharacterDefinition = {
   skills: SkillDefinition[]; // A list of the character's skills.
   knowledgeCardGroups: (KnowledgeCardGroup | KnowledgeCardGroupSet)[]; // Recommended knowledge card setups.
   specialSkills?: SuggestedSpecialSkillItem[]; // Recommended special skills.
+  recommendedStorePlans?: RecommendedStorePlan[]; // Recommended in-game store purchase plans.
 
   // --- Matchup Information ---
   // Relations are stored as traits with relation metadata; use trait utilities to query.

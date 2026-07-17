@@ -130,6 +130,11 @@ export type SuggestedSpecialSkillItem = {
   description: string;
 };
 
+export type RecommendedStorePlan = {
+  items: [string, string, string, string];
+  description: string;
+};
+
 export type CharacterRelationItem = {
   id: string;
   description?: string;
@@ -159,6 +164,9 @@ export type CharacterDefinition = {
 
   // special skill suggestions
   specialSkills?: SuggestedSpecialSkillItem[];
+
+  // In-game store purchase suggestions
+  recommendedStorePlans?: RecommendedStorePlan[];
 
   EnglishName?: string; // Official translation retained outside canonical actor profile data
 };

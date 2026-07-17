@@ -863,6 +863,12 @@ const mouseCharacterDefinitions = {
       { name: '绝处逢生', description: '铁血拉距快速起身。' },
       { name: '干扰投掷', description: '提高干扰能力。' },
     ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '玻璃杯', '冰块', '灰花瓶'],
+        description: '便于购买道具，伤害、减速与眩晕猫咪。',
+      },
+    ],
   },
 
   /* ----------------------------------- 国王杰瑞 ----------------------------------- */
