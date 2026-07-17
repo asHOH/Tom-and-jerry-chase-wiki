@@ -54,6 +54,12 @@ describe('areActionsOrderDependent', () => {
         set('Tom.aliases.0.name', 'first', 'updated')
       )
     ).toBe(true);
+    expect(
+      areActionsOrderDependent(
+        set('Tom.aliases.0', { name: 'first' }, undefined),
+        set('Tom.aliases.1.name', 'second', 'updated')
+      )
+    ).toBe(true);
   });
 
   it('should keep ordinary writes below different array items independent', () => {
@@ -92,6 +98,16 @@ describe('groupActionEntriesByDependency', () => {
       [set('Tom.profile.name', 'Tom', 'Thomas'), set('Tom.description', 'old', 'new')],
       set('Tom.profile.name', 'Thomas', 'Tommy'),
       set('Jerry.description', 'old', 'new'),
+    ];
+
+    expect(groupActionEntriesByDependency(entries)).toEqual([[0, 1], [2]]);
+  });
+
+  it('should group a set-delete with writes affected by its array index shift', () => {
+    const entries: ActionHistoryEntry[] = [
+      set('Tom.aliases.0', { name: 'first' }, undefined),
+      set('Tom.aliases.1.name', 'second', 'updated'),
+      set('Tom.description', 'old', 'new'),
     ];
 
     expect(groupActionEntriesByDependency(entries)).toEqual([[0, 1], [2]]);

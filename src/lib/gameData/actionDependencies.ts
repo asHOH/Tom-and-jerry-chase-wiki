@@ -44,7 +44,9 @@ function getStructuralArrayParent(action: Action): Path | null {
 
   if (action.op !== 'set') return null;
   if (last === 'length') return parent;
-  if (isArrayIndex(last) && action.oldValue === undefined) return parent;
+  if (isArrayIndex(last) && (action.oldValue === undefined || action.newValue === undefined)) {
+    return parent;
+  }
 
   return null;
 }
