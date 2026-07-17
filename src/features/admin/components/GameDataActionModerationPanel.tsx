@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
 
 import { formatCompactDateTime } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
@@ -436,9 +437,22 @@ const GameDataActionModerationPanel = ({
                         <span className={statusMeta.className}>{statusMeta.label}</span>
                         <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
                         <span>
-                          {submission.created_by_nickname
-                            ? `由 ${submission.created_by_nickname} 提交`
-                            : '匿名提交'}
+                          {submission.created_by_nickname && submission.created_by ? (
+                            <>
+                              由{' '}
+                              <Link
+                                href={`/users/${submission.created_by}`}
+                                target='_blank'
+                                rel='noopener noreferrer'
+                                className='font-medium text-blue-600 hover:underline dark:text-blue-400'
+                              >
+                                {submission.created_by_nickname}
+                              </Link>{' '}
+                              提交
+                            </>
+                          ) : (
+                            '匿名提交'
+                          )}
                         </span>
                         <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
                         <span>
@@ -450,9 +464,21 @@ const GameDataActionModerationPanel = ({
                           <>
                             <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
                             <span>
-                              {submission.reviewed_by_nickname
-                                ? `审核：${submission.reviewed_by_nickname}`
-                                : '已审核'}
+                              {submission.reviewed_by_nickname && submission.reviewed_by ? (
+                                <>
+                                  审核：
+                                  <Link
+                                    href={`/users/${submission.reviewed_by}`}
+                                    target='_blank'
+                                    rel='noopener noreferrer'
+                                    className='font-medium text-blue-600 hover:underline dark:text-blue-400'
+                                  >
+                                    {submission.reviewed_by_nickname}
+                                  </Link>
+                                </>
+                              ) : (
+                                '已审核'
+                              )}
                             </span>
                             <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
                             <span>

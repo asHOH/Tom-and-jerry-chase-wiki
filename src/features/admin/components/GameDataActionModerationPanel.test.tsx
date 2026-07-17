@@ -76,6 +76,14 @@ describe('GameDataActionModerationPanel', () => {
 
     expect(screen.queryAllByText(String(currentYear), { exact: false })).toHaveLength(0);
     expect(screen.getAllByText(String(previousYear), { exact: false }).length).toBeGreaterThan(0);
+    expect(screen.getAllByRole('link', { name: 'Alice' })[0]).toHaveAttribute(
+      'href',
+      '/users/user-1'
+    );
+    expect(screen.getByRole('link', { name: 'Reviewer' })).toHaveAttribute(
+      'href',
+      '/users/reviewer-1'
+    );
   });
 
   it('keeps copy ID with copy JSON in expanded details and uses an icon-only expander', () => {

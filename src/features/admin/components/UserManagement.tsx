@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { useSWRConfig } from 'swr';
 
 import { cn } from '@/lib/design';
@@ -180,7 +181,14 @@ const UserManagement: React.FC<UserManagementProps> = ({
               {users.map((user) => (
                 <tr key={user.id}>
                   <td className='px-4 py-3 text-sm text-gray-800 dark:text-slate-100'>
-                    {user.nickname}
+                    <Link
+                      href={`/users/${user.id}`}
+                      target='_blank'
+                      rel='noopener noreferrer'
+                      className='font-medium text-blue-600 hover:underline dark:text-blue-400'
+                    >
+                      {user.nickname}
+                    </Link>
                   </td>
                   <td className='px-4 py-3 text-sm text-gray-600 dark:text-gray-300'>
                     <div className='w-52'>
