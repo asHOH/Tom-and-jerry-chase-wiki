@@ -9,6 +9,13 @@ const set = (path: string, oldValue: unknown, newValue: unknown): Action => ({
   newValue,
 });
 
+const add = (path: string, newValue: unknown): Action => ({
+  op: 'add',
+  path,
+  oldValue: undefined,
+  newValue,
+});
+
 const remove = (path: string, oldValue: unknown): Action => ({
   op: 'delete',
   path,
@@ -56,8 +63,31 @@ describe('areActionsOrderDependent', () => {
     ).toBe(true);
     expect(
       areActionsOrderDependent(
-        set('Tom.aliases.0', { name: 'first' }, undefined),
+        set('Tom.aliases.0', { name: 'first' }, { name: 'updated first' }),
         set('Tom.aliases.1.name', 'second', 'updated')
+      )
+    ).toBe(true);
+    expect(
+      areActionsOrderDependent(
+        add('Tom.aliases.0', { name: 'inserted' }),
+        set('Tom.aliases.1.name', 'second', 'updated')
+      )
+    ).toBe(true);
+  });
+
+  it('should ignore old and new value metadata when classifying a direct index set', () => {
+    const neighboringWrite = set('Tom.aliases.1.name', 'second', 'updated');
+
+    expect(
+      areActionsOrderDependent(
+        set('Tom.aliases.0', { name: 'first' }, { name: 'updated first' }),
+        neighboringWrite
+      )
+    ).toBe(true);
+    expect(
+      areActionsOrderDependent(
+        set('Tom.aliases.0', 'metadata is wrong', 'metadata is also wrong'),
+        neighboringWrite
       )
     ).toBe(true);
   });
@@ -70,6 +100,24 @@ describe('areActionsOrderDependent', () => {
       )
     ).toBe(false);
   });
+
+  it.each(['Tom..aliases.0', 'Tom.__proto__.aliases', 'Tom.aliases.01'])(
+    'should fail closed for invalid path %s',
+    (invalidPath) => {
+      expect(() =>
+        areActionsOrderDependent(
+          set(invalidPath, 'old', 'new'),
+          set('Jerry.description', 'old', 'new')
+        )
+      ).not.toThrow();
+      expect(
+        areActionsOrderDependent(
+          set(invalidPath, 'old', 'new'),
+          set('Jerry.description', 'old', 'new')
+        )
+      ).toBe(true);
+    }
+  );
 });
 
 describe('groupActionEntriesByDependency', () => {
@@ -111,5 +159,16 @@ describe('groupActionEntriesByDependency', () => {
     ];
 
     expect(groupActionEntriesByDependency(entries)).toEqual([[0, 1], [2]]);
+  });
+
+  it('should form a transitive group through a direct numeric set', () => {
+    const entries: ActionHistoryEntry[] = [
+      set('Tom.aliases.0', { name: 'first' }, { name: 'updated first' }),
+      set('Tom.aliases.1.name', 'second', 'updated second'),
+      set('Tom.aliases.1.title', 'old title', 'new title'),
+      set('Tom.description', 'old', 'new'),
+    ];
+
+    expect(groupActionEntriesByDependency(entries)).toEqual([[0, 1, 2], [3]]);
   });
 });

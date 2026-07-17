@@ -1,14 +1,15 @@
 import type { Action, ActionHistoryEntry } from '@/lib/edit/diffUtils';
 
-type Path = string[];
+import { parseActionPath, resolveArraySegment } from './actionPath';
 
-function parsePath(path: string): Path {
-  return path.split('.').filter(Boolean);
-}
+type Path = readonly string[];
 
-function isArrayIndex(segment: string): boolean {
-  return /^[0-9]+$/.test(segment);
-}
+type AnalyzedActionPath = {
+  path: Path;
+  structuralArrayParent: Path | null;
+};
+
+type ActionPathAnalysis = { success: true; value: AnalyzedActionPath } | { success: false };
 
 function isAtOrUnderPath(path: Path, parent: Path): boolean {
   if (path.length < parent.length) return false;
@@ -24,43 +25,49 @@ function pathsOverlap(left: Path, right: Path): boolean {
   return isAtOrUnderPath(left, right) || isAtOrUnderPath(right, left);
 }
 
-/**
- * Returns the array whose indexes can shift when this action is applied.
- *
- * Ordinary writes below different array items remain independent. Inserts,
- * removals, length writes, and append-shaped index sets affect every later
- * index below the structural parent.
- */
-function getStructuralArrayParent(action: Action): Path | null {
-  const path = parsePath(action.path);
-  if (path.length < 2) return null;
+function analyzeActionPath(action: Action): ActionPathAnalysis {
+  const parsed = parseActionPath(action.path);
+  if (!parsed.success) return { success: false };
 
-  const last = path[path.length - 1]!;
-  const parent = path.slice(0, -1);
+  const path = parsed.value.segments;
+  const finalSegmentIndex = path.length - 1;
+  const finalSegment = path[finalSegmentIndex]!;
+  const resolvedFinalSegment = resolveArraySegment(finalSegment, finalSegmentIndex);
+  if (!resolvedFinalSegment.success) return { success: false };
 
-  if ((action.op === 'add' || action.op === 'delete') && isArrayIndex(last)) {
-    return parent;
+  let structuralArrayParent: Path | null = null;
+  if (path.length >= 2) {
+    const parent = path.slice(0, -1);
+    const isDirectIndex = resolvedFinalSegment.value.kind === 'index';
+    const isStructuralIndexOperation =
+      isDirectIndex && (action.op === 'set' || action.op === 'add' || action.op === 'delete');
+    const isLengthSet =
+      action.op === 'set' &&
+      resolvedFinalSegment.value.kind === 'property' &&
+      resolvedFinalSegment.value.key === 'length';
+
+    if (isStructuralIndexOperation || isLengthSet) structuralArrayParent = parent;
   }
 
-  if (action.op !== 'set') return null;
-  if (last === 'length') return parent;
-  if (isArrayIndex(last) && (action.oldValue === undefined || action.newValue === undefined)) {
-    return parent;
-  }
-
-  return null;
+  return {
+    success: true,
+    value: { path, structuralArrayParent },
+  };
 }
 
 export function areActionsOrderDependent(left: Action, right: Action): boolean {
-  const leftPath = parsePath(left.path);
-  const rightPath = parsePath(right.path);
-  if (leftPath.length === 0 || rightPath.length === 0) return false;
+  const leftAnalysis = analyzeActionPath(left);
+  const rightAnalysis = analyzeActionPath(right);
+  if (!leftAnalysis.success || !rightAnalysis.success) return true;
+
+  const leftPath = leftAnalysis.value.path;
+  const rightPath = rightAnalysis.value.path;
   if (pathsOverlap(leftPath, rightPath)) return true;
 
-  const leftArrayParent = getStructuralArrayParent(left);
+  const leftArrayParent = leftAnalysis.value.structuralArrayParent;
   if (leftArrayParent && isAtOrUnderPath(rightPath, leftArrayParent)) return true;
 
-  const rightArrayParent = getStructuralArrayParent(right);
+  const rightArrayParent = rightAnalysis.value.structuralArrayParent;
   return Boolean(rightArrayParent && isAtOrUnderPath(leftPath, rightArrayParent));
 }
 
