@@ -111,10 +111,14 @@ let queryRows = publicRows;
 
 describe('public game data actions', () => {
   beforeEach(() => {
+    const { cached: cachedMock } = jest.requireMock('@/lib/serverCache') as {
+      cached: jest.Mock;
+    };
     const { characters } = jest.requireMock('@/data') as {
       characters: Record<string, { description: string }>;
     };
 
+    cachedMock.mockImplementation((_keyParts: string[], fn: () => Promise<unknown>) => fn());
     characters.Tom = { description: 'old' };
     queryRows = publicRows;
     query.select.mockReturnValue(query);
@@ -164,6 +168,44 @@ describe('public game data actions', () => {
     await expect(getPublicGameDataActionsAndApplyToServerData()).resolves.toEqual(publicRows);
 
     expect(characters.Tom).toEqual({ description: 'new' });
+  });
+
+  it('should retry the approved-row query after a transient cached query failure', async () => {
+    const { cached: cachedMock } = jest.requireMock('@/lib/serverCache') as {
+      cached: jest.Mock;
+    };
+    let hasCachedValue = false;
+    let cachedValue: unknown;
+    cachedMock.mockImplementation(
+      async (_keyParts: string[], fn: () => Promise<unknown>): Promise<unknown> => {
+        if (hasCachedValue) return cachedValue;
+        const value = await fn();
+        cachedValue = value;
+        hasCachedValue = true;
+        return value;
+      }
+    );
+
+    let terminalQueryCount = 0;
+    query.order.mockImplementation((column: string) => {
+      if (column !== 'id') return query;
+      terminalQueryCount += 1;
+      return Promise.resolve(
+        terminalQueryCount === 1
+          ? { data: null, error: { message: 'temporary query failure' } }
+          : { data: queryRows, error: null }
+      );
+    });
+    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    await expect(fetchPublicGameDataActions()).resolves.toEqual([]);
+    await expect(fetchPublicGameDataActions()).resolves.toEqual(publicRows);
+
+    expect(terminalQueryCount).toBe(2);
+    expect(consoleError).toHaveBeenCalledWith('Error fetching public game data actions:', {
+      message: 'temporary query failure',
+    });
+    consoleError.mockRestore();
   });
 
   it('should use the action id to break update-history timestamp ties', async () => {
@@ -226,5 +268,44 @@ describe('public game data actions', () => {
       status: 'synced',
       affectedPath: 'Tom.name',
     });
+  });
+
+  it('should retry the history query after a transient cached query failure', async () => {
+    const { cached: cachedMock } = jest.requireMock('@/lib/serverCache') as {
+      cached: jest.Mock;
+    };
+    let hasCachedValue = false;
+    let cachedValue: unknown;
+    cachedMock.mockImplementation(
+      async (_keyParts: string[], fn: () => Promise<unknown>): Promise<unknown> => {
+        if (hasCachedValue) return cachedValue;
+        const value = await fn();
+        cachedValue = value;
+        hasCachedValue = true;
+        return value;
+      }
+    );
+
+    let terminalQueryCount = 0;
+    query.order.mockImplementation((column: string) => {
+      if (column !== 'id') return query;
+      terminalQueryCount += 1;
+      return Promise.resolve(
+        terminalQueryCount === 1
+          ? { data: null, error: { message: 'temporary history failure' } }
+          : { data: queryRows, error: null }
+      );
+    });
+    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    await expect(getEntityUpdateHistory()).resolves.toEqual(new Map());
+    const history = await getEntityUpdateHistory();
+
+    expect(history.get('characters:Tom')).toMatchObject({ actionId: 'character-row' });
+    expect(terminalQueryCount).toBe(2);
+    expect(consoleError).toHaveBeenCalledWith('Error fetching public game data action history:', {
+      message: 'temporary history failure',
+    });
+    consoleError.mockRestore();
   });
 });

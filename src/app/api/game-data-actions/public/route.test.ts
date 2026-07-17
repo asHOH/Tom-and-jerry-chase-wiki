@@ -4,6 +4,8 @@ const jsonResponse = (body: unknown, init?: { status?: number }) =>
     json: async () => body,
   }) as Response;
 
+jest.mock('server-only', () => ({}), { virtual: true });
+
 jest.mock('next/server', () => ({
   NextResponse: {
     json: jest.fn(jsonResponse),
@@ -53,6 +55,42 @@ describe('public game data actions route', () => {
     expect(query.eq).toHaveBeenNthCalledWith(2, 'status', 'approved');
     expect(query.order).toHaveBeenNthCalledWith(1, 'created_at', { ascending: true });
     expect(query.order).toHaveBeenNthCalledWith(2, 'id', { ascending: true });
+  });
+
+  it('should preserve the public response schema when the shared reader selects metadata', async () => {
+    query.order.mockImplementation((column: string) =>
+      column === 'id'
+        ? Promise.resolve({
+            data: [
+              {
+                id: 'action-id',
+                entity_type: 'characters',
+                entry: { op: 'set', path: 'Tom.name', newValue: 'Thomas' },
+                created_at: '2026-07-17T00:00:00.000Z',
+                status: 'approved',
+                message: 'metadata must not leak into the legacy response',
+                reviewed_at: '2026-07-17T00:01:00.000Z',
+                created_by: 'user-id',
+              },
+            ],
+            error: null,
+          })
+        : query
+    );
+    const { GET } = await import('./route');
+
+    const response = await GET();
+
+    await expect(response.json()).resolves.toEqual({
+      actions: [
+        {
+          id: 'action-id',
+          entity_type: 'characters',
+          entry: { op: 'set', path: 'Tom.name', newValue: 'Thomas' },
+          created_at: '2026-07-17T00:00:00.000Z',
+        },
+      ],
+    });
   });
 
   it('should preserve the error response when the replay query fails', async () => {

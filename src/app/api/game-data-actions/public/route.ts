@@ -1,5 +1,9 @@
 import { NextResponse } from 'next/server';
 
+import {
+  PublicActionQueryError,
+  queryApprovedPublicActionRows,
+} from '@/lib/gameData/publicActionQueries';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
 import { createClient } from '@/lib/supabase/server';
 
@@ -10,22 +14,21 @@ export async function GET() {
 
   try {
     const supabase = await createClient();
+    const rows = await queryApprovedPublicActionRows(supabase);
+    const actions = rows.map(({ id, entity_type, entry, created_at }) => ({
+      id,
+      entity_type,
+      entry,
+      created_at,
+    }));
 
-    const { data, error } = await supabase
-      .from('game_data_actions')
-      .select('id, entity_type, entry, created_at')
-      .eq('is_public', true)
-      .eq('status', 'approved')
-      .order('created_at', { ascending: true })
-      .order('id', { ascending: true });
-
-    if (error) {
-      console.error('Error fetching public game data actions:', error);
+    return NextResponse.json({ actions });
+  } catch (err) {
+    if (err instanceof PublicActionQueryError) {
+      console.error('Error fetching public game data actions:', err.cause);
       return NextResponse.json({ error: 'Failed to fetch public actions' }, { status: 500 });
     }
 
-    return NextResponse.json({ actions: data ?? [] });
-  } catch (err) {
     console.error('API error:', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }

@@ -32,6 +32,11 @@ import {
 } from '@/data';
 
 import { normalizePublicActionEntries } from './actionEntries';
+import {
+  PublicActionQueryError,
+  queryApprovedPublicActionRows,
+  queryPublicActionHistoryRows,
+} from './publicActionQueries';
 import type { PublicActionRow } from './publicActionsTypes';
 
 export { PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG } from '@/lib/gameData/publicActionsCache';
@@ -165,29 +170,22 @@ async function fetchPublicGameDataActionHistoryRows(): Promise<PublicActionRow[]
     return [];
   }
 
-  return cached(
-    [PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG, 'history'],
-    async () => {
-      const { data, error } = await supabaseServerPublic
-        .from('game_data_actions')
-        .select('id, entity_type, entry, created_at, status, message, reviewed_at, created_by')
-        .eq('is_public', true)
-        .in('status', ['approved', 'synced'])
-        .order('created_at', { ascending: true })
-        .order('id', { ascending: true });
-
-      if (error) {
-        console.error('Error fetching public game data action history:', error);
-        return [];
+  try {
+    return await cached(
+      [PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG, 'history'],
+      () => queryPublicActionHistoryRows(supabaseServerPublic),
+      {
+        revalidate: false,
+        tags: [PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG],
       }
-
-      return data ?? [];
-    },
-    {
-      revalidate: false,
-      tags: [PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG],
-    }
-  );
+    );
+  } catch (error) {
+    console.error(
+      'Error fetching public game data action history:',
+      error instanceof PublicActionQueryError ? error.cause : error
+    );
+    return [];
+  }
 }
 
 export async function fetchPublicGameDataActions(): Promise<PublicActionRow[]> {
@@ -195,33 +193,24 @@ export async function fetchPublicGameDataActions(): Promise<PublicActionRow[]> {
     return [];
   }
 
-  const actions = await cached(
-    [PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG],
-    async () => {
-      const { data, error } = await supabaseServerPublic
-        .from('game_data_actions')
-        .select('id, entity_type, entry, created_at, status, message, reviewed_at, created_by')
-        .eq('is_public', true)
-        .eq('status', 'approved')
-        .order('created_at', { ascending: true })
-        .order('id', { ascending: true });
-
-      if (error) {
-        console.error('Error fetching public game data actions:', error);
-        return [];
+  try {
+    return await cached(
+      [PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG],
+      () => queryApprovedPublicActionRows(supabaseServerPublic),
+      {
+        // Public actions change only through server mutations, which explicitly
+        // revalidate this tag. Avoid periodic database reads on public page requests.
+        revalidate: false,
+        tags: [PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG],
       }
-
-      return data ?? [];
-    },
-    {
-      // Public actions change only through server mutations, which explicitly
-      // revalidate this tag. Avoid periodic database reads on public page requests.
-      revalidate: false,
-      tags: [PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG],
-    }
-  );
-
-  return actions;
+    );
+  } catch (error) {
+    console.error(
+      'Error fetching public game data actions:',
+      error instanceof PublicActionQueryError ? error.cause : error
+    );
+    return [];
+  }
 }
 
 export async function getPublicGameDataActionsAndApplyToServerData(): Promise<PublicActionRow[]> {
