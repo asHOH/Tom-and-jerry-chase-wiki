@@ -22,8 +22,9 @@
   composition, and the resulting pure published values. Those responsibilities do not belong in the
   checked replay engine.
 
-This work can land independently beside the current global server targets. Landing it must not
-change route output or client behavior.
+This work can land beside the current global server targets, but only after every canonical domain
+has a pristine construction path that is independent of legacy module load order. Landing it must
+not change route output or client behavior.
 
 ## Goal
 
@@ -92,16 +93,19 @@ Use these construction rules:
 - Extract pure character and card builders from `GameDataManager`'s raw inputs and derived-field
   logic. The existing `GameDataManager` accessors and the canonical registry must call the same
   builders so their results cannot drift.
-- For directly checked-in domains, construct one server-only canonical root from the checked-in
-  definitions. During coexistence, isolate it once from any legacy mutating target with a deep
-  clone at the boundary.
+- For directly checked-in domains, move the checked-in definition behind a fresh-data factory. Keep
+  the factory's raw input private and deep-clone it on construction so neither the canonical root nor
+  a later construction can observe mutations to a legacy export. The existing legacy value export
+  may be initialized from the same factory during coexistence, but it must not be the input to the
+  canonical factory.
 - Do not use a Valtio proxy, `src/data/store.ts`, or a module cache that legacy replay mutates as a
   canonical source.
 - Expose canonical values through deep-readonly types. Do not deep-freeze the production graph.
   Tests provide the mutation guard without adding normal-request work.
 
-Cloning once while establishing an isolated server-only canonical root is acceptable. Cloning the
-complete graph for each selector call is not.
+Cloning once while establishing an isolated server-only canonical root is acceptable. Cloning a
+possibly already-mutated legacy export is not, even if it occurs only once. Cloning the complete
+graph for each selector call is also not acceptable.
 
 ### The action input is an immutable value
 
@@ -195,8 +199,9 @@ Acceptance:
 
 1. Extract pure character and card construction functions from the current manager logic.
 2. Make both the existing manager path and the canonical registry use those functions.
-3. Add server-only canonical getters for all directly checked-in domains.
-4. Isolate every canonical root from legacy mutation at construction time.
+3. Add fresh-data factories and server-only canonical getters for all directly checked-in domains.
+   Private raw inputs must not be exported by identity; legacy exports are separate factory results.
+4. Isolate every canonical root from legacy mutation regardless of module evaluation order.
 5. Add type-level server-only and deep-readonly boundaries.
 
 Acceptance:
@@ -205,6 +210,9 @@ Acceptance:
 - Every domain root, plus representative nested mutable branches, has different identity from the
   corresponding legacy replay target.
 - Mutating a representative legacy target in a test does not change its canonical value.
+- Importing and mutating the legacy path before first importing or constructing the canonical
+  registry still produces the pristine canonical value. This legacy-first test is required for
+  every direct-data construction pattern, not only the normal canonical-first path.
 - Canonical-source modules do not import `src/data/store.ts`, Valtio, or `editModeRegistry.ts`.
 
 ### Phase 3: Add the immutable action snapshot and wire shared touched roots
@@ -282,7 +290,8 @@ path shapes from every domain.
 ### A canonical value still aliases a mutable legacy branch
 
 Control: add root and representative nested identity assertions for all domains, plus a mutation
-isolation test. Deep equality alone cannot detect this problem.
+isolation test. Include a legacy-first construction test so module evaluation order cannot hide an
+already-mutated source. Deep equality alone cannot detect this problem.
 
 ### Pure selection becomes a full-graph clone
 

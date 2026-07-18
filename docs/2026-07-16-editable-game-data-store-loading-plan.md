@@ -157,22 +157,41 @@ measurements show that edit-mode loading itself needs optimization.
 
 - There is one global published revision used to compare route models with the complete editable
   baseline. It consists only of the immutable production build identity and the action revision.
-- An immutable production build identity is part of the global revision and every
-  published-snapshot cache key. It changes on every deployment, including code-only deployments.
-  Canonical-data and selector changes therefore receive a new cache identity without a second
-  canonical-source hashing or version-generation system.
+- The production build identity is one opaque value generated once while evaluating `next.config.ts`
+  for a build. Use a new optional server environment variable, `DEPLOY_BUILD_ID`, when the deployment
+  system provides an immutable build/deployment ID; otherwise generate a random UUID fallback once
+  for that build. Return that exact value from
+  `generateBuildId` and expose the same value through a server-only build-time constant. Do not use
+  `NEXT_PUBLIC_BUILD_TIMESTAMP`, runtime server-start time, or a commit SHA alone: they either expose
+  an unnecessary client value or do not uniquely identify every built deployment.
+- That immutable production build identity is part of the global revision and every published-cache
+  key. Canonical-data and selector changes therefore receive a new cache identity without a second
+  canonical-source hashing or version-generation system. Every server instance using one built
+  artifact must use the embedded value; local development may generate a new value per dev-server
+  start.
 - One immutable approved-action snapshot contains the ordered, normalized rows and its action
   revision. The action revision covers every field that affects replay or published history,
   including action identity, order, entity type, entry, and visible history metadata.
+- The action revision encoding is versioned and deterministic. Serialize the ordered approved rows
+  as a `v1` array of explicit positional tuples containing `id`, `created_at`, `entity_type`, the
+  normalized canonical action list, `status`, `created_by`, `message`, and `reviewed_at`. Preserve
+  array order, recursively sort object keys, encode absent optional metadata as `null`, serialize as
+  UTF-8 JSON without insignificant whitespace, and hash with SHA-256. Expose lowercase hex prefixed
+  with `v1:`. Add fixed test vectors so browser, Node, or database JSON key order cannot change the
+  revision. The raw stored entry remains available for approval race comparison but is not used as
+  an order-sensitive object serialization shortcut.
 - A request acquires the approved-action snapshot once. Metadata, structured data, page rendering,
   history, route read models, and editable-baseline composition derive from that exact snapshot.
-- Start with one immutable complete published snapshot cached by production build identity and action
-  revision. Its computation receives the exact immutable action snapshot represented by that key and
-  must not close over unkeyed action rows or independently refetch a newer action set.
-- Route and domain selectors derive serializable projections from that cached snapshot. Do not add
-  independently cached domain snapshots or cross-domain revision composition initially. Introduce a
-  domain cache only if measurements show that reading or building the complete cached snapshot is a
-  material server cost; any later domain cache uses the same build identity and action revision.
+- Start with one immutable complete published snapshot per request, derived from the exact immutable
+  action snapshot represented by its revision. Before placing that complete graph in the persistent
+  Next data cache, measure its canonical serialized byte size and verify it against every supported
+  production cache backend. If the complete value is not safely below the smallest supported item
+  limit, cache per-domain published values by the same build identity and action revision and compose
+  the complete editable baseline request-locally. In either form, computation must not close over
+  unkeyed action rows or independently refetch a newer action set.
+- Route and domain selectors derive serializable projections from one revision-consistent published
+  snapshot view. Persistent caching uses either the measured-safe complete value or per-domain values
+  selected by the byte-size gate above; do not introduce independently versioned domain revisions.
 - The complete editable baseline is the domain data from that one published snapshot, not a
   composition of independently versioned results.
 - The existing public-action cache tag and hard-expiration helper invalidate action and dependent
@@ -204,24 +223,28 @@ plan composes that completed foundation with revisions, caching, read models, an
    nested-branch identity with the legacy mutating replay targets. Add canonical characters from raw
    character data rather than aliasing the current mutable proxy or a cache that legacy replay can
    mutate. Where both paths originate from one raw module, make the legacy target a private copy.
-3. Generate or expose one immutable production build identity during the build and make it
-   importable by server selectors without reading the filesystem at runtime. In `next.config.ts`,
-   resolve one value from the deployment-provided commit or deployment ID, use that same value for
-   `generateBuildId`, and expose it as a build-time constant through `env`. Local builds may generate
-   a random fallback; every server instance in one deployed build must receive the same value.
+3. Generate the immutable production build identity using the frozen contract above and make it
+   importable by server selectors without reading the filesystem at runtime. Resolve
+   `process.env.DEPLOY_BUILD_ID` or one random UUID fallback at `next.config.ts` module evaluation,
+   use that exact value for `generateBuildId`, and expose it as a server-only build-time constant.
+   Add `DEPLOY_BUILD_ID` to `src/env.ts` and `.env.example`. Every server instance in one deployed
+   artifact must receive the same value.
 4. Fetch the normalized ordered rows once as one immutable approved-action snapshot and derive the
-   action revision from all replay- and history-relevant row fields.
+   versioned SHA-256 action revision from the frozen tuple encoding. Add cross-process fixed vectors
+   for nested objects, arrays, null metadata, and object-key reordering.
 5. Define the global published revision from the production build identity and action revision. Use
    it for route models and editable baselines.
 6. Compose the foundation's pure per-domain copy-on-write overlays into one complete published-data
    snapshot. Those overlays use the checked apply engine so canonical inputs remain unchanged and a
    failed database row leaves the working snapshot unchanged.
-7. Cache that immutable complete published snapshot by production build identity and action revision.
-   Avoid unkeyed closures over action rows. Canonical imports are safe closure inputs because a new
-   deployment receives a new build identity.
-8. Derive route and domain read models from the complete cached snapshot and retain its global
-   published revision on every result. Keep selector APIs domain-oriented so a measured optimization
-   can add domain caches later without changing route contracts.
+7. Measure the complete snapshot's canonical serialized bytes before choosing its persistent cache
+   shape. Cache either the proven-safe complete snapshot or per-domain values by production build
+   identity and action revision; compose one request-local complete view in both cases. Avoid unkeyed
+   closures over action rows. Canonical imports are safe closure inputs because a new deployment
+   receives a new build identity.
+8. Derive route and domain read models from the revision-consistent snapshot view and retain its
+   global published revision on every result. Keep selector APIs domain-oriented so the byte-size
+   gate can select complete or per-domain persistent caching without changing route contracts.
 9. Use the same complete snapshot as the published editable baseline. Do not add a second replay
    implementation for edit mode and do not refetch actions separately per domain.
 10. Acquire the immutable approved-action snapshot once per server render or baseline request and
@@ -238,7 +261,7 @@ plan composes that completed foundation with revisions, caching, read models, an
 14. Add equivalence tests for every publishable entity type. Assert that canonical inputs are
     unchanged after replay and do not share identity with legacy mutable targets.
 15. Add cache tests proving that an unchanged action set under a new production build identity cannot
-    reuse an older snapshot, and that all projections from one cached snapshot carry its exact global
+    reuse an older snapshot, and that all projections from one snapshot view carry its exact global
     revision.
 
 Build this path alongside the existing behavior first. The implementation must not clone and replay
@@ -249,30 +272,34 @@ The semantic-ordering plan's publish grouping remains disabled until Phase 4 rem
 
 ### Phase 2: Establish explicit data boundaries without changing visible behavior
 
-1. Treat the existing `@/data/store` module as the edit-only mutable entry point. Temporarily change
+1. Generate a checked-in or deterministically generated import inventory before moving consumers.
+   Classify every client-reachable canonical-value import and every mutable-store import by route or
+   shared feature. Use that inventory to seed the two temporary allowlists and name the Phase 3
+   migration batches; do not rely on the domain list alone as proof that all consumers were found.
+2. Treat the existing `@/data/store` module as the edit-only mutable entry point. Temporarily change
    proxy-dependent consumers to import this path explicitly; do not silently switch them to
    canonical data before they receive published read models.
-2. Switch server rendering, metadata, and structured-data call sites to the Phase 1 published
+3. Switch server rendering, metadata, and structured-data call sites to the Phase 1 published
    selectors before removing the legacy server mutation path.
-3. Replace `getPublicGameDataActionsAndApplyToServerData` in the transitional root provider with a
+4. Replace `getPublicGameDataActionsAndApplyToServerData` in the transitional root provider with a
    fetch-only path. Continue passing those rows to the existing client replay until Phase 4, but do
    not mutate server data as a side effect of fetching them.
-4. After no server caller relies on mutation, remove the legacy mutating server replay and its
+5. After no server caller relies on mutation, remove the legacy mutating server replay and its
    module-global applied-ID set.
-5. Make `@/data` export canonical data and types only, then remove `export * from './store'` from
+6. Make `@/data` export canonical data and types only, then remove `export * from './store'` from
    `src/data/index.ts`.
-6. Move client type imports to `@/data/types` where practical. Treat canonical value exports from
+7. Move client type imports to `@/data/types` where practical. Treat canonical value exports from
    `@/data` as transitional and server-intended; do not mark them server-only until their existing
    client consumers have migrated in Phase 3.
-7. Prefer explicit exports where a wildcard export could obscure whether a module is stateful or
+8. Prefer explicit exports where a wildcard export could obscure whether a module is stateful or
    server-only.
-8. Maintain a temporary, reviewed allowlist of non-edit client modules that still depend on
+9. Maintain a temporary, reviewed allowlist of non-edit client modules that still depend on
    `@/data/store`. It initially includes the root client replay and unmigrated normal
    consumers. Remove consumer entries during Phase 3; the root replay remains until Phase 4.
-9. Maintain a second temporary allowlist of client-reachable modules that import canonical data
-   values. It exists only to support incremental read-model migration and must not grow without
-   review.
-10. Add a boundary check that permits `@/data/store` and canonical-value imports only from their
+10. Maintain a second temporary allowlist of client-reachable modules that import canonical data
+    values. It exists only to support incremental read-model migration and must not grow without
+    review.
+11. Add a boundary check that permits `@/data/store` and canonical-value imports only from their
     respective temporary allowlists, and prevents mutable modules from being re-exported by `@/data`.
 
 The ordering inside this phase is required: the pure barrel is enforced only after the server no
@@ -292,8 +319,10 @@ universal client bundle because the root client replay remains active for unmigr
 4. Split read-only presentation from editor-specific controls. During this phase, existing editor
    modules may continue to use the current provider and explicit edit-store imports; Phase 4 moves
    those modules behind the lazy boundary after the read-only path no longer needs them.
-5. Continue by domain: cards, items, buffs, maps, fixtures, modes, entities, special skills, and
-   achievements.
+5. Continue through the named route/shared-feature batches produced by the Phase 2 import inventory.
+   At minimum those batches must account for cards, items, buffs, maps, fixtures, modes, entities,
+   special skills, achievements, and every shared cross-domain consumer; a domain name without its
+   concrete importing routes is not a migration batch.
 6. Migrate shared search, tooltips, relations, rankings, and games using purpose-built projections
    rather than passing the complete graph.
 7. Provide entity-scoped action-derived history to every migrated history display.
@@ -502,10 +531,14 @@ snapshot even when approved actions are unchanged.
 - Canonical source records remain unchanged after public-action replay.
 - Global revision determinism from production build identity and the immutable approved-action
   snapshot.
+- Fixed action-revision vectors prove recursive object-key sorting, array-order preservation, tuple
+  field order, null normalization, UTF-8 handling, and the `v1:` SHA-256 encoding.
+- Complete-snapshot serialized-size measurement selects and records either the complete-cache or
+  per-domain-cache path for the supported deployment backends.
 - The complete published-snapshot cache misses across production build identities when canonical data
   and approved actions do not change.
-- Route read models and the editable baseline derived from one cached snapshot carry its exact global
-  revision.
+- Route read models and the editable baseline derived from one snapshot view carry its exact global
+  revision, for both supported persistent-cache shapes.
 - Metadata, structured data, page rendering, history, and route read models use one acquired action
   snapshot in a render.
 - Edit runtime initialization from the complete published editable baseline.
@@ -593,9 +626,9 @@ The work is complete when all of the following are true:
 
 1. Complete or confirm the semantic-ordering plan's strict reader, decoder, and checked plain-object
    replay contracts.
-2. Build the production build identity, immutable approved-action snapshot, global revision, one
-   cached complete published snapshot, pure server-side selectors, and history selectors alongside
-   the legacy path.
+2. Build the production build identity, immutable approved-action snapshot, global revision,
+   byte-size-selected persistent published cache, pure server-side selectors, and history selectors
+   alongside the legacy path.
 3. Establish the canonical/`@/data/store` boundary and server cutover with both temporary client
    allowlists.
 4. Migrate character detail, followed by remaining normal consumers, reducing the canonical-value

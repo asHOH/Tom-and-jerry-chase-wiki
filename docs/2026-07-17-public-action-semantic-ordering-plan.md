@@ -23,7 +23,9 @@ Completed foundation:
 Remaining work:
 
 1. Close the direct publish and approval RPC bypasses through server-owned preparation and
-   service-role-only persistence. Preserve current publish row boundaries while doing so.
+   service-role-only persistence. Preserve current publish row boundaries while doing so, reject
+   dependent cross-row requests until grouping is enabled, and protect every replay-set mutation
+   with an approved-replay epoch compare.
 2. Migrate live replay through the pure published-data and editable-store-loading plans; do not
    adapt the legacy mutable replay into the checked engine.
 3. Enable publish-time dependency grouping only after the store-loading plan removes root-client
@@ -56,8 +58,16 @@ Remaining work:
   `invalid_array_index`, `missing_new_value`, `missing_path`, `invalid_array_length`, `clone_failed`,
   `apply_failed`, and fatal `invariant_failed`.
 - Structural validation does not solve stale drafts or cross-submission conflicts. The accepted
-  route-to-persistence race is limited by exact raw-entry comparison for approval; broader revision
-  policy remains separate work.
+  stale-draft and semantic-conflict policy remains separate work. Structural validity does require
+  race protection: candidate replay uses one atomic approved-row snapshot and its replay epoch, and
+  the persistence RPC rejects if that epoch changed before it acquires the mutation lock.
+- Publish and moderation candidate checks replay the complete proposed approved row set from a
+  pristine canonical baseline in `(created_at ASC, id ASC)` order. An older pending row is inserted
+  at its stored position; it is never checked merely by applying it after the current final value.
+- A database-maintained approved-replay epoch changes whenever a row enters, leaves, or changes the
+  approved replay set. Publish, approval, and mark-synced persistence compare that epoch while
+  holding the same singleton revision row lock. This epoch is an internal concurrency token, not the
+  published-snapshot content hash owned by the store-loading plan.
 
 ## Ownership and Gates
 
@@ -70,7 +80,9 @@ Remaining work:
 - Never replace branches in mounted Valtio stores. Approved rows must be applied to a plain published
   baseline before edit proxies are created.
 - Closing persistence bypasses is ready now and must not wait for client migration. Only dependency
-  grouping waits for removal of root-client replay.
+  grouping waits for removal of root-client replay. Correct candidate replay does depend on the
+  pure-foundation plan's pristine canonical-source factories; implement that bounded prerequisite
+  before route cutover rather than cloning possibly mutated legacy targets.
 
 ## Work Package 1: Trusted Publish Boundary
 
@@ -88,20 +100,32 @@ Remaining work:
 4. Preserve the current top-level publish row boundaries in this stage. Validate each row with
    `decodeActionRowEntry` and persist only its canonical value. Reject malformed, empty, unknown-field,
    split, or dropped input with `400`.
-5. Derive resource contexts from every decoded child action. The standard route selects
+5. Run `groupActionEntriesByDependency` as a validation-only check. Until Stage B is enabled, reject
+   any request containing a non-singleton dependency group. Separately persisted rows must commute,
+   because rows created by one transaction can share `created_at` and therefore replay in UUID `id`
+   order rather than request order.
+6. Derive resource contexts from every decoded child action. The standard route selects
    `game_data_action.create`; the relations route selects
    `game_data_action.publish_relations`, valid only for the `characters` entity type. Never accept a
    permission key or actor ID from the body.
-6. Dry replay the complete prepared request against one uncached, throwing approved-action snapshot.
-   Operation-local invalidity returns `400`; failure against current target shape returns `409`.
-   Database read failure fails closed.
-7. Add a prepared publishing RPC callable only by `service_role`. It accepts the route-authorized
-   actor, server-selected permission, entity type, canonical rows, and message. It recursively repeats
-   permission checks for every child; auto-approval also checks `game_data_action.approve`.
-8. Call the prepared RPC through the server-only admin client and update generated database types in
-   the additive migration.
-9. Cut over both routes, then revoke `EXECUTE` on the legacy `publish_game_data_actions` RPC from
-   `PUBLIC`, `anon`, and `authenticated`. The package is incomplete until this revoke is deployed.
+7. Load the ordered approved rows and `approved_replay_epoch` together through one uncached,
+   throwing, service-role-only snapshot RPC. Compose the complete proposed approved row set, including
+   only rows from this request that will auto-approve, and checked-replay it from pristine canonical
+   targets in semantic order. Operation-local invalidity returns `400`; candidate-set structural
+   failure returns `409`; database read failure fails closed.
+8. Add a singleton approved-replay epoch table and a trigger that increments it whenever an insert,
+   update, or delete changes approved replay membership or replay-relevant fields. This trigger must
+   cover legacy functions during rollout as well as prepared functions. The snapshot RPC returns rows
+   and epoch from one database statement so they cannot describe different committed states.
+9. Add a prepared publishing RPC callable only by `service_role`. It accepts the route-authorized
+   actor, server-selected permission, entity type, canonical rows, message, and expected replay epoch.
+   It locks the singleton epoch row, rejects a mismatch with a stable conflict code, recursively
+   repeats permission checks for every child, and lets the trigger advance the epoch for auto-approved
+   inserts. Pending-only inserts do not change the replay set.
+10. Call the prepared RPC through the server-only admin client and update generated database types in
+    the additive migration.
+11. Cut over both routes, then revoke `EXECUTE` on the legacy `publish_game_data_actions` RPC from
+    `PUBLIC`, `anon`, and `authenticated`. The package is incomplete until this revoke is deployed.
 
 Roll out additively: add the prepared RPC, deploy both route cutovers, then deploy the revoke. This
 stage changes validation and trust ownership but deliberately does not introduce dependency grouping.
@@ -123,10 +147,12 @@ After the editable-store Phase 4 gate passes:
   grouping or persistence.
 - Unknown fields and missing values fail before persistence, and persisted JSON equals strict
   canonical output.
+- Dependent top-level rows are rejected before Stage B; accepted separately persisted rows commute
+  even when their database tie-break order differs from request order.
 - Both routes derive permission contexts for every child and cannot substitute each other's
   permission contract.
-- Dry replay maps operation-local invalidity to `400` and current-baseline structural failure to
-  `409`.
+- Candidate replay places existing and proposed rows in semantic order, maps operation-local
+  invalidity to `400`, and maps structural or replay-epoch conflicts to `409`.
 - Anonymous and authenticated clients cannot execute legacy or prepared publish RPCs; the
   service-role path still enforces the supplied actor's recursive permissions.
 - Later grouping preserves noncontiguous transitive order, final replay result, and independent row
@@ -136,23 +162,31 @@ After the editable-store Phase 4 gate passes:
 
 1. Add one pending-row loader and decoder shared by single and batch moderation. Decode each complete
    row with `decodeStoredActionRow`; one invalid child makes that row ineligible for approval.
-2. Retain the exact raw `entry` and normalized actions. Dry replay normalized actions against one
-   uncached, throwing current approved snapshot. A structural failure leaves the row pending and
-   rejectable; rejection never requires successful decode.
+2. Retain the exact raw `entry` and normalized actions. Load the approved rows and replay epoch
+   atomically, insert the pending row into its `(created_at, id)` position, and checked-replay the
+   complete candidate set from pristine canonical targets. A structural failure leaves the row
+   pending and rejectable; rejection never requires successful decode.
 3. Take the moderator ID only from the route guard.
-4. Add a prepared approval RPC callable only by `service_role`. Under a row lock it must require the
-   row to remain pending, recursively repeat `game_data_action.approve` checks for the supplied actor,
-   and compare current `entity_type` and raw `entry` with the route-supplied expected values before
-   approving atomically.
+4. Add a prepared approval RPC callable only by `service_role`. It locks the replay-epoch singleton
+   and pending row, requires the expected replay epoch and pending state to remain unchanged,
+   recursively repeats `game_data_action.approve` checks for the supplied actor, and compares current
+   `entity_type` and raw `entry` with the route-supplied expected values before approving atomically.
 5. Call it through the server-only admin client from both moderation routes. Batch approval may call
    once per row so each database row remains an independent result. Update database types with the
    additive migration.
 6. Cut over both approval routes, then revoke `EXECUTE` on legacy
    `approve_game_data_action` from `PUBLIC`, `anon`, and `authenticated`. Rejection may remain
    callable under its existing permission contract because it cannot publish data.
+7. Cut the existing mark-synced route over to a service-role-only prepared RPC in the same package.
+   Candidate replay excludes the target approved row and uses the expected replay epoch; the RPC
+   locks the epoch and row, repeats `game_data_action.mark_synced`, compares the expected raw row,
+   and changes it to `synced`. Revoke any browser-callable mutation path that can perform this
+   transition directly. Mark-synced is included because it removes a row from replay even though it
+   is not an approval operation.
 
-Roll out additively: add the prepared RPC, deploy both moderation cutovers, then deploy the revoke.
-The complete trust boundary is secure only after both legacy publish and approval RPCs are revoked.
+Roll out additively: add the prepared RPCs, deploy the approval and mark-synced cutovers, then deploy
+the revokes. The complete trust boundary is secure only after legacy publish and approval execution
+is revoked and no browser-callable path can move a row into or out of the approved replay set.
 
 ### Exit tests
 
@@ -161,9 +195,13 @@ The complete trust boundary is secure only after both legacy publish and approva
 - Batch moderation reports per-row failures and never partially approves a row.
 - Status, entity type, or raw entry changes between route decode and RPC execution fail the locked
   compare.
+- Approval replays an older pending row at its stored semantic position, and mark-synced proves the
+  remaining ordered approved set against the canonical baseline before removing a row.
+- A concurrent publish, approval, or mark-synced transition changes the replay epoch and forces the
+  stale prepared request to retry rather than persisting an unchecked replay set.
 - Recursive resource permission checks cover every child action.
-- Anonymous and authenticated clients cannot execute legacy or prepared approval RPCs; service-role
-  route calls remain permission checked.
+- Anonymous and authenticated clients cannot execute legacy or prepared approval or mark-synced
+  RPCs; service-role route calls remain permission checked.
 
 ## Live Replay Handoff
 
@@ -180,17 +218,21 @@ Do not create a generalized mutable-target adapter or replay approved rows again
 
 ## Delivery Order
 
-1. Add shared bounded publish preparation and the additive prepared publish and approval RPCs.
-2. Cut over approval routes and revoke the legacy approval RPC.
-3. Cut over publish routes without grouping and revoke the legacy publish RPC.
-4. Rerun the approved, synced, and pending audit so no row created through a closing bypass escapes
+1. Complete the pure foundation's pristine canonical-source factories needed by candidate replay.
+2. Add shared bounded publish preparation, the approved-replay epoch and trigger, the atomic snapshot
+   reader, and additive prepared publish, approval, and mark-synced RPCs.
+3. Cut over approval and mark-synced routes and revoke their legacy browser mutation paths.
+4. Cut over publish routes without grouping, reject dependent cross-row requests, and revoke the
+   legacy publish RPC.
+5. Rerun the approved, synced, and pending audit so no row created through a closing bypass escapes
    review.
-5. Complete the pure published-data server cutover and editable-store Phases 1-4.
-6. Enable and verify publish-time dependency grouping.
-7. Complete moderation and direct-RPC security verification.
-8. Add submission metadata only if later evidence establishes a concrete operational need.
+6. Complete the pure published-data server cutover and editable-store Phases 1-4.
+7. Enable and verify publish-time dependency grouping.
+8. Complete moderation and direct-RPC security verification.
+9. Add submission metadata only if later evidence establishes a concrete operational need.
 
-Items 1-4 are ready now. Item 6 is explicitly gated on removal of root-client replay.
+Items 1-5 form the ready implementation sequence. Item 7 is explicitly gated on removal of
+root-client replay.
 
 ## Validation and Completion
 
@@ -205,7 +247,8 @@ The plan is complete when:
 - legacy server and root-client replay are removed before grouping is enabled;
 - separately persisted rows from one publish request commute;
 - strict canonical publish input and checked dry replay run before persistence;
-- legacy and prepared publish/approval RPCs are inaccessible to browser roles; and
+- every replay-set mutation uses the locked replay-epoch compare;
+- legacy and prepared publish/approval/mark-synced RPCs are inaccessible to browser roles; and
 - existing valid stored shapes remain compatible.
 
 ## Deferred and Non-Goals
