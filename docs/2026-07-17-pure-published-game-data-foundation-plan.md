@@ -3,9 +3,18 @@
 ## Status
 
 - Date: 2026-07-17
-- State: Proposed
+- Last revised: 2026-07-18
+- State: Implemented; landed beside the legacy path
 - Scope: Identity-isolated canonical game data, an immutable approved-action input, and pure
   per-domain public-action overlay
+
+Implementation status:
+
+- Phases 1-4 and the Phase 5 coexistence boundary landed in `5a0ebc73`, `beb94365`, and
+  `5724e296`.
+- The server-only foundation is now consumed by trusted candidate replay in `85e5934f`.
+- Snapshot caching, revisions, route read models, client migration, and removal of legacy replay
+  remain owned by the parent store-loading plan and are not part of this plan's completion.
 
 ## Relationship to Other Plans
 

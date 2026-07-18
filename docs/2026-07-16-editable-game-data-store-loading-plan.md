@@ -3,10 +3,19 @@
 ## Status
 
 - Date: 2026-07-16
-- Last revised: 2026-07-17
-- State: Proposed
+- Last revised: 2026-07-18
+- State: Phase 1 pure-foundation prerequisite complete; parent implementation remains
 - Scope: Client bundle size, edit-mode initialization, published-snapshot caching, public-action
   replay, route read models, and data-module boundaries
+
+Implementation status:
+
+- The identity-isolated canonical sources, immutable approved-action value, and pure per-domain
+  copy-on-write overlays required by Phase 1 landed in `5a0ebc73`, `beb94365`, and `5724e296`.
+- The parent Phase 1 work for build identity, action/global revisions, measured persistent caching,
+  complete snapshot composition, route read models, and history selectors has not started.
+- Phases 2-5, including the import inventory, server/client consumer migration, lazy edit runtime,
+  atomic root payload/replay removal, boundary enforcement, and final bundle audit, have not started.
 
 ## Related Work and Dependencies
 

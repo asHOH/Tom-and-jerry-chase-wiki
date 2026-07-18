@@ -4,7 +4,7 @@
 
 - Date: 2026-07-17
 - Last revised: 2026-07-18
-- State: Foundational semantics complete; trust-boundary work remains
+- State: Additive trust-boundary cutover implemented; rollout closure and grouping remain
 - Scope: Public-row decoding and replay semantics, trusted publish and approval persistence, and
   publish-time dependency grouping
 
@@ -19,16 +19,21 @@ Completed foundation:
 - The production audit passed: 65 approved and 8 pending rows decoded and checked-replayed without
   failure; 1125 synced rows decoded for history only. See
   `reports/2026-07-18-public-action-replay-audit-result.md`.
+- Measured publish limits, bounded server preparation, the approved-replay epoch and trigger, and
+  the atomic approved snapshot reader landed in `bb02ec74`.
+- Service-role-only prepared publish, approval, and mark-synced RPCs, complete candidate replay, and
+  the publish and moderation route cutovers landed in `85e5934f`.
 
 Remaining work:
 
-1. Close the direct publish and approval RPC bypasses through server-owned preparation and
-   service-role-only persistence. Preserve current publish row boundaries while doing so, reject
-   dependent cross-row requests until grouping is enabled, and protect every replay-set mutation
-   with an approved-replay epoch compare.
-2. Migrate live replay through the pure published-data and editable-store-loading plans; do not
+1. Deploy the additive epoch/prepared-RPC migrations and application route cutovers; repository
+   implementation alone does not authorize this production change.
+2. Add and deploy the separate revoke migration for legacy publish and approval execution and the
+   browser-callable direct mark-synced path, after the application cutover is live.
+3. Rerun the approved, synced, and pending production audit after the bypasses are closed.
+4. Migrate live replay through the pure published-data and editable-store-loading plans; do not
    adapt the legacy mutable replay into the checked engine.
-3. Enable publish-time dependency grouping only after the store-loading plan removes root-client
+5. Enable publish-time dependency grouping only after the store-loading plan removes root-client
    replay.
 
 ## Frozen Contract
