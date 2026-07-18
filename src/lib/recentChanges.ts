@@ -11,6 +11,7 @@ import { hasSupabasePublicConfig } from '@/lib/supabase/config';
 import { supabaseServerPublic } from '@/lib/supabase/public';
 
 export const RECENT_CHANGES_PAGE_SIZE = 20;
+export const RECENT_CHANGES_MAX_ITEMS = 100;
 
 export type RecentChangesFilter = 'all' | 'articles' | 'game-data';
 
@@ -235,7 +236,7 @@ async function loadRecentChanges(
     includeArticles ? countArticleChanges() : Promise.resolve(0),
     includeGameData ? countGameDataChanges() : Promise.resolve(0),
   ]);
-  const totalItems = articleTotal + gameDataTotal;
+  const totalItems = Math.min(articleTotal + gameDataTotal, RECENT_CHANGES_MAX_ITEMS);
   const totalPages = Math.max(1, Math.ceil(totalItems / RECENT_CHANGES_PAGE_SIZE));
   const currentPage = Math.min(requestedPage, totalPages);
   const offset = (currentPage - 1) * RECENT_CHANGES_PAGE_SIZE;
@@ -243,7 +244,7 @@ async function loadRecentChanges(
   // For a unified feed, either source can occupy any position in the requested
   // window, so fetch each source through the window end before merging.
   const sourceFrom = filter === 'all' ? 0 : offset;
-  const sourceTo = offset + RECENT_CHANGES_PAGE_SIZE - 1;
+  const sourceTo = Math.min(offset + RECENT_CHANGES_PAGE_SIZE - 1, RECENT_CHANGES_MAX_ITEMS - 1);
   const [articleRows, gameDataRows] = await Promise.all([
     includeArticles && articleTotal > 0
       ? queryArticleChanges(sourceFrom, sourceTo)
@@ -277,7 +278,7 @@ export async function getRecentChanges(
 
   try {
     return await cached(
-      ['recent-changes-v2', filter, String(page)],
+      ['recent-changes-v3', filter, String(page)],
       () => loadRecentChanges(filter, page),
       {
         revalidate: 300,

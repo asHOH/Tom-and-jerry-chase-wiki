@@ -3,6 +3,8 @@ import {
   mergeRecentChangeRows,
   normalizeRecentChangesFilter,
   normalizeRecentChangesPage,
+  RECENT_CHANGES_MAX_ITEMS,
+  RECENT_CHANGES_PAGE_SIZE,
 } from './recentChanges';
 
 jest.mock('next/cache', () => ({
@@ -18,6 +20,11 @@ describe('recent changes', () => {
     expect(normalizeRecentChangesPage('3')).toBe(3);
     expect(normalizeRecentChangesPage('-1')).toBe(1);
     expect(normalizeRecentChangesPage('abc')).toBe(1);
+  });
+
+  it('limits the recent-changes feed to five pages and 100 entries', () => {
+    expect(RECENT_CHANGES_MAX_ITEMS).toBe(100);
+    expect(RECENT_CHANGES_MAX_ITEMS / RECENT_CHANGES_PAGE_SIZE).toBe(5);
   });
 
   it('describes affected game-data entries and links to the first one', () => {
