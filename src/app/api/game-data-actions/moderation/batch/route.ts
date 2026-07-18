@@ -4,7 +4,12 @@ import { z } from 'zod';
 import { canAccessAll } from '@/lib/auth/permissions';
 import { requirePermission } from '@/lib/auth/requirePermission';
 import { getGameActionResourceContexts } from '@/lib/auth/resourceContexts';
-import { invalidatePublicGameDataActionsCache } from '@/lib/gameData/publicActionsCache';
+import {
+  approvePreparedGameDataAction,
+  loadTrustedGameDataAction,
+  TrustedGameDataMutationError,
+  type TrustedGameDataActionRecord,
+} from '@/lib/gameData/trustedGameDataMutations';
 import { publishNotification } from '@/lib/notificationUtils';
 
 const schema = z.object({
@@ -13,73 +18,70 @@ const schema = z.object({
   reason: z.string().trim().max(1000).optional(),
 });
 
-type ModerationRecord = {
-  created_by: string | null;
-  entity_type: string;
-  entry: import('@/data/database.types').Json;
-  id: string;
-};
-
 export async function POST(request: Request) {
   const parsed = schema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
 
-  const guard = await requirePermission(
-    parsed.data.action === 'approve' ? 'game_data_action.approve' : 'game_data_action.reject'
-  );
+  const requiredPermission =
+    parsed.data.action === 'approve' ? 'game_data_action.approve' : 'game_data_action.reject';
+  const guard = await requirePermission(requiredPermission);
   if ('error' in guard) return guard.error;
-  const { supabase } = guard;
   const { actionIds, action, reason } = parsed.data;
+  const recordsById = new Map<string, TrustedGameDataActionRecord>();
+  const failures: Array<{ actionId: string; message: string }> = [];
 
-  const { data: records, error: recordsError } = await supabase
-    .from('game_data_actions')
-    .select('id, created_by, entity_type, entry')
-    .in('id', actionIds)
-    .eq('status', 'pending');
-
-  if (recordsError) {
-    return NextResponse.json({ error: 'Failed to load actions' }, { status: 500 });
+  for (const actionId of actionIds) {
+    try {
+      const record = await loadTrustedGameDataAction(actionId);
+      if (record.status !== 'pending') {
+        failures.push({ actionId, message: 'Action not found or not pending' });
+      } else {
+        recordsById.set(actionId, record);
+      }
+    } catch (error) {
+      if (error instanceof TrustedGameDataMutationError && error.code === 'not_found') {
+        failures.push({ actionId, message: 'Action not found or not pending' });
+        continue;
+      }
+      return NextResponse.json({ error: 'Failed to load actions' }, { status: 500 });
+    }
   }
 
-  const requiredPermission =
-    action === 'approve' ? 'game_data_action.approve' : 'game_data_action.reject';
-  const contexts = (records ?? []).flatMap((record) =>
+  const contexts = [...recordsById.values()].flatMap((record) =>
     getGameActionResourceContexts(record.entity_type, [record.entry])
   );
   if (!canAccessAll(guard.grants, requiredPermission, contexts)) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
-  const recordsById = new Map(
-    (records ?? []).map((record) => [record.id, record satisfies ModerationRecord])
-  );
   const succeeded: string[] = [];
-  const failures: Array<{ actionId: string; message: string }> = [];
-
   for (const actionId of actionIds) {
     const record = recordsById.get(actionId);
-    if (!record) {
-      failures.push({ actionId, message: 'Action not found or not pending' });
-      continue;
+    if (!record) continue;
+
+    try {
+      if (action === 'approve') {
+        await approvePreparedGameDataAction(guard.userId, record);
+      } else {
+        const { error } = await guard.supabase.rpc('reject_game_data_action', {
+          p_action_id: actionId,
+          ...(reason ? { p_reason: reason } : {}),
+        });
+        if (error) throw error;
+      }
+      succeeded.push(actionId);
+    } catch (error) {
+      const message =
+        error instanceof TrustedGameDataMutationError
+          ? error.code
+          : error instanceof Error
+            ? error.message
+            : 'Unknown moderation failure';
+      failures.push({ actionId, message });
     }
-
-    const { error } =
-      action === 'approve'
-        ? await supabase.rpc('approve_game_data_action', { p_action_id: actionId })
-        : await supabase.rpc('reject_game_data_action', {
-            p_action_id: actionId,
-            ...(reason ? { p_reason: reason } : {}),
-          });
-
-    if (error) failures.push({ actionId, message: error.message });
-    else succeeded.push(actionId);
   }
 
-  if (action === 'approve' && succeeded.length > 0) {
-    invalidatePublicGameDataActionsCache();
-  }
-
-  const grouped = new Map<string, ModerationRecord[]>();
+  const grouped = new Map<string, TrustedGameDataActionRecord[]>();
   for (const actionId of succeeded) {
     const record = recordsById.get(actionId);
     if (!record?.created_by) continue;

@@ -1,109 +1,82 @@
 import { NextResponse } from 'next/server';
-import z from 'zod';
 
 import { requirePermission } from '@/lib/auth/requirePermission';
-import { getGameActionResourceContexts } from '@/lib/auth/resourceContexts';
+import { PUBLISH_LIMITS } from '@/lib/gameData/publishLimits';
 import {
-  publishGameDataActions,
-  PublishGameDataActionsError,
-} from '@/lib/gameData/publishGameDataActions';
+  preparePublishActionItems,
+  PublishPreparationError,
+  readBoundedJsonBody,
+  type UntrustedPublishActionItem,
+} from '@/lib/gameData/publishPreparation';
+import {
+  publishPreparedGameDataActions,
+  TrustedGameDataMutationError,
+} from '@/lib/gameData/trustedGameDataMutations';
 import { publishNotification } from '@/lib/notificationUtils';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
-import type { Json } from '@/data/database.types';
 
-type ActionItem = {
-  entityType: string;
-  entries: Json[];
-};
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
 
-const schema = z.union([
-  z.object({
-    entityType: z.string(),
-    entries: z.array(z.any()),
-    message: z.string().optional(),
-  }),
-  z.object({
-    actions: z.array(
-      z.object({
-        entityType: z.string(),
-        entries: z.array(z.any()),
-      })
-    ),
-    message: z.string().optional(),
-  }),
-]);
+function readActionItems(body: unknown): {
+  items: UntrustedPublishActionItem[];
+  message?: unknown;
+} {
+  if (!isRecord(body)) throw new PublishPreparationError('invalid_shape');
+  const rawItems = Array.isArray(body.actions)
+    ? body.actions
+    : [{ entityType: body.entityType, entries: body.entries }];
+  if (rawItems.length === 0) throw new PublishPreparationError('invalid_shape');
 
-export async function POST(req: Request) {
+  let entryCount = 0;
+  const items = rawItems.map((item) => {
+    if (!isRecord(item) || !Array.isArray(item.entries)) {
+      throw new PublishPreparationError('invalid_shape');
+    }
+    entryCount += item.entries.length;
+    if (entryCount > PUBLISH_LIMITS.topLevelEntries) {
+      throw new PublishPreparationError('too_many_entries');
+    }
+    return { entityType: item.entityType, entries: item.entries };
+  });
+  return { items, ...('message' in body ? { message: body.message } : {}) };
+}
+
+function preparationResponse(error: PublishPreparationError): NextResponse {
+  return NextResponse.json(
+    { error: error.detail.code },
+    { status: error.detail.code === 'request_too_large' ? 413 : 400 }
+  );
+}
+
+export async function POST(request: Request) {
   if (!hasSupabasePublicConfig()) {
     return NextResponse.json({ error: 'Supabase is disabled' }, { status: 501 });
   }
 
-  let body: z.infer<typeof schema>;
+  let untrusted: ReturnType<typeof readActionItems>;
   try {
-    body = schema.parse(await req.json());
-  } catch {
-    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+    untrusted = readActionItems(await readBoundedJsonBody(request));
+  } catch (error) {
+    return error instanceof PublishPreparationError
+      ? preparationResponse(error)
+      : NextResponse.json({ error: 'invalid_json' }, { status: 400 });
   }
 
-  const message = typeof body.message === 'string' ? body.message.trim() : undefined;
+  const guard = await requirePermission('game_data_action.create');
+  if ('error' in guard) return guard.error;
 
-  // Build list of actions to publish
-  const actionList: ActionItem[] = [];
-
-  // Support new batch format: actions array (merge same entityType)
-  if ('actions' in body) {
-    const grouped = new Map<string, Json[]>();
-
-    for (const action of body.actions) {
-      const entityType = typeof action.entityType === 'string' ? action.entityType.trim() : '';
-      if (!entityType) {
-        return NextResponse.json({ error: 'Missing entityType in actions array' }, { status: 400 });
-      }
-      if (!Array.isArray(action.entries)) {
-        return NextResponse.json(
-          { error: `entries must be an array for entityType: ${entityType}` },
-          { status: 400 }
-        );
-      }
-
-      const existing = grouped.get(entityType);
-      if (existing) {
-        existing.push(...action.entries);
-      } else {
-        grouped.set(entityType, [...action.entries]);
-      }
-    }
-
-    grouped.forEach((entries, entityType) => {
-      actionList.push({ entityType, entries });
+  try {
+    const prepared = preparePublishActionItems(untrusted.items, untrusted.message);
+    const results = await publishPreparedGameDataActions({
+      actorId: guard.userId,
+      permission: 'game_data_action.create',
+      grants: guard.grants,
+      prepared,
     });
-  }
-  // Legacy single-action format
-  else if (body.entityType || body.entries) {
-    const entityType = typeof body.entityType === 'string' ? body.entityType.trim() : '';
-    if (!entityType) {
-      return NextResponse.json({ error: 'Missing entityType' }, { status: 400 });
-    }
-    if (!Array.isArray(body.entries)) {
-      return NextResponse.json({ error: 'entries must be an array' }, { status: 400 });
-    }
-    actionList.push({ entityType, entries: body.entries });
-  }
 
-  if (actionList.length === 0) {
-    return NextResponse.json({ error: 'No actions to publish' }, { status: 400 });
-  }
-
-  try {
-    const contexts = actionList.flatMap((action) =>
-      getGameActionResourceContexts(action.entityType, action.entries)
-    );
-    const guard = await requirePermission('game_data_action.create', contexts, 'all');
-    if ('error' in guard) return guard.error;
-    const { supabase, userId } = guard;
-    const allResults = await publishGameDataActions(supabase, actionList, message);
-
-    const finalResults = allResults.filter(
+    const finalResults = results.filter(
       (result) => result.status === 'approved' || result.status === 'rejected'
     );
     for (const status of ['approved', 'rejected'] as const) {
@@ -112,7 +85,7 @@ export async function POST(req: Request) {
       const approved = status === 'approved';
       try {
         await publishNotification({
-          recipientUserId: userId,
+          recipientUserId: guard.userId,
           kind: approved ? 'game_data_action_approved' : 'game_data_action_rejected',
           decisionOrigin: 'automatic',
           title: approved ? '游戏数据改动已自动通过' : '游戏数据改动未通过',
@@ -130,17 +103,18 @@ export async function POST(req: Request) {
       }
     }
 
-    return NextResponse.json({ result: allResults });
-  } catch (err) {
-    if (err instanceof PublishGameDataActionsError) {
-      console.error(`Error publishing game data actions for ${err.entityType}:`, err.cause);
-      return NextResponse.json(
-        { error: `Failed to publish actions for ${err.entityType}` },
-        { status: 500 }
-      );
+    return NextResponse.json({ result: results });
+  } catch (error) {
+    if (error instanceof PublishPreparationError) return preparationResponse(error);
+    if (error instanceof TrustedGameDataMutationError) {
+      if (error.code === 'forbidden') {
+        return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+      }
+      if (error.code === 'candidate_conflict' || error.code === 'replay_epoch_conflict') {
+        return NextResponse.json({ error: error.code }, { status: 409 });
+      }
     }
-
-    console.error('API error:', err);
+    console.error('API error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

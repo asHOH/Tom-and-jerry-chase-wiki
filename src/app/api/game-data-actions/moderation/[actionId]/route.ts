@@ -3,11 +3,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { canAccessAll } from '@/lib/auth/permissions';
 import { requirePermission } from '@/lib/auth/requirePermission';
 import { getGameActionResourceContexts } from '@/lib/auth/resourceContexts';
-import { invalidatePublicGameDataActionsCache } from '@/lib/gameData/publicActionsCache';
+import {
+  approvePreparedGameDataAction,
+  loadTrustedGameDataAction,
+  markPreparedGameDataActionSynced,
+  TrustedGameDataMutationError,
+} from '@/lib/gameData/trustedGameDataMutations';
 import { publishNotification } from '@/lib/notificationUtils';
-import type { Database } from '@/data/database.types';
-
-type GameDataActionUpdate = Database['public']['Tables']['game_data_actions']['Update'];
 
 const MODERATION_ACTIONS = ['approve', 'reject', 'mark-synced'] as const;
 
@@ -57,24 +59,14 @@ export async function POST(
     if ('error' in guard) return guard.error;
     const { supabase } = guard;
 
-    const { data: recordData } = await supabase
-      .from('game_data_actions')
-      .select('created_by, entity_type, entry, status')
-      .eq('id', actionId)
-      .single();
+    const recordData = await loadTrustedGameDataAction(actionId);
 
-    const contexts = recordData
-      ? getGameActionResourceContexts(recordData.entity_type, [recordData.entry])
-      : [];
+    const contexts = getGameActionResourceContexts(recordData.entity_type, [recordData.entry]);
     if (contexts.length === 0 || !canAccessAll(guard.grants, requiredPermission, contexts)) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     if (action === 'mark-synced') {
-      if (!recordData) {
-        return NextResponse.json({ error: 'Action not found' }, { status: 404 });
-      }
-
       if (recordData.status !== 'approved') {
         return NextResponse.json(
           { error: 'Action must be approved before this transition' },
@@ -82,44 +74,12 @@ export async function POST(
         );
       }
 
-      const { data: claimsData } = await supabase.auth.getClaims();
-      const reviewerId = claimsData?.claims.sub;
-      const updatePayload: GameDataActionUpdate = {
-        is_public: true,
-        rejection_reason: null,
-        reviewed_at: new Date().toISOString(),
-        status: 'synced',
-      };
-
-      if (reviewerId) {
-        updatePayload.reviewed_by = reviewerId;
-      }
-
-      const { error } = await supabase
-        .from('game_data_actions')
-        .update(updatePayload)
-        .eq('id', actionId)
-        .eq('status', 'approved')
-        .select('id')
-        .single();
-
-      if (error) {
-        console.error('Error updating game data action status:', error);
-        return NextResponse.json({ error: 'Failed to update action status' }, { status: 500 });
-      }
-
-      invalidatePublicGameDataActionsCache();
+      await markPreparedGameDataActionSynced(guard.userId, recordData);
       return NextResponse.json({ message: 'Action marked as synced', action, action_id: actionId });
     }
 
     if (action === 'approve') {
-      const { error } = await supabase.rpc('approve_game_data_action', { p_action_id: actionId });
-      if (error) {
-        console.error('Error approving game data action:', error);
-        return NextResponse.json({ error: 'Failed to approve action' }, { status: 500 });
-      }
-
-      invalidatePublicGameDataActionsCache();
+      await approvePreparedGameDataAction(guard.userId, recordData);
       if (recordData?.created_by) {
         try {
           await publishNotification({
@@ -171,6 +131,18 @@ export async function POST(
 
     return NextResponse.json({ message: 'Action rejected', action, action_id: actionId });
   } catch (err) {
+    if (err instanceof TrustedGameDataMutationError) {
+      if (err.code === 'not_found') {
+        return NextResponse.json({ error: 'Action not found' }, { status: 404 });
+      }
+      if (
+        err.code === 'invalid_row' ||
+        err.code === 'candidate_conflict' ||
+        err.code === 'replay_epoch_conflict'
+      ) {
+        return NextResponse.json({ error: err.code }, { status: 409 });
+      }
+    }
     console.error('API error:', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }

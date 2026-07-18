@@ -1,77 +1,81 @@
 import { NextResponse } from 'next/server';
-import z from 'zod';
 
 import { requirePermission } from '@/lib/auth/requirePermission';
+import { isCharacterRelationAction } from '@/lib/edit/characterRelationActions';
 import {
-  isCharacterRelationAction,
-  parseCharacterRelationActionPath,
-} from '@/lib/edit/characterRelationActions';
-import type { ActionHistoryEntry } from '@/lib/edit/diffUtils';
-import { flattenActionEntries } from '@/lib/gameData/actionEntries';
+  preparePublishActionItems,
+  PublishPreparationError,
+  readBoundedJsonBody,
+} from '@/lib/gameData/publishPreparation';
 import {
-  publishGameDataActions,
-  PublishGameDataActionsError,
-} from '@/lib/gameData/publishGameDataActions';
+  publishPreparedGameDataActions,
+  TrustedGameDataMutationError,
+} from '@/lib/gameData/trustedGameDataMutations';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
-import { actionHistorySchema } from '@/lib/validation/schemas';
-import type { Json } from '@/data/database.types';
 
-const schema = z.object({
-  entries: actionHistorySchema,
-  message: z.string().optional(),
-});
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
 
-export async function POST(req: Request) {
+function errorResponse(error: PublishPreparationError): NextResponse {
+  return NextResponse.json(
+    { error: error.detail.code },
+    { status: error.detail.code === 'request_too_large' ? 413 : 400 }
+  );
+}
+
+export async function POST(request: Request) {
   if (!hasSupabasePublicConfig()) {
     return NextResponse.json({ error: 'Supabase is disabled' }, { status: 501 });
   }
 
+  let body: Record<string, unknown>;
   try {
-    let body: { entries: ActionHistoryEntry[]; message?: string };
-    try {
-      const parsed = schema.parse(await req.json());
-      body = {
-        entries: parsed.entries as ActionHistoryEntry[],
-        ...(typeof parsed.message === 'string' ? { message: parsed.message } : {}),
-      };
-    } catch {
-      return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+    const value = await readBoundedJsonBody(request);
+    if (!isRecord(value) || !Array.isArray(value.entries)) {
+      throw new PublishPreparationError('invalid_shape');
     }
+    body = value;
+  } catch (error) {
+    return error instanceof PublishPreparationError
+      ? errorResponse(error)
+      : NextResponse.json({ error: 'invalid_json' }, { status: 400 });
+  }
 
-    const flattenedEntries = flattenActionEntries(body.entries);
-    if (flattenedEntries.length === 0) {
-      return NextResponse.json({ error: 'No actions to publish' }, { status: 400 });
-    }
+  const guard = await requirePermission('game_data_action.publish_relations');
+  if ('error' in guard) return guard.error;
 
-    if (!flattenedEntries.every(isCharacterRelationAction)) {
+  try {
+    const prepared = preparePublishActionItems(
+      [{ entityType: 'characters', entries: body.entries }],
+      body.message
+    );
+    if (
+      !prepared.actions.every((item) =>
+        item.rows.every((row) => row.actions.every(isCharacterRelationAction))
+      )
+    ) {
       return NextResponse.json({ error: 'Only relation actions are allowed' }, { status: 400 });
     }
 
-    const contexts = flattenedEntries.map((entry) => ({
-      resourceType: 'characters',
-      resourceId: parseCharacterRelationActionPath(entry.path)!.characterId,
-    }));
-    const guard = await requirePermission('game_data_action.publish_relations', contexts, 'all');
-    if ('error' in guard) return guard.error;
-
-    const message = typeof body.message === 'string' ? body.message.trim() : undefined;
-    const result = await publishGameDataActions(
-      guard.supabase,
-      [{ entityType: 'characters', entries: body.entries as unknown as Json[] }],
-      message
-    );
-
+    const result = await publishPreparedGameDataActions({
+      actorId: guard.userId,
+      permission: 'game_data_action.publish_relations',
+      grants: guard.grants,
+      prepared,
+    });
     return NextResponse.json({ result });
-  } catch (err) {
-    if (err instanceof PublishGameDataActionsError) {
-      console.error(`Error publishing game data actions for ${err.entityType}:`, err.cause);
-      return NextResponse.json(
-        { error: `Failed to publish actions for ${err.entityType}` },
-        { status: 500 }
-      );
+  } catch (error) {
+    if (error instanceof PublishPreparationError) return errorResponse(error);
+    if (error instanceof TrustedGameDataMutationError) {
+      if (error.code === 'forbidden') {
+        return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+      }
+      if (error.code === 'candidate_conflict' || error.code === 'replay_epoch_conflict') {
+        return NextResponse.json({ error: error.code }, { status: 409 });
+      }
     }
-
-    console.error('API error:', err);
+    console.error('API error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

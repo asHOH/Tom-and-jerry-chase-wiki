@@ -922,6 +922,41 @@ export type Database = {
           status: Database['public']['Enums']['game_data_action_status'];
         }[];
       };
+      prepared_approve_game_data_action: {
+        Args: {
+          p_action_id: string;
+          p_actor_id: string;
+          p_expected_entity_type: string;
+          p_expected_entry: Json;
+          p_expected_replay_epoch: number;
+        };
+        Returns: undefined;
+      };
+      prepared_mark_game_data_action_synced: {
+        Args: {
+          p_action_id: string;
+          p_actor_id: string;
+          p_expected_entity_type: string;
+          p_expected_entry: Json;
+          p_expected_replay_epoch: number;
+        };
+        Returns: undefined;
+      };
+      prepared_publish_game_data_actions: {
+        Args: {
+          p_actor_id: string;
+          p_entity_type: string;
+          p_entries: Json;
+          p_expected_replay_epoch: number;
+          p_message: string | null;
+          p_permission_key: string;
+        };
+        Returns: {
+          id: string;
+          is_public: boolean;
+          status: Database['public']['Enums']['game_data_action_status'];
+        }[];
+      };
       reject_article_version: {
         Args: { p_version_id: string };
         Returns: undefined;

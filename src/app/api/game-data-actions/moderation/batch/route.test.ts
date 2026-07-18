@@ -1,6 +1,9 @@
-import { canAccessAll } from '@/lib/auth/permissions';
 import { requirePermission } from '@/lib/auth/requirePermission';
-import { invalidatePublicGameDataActionsCache } from '@/lib/gameData/publicActionsCache';
+import {
+  approvePreparedGameDataAction,
+  loadTrustedGameDataAction,
+  TrustedGameDataMutationError,
+} from '@/lib/gameData/trustedGameDataMutations';
 import { publishNotification } from '@/lib/notificationUtils';
 
 import { POST } from './route';
@@ -9,68 +12,69 @@ jest.mock('next/server', () => ({
   NextResponse: {
     json: jest.fn(
       (body: unknown, init?: { status?: number }) =>
-        ({
-          status: init?.status ?? 200,
-          json: async () => body,
-        }) as Response
+        ({ status: init?.status ?? 200, json: async () => body }) as Response
     ),
   },
 }));
-
-jest.mock('@/lib/auth/permissions', () => ({
-  canAccessAll: jest.fn(),
-}));
-
-jest.mock('@/lib/auth/requirePermission', () => ({
-  requirePermission: jest.fn(),
-}));
-
-jest.mock('@/lib/gameData/publicActionsCache', () => ({
-  invalidatePublicGameDataActionsCache: jest.fn(),
-}));
-
-jest.mock('@/lib/notificationUtils', () => ({
-  publishNotification: jest.fn(),
-}));
-
-const canAccessAllMock = jest.mocked(canAccessAll);
-const requirePermissionMock = jest.mocked(requirePermission);
-const invalidatePublicGameDataActionsCacheMock = jest.mocked(invalidatePublicGameDataActionsCache);
-const publishNotificationMock = jest.mocked(publishNotification);
-
-const createRequest = (action: 'approve' | 'reject') =>
-  ({
-    json: async () => ({ action, actionIds: ['00000000-0000-4000-8000-000000000001'] }),
-  }) as Request;
-
-const createSupabaseMock = () => {
-  const records = [
-    {
-      id: '00000000-0000-4000-8000-000000000001',
-      created_by: 'user-1',
-      entity_type: 'characters',
-      entry: { op: 'set', path: '汤姆.description' },
-    },
-  ];
-  const recordsQuery = {
-    select: jest.fn(),
-    in: jest.fn(),
-    eq: jest.fn(),
-  };
-  recordsQuery.select.mockReturnValue(recordsQuery);
-  recordsQuery.in.mockReturnValue(recordsQuery);
-  recordsQuery.eq.mockResolvedValue({ data: records, error: null });
-
+jest.mock('@/lib/auth/requirePermission', () => ({ requirePermission: jest.fn() }));
+jest.mock('@/lib/gameData/trustedGameDataMutations', () => {
+  class MockTrustedGameDataMutationError extends Error {
+    constructor(readonly code: string) {
+      super(code);
+    }
+  }
   return {
-    from: jest.fn(() => recordsQuery),
-    rpc: jest.fn().mockResolvedValue({ error: null }),
+    approvePreparedGameDataAction: jest.fn(),
+    loadTrustedGameDataAction: jest.fn(),
+    TrustedGameDataMutationError: MockTrustedGameDataMutationError,
   };
-};
+});
+jest.mock('@/lib/notificationUtils', () => ({ publishNotification: jest.fn() }));
+
+const requirePermissionMock = jest.mocked(requirePermission);
+const loadRecordMock = jest.mocked(loadTrustedGameDataAction);
+const approveMock = jest.mocked(approvePreparedGameDataAction);
+const publishNotificationMock = jest.mocked(publishNotification);
+const actionId1 = '00000000-0000-4000-8000-000000000001';
+const actionId2 = '00000000-0000-4000-8000-000000000002';
+const rpcMock = jest.fn().mockResolvedValue({ error: null });
+
+const record = (id: string) => ({
+  id,
+  created_by: 'user-1',
+  entity_type: 'characters',
+  entry: { op: 'set', path: `${id}.description`, newValue: 'new' },
+  created_at: '2026-07-18T00:00:00.000Z',
+  status: 'pending' as const,
+  is_public: false,
+});
+
+const createRequest = (action: 'approve' | 'reject', actionIds = [actionId1, actionId2]) =>
+  ({ json: async () => ({ action, actionIds }) }) as Request;
 
 describe('batch game data action moderation route', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    canAccessAllMock.mockReturnValue(true);
+    rpcMock.mockResolvedValue({ error: null });
+    requirePermissionMock.mockResolvedValue({
+      supabase: { rpc: rpcMock },
+      userId: 'moderator-1',
+      grants: [
+        {
+          permission: 'game_data_action.approve',
+          scope: 'global',
+          resourceType: null,
+          resourceId: null,
+        },
+        {
+          permission: 'game_data_action.reject',
+          scope: 'global',
+          resourceType: null,
+          resourceId: null,
+        },
+      ],
+    } as never);
+    loadRecordMock.mockImplementation(async (id) => record(id));
     publishNotificationMock.mockResolvedValue({
       created: true,
       suppressed: false,
@@ -78,23 +82,40 @@ describe('batch game data action moderation route', () => {
     });
   });
 
-  it('should expire public actions after approving at least one action', async () => {
-    const supabase = createSupabaseMock();
-    requirePermissionMock.mockResolvedValue({ supabase } as never);
-
+  it('approves each database row independently through the trusted path', async () => {
     const response = await POST(createRequest('approve'));
 
     expect(response.status).toBe(200);
-    expect(invalidatePublicGameDataActionsCacheMock).toHaveBeenCalledTimes(1);
+    await expect(response.json()).resolves.toEqual({
+      succeeded: [actionId1, actionId2],
+      failures: [],
+    });
+    expect(approveMock).toHaveBeenNthCalledWith(1, 'moderator-1', record(actionId1));
+    expect(approveMock).toHaveBeenNthCalledWith(2, 'moderator-1', record(actionId2));
+    expect(rpcMock).not.toHaveBeenCalled();
   });
 
-  it('should not expire public actions after rejecting actions', async () => {
-    const supabase = createSupabaseMock();
-    requirePermissionMock.mockResolvedValue({ supabase } as never);
+  it('reports a malformed or conflicting row without approving or hiding other results', async () => {
+    approveMock.mockRejectedValueOnce(new TrustedGameDataMutationError('invalid_row'));
 
-    const response = await POST(createRequest('reject'));
+    const response = await POST(createRequest('approve'));
+
+    await expect(response.json()).resolves.toEqual({
+      succeeded: [actionId2],
+      failures: [{ actionId: actionId1, message: 'invalid_row' }],
+    });
+    expect(publishNotificationMock).toHaveBeenCalledWith(
+      expect.objectContaining({ sourceIds: [actionId2] })
+    );
+  });
+
+  it('keeps rejection available without requiring successful action decoding', async () => {
+    const response = await POST(createRequest('reject', [actionId1]));
 
     expect(response.status).toBe(200);
-    expect(invalidatePublicGameDataActionsCacheMock).not.toHaveBeenCalled();
+    expect(rpcMock).toHaveBeenCalledWith('reject_game_data_action', {
+      p_action_id: actionId1,
+    });
+    expect(approveMock).not.toHaveBeenCalled();
   });
 });
