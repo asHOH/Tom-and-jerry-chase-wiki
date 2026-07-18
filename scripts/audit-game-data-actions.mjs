@@ -18,6 +18,9 @@ const {
   isActionAuditDetailSelector,
   runActionAudit,
 } = jiti('../src/lib/gameData/actionAudit.ts');
+const { createSanitizedPublishLimitMeasurement } = jiti(
+  '../src/lib/gameData/publishLimitsMeasurement.ts'
+);
 const { ACTION_AUDIT_KNOWN_NOOP_ENTITY_TYPES, createActionAuditTargetRegistry } = jiti(
   '../src/lib/gameData/actionAuditTargets.ts'
 );
@@ -25,7 +28,7 @@ const { ACTION_AUDIT_KNOWN_NOOP_ENTITY_TYPES, createActionAuditTargetRegistry } 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SERVICE_KEY = process.env.SUPABASE_SECRET_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY;
 const QUERY_PAGE_SIZE = 500;
-const SELECT_COLUMNS = 'id, entity_type, entry, created_at, created_by, status, is_public';
+const SELECT_COLUMNS = 'id, entity_type, entry, created_at, created_by, status, is_public, message';
 
 class AuditScriptError extends Error {
   constructor(code, details = {}) {
@@ -40,6 +43,7 @@ function parseArgs(args) {
   let selector;
   let limit;
   let cursor;
+  let measurePublishLimits = false;
 
   for (const arg of args) {
     if (arg.startsWith('--details=')) {
@@ -48,6 +52,8 @@ function parseArgs(args) {
       limit = Number(arg.slice('--limit='.length));
     } else if (arg.startsWith('--cursor=')) {
       cursor = arg.slice('--cursor='.length);
+    } else if (arg === '--measure-publish-limits') {
+      measurePublishLimits = true;
     } else {
       throw new AuditScriptError('invalid_argument');
     }
@@ -59,6 +65,9 @@ function parseArgs(args) {
   if ((limit !== undefined || cursor !== undefined) && selector === undefined) {
     throw new AuditScriptError('details_required');
   }
+  if (measurePublishLimits && selector !== undefined) {
+    throw new AuditScriptError('measurement_details_conflict');
+  }
   if (
     limit !== undefined &&
     (!Number.isInteger(limit) || limit < 1 || limit > MAX_ACTION_AUDIT_DETAIL_LIMIT)
@@ -69,7 +78,7 @@ function parseArgs(args) {
     throw new AuditScriptError('invalid_cursor');
   }
 
-  return { selector, limit, cursor };
+  return { selector, limit, cursor, measurePublishLimits };
 }
 
 function quotePostgrestValue(value) {
@@ -125,6 +134,7 @@ function updateFingerprint(hash, cohort, rows) {
         row.created_by,
         row.status,
         row.is_public,
+        row.message,
       ])
     );
     hash.update('\u0000');
@@ -174,6 +184,14 @@ async function main() {
   ]);
   const cohorts = { approvedRows, syncedRows, pendingRows };
   const runFingerprint = createRunFingerprint(cohorts);
+  if (args.measurePublishLimits) {
+    const measurement = createSanitizedPublishLimitMeasurement(
+      [...approvedRows, ...syncedRows, ...pendingRows],
+      runFingerprint
+    );
+    process.stdout.write(`${JSON.stringify(measurement, null, 2)}\n`);
+    return;
+  }
   const targets = createActionAuditTargetRegistry();
   const report = runActionAudit({
     ...cohorts,

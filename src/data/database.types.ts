@@ -393,6 +393,24 @@ export type Database = {
           },
         ];
       };
+      game_data_approved_replay_epoch: {
+        Row: {
+          epoch: number;
+          singleton: boolean;
+          updated_at: string;
+        };
+        Insert: {
+          epoch?: number;
+          singleton?: boolean;
+          updated_at?: string;
+        };
+        Update: {
+          epoch?: number;
+          singleton?: boolean;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       notification_email_settings: {
         Row: {
           user_id: string;
@@ -849,6 +867,13 @@ export type Database = {
           reviewed_by: string;
           reviewed_by_nickname: string;
           status: Database['public']['Enums']['game_data_action_status'];
+        }[];
+      };
+      read_game_data_approved_replay_snapshot: {
+        Args: never;
+        Returns: {
+          action_rows: Json;
+          replay_epoch: number;
         }[];
       };
       get_pending_versions_for_moderation: {

@@ -1,0 +1,152 @@
+import { PUBLISH_LIMITS } from './publishLimits';
+import {
+  preparePublishActionItems,
+  PublishPreparationError,
+  readBoundedJsonBody,
+} from './publishPreparation';
+
+jest.mock('server-only', () => ({}), { virtual: true });
+
+function createRequest(body: string): Request {
+  const bytes = new TextEncoder().encode(body);
+  let delivered = false;
+
+  return {
+    headers: { get: () => null },
+    body: {
+      getReader: () => ({
+        read: async () => {
+          if (delivered) return { done: true as const, value: undefined };
+          delivered = true;
+          return { done: false as const, value: bytes };
+        },
+        cancel: async () => undefined,
+      }),
+    },
+  } as unknown as Request;
+}
+
+describe('readBoundedJsonBody', () => {
+  it('parses a body within the byte limit', async () => {
+    const request = createRequest(JSON.stringify({ entries: [] }));
+
+    await expect(readBoundedJsonBody(request)).resolves.toEqual({ entries: [] });
+  });
+
+  it('rejects an oversized streamed body without trusting Content-Length', async () => {
+    const request = createRequest(
+      JSON.stringify({ value: 'x'.repeat(PUBLISH_LIMITS.requestBytes) })
+    );
+
+    await expect(readBoundedJsonBody(request)).rejects.toMatchObject({
+      detail: { code: 'request_too_large' },
+    });
+  });
+});
+
+describe('preparePublishActionItems', () => {
+  it('strictly decodes rows and returns canonical persistence values', () => {
+    const result = preparePublishActionItems(
+      [
+        {
+          entityType: ' characters ',
+          entries: [{ op: 'set', path: ' 汤姆.description ', newValue: 'new' }],
+        },
+      ],
+      '  message  '
+    );
+
+    expect(result).toEqual({
+      actions: [
+        {
+          entityType: 'characters',
+          rows: [
+            {
+              canonicalEntry: { op: 'set', path: '汤姆.description', newValue: 'new' },
+              actions: [
+                { op: 'set', path: '汤姆.description', oldValue: undefined, newValue: 'new' },
+              ],
+            },
+          ],
+        },
+      ],
+      message: 'message',
+    });
+  });
+
+  it('rejects unknown fields instead of dropping them', () => {
+    expect(() =>
+      preparePublishActionItems([
+        {
+          entityType: 'items',
+          entries: [{ op: 'set', path: '道具.description', newValue: 'new', unexpected: true }],
+        },
+      ])
+    ).toThrow(PublishPreparationError);
+  });
+
+  it('rejects dependent top-level rows before grouping is enabled', () => {
+    expect(() =>
+      preparePublishActionItems([
+        {
+          entityType: 'characters',
+          entries: [
+            { op: 'set', path: '汤姆.description', newValue: 'first' },
+            { op: 'set', path: '汤姆.description', newValue: 'second' },
+          ],
+        },
+      ])
+    ).toThrow(
+      expect.objectContaining({
+        detail: expect.objectContaining({ code: 'dependent_rows' }),
+      })
+    );
+  });
+
+  it('checks dependencies across repeated items for the same entity type', () => {
+    expect(() =>
+      preparePublishActionItems([
+        {
+          entityType: 'characters',
+          entries: [{ op: 'set', path: '汤姆.description', newValue: 'first' }],
+        },
+        {
+          entityType: 'characters',
+          entries: [{ op: 'set', path: '汤姆.description', newValue: 'second' }],
+        },
+      ])
+    ).toThrow(
+      expect.objectContaining({
+        detail: expect.objectContaining({ code: 'dependent_rows' }),
+      })
+    );
+  });
+
+  it('freezes path and message boundaries', () => {
+    expect(() =>
+      preparePublishActionItems([
+        {
+          entityType: 'items',
+          entries: [
+            {
+              op: 'set',
+              path: `item.${'x'.repeat(PUBLISH_LIMITS.pathCharacters)}`,
+              newValue: true,
+            },
+          ],
+        },
+      ])
+    ).toThrow(
+      expect.objectContaining({
+        detail: { code: 'path_too_long', entityType: 'items', entryIndex: 0 },
+      })
+    );
+
+    expect(() =>
+      preparePublishActionItems(
+        [{ entityType: 'items', entries: [{ op: 'set', path: 'item.value', newValue: true }] }],
+        'x'.repeat(PUBLISH_LIMITS.messageCharacters + 1)
+      )
+    ).toThrow(expect.objectContaining({ detail: { code: 'message_too_long' } }));
+  });
+});
