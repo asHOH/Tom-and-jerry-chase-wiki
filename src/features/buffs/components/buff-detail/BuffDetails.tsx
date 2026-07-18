@@ -98,6 +98,7 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
       content: (
         <DetailTextSection
           title={`具体来源（${sourceItems.length}个）`}
+          sectionId='Section:具体来源'
           value={effectiveBuff.sourceDescription ?? ''}
           fallbackText=''
           detailedValue={null}

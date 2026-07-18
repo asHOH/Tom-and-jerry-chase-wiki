@@ -12,6 +12,11 @@ describe('DetailTextSection', () => {
     render(<DetailTextSection title='测试' value='基础内容' detailedValue='   ' isDetailedView />);
 
     expect(screen.getByTestId('display-text')).toHaveTextContent('基础内容');
+    expect(screen.getByRole('heading', { name: '测试' })).toHaveAttribute('id', 'Section:测试');
+    expect(screen.getByRole('link', { name: '链接到测试' })).toHaveAttribute(
+      'href',
+      '#Section:测试'
+    );
   });
 
   it('uses the fallback when both values contain only whitespace', () => {

@@ -85,6 +85,16 @@ export const SearchIcon = ({ strokeWidth = 2, ...props }: IconProps) => (
   </SvgIcon>
 );
 
+export const LinkIcon = ({ strokeWidth = 2, ...props }: IconProps) => (
+  <SvgIcon strokeWidth={strokeWidth} {...props}>
+    <path
+      strokeLinecap='round'
+      strokeLinejoin='round'
+      d='M10.5 13.5l3-3m-5.25 6.75-1.5 1.5a3.182 3.182 0 01-4.5-4.5l3-3a3.182 3.182 0 014.5 0m5.25-4.5 1.5-1.5a3.182 3.182 0 014.5 4.5l-3 3a3.182 3.182 0 01-4.5 0'
+    />
+  </SvgIcon>
+);
+
 export const CheckBadgeIcon = ({ strokeWidth = 2, ...props }: IconProps) => (
   <SvgIcon strokeWidth={strokeWidth} {...props}>
     <path strokeLinecap='round' strokeLinejoin='round' d='M4.5 12.75l6 6 9-13.5' />

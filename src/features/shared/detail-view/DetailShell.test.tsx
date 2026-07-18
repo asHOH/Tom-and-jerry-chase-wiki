@@ -17,6 +17,11 @@ describe('DetailShell', () => {
 
     expect(screen.getByTestId('left-column')).toBeInTheDocument();
     expect(screen.getByText('简介')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: '简介' })).toHaveAttribute('id', 'Section:简介');
+    expect(screen.getByRole('link', { name: '链接到简介' })).toHaveAttribute(
+      'href',
+      '#Section:简介'
+    );
     expect(screen.getByTestId('section-content')).toBeInTheDocument();
   });
 

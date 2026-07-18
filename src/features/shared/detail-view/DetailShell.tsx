@@ -85,7 +85,9 @@ function DetailShell({
                 style={section.containerStyle}
               >
                 {section.title ? (
-                  <SectionHeader title={section.title}>{section.headerContent}</SectionHeader>
+                  <SectionHeader title={section.title} id={`Section:${section.title}`}>
+                    {section.headerContent}
+                  </SectionHeader>
                 ) : null}
                 {section.content}
               </div>

@@ -11,6 +11,7 @@ const hasText = (text?: string | null): text is string => Boolean(text?.trim());
 
 type DetailTextSectionProps = {
   title: string;
+  sectionId?: string;
   value?: string | null | undefined;
   detailedValue?: string | null | undefined;
   isDetailedView: boolean;
@@ -22,6 +23,7 @@ type DetailTextSectionProps = {
 
 function DetailTextSection({
   title,
+  sectionId,
   value,
   detailedValue,
   isDetailedView,
@@ -39,7 +41,9 @@ function DetailTextSection({
 
   return (
     <div>
-      <SectionHeader title={title}>{headerContent}</SectionHeader>
+      <SectionHeader title={title} id={sectionId ?? `Section:${title}`}>
+        {headerContent}
+      </SectionHeader>
       <Card className='mb-8 p-4'>
         <p className='py-2 text-lg whitespace-pre-wrap text-black dark:text-gray-200'>
           {renderValue ?? <TextWithHoverTooltips text={displayText} />}
