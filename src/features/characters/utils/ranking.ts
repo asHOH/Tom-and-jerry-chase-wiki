@@ -13,11 +13,17 @@ export type RankableProperty =
   | 'hpRecovery'
   | 'moveSpeed'
   | 'jumpHeight'
+  | 'jumpSpeed'
+  | 'climbSpeed'
+  | 'visionScale'
+  | 'gravity'
   | 'clawKnifeCdHit'
   | 'clawKnifeCdUnhit'
   | 'clawKnifeRange'
   | 'cheesePushSpeed'
-  | 'wallCrackDamageBoost';
+  | 'wallCrackDamageBoost'
+  | 'deformCooldown'
+  | 'shoppingDelay';
 
 export type PropertyInfo = {
   key: RankableProperty;
@@ -77,6 +83,40 @@ export const RANKABLE_PROPERTIES: readonly PropertyInfo[] = [
     higherIsBetter: true,
   },
   {
+    key: 'jumpSpeed',
+    getValue: (profile) => profile.jumpSpeed,
+    formatValue: createValueFormatter('/s'),
+    label: '跳跃速度',
+    description: '角色跳跃时的初速度',
+    unit: '/s',
+    higherIsBetter: true,
+  },
+  {
+    key: 'climbSpeed',
+    getValue: (profile) => profile.climbSpeed,
+    formatValue: createValueFormatter('/s'),
+    label: '攀爬速度',
+    description: '角色持续交互攀爬梯子的速度',
+    unit: '/s',
+    higherIsBetter: true,
+  },
+  {
+    key: 'visionScale',
+    getValue: (profile) => profile.visionScale,
+    formatValue: createValueFormatter(),
+    label: '视野缩放',
+    description: '角色的视野缩放倍率，数值越小实际视野越大',
+    higherIsBetter: false,
+  },
+  {
+    key: 'gravity',
+    getValue: (profile) => profile.gravity,
+    formatValue: createValueFormatter(),
+    label: '重力参数',
+    description: '角色受到的重力加速度',
+    higherIsBetter: true,
+  },
+  {
     key: 'clawKnifeCdHit',
     getValue: (profile) => profile.attackCooldown.hit,
     formatValue: createValueFormatter('s'),
@@ -123,6 +163,25 @@ export const RANKABLE_PROPERTIES: readonly PropertyInfo[] = [
     description: '鼠角色对墙缝的伤害加成',
     faction: 'mouse',
     higherIsBetter: true,
+  },
+  {
+    key: 'deformCooldown',
+    getValue: (profile) => profile.deformCooldown,
+    formatValue: createValueFormatter('s'),
+    label: '变形彩蛋CD',
+    description: '部分角色特殊变形彩蛋的触发冷却时间',
+    unit: 's',
+    higherIsBetter: false,
+  },
+  {
+    key: 'shoppingDelay',
+    getValue: (profile) => profile.shoppingDelay,
+    formatValue: createValueFormatter('s'),
+    label: '购物到货时间',
+    description: '猫角色开始购物至到货所需的时间',
+    faction: 'cat',
+    unit: 's',
+    higherIsBetter: false,
   },
 ];
 

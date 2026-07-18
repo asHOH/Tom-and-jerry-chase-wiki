@@ -29,11 +29,17 @@ describe('character ranking utilities', () => {
     ['hpRecovery', (id) => getActorProfile(id).hpRecovery],
     ['moveSpeed', (id) => getActorProfile(id).runSpeed],
     ['jumpHeight', (id) => getActorJumpHeight(getActorProfile(id))],
+    ['jumpSpeed', (id) => getActorProfile(id).jumpSpeed],
+    ['climbSpeed', (id) => getActorProfile(id).climbSpeed],
+    ['visionScale', (id) => getActorProfile(id).visionScale],
+    ['gravity', (id) => getActorProfile(id).gravity],
     ['clawKnifeCdHit', (id) => getActorProfile(id).attackCooldown.hit],
     ['clawKnifeCdUnhit', (id) => getActorProfile(id).attackCooldown.miss],
     ['clawKnifeRange', (id) => getActorProfile(id).attackRange],
     ['cheesePushSpeed', (id) => getActorProfile(id).pushCheeseSpeed],
     ['wallCrackDamageBoost', (id) => getActorProfile(id).wallDamage],
+    ['deformCooldown', (id) => getActorProfile(id).deformCooldown],
+    ['shoppingDelay', (id) => getActorProfile(id).shoppingDelay],
   ])('keeps the %s route key backed by its canonical selector', (property, getExpectedValue) => {
     const propertyInfo = getPropertyInfo(property);
     expect(propertyInfo).toBeDefined();
@@ -48,6 +54,14 @@ describe('character ranking utilities', () => {
       ['如玉', 0.8],
       ['苏蕊', 4.9],
     ]);
+  });
+
+  it('sorts lower vision scales first', () => {
+    const ranked = rankCharactersByProperty(selectCharacters('汤姆', '杰瑞'), 'visionScale');
+
+    expect(ranked.map(({ value }) => value)).toEqual(
+      [...ranked.map(({ value }) => value)].sort((a, b) => a - b)
+    );
   });
 
   it('uses the displayed integer jump height for ordering, formatting, and ties', () => {

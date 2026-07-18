@@ -115,6 +115,14 @@ const getRankableProperty = (
       return 'hpRecovery';
     case 'runSpeed':
       return 'moveSpeed';
+    case 'jumpSpeed':
+      return 'jumpSpeed';
+    case 'climbSpeed':
+      return 'climbSpeed';
+    case 'visionScale':
+      return 'visionScale';
+    case 'gravity':
+      return 'gravity';
     case 'attack':
       return 'attackBoost';
     case 'wallDamage':
@@ -123,6 +131,10 @@ const getRankableProperty = (
       return factionId === 'cat' ? 'clawKnifeRange' : undefined;
     case 'pushCheeseSpeed':
       return factionId === 'mouse' ? 'cheesePushSpeed' : undefined;
+    case 'deformCooldown':
+      return 'deformCooldown';
+    case 'shoppingDelay':
+      return factionId === 'cat' ? 'shoppingDelay' : undefined;
     default:
       return undefined;
   }

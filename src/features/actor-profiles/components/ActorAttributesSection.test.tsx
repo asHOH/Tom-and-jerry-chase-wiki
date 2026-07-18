@@ -76,7 +76,7 @@ describe('ActorAttributesSection', () => {
     ]);
     expect(getRankingLink(container, 'maxHp', 'cat')).toHaveTextContent('255');
     expect(getRankingLink(container, 'jumpHeight', 'cat')).toBeUndefined();
-    expect(getRankingLink(container, 'jumpSpeed', 'cat')).toBeUndefined();
+    expect(getRankingLink(container, 'jumpSpeed', 'cat')).toHaveTextContent('1850');
 
     fireEvent.click(screen.getByRole('button', { name: '展开' }));
 
@@ -84,6 +84,9 @@ describe('ActorAttributesSection', () => {
     expect(screen.getByText('英文名')).toBeInTheDocument();
     expect(screen.getByText('爪刀CD').closest('p')).toHaveTextContent('爪刀CD: 2.25 / 4.5 s');
     expect(screen.getByText('购物到货时间').closest('p')).toHaveTextContent('购物到货时间: 2.5s');
+    expect(getRankingLink(container, 'climbSpeed', 'cat')).toBeDefined();
+    expect(getRankingLink(container, 'visionScale', 'cat')).toBeDefined();
+    expect(getRankingLink(container, 'shoppingDelay', 'cat')).toHaveTextContent('2.5');
     expect(screen.queryByText('攻击力')).not.toBeInTheDocument();
     expect(screen.queryByText('破坏力')).not.toBeInTheDocument();
     expect(screen.queryByText('推速')).not.toBeInTheDocument();
@@ -186,6 +189,9 @@ describe('ActorAttributesSection', () => {
     expect(getRankingLink(container, 'attackBoost', 'mouse')).toHaveTextContent('15');
     expect(getRankingLink(container, 'cheesePushSpeed', 'mouse')).toHaveTextContent('5');
     expect(getRankingLink(container, 'wallCrackDamageBoost', 'mouse')).toHaveTextContent('1');
+    expect(getRankingLink(container, 'jumpSpeed', 'mouse')).toBeDefined();
+    expect(getRankingLink(container, 'climbSpeed', 'mouse')).toBeDefined();
+    expect(getRankingLink(container, 'visionScale', 'mouse')).toBeDefined();
     expect(screen.queryByText('爪刀范围')).not.toBeInTheDocument();
     expect(screen.queryByText('爪刀CD')).not.toBeInTheDocument();
     expect(screen.queryByText('初始道具')).not.toBeInTheDocument();
