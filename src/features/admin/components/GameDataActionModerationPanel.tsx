@@ -460,34 +460,36 @@ const GameDataActionModerationPanel = ({
                             invalidFallback: submission.created_at,
                           })}
                         </span>
-                        {submission.status !== 'pending' && submission.reviewed_at && (
-                          <>
-                            <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
-                            <span>
-                              {submission.reviewed_by_nickname && submission.reviewed_by ? (
-                                <>
-                                  审核：
-                                  <Link
-                                    href={`/users/${submission.reviewed_by}`}
-                                    target='_blank'
-                                    rel='noopener noreferrer'
-                                    className='font-medium text-blue-600 hover:underline dark:text-blue-400'
-                                  >
-                                    {submission.reviewed_by_nickname}
-                                  </Link>
-                                </>
-                              ) : (
-                                '已审核'
-                              )}
-                            </span>
-                            <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
-                            <span>
-                              {formatCompactDateTime(submission.reviewed_at, {
-                                invalidFallback: submission.reviewed_at,
-                              })}
-                            </span>
-                          </>
-                        )}
+                        {submission.status !== 'pending' &&
+                          submission.reviewed_at &&
+                          submission.created_by !== submission.reviewed_by && (
+                            <>
+                              <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
+                              <span>
+                                {submission.reviewed_by_nickname && submission.reviewed_by ? (
+                                  <>
+                                    审核：
+                                    <Link
+                                      href={`/users/${submission.reviewed_by}`}
+                                      target='_blank'
+                                      rel='noopener noreferrer'
+                                      className='font-medium text-blue-600 hover:underline dark:text-blue-400'
+                                    >
+                                      {submission.reviewed_by_nickname}
+                                    </Link>
+                                  </>
+                                ) : (
+                                  '已审核'
+                                )}
+                              </span>
+                              <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
+                              <span>
+                                {formatCompactDateTime(submission.reviewed_at, {
+                                  invalidFallback: submission.reviewed_at,
+                                })}
+                              </span>
+                            </>
+                          )}
                       </div>
 
                       <div className='flex items-center gap-2'>

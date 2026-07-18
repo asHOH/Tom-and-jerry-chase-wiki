@@ -86,6 +86,30 @@ describe('GameDataActionModerationPanel', () => {
     );
   });
 
+  it('hides review details when the submitter reviewed their own action', () => {
+    const selfReviewedAction: PendingGameDataAction = {
+      ...sampleAction,
+      status: 'approved',
+      reviewed_at: '2026-05-11T07:30:00.000Z',
+      reviewed_by: sampleAction.created_by,
+      reviewed_by_nickname: 'Alice',
+      is_public: true,
+    };
+
+    render(
+      <GameDataActionModerationPanel
+        pendingActions={[selfReviewedAction]}
+        mutatePendingActions={jest.fn()}
+      />
+    );
+
+    fireEvent.change(screen.getByTitle('过滤状态'), { target: { value: 'all' } });
+
+    expect(screen.getByRole('link', { name: 'Alice' })).toHaveAttribute('href', '/users/user-1');
+    expect(screen.queryByText('审核：')).not.toBeInTheDocument();
+    expect(screen.queryByText('2026-05-11', { exact: false })).not.toBeInTheDocument();
+  });
+
   it('keeps copy ID with copy JSON in expanded details and uses an icon-only expander', () => {
     render(
       <GameDataActionModerationPanel
