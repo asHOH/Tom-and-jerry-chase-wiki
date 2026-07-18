@@ -95,7 +95,7 @@ describe('relationMatrixViewModel', () => {
     expect(getCell(viewModel, '鲍姆', '剑客莉莉')).toMatchObject({
       displayKind: 'collaborator',
       isMinor: false,
-      tooltipContent: expect.stringContaining('协作：鲍姆救援后自保差不好走'),
+      tooltipContent: expect.stringContaining('鲍姆与剑客莉莉协作：鲍姆救援后自保差不好走'),
     });
     expect(getCell(viewModel, '剑客莉莉', '鲍姆')).toMatchObject({
       displayKind: 'collaborator',
@@ -115,11 +115,11 @@ describe('relationMatrixViewModel', () => {
 
     expect(getCell(catRows, '汤姆', '杰瑞')).toMatchObject({
       displayKind: 'counter',
-      tooltipContent: expect.stringContaining('克制：杰瑞自保能力差'),
+      tooltipContent: expect.stringContaining('汤姆克制杰瑞：杰瑞自保能力差'),
     });
     expect(getCell(mouseRows, '杰瑞', '汤姆')).toMatchObject({
       displayKind: 'counteredBy',
-      tooltipContent: expect.stringContaining('被克制：杰瑞自保能力差'),
+      tooltipContent: expect.stringContaining('杰瑞被汤姆克制：杰瑞自保能力差'),
     });
     expect(getCell(catRows, '牛仔汤姆', '剑客泰菲')).toMatchObject({
       displayKind: 'counteredBy',
@@ -129,7 +129,7 @@ describe('relationMatrixViewModel', () => {
     });
     expect(getCell(mouseRows, '鲍姆', '图茨')).toMatchObject({
       displayKind: 'counterEachOther',
-      tooltipContent: expect.stringContaining('互克：鲍姆爆炸会打断喵喵叫'),
+      tooltipContent: expect.stringContaining('鲍姆与图茨互相克制：鲍姆爆炸会打断喵喵叫'),
     });
   });
 
@@ -178,15 +178,19 @@ describe('relationMatrixViewModel', () => {
 
     expect(getCell(catMaps, '塔拉', '经典之家I')).toMatchObject({
       displayKind: 'counter',
+      tooltipContent: expect.stringContaining('塔拉在经典之家I中有优势：'),
     });
     expect(getCell(catMaps, '塔拉', '雪夜古堡III')).toMatchObject({
       displayKind: 'counteredBy',
+      tooltipContent: expect.stringContaining('塔拉在雪夜古堡III中处于劣势：'),
     });
     expect(getCell(catModes, '斯飞', '疯狂奶酪赛')).toMatchObject({
       displayKind: 'counter',
+      tooltipContent: expect.stringContaining('斯飞在疯狂奶酪赛中有优势：'),
     });
     expect(getCell(catModes, '斯飞', '黄金钥匙赛')).toMatchObject({
       displayKind: 'counteredBy',
+      tooltipContent: expect.stringContaining('斯飞在黄金钥匙赛中处于劣势：'),
     });
   });
 
@@ -231,7 +235,7 @@ describe('relationMatrixViewModel', () => {
       displayKind: 'counter',
       sourceKind: 'counters',
       description: '本地覆盖关系',
-      tooltipContent: '克制：本地覆盖关系',
+      tooltipContent: `杰瑞克制${emptyColumn.id}：本地覆盖关系`,
       isMinor: true,
     });
   });

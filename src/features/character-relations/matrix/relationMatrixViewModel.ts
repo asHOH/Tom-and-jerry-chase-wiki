@@ -71,13 +71,6 @@ const LEGAL_COLUMN_CATEGORY_IDS_BY_ROW_FACTION: Record<
   cat: ['mouse', 'knowledgeCard', 'specialSkill', 'map', 'mode'],
 };
 
-const TOOLTIP_PREFIX_BY_DISPLAY_KIND = {
-  collaborator: '协作：',
-  counter: '克制：',
-  counteredBy: '被克制：',
-  counterEachOther: '互克：',
-} satisfies Record<RelationMatrixDisplayKind, string>;
-
 const warnedDuplicateCellKeys = new Set<string>();
 
 const getOppositeFaction = (factionId: FactionId): FactionId =>
@@ -178,8 +171,37 @@ const getDisplayKind = (relationKind: TraitRelationKind): RelationMatrixDisplayK
   }
 };
 
+const getRelationSentence = (
+  relationKind: TraitRelationKind,
+  subjectName: string,
+  targetName: string
+): string => {
+  switch (relationKind) {
+    case 'counters':
+    case 'countersKnowledgeCards':
+    case 'countersSpecialSkills':
+      return `${subjectName}克制${targetName}`;
+    case 'counteredBy':
+    case 'counteredByKnowledgeCards':
+    case 'counteredBySpecialSkills':
+      return `${subjectName}被${targetName}克制`;
+    case 'counterEachOther':
+      return `${subjectName}与${targetName}互相克制`;
+    case 'collaborators':
+      return `${subjectName}与${targetName}协作`;
+    case 'advantageMaps':
+    case 'advantageModes':
+      return `${subjectName}在${targetName}中有优势`;
+    case 'disadvantageMaps':
+    case 'disadvantageModes':
+      return `${subjectName}在${targetName}中处于劣势`;
+  }
+};
+
 const createCell = (
   relationKind: TraitRelationKind,
+  subjectName: string,
+  targetName: string,
   item: { description?: string; isMinor?: boolean }
 ): RelationMatrixCell => {
   const displayKind = getDisplayKind(relationKind);
@@ -188,7 +210,7 @@ const createCell = (
     displayKind,
     isMinor: !!item.isMinor,
     description,
-    tooltipContent: `${TOOLTIP_PREFIX_BY_DISPLAY_KIND[displayKind]}${description}`,
+    tooltipContent: `${getRelationSentence(relationKind, subjectName, targetName)}：${description}`,
     sourceKind: relationKind,
   };
 };
@@ -276,11 +298,15 @@ export const buildRelationMatrixViewModel = (
 
         const cellKey = toCellKey(row.key, columnKey);
         if (cells.has(cellKey)) {
-          warnDuplicateMatrixCell(cellKey, cells.get(cellKey), createCell(relationKind, item));
+          warnDuplicateMatrixCell(
+            cellKey,
+            cells.get(cellKey),
+            createCell(relationKind, row.label, item.id, item)
+          );
           continue;
         }
 
-        cells.set(cellKey, createCell(relationKind, item));
+        cells.set(cellKey, createCell(relationKind, row.label, item.id, item));
       }
     }
   }

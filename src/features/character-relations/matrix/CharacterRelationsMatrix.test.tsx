@@ -89,12 +89,13 @@ describe('CharacterRelationsMatrix', () => {
     ).toBeEmptyDOMElement();
 
     const majorCell = screen.getByTestId(getCellTestId(viewModel, '杰瑞', '汤姆'));
-    const majorTrigger = within(majorCell).getByLabelText(/被克制：杰瑞自保能力差/);
+    const majorTrigger = within(majorCell).getByLabelText(/杰瑞被汤姆克制：杰瑞自保能力差/);
     expect(majorTrigger).toHaveClass('bg-red-500');
     expect(within(majorCell).queryByTestId('relation-minor-dot')).not.toBeInTheDocument();
 
     const minorCell = screen.getByTestId(getCellTestId(viewModel, '鲍姆', '托普斯'));
-    const minorTrigger = within(minorCell).getByLabelText(/互克：二者克制关系主要取决于托普斯/);
+    const minorTrigger =
+      within(minorCell).getByLabelText(/鲍姆与托普斯互相克制：二者克制关系主要取决于托普斯/);
     expect(minorTrigger).not.toHaveClass('bg-amber-400', 'dark:bg-amber-500/90');
     expect(within(minorCell).getByTestId('relation-minor-dot')).toHaveClass(
       'bg-amber-400',
@@ -113,7 +114,7 @@ describe('CharacterRelationsMatrix', () => {
     const majorCell = screen.getByTestId(getCellTestId(viewModel, '杰瑞', '汤姆'));
     expect(majorCell).toHaveStyle('height: 36px; width: 36px; min-width: 36px');
 
-    const majorTrigger = within(majorCell).getByLabelText(/被克制：杰瑞自保能力差/);
+    const majorTrigger = within(majorCell).getByLabelText(/杰瑞被汤姆克制：杰瑞自保能力差/);
     expect(majorTrigger).toHaveStyle('height: 36px; width: 36px');
   });
 
@@ -145,7 +146,7 @@ describe('CharacterRelationsMatrix', () => {
     );
 
     const majorCell = screen.getByTestId(getCellTestId(viewModel, '杰瑞', '汤姆'));
-    const majorTrigger = within(majorCell).getByLabelText(/被克制：杰瑞自保能力差/);
+    const majorTrigger = within(majorCell).getByLabelText(/杰瑞被汤姆克制：杰瑞自保能力差/);
     expect(majorTrigger).toHaveClass('bg-red-500', 'dark:bg-red-500/90');
 
     const minorCell = screen.getByTestId(getCellTestId(viewModel, '鲍姆', '托普斯'));
@@ -208,7 +209,9 @@ describe('CharacterRelationsMatrix', () => {
       name: '编辑 杰瑞 与 汤姆 的关系',
     });
     expect(majorButton).toHaveClass('bg-red-500', 'dark:bg-red-500/90');
-    expect(within(majorCell).queryByLabelText(/被克制：杰瑞自保能力差/)).not.toBeInTheDocument();
+    expect(
+      within(majorCell).queryByLabelText(/杰瑞被汤姆克制：杰瑞自保能力差/)
+    ).not.toBeInTheDocument();
 
     fireEvent.click(majorButton);
 
