@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { Metadata } from 'next';
 
 import { generatePageMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
@@ -23,5 +24,15 @@ export async function generateMetadata({
 }
 
 export default function ArticleHistoryPage() {
-  return <ArticleHistoryClient />;
+  return (
+    <Suspense
+      fallback={
+        <div className='container mx-auto px-4 py-16 text-center text-gray-600 dark:text-gray-400'>
+          正在加载版本历史...
+        </div>
+      }
+    >
+      <ArticleHistoryClient />
+    </Suspense>
+  );
 }

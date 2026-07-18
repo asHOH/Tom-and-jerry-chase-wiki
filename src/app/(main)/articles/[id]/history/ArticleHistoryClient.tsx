@@ -1,13 +1,14 @@
 'use client';
 
-import { useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import useSWR from 'swr';
 
 import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { formatArticleDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
 import { useToast } from '@/context/ToastContext';
+import ArticleDiffViewer from '@/features/articles/components/ArticleDiffViewer';
 import Button from '@/components/ui/Button';
 import ButtonLink from '@/components/ui/ButtonLink';
 import Card from '@/components/ui/Card';
@@ -19,29 +20,32 @@ import Link from '@/components/Link';
 
 interface ArticleVersion {
   id: string;
-  content: string;
-  created_at: string;
-  editor_id: string;
-  status: 'approved' | 'pending' | 'rejected' | 'revoked';
+  content: string | null;
+  created_at: string | null;
+  editor_id: string | null;
+  status: string | null;
   commit_message: string | null;
-  users: { nickname: string };
+  users: { nickname: string | null } | null;
 }
 
 interface ArticleHistoryData {
   article: {
     id: string;
     title: string;
-    categories: { name: string };
+    categories: { name: string } | null;
   };
   versions: ArticleVersion[];
+  total_count: number;
 }
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function ArticleHistoryClient() {
   const params = useParams();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const permissions = usePermissions();
-  const { info, success, error: showError } = useToast();
+  const { success, error: showError } = useToast();
   const articleId = params?.id as string;
 
   const { data, error } = useSWR<ArticleHistoryData>(
@@ -49,25 +53,72 @@ export default function ArticleHistoryClient() {
     fetcher
   );
 
-  const [selectedVersions, setSelectedVersions] = useState<string[]>([]);
+  const [selectedVersions, setSelectedVersions] = useState<{
+    oldId: string | null;
+    newId: string | null;
+  }>({ oldId: null, newId: null });
 
   const loading = !data && !error;
 
-  const handleVersionSelect = (versionId: string) => {
-    setSelectedVersions((prev) => {
-      if (prev.includes(versionId)) {
-        return prev.filter((id) => id !== versionId);
-      } else if (prev.length < 2) {
-        return [...prev, versionId];
-      } else {
-        // Replace the first selected version with the new one
-        const secondVersion = prev[1];
-        return secondVersion ? [secondVersion, versionId] : [versionId];
-      }
+  const requestedOldId = searchParams.get('oldid');
+  const requestedNewId = searchParams.get('diff');
+  const hasComparisonParams = requestedOldId !== null || requestedNewId !== null;
+
+  const comparison = useMemo(() => {
+    if (!data || !requestedOldId || !requestedNewId) return null;
+    const oldIndex = data.versions.findIndex((version) => version.id === requestedOldId);
+    const newIndex = data.versions.findIndex((version) => version.id === requestedNewId);
+    if (oldIndex < 0 || newIndex < 0 || oldIndex <= newIndex) return null;
+
+    return {
+      oldIndex,
+      newIndex,
+      oldVersion: data.versions[oldIndex]!,
+      newVersion: data.versions[newIndex]!,
+    };
+  }, [data, requestedNewId, requestedOldId]);
+
+  useEffect(() => {
+    if (!data || data.versions.length < 2 || hasComparisonParams) return;
+    setSelectedVersions((current) => {
+      const oldIndex = data.versions.findIndex((version) => version.id === current.oldId);
+      const newIndex = data.versions.findIndex((version) => version.id === current.newId);
+      if (oldIndex > newIndex && newIndex >= 0) return current;
+      return { oldId: data.versions[1]!.id, newId: data.versions[0]!.id };
     });
+  }, [data, hasComparisonParams]);
+
+  useEffect(() => {
+    if (!data || !hasComparisonParams || comparison) return;
+    showError('无法比较所选版本，请重新选择两个有效的历史版本');
+    router.replace(`/articles/${articleId}/history`);
+  }, [articleId, comparison, data, hasComparisonParams, router, showError]);
+
+  const selectedOldIndexValue = data?.versions.findIndex(
+    (version) => version.id === selectedVersions.oldId
+  );
+  const selectedNewIndexValue = data?.versions.findIndex(
+    (version) => version.id === selectedVersions.newId
+  );
+  const selectedOldIndex =
+    selectedOldIndexValue !== undefined && selectedOldIndexValue >= 0
+      ? selectedOldIndexValue
+      : undefined;
+  const selectedNewIndex =
+    selectedNewIndexValue !== undefined && selectedNewIndexValue >= 0
+      ? selectedNewIndexValue
+      : undefined;
+
+  const compareSelectedVersions = () => {
+    if (!selectedVersions.oldId || !selectedVersions.newId) return;
+    const query = new URLSearchParams({
+      oldid: selectedVersions.oldId,
+      diff: selectedVersions.newId,
+    });
+    router.push(`/articles/${articleId}/history?${query.toString()}`);
   };
 
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (status: string | null) => {
     const statusConfig = {
       approved: {
         color: 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400',
@@ -128,6 +179,43 @@ export default function ArticleHistoryClient() {
     );
   }
 
+  if (comparison) {
+    const olderVersion = data.versions[comparison.oldIndex + 1];
+    const newerVersion = data.versions[comparison.newIndex - 1];
+    const comparisonHref = (oldId: string, newId: string) => {
+      const query = new URLSearchParams({ oldid: oldId, diff: newId });
+      return `/articles/${articleId}/history?${query.toString()}`;
+    };
+
+    return (
+      <div className='container mx-auto max-w-7xl px-4 py-8'>
+        <header className='mb-8 text-center'>
+          <PageTitle>版本差异</PageTitle>
+          <p className='mt-4 text-gray-600 dark:text-gray-400'>{data.article.title}</p>
+        </header>
+
+        <ArticleDiffViewer
+          key={`${comparison.oldVersion.id}-${comparison.newVersion.id}`}
+          articleId={articleId}
+          oldVersion={comparison.oldVersion}
+          newVersion={comparison.newVersion}
+          oldVersionNumber={data.versions.length - comparison.oldIndex}
+          newVersionNumber={data.versions.length - comparison.newIndex}
+          {...(olderVersion
+            ? {
+                olderComparisonHref: comparisonHref(olderVersion.id, comparison.oldVersion.id),
+              }
+            : {})}
+          {...(newerVersion
+            ? {
+                newerComparisonHref: comparisonHref(comparison.newVersion.id, newerVersion.id),
+              }
+            : {})}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className='container mx-auto max-w-7xl px-4 py-8'>
       {/* Header */}
@@ -152,25 +240,18 @@ export default function ArticleHistoryClient() {
       </header>
 
       {/* Comparison Actions */}
-      {selectedVersions.length === 2 && (
+      {data.versions.length >= 2 && (
         <Card className='mb-6 p-4'>
-          <div className='flex items-center justify-between'>
+          <div className='flex flex-wrap items-center justify-between gap-3'>
             <div className='text-sm text-gray-600 dark:text-gray-400'>
-              已选择 {selectedVersions.length} 个版本进行比较
+              请选择一个旧版本和一个新版本进行比较
             </div>
-            <div className='flex gap-3'>
-              <Button onClick={() => setSelectedVersions([])} variant='ghost'>
-                清除选择
-              </Button>
-              <Button
-                onClick={() => {
-                  // TODO: Implement diff viewer
-                  info('差异比较功能即将推出');
-                }}
-              >
-                比较差异
-              </Button>
-            </div>
+            <Button
+              onClick={compareSelectedVersions}
+              disabled={!selectedVersions.oldId || !selectedVersions.newId}
+            >
+              比较选中的版本
+            </Button>
           </div>
         </Card>
       )}
@@ -181,24 +262,52 @@ export default function ArticleHistoryClient() {
           <div key={version.id} className='p-6'>
             <div className='flex items-start justify-between'>
               <div className='flex-1'>
-                <div className='mb-3 flex items-center gap-4'>
+                <div className='mb-3 flex flex-wrap items-center gap-4'>
                   <div className='flex items-center gap-2'>
-                    {/* Version Selection Checkbox */}
-                    <input
-                      type='checkbox'
-                      checked={selectedVersions.includes(version.id)}
-                      onChange={() => handleVersionSelect(version.id)}
-                      className='h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600'
-                      disabled={
-                        !selectedVersions.includes(version.id) && selectedVersions.length >= 2
-                      }
-                      aria-label={`选择版本 #${data.versions.length - index}`}
-                    />
-
                     <h3 className='text-lg font-semibold text-gray-900 dark:text-gray-100'>
                       版本 #{data.versions.length - index}
                     </h3>
                   </div>
+
+                  {data.versions.length >= 2 && (
+                    <fieldset className='flex items-center gap-3 text-sm text-gray-700 dark:text-gray-300'>
+                      <legend className='sr-only'>选择版本 #{data.versions.length - index}</legend>
+                      <label className='flex items-center gap-1.5'>
+                        <input
+                          type='radio'
+                          name='old-version'
+                          checked={selectedVersions.oldId === version.id}
+                          onChange={() =>
+                            setSelectedVersions((current) => ({
+                              ...current,
+                              oldId: version.id,
+                            }))
+                          }
+                          disabled={selectedNewIndex !== undefined && index <= selectedNewIndex}
+                          className='size-4 border-gray-300 text-orange-600 focus:ring-orange-500 dark:border-gray-600 dark:bg-gray-700'
+                          aria-label={`选择版本 #${data.versions.length - index} 作为旧版本`}
+                        />
+                        旧
+                      </label>
+                      <label className='flex items-center gap-1.5'>
+                        <input
+                          type='radio'
+                          name='new-version'
+                          checked={selectedVersions.newId === version.id}
+                          onChange={() =>
+                            setSelectedVersions((current) => ({
+                              ...current,
+                              newId: version.id,
+                            }))
+                          }
+                          disabled={selectedOldIndex !== undefined && index >= selectedOldIndex}
+                          className='size-4 border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700'
+                          aria-label={`选择版本 #${data.versions.length - index} 作为新版本`}
+                        />
+                        新
+                      </label>
+                    </fieldset>
+                  )}
 
                   {getStatusBadge(version.status)}
 
@@ -218,7 +327,9 @@ export default function ArticleHistoryClient() {
 
                     <div className='flex items-center gap-2'>
                       <ClockIcon className='size-4' strokeWidth={1.5} />
-                      <span>{formatArticleDate(version.created_at)}</span>
+                      <span>
+                        {version.created_at ? formatArticleDate(version.created_at) : '未知时间'}
+                      </span>
                     </div>
                   </div>
 
