@@ -158,10 +158,12 @@ const GameDataActionModerationPanel = ({
       if (!q) return true;
 
       const createdBy = (submission.created_by_nickname ?? '').toLowerCase();
+      const entryContent = JSON.stringify(submission.entry)?.toLowerCase() ?? '';
       return (
         submission.action_id.toLowerCase().includes(q) ||
         submission.entity_type.toLowerCase().includes(q) ||
-        createdBy.includes(q)
+        createdBy.includes(q) ||
+        entryContent.includes(q)
       );
     });
   }, [pendingActions, actionEntityType, actionQuery, actionStatus]);
@@ -343,7 +345,7 @@ const GameDataActionModerationPanel = ({
           <FormInput
             value={actionQuery}
             onChange={(e) => setActionQuery(e.target.value)}
-            placeholder='action_id / 类型 / 提交者'
+            placeholder='action_id / 类型 / 提交者 / 改动内容'
             className='md:w-64'
             size='sm'
           />

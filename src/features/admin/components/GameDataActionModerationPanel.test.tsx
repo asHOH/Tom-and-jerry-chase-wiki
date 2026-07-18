@@ -110,6 +110,36 @@ describe('GameDataActionModerationPanel', () => {
     expect(screen.queryByText('2026-05-11', { exact: false })).not.toBeInTheDocument();
   });
 
+  it('searches the full game data action entry content', () => {
+    const otherAction: PendingGameDataAction = {
+      ...sampleAction,
+      action_id: 'action-2',
+      entry: {
+        op: 'set',
+        path: '汤姆.description',
+        oldValue: '旧描述',
+        newValue: '这是可搜索的嵌套改动内容',
+      },
+    };
+
+    render(
+      <GameDataActionModerationPanel
+        pendingActions={[sampleAction, otherAction]}
+        mutatePendingActions={jest.fn()}
+      />
+    );
+
+    fireEvent.change(screen.getByPlaceholderText('action_id / 类型 / 提交者 / 改动内容'), {
+      target: { value: '嵌套改动内容' },
+    });
+
+    expect(screen.getByRole('checkbox', { name: '选择改动 action-2' })).toBeInTheDocument();
+    expect(screen.queryByRole('checkbox', { name: '选择改动 action-1' })).not.toBeInTheDocument();
+    expect(
+      screen.getByText((_content, element) => element?.textContent === '显示 1 / 2')
+    ).toBeInTheDocument();
+  });
+
   it('keeps copy ID with copy JSON in expanded details and uses an icon-only expander', () => {
     render(
       <GameDataActionModerationPanel
