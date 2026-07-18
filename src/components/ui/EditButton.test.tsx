@@ -3,13 +3,18 @@ import { render, screen } from '@testing-library/react';
 import EditButton from '@/components/ui/EditButton';
 
 const mockEnterEditMode = jest.fn();
+let mockIsEditMode = false;
 
 jest.mock('@/hooks/useSearchParamEditMode', () => ({
-  useSearchParamEditMode: () => ({ enterEditMode: mockEnterEditMode }),
+  useSearchParamEditMode: () => ({
+    isEditMode: mockIsEditMode,
+    enterEditMode: mockEnterEditMode,
+  }),
 }));
 
 describe('EditButton', () => {
   beforeEach(() => {
+    mockIsEditMode = false;
     mockEnterEditMode.mockClear();
   });
 
@@ -25,5 +30,13 @@ describe('EditButton', () => {
     render(<EditButton />);
 
     expect(screen.getByRole('button', { name: '编辑' })).toHaveClass('bg-blue-600', 'text-white');
+  });
+
+  it('should hide when edit mode is enabled', () => {
+    mockIsEditMode = true;
+
+    render(<EditButton />);
+
+    expect(screen.queryByRole('button', { name: '编辑' })).not.toBeInTheDocument();
   });
 });

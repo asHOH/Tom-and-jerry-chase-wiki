@@ -11,8 +11,10 @@ export type EditButtonProps = {
 };
 
 export default function EditButton({ className, compact = false }: EditButtonProps) {
-  const { enterEditMode } = useSearchParamEditMode();
+  const { isEditMode, enterEditMode } = useSearchParamEditMode();
   const title = '编辑此页面';
+
+  if (isEditMode) return null;
 
   if (compact) {
     return (
