@@ -1,6 +1,5 @@
-import type { DeepReadonly } from '@/types/deep-readonly';
-import type { CardGameData, CharacterGameData } from '@/lib/dataManager';
 import type { PublishableEntityType } from '@/lib/gameData/publishableEntityTypes';
+import type { CharacterWithFaction, KnowledgeCardWithFaction } from '@/lib/types';
 import type {
   Achievement,
   Buff,
@@ -15,9 +14,9 @@ import type {
 
 type FactionData<T> = Record<FactionId, Record<string, T>>;
 
-type PublishedGameDataShapeByType = {
-  characters: CharacterGameData;
-  cards: CardGameData;
+export type PublishedGameDataByType = {
+  characters: Record<string, CharacterWithFaction>;
+  cards: Record<string, KnowledgeCardWithFaction>;
   entities: Record<string, Entity>;
   buffs: Record<string, Buff>;
   items: Record<string, Item>;
@@ -26,12 +25,6 @@ type PublishedGameDataShapeByType = {
   modes: Record<string, Mode>;
   specialSkills: FactionData<SpecialSkill>;
   achievements: FactionData<Achievement>;
-};
-
-export type PublishedGameDataByType = {
-  readonly [EntityType in keyof PublishedGameDataShapeByType]: DeepReadonly<
-    PublishedGameDataShapeByType[EntityType]
-  >;
 };
 
 type HasExactlyPublishableEntityTypeKeys<T> =
@@ -44,5 +37,5 @@ type HasExactlyPublishableEntityTypeKeys<T> =
 type Assert<T extends true> = T;
 
 export type PublishedGameDataByTypeIsExhaustive = Assert<
-  HasExactlyPublishableEntityTypeKeys<PublishedGameDataShapeByType>
+  HasExactlyPublishableEntityTypeKeys<PublishedGameDataByType>
 >;
