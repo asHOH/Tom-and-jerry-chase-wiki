@@ -24,7 +24,14 @@ export default function CharacterRankingGrid({ description }: CharacterRankingGr
     },
     {
       title: '查询工具',
-      items: ['ranks', 'win-rates', 'special-skill-advices', 'traitCollection', 'recent-changes'],
+      items: [
+        'ranks',
+        'win-rates',
+        'special-skill-advices',
+        'traitCollection',
+        'recent-changes',
+        'random',
+      ],
     },
     {
       title: '小游戏',

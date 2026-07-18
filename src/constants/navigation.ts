@@ -236,6 +236,14 @@ export const TOOL_NAV_ITEMS: readonly NavItem[] = [
     iconSrc: '/images/icons/article.png',
     iconAlt: '',
   },
+  {
+    id: 'random',
+    label: '随机页面',
+    description: '随机查看一个游戏资料页面',
+    href: '/random',
+    iconSrc: '/images/icons/game.png',
+    iconAlt: '',
+  },
   //建设中界面
   {
     id: 'achievements',

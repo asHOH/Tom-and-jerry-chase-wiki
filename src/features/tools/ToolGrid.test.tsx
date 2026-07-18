@@ -85,6 +85,7 @@ describe('ToolGrid', () => {
         'win-rates',
         'special-skill-advices',
         'traitCollection',
+        'random',
         'fixtures',
         'achievements',
       ].includes(item.id)
