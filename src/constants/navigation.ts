@@ -228,6 +228,14 @@ export const TOOL_NAV_ITEMS: readonly NavItem[] = [
     iconSrc: '/images/mouseSkills/%E8%8E%B1%E6%81%A92-%E8%98%B8%E6%B0%B4%E7%AC%94.png',
     iconAlt: '',
   },
+  {
+    id: 'recent-changes',
+    label: '最近更改',
+    description: '查看最近通过审核的文章与游戏数据更改',
+    href: '/recent-changes',
+    iconSrc: '/images/icons/article.png',
+    iconAlt: '',
+  },
   //建设中界面
   {
     id: 'achievements',
