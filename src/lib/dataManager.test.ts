@@ -1,4 +1,4 @@
-import { GameDataManager } from './dataManager';
+import { buildCardGameData, buildCharacterGameData, GameDataManager } from './dataManager';
 
 describe('GameDataManager', () => {
   describe('getFactions', () => {
@@ -92,6 +92,41 @@ describe('GameDataManager', () => {
       // Check that raw data doesn't have derived properties
       expect(rawData.factionData.cat).not.toHaveProperty('characters');
       expect(rawData.factionData.mouse).not.toHaveProperty('characters');
+    });
+
+    it('returns fresh data that cannot mutate the private builder inputs', () => {
+      const first = GameDataManager.getRawData();
+      const originalDescription = first.characterData['汤姆']?.description;
+
+      first.characterData['汤姆']!.description = '__legacy mutation__';
+
+      expect(GameDataManager.getRawData().characterData['汤姆']?.description).toBe(
+        originalDescription
+      );
+    });
+  });
+
+  describe('pure builders', () => {
+    it('builds characters equivalent to the legacy manager without sharing identity', () => {
+      GameDataManager.invalidate({ characters: true });
+      const legacyCharacters = GameDataManager.getCharacters();
+      const builtCharacters = buildCharacterGameData();
+
+      expect(builtCharacters).toEqual(legacyCharacters);
+      expect(builtCharacters).not.toBe(legacyCharacters);
+      expect(builtCharacters['汤姆']).not.toBe(legacyCharacters['汤姆']);
+      expect(builtCharacters['汤姆']?.skills).not.toBe(legacyCharacters['汤姆']?.skills);
+    });
+
+    it('builds cards equivalent to the legacy manager without sharing identity', () => {
+      GameDataManager.invalidate({ cards: true });
+      const legacyCards = GameDataManager.getCards();
+      const builtCards = buildCardGameData();
+
+      expect(builtCards).toEqual(legacyCards);
+      expect(builtCards).not.toBe(legacyCards);
+      expect(builtCards['乘胜追击']).not.toBe(legacyCards['乘胜追击']);
+      expect(builtCards['乘胜追击']?.levels).not.toBe(legacyCards['乘胜追击']?.levels);
     });
   });
 

@@ -1250,4 +1250,8 @@ const buffsWithImages: Record<string, Buff> = Object.fromEntries(
   ])
 );
 
-export default buffsWithImages;
+export function createBuffsData(): Record<string, Buff> {
+  return structuredClone(buffsWithImages);
+}
+
+export default createBuffsData();

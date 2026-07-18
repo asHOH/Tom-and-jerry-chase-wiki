@@ -186,4 +186,8 @@ const ModeWithImages: Record<string, Mode> = Object.fromEntries(
   ])
 );
 
-export default ModeWithImages;
+export function createModesData(): Record<string, Mode> {
+  return structuredClone(ModeWithImages);
+}
+
+export default createModesData();

@@ -1058,4 +1058,8 @@ const mapsWithImages: Record<string, Map> = Object.fromEntries(
   ])
 );
 
-export default mapsWithImages;
+export function createMapsData(): Record<string, Map> {
+  return structuredClone(mapsWithImages);
+}
+
+export default createMapsData();

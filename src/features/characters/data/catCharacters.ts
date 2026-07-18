@@ -4200,7 +4200,7 @@ const catCharacterDefinitions = {
 const catCharacters = processCharacters(catCharacterDefinitions);
 
 // Generate characters with faction ID and image URLs applied in bulk
-export const catCharactersWithImages = Object.fromEntries(
+const pristineCatCharactersWithImages = Object.fromEntries(
   Object.entries(catCharacters).map(([characterId, character]) => [
     characterId,
     {
@@ -4211,3 +4211,9 @@ export const catCharactersWithImages = Object.fromEntries(
     },
   ])
 );
+
+export function createCatCharactersWithImages() {
+  return structuredClone(pristineCatCharactersWithImages);
+}
+
+export const catCharactersWithImages = createCatCharactersWithImages();

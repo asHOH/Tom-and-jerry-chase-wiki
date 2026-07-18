@@ -79,4 +79,8 @@ const catSpecialSkillsWithImages: Record<string, SpecialSkill> = Object.fromEntr
   ])
 );
 
-export default catSpecialSkillsWithImages;
+export function createCatSpecialSkillsData(): Record<string, SpecialSkill> {
+  return structuredClone(catSpecialSkillsWithImages);
+}
+
+export default createCatSpecialSkillsData();

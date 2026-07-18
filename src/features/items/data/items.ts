@@ -868,4 +868,8 @@ const itemsWithImages: Record<string, Item> = Object.fromEntries(
   ])
 );
 
-export default itemsWithImages;
+export function createItemsData(): Record<string, Item> {
+  return structuredClone(itemsWithImages);
+}
+
+export default createItemsData();

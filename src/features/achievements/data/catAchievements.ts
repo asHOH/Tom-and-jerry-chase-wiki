@@ -34,4 +34,8 @@ const catAchievementsWithImages: Record<string, Achievement> = Object.fromEntrie
   ])
 );
 
-export default catAchievementsWithImages;
+export function createCatAchievementsData(): Record<string, Achievement> {
+  return structuredClone(catAchievementsWithImages);
+}
+
+export default createCatAchievementsData();

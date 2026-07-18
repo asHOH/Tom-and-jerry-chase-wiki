@@ -5,7 +5,7 @@ const getMouseCardImageUrl = (rank: string, name: string): string => {
   return `/images/mouseCards/${rank}-${name}.png`;
 };
 
-export const mouseKnowledgeCards: Record<string, Card> = {
+const mouseKnowledgeCardDefinitions: Record<string, Card> = {
   /* ----------------------------------- S级卡 ---------------------------------- */
   回家: {
     id: '回家',
@@ -546,9 +546,11 @@ export const mouseKnowledgeCards: Record<string, Card> = {
   },
 };
 
+export const mouseKnowledgeCards = structuredClone(mouseKnowledgeCardDefinitions);
+
 // Generate cards with faction ID and image URLs applied in bulk
-export const mouseCardsWithImages = Object.fromEntries(
-  Object.entries(mouseKnowledgeCards).map(([cardId, card]) => [
+const pristineMouseCardsWithImages = Object.fromEntries(
+  Object.entries(mouseKnowledgeCardDefinitions).map(([cardId, card]) => [
     cardId,
     {
       ...card,
@@ -557,3 +559,9 @@ export const mouseCardsWithImages = Object.fromEntries(
     },
   ])
 );
+
+export function createMouseCardsWithImages() {
+  return structuredClone(pristineMouseCardsWithImages);
+}
+
+export const mouseCardsWithImages = createMouseCardsWithImages();

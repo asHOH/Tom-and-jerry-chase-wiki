@@ -1,25 +1,25 @@
 import { DeepReadonly } from '@/types/deep-readonly';
 import { historyData } from '@/data/history';
 import { Card, Character, Faction, FactionId } from '@/data/types';
-import { catCharactersWithImages } from '@/features/characters/data/catCharacters';
-import { mouseCharactersWithImages } from '@/features/characters/data/mouseCharacters';
+import { createCatCharactersWithImages } from '@/features/characters/data/catCharacters';
+import { createMouseCharactersWithImages } from '@/features/characters/data/mouseCharacters';
 import { mergeCharacterRecommendations } from '@/features/characters/utils/recommendations';
 import catGeneralKnowledgeCardGroups from '@/features/knowledge-cards/data/catGeneralKnowledgeCardGroups';
-import { catCardsWithImages } from '@/features/knowledge-cards/data/catKnowledgeCards';
+import { createCatCardsWithImages } from '@/features/knowledge-cards/data/catKnowledgeCards';
 import mouseGeneralKnowledgeCardGroups from '@/features/knowledge-cards/data/mouseGeneralKnowledgeCardGroups';
-import { mouseCardsWithImages } from '@/features/knowledge-cards/data/mouseKnowledgeCards';
+import { createMouseCardsWithImages } from '@/features/knowledge-cards/data/mouseKnowledgeCards';
 import catGeneralSpecialSkills from '@/features/special-skills/data/catGeneralSpecialSkills';
 import mouseGeneralSpecialSkills from '@/features/special-skills/data/mouseGeneralSpecialSkills';
 
 // Raw data aggregation
 const rawCharacterData = {
-  ...catCharactersWithImages,
-  ...mouseCharactersWithImages,
+  ...createCatCharactersWithImages(),
+  ...createMouseCharactersWithImages(),
 };
 
 const rawCardData = {
-  ...catCardsWithImages,
-  ...mouseCardsWithImages,
+  ...createCatCardsWithImages(),
+  ...createMouseCardsWithImages(),
 };
 
 const rawFactionData: Record<FactionId, Faction> = {
@@ -70,6 +70,68 @@ function getCreateTime(name: string) {
   return createTimeLookup.get(name) ?? null;
 }
 
+export type CharacterGameData = Record<
+  string,
+  Character & {
+    imageUrl: string;
+    faction: { id: FactionId; name: string };
+    createDate: string | null;
+  }
+>;
+
+export type CardGameData = Record<
+  string,
+  Card & {
+    imageUrl: string;
+    faction: { id: FactionId; name: string };
+    createDate: string | null;
+  }
+>;
+
+export function buildCharacterGameData(): CharacterGameData {
+  const built = Object.fromEntries(
+    Object.entries(rawCharacterData).map(([characterId, character]) => {
+      const factionId = character.factionId as FactionId;
+      const faction = rawFactionData[factionId];
+      const recommendations = mergeCharacterRecommendations(character, faction);
+
+      return [
+        characterId,
+        {
+          ...character,
+          ...recommendations,
+          imageUrl: character.imageUrl!,
+          faction: { id: faction.id, name: faction.name },
+          createDate: getCreateTime(character.id),
+        },
+      ];
+    })
+  );
+
+  return structuredClone(built) as CharacterGameData;
+}
+
+export function buildCardGameData(): CardGameData {
+  const built = Object.fromEntries(
+    Object.entries(rawCardData).map(([cardId, card]) => {
+      const factionId = card.factionId as FactionId;
+      const faction = rawFactionData[factionId];
+
+      return [
+        cardId,
+        {
+          ...card,
+          imageUrl: card.imageUrl!,
+          faction: { id: faction.id, name: faction.name },
+          createDate: getCreateTime(card.id),
+        },
+      ];
+    })
+  );
+
+  return structuredClone(built) as CardGameData;
+}
+
 // Simple memoization utility for functions with no arguments
 /**
  * Data Manager - Handles all data transformations
@@ -102,26 +164,8 @@ export class GameDataManager {
   }
 
   // Module-scoped caches (lazy-initialized)
-  private static _charactersCache: Readonly<
-    Record<
-      string,
-      Character & {
-        imageUrl: string;
-        faction: { id: FactionId; name: string };
-        createDate: string | null;
-      }
-    >
-  > | null = null;
-  private static _cardsCache: Readonly<
-    Record<
-      string,
-      Card & {
-        imageUrl: string;
-        faction: { id: FactionId; name: string };
-        createDate: string | null;
-      }
-    >
-  > | null = null;
+  private static _charactersCache: Readonly<CharacterGameData> | null = null;
+  private static _cardsCache: Readonly<CardGameData> | null = null;
 
   /**
    * Clear memoized caches. If no options provided, clears all.
@@ -135,81 +179,15 @@ export class GameDataManager {
     if (all || opts?.cards) this._cardsCache = null;
   }
 
-  static getCharacters(): Readonly<
-    Record<
-      string,
-      Character & {
-        imageUrl: string;
-        faction: { id: FactionId; name: string };
-        createDate: string | null;
-      }
-    >
-  > {
+  static getCharacters(): Readonly<CharacterGameData> {
     if (this._charactersCache) return this._charactersCache;
-    const built = Object.fromEntries(
-      Object.entries(rawCharacterData).map(([characterId, character]) => {
-        const factionId = character.factionId as FactionId;
-        const faction = rawFactionData[factionId];
-        const recommendations = mergeCharacterRecommendations(character, faction);
-
-        return [
-          characterId,
-          {
-            ...character,
-            ...recommendations,
-            imageUrl: character.imageUrl!,
-            faction: { id: faction.id, name: faction.name },
-            createDate: getCreateTime(character.id),
-          },
-        ];
-      })
-    );
-    this._charactersCache = built as Record<
-      string,
-      Character & {
-        imageUrl: string;
-        faction: { id: FactionId; name: string };
-        createDate: string | null;
-      }
-    >;
+    this._charactersCache = buildCharacterGameData();
     return this._charactersCache!;
   }
 
-  static getCards(): Readonly<
-    Record<
-      string,
-      Card & {
-        imageUrl: string;
-        faction: { id: FactionId; name: string };
-        createDate: string | null;
-      }
-    >
-  > {
+  static getCards(): Readonly<CardGameData> {
     if (this._cardsCache) return this._cardsCache;
-    const built = Object.fromEntries(
-      Object.entries(rawCardData).map(([cardId, card]) => {
-        const factionId = card.factionId as FactionId;
-        const faction = rawFactionData[factionId];
-
-        return [
-          cardId,
-          {
-            ...card,
-            imageUrl: card.imageUrl!,
-            faction: { id: faction.id, name: faction.name },
-            createDate: getCreateTime(card.id),
-          },
-        ];
-      })
-    );
-    this._cardsCache = built as Record<
-      string,
-      Card & {
-        imageUrl: string;
-        faction: { id: FactionId; name: string };
-        createDate: string | null;
-      }
-    >;
+    this._cardsCache = buildCardGameData();
     return this._cardsCache!;
   }
 
@@ -217,10 +195,10 @@ export class GameDataManager {
    * Get raw data for direct access (when needed)
    */
   static getRawData() {
-    return {
+    return structuredClone({
       factionData: rawFactionData,
       characterData: rawCharacterData,
       cardData: rawCardData,
-    };
+    });
   }
 }

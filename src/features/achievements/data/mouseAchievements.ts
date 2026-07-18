@@ -35,4 +35,8 @@ const mouseAchievementsWithImages: Record<string, Achievement> = Object.fromEntr
   ])
 );
 
-export default mouseAchievementsWithImages;
+export function createMouseAchievementsData(): Record<string, Achievement> {
+  return structuredClone(mouseAchievementsWithImages);
+}
+
+export default createMouseAchievementsData();

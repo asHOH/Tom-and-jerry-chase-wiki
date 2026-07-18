@@ -1801,4 +1801,8 @@ const FixtureWithImages: Record<string, Fixture> = Object.fromEntries(
   ])
 );
 
-export default FixtureWithImages;
+export function createFixturesData(): Record<string, Fixture> {
+  return structuredClone(FixtureWithImages);
+}
+
+export default createFixturesData();

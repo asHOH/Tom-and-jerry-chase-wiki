@@ -6788,7 +6788,7 @@ const mouseCharacterDefinitions = {
 const mouseCharacters = processCharacters(mouseCharacterDefinitions);
 
 // Generate characters with faction ID and image URLs applied in bulk
-export const mouseCharactersWithImages = Object.fromEntries(
+const pristineMouseCharactersWithImages = Object.fromEntries(
   Object.entries(mouseCharacters).map(([characterId, character]) => [
     characterId,
     {
@@ -6799,3 +6799,9 @@ export const mouseCharactersWithImages = Object.fromEntries(
     },
   ])
 );
+
+export function createMouseCharactersWithImages() {
+  return structuredClone(pristineMouseCharactersWithImages);
+}
+
+export const mouseCharactersWithImages = createMouseCharactersWithImages();

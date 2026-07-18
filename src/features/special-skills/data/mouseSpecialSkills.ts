@@ -73,4 +73,8 @@ const mouseSpecialSkillsWithImages: Record<string, SpecialSkill> = Object.fromEn
   ])
 );
 
-export default mouseSpecialSkillsWithImages;
+export function createMouseSpecialSkillsData(): Record<string, SpecialSkill> {
+  return structuredClone(mouseSpecialSkillsWithImages);
+}
+
+export default createMouseSpecialSkillsData();

@@ -2453,4 +2453,8 @@ const entitiesWithImages: Record<string, Entity> = Object.fromEntries(
   )
 );
 
-export default entitiesWithImages;
+export function createEntitiesData(): Record<string, Entity> {
+  return structuredClone(entitiesWithImages);
+}
+
+export default createEntitiesData();
