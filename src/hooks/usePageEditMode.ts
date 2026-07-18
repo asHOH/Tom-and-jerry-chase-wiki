@@ -20,11 +20,11 @@ import {
   splitActionHistoryByEntity,
   type DraftSummaryItem,
 } from '@/lib/edit/editModeDrafts';
+import { getEntityRegistry as getEntityRegistrySnapshot } from '@/lib/edit/editModeRegistry';
 import {
-  getEntityRegistry as getEntityRegistrySnapshot,
   PUBLISHABLE_ENTITY_TYPES,
   type PublishableEntityType,
-} from '@/lib/edit/editModeRegistry';
+} from '@/lib/gameData/publishableEntityTypes';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { useEditMode } from '@/context/EditModeContext';
 

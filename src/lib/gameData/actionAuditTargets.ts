@@ -1,3 +1,4 @@
+import type { PublishableEntityType } from '@/lib/gameData/publishableEntityTypes';
 import {
   achievements,
   achievementsEdit,
@@ -38,7 +39,7 @@ export const ACTION_AUDIT_KNOWN_NOOP_ENTITY_TYPES = Object.freeze([] as const);
 
 export type ActionAuditTargetRegistry = Record<string, Record<string, unknown>[]>;
 
-type BaselineTargetRegistry = Record<string, readonly Record<string, unknown>[]>;
+type BaselineTargetRegistry = Record<PublishableEntityType, readonly Record<string, unknown>[]>;
 
 const baselineTargets: BaselineTargetRegistry = {
   achievements: [

@@ -10,6 +10,7 @@ import {
   subscribers,
   withRecordingSuppressed,
 } from '@/lib/edit/diffUtils';
+import type { PublishableEntityType } from '@/lib/gameData/publishableEntityTypes';
 import {
   achievements,
   achievementsEdit,
@@ -31,24 +32,9 @@ import {
   specialSkillsEdit,
 } from '@/data';
 
-export const PUBLISHABLE_ENTITY_TYPES = [
-  'characters',
-  'cards',
-  'entities',
-  'buffs',
-  'items',
-  'fixtures',
-  'maps',
-  'modes',
-  'specialSkills',
-  'achievements',
-] as const;
-
-export type PublishableEntityType = (typeof PUBLISHABLE_ENTITY_TYPES)[number];
-
 unstable_enableOp(true);
 
-const entityRegistry = new Map<string, Record<string, unknown>>([
+const entityRegistry = new Map<PublishableEntityType, Record<string, unknown>>([
   ['achievements', achievementsEdit as unknown as Record<string, unknown>],
   ['characters', characters],
   ['cards', cardsEdit],
@@ -242,6 +228,6 @@ export function clearAllEditModeData(): void {
 /**
  * Get a snapshot of the entity registry for external access.
  */
-export function getEntityRegistry(): ReadonlyMap<string, Record<string, unknown>> {
+export function getEntityRegistry(): ReadonlyMap<PublishableEntityType, Record<string, unknown>> {
   return new Map(entityRegistry);
 }

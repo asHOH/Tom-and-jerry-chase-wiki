@@ -2,7 +2,7 @@
 
 import { ReactNode, useCallback, useMemo } from 'react';
 
-import type { PublishableEntityType } from '@/lib/edit/editModeRegistry';
+import type { PublishableEntityType } from '@/lib/gameData/publishableEntityTypes';
 import { usePageEditMode } from '@/hooks/usePageEditMode';
 import { useSearchParamEditMode } from '@/hooks/useSearchParamEditMode';
 import { EditModeContext, useEditMode } from '@/context/EditModeContext';

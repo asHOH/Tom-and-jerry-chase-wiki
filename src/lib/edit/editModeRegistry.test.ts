@@ -1,5 +1,6 @@
 import { waitFor } from '@testing-library/react';
 
+import { PUBLISHABLE_ENTITY_TYPES } from '@/lib/gameData/publishableEntityTypes';
 import { characters, items, itemsEdit } from '@/data';
 
 import { getActionsStorageKey, readActionHistory } from './diffUtils';
@@ -7,7 +8,6 @@ import {
   clearAllEditModeData,
   getEntityRegistry,
   loadEntitiesFromStorage,
-  PUBLISHABLE_ENTITY_TYPES,
   setupEntitySubscribers,
   teardownSubscribers,
 } from './editModeRegistry';
@@ -44,20 +44,11 @@ describe('editModeRegistry', () => {
   });
 
   it('should expose all publishable entity registries', () => {
-    expect(PUBLISHABLE_ENTITY_TYPES).toEqual([
-      'characters',
-      'cards',
-      'entities',
-      'buffs',
-      'items',
-      'fixtures',
-      'maps',
-      'modes',
-      'specialSkills',
-      'achievements',
-    ]);
-    expect(getEntityRegistry().get('characters')).toBe(characters);
-    expect(getEntityRegistry().get('items')).toBe(itemsEdit);
+    const registry = getEntityRegistry();
+
+    expect([...registry.keys()].sort()).toEqual([...PUBLISHABLE_ENTITY_TYPES].sort());
+    expect(registry.get('characters')).toBe(characters);
+    expect(registry.get('items')).toBe(itemsEdit);
   });
 
   it('should return a read-only snapshot of the registry', () => {

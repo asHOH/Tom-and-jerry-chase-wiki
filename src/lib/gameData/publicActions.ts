@@ -7,6 +7,7 @@ import {
   type PublicActionTargetRegistry,
 } from '@/lib/gameData/actionReplay';
 import { PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG } from '@/lib/gameData/publicActionsCache';
+import type { PublishableEntityType } from '@/lib/gameData/publishableEntityTypes';
 import { cached } from '@/lib/serverCache';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
 import { supabaseServerPublic } from '@/lib/supabase/public';
@@ -78,7 +79,7 @@ const serverPublicActionTargetRegistry: PublicActionTargetRegistry = {
     specialSkills as unknown as Record<string, unknown>,
     specialSkillsEdit as unknown as Record<string, unknown>,
   ],
-};
+} satisfies Record<PublishableEntityType, Record<string, unknown>[]>;
 
 function applyPublicGameDataActionsToServerData(actions: PublicActionRow[]): void {
   applyPublicActionRows({
