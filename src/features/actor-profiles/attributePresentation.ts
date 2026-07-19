@@ -35,12 +35,12 @@ export const ACTOR_ATTRIBUTE_PRESENTATION = defineActorAttributePresentation({
     detailedTooltip: '角色的英文译名',
     numeric: false,
   },
-  size: {
-    label: '体型',
-    tooltip: '角色的判定区域大小',
-    detailedTooltip: '角色的判定区域大小；单位：单位长',
-    numeric: false,
-  },
+  // size: {
+  //   label: '体型',
+  //   tooltip: '角色的判定区域大小',
+  //   detailedTooltip: '角色的判定区域大小；单位：单位长',
+  //   numeric: false,
+  // },
   runSpeed: {
     label: '移速',
     tooltip: '横向移动速度',

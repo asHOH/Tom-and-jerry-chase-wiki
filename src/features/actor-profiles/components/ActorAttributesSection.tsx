@@ -15,7 +15,7 @@ import {
   formatActorAttributeNumber,
   formatActorPhysicsType,
   formatActorSex,
-  formatActorSize,
+  // formatActorSize,
   formatActorType,
 } from '../formatters';
 import type { ActorProfile } from '../schema';
@@ -246,7 +246,7 @@ const createDisplayedActorAttributes = (
       key: 'jumpSpeed',
       value: formatActorAttributeNumber(profile.jumpSpeed),
     },
-    { key: 'size', value: formatActorSize(profile.size) },
+    // { key: 'size', value: formatActorSize(profile.size) },
     {
       key: 'climbSpeed',
       value: formatActorAttributeNumber(profile.climbSpeed),
