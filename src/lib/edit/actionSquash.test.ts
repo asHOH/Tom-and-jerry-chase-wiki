@@ -15,6 +15,13 @@ const deleteAction = (path: string, oldValue: unknown): Action => ({
   newValue: undefined,
 });
 
+const addAction = (path: string, newValue: unknown): Action => ({
+  op: 'add',
+  path,
+  oldValue: undefined,
+  newValue,
+});
+
 const marySpecialSkillsOriginal = [
   { name: '魔术漂浮', description: '通用特技。' },
   { name: '干扰投掷', description: '提高干扰能力和技能命中率。' },
@@ -80,6 +87,127 @@ describe('squashActions', () => {
     expect(squashActions([firstPositioningTags, latestPositioningTags])).toEqual([
       setAction('Tuffy.mousePositioningTags', ['cheese'], ['cheese', 'rescue.']),
     ]);
+  });
+
+  it('should squash clearing and replacing a scalar object property into one set', () => {
+    expect(
+      squashActions(
+        [
+          deleteAction('Tom.skills.0.videoUrl', 'https://example.com/old'),
+          setAction('Tom.skills.0.videoUrl', undefined, 'https://example.com/new'),
+        ],
+        {
+          currentRoot: {
+            Tom: {
+              skills: [{ videoUrl: 'https://example.com/new' }],
+            },
+          },
+        }
+      )
+    ).toEqual([
+      setAction('Tom.skills.0.videoUrl', 'https://example.com/old', 'https://example.com/new'),
+    ]);
+  });
+
+  it('should keep a standalone scalar object-property deletion', () => {
+    const deletedVideoUrl = deleteAction('Tom.skills.0.videoUrl', 'https://example.com/old');
+
+    expect(
+      squashActions([deletedVideoUrl], {
+        currentRoot: {
+          Tom: {
+            skills: [{}],
+          },
+        },
+      })
+    ).toEqual([deletedVideoUrl]);
+  });
+
+  it('should preserve the original old value when a scalar property is set and then deleted', () => {
+    expect(
+      squashActions(
+        [
+          setAction(
+            'Tom.skills.0.videoUrl',
+            'https://example.com/old',
+            'https://example.com/draft'
+          ),
+          deleteAction('Tom.skills.0.videoUrl', 'https://example.com/draft'),
+        ],
+        {
+          currentRoot: {
+            Tom: {
+              skills: [{}],
+            },
+          },
+        }
+      )
+    ).toEqual([deleteAction('Tom.skills.0.videoUrl', 'https://example.com/old')]);
+  });
+
+  it('should drop scalar property delete/set churn that restores the original value', () => {
+    expect(
+      squashActions(
+        [
+          deleteAction('Tom.skills.0.videoUrl', 'https://example.com/video'),
+          setAction('Tom.skills.0.videoUrl', undefined, 'https://example.com/video'),
+        ],
+        {
+          currentRoot: {
+            Tom: {
+              skills: [{ videoUrl: 'https://example.com/video' }],
+            },
+          },
+        }
+      )
+    ).toEqual([]);
+  });
+
+  it('should drop scalar object-property add/delete churn', () => {
+    expect(
+      squashActions(
+        [
+          addAction('Tom.skills.0.videoUrl', 'https://example.com/video'),
+          deleteAction('Tom.skills.0.videoUrl', 'https://example.com/video'),
+        ],
+        {
+          currentRoot: {
+            Tom: {
+              skills: [{}],
+            },
+          },
+        }
+      )
+    ).toEqual([]);
+  });
+
+  it('should turn scalar object-property delete/add replacement into a set', () => {
+    expect(
+      squashActions(
+        [
+          deleteAction('Tom.skills.0.videoUrl', 'https://example.com/old'),
+          addAction('Tom.skills.0.videoUrl', 'https://example.com/new'),
+        ],
+        {
+          currentRoot: {
+            Tom: {
+              skills: [{ videoUrl: 'https://example.com/new' }],
+            },
+          },
+        }
+      )
+    ).toEqual([
+      setAction('Tom.skills.0.videoUrl', 'https://example.com/old', 'https://example.com/new'),
+    ]);
+  });
+
+  it('should preserve scalar delete/set details when no current root is provided', () => {
+    const actions = [
+      deleteAction('Tom.skills.0.videoUrl', 'https://example.com/old'),
+      setAction('Tom.skills.0.videoUrl', undefined, 'https://example.com/new'),
+    ];
+
+    expect(squashActions(actions)).toEqual(actions);
   });
 
   it('should fold descendant sets into a newly set parent object', () => {

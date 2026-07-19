@@ -192,12 +192,12 @@ function setAtRelativePath(root: Container, parts: string[], value: unknown): bo
   return true;
 }
 
-function foldDescendantSets(flat: FlatItem[], structuralParents: Set<string>): Set<number> {
+function foldDescendantMutations(flat: FlatItem[], structuralParents: Set<string>): Set<number> {
   const foldedIndexes = new Set<number>();
 
   flat.forEach((item, flatPosition) => {
     const { action } = item;
-    if (action.op !== 'set' || !action.path) return;
+    if (!action.path) return;
     if (foldedIndexes.has(item.flatIndex)) return;
     if (isInStructuralZone(action.path, structuralParents)) return;
 
@@ -235,6 +235,34 @@ function foldDescendantSets(flat: FlatItem[], structuralParents: Set<string>): S
   });
 
   return foldedIndexes;
+}
+
+function isSquashablePropertyStructuralMutation(
+  action: Action,
+  currentRoot?: Record<string, unknown>
+): boolean {
+  if ((action.op !== 'add' && action.op !== 'delete') || !action.path || !currentRoot) return false;
+
+  const mutationValue = action.op === 'add' ? action.newValue : action.oldValue;
+  if (isContainer(mutationValue)) return false;
+
+  const parent = getAtPath(currentRoot, getStructuralParent(action.path));
+  return isContainer(parent) && !Array.isArray(parent);
+}
+
+function squashPathMutation(firstAction: Action, lastAction: Action): Action {
+  const oldValue = firstAction.oldValue;
+  const newValue = lastAction.newValue;
+
+  if (newValue === undefined) {
+    return { ...lastAction, op: 'delete', oldValue, newValue };
+  }
+
+  if (oldValue !== undefined) {
+    return { ...lastAction, op: 'set', oldValue, newValue };
+  }
+
+  return { ...lastAction, oldValue, newValue };
 }
 
 function buildFlatEntries(entries: ActionHistoryEntry[]): FlatItem[] {
@@ -524,7 +552,9 @@ function normalizeStructuralArrayActions(
  * Squash an action history so that only the last safe `set` per path remains.
  *
  * Safety rules:
- * - Always keep structural ops (`add`/`delete`) as-is.
+ * - Always keep array/container structural ops (`add`/`delete`) as-is.
+ * - Fold scalar object-property adds/deletes with later mutations on the same path when the
+ *   current root proves that the parent is not an array.
  * - Do not squash sets inside the parent subtree of any structural op.
  * - Fold descendant sets into an earlier parent set when oldValue matches the parent snapshot,
  *   or when the descendant newValue is already represented by that snapshot.
@@ -541,6 +571,7 @@ export function squashActions(
 
   const recordStructuralParent = (action: Action) => {
     if (action.op !== 'add' && action.op !== 'delete') return;
+    if (isSquashablePropertyStructuralMutation(action, options?.currentRoot)) return;
     if (!action.path) return;
     const parent = getStructuralParent(action.path);
     if (parent) structuralParents.add(parent);
@@ -556,19 +587,21 @@ export function squashActions(
 
   const flat = buildFlatEntries(normalizedEntries);
 
-  const foldedIndexes = foldDescendantSets(flat, structuralParents);
+  const foldedIndexes = foldDescendantMutations(flat, structuralParents);
 
   const latestByPath = new Map<string, number>();
-  const firstSetByPath = new Map<string, Action>();
+  const firstMutationByPath = new Map<string, Action>();
   flat.forEach((item) => {
     const { action, flatIndex: idx } = item;
     const path = action.path;
     if (!path) return;
     if (foldedIndexes.has(idx)) return;
 
-    if (action.op === 'set' && !isInStructuralZone(path, structuralParents)) {
-      if (!firstSetByPath.has(path)) {
-        firstSetByPath.set(path, action);
+    const isSquashableMutation =
+      action.op === 'set' || isSquashablePropertyStructuralMutation(action, options?.currentRoot);
+    if (isSquashableMutation && !isInStructuralZone(path, structuralParents)) {
+      if (!firstMutationByPath.has(path)) {
+        firstMutationByPath.set(path, action);
       }
       latestByPath.set(path, idx);
     }
@@ -581,24 +614,24 @@ export function squashActions(
     const path = action.path;
     if (foldedIndexes.has(idx)) return;
 
+    const isSquashablePropertyMutation = isSquashablePropertyStructuralMutation(
+      action,
+      options?.currentRoot
+    );
     const isStructural =
-      action.op === 'add' ||
-      action.op === 'delete' ||
+      ((action.op === 'add' || action.op === 'delete') && !isSquashablePropertyMutation) ||
       (path ? isInStructuralZone(path, structuralParents) : false);
     const isLatestForPath = !path || latestByPath.get(path) === idx;
-    const shouldSquashSet =
-      action.op === 'set' && path ? !isInStructuralZone(path, structuralParents) : false;
-    const squashedAction = shouldSquashSet
-      ? { ...action, oldValue: firstSetByPath.get(path)?.oldValue }
+    const shouldSquashMutation =
+      (action.op === 'set' || isSquashablePropertyMutation) && path
+        ? !isInStructuralZone(path, structuralParents)
+        : false;
+    const squashedAction = shouldSquashMutation
+      ? squashPathMutation(firstMutationByPath.get(path) ?? action, action)
       : action;
     const isNoOp = isEqual(squashedAction.oldValue, squashedAction.newValue);
 
-    const shouldKeep =
-      isStructural ||
-      (action.op === 'set' &&
-        !isInStructuralZone(path, structuralParents) &&
-        isLatestForPath &&
-        !isNoOp);
+    const shouldKeep = isStructural || (shouldSquashMutation && isLatestForPath && !isNoOp);
 
     if (shouldKeep) {
       const bucket = grouped[item.entryIndex] ?? [];
