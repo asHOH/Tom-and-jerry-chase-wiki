@@ -108,6 +108,7 @@ export type SanitizedActionAuditSummary = {
     pass: boolean;
     malformedRowCount: number;
     checkedReplayFailureCount: number;
+    unknownEntityTypeCount: number;
   };
   pendingReplayProvisional: boolean;
 };
@@ -390,7 +391,14 @@ export function runActionAudit(options: RunActionAuditOptions): ActionAuditRepor
     'approved',
     'checked_replay_failure'
   );
-  const pendingReplayProvisional = approvedMalformedCount + approvedReplayFailureCount > 0;
+  const approvedUnknownEntityTypeCount = countFindings(
+    state.findings,
+    'approved',
+    'unknown_entity_type'
+  );
+  const approvedCompatibilityIssueCount =
+    approvedMalformedCount + approvedReplayFailureCount + approvedUnknownEntityTypeCount;
+  const pendingReplayProvisional = approvedCompatibilityIssueCount > 0;
 
   applyPendingRows(pendingRows, options.targets, knownNoopEntityTypes, state);
 
@@ -402,7 +410,7 @@ export function runActionAudit(options: RunActionAuditOptions): ActionAuditRepor
       pending: Object.freeze({ ...state.cohortCounts.pending }),
     }),
     findings: Object.freeze([...state.findings]),
-    approvedReplayCompatible: approvedMalformedCount === 0 && approvedReplayFailureCount === 0,
+    approvedReplayCompatible: approvedCompatibilityIssueCount === 0,
     pendingReplayProvisional,
   });
 }
@@ -477,6 +485,7 @@ export function createSanitizedActionAuditSummary(
       pass: report.approvedReplayCompatible,
       malformedRowCount: approved.categories.malformed_row.count,
       checkedReplayFailureCount: approved.categories.checked_replay_failure.count,
+      unknownEntityTypeCount: approved.categories.unknown_entity_type.count,
     },
     pendingReplayProvisional: report.pendingReplayProvisional,
   };

@@ -184,7 +184,7 @@ describe('runActionAudit', () => {
     ]);
   });
 
-  it('distinguishes unknown entity types from explicit known no-op rows', () => {
+  it('fails compatibility for unknown approved types while allowing reviewed known no-ops', () => {
     const report = runActionAudit({
       runFingerprint: 'audit-entity-types',
       approvedRows: [
@@ -196,7 +196,7 @@ describe('runActionAudit', () => {
         }),
       ],
       syncedRows: [],
-      pendingRows: [],
+      pendingRows: [pendingRow('pending-valid', set('Tom.value', 'baseline', 'pending'))],
       targets: characterTargets(),
       knownNoopEntityTypes: ['legacyNoop'],
     });
@@ -207,6 +207,24 @@ describe('runActionAudit', () => {
         expect.objectContaining({ category: 'known_noop_row', rowIds: ['noop-row'] }),
       ])
     );
+    expect(report.approvedReplayCompatible).toBe(false);
+    expect(report.pendingReplayProvisional).toBe(true);
+
+    const knownNoopOnlyReport = runActionAudit({
+      runFingerprint: 'audit-known-noop',
+      approvedRows: [
+        approvedRow('noop-row', set('anything.value', 'old', 'new'), {
+          entity_type: 'legacyNoop',
+        }),
+      ],
+      syncedRows: [],
+      pendingRows: [],
+      targets: characterTargets(),
+      knownNoopEntityTypes: ['legacyNoop'],
+    });
+
+    expect(knownNoopOnlyReport.approvedReplayCompatible).toBe(true);
+    expect(knownNoopOnlyReport.pendingReplayProvisional).toBe(false);
   });
 
   it('records checked replay failures and makes pending output provisional', () => {
@@ -252,6 +270,7 @@ describe('sanitized action audit reporting', () => {
       pass: false,
       malformedRowCount: 1,
       checkedReplayFailureCount: 0,
+      unknownEntityTypeCount: 0,
     });
     expect(summary.cohorts.approved.errorCodeCounts).toEqual({ invalid_path: 1 });
     expect(summary.cohorts.approved.categories.malformed_row).toEqual({
