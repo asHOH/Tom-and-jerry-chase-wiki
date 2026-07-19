@@ -142,6 +142,38 @@ describe('trusted game data mutations', () => {
     expect(invalidateMock).toHaveBeenCalledTimes(1);
   });
 
+  it('preserves checked replay detail when candidate validation blocks persistence', async () => {
+    const replayFailure = {
+      detail: {
+        code: 'missing_path',
+        stage: 'apply',
+        operation: 'set',
+        path: 'item-b.description',
+        rowId: 'proposed:items:0',
+        actionIndex: 0,
+        targetIndex: 0,
+        rootKey: 'item-b',
+        segmentIndex: 1,
+        cause: { value: 'unsafe action value' },
+      },
+    };
+    validateCandidateMock.mockImplementationOnce(() => {
+      throw replayFailure;
+    });
+
+    await expect(
+      publishPreparedGameDataActions({
+        actorId: 'actor-1',
+        permission: 'game_data_action.create',
+        grants: [],
+        prepared,
+      })
+    ).rejects.toMatchObject({ code: 'candidate_conflict', cause: replayFailure });
+
+    expect(adminRpcMock).not.toHaveBeenCalled();
+    expect(invalidateMock).not.toHaveBeenCalled();
+  });
+
   it('omits the whole entity batch from candidate replay when any row will remain pending', async () => {
     const twoRows = {
       ...prepared,

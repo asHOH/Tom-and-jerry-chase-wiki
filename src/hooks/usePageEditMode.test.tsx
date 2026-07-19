@@ -215,14 +215,21 @@ describe('usePageEditMode', () => {
     });
   });
 
-  it('should show dependent-row guidance with a request ID and retain the draft', async () => {
+  it.each([
+    {
+      error: 'dependent_rows',
+      message: '这些修改存在顺序依赖，草稿已保留。',
+      requestId: 'request-123',
+    },
+    {
+      error: 'candidate_conflict',
+      message: '发布前的数据兼容性检查未通过。草稿已保留。',
+      requestId: 'request-456',
+    },
+  ])('should show $error guidance with a request ID and retain the draft', async (errorBody) => {
     global.fetch = jest.fn().mockResolvedValue({
       ok: false,
-      json: jest.fn().mockResolvedValue({
-        error: 'dependent_rows',
-        message: '这些修改存在顺序依赖，草稿已保留。',
-        requestId: 'request-123',
-      }),
+      json: jest.fn().mockResolvedValue(errorBody),
     });
     renderInEditMode();
 
@@ -242,7 +249,7 @@ describe('usePageEditMode', () => {
 
     await waitFor(() => {
       expect(mockShowToast).toHaveBeenCalledWith(
-        '这些修改存在顺序依赖，草稿已保留。（请求编号：request-123）'
+        `${errorBody.message}（请求编号：${errorBody.requestId}）`
       );
       expect(readActionHistory(getActionsStorageKey('characters'))).toEqual([draft]);
     });

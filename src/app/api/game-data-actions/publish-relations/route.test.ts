@@ -19,8 +19,11 @@ jest.mock('@/env', () => ({
 jest.mock('@/lib/auth/requirePermission', () => ({ requirePermission: jest.fn() }));
 jest.mock('@/lib/gameData/trustedGameDataMutations', () => {
   class MockTrustedGameDataMutationError extends Error {
-    constructor(readonly code: string) {
-      super(code);
+    constructor(
+      readonly code: string,
+      cause?: unknown
+    ) {
+      super(code, { cause });
     }
   }
   return {
@@ -172,7 +175,50 @@ describe('publish-relations route', () => {
     warnSpy.mockRestore();
   });
 
-  it('maps candidate and replay-epoch conflicts to 409', async () => {
+  it('returns bounded candidate-conflict guidance for relation drafts', async () => {
+    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+    publishPreparedMock.mockRejectedValueOnce(
+      new TrustedGameDataMutationError('candidate_conflict', {
+        detail: {
+          code: 'missing_path',
+          stage: 'apply',
+          operation: 'set',
+          path: '杰瑞.counters',
+          rowId: 'proposed:characters:0',
+          actionIndex: 0,
+          targetIndex: 0,
+          rootKey: '杰瑞',
+        },
+      })
+    );
+    const { POST } = await import('./route');
+
+    const response = await POST(createRequest({ entries: validEntries }));
+
+    expect(response.status).toBe(409);
+    const body = (await response.json()) as { error: string; requestId: string };
+    expect(body).toEqual({
+      error: 'candidate_conflict',
+      message: expect.any(String) as string,
+      requestId: expect.any(String) as string,
+    });
+    expect(warnSpy).toHaveBeenCalledWith(
+      'game_data_publish_rejected',
+      expect.objectContaining({
+        event: 'candidate_conflict',
+        requestId: body.requestId,
+        route: '/api/game-data-actions/publish-relations',
+        replayError: expect.objectContaining({
+          code: 'missing_path',
+          path: '杰瑞.counters',
+          rowId: 'proposed:characters:0',
+        }),
+      })
+    );
+    warnSpy.mockRestore();
+  });
+
+  it('keeps replay epoch conflicts on their stable 409 response', async () => {
     publishPreparedMock.mockRejectedValueOnce(
       new TrustedGameDataMutationError('replay_epoch_conflict')
     );

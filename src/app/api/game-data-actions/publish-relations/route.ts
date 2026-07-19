@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 
 import { requirePermission } from '@/lib/auth/requirePermission';
 import { isCharacterRelationAction } from '@/lib/edit/characterRelationActions';
+import { candidateConflictResponse } from '@/lib/gameData/candidateConflictResponse';
 import {
   preparePublishActionItems,
   PublishPreparationError,
@@ -67,7 +68,10 @@ export async function POST(request: Request) {
       if (error.code === 'forbidden') {
         return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
       }
-      if (error.code === 'candidate_conflict' || error.code === 'replay_epoch_conflict') {
+      if (error.code === 'candidate_conflict') {
+        return candidateConflictResponse(error, '/api/game-data-actions/publish-relations');
+      }
+      if (error.code === 'replay_epoch_conflict') {
         return NextResponse.json({ error: error.code }, { status: 409 });
       }
     }

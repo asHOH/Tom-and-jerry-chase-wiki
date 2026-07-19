@@ -7,7 +7,7 @@ import { PublishPreparationError } from './publishPreparation';
 const DEPENDENT_ROWS_MESSAGE =
   '这些修改存在顺序依赖，暂时无法一起提交。草稿已保留，请将请求编号提供给管理员。';
 
-type PublishRouteName =
+export type PublishRouteName =
   '/api/game-data-actions/publish' | '/api/game-data-actions/publish-relations';
 
 export function publishPreparationErrorResponse(

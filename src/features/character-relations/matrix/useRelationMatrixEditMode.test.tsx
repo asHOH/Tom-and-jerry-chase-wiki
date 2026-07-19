@@ -176,14 +176,21 @@ describe('useRelationMatrixEditMode', () => {
     });
   });
 
-  it('shows dependent-row guidance with a request ID and retains relation drafts', async () => {
+  it.each([
+    {
+      error: 'dependent_rows',
+      message: '这些修改存在顺序依赖，草稿已保留。',
+      requestId: 'request-456',
+    },
+    {
+      error: 'candidate_conflict',
+      message: '发布前的数据兼容性检查未通过。草稿已保留。',
+      requestId: 'request-789',
+    },
+  ])('shows $error guidance with a request ID and retains relation drafts', async (errorBody) => {
     global.fetch = jest.fn().mockResolvedValue({
       ok: false,
-      json: jest.fn().mockResolvedValue({
-        error: 'dependent_rows',
-        message: '这些修改存在顺序依赖，草稿已保留。',
-        requestId: 'request-456',
-      }),
+      json: jest.fn().mockResolvedValue(errorBody),
     });
     const draft = {
       op: 'set' as const,
@@ -201,7 +208,7 @@ describe('useRelationMatrixEditMode', () => {
 
     await waitFor(() => {
       expect(mockError).toHaveBeenCalledWith(
-        '这些修改存在顺序依赖，草稿已保留。（请求编号：request-456）'
+        `${errorBody.message}（请求编号：${errorBody.requestId}）`
       );
       expect(readActionHistory(storageKey)).toEqual([draft]);
     });
