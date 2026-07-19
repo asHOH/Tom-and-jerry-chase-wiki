@@ -3,8 +3,8 @@
 ## Status
 
 - Date: 2026-07-17
-- Last revised: 2026-07-19
-- State: Additive trust-boundary cutover implemented; rollout closure and grouping remain
+- Last revised: 2026-07-20
+- State: Additive trust-boundary cutover deployed; revoke implemented but rollout closure remains
 - Scope: Public-row decoding and replay semantics, trusted publish and approval persistence, and
   publish-time dependency grouping
 
@@ -23,13 +23,15 @@ Completed foundation:
   the atomic approved snapshot reader landed in `bb02ec74`.
 - Service-role-only prepared publish, approval, and mark-synced RPCs, complete candidate replay, and
   the publish and moderation route cutovers landed in `85e5934f`.
+- The additive epoch/prepared-RPC migrations and route cutovers are deployed. The separate Step 5B
+  revoke migration is implemented and tested in the repository but is not deployed.
 
 Remaining work:
 
-1. Deploy the additive epoch/prepared-RPC migrations and application route cutovers; repository
-   implementation alone does not authorize this production change.
-2. Add and deploy the separate revoke migration for legacy publish and approval execution and the
-   browser-callable direct mark-synced path, after the application cutover is live.
+1. Confirm one successful prepared-path publish, review and commit the Step 5B revoke migration,
+   then obtain explicit approval before deploying that migration alone. Do not use an unreconciled
+   normal migration push.
+2. Verify the post-revoke privileges and intended read/rejection behavior with the Step 5D probes.
 3. Rerun the approved, synced, and pending production audit after the bypasses are closed.
 4. Migrate live replay through the pure published-data and editable-store-loading plans; do not
    adapt the legacy mutable replay into the checked engine.
