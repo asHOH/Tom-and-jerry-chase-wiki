@@ -98,10 +98,13 @@ describe('KnowledgeCard nested persistence (sanity tests)', () => {
 
 describe('KnowledgeCardGroupDisplay', () => {
   beforeEach(() => {
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date('2026-09-03T00:00:00+08:00'));
     (characters as any)['test-character'] = proxy({ id: 'test-character' });
   });
 
   afterEach(() => {
+    jest.useRealTimers();
     delete (characters as any)['test-character'];
   });
 
@@ -123,7 +126,17 @@ describe('KnowledgeCardGroupDisplay', () => {
     getCardPriority: (cardId: string) => (cardId === 'C-飞跃' ? '3级质变' : undefined),
   };
 
-  it('shows priority warnings on target cards instead of as a group meta tag', () => {
+  it('hides priority warnings before September 3, 2026', () => {
+    jest.setSystemTime(new Date('2026-09-02T23:59:59+08:00'));
+
+    render(<KnowledgeCardGroupDisplay {...defaultProps} />);
+
+    expect(
+      screen.queryByRole('button', { name: '飞跃建议升到三级再佩戴' })
+    ).not.toBeInTheDocument();
+  });
+
+  it('shows priority warnings on target cards starting September 3, 2026', () => {
     render(<KnowledgeCardGroupDisplay {...defaultProps} />);
 
     expect(screen.queryByText('飞跃建议升到三级再佩戴')).not.toBeInTheDocument();

@@ -30,6 +30,38 @@ import TreeCardDisplay from './TreeCardDisplay';
 
 const e = editable('characters');
 
+const PRIORITY_WARNING_VISIBLE_FROM = Date.parse('2026-09-03T00:00:00+08:00');
+const MAX_TIMEOUT_MS = 2_147_483_647;
+
+const subscribeToPriorityWarningVisibility = (onVisible: () => void) => {
+  let timeoutId: number | undefined;
+
+  const scheduleVisibilityCheck = () => {
+    const remainingTime = PRIORITY_WARNING_VISIBLE_FROM - Date.now();
+    if (remainingTime <= 0) {
+      onVisible();
+      return;
+    }
+
+    timeoutId = window.setTimeout(scheduleVisibilityCheck, Math.min(remainingTime, MAX_TIMEOUT_MS));
+  };
+
+  if (Date.now() < PRIORITY_WARNING_VISIBLE_FROM) {
+    scheduleVisibilityCheck();
+  }
+
+  return () => {
+    if (timeoutId !== undefined) window.clearTimeout(timeoutId);
+  };
+};
+
+const useShouldShowPriorityWarnings = () =>
+  React.useSyncExternalStore(
+    subscribeToPriorityWarningVisibility,
+    () => Date.now() >= PRIORITY_WARNING_VISIBLE_FROM,
+    () => false
+  );
+
 export type ViewMode = 'compact' | 'tree' | 'hybrid';
 
 type WarningMessagesInput = {
@@ -54,9 +86,10 @@ const buildWarningMessages = ({ warnTieXue, warnJiuJiuWo, warnRescue }: WarningM
 const getPriorityWarningMessage = (
   cardId: string,
   getCardPriority: (cardId: string) => string | undefined,
-  isEditMode: boolean
+  isEditMode: boolean,
+  shouldShowPriorityWarnings: boolean
 ) => {
-  if (isEditMode || getCardPriority(cardId) !== '3级质变') {
+  if (!shouldShowPriorityWarnings || isEditMode || getCardPriority(cardId) !== '3级质变') {
     return null;
   }
 
@@ -138,6 +171,7 @@ type KnowledgeCardGroupFlatProps = {
   contributorInformation: Contributor | undefined;
   isDarkMode: boolean;
   getCardPriority: (cardId: string) => string | undefined;
+  shouldShowPriorityWarnings: boolean;
   onConvertToGroupSet?: (index: number) => void;
 };
 
@@ -205,6 +239,7 @@ function KnowledgeCardGroupFlat({
   contributorInformation,
   isDarkMode,
   getCardPriority,
+  shouldShowPriorityWarnings,
   onConvertToGroupSet,
 }: KnowledgeCardGroupFlatProps) {
   const charSnap = useSnapshot(characters[characterId]!);
@@ -267,7 +302,12 @@ function KnowledgeCardGroupFlat({
         >
           {cards.map((cardId) => {
             const isOptional = isCardOptional(cardId, costInfo.hasOptionalCard, costInfo.totalCost);
-            const priorityWarning = getPriorityWarningMessage(cardId, getCardPriority, isEditMode);
+            const priorityWarning = getPriorityWarningMessage(
+              cardId,
+              getCardPriority,
+              isEditMode,
+              shouldShowPriorityWarnings
+            );
 
             return (
               <KnowledgeCardLinkDisplay
@@ -357,6 +397,7 @@ export function KnowledgeCardGroupDisplay({
 }: KnowledgeCardGroupDisplayProps) {
   const charSnap = useSnapshot(characters[characterId]!);
   const [isDarkMode] = useDarkMode();
+  const shouldShowPriorityWarnings = useShouldShowPriorityWarnings();
   const normalizedGroup = group as unknown as readonly CardGroup[];
   const isSqueezedView = viewMode === 'compact';
   const isTreeView =
@@ -431,7 +472,12 @@ export function KnowledgeCardGroupDisplay({
               isDarkMode={isDarkMode}
               isHybridMode={isHybridMode}
               getCardPriorityWarning={(cardId) =>
-                getPriorityWarningMessage(cardId, getCardPriority, isEditMode)
+                getPriorityWarningMessage(
+                  cardId,
+                  getCardPriority,
+                  isEditMode,
+                  shouldShowPriorityWarnings
+                )
               }
             />
           </div>
@@ -510,6 +556,7 @@ export function KnowledgeCardGroupDisplay({
               contributorInformation={contributorInformation}
               isDarkMode={isDarkMode}
               getCardPriority={getCardPriority}
+              shouldShowPriorityWarnings={shouldShowPriorityWarnings}
               {...(onConvertToGroupSet ? { onConvertToGroupSet } : {})}
             />
             {subIndex < flattenedCombinations.length - 1 && (
