@@ -85,12 +85,15 @@ export function candidateConflictResponse(
   const requestId = crypto.randomUUID();
   const replayError = candidateConflictReplayDiagnostic(error.cause);
 
-  console.warn('game_data_publish_rejected', {
-    event: 'candidate_conflict',
-    requestId,
-    route,
-    ...(replayError === undefined ? {} : { replayError }),
-  });
+  console.warn(
+    'game_data_publish_rejected',
+    JSON.stringify({
+      event: 'candidate_conflict',
+      requestId,
+      route,
+      ...(replayError === undefined ? {} : { replayError }),
+    })
+  );
 
   return NextResponse.json(
     {

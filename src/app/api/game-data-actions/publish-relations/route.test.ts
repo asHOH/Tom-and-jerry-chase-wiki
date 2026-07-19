@@ -162,8 +162,9 @@ describe('publish-relations route', () => {
       message: expect.any(String) as string,
       requestId: expect.any(String) as string,
     });
-    expect(warnSpy).toHaveBeenCalledWith(
-      'game_data_publish_rejected',
+    expect(warnSpy).toHaveBeenCalledWith('game_data_publish_rejected', expect.any(String));
+    const logged = JSON.parse(warnSpy.mock.calls[0]?.[1] as string) as Record<string, unknown>;
+    expect(logged).toEqual(
       expect.objectContaining({
         requestId: body.requestId,
         route: '/api/game-data-actions/publish-relations',
@@ -202,8 +203,9 @@ describe('publish-relations route', () => {
       message: expect.any(String) as string,
       requestId: expect.any(String) as string,
     });
-    expect(warnSpy).toHaveBeenCalledWith(
-      'game_data_publish_rejected',
+    expect(warnSpy).toHaveBeenCalledWith('game_data_publish_rejected', expect.any(String));
+    const logged = JSON.parse(warnSpy.mock.calls[0]?.[1] as string) as Record<string, unknown>;
+    expect(logged).toEqual(
       expect.objectContaining({
         event: 'candidate_conflict',
         requestId: body.requestId,

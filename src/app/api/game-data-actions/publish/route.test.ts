@@ -156,8 +156,9 @@ describe('publish route', () => {
       message: '这些修改存在顺序依赖，暂时无法一起提交。草稿已保留，请将请求编号提供给管理员。',
       requestId: expect.any(String) as string,
     });
-    expect(warnSpy).toHaveBeenCalledWith(
-      'game_data_publish_rejected',
+    expect(warnSpy).toHaveBeenCalledWith('game_data_publish_rejected', expect.any(String));
+    const logged = JSON.parse(warnSpy.mock.calls[0]?.[1] as string) as Record<string, unknown>;
+    expect(logged).toEqual(
       expect.objectContaining({
         event: 'dependent_rows',
         requestId: body.requestId,
@@ -220,7 +221,9 @@ describe('publish route', () => {
       message: '发布前的数据兼容性检查未通过。草稿已保留，请将请求编号提供给管理员。',
       requestId: expect.any(String) as string,
     });
-    expect(warnSpy).toHaveBeenCalledWith('game_data_publish_rejected', {
+    expect(warnSpy).toHaveBeenCalledWith('game_data_publish_rejected', expect.any(String));
+    const logged = JSON.parse(warnSpy.mock.calls[0]?.[1] as string) as Record<string, unknown>;
+    expect(logged).toEqual({
       event: 'candidate_conflict',
       requestId: body.requestId,
       route: '/api/game-data-actions/publish',

@@ -16,14 +16,17 @@ export function publishPreparationErrorResponse(
 ): NextResponse {
   if (error.detail.code === 'dependent_rows') {
     const requestId = crypto.randomUUID();
-    console.warn('game_data_publish_rejected', {
-      event: 'dependent_rows',
-      requestId,
-      route,
-      entityType: error.detail.entityType,
-      dependencyGroups: error.detail.dependencyGroups,
-      omittedDependencyGroupCount: error.detail.omittedDependencyGroupCount,
-    });
+    console.warn(
+      'game_data_publish_rejected',
+      JSON.stringify({
+        event: 'dependent_rows',
+        requestId,
+        route,
+        entityType: error.detail.entityType,
+        dependencyGroups: error.detail.dependencyGroups,
+        omittedDependencyGroupCount: error.detail.omittedDependencyGroupCount,
+      })
+    );
 
     return NextResponse.json(
       {
