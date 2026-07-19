@@ -134,6 +134,44 @@ describe('publish-relations route', () => {
     });
   });
 
+  it('logs bounded dependent-row diagnostics and returns a request ID', async () => {
+    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+    const { POST } = await import('./route');
+
+    const response = await POST(
+      createRequest({
+        entries: [
+          { op: 'set', path: '杰瑞.counters', oldValue: [], newValue: [{ id: '汤姆' }] },
+          {
+            op: 'set',
+            path: '杰瑞.counters',
+            oldValue: [{ id: '汤姆' }],
+            newValue: [{ id: '布奇' }],
+          },
+        ],
+      })
+    );
+
+    const body = (await response.json()) as { error: string; requestId: string };
+    expect(response.status).toBe(400);
+    expect(body).toEqual({
+      error: 'dependent_rows',
+      message: expect.any(String) as string,
+      requestId: expect.any(String) as string,
+    });
+    expect(warnSpy).toHaveBeenCalledWith(
+      'game_data_publish_rejected',
+      expect.objectContaining({
+        requestId: body.requestId,
+        route: '/api/game-data-actions/publish-relations',
+        entityType: 'characters',
+        dependencyGroups: [expect.objectContaining({ rowIndexes: [0, 1] })],
+      })
+    );
+    expect(publishPreparedMock).not.toHaveBeenCalled();
+    warnSpy.mockRestore();
+  });
+
   it('maps candidate and replay-epoch conflicts to 409', async () => {
     publishPreparedMock.mockRejectedValueOnce(
       new TrustedGameDataMutationError('replay_epoch_conflict')

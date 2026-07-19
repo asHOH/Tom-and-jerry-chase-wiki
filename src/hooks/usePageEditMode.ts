@@ -25,6 +25,7 @@ import {
   PUBLISHABLE_ENTITY_TYPES,
   type PublishableEntityType,
 } from '@/lib/gameData/publishableEntityTypes';
+import { getPublishErrorMessage } from '@/lib/gameData/publishErrorMessage';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { useEditMode } from '@/context/EditModeContext';
 
@@ -257,8 +258,12 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
         });
 
         if (!res.ok) {
-          const body = (await res.json().catch(() => null)) as { error?: string } | null;
-          throw new Error(body?.error || '发布失败');
+          const body = (await res.json().catch(() => null)) as {
+            error?: string;
+            message?: string;
+            requestId?: string;
+          } | null;
+          throw new Error(getPublishErrorMessage(body, '发布失败'));
         }
 
         // Clear storage on success

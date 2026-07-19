@@ -7,6 +7,7 @@ import {
   PublishPreparationError,
   readBoundedJsonBody,
 } from '@/lib/gameData/publishPreparation';
+import { publishPreparationErrorResponse } from '@/lib/gameData/publishPreparationResponse';
 import {
   publishPreparedGameDataActions,
   TrustedGameDataMutationError,
@@ -15,13 +16,6 @@ import { hasSupabasePublicConfig } from '@/lib/supabase/config';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
-}
-
-function errorResponse(error: PublishPreparationError): NextResponse {
-  return NextResponse.json(
-    { error: error.detail.code },
-    { status: error.detail.code === 'request_too_large' ? 413 : 400 }
-  );
 }
 
 export async function POST(request: Request) {
@@ -38,7 +32,7 @@ export async function POST(request: Request) {
     body = value;
   } catch (error) {
     return error instanceof PublishPreparationError
-      ? errorResponse(error)
+      ? publishPreparationErrorResponse(error, '/api/game-data-actions/publish-relations')
       : NextResponse.json({ error: 'invalid_json' }, { status: 400 });
   }
 
@@ -66,7 +60,9 @@ export async function POST(request: Request) {
     });
     return NextResponse.json({ result });
   } catch (error) {
-    if (error instanceof PublishPreparationError) return errorResponse(error);
+    if (error instanceof PublishPreparationError) {
+      return publishPreparationErrorResponse(error, '/api/game-data-actions/publish-relations');
+    }
     if (error instanceof TrustedGameDataMutationError) {
       if (error.code === 'forbidden') {
         return NextResponse.json({ error: 'Forbidden' }, { status: 403 });

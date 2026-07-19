@@ -8,6 +8,7 @@ import {
   readBoundedJsonBody,
   type UntrustedPublishActionItem,
 } from '@/lib/gameData/publishPreparation';
+import { publishPreparationErrorResponse } from '@/lib/gameData/publishPreparationResponse';
 import {
   publishPreparedGameDataActions,
   TrustedGameDataMutationError,
@@ -43,13 +44,6 @@ function readActionItems(body: unknown): {
   return { items, ...('message' in body ? { message: body.message } : {}) };
 }
 
-function preparationResponse(error: PublishPreparationError): NextResponse {
-  return NextResponse.json(
-    { error: error.detail.code },
-    { status: error.detail.code === 'request_too_large' ? 413 : 400 }
-  );
-}
-
 export async function POST(request: Request) {
   if (!hasSupabasePublicConfig()) {
     return NextResponse.json({ error: 'Supabase is disabled' }, { status: 501 });
@@ -60,7 +54,7 @@ export async function POST(request: Request) {
     untrusted = readActionItems(await readBoundedJsonBody(request));
   } catch (error) {
     return error instanceof PublishPreparationError
-      ? preparationResponse(error)
+      ? publishPreparationErrorResponse(error, '/api/game-data-actions/publish')
       : NextResponse.json({ error: 'invalid_json' }, { status: 400 });
   }
 
@@ -105,7 +99,9 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ result: results });
   } catch (error) {
-    if (error instanceof PublishPreparationError) return preparationResponse(error);
+    if (error instanceof PublishPreparationError) {
+      return publishPreparationErrorResponse(error, '/api/game-data-actions/publish');
+    }
     if (error instanceof TrustedGameDataMutationError) {
       if (error.code === 'forbidden') {
         return NextResponse.json({ error: 'Forbidden' }, { status: 403 });

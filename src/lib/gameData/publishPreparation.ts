@@ -24,21 +24,81 @@ export type PublishPreparationErrorCode =
   | 'dependent_rows'
   | ActionDecodeError['code'];
 
+export type PublishDependencyDiagnostic = {
+  rowIndexes: readonly number[];
+  rows: readonly {
+    rowIndex: number;
+    actions: readonly {
+      op: Action['op'];
+      path: string;
+    }[];
+    omittedActionCount: number;
+  }[];
+  omittedRowCount: number;
+};
+
+type PublishPreparationErrorDetails = {
+  code: PublishPreparationErrorCode;
+  entityType?: string;
+  entryIndex?: number;
+  dependencyGroups?: readonly PublishDependencyDiagnostic[];
+  omittedDependencyGroupCount?: number;
+};
+
 export class PublishPreparationError extends Error {
-  readonly detail: {
-    code: PublishPreparationErrorCode;
-    entityType?: string;
-    entryIndex?: number;
-  };
+  readonly detail: PublishPreparationErrorDetails;
 
   constructor(
     code: PublishPreparationErrorCode,
-    details: { entityType?: string; entryIndex?: number } = {}
+    details: Omit<PublishPreparationErrorDetails, 'code'> = {}
   ) {
     super(code);
     this.name = 'PublishPreparationError';
     this.detail = Object.freeze({ code, ...details });
   }
+}
+
+const MAX_DIAGNOSTIC_GROUPS = 4;
+const MAX_DIAGNOSTIC_ROWS_PER_GROUP = 8;
+const MAX_DIAGNOSTIC_ACTIONS_PER_ROW = 8;
+
+function buildDependencyDiagnostics(
+  rows: readonly PreparedPublishRow[],
+  groups: readonly number[][]
+): {
+  dependencyGroups: readonly PublishDependencyDiagnostic[];
+  omittedDependencyGroupCount: number;
+} {
+  const dependentGroups = groups.filter((group) => group.length > 1);
+  const dependencyGroups = dependentGroups.slice(0, MAX_DIAGNOSTIC_GROUPS).map((group) => {
+    const includedRowIndexes = group.slice(0, MAX_DIAGNOSTIC_ROWS_PER_GROUP);
+    return Object.freeze({
+      rowIndexes: Object.freeze([...includedRowIndexes]),
+      rows: Object.freeze(
+        includedRowIndexes.map((rowIndex) => {
+          const actions = rows[rowIndex]?.actions ?? [];
+          return Object.freeze({
+            rowIndex,
+            actions: Object.freeze(
+              actions.slice(0, MAX_DIAGNOSTIC_ACTIONS_PER_ROW).map((action) =>
+                Object.freeze({
+                  op: action.op,
+                  path: action.path,
+                })
+              )
+            ),
+            omittedActionCount: Math.max(0, actions.length - MAX_DIAGNOSTIC_ACTIONS_PER_ROW),
+          });
+        })
+      ),
+      omittedRowCount: Math.max(0, group.length - MAX_DIAGNOSTIC_ROWS_PER_GROUP),
+    });
+  });
+
+  return {
+    dependencyGroups: Object.freeze(dependencyGroups),
+    omittedDependencyGroupCount: Math.max(0, dependentGroups.length - MAX_DIAGNOSTIC_GROUPS),
+  };
 }
 
 export type UntrustedPublishActionItem = {
@@ -176,7 +236,10 @@ export function preparePublishActionItems(
       rows.map((row) => row.actions.map((action) => ({ ...action })))
     );
     if (dependencyGroups.some((group) => group.length > 1)) {
-      throw new PublishPreparationError('dependent_rows', { entityType });
+      throw new PublishPreparationError('dependent_rows', {
+        entityType,
+        ...buildDependencyDiagnostics(rows, dependencyGroups),
+      });
     }
     preparedActions.push({ entityType, rows: Object.freeze(rows) });
   }

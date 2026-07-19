@@ -86,7 +86,7 @@ describe('preparePublishActionItems', () => {
   });
 
   it('rejects dependent top-level rows before grouping is enabled', () => {
-    expect(() =>
+    try {
       preparePublishActionItems([
         {
           entityType: 'characters',
@@ -95,12 +95,34 @@ describe('preparePublishActionItems', () => {
             { op: 'set', path: '汤姆.description', newValue: 'second' },
           ],
         },
-      ])
-    ).toThrow(
-      expect.objectContaining({
-        detail: expect.objectContaining({ code: 'dependent_rows' }),
-      })
-    );
+      ]);
+      throw new Error('Expected dependent rows to be rejected');
+    } catch (error) {
+      expect(error).toBeInstanceOf(PublishPreparationError);
+      expect((error as PublishPreparationError).detail).toEqual({
+        code: 'dependent_rows',
+        entityType: 'characters',
+        dependencyGroups: [
+          {
+            rowIndexes: [0, 1],
+            rows: [
+              {
+                rowIndex: 0,
+                actions: [{ op: 'set', path: '汤姆.description' }],
+                omittedActionCount: 0,
+              },
+              {
+                rowIndex: 1,
+                actions: [{ op: 'set', path: '汤姆.description' }],
+                omittedActionCount: 0,
+              },
+            ],
+            omittedRowCount: 0,
+          },
+        ],
+        omittedDependencyGroupCount: 0,
+      });
+    }
   });
 
   it('checks dependencies across repeated items for the same entity type', () => {

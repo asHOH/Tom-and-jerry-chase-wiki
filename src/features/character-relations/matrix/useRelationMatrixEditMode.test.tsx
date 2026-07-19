@@ -176,6 +176,37 @@ describe('useRelationMatrixEditMode', () => {
     });
   });
 
+  it('shows dependent-row guidance with a request ID and retains relation drafts', async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: false,
+      json: jest.fn().mockResolvedValue({
+        error: 'dependent_rows',
+        message: '这些修改存在顺序依赖，草稿已保留。',
+        requestId: 'request-456',
+      }),
+    });
+    const draft = {
+      op: 'set' as const,
+      path: '杰瑞.counters',
+      oldValue: [],
+      newValue: [{ id: '汤姆' }],
+    };
+    writeActionHistory(storageKey, [draft]);
+    renderProbe();
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'publish' }));
+      await Promise.resolve();
+    });
+
+    await waitFor(() => {
+      expect(mockError).toHaveBeenCalledWith(
+        '这些修改存在顺序依赖，草稿已保留。（请求编号：request-456）'
+      );
+      expect(readActionHistory(storageKey)).toEqual([draft]);
+    });
+  });
+
   it('discards relation actions with suppressed inverse replay and preserves unrelated drafts', async () => {
     (characters['杰瑞'] as unknown as { counters?: unknown }).counters = [{ id: '汤姆' }];
     writeActionHistory(storageKey, [

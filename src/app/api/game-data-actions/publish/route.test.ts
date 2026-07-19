@@ -130,6 +130,7 @@ describe('publish route', () => {
   });
 
   it('rejects dependent top-level rows before persistence', async () => {
+    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
     const { POST } = await import('./route');
     const response = await POST(
       createRequest({
@@ -142,8 +143,42 @@ describe('publish route', () => {
     );
 
     expect(response.status).toBe(400);
-    await expect(response.json()).resolves.toEqual({ error: 'dependent_rows' });
+    const body = (await response.json()) as {
+      error: string;
+      message: string;
+      requestId: string;
+    };
+    expect(body).toEqual({
+      error: 'dependent_rows',
+      message: '这些修改存在顺序依赖，暂时无法一起提交。草稿已保留，请将请求编号提供给管理员。',
+      requestId: expect.any(String) as string,
+    });
+    expect(warnSpy).toHaveBeenCalledWith(
+      'game_data_publish_rejected',
+      expect.objectContaining({
+        event: 'dependent_rows',
+        requestId: body.requestId,
+        route: '/api/game-data-actions/publish',
+        entityType: 'items',
+        dependencyGroups: [
+          expect.objectContaining({
+            rowIndexes: [0, 1],
+            rows: [
+              expect.objectContaining({
+                rowIndex: 0,
+                actions: [{ op: 'set', path: 'item.description' }],
+              }),
+              expect.objectContaining({
+                rowIndex: 1,
+                actions: [{ op: 'set', path: 'item.description' }],
+              }),
+            ],
+          }),
+        ],
+      })
+    );
     expect(publishPreparedMock).not.toHaveBeenCalled();
+    warnSpy.mockRestore();
   });
 
   it('maps replay candidate and epoch conflicts to 409', async () => {

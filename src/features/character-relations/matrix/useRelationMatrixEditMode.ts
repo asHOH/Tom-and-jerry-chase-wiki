@@ -18,6 +18,7 @@ import {
   sortDraftSummaryItems,
   type DraftSummaryItem,
 } from '@/lib/edit/editModeDrafts';
+import { getPublishErrorMessage } from '@/lib/gameData/publishErrorMessage';
 import { useToast } from '@/context/ToastContext';
 import { characters } from '@/data/store';
 
@@ -125,8 +126,12 @@ export const useRelationMatrixEditMode = (): RelationMatrixEditModeResult => {
         });
 
         if (!response.ok) {
-          const body = (await response.json().catch(() => null)) as { error?: string } | null;
-          throw new Error(body?.error || '发布失败');
+          const body = (await response.json().catch(() => null)) as {
+            error?: string;
+            message?: string;
+            requestId?: string;
+          } | null;
+          throw new Error(getPublishErrorMessage(body, '发布失败'));
         }
 
         writeRemainingCharacterActions(remaining);

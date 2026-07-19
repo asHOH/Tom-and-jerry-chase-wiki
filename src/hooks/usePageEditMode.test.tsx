@@ -215,6 +215,39 @@ describe('usePageEditMode', () => {
     });
   });
 
+  it('should show dependent-row guidance with a request ID and retain the draft', async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: false,
+      json: jest.fn().mockResolvedValue({
+        error: 'dependent_rows',
+        message: '这些修改存在顺序依赖，草稿已保留。',
+        requestId: 'request-123',
+      }),
+    });
+    renderInEditMode();
+
+    const draft = {
+      op: 'set',
+      path: `${TEST_CHARACTER_ID}.description`,
+      oldValue: 'canonical description',
+      newValue: 'draft description',
+    };
+    window.localStorage.setItem(getActionsStorageKey('characters'), JSON.stringify([draft]));
+    fireEvent.click(screen.getByRole('button', { name: 'refresh' }));
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'publish' }));
+      await Promise.resolve();
+    });
+
+    await waitFor(() => {
+      expect(mockShowToast).toHaveBeenCalledWith(
+        '这些修改存在顺序依赖，草稿已保留。（请求编号：request-123）'
+      );
+      expect(readActionHistory(getActionsStorageKey('characters'))).toEqual([draft]);
+    });
+  });
+
   it('should normalize structural array churn for action counts and publishing', async () => {
     const fetchMock = jest.fn().mockResolvedValue({
       ok: true,
