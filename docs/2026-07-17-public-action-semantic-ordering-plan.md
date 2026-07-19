@@ -3,7 +3,7 @@
 ## Status
 
 - Date: 2026-07-17
-- Last revised: 2026-07-18
+- Last revised: 2026-07-19
 - State: Additive trust-boundary cutover implemented; rollout closure and grouping remain
 - Scope: Public-row decoding and replay semantics, trusted publish and approval persistence, and
   publish-time dependency grouping
@@ -239,6 +239,16 @@ Do not create a generalized mutable-target adapter or replay approved rows again
 Items 1-5 form the ready implementation sequence. Item 7 is explicitly gated on removal of
 root-client replay.
 
+The post-bypass audit in Item 5 has two distinct gates:
+
+- Approved replay compatibility passes only when malformed rows, checked-replay failures, and
+  unknown entity types are all zero. Resolve an approved unknown type by adding checked replay
+  targets or by making a separate reviewed known-no-op classification, then rerun the audit.
+- Non-approved findings do not block the current approved replay set, but every pending malformed
+  row, checked-replay failure, dependency cluster, or unknown entity type must have an owner and a
+  repair-or-reject disposition before approval. Every malformed synced row must have an owner and a
+  history follow-up. Informational synced multi-action findings require no disposition.
+
 ## Validation and Completion
 
 For each work package, run focused unit, route, and migration tests, then lint and type-check. Run the
@@ -248,6 +258,8 @@ The plan is complete when:
 
 - all active readers use their purpose-specific status contract and stored rows are decoded atomically;
 - ordinary checked failures expose no partial published value and invariant failures remain fatal;
+- approved replay compatibility includes zero unknown entity types, and all actionable pending or
+  synced audit findings have the required owner and disposition;
 - synced rows are history-only;
 - legacy server and root-client replay are removed before grouping is enabled;
 - separately persisted rows from one publish request commute;

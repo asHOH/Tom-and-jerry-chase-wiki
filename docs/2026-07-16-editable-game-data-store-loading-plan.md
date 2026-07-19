@@ -3,7 +3,7 @@
 ## Status
 
 - Date: 2026-07-16
-- Last revised: 2026-07-18
+- Last revised: 2026-07-19
 - State: Phase 1 pure-foundation prerequisite complete; parent implementation remains
 - Scope: Client bundle size, edit-mode initialization, published-snapshot caching, public-action
   replay, route read models, and data-module boundaries
@@ -27,6 +27,9 @@ Implementation status:
   path interpretation, checked plain-object apply semantics, publish grouping, and publish and
   approval trust boundaries. This plan consumes those contracts and must not introduce another replay
   order, decoder, or apply engine.
+- Before live consumer migration, the semantic-ordering plan's post-bypass audit must report zero
+  approved malformed rows, checked-replay failures, and unknown entity types. Actionable pending and
+  synced findings must also have the owners and dispositions required by that plan.
 - This plan owns the client-side atomicity solution. It must derive the complete published baseline
   through checked replay before constructing Valtio proxies, then remove the transitional root
   client replay. The semantic-ordering plan must not enable publish-time grouping until that Phase 4
@@ -633,8 +636,8 @@ The work is complete when all of the following are true:
 
 ## Recommended Delivery Sequence
 
-1. Complete or confirm the semantic-ordering plan's strict reader, decoder, and checked plain-object
-   replay contracts.
+1. Complete or confirm the semantic-ordering plan's strict reader, decoder, checked plain-object
+   replay contracts, post-bypass audit compatibility gate, and non-approved finding dispositions.
 2. Build the production build identity, immutable approved-action snapshot, global revision,
    byte-size-selected persistent published cache, pure server-side selectors, and history selectors
    alongside the legacy path.
