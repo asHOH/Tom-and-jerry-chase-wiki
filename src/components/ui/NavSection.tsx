@@ -44,20 +44,20 @@ const HomePageSection: React.FC<HomePageSectionProps> = ({ title, buttons }) => 
           {title}
         </h2>
       )}
-      <FactionButtonGroup>
-        {buttons.map((button, index) => (
-          <React.Fragment key={button.href}>
-            <FactionButton
-              imageSrc={button.imageSrc}
-              imageAlt={button.imageAlt}
-              title={button.title || ''}
-              description={button.description}
-              href={button.href}
-              ariaLabel={button.ariaLabel}
-              preload
-            />
-            {buttons.length == 4 && index == 1 && <div className='hidden h-0 w-full sm:block' />}
-          </React.Fragment>
+      <FactionButtonGroup
+        {...(buttons.length === 4 ? { className: 'sm:grid sm:grid-cols-2' } : {})}
+      >
+        {buttons.map((button) => (
+          <FactionButton
+            key={button.href}
+            imageSrc={button.imageSrc}
+            imageAlt={button.imageAlt}
+            title={button.title || ''}
+            description={button.description}
+            href={button.href}
+            ariaLabel={button.ariaLabel}
+            preload
+          />
         ))}
       </FactionButtonGroup>
     </div>

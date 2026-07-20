@@ -26,8 +26,18 @@ jest.mock('@/components/ui/FactionButton', () => ({
 
 jest.mock('@/components/ui/FactionButtonGroup', () => ({
   __esModule: true,
-  default: function MockFactionButtonGroup({ children }: { children: React.ReactNode }) {
-    return <div data-testid='faction-button-group'>{children}</div>;
+  default: function MockFactionButtonGroup({
+    children,
+    className,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+  }) {
+    return (
+      <div data-testid='faction-button-group' className={className}>
+        {children}
+      </div>
+    );
   },
 }));
 
@@ -36,7 +46,7 @@ describe('HomePageSection', () => {
     jest.clearAllMocks();
   });
 
-  it('passes every button through with preload enabled and inserts the 4-item wrap spacer', () => {
+  it('passes every button through with preload enabled and uses two columns for four buttons', () => {
     const buttons = [
       {
         imageSrc: '/images/one.png',
@@ -84,8 +94,8 @@ describe('HomePageSection', () => {
         preload: true,
       }))
     );
-    expect(group.childElementCount).toBe(5);
-    expect(group.children[2]?.textContent).toBe('');
+    expect(group).toHaveClass('sm:grid', 'sm:grid-cols-2');
+    expect(group.childElementCount).toBe(4);
   });
 
   it('omits the section heading when title is not provided', () => {
