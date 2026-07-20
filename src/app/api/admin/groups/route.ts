@@ -13,6 +13,12 @@ import {
 } from '@/lib/auth/resourceContexts';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 
+const PROTECTED_GROUP_IDS = new Set([
+  '00000000-0000-4000-8000-000000000001',
+  '00000000-0000-4000-8000-000000000002',
+  '00000000-0000-4000-8000-000000000003',
+]);
+
 const grantSchema = z.object({
   permission: z.string(),
   scope: z.enum(['global', 'resource_type', 'resource']),
@@ -25,6 +31,7 @@ const createSchema = z.object({
   description: z.string().max(200).default(''),
   isDefault: z.boolean().default(false),
   grants: z.array(grantSchema).default([]),
+  parentGroupId: z.string().uuid().nullable().optional(),
 });
 
 const toRpcGrants = (grants: z.infer<typeof grantSchema>[]) =>
@@ -72,7 +79,7 @@ export async function GET() {
   ] = await Promise.all([
     supabase
       .from('user_groups')
-      .select('id, name, description, is_default, created_at, updated_at')
+      .select('id, name, description, is_default, parent_group_id, created_at, updated_at')
       .order('name'),
     supabase
       .from('group_permission_grants')
@@ -87,6 +94,34 @@ export async function GET() {
   ]);
 
   if (error) return NextResponse.json({ error: 'Failed to fetch groups' }, { status: 500 });
+  const allGroups = groups ?? [];
+  const allGrants = grants ?? [];
+  const groupById = new Map(allGroups.map((group) => [group.id, group]));
+  const inheritedGrantsFor = (groupId: string) => {
+    const inherited = [];
+    const visited = new Set<string>([groupId]);
+    let parentId = groupById.get(groupId)?.parent_group_id ?? null;
+    while (parentId && !visited.has(parentId)) {
+      visited.add(parentId);
+      const parent = groupById.get(parentId);
+      if (!parent) break;
+      inherited.push(
+        ...allGrants
+          .filter((grant) => grant.group_id === parentId)
+          .map((grant) => ({
+            permission: grant.permission_key as PermissionGrant['permission'],
+            scope: grant.scope,
+            resourceType: grant.resource_type === '*' ? null : grant.resource_type,
+            resourceId: grant.resource_id === '*' ? null : grant.resource_id,
+            sourceGroupId: parent.id,
+            sourceGroupName: parent.name,
+          }))
+      );
+      parentId = parent.parent_group_id;
+    }
+    return inherited;
+  };
+
   return NextResponse.json({
     catalog: catalog ?? [],
     resourceOptions: {
@@ -101,14 +136,16 @@ export async function GET() {
         label: category.name,
       })),
     },
-    groups: (groups ?? []).map((group) => ({
+    groups: allGroups.map((group) => ({
       id: group.id,
       name: group.name,
       description: group.description,
       isDefault: group.is_default,
+      isProtected: PROTECTED_GROUP_IDS.has(group.id),
+      parentGroupId: group.parent_group_id,
       memberCount: (memberships ?? []).filter((membership) => membership.group_id === group.id)
         .length,
-      grants: (grants ?? [])
+      grants: allGrants
         .filter((grant) => grant.group_id === group.id)
         .map((grant): PermissionGrant => ({
           permission: grant.permission_key as PermissionGrant['permission'],
@@ -116,6 +153,7 @@ export async function GET() {
           resourceType: grant.resource_type === '*' ? null : grant.resource_type,
           resourceId: grant.resource_id === '*' ? null : grant.resource_id,
         })),
+      inheritedGrants: inheritedGrantsFor(group.id),
     })),
   });
 }
@@ -130,12 +168,19 @@ export async function POST(request: Request) {
   if (!(await Promise.all(parsed.data.grants.map(resourceExists))).every(Boolean)) {
     return NextResponse.json({ error: 'Unknown resource ID' }, { status: 400 });
   }
-  const { data, error } = await guard.supabase.rpc('create_permission_group', {
+  const rpcArguments = {
     p_name: parsed.data.name,
     p_description: parsed.data.description,
     p_is_default: parsed.data.isDefault,
     p_grants: toRpcGrants(parsed.data.grants),
-  });
+  };
+  const { data, error } =
+    parsed.data.parentGroupId === undefined
+      ? await guard.supabase.rpc('create_permission_group', rpcArguments)
+      : await guard.supabase.rpc('create_permission_group_v2', {
+          ...rpcArguments,
+          p_parent_group_id: parsed.data.parentGroupId,
+        });
   if (error) {
     const status = error.message.includes('duplicate') ? 409 : 400;
     return NextResponse.json({ error: error.message }, { status });

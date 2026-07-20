@@ -516,8 +516,8 @@ export type Database = {
           description: string;
           id: string;
           is_default: boolean;
-          legacy_role: Database['public']['Enums']['role_type'] | null;
           name: string;
+          parent_group_id: string | null;
           updated_at: string;
         };
         Insert: {
@@ -525,8 +525,8 @@ export type Database = {
           description?: string;
           id?: string;
           is_default?: boolean;
-          legacy_role?: Database['public']['Enums']['role_type'] | null;
           name: string;
+          parent_group_id?: string | null;
           updated_at?: string;
         };
         Update: {
@@ -534,11 +534,19 @@ export type Database = {
           description?: string;
           id?: string;
           is_default?: boolean;
-          legacy_role?: Database['public']['Enums']['role_type'] | null;
           name?: string;
+          parent_group_id?: string | null;
           updated_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: 'user_groups_parent_group_id_fkey';
+            columns: ['parent_group_id'];
+            isOneToOne: false;
+            referencedRelation: 'user_groups';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       group_permission_grants: {
         Row: {
@@ -578,7 +586,6 @@ export type Database = {
           id: string;
           nickname: string;
           password_hash: string | null;
-          role: Database['public']['Enums']['role_type'];
           salt: string;
           username_hash: string;
         };
@@ -586,7 +593,6 @@ export type Database = {
           id: string;
           nickname: string;
           password_hash?: string | null;
-          role?: Database['public']['Enums']['role_type'];
           salt: string;
           username_hash: string;
         };
@@ -594,7 +600,6 @@ export type Database = {
           id?: string;
           nickname?: string;
           password_hash?: string | null;
-          role?: Database['public']['Enums']['role_type'];
           salt?: string;
           username_hash?: string;
         };
@@ -740,6 +745,16 @@ export type Database = {
         Args: { p_description?: string; p_grants?: Json; p_is_default?: boolean; p_name: string };
         Returns: string;
       };
+      create_permission_group_v2: {
+        Args: {
+          p_description: string;
+          p_grants: Json;
+          p_is_default: boolean;
+          p_name: string;
+          p_parent_group_id: string | null;
+        };
+        Returns: string;
+      };
       delete_permission_group: { Args: { p_group_id: string }; Returns: undefined };
       get_my_permission_grants: {
         Args: never;
@@ -762,6 +777,17 @@ export type Database = {
           p_group_id: string;
           p_is_default: boolean;
           p_name: string;
+        };
+        Returns: undefined;
+      };
+      save_permission_group_v2: {
+        Args: {
+          p_description: string;
+          p_grants: Json;
+          p_group_id: string;
+          p_is_default: boolean;
+          p_name: string;
+          p_parent_group_id: string | null;
         };
         Returns: undefined;
       };
@@ -898,10 +924,6 @@ export type Database = {
           version_id: string;
         }[];
       };
-      get_user_role: {
-        Args: { p_user_id: string };
-        Returns: Database['public']['Enums']['role_type'];
-      };
       hash_credential: {
         Args: { credential: string; salt: string };
         Returns: string;
@@ -1020,7 +1042,6 @@ export type Database = {
       comment_status: 'visible' | 'hidden' | 'deleted';
       game_data_action_status: 'pending' | 'approved' | 'rejected' | 'synced';
       permission_scope: 'global' | 'resource_type' | 'resource';
-      role_type: 'Contributor' | 'Reviewer' | 'Coordinator';
       version_status: 'pending' | 'approved' | 'rejected' | 'revoked';
     };
     CompositeTypes: {
@@ -1163,7 +1184,6 @@ export const Constants = {
       comment_status: ['visible', 'hidden', 'deleted'],
       game_data_action_status: ['pending', 'approved', 'rejected', 'synced'],
       permission_scope: ['global', 'resource_type', 'resource'],
-      role_type: ['Contributor', 'Reviewer', 'Coordinator'],
       version_status: ['pending', 'approved', 'rejected', 'revoked'],
     },
   },

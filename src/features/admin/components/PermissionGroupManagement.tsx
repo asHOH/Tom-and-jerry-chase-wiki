@@ -4,7 +4,11 @@ import { useEffect, useState } from 'react';
 import { useSWRConfig } from 'swr';
 
 import type { PermissionResourceOption } from '@/lib/auth/permissionResources';
-import type { PermissionGrant, PermissionScope } from '@/lib/auth/permissions';
+import {
+  normalizePermissionGrants,
+  type PermissionGrant,
+  type PermissionScope,
+} from '@/lib/auth/permissions';
 import { SCOPABLE_RESOURCE_TYPES } from '@/lib/auth/resourceContexts';
 import { cn } from '@/lib/design';
 import { USER_API_KEY } from '@/hooks/useUser';
@@ -19,6 +23,12 @@ import {
   UserCircleIcon,
 } from '@/components/icons/CommonIcons';
 
+import {
+  getDescendantGroupIds,
+  isGrantCovered,
+  removeCoveredDirectGrants,
+} from '../utils/groupInheritance';
+
 export type PermissionCatalogEntry = {
   key: string;
   category: string;
@@ -32,8 +42,16 @@ export type PermissionGroup = {
   name: string;
   description: string;
   isDefault: boolean;
+  isProtected: boolean;
+  parentGroupId: string | null;
   memberCount: number;
   grants: PermissionGrant[];
+  inheritedGrants: InheritedPermissionGrant[];
+};
+
+export type InheritedPermissionGrant = PermissionGrant & {
+  sourceGroupId: string;
+  sourceGroupName: string;
 };
 
 type Props = {
@@ -51,6 +69,18 @@ const emptyGrant = (permission: string): PermissionGrant => ({
   resourceId: null,
 });
 
+const withoutSource = ({
+  sourceGroupId: _sourceGroupId,
+  sourceGroupName: _sourceGroupName,
+  ...grant
+}: InheritedPermissionGrant): PermissionGrant => grant;
+
+const scopeLabel = (grant: PermissionGrant) => {
+  if (grant.scope === 'global') return '全局';
+  if (grant.scope === 'resource_type') return `资源类型: ${grant.resourceType}`;
+  return `指定资源: ${grant.resourceType} / ${grant.resourceId}`;
+};
+
 export default function PermissionGroupManagement({
   groups,
   catalog,
@@ -64,6 +94,7 @@ export default function PermissionGroupManagement({
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [isDefault, setIsDefault] = useState(false);
+  const [parentGroupId, setParentGroupId] = useState<string | null>(null);
   const [grants, setGrants] = useState<PermissionGrant[]>([]);
   const [message, setMessage] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -74,8 +105,28 @@ export default function PermissionGroupManagement({
     setName(selected.name);
     setDescription(selected.description);
     setIsDefault(selected.isDefault);
+    setParentGroupId(selected.parentGroupId);
     setGrants(selected.grants);
   }, [selected]);
+
+  const descendantIds = selected ? getDescendantGroupIds(groups, selected.id) : new Set<string>();
+  const parentGroup = groups.find((group) => group.id === parentGroupId);
+  const inheritedGrants: InheritedPermissionGrant[] = parentGroup
+    ? [
+        ...parentGroup.grants.map((grant) => ({
+          ...grant,
+          sourceGroupId: parentGroup.id,
+          sourceGroupName: parentGroup.name,
+        })),
+        ...parentGroup.inheritedGrants,
+      ]
+    : [];
+  const inheritedPermissionGrants = inheritedGrants.map(withoutSource);
+  const effectiveGrantCount = normalizePermissionGrants([
+    ...grants,
+    ...inheritedPermissionGrants,
+  ]).length;
+  const childGroups = selected ? groups.filter((group) => group.parentGroupId === selected.id) : [];
 
   const request = async (url: string, method: string, body?: unknown) => {
     const response = await fetch(url, {
@@ -94,6 +145,7 @@ export default function PermissionGroupManagement({
         description: '',
         isDefault: false,
         grants: [],
+        parentGroupId: null,
       });
       setMessage('用户组已创建');
       await mutateGroups();
@@ -106,11 +158,13 @@ export default function PermissionGroupManagement({
     if (!selected) return;
     setIsSaving(true);
     try {
+      const directGrants = removeCoveredDirectGrants(grants, inheritedPermissionGrants);
       await request(`/api/admin/groups/${selected.id}`, 'PATCH', {
         name,
         description,
         isDefault,
-        grants,
+        grants: directGrants,
+        parentGroupId,
       });
       setMessage('用户组已保存');
       await Promise.all([mutateGroups(), mutateCache(USER_API_KEY)]);
@@ -134,15 +188,25 @@ export default function PermissionGroupManagement({
   };
 
   const updateGrant = (index: number, patch: Partial<PermissionGrant>) => {
-    setGrants((current) =>
-      current.map((grant, grantIndex) => {
+    setGrants((current) => {
+      const updated = current.map((grant, grantIndex) => {
         if (grantIndex !== index) return grant;
         const next = { ...grant, ...patch };
         if (next.scope === 'global') return { ...next, resourceType: null, resourceId: null };
         if (next.scope === 'resource_type') return { ...next, resourceId: null };
         return next;
-      })
-    );
+      });
+      return removeCoveredDirectGrants(updated, inheritedPermissionGrants);
+    });
+  };
+
+  const updateParent = (nextParentGroupId: string | null) => {
+    const nextParent = groups.find((group) => group.id === nextParentGroupId);
+    const nextInherited = nextParent
+      ? [...nextParent.grants, ...nextParent.inheritedGrants.map(withoutSource)]
+      : [];
+    setParentGroupId(nextParentGroupId);
+    setGrants((current) => removeCoveredDirectGrants(current, nextInherited));
   };
 
   return (
@@ -236,7 +300,8 @@ export default function PermissionGroupManagement({
                     {selected.name}
                   </h2>
                   <p className='mt-1 text-sm text-slate-500 dark:text-slate-400'>
-                    {selected.memberCount} 名成员 · {grants.length} 项授权
+                    {selected.memberCount} 名成员 · {grants.length} 项直接授权 ·{' '}
+                    {effectiveGrantCount} 项有效授权
                   </p>
                 </div>
                 {selected.isDefault && (
@@ -297,6 +362,62 @@ export default function PermissionGroupManagement({
                     onChange={(e) => setDescription(e.target.value)}
                   />
                 </label>
+                <label className='mt-4 block'>
+                  <span className='mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-200'>
+                    扩展用户组
+                  </span>
+                  <FormSelect
+                    aria-label='扩展用户组'
+                    value={parentGroupId ?? ''}
+                    disabled={!canManage}
+                    onChange={(event) => updateParent(event.target.value || null)}
+                  >
+                    <option value=''>不扩展其他用户组</option>
+                    {groups
+                      .filter((group) => group.id !== selected.id && !descendantIds.has(group.id))
+                      .map((group) => (
+                        <option key={group.id} value={group.id}>
+                          {group.name}
+                        </option>
+                      ))}
+                  </FormSelect>
+                  <span className='mt-1.5 block text-xs text-slate-500 dark:text-slate-400'>
+                    此用户组会立即继承父组的全部权限；父组权限变化也会同步生效。
+                  </span>
+                </label>
+              </section>
+
+              <section className='border-t border-slate-200 pt-6 dark:border-slate-700'>
+                <div className='mb-4'>
+                  <h3 className='font-semibold text-slate-900 dark:text-white'>继承权限</h3>
+                  <p className='mt-0.5 text-sm text-slate-500 dark:text-slate-400'>
+                    继承权限为只读，请在来源用户组中修改
+                  </p>
+                </div>
+                {inheritedGrants.length > 0 ? (
+                  <div className='space-y-2'>
+                    {inheritedGrants.map((grant, index) => {
+                      const definition = catalog.find((entry) => entry.key === grant.permission);
+                      return (
+                        <div
+                          key={`${grant.sourceGroupId}-${grant.permission}-${grant.scope}-${grant.resourceType}-${grant.resourceId}-${index}`}
+                          className='flex flex-wrap items-center justify-between gap-2 rounded-lg border border-indigo-100 bg-indigo-50/60 px-3 py-2.5 text-sm dark:border-indigo-900/50 dark:bg-indigo-950/20'
+                        >
+                          <span className='font-medium text-slate-700 dark:text-slate-200'>
+                            {definition?.category} · {definition?.label_zh ?? grant.permission}
+                          </span>
+                          <span className='text-xs text-slate-500 dark:text-slate-400'>
+                            {scopeLabel(grant)} · 来自 {grant.sourceGroupName}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className='rounded-xl border border-dashed border-slate-300 px-4 py-6 text-center text-sm text-slate-500 dark:border-slate-700 dark:text-slate-400'>
+                    未继承任何权限
+                  </div>
+                )}
               </section>
 
               <section className='border-t border-slate-200 pt-6 dark:border-slate-700'>
@@ -312,9 +433,17 @@ export default function PermissionGroupManagement({
                       size='sm'
                       variant='secondary'
                       leadingIcon={<PlusIcon size={16} />}
-                      onClick={() =>
-                        setGrants((current) => [...current, emptyGrant(catalog[0]!.key)])
-                      }
+                      onClick={() => {
+                        const definition =
+                          catalog.find(
+                            (entry) =>
+                              !isGrantCovered(emptyGrant(entry.key), inheritedPermissionGrants)
+                          ) ?? catalog[0]!;
+                        const nextGrant = emptyGrant(definition.key);
+                        if (!isGrantCovered(nextGrant, inheritedPermissionGrants)) {
+                          setGrants((current) => [...current, nextGrant]);
+                        }
+                      }}
                     >
                       添加授权
                     </Button>
@@ -454,7 +583,12 @@ export default function PermissionGroupManagement({
                 <div className='flex flex-col-reverse gap-2 border-t border-slate-200 pt-5 sm:flex-row sm:justify-end dark:border-slate-700'>
                   <Button
                     variant='danger'
-                    disabled={selected.isDefault || selected.memberCount > 0}
+                    disabled={
+                      selected.isProtected ||
+                      selected.isDefault ||
+                      selected.memberCount > 0 ||
+                      childGroups.length > 0
+                    }
                     onClick={deleteGroup}
                     leadingIcon={<TrashIcon size={16} />}
                   >

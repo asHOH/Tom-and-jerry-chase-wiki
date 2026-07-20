@@ -97,8 +97,8 @@ const createSWRResponse = <T,>(data: T, mutate: jest.Mock) =>
     mutate,
   }) as never;
 
-const renderAdminPanel = (role: 'Contributor' | 'Reviewer' | 'Coordinator' | null) => {
-  currentProfile = role?.toLowerCase() as typeof currentProfile;
+const renderAdminPanel = (profile: 'Contributor' | 'Reviewer' | 'Coordinator' | null) => {
+  currentProfile = profile?.toLowerCase() as typeof currentProfile;
   return render(<AdminPanel />);
 };
 

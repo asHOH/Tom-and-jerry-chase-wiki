@@ -14,6 +14,7 @@ const updateSchema = z.object({
   name: z.string().trim().min(1).max(50),
   description: z.string().max(200),
   isDefault: z.boolean(),
+  parentGroupId: z.string().uuid().nullable().optional(),
   grants: z.array(
     z.object({
       permission: z.string(),
@@ -74,13 +75,20 @@ export async function PATCH(
   if (!(await Promise.all(parsed.data.grants.map(resourceExists))).every(Boolean)) {
     return NextResponse.json({ error: 'Unknown resource ID' }, { status: 400 });
   }
-  const { error } = await guard.supabase.rpc('save_permission_group', {
+  const rpcArguments = {
     p_group_id: await getGroupId(params),
     p_name: parsed.data.name,
     p_description: parsed.data.description,
     p_is_default: parsed.data.isDefault,
     p_grants: parsed.data.grants,
-  });
+  };
+  const { error } =
+    parsed.data.parentGroupId === undefined
+      ? await guard.supabase.rpc('save_permission_group', rpcArguments)
+      : await guard.supabase.rpc('save_permission_group_v2', {
+          ...rpcArguments,
+          p_parent_group_id: parsed.data.parentGroupId,
+        });
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
   return NextResponse.json({ ok: true });
 }
