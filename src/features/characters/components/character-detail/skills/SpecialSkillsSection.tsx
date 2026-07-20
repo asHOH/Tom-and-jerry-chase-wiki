@@ -2,13 +2,14 @@ import { useSnapshot } from 'valtio';
 
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useEditMode } from '@/context/EditModeContext';
+import { isGeneralSpecialSkill } from '@/features/characters/utils/recommendations';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 import { editable } from '@/components/ui/editable';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 import Link from '@/components/Link';
-import { characters, specialSkillsEdit } from '@/data';
+import { characters, factionData, specialSkillsEdit } from '@/data';
 
 import RecommendedStorePlansSection from './RecommendedStorePlansSection';
 
@@ -23,6 +24,24 @@ export default function SpecialSkillsSection() {
   const hasSpecialSkills = Boolean(character.specialSkills?.length);
   const hasStorePlans = Boolean(character.recommendedStorePlans?.length);
   if (!hasSpecialSkills && !hasStorePlans && !isEditMode) return null;
+  const faction = character.factionId ? factionData[character.factionId] : undefined;
+
+  const insertCustomSkill = () => {
+    const skills = characters[characterId]!.specialSkills ?? [];
+    const generalStartIndex = faction
+      ? skills.findIndex((skill) => isGeneralSpecialSkill(skill, faction))
+      : -1;
+    const insertionIndex = generalStartIndex === -1 ? skills.length : generalStartIndex;
+
+    if (!characters[characterId]!.specialSkills) {
+      characters[characterId]!.specialSkills = [];
+    }
+    characters[characterId]!.specialSkills!.splice(insertionIndex, 0, {
+      name: character.factionId === 'cat' ? '绝地反击' : '魔术漂浮',
+      description: '',
+    });
+  };
+
   return (
     <div>
       {(hasSpecialSkills || isEditMode) && (
@@ -39,6 +58,8 @@ export default function SpecialSkillsSection() {
           <ul className='flex flex-col items-center gap-2'>
             {(character.specialSkills ?? []).map((skill, index) => {
               const specialSkill = specialSkillsSnapshot[character.factionId!][skill.name];
+              const isGeneral = faction ? isGeneralSpecialSkill(skill, faction) : false;
+              const canEdit = isEditMode && !isGeneral;
               if (!specialSkill && !isEditMode) return null;
               return (
                 <li
@@ -50,7 +71,7 @@ export default function SpecialSkillsSection() {
                     <Link
                       href={`/special-skills/${character.factionId}/${skill.name}`}
                       onClick={(ev) => {
-                        if (isEditMode) {
+                        if (isEditMode && !isGeneral) {
                           ev.preventDefault();
                         }
                       }}
@@ -71,20 +92,26 @@ export default function SpecialSkillsSection() {
                         <Link
                           href={`/special-skills/${character.factionId}/${skill.name}`}
                           onClick={(ev) => {
-                            if (isEditMode) {
+                            if (isEditMode && !isGeneral) {
                               ev.preventDefault();
                             }
                           }}
                           className='max-w-full'
                         >
-                          <e.span
-                            initialValue={skill.name}
-                            path={`specialSkills.${index}.name`}
-                            className='text-base font-bold dark:text-white'
-                          />
+                          {canEdit ? (
+                            <e.span
+                              initialValue={skill.name}
+                              path={`specialSkills.${index}.name`}
+                              className='text-base font-bold dark:text-white'
+                            />
+                          ) : (
+                            <span className='text-base font-bold dark:text-white'>
+                              <TextWithHoverTooltips text={skill.name} />
+                            </span>
+                          )}
                         </Link>
 
-                        {isEditMode && (
+                        {canEdit && (
                           <IconButton
                             type='button'
                             aria-label='移除特技'
@@ -102,7 +129,7 @@ export default function SpecialSkillsSection() {
                       </div>
 
                       <div className='mt-1 text-sm break-words whitespace-pre-wrap text-gray-500 dark:text-gray-300'>
-                        {isEditMode ? (
+                        {canEdit ? (
                           <e.div
                             initialValue={skill.description}
                             path={`specialSkills.${index}.description`}
@@ -123,15 +150,7 @@ export default function SpecialSkillsSection() {
               <IconButton
                 type='button'
                 aria-label='添加特技'
-                onClick={() => {
-                  if (!characters[characterId]!.specialSkills) {
-                    characters[characterId]!.specialSkills = [];
-                  }
-                  characters[characterId]!.specialSkills.push({
-                    name: character.factionId === 'cat' ? '绝地反击' : '魔术漂浮',
-                    description: '',
-                  });
-                }}
+                onClick={insertCustomSkill}
                 variant='add'
                 size='md'
               >

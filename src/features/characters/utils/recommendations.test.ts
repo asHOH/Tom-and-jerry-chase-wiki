@@ -1,6 +1,10 @@
 import type { KnowledgeCardGroup, SuggestedSpecialSkillItem } from '@/data/types';
 
-import { mergeCharacterRecommendations } from './recommendations';
+import {
+  getGeneralKnowledgeCardGroupCount,
+  isGeneralSpecialSkill,
+  mergeCharacterRecommendations,
+} from './recommendations';
 
 describe('mergeCharacterRecommendations', () => {
   it('appends faction knowledge-card groups after character groups', () => {
@@ -78,5 +82,33 @@ describe('mergeCharacterRecommendations', () => {
     );
 
     expect(result.specialSkills).toEqual([]);
+  });
+});
+
+describe('general recommendation helpers', () => {
+  const generalSpecialSkill: SuggestedSpecialSkillItem = {
+    name: '通用特技',
+    description: '通用说明',
+  };
+
+  it('identifies inherited special skills without treating character overrides as general', () => {
+    const faction = {
+      generalKnowledgeCardGroups: [],
+      generalSpecialSkills: [generalSpecialSkill],
+    };
+
+    expect(isGeneralSpecialSkill(generalSpecialSkill, faction)).toBe(true);
+    expect(
+      isGeneralSpecialSkill({ ...generalSpecialSkill, description: '角色专属说明' }, faction)
+    ).toBe(false);
+  });
+
+  it('returns the number of inherited knowledge-card groups', () => {
+    expect(
+      getGeneralKnowledgeCardGroupCount({
+        generalKnowledgeCardGroups: [{ cards: [], description: '通用卡组' }],
+        generalSpecialSkills: [],
+      })
+    ).toBe(1);
   });
 });

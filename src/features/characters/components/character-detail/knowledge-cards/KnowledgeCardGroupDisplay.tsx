@@ -173,6 +173,7 @@ type KnowledgeCardGroupFlatProps = {
   getCardPriority: (cardId: string) => string | undefined;
   shouldShowPriorityWarnings: boolean;
   onConvertToGroupSet?: (index: number) => void;
+  isGeneral?: boolean;
 };
 
 type KnowledgeCardGroupDisplayProps = {
@@ -192,6 +193,7 @@ type KnowledgeCardGroupDisplayProps = {
   contributor: string | undefined;
   getCardPriority: (cardId: string) => string | undefined;
   onConvertToGroupSet?: (index: number) => void;
+  isGeneral?: boolean;
 };
 
 const GroupDescriptionBlock = ({
@@ -241,10 +243,12 @@ function KnowledgeCardGroupFlat({
   getCardPriority,
   shouldShowPriorityWarnings,
   onConvertToGroupSet,
+  isGeneral = false,
 }: KnowledgeCardGroupFlatProps) {
   const charSnap = useSnapshot(characters[characterId]!);
+  const canEdit = isEditMode && !isGeneral;
 
-  if (cards.length === 0 && !isEditMode) {
+  if (cards.length === 0 && !canEdit) {
     return null;
   }
 
@@ -258,9 +262,9 @@ function KnowledgeCardGroupFlat({
   const hasJiuJiuWo = cards.includes('C-救救我');
   const hasRescueSkill = cards.includes('S-舍己') || cards.includes('S-无畏');
   const hasTieXue = cards.includes('S-铁血');
-  const shouldWarnMissingRescueSkill = !isEditMode && isMouseFaction && !hasRescueSkill;
-  const shouldWarnMissingJiuJiuWo = !isEditMode && isMouseFaction && !hasJiuJiuWo;
-  const shouldWarnMissingTieXue = !isEditMode && isMouseFaction && !hasTieXue;
+  const shouldWarnMissingRescueSkill = !canEdit && isMouseFaction && !hasRescueSkill;
+  const shouldWarnMissingJiuJiuWo = !canEdit && isMouseFaction && !hasJiuJiuWo;
+  const shouldWarnMissingTieXue = !canEdit && isMouseFaction && !hasTieXue;
 
   const { missingWarningMessage } = buildWarningMessages({
     warnTieXue: shouldWarnMissingTieXue,
@@ -305,7 +309,7 @@ function KnowledgeCardGroupFlat({
             const priorityWarning = getPriorityWarningMessage(
               cardId,
               getCardPriority,
-              isEditMode,
+              canEdit,
               shouldShowPriorityWarnings
             );
 
@@ -316,7 +320,7 @@ function KnowledgeCardGroupFlat({
                 variant={isSqueezedView ? 'tag' : 'image'}
                 imageBasePath={imageBasePath}
                 isOptional={isOptional}
-                isEditMode={isEditMode}
+                isEditMode={canEdit}
                 isDarkMode={isDarkMode}
                 characterId={characterId}
                 getCardRank={getCardRank}
@@ -326,7 +330,7 @@ function KnowledgeCardGroupFlat({
             );
           })}
         </div>
-        {isEditMode && (
+        {canEdit && (
           <div className='flex flex-col gap-2'>
             <IconButton
               type='button'
@@ -362,14 +366,14 @@ function KnowledgeCardGroupFlat({
       <GroupMetaRow
         contributor={contributor}
         contributorInformation={contributorInformation}
-        isEditMode={isEditMode}
+        isEditMode={canEdit}
         isDarkMode={isDarkMode}
         missingWarningMessage={missingWarningMessage}
       />
 
       <GroupDescriptionBlock
         description={description}
-        isEditMode={isEditMode}
+        isEditMode={canEdit}
         descriptionPath={descriptionPath}
       />
     </div>
@@ -394,6 +398,7 @@ export function KnowledgeCardGroupDisplay({
   contributor,
   getCardPriority,
   onConvertToGroupSet,
+  isGeneral = false,
 }: KnowledgeCardGroupDisplayProps) {
   const charSnap = useSnapshot(characters[characterId]!);
   const [isDarkMode] = useDarkMode();
@@ -413,6 +418,7 @@ export function KnowledgeCardGroupDisplay({
   const contributorInformation = contributors.find(
     (item) => item.id === contributor || item.name === contributor
   );
+  const canEdit = isEditMode && !isGeneral;
 
   if (isTreeView) {
     // Tree mode: show tree structure with max cost
@@ -428,9 +434,9 @@ export function KnowledgeCardGroupDisplay({
     );
     const lacksJiuJiuWo = some(allFlatCombinations, (combo) => !combo.includes('C-救救我'));
     const lacksTieXue = some(allFlatCombinations, (combo) => !combo.includes('S-铁血'));
-    const shouldWarnMissingRescueSkill = !isEditMode && isMouseFaction && lacksRescueSkill;
-    const shouldWarnMissingJiuJiuWo = !isEditMode && isMouseFaction && lacksJiuJiuWo;
-    const shouldWarnMissingTieXue = !isEditMode && isMouseFaction && lacksTieXue;
+    const shouldWarnMissingRescueSkill = !canEdit && isMouseFaction && lacksRescueSkill;
+    const shouldWarnMissingJiuJiuWo = !canEdit && isMouseFaction && lacksJiuJiuWo;
+    const shouldWarnMissingTieXue = !canEdit && isMouseFaction && lacksTieXue;
 
     const { missingWarningMessage } = buildWarningMessages({
       warnTieXue: shouldWarnMissingTieXue,
@@ -461,7 +467,7 @@ export function KnowledgeCardGroupDisplay({
           <div className='flex min-w-0 flex-1'>
             <TreeCardDisplay
               tree={treeStructure}
-              isEditMode={isEditMode}
+              isEditMode={canEdit}
               isSqueezedView={isSqueezedView}
               handleSelectCard={handleSelectCard}
               characterId={characterId}
@@ -475,14 +481,14 @@ export function KnowledgeCardGroupDisplay({
                 getPriorityWarningMessage(
                   cardId,
                   getCardPriority,
-                  isEditMode,
+                  canEdit,
                   shouldShowPriorityWarnings
                 )
               }
             />
           </div>
 
-          {isEditMode && (
+          {canEdit && (
             <div className='flex flex-col gap-2'>
               <IconButton
                 type='button'
@@ -518,14 +524,14 @@ export function KnowledgeCardGroupDisplay({
         <GroupMetaRow
           contributor={contributor}
           contributorInformation={contributorInformation}
-          isEditMode={isEditMode}
+          isEditMode={canEdit}
           isDarkMode={isDarkMode}
           missingWarningMessage={missingWarningMessage}
         />
 
         <GroupDescriptionBlock
           description={description}
-          isEditMode={isEditMode}
+          isEditMode={canEdit}
           descriptionPath={descriptionPath}
         />
       </div>
@@ -542,7 +548,7 @@ export function KnowledgeCardGroupDisplay({
               cards={cards}
               index={index}
               description={description}
-              isEditMode={isEditMode}
+              isEditMode={canEdit}
               isSqueezedView={isSqueezedView}
               handleSelectCard={handleSelectCard}
               characterId={characterId}
@@ -558,6 +564,7 @@ export function KnowledgeCardGroupDisplay({
               getCardPriority={getCardPriority}
               shouldShowPriorityWarnings={shouldShowPriorityWarnings}
               {...(onConvertToGroupSet ? { onConvertToGroupSet } : {})}
+              isGeneral={isGeneral}
             />
             {subIndex < flattenedCombinations.length - 1 && (
               <div className='my-2 border-t border-gray-300 dark:border-slate-600'></div>

@@ -32,6 +32,7 @@ type KnowledgeCardGroupSetDisplayProps = {
   getCardRank: (cardId: string) => string;
   imageBasePath: string;
   getCardPriority: (cardId: string) => string | undefined;
+  isGeneral?: boolean;
 };
 
 const KnowledgeCardGroupSetDisplay = ({
@@ -50,12 +51,14 @@ const KnowledgeCardGroupSetDisplay = ({
   getCardRank,
   imageBasePath,
   getCardPriority,
+  isGeneral = false,
 }: KnowledgeCardGroupSetDisplayProps) => {
   const { isDetailedView } = useAppContext();
-  const [isOpen, setIsOpen] = useState(() => !groupSet.defaultFolded || isEditMode);
+  const canEdit = isEditMode && !isGeneral;
+  const [isOpen, setIsOpen] = useState(() => !groupSet.defaultFolded || canEdit);
 
   const toggleOpen = () => {
-    if (!isEditMode) {
+    if (!canEdit) {
       setIsOpen((prev) => !prev);
     }
   };
@@ -74,19 +77,20 @@ const KnowledgeCardGroupSetDisplay = ({
           aria-label={isOpen ? `折叠${groupSet.id}` : `展开${groupSet.id}`}
           className={cn(
             'flex-1 py-1 text-left text-2xl font-bold focus:outline-none dark:text-white',
-            { 'cursor-pointer': !isEditMode }
+            { 'cursor-pointer': !canEdit }
           )}
-          {...(isEditMode ? {} : { onClick: toggleOpen })}
+          {...(canEdit ? {} : { onClick: toggleOpen })}
         >
           <e.h3
             path={`knowledgeCardGroups.${topIndex}.id`}
             initialValue={groupSet.id}
             onSave={(v) => onEditGroupSetMetadata(topIndex, 'id', v)}
             className='pl-1 text-lg'
+            enableEdit={canEdit}
           />
         </button>
 
-        {isEditMode && (
+        {canEdit && (
           <div className='flex gap-2'>
             <div className='flex items-center gap-1 text-xs'>
               <span className='text-xs text-gray-400 dark:text-gray-500'>显示方式:</span>
@@ -144,6 +148,7 @@ const KnowledgeCardGroupSetDisplay = ({
               )
             }
             className='mb-6 text-gray-700 dark:text-gray-300'
+            enableEdit={canEdit}
           />
 
           <div className='flex flex-col gap-y-4'>
@@ -154,6 +159,7 @@ const KnowledgeCardGroupSetDisplay = ({
                 index={index}
                 description={group.description}
                 isEditMode={isEditMode}
+                isGeneral={isGeneral}
                 viewMode={viewMode}
                 handleSelectCard={handleSelectCard}
                 characterId={characterId}
@@ -167,7 +173,7 @@ const KnowledgeCardGroupSetDisplay = ({
                 getCardPriority={getCardPriority}
               />
             ))}
-            {isEditMode && onAddInnerGroup && (
+            {canEdit && onAddInnerGroup && (
               <div className='mt-2'>
                 <IconButton
                   type='button'

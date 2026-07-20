@@ -4,7 +4,8 @@ import { useSnapshot } from 'valtio';
 
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import type { FactionId, KnowledgeCardGroup } from '@/data/types';
-import { characters } from '@/data'; // Import Character type
+import { getGeneralKnowledgeCardGroupCount } from '@/features/characters/utils/recommendations';
+import { characters, factionData } from '@/data';
 
 import KnowledgeCardSection from './KnowledgeCardSection';
 
@@ -16,21 +17,27 @@ interface KnowledgeCardManagerProps {
 export default function KnowledgeCardManager({ factionId }: KnowledgeCardManagerProps) {
   const { characterId } = useLocalCharacter();
   const character = useSnapshot(characters[characterId]!);
+  const generalGroupCount = getGeneralKnowledgeCardGroupCount(factionData[factionId]);
 
   const handleCreateGroup = () => {
     const newGroup: KnowledgeCardGroup = {
       cards: [],
       description: '待补充',
     };
-    characters[character.id]!.knowledgeCardGroups.push(newGroup);
+    const groups = characters[character.id]!.knowledgeCardGroups;
+    const generalStartIndex = Math.max(0, groups.length - generalGroupCount);
+    groups.splice(generalStartIndex, 0, newGroup);
   };
 
   const handleRemoveGroup = (topIndex: number, innerIndex?: number) => {
+    const groups = characters[character.id]!.knowledgeCardGroups;
+    const generalStartIndex = Math.max(0, groups.length - generalGroupCount);
+
+    if (topIndex >= generalStartIndex) return;
+
     // If no innerIndex is provided, remove a top-level group.
     if (innerIndex === undefined) {
-      characters[character.id]!.knowledgeCardGroups = characters[
-        character.id
-      ]!.knowledgeCardGroups.filter((_, i) => i !== topIndex);
+      characters[character.id]!.knowledgeCardGroups = groups.filter((_, i) => i !== topIndex);
       return;
     }
 

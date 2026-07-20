@@ -1,4 +1,4 @@
-import type { Character, Faction } from '@/data/types';
+import type { Character, Faction, SuggestedSpecialSkillItem } from '@/data/types';
 
 type CharacterRecommendationFields = Pick<Character, 'knowledgeCardGroups' | 'specialSkills'>;
 
@@ -32,6 +32,20 @@ export function mergeCharacterRecommendations(
     knowledgeCardGroups,
     ...(mergedSpecialSkills === undefined ? {} : { specialSkills: mergedSpecialSkills }),
   };
+}
+
+export function isGeneralSpecialSkill(
+  skill: Pick<SuggestedSpecialSkillItem, 'name' | 'description'>,
+  faction: FactionRecommendationFields
+) {
+  return faction.generalSpecialSkills.some(
+    (generalSkill) =>
+      generalSkill.name === skill.name && generalSkill.description === skill.description
+  );
+}
+
+export function getGeneralKnowledgeCardGroupCount(faction: FactionRecommendationFields) {
+  return faction.generalKnowledgeCardGroups.length;
 }
 
 export type { CharacterRecommendationFields, FactionRecommendationFields };

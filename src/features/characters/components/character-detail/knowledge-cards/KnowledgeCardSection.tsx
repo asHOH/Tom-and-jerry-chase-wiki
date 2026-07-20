@@ -7,6 +7,7 @@ import { cn } from '@/lib/design';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
 import type { CardGroup, FactionId, KnowledgeCardGroup, KnowledgeCardGroupSet } from '@/data/types';
+import { getGeneralKnowledgeCardGroupCount } from '@/features/characters/utils/recommendations';
 import { catKnowledgeCards } from '@/features/knowledge-cards/data/catKnowledgeCards';
 import { mouseKnowledgeCards } from '@/features/knowledge-cards/data/mouseKnowledgeCards';
 import { flattenCardGroup } from '@/features/knowledge-cards/utils/sections';
@@ -14,7 +15,7 @@ import Card from '@/components/ui/Card';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import KnowledgeCardPicker from '@/components/ui/KnowledgeCardPicker';
 import { PlusIcon } from '@/components/icons/CommonIcons';
-import { characters } from '@/data';
+import { characters, factionData } from '@/data';
 
 import CharacterSection from '../sections/CharacterSection';
 import AdvancedCardGroupEditor from './AdvancedCardGroupEditor';
@@ -79,6 +80,7 @@ export default function KnowledgeCardSection({
 }: KnowledgeCardSectionProps) {
   const { handleSelectCard } = useAppContext();
   const { isEditMode } = useEditMode();
+  const generalGroupCount = getGeneralKnowledgeCardGroupCount(factionData[factionId]);
   const [isPickerOpen, setPickerOpen] = useState(false);
   const [currentTarget, setCurrentTarget] = useState<{
     topIndex: number;
@@ -448,6 +450,7 @@ export default function KnowledgeCardSection({
                   contributor={group.contributor}
                   getCardPriority={getCardPriority}
                   onConvertToGroupSet={handleConvertToGroupSet}
+                  isGeneral={index >= Math.max(0, knowledgeCardGroups.length - generalGroupCount)}
                 />
                 {index < knowledgeCardGroups.length - 1 && (
                   <div className='my-4 border-t border-gray-200 dark:border-slate-700'></div>
@@ -471,6 +474,7 @@ export default function KnowledgeCardSection({
                   getCardRank={getCardRank}
                   imageBasePath={imageBasePath}
                   getCardPriority={getCardPriority}
+                  isGeneral={index >= Math.max(0, knowledgeCardGroups.length - generalGroupCount)}
                 />
                 {index < knowledgeCardGroups.length - 1 && (
                   <div className='my-4 border-t border-gray-200 dark:border-slate-700'></div>
