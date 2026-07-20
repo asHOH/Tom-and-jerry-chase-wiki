@@ -95,11 +95,17 @@ export async function loadTrustedGameDataAction(
 }
 
 export async function publishPreparedGameDataActions(options: {
-  actorId: string;
+  actorId: string | null;
   permission: PublishPermission;
   grants: readonly PermissionGrant[];
   prepared: PreparedPublishRequest;
 }): Promise<TrustedPublishResult[]> {
+  const actorId = options.actorId;
+  const isAnonymous = actorId === null;
+  if (isAnonymous && options.permission !== 'game_data_action.create') {
+    throw new TrustedGameDataMutationError('forbidden');
+  }
+
   const proposedApprovedRows: ApprovedCandidateReplayRow[] = [];
 
   for (const action of options.prepared.actions) {
@@ -111,17 +117,18 @@ export async function publishPreparedGameDataActions(options: {
     for (const [rowIndex, row] of action.rows.entries()) {
       const entry = asJson(row.canonicalEntry);
       const contexts = getGameActionResourceContexts(action.entityType, [entry]);
-      if (!canAccessAll(options.grants, options.permission, contexts)) {
+      if (!isAnonymous && !canAccessAll(options.grants, options.permission, contexts)) {
         throw new TrustedGameDataMutationError('forbidden');
       }
-      autoApprovesAction &&= canAccessAll(options.grants, 'game_data_action.approve', contexts);
+      autoApprovesAction &&=
+        !isAnonymous && canAccessAll(options.grants, 'game_data_action.approve', contexts);
       actionCandidateRows.push({
         rowId: `proposed:${action.entityType}:${rowIndex}`,
         entityType: action.entityType,
         actions: row.actions,
       });
     }
-    if (autoApprovesAction) proposedApprovedRows.push(...actionCandidateRows);
+    if (!isAnonymous && autoApprovesAction) proposedApprovedRows.push(...actionCandidateRows);
   }
 
   const snapshot = await readApprovedReplaySnapshot();
@@ -130,14 +137,22 @@ export async function publishPreparedGameDataActions(options: {
   const results: TrustedPublishResult[] = [];
   let expectedEpoch = snapshot.replayEpoch;
   for (const action of options.prepared.actions) {
-    const { data, error } = await supabaseAdmin.rpc('prepared_publish_game_data_actions', {
-      p_actor_id: options.actorId,
-      p_permission_key: options.permission,
-      p_entity_type: action.entityType,
-      p_entries: action.rows.map((row) => asJson(row.canonicalEntry)),
-      p_message: options.prepared.message ?? null,
-      p_expected_replay_epoch: expectedEpoch,
-    });
+    const rpcResult = isAnonymous
+      ? await supabaseAdmin.rpc('prepared_publish_anonymous_game_data_actions', {
+          p_entity_type: action.entityType,
+          p_entries: action.rows.map((row) => asJson(row.canonicalEntry)),
+          p_message: options.prepared.message ?? null,
+          p_expected_replay_epoch: expectedEpoch,
+        })
+      : await supabaseAdmin.rpc('prepared_publish_game_data_actions', {
+          p_actor_id: actorId,
+          p_permission_key: options.permission,
+          p_entity_type: action.entityType,
+          p_entries: action.rows.map((row) => asJson(row.canonicalEntry)),
+          p_message: options.prepared.message ?? null,
+          p_expected_replay_epoch: expectedEpoch,
+        });
+    const { data, error } = rpcResult;
     if (error) throw persistenceError(error);
     const actionResults = data ?? [];
     results.push(...actionResults);

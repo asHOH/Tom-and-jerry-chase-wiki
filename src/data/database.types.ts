@@ -964,6 +964,19 @@ export type Database = {
         };
         Returns: undefined;
       };
+      prepared_publish_anonymous_game_data_actions: {
+        Args: {
+          p_entity_type: string;
+          p_entries: Json;
+          p_expected_replay_epoch: number;
+          p_message: string | null;
+        };
+        Returns: {
+          id: string;
+          is_public: boolean;
+          status: Database['public']['Enums']['game_data_action_status'];
+        }[];
+      };
       prepared_publish_game_data_actions: {
         Args: {
           p_actor_id: string;

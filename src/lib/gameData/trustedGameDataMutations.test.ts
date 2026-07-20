@@ -118,6 +118,29 @@ describe('trusted game data mutations', () => {
     expect(adminRpcMock).not.toHaveBeenCalled();
   });
 
+  it('publishes anonymous submissions through the pending-only RPC', async () => {
+    adminRpcMock.mockResolvedValueOnce({
+      data: [{ id: 'anonymous-1', is_public: false, status: 'pending' }],
+      error: null,
+    } as never);
+
+    const result = await publishPreparedGameDataActions({
+      actorId: null,
+      permission: 'game_data_action.create',
+      grants: [],
+      prepared,
+    });
+
+    expect(canAccessAllMock).not.toHaveBeenCalled();
+    expect(adminRpcMock).toHaveBeenCalledWith('prepared_publish_anonymous_game_data_actions', {
+      p_entity_type: 'items',
+      p_entries: [{ op: 'set', path: 'item-b.description', newValue: 'new' }],
+      p_message: 'message',
+      p_expected_replay_epoch: 9,
+    });
+    expect(result).toEqual([{ id: 'anonymous-1', is_public: false, status: 'pending' }]);
+  });
+
   it('replays the complete approved candidate and persists canonical rows with the snapshot epoch', async () => {
     const result = await publishPreparedGameDataActions({
       actorId: 'actor-1',

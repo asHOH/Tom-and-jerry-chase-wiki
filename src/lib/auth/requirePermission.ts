@@ -20,6 +20,15 @@ type RequirePermissionResult =
   | RequirePermissionSuccess
   | { error: NextResponse; supabase?: never; userId?: never; grants?: never };
 
+type RequirePermissionOrAnonymousResult =
+  | RequirePermissionSuccess
+  | {
+      supabase: Awaited<ReturnType<typeof createClient>>;
+      userId: null;
+      grants: [];
+    }
+  | { error: NextResponse; supabase?: never; userId?: never; grants?: never };
+
 export async function loadPermissionGrants(
   supabase: Awaited<ReturnType<typeof createClient>>
 ): Promise<PermissionGrant[]> {
@@ -44,6 +53,45 @@ export async function requirePermission(
   if (!userId) {
     return { error: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) };
   }
+
+  const grants = await loadPermissionGrants(supabase);
+  const list = contexts ? (Array.isArray(contexts) ? contexts : [contexts]) : [];
+  if (
+    list.some(
+      (context) =>
+        !context.resourceType.trim() ||
+        (context.resourceId !== undefined && !context.resourceId.trim())
+    )
+  ) {
+    return { error: NextResponse.json({ error: 'Forbidden' }, { status: 403 }) };
+  }
+  const permissionKeys = Array.isArray(permission) ? permission : [permission];
+  const allowed = permissionKeys.some((permissionKey) =>
+    list.length === 0
+      ? hasPermission(grants, permissionKey)
+      : mode === 'all'
+        ? canAccessAll(grants, permissionKey, list)
+        : list.some((context) => canAccess(grants, permissionKey, context))
+  );
+  if (!allowed) {
+    return { error: NextResponse.json({ error: 'Forbidden' }, { status: 403 }) };
+  }
+  return { supabase, userId, grants };
+}
+
+/**
+ * Require a permission for authenticated callers while preserving the anonymous contributor
+ * path used by game-data submissions.
+ */
+export async function requirePermissionOrAnonymous(
+  permission: PermissionKey | readonly PermissionKey[],
+  contexts?: ResourceContext | readonly ResourceContext[],
+  mode: 'any' | 'all' = 'all'
+): Promise<RequirePermissionOrAnonymousResult> {
+  const supabase = await createClient();
+  const { data: claimsData } = await supabase.auth.getClaims();
+  const userId = claimsData?.claims.sub;
+  if (!userId) return { supabase, userId: null, grants: [] };
 
   const grants = await loadPermissionGrants(supabase);
   const list = contexts ? (Array.isArray(contexts) ? contexts : [contexts]) : [];

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-import { requirePermission } from '@/lib/auth/requirePermission';
+import { requirePermissionOrAnonymous } from '@/lib/auth/requirePermission';
 import { candidateConflictResponse } from '@/lib/gameData/candidateConflictResponse';
 import { PUBLISH_LIMITS } from '@/lib/gameData/publishLimits';
 import {
@@ -59,7 +59,7 @@ export async function POST(request: Request) {
       : NextResponse.json({ error: 'invalid_json' }, { status: 400 });
   }
 
-  const guard = await requirePermission('game_data_action.create');
+  const guard = await requirePermissionOrAnonymous('game_data_action.create');
   if ('error' in guard) return guard.error;
 
   try {
@@ -74,13 +74,14 @@ export async function POST(request: Request) {
     const finalResults = results.filter(
       (result) => result.status === 'approved' || result.status === 'rejected'
     );
+    const recipientUserId = guard.userId;
     for (const status of ['approved', 'rejected'] as const) {
       const matching = finalResults.filter((result) => result.status === status);
-      if (matching.length === 0) continue;
+      if (matching.length === 0 || recipientUserId === null) continue;
       const approved = status === 'approved';
       try {
         await publishNotification({
-          recipientUserId: guard.userId,
+          recipientUserId,
           kind: approved ? 'game_data_action_approved' : 'game_data_action_rejected',
           decisionOrigin: 'automatic',
           title: approved ? '游戏数据改动已自动通过' : '游戏数据改动未通过',

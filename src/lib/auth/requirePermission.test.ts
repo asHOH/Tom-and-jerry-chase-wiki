@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 
-import { requirePermission } from './requirePermission';
+import { requirePermission, requirePermissionOrAnonymous } from './requirePermission';
 
 jest.mock('@/lib/supabase/server', () => ({ createClient: jest.fn() }));
 jest.mock('next/server', () => ({
@@ -29,6 +29,13 @@ describe('requirePermission', () => {
     mockCreateClient.mockResolvedValue(client(false, []));
     const result = await requirePermission('article.create');
     expect('error' in result && result.error.status).toBe(401);
+  });
+
+  it('preserves an anonymous caller for explicitly anonymous-capable routes', async () => {
+    mockCreateClient.mockResolvedValue(client(false, []));
+    const result = await requirePermissionOrAnonymous('game_data_action.create');
+    expect(result).toMatchObject({ userId: null, grants: [] });
+    expect('error' in result).toBe(false);
   });
 
   it('returns 403 when an instance grant does not match the context', async () => {

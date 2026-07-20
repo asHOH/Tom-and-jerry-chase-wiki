@@ -1,4 +1,4 @@
-import { requirePermission } from '@/lib/auth/requirePermission';
+import { requirePermissionOrAnonymous } from '@/lib/auth/requirePermission';
 import { PUBLISH_LIMITS } from '@/lib/gameData/publishLimits';
 import {
   publishPreparedGameDataActions,
@@ -17,7 +17,9 @@ jest.mock('@/env', () => ({
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: 'test-publishable-key',
   },
 }));
-jest.mock('@/lib/auth/requirePermission', () => ({ requirePermission: jest.fn() }));
+jest.mock('@/lib/auth/requirePermission', () => ({
+  requirePermissionOrAnonymous: jest.fn(),
+}));
 jest.mock('@/lib/gameData/trustedGameDataMutations', () => {
   class MockTrustedGameDataMutationError extends Error {
     constructor(
@@ -34,7 +36,7 @@ jest.mock('@/lib/gameData/trustedGameDataMutations', () => {
 });
 jest.mock('@/lib/notificationUtils', () => ({ publishNotification: jest.fn() }));
 
-const requirePermissionMock = jest.mocked(requirePermission);
+const requirePermissionMock = jest.mocked(requirePermissionOrAnonymous);
 const publishPreparedMock = jest.mocked(publishPreparedGameDataActions);
 const mutableEnv = env as unknown as { NEXT_PUBLIC_DISABLE_ARTICLES?: string };
 
@@ -103,6 +105,26 @@ describe('publish route', () => {
 
     expect(response.status).toBe(401);
     expect(publishPreparedMock).not.toHaveBeenCalled();
+  });
+
+  it('publishes anonymous submissions as pending actions', async () => {
+    requirePermissionMock.mockResolvedValueOnce({
+      supabase: {} as never,
+      userId: null,
+      grants: [],
+    });
+    const { POST } = await import('./route');
+
+    const response = await POST(createRequest(validBody));
+
+    expect(response.status).toBe(200);
+    expect(publishPreparedMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        actorId: null,
+        permission: 'game_data_action.create',
+        grants: [],
+      })
+    );
   });
 
   it('passes only strict canonical output to trusted persistence', async () => {
