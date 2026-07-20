@@ -1,4 +1,4 @@
-import type { TraitRelationKind } from '@/data/types';
+import type { CharacterRelationTag, TraitRelationKind } from '@/data/types';
 
 import type { RelationItemOptions } from './characterRelationViewModel';
 
@@ -14,6 +14,12 @@ type CreateEditableRelationItemOptionsParams = {
     itemId: string,
     description: string
   ) => void;
+  onUpdateTags?: (
+    characterId: string,
+    relationKind: TraitRelationKind,
+    itemId: string,
+    tags: CharacterRelationTag[]
+  ) => void;
 };
 
 export const createEditableRelationItemOptions = ({
@@ -23,6 +29,7 @@ export const createEditableRelationItemOptions = ({
   onToggleMinor,
   onRemove,
   onUpdateDescription,
+  onUpdateTags,
 }: CreateEditableRelationItemOptionsParams): RelationItemOptions => ({
   relationKind,
   isEditable: true,
@@ -31,4 +38,10 @@ export const createEditableRelationItemOptions = ({
   onRemove: (itemId) => onRemove(characterId, relationKind, itemId),
   onUpdateDescription: (itemId, description) =>
     onUpdateDescription(characterId, relationKind, itemId, description),
+  ...(onUpdateTags
+    ? {
+        onUpdateTags: (itemId: string, tags: CharacterRelationTag[]) =>
+          onUpdateTags(characterId, relationKind, itemId, tags),
+      }
+    : {}),
 });

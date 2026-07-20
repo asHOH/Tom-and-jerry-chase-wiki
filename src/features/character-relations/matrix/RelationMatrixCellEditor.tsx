@@ -3,11 +3,12 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { cn } from '@/lib/design';
-import type { TraitRelationKind } from '@/data/types';
+import type { CharacterRelationTag, TraitRelationKind } from '@/data/types';
 import {
   removeCharacterRelationItemFromKinds,
   upsertCharacterRelationItem,
 } from '@/features/characters/utils/characterRelationOverlay';
+import { supportsCharacterRelationTags } from '@/features/characters/utils/characterRelationTags';
 import { BaseDialog } from '@/components/ui/BaseDialog';
 import Button from '@/components/ui/Button';
 
@@ -59,6 +60,7 @@ export default function RelationMatrixCellEditor({
   const [selectedKind, setSelectedKind] = useState<TraitRelationKind | ''>('');
   const [description, setDescription] = useState('');
   const [isMinor, setIsMinor] = useState(false);
+  const [tagPairs, setTagPairs] = useState<CharacterRelationTag[]>([]);
 
   useEffect(() => {
     if (!selection || !open) return;
@@ -66,6 +68,7 @@ export default function RelationMatrixCellEditor({
     setSelectedKind(getInitialRelationKind(selection, legalKinds));
     setDescription(selection.cell?.description ?? '');
     setIsMinor(!!selection.cell?.isMinor);
+    setTagPairs(selection.cell?.tagPairs?.map((tag) => ({ ...tag })) ?? []);
   }, [legalKinds, open, selection]);
 
   if (!selection) {
@@ -80,10 +83,19 @@ export default function RelationMatrixCellEditor({
     if (!selectedKind) return;
 
     const trimmedDescription = description.trim();
+    const normalizedTagPairs = supportsCharacterRelationTags(selectedKind)
+      ? tagPairs
+          .map((tag) => ({
+            counters: tag.counters.trim(),
+            counteredBy: tag.counteredBy.trim(),
+          }))
+          .filter((tag) => tag.counters && tag.counteredBy)
+      : [];
     const item = {
       id: selection.column.id,
       description: trimmedDescription,
       isMinor,
+      ...(normalizedTagPairs.length > 0 ? { tags: normalizedTagPairs } : {}),
     };
 
     removeCharacterRelationItemFromKinds(
@@ -112,6 +124,7 @@ export default function RelationMatrixCellEditor({
           id: selection.row.id,
           description: trimmedDescription,
           isMinor,
+          ...(normalizedTagPairs.length > 0 ? { tags: normalizedTagPairs } : {}),
         });
       }
     }
@@ -195,6 +208,70 @@ export default function RelationMatrixCellEditor({
             </button>
           ))}
         </div>
+
+        {selectedKind && supportsCharacterRelationTags(selectedKind) && (
+          <fieldset className='flex flex-col gap-2'>
+            <legend className='text-sm font-medium text-gray-700 dark:text-gray-200'>
+              克制分类
+            </legend>
+            <p className='text-xs text-gray-500 dark:text-gray-400'>
+              分别填写克制方与被克制方看到的标签，例如“高伤”和“怕高伤”。
+            </p>
+            {tagPairs.map((tag, index) => (
+              <div key={index} className='grid grid-cols-[1fr_1fr_auto] items-center gap-2'>
+                <input
+                  value={tag.counters}
+                  onChange={(event) =>
+                    setTagPairs((current) =>
+                      current.map((item, itemIndex) =>
+                        itemIndex === index
+                          ? { ...item, counters: event.currentTarget.value }
+                          : item
+                      )
+                    )
+                  }
+                  aria-label={`克制方分类 ${index + 1}`}
+                  placeholder='如：高伤'
+                  className='min-w-0 rounded-md border border-gray-300 bg-white px-2 py-1.5 text-sm text-gray-900 dark:border-slate-600 dark:bg-slate-800 dark:text-white'
+                />
+                <input
+                  value={tag.counteredBy}
+                  onChange={(event) =>
+                    setTagPairs((current) =>
+                      current.map((item, itemIndex) =>
+                        itemIndex === index
+                          ? { ...item, counteredBy: event.currentTarget.value }
+                          : item
+                      )
+                    )
+                  }
+                  aria-label={`被克制方分类 ${index + 1}`}
+                  placeholder='如：怕高伤'
+                  className='min-w-0 rounded-md border border-gray-300 bg-white px-2 py-1.5 text-sm text-gray-900 dark:border-slate-600 dark:bg-slate-800 dark:text-white'
+                />
+                <Button
+                  variant='danger'
+                  size='sm'
+                  onClick={() =>
+                    setTagPairs((current) => current.filter((_, itemIndex) => itemIndex !== index))
+                  }
+                >
+                  删除
+                </Button>
+              </div>
+            ))}
+            <Button
+              variant='secondary'
+              size='sm'
+              className='w-fit'
+              onClick={() =>
+                setTagPairs((current) => [...current, { counters: '', counteredBy: '' }])
+              }
+            >
+              添加分类
+            </Button>
+          </fieldset>
+        )}
 
         <label className='flex flex-col gap-1 text-sm font-medium text-gray-700 dark:text-gray-200'>
           说明（建议以角色名开头）

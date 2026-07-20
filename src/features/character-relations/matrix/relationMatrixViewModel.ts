@@ -1,7 +1,14 @@
 import { cards, maps, modes, specialSkills } from '@/data/static';
 import { characters } from '@/data/store';
-import type { CharacterRelation, FactionId, SingleItem, TraitRelationKind } from '@/data/types';
+import type {
+  CharacterRelation,
+  CharacterRelationTag,
+  FactionId,
+  SingleItem,
+  TraitRelationKind,
+} from '@/data/types';
 import { catCharacterIds, mouseCharacterIds } from '@/features/characters/data/characterMetadata';
+import { getCharacterRelationTagLabels } from '@/features/characters/utils/characterRelationTags';
 import { getCharacterRelation } from '@/features/characters/utils/relationReadModel';
 
 export type RelationMatrixRowFaction = FactionId;
@@ -34,6 +41,8 @@ export type RelationMatrixCell = {
   description: string;
   tooltipContent: string;
   sourceKind: TraitRelationKind;
+  tagPairs?: CharacterRelationTag[];
+  tagLabels?: string[];
 };
 
 export type RelationMatrixViewModel = {
@@ -202,16 +211,20 @@ const createCell = (
   relationKind: TraitRelationKind,
   subjectName: string,
   targetName: string,
-  item: { description?: string; isMinor?: boolean }
+  item: { description?: string; isMinor?: boolean; tags?: CharacterRelationTag[] }
 ): RelationMatrixCell => {
   const displayKind = getDisplayKind(relationKind);
   const description = item.description ?? '';
+  const tagLabels = getCharacterRelationTagLabels(item.tags, relationKind);
+  const tagSummary = tagLabels.length > 0 ? ` [${tagLabels.join('、')}]` : '';
   return {
     displayKind,
     isMinor: !!item.isMinor,
     description,
-    tooltipContent: `${getRelationSentence(relationKind, subjectName, targetName)}：${description}`,
+    tooltipContent: `${getRelationSentence(relationKind, subjectName, targetName)}${tagSummary}：${description}`,
     sourceKind: relationKind,
+    tagPairs: item.tags?.map((tag) => ({ ...tag })) ?? [],
+    tagLabels,
   };
 };
 

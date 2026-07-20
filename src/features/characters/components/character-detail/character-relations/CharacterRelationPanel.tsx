@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { cn } from '@/lib/design';
+import { supportsCharacterRelationTags } from '@/features/characters/utils/characterRelationTags';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 import { editable } from '@/components/ui/editable';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
-import { TrashIcon } from '@/components/icons/CommonIcons';
+import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 
 import type { RelationDisplayItem } from './characterRelationViewModel';
@@ -105,6 +106,8 @@ const relationItemDescriptionClassName = 'mt-1 text-left text-xs text-gray-500 d
 const relationItemTextareaClassName =
   'mt-1 w-full resize-none rounded-md border border-gray-200 bg-white/60 px-2 py-1 text-left text-xs text-gray-600 focus:border-blue-400 focus:ring-1 focus:ring-blue-300 focus:outline-none dark:border-gray-600 dark:bg-slate-800/60 dark:text-gray-300';
 const minorLabelClassName = 'text-[11px] text-gray-500 dark:text-gray-400';
+const relationTagClassName =
+  'inline-flex rounded-full bg-white/80 px-2 py-0.5 text-[11px] font-medium text-gray-600 ring-1 ring-gray-200 dark:bg-slate-800/80 dark:text-gray-300 dark:ring-slate-600';
 
 const getItemAriaLabel = (item: RelationDisplayItem, canEdit: boolean) =>
   item.type === 'character' ? item.getAriaLabel(canEdit) : item.ariaLabel;
@@ -175,6 +178,77 @@ function RelationItemMedia({ item }: { item: RelationDisplayItem }) {
   );
 }
 
+function RelationTagEditor({ item }: { item: RelationDisplayItem }) {
+  const [tagPairs, setTagPairs] = useState(item.tagPairs);
+
+  useEffect(() => {
+    setTagPairs(item.tagPairs);
+  }, [item.id, item.relationKind, item.tagPairs]);
+
+  const updateTag = (index: number, field: 'counters' | 'counteredBy', value: string) => {
+    setTagPairs((current) =>
+      current.map((tag, tagIndex) => (tagIndex === index ? { ...tag, [field]: value } : tag))
+    );
+  };
+
+  const saveTags = () => {
+    const completeTags = tagPairs
+      .map((tag) => ({
+        counters: tag.counters.trim(),
+        counteredBy: tag.counteredBy.trim(),
+      }))
+      .filter((tag) => tag.counters && tag.counteredBy);
+
+    if (completeTags.length === tagPairs.length) {
+      item.onUpdateTags?.(completeTags);
+    }
+  };
+
+  return (
+    <div className='mt-2 flex flex-col gap-1.5' onBlur={saveTags}>
+      {tagPairs.map((tag, index) => (
+        <div key={index} className='grid grid-cols-[1fr_1fr_auto] items-center gap-1.5'>
+          <input
+            value={tag.counters}
+            onChange={(event) => updateTag(index, 'counters', event.currentTarget.value)}
+            className={relationItemTextareaClassName}
+            aria-label={`克制方分类 ${index + 1}`}
+            placeholder='克制方，如：高伤'
+          />
+          <input
+            value={tag.counteredBy}
+            onChange={(event) => updateTag(index, 'counteredBy', event.currentTarget.value)}
+            className={relationItemTextareaClassName}
+            aria-label={`被克制方分类 ${index + 1}`}
+            placeholder='被克制方，如：怕高伤'
+          />
+          <IconButton
+            type='button'
+            aria-label={`删除分类 ${index + 1}`}
+            onClick={() => {
+              const nextTags = tagPairs.filter((_, tagIndex) => tagIndex !== index);
+              setTagPairs(nextTags);
+              item.onUpdateTags?.(nextTags);
+            }}
+            variant='delete'
+            size='sm'
+          >
+            <TrashIcon className={getIconButtonIconClassName('sm')} aria-hidden='true' />
+          </IconButton>
+        </div>
+      ))}
+      <button
+        type='button'
+        onClick={() => setTagPairs((current) => [...current, { counters: '', counteredBy: '' }])}
+        className='inline-flex w-fit items-center gap-1 rounded-md px-1.5 py-1 text-xs text-blue-600 hover:bg-blue-100 dark:text-blue-300 dark:hover:bg-blue-900/40'
+      >
+        <PlusIcon className='h-3.5 w-3.5' aria-hidden='true' />
+        添加克制分类
+      </button>
+    </div>
+  );
+}
+
 function RelationItemCard({
   item,
   themeClasses,
@@ -240,6 +314,19 @@ function RelationItemCard({
             </IconButton>
           )}
         </div>
+        {!canEdit && item.tagLabels.length > 0 && (
+          <div className='mt-1 flex flex-wrap gap-1' aria-label='克制分类'>
+            {item.tagLabels.map((tag) => (
+              <span key={tag} className={relationTagClassName}>
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
+        {canEdit &&
+          item.isEditable &&
+          item.onUpdateTags &&
+          supportsCharacterRelationTags(item.relationKind) && <RelationTagEditor item={item} />}
         {canEdit && canEditDescription ? (
           item.descriptionPath ? (
             <e.span

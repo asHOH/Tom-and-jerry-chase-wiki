@@ -15,6 +15,7 @@ import {
   removeCharacterRelationItem,
   toggleCharacterRelationMinor,
   updateCharacterRelationDescription,
+  updateCharacterRelationTags,
 } from '@/features/characters/utils/characterRelationOverlay';
 import { CharacterSelector } from '@/components/ui/CharacterSelector';
 
@@ -82,6 +83,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       onToggleMinor: toggleCharacterRelationMinor,
       onRemove: removeCharacterRelationItem,
       onUpdateDescription: updateCharacterRelationDescription,
+      onUpdateTags: updateCharacterRelationTags,
     });
   const createSelectHandler = (relationKind: TraitRelationKind) =>
     createRelationSelectHandler({

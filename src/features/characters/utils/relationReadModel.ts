@@ -8,6 +8,7 @@ import type {
   TraitRelation,
   TraitRelationKind,
 } from '@/data/types';
+import { characterRelationTagPairs } from '@/features/characters/utils/characterRelationTags';
 import {
   getRelationsByKind,
   getRelationsBySubject,
@@ -216,6 +217,9 @@ const toRelationItem = (
     id: targetName,
     ...(relation.description ? { description: relation.description } : {}),
     isMinor: relation.isMinor ?? false,
+    ...(relation.tags && relation.tags.length > 0
+      ? { tags: relation.tags.map((tag) => ({ ...tag })) }
+      : {}),
   };
 };
 
@@ -226,6 +230,34 @@ const mergeRelationItems = (
   return [...primary, ...secondary.filter((item) => !primary.some((p) => p.id === item.id))];
 };
 
+const mergeTagDerivedRelationItems = (
+  primary: CharacterRelationItem[],
+  tagDerived: CharacterRelationItem[]
+): CharacterRelationItem[] => {
+  const merged = primary.map((item) => {
+    const derivedItem = tagDerived.find((candidate) => candidate.id === item.id);
+    if (!derivedItem?.tags?.length) return item;
+
+    const tags = [...(item.tags ?? [])];
+    derivedItem.tags.forEach((tag) => {
+      if (
+        !tags.some(
+          (existing) =>
+            existing.counters === tag.counters && existing.counteredBy === tag.counteredBy
+        )
+      ) {
+        tags.push(tag);
+      }
+    });
+    return { ...item, tags };
+  });
+
+  return [
+    ...merged,
+    ...tagDerived.filter((item) => !primary.some((existing) => existing.id === item.id)),
+  ];
+};
+
 const normalizeLegacyItems = (
   items: CharacterRelationItem[] | undefined
 ): CharacterRelationItem[] => {
@@ -234,6 +266,7 @@ const normalizeLegacyItems = (
     id: item.id,
     description: item.description ?? '',
     isMinor: !!item.isMinor,
+    ...(item.tags && item.tags.length > 0 ? { tags: item.tags.map((tag) => ({ ...tag })) } : {}),
   }));
 };
 
@@ -278,6 +311,7 @@ const buildLegacyOverlayRelations = (
       id: otherId,
       description: item.description ?? '',
       isMinor: !!item.isMinor,
+      ...(item.tags && item.tags.length > 0 ? { tags: item.tags.map((tag) => ({ ...tag })) } : {}),
     }));
     legacy[targetKey] = mergeRelationItems(legacy[targetKey], inverseItems);
   };
@@ -370,13 +404,58 @@ const buildSharedInverseCharacterRelations = (id: string) => {
   };
 };
 
+const buildTagDerivedCharacterRelations = (
+  charactersRecord: DeepReadonly<Record<string, CharacterWithFaction>>,
+  id: string
+): Pick<CharacterRelation, 'counters' | 'counteredBy'> => {
+  const current = charactersRecord[id];
+  if (!current) return { counters: [], counteredBy: [] };
+
+  const currentTags = new Set(current.counterTags ?? []);
+  const counters: CharacterRelationItem[] = [];
+  const counteredBy: CharacterRelationItem[] = [];
+
+  Object.entries(charactersRecord).forEach(([otherId, other]) => {
+    if (otherId === id || other.factionId === current.factionId) return;
+
+    const otherTags = new Set(other.counterTags ?? []);
+    const counterTags = characterRelationTagPairs
+      .filter((tag) => currentTags.has(tag.counters) && otherTags.has(tag.counteredBy))
+      .map((tag) => ({ ...tag }));
+    const counteredByTags = characterRelationTagPairs
+      .filter((tag) => currentTags.has(tag.counteredBy) && otherTags.has(tag.counters))
+      .map((tag) => ({ ...tag }));
+
+    if (counterTags.length > 0) {
+      counters.push({
+        id: otherId,
+        description: `${id}的“${counterTags.map((tag) => tag.counters).join('、')}”特性克制${otherId}。`,
+        isMinor: false,
+        tags: counterTags,
+      });
+    }
+
+    if (counteredByTags.length > 0) {
+      counteredBy.push({
+        id: otherId,
+        description: `${id}的“${counteredByTags.map((tag) => tag.counteredBy).join('、')}”特性会被${otherId}克制。`,
+        isMinor: false,
+        tags: counteredByTags,
+      });
+    }
+  });
+
+  return { counters, counteredBy };
+};
+
 const mergeCharacterRelationProjection = (
   sharedTraitRelations: CharacterRelation,
   sharedInverseCharacterRelations: Pick<
     CharacterRelation,
     'collaborators' | 'counterEachOther' | 'counteredBy' | 'counters'
   >,
-  legacyOverlayProjection: LegacyOverlayProjection
+  legacyOverlayProjection: LegacyOverlayProjection,
+  tagDerivedRelations: Pick<CharacterRelation, 'counters' | 'counteredBy'>
 ): CharacterRelation => {
   const merged = {
     ...sharedTraitRelations,
@@ -410,6 +489,12 @@ const mergeCharacterRelationProjection = (
     }
   });
 
+  merged.counters = mergeTagDerivedRelationItems(merged.counters, tagDerivedRelations.counters);
+  merged.counteredBy = mergeTagDerivedRelationItems(
+    merged.counteredBy,
+    tagDerivedRelations.counteredBy
+  );
+
   return merged;
 };
 
@@ -424,7 +509,8 @@ export function getCharacterRelation(
   const mergedRelation = mergeCharacterRelationProjection(
     buildSharedTraitRelations(id),
     buildSharedInverseCharacterRelations(id),
-    buildLegacyOverlayRelations(charactersRecord, id)
+    buildLegacyOverlayRelations(charactersRecord, id),
+    buildTagDerivedCharacterRelations(charactersRecord, id)
   );
 
   return normalizeCharacterRelationProjection(id, mergedRelation, {

@@ -1,5 +1,11 @@
 import { cards } from '@/data/static';
-import type { CharacterRelationItem, FactionId, TraitRelationKind } from '@/data/types';
+import type {
+  CharacterRelationItem,
+  CharacterRelationTag,
+  FactionId,
+  TraitRelationKind,
+} from '@/data/types';
+import { getCharacterRelationTagLabels } from '@/features/characters/utils/characterRelationTags';
 
 export type RelationItemOptions = {
   relationKind: TraitRelationKind;
@@ -8,6 +14,7 @@ export type RelationItemOptions = {
   onToggleMinor?: (id: string) => void;
   onRemove?: (id: string) => void;
   onUpdateDescription?: (id: string, description: string) => void;
+  onUpdateTags?: (id: string, tags: CharacterRelationTag[]) => void;
 };
 
 type RelationDisplayBase = {
@@ -18,10 +25,13 @@ type RelationDisplayBase = {
   isEditable: boolean;
   descriptionPath?: string;
   relationKind: TraitRelationKind;
+  tagPairs: CharacterRelationTag[];
+  tagLabels: string[];
   onToggleMinor?: () => void;
   getToggleLabel?: (currentIsMinor: boolean) => string;
   onRemove?: () => void;
   onUpdateDescription?: (description: string) => void;
+  onUpdateTags?: (tags: CharacterRelationTag[]) => void;
 };
 
 export type CharacterDisplayItem = RelationDisplayBase & {
@@ -83,6 +93,14 @@ const optionalRelationActions = (
           options.onUpdateDescription?.(itemId, description),
       }
     : {}),
+  ...(options.onUpdateTags
+    ? { onUpdateTags: (tags: CharacterRelationTag[]) => options.onUpdateTags?.(itemId, tags) }
+    : {}),
+});
+
+const relationTagFields = (item: CharacterRelationItem, relationKind: TraitRelationKind) => ({
+  tagPairs: item.tags?.map((tag) => ({ ...tag })) ?? [],
+  tagLabels: getCharacterRelationTagLabels(item.tags, relationKind),
 });
 
 export const sortByImportance = <T extends { isMinor?: boolean }>(items: T[]): T[] =>
@@ -114,6 +132,7 @@ export const buildCharacterItems = (
       onNavigate: () => handleSelectCharacter(id),
       isEditable: options.isEditable,
       relationKind: options.relationKind,
+      ...relationTagFields(item, options.relationKind),
       ...optionalRelationActions(id, options, descriptionPath),
       getToggleLabel: (currentIsMinor) => `切换${id}的关系为${currentIsMinor ? '主要' : '次要'}`,
     } satisfies CharacterDisplayItem;
@@ -141,6 +160,7 @@ export const buildKnowledgeCardItems = (
         onNavigate: () => navigateToCard(card.id),
         isEditable: options.isEditable,
         relationKind: options.relationKind,
+        ...relationTagFields(card, options.relationKind),
         ...optionalRelationActions(card.id, options, descriptionPath),
         getToggleLabel: (currentIsMinor) =>
           `切换${card.id}的知识卡关系为${currentIsMinor ? '主要' : '次要'}`,
@@ -169,6 +189,7 @@ export const buildSpecialSkillItems = (
       onNavigate: () => navigateToSkill(skill.id),
       isEditable: options.isEditable,
       relationKind: options.relationKind,
+      ...relationTagFields(skill, options.relationKind),
       ...optionalRelationActions(skill.id, options, descriptionPath),
       getToggleLabel: (currentIsMinor) =>
         `切换${skill.id}的特技关系为${currentIsMinor ? '主要' : '次要'}`,
@@ -195,6 +216,7 @@ export const buildMapItems = (
       onNavigate: () => navigateToMap(map.id),
       isEditable: options.isEditable,
       relationKind: options.relationKind,
+      ...relationTagFields(map, options.relationKind),
       ...optionalRelationActions(map.id, options, descriptionPath),
       getToggleLabel: (currentIsMinor) =>
         `切换${map.id}的地图关系为${currentIsMinor ? '主要' : '次要'}`,
@@ -221,6 +243,7 @@ export const buildModeItems = (
       onNavigate: () => navigateToMode(mode.id),
       isEditable: options.isEditable,
       relationKind: options.relationKind,
+      ...relationTagFields(mode, options.relationKind),
       ...optionalRelationActions(mode.id, options, descriptionPath),
       getToggleLabel: (currentIsMinor) =>
         `切换${mode.id}的模式关系为${currentIsMinor ? '主要' : '次要'}`,

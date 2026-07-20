@@ -15,6 +15,16 @@ const normalizeCharacterRelationItem = (
   id: item.id,
   description: item.description ?? '',
   isMinor: !!item.isMinor,
+  ...(item.tags && item.tags.length > 0
+    ? {
+        tags: item.tags
+          .map((tag) => ({
+            counters: tag.counters.trim(),
+            counteredBy: tag.counteredBy.trim(),
+          }))
+          .filter((tag) => tag.counters && tag.counteredBy),
+      }
+    : {}),
 });
 
 const isSameCharacterRelationItem = (
@@ -23,7 +33,8 @@ const isSameCharacterRelationItem = (
 ): boolean =>
   left.id === right.id &&
   (left.description ?? '') === (right.description ?? '') &&
-  !!left.isMinor === !!right.isMinor;
+  !!left.isMinor === !!right.isMinor &&
+  JSON.stringify(left.tags ?? []) === JSON.stringify(right.tags ?? []);
 
 const ownsCharacterRelationKind = (characterId: string, relationKind: TraitRelationKind) => {
   const characterRecord = characters[characterId] as
@@ -141,6 +152,29 @@ export const updateCharacterRelationDescription = (
     ...item,
     description: nextDescription,
   }));
+};
+
+export const updateCharacterRelationTags = (
+  characterId: string,
+  relationKind: TraitRelationKind,
+  itemId: string,
+  tags: CharacterRelationItem['tags']
+) => {
+  updateCharacterRelationItem(characterId, relationKind, itemId, (item) => {
+    const normalizedTags = tags
+      ?.map((tag) => ({
+        counters: tag.counters.trim(),
+        counteredBy: tag.counteredBy.trim(),
+      }))
+      .filter((tag) => tag.counters && tag.counteredBy);
+
+    if (!normalizedTags || normalizedTags.length === 0) {
+      const { tags: _unused, ...itemWithoutTags } = item;
+      return itemWithoutTags;
+    }
+
+    return { ...item, tags: normalizedTags };
+  });
 };
 
 export const toggleCharacterRelationMinor = (

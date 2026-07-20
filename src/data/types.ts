@@ -141,10 +141,16 @@ export type RecommendedStorePlan = {
   description: string;
 };
 
+export type CharacterRelationTag = {
+  counters: string;
+  counteredBy: string;
+};
+
 export type CharacterRelationItem = {
   id: string;
   description?: string;
   isMinor: boolean;
+  tags?: CharacterRelationTag[];
 };
 
 // Character definition type (without id, for raw definitions)
@@ -159,6 +165,7 @@ export type CharacterDefinition = {
   // Positioning tags (faction-specific)
   catPositioningTags?: CatPositioningTag[]; // For cat characters
   mousePositioningTags?: MousePositioningTag[]; // For mouse characters
+  counterTags?: string[]; // Generic counter traits paired in characterRelationTags.ts
 
   // Skill allocations
   skillAllocations?: SkillAllocation[];
@@ -482,6 +489,7 @@ export type TraitRelation = {
   target: SingleItem;
   description?: string;
   isMinor?: boolean;
+  tags?: CharacterRelationTag[];
 };
 export type Trait = {
   description: string;

@@ -34,7 +34,7 @@ const relationKey = (kind: TraitRelationKind, item: SingleItem) =>
 
 const normalizeTraitRelation = (trait: CharacterRelationTrait): TraitRelation | null => {
   if (!trait.relation) return null;
-  const { kind, subject, target, isMinor } = trait.relation;
+  const { kind, subject, target, isMinor, tags } = trait.relation;
   if (!relationKindSet.has(kind)) return null;
   return {
     kind,
@@ -46,6 +46,7 @@ const normalizeTraitRelation = (trait: CharacterRelationTrait): TraitRelation | 
         ? { description: trait.description }
         : {}),
     ...(typeof isMinor === 'boolean' ? { isMinor } : {}),
+    ...(tags && tags.length > 0 ? { tags } : {}),
   };
 };
 
