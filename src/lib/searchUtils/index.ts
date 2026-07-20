@@ -1,6 +1,6 @@
 import { convertToPinyin } from '../pinyinUtils';
 import { searchAchievements } from './achievements';
-import { searchBuffs } from './buffs';
+import { searchBuffs, searchDetailedBuffs } from './buffs';
 import { searchCards } from './cards';
 import { searchCharacters } from './character';
 import { searchDocs } from './docs';
@@ -93,6 +93,7 @@ export const performSearch = async function* (query: string): AsyncGenerator<Sea
     arrayFromAsync(searchModes(findMatchContext, lowerCaseQuery, pinyinQuery)),
     arrayFromAsync(searchAchievements(findMatchContext, lowerCaseQuery, pinyinQuery)),
     arrayFromAsync(searchDocs(findMatchContext, lowerCaseQuery, pinyinQuery)),
+    arrayFromAsync(searchDetailedBuffs(findMatchContext, lowerCaseQuery, pinyinQuery)),
   ]);
 
   // Limit results per type and sort by priority

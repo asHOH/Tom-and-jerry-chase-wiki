@@ -46,6 +46,14 @@ export default function TextWithHoverTooltips({ text: rawText }: TextWithHoverTo
     () => buildTextWithHoverTooltipTokens(rawText, currentCharacterId),
     [currentCharacterId, rawText]
   );
+  const referencedBuffIds = useMemo(() => {
+    const ids = new Set<string>();
+    for (const match of rawText.matchAll(/!\{(\d+)(?:-(\d+))?\}/g)) {
+      if (match[1]) ids.add(match[1]);
+      if (match[2]) ids.add(match[2]);
+    }
+    return [...ids];
+  }, [rawText]);
 
   const colorfulHighlightedParts = useMemo(() => {
     const shouldMeasure = shouldMeasureTooltipParsing();
@@ -150,6 +158,9 @@ export default function TextWithHoverTooltips({ text: rawText }: TextWithHoverTo
 
   return (
     <>
+      {referencedBuffIds.map((id) => (
+        <span key={id} id={`buff-${id}`} className='scroll-mt-24' aria-hidden='true' />
+      ))}
       {colorfulHighlightedParts.map((part, index) => (
         <Fragment key={`text-part-${index}`}>{part}</Fragment>
       ))}

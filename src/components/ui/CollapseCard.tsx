@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { cn } from '@/lib/design';
 import { ChevronDownIcon } from '@/components/icons/CommonIcons';
@@ -13,6 +13,7 @@ type CollapseCardProps = {
   color?: 'default' | 'red' | 'orange' | 'yellow' | 'green' | 'purple' | 'blue' | 'lime';
   openOnStart?: boolean;
   lazyMount?: boolean;
+  openOnHashTargets?: string;
 };
 
 const titleSizeClasses = {
@@ -41,6 +42,7 @@ export default function CollapseCard({
   size = 'md',
   openOnStart = false,
   lazyMount = false,
+  openOnHashTargets,
 }: CollapseCardProps) {
   const [isExpanded, setIsExpanded] = useState(openOnStart);
   const [hasMountedChildren, setHasMountedChildren] = useState(openOnStart);
@@ -58,6 +60,30 @@ export default function CollapseCard({
     lime: 'bg-lime-100 dark:bg-lime-900 border-2 border-lime-200 dark:border-lime-700',
   }[color];
   const shouldRenderChildren = !lazyMount || isExpanded || hasMountedChildren;
+
+  useEffect(() => {
+    if (!openOnHashTargets) return;
+
+    const hashTargets = new Set(openOnHashTargets.split(' '));
+
+    const revealHashTarget = () => {
+      const hash = decodeURIComponent(window.location.hash.slice(1));
+      if (!hashTargets.has(hash)) return;
+
+      setHasMountedChildren(true);
+      setIsExpanded(true);
+      window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => {
+          document.getElementById(hash)?.scrollIntoView({ block: 'center' });
+        });
+      });
+    };
+
+    revealHashTarget();
+    window.addEventListener('hashchange', revealHashTarget);
+    return () => window.removeEventListener('hashchange', revealHashTarget);
+  }, [openOnHashTargets]);
+
   const handleToggle = () => {
     const nextIsExpanded = !isExpanded;
     if (nextIsExpanded) {

@@ -5,12 +5,17 @@ import { SingleItem } from '@/data/types';
 // 将导入的 JSON 断言为索引签名类型，允许字符串索引
 const allBuffDetailedDescriptions = allBuffDetailedDescriptionsRaw as Record<string, string>;
 
+export type SingleItemOwnedBuff = {
+  id: string;
+  description: string;
+};
+
 /**
  * 根据给定的 SingleItem 获取其对应的所有 buff 描述。
  * @param item 单个数据项（角色、技能、知识卡等）
  * @returns buff 描述字符串数组，若无匹配则返回空数组
  */
-export default function singleItemOwnbuffs(item: SingleItem): string[] {
+export function getSingleItemOwnedBuffs(item: SingleItem): SingleItemOwnedBuff[] {
   const { name, type, factionId } = item;
 
   // 构建可能的查找键，优先使用带派系的键
@@ -34,7 +39,12 @@ export default function singleItemOwnbuffs(item: SingleItem): string[] {
   }
 
   // 根据 buff 编号获取描述，过滤掉不存在的条目
-  return buffIds
-    .map((id) => allBuffDetailedDescriptions[String(id)])
-    .filter((desc): desc is string => !!desc);
+  return buffIds.flatMap((id) => {
+    const description = allBuffDetailedDescriptions[String(id)];
+    return description ? [{ id: String(id), description }] : [];
+  });
+}
+
+export default function singleItemOwnbuffs(item: SingleItem): string[] {
+  return getSingleItemOwnedBuffs(item).map(({ description }) => description);
 }

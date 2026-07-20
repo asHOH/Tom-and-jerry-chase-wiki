@@ -1,4 +1,4 @@
-import singleItemOwnbuffs from '@/lib/singleItemOwnbuffs';
+import { getSingleItemOwnedBuffs } from '@/lib/singleItemOwnbuffs';
 import type { SingleItem } from '@/data/types';
 
 import SingleItemOwnbuffsCard from '../components/SingleItemOwnbuffsCard';
@@ -9,9 +9,8 @@ type DetailOwnbuffsCardProps = {
 };
 
 export default function DetailOwnbuffsCard({ singleItem }: DetailOwnbuffsCardProps) {
-  const numberOfOwnOwnbuffs: number[] = [singleItem].map((item) => {
-    return singleItemOwnbuffs(item).length;
-  });
+  const ownedBuffs = getSingleItemOwnedBuffs(singleItem);
+  const numberOfOwnOwnbuffs: number[] = [ownedBuffs.length];
   const totalOwnbuffs = numberOfOwnOwnbuffs.reduce((a, b) => a + b, 0);
 
   if (totalOwnbuffs === 0) {
@@ -35,6 +34,7 @@ export default function DetailOwnbuffsCard({ singleItem }: DetailOwnbuffsCardPro
       items={items}
       singleContent={<SingleItemOwnbuffsCard singleItem={singleItem} />}
       lazyMountContent
+      openOnHashTargets={ownedBuffs.map(({ id }) => `buff-${id}`).join(' ')}
     />
   );
 }

@@ -17,6 +17,7 @@ type DetailRelatedCardProps = {
   items: DetailRelatedCardItem[];
   singleContent: ReactNode;
   lazyMountContent?: boolean;
+  openOnHashTargets?: string;
 };
 
 const contentClassName =
@@ -37,6 +38,7 @@ export default function DetailRelatedCard({
   items,
   singleContent,
   lazyMountContent = false,
+  openOnHashTargets,
 }: DetailRelatedCardProps) {
   const visibleItems = items.filter((item) => item.count > 0);
   const accordionItems = visibleItems.map(({ count: _count, ...item }) => item);
@@ -52,6 +54,7 @@ export default function DetailRelatedCard({
       collapsedTitleClassName={collapsedTitleClassName}
       color={color}
       lazyMount={lazyMountContent}
+      {...(openOnHashTargets ? { openOnHashTargets } : {})}
     >
       {visibleItems.length <= 1 ? (
         <div>{visibleItems[0]?.children ?? singleContent}</div>

@@ -1,4 +1,4 @@
-import singleItemOwnbuffs from '@/lib/singleItemOwnbuffs';
+import { getSingleItemOwnedBuffs } from '@/lib/singleItemOwnbuffs';
 import { SingleItem } from '@/data/types';
 
 import TextWithHoverTooltips from './TextWithHoverTooltips';
@@ -8,16 +8,22 @@ interface SingleItemOwnbuffsTextProps {
 }
 
 export default function SingleItemOwnbuffsCard({ singleItem }: SingleItemOwnbuffsTextProps) {
-  const allStrings = [
-    '（部分相关信息可查阅 状态效果 或 机制-状态 页面）',
-    ...singleItemOwnbuffs(singleItem),
-  ];
+  const ownedBuffs = getSingleItemOwnedBuffs(singleItem);
 
-  if (allStrings.length === 0) {
+  if (ownedBuffs.length === 0) {
     return (
       <TextWithHoverTooltips text='    $暂未收录相关状态$italic text-gray-500 dark:text-gray-400 text-sm#' />
     );
   }
 
-  return <TextWithHoverTooltips text={allStrings.join('\n')} />;
+  return (
+    <>
+      <div>（部分相关信息可查阅 状态效果 或 机制-状态 页面）</div>
+      {ownedBuffs.map(({ id, description }) => (
+        <div key={id} id={`buff-${id}`} className='scroll-mt-24'>
+          <TextWithHoverTooltips text={description} />
+        </div>
+      ))}
+    </>
+  );
 }

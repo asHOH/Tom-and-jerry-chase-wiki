@@ -43,10 +43,15 @@ export type SearchResult =
       Entity,
       'name' | 'imageUrl'
     >)
-  | ({ type: 'buff'; matchContext: string; priority: number; isPinyinMatch: boolean } & Pick<
-      Buff,
-      'name' | 'imageUrl'
-    >)
+  | ({
+      type: 'buff';
+      matchContext: string;
+      priority: number;
+      isPinyinMatch: boolean;
+      detailedBuffId?: string;
+      href?: string;
+    } & Pick<Buff, 'name'> &
+      Partial<Pick<Buff, 'imageUrl'>>)
   | ({ type: 'map'; matchContext: string; priority: number; isPinyinMatch: boolean } & Pick<
       MapType,
       'name' | 'imageUrl'

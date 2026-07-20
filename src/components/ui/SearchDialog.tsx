@@ -136,6 +136,8 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
         return `${result.type}-${result.factionId}-${result.name}`;
       case 'doc':
         return `${result.type}-${result.slug}`;
+      case 'buff':
+        return `${result.type}-${result.detailedBuffId ?? result.name}`;
       default:
         return `${result.type}-${getResultName(result)}`;
     }
@@ -167,7 +169,13 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
           navigate(`/entities/${encodeURIComponent(result.name)}`);
           break;
         case 'buff':
-          navigate(`/buffs/${encodeURIComponent(result.name)}`);
+          if (result.href) {
+            navigate(result.href);
+          } else if (result.detailedBuffId) {
+            navigate('/buffs');
+          } else {
+            navigate(`/buffs/${encodeURIComponent(result.name)}`);
+          }
           break;
         case 'map':
           navigate(`/maps/${encodeURIComponent(result.name)}`);
