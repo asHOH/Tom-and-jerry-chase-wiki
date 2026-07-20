@@ -49,6 +49,43 @@ describe('recent changes', () => {
     });
   });
 
+  it('resolves faction-scoped achievements to their names and detail route', () => {
+    expect(
+      mapGameDataChange({
+        id: 'achievement-1',
+        entity_type: 'achievements',
+        entry: [
+          { op: 'set', path: 'cat.翻盘.description', value: '更新' },
+          { op: 'set', path: 'mouse.救援.score', value: 2 },
+        ],
+        message: '调整成就',
+        created_at: '2026-07-18T08:00:00Z',
+        created_by: null,
+        users: null,
+      })
+    ).toMatchObject({
+      title: '更新成就：翻盘、救援',
+      href: '/achievements/cat/%E7%BF%BB%E7%9B%98',
+    });
+  });
+
+  it('uses the same faction-scoped route handling for special skills', () => {
+    expect(
+      mapGameDataChange({
+        id: 'special-skill-1',
+        entity_type: 'specialSkills',
+        entry: { op: 'set', path: 'mouse.急速翻滚.cooldown', value: 3 },
+        message: null,
+        created_at: '2026-07-18T08:00:00Z',
+        created_by: null,
+        users: null,
+      })
+    ).toMatchObject({
+      title: '更新特技：急速翻滚',
+      href: '/special-skills/mouse/%E6%80%A5%E9%80%9F%E7%BF%BB%E6%BB%9A',
+    });
+  });
+
   it('merges both sources by timestamp before slicing the requested window', () => {
     const changes = mergeRecentChangeRows(
       [

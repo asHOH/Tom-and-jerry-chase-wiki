@@ -546,11 +546,11 @@ export const resolvers: Record<string, PathResolver> = {
         factionId = 'mouse';
       }
       if (!skill) return null;
-      const updateInfo = await getMergedUpdateTime('specialSkills', decodedId);
+      const updateInfo = await getMergedUpdateTime('specialSkills', `${factionId}.${decodedId}`);
       return createDetailResult(
         { ...skill, name: decodedId, factionId },
         'SpecialSkill',
-        `/special-skills/${decodedId}`,
+        `/special-skills/${factionId}/${decodedId}`,
         updateInfo?.date
       );
     },

@@ -3,9 +3,9 @@ import { WikiChangeType } from '@/data/types';
 import type { PublicActionRow } from './gameData/publicActionsTypes';
 import { publicActionsToWikiHistory } from './wikiHistoryFromActions';
 
-const row = (id: string, entry: unknown): PublicActionRow => ({
+const row = (id: string, entry: unknown, entityType = 'characters'): PublicActionRow => ({
   id,
-  entity_type: 'characters',
+  entity_type: entityType,
   entry,
   created_at: '2026-05-09T00:00:00.000Z',
   status: 'approved',
@@ -99,5 +99,50 @@ describe('publicActionsToWikiHistory', () => {
     ]);
 
     expect(changes.map((change) => change.item.name)).toEqual(['Tom']);
+  });
+
+  it('should preserve faction-scoped achievement identity and field paths', () => {
+    const changes = getBatchChanges([
+      row(
+        'achievement-action',
+        {
+          op: 'set',
+          path: 'cat.翻盘.description',
+          oldValue: 'old',
+          newValue: 'new',
+        },
+        'achievements'
+      ),
+    ]);
+
+    expect(changes).toEqual([
+      expect.objectContaining({
+        item: { name: '翻盘', type: 'achievement', factionId: 'cat' },
+        changeType: WikiChangeType.UPDATE,
+        description: '更新 description',
+      }),
+    ]);
+  });
+
+  it('should preserve faction-scoped special-skill identity', () => {
+    const changes = getBatchChanges([
+      row(
+        'special-skill-action',
+        {
+          op: 'set',
+          path: 'mouse.急速翻滚.cooldown',
+          oldValue: 1,
+          newValue: 2,
+        },
+        'specialSkills'
+      ),
+    ]);
+
+    expect(changes[0]).toEqual(
+      expect.objectContaining({
+        item: { name: '急速翻滚', type: 'specialSkill', factionId: 'mouse' },
+        description: '更新 cooldown',
+      })
+    );
   });
 });

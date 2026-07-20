@@ -270,6 +270,44 @@ describe('public game data actions', () => {
     });
   });
 
+  it('should keep faction-scoped achievement and special-skill history keys', async () => {
+    queryRows = [
+      {
+        ...publicRows[0]!,
+        id: 'achievement-row',
+        entity_type: 'achievements',
+        entry: {
+          op: 'set',
+          path: 'cat.翻盘.description',
+          oldValue: 'old',
+          newValue: 'new',
+        },
+      },
+      {
+        ...publicRows[0]!,
+        id: 'special-skill-row',
+        entity_type: 'specialSkills',
+        entry: {
+          op: 'set',
+          path: 'mouse.急速翻滚.cooldown',
+          oldValue: 1,
+          newValue: 2,
+        },
+      },
+    ];
+
+    const history = await getEntityUpdateHistory();
+
+    expect(history.get('achievements:cat.翻盘')).toMatchObject({
+      actionId: 'achievement-row',
+      affectedPath: 'cat.翻盘.description',
+    });
+    expect(history.get('specialSkills:mouse.急速翻滚')).toMatchObject({
+      actionId: 'special-skill-row',
+      affectedPath: 'mouse.急速翻滚.cooldown',
+    });
+  });
+
   it('should retry the history query after a transient cached query failure', async () => {
     const { cached: cachedMock } = jest.requireMock('@/lib/serverCache') as {
       cached: jest.Mock;

@@ -3,6 +3,7 @@ import { SingleItem, SingleItemTypeName, WikiChangeType, WikiYearData } from '@/
 
 import { flattenActionEntries, normalizePublicActionEntries } from './gameData/actionEntries';
 import type { PublicActionRow } from './gameData/publicActionsTypes';
+import { getGameDataActionTarget } from './gameData/scopedEntityPaths';
 
 /**
  * Maps entity_type (used in game_data_actions) to SingleItemTypeName (used in wiki history)
@@ -23,28 +24,19 @@ const ENTITY_TYPE_TO_SINGLE_ITEM_TYPE: Record<string, SingleItemTypeName> = {
 /**
  * Maps action operation to WikiChangeType
  */
-function opToChangeType(op: string, path: string): WikiChangeType {
-  // If path only has one segment (e.g., "汤姆"), it's a top-level item
+function opToChangeType(op: string, path: string, itemPathDepth = 1): WikiChangeType {
+  // If path ends at the item record (e.g., "汤姆" or "cat.翻盘"), it's a top-level item.
   const pathParts = path.split('.').filter(Boolean);
 
   if (op === 'add') {
     // If adding at root level, it's CREATE; otherwise it's ADD
-    return pathParts.length === 1 ? WikiChangeType.CREATE : WikiChangeType.ADD;
+    return pathParts.length === itemPathDepth ? WikiChangeType.CREATE : WikiChangeType.ADD;
   }
   if (op === 'delete') {
     return WikiChangeType.REMOVE;
   }
   // 'set' operation is UPDATE
   return WikiChangeType.UPDATE;
-}
-
-/**
- * Extracts the item name from an action path
- * e.g., "汤姆.skills.0.name" -> "汤姆"
- */
-function extractItemName(path: string): string {
-  const parts = path.split('.');
-  return parts[0] ?? '';
 }
 
 interface WikiHistoryFromAction {
@@ -66,21 +58,23 @@ function actionToWikiHistoryInfo(
   const singleItemType = ENTITY_TYPE_TO_SINGLE_ITEM_TYPE[entityType];
   if (!singleItemType) return null;
 
-  const itemName = extractItemName(action.path);
-  if (!itemName) return null;
+  const target = getGameDataActionTarget(entityType, action.path);
+  if (!target) return null;
+
+  const itemPathDepth = target.factionId ? 2 : 1;
 
   const year = createdAt.getFullYear();
   const month = createdAt.getMonth() + 1;
   const day = createdAt.getDate();
   const date = `${month}.${day}` as `${number}.${number}`;
 
-  const changeType = opToChangeType(action.op, action.path);
+  const changeType = opToChangeType(action.op, action.path, itemPathDepth);
 
   // Generate a description based on the change
   let description = '';
   const pathParts = action.path.split('.').filter(Boolean);
 
-  if (pathParts.length === 1) {
+  if (pathParts.length === itemPathDepth) {
     // Top-level change (create/delete entire item)
     if (action.op === 'add') {
       description = '创建该条目';
@@ -89,14 +83,18 @@ function actionToWikiHistoryInfo(
     }
   } else {
     // Nested change
-    const fieldPath = pathParts.slice(1).join('.');
+    const fieldPath = pathParts.slice(itemPathDepth).join('.');
     description = `更新 ${fieldPath}`;
   }
 
   return {
     year,
     date,
-    item: { name: itemName, type: singleItemType },
+    item: {
+      name: target.entityId,
+      type: singleItemType,
+      ...(target.factionId && { factionId: target.factionId }),
+    },
     changeType,
     description,
   };
@@ -146,7 +144,7 @@ export function publicActionsToWikiHistory(actions: PublicActionRow[]): WikiYear
       // Group changes by item to create batch changes
       const itemChanges = new Map<string, WikiHistoryFromAction[]>();
       for (const change of changes) {
-        const key = `${change.item.type}:${change.item.name}`;
+        const key = `${change.item.type}:${change.item.factionId ?? ''}:${change.item.name}`;
         if (!itemChanges.has(key)) {
           itemChanges.set(key, []);
         }

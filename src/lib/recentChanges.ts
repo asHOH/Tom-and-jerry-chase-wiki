@@ -5,10 +5,12 @@ import type { Route } from 'next';
 import { CACHE_TAGS } from '@/lib/cacheTags';
 import { flattenActionEntries, normalizePublicActionEntries } from '@/lib/gameData/actionEntries';
 import { PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG } from '@/lib/gameData/publicActionsCache';
+import { getGameDataActionTarget } from '@/lib/gameData/scopedEntityPaths';
 import { cached } from '@/lib/serverCache';
 import { hasSupabaseAdminConfig, supabaseAdmin } from '@/lib/supabase/admin';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
 import { supabaseServerPublic } from '@/lib/supabase/public';
+import type { FactionId } from '@/data/types';
 
 export const RECENT_CHANGES_PAGE_SIZE = 20;
 export const RECENT_CHANGES_MAX_ITEMS = 100;
@@ -66,6 +68,7 @@ const GAME_DATA_LABELS: Record<string, string> = {
 };
 
 const GAME_DATA_ROUTES: Record<string, string> = {
+  achievements: '/achievements',
   buffs: '/buffs',
   cards: '/cards',
   characters: '/characters',
@@ -74,6 +77,12 @@ const GAME_DATA_ROUTES: Record<string, string> = {
   items: '/items',
   maps: '/maps',
   modes: '/modes',
+  specialSkills: '/special-skills',
+};
+
+type AffectedGameDataName = {
+  name: string;
+  factionId?: FactionId;
 };
 
 export function normalizeRecentChangesFilter(value: string | undefined): RecentChangesFilter {
@@ -85,23 +94,36 @@ export function normalizeRecentChangesPage(value: string | undefined): number {
   return Number.isSafeInteger(page) && page > 0 ? page : 1;
 }
 
-function extractAffectedNames(row: GameDataChangeRow): string[] {
+function extractAffectedNames(row: GameDataChangeRow): AffectedGameDataName[] {
   const entries = normalizePublicActionEntries(row.entry);
-  const names = new Set<string>();
+  const names = new Map<string, AffectedGameDataName>();
 
   for (const action of flattenActionEntries(entries)) {
-    const parts = action.path.split('.').filter(Boolean);
-    const name = row.entity_type === 'specialSkills' ? parts[1] : parts[0];
-    if (name) names.add(name);
+    const target = getGameDataActionTarget(row.entity_type, action.path);
+    if (!target) continue;
+
+    const key = target.factionId ? `${target.factionId}:${target.entityId}` : target.entityId;
+    if (!names.has(key)) {
+      names.set(key, {
+        name: target.entityId,
+        ...(target.factionId && { factionId: target.factionId }),
+      });
+    }
   }
 
-  return [...names];
+  return [...names.values()];
 }
 
-function gameDataHref(entityType: string, names: string[]): Route | null {
+function gameDataHref(entityType: string, names: AffectedGameDataName[]): Route | null {
   const route = GAME_DATA_ROUTES[entityType];
-  const name = names[0];
-  return route && name ? (`${route}/${encodeURIComponent(name)}` as Route) : null;
+  const target = names[0];
+  if (!route || !target) return null;
+
+  if (target.factionId) {
+    return `${route}/${encodeURIComponent(target.factionId)}/${encodeURIComponent(target.name)}` as Route;
+  }
+
+  return `${route}/${encodeURIComponent(target.name)}` as Route;
 }
 
 export function mapArticleChange(row: ArticleChangeRow): RecentChange {
@@ -119,7 +141,13 @@ export function mapArticleChange(row: ArticleChangeRow): RecentChange {
 export function mapGameDataChange(row: GameDataChangeRow): RecentChange {
   const names = extractAffectedNames(row);
   const label = GAME_DATA_LABELS[row.entity_type] ?? '游戏数据';
-  const namesLabel = names.length > 0 ? `：${names.slice(0, 3).join('、')}` : '';
+  const namesLabel =
+    names.length > 0
+      ? `：${names
+          .slice(0, 3)
+          .map(({ name }) => name)
+          .join('、')}`
+      : '';
   const overflowLabel = names.length > 3 ? ` 等 ${names.length} 项` : '';
 
   return {

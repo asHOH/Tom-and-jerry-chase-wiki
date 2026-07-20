@@ -39,6 +39,7 @@ import {
   queryPublicActionHistoryRows,
 } from './publicActionQueries';
 import type { PublicActionRow } from './publicActionsTypes';
+import { getGameDataActionEntityKey } from './scopedEntityPaths';
 
 export { PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG } from '@/lib/gameData/publicActionsCache';
 
@@ -115,14 +116,7 @@ function extractActionPaths(entry: ActionHistoryEntry): string[] {
 }
 
 function extractEntryId(entityType: string, path: string): string | undefined {
-  const pathParts = path.split('.').filter(Boolean);
-  if (pathParts.length === 0) return undefined;
-
-  if (entityType === 'specialSkills') {
-    return pathParts.length >= 2 ? pathParts[1] : undefined;
-  }
-
-  return pathParts[0];
+  return getGameDataActionEntityKey(entityType, path);
 }
 
 export async function getEntityUpdateHistory(): Promise<Map<string, EntityUpdateHistory>> {
