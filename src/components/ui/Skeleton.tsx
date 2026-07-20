@@ -203,7 +203,57 @@ export function SkeletonArticleCard({ animate = true }: { animate?: boolean }) {
  * Skeleton for character detail page
  */
 export function SkeletonCharacterDetail({ animate = true }: { animate?: boolean }) {
-  return <SkeletonDetailLayout animate={animate} sectionCount={4} />;
+  return (
+    <div className='space-y-8'>
+      <div className='flex flex-col gap-8 md:flex-row'>
+        <div className='md:w-1/3'>
+          <div className='rounded-lg bg-white p-4 shadow-md dark:bg-slate-800'>
+            <Skeleton className='-mx-4 -mt-4 mb-4 h-64 rounded-t-lg' animate={animate} />
+            <div className='flex items-center justify-between py-2'>
+              <Skeleton className='h-9 w-3/4' animate={animate} />
+              <div className='flex gap-1'>
+                <Skeleton className='h-8 w-8 rounded-md' animate={animate} />
+                <Skeleton className='h-8 w-8 rounded-md' animate={animate} />
+              </div>
+            </div>
+            <div className='space-y-2'>
+              <Skeleton className='h-4 w-2/3' animate={animate} />
+              <Skeleton className='h-4 w-1/2' animate={animate} />
+              <Skeleton className='h-4 w-3/4' animate={animate} />
+            </div>
+            <div className='mt-2 space-y-2'>
+              <Skeleton className='h-4 w-full' animate={animate} />
+              <Skeleton className='h-4 w-5/6' animate={animate} />
+              <Skeleton className='h-4 w-2/3' animate={animate} />
+            </div>
+            <div className='mt-6 space-y-3'>
+              <Skeleton className='h-6 w-32' animate={animate} />
+              <Skeleton className='h-6 w-40' animate={animate} />
+              <Skeleton className='h-6 w-36' animate={animate} />
+              <div className='border-t border-gray-200 pt-4 dark:border-gray-700'>
+                <Skeleton className='h-8 w-full' animate={animate} />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className='overflow-y-hidden md:w-2/3'>
+          <div className='space-y-6'>
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className='space-y-3'>
+                <Skeleton className='h-8 w-40' animate={animate} />
+                <div className='space-y-3 rounded-lg border border-gray-200 p-4 dark:border-gray-700'>
+                  <Skeleton className='h-4 w-full' animate={animate} />
+                  <Skeleton className='h-4 w-5/6' animate={animate} />
+                  <Skeleton className='h-4 w-3/4' animate={animate} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 /**
