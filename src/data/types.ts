@@ -60,16 +60,7 @@ export type SkillLevel = {
   charges?: number; // 技能存储次数
 };
 
-// Raw skill definition (without ID, for character definitions)
-export type SkillDefinition = {
-  name: string;
-  type: SkillType;
-  aliases?: string[]; // Alternative names for search
-  description?: string; // Basic description (optional, especially for passive skills)
-  detailedDescription?: string; // Detailed description for detailed view
-  imageUrl?: string; // Skill icon image URL
-  videoUrl?: string; // Skill video URL (external link)
-
+export type SkillUsageProperties = {
   // Skill usage properties
   canMoveWhileUsing?: boolean; // 移动释放
   canUseInAir?: boolean; // 空中释放
@@ -81,16 +72,31 @@ export type SkillDefinition = {
   canHitInPipe?: boolean; // 可击中管道中的角色
   cooldownTiming?: '前摇前' | '释放时' | '释放后'; // 进入CD时机
   cueRange?: '随距离远近变化' | '全图可见' | '本房间可见' | '无音效'; // 技能音效的范围
+};
+
+type SinglePartSkillUsage = SkillUsageProperties & { parts?: never };
+type MultiPartSkillUsage = { parts: SkillUsageProperties[] } & {
+  [K in keyof SkillUsageProperties]?: never;
+};
+
+type SkillDefinitionBase = {
+  name: string;
+  type: SkillType;
+  aliases?: string[]; // Alternative names for search
+  description?: string; // Basic description (optional, especially for passive skills)
+  detailedDescription?: string; // Detailed description for detailed view
+  imageUrl?: string; // Skill icon image URL
+  videoUrl?: string; // Skill video URL (external link)
 
   skillLevels: SkillLevel[];
 };
 
+// Raw skill definition (without ID, for character definitions)
+export type SkillDefinition = SkillDefinitionBase & (SinglePartSkillUsage | MultiPartSkillUsage);
+
 // Final processed skill (with ID assigned)
-export type Skill = Omit<SkillDefinition, 'forecast' | 'aftercast'> & {
+export type Skill = SkillDefinition & {
   id: string;
-  // 处理后的技能可以没有前摇/后摇（未测试），也可以为负值表示未测试
-  forecast?: number;
-  aftercast?: number;
 };
 
 export const enum CardGroupType {

@@ -20,15 +20,10 @@ function processSkillsWithIds(
   characterName: string,
   skills: ReadonlyArray<SkillDefinition>
 ): Skill[] {
-  return skills.map((skill) => {
-    const { forecast, aftercast, ...rest } = skill;
-    return {
-      ...rest,
-      ...(typeof forecast === 'number' ? { forecast } : {}),
-      ...(typeof aftercast === 'number' ? { aftercast } : {}),
-      id: `${characterName}-${skill.type}`,
-    };
-  });
+  return skills.map((skill) => ({
+    ...skill,
+    id: `${characterName}-${skill.type}`,
+  }));
 }
 
 /**

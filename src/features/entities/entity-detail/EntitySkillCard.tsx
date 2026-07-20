@@ -9,10 +9,7 @@ import { useMobile } from '@/hooks/useMediaQuery';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { Skill, SkillLevel } from '@/data/types';
-import {
-  convertCancelableAftercastToDisplayText,
-  convertCancelableSkillToDisplayText,
-} from '@/features/characters/utils/skills';
+import { getSkillUsageSections } from '@/features/characters/utils/skillUsage';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 import TextWithItemKeyTooltips from '@/features/shared/components/TextWithItemKeyTooltips';
 import Card from '@/components/ui/Card';
@@ -80,78 +77,10 @@ export default function EntitySkillCard({ skill }: SkillCardProps) {
     ];
   };
 
-  const getSkillProperties = () => {
-    const properties: React.ReactNode[] = [];
-
-    const cooldownProp = getCooldownProperty();
-    if (cooldownProp) properties.push(cooldownProp);
-    {
-      if (skill.canMoveWhileUsing) properties.push('移动释放');
-      if (skill.canUseInAir) properties.push('空中释放');
-      if (skill.type !== 'passive') {
-        // Combine forecast with cancelableSkill (optional fields)
-        const forecastBase =
-          typeof skill.forecast === 'number'
-            ? skill.forecast < 0
-              ? '前摇未测试'
-              : skill.forecast === 0
-                ? '无前摇'
-                : `前摇 ${skill.forecast} 秒`
-            : undefined;
-        const cancelableSkillText =
-          skill.forecast !== 0 && skill.cancelableSkill
-            ? typeof skill.cancelableSkill === 'string'
-              ? skill.cancelableSkill
-              : convertCancelableSkillToDisplayText(skill.cancelableSkill)
-            : undefined;
-        if (forecastBase || cancelableSkillText) {
-          const text = `${forecastBase ?? ''}${forecastBase && cancelableSkillText ? '，' : ''}${
-            cancelableSkillText ?? ''
-          }`;
-          properties.push(
-            <TextWithItemKeyTooltips key='forecast' text={text} isDetailed={isDetailed} />
-          );
-        }
-
-        // Combine aftercast with cancelableAftercast (optional fields)
-        const aftercastBase =
-          typeof skill.aftercast === 'number'
-            ? skill.aftercast < 0
-              ? '后摇未测试'
-              : skill.aftercast === 0
-                ? '无后摇'
-                : `后摇 ${skill.aftercast} 秒`
-            : undefined;
-        const cancelableAfterText =
-          skill.aftercast !== 0 && skill.cancelableAftercast
-            ? typeof skill.cancelableAftercast === 'string'
-              ? skill.cancelableAftercast
-              : convertCancelableAftercastToDisplayText(skill.cancelableAftercast)
-            : undefined;
-        if (aftercastBase || cancelableAfterText) {
-          const text = `${aftercastBase ?? ''}${aftercastBase && cancelableAfterText ? '，' : ''}${
-            cancelableAfterText ?? ''
-          }`;
-          properties.push(
-            <TextWithItemKeyTooltips key='aftercast' text={text} isDetailed={isDetailed} />
-          );
-        }
-      }
-
-      if (skill.canHitInPipe) properties.push('可击中管道中的角色');
-      if (skill.cooldownTiming && skill.cooldownTiming !== '释放时') {
-        properties.push(`CD时机: ${skill.cooldownTiming}`);
-      }
-      if (skill.cueRange && skill.cueRange !== '无音效') {
-        properties.push(`技能音效: ${skill.cueRange}`);
-      }
-    }
-
-    return properties;
-  };
-
-  const properties = getSkillProperties();
-  const hasProperties = properties.length > 0;
+  const cooldownProperty = getCooldownProperty();
+  const usageSections = getSkillUsageSections(skill);
+  const hasProperties =
+    cooldownProperty !== null || usageSections.some((section) => section.properties.length > 0);
 
   return (
     <Card className='p-6!'>
@@ -191,12 +120,31 @@ export default function EntitySkillCard({ skill }: SkillCardProps) {
 
           {hasProperties && (
             <div className='mt-1 px-2 text-sm text-gray-500 dark:text-gray-400'>
-              {properties.map((prop, index) => (
-                <React.Fragment key={index}>
-                  {index > 0 && ' · '}
-                  {prop}
-                </React.Fragment>
-              ))}
+              {cooldownProperty}
+              {usageSections.length > 1 ? (
+                <div className={cn('space-y-1', cooldownProperty && 'mt-1')}>
+                  {usageSections.map((section) => (
+                    <div key={section.label}>
+                      <span className='font-semibold text-gray-600 dark:text-gray-300'>
+                        {section.label}：
+                      </span>
+                      {section.properties.map((property, propertyIndex) => (
+                        <React.Fragment key={property}>
+                          {propertyIndex > 0 && ' · '}
+                          <TextWithItemKeyTooltips text={property} isDetailed={isDetailed} />
+                        </React.Fragment>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                usageSections[0]?.properties.map((property, propertyIndex) => (
+                  <React.Fragment key={property}>
+                    {(cooldownProperty || propertyIndex > 0) && ' · '}
+                    <TextWithItemKeyTooltips text={property} isDetailed={isDetailed} />
+                  </React.Fragment>
+                ))
+              )}
             </div>
           )}
 

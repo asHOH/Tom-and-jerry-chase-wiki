@@ -212,16 +212,8 @@ type SkillLevel = {
   charges?: number; // Number of charges the skill can store at this level
 };
 
-// The complete definition of a character's skill.
-type SkillDefinition = {
-  name: string; // The name of the skill.
-  type: SkillType; // The type of skill (active, weapon, passive).
-  aliases?: string[]; // Alternative names for the skill, used for searching.
-  description?: string; // A general description of the skill's function.
-  detailedDescription?: string; // A more detailed description.
-  videoUrl?: string; // URL for a video demonstrating the skill.
-
-  // --- Skill Usage Properties ---
+// Properties describing how one part of a skill is used.
+type SkillUsageProperties = {
   canMoveWhileUsing?: boolean; // True if the character can move while casting the skill.
   canUseInAir?: boolean; // True if the skill can be used mid-air.
   cancelableSkill?: CancelableSkillType; // How the startup animation can be cancelled.
@@ -230,10 +222,21 @@ type SkillDefinition = {
   aftercast?: number; // The recovery animation time in seconds (aftercast).
   canHitInPipe?: boolean; // True if the skill can affect characters inside pipes.
   cooldownTiming?: '前摇前' | '释放时' | '释放后'; // When the cooldown begins: 'Before cast', 'During cast', or 'After cast'.
-  cueRange?: '全图可见' | '本房间可见' | '无音效'; // The audible range of the skill's sound effect: 'Map-wide', 'Room-only', or 'No sound'.
+  cueRange?: '随距离远近变化' | '全图可见' | '本房间可见' | '无音效'; // The audible range of the skill's sound effect.
+};
+
+// The complete definition of a character's skill. Usage properties are either
+// stored directly for a legacy single-part skill or in an ordered parts array.
+type SkillDefinition = {
+  name: string; // The name of the skill.
+  type: SkillType; // The type of skill (active, weapon, passive).
+  aliases?: string[]; // Alternative names for the skill, used for searching.
+  description?: string; // A general description of the skill's function.
+  detailedDescription?: string; // A more detailed description.
+  videoUrl?: string; // URL for a video demonstrating the skill.
 
   skillLevels: SkillLevel[]; // An array detailing each level of the skill.
-};
+} & (SkillUsageProperties | { parts: SkillUsageProperties[] });
 
 // --- Knowledge Cards (Perks) ---
 
