@@ -21,7 +21,7 @@ describe('anonymous game data action publish migration', () => {
   });
 
   it('locks the replay epoch before inserting anonymous rows', () => {
-    expect(migration).toContain('WHERE singleton = true\n  FOR UPDATE;');
+    expect(migration).toMatch(/WHERE singleton = true\s+FOR UPDATE;/);
     expect(migration).toContain('p_expected_replay_epoch');
     expect(migration).toContain('approved_replay_epoch_conflict');
   });

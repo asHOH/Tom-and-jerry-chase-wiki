@@ -3,7 +3,7 @@
 ## Status
 
 - Date: 2026-07-17
-- Last revised: 2026-07-21
+- Last revised: 2026-07-22
 - State: Additive trust-boundary cutover deployed; revoke implemented but rollout closure remains
 - Scope: Public-row decoding and replay semantics, trusted publish and approval persistence, and
   publish-time dependency grouping
@@ -24,22 +24,29 @@ Completed foundation:
 - Service-role-only prepared publish, approval, and mark-synced RPCs, complete candidate replay, and
   the publish and moderation route cutovers landed in `85e5934f`.
 - The additive epoch/prepared-RPC migrations and route cutovers are deployed. The separate Step 5B
-  revoke migration landed in `bde03ae0` but is not deployed.
+  revoke migration landed in `e04fcfa1` but is not deployed. After a read-only ledger check confirmed
+  its original duplicate version was absent remotely, its unchanged SQL was retimestamped to unique
+  repository version `20260722000000`.
 - The scalar-property delete squashing fix landed in `c07b4a14`, and the frozen container replay fix
-  landed in `c4aadeae`. Both still require production deployment and resubmission verification.
+  landed in `bf71c68e`. Both are present in the verified production build; affected-user
+  resubmission verification is still pending.
+- The anonymous prepared-publish function is live with its expected signature and service-role-only
+  execution privileges. Its repository migration remains absent from the production ledger and must
+  be reconciled separately rather than reapplied blindly.
 
 Remaining work:
 
-1. Deploy the current application fixes and verify a retained or fresh submission through the normal
-   route. Use a successful publish to establish prepared-path persistence with server/database
-   evidence.
-2. Obtain explicit approval before deploying the committed Step 5B migration alone. Do not use an
-   unreconciled normal migration push.
-3. Verify the post-revoke privileges and intended read/rejection behavior with the Step 5D probes.
-4. Rerun the approved, synced, and pending production audit after the bypasses are closed.
-5. Migrate live replay through the pure published-data and editable-store-loading plans; do not
+1. Verify a retained or fresh submission through the normal route. Use a successful publish to
+   establish prepared-path persistence with server/database evidence.
+2. Reconcile the anonymous prepared-publish migration's missing ledger entry deliberately; its live
+   object and privileges are verified, so do not reapply its SQL merely because the row is absent.
+3. Obtain explicit approval before deploying the uniquely versioned Step 5B migration alone. Do not
+   use an unreconciled normal migration push.
+4. Verify the post-revoke privileges and intended read/rejection behavior with the Step 5D probes.
+5. Rerun the approved, synced, and pending production audit after the bypasses are closed.
+6. Migrate live replay through the pure published-data and editable-store-loading plans; do not
    adapt the legacy mutable replay into the checked engine.
-6. Enable publish-time dependency grouping only after the store-loading plan removes root-client
+7. Enable publish-time dependency grouping only after the store-loading plan removes root-client
    replay.
 
 ## Frozen Contract

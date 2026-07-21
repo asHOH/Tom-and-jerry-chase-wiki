@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 
 const migrationPath =
-  'supabase/migrations/20260720000000_revoke_legacy_game_data_action_mutations.sql';
+  'supabase/migrations/20260722000000_revoke_legacy_game_data_action_mutations.sql';
 
 describe('legacy game data action access revoke migration', () => {
   const migration = readFileSync(migrationPath, 'utf8');
