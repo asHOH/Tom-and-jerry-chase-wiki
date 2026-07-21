@@ -26,22 +26,28 @@ Completed foundation:
 - The additive epoch/prepared-RPC migrations and route cutovers are deployed. The separate Step 5B
   revoke migration landed in `e04fcfa1` but is not deployed. After a read-only ledger check confirmed
   its original duplicate version was absent remotely, its unchanged SQL was retimestamped to unique
-  repository version `20260722000000`.
+  repository version `20260722000000` and committed in `f5e59f41`.
 - The scalar-property delete squashing fix landed in `c07b4a14`, and the frozen container replay fix
   landed in `bf71c68e`. Both are present in the verified production build; affected-user
   resubmission verification is still pending.
 - The anonymous prepared-publish function is live with its expected signature and service-role-only
-  execution privileges. Its repository migration remains absent from the production ledger and must
-  be reconciled separately rather than reapplied blindly.
+  execution privileges. A catalog-only comparison recorded in
+  [the live-comparison report](./reports/2026-07-22-anonymous-prepared-publish-live-comparison.md)
+  confirmed that its complete definition matches the repository migration. Approved history-only
+  repair then recorded `20260720000001` as applied without re-executing its SQL.
+- A clean local `supabase db reset --local` was deferred because the pinned Postgres Docker image
+  could not finish downloading. No local database container or migration ran; this is optional
+  reproducibility validation, not a blocker for the already-validated retimestamp-only change.
 
 Remaining work:
 
-1. Verify a retained or fresh submission through the normal route. Use a successful publish to
-   establish prepared-path persistence with server/database evidence.
-2. Reconcile the anonymous prepared-publish migration's missing ledger entry deliberately; its live
-   object and privileges are verified, so do not reapply its SQL merely because the row is absent.
-3. Obtain explicit approval before deploying the uniquely versioned Step 5B migration alone. Do not
-   use an unreconciled normal migration push.
+1. The operator is deferring the normal-route resubmission. When resumed, use a successful publish
+   to establish prepared-path persistence with server/database evidence.
+2. Optionally repeat the clean local reset in CI, on another machine, or after the Docker image is
+   available; record it as deferred until then.
+3. Obtain explicit approval before deploying the uniquely versioned Step 5B migration alone. Follow
+   the [Step 5C production runbook](./2026-07-22-game-data-step-5c-runbook.md); do not use an
+   unreconciled normal migration push.
 4. Verify the post-revoke privileges and intended read/rejection behavior with the Step 5D probes.
 5. Rerun the approved, synced, and pending production audit after the bypasses are closed.
 6. Migrate live replay through the pure published-data and editable-store-loading plans; do not

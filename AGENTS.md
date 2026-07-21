@@ -5,7 +5,7 @@ Next.js 16 App Router, React 19, strict TypeScript, and Tailwind CSS 4.
 
 - Production: <https://tjwiki.com>
 - Development preview: <https://dev.tjwiki.com>
-- Primary UI language: `zh-CN`; user-facing copy should be Chinese.
+- Primary UI language: `zh-CN`; product UI copy should be Chinese. This does not set the language of assistant responses.
 - Design mobile-first; desktop layouts enhance the mobile baseline.
 - Use the Node.js and npm versions declared in `package.json` (`engines`, `packageManager`, and `devEngines`).
 - `DEPLOY.md` holds deployment options and environment setup; do not duplicate those details here.
