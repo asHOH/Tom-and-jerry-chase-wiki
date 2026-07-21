@@ -115,6 +115,20 @@ function createActionError(
   };
 }
 
+function cloneContainerActionValue(
+  action: Readonly<Action>
+): { success: true; value: unknown } | CheckedActionFailure {
+  if (!isContainer(action.newValue)) return { success: true, value: action.newValue };
+
+  try {
+    const cloned = cloneGameDataValue(action.newValue);
+    if (cloned.success) return cloned;
+    return createActionError(action, 'clone_failed', 'Failed to clone action value');
+  } catch (cause) {
+    return createActionError(action, 'clone_failed', 'Failed to clone action value', { cause });
+  }
+}
+
 function actionPathError(action: Readonly<Action>, error: ActionPathError): CheckedActionFailure {
   return createActionError(action, error.code, error.message, {
     ...(error.segment === undefined ? {} : { segment: error.segment }),
@@ -296,6 +310,13 @@ export function applyCheckedAction(
     return createActionError(action, 'missing_new_value', 'Add actions require newValue');
   }
 
+  let replayValue = action.newValue;
+  if (!isDelete) {
+    const cloned = cloneContainerActionValue(action);
+    if (!cloned.success) return cloned;
+    replayValue = cloned.value;
+  }
+
   try {
     const parent = walkToParent(target, parsedPath.value, action, !isDelete);
     if (!parent.success) return parent;
@@ -322,18 +343,12 @@ export function applyCheckedAction(
       parent.container.splice(
         Math.min(resolvedKey.key as number, parent.container.length),
         0,
-        action.newValue
+        replayValue
       );
       return { success: true };
     }
 
-    return assignValue(
-      parent.container,
-      resolvedKey.key,
-      action.newValue,
-      action,
-      parent.finalIndex
-    );
+    return assignValue(parent.container, resolvedKey.key, replayValue, action, parent.finalIndex);
   } catch (cause) {
     return createActionError(action, 'apply_failed', 'Checked action application threw', { cause });
   }

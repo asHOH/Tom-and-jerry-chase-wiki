@@ -89,6 +89,33 @@ describe('selectPublishedGameData', () => {
     expect(mutableResult['图多盖洛']).toEqual(replacement);
   });
 
+  it('can edit a descendant of a container installed by an earlier frozen action', () => {
+    const snapshot = createApprovedActionSnapshot([
+      decodedRow('characters', 'proposed:characters:0', {
+        op: 'set',
+        path: '泰菲.knowledgeCardGroups.5',
+        newValue: { description: 'before' },
+      }),
+      decodedRow('characters', 'proposed:characters:1', {
+        op: 'set',
+        path: '泰菲.knowledgeCardGroups.5.description',
+        newValue: 'after',
+      }),
+    ]);
+
+    const result = selectPublishedGameData(
+      'characters',
+      getCanonicalGameData('characters'),
+      snapshot
+    );
+    const teffy = asMutableRecord((result as unknown as MutableRecord)['泰菲']);
+    const group = asMutableRecord((teffy.knowledgeCardGroups as unknown[])[5]);
+
+    expect(group.description).toBe('after');
+    expect(Object.isFrozen(snapshot.rows[0]?.actions[0]?.newValue)).toBe(true);
+    expect(Object.isFrozen(group)).toBe(false);
+  });
+
   it('uses faction roots and ignores rows for unknown or other domains', () => {
     const canonical = getCanonicalGameData('specialSkills');
     const catSkillId = Object.keys(canonical.cat)[0]!;

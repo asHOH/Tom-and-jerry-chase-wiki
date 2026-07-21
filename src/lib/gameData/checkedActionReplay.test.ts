@@ -84,6 +84,39 @@ describe('applyCheckedAction', () => {
     expect(target).toEqual({ Tom: { aliases: ['a', 'b'], title: 'new' } });
   });
 
+  it('clones frozen container values for assignment and array insertion', () => {
+    const assignedValue = Object.freeze({ description: 'assigned' });
+    const insertedValue = Object.freeze({ description: 'inserted' });
+    const target: Record<string, unknown> = { Tom: { groups: [] } };
+
+    expect(applyCheckedAction(target, action('set', 'Tom.profile', assignedValue))).toEqual({
+      success: true,
+    });
+    expect(applyCheckedAction(target, action('add', 'Tom.groups.0', insertedValue))).toEqual({
+      success: true,
+    });
+
+    const tom = target.Tom as { profile: unknown; groups: unknown[] };
+    expect(tom.profile).toEqual(assignedValue);
+    expect(tom.profile).not.toBe(assignedValue);
+    expect(tom.groups[0]).toEqual(insertedValue);
+    expect(tom.groups[0]).not.toBe(insertedValue);
+    expect(Object.isFrozen(tom.profile)).toBe(false);
+    expect(Object.isFrozen(tom.groups[0])).toBe(false);
+  });
+
+  it('reports an uncloneable action value before mutating the target', () => {
+    const circular: Record<string, unknown> = {};
+    circular.self = circular;
+    const target: Record<string, unknown> = {};
+
+    expect(applyCheckedAction(target, action('set', 'Tom.profile', circular))).toMatchObject({
+      success: false,
+      error: { code: 'clone_failed', path: 'Tom.profile' },
+    });
+    expect(target).toEqual({});
+  });
+
   it('rejects add without newValue and missing delete paths', () => {
     const target = { Tom: { aliases: [] } };
 
@@ -141,6 +174,29 @@ describe('applyCheckedActionRow', () => {
     });
     expect(first).toEqual({ Tom: { description: 'new' }, Jerry: { description: 'new' } });
     expect(second).toEqual(first);
+  });
+
+  it('clones container action values independently for every target', () => {
+    const payload = Object.freeze({ nested: Object.freeze({ description: 'initial' }) });
+    const first: Record<string, unknown> = {};
+    const second: Record<string, unknown> = {};
+
+    const result = applyCheckedActionRow({
+      rowId: 'row-container-isolation',
+      actions: [action('set', 'Tom.profile', payload)],
+      targets: [first, second],
+    });
+
+    expect(result.success).toBe(true);
+    const firstProfile = (first.Tom as { profile: { nested: { description: string } } }).profile;
+    const secondProfile = (second.Tom as { profile: { nested: { description: string } } }).profile;
+    expect(firstProfile).toEqual(payload);
+    expect(firstProfile).not.toBe(payload);
+    expect(firstProfile).not.toBe(secondProfile);
+    expect(firstProfile.nested).not.toBe(secondProfile.nested);
+
+    firstProfile.nested.description = 'changed';
+    expect(secondProfile.nested.description).toBe('initial');
   });
 
   it('rolls every target back when a middle action fails', () => {

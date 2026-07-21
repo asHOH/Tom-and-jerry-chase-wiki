@@ -3,7 +3,7 @@
 ## Status
 
 - Date: 2026-07-17
-- Last revised: 2026-07-20
+- Last revised: 2026-07-21
 - State: Additive trust-boundary cutover deployed; revoke implemented but rollout closure remains
 - Scope: Public-row decoding and replay semantics, trusted publish and approval persistence, and
   publish-time dependency grouping
@@ -24,18 +24,22 @@ Completed foundation:
 - Service-role-only prepared publish, approval, and mark-synced RPCs, complete candidate replay, and
   the publish and moderation route cutovers landed in `85e5934f`.
 - The additive epoch/prepared-RPC migrations and route cutovers are deployed. The separate Step 5B
-  revoke migration is implemented and tested in the repository but is not deployed.
+  revoke migration landed in `bde03ae0` but is not deployed.
+- The scalar-property delete squashing fix landed in `c07b4a14`, and the frozen container replay fix
+  landed in `c4aadeae`. Both still require production deployment and resubmission verification.
 
 Remaining work:
 
-1. Confirm one successful prepared-path publish, review and commit the Step 5B revoke migration,
-   then obtain explicit approval before deploying that migration alone. Do not use an unreconciled
-   normal migration push.
-2. Verify the post-revoke privileges and intended read/rejection behavior with the Step 5D probes.
-3. Rerun the approved, synced, and pending production audit after the bypasses are closed.
-4. Migrate live replay through the pure published-data and editable-store-loading plans; do not
+1. Deploy the current application fixes and verify a retained or fresh submission through the normal
+   route. Use a successful publish to establish prepared-path persistence with server/database
+   evidence.
+2. Obtain explicit approval before deploying the committed Step 5B migration alone. Do not use an
+   unreconciled normal migration push.
+3. Verify the post-revoke privileges and intended read/rejection behavior with the Step 5D probes.
+4. Rerun the approved, synced, and pending production audit after the bypasses are closed.
+5. Migrate live replay through the pure published-data and editable-store-loading plans; do not
    adapt the legacy mutable replay into the checked engine.
-5. Enable publish-time dependency grouping only after the store-loading plan removes root-client
+6. Enable publish-time dependency grouping only after the store-loading plan removes root-client
    replay.
 
 ## Frozen Contract
