@@ -81,6 +81,12 @@ const catCharacterDefinitions = {
         description: '配合平底锅使用，平底锅每一段伤害都能受到全垒打的攻击增伤，瞬间打出爆发伤害。',
       },
     ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '苍蝇拍', '老鼠夹', '护盾饮料'],
+        description: '兼顾控场、追击与自保。',
+      },
+    ],
     skills: [
       {
         name: '发怒冲刺',
@@ -267,6 +273,12 @@ const catCharacterDefinitions = {
         name: '全垒打',
         description:
           '在需要高伤害的场合可酌情使用。主动和武器技能都能享受全垒打的攻击增伤；全垒打提供的移速还能提高{主动技能}的冲刺距离。',
+      },
+    ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '苍蝇拍', '老鼠夹', '护盾饮料'],
+        description: '兼顾控场、追击与自保。',
       },
     ],
     skills: [
@@ -489,6 +501,12 @@ const catCharacterDefinitions = {
         description: '配合击晕和Lv.1被动，形成连续控制，以此造成高额伤害或刷取经验。',
       },
     ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '苍蝇拍', '老鼠夹', '护盾饮料'],
+        description: '兼顾控场、追击与自保。',
+      },
+    ],
     skills: [
       {
         name: '双重猫格',
@@ -686,6 +704,12 @@ const catCharacterDefinitions = {
       {
         name: '绝地反击',
         description: '弥补缺霸体的短板。',
+      },
+    ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '苍蝇拍', '老鼠夹', '护盾饮料'],
+        description: '兼顾控场、追击与自保。',
       },
     ],
     skills: [
@@ -935,6 +959,13 @@ const catCharacterDefinitions = {
           },
         ],
         defaultFolded: false,
+      },
+    ],
+
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '苍蝇拍', '老鼠夹', '护盾饮料'],
+        description: '兼顾控场、追击与自保。',
       },
     ],
     skills: [
@@ -1210,6 +1241,13 @@ const catCharacterDefinitions = {
         description: '提高机动性。',
       },
     ],
+
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '苍蝇拍', '老鼠夹', '护盾饮料'],
+        description: '兼顾控场、追击与自保。',
+      },
+    ],
     skills: [
       {
         name: '魅惑之吻',
@@ -1449,6 +1487,12 @@ const catCharacterDefinitions = {
       },
     ],
     specialSkills: [],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '苍蝇拍', '老鼠夹', '护盾饮料'],
+        description: '兼顾控场、追击与自保。',
+      },
+    ],
     skills: [
       {
         name: '警戒',
@@ -1636,6 +1680,12 @@ const catCharacterDefinitions = {
       {
         name: '绝地反击',
         description: '弥补缺霸体的短板。',
+      },
+    ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '苍蝇拍', '老鼠夹', '护盾饮料'],
+        description: '兼顾控场、追击与自保。',
       },
     ],
     skills: [
@@ -1830,6 +1880,12 @@ const catCharacterDefinitions = {
         description: '提高续航，防止被胡椒粉毒死。',
       },
     ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '苍蝇拍', '老鼠夹', '护盾饮料'],
+        description: '兼顾控场、追击与自保。',
+      },
+    ],
     skills: [
       {
         name: '胡椒粉罐头',
@@ -1995,6 +2051,12 @@ const catCharacterDefinitions = {
       {
         name: '蓄力重击',
         description: '配合击晕或套索，提高伤害。',
+      },
+    ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '苍蝇拍', '老鼠夹', '护盾饮料'],
+        description: '兼顾控场、追击与自保。',
       },
     ],
     skills: [
@@ -2211,6 +2273,12 @@ const catCharacterDefinitions = {
       {
         name: '绝地反击',
         description: '弥补缺霸体的短板。',
+      },
+    ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '苍蝇拍', '老鼠夹', '护盾饮料'],
+        description: '兼顾控场、追击与自保。',
       },
     ],
     skills: [
@@ -2447,6 +2515,12 @@ const catCharacterDefinitions = {
         description: '搭配击晕或捕鼠夹使用，补充伤害。',
       },
     ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '苍蝇拍', '老鼠夹', '护盾饮料'],
+        description: '兼顾控场、追击与自保。',
+      },
+    ],
     skills: [
       {
         name: '虚幻梦影',
@@ -2610,6 +2684,12 @@ const catCharacterDefinitions = {
       {
         name: '全垒打',
         description: '两个技能都能享受攻击力加成，大幅提高伤害。',
+      },
+    ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '苍蝇拍', '老鼠夹', '护盾饮料'],
+        description: '兼顾控场、追击与自保。',
       },
     ],
     skills: [
@@ -2839,6 +2919,12 @@ const catCharacterDefinitions = {
         description: '适配乘胜追击和乾坤一掷。但苏蕊不缺霸体，较不推荐。',
       },
     ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '苍蝇拍', '老鼠夹', '护盾饮料'],
+        description: '兼顾控场、追击与自保。',
+      },
+    ],
     skills: [
       {
         name: '律动时间',
@@ -3018,6 +3104,12 @@ const catCharacterDefinitions = {
         description: '用于前期过渡至2级被动，手绑能力提高。',
       },
     ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '苍蝇拍', '老鼠夹', '护盾饮料'],
+        description: '兼顾控场、追击与自保。',
+      },
+    ],
     skills: [
       {
         name: '自由翱翔',
@@ -3191,6 +3283,12 @@ const catCharacterDefinitions = {
         description: '蓄势一击可以弥补斯飞在削弱后缺失的伤害。',
       },
     ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '苍蝇拍', '老鼠夹', '护盾饮料'],
+        description: '兼顾控场、追击与自保。',
+      },
+    ],
     skills: [
       {
         name: '狂',
@@ -3350,6 +3448,12 @@ const catCharacterDefinitions = {
       {
         name: '绝地反击',
         description: '提高恶魔汤姆对控制效果的容错。但恶汤不缺护盾和霸体，因此该技能较不推荐。',
+      },
+    ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '苍蝇拍', '老鼠夹', '护盾饮料'],
+        description: '兼顾控场、追击与自保。',
       },
     ],
     skills: [
@@ -3542,6 +3646,12 @@ const catCharacterDefinitions = {
         description: '对面有魔术师时可以酌情使用',
       },
     ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '苍蝇拍', '老鼠夹', '护盾饮料'],
+        description: '兼顾控场、追击与自保。',
+      },
+    ],
     skills: [
       {
         name: '狡兔三窟',
@@ -3728,6 +3838,12 @@ const catCharacterDefinitions = {
       {
         name: '应急治疗',
         description: '推荐新手带，保下限。',
+      },
+    ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '苍蝇拍', '老鼠夹', '护盾饮料'],
+        description: '兼顾控场、追击与自保。',
       },
     ],
     skills: [
@@ -3922,6 +4038,12 @@ const catCharacterDefinitions = {
         description: '大幅缩短特殊爪刀CD，配合跳跃劈枪的超大攻击范围能产生不错的效果。',
       },
     ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '苍蝇拍', '老鼠夹', '护盾饮料'],
+        description: '兼顾控场、追击与自保。',
+      },
+    ],
     skills: [
       {
         name: '舞花枪',
@@ -4093,6 +4215,12 @@ const catCharacterDefinitions = {
       {
         name: '全垒打',
         description: '进一步的提高移速和伤害，并且与道具产生的反应，实战中利用好，能打出不错的效果',
+      },
+    ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '苍蝇拍', '老鼠夹', '护盾饮料'],
+        description: '兼顾控场、追击与自保。',
       },
     ],
     skills: [

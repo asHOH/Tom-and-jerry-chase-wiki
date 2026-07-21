@@ -1127,6 +1127,12 @@ const mouseCharacterDefinitions = {
         description: '第一套卡的下位替代，兼具自保和输出。',
       },
     ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '冰块', '灰花瓶', '隐身饮料'],
+        description: '兼顾干扰、控制与救援。',
+      },
+    ],
     skills: [
       {
         name: '剑与苹果',
@@ -1365,6 +1371,12 @@ const mouseCharacterDefinitions = {
         cards: ['S-舍己', 'B-精准投射', 'C-不屈', 'C-救救我', 'B-孤军奋战', 'B-应激反应'],
         description:
           '生存卡组，在打{布奇}、{米特}等高伤害的猫的对局中可用，精准投射可以减{圆滚滚}冷却，不屈增加续航，孤军奋战提高移速，被针对时和猫拉开距离，被道具打中之后，应激反应可以增加逃跑速度。没有铁血，需要走位技术，容错低，建议四排时带，新手不建议带',
+      },
+    ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '冰块', '灰花瓶', '隐身饮料'],
+        description: '兼顾干扰、控制与救援。',
       },
     ],
     skills: [
@@ -1613,6 +1625,12 @@ const mouseCharacterDefinitions = {
           '不屈大大弥补残局下只要一露面就极易被死追而难以脱身的缺点，同时因为加成的额外移速也使得在救人或墙缝期出现难以靠近的情况下可以更远位置开头盔，或是砸墙情况下也因为高移速可以快速离场的原因可以多砸一会不用特别提前离开墙缝，大大增加了机动性与自保能力',
       },
     ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '冰块', '灰花瓶', '隐身饮料'],
+        description: '兼顾干扰、控制与救援。',
+      },
+    ],
     skills: [
       {
         name: '勇气冲刺',
@@ -1839,6 +1857,12 @@ const mouseCharacterDefinitions = {
           '破夹专用，也是一个性价比较好的20点卡组。有21点后剩下费用也可以根据情况搭配别的。',
       },
     ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '冰块', '灰花瓶', '隐身饮料'],
+        description: '兼顾干扰、控制与救援。',
+      },
+    ],
     skills: [
       {
         name: '仙人掌',
@@ -2042,6 +2066,12 @@ const mouseCharacterDefinitions = {
       },
     ],
 
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '冰块', '灰花瓶', '隐身饮料'],
+        description: '兼顾干扰、控制与救援。',
+      },
+    ],
     skills: [
       {
         name: '地狱裂隙',
@@ -2249,6 +2279,12 @@ const mouseCharacterDefinitions = {
       },
     ],
 
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '冰块', '灰花瓶', '隐身饮料'],
+        description: '兼顾干扰、控制与救援。',
+      },
+    ],
     skills: [
       {
         name: '意念控制',
@@ -2444,6 +2480,12 @@ const mouseCharacterDefinitions = {
       {
         cards: ['S-无畏', 'S-铁血', 'C-救救我', 'C-不屈', 'B-绝地反击'],
         description: '辅助救援卡组。',
+      },
+    ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '冰块', '灰花瓶', '隐身饮料'],
+        description: '兼顾干扰、控制与救援。',
       },
     ],
     skills: [
@@ -2684,6 +2726,12 @@ const mouseCharacterDefinitions = {
         defaultFolded: false,
       },
     ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '冰块', '灰花瓶', '隐身饮料'],
+        description: '兼顾干扰、控制与救援。',
+      },
+    ],
     skills: [
       {
         name: '天使祝福',
@@ -2897,6 +2945,12 @@ const mouseCharacterDefinitions = {
         cards: ['S-缴械', 'S-舍己', 'B-精准投射', 'B-应激反应', 'C-救救我'],
         description:
           '对付{苏蕊}、{托普斯}、{恶魔汤姆}等角色时优先考虑的卡组。在未获得21知识点知识量时，{应激反应}也可替换为{孤军奋战}。',
+      },
+    ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '冰块', '灰花瓶', '隐身饮料'],
+        description: '兼顾干扰、控制与救援。',
       },
     ],
     skills: [
@@ -3125,6 +3179,12 @@ const mouseCharacterDefinitions = {
           },
         ],
         defaultFolded: true,
+      },
+    ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '冰块', '灰花瓶', '隐身饮料'],
+        description: '兼顾干扰、控制与救援。',
       },
     ],
     skills: [
@@ -3365,6 +3425,12 @@ const mouseCharacterDefinitions = {
         description: '{缴械}卡组。',
       },
     ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '冰块', '灰花瓶', '隐身饮料'],
+        description: '兼顾干扰、控制与救援。',
+      },
+    ],
     skills: [
       {
         name: '魔音贯耳',
@@ -3519,6 +3585,12 @@ const mouseCharacterDefinitions = {
       {
         cards: ['S-铁血', 'C-救救我', 'S-舍己', 'B-飞跃', 'B-绝地反击'],
         description: '21知识点卡组，能提升拿坡里的自保，使拿坡里变得更全能。',
+      },
+    ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '冰块', '灰花瓶', '隐身饮料'],
+        description: '兼顾干扰、控制与救援。',
       },
     ],
     skills: [
@@ -3708,6 +3780,12 @@ const mouseCharacterDefinitions = {
         description: '常用，可拉扯。',
       },
     ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '冰块', '灰花瓶', '隐身饮料'],
+        description: '兼顾干扰、控制与救援。',
+      },
+    ],
     skills: [
       {
         aliases: ['隐身'],
@@ -3865,6 +3943,12 @@ const mouseCharacterDefinitions = {
       {
         cards: ['S-铁血', 'S-舍己', 'B-幸运', 'C-脱身'],
         description: '幸运体系卡组，减少队伍救援次数，防止拖累游戏节奏。',
+      },
+    ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '冰块', '灰花瓶', '隐身饮料'],
+        description: '兼顾干扰、控制与救援。',
       },
     ],
     skills: [
@@ -4071,6 +4155,12 @@ const mouseCharacterDefinitions = {
         defaultFolded: true,
       },
     ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '冰块', '灰花瓶', '隐身饮料'],
+        description: '兼顾干扰、控制与救援。',
+      },
+    ],
     skills: [
       {
         name: '弹力圆球',
@@ -4251,6 +4341,12 @@ const mouseCharacterDefinitions = {
         description: '适合在钻石以上的对局。',
       },
     ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '冰块', '灰花瓶', '隐身饮料'],
+        description: '兼顾干扰、控制与救援。',
+      },
+    ],
     skills: [
       {
         name: '贵族礼仪',
@@ -4405,6 +4501,12 @@ const mouseCharacterDefinitions = {
       {
         cards: ['S-铁血', 'S-无畏', 'B-逃之夭夭', 'C-救救我'],
         description: '无畏常规卡组，踏空不熟练或单双排可用。',
+      },
+    ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '冰块', '灰花瓶', '隐身饮料'],
+        description: '兼顾干扰、控制与救援。',
       },
     ],
     skills: [
@@ -4599,6 +4701,12 @@ const mouseCharacterDefinitions = {
       {
         cards: ['S-舍己', 'S-有难同当', 'B-幸运', 'C-脱身', 'C-救救我'],
         description: '二武卡组，适用于打前期猫，需要队友配合接哭接气球。',
+      },
+    ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '冰块', '灰花瓶', '隐身饮料'],
+        description: '兼顾干扰、控制与救援。',
       },
     ],
     skills: [
@@ -4822,6 +4930,12 @@ const mouseCharacterDefinitions = {
           '现版本冰冻保鲜在释放和解除时均能触发共鸣，可在短时间内放出4段共鸣，可用于打伤害或拆火箭。',
       },
     ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '冰块', '灰花瓶', '隐身饮料'],
+        description: '兼顾干扰、控制与救援。',
+      },
+    ],
     skills: [
       {
         name: '风格骤变',
@@ -4975,6 +5089,12 @@ const mouseCharacterDefinitions = {
         description: '战矛可以触发干扰投掷效果。',
       },
     ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '冰块', '灰花瓶', '隐身饮料'],
+        description: '兼顾干扰、控制与救援。',
+      },
+    ],
     skills: [
       {
         name: '勇往直前',
@@ -5120,6 +5240,12 @@ const mouseCharacterDefinitions = {
       {
         cards: ['S-舍己', 'S-铁血', 'B-应激反应', 'C-不屈', 'C-救救我'],
         description: '在无21点情况下的过渡卡组，应激反应提升自保与脱身能力',
+      },
+    ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '冰块', '灰花瓶', '隐身饮料'],
+        description: '兼顾干扰、控制与救援。',
       },
     ],
     skills: [
@@ -5290,6 +5416,12 @@ const mouseCharacterDefinitions = {
         cards: ['S-铁血', 'S-舍己', 'S-缴械', 'C-救救我'],
         description:
           '通用卡组，打无道具的单刀猫可直接{缴械}救人。{舍己}可换{无畏}（配合{2级被动}和{冰冻保鲜}稳定救援），但需队友接应。',
+      },
+    ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '冰块', '灰花瓶', '隐身饮料'],
+        description: '兼顾干扰、控制与救援。',
       },
     ],
     skills: [
@@ -5466,6 +5598,12 @@ const mouseCharacterDefinitions = {
       {
         cards: ['S-无畏', 'S-铁血', 'C-救救我', 'B-绝地反击', 'C-不屈'],
         description: '辅助救人',
+      },
+    ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '冰块', '灰花瓶', '隐身饮料'],
+        description: '兼顾干扰、控制与救援。',
       },
     ],
     skills: [
@@ -5659,6 +5797,12 @@ const mouseCharacterDefinitions = {
         defaultFolded: true,
       },
     ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '冰块', '灰花瓶', '隐身饮料'],
+        description: '兼顾干扰、控制与救援。',
+      },
+    ],
     skills: [
       {
         name: '说出你的故事',
@@ -5832,6 +5976,12 @@ const mouseCharacterDefinitions = {
       {
         cards: ['S-舍己', 'S-铁血', 'S-缴械', 'C-救救我'],
         description: '适合打爪刀猫，如托普斯等',
+      },
+    ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '冰块', '灰花瓶', '隐身饮料'],
+        description: '兼顾干扰、控制与救援。',
       },
     ],
     skills: [
@@ -6015,6 +6165,12 @@ const mouseCharacterDefinitions = {
         description: '可以在铁血结束后快速起身继续跳舞拖延猫咪。',
       },
     ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '冰块', '灰花瓶', '隐身饮料'],
+        description: '兼顾干扰、控制与救援。',
+      },
+    ],
     skills: [
       {
         name: '梦幻舞步',
@@ -6158,6 +6314,12 @@ const mouseCharacterDefinitions = {
         cards: ['S-缴械', 'S-舍己', 'S-铁血', 'C-救救我'],
         description:
           '配合缴械缩小把猫变线条的劣势，但要注意不要和队友的缴械冲突，以及自己缴械cd期间把猫变线条猫找死。',
+      },
+    ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '冰块', '灰花瓶', '隐身饮料'],
+        description: '兼顾干扰、控制与救援。',
       },
     ],
     skills: [
@@ -6326,6 +6488,12 @@ const mouseCharacterDefinitions = {
       {
         cards: ['S-舍己', 'S-铁血', 'B-夹不住我', 'C-救救我', 'C-脱身'],
         description: '{脱身}适配{1级被动}，与幸运+脱身的效果类似，适配幸运体系的战术。',
+      },
+    ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '冰块', '灰花瓶', '隐身饮料'],
+        description: '兼顾干扰、控制与救援。',
       },
     ],
     skills: [
@@ -6505,6 +6673,12 @@ const mouseCharacterDefinitions = {
         description: '幸运流派卡组。',
       },
     ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '冰块', '灰花瓶', '隐身饮料'],
+        description: '兼顾干扰、控制与救援。',
+      },
+    ],
     skills: [
       {
         name: 'BOOM!!',
@@ -6668,6 +6842,12 @@ const mouseCharacterDefinitions = {
       {
         cards: ['S-无畏', 'S-铁血', 'B-绝地反击', 'C-救救我'],
         description: '无畏卡组，与第二套卡组作用相似。',
+      },
+    ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '冰块', '灰花瓶', '隐身饮料'],
+        description: '兼顾干扰、控制与救援。',
       },
     ],
     skills: [
