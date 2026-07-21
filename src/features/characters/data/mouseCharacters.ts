@@ -56,6 +56,12 @@ const mouseCharacterDefinitions = {
         description: '用于打防守猫。',
       },
     ],
+    recommendedStorePlans: [
+      {
+        items: ['胡椒瓶', '冰块', '灰花瓶', '隐身饮料'],
+        description: '兼顾干扰、控制与救援。',
+      },
+    ],
     skills: [
       {
         name: '鼓舞',
@@ -272,6 +278,12 @@ const mouseCharacterDefinitions = {
       },
     ],
 
+    recommendedStorePlans: [
+      {
+        items: ['胡椒瓶', '冰块', '灰花瓶', '隐身饮料'],
+        description: '兼顾干扰、控制与救援。',
+      },
+    ],
     skills: [
       {
         name: '隐身',
@@ -865,7 +877,7 @@ const mouseCharacterDefinitions = {
     ],
     recommendedStorePlans: [
       {
-        items: ['盘子', '玻璃杯', '冰块', '灰花瓶'],
+        items: ['盘子', '冰块', '灰花瓶', '隐身饮料'],
         description: '便于购买道具，伤害、减速与眩晕猫咪。',
       },
     ],
@@ -1859,7 +1871,7 @@ const mouseCharacterDefinitions = {
     ],
     recommendedStorePlans: [
       {
-        items: ['盘子', '冰块', '灰花瓶', '隐身饮料'],
+        items: ['胡椒瓶', '冰块', '灰花瓶', '隐身饮料'],
         description: '兼顾干扰、控制与救援。',
       },
     ],
@@ -2281,7 +2293,7 @@ const mouseCharacterDefinitions = {
 
     recommendedStorePlans: [
       {
-        items: ['盘子', '冰块', '灰花瓶', '隐身饮料'],
+        items: ['胡椒瓶', '冰块', '灰花瓶', '隐身饮料'],
         description: '兼顾干扰、控制与救援。',
       },
     ],
@@ -3589,7 +3601,7 @@ const mouseCharacterDefinitions = {
     ],
     recommendedStorePlans: [
       {
-        items: ['盘子', '冰块', '灰花瓶', '隐身饮料'],
+        items: ['胡椒瓶', '冰块', '灰花瓶', '隐身饮料'],
         description: '兼顾干扰、控制与救援。',
       },
     ],
@@ -3947,7 +3959,7 @@ const mouseCharacterDefinitions = {
     ],
     recommendedStorePlans: [
       {
-        items: ['盘子', '冰块', '灰花瓶', '隐身饮料'],
+        items: ['胡椒瓶', '冰块', '灰花瓶', '隐身饮料'],
         description: '兼顾干扰、控制与救援。',
       },
     ],
@@ -4157,7 +4169,7 @@ const mouseCharacterDefinitions = {
     ],
     recommendedStorePlans: [
       {
-        items: ['盘子', '冰块', '灰花瓶', '隐身饮料'],
+        items: ['胡椒瓶', '冰块', '灰花瓶', '隐身饮料'],
         description: '兼顾干扰、控制与救援。',
       },
     ],
@@ -4932,7 +4944,7 @@ const mouseCharacterDefinitions = {
     ],
     recommendedStorePlans: [
       {
-        items: ['盘子', '冰块', '灰花瓶', '隐身饮料'],
+        items: ['胡椒瓶', '冰块', '灰花瓶', '隐身饮料'],
         description: '兼顾干扰、控制与救援。',
       },
     ],

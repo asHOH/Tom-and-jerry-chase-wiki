@@ -83,7 +83,7 @@ const catCharacterDefinitions = {
     ],
     recommendedStorePlans: [
       {
-        items: ['盘子', '苍蝇拍', '老鼠夹', '护盾饮料'],
+        items: ['盘子', '玻璃杯', '苍蝇拍', '老鼠夹'],
         description: '兼顾控场、追击与自保。',
       },
     ],
