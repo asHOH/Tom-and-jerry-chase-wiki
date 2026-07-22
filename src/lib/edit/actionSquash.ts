@@ -304,6 +304,15 @@ function cloneCurrentRoot(currentRoot: Record<string, unknown>): Record<string, 
   }
 }
 
+type ReplayValueClone = { success: true; value: unknown } | { success: false };
+
+function cloneReplayValue(value: unknown): ReplayValueClone {
+  if (!isContainer(value)) return { success: true, value };
+
+  const cloned = cloneValue(value);
+  return cloned === null ? { success: false } : { success: true, value: cloned };
+}
+
 function applyForwardAction(root: Container, action: Action): boolean {
   if (!action.path) return false;
 
@@ -312,11 +321,14 @@ function applyForwardAction(root: Container, action: Action): boolean {
     return removeAtRelativePath(root, parts, 'delete');
   }
 
+  const replayValue = cloneReplayValue(action.newValue);
+  if (!replayValue.success) return false;
+
   if (action.op === 'add') {
-    return addAtRelativePath(root, parts, action.newValue);
+    return addAtRelativePath(root, parts, replayValue.value);
   }
 
-  return assignAtRelativePath(root, parts, action.newValue);
+  return assignAtRelativePath(root, parts, replayValue.value);
 }
 
 function applyInverseAction(root: Container, action: Action): boolean {
@@ -324,7 +336,8 @@ function applyInverseAction(root: Container, action: Action): boolean {
 
   const parts = parsePath(action.path);
   if (action.op === 'delete') {
-    return assignAtRelativePath(root, parts, action.oldValue);
+    const replayValue = cloneReplayValue(action.oldValue);
+    return replayValue.success && assignAtRelativePath(root, parts, replayValue.value);
   }
 
   if (action.op === 'add') {
@@ -335,7 +348,8 @@ function applyInverseAction(root: Container, action: Action): boolean {
     return removeAtRelativePath(root, parts, 'splice');
   }
 
-  return assignAtRelativePath(root, parts, action.oldValue);
+  const replayValue = cloneReplayValue(action.oldValue);
+  return replayValue.success && assignAtRelativePath(root, parts, replayValue.value);
 }
 
 function reverseApplyActions(root: Container, flat: FlatItem[]): void {
@@ -373,6 +387,14 @@ function isArrayShapedDescendantPath(parentPath: string, childPath: string): boo
   const [first, ...rest] = relativePath;
   if (first === 'length') return rest.length === 0;
   return first !== undefined && isArrayIndex(first);
+}
+
+function isArrayNormalizationAction(parentPath: string, action: Action): boolean {
+  if (action.path === parentPath) {
+    return action.op === 'set' && isDenseArray(action.oldValue) && isDenseArray(action.newValue);
+  }
+
+  return isArrayShapedDescendantPath(parentPath, action.path);
 }
 
 function isDenseArray(value: unknown): value is unknown[] {
@@ -423,7 +445,7 @@ function getArrayParentNormalization(
   const coveredItems = flat.filter((item) => isAtOrUnderPath(item.action.path, parentPath));
   if (coveredItems.length === 0) return null;
 
-  if (coveredItems.some((item) => !isArrayShapedDescendantPath(parentPath, item.action.path))) {
+  if (coveredItems.some((item) => !isArrayNormalizationAction(parentPath, item.action))) {
     return null;
   }
 

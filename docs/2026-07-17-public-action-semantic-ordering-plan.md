@@ -26,10 +26,13 @@ Completed foundation:
 - The additive epoch/prepared-RPC migrations and route cutovers are deployed. The separate Step 5B
   revoke migration landed in `e04fcfa1` but is not deployed. After a read-only ledger check confirmed
   its original duplicate version was absent remotely, its unchanged SQL was retimestamped to unique
-  repository version `20260722000000` and committed in `f5e59f41`.
+  repository version `20260722000000` and committed in `2b2b0792`.
 - The scalar-property delete squashing fix landed in `c07b4a14`, and the frozen container replay fix
-  landed in `bf71c68e`. Both are present in the verified production build; affected-user
-  resubmission verification is still pending.
+  landed in `bf71c68e`. Both are present in the verified production build. The remaining mixed
+  numeric-child/parent-array squash failure was reproduced after that deployment and fixed in
+  `749573da` by cloning scratch-replay payloads and admitting verified direct parent-array sets.
+  That fix is repository-validated but not deployed; affected-user resubmission verification is
+  still pending.
 - The anonymous prepared-publish function is live with its expected signature and service-role-only
   execution privileges. A catalog-only comparison recorded in
   [the live-comparison report](./reports/2026-07-22-anonymous-prepared-publish-live-comparison.md)
@@ -41,8 +44,8 @@ Completed foundation:
 
 Remaining work:
 
-1. The operator is deferring the normal-route resubmission. When resumed, use a successful publish
-   to establish prepared-path persistence with server/database evidence.
+1. Deploy application fix `749573da`, verify it through `/api/version/`, then use one affected-user
+   normal-route resubmission to establish prepared-path persistence with server/database evidence.
 2. Optionally repeat the clean local reset in CI, on another machine, or after the Docker image is
    available; record it as deferred until then.
 3. Obtain explicit approval before deploying the uniquely versioned Step 5B migration alone. Follow
@@ -54,6 +57,11 @@ Remaining work:
    adapt the legacy mutable replay into the checked engine.
 7. Enable publish-time dependency grouping only after the store-loading plan removes root-client
    replay.
+
+While the resubmission is pending, the application-only deployment, optional local reset, and
+read-only reconciliation planning for the remaining migration-ledger differences may proceed. The
+Step 5C production preflight and revoke, Steps 5D-5E, and the editable-store implementation remain
+blocked unless their stated gate is satisfied or the work is explicitly reprioritized.
 
 ## Frozen Contract
 

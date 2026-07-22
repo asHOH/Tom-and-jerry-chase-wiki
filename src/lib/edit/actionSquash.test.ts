@@ -319,6 +319,57 @@ describe('squashActions', () => {
     ).toEqual([setAction('玛丽.specialSkills', marySpecialSkillsFinal, marySpecialSkillsOriginal)]);
   });
 
+  it('should collapse an appended group followed by removing another group to one parent set', () => {
+    const originalGroups = ['A', 'B', 'C', 'D', 'E'].map((description) => ({
+      cards: [],
+      description,
+    }));
+    const appendedGroup = { cards: [], description: 'new' };
+    const groupsAfterAppend = [...originalGroups, appendedGroup];
+    const finalGroups = groupsAfterAppend.slice(1);
+    const history = [
+      setAction('莱特宁.knowledgeCardGroups.5', undefined, appendedGroup),
+      setAction('莱特宁.knowledgeCardGroups', groupsAfterAppend, finalGroups),
+    ];
+    const originalHistory = structuredClone(history);
+
+    expect(
+      squashActions(history, {
+        currentRoot: {
+          莱特宁: {
+            knowledgeCardGroups: finalGroups,
+          },
+        },
+      })
+    ).toEqual([setAction('莱特宁.knowledgeCardGroups', originalGroups, finalGroups)]);
+    expect(history).toEqual(originalHistory);
+  });
+
+  it('should drop appending and then removing the same group without mutating history', () => {
+    const originalGroups = ['A', 'B', 'C', 'D', 'E'].map((description) => ({
+      cards: [],
+      description,
+    }));
+    const appendedGroup = { cards: [], description: 'new' };
+    const groupsAfterAppend = [...originalGroups, appendedGroup];
+    const history = [
+      setAction('莱特宁.knowledgeCardGroups.5', undefined, appendedGroup),
+      setAction('莱特宁.knowledgeCardGroups', groupsAfterAppend, originalGroups),
+    ];
+    const originalHistory = structuredClone(history);
+
+    expect(
+      squashActions(history, {
+        currentRoot: {
+          莱特宁: {
+            knowledgeCardGroups: originalGroups,
+          },
+        },
+      })
+    ).toEqual([]);
+    expect(history).toEqual(originalHistory);
+  });
+
   it('should collapse middle-index array deletion with shifted items to one parent array set', () => {
     const oldSkills = [{ name: 'A' }, { name: 'B' }, { name: 'C' }];
     const newSkills = [{ name: 'A' }, { name: 'C' }];
