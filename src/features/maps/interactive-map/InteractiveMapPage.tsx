@@ -21,12 +21,11 @@ type InteractiveMapPageProps = {
 };
 
 function InteractiveMapPageContent({ map, mapName }: InteractiveMapPageProps) {
-  const { isEditMode, isPreviewMode } = useEditMode();
+  const { isEditMode } = useEditMode();
   const orientationContainerRef = useRef<HTMLDivElement>(null);
   const rawLocalMap = mapsEdit[mapName];
   const localMapSnapshot = useSnapshot(rawLocalMap ?? ({} as MapType));
-  const effectiveMap =
-    (isEditMode || isPreviewMode) && rawLocalMap ? (localMapSnapshot as MapType) : map;
+  const effectiveMap = rawLocalMap ? (localMapSnapshot as MapType) : map;
   const interactiveMap = effectiveMap.interactiveMap;
 
   if (!interactiveMap) return null;
