@@ -13,6 +13,8 @@ import type {
   SpecialSkill,
 } from '@/data/types';
 
+import type { PublishedRevision } from './revision';
+
 type FactionData<T> = Record<FactionId, Record<string, T>>;
 
 type PublishedGameDataShapeByType = {
@@ -26,6 +28,19 @@ type PublishedGameDataShapeByType = {
   modes: Record<string, Mode>;
   specialSkills: FactionData<SpecialSkill>;
   achievements: FactionData<Achievement>;
+};
+
+export type PublishedGameDataEntityByType = {
+  characters: CharacterGameData[string];
+  cards: CardGameData[string];
+  entities: Entity;
+  buffs: Buff;
+  items: Item;
+  fixtures: Fixture;
+  maps: GameMap;
+  modes: Mode;
+  specialSkills: SpecialSkill;
+  achievements: Achievement;
 };
 
 export type PublishedGameDataByType = {
@@ -46,3 +61,16 @@ type Assert<T extends true> = T;
 export type PublishedGameDataByTypeIsExhaustive = Assert<
   HasExactlyPublishableEntityTypeKeys<PublishedGameDataShapeByType>
 >;
+
+export type PublishedGameDataSnapshot = DeepReadonly<{
+  revision: PublishedRevision;
+  actionRevision: `v1:${string}`;
+  buildIdentity: string;
+  data: PublishedGameDataByType;
+}>;
+
+export type PublishedDomainReadModel<EntityType extends PublishableEntityType> = {
+  readonly revision: PublishedRevision;
+  readonly entityType: EntityType;
+  readonly data: PublishedGameDataByType[EntityType];
+};

@@ -15,13 +15,21 @@ jest.mock('server-only', () => ({}), { virtual: true });
 type MutableRecord = Record<string, unknown>;
 
 function decodedRow(
-  entityType: string,
+  entityType: ApprovedActionSnapshotRowInput['entityType'],
   rowId: string,
   entry: unknown
 ): ApprovedActionSnapshotRowInput {
   const decoded = decodeStoredActionRow({ id: rowId, entry });
   if (!decoded.success) throw new Error(decoded.error.message);
-  return { entityType, decodedRow: decoded.value };
+  return {
+    entityType,
+    createdAt: '2026-07-24T00:00:00.000Z',
+    status: 'approved',
+    createdBy: null,
+    message: null,
+    reviewedAt: null,
+    decodedRow: decoded.value,
+  };
 }
 
 function asMutableRecord(value: unknown): MutableRecord {
@@ -120,11 +128,6 @@ describe('selectPublishedGameData', () => {
     const canonical = getCanonicalGameData('specialSkills');
     const catSkillId = Object.keys(canonical.cat)[0]!;
     const snapshot = createApprovedActionSnapshot([
-      decodedRow('unknown-domain', 'row-unknown', {
-        op: 'set',
-        path: 'cat.__unknown__',
-        newValue: true,
-      }),
       decodedRow('items', 'row-items', {
         op: 'set',
         path: '__other_domain__',

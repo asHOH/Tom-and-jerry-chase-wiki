@@ -47,6 +47,12 @@ interface WikiHistoryFromAction {
   description: string;
 }
 
+export type NormalizedWikiHistoryActionRow = {
+  entityType: string;
+  createdAt: string;
+  actions: readonly Readonly<Action>[];
+};
+
 /**
  * Converts a single action to wiki history info
  */
@@ -103,15 +109,15 @@ function actionToWikiHistoryInfo(
 /**
  * Converts public action rows to wiki history entries grouped by year
  */
-export function publicActionsToWikiHistory(actions: PublicActionRow[]): WikiYearData[] {
+export function normalizedActionsToWikiHistory(
+  rows: readonly NormalizedWikiHistoryActionRow[]
+): WikiYearData[] {
   const yearMap = new Map<number, Map<string, WikiHistoryFromAction[]>>();
 
-  for (const row of actions) {
-    const entries = normalizePublicActionEntries(row.entry);
-    const actionsArray = flattenActionEntries(entries);
-    if (actionsArray.length === 0) continue;
+  for (const row of rows) {
+    if (row.actions.length === 0) continue;
 
-    const createdAt = new Date(row.created_at);
+    const createdAt = new Date(row.createdAt);
     const year = createdAt.getFullYear();
 
     // Group by date within year
@@ -119,8 +125,8 @@ export function publicActionsToWikiHistory(actions: PublicActionRow[]): WikiYear
     const day = createdAt.getDate();
     const dateKey = `${month}.${day}`;
 
-    for (const action of actionsArray) {
-      const info = actionToWikiHistoryInfo(action, row.entity_type, createdAt);
+    for (const action of row.actions) {
+      const info = actionToWikiHistoryInfo(action as Action, row.entityType, createdAt);
       if (!info) continue;
 
       if (!yearMap.has(year)) {
@@ -179,6 +185,23 @@ export function publicActionsToWikiHistory(actions: PublicActionRow[]): WikiYear
   result.sort((a, b) => b.year - a.year);
 
   return result;
+}
+
+/**
+ * Legacy adapter for the root action payload. Published selectors call the
+ * normalized entry point with the immutable decoded snapshot instead.
+ */
+export function publicActionsToWikiHistory(actions: PublicActionRow[]): WikiYearData[] {
+  return normalizedActionsToWikiHistory(
+    actions.map((row) => {
+      const entries = normalizePublicActionEntries(row.entry);
+      return {
+        entityType: row.entity_type,
+        createdAt: row.created_at,
+        actions: flattenActionEntries(entries),
+      };
+    })
+  );
 }
 
 /**

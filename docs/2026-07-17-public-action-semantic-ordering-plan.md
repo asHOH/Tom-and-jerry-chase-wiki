@@ -4,7 +4,7 @@
 
 - Date: 2026-07-17
 - Last revised: 2026-07-24
-- State: Trust-boundary cutover, revoke, and post-revoke audit complete; live replay migration and
+- State: Trust-boundary work and published-data Phase 1 complete; live consumer migration and
   publish-time dependency grouping remain
 - Scope: Public-row decoding and replay semantics, trusted publish and approval persistence, and
   publish-time dependency grouping
@@ -50,11 +50,15 @@ Completed foundation:
   persist separately, while same-index, property, non-canonical, structural-operation, and invalid
   cases remain dependent or fail closed. The production-connected read-only audit reported no
   classification delta.
+- Editable-store Phase 1 now consumes the frozen decoder and checked replay contracts through one
+  immutable approved-action snapshot, deterministic action/global revisions, measured persistent
+  published caches, complete snapshot composition, and route/history selectors. It remains
+  alongside legacy replay until the owning Phase 2 cutover.
 
 Remaining work:
 
-1. Migrate live replay through the pure published-data and editable-store-loading plans; do not
-   adapt the legacy mutable replay into the checked engine.
+1. Complete editable-store Phases 2-4 to migrate live server and client consumers; do not adapt the
+   legacy mutable replay into the checked engine.
 2. Enable publish-time dependency grouping only after the store-loading plan removes root-client
    replay.
 
@@ -240,10 +244,12 @@ is revoked and no browser-callable path can move a row into or out of the approv
 
 ## Live Replay Handoff
 
-The production audit gate is passed, but live migration stays in the owning plans:
+The production audit gate and published-data Phase 1 are complete, but live migration stays in the
+owning plan:
 
-1. The pure foundation consumes `decodeStoredActionRow`, shared touched roots, and
-   `applyCheckedActionRow` to build copy-on-write published values without mutating canonical data.
+1. The pure foundation and Phase 1 snapshot layer consume `decodeStoredActionRow`, shared touched
+   roots, and `applyCheckedActionRow` to build revision-consistent copy-on-write published values
+   without mutating canonical data.
 2. Server rendering moves to that pure snapshot and removes legacy global server mutation.
 3. The editable-store plan moves normal clients to read models, creates edit proxies from the fully
    replayed baseline, and removes root-client replay.
@@ -253,13 +259,13 @@ Do not create a generalized mutable-target adapter or replay approved rows again
 
 ## Delivery Status and Remaining Order
 
-The pure foundation, bounded preparation, replay epoch, prepared RPCs, route cutovers, legacy
-revokes, post-revoke audit, direct-RPC security verification, and direct array-index classifier are
-complete.
+The pure foundation, editable-store Phase 1 snapshot/selectors, bounded preparation, replay epoch,
+prepared RPCs, route cutovers, legacy revokes, post-revoke audit, direct-RPC security verification,
+and direct array-index classifier are complete.
 
 Complete the remaining work in this order:
 
-1. Complete the pure published-data server cutover and editable-store Phases 1-4.
+1. Complete the pure published-data server cutover and editable-store Phases 2-4.
 2. Enable and verify publish-time dependency grouping.
 3. Return to editable-store Phase 5 and complete its boundary enforcement and final audits.
 

@@ -1,10 +1,12 @@
+import { randomUUID } from 'node:crypto';
+import { NextConfig } from 'next';
 import createMDX from '@next/mdx';
 
 import { buildCspHeader } from './csp.config';
 
 import './src/env';
 
-import { NextConfig } from 'next';
+const productionBuildIdentity = process.env.DEPLOY_BUILD_ID?.trim() || randomUUID();
 
 let withBundleAnalyzer = (config: NextConfig) => config;
 
@@ -38,6 +40,7 @@ const shouldIncludeVercelAnalytics = () => {
 };
 
 const nextConfig: NextConfig = {
+  generateBuildId: () => productionBuildIdentity,
   pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
   transpilePackages: [
     'motion',
@@ -62,6 +65,10 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: process.env.SKIP_BUILD_CHECKS === 'true',
   },
   env: {
+    // Server-only consumers import this embedded value from buildIdentity.ts. Keeping
+    // the exact generateBuildId value in the built artifact prevents cache reuse
+    // across deployments even when the source commit is unchanged.
+    TJWIKI_BUILD_IDENTITY: productionBuildIdentity,
     // Use the commit timestamp if available (set by start_server.sh), otherwise fallback to build time
     NEXT_PUBLIC_BUILD_TIMESTAMP:
       process.env.NEXT_PUBLIC_BUILD_TIMESTAMP || new Date().toISOString(),

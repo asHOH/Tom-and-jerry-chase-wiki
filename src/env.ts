@@ -37,6 +37,7 @@ export const env = createEnv({
     SUPABASE_RTE_IMAGE_BUCKET: z.string().optional(),
 
     // Deployment metadata (optional)
+    DEPLOY_BUILD_ID: z.string().min(1).optional(),
     COMMIT_SHA: z.string().optional(),
     DEPLOY_COMMIT_SHA: z.string().optional(),
     NETLIFY_COMMIT_SHA: z.string().optional(),

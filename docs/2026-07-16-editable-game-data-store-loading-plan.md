@@ -4,7 +4,7 @@
 
 - Date: 2026-07-16
 - Last revised: 2026-07-24
-- State: Phase 0 verified; parent Phases 1-5 remain
+- State: Phases 0-1 complete; parent Phases 2-5 remain
 - Scope: Client bundle size, edit-mode initialization, published-snapshot caching, public-action
   replay, route read models, and data-module boundaries
 
@@ -12,8 +12,10 @@ Implementation status:
 
 - The identity-isolated canonical sources, immutable approved-action value, and pure per-domain
   copy-on-write overlays required by Phase 1 landed in `5a0ebc73`, `beb94365`, and `5724e296`.
-- The parent Phase 1 work for build identity, action/global revisions, measured persistent caching,
-  complete snapshot composition, route read models, and history selectors has not started.
+- Parent Phase 1 is complete. The production build identity, immutable decoded approved-action
+  snapshot, `v1` action/global revisions, measured per-domain persistent cache, complete snapshot
+  composition, domain/entity route read models, and static-plus-action history selectors now exist
+  alongside the legacy path.
 - Phases 2-5, including the import inventory, server/client consumer migration, lazy edit runtime,
   atomic root payload/replay removal, boundary enforcement, and final bundle audit, have not started.
 - The semantic-ordering trust-boundary closure, post-revoke audit compatibility gate, and direct
@@ -22,8 +24,9 @@ Implementation status:
   effects on normal rendering, metadata, structured data, and wiki history, plus draft restore,
   preview, discard, publish, exit, and cross-domain summaries.
 
-Handoff entry point: begin the parent Phase 1 work. Do not repeat Phase 0, rebuild the completed pure
-foundation, or enable semantic-ordering Stage B before the Phase 4 gate.
+Handoff entry point: begin Phase 2 with the import inventory and server-consumer cutover. Do not
+repeat Phases 0-1, remove the legacy path before its Phase 2 gates, or enable semantic-ordering
+Stage B before the Phase 4 gate.
 
 ## Related Work and Dependencies
 
@@ -250,7 +253,7 @@ Verification record:
 The two cache vectors are specifications for Phase 1 because the production build identity and
 published cache do not exist before that phase.
 
-### Phase 1: Build deterministic published data and history selectors
+### Phase 1: Build deterministic published data and history selectors (complete)
 
 Compose the canonical-source and pure-overlay work already completed in the
 [pure published-data foundation plan](./archive/completed/2026-07-17-pure-published-game-data-foundation-plan.md).
@@ -303,6 +306,29 @@ The steps below describe how this parent plan adds revisions, caching, read mode
 15. Add cache tests proving that an unchanged action set under a new production build identity cannot
     reuse an older snapshot, and that all projections from one snapshot view carry its exact global
     revision.
+
+Verification record:
+
+- `next.config.ts` resolves `DEPLOY_BUILD_ID` or one UUID fallback once, returns that exact value
+  from `generateBuildId`, and embeds the same server-only identity. `src/env.ts` and `.env.example`
+  include the optional deployment value.
+- The strict approved-row reader feeds `decodeStoredActionRow` into one deeply frozen snapshot. Its
+  `v1:` SHA-256 revision uses ordered positional tuples, recursively sorted object keys, preserved
+  array order, normalized null metadata, and every replay/history field. Fixed UTF-8 and field/order
+  vectors freeze the encoding.
+- The canonical complete graph measured 1,220,169 UTF-8 JSON bytes on 2026-07-24. Because that
+  exceeds the conservative 1,000,000-byte compatibility boundary, persistent caching is per domain;
+  the largest domain is characters at 555,464 bytes. Every domain key contains the production build
+  identity, action revision, and entity type and uses the existing public-action cache tag.
+- `composePublishedGameDataSnapshot` composes all publishable domains from one immutable action
+  snapshot and exposes the same global revision used by domain, entity-route, history, and future
+  editable-baseline consumers. Approved rows are still applied only by the existing checked replay
+  engine before any future proxy construction.
+- Domain and entity route selectors cover all publishable types, missing IDs, faction-scoped IDs,
+  and entity-scoped static-plus-approved wiki history. The legacy server mutation, root action
+  payload, and mounted-client replay remain unchanged for the Phase 2-4 compatibility window.
+- Focused published/game-data tests, Oxlint, strict TypeScript, actor-profile validation, and
+  `npm run build:skip-images` pass.
 
 Build this path alongside the existing behavior first. The implementation must not clone and replay
 the entire graph on every request. Keep legacy server mutation active until the Phase 2 server
