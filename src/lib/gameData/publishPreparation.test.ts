@@ -125,6 +125,45 @@ describe('preparePublishActionItems', () => {
     }
   });
 
+  it('accepts distinct direct array-index assignments as separate canonical rows', () => {
+    const result = preparePublishActionItems([
+      {
+        entityType: 'characters',
+        entries: [
+          { op: 'set', path: '汤姆.aliases.2', newValue: { name: '侦探汤姆' } },
+          { op: 'set', path: '汤姆.aliases.3', newValue: { name: '海盗汤姆' } },
+        ],
+      },
+    ]);
+
+    expect(result.actions[0]?.rows).toHaveLength(2);
+    expect(result.actions[0]?.rows.map((row) => row.canonicalEntry)).toEqual([
+      { op: 'set', path: '汤姆.aliases.2', newValue: { name: '侦探汤姆' } },
+      { op: 'set', path: '汤姆.aliases.3', newValue: { name: '海盗汤姆' } },
+    ]);
+  });
+
+  it.each(['foo', '01', '1e2', '4294967295'])(
+    'rejects a direct index assignment paired with sibling %s',
+    (sibling) => {
+      expect(() =>
+        preparePublishActionItems([
+          {
+            entityType: 'characters',
+            entries: [
+              { op: 'set', path: '汤姆.aliases.0', newValue: 'first' },
+              { op: 'set', path: `汤姆.aliases.${sibling}.name`, newValue: 'second' },
+            ],
+          },
+        ])
+      ).toThrow(
+        expect.objectContaining({
+          detail: expect.objectContaining({ code: 'dependent_rows' }),
+        })
+      );
+    }
+  );
+
   it('checks dependencies across repeated items for the same entity type', () => {
     expect(() =>
       preparePublishActionItems([
@@ -142,6 +181,22 @@ describe('preparePublishActionItems', () => {
         detail: expect.objectContaining({ code: 'dependent_rows' }),
       })
     );
+  });
+
+  it('accepts distinct direct indexes across repeated items for the same entity type', () => {
+    const result = preparePublishActionItems([
+      {
+        entityType: 'characters',
+        entries: [{ op: 'set', path: '汤姆.aliases.2', newValue: 'third' }],
+      },
+      {
+        entityType: 'characters',
+        entries: [{ op: 'set', path: '汤姆.aliases.3', newValue: 'fourth' }],
+      },
+    ]);
+
+    expect(result.actions).toHaveLength(1);
+    expect(result.actions[0]?.rows).toHaveLength(2);
   });
 
   it('freezes path and message boundaries', () => {

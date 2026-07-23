@@ -3,8 +3,8 @@
 ## Status
 
 - Date: 2026-07-16
-- Last revised: 2026-07-19
-- State: Phase 1 pure-foundation prerequisite complete; parent implementation remains
+- Last revised: 2026-07-24
+- State: Semantic prerequisites complete; parent Phases 1-5 remain
 - Scope: Client bundle size, edit-mode initialization, published-snapshot caching, public-action
   replay, route read models, and data-module boundaries
 
@@ -16,6 +16,8 @@ Implementation status:
   complete snapshot composition, route read models, and history selectors has not started.
 - Phases 2-5, including the import inventory, server/client consumer migration, lazy edit runtime,
   atomic root payload/replay removal, boundary enforcement, and final bundle audit, have not started.
+- The semantic-ordering trust-boundary closure, post-revoke audit compatibility gate, and direct
+  array-index dependency classifier are complete. The parent implementation may proceed.
 
 ## Related Work and Dependencies
 
@@ -27,9 +29,10 @@ Implementation status:
   path interpretation, checked plain-object apply semantics, publish grouping, and publish and
   approval trust boundaries. This plan consumes those contracts and must not introduce another replay
   order, decoder, or apply engine.
-- Before live consumer migration, the semantic-ordering plan's post-bypass audit must report zero
-  approved malformed rows, checked-replay failures, and unknown entity types. Actionable pending and
-  synced findings must also have the owners and dispositions required by that plan.
+- The semantic-ordering plan's post-bypass audit gate passed with zero approved malformed rows,
+  checked-replay failures, and unknown entity types. Its pending output was non-provisional, and its
+  only nonzero synced finding was already dispositioned as history-only shape information. Future
+  audit reruns must retain those gates before live consumer migration continues.
 - This plan owns the client-side atomicity solution. It must derive the complete published baseline
   through checked replay before constructing Valtio proxies, then remove the transitional root
   client replay. The semantic-ordering plan must not enable publish-time grouping until that Phase 4
@@ -636,20 +639,18 @@ The work is complete when all of the following are true:
 
 ## Recommended Delivery Sequence
 
-1. Complete or confirm the semantic-ordering plan's strict reader, decoder, checked plain-object
-   replay contracts, post-bypass audit compatibility gate, and non-approved finding dispositions.
-2. Build the production build identity, immutable approved-action snapshot, global revision,
+1. Build the production build identity, immutable approved-action snapshot, global revision,
    byte-size-selected persistent published cache, pure server-side selectors, and history selectors
    alongside the legacy path.
-3. Establish the canonical/`@/data/store` boundary and server cutover with both temporary client
+2. Establish the canonical/`@/data/store` boundary and server cutover with both temporary client
    allowlists.
-4. Migrate character detail, followed by remaining normal consumers, reducing the canonical-value
+3. Migrate character detail, followed by remaining normal consumers, reducing the canonical-value
    client allowlist to empty and the mutable-store allowlist to the root client replay only.
-5. Perform the atomic lazy edit-runtime and root public-action-payload cutover, removing the final
+4. Perform the atomic lazy edit-runtime and root public-action-payload cutover, removing the final
    mutable-store allowlist entry.
-6. Verify that edit proxies are created from the fully replayed baseline and that no mounted client
+5. Verify that edit proxies are created from the fully replayed baseline and that no mounted client
    path replays approved rows, then release the semantic-ordering plan's publish-grouping gate.
-7. Remove the canonical-value client allowlist, mark canonical value entry points server-only, and
+6. Remove the canonical-value client allowlist, mark canonical value entry points server-only, and
    complete the import-boundary and final bundle audit.
 
 Each step should land with relevant tests. Run focused bundle verification after the

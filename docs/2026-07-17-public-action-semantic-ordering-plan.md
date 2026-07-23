@@ -44,23 +44,26 @@ Completed foundation:
   authenticated read/reject behavior remain available. The post-revoke three-cohort audit passed
   approved replay compatibility with 182 approved, 1,125 synced, and 5 pending rows. See the
   [execution evidence](./reports/2026-07-23-game-data-step-5c-execution-evidence.md).
+- The direct array-index dependency classifier refinement is complete. Defined direct assignments to
+  distinct canonical numeric siblings may persist separately, while same-index, property,
+  non-canonical, structural-operation, and invalid cases remain dependent or fail closed. The
+  production-connected read-only audit reported no classification delta.
 - A clean local `supabase db reset --local` was deferred because the pinned Postgres Docker image
   could not finish downloading. No local database container or migration ran; this is optional
   reproducibility validation, not a blocker for the already-validated retimestamp-only change.
 
 Remaining work:
 
-1. Implement and verify the direct array-index classifier refinement without enabling grouping.
-2. Migrate live replay through the pure published-data and editable-store-loading plans; do not
+1. Migrate live replay through the pure published-data and editable-store-loading plans; do not
    adapt the legacy mutable replay into the checked engine.
-3. Enable publish-time dependency grouping only after the store-loading plan removes root-client
+2. Enable publish-time dependency grouping only after the store-loading plan removes root-client
    replay.
-4. Optionally repeat the clean local reset in CI, on another machine, or after the Docker image is
+3. Optionally repeat the clean local reset in CI, on another machine, or after the Docker image is
    available; record it as deferred until then.
 
-No production trust-boundary rollout gate remains. The direct array-index classifier and the
-editable-store implementation may proceed. Publish-time dependency grouping remains blocked until
-the editable-store Phase 4 gate removes root-client replay.
+No production trust-boundary rollout gate remains. The editable-store implementation may proceed.
+Publish-time dependency grouping remains blocked until the editable-store Phase 4 gate removes
+root-client replay.
 
 ## Frozen Contract
 
@@ -254,16 +257,16 @@ Do not create a generalized mutable-target adapter or replay approved rows again
 ## Delivery Status and Remaining Order
 
 The pure foundation, bounded preparation, replay epoch, prepared RPCs, route cutovers, legacy
-revokes, post-revoke audit, and direct-RPC security verification are complete.
+revokes, post-revoke audit, direct-RPC security verification, and direct array-index classifier are
+complete.
 
 Complete the remaining work in this order:
 
-1. Implement and verify the direct array-index dependency-classifier refinement.
-2. Complete the pure published-data server cutover and editable-store Phases 1-4.
-3. Enable and verify publish-time dependency grouping.
-4. Add submission metadata only if later evidence establishes a concrete operational need.
+1. Complete the pure published-data server cutover and editable-store Phases 1-4.
+2. Enable and verify publish-time dependency grouping.
+3. Add submission metadata only if later evidence establishes a concrete operational need.
 
-Item 3 is explicitly gated on removal of root-client replay.
+Item 2 is explicitly gated on removal of root-client replay.
 
 The post-bypass audit gate passed. Future reruns retain these two criteria:
 

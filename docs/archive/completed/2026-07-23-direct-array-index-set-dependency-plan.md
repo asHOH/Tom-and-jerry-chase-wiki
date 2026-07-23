@@ -3,10 +3,23 @@
 ## Status
 
 - Date: 2026-07-23
-- State: Planned
+- Last revised: 2026-07-24
+- State: Complete; repository implementation and validation passed
 - Scope: Dependency classification for direct array-index `set` actions submitted as separate
   top-level rows
 - Production impact: Application-only change; no database migration
+
+Completion summary:
+
+- `actionDependencies.ts` now retains defined direct-index assignment metadata and exempts only the
+  assignment's broad structural-parent dependency for distinct canonical numeric siblings.
+- Focused dependency, commutativity, and publish-preparation coverage proves the accepted and
+  fail-closed cases.
+- Lint, TypeScript, Prettier, the complete Jest suite, and the production build pass.
+- The production-connected read-only audit retained fingerprint
+  `audit-f0429897bfb2022d8095508c61791e487de723ff6b6cd0db72387f5d669db246`, with no classification
+  delta and approved replay compatibility still passing.
+- Stage B dependency grouping remains disabled until its existing editable-store Phase 4 gate.
 
 ## Problem
 
@@ -155,7 +168,7 @@ Add publish-preparation tests proving:
 
 ## Validation and rollout
 
-Before deployment:
+Repository validation completed:
 
 1. Run the focused action-dependency and publish-preparation tests.
 2. Run lint, TypeScript, Prettier, and the complete Jest suite.
@@ -163,10 +176,10 @@ Before deployment:
    mutate or repair rows as part of this validation.
 4. Build the production application.
 
-Deploy through the normal application path without applying migrations. Verify `/api/version/` and
-`/api/health/`, then ask the affected user to resubmit the retained draft once. Retain only the
-submission time, route/status, returned result IDs/statuses, matching safe database metadata, and
-the replay-epoch change.
+Operational follow-up: deploy through the normal application path without applying migrations.
+Verify `/api/version/` and `/api/health/`, then ask the affected user to resubmit the retained draft
+once. Retain only the submission time, route/status, returned result IDs/statuses, matching safe
+database metadata, and the replay-epoch change.
 
 ## Exit criteria
 
@@ -174,6 +187,8 @@ the replay-epoch change.
 - All newly accepted separately stored rows commute under the checked replay semantics.
 - Existing genuinely dependent cases remain rejected.
 - The read-only audit reports no new malformed or replay-failing approved rows.
-- Production verification succeeds without `dependent_rows`, `candidate_conflict`, persistence
-  failure, or unexpected HTTP 500 for the retained draft.
 - Stage B remains disabled until its existing gate is deliberately completed or revised.
+
+The repository exit criteria are met. Production verification of the retained draft remains an
+operational rollout check: it must succeed without `dependent_rows`, `candidate_conflict`,
+persistence failure, or unexpected HTTP 500.

@@ -4,9 +4,15 @@ import { parseActionPath, resolveArraySegment } from './actionPath';
 
 type Path = readonly string[];
 
+type DirectArrayIndexAssignment = {
+  parent: Path;
+  index: number;
+};
+
 type AnalyzedActionPath = {
   path: Path;
   structuralArrayParent: Path | null;
+  directArrayIndexAssignment: DirectArrayIndexAssignment | null;
 };
 
 type ActionPathAnalysis = { success: true; value: AnalyzedActionPath } | { success: false };
@@ -25,6 +31,29 @@ function pathsOverlap(left: Path, right: Path): boolean {
   return isAtOrUnderPath(left, right) || isAtOrUnderPath(right, left);
 }
 
+function entersDistinctCanonicalIndex(path: Path, assignment: DirectArrayIndexAssignment): boolean {
+  if (path.length <= assignment.parent.length || !isAtOrUnderPath(path, assignment.parent)) {
+    return false;
+  }
+
+  const siblingSegmentIndex = assignment.parent.length;
+  const siblingSegment = path[siblingSegmentIndex]!;
+  const resolvedSibling = resolveArraySegment(siblingSegment, siblingSegmentIndex);
+  return (
+    resolvedSibling.success &&
+    resolvedSibling.value.kind === 'index' &&
+    resolvedSibling.value.index !== assignment.index
+  );
+}
+
+function structuralParentAffectsPath(analysis: AnalyzedActionPath, otherPath: Path): boolean {
+  const structuralParent = analysis.structuralArrayParent;
+  if (!structuralParent || !isAtOrUnderPath(otherPath, structuralParent)) return false;
+
+  const assignment = analysis.directArrayIndexAssignment;
+  return !assignment || !entersDistinctCanonicalIndex(otherPath, assignment);
+}
+
 function analyzeActionPath(action: Action): ActionPathAnalysis {
   const parsed = parseActionPath(action.path);
   if (!parsed.success) return { success: false };
@@ -36,6 +65,7 @@ function analyzeActionPath(action: Action): ActionPathAnalysis {
   if (!resolvedFinalSegment.success) return { success: false };
 
   let structuralArrayParent: Path | null = null;
+  let directArrayIndexAssignment: DirectArrayIndexAssignment | null = null;
   if (path.length >= 2) {
     const parent = path.slice(0, -1);
     const isDirectIndex = resolvedFinalSegment.value.kind === 'index';
@@ -47,11 +77,21 @@ function analyzeActionPath(action: Action): ActionPathAnalysis {
       resolvedFinalSegment.value.key === 'length';
 
     if (isStructuralIndexOperation || isLengthSet) structuralArrayParent = parent;
+    if (
+      resolvedFinalSegment.value.kind === 'index' &&
+      action.op === 'set' &&
+      action.newValue !== undefined
+    ) {
+      directArrayIndexAssignment = {
+        parent,
+        index: resolvedFinalSegment.value.index,
+      };
+    }
   }
 
   return {
     success: true,
-    value: { path, structuralArrayParent },
+    value: { path, structuralArrayParent, directArrayIndexAssignment },
   };
 }
 
@@ -64,11 +104,10 @@ export function areActionsOrderDependent(left: Action, right: Action): boolean {
   const rightPath = rightAnalysis.value.path;
   if (pathsOverlap(leftPath, rightPath)) return true;
 
-  const leftArrayParent = leftAnalysis.value.structuralArrayParent;
-  if (leftArrayParent && isAtOrUnderPath(rightPath, leftArrayParent)) return true;
-
-  const rightArrayParent = rightAnalysis.value.structuralArrayParent;
-  return Boolean(rightArrayParent && isAtOrUnderPath(leftPath, rightArrayParent));
+  return (
+    structuralParentAffectsPath(leftAnalysis.value, rightPath) ||
+    structuralParentAffectsPath(rightAnalysis.value, leftPath)
+  );
 }
 
 function actionsInEntry(entry: ActionHistoryEntry): Action[] {
