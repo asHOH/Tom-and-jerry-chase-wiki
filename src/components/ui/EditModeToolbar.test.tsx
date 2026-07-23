@@ -5,6 +5,8 @@ import { EditModeContext } from '@/context/EditModeContext';
 
 import EditModeToolbar, { type EditModeToolbarProps } from './EditModeToolbar';
 
+const mockSetIsPreviewMode = jest.fn();
+
 jest.mock('@/lib/auth/PermissionProvider', () => {
   const actual = jest.requireActual('@/lib/auth/permissions');
   const fixtures = jest.requireActual('@/testUtils/permissionFixtures');
@@ -23,14 +25,14 @@ jest.mock('@/lib/auth/PermissionProvider', () => {
   };
 });
 
-function renderToolbar(props: EditModeToolbarProps) {
+function renderToolbar(props: EditModeToolbarProps, isPreviewMode = false) {
   return render(
     <EditModeContext
       value={{
         isEditMode: true,
         isLoading: false,
-        isPreviewMode: false,
-        setIsPreviewMode: jest.fn(),
+        isPreviewMode,
+        setIsPreviewMode: mockSetIsPreviewMode,
       }}
     >
       <EditModeToolbar {...props} />
@@ -101,6 +103,21 @@ describe('EditModeToolbar', () => {
     const buttons = screen.getAllByRole('button');
     return buttons[buttons.length - 1]!;
   };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it.each([
+    { active: false, buttonName: '预览', next: true },
+    { active: true, buttonName: '退出预览', next: false },
+  ])('toggles preview mode when active is $active', ({ active, buttonName, next }) => {
+    renderToolbar(createProps(), active);
+
+    fireEvent.click(screen.getByRole('button', { name: buttonName }));
+
+    expect(mockSetIsPreviewMode).toHaveBeenCalledWith(next);
+  });
 
   it('does not exit edit mode when publish fails', async () => {
     const props = createProps();

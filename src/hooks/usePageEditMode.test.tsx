@@ -18,17 +18,21 @@ const marySpecialSkillsFinal = [{ name: '魔术漂浮', description: '通用特�
 
 function PageEditModeProbe() {
   const [refreshCount, setRefreshCount] = useState(0);
-  const { isDirty, discardChanges, publishChanges, getActionCount } = usePageEditMode({
-    entityType: 'characters',
-    entityId: TEST_CHARACTER_ID,
-    showToast: mockShowToast,
-  });
+  const { isDirty, draftsSummary, discardChanges, publishChanges, getActionCount } =
+    usePageEditMode({
+      entityType: 'characters',
+      entityId: TEST_CHARACTER_ID,
+      showToast: mockShowToast,
+    });
   void refreshCount;
 
   return (
     <div>
       <div data-testid='page-dirty'>{String(isDirty)}</div>
       <div data-testid='page-action-count'>{getActionCount()}</div>
+      <div data-testid='drafts-summary'>
+        {draftsSummary.map((draft) => `${draft.entityType}:${draft.entityId}`).join(',')}
+      </div>
       <button type='button' onClick={() => setRefreshCount((count) => count + 1)}>
         refresh
       </button>
@@ -212,6 +216,40 @@ describe('usePageEditMode', () => {
           newValue: 'other draft description',
         }),
       ]);
+    });
+  });
+
+  it('should summarize drafts across entity domains while editing one route', async () => {
+    window.localStorage.setItem(
+      getActionsStorageKey('characters'),
+      JSON.stringify([
+        {
+          op: 'set',
+          path: `${TEST_CHARACTER_ID}.description`,
+          oldValue: 'canonical description',
+          newValue: 'draft description',
+        },
+      ])
+    );
+    window.localStorage.setItem(
+      getActionsStorageKey('items'),
+      JSON.stringify([
+        {
+          op: 'set',
+          path: '__cross_domain_item__.description',
+          oldValue: 'canonical item description',
+          newValue: 'draft item description',
+        },
+      ])
+    );
+
+    renderInEditMode();
+
+    await waitFor(() => {
+      expect(screen.getByTestId('drafts-summary')).toHaveTextContent(
+        `characters:${TEST_CHARACTER_ID}`
+      );
+      expect(screen.getByTestId('drafts-summary')).toHaveTextContent('items:__cross_domain_item__');
     });
   });
 

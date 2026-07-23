@@ -4,7 +4,7 @@
 
 - Date: 2026-07-16
 - Last revised: 2026-07-24
-- State: Semantic prerequisites complete; parent Phases 1-5 remain
+- State: Phase 0 verified; parent Phases 1-5 remain
 - Scope: Client bundle size, edit-mode initialization, published-snapshot caching, public-action
   replay, route read models, and data-module boundaries
 
@@ -18,6 +18,9 @@ Implementation status:
   atomic root payload/replay removal, boundary enforcement, and final bundle audit, have not started.
 - The semantic-ordering trust-boundary closure, post-revoke audit compatibility gate, and direct
   array-index dependency classifier are complete. The parent implementation may proceed.
+- Phase 0 verification is complete. Characterization coverage now freezes approved-action effects on
+  normal rendering, metadata, structured data, and wiki history, plus draft restore, preview,
+  discard, publish, exit, and cross-domain summaries.
 
 ## Related Work and Dependencies
 
@@ -215,7 +218,7 @@ measurements show that edit-mode loading itself needs optimization.
 
 ## Implementation Plan
 
-### Phase 0: Confirm behavioral invariants
+### Phase 0: Confirm behavioral invariants (complete)
 
 Use the existing evidence as justification. In the first implementation change:
 
@@ -224,6 +227,24 @@ Use the existing evidence as justification. In the first implementation change:
 2. Add or confirm edit tests for restore, preview, discard, publish, exit, and cross-route drafts.
 3. Define one canonical-data-only change and one code-only change with an unchanged approved-action
    set so cache-key tests prove that a new production build cannot reuse an older snapshot.
+
+Verification record:
+
+- An item-detail characterization applies an approved action through the legacy replay boundary and
+  verifies that the published description reaches normal rendering props, generated metadata, and
+  JSON-LD. Existing wiki-history tests verify approved action-derived history and entity filtering.
+- Existing edit tests cover restoration, current-entity discard and publish while preserving other
+  drafts, successful-publish exit, failed-publish retention, and preview rendering. Added coverage
+  verifies both preview toggle directions and cross-domain draft summaries while editing one route.
+- Freeze the canonical-data-only cache vector as: keep the ordered approved-action snapshot and
+  selector code fixed, change one canonical item description between build identities, and require
+  the second build to miss the first build's published cache and return the new description.
+- Freeze the code-only cache vector as: keep canonical data and the ordered approved-action snapshot
+  fixed, change one published selector projection between build identities, and require the second
+  build to miss the first build's published cache and return the new projection.
+
+The two cache vectors are specifications for Phase 1 because the production build identity and
+published cache do not exist before that phase.
 
 ### Phase 1: Build deterministic published data and history selectors
 
