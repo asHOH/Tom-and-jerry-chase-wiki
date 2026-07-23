@@ -4,10 +4,15 @@
 
 - Date: 2026-07-17
 - Last revised: 2026-07-24
-- State: Trust-boundary work and published-data Phase 1 complete; live consumer migration and
-  publish-time dependency grouping remain
+- State: Archived trust-boundary record; remaining client cutover and Stage B work merged into the
+  lean active plan
 - Scope: Public-row decoding and replay semantics, trusted publish and approval persistence, and
   publish-time dependency grouping
+
+This record preserves the completed security rollout and frozen semantic contracts. It no longer
+defines an active delivery sequence. The remaining client cutover and publish-time grouping work is
+owned by the
+[lean game-data plan](../../2026-07-16-editable-game-data-store-loading-plan.md).
 
 Completed foundation:
 
@@ -36,16 +41,16 @@ Completed foundation:
   replay-epoch movement complete prepared-path persistence attribution.
 - The anonymous prepared-publish function is live with its expected signature and service-role-only
   execution privileges. A catalog-only comparison recorded in
-  [the live-comparison report](./reports/2026-07-22-anonymous-prepared-publish-live-comparison.md)
+  [the live-comparison report](../../reports/2026-07-22-anonymous-prepared-publish-live-comparison.md)
   confirmed that its complete definition matches the repository migration. Approved history-only
   repair then recorded `20260720000001` as applied without re-executing its SQL.
 - Steps 5C-5E are complete. Post-revoke probes confirmed that browser roles cannot execute the legacy
   mutation RPCs or update action rows directly, while prepared service-role execution and intended
   authenticated read/reject behavior remain available. The post-revoke three-cohort audit passed
   approved replay compatibility with 182 approved, 1,125 synced, and 5 pending rows. See the
-  [execution evidence](./reports/2026-07-23-game-data-step-5c-execution-evidence.md).
+  [execution evidence](../../reports/2026-07-23-game-data-step-5c-execution-evidence.md).
 - The
-  [direct array-index dependency classifier refinement](./archive/completed/2026-07-23-direct-array-index-set-dependency-plan.md)
+  [direct array-index dependency classifier refinement](./2026-07-23-direct-array-index-set-dependency-plan.md)
   landed in `0bc4d575`. Defined direct assignments to distinct canonical numeric siblings may
   persist separately, while same-index, property, non-canonical, structural-operation, and invalid
   cases remain dependent or fail closed. The production-connected read-only audit reported no
@@ -53,18 +58,10 @@ Completed foundation:
 - Editable-store Phase 1 now consumes the frozen decoder and checked replay contracts through one
   immutable approved-action snapshot, deterministic action/global revisions, measured persistent
   published caches, complete snapshot composition, and route/history selectors. It remains
-  alongside legacy replay until the owning Phase 2 cutover.
+  alongside legacy replay until Lean Step 1 cuts server consumers over.
 
-Remaining work:
-
-1. Complete editable-store Phases 2-4 to migrate live server and client consumers; do not adapt the
-   legacy mutable replay into the checked engine.
-2. Enable publish-time dependency grouping only after the store-loading plan removes root-client
-   replay.
-
-No production trust-boundary rollout gate remains. The editable-store implementation may proceed.
-Publish-time dependency grouping remains blocked until the editable-store Phase 4 gate removes
-root-client replay.
+No trust-boundary work remains in this archived plan. The active lean plan owns removal of legacy
+server/client replay, the lazy edit runtime, the Stage B gate, and final validation.
 
 ## Frozen Contract
 
@@ -169,7 +166,10 @@ root-client replay.
 Roll out additively: add the prepared RPC, deploy both route cutovers, then deploy the revoke. This
 stage changes validation and trust ownership but deliberately does not introduce dependency grouping.
 
-### Stage B: Enable grouping after root-client replay is gone (pending Phase 4)
+### Historical Stage B design (moved to the lean active plan)
+
+The active wording and exit gate now live in the lean game-data plan. The original design is
+retained below as historical context.
 
 After the editable-store Phase 4 gate passes:
 
@@ -242,10 +242,10 @@ is revoked and no browser-callable path can move a row into or out of the approv
 - Anonymous and authenticated clients cannot execute legacy or prepared approval or mark-synced
   RPCs; service-role route calls remain permission checked.
 
-## Live Replay Handoff
+## Historical Live Replay Handoff
 
-The production audit gate and published-data Phase 1 are complete, but live migration stays in the
-owning plan:
+This handoff is superseded by the lean active plan. Its correctness order remains historical
+context:
 
 1. The pure foundation and Phase 1 snapshot layer consume `decodeStoredActionRow`, shared touched
    roots, and `applyCheckedActionRow` to build revision-consistent copy-on-write published values
@@ -257,19 +257,15 @@ owning plan:
 
 Do not create a generalized mutable-target adapter or replay approved rows against mounted proxies.
 
-## Delivery Status and Remaining Order
+## Archived Delivery Status
 
 The pure foundation, editable-store Phase 1 snapshot/selectors, bounded preparation, replay epoch,
 prepared RPCs, route cutovers, legacy revokes, post-revoke audit, direct-RPC security verification,
 and direct array-index classifier are complete.
 
-Complete the remaining work in this order:
-
-1. Complete the pure published-data server cutover and editable-store Phases 2-4.
-2. Enable and verify publish-time dependency grouping.
-3. Return to editable-store Phase 5 and complete its boundary enforcement and final audits.
-
-Item 2 is explicitly gated on removal of root-client replay.
+The remaining server/client cutover, root-replay removal, dependency grouping, and final audit were
+merged into the lean active plan. This archived record must not be used as a second execution
+sequence.
 
 The post-bypass audit gate passed. Future reruns retain these two criteria:
 

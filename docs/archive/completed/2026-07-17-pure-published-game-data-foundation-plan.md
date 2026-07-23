@@ -21,7 +21,8 @@ Implementation status:
 - `2026-07-16-editable-game-data-store-loading-plan.md` owns published-snapshot caching, build and
   action revisions, route read models, server and client cutovers, the lazy edit runtime, and removal
   of the transitional root replay.
-- `2026-07-17-public-action-semantic-ordering-plan.md` owns database-row selection, decoding,
+- `docs/archive/completed/2026-07-17-public-action-semantic-ordering-plan.md` owns the historical
+  database-row selection, decoding,
   normalization, deterministic ordering, path and touched-root interpretation, checked action
   application, row-local rollback semantics, publish grouping, and the publish and approval trust
   boundaries.

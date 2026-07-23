@@ -123,7 +123,8 @@ order rather than request order.
 4. Keep non-index and malformed siblings beneath the same parent dependent. Keep all invalid paths
    fail-closed.
 5. Revise the frozen dependency bullet in
-   `docs/2026-07-17-public-action-semantic-ordering-plan.md` to prescribe this exact pairwise
+   `docs/archive/completed/2026-07-17-public-action-semantic-ordering-plan.md` to prescribe this
+   exact pairwise
    exception and retain all fail-closed cases.
 6. Do not change request decoding, permission derivation, candidate replay, replay-epoch locking,
    prepared RPCs, or persistence row boundaries.
