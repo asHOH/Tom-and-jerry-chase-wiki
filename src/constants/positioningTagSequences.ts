@@ -6,7 +6,7 @@ import type {
 } from '@/data/types';
 
 // Define display sequences for positioning tags
-const CAT_POSITIONING_TAG_SEQUENCE: CatPositioningTagName[] = [
+export const CAT_POSITIONING_TAG_SEQUENCE: readonly CatPositioningTagName[] = [
   '进攻',
   '防守',
   '追击',
@@ -16,7 +16,7 @@ const CAT_POSITIONING_TAG_SEQUENCE: CatPositioningTagName[] = [
   '翻盘',
 ];
 
-const MOUSE_POSITIONING_TAG_SEQUENCE: MousePositioningTagName[] = [
+export const MOUSE_POSITIONING_TAG_SEQUENCE: readonly MousePositioningTagName[] = [
   '奶酪',
   '干扰',
   '救援',
@@ -25,6 +25,10 @@ const MOUSE_POSITIONING_TAG_SEQUENCE: MousePositioningTagName[] = [
   '砸墙',
   '后期',
 ];
+
+export function getPositioningTagNames(factionId: FactionId): readonly string[] {
+  return factionId === 'cat' ? CAT_POSITIONING_TAG_SEQUENCE : MOUSE_POSITIONING_TAG_SEQUENCE;
+}
 
 type PositioningTagLevelSource = {
   readonly level?: unknown;
