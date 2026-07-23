@@ -18,16 +18,20 @@ Implementation status:
   atomic root payload/replay removal, boundary enforcement, and final bundle audit, have not started.
 - The semantic-ordering trust-boundary closure, post-revoke audit compatibility gate, and direct
   array-index dependency classifier are complete. The parent implementation may proceed.
-- Phase 0 verification is complete. Characterization coverage now freezes approved-action effects on
-  normal rendering, metadata, structured data, and wiki history, plus draft restore, preview,
-  discard, publish, exit, and cross-domain summaries.
+- Phase 0 verification landed in `23bbe834`. Characterization coverage now freezes approved-action
+  effects on normal rendering, metadata, structured data, and wiki history, plus draft restore,
+  preview, discard, publish, exit, and cross-domain summaries.
+
+Handoff entry point: begin the parent Phase 1 work. Do not repeat Phase 0, rebuild the completed pure
+foundation, or enable semantic-ordering Stage B before the Phase 4 gate.
 
 ## Related Work and Dependencies
 
-- `2026-07-17-pure-published-game-data-foundation-plan.md` owns the identity-isolated canonical
-  sources, immutable approved-action input, and pure per-domain copy-on-write overlay. Phase 1 of
-  this plan composes and caches that foundation; it does not redefine its domain or overlay
-  contracts.
+- The
+  [pure published-data foundation plan](./archive/completed/2026-07-17-pure-published-game-data-foundation-plan.md)
+  owns the identity-isolated canonical sources, immutable approved-action input, and pure per-domain
+  copy-on-write overlay. Phase 1 of this plan composes and caches that completed foundation; it does
+  not redefine its domain or overlay contracts.
 - `2026-07-17-public-action-semantic-ordering-plan.md` owns row selection, decoding, ordering,
   path interpretation, checked plain-object apply semantics, publish grouping, and publish and
   approval trust boundaries. This plan consumes those contracts and must not introduce another replay
@@ -248,9 +252,9 @@ published cache do not exist before that phase.
 
 ### Phase 1: Build deterministic published data and history selectors
 
-Implement the canonical-source and pure-overlay work through
-`2026-07-17-pure-published-game-data-foundation-plan.md`. The steps below describe how this parent
-plan composes that completed foundation with revisions, caching, read models, and history.
+Compose the canonical-source and pure-overlay work already completed in the
+[pure published-data foundation plan](./archive/completed/2026-07-17-pure-published-game-data-foundation-plan.md).
+The steps below describe how this parent plan adds revisions, caching, read models, and history.
 
 1. Reuse the strict approved-row reader, `decodeStoredActionRow`, and checked apply helpers owned by
    `2026-07-17-public-action-semantic-ordering-plan.md`. Do not fork selection, decoding, ordering,
@@ -670,9 +674,10 @@ The work is complete when all of the following are true:
 4. Perform the atomic lazy edit-runtime and root public-action-payload cutover, removing the final
    mutable-store allowlist entry.
 5. Verify that edit proxies are created from the fully replayed baseline and that no mounted client
-   path replays approved rows, then release the semantic-ordering plan's publish-grouping gate.
-6. Remove the canonical-value client allowlist, mark canonical value entry points server-only, and
-   complete the import-boundary and final bundle audit.
+   path replays approved rows. Then pause this plan, release the semantic-ordering plan's gate, and
+   enable and verify Stage B publish-time dependency grouping.
+6. Return to this plan for Phase 5: remove the canonical-value client allowlist, mark canonical value
+   entry points server-only, and complete the import-boundary and final bundle audit.
 
 Each step should land with relevant tests. Run focused bundle verification after the
 character-detail pilot and final cutover. The universal-route reduction is delivered at the Phase 4

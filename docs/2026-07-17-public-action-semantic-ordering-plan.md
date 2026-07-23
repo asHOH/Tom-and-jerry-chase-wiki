@@ -44,13 +44,12 @@ Completed foundation:
   authenticated read/reject behavior remain available. The post-revoke three-cohort audit passed
   approved replay compatibility with 182 approved, 1,125 synced, and 5 pending rows. See the
   [execution evidence](./reports/2026-07-23-game-data-step-5c-execution-evidence.md).
-- The direct array-index dependency classifier refinement is complete. Defined direct assignments to
-  distinct canonical numeric siblings may persist separately, while same-index, property,
-  non-canonical, structural-operation, and invalid cases remain dependent or fail closed. The
-  production-connected read-only audit reported no classification delta.
-- A clean local `supabase db reset --local` was deferred because the pinned Postgres Docker image
-  could not finish downloading. No local database container or migration ran; this is optional
-  reproducibility validation, not a blocker for the already-validated retimestamp-only change.
+- The
+  [direct array-index dependency classifier refinement](./archive/completed/2026-07-23-direct-array-index-set-dependency-plan.md)
+  landed in `0bc4d575`. Defined direct assignments to distinct canonical numeric siblings may
+  persist separately, while same-index, property, non-canonical, structural-operation, and invalid
+  cases remain dependent or fail closed. The production-connected read-only audit reported no
+  classification delta.
 
 Remaining work:
 
@@ -58,8 +57,6 @@ Remaining work:
    adapt the legacy mutable replay into the checked engine.
 2. Enable publish-time dependency grouping only after the store-loading plan removes root-client
    replay.
-3. Optionally repeat the clean local reset in CI, on another machine, or after the Docker image is
-   available; record it as deferred until then.
 
 No production trust-boundary rollout gate remains. The editable-store implementation may proceed.
 Publish-time dependency grouping remains blocked until the editable-store Phase 4 gate removes
@@ -264,7 +261,7 @@ Complete the remaining work in this order:
 
 1. Complete the pure published-data server cutover and editable-store Phases 1-4.
 2. Enable and verify publish-time dependency grouping.
-3. Add submission metadata only if later evidence establishes a concrete operational need.
+3. Return to editable-store Phase 5 and complete its boundary enforcement and final audits.
 
 Item 2 is explicitly gated on removal of root-client replay.
 
@@ -299,9 +296,8 @@ The plan is complete when:
 
 ## Deferred and Non-Goals
 
-Do not add submission sequence metadata unless implementation demonstrates a need for operational
-group identity. If justified later, nullable `submission_id` and `entry_index` are diagnostic only and
-must not override semantic dependency grouping.
+The optional clean local Supabase reset and submission sequence metadata are explicitly skipped for
+this handoff. Do not implement or reintroduce them as part of the remaining plan.
 
 This plan does not solve stale drafts, cross-submission conflict policy, last-writer-wins behavior,
 local undo history, route read models, client bundle boundaries, or general event sourcing. It does
