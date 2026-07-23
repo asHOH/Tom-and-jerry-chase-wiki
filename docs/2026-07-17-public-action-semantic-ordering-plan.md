@@ -3,8 +3,9 @@
 ## Status
 
 - Date: 2026-07-17
-- Last revised: 2026-07-22
-- State: Additive trust-boundary cutover deployed; revoke implemented but rollout closure remains
+- Last revised: 2026-07-24
+- State: Trust-boundary cutover, revoke, and post-revoke audit complete; live replay migration and
+  publish-time dependency grouping remain
 - Scope: Public-row decoding and replay semantics, trusted publish and approval persistence, and
   publish-time dependency grouping
 
@@ -24,44 +25,42 @@ Completed foundation:
 - Service-role-only prepared publish, approval, and mark-synced RPCs, complete candidate replay, and
   the publish and moderation route cutovers landed in `85e5934f`.
 - The additive epoch/prepared-RPC migrations and route cutovers are deployed. The separate Step 5B
-  revoke migration landed in `e04fcfa1` but is not deployed. After a read-only ledger check confirmed
-  its original duplicate version was absent remotely, its unchanged SQL was retimestamped to unique
-  repository version `20260722000000` and committed in `2b2b0792`.
+  revoke migration landed in `e04fcfa1`, was retimestamped to unique repository version
+  `20260722000000` in `2b2b0792`, and is deployed.
 - The scalar-property delete squashing fix landed in `c07b4a14`, and the frozen container replay fix
   landed in `bf71c68e`. Both are present in the verified production build. The remaining mixed
   numeric-child/parent-array squash failure was reproduced after that deployment and fixed in
-  `749573da` by cloning scratch-replay payloads and admitting verified direct parent-array sets.
-  That fix is repository-validated but not deployed; affected-user resubmission verification is
-  still pending.
+  `f02945c1` by cloning scratch-replay payloads and admitting verified direct parent-array sets.
+  That fix is repository-validated, deployed, and version-verified. Multiple users confirmed
+  successful normal-website submissions, and aggregate database metadata plus the exact
+  replay-epoch movement complete prepared-path persistence attribution.
 - The anonymous prepared-publish function is live with its expected signature and service-role-only
   execution privileges. A catalog-only comparison recorded in
   [the live-comparison report](./reports/2026-07-22-anonymous-prepared-publish-live-comparison.md)
   confirmed that its complete definition matches the repository migration. Approved history-only
   repair then recorded `20260720000001` as applied without re-executing its SQL.
+- Steps 5C-5E are complete. Post-revoke probes confirmed that browser roles cannot execute the legacy
+  mutation RPCs or update action rows directly, while prepared service-role execution and intended
+  authenticated read/reject behavior remain available. The post-revoke three-cohort audit passed
+  approved replay compatibility with 182 approved, 1,125 synced, and 5 pending rows. See the
+  [execution evidence](./reports/2026-07-23-game-data-step-5c-execution-evidence.md).
 - A clean local `supabase db reset --local` was deferred because the pinned Postgres Docker image
   could not finish downloading. No local database container or migration ran; this is optional
   reproducibility validation, not a blocker for the already-validated retimestamp-only change.
 
 Remaining work:
 
-1. Deploy application fix `749573da`, verify it through `/api/version/`, then use one affected-user
-   normal-route resubmission to establish prepared-path persistence with server/database evidence.
-2. Optionally repeat the clean local reset in CI, on another machine, or after the Docker image is
-   available; record it as deferred until then.
-3. Obtain explicit approval before deploying the uniquely versioned Step 5B migration alone. Follow
-   the [Step 5C production runbook](./2026-07-22-game-data-step-5c-runbook.md); do not use an
-   unreconciled normal migration push.
-4. Verify the post-revoke privileges and intended read/rejection behavior with the Step 5D probes.
-5. Rerun the approved, synced, and pending production audit after the bypasses are closed.
-6. Migrate live replay through the pure published-data and editable-store-loading plans; do not
+1. Implement and verify the direct array-index classifier refinement without enabling grouping.
+2. Migrate live replay through the pure published-data and editable-store-loading plans; do not
    adapt the legacy mutable replay into the checked engine.
-7. Enable publish-time dependency grouping only after the store-loading plan removes root-client
+3. Enable publish-time dependency grouping only after the store-loading plan removes root-client
    replay.
+4. Optionally repeat the clean local reset in CI, on another machine, or after the Docker image is
+   available; record it as deferred until then.
 
-While the resubmission is pending, the application-only deployment, optional local reset, and
-read-only reconciliation planning for the remaining migration-ledger differences may proceed. The
-Step 5C production preflight and revoke, Steps 5D-5E, and the editable-store implementation remain
-blocked unless their stated gate is satisfied or the work is explicitly reprioritized.
+No production trust-boundary rollout gate remains. The direct array-index classifier and the
+editable-store implementation may proceed. Publish-time dependency grouping remains blocked until
+the editable-store Phase 4 gate removes root-client replay.
 
 ## Frozen Contract
 
@@ -80,8 +79,12 @@ blocked unless their stated gate is satisfied or the work is explicitly repriori
   explicit `delete`. `add` without `newValue` is invalid.
 - Checked delete requires every intermediate segment and final target to exist. `oldValue` is
   presentation metadata, not a replay or concurrency condition.
-- Direct numeric `set`, `add`, and `delete` and `length` writes are structural dependencies. Invalid
-  paths fail dependency analysis closed.
+- Direct numeric `set`, `add`, and `delete` and `length` writes retain structural dependency
+  metadata. A direct numeric `set` with defined `newValue` may bypass only its own broad
+  structural-parent dependency when the other path enters a distinct canonical numeric sibling
+  immediately beneath the same parent; the other action's structural analysis still applies.
+  Same-index, non-index, malformed sibling, parent/ancestor, and invalid paths remain dependent or
+  fail dependency analysis closed.
 - Ordinary row failure restores all supplied working targets and does not mark the row handled.
   Incomplete rollback is a fatal invariant failure.
 - Replay and dynamic wiki history use public `approved` rows. Entity-update and audit history may
@@ -118,7 +121,7 @@ blocked unless their stated gate is satisfied or the work is explicitly repriori
 
 ## Work Package 1: Trusted Publish Boundary
 
-### Stage A: Close the bypass now without grouping
+### Stage A: Close the bypass now without grouping (complete)
 
 1. Add one server preparation helper shared by `/api/game-data-actions/publish` and
    `/api/game-data-actions/publish-relations`.
@@ -162,7 +165,7 @@ blocked unless their stated gate is satisfied or the work is explicitly repriori
 Roll out additively: add the prepared RPC, deploy both route cutovers, then deploy the revoke. This
 stage changes validation and trust ownership but deliberately does not introduce dependency grouping.
 
-### Stage B: Enable grouping after root-client replay is gone
+### Stage B: Enable grouping after root-client replay is gone (pending Phase 4)
 
 After the editable-store Phase 4 gate passes:
 
@@ -190,7 +193,7 @@ After the editable-store Phase 4 gate passes:
 - Later grouping preserves noncontiguous transitive order, final replay result, and independent row
   separation.
 
-## Work Package 2: Route-Owned Approval
+## Work Package 2: Route-Owned Approval (complete)
 
 1. Add one pending-row loader and decoder shared by single and batch moderation. Decode each complete
    row with `decodeStoredActionRow`; one invalid child makes that row ineligible for approval.
@@ -248,25 +251,21 @@ The production audit gate is passed, but live migration stays in the owning plan
 
 Do not create a generalized mutable-target adapter or replay approved rows against mounted proxies.
 
-## Delivery Order
+## Delivery Status and Remaining Order
 
-1. Complete the pure foundation's pristine canonical-source factories needed by candidate replay.
-2. Add shared bounded publish preparation, the approved-replay epoch and trigger, the atomic snapshot
-   reader, and additive prepared publish, approval, and mark-synced RPCs.
-3. Cut over approval and mark-synced routes and revoke their legacy browser mutation paths.
-4. Cut over publish routes without grouping, reject dependent cross-row requests, and revoke the
-   legacy publish RPC.
-5. Rerun the approved, synced, and pending audit so no row created through a closing bypass escapes
-   review.
-6. Complete the pure published-data server cutover and editable-store Phases 1-4.
-7. Enable and verify publish-time dependency grouping.
-8. Complete moderation and direct-RPC security verification.
-9. Add submission metadata only if later evidence establishes a concrete operational need.
+The pure foundation, bounded preparation, replay epoch, prepared RPCs, route cutovers, legacy
+revokes, post-revoke audit, and direct-RPC security verification are complete.
 
-Items 1-5 form the ready implementation sequence. Item 7 is explicitly gated on removal of
-root-client replay.
+Complete the remaining work in this order:
 
-The post-bypass audit in Item 5 has two distinct gates:
+1. Implement and verify the direct array-index dependency-classifier refinement.
+2. Complete the pure published-data server cutover and editable-store Phases 1-4.
+3. Enable and verify publish-time dependency grouping.
+4. Add submission metadata only if later evidence establishes a concrete operational need.
+
+Item 3 is explicitly gated on removal of root-client replay.
+
+The post-bypass audit gate passed. Future reruns retain these two criteria:
 
 - Approved replay compatibility passes only when malformed rows, checked-replay failures, and
   unknown entity types are all zero. Resolve an approved unknown type by adding checked replay
