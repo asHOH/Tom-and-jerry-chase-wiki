@@ -58,11 +58,15 @@ type ReplayTargetBackup = {
 };
 
 function cloneReplayValue(value: unknown): unknown {
-  if (value !== null && typeof value === 'object' && getVersion(value) !== undefined) {
-    return structuredClone(snapshot(value));
-  }
+  try {
+    if (value !== null && typeof value === 'object' && getVersion(value) !== undefined) {
+      return structuredClone(snapshot(value));
+    }
 
-  return structuredClone(value);
+    return structuredClone(value);
+  } catch (error) {
+    return JSON.parse(JSON.stringify(value));
+  }
 }
 
 function getTouchedRootKeys(entries: ActionHistoryEntry[]): string[] {
