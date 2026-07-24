@@ -21,6 +21,7 @@ import CharacterArticle from './CharacterArticle';
 import CharacterDocs from './CharacterDocs';
 
 // Revalidate once per 8 hours to keep docs fresh
+export const dynamic = 'force-static';
 export const revalidate = 28800;
 
 const getCharacterMap = () => {

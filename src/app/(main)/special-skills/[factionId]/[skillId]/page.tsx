@@ -12,6 +12,8 @@ import StructuredData from '@/components/StructuredData';
 import SpecialSkillDetailClient from './SpecialSkillDetailClient';
 
 // Generate static params for all special skills
+export const dynamic = 'force-static';
+
 export function generateStaticParams() {
   return (['cat', 'mouse'] as const).flatMap((factionId) =>
     Object.keys(canonicalSpecialSkills[factionId]).map((skillId) => ({

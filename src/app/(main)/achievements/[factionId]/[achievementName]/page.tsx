@@ -10,6 +10,8 @@ import StructuredData from '@/components/StructuredData';
 
 import AchievementDetailsClient from './AchievementDetailsClient';
 
+export const dynamic = 'force-static';
+
 export function generateStaticParams() {
   return (['cat', 'mouse'] as const).flatMap((factionId) =>
     Object.keys(canonicalAchievements[factionId]).map((achievementName) => ({

@@ -5,6 +5,8 @@ import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/route
 import { maps as canonicalMaps } from '@/data/static';
 import InteractiveMapPage from '@/features/maps/interactive-map/InteractiveMapPage';
 
+export const dynamic = 'force-static';
+
 export function generateStaticParams() {
   return Object.entries(canonicalMaps)
     .filter(([, map]) => map.interactiveMap)

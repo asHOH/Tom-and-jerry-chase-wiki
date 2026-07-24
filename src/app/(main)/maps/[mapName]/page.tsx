@@ -10,6 +10,8 @@ import StructuredData from '@/components/StructuredData';
 
 import MapDetailClient from './MapDetailsClient';
 
+export const dynamic = 'force-static';
+
 export function generateStaticParams() {
   return Object.keys(canonicalMaps).map((mapName) => ({
     mapName,

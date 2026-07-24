@@ -10,6 +10,8 @@ import StructuredData from '@/components/StructuredData';
 
 import FixtureDetailClient from './FixtureDetailsClient';
 
+export const dynamic = 'force-static';
+
 export function generateStaticParams() {
   return Object.keys(canonicalFixtures).map((fixtureName) => ({
     fixtureName,

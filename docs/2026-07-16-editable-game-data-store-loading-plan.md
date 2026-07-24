@@ -53,6 +53,9 @@ Lean Step 1 is also complete:
   explicitly.
 - Published detail routes carry their exact published revision into edit-capable client shells,
   with character detail and faction character lists migrated as the first large-domain checkpoint.
+- Published detail routes retain static generation through explicit `force-static` contracts;
+  character detail retains its eight-hour ISR interval, while tagged published-data invalidation
+  remains available for on-demand refresh.
 - Focused characterization tests, Oxlint, strict TypeScript, Prettier, and
   `npm run build:skip-images` pass.
 

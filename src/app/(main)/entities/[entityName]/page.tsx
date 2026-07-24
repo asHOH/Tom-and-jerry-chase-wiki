@@ -11,6 +11,8 @@ import StructuredData from '@/components/StructuredData';
 
 import EntityDetailClient from './EntityDetailsClient';
 
+export const dynamic = 'force-static';
+
 export function generateStaticParams() {
   return Object.keys(canonicalEntities).map((entityName) => ({
     entityName,

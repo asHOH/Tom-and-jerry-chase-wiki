@@ -11,6 +11,8 @@ import StructuredData from '@/components/StructuredData';
 
 import BuffDetailClient from './BuffDetailsClient';
 
+export const dynamic = 'force-static';
+
 export function generateStaticParams() {
   return Object.keys(canonicalBuffs).map((buffName) => ({
     buffName,

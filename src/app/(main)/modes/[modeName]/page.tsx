@@ -10,6 +10,8 @@ import StructuredData from '@/components/StructuredData';
 
 import ModeDetailClient from './ModeDetailsClient';
 
+export const dynamic = 'force-static';
+
 export function generateStaticParams() {
   return Object.keys(canonicalModes).map((modeName) => ({
     modeName,
