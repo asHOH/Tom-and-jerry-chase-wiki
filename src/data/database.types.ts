@@ -964,6 +964,16 @@ export type Database = {
         };
         Returns: undefined;
       };
+      prepared_revoke_game_data_action: {
+        Args: {
+          p_action_id: string;
+          p_actor_id: string;
+          p_expected_entity_type: string;
+          p_expected_entry: Json;
+          p_expected_replay_epoch: number;
+        };
+        Returns: undefined;
+      };
       prepared_publish_anonymous_game_data_actions: {
         Args: {
           p_entity_type: string;
@@ -1053,7 +1063,7 @@ export type Database = {
         | 'special_skills'
         | 'list_pages';
       comment_status: 'visible' | 'hidden' | 'deleted';
-      game_data_action_status: 'pending' | 'approved' | 'rejected' | 'synced';
+      game_data_action_status: 'pending' | 'approved' | 'rejected' | 'synced' | 'revoked';
       permission_scope: 'global' | 'resource_type' | 'resource';
       version_status: 'pending' | 'approved' | 'rejected' | 'revoked';
     };
@@ -1195,7 +1205,7 @@ export const Constants = {
         'list_pages',
       ],
       comment_status: ['visible', 'hidden', 'deleted'],
-      game_data_action_status: ['pending', 'approved', 'rejected', 'synced'],
+      game_data_action_status: ['pending', 'approved', 'rejected', 'synced', 'revoked'],
       permission_scope: ['global', 'resource_type', 'resource'],
       version_status: ['pending', 'approved', 'rejected', 'revoked'],
     },

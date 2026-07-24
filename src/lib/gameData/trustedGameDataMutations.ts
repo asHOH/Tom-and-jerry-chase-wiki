@@ -243,3 +243,27 @@ export async function markPreparedGameDataActionSynced(
   if (error) throw persistenceError(error);
   invalidatePublicGameDataActionsCache();
 }
+
+export async function revokePreparedGameDataAction(
+  actorId: string,
+  record: TrustedGameDataActionRecord
+): Promise<void> {
+  if (record.status !== 'approved' || !record.is_public) {
+    throw new TrustedGameDataMutationError('not_found');
+  }
+  const snapshot = await readApprovedReplaySnapshot();
+  if (!snapshot.rows.some((row) => row.id === record.id)) {
+    throw new TrustedGameDataMutationError('replay_epoch_conflict');
+  }
+  validateCandidate(candidateRows(snapshot).filter((row) => row.rowId !== record.id));
+
+  const { error } = await supabaseAdmin.rpc('prepared_revoke_game_data_action', {
+    p_actor_id: actorId,
+    p_action_id: record.id,
+    p_expected_entity_type: record.entity_type,
+    p_expected_entry: record.entry,
+    p_expected_replay_epoch: snapshot.replayEpoch,
+  });
+  if (error) throw persistenceError(error);
+  invalidatePublicGameDataActionsCache();
+}

@@ -7,11 +7,12 @@ import {
   approvePreparedGameDataAction,
   loadTrustedGameDataAction,
   markPreparedGameDataActionSynced,
+  revokePreparedGameDataAction,
   TrustedGameDataMutationError,
 } from '@/lib/gameData/trustedGameDataMutations';
 import { publishNotification } from '@/lib/notificationUtils';
 
-const MODERATION_ACTIONS = ['approve', 'reject', 'mark-synced'] as const;
+const MODERATION_ACTIONS = ['approve', 'reject', 'mark-synced', 'revoke'] as const;
 
 type ModerationAction = (typeof MODERATION_ACTIONS)[number];
 
@@ -52,9 +53,11 @@ export async function POST(
     const requiredPermission =
       action === 'mark-synced'
         ? 'game_data_action.mark_synced'
-        : action === 'reject'
-          ? 'game_data_action.reject'
-          : 'game_data_action.approve';
+        : action === 'revoke'
+          ? 'game_data_action.revoke'
+          : action === 'reject'
+            ? 'game_data_action.reject'
+            : 'game_data_action.approve';
     const guard = await requirePermission(requiredPermission);
     if ('error' in guard) return guard.error;
     const { supabase } = guard;
@@ -97,6 +100,11 @@ export async function POST(
       }
 
       return NextResponse.json({ message: 'Action approved', action, action_id: actionId });
+    }
+
+    if (action === 'revoke') {
+      await revokePreparedGameDataAction(guard.userId, recordData);
+      return NextResponse.json({ message: 'Action revoked', action, action_id: actionId });
     }
 
     // reject

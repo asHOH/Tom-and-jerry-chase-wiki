@@ -11,6 +11,7 @@ export const PERMISSION_KEYS = [
   'game_data_action.approve',
   'game_data_action.reject',
   'game_data_action.mark_synced',
+  'game_data_action.revoke',
   'game_data_action.publish_relations',
   'relation.update',
   'category.create',

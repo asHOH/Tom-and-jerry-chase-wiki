@@ -8,6 +8,7 @@ import {
   approvePreparedGameDataAction,
   markPreparedGameDataActionSynced,
   publishPreparedGameDataActions,
+  revokePreparedGameDataAction,
   type TrustedGameDataActionRecord,
 } from './trustedGameDataMutations';
 
@@ -293,6 +294,45 @@ describe('trusted game data mutations', () => {
       p_expected_replay_epoch: 9,
     });
   });
+
+  it('validates the complete remaining set before revoke persistence', async () => {
+    const target = approvedRow('approved-target', 'item-a.description');
+    const remaining = approvedRow('approved-remaining', 'item-b.description');
+    readSnapshotMock.mockResolvedValue(snapshot([target, remaining]) as never);
+    adminRpcMock.mockResolvedValue({ data: null, error: null } as never);
+
+    await revokePreparedGameDataAction(
+      'moderator-1',
+      record({ id: 'approved-target', status: 'approved', is_public: true })
+    );
+
+    expect(validateCandidateMock).toHaveBeenCalledWith([
+      expect.objectContaining({ rowId: 'approved-remaining' }),
+    ]);
+    expect(adminRpcMock).toHaveBeenCalledWith('prepared_revoke_game_data_action', {
+      p_actor_id: 'moderator-1',
+      p_action_id: 'approved-target',
+      p_expected_entity_type: 'items',
+      p_expected_entry: record().entry,
+      p_expected_replay_epoch: 9,
+    });
+    expect(invalidateMock).toHaveBeenCalledTimes(1);
+  });
+
+  it.each([
+    ['pending', false],
+    ['approved', false],
+  ] as const)(
+    'rejects revoke when the record is not public approved (%s)',
+    async (status, isPublic) => {
+      await expect(
+        revokePreparedGameDataAction('moderator-1', record({ status, is_public: isPublic }))
+      ).rejects.toMatchObject({ code: 'not_found' });
+
+      expect(readSnapshotMock).not.toHaveBeenCalled();
+      expect(adminRpcMock).not.toHaveBeenCalled();
+    }
+  );
 
   it('maps a locked replay epoch mismatch to a stable conflict', async () => {
     adminRpcMock.mockResolvedValue({

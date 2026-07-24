@@ -23,12 +23,13 @@ export type PendingGameDataAction =
 
 type GameDataActionModerationPanelProps = {
   canMarkActionsSynced?: boolean;
+  canRevokeActions?: boolean;
   pendingActions: PendingGameDataAction[];
   mutatePendingActions: () => Promise<unknown> | unknown;
 };
 
 type PendingModerationAction = 'approve' | 'reject';
-type ModerationAction = PendingModerationAction | 'mark-synced';
+type ModerationAction = PendingModerationAction | 'mark-synced' | 'revoke';
 
 type ModerationFailure = {
   actionId: string;
@@ -40,12 +41,14 @@ const ACTION_STATUS_META: Record<ActionStatus, { label: string; className: strin
   approved: { label: '已批准', className: 'text-green-700 dark:text-green-300' },
   rejected: { label: '已拒绝', className: 'text-red-700 dark:text-red-300' },
   synced: { label: '已同步', className: 'text-purple-700 dark:text-purple-300' },
+  revoked: { label: '已撤销', className: 'text-gray-700 dark:text-gray-300' },
 };
 
 const MODERATION_ACTION_SUCCESS_MESSAGE: Record<ModerationAction, string> = {
   approve: '已批准，该改动已公开',
   reject: '已拒绝',
   'mark-synced': '已标记为已同步',
+  revoke: '已撤销，该改动已从公开 replay 移除',
 };
 
 const getModerationFailureMessage = (failure: unknown): string =>
@@ -62,6 +65,7 @@ const summarizeModerationFailures = (failures: ModerationFailure[]): string => {
 
 const GameDataActionModerationPanel = ({
   canMarkActionsSynced: canMarkActionsSynced = false,
+  canRevokeActions: canRevokeActions = false,
   pendingActions,
   mutatePendingActions,
 }: GameDataActionModerationPanelProps) => {
@@ -322,6 +326,7 @@ const GameDataActionModerationPanel = ({
             <option value='approved'>已批准</option>
             <option value='rejected'>已拒绝</option>
             <option value='synced'>已同步</option>
+            <option value='revoked'>已撤销</option>
             <option value='all'>全部</option>
           </FormSelect>
 
@@ -535,6 +540,21 @@ const GameDataActionModerationPanel = ({
                             size='sm'
                           >
                             标为已同步
+                          </Button>
+                        )}
+                        {canRevokeActions && submission.status === 'approved' && (
+                          <Button
+                            disabled={isModerating}
+                            onClick={() => {
+                              const confirmed =
+                                window.confirm('确认撤销该改动？撤销后将从公开数据中移除。');
+                              if (!confirmed) return;
+                              void moderateAction(submission.action_id, 'revoke');
+                            }}
+                            variant='danger'
+                            size='sm'
+                          >
+                            撤销
                           </Button>
                         )}
                         <Button

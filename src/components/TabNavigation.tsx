@@ -89,6 +89,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     'category.delete',
     'game_data_action.approve',
     'game_data_action.reject',
+    'game_data_action.revoke',
     'user.read',
     'user.update',
     'group.manage',

@@ -22,6 +22,7 @@ export const permissionGrantsForProfile = (
     'comment.moderate',
     'game_data_action.approve',
     'game_data_action.reject',
+    'game_data_action.revoke',
     'category.create',
     'category.update',
     'category.delete',

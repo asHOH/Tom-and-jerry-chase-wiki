@@ -5,6 +5,7 @@ import {
   approvePreparedGameDataAction,
   loadTrustedGameDataAction,
   markPreparedGameDataActionSynced,
+  revokePreparedGameDataAction,
   TrustedGameDataMutationError,
 } from '@/lib/gameData/trustedGameDataMutations';
 import { publishNotification } from '@/lib/notificationUtils';
@@ -24,6 +25,7 @@ jest.mock('@/lib/gameData/trustedGameDataMutations', () => {
     approvePreparedGameDataAction: jest.fn(),
     loadTrustedGameDataAction: jest.fn(),
     markPreparedGameDataActionSynced: jest.fn(),
+    revokePreparedGameDataAction: jest.fn(),
     TrustedGameDataMutationError: MockTrustedGameDataMutationError,
   };
 });
@@ -33,6 +35,7 @@ const requirePermissionMock = jest.mocked(requirePermission);
 const loadRecordMock = jest.mocked(loadTrustedGameDataAction);
 const approveMock = jest.mocked(approvePreparedGameDataAction);
 const markSyncedMock = jest.mocked(markPreparedGameDataActionSynced);
+const revokeMock = jest.mocked(revokePreparedGameDataAction);
 const publishNotificationMock = jest.mocked(publishNotification);
 const rpcMock = jest.fn().mockResolvedValue({ error: null });
 
@@ -74,6 +77,12 @@ describe('game data action moderation route', () => {
         },
         {
           permission: 'game_data_action.mark_synced',
+          scope: 'global',
+          resourceType: null,
+          resourceId: null,
+        },
+        {
+          permission: 'game_data_action.revoke',
           scope: 'global',
           resourceType: null,
           resourceId: null,
@@ -130,6 +139,21 @@ describe('game data action moderation route', () => {
       p_reason: '不通过',
     });
     expect(approveMock).not.toHaveBeenCalled();
+  });
+
+  it('revokes approved rows through the trusted prepared mutation', async () => {
+    loadRecordMock.mockResolvedValue(record('approved'));
+    const { POST } = await import('./route');
+
+    const response = await POST(createRequest('revoke'), {
+      params: Promise.resolve({ actionId: 'action-1' }),
+    });
+
+    expect(response.status).toBe(200);
+    expect(requirePermissionMock).toHaveBeenCalledWith('game_data_action.revoke');
+    expect(revokeMock).toHaveBeenCalledWith('moderator-1', record('approved'));
+    expect(rpcMock).not.toHaveBeenCalled();
+    expect(publishNotificationMock).not.toHaveBeenCalled();
   });
 
   it.each(['invalid_row', 'candidate_conflict', 'replay_epoch_conflict'])(

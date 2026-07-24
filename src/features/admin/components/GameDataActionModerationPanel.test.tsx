@@ -338,8 +338,59 @@ describe('GameDataActionModerationPanel', () => {
     );
 
     expect(screen.getByRole('button', { name: '标为已同步' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: '撤销' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: '标为已拒绝' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: '标为已批准' })).not.toBeInTheDocument();
+  });
+
+  it('shows and submits revoke only for approved actions when authorized', async () => {
+    const mutatePendingActions = jest.fn().mockResolvedValue(undefined);
+    const fetchMock = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({}),
+    } as Response);
+    global.fetch = fetchMock;
+    jest.spyOn(window, 'confirm').mockReturnValue(true);
+
+    const approvedAction: PendingGameDataAction = {
+      ...sampleAction,
+      action_id: 'action-approved',
+      status: 'approved',
+      reviewed_at: '2026-05-11T07:30:00.000Z',
+      reviewed_by: 'reviewer-1',
+      reviewed_by_nickname: 'Reviewer',
+      is_public: true,
+    };
+    const syncedAction: PendingGameDataAction = {
+      ...approvedAction,
+      action_id: 'action-synced',
+      status: 'synced',
+    };
+    const rejectedAction: PendingGameDataAction = {
+      ...approvedAction,
+      action_id: 'action-rejected',
+      status: 'rejected',
+      is_public: false,
+    };
+
+    render(
+      <GameDataActionModerationPanel
+        pendingActions={[approvedAction, syncedAction, rejectedAction]}
+        mutatePendingActions={mutatePendingActions}
+        canRevokeActions
+      />
+    );
+
+    fireEvent.change(screen.getByTitle('过滤状态'), { target: { value: 'all' } });
+    expect(screen.getAllByRole('button', { name: '撤销' })).toHaveLength(1);
+
+    fireEvent.click(screen.getByRole('button', { name: '撤销' }));
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenLastCalledWith(
+        '/api/game-data-actions/moderation/action-approved?action=revoke',
+        expect.objectContaining({ method: 'POST' })
+      );
+    });
   });
 
   it('submits super-admin mark-synced actions', async () => {

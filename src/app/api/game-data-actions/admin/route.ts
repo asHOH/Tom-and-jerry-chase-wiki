@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requirePermission } from '@/lib/auth/requirePermission';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 
-const ALLOWED_STATUSES = ['pending', 'approved', 'rejected', 'synced', 'all'] as const;
+const ALLOWED_STATUSES = ['pending', 'approved', 'rejected', 'synced', 'revoked', 'all'] as const;
 
 type AllowedStatus = (typeof ALLOWED_STATUSES)[number];
 
@@ -13,6 +13,7 @@ export async function GET(request: NextRequest) {
       'game_data_action.approve',
       'game_data_action.reject',
       'game_data_action.mark_synced',
+      'game_data_action.revoke',
     ]);
     if ('error' in guard) return guard.error;
     const { supabase } = guard;

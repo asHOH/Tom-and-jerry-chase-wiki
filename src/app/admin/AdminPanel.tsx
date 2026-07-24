@@ -77,7 +77,9 @@ const AdminPanel = () => {
     permissions.has('user.update') ||
     permissions.has('group.assign');
   const enableActionModeration =
-    permissions.has('game_data_action.approve') || permissions.has('game_data_action.reject');
+    permissions.has('game_data_action.approve') ||
+    permissions.has('game_data_action.reject') ||
+    permissions.has('game_data_action.revoke');
   const enableGroupAccess = permissions.has('group.manage') || permissions.has('group.assign');
   const enableCategoryAccess =
     permissions.has('category.create') ||
@@ -200,6 +202,7 @@ const AdminPanel = () => {
       {enableActionModeration && activeTab === 'actions' && (
         <GameDataActionModerationPanel
           canMarkActionsSynced={permissions.has('game_data_action.mark_synced')}
+          canRevokeActions={permissions.has('game_data_action.revoke')}
           pendingActions={pendingActions}
           mutatePendingActions={mutatePendingActions}
         />
