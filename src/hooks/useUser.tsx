@@ -4,6 +4,7 @@ import { ReactNode, useEffect } from 'react';
 import useSWR, { SWRConfig, useSWRConfig } from 'swr';
 
 import type { PermissionGrant } from '@/lib/auth/permissions';
+import type { BlockedUserSummary } from '@/lib/blocks/types';
 import { supabase } from '@/lib/supabase/client';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
 
@@ -11,9 +12,10 @@ export type UserType = {
   nickname: string | null;
   grants: PermissionGrant[];
   groups: Array<{ id: string; name: string }>;
+  blockSummary: BlockedUserSummary[];
 };
 
-const EMPTY_USER: UserType = { nickname: null, grants: [], groups: [] };
+const EMPTY_USER: UserType = { nickname: null, grants: [], groups: [], blockSummary: [] };
 
 export const USER_API_KEY = '/api/auth/me';
 
@@ -35,12 +37,14 @@ async function getUserData() {
     nickname?: string | null;
     grants?: PermissionGrant[];
     groups?: Array<{ id: string; name: string }>;
+    blockSummary?: BlockedUserSummary[];
   } | null;
 
   return {
     nickname: data?.nickname ?? null,
     grants: data?.grants ?? [],
     groups: data?.groups ?? [],
+    blockSummary: data?.blockSummary ?? [],
   };
 }
 
@@ -216,6 +220,7 @@ export const useUser = () => {
     nickname: data?.nickname ?? null,
     grants: data?.grants ?? [],
     groups: data?.groups ?? [],
+    blockSummary: data?.blockSummary ?? [],
     isLoading,
     isValidating,
     mutate,

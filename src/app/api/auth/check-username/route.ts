@@ -4,9 +4,11 @@ import {
   checkUsernameAvailability,
   createSupabaseUsernameAvailabilityDataSource,
 } from '@/lib/auth/usernameAvailability';
+import { requireNotBlocked } from '@/lib/blocks/server';
 import { generateCaptchaProof, verifyCaptchaToken } from '@/lib/captchaUtils';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { supabaseAdmin } from '@/lib/supabase/admin';
+import { createClient } from '@/lib/supabase/server';
 import { env } from '@/env';
 
 export async function POST(request: NextRequest) {
@@ -18,6 +20,15 @@ export async function POST(request: NextRequest) {
         { status: 429, headers: rl.headers }
       );
     }
+
+    const sessionClient = await createClient();
+    const { data: claimsData } = await sessionClient.auth.getClaims();
+    const blocked = await requireNotBlocked({
+      request,
+      userId: claimsData?.claims.sub ?? null,
+      action: 'create_account',
+    });
+    if (blocked) return blocked;
 
     const { username, token } = await request.json();
 

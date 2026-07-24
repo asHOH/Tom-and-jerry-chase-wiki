@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 
 import { requirePermission } from '@/lib/auth/requirePermission';
+import { getRequestIp } from '@/lib/blocks/server';
 import { CACHE_TAGS, invalidateCache } from '@/lib/cacheTags';
 import { publishNotification } from '@/lib/notificationUtils';
 import { checkRateLimit } from '@/lib/rateLimit';
@@ -21,47 +22,39 @@ export async function POST(req: Request) {
     );
   }
   const { title, category, content, character_id } = parsed.data;
-  const guard = await requirePermission('article.create', {
-    resourceType: 'categories',
-    resourceId: category,
-  });
+  const guard = await requirePermission(
+    'article.create',
+    {
+      resourceType: 'categories',
+      resourceId: category,
+    },
+    'all',
+    { request: req, blockAction: 'edit' }
+  );
   if ('error' in guard) return guard.error;
-  const { supabase, userId } = guard;
+  const { userId } = guard;
 
   try {
-    // First, create the article and get its ID
-    const { data: newArticle, error: articleError } = await supabaseAdmin
-      .from('articles')
-      .insert({
-        title,
-        category_id: category,
-        author_id: userId,
-        character_id: character_id || null,
-      })
-      .select('id')
-      .single();
-
-    if (articleError) {
-      console.error('Supabase article insert error:', articleError);
-      return NextResponse.json({ error: 'Failed to create article' }, { status: 500 });
-    }
-
-    const newArticleId = newArticle.id;
-
-    // Then, submit the first version using the RPC
-    const { data: submittedVersions, error: rpcError } = await supabase.rpc('submit_article', {
-      p_article_id: newArticleId,
-      p_title: title,
-      p_content: content,
-      p_category_id: category,
-      ...(character_id ? { p_character_id: character_id } : {}),
-    });
+    const { data: submittedVersions, error: rpcError } = await supabaseAdmin.rpc(
+      'prepared_create_article',
+      {
+        p_actor_id: userId,
+        p_ip: getRequestIp(req),
+        p_title: title,
+        p_content: content,
+        p_category_id: category,
+        ...(character_id ? { p_character_id: character_id } : {}),
+      }
+    );
 
     if (rpcError) {
       console.error('Supabase RPC error:', rpcError);
-      // If submitting the version fails, delete the article to avoid orphans.
-      await supabaseAdmin.from('articles').delete().eq('id', newArticleId);
       return NextResponse.json({ error: 'Failed to submit article version' }, { status: 500 });
+    }
+
+    const newArticleId = submittedVersions?.[0]?.article_id;
+    if (!newArticleId) {
+      return NextResponse.json({ error: 'Failed to create article' }, { status: 500 });
     }
 
     // Next 16 Granular Cache Strategy:

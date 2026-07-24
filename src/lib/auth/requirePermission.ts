@@ -8,6 +8,8 @@ import {
   type PermissionKey,
   type ResourceContext,
 } from '@/lib/auth/permissions';
+import { blockedResponse, getActiveBlock } from '@/lib/blocks/server';
+import type { BlockAction, BlockResourceContext } from '@/lib/blocks/types';
 import { createClient } from '@/lib/supabase/server';
 
 type RequirePermissionSuccess = {
@@ -29,6 +31,11 @@ type RequirePermissionOrAnonymousResult =
     }
   | { error: NextResponse; supabase?: never; userId?: never; grants?: never };
 
+export type PermissionCheckOptions = {
+  request?: Request | undefined;
+  blockAction?: BlockAction;
+};
+
 export async function loadPermissionGrants(
   supabase: Awaited<ReturnType<typeof createClient>>
 ): Promise<PermissionGrant[]> {
@@ -45,7 +52,8 @@ export async function loadPermissionGrants(
 export async function requirePermission(
   permission: PermissionKey | readonly PermissionKey[],
   contexts?: ResourceContext | readonly ResourceContext[],
-  mode: 'any' | 'all' = 'all'
+  mode: 'any' | 'all' = 'all',
+  options?: PermissionCheckOptions
 ): Promise<RequirePermissionResult> {
   const supabase = await createClient();
   const { data: claimsData } = await supabase.auth.getClaims();
@@ -76,6 +84,15 @@ export async function requirePermission(
   if (!allowed) {
     return { error: NextResponse.json({ error: 'Forbidden' }, { status: 403 }) };
   }
+  if (options?.blockAction) {
+    const block = await getActiveBlock({
+      request: options.request,
+      userId,
+      action: options.blockAction,
+      contexts: list as BlockResourceContext[],
+    });
+    if (block) return { error: blockedResponse(block) };
+  }
   return { supabase, userId, grants };
 }
 
@@ -86,12 +103,28 @@ export async function requirePermission(
 export async function requirePermissionOrAnonymous(
   permission: PermissionKey | readonly PermissionKey[],
   contexts?: ResourceContext | readonly ResourceContext[],
-  mode: 'any' | 'all' = 'all'
+  mode: 'any' | 'all' = 'all',
+  options?: PermissionCheckOptions
 ): Promise<RequirePermissionOrAnonymousResult> {
   const supabase = await createClient();
   const { data: claimsData } = await supabase.auth.getClaims();
   const userId = claimsData?.claims.sub;
-  if (!userId) return { supabase, userId: null, grants: [] };
+  if (!userId) {
+    if (options?.blockAction) {
+      const block = await getActiveBlock({
+        request: options.request,
+        userId: null,
+        action: options.blockAction,
+        contexts: (contexts
+          ? Array.isArray(contexts)
+            ? contexts
+            : [contexts]
+          : []) as BlockResourceContext[],
+      });
+      if (block) return { error: blockedResponse(block) };
+    }
+    return { supabase, userId: null, grants: [] };
+  }
 
   const grants = await loadPermissionGrants(supabase);
   const list = contexts ? (Array.isArray(contexts) ? contexts : [contexts]) : [];
@@ -114,6 +147,15 @@ export async function requirePermissionOrAnonymous(
   );
   if (!allowed) {
     return { error: NextResponse.json({ error: 'Forbidden' }, { status: 403 }) };
+  }
+  if (options?.blockAction) {
+    const block = await getActiveBlock({
+      request: options.request,
+      userId,
+      action: options.blockAction,
+      contexts: list as BlockResourceContext[],
+    });
+    if (block) return { error: blockedResponse(block) };
   }
   return { supabase, userId, grants };
 }

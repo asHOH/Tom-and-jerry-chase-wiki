@@ -1,6 +1,7 @@
 import { createHash, pbkdf2Sync, timingSafeEqual } from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 
+import { recordUserIp } from '@/lib/blocks/server';
 import { verifyCaptchaProof } from '@/lib/captchaUtils';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { supabaseAdmin } from '@/lib/supabase/admin';
@@ -100,6 +101,8 @@ export async function POST(request: NextRequest) {
       console.error('Error signing in password-based user:', sessionError);
       return NextResponse.json({ error: 'Login failed' }, { status: 500 });
     }
+
+    await recordUserIp(user.id, request);
 
     // Return JSON with Set-Cookie attached
     return response;

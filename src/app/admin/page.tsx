@@ -30,6 +30,8 @@ export default async function AdminPage() {
     'user.update',
     'group.manage',
     'group.assign',
+    'block.view',
+    'block.manage',
   ];
   const canAccessAdmin = adminPermissions.some((permission) => hasPermission(grants, permission));
   if (!canAccessAdmin) {

@@ -2,6 +2,7 @@ import 'server-only';
 
 import { createHash, createHmac, timingSafeEqual } from 'crypto';
 
+import { getActiveBlock } from '@/lib/blocks/check';
 import { renderWikiEmailTemplate } from '@/lib/emailTemplate';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { SITE_URL } from '@/constants/seo';
@@ -170,6 +171,11 @@ export const publishNotification = async (
 
   if (!createdNotification) {
     return { created: false, suppressed: false, emailStatus: 'skipped' };
+  }
+
+  const emailBlock = await getActiveBlock({ userId: input.recipientUserId, action: 'email' });
+  if (emailBlock) {
+    return { created: true, suppressed: false, emailStatus: 'skipped' };
   }
 
   const { data: emailSettings, error: settingsError } = await supabaseAdmin

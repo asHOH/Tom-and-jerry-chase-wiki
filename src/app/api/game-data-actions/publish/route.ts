@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 
 import { requirePermissionOrAnonymous } from '@/lib/auth/requirePermission';
+import { getGameActionResourceContexts } from '@/lib/auth/resourceContexts';
+import { getRequestIp } from '@/lib/blocks/server';
 import { candidateConflictResponse } from '@/lib/gameData/candidateConflictResponse';
 import { PUBLISH_LIMITS } from '@/lib/gameData/publishLimits';
 import {
@@ -16,6 +18,7 @@ import {
 } from '@/lib/gameData/trustedGameDataMutations';
 import { publishNotification } from '@/lib/notificationUtils';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
+import type { Json } from '@/data/database.types';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -59,13 +62,30 @@ export async function POST(request: Request) {
       : NextResponse.json({ error: 'invalid_json' }, { status: 400 });
   }
 
-  const guard = await requirePermissionOrAnonymous('game_data_action.create');
+  const guard = await requirePermissionOrAnonymous('game_data_action.create', undefined, 'all', {
+    request,
+    blockAction: 'edit',
+  });
   if ('error' in guard) return guard.error;
 
   try {
     const prepared = preparePublishActionItems(untrusted.items, untrusted.message);
+    const contexts = prepared.actions.flatMap((item) =>
+      getGameActionResourceContexts(
+        item.entityType,
+        item.rows.map((row) => row.canonicalEntry as Json)
+      )
+    );
+    const resourceGuard = await requirePermissionOrAnonymous(
+      'game_data_action.create',
+      contexts,
+      'all',
+      { request, blockAction: 'edit' }
+    );
+    if ('error' in resourceGuard) return resourceGuard.error;
     const results = await publishPreparedGameDataActions({
       actorId: guard.userId,
+      clientIp: getRequestIp(request),
       permission: 'game_data_action.create',
       grants: guard.grants,
       prepared,

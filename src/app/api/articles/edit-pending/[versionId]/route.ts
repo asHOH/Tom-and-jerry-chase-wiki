@@ -2,6 +2,7 @@ import { revalidateTag } from 'next/cache';
 import { NextResponse } from 'next/server';
 
 import { requirePermission } from '@/lib/auth/requirePermission';
+import { getRequestIp, requireNotBlocked } from '@/lib/blocks/server';
 import { CACHE_TAGS } from '@/lib/cacheTags';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { articleEditPendingSchema, formatZodError } from '@/lib/validation/schemas';
@@ -18,7 +19,7 @@ export async function POST(
 
   const guard = await requirePermission(['article.update_own', 'article.update_any']);
   if ('error' in guard) return guard.error;
-  const { supabase } = guard;
+  const { userId } = guard;
 
   const parsed = articleEditPendingSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) {
@@ -41,8 +42,21 @@ export async function POST(
       return NextResponse.json({ error: 'Article version not found' }, { status: 404 });
     }
 
+    const blocked = await requireNotBlocked({
+      request,
+      userId,
+      action: 'edit',
+      contexts: [
+        { resourceType: 'articles', resourceId: version.article_id },
+        { resourceType: 'categories', resourceId: category },
+      ],
+    });
+    if (blocked) return blocked;
+
     // Call RPC to update pending article in a transaction
-    const { error: rpcError } = await supabase.rpc('update_pending_article', {
+    const { error: rpcError } = await supabaseAdmin.rpc('prepared_update_pending_article', {
+      p_actor_id: userId,
+      p_ip: getRequestIp(request),
       p_version_id: versionId,
       p_article_id: version.article_id,
       p_title: title,

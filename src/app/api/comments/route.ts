@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 
 import { requirePermission } from '../../../lib/auth/requirePermission';
+import { getRequestIp } from '../../../lib/blocks/server';
 import { shouldAllowComment } from '../../../lib/comments/moderation';
 import { checkRateLimit } from '../../../lib/rateLimit';
 import { supabaseAdmin } from '../../../lib/supabase/admin';
@@ -156,10 +157,15 @@ export async function POST(req: Request) {
   }
 
   const { scope, targetId, parentId, content, title } = parsed.data;
-  const guard = await requirePermission('comment.create', {
-    resourceType: `comments/${scope}`,
-    resourceId: targetId,
-  });
+  const guard = await requirePermission(
+    'comment.create',
+    {
+      resourceType: `comments/${scope}`,
+      resourceId: targetId,
+    },
+    'all',
+    { request: req, blockAction: 'edit' }
+  );
   if ('error' in guard) return guard.error;
   const { supabase } = guard;
 
@@ -172,7 +178,9 @@ export async function POST(req: Request) {
   });
 
   try {
-    const { data: newId, error: rpcError } = await supabase.rpc('create_comment', {
+    const { data: newId, error: rpcError } = await supabaseAdmin.rpc('prepared_create_comment', {
+      p_actor_id: guard.userId,
+      p_ip: getRequestIp(req),
       p_scope: scope,
       p_target_id: targetId,
       p_content: content,
@@ -270,15 +278,20 @@ export async function PATCH(req: Request) {
     .eq('id', commentId)
     .maybeSingle();
   if (!target) return NextResponse.json({ error: 'Comment not found' }, { status: 404 });
-  const guard = await requirePermission('comment.moderate', {
-    resourceType: `comments/${target.scope}`,
-    resourceId: target.target_id,
-  });
+  const guard = await requirePermission(
+    'comment.moderate',
+    {
+      resourceType: `comments/${target.scope}`,
+      resourceId: target.target_id,
+    },
+    'all',
+    { request: req, blockAction: 'edit' }
+  );
   if ('error' in guard) return guard.error;
-  const { supabase } = guard;
-
   try {
-    const { error: rpcError } = await supabase.rpc('set_comment_status', {
+    const { error: rpcError } = await supabaseAdmin.rpc('prepared_set_comment_status', {
+      p_actor_id: guard.userId,
+      p_ip: getRequestIp(req),
       p_comment_id: commentId,
       p_status: status,
     });

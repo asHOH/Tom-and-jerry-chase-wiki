@@ -133,9 +133,15 @@ describe('publish route', () => {
     const response = await POST(createRequest(validBody));
 
     expect(response.status).toBe(200);
-    expect(requirePermissionMock).toHaveBeenCalledWith('game_data_action.create');
+    expect(requirePermissionMock).toHaveBeenCalledWith(
+      'game_data_action.create',
+      undefined,
+      'all',
+      expect.objectContaining({ blockAction: 'edit', request: expect.anything() })
+    );
     expect(publishPreparedMock).toHaveBeenCalledWith({
       actorId: 'actor-1',
+      clientIp: null,
       permission: 'game_data_action.create',
       grants: [{ permission: 'game_data_action.create' }],
       prepared: {

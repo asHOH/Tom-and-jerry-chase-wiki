@@ -5,8 +5,10 @@ import {
   type ModerationAction,
 } from '@/lib/articles/moderationActionError';
 import { requirePermission } from '@/lib/auth/requirePermission';
+import { getRequestIp } from '@/lib/blocks/server';
 import { CACHE_TAGS, invalidateCache } from '@/lib/cacheTags';
 import { publishNotification } from '@/lib/notificationUtils';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 export async function POST(
   request: NextRequest,
@@ -34,26 +36,17 @@ export async function POST(
         : action === 'reject'
           ? 'article_version.reject'
           : 'article_version.revoke';
-    const guard = await requirePermission(permission);
+    const guard = await requirePermission(permission, undefined, 'all', {
+      request,
+      blockAction: 'edit',
+    });
     if ('error' in guard) return guard.error;
     const { supabase } = guard;
 
-    let functionName: `${'approve' | 'reject' | 'revoke'}_article_version`;
-    switch (action) {
-      case 'approve':
-        functionName = 'approve_article_version';
-        break;
-      case 'reject':
-        functionName = 'reject_article_version';
-        break;
-      case 'revoke':
-        functionName = 'revoke_article_version';
-        break;
-      default:
-        return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
-    }
-
-    const { error: actionError } = await supabase.rpc(functionName, {
+    const { error: actionError } = await supabaseAdmin.rpc('prepared_article_version_moderation', {
+      p_actor_id: guard.userId,
+      p_ip: getRequestIp(request),
+      p_action: action,
       p_version_id: versionId,
     });
     if (actionError) {

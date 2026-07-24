@@ -138,6 +138,7 @@ describe('AdminPanel', () => {
       ['categories', expect.any(Function)],
       [null, expect.any(Function)],
       ['game-data-actions-admin', expect.any(Function)],
+      [null, expect.any(Function)],
     ]);
   });
 
@@ -151,6 +152,7 @@ describe('AdminPanel', () => {
       ['categories', expect.any(Function)],
       ['permission-groups', expect.any(Function)],
       ['game-data-actions-admin', expect.any(Function)],
+      [null, expect.any(Function)],
     ]);
 
     const [usersTab, , categoriesTab, actionsTab] = screen.getAllByRole('button');
@@ -183,6 +185,7 @@ describe('AdminPanel', () => {
     expect(screen.queryAllByRole('button')).toHaveLength(0);
 
     expect(mockUseSWR.mock.calls).toEqual([
+      [null, expect.any(Function)],
       [null, expect.any(Function)],
       [null, expect.any(Function)],
       [null, expect.any(Function)],

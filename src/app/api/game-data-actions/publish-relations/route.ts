@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 
 import { requirePermission } from '@/lib/auth/requirePermission';
+import { getGameActionResourceContexts } from '@/lib/auth/resourceContexts';
+import { getRequestIp } from '@/lib/blocks/server';
 import { isCharacterRelationAction } from '@/lib/edit/characterRelationActions';
 import { candidateConflictResponse } from '@/lib/gameData/candidateConflictResponse';
 import {
@@ -14,6 +16,7 @@ import {
   TrustedGameDataMutationError,
 } from '@/lib/gameData/trustedGameDataMutations';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
+import type { Json } from '@/data/database.types';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -37,7 +40,10 @@ export async function POST(request: Request) {
       : NextResponse.json({ error: 'invalid_json' }, { status: 400 });
   }
 
-  const guard = await requirePermission('game_data_action.publish_relations');
+  const guard = await requirePermission('game_data_action.publish_relations', undefined, 'all', {
+    request,
+    blockAction: 'edit',
+  });
   if ('error' in guard) return guard.error;
 
   try {
@@ -53,8 +59,20 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Only relation actions are allowed' }, { status: 400 });
     }
 
+    const resourceGuard = await requirePermission(
+      'game_data_action.publish_relations',
+      getGameActionResourceContexts(
+        'characters',
+        prepared.actions.flatMap((item) => item.rows.map((row) => row.canonicalEntry as Json))
+      ),
+      'all',
+      { request, blockAction: 'edit' }
+    );
+    if ('error' in resourceGuard) return resourceGuard.error;
+
     const result = await publishPreparedGameDataActions({
       actorId: guard.userId,
+      clientIp: getRequestIp(request),
       permission: 'game_data_action.publish_relations',
       grants: guard.grants,
       prepared,

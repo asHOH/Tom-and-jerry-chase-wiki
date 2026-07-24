@@ -9,6 +9,7 @@ import { usePublicGameDataActions } from '@/hooks/usePublicGameDataActions';
 import { ToastProvider } from '@/context/ToastContext';
 import { WikiHistoryProvider } from '@/context/WikiHistoryContext';
 
+import BlockStatusBanner from './BlockStatusBanner';
 import { CacheDebugPanel } from './CacheDebugPanel';
 import { OfflineIndicator } from './OfflineIndicator';
 import { ServiceWorkerRegistration } from './ServiceWorkerRegistration';
@@ -23,6 +24,7 @@ export function ClientProviders({ children, initialPublicActions }: ClientProvid
   return (
     <LazyMotion features={loadMotionFeatures} strict>
       <ToastProvider>
+        <BlockStatusBanner />
         <PermissionProvider>
           <WikiHistoryProvider publicActions={initialPublicActions}>{children}</WikiHistoryProvider>
         </PermissionProvider>

@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server';
 
 import { loadPermissionGrants } from '@/lib/auth/requirePermission';
+import { getUserBlockSummary } from '@/lib/blocks/server';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
 import { createClient } from '@/lib/supabase/server';
 
-export async function GET() {
+export async function GET(request: Request) {
   if (!hasSupabasePublicConfig()) {
-    return NextResponse.json({ nickname: null, grants: [], groups: [] });
+    return NextResponse.json({ nickname: null, grants: [], groups: [], blockSummary: [] });
   }
 
   const supabase = await createClient();
@@ -14,7 +15,7 @@ export async function GET() {
   const userId = claimsData?.claims.sub;
 
   if (!userId) {
-    return NextResponse.json({ nickname: null, grants: [], groups: [] });
+    return NextResponse.json({ nickname: null, grants: [], groups: [], blockSummary: [] });
   }
 
   const [{ data, error }, grants, { data: memberships }] = await Promise.all([
@@ -24,7 +25,10 @@ export async function GET() {
   ]);
 
   if (error) {
-    return NextResponse.json({ nickname: null, grants: [], groups: [] }, { status: 200 });
+    return NextResponse.json(
+      { nickname: null, grants: [], groups: [], blockSummary: [] },
+      { status: 200 }
+    );
   }
 
   const groupIds = memberships?.map(({ group_id }) => group_id) ?? [];
@@ -32,9 +36,11 @@ export async function GET() {
     ? await supabase.from('user_groups').select('id, name').in('id', groupIds)
     : { data: [] };
 
+  const blockSummary = await getUserBlockSummary(userId, request);
   return NextResponse.json({
     nickname: data?.nickname ?? null,
     grants,
     groups: groups ?? [],
+    blockSummary,
   });
 }

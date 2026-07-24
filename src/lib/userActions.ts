@@ -1,12 +1,13 @@
 'use server';
 
 import { loadPermissionGrants } from './auth/requirePermission';
+import { getUserBlockSummary } from './blocks/server';
 import { hasSupabasePublicConfig } from './supabase/config';
 import { createClient } from './supabase/server';
 
 export async function getUserData() {
   if (!hasSupabasePublicConfig()) {
-    return { nickname: null, grants: [], groups: [] };
+    return { nickname: null, grants: [], groups: [], blockSummary: [] };
   }
 
   const supabase = await createClient();
@@ -14,7 +15,7 @@ export async function getUserData() {
   const userId = claimsData?.claims.sub;
 
   if (!userId) {
-    return { nickname: null, grants: [], groups: [] };
+    return { nickname: null, grants: [], groups: [], blockSummary: [] };
   }
 
   const [{ data }, grants, { data: memberships }] = await Promise.all([
@@ -30,5 +31,6 @@ export async function getUserData() {
     nickname: data?.nickname || null,
     grants,
     groups: groups ?? [],
+    blockSummary: await getUserBlockSummary(userId),
   };
 }

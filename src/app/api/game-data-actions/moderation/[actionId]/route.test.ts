@@ -9,6 +9,7 @@ import {
   TrustedGameDataMutationError,
 } from '@/lib/gameData/trustedGameDataMutations';
 import { publishNotification } from '@/lib/notificationUtils';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 const jsonResponse = (body: unknown, init?: { status?: number }) =>
   ({ status: init?.status ?? 200, json: async () => body }) as Response;
@@ -30,6 +31,7 @@ jest.mock('@/lib/gameData/trustedGameDataMutations', () => {
   };
 });
 jest.mock('@/lib/notificationUtils', () => ({ publishNotification: jest.fn() }));
+jest.mock('@/lib/supabase/admin', () => ({ supabaseAdmin: { rpc: jest.fn() } }));
 
 const requirePermissionMock = jest.mocked(requirePermission);
 const loadRecordMock = jest.mocked(loadTrustedGameDataAction);
@@ -37,6 +39,7 @@ const approveMock = jest.mocked(approvePreparedGameDataAction);
 const markSyncedMock = jest.mocked(markPreparedGameDataActionSynced);
 const revokeMock = jest.mocked(revokePreparedGameDataAction);
 const publishNotificationMock = jest.mocked(publishNotification);
+const adminRpcMock = jest.mocked(supabaseAdmin.rpc);
 const rpcMock = jest.fn().mockResolvedValue({ error: null });
 
 const record = (status: 'pending' | 'approved' = 'pending') => ({
@@ -59,6 +62,7 @@ describe('game data action moderation route', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     rpcMock.mockResolvedValue({ error: null });
+    adminRpcMock.mockResolvedValue({ error: null } as never);
     requirePermissionMock.mockResolvedValue({
       supabase: { rpc: rpcMock },
       userId: 'moderator-1',
@@ -106,8 +110,13 @@ describe('game data action moderation route', () => {
     });
 
     expect(response.status).toBe(200);
-    expect(requirePermissionMock).toHaveBeenCalledWith('game_data_action.mark_synced');
-    expect(markSyncedMock).toHaveBeenCalledWith('moderator-1', record('approved'));
+    expect(requirePermissionMock).toHaveBeenCalledWith(
+      'game_data_action.mark_synced',
+      undefined,
+      'all',
+      expect.objectContaining({ blockAction: 'edit', request: expect.anything() })
+    );
+    expect(markSyncedMock).toHaveBeenCalledWith('moderator-1', record('approved'), null);
     expect(rpcMock).not.toHaveBeenCalled();
   });
 
@@ -119,7 +128,7 @@ describe('game data action moderation route', () => {
     });
 
     expect(response.status).toBe(200);
-    expect(approveMock).toHaveBeenCalledWith('moderator-1', record());
+    expect(approveMock).toHaveBeenCalledWith('moderator-1', record(), null);
     expect(rpcMock).not.toHaveBeenCalled();
     expect(publishNotificationMock).toHaveBeenCalledWith(
       expect.objectContaining({ recipientUserId: 'user-2', kind: 'game_data_action_approved' })
@@ -134,9 +143,11 @@ describe('game data action moderation route', () => {
     });
 
     expect(response.status).toBe(200);
-    expect(rpcMock).toHaveBeenCalledWith('reject_game_data_action', {
+    expect(adminRpcMock).toHaveBeenCalledWith('prepared_reject_game_data_action', {
+      p_actor_id: 'moderator-1',
       p_action_id: 'action-1',
       p_reason: '不通过',
+      p_ip: null,
     });
     expect(approveMock).not.toHaveBeenCalled();
   });
@@ -150,8 +161,13 @@ describe('game data action moderation route', () => {
     });
 
     expect(response.status).toBe(200);
-    expect(requirePermissionMock).toHaveBeenCalledWith('game_data_action.revoke');
-    expect(revokeMock).toHaveBeenCalledWith('moderator-1', record('approved'));
+    expect(requirePermissionMock).toHaveBeenCalledWith(
+      'game_data_action.revoke',
+      undefined,
+      'all',
+      expect.objectContaining({ blockAction: 'edit', request: expect.anything() })
+    );
+    expect(revokeMock).toHaveBeenCalledWith('moderator-1', record('approved'), null);
     expect(rpcMock).not.toHaveBeenCalled();
     expect(publishNotificationMock).not.toHaveBeenCalled();
   });

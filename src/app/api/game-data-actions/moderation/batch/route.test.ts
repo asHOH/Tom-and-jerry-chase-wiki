@@ -5,6 +5,7 @@ import {
   TrustedGameDataMutationError,
 } from '@/lib/gameData/trustedGameDataMutations';
 import { publishNotification } from '@/lib/notificationUtils';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 import { POST } from './route';
 
@@ -30,11 +31,13 @@ jest.mock('@/lib/gameData/trustedGameDataMutations', () => {
   };
 });
 jest.mock('@/lib/notificationUtils', () => ({ publishNotification: jest.fn() }));
+jest.mock('@/lib/supabase/admin', () => ({ supabaseAdmin: { rpc: jest.fn() } }));
 
 const requirePermissionMock = jest.mocked(requirePermission);
 const loadRecordMock = jest.mocked(loadTrustedGameDataAction);
 const approveMock = jest.mocked(approvePreparedGameDataAction);
 const publishNotificationMock = jest.mocked(publishNotification);
+const adminRpcMock = jest.mocked(supabaseAdmin.rpc);
 const actionId1 = '00000000-0000-4000-8000-000000000001';
 const actionId2 = '00000000-0000-4000-8000-000000000002';
 const rpcMock = jest.fn().mockResolvedValue({ error: null });
@@ -56,6 +59,7 @@ describe('batch game data action moderation route', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     rpcMock.mockResolvedValue({ error: null });
+    adminRpcMock.mockResolvedValue({ error: null } as never);
     requirePermissionMock.mockResolvedValue({
       supabase: { rpc: rpcMock },
       userId: 'moderator-1',
@@ -90,8 +94,8 @@ describe('batch game data action moderation route', () => {
       succeeded: [actionId1, actionId2],
       failures: [],
     });
-    expect(approveMock).toHaveBeenNthCalledWith(1, 'moderator-1', record(actionId1));
-    expect(approveMock).toHaveBeenNthCalledWith(2, 'moderator-1', record(actionId2));
+    expect(approveMock).toHaveBeenNthCalledWith(1, 'moderator-1', record(actionId1), null);
+    expect(approveMock).toHaveBeenNthCalledWith(2, 'moderator-1', record(actionId2), null);
     expect(rpcMock).not.toHaveBeenCalled();
   });
 
@@ -113,8 +117,11 @@ describe('batch game data action moderation route', () => {
     const response = await POST(createRequest('reject', [actionId1]));
 
     expect(response.status).toBe(200);
-    expect(rpcMock).toHaveBeenCalledWith('reject_game_data_action', {
+    expect(adminRpcMock).toHaveBeenCalledWith('prepared_reject_game_data_action', {
+      p_actor_id: 'moderator-1',
       p_action_id: actionId1,
+      p_reason: '',
+      p_ip: null,
     });
     expect(approveMock).not.toHaveBeenCalled();
   });

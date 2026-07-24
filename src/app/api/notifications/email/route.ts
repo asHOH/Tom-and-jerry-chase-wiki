@@ -2,6 +2,7 @@ import { randomBytes } from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
+import { requireNotBlocked } from '@/lib/blocks/server';
 import {
   hashNotificationVerificationToken,
   sendNotificationEmailVerification,
@@ -47,6 +48,8 @@ export async function POST(request: NextRequest) {
 
   const userId = await getUserId();
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const blocked = await requireNotBlocked({ request, userId, action: 'email' });
+  if (blocked) return blocked;
 
   const parsed = emailSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: 'Invalid email' }, { status: 400 });
@@ -101,6 +104,8 @@ export async function POST(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
   const userId = await getUserId();
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const blocked = await requireNotBlocked({ request, userId, action: 'email' });
+  if (blocked) return blocked;
 
   const body = (await request.json().catch(() => null)) as { enabled?: unknown } | null;
   if (typeof body?.enabled !== 'boolean') {

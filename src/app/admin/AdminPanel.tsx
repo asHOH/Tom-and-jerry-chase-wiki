@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ComponentProps } from 'react';
 import useSWR from 'swr';
 
 import { usePermissions } from '@/lib/auth/PermissionProvider';
 import type { PermissionResourceOption } from '@/lib/auth/permissionResources';
 import { cn } from '@/lib/design';
 import type { Database } from '@/data/database.types';
+import BlockManagement from '@/features/admin/components/BlockManagement';
 import CategoryManagement from '@/features/admin/components/CategoryManagement';
 import GameDataActionModerationPanel, {
   PendingGameDataAction,
@@ -29,6 +30,13 @@ type GroupsResponse = {
   catalog: PermissionCatalogEntry[];
   groups: PermissionGroup[];
   resourceOptions: Record<string, PermissionResourceOption[]>;
+};
+
+type BlocksResponse = {
+  blocks: ComponentProps<typeof BlockManagement>['blocks'];
+  logs: ComponentProps<typeof BlockManagement>['logs'];
+  users: ComponentProps<typeof BlockManagement>['users'];
+  resourceOptions: ComponentProps<typeof BlockManagement>['resourceOptions'];
 };
 
 const fetchUsers = async (): Promise<User[]> => {
@@ -66,10 +74,16 @@ const fetchPendingGameDataActions = async (): Promise<PendingGameDataAction[]> =
   return data.submissions ?? [];
 };
 
+const fetchBlocks = async (): Promise<BlocksResponse> => {
+  const response = await fetch('/api/admin/blocks?status=history');
+  if (!response.ok) throw new Error('Failed to fetch blocks');
+  return response.json();
+};
+
 const AdminPanel = () => {
-  const [activeTab, setActiveTab] = useState<'users' | 'groups' | 'categories' | 'actions'>(
-    'categories'
-  );
+  const [activeTab, setActiveTab] = useState<
+    'users' | 'groups' | 'categories' | 'actions' | 'blocks'
+  >('categories');
   const permissions = usePermissions();
 
   const enableUserAccess =
@@ -85,17 +99,20 @@ const AdminPanel = () => {
     permissions.has('category.create') ||
     permissions.has('category.update') ||
     permissions.has('category.delete');
+  const enableBlockAccess = permissions.has('block.view') || permissions.has('block.manage');
 
   useEffect(() => {
     if (activeTab === 'categories' && !enableCategoryAccess) {
       if (enableGroupAccess) setActiveTab('groups');
       else if (enableUserAccess) setActiveTab('users');
       else if (enableActionModeration) setActiveTab('actions');
+      else if (enableBlockAccess) setActiveTab('blocks');
     }
   }, [
     activeTab,
     enableActionModeration,
     enableCategoryAccess,
+    enableBlockAccess,
     enableGroupAccess,
     enableUserAccess,
   ]);
@@ -118,10 +135,14 @@ const AdminPanel = () => {
     enableActionModeration ? 'game-data-actions-admin' : null,
     fetchPendingGameDataActions
   );
+  const { data: blocksData, mutate: mutateBlocks } = useSWR(
+    enableBlockAccess ? 'admin-blocks' : null,
+    fetchBlocks
+  );
 
   const pendingCount = pendingActions.filter((a) => a.status === 'pending').length;
 
-  const getTabClassName = (tab: 'users' | 'groups' | 'categories' | 'actions') =>
+  const getTabClassName = (tab: 'users' | 'groups' | 'categories' | 'actions' | 'blocks') =>
     cn(
       'border-b-2 px-4 py-2 text-sm font-medium transition-colors',
       activeTab === tab
@@ -167,6 +188,11 @@ const AdminPanel = () => {
             )}
           </button>
         )}
+        {enableBlockAccess && (
+          <button onClick={() => setActiveTab('blocks')} className={getTabClassName('blocks')}>
+            封禁管理
+          </button>
+        )}
       </div>
 
       {enableUserAccess && activeTab === 'users' && (
@@ -205,6 +231,17 @@ const AdminPanel = () => {
           canRevokeActions={permissions.has('game_data_action.revoke')}
           pendingActions={pendingActions}
           mutatePendingActions={mutatePendingActions}
+        />
+      )}
+
+      {enableBlockAccess && activeTab === 'blocks' && (
+        <BlockManagement
+          blocks={blocksData?.blocks ?? []}
+          logs={blocksData?.logs ?? []}
+          users={blocksData?.users ?? []}
+          resourceOptions={blocksData?.resourceOptions ?? {}}
+          canManage={permissions.has('block.manage')}
+          mutateBlocks={mutateBlocks}
         />
       )}
     </div>

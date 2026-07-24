@@ -86,6 +86,9 @@ export default function NotificationsClient() {
     if (emailStatus === 'invalid') {
       setEmailMessage({ text: '验证链接无效或已过期。', variant: 'error' });
     }
+    if (emailStatus === 'blocked') {
+      setEmailMessage({ text: '当前账号被限制使用邮件功能。', variant: 'error' });
+    }
   }, [searchParams]);
 
   const markRead = async (notificationId?: string) => {

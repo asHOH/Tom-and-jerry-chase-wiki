@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+import { getActiveBlock } from '@/lib/blocks/server';
 import { hashNotificationVerificationToken } from '@/lib/notificationUtils';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { SITE_URL } from '@/constants/seo';
 
-const redirectToNotifications = (status: 'verified' | 'invalid') => {
+const redirectToNotifications = (status: 'verified' | 'invalid' | 'blocked') => {
   const url = new URL('/notifications/', SITE_URL);
   url.searchParams.set('email', status);
   return NextResponse.redirect(url);
@@ -23,6 +24,9 @@ export async function GET(request: NextRequest) {
     .maybeSingle();
 
   if (error || !data?.pending_email) return redirectToNotifications('invalid');
+
+  const block = await getActiveBlock({ request, userId: data.user_id, action: 'email' });
+  if (block) return redirectToNotifications('blocked');
 
   const now = new Date().toISOString();
   const { error: updateError } = await supabaseAdmin

@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
-import { canAccessAll } from '@/lib/auth/permissions';
 import { requirePermission } from '@/lib/auth/requirePermission';
 import { getGameActionResourceContexts } from '@/lib/auth/resourceContexts';
+import { getRequestIp } from '@/lib/blocks/server';
 import {
   approvePreparedGameDataAction,
   loadTrustedGameDataAction,
@@ -11,6 +11,7 @@ import {
   type TrustedGameDataActionRecord,
 } from '@/lib/gameData/trustedGameDataMutations';
 import { publishNotification } from '@/lib/notificationUtils';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 const schema = z.object({
   actionIds: z.array(z.uuid()).min(1).max(200),
@@ -24,7 +25,10 @@ export async function POST(request: Request) {
 
   const requiredPermission =
     parsed.data.action === 'approve' ? 'game_data_action.approve' : 'game_data_action.reject';
-  const guard = await requirePermission(requiredPermission);
+  const guard = await requirePermission(requiredPermission, undefined, 'all', {
+    request,
+    blockAction: 'edit',
+  });
   if ('error' in guard) return guard.error;
   const { actionIds, action, reason } = parsed.data;
   const recordsById = new Map<string, TrustedGameDataActionRecord>();
@@ -50,9 +54,11 @@ export async function POST(request: Request) {
   const contexts = [...recordsById.values()].flatMap((record) =>
     getGameActionResourceContexts(record.entity_type, [record.entry])
   );
-  if (!canAccessAll(guard.grants, requiredPermission, contexts)) {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-  }
+  const resourceGuard = await requirePermission(requiredPermission, contexts, 'all', {
+    request,
+    blockAction: 'edit',
+  });
+  if ('error' in resourceGuard) return resourceGuard.error;
 
   const succeeded: string[] = [];
   for (const actionId of actionIds) {
@@ -61,11 +67,13 @@ export async function POST(request: Request) {
 
     try {
       if (action === 'approve') {
-        await approvePreparedGameDataAction(guard.userId, record);
+        await approvePreparedGameDataAction(guard.userId, record, getRequestIp(request));
       } else {
-        const { error } = await guard.supabase.rpc('reject_game_data_action', {
+        const { error } = await supabaseAdmin.rpc('prepared_reject_game_data_action', {
+          p_actor_id: guard.userId,
           p_action_id: actionId,
-          ...(reason ? { p_reason: reason } : {}),
+          p_reason: reason ?? '',
+          p_ip: getRequestIp(request),
         });
         if (error) throw error;
       }

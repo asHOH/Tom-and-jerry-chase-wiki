@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 
 import { canAccess } from '@/lib/auth/permissions';
 import { loadPermissionGrants } from '@/lib/auth/requirePermission';
+import { getRequestIp, requireNotBlocked } from '@/lib/blocks/server';
 import { CACHE_TAGS } from '@/lib/cacheTags';
 import { publishNotification } from '@/lib/notificationUtils';
 import { supabaseAdmin } from '@/lib/supabase/admin';
@@ -49,6 +50,14 @@ export async function POST(request: Request, { params }: { params: Promise<{ id?
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
+    const initialBlock = await requireNotBlocked({
+      request,
+      userId,
+      action: 'edit',
+      contexts: [{ resourceType: 'articles', resourceId: id }],
+    });
+    if (initialBlock) return initialBlock;
+
     // Authorization passed — now parse and validate the body
     const body = await request.json().catch(() => null);
     const title = body?.title;
@@ -70,7 +79,20 @@ export async function POST(request: Request, { params }: { params: Promise<{ id?
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const { data, error } = await supabase.rpc('submit_article', {
+    const block = await requireNotBlocked({
+      request,
+      userId,
+      action: 'edit',
+      contexts: [
+        { resourceType: 'articles', resourceId: id },
+        { resourceType: 'categories', resourceId: category },
+      ],
+    });
+    if (block) return block;
+
+    const { data, error } = await supabaseAdmin.rpc('prepared_submit_article', {
+      p_actor_id: userId,
+      p_ip: getRequestIp(request),
       p_article_id: id,
       p_title: title,
       p_content: content,

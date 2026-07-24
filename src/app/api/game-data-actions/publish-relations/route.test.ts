@@ -120,9 +120,15 @@ describe('publish-relations route', () => {
     const response = await POST(createRequest({ entries: validEntries, message: '  更新关系  ' }));
 
     expect(response.status).toBe(200);
-    expect(requirePermissionMock).toHaveBeenCalledWith('game_data_action.publish_relations');
+    expect(requirePermissionMock).toHaveBeenCalledWith(
+      'game_data_action.publish_relations',
+      undefined,
+      'all',
+      expect.objectContaining({ blockAction: 'edit', request: expect.anything() })
+    );
     expect(publishPreparedMock).toHaveBeenCalledWith({
       actorId: 'test-user',
+      clientIp: null,
       permission: 'game_data_action.publish_relations',
       grants: [{ permission: 'game_data_action.publish_relations' }],
       prepared: expect.objectContaining({

@@ -6,10 +6,12 @@ import {
   createSupabaseUsernameAvailabilityDataSource,
   hashUsername,
 } from '@/lib/auth/usernameAvailability';
+import { recordUserIp, requireNotBlocked } from '@/lib/blocks/server';
 import { verifyCaptchaProof } from '@/lib/captchaUtils';
 import { checkPasswordStrength } from '@/lib/passwordUtils';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { supabaseAdmin } from '@/lib/supabase/admin';
+import { createClient } from '@/lib/supabase/server';
 import { createSupabaseRouteClient } from '@/lib/supabase/ssrClient';
 import { authRegisterSchema, formatZodError } from '@/lib/validation/schemas';
 import { TablesInsert } from '@/data/database.types';
@@ -30,6 +32,15 @@ export async function POST(request: NextRequest) {
         { status: 429, headers: rl.headers }
       );
     }
+
+    const sessionClient = await createClient();
+    const { data: claimsData } = await sessionClient.auth.getClaims();
+    const blocked = await requireNotBlocked({
+      request,
+      userId: claimsData?.claims.sub ?? null,
+      action: 'create_account',
+    });
+    if (blocked) return blocked;
 
     const parsed = authRegisterSchema.safeParse(await request.json());
     if (!parsed.success) {
@@ -170,6 +181,8 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
+
+    await recordUserIp(authUserId, request);
 
     return response;
   } catch (e) {

@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { extname } from 'node:path';
 import { NextRequest, NextResponse } from 'next/server';
 
+import { requireNotBlocked } from '@/lib/blocks/server';
 import { checkRateLimit } from '@/lib/rateLimit';
 import {
   normalizeHostedImageUrl,
@@ -174,6 +175,9 @@ export async function POST(request: Request) {
   if (!userId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
+
+  const blocked = await requireNotBlocked({ request, userId, action: 'upload' });
+  if (blocked) return blocked;
 
   const formData = await request.formData();
   const file = formData.get('file');

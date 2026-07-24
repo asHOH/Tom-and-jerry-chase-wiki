@@ -21,6 +21,8 @@ export const PERMISSION_KEYS = [
   'user.update',
   'group.manage',
   'group.assign',
+  'block.view',
+  'block.manage',
 ] as const;
 
 export type PermissionKey = (typeof PERMISSION_KEYS)[number];
@@ -43,6 +45,8 @@ export const GLOBAL_ONLY_PERMISSIONS = new Set<PermissionKey>([
   'user.update',
   'group.manage',
   'group.assign',
+  'block.view',
+  'block.manage',
 ]);
 
 export const isPermissionKey = (value: string): value is PermissionKey =>

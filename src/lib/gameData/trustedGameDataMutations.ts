@@ -96,6 +96,7 @@ export async function loadTrustedGameDataAction(
 
 export async function publishPreparedGameDataActions(options: {
   actorId: string | null;
+  clientIp?: string | null;
   permission: PublishPermission;
   grants: readonly PermissionGrant[];
   prepared: PreparedPublishRequest;
@@ -143,6 +144,7 @@ export async function publishPreparedGameDataActions(options: {
           p_entries: action.rows.map((row) => asJson(row.canonicalEntry)),
           p_message: options.prepared.message ?? null,
           p_expected_replay_epoch: expectedEpoch,
+          ...(options.clientIp === undefined ? {} : { p_ip: options.clientIp }),
         })
       : await supabaseAdmin.rpc('prepared_publish_game_data_actions', {
           p_actor_id: actorId,
@@ -151,6 +153,7 @@ export async function publishPreparedGameDataActions(options: {
           p_entries: action.rows.map((row) => asJson(row.canonicalEntry)),
           p_message: options.prepared.message ?? null,
           p_expected_replay_epoch: expectedEpoch,
+          ...(options.clientIp === undefined ? {} : { p_ip: options.clientIp }),
         });
     const { data, error } = rpcResult;
     if (error) throw persistenceError(error);
@@ -203,7 +206,8 @@ function insertCandidateInSemanticOrder(
 
 export async function approvePreparedGameDataAction(
   actorId: string,
-  record: TrustedGameDataActionRecord
+  record: TrustedGameDataActionRecord,
+  clientIp?: string | null
 ): Promise<void> {
   if (record.status !== 'pending') throw new TrustedGameDataMutationError('not_found');
   const snapshot = await readApprovedReplaySnapshot();
@@ -215,6 +219,7 @@ export async function approvePreparedGameDataAction(
     p_expected_entity_type: record.entity_type,
     p_expected_entry: record.entry,
     p_expected_replay_epoch: snapshot.replayEpoch,
+    ...(clientIp === undefined ? {} : { p_ip: clientIp }),
   });
   if (error) throw persistenceError(error);
   invalidatePublicGameDataActionsCache();
@@ -222,7 +227,8 @@ export async function approvePreparedGameDataAction(
 
 export async function markPreparedGameDataActionSynced(
   actorId: string,
-  record: TrustedGameDataActionRecord
+  record: TrustedGameDataActionRecord,
+  clientIp?: string | null
 ): Promise<void> {
   if (record.status !== 'approved' || !record.is_public) {
     throw new TrustedGameDataMutationError('not_found');
@@ -239,6 +245,7 @@ export async function markPreparedGameDataActionSynced(
     p_expected_entity_type: record.entity_type,
     p_expected_entry: record.entry,
     p_expected_replay_epoch: snapshot.replayEpoch,
+    ...(clientIp === undefined ? {} : { p_ip: clientIp }),
   });
   if (error) throw persistenceError(error);
   invalidatePublicGameDataActionsCache();
@@ -246,7 +253,8 @@ export async function markPreparedGameDataActionSynced(
 
 export async function revokePreparedGameDataAction(
   actorId: string,
-  record: TrustedGameDataActionRecord
+  record: TrustedGameDataActionRecord,
+  clientIp?: string | null
 ): Promise<void> {
   if (record.status !== 'approved' || !record.is_public) {
     throw new TrustedGameDataMutationError('not_found');
@@ -263,6 +271,7 @@ export async function revokePreparedGameDataAction(
     p_expected_entity_type: record.entity_type,
     p_expected_entry: record.entry,
     p_expected_replay_epoch: snapshot.replayEpoch,
+    ...(clientIp === undefined ? {} : { p_ip: clientIp }),
   });
   if (error) throw persistenceError(error);
   invalidatePublicGameDataActionsCache();

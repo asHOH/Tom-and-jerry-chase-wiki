@@ -447,6 +447,117 @@ export type Database = {
         };
         Relationships: [];
       };
+      blocks: {
+        Row: {
+          id: string;
+          target_type: string;
+          target_user_id: string | null;
+          target_cidr: string | null;
+          reason: string;
+          created_by: string;
+          created_at: string;
+          expires_at: string | null;
+          revoked_at: string | null;
+          revoked_by: string | null;
+          is_autoblock: boolean;
+          autoblock_enabled: boolean;
+          parent_block_id: string | null;
+          hard_block: boolean;
+        };
+        Insert: {
+          id?: string;
+          target_type: string;
+          target_user_id?: string | null;
+          target_cidr?: string | null;
+          reason: string;
+          created_by: string;
+          created_at?: string;
+          expires_at?: string | null;
+          revoked_at?: string | null;
+          revoked_by?: string | null;
+          is_autoblock?: boolean;
+          autoblock_enabled?: boolean;
+          parent_block_id?: string | null;
+          hard_block?: boolean;
+        };
+        Update: {
+          id?: string;
+          target_type?: string;
+          target_user_id?: string | null;
+          target_cidr?: string | null;
+          reason?: string;
+          created_by?: string;
+          created_at?: string;
+          expires_at?: string | null;
+          revoked_at?: string | null;
+          revoked_by?: string | null;
+          is_autoblock?: boolean;
+          autoblock_enabled?: boolean;
+          parent_block_id?: string | null;
+          hard_block?: boolean;
+        };
+        Relationships: [];
+      };
+      block_restrictions: {
+        Row: {
+          id: string;
+          block_id: string;
+          action: string;
+          resource_type: string | null;
+          resource_id: string | null;
+        };
+        Insert: {
+          id?: string;
+          block_id: string;
+          action: string;
+          resource_type?: string | null;
+          resource_id?: string | null;
+        };
+        Update: {
+          id?: string;
+          block_id?: string;
+          action?: string;
+          resource_type?: string | null;
+          resource_id?: string | null;
+        };
+        Relationships: [];
+      };
+      block_log: {
+        Row: {
+          id: string;
+          block_id: string | null;
+          event_type: string;
+          actor_id: string | null;
+          reason: string | null;
+          snapshot: Json;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          block_id?: string | null;
+          event_type: string;
+          actor_id?: string | null;
+          reason?: string | null;
+          snapshot: Json;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          block_id?: string | null;
+          event_type?: string;
+          actor_id?: string | null;
+          reason?: string | null;
+          snapshot?: Json;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      user_last_ips: {
+        Row: { user_id: string; last_ip: string; last_seen_at: string };
+        Insert: { user_id: string; last_ip: string; last_seen_at?: string };
+        Update: { user_id?: string; last_ip?: string; last_seen_at?: string };
+        Relationships: [];
+      };
       notifications: {
         Row: {
           body: string;
@@ -741,6 +852,157 @@ export type Database = {
       };
     };
     Functions: {
+      block_snapshot: {
+        Args: { p_block_id: string };
+        Returns: Json;
+      };
+      find_effective_block: {
+        Args: {
+          p_action: string;
+          p_ip?: string;
+          p_resource_id?: string;
+          p_resource_type?: string;
+          p_user_id?: string;
+        };
+        Returns: {
+          id: string;
+          reason: string;
+          expires_at: string | null;
+          is_autoblock: boolean;
+          target_type: string;
+          hard_block: boolean;
+          parent_block_id: string | null;
+        }[];
+      };
+      record_user_last_ip: {
+        Args: { p_ip: string; p_user_id: string };
+        Returns: undefined;
+      };
+      create_autoblock_for_request: {
+        Args: { p_action: string; p_ip: string; p_user_id: string };
+        Returns: string | null;
+      };
+      create_block: {
+        Args: {
+          p_autoblock: boolean;
+          p_expires_at?: string | null;
+          p_hard_block: boolean;
+          p_reason: string;
+          p_restrictions: Json;
+          p_target_cidr?: string | null;
+          p_target_type: string;
+          p_target_user_id?: string | null;
+        };
+        Returns: string;
+      };
+      modify_block: {
+        Args: {
+          p_block_id: string;
+          p_expires_at?: string | null;
+          p_hard_block: boolean;
+          p_reason: string;
+          p_restrictions: Json;
+        };
+        Returns: undefined;
+      };
+      unblock: {
+        Args: { p_block_id: string; p_reason: string };
+        Returns: undefined;
+      };
+      prepared_create_article: {
+        Args: {
+          p_actor_id: string;
+          p_category_id: string;
+          p_character_id?: string | null;
+          p_commit_message?: string | null;
+          p_content: string;
+          p_ip: string | null;
+          p_title: string;
+        };
+        Returns: {
+          article_id: string;
+          submitted_status: Database['public']['Enums']['version_status'];
+          submitted_version_id: string;
+        }[];
+      };
+      prepared_submit_article: {
+        Args: {
+          p_actor_id: string;
+          p_article_id: string;
+          p_category_id: string;
+          p_character_id?: string | null;
+          p_commit_message?: string | null;
+          p_content: string;
+          p_ip: string | null;
+          p_title: string;
+        };
+        Returns: {
+          submitted_status: Database['public']['Enums']['version_status'];
+          submitted_version_id: string;
+        }[];
+      };
+      prepared_update_pending_article: {
+        Args: {
+          p_actor_id: string;
+          p_article_id: string;
+          p_category_id: string;
+          p_content: string;
+          p_ip: string | null;
+          p_title: string;
+          p_version_id: string;
+        };
+        Returns: undefined;
+      };
+      prepared_create_comment: {
+        Args: {
+          p_actor_id: string;
+          p_content: string;
+          p_ip: string | null;
+          p_parent_id?: string | null;
+          p_scope: Database['public']['Enums']['comment_scope'];
+          p_target_id: string;
+          p_title?: string | null;
+        };
+        Returns: string;
+      };
+      prepared_set_comment_status: {
+        Args: {
+          p_actor_id: string;
+          p_comment_id: string;
+          p_ip: string | null;
+          p_status: Database['public']['Enums']['comment_status'];
+        };
+        Returns: undefined;
+      };
+      prepared_create_category: {
+        Args: {
+          p_actor_id: string;
+          p_default_visibility?: Database['public']['Enums']['version_status'];
+          p_ip: string | null;
+          p_name: string;
+          p_parent_category_id?: string | null;
+        };
+        Returns: string;
+      };
+      prepared_update_category: {
+        Args: {
+          p_actor_id: string;
+          p_default_visibility?: Database['public']['Enums']['version_status'];
+          p_id: string;
+          p_ip: string | null;
+          p_name: string;
+          p_parent_category_id?: string | null;
+        };
+        Returns: undefined;
+      };
+      prepared_delete_category: {
+        Args: { p_actor_id: string; p_id: string; p_ip: string | null };
+        Returns: undefined;
+      };
+      prepared_article_version_moderation: {
+        Args: { p_action: string; p_actor_id: string; p_ip: string | null; p_version_id: string };
+        Returns: undefined;
+      };
       create_permission_group: {
         Args: { p_description?: string; p_grants?: Json; p_is_default?: boolean; p_name: string };
         Returns: string;
@@ -951,6 +1213,7 @@ export type Database = {
           p_expected_entity_type: string;
           p_expected_entry: Json;
           p_expected_replay_epoch: number;
+          p_ip?: string | null;
         };
         Returns: undefined;
       };
@@ -961,6 +1224,7 @@ export type Database = {
           p_expected_entity_type: string;
           p_expected_entry: Json;
           p_expected_replay_epoch: number;
+          p_ip?: string | null;
         };
         Returns: undefined;
       };
@@ -971,7 +1235,12 @@ export type Database = {
           p_expected_entity_type: string;
           p_expected_entry: Json;
           p_expected_replay_epoch: number;
+          p_ip?: string | null;
         };
+        Returns: undefined;
+      };
+      prepared_reject_game_data_action: {
+        Args: { p_action_id: string; p_actor_id: string; p_ip: string | null; p_reason: string };
         Returns: undefined;
       };
       prepared_publish_anonymous_game_data_actions: {
@@ -980,6 +1249,7 @@ export type Database = {
           p_entries: Json;
           p_expected_replay_epoch: number;
           p_message: string | null;
+          p_ip?: string | null;
         };
         Returns: {
           id: string;
@@ -995,6 +1265,7 @@ export type Database = {
           p_expected_replay_epoch: number;
           p_message: string | null;
           p_permission_key: string;
+          p_ip?: string | null;
         };
         Returns: {
           id: string;
