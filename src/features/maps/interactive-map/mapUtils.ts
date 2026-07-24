@@ -281,12 +281,15 @@ export const updateInteractiveMapPoint = (
   pointIndex: number,
   changes: Partial<InteractiveMapPoint>
 ): InteractiveMapConfig | null => {
-  const next = cloneInteractiveMap(config);
-  const point = next.points[pointIndex];
+  const point = config.points[pointIndex];
   if (!point) return null;
 
-  Object.assign(point, changes);
-  return next;
+  return {
+    ...config,
+    points: config.points.map((candidate, index) =>
+      index === pointIndex ? { ...candidate, ...changes } : candidate
+    ),
+  };
 };
 
 export const updateGeometryBarrelRoute = (
@@ -294,24 +297,40 @@ export const updateGeometryBarrelRoute = (
   pointIndex: number,
   changes: GeometryBarrelRoute
 ): InteractiveMapConfig | null => {
-  const next = cloneInteractiveMap(config);
-  const point = next.points[pointIndex];
+  const point = config.points[pointIndex];
   if (!point || point.category !== 'geometryBarrel') return null;
 
-  point.geometryBarrelRoute = { ...point.geometryBarrelRoute, ...changes };
-  return next;
+  return {
+    ...config,
+    points: config.points.map((candidate, index) =>
+      index === pointIndex
+        ? {
+            ...candidate,
+            geometryBarrelRoute: { ...candidate.geometryBarrelRoute, ...changes },
+          }
+        : candidate
+    ),
+  };
 };
 
 export const clearGeometryBarrelTarget = (
   config: InteractiveMapConfig,
   pointIndex: number
 ): InteractiveMapConfig | null => {
-  const next = cloneInteractiveMap(config);
-  const point = next.points[pointIndex];
+  const point = config.points[pointIndex];
   if (!point || point.category !== 'geometryBarrel') return null;
 
-  if (point.geometryBarrelRoute) delete point.geometryBarrelRoute.targetRocketPointId;
-  return next;
+  if (!point.geometryBarrelRoute) return config;
+
+  const geometryBarrelRoute = { ...point.geometryBarrelRoute };
+  delete geometryBarrelRoute.targetRocketPointId;
+
+  return {
+    ...config,
+    points: config.points.map((candidate, index) =>
+      index === pointIndex ? { ...candidate, geometryBarrelRoute } : candidate
+    ),
+  };
 };
 
 export const deleteInteractiveMapPoint = (
@@ -321,20 +340,24 @@ export const deleteInteractiveMapPoint = (
   const point = config.points[pointIndex];
   if (!point) return null;
 
-  const next = cloneInteractiveMap(config);
   const deletedPointId = point.id;
-  next.points.splice(pointIndex, 1);
+  const remainingPoints = config.points
+    .filter((_, index) => index !== pointIndex)
+    .map((candidate) => {
+      if (!deletedPointId) return candidate;
 
-  if (deletedPointId) {
-    next.points.forEach((candidate) => {
+      let nextCandidate = candidate;
       if (candidate.geometryBarrelRoute?.targetRocketPointId === deletedPointId) {
-        delete candidate.geometryBarrelRoute.targetRocketPointId;
+        const geometryBarrelRoute = { ...candidate.geometryBarrelRoute };
+        delete geometryBarrelRoute.targetRocketPointId;
+        nextCandidate = { ...nextCandidate, geometryBarrelRoute };
       }
       if (candidate.targetWallCrackPointId === deletedPointId) {
-        delete candidate.targetWallCrackPointId;
+        nextCandidate = { ...nextCandidate };
+        delete nextCandidate.targetWallCrackPointId;
       }
+      return nextCandidate;
     });
-  }
 
-  return next;
+  return { ...config, points: remainingPoints };
 };

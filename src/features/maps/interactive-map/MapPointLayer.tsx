@@ -21,7 +21,7 @@ import { makeIcon, type ConnectionHighlight } from './markerIcons';
 import type { EditorMode } from './types';
 
 type MapPointMarkerProps = {
-  config: InteractiveMapConfig;
+  geometry: Pick<InteractiveMapConfig, 'height' | 'maxZoom' | 'width'>;
   connectionHighlight: ConnectionHighlight;
   editorMode: EditorMode;
   isEditMode: boolean;
@@ -35,7 +35,7 @@ type MapPointMarkerProps = {
 };
 
 const MapPointMarker = memo(function MapPointMarker({
-  config,
+  geometry,
   connectionHighlight,
   editorMode,
   isEditMode,
@@ -48,8 +48,8 @@ const MapPointMarker = memo(function MapPointMarker({
   selected,
 }: MapPointMarkerProps) {
   const position = useMemo(
-    () => coordinateToLatLng(point.position, config),
-    [config, point.position]
+    () => coordinateToLatLng(point.position, geometry),
+    [geometry, point.position]
   );
   const icon = useMemo(
     () => makeIcon(point, selected, isEditMode, connectionHighlight),
@@ -78,12 +78,15 @@ const MapPointMarker = memo(function MapPointMarker({
       dragend: (event) => {
         const marker = event.target as L.Marker;
         const markerPosition = marker.getLatLng();
-        onMovePoint(pointIndex, latLngToCoordinate(markerPosition.lat, markerPosition.lng, config));
+        onMovePoint(
+          pointIndex,
+          latLngToCoordinate(markerPosition.lat, markerPosition.lng, geometry)
+        );
       },
     };
   }, [
-    config,
     editorMode,
+    geometry,
     onMovePoint,
     onOpenPoint,
     onSelectGeometryBarrelTarget,
@@ -107,7 +110,7 @@ const MapPointMarker = memo(function MapPointMarker({
 });
 
 type MapPointLayerProps = {
-  config: InteractiveMapConfig;
+  geometry: Pick<InteractiveMapConfig, 'height' | 'maxZoom' | 'width'>;
   connectedPointIndex: number | null;
   editorMode: EditorMode;
   hiddenSubtypes: ReadonlySet<string>;
@@ -117,14 +120,15 @@ type MapPointLayerProps = {
   onSelectGeometryBarrelTarget: (pointIndex: number) => void;
   onSelectIdleFruitPlateTarget: (pointIndex: number) => void;
   selectedPointIndex: number | null;
+  points: InteractiveMapPoint[];
   visibleCategories: ReadonlySet<MapPointCategory>;
   zoom: number;
 };
 
 export const MapPointLayer = memo(function MapPointLayer({
-  config,
   connectedPointIndex,
   editorMode,
+  geometry,
   hiddenSubtypes,
   isEditMode,
   onMovePoint,
@@ -132,12 +136,13 @@ export const MapPointLayer = memo(function MapPointLayer({
   onSelectGeometryBarrelTarget,
   onSelectIdleFruitPlateTarget,
   selectedPointIndex,
+  points,
   visibleCategories,
   zoom,
 }: MapPointLayerProps) {
   const visiblePoints = useMemo(
     () =>
-      config.points
+      points
         .map((point, pointIndex) => ({ point, pointIndex }))
         .filter(
           ({ point }) =>
@@ -145,7 +150,7 @@ export const MapPointLayer = memo(function MapPointLayer({
             (editorMode === 'selectIdleFruitPlateWallCrack' && point.category === 'wallCrack') ||
             isPointVisible(point, zoom, visibleCategories, hiddenSubtypes)
         ),
-    [config.points, editorMode, hiddenSubtypes, visibleCategories, zoom]
+    [editorMode, hiddenSubtypes, points, visibleCategories, zoom]
   );
 
   return visiblePoints.map(({ point, pointIndex }) => {
@@ -165,7 +170,7 @@ export const MapPointLayer = memo(function MapPointLayer({
     return (
       <MapPointMarker
         key={point.id ?? `legacy-${point.category}-${pointIndex}`}
-        config={config}
+        geometry={geometry}
         connectionHighlight={connectionHighlight}
         editorMode={editorMode}
         isEditMode={isEditMode}

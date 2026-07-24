@@ -18,6 +18,13 @@ class NativePictureTileLayer extends L.TileLayer {
     const image = document.createElement('img');
     const webpUrl = this.getTileUrl(coords);
     const avifUrl = getInteractiveMapAssetUrl(webpUrl, 'avif');
+    let completed = false;
+
+    const finish = (error?: Error) => {
+      if (completed) return;
+      completed = true;
+      done(error, picture);
+    };
 
     picture.className = 'leaflet-picture-tile';
     image.className = 'leaflet-picture-tile-image';
@@ -29,8 +36,9 @@ class NativePictureTileLayer extends L.TileLayer {
       source.srcset = avifUrl;
       picture.append(source);
     }
+    picture.append(image);
 
-    image.onload = () => done(undefined, picture);
+    image.onload = () => finish();
     image.onerror = () => {
       if (isAvifUrl(image.currentSrc || image.src)) {
         source.removeAttribute('srcset');
@@ -38,10 +46,9 @@ class NativePictureTileLayer extends L.TileLayer {
         return;
       }
 
-      done(new Error('地图瓦片加载失败'), picture);
+      finish(new Error('地图瓦片加载失败'));
     };
     image.src = webpUrl;
-    picture.append(image);
 
     return picture;
   }

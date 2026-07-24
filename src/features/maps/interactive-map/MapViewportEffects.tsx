@@ -1,7 +1,7 @@
 'use client';
 
-import { useCallback, useEffect } from 'react';
-import L, { type LeafletMouseEvent } from 'leaflet';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
+import L, { type LeafletEventHandlerFnMap, type LeafletMouseEvent } from 'leaflet';
 import { useMap, useMapEvents } from 'react-leaflet';
 
 import type { InteractiveMapConfig, InteractiveMapPoint } from '@/data/types';
@@ -41,21 +41,34 @@ export function MainMapEvents({
     },
     [height, map, maxZoom, width]
   );
+  const editorModeRef = useRef(editorMode);
+  const onMapClickRef = useRef(onMapClick);
+  const onZoomEndRef = useRef(onZoomEnd);
+  const updatePointScaleRef = useRef(updatePointScale);
+  editorModeRef.current = editorMode;
+  onMapClickRef.current = onMapClick;
+  onZoomEndRef.current = onZoomEnd;
+  updatePointScaleRef.current = updatePointScale;
 
-  useMapEvents({
-    click: (event) => {
-      if (editorMode !== 'browse') onMapClick(event);
-    },
-    zoom: () => {
-      updatePointScale(map.getZoom());
-    },
-    zoomanim: (event) => {
-      updatePointScale(event.zoom);
-    },
-    zoomend: () => {
-      onZoomEnd(map.getZoom());
-    },
-  });
+  const mapEventHandlers = useMemo<LeafletEventHandlerFnMap>(
+    () => ({
+      click: (event) => {
+        if (editorModeRef.current !== 'browse') onMapClickRef.current(event);
+      },
+      zoom: () => {
+        updatePointScaleRef.current(map.getZoom());
+      },
+      zoomanim: (event) => {
+        updatePointScaleRef.current(event.zoom);
+      },
+      zoomend: () => {
+        onZoomEndRef.current(map.getZoom());
+      },
+    }),
+    [map]
+  );
+
+  useMapEvents(mapEventHandlers);
 
   useEffect(() => {
     onReady(map);

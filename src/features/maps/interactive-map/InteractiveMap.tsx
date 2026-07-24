@@ -76,6 +76,11 @@ export default function InteractiveMap({
   const undoStack = useRef<InteractiveMapConfig[]>([]);
   const redoStack = useRef<InteractiveMapConfig[]>([]);
   const mainMapRef = useRef<L.Map | null>(null);
+  const configRef = useRef(config);
+  const onConfigChangeRef = useRef(onConfigChange);
+  const skipIncomingConfigSyncRef = useRef(false);
+  configRef.current = config;
+  onConfigChangeRef.current = onConfigChange;
   const selectedPoint =
     selectedPointIndex === null ? null : (config.points[selectedPointIndex] ?? null);
   const connectedPoint = selectedPoint ? getConnectedMapPoint(config, selectedPoint) : null;
@@ -107,6 +112,10 @@ export default function InteractiveMap({
       }),
     [config.height, config.maxZoom, config.width]
   );
+  const mapGeometry = useMemo(
+    () => ({ height: config.height, maxZoom: config.maxZoom, width: config.width }),
+    [config.height, config.maxZoom, config.width]
+  );
   const webpTileUrl = getInteractiveMapAssetUrl(config.tileUrl, 'webp') ?? config.tileUrl;
   const previewUrl = getInteractiveMapAssetUrl(config.previewUrl, 'webp');
   const mainTileOptions = useMemo<TileLayerOptions>(
@@ -133,7 +142,13 @@ export default function InteractiveMap({
   }, []);
 
   useEffect(() => {
-    setConfig(cloneInteractiveMap(incomingConfig));
+    if (skipIncomingConfigSyncRef.current) {
+      skipIncomingConfigSyncRef.current = false;
+      return;
+    }
+    const next = cloneInteractiveMap(incomingConfig);
+    configRef.current = next;
+    setConfig(next);
   }, [incomingConfig]);
 
   useEffect(() => {
@@ -171,25 +186,30 @@ export default function InteractiveMap({
     };
   }, [alwaysFullscreen, isFullscreen]);
 
-  const updateConfig = useCallback(
-    (next: InteractiveMapConfig, recordHistory = true) => {
-      if (recordHistory) {
-        undoStack.current.push(cloneInteractiveMap(config));
-        redoStack.current = [];
-      }
-      setConfig(next);
-      onConfigChange?.(cloneInteractiveMap(next));
-    },
-    [config, onConfigChange]
-  );
+  const updateConfig = useCallback((next: InteractiveMapConfig, recordHistory = true) => {
+    const current = configRef.current;
+    if (next === current) return;
+    if (recordHistory) {
+      undoStack.current.push(current);
+      redoStack.current = [];
+    }
+    configRef.current = next;
+    setConfig(next);
+    const onChange = onConfigChangeRef.current;
+    if (onChange) {
+      skipIncomingConfigSyncRef.current = true;
+      onChange(next);
+    }
+  }, []);
 
   const updatePoint = useCallback(
     (pointIndex: number, changes: Partial<InteractiveMapPoint>) => {
-      const next = updateInteractiveMapPoint(config, pointIndex, changes);
+      const current = configRef.current;
+      const next = updateInteractiveMapPoint(current, pointIndex, changes);
       if (!next) return;
       updateConfig(next);
     },
-    [config, updateConfig]
+    [updateConfig]
   );
 
   const movePoint = useCallback(
@@ -209,11 +229,14 @@ export default function InteractiveMap({
 
   const updateSelectedGeometryBarrelRoute = useCallback(
     (changes: NonNullable<InteractiveMapPoint['geometryBarrelRoute']>) => {
-      if (selectedPointIndex === null || selectedPoint?.category !== 'geometryBarrel') return;
-      const next = updateGeometryBarrelRoute(config, selectedPointIndex, changes);
+      if (selectedPointIndex === null) return;
+      const current = configRef.current;
+      const point = current.points[selectedPointIndex];
+      if (!point || point.category !== 'geometryBarrel') return;
+      const next = updateGeometryBarrelRoute(current, selectedPointIndex, changes);
       if (next) updateConfig(next);
     },
-    [config, selectedPoint, selectedPointIndex, updateConfig]
+    [selectedPointIndex, updateConfig]
   );
 
   const toggleCategory = (category: MapPointCategory) => {
@@ -252,16 +275,16 @@ export default function InteractiveMap({
   }, []);
 
   const handleMapClick = (event: LeafletMouseEvent) => {
+    const current = configRef.current;
     if (editorMode === 'addPoint') {
-      const next = cloneInteractiveMap(config);
       const point: InteractiveMapPoint = {
         id: `map-point-${crypto.randomUUID()}`,
         category: pointCategory,
-        position: latLngToCoordinate(event.latlng.lat, event.latlng.lng, config),
+        position: latLngToCoordinate(event.latlng.lat, event.latlng.lng, current),
         isRandomCandidate: isRandomCandidateByDefault(pointCategory),
         relatedEntries: getDefaultMapPointRelatedEntries({ category: pointCategory }),
       };
-      next.points.push(point);
+      const next = { ...current, points: [...current.points, point] };
       updateConfig(next);
       openPoint(next.points.length - 1);
       setEditorMode('browse');
@@ -269,7 +292,7 @@ export default function InteractiveMap({
     }
     if (editorMode === 'placeGeometryBarrelFirecracker') {
       updateSelectedGeometryBarrelRoute({
-        firecrackerPosition: latLngToCoordinate(event.latlng.lat, event.latlng.lng, config),
+        firecrackerPosition: latLngToCoordinate(event.latlng.lat, event.latlng.lng, current),
       });
       setEditorMode('browse');
       return;
@@ -281,16 +304,16 @@ export default function InteractiveMap({
 
   const finishRoom = () => {
     if (draftPolygon.length < 3 || !roomName.trim()) return;
-    const next = cloneInteractiveMap(config);
-    const polygon = draftPolygon.map(([lat, lng]) => latLngToCoordinate(lat, lng, config));
-    const existingRoom = next.rooms.find((room) => room.name === roomName.trim());
-    if (existingRoom) existingRoom.polygons.push(polygon);
-    else {
-      next.rooms.push({
-        name: roomName.trim(),
-        polygons: [polygon],
-      });
-    }
+    const current = configRef.current;
+    const normalizedRoomName = roomName.trim();
+    const polygon = draftPolygon.map(([lat, lng]) => latLngToCoordinate(lat, lng, current));
+    const hasExistingRoom = current.rooms.some((room) => room.name === normalizedRoomName);
+    const rooms = current.rooms.map((room) =>
+      room.name === normalizedRoomName ? { ...room, polygons: [...room.polygons, polygon] } : room
+    );
+    const next = hasExistingRoom
+      ? { ...current, rooms }
+      : { ...current, rooms: [...rooms, { name: normalizedRoomName, polygons: [polygon] }] };
     updateConfig(next);
     setDraftPolygon([]);
     setRoomName('');
@@ -300,14 +323,14 @@ export default function InteractiveMap({
   const undo = () => {
     const previous = undoStack.current.pop();
     if (!previous) return;
-    redoStack.current.push(cloneInteractiveMap(config));
+    redoStack.current.push(configRef.current);
     updateConfig(previous, false);
   };
 
   const redo = () => {
     const next = redoStack.current.pop();
     if (!next) return;
-    undoStack.current.push(cloneInteractiveMap(config));
+    undoStack.current.push(configRef.current);
     updateConfig(next, false);
   };
 
@@ -344,17 +367,17 @@ export default function InteractiveMap({
 
   const selectGeometryBarrelTarget = useCallback(
     (targetPointIndex: number) => {
-      const targetPoint = config.points[targetPointIndex];
+      const targetPoint = configRef.current.points[targetPointIndex];
       if (!targetPoint || targetPoint.category !== 'rocket' || !targetPoint.id) return;
       updateSelectedGeometryBarrelRoute({ targetRocketPointId: targetPoint.id });
       setEditorMode('browse');
     },
-    [config.points, updateSelectedGeometryBarrelRoute]
+    [updateSelectedGeometryBarrelRoute]
   );
 
   const selectIdleFruitPlateTarget = useCallback(
     (targetPointIndex: number) => {
-      const targetPoint = config.points[targetPointIndex];
+      const targetPoint = configRef.current.points[targetPointIndex];
       if (
         selectedPointIndex === null ||
         !targetPoint ||
@@ -366,52 +389,103 @@ export default function InteractiveMap({
       updatePoint(selectedPointIndex, { targetWallCrackPointId: targetPoint.id });
       setEditorMode('browse');
     },
-    [config.points, selectedPointIndex, updatePoint]
+    [selectedPointIndex, updatePoint]
   );
 
   const connectSelectedPoint = (targetPointId: string) => {
     if (selectedPointIndex === null || !selectedPoint?.id) return;
-    const next = cloneInteractiveMap(config);
-    const point = next.points[selectedPointIndex];
+    const current = configRef.current;
+    const point = current.points[selectedPointIndex];
     const pointId = point?.id;
     if (!point || !pointId) return;
 
     const previousTargetId = point.connection?.targetPointId;
-    const previousTarget = next.points.find((candidate) => candidate.id === previousTargetId);
-    if (previousTarget && previousTarget.connection?.targetPointId === pointId) {
-      delete previousTarget.connection;
-    }
+    const previousTarget = current.points.find((candidate) => candidate.id === previousTargetId);
 
     if (!targetPointId) {
-      delete point.connection;
-      updateConfig(next);
+      const points = current.points.map((candidate) => {
+        if (candidate.id === pointId) {
+          const nextCandidate = { ...candidate };
+          delete nextCandidate.connection;
+          return nextCandidate;
+        }
+        if (
+          candidate.id === previousTarget?.id &&
+          candidate.connection?.targetPointId === pointId
+        ) {
+          const nextCandidate = { ...candidate };
+          delete nextCandidate.connection;
+          return nextCandidate;
+        }
+        return candidate;
+      });
+      updateConfig({ ...current, points });
       return;
     }
 
-    const target = next.points.find((candidate) => candidate.id === targetPointId);
+    const target = current.points.find((candidate) => candidate.id === targetPointId);
     if (!target) return;
     const label =
       point.connection?.label ??
       target.connection?.label ??
       String.fromCharCode(65 + (selectedPointIndex % 26));
-    point.connection = { targetPointId, direction: 'both', label };
-    target.connection = { targetPointId: pointId, direction: 'both', label };
-    updateConfig(next);
+    const points = current.points.map((candidate) => {
+      if (candidate.id === pointId) {
+        const connection: NonNullable<InteractiveMapPoint['connection']> = {
+          targetPointId,
+          direction: 'both',
+          label,
+        };
+        return { ...candidate, connection };
+      }
+      if (candidate.id === targetPointId) {
+        const connection: NonNullable<InteractiveMapPoint['connection']> = {
+          targetPointId: pointId,
+          direction: 'both',
+          label,
+        };
+        return { ...candidate, connection };
+      }
+      if (candidate.id === previousTarget?.id && candidate.connection?.targetPointId === pointId) {
+        const nextCandidate = { ...candidate };
+        delete nextCandidate.connection;
+        return nextCandidate;
+      }
+      return candidate;
+    });
+    updateConfig({ ...current, points });
   };
 
   const updateSelectedConnectionLabel = (label: string) => {
     if (selectedPointIndex === null || !selectedPoint?.connection) return;
-    const next = cloneInteractiveMap(config);
-    const point = next.points[selectedPointIndex];
+    const current = configRef.current;
+    const point = current.points[selectedPointIndex];
     if (!point?.connection || !point.id) return;
-    point.connection.label = label;
     const targetPointId = point.connection.targetPointId;
-    const target = next.points.find((candidate) => candidate.id === targetPointId);
-    const targetConnection = target?.connection;
-    if (targetConnection?.targetPointId === point.id) {
-      targetConnection.label = label;
-    }
-    updateConfig(next);
+    const points = current.points.map((candidate) => {
+      if (candidate.id === point.id && candidate.connection) {
+        const connection: NonNullable<InteractiveMapPoint['connection']> = {
+          ...candidate.connection,
+          label,
+        };
+        return { ...candidate, connection };
+      }
+      const targetConnection = candidate.connection;
+      if (
+        candidate.id === targetPointId &&
+        targetConnection &&
+        targetConnection.targetPointId === point.id
+      ) {
+        const connection: NonNullable<InteractiveMapPoint['connection']> = {
+          targetPointId: targetConnection.targetPointId,
+          direction: targetConnection.direction,
+          label,
+        };
+        return { ...candidate, connection };
+      }
+      return candidate;
+    });
+    updateConfig({ ...current, points });
   };
 
   if (useFallback && fallbackImageUrl) {
@@ -582,9 +656,9 @@ export default function InteractiveMap({
           </Polyline>
         )}
         <MapPointLayer
-          config={config}
           connectedPointIndex={connectedPoint?.pointIndex ?? null}
           editorMode={editorMode}
+          geometry={mapGeometry}
           hiddenSubtypes={hiddenSubtypes}
           isEditMode={isEditMode}
           onMovePoint={movePoint}
@@ -592,6 +666,7 @@ export default function InteractiveMap({
           onSelectGeometryBarrelTarget={selectGeometryBarrelTarget}
           onSelectIdleFruitPlateTarget={selectIdleFruitPlateTarget}
           selectedPointIndex={selectedPointIndex}
+          points={config.points}
           visibleCategories={visibleCategories}
           zoom={zoom}
         />
@@ -609,17 +684,32 @@ export default function InteractiveMap({
                   eventHandlers={{
                     dragend: (event) => {
                       const marker = event.target as L.Marker;
-                      const next = cloneInteractiveMap(config);
-                      const room = next.rooms.find(
+                      const current = configRef.current;
+                      const room = current.rooms.find(
                         (candidate) => candidate.name === selectedRoomId
                       );
                       const vertex = room?.polygons[polygonIndex]?.[pointIndex];
                       if (!vertex) return;
-                      Object.assign(
-                        vertex,
-                        latLngToCoordinate(marker.getLatLng().lat, marker.getLatLng().lng, config)
+                      const position = latLngToCoordinate(
+                        marker.getLatLng().lat,
+                        marker.getLatLng().lng,
+                        current
                       );
-                      updateConfig(next);
+                      const rooms = current.rooms.map((candidate) =>
+                        candidate.name !== selectedRoomId
+                          ? candidate
+                          : {
+                              ...candidate,
+                              polygons: candidate.polygons.map((polygon, currentPolygonIndex) =>
+                                currentPolygonIndex !== polygonIndex
+                                  ? polygon
+                                  : polygon.map((point, currentPointIndex) =>
+                                      currentPointIndex === pointIndex ? position : point
+                                    )
+                              ),
+                            }
+                      );
+                      updateConfig({ ...current, rooms });
                     },
                   }}
                 />
@@ -713,15 +803,21 @@ export default function InteractiveMap({
           onUpdateConnectionLabel={updateSelectedConnectionLabel}
           onGeometryBarrelCountdownDisplay={(value) => {
             if (selectedPointIndex === null) return;
-            const next = cloneInteractiveMap(config);
-            const point = next.points[selectedPointIndex];
+            const current = configRef.current;
+            const point = current.points[selectedPointIndex];
             if (!point || point.category !== 'geometryBarrel') return;
-            point.geometryBarrelRoute ??= {};
-            if (value === null) {
-              delete point.geometryBarrelRoute.barrelCountdownDisplayAtFirecrackerExplosion;
-            } else {
-              point.geometryBarrelRoute.barrelCountdownDisplayAtFirecrackerExplosion = value;
-            }
+            const geometryBarrelRoute = { ...point.geometryBarrelRoute };
+            if (value === null)
+              delete geometryBarrelRoute.barrelCountdownDisplayAtFirecrackerExplosion;
+            else geometryBarrelRoute.barrelCountdownDisplayAtFirecrackerExplosion = value;
+            const next = {
+              ...current,
+              points: current.points.map((candidate, pointIndex) =>
+                pointIndex === selectedPointIndex
+                  ? { ...candidate, geometryBarrelRoute }
+                  : candidate
+              ),
+            };
             updateConfig(next);
           }}
           onPlaceGeometryBarrelFirecracker={() => setEditorMode('placeGeometryBarrelFirecracker')}
@@ -729,10 +825,18 @@ export default function InteractiveMap({
           onSelectIdleFruitPlateWallCrack={() => setEditorMode('selectIdleFruitPlateWallCrack')}
           onClearIdleFruitPlateTarget={() => {
             if (selectedPointIndex === null) return;
-            const next = cloneInteractiveMap(config);
-            const point = next.points[selectedPointIndex];
+            const current = configRef.current;
+            const point = current.points[selectedPointIndex];
             if (!point || point.category !== 'idleFruitPlate') return;
-            delete point.targetWallCrackPointId;
+            const next = {
+              ...current,
+              points: current.points.map((candidate, pointIndex) => {
+                if (pointIndex !== selectedPointIndex) return candidate;
+                const nextCandidate = { ...candidate };
+                delete nextCandidate.targetWallCrackPointId;
+                return nextCandidate;
+              }),
+            };
             updateConfig(next);
           }}
           onClearGeometryBarrelTarget={() => {
@@ -742,30 +846,39 @@ export default function InteractiveMap({
           }}
           onDeletePoint={() => {
             if (selectedPointIndex === null) return;
-            const next = deleteInteractiveMapPoint(config, selectedPointIndex);
+            const next = deleteInteractiveMapPoint(configRef.current, selectedPointIndex);
             if (!next) return;
             updateConfig(next);
             closePoint();
           }}
           onDeleteRoom={() => {
             if (!selectedRoomId) return;
-            const next = cloneInteractiveMap(config);
-            next.rooms = next.rooms.filter((room) => room.name !== selectedRoomId);
-            updateConfig(next);
+            const current = configRef.current;
+            updateConfig({
+              ...current,
+              rooms: current.rooms.filter((room) => room.name !== selectedRoomId),
+            });
             setSelectedRoomId(null);
           }}
           onMoveRoom={(x, y) => {
             if (!selectedRoomId) return;
-            const next = cloneInteractiveMap(config);
-            const room = next.rooms.find((candidate) => candidate.name === selectedRoomId);
+            const current = configRef.current;
+            const room = current.rooms.find((candidate) => candidate.name === selectedRoomId);
             if (!room) return;
-            room.polygons.forEach((polygon) =>
-              polygon.forEach((point) => {
-                point.x = Math.min(1, Math.max(0, point.x + x));
-                point.y = Math.min(1, Math.max(0, point.y + y));
-              })
+            const rooms = current.rooms.map((candidate) =>
+              candidate.name !== selectedRoomId
+                ? candidate
+                : {
+                    ...candidate,
+                    polygons: candidate.polygons.map((polygon) =>
+                      polygon.map((point) => ({
+                        x: Math.min(1, Math.max(0, point.x + x)),
+                        y: Math.min(1, Math.max(0, point.y + y)),
+                      }))
+                    ),
+                  }
             );
-            updateConfig(next);
+            updateConfig({ ...current, rooms });
           }}
         />
       )}
