@@ -11,7 +11,7 @@ import EditModePageShell from '@/components/ui/EditModePageShell';
 import Link from '@/components/Link';
 import { mapsEdit } from '@/data';
 
-import LandscapeOrientationPrompt from './LandscapeOrientationPrompt';
+// import LandscapeOrientationPrompt from './LandscapeOrientationPrompt';
 
 const InteractiveMap = dynamic(() => import('./InteractiveMap'), { ssr: false });
 
@@ -35,7 +35,7 @@ function InteractiveMapPageContent({ map, mapName }: InteractiveMapPageProps) {
       ref={orientationContainerRef}
       className='relative h-dvh w-screen overflow-hidden bg-slate-950'
     >
-      <LandscapeOrientationPrompt fullscreenTargetRef={orientationContainerRef} />
+      {/* <LandscapeOrientationPrompt fullscreenTargetRef={orientationContainerRef} /> */}
       <InteractiveMap
         config={interactiveMap}
         mapName={effectiveMap.name}
