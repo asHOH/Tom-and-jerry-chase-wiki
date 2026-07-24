@@ -174,7 +174,8 @@ const ItemGroupDefinitions: Record<string, ItemGroupDefinition> = {
     ],
   },
   饮料: {
-    description: '包括全部6种饮料。拾取后会储存在饮料栏，饮用后产生对应效果。',
+    description:
+      '包括全部6种饮料。拾取后会储存在饮料栏，饮用后产生对应效果。经典奶酪赛开局会固定刷新三瓶远视饮料、一瓶随机饮料、一瓶护盾饮料和一瓶隐身饮料。',
     group: [
       { name: '远视饮料', type: 'item' },
       { name: '隐身饮料', type: 'item' },
