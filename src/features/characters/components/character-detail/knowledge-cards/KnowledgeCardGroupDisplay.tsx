@@ -9,6 +9,7 @@ import { cn, getKnowledgeCardGroupMetaColors } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { contributors, type Contributor } from '@/data/contributors';
+import { characters } from '@/data/store';
 import type { CardGroup } from '@/data/types';
 import {
   buildTreeStructure,
@@ -23,7 +24,6 @@ import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButt
 import Tag from '@/components/ui/Tag';
 import Tooltip from '@/components/ui/Tooltip';
 import { PencilSquareIcon, PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
-import { characters } from '@/data';
 
 import KnowledgeCardLinkDisplay from './KnowledgeCardLinkDisplay';
 import TreeCardDisplay from './TreeCardDisplay';

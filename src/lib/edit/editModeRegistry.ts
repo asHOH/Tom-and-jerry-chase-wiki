@@ -13,24 +13,26 @@ import {
 import type { PublishableEntityType } from '@/lib/gameData/publishableEntityTypes';
 import {
   achievements,
-  achievementsEdit,
   buffs,
+  entities,
+  fixtures,
+  items,
+  maps,
+  modes,
+  specialSkills,
+} from '@/data/static';
+import {
+  achievementsEdit,
   buffsEdit,
   cardsEdit,
   characters,
-  entities,
   entitiesEdit,
-  fixtures,
   fixturesEdit,
-  items,
   itemsEdit,
-  maps,
   mapsEdit,
-  modes,
   modesEdit,
-  specialSkills,
   specialSkillsEdit,
-} from '@/data';
+} from '@/data/store';
 
 unstable_enableOp(true);
 

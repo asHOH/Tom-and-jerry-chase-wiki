@@ -5,8 +5,8 @@ import { snapshot } from 'valtio';
 import '@testing-library/jest-dom';
 
 import type { CharacterWithFaction } from '@/lib/types';
+import { characters } from '@/data/store';
 import type { Skill } from '@/data/types';
-import { characters } from '@/data';
 
 import SkillCardProperties from './SkillCardProperties';
 

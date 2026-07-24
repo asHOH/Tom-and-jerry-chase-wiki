@@ -2,7 +2,7 @@ import { createContext, type ReactNode } from 'react';
 import { render } from '@testing-library/react';
 
 import type { CharacterWithFaction } from '@/lib/types';
-import { characters } from '@/data';
+import { characters } from '@/data/store';
 
 import CharacterDetailsClient from './CharacterDetailsClient';
 

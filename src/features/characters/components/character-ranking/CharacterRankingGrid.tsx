@@ -6,6 +6,7 @@ import { useSnapshot } from 'valtio';
 
 import { getCardRankColors } from '@/lib/design';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { characters } from '@/data/store';
 import { FactionId } from '@/data/types';
 import {
   getCharactersWithProperty,
@@ -16,7 +17,6 @@ import {
 import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
-import { characters } from '@/data';
 
 import CharacterRankingCard from './CharacterRankingCard';
 import PropertySelector from './PropertySelector';

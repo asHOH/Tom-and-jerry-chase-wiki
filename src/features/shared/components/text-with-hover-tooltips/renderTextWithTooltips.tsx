@@ -2,11 +2,12 @@
 
 import { getCardRankColors } from '@/lib/design';
 import { CATEGORY_HINTS, type CategoryHint } from '@/lib/types';
+import { cards } from '@/data/static';
+import { characters } from '@/data/store';
 import type { SkillType } from '@/data/types';
 import Tag from '@/components/ui/Tag';
 import Tooltip from '@/components/ui/Tooltip';
 import GotoLink from '@/components/GotoLink';
-import { cards, characters } from '@/data';
 
 import { resolveCharacterExpression } from './characterText';
 import { calculateDamageValues, orderDamageSuffixes } from './damageDisplay';

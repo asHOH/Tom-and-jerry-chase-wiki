@@ -1,24 +1,26 @@
 import type { PublishableEntityType } from '@/lib/gameData/publishableEntityTypes';
 import {
   achievements,
-  achievementsEdit,
   buffs,
-  buffsEdit,
   cards,
-  cardsEdit,
-  characters,
   entities,
   fixtures,
-  fixturesEdit,
   items,
-  itemsEdit,
   maps,
-  mapsEdit,
   modes,
-  modesEdit,
   specialSkills,
+} from '@/data/static';
+import {
+  achievementsEdit,
+  buffsEdit,
+  cardsEdit,
+  characters,
+  fixturesEdit,
+  itemsEdit,
+  mapsEdit,
+  modesEdit,
   specialSkillsEdit,
-} from '@/data';
+} from '@/data/store';
 
 import { cloneGameDataValue } from './cloneGameDataValue';
 

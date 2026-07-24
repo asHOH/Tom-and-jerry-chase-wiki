@@ -5,9 +5,9 @@ import type { DeepReadonly } from '@/types/deep-readonly';
 import { cn } from '@/lib/design';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useScrollSpy } from '@/hooks/useScrollSpy';
+import { characters } from '@/data/store';
 import type { Skill } from '@/data/types';
 import { ChevronDownIcon } from '@/components/icons/CommonIcons';
-import { characters } from '@/data';
 
 function CharacterSectionIndexItem({
   name,

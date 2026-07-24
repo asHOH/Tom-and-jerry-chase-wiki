@@ -1,6 +1,6 @@
 import type React from 'react';
 
-import type { characters } from '@/data';
+import type { characters } from '@/data/store';
 
 export type CharacterRecord = (typeof characters)[string];
 

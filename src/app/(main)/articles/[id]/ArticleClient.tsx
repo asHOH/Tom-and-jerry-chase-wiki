@@ -10,6 +10,7 @@ import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { formatArticleDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
 import { toChineseNumeral } from '@/lib/textUtils';
+import { characters } from '@/data/store';
 import Button from '@/components/ui/Button';
 import ButtonLink from '@/components/ui/ButtonLink';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
@@ -23,7 +24,6 @@ import {
 } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 import Link from '@/components/Link';
-import { characters } from '@/data';
 
 interface ArticleData {
   id: string;

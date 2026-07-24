@@ -1,5 +1,6 @@
 import { Fragment } from 'react';
 
+import { characters } from '@/data/store';
 import type { TraitRelationKind } from '@/data/types';
 import {
   diffGameActionIdArray,
@@ -8,7 +9,6 @@ import {
   summarizeGameActionValue,
 } from '@/features/admin/utils/gameActionPreview';
 import { getCharacterRelation } from '@/features/characters/utils/relationReadModel';
-import { characters } from '@/data';
 
 type PreviewAction = {
   op?: string;

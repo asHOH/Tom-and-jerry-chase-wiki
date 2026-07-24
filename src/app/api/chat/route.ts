@@ -3,10 +3,10 @@ import { createOpenAI } from '@ai-sdk/openai';
 import { convertToModelMessages, streamText, type UIMessage } from 'ai';
 import { z } from 'zod';
 
-import { getPublicGameDataActionsAndApplyToServerData } from '@/lib/gameData/publicActions';
+import { getPublishedGameDataSnapshot } from '@/lib/gameData/published/publishedSnapshot';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { historyData } from '@/data/history';
-import { buffs, cards, characters, entities, itemGroups, items, specialSkills } from '@/data';
+import { itemGroups } from '@/data/static';
 import { env } from '@/env';
 
 const debugLoggingEnabled = env.CHAT_DEBUG_LOG === '1';
@@ -19,39 +19,46 @@ const logDebug = (message: string, detail?: unknown) => {
   }
 };
 
-// Helper function to build alias mapping text
-function buildAliasMap<T extends { aliases?: string[] }>(
-  data: Record<string, T> | { cat: Record<string, T>; mouse: Record<string, T> },
+type AliasItem = { readonly aliases?: readonly string[] };
+type AliasRecord = Readonly<Record<string, AliasItem>>;
+
+function collectAliasMappings(data: AliasRecord, maps: string[], prefix = ''): void {
+  Object.entries(data).forEach(([name, item]) => {
+    if (item.aliases && item.aliases.length > 0) {
+      maps.push(`  ${prefix}${name}: ${item.aliases.join(', ')}`);
+    }
+  });
+}
+
+function formatAliasMappings(maps: string[], entityType: string): string {
+  return maps.length > 0 ? `\n${entityType} Name-Alias Mapping:\n${maps.join('\n')}` : '';
+}
+
+function buildAliasMap(data: AliasRecord, entityType: string): string {
+  const maps: string[] = [];
+  collectAliasMappings(data, maps);
+  return formatAliasMappings(maps, entityType);
+}
+
+function buildFactionAliasMap(
+  data: { readonly cat: AliasRecord; readonly mouse: AliasRecord },
   entityType: string
 ): string {
   const maps: string[] = [];
-  const processRecord = (record: Record<string, T>, prefix = '') => {
-    Object.entries(record).forEach(([name, item]) => {
-      if (item.aliases && item.aliases.length > 0) {
-        maps.push(`  ${prefix}${name}: ${item.aliases.join(', ')}`);
-      }
-    });
-  };
-
-  if ('cat' in data && 'mouse' in data) {
-    processRecord(data.cat as Record<string, T>, '[猫] ');
-    processRecord(data.mouse as Record<string, T>, '[鼠] ');
-  } else {
-    processRecord(data as Record<string, T>);
-  }
-
-  return maps.length > 0 ? `\n${entityType} Name-Alias Mapping:\n${maps.join('\n')}` : '';
+  collectAliasMappings(data.cat, maps, '[猫] ');
+  collectAliasMappings(data.mouse, maps, '[鼠] ');
+  return formatAliasMappings(maps, entityType);
 }
 
 // Build alias mappings
 async function buildSystemInstructionText(): Promise<string> {
-  // Side effect: this call applies public patches to the in-memory `@/data` stores.
-  // We intentionally do this *before* building alias maps so the system prompt stays in sync.
-  await getPublicGameDataActionsAndApplyToServerData();
+  const {
+    data: { buffs, cards, characters, entities, items, specialSkills },
+  } = await getPublishedGameDataSnapshot();
 
   const characterAliases = buildAliasMap(characters, 'Characters');
   const cardAliases = buildAliasMap(cards, 'Knowledge Cards');
-  const specialSkillAliases = buildAliasMap(specialSkills, 'Special Skills');
+  const specialSkillAliases = buildFactionAliasMap(specialSkills, 'Special Skills');
   const itemAliases = buildAliasMap(items, 'Items');
   const entityAliases = buildAliasMap(entities, 'Entities');
   const buffAliases = buildAliasMap(buffs, 'Buffs');

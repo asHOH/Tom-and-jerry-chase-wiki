@@ -2,22 +2,22 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Article, WithContext } from 'schema-dts';
 
+import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
 import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
+import { entities as canonicalEntities } from '@/data/static';
+import type { Entity } from '@/data/types';
 import StructuredData from '@/components/StructuredData';
-import { entities } from '@/data';
 
 import EntityDetailClient from './EntityDetailsClient';
 
 export function generateStaticParams() {
-  return Object.keys(entities).map((entityName) => ({
+  return Object.keys(canonicalEntities).map((entityName) => ({
     entityName,
   }));
 }
 
-function generateStructuredData(entityName: string): WithContext<Article> {
-  const entity = entities[entityName]!;
-
+function generateStructuredData(entityName: string, entity: Entity): WithContext<Article> {
   const desc = entity.description ?? `${entity.name}详细信息`;
   return {
     '@context': 'https://schema.org',
@@ -39,7 +39,7 @@ export async function generateMetadata({
   params: Promise<{ entityName: string }>;
 }): Promise<Metadata> {
   const entityName = decodeURIComponent((await params).entityName);
-  const entity = entities[entityName];
+  const { data: entity } = await getPublishedEntityRouteReadModel('entities', entityName);
 
   if (!entity) {
     return {};
@@ -61,7 +61,8 @@ export default async function EntityDetailPage({
   params: Promise<{ entityName: string }>;
 }) {
   const entityName = decodeURIComponent((await params).entityName);
-  const entity = entities[entityName];
+  const readModel = await getPublishedEntityRouteReadModel('entities', entityName);
+  const entity = readModel.data;
 
   if (!entity) {
     notFound();
@@ -69,8 +70,12 @@ export default async function EntityDetailPage({
 
   return (
     <>
-      <StructuredData data={generateStructuredData(entityName)} />
-      <EntityDetailClient entity={entity} entityName={entityName} />
+      <StructuredData data={generateStructuredData(entityName, entity)} />
+      <EntityDetailClient
+        entity={entity}
+        entityName={entityName}
+        publishedRevision={readModel.revision}
+      />
     </>
   );
 }

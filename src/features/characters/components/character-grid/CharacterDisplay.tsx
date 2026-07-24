@@ -13,13 +13,13 @@ import {
   isPositioningTagVisible,
   sortPositioningTags,
 } from '@/constants/positioningTagSequences';
+import { characters } from '@/data/store';
 import type { FactionId } from '@/data/types';
 import { getWeaponSkillImageUrl } from '@/features/characters/utils/weapons';
 import EntityCardFrame from '@/components/ui/EntityCardFrame';
 import GameImage from '@/components/ui/GameImage';
 import Tag from '@/components/ui/Tag';
 import Image from '@/components/Image';
-import { characters } from '@/data';
 
 export default function CharacterDisplay({
   id,

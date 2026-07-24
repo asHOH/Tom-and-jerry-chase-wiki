@@ -1,8 +1,4 @@
-import {
-  fetchPublicGameDataActions,
-  getEntityUpdateHistory,
-  getPublicGameDataActionsAndApplyToServerData,
-} from './publicActions';
+import { fetchPublicGameDataActions, getEntityUpdateHistory } from './publicActions';
 import type { PublicActionRow } from './publicActionsTypes';
 
 jest.mock('server-only', () => ({}), { virtual: true });
@@ -34,29 +30,6 @@ jest.mock('@/lib/supabase/public', () => ({
   supabaseServerPublic: {
     from: jest.fn(),
   },
-}));
-
-jest.mock('@/data', () => ({
-  buffs: {},
-  buffsEdit: {},
-  cards: {},
-  cardsEdit: {},
-  characters: {
-    Tom: {
-      description: 'old',
-    },
-  },
-  entities: {},
-  fixtures: {},
-  fixturesEdit: {},
-  items: {},
-  itemsEdit: {},
-  maps: {},
-  mapsEdit: {},
-  modes: {},
-  modesEdit: {},
-  specialSkills: {},
-  specialSkillsEdit: {},
 }));
 
 const publicRows: PublicActionRow[] = [
@@ -114,12 +87,7 @@ describe('public game data actions', () => {
     const { cached: cachedMock } = jest.requireMock('@/lib/serverCache') as {
       cached: jest.Mock;
     };
-    const { characters } = jest.requireMock('@/data') as {
-      characters: Record<string, { description: string }>;
-    };
-
     cachedMock.mockImplementation((_keyParts: string[], fn: () => Promise<unknown>) => fn());
-    characters.Tom = { description: 'old' };
     queryRows = publicRows;
     query.select.mockReturnValue(query);
     query.eq.mockReturnValue(query);
@@ -142,13 +110,8 @@ describe('public game data actions', () => {
     const { cached: cachedMock } = jest.requireMock('@/lib/serverCache') as {
       cached: jest.Mock;
     };
-    const { characters } = jest.requireMock('@/data') as {
-      characters: Record<string, { description: string }>;
-    };
-
     await expect(fetchPublicGameDataActions()).resolves.toEqual(publicRows);
 
-    expect(characters.Tom).toEqual({ description: 'old' });
     expect(publicRows.map((row) => row.entity_type)).toEqual(['characters', 'factions', 'unknown']);
     expect(query.eq).toHaveBeenNthCalledWith(1, 'is_public', true);
     expect(query.eq).toHaveBeenNthCalledWith(2, 'status', 'approved');
@@ -158,16 +121,6 @@ describe('public game data actions', () => {
       revalidate: false,
       tags: ['public-game-data-actions'],
     });
-  });
-
-  it('should fetch and apply public rows when explicitly requested', async () => {
-    const { characters } = jest.requireMock('@/data') as {
-      characters: Record<string, { description: string }>;
-    };
-
-    await expect(getPublicGameDataActionsAndApplyToServerData()).resolves.toEqual(publicRows);
-
-    expect(characters.Tom).toEqual({ description: 'new' });
   });
 
   it('should retry the approved-row query after a transient cached query failure', async () => {

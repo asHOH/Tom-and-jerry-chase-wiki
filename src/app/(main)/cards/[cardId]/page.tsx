@@ -2,10 +2,12 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Article, WithContext } from 'schema-dts';
 
+import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
 import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
+import { cards as canonicalCards } from '@/data/static';
+import type { Card } from '@/data/types';
 import StructuredData from '@/components/StructuredData';
-import { cards } from '@/data';
 
 import KnowledgeCardDetailsClient from './KnowledgeCardDetailsClient';
 
@@ -13,18 +15,12 @@ export const dynamic = 'force-static';
 
 // Generate static params for all cards
 export function generateStaticParams() {
-  return Object.keys(cards).map((cardId) => ({
+  return Object.keys(canonicalCards).map((cardId) => ({
     cardId: cardId, // Don't encode here - Next.js will handle it
   }));
 }
 
-function generateStructuredData(cardId: string): WithContext<Article> | null {
-  const card = cards[cardId];
-
-  if (!card) {
-    return null;
-  }
-
+function generateStructuredData(cardId: string, card: Card): WithContext<Article> {
   return {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -32,7 +28,7 @@ function generateStructuredData(cardId: string): WithContext<Article> | null {
     description: card.description,
     author: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: SITE_URL },
     publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: SITE_URL },
-    image: card.imageUrl,
+    ...(card.imageUrl === undefined ? {} : { image: card.imageUrl }),
     mainEntityOfPage: {
       '@type': 'WebPage',
       '@id': `${SITE_URL}/cards/${encodeURIComponent(cardId)}`,
@@ -47,7 +43,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const resolvedParams = await params;
   const cardId = decodeURIComponent(resolvedParams.cardId); // Decode the URL-encoded card ID
-  const card = cards[cardId];
+  const { data: card } = await getPublishedEntityRouteReadModel('cards', cardId);
 
   if (!card) {
     return {};
@@ -68,7 +64,8 @@ export async function generateMetadata({
 export default async function CardPage({ params }: { params: Promise<{ cardId: string }> }) {
   const resolvedParams = await params;
   const cardId = decodeURIComponent(resolvedParams.cardId); // Decode the URL-encoded card ID
-  const card = cards[cardId];
+  const readModel = await getPublishedEntityRouteReadModel('cards', cardId);
+  const card = readModel.data;
 
   if (!card) {
     notFound();
@@ -76,8 +73,12 @@ export default async function CardPage({ params }: { params: Promise<{ cardId: s
 
   return (
     <>
-      <StructuredData data={generateStructuredData(cardId)} />
-      <KnowledgeCardDetailsClient card={card} cardId={cardId} />
+      <StructuredData data={generateStructuredData(cardId, card)} />
+      <KnowledgeCardDetailsClient
+        card={card}
+        cardId={cardId}
+        publishedRevision={readModel.revision}
+      />
     </>
   );
 }

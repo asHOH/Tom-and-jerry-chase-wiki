@@ -10,12 +10,13 @@ import {
   getPositioningTagLevel,
   isPositioningTagVisible,
 } from '@/constants/positioningTagSequences';
+import { buffs } from '@/data/static';
+import { characters } from '@/data/store';
 import { getActorJumpHeight, getActorProfile } from '@/features/actor-profiles/selectors';
 import { catCharacterIds, mouseCharacterIds } from '@/features/characters/data/characterMetadata';
 import GameLayout from '@/features/games/components/GameLayout';
 import StreakCounter from '@/features/games/components/StreakCounter';
 import { getRelationsBySubject } from '@/features/shared/traits/relationIndex';
-import { buffs, characters } from '@/data';
 
 import CluePanel, { type ClueEntry } from './components/CluePanel';
 import GuessHistory from './components/GuessHistory';

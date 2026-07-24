@@ -7,6 +7,7 @@ import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
+import { characters } from '@/data/store';
 import type { FactionId, SkillAllocation } from '@/data/types';
 import {
   safeParseSkillAllocationPattern,
@@ -16,7 +17,6 @@ import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverToo
 import { editable } from '@/components/ui/editable';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import { TrashIcon } from '@/components/icons/CommonIcons';
-import { characters } from '@/data';
 
 import SkillAllocationPathDisplay from './SkillAllocationPathDisplay';
 

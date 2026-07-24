@@ -9,7 +9,8 @@ import { proxy, snapshot } from 'valtio';
 import { AssetManager } from '@/lib/assetManager';
 import { GameDataManager } from '@/lib/dataManager';
 import { CharacterWithFaction } from '@/lib/types';
-import { characters, FactionId, Skill } from '@/data';
+import { characters } from '@/data/store';
+import type { FactionId, Skill } from '@/data/types';
 
 /**
  * Handles character ID changes, including:

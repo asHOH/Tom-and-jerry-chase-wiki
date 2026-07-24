@@ -6,12 +6,12 @@ import { useSnapshot } from 'valtio';
 import { getMapLevelColors, getMapSizeColors, getMapTypeColors } from '@/lib/design';
 import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { mapsEdit } from '@/data/store';
 import { type Map, type MapSize, type mapTypes, type studyLevel } from '@/data/types';
 import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
 import Tooltip from '@/components/ui/Tooltip';
-import { mapsEdit } from '@/data';
 
 import MapCardDisplay from './MapCardDisplay';
 

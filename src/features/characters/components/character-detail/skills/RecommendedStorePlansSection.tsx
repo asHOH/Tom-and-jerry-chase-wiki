@@ -2,13 +2,13 @@ import { useSnapshot } from 'valtio';
 
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useEditMode } from '@/context/EditModeContext';
+import { characters, itemsEdit } from '@/data/store';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 import { editable } from '@/components/ui/editable';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 import { Img } from '@/components/Image';
 import Link from '@/components/Link';
-import { characters, itemsEdit } from '@/data';
 
 const DEFAULT_STORE_PLAN = ['盘子', '玻璃杯', '高尔夫球', '鞭炮'] as const;
 const e = editable('characters');

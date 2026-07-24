@@ -8,9 +8,11 @@ import { useSnapshot } from 'valtio';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import singleItemRreverse from '@/lib/singleItemReverse';
+import type { CharacterWithFaction } from '@/lib/types';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { EditModeContext, useEditMode } from '@/context/EditModeContext';
+import { characters } from '@/data/store';
 import { Skill } from '@/data/types';
 import ActorAttributesSection from '@/features/actor-profiles/components/ActorAttributesSection';
 import SingleItemReverseCard from '@/features/shared/components/SingleItemReverseCard';
@@ -26,7 +28,6 @@ import EditButton from '@/components/ui/EditButton';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import { PlusIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
-import { characters } from '@/data';
 
 import CharacterRelationDisplay from './character-relations/CharacterRelationDisplay';
 import CharacterHistoryDisplay from './info-displays/CharacterHistoryDisplay';
@@ -45,6 +46,7 @@ import { useCharacterActions } from './useCharacterActions';
 const e = editable('characters');
 
 interface CharacterDetailsWithTutorialProps {
+  character: DeepReadonly<CharacterWithFaction>;
   children?: React.ReactNode;
 }
 
@@ -68,12 +70,16 @@ function CharacterImage({ characterId, imageUrl }: { characterId: string; imageU
   );
 }
 
-export default function CharacterDetails({ children }: CharacterDetailsWithTutorialProps) {
+export default function CharacterDetails({
+  character,
+  children,
+}: CharacterDetailsWithTutorialProps) {
   const { isEditMode } = useEditMode();
   const isMobile = useMobile();
   const { addSecondWeapon } = useCharacterActions();
   const { characterId } = useLocalCharacter();
-  const localCharacter = useSnapshot(characters[characterId]!);
+  const editCharacter = useSnapshot(characters[characterId] ?? characters[character.id]!);
+  const localCharacter = isEditMode ? editCharacter : character;
   const factionId = localCharacter.factionId!;
 
   // Go to Top button state

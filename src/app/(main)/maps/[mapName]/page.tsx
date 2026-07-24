@@ -1,21 +1,22 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
+import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
 import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
+import { maps as canonicalMaps } from '@/data/static';
+import type { Map as GameMap } from '@/data/types';
 import StructuredData from '@/components/StructuredData';
-import { maps } from '@/data';
 
 import MapDetailClient from './MapDetailsClient';
 
 export function generateStaticParams() {
-  return Object.keys(maps).map((mapName) => ({
+  return Object.keys(canonicalMaps).map((mapName) => ({
     mapName,
   }));
 }
 
-function generateStructuredData(mapName: string) {
-  const map = maps[mapName]!;
+function generateStructuredData(mapName: string, map: GameMap) {
   const desc = map.description ?? `${map.name}详细信息`;
   return {
     '@context': 'https://schema.org',
@@ -38,7 +39,7 @@ export async function generateMetadata({
   params: Promise<{ mapName: string }>;
 }): Promise<Metadata> {
   const mapName = decodeURIComponent((await params).mapName);
-  const map = maps[mapName];
+  const { data: map } = await getPublishedEntityRouteReadModel('maps', mapName);
 
   if (!map) {
     return {};
@@ -56,7 +57,8 @@ export async function generateMetadata({
 
 export default async function MapDetailPage({ params }: { params: Promise<{ mapName: string }> }) {
   const mapName = decodeURIComponent((await params).mapName);
-  const map = maps[mapName];
+  const readModel = await getPublishedEntityRouteReadModel('maps', mapName);
+  const map = readModel.data;
 
   if (!map) {
     notFound();
@@ -64,8 +66,8 @@ export default async function MapDetailPage({ params }: { params: Promise<{ mapN
 
   return (
     <>
-      <StructuredData data={generateStructuredData(mapName)} />
-      <MapDetailClient map={map} mapName={mapName} />
+      <StructuredData data={generateStructuredData(mapName, map)} />
+      <MapDetailClient map={map} mapName={mapName} publishedRevision={readModel.revision} />
     </>
   );
 }

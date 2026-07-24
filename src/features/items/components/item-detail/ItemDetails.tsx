@@ -6,6 +6,7 @@ import { useLocalItem } from '@/hooks/useLocalEditEntity';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
+import { itemsEdit } from '@/data/store';
 import { Item } from '@/data/types';
 import DetailOwnbuffsCard from '@/features/shared/detail-view/DetaidOwnbuffsCard';
 import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
@@ -13,7 +14,6 @@ import DetailShell, { DetailSection } from '@/features/shared/detail-view/Detail
 import DetailTextSection from '@/features/shared/detail-view/DetailTextSection';
 import DetailTraitsCard from '@/features/shared/detail-view/DetailTraitsCard';
 import { editable } from '@/components/ui/editable';
-import { itemsEdit } from '@/data';
 
 import ItemAttributesCard from './ItemAttributesCard';
 

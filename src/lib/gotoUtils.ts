@@ -11,7 +11,9 @@ import type {
   GotoResponse,
   GotoResult,
 } from '@/lib/types';
-import { buffs, characters, type Skill } from '@/data';
+import { buffs } from '@/data/static';
+import { characters } from '@/data/store';
+import type { Skill } from '@/data/types';
 
 import { ensureGotoIndex, normalizeCategoryHint, normalizeName } from './gotoIndex';
 

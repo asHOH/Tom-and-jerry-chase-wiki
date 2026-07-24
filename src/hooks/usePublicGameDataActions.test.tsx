@@ -2,8 +2,8 @@ import { render, waitFor } from '@testing-library/react';
 
 import { GameDataManager } from '@/lib/dataManager';
 import { PublicActionRow } from '@/lib/gameData/publicActionsTypes';
+import { characters } from '@/data/store';
 import { getCharacterRelation } from '@/features/characters/utils/relationReadModel';
-import { characters } from '@/data';
 
 import { usePublicGameDataActions } from './usePublicGameDataActions';
 

@@ -4,12 +4,13 @@ import { useMemo, useState } from 'react';
 import { useSnapshot } from 'valtio';
 
 import { AssetManager } from '@/lib/assetManager';
+import { maps } from '@/data/static';
+import { characters } from '@/data/store';
 import CharacterDisplay from '@/features/characters/components/character-grid/CharacterDisplay';
 import { getCharacterRelation } from '@/features/characters/utils/relationReadModel';
 import { CharacterSlotsSelector } from '@/components/ui/CharacterSelector';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
-import { characters, maps } from '@/data';
 
 export default function RecommendedPageClient() {
   const [selectedMice, setSelectedMice] = useState<(string | null)[]>([null, null, null, null]);

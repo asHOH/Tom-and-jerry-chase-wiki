@@ -4,7 +4,7 @@
 
 - Date: 2026-07-16
 - Last revised: 2026-07-24
-- State: Foundation and published-data selectors complete; Lean Step 1 is next
+- State: Foundation, published-data selectors, and Lean Step 1 complete; Lean Step 2 is next
 - Scope: Remove universal editable-store initialization and root approved-action replay, preserve
   edit behavior, then enable publish-time dependency grouping
 
@@ -43,6 +43,19 @@ The following work is complete and must not be repeated:
 Phase 1 validation passed focused and wider game-data tests, Oxlint, strict TypeScript,
 actor-profile validation, and `npm run build:skip-images`.
 
+Lean Step 1 is also complete:
+
+- Server rendering, metadata, structured data, sitemap generation, chat, and EchoFlow use the
+  published selectors instead of mutating shared game-data modules.
+- `ClientProvidersWithInitialData` is fetch-only, and the legacy server mutator and module-global
+  applied-ID set are removed.
+- `@/data` no longer re-exports Valtio stores; proxy-dependent modules use `@/data/store`
+  explicitly.
+- Published detail routes carry their exact published revision into edit-capable client shells,
+  with character detail and faction character lists migrated as the first large-domain checkpoint.
+- Focused characterization tests, Oxlint, strict TypeScript, Prettier, and
+  `npm run build:skip-images` pass.
+
 ## Frozen Correctness Contracts
 
 The leaner delivery scope does not relax these contracts:
@@ -78,7 +91,7 @@ graph; leave small static client assets alone unless evidence shows a material c
 
 ## Remaining Work
 
-### Lean Step 1: Sever legacy server mutation and mutable barrel imports
+### Lean Step 1 (complete): Sever legacy server mutation and mutable barrel imports
 
 1. Use a focused import audit to identify:
    - imports of mutable symbols from `@/data` or `@/data/store`;
@@ -95,14 +108,16 @@ graph; leave small static client assets alone unless evidence shows a material c
 6. Remove the mutable-store re-export from `@/data`. Keep types and justified static client values;
    do not force unrelated static assets through route models.
 7. Migrate only normal-mode consumers that still depend on a mutable store. Pass published values
-   through existing page props or a narrow route projection. Character detail is the first
-   checkpoint because it exercises the largest domain and the most shared helpers.
+   and the revision used to produce them through existing page props or a narrow route projection.
+   Character detail is the first checkpoint because it exercises the largest domain and the most
+   shared helpers.
 
 Exit gate:
 
 - server rendering, metadata, and structured data show approved values without global mutation;
 - `@/data` no longer re-exports Valtio stores;
 - edit-only consumers use explicit store imports;
+- migrated edit-capable route props carry the exact published revision used for their visible data;
 - root-client replay is still the only temporary normal-path store dependency; and
 - focused tests, lint, type-check, and a character-detail build/bundle check pass.
 
@@ -114,17 +129,21 @@ Preparatory code may land earlier, but runtime enablement and root replay remova
 2. Dynamically import `EditRuntime` only when `?edit=1` is active.
 3. Add a dedicated server endpoint for the complete published editable baseline. It returns the
    global revision and published domains, never approved rows.
-4. Replace module-level edit proxies with `createEditStores(baseline)`. Create one store set per
+4. Keep each normal route shell free of edit-store and registry imports. Where a component serves
+   both modes and its module graph reaches those imports, lazy-load only its narrow editor adapter
+   after edit mode activates; do not create a parallel route implementation.
+5. Replace module-level edit proxies with `createEditStores(baseline)`. Create one store set per
    edit session and pass it to the registry, subscribers, and editor adapters.
-5. Restore stored draft histories before mounting editable controls. Keep loading, ready, and
+6. Restore stored draft histories before mounting editable controls. Keep loading, ready, and
    retryable error states explicit.
-6. Compare the route revision with the baseline revision. Refresh once on mismatch; if the second
-   comparison still differs, keep editing disabled and offer retry.
-7. Keep the baseline fixed until edit mode is exited and re-entered.
-8. Replace the root raw-action history input with server-derived action-history data or a narrow
+7. Compare the revision carried by the visible route data with the baseline revision before
+   constructing edit stores. Refresh once on mismatch and wait for the refreshed route revision; if
+   the second comparison still differs, keep editing disabled and offer retry.
+8. Keep the baseline fixed until edit mode is exited and re-entered.
+9. Replace the root raw-action history input with server-derived action-history data or a narrow
    route history projection. Do not send raw approved rows for history.
-9. Remove `usePublicGameDataActions`, the root approved-row payload, and all client replay against
-   game-data stores in the same cutover.
+10. Remove `usePublicGameDataActions`, the root approved-row payload, and all client replay against
+    game-data stores in the same cutover.
 
 Exit gate:
 
@@ -132,6 +151,8 @@ Exit gate:
   proxies;
 - direct edit entry loads one baseline and one runtime;
 - the first mounted editor state already contains approved values;
+- mixed-mode route modules do not retain edit stores or the edit registry in their normal chunk;
+- edit stores are not constructed until the visible route and baseline revisions match;
 - restore, preview, discard, publish, exit, re-entry, and cross-domain drafts work;
 - no mounted client path replays approved rows; and
 - non-edit route manifests no longer contain the former shared store/edit chunk.
@@ -145,15 +166,18 @@ Only begin after Lean Step 2 proves root-client replay is gone.
 3. Preserve singleton groups.
 4. Flatten each multi-row dependency group into one ordered canonical action array at its earliest
    member position.
-5. Verify that entries crossed by the move commute with every group member and that every
+5. Re-check the generated row against `PUBLISH_LIMITS.actionsPerRow`. Reject an oversized dependent
+   group with the existing row-limit error; do not split a dependency group.
+6. Verify that entries crossed by the move commute with every group member and that every
    separately persisted row from one request commutes with the others.
-6. Persist through the existing prepared service-role RPC and retain complete candidate checked
+7. Persist through the existing prepared service-role RPC and retain complete candidate checked
    replay plus replay-epoch comparison.
 
 Exit gate:
 
 - noncontiguous transitive groups preserve action order and final replay results;
 - independent rows remain separate;
+- dependency groups that exceed the per-row action bound are rejected before persistence;
 - same-index, parent/child, structural array, malformed, and unknown cases still fail closed or
   group as defined by the existing classifier;
 - route bounds, permission derivation, strict decoding, candidate replay, and atomic persistence
@@ -182,9 +206,10 @@ Validate in proportion to each landing:
 
 - Server-call-site batches: focused page/metadata/JSON-LD or API tests, lint, and type-check.
 - Character checkpoint: approved-data tests plus a production bundle inspection.
-- Runtime cutover: edit workflow tests, root-provider tests, direct/client navigation checks, and a
-  production build.
-- Stage B: dependency, preparation, route, candidate replay, and trusted mutation tests.
+- Runtime cutover: edit workflow tests, root-provider tests, route-revision mismatch and refresh
+  tests, direct/client navigation checks, route chunk inspection, and a production build.
+- Stage B: dependency, post-group row-bound, preparation, route, candidate replay, and trusted
+  mutation tests.
 - Final audit: full Jest and production build.
 
 Do not require a full suite for every small import move.

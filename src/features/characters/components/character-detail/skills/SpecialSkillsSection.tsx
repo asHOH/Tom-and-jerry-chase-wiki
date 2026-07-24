@@ -2,6 +2,8 @@ import { useSnapshot } from 'valtio';
 
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useEditMode } from '@/context/EditModeContext';
+import { factionData } from '@/data/static';
+import { characters, specialSkillsEdit } from '@/data/store';
 import { isGeneralSpecialSkill } from '@/features/characters/utils/recommendations';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 import { editable } from '@/components/ui/editable';
@@ -9,7 +11,6 @@ import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButt
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 import Link from '@/components/Link';
-import { characters, factionData, specialSkillsEdit } from '@/data';
 
 import RecommendedStorePlansSection from './RecommendedStorePlansSection';
 

@@ -181,12 +181,25 @@ jest.mock('./info-displays/WinRatesDisplay', () => ({
 }));
 
 describe('CharacterDetails', () => {
+  const character = {
+    id: '汤姆',
+    factionId: 'cat' as const,
+    description: 'published description',
+    imageUrl: '/test-character.png',
+    createDate: '2026.1.1',
+    aliases: [],
+    skills: [],
+    knowledgeCardGroups: [],
+    catPositioningTags: [],
+    EnglishName: 'Tom',
+  };
+
   it('should render on the server without accessing document for the portal target', () => {
-    expect(() => renderToString(<CharacterDetails />)).not.toThrow();
+    expect(() => renderToString(<CharacterDetails character={character} />)).not.toThrow();
   });
 
   it('should hide own traits and reverse cards when their counts are zero', () => {
-    const html = renderToString(<CharacterDetails />);
+    const html = renderToString(<CharacterDetails character={character} />);
 
     expect(html).not.toContain('traits-text');
     expect(html).not.toContain('reverse-card');

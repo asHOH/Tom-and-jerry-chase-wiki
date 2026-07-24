@@ -6,11 +6,11 @@ import { useSnapshot } from 'valtio';
 import { setNestedProperty } from '@/lib/editUtils';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useEditMode } from '@/context/EditModeContext';
+import { characters } from '@/data/store';
 import { FactionId, SkillAllocation } from '@/data/types';
 import Card from '@/components/ui/Card';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import { PlusIcon } from '@/components/icons/CommonIcons';
-import { characters } from '@/data';
 
 import CharacterSection from '../sections/CharacterSection';
 import SkillAllocationDisplay from './SkillAllocationDisplay';

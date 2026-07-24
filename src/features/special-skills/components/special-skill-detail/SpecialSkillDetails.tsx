@@ -6,6 +6,7 @@ import { useLocalSpecialSkill } from '@/hooks/useLocalEditEntity';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
+import { characters, specialSkillsEdit } from '@/data/store';
 import { SpecialSkill } from '@/data/types';
 import CharacterList from '@/features/knowledge-cards/components/knowledge-card-detail/CharacterList';
 import DetailOwnbuffsCard from '@/features/shared/detail-view/DetaidOwnbuffsCard';
@@ -14,7 +15,6 @@ import DetailShell, { DetailSection } from '@/features/shared/detail-view/Detail
 import DetailTextSection from '@/features/shared/detail-view/DetailTextSection';
 import DetailTraitsCard from '@/features/shared/detail-view/DetailTraitsCard';
 import { editable } from '@/components/ui/editable';
-import { characters, specialSkillsEdit } from '@/data';
 
 import SpecialSkillAttributesCard from './SpecialSkillAttributesCard';
 

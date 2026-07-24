@@ -4,8 +4,8 @@ import { AssetManager } from '@/lib/assetManager';
 import { generateTypescriptCodeFromCharacter } from '@/lib/editUtils';
 import type { CharacterWithFaction } from '@/lib/types';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
+import { characters } from '@/data/store';
 import type { Skill } from '@/data/types';
-import { characters } from '@/data';
 
 export function useCharacterActions() {
   const { characterId } = useLocalCharacter();

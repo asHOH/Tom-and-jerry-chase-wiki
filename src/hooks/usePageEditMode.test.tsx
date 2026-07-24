@@ -3,7 +3,7 @@ import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-libra
 
 import { getActionsStorageKey, readActionHistory } from '@/lib/edit/diffUtils';
 import { EditModeContext } from '@/context/EditModeContext';
-import { characters } from '@/data';
+import { characters } from '@/data/store';
 
 import { usePageEditMode } from './usePageEditMode';
 

@@ -6,11 +6,11 @@ import { useSnapshot } from 'valtio';
 
 import { getBuffTypeColors } from '@/lib/design';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { buffsEdit } from '@/data/store';
 import type { Buff } from '@/data/types';
 import { CatalogGridItem } from '@/components/ui/CatalogGrid';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
-import { buffsEdit } from '@/data';
 
 import BuffCardDisplay from './BuffCardDisplay';
 

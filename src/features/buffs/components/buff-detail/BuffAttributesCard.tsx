@@ -6,6 +6,7 @@ import { getBuffTypeColors } from '@/lib/design';
 import { useLocalBuff } from '@/hooks/useLocalEditEntity';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
+import { buffsEdit } from '@/data/store';
 import { Buff, SingleItem } from '@/data/types';
 import AddAliasButton from '@/features/shared/detail-view/AddAliasButton';
 import AttributesCardLayout from '@/features/shared/detail-view/AttributesCardLayout';
@@ -14,7 +15,6 @@ import NavigationButtonsRow from '@/components/ui/NavigationButtonsRow';
 import SingleItemAccordionCard from '@/components/ui/SingleItemAccordionCard';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import Tag from '@/components/ui/Tag';
-import { buffsEdit } from '@/data';
 
 import '@/lib/design';
 

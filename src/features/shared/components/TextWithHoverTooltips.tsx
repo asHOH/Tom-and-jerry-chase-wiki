@@ -2,9 +2,9 @@ import { Fragment, useMemo } from 'react';
 
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { characters } from '@/data/store';
 import { getActorProfile } from '@/features/actor-profiles/selectors';
 import Tooltip from '@/components/ui/Tooltip';
-import { characters } from '@/data';
 
 import { renderColorfulHighlight } from './text-with-hover-tooltips/inlineMarkup';
 import { renderTextWithTooltips } from './text-with-hover-tooltips/renderTextWithTooltips';

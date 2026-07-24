@@ -5,11 +5,11 @@ import { useSnapshot } from 'valtio';
 
 import { getModeTypeColors } from '@/lib/design';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { modesEdit } from '@/data/store';
 import type { Mode, ModeTypeList } from '@/data/types';
 import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
-import { modesEdit } from '@/data';
 
 import ModeCardDisplay from './ModeCardDisplay';
 

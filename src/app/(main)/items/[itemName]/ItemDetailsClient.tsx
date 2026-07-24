@@ -10,9 +10,22 @@ const ItemDetails = dynamic(() => import('@/features/items/components/item-detai
   loading: () => <PageLoadingState type='detail' message='加载道具详情中...' />,
 });
 
-export default function ItemDetailsClient({ item, itemName }: { item: Item; itemName: string }) {
+export default function ItemDetailsClient({
+  item,
+  itemName,
+  publishedRevision,
+}: {
+  item: Item;
+  itemName: string;
+  publishedRevision: `v1:${string}`;
+}) {
   return (
-    <EditModePageShell entityType='items' entityId={itemName} entityName={itemName}>
+    <EditModePageShell
+      entityType='items'
+      entityId={itemName}
+      entityName={itemName}
+      publishedRevision={publishedRevision}
+    >
       <ItemDetails item={item} />
     </EditModePageShell>
   );

@@ -8,6 +8,8 @@ import { useMobile } from '@/hooks/useMediaQuery';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
+import { fixtures } from '@/data/static';
+import { mapsEdit } from '@/data/store';
 import type { Map as MapType, SingleItem } from '@/data/types';
 import DetailOwnbuffsCard from '@/features/shared/detail-view/DetaidOwnbuffsCard';
 import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
@@ -19,7 +21,6 @@ import { editable } from '@/components/ui/editable';
 import SingleItemButton from '@/components/ui/SingleItemButton';
 import Image from '@/components/Image';
 import Link from '@/components/Link';
-import { fixtures, mapsEdit } from '@/data';
 
 import MapAttributesCard from './MapAttributesCard';
 

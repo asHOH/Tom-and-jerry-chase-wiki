@@ -11,6 +11,7 @@ import { useMobile } from '@/hooks/useMediaQuery';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
+import { characters } from '@/data/store';
 import { Skill, SkillLevel } from '@/data/types';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
 import DetailOwnbuffsCard from '@/features/shared/detail-view/DetaidOwnbuffsCard';
@@ -20,7 +21,6 @@ import Card from '@/components/ui/Card';
 import { editable } from '@/components/ui/editable';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import { TrashIcon } from '@/components/icons/CommonIcons';
-import { characters } from '@/data';
 
 import SkillCardMedia from './SkillCardMedia';
 import SkillCardProperties from './SkillCardProperties';

@@ -6,6 +6,7 @@ import uniq from 'lodash-es/uniq';
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { cn } from '@/lib/design';
 import type { CharacterWithFaction } from '@/lib/types';
+import { characters } from '@/data/store';
 import type { Skill, SkillLevel, SkillUsageProperties } from '@/data/types';
 import {
   addSkillPart,
@@ -20,7 +21,6 @@ import AddAliasButton from '@/features/shared/detail-view/AddAliasButton';
 import { editable } from '@/components/ui/editable';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
-import { characters } from '@/data';
 
 import SkillUsagePropertiesEditor from './SkillUsagePropertiesEditor';
 

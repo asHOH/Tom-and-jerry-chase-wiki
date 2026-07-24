@@ -1,21 +1,22 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
+import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
 import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
+import { modes as canonicalModes } from '@/data/static';
+import type { Mode } from '@/data/types';
 import StructuredData from '@/components/StructuredData';
-import { modes } from '@/data';
 
 import ModeDetailClient from './ModeDetailsClient';
 
 export function generateStaticParams() {
-  return Object.keys(modes).map((modeName) => ({
+  return Object.keys(canonicalModes).map((modeName) => ({
     modeName,
   }));
 }
 
-function generateStructuredData(modeName: string) {
-  const mode = modes[modeName]!;
+function generateStructuredData(modeName: string, mode: Mode) {
   const desc = mode.description ?? `${mode.name}详细信息`;
   return {
     '@context': 'https://schema.org',
@@ -38,7 +39,7 @@ export async function generateMetadata({
   params: Promise<{ modeName: string }>;
 }): Promise<Metadata> {
   const modeName = decodeURIComponent((await params).modeName);
-  const mode = modes[modeName];
+  const { data: mode } = await getPublishedEntityRouteReadModel('modes', modeName);
 
   if (!mode) {
     return {};
@@ -60,7 +61,8 @@ export default async function ModeDetailPage({
   params: Promise<{ modeName: string }>;
 }) {
   const modeName = decodeURIComponent((await params).modeName);
-  const mode = modes[modeName];
+  const readModel = await getPublishedEntityRouteReadModel('modes', modeName);
+  const mode = readModel.data;
 
   if (!mode) {
     notFound();
@@ -68,8 +70,8 @@ export default async function ModeDetailPage({
 
   return (
     <>
-      <StructuredData data={generateStructuredData(modeName)} />
-      <ModeDetailClient mode={mode} modeName={modeName} />
+      <StructuredData data={generateStructuredData(modeName, mode)} />
+      <ModeDetailClient mode={mode} modeName={modeName} publishedRevision={readModel.revision} />
     </>
   );
 }

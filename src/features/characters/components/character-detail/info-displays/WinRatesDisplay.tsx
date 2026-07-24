@@ -4,9 +4,9 @@ import { useMemo, useState } from 'react';
 import { useSnapshot } from 'valtio';
 
 import { cn } from '@/lib/design';
+import { characters } from '@/data/store';
 import { CharacterWinRateEntry, getCharacterWinRates } from '@/data/winRates';
 import { ChevronDownIcon } from '@/components/icons/CommonIcons';
-import { characters } from '@/data';
 
 interface WinRatesDisplayProps {
   characterName: string;

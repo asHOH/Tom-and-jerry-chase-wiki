@@ -1,30 +1,29 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
+import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
 import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
+import { achievements as canonicalAchievements } from '@/data/static';
 import type { Achievement, FactionId } from '@/data/types';
 import StructuredData from '@/components/StructuredData';
-import { achievements } from '@/data';
 
 import AchievementDetailsClient from './AchievementDetailsClient';
 
-function getAchievement(factionId: string, achievementName: string): Achievement | undefined {
-  if (factionId !== 'cat' && factionId !== 'mouse') return undefined;
-  return achievements[factionId][achievementName];
-}
-
 export function generateStaticParams() {
   return (['cat', 'mouse'] as const).flatMap((factionId) =>
-    Object.keys(achievements[factionId]).map((achievementName) => ({
+    Object.keys(canonicalAchievements[factionId]).map((achievementName) => ({
       factionId,
       achievementName,
     }))
   );
 }
 
-function generateStructuredData(factionId: FactionId, achievementName: string) {
-  const achievement = getAchievement(factionId, achievementName)!;
+function generateStructuredData(
+  factionId: FactionId,
+  achievementName: string,
+  achievement: Achievement
+) {
   const desc = achievement.description ?? `${achievement.name}详细信息`;
   return {
     '@context': 'https://schema.org',
@@ -49,7 +48,12 @@ export async function generateMetadata({
   const resolvedParams = await params;
   const factionId = decodeURIComponent(resolvedParams.factionId);
   const achievementName = decodeURIComponent(resolvedParams.achievementName);
-  const achievement = getAchievement(factionId, achievementName);
+  if (factionId !== 'cat' && factionId !== 'mouse') return {};
+  const { data: achievement } = await getPublishedEntityRouteReadModel(
+    'achievements',
+    achievementName,
+    factionId
+  );
 
   if (!achievement) return {};
 
@@ -77,16 +81,22 @@ export default async function AchievementDetailPage({
   if (factionIdRaw !== 'cat' && factionIdRaw !== 'mouse') notFound();
 
   const factionId = factionIdRaw as FactionId;
-  const achievement = getAchievement(factionId, achievementName);
+  const readModel = await getPublishedEntityRouteReadModel(
+    'achievements',
+    achievementName,
+    factionId
+  );
+  const achievement = readModel.data;
   if (!achievement) notFound();
 
   return (
     <>
-      <StructuredData data={generateStructuredData(factionId, achievementName)} />
+      <StructuredData data={generateStructuredData(factionId, achievementName, achievement)} />
       <AchievementDetailsClient
         achievement={achievement}
         factionId={factionId}
         achievementName={achievementName}
+        publishedRevision={readModel.revision}
       />
     </>
   );

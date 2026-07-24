@@ -9,13 +9,14 @@ import { sortCardsByRank } from '@/lib/sortingUtils';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
+import { cards } from '@/data/static';
+import { cardsEdit } from '@/data/store';
 import type { FactionId } from '@/data/types';
 import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import CostRangeSlider from '@/components/ui/CostRangeSlider';
 import FilterLabel from '@/components/ui/FilterLabel';
 import FilterRow from '@/components/ui/FilterRow';
-import { cards, cardsEdit } from '@/data';
 
 import KnowledgeCardDisplay from './KnowledgeCardDisplay';
 

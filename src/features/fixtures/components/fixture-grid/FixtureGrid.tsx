@@ -7,12 +7,12 @@ import { getFixtureSourceColors, getFixtureTypeColors } from '@/lib/design';
 import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { fixturesEdit } from '@/data/store';
 import type { Fixture, FixtureSourceList, FixtureTypeList } from '@/data/types';
 import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
 import Tooltip from '@/components/ui/Tooltip';
-import { fixturesEdit } from '@/data';
 
 import FixtureCardDisplay from './FixtureCardDisplay';
 

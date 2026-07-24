@@ -9,6 +9,7 @@ import { useLocalCard } from '@/hooks/useLocalEditEntity';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
+import { cardsEdit, characters } from '@/data/store';
 import type { KnowledgeCardGroup, KnowledgeCardGroupSet } from '@/data/types';
 import { flattenCardGroup } from '@/features/knowledge-cards/utils/sections';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
@@ -19,7 +20,6 @@ import DetailTextSection from '@/features/shared/detail-view/DetailTextSection';
 import DetailTraitsCard from '@/features/shared/detail-view/DetailTraitsCard';
 import { editable } from '@/components/ui/editable';
 import Image from '@/components/Image';
-import { cardsEdit, characters } from '@/data'; // Import characters data
 
 import CharacterList from './CharacterList';
 import KnowledgeCardAttributesCard from './KnowledgeCardAttributesCard';

@@ -17,15 +17,22 @@ export default function AchievementDetailsClient({
   achievement,
   factionId,
   achievementName,
+  publishedRevision,
 }: {
   achievement: Achievement;
   factionId: FactionId;
   achievementName: string;
+  publishedRevision: `v1:${string}`;
 }) {
   const entityId = `${factionId}.${achievementName}`;
 
   return (
-    <EditModePageShell entityType='achievements' entityId={entityId} entityName={achievementName}>
+    <EditModePageShell
+      entityType='achievements'
+      entityId={entityId}
+      entityName={achievementName}
+      publishedRevision={publishedRevision}
+    >
       <AchievementDetails achievement={achievement} />
     </EditModePageShell>
   );

@@ -1,36 +1,10 @@
 import 'server-only';
 
 import type { ActionHistoryEntry } from '@/lib/edit/diffUtils';
-import {
-  applyPublicActionRows,
-  resolvePublicActionTargets,
-  type PublicActionTargetRegistry,
-} from '@/lib/gameData/actionReplay';
 import { PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG } from '@/lib/gameData/publicActionsCache';
-import type { PublishableEntityType } from '@/lib/gameData/publishableEntityTypes';
 import { cached } from '@/lib/serverCache';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
 import { supabaseServerPublic } from '@/lib/supabase/public';
-import {
-  achievements,
-  achievementsEdit,
-  buffs,
-  buffsEdit,
-  cards,
-  cardsEdit,
-  characters,
-  entities,
-  fixtures,
-  fixturesEdit,
-  items,
-  itemsEdit,
-  maps,
-  mapsEdit,
-  modes,
-  modesEdit,
-  specialSkills,
-  specialSkillsEdit,
-} from '@/data';
 
 import { normalizePublicActionEntries } from './actionEntries';
 import {
@@ -42,57 +16,6 @@ import type { PublicActionRow } from './publicActionsTypes';
 import { getGameDataActionEntityKey } from './scopedEntityPaths';
 
 export { PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG } from '@/lib/gameData/publicActionsCache';
-
-const appliedPublicActionIds = new Set<string>();
-
-const serverPublicActionTargetRegistry: PublicActionTargetRegistry = {
-  achievements: [
-    achievements as unknown as Record<string, unknown>,
-    achievementsEdit as unknown as Record<string, unknown>,
-  ],
-  characters: [characters as unknown as Record<string, unknown>],
-  cards: [
-    cards as unknown as Record<string, unknown>,
-    cardsEdit as unknown as Record<string, unknown>,
-  ],
-  entities: [entities as unknown as Record<string, unknown>],
-  buffs: [
-    buffs as unknown as Record<string, unknown>,
-    buffsEdit as unknown as Record<string, unknown>,
-  ],
-  items: [
-    items as unknown as Record<string, unknown>,
-    itemsEdit as unknown as Record<string, unknown>,
-  ],
-  fixtures: [
-    fixtures as unknown as Record<string, unknown>,
-    fixturesEdit as unknown as Record<string, unknown>,
-  ],
-  maps: [
-    maps as unknown as Record<string, unknown>,
-    mapsEdit as unknown as Record<string, unknown>,
-  ],
-  modes: [
-    modes as unknown as Record<string, unknown>,
-    modesEdit as unknown as Record<string, unknown>,
-  ],
-  specialSkills: [
-    specialSkills as unknown as Record<string, unknown>,
-    specialSkillsEdit as unknown as Record<string, unknown>,
-  ],
-} satisfies Record<PublishableEntityType, Record<string, unknown>[]>;
-
-function applyPublicGameDataActionsToServerData(actions: PublicActionRow[]): void {
-  applyPublicActionRows({
-    rows: actions,
-    handledIds: appliedPublicActionIds,
-    resolveTargets: (entityType) =>
-      resolvePublicActionTargets(serverPublicActionTargetRegistry, entityType),
-    onError: (row, err) => {
-      console.error('Failed to apply public action on server:', row, err);
-    },
-  });
-}
 
 export type EntityUpdateHistory = {
   updatedAt: string;
@@ -206,11 +129,4 @@ export async function fetchPublicGameDataActions(): Promise<PublicActionRow[]> {
     );
     return [];
   }
-}
-
-export async function getPublicGameDataActionsAndApplyToServerData(): Promise<PublicActionRow[]> {
-  const actions = await fetchPublicGameDataActions();
-  applyPublicGameDataActionsToServerData(actions);
-
-  return actions;
 }

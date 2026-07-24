@@ -19,6 +19,8 @@ type EditModeContextType = {
   isPreviewMode: boolean;
   /** Set preview mode */
   setIsPreviewMode: (value: boolean) => void;
+  /** Published revision used to render the visible route data. */
+  publishedRevision?: `v1:${string}`;
 };
 
 export const EditModeContext = createContext<EditModeContextType | undefined>(undefined);

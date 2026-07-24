@@ -2,6 +2,7 @@
 
 import { useLocalSpecialSkill } from '@/hooks/useLocalEditEntity';
 import { useEditMode } from '@/context/EditModeContext';
+import { specialSkillsEdit } from '@/data/store';
 import { SpecialSkill } from '@/data/types';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
 import AddAliasButton from '@/features/shared/detail-view/AddAliasButton';
@@ -9,7 +10,6 @@ import AttributesCardLayout from '@/features/shared/detail-view/AttributesCardLa
 import { editable } from '@/components/ui/editable';
 import NavigationButtonsRow from '@/components/ui/NavigationButtonsRow';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
-import { specialSkillsEdit } from '@/data';
 
 interface SpecialSkillDetailClientProps {
   skill: SpecialSkill;

@@ -1,8 +1,15 @@
+import { GameDataManager } from '@/lib/dataManager';
 import { getCharacterRelation } from '@/features/characters/utils/relations';
-import { characters } from '@/data';
 
-import { resolvers, type ResolverResult } from './resolvers';
+import { getResolvers, type ResolverResult } from './resolvers';
 
+jest.mock('server-only', () => ({}), { virtual: true });
+jest.mock('next/cache', () => ({
+  unstable_cache: (callback: unknown) => callback,
+}));
+jest.mock('@/lib/gameData/published/buildIdentity', () => ({
+  PRODUCTION_BUILD_IDENTITY: 'test-build',
+}));
 jest.mock('@/lib/articles/serverQueries', () => ({
   getApprovedArticleVersion: jest.fn(),
   getArticleBasicInfo: jest.fn(),
@@ -15,6 +22,7 @@ type RecommendedCharacter = {
 };
 
 const getRecommendedData = async (): Promise<RecommendedCharacter[]> => {
+  const resolvers = await getResolvers();
   const recommendedResolver = resolvers.recommended;
   if (!recommendedResolver) {
     throw new Error('Expected recommended resolver to be registered.');
@@ -30,6 +38,7 @@ const getRecommendedData = async (): Promise<RecommendedCharacter[]> => {
 
 describe('echoflow resolvers', () => {
   it('should expose actor profile data with a deprecated role alias', async () => {
+    const resolvers = await getResolvers();
     const characterResolver = resolvers.characters;
     if (!characterResolver) throw new Error('Expected character resolver to be registered.');
 
@@ -48,6 +57,7 @@ describe('echoflow resolvers', () => {
 
   it('should expose projected character relations in recommended data', async () => {
     const characterId = '恶魔汤姆';
+    const characters = GameDataManager.getCharacters();
     const expectedRelations = getCharacterRelation(characters, characterId);
 
     expect(expectedRelations.counters.length).toBeGreaterThan(0);

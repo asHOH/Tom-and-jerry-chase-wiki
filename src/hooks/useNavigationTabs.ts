@@ -2,7 +2,7 @@ import { usePathname } from 'next/navigation';
 import { useSnapshot } from 'valtio';
 
 import { NAV_ITEMS } from '@/constants/navigation';
-import { characters } from '@/data';
+import { characters } from '@/data/store';
 
 export function useNavigationTabs() {
   const pathname = usePathname();

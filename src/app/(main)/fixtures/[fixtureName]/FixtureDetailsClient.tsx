@@ -16,12 +16,19 @@ const FixtureDetails = dynamic(
 export default function FixtureDetailsClient({
   fixture,
   fixtureName,
+  publishedRevision,
 }: {
   fixture: Fixture;
   fixtureName: string;
+  publishedRevision: `v1:${string}`;
 }) {
   return (
-    <EditModePageShell entityType='fixtures' entityId={fixtureName} entityName={fixtureName}>
+    <EditModePageShell
+      entityType='fixtures'
+      entityId={fixtureName}
+      entityName={fixtureName}
+      publishedRevision={publishedRevision}
+    >
       <FixtureDetails fixture={fixture} />
     </EditModePageShell>
   );

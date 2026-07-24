@@ -5,11 +5,11 @@ import dynamic from 'next/dynamic';
 import { useSnapshot } from 'valtio';
 
 import { useEditMode } from '@/context/EditModeContext';
+import { mapsEdit } from '@/data/store';
 import type { InteractiveMapConfig, Map as MapType } from '@/data/types';
 import EditButton from '@/components/ui/EditButton';
 import EditModePageShell from '@/components/ui/EditModePageShell';
 import Link from '@/components/Link';
-import { mapsEdit } from '@/data';
 
 // import LandscapeOrientationPrompt from './LandscapeOrientationPrompt';
 
@@ -18,6 +18,7 @@ const InteractiveMap = dynamic(() => import('./InteractiveMap'), { ssr: false })
 type InteractiveMapPageProps = {
   map: MapType;
   mapName: string;
+  publishedRevision: `v1:${string}`;
 };
 
 function InteractiveMapPageContent({ map, mapName }: InteractiveMapPageProps) {
@@ -25,7 +26,7 @@ function InteractiveMapPageContent({ map, mapName }: InteractiveMapPageProps) {
   const orientationContainerRef = useRef<HTMLDivElement>(null);
   const rawLocalMap = mapsEdit[mapName];
   const localMapSnapshot = useSnapshot(rawLocalMap ?? ({} as MapType));
-  const effectiveMap = rawLocalMap ? (localMapSnapshot as MapType) : map;
+  const effectiveMap = isEditMode && rawLocalMap ? (localMapSnapshot as MapType) : map;
   const interactiveMap = effectiveMap.interactiveMap;
 
   if (!interactiveMap) return null;
@@ -64,10 +65,23 @@ function InteractiveMapPageContent({ map, mapName }: InteractiveMapPageProps) {
   );
 }
 
-export default function InteractiveMapPage({ map, mapName }: InteractiveMapPageProps) {
+export default function InteractiveMapPage({
+  map,
+  mapName,
+  publishedRevision,
+}: InteractiveMapPageProps) {
   return (
-    <EditModePageShell entityType='maps' entityId={mapName} entityName={mapName}>
-      <InteractiveMapPageContent map={map} mapName={mapName} />
+    <EditModePageShell
+      entityType='maps'
+      entityId={mapName}
+      entityName={mapName}
+      publishedRevision={publishedRevision}
+    >
+      <InteractiveMapPageContent
+        map={map}
+        mapName={mapName}
+        publishedRevision={publishedRevision}
+      />
     </EditModePageShell>
   );
 }

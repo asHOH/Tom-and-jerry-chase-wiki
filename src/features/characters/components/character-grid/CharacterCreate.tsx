@@ -8,11 +8,12 @@ import { handleCharacterIdChange } from '@/lib/editUtils';
 import type { CharacterWithFaction } from '@/lib/types';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
+import { characters } from '@/data/store';
+import type { FactionId } from '@/data/types';
 import Button from '@/components/ui/Button';
 import EntityCardFrame from '@/components/ui/EntityCardFrame';
 import { FormInput } from '@/components/ui/FormControls';
 import { PlusIcon } from '@/components/icons/CommonIcons';
-import { characters, FactionId } from '@/data';
 
 export default function CharacterCreate() {
   const { width, height } = componentTokens.image.dimensions.CHARACTER_CARD;

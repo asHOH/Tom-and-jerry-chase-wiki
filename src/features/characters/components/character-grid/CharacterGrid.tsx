@@ -17,32 +17,34 @@ import {
   isPositioningTagVisible,
   sortPositioningTagNames,
 } from '@/constants/positioningTagSequences';
+import { characters as characterStore } from '@/data/store';
+import type { FactionId, PositioningTagName } from '@/data/types';
 import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
 import Tooltip from '@/components/ui/Tooltip';
-import { characters as allCharacters, characters, FactionId, PositioningTagName } from '@/data';
 
 import CharacterCreate from './CharacterCreate';
 import CharacterDisplay from './CharacterDisplay';
 import CharacterImport from './CharacterImport';
 
-export default function CharacterGrid({ factionId }: FactionCharactersProps) {
-  const localCharacters = useSnapshot(characters);
-  const faction = useMemo(() => {
-    return GameDataManager.getFactionsWithCharacters(localCharacters)[factionId];
-  }, [localCharacters, factionId])!;
-  const { isDetailedView: isDetailed } = useAppContext();
+export default function CharacterGrid({ factionId, characters }: FactionCharactersProps) {
   const { isEditMode } = useEditMode();
+  const localCharacters = useSnapshot(characterStore);
+  const effectiveCharacters = isEditMode || characters === undefined ? localCharacters : characters;
+  const faction = useMemo(() => {
+    return GameDataManager.getFactionsWithCharacters(effectiveCharacters)[factionId];
+  }, [effectiveCharacters, factionId])!;
+  const { isDetailedView: isDetailed } = useAppContext();
   const [isDarkMode] = useDarkMode();
   const originalCharacterIds = getOriginalCharacterIds();
 
   const originalCharacters = useMemo(() => {
     return originalCharacterIds
-      .map((id) => allCharacters[id])
+      .map((id) => effectiveCharacters[id])
       .filter((char): char is NonNullable<typeof char> => Boolean(char))
       .filter((char) => char.factionId === faction.id);
-  }, [originalCharacterIds, faction.id]);
+  }, [effectiveCharacters, originalCharacterIds, faction.id]);
 
   const {
     selectedFilters: selectedPositioningTags,
@@ -65,7 +67,7 @@ export default function CharacterGrid({ factionId }: FactionCharactersProps) {
 
   const uniquePositioningTags = useMemo(() => {
     const tags = new Set<PositioningTagName>();
-    Object.values(allCharacters).forEach((character) => {
+    Object.values(effectiveCharacters).forEach((character) => {
       if (character.factionId === faction.id) {
         const tagsToAdd =
           (character.factionId === 'cat'
@@ -79,10 +81,10 @@ export default function CharacterGrid({ factionId }: FactionCharactersProps) {
       }
     });
     return sortPositioningTagNames(Array.from(tags), faction.id as FactionId);
-  }, [faction.id]);
+  }, [effectiveCharacters, faction.id]);
 
   const filteredCharacters = useMemo(() => {
-    let charactersToFilter = Object.values(allCharacters).filter(
+    let charactersToFilter = Object.values(effectiveCharacters).filter(
       (char) => char.factionId === faction.id
     );
 
@@ -132,7 +134,7 @@ export default function CharacterGrid({ factionId }: FactionCharactersProps) {
 
     return filtered.sort((a, b) => {
       const getHighestSelectedLevel = (
-        char: (typeof allCharacters)[keyof typeof allCharacters]
+        char: (typeof effectiveCharacters)[keyof typeof effectiveCharacters]
       ) => {
         const tags =
           (char.factionId === 'cat' ? char.catPositioningTags : char.mousePositioningTags) || [];
@@ -144,7 +146,14 @@ export default function CharacterGrid({ factionId }: FactionCharactersProps) {
       };
       return getHighestSelectedLevel(b) - getHighestSelectedLevel(a);
     });
-  }, [faction.id, selectedPositioningTags, isEditMode, originalCharacterIds, selectedAvatar]);
+  }, [
+    effectiveCharacters,
+    faction.id,
+    selectedPositioningTags,
+    isEditMode,
+    originalCharacterIds,
+    selectedAvatar,
+  ]);
 
   const cardNodes = useMemo(() => {
     const nodes: React.ReactNode[] = [];

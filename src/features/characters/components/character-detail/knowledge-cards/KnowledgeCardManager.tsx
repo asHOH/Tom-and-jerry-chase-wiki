@@ -3,9 +3,10 @@
 import { useSnapshot } from 'valtio';
 
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
+import { factionData } from '@/data/static';
+import { characters } from '@/data/store';
 import type { FactionId, KnowledgeCardGroup } from '@/data/types';
 import { getGeneralKnowledgeCardGroupCount } from '@/features/characters/utils/recommendations';
-import { characters, factionData } from '@/data';
 
 import KnowledgeCardSection from './KnowledgeCardSection';
 

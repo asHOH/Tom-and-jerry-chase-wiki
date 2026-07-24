@@ -2,7 +2,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { proxy } from 'valtio';
 
-import { characters } from '@/data';
+import { characters } from '@/data/store';
 
 import { KnowledgeCardGroupDisplay } from './KnowledgeCardGroupDisplay';
 import KnowledgeCardSection from './KnowledgeCardSection';

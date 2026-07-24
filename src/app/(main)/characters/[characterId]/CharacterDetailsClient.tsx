@@ -68,15 +68,18 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
       isLoading,
       isPreviewMode,
       setIsPreviewMode,
+      ...(props.publishedRevision === undefined
+        ? {}
+        : { publishedRevision: props.publishedRevision }),
     }),
-    [isEditMode, isLoading, isPreviewMode, setIsPreviewMode]
+    [isEditMode, isLoading, isPreviewMode, props.publishedRevision, setIsPreviewMode]
   );
 
   return (
     <>
       <div className='min-h-screen'>
         <EditModeContext value={editModeContextValue}>
-          <CharacterDetails>{props.children}</CharacterDetails>
+          <CharacterDetails character={props.character}>{props.children}</CharacterDetails>
         </EditModeContext>
       </div>
 

@@ -3,10 +3,12 @@ import { notFound } from 'next/navigation';
 import { CollectionPage, WithContext } from 'schema-dts';
 
 import { GameDataManager } from '@/lib/dataManager';
+import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
 import { generatePageMetadata } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
+import { factionData } from '@/data/static';
+import type { FactionId } from '@/data/types';
 import StructuredData from '@/components/StructuredData';
-import { characters, factionData, FactionId } from '@/data';
 
 import CharacterGridClient from './CharacterGridClient';
 
@@ -19,13 +21,10 @@ export function generateStaticParams() {
   }));
 }
 
-function generateStructuredData(factionId: string): WithContext<CollectionPage> | null {
-  const faction = GameDataManager.getFactionsWithCharacters(characters)[factionId];
-
-  if (!faction) {
-    return null;
-  }
-
+function generateStructuredData(
+  factionId: string,
+  faction: ReturnType<typeof GameDataManager.getFactionsWithCharacters>[string]
+): WithContext<CollectionPage> {
   return {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
@@ -52,6 +51,7 @@ export async function generateMetadata({
   params: Promise<{ factionId: string }>;
 }): Promise<Metadata> {
   const resolvedParams = await params;
+  const characters = (await getPublishedDomainReadModel('characters')).data;
   const faction = GameDataManager.getFactionsWithCharacters(characters)[resolvedParams.factionId];
 
   if (!faction) {
@@ -68,6 +68,8 @@ export async function generateMetadata({
 
 export default async function FactionPage({ params }: { params: Promise<{ factionId: string }> }) {
   const resolvedParams = await params;
+  const readModel = await getPublishedDomainReadModel('characters');
+  const characters = readModel.data;
   const faction = GameDataManager.getFactionsWithCharacters(characters)[resolvedParams.factionId];
 
   if (!faction) {
@@ -76,8 +78,12 @@ export default async function FactionPage({ params }: { params: Promise<{ factio
 
   return (
     <>
-      <StructuredData data={generateStructuredData(resolvedParams.factionId)} />
-      <CharacterGridClient factionId={resolvedParams.factionId as FactionId} />
+      <StructuredData data={generateStructuredData(resolvedParams.factionId, faction)} />
+      <CharacterGridClient
+        factionId={resolvedParams.factionId as FactionId}
+        characters={characters}
+        publishedRevision={readModel.revision}
+      />
     </>
   );
 }

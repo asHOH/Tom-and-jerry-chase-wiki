@@ -2,26 +2,22 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Article, WithContext } from 'schema-dts';
 
+import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
 import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
+import { buffs as canonicalBuffs } from '@/data/static';
+import type { Buff } from '@/data/types';
 import StructuredData from '@/components/StructuredData';
-import { buffs } from '@/data';
 
 import BuffDetailClient from './BuffDetailsClient';
 
 export function generateStaticParams() {
-  return Object.keys(buffs).map((buffName) => ({
+  return Object.keys(canonicalBuffs).map((buffName) => ({
     buffName,
   }));
 }
 
-function generateStructuredData(buffName: string): WithContext<Article> | null {
-  const buff = buffs[buffName];
-
-  if (!buff) {
-    return null;
-  }
-
+function generateStructuredData(buffName: string, buff: Buff): WithContext<Article> {
   const desc = buff.description ?? `${buff.name}详细信息`;
   return {
     '@context': 'https://schema.org',
@@ -44,7 +40,7 @@ export async function generateMetadata({
   params: Promise<{ buffName: string }>;
 }): Promise<Metadata> {
   const buffName = decodeURIComponent((await params).buffName);
-  const buff = buffs[buffName];
+  const { data: buff } = await getPublishedEntityRouteReadModel('buffs', buffName);
 
   if (!buff) {
     return {};
@@ -66,7 +62,8 @@ export default async function BuffDetailPage({
   params: Promise<{ buffName: string }>;
 }) {
   const buffName = decodeURIComponent((await params).buffName);
-  const buff = buffs[buffName];
+  const readModel = await getPublishedEntityRouteReadModel('buffs', buffName);
+  const buff = readModel.data;
 
   if (!buff) {
     notFound();
@@ -74,8 +71,8 @@ export default async function BuffDetailPage({
 
   return (
     <>
-      <StructuredData data={generateStructuredData(buffName)} />
-      <BuffDetailClient buff={buff} buffName={buffName} />
+      <StructuredData data={generateStructuredData(buffName, buff)} />
+      <BuffDetailClient buff={buff} buffName={buffName} publishedRevision={readModel.revision} />
     </>
   );
 }

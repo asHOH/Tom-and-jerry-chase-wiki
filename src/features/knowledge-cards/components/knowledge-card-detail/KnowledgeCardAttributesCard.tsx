@@ -5,6 +5,7 @@ import { KnowledgeCardDetailsProps } from '@/lib/types';
 import { useLocalCard } from '@/hooks/useLocalEditEntity';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
+import { cardsEdit } from '@/data/store';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
 import AddAliasButton from '@/features/shared/detail-view/AddAliasButton';
 import AttributesCardLayout from '@/features/shared/detail-view/AttributesCardLayout';
@@ -12,7 +13,6 @@ import { editable } from '@/components/ui/editable';
 import NavigationButtonsRow from '@/components/ui/NavigationButtonsRow';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import Tag from '@/components/ui/Tag';
-import { cardsEdit } from '@/data';
 
 export default function KnowledgeCardAttributesCard({ card }: KnowledgeCardDetailsProps) {
   const [isDarkMode] = useDarkMode();

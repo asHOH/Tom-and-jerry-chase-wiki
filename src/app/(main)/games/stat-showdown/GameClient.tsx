@@ -5,6 +5,7 @@ import { useSnapshot } from 'valtio';
 
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { useTimer } from '@/hooks/useTimer';
+import { characters } from '@/data/store';
 import type { FactionId } from '@/data/types';
 import {
   CHARACTER_GAME_STAT_INFO,
@@ -15,7 +16,6 @@ import {
 } from '@/features/games/characterStatCatalog';
 import GameLayout from '@/features/games/components/GameLayout';
 import StreakCounter from '@/features/games/components/StreakCounter';
-import { characters } from '@/data';
 
 import ComparisonCard from './components/ComparisonCard';
 import GameOverDialog from './components/GameOverDialog';

@@ -18,7 +18,8 @@ import {
   isPositioningTagVisible,
   sortPositioningTags,
 } from '@/constants/positioningTagSequences';
-import type { FactionId, PositioningTagLevel } from '@/data/types';
+import { characters } from '@/data/store';
+import type { FactionId, PositioningTag, PositioningTagLevel } from '@/data/types';
 import { getWeaponSkillImageUrl } from '@/features/characters/utils/weapons';
 import { editable } from '@/components/ui/editable';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
@@ -26,7 +27,6 @@ import Tag from '@/components/ui/Tag';
 import Tooltip from '@/components/ui/Tooltip';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
-import { characters, PositioningTag } from '@/data';
 
 import PositioningTagsChart from './PositioningTagsCharts';
 import {

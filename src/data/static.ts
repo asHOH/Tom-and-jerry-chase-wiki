@@ -6,6 +6,8 @@ import mouseSpecialSkillsWithImages from '@/features/special-skills/data/mouseSp
 
 export const { factionData, cardData } = GameDataManager.getRawData();
 
+export const characters = GameDataManager.getCharacters();
+
 export const cards = GameDataManager.getCards();
 
 export const specialSkills = {

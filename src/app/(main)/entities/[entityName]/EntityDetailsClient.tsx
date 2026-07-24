@@ -13,12 +13,19 @@ const EntityDetails = dynamic(() => import('@/features/entities/entity-detail/En
 export default function EntityDetailsClient({
   entity,
   entityName,
+  publishedRevision,
 }: {
   entity: Entity;
   entityName: string;
+  publishedRevision: `v1:${string}`;
 }) {
   return (
-    <EditModePageShell entityType='entities' entityId={entityName} entityName={entityName}>
+    <EditModePageShell
+      entityType='entities'
+      entityId={entityName}
+      entityName={entityName}
+      publishedRevision={publishedRevision}
+    >
       <EntityDetails entity={entity} />
     </EditModePageShell>
   );

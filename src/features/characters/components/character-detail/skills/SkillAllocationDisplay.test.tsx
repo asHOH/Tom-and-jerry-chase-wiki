@@ -7,9 +7,9 @@ import { proxy } from 'valtio';
 
 import type { CharacterWithFaction } from '@/lib/types';
 import { EditModeProvider } from '@/context/EditModeContext';
+import { characters } from '@/data/store';
 import type { SkillAllocation } from '@/data/types';
 import * as skillAllocationUtils from '@/features/characters/utils/skillAllocation';
-import { characters } from '@/data';
 
 import SkillAllocationDisplay from './SkillAllocationDisplay';
 

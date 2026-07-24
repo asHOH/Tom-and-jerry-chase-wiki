@@ -8,6 +8,7 @@ import {
   incrementArticleViewCount,
 } from '@/lib/articles/serverQueries';
 import { GameDataManager } from '@/lib/dataManager';
+import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
 import { generatePageMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
 import { SITE_URL } from '@/constants/seo';
@@ -15,7 +16,6 @@ import { getTutorialPage } from '@/features/articles/utils/docs';
 import StructuredData from '@/components/StructuredData';
 import CharacterDetailsClient from '@/app/(main)/characters/[characterId]/CharacterDetailsClient';
 import { getContentWritersByCharacter } from '@/constants';
-import { characters } from '@/data';
 
 import CharacterArticle from './CharacterArticle';
 import CharacterDocs from './CharacterDocs';
@@ -37,15 +37,16 @@ export function generateStaticParams() {
   return Object.keys(characterMap).map((id) => ({ characterId: id }));
 }
 
-function generateStructuredData(characterId: string): WithContext<Article> | null {
-  const character = characters[characterId];
+function generateStructuredData(
+  characterId: string,
+  character: NonNullable<
+    Awaited<ReturnType<typeof getPublishedEntityRouteReadModel<'characters'>>>['data']
+  >
+): WithContext<Article> {
   const author = getContentWritersByCharacter(characterId).map((author) => ({
     '@type': 'Person' as const,
     name: author,
   }));
-  if (!character) {
-    return null;
-  }
   return {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -73,8 +74,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const resolvedParams = await params;
   const characterId = decodeURIComponent(resolvedParams.characterId); // Decode the URL-encoded character ID
-  const characterMap = getCharacterMap();
-  const character = characterMap[characterId];
+  const { data: character } = await getPublishedEntityRouteReadModel('characters', characterId);
 
   if (!character) {
     return {};
@@ -99,9 +99,11 @@ export default async function CharacterPage({
   try {
     const resolvedParams = await params;
     const characterId = decodeURIComponent(resolvedParams.characterId); // Decode the URL-encoded character ID
-    const characterMap = getCharacterMap();
-    const character = characterMap[characterId];
-    const docPage = await getTutorialPage(characterId);
+    const [readModel, docPage] = await Promise.all([
+      getPublishedEntityRouteReadModel('characters', characterId),
+      getTutorialPage(characterId),
+    ]);
+    const character = readModel.data;
 
     if (!character) {
       notFound();
@@ -109,7 +111,7 @@ export default async function CharacterPage({
 
     if (!hasSupabasePublicConfig()) {
       return (
-        <CharacterDetailsClient character={character}>
+        <CharacterDetailsClient character={character} publishedRevision={readModel.revision}>
           {docPage ? <CharacterDocs docPage={docPage}></CharacterDocs> : null}
         </CharacterDetailsClient>
       );
@@ -126,8 +128,8 @@ export default async function CharacterPage({
 
     return (
       <>
-        <StructuredData data={generateStructuredData(characterId)} />
-        <CharacterDetailsClient character={character}>
+        <StructuredData data={generateStructuredData(characterId, character)} />
+        <CharacterDetailsClient character={character} publishedRevision={readModel.revision}>
           {docPage ? (
             <CharacterDocs docPage={docPage}></CharacterDocs>
           ) : (

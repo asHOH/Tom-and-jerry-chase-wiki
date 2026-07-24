@@ -8,6 +8,7 @@ import { useLocalEntity } from '@/hooks/useLocalEditEntity';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
+import { entitiesEdit } from '@/data/store';
 import { Entity } from '@/data/types';
 import ActorAttributesSection from '@/features/actor-profiles/components/ActorAttributesSection';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
@@ -20,7 +21,6 @@ import NavigationButtonsRow from '@/components/ui/NavigationButtonsRow';
 import SingleItemAccordionCard from '@/components/ui/SingleItemAccordionCard';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import Tag from '@/components/ui/Tag';
-import { entitiesEdit } from '@/data';
 
 import getEntityFactionId from '../lib/getEntityFactionId';
 

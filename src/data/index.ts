@@ -14,4 +14,3 @@ export type {
 } from './types';
 
 export * from './static';
-export * from './store';

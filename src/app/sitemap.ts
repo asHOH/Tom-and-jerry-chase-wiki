@@ -1,22 +1,11 @@
 import { MetadataRoute } from 'next';
 
+import { getPublishedGameDataSnapshot } from '@/lib/gameData/published/publishedSnapshot';
 import { normalizeUrlWithTrailingSlash } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
 import { RANKABLE_PROPERTIES } from '@/features/characters/utils/ranking';
 import { mechanicsSectionsList } from '@/features/mechanics/sections';
 import { usagesSectionsList } from '@/features/usages/sections';
-import {
-  achievements,
-  buffs,
-  cards,
-  characters,
-  entities,
-  fixtures,
-  items,
-  maps,
-  modes,
-  specialSkills,
-} from '@/data';
 import { env } from '@/env';
 
 export const dynamic = 'force-static';
@@ -28,7 +17,21 @@ function normalizeSitemapEntries(entries: MetadataRoute.Sitemap): MetadataRoute.
   }));
 }
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const {
+    data: {
+      achievements,
+      buffs,
+      cards,
+      characters,
+      entities,
+      fixtures,
+      items,
+      maps,
+      modes,
+      specialSkills,
+    },
+  } = await getPublishedGameDataSnapshot();
   const baseUrl = SITE_URL;
   const buildTime = env.NEXT_PUBLIC_BUILD_TIMESTAMP
     ? new Date(env.NEXT_PUBLIC_BUILD_TIMESTAMP)

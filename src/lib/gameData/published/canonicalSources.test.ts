@@ -29,18 +29,19 @@ describe('canonical game-data sources', () => {
   });
 
   it('constructs every canonical domain pristinely after legacy targets load and mutate', async () => {
-    const legacy = await import('@/data');
+    const legacyStatic = await import('@/data/static');
+    const legacyStore = await import('@/data/store');
     const legacyTargets: Record<PublishableEntityType, readonly MutableRecord[]> = {
-      achievements: [legacy.achievements, legacy.achievementsEdit],
-      characters: [legacy.characters],
-      cards: [legacy.cards, legacy.cardsEdit],
-      entities: [legacy.entities],
-      buffs: [legacy.buffs, legacy.buffsEdit],
-      items: [legacy.items, legacy.itemsEdit],
-      fixtures: [legacy.fixtures, legacy.fixturesEdit],
-      maps: [legacy.maps, legacy.mapsEdit],
-      modes: [legacy.modes, legacy.modesEdit],
-      specialSkills: [legacy.specialSkills, legacy.specialSkillsEdit],
+      achievements: [legacyStatic.achievements, legacyStore.achievementsEdit],
+      characters: [legacyStore.characters],
+      cards: [legacyStatic.cards, legacyStore.cardsEdit],
+      entities: [legacyStatic.entities],
+      buffs: [legacyStatic.buffs, legacyStore.buffsEdit],
+      items: [legacyStatic.items, legacyStore.itemsEdit],
+      fixtures: [legacyStatic.fixtures, legacyStore.fixturesEdit],
+      maps: [legacyStatic.maps, legacyStore.mapsEdit],
+      modes: [legacyStatic.modes, legacyStore.modesEdit],
+      specialSkills: [legacyStatic.specialSkills, legacyStore.specialSkillsEdit],
     };
     const pristineByType = {} as Record<PublishableEntityType, unknown>;
 

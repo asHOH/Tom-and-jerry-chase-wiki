@@ -1,7 +1,7 @@
 import { characterRelationTraits } from '@/data/characterRelations';
+import { characters } from '@/data/store';
 import type { CharacterRelation, TraitRelation } from '@/data/types';
 import { getRelationIndex } from '@/features/shared/traits/relationIndex';
-import { characters } from '@/data';
 
 import {
   getAllSpecialSkillRelations,

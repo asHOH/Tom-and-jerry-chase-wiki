@@ -17,14 +17,23 @@ const KnowledgeCardDetails = dynamic(
   }
 );
 
-type KnowledgeCardDetailsClientProps = KnowledgeCardDetailsProps & { cardId: string };
+type KnowledgeCardDetailsClientProps = KnowledgeCardDetailsProps & {
+  cardId: string;
+  publishedRevision: `v1:${string}`;
+};
 
 export default function KnowledgeCardDetailsClient({
   cardId,
+  publishedRevision,
   ...props
 }: KnowledgeCardDetailsClientProps) {
   return (
-    <EditModePageShell entityType='cards' entityId={cardId} entityName={props.card.id}>
+    <EditModePageShell
+      entityType='cards'
+      entityId={cardId}
+      entityName={props.card.id}
+      publishedRevision={publishedRevision}
+    >
       <KnowledgeCardDetails {...props} />
     </EditModePageShell>
   );

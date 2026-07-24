@@ -4,10 +4,10 @@ import { useState } from 'react';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { cn } from '@/lib/design';
+import { characters } from '@/data/store';
 import type { Skill } from '@/data/types';
 import { editable } from '@/components/ui/editable';
 import Image from '@/components/Image';
-import { characters } from '@/data';
 
 const e = editable('characters');
 

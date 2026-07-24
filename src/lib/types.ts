@@ -46,11 +46,14 @@ export type KnowledgeCardDetailsProps = {
 
 export type CharacterDetailsProps = {
   character: DeepReadonly<CharacterWithFaction>;
+  publishedRevision?: `v1:${string}`;
   children?: ReactNode;
 };
 
 export type FactionCharactersProps = {
   factionId: FactionId;
+  characters?: DeepReadonly<Record<string, CharacterWithFaction>>;
+  publishedRevision?: `v1:${string}`;
 };
 export type GotoResult = {
   url: string;

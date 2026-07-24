@@ -1,8 +1,8 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
+import { characters } from '@/data/store';
 import { summarizeGameActionValue } from '@/features/admin/utils/gameActionPreview';
 import { getCharacterRelation } from '@/features/characters/utils/relationReadModel';
-import { characters } from '@/data';
 
 import GameDataActionModerationPanel, {
   type PendingGameDataAction,

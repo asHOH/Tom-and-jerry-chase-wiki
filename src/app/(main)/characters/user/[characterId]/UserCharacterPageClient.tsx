@@ -6,9 +6,9 @@ import { useSnapshot } from 'valtio';
 
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useEditMode } from '@/context/EditModeContext';
+import { characters } from '@/data/store';
 import { PageLoadingState } from '@/components/ui/LoadingState';
 import CharacterDetailsClient from '@/app/(main)/characters/[characterId]/CharacterDetailsClient';
-import { characters } from '@/data';
 
 /**
  * This is the client component that contains the actual page logic.

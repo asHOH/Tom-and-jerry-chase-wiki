@@ -6,6 +6,7 @@ import { useLocalFixture } from '@/hooks/useLocalEditEntity';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
+import { fixturesEdit } from '@/data/store';
 import { Fixture, SingleItem } from '@/data/types';
 import DetailOwnbuffsCard from '@/features/shared/detail-view/DetaidOwnbuffsCard';
 import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
@@ -14,7 +15,6 @@ import DetailTextSection from '@/features/shared/detail-view/DetailTextSection';
 import DetailTraitsCard from '@/features/shared/detail-view/DetailTraitsCard';
 import { editable } from '@/components/ui/editable';
 import SingleItemButton from '@/components/ui/SingleItemButton';
-import { fixturesEdit } from '@/data';
 
 //import DetailTraitsCard from '@/features/shared/detail-view/DetailTraitsCard';
 

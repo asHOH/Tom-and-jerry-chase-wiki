@@ -14,6 +14,7 @@ type EditModePageShellProps = {
   entityType: PublishableEntityType;
   entityId: string;
   entityName: string;
+  publishedRevision?: `v1:${string}`;
   children: ReactNode;
 };
 
@@ -21,6 +22,7 @@ export default function EditModePageShell({
   entityType,
   entityId,
   entityName,
+  publishedRevision,
   children,
 }: EditModePageShellProps) {
   const { exitEditMode } = useSearchParamEditMode();
@@ -45,8 +47,9 @@ export default function EditModePageShell({
       isLoading,
       isPreviewMode,
       setIsPreviewMode,
+      ...(publishedRevision === undefined ? {} : { publishedRevision }),
     }),
-    [isEditMode, isLoading, isPreviewMode, setIsPreviewMode]
+    [isEditMode, isLoading, isPreviewMode, publishedRevision, setIsPreviewMode]
   );
 
   const handlePublish = useCallback(

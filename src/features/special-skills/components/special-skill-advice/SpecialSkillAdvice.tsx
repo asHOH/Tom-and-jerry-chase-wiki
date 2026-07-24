@@ -7,6 +7,7 @@ import type { DeepReadonly } from '@/types/deep-readonly';
 import { designTokens, getFactionButtonColors } from '@/lib/design';
 import { CharacterWithFaction } from '@/lib/types';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { characters, specialSkillsEdit } from '@/data/store';
 import type { FactionId, SpecialSkill } from '@/data/types';
 import { getSpecialSkillRelationSummary } from '@/features/characters/utils/relationReadModel';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
@@ -16,7 +17,6 @@ import FilterRow from '@/components/ui/FilterRow';
 import GameImage from '@/components/ui/GameImage';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
-import { characters, specialSkillsEdit } from '@/data';
 
 import AdviceCharacterList from './AdviceCharacterList';
 

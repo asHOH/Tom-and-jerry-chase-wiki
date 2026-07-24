@@ -8,13 +8,13 @@ import { cn, getFactionButtonColors } from '@/lib/design';
 import { useFilterState } from '@/lib/filterUtils';
 import type { CharacterWithFaction } from '@/lib/types';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { characters } from '@/data/store';
 import type { FactionId } from '@/data/types';
 import { CharacterTable, winRatesData } from '@/data/winRates';
 import FilterRow from '@/components/ui/FilterRow';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
 import Link from '@/components/Link';
-import { characters } from '@/data';
 
 type ColumnKey = 'rank' | 'faction' | 'character' | 'pickRate' | 'winRate' | 'banRate';
 type SortColumn = 'pickRate' | 'winRate' | 'banRate';

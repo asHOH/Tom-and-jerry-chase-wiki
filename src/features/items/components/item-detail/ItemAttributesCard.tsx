@@ -8,6 +8,7 @@ import { useLocalItem } from '@/hooks/useLocalEditEntity';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
+import { itemsEdit } from '@/data/store';
 import { Item } from '@/data/types';
 import ActorAttributesSection from '@/features/actor-profiles/components/ActorAttributesSection';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
@@ -20,7 +21,6 @@ import NavigationButtonsRow from '@/components/ui/NavigationButtonsRow';
 import SingleItemAccordionCard from '@/components/ui/SingleItemAccordionCard';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import Tag from '@/components/ui/Tag';
-import { itemsEdit } from '@/data';
 
 export default function ItemAttributesCard({ item }: { item: Item }) {
   const [isDarkMode] = useDarkMode();

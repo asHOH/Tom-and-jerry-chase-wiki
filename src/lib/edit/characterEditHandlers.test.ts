@@ -2,7 +2,7 @@ import { proxy } from 'valtio';
 
 import { GameDataManager } from '@/lib/dataManager';
 import type { CharacterWithFaction } from '@/lib/types';
-import { characters } from '@/data';
+import { characters } from '@/data/store';
 
 import { isOriginalCharacter } from './characterEditHandlers';
 

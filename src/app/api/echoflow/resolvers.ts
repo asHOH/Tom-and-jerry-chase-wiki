@@ -11,8 +11,11 @@ import {
   getArticlesPageData,
 } from '@/lib/articles/serverQueries';
 import { GameDataManager } from '@/lib/dataManager';
+import { getPublishedGameDataSnapshot } from '@/lib/gameData/published/publishedSnapshot';
+import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { contributors } from '@/data/contributors';
 import { historyData } from '@/data/history';
+import { itemGroups } from '@/data/static';
 import traits from '@/data/traits';
 import { WikiChangeType } from '@/data/types';
 import { wikiHistoryData } from '@/data/wikiHistory';
@@ -20,19 +23,6 @@ import { winRatesData } from '@/data/winRates';
 import type { ActorProfile } from '@/features/actor-profiles/schema';
 import { getActorProfile } from '@/features/actor-profiles/selectors';
 import { getCharacterRelation } from '@/features/characters/utils/relations';
-import {
-  achievements,
-  buffs,
-  cards,
-  characters,
-  entities,
-  fixtures,
-  itemGroups,
-  items,
-  maps,
-  modes,
-  specialSkills,
-} from '@/data';
 
 let updateLookup: Map<string, { date: string; description?: string }> | null = null;
 let updateLookupTimestamp: number | null = null;
@@ -183,7 +173,7 @@ export type PathResolver = {
 };
 
 function recordToArray<T extends object>(
-  record: Record<string, T>,
+  record: Readonly<Record<string, T>>,
   keyName: string = 'name'
 ): Array<T & { [key: string]: string }> {
   return Object.entries(record).map(([key, value]) => ({
@@ -211,7 +201,10 @@ function createActorProfilePayload(characterId: string): ActorProfilePayload {
   return { actorProfile, role: actorProfile };
 }
 
-function findByKey<T>(record: Record<string, T>, key: string): (T & { name: string }) | null {
+function findByKey<T>(
+  record: Readonly<Record<string, T>>,
+  key: string
+): (T & { name: string }) | null {
   const decodedKey = safeDecode(key);
   const item = record[decodedKey];
   if (!item) return null;
@@ -269,561 +262,592 @@ function createFullDataResult(
   };
 }
 
-export const resolvers: Record<string, PathResolver> = {
-  characters: {
-    description: '游戏角色列表（猫和老鼠）',
-    list: () => {
-      const charactersRecord = GameDataManager.getCharacters();
-      const charactersList = recordToArray(charactersRecord, 'id').map((character) => ({
-        ...character,
-        ...createActorProfilePayload(character.id),
-      }));
-      return createListResult(charactersList, 'Character', '/characters', true);
-    },
-    detail: async (id: string) => {
-      const charactersRecord = GameDataManager.getCharacters();
-      const decodedId = safeDecode(id);
-      const character = charactersRecord[decodedId];
-      if (!character) return null;
+function createResolvers(data: PublishedGameDataByType): Record<string, PathResolver> {
+  const {
+    achievements,
+    buffs,
+    cards,
+    characters,
+    entities,
+    fixtures,
+    items,
+    maps,
+    modes,
+    specialSkills,
+  } = data;
 
-      const relations = getCharacterRelation(characters, decodedId);
-      const updateInfo = await getMergedUpdateTime('characters', decodedId);
+  return {
+    characters: {
+      description: '游戏角色列表（猫和老鼠）',
+      list: () => {
+        const charactersRecord = characters;
+        const charactersList = recordToArray(charactersRecord, 'id').map((character) => ({
+          ...character,
+          ...createActorProfilePayload(character.id),
+        }));
+        return createListResult(charactersList, 'Character', '/characters', true);
+      },
+      detail: async (id: string) => {
+        const charactersRecord = characters;
+        const decodedId = safeDecode(id);
+        const character = charactersRecord[decodedId];
+        if (!character) return null;
 
-      return createDetailResult(
-        {
-          ...character,
-          id: decodedId,
-          ...createActorProfilePayload(decodedId),
-          relations:
-            relations.counters.length > 0 ||
-            relations.counteredBy.length > 0 ||
-            relations.counterEachOther.length > 0 ||
-            relations.collaborators.length > 0 ||
-            relations.countersKnowledgeCards.length > 0 ||
-            relations.counteredByKnowledgeCards.length > 0 ||
-            relations.countersSpecialSkills.length > 0 ||
-            relations.counteredBySpecialSkills.length > 0 ||
-            relations.advantageMaps.length > 0 ||
-            relations.advantageModes.length > 0 ||
-            relations.disadvantageMaps.length > 0 ||
-            relations.disadvantageModes.length > 0
-              ? relations
-              : undefined,
-        },
-        'Character',
-        `/characters/${decodedId}`,
-        updateInfo?.date
-      );
+        const relations = getCharacterRelation(characters, decodedId);
+        const updateInfo = await getMergedUpdateTime('characters', decodedId);
+
+        return createDetailResult(
+          {
+            ...character,
+            id: decodedId,
+            ...createActorProfilePayload(decodedId),
+            relations:
+              relations.counters.length > 0 ||
+              relations.counteredBy.length > 0 ||
+              relations.counterEachOther.length > 0 ||
+              relations.collaborators.length > 0 ||
+              relations.countersKnowledgeCards.length > 0 ||
+              relations.counteredByKnowledgeCards.length > 0 ||
+              relations.countersSpecialSkills.length > 0 ||
+              relations.counteredBySpecialSkills.length > 0 ||
+              relations.advantageMaps.length > 0 ||
+              relations.advantageModes.length > 0 ||
+              relations.disadvantageMaps.length > 0 ||
+              relations.disadvantageModes.length > 0
+                ? relations
+                : undefined,
+          },
+          'Character',
+          `/characters/${decodedId}`,
+          updateInfo?.date
+        );
+      },
+      fullData: () => {
+        const charactersRecord = characters;
+        const fullCharacters = Object.entries(charactersRecord).map(([id, character]) => {
+          const relations = getCharacterRelation(characters, id);
+          return {
+            ...character,
+            id,
+            relations:
+              relations.counters.length > 0 ||
+              relations.counteredBy.length > 0 ||
+              relations.counterEachOther.length > 0 ||
+              relations.collaborators.length > 0 ||
+              relations.countersKnowledgeCards.length > 0 ||
+              relations.counteredByKnowledgeCards.length > 0 ||
+              relations.countersSpecialSkills.length > 0 ||
+              relations.counteredBySpecialSkills.length > 0 ||
+              relations.advantageMaps.length > 0 ||
+              relations.advantageModes.length > 0 ||
+              relations.disadvantageMaps.length > 0 ||
+              relations.disadvantageModes.length > 0
+                ? relations
+                : undefined,
+          };
+        });
+        return createFullDataResult(fullCharacters, 'Character', '/characters');
+      },
     },
-    fullData: () => {
-      const charactersRecord = GameDataManager.getCharacters();
-      const fullCharacters = Object.entries(charactersRecord).map(([id, character]) => {
-        const relations = getCharacterRelation(characters, id);
-        return {
-          ...character,
+
+    cards: {
+      description: '知识卡牌列表',
+      list: () => {
+        const cardsList = recordToArray(cards, 'id');
+        return createListResult(cardsList, 'Card', '/cards', true);
+      },
+      detail: async (id: string) => {
+        const decodedId = safeDecode(id);
+        const card = cards[decodedId];
+        if (!card) return null;
+        const updateInfo = await getMergedUpdateTime('cards', decodedId);
+        return createDetailResult(
+          { ...card, id: decodedId },
+          'Card',
+          `/cards/${decodedId}`,
+          updateInfo?.date
+        );
+      },
+      fullData: () => {
+        const fullCards = Object.entries(cards).map(([id, card]) => ({ ...card, id }));
+        return createFullDataResult(fullCards, 'Card', '/cards');
+      },
+    },
+
+    items: {
+      description: '道具列表',
+      list: () => {
+        const itemsList = recordToArray(items, 'name');
+        return createListResult(itemsList, 'Item', '/items', true);
+      },
+      detail: async (id: string) => {
+        const item = findByKey(items, id);
+        if (!item) return null;
+        const updateInfo = await getMergedUpdateTime('items', item.name);
+        return createDetailResult(item, 'Item', `/items/${item.name}`, updateInfo?.date);
+      },
+      fullData: () => {
+        const fullItems = recordToArray(items, 'name');
+        return createFullDataResult(fullItems, 'Item', '/items');
+      },
+    },
+
+    entities: {
+      description: '衍生物/实体列表',
+      list: () => {
+        const entitiesList = recordToArray(entities, 'name');
+        return createListResult(entitiesList, 'Entity', '/entities', true);
+      },
+      detail: async (id: string) => {
+        const entity = findByKey(entities, id);
+        if (!entity) return null;
+        const updateInfo = await getMergedUpdateTime('entities', entity.name);
+        return createDetailResult(entity, 'Entity', `/entities/${entity.name}`, updateInfo?.date);
+      },
+      fullData: () => {
+        const fullEntities = recordToArray(entities, 'name');
+        return createFullDataResult(fullEntities, 'Entity', '/entities');
+      },
+    },
+
+    buffs: {
+      description: '状态效果列表',
+      list: () => {
+        const buffsList = recordToArray(buffs, 'name');
+        return createListResult(buffsList, 'Buff', '/buffs', true);
+      },
+      detail: async (id: string) => {
+        const buff = findByKey(buffs, id);
+        if (!buff) return null;
+        const updateInfo = await getMergedUpdateTime('buffs', buff.name);
+        return createDetailResult(buff, 'Buff', `/buffs/${buff.name}`, updateInfo?.date);
+      },
+      fullData: () => {
+        const fullBuffs = recordToArray(buffs, 'name');
+        return createFullDataResult(fullBuffs, 'Buff', '/buffs');
+      },
+    },
+
+    maps: {
+      description: '地图列表',
+      list: () => {
+        const mapsList = recordToArray(maps, 'name');
+        return createListResult(mapsList, 'Map', '/maps', true);
+      },
+      detail: async (id: string) => {
+        const map = findByKey(maps, id);
+        if (!map) return null;
+        const updateInfo = await getMergedUpdateTime('maps', map.name);
+        return createDetailResult(map, 'Map', `/maps/${map.name}`, updateInfo?.date);
+      },
+      fullData: () => {
+        const fullMaps = recordToArray(maps, 'name');
+        return createFullDataResult(fullMaps, 'Map', '/maps');
+      },
+    },
+
+    fixtures: {
+      description: '地图组件/固定物列表',
+      list: () => {
+        const fixturesList = recordToArray(fixtures, 'name');
+        return createListResult(fixturesList, 'Fixture', '/fixtures', true);
+      },
+      detail: async (id: string) => {
+        const fixture = findByKey(fixtures, id);
+        if (!fixture) return null;
+        const updateInfo = await getMergedUpdateTime('fixtures', fixture.name);
+        return createDetailResult(
+          fixture,
+          'Fixture',
+          `/fixtures/${fixture.name}`,
+          updateInfo?.date
+        );
+      },
+      fullData: () => {
+        const fullFixtures = recordToArray(fixtures, 'name');
+        return createFullDataResult(fullFixtures, 'Fixture', '/fixtures');
+      },
+    },
+
+    modes: {
+      description: '游戏模式列表',
+      list: () => {
+        const modesList = recordToArray(modes, 'name');
+        return createListResult(modesList, 'Mode', '/modes', true);
+      },
+      detail: async (id: string) => {
+        const mode = findByKey(modes, id);
+        if (!mode) return null;
+        const updateInfo = await getMergedUpdateTime('modes', mode.name);
+        return createDetailResult(mode, 'Mode', `/modes/${mode.name}`, updateInfo?.date);
+      },
+      fullData: () => {
+        const fullModes = recordToArray(modes, 'name');
+        return createFullDataResult(fullModes, 'Mode', '/modes');
+      },
+    },
+
+    achievements: {
+      description: '成就列表（猫/鼠阵营）',
+      list: () => {
+        const achievementsList = (['cat', 'mouse'] as const).flatMap((factionId) =>
+          recordToArray(achievements[factionId], 'name').map((achievement) => ({
+            ...achievement,
+            factionId,
+          }))
+        );
+        return createListResult(achievementsList, 'Achievement', '/achievements', true);
+      },
+      detail: async (id: string) => {
+        const decodedId = decodeURIComponent(id);
+        const separatorIndex = decodedId.indexOf('.');
+        const requestedFaction =
+          separatorIndex === -1 ? undefined : decodedId.slice(0, separatorIndex);
+        const achievementName =
+          separatorIndex === -1 ? decodedId : decodedId.slice(separatorIndex + 1);
+        const factionId =
+          requestedFaction === 'cat' || requestedFaction === 'mouse'
+            ? requestedFaction
+            : achievements.cat[achievementName]
+              ? 'cat'
+              : 'mouse';
+        const achievement = achievements[factionId][achievementName];
+        if (!achievement) return null;
+        const updateInfo = await getMergedUpdateTime(
+          'achievements',
+          `${factionId}.${achievementName}`
+        );
+        return createDetailResult(
+          achievement,
+          'Achievement',
+          `/achievements/${factionId}/${achievementName}`,
+          updateInfo?.date
+        );
+      },
+      fullData: () => {
+        const fullAchievements = (['cat', 'mouse'] as const).flatMap((factionId) =>
+          recordToArray(achievements[factionId], 'name').map((achievement) => ({
+            ...achievement,
+            factionId,
+          }))
+        );
+        return createFullDataResult(fullAchievements, 'Achievement', '/achievements');
+      },
+    },
+
+    'special-skills': {
+      description: '特技列表（猫/鼠阵营）',
+      list: () => {
+        const catSkillsList = recordToArray(specialSkills.cat, 'name').map((s) => ({
+          ...s,
+          factionId: 'cat' as const,
+        }));
+        const mouseSkillsList = recordToArray(specialSkills.mouse, 'name').map((s) => ({
+          ...s,
+          factionId: 'mouse' as const,
+        }));
+        const allSkills = [...catSkillsList, ...mouseSkillsList];
+        return createListResult(allSkills, 'SpecialSkill', '/special-skills', true);
+      },
+      detail: async (id: string) => {
+        const decodedId = decodeURIComponent(id);
+        let skill = specialSkills.cat[decodedId];
+        let factionId: 'cat' | 'mouse' = 'cat';
+        if (!skill) {
+          skill = specialSkills.mouse[decodedId];
+          factionId = 'mouse';
+        }
+        if (!skill) return null;
+        const updateInfo = await getMergedUpdateTime('specialSkills', `${factionId}.${decodedId}`);
+        return createDetailResult(
+          { ...skill, name: decodedId, factionId },
+          'SpecialSkill',
+          `/special-skills/${factionId}/${decodedId}`,
+          updateInfo?.date
+        );
+      },
+      fullData: () => {
+        const catSkillsList = recordToArray(specialSkills.cat, 'name').map((s) => ({
+          ...s,
+          factionId: 'cat' as const,
+        }));
+        const mouseSkillsList = recordToArray(specialSkills.mouse, 'name').map((s) => ({
+          ...s,
+          factionId: 'mouse' as const,
+        }));
+        const allSkills = [...catSkillsList, ...mouseSkillsList];
+        return createFullDataResult(allSkills, 'SpecialSkill', '/special-skills');
+      },
+    },
+
+    factions: {
+      description: '阵营信息（猫/鼠）及其角色',
+      list: () => {
+        const factionsWithCharacters = GameDataManager.getFactionsWithCharacters(characters);
+        const factionsList = Object.entries(factionsWithCharacters).map(([id, faction]) => ({
+          ...faction,
           id,
-          relations:
-            relations.counters.length > 0 ||
-            relations.counteredBy.length > 0 ||
-            relations.counterEachOther.length > 0 ||
-            relations.collaborators.length > 0 ||
-            relations.countersKnowledgeCards.length > 0 ||
-            relations.counteredByKnowledgeCards.length > 0 ||
-            relations.countersSpecialSkills.length > 0 ||
-            relations.counteredBySpecialSkills.length > 0 ||
-            relations.advantageMaps.length > 0 ||
-            relations.advantageModes.length > 0 ||
-            relations.disadvantageMaps.length > 0 ||
-            relations.disadvantageModes.length > 0
-              ? relations
-              : undefined,
-        };
-      });
-      return createFullDataResult(fullCharacters, 'Character', '/characters');
+        }));
+        return createListResult(factionsList, 'Faction', '/factions', true);
+      },
+      detail: (id: string) => {
+        const decodedId = decodeURIComponent(id);
+        if (decodedId !== 'cat' && decodedId !== 'mouse') return null;
+        const factionsWithCharacters = GameDataManager.getFactionsWithCharacters(characters);
+        const faction = factionsWithCharacters[decodedId];
+        if (!faction) return null;
+        return createDetailResult(
+          { ...faction, id: decodedId },
+          'Faction',
+          `/factions/${decodedId}`
+        );
+      },
+      fullData: () => {
+        const factionsWithCharacters = GameDataManager.getFactionsWithCharacters(characters);
+        const factionsList = Object.entries(factionsWithCharacters).map(([id, faction]) => ({
+          ...faction,
+          id,
+        }));
+        return createFullDataResult(factionsList, 'Faction', '/factions');
+      },
     },
-  },
 
-  cards: {
-    description: '知识卡牌列表',
-    list: () => {
-      const cardsList = recordToArray(cards, 'id');
-      return createListResult(cardsList, 'Card', '/cards', true);
+    itemGroups: {
+      description: '道具组合/分类',
+      list: () => {
+        const groupsList = recordToArray(itemGroups, 'name');
+        return createListResult(groupsList, 'ItemGroup', '/itemGroups', true);
+      },
+      detail: async (id: string) => {
+        const group = findByKey(itemGroups, id);
+        if (!group) return null;
+        const updateInfo = await getMergedUpdateTime('itemGroups', group.name);
+        return createDetailResult(
+          group,
+          'ItemGroup',
+          `/itemGroups/${group.name}`,
+          updateInfo?.date
+        );
+      },
+      fullData: () => {
+        const fullItemGroups = recordToArray(itemGroups, 'name');
+        return createFullDataResult(fullItemGroups, 'ItemGroup', '/itemGroups');
+      },
     },
-    detail: async (id: string) => {
-      const decodedId = safeDecode(id);
-      const card = cards[decodedId];
-      if (!card) return null;
-      const updateInfo = await getMergedUpdateTime('cards', decodedId);
-      return createDetailResult(
-        { ...card, id: decodedId },
-        'Card',
-        `/cards/${decodedId}`,
-        updateInfo?.date
-      );
-    },
-    fullData: () => {
-      const fullCards = Object.entries(cards).map(([id, card]) => ({ ...card, id }));
-      return createFullDataResult(fullCards, 'Card', '/cards');
-    },
-  },
 
-  items: {
-    description: '道具列表',
-    list: () => {
-      const itemsList = recordToArray(items, 'name');
-      return createListResult(itemsList, 'Item', '/items', true);
+    'win-rates': {
+      description: '胜率数据（历史记录）',
+      list: () => {
+        return createListResult(winRatesData, 'WinRateEntry', '/win-rates', false);
+      },
+      fullData: () => {
+        return createFullDataResult(winRatesData, 'WinRateEntry', '/win-rates');
+      },
     },
-    detail: async (id: string) => {
-      const item = findByKey(items, id);
-      if (!item) return null;
-      const updateInfo = await getMergedUpdateTime('items', item.name);
-      return createDetailResult(item, 'Item', `/items/${item.name}`, updateInfo?.date);
-    },
-    fullData: () => {
-      const fullItems = recordToArray(items, 'name');
-      return createFullDataResult(fullItems, 'Item', '/items');
-    },
-  },
 
-  entities: {
-    description: '衍生物/实体列表',
-    list: () => {
-      const entitiesList = recordToArray(entities, 'name');
-      return createListResult(entitiesList, 'Entity', '/entities', true);
-    },
-    detail: async (id: string) => {
-      const entity = findByKey(entities, id);
-      if (!entity) return null;
-      const updateInfo = await getMergedUpdateTime('entities', entity.name);
-      return createDetailResult(entity, 'Entity', `/entities/${entity.name}`, updateInfo?.date);
-    },
-    fullData: () => {
-      const fullEntities = recordToArray(entities, 'name');
-      return createFullDataResult(fullEntities, 'Entity', '/entities');
-    },
-  },
-
-  buffs: {
-    description: '状态效果列表',
-    list: () => {
-      const buffsList = recordToArray(buffs, 'name');
-      return createListResult(buffsList, 'Buff', '/buffs', true);
-    },
-    detail: async (id: string) => {
-      const buff = findByKey(buffs, id);
-      if (!buff) return null;
-      const updateInfo = await getMergedUpdateTime('buffs', buff.name);
-      return createDetailResult(buff, 'Buff', `/buffs/${buff.name}`, updateInfo?.date);
-    },
-    fullData: () => {
-      const fullBuffs = recordToArray(buffs, 'name');
-      return createFullDataResult(fullBuffs, 'Buff', '/buffs');
-    },
-  },
-
-  maps: {
-    description: '地图列表',
-    list: () => {
-      const mapsList = recordToArray(maps, 'name');
-      return createListResult(mapsList, 'Map', '/maps', true);
-    },
-    detail: async (id: string) => {
-      const map = findByKey(maps, id);
-      if (!map) return null;
-      const updateInfo = await getMergedUpdateTime('maps', map.name);
-      return createDetailResult(map, 'Map', `/maps/${map.name}`, updateInfo?.date);
-    },
-    fullData: () => {
-      const fullMaps = recordToArray(maps, 'name');
-      return createFullDataResult(fullMaps, 'Map', '/maps');
-    },
-  },
-
-  fixtures: {
-    description: '地图组件/固定物列表',
-    list: () => {
-      const fixturesList = recordToArray(fixtures, 'name');
-      return createListResult(fixturesList, 'Fixture', '/fixtures', true);
-    },
-    detail: async (id: string) => {
-      const fixture = findByKey(fixtures, id);
-      if (!fixture) return null;
-      const updateInfo = await getMergedUpdateTime('fixtures', fixture.name);
-      return createDetailResult(fixture, 'Fixture', `/fixtures/${fixture.name}`, updateInfo?.date);
-    },
-    fullData: () => {
-      const fullFixtures = recordToArray(fixtures, 'name');
-      return createFullDataResult(fullFixtures, 'Fixture', '/fixtures');
-    },
-  },
-
-  modes: {
-    description: '游戏模式列表',
-    list: () => {
-      const modesList = recordToArray(modes, 'name');
-      return createListResult(modesList, 'Mode', '/modes', true);
-    },
-    detail: async (id: string) => {
-      const mode = findByKey(modes, id);
-      if (!mode) return null;
-      const updateInfo = await getMergedUpdateTime('modes', mode.name);
-      return createDetailResult(mode, 'Mode', `/modes/${mode.name}`, updateInfo?.date);
-    },
-    fullData: () => {
-      const fullModes = recordToArray(modes, 'name');
-      return createFullDataResult(fullModes, 'Mode', '/modes');
-    },
-  },
-
-  achievements: {
-    description: '成就列表（猫/鼠阵营）',
-    list: () => {
-      const achievementsList = (['cat', 'mouse'] as const).flatMap((factionId) =>
-        recordToArray(achievements[factionId], 'name').map((achievement) => ({
-          ...achievement,
-          factionId,
-        }))
-      );
-      return createListResult(achievementsList, 'Achievement', '/achievements', true);
-    },
-    detail: async (id: string) => {
-      const decodedId = decodeURIComponent(id);
-      const separatorIndex = decodedId.indexOf('.');
-      const requestedFaction =
-        separatorIndex === -1 ? undefined : decodedId.slice(0, separatorIndex);
-      const achievementName =
-        separatorIndex === -1 ? decodedId : decodedId.slice(separatorIndex + 1);
-      const factionId =
-        requestedFaction === 'cat' || requestedFaction === 'mouse'
-          ? requestedFaction
-          : achievements.cat[achievementName]
-            ? 'cat'
-            : 'mouse';
-      const achievement = achievements[factionId][achievementName];
-      if (!achievement) return null;
-      const updateInfo = await getMergedUpdateTime(
-        'achievements',
-        `${factionId}.${achievementName}`
-      );
-      return createDetailResult(
-        achievement,
-        'Achievement',
-        `/achievements/${factionId}/${achievementName}`,
-        updateInfo?.date
-      );
-    },
-    fullData: () => {
-      const fullAchievements = (['cat', 'mouse'] as const).flatMap((factionId) =>
-        recordToArray(achievements[factionId], 'name').map((achievement) => ({
-          ...achievement,
-          factionId,
-        }))
-      );
-      return createFullDataResult(fullAchievements, 'Achievement', '/achievements');
-    },
-  },
-
-  'special-skills': {
-    description: '特技列表（猫/鼠阵营）',
-    list: () => {
-      const catSkillsList = recordToArray(specialSkills.cat, 'name').map((s) => ({
-        ...s,
-        factionId: 'cat' as const,
-      }));
-      const mouseSkillsList = recordToArray(specialSkills.mouse, 'name').map((s) => ({
-        ...s,
-        factionId: 'mouse' as const,
-      }));
-      const allSkills = [...catSkillsList, ...mouseSkillsList];
-      return createListResult(allSkills, 'SpecialSkill', '/special-skills', true);
-    },
-    detail: async (id: string) => {
-      const decodedId = decodeURIComponent(id);
-      let skill = specialSkills.cat[decodedId];
-      let factionId: 'cat' | 'mouse' = 'cat';
-      if (!skill) {
-        skill = specialSkills.mouse[decodedId];
-        factionId = 'mouse';
-      }
-      if (!skill) return null;
-      const updateInfo = await getMergedUpdateTime('specialSkills', `${factionId}.${decodedId}`);
-      return createDetailResult(
-        { ...skill, name: decodedId, factionId },
-        'SpecialSkill',
-        `/special-skills/${factionId}/${decodedId}`,
-        updateInfo?.date
-      );
-    },
-    fullData: () => {
-      const catSkillsList = recordToArray(specialSkills.cat, 'name').map((s) => ({
-        ...s,
-        factionId: 'cat' as const,
-      }));
-      const mouseSkillsList = recordToArray(specialSkills.mouse, 'name').map((s) => ({
-        ...s,
-        factionId: 'mouse' as const,
-      }));
-      const allSkills = [...catSkillsList, ...mouseSkillsList];
-      return createFullDataResult(allSkills, 'SpecialSkill', '/special-skills');
-    },
-  },
-
-  factions: {
-    description: '阵营信息（猫/鼠）及其角色',
-    list: () => {
-      const characters = GameDataManager.getCharacters();
-      const factionsWithCharacters = GameDataManager.getFactionsWithCharacters(characters);
-      const factionsList = Object.entries(factionsWithCharacters).map(([id, faction]) => ({
-        ...faction,
-        id,
-      }));
-      return createListResult(factionsList, 'Faction', '/factions', true);
-    },
-    detail: (id: string) => {
-      const decodedId = decodeURIComponent(id);
-      if (decodedId !== 'cat' && decodedId !== 'mouse') return null;
-      const characters = GameDataManager.getCharacters();
-      const factionsWithCharacters = GameDataManager.getFactionsWithCharacters(characters);
-      const faction = factionsWithCharacters[decodedId];
-      if (!faction) return null;
-      return createDetailResult({ ...faction, id: decodedId }, 'Faction', `/factions/${decodedId}`);
-    },
-    fullData: () => {
-      const characters = GameDataManager.getCharacters();
-      const factionsWithCharacters = GameDataManager.getFactionsWithCharacters(characters);
-      const factionsList = Object.entries(factionsWithCharacters).map(([id, faction]) => ({
-        ...faction,
-        id,
-      }));
-      return createFullDataResult(factionsList, 'Faction', '/factions');
-    },
-  },
-
-  itemGroups: {
-    description: '道具组合/分类',
-    list: () => {
-      const groupsList = recordToArray(itemGroups, 'name');
-      return createListResult(groupsList, 'ItemGroup', '/itemGroups', true);
-    },
-    detail: async (id: string) => {
-      const group = findByKey(itemGroups, id);
-      if (!group) return null;
-      const updateInfo = await getMergedUpdateTime('itemGroups', group.name);
-      return createDetailResult(group, 'ItemGroup', `/itemGroups/${group.name}`, updateInfo?.date);
-    },
-    fullData: () => {
-      const fullItemGroups = recordToArray(itemGroups, 'name');
-      return createFullDataResult(fullItemGroups, 'ItemGroup', '/itemGroups');
-    },
-  },
-
-  'win-rates': {
-    description: '胜率数据（历史记录）',
-    list: () => {
-      return createListResult(winRatesData, 'WinRateEntry', '/win-rates', false);
-    },
-    fullData: () => {
-      return createFullDataResult(winRatesData, 'WinRateEntry', '/win-rates');
-    },
-  },
-
-  ranks: {
-    description: '角色定位标签排行',
-    list: () => {
-      const characters = GameDataManager.getCharacters();
-      const rankData = Object.entries(characters).map(([id, char]) => ({
-        id,
-        name: id,
-        factionId: char.faction?.id,
-        catPositioningTags: char.catPositioningTags || [],
-        mousePositioningTags: char.mousePositioningTags || [],
-      }));
-      return createListResult(rankData, 'CharacterRank', '/ranks', false);
-    },
-    fullData: () => {
-      const characters = GameDataManager.getCharacters();
-      const rankData = Object.entries(characters).map(([id, char]) => ({
-        id,
-        name: id,
-        factionId: char.faction?.id,
-        catPositioningTags: char.catPositioningTags || [],
-        mousePositioningTags: char.mousePositioningTags || [],
-      }));
-      return createFullDataResult(rankData, 'CharacterRank', '/ranks');
-    },
-  },
-
-  recommended: {
-    description: '角色推荐信息（关系、地图适配等）',
-    list: () => {
-      const characters = GameDataManager.getCharacters();
-      const recommendedData = Object.entries(characters).map(([id, char]) => {
-        const relations = getCharacterRelation(characters, id);
-        return {
+    ranks: {
+      description: '角色定位标签排行',
+      list: () => {
+        const rankData = Object.entries(characters).map(([id, char]) => ({
           id,
           name: id,
           factionId: char.faction?.id,
-          description: char.description,
-          relations,
-        };
-      });
-      return createListResult(recommendedData, 'RecommendedCharacter', '/recommended', false);
-    },
-    fullData: () => {
-      const characters = GameDataManager.getCharacters();
-      const recommendedData = Object.entries(characters).map(([id, char]) => {
-        const relations = getCharacterRelation(characters, id);
-        return {
+          catPositioningTags: char.catPositioningTags || [],
+          mousePositioningTags: char.mousePositioningTags || [],
+        }));
+        return createListResult(rankData, 'CharacterRank', '/ranks', false);
+      },
+      fullData: () => {
+        const rankData = Object.entries(characters).map(([id, char]) => ({
           id,
           name: id,
           factionId: char.faction?.id,
-          description: char.description,
-          relations,
+          catPositioningTags: char.catPositioningTags || [],
+          mousePositioningTags: char.mousePositioningTags || [],
+        }));
+        return createFullDataResult(rankData, 'CharacterRank', '/ranks');
+      },
+    },
+
+    recommended: {
+      description: '角色推荐信息（关系、地图适配等）',
+      list: () => {
+        const recommendedData = Object.entries(characters).map(([id, char]) => {
+          const relations = getCharacterRelation(characters, id);
+          return {
+            id,
+            name: id,
+            factionId: char.faction?.id,
+            description: char.description,
+            relations,
+          };
+        });
+        return createListResult(recommendedData, 'RecommendedCharacter', '/recommended', false);
+      },
+      fullData: () => {
+        const recommendedData = Object.entries(characters).map(([id, char]) => {
+          const relations = getCharacterRelation(characters, id);
+          return {
+            id,
+            name: id,
+            factionId: char.faction?.id,
+            description: char.description,
+            relations,
+          };
+        });
+        return createFullDataResult(recommendedData, 'RecommendedCharacter', '/recommended');
+      },
+    },
+
+    traits: {
+      description: '角色特性/机制数据',
+      list: () => {
+        const traitsList = recordToArray(traits, 'id');
+        return createListResult(traitsList, 'Trait', '/traits', false);
+      },
+      fullData: () => {
+        const traitsList = recordToArray(traits, 'id');
+        return createFullDataResult(traitsList, 'Trait', '/traits');
+      },
+    },
+
+    'character-relations': {
+      description: '角色关系数据',
+      list: () => {
+        const charactersRecord = characters;
+        const relationsList = Object.keys(charactersRecord).map((characterId) => ({
+          id: characterId,
+          relations: getCharacterRelation(characters, characterId),
+        }));
+        return createListResult(relationsList, 'CharacterRelation', '/character-relations', true);
+      },
+      detail: (id: string) => {
+        const decodedId = decodeURIComponent(id);
+        const charactersRecord = characters;
+        if (!charactersRecord[decodedId]) return null;
+        const relations = getCharacterRelation(characters, decodedId);
+        return createDetailResult(
+          { id: decodedId, relations },
+          'CharacterRelation',
+          `/character-relations/${id}`
+        );
+      },
+      fullData: () => {
+        const charactersRecord = characters;
+        const relationsList = Object.keys(charactersRecord).map((characterId) => ({
+          id: characterId,
+          relations: getCharacterRelation(characters, characterId),
+        }));
+        return createFullDataResult(relationsList, 'CharacterRelation', '/character-relations');
+      },
+    },
+
+    history: {
+      description: 'Wiki 编辑历史',
+      list: () => {
+        return createListResult(historyData, 'HistoryEntry', '/history', false);
+      },
+      fullData: () => {
+        return createFullDataResult(historyData, 'HistoryEntry', '/history');
+      },
+    },
+
+    'wiki-history': {
+      description: 'Wiki 历史数据',
+      list: () => {
+        return createListResult(wikiHistoryData, 'WikiHistoryEntry', '/wiki-history', false);
+      },
+      fullData: () => {
+        return createFullDataResult(wikiHistoryData, 'WikiHistoryEntry', '/wiki-history');
+      },
+    },
+
+    contributors: {
+      description: 'Wiki 贡献者统计',
+      list: () => {
+        return createListResult(contributors, 'Contributor', '/contributors', false);
+      },
+      fullData: () => {
+        return createFullDataResult(contributors, 'Contributor', '/contributors');
+      },
+    },
+
+    articles: {
+      description: 'Wiki 文章列表',
+      list: async () => {
+        const { articles: articlesList } = await getArticlesPageData();
+        return createListResult(articlesList, 'Article', '/articles', true);
+      },
+      detail: async (id: string) => {
+        const decodedId = decodeURIComponent(id);
+        const [basicInfo, version] = await Promise.all([
+          getArticleBasicInfo(decodedId),
+          getApprovedArticleVersion({ articleId: decodedId }),
+        ]);
+        if (!basicInfo) return null;
+        return createDetailResult(
+          {
+            ...basicInfo,
+            content: version?.content || null,
+            version: version
+              ? {
+                  id: version.id,
+                  createdAt: version.created_at,
+                  editorNickname: version.users_public_view?.nickname || null,
+                }
+              : null,
+          },
+          'Article',
+          `/articles/${id}`
+        );
+      },
+      fullData: async () => {
+        const { articles: articlesList } = await getArticlesPageData();
+        return createFullDataResult(articlesList, 'Article', '/articles');
+      },
+    },
+
+    usages: {
+      description: '使用指南模块',
+      list: () => {
+        const usagesMeta = {
+          description: '角色使用指南和技巧',
+          sections: ['EditPage', 'UsePage'],
+          note: '详细内容请访问对应的角色页面',
         };
-      });
-      return createFullDataResult(recommendedData, 'RecommendedCharacter', '/recommended');
+        return createListResult([usagesMeta], 'UsagesMetadata', '/usages', false);
+      },
     },
-  },
 
-  traits: {
-    description: '角色特性/机制数据',
-    list: () => {
-      const traitsList = recordToArray(traits, 'id');
-      return createListResult(traitsList, 'Trait', '/traits', false);
+    mechanics: {
+      description: '游戏机制模块',
+      list: () => {
+        const mechanicsMeta = {
+          description: '游戏机制和特性说明',
+          sections: ['ArticlesIndex', 'TraitCollection'],
+          note: '详细内容请访问机制页面',
+        };
+        return createListResult([mechanicsMeta], 'MechanicsMetadata', '/mechanics', false);
+      },
     },
-    fullData: () => {
-      const traitsList = recordToArray(traits, 'id');
-      return createFullDataResult(traitsList, 'Trait', '/traits');
-    },
-  },
+  };
+}
 
-  'character-relations': {
-    description: '角色关系数据',
-    list: () => {
-      const charactersRecord = GameDataManager.getCharacters();
-      const relationsList = Object.keys(charactersRecord).map((characterId) => ({
-        id: characterId,
-        relations: getCharacterRelation(characters, characterId),
-      }));
-      return createListResult(relationsList, 'CharacterRelation', '/character-relations', true);
-    },
-    detail: (id: string) => {
-      const decodedId = decodeURIComponent(id);
-      const charactersRecord = GameDataManager.getCharacters();
-      if (!charactersRecord[decodedId]) return null;
-      const relations = getCharacterRelation(characters, decodedId);
-      return createDetailResult(
-        { id: decodedId, relations },
-        'CharacterRelation',
-        `/character-relations/${id}`
-      );
-    },
-    fullData: () => {
-      const charactersRecord = GameDataManager.getCharacters();
-      const relationsList = Object.keys(charactersRecord).map((characterId) => ({
-        id: characterId,
-        relations: getCharacterRelation(characters, characterId),
-      }));
-      return createFullDataResult(relationsList, 'CharacterRelation', '/character-relations');
-    },
-  },
+export async function getResolvers(): Promise<Record<string, PathResolver>> {
+  const snapshot = await getPublishedGameDataSnapshot();
+  return createResolvers(snapshot.data);
+}
 
-  history: {
-    description: 'Wiki 编辑历史',
-    list: () => {
-      return createListResult(historyData, 'HistoryEntry', '/history', false);
-    },
-    fullData: () => {
-      return createFullDataResult(historyData, 'HistoryEntry', '/history');
-    },
-  },
-
-  'wiki-history': {
-    description: 'Wiki 历史数据',
-    list: () => {
-      return createListResult(wikiHistoryData, 'WikiHistoryEntry', '/wiki-history', false);
-    },
-    fullData: () => {
-      return createFullDataResult(wikiHistoryData, 'WikiHistoryEntry', '/wiki-history');
-    },
-  },
-
-  contributors: {
-    description: 'Wiki 贡献者统计',
-    list: () => {
-      return createListResult(contributors, 'Contributor', '/contributors', false);
-    },
-    fullData: () => {
-      return createFullDataResult(contributors, 'Contributor', '/contributors');
-    },
-  },
-
-  articles: {
-    description: 'Wiki 文章列表',
-    list: async () => {
-      const { articles: articlesList } = await getArticlesPageData();
-      return createListResult(articlesList, 'Article', '/articles', true);
-    },
-    detail: async (id: string) => {
-      const decodedId = decodeURIComponent(id);
-      const [basicInfo, version] = await Promise.all([
-        getArticleBasicInfo(decodedId),
-        getApprovedArticleVersion({ articleId: decodedId }),
-      ]);
-      if (!basicInfo) return null;
-      return createDetailResult(
-        {
-          ...basicInfo,
-          content: version?.content || null,
-          version: version
-            ? {
-                id: version.id,
-                createdAt: version.created_at,
-                editorNickname: version.users_public_view?.nickname || null,
-              }
-            : null,
-        },
-        'Article',
-        `/articles/${id}`
-      );
-    },
-    fullData: async () => {
-      const { articles: articlesList } = await getArticlesPageData();
-      return createFullDataResult(articlesList, 'Article', '/articles');
-    },
-  },
-
-  usages: {
-    description: '使用指南模块',
-    list: () => {
-      const usagesMeta = {
-        description: '角色使用指南和技巧',
-        sections: ['EditPage', 'UsePage'],
-        note: '详细内容请访问对应的角色页面',
-      };
-      return createListResult([usagesMeta], 'UsagesMetadata', '/usages', false);
-    },
-  },
-
-  mechanics: {
-    description: '游戏机制模块',
-    list: () => {
-      const mechanicsMeta = {
-        description: '游戏机制和特性说明',
-        sections: ['ArticlesIndex', 'TraitCollection'],
-        note: '详细内容请访问机制页面',
-      };
-      return createListResult([mechanicsMeta], 'MechanicsMetadata', '/mechanics', false);
-    },
-  },
-};
-
-export function getAvailablePaths(): Array<{
-  path: string;
-  description: string;
-  hasDetail: boolean;
-  availableDetails?: string[];
-}> {
+export async function getAvailablePaths(): Promise<
+  Array<{
+    path: string;
+    description: string;
+    hasDetail: boolean;
+    availableDetails?: string[];
+  }>
+> {
+  const snapshot = await getPublishedGameDataSnapshot();
+  const resolvers = createResolvers(snapshot.data);
   return Object.entries(resolvers).map(([path, resolver]) => {
     const result: {
       path: string;
@@ -837,18 +861,29 @@ export function getAvailablePaths(): Array<{
     };
 
     if (resolver.detail) {
-      result.availableDetails = getDetailIds(path);
+      result.availableDetails = getDetailIds(path, snapshot.data);
     }
 
     return result;
   });
 }
 
-function getDetailIds(resourcePath: string): string[] {
+function getDetailIds(resourcePath: string, data: PublishedGameDataByType): string[] {
+  const {
+    achievements,
+    buffs,
+    cards,
+    characters,
+    entities,
+    fixtures,
+    items,
+    maps,
+    modes,
+    specialSkills,
+  } = data;
   try {
     switch (resourcePath) {
       case 'characters': {
-        const characters = GameDataManager.getCharacters();
         return Object.keys(characters);
       }
       case 'cards': {
@@ -892,7 +927,6 @@ function getDetailIds(resourcePath: string): string[] {
         return Object.keys(itemGroups);
       }
       case 'character-relations': {
-        const characters = GameDataManager.getCharacters();
         return Object.keys(characters);
       }
       case 'articles': {
@@ -911,6 +945,7 @@ export async function resolvePath(
   detailId?: string,
   fullData: boolean = false
 ): Promise<ResolverResult | FullDataResult | null> {
+  const resolvers = await getResolvers();
   let resolver = resolvers[path];
   if (!resolver) {
     const lowerPath = path.toLowerCase();
@@ -920,10 +955,6 @@ export async function resolvePath(
     }
   }
   if (!resolver) return null;
-
-  const { getPublicGameDataActionsAndApplyToServerData } =
-    await import('@/lib/gameData/publicActions');
-  await getPublicGameDataActionsAndApplyToServerData();
 
   if (detailId && resolver.detail) {
     const result = await resolver.detail(detailId);

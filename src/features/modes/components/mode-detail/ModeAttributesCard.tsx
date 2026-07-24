@@ -6,6 +6,7 @@ import { getModeTypeColors } from '@/lib/design';
 import { useLocalMode } from '@/hooks/useLocalEditEntity';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
+import { mapsEdit, modesEdit } from '@/data/store';
 import { Mode, SingleItem } from '@/data/types';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
 import AddAliasButton from '@/features/shared/detail-view/AddAliasButton';
@@ -15,7 +16,6 @@ import NavigationButtonsRow from '@/components/ui/NavigationButtonsRow';
 import SingleItemAccordionCard from '@/components/ui/SingleItemAccordionCard';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import Tag from '@/components/ui/Tag';
-import { mapsEdit, modesEdit } from '@/data';
 
 export default function ModeAttributesCard({ mode }: { mode: Mode }) {
   const [isDarkMode] = useDarkMode();

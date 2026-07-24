@@ -1,6 +1,7 @@
 import uniq from 'lodash-es/uniq';
 
-import { cards, characters } from '@/data';
+import { cards } from '@/data/static';
+import { characters } from '@/data/store';
 
 const nameBlacklist = [
   '破墙',

@@ -6,6 +6,8 @@ import type { DeepReadonly } from '@/types/deep-readonly';
 import { cn } from '@/lib/design';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
+import { factionData } from '@/data/static';
+import { characters } from '@/data/store';
 import type { CardGroup, FactionId, KnowledgeCardGroup, KnowledgeCardGroupSet } from '@/data/types';
 import { getGeneralKnowledgeCardGroupCount } from '@/features/characters/utils/recommendations';
 import { catKnowledgeCards } from '@/features/knowledge-cards/data/catKnowledgeCards';
@@ -15,7 +17,6 @@ import Card from '@/components/ui/Card';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import KnowledgeCardPicker from '@/components/ui/KnowledgeCardPicker';
 import { PlusIcon } from '@/components/icons/CommonIcons';
-import { characters, factionData } from '@/data';
 
 import CharacterSection from '../sections/CharacterSection';
 import AdvancedCardGroupEditor from './AdvancedCardGroupEditor';

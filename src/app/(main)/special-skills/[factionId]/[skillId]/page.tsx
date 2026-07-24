@@ -2,55 +2,30 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Article, WithContext } from 'schema-dts';
 
+import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
 import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
-import type { FactionId } from '@/data/types';
+import { specialSkills as canonicalSpecialSkills } from '@/data/static';
+import type { FactionId, SpecialSkill } from '@/data/types';
 import StructuredData from '@/components/StructuredData';
-import { specialSkills } from '@/data';
 
 import SpecialSkillDetailClient from './SpecialSkillDetailClient';
-
-type CatSkill = (typeof specialSkills)['cat'][string];
-type MouseSkill = (typeof specialSkills)['mouse'][string];
-
-function getSkill(factionId: string, skillId: string): CatSkill | MouseSkill | undefined {
-  if (factionId === 'cat') {
-    const catSkills = specialSkills.cat as Record<string, CatSkill>;
-    return Object.prototype.hasOwnProperty.call(catSkills, skillId)
-      ? catSkills[skillId]
-      : undefined;
-  }
-  if (factionId === 'mouse') {
-    const mouseSkills = specialSkills.mouse as Record<string, MouseSkill>;
-    return Object.prototype.hasOwnProperty.call(mouseSkills, skillId)
-      ? mouseSkills[skillId]
-      : undefined;
-  }
-  return undefined;
-}
 
 // Generate static params for all special skills
 export function generateStaticParams() {
   return (['cat', 'mouse'] as const).flatMap((factionId) =>
-    Object.keys((specialSkills[factionId] as Record<string, CatSkill | MouseSkill>) || {}).map(
-      (skillId) => ({
-        factionId,
-        skillId,
-      })
-    )
+    Object.keys(canonicalSpecialSkills[factionId]).map((skillId) => ({
+      factionId,
+      skillId,
+    }))
   );
 }
 
 function generateStructuredData(
   factionId: FactionId,
-  skillId: string
-): WithContext<Article> | null {
-  const skill = getSkill(factionId, skillId);
-
-  if (!skill) {
-    return null;
-  }
-
+  skillId: string,
+  skill: SpecialSkill
+): WithContext<Article> {
   const desc = skill.description ?? `${skill.name}技能详情`;
   return {
     '@context': 'https://schema.org',
@@ -79,7 +54,11 @@ export async function generateMetadata({
     return {};
   }
   const factionId = factionIdRaw as FactionId;
-  const skill = getSkill(factionId, skillId);
+  const { data: skill } = await getPublishedEntityRouteReadModel(
+    'specialSkills',
+    skillId,
+    factionId
+  );
 
   if (!skill) {
     return {};
@@ -109,7 +88,8 @@ export default async function SpecialSkillDetailPage({
     notFound();
   }
   const factionId = factionIdRaw as FactionId;
-  const skill = getSkill(factionId, skillId);
+  const readModel = await getPublishedEntityRouteReadModel('specialSkills', skillId, factionId);
+  const skill = readModel.data;
 
   if (!skill) {
     notFound();
@@ -117,8 +97,13 @@ export default async function SpecialSkillDetailPage({
 
   return (
     <>
-      <StructuredData data={generateStructuredData(factionId, skillId)} />
-      <SpecialSkillDetailClient skill={skill} factionId={factionId} skillId={skillId} />
+      <StructuredData data={generateStructuredData(factionId, skillId, skill)} />
+      <SpecialSkillDetailClient
+        skill={skill}
+        factionId={factionId}
+        skillId={skillId}
+        publishedRevision={readModel.revision}
+      />
     </>
   );
 }

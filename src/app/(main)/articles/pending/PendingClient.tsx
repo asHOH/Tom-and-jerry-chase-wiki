@@ -7,6 +7,7 @@ import { useSnapshot } from 'valtio';
 import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { formatArticleDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
+import { characters } from '@/data/store';
 import Button from '@/components/ui/Button';
 import ButtonLink from '@/components/ui/ButtonLink';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
@@ -15,7 +16,6 @@ import PageTitle from '@/components/ui/PageTitle';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
 import { CheckBadgeIcon, ClockIcon, CloseIcon, EyeIcon } from '@/components/icons/CommonIcons';
 import Link from '@/components/Link';
-import { characters } from '@/data';
 
 /**
  * Represents a unified article submission.

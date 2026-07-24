@@ -6,6 +6,7 @@ import { getMapLevelColors, getMapSizeColors, getMapTypeColors } from '@/lib/des
 import { useLocalMap } from '@/hooks/useLocalEditEntity';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
+import { mapsEdit, modesEdit } from '@/data/store';
 import { Map, SingleItem } from '@/data/types';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
 import AddAliasButton from '@/features/shared/detail-view/AddAliasButton';
@@ -17,7 +18,6 @@ import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationB
 import Tag from '@/components/ui/Tag';
 import Tooltip from '@/components/ui/Tooltip';
 import Image from '@/components/Image';
-import { mapsEdit, modesEdit } from '@/data';
 
 export default function MapAttributesCard({ map }: { map: Map }) {
   const [isDarkMode] = useDarkMode();

@@ -6,8 +6,9 @@ import { DefaultChatTransport, lastAssistantMessageIsCompleteWithToolCalls } fro
 import { snapshot } from 'valtio';
 
 import { historyData } from '@/data/history';
+import { buffs, cards, entities, itemGroups, items, specialSkills } from '@/data/static';
+import { characters } from '@/data/store';
 import { actorProfileLookup } from '@/features/actor-profiles/serialization';
-import { buffs, cards, characters, entities, itemGroups, items, specialSkills } from '@/data';
 import { env } from '@/env';
 
 // Debounce utility to delay function execution

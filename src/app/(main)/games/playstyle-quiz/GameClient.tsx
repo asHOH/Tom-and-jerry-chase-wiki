@@ -4,8 +4,8 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import { useSnapshot } from 'valtio';
 
 import { useDarkMode } from '@/context/DarkModeContext';
+import { characters } from '@/data/store';
 import GameLayout from '@/features/games/components/GameLayout';
-import { characters } from '@/data';
 
 import QuestionCard from './components/QuestionCard';
 import QuizProgress from './components/QuizProgress';

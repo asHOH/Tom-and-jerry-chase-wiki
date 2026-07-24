@@ -7,12 +7,12 @@ import { getEntityTypeColors, getFactionButtonColors } from '@/lib/design';
 import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { entitiesEdit } from '@/data/store';
 import type { Entity, Entitytaglist, Entitytypelist } from '@/data/types';
 import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
 import FilterRow from '@/components/ui/FilterRow';
 import Tooltip from '@/components/ui/Tooltip';
-import { entitiesEdit } from '@/data';
 
 import getEntityFactionId from '../lib/getEntityFactionId';
 import EntityCardDisplay from './EntityCardDisplay';

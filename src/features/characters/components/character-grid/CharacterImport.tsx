@@ -12,11 +12,12 @@ import { CharacterWithFaction } from '@/lib/types';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { useToast } from '@/context/ToastContext';
+import { characters } from '@/data/store';
+import type { FactionId } from '@/data/types';
 import { processCharacters } from '@/features/characters/utils/skillId';
 import Button from '@/components/ui/Button';
 import EntityCardFrame from '@/components/ui/EntityCardFrame';
 import { FormTextarea } from '@/components/ui/FormControls';
-import { characters, FactionId } from '@/data';
 
 function handleUploadedData(
   data: string,

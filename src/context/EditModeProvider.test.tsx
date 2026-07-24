@@ -4,7 +4,7 @@ import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-libra
 
 import { getActionsStorageKey, readActionHistory } from '@/lib/edit/diffUtils';
 import { usePageEditMode } from '@/hooks/usePageEditMode';
-import { characters } from '@/data';
+import { characters } from '@/data/store';
 
 import { EditModeProvider, useEditMode } from './EditModeContext';
 

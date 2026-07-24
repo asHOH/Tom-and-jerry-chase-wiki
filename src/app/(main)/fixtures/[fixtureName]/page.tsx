@@ -1,21 +1,22 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
+import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
 import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
+import { fixtures as canonicalFixtures } from '@/data/static';
+import type { Fixture } from '@/data/types';
 import StructuredData from '@/components/StructuredData';
-import { fixtures } from '@/data';
 
 import FixtureDetailClient from './FixtureDetailsClient';
 
 export function generateStaticParams() {
-  return Object.keys(fixtures).map((fixtureName) => ({
+  return Object.keys(canonicalFixtures).map((fixtureName) => ({
     fixtureName,
   }));
 }
 
-function generateStructuredData(fixtureName: string) {
-  const fixture = fixtures[fixtureName]!;
+function generateStructuredData(fixtureName: string, fixture: Fixture) {
   const desc = fixture.description ?? `${fixture.name}详细信息`;
   return {
     '@context': 'https://schema.org',
@@ -38,7 +39,7 @@ export async function generateMetadata({
   params: Promise<{ fixtureName: string }>;
 }): Promise<Metadata> {
   const fixtureName = decodeURIComponent((await params).fixtureName);
-  const fixture = fixtures[fixtureName];
+  const { data: fixture } = await getPublishedEntityRouteReadModel('fixtures', fixtureName);
 
   if (!fixture) {
     return {};
@@ -60,7 +61,8 @@ export default async function FixtureDetailPage({
   params: Promise<{ fixtureName: string }>;
 }) {
   const fixtureName = decodeURIComponent((await params).fixtureName);
-  const fixture = fixtures[fixtureName];
+  const readModel = await getPublishedEntityRouteReadModel('fixtures', fixtureName);
+  const fixture = readModel.data;
 
   if (!fixture) {
     notFound();
@@ -68,8 +70,12 @@ export default async function FixtureDetailPage({
 
   return (
     <>
-      <StructuredData data={generateStructuredData(fixtureName)} />
-      <FixtureDetailClient fixture={fixture} fixtureName={fixtureName} />
+      <StructuredData data={generateStructuredData(fixtureName, fixture)} />
+      <FixtureDetailClient
+        fixture={fixture}
+        fixtureName={fixtureName}
+        publishedRevision={readModel.revision}
+      />
     </>
   );
 }

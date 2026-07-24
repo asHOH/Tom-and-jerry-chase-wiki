@@ -10,9 +10,22 @@ const BuffDetails = dynamic(() => import('@/features/buffs/components/buff-detai
   loading: () => <PageLoadingState type='detail' message='加载状态详情中...' />,
 });
 
-export default function BuffDetailsClient({ buff, buffName }: { buff: Buff; buffName: string }) {
+export default function BuffDetailsClient({
+  buff,
+  buffName,
+  publishedRevision,
+}: {
+  buff: Buff;
+  buffName: string;
+  publishedRevision: `v1:${string}`;
+}) {
   return (
-    <EditModePageShell entityType='buffs' entityId={buffName} entityName={buffName}>
+    <EditModePageShell
+      entityType='buffs'
+      entityId={buffName}
+      entityName={buffName}
+      publishedRevision={publishedRevision}
+    >
       <BuffDetails buff={buff} />
     </EditModePageShell>
   );

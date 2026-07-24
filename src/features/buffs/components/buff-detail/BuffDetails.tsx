@@ -6,6 +6,7 @@ import { useLocalBuff } from '@/hooks/useLocalEditEntity';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
+import { buffsEdit } from '@/data/store';
 import { Buff, SingleItem, SingleItemTypeChineseNameList } from '@/data/types';
 import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
 import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';
@@ -14,7 +15,6 @@ import DetailTraitsCard from '@/features/shared/detail-view/DetailTraitsCard';
 import AccordionCard from '@/components/ui/AccordionCard';
 import { editable } from '@/components/ui/editable';
 import SingleItemButton from '@/components/ui/SingleItemButton';
-import { buffsEdit } from '@/data';
 
 import BuffAttributesCard from './BuffAttributesCard';
 

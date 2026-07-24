@@ -1,7 +1,8 @@
 import { waitFor } from '@testing-library/react';
 
 import { PUBLISHABLE_ENTITY_TYPES } from '@/lib/gameData/publishableEntityTypes';
-import { characters, items, itemsEdit } from '@/data';
+import { items } from '@/data/static';
+import { characters, itemsEdit } from '@/data/store';
 
 import { getActionsStorageKey, readActionHistory } from './diffUtils';
 import {

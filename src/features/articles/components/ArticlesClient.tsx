@@ -16,6 +16,7 @@ import { useMobile } from '@/hooks/useMediaQuery';
 import { useSwipeGesture } from '@/hooks/useSwipeGesture';
 import { useEditMode } from '@/context/EditModeContext';
 import { useToast } from '@/context/ToastContext';
+import { characters } from '@/data/store';
 import { Article, ArticlesData, Category } from '@/data/types';
 import Button from '@/components/ui/Button';
 import ButtonLink from '@/components/ui/ButtonLink';
@@ -26,7 +27,6 @@ import RichTextDisplay from '@/components/ui/RichTextDisplay';
 import { SkeletonArticleCard } from '@/components/ui/Skeleton';
 import { ClockIcon, PlusIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
-import { characters } from '@/data';
 
 import { useArticleListScrollRestoration } from '../hooks/useArticleListScrollRestoration';
 import ArticleFilters from './ArticleFilters';
