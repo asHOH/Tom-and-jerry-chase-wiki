@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import useSWR from 'swr';
 
+import type { BlockedUserSummary } from '@/lib/blocks/types';
 import type { PendingGameDataAction } from '@/features/admin/components/GameDataActionModerationPanel';
 
 import AdminPanel from './AdminPanel';
@@ -11,6 +12,7 @@ const mockUseSWR = useSWR as jest.MockedFunction<typeof useSWR>;
 const mockModerationPanel = jest.fn();
 
 let currentProfile: 'contributor' | 'reviewer' | 'coordinator' | null = null;
+let mockBlockSummary: BlockedUserSummary[] = [];
 
 jest.mock('@/lib/auth/PermissionProvider', () => {
   const actual = jest.requireActual('@/lib/auth/permissions');
@@ -29,6 +31,10 @@ jest.mock('@/lib/auth/PermissionProvider', () => {
     },
   };
 });
+
+jest.mock('@/hooks/useUser', () => ({
+  useUser: () => ({ blockSummary: mockBlockSummary }),
+}));
 
 jest.mock('@/context/ToastContext', () => ({
   useToast: () => ({
@@ -107,6 +113,7 @@ describe('AdminPanel', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     currentProfile = null;
+    mockBlockSummary = [];
 
     mockUseSWR.mockImplementation((key) => {
       if (key === 'users') {
@@ -191,5 +198,23 @@ describe('AdminPanel', () => {
       [null, expect.any(Function)],
       [null, expect.any(Function)],
     ]);
+  });
+
+  it('hides administrative abilities for a blocked reviewer', () => {
+    mockBlockSummary = [
+      {
+        action: 'edit',
+        reason: '审核期间暂停编辑权限',
+        expiresAt: null,
+        isAutoblock: false,
+        blockId: 'block-1',
+      },
+    ];
+
+    renderAdminPanel('Reviewer');
+
+    expect(screen.queryByText('Category Management')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('moderation-panel')).not.toBeInTheDocument();
+    expect(screen.queryAllByRole('button')).toHaveLength(0);
   });
 });

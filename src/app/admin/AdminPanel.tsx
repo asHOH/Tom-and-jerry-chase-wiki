@@ -6,6 +6,7 @@ import useSWR from 'swr';
 import { usePermissions } from '@/lib/auth/PermissionProvider';
 import type { PermissionResourceOption } from '@/lib/auth/permissionResources';
 import { cn } from '@/lib/design';
+import { useUser } from '@/hooks/useUser';
 import type { Database } from '@/data/database.types';
 import BlockManagement from '@/features/admin/components/BlockManagement';
 import CategoryManagement from '@/features/admin/components/CategoryManagement';
@@ -85,20 +86,27 @@ const AdminPanel = () => {
     'users' | 'groups' | 'categories' | 'actions' | 'blocks'
   >('categories');
   const permissions = usePermissions();
+  const { blockSummary } = useUser();
+  const administrativeActionsBlocked = blockSummary.some((block) => block.action === 'edit');
 
   const enableUserAccess =
-    permissions.has('user.read') ||
-    permissions.has('user.update') ||
-    permissions.has('group.assign');
+    !administrativeActionsBlocked &&
+    (permissions.has('user.read') ||
+      permissions.has('user.update') ||
+      permissions.has('group.assign'));
   const enableActionModeration =
-    permissions.has('game_data_action.approve') ||
-    permissions.has('game_data_action.reject') ||
-    permissions.has('game_data_action.revoke');
-  const enableGroupAccess = permissions.has('group.manage') || permissions.has('group.assign');
+    !administrativeActionsBlocked &&
+    (permissions.has('game_data_action.approve') ||
+      permissions.has('game_data_action.reject') ||
+      permissions.has('game_data_action.revoke'));
+  const enableGroupAccess =
+    !administrativeActionsBlocked &&
+    (permissions.has('group.manage') || permissions.has('group.assign'));
   const enableCategoryAccess =
-    permissions.has('category.create') ||
-    permissions.has('category.update') ||
-    permissions.has('category.delete');
+    !administrativeActionsBlocked &&
+    (permissions.has('category.create') ||
+      permissions.has('category.update') ||
+      permissions.has('category.delete'));
   const enableBlockAccess = permissions.has('block.view') || permissions.has('block.manage');
 
   useEffect(() => {

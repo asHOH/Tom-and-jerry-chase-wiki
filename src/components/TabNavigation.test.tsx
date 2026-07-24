@@ -63,6 +63,7 @@ jest.mock('@/hooks/useUser', () => ({
     nickname: null,
     grants: [],
     groups: [],
+    blockSummary: [],
     clearData: jest.fn(),
   }),
 }));

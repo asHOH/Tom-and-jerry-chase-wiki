@@ -66,7 +66,10 @@ export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ groupId: string }> }
 ) {
-  const guard = await requirePermission('group.manage');
+  const guard = await requirePermission('group.manage', undefined, 'all', {
+    request,
+    blockAction: 'edit',
+  });
   if ('error' in guard) return guard.error;
   const parsed = updateSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success || parsed.data.grants.some((grant) => !isValidGrant(grant))) {
@@ -94,7 +97,10 @@ export async function PATCH(
 }
 
 export async function PUT(request: Request, { params }: { params: Promise<{ groupId: string }> }) {
-  const guard = await requirePermission('group.manage');
+  const guard = await requirePermission('group.manage', undefined, 'all', {
+    request,
+    blockAction: 'edit',
+  });
   if ('error' in guard) return guard.error;
   const parsed = grantsSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success || parsed.data.grants.some((grant) => !isValidGrant(grant))) {
@@ -111,8 +117,14 @@ export async function PUT(request: Request, { params }: { params: Promise<{ grou
   return NextResponse.json({ ok: true });
 }
 
-export async function DELETE(_: Request, { params }: { params: Promise<{ groupId: string }> }) {
-  const guard = await requirePermission('group.manage');
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ groupId: string }> }
+) {
+  const guard = await requirePermission('group.manage', undefined, 'all', {
+    request,
+    blockAction: 'edit',
+  });
   if ('error' in guard) return guard.error;
   const { error } = await guard.supabase.rpc('delete_permission_group', {
     p_group_id: await getGroupId(params),

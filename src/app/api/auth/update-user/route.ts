@@ -10,7 +10,10 @@ const hashPassword = (password: string, salt: string) =>
 const generateSalt = () => randomBytes(16).toString('hex');
 
 export async function POST(request: Request) {
-  const guard = await requirePermission('user.update');
+  const guard = await requirePermission('user.update', undefined, 'all', {
+    request,
+    blockAction: 'edit',
+  });
   if ('error' in guard) return guard.error;
   const { supabase } = guard;
 

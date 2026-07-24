@@ -159,7 +159,10 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const guard = await requirePermission('group.manage');
+  const guard = await requirePermission('group.manage', undefined, 'all', {
+    request,
+    blockAction: 'edit',
+  });
   if ('error' in guard) return guard.error;
   const parsed = createSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success || parsed.data.grants.some((grant) => !isValidGrant(grant))) {

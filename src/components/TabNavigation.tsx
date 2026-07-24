@@ -7,6 +7,7 @@ import { useMediaQuery } from 'usehooks-ts';
 
 import { usePermissions } from '@/lib/auth/PermissionProvider';
 import type { PermissionKey } from '@/lib/auth/permissions';
+import type { BlockAction, BlockedUserSummary } from '@/lib/blocks/types';
 import { cn, getNavigationButtonClasses } from '@/lib/design';
 import { supabase } from '@/lib/supabase/client';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
@@ -51,6 +52,18 @@ type DropdownNavLinkProps = {
 const shouldShowNavItem = (item: NavItem) =>
   env.NEXT_PUBLIC_DISABLE_ARTICLES !== '1' || item.id !== 'articles';
 
+const BLOCK_ACTION_LABELS: Record<BlockAction, string> = {
+  edit: '编辑',
+  upload: '上传',
+  create_account: '创建账号',
+  email: '邮件',
+};
+
+const formatBlockExpiry = (expiresAt: string | null) =>
+  expiresAt
+    ? `至 ${new Date(expiresAt).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })}`
+    : '永久';
+
 function DropdownNavLink({ item, isActive, paddingClassName, onClick }: DropdownNavLinkProps) {
   return (
     <Link
@@ -80,7 +93,9 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   const [mounted, setMounted] = useState(false);
   const [collapsedCount, setCollapsedCount] = useState(0);
   const pathname = usePathname();
-  const { nickname, clearData: clearUserData } = useUser();
+  const { nickname, blockSummary, clearData: clearUserData } = useUser();
+  const hasEditBlock = blockSummary.some((block) => block.action === 'edit');
+  const hasActiveBlock = blockSummary.length > 0;
   const permissions = usePermissions();
   const adminPermissions: PermissionKey[] = [
     'article_version.approve',
@@ -95,7 +110,10 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     'group.manage',
     'group.assign',
   ];
-  const canAccessAdmin = adminPermissions.some(permissions.has);
+  const canAccessAdmin =
+    permissions.has('block.view') ||
+    permissions.has('block.manage') ||
+    (!hasEditBlock && adminPermissions.some(permissions.has));
   const unreadNotificationCount = useNotificationCount(!!nickname);
   const { items: rawItems, isActive } = useNavigationTabs();
   const isMobile = useMobile();
@@ -487,23 +505,40 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
           {/* User Settings Dropdown (deferred until mounted to avoid hydration mismatch) */}
           {mounted && !!nickname && shouldDisplayUserSettings && hasSupabasePublicConfig() && (
             <div className='relative' data-user-dropdown-root>
-              <Tooltip content='用户设置' className='border-none'>
+              <Tooltip
+                content={hasActiveBlock ? '账号受限：点击查看详情' : '用户设置'}
+                className='border-none'
+              >
                 <m.button
                   type='button'
-                  aria-label='用户设置'
-                  className={getNavigationButtonClasses(false, userDropdownOpen, true)}
+                  aria-label={hasActiveBlock ? '用户设置（账号受限）' : '用户设置'}
+                  className={cn(
+                    getNavigationButtonClasses(false, userDropdownOpen, true),
+                    hasActiveBlock &&
+                      'border-amber-400 bg-amber-50 text-amber-700 dark:border-amber-500/70 dark:bg-amber-950/40 dark:text-amber-300'
+                  )}
                   onClick={() => setUserDropdownOpen((prev) => !prev)}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <UserCircleIcon className='size-6' strokeWidth={1.5} />
+                  <span className='relative'>
+                    <UserCircleIcon className='size-6' strokeWidth={1.5} />
+                    {hasActiveBlock && (
+                      <span
+                        aria-hidden='true'
+                        className='absolute -top-1 -right-1 flex size-3.5 items-center justify-center rounded-full bg-amber-500 text-[10px] leading-none font-bold text-white'
+                      >
+                        !
+                      </span>
+                    )}
+                  </span>
                 </m.button>
               </Tooltip>
               <AnimatePresence initial={false}>
                 {userDropdownOpen && (
                   <m.div
                     key='user-settings-dropdown'
-                    className='absolute right-0 z-99999 mt-2 w-48 rounded-md bg-white shadow-lg dark:bg-slate-800'
+                    className='absolute right-0 z-99999 mt-2 w-64 rounded-md bg-white shadow-lg dark:bg-slate-800'
                     initial={
                       shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: -6, scale: 0.98 }
                     }
@@ -513,6 +548,22 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                     style={{ transformOrigin: 'top right' }}
                   >
                     <ul className='py-1'>
+                      {hasActiveBlock && (
+                        <li
+                          role='status'
+                          className='mx-2 mb-1 rounded-md bg-amber-50 px-3 py-2 text-xs text-amber-900 dark:bg-amber-950/50 dark:text-amber-200'
+                        >
+                          <div className='font-semibold'>账号受限</div>
+                          <ul className='mt-1 space-y-1'>
+                            {blockSummary.map((block: BlockedUserSummary) => (
+                              <li key={`${block.blockId}:${block.action}`}>
+                                {BLOCK_ACTION_LABELS[block.action]}：{block.reason}（
+                                {formatBlockExpiry(block.expiresAt)}）
+                              </li>
+                            ))}
+                          </ul>
+                        </li>
+                      )}
                       <li className='px-4 py-2 text-sm text-gray-800 dark:text-gray-200'>
                         你好，{nickname}
                       </li>
