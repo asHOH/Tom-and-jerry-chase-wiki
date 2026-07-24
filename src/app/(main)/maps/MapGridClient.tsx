@@ -2,10 +2,15 @@
 
 import dynamic from 'next/dynamic';
 
+import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { LOADING_COUNTS } from '@/constants/loadingCounts';
 import { CatalogPageLoadingState } from '@/components/ui/LoadingState';
 
-type Props = { description?: string };
+type Props = {
+  description?: string;
+  data: PublishedGameDataByType['maps'];
+  publishedRevision: `v1:${string}`;
+};
 
 const MapGridClient = dynamic<Props>(() => import('@/features/maps/map-grid/MapGrid'), {
   loading: () => (

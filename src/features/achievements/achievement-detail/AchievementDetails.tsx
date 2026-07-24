@@ -1,12 +1,10 @@
 'use client';
 
-import { useSnapshot } from 'valtio';
-
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { useLocalAchievement } from '@/hooks/useLocalEditEntity';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
-import { achievementsEdit } from '@/data/store';
 import { Achievement } from '@/data/types';
 import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
 import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';
@@ -20,17 +18,17 @@ export default function AchievementDetailClient({ achievement }: { achievement: 
   const { isEditMode } = useEditMode();
   const { achievementName, factionId } = useLocalAchievement();
   const ed = editable('achievements');
+  const editRuntime = useActiveEditRuntime();
 
   const rawLocalAchievement =
     factionId === 'cat'
-      ? achievementsEdit.cat[achievementName]
+      ? editRuntime?.stores.achievements.cat[achievementName]
       : factionId === 'mouse'
-        ? achievementsEdit.mouse[achievementName]
+        ? editRuntime?.stores.achievements.mouse[achievementName]
         : undefined;
-  const localAchievementSnapshot = useSnapshot(rawLocalAchievement ?? ({} as Achievement));
-  const effectiveAchievement = rawLocalAchievement
-    ? (localAchievementSnapshot as Achievement)
-    : achievement;
+  const localAchievementSnapshot = useOptionalEditSnapshot(rawLocalAchievement, achievement);
+  const effectiveAchievement =
+    isEditMode && rawLocalAchievement ? (localAchievementSnapshot as Achievement) : achievement;
 
   // Keyboard navigation
   useSpecifyTypeKeyboardNavigation(

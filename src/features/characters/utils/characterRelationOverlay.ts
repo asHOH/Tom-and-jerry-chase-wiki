@@ -1,6 +1,7 @@
+import { getActiveEditRuntime, requireActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
 import { CHARACTER_RELATION_KINDS } from '@/lib/edit/characterRelationActions';
 import { setNestedProperty } from '@/lib/editUtils';
-import { characters } from '@/data/store';
+import { characters as staticCharacters } from '@/data/static';
 import type { CharacterRelationItem, TraitRelationKind } from '@/data/types';
 import { getCharacterRelation } from '@/features/characters/utils/relationReadModel';
 
@@ -37,6 +38,7 @@ const isSameCharacterRelationItem = (
   JSON.stringify(left.tags ?? []) === JSON.stringify(right.tags ?? []);
 
 const ownsCharacterRelationKind = (characterId: string, relationKind: TraitRelationKind) => {
+  const characters = requireActiveEditRuntime().stores.characters;
   const characterRecord = characters[characterId] as
     Partial<Record<TraitRelationKind, CharacterRelationItem[]>> | undefined;
 
@@ -54,6 +56,7 @@ export const getEditableCharacterRelations = (
   characterId: string,
   character?: unknown
 ): EditableCharacterRelations => {
+  const characters = getActiveEditRuntime()?.stores.characters ?? staticCharacters;
   const characterRecord = character ?? characters[characterId];
   const projectedRelations = getCharacterRelation(characters, characterId);
 
@@ -79,6 +82,7 @@ const writeCharacterRelationItems = (
   relationKind: TraitRelationKind,
   items: CharacterRelationItem[]
 ) => {
+  const characters = requireActiveEditRuntime().stores.characters;
   setNestedProperty(characters, `${characterId}.${relationKind}`, items);
   if (characters[characterId]) {
     (characters[characterId] as Record<string, unknown>)[relationKind] = items;

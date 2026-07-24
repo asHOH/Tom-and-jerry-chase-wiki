@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 
 import { cn } from '@/lib/design';
 import { useWikiHistory } from '@/hooks/useWikiHistory';
+import { usePublishedEntityHistory } from '@/context/PublishedEntityHistoryContext';
 import { SingleItem, WikiChangeType } from '@/data/types';
 import { ChevronDownIcon } from '@/components/icons/CommonIcons';
 
@@ -23,7 +24,9 @@ function formatHistoryChangeText(type: WikiChangeType, description: string) {
 
 export default function SingleItemWikiHistoryDisplay({ singleItem }: { singleItem: SingleItem }) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const history = useWikiHistory([singleItem]);
+  const fallbackHistory = useWikiHistory([singleItem]);
+  const publishedHistory = usePublishedEntityHistory();
+  const history = publishedHistory ?? fallbackHistory;
   const currentYear = new Date().getFullYear();
 
   const sortedHistory = useMemo(() => {

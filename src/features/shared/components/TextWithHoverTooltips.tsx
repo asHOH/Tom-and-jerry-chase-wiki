@@ -2,7 +2,7 @@ import { Fragment, useMemo } from 'react';
 
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useDarkMode } from '@/context/DarkModeContext';
-import { characters } from '@/data/store';
+import { characters } from '@/data/static';
 import { getActorProfile } from '@/features/actor-profiles/selectors';
 import Tooltip from '@/components/ui/Tooltip';
 

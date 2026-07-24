@@ -2,14 +2,13 @@
 
 import React from 'react';
 import some from 'lodash-es/some';
-import { useSnapshot } from 'valtio';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { cn, getKnowledgeCardGroupMetaColors } from '@/lib/design';
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { contributors, type Contributor } from '@/data/contributors';
-import { characters } from '@/data/store';
 import type { CardGroup } from '@/data/types';
 import {
   buildTreeStructure,
@@ -25,8 +24,15 @@ import Tag from '@/components/ui/Tag';
 import Tooltip from '@/components/ui/Tooltip';
 import { PencilSquareIcon, PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 
+import { usePublishedCharacter } from '../PublishedCharacterContext';
 import KnowledgeCardLinkDisplay from './KnowledgeCardLinkDisplay';
 import TreeCardDisplay from './TreeCardDisplay';
+
+function useCharacterSnapshot(characterId: string) {
+  const editRuntime = useActiveEditRuntime();
+  const publishedCharacter = usePublishedCharacter(characterId);
+  return useOptionalEditSnapshot(editRuntime?.stores.characters[characterId], publishedCharacter);
+}
 
 const e = editable('characters');
 
@@ -245,7 +251,7 @@ function KnowledgeCardGroupFlat({
   onConvertToGroupSet,
   isGeneral = false,
 }: KnowledgeCardGroupFlatProps) {
-  const charSnap = useSnapshot(characters[characterId]!);
+  const charSnap = useCharacterSnapshot(characterId);
   const canEdit = isEditMode && !isGeneral;
 
   if (cards.length === 0 && !canEdit) {
@@ -400,7 +406,7 @@ export function KnowledgeCardGroupDisplay({
   onConvertToGroupSet,
   isGeneral = false,
 }: KnowledgeCardGroupDisplayProps) {
-  const charSnap = useSnapshot(characters[characterId]!);
+  const charSnap = useCharacterSnapshot(characterId);
   const [isDarkMode] = useDarkMode();
   const shouldShowPriorityWarnings = useShouldShowPriorityWarnings();
   const normalizedGroup = group as unknown as readonly CardGroup[];

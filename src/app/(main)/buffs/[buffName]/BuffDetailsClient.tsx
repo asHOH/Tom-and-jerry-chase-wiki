@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic';
 
+import type { PublishedEntityHistoryEntry } from '@/context/PublishedEntityHistoryContext';
 import type { Buff } from '@/data/types';
 import EditModePageShell from '@/components/ui/EditModePageShell';
 import { PageLoadingState } from '@/components/ui/LoadingState';
@@ -14,10 +15,12 @@ export default function BuffDetailsClient({
   buff,
   buffName,
   publishedRevision,
+  publishedHistory,
 }: {
   buff: Buff;
   buffName: string;
   publishedRevision: `v1:${string}`;
+  publishedHistory: readonly PublishedEntityHistoryEntry[];
 }) {
   return (
     <EditModePageShell
@@ -25,6 +28,7 @@ export default function BuffDetailsClient({
       entityId={buffName}
       entityName={buffName}
       publishedRevision={publishedRevision}
+      publishedHistory={publishedHistory}
     >
       <BuffDetails buff={buff} />
     </EditModePageShell>

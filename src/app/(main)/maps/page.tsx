@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 
+import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
 import { generatePageMetadata } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
 
@@ -16,6 +17,13 @@ export const metadata: Metadata = generatePageMetadata({
   canonicalUrl: `${SITE_URL}/maps`,
 });
 
-export default function ItemsPage() {
-  return <MapClient description={DESCRIPTION} />;
+export default async function ItemsPage() {
+  const readModel = await getPublishedDomainReadModel('maps');
+  return (
+    <MapClient
+      description={DESCRIPTION}
+      data={readModel.data}
+      publishedRevision={readModel.revision}
+    />
+  );
 }

@@ -1,11 +1,13 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { useSnapshot } from 'valtio';
 
 import { getFactionButtonColors } from '@/lib/design';
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
+import { usePublishedRevision } from '@/hooks/usePublishedRevision';
 import { useDarkMode } from '@/context/DarkModeContext';
-import { specialSkillsEdit } from '@/data/store';
+import { specialSkills } from '@/data/static';
 import type { FactionId } from '@/data/types';
 import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
@@ -13,13 +15,23 @@ import EntityCardFrame from '@/components/ui/EntityCardFrame';
 import FilterRow from '@/components/ui/FilterRow';
 import GameImage from '@/components/ui/GameImage';
 
-type Props = { description?: string };
+type Props = {
+  description?: string;
+  data?: PublishedGameDataByType['specialSkills'];
+  publishedRevision?: `v1:${string}`;
+};
 
-export default function SpecialSkillClient({ description }: Props) {
+export default function SpecialSkillClient({
+  description,
+  data = specialSkills,
+  publishedRevision,
+}: Props) {
+  usePublishedRevision(publishedRevision);
   const [selectedFaction, setSelectedFaction] = useState<FactionId | null>(null);
   const [isDarkMode] = useDarkMode();
 
-  const specialSkillsSnapshot = useSnapshot(specialSkillsEdit);
+  const editRuntime = useActiveEditRuntime();
+  const specialSkillsSnapshot = useOptionalEditSnapshot(editRuntime?.stores.specialSkills, data);
   const allSkills = [
     ...Object.values(specialSkillsSnapshot.cat),
     ...Object.values(specialSkillsSnapshot.mouse),

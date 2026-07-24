@@ -1,9 +1,9 @@
 'use client';
 
 import { useMemo } from 'react';
-import { useSnapshot } from 'valtio';
 
 import { cn, getPositioningTagColors } from '@/lib/design';
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { CharacterDisplayProps } from '@/lib/types';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
@@ -13,7 +13,7 @@ import {
   isPositioningTagVisible,
   sortPositioningTags,
 } from '@/constants/positioningTagSequences';
-import { characters } from '@/data/store';
+import { characters } from '@/data/static';
 import type { FactionId } from '@/data/types';
 import { getWeaponSkillImageUrl } from '@/features/characters/utils/weapons';
 import EntityCardFrame from '@/components/ui/EntityCardFrame';
@@ -33,7 +33,8 @@ export default function CharacterDisplay({
   const [isDarkMode] = useDarkMode();
   const { isEditMode } = useEditMode();
   const isMobile = useMobile();
-  const charactersSnap = useSnapshot(characters);
+  const editRuntime = useActiveEditRuntime();
+  const charactersSnap = useOptionalEditSnapshot(editRuntime?.stores.characters, characters);
 
   const sortedPositioningTags = useMemo(() => {
     if (!positioningTags || positioningTags.length === 0) return [];

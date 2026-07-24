@@ -1,4 +1,4 @@
-import { characters } from '@/data/store';
+import { characters } from '@/data/static';
 
 import { preprocessText, resolveCharacterExpression, wrapAutoNamesInText } from './characterText';
 

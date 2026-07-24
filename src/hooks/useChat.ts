@@ -6,8 +6,15 @@ import { DefaultChatTransport, lastAssistantMessageIsCompleteWithToolCalls } fro
 import { snapshot } from 'valtio';
 
 import { historyData } from '@/data/history';
-import { buffs, cards, entities, itemGroups, items, specialSkills } from '@/data/static';
-import { characters } from '@/data/store';
+import {
+  buffs,
+  cards,
+  characters,
+  entities,
+  itemGroups,
+  items,
+  specialSkills,
+} from '@/data/static';
 import { actorProfileLookup } from '@/features/actor-profiles/serialization';
 import { env } from '@/env';
 

@@ -1,12 +1,12 @@
 'use client';
 
-import { useSnapshot } from 'valtio';
-
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { useLocalSpecialSkill } from '@/hooks/useLocalEditEntity';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
-import { characters, specialSkillsEdit } from '@/data/store';
+import { characters } from '@/data/static';
 import { SpecialSkill } from '@/data/types';
 import CharacterList from '@/features/knowledge-cards/components/knowledge-card-detail/CharacterList';
 import DetailOwnbuffsCard from '@/features/shared/detail-view/DetailOwnbuffsCard';
@@ -20,21 +20,26 @@ import SpecialSkillAttributesCard from './SpecialSkillAttributesCard';
 
 interface SpecialSkillDetailClientProps {
   skill: SpecialSkill;
+  charactersData?: PublishedGameDataByType['characters'];
 }
 
-export default function SpecialSkillDetailClient({ skill }: SpecialSkillDetailClientProps) {
+export default function SpecialSkillDetailClient({
+  skill,
+  charactersData = characters,
+}: SpecialSkillDetailClientProps) {
   const { isEditMode } = useEditMode();
   const { factionId, skillId } = useLocalSpecialSkill();
   const ed = editable('specialSkills');
+  const editRuntime = useActiveEditRuntime();
 
   const rawLocalSkill =
     factionId === 'cat'
-      ? specialSkillsEdit.cat[skillId]
+      ? editRuntime?.stores.specialSkills.cat[skillId]
       : factionId === 'mouse'
-        ? specialSkillsEdit.mouse[skillId]
+        ? editRuntime?.stores.specialSkills.mouse[skillId]
         : undefined;
-  const localSkillSnapshot = useSnapshot(rawLocalSkill ?? ({} as SpecialSkill));
-  const effectiveSkill = rawLocalSkill ? (localSkillSnapshot as SpecialSkill) : skill;
+  const localSkillSnapshot = useOptionalEditSnapshot(rawLocalSkill, skill);
+  const effectiveSkill = isEditMode && rawLocalSkill ? (localSkillSnapshot as SpecialSkill) : skill;
 
   // Keyboard navigation
   useSpecifyTypeKeyboardNavigation(
@@ -44,7 +49,7 @@ export default function SpecialSkillDetailClient({ skill }: SpecialSkillDetailCl
   );
 
   const { isDetailedView } = useAppContext();
-  const charactersSnap = useSnapshot(characters);
+  const charactersSnap = useOptionalEditSnapshot(editRuntime?.stores.characters, charactersData);
 
   if (!effectiveSkill) return null;
 

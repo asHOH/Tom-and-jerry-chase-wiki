@@ -1,12 +1,16 @@
 'use client';
 
-import { ReactNode, useCallback, useMemo } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo } from 'react';
 
 import type { PublishableEntityType } from '@/lib/gameData/publishableEntityTypes';
 import type { GameDataSubmitMode } from '@/lib/gameData/submitMode';
 import { usePageEditMode } from '@/hooks/usePageEditMode';
 import { useSearchParamEditMode } from '@/hooks/useSearchParamEditMode';
 import { EditModeContext, useEditMode } from '@/context/EditModeContext';
+import {
+  PublishedEntityHistoryProvider,
+  type PublishedEntityHistoryEntry,
+} from '@/context/PublishedEntityHistoryContext';
 import { useToast } from '@/context/ToastContext';
 
 import EditModeToolbar from './EditModeToolbar';
@@ -16,6 +20,7 @@ type EditModePageShellProps = {
   entityId: string;
   entityName: string;
   publishedRevision?: `v1:${string}`;
+  publishedHistory?: readonly PublishedEntityHistoryEntry[];
   children: ReactNode;
 };
 
@@ -24,6 +29,7 @@ export default function EditModePageShell({
   entityId,
   entityName,
   publishedRevision,
+  publishedHistory,
   children,
 }: EditModePageShellProps) {
   const { exitEditMode } = useSearchParamEditMode();
@@ -42,16 +48,21 @@ export default function EditModePageShell({
     entityId,
     showToast: info,
   });
-  const { isEditMode, isLoading, isPreviewMode, setIsPreviewMode } = useEditMode();
+  const editMode = useEditMode();
+  const { isEditMode, isPreviewMode, registerPublishedRevision } = editMode;
+
+  useEffect(() => {
+    if (!publishedRevision) return undefined;
+    return registerPublishedRevision(publishedRevision);
+  }, [publishedRevision, registerPublishedRevision]);
+
   const editModeContextValue = useMemo(
     () => ({
+      ...editMode,
       isEditMode: isEditMode && !isPreviewMode,
-      isLoading,
-      isPreviewMode,
-      setIsPreviewMode,
       ...(publishedRevision === undefined ? {} : { publishedRevision }),
     }),
-    [isEditMode, isLoading, isPreviewMode, publishedRevision, setIsPreviewMode]
+    [editMode, isEditMode, isPreviewMode, publishedRevision]
   );
 
   const handlePublish = useCallback(
@@ -66,7 +77,15 @@ export default function EditModePageShell({
 
   return (
     <>
-      <EditModeContext value={editModeContextValue}>{children}</EditModeContext>
+      <EditModeContext value={editModeContextValue}>
+        {publishedHistory ? (
+          <PublishedEntityHistoryProvider history={publishedHistory}>
+            {children}
+          </PublishedEntityHistoryProvider>
+        ) : (
+          children
+        )}
+      </EditModeContext>
       {isEditMode ? (
         <EditModeToolbar
           isDirty={isDirty}

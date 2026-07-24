@@ -9,7 +9,7 @@ import { cn } from '@/lib/design';
 import { isVercelAnalyticsEnabled } from '@/lib/platform';
 import { defaultMetadata } from '@/constants/seo';
 import { AnalyticsComponent } from '@/components/AnalyticsComponent';
-import { ClientProvidersWithInitialData } from '@/components/ClientProvidersWithInitialData';
+import { ClientProviders } from '@/components/ClientProviders';
 import { DisableLinkPrefetch } from '@/components/DisableLinkPrefetch';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { PerformanceMonitor } from '@/components/PerformanceMonitor';
@@ -128,7 +128,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 <Suspense fallback={null}>
                   <EditModeProvider>
                     <KeyboardNavigation />
-                    <ClientProvidersWithInitialData>{children}</ClientProvidersWithInitialData>
+                    <ClientProviders>{children}</ClientProviders>
                   </EditModeProvider>
                 </Suspense>
               </UserProvider>

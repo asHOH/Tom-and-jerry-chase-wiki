@@ -3,6 +3,7 @@ import {
   achievements,
   buffs,
   cards,
+  characters,
   entities,
   fixtures,
   items,
@@ -10,17 +11,6 @@ import {
   modes,
   specialSkills,
 } from '@/data/static';
-import {
-  achievementsEdit,
-  buffsEdit,
-  cardsEdit,
-  characters,
-  fixturesEdit,
-  itemsEdit,
-  mapsEdit,
-  modesEdit,
-  specialSkillsEdit,
-} from '@/data/store';
 
 import { cloneGameDataValue } from './cloneGameDataValue';
 
@@ -46,37 +36,22 @@ type BaselineTargetRegistry = Record<PublishableEntityType, readonly Record<stri
 const baselineTargets: BaselineTargetRegistry = {
   achievements: [
     achievements as unknown as Record<string, unknown>,
-    achievementsEdit as unknown as Record<string, unknown>,
+    achievements as unknown as Record<string, unknown>,
   ],
   characters: [characters as unknown as Record<string, unknown>],
-  cards: [
-    cards as unknown as Record<string, unknown>,
-    cardsEdit as unknown as Record<string, unknown>,
-  ],
+  cards: [cards as unknown as Record<string, unknown>, cards as unknown as Record<string, unknown>],
   entities: [entities as unknown as Record<string, unknown>],
-  buffs: [
-    buffs as unknown as Record<string, unknown>,
-    buffsEdit as unknown as Record<string, unknown>,
-  ],
-  items: [
-    items as unknown as Record<string, unknown>,
-    itemsEdit as unknown as Record<string, unknown>,
-  ],
+  buffs: [buffs as unknown as Record<string, unknown>, buffs as unknown as Record<string, unknown>],
+  items: [items as unknown as Record<string, unknown>, items as unknown as Record<string, unknown>],
   fixtures: [
     fixtures as unknown as Record<string, unknown>,
-    fixturesEdit as unknown as Record<string, unknown>,
+    fixtures as unknown as Record<string, unknown>,
   ],
-  maps: [
-    maps as unknown as Record<string, unknown>,
-    mapsEdit as unknown as Record<string, unknown>,
-  ],
-  modes: [
-    modes as unknown as Record<string, unknown>,
-    modesEdit as unknown as Record<string, unknown>,
-  ],
+  maps: [maps as unknown as Record<string, unknown>, maps as unknown as Record<string, unknown>],
+  modes: [modes as unknown as Record<string, unknown>, modes as unknown as Record<string, unknown>],
   specialSkills: [
     specialSkills as unknown as Record<string, unknown>,
-    specialSkillsEdit as unknown as Record<string, unknown>,
+    specialSkills as unknown as Record<string, unknown>,
   ],
 };
 

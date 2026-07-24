@@ -1,8 +1,8 @@
 'use client';
 
+import { useActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
 import { useLocalSpecialSkill } from '@/hooks/useLocalEditEntity';
 import { useEditMode } from '@/context/EditModeContext';
-import { specialSkillsEdit } from '@/data/store';
 import { SpecialSkill } from '@/data/types';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
 import AddAliasButton from '@/features/shared/detail-view/AddAliasButton';
@@ -19,13 +19,13 @@ export default function SpecialSkillAttributesCard({ skill }: SpecialSkillDetail
   const { isEditMode } = useEditMode();
   const { factionId, skillId } = useLocalSpecialSkill();
   const ed = editable('specialSkills');
-  if (!skill) return null;
+  const editRuntime = useActiveEditRuntime();
 
   const rawSkill =
     factionId === 'cat'
-      ? specialSkillsEdit.cat[skillId]
+      ? editRuntime?.stores.specialSkills.cat[skillId]
       : factionId === 'mouse'
-        ? specialSkillsEdit.mouse[skillId]
+        ? editRuntime?.stores.specialSkills.mouse[skillId]
         : undefined;
 
   return (

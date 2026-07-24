@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic';
 
+import type { PublishedEntityHistoryEntry } from '@/context/PublishedEntityHistoryContext';
 import type { Achievement, FactionId } from '@/data/types';
 import EditModePageShell from '@/components/ui/EditModePageShell';
 import { PageLoadingState } from '@/components/ui/LoadingState';
@@ -18,11 +19,13 @@ export default function AchievementDetailsClient({
   factionId,
   achievementName,
   publishedRevision,
+  publishedHistory,
 }: {
   achievement: Achievement;
   factionId: FactionId;
   achievementName: string;
   publishedRevision: `v1:${string}`;
+  publishedHistory: readonly PublishedEntityHistoryEntry[];
 }) {
   const entityId = `${factionId}.${achievementName}`;
 
@@ -32,6 +35,7 @@ export default function AchievementDetailsClient({
       entityId={entityId}
       entityName={achievementName}
       publishedRevision={publishedRevision}
+      publishedHistory={publishedHistory}
     >
       <AchievementDetails achievement={achievement} />
     </EditModePageShell>

@@ -1,14 +1,13 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { useSnapshot } from 'valtio';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { cn, getFactionButtonColors } from '@/lib/design';
 import { useFilterState } from '@/lib/filterUtils';
 import type { CharacterWithFaction } from '@/lib/types';
 import { useDarkMode } from '@/context/DarkModeContext';
-import { characters } from '@/data/store';
+import { characters } from '@/data/static';
 import type { FactionId } from '@/data/types';
 import { CharacterTable, winRatesData } from '@/data/winRates';
 import FilterRow from '@/components/ui/FilterRow';
@@ -165,7 +164,7 @@ function getRanksFromSeason(seasonIndex: number): string[] {
 
 export default function WinRatesClient({ description }: WinRatesClientProps) {
   const [isDarkMode] = useDarkMode();
-  const charactersSnap = useSnapshot(characters);
+  const charactersSnap = characters;
 
   const seasons = useMemo(() => getSeasons(), []);
 

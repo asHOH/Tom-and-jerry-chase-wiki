@@ -1,4 +1,5 @@
-import { characters } from '@/data/store';
+import type { ActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
+import { clearTestEditRuntime, installTestEditRuntime } from '@/testUtils/editRuntime';
 
 import {
   addCharacterRelationItem,
@@ -12,27 +13,17 @@ import {
   upsertCharacterRelationItem,
 } from './characterRelationOverlay';
 
-const cloneCharacters = () => structuredClone(characters);
-
-const restoreCharacters = (snapshot: Record<string, unknown>) => {
-  Object.keys(characters).forEach((key) => {
-    delete (characters as Record<string, unknown>)[key];
-  });
-
-  Object.entries(snapshot).forEach(([key, value]) => {
-    (characters as Record<string, unknown>)[key] = structuredClone(value);
-  });
-};
+let runtime: ActiveEditRuntime;
+let characters: ActiveEditRuntime['stores']['characters'];
 
 describe('characterRelationOverlay', () => {
-  let snapshot: Record<string, unknown>;
-
   beforeEach(() => {
-    snapshot = cloneCharacters() as Record<string, unknown>;
+    runtime = installTestEditRuntime();
+    characters = runtime.stores.characters;
   });
 
   afterEach(() => {
-    restoreCharacters(snapshot);
+    clearTestEditRuntime(runtime);
   });
 
   it('should expose relation description paths relative to the current character overlay', () => {

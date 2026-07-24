@@ -1,6 +1,8 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
+import { getApprovedActionSnapshot } from '@/lib/gameData/published/getApprovedActionSnapshot';
+import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
 import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
 import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
@@ -63,7 +65,11 @@ export default async function ModeDetailPage({
   params: Promise<{ modeName: string }>;
 }) {
   const modeName = decodeURIComponent((await params).modeName);
-  const readModel = await getPublishedEntityRouteReadModel('modes', modeName);
+  const snapshot = await getApprovedActionSnapshot();
+  const [readModel, maps] = await Promise.all([
+    getPublishedEntityRouteReadModel('modes', modeName, undefined, snapshot),
+    getPublishedDomainReadModel('maps', snapshot),
+  ]);
   const mode = readModel.data;
 
   if (!mode) {
@@ -73,7 +79,13 @@ export default async function ModeDetailPage({
   return (
     <>
       <StructuredData data={generateStructuredData(modeName, mode)} />
-      <ModeDetailClient mode={mode} modeName={modeName} publishedRevision={readModel.revision} />
+      <ModeDetailClient
+        mode={mode}
+        modeName={modeName}
+        publishedRevision={readModel.revision}
+        publishedHistory={readModel.history}
+        mapsData={maps.data}
+      />
     </>
   );
 }

@@ -1,12 +1,14 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { useSnapshot } from 'valtio';
 
 import { getMapLevelColors, getMapSizeColors, getMapTypeColors } from '@/lib/design';
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
+import { usePublishedRevision } from '@/hooks/usePublishedRevision';
 import { useDarkMode } from '@/context/DarkModeContext';
-import { mapsEdit } from '@/data/store';
+import { maps } from '@/data/static';
 import { type Map, type MapSize, type mapTypes, type studyLevel } from '@/data/types';
 import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
@@ -25,15 +27,21 @@ const MAP_LEVEL_OPTIONS: (studyLevel | '其它')[] = [
   '其它',
 ];
 
-type Props = { description?: string };
+type Props = {
+  description?: string;
+  data?: PublishedGameDataByType['maps'];
+  publishedRevision?: `v1:${string}`;
+};
 
-export default function MapClient({ description }: Props) {
+export default function MapClient({ description, data = maps, publishedRevision }: Props) {
+  usePublishedRevision(publishedRevision);
   const [selectedTypes, setSelectedTypes] = useState<mapTypes[]>([]);
   const [selectedSizes, setSelectedSizes] = useState<MapSize[]>([]);
   const [selectedLevels, setSelectedLevels] = useState<(studyLevel | '其它')[]>([]);
   const [isDarkMode] = useDarkMode();
 
-  const mapsSnapshot = useSnapshot(mapsEdit);
+  const editRuntime = useActiveEditRuntime();
+  const mapsSnapshot = useOptionalEditSnapshot(editRuntime?.stores.maps, data);
   const filteredMaps = Object.values(mapsSnapshot as Record<string, Map>).filter((map: Map) => {
     const typeMatch = selectedTypes.length === 0 || selectedTypes.includes(map.type);
     const sizeMatch = selectedSizes.length === 0 || (map.size && selectedSizes.includes(map.size));

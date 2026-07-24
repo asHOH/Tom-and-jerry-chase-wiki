@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
+import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
 import { generatePageMetadata } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
 import { FactionId } from '@/data/types';
@@ -64,9 +65,15 @@ export default async function PropertyRankPage({ params, searchParams }: PagePro
     notFound();
   }
 
+  const readModel = await getPublishedDomainReadModel('characters');
+
   return (
     <div className='mx-auto max-w-7xl space-y-6 p-6'>
-      <CharacterRankingGrid initialProperty={property} />
+      <CharacterRankingGrid
+        initialProperty={property}
+        data={readModel.data}
+        publishedRevision={readModel.revision}
+      />
     </div>
   );
 }

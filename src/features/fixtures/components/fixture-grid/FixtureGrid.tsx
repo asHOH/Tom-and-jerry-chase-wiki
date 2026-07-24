@@ -1,13 +1,15 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { useSnapshot } from 'valtio';
 
 import { getFixtureSourceColors, getFixtureTypeColors } from '@/lib/design';
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
+import { usePublishedRevision } from '@/hooks/usePublishedRevision';
 import { useDarkMode } from '@/context/DarkModeContext';
-import { fixturesEdit } from '@/data/store';
+import { fixtures } from '@/data/static';
 import type { Fixture, FixtureSourceList, FixtureTypeList } from '@/data/types';
 import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
@@ -16,7 +18,11 @@ import Tooltip from '@/components/ui/Tooltip';
 
 import FixtureCardDisplay from './FixtureCardDisplay';
 
-type Props = { description?: string };
+type Props = {
+  description?: string;
+  data?: PublishedGameDataByType['fixtures'];
+  publishedRevision?: `v1:${string}`;
+};
 
 const FIXTURE_TYPE_OPTIONS: FixtureTypeList[] = [
   '平台类',
@@ -30,13 +36,15 @@ const FIXTURE_TYPE_OPTIONS: FixtureTypeList[] = [
 
 const FIXTURE_SOURCE_OPTIONS: FixtureSourceList[] = ['通用组件', '地图组件', '模式组件'];
 
-export default function FixtureClient({ description }: Props) {
+export default function FixtureClient({ description, data = fixtures, publishedRevision }: Props) {
+  usePublishedRevision(publishedRevision);
   const [selectedTypes, setSelectedTypes] = useState<FixtureTypeList[]>([]);
   const [selectedSources, setSelectedSources] = useState<FixtureSourceList[]>([]);
   const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
 
-  const fixturesSnapshot = useSnapshot(fixturesEdit);
+  const editRuntime = useActiveEditRuntime();
+  const fixturesSnapshot = useOptionalEditSnapshot(editRuntime?.stores.fixtures, data);
   const filteredFixtures = Object.values(fixturesSnapshot as Record<string, Fixture>).filter(
     (fixture: Fixture) => {
       let typeMatch = true;

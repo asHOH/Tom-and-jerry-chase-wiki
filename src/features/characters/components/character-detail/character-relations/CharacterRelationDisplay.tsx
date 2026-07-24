@@ -1,13 +1,13 @@
 'use client';
 
 import React from 'react';
-import { useSnapshot } from 'valtio';
 
 import { AssetManager } from '@/lib/assetManager';
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { useNavigation } from '@/hooks/useNavigation';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
-import { characters, mapsEdit, modesEdit, specialSkillsEdit } from '@/data/store';
+import { maps, modes, specialSkills } from '@/data/static';
 import type { CharacterRelationItem, FactionId, TraitRelationKind } from '@/data/types';
 import {
   getCharacterRelationDescriptionPath,
@@ -20,6 +20,7 @@ import {
 import { CharacterSelector } from '@/components/ui/CharacterSelector';
 
 import KnowledgeCardSelector from '../knowledge-cards/KnowledgeCardSelector';
+import { usePublishedCharacter } from '../PublishedCharacterContext';
 import SpecialSkillSelector from '../skills/SpecialSkillSelector';
 import {
   AdvantageIcon,
@@ -58,15 +59,23 @@ type Props = {
 const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
   'use no memo';
   const { isEditMode } = useEditMode();
-  const mapsSnapshot = useSnapshot(mapsEdit);
-  const modesSnapshot = useSnapshot(modesEdit);
-  const specialSkillsSnapshot = useSnapshot(specialSkillsEdit);
+  const editRuntime = useActiveEditRuntime();
+  const mapsSnapshot = useOptionalEditSnapshot(editRuntime?.stores.maps, maps);
+  const modesSnapshot = useOptionalEditSnapshot(editRuntime?.stores.modes, modes);
+  const specialSkillsSnapshot = useOptionalEditSnapshot(
+    editRuntime?.stores.specialSkills,
+    specialSkills
+  );
+  const publishedCharacter = usePublishedCharacter(id);
   const getImageUrl = React.useCallback(
     (targetId: string) =>
       AssetManager.getCharacterImageUrl(targetId, factionId === 'cat' ? 'mouse' : 'cat'),
     [factionId]
   );
-  const characterSnapshot = useSnapshot(characters[id]!);
+  const characterSnapshot = useOptionalEditSnapshot(
+    editRuntime?.stores.characters[id],
+    publishedCharacter
+  );
   const char = getEditableCharacterRelations(
     id,
     characterSnapshot as Partial<Record<TraitRelationKind, CharacterRelationItem[]>>

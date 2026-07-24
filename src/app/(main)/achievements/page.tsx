@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 
+import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
 import { generatePageMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 
 import AchievementGridClient from './AchievementGridClient';
@@ -12,10 +13,12 @@ export const metadata: Metadata = generatePageMetadata({
   canonicalUrl: getCanonicalUrl('/achievements'),
 });
 
-export default function AchievementsPage() {
+export default async function AchievementsPage() {
+  const readModel = await getPublishedDomainReadModel('achievements');
+
   return (
     <div className='mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8'>
-      <AchievementGridClient />
+      <AchievementGridClient data={readModel.data} publishedRevision={readModel.revision} />
     </div>
   );
 }

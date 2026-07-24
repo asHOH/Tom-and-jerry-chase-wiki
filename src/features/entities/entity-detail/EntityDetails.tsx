@@ -1,14 +1,13 @@
 'use client';
 
 import React from 'react';
-import { useSnapshot } from 'valtio';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { useLocalEntity } from '@/hooks/useLocalEditEntity';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
-import { entitiesEdit } from '@/data/store';
 import { Entity, Skill } from '@/data/types';
 import DetailOwnbuffsCard from '@/features/shared/detail-view/DetailOwnbuffsCard';
 import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
@@ -25,9 +24,10 @@ export default function EntityDetailClient({ entity }: { entity: Entity }) {
   const { entityName } = useLocalEntity();
   const ed = editable('entities');
 
-  const rawLocalEntity = entitiesEdit[entityName];
-  const localEntitySnapshot = useSnapshot(rawLocalEntity ?? ({} as Entity));
-  const effectiveEntity = rawLocalEntity ? (localEntitySnapshot as Entity) : entity;
+  const editRuntime = useActiveEditRuntime();
+  const rawLocalEntity = editRuntime?.stores.entities[entityName];
+  const localEntitySnapshot = useOptionalEditSnapshot(rawLocalEntity, entity);
+  const effectiveEntity = isEditMode && rawLocalEntity ? (localEntitySnapshot as Entity) : entity;
 
   // Keyboard navigation
   useSpecifyTypeKeyboardNavigation(effectiveEntity.name, 'entity');

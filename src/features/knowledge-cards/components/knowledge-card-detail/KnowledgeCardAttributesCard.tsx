@@ -1,11 +1,11 @@
 'use client';
 
 import { getCardCostColors, getCardRankColors } from '@/lib/design';
+import { useActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
 import { KnowledgeCardDetailsProps } from '@/lib/types';
 import { useLocalCard } from '@/hooks/useLocalEditEntity';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
-import { cardsEdit } from '@/data/store';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
 import AddAliasButton from '@/features/shared/detail-view/AddAliasButton';
 import AttributesCardLayout from '@/features/shared/detail-view/AttributesCardLayout';
@@ -20,7 +20,8 @@ export default function KnowledgeCardAttributesCard({ card }: KnowledgeCardDetai
   const { cardId } = useLocalCard();
   const ed = editable('cards');
 
-  const rawCard = cardId ? cardsEdit[cardId] : undefined;
+  const editRuntime = useActiveEditRuntime();
+  const rawCard = cardId ? editRuntime?.stores.cards[cardId] : undefined;
 
   const rankColors = getCardRankColors(card.rank, true, isDarkMode);
   const costColors = getCardCostColors(card.cost, true, isDarkMode);

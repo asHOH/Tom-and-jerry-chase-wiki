@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { subscribe } from 'valtio';
 
 import { usePermissions } from '@/lib/auth/PermissionProvider';
+import { useActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
 import { splitCharacterRelationActionHistory } from '@/lib/edit/characterRelationActions';
 import {
   applyActionEntry,
@@ -29,7 +30,6 @@ import {
 } from '@/lib/gameData/submitMode';
 import { useToast } from '@/context/ToastContext';
 import type { Json } from '@/data/database.types';
-import { characters } from '@/data/store';
 
 type RelationMatrixEditModeResult = {
   isDirty: boolean;
@@ -60,7 +60,10 @@ const writeRemainingCharacterActions = (remaining: ReturnType<typeof readActionH
   writeActionHistory(RELATION_ACTIONS_STORAGE_KEY, remaining);
 };
 
-const resolveCharacterLabel = ({ entityId }: { entityId: string }) => {
+const resolveCharacterLabel = (
+  characters: Record<string, unknown>,
+  { entityId }: { entityId: string }
+) => {
   const character = characters[entityId] as { name?: string; id?: string } | undefined;
   return character?.name ?? character?.id ?? entityId;
 };
@@ -68,16 +71,19 @@ const resolveCharacterLabel = ({ entityId }: { entityId: string }) => {
 export const useRelationMatrixEditMode = (): RelationMatrixEditModeResult => {
   const permissions = usePermissions();
   const { info, success, error } = useToast();
+  const editRuntime = useActiveEditRuntime();
+  const characters = editRuntime?.stores.characters;
   const [isPublishing, setIsPublishing] = useState(false);
   const [actionCountTrigger, setActionCountTrigger] = useState(0);
 
   useEffect(() => {
+    if (!characters) return;
     const unsubscribe = subscribe(characters, () => {
       setActionCountTrigger((current) => current + 1);
     });
 
     return unsubscribe;
-  }, []);
+  }, [characters]);
 
   const getRelationActions = useCallback(() => {
     const history = readActionHistory(RELATION_ACTIONS_STORAGE_KEY);
@@ -85,15 +91,16 @@ export const useRelationMatrixEditMode = (): RelationMatrixEditModeResult => {
   }, []);
 
   const getActionCount = useCallback((): number => {
+    if (!characters) return 0;
     const { matching } = getRelationActions();
     return squashActions(matching, { currentRoot: characters }).length;
-  }, [getRelationActions]);
+  }, [characters, getRelationActions]);
 
   const getPublishDraft = useCallback(() => {
     const { matching, remaining } = getRelationActions();
-    const squashed = squashActions(matching, { currentRoot: characters });
+    const squashed = characters ? squashActions(matching, { currentRoot: characters }) : [];
     return { remaining, squashed };
-  }, [getRelationActions]);
+  }, [characters, getRelationActions]);
 
   const squashedRelationActions = useMemo(() => {
     void actionCountTrigger;
@@ -105,9 +112,11 @@ export const useRelationMatrixEditMode = (): RelationMatrixEditModeResult => {
   const draftsSummary = useMemo(
     () =>
       sortDraftSummaryItems(
-        buildDraftSummaryItemsForType('characters', squashedRelationActions, resolveCharacterLabel)
+        buildDraftSummaryItemsForType('characters', squashedRelationActions, (item) =>
+          resolveCharacterLabel(characters ?? {}, item)
+        )
       ),
-    [squashedRelationActions]
+    [characters, squashedRelationActions]
   );
   const advancedSubmit = useMemo(
     () =>
@@ -120,6 +129,7 @@ export const useRelationMatrixEditMode = (): RelationMatrixEditModeResult => {
   );
 
   const discardChanges = useCallback(() => {
+    if (!characters) return;
     const { matching, remaining } = getRelationActions();
 
     if (matching.length > 0) {
@@ -133,7 +143,7 @@ export const useRelationMatrixEditMode = (): RelationMatrixEditModeResult => {
     writeRemainingCharacterActions(remaining);
     setActionCountTrigger((current) => current + 1);
     info('已放弃关系修改');
-  }, [getRelationActions, info]);
+  }, [characters, getRelationActions, info]);
 
   const publishChanges = useCallback(
     async (
@@ -142,6 +152,10 @@ export const useRelationMatrixEditMode = (): RelationMatrixEditModeResult => {
         submitMode?: GameDataSubmitMode;
       }
     ): Promise<boolean> => {
+      if (!characters) {
+        error('编辑数据尚未就绪');
+        return false;
+      }
       const { remaining, squashed } = getPublishDraft();
 
       if (squashed.length === 0) {
@@ -191,7 +205,7 @@ export const useRelationMatrixEditMode = (): RelationMatrixEditModeResult => {
         setIsPublishing(false);
       }
     },
-    [error, getPublishDraft, info, success]
+    [characters, error, getPublishDraft, info, success]
   );
 
   return {

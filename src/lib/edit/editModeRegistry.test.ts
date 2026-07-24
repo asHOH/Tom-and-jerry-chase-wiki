@@ -1,67 +1,63 @@
 import { waitFor } from '@testing-library/react';
 
+import { createEditStores, type EditStores } from '@/lib/edit/editStores';
 import { PUBLISHABLE_ENTITY_TYPES } from '@/lib/gameData/publishableEntityTypes';
-import { items } from '@/data/static';
-import { characters, itemsEdit } from '@/data/store';
+import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
+import {
+  achievements,
+  buffs,
+  cards,
+  characters,
+  entities,
+  fixtures,
+  items,
+  maps,
+  modes,
+  specialSkills,
+} from '@/data/static';
 
 import { getActionsStorageKey, readActionHistory } from './diffUtils';
-import {
-  clearAllEditModeData,
-  getEntityRegistry,
-  loadEntitiesFromStorage,
-  setupEntitySubscribers,
-  teardownSubscribers,
-} from './editModeRegistry';
+import { createEditModeRegistry, type EditModeRegistry } from './editModeRegistry';
 
 const TEST_CHARACTER_ID = '__edit_mode_registry_character__';
+const baseline = {
+  achievements,
+  characters,
+  cards,
+  entities,
+  buffs,
+  items,
+  fixtures,
+  maps,
+  modes,
+  specialSkills,
+} as PublishedGameDataByType;
 
 describe('editModeRegistry', () => {
-  let characterSnapshot: Record<string, unknown>;
-  let itemSnapshot: Record<string, unknown>;
+  let stores: EditStores;
+  let registry: EditModeRegistry;
 
   beforeEach(() => {
-    characterSnapshot = structuredClone(characters) as Record<string, unknown>;
-    itemSnapshot = structuredClone(itemsEdit) as Record<string, unknown>;
+    stores = createEditStores(baseline);
+    registry = createEditModeRegistry(stores, baseline);
     window.localStorage.clear();
-    teardownSubscribers();
   });
 
   afterEach(() => {
-    teardownSubscribers();
-    Object.keys(characters).forEach((key) => {
-      delete (characters as Record<string, unknown>)[key];
-    });
-    Object.entries(characterSnapshot).forEach(([key, value]) => {
-      (characters as Record<string, unknown>)[key] = value;
-    });
-    Object.keys(itemsEdit).forEach((key) => {
-      delete (itemsEdit as Record<string, unknown>)[key];
-    });
-    Object.entries(itemSnapshot).forEach(([key, value]) => {
-      (itemsEdit as Record<string, unknown>)[key] = value;
-    });
+    registry.teardownSubscribers();
     window.localStorage.clear();
     jest.restoreAllMocks();
   });
 
-  it('should expose all publishable entity registries', () => {
-    const registry = getEntityRegistry();
-
-    expect([...registry.keys()].sort()).toEqual([...PUBLISHABLE_ENTITY_TYPES].sort());
-    expect(registry.get('characters')).toBe(characters);
-    expect(registry.get('items')).toBe(itemsEdit);
+  it('exposes all publishable entity registries from one store set', () => {
+    expect([...registry.entityRegistry.keys()].sort()).toEqual(
+      [...PUBLISHABLE_ENTITY_TYPES].sort()
+    );
+    expect(registry.entityRegistry.get('characters')).toBe(stores.characters);
+    expect(registry.entityRegistry.get('items')).toBe(stores.items);
   });
 
-  it('should return a read-only snapshot of the registry', () => {
-    const registry = getEntityRegistry();
-    const mutableRegistry = registry as Map<string, Record<string, unknown>>;
-
-    mutableRegistry.set('items', {});
-
-    expect(getEntityRegistry().get('items')).toBe(itemsEdit);
-  });
-
-  it('should load stored draft actions into registered entity stores', () => {
+  it('loads stored draft actions before subscribers start', () => {
     window.localStorage.setItem(
       getActionsStorageKey('characters'),
       JSON.stringify([
@@ -74,17 +70,19 @@ describe('editModeRegistry', () => {
       ])
     );
 
-    loadEntitiesFromStorage();
+    registry.loadDrafts();
 
-    expect((characters as Record<string, { description?: string }>)[TEST_CHARACTER_ID]).toEqual({
+    expect(
+      (stores.characters as Record<string, { description?: string }>)[TEST_CHARACTER_ID]
+    ).toEqual({
       description: 'registry restored draft',
     });
   });
 
-  it('should record registered entity mutations while subscribers are set up', async () => {
-    setupEntitySubscribers();
+  it('records registered entity mutations after subscribers start', async () => {
+    registry.setupSubscribers();
 
-    (characters as Record<string, { description: string }>)[TEST_CHARACTER_ID] = {
+    (stores.characters as Record<string, { description: string }>)[TEST_CHARACTER_ID] = {
       description: 'registry recorded draft',
     };
 
@@ -99,46 +97,29 @@ describe('editModeRegistry', () => {
     });
   });
 
-  it('should clear draft storage and restore editable stores to canonical data', () => {
+  it('clears draft storage and restores the fixed published baseline', () => {
     const itemId = Object.keys(items)[0]!;
     window.localStorage.setItem('items', 'legacy draft');
     window.localStorage.setItem(getActionsStorageKey('items'), '[]');
-    (itemsEdit as Record<string, unknown>)[itemId] = {
+    (stores.items as Record<string, unknown>)[itemId] = {
       name: 'mutated item',
     };
 
-    clearAllEditModeData();
+    registry.clearAllData();
 
     expect(window.localStorage.getItem('items')).toBeNull();
     expect(window.localStorage.getItem(getActionsStorageKey('items'))).toBeNull();
-    expect((itemsEdit as Record<string, { name?: string }>)[itemId]?.name).toBe(
+    expect((stores.items as Record<string, { name?: string }>)[itemId]?.name).toBe(
       (items as Record<string, { name?: string }>)[itemId]?.name
     );
   });
 
-  it('should not record restore mutations when clearing all edit mode data', () => {
-    setupEntitySubscribers();
+  it('does not record restore mutations when clearing all edit mode data', () => {
+    registry.setupSubscribers();
 
-    clearAllEditModeData();
+    registry.clearAllData();
 
     expect(readActionHistory(getActionsStorageKey('items'))).toEqual([]);
     expect(readActionHistory(getActionsStorageKey('characters'))).toEqual([]);
-  });
-
-  it('should restore the entity store from the canonical entities record', () => {
-    const entityId = Object.keys(getEntityRegistry().get('entities') ?? {})[0]!;
-    const entityStore = getEntityRegistry().get('entities') as Record<string, { name?: string }>;
-    const originalName = entityStore[entityId]?.name;
-
-    entityStore[entityId] = {
-      ...entityStore[entityId],
-      name: 'mutated entity',
-    };
-
-    clearAllEditModeData();
-
-    expect(
-      (getEntityRegistry().get('entities') as Record<string, { name?: string }>)[entityId]?.name
-    ).toBe(originalName);
   });
 });

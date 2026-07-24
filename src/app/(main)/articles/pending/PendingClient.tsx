@@ -2,12 +2,11 @@
 
 import { useMemo, useState } from 'react';
 import useSWR from 'swr';
-import { useSnapshot } from 'valtio';
 
 import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { formatArticleDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
-import { characters } from '@/data/store';
+import { characters } from '@/data/static';
 import Button from '@/components/ui/Button';
 import ButtonLink from '@/components/ui/ButtonLink';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
@@ -74,7 +73,7 @@ export default function PendingClient() {
   const permissions = usePermissions();
   const [processingVersions, setProcessingVersions] = useState<Set<string>>(new Set());
   const [filter, setFilter] = useState<'all' | 'pending' | 'rejected'>('all');
-  const charactersSnap = useSnapshot(characters);
+  const charactersSnap = characters;
 
   const canModerate = permissions.has('article_version.approve');
 

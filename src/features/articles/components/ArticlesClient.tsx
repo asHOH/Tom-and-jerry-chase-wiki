@@ -4,7 +4,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { m, useReducedMotion } from 'motion/react';
 import { Masonry } from 'react-plock';
-import { useSnapshot } from 'valtio';
 
 import { AssetManager } from '@/lib/assetManager';
 import { usePermissions } from '@/lib/auth/PermissionProvider';
@@ -16,7 +15,7 @@ import { useMobile } from '@/hooks/useMediaQuery';
 import { useSwipeGesture } from '@/hooks/useSwipeGesture';
 import { useEditMode } from '@/context/EditModeContext';
 import { useToast } from '@/context/ToastContext';
-import { characters } from '@/data/store';
+import { characters } from '@/data/static';
 import { Article, ArticlesData, Category } from '@/data/types';
 import Button from '@/components/ui/Button';
 import ButtonLink from '@/components/ui/ButtonLink';
@@ -46,7 +45,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
   const { info } = useToast();
   const articlesGridRef = useRef<HTMLDivElement>(null);
   const shouldReduceMotion = useReducedMotion();
-  const charactersSnap = useSnapshot(characters);
+  const charactersSnap = characters;
 
   // Use centralized filter state management
   const {

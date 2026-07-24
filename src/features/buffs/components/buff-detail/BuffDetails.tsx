@@ -1,12 +1,10 @@
 'use client';
 
-import { useSnapshot } from 'valtio';
-
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { useLocalBuff } from '@/hooks/useLocalEditEntity';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
-import { buffsEdit } from '@/data/store';
 import { Buff, SingleItem, SingleItemTypeChineseNameList } from '@/data/types';
 import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
 import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';
@@ -23,8 +21,9 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
   const { buffName } = useLocalBuff();
   const ed = editable('buffs');
 
-  const rawLocalBuff = buffsEdit[buffName];
-  const localBuffSnapshot = useSnapshot(rawLocalBuff ?? ({} as Buff));
+  const editRuntime = useActiveEditRuntime();
+  const rawLocalBuff = editRuntime?.stores.buffs[buffName];
+  const localBuffSnapshot = useOptionalEditSnapshot(rawLocalBuff, buff);
   const effectiveBuff = isEditMode && rawLocalBuff ? (localBuffSnapshot as Buff) : buff;
 
   // Keyboard navigation

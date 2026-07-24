@@ -1,5 +1,5 @@
 import { autoWrapNames } from '@/data/autoWrapNames';
-import { characters } from '@/data/store';
+import { characters } from '@/data/static';
 import type { ActorProfile } from '@/features/actor-profiles/schema';
 import { getActorJumpHeight, getActorProfile } from '@/features/actor-profiles/selectors';
 

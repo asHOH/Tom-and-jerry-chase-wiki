@@ -1,14 +1,12 @@
 'use client';
 
-import { useSnapshot } from 'valtio';
-
 import { getItemSourceColors /* , getCardCostColors */, getItemTypeColors } from '@/lib/design';
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { getSingleItemPrototype, getSingleItemVariant } from '@/lib/singleItemTools';
 import { useLocalItem } from '@/hooks/useLocalEditEntity';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
-import { itemsEdit } from '@/data/store';
 import { Item } from '@/data/types';
 import ActorAttributesSection from '@/features/actor-profiles/components/ActorAttributesSection';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
@@ -28,11 +26,11 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
   const { isEditMode } = useEditMode();
   const { itemName } = useLocalItem();
   const ed = editable('items');
-  const itemsSnapshot = useSnapshot(itemsEdit);
-  if (!item) return null;
 
-  const rawItem = itemsEdit[itemName];
-  const effectiveItem = itemsSnapshot[itemName] ?? item;
+  const editRuntime = useActiveEditRuntime();
+  const rawItem = editRuntime?.stores.items[itemName];
+  const itemSnapshot = useOptionalEditSnapshot(rawItem, item);
+  const effectiveItem = isEditMode && rawItem ? (itemSnapshot as Item) : item;
 
   /* 计算variant相关内容 */
   const prototype = getSingleItemPrototype({ name: item.name, type: 'item' });

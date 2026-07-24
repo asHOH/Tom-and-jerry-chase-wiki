@@ -8,8 +8,8 @@ import { proxy, snapshot } from 'valtio';
 
 import { AssetManager } from '@/lib/assetManager';
 import { GameDataManager } from '@/lib/dataManager';
+import { requireActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
 import { CharacterWithFaction } from '@/lib/types';
-import { characters } from '@/data/store';
 import type { FactionId, Skill } from '@/data/types';
 
 /**
@@ -34,6 +34,7 @@ export function handleCharacterIdChange(
 ): void {
   const normalizedOldId = oldId.trim();
   const normalizedNewId = newId.trim();
+  const characters = requireActiveEditRuntime().stores.characters;
 
   if (!normalizedOldId) {
     console.error('Invalid character ID for character rename:', oldId);

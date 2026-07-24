@@ -1,13 +1,15 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { useSnapshot } from 'valtio';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { designTokens, getFactionButtonColors } from '@/lib/design';
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { CharacterWithFaction } from '@/lib/types';
+import { usePublishedRevision } from '@/hooks/usePublishedRevision';
 import { useDarkMode } from '@/context/DarkModeContext';
-import { characters, specialSkillsEdit } from '@/data/store';
+import { characters, specialSkills } from '@/data/static';
 import type { FactionId, SpecialSkill } from '@/data/types';
 import { getSpecialSkillRelationSummary } from '@/features/characters/utils/relationReadModel';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
@@ -83,12 +85,27 @@ function userQuantity(
   );
 }
 
-export default function SpecialSkillAdviceClient() {
+type SpecialSkillAdviceProps = {
+  charactersData?: PublishedGameDataByType['characters'];
+  specialSkillsData?: PublishedGameDataByType['specialSkills'];
+  publishedRevision?: `v1:${string}`;
+};
+
+export default function SpecialSkillAdviceClient({
+  charactersData = characters,
+  specialSkillsData = specialSkills,
+  publishedRevision,
+}: SpecialSkillAdviceProps) {
+  usePublishedRevision(publishedRevision);
   const [selectedFaction, setSelectedFaction] = useState<FactionId | null>(null);
   const [isDarkMode] = useDarkMode();
 
-  const specialSkillsSnapshot = useSnapshot(specialSkillsEdit);
-  const charactersSnap = useSnapshot(characters);
+  const editRuntime = useActiveEditRuntime();
+  const specialSkillsSnapshot = useOptionalEditSnapshot(
+    editRuntime?.stores.specialSkills,
+    specialSkillsData
+  );
+  const charactersSnap = useOptionalEditSnapshot(editRuntime?.stores.characters, charactersData);
   const allSkills = useMemo(
     () => [
       ...Object.values(specialSkillsSnapshot.cat).sort(

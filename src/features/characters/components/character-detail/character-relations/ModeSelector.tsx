@@ -1,9 +1,9 @@
 'use client';
 
 import React from 'react';
-import { useSnapshot } from 'valtio';
 
-import { modesEdit } from '@/data/store';
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { modes } from '@/data/static';
 import type { CharacterRelationItem } from '@/data/types';
 
 import RelationItemSelector from './RelationItemSelector';
@@ -15,7 +15,8 @@ type Props = {
 };
 
 const ModeSelector: React.FC<Props> = ({ selected, onSelect, disabled }) => {
-  const modesSnapshot = useSnapshot(modesEdit);
+  const editRuntime = useActiveEditRuntime();
+  const modesSnapshot = useOptionalEditSnapshot(editRuntime?.stores.modes, modes);
   const selectedIds = new Set(selected.map(({ id }) => id));
   const options = Object.values(modesSnapshot)
     .filter(({ name }) => !selectedIds.has(name))

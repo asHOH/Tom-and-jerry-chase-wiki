@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic';
 
+import type { PublishedEntityHistoryEntry } from '@/context/PublishedEntityHistoryContext';
 import type { Fixture } from '@/data/types';
 import EditModePageShell from '@/components/ui/EditModePageShell';
 import { PageLoadingState } from '@/components/ui/LoadingState';
@@ -17,10 +18,12 @@ export default function FixtureDetailsClient({
   fixture,
   fixtureName,
   publishedRevision,
+  publishedHistory,
 }: {
   fixture: Fixture;
   fixtureName: string;
   publishedRevision: `v1:${string}`;
+  publishedHistory: readonly PublishedEntityHistoryEntry[];
 }) {
   return (
     <EditModePageShell
@@ -28,6 +31,7 @@ export default function FixtureDetailsClient({
       entityId={fixtureName}
       entityName={fixtureName}
       publishedRevision={publishedRevision}
+      publishedHistory={publishedHistory}
     >
       <FixtureDetails fixture={fixture} />
     </EditModePageShell>

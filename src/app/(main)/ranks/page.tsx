@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 
+import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
 import { generatePageMetadata } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
 import { CharacterRankingGrid } from '@/features/characters/components';
@@ -19,10 +20,17 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-export default function RanksPage() {
+export default async function RanksPage() {
+  const readModel = await getPublishedDomainReadModel('characters');
+
   return (
     <div className='mx-auto max-w-7xl space-y-6 p-6'>
-      <CharacterRankingGrid description={DESCRIPTION} initialProperty={DEFAULT_PROPERTY} />
+      <CharacterRankingGrid
+        description={DESCRIPTION}
+        initialProperty={DEFAULT_PROPERTY}
+        data={readModel.data}
+        publishedRevision={readModel.revision}
+      />
     </div>
   );
 }

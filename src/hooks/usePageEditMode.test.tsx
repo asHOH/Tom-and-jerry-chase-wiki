@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
+import type { ActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
 import { getActionsStorageKey, readActionHistory } from '@/lib/edit/diffUtils';
 import { EditModeContext } from '@/context/EditModeContext';
-import { characters } from '@/data/store';
+import { clearTestEditRuntime, installTestEditRuntime } from '@/testUtils/editRuntime';
 
 import { usePageEditMode } from './usePageEditMode';
 
@@ -34,6 +35,8 @@ const marySpecialSkillsOriginal = [
   { name: '干扰投掷', description: '提高干扰能力和技能命中率。' },
 ];
 const marySpecialSkillsFinal = [{ name: '魔术漂浮', description: '通用特技。' }];
+let runtime: ActiveEditRuntime;
+let characters: ActiveEditRuntime['stores']['characters'];
 
 function PageEditModeProbe() {
   const [refreshCount, setRefreshCount] = useState(0);
@@ -96,10 +99,9 @@ function renderInEditMode() {
 }
 
 describe('usePageEditMode', () => {
-  let characterSnapshot: Record<string, unknown>;
-
   beforeEach(() => {
-    characterSnapshot = structuredClone(characters) as Record<string, unknown>;
+    runtime = installTestEditRuntime();
+    characters = runtime.stores.characters;
     mockPermissionProfile = 'contributor';
     mockShowToast.mockClear();
     window.localStorage.clear();
@@ -108,12 +110,7 @@ describe('usePageEditMode', () => {
 
   afterEach(() => {
     cleanup();
-    Object.keys(characters).forEach((key) => {
-      delete (characters as Record<string, unknown>)[key];
-    });
-    Object.entries(characterSnapshot).forEach(([key, value]) => {
-      (characters as Record<string, unknown>)[key] = value;
-    });
+    clearTestEditRuntime(runtime);
     window.localStorage.clear();
     jest.restoreAllMocks();
   });

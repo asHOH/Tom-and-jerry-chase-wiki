@@ -77,6 +77,7 @@ export default async function EntityDetailPage({
         entity={entity}
         entityName={entityName}
         publishedRevision={readModel.revision}
+        publishedHistory={readModel.history}
       />
     </>
   );

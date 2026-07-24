@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { cn } from '@/lib/design';
-import { characters } from '@/data/store';
+import { requireActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
 import type { Skill } from '@/data/types';
 import { editable } from '@/components/ui/editable';
 import Image from '@/components/Image';
@@ -60,7 +60,8 @@ export default function SkillCardMedia({
               path={`skills.${skillIndex}.videoUrl`}
               initialValue={skill.videoUrl ?? '输入视频网址'}
               onSave={(newValue) => {
-                const skill = characters[characterId]!.skills[skillIndex]!;
+                const skill =
+                  requireActiveEditRuntime().stores.characters[characterId]!.skills[skillIndex]!;
                 if (newValue.trim() === '输入视频网址' || newValue.trim() === '') {
                   delete skill.videoUrl;
                 } else {

@@ -1,6 +1,8 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
+import { getApprovedActionSnapshot } from '@/lib/gameData/published/getApprovedActionSnapshot';
+import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
 import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
 import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
@@ -59,7 +61,12 @@ export async function generateMetadata({
 
 export default async function MapDetailPage({ params }: { params: Promise<{ mapName: string }> }) {
   const mapName = decodeURIComponent((await params).mapName);
-  const readModel = await getPublishedEntityRouteReadModel('maps', mapName);
+  const snapshot = await getApprovedActionSnapshot();
+  const [readModel, fixtures, modes] = await Promise.all([
+    getPublishedEntityRouteReadModel('maps', mapName, undefined, snapshot),
+    getPublishedDomainReadModel('fixtures', snapshot),
+    getPublishedDomainReadModel('modes', snapshot),
+  ]);
   const map = readModel.data;
 
   if (!map) {
@@ -69,7 +76,14 @@ export default async function MapDetailPage({ params }: { params: Promise<{ mapN
   return (
     <>
       <StructuredData data={generateStructuredData(mapName, map)} />
-      <MapDetailClient map={map} mapName={mapName} publishedRevision={readModel.revision} />
+      <MapDetailClient
+        map={map}
+        mapName={mapName}
+        publishedRevision={readModel.revision}
+        publishedHistory={readModel.history}
+        fixturesData={fixtures.data}
+        modesData={modes.data}
+      />
     </>
   );
 }

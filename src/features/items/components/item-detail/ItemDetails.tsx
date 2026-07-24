@@ -1,12 +1,10 @@
 'use client';
 
-import { useSnapshot } from 'valtio';
-
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { useLocalItem } from '@/hooks/useLocalEditEntity';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
-import { itemsEdit } from '@/data/store';
 import { Item } from '@/data/types';
 import DetailOwnbuffsCard from '@/features/shared/detail-view/DetailOwnbuffsCard';
 import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
@@ -22,8 +20,9 @@ export default function ItemDetailClient({ item }: { item: Item }) {
   const { itemName } = useLocalItem();
   const ed = editable('items');
 
-  const rawLocalItem = itemsEdit[itemName];
-  const localItemSnapshot = useSnapshot(rawLocalItem ?? ({} as Item));
+  const editRuntime = useActiveEditRuntime();
+  const rawLocalItem = editRuntime?.stores.items[itemName];
+  const localItemSnapshot = useOptionalEditSnapshot(rawLocalItem, item);
   const effectiveItem = isEditMode && rawLocalItem ? (localItemSnapshot as Item) : item;
 
   // Keyboard navigation

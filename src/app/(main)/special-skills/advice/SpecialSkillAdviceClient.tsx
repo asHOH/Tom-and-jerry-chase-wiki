@@ -2,10 +2,17 @@
 
 import dynamic from 'next/dynamic';
 
+import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { LOADING_COUNTS } from '@/constants/loadingCounts';
 import { CatalogPageLoadingState } from '@/components/ui/LoadingState';
 
-const SpecialSkillAdviceClient = dynamic(
+type Props = {
+  charactersData: PublishedGameDataByType['characters'];
+  specialSkillsData: PublishedGameDataByType['specialSkills'];
+  publishedRevision: `v1:${string}`;
+};
+
+const SpecialSkillAdviceClient = dynamic<Props>(
   () => import('@/features/special-skills/components/special-skill-advice/SpecialSkillAdvice'),
   {
     loading: () => (

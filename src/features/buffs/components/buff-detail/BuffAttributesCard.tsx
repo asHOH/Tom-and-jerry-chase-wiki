@@ -1,12 +1,11 @@
 'use client';
 
-import { useSnapshot } from 'valtio';
-
 import { getBuffTypeColors } from '@/lib/design';
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { useLocalBuff } from '@/hooks/useLocalEditEntity';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
-import { buffsEdit } from '@/data/store';
+import { buffs } from '@/data/static';
 import { Buff, SingleItem } from '@/data/types';
 import AddAliasButton from '@/features/shared/detail-view/AddAliasButton';
 import AttributesCardLayout from '@/features/shared/detail-view/AttributesCardLayout';
@@ -26,11 +25,11 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
   const { buffName } = useLocalBuff();
   const ed = editable('buffs');
 
-  const buffsSnapshot = useSnapshot(buffsEdit);
-  if (!buff) return null;
-
-  const rawBuff = buffsEdit[buffName];
-  const effectiveBuff = buffsSnapshot[buffName] ?? buff;
+  const editRuntime = useActiveEditRuntime();
+  const rawBuff = editRuntime?.stores.buffs[buffName];
+  const buffSnapshot = useOptionalEditSnapshot(rawBuff, buff);
+  const buffsSnapshot = useOptionalEditSnapshot(editRuntime?.stores.buffs, buffs);
+  const effectiveBuff = isEditMode && rawBuff ? (buffSnapshot as Buff) : buff;
 
   const availableAliases = (effectiveBuff.aliases ?? buff.aliases ?? [])
     .filter((i) => i && i[0] !== '#')

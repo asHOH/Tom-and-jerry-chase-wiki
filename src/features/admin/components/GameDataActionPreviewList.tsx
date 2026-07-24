@@ -1,6 +1,6 @@
 import { Fragment } from 'react';
 
-import { characters } from '@/data/store';
+import { characters } from '@/data/static';
 import type { TraitRelationKind } from '@/data/types';
 import {
   diffGameActionIdArray,

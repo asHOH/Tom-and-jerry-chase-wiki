@@ -10,13 +10,15 @@ import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { usePageEditMode } from '@/hooks/usePageEditMode';
 import { useSearchParamEditMode } from '@/hooks/useSearchParamEditMode';
 import { EditModeContext, useEditMode } from '@/context/EditModeContext';
+import { PublishedEntityHistoryProvider } from '@/context/PublishedEntityHistoryContext';
 import { useToast } from '@/context/ToastContext';
 import { CharacterDetails } from '@/features/characters/components/character-detail';
 import EditModeToolbar from '@/components/ui/EditModeToolbar';
 import OnboardingTutorial from '@/components/OnboardingTutorial';
 
 export default function CharacterDetailsClient(props: CharacterDetailsProps) {
-  const { isEditMode, isLoading, isPreviewMode, setIsPreviewMode } = useEditMode();
+  const editMode = useEditMode();
+  const { isEditMode, isPreviewMode, registerPublishedRevision } = editMode;
   const { characterId } = useLocalCharacter();
   const { exitEditMode } = useSearchParamEditMode();
   const { info } = useToast();
@@ -42,6 +44,11 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
 
   // Keyboard navigation
   useKeyboardNavigation(currentCharacterId, isEditMode);
+
+  useEffect(() => {
+    if (!props.publishedRevision) return undefined;
+    return registerPublishedRevision(props.publishedRevision);
+  }, [props.publishedRevision, registerPublishedRevision]);
 
   useEffect(() => {
     if (!isEditMode) {
@@ -71,32 +78,46 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
   );
   const editModeContextValue = useMemo(
     () => ({
+      ...editMode,
       isEditMode: isEditMode && !isPreviewMode,
-      isLoading,
-      isPreviewMode,
-      setIsPreviewMode,
       ...(props.publishedRevision === undefined
         ? {}
         : { publishedRevision: props.publishedRevision }),
     }),
-    [isEditMode, isLoading, isPreviewMode, props.publishedRevision, setIsPreviewMode]
+    [editMode, isEditMode, isPreviewMode, props.publishedRevision]
   );
 
   return (
     <>
       <div className='min-h-screen'>
         <EditModeContext value={editModeContextValue}>
-          <CharacterDetails
-            character={props.character}
-            {...(props.contentWriters === undefined
-              ? {}
-              : { contentWriters: props.contentWriters })}
-            {...(props.contentEditors === undefined
-              ? {}
-              : { contentEditors: props.contentEditors })}
-          >
-            {props.children}
-          </CharacterDetails>
+          {props.publishedHistory ? (
+            <PublishedEntityHistoryProvider history={props.publishedHistory}>
+              <CharacterDetails
+                character={props.character}
+                {...(props.contentWriters === undefined
+                  ? {}
+                  : { contentWriters: props.contentWriters })}
+                {...(props.contentEditors === undefined
+                  ? {}
+                  : { contentEditors: props.contentEditors })}
+              >
+                {props.children}
+              </CharacterDetails>
+            </PublishedEntityHistoryProvider>
+          ) : (
+            <CharacterDetails
+              character={props.character}
+              {...(props.contentWriters === undefined
+                ? {}
+                : { contentWriters: props.contentWriters })}
+              {...(props.contentEditors === undefined
+                ? {}
+                : { contentEditors: props.contentEditors })}
+            >
+              {props.children}
+            </CharacterDetails>
+          )}
         </EditModeContext>
       </div>
 

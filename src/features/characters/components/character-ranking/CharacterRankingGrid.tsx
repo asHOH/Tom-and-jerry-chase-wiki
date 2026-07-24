@@ -2,11 +2,13 @@
 
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { useSnapshot } from 'valtio';
 
 import { getCardRankColors } from '@/lib/design';
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
+import { usePublishedRevision } from '@/hooks/usePublishedRevision';
 import { useDarkMode } from '@/context/DarkModeContext';
-import { characters } from '@/data/store';
+import { characters } from '@/data/static';
 import { FactionId } from '@/data/types';
 import {
   getCharactersWithProperty,
@@ -24,19 +26,25 @@ import PropertySelector from './PropertySelector';
 interface CharacterRankingGridProps {
   initialProperty?: RankableProperty;
   description?: string;
+  data?: PublishedGameDataByType['characters'];
+  publishedRevision?: `v1:${string}`;
 }
 
 export default function CharacterRankingGrid({
   initialProperty,
   description,
+  data = characters,
+  publishedRevision,
 }: CharacterRankingGridProps) {
+  usePublishedRevision(publishedRevision);
   const [selectedProperty, setSelectedProperty] = useState<RankableProperty | undefined>(
     initialProperty
   );
 
   const factionId = (useSearchParams().get('faction') ?? undefined) as FactionId | undefined;
   const [isDarkMode] = useDarkMode();
-  const charactersSnap = useSnapshot(characters);
+  const editRuntime = useActiveEditRuntime();
+  const charactersSnap = useOptionalEditSnapshot(editRuntime?.stores.characters, data);
 
   // Helpers to create softer backgrounds from token colors
   const hexToRgba = (hex: string, alpha: number) => {

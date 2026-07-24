@@ -1,12 +1,12 @@
 'use client';
 
-import { useSnapshot } from 'valtio';
-
 import { getMapLevelColors, getMapSizeColors, getMapTypeColors } from '@/lib/design';
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { useLocalMap } from '@/hooks/useLocalEditEntity';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
-import { mapsEdit, modesEdit } from '@/data/store';
+import { modes } from '@/data/static';
 import { Map, SingleItem } from '@/data/types';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
 import AddAliasButton from '@/features/shared/detail-view/AddAliasButton';
@@ -19,18 +19,23 @@ import Tag from '@/components/ui/Tag';
 import Tooltip from '@/components/ui/Tooltip';
 import Image from '@/components/Image';
 
-export default function MapAttributesCard({ map }: { map: Map }) {
+export default function MapAttributesCard({
+  map,
+  modesData = modes,
+}: {
+  map: Map;
+  modesData?: PublishedGameDataByType['modes'];
+}) {
   const [isDarkMode] = useDarkMode();
   const { isEditMode } = useEditMode();
   const { mapName } = useLocalMap();
   const ed = editable('maps');
 
-  const mapsSnapshot = useSnapshot(mapsEdit);
-  const modesSnapshot = useSnapshot(modesEdit);
-  if (!map) return null;
-
-  const rawMap = mapsEdit[mapName];
-  const effectiveMap = mapsSnapshot[mapName] ?? map;
+  const editRuntime = useActiveEditRuntime();
+  const rawMap = editRuntime?.stores.maps[mapName];
+  const mapSnapshot = useOptionalEditSnapshot(rawMap, map);
+  const modesSnapshot = useOptionalEditSnapshot(editRuntime?.stores.modes, modesData);
+  const effectiveMap = isEditMode && rawMap ? (mapSnapshot as Map) : map;
   const availableModeOptions = Object.keys(modesSnapshot);
   const activeSupportedModes = Array.isArray(effectiveMap?.supportedModes)
     ? effectiveMap.supportedModes

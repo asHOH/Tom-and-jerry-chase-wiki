@@ -1,9 +1,9 @@
 'use client';
 
 import React from 'react';
-import { useSnapshot } from 'valtio';
 
-import { mapsEdit } from '@/data/store';
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { maps } from '@/data/static';
 import type { CharacterRelationItem } from '@/data/types';
 
 import RelationItemSelector from './RelationItemSelector';
@@ -15,7 +15,8 @@ type Props = {
 };
 
 const MapSelector: React.FC<Props> = ({ selected, onSelect, disabled }) => {
-  const mapsSnapshot = useSnapshot(mapsEdit);
+  const editRuntime = useActiveEditRuntime();
+  const mapsSnapshot = useOptionalEditSnapshot(editRuntime?.stores.maps, maps);
   const selectedIds = new Set(selected.map(({ id }) => id));
   const options = Object.values(mapsSnapshot)
     .filter(({ name }) => !selectedIds.has(name))

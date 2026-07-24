@@ -1,12 +1,10 @@
 'use client';
 
-import { useSnapshot } from 'valtio';
-
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { useLocalFixture } from '@/hooks/useLocalEditEntity';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
-import { fixturesEdit } from '@/data/store';
 import { Fixture, SingleItem } from '@/data/types';
 import DetailOwnbuffsCard from '@/features/shared/detail-view/DetailOwnbuffsCard';
 import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
@@ -25,9 +23,11 @@ export default function FixtureDetailClient({ fixture }: { fixture: Fixture }) {
   const { fixtureName } = useLocalFixture();
   const ed = editable('fixtures');
 
-  const rawLocalFixture = fixturesEdit[fixtureName];
-  const localFixtureSnapshot = useSnapshot(rawLocalFixture ?? ({} as Fixture));
-  const effectiveFixture = rawLocalFixture ? (localFixtureSnapshot as Fixture) : fixture;
+  const editRuntime = useActiveEditRuntime();
+  const rawLocalFixture = editRuntime?.stores.fixtures[fixtureName];
+  const localFixtureSnapshot = useOptionalEditSnapshot(rawLocalFixture, fixture);
+  const effectiveFixture =
+    isEditMode && rawLocalFixture ? (localFixtureSnapshot as Fixture) : fixture;
 
   // Keyboard navigation
   useSpecifyTypeKeyboardNavigation(effectiveFixture.name, 'fixture');

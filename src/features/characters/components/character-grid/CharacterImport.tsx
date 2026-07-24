@@ -8,11 +8,11 @@ import { proxy } from 'valtio';
 import { AssetManager } from '@/lib/assetManager';
 import { GameDataManager } from '@/lib/dataManager';
 import { componentTokens, designTokens } from '@/lib/design';
+import { requireActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
 import { CharacterWithFaction } from '@/lib/types';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { useToast } from '@/context/ToastContext';
-import { characters } from '@/data/store';
 import type { FactionId } from '@/data/types';
 import { processCharacters } from '@/features/characters/utils/skillId';
 import Button from '@/components/ui/Button';
@@ -52,6 +52,7 @@ function handleUploadedData(
   }
 
   newCharacters = processCharacters(newCharacters) as Record<string, CharacterWithFaction>;
+  const characters = requireActiveEditRuntime().stores.characters;
 
   // Update the global characters object
   for (const [id, value] of Object.entries(newCharacters)) {

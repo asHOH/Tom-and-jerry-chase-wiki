@@ -112,6 +112,19 @@ jest.mock('@/context/ToastContext', () => ({
   }),
 }));
 
+jest.mock('@/context/EditModeContext', () => ({
+  useEditMode: () => ({
+    isEditMode: mockIsEditMode,
+    isEditModeRequested: mockIsEditMode,
+    isLoading: false,
+    runtimeStatus: mockIsEditMode ? 'ready' : 'idle',
+    isPreviewMode: false,
+    setIsPreviewMode: jest.fn(),
+    registerPublishedRevision: jest.fn(() => () => undefined),
+    retryEditRuntime: jest.fn(),
+  }),
+}));
+
 jest.mock('@/hooks/useUser', () => ({
   useUser: () => ({
     nickname: null,

@@ -2,12 +2,17 @@ import { readdirSync, readFileSync, statSync } from 'fs';
 import { join, relative } from 'path';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
-import { cardsEdit, characters, itemsEdit } from '@/data/store';
+import type { ActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
+import { clearTestEditRuntime, installTestEditRuntime } from '@/testUtils/editRuntime';
 
 import { editable } from './editable';
 
 let mockIsEditMode = false;
 const mockHandleSelectCharacter = jest.fn();
+let runtime: ActiveEditRuntime;
+let cardsEdit: ActiveEditRuntime['stores']['cards'];
+let characters: ActiveEditRuntime['stores']['characters'];
+let itemsEdit: ActiveEditRuntime['stores']['items'];
 
 jest.mock('@/context/AppContext', () => ({
   useAppContext: () => ({ handleSelectCharacter: mockHandleSelectCharacter }),
@@ -81,9 +86,17 @@ function editAndBlur(element: HTMLElement, text: string) {
 
 describe('editable', () => {
   beforeEach(() => {
+    runtime = installTestEditRuntime();
+    cardsEdit = runtime.stores.cards;
+    characters = runtime.stores.characters;
+    itemsEdit = runtime.stores.items;
     mockIsEditMode = false;
     mockHandleSelectCharacter.mockClear();
     seedEditableStoreFixtures();
+  });
+
+  afterEach(() => {
+    clearTestEditRuntime(runtime);
   });
 
   it('returns stable scoped proxies and tag components', () => {

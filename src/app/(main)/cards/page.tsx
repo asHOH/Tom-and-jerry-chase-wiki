@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 
+import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
 import { generatePageMetadata } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
 
@@ -16,6 +17,13 @@ export const metadata: Metadata = generatePageMetadata({
   canonicalUrl: `${SITE_URL}/cards`,
 });
 
-export default function CardsPage() {
-  return <KnowledgeCardClient description={DESCRIPTION} />;
+export default async function CardsPage() {
+  const readModel = await getPublishedDomainReadModel('cards');
+  return (
+    <KnowledgeCardClient
+      description={DESCRIPTION}
+      data={readModel.data}
+      publishedRevision={readModel.revision}
+    />
+  );
 }

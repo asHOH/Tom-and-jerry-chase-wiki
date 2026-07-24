@@ -1,10 +1,9 @@
 'use client';
 
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { useSnapshot } from 'valtio';
 
 import { useDarkMode } from '@/context/DarkModeContext';
-import { characters } from '@/data/store';
+import { characters } from '@/data/static';
 import GameLayout from '@/features/games/components/GameLayout';
 
 import QuestionCard from './components/QuestionCard';
@@ -20,7 +19,7 @@ type GamePhase = 'select' | 'quiz' | 'result';
 type Props = { description?: string };
 
 export default function PlaystyleQuizClient({ description }: Props) {
-  const charsSnap = useSnapshot(characters);
+  const charsSnap = characters;
   const [isDarkMode] = useDarkMode();
 
   const [phase, setPhase] = useState<GamePhase>('select');

@@ -1,10 +1,28 @@
 import { useSearchParams } from 'next/navigation';
 import { render, screen, waitFor } from '@testing-library/react';
 
+import type { EditRuntimeStatus } from '@/lib/edit/editRuntimeStatus';
+
 import { EditModeProvider, useEditMode } from './EditModeContext';
 
 jest.mock('next/navigation', () => ({
+  usePathname: () => '/',
   useSearchParams: jest.fn(),
+}));
+
+jest.mock('@/components/EditRuntime', () => ({
+  __esModule: true,
+  default: function MockEditRuntime({
+    onStatusChange,
+  }: {
+    onStatusChange: (status: EditRuntimeStatus) => void;
+  }) {
+    const { useEffect } = jest.requireActual<typeof import('react')>('react');
+    useEffect(() => {
+      onStatusChange('ready');
+    }, [onStatusChange]);
+    return null;
+  },
 }));
 
 const mockUseSearchParams = useSearchParams as jest.MockedFunction<typeof useSearchParams>;

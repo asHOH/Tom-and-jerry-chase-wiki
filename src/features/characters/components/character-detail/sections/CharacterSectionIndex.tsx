@@ -1,13 +1,14 @@
 import { useMemo, useState } from 'react';
-import { useSnapshot } from 'valtio';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { cn } from '@/lib/design';
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useScrollSpy } from '@/hooks/useScrollSpy';
-import { characters } from '@/data/store';
 import type { Skill } from '@/data/types';
 import { ChevronDownIcon } from '@/components/icons/CommonIcons';
+
+import { usePublishedCharacter } from '../PublishedCharacterContext';
 
 function CharacterSectionIndexItem({
   name,
@@ -38,7 +39,12 @@ function CharacterSectionIndexItem({
 
 export default function CharacterSectionIndex() {
   const { characterId } = useLocalCharacter();
-  const character = useSnapshot(characters[characterId]!);
+  const editRuntime = useActiveEditRuntime();
+  const publishedCharacter = usePublishedCharacter(characterId);
+  const character = useOptionalEditSnapshot(
+    editRuntime?.stores.characters[characterId],
+    publishedCharacter
+  );
   const [skillsOpen, setSkillsOpen] = useState(false);
 
   // Generate all section IDs for scroll spy

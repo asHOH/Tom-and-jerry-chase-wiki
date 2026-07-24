@@ -2,10 +2,9 @@
 
 import { useRef } from 'react';
 import dynamic from 'next/dynamic';
-import { useSnapshot } from 'valtio';
 
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { useEditMode } from '@/context/EditModeContext';
-import { mapsEdit } from '@/data/store';
 import type { InteractiveMapConfig, Map as MapType } from '@/data/types';
 import EditButton from '@/components/ui/EditButton';
 import EditModePageShell from '@/components/ui/EditModePageShell';
@@ -24,8 +23,9 @@ type InteractiveMapPageProps = {
 function InteractiveMapPageContent({ map, mapName }: InteractiveMapPageProps) {
   const { isEditMode } = useEditMode();
   const orientationContainerRef = useRef<HTMLDivElement>(null);
-  const rawLocalMap = mapsEdit[mapName];
-  const localMapSnapshot = useSnapshot(rawLocalMap ?? ({} as MapType));
+  const editRuntime = useActiveEditRuntime();
+  const rawLocalMap = editRuntime?.stores.maps[mapName];
+  const localMapSnapshot = useOptionalEditSnapshot(rawLocalMap, map);
   const effectiveMap = isEditMode && rawLocalMap ? (localMapSnapshot as MapType) : map;
   const interactiveMap = effectiveMap.interactiveMap;
 

@@ -2,11 +2,13 @@
 
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
-import { useSnapshot } from 'valtio';
 
 import { getBuffTypeColors } from '@/lib/design';
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
+import { usePublishedRevision } from '@/hooks/usePublishedRevision';
 import { useDarkMode } from '@/context/DarkModeContext';
-import { buffsEdit } from '@/data/store';
+import { buffs } from '@/data/static';
 import type { Buff } from '@/data/types';
 import { CatalogGridItem } from '@/components/ui/CatalogGrid';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
@@ -16,15 +18,21 @@ import BuffCardDisplay from './BuffCardDisplay';
 
 const TYPE_OPTIONS = ['状态', '瞬时效果', '持续效果', '属性'] as const;
 
-type Props = { description?: string };
+type Props = {
+  description?: string;
+  data?: PublishedGameDataByType['buffs'];
+  publishedRevision?: `v1:${string}`;
+};
 
-export default function BuffClient({ description }: Props) {
+export default function BuffClient({ description, data = buffs, publishedRevision }: Props) {
+  usePublishedRevision(publishedRevision);
   const [selectedTypes, setSelectedTypes] = useState<('状态' | '瞬时效果' | '持续效果' | '属性')[]>(
     []
   );
   const [isDarkMode] = useDarkMode();
 
-  const buffsSnapshot = useSnapshot(buffsEdit);
+  const editRuntime = useActiveEditRuntime();
+  const buffsSnapshot = useOptionalEditSnapshot(editRuntime?.stores.buffs, data);
   const allBuffs = Object.values(buffsSnapshot as Record<string, Buff>);
   const filteredAll = allBuffs.filter((buff) => {
     if (selectedTypes.length === 0) return true;

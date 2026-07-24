@@ -1,3 +1,5 @@
+import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
+
 import UserCharacterPageClient from './UserCharacterPageClient';
 
 export const dynamic = 'force-dynamic';
@@ -12,6 +14,7 @@ export async function generateStaticParams() {
 /**
  * This is the main page component, responsible for setting up the context providers.
  */
-export default function UserCharacterPage() {
-  return <UserCharacterPageClient />;
+export default async function UserCharacterPage() {
+  const readModel = await getPublishedDomainReadModel('characters');
+  return <UserCharacterPageClient publishedRevision={readModel.revision} />;
 }

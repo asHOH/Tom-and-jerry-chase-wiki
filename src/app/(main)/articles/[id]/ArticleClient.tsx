@@ -3,14 +3,13 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { createPortal } from 'react-dom';
-import { useSnapshot } from 'valtio';
 
 import { AssetManager } from '@/lib/assetManager';
 import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { formatArticleDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
 import { toChineseNumeral } from '@/lib/textUtils';
-import { characters } from '@/data/store';
+import { characters } from '@/data/static';
 import Button from '@/components/ui/Button';
 import ButtonLink from '@/components/ui/ButtonLink';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
@@ -179,7 +178,7 @@ export default function ArticleClient({
   const params = useParams();
   const permissions = usePermissions();
   const articleId = params?.id as string;
-  const charactersSnap = useSnapshot(characters);
+  const charactersSnap = characters;
   const contentRef = useRef<HTMLDivElement | null>(null);
   const [tocItems, setTocItems] = useState<TocItem[]>([]);
   const [activeHeadingId, setActiveHeadingId] = useState<string>('');

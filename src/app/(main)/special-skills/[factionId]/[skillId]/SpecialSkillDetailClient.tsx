@@ -2,6 +2,8 @@
 
 import dynamic from 'next/dynamic';
 
+import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
+import type { PublishedEntityHistoryEntry } from '@/context/PublishedEntityHistoryContext';
 import type { FactionId, SpecialSkill } from '@/data/types';
 import EditModePageShell from '@/components/ui/EditModePageShell';
 import { PageLoadingState } from '@/components/ui/LoadingState';
@@ -18,11 +20,15 @@ export default function SpecialSkillDetailClient({
   factionId,
   skillId,
   publishedRevision,
+  publishedHistory,
+  charactersData,
 }: {
   skill: SpecialSkill;
   factionId: FactionId;
   skillId: string;
   publishedRevision: `v1:${string}`;
+  publishedHistory: readonly PublishedEntityHistoryEntry[];
+  charactersData: PublishedGameDataByType['characters'];
 }) {
   const entityId = `${factionId}.${skillId}`;
 
@@ -32,8 +38,9 @@ export default function SpecialSkillDetailClient({
       entityId={entityId}
       entityName={skillId}
       publishedRevision={publishedRevision}
+      publishedHistory={publishedHistory}
     >
-      <SpecialSkillDetails skill={skill} />
+      <SpecialSkillDetails skill={skill} charactersData={charactersData} />
     </EditModePageShell>
   );
 }

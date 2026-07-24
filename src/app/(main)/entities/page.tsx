@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 
+import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
 import { generatePageMetadata } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
 
@@ -16,6 +17,13 @@ export const metadata: Metadata = generatePageMetadata({
   canonicalUrl: `${SITE_URL}/entities`,
 });
 
-export default function EntitysPage() {
-  return <EntityClient description={DESCRIPTION} />;
+export default async function EntitysPage() {
+  const readModel = await getPublishedDomainReadModel('entities');
+  return (
+    <EntityClient
+      description={DESCRIPTION}
+      data={readModel.data}
+      publishedRevision={readModel.revision}
+    />
+  );
 }

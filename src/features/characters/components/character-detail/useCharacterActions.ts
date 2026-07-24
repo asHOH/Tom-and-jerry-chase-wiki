@@ -1,15 +1,22 @@
-import { useSnapshot } from 'valtio';
-
 import { AssetManager } from '@/lib/assetManager';
+import {
+  requireActiveEditRuntime,
+  useActiveEditRuntime,
+  useOptionalEditSnapshot,
+} from '@/lib/edit/activeEditRuntime';
 import { generateTypescriptCodeFromCharacter } from '@/lib/editUtils';
 import type { CharacterWithFaction } from '@/lib/types';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
-import { characters } from '@/data/store';
 import type { Skill } from '@/data/types';
+
+import { usePublishedCharacter } from './PublishedCharacterContext';
 
 export function useCharacterActions() {
   const { characterId } = useLocalCharacter();
-  const localCharacter = useSnapshot(characters[characterId]!);
+  const editRuntime = useActiveEditRuntime();
+  const rawCharacter = editRuntime?.stores.characters[characterId];
+  const publishedCharacter = usePublishedCharacter(characterId);
+  const localCharacter = useOptionalEditSnapshot(rawCharacter, publishedCharacter);
   const factionId = localCharacter.factionId!;
 
   function addSecondWeapon() {
@@ -24,7 +31,7 @@ export function useCharacterActions() {
       const index = character.skills.findIndex(({ type }) => type == 'weapon1');
       character.skills.splice(index + 1, 0, secondWeapon as unknown as Skill);
     }
-    modifySkillObject(characters[localCharacter.id]!);
+    modifySkillObject(requireActiveEditRuntime().stores.characters[localCharacter.id]!);
   }
 
   async function exportCharacter() {

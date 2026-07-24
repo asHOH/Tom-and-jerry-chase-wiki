@@ -1,5 +1,7 @@
 import { Metadata } from 'next';
 
+import { getApprovedActionSnapshot } from '@/lib/gameData/published/getApprovedActionSnapshot';
+import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
 import { generatePageMetadata } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
 
@@ -14,6 +16,18 @@ export const metadata: Metadata = generatePageMetadata({
   canonicalUrl: `${SITE_URL}/special-skills/advice`,
 });
 
-export default function SpecialSkillsPage() {
-  return <SpecialSkillAdviceClient />;
+export default async function SpecialSkillsPage() {
+  const snapshot = await getApprovedActionSnapshot();
+  const [characters, specialSkills] = await Promise.all([
+    getPublishedDomainReadModel('characters', snapshot),
+    getPublishedDomainReadModel('specialSkills', snapshot),
+  ]);
+
+  return (
+    <SpecialSkillAdviceClient
+      charactersData={characters.data}
+      specialSkillsData={specialSkills.data}
+      publishedRevision={characters.revision}
+    />
+  );
 }

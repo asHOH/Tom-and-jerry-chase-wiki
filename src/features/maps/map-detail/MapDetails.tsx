@@ -1,15 +1,15 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { useSnapshot } from 'valtio';
 
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { useLocalMap } from '@/hooks/useLocalEditEntity';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { fixtures } from '@/data/static';
-import { mapsEdit } from '@/data/store';
 import type { Map as MapType, SingleItem } from '@/data/types';
 import DetailOwnbuffsCard from '@/features/shared/detail-view/DetailOwnbuffsCard';
 import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
@@ -24,13 +24,22 @@ import Link from '@/components/Link';
 
 import MapAttributesCard from './MapAttributesCard';
 
-export default function MapDetailClient({ map }: { map: MapType }) {
+export default function MapDetailClient({
+  map,
+  fixturesData = fixtures,
+  modesData,
+}: {
+  map: MapType;
+  fixturesData?: PublishedGameDataByType['fixtures'];
+  modesData?: PublishedGameDataByType['modes'];
+}) {
   const { isEditMode } = useEditMode();
   const { mapName } = useLocalMap();
   const ed = editable('maps');
 
-  const rawLocalMap = mapsEdit[mapName];
-  const localMapSnapshot = useSnapshot(rawLocalMap ?? ({} as MapType));
+  const editRuntime = useActiveEditRuntime();
+  const rawLocalMap = editRuntime?.stores.maps[mapName];
+  const localMapSnapshot = useOptionalEditSnapshot(rawLocalMap, map);
   const effectiveMap = isEditMode && rawLocalMap ? (localMapSnapshot as MapType) : map;
 
   const [isFullScreen, setIsFullScreen] = useState(false);
@@ -44,7 +53,7 @@ export default function MapDetailClient({ map }: { map: MapType }) {
   const { isDetailedView } = useAppContext();
 
   // 检索相关组件
-  const ownFixtures: string[] = Object.entries(fixtures)
+  const ownFixtures: string[] = Object.entries(fixturesData)
     .filter(([_, fixture]) => fixture.supportedMaps && fixture.supportedMaps.includes(map.name))
     .map(([name, _]) => name);
 
@@ -234,7 +243,12 @@ export default function MapDetailClient({ map }: { map: MapType }) {
   return (
     <>
       <DetailShell
-        leftColumn={<MapAttributesCard map={effectiveMap} />}
+        leftColumn={
+          <MapAttributesCard
+            map={effectiveMap}
+            {...(modesData === undefined ? {} : { modesData })}
+          />
+        }
         sections={sections}
         rightColumnProps={{ style: { whiteSpace: 'pre-wrap' } }}
       />

@@ -1,15 +1,22 @@
 'use client';
 
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
-import { useSnapshot } from 'valtio';
 
 import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { getFactionButtonColors } from '@/lib/design';
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import type { GameDataSubmitMode } from '@/lib/gameData/submitMode';
 import { useSearchParamEditMode } from '@/hooks/useSearchParamEditMode';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { useEditMode } from '@/context/EditModeContext';
 import { useToast } from '@/context/ToastContext';
-import { characters } from '@/data/store';
+import {
+  cards as staticCards,
+  characters as staticCharacters,
+  maps as staticMaps,
+  modes as staticModes,
+  specialSkills as staticSpecialSkills,
+} from '@/data/static';
 import CharacterRelationsMatrix, {
   RelationMatrixLegend,
   type RelationMatrixCellSelection,
@@ -21,6 +28,7 @@ import {
   getLegalColumnCategories,
   type RelationMatrixColumnCategory,
   type RelationMatrixColumnCategoryOption,
+  type RelationMatrixData,
   type RelationMatrixRowFaction,
 } from '@/features/character-relations/matrix/relationMatrixViewModel';
 import { useRelationMatrixEditMode } from '@/features/character-relations/matrix/useRelationMatrixEditMode';
@@ -34,6 +42,8 @@ import FilterRow from '@/components/ui/FilterRow';
 
 type RelationsClientProps = {
   description?: string;
+  data?: RelationMatrixData;
+  publishedRevision?: `v1:${string}`;
 };
 
 const ROW_FACTION_OPTIONS = ['mouse', 'cat'] as const satisfies readonly RelationMatrixRowFaction[];
@@ -47,6 +57,13 @@ const MATRIX_SIZE_MIN = 22;
 const MATRIX_SIZE_MAX = 40;
 const MATRIX_SIZE_STEP = 2;
 const DEFAULT_MATRIX_SIZE = 28;
+const STATIC_RELATION_DATA: RelationMatrixData = {
+  characters: staticCharacters,
+  cards: staticCards,
+  specialSkills: staticSpecialSkills,
+  maps: staticMaps,
+  modes: staticModes,
+};
 
 const targetSelectorClassName = 'mt-0 justify-start md:mt-0';
 const isFactionTarget = (
@@ -146,12 +163,22 @@ function MatrixSizeSlider({
   );
 }
 
-export default function RelationsClient({ description }: RelationsClientProps) {
+export default function RelationsClient({
+  description,
+  data,
+  publishedRevision,
+}: RelationsClientProps) {
   const [isDarkMode] = useDarkMode();
   const permissions = usePermissions();
-  const { isEditMode, exitEditMode } = useSearchParamEditMode();
+  const { exitEditMode } = useSearchParamEditMode();
+  const { isEditMode, registerPublishedRevision } = useEditMode();
   const { info } = useToast();
-  const charactersSnapshot = useSnapshot(characters);
+  const publishedData = data ?? STATIC_RELATION_DATA;
+  const editRuntime = useActiveEditRuntime();
+  const charactersSnapshot = useOptionalEditSnapshot(
+    editRuntime?.stores.characters,
+    publishedData.characters
+  );
   const [rowFaction, setRowFaction] = useState<RelationMatrixRowFaction>('mouse');
   const [columnCategory, setColumnCategory] = useState<RelationMatrixColumnCategory>('cat');
   const [matrixSize, setMatrixSize] = useState(DEFAULT_MATRIX_SIZE);
@@ -175,14 +202,25 @@ export default function RelationsClient({ description }: RelationsClientProps) {
       buildRelationMatrixViewModel({
         rowFaction,
         columnCategory: coercedColumnCategory,
+        data: isRelationEditMode
+          ? {
+              ...publishedData,
+              characters: charactersSnapshot as unknown as RelationMatrixData['characters'],
+            }
+          : publishedData,
         getRelationsForRow: isRelationEditMode
           ? (characterId) =>
               getEditableCharacterRelations(characterId, charactersSnapshot[characterId])
-          : (characterId) => getCharacterRelation(characters, characterId),
+          : (characterId) => getCharacterRelation(publishedData.characters, characterId),
       }),
-    [charactersSnapshot, coercedColumnCategory, isRelationEditMode, rowFaction]
+    [charactersSnapshot, coercedColumnCategory, publishedData, isRelationEditMode, rowFaction]
   );
   const actionCount = getActionCount();
+
+  useEffect(() => {
+    if (!publishedRevision) return undefined;
+    return registerPublishedRevision(publishedRevision);
+  }, [publishedRevision, registerPublishedRevision]);
 
   useEffect(() => {
     if (!isEditMode || canEditRelations) return;

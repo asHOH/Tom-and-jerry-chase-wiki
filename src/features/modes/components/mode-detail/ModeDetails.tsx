@@ -1,12 +1,11 @@
 'use client';
 
-import { useSnapshot } from 'valtio';
-
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { useLocalMode } from '@/hooks/useLocalEditEntity';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
-import { modesEdit } from '@/data/store';
 import { Mode } from '@/data/types';
 import DetailOwnbuffsCard from '@/features/shared/detail-view/DetailOwnbuffsCard';
 import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
@@ -19,14 +18,21 @@ import { editable } from '@/components/ui/editable';
 
 import ModeAttributesCard from './ModeAttributesCard';
 
-export default function ModeDetailClient({ mode }: { mode: Mode }) {
+export default function ModeDetailClient({
+  mode,
+  mapsData,
+}: {
+  mode: Mode;
+  mapsData?: PublishedGameDataByType['maps'];
+}) {
   const { isEditMode } = useEditMode();
   const { modeName } = useLocalMode();
   const ed = editable('modes');
 
-  const rawLocalMode = modesEdit[modeName];
-  const localModeSnapshot = useSnapshot(rawLocalMode ?? ({} as Mode));
-  const effectiveMode = rawLocalMode ? (localModeSnapshot as Mode) : mode;
+  const editRuntime = useActiveEditRuntime();
+  const rawLocalMode = editRuntime?.stores.modes[modeName];
+  const localModeSnapshot = useOptionalEditSnapshot(rawLocalMode, mode);
+  const effectiveMode = isEditMode && rawLocalMode ? (localModeSnapshot as Mode) : mode;
 
   // Keyboard navigation
   useSpecifyTypeKeyboardNavigation(effectiveMode.name, 'mode');
@@ -95,7 +101,12 @@ export default function ModeDetailClient({ mode }: { mode: Mode }) {
 
   return (
     <DetailShell
-      leftColumn={<ModeAttributesCard mode={effectiveMode} />}
+      leftColumn={
+        <ModeAttributesCard
+          mode={effectiveMode}
+          {...(mapsData === undefined ? {} : { mapsData })}
+        />
+      }
       sections={sections}
       rightColumnProps={{ style: { whiteSpace: 'pre-wrap' } }}
     />

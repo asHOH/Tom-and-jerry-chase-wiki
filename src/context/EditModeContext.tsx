@@ -1,110 +1,178 @@
 'use client';
 
-import { createContext, ReactNode, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
-
 import {
-  loadEntitiesFromStorage,
-  setupEntitySubscribers,
-  teardownSubscribers,
-} from '@/lib/edit/editModeRegistry';
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react';
+import dynamic from 'next/dynamic';
+import { usePathname, useSearchParams } from 'next/navigation';
+
+import type { EditRuntimeStatus } from '@/lib/edit/editRuntimeStatus';
 import { isEditModeSearchParamEnabled } from '@/hooks/useSearchParamEditMode';
 
+const EditRuntime = dynamic(() => import('@/components/EditRuntime'), {
+  ssr: false,
+});
+
 type EditModeContextType = {
-  /** Whether edit mode is active for the current page (from URL ?edit=1) */
+  /** Whether the edit runtime is ready and editing is active. */
   isEditMode: boolean;
-  /** Loading state during initialization */
+  /** Whether ?edit=1 requested edit mode. */
+  isEditModeRequested: boolean;
+  /** Loading state during runtime initialization. */
   isLoading: boolean;
-  /** Whether the page is in preview mode */
+  /** Runtime initialization state. */
+  runtimeStatus: EditRuntimeStatus;
+  /** Retryable runtime error shown while editing is disabled. */
+  runtimeError?: string;
+  /** Whether the page is in preview mode. */
   isPreviewMode: boolean;
-  /** Set preview mode */
+  /** Set preview mode. */
   setIsPreviewMode: (value: boolean) => void;
   /** Published revision used to render the visible route data. */
   publishedRevision?: `v1:${string}`;
+  /** Register the revision carried by an edit-capable route shell. */
+  registerPublishedRevision: (revision: `v1:${string}`) => () => void;
+  /** Retry lazy runtime initialization after a recoverable failure. */
+  retryEditRuntime: () => void;
 };
 
-export const EditModeContext = createContext<EditModeContextType | undefined>(undefined);
+type EditModeContextInput = Pick<
+  EditModeContextType,
+  'isEditMode' | 'isLoading' | 'isPreviewMode' | 'setIsPreviewMode'
+> &
+  Partial<
+    Pick<
+      EditModeContextType,
+      | 'isEditModeRequested'
+      | 'runtimeStatus'
+      | 'runtimeError'
+      | 'publishedRevision'
+      | 'registerPublishedRevision'
+      | 'retryEditRuntime'
+    >
+  >;
+
+export const EditModeContext = createContext<EditModeContextInput | undefined>(undefined);
 
 export const EditModeProvider = ({ children }: { children: ReactNode }) => {
+  const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [hasInitialized, setHasInitialized] = useState(false);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const previousEditModeRef = useRef<boolean>(false);
+  const [runtimeStatus, setRuntimeStatus] = useState<EditRuntimeStatus>('idle');
+  const [runtimeError, setRuntimeError] = useState<string | undefined>();
+  const [visibleRevision, setVisibleRevision] = useState<`v1:${string}` | undefined>();
+  const [retryKey, setRetryKey] = useState(0);
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const previousPathnameRef = useRef(pathname);
 
-  const [isPreviewMode, setIsPreviewMode] = useState<boolean>(false);
+  const isEditModeRequested = useMemo(
+    () => isEditModeSearchParamEnabled(searchParams),
+    [searchParams]
+  );
+  const isEditMode = isEditModeRequested && runtimeStatus === 'ready';
+  const isLoading =
+    isEditModeRequested &&
+    (runtimeStatus === 'idle' ||
+      runtimeStatus === 'loading' ||
+      runtimeStatus === 'refreshing' ||
+      runtimeStatus === 'restoring');
 
-  // Edit mode is now determined by URL param
-  const isEditMode = useMemo(() => {
-    return isEditModeSearchParamEnabled(searchParams);
-  }, [searchParams]);
-
-  // Initialize on mount
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setHasInitialized(true);
+    if (previousPathnameRef.current === pathname) return;
+    previousPathnameRef.current = pathname;
+    setVisibleRevision(undefined);
+    setIsPreviewMode(false);
+    if (isEditModeRequested) {
+      setRuntimeStatus('loading');
+      setRuntimeError(undefined);
     }
+  }, [isEditModeRequested, pathname]);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem('isEditMode', JSON.stringify(isEditModeRequested));
+      if (isEditModeRequested) {
+        window.localStorage.setItem('editmode:enabledAt', String(Date.now()));
+      }
+    } catch (error) {
+      console.error('Failed to persist edit mode state:', error);
+    }
+
+    window.dispatchEvent(
+      new CustomEvent('editmode:changed', {
+        detail: { isEditMode: isEditModeRequested },
+      })
+    );
+
+    if (!isEditModeRequested) {
+      setRuntimeStatus('idle');
+      setRuntimeError(undefined);
+    }
+  }, [isEditModeRequested]);
+
+  const registerPublishedRevision = useCallback((revision: `v1:${string}`) => {
+    setVisibleRevision(revision);
+    return () => {
+      setVisibleRevision((current) => (current === revision ? undefined : current));
+    };
   }, []);
 
-  // Set up entity syncing when edit mode is active
-  useEffect(() => {
-    if (!hasInitialized) return undefined;
+  const handleRuntimeStatusChange = useCallback((status: EditRuntimeStatus, error?: string) => {
+    setRuntimeStatus(status);
+    setRuntimeError(error);
+  }, []);
 
-    const wasEditMode = previousEditModeRef.current;
-    previousEditModeRef.current = isEditMode;
+  const retryEditRuntime = useCallback(() => {
+    setRuntimeError(undefined);
+    setRuntimeStatus('loading');
+    setRetryKey((current) => current + 1);
+  }, []);
 
-    if (typeof window !== 'undefined') {
-      try {
-        window.localStorage.setItem('isEditMode', JSON.stringify(isEditMode));
-        if (isEditMode && !wasEditMode) {
-          window.localStorage.setItem('editmode:enabledAt', String(Date.now()));
-        }
-      } catch (error) {
-        console.error('Failed to persist edit mode state:', error);
-      }
-
-      window.dispatchEvent(new CustomEvent('editmode:changed', { detail: { isEditMode } }));
-    }
-
-    if (isEditMode && !wasEditMode) {
-      // Entering edit mode - load from storage
-      loadEntitiesFromStorage();
-      setIsLoading(false);
-
-      // Subscribe to all registered entities
-      setupEntitySubscribers();
-
-      return () => {
-        teardownSubscribers();
-      };
-    } else if (!isEditMode && wasEditMode) {
-      // Exiting edit mode - handled by page-level controls
-      // Don't automatically clear here - let the page decide
-      setIsLoading(false);
-    } else if (isEditMode) {
-      // Already in edit mode, just set up subscriptions
-      setIsLoading(false);
-      setupEntitySubscribers();
-
-      return () => {
-        teardownSubscribers();
-      };
-    }
-
-    setIsLoading(false);
-    return undefined;
-  }, [isEditMode, hasInitialized]);
-
-  const contextValue = useMemo(
+  const contextValue = useMemo<EditModeContextType>(
     () => ({
       isEditMode,
+      isEditModeRequested,
       isLoading,
+      runtimeStatus,
+      ...(runtimeError === undefined ? {} : { runtimeError }),
       isPreviewMode,
       setIsPreviewMode,
+      ...(visibleRevision === undefined ? {} : { publishedRevision: visibleRevision }),
+      registerPublishedRevision,
+      retryEditRuntime,
     }),
-    [isEditMode, isLoading, isPreviewMode]
+    [
+      isEditMode,
+      isEditModeRequested,
+      isLoading,
+      isPreviewMode,
+      registerPublishedRevision,
+      retryEditRuntime,
+      runtimeError,
+      runtimeStatus,
+      visibleRevision,
+    ]
   );
 
-  return <EditModeContext.Provider value={contextValue}>{children}</EditModeContext.Provider>;
+  return (
+    <EditModeContext.Provider value={contextValue}>
+      {children}
+      {isEditModeRequested ? (
+        <EditRuntime
+          key={retryKey}
+          {...(visibleRevision === undefined ? {} : { visibleRevision })}
+          onStatusChange={handleRuntimeStatusChange}
+          onRetry={retryEditRuntime}
+        />
+      ) : null}
+    </EditModeContext.Provider>
+  );
 };
 
 export const useEditMode = () => {
@@ -112,5 +180,11 @@ export const useEditMode = () => {
   if (context === undefined) {
     throw new Error('useEditMode must be used within an EditModeProvider');
   }
-  return context;
+  return {
+    ...context,
+    isEditModeRequested: context.isEditModeRequested ?? context.isEditMode,
+    runtimeStatus: context.runtimeStatus ?? (context.isEditMode ? 'ready' : 'idle'),
+    registerPublishedRevision: context.registerPublishedRevision ?? (() => () => undefined),
+    retryEditRuntime: context.retryEditRuntime ?? (() => undefined),
+  } satisfies EditModeContextType;
 };

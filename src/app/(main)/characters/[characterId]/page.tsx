@@ -119,6 +119,7 @@ export default async function CharacterPage({
           contentWriters={contentWriterData.writers}
           contentEditors={contentWriterData.editors}
           publishedRevision={readModel.revision}
+          publishedHistory={readModel.history}
         >
           {docPage ? <CharacterDocs docPage={docPage}></CharacterDocs> : null}
         </CharacterDetailsClient>
@@ -144,6 +145,7 @@ export default async function CharacterPage({
           contentWriters={contentWriterData.writers}
           contentEditors={contentWriterData.editors}
           publishedRevision={readModel.revision}
+          publishedHistory={readModel.history}
         >
           {docPage ? (
             <CharacterDocs docPage={docPage}></CharacterDocs>

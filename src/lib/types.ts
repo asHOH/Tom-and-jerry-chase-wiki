@@ -7,6 +7,7 @@ import { ReactNode } from 'react';
 import type { Snapshot } from 'valtio';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
+import type { PublishedEntityHistoryEntry } from '@/context/PublishedEntityHistoryContext';
 import { SkillType } from '@/data/types';
 import { Card, Character, FactionId, PositioningTag } from '@/data';
 
@@ -49,6 +50,7 @@ export type CharacterDetailsProps = {
   contentWriters?: readonly string[];
   contentEditors?: readonly ContentEditor[];
   publishedRevision?: `v1:${string}`;
+  publishedHistory?: readonly PublishedEntityHistoryEntry[];
   children?: ReactNode;
 };
 

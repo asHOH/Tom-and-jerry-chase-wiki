@@ -1,9 +1,9 @@
 'use client';
 
 import React from 'react';
-import { useSnapshot } from 'valtio';
 
-import { specialSkillsEdit } from '@/data/store';
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { specialSkills } from '@/data/static';
 import type { CharacterRelationItem, FactionId } from '@/data/types';
 
 import RelationItemSelector from '../character-relations/RelationItemSelector';
@@ -16,7 +16,11 @@ type Props = {
 };
 
 const SpecialSkillSelector: React.FC<Props> = ({ selected, factionId, onSelect, disabled }) => {
-  const specialSkillsSnapshot = useSnapshot(specialSkillsEdit);
+  const editRuntime = useActiveEditRuntime();
+  const specialSkillsSnapshot = useOptionalEditSnapshot(
+    editRuntime?.stores.specialSkills,
+    specialSkills
+  );
   const oppositeFaction: FactionId = factionId === 'cat' ? 'mouse' : 'cat';
   const selectedIds = new Set(selected.map(({ id }) => id));
   const options = Object.entries(specialSkillsSnapshot[oppositeFaction])

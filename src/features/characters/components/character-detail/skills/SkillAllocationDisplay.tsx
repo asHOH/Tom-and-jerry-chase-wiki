@@ -1,13 +1,12 @@
 'use client';
 
 import React, { useMemo } from 'react';
-import { useSnapshot } from 'valtio';
 
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
-import { characters } from '@/data/store';
 import type { FactionId, SkillAllocation } from '@/data/types';
 import {
   safeParseSkillAllocationPattern,
@@ -18,6 +17,7 @@ import { editable } from '@/components/ui/editable';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import { TrashIcon } from '@/components/icons/CommonIcons';
 
+import { usePublishedCharacter } from '../PublishedCharacterContext';
 import SkillAllocationPathDisplay from './SkillAllocationPathDisplay';
 
 const e = editable('characters');
@@ -60,7 +60,12 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
 }) => {
   const { isEditMode } = useEditMode();
   const { characterId } = useLocalCharacter();
-  const character = useSnapshot(characters[characterId]!);
+  const editRuntime = useActiveEditRuntime();
+  const publishedCharacter = usePublishedCharacter(characterId);
+  const character = useOptionalEditSnapshot(
+    editRuntime?.stores.characters[characterId],
+    publishedCharacter
+  );
   const [isDarkMode] = useDarkMode();
   const { isDetailedView: isDetailed } = useAppContext();
 

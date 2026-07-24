@@ -1,14 +1,12 @@
 'use client';
 
-import { useSnapshot } from 'valtio';
-
 import { getEntityTypeColors } from '@/lib/design';
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { getSingleItemPrototype, getSingleItemVariant } from '@/lib/singleItemTools';
 import { useLocalEntity } from '@/hooks/useLocalEditEntity';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
-import { entitiesEdit } from '@/data/store';
 import { Entity } from '@/data/types';
 import ActorAttributesSection from '@/features/actor-profiles/components/ActorAttributesSection';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
@@ -31,13 +29,10 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
   const { entityName } = useLocalEntity();
   const ed = editable('entities');
 
-  const entitiesSnapshot = useSnapshot(entitiesEdit);
-  if (!entity) return null;
-
-  const rawEntity = entitiesEdit[entityName];
-  const effectiveEntity = (
-    isEditMode ? (entitiesSnapshot[entityName] ?? entity) : entity
-  ) as Entity;
+  const editRuntime = useActiveEditRuntime();
+  const rawEntity = editRuntime?.stores.entities[entityName];
+  const entitySnapshot = useOptionalEditSnapshot(rawEntity, entity);
+  const effectiveEntity = (isEditMode && rawEntity ? entitySnapshot : entity) as Entity;
 
   /* 计算variant相关内容 */
   const prototype = getSingleItemPrototype({ name: entity.name, type: 'entity' });

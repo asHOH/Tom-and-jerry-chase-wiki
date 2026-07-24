@@ -1,4 +1,5 @@
-import { proxy, subscribe, unstable_enableOp } from 'valtio';
+import { subscribe, unstable_enableOp } from 'valtio';
+import { proxy } from 'valtio/vanilla';
 
 import { GameDataManager } from '@/lib/dataManager';
 import {
@@ -10,52 +11,57 @@ import {
   subscribers,
   withRecordingSuppressed,
 } from '@/lib/edit/diffUtils';
+import type { EditStores } from '@/lib/edit/editStores';
 import type { PublishableEntityType } from '@/lib/gameData/publishableEntityTypes';
-import {
-  achievements,
-  buffs,
-  entities,
-  fixtures,
-  items,
-  maps,
-  modes,
-  specialSkills,
-} from '@/data/static';
-import {
-  achievementsEdit,
-  buffsEdit,
-  cardsEdit,
-  characters,
-  entitiesEdit,
-  fixturesEdit,
-  itemsEdit,
-  mapsEdit,
-  modesEdit,
-  specialSkillsEdit,
-} from '@/data/store';
+import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 
 unstable_enableOp(true);
 
-const entityRegistry = new Map<PublishableEntityType, Record<string, unknown>>([
-  ['achievements', achievementsEdit as unknown as Record<string, unknown>],
-  ['characters', characters],
-  ['cards', cardsEdit],
-  ['entities', entitiesEdit as unknown as Record<string, unknown>],
-  ['buffs', buffsEdit as unknown as Record<string, unknown>],
-  ['items', itemsEdit as unknown as Record<string, unknown>],
-  ['fixtures', fixturesEdit as unknown as Record<string, unknown>],
-  ['maps', mapsEdit as unknown as Record<string, unknown>],
-  ['modes', modesEdit as unknown as Record<string, unknown>],
-  ['specialSkills', specialSkillsEdit as unknown as Record<string, unknown>],
-]);
-
 const DRAFT_HISTORY_WARNING_THRESHOLD = 1000;
 
-/**
- * Centralized localStorage sync helper.
- * Subscribes to entity changes and persists them to localStorage.
- */
-function syncEntityToLocalStorage(entityType: string, entity: Record<string, unknown>): () => void {
+export class EditDraftRestoreError extends Error {
+  readonly causes: readonly unknown[];
+
+  constructor(causes: readonly unknown[]) {
+    super('Failed to restore one or more edit-mode drafts.');
+    this.name = 'EditDraftRestoreError';
+    this.causes = causes;
+  }
+}
+
+export type EditModeRegistry = Readonly<{
+  entityRegistry: ReadonlyMap<PublishableEntityType, Record<string, unknown>>;
+  setupSubscribers: () => void;
+  teardownSubscribers: () => void;
+  loadDrafts: () => void;
+  clearAllData: () => void;
+}>;
+
+function asRecord(value: object): Record<string, unknown> {
+  return value as Record<string, unknown>;
+}
+
+function createEntityRegistry(
+  stores: EditStores
+): Map<PublishableEntityType, Record<string, unknown>> {
+  return new Map([
+    ['achievements', asRecord(stores.achievements)],
+    ['characters', asRecord(stores.characters)],
+    ['cards', asRecord(stores.cards)],
+    ['entities', asRecord(stores.entities)],
+    ['buffs', asRecord(stores.buffs)],
+    ['items', asRecord(stores.items)],
+    ['fixtures', asRecord(stores.fixtures)],
+    ['maps', asRecord(stores.maps)],
+    ['modes', asRecord(stores.modes)],
+    ['specialSkills', asRecord(stores.specialSkills)],
+  ]);
+}
+
+function syncEntityToLocalStorage(
+  entityType: PublishableEntityType,
+  entity: Record<string, unknown>
+): () => void {
   const actionsStorageKey = getActionsStorageKey(entityType);
 
   return subscribe(entity, (ops) => {
@@ -65,48 +71,72 @@ function syncEntityToLocalStorage(entityType: string, entity: Record<string, unk
   });
 }
 
-export function setupEntitySubscribers(): void {
-  Array.from(entityRegistry.entries()).forEach(([entityType, entity]) => {
-    const key = getActionsStorageKey(entityType);
-    const existing = subscribers[key];
-    const unsubscribe = existing?.[1];
-    if (typeof unsubscribe === 'function') {
-      unsubscribe();
-    }
+function createEditableProxyValue(value: unknown): unknown {
+  if (typeof value === 'object' && value !== null) {
+    return proxy(structuredClone(value as Record<string, unknown>));
+  }
+  return value;
+}
 
-    subscribers[key] = [
-      () => {
-        subscribers[key]![1] = syncEntityToLocalStorage(entityType, entity);
-      },
-      void 0 as unknown as () => void,
-    ];
-    subscribers[key][0]();
+function replaceProxyRecord(
+  target: Record<string, unknown>,
+  source: Readonly<Record<string, unknown>>
+): void {
+  Object.keys(target).forEach((key) => {
+    delete target[key];
+  });
+
+  Object.entries(source).forEach(([key, value]) => {
+    target[key] = createEditableProxyValue(value);
   });
 }
 
-export function teardownSubscribers(): void {
-  Object.keys(subscribers).forEach((key) => {
-    const entry = subscribers[key];
-    const unsubscribe = entry?.[1];
-    if (typeof unsubscribe === 'function') {
-      unsubscribe();
-    }
-    delete subscribers[key];
-  });
-}
+export function createEditModeRegistry(
+  stores: EditStores,
+  baseline: PublishedGameDataByType
+): EditModeRegistry {
+  const entityRegistry = createEntityRegistry(stores);
 
-/**
- * Loads all registered entities from localStorage action history.
- * Called when entering edit mode to restore previous session.
- */
-export function loadEntitiesFromStorage(): void {
-  if (typeof localStorage === 'undefined') return;
+  const teardownSubscribers = (): void => {
+    Object.keys(subscribers).forEach((key) => {
+      const entry = subscribers[key];
+      const unsubscribe = entry?.[1];
+      if (typeof unsubscribe === 'function') {
+        unsubscribe();
+      }
+      delete subscribers[key];
+    });
+  };
 
-  Array.from(entityRegistry.entries()).forEach(([entityType, entity]) => {
-    try {
-      const actionsStorageKey = getActionsStorageKey(entityType);
-      const history = readActionHistory(actionsStorageKey);
-      if (history.length > 0) {
+  const setupSubscribers = (): void => {
+    entityRegistry.forEach((entity, entityType) => {
+      const key = getActionsStorageKey(entityType);
+      const existing = subscribers[key];
+      const unsubscribe = existing?.[1];
+      if (typeof unsubscribe === 'function') {
+        unsubscribe();
+      }
+
+      subscribers[key] = [
+        () => {
+          subscribers[key]![1] = syncEntityToLocalStorage(entityType, entity);
+        },
+        void 0 as unknown as () => void,
+      ];
+      subscribers[key][0]();
+    });
+  };
+
+  const loadDrafts = (): void => {
+    if (typeof localStorage === 'undefined') return;
+
+    const errors: unknown[] = [];
+    entityRegistry.forEach((entity, entityType) => {
+      try {
+        const actionsStorageKey = getActionsStorageKey(entityType);
+        const history = readActionHistory(actionsStorageKey);
+        if (history.length === 0) return;
+
         if (history.length > DRAFT_HISTORY_WARNING_THRESHOLD) {
           console.warn('Large edit mode draft history detected', {
             entityType,
@@ -120,116 +150,53 @@ export function loadEntitiesFromStorage(): void {
             applyActionEntry(entity, entry);
           }
         });
+      } catch (error) {
+        console.error(`Failed to load ${entityType} from localStorage:`, error);
+        errors.push(error);
       }
-    } catch (error) {
-      console.error(`Failed to load ${entityType} from localStorage:`, error);
+    });
+
+    if (errors.length > 0) {
+      throw new EditDraftRestoreError(errors);
     }
-  });
-}
-
-/**
- * Clears all action histories from localStorage.
- */
-function clearActionHistoriesFromStorage(): void {
-  if (typeof localStorage === 'undefined') return;
-
-  Array.from(entityRegistry.entries()).forEach(([entityType]) => {
-    try {
-      localStorage.removeItem(entityType);
-      localStorage.removeItem(getActionsStorageKey(entityType));
-    } catch (error) {
-      console.error(`Failed to clear ${entityType} from localStorage:`, error);
-    }
-  });
-}
-
-function createEditableProxyValue(value: unknown): unknown {
-  if (typeof value === 'object' && value !== null) {
-    return proxy(structuredClone(value as Record<string, unknown>));
-  }
-  return value;
-}
-
-function replaceProxyRecord(
-  target: Record<string, unknown>,
-  source: Record<string, unknown> | Readonly<Record<string, unknown>>
-): void {
-  Object.keys(target).forEach((key) => {
-    delete target[key];
-  });
-
-  Object.entries(source).forEach(([key, value]) => {
-    target[key] = createEditableProxyValue(value);
-  });
-}
-
-/**
- * Restores all registered entities to their original canonical state.
- */
-function restoreEntitiesToCanonical(): void {
-  GameDataManager.invalidate({ characters: true, cards: true });
-
-  const canonicalRecordSources: Partial<Record<PublishableEntityType, Record<string, unknown>>> = {
-    buffs: buffs as Record<string, unknown>,
-    cards: GameDataManager.getCards() as Record<string, unknown>,
-    characters: GameDataManager.getCharacters() as Record<string, unknown>,
-    entities: entities as Record<string, unknown>,
-    fixtures: fixtures as Record<string, unknown>,
-    items: items as Record<string, unknown>,
-    maps: maps as Record<string, unknown>,
-    modes: modes as Record<string, unknown>,
   };
 
-  Array.from(entityRegistry.entries()).forEach(([entityType, entity]) => {
-    if (entityType === 'specialSkills' || entityType === 'achievements') {
-      const root = entity as unknown as {
-        cat?: Record<string, unknown>;
-        mouse?: Record<string, unknown>;
-      };
-      const source = entityType === 'specialSkills' ? specialSkills : achievements;
+  const clearActionHistoriesFromStorage = (): void => {
+    if (typeof localStorage === 'undefined') return;
 
-      if (!root.cat) root.cat = {};
-      if (!root.mouse) root.mouse = {};
+    entityRegistry.forEach((_entity, entityType) => {
+      try {
+        localStorage.removeItem(entityType);
+        localStorage.removeItem(getActionsStorageKey(entityType));
+      } catch (error) {
+        console.error(`Failed to clear ${entityType} from localStorage:`, error);
+      }
+    });
+  };
 
-      replaceProxyRecord(root.cat, source.cat as Record<string, unknown>);
-      replaceProxyRecord(root.mouse, source.mouse as Record<string, unknown>);
-      return;
-    }
-
-    const source = canonicalRecordSources[entityType as PublishableEntityType];
-    if (source) {
-      replaceProxyRecord(entity, source);
-    }
-  });
-
-  GameDataManager.invalidate();
-}
-
-/**
- * Clears all action histories and restores canonical data.
- * Call this when the user explicitly discards all changes.
- */
-export function clearAllEditModeData(): void {
-  const hadSubscribers = Object.keys(subscribers).length > 0;
-
-  if (hadSubscribers) {
-    // Pause subscriptions so the restore does not append a fresh history.
+  const restoreBaseline = (): void => {
     teardownSubscribers();
-  }
-
-  try {
-    clearActionHistoriesFromStorage();
-    restoreEntitiesToCanonical();
-  } finally {
-    if (hadSubscribers) {
-      setupEntitySubscribers();
+    try {
+      entityRegistry.forEach((entity, entityType) => {
+        replaceProxyRecord(
+          entity,
+          baseline[entityType] as unknown as Readonly<Record<string, unknown>>
+        );
+      });
+      GameDataManager.invalidate();
+    } finally {
+      setupSubscribers();
     }
-  }
-}
+  };
 
-/**
- * Get a snapshot of the entity registry for external access.
- */
-export function getEntityRegistry(): ReadonlyMap<PublishableEntityType, Record<string, unknown>> {
-  return new Map(entityRegistry);
+  return Object.freeze({
+    entityRegistry,
+    setupSubscribers,
+    teardownSubscribers,
+    loadDrafts,
+    clearAllData: () => {
+      clearActionHistoriesFromStorage();
+      restoreBaseline();
+    },
+  });
 }

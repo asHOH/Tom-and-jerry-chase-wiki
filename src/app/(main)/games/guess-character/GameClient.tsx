@@ -1,7 +1,6 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useSnapshot } from 'valtio';
 
 import { formatDateKey, getDailyCharacterId, getGameDate, getPuzzleNumber } from '@/lib/gameUtils';
 import { buildSkillCluesForCharacter } from '@/lib/skillEffectUtils';
@@ -10,8 +9,7 @@ import {
   getPositioningTagLevel,
   isPositioningTagVisible,
 } from '@/constants/positioningTagSequences';
-import { buffs } from '@/data/static';
-import { characters } from '@/data/store';
+import { buffs, characters } from '@/data/static';
 import { getActorJumpHeight, getActorProfile } from '@/features/actor-profiles/selectors';
 import { catCharacterIds, mouseCharacterIds } from '@/features/characters/data/characterMetadata';
 import GameLayout from '@/features/games/components/GameLayout';
@@ -78,7 +76,7 @@ function bucketHp(hp: number | undefined, factionId?: string): string {
 }
 
 export default function GuessCharacterClient({ description }: Props) {
-  const charsSnap = useSnapshot(characters);
+  const charsSnap = characters;
 
   // Mode: 'daily' or 'practice'
   const [mode, setMode] = useState<'daily' | 'practice'>('daily');

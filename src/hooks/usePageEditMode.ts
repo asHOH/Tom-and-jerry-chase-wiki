@@ -5,6 +5,7 @@ import { subscribe } from 'valtio';
 
 import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { GameDataManager } from '@/lib/dataManager';
+import { useActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
 import {
   applyActionEntry,
   getActionsStorageKey,
@@ -21,7 +22,6 @@ import {
   splitActionHistoryByEntity,
   type DraftSummaryItem,
 } from '@/lib/edit/editModeDrafts';
-import { getEntityRegistry as getEntityRegistrySnapshot } from '@/lib/edit/editModeRegistry';
 import {
   PUBLISHABLE_ENTITY_TYPES,
   type PublishableEntityType,
@@ -37,8 +37,6 @@ import {
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { useEditMode } from '@/context/EditModeContext';
 import type { Json } from '@/data/database.types';
-
-const entityRegistry = getEntityRegistrySnapshot();
 
 export type PageEditModeOptions = {
   entityType: PublishableEntityType;
@@ -65,6 +63,7 @@ export type PageEditModeResult = {
 };
 
 function resolveDraftItemLabel(
+  entityRegistry: ReadonlyMap<PublishableEntityType, Record<string, unknown>>,
   entityType: PublishableEntityType,
   entityId: string,
   factionId?: 'cat' | 'mouse'
@@ -98,6 +97,8 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
   const permissions = usePermissions();
   const entityKey = entityId.trim();
   const { isEditMode: originalIsEditMode, isPreviewMode } = useEditMode();
+  const activeRuntime = useActiveEditRuntime();
+  const entityRegistry = activeRuntime?.registry.entityRegistry;
   const [isPublishing, setIsPublishing] = useState(false);
   const [_actionCountTrigger, setActionCountTrigger] = useState(0);
   const draftLoadedRef = useRef(false);
@@ -110,7 +111,7 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
   useEffect(() => {
     if (!isEditMode) return undefined;
 
-    const entity = entityRegistry.get(entityType);
+    const entity = entityRegistry?.get(entityType);
     if (!entity) return undefined;
 
     const unsubscribe = subscribe(entity, () => {
@@ -118,25 +119,25 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
     });
 
     return unsubscribe;
-  }, [isEditMode, entityType]);
+  }, [entityRegistry, isEditMode, entityType]);
 
   const getActionCount = useCallback((): number => {
     if (typeof window === 'undefined') return 0;
     const storageKey = getActionsStorageKey(entityType);
     const history = readActionHistory(storageKey);
     const { matching } = splitActionHistoryByEntity(history, entityKey);
-    const currentRoot = entityRegistry.get(entityType);
+    const currentRoot = entityRegistry?.get(entityType);
     return squashActions(matching, currentRoot ? { currentRoot } : undefined).length;
-  }, [entityType, entityKey]);
+  }, [entityRegistry, entityType, entityKey]);
 
   const getPublishDraft = useCallback(() => {
     const storageKey = getActionsStorageKey(entityType);
     const history = readActionHistory(storageKey);
     const { matching, remaining } = splitActionHistoryByEntity(history, entityKey);
-    const currentRoot = entityRegistry.get(entityType);
+    const currentRoot = entityRegistry?.get(entityType);
     const squashed = squashActions(matching, currentRoot ? { currentRoot } : undefined);
     return { storageKey, remaining, squashed };
-  }, [entityType, entityKey]);
+  }, [entityRegistry, entityType, entityKey]);
 
   const squashedDraft = useMemo(() => {
     void _actionCountTrigger;
@@ -183,22 +184,24 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
       PUBLISHABLE_ENTITY_TYPES.flatMap((type) => {
         const storageKey = getActionsStorageKey(type);
         const history = readActionHistory(storageKey);
-        const currentRoot = entityRegistry.get(type);
+        const currentRoot = entityRegistry?.get(type);
         const squashed = squashActions(history, currentRoot ? { currentRoot } : undefined);
         return buildDraftSummaryItemsForType(type, squashed, ({ entityId, factionId }) =>
-          resolveDraftItemLabel(type, entityId, factionId)
+          entityRegistry
+            ? resolveDraftItemLabel(entityRegistry, type, entityId, factionId)
+            : undefined
         );
       })
     );
 
     setDraftsSummary(summary);
-  }, [debouncedActionCount, isEditMode]);
+  }, [debouncedActionCount, entityRegistry, isEditMode]);
 
   const discardChanges = useCallback(
     (options?: { showToast?: boolean; suppressSync?: boolean }) => {
       const { showToast: shouldShowToast = true, suppressSync = false } = options ?? {};
       const storageKey = getActionsStorageKey(entityType);
-      const entity = entityRegistry.get(entityType);
+      const entity = entityRegistry?.get(entityType);
 
       if (entity) {
         const history = readActionHistory(storageKey);
@@ -243,7 +246,7 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
 
       if (shouldShowToast && showToast) showToast('已放弃所有修改');
     },
-    [entityType, entityKey, isEditMode, showToast]
+    [entityRegistry, entityType, entityKey, isEditMode, showToast]
   );
 
   // Reset draft loaded flag when exiting edit mode (not on preview toggle)

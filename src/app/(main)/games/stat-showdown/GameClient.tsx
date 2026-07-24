@@ -1,11 +1,10 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useSnapshot } from 'valtio';
 
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { useTimer } from '@/hooks/useTimer';
-import { characters } from '@/data/store';
+import { characters } from '@/data/static';
 import type { FactionId } from '@/data/types';
 import {
   CHARACTER_GAME_STAT_INFO,
@@ -82,7 +81,7 @@ function pickRandomStat(stats: readonly CharacterGameStatKey[]): CharacterGameSt
 }
 
 export default function StatShowdownClient({ mode, description, modeNav }: Props) {
-  const charsSnap = useSnapshot(characters);
+  const charsSnap = characters;
 
   const [score, setScore] = useState(0);
   const [isJudging, setIsJudging] = useState(false);

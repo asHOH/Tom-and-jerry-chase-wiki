@@ -1,12 +1,10 @@
 'use client';
 
-import { useSnapshot } from 'valtio';
-
 import { getFactionButtonColors } from '@/lib/design';
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { useLocalAchievement } from '@/hooks/useLocalEditEntity';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
-import { achievementsEdit } from '@/data/store';
 import { Achievement } from '@/data/types';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
 import AddAliasButton from '@/features/shared/detail-view/AddAliasButton';
@@ -21,21 +19,18 @@ export default function AchievementAttributesCard({ achievement }: { achievement
   const { isEditMode } = useEditMode();
   const { achievementName, factionId } = useLocalAchievement();
   const ed = editable('achievements');
-
-  const achievementsSnapshot = useSnapshot(achievementsEdit);
-  if (!achievement) return null;
+  const editRuntime = useActiveEditRuntime();
 
   const factionAchievements =
     factionId === 'cat'
-      ? achievementsEdit.cat
+      ? editRuntime?.stores.achievements.cat
       : factionId === 'mouse'
-        ? achievementsEdit.mouse
+        ? editRuntime?.stores.achievements.mouse
         : undefined;
   const rawAchievement = factionAchievements?.[achievementName];
+  const achievementSnapshot = useOptionalEditSnapshot(rawAchievement, achievement);
   const effectiveAchievement = (
-    isEditMode && (factionId === 'cat' || factionId === 'mouse')
-      ? (achievementsSnapshot[factionId][achievementName] ?? achievement)
-      : achievement
+    isEditMode && rawAchievement ? achievementSnapshot : achievement
   ) as Achievement;
 
   return (

@@ -1,11 +1,11 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
-import { useSnapshot } from 'valtio';
 
 import { AssetManager } from '@/lib/assetManager';
 import { cn } from '@/lib/design';
-import { characters } from '@/data/store';
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { characters } from '@/data/static';
 import type { CharacterRelationItem, FactionId } from '@/data/types';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import { ChevronDownIcon, PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
@@ -29,7 +29,8 @@ export function CharacterSelector({
   disabled?: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const charactersSnap = useSnapshot(characters);
+  const editRuntime = useActiveEditRuntime();
+  const charactersSnap = useOptionalEditSnapshot(editRuntime?.stores.characters, characters);
 
   const availableCharacters = useMemo(() => {
     const allCharacters = Object.values(charactersSnap) as Array<{
@@ -255,7 +256,8 @@ export function ArticleCharacterSelector({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const charactersSnapAr = useSnapshot(characters);
+  const editRuntime = useActiveEditRuntime();
+  const charactersSnapAr = useOptionalEditSnapshot(editRuntime?.stores.characters, characters);
 
   const allCharacters = useMemo(() => {
     return Object.values(charactersSnapAr) as Array<{ id: string; factionId: FactionId }>;

@@ -77,6 +77,7 @@ export default async function FixtureDetailPage({
         fixture={fixture}
         fixtureName={fixtureName}
         publishedRevision={readModel.revision}
+        publishedHistory={readModel.history}
       />
     </>
   );

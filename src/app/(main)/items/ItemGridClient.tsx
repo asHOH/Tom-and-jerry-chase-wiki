@@ -2,10 +2,15 @@
 
 import dynamic from 'next/dynamic';
 
+import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { LOADING_COUNTS } from '@/constants/loadingCounts';
 import { CatalogPageLoadingState } from '@/components/ui/LoadingState';
 
-type Props = { description?: string };
+type Props = {
+  description?: string;
+  data: PublishedGameDataByType['items'];
+  publishedRevision: `v1:${string}`;
+};
 
 const ItemGridClient = dynamic<Props>(
   () => import('@/features/items/components/item-grid/ItemGrid'),

@@ -5,8 +5,8 @@ import uniq from 'lodash-es/uniq';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { cn } from '@/lib/design';
+import { useActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
 import type { CharacterWithFaction } from '@/lib/types';
-import { characters } from '@/data/store';
 import type { Skill, SkillLevel, SkillUsageProperties } from '@/data/types';
 import {
   addSkillPart,
@@ -87,7 +87,10 @@ export default function SkillCardProperties({
   isDetailed,
   isMobileEditMode = false,
 }: SkillCardPropertiesProps) {
-  const skillRef = characters[characterId]!.skills[skillIndex]!;
+  const editRuntime = useActiveEditRuntime();
+  const skillRef =
+    editRuntime?.stores.characters[characterId]?.skills[skillIndex] ??
+    localCharacter.skills[skillIndex]!;
 
   const getCooldownProperty = (): React.ReactNode => {
     if (!skill.skillLevels.some((level: SkillLevel) => level.cooldown)) return null;

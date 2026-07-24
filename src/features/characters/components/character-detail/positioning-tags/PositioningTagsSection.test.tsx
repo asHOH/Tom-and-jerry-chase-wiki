@@ -24,12 +24,12 @@ jest.mock('@/hooks/useLocalEditEntity', () => ({
   useLocalCharacter: () => ({ characterId: '测试角色' }),
 }));
 
-jest.mock('@/data', () => ({
-  characters: (() => {
-    const { proxy } = jest.requireActual<typeof import('valtio')>('valtio');
-    return proxy({ 测试角色: proxy({ id: '测试角色', skills: [] }) });
-  })(),
-}));
+jest.mock('../PublishedCharacterContext', () => {
+  const character = { id: '测试角色', skills: [] };
+  return {
+    usePublishedCharacter: () => character,
+  };
+});
 
 jest.mock('@/lib/design', () => ({
   cn: (...classes: Array<string | false | null | undefined>) => classes.filter(Boolean).join(' '),

@@ -1,14 +1,15 @@
-import { useSnapshot } from 'valtio';
-
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useEditMode } from '@/context/EditModeContext';
-import { characters, itemsEdit } from '@/data/store';
+import { items as staticItems } from '@/data/static';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 import { editable } from '@/components/ui/editable';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 import { Img } from '@/components/Image';
 import Link from '@/components/Link';
+
+import { usePublishedCharacter } from '../PublishedCharacterContext';
 
 const DEFAULT_STORE_PLAN = ['盘子', '玻璃杯', '高尔夫球', '鞭炮'] as const;
 const e = editable('characters');
@@ -17,8 +18,11 @@ export default function RecommendedStorePlansSection() {
   'use no memo';
   const { characterId } = useLocalCharacter();
   const { isEditMode } = useEditMode();
-  const character = useSnapshot(characters[characterId]!);
-  const items = useSnapshot(itemsEdit);
+  const editRuntime = useActiveEditRuntime();
+  const rawCharacter = editRuntime?.stores.characters[characterId];
+  const publishedCharacter = usePublishedCharacter(characterId);
+  const character = useOptionalEditSnapshot(rawCharacter, publishedCharacter);
+  const items = useOptionalEditSnapshot(editRuntime?.stores.items, staticItems);
   const storePlans = character.recommendedStorePlans ?? [];
   const storeItems = Object.values(items).filter(
     (item) => item.store === true && item.price !== undefined
@@ -40,9 +44,7 @@ export default function RecommendedStorePlansSection() {
                 <IconButton
                   type='button'
                   aria-label={`移除商店方案 ${planIndex + 1}`}
-                  onClick={() =>
-                    characters[characterId]!.recommendedStorePlans!.splice(planIndex, 1)
-                  }
+                  onClick={() => rawCharacter!.recommendedStorePlans!.splice(planIndex, 1)}
                   variant='delete'
                   size='sm'
                 >
@@ -81,9 +83,8 @@ export default function RecommendedStorePlansSection() {
                         aria-label={`方案 ${planIndex + 1} 的第 ${itemIndex + 1} 件道具`}
                         value={itemName}
                         onChange={(event) => {
-                          characters[characterId]!.recommendedStorePlans![planIndex]!.items[
-                            itemIndex
-                          ] = event.target.value;
+                          rawCharacter!.recommendedStorePlans![planIndex]!.items[itemIndex] =
+                            event.target.value;
                         }}
                         className='mt-2 w-full rounded border border-gray-300 bg-white px-1 py-1 text-xs dark:border-gray-500 dark:bg-gray-800'
                       >
@@ -118,10 +119,10 @@ export default function RecommendedStorePlansSection() {
             type='button'
             aria-label='添加商店方案'
             onClick={() => {
-              if (!characters[characterId]!.recommendedStorePlans) {
-                characters[characterId]!.recommendedStorePlans = [];
+              if (!rawCharacter!.recommendedStorePlans) {
+                rawCharacter!.recommendedStorePlans = [];
               }
-              characters[characterId]!.recommendedStorePlans.push({
+              rawCharacter!.recommendedStorePlans.push({
                 items: [...DEFAULT_STORE_PLAN],
                 description: '',
               });

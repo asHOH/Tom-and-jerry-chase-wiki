@@ -4,20 +4,9 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { cn } from '@/lib/design';
+import { requireActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
 import { CATEGORY_HINTS } from '@/lib/types';
 import { useEditMode } from '@/context/EditModeContext';
-import { cards } from '@/data/static';
-import {
-  achievementsEdit,
-  buffsEdit,
-  characters,
-  entitiesEdit,
-  fixturesEdit,
-  itemsEdit,
-  mapsEdit,
-  modesEdit,
-  specialSkillsEdit,
-} from '@/data/store';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 
 import {
@@ -96,6 +85,18 @@ async function toPinyinTokens(text: string): Promise<{ full: string; initials: s
 }
 
 async function buildEditableAutocompleteCandidates(): Promise<EditableAutocompleteCandidate[]> {
+  const {
+    achievements,
+    buffs,
+    cards,
+    characters,
+    entities,
+    fixtures,
+    items,
+    maps,
+    modes,
+    specialSkills,
+  } = requireActiveEditRuntime().stores;
   const dedup = new Map<
     string,
     { label: string; insertText: string; source: EditableAutocompleteSource }
@@ -163,16 +164,16 @@ async function buildEditableAutocompleteCandidates(): Promise<EditableAutocomple
     }
   });
 
-  addFromRecord(itemsEdit as unknown as Record<string, unknown>, '道具');
-  addFromRecord(entitiesEdit as unknown as Record<string, unknown>, '衍生物');
-  addFromRecord(buffsEdit as unknown as Record<string, unknown>, '状态');
-  addFromRecord(fixturesEdit as unknown as Record<string, unknown>, '场景');
-  addFromRecord(mapsEdit as unknown as Record<string, unknown>, '地图');
-  addFromRecord(modesEdit as unknown as Record<string, unknown>, '模式');
-  addFromRecord(achievementsEdit.cat as unknown as Record<string, unknown>, '成就');
-  addFromRecord(achievementsEdit.mouse as unknown as Record<string, unknown>, '成就');
-  addFromRecord(specialSkillsEdit.cat as unknown as Record<string, unknown>, '特技');
-  addFromRecord(specialSkillsEdit.mouse as unknown as Record<string, unknown>, '特技');
+  addFromRecord(items as unknown as Record<string, unknown>, '道具');
+  addFromRecord(entities as unknown as Record<string, unknown>, '衍生物');
+  addFromRecord(buffs as unknown as Record<string, unknown>, '状态');
+  addFromRecord(fixtures as unknown as Record<string, unknown>, '场景');
+  addFromRecord(maps as unknown as Record<string, unknown>, '地图');
+  addFromRecord(modes as unknown as Record<string, unknown>, '模式');
+  addFromRecord(achievements.cat as unknown as Record<string, unknown>, '成就');
+  addFromRecord(achievements.mouse as unknown as Record<string, unknown>, '成就');
+  addFromRecord(specialSkills.cat as unknown as Record<string, unknown>, '特技');
+  addFromRecord(specialSkills.mouse as unknown as Record<string, unknown>, '特技');
 
   CATEGORY_HINTS.forEach((hint) => add(hint, '分类'));
 

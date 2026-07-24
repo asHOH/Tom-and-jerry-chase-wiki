@@ -1,5 +1,5 @@
-import { cards, maps, modes, specialSkills } from '@/data/static';
-import { characters } from '@/data/store';
+import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
+import { cards, characters, maps, modes, specialSkills } from '@/data/static';
 import type {
   CharacterRelation,
   CharacterRelationTag,
@@ -58,7 +58,13 @@ export type RelationMatrixViewModelOptions = {
   rowFaction?: RelationMatrixRowFaction;
   columnCategory?: RelationMatrixColumnCategory;
   getRelationsForRow?: (characterId: string) => CharacterRelation;
+  data?: RelationMatrixData;
 };
+
+export type RelationMatrixData = Pick<
+  PublishedGameDataByType,
+  'characters' | 'cards' | 'specialSkills' | 'maps' | 'modes'
+>;
 
 export const DEFAULT_RELATION_MATRIX_ROW_FACTION = 'mouse' satisfies RelationMatrixRowFaction;
 export const DEFAULT_RELATION_MATRIX_COLUMN_CATEGORY = 'cat' satisfies RelationMatrixColumnCategory;
@@ -101,8 +107,23 @@ const createEntity = (
   ...(item.factionId ? { factionId: item.factionId } : {}),
 });
 
-const createCharacterEntities = (factionId: FactionId): RelationMatrixEntity[] => {
-  const characterIds = factionId === 'mouse' ? mouseCharacterIds : catCharacterIds;
+const createCharacterEntities = (
+  factionId: FactionId,
+  characterData: RelationMatrixData['characters']
+): RelationMatrixEntity[] => {
+  const canonicalOrder: readonly string[] =
+    factionId === 'mouse' ? mouseCharacterIds : catCharacterIds;
+  const characterIds = Object.values(characterData)
+    .filter((character) => character.factionId === factionId)
+    .map((character) => character.id)
+    .sort((left, right) => {
+      const leftIndex = canonicalOrder.indexOf(left);
+      const rightIndex = canonicalOrder.indexOf(right);
+      if (leftIndex === -1 && rightIndex === -1) return left.localeCompare(right, 'zh-CN');
+      if (leftIndex === -1) return 1;
+      if (rightIndex === -1) return -1;
+      return leftIndex - rightIndex;
+    });
 
   return characterIds.map((characterId) =>
     createEntity(
@@ -112,8 +133,11 @@ const createCharacterEntities = (factionId: FactionId): RelationMatrixEntity[] =
   );
 };
 
-const createKnowledgeCardEntities = (factionId: FactionId): RelationMatrixEntity[] =>
-  Object.entries(cards)
+const createKnowledgeCardEntities = (
+  factionId: FactionId,
+  cardData: RelationMatrixData['cards']
+): RelationMatrixEntity[] =>
+  Object.entries(cardData)
     .filter(([, card]) => card.factionId === factionId)
     .map(([cardId]) =>
       createEntity(
@@ -122,40 +146,44 @@ const createKnowledgeCardEntities = (factionId: FactionId): RelationMatrixEntity
       )
     );
 
-const createSpecialSkillEntities = (factionId: FactionId): RelationMatrixEntity[] =>
-  Object.entries(specialSkills[factionId]).map(([skillId]) =>
+const createSpecialSkillEntities = (
+  factionId: FactionId,
+  skillData: RelationMatrixData['specialSkills']
+): RelationMatrixEntity[] =>
+  Object.entries(skillData[factionId]).map(([skillId]) =>
     createEntity(
       { name: skillId, type: 'specialSkill', factionId },
       `/special-skills/${factionId}/${encodeURIComponent(skillId)}`
     )
   );
 
-const createMapEntities = (): RelationMatrixEntity[] =>
-  Object.keys(maps).map((mapId) =>
+const createMapEntities = (mapData: RelationMatrixData['maps']): RelationMatrixEntity[] =>
+  Object.keys(mapData).map((mapId) =>
     createEntity({ name: mapId, type: 'map' }, `/maps/${encodeURIComponent(mapId)}`)
   );
 
-const createModeEntities = (): RelationMatrixEntity[] =>
-  Object.keys(modes).map((modeId) =>
+const createModeEntities = (modeData: RelationMatrixData['modes']): RelationMatrixEntity[] =>
+  Object.keys(modeData).map((modeId) =>
     createEntity({ name: modeId, type: 'mode' }, `/modes/${encodeURIComponent(modeId)}`)
   );
 
 const createColumnEntities = (
   rowFaction: FactionId,
-  columnCategory: RelationMatrixColumnCategory
+  columnCategory: RelationMatrixColumnCategory,
+  data: RelationMatrixData
 ): RelationMatrixEntity[] => {
   switch (columnCategory) {
     case 'mouse':
     case 'cat':
-      return createCharacterEntities(columnCategory);
+      return createCharacterEntities(columnCategory, data.characters);
     case 'knowledgeCard':
-      return createKnowledgeCardEntities(getOppositeFaction(rowFaction));
+      return createKnowledgeCardEntities(getOppositeFaction(rowFaction), data.cards);
     case 'specialSkill':
-      return createSpecialSkillEntities(getOppositeFaction(rowFaction));
+      return createSpecialSkillEntities(getOppositeFaction(rowFaction), data.specialSkills);
     case 'map':
-      return createMapEntities();
+      return createMapEntities(data.maps);
     case 'mode':
-      return createModeEntities();
+      return createModeEntities(data.modes);
   }
 };
 
@@ -288,18 +316,25 @@ export const getRelationMatrixCell = (
 export const buildRelationMatrixViewModel = (
   options: RelationMatrixViewModelOptions = {}
 ): RelationMatrixViewModel => {
+  const data: RelationMatrixData = options.data ?? {
+    characters,
+    cards,
+    specialSkills,
+    maps,
+    modes,
+  };
   const rowFaction = options.rowFaction ?? DEFAULT_RELATION_MATRIX_ROW_FACTION;
   const columnCategory = coerceColumnCategory(
     rowFaction,
     options.columnCategory ?? DEFAULT_RELATION_MATRIX_COLUMN_CATEGORY
   );
-  const rows = createCharacterEntities(rowFaction);
-  const columns = createColumnEntities(rowFaction, columnCategory);
+  const rows = createCharacterEntities(rowFaction, data.characters);
+  const columns = createColumnEntities(rowFaction, columnCategory, data);
   const columnKeyById = new Map(columns.map((column) => [column.id, column.key]));
   const relationKinds = getRelationKindsForColumnCategory(columnCategory);
   const getRelationsForRow =
     options.getRelationsForRow ??
-    ((characterId: string) => getCharacterRelation(characters, characterId));
+    ((characterId: string) => getCharacterRelation(data.characters, characterId));
   const cells = new Map<string, RelationMatrixCell>();
 
   for (const row of rows) {

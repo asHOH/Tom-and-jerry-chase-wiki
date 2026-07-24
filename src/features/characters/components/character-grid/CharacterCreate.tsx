@@ -4,11 +4,11 @@ import React, { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 
 import { componentTokens, designTokens } from '@/lib/design';
+import { requireActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
 import { handleCharacterIdChange } from '@/lib/editUtils';
 import type { CharacterWithFaction } from '@/lib/types';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
-import { characters } from '@/data/store';
 import type { FactionId } from '@/data/types';
 import Button from '@/components/ui/Button';
 import EntityCardFrame from '@/components/ui/EntityCardFrame';
@@ -36,6 +36,7 @@ export default function CharacterCreate() {
   const handleSubmit = () => {
     const trimmedName = characterName.trim();
     if (!trimmedName) return;
+    const characters = requireActiveEditRuntime().stores.characters;
 
     if (characters[trimmedName]) {
       handleSelectCharacter(trimmedName);

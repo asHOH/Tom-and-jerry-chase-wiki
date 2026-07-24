@@ -1,17 +1,20 @@
 'use client';
 
 import React, { Fragment } from 'react';
-import { useSnapshot } from 'valtio';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { AssetManager } from '@/lib/assetManager';
 import { cn, getSkillLevelColors, getSkillLevelContainerColor } from '@/lib/design';
+import {
+  requireActiveEditRuntime,
+  useActiveEditRuntime,
+  useOptionalEditSnapshot,
+} from '@/lib/edit/activeEditRuntime';
 import { CharacterWithFaction } from '@/lib/types';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
-import { characters } from '@/data/store';
 import { Skill, SkillLevel } from '@/data/types';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
 import DetailOwnbuffsCard from '@/features/shared/detail-view/DetailOwnbuffsCard';
@@ -22,6 +25,7 @@ import { editable } from '@/components/ui/editable';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import { TrashIcon } from '@/components/icons/CommonIcons';
 
+import { usePublishedCharacter } from '../PublishedCharacterContext';
 import SkillCardMedia from './SkillCardMedia';
 import SkillCardProperties from './SkillCardProperties';
 
@@ -95,6 +99,7 @@ function updateSkillName({
   newName: string;
 }) {
   const factionId = localCharacter.factionId!;
+  const characters = requireActiveEditRuntime().stores.characters;
   const skill = characters[characterId]!.skills[skillIndex]!;
   skill.name = newName;
   skill.imageUrl = AssetManager.getSkillImageUrl(
@@ -110,6 +115,7 @@ function RemoveWeaponButton({ characterId }: { characterId: string }) {
       type='button'
       aria-label='移除技能'
       onClick={() => {
+        const characters = requireActiveEditRuntime().stores.characters;
         characters[characterId]!.skills = characters[characterId]!.skills.filter(
           ({ type }: Skill) => type != 'weapon2'
         );
@@ -208,7 +214,12 @@ export default function SkillCard({
 }: SkillCardProps) {
   const { isEditMode } = useEditMode();
   const { isDetailedView: isDetailed } = useAppContext();
-  const localCharacter = useSnapshot(characters[characterId]!) as CharacterWithFaction;
+  const editRuntime = useActiveEditRuntime();
+  const publishedCharacter = usePublishedCharacter(characterId);
+  const localCharacter = useOptionalEditSnapshot(
+    editRuntime?.stores.characters[characterId],
+    publishedCharacter
+  ) as CharacterWithFaction;
   const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
   const skillTypeLabel = getSkillTypeLabel(skill.type, isSingleWeapon);

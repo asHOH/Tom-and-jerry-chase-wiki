@@ -1,14 +1,12 @@
 'use client';
 
-import { useSnapshot } from 'valtio';
-
 import { getFixtureSourceColors, getFixtureTypeColors } from '@/lib/design';
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { getSingleItemPrototype, getSingleItemVariant } from '@/lib/singleItemTools';
 import { useLocalFixture } from '@/hooks/useLocalEditEntity';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
-import { fixturesEdit } from '@/data/store';
 import { Fixture } from '@/data/types';
 import ActorAttributesSection from '@/features/actor-profiles/components/ActorAttributesSection';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
@@ -29,13 +27,10 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
   const { fixtureName } = useLocalFixture();
   const ed = editable('fixtures');
 
-  const fixturesSnapshot = useSnapshot(fixturesEdit);
-  if (!fixture) return null;
-
-  const rawFixture = fixturesEdit[fixtureName];
-  const effectiveFixture = (
-    isEditMode ? (fixturesSnapshot[fixtureName] ?? fixture) : fixture
-  ) as Fixture;
+  const editRuntime = useActiveEditRuntime();
+  const rawFixture = editRuntime?.stores.fixtures[fixtureName];
+  const fixtureSnapshot = useOptionalEditSnapshot(rawFixture, fixture);
+  const effectiveFixture = (isEditMode && rawFixture ? fixtureSnapshot : fixture) as Fixture;
 
   /* 计算variant相关内容 */
   const prototype = getSingleItemPrototype({ name: fixture.name, type: 'fixture' });

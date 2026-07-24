@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 
+import { getPublishedGameDataSnapshot } from '@/lib/gameData/published/publishedSnapshot';
 import { generatePageMetadata } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
 
@@ -16,6 +17,17 @@ export const metadata: Metadata = generatePageMetadata({
   canonicalUrl: `${SITE_URL}/relations`,
 });
 
-export default function RelationsPage() {
-  return <RelationsClient description={DESCRIPTION} />;
+export default async function RelationsPage() {
+  const snapshot = await getPublishedGameDataSnapshot();
+  const data = {
+    characters: snapshot.data.characters,
+    cards: snapshot.data.cards,
+    specialSkills: snapshot.data.specialSkills,
+    maps: snapshot.data.maps,
+    modes: snapshot.data.modes,
+  };
+
+  return (
+    <RelationsClient description={DESCRIPTION} data={data} publishedRevision={snapshot.revision} />
+  );
 }

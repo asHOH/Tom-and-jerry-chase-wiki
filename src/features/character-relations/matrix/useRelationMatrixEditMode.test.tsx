@@ -1,7 +1,8 @@
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
+import type { ActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
 import { getActionsStorageKey, readActionHistory, writeActionHistory } from '@/lib/edit/diffUtils';
-import { characters } from '@/data/store';
+import { clearTestEditRuntime, installTestEditRuntime } from '@/testUtils/editRuntime';
 
 import { useRelationMatrixEditMode } from './useRelationMatrixEditMode';
 
@@ -39,6 +40,8 @@ jest.mock('@/context/ToastContext', () => ({
 const storageKey = getActionsStorageKey('characters');
 const relationCountersOriginal = [{ id: '汤姆' }, { id: '布奇' }];
 const relationCountersFinal = [{ id: '汤姆' }];
+let runtime: ActiveEditRuntime;
+let characters: ActiveEditRuntime['stores']['characters'];
 
 function RelationEditModeProbe() {
   const {
@@ -87,10 +90,9 @@ function RelationEditModeProbe() {
 const renderProbe = () => render(<RelationEditModeProbe />);
 
 describe('useRelationMatrixEditMode', () => {
-  let characterSnapshot: Record<string, unknown>;
-
   beforeEach(() => {
-    characterSnapshot = structuredClone(characters) as Record<string, unknown>;
+    runtime = installTestEditRuntime();
+    characters = runtime.stores.characters;
     mockPermissionProfile = 'contributor';
     window.localStorage.clear();
     mockInfo.mockClear();
@@ -101,12 +103,7 @@ describe('useRelationMatrixEditMode', () => {
 
   afterEach(() => {
     cleanup();
-    Object.keys(characters).forEach((key) => {
-      delete (characters as Record<string, unknown>)[key];
-    });
-    Object.entries(characterSnapshot).forEach(([key, value]) => {
-      (characters as Record<string, unknown>)[key] = value;
-    });
+    clearTestEditRuntime(runtime);
     window.localStorage.clear();
     jest.restoreAllMocks();
   });

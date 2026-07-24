@@ -99,6 +99,7 @@ export default async function AchievementDetailPage({
         factionId={factionId}
         achievementName={achievementName}
         publishedRevision={readModel.revision}
+        publishedHistory={readModel.history}
       />
     </>
   );

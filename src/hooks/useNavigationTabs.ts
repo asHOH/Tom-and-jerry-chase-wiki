@@ -1,12 +1,13 @@
 import { usePathname } from 'next/navigation';
-import { useSnapshot } from 'valtio';
 
 import { NAV_ITEMS } from '@/constants/navigation';
-import { characters } from '@/data/store';
+import { catCharacterIds, mouseCharacterIds } from '@/features/characters/data/characterMetadata';
+
+const catCharacterIdSet = new Set<string>(catCharacterIds);
+const mouseCharacterIdSet = new Set<string>(mouseCharacterIds);
 
 export function useNavigationTabs() {
   const pathname = usePathname();
-  const charactersSnap = useSnapshot(characters);
 
   const isActive = (href: string) => {
     if (!pathname) return false;
@@ -14,10 +15,10 @@ export function useNavigationTabs() {
     if (!href.startsWith('/factions/mouse') && !href.startsWith('/factions/cat')) return false;
     const slug = /^\/characters\/(?:user\/)?([^/]+)\/?$/.exec(pathname)?.[1];
     if (!slug) return false;
-    const character = charactersSnap[decodeURIComponent(slug)];
+    const characterId = decodeURIComponent(slug);
     return (
-      (character?.factionId === 'cat' && href.startsWith('/factions/cat')) ||
-      (character?.factionId === 'mouse' && href.startsWith('/factions/mouse'))
+      (catCharacterIdSet.has(characterId) && href.startsWith('/factions/cat')) ||
+      (mouseCharacterIdSet.has(characterId) && href.startsWith('/factions/mouse'))
     );
   };
 

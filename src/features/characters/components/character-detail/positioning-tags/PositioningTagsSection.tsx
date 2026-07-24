@@ -1,8 +1,8 @@
 import React, { useCallback } from 'react';
-import { useSnapshot } from 'valtio';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { cn, getPositioningTagColors, getPositioningTagContainerColor } from '@/lib/design';
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { setNestedProperty } from '@/lib/editUtils';
 import { getPositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { CharacterWithFaction } from '@/lib/types';
@@ -18,7 +18,7 @@ import {
   isPositioningTagVisible,
   sortPositioningTags,
 } from '@/constants/positioningTagSequences';
-import { characters } from '@/data/store';
+import { characters as staticCharacters } from '@/data/static';
 import type { FactionId, PositioningTag, PositioningTagLevel } from '@/data/types';
 import { getWeaponSkillImageUrl } from '@/features/characters/utils/weapons';
 import { editable } from '@/components/ui/editable';
@@ -28,6 +28,7 @@ import Tooltip from '@/components/ui/Tooltip';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 
+import { usePublishedCharacter } from '../PublishedCharacterContext';
 import PositioningTagsChart from './PositioningTagsCharts';
 import {
   getPositioningTagChartData,
@@ -113,7 +114,12 @@ function WeaponDropdown({
   characterId: string;
   onSelect: (value: 1 | 2 | null) => void;
 }) {
-  const character = useSnapshot(characters[characterId]!);
+  const editRuntime = useActiveEditRuntime();
+  const publishedCharacter = usePublishedCharacter(characterId);
+  const character = useOptionalEditSnapshot(
+    editRuntime?.stores.characters[characterId],
+    publishedCharacter
+  );
   if (!~character.skills?.findIndex((skill) => skill.type === 'weapon2') && currentValue == null)
     return;
 
@@ -159,7 +165,10 @@ interface PositioningTagsSectionProps {
 
 function usePositioningTags({ factionId }: { factionId: FactionId }) {
   const { characterId } = useLocalCharacter();
-  const localCharacter = useSnapshot(characters[characterId]!);
+  const editRuntime = useActiveEditRuntime();
+  const rawCharacter = editRuntime?.stores.characters[characterId];
+  const publishedCharacter = usePublishedCharacter(characterId);
+  const localCharacter = useOptionalEditSnapshot(rawCharacter, publishedCharacter);
   const key = factionId == 'cat' ? 'catPositioningTags' : 'mousePositioningTags';
   function getTags(char: DeepReadonly<CharacterWithFaction>) {
     return char.mousePositioningTags ?? char.catPositioningTags ?? [];
@@ -174,10 +183,11 @@ function usePositioningTags({ factionId }: { factionId: FactionId }) {
         additionalDescription: string;
       }[]
     ) => {
-      setNestedProperty(characters, `${localCharacter.id}.${key}`, updatedTags);
+      if (!editRuntime) return { ...prevChar, [key]: updatedTags };
+      setNestedProperty(editRuntime.stores.characters, `${localCharacter.id}.${key}`, updatedTags);
       return { ...prevChar, [key]: updatedTags };
     },
-    [key, localCharacter.id]
+    [editRuntime, key, localCharacter.id]
   );
   const handleUpdate = useCallback(
     (
@@ -251,7 +261,8 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
   const { isEditMode } = useEditMode();
   const { isDetailedView: isDetailed } = useAppContext();
   const { characterId } = useLocalCharacter();
-  const charactersSnap = useSnapshot(characters);
+  const editRuntime = useActiveEditRuntime();
+  const charactersSnap = useOptionalEditSnapshot(editRuntime?.stores.characters, staticCharacters);
 
   const borderColor =
     factionId === 'cat'

@@ -2,6 +2,8 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Article, WithContext } from 'schema-dts';
 
+import { getApprovedActionSnapshot } from '@/lib/gameData/published/getApprovedActionSnapshot';
+import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
 import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
 import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
@@ -64,7 +66,11 @@ export async function generateMetadata({
 export default async function CardPage({ params }: { params: Promise<{ cardId: string }> }) {
   const resolvedParams = await params;
   const cardId = decodeURIComponent(resolvedParams.cardId); // Decode the URL-encoded card ID
-  const readModel = await getPublishedEntityRouteReadModel('cards', cardId);
+  const snapshot = await getApprovedActionSnapshot();
+  const [readModel, characters] = await Promise.all([
+    getPublishedEntityRouteReadModel('cards', cardId, undefined, snapshot),
+    getPublishedDomainReadModel('characters', snapshot),
+  ]);
   const card = readModel.data;
 
   if (!card) {
@@ -78,6 +84,8 @@ export default async function CardPage({ params }: { params: Promise<{ cardId: s
         card={card}
         cardId={cardId}
         publishedRevision={readModel.revision}
+        publishedHistory={readModel.history}
+        charactersData={characters.data}
       />
     </>
   );

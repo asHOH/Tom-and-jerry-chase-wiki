@@ -1,11 +1,13 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { useSnapshot } from 'valtio';
 
 import { getFactionButtonColors } from '@/lib/design';
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
+import { usePublishedRevision } from '@/hooks/usePublishedRevision';
 import { useDarkMode } from '@/context/DarkModeContext';
-import { achievementsEdit } from '@/data/store';
+import { achievements } from '@/data/static';
 import type { Achievement } from '@/data/types';
 import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
@@ -13,11 +15,21 @@ import FilterRow from '@/components/ui/FilterRow';
 
 import AchievementCardDisplay from './AchievementCardDisplay';
 
-export default function AchievementGridClient() {
+type AchievementGridProps = {
+  data?: PublishedGameDataByType['achievements'];
+  publishedRevision?: `v1:${string}`;
+};
+
+export default function AchievementGridClient({
+  data = achievements,
+  publishedRevision,
+}: AchievementGridProps) {
+  usePublishedRevision(publishedRevision);
   const [selectedFactions, setSelectedFactions] = useState<('cat' | 'mouse')[]>([]);
   const [isDarkMode] = useDarkMode();
 
-  const achievementsSnapshot = useSnapshot(achievementsEdit);
+  const editRuntime = useActiveEditRuntime();
+  const achievementsSnapshot = useOptionalEditSnapshot(editRuntime?.stores.achievements, data);
   const allAchievements = [
     ...Object.values(achievementsSnapshot.cat),
     ...Object.values(achievementsSnapshot.mouse),

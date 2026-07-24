@@ -1,9 +1,7 @@
-import { useSnapshot } from 'valtio';
-
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useEditMode } from '@/context/EditModeContext';
-import { factionData } from '@/data/static';
-import { characters, specialSkillsEdit } from '@/data/store';
+import { factionData, specialSkills } from '@/data/static';
 import { isGeneralSpecialSkill } from '@/features/characters/utils/recommendations';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 import { editable } from '@/components/ui/editable';
@@ -12,6 +10,7 @@ import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 import Link from '@/components/Link';
 
+import { usePublishedCharacter } from '../PublishedCharacterContext';
 import RecommendedStorePlansSection from './RecommendedStorePlansSection';
 
 const e = editable('characters');
@@ -20,24 +19,30 @@ export default function SpecialSkillsSection() {
   'use no memo';
   const { characterId } = useLocalCharacter();
   const { isEditMode } = useEditMode();
-  const character = useSnapshot(characters[characterId]!);
-  const specialSkillsSnapshot = useSnapshot(specialSkillsEdit);
+  const editRuntime = useActiveEditRuntime();
+  const rawCharacter = editRuntime?.stores.characters[characterId];
+  const publishedCharacter = usePublishedCharacter(characterId);
+  const character = useOptionalEditSnapshot(rawCharacter, publishedCharacter);
+  const specialSkillsSnapshot = useOptionalEditSnapshot(
+    editRuntime?.stores.specialSkills,
+    specialSkills
+  );
   const hasSpecialSkills = Boolean(character.specialSkills?.length);
   const hasStorePlans = Boolean(character.recommendedStorePlans?.length);
   if (!hasSpecialSkills && !hasStorePlans && !isEditMode) return null;
   const faction = character.factionId ? factionData[character.factionId] : undefined;
 
   const insertCustomSkill = () => {
-    const skills = characters[characterId]!.specialSkills ?? [];
+    const skills = rawCharacter!.specialSkills ?? [];
     const generalStartIndex = faction
       ? skills.findIndex((skill) => isGeneralSpecialSkill(skill, faction))
       : -1;
     const insertionIndex = generalStartIndex === -1 ? skills.length : generalStartIndex;
 
-    if (!characters[characterId]!.specialSkills) {
-      characters[characterId]!.specialSkills = [];
+    if (!rawCharacter!.specialSkills) {
+      rawCharacter!.specialSkills = [];
     }
-    characters[characterId]!.specialSkills!.splice(insertionIndex, 0, {
+    rawCharacter!.specialSkills!.splice(insertionIndex, 0, {
       name: character.factionId === 'cat' ? '绝地反击' : '魔术漂浮',
       description: '',
     });
@@ -116,7 +121,7 @@ export default function SpecialSkillsSection() {
                           <IconButton
                             type='button'
                             aria-label='移除特技'
-                            onClick={() => characters[characterId]!.specialSkills!.splice(index, 1)}
+                            onClick={() => rawCharacter!.specialSkills!.splice(index, 1)}
                             variant='delete'
                             size='md'
                             className='ml-auto'

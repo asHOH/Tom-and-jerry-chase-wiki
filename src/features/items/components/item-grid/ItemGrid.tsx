@@ -1,13 +1,15 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { useSnapshot } from 'valtio';
 
 import { getFactionButtonColors, getItemSourceColors, getItemTypeColors } from '@/lib/design';
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
+import { usePublishedRevision } from '@/hooks/usePublishedRevision';
 import { useDarkMode } from '@/context/DarkModeContext';
-import { itemsEdit } from '@/data/store';
+import { items } from '@/data/static';
 import type { Item, Itemsourcelist, Itemtypelist } from '@/data/types';
 import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
@@ -16,7 +18,11 @@ import Tooltip from '@/components/ui/Tooltip';
 
 import ItemCardDisplay from './ItemCardDisplay';
 
-type Props = { description?: string };
+type Props = {
+  description?: string;
+  data?: PublishedGameDataByType['items'];
+  publishedRevision?: `v1:${string}`;
+};
 
 const ITEM_TYPE_OPTIONS: Itemtypelist[] = [
   '投掷类',
@@ -28,14 +34,16 @@ const ITEM_TYPE_OPTIONS: Itemtypelist[] = [
 ];
 const ITEM_SOURCE_OPTIONS: Itemsourcelist[] = ['常规道具', '地图道具'];
 
-export default function ItemClient({ description }: Props) {
+export default function ItemClient({ description, data = items, publishedRevision }: Props) {
+  usePublishedRevision(publishedRevision);
   const [selectedTypes, setSelectedTypes] = useState<Itemtypelist[]>([]);
   const [selectedSources, setSelectedSources] = useState<Itemsourcelist[]>([]);
   const [selectedFactions, setSelectedFactions] = useState<('cat' | 'mouse' | 'none')[]>([]);
   const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
 
-  const itemsSnapshot = useSnapshot(itemsEdit);
+  const editRuntime = useActiveEditRuntime();
+  const itemsSnapshot = useOptionalEditSnapshot(editRuntime?.stores.items, data);
   const filteredItems = Object.values(itemsSnapshot as Record<string, Item>).filter(
     (item: Item) => {
       const typeMatch = selectedTypes.length === 0 || selectedTypes.includes(item.itemtype);

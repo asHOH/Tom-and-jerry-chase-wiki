@@ -1,16 +1,17 @@
 'use client';
 
 import { useId, useMemo, useState } from 'react';
-import { useSnapshot } from 'valtio';
 
 import { getCardRankColors, getFactionButtonColors } from '@/lib/design';
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { createRankFilter, RANK_OPTIONS, useFilterState } from '@/lib/filterUtils';
+import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { sortCardsByRank } from '@/lib/sortingUtils';
+import { usePublishedRevision } from '@/hooks/usePublishedRevision';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { cards } from '@/data/static';
-import { cardsEdit } from '@/data/store';
 import type { FactionId } from '@/data/types';
 import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
@@ -20,11 +21,17 @@ import FilterRow from '@/components/ui/FilterRow';
 
 import KnowledgeCardDisplay from './KnowledgeCardDisplay';
 
-type Props = { description?: string };
+type Props = {
+  description?: string;
+  data?: PublishedGameDataByType['cards'];
+  publishedRevision?: `v1:${string}`;
+};
 
-export default function KnowledgeCardGrid({ description }: Props) {
+export default function KnowledgeCardGrid({ description, data = cards, publishedRevision }: Props) {
+  usePublishedRevision(publishedRevision);
   const { isEditMode } = useEditMode();
-  const cardsEditSnapshot = useSnapshot(cardsEdit);
+  const editRuntime = useActiveEditRuntime();
+  const cardsEditSnapshot = useOptionalEditSnapshot(editRuntime?.stores.cards, data);
   const {
     selectedFilters: selectedRanks,
     toggleFilter: toggleRankFilter,
@@ -36,7 +43,7 @@ export default function KnowledgeCardGrid({ description }: Props) {
   const costLabelId = useId();
   const { handleSelectCard } = useAppContext();
 
-  const sourceCards = isEditMode ? cardsEditSnapshot : cards;
+  const sourceCards = isEditMode ? cardsEditSnapshot : data;
   const filteredAndSortedCards = sortCardsByRank(
     Object.values(sourceCards)
       .filter(createRankFilter(selectedRanks))

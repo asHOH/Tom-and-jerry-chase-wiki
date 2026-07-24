@@ -1,13 +1,15 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { useSnapshot } from 'valtio';
 
 import { getEntityTypeColors, getFactionButtonColors } from '@/lib/design';
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
+import { usePublishedRevision } from '@/hooks/usePublishedRevision';
 import { useDarkMode } from '@/context/DarkModeContext';
-import { entitiesEdit } from '@/data/store';
+import { entities } from '@/data/static';
 import type { Entity, Entitytaglist, Entitytypelist } from '@/data/types';
 import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
@@ -57,9 +59,14 @@ const ENTITY_TAG_OPTIONS: Entitytaglist[] = [
   '特殊',
 ];
 
-type Props = { description?: string };
+type Props = {
+  description?: string;
+  data?: PublishedGameDataByType['entities'];
+  publishedRevision?: `v1:${string}`;
+};
 
-export default function EntityClient({ description }: Props) {
+export default function EntityClient({ description, data = entities, publishedRevision }: Props) {
+  usePublishedRevision(publishedRevision);
   // 基础筛选状态
   const [selectedTypes, setSelectedTypes] = useState<Entitytypelist[]>([]);
   const [selectedFactions, setSelectedFactions] = useState<('cat' | 'mouse' | 'other')[]>([]);
@@ -135,7 +142,8 @@ export default function EntityClient({ description }: Props) {
     }
   }
 
-  const entitiesSnapshot = useSnapshot(entitiesEdit);
+  const editRuntime = useActiveEditRuntime();
+  const entitiesSnapshot = useOptionalEditSnapshot(editRuntime?.stores.entities, data);
   const filteredEntities = Object.values(entitiesSnapshot as Record<string, Entity>).filter(
     (entity: Entity) => {
       return matchesType(entity) && matchesFaction(entity) && matchesTag(entity);

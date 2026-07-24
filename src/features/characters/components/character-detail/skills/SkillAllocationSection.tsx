@@ -1,36 +1,39 @@
 'use client';
 
 import React, { useCallback } from 'react';
-import { useSnapshot } from 'valtio';
 
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { setNestedProperty } from '@/lib/editUtils';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useEditMode } from '@/context/EditModeContext';
-import { characters } from '@/data/store';
 import { FactionId, SkillAllocation } from '@/data/types';
 import Card from '@/components/ui/Card';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import { PlusIcon } from '@/components/icons/CommonIcons';
 
+import { usePublishedCharacter } from '../PublishedCharacterContext';
 import CharacterSection from '../sections/CharacterSection';
 import SkillAllocationDisplay from './SkillAllocationDisplay';
 
 const useSkillAllocationManagement = () => {
   const { characterId } = useLocalCharacter();
-  const localCharacter = useSnapshot(characters[characterId]!);
+  const editRuntime = useActiveEditRuntime();
+  const rawCharacter = editRuntime?.stores.characters[characterId];
+  const publishedCharacter = usePublishedCharacter(characterId);
+  const localCharacter = useOptionalEditSnapshot(rawCharacter, publishedCharacter);
   const handleSaveChanges = useCallback(
     (updatedSkillAllocations: SkillAllocation[]) => {
-      if (!localCharacter) return;
+      if (!rawCharacter || !editRuntime) return;
       setNestedProperty(
-        characters,
+        editRuntime.stores.characters,
         `${localCharacter.id}.skillAllocations`,
         updatedSkillAllocations
       );
-      characters[localCharacter.id]!.skillAllocations = updatedSkillAllocations;
+      editRuntime.stores.characters[localCharacter.id]!.skillAllocations = updatedSkillAllocations;
 
       // Removed setLocalCharacter call due to missing function.
     },
-    [localCharacter]
+    [editRuntime, localCharacter.id, rawCharacter]
   );
 
   const handleAddSkillAllocation = () => {
@@ -63,7 +66,13 @@ interface SkillAllocationSectionProps {
 const SkillAllocationSection: React.FC<SkillAllocationSectionProps> = ({ factionId }) => {
   const { isEditMode } = useEditMode();
   const { characterId } = useLocalCharacter();
-  const skillAllocations = useSnapshot(characters[characterId]?.skillAllocations ?? []);
+  const editRuntime = useActiveEditRuntime();
+  const publishedCharacter = usePublishedCharacter(characterId);
+  const character = useOptionalEditSnapshot(
+    editRuntime?.stores.characters[characterId],
+    publishedCharacter
+  );
+  const skillAllocations = character.skillAllocations ?? [];
   const { handleAddSkillAllocation, handleRemoveSkillAllocation } = useSkillAllocationManagement();
 
   if (!isEditMode && (!skillAllocations || skillAllocations.length === 0)) {

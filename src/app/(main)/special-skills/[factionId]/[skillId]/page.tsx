@@ -2,6 +2,8 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Article, WithContext } from 'schema-dts';
 
+import { getApprovedActionSnapshot } from '@/lib/gameData/published/getApprovedActionSnapshot';
+import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
 import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
 import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
@@ -90,7 +92,11 @@ export default async function SpecialSkillDetailPage({
     notFound();
   }
   const factionId = factionIdRaw as FactionId;
-  const readModel = await getPublishedEntityRouteReadModel('specialSkills', skillId, factionId);
+  const snapshot = await getApprovedActionSnapshot();
+  const [readModel, characters] = await Promise.all([
+    getPublishedEntityRouteReadModel('specialSkills', skillId, factionId, snapshot),
+    getPublishedDomainReadModel('characters', snapshot),
+  ]);
   const skill = readModel.data;
 
   if (!skill) {
@@ -105,6 +111,8 @@ export default async function SpecialSkillDetailPage({
         factionId={factionId}
         skillId={skillId}
         publishedRevision={readModel.revision}
+        publishedHistory={readModel.history}
+        charactersData={characters.data}
       />
     </>
   );

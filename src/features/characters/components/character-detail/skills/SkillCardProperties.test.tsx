@@ -4,11 +4,15 @@ import { snapshot } from 'valtio';
 
 import '@testing-library/jest-dom';
 
+import type { ActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
 import type { CharacterWithFaction } from '@/lib/types';
-import { characters } from '@/data/store';
 import type { Skill } from '@/data/types';
+import { clearTestEditRuntime, installTestEditRuntime } from '@/testUtils/editRuntime';
 
 import SkillCardProperties from './SkillCardProperties';
+
+let runtime: ActiveEditRuntime;
+let characters: ActiveEditRuntime['stores']['characters'];
 
 jest.mock('@/data', () => {
   const { proxy } = jest.requireActual<typeof import('valtio')>('valtio');
@@ -91,6 +95,24 @@ function renderProperties(skill: Skill, isEditMode = false) {
 }
 
 describe('SkillCardProperties multi-part skills', () => {
+  beforeEach(() => {
+    runtime = installTestEditRuntime();
+    characters = runtime.stores.characters;
+    characters['测试角色'] = {
+      id: '测试角色',
+      factionId: 'mouse',
+      description: '',
+      imageUrl: '/test.png',
+      createDate: null,
+      skills: [],
+      knowledgeCardGroups: [],
+    } as unknown as (typeof characters)[string];
+  });
+
+  afterEach(() => {
+    clearTestEditRuntime(runtime);
+  });
+
   it('renders ordinal labels only when there are multiple parts', () => {
     renderProperties(
       createSkill({

@@ -3,8 +3,9 @@
 ## Status
 
 - Date: 2026-07-16
-- Last revised: 2026-07-24
-- State: Foundation, published-data selectors, and Lean Step 1 complete; Lean Step 2 is next
+- Last revised: 2026-07-25
+- State: Foundation, published-data selectors, Lean Step 1, and Lean Step 2 complete; Lean Step 3
+  is next
 - Scope: Remove universal editable-store initialization and root approved-action replay, preserve
   edit behavior, then enable publish-time dependency grouping
 
@@ -57,6 +58,26 @@ Lean Step 1 is also complete:
   character detail retains its eight-hour ISR interval, while tagged published-data invalidation
   remains available for on-demand refresh.
 - Focused characterization tests, Oxlint, strict TypeScript, Prettier, and
+  `npm run build:skip-images` pass.
+
+Lean Step 2 is also complete:
+
+- The root provider now derives request state from the URL and lazy-loads one `EditRuntime` only
+  for `?edit=1`.
+- The edit baseline endpoint returns one complete published snapshot and global revision with
+  private, no-store caching. It never returns approved action rows.
+- Edit stores are created once per edit session from the verified published baseline. Drafts are
+  restored before subscribers and editable controls become ready.
+- A visible-route/baseline revision mismatch triggers one route refresh. A persistent mismatch
+  leaves editing disabled with an explicit retry path.
+- Root approved-row transport, `usePublicGameDataActions`, mounted-client approved replay, and the
+  root raw-row history input are removed. Detail history uses route-scoped server projections.
+- Normal routes no longer construct module-level game-data proxies. Mixed-mode consumers use the
+  active edit session only after it exists, while normal reads use published route data or
+  justified static inputs.
+- Production manifests for the home page and representative character, item, map, and relation
+  routes do not contain the lazy edit-runtime chunk.
+- Full Jest, Oxlint, strict TypeScript, Prettier, actor-profile validation, and
   `npm run build:skip-images` pass.
 
 ## Frozen Correctness Contracts
@@ -124,7 +145,7 @@ Exit gate:
 - root-client replay is still the only temporary normal-path store dependency; and
 - focused tests, lint, type-check, and a character-detail build/bundle check pass.
 
-### Lean Step 2: Atomically install the lazy edit runtime and remove root replay
+### Lean Step 2 (complete): Atomically install the lazy edit runtime and remove root replay
 
 Preparatory code may land earlier, but runtime enablement and root replay removal are one cutover.
 

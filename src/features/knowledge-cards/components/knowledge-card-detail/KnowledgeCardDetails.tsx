@@ -1,15 +1,16 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { useSnapshot } from 'valtio';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import type { KnowledgeCardDetailsProps, KnowledgeCardWithFaction } from '@/lib/types';
 import { useLocalCard } from '@/hooks/useLocalEditEntity';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
-import { cardsEdit, characters } from '@/data/store';
+import { characters } from '@/data/static';
 import type { KnowledgeCardGroup, KnowledgeCardGroupSet } from '@/data/types';
 import { flattenCardGroup } from '@/features/knowledge-cards/utils/sections';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
@@ -24,13 +25,19 @@ import Image from '@/components/Image';
 import CharacterList from './CharacterList';
 import KnowledgeCardAttributesCard from './KnowledgeCardAttributesCard';
 
-export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps) {
+export default function KnowledgeCardDetails({
+  card,
+  charactersData = characters,
+}: KnowledgeCardDetailsProps & {
+  charactersData?: PublishedGameDataByType['characters'];
+}) {
   const { isEditMode } = useEditMode();
   const { cardId } = useLocalCard();
   const ed = editable('cards');
 
-  const rawLocalCard = cardsEdit[cardId];
-  const localCardSnapshot = useSnapshot(rawLocalCard ?? ({} as KnowledgeCardWithFaction));
+  const editRuntime = useActiveEditRuntime();
+  const rawLocalCard = editRuntime?.stores.cards[cardId];
+  const localCardSnapshot = useOptionalEditSnapshot(rawLocalCard, card);
   const effectiveCard =
     isEditMode && rawLocalCard ? (localCardSnapshot as KnowledgeCardWithFaction) : card;
 
@@ -40,7 +47,7 @@ export default function KnowledgeCardDetails({ card }: KnowledgeCardDetailsProps
   const { handleSelectCharacter, isDetailedView } = useAppContext();
   const searchParams = useSearchParams();
   const fromCharacterId = searchParams ? searchParams.get('from') : null;
-  const charactersSnap = useSnapshot(characters);
+  const charactersSnap = useOptionalEditSnapshot(editRuntime?.stores.characters, charactersData);
 
   const fromCharacter = fromCharacterId ? charactersSnap[fromCharacterId] : null;
 

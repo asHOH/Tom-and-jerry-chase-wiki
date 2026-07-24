@@ -4,7 +4,7 @@ import {
   getPositioningTagLevel,
   isPositioningTagVisible,
 } from '@/constants/positioningTagSequences';
-import { characters } from '@/data/store';
+import { characters } from '@/data/static';
 
 import { convertToPinyin } from '../pinyinUtils';
 import type { SearchResult } from './types';

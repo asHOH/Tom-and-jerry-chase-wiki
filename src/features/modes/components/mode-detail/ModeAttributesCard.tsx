@@ -1,12 +1,12 @@
 'use client';
 
-import { useSnapshot } from 'valtio';
-
 import { getModeTypeColors } from '@/lib/design';
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { useLocalMode } from '@/hooks/useLocalEditEntity';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
-import { mapsEdit, modesEdit } from '@/data/store';
+import { maps } from '@/data/static';
 import { Mode, SingleItem } from '@/data/types';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
 import AddAliasButton from '@/features/shared/detail-view/AddAliasButton';
@@ -17,14 +17,21 @@ import SingleItemAccordionCard from '@/components/ui/SingleItemAccordionCard';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import Tag from '@/components/ui/Tag';
 
-export default function ModeAttributesCard({ mode }: { mode: Mode }) {
+export default function ModeAttributesCard({
+  mode,
+  mapsData = maps,
+}: {
+  mode: Mode;
+  mapsData?: PublishedGameDataByType['maps'];
+}) {
   const [isDarkMode] = useDarkMode();
   const { isEditMode } = useEditMode();
   const { modeName } = useLocalMode();
   const ed = editable('modes');
 
-  const rawMode = modesEdit[modeName];
-  const mapsSnapshot = useSnapshot(mapsEdit);
+  const editRuntime = useActiveEditRuntime();
+  const rawMode = editRuntime?.stores.modes[modeName];
+  const mapsSnapshot = useOptionalEditSnapshot(editRuntime?.stores.maps, mapsData);
   const mapsSource = mapsSnapshot;
 
   function putTypeTagOn(mode: Mode) {

@@ -1,11 +1,9 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { useSnapshot } from 'valtio';
 
 import { AssetManager } from '@/lib/assetManager';
-import { maps } from '@/data/static';
-import { characters } from '@/data/store';
+import { characters, maps } from '@/data/static';
 import CharacterDisplay from '@/features/characters/components/character-grid/CharacterDisplay';
 import { getCharacterRelation } from '@/features/characters/utils/relationReadModel';
 import { CharacterSlotsSelector } from '@/components/ui/CharacterSelector';
@@ -15,7 +13,7 @@ import PageTitle from '@/components/ui/PageTitle';
 export default function RecommendedPageClient() {
   const [selectedMice, setSelectedMice] = useState<(string | null)[]>([null, null, null, null]);
   const [selectedMapName, setSelectedMapName] = useState<string>('');
-  const charactersSnap = useSnapshot(characters);
+  const charactersSnap = characters;
 
   const allMice = useMemo(() => {
     return Object.values(charactersSnap).filter((c) => c.factionId === 'mouse');

@@ -73,7 +73,12 @@ export default async function ItemDetailPage({
   return (
     <>
       <StructuredData data={generateStructuredData(itemName, item)} />
-      <ItemDetailClient item={item} itemName={itemName} publishedRevision={readModel.revision} />
+      <ItemDetailClient
+        item={item}
+        itemName={itemName}
+        publishedRevision={readModel.revision}
+        publishedHistory={readModel.history}
+      />
     </>
   );
 }

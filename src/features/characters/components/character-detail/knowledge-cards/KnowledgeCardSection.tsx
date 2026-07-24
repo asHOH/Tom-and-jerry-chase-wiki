@@ -4,10 +4,10 @@ import React, { useEffect, useMemo, useState } from 'react';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { cn } from '@/lib/design';
+import { useActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { factionData } from '@/data/static';
-import { characters } from '@/data/store';
 import type { CardGroup, FactionId, KnowledgeCardGroup, KnowledgeCardGroupSet } from '@/data/types';
 import { getGeneralKnowledgeCardGroupCount } from '@/features/characters/utils/recommendations';
 import { catKnowledgeCards } from '@/features/knowledge-cards/data/catKnowledgeCards';
@@ -81,6 +81,8 @@ export default function KnowledgeCardSection({
 }: KnowledgeCardSectionProps) {
   const { handleSelectCard } = useAppContext();
   const { isEditMode } = useEditMode();
+  const editRuntime = useActiveEditRuntime();
+  const editCharacter = editRuntime?.stores.characters[characterId];
   const generalGroupCount = getGeneralKnowledgeCardGroupCount(factionData[factionId]);
   const [isPickerOpen, setPickerOpen] = useState(false);
   const [currentTarget, setCurrentTarget] = useState<{
@@ -153,11 +155,12 @@ export default function KnowledgeCardSection({
     newCards: readonly string[]
   ) => {
     if (innerIndex === undefined) {
-      (characters[characterId]!.knowledgeCardGroups[topIndex] as KnowledgeCardGroup).cards =
-        Array.from(newCards) as CardGroup[];
+      (editCharacter!.knowledgeCardGroups[topIndex] as KnowledgeCardGroup).cards = Array.from(
+        newCards
+      ) as CardGroup[];
       return;
     }
-    const groupEntry = characters[characterId]!.knowledgeCardGroups[topIndex];
+    const groupEntry = editCharacter!.knowledgeCardGroups[topIndex];
     if (groupEntry && 'groups' in groupEntry && Array.isArray(groupEntry.groups)) {
       groupEntry.groups[innerIndex]!.cards = Array.from(newCards) as CardGroup[];
     }
@@ -168,7 +171,7 @@ export default function KnowledgeCardSection({
     field: 'id' | 'description' | 'detailedDescription' | 'defaultFolded',
     value: string | boolean | undefined
   ) => {
-    const entry = characters[characterId]!.knowledgeCardGroups[topIndex];
+    const entry = editCharacter!.knowledgeCardGroups[topIndex];
     if (!entry || !('groups' in entry)) return;
     (entry as unknown as Record<string, string | boolean | undefined>)[field] = value;
   };
@@ -231,10 +234,9 @@ export default function KnowledgeCardSection({
     newCards: CardGroup[]
   ) => {
     if (innerIndex === undefined) {
-      (characters[characterId]!.knowledgeCardGroups[topIndex] as KnowledgeCardGroup).cards =
-        newCards;
+      (editCharacter!.knowledgeCardGroups[topIndex] as KnowledgeCardGroup).cards = newCards;
     } else {
-      const entry = characters[characterId]!.knowledgeCardGroups[topIndex];
+      const entry = editCharacter!.knowledgeCardGroups[topIndex];
       if (entry && 'groups' in entry && Array.isArray(entry.groups)) {
         entry.groups[innerIndex]!.cards = newCards;
       }
@@ -251,7 +253,7 @@ export default function KnowledgeCardSection({
 
   /** Convert a top-level KnowledgeCardGroup into a KnowledgeCardGroupSet. */
   const handleConvertToGroupSet = (topIndex: number) => {
-    const entry = characters[characterId]!.knowledgeCardGroups[topIndex];
+    const entry = editCharacter!.knowledgeCardGroups[topIndex];
     if (!entry || !('cards' in entry)) return;
 
     const group = entry as KnowledgeCardGroup;
@@ -268,12 +270,12 @@ export default function KnowledgeCardSection({
       groups: [innerGroup, { cards: [], description: '待补充' }],
       defaultFolded: false,
     };
-    characters[characterId]!.knowledgeCardGroups[topIndex] = newSet;
+    editCharacter!.knowledgeCardGroups[topIndex] = newSet;
   };
 
   /** Add a new empty inner group to an existing KnowledgeCardGroupSet. */
   const handleAddInnerGroup = (topIndex: number) => {
-    const entry = characters[characterId]!.knowledgeCardGroups[topIndex];
+    const entry = editCharacter!.knowledgeCardGroups[topIndex];
     if (!entry || !('groups' in entry)) return;
 
     const set = entry as KnowledgeCardGroupSet;

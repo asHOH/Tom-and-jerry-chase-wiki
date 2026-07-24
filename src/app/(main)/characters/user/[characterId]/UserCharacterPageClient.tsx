@@ -2,22 +2,31 @@
 
 import { useLayoutEffect } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useSnapshot } from 'valtio';
 
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
+import { usePublishedRevision } from '@/hooks/usePublishedRevision';
 import { useEditMode } from '@/context/EditModeContext';
-import { characters } from '@/data/store';
 import { PageLoadingState } from '@/components/ui/LoadingState';
 import CharacterDetailsClient from '@/app/(main)/characters/[characterId]/CharacterDetailsClient';
+
+const EMPTY_CHARACTERS: PublishedGameDataByType['characters'] = {};
 
 /**
  * This is the client component that contains the actual page logic.
  * It can safely use hooks that depend on the contexts provided by its parent.
  */
-export default function UserCharacterPageClient() {
+export default function UserCharacterPageClient({
+  publishedRevision,
+}: {
+  publishedRevision: `v1:${string}`;
+}) {
+  usePublishedRevision(publishedRevision);
   const { isLoading, isEditMode } = useEditMode();
   const { characterId } = useLocalCharacter();
-  const charactersSnap = useSnapshot(characters);
+  const editRuntime = useActiveEditRuntime();
+  const charactersSnap = useOptionalEditSnapshot(editRuntime?.stores.characters, EMPTY_CHARACTERS);
   const character = characterId ? (charactersSnap[characterId] ?? null) : null;
   const searchParams = useSearchParams();
   const pathname = usePathname();

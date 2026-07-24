@@ -1,11 +1,13 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { useSnapshot } from 'valtio';
 
 import { getModeTypeColors } from '@/lib/design';
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
+import { usePublishedRevision } from '@/hooks/usePublishedRevision';
 import { useDarkMode } from '@/context/DarkModeContext';
-import { modesEdit } from '@/data/store';
+import { modes } from '@/data/static';
 import type { Mode, ModeTypeList } from '@/data/types';
 import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
@@ -13,15 +15,21 @@ import FilterRow from '@/components/ui/FilterRow';
 
 import ModeCardDisplay from './ModeCardDisplay';
 
-type Props = { description?: string };
+type Props = {
+  description?: string;
+  data?: PublishedGameDataByType['modes'];
+  publishedRevision?: `v1:${string}`;
+};
 
 const MODE_TYPE_OPTIONS: ModeTypeList[] = ['经典模式', '休闲模式', '特殊模式'];
 
-export default function ModeClient({ description }: Props) {
+export default function ModeClient({ description, data = modes, publishedRevision }: Props) {
+  usePublishedRevision(publishedRevision);
   const [selectedTypes, setSelectedTypes] = useState<ModeTypeList[]>([]);
   const [isDarkMode] = useDarkMode();
 
-  const modesSnapshot = useSnapshot(modesEdit);
+  const editRuntime = useActiveEditRuntime();
+  const modesSnapshot = useOptionalEditSnapshot(editRuntime?.stores.modes, data);
   const filteredModes = Object.values(modesSnapshot as Record<string, Mode>).filter(
     (mode: Mode) => {
       let typeMatch = true;

@@ -1,10 +1,10 @@
 'use client';
 
 import { useMemo } from 'react';
-import { useSnapshot } from 'valtio';
 
 import { GameDataManager } from '@/lib/dataManager';
 import { getAvatarFilterColors, getPositioningTagColors } from '@/lib/design';
+import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { getOriginalCharacterIds } from '@/lib/editUtils';
 import { useFilterState } from '@/lib/filterUtils';
 import { getPositioningTagTooltipContent } from '@/lib/tooltipUtils';
@@ -17,7 +17,7 @@ import {
   isPositioningTagVisible,
   sortPositioningTagNames,
 } from '@/constants/positioningTagSequences';
-import { characters as characterStore } from '@/data/store';
+import { characters as staticCharacters } from '@/data/static';
 import type { FactionId, PositioningTagName } from '@/data/types';
 import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
@@ -30,7 +30,11 @@ import CharacterImport from './CharacterImport';
 
 export default function CharacterGrid({ factionId, characters }: FactionCharactersProps) {
   const { isEditMode } = useEditMode();
-  const localCharacters = useSnapshot(characterStore);
+  const editRuntime = useActiveEditRuntime();
+  const localCharacters = useOptionalEditSnapshot(
+    editRuntime?.stores.characters,
+    characters ?? staticCharacters
+  );
   const effectiveCharacters = isEditMode || characters === undefined ? localCharacters : characters;
   const faction = useMemo(() => {
     return GameDataManager.getFactionsWithCharacters(effectiveCharacters)[factionId];
