@@ -47,6 +47,8 @@ import type { EditorMode, InteractiveMapProps } from './types';
 
 import 'leaflet/dist/leaflet.css';
 
+const INTERACTIVE_MAP_ZOOM_STEP = 2 / 3;
+
 export default function InteractiveMap({
   config: incomingConfig,
   mapName,
@@ -523,6 +525,9 @@ export default function InteractiveMap({
         maxBoundsViscosity={1}
         minZoom={config.minZoom}
         maxZoom={config.maxZoom + 2}
+        zoomSnap={INTERACTIVE_MAP_ZOOM_STEP}
+        zoomDelta={INTERACTIVE_MAP_ZOOM_STEP}
+        wheelPxPerZoomLevel={120}
         zoomControl
         doubleClickZoom
         className={`h-full w-full bg-slate-950 ${alwaysFullscreen ? '' : 'min-h-[420px]'}`}
