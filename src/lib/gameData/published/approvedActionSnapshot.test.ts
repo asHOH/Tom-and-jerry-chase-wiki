@@ -173,7 +173,7 @@ describe('createApprovedActionSnapshot', () => {
     expect(revision([base, second])).not.toBe(revision([second, base]));
   });
 
-  it('rejects non-approved, malformed, and unknown-type rows at the snapshot boundary', () => {
+  it('accepts any public-row status while rejecting malformed and unknown types', () => {
     const base = {
       id: 'row-invalid',
       entity_type: 'items',
@@ -185,9 +185,12 @@ describe('createApprovedActionSnapshot', () => {
       reviewed_at: null,
     };
 
-    expect(() => createApprovedActionSnapshotFromRows([{ ...base, status: 'synced' }])).toThrow(
-      'is not approved'
-    );
+    expect(
+      createApprovedActionSnapshotFromRows([{ ...base, status: 'pending' }]).rows[0]
+    ).toMatchObject({
+      rowId: 'row-invalid',
+      status: 'pending',
+    });
     expect(() =>
       createApprovedActionSnapshotFromRows([
         { ...base, entry: { op: 'set', path: '__proto__.polluted', newValue: true } },

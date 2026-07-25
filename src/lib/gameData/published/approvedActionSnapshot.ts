@@ -142,9 +142,6 @@ export function createApprovedActionSnapshotFromRows(
   const inputs: ApprovedActionSnapshotRowInput[] = [];
 
   for (const row of rows) {
-    if (row.status !== 'approved') {
-      throw new ApprovedActionSnapshotError(`Public replay row ${row.id} is not approved`, row.id);
-    }
     if (!isPublishableEntityType(row.entity_type)) {
       throw new ApprovedActionSnapshotError(
         `Public replay row ${row.id} has unknown entity type ${row.entity_type}`,

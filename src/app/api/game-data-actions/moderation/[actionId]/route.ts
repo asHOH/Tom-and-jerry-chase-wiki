@@ -31,6 +31,9 @@ const readRejectionReason = async (request: NextRequest): Promise<string | undef
   return undefined;
 };
 
+const rejectConflictResponse = () =>
+  NextResponse.json({ error: 'Action is already public; use revoke instead' }, { status: 409 });
+
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ actionId: string }> }
@@ -113,6 +116,9 @@ export async function POST(
     }
 
     // reject
+    if (recordData.is_public) {
+      return rejectConflictResponse();
+    }
     const reason = await readRejectionReason(request);
 
     const { error } = await supabaseAdmin.rpc('prepared_reject_game_data_action', {

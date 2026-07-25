@@ -58,6 +58,8 @@ jest.mock('@/features/admin/components/UserManagement', () => {
 jest.mock('@/features/admin/components/GameDataActionModerationPanel', () => ({
   __esModule: true,
   default: function MockGameDataActionModerationPanel(props: {
+    canApproveActions?: boolean;
+    canRejectActions?: boolean;
     canMarkActionsSynced?: boolean;
     canRevokeActions?: boolean;
     pendingActions: PendingGameDataAction[];
@@ -176,6 +178,8 @@ describe('AdminPanel', () => {
     expect(screen.getByTestId('moderation-panel')).toBeInTheDocument();
     expect(mockModerationPanel).toHaveBeenCalledTimes(1);
     expect(mockModerationPanel.mock.calls[0]?.[0]).toEqual({
+      canApproveActions: true,
+      canRejectActions: true,
       canMarkActionsSynced: true,
       canRevokeActions: true,
       pendingActions: samplePendingActions,

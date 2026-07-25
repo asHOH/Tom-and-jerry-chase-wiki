@@ -84,7 +84,9 @@ describe('permission evaluator', () => {
     const coordinator = permissionGrantsForProfile('coordinator');
     expect(hasPermission(contributor, 'article.create')).toBe(true);
     expect(hasPermission(contributor, 'article_version.approve')).toBe(false);
+    expect(hasPermission(contributor, 'game_data_action.auto_approve')).toBe(false);
     expect(hasPermission(reviewer, 'article_version.approve')).toBe(true);
+    expect(hasPermission(reviewer, 'game_data_action.auto_approve')).toBe(true);
     expect(hasPermission(reviewer, 'group.manage')).toBe(false);
     expect(hasPermission(coordinator, 'group.manage')).toBe(true);
     expect(hasPermission(coordinator, 'game_data_action.mark_synced')).toBe(true);

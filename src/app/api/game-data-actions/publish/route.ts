@@ -91,25 +91,31 @@ export async function POST(request: Request) {
       prepared,
     });
 
-    const finalResults = results.filter(
-      (result) => result.status === 'approved' || result.status === 'rejected'
-    );
     const recipientUserId = guard.userId;
-    for (const status of ['approved', 'rejected'] as const) {
-      const matching = finalResults.filter((result) => result.status === status);
+    for (const outcome of ['public', 'rejected'] as const) {
+      const matching = results.filter((result) =>
+        outcome === 'public' ? result.is_public : result.status === 'rejected'
+      );
       if (matching.length === 0 || recipientUserId === null) continue;
-      const approved = status === 'approved';
+      const approved = outcome === 'public';
+      const pendingPublic = approved && matching.some((result) => result.status === 'pending');
       try {
         await publishNotification({
           recipientUserId,
           kind: approved ? 'game_data_action_approved' : 'game_data_action_rejected',
           decisionOrigin: 'automatic',
-          title: approved ? '游戏数据改动已自动通过' : '游戏数据改动未通过',
+          title: approved
+            ? pendingPublic
+              ? '游戏数据改动已自动公开'
+              : '游戏数据改动已自动通过'
+            : '游戏数据改动未通过',
           body: approved
-            ? `您提交的 ${matching.length} 条游戏数据改动已自动通过审核。`
+            ? pendingPublic
+              ? `您提交的 ${matching.length} 条游戏数据改动已自动公开，后续仍可由有权限的用户复核或撤销。`
+              : `您提交的 ${matching.length} 条游戏数据改动已自动通过审核。`
             : `您提交的 ${matching.length} 条游戏数据改动未通过自动审核。`,
           sourceIds: matching.map((result) => result.id),
-          dedupeKey: `game-data-actions:auto:${status}:${matching
+          dedupeKey: `game-data-actions:auto:${outcome}:${matching
             .map((result) => result.id)
             .sort()
             .join(',')}`,

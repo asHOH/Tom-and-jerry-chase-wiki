@@ -1,5 +1,6 @@
 import 'server-only';
 
+import { GAME_DATA_CONTRIBUTION_FILTER } from '@/lib/gameData/contributionFilter';
 import { hasSupabaseAdminConfig, supabaseAdmin } from '@/lib/supabase/admin';
 
 const RECENT_CONTRIBUTION_LIMIT = 10;
@@ -114,8 +115,7 @@ export async function getPublicUserProfile(userId: string): Promise<PublicUserPr
       .from('game_data_actions')
       .select('id', { count: 'exact', head: true })
       .eq('created_by', userId)
-      .in('status', ['approved', 'synced'])
-      .eq('is_public', true),
+      .or(GAME_DATA_CONTRIBUTION_FILTER),
     supabaseAdmin
       .from('game_data_actions')
       .select('id', { count: 'exact', head: true })
@@ -133,8 +133,7 @@ export async function getPublicUserProfile(userId: string): Promise<PublicUserPr
       .from('game_data_actions')
       .select('id, entity_type, message, created_at')
       .eq('created_by', userId)
-      .in('status', ['approved', 'synced'])
-      .eq('is_public', true)
+      .or(GAME_DATA_CONTRIBUTION_FILTER)
       .order('created_at', { ascending: false })
       .limit(RECENT_CONTRIBUTION_LIMIT),
   ]);

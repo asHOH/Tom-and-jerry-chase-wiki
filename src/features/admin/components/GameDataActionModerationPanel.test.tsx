@@ -110,6 +110,52 @@ describe('GameDataActionModerationPanel', () => {
     expect(screen.queryByText('2026-05-11', { exact: false })).not.toBeInTheDocument();
   });
 
+  it('distinguishes public pending rows and exposes approve plus revoke instead of reject', () => {
+    const publicPendingAction: PendingGameDataAction = {
+      ...sampleAction,
+      action_id: 'action-public-pending',
+      is_public: true,
+    };
+
+    render(
+      <GameDataActionModerationPanel
+        pendingActions={[publicPendingAction]}
+        mutatePendingActions={jest.fn()}
+        canRevokeActions
+      />
+    );
+
+    expect(screen.getByText('已公开')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '批准' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '撤销' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: '拒绝' })).not.toBeInTheDocument();
+  });
+
+  it('shows only revoke for public pending rows when the moderator cannot approve or reject', () => {
+    const publicPendingAction: PendingGameDataAction = {
+      ...sampleAction,
+      action_id: 'action-public-pending',
+      is_public: true,
+    };
+
+    render(
+      <GameDataActionModerationPanel
+        canApproveActions={false}
+        canRejectActions={false}
+        canRevokeActions
+        pendingActions={[publicPendingAction]}
+        mutatePendingActions={jest.fn()}
+      />
+    );
+
+    expect(
+      screen.queryByRole('checkbox', { name: '选择改动 action-public-pending' })
+    ).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: '批准' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: '拒绝' })).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '撤销' })).toBeInTheDocument();
+  });
+
   it('searches the full game data action entry content', () => {
     const otherAction: PendingGameDataAction = {
       ...sampleAction,

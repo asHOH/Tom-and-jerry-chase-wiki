@@ -3,12 +3,12 @@ import { readApprovedReplaySnapshot } from './approvedReplaySnapshotReader';
 jest.mock('server-only', () => ({}), { virtual: true });
 jest.mock('@/lib/supabase/admin', () => ({ supabaseAdmin: undefined }));
 
-const row = (id: string, createdAt: string) => ({
+const row = (id: string, createdAt: string, status = 'approved') => ({
   id,
   entity_type: 'items',
   entry: { op: 'set', path: 'item.description', newValue: id },
   created_at: createdAt,
-  status: 'approved',
+  status,
   message: null,
   reviewed_at: null,
   created_by: null,
@@ -23,7 +23,7 @@ describe('readApprovedReplaySnapshot', () => {
             replay_epoch: 7,
             action_rows: [
               row('row-1', '2026-07-18T00:00:00.000Z'),
-              row('row-2', '2026-07-18T00:01:00.000Z'),
+              row('row-2', '2026-07-18T00:01:00.000Z', 'pending'),
             ],
           },
         ],
@@ -36,6 +36,7 @@ describe('readApprovedReplaySnapshot', () => {
     expect(client.rpc).toHaveBeenCalledWith('read_game_data_approved_replay_snapshot');
     expect(result.replayEpoch).toBe(7);
     expect(result.rows.map(({ id }) => id)).toEqual(['row-1', 'row-2']);
+    expect(result.actionSnapshot.rows.map(({ status }) => status)).toEqual(['approved', 'pending']);
     expect(result.actionSnapshot.rows.map(({ rowId }) => rowId)).toEqual(['row-1', 'row-2']);
     expect(Object.isFrozen(result.rows)).toBe(true);
   });

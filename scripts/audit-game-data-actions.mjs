@@ -91,14 +91,16 @@ function keysetFilter(cursor) {
   return `created_at.gt.${createdAt},and(created_at.eq.${createdAt},id.gt.${id})`;
 }
 
-async function fetchCohort(supabase, cohort, requirePublic) {
+async function fetchCohort(supabase, statuses, requirePublic = null) {
   const rows = [];
   let cursor;
 
   while (true) {
-    let query = supabase.from('game_data_actions').select(SELECT_COLUMNS).eq('status', cohort);
+    let query = supabase.from('game_data_actions').select(SELECT_COLUMNS);
 
-    if (requirePublic) query = query.eq('is_public', true);
+    query = statuses.length === 1 ? query.eq('status', statuses[0]) : query.in('status', statuses);
+
+    if (requirePublic !== null) query = query.eq('is_public', requirePublic);
     if (cursor !== undefined) query = query.or(keysetFilter(cursor));
 
     const { data, error } = await query
@@ -106,14 +108,14 @@ async function fetchCohort(supabase, cohort, requirePublic) {
       .order('id', { ascending: true })
       .limit(QUERY_PAGE_SIZE);
 
-    if (error) throw new AuditScriptError('query_failed', { cohort });
+    if (error) throw new AuditScriptError('query_failed', { cohort: statuses.join(',') });
     const page = data ?? [];
     rows.push(...page);
     if (page.length < QUERY_PAGE_SIZE) break;
 
     const last = page.at(-1);
     if (!last?.created_at || !last.id) {
-      throw new AuditScriptError('invalid_query_page', { cohort });
+      throw new AuditScriptError('invalid_query_page', { cohort: statuses.join(',') });
     }
     cursor = { created_at: last.created_at, id: last.id };
   }
@@ -178,9 +180,9 @@ async function main() {
   });
 
   const [approvedRows, syncedRows, pendingRows] = await Promise.all([
-    fetchCohort(supabase, 'approved', true),
-    fetchCohort(supabase, 'synced', true),
-    fetchCohort(supabase, 'pending', false),
+    fetchCohort(supabase, ['approved', 'pending'], true),
+    fetchCohort(supabase, ['synced'], false),
+    fetchCohort(supabase, ['pending'], false),
   ]);
   const cohorts = { approvedRows, syncedRows, pendingRows };
   const runFingerprint = createRunFingerprint(cohorts);

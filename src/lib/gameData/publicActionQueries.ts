@@ -22,18 +22,12 @@ export class PublicActionQueryError extends Error {
 }
 
 async function queryPublicActionRows(
-  supabase: PublicActionQueryClient,
-  statuses: readonly ['approved'] | readonly ['approved', 'synced']
+  supabase: PublicActionQueryClient
 ): Promise<PublicActionRow[]> {
-  let query = supabase
+  const { data, error } = await supabase
     .from('game_data_actions')
     .select(PUBLIC_ACTION_ROW_COLUMNS)
-    .eq('is_public', true);
-
-  query =
-    statuses.length === 1 ? query.eq('status', statuses[0]) : query.in('status', [...statuses]);
-
-  const { data, error } = await query
+    .eq('is_public', true)
     .order('created_at', { ascending: true })
     .order('id', { ascending: true });
 
@@ -48,12 +42,12 @@ async function queryPublicActionRows(
 export function queryApprovedPublicActionRows(
   supabase: PublicActionQueryClient
 ): Promise<PublicActionRow[]> {
-  return queryPublicActionRows(supabase, ['approved']);
+  return queryPublicActionRows(supabase);
 }
 
 /** Queries the ordered public rows retained in entity-update and audit history. */
 export function queryPublicActionHistoryRows(
   supabase: PublicActionQueryClient
 ): Promise<PublicActionRow[]> {
-  return queryPublicActionRows(supabase, ['approved', 'synced']);
+  return queryPublicActionRows(supabase);
 }

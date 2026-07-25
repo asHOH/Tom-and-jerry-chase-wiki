@@ -47,8 +47,6 @@ export async function getEntityUpdateHistory(): Promise<Map<string, EntityUpdate
   const historyMap = new Map<string, EntityUpdateHistory>();
 
   for (const action of actions) {
-    if (action.status !== 'approved' && action.status !== 'synced') continue;
-
     const entries = normalizePublicActionEntries(action.entry);
     for (const entry of entries) {
       const paths = extractActionPaths(entry);

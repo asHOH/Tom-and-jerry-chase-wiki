@@ -219,7 +219,7 @@ describe('trusted game data mutations', () => {
       ],
     };
     canAccessAllMock.mockImplementation((_grants, permission, contexts) => {
-      if (permission !== 'game_data_action.approve') return true;
+      if (permission !== 'game_data_action.auto_approve') return true;
       return !JSON.stringify(contexts).includes('item-c');
     });
     adminRpcMock.mockResolvedValue({
@@ -238,6 +238,31 @@ describe('trusted game data mutations', () => {
       expect.objectContaining({ rowId: 'approved-1' }),
     ]);
     expect(invalidateMock).not.toHaveBeenCalled();
+  });
+
+  it('replays auto-published pending rows even when the actor cannot self-review them', async () => {
+    canAccessAllMock.mockImplementation((_grants, permission) => {
+      if (permission === 'game_data_action.approve') return false;
+      return true;
+    });
+    adminRpcMock.mockResolvedValueOnce({
+      data: [{ id: 'new-public-pending', is_public: true, status: 'pending' }],
+      error: null,
+    } as never);
+
+    const result = await publishPreparedGameDataActions({
+      actorId: 'actor-1',
+      permission: 'game_data_action.create',
+      grants: [],
+      prepared,
+    });
+
+    expect(validateCandidateMock).toHaveBeenCalledWith([
+      expect.objectContaining({ rowId: 'approved-1' }),
+      expect.objectContaining({ rowId: 'proposed:items:0' }),
+    ]);
+    expect(result).toEqual([{ id: 'new-public-pending', is_public: true, status: 'pending' }]);
+    expect(invalidateMock).toHaveBeenCalledTimes(1);
   });
 
   it('inserts an older pending row at its stored semantic position before approval', async () => {
@@ -270,6 +295,45 @@ describe('trusted game data mutations', () => {
       p_expected_entry: record().entry,
       p_expected_replay_epoch: 9,
     });
+  });
+
+  it('treats public pending approval as metadata-only review', async () => {
+    const publicPendingRecord = record({ is_public: true });
+    readSnapshotMock.mockResolvedValue({
+      ...snapshot([approvedRow('approved-1', 'item-a.description')]),
+      rows: [
+        snapshot().rows[0]!,
+        {
+          id: publicPendingRecord.id,
+          entity_type: publicPendingRecord.entity_type,
+          entry: publicPendingRecord.entry,
+          created_at: publicPendingRecord.created_at,
+          status: publicPendingRecord.status,
+          message: null,
+          reviewed_at: null,
+          created_by: publicPendingRecord.created_by,
+        },
+      ],
+      actionSnapshot: {
+        rows: [
+          approvedRow('approved-1', 'item-a.description'),
+          approvedRow(publicPendingRecord.id, 'item-b.description'),
+        ],
+      },
+    } as never);
+    adminRpcMock.mockResolvedValue({ data: null, error: null } as never);
+
+    await approvePreparedGameDataAction('moderator-1', publicPendingRecord);
+
+    expect(validateCandidateMock).not.toHaveBeenCalled();
+    expect(adminRpcMock).toHaveBeenCalledWith('prepared_approve_game_data_action', {
+      p_actor_id: 'moderator-1',
+      p_action_id: 'pending-1',
+      p_expected_entity_type: 'items',
+      p_expected_entry: publicPendingRecord.entry,
+      p_expected_replay_epoch: 9,
+    });
+    expect(invalidateMock).toHaveBeenCalledTimes(1);
   });
 
   it('validates the complete remaining set before mark-synced persistence', async () => {
@@ -322,17 +386,14 @@ describe('trusted game data mutations', () => {
   it.each([
     ['pending', false],
     ['approved', false],
-  ] as const)(
-    'rejects revoke when the record is not public approved (%s)',
-    async (status, isPublic) => {
-      await expect(
-        revokePreparedGameDataAction('moderator-1', record({ status, is_public: isPublic }))
-      ).rejects.toMatchObject({ code: 'not_found' });
+  ] as const)('rejects revoke when the record is not public (%s)', async (status, isPublic) => {
+    await expect(
+      revokePreparedGameDataAction('moderator-1', record({ status, is_public: isPublic }))
+    ).rejects.toMatchObject({ code: 'not_found' });
 
-      expect(readSnapshotMock).not.toHaveBeenCalled();
-      expect(adminRpcMock).not.toHaveBeenCalled();
-    }
-  );
+    expect(readSnapshotMock).not.toHaveBeenCalled();
+    expect(adminRpcMock).not.toHaveBeenCalled();
+  });
 
   it('maps a locked replay epoch mismatch to a stable conflict', async () => {
     adminRpcMock.mockResolvedValue({

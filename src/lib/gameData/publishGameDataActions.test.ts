@@ -12,10 +12,10 @@ describe('publishGameDataActions', () => {
     jest.clearAllMocks();
   });
 
-  it('should invalidate public actions after a reviewer or coordinator publishes one', async () => {
+  it('should invalidate public actions after a public replay row is published', async () => {
     const supabase = {
       rpc: jest.fn().mockResolvedValue({
-        data: [{ id: 'action-1', is_public: true, status: 'approved' }],
+        data: [{ id: 'action-1', is_public: true, status: 'pending' }],
         error: null,
       }),
     };

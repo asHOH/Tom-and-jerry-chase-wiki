@@ -4,6 +4,7 @@ import type { Route } from 'next';
 
 import { CACHE_TAGS } from '@/lib/cacheTags';
 import { flattenActionEntries, normalizePublicActionEntries } from '@/lib/gameData/actionEntries';
+import { GAME_DATA_CONTRIBUTION_FILTER } from '@/lib/gameData/contributionFilter';
 import { PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG } from '@/lib/gameData/publicActionsCache';
 import { getGameDataActionTarget } from '@/lib/gameData/scopedEntityPaths';
 import { cached } from '@/lib/serverCache';
@@ -186,11 +187,11 @@ async function countArticleChanges(): Promise<number> {
 }
 
 async function countGameDataChanges(): Promise<number> {
-  const { count, error } = await supabaseServerPublic
+  const client = hasSupabaseAdminConfig() ? supabaseAdmin : supabaseServerPublic;
+  const { count, error } = await client
     .from('game_data_actions')
     .select('id', { count: 'exact', head: true })
-    .eq('is_public', true)
-    .in('status', ['approved', 'synced']);
+    .or(GAME_DATA_CONTRIBUTION_FILTER);
   if (error) throw error;
   return count ?? 0;
 }
@@ -208,11 +209,11 @@ async function queryArticleChanges(from: number, to: number): Promise<ArticleCha
 }
 
 async function queryGameDataChanges(from: number, to: number): Promise<GameDataChangeRow[]> {
-  const { data, error } = await supabaseServerPublic
+  const client = hasSupabaseAdminConfig() ? supabaseAdmin : supabaseServerPublic;
+  const { data, error } = await client
     .from('game_data_actions')
     .select('id, entity_type, entry, message, created_at, created_by')
-    .eq('is_public', true)
-    .in('status', ['approved', 'synced'])
+    .or(GAME_DATA_CONTRIBUTION_FILTER)
     .order('created_at', { ascending: false })
     .order('id', { ascending: false })
     .range(from, to);
@@ -306,7 +307,7 @@ export async function getRecentChanges(
 
   try {
     return await cached(
-      ['recent-changes-v3', filter, String(page)],
+      ['recent-changes-v4', filter, String(page)],
       () => loadRecentChanges(filter, page),
       {
         revalidate: 300,

@@ -20,6 +20,7 @@ export const permissionGrantsForProfile = (
     'article_version.reject',
     'article_version.revoke',
     'comment.moderate',
+    'game_data_action.auto_approve',
     'game_data_action.approve',
     'game_data_action.reject',
     'game_data_action.revoke',

@@ -235,6 +235,8 @@ const AdminPanel = () => {
 
       {enableActionModeration && activeTab === 'actions' && (
         <GameDataActionModerationPanel
+          canApproveActions={permissions.has('game_data_action.approve')}
+          canRejectActions={permissions.has('game_data_action.reject')}
           canMarkActionsSynced={permissions.has('game_data_action.mark_synced')}
           canRevokeActions={permissions.has('game_data_action.revoke')}
           pendingActions={pendingActions}

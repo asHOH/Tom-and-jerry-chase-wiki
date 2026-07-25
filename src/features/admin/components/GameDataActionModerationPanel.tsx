@@ -22,6 +22,8 @@ export type PendingGameDataAction =
   };
 
 type GameDataActionModerationPanelProps = {
+  canApproveActions?: boolean;
+  canRejectActions?: boolean;
   canMarkActionsSynced?: boolean;
   canRevokeActions?: boolean;
   pendingActions: PendingGameDataAction[];
@@ -64,6 +66,8 @@ const summarizeModerationFailures = (failures: ModerationFailure[]): string => {
 };
 
 const GameDataActionModerationPanel = ({
+  canApproveActions: canApproveActions = true,
+  canRejectActions: canRejectActions = true,
   canMarkActionsSynced: canMarkActionsSynced = false,
   canRevokeActions: canRevokeActions = false,
   pendingActions,
@@ -173,8 +177,13 @@ const GameDataActionModerationPanel = ({
   }, [pendingActions, actionEntityType, actionQuery, actionStatus]);
 
   const actionableActions = useMemo(
-    () => filteredActions.filter((action) => action.status === 'pending'),
-    [filteredActions]
+    () =>
+      filteredActions.filter(
+        (action) =>
+          action.status === 'pending' &&
+          (canApproveActions || (!action.is_public && canRejectActions))
+      ),
+    [canApproveActions, canRejectActions, filteredActions]
   );
 
   const selectedPendingActions = useMemo(
@@ -189,7 +198,11 @@ const GameDataActionModerationPanel = ({
   useEffect(() => {
     const pendingActionIds = new Set(
       pendingActions
-        .filter((action) => action.status === 'pending')
+        .filter(
+          (action) =>
+            action.status === 'pending' &&
+            (canApproveActions || (!action.is_public && canRejectActions))
+        )
         .map((action) => action.action_id)
     );
 
@@ -204,7 +217,7 @@ const GameDataActionModerationPanel = ({
 
       return next.size === prev.size ? prev : next;
     });
-  }, [pendingActions]);
+  }, [canApproveActions, canRejectActions, pendingActions]);
 
   const moderateMany = async (action: PendingModerationAction) => {
     if (isModerating || selectedPendingActions.length === 0) return;
@@ -388,22 +401,26 @@ const GameDataActionModerationPanel = ({
           >
             刷新
           </Button>
-          <Button
-            disabled={isModerating || selectedPendingActions.length === 0}
-            onClick={() => void moderateMany('approve')}
-            variant='success'
-            size='sm'
-          >
-            批量批准
-          </Button>
-          <Button
-            disabled={isModerating || selectedPendingActions.length === 0}
-            onClick={() => void moderateMany('reject')}
-            variant='danger'
-            size='sm'
-          >
-            批量拒绝
-          </Button>
+          {canApproveActions && (
+            <Button
+              disabled={isModerating || selectedPendingActions.length === 0}
+              onClick={() => void moderateMany('approve')}
+              variant='success'
+              size='sm'
+            >
+              批量批准
+            </Button>
+          )}
+          {canRejectActions && (
+            <Button
+              disabled={isModerating || selectedPendingActions.length === 0}
+              onClick={() => void moderateMany('reject')}
+              variant='danger'
+              size='sm'
+            >
+              批量拒绝
+            </Button>
+          )}
         </div>
       </div>
 
@@ -422,7 +439,8 @@ const GameDataActionModerationPanel = ({
               <div key={submission.action_id} className='rounded-md bg-white p-4 dark:bg-slate-800'>
                 <div className='flex items-start gap-3'>
                   <div className='pt-1'>
-                    {submission.status === 'pending' ? (
+                    {submission.status === 'pending' &&
+                    (canApproveActions || (!submission.is_public && canRejectActions)) ? (
                       <input
                         type='checkbox'
                         checked={selectedActionIds.has(submission.action_id)}
@@ -442,6 +460,14 @@ const GameDataActionModerationPanel = ({
                         <span className='font-medium'>{submission.entity_type}</span>
                         <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
                         <span className={statusMeta.className}>{statusMeta.label}</span>
+                        {submission.is_public && (
+                          <>
+                            <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
+                            <span className='rounded bg-emerald-100 px-2 py-0.5 text-xs font-medium whitespace-nowrap text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300'>
+                              已公开
+                            </span>
+                          </>
+                        )}
                         <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
                         <span>
                           {submission.created_by_nickname && submission.created_by ? (
@@ -502,30 +528,54 @@ const GameDataActionModerationPanel = ({
                       <div className='flex items-center gap-2'>
                         {submission.status === 'pending' && (
                           <>
-                            <Button
-                              disabled={isModerating}
-                              onClick={() => {
-                                const confirmed = window.confirm('确认批准并公开该改动？');
-                                if (!confirmed) return;
-                                void moderateAction(submission.action_id, 'approve');
-                              }}
-                              variant='success'
-                              size='sm'
-                            >
-                              批准
-                            </Button>
-                            <Button
-                              disabled={isModerating}
-                              onClick={() => {
-                                const confirmed = window.confirm('确认拒绝该改动？');
-                                if (!confirmed) return;
-                                void moderateAction(submission.action_id, 'reject');
-                              }}
-                              variant='danger'
-                              size='sm'
-                            >
-                              拒绝
-                            </Button>
+                            {canApproveActions && (
+                              <Button
+                                disabled={isModerating}
+                                onClick={() => {
+                                  const confirmed = window.confirm(
+                                    submission.is_public
+                                      ? '确认审核通过该已公开改动？'
+                                      : '确认批准并公开该改动？'
+                                  );
+                                  if (!confirmed) return;
+                                  void moderateAction(submission.action_id, 'approve');
+                                }}
+                                variant='success'
+                                size='sm'
+                              >
+                                批准
+                              </Button>
+                            )}
+                            {!submission.is_public && canRejectActions && (
+                              <Button
+                                disabled={isModerating}
+                                onClick={() => {
+                                  const confirmed = window.confirm('确认拒绝该改动？');
+                                  if (!confirmed) return;
+                                  void moderateAction(submission.action_id, 'reject');
+                                }}
+                                variant='danger'
+                                size='sm'
+                              >
+                                拒绝
+                              </Button>
+                            )}
+                            {submission.is_public && canRevokeActions && (
+                              <Button
+                                disabled={isModerating}
+                                onClick={() => {
+                                  const confirmed = window.confirm(
+                                    '确认撤销该已公开改动？撤销后将从公开数据中移除。'
+                                  );
+                                  if (!confirmed) return;
+                                  void moderateAction(submission.action_id, 'revoke');
+                                }}
+                                variant='danger'
+                                size='sm'
+                              >
+                                撤销
+                              </Button>
+                            )}
                           </>
                         )}
                         {canMarkActionsSynced && submission.status === 'approved' && (
@@ -589,8 +639,7 @@ const GameDataActionModerationPanel = ({
                         <div className='flex flex-wrap items-center justify-between gap-2'>
                           <div className='flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500 dark:text-slate-400'>
                             <span className='truncate'>action_id: {submission.action_id}</span>
-                            {(submission.status === 'approved' ||
-                              submission.status === 'synced') && (
+                            {submission.is_public !== undefined && (
                               <span className='rounded bg-gray-100 px-2 py-0.5 whitespace-nowrap text-gray-700 dark:bg-slate-900/60 dark:text-slate-200'>
                                 {submission.is_public ? '已' : '未'}公开
                               </span>

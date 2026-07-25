@@ -42,14 +42,14 @@ const publishNotificationMock = jest.mocked(publishNotification);
 const adminRpcMock = jest.mocked(supabaseAdmin.rpc);
 const rpcMock = jest.fn().mockResolvedValue({ error: null });
 
-const record = (status: 'pending' | 'approved' = 'pending') => ({
+const record = (status: 'pending' | 'approved' = 'pending', isPublic = status === 'approved') => ({
   id: 'action-1',
   entity_type: 'characters',
   entry: { op: 'set', path: '杰瑞.description', newValue: 'new' },
   created_at: '2026-07-18T00:00:00.000Z',
   created_by: 'user-2',
   status,
-  is_public: status === 'approved',
+  is_public: isPublic,
 });
 
 const createRequest = (action: string, body?: unknown) =>
@@ -152,6 +152,21 @@ describe('game data action moderation route', () => {
     expect(approveMock).not.toHaveBeenCalled();
   });
 
+  it('blocks rejecting already-public pending rows and points moderators to revoke', async () => {
+    loadRecordMock.mockResolvedValue(record('pending', true));
+    const { POST } = await import('./route');
+
+    const response = await POST(createRequest('reject', { reason: '不通过' }), {
+      params: Promise.resolve({ actionId: 'action-1' }),
+    });
+
+    expect(response.status).toBe(409);
+    await expect(response.json()).resolves.toEqual({
+      error: 'Action is already public; use revoke instead',
+    });
+    expect(adminRpcMock).not.toHaveBeenCalled();
+  });
+
   it('revokes approved rows through the trusted prepared mutation', async () => {
     loadRecordMock.mockResolvedValue(record('approved'));
     const { POST } = await import('./route');
@@ -169,6 +184,19 @@ describe('game data action moderation route', () => {
     );
     expect(revokeMock).toHaveBeenCalledWith('moderator-1', record('approved'), null);
     expect(rpcMock).not.toHaveBeenCalled();
+    expect(publishNotificationMock).not.toHaveBeenCalled();
+  });
+
+  it('revokes public pending rows through the trusted prepared mutation', async () => {
+    loadRecordMock.mockResolvedValue(record('pending', true));
+    const { POST } = await import('./route');
+
+    const response = await POST(createRequest('revoke'), {
+      params: Promise.resolve({ actionId: 'action-1' }),
+    });
+
+    expect(response.status).toBe(200);
+    expect(revokeMock).toHaveBeenCalledWith('moderator-1', record('pending', true), null);
     expect(publishNotificationMock).not.toHaveBeenCalled();
   });
 

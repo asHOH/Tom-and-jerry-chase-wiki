@@ -39,6 +39,8 @@ export async function POST(request: Request) {
       const record = await loadTrustedGameDataAction(actionId);
       if (record.status !== 'pending') {
         failures.push({ actionId, message: 'Action not found or not pending' });
+      } else if (action === 'reject' && record.is_public) {
+        failures.push({ actionId, message: 'Action is already public; use revoke instead' });
       } else {
         recordsById.set(actionId, record);
       }

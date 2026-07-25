@@ -51,7 +51,7 @@ const syncedRow = (
 ): SyncedActionAuditRow => ({
   ...baseRow(id, entry),
   status: 'synced',
-  is_public: true,
+  is_public: false,
   ...overrides,
 });
 

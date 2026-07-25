@@ -40,7 +40,7 @@ function parseRow(value: unknown): PublicActionRow {
     typeof value.id !== 'string' ||
     typeof value.entity_type !== 'string' ||
     typeof value.created_at !== 'string' ||
-    value.status !== 'approved' ||
+    typeof value.status !== 'string' ||
     (value.message !== null && typeof value.message !== 'string') ||
     (value.reviewed_at !== null && typeof value.reviewed_at !== 'string') ||
     (value.created_by !== null && typeof value.created_by !== 'string')
@@ -84,7 +84,15 @@ export async function readApprovedReplaySnapshot(
     }
     const immutableRow = Object.freeze({ ...row, entry: decoded.value.rawEntry });
     rows.push(immutableRow);
-    snapshotInputs.push({ entityType: row.entity_type, decodedRow: decoded.value });
+    snapshotInputs.push({
+      entityType: row.entity_type,
+      createdAt: row.created_at,
+      status: row.status,
+      createdBy: row.created_by,
+      message: row.message,
+      reviewedAt: row.reviewed_at,
+      decodedRow: decoded.value,
+    });
   }
 
   return Object.freeze({

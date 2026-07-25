@@ -31,13 +31,13 @@ type ActionAuditRowBase = {
 };
 
 export type ApprovedActionAuditRow = ActionAuditRowBase & {
-  status: 'approved';
+  status: 'approved' | 'pending';
   is_public: true;
 };
 
 export type SyncedActionAuditRow = ActionAuditRowBase & {
   status: 'synced';
-  is_public: true;
+  is_public: false;
 };
 
 export type PendingActionAuditRow = ActionAuditRowBase & {
@@ -200,9 +200,16 @@ function addFinding(
 
 function assertCohortRows(rows: readonly AnyActionAuditRow[], cohort: ActionAuditCohort): void {
   for (const row of rows) {
-    const hasExpectedStatus = row.status === cohort;
+    const hasExpectedStatus =
+      cohort === 'approved'
+        ? row.status === 'approved' || row.status === 'pending'
+        : row.status === cohort;
     const hasExpectedVisibility =
-      cohort === 'pending' ? typeof row.is_public === 'boolean' : row.is_public === true;
+      cohort === 'pending'
+        ? typeof row.is_public === 'boolean'
+        : cohort === 'approved'
+          ? row.is_public === true
+          : row.is_public === false;
     if (!hasExpectedStatus || !hasExpectedVisibility) {
       throw new Error(`Invalid ${cohort} audit row contract for ${row.id}`);
     }

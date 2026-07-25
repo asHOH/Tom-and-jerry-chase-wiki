@@ -5,7 +5,11 @@ import { requirePermission } from '@/lib/auth/requirePermission';
 export async function GET(request: NextRequest) {
   void request;
   try {
-    const guard = await requirePermission(['game_data_action.approve', 'game_data_action.reject']);
+    const guard = await requirePermission([
+      'game_data_action.approve',
+      'game_data_action.reject',
+      'game_data_action.revoke',
+    ]);
     if ('error' in guard) return guard.error;
     const { supabase } = guard;
 

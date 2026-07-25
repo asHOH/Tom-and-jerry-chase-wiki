@@ -42,14 +42,14 @@ const actionId1 = '00000000-0000-4000-8000-000000000001';
 const actionId2 = '00000000-0000-4000-8000-000000000002';
 const rpcMock = jest.fn().mockResolvedValue({ error: null });
 
-const record = (id: string) => ({
+const record = (id: string, isPublic = false) => ({
   id,
   created_by: 'user-1',
   entity_type: 'characters',
   entry: { op: 'set', path: `${id}.description`, newValue: 'new' },
   created_at: '2026-07-18T00:00:00.000Z',
   status: 'pending' as const,
-  is_public: false,
+  is_public: isPublic,
 });
 
 const createRequest = (action: 'approve' | 'reject', actionIds = [actionId1, actionId2]) =>
@@ -124,5 +124,17 @@ describe('batch game data action moderation route', () => {
       p_ip: null,
     });
     expect(approveMock).not.toHaveBeenCalled();
+  });
+
+  it('reports public pending rows as revoke-only when batch rejecting', async () => {
+    loadRecordMock.mockImplementation(async (id) => record(id, true));
+
+    const response = await POST(createRequest('reject', [actionId1]));
+
+    await expect(response.json()).resolves.toEqual({
+      succeeded: [],
+      failures: [{ actionId: actionId1, message: 'Action is already public; use revoke instead' }],
+    });
+    expect(adminRpcMock).not.toHaveBeenCalled();
   });
 });

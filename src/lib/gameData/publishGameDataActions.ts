@@ -46,9 +46,7 @@ export const publishGameDataActions = async (
 
       if (data) {
         allResults.push(...data);
-        hasPublishedPublicAction ||= data.some(
-          (result) => result.is_public && result.status === 'approved'
-        );
+        hasPublishedPublicAction ||= data.some((result) => result.is_public);
       }
     }
   } finally {

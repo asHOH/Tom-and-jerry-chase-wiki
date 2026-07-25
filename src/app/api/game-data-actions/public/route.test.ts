@@ -45,14 +45,13 @@ describe('public game data actions route', () => {
     createClient.mockResolvedValue({ from: jest.fn(() => query) });
   });
 
-  it('should select approved replay rows in deterministic order', async () => {
+  it('should select public replay rows in deterministic order', async () => {
     const { GET } = await import('./route');
 
     const response = await GET();
 
     expect(response.status).toBe(200);
     expect(query.eq).toHaveBeenNthCalledWith(1, 'is_public', true);
-    expect(query.eq).toHaveBeenNthCalledWith(2, 'status', 'approved');
     expect(query.order).toHaveBeenNthCalledWith(1, 'created_at', { ascending: true });
     expect(query.order).toHaveBeenNthCalledWith(2, 'id', { ascending: true });
   });

@@ -113,7 +113,7 @@ export async function publishPreparedGameDataActions(options: {
     // Permission grants can change between this route-owned snapshot and the RPC's mandatory
     // database recheck. We intentionally accept that narrow race instead of adding a second
     // approval expectation token; the RPC remains the final authorization authority.
-    let autoApprovesAction = true;
+    let autoPublishesAction = true;
     const actionCandidateRows: ApprovedCandidateReplayRow[] = [];
     for (const [rowIndex, row] of action.rows.entries()) {
       const entry = asJson(row.canonicalEntry);
@@ -121,15 +121,15 @@ export async function publishPreparedGameDataActions(options: {
       if (!isAnonymous && !canAccessAll(options.grants, options.permission, contexts)) {
         throw new TrustedGameDataMutationError('forbidden');
       }
-      autoApprovesAction &&=
-        !isAnonymous && canAccessAll(options.grants, 'game_data_action.approve', contexts);
+      autoPublishesAction &&=
+        !isAnonymous && canAccessAll(options.grants, 'game_data_action.auto_approve', contexts);
       actionCandidateRows.push({
         rowId: `proposed:${action.entityType}:${rowIndex}`,
         entityType: action.entityType,
         actions: row.actions,
       });
     }
-    if (!isAnonymous && autoApprovesAction) proposedApprovedRows.push(...actionCandidateRows);
+    if (!isAnonymous && autoPublishesAction) proposedApprovedRows.push(...actionCandidateRows);
   }
 
   const snapshot = await readApprovedReplaySnapshot();
@@ -159,12 +159,10 @@ export async function publishPreparedGameDataActions(options: {
     if (error) throw persistenceError(error);
     const actionResults = data ?? [];
     results.push(...actionResults);
-    expectedEpoch += actionResults.filter(
-      (result) => result.is_public && result.status === 'approved'
-    ).length;
+    expectedEpoch += actionResults.filter((result) => result.is_public).length;
   }
 
-  if (results.some((result) => result.is_public && result.status === 'approved')) {
+  if (results.some((result) => result.is_public)) {
     invalidatePublicGameDataActionsCache();
   }
   return results;
@@ -211,7 +209,13 @@ export async function approvePreparedGameDataAction(
 ): Promise<void> {
   if (record.status !== 'pending') throw new TrustedGameDataMutationError('not_found');
   const snapshot = await readApprovedReplaySnapshot();
-  validateCandidate(insertCandidateInSemanticOrder(snapshot, record));
+  if (record.is_public) {
+    if (!snapshot.rows.some((row) => row.id === record.id)) {
+      throw new TrustedGameDataMutationError('replay_epoch_conflict');
+    }
+  } else {
+    validateCandidate(insertCandidateInSemanticOrder(snapshot, record));
+  }
 
   const { error } = await supabaseAdmin.rpc('prepared_approve_game_data_action', {
     p_actor_id: actorId,
@@ -256,7 +260,7 @@ export async function revokePreparedGameDataAction(
   record: TrustedGameDataActionRecord,
   clientIp?: string | null
 ): Promise<void> {
-  if (record.status !== 'approved' || !record.is_public) {
+  if (!record.is_public) {
     throw new TrustedGameDataMutationError('not_found');
   }
   const snapshot = await readApprovedReplaySnapshot();

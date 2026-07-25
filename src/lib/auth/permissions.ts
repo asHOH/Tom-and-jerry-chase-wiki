@@ -8,6 +8,7 @@ export const PERMISSION_KEYS = [
   'comment.create',
   'comment.moderate',
   'game_data_action.create',
+  'game_data_action.auto_approve',
   'game_data_action.approve',
   'game_data_action.reject',
   'game_data_action.mark_synced',
