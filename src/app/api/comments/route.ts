@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { requirePermission } from '../../../lib/auth/requirePermission';
 import { getRequestIp } from '../../../lib/blocks/server';
 import { shouldAllowComment } from '../../../lib/comments/moderation';
+import { publishNotification } from '../../../lib/notificationUtils';
 import { checkRateLimit } from '../../../lib/rateLimit';
 import { supabaseAdmin } from '../../../lib/supabase/admin';
 import { hasSupabasePublicConfig } from '../../../lib/supabase/config';
@@ -77,6 +78,64 @@ function rowToComment(row: CommentRow, nicknameMap: Map<string, string | null>):
       nickname: nicknameMap.get(row.author_id) ?? null,
     },
   };
+}
+
+type ArticleNotificationTarget = {
+  author_id: string;
+  title: string;
+};
+
+const COMMENT_NOTIFICATION_PREVIEW_LENGTH = 120;
+
+const buildCommentPreview = (value: string): string => {
+  const normalized = value.replace(/\s+/g, ' ').trim();
+  if (normalized.length <= COMMENT_NOTIFICATION_PREVIEW_LENGTH) {
+    return normalized;
+  }
+  return `${normalized.slice(0, COMMENT_NOTIFICATION_PREVIEW_LENGTH - 1)}…`;
+};
+
+async function getArticleNotificationTarget(
+  articleId: string
+): Promise<ArticleNotificationTarget | null> {
+  const { data, error } = await supabaseAdmin
+    .from('articles')
+    .select('author_id, title')
+    .eq('id', articleId)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(`Failed to load article comment notification target: ${error.message}`);
+  }
+
+  return data;
+}
+
+async function notifyArticleAuthorOfComment({
+  articleId,
+  comment,
+}: {
+  articleId: string;
+  comment: ApiComment;
+}): Promise<void> {
+  const article = await getArticleNotificationTarget(articleId);
+  if (!article || article.author_id === comment.author.id) {
+    return;
+  }
+
+  const commenterName = comment.author.nickname?.trim() || '匿名用户';
+  const actionText = comment.parent_id ? '回复了文章评论' : '发表了评论';
+
+  await publishNotification({
+    recipientUserId: article.author_id,
+    kind: 'article_comment_created',
+    decisionOrigin: 'automatic',
+    title: `《${article.title}》收到新评论`,
+    body: `${commenterName}${actionText}：\n${buildCommentPreview(comment.content)}`,
+    href: `/articles/${articleId}/#comments`,
+    sourceIds: [comment.id],
+    dedupeKey: `article-comment:${comment.id}:author:${article.author_id}`,
+  });
 }
 
 export async function GET(req: Request) {
@@ -250,6 +309,14 @@ export async function POST(req: Request) {
 
     const nicknameMap = await getNicknamesByUserIds([(row as CommentRow).author_id]);
     const comment = rowToComment(row as CommentRow, nicknameMap);
+
+    if (allowed && scope === 'articles') {
+      try {
+        await notifyArticleAuthorOfComment({ articleId: targetId, comment });
+      } catch (notificationError) {
+        console.error('Failed to publish article comment notification:', notificationError);
+      }
+    }
 
     return NextResponse.json({ comment }, { status: 200 });
   } catch (err) {

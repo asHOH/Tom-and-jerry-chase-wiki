@@ -26,7 +26,7 @@ describe('emailTemplate', () => {
     expect(html).toContain('@media only screen and (max-width:620px)');
     expect(html).toContain('https://tjwiki.test/icon.png');
     expect(html).toContain('查看详情');
-    expect(html).toContain('取消订阅审核邮件');
+    expect(html).toContain('取消订阅通知邮件');
   });
 
   it('escapes untrusted text in messages, details, and callouts', () => {

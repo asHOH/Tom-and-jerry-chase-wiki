@@ -4,15 +4,14 @@ import { createHash, createHmac, timingSafeEqual } from 'crypto';
 
 import { getActiveBlock } from '@/lib/blocks/check';
 import { renderWikiEmailTemplate } from '@/lib/emailTemplate';
+import {
+  getNotificationKindMeta,
+  isModerationNotificationKind,
+  type NotificationKind,
+} from '@/lib/notifications/kinds';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { SITE_URL } from '@/constants/seo';
 import { env } from '@/env';
-
-export type NotificationKind =
-  | 'article_version_approved'
-  | 'article_version_rejected'
-  | 'game_data_action_approved'
-  | 'game_data_action_rejected';
 
 export type PublishNotificationInput = {
   recipientUserId: string;
@@ -144,7 +143,11 @@ export const publishNotification = async (
     );
   }
 
-  if (input.decisionOrigin === 'automatic' && canApproveArticles) {
+  if (
+    input.decisionOrigin === 'automatic' &&
+    isModerationNotificationKind(input.kind) &&
+    canApproveArticles
+  ) {
     return { created: false, suppressed: true, emailStatus: 'skipped' };
   }
 
@@ -201,19 +204,19 @@ export const publishNotification = async (
   const unsubscribeUrl = new URL('/api/notifications/email/unsubscribe', SITE_URL);
   unsubscribeUrl.searchParams.set('token', unsubscribeToken);
   const unsubscribeLink = unsubscribeUrl.toString();
-  const approved = input.kind.endsWith('_approved');
+  const kindMeta = getNotificationKindMeta(input.kind);
 
   try {
     const sent = await sendEmail({
       to: emailSettings.email,
       subject: `[猫鼠Wiki] ${input.title}`,
-      text: `${input.title}\n\n${input.body}\n\n${link}\n\n取消订阅审核结果邮件：${unsubscribeLink}`,
+      text: `${input.title}\n\n${input.body}\n\n${link}\n\n取消订阅通知邮件：${unsubscribeLink}`,
       html: renderWikiEmailTemplate({
         preheader: `${input.title}：${input.body}`,
-        eyebrow: approved ? '审核通过' : '审核结果',
+        eyebrow: kindMeta.eyebrow,
         title: input.title,
         message: input.body,
-        tone: approved ? 'success' : 'danger',
+        tone: kindMeta.tone,
         action: { label: '查看详情', url: link },
         notice: '您可以随时在 Wiki 的通知页面管理邮件通知设置。',
         unsubscribeUrl: unsubscribeLink,
@@ -252,7 +255,7 @@ export const sendNotificationEmailVerification = async (
       preheader: '验证您的猫鼠 Wiki 通知邮箱',
       eyebrow: '邮箱验证',
       title: '验证通知邮箱',
-      message: '请确认这是您希望用于接收审核结果通知的邮箱地址。',
+      message: '请确认这是您希望用于接收站内通知邮件的邮箱地址。',
       tone: 'info',
       action: { label: '验证邮箱', url: link },
       notice: '此验证链接将在 30 分钟后失效。如果这不是您的操作，可以安全忽略本邮件。',

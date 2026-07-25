@@ -159,7 +159,7 @@ export const renderWikiEmailTemplate = ({
                 <p style="margin:0;color:#94a3b8;font-size:12px;line-height:1.7;">这是一封由 ${escapeEmailHtml(SITE_NAME)} 自动发送的邮件，请勿直接回复。</p>
                 <p style="margin:8px 0 0;color:#94a3b8;font-size:12px;line-height:1.7;">
                   <a href="${escapeEmailHtml(homeUrl)}" style="color:#64748b;text-decoration:underline;">访问 Wiki</a>
-                  ${unsubscribeUrl ? `&nbsp;&nbsp;·&nbsp;&nbsp;<a href="${escapeEmailHtml(unsubscribeUrl)}" style="color:#64748b;text-decoration:underline;">取消订阅审核邮件</a>` : ''}
+                  ${unsubscribeUrl ? `&nbsp;&nbsp;·&nbsp;&nbsp;<a href="${escapeEmailHtml(unsubscribeUrl)}" style="color:#64748b;text-decoration:underline;">取消订阅通知邮件</a>` : ''}
                 </p>
               </td>
             </tr>

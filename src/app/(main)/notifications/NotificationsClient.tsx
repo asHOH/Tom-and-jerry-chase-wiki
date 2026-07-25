@@ -7,6 +7,7 @@ import useSWRInfinite from 'swr/infinite';
 
 import { formatCompactDateTime } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
+import { getNotificationKindMeta } from '@/lib/notifications/kinds';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import { FormInput } from '@/components/ui/FormControls';
@@ -15,7 +16,7 @@ import Notice, { type NoticeVariant } from '@/components/ui/Notice';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
 import SectionHeader from '@/components/ui/SectionHeader';
-import { CheckCircleIcon, CloseIcon } from '@/components/icons/CommonIcons';
+import { ChatBubbleIcon, CheckCircleIcon, CloseIcon } from '@/components/icons/CommonIcons';
 import Link from '@/components/Link';
 
 type NotificationItem = {
@@ -160,7 +161,7 @@ export default function NotificationsClient() {
     <main className='mx-auto w-full max-w-5xl space-y-8 px-4 py-8 text-gray-900 sm:px-6 dark:text-gray-100'>
       <header className='text-center'>
         <PageTitle>通知中心</PageTitle>
-        <PageDescription>查看审核结果，管理站内通知与邮件接收设置</PageDescription>
+        <PageDescription>查看站内通知，管理邮件接收设置</PageDescription>
       </header>
 
       <div className='grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start'>
@@ -215,14 +216,14 @@ export default function NotificationsClient() {
                   暂无{filter === 'unread' ? '未读' : ''}通知
                 </p>
                 <p className='mt-1 text-sm text-gray-500 dark:text-gray-400'>
-                  审核结果会显示在这里
+                  站内通知会显示在这里
                 </p>
               </div>
             )}
 
             <div className='space-y-2'>
               {notifications.map((notification) => {
-                const approved = notification.kind.endsWith('_approved');
+                const kindMeta = getNotificationKindMeta(notification.kind);
                 const content = (
                   <article
                     className={cn(
@@ -235,15 +236,21 @@ export default function NotificationsClient() {
                     <div
                       className={cn(
                         'mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-full',
-                        approved
+                        kindMeta.tone === 'success'
                           ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300'
-                          : 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300'
+                          : kindMeta.tone === 'danger'
+                            ? 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300'
+                            : kindMeta.tone === 'warning'
+                              ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300'
+                              : 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300'
                       )}
                     >
-                      {approved ? (
+                      {kindMeta.tone === 'success' ? (
                         <CheckCircleIcon className='size-5' />
-                      ) : (
+                      ) : kindMeta.tone === 'danger' ? (
                         <CloseIcon className='size-5' />
+                      ) : (
+                        <ChatBubbleIcon className='size-5' />
                       )}
                     </div>
                     <div className='min-w-0 flex-1'>
@@ -310,7 +317,7 @@ export default function NotificationsClient() {
         >
           <SectionHeader title='邮件通知' />
           <p className='mb-4 text-sm leading-6 text-gray-600 dark:text-gray-300'>
-            审核完成后，将结果发送到您验证过的邮箱。
+            将站内通知同步发送到您验证过的邮箱。
           </p>
 
           {emailSettingsError ? (
@@ -332,7 +339,7 @@ export default function NotificationsClient() {
                       )}
                     />
                     <span className='text-xs text-gray-600 dark:text-gray-300'>
-                      {emailSettings.enabled ? '审核邮件已启用' : '审核邮件已停用'}
+                      {emailSettings.enabled ? '通知邮件已启用' : '通知邮件已停用'}
                     </span>
                   </div>
                   <div className='mt-3 flex gap-2 border-t border-gray-200 pt-3 dark:border-gray-700'>
@@ -374,7 +381,7 @@ export default function NotificationsClient() {
               {emailMessage && <Notice variant={emailMessage.variant}>{emailMessage.text}</Notice>}
 
               <p className='text-xs leading-5 text-gray-500 dark:text-gray-400'>
-                我们仅会向此邮箱发送审核结果。您可以随时停用邮件或取消订阅。
+                我们仅会向此邮箱发送通知邮件。您可以随时停用邮件或取消订阅。
               </p>
             </div>
           )}

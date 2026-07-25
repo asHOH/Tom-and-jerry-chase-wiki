@@ -55,11 +55,11 @@ export async function GET(request: NextRequest) {
 
   const settings = await loadSettingsForToken(token);
   if (!settings) return htmlResponse('链接无效', '取消订阅链接无效或已失效。', undefined, 400);
-  if (!settings.enabled) return htmlResponse('已取消订阅', '您已停止接收审核结果邮件。');
+  if (!settings.enabled) return htmlResponse('已取消订阅', '您已停止接收通知邮件。');
 
   const action = `/api/notifications/email/unsubscribe?token=${encodeURIComponent(token)}`;
   const form = `<form method="post" action="${escapeHtml(action)}"><button type="submit" style="border:0;border-radius:8px;background:#dc2626;color:white;padding:10px 16px;font-weight:600;cursor:pointer">确认取消订阅</button></form>`;
-  return htmlResponse('取消订阅审核结果邮件', '确认后将不再通过邮件发送审核结果。', form);
+  return htmlResponse('取消订阅通知邮件', '确认后将不再通过邮件接收通知。', form);
 }
 
 export async function POST(request: NextRequest) {
@@ -77,5 +77,5 @@ export async function POST(request: NextRequest) {
     if (error) return htmlResponse('操作失败', '暂时无法取消订阅，请稍后重试。', undefined, 500);
   }
 
-  return htmlResponse('已取消订阅', '您已停止接收审核结果邮件。');
+  return htmlResponse('已取消订阅', '您已停止接收通知邮件。');
 }

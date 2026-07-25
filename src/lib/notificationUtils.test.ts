@@ -96,6 +96,17 @@ const input = {
   dedupeKey: 'article-version:1:approved',
 };
 
+const commentInput = {
+  recipientUserId: 'user-1',
+  kind: 'article_comment_created' as const,
+  decisionOrigin: 'automatic' as const,
+  title: '《测试文章》收到新评论',
+  body: '评论者 发表了评论：\n这是一条新的评论。',
+  href: '/articles/article-1/#comments',
+  sourceIds: ['00000000-0000-0000-0000-000000000002'],
+  dedupeKey: 'article-comment:2:author:user-1',
+};
+
 describe('publishNotification', () => {
   const fetchMock = jest.fn();
 
@@ -128,7 +139,7 @@ describe('publishNotification', () => {
       text?: string;
     };
     expect(emailBody.html).toContain('取消订阅');
-    expect(emailBody.text).toContain('取消订阅审核结果邮件');
+    expect(emailBody.text).toContain('取消订阅通知邮件');
     expect(emailBody.headers).toEqual(
       expect.objectContaining({
         'List-Unsubscribe': expect.stringContaining('/api/notifications/email/unsubscribe?token='),
@@ -147,6 +158,20 @@ describe('publishNotification', () => {
     });
     expect(supabaseAdmin.from).toHaveBeenCalledTimes(1);
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('keeps automatic comment notifications for article approvers', async () => {
+    configureSupabase({ canApprove: true });
+
+    await expect(publishNotification(commentInput)).resolves.toEqual({
+      created: true,
+      suppressed: false,
+      emailStatus: 'sent',
+    });
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://api.resend.com/emails',
+      expect.objectContaining({ method: 'POST' })
+    );
   });
 
   it('does not email a duplicate notification', async () => {

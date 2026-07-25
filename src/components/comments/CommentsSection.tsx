@@ -182,7 +182,7 @@ export default function CommentsSection({
   const loading = !data && !loadError;
 
   return (
-    <section className='mt-8'>
+    <section id='comments' className='mt-8'>
       <div className='mb-4 flex items-center justify-between'>
         <h2 className='text-lg font-bold text-gray-900 dark:text-gray-100'>评论</h2>
         <span className='text-sm text-gray-500 dark:text-gray-400'>{comments.length} 条</span>
