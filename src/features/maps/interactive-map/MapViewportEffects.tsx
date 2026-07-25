@@ -14,6 +14,7 @@ import {
 } from './constants';
 import { coordinateToLatLng, getMapPointScale } from './mapUtils';
 import type { EditorMode } from './types';
+import { getViewportAwareMaxBounds } from './viewportBounds';
 
 export function MainMapEvents({
   config,
@@ -120,5 +121,39 @@ export function LocatePoint({
       paddingBottomRight,
     });
   }, [avoidDetailsPanel, config, map, point]);
+  return null;
+}
+
+export function ViewportMaxBounds({ config }: { config: InteractiveMapConfig }) {
+  const map = useMap();
+  const updateMaxBounds = useCallback(() => {
+    const container = map.getContainer();
+    map.setMaxBounds(
+      getViewportAwareMaxBounds(
+        config,
+        {
+          width: container.clientWidth,
+          height: container.clientHeight,
+        },
+        map.getZoom()
+      )
+    );
+  }, [config, map]);
+  const updateMaxBoundsRef = useRef(updateMaxBounds);
+  updateMaxBoundsRef.current = updateMaxBounds;
+
+  useMapEvents({
+    resize: () => {
+      updateMaxBoundsRef.current();
+    },
+    zoomend: () => {
+      updateMaxBoundsRef.current();
+    },
+  });
+
+  useEffect(() => {
+    updateMaxBounds();
+  }, [updateMaxBounds]);
+
   return null;
 }

@@ -21,6 +21,7 @@ import {
   MapGridBackground,
   MapPointLayer,
   PictureTileLayer,
+  ViewportMaxBounds,
 } from './MapLayers';
 import {
   clearGeometryBarrelTarget,
@@ -521,7 +522,6 @@ export default function InteractiveMap({
       <MapContainer
         crs={L.CRS.Simple}
         bounds={mapBounds}
-        maxBounds={mapBounds}
         maxBoundsViscosity={1}
         minZoom={config.minZoom}
         maxZoom={config.maxZoom + 2}
@@ -553,6 +553,7 @@ export default function InteractiveMap({
           onZoomEnd={setZoom}
           onReady={handleMapReady}
         />
+        <ViewportMaxBounds config={config} />
         <LocatePoint
           point={selectedPoint}
           config={config}
