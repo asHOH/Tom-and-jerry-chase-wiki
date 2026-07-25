@@ -38,7 +38,6 @@ type CharacterRelationPanelProps = {
 
 type RelationSectionProps = Omit<CharacterRelationPanelSection, 'key' | 'show'> & {
   isEditMode: boolean;
-  emptyLabel?: string;
   canEditDescription?: boolean;
 };
 
@@ -364,11 +363,11 @@ function RelationSection({
   selectors,
   isEditMode,
   showEditControls = false,
-  emptyLabel = '无',
   canEditDescription = true,
 }: RelationSectionProps) {
   const themeClasses = relationThemeClasses[theme];
   const canEdit = isEditMode && showEditControls;
+  if (!canEdit && items.length === 0) return null;
 
   return (
     <div>
@@ -389,19 +388,15 @@ function RelationSection({
         {canEdit && selectors}
       </div>
       <div className='mt-2 grid grid-cols-1 gap-y-3'>
-        {!canEdit && items.length === 0 ? (
-          <span className='text-xs text-gray-400'>{emptyLabel}</span>
-        ) : (
-          items.map((item) => (
-            <RelationItemCard
-              key={item.key}
-              item={item}
-              themeClasses={themeClasses}
-              canEdit={canEdit}
-              canEditDescription={canEditDescription}
-            />
-          ))
-        )}
+        {items.map((item) => (
+          <RelationItemCard
+            key={item.key}
+            item={item}
+            themeClasses={themeClasses}
+            canEdit={canEdit}
+            canEditDescription={canEditDescription}
+          />
+        ))}
       </div>
     </div>
   );
