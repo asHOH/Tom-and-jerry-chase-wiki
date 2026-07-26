@@ -13,6 +13,7 @@ import {
 } from '@/lib/gameData/approvedReplaySnapshotReader';
 import { invalidatePublicGameDataActionsCache } from '@/lib/gameData/publicActionsCache';
 import type { PreparedPublishRequest } from '@/lib/gameData/publishPreparation';
+import type { GameDataSubmitMode } from '@/lib/gameData/submitMode';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import type { Database, Json } from '@/data/database.types';
 
@@ -100,6 +101,7 @@ export async function publishPreparedGameDataActions(options: {
   permission: PublishPermission;
   grants: readonly PermissionGrant[];
   prepared: PreparedPublishRequest;
+  submitMode?: GameDataSubmitMode;
 }): Promise<TrustedPublishResult[]> {
   const actorId = options.actorId;
   const isAnonymous = actorId === null;
@@ -113,7 +115,7 @@ export async function publishPreparedGameDataActions(options: {
     // Permission grants can change between this route-owned snapshot and the RPC's mandatory
     // database recheck. We intentionally accept that narrow race instead of adding a second
     // approval expectation token; the RPC remains the final authorization authority.
-    let autoPublishesAction = true;
+    let autoPublishesAction = options.submitMode !== 'force_pending';
     const actionCandidateRows: ApprovedCandidateReplayRow[] = [];
     for (const [rowIndex, row] of action.rows.entries()) {
       const entry = asJson(row.canonicalEntry);
@@ -153,6 +155,7 @@ export async function publishPreparedGameDataActions(options: {
           p_entries: action.rows.map((row) => asJson(row.canonicalEntry)),
           p_message: options.prepared.message ?? null,
           p_expected_replay_epoch: expectedEpoch,
+          p_submit_mode: options.submitMode ?? 'default',
           ...(options.clientIp === undefined ? {} : { p_ip: options.clientIp }),
         });
     const { data, error } = rpcResult;

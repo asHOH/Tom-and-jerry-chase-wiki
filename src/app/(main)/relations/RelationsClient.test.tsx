@@ -1,5 +1,6 @@
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 
+import type { GameDataSubmitMode } from '@/lib/gameData/submitMode';
 import type { RelationMatrixCellSelection } from '@/features/character-relations/matrix/CharacterRelationsMatrix';
 import type { RelationMatrixColumnCategory } from '@/features/character-relations/matrix/relationMatrixViewModel';
 import type { EditModeToolbarProps } from '@/components/ui/EditModeToolbar';
@@ -52,7 +53,14 @@ const mockEnterEditMode = jest.fn();
 const mockExitEditMode = jest.fn();
 const mockToastInfo = jest.fn();
 const mockDiscardChanges = jest.fn();
-const mockPublishChanges = jest.fn(async (_message?: string) => true);
+const mockPublishChanges = jest.fn(
+  async (
+    _message?: string,
+    _options?: {
+      submitMode?: GameDataSubmitMode;
+    }
+  ) => true
+);
 const mockGetActionCount = jest.fn(() => 2);
 let mockIsEditMode = false;
 let mockUserRole: string | null = null;
@@ -61,6 +69,7 @@ let mockRelationEditModeState = {
   isPublishing: false,
   draftInfo: { actionCount: 2 },
   draftsSummary: mockDraftsSummary,
+  advancedSubmit: { available: false, defaultOutcome: 'pending' as const, modes: ['default'] },
   discardChanges: mockDiscardChanges,
   publishChanges: mockPublishChanges,
   getActionCount: mockGetActionCount,
@@ -186,6 +195,11 @@ describe('RelationsClient', () => {
       isPublishing: false,
       draftInfo: { actionCount: 2 },
       draftsSummary: mockDraftsSummary,
+      advancedSubmit: {
+        available: false,
+        defaultOutcome: 'pending' as const,
+        modes: ['default'],
+      },
       discardChanges: mockDiscardChanges,
       publishChanges: mockPublishChanges,
       getActionCount: mockGetActionCount,
@@ -301,6 +315,7 @@ describe('RelationsClient', () => {
         actionCount: 2,
         draftInfo: { actionCount: 2 },
         draftsSummary: mockDraftsSummary,
+        advancedSubmit: { available: false, defaultOutcome: 'pending', modes: ['default'] },
         isPublishing: false,
         onDiscard: mockDiscardChanges,
         entityName: '角色关系',
@@ -308,7 +323,7 @@ describe('RelationsClient', () => {
     );
 
     await expect(toolbarProps.onPublish('补充关系')).resolves.toBe(true);
-    expect(mockPublishChanges).toHaveBeenCalledWith('补充关系');
+    expect(mockPublishChanges).toHaveBeenCalledWith('补充关系', undefined);
 
     toolbarProps.onExitEditMode();
     expect(mockExitEditMode).toHaveBeenCalledTimes(1);

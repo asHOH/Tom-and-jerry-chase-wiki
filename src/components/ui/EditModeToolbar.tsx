@@ -4,8 +4,13 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, m, useDragControls, useReducedMotion } from 'motion/react';
 import { createPortal } from 'react-dom';
 
-import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { cn } from '@/lib/design';
+import {
+  getGameDataSubmitModeDescription,
+  getGameDataSubmitModeLabel,
+  type GameDataAdvancedSubmit,
+  type GameDataSubmitMode,
+} from '@/lib/gameData/submitMode';
 import { useEditMode } from '@/context/EditModeContext';
 import {
   CheckBadgeIcon,
@@ -37,7 +42,14 @@ export interface EditModeToolbarProps {
   /** Called when user clicks discard */
   onDiscard: () => void;
   /** Called when user clicks publish */
-  onPublish: (message?: string) => Promise<boolean>;
+  onPublish: (
+    message?: string,
+    options?: {
+      submitMode?: GameDataSubmitMode;
+    }
+  ) => Promise<boolean>;
+  /** Advanced submit controls for temporary permission downgrade */
+  advancedSubmit?: GameDataAdvancedSubmit;
   /** Called when user wants to exit edit mode */
   onExitEditMode: () => void;
   /** Entity display name for better UX */
@@ -54,21 +66,26 @@ export default function EditModeToolbar({
   isPublishing,
   onDiscard,
   onPublish,
+  advancedSubmit,
   onExitEditMode,
   entityName,
   isTutorialEnabled = false,
 }: EditModeToolbarProps) {
-  const permissions = usePermissions();
-  const isAdmin = permissions.has('article.update_any');
   const shouldReduceMotion = useReducedMotion();
   const dragControls = useDragControls();
   const [showMessageInput, setShowMessageInput] = useState(false);
   const [publishMessage, setPublishMessage] = useState('');
+  const [submitMode, setSubmitMode] = useState<GameDataSubmitMode>('default');
   const [isConfirmingDiscard, setIsConfirmingDiscard] = useState(false);
   const [isDraftsOpen, setIsDraftsOpen] = useState(false);
   const [agreedToLicense, setAgreedToLicense] = useState(false);
   const discardResetTimerRef = useRef<number | null>(null);
   const { isPreviewMode, setIsPreviewMode } = useEditMode();
+
+  useEffect(() => {
+    if (advancedSubmit?.modes.includes(submitMode)) return;
+    setSubmitMode('default');
+  }, [advancedSubmit?.modes, submitMode]);
 
   useEffect(() => {
     return () => {
@@ -83,10 +100,14 @@ export default function EditModeToolbar({
 
   const handlePublish = async () => {
     if (showMessageInput) {
-      const didPublish = await onPublish(publishMessage || undefined);
+      const didPublish = await onPublish(
+        publishMessage || undefined,
+        advancedSubmit?.available ? { submitMode } : undefined
+      );
       if (!didPublish) return;
       setPublishMessage('');
       setShowMessageInput(false);
+      setSubmitMode('default');
       setAgreedToLicense(false);
       onExitEditMode();
     } else {
@@ -134,6 +155,9 @@ export default function EditModeToolbar({
 
   const draftLabel = draftInfo ? `草稿：${draftInfo.actionCount} 条修改` : null;
   const draftsButtonLabel = totalDraftCount > 0 ? `草稿(${totalDraftCount})` : '草稿';
+  const advancedSubmitDescription = advancedSubmit
+    ? getGameDataSubmitModeDescription(submitMode, advancedSubmit.defaultOutcome)
+    : null;
 
   const toolbarContent = (
     <m.div
@@ -212,6 +236,7 @@ export default function EditModeToolbar({
                   onClick={() => {
                     setShowMessageInput(false);
                     setPublishMessage('');
+                    setSubmitMode('default');
                     setAgreedToLicense(false);
                   }}
                   className='absolute top-1 right-1 rounded p-1 text-gray-400 hover:bg-gray-200 hover:text-gray-600 dark:hover:bg-slate-600 dark:hover:text-gray-300'
@@ -243,12 +268,36 @@ export default function EditModeToolbar({
                   >
                     CC BY 4.0 许可协议
                   </a>{' '}
-                  进行授权发布
-                  {isAdmin
-                    ? '，提交后将自动审核通过并公开显示。'
-                    : '，管理员审核通过后将公开显示。'}
+                  进行授权发布。
                 </label>
               </div>
+              {advancedSubmit?.available && advancedSubmitDescription && (
+                <div className='mt-2 rounded-lg bg-blue-50 px-3 py-2 text-xs text-blue-900 dark:bg-blue-900/30 dark:text-blue-100'>
+                  <div>{advancedSubmitDescription}</div>
+                  <div className='mt-2 flex flex-wrap gap-2'>
+                    {advancedSubmit.modes.map((mode) => {
+                      const isActive = mode === submitMode;
+                      return (
+                        <button
+                          key={mode}
+                          type='button'
+                          onClick={() => setSubmitMode(mode)}
+                          disabled={isPublishing || isActive}
+                          className={cn(
+                            'rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors',
+                            isActive
+                              ? 'border-blue-700 bg-blue-700 text-white dark:border-blue-400 dark:bg-blue-400 dark:text-slate-950'
+                              : 'border-blue-200 bg-white/80 text-blue-900 hover:bg-blue-100 dark:border-blue-500/40 dark:bg-slate-900/40 dark:text-blue-100 dark:hover:bg-blue-950/40',
+                            'disabled:cursor-not-allowed disabled:opacity-60'
+                          )}
+                        >
+                          {getGameDataSubmitModeLabel(mode, advancedSubmit.defaultOutcome)}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </m.div>
           )}
         </AnimatePresence>

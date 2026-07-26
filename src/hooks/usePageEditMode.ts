@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { subscribe } from 'valtio';
 
+import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { GameDataManager } from '@/lib/dataManager';
 import {
   applyActionEntry,
@@ -26,8 +27,16 @@ import {
   type PublishableEntityType,
 } from '@/lib/gameData/publishableEntityTypes';
 import { getPublishErrorMessage } from '@/lib/gameData/publishErrorMessage';
+import {
+  getGameDataSubmitOutcomeFromResults,
+  getGameDataSubmitSuccessMessage,
+  resolveGameDataAdvancedSubmit,
+  type GameDataAdvancedSubmit,
+  type GameDataSubmitMode,
+} from '@/lib/gameData/submitMode';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { useEditMode } from '@/context/EditModeContext';
+import type { Json } from '@/data/database.types';
 
 const entityRegistry = getEntityRegistrySnapshot();
 
@@ -44,8 +53,14 @@ export type PageEditModeResult = {
   isPublishing: boolean;
   draftInfo: { actionCount: number } | null;
   draftsSummary: DraftSummaryItem[];
+  advancedSubmit: GameDataAdvancedSubmit;
   discardChanges: (options?: { showToast?: boolean; suppressSync?: boolean }) => void;
-  publishChanges: (message?: string) => Promise<boolean>;
+  publishChanges: (
+    message?: string,
+    options?: {
+      submitMode?: GameDataSubmitMode;
+    }
+  ) => Promise<boolean>;
   getActionCount: () => number;
 };
 
@@ -80,6 +95,7 @@ function resolveDraftItemLabel(
  */
 export function usePageEditMode(options: PageEditModeOptions): PageEditModeResult {
   const { entityType, entityId, showToast } = options;
+  const permissions = usePermissions();
   const entityKey = entityId.trim();
   const { isEditMode: originalIsEditMode, isPreviewMode } = useEditMode();
   const [isPublishing, setIsPublishing] = useState(false);
@@ -113,6 +129,20 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
     return squashActions(matching, currentRoot ? { currentRoot } : undefined).length;
   }, [entityType, entityKey]);
 
+  const getPublishDraft = useCallback(() => {
+    const storageKey = getActionsStorageKey(entityType);
+    const history = readActionHistory(storageKey);
+    const { matching, remaining } = splitActionHistoryByEntity(history, entityKey);
+    const currentRoot = entityRegistry.get(entityType);
+    const squashed = squashActions(matching, currentRoot ? { currentRoot } : undefined);
+    return { storageKey, remaining, squashed };
+  }, [entityType, entityKey]);
+
+  const squashedDraft = useMemo(() => {
+    void _actionCountTrigger;
+    return getPublishDraft().squashed;
+  }, [_actionCountTrigger, getPublishDraft]);
+
   const isDirty = useMemo(() => {
     // Trigger re-evaluation when _actionCountTrigger changes
     void _actionCountTrigger;
@@ -120,6 +150,16 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
   }, [_actionCountTrigger, getActionCount]);
 
   const debouncedActionCount = useDebouncedValue(_actionCountTrigger, 800);
+
+  const advancedSubmit = useMemo(
+    () =>
+      resolveGameDataAdvancedSubmit({
+        entityType,
+        entries: squashedDraft as unknown as Json[],
+        canAll: permissions.canAll,
+      }),
+    [entityType, permissions, squashedDraft]
+  );
 
   useEffect(() => {
     if (!isEditMode) return;
@@ -223,12 +263,13 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
   }, [originalIsEditMode, discardChanges]);
 
   const publishChanges = useCallback(
-    async (message?: string): Promise<boolean> => {
-      const storageKey = getActionsStorageKey(entityType);
-      const history = readActionHistory(storageKey);
-      const { matching, remaining } = splitActionHistoryByEntity(history, entityKey);
-      const currentRoot = entityRegistry.get(entityType);
-      const squashed = squashActions(matching, currentRoot ? { currentRoot } : undefined);
+    async (
+      message?: string,
+      options?: {
+        submitMode?: GameDataSubmitMode;
+      }
+    ): Promise<boolean> => {
+      const { storageKey, remaining, squashed } = getPublishDraft();
 
       if (squashed.length === 0) {
         if (showToast) showToast('没有需要发布的修改');
@@ -254,6 +295,7 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
             entityType,
             entries: squashed,
             message,
+            submitMode: options?.submitMode,
           }),
         });
 
@@ -265,6 +307,12 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
           } | null;
           throw new Error(getPublishErrorMessage(body, '发布失败'));
         }
+        const body = (await res.json().catch(() => null)) as {
+          result?: Array<{
+            is_public: boolean;
+            status: 'pending' | 'approved' | 'rejected' | 'synced' | 'revoked';
+          }>;
+        } | null;
 
         // Clear storage on success
         if (typeof window !== 'undefined') {
@@ -277,7 +325,14 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
         setDraftInfo(null);
         setActionCountTrigger((prev) => prev + 1);
 
-        if (showToast) showToast('改动已提交，等待审核');
+        if (showToast) {
+          showToast(
+            getGameDataSubmitSuccessMessage(
+              '改动',
+              getGameDataSubmitOutcomeFromResults(body?.result ?? [])
+            )
+          );
+        }
 
         return true;
       } catch (e) {
@@ -288,7 +343,7 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
         setIsPublishing(false);
       }
     },
-    [entityType, entityKey, showToast]
+    [entityType, getPublishDraft, showToast]
   );
 
   return {
@@ -297,6 +352,7 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
     isPublishing,
     draftInfo,
     draftsSummary,
+    advancedSubmit,
     discardChanges,
     publishChanges,
     getActionCount,

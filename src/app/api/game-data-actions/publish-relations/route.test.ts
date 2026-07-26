@@ -143,6 +143,37 @@ describe('publish-relations route', () => {
     });
   });
 
+  it('passes submitMode through to trusted persistence when requested', async () => {
+    const { POST } = await import('./route');
+
+    const response = await POST(
+      createRequest({
+        entries: validEntries,
+        message: '更新关系',
+        submitMode: 'force_public_pending',
+      })
+    );
+
+    expect(response.status).toBe(200);
+    expect(publishPreparedMock).toHaveBeenCalledWith(
+      expect.objectContaining({ submitMode: 'force_public_pending' })
+    );
+  });
+
+  it('rejects invalid submitMode values as invalid_shape', async () => {
+    const { POST } = await import('./route');
+
+    const response = await POST(
+      createRequest({ entries: validEntries, submitMode: 'unexpected-mode' })
+    );
+
+    expect(response.status).toBe(400);
+    await expect(response.json()).resolves.toEqual(
+      expect.objectContaining({ error: 'invalid_shape' })
+    );
+    expect(publishPreparedMock).not.toHaveBeenCalled();
+  });
+
   it('logs bounded dependent-row diagnostics and returns a request ID', async () => {
     const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
     const { POST } = await import('./route');

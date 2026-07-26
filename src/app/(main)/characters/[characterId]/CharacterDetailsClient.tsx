@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import type { GameDataSubmitMode } from '@/lib/gameData/submitMode';
 import { hasUserSeenTutorial } from '@/lib/tutorialUtils';
 import { CharacterDetailsProps } from '@/lib/types';
 import { useKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
@@ -27,6 +28,7 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
     isPublishing,
     draftInfo,
     draftsSummary,
+    advancedSubmit,
     discardChanges,
     publishChanges,
     getActionCount,
@@ -59,7 +61,12 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
   }, []);
 
   const handlePublish = useCallback(
-    (message?: string) => publishChanges(message),
+    (
+      message?: string,
+      options?: {
+        submitMode?: GameDataSubmitMode;
+      }
+    ) => publishChanges(message, options),
     [publishChanges]
   );
   const editModeContextValue = useMemo(
@@ -100,6 +107,7 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
             isPublishing={isPublishing}
             onDiscard={discardChanges}
             onPublish={handlePublish}
+            advancedSubmit={advancedSubmit}
             onExitEditMode={exitEditMode}
             entityName={currentCharacterId}
             draftInfo={draftInfo}

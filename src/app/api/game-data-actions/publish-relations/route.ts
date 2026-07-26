@@ -11,6 +11,7 @@ import {
   readBoundedJsonBody,
 } from '@/lib/gameData/publishPreparation';
 import { publishPreparationErrorResponse } from '@/lib/gameData/publishPreparationResponse';
+import { isGameDataSubmitMode, type GameDataSubmitMode } from '@/lib/gameData/submitMode';
 import {
   publishPreparedGameDataActions,
   TrustedGameDataMutationError,
@@ -22,18 +23,28 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
+function readSubmitMode(value: unknown): GameDataSubmitMode | undefined {
+  if (value === undefined) return undefined;
+  if (!isGameDataSubmitMode(value)) throw new PublishPreparationError('invalid_shape');
+  return value;
+}
+
 export async function POST(request: Request) {
   if (!hasSupabasePublicConfig()) {
     return NextResponse.json({ error: 'Supabase is disabled' }, { status: 501 });
   }
 
-  let body: Record<string, unknown>;
+  let body: Record<string, unknown> & { submitMode?: GameDataSubmitMode };
   try {
     const value = await readBoundedJsonBody(request);
     if (!isRecord(value) || !Array.isArray(value.entries)) {
       throw new PublishPreparationError('invalid_shape');
     }
-    body = value;
+    const submitMode = readSubmitMode(value.submitMode);
+    body = {
+      ...value,
+      ...(submitMode === undefined ? {} : { submitMode }),
+    };
   } catch (error) {
     return error instanceof PublishPreparationError
       ? publishPreparationErrorResponse(error, '/api/game-data-actions/publish-relations')
@@ -76,6 +87,7 @@ export async function POST(request: Request) {
       permission: 'game_data_action.publish_relations',
       grants: guard.grants,
       prepared,
+      ...(body.submitMode === undefined ? {} : { submitMode: body.submitMode }),
     });
     return NextResponse.json({ result });
   } catch (error) {

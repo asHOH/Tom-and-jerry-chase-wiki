@@ -1309,6 +1309,7 @@ export type Database = {
           p_message: string | null;
           p_permission_key: string;
           p_ip?: string | null;
+          p_submit_mode?: 'default' | 'force_public_pending' | 'force_pending' | null;
         };
         Returns: {
           id: string;

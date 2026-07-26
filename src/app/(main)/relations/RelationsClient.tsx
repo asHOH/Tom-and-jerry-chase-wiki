@@ -5,6 +5,7 @@ import { useSnapshot } from 'valtio';
 
 import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { getFactionButtonColors } from '@/lib/design';
+import type { GameDataSubmitMode } from '@/lib/gameData/submitMode';
 import { useSearchParamEditMode } from '@/hooks/useSearchParamEditMode';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useToast } from '@/context/ToastContext';
@@ -160,6 +161,7 @@ export default function RelationsClient({ description }: RelationsClientProps) {
     isPublishing,
     draftInfo,
     draftsSummary,
+    advancedSubmit,
     discardChanges,
     publishChanges,
     getActionCount,
@@ -264,7 +266,13 @@ export default function RelationsClient({ description }: RelationsClientProps) {
             isTutorialEnabled
             isPublishing={isPublishing}
             onDiscard={discardChanges}
-            onPublish={publishChanges}
+            onPublish={(
+              message?: string,
+              options?: {
+                submitMode?: GameDataSubmitMode;
+              }
+            ) => publishChanges(message, options)}
+            advancedSubmit={advancedSubmit}
             onExitEditMode={handleExitEditMode}
             entityName='角色关系'
           />

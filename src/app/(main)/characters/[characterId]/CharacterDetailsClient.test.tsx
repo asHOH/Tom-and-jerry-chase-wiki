@@ -29,6 +29,7 @@ jest.mock('@/hooks/usePageEditMode', () => ({
     isPublishing: false,
     draftInfo: null,
     draftsSummary: [],
+    advancedSubmit: { available: false, defaultOutcome: 'pending' as const, modes: ['default'] },
     discardChanges: jest.fn(),
     publishChanges: jest.fn(),
     getActionCount: () => 0,

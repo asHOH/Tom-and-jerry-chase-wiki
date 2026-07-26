@@ -8,6 +8,25 @@ import { useRelationMatrixEditMode } from './useRelationMatrixEditMode';
 const mockInfo = jest.fn();
 const mockSuccess = jest.fn();
 const mockError = jest.fn();
+let mockPermissionProfile: 'contributor' | 'reviewer' | 'coordinator' | null = 'contributor';
+
+jest.mock('@/lib/auth/PermissionProvider', () => {
+  const actual = jest.requireActual('@/lib/auth/permissions');
+  const fixtures = jest.requireActual('@/testUtils/permissionFixtures');
+  return {
+    usePermissions: () => {
+      const grants = fixtures.permissionGrantsForProfile(mockPermissionProfile);
+      return {
+        grants,
+        has: (permission: string) => actual.hasPermission(grants, permission),
+        can: (permission: string, context?: unknown) =>
+          actual.canAccess(grants, permission, context),
+        canAll: (permission: string, contexts: unknown[]) =>
+          actual.canAccessAll(grants, permission, contexts),
+      };
+    },
+  };
+});
 
 jest.mock('@/context/ToastContext', () => ({
   useToast: () => ({
@@ -27,6 +46,7 @@ function RelationEditModeProbe() {
     isPublishing,
     draftInfo,
     draftsSummary,
+    advancedSubmit,
     discardChanges,
     publishChanges,
     getActionCount,
@@ -38,12 +58,27 @@ function RelationEditModeProbe() {
       <div data-testid='publishing'>{String(isPublishing)}</div>
       <div data-testid='count'>{getActionCount()}</div>
       <div data-testid='draft-info'>{draftInfo?.actionCount ?? 0}</div>
+      <div data-testid='advanced-submit-available'>{String(advancedSubmit.available)}</div>
+      <div data-testid='advanced-submit-outcome'>{advancedSubmit.defaultOutcome}</div>
+      <div data-testid='advanced-submit-modes'>{advancedSubmit.modes.join(',')}</div>
       <div data-testid='draft-summary'>{draftsSummary.map((item) => item.itemLabel).join(',')}</div>
       <button type='button' onClick={() => discardChanges()}>
         discard
       </button>
       <button type='button' onClick={() => void publishChanges('关系更新')}>
         publish
+      </button>
+      <button
+        type='button'
+        onClick={() => void publishChanges('关系更新', { submitMode: 'force_public_pending' })}
+      >
+        publish-force-public-pending
+      </button>
+      <button
+        type='button'
+        onClick={() => void publishChanges('关系更新', { submitMode: 'force_pending' })}
+      >
+        publish-force-pending
       </button>
     </div>
   );
@@ -56,6 +91,7 @@ describe('useRelationMatrixEditMode', () => {
 
   beforeEach(() => {
     characterSnapshot = structuredClone(characters) as Record<string, unknown>;
+    mockPermissionProfile = 'contributor';
     window.localStorage.clear();
     mockInfo.mockClear();
     mockSuccess.mockClear();
@@ -97,7 +133,9 @@ describe('useRelationMatrixEditMode', () => {
   it('publishes only relation actions and preserves unrelated character drafts', async () => {
     const fetchMock = jest.fn().mockResolvedValue({
       ok: true,
-      json: jest.fn(),
+      json: jest.fn().mockResolvedValue({
+        result: [{ id: 'action-1', is_public: false, status: 'pending' }],
+      }),
     });
     global.fetch = fetchMock;
     writeActionHistory(storageKey, [
@@ -126,10 +164,50 @@ describe('useRelationMatrixEditMode', () => {
     });
   });
 
+  it('exposes reviewer submit modes and sends force_public_pending when requested', async () => {
+    mockPermissionProfile = 'reviewer';
+    const fetchMock = jest.fn().mockResolvedValue({
+      ok: true,
+      json: jest.fn().mockResolvedValue({
+        result: [{ id: 'action-1', is_public: true, status: 'pending' }],
+      }),
+    });
+    global.fetch = fetchMock;
+    writeActionHistory(storageKey, [
+      { op: 'set', path: '杰瑞.counters', oldValue: [], newValue: [{ id: '汤姆' }] },
+    ]);
+    renderProbe();
+
+    expect(screen.getByTestId('advanced-submit-available')).toHaveTextContent('true');
+    expect(screen.getByTestId('advanced-submit-outcome')).toHaveTextContent('approved');
+    expect(screen.getByTestId('advanced-submit-modes')).toHaveTextContent(
+      'default,force_public_pending,force_pending'
+    );
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'publish-force-public-pending' }));
+      await Promise.resolve();
+    });
+
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledWith('/api/game-data-actions/publish-relations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          entries: [{ op: 'set', path: '杰瑞.counters', oldValue: [], newValue: [{ id: '汤姆' }] }],
+          message: '关系更新',
+          submitMode: 'force_public_pending',
+        }),
+      });
+    });
+  });
+
   it('normalizes relation structural arrays with the current characters root when publishing', async () => {
     const fetchMock = jest.fn().mockResolvedValue({
       ok: true,
-      json: jest.fn(),
+      json: jest.fn().mockResolvedValue({
+        result: [{ id: 'action-1', is_public: false, status: 'pending' }],
+      }),
     });
     global.fetch = fetchMock;
     (characters['杰瑞'] as unknown as { counters?: unknown }).counters = relationCountersFinal;
@@ -175,6 +253,38 @@ describe('useRelationMatrixEditMode', () => {
       });
     });
   });
+
+  it.each([
+    ['pending', { is_public: false, status: 'pending' }, '关系修改已提交，等待审核'],
+    [
+      'public_pending',
+      { is_public: true, status: 'pending' },
+      '关系修改已提交，已自动公开，后续仍可复核',
+    ],
+    ['approved', { is_public: true, status: 'approved' }, '关系修改已提交，已自动审核通过并公开'],
+  ] as const)(
+    'shows the %s success toast from the actual relation publish result',
+    async (_label, result, expectedToast) => {
+      const fetchMock = jest.fn().mockResolvedValue({
+        ok: true,
+        json: jest.fn().mockResolvedValue({ result: [{ id: 'action-1', ...result }] }),
+      });
+      global.fetch = fetchMock;
+      writeActionHistory(storageKey, [
+        { op: 'set', path: '杰瑞.counters', oldValue: [], newValue: [{ id: '汤姆' }] },
+      ]);
+      renderProbe();
+
+      await act(async () => {
+        fireEvent.click(screen.getByRole('button', { name: 'publish' }));
+        await Promise.resolve();
+      });
+
+      await waitFor(() => {
+        expect(mockSuccess).toHaveBeenCalledWith(expectedToast);
+      });
+    }
+  );
 
   it.each([
     {

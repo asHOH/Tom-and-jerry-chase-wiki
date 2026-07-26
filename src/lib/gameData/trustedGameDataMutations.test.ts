@@ -161,6 +161,7 @@ describe('trusted game data mutations', () => {
       p_entries: [{ op: 'set', path: 'item-b.description', newValue: 'new' }],
       p_message: 'message',
       p_expected_replay_epoch: 9,
+      p_submit_mode: 'default',
     });
     expect(result).toEqual([{ id: 'new-1', is_public: true, status: 'approved' }]);
     expect(invalidateMock).toHaveBeenCalledTimes(1);
@@ -263,6 +264,67 @@ describe('trusted game data mutations', () => {
     ]);
     expect(result).toEqual([{ id: 'new-public-pending', is_public: true, status: 'pending' }]);
     expect(invalidateMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps proposed replay membership and skips self-review when public pending is requested', async () => {
+    adminRpcMock.mockResolvedValueOnce({
+      data: [{ id: 'force-public-pending-1', is_public: true, status: 'pending' }],
+      error: null,
+    } as never);
+
+    const result = await publishPreparedGameDataActions({
+      actorId: 'actor-1',
+      permission: 'game_data_action.create',
+      grants: [],
+      prepared,
+      submitMode: 'force_public_pending',
+    });
+
+    expect(validateCandidateMock).toHaveBeenCalledWith([
+      expect.objectContaining({ rowId: 'approved-1' }),
+      expect.objectContaining({ rowId: 'proposed:items:0' }),
+    ]);
+    expect(adminRpcMock).toHaveBeenCalledWith('prepared_publish_game_data_actions', {
+      p_actor_id: 'actor-1',
+      p_permission_key: 'game_data_action.create',
+      p_entity_type: 'items',
+      p_entries: [{ op: 'set', path: 'item-b.description', newValue: 'new' }],
+      p_message: 'message',
+      p_expected_replay_epoch: 9,
+      p_submit_mode: 'force_public_pending',
+    });
+    expect(result).toEqual([{ id: 'force-public-pending-1', is_public: true, status: 'pending' }]);
+    expect(invalidateMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('skips proposed replay membership and forces private pending persistence when requested', async () => {
+    adminRpcMock.mockResolvedValueOnce({
+      data: [{ id: 'force-pending-1', is_public: false, status: 'pending' }],
+      error: null,
+    } as never);
+
+    const result = await publishPreparedGameDataActions({
+      actorId: 'actor-1',
+      permission: 'game_data_action.create',
+      grants: [],
+      prepared,
+      submitMode: 'force_pending',
+    });
+
+    expect(validateCandidateMock).toHaveBeenCalledWith([
+      expect.objectContaining({ rowId: 'approved-1' }),
+    ]);
+    expect(adminRpcMock).toHaveBeenCalledWith('prepared_publish_game_data_actions', {
+      p_actor_id: 'actor-1',
+      p_permission_key: 'game_data_action.create',
+      p_entity_type: 'items',
+      p_entries: [{ op: 'set', path: 'item-b.description', newValue: 'new' }],
+      p_message: 'message',
+      p_expected_replay_epoch: 9,
+      p_submit_mode: 'force_pending',
+    });
+    expect(result).toEqual([{ id: 'force-pending-1', is_public: false, status: 'pending' }]);
+    expect(invalidateMock).not.toHaveBeenCalled();
   });
 
   it('inserts an older pending row at its stored semantic position before approval', async () => {

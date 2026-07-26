@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { subscribe } from 'valtio';
 
+import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { splitCharacterRelationActionHistory } from '@/lib/edit/characterRelationActions';
 import {
   applyActionEntry,
@@ -19,7 +20,15 @@ import {
   type DraftSummaryItem,
 } from '@/lib/edit/editModeDrafts';
 import { getPublishErrorMessage } from '@/lib/gameData/publishErrorMessage';
+import {
+  getGameDataSubmitOutcomeFromResults,
+  getGameDataSubmitSuccessMessage,
+  resolveGameDataAdvancedSubmit,
+  type GameDataAdvancedSubmit,
+  type GameDataSubmitMode,
+} from '@/lib/gameData/submitMode';
 import { useToast } from '@/context/ToastContext';
+import type { Json } from '@/data/database.types';
 import { characters } from '@/data/store';
 
 type RelationMatrixEditModeResult = {
@@ -27,8 +36,14 @@ type RelationMatrixEditModeResult = {
   isPublishing: boolean;
   draftInfo: { actionCount: number } | null;
   draftsSummary: DraftSummaryItem[];
+  advancedSubmit: GameDataAdvancedSubmit;
   discardChanges: () => void;
-  publishChanges: (message?: string) => Promise<boolean>;
+  publishChanges: (
+    message?: string,
+    options?: {
+      submitMode?: GameDataSubmitMode;
+    }
+  ) => Promise<boolean>;
   getActionCount: () => number;
 };
 
@@ -51,6 +66,7 @@ const resolveCharacterLabel = ({ entityId }: { entityId: string }) => {
 };
 
 export const useRelationMatrixEditMode = (): RelationMatrixEditModeResult => {
+  const permissions = usePermissions();
   const { info, success, error } = useToast();
   const [isPublishing, setIsPublishing] = useState(false);
   const [actionCountTrigger, setActionCountTrigger] = useState(0);
@@ -73,11 +89,16 @@ export const useRelationMatrixEditMode = (): RelationMatrixEditModeResult => {
     return squashActions(matching, { currentRoot: characters }).length;
   }, [getRelationActions]);
 
+  const getPublishDraft = useCallback(() => {
+    const { matching, remaining } = getRelationActions();
+    const squashed = squashActions(matching, { currentRoot: characters });
+    return { remaining, squashed };
+  }, [getRelationActions]);
+
   const squashedRelationActions = useMemo(() => {
     void actionCountTrigger;
-    const { matching } = getRelationActions();
-    return squashActions(matching, { currentRoot: characters });
-  }, [actionCountTrigger, getRelationActions]);
+    return getPublishDraft().squashed;
+  }, [actionCountTrigger, getPublishDraft]);
 
   const isDirty = squashedRelationActions.length > 0;
   const draftInfo = isDirty ? { actionCount: squashedRelationActions.length } : null;
@@ -87,6 +108,15 @@ export const useRelationMatrixEditMode = (): RelationMatrixEditModeResult => {
         buildDraftSummaryItemsForType('characters', squashedRelationActions, resolveCharacterLabel)
       ),
     [squashedRelationActions]
+  );
+  const advancedSubmit = useMemo(
+    () =>
+      resolveGameDataAdvancedSubmit({
+        entityType: 'characters',
+        entries: squashedRelationActions as unknown as Json[],
+        canAll: permissions.canAll,
+      }),
+    [permissions, squashedRelationActions]
   );
 
   const discardChanges = useCallback(() => {
@@ -106,9 +136,13 @@ export const useRelationMatrixEditMode = (): RelationMatrixEditModeResult => {
   }, [getRelationActions, info]);
 
   const publishChanges = useCallback(
-    async (message?: string): Promise<boolean> => {
-      const { matching, remaining } = getRelationActions();
-      const squashed = squashActions(matching, { currentRoot: characters });
+    async (
+      message?: string,
+      options?: {
+        submitMode?: GameDataSubmitMode;
+      }
+    ): Promise<boolean> => {
+      const { remaining, squashed } = getPublishDraft();
 
       if (squashed.length === 0) {
         writeRemainingCharacterActions(remaining);
@@ -122,7 +156,7 @@ export const useRelationMatrixEditMode = (): RelationMatrixEditModeResult => {
         const response = await fetch('/api/game-data-actions/publish-relations', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ entries: squashed, message }),
+          body: JSON.stringify({ entries: squashed, message, submitMode: options?.submitMode }),
         });
 
         if (!response.ok) {
@@ -133,10 +167,21 @@ export const useRelationMatrixEditMode = (): RelationMatrixEditModeResult => {
           } | null;
           throw new Error(getPublishErrorMessage(body, '发布失败'));
         }
+        const body = (await response.json().catch(() => null)) as {
+          result?: Array<{
+            is_public: boolean;
+            status: 'pending' | 'approved' | 'rejected' | 'synced' | 'revoked';
+          }>;
+        } | null;
 
         writeRemainingCharacterActions(remaining);
         setActionCountTrigger((current) => current + 1);
-        success('关系修改已提交，等待审核');
+        success(
+          getGameDataSubmitSuccessMessage(
+            '关系修改',
+            getGameDataSubmitOutcomeFromResults(body?.result ?? [])
+          )
+        );
         return true;
       } catch (caught) {
         const message = caught instanceof Error ? caught.message : '发布失败';
@@ -146,7 +191,7 @@ export const useRelationMatrixEditMode = (): RelationMatrixEditModeResult => {
         setIsPublishing(false);
       }
     },
-    [error, getRelationActions, info, success]
+    [error, getPublishDraft, info, success]
   );
 
   return {
@@ -154,6 +199,7 @@ export const useRelationMatrixEditMode = (): RelationMatrixEditModeResult => {
     isPublishing,
     draftInfo,
     draftsSummary,
+    advancedSubmit,
     discardChanges,
     publishChanges,
     getActionCount,

@@ -8,6 +8,25 @@ import { characters } from '@/data/store';
 import { usePageEditMode } from './usePageEditMode';
 
 const mockShowToast = jest.fn();
+let mockPermissionProfile: 'contributor' | 'reviewer' | 'coordinator' | null = 'contributor';
+
+jest.mock('@/lib/auth/PermissionProvider', () => {
+  const actual = jest.requireActual('@/lib/auth/permissions');
+  const fixtures = jest.requireActual('@/testUtils/permissionFixtures');
+  return {
+    usePermissions: () => {
+      const grants = fixtures.permissionGrantsForProfile(mockPermissionProfile);
+      return {
+        grants,
+        has: (permission: string) => actual.hasPermission(grants, permission),
+        can: (permission: string, context?: unknown) =>
+          actual.canAccess(grants, permission, context),
+        canAll: (permission: string, contexts: unknown[]) =>
+          actual.canAccessAll(grants, permission, contexts),
+      };
+    },
+  };
+});
 
 const TEST_CHARACTER_ID = '__page_edit_mode_character__';
 const marySpecialSkillsOriginal = [
@@ -18,7 +37,7 @@ const marySpecialSkillsFinal = [{ name: '魔术漂浮', description: '通用特�
 
 function PageEditModeProbe() {
   const [refreshCount, setRefreshCount] = useState(0);
-  const { isDirty, draftsSummary, discardChanges, publishChanges, getActionCount } =
+  const { isDirty, draftsSummary, advancedSubmit, discardChanges, publishChanges, getActionCount } =
     usePageEditMode({
       entityType: 'characters',
       entityId: TEST_CHARACTER_ID,
@@ -30,6 +49,9 @@ function PageEditModeProbe() {
     <div>
       <div data-testid='page-dirty'>{String(isDirty)}</div>
       <div data-testid='page-action-count'>{getActionCount()}</div>
+      <div data-testid='advanced-submit-available'>{String(advancedSubmit.available)}</div>
+      <div data-testid='advanced-submit-outcome'>{advancedSubmit.defaultOutcome}</div>
+      <div data-testid='advanced-submit-modes'>{advancedSubmit.modes.join(',')}</div>
       <div data-testid='drafts-summary'>
         {draftsSummary.map((draft) => `${draft.entityType}:${draft.entityId}`).join(',')}
       </div>
@@ -41,6 +63,18 @@ function PageEditModeProbe() {
       </button>
       <button type='button' onClick={() => void publishChanges('hook publish')}>
         publish
+      </button>
+      <button
+        type='button'
+        onClick={() => void publishChanges('hook publish', { submitMode: 'force_public_pending' })}
+      >
+        publish-force-public-pending
+      </button>
+      <button
+        type='button'
+        onClick={() => void publishChanges('hook publish', { submitMode: 'force_pending' })}
+      >
+        publish-force-pending
       </button>
     </div>
   );
@@ -66,6 +100,7 @@ describe('usePageEditMode', () => {
 
   beforeEach(() => {
     characterSnapshot = structuredClone(characters) as Record<string, unknown>;
+    mockPermissionProfile = 'contributor';
     mockShowToast.mockClear();
     window.localStorage.clear();
     global.fetch = jest.fn();
@@ -158,7 +193,9 @@ describe('usePageEditMode', () => {
   it('should publish only the current entity draft and preserve remaining drafts', async () => {
     const fetchMock = jest.fn().mockResolvedValue({
       ok: true,
-      json: jest.fn(),
+      json: jest.fn().mockResolvedValue({
+        result: [{ id: 'action-1', is_public: false, status: 'pending' }],
+      }),
     });
     global.fetch = fetchMock;
     renderInEditMode();
@@ -216,6 +253,64 @@ describe('usePageEditMode', () => {
           newValue: 'other draft description',
         }),
       ]);
+    });
+  });
+
+  it('should expose reviewer submit modes and send force_public_pending when requested', async () => {
+    mockPermissionProfile = 'reviewer';
+    const fetchMock = jest.fn().mockResolvedValue({
+      ok: true,
+      json: jest.fn().mockResolvedValue({
+        result: [{ id: 'action-1', is_public: true, status: 'pending' }],
+      }),
+    });
+    global.fetch = fetchMock;
+    window.localStorage.setItem(
+      getActionsStorageKey('characters'),
+      JSON.stringify([
+        {
+          op: 'set',
+          path: `${TEST_CHARACTER_ID}.description`,
+          oldValue: 'canonical description',
+          newValue: 'draft description',
+        },
+      ])
+    );
+
+    renderInEditMode();
+    fireEvent.click(screen.getByRole('button', { name: 'refresh' }));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('advanced-submit-available')).toHaveTextContent('true');
+      expect(screen.getByTestId('advanced-submit-outcome')).toHaveTextContent('approved');
+      expect(screen.getByTestId('advanced-submit-modes')).toHaveTextContent(
+        'default,force_public_pending,force_pending'
+      );
+    });
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'publish-force-public-pending' }));
+      await Promise.resolve();
+    });
+
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledWith('/api/game-data-actions/publish', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          entityType: 'characters',
+          entries: [
+            {
+              op: 'set',
+              path: `${TEST_CHARACTER_ID}.description`,
+              oldValue: 'canonical description',
+              newValue: 'draft description',
+            },
+          ],
+          message: 'hook publish',
+          submitMode: 'force_public_pending',
+        }),
+      });
     });
   });
 
@@ -296,7 +391,9 @@ describe('usePageEditMode', () => {
   it('should normalize structural array churn for action counts and publishing', async () => {
     const fetchMock = jest.fn().mockResolvedValue({
       ok: true,
-      json: jest.fn(),
+      json: jest.fn().mockResolvedValue({
+        result: [{ id: 'action-1', is_public: false, status: 'pending' }],
+      }),
     });
     global.fetch = fetchMock;
     characters[TEST_CHARACTER_ID] = {
@@ -354,4 +451,46 @@ describe('usePageEditMode', () => {
       });
     });
   });
+
+  it.each([
+    ['pending', { is_public: false, status: 'pending' }, '改动已提交，等待审核'],
+    [
+      'public_pending',
+      { is_public: true, status: 'pending' },
+      '改动已提交，已自动公开，后续仍可复核',
+    ],
+    ['approved', { is_public: true, status: 'approved' }, '改动已提交，已自动审核通过并公开'],
+  ] as const)(
+    'shows the %s success toast from the actual publish result',
+    async (_label, result, expectedToast) => {
+      const fetchMock = jest.fn().mockResolvedValue({
+        ok: true,
+        json: jest.fn().mockResolvedValue({ result: [{ id: 'action-1', ...result }] }),
+      });
+      global.fetch = fetchMock;
+      renderInEditMode();
+
+      window.localStorage.setItem(
+        getActionsStorageKey('characters'),
+        JSON.stringify([
+          {
+            op: 'set',
+            path: `${TEST_CHARACTER_ID}.description`,
+            oldValue: 'canonical description',
+            newValue: 'draft description',
+          },
+        ])
+      );
+      fireEvent.click(screen.getByRole('button', { name: 'refresh' }));
+
+      await act(async () => {
+        fireEvent.click(screen.getByRole('button', { name: 'publish' }));
+        await Promise.resolve();
+      });
+
+      await waitFor(() => {
+        expect(mockShowToast).toHaveBeenCalledWith(expectedToast);
+      });
+    }
+  );
 });

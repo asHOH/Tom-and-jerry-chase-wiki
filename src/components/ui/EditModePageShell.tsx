@@ -3,6 +3,7 @@
 import { ReactNode, useCallback, useMemo } from 'react';
 
 import type { PublishableEntityType } from '@/lib/gameData/publishableEntityTypes';
+import type { GameDataSubmitMode } from '@/lib/gameData/submitMode';
 import { usePageEditMode } from '@/hooks/usePageEditMode';
 import { useSearchParamEditMode } from '@/hooks/useSearchParamEditMode';
 import { EditModeContext, useEditMode } from '@/context/EditModeContext';
@@ -32,6 +33,7 @@ export default function EditModePageShell({
     isPublishing,
     draftInfo,
     draftsSummary,
+    advancedSubmit,
     discardChanges,
     publishChanges,
     getActionCount,
@@ -53,7 +55,12 @@ export default function EditModePageShell({
   );
 
   const handlePublish = useCallback(
-    (message?: string) => publishChanges(message),
+    (
+      message?: string,
+      options?: {
+        submitMode?: GameDataSubmitMode;
+      }
+    ) => publishChanges(message, options),
     [publishChanges]
   );
 
@@ -67,6 +74,7 @@ export default function EditModePageShell({
           isPublishing={isPublishing}
           onDiscard={discardChanges}
           onPublish={handlePublish}
+          advancedSubmit={advancedSubmit}
           onExitEditMode={exitEditMode}
           entityName={entityName}
           draftInfo={draftInfo}

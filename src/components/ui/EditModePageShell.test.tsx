@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 
+import type { GameDataSubmitMode } from '@/lib/gameData/submitMode';
 import { EditModeContext } from '@/context/EditModeContext';
 
 import EditModePageShell from './EditModePageShell';
@@ -59,6 +60,7 @@ describe('EditModePageShell', () => {
       isPublishing: false,
       draftInfo: null,
       draftsSummary: [],
+      advancedSubmit: { available: false, defaultOutcome: 'pending', modes: ['default'] },
       discardChanges: jest.fn(),
       publishChanges: jest.fn(),
       getActionCount: () => 0,
@@ -96,7 +98,7 @@ describe('EditModePageShell', () => {
     ];
     const discardChanges = jest.fn();
     const publishChanges = jest
-      .fn<Promise<boolean>, [string | undefined]>()
+      .fn<Promise<boolean>, [string | undefined, { submitMode?: GameDataSubmitMode } | undefined]>()
       .mockResolvedValue(true);
 
     mockUsePageEditMode.mockReturnValue({
@@ -105,6 +107,11 @@ describe('EditModePageShell', () => {
       isPublishing: true,
       draftInfo,
       draftsSummary,
+      advancedSubmit: {
+        available: true,
+        defaultOutcome: 'approved',
+        modes: ['default', 'force_public_pending', 'force_pending'],
+      },
       discardChanges,
       publishChanges,
       getActionCount: () => 2,
@@ -128,12 +135,17 @@ describe('EditModePageShell', () => {
       isPublishing: true,
       draftInfo,
       draftsSummary,
+      advancedSubmit: {
+        available: true,
+        defaultOutcome: 'approved',
+        modes: ['default', 'force_public_pending', 'force_pending'],
+      },
       entityName: 'Fork',
     });
     expect(toolbarProps?.onDiscard).toBe(discardChanges);
 
     await expect(toolbarProps?.onPublish('publish summary')).resolves.toBe(true);
-    expect(publishChanges).toHaveBeenCalledWith('publish summary');
+    expect(publishChanges).toHaveBeenCalledWith('publish summary', undefined);
 
     toolbarProps?.onExitEditMode();
     expect(mockExitEditMode).toHaveBeenCalledTimes(1);

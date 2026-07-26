@@ -12,6 +12,7 @@ import {
   type UntrustedPublishActionItem,
 } from '@/lib/gameData/publishPreparation';
 import { publishPreparationErrorResponse } from '@/lib/gameData/publishPreparationResponse';
+import { isGameDataSubmitMode, type GameDataSubmitMode } from '@/lib/gameData/submitMode';
 import {
   publishPreparedGameDataActions,
   TrustedGameDataMutationError,
@@ -27,15 +28,23 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
+function readSubmitMode(value: unknown): GameDataSubmitMode | undefined {
+  if (value === undefined) return undefined;
+  if (!isGameDataSubmitMode(value)) throw new PublishPreparationError('invalid_shape');
+  return value;
+}
+
 function readActionItems(body: unknown): {
   items: UntrustedPublishActionItem[];
   message?: unknown;
+  submitMode?: GameDataSubmitMode;
 } {
   if (!isRecord(body)) throw new PublishPreparationError('invalid_shape');
   const rawItems = Array.isArray(body.actions)
     ? body.actions
     : [{ entityType: body.entityType, entries: body.entries }];
   if (rawItems.length === 0) throw new PublishPreparationError('invalid_shape');
+  const submitMode = readSubmitMode(body.submitMode);
 
   let entryCount = 0;
   const items = rawItems.map((item) => {
@@ -48,7 +57,11 @@ function readActionItems(body: unknown): {
     }
     return { entityType: item.entityType, entries: item.entries };
   });
-  return { items, ...('message' in body ? { message: body.message } : {}) };
+  return {
+    items,
+    ...('message' in body ? { message: body.message } : {}),
+    ...(submitMode === undefined ? {} : { submitMode }),
+  };
 }
 
 export async function POST(request: Request) {
@@ -92,6 +105,7 @@ export async function POST(request: Request) {
       permission: 'game_data_action.create',
       grants: guard.grants,
       prepared,
+      ...(untrusted.submitMode === undefined ? {} : { submitMode: untrusted.submitMode }),
     });
 
     const pendingActionIds = results

@@ -4,7 +4,10 @@ import {
   publishPreparedGameDataActions,
   TrustedGameDataMutationError,
 } from '@/lib/gameData/trustedGameDataMutations';
-import { notifyPendingGameDataActionSubscribers } from '@/lib/notificationUtils';
+import {
+  notifyPendingGameDataActionSubscribers,
+  publishNotification,
+} from '@/lib/notificationUtils';
 import { env } from '@/env';
 
 const jsonResponse = (body: unknown, init?: { status?: number }) =>
@@ -45,6 +48,7 @@ const publishPreparedMock = jest.mocked(publishPreparedGameDataActions);
 const notifyPendingGameDataActionSubscribersMock = jest.mocked(
   notifyPendingGameDataActionSubscribers
 );
+const publishNotificationMock = jest.mocked(publishNotification);
 const mutableEnv = env as unknown as { NEXT_PUBLIC_DISABLE_ARTICLES?: string };
 
 function createRequest(body: unknown, declaredLength?: number): Request {
@@ -168,6 +172,33 @@ describe('publish route', () => {
     });
   });
 
+  it('passes submitMode through to trusted persistence when public pending is requested', async () => {
+    const { POST } = await import('./route');
+
+    const response = await POST(
+      createRequest({ ...validBody, submitMode: 'force_public_pending' })
+    );
+
+    expect(response.status).toBe(200);
+    expect(publishPreparedMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        submitMode: 'force_public_pending',
+      })
+    );
+  });
+
+  it('rejects invalid submitMode values as invalid_shape', async () => {
+    const { POST } = await import('./route');
+
+    const response = await POST(createRequest({ ...validBody, submitMode: 'unexpected-mode' }));
+
+    expect(response.status).toBe(400);
+    await expect(response.json()).resolves.toEqual(
+      expect.objectContaining({ error: 'invalid_shape' })
+    );
+    expect(publishPreparedMock).not.toHaveBeenCalled();
+  });
+
   it('notifies moderators only about newly private pending actions', async () => {
     publishPreparedMock.mockResolvedValueOnce([
       { id: 'pending-private', is_public: false, status: 'pending' },
@@ -183,6 +214,40 @@ describe('publish route', () => {
       actorUserId: 'actor-1',
       actionIds: ['pending-private'],
     });
+  });
+
+  it('does not emit automatic public notifications when force_pending keeps submissions private', async () => {
+    const { POST } = await import('./route');
+
+    const response = await POST(createRequest({ ...validBody, submitMode: 'force_pending' }));
+
+    expect(response.status).toBe(200);
+    expect(notifyPendingGameDataActionSubscribersMock).toHaveBeenCalledWith({
+      actorUserId: 'actor-1',
+      actionIds: ['action-1'],
+    });
+    expect(publishNotificationMock).not.toHaveBeenCalled();
+  });
+
+  it('treats force_public_pending submissions as automatic public results, not private pending ones', async () => {
+    publishPreparedMock.mockResolvedValueOnce([
+      { id: 'public-pending-1', is_public: true, status: 'pending' },
+    ]);
+    const { POST } = await import('./route');
+
+    const response = await POST(
+      createRequest({ ...validBody, submitMode: 'force_public_pending' })
+    );
+
+    expect(response.status).toBe(200);
+    expect(notifyPendingGameDataActionSubscribersMock).not.toHaveBeenCalled();
+    expect(publishNotificationMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        kind: 'game_data_action_approved',
+        title: '游戏数据改动已自动公开',
+        sourceIds: ['public-pending-1'],
+      })
+    );
   });
 
   it('rejects dependent top-level rows before persistence', async () => {
