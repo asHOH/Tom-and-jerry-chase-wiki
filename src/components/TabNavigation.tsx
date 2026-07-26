@@ -115,6 +115,16 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     permissions.has('block.manage') ||
     (!hasEditBlock && adminPermissions.some(permissions.has));
   const unreadNotificationCount = useNotificationCount(!!nickname);
+  const hasUnreadNotifications = unreadNotificationCount > 0;
+  const unreadNotificationBadgeLabel =
+    unreadNotificationCount > 99 ? '99+' : unreadNotificationCount.toString();
+  const userSettingsLabel = hasActiveBlock
+    ? hasUnreadNotifications
+      ? `用户设置（账号受限，${unreadNotificationCount} 条未读通知）`
+      : '用户设置（账号受限）'
+    : hasUnreadNotifications
+      ? `用户设置（${unreadNotificationCount} 条未读通知）`
+      : '用户设置';
   const { items: rawItems, isActive } = useNavigationTabs();
   const isMobile = useMobile();
   const isMd = useMediaQuery('(min-width: 768px)', { initializeWithValue: false });
@@ -511,7 +521,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
               >
                 <m.button
                   type='button'
-                  aria-label={hasActiveBlock ? '用户设置（账号受限）' : '用户设置'}
+                  aria-label={userSettingsLabel}
                   className={cn(
                     getNavigationButtonClasses(false, userDropdownOpen, true),
                     hasActiveBlock &&
@@ -521,12 +531,20 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
+                  {hasUnreadNotifications && (
+                    <span
+                      aria-hidden='true'
+                      className='absolute -top-1 -right-1 z-10 flex min-w-4.5 items-center justify-center rounded-full bg-red-500 px-1 py-0.5 text-[10px] leading-none font-semibold text-white ring-2 ring-white dark:ring-slate-800'
+                    >
+                      {unreadNotificationBadgeLabel}
+                    </span>
+                  )}
                   <span className='relative'>
                     <UserCircleIcon className='size-6' strokeWidth={1.5} />
                     {hasActiveBlock && (
                       <span
                         aria-hidden='true'
-                        className='absolute -top-1 -right-1 flex size-3.5 items-center justify-center rounded-full bg-amber-500 text-[10px] leading-none font-bold text-white'
+                        className='absolute -right-1 -bottom-1 flex size-3.5 items-center justify-center rounded-full bg-amber-500 text-[10px] leading-none font-bold text-white'
                       >
                         !
                       </span>
