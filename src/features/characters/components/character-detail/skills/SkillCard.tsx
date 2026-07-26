@@ -14,7 +14,7 @@ import { useEditMode } from '@/context/EditModeContext';
 import { characters } from '@/data/store';
 import { Skill, SkillLevel } from '@/data/types';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
-import DetailOwnbuffsCard from '@/features/shared/detail-view/DetaidOwnbuffsCard';
+import DetailOwnbuffsCard from '@/features/shared/detail-view/DetailOwnbuffsCard';
 import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
 import DetailTraitsCard from '@/features/shared/detail-view/DetailTraitsCard';
 import Card from '@/components/ui/Card';

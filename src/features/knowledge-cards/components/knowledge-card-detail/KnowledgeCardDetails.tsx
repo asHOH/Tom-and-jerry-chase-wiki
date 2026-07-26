@@ -13,7 +13,7 @@ import { cardsEdit, characters } from '@/data/store';
 import type { KnowledgeCardGroup, KnowledgeCardGroupSet } from '@/data/types';
 import { flattenCardGroup } from '@/features/knowledge-cards/utils/sections';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
-import DetailOwnbuffsCard from '@/features/shared/detail-view/DetaidOwnbuffsCard';
+import DetailOwnbuffsCard from '@/features/shared/detail-view/DetailOwnbuffsCard';
 import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
 import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';
 import DetailTextSection from '@/features/shared/detail-view/DetailTextSection';

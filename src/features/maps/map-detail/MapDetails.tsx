@@ -11,7 +11,7 @@ import { useEditMode } from '@/context/EditModeContext';
 import { fixtures } from '@/data/static';
 import { mapsEdit } from '@/data/store';
 import type { Map as MapType, SingleItem } from '@/data/types';
-import DetailOwnbuffsCard from '@/features/shared/detail-view/DetaidOwnbuffsCard';
+import DetailOwnbuffsCard from '@/features/shared/detail-view/DetailOwnbuffsCard';
 import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
 import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';
 import DetailTextSection from '@/features/shared/detail-view/DetailTextSection';

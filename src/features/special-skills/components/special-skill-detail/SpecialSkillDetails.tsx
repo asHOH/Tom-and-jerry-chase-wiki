@@ -9,7 +9,7 @@ import { useEditMode } from '@/context/EditModeContext';
 import { characters, specialSkillsEdit } from '@/data/store';
 import { SpecialSkill } from '@/data/types';
 import CharacterList from '@/features/knowledge-cards/components/knowledge-card-detail/CharacterList';
-import DetailOwnbuffsCard from '@/features/shared/detail-view/DetaidOwnbuffsCard';
+import DetailOwnbuffsCard from '@/features/shared/detail-view/DetailOwnbuffsCard';
 import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
 import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';
 import DetailTextSection from '@/features/shared/detail-view/DetailTextSection';
