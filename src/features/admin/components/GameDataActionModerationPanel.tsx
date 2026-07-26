@@ -460,7 +460,7 @@ const GameDataActionModerationPanel = ({
                         <span className='font-medium'>{submission.entity_type}</span>
                         <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
                         <span className={statusMeta.className}>{statusMeta.label}</span>
-                        {submission.is_public && (
+                        {submission.is_public && submission.status === 'pending' && (
                           <>
                             <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
                             <span className='rounded bg-emerald-100 px-2 py-0.5 text-xs font-medium whitespace-nowrap text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300'>

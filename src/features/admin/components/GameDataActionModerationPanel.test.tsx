@@ -131,6 +131,29 @@ describe('GameDataActionModerationPanel', () => {
     expect(screen.queryByRole('button', { name: '拒绝' })).not.toBeInTheDocument();
   });
 
+  it('hides the public badge for approved rows', () => {
+    const approvedAction: PendingGameDataAction = {
+      ...sampleAction,
+      action_id: 'action-approved',
+      status: 'approved',
+      reviewed_at: '2026-05-11T07:30:00.000Z',
+      reviewed_by: 'reviewer-1',
+      reviewed_by_nickname: 'Reviewer',
+      is_public: true,
+    };
+
+    render(
+      <GameDataActionModerationPanel
+        pendingActions={[approvedAction]}
+        mutatePendingActions={jest.fn()}
+      />
+    );
+
+    fireEvent.change(screen.getByTitle('过滤状态'), { target: { value: 'all' } });
+
+    expect(screen.queryByText('已公开')).not.toBeInTheDocument();
+  });
+
   it('shows only revoke for public pending rows when the moderator cannot approve or reject', () => {
     const publicPendingAction: PendingGameDataAction = {
       ...sampleAction,
