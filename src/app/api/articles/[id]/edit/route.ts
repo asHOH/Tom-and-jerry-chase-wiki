@@ -5,7 +5,7 @@ import { canAccess } from '@/lib/auth/permissions';
 import { loadPermissionGrants } from '@/lib/auth/requirePermission';
 import { getRequestIp, requireNotBlocked } from '@/lib/blocks/server';
 import { CACHE_TAGS } from '@/lib/cacheTags';
-import { publishNotification } from '@/lib/notificationUtils';
+import { notifyArticleVersionSubscribers, publishNotification } from '@/lib/notificationUtils';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { createClient } from '@/lib/supabase/server';
 
@@ -112,6 +112,23 @@ export async function POST(request: Request, { params }: { params: Promise<{ id?
     revalidateTag(CACHE_TAGS.sitemapArticles, 'max');
 
     const submittedVersion = data?.[0];
+    if (submittedVersion?.submitted_status === 'pending') {
+      try {
+        await notifyArticleVersionSubscribers({
+          actorUserId: userId,
+          articleId: id,
+          articleTitle: title,
+          proposedCategoryId: category,
+          versionId: submittedVersion.submitted_version_id,
+        });
+      } catch (notificationError) {
+        console.error(
+          'Failed to publish article edit pending-review notifications:',
+          notificationError
+        );
+      }
+    }
+
     if (
       submittedVersion &&
       (submittedVersion.submitted_status === 'approved' ||

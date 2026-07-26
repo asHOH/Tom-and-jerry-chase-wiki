@@ -3,7 +3,10 @@ import { NextResponse } from 'next/server';
 import { requirePermission } from '../../../lib/auth/requirePermission';
 import { getRequestIp } from '../../../lib/blocks/server';
 import { shouldAllowComment } from '../../../lib/comments/moderation';
-import { publishNotification } from '../../../lib/notificationUtils';
+import {
+  notifyDiscussionCommentSubscribers,
+  publishNotification,
+} from '../../../lib/notificationUtils';
 import { checkRateLimit } from '../../../lib/rateLimit';
 import { supabaseAdmin } from '../../../lib/supabase/admin';
 import { hasSupabasePublicConfig } from '../../../lib/supabase/config';
@@ -135,6 +138,31 @@ async function notifyArticleAuthorOfComment({
     href: `/articles/${articleId}/#comments`,
     sourceIds: [comment.id],
     dedupeKey: `article-comment:${comment.id}:author:${article.author_id}`,
+  });
+}
+
+async function notifyDiscussionSubscribersOfComment({
+  scope,
+  targetId,
+  comment,
+}: {
+  scope: string;
+  targetId: string;
+  comment: ApiComment;
+}): Promise<void> {
+  const commenterName = comment.author.nickname?.trim() || '匿名用户';
+  const actionText = comment.parent_id
+    ? '回复了讨论'
+    : comment.title
+      ? '发布了新话题'
+      : '发表了评论';
+
+  await notifyDiscussionCommentSubscribers({
+    actorUserId: comment.author.id,
+    commentId: comment.id,
+    scope,
+    targetId,
+    body: `${commenterName}${actionText}：\n${buildCommentPreview(comment.content)}`,
   });
 }
 
@@ -310,11 +338,19 @@ export async function POST(req: Request) {
     const nicknameMap = await getNicknamesByUserIds([(row as CommentRow).author_id]);
     const comment = rowToComment(row as CommentRow, nicknameMap);
 
-    if (allowed && scope === 'articles') {
-      try {
-        await notifyArticleAuthorOfComment({ articleId: targetId, comment });
-      } catch (notificationError) {
-        console.error('Failed to publish article comment notification:', notificationError);
+    if (allowed) {
+      if (scope === 'articles') {
+        try {
+          await notifyArticleAuthorOfComment({ articleId: targetId, comment });
+        } catch (notificationError) {
+          console.error('Failed to publish article comment notification:', notificationError);
+        }
+      } else {
+        try {
+          await notifyDiscussionSubscribersOfComment({ scope, targetId, comment });
+        } catch (notificationError) {
+          console.error('Failed to publish discussion comment notification:', notificationError);
+        }
       }
     }
 

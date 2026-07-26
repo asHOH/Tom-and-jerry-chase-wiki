@@ -3,6 +3,10 @@ import 'server-only';
 import { createHash, createHmac, timingSafeEqual } from 'crypto';
 
 import { getActiveBlock } from '@/lib/blocks/check';
+import {
+  getDiscussionCommentHref,
+  getDiscussionNotificationTarget,
+} from '@/lib/comments/scopeMapping';
 import { renderWikiEmailTemplate } from '@/lib/emailTemplate';
 import {
   getNotificationKindMeta,
@@ -22,6 +26,7 @@ export type PublishNotificationInput = {
   href?: string;
   sourceIds: string[];
   dedupeKey: string;
+  skipEmailDelivery?: boolean;
 };
 
 export type PublishNotificationResult = {
@@ -176,6 +181,10 @@ export const publishNotification = async (
     return { created: false, suppressed: false, emailStatus: 'skipped' };
   }
 
+  if (input.skipEmailDelivery) {
+    return { created: true, suppressed: false, emailStatus: 'skipped' };
+  }
+
   const emailBlock = await getActiveBlock({ userId: input.recipientUserId, action: 'email' });
   if (emailBlock) {
     return { created: true, suppressed: false, emailStatus: 'skipped' };
@@ -236,6 +245,140 @@ export const publishNotification = async (
     return { created: true, suppressed: false, emailStatus: 'failed' };
   }
 };
+
+const uniqueIds = (values: readonly string[]) => [
+  ...new Set(values.filter((value) => value.trim().length > 0)),
+];
+
+export async function notifyArticleVersionSubscribers(input: {
+  actorUserId: string;
+  articleId: string;
+  articleTitle: string;
+  proposedCategoryId: string;
+  versionId: string;
+}): Promise<void> {
+  const { data, error } = await supabaseAdmin.rpc('get_article_version_notification_recipients', {
+    p_actor_id: input.actorUserId,
+    p_article_id: input.articleId,
+    p_proposed_category_id: input.proposedCategoryId,
+  });
+
+  if (error) {
+    throw new Error(`Failed to load article version notification recipients: ${error.message}`);
+  }
+
+  const recipientIds = uniqueIds((data ?? []).map((row) => row.user_id));
+  if (recipientIds.length === 0) return;
+
+  await Promise.all(
+    recipientIds.map((recipientUserId) =>
+      publishNotification({
+        recipientUserId,
+        kind: 'article_version_created',
+        decisionOrigin: 'automatic',
+        title: '收到新的待审核文章',
+        body: `《${input.articleTitle || '文章'}》已提交，等待审核。`,
+        href: '/articles/pending/',
+        sourceIds: [input.versionId],
+        dedupeKey: `article-version-created:${input.versionId}:recipient:${recipientUserId}`,
+      })
+    )
+  );
+}
+
+export async function notifyPendingGameDataActionSubscribers(input: {
+  actorUserId: string | null;
+  actionIds: readonly string[];
+}): Promise<void> {
+  const actionIds = uniqueIds(input.actionIds);
+  if (actionIds.length === 0) return;
+
+  const recipientsByUserId = new Map<string, string[]>();
+
+  await Promise.all(
+    actionIds.map(async (actionId) => {
+      const { data, error } = await supabaseAdmin.rpc(
+        'get_game_data_action_notification_recipients',
+        {
+          p_action_id: actionId,
+          ...(input.actorUserId === null
+            ? { p_actor_id: null }
+            : { p_actor_id: input.actorUserId }),
+        }
+      );
+
+      if (error) {
+        throw new Error(`Failed to load game data notification recipients: ${error.message}`);
+      }
+
+      for (const recipientUserId of uniqueIds((data ?? []).map((row) => row.user_id))) {
+        const sourceIds = recipientsByUserId.get(recipientUserId) ?? [];
+        sourceIds.push(actionId);
+        recipientsByUserId.set(recipientUserId, sourceIds);
+      }
+    })
+  );
+
+  await Promise.all(
+    [...recipientsByUserId.entries()].map(([recipientUserId, sourceIds]) => {
+      const uniqueSourceIds = uniqueIds(sourceIds).sort();
+      return publishNotification({
+        recipientUserId,
+        kind: 'game_data_action_created',
+        decisionOrigin: 'automatic',
+        title: '收到新的待审核游戏数据改动',
+        body: `有 ${uniqueSourceIds.length} 条新的游戏数据改动等待审核。`,
+        href: '/admin/?tab=actions',
+        sourceIds: uniqueSourceIds,
+        dedupeKey: `game-data-action-created:${uniqueSourceIds.join(',')}:recipient:${recipientUserId}`,
+      });
+    })
+  );
+}
+
+export async function notifyDiscussionCommentSubscribers(input: {
+  actorUserId: string;
+  commentId: string;
+  scope: string;
+  targetId: string;
+  body: string;
+}): Promise<void> {
+  const { data, error } = await supabaseAdmin
+    .from('notification_subscription_settings')
+    .select('user_id')
+    .eq('discussion_comment_enabled', true)
+    .neq('user_id', input.actorUserId);
+
+  if (error) {
+    throw new Error(`Failed to load discussion comment notification recipients: ${error.message}`);
+  }
+
+  const recipientIds = uniqueIds((data ?? []).map((row) => row.user_id));
+  if (recipientIds.length === 0) return;
+
+  const target = getDiscussionNotificationTarget(input.scope, input.targetId);
+  const href = getDiscussionCommentHref(input.scope, input.targetId, input.commentId);
+  const labelSuffix =
+    target.entityTitle === target.entityTypeLabel
+      ? target.entityTitle
+      : `${target.entityTitle} (${target.entityTypeLabel})`;
+
+  await Promise.all(
+    recipientIds.map((recipientUserId) =>
+      publishNotification({
+        recipientUserId,
+        kind: 'discussion_comment_created',
+        decisionOrigin: 'automatic',
+        title: `${labelSuffix} 有新评论`,
+        body: input.body,
+        href,
+        sourceIds: [input.commentId],
+        dedupeKey: `discussion-comment-created:${input.commentId}:recipient:${recipientUserId}`,
+        skipEmailDelivery: true,
+      })
+    )
+  );
+}
 
 export const hashNotificationVerificationToken = (token: string) =>
   createHash('sha256').update(token).digest('hex');

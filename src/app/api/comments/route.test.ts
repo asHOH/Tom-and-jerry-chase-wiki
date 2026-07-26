@@ -1,6 +1,6 @@
 import { requirePermission } from '@/lib/auth/requirePermission';
 import { shouldAllowComment } from '@/lib/comments/moderation';
-import { publishNotification } from '@/lib/notificationUtils';
+import { notifyDiscussionCommentSubscribers, publishNotification } from '@/lib/notificationUtils';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
@@ -23,7 +23,10 @@ jest.mock('next/server', () => ({
 jest.mock('@/lib/auth/requirePermission', () => ({ requirePermission: jest.fn() }));
 jest.mock('@/lib/blocks/server', () => ({ getRequestIp: jest.fn(() => '127.0.0.1') }));
 jest.mock('@/lib/comments/moderation', () => ({ shouldAllowComment: jest.fn() }));
-jest.mock('@/lib/notificationUtils', () => ({ publishNotification: jest.fn() }));
+jest.mock('@/lib/notificationUtils', () => ({
+  notifyDiscussionCommentSubscribers: jest.fn(),
+  publishNotification: jest.fn(),
+}));
 jest.mock('@/lib/rateLimit', () => ({ checkRateLimit: jest.fn() }));
 jest.mock('@/lib/supabase/admin', () => ({ supabaseAdmin: { from: jest.fn(), rpc: jest.fn() } }));
 jest.mock('@/lib/supabase/config', () => ({ hasSupabasePublicConfig: jest.fn(() => true) }));
@@ -31,6 +34,7 @@ jest.mock('@/lib/supabase/server', () => ({ createClient: jest.fn() }));
 
 const requirePermissionMock = jest.mocked(requirePermission);
 const shouldAllowCommentMock = jest.mocked(shouldAllowComment);
+const notifyDiscussionCommentSubscribersMock = jest.mocked(notifyDiscussionCommentSubscribers);
 const publishNotificationMock = jest.mocked(publishNotification);
 const checkRateLimitMock = jest.mocked(checkRateLimit);
 const adminFromMock = jest.mocked(supabaseAdmin.from);
@@ -107,6 +111,7 @@ describe('comments route', () => {
       suppressed: false,
       emailStatus: 'skipped',
     });
+    notifyDiscussionCommentSubscribersMock.mockResolvedValue(undefined);
     adminRpcMock.mockResolvedValue({ data: commentId, error: null } as never);
     adminFromMock.mockImplementation((table: string) => {
       if (table === 'users_public_view') return nicknamesQuery as never;
@@ -163,6 +168,33 @@ describe('comments route', () => {
 
     expect(response.status).toBe(200);
     expect(publishNotificationMock).not.toHaveBeenCalled();
+    expect(notifyDiscussionCommentSubscribersMock).not.toHaveBeenCalled();
+  });
+
+  it('notifies opted-in users about non-article discussion comments', async () => {
+    commentsSelectQuery.single.mockResolvedValueOnce({
+      data: { ...commentRow, title: '测试话题' },
+      error: null,
+    });
+
+    const response = await POST(
+      createRequest({
+        scope: 'characters',
+        targetId: 'tom',
+        content: '这是一条新的评论',
+        title: '测试话题',
+      })
+    );
+
+    expect(response.status).toBe(200);
+    expect(notifyDiscussionCommentSubscribersMock).toHaveBeenCalledWith({
+      actorUserId: 'commenter-1',
+      commentId,
+      scope: 'characters',
+      targetId: 'tom',
+      body: '评论者发布了新话题：\n这是一条新的评论',
+    });
+    expect(publishNotificationMock).not.toHaveBeenCalled();
   });
 
   it('does not notify when the new comment is auto-hidden', async () => {
@@ -184,5 +216,6 @@ describe('comments route', () => {
     expect(commentUpdateQuery.update).toHaveBeenCalledWith({ status: 'hidden' });
     expect(commentUpdateQuery.eq).toHaveBeenCalledWith('id', commentId);
     expect(publishNotificationMock).not.toHaveBeenCalled();
+    expect(notifyDiscussionCommentSubscribersMock).not.toHaveBeenCalled();
   });
 });

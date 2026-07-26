@@ -3,9 +3,12 @@ export type NotificationTone = 'danger' | 'info' | 'success' | 'warning';
 export type NotificationKind =
   | 'article_version_approved'
   | 'article_version_rejected'
+  | 'article_version_created'
   | 'game_data_action_approved'
   | 'game_data_action_rejected'
-  | 'article_comment_created';
+  | 'game_data_action_created'
+  | 'article_comment_created'
+  | 'discussion_comment_created';
 
 type ModerationNotificationKind = Extract<
   NotificationKind,
@@ -34,6 +37,10 @@ const NOTIFICATION_KIND_META: Record<NotificationKind, NotificationKindMeta> = {
     eyebrow: '审核结果',
     tone: 'danger',
   },
+  article_version_created: {
+    eyebrow: '待审核文章',
+    tone: 'warning',
+  },
   game_data_action_approved: {
     eyebrow: '审核通过',
     tone: 'success',
@@ -42,8 +49,16 @@ const NOTIFICATION_KIND_META: Record<NotificationKind, NotificationKindMeta> = {
     eyebrow: '审核结果',
     tone: 'danger',
   },
+  game_data_action_created: {
+    eyebrow: '待审核改动',
+    tone: 'warning',
+  },
   article_comment_created: {
     eyebrow: '文章评论',
+    tone: 'info',
+  },
+  discussion_comment_created: {
+    eyebrow: '讨论评论',
     tone: 'info',
   },
 };

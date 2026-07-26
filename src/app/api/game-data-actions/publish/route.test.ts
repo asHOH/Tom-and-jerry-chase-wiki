@@ -4,6 +4,7 @@ import {
   publishPreparedGameDataActions,
   TrustedGameDataMutationError,
 } from '@/lib/gameData/trustedGameDataMutations';
+import { notifyPendingGameDataActionSubscribers } from '@/lib/notificationUtils';
 import { env } from '@/env';
 
 const jsonResponse = (body: unknown, init?: { status?: number }) =>
@@ -34,10 +35,16 @@ jest.mock('@/lib/gameData/trustedGameDataMutations', () => {
     TrustedGameDataMutationError: MockTrustedGameDataMutationError,
   };
 });
-jest.mock('@/lib/notificationUtils', () => ({ publishNotification: jest.fn() }));
+jest.mock('@/lib/notificationUtils', () => ({
+  notifyPendingGameDataActionSubscribers: jest.fn(),
+  publishNotification: jest.fn(),
+}));
 
 const requirePermissionMock = jest.mocked(requirePermissionOrAnonymous);
 const publishPreparedMock = jest.mocked(publishPreparedGameDataActions);
+const notifyPendingGameDataActionSubscribersMock = jest.mocked(
+  notifyPendingGameDataActionSubscribers
+);
 const mutableEnv = env as unknown as { NEXT_PUBLIC_DISABLE_ARTICLES?: string };
 
 function createRequest(body: unknown, declaredLength?: number): Request {
@@ -78,6 +85,7 @@ describe('publish route', () => {
       userId: 'actor-1',
       grants: [{ permission: 'game_data_action.create' }],
     } as never);
+    notifyPendingGameDataActionSubscribersMock.mockResolvedValue(undefined);
     publishPreparedMock.mockResolvedValue([
       { id: 'action-1', is_public: false, status: 'pending' },
     ]);
@@ -157,6 +165,23 @@ describe('publish route', () => {
         ],
         message: 'message',
       },
+    });
+  });
+
+  it('notifies moderators only about newly private pending actions', async () => {
+    publishPreparedMock.mockResolvedValueOnce([
+      { id: 'pending-private', is_public: false, status: 'pending' },
+      { id: 'pending-public', is_public: true, status: 'pending' },
+      { id: 'approved-public', is_public: true, status: 'approved' },
+    ]);
+    const { POST } = await import('./route');
+
+    const response = await POST(createRequest(validBody));
+
+    expect(response.status).toBe(200);
+    expect(notifyPendingGameDataActionSubscribersMock).toHaveBeenCalledWith({
+      actorUserId: 'actor-1',
+      actionIds: ['pending-private'],
     });
   });
 

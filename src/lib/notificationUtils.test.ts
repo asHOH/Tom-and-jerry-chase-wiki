@@ -185,6 +185,17 @@ describe('publishNotification', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
+  it('skips email delivery when requested explicitly', async () => {
+    configureSupabase();
+
+    await expect(publishNotification({ ...input, skipEmailDelivery: true })).resolves.toEqual({
+      created: true,
+      suppressed: false,
+      emailStatus: 'skipped',
+    });
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
   it('skips email when no verified enabled address exists', async () => {
     configureSupabase({ settings: null });
 

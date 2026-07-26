@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, type ComponentProps } from 'react';
+import { useSearchParams } from 'next/navigation';
 import useSWR from 'swr';
 
 import { usePermissions } from '@/lib/auth/PermissionProvider';
@@ -81,10 +82,16 @@ const fetchBlocks = async (): Promise<BlocksResponse> => {
   return response.json();
 };
 
+type AdminTab = 'users' | 'groups' | 'categories' | 'actions' | 'blocks';
+
+const ADMIN_TABS: readonly AdminTab[] = ['users', 'groups', 'categories', 'actions', 'blocks'];
+
+const isAdminTab = (value: string | null): value is AdminTab =>
+  value !== null && ADMIN_TABS.includes(value as AdminTab);
+
 const AdminPanel = () => {
-  const [activeTab, setActiveTab] = useState<
-    'users' | 'groups' | 'categories' | 'actions' | 'blocks'
-  >('categories');
+  const [activeTab, setActiveTab] = useState<AdminTab>('categories');
+  const searchParams = useSearchParams();
   const permissions = usePermissions();
   const { blockSummary } = useUser();
   const administrativeActionsBlocked = blockSummary.some((block) => block.action === 'edit');
@@ -123,6 +130,24 @@ const AdminPanel = () => {
     enableBlockAccess,
     enableGroupAccess,
     enableUserAccess,
+  ]);
+
+  useEffect(() => {
+    const requestedTab = searchParams.get('tab');
+    if (!isAdminTab(requestedTab)) return;
+
+    if (requestedTab === 'users' && enableUserAccess) setActiveTab('users');
+    if (requestedTab === 'groups' && enableGroupAccess) setActiveTab('groups');
+    if (requestedTab === 'categories' && enableCategoryAccess) setActiveTab('categories');
+    if (requestedTab === 'actions' && enableActionModeration) setActiveTab('actions');
+    if (requestedTab === 'blocks' && enableBlockAccess) setActiveTab('blocks');
+  }, [
+    enableActionModeration,
+    enableCategoryAccess,
+    enableBlockAccess,
+    enableGroupAccess,
+    enableUserAccess,
+    searchParams,
   ]);
 
   const { data: users = [], mutate: mutateUsers } = useSWR(

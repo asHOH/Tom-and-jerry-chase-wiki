@@ -102,7 +102,7 @@ export function TopicSection({
   };
 
   return (
-    <section>
+    <section id={`comment-${topic.id}`}>
       <hr className='border-gray-200 dark:border-gray-700' />
 
       <div className='py-5'>
@@ -271,7 +271,11 @@ function ReplyItem({
 
   return (
     <>
-      <div className='text-sm' style={{ marginLeft: `${Math.min(reply.depth, 4) * 1.5}rem` }}>
+      <div
+        id={`comment-${reply.id}`}
+        className='text-sm'
+        style={{ marginLeft: `${Math.min(reply.depth, 4) * 1.5}rem` }}
+      >
         {isDeleted ? (
           <div className='text-gray-400 italic dark:text-gray-500'>[内容已删除]</div>
         ) : isHidden ? (

@@ -7,7 +7,7 @@ import NotificationsClient from './NotificationsClient';
 
 export const metadata: Metadata = generatePageMetadata({
   title: '通知',
-  description: '查看站内通知并管理通知邮箱',
+  description: '查看站内通知并管理站内订阅与通知邮箱',
   canonicalUrl: getCanonicalUrl('/notifications'),
   robots: { index: false },
 });

@@ -16,7 +16,10 @@ import {
   publishPreparedGameDataActions,
   TrustedGameDataMutationError,
 } from '@/lib/gameData/trustedGameDataMutations';
-import { publishNotification } from '@/lib/notificationUtils';
+import {
+  notifyPendingGameDataActionSubscribers,
+  publishNotification,
+} from '@/lib/notificationUtils';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
 import type { Json } from '@/data/database.types';
 
@@ -90,6 +93,23 @@ export async function POST(request: Request) {
       grants: guard.grants,
       prepared,
     });
+
+    const pendingActionIds = results
+      .filter((result) => result.status === 'pending' && !result.is_public)
+      .map((result) => result.id);
+    if (pendingActionIds.length > 0) {
+      try {
+        await notifyPendingGameDataActionSubscribers({
+          actorUserId: guard.userId,
+          actionIds: pendingActionIds,
+        });
+      } catch (notificationError) {
+        console.error(
+          'Failed to publish pending game data action notifications:',
+          notificationError
+        );
+      }
+    }
 
     const recipientUserId = guard.userId;
     for (const outcome of ['public', 'rejected'] as const) {

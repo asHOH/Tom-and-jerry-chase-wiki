@@ -15,20 +15,38 @@ import {
  * Maps URL route segments to comment_scope enum values.
  * Used by the catch-all discussion route handler.
  */
+const ROUTE_SEGMENT_TO_SCOPE: Record<string, string> = {
+  entities: 'entities',
+  items: 'items',
+  buffs: 'buffs',
+  maps: 'maps',
+  fixtures: 'fixtures',
+  modes: 'modes',
+  achievements: 'achievements',
+  cards: 'knowledge_cards',
+  'special-skills': 'special_skills',
+  characters: 'characters',
+};
+
+const SCOPE_TO_ROUTE_SEGMENT: Record<string, string> = {
+  entities: 'entities',
+  items: 'items',
+  buffs: 'buffs',
+  maps: 'maps',
+  fixtures: 'fixtures',
+  modes: 'modes',
+  achievements: 'achievements',
+  knowledge_cards: 'cards',
+  special_skills: 'special-skills',
+  characters: 'characters',
+};
+
 export function routeSegmentToScope(segment: string): string {
-  const mapping: Record<string, string> = {
-    entities: 'entities',
-    items: 'items',
-    buffs: 'buffs',
-    maps: 'maps',
-    fixtures: 'fixtures',
-    modes: 'modes',
-    achievements: 'achievements',
-    cards: 'knowledge_cards',
-    'special-skills': 'special_skills',
-    characters: 'characters',
-  };
-  return mapping[segment] ?? segment;
+  return ROUTE_SEGMENT_TO_SCOPE[segment] ?? segment;
+}
+
+export function scopeToRouteSegment(scope: string): string {
+  return SCOPE_TO_ROUTE_SEGMENT[scope] ?? scope;
 }
 
 /** Chinese labels for entity types — used for discussion page titles. */
@@ -132,3 +150,34 @@ export function getEntityByTypeAndId(
       return undefined;
   }
 }
+
+export function getDiscussionNotificationTarget(
+  scope: string,
+  targetId: string
+): {
+  entityTitle: string;
+  entityTypeLabel: string;
+  href: string;
+} {
+  if (scope === 'list_pages') {
+    const entityTypeLabel = ENTITY_LABELS[targetId] ?? targetId;
+    return {
+      entityTitle: entityTypeLabel,
+      entityTypeLabel,
+      href: `/discuss/${encodeURIComponent(targetId)}/`,
+    };
+  }
+
+  const routeSegment = scopeToRouteSegment(scope);
+  const entity = getEntityByTypeAndId(routeSegment, targetId);
+  const entityTypeLabel = ENTITY_LABELS[routeSegment] ?? routeSegment;
+
+  return {
+    entityTitle: entity?.name ?? targetId,
+    entityTypeLabel,
+    href: `/discuss/${encodeURIComponent(routeSegment)}/${encodeURIComponent(targetId)}/`,
+  };
+}
+
+export const getDiscussionCommentHref = (scope: string, targetId: string, commentId: string) =>
+  `${getDiscussionNotificationTarget(scope, targetId).href}#comment-${commentId}`;

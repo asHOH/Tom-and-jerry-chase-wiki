@@ -8,6 +8,7 @@ import useSWRInfinite from 'swr/infinite';
 import { formatCompactDateTime } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
 import { getNotificationKindMeta } from '@/lib/notifications/kinds';
+import type { NotificationSubscriptionResponse } from '@/lib/notifications/subscriptionSettings';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import { FormInput } from '@/components/ui/FormControls';
@@ -45,6 +46,35 @@ type EmailSettings = {
 };
 
 type EmailMessage = { text: string; variant: NoticeVariant };
+type PreferenceMessage = { text: string; variant: NoticeVariant };
+type NotificationPreferenceKey = keyof Omit<NotificationSubscriptionResponse, 'availability'>;
+
+const SUBSCRIPTION_OPTIONS: Array<{
+  key: NotificationPreferenceKey;
+  label: string;
+  description: string;
+  availabilityKey: keyof NotificationSubscriptionResponse['availability'];
+}> = [
+  {
+    key: 'articleVersionPendingEnabled',
+    label: '新待审核文章',
+    description: '拥有文章审核权限的用户可接收新待审核文章提醒。',
+    availabilityKey: 'articleVersionPendingAvailable',
+  },
+  {
+    key: 'gameDataActionPendingEnabled',
+    label: '新待审核游戏数据改动',
+    description: '拥有游戏数据审核权限的用户可接收新待审核改动提醒。',
+    availabilityKey: 'gameDataActionPendingAvailable',
+  },
+  {
+    key: 'discussionCommentEnabled',
+    label: '非文章讨论区新评论',
+    description:
+      '接收非文章讨论页的新评论站内通知，不包含文章评论；您自己文章的评论通知仍会照常发送。仅站内通知，不发送邮件。',
+    availabilityKey: 'discussionCommentAvailable',
+  },
+];
 
 const jsonFetcher = async <T,>(url: string): Promise<T> => {
   const response = await fetch(url);
@@ -58,6 +88,10 @@ export default function NotificationsClient() {
   const [emailInput, setEmailInput] = useState('');
   const [emailMessage, setEmailMessage] = useState<EmailMessage | null>(null);
   const [emailBusy, setEmailBusy] = useState(false);
+  const [preferenceMessage, setPreferenceMessage] = useState<PreferenceMessage | null>(null);
+  const [preferenceBusyKey, setPreferenceBusyKey] = useState<NotificationPreferenceKey | null>(
+    null
+  );
 
   const { data, error, size, setSize, mutate, isLoading } = useSWRInfinite<NotificationPage>(
     (pageIndex, previousPage) => {
@@ -68,6 +102,12 @@ export default function NotificationsClient() {
     },
     jsonFetcher
   );
+  const {
+    data: notificationPreferences,
+    mutate: mutateNotificationPreferences,
+    error: notificationPreferencesError,
+    isLoading: notificationPreferencesLoading,
+  } = useSWR<NotificationSubscriptionResponse>('/api/notifications/preferences', jsonFetcher);
   const {
     data: emailSettings,
     mutate: mutateEmailSettings,
@@ -145,6 +185,36 @@ export default function NotificationsClient() {
     setEmailBusy(false);
   };
 
+  const togglePreference = async (key: NotificationPreferenceKey) => {
+    if (!notificationPreferences) return;
+
+    setPreferenceBusyKey(key);
+    setPreferenceMessage(null);
+
+    try {
+      const response = await fetch('/api/notifications/preferences', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ [key]: !notificationPreferences[key] }),
+      });
+      const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+
+      if (!response.ok) {
+        throw new Error(payload?.error || '站内订阅设置更新失败。');
+      }
+
+      setPreferenceMessage({ text: '站内订阅设置已更新。', variant: 'success' });
+      await mutateNotificationPreferences();
+    } catch (preferenceError) {
+      setPreferenceMessage({
+        text: preferenceError instanceof Error ? preferenceError.message : '站内订阅设置更新失败。',
+        variant: 'error',
+      });
+    } finally {
+      setPreferenceBusyKey(null);
+    }
+  };
+
   const removeEmail = async () => {
     if (!window.confirm('确认移除通知邮箱？')) return;
     setEmailBusy(true);
@@ -161,7 +231,7 @@ export default function NotificationsClient() {
     <main className='mx-auto w-full max-w-5xl space-y-8 px-4 py-8 text-gray-900 sm:px-6 dark:text-gray-100'>
       <header className='text-center'>
         <PageTitle>通知中心</PageTitle>
-        <PageDescription>查看站内通知，管理邮件接收设置</PageDescription>
+        <PageDescription>查看站内通知，管理站内订阅与邮件设置</PageDescription>
       </header>
 
       <div className='grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start'>
@@ -315,76 +385,140 @@ export default function NotificationsClient() {
           as='aside'
           className='order-1 border border-gray-200 lg:sticky lg:top-24 lg:order-2 dark:border-gray-700'
         >
-          <SectionHeader title='邮件通知' />
+          <SectionHeader title='站内订阅' />
           <p className='mb-4 text-sm leading-6 text-gray-600 dark:text-gray-300'>
-            将站内通知同步发送到您验证过的邮箱。
+            按需接收全站范围的待审核提醒和讨论更新。
           </p>
 
-          {emailSettingsError ? (
-            <Notice variant='error'>邮件设置加载失败。</Notice>
-          ) : emailSettingsLoading ? (
-            <LoadingState message='正在加载邮件设置…' />
+          {notificationPreferencesError ? (
+            <Notice variant='error'>站内订阅设置加载失败。</Notice>
+          ) : notificationPreferencesLoading ? (
+            <LoadingState message='正在加载站内订阅设置…' />
           ) : (
-            <div className='space-y-4'>
-              {emailSettings?.email && (
-                <div className='rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-gray-600 dark:bg-gray-900/40'>
-                  <p className='truncate text-sm font-semibold text-gray-900 dark:text-gray-100'>
-                    {emailSettings.email}
-                  </p>
-                  <div className='mt-2 flex items-center gap-2'>
-                    <span
-                      className={cn(
-                        'size-2 rounded-full',
-                        emailSettings.enabled ? 'bg-green-500' : 'bg-gray-400'
-                      )}
+            <div className='space-y-3'>
+              {SUBSCRIPTION_OPTIONS.map((item) => {
+                const checked = notificationPreferences?.[item.key] ?? false;
+                const available =
+                  notificationPreferences?.availability[item.availabilityKey] ?? false;
+                const disabled = !available || preferenceBusyKey !== null;
+
+                return (
+                  <label
+                    key={item.key}
+                    className={cn(
+                      'flex items-start gap-3 rounded-lg border border-gray-200 bg-gray-50/70 px-3 py-3 dark:border-gray-700 dark:bg-gray-900/30',
+                      !available && 'opacity-75'
+                    )}
+                  >
+                    <input
+                      type='checkbox'
+                      checked={checked}
+                      disabled={disabled}
+                      onChange={() => void togglePreference(item.key)}
+                      className='mt-1 size-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-900'
                     />
-                    <span className='text-xs text-gray-600 dark:text-gray-300'>
-                      {emailSettings.enabled ? '通知邮件已启用' : '通知邮件已停用'}
+                    <span className='min-w-0'>
+                      <span className='block text-sm font-medium text-gray-900 dark:text-gray-100'>
+                        {item.label}
+                      </span>
+                      <span className='mt-1 block text-xs leading-5 text-gray-500 dark:text-gray-400'>
+                        {item.description}
+                      </span>
+                      {!available && (
+                        <span className='mt-1 block text-xs text-amber-600 dark:text-amber-300'>
+                          当前账号暂无对应权限，无法启用此订阅。
+                        </span>
+                      )}
                     </span>
-                  </div>
-                  <div className='mt-3 flex gap-2 border-t border-gray-200 pt-3 dark:border-gray-700'>
-                    <Button size='sm' variant='secondary' loading={emailBusy} onClick={toggleEmail}>
-                      {emailSettings.enabled ? '停用邮件' : '启用邮件'}
-                    </Button>
-                    <Button size='sm' variant='ghost' disabled={emailBusy} onClick={removeEmail}>
-                      移除
-                    </Button>
-                  </div>
-                </div>
+                  </label>
+                );
+              })}
+
+              {preferenceMessage && (
+                <Notice variant={preferenceMessage.variant}>{preferenceMessage.text}</Notice>
               )}
-
-              {emailSettings?.pendingEmail && (
-                <Notice variant='warning'>等待验证：{emailSettings.pendingEmail}</Notice>
-              )}
-
-              <form className='space-y-3' onSubmit={requestVerification}>
-                <label
-                  htmlFor='notification-email'
-                  className='block text-sm font-medium text-gray-700 dark:text-gray-200'
-                >
-                  {emailSettings?.email ? '更换通知邮箱' : '添加通知邮箱'}
-                </label>
-                <FormInput
-                  id='notification-email'
-                  type='email'
-                  value={emailInput}
-                  onChange={(event) => setEmailInput(event.target.value)}
-                  placeholder='name@example.com'
-                  autoComplete='email'
-                  required
-                />
-                <Button type='submit' loading={emailBusy} fullWidth>
-                  发送验证邮件
-                </Button>
-              </form>
-
-              {emailMessage && <Notice variant={emailMessage.variant}>{emailMessage.text}</Notice>}
-
-              <p className='text-xs leading-5 text-gray-500 dark:text-gray-400'>
-                我们仅会向此邮箱发送通知邮件。您可以随时停用邮件或取消订阅。
-              </p>
             </div>
           )}
+
+          <div className='mt-6 border-t border-gray-200 pt-6 dark:border-gray-700'>
+            <SectionHeader title='邮件通知' />
+            <p className='mb-4 text-sm leading-6 text-gray-600 dark:text-gray-300'>
+              将站内通知同步发送到您验证过的邮箱。
+            </p>
+
+            {emailSettingsError ? (
+              <Notice variant='error'>邮件设置加载失败。</Notice>
+            ) : emailSettingsLoading ? (
+              <LoadingState message='正在加载邮件设置…' />
+            ) : (
+              <div className='space-y-4'>
+                {emailSettings?.email && (
+                  <div className='rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-gray-600 dark:bg-gray-900/40'>
+                    <p className='truncate text-sm font-semibold text-gray-900 dark:text-gray-100'>
+                      {emailSettings.email}
+                    </p>
+                    <div className='mt-2 flex items-center gap-2'>
+                      <span
+                        className={cn(
+                          'size-2 rounded-full',
+                          emailSettings.enabled ? 'bg-green-500' : 'bg-gray-400'
+                        )}
+                      />
+                      <span className='text-xs text-gray-600 dark:text-gray-300'>
+                        {emailSettings.enabled ? '通知邮件已启用' : '通知邮件已停用'}
+                      </span>
+                    </div>
+                    <div className='mt-3 flex gap-2 border-t border-gray-200 pt-3 dark:border-gray-700'>
+                      <Button
+                        size='sm'
+                        variant='secondary'
+                        loading={emailBusy}
+                        onClick={toggleEmail}
+                      >
+                        {emailSettings.enabled ? '停用邮件' : '启用邮件'}
+                      </Button>
+                      <Button size='sm' variant='ghost' disabled={emailBusy} onClick={removeEmail}>
+                        移除
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                {emailSettings?.pendingEmail && (
+                  <Notice variant='warning'>等待验证：{emailSettings.pendingEmail}</Notice>
+                )}
+
+                <form className='space-y-3' onSubmit={requestVerification}>
+                  <label
+                    htmlFor='notification-email'
+                    className='block text-sm font-medium text-gray-700 dark:text-gray-200'
+                  >
+                    {emailSettings?.email ? '更换通知邮箱' : '添加通知邮箱'}
+                  </label>
+                  <FormInput
+                    id='notification-email'
+                    type='email'
+                    value={emailInput}
+                    onChange={(event) => setEmailInput(event.target.value)}
+                    placeholder='name@example.com'
+                    autoComplete='email'
+                    required
+                  />
+                  <Button type='submit' loading={emailBusy} fullWidth>
+                    发送验证邮件
+                  </Button>
+                </form>
+
+                {emailMessage && (
+                  <Notice variant={emailMessage.variant}>{emailMessage.text}</Notice>
+                )}
+
+                <p className='text-xs leading-5 text-gray-500 dark:text-gray-400'>
+                  我们仅会向此邮箱发送通知邮件。您可以随时停用邮件或取消订阅。
+                </p>
+              </div>
+            )}
+          </div>
         </Card>
       </div>
     </main>

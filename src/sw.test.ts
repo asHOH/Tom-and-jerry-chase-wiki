@@ -136,6 +136,7 @@ describe('service worker runtime caching', () => {
     '/api/auth/me',
     '/api/notifications',
     '/api/notifications/email',
+    '/api/notifications/preferences',
     '/api/articles/pending',
     '/api/articles/preview?token=secret',
     '/api/articles/submit',

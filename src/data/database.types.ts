@@ -447,6 +447,30 @@ export type Database = {
         };
         Relationships: [];
       };
+      notification_subscription_settings: {
+        Row: {
+          article_version_pending_enabled: boolean;
+          discussion_comment_enabled: boolean;
+          game_data_action_pending_enabled: boolean;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          article_version_pending_enabled?: boolean;
+          discussion_comment_enabled?: boolean;
+          game_data_action_pending_enabled?: boolean;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          article_version_pending_enabled?: boolean;
+          discussion_comment_enabled?: boolean;
+          game_data_action_pending_enabled?: boolean;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       blocks: {
         Row: {
           id: string;
@@ -1155,6 +1179,25 @@ export type Database = {
           reviewed_by: string;
           reviewed_by_nickname: string;
           status: Database['public']['Enums']['game_data_action_status'];
+        }[];
+      };
+      get_article_version_notification_recipients: {
+        Args: {
+          p_actor_id?: string | null;
+          p_article_id: string;
+          p_proposed_category_id?: string | null;
+        };
+        Returns: {
+          user_id: string;
+        }[];
+      };
+      get_game_data_action_notification_recipients: {
+        Args: {
+          p_action_id: string;
+          p_actor_id?: string | null;
+        };
+        Returns: {
+          user_id: string;
         }[];
       };
       read_game_data_approved_replay_snapshot: {

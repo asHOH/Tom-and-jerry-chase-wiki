@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { requirePermission } from '@/lib/auth/requirePermission';
 import { getRequestIp } from '@/lib/blocks/server';
 import { CACHE_TAGS, invalidateCache } from '@/lib/cacheTags';
-import { publishNotification } from '@/lib/notificationUtils';
+import { notifyArticleVersionSubscribers, publishNotification } from '@/lib/notificationUtils';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { articleSubmitSchema, formatZodError } from '@/lib/validation/schemas';
@@ -66,6 +66,20 @@ export async function POST(req: Request) {
     await invalidateCache(CACHE_TAGS.sitemapArticles, 'expire');
 
     const submittedVersion = submittedVersions?.[0];
+    if (submittedVersion?.submitted_status === 'pending') {
+      try {
+        await notifyArticleVersionSubscribers({
+          actorUserId: userId,
+          articleId: newArticleId,
+          articleTitle: title,
+          proposedCategoryId: category,
+          versionId: submittedVersion.submitted_version_id,
+        });
+      } catch (notificationError) {
+        console.error('Failed to publish article pending-review notifications:', notificationError);
+      }
+    }
+
     if (
       submittedVersion &&
       (submittedVersion.submitted_status === 'approved' ||

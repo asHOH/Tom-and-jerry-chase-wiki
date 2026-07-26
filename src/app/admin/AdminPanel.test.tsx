@@ -8,6 +8,12 @@ import AdminPanel from './AdminPanel';
 
 jest.mock('swr');
 
+let currentSearchParams = new URLSearchParams();
+
+jest.mock('next/navigation', () => ({
+  useSearchParams: () => currentSearchParams,
+}));
+
 const mockUseSWR = useSWR as jest.MockedFunction<typeof useSWR>;
 const mockModerationPanel = jest.fn();
 
@@ -116,6 +122,7 @@ describe('AdminPanel', () => {
     jest.clearAllMocks();
     currentProfile = null;
     mockBlockSummary = [];
+    currentSearchParams = new URLSearchParams();
 
     mockUseSWR.mockImplementation((key) => {
       if (key === 'users') {
@@ -220,5 +227,14 @@ describe('AdminPanel', () => {
     expect(screen.queryByText('Category Management')).not.toBeInTheDocument();
     expect(screen.queryByTestId('moderation-panel')).not.toBeInTheDocument();
     expect(screen.queryAllByRole('button')).toHaveLength(0);
+  });
+
+  it('opens the requested admin tab from the query string when allowed', () => {
+    currentSearchParams = new URLSearchParams('tab=actions');
+
+    renderAdminPanel('Coordinator');
+
+    expect(screen.getByTestId('moderation-panel')).toBeInTheDocument();
+    expect(mockModerationPanel).toHaveBeenCalled();
   });
 });
