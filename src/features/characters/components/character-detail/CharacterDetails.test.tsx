@@ -7,6 +7,8 @@ import { renderToString } from 'react-dom/server';
 
 import CharacterDetails from './CharacterDetails';
 
+let mockIsEditMode = false;
+
 jest.mock('motion/react', () => {
   return {
     AnimatePresence: ({ children }: { children: ReactNode }) => <>{children}</>,
@@ -39,7 +41,7 @@ jest.mock('@/data', () => ({
 
 jest.mock('@/context/EditModeContext', () => ({
   EditModeContext: ({ children }: { children: ReactNode }) => <>{children}</>,
-  useEditMode: () => ({ isEditMode: false }),
+  useEditMode: () => ({ isEditMode: mockIsEditMode }),
 }));
 
 jest.mock('@/hooks/useLocalEditEntity', () => ({
@@ -68,6 +70,13 @@ jest.mock('@/components/ui/CollapseCard', () => ({
 jest.mock('@/components/ui/CharacterNavigationButtons', () => ({
   __esModule: true,
   default: () => <nav />,
+}));
+
+jest.mock('@/components/ui/DiscussButton', () => ({
+  __esModule: true,
+  default: ({ className }: { className?: string }) => (
+    <a data-discuss-class={className ?? ''}>讨论</a>
+  ),
 }));
 
 jest.mock('@/components/ui/EditButton', () => ({
@@ -194,6 +203,10 @@ describe('CharacterDetails', () => {
     EnglishName: 'Tom',
   };
 
+  beforeEach(() => {
+    mockIsEditMode = false;
+  });
+
   it('should render on the server without accessing document for the portal target', () => {
     expect(() => renderToString(<CharacterDetails character={character} />)).not.toThrow();
   });
@@ -203,5 +216,15 @@ describe('CharacterDetails', () => {
 
     expect(html).not.toContain('traits-text');
     expect(html).not.toContain('reverse-card');
+  });
+
+  it('keeps the discuss button fully rounded when edit mode hides the edit button', () => {
+    mockIsEditMode = true;
+
+    const html = renderToString(<CharacterDetails character={character} />);
+
+    expect(html).toContain('data-discuss-class=""');
+    expect(html).not.toContain('rounded-r-none');
+    expect(html).not.toContain('>编辑<');
   });
 });

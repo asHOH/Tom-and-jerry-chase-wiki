@@ -22,9 +22,8 @@ import { filterTraitsBySingleItem } from '@/features/shared/traits/filterTraitsB
 import Card from '@/components/ui/Card';
 import CharacterNavigationButtons from '@/components/ui/CharacterNavigationButtons';
 import CollapseCard from '@/components/ui/CollapseCard';
-import DiscussButton from '@/components/ui/DiscussButton';
+import DiscussEditButtons from '@/components/ui/DiscussEditButtons';
 import { editable } from '@/components/ui/editable';
-import EditButton from '@/components/ui/EditButton';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import { PlusIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
@@ -142,10 +141,7 @@ export default function CharacterDetails({
                         ({localCharacter.factionId == 'cat' ? '猫' : '鼠'}阵营)
                       </span>
                     </h1>
-                    <span className='ml-2 inline-flex rounded-md'>
-                      <DiscussButton compact className='rounded-r-none' />
-                      {!isEditMode && <EditButton compact className='-ml-px rounded-l-none' />}
-                    </span>
+                    <DiscussEditButtons compact isEditMode={isEditMode} className='ml-2' />
                   </div>
                   <ContentWriterDisplay characterId={localCharacter.id} />
                   <CreateDateDisplay createDate={localCharacter.createDate} />
@@ -191,10 +187,7 @@ export default function CharacterDetails({
                             )
                           </p>
                         </div>
-                        <span className='inline-flex rounded-md'>
-                          <DiscussButton compact className='rounded-r-none' />
-                          <EditButton compact className='-ml-px rounded-l-none' />
-                        </span>
+                        <DiscussEditButtons compact isEditMode={false} />
                       </div>
                       <ContentWriterDisplay characterId={localCharacter.id} type='isMobile' />
                       <CreateDateDisplay createDate={localCharacter.createDate} />
