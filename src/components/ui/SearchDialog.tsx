@@ -144,11 +144,11 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
   };
 
   // Use chat hook to get AI response for the search query
-  const {
-    responseText: aiResponseText,
-    isLoading: isChatLoading,
-    error: chatError,
-  } = useChat(searchQuery.length > 1 ? searchQuery : undefined, 2000);
+  const { responseText: aiResponseText, isLoading: isChatLoading } = useChat(
+    searchQuery.length > 1 ? searchQuery : undefined,
+    2000
+  );
+  const hasAiResult = searchQuery.length > 1 && Boolean(aiResponseText?.trim());
 
   const handleResultClick = useCallback(
     (result: SearchResult) => {
@@ -233,7 +233,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
       }
 
       // Handle navigation keys
-      const totalResults = searchQuery.length > 1 ? searchResults.length + 1 : searchResults.length;
+      const totalResults = hasAiResult ? searchResults.length + 1 : searchResults.length;
       switch (event.key) {
         case 'ArrowDown':
           event.preventDefault();
@@ -255,12 +255,12 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
             event.preventDefault();
             if (highlightedIndex >= 0) {
               // If chat result is highlighted (index 0 when chat is present), do nothing
-              if (searchQuery.length > 1 && highlightedIndex === 0) {
+              if (hasAiResult && highlightedIndex === 0) {
                 // Chat result is highlighted, do nothing for now
                 return;
               }
               // Handle regular search results
-              const resultIndex = searchQuery.length > 1 ? highlightedIndex - 1 : highlightedIndex;
+              const resultIndex = hasAiResult ? highlightedIndex - 1 : highlightedIndex;
               if (resultIndex >= 0 && searchResults[resultIndex]) {
                 handleResultClick(searchResults[resultIndex]);
               }
@@ -275,7 +275,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [onClose, highlightedIndex, searchResults, handleResultClick, searchQuery.length]); // Updated dependencies
+  }, [onClose, highlightedIndex, searchResults, handleResultClick, hasAiResult]);
 
   // Scroll highlighted item into view
   useEffect(() => {
@@ -305,9 +305,9 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
           if (searchIdRef.current === currentId) {
             newResults = [...newResults, result];
             setSearchResults(newResults); // Store all results (already sorted by searchUtils)
-            // Initialize highlighted index to first result if not set (accounting for chat result)
+            // Initialize highlighted index to the first visible result.
             if (newResults.length === 1) {
-              setHighlightedIndex(searchQuery.length > 1 ? 1 : 0);
+              setHighlightedIndex(0);
             }
           } else {
             break; // A new search has started, stop processing old results
@@ -372,10 +372,9 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
         </button>
         <div className='mb-4 pr-8'>
           <h2 className='mb-1 text-xl font-bold text-gray-900 dark:text-white'>搜索</h2>
-          {(searchResults.length > 0 ||
-            (searchQuery.length > 1 && (aiResponseText || isChatLoading))) && (
+          {(searchResults.length > 0 || hasAiResult) && (
             <span className='text-sm text-gray-500 dark:text-gray-400'>
-              {searchQuery.length > 1 ? searchResults.length + 1 : searchResults.length} 个结果
+              {searchResults.length + (hasAiResult ? 1 : 0)} 个结果
             </span>
           )}
         </div>
@@ -399,132 +398,115 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
           </div>
         </div>
 
-        {searchQuery.length > 0 &&
-          (searchResults.length > 0 ||
-            (searchQuery.length > 1 && (aiResponseText || isChatLoading))) && (
-            <m.ul
-              ref={resultsListRef}
-              className={cn(
-                'overflow-y-auto rounded-md border border-gray-300 dark:border-gray-600',
-                isMobile ? 'flex-1' : 'max-h-60'
-              )}
-              initial='hidden'
-              animate='visible'
-              variants={{
-                visible: {
-                  transition: {
-                    staggerChildren: 0.05, // Stagger animation for children
-                  },
+        {searchQuery.length > 0 && (searchResults.length > 0 || hasAiResult) && (
+          <m.ul
+            ref={resultsListRef}
+            className={cn(
+              'overflow-y-auto rounded-md border border-gray-300 dark:border-gray-600',
+              isMobile ? 'flex-1' : 'max-h-60'
+            )}
+            initial='hidden'
+            animate='visible'
+            variants={{
+              visible: {
+                transition: {
+                  staggerChildren: 0.05, // Stagger animation for children
                 },
-              }}
-            >
-              {/* Chat result as first item */}
-              {searchQuery.length > 1 && (aiResponseText || isChatLoading) && (
-                <m.li
-                  key='chat-result'
-                  className='border-b border-gray-200 dark:border-gray-700'
-                  variants={{
-                    hidden: { opacity: 0, y: 10 },
-                    visible: { opacity: 1, y: 0 },
-                  }}
-                  transition={{ duration: 0.2 }}
+              },
+            }}
+          >
+            {/* Chat result as first item */}
+            {hasAiResult && (
+              <m.li
+                key='chat-result'
+                className='border-b border-gray-200 dark:border-gray-700'
+                variants={{
+                  hidden: { opacity: 0, y: 10 },
+                  visible: { opacity: 1, y: 0 },
+                }}
+                transition={{ duration: 0.2 }}
+              >
+                <div
+                  className={cn(
+                    'flex items-start bg-blue-50 p-3 dark:bg-blue-900/20',
+                    highlightedIndex === 0 && 'bg-blue-100 dark:bg-blue-900/40'
+                  )}
+                  onMouseEnter={() => setHighlightedIndex(0)}
                 >
-                  <div
-                    className={cn(
-                      'flex items-start bg-blue-50 p-3 dark:bg-blue-900/20',
-                      highlightedIndex === 0 && 'bg-blue-100 dark:bg-blue-900/40'
-                    )}
-                    onMouseEnter={() => setHighlightedIndex(0)}
-                  >
-                    <div className='mr-3 shrink-0'>
-                      <div className='flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 dark:bg-blue-600'>
-                        <ChatBubbleIcon className='h-4 w-4 text-white' strokeWidth={2} />
-                      </div>
-                    </div>
-                    <div className='min-w-0 flex-1'>
-                      <div className='mb-1 text-sm font-medium text-blue-700 dark:text-blue-300'>
-                        AI 助手回答
-                      </div>
-                      <div className='text-sm text-gray-700 dark:text-gray-300'>
-                        {isChatLoading ? (
-                          <div className='flex items-center'>
-                            <div className='mr-2 h-4 w-4 animate-spin rounded-full border-b-2 border-blue-500'></div>
-                            正在生成回答...
-                          </div>
-                        ) : chatError ? (
-                          <span className='text-red-600 dark:text-red-400'>生成回答时出错</span>
-                        ) : (
-                          <div className='whitespace-pre-wrap'>
-                            {aiResponseText || '正在思考...'}
-                          </div>
-                        )}
-                      </div>
+                  <div className='mr-3 shrink-0'>
+                    <div className='flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 dark:bg-blue-600'>
+                      <ChatBubbleIcon className='h-4 w-4 text-white' strokeWidth={2} />
                     </div>
                   </div>
-                </m.li>
-              )}
-
-              {/* Regular search results */}
-              {searchResults.map((result, index) => (
-                <m.li
-                  key={getResultKey(result)}
-                  className='border-b border-gray-200 last:border-b-0 dark:border-gray-700'
-                  variants={{
-                    hidden: { opacity: 0, y: 10 },
-                    visible: { opacity: 1, y: 0 },
-                  }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <button
-                    type='button'
-                    onClick={() => handleResultClick(result)}
-                    className={cn(
-                      'flex w-full items-center gap-2 p-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700',
-                      highlightedIndex === (searchQuery.length > 1 ? index + 1 : index) &&
-                        'bg-gray-100 dark:bg-gray-700'
-                    )}
-                    onMouseEnter={() =>
-                      setHighlightedIndex(searchQuery.length > 1 ? index + 1 : index)
-                    }
-                  >
-                    {result.imageUrl && (
-                      <Image
-                        src={result.imageUrl}
-                        alt={getResultName(result)}
-                        width={32}
-                        height={32}
-                        className='mr-3 object-cover'
-                      />
-                    )}
-                    <div className='min-w-0 flex-1'>
-                      <span className='block truncate text-gray-900 dark:text-white'>
-                        {getResultName(result)}
-                      </span>
-                      {result.matchContext && (
-                        <span className='mt-0.5 hidden truncate text-sm text-gray-500 md:block dark:text-gray-400'>
-                          {highlightMatch(result.matchContext, searchQuery, result.isPinyinMatch)}
-                        </span>
-                      )}
+                  <div className='min-w-0 flex-1'>
+                    <div className='mb-1 text-sm font-medium text-blue-700 dark:text-blue-300'>
+                      AI 助手回答
                     </div>
-                    <Tag
-                      colorStyles={getTypeLabelColors(getTypeColorKey(result), isDarkMode)}
-                      size='xs'
-                      margin='compact'
-                      className='shrink-0'
-                    >
-                      {getResultLabel(result)}
-                    </Tag>
-                  </button>
-                </m.li>
-              ))}
-            </m.ul>
-          )}
+                    <div className='text-sm text-gray-700 dark:text-gray-300'>
+                      <div className='whitespace-pre-wrap'>{aiResponseText}</div>
+                    </div>
+                  </div>
+                </div>
+              </m.li>
+            )}
 
-        {searchQuery.length > 0 &&
-          searchResults.length === 0 &&
-          !(aiResponseText || isChatLoading) && (
-            <div className='p-2 pr-8 text-gray-500 dark:text-gray-400'>无结果</div>
-          )}
+            {/* Regular search results */}
+            {searchResults.map((result, index) => (
+              <m.li
+                key={getResultKey(result)}
+                className='border-b border-gray-200 last:border-b-0 dark:border-gray-700'
+                variants={{
+                  hidden: { opacity: 0, y: 10 },
+                  visible: { opacity: 1, y: 0 },
+                }}
+                transition={{ duration: 0.2 }}
+              >
+                <button
+                  type='button'
+                  onClick={() => handleResultClick(result)}
+                  className={cn(
+                    'flex w-full items-center gap-2 p-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700',
+                    highlightedIndex === (hasAiResult ? index + 1 : index) &&
+                      'bg-gray-100 dark:bg-gray-700'
+                  )}
+                  onMouseEnter={() => setHighlightedIndex(hasAiResult ? index + 1 : index)}
+                >
+                  {result.imageUrl && (
+                    <Image
+                      src={result.imageUrl}
+                      alt={getResultName(result)}
+                      width={32}
+                      height={32}
+                      className='mr-3 object-cover'
+                    />
+                  )}
+                  <div className='min-w-0 flex-1'>
+                    <span className='block truncate text-gray-900 dark:text-white'>
+                      {getResultName(result)}
+                    </span>
+                    {result.matchContext && (
+                      <span className='mt-0.5 hidden truncate text-sm text-gray-500 md:block dark:text-gray-400'>
+                        {highlightMatch(result.matchContext, searchQuery, result.isPinyinMatch)}
+                      </span>
+                    )}
+                  </div>
+                  <Tag
+                    colorStyles={getTypeLabelColors(getTypeColorKey(result), isDarkMode)}
+                    size='xs'
+                    margin='compact'
+                    className='shrink-0'
+                  >
+                    {getResultLabel(result)}
+                  </Tag>
+                </button>
+              </m.li>
+            ))}
+          </m.ul>
+        )}
+
+        {searchQuery.length > 0 && searchResults.length === 0 && !hasAiResult && !isChatLoading && (
+          <div className='p-2 pr-8 text-gray-500 dark:text-gray-400'>无结果</div>
+        )}
       </m.div>
     </m.div>
   );
