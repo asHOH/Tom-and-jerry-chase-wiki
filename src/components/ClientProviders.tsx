@@ -1,6 +1,6 @@
 'use client';
 
-import type { ReactNode } from 'react';
+import { useMemo, type ReactNode } from 'react';
 import { LazyMotion } from 'motion/react';
 
 import { PermissionProvider } from '@/lib/auth/PermissionProvider';
@@ -14,17 +14,45 @@ import { OfflineIndicator } from './OfflineIndicator';
 import { ServiceWorkerRegistration } from './ServiceWorkerRegistration';
 import { VersionChecker } from './VersionChecker';
 
-type ClientProvidersProps = { children: ReactNode; initialPublicActions?: PublicActionRow[] };
+type ClientProvidersProps = {
+  children: ReactNode;
+  initialPublicActions?: PublicActionRow[];
+  initialWikiHistoryActions?: PublicActionRow[];
+};
 
 const loadMotionFeatures = () => import('motion/react').then((mod) => mod.domMax);
 
-export function ClientProviders({ children, initialPublicActions }: ClientProvidersProps) {
+function mergeWikiHistoryActions(
+  publicActions: PublicActionRow[] | undefined,
+  historyActions: PublicActionRow[] | undefined
+): PublicActionRow[] {
+  const actionsById = new Map<string, PublicActionRow>();
+
+  for (const action of publicActions ?? []) actionsById.set(action.id, action);
+  for (const action of historyActions ?? []) actionsById.set(action.id, action);
+
+  return Array.from(actionsById.values()).sort(
+    (left, right) =>
+      left.created_at.localeCompare(right.created_at) || left.id.localeCompare(right.id)
+  );
+}
+
+export function ClientProviders({
+  children,
+  initialPublicActions,
+  initialWikiHistoryActions,
+}: ClientProvidersProps) {
+  const wikiHistoryActions = useMemo(
+    () => mergeWikiHistoryActions(initialPublicActions, initialWikiHistoryActions),
+    [initialPublicActions, initialWikiHistoryActions]
+  );
+
   usePublicGameDataActions(initialPublicActions ? { initialPublicActions } : undefined);
   return (
     <LazyMotion features={loadMotionFeatures} strict>
       <ToastProvider>
         <PermissionProvider>
-          <WikiHistoryProvider publicActions={initialPublicActions}>{children}</WikiHistoryProvider>
+          <WikiHistoryProvider publicActions={wikiHistoryActions}>{children}</WikiHistoryProvider>
         </PermissionProvider>
         <ServiceWorkerRegistration />
         <CacheDebugPanel />

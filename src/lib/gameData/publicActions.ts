@@ -3,6 +3,7 @@ import 'server-only';
 import type { ActionHistoryEntry } from '@/lib/edit/diffUtils';
 import { PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG } from '@/lib/gameData/publicActionsCache';
 import { cached } from '@/lib/serverCache';
+import { hasSupabaseAdminConfig, supabaseAdmin } from '@/lib/supabase/admin';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
 import { supabaseServerPublic } from '@/lib/supabase/public';
 
@@ -43,7 +44,7 @@ function extractEntryId(entityType: string, path: string): string | undefined {
 }
 
 export async function getEntityUpdateHistory(): Promise<Map<string, EntityUpdateHistory>> {
-  const actions = await fetchPublicGameDataActionHistoryRows();
+  const actions = await fetchPublicGameDataActionHistory();
   const historyMap = new Map<string, EntityUpdateHistory>();
 
   for (const action of actions) {
@@ -81,15 +82,16 @@ export async function getEntityUpdateHistory(): Promise<Map<string, EntityUpdate
   return historyMap;
 }
 
-async function fetchPublicGameDataActionHistoryRows(): Promise<PublicActionRow[]> {
-  if (!hasSupabasePublicConfig()) {
+export async function fetchPublicGameDataActionHistory(): Promise<PublicActionRow[]> {
+  if (!hasSupabaseAdminConfig() && !hasSupabasePublicConfig()) {
     return [];
   }
 
   try {
+    const client = hasSupabaseAdminConfig() ? supabaseAdmin : supabaseServerPublic;
     return await cached(
       [PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG, 'history'],
-      () => queryPublicActionHistoryRows(supabaseServerPublic),
+      () => queryPublicActionHistoryRows(client),
       {
         revalidate: false,
         tags: [PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG],

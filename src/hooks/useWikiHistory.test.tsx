@@ -17,7 +17,7 @@ const publicActionRow = (itemName: string): PublicActionRow => ({
     newValue: 'new',
   },
   created_at: '2026-05-10T00:00:00.000Z',
-  status: 'approved',
+  status: 'synced',
   message: null,
   reviewed_at: null,
   created_by: null,
@@ -32,7 +32,7 @@ describe('useWikiHistory', () => {
     expect(result.current).toEqual([]);
   });
 
-  it('includes dynamic history derived from provider public actions', () => {
+  it('includes dynamic history derived from provider synced actions', () => {
     const wrapper = ({ children }: { children: ReactNode }) => (
       <WikiHistoryProvider publicActions={[publicActionRow('Public Test Item')]}>
         {children}

@@ -1,3 +1,4 @@
+import { GAME_DATA_CONTRIBUTION_FILTER } from './contributionFilter';
 import { fetchPublicGameDataActions, getEntityUpdateHistory } from './publicActions';
 import type { PublicActionRow } from './publicActionsTypes';
 
@@ -22,6 +23,7 @@ jest.mock('@/lib/gameData/publicActionsCache', () => ({
 const query = {
   select: jest.fn(),
   eq: jest.fn(),
+  or: jest.fn(),
   order: jest.fn(),
 };
 
@@ -90,6 +92,7 @@ describe('public game data actions', () => {
     queryRows = publicRows;
     query.select.mockReturnValue(query);
     query.eq.mockReturnValue(query);
+    query.or.mockReturnValue(query);
     query.order.mockImplementation((column: string) =>
       column === 'id' ? Promise.resolve({ data: queryRows, error: null }) : query
     );
@@ -188,7 +191,8 @@ describe('public game data actions', () => {
       actionId: '00000000-0000-4000-8000-000000000002',
       affectedPath: 'Tom.name',
     });
-    expect(query.eq).toHaveBeenCalledWith('is_public', true);
+    expect(query.or).toHaveBeenCalledWith(GAME_DATA_CONTRIBUTION_FILTER);
+    expect(query.eq).not.toHaveBeenCalled();
     expect(query.order).toHaveBeenNthCalledWith(1, 'created_at', { ascending: true });
     expect(query.order).toHaveBeenNthCalledWith(2, 'id', { ascending: true });
   });

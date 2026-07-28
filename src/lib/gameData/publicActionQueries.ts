@@ -4,6 +4,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 
 import type { Database } from '@/data/database.types';
 
+import { GAME_DATA_CONTRIBUTION_FILTER } from './contributionFilter';
 import type { PublicActionRow } from './publicActionsTypes';
 
 type PublicActionQueryClient = Pick<SupabaseClient<Database>, 'from'>;
@@ -22,12 +23,14 @@ export class PublicActionQueryError extends Error {
 }
 
 async function queryPublicActionRows(
-  supabase: PublicActionQueryClient
+  supabase: PublicActionQueryClient,
+  includeSynced: boolean
 ): Promise<PublicActionRow[]> {
-  const { data, error } = await supabase
-    .from('game_data_actions')
-    .select(PUBLIC_ACTION_ROW_COLUMNS)
-    .eq('is_public', true)
+  const query = supabase.from('game_data_actions').select(PUBLIC_ACTION_ROW_COLUMNS);
+  const filteredQuery = includeSynced
+    ? query.or(GAME_DATA_CONTRIBUTION_FILTER)
+    : query.eq('is_public', true);
+  const { data, error } = await filteredQuery
     .order('created_at', { ascending: true })
     .order('id', { ascending: true });
 
@@ -42,12 +45,12 @@ async function queryPublicActionRows(
 export function queryApprovedPublicActionRows(
   supabase: PublicActionQueryClient
 ): Promise<PublicActionRow[]> {
-  return queryPublicActionRows(supabase);
+  return queryPublicActionRows(supabase, false);
 }
 
 /** Queries the ordered public rows retained in entity-update and audit history. */
 export function queryPublicActionHistoryRows(
   supabase: PublicActionQueryClient
 ): Promise<PublicActionRow[]> {
-  return queryPublicActionRows(supabase);
+  return queryPublicActionRows(supabase, true);
 }

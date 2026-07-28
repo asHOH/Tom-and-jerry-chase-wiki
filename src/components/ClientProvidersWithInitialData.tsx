@@ -1,6 +1,9 @@
 import { ReactNode } from 'react';
 
-import { fetchPublicGameDataActions } from '@/lib/gameData/publicActions';
+import {
+  fetchPublicGameDataActionHistory,
+  fetchPublicGameDataActions,
+} from '@/lib/gameData/publicActions';
 
 import { ClientProviders } from './ClientProviders';
 
@@ -11,6 +14,17 @@ type ClientProvidersWithInitialDataProps = {
 export async function ClientProvidersWithInitialData({
   children,
 }: ClientProvidersWithInitialDataProps) {
-  const initialPublicActions = await fetchPublicGameDataActions();
-  return <ClientProviders initialPublicActions={initialPublicActions}>{children}</ClientProviders>;
+  const [initialPublicActions, initialWikiHistoryActions] = await Promise.all([
+    fetchPublicGameDataActions(),
+    fetchPublicGameDataActionHistory(),
+  ]);
+
+  return (
+    <ClientProviders
+      initialPublicActions={initialPublicActions}
+      initialWikiHistoryActions={initialWikiHistoryActions}
+    >
+      {children}
+    </ClientProviders>
+  );
 }
