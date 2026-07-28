@@ -208,6 +208,9 @@ const nextConfig: NextConfig = {
   },
   // Enable typed routes for better navigation safety
   typedRoutes: true,
+  experimental: {
+    useTypeScriptCli: true,
+  },
 };
 
 const finalConfig = withBundleAnalyzer(withMDX(nextConfig));
