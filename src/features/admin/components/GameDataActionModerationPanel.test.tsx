@@ -78,11 +78,11 @@ describe('GameDataActionModerationPanel', () => {
     expect(screen.getAllByText(String(previousYear), { exact: false }).length).toBeGreaterThan(0);
     expect(screen.getAllByRole('link', { name: 'Alice' })[0]).toHaveAttribute(
       'href',
-      '/users/user-1'
+      '/users/Alice'
     );
     expect(screen.getByRole('link', { name: 'Reviewer' })).toHaveAttribute(
       'href',
-      '/users/reviewer-1'
+      '/users/Reviewer'
     );
   });
 
@@ -105,7 +105,7 @@ describe('GameDataActionModerationPanel', () => {
 
     fireEvent.change(screen.getByTitle('过滤状态'), { target: { value: 'all' } });
 
-    expect(screen.getByRole('link', { name: 'Alice' })).toHaveAttribute('href', '/users/user-1');
+    expect(screen.getByRole('link', { name: 'Alice' })).toHaveAttribute('href', '/users/Alice');
     expect(screen.queryByText('审核：')).not.toBeInTheDocument();
     expect(screen.queryByText('2026-05-11', { exact: false })).not.toBeInTheDocument();
   });

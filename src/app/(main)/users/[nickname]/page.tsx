@@ -10,6 +10,14 @@ import Link from '@/components/Link';
 
 const getProfile = cache(getPublicUserProfile);
 
+function decodeNickname(value: string): string {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+}
+
 const registrationDateFormatter = new Intl.DateTimeFormat('zh-CN', {
   year: 'numeric',
   month: 'long',
@@ -20,18 +28,19 @@ const registrationDateFormatter = new Intl.DateTimeFormat('zh-CN', {
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ userId: string }>;
+  params: Promise<{ nickname: string }>;
 }): Promise<Metadata> {
-  const { userId } = await params;
+  const { nickname: encodedNickname } = await params;
+  const nickname = decodeNickname(encodedNickname);
 
   try {
-    const profile = await getProfile(userId);
+    const profile = await getProfile(nickname);
     if (!profile) return {};
 
     return generatePageMetadata({
       title: `${profile.nickname}的用户页`,
       description: `查看${profile.nickname}在猫和老鼠手游wiki的公开贡献。`,
-      canonicalUrl: getCanonicalUrl(`/users/${userId}`),
+      canonicalUrl: getCanonicalUrl(`/users/${encodeURIComponent(nickname)}`),
     });
   } catch (error) {
     console.error('Failed to generate public user metadata:', error);
@@ -39,12 +48,17 @@ export async function generateMetadata({
   }
 }
 
-export default async function PublicUserPage({ params }: { params: Promise<{ userId: string }> }) {
-  const { userId } = await params;
+export default async function PublicUserPage({
+  params,
+}: {
+  params: Promise<{ nickname: string }>;
+}) {
+  const { nickname: encodedNickname } = await params;
+  const nickname = decodeNickname(encodedNickname);
   let profile;
 
   try {
-    profile = await getProfile(userId);
+    profile = await getProfile(nickname);
   } catch (error) {
     console.error('Failed to load public user profile:', error);
     notFound();

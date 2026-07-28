@@ -474,7 +474,7 @@ const GameDataActionModerationPanel = ({
                             <>
                               由{' '}
                               <Link
-                                href={`/users/${submission.created_by}`}
+                                href={`/users/${encodeURIComponent(submission.created_by_nickname)}`}
                                 target='_blank'
                                 rel='noopener noreferrer'
                                 className='font-medium text-blue-600 hover:underline dark:text-blue-400'
@@ -503,7 +503,7 @@ const GameDataActionModerationPanel = ({
                                   <>
                                     审核：
                                     <Link
-                                      href={`/users/${submission.reviewed_by}`}
+                                      href={`/users/${encodeURIComponent(submission.reviewed_by_nickname)}`}
                                       target='_blank'
                                       rel='noopener noreferrer'
                                       className='font-medium text-blue-600 hover:underline dark:text-blue-400'

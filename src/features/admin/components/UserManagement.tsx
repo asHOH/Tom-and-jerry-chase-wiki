@@ -182,7 +182,7 @@ const UserManagement: React.FC<UserManagementProps> = ({
                 <tr key={user.id}>
                   <td className='px-4 py-3 text-sm text-gray-800 dark:text-slate-100'>
                     <Link
-                      href={`/users/${user.id}`}
+                      href={`/users/${encodeURIComponent(user.nickname)}`}
                       target='_blank'
                       rel='noopener noreferrer'
                       className='font-medium text-blue-600 hover:underline dark:text-blue-400'

@@ -534,7 +534,7 @@ export default function ArticleClient({
                     作者:{' '}
                     {article.users_public_view?.nickname ? (
                       <Link
-                        href={`/users/${article.author_id}`}
+                        href={`/users/${encodeURIComponent(article.users_public_view.nickname)}`}
                         className='hover:text-blue-600 hover:underline dark:hover:text-blue-400'
                       >
                         {article.users_public_view.nickname}
@@ -595,7 +595,7 @@ export default function ArticleClient({
                           <>
                             {' 由 '}
                             <Link
-                              href={`/users/${article.latest_version.editor_id}`}
+                              href={`/users/${encodeURIComponent(article.latest_version.users_public_view.nickname)}`}
                               className='hover:text-blue-600 hover:underline dark:hover:text-blue-400'
                             >
                               {article.latest_version.users_public_view.nickname}

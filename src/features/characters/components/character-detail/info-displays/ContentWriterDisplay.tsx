@@ -33,7 +33,7 @@ export default function ContentWriterDisplay({
         {contentEditors.map((editor, index) => (
           <span key={editor.id}>
             {index > 0 && '、'}
-            <a href={`/users/${encodeURIComponent(editor.id)}`} className='underline'>
+            <a href={`/users/${encodeURIComponent(editor.name)}`} className='underline'>
               {editor.name}
             </a>
           </span>

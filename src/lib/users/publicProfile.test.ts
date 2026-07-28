@@ -156,7 +156,7 @@ describe('mergeRecentContributions', () => {
       .mockImplementationOnce(() => articleRowsQuery)
       .mockImplementationOnce(() => gameDataRowsQuery);
 
-    const profile = await getPublicUserProfile('user-1');
+    const profile = await getPublicUserProfile('测试用户');
 
     expect(profile).toMatchObject({
       id: 'user-1',

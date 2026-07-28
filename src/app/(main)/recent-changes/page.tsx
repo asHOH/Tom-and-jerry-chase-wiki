@@ -132,7 +132,7 @@ function ChangeContent({ change }: { change: RecentChange }) {
             <>
               由{' '}
               <Link
-                href={`/users/${change.editor.id}` as Route}
+                href={`/users/${encodeURIComponent(change.editor.nickname)}` as Route}
                 className='hover:text-blue-600 hover:underline dark:hover:text-blue-300'
               >
                 {change.editor.nickname}

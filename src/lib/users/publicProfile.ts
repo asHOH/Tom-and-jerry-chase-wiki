@@ -83,17 +83,19 @@ export function mergeRecentContributions(
     .slice(0, limit);
 }
 
-export async function getPublicUserProfile(userId: string): Promise<PublicUserProfile | null> {
+export async function getPublicUserProfile(nickname: string): Promise<PublicUserProfile | null> {
   if (!hasSupabaseAdminConfig()) return null;
 
   const { data: userRow, error: userError } = await supabaseAdmin
     .from('users')
     .select('id, nickname')
-    .eq('id', userId)
+    .eq('nickname', nickname)
     .maybeSingle();
 
   if (userError) throw userError;
   if (!userRow) return null;
+
+  const userId = userRow.id;
 
   const [
     authResult,

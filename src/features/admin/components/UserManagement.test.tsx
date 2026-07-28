@@ -14,6 +14,6 @@ describe('UserManagement', () => {
       />
     );
 
-    expect(screen.getByRole('link', { name: 'Alice' })).toHaveAttribute('href', '/users/user-1');
+    expect(screen.getByRole('link', { name: 'Alice' })).toHaveAttribute('href', '/users/Alice');
   });
 });
