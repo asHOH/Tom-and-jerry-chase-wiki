@@ -20,7 +20,11 @@ export type CharacterContentWriterData = {
   editors: ContentEditor[];
 };
 
-async function queryGameDataActionAuthors(characterId: string): Promise<ContentEditor[]> {
+type AggregatedContentEditor = ContentEditor & {
+  contributionCount: number;
+};
+
+async function queryGameDataActionAuthors(characterId: string): Promise<AggregatedContentEditor[]> {
   const supabase = getPublicReadClient();
   if (!supabase) return [];
 
@@ -35,7 +39,7 @@ async function queryGameDataActionAuthors(characterId: string): Promise<ContentE
     return [];
   }
 
-  const authors = new Map<string, string>();
+  const authors = new Map<string, AggregatedContentEditor>();
   for (const row of (data ?? []) as unknown as CharacterGameDataActionAuthorRow[]) {
     const nickname = row.users_public_view?.nickname?.trim();
     if (!row.created_by || !nickname) continue;
@@ -43,10 +47,20 @@ async function queryGameDataActionAuthors(characterId: string): Promise<ContentE
     const touchesCharacter = flattenActionEntries(normalizePublicActionEntries(row.entry)).some(
       (action) => getGameDataActionTarget('characters', action.path)?.entityId === characterId
     );
-    if (touchesCharacter) authors.set(row.created_by, nickname);
+    if (touchesCharacter) {
+      const author = authors.get(row.created_by);
+      if (author) {
+        author.contributionCount += 1;
+      } else {
+        authors.set(row.created_by, { id: row.created_by, name: nickname, contributionCount: 1 });
+      }
+    }
   }
 
-  return [...authors].map(([id, name]) => ({ id, name }));
+  return [...authors.values()].sort(
+    (left, right) =>
+      right.contributionCount - left.contributionCount || left.name.localeCompare(right.name)
+  );
 }
 
 export async function getContentWritersForCharacter(
@@ -63,10 +77,10 @@ export async function getContentWritersForCharacter(
       )
       .map((contributor) => contributor.id)
   );
-  let actionAuthors: ContentEditor[] = [];
+  let actionAuthors: AggregatedContentEditor[] = [];
   try {
     actionAuthors = await cached(
-      [PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG, 'character-content-writers', characterId],
+      [PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG, 'character-content-writers-v2', characterId],
       () => queryGameDataActionAuthors(characterId),
       {
         revalidate: 300,
@@ -89,6 +103,6 @@ export async function getContentWritersForCharacter(
 
   return {
     writers: [...new Set([...staticAuthors, ...editors.map(({ name }) => name)])],
-    editors,
+    editors: editors.map(({ id, name }) => ({ id, name })),
   };
 }
