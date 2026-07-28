@@ -499,6 +499,12 @@ const mouseCharacterDefinitions = {
         description: '无畏流派卡组，打米特、图多盖洛等猫咪专用，一般情况不建议携带。',
       },
     ],
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '冰块', '灰花瓶', '隐身饮料'],
+        description: '兼顾干扰、控制与救援。',
+      },
+    ],
     skills: [
       {
         name: '二段跳',
@@ -940,6 +946,13 @@ const mouseCharacterDefinitions = {
       {
         cards: ['S-铁血', 'S-舍己', 'S-缴械', 'C-救救我'],
         description: '缴械可对猫咪进行干扰，进而保护队友或安全地进行火箭救援。',
+      },
+    ],
+
+    recommendedStorePlans: [
+      {
+        items: ['盘子', '冰块', '灰花瓶', '隐身饮料'],
+        description: '兼顾干扰、控制与救援。',
       },
     ],
 
