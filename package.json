@@ -213,5 +213,11 @@
       "prettier --write --ignore-unknown --cache"
     ],
     "**/*.{json,css,md,mdx,html,yml,yaml}": "prettier --write --ignore-unknown --cache"
+  },
+  "allowScripts": {
+    "esbuild@0.28.1": true,
+    "unrs-resolver@1.11.1": true,
+    "sharp@0.34.5": true,
+    "sharp@0.35.3": true
   }
 }
