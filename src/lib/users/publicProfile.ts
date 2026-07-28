@@ -1,5 +1,9 @@
 import 'server-only';
 
+import {
+  getAffectedGameDataNames,
+  getGameDataDetailHref,
+} from '@/lib/gameData/contributionDisplay';
 import { GAME_DATA_CONTRIBUTION_FILTER } from '@/lib/gameData/contributionFilter';
 import { hasSupabaseAdminConfig, supabaseAdmin } from '@/lib/supabase/admin';
 
@@ -52,6 +56,7 @@ type ArticleContributionRow = {
 type GameDataContributionRow = {
   id: string;
   entity_type: string;
+  entry?: unknown;
   message: string | null;
   created_at: string;
 };
@@ -69,14 +74,26 @@ export function mergeRecentContributions(
     href: `/articles/${row.article_id}/history`,
     createdAt: row.created_at,
   }));
-  const gameData: PublicContribution[] = gameDataRows.map((row) => ({
-    id: row.id,
-    kind: 'gameData',
-    title: `更新${GAME_DATA_LABELS[row.entity_type] ?? '游戏数据'}`,
-    description: row.message,
-    href: null,
-    createdAt: row.created_at,
-  }));
+  const gameData: PublicContribution[] = gameDataRows.map((row) => {
+    const names = getAffectedGameDataNames(row.entity_type, row.entry);
+    const namesLabel =
+      names.length > 0
+        ? `：${names
+            .slice(0, 3)
+            .map(({ name }) => name)
+            .join('、')}`
+        : '';
+    const overflowLabel = names.length > 3 ? ` 等 ${names.length} 项` : '';
+
+    return {
+      id: row.id,
+      kind: 'gameData',
+      title: `更新${GAME_DATA_LABELS[row.entity_type] ?? '游戏数据'}${namesLabel}${overflowLabel}`,
+      description: row.message,
+      href: getGameDataDetailHref(row.entity_type, names[0]),
+      createdAt: row.created_at,
+    };
+  });
 
   return [...articles, ...gameData]
     .sort((left, right) => Date.parse(right.createdAt) - Date.parse(left.createdAt))
@@ -133,7 +150,7 @@ export async function getPublicUserProfile(nickname: string): Promise<PublicUser
       .limit(RECENT_CONTRIBUTION_LIMIT),
     supabaseAdmin
       .from('game_data_actions')
-      .select('id, entity_type, message, created_at')
+      .select('id, entity_type, entry, message, created_at')
       .eq('created_by', userId)
       .or(GAME_DATA_CONTRIBUTION_FILTER)
       .order('created_at', { ascending: false })

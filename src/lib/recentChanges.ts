@@ -3,15 +3,16 @@ import 'server-only';
 import type { Route } from 'next';
 
 import { CACHE_TAGS } from '@/lib/cacheTags';
-import { flattenActionEntries, normalizePublicActionEntries } from '@/lib/gameData/actionEntries';
+import {
+  getAffectedGameDataNames,
+  getGameDataDetailHref,
+} from '@/lib/gameData/contributionDisplay';
 import { GAME_DATA_CONTRIBUTION_FILTER } from '@/lib/gameData/contributionFilter';
 import { PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG } from '@/lib/gameData/publicActionsCache';
-import { getGameDataActionTarget } from '@/lib/gameData/scopedEntityPaths';
 import { cached } from '@/lib/serverCache';
 import { hasSupabaseAdminConfig, supabaseAdmin } from '@/lib/supabase/admin';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
 import { supabaseServerPublic } from '@/lib/supabase/public';
-import type { FactionId } from '@/data/types';
 
 export const RECENT_CHANGES_PAGE_SIZE = 20;
 export const RECENT_CHANGES_MAX_ITEMS = 100;
@@ -68,24 +69,6 @@ const GAME_DATA_LABELS: Record<string, string> = {
   specialSkills: '特技',
 };
 
-const GAME_DATA_ROUTES: Record<string, string> = {
-  achievements: '/achievements',
-  buffs: '/buffs',
-  cards: '/cards',
-  characters: '/characters',
-  entities: '/entities',
-  fixtures: '/fixtures',
-  items: '/items',
-  maps: '/maps',
-  modes: '/modes',
-  specialSkills: '/special-skills',
-};
-
-type AffectedGameDataName = {
-  name: string;
-  factionId?: FactionId;
-};
-
 export function normalizeRecentChangesFilter(value: string | undefined): RecentChangesFilter {
   return value === 'articles' || value === 'game-data' ? value : 'all';
 }
@@ -93,38 +76,6 @@ export function normalizeRecentChangesFilter(value: string | undefined): RecentC
 export function normalizeRecentChangesPage(value: string | undefined): number {
   const page = Number.parseInt(value ?? '', 10);
   return Number.isSafeInteger(page) && page > 0 ? page : 1;
-}
-
-function extractAffectedNames(row: GameDataChangeRow): AffectedGameDataName[] {
-  const entries = normalizePublicActionEntries(row.entry);
-  const names = new Map<string, AffectedGameDataName>();
-
-  for (const action of flattenActionEntries(entries)) {
-    const target = getGameDataActionTarget(row.entity_type, action.path);
-    if (!target) continue;
-
-    const key = target.factionId ? `${target.factionId}:${target.entityId}` : target.entityId;
-    if (!names.has(key)) {
-      names.set(key, {
-        name: target.entityId,
-        ...(target.factionId && { factionId: target.factionId }),
-      });
-    }
-  }
-
-  return [...names.values()];
-}
-
-function gameDataHref(entityType: string, names: AffectedGameDataName[]): Route | null {
-  const route = GAME_DATA_ROUTES[entityType];
-  const target = names[0];
-  if (!route || !target) return null;
-
-  if (target.factionId) {
-    return `${route}/${encodeURIComponent(target.factionId)}/${encodeURIComponent(target.name)}` as Route;
-  }
-
-  return `${route}/${encodeURIComponent(target.name)}` as Route;
 }
 
 export function mapArticleChange(row: ArticleChangeRow): RecentChange {
@@ -140,7 +91,7 @@ export function mapArticleChange(row: ArticleChangeRow): RecentChange {
 }
 
 export function mapGameDataChange(row: GameDataChangeRow): RecentChange {
-  const names = extractAffectedNames(row);
+  const names = getAffectedGameDataNames(row.entity_type, row.entry);
   const label = GAME_DATA_LABELS[row.entity_type] ?? '游戏数据';
   const namesLabel =
     names.length > 0
@@ -156,7 +107,7 @@ export function mapGameDataChange(row: GameDataChangeRow): RecentChange {
     kind: 'gameData',
     title: `更新${label}${namesLabel}${overflowLabel}`,
     description: row.message,
-    href: gameDataHref(row.entity_type, names),
+    href: getGameDataDetailHref(row.entity_type, names[0]),
     createdAt: row.created_at,
     editor:
       row.created_by && row.users ? { id: row.created_by, nickname: row.users.nickname } : null,
