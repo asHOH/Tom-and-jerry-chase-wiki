@@ -8,6 +8,7 @@ import {
   getDiscussionNotificationTarget,
 } from '@/lib/comments/scopeMapping';
 import { renderWikiEmailTemplate } from '@/lib/emailTemplate';
+import { getGameDataNotificationDetails } from '@/lib/gameData/contributionDisplay';
 import {
   getNotificationKindMeta,
   isModerationNotificationKind,
@@ -250,6 +251,30 @@ const uniqueIds = (values: readonly string[]) => [
   ...new Set(values.filter((value) => value.trim().length > 0)),
 ];
 
+export type GameDataActionNotificationRecord = {
+  id: string;
+  entity_type: string;
+  entry: unknown;
+};
+
+export async function loadGameDataActionNotificationRecords(
+  actionIds: readonly string[]
+): Promise<GameDataActionNotificationRecord[]> {
+  const uniqueActionIds = uniqueIds(actionIds);
+  if (uniqueActionIds.length === 0) return [];
+
+  const { data, error } = await supabaseAdmin
+    .from('game_data_actions')
+    .select('id, entity_type, entry')
+    .in('id', uniqueActionIds);
+
+  if (error) {
+    throw new Error(`Failed to load game data notification entities: ${error.message}`);
+  }
+
+  return data ?? [];
+}
+
 export async function notifyArticleVersionSubscribers(input: {
   actorUserId: string;
   articleId: string;
@@ -294,6 +319,8 @@ export async function notifyPendingGameDataActionSubscribers(input: {
   if (actionIds.length === 0) return;
 
   const recipientsByUserId = new Map<string, string[]>();
+  const actionRecords = await loadGameDataActionNotificationRecords(actionIds);
+  const recordsById = new Map(actionRecords.map((record) => [record.id, record]));
 
   await Promise.all(
     actionIds.map(async (actionId) => {
@@ -322,13 +349,19 @@ export async function notifyPendingGameDataActionSubscribers(input: {
   await Promise.all(
     [...recipientsByUserId.entries()].map(([recipientUserId, sourceIds]) => {
       const uniqueSourceIds = uniqueIds(sourceIds).sort();
+      const details = getGameDataNotificationDetails(
+        uniqueSourceIds.flatMap((sourceId) => {
+          const record = recordsById.get(sourceId);
+          return record ? [record] : [];
+        })
+      );
       return publishNotification({
         recipientUserId,
         kind: 'game_data_action_created',
         decisionOrigin: 'automatic',
         title: '收到新的待审核游戏数据改动',
-        body: `有 ${uniqueSourceIds.length} 条新的游戏数据改动等待审核。`,
-        href: '/admin/?tab=actions',
+        body: `有 ${uniqueSourceIds.length} 条新的${details.summary}改动等待审核。`,
+        href: details.href ?? '/admin/?tab=actions',
         sourceIds: uniqueSourceIds,
         dedupeKey: `game-data-action-created:${uniqueSourceIds.join(',')}:recipient:${recipientUserId}`,
       });

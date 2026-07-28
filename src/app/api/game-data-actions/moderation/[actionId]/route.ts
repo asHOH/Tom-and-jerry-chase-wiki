@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requirePermission } from '@/lib/auth/requirePermission';
 import { getGameActionResourceContexts } from '@/lib/auth/resourceContexts';
 import { getRequestIp } from '@/lib/blocks/server';
+import { getGameDataNotificationDetails } from '@/lib/gameData/contributionDisplay';
 import {
   approvePreparedGameDataAction,
   loadTrustedGameDataAction,
@@ -93,12 +94,14 @@ export async function POST(
       await approvePreparedGameDataAction(guard.userId, recordData, getRequestIp(request));
       if (recordData?.created_by) {
         try {
+          const details = getGameDataNotificationDetails([recordData]);
           await publishNotification({
             recipientUserId: recordData.created_by,
             kind: 'game_data_action_approved',
             decisionOrigin: 'manual',
             title: '游戏数据改动审核通过',
-            body: `您的 ${recordData.entity_type || '数据'} 修改已通过审核。`,
+            body: `您的${details.summary}修改已通过审核。`,
+            href: details.href ?? '/admin/?tab=actions',
             sourceIds: [actionId],
             dedupeKey: `game-data-action:${actionId}:approved`,
           });
@@ -136,12 +139,14 @@ export async function POST(
     if (recordData?.created_by) {
       try {
         const reasonSuffix = reason ? `原因：${reason}` : '';
+        const details = getGameDataNotificationDetails([recordData]);
         await publishNotification({
           recipientUserId: recordData.created_by,
           kind: 'game_data_action_rejected',
           decisionOrigin: 'manual',
           title: '游戏数据改动未通过审核',
-          body: `您的 ${recordData.entity_type || '数据'} 修改未通过审核。${reasonSuffix}`,
+          body: `您的${details.summary}修改未通过审核。${reasonSuffix}`,
+          href: details.href ?? '/admin/?tab=actions',
           sourceIds: [actionId],
           dedupeKey: `game-data-action:${actionId}:rejected`,
         });

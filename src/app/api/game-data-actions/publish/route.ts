@@ -4,6 +4,7 @@ import { requirePermissionOrAnonymous } from '@/lib/auth/requirePermission';
 import { getGameActionResourceContexts } from '@/lib/auth/resourceContexts';
 import { getRequestIp } from '@/lib/blocks/server';
 import { candidateConflictResponse } from '@/lib/gameData/candidateConflictResponse';
+import { getGameDataNotificationDetails } from '@/lib/gameData/contributionDisplay';
 import { PUBLISH_LIMITS } from '@/lib/gameData/publishLimits';
 import {
   preparePublishActionItems,
@@ -108,6 +109,21 @@ export async function POST(request: Request) {
       ...(untrusted.submitMode === undefined ? {} : { submitMode: untrusted.submitMode }),
     });
 
+    const notificationRecordsById = new Map<string, { entity_type: string; entry: unknown }>();
+    let resultIndex = 0;
+    for (const preparedAction of prepared.actions) {
+      for (const row of preparedAction.rows) {
+        const result = results[resultIndex];
+        resultIndex += 1;
+        if (result) {
+          notificationRecordsById.set(result.id, {
+            entity_type: preparedAction.entityType,
+            entry: row.canonicalEntry,
+          });
+        }
+      }
+    }
+
     const pendingActionIds = results
       .filter((result) => result.status === 'pending' && !result.is_public)
       .map((result) => result.id);
@@ -134,6 +150,12 @@ export async function POST(request: Request) {
       const approved = outcome === 'public';
       const pendingPublic = approved && matching.some((result) => result.status === 'pending');
       try {
+        const details = getGameDataNotificationDetails(
+          matching.flatMap((result) => {
+            const record = notificationRecordsById.get(result.id);
+            return record ? [record] : [];
+          })
+        );
         await publishNotification({
           recipientUserId,
           kind: approved ? 'game_data_action_approved' : 'game_data_action_rejected',
@@ -145,9 +167,10 @@ export async function POST(request: Request) {
             : '游戏数据改动未通过',
           body: approved
             ? pendingPublic
-              ? `您提交的 ${matching.length} 条游戏数据改动已自动公开，后续仍可由有权限的用户复核或撤销。`
-              : `您提交的 ${matching.length} 条游戏数据改动已自动通过审核。`
-            : `您提交的 ${matching.length} 条游戏数据改动未通过自动审核。`,
+              ? `您提交的 ${matching.length} 条${details.summary}改动已自动公开，后续仍可由有权限的用户复核或撤销。`
+              : `您提交的 ${matching.length} 条${details.summary}改动已自动通过审核。`
+            : `您提交的 ${matching.length} 条${details.summary}改动未通过自动审核。`,
+          href: details.href ?? '/admin/?tab=actions',
           sourceIds: matching.map((result) => result.id),
           dedupeKey: `game-data-actions:auto:${outcome}:${matching
             .map((result) => result.id)

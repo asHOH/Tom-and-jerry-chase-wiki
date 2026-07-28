@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { requirePermission } from '@/lib/auth/requirePermission';
 import { getGameActionResourceContexts } from '@/lib/auth/resourceContexts';
 import { getRequestIp } from '@/lib/blocks/server';
+import { getGameDataNotificationDetails } from '@/lib/gameData/contributionDisplay';
 import {
   approvePreparedGameDataAction,
   loadTrustedGameDataAction,
@@ -102,7 +103,7 @@ export async function POST(request: Request) {
 
   for (const [recipientUserId, group] of grouped) {
     const sourceIds = group.map((record) => record.id).sort();
-    const entityTypes = Array.from(new Set(group.map((record) => record.entity_type))).join('、');
+    const details = getGameDataNotificationDetails(group);
     const approved = action === 'approve';
     const reasonSuffix = !approved && reason ? `原因：${reason}` : '';
     try {
@@ -111,7 +112,8 @@ export async function POST(request: Request) {
         kind: approved ? 'game_data_action_approved' : 'game_data_action_rejected',
         decisionOrigin: 'manual',
         title: approved ? '游戏数据改动批量审核通过' : '游戏数据改动批量审核未通过',
-        body: `您提交的 ${group.length} 条${entityTypes}改动${approved ? '已通过审核' : '未通过审核'}。${reasonSuffix}`,
+        body: `您提交的 ${group.length} 条${details.summary}改动${approved ? '已通过审核' : '未通过审核'}。${reasonSuffix}`,
+        href: details.href ?? '/admin/?tab=actions',
         sourceIds,
         dedupeKey: `game-data-actions:batch:${action}:${sourceIds.join(',')}`,
       });
