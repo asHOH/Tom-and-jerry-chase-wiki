@@ -86,7 +86,17 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
     <>
       <div className='min-h-screen'>
         <EditModeContext value={editModeContextValue}>
-          <CharacterDetails character={props.character}>{props.children}</CharacterDetails>
+          <CharacterDetails
+            character={props.character}
+            {...(props.contentWriters === undefined
+              ? {}
+              : { contentWriters: props.contentWriters })}
+            {...(props.contentEditors === undefined
+              ? {}
+              : { contentEditors: props.contentEditors })}
+          >
+            {props.children}
+          </CharacterDetails>
         </EditModeContext>
       </div>
 

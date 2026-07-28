@@ -8,6 +8,7 @@ import {
   incrementArticleViewCount,
 } from '@/lib/articles/serverQueries';
 import { GameDataManager } from '@/lib/dataManager';
+import { getContentWritersForCharacter } from '@/lib/gameData/contentWriters';
 import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
 import { generatePageMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
@@ -15,7 +16,6 @@ import { SITE_URL } from '@/constants/seo';
 import { getTutorialPage } from '@/features/articles/utils/docs';
 import StructuredData from '@/components/StructuredData';
 import CharacterDetailsClient from '@/app/(main)/characters/[characterId]/CharacterDetailsClient';
-import { getContentWritersByCharacter } from '@/constants';
 
 import CharacterArticle from './CharacterArticle';
 import CharacterDocs from './CharacterDocs';
@@ -42,9 +42,10 @@ function generateStructuredData(
   characterId: string,
   character: NonNullable<
     Awaited<ReturnType<typeof getPublishedEntityRouteReadModel<'characters'>>>['data']
-  >
+  >,
+  contentWriters: readonly string[]
 ): WithContext<Article> {
-  const author = getContentWritersByCharacter(characterId).map((author) => ({
+  const author = contentWriters.map((author) => ({
     '@type': 'Person' as const,
     name: author,
   }));
@@ -100,9 +101,10 @@ export default async function CharacterPage({
   try {
     const resolvedParams = await params;
     const characterId = decodeURIComponent(resolvedParams.characterId); // Decode the URL-encoded character ID
-    const [readModel, docPage] = await Promise.all([
+    const [readModel, docPage, contentWriterData] = await Promise.all([
       getPublishedEntityRouteReadModel('characters', characterId),
       getTutorialPage(characterId),
+      getContentWritersForCharacter(characterId),
     ]);
     const character = readModel.data;
 
@@ -112,7 +114,12 @@ export default async function CharacterPage({
 
     if (!hasSupabasePublicConfig()) {
       return (
-        <CharacterDetailsClient character={character} publishedRevision={readModel.revision}>
+        <CharacterDetailsClient
+          character={character}
+          contentWriters={contentWriterData.writers}
+          contentEditors={contentWriterData.editors}
+          publishedRevision={readModel.revision}
+        >
           {docPage ? <CharacterDocs docPage={docPage}></CharacterDocs> : null}
         </CharacterDetailsClient>
       );
@@ -129,8 +136,15 @@ export default async function CharacterPage({
 
     return (
       <>
-        <StructuredData data={generateStructuredData(characterId, character)} />
-        <CharacterDetailsClient character={character} publishedRevision={readModel.revision}>
+        <StructuredData
+          data={generateStructuredData(characterId, character, contentWriterData.writers)}
+        />
+        <CharacterDetailsClient
+          character={character}
+          contentWriters={contentWriterData.writers}
+          contentEditors={contentWriterData.editors}
+          publishedRevision={readModel.revision}
+        >
           {docPage ? (
             <CharacterDocs docPage={docPage}></CharacterDocs>
           ) : (

@@ -8,7 +8,7 @@ import { useSnapshot } from 'valtio';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import singleItemRreverse from '@/lib/singleItemReverse';
-import type { CharacterWithFaction } from '@/lib/types';
+import type { CharacterWithFaction, ContentEditor } from '@/lib/types';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { EditModeContext, useEditMode } from '@/context/EditModeContext';
@@ -46,6 +46,8 @@ const e = editable('characters');
 
 interface CharacterDetailsWithTutorialProps {
   character: DeepReadonly<CharacterWithFaction>;
+  contentWriters?: readonly string[];
+  contentEditors?: readonly ContentEditor[];
   children?: React.ReactNode;
 }
 
@@ -71,6 +73,8 @@ function CharacterImage({ characterId, imageUrl }: { characterId: string; imageU
 
 export default function CharacterDetails({
   character,
+  contentWriters,
+  contentEditors,
   children,
 }: CharacterDetailsWithTutorialProps) {
   const { isEditMode } = useEditMode();
@@ -143,7 +147,11 @@ export default function CharacterDetails({
                     </h1>
                     <DiscussEditButtons compact isEditMode={isEditMode} className='ml-2' />
                   </div>
-                  <ContentWriterDisplay characterId={localCharacter.id} />
+                  <ContentWriterDisplay
+                    characterId={localCharacter.id}
+                    {...(contentWriters === undefined ? {} : { contentWriters })}
+                    {...(contentEditors === undefined ? {} : { contentEditors })}
+                  />
                   <CreateDateDisplay createDate={localCharacter.createDate} />
                   <CharacterHistoryDisplay
                     name={localCharacter.id}
@@ -189,7 +197,12 @@ export default function CharacterDetails({
                         </div>
                         <DiscussEditButtons compact isEditMode={false} />
                       </div>
-                      <ContentWriterDisplay characterId={localCharacter.id} type='isMobile' />
+                      <ContentWriterDisplay
+                        characterId={localCharacter.id}
+                        {...(contentWriters === undefined ? {} : { contentWriters })}
+                        {...(contentEditors === undefined ? {} : { contentEditors })}
+                        type='isMobile'
+                      />
                       <CreateDateDisplay createDate={localCharacter.createDate} />
                       <CharacterHistoryDisplay
                         name={localCharacter.id}

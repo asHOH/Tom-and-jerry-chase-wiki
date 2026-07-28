@@ -46,8 +46,15 @@ export type KnowledgeCardDetailsProps = {
 
 export type CharacterDetailsProps = {
   character: DeepReadonly<CharacterWithFaction>;
+  contentWriters?: readonly string[];
+  contentEditors?: readonly ContentEditor[];
   publishedRevision?: `v1:${string}`;
   children?: ReactNode;
+};
+
+export type ContentEditor = {
+  id: string;
+  name: string;
 };
 
 export type FactionCharactersProps = {
