@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { cn } from '@/lib/design';
@@ -55,7 +55,11 @@ const KnowledgeCardGroupSetDisplay = ({
 }: KnowledgeCardGroupSetDisplayProps) => {
   const { isDetailedView } = useAppContext();
   const canEdit = isEditMode && !isGeneral;
-  const [isOpen, setIsOpen] = useState(() => !groupSet.defaultFolded || canEdit);
+  const [isOpen, setIsOpen] = useState(() => !groupSet.defaultFolded);
+
+  useEffect(() => {
+    setIsOpen(canEdit || !groupSet.defaultFolded);
+  }, [canEdit, groupSet.defaultFolded]);
 
   const toggleOpen = () => {
     if (!canEdit) {
