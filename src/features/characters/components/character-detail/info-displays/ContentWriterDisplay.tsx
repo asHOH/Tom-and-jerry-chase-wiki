@@ -33,7 +33,10 @@ export default function ContentWriterDisplay({
         {contentEditors.map((editor, index) => (
           <span key={editor.id}>
             {index > 0 && '、'}
-            <a href={`/users/${encodeURIComponent(editor.name)}`} className='underline'>
+            <a
+              href={`/users/${encodeURIComponent(editor.name)}`}
+              className='no-underline transition-colors hover:text-gray-600 dark:hover:text-gray-300'
+            >
               {editor.name}
             </a>
           </span>
