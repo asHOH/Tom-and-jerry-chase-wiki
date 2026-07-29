@@ -1,6 +1,7 @@
 export interface Contributor {
   id: string;
   name: string; // Display name
+  nickname?: string; // Database nickname, when it differs from the display name
   description?: string; // E.g., "S24赛季第4恶魔汤姆，段位榜第24"
   url?: string; // Link to personal homepage
   roles: Role[]; // Fulfilled roles
@@ -27,6 +28,7 @@ export const contributors: Contributor[] = [
   {
     id: 'asHOH',
     name: '小曙光',
+    nickname: '曙光',
     url: 'https://github.com/asHOH',
     roles: [
       { type: RoleType.ProjectMaintainer },
@@ -41,6 +43,7 @@ export const contributors: Contributor[] = [
   {
     id: '3swordman',
     name: '海阔天空',
+    nickname: '海阔天空',
     url: 'https://github.com/3swordman',
     roles: [
       { type: RoleType.Developer },
@@ -53,6 +56,7 @@ export const contributors: Contributor[] = [
   {
     id: 'chaserTom',
     name: '追风汤姆',
+    nickname: '追风汤姆',
     url: 'https://space.bilibili.com/3493135485241940',
     roles: [
       {
@@ -89,6 +93,7 @@ export const contributors: Contributor[] = [
   {
     id: 'gebilaomiLM',
     name: '隔壁老米LM',
+    nickname: '隔壁老米LM',
     url: 'https://space.bilibili.com/3493090618771682',
     roles: [
       {
@@ -124,6 +129,7 @@ export const contributors: Contributor[] = [
   {
     id: 'ConductorJerry',
     name: '音乐家杰瑞',
+    nickname: '音乐家杰瑞',
     url: 'https://github.com/ConductorJerry',
     roles: [
       { type: RoleType.Developer },
@@ -161,6 +167,7 @@ export const contributors: Contributor[] = [
   {
     id: 'xuniweilai',
     name: '虚拟未来',
+    nickname: '虚拟未来',
     url: 'https://space.bilibili.com/489570540',
     roles: [
       {
@@ -172,6 +179,7 @@ export const contributors: Contributor[] = [
   {
     id: 'dotdotdot',
     name: '人畜有害的白菜',
+    nickname: '人畜有害的白菜',
     url: 'https://space.bilibili.com/3494366331013311',
     roles: [
       {
@@ -183,6 +191,7 @@ export const contributors: Contributor[] = [
   {
     id: 'SYSTEM_CPYTHON',
     name: 'SYSTEM_CPYTHON',
+    nickname: 'SYSTEM-CPYTHON',
     url: 'https://space.bilibili.com/2060407817',
     roles: [
       {
@@ -194,6 +203,7 @@ export const contributors: Contributor[] = [
   {
     id: 'yekonghaohan',
     name: '夜空乄浩瀚',
+    nickname: '夜空乄浩瀚',
     url: 'https://space.bilibili.com/3546658333788386',
     roles: [
       {
@@ -205,6 +215,7 @@ export const contributors: Contributor[] = [
   {
     id: 'zhuifengtangmuofficial',
     name: '追风汤姆Official',
+    nickname: '追风汤姆official',
     url: 'https://space.bilibili.com/1060009579',
     roles: [
       {
@@ -216,6 +227,7 @@ export const contributors: Contributor[] = [
   {
     id: 'wujinchiyu',
     name: '-无尽炽羽-',
+    nickname: '无尽炽羽',
     url: 'https://space.bilibili.com/3493104889891012',
     roles: [
       {
@@ -227,6 +239,7 @@ export const contributors: Contributor[] = [
   {
     id: 'beique',
     name: '北雀',
+    nickname: '北雀',
     url: 'https://space.bilibili.com/510324311',
     roles: [
       {
@@ -272,6 +285,7 @@ export const contributors: Contributor[] = [
   {
     id: 'dashuijiangjun',
     name: '大水将军',
+    nickname: '大水将军',
     url: 'https://space.bilibili.com/1466875723',
     roles: [
       {
@@ -294,6 +308,7 @@ export const contributors: Contributor[] = [
   {
     id: 'yinshuisiyuan',
     name: '饮泉思源',
+    nickname: '饮泉思源',
     url: 'https://zh.moegirl.org.cn/User:Yqsychzs',
     roles: [
       {
@@ -329,6 +344,7 @@ export const contributors: Contributor[] = [
   {
     id: 'ruomeng',
     name: '若梦',
+    nickname: '若梦',
     url: 'https://space.bilibili.com/3537122405386648',
     roles: [
       {
@@ -340,6 +356,7 @@ export const contributors: Contributor[] = [
   {
     id: 'shengjianbao',
     name: '生煎包勇闯猫鼠',
+    nickname: '生煎包',
     roles: [
       {
         type: RoleType.ContentWriter,
@@ -392,6 +409,7 @@ export const contributors: Contributor[] = [
   {
     id: 'renou',
     name: '人偶',
+    nickname: '人偶',
     roles: [
       {
         type: RoleType.ContentWriter,
@@ -443,6 +461,7 @@ export const contributors: Contributor[] = [
   {
     id: 'HZZHD',
     name: 'HZZHD',
+    nickname: 'HZZHD',
     url: 'https://space.bilibili.com/3493130452076692',
     roles: [
       {
@@ -560,6 +579,7 @@ export const contributors: Contributor[] = [
   {
     id: 'shaofengyuan',
     name: '韶风愿の恶魔泰猫',
+    nickname: '韶风愿の恶魔泰猫',
     url: 'https://space.bilibili.com/1945435633',
     roles: [
       {
@@ -591,6 +611,7 @@ export const contributors: Contributor[] = [
   {
     id: 'momo',
     name: '是莫莫喵',
+    nickname: '莫莫喵',
     url: 'https://space.bilibili.com/443541296',
     roles: [
       {
