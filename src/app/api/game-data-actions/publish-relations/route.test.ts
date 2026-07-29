@@ -174,7 +174,7 @@ describe('publish-relations route', () => {
     expect(publishPreparedMock).not.toHaveBeenCalled();
   });
 
-  it('logs bounded dependent-row diagnostics and returns a request ID', async () => {
+  it('passes dependent relation rows to persistence as one ordered canonical row', async () => {
     const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
     const { POST } = await import('./route');
 
@@ -192,24 +192,37 @@ describe('publish-relations route', () => {
       })
     );
 
-    const body = (await response.json()) as { error: string; requestId: string };
-    expect(response.status).toBe(400);
-    expect(body).toEqual({
-      error: 'dependent_rows',
-      message: expect.any(String) as string,
-      requestId: expect.any(String) as string,
-    });
-    expect(warnSpy).toHaveBeenCalledWith('game_data_publish_rejected', expect.any(String));
-    const logged = JSON.parse(warnSpy.mock.calls[0]?.[1] as string) as Record<string, unknown>;
-    expect(logged).toEqual(
+    expect(response.status).toBe(200);
+    expect(publishPreparedMock).toHaveBeenCalledWith(
       expect.objectContaining({
-        requestId: body.requestId,
-        route: '/api/game-data-actions/publish-relations',
-        entityType: 'characters',
-        dependencyGroups: [expect.objectContaining({ rowIndexes: [0, 1] })],
+        prepared: expect.objectContaining({
+          actions: [
+            expect.objectContaining({
+              entityType: 'characters',
+              rows: [
+                expect.objectContaining({
+                  canonicalEntry: [
+                    {
+                      op: 'set',
+                      path: '杰瑞.counters',
+                      oldValue: [],
+                      newValue: [{ id: '汤姆' }],
+                    },
+                    {
+                      op: 'set',
+                      path: '杰瑞.counters',
+                      oldValue: [{ id: '汤姆' }],
+                      newValue: [{ id: '布奇' }],
+                    },
+                  ],
+                }),
+              ],
+            }),
+          ],
+        }),
       })
     );
-    expect(publishPreparedMock).not.toHaveBeenCalled();
+    expect(warnSpy).not.toHaveBeenCalled();
     warnSpy.mockRestore();
   });
 

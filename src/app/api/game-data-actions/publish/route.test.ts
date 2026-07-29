@@ -250,7 +250,7 @@ describe('publish route', () => {
     );
   });
 
-  it('rejects dependent top-level rows before persistence', async () => {
+  it('passes dependent top-level rows to persistence as one ordered canonical row', async () => {
     const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
     const { POST } = await import('./route');
     const response = await POST(
@@ -263,43 +263,27 @@ describe('publish route', () => {
       })
     );
 
-    expect(response.status).toBe(400);
-    const body = (await response.json()) as {
-      error: string;
-      message: string;
-      requestId: string;
-    };
-    expect(body).toEqual({
-      error: 'dependent_rows',
-      message: '这些修改存在顺序依赖，暂时无法一起提交。草稿已保留，请将请求编号提供给管理员。',
-      requestId: expect.any(String) as string,
-    });
-    expect(warnSpy).toHaveBeenCalledWith('game_data_publish_rejected', expect.any(String));
-    const logged = JSON.parse(warnSpy.mock.calls[0]?.[1] as string) as Record<string, unknown>;
-    expect(logged).toEqual(
+    expect(response.status).toBe(200);
+    expect(publishPreparedMock).toHaveBeenCalledWith(
       expect.objectContaining({
-        event: 'dependent_rows',
-        requestId: body.requestId,
-        route: '/api/game-data-actions/publish',
-        entityType: 'items',
-        dependencyGroups: [
-          expect.objectContaining({
-            rowIndexes: [0, 1],
-            rows: [
-              expect.objectContaining({
-                rowIndex: 0,
-                actions: [{ op: 'set', path: 'item.description' }],
-              }),
-              expect.objectContaining({
-                rowIndex: 1,
-                actions: [{ op: 'set', path: 'item.description' }],
-              }),
-            ],
-          }),
-        ],
+        prepared: expect.objectContaining({
+          actions: [
+            expect.objectContaining({
+              entityType: 'items',
+              rows: [
+                expect.objectContaining({
+                  canonicalEntry: [
+                    { op: 'set', path: 'item.description', newValue: 'first' },
+                    { op: 'set', path: 'item.description', newValue: 'second' },
+                  ],
+                }),
+              ],
+            }),
+          ],
+        }),
       })
     );
-    expect(publishPreparedMock).not.toHaveBeenCalled();
+    expect(warnSpy).not.toHaveBeenCalled();
     warnSpy.mockRestore();
   });
 

@@ -1,3 +1,6 @@
+import type { ActionHistoryEntry } from '@/lib/edit/diffUtils';
+
+import { applyCheckedActionRow } from './checkedActionReplay';
 import { PUBLISH_LIMITS } from './publishLimits';
 import {
   preparePublishActionItems,
@@ -85,44 +88,123 @@ describe('preparePublishActionItems', () => {
     ).toThrow(PublishPreparationError);
   });
 
-  it('rejects dependent top-level rows before grouping is enabled', () => {
-    try {
-      preparePublishActionItems([
-        {
-          entityType: 'characters',
-          entries: [
-            { op: 'set', path: '汤姆.description', newValue: 'first' },
-            { op: 'set', path: '汤姆.description', newValue: 'second' },
-          ],
-        },
-      ]);
-      throw new Error('Expected dependent rows to be rejected');
-    } catch (error) {
-      expect(error).toBeInstanceOf(PublishPreparationError);
-      expect((error as PublishPreparationError).detail).toEqual({
-        code: 'dependent_rows',
+  it('materializes dependent top-level rows as one ordered canonical row', () => {
+    const result = preparePublishActionItems([
+      {
         entityType: 'characters',
-        dependencyGroups: [
+        entries: [
+          { op: 'set', path: '汤姆.description', newValue: 'first' },
+          { op: 'set', path: '汤姆.description', newValue: 'second' },
+        ],
+      },
+    ]);
+
+    expect(result.actions[0]?.rows).toEqual([
+      {
+        canonicalEntry: [
+          { op: 'set', path: '汤姆.description', newValue: 'first' },
+          { op: 'set', path: '汤姆.description', newValue: 'second' },
+        ],
+        actions: [
           {
-            rowIndexes: [0, 1],
-            rows: [
-              {
-                rowIndex: 0,
-                actions: [{ op: 'set', path: '汤姆.description' }],
-                omittedActionCount: 0,
-              },
-              {
-                rowIndex: 1,
-                actions: [{ op: 'set', path: '汤姆.description' }],
-                omittedActionCount: 0,
-              },
-            ],
-            omittedRowCount: 0,
+            op: 'set',
+            path: '汤姆.description',
+            oldValue: undefined,
+            newValue: 'first',
+          },
+          {
+            op: 'set',
+            path: '汤姆.description',
+            oldValue: undefined,
+            newValue: 'second',
           },
         ],
-        omittedDependencyGroupCount: 0,
-      });
+      },
+    ]);
+  });
+
+  it('groups a sanitized child-then-parent structural-array reproduction', () => {
+    const result = preparePublishActionItems([
+      {
+        entityType: 'characters',
+        entries: [
+          {
+            op: 'set',
+            path: '汤姆.knowledgeCardGroups.5',
+            newValue: { name: 'new group' },
+          },
+          {
+            op: 'set',
+            path: '汤姆.knowledgeCardGroups',
+            newValue: [{ name: 'replacement' }],
+          },
+        ],
+      },
+    ]);
+
+    expect(result.actions[0]?.rows).toHaveLength(1);
+    expect(result.actions[0]?.rows[0]?.canonicalEntry).toEqual([
+      {
+        op: 'set',
+        path: '汤姆.knowledgeCardGroups.5',
+        newValue: { name: 'new group' },
+      },
+      {
+        op: 'set',
+        path: '汤姆.knowledgeCardGroups',
+        newValue: [{ name: 'replacement' }],
+      },
+    ]);
+  });
+
+  it('moves a noncontiguous transitive group to its earliest member without changing replay', () => {
+    const entries: ActionHistoryEntry[] = [
+      { op: 'set', path: 'Tom.profile.name', oldValue: 'Tom', newValue: 'Thomas' },
+      { op: 'set', path: 'Jerry.description', oldValue: 'old', newValue: 'independent' },
+      {
+        op: 'set',
+        path: 'Tom.profile',
+        oldValue: { name: 'Thomas', title: 'Cat' },
+        newValue: { name: 'Tommy', title: 'Mouse catcher' },
+      },
+      {
+        op: 'set',
+        path: 'Tom.profile.title',
+        oldValue: 'Mouse catcher',
+        newValue: 'Champion',
+      },
+    ];
+    const result = preparePublishActionItems([{ entityType: 'characters', entries }]);
+
+    expect(result.actions[0]?.rows.map((row) => row.canonicalEntry)).toEqual([
+      [entries[0], entries[2], entries[3]],
+      entries[1],
+    ]);
+
+    const originalTarget = {
+      Tom: { profile: { name: 'Tom', title: 'Cat' } },
+      Jerry: { description: 'old' },
+    };
+    const groupedTarget = structuredClone(originalTarget);
+    for (const [rowIndex, entry] of entries.entries()) {
+      expect(
+        applyCheckedActionRow({
+          rowId: `original:${rowIndex}`,
+          actions: Array.isArray(entry) ? entry : [entry],
+          targets: [originalTarget],
+        })
+      ).toMatchObject({ success: true });
     }
+    for (const row of result.actions[0]!.rows) {
+      expect(
+        applyCheckedActionRow({
+          rowId: 'grouped',
+          actions: row.actions,
+          targets: [groupedTarget],
+        })
+      ).toMatchObject({ success: true });
+    }
+    expect(groupedTarget).toEqual(originalTarget);
   });
 
   it('accepts distinct direct array-index assignments as separate canonical rows', () => {
@@ -144,43 +226,44 @@ describe('preparePublishActionItems', () => {
   });
 
   it.each(['foo', '01', '1e2', '4294967295'])(
-    'rejects a direct index assignment paired with sibling %s',
+    'groups a direct index assignment paired with dependent sibling %s',
     (sibling) => {
-      expect(() =>
-        preparePublishActionItems([
-          {
-            entityType: 'characters',
-            entries: [
-              { op: 'set', path: '汤姆.aliases.0', newValue: 'first' },
-              { op: 'set', path: `汤姆.aliases.${sibling}.name`, newValue: 'second' },
-            ],
-          },
-        ])
-      ).toThrow(
-        expect.objectContaining({
-          detail: expect.objectContaining({ code: 'dependent_rows' }),
-        })
-      );
+      const result = preparePublishActionItems([
+        {
+          entityType: 'characters',
+          entries: [
+            { op: 'set', path: '汤姆.aliases.0', newValue: 'first' },
+            { op: 'set', path: `汤姆.aliases.${sibling}.name`, newValue: 'second' },
+          ],
+        },
+      ]);
+
+      expect(result.actions[0]?.rows).toHaveLength(1);
+      expect(result.actions[0]?.rows[0]?.canonicalEntry).toEqual([
+        { op: 'set', path: '汤姆.aliases.0', newValue: 'first' },
+        { op: 'set', path: `汤姆.aliases.${sibling}.name`, newValue: 'second' },
+      ]);
     }
   );
 
-  it('checks dependencies across repeated items for the same entity type', () => {
-    expect(() =>
-      preparePublishActionItems([
-        {
-          entityType: 'characters',
-          entries: [{ op: 'set', path: '汤姆.description', newValue: 'first' }],
-        },
-        {
-          entityType: 'characters',
-          entries: [{ op: 'set', path: '汤姆.description', newValue: 'second' }],
-        },
-      ])
-    ).toThrow(
-      expect.objectContaining({
-        detail: expect.objectContaining({ code: 'dependent_rows' }),
-      })
-    );
+  it('groups dependencies across repeated items for the same entity type', () => {
+    const result = preparePublishActionItems([
+      {
+        entityType: 'characters',
+        entries: [{ op: 'set', path: '汤姆.description', newValue: 'first' }],
+      },
+      {
+        entityType: 'characters',
+        entries: [{ op: 'set', path: '汤姆.description', newValue: 'second' }],
+      },
+    ]);
+
+    expect(result.actions).toHaveLength(1);
+    expect(result.actions[0]?.rows).toHaveLength(1);
+    expect(result.actions[0]?.rows[0]?.canonicalEntry).toEqual([
+      { op: 'set', path: '汤姆.description', newValue: 'first' },
+      { op: 'set', path: '汤姆.description', newValue: 'second' },
+    ]);
   });
 
   it('accepts distinct direct indexes across repeated items for the same entity type', () => {
@@ -197,6 +280,42 @@ describe('preparePublishActionItems', () => {
 
     expect(result.actions).toHaveLength(1);
     expect(result.actions[0]?.rows).toHaveLength(2);
+  });
+
+  it('rejects a dependency group that exceeds the per-row action limit', () => {
+    const firstRow = Array.from(
+      { length: Math.floor(PUBLISH_LIMITS.actionsPerRow / 2) + 1 },
+      (_, index) => ({
+        op: 'set' as const,
+        path: `Tom.profile.field${index}`,
+        newValue: `first-${index}`,
+      })
+    );
+    const secondRow = Array.from(
+      { length: Math.ceil(PUBLISH_LIMITS.actionsPerRow / 2) },
+      (_, index) => ({
+        op: 'set' as const,
+        path: index === 0 ? 'Tom.profile' : `Tom.profile.extra${index}`,
+        newValue: index === 0 ? {} : `second-${index}`,
+      })
+    );
+
+    expect(() =>
+      preparePublishActionItems([
+        {
+          entityType: 'characters',
+          entries: [firstRow, secondRow],
+        },
+      ])
+    ).toThrow(
+      expect.objectContaining({
+        detail: {
+          code: 'too_many_actions_per_row',
+          entityType: 'characters',
+          entryIndex: 0,
+        },
+      })
+    );
   });
 
   it('freezes path and message boundaries', () => {

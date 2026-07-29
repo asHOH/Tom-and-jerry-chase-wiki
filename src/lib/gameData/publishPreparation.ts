@@ -2,10 +2,11 @@ import 'server-only';
 
 import type { Action } from '@/lib/edit/diffUtils';
 
-import { groupActionEntriesByDependency } from './actionDependencies';
+import { areActionsOrderDependent, groupActionEntriesByDependency } from './actionDependencies';
 import {
   decodeActionRowEntry,
   type ActionDecodeError,
+  type CanonicalAction,
   type CanonicalActionRowEntry,
 } from './actionRowDecoder';
 import { isPublishableEntityType, type PublishableEntityType } from './publishableEntityTypes';
@@ -99,6 +100,77 @@ function buildDependencyDiagnostics(
     dependencyGroups: Object.freeze(dependencyGroups),
     omittedDependencyGroupCount: Math.max(0, dependentGroups.length - MAX_DIAGNOSTIC_GROUPS),
   };
+}
+
+function rowsAreOrderDependent(left: PreparedPublishRow, right: PreparedPublishRow): boolean {
+  return left.actions.some((leftAction) =>
+    right.actions.some((rightAction) => areActionsOrderDependent(leftAction, rightAction))
+  );
+}
+
+function dependencyGroupsCommute(
+  rows: readonly PreparedPublishRow[],
+  groups: readonly number[][]
+): boolean {
+  for (let leftGroupIndex = 0; leftGroupIndex < groups.length; leftGroupIndex += 1) {
+    const leftGroup = groups[leftGroupIndex]!;
+    for (
+      let rightGroupIndex = leftGroupIndex + 1;
+      rightGroupIndex < groups.length;
+      rightGroupIndex += 1
+    ) {
+      const rightGroup = groups[rightGroupIndex]!;
+      for (const leftRowIndex of leftGroup) {
+        for (const rightRowIndex of rightGroup) {
+          if (rowsAreOrderDependent(rows[leftRowIndex]!, rows[rightRowIndex]!)) return false;
+        }
+      }
+    }
+  }
+  return true;
+}
+
+function canonicalActions(row: PreparedPublishRow): readonly CanonicalAction[] {
+  return Array.isArray(row.canonicalEntry)
+    ? (row.canonicalEntry as readonly CanonicalAction[])
+    : [row.canonicalEntry as CanonicalAction];
+}
+
+function materializeDependencyGroups(
+  entityType: PublishableEntityType,
+  rows: readonly PreparedPublishRow[],
+  groups: readonly number[][]
+): readonly PreparedPublishRow[] {
+  // This pairwise check is stronger than checking only rows crossed when a later group member
+  // moves to the group's earliest position. It also proves that every separately persisted row
+  // commutes with every other persisted row.
+  if (!dependencyGroupsCommute(rows, groups)) {
+    throw new PublishPreparationError('dependent_rows', {
+      entityType,
+      ...buildDependencyDiagnostics(rows, groups),
+    });
+  }
+
+  return Object.freeze(
+    groups.map((group) => {
+      const firstRowIndex = group[0]!;
+      if (group.length === 1) return rows[firstRowIndex]!;
+
+      const groupedRow = Object.freeze({
+        canonicalEntry: Object.freeze(
+          group.flatMap((rowIndex) => canonicalActions(rows[rowIndex]!))
+        ),
+        actions: Object.freeze(group.flatMap((rowIndex) => rows[rowIndex]!.actions)),
+      });
+      if (groupedRow.actions.length > PUBLISH_LIMITS.actionsPerRow) {
+        throw new PublishPreparationError('too_many_actions_per_row', {
+          entityType,
+          entryIndex: firstRowIndex,
+        });
+      }
+      return groupedRow;
+    })
+  );
 }
 
 export type UntrustedPublishActionItem = {
@@ -235,13 +307,10 @@ export function preparePublishActionItems(
     const dependencyGroups = groupActionEntriesByDependency(
       rows.map((row) => row.actions.map((action) => ({ ...action })))
     );
-    if (dependencyGroups.some((group) => group.length > 1)) {
-      throw new PublishPreparationError('dependent_rows', {
-        entityType,
-        ...buildDependencyDiagnostics(rows, dependencyGroups),
-      });
-    }
-    preparedActions.push({ entityType, rows: Object.freeze(rows) });
+    preparedActions.push({
+      entityType,
+      rows: materializeDependencyGroups(entityType, rows, dependencyGroups),
+    });
   }
 
   const preparedMessage = prepareMessage(message);
