@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Article, WithContext } from 'schema-dts';
 
+import { projectSpecialSkillCharacters } from '@/lib/gameData/published/clientProjections';
 import { getApprovedActionSnapshot } from '@/lib/gameData/published/getApprovedActionSnapshot';
 import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
 import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
@@ -112,7 +113,7 @@ export default async function SpecialSkillDetailPage({
         skillId={skillId}
         publishedRevision={readModel.revision}
         publishedHistory={readModel.history}
-        charactersData={characters.data}
+        charactersData={projectSpecialSkillCharacters(characters.data)}
       />
     </>
   );

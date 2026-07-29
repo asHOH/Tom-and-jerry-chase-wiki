@@ -4,7 +4,7 @@ import { useSearchParams } from 'next/navigation';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
-import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
+import type { KnowledgeCardCharacterLookup } from '@/lib/gameData/published/clientProjections';
 import type { KnowledgeCardDetailsProps, KnowledgeCardWithFaction } from '@/lib/types';
 import { useLocalCard } from '@/hooks/useLocalEditEntity';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
@@ -29,7 +29,7 @@ export default function KnowledgeCardDetails({
   card,
   charactersData = characters,
 }: KnowledgeCardDetailsProps & {
-  charactersData?: PublishedGameDataByType['characters'];
+  charactersData?: KnowledgeCardCharacterLookup;
 }) {
   const { isEditMode } = useEditMode();
   const { cardId } = useLocalCard();
@@ -47,7 +47,10 @@ export default function KnowledgeCardDetails({
   const { handleSelectCharacter, isDetailedView } = useAppContext();
   const searchParams = useSearchParams();
   const fromCharacterId = searchParams ? searchParams.get('from') : null;
-  const charactersSnap = useOptionalEditSnapshot(editRuntime?.stores.characters, charactersData);
+  const charactersSnap = useOptionalEditSnapshot<KnowledgeCardCharacterLookup>(
+    editRuntime?.stores.characters,
+    charactersData
+  );
 
   const fromCharacter = fromCharacterId ? charactersSnap[fromCharacterId] : null;
 
