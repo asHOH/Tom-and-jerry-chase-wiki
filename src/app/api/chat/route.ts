@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { getPublishedGameDataSnapshot } from '@/lib/gameData/published/publishedSnapshot';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { historyData } from '@/data/history';
-import { itemGroups } from '@/data/static';
+import itemGroups from '@/features/items/data/itemGroups';
 import { env } from '@/env';
 
 const debugLoggingEnabled = env.CHAT_DEBUG_LOG === '1';

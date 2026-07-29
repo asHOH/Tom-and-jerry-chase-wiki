@@ -3,19 +3,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useChat as useAIChat } from '@ai-sdk/react';
 import { DefaultChatTransport, lastAssistantMessageIsCompleteWithToolCalls } from 'ai';
-import { snapshot } from 'valtio';
 
+import type { ChatGameData } from '@/lib/gameData/chatGameData';
+import { fetchPublishedChatGameData } from '@/lib/gameData/chatGameDataClient';
 import { historyData } from '@/data/history';
-import {
-  buffs,
-  cards,
-  characters,
-  entities,
-  itemGroups,
-  items,
-  specialSkills,
-} from '@/data/static';
 import { actorProfileLookup } from '@/features/actor-profiles/serialization';
+import itemGroups from '@/features/items/data/itemGroups';
 import { env } from '@/env';
 
 // Debounce utility to delay function execution
@@ -32,9 +25,16 @@ function debounce<T extends (...args: never[]) => void>(func: T, waitFor: number
 
 // Client-side code execution implementation
 // Executes JavaScript code in a sandboxed iframe for security
-async function executeCode({ code }: { code: string }): Promise<unknown> {
+async function executeCode({
+  code,
+  gameData,
+}: {
+  code: string;
+  gameData: ChatGameData;
+}): Promise<unknown> {
   return new Promise((resolve) => {
     try {
+      const { characters, cards, specialSkills, items, entities, buffs } = gameData;
       const nonce = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString(16);
       const csp = `default-src 'none'; script-src 'nonce-${nonce}';`;
       // Create a sandboxed iframe for isolated code execution
@@ -52,7 +52,7 @@ async function executeCode({ code }: { code: string }): Promise<unknown> {
                 <script nonce="${nonce}">
                   try {
                     // Receive data from parent
-                    var characters = ${JSON.stringify(snapshot(characters))};
+                    var characters = ${JSON.stringify(characters)};
                     var actorProfiles = ${JSON.stringify(actorProfileLookup)};
                     var cards = ${JSON.stringify(cards)};
                     var specialSkills = ${JSON.stringify(specialSkills)};
@@ -130,6 +130,7 @@ export function useChat(message?: string, debounceMs = 500) {
   const [error, setError] = useState<Error | null>(null);
   const pendingRef = useRef<string | null>(null);
   const mountedRef = useRef(true);
+  const chatGameDataPromiseRef = useRef<ReturnType<typeof fetchPublishedChatGameData> | null>(null);
 
   // Debounce the message updates
   const debouncedSetMessage = useMemo(() => {
@@ -166,7 +167,21 @@ export function useChat(message?: string, debounceMs = 500) {
     onToolCall: useCallback(async ({ toolCall }) => {
       if (toolCall.toolName === 'executeCode' && 'input' in toolCall) {
         const toolInput = toolCall.input as { code: string };
-        const result = await executeCode({ code: toolInput.code });
+        const gameDataPromise = chatGameDataPromiseRef.current ?? fetchPublishedChatGameData();
+        chatGameDataPromiseRef.current = gameDataPromise;
+        let result: unknown;
+        try {
+          const { data } = await gameDataPromise;
+          result = await executeCode({ code: toolInput.code, gameData: data });
+        } catch (error) {
+          if (chatGameDataPromiseRef.current === gameDataPromise) {
+            chatGameDataPromiseRef.current = null;
+          }
+          result = {
+            error: 'Code execution data load failed',
+            details: error instanceof Error ? error.message : String(error),
+          };
+        }
         addToolResultRef.current?.({
           tool: toolCall.toolName,
           toolCallId: toolCall.toolCallId,
@@ -202,6 +217,7 @@ export function useChat(message?: string, debounceMs = 500) {
 
   // When debounced message changes, start a fresh conversation
   useEffect(() => {
+    chatGameDataPromiseRef.current = null;
     if (!debouncedMessage?.trim() || !featureEnabled) {
       setResponseText('');
       setError(null);
