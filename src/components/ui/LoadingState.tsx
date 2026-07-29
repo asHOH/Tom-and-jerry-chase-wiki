@@ -3,6 +3,7 @@ import React from 'react';
 import { cn } from '@/lib/design';
 
 import LoadingSpinner from './LoadingSpinner';
+import PageShell, { type PageShellWidth } from './PageShell';
 import {
   Skeleton,
   SkeletonBuffCard,
@@ -56,15 +57,16 @@ const gridItemClasses = [
 
 const getGridItemClass = (index: number) => gridItemClasses[index % gridItemClasses.length];
 
-const pageLoadingLayoutClasses: Record<PageLoadingLayout, string> = {
-  detail: 'mx-auto max-w-7xl space-y-6 p-6',
-  catalog: 'mx-auto max-w-7xl space-y-8 p-6 dark:text-slate-200',
-};
+const pageLoadingLayouts: Record<PageLoadingLayout, { width: PageShellWidth; className: string }> =
+  {
+    detail: { width: 'maximum', className: 'space-y-6' },
+    catalog: { width: 'wide', className: 'space-y-8 dark:text-slate-200' },
+  };
 
 export const getPageLoadingStateClassName = (
   layout: PageLoadingLayout = 'detail',
   className?: string
-) => cn(pageLoadingLayoutClasses[layout], className);
+) => cn(pageLoadingLayouts[layout].className, className);
 
 /**
  * Unified loading state component that provides consistent loading UI across the app
@@ -338,8 +340,14 @@ export function PageLoadingState({
   className,
   children,
 }: PageLoadingStateProps) {
+  const shell = pageLoadingLayouts[layout];
+
   return (
-    <div className={getPageLoadingStateClassName(layout, className)}>
+    <PageShell
+      as='div'
+      width={shell.width}
+      className={getPageLoadingStateClassName(layout, className)}
+    >
       {children ?? (
         <LoadingState
           type={type}
@@ -347,7 +355,7 @@ export function PageLoadingState({
           {...(typeof count === 'number' ? { count } : {})}
         />
       )}
-    </div>
+    </PageShell>
   );
 }
 

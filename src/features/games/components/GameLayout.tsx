@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 
 import { cn } from '@/lib/design';
 import PageHeader from '@/components/ui/PageHeader';
+import PageShell from '@/components/ui/PageShell';
 
 type GameLayoutProps = {
   title: string;
@@ -18,15 +19,9 @@ type GameLayoutProps = {
  */
 export default function GameLayout({ title, description, children, className }: GameLayoutProps) {
   return (
-    <div
-      className={cn(
-        'mx-auto max-w-3xl space-y-4 p-3 md:max-w-6xl md:space-y-6 md:p-6',
-        'dark:text-slate-200',
-        className
-      )}
-    >
+    <PageShell width='wide' className={cn('space-y-4 md:space-y-6 dark:text-slate-200', className)}>
       <PageHeader title={title} description={description} className='mb-4 md:mb-8' />
       {children}
-    </div>
+    </PageShell>
   );
 }

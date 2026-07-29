@@ -149,7 +149,8 @@ describe('PageLoadingState', () => {
   it('uses the detail shell classes by default', () => {
     const { container } = render(<PageLoadingState type='detail' />);
 
-    expect(container.firstChild).toHaveClass('mx-auto', 'max-w-7xl', 'space-y-6', 'p-6');
+    expect(container.firstChild).toHaveClass('mx-auto', 'w-full', 'max-w-7xl', 'space-y-6');
+    expect(container.firstChild).not.toHaveClass('p-6');
     expect(container.firstChild).not.toHaveClass('space-y-8', 'dark:text-slate-200');
   });
 
@@ -160,23 +161,19 @@ describe('PageLoadingState', () => {
 
     expect(container.firstChild).toHaveClass(
       'mx-auto',
-      'max-w-7xl',
+      'w-full',
+      'max-w-6xl',
       'space-y-8',
-      'p-6',
       'dark:text-slate-200'
     );
+    expect(container.firstChild).not.toHaveClass('p-6');
   });
 
   it('merges custom classes into the selected shell', () => {
-    const { container } = render(<PageLoadingState className='pt-10 md:p-8' />);
+    const { container } = render(<PageLoadingState className='max-w-5xl py-10' />);
 
-    expect(container.firstChild).toHaveClass(
-      'mx-auto',
-      'max-w-7xl',
-      'space-y-6',
-      'pt-10',
-      'md:p-8'
-    );
+    expect(container.firstChild).toHaveClass('mx-auto', 'max-w-5xl', 'space-y-6', 'py-10');
+    expect(container.firstChild).not.toHaveClass('max-w-7xl');
   });
 
   it('renders the requested loading branch when children are absent', () => {
@@ -235,11 +232,12 @@ describe('CatalogPageLoadingState', () => {
 
     expect(container.firstChild).toHaveClass(
       'mx-auto',
-      'max-w-7xl',
+      'w-full',
+      'max-w-6xl',
       'space-y-8',
-      'p-6',
       'dark:text-slate-200'
     );
+    expect(container.firstChild).not.toHaveClass('p-6');
     expect(screen.getAllByTestId('skeleton-item-card')).toHaveLength(8);
   });
 });

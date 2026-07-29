@@ -100,22 +100,15 @@ describe('ToolGrid', () => {
     });
   });
 
-  it('uses mobile-first responsive shell classes', () => {
+  it('keeps the route shell while using the gutter-free shared header', () => {
     const { container } = render(<ToolGrid description='Mobile description' />);
 
     const root = container.firstElementChild as HTMLElement;
     const header = container.querySelector('header') as HTMLElement | null;
 
     expect(root).toHaveClass('max-w-3xl', 'space-y-2', 'p-2', 'md:max-w-7xl');
-    expect(header).toHaveClass(
-      'mb-4',
-      'space-y-2',
-      'px-2',
-      'text-center',
-      'md:mb-8',
-      'md:space-y-4',
-      'md:px-4'
-    );
+    expect(header).toHaveClass('mb-4', 'space-y-2', 'text-center', 'md:mb-8', 'md:space-y-4');
+    expect(header).not.toHaveClass('px-2', 'md:px-4');
     expect(screen.getByText('Mobile description')).toBeInTheDocument();
   });
 });

@@ -88,6 +88,8 @@ describe('CatalogPageShell', () => {
     const contentWrapper = screen.getByText('Content').parentElement;
 
     expect(section).not.toHaveClass('space-y-2', 'md:space-y-8');
+    expect(section).toHaveClass('max-w-6xl');
+    expect(section).not.toHaveClass('px-2', 'md:p-6');
     expect(header).not.toHaveClass('mb-4', 'md:mb-8');
     expect(contentWrapper).toHaveClass('mt-6', 'md:mt-8');
   });
@@ -123,7 +125,7 @@ describe('CatalogPageShell', () => {
     const contentWrapper = screen.getByText('Content').parentElement;
 
     expect(section).toHaveClass('max-w-4xl');
-    expect(section).not.toHaveClass('max-w-7xl');
+    expect(section).not.toHaveClass('max-w-6xl');
     expect(header).toHaveClass('mb-2');
     expect(filtersWrapper).toHaveClass('max-w-xl');
     expect(filtersWrapper).not.toHaveClass('max-w-2xl');

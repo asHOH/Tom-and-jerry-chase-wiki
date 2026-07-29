@@ -8,7 +8,7 @@ export default function PageDescription({ className, style, ...props }: PageDesc
   return (
     <p
       className={cn(
-        'mx-auto max-w-3xl px-2 py-1 text-lg leading-8 text-gray-700 transition-colors md:px-4 md:py-2 md:text-xl dark:text-gray-200',
+        'mx-auto max-w-3xl py-1 text-lg leading-8 text-gray-700 transition-colors md:py-2 md:text-xl dark:text-gray-200',
         className
       )}
       style={{ ...style, fontFamily: 'var(--font-sans-stack)' }}

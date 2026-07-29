@@ -21,6 +21,10 @@ describe('PageHeader', () => {
     expect(screen.getByText('页面说明')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '页面操作' })).toBeInTheDocument();
     expect(screen.getByText('页面筛选')).toBeInTheDocument();
+
+    const header = screen.getByRole('heading', { level: 1 }).parentElement;
+    expect(header).not.toHaveClass('px-2', 'md:px-4');
+    expect(screen.getByText('页面说明')).not.toHaveClass('px-2', 'md:px-4');
   });
 
   it('supports desktop-only descriptions', () => {
