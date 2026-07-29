@@ -236,15 +236,45 @@ describe('publish route', () => {
     const { POST } = await import('./route');
 
     const response = await POST(
-      createRequest({ ...validBody, submitMode: 'force_public_pending' })
+      createRequest({
+        entityType: 'items',
+        entries: [
+          { op: 'set', path: 'item.description', newValue: 'first' },
+          { op: 'set', path: 'item.description', newValue: 'second' },
+        ],
+        submitMode: 'force_public_pending',
+      })
     );
 
     expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      result: [{ id: 'public-pending-1', is_public: true, status: 'pending' }],
+    });
+    expect(publishPreparedMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        submitMode: 'force_public_pending',
+        prepared: expect.objectContaining({
+          actions: [
+            expect.objectContaining({
+              rows: [
+                expect.objectContaining({
+                  canonicalEntry: [
+                    { op: 'set', path: 'item.description', newValue: 'first' },
+                    { op: 'set', path: 'item.description', newValue: 'second' },
+                  ],
+                }),
+              ],
+            }),
+          ],
+        }),
+      })
+    );
     expect(notifyPendingGameDataActionSubscribersMock).not.toHaveBeenCalled();
     expect(publishNotificationMock).toHaveBeenCalledWith(
       expect.objectContaining({
         kind: 'game_data_action_approved',
         title: '游戏数据改动已自动公开',
+        body: '您提交的 1 条游戏数据改动已自动公开，后续仍可由有权限的用户复核或撤销。',
         sourceIds: ['public-pending-1'],
       })
     );
@@ -264,6 +294,9 @@ describe('publish route', () => {
     );
 
     expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      result: [{ id: 'action-1', is_public: false, status: 'pending' }],
+    });
     expect(publishPreparedMock).toHaveBeenCalledWith(
       expect.objectContaining({
         prepared: expect.objectContaining({
@@ -283,6 +316,10 @@ describe('publish route', () => {
         }),
       })
     );
+    expect(notifyPendingGameDataActionSubscribersMock).toHaveBeenCalledWith({
+      actorUserId: 'actor-1',
+      actionIds: ['action-1'],
+    });
     expect(warnSpy).not.toHaveBeenCalled();
     warnSpy.mockRestore();
   });

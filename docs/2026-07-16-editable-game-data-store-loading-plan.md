@@ -4,8 +4,8 @@
 
 - Date: 2026-07-16
 - Last revised: 2026-07-29
-- State: Foundation, published-data selectors, Lean Steps 1 and 2, and the Step 2 follow-up gate
-  complete; Lean Step 3 is unblocked, actionable, and next
+- State: Foundation, published-data selectors, Lean Steps 1 through 3, and the Step 2 follow-up gate
+  complete; Lean Step 4 is ready and next
 - Scope: Remove universal editable-store initialization and root approved-action replay, preserve
   edit behavior, then enable publish-time dependency grouping
 
@@ -98,7 +98,8 @@ The leaner delivery scope does not relax these contracts:
 - Approved rows are applied to plain published data before edit proxies are created.
 - Approved rows are never replayed against mounted Valtio proxies.
 - The edit runtime receives a complete published baseline and global revision, not approved rows.
-- Stage B dependency grouping remains blocked until root-client replay is removed.
+- Publish-time dependency grouping remains valid only while root-client replay stays absent; do not
+  reintroduce mounted-client replay or split a dependency group across persistence rows.
 
 Do not add another replay engine, a mutable-target adapter, or route-scoped edit stores.
 
@@ -253,16 +254,15 @@ Completion evidence:
 - The `_not-found`, home, character, item, map, and relations client-reference manifests contain no
   `EditRuntime`, `activeEditRuntime`, `editStores`, or `editModeRegistry` references.
 
-### Lean Step 3 (actionable): Enable semantic dependency grouping
+### Lean Step 3 (complete): Enable semantic dependency grouping
 
 Multiple users have reported valid game-data submissions failing with `dependent_rows`. A dependency
 group means that its actions must retain request order and one atomic persistence boundary; it does
 not make those actions invalid. Stage A deliberately rejected these requests as a temporary
 fail-safe while rows from one transaction could replay in UUID order.
 
-Step 3 is unblocked. Root-client replay is absent, the Step 2 follow-up gate has passed, and strict
-decoding, the dependency classifier, complete candidate checked replay, the replay epoch, and the
-prepared service-role RPC are already in place.
+Step 3 used the completed Step 2 cutover together with the existing strict decoder, dependency
+classifier, complete candidate checked replay, replay epoch, and prepared service-role RPC.
 
 No database migration, approved-row compaction, or approved-action synchronization is a
 prerequisite. Existing public approved rows remain inputs to complete candidate replay while new
@@ -306,7 +306,29 @@ Exit gate:
   unknown entity types; and
 - rollout requires no database migration or approved-action synchronization.
 
-### Lean Step 4: Add small regression guards and finish the audit
+Completion evidence:
+
+- Commit `a73af3ee` materializes each dependency group as one ordered canonical row at its earliest
+  member position, preserves singleton and independent rows, verifies cross-group commutativity,
+  and reapplies the per-row action limit after grouping.
+- Commit `ed7462fe` verifies recursive child-resource permissions, complete grouped candidate
+  replay, one-row prepared RPC persistence, submit-mode behavior, result-based replay-epoch
+  advancement, and stable epoch-conflict handling.
+- Commit `f2a74730` verifies normal and relation route results, notifications, advanced submission
+  modes, and result-derived client messaging after several submitted rows become one persisted row.
+- Focused dependency, preparation, trusted mutation, route, page-edit, relation-edit, permission,
+  candidate-replay, and RPC-contract tests pass.
+- Full Jest passes 224 suites and 1,226 tests. Oxlint, strict TypeScript, Prettier, and diff checks
+  pass.
+- The production-connected read-only audit fingerprint
+  `audit-dabc20893d78239673de51f0a8cab234c42450b335bb10d5d3a5b311d29c32a6` covers 237 approved
+  rows and reports zero malformed rows, checked-replay failures, and unknown entity types.
+- Step 3 required no database migration, approved-row compaction, approved-action synchronization,
+  or database write during validation.
+
+### Lean Step 4 (ready): Add small regression guards and finish the audit
+
+Step 4 is unblocked and is the only remaining implementation and validation stage.
 
 1. Add or extend one straightforward import-boundary test proving:
    - `@/data` does not re-export mutable stores;

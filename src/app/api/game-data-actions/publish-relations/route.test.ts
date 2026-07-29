@@ -155,6 +155,9 @@ describe('publish-relations route', () => {
     );
 
     expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      result: [{ id: 'action-1', is_public: false, status: 'pending' }],
+    });
     expect(publishPreparedMock).toHaveBeenCalledWith(
       expect.objectContaining({ submitMode: 'force_public_pending' })
     );
@@ -193,6 +196,9 @@ describe('publish-relations route', () => {
     );
 
     expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      result: [{ id: 'action-1', is_public: false, status: 'pending' }],
+    });
     expect(publishPreparedMock).toHaveBeenCalledWith(
       expect.objectContaining({
         prepared: expect.objectContaining({
