@@ -5,7 +5,7 @@ import { notFound } from 'next/navigation';
 import { formatCompactDateTime } from '@/lib/dateUtils';
 import { generatePageMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { getPublicUserProfile, type PublicContribution } from '@/lib/users/publicProfile';
-import { contributors } from '@/data/contributors';
+import { contributors, RoleType } from '@/data/contributors';
 import Card from '@/components/ui/Card';
 import { InlineExternalLink } from '@/components/ui/InlineExternalLink';
 import Link from '@/components/Link';
@@ -26,6 +26,25 @@ const registrationDateFormatter = new Intl.DateTimeFormat('zh-CN', {
   day: 'numeric',
   timeZone: 'Asia/Shanghai',
 });
+
+function getCharacterContributionCount(
+  contributor: (typeof contributors)[number] | undefined
+): number {
+  if (!contributor) return 0;
+
+  return new Set(
+    contributor.roles
+      .filter((role) => role.type === RoleType.ContentWriter)
+      .flatMap((role) => role.characters ?? [])
+  ).size;
+}
+
+function getContributionStatsGridClassName(statCount: number): string {
+  if (statCount <= 1) return 'grid grid-cols-1 gap-3 sm:grid-cols-1';
+  if (statCount === 2) return 'grid grid-cols-2 gap-3 sm:grid-cols-2';
+  if (statCount === 3) return 'grid grid-cols-3 gap-3 sm:grid-cols-3';
+  return 'grid grid-cols-2 gap-3 sm:grid-cols-4';
+}
 
 export async function generateMetadata({
   params,
@@ -69,6 +88,13 @@ export default async function PublicUserPage({
   if (!profile) notFound();
 
   const contributor = contributors.find(({ nickname }) => nickname === profile.nickname);
+  const characterContributionCount = getCharacterContributionCount(contributor);
+  const contributionStats = [
+    { label: '角色文案撰写', value: characterContributionCount },
+    { label: '文章编辑', value: profile.contributionTotals.articles },
+    { label: '游戏数据编辑', value: profile.contributionTotals.gameData },
+    { label: '审核', value: profile.reviewCount },
+  ].filter((stat) => stat.value > 0);
 
   return (
     <main className='mx-auto w-full max-w-5xl space-y-6 px-4 py-8 text-gray-900 sm:px-6 dark:text-gray-100'>
@@ -81,12 +107,14 @@ export default async function PublicUserPage({
               {registrationDateFormatter.format(new Date(profile.registeredAt))}注册
             </p>
           </div>
-          <div className='rounded-xl bg-blue-50 px-6 py-4 text-center dark:bg-blue-950/40'>
-            <div className='text-3xl font-bold text-blue-700 dark:text-blue-300'>
-              {profile.contributionTotals.all}
+          {profile.contributionTotals.all > 0 ? (
+            <div className='rounded-xl bg-blue-50 px-6 py-4 text-center dark:bg-blue-950/40'>
+              <div className='text-3xl font-bold text-blue-700 dark:text-blue-300'>
+                {profile.contributionTotals.all}
+              </div>
+              <div className='mt-1 text-sm text-blue-700/80 dark:text-blue-300/80'>公开贡献</div>
             </div>
-            <div className='mt-1 text-sm text-blue-700/80 dark:text-blue-300/80'>公开贡献</div>
-          </div>
+          ) : null}
         </div>
 
         <div className='mt-6 flex flex-wrap gap-2' aria-label='用户组'>
@@ -105,44 +133,50 @@ export default async function PublicUserPage({
         </div>
 
         {contributor?.url ? (
-          <div className='mt-4'>
+          <div className='mt-6 border-t border-gray-200 pt-4 dark:border-gray-700'>
             <InlineExternalLink
               href={contributor.url}
               ariaLabel={`${contributor.name}的外部主页（在新标签页打开）`}
+              className='group inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3.5 py-2.5 font-medium no-underline shadow-sm transition-colors hover:border-blue-300 hover:bg-blue-100 dark:border-blue-800 dark:bg-blue-950/40 dark:hover:border-blue-700 dark:hover:bg-blue-900/60'
             >
-              外部主页
+              <svg
+                className='h-4 w-4 shrink-0'
+                fill='none'
+                stroke='currentColor'
+                viewBox='0 0 24 24'
+                aria-hidden='true'
+              >
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth={1.8}
+                  d='M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V16.5M14.25 3H21m0 0v6.75M21 3l-9.75 9.75'
+                />
+              </svg>
+              <span>访问外部主页</span>
             </InlineExternalLink>
           </div>
         ) : null}
       </Card>
 
-      <section aria-labelledby='contribution-totals-heading'>
-        <h2 id='contribution-totals-heading' className='mb-3 text-xl font-semibold'>
-          贡献统计
-        </h2>
-        <div
-          className={
-            profile.reviewCount > 0
-              ? 'grid grid-cols-2 gap-3 sm:grid-cols-3'
-              : 'grid grid-cols-2 gap-3'
-          }
-        >
-          <Card className='border border-gray-200 text-center dark:border-gray-700'>
-            <div className='text-2xl font-bold'>{profile.contributionTotals.articles}</div>
-            <div className='mt-1 text-sm text-gray-500 dark:text-gray-400'>文章编辑</div>
-          </Card>
-          <Card className='border border-gray-200 text-center dark:border-gray-700'>
-            <div className='text-2xl font-bold'>{profile.contributionTotals.gameData}</div>
-            <div className='mt-1 text-sm text-gray-500 dark:text-gray-400'>游戏数据编辑</div>
-          </Card>
-          {profile.reviewCount > 0 && (
-            <Card className='col-span-2 border border-gray-200 text-center sm:col-span-1 dark:border-gray-700'>
-              <div className='text-2xl font-bold'>{profile.reviewCount}</div>
-              <div className='mt-1 text-sm text-gray-500 dark:text-gray-400'>审核</div>
-            </Card>
-          )}
-        </div>
-      </section>
+      {contributionStats.length > 0 ? (
+        <section aria-labelledby='contribution-totals-heading'>
+          <h2 id='contribution-totals-heading' className='mb-3 text-xl font-semibold'>
+            贡献统计
+          </h2>
+          <div className={getContributionStatsGridClassName(contributionStats.length)}>
+            {contributionStats.map((stat) => (
+              <Card
+                key={stat.label}
+                className='border border-gray-200 text-center dark:border-gray-700'
+              >
+                <div className='text-2xl font-bold'>{stat.value}</div>
+                <div className='mt-1 text-sm text-gray-500 dark:text-gray-400'>{stat.label}</div>
+              </Card>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       <Card
         as='section'
