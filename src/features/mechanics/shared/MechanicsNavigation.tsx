@@ -4,6 +4,7 @@ import { useMobile } from '@/hooks/useMediaQuery';
 import { useNavigationTabs } from '@/hooks/useNavigationTabs';
 import ActionTile from '@/components/ui/ActionTile';
 import PageHeader from '@/components/ui/PageHeader';
+import PageShell from '@/components/ui/PageShell';
 import Image from '@/components/Image';
 
 import { MECHANICS_NAV_ITEMS } from '../sections';
@@ -57,7 +58,7 @@ export default function MechanicsNavigation({ children, description }: Mechanics
   const hasActiveMechanicsTab = MECHANICS_NAV_ITEMS.some((tab) => isTabActive(tab.href));
 
   return (
-    <div className='mx-auto max-w-3xl space-y-4 md:max-w-7xl md:space-y-8 md:p-6 dark:text-slate-200'>
+    <PageShell width='maximum' className='space-y-4 md:space-y-8 dark:text-slate-200'>
       <PageHeader title='局内机制' description={description} className='mb-2 md:mb-4' />
 
       <NavigationButtons isMobile={isMobile} isTabActive={isTabActive} />
@@ -69,6 +70,6 @@ export default function MechanicsNavigation({ children, description }: Mechanics
       {hasActiveMechanicsTab ? (
         <NavigationButtons isMobile={isMobile} isTabActive={isTabActive} />
       ) : null}
-    </div>
+    </PageShell>
   );
 }

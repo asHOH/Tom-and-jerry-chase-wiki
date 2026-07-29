@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 
 import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
 import { generatePageMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
+import PageShell from '@/components/ui/PageShell';
 
 import AchievementGridClient from './AchievementGridClient';
 
@@ -17,8 +18,8 @@ export default async function AchievementsPage() {
   const readModel = await getPublishedDomainReadModel('achievements');
 
   return (
-    <div className='mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8'>
+    <PageShell width='maximum' className='py-8'>
       <AchievementGridClient data={readModel.data} publishedRevision={readModel.revision} />
-    </div>
+    </PageShell>
   );
 }

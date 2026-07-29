@@ -8,6 +8,7 @@ import { cn } from '@/lib/design';
 import ButtonLink from '@/components/ui/ButtonLink';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import PageHeader from '@/components/ui/PageHeader';
+import PageShell from '@/components/ui/PageShell';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
 import {
   ClockIcon,
@@ -66,17 +67,17 @@ export default function PreviewClient() {
 
   if (loading) {
     return (
-      <div className='container mx-auto px-4 py-8'>
+      <PageShell width='narrow' className='py-8'>
         <div className='flex min-h-100 items-center justify-center'>
           <LoadingSpinner size='lg' />
         </div>
-      </div>
+      </PageShell>
     );
   }
 
   if (error || !data) {
     return (
-      <div className='container mx-auto px-4 py-8'>
+      <PageShell width='narrow' className='py-8'>
         <div className='py-12 text-center'>
           <div className='mb-4 text-6xl'>🔗</div>
           <h2 className='mb-2 text-2xl font-bold text-gray-800 dark:text-gray-200'>
@@ -87,7 +88,7 @@ export default function PreviewClient() {
           </p>
           <ButtonLink href='/'>返回首页</ButtonLink>
         </div>
-      </div>
+      </PageShell>
     );
   }
 
@@ -121,7 +122,7 @@ export default function PreviewClient() {
   const statusInfo = getStatusInfo(data.article.version.status);
 
   return (
-    <div className='container mx-auto max-w-4xl px-4 py-8'>
+    <PageShell width='narrow' className='py-8'>
       {/* Preview Banner */}
       <div className='mb-6'>
         <div
@@ -264,6 +265,6 @@ export default function PreviewClient() {
           </Link>
         </div>
       </div>
-    </div>
+    </PageShell>
   );
 }

@@ -11,6 +11,7 @@ import {
   RANKABLE_PROPERTIES,
   RankableProperty,
 } from '@/features/characters/utils/ranking';
+import PageShell from '@/components/ui/PageShell';
 
 export const dynamic = 'force-static';
 
@@ -68,12 +69,12 @@ export default async function PropertyRankPage({ params, searchParams }: PagePro
   const readModel = await getPublishedDomainReadModel('characters');
 
   return (
-    <div className='mx-auto max-w-7xl space-y-6 p-6'>
+    <PageShell width='maximum' className='space-y-6 py-6'>
       <CharacterRankingGrid
         initialProperty={property}
         data={readModel.data}
         publishedRevision={readModel.revision}
       />
-    </div>
+    </PageShell>
   );
 }

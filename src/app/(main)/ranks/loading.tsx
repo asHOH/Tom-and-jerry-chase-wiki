@@ -1,5 +1,6 @@
 import { LOADING_COUNTS } from '@/constants/loadingCounts';
 import { RANKABLE_PROPERTIES } from '@/features/characters/utils/ranking';
+import PageShell from '@/components/ui/PageShell';
 import { Skeleton } from '@/components/ui/Skeleton';
 
 const commonPropertyCount = RANKABLE_PROPERTIES.filter((property) => !property.faction).length;
@@ -28,7 +29,7 @@ function FilterRowSkeleton({
 
 export default function Loading() {
   return (
-    <div className='mx-auto max-w-7xl space-y-6 p-6'>
+    <PageShell width='maximum' className='space-y-6 py-6'>
       <div className='space-y-8'>
         {/* Header skeleton */}
         <div className='mb-8 space-y-4 px-4 text-center'>
@@ -81,6 +82,6 @@ export default function Loading() {
           </div>
         </div>
       </div>
-    </div>
+    </PageShell>
   );
 }

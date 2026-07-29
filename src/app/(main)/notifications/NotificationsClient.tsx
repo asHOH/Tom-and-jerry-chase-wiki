@@ -15,6 +15,7 @@ import { FormInput } from '@/components/ui/FormControls';
 import LoadingState from '@/components/ui/LoadingState';
 import Notice, { type NoticeVariant } from '@/components/ui/Notice';
 import PageHeader from '@/components/ui/PageHeader';
+import PageShell from '@/components/ui/PageShell';
 import SectionHeader from '@/components/ui/SectionHeader';
 import { ChatBubbleIcon, CheckCircleIcon, CloseIcon } from '@/components/icons/CommonIcons';
 import Link from '@/components/Link';
@@ -227,7 +228,7 @@ export default function NotificationsClient() {
   };
 
   return (
-    <main className='mx-auto w-full max-w-5xl space-y-8 px-4 py-8 text-gray-900 sm:px-6 dark:text-gray-100'>
+    <PageShell width='standard' className='space-y-8 py-8 text-gray-900 dark:text-gray-100'>
       <PageHeader title='通知中心' description='查看站内通知，管理站内订阅与邮件设置' />
 
       <div className='grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start'>
@@ -517,6 +518,6 @@ export default function NotificationsClient() {
           </div>
         </Card>
       </div>
-    </main>
+    </PageShell>
   );
 }

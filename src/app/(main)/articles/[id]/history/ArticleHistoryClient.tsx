@@ -14,6 +14,7 @@ import ButtonLink from '@/components/ui/ButtonLink';
 import Card from '@/components/ui/Card';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import PageHeader from '@/components/ui/PageHeader';
+import PageShell from '@/components/ui/PageShell';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
 import { ClockIcon, UserCircleIcon } from '@/components/icons/CommonIcons';
 import Link from '@/components/Link';
@@ -156,17 +157,17 @@ export default function ArticleHistoryClient() {
 
   if (loading) {
     return (
-      <div className='container mx-auto px-4 py-8'>
+      <PageShell width='maximum' className='py-8'>
         <div className='flex min-h-100 items-center justify-center'>
           <LoadingSpinner size='lg' />
         </div>
-      </div>
+      </PageShell>
     );
   }
 
   if (error || !data) {
     return (
-      <div className='container mx-auto px-4 py-8'>
+      <PageShell width='maximum' className='py-8'>
         <Card className='py-12 text-center'>
           <div className='mb-4 text-6xl'>📚</div>
           <h2 className='mb-2 text-2xl font-bold text-gray-800 dark:text-gray-200'>
@@ -175,7 +176,7 @@ export default function ArticleHistoryClient() {
           <p className='mb-6 text-gray-600 dark:text-gray-400'>无法加载此文章的历史版本</p>
           <ButtonLink href={`/articles/${articleId}`}>返回文章</ButtonLink>
         </Card>
-      </div>
+      </PageShell>
     );
   }
 
@@ -188,7 +189,7 @@ export default function ArticleHistoryClient() {
     };
 
     return (
-      <div className='container mx-auto max-w-7xl px-4 py-8'>
+      <PageShell width='maximum' className='py-8'>
         <PageHeader title='版本差异' description={data.article.title} className='mb-8' />
 
         <ArticleDiffViewer
@@ -209,12 +210,12 @@ export default function ArticleHistoryClient() {
               }
             : {})}
         />
-      </div>
+      </PageShell>
     );
   }
 
   return (
-    <div className='container mx-auto max-w-7xl px-4 py-8'>
+    <PageShell width='maximum' className='py-8'>
       {/* Header */}
       <PageHeader
         title='版本历史'
@@ -411,6 +412,6 @@ export default function ArticleHistoryClient() {
           </Link>
         </div>
       </div>
-    </div>
+    </PageShell>
   );
 }

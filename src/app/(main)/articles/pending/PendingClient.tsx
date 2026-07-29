@@ -10,6 +10,7 @@ import Button from '@/components/ui/Button';
 import ButtonLink from '@/components/ui/ButtonLink';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import PageHeader from '@/components/ui/PageHeader';
+import PageShell from '@/components/ui/PageShell';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
 import { CheckBadgeIcon, ClockIcon, CloseIcon, EyeIcon } from '@/components/icons/CommonIcons';
 import Link from '@/components/Link';
@@ -180,17 +181,17 @@ export default function PendingClient() {
 
   if (loading) {
     return (
-      <div className='container mx-auto px-4 py-8'>
+      <PageShell width='standard' className='py-8'>
         <div className='flex min-h-100 items-center justify-center'>
           <LoadingSpinner size='lg' />
         </div>
-      </div>
+      </PageShell>
     );
   }
 
   if (error) {
     return (
-      <div className='container mx-auto px-4 py-8'>
+      <PageShell width='standard' className='py-8'>
         <div className='py-12 text-center'>
           <div className='mb-4 text-6xl'>🚫</div>
           <h2 className='mb-2 text-2xl font-bold text-gray-800 dark:text-gray-200'>
@@ -206,12 +207,12 @@ export default function PendingClient() {
           </p>
           <ButtonLink href='/articles'>返回文章列表</ButtonLink>
         </div>
-      </div>
+      </PageShell>
     );
   }
 
   return (
-    <div className='space-y-8 dark:text-slate-200'>
+    <PageShell width='standard' className='space-y-8 dark:text-slate-200'>
       <PageHeader
         title={canModerate ? '内容审核' : '待审核内容'}
         description={canModerate ? '管理待审核的文章提交' : '查看您的待审核提交'}
@@ -412,6 +413,6 @@ export default function PendingClient() {
           )}
         </div>
       </div>
-    </div>
+    </PageShell>
   );
 }

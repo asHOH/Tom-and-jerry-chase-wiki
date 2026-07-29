@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { generatePageMetadata } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
 import PageHeader from '@/components/ui/PageHeader';
+import PageShell from '@/components/ui/PageShell';
 
 export const dynamic = 'force-static';
 
@@ -96,7 +97,7 @@ const MODES = [
 
 export default function StatShowdownHubPage() {
   return (
-    <div className='mx-auto max-w-3xl space-y-2 p-2 md:max-w-6xl md:space-y-8 md:p-6 dark:text-slate-200'>
+    <PageShell width='wide' className='space-y-2 md:space-y-8 dark:text-slate-200'>
       <PageHeader title='能力对决' description={DESCRIPTION} className='mb-4 md:mb-8' />
 
       <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4'>
@@ -116,6 +117,6 @@ export default function StatShowdownHubPage() {
           </Link>
         ))}
       </div>
-    </div>
+    </PageShell>
   );
 }

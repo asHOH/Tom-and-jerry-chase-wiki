@@ -20,6 +20,7 @@ import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import Notice from '@/components/ui/Notice';
 import PageHeader from '@/components/ui/PageHeader';
+import PageShell from '@/components/ui/PageShell';
 import ArticleForm, { CategoryOption } from '@/components/articles/ArticleForm';
 import Link from '@/components/Link';
 
@@ -234,11 +235,11 @@ const EditArticleClient: React.FC<EditArticleClientProps> = ({ characterOptions 
   // Loading state for user authentication and article data
   if (isLoading) {
     return (
-      <div className='space-y-8 dark:text-slate-200'>
+      <PageShell width='narrow' className='space-y-8 dark:text-slate-200'>
         <div className='flex min-h-100 items-center justify-center'>
           <LoadingSpinner size='lg' />
         </div>
-      </div>
+      </PageShell>
     );
   }
 
@@ -261,7 +262,7 @@ const EditArticleClient: React.FC<EditArticleClientProps> = ({ characterOptions 
   const pendingSource = articleData?.edit_sources.pending_mine;
 
   return (
-    <div className='space-y-8 dark:text-slate-200'>
+    <PageShell width='narrow' className='space-y-8 dark:text-slate-200'>
       {/* Header */}
       <PageHeader title='编辑文章' description='修改和完善您的文章内容' className='mb-8'>
         {/* Navigation Breadcrumb */}
@@ -376,7 +377,7 @@ const EditArticleClient: React.FC<EditArticleClientProps> = ({ characterOptions 
         showCommitMessage={true}
         submitNoticeMessage={submitNoticeMessage}
       />
-    </div>
+    </PageShell>
   );
 };
 

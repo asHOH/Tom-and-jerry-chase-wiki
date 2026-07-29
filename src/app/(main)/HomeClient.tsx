@@ -13,6 +13,7 @@ import FeedbackSection, { FeedbackSectionRef } from '@/components/ui/FeedbackSec
 import HomePageSection from '@/components/ui/NavSection';
 import OfficialSitesDisplay from '@/components/ui/OfficialSitesDisplay';
 import PageHeader from '@/components/ui/PageHeader';
+import PageShell from '@/components/ui/PageShell';
 import LoginDialog from '@/components/LoginDialog';
 import { ProjectStatement } from '@/components/ProjectStatement';
 import { VersionDisplay } from '@/components/VersionDisplay';
@@ -61,7 +62,7 @@ export default function HomeContentClient({ description, hasServiceKey }: Props)
   };
 
   return (
-    <div className='space-y-6'>
+    <PageShell width='wide' className='space-y-6'>
       <PageHeader
         title='猫和老鼠手游wiki'
         description={description}
@@ -137,6 +138,6 @@ export default function HomeContentClient({ description, hasServiceKey }: Props)
           <LoginDialog onClose={() => setShowLoginDialog(false)} isMobile={isMobile} />
         )}
       </AnimatePresence>
-    </div>
+    </PageShell>
   );
 }

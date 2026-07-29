@@ -5,6 +5,7 @@ import { notFound, redirect } from 'next/navigation';
 import { getPublishedGameDataSnapshot } from '@/lib/gameData/published/publishedSnapshot';
 import { getGotoResult } from '@/lib/gotoUtils';
 import PageHeader from '@/components/ui/PageHeader';
+import PageShell from '@/components/ui/PageShell';
 import GotoLink from '@/components/GotoLink';
 
 export default async function GotoPage({
@@ -38,7 +39,7 @@ export default async function GotoPage({
   }
 
   return (
-    <main className='mx-auto w-full max-w-3xl px-4 py-6 sm:px-6'>
+    <PageShell width='narrow' className='py-6'>
       <PageHeader title={result.name} description={`${result.name}可能指：`} />
       <ul className='mt-4 list-inside list-disc space-y-2 rounded-lg bg-white/60 p-4 text-lg text-gray-800 shadow-sm dark:bg-slate-900/40 dark:text-gray-200'>
         {result.candidates.map((c) => (
@@ -66,6 +67,6 @@ export default async function GotoPage({
           </li>
         ))}
       </ul>
-    </main>
+    </PageShell>
   );
 }

@@ -6,6 +6,7 @@ import type { ItemGroup } from '@/data/types';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
 import PageHeader from '@/components/ui/PageHeader';
+import PageShell from '@/components/ui/PageShell';
 
 import SingleItemCardDisplay from './SingleItemCardDisplay';
 
@@ -19,7 +20,7 @@ export default function ItemGroupClient({ itemGroup }: { itemGroup: ItemGroup })
   }, [itemGroup.group]);
 
   return (
-    <div className='mx-auto max-w-3xl space-y-2 p-2 md:max-w-7xl md:space-y-8 md:p-6 dark:text-slate-200'>
+    <PageShell width='maximum' className='space-y-2 md:space-y-8 dark:text-slate-200'>
       <PageHeader
         title={itemGroup.name}
         description={<TextWithHoverTooltips text={itemGroup.description || ''} />}
@@ -33,6 +34,6 @@ export default function ItemGroupClient({ itemGroup }: { itemGroup: ItemGroup })
         estimatedRowHeight={240}
         mobileEstimatedRowHeight={180}
       />
-    </div>
+    </PageShell>
   );
 }

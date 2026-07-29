@@ -5,6 +5,7 @@ import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedS
 import { generatePageMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import type { FactionId } from '@/data/types';
 import ArticlesClient from '@/features/articles/components/ArticlesClient';
+import PageShell from '@/components/ui/PageShell';
 
 export const revalidate = 60;
 
@@ -35,10 +36,12 @@ export default async function ArticlesPage() {
   ) as Record<string, { id: string; factionId?: FactionId }>;
 
   return (
-    <ArticlesClient
-      articles={articles}
-      characterSummaries={characterSummaries}
-      description={DESCRIPTION}
-    />
+    <PageShell width='wide'>
+      <ArticlesClient
+        articles={articles}
+        characterSummaries={characterSummaries}
+        description={DESCRIPTION}
+      />
+    </PageShell>
   );
 }

@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 import { Metadata } from 'next';
 
 import { generatePageMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
+import PageShell from '@/components/ui/PageShell';
 
 import ArticleHistoryClient from './ArticleHistoryClient';
 
@@ -27,9 +28,9 @@ export default function ArticleHistoryPage() {
   return (
     <Suspense
       fallback={
-        <div className='container mx-auto px-4 py-16 text-center text-gray-600 dark:text-gray-400'>
+        <PageShell width='maximum' className='py-16 text-center text-gray-600 dark:text-gray-400'>
           正在加载版本历史...
-        </div>
+        </PageShell>
       }
     >
       <ArticleHistoryClient />

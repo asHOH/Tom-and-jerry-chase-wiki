@@ -4,6 +4,7 @@ import { useMobile } from '@/hooks/useMediaQuery';
 import { useNavigationTabs } from '@/hooks/useNavigationTabs';
 import ActionTile from '@/components/ui/ActionTile';
 import PageHeader from '@/components/ui/PageHeader';
+import PageShell from '@/components/ui/PageShell';
 import Image from '@/components/Image';
 
 import { USAGES_NAV_ITEMS } from '../sections';
@@ -56,7 +57,7 @@ export default function UsagesNavigation({ children, description }: UsagesNaviga
   const isTabActive = (tabPath: string) => isActive(tabPath);
 
   return (
-    <div className='mx-auto max-w-3xl space-y-4 md:max-w-7xl md:space-y-8 md:p-6 dark:text-slate-200'>
+    <PageShell width='maximum' className='space-y-4 md:space-y-8 dark:text-slate-200'>
       <PageHeader title='网站说明' description={description} className='mb-2 md:mb-4' />
 
       <NavigationButtons isMobile={isMobile} isTabActive={isTabActive} />
@@ -66,6 +67,6 @@ export default function UsagesNavigation({ children, description }: UsagesNaviga
       </div>
 
       <NavigationButtons isMobile={isMobile} isTabActive={isTabActive} />
-    </div>
+    </PageShell>
   );
 }

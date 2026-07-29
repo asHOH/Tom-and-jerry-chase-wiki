@@ -10,6 +10,7 @@ import type { FactionId } from '@/data/types';
 import { CharacterTable, winRatesData } from '@/data/winRates';
 import FilterRow from '@/components/ui/FilterRow';
 import PageHeader from '@/components/ui/PageHeader';
+import PageShell from '@/components/ui/PageShell';
 import Link from '@/components/Link';
 
 type ColumnKey = 'rank' | 'faction' | 'character' | 'pickRate' | 'winRate' | 'banRate';
@@ -359,7 +360,7 @@ export default function WinRatesClient({ description, characterFactions }: WinRa
   };
 
   return (
-    <div className='mx-auto max-w-3xl space-y-2 p-2 md:max-w-7xl md:space-y-8 md:p-6 dark:text-slate-200'>
+    <PageShell width='maximum' className='space-y-2 md:space-y-8 dark:text-slate-200'>
       <PageHeader title='胜率数据统计' description={description} className='mb-4 md:mb-8'>
         <div className='mx-auto w-full max-w-2xl space-y-0 md:px-2'>
           <FilterRow<string>
@@ -562,6 +563,6 @@ export default function WinRatesClient({ description, characterFactions }: WinRa
           </div>
         </section>
       )}
-    </div>
+    </PageShell>
   );
 }

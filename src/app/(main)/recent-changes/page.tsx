@@ -11,6 +11,7 @@ import {
 } from '@/lib/recentChanges';
 import Card from '@/components/ui/Card';
 import PageHeader from '@/components/ui/PageHeader';
+import PageShell from '@/components/ui/PageShell';
 import Link from '@/components/Link';
 
 const DESCRIPTION = '查看社区最近通过审核的文章与游戏数据更改';
@@ -47,7 +48,7 @@ export default async function RecentChangesPage({ searchParams }: PageProps) {
   const result = await getRecentChanges(filter, requestedPage);
 
   return (
-    <main className='mx-auto w-full max-w-5xl space-y-6 px-3 py-6 sm:px-6 sm:py-8 dark:text-gray-100'>
+    <PageShell width='standard' className='space-y-6 py-6 sm:py-8 dark:text-gray-100'>
       <PageHeader title='最近更改' description={DESCRIPTION} />
 
       <nav aria-label='更改类型筛选' className='flex justify-center gap-2'>
@@ -97,7 +98,7 @@ export default async function RecentChangesPage({ searchParams }: PageProps) {
       </Card>
 
       <Pagination filter={filter} currentPage={result.currentPage} totalPages={result.totalPages} />
-    </main>
+    </PageShell>
   );
 }
 

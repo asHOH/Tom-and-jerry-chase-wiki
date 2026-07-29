@@ -14,6 +14,7 @@ import {
 import { useToast } from '@/context/ToastContext';
 
 import EditModeToolbar from './EditModeToolbar';
+import PageShell from './PageShell';
 
 type EditModePageShellProps = {
   entityType: PublishableEntityType;
@@ -78,13 +79,15 @@ export default function EditModePageShell({
   return (
     <>
       <EditModeContext value={editModeContextValue}>
-        {publishedHistory ? (
-          <PublishedEntityHistoryProvider history={publishedHistory}>
-            {children}
-          </PublishedEntityHistoryProvider>
-        ) : (
-          children
-        )}
+        <PageShell width='maximum'>
+          {publishedHistory ? (
+            <PublishedEntityHistoryProvider history={publishedHistory}>
+              {children}
+            </PublishedEntityHistoryProvider>
+          ) : (
+            children
+          )}
+        </PageShell>
       </EditModeContext>
       {isEditMode ? (
         <EditModeToolbar

@@ -8,6 +8,7 @@ import CharacterDisplay from '@/features/characters/components/character-grid/Ch
 import { getCharacterRelation } from '@/features/characters/utils/relationReadModel';
 import { CharacterSlotsSelector } from '@/components/ui/CharacterSelector';
 import PageHeader from '@/components/ui/PageHeader';
+import PageShell from '@/components/ui/PageShell';
 
 type Props = {
   characters: PublishedGameDataByType['characters'];
@@ -82,7 +83,7 @@ export default function RecommendedPageClient({ characters, maps }: Props) {
   }, [selectedMice, allCats, selectedMapName, charactersSnap]);
 
   return (
-    <div className='min-h-screen'>
+    <PageShell width='maximum' className='min-h-screen'>
       <PageHeader
         title='阵容推荐'
         description='选择对手的老鼠阵容，系统将为您推荐最佳的猫角色。'
@@ -154,6 +155,6 @@ export default function RecommendedPageClient({ characters, maps }: Props) {
           没有找到特别推荐的猫咪，可能是因为数据不足或关系平衡。
         </div>
       )}
-    </div>
+    </PageShell>
   );
 }

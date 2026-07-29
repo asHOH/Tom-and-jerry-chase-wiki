@@ -7,6 +7,7 @@ import ChangeLogs, { ChangeLogsRef } from '@/components/ui/ChangeLogs';
 import FeedbackSection, { FeedbackSectionRef } from '@/components/ui/FeedbackSection';
 import HomePageSection from '@/components/ui/NavSection';
 import PageHeader from '@/components/ui/PageHeader';
+import PageShell from '@/components/ui/PageShell';
 
 interface CharacterRankingGridProps {
   description?: string;
@@ -65,7 +66,7 @@ export default function CharacterRankingGrid({ description }: CharacterRankingGr
   };
 
   return (
-    <div className='mx-auto max-w-3xl space-y-2 p-2 md:max-w-7xl md:space-y-8 md:p-6 dark:text-slate-200'>
+    <PageShell width='maximum' className='space-y-2 md:space-y-8 dark:text-slate-200'>
       <PageHeader title='工具栏' description={description} className='mb-4 md:mb-8' />
 
       {SECTIONS.map((section, index) => {
@@ -92,6 +93,6 @@ export default function CharacterRankingGrid({ description }: CharacterRankingGr
       {/*<div className='border-t-2 border-b-2 border-dashed border-gray-300 dark:border-gray-700'>
         {children}
       </div>*/}
-    </div>
+    </PageShell>
   );
 }

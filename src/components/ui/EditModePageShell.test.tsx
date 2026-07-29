@@ -81,6 +81,7 @@ describe('EditModePageShell', () => {
       showToast: mockInfo,
     });
     expect(screen.getByText('content')).toBeInTheDocument();
+    expect(screen.getByRole('main')).toHaveClass('mx-auto', 'w-full', 'max-w-7xl');
     expect(screen.queryByTestId('edit-mode-toolbar')).not.toBeInTheDocument();
     expect(mockEditModeToolbar).not.toHaveBeenCalled();
   });

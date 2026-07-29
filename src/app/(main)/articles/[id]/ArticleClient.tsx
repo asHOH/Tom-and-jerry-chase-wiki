@@ -13,6 +13,7 @@ import type { FactionId } from '@/data/types';
 import Button from '@/components/ui/Button';
 import ButtonLink from '@/components/ui/ButtonLink';
 import PageHeader from '@/components/ui/PageHeader';
+import PageShell from '@/components/ui/PageShell';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
 import CommentsSection from '@/components/comments/CommentsSection';
 import {
@@ -495,7 +496,7 @@ export default function ArticleClient({
   );
 
   return (
-    <div className='container mx-auto max-w-7xl px-1 py-2 md:px-6 md:py-8'>
+    <PageShell width='maximum' className='py-2 md:py-8'>
       {/* Reading Progress Bar - Teleported to body to escape transformed containers */}
       {mounted &&
         createPortal(
@@ -683,6 +684,6 @@ export default function ArticleClient({
           </div>
         </div>
       </div>
-    </div>
+    </PageShell>
   );
 }

@@ -8,6 +8,7 @@ import { getPublicUserProfile, type PublicContribution } from '@/lib/users/publi
 import { contributors, RoleType } from '@/data/contributors';
 import Card from '@/components/ui/Card';
 import { InlineExternalLink } from '@/components/ui/InlineExternalLink';
+import PageShell from '@/components/ui/PageShell';
 import Link from '@/components/Link';
 
 const getProfile = cache(getPublicUserProfile);
@@ -97,7 +98,7 @@ export default async function PublicUserPage({
   ].filter((stat) => stat.value > 0);
 
   return (
-    <main className='mx-auto w-full max-w-5xl space-y-6 px-4 py-8 text-gray-900 sm:px-6 dark:text-gray-100'>
+    <PageShell width='standard' className='space-y-6 py-8 text-gray-900 dark:text-gray-100'>
       <Card as='header' className='border border-gray-200 p-6 sm:p-8 dark:border-gray-700'>
         <div className='flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between'>
           <div className='min-w-0'>
@@ -212,7 +213,7 @@ export default async function PublicUserPage({
           <p className='px-5 py-12 text-center text-gray-500 dark:text-gray-400'>暂无公开贡献</p>
         )}
       </Card>
-    </main>
+    </PageShell>
   );
 }
 

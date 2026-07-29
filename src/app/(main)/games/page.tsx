@@ -4,6 +4,7 @@ import { generatePageMetadata } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
 import HomePageSection from '@/components/ui/NavSection';
 import PageHeader from '@/components/ui/PageHeader';
+import PageShell from '@/components/ui/PageShell';
 
 export const dynamic = 'force-static';
 
@@ -45,10 +46,10 @@ const GAME_BUTTONS = [
 
 export default function GamesPage() {
   return (
-    <div className='mx-auto max-w-3xl space-y-2 p-2 md:max-w-6xl md:space-y-8 md:p-6 dark:text-slate-200'>
+    <PageShell width='wide' className='space-y-2 md:space-y-8 dark:text-slate-200'>
       <PageHeader title='小游戏' description={DESCRIPTION} className='mb-4 md:mb-8' />
 
       <HomePageSection title='游戏列表' buttons={GAME_BUTTONS} />
-    </div>
+    </PageShell>
   );
 }

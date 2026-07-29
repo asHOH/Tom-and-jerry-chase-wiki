@@ -18,6 +18,7 @@ import EntityCardFrame from '@/components/ui/EntityCardFrame';
 import FilterRow from '@/components/ui/FilterRow';
 import GameImage from '@/components/ui/GameImage';
 import PageHeader from '@/components/ui/PageHeader';
+import PageShell from '@/components/ui/PageShell';
 
 import AdviceCharacterList from './AdviceCharacterList';
 
@@ -123,7 +124,7 @@ export default function SpecialSkillAdviceClient({
     : allSkills;
 
   return (
-    <div className='mx-auto max-w-7xl space-y-8 p-6 dark:text-slate-200'>
+    <PageShell width='maximum' className='space-y-8 dark:text-slate-200'>
       <PageHeader
         title='特技推荐'
         description='根据各特技的应用场合和克制关系，选择最合适的特技'
@@ -295,6 +296,6 @@ export default function SpecialSkillAdviceClient({
           </Card>
         ))}
       </div>
-    </div>
+    </PageShell>
   );
 }

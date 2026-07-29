@@ -11,6 +11,7 @@ import { useToast } from '@/context/ToastContext';
 import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import PageHeader from '@/components/ui/PageHeader';
+import PageShell from '@/components/ui/PageShell';
 import ArticleForm, { CategoryOption } from '@/components/articles/ArticleForm';
 import Link from '@/components/Link';
 
@@ -182,11 +183,11 @@ const NewArticleClient: React.FC<NewArticleClientProps> = ({ characterOptions })
   // Loading state for user authentication
   if (isUserLoading || (isUserValidating && !canCreateArticle)) {
     return (
-      <div className='space-y-8 dark:text-slate-200'>
+      <PageShell width='narrow' className='space-y-8 dark:text-slate-200'>
         <div className='flex min-h-100 items-center justify-center'>
           <LoadingSpinner size='lg' />
         </div>
-      </div>
+      </PageShell>
     );
   }
 
@@ -196,7 +197,7 @@ const NewArticleClient: React.FC<NewArticleClientProps> = ({ characterOptions })
   }
 
   return (
-    <div className='space-y-8 dark:text-slate-200'>
+    <PageShell width='narrow' className='space-y-8 dark:text-slate-200'>
       {/* Header */}
       <PageHeader title='创建新文章' description='分享你的游戏心得和攻略技巧' className='mb-8'>
         {/* Navigation Breadcrumb */}
@@ -240,7 +241,7 @@ const NewArticleClient: React.FC<NewArticleClientProps> = ({ characterOptions })
         characterId={characterId}
         onCharacterChange={setCharacterId}
       />
-    </div>
+    </PageShell>
   );
 };
 

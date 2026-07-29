@@ -14,6 +14,7 @@ import { PublishedEntityHistoryProvider } from '@/context/PublishedEntityHistory
 import { useToast } from '@/context/ToastContext';
 import { CharacterDetails } from '@/features/characters/components/character-detail';
 import EditModeToolbar from '@/components/ui/EditModeToolbar';
+import PageShell from '@/components/ui/PageShell';
 import OnboardingTutorial from '@/components/OnboardingTutorial';
 
 export default function CharacterDetailsClient(props: CharacterDetailsProps) {
@@ -89,7 +90,7 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
 
   return (
     <>
-      <div className='min-h-screen'>
+      <PageShell width='maximum' className='min-h-screen'>
         <EditModeContext value={editModeContextValue}>
           {props.publishedHistory ? (
             <PublishedEntityHistoryProvider history={props.publishedHistory}>
@@ -119,7 +120,7 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
             </CharacterDetails>
           )}
         </EditModeContext>
-      </div>
+      </PageShell>
 
       {showCharacterTutorial && (
         <OnboardingTutorial

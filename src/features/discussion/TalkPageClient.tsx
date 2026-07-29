@@ -8,6 +8,7 @@ import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useUser } from '@/hooks/useUser';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import PageShell from '@/components/ui/PageShell';
 import LoginDialog from '@/components/LoginDialog';
 
 import { DiscussionInfoBanner } from './components/DiscussionInfoBanner';
@@ -181,7 +182,7 @@ export function TalkPageClient({
   }
 
   return (
-    <div className='mx-auto max-w-4xl px-4 py-6'>
+    <PageShell width='narrow' className='py-6'>
       {/* Page header */}
       <nav className='mb-1'>
         <Link
@@ -259,6 +260,6 @@ export function TalkPageClient({
       {showLoginDialog && (
         <LoginDialog onClose={() => setShowLoginDialog(false)} isMobile={isMobile} />
       )}
-    </div>
+    </PageShell>
   );
 }
