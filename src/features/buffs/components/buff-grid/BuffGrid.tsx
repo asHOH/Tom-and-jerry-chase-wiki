@@ -129,9 +129,9 @@ export default function BuffClient({ description, data = buffs, publishedRevisio
               <div className='w-full border-t border-gray-300 dark:border-gray-600'></div>
             </div>
             <div className='relative flex justify-center'>
-              <h1 className='inline-block bg-gray-100 px-4 text-2xl font-bold dark:bg-gray-900'>
+              <h2 className='inline-block bg-gray-100 px-4 text-2xl font-bold dark:bg-gray-900'>
                 状态
-              </h1>
+              </h2>
             </div>
           </div>
           {classGroups.length > 0 && (
@@ -176,9 +176,9 @@ export default function BuffClient({ description, data = buffs, publishedRevisio
               <div className='w-full border-t border-gray-300 dark:border-gray-600'></div>
             </div>
             <div className='relative flex justify-center'>
-              <h1 className='inline-block bg-gray-100 px-4 text-2xl font-bold dark:bg-gray-900'>
+              <h2 className='inline-block bg-gray-100 px-4 text-2xl font-bold dark:bg-gray-900'>
                 效果&属性
-              </h1>
+              </h2>
             </div>
           </div>
           {effectClassGroups.length > 0 && (
