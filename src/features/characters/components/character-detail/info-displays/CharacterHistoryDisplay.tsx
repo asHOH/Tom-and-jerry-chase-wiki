@@ -82,7 +82,7 @@ export default function CharacterHistoryDisplay({
           </li>
           {sortedHistory.map((entry, index) => (
             <li
-              key={`${entry.year}-${entry.date}-${entry.type}`}
+              key={`${entry.year}-${entry.date}-${entry.type}-${index}`}
               className={index === 0 ? 'text-blue-600 dark:text-blue-400' : ''}
             >
               <strong>

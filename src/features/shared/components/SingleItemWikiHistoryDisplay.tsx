@@ -94,7 +94,7 @@ export default function SingleItemWikiHistoryDisplay({ singleItem }: { singleIte
           </li>
           {sortedHistory.map((entry, index) => (
             <li
-              key={`${entry.year}-${entry.date}-${entry.type}`}
+              key={`${entry.year}-${entry.date}-${entry.type}-${index}`}
               className={cn(
                 'grid grid-cols-[3.25rem_auto_1fr] items-baseline gap-x-1',
                 index === 0 && 'text-blue-600 dark:text-blue-400'
