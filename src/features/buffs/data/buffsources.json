@@ -3661,10 +3661,6 @@
       "type": "skill"
     },
     {
-      "name": "贵族礼仪",
-      "type": "skill"
-    },
-    {
       "name": "追风双翼",
       "type": "skill"
     }
@@ -4205,10 +4201,6 @@
       "type": "skill"
     },
     {
-      "name": "贵族礼仪",
-      "type": "skill"
-    },
-    {
       "name": "超级变！变！变！",
       "type": "skill"
     },
@@ -4699,7 +4691,7 @@
   ],
   "禁止攻击": [
     {
-      "name": "知识渊博",
+      "name": "缴械",
       "type": "knowledgeCard"
     },
     {
