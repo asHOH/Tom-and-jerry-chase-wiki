@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
 
+import { getPublishedGameDataSnapshot } from '@/lib/gameData/published/publishedSnapshot';
 import { getGotoResult } from '@/lib/gotoUtils';
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ name: string }> }) {
@@ -18,7 +19,11 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     undefined;
   const descMode =
     rawDescMode === 'description' || rawDescMode === 'detailed' ? rawDescMode : undefined;
+  const snapshot = await getPublishedGameDataSnapshot();
   return NextResponse.json(
-    await getGotoResult(name, category, descMode ? { descMode } : undefined)
+    await getGotoResult(name, category, {
+      ...(descMode ? { descMode } : {}),
+      gameData: snapshot.data,
+    })
   );
 }

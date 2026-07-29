@@ -1,6 +1,7 @@
 import orderBy from 'lodash-es/orderBy';
 import uniqBy from 'lodash-es/uniqBy';
 
+import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { CATEGORY_HINTS, type CategoryHint, type GotoResult } from '@/lib/types';
 import type { ItemGroupDefinition } from '@/data/types';
 import { getDocPages } from '@/features/articles/utils/docs';
@@ -97,13 +98,41 @@ function push(map: Map<string, IndexEntry[]>, key: string, entry: IndexEntry) {
 
 let indexPromise: Promise<GotoIndex> | null = null;
 
-export async function ensureGotoIndex(): Promise<GotoIndex> {
+const staticGameData: PublishedGameDataByType = {
+  achievements,
+  buffs,
+  cards,
+  characters,
+  entities,
+  fixtures,
+  items,
+  maps,
+  modes,
+  specialSkills,
+};
+
+export async function ensureGotoIndex(gameData?: PublishedGameDataByType): Promise<GotoIndex> {
+  if (gameData) {
+    return buildGotoIndex(gameData);
+  }
   if (indexPromise) return indexPromise;
-  indexPromise = buildGotoIndex();
+  indexPromise = buildGotoIndex(staticGameData);
   return indexPromise;
 }
 
-async function buildGotoIndex(): Promise<GotoIndex> {
+async function buildGotoIndex(gameData: PublishedGameDataByType): Promise<GotoIndex> {
+  const {
+    achievements,
+    buffs,
+    cards,
+    characters,
+    entities,
+    fixtures,
+    items,
+    maps,
+    modes,
+    specialSkills,
+  } = gameData;
   const byName = new Map<string, IndexEntry[]>();
 
   // Characters

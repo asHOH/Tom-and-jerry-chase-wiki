@@ -3,14 +3,19 @@
 import { useMemo, useState } from 'react';
 
 import { AssetManager } from '@/lib/assetManager';
-import { characters, maps } from '@/data/static';
+import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import CharacterDisplay from '@/features/characters/components/character-grid/CharacterDisplay';
 import { getCharacterRelation } from '@/features/characters/utils/relationReadModel';
 import { CharacterSlotsSelector } from '@/components/ui/CharacterSelector';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
 
-export default function RecommendedPageClient() {
+type Props = {
+  characters: PublishedGameDataByType['characters'];
+  maps: PublishedGameDataByType['maps'];
+};
+
+export default function RecommendedPageClient({ characters, maps }: Props) {
   const [selectedMice, setSelectedMice] = useState<(string | null)[]>([null, null, null, null]);
   const [selectedMapName, setSelectedMapName] = useState<string>('');
   const charactersSnap = characters;
@@ -27,7 +32,7 @@ export default function RecommendedPageClient() {
     return Object.values(maps)
       .filter((m) => (m.supportedModes ?? []).includes('经典奶酪赛'))
       .sort((a, b) => a.name.localeCompare(b.name, 'zh-CN'));
-  }, []);
+  }, [maps]);
 
   const recommendedCats = useMemo(() => {
     const activeMice = selectedMice.filter((id): id is string => id !== null);

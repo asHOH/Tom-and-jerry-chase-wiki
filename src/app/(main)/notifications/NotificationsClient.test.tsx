@@ -98,8 +98,8 @@ describe('NotificationsClient', () => {
   it('disables moderator-only toggles for ineligible users', () => {
     render(<NotificationsClient />);
 
-    expect(screen.getByRole('checkbox', { name: '新待审核文章' })).toBeDisabled();
-    expect(screen.getByRole('checkbox', { name: '新待审核游戏数据改动' })).toBeEnabled();
-    expect(screen.getByRole('checkbox', { name: '新待审核游戏数据改动' })).toBeChecked();
+    expect(screen.getByRole('checkbox', { name: /^新待审核文章/ })).toBeDisabled();
+    expect(screen.getByRole('checkbox', { name: /^新待审核游戏数据改动/ })).toBeEnabled();
+    expect(screen.getByRole('checkbox', { name: /^新待审核游戏数据改动/ })).toBeChecked();
   });
 });

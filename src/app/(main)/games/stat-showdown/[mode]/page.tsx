@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 
+import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
 import { generatePageMetadata } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
 
@@ -59,11 +60,13 @@ export default async function StatShowdownModePage({ params }: Props) {
 
   const gameMode = mode as GameMode;
   const meta = MODE_META[mode]!;
+  const characters = await getPublishedDomainReadModel('characters');
 
   return (
     <GameClient
       mode={gameMode}
       description={meta.description}
+      characters={characters.data}
       modeNav={<ModeNav currentMode={gameMode} />}
     />
   );

@@ -2,6 +2,7 @@
 
 import { notFound, redirect } from 'next/navigation';
 
+import { getPublishedGameDataSnapshot } from '@/lib/gameData/published/publishedSnapshot';
 import { getGotoResult } from '@/lib/gotoUtils';
 import PageDescription from '@/components/ui/PageDescription';
 import PageTitle from '@/components/ui/PageTitle';
@@ -25,7 +26,11 @@ export default async function GotoPage({
         : undefined;
   const descMode =
     rawDescMode === 'description' || rawDescMode === 'detailed' ? rawDescMode : undefined;
-  const result = await getGotoResult(name, category, descMode ? { descMode } : undefined);
+  const snapshot = await getPublishedGameDataSnapshot();
+  const result = await getGotoResult(name, category, {
+    ...(descMode ? { descMode } : {}),
+    gameData: snapshot.data,
+  });
 
   if (!result) notFound();
 

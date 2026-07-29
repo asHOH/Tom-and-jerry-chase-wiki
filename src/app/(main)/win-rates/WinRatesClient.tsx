@@ -5,9 +5,7 @@ import { useMemo, useState } from 'react';
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { cn, getFactionButtonColors } from '@/lib/design';
 import { useFilterState } from '@/lib/filterUtils';
-import type { CharacterWithFaction } from '@/lib/types';
 import { useDarkMode } from '@/context/DarkModeContext';
-import { characters } from '@/data/static';
 import type { FactionId } from '@/data/types';
 import { CharacterTable, winRatesData } from '@/data/winRates';
 import FilterRow from '@/components/ui/FilterRow';
@@ -34,6 +32,7 @@ interface EnrichedCharacterRow {
 
 interface WinRatesClientProps {
   description: string;
+  characterFactions: Readonly<Record<string, FactionId>>;
 }
 
 function escapeCsvCell(value: unknown): string {
@@ -89,14 +88,6 @@ function getRankOrder(rank: string): number {
   return idx === -1 ? Number.MAX_SAFE_INTEGER : idx;
 }
 
-function getFactionIdFromCharacters(
-  characterName: string,
-  charactersRecord: DeepReadonly<Record<string, CharacterWithFaction>>
-): FactionId | null {
-  const factionId = charactersRecord[characterName]?.factionId;
-  return factionId === 'cat' || factionId === 'mouse' ? factionId : null;
-}
-
 function normalizeTableFaction(tableFaction: unknown): FactionId | null {
   if (tableFaction === '猫') return 'cat';
   if (tableFaction === '鼠') return 'mouse';
@@ -105,7 +96,7 @@ function normalizeTableFaction(tableFaction: unknown): FactionId | null {
 
 function enrichCharacterData(
   tables: CharacterTable[],
-  charactersRecord: DeepReadonly<Record<string, CharacterWithFaction>>
+  characterFactions: DeepReadonly<Record<string, FactionId>>
 ): EnrichedCharacterRow[] {
   const enriched: EnrichedCharacterRow[] = [];
 
@@ -117,8 +108,7 @@ function enrichCharacterData(
     );
 
     for (const row of table.rows) {
-      const faction =
-        getFactionIdFromCharacters(row.character, charactersRecord) ?? factionFromTable ?? 'mouse';
+      const faction = characterFactions[row.character] ?? factionFromTable ?? 'mouse';
       enriched.push({
         rank,
         rankOrder,
@@ -162,9 +152,8 @@ function getRanksFromSeason(seasonIndex: number): string[] {
   return Array.from(ranks).sort((a, b) => getRankOrder(a) - getRankOrder(b));
 }
 
-export default function WinRatesClient({ description }: WinRatesClientProps) {
+export default function WinRatesClient({ description, characterFactions }: WinRatesClientProps) {
   const [isDarkMode] = useDarkMode();
-  const charactersSnap = characters;
 
   const seasons = useMemo(() => getSeasons(), []);
 
@@ -207,8 +196,8 @@ export default function WinRatesClient({ description }: WinRatesClientProps) {
       });
     }
 
-    return enrichCharacterData(tables, charactersSnap);
-  }, [selectedSeason, charactersSnap]);
+    return enrichCharacterData(tables, characterFactions);
+  }, [selectedSeason, characterFactions]);
 
   const filteredAndSortedData = useMemo(() => {
     let filtered = enrichedData;

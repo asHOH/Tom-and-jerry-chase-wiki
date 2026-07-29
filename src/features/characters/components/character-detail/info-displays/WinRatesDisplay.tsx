@@ -4,9 +4,10 @@ import { useMemo, useState } from 'react';
 
 import { cn } from '@/lib/design';
 import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
-import { characters } from '@/data/static';
 import { CharacterWinRateEntry, getCharacterWinRates } from '@/data/winRates';
 import { ChevronDownIcon } from '@/components/icons/CommonIcons';
+
+import { usePublishedCharacter } from '../PublishedCharacterContext';
 
 interface WinRatesDisplayProps {
   characterName: string;
@@ -15,15 +16,15 @@ interface WinRatesDisplayProps {
 export default function WinRatesDisplay({ characterName }: WinRatesDisplayProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const editRuntime = useActiveEditRuntime();
-  const charactersSnap = useOptionalEditSnapshot(editRuntime?.stores.characters, characters);
+  const publishedCharacter = usePublishedCharacter(characterName);
+  const character = useOptionalEditSnapshot(
+    editRuntime?.stores.characters[characterName],
+    publishedCharacter
+  );
 
   const winRates = useMemo(
-    () =>
-      getCharacterWinRates(
-        [characterName, ...(charactersSnap[characterName]?.aliases ?? [])],
-        charactersSnap[characterName]?.factionId
-      ),
-    [characterName, charactersSnap]
+    () => getCharacterWinRates([characterName, ...(character.aliases ?? [])], character.factionId),
+    [character, characterName]
   );
 
   const groupedByTimeRange = useMemo(() => {

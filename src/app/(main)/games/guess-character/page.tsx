@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 
+import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
 import { generatePageMetadata } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
 
@@ -17,6 +18,7 @@ export const metadata: Metadata = generatePageMetadata({
   canonicalUrl: `${SITE_URL}/games/guess-character`,
 });
 
-export default function GuessCharacterPage() {
-  return <GameClient description={DESCRIPTION} />;
+export default async function GuessCharacterPage() {
+  const characters = await getPublishedDomainReadModel('characters');
+  return <GameClient description={DESCRIPTION} characters={characters.data} />;
 }

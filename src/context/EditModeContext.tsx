@@ -70,6 +70,7 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
   const [retryKey, setRetryKey] = useState(0);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const previousPathnameRef = useRef(pathname);
+  const hasReadyRuntimeRef = useRef(false);
 
   const isEditModeRequested = useMemo(
     () => isEditModeSearchParamEnabled(searchParams),
@@ -111,6 +112,7 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
     );
 
     if (!isEditModeRequested) {
+      hasReadyRuntimeRef.current = false;
       setRuntimeStatus('idle');
       setRuntimeError(undefined);
     }
@@ -124,11 +126,17 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const handleRuntimeStatusChange = useCallback((status: EditRuntimeStatus, error?: string) => {
+    if (status === 'ready') {
+      hasReadyRuntimeRef.current = true;
+    }
     setRuntimeStatus(status);
     setRuntimeError(error);
   }, []);
 
   const retryEditRuntime = useCallback(() => {
+    if (hasReadyRuntimeRef.current) {
+      return;
+    }
     setRuntimeError(undefined);
     setRuntimeStatus('loading');
     setRetryKey((current) => current + 1);

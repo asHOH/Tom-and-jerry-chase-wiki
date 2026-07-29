@@ -1,5 +1,7 @@
 import { Metadata } from 'next';
 
+import { getApprovedActionSnapshot } from '@/lib/gameData/published/getApprovedActionSnapshot';
+import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
 import { generatePageMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 
 import RecommendedPageClient from './RecommendedPageClient';
@@ -14,6 +16,11 @@ export const metadata: Metadata = generatePageMetadata({
   },
 });
 
-export default function RecommendedPage() {
-  return <RecommendedPageClient />;
+export default async function RecommendedPage() {
+  const snapshot = await getApprovedActionSnapshot();
+  const [characters, maps] = await Promise.all([
+    getPublishedDomainReadModel('characters', snapshot),
+    getPublishedDomainReadModel('maps', snapshot),
+  ]);
+  return <RecommendedPageClient characters={characters.data} maps={maps.data} />;
 }

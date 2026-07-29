@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { formatDateKey, getDailyCharacterId, getGameDate, getPuzzleNumber } from '@/lib/gameUtils';
 import { buildSkillCluesForCharacter } from '@/lib/skillEffectUtils';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
@@ -9,7 +10,7 @@ import {
   getPositioningTagLevel,
   isPositioningTagVisible,
 } from '@/constants/positioningTagSequences';
-import { buffs, characters } from '@/data/static';
+import { buffs } from '@/data/static';
 import { getActorJumpHeight, getActorProfile } from '@/features/actor-profiles/selectors';
 import { catCharacterIds, mouseCharacterIds } from '@/features/characters/data/characterMetadata';
 import GameLayout from '@/features/games/components/GameLayout';
@@ -21,7 +22,10 @@ import GuessHistory from './components/GuessHistory';
 import GuessInput from './components/GuessInput';
 import ResultDialog from './components/ResultDialog';
 
-type Props = { description?: string };
+type Props = {
+  description?: string;
+  characters: PublishedGameDataByType['characters'];
+};
 
 type DailyState = {
   date: string;
@@ -75,8 +79,11 @@ function bucketHp(hp: number | undefined, factionId?: string): string {
   return `${low}–${high}`;
 }
 
-export default function GuessCharacterClient({ description }: Props) {
-  const charsSnap = characters;
+export default function GuessCharacterClient({ description, characters: charsSnap }: Props) {
+  const allCharacterIds = useMemo(
+    () => ALL_CHARACTER_IDS.filter((characterId) => charsSnap[characterId]),
+    [charsSnap]
+  );
 
   // Mode: 'daily' or 'practice'
   const [mode, setMode] = useState<'daily' | 'practice'>('daily');
@@ -109,8 +116,8 @@ export default function GuessCharacterClient({ description }: Props) {
 
   // Daily character (deterministic from date)
   const dailyCharacterId = useMemo(
-    () => getDailyCharacterId(today, ALL_CHARACTER_IDS).characterId,
-    [today]
+    () => getDailyCharacterId(today, allCharacterIds).characterId,
+    [allCharacterIds, today]
   );
 
   // Active game state
@@ -322,33 +329,33 @@ export default function GuessCharacterClient({ description }: Props) {
   // Start a new practice game
   const startPractice = useCallback(() => {
     // Pick a random character
-    const rng = (Math.random() * ALL_CHARACTER_IDS.length) | 0;
-    setPracticeCharacterId(ALL_CHARACTER_IDS[rng]!);
+    const rng = (Math.random() * allCharacterIds.length) | 0;
+    setPracticeCharacterId(allCharacterIds[rng]!);
     setPracticeGuesses([]);
     setPracticeSolved(false);
     setShowResult(false);
-  }, []);
+  }, [allCharacterIds]);
 
   // Initialize practice mode on switch
   const switchToPractice = useCallback(() => {
     setMode('practice');
     if (!practiceCharacterId) {
-      const rng = (Math.random() * ALL_CHARACTER_IDS.length) | 0;
-      setPracticeCharacterId(ALL_CHARACTER_IDS[rng]!);
+      const rng = (Math.random() * allCharacterIds.length) | 0;
+      setPracticeCharacterId(allCharacterIds[rng]!);
     }
     setPracticeGuesses([]);
     setPracticeSolved(false);
     setShowResult(false);
-  }, [practiceCharacterId]);
+  }, [allCharacterIds, practiceCharacterId]);
 
   // Prepare character list for GuessInput
   const characterList = useMemo(
     () =>
-      ALL_CHARACTER_IDS.map((id) => ({
+      allCharacterIds.map((id) => ({
         id,
         factionId: charsSnap[id]?.factionId ?? 'mouse',
       })),
-    [charsSnap]
+    [allCharacterIds, charsSnap]
   );
 
   const guessedIdSet = useMemo(() => new Set(guesses), [guesses]);

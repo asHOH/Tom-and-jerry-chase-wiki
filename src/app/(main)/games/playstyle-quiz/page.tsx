@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 
+import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
 import { generatePageMetadata } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
 
@@ -16,6 +17,7 @@ export const metadata: Metadata = generatePageMetadata({
   canonicalUrl: `${SITE_URL}/games/playstyle-quiz`,
 });
 
-export default function PlaystyleQuizPage() {
-  return <GameClient description={DESCRIPTION} />;
+export default async function PlaystyleQuizPage() {
+  const characters = await getPublishedDomainReadModel('characters');
+  return <GameClient description={DESCRIPTION} characters={characters.data} />;
 }

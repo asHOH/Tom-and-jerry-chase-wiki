@@ -1,5 +1,6 @@
 import { notFound, redirect } from 'next/navigation';
 
+import { getPublishedGameDataSnapshot } from '@/lib/gameData/published/publishedSnapshot';
 import { getGotoResult } from '@/lib/gotoUtils';
 
 import RootGotoPage from './page';
@@ -17,11 +18,18 @@ jest.mock('@/lib/gotoUtils', () => ({
   getGotoResult: jest.fn(),
 }));
 
+jest.mock('@/lib/gameData/published/publishedSnapshot', () => ({
+  getPublishedGameDataSnapshot: jest.fn(),
+}));
+
 const mockGetGotoResult = jest.mocked(getGotoResult);
+const mockGetPublishedGameDataSnapshot = jest.mocked(getPublishedGameDataSnapshot);
+const publishedData = { characters: {} };
 
 describe('root goto page', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockGetPublishedGameDataSnapshot.mockResolvedValue({ data: publishedData } as never);
   });
 
   it('redirects a matching root name to its resolved page', async () => {
@@ -40,7 +48,9 @@ describe('root goto page', () => {
       })
     ).rejects.toThrow('NEXT_REDIRECT:/characters/%E6%B1%A4%E5%A7%86');
 
-    expect(mockGetGotoResult).toHaveBeenCalledWith('汤姆', undefined, undefined);
+    expect(mockGetGotoResult).toHaveBeenCalledWith('汤姆', undefined, {
+      gameData: publishedData,
+    });
     expect(redirect).toHaveBeenCalledWith('/characters/%E6%B1%A4%E5%A7%86');
   });
 

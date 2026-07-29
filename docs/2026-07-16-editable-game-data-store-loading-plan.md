@@ -4,8 +4,8 @@
 
 - Date: 2026-07-16
 - Last revised: 2026-07-29
-- State: Foundation, published-data selectors, Lean Step 1, and Lean Step 2 complete and rebased;
-  the Lean Step 2 follow-up gate is next, and Lean Step 3 remains blocked
+- State: Foundation, published-data selectors, Lean Steps 1 and 2, and the Step 2 follow-up gate
+  complete; Lean Step 3 is next
 - Scope: Remove universal editable-store initialization and root approved-action replay, preserve
   edit behavior, then enable publish-time dependency grouping
 
@@ -185,10 +185,24 @@ Exit gate:
 - no mounted client path replays approved rows; and
 - non-edit route manifests no longer contain the former shared store/edit chunk.
 
-### Lean Step 2 follow-up gate: Close post-rebase correctness gaps
+### Lean Step 2 follow-up gate (complete): Close post-rebase correctness gaps
 
-Complete this gate before beginning Lean Step 3. It revises the landed runtime without restoring
-root replay, module-level edit proxies, or a universal published-data payload.
+This gate revised the landed runtime without restoring root replay, module-level edit proxies, or a
+universal published-data payload.
+
+Consumer audit disposition:
+
+| Consumer                                                        | Disposition                   | Reason                                                                                                                                                         |
+| --------------------------------------------------------------- | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Guess-character, playstyle-quiz, and stat-showdown game clients | Published route domain        | Their clues, matching, and comparisons display current character values; each game route receives only the published character domain.                         |
+| Team recommendations                                            | Published route domains       | Recommendations derive from approved character relations and supported maps; the route shares one approved snapshot across the character and map selectors.    |
+| Win-rate page and character-detail win-rate view                | Published narrow projection   | The page receives only character-to-faction values, while character detail reuses its already-published character entity for aliases and faction.              |
+| Article list and detail character badges                        | Published narrow projection   | Article routes send only summaries for characters actually bound to the rendered articles.                                                                     |
+| Pending-article character label                                 | Intentionally identifier-only | The UI displays the submitted binding ID and does not need a game-data lookup.                                                                                 |
+| Goto resolution                                                 | Published server read model   | Page and API resolution build their index from the server-only published snapshot; no snapshot is added to a client or root payload.                           |
+| Navigation faction tabs                                         | Intentionally build-bound     | They identify the checked-in route taxonomy and generated faction catalog rather than rendering game-data fields.                                              |
+| Client search and auto-wrap/tooltip vocabulary                  | Intentionally build-bound     | These are local/offline lexical indexes aligned with the generated route universe; route content and goto resolution remain the authoritative published reads. |
+| Admin action-preview fallback labels                            | Intentionally build-bound     | Proposed actions are previewed against their explicit candidate data; canonical labels are only a stable fallback.                                             |
 
 1. Enforce the fixed-baseline session contract in retry handling:
    - a retry before any runtime is installed may remount the lazy runtime and refetch the baseline;
@@ -222,6 +236,21 @@ Exit gate:
 - every audited static consumer has a recorded static-or-published disposition;
 - representative published consumers show approved values without root replay; and
 - the complete validation set and bundle checks pass.
+
+Completion evidence:
+
+- Retry can remount a failed pre-install runtime, but it cannot remount or replace an already-ready
+  runtime. A persistent mismatch now requires explicit edit-mode exit and re-entry.
+- Runtime tests preserve active runtime identity, baseline identity, and cross-domain drafts across
+  route navigation and mismatch handling; explicit re-entry creates exactly one fresh runtime.
+- Reviewer submission modes, auto-approve behavior, and result-derived success messages remain
+  covered by the runtime-backed page and relation hook tests.
+- Published recommendation and goto regressions prove approved values reach representative normal
+  consumers without root replay.
+- Full Jest passes 219 suites and 1,214 tests. Oxlint, strict TypeScript, Prettier, actor-profile
+  validation, and `npm run build:skip-images` pass.
+- The `_not-found`, home, character, item, map, and relations client-reference manifests contain no
+  `EditRuntime`, `activeEditRuntime`, `editStores`, or `editModeRegistry` references.
 
 ### Lean Step 3: Enable semantic dependency grouping
 

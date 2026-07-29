@@ -176,21 +176,27 @@ export default function EditRuntime({
 
   if (status === 'ready') return null;
 
+  const requiresFreshEditSession = status === 'error' && activeRuntimeRef.current !== null;
+
   return (
     <div className='pointer-events-none fixed inset-x-0 bottom-3 z-[10060] flex justify-center px-3'>
       <div className='pointer-events-auto rounded-lg border border-blue-200 bg-white/95 px-3 py-2 text-sm text-gray-700 shadow-lg backdrop-blur dark:border-blue-900 dark:bg-gray-900/95 dark:text-gray-200'>
         {status === 'error'
-          ? (errorMessage ?? '编辑环境初始化失败')
+          ? requiresFreshEditSession
+            ? `${errorMessage ?? '编辑环境版本已过期'}，请退出编辑模式后重新进入`
+            : (errorMessage ?? '编辑环境初始化失败')
           : baseline && visibleRevision && baseline.revision === visibleRevision
             ? '正在恢复编辑环境…'
             : '正在加载编辑数据…'}
-        <button
-          type='button'
-          onClick={onRetry}
-          className='ml-3 text-blue-600 hover:underline dark:text-blue-400'
-        >
-          重试
-        </button>
+        {!requiresFreshEditSession ? (
+          <button
+            type='button'
+            onClick={onRetry}
+            className='ml-3 text-blue-600 hover:underline dark:text-blue-400'
+          >
+            重试
+          </button>
+        ) : null}
       </div>
     </div>
   );

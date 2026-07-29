@@ -6,7 +6,6 @@ import useSWR from 'swr';
 import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { formatArticleDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
-import { characters } from '@/data/static';
 import Button from '@/components/ui/Button';
 import ButtonLink from '@/components/ui/ButtonLink';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
@@ -73,7 +72,6 @@ export default function PendingClient() {
   const permissions = usePermissions();
   const [processingVersions, setProcessingVersions] = useState<Set<string>>(new Set());
   const [filter, setFilter] = useState<'all' | 'pending' | 'rejected'>('all');
-  const charactersSnap = characters;
 
   const canModerate = permissions.has('article_version.approve');
 
@@ -303,11 +301,7 @@ export default function PendingClient() {
                         <span>编辑者: {submission.editor_nickname || '未知'}</span>
                         <span>分类: {submission.category_name || '未分类'}</span>
                         {submission.proposed_character_id && (
-                          <span>
-                            关联角色:{' '}
-                            {charactersSnap[submission.proposed_character_id]?.id ||
-                              submission.proposed_character_id}
-                          </span>
+                          <span>关联角色: {submission.proposed_character_id}</span>
                         )}
                       </div>
                     </div>

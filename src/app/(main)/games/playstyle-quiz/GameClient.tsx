@@ -2,8 +2,9 @@
 
 import { useCallback, useMemo, useRef, useState } from 'react';
 
+import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { useDarkMode } from '@/context/DarkModeContext';
-import { characters } from '@/data/static';
+import { catCharacterIds, mouseCharacterIds } from '@/features/characters/data/characterMetadata';
 import GameLayout from '@/features/games/components/GameLayout';
 
 import QuestionCard from './components/QuestionCard';
@@ -16,10 +17,22 @@ import { buildUserProfile, findClosestCharacters } from './utils/matchCalculator
 
 type GamePhase = 'select' | 'quiz' | 'result';
 
-type Props = { description?: string };
+type Props = {
+  description?: string;
+  characters: PublishedGameDataByType['characters'];
+};
 
-export default function PlaystyleQuizClient({ description }: Props) {
-  const charsSnap = characters;
+export default function PlaystyleQuizClient({ description, characters: charsSnap }: Props) {
+  const playableCharacters = useMemo(
+    () =>
+      Object.fromEntries(
+        [...catCharacterIds, ...mouseCharacterIds].flatMap((characterId) => {
+          const character = charsSnap[characterId];
+          return character ? [[characterId, character]] : [];
+        })
+      ) as PublishedGameDataByType['characters'],
+    [charsSnap]
+  );
   const [isDarkMode] = useDarkMode();
 
   const [phase, setPhase] = useState<GamePhase>('select');
@@ -38,18 +51,18 @@ export default function PlaystyleQuizClient({ description }: Props) {
     if (phase !== 'result' || !faction || answers.length === 0) return null;
 
     const userProfile = buildUserProfile(answers);
-    const matches = findClosestCharacters(userProfile, faction, charsSnap);
+    const matches = findClosestCharacters(userProfile, faction, playableCharacters);
 
     const topMatch = matches[0];
     if (!topMatch) return null;
 
-    const character = charsSnap[topMatch.characterId];
+    const character = playableCharacters[topMatch.characterId];
     return {
       topMatch,
       character,
       similarMatches: matches.slice(1),
     };
-  }, [phase, faction, answers, charsSnap]);
+  }, [phase, faction, answers, playableCharacters]);
 
   const handleFactionSelect = useCallback((f: 'cat' | 'mouse') => {
     setFaction(f);
@@ -138,7 +151,7 @@ export default function PlaystyleQuizClient({ description }: Props) {
             faction={faction!}
             isDarkMode={isDarkMode}
             similarMatches={result.similarMatches}
-            allCharacters={charsSnap}
+            allCharacters={playableCharacters}
           />
           <div className='flex justify-center gap-4'>
             <button

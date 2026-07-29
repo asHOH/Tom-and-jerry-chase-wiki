@@ -4,7 +4,7 @@ const migrationPath =
   'supabase/migrations/20260726000001_add_force_pending_game_data_submit_mode.sql';
 
 describe('game data force-pending submit mode migration', () => {
-  const migration = readFileSync(migrationPath, 'utf8');
+  const migration = readFileSync(migrationPath, 'utf8').replace(/\r\n/g, '\n');
 
   it('adds p_force_pending to the prepared publish RPC and wrapper overload', () => {
     expect(migration).toContain('p_force_pending boolean DEFAULT false');

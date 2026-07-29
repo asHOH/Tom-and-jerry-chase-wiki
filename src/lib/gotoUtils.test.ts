@@ -1,3 +1,17 @@
+import {
+  achievements,
+  buffs,
+  cards,
+  characters,
+  entities,
+  fixtures,
+  items,
+  maps,
+  modes,
+  specialSkills,
+} from '@/data/static';
+
+import type { PublishedGameDataByType } from './gameData/published/types';
 import { getGotoResult } from './gotoUtils';
 
 describe('getGotoResult', () => {
@@ -11,6 +25,41 @@ describe('getGotoResult', () => {
         name: '旋转桶盖',
         skillLevel: 3,
         skillType: 'weapon2',
+      })
+    );
+  });
+
+  it('resolves aliases and descriptions from the published server snapshot', async () => {
+    const characterId = Object.keys(characters)[0]!;
+    const publishedAlias = '__published_character_alias__';
+    const publishedDescription = '__published_character_description__';
+    const gameData = {
+      achievements,
+      buffs,
+      cards,
+      characters: {
+        ...characters,
+        [characterId]: {
+          ...characters[characterId]!,
+          aliases: [publishedAlias],
+          description: publishedDescription,
+        },
+      },
+      entities,
+      fixtures,
+      items,
+      maps,
+      modes,
+      specialSkills,
+    } as PublishedGameDataByType;
+
+    const result = await getGotoResult(publishedAlias, '角色', { gameData });
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        type: 'character',
+        name: characterId,
+        description: publishedDescription,
       })
     );
   });

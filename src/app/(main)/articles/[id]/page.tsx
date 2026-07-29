@@ -7,6 +7,7 @@ import {
   getArticleBasicInfo,
   incrementArticleViewCount,
 } from '@/lib/articles/serverQueries';
+import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
 import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { sanitizeHTML } from '@/lib/xssUtils';
 import { SITE_URL } from '@/constants/seo';
@@ -119,6 +120,15 @@ export default async function ArticlePage({
   }
 
   const sanitizedContent = sanitizeHTML(response.article.latest_version?.content ?? '');
+  const publishedCharacter = response.article.character_id
+    ? (await getPublishedEntityRouteReadModel('characters', response.article.character_id)).data
+    : null;
+  const boundCharacter = publishedCharacter
+    ? {
+        id: publishedCharacter.id,
+        ...(publishedCharacter.factionId ? { factionId: publishedCharacter.factionId } : {}),
+      }
+    : null;
 
   return (
     <>
@@ -134,7 +144,11 @@ export default async function ArticlePage({
           datePublished: response.article.created_at,
         })}
       />
-      <ArticleClient article={response.article} sanitizedContent={sanitizedContent} />
+      <ArticleClient
+        article={response.article}
+        boundCharacter={boundCharacter}
+        sanitizedContent={sanitizedContent}
+      />
     </>
   );
 }

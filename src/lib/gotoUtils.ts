@@ -4,6 +4,7 @@ import compact from 'lodash-es/compact';
 import orderBy from 'lodash-es/orderBy';
 import uniqBy from 'lodash-es/uniqBy';
 
+import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import type {
   CategoryHint,
   GotoDisambiguationCandidate,
@@ -11,7 +12,7 @@ import type {
   GotoResponse,
   GotoResult,
 } from '@/lib/types';
-import { buffs, characters } from '@/data/static';
+import { buffs as staticBuffs, characters as staticCharacters } from '@/data/static';
 import type { Skill } from '@/data/types';
 
 import { ensureGotoIndex, normalizeCategoryHint, normalizeName } from './gotoIndex';
@@ -27,8 +28,11 @@ export async function getGotoResult(
   category?: CategoryHint | (string & Record<never, never>),
   options?: {
     descMode?: 'description' | 'detailed';
+    gameData?: PublishedGameDataByType;
   }
 ): Promise<GotoResponse | null> {
+  const characters = options?.gameData?.characters ?? staticCharacters;
+  const buffs = options?.gameData?.buffs ?? staticBuffs;
   const parseTrailingCategoryTemplate = (
     input: string
   ): { baseName: string; categoryHint?: CategoryHint } => {
@@ -194,7 +198,7 @@ export async function getGotoResult(
     }
   }
 
-  const { byName } = await ensureGotoIndex();
+  const { byName } = await ensureGotoIndex(options?.gameData);
   const key = normalizeName(rawName);
   const candidates = byName.get(key) ?? [];
 

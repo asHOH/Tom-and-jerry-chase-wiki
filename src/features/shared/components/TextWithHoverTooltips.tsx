@@ -2,8 +2,8 @@ import { Fragment, useMemo } from 'react';
 
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useDarkMode } from '@/context/DarkModeContext';
-import { characters } from '@/data/static';
 import { getActorProfile } from '@/features/actor-profiles/selectors';
+import { usePublishedCharacter } from '@/features/characters/components/character-detail/PublishedCharacterContext';
 import Tooltip from '@/components/ui/Tooltip';
 
 import { renderColorfulHighlight } from './text-with-hover-tooltips/inlineMarkup';
@@ -37,7 +37,7 @@ export default function TextWithHoverTooltips({ text: rawText }: TextWithHoverTo
   const [isDarkMode] = useDarkMode();
   const localCharacterCtx = useLocalCharacter();
   const currentCharacterId = localCharacterCtx.characterId;
-  const localCharacter = characters[currentCharacterId];
+  const localCharacter = usePublishedCharacter(currentCharacterId);
   const actorProfile = localCharacter ? getActorProfile(currentCharacterId) : undefined;
   const attackBoost = actorProfile?.attack ?? null;
   const wallCrackDamageBoost =

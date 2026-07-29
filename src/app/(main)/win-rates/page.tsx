@@ -1,7 +1,9 @@
 import { Metadata } from 'next';
 
+import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
 import { generatePageMetadata } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
+import type { FactionId } from '@/data/types';
 
 import WinRatesClient from './WinRatesClient';
 
@@ -18,6 +20,10 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-export default function WinRatesPage() {
-  return <WinRatesClient description={DESCRIPTION} />;
+export default async function WinRatesPage() {
+  const characters = await getPublishedDomainReadModel('characters');
+  const characterFactions = Object.fromEntries(
+    Object.values(characters.data).map((character) => [character.id, character.factionId])
+  ) as Record<string, FactionId>;
+  return <WinRatesClient description={DESCRIPTION} characterFactions={characterFactions} />;
 }

@@ -1,4 +1,4 @@
-import { act, cleanup, render, waitFor } from '@testing-library/react';
+import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
 
 import { clearActiveEditRuntime, getActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
 import { getActionsStorageKey } from '@/lib/edit/diffUtils';
@@ -156,5 +156,108 @@ describe('EditRuntime', () => {
     });
 
     expect(statuses.at(-1)).toEqual(['error', '页面数据版本与编辑基线仍不一致，请重试']);
+  });
+
+  it('does not construct a partial runtime when the initial baseline request fails', async () => {
+    global.fetch = jest.fn().mockResolvedValue({ ok: false, status: 503 });
+    const onStatusChange = jest.fn();
+    const onRetry = jest.fn();
+
+    render(
+      <EditRuntime
+        visibleRevision='v1:matching'
+        onStatusChange={onStatusChange}
+        onRetry={onRetry}
+      />
+    );
+
+    await waitFor(() => {
+      expect(onStatusChange).toHaveBeenLastCalledWith('error', '加载编辑数据失败 (503)');
+    });
+
+    expect(getActiveEditRuntime()).toBeNull();
+    expect(screen.getByRole('button', { name: '重试' })).toBeInTheDocument();
+  });
+
+  it('keeps the installed runtime and baseline fixed across navigation and mismatch handling', async () => {
+    jest.useFakeTimers();
+    global.fetch = jest.fn().mockResolvedValue(createFetchResponse('v1:baseline'));
+    const statuses: Array<[EditRuntimeStatus, string | undefined]> = [];
+    const onStatusChange = (status: EditRuntimeStatus, error?: string) =>
+      statuses.push([status, error]);
+
+    const view = render(
+      <EditRuntime
+        visibleRevision='v1:baseline'
+        onStatusChange={onStatusChange}
+        onRetry={jest.fn()}
+      />
+    );
+
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+    const runtime = getActiveEditRuntime();
+    expect(runtime).not.toBeNull();
+    const characterId = Object.keys(characters)[0]!;
+    const itemId = Object.keys(items)[0]!;
+    runtime!.stores.characters[characterId]!.description = '跨域角色草稿';
+    runtime!.stores.items[itemId]!.description = '跨域道具草稿';
+
+    view.rerender(
+      <EditRuntime
+        visibleRevision='v1:newer-route'
+        onStatusChange={onStatusChange}
+        onRetry={jest.fn()}
+      />
+    );
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+    expect(mockRefresh).toHaveBeenCalledTimes(1);
+
+    act(() => {
+      jest.advanceTimersByTime(5000);
+    });
+
+    expect(getActiveEditRuntime()).toBe(runtime);
+    expect(runtime!.stores.characters[characterId]!.description).toBe('跨域角色草稿');
+    expect(runtime!.stores.items[itemId]!.description).toBe('跨域道具草稿');
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(screen.queryByRole('button', { name: '重试' })).not.toBeInTheDocument();
+    expect(screen.getByText(/请退出编辑模式后重新进入/)).toBeInTheDocument();
+  });
+
+  it('creates one fresh baseline and runtime after an explicit exit and re-entry', async () => {
+    global.fetch = jest
+      .fn()
+      .mockResolvedValueOnce(createFetchResponse('v1:first'))
+      .mockResolvedValueOnce(createFetchResponse('v1:second'));
+
+    const firstView = render(
+      <EditRuntime visibleRevision='v1:first' onStatusChange={jest.fn()} onRetry={jest.fn()} />
+    );
+
+    await waitFor(() => {
+      expect(getActiveEditRuntime()?.revision).toBe('v1:first');
+    });
+    const firstRuntime = getActiveEditRuntime();
+    firstView.unmount();
+    expect(getActiveEditRuntime()).toBeNull();
+
+    const secondView = render(
+      <EditRuntime visibleRevision='v1:second' onStatusChange={jest.fn()} onRetry={jest.fn()} />
+    );
+
+    await waitFor(() => {
+      expect(getActiveEditRuntime()?.revision).toBe('v1:second');
+    });
+
+    expect(getActiveEditRuntime()).not.toBe(firstRuntime);
+    expect(global.fetch).toHaveBeenCalledTimes(2);
+    secondView.unmount();
   });
 });

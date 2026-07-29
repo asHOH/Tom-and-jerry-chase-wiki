@@ -9,7 +9,7 @@ import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { formatArticleDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
 import { toChineseNumeral } from '@/lib/textUtils';
-import { characters } from '@/data/static';
+import type { FactionId } from '@/data/types';
 import Button from '@/components/ui/Button';
 import ButtonLink from '@/components/ui/ButtonLink';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
@@ -170,15 +170,16 @@ const stripExistingHeadingNumbering = (
 
 export default function ArticleClient({
   article,
+  boundCharacter,
   sanitizedContent,
 }: {
   article: ArticleData;
+  boundCharacter: { id: string; factionId?: FactionId } | null;
   sanitizedContent: string;
 }) {
   const params = useParams();
   const permissions = usePermissions();
   const articleId = params?.id as string;
-  const charactersSnap = characters;
   const contentRef = useRef<HTMLDivElement | null>(null);
   const [tocItems, setTocItems] = useState<TocItem[]>([]);
   const [activeHeadingId, setActiveHeadingId] = useState<string>('');
@@ -461,8 +462,6 @@ export default function ArticleClient({
   }, [tocItems]);
 
   // Get bound character info if this is a game strategy article
-  const boundCharacter = article.character_id ? charactersSnap[article.character_id] : null;
-
   const renderTocList = (itemClassName: string, showHeadingLabel = true) => (
     <nav aria-label='文章目录'>
       {showHeadingLabel && (

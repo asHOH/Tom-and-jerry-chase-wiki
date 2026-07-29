@@ -15,8 +15,7 @@ import { useMobile } from '@/hooks/useMediaQuery';
 import { useSwipeGesture } from '@/hooks/useSwipeGesture';
 import { useEditMode } from '@/context/EditModeContext';
 import { useToast } from '@/context/ToastContext';
-import { characters } from '@/data/static';
-import { Article, ArticlesData, Category } from '@/data/types';
+import { Article, ArticlesData, Category, type FactionId } from '@/data/types';
 import Button from '@/components/ui/Button';
 import ButtonLink from '@/components/ui/ButtonLink';
 import EntityCardFrame from '@/components/ui/EntityCardFrame';
@@ -33,10 +32,15 @@ import ArticlePagination from './ArticlePagination';
 
 interface ArticlesClientProps {
   articles: ArticlesData;
+  characterSummaries: Readonly<Record<string, { id: string; factionId?: FactionId }>>;
   description?: string;
 }
 
-export default function ArticlesClient({ articles: data, description }: ArticlesClientProps) {
+export default function ArticlesClient({
+  articles: data,
+  characterSummaries,
+  description,
+}: ArticlesClientProps) {
   const permissions = usePermissions();
   const isMobile = useMobile();
   const router = useRouter();
@@ -45,7 +49,6 @@ export default function ArticlesClient({ articles: data, description }: Articles
   const { info } = useToast();
   const articlesGridRef = useRef<HTMLDivElement>(null);
   const shouldReduceMotion = useReducedMotion();
-  const charactersSnap = characters;
 
   // Use centralized filter state management
   const {
@@ -414,7 +417,7 @@ export default function ArticlesClient({ articles: data, description }: Articles
             render={(article) => {
               const latestVersion = article.latest_approved_version[0];
               const boundCharacter = article.character_id
-                ? charactersSnap[article.character_id]
+                ? characterSummaries[article.character_id]
                 : null;
               return (
                 <EntityCardFrame

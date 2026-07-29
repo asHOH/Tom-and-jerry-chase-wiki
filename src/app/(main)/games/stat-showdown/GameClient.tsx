@@ -2,10 +2,11 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { useTimer } from '@/hooks/useTimer';
-import { characters } from '@/data/static';
 import type { FactionId } from '@/data/types';
+import { catCharacterIds, mouseCharacterIds } from '@/features/characters/data/characterMetadata';
 import {
   CHARACTER_GAME_STAT_INFO,
   compareCharacterGameStatValues,
@@ -25,6 +26,7 @@ import TimerDisplay from './components/TimerDisplay';
 type Props = {
   mode: GameMode;
   description?: string;
+  characters: PublishedGameDataByType['characters'];
   /** Navigation tabs for switching between modes (rendered above the game) */
   modeNav?: React.ReactNode;
 };
@@ -64,6 +66,10 @@ type HighScores = { cats: number; mice: number; all: number; blitz: number };
 
 /** Modes that allow cross-faction comparison ONLY for attackBoost */
 const CROSS_FACTION_MODES: Set<GameMode> = new Set(['all', 'blitz']);
+const ACTOR_PROFILE_CHARACTER_IDS: ReadonlySet<string> = new Set([
+  ...catCharacterIds,
+  ...mouseCharacterIds,
+]);
 
 type CharacterSummary = {
   id: string;
@@ -80,9 +86,12 @@ function pickRandomStat(stats: readonly CharacterGameStatKey[]): CharacterGameSt
   return stats[Math.floor(Math.random() * stats.length)]!;
 }
 
-export default function StatShowdownClient({ mode, description, modeNav }: Props) {
-  const charsSnap = characters;
-
+export default function StatShowdownClient({
+  mode,
+  description,
+  characters: charsSnap,
+  modeNav,
+}: Props) {
   const [score, setScore] = useState(0);
   const [isJudging, setIsJudging] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
@@ -120,17 +129,19 @@ export default function StatShowdownClient({ mode, description, modeNav }: Props
 
   // Build character pool based on mode
   const pool = useMemo<CharacterSummary[]>(() => {
-    const all = Object.values(charsSnap).map((character) => {
-      if (!character.factionId) {
-        throw new Error(`Character ${character.id} is missing its factionId`);
-      }
-      return {
-        id: character.id,
-        imageUrl: character.imageUrl,
-        factionId: character.factionId,
-        stats: getCharacterGameStats({ id: character.id, factionId: character.factionId }),
-      };
-    });
+    const all = Object.values(charsSnap)
+      .filter((character) => ACTOR_PROFILE_CHARACTER_IDS.has(character.id))
+      .map((character) => {
+        if (!character.factionId) {
+          throw new Error(`Character ${character.id} is missing its factionId`);
+        }
+        return {
+          id: character.id,
+          imageUrl: character.imageUrl,
+          factionId: character.factionId,
+          stats: getCharacterGameStats({ id: character.id, factionId: character.factionId }),
+        };
+      });
 
     if (mode === 'cats') return all.filter((c) => c.factionId === 'cat');
     if (mode === 'mice') return all.filter((c) => c.factionId === 'mouse');

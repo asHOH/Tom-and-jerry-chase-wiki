@@ -3,7 +3,7 @@ import { readFileSync } from 'fs';
 const migrationPath = 'supabase/migrations/20260726000002_expand_game_data_submit_modes.sql';
 
 describe('game data submit mode expansion migration', () => {
-  const migration = readFileSync(migrationPath, 'utf8');
+  const migration = readFileSync(migrationPath, 'utf8').replace(/\r\n/g, '\n');
 
   it('replaces the boolean force_pending RPC argument with a text submit mode on both overloads', () => {
     expect(migration).toContain("p_submit_mode text DEFAULT 'default'");
