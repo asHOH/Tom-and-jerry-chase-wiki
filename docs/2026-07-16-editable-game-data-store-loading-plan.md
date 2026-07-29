@@ -3,9 +3,9 @@
 ## Status
 
 - Date: 2026-07-16
-- Last revised: 2026-07-25
-- State: Foundation, published-data selectors, Lean Step 1, and Lean Step 2 complete; Lean Step 3
-  is next
+- Last revised: 2026-07-29
+- State: Foundation, published-data selectors, Lean Step 1, and Lean Step 2 complete and rebased;
+  the Lean Step 2 follow-up gate is next, and Lean Step 3 remains blocked
 - Scope: Remove universal editable-store initialization and root approved-action replay, preserve
   edit behavior, then enable publish-time dependency grouping
 
@@ -79,6 +79,10 @@ Lean Step 2 is also complete:
   routes do not contain the lazy edit-runtime chunk.
 - Full Jest, Oxlint, strict TypeScript, Prettier, actor-profile validation, and
   `npm run build:skip-images` pass.
+- The Step 2 commit was rebased onto current `develop` while preserving advanced submission modes,
+  result-derived publish messaging, auto-approve compatibility, and the current edit-button UI.
+  Focused runtime, provider, registry, page-edit, relation-edit, and baseline-endpoint tests pass
+  after conflict resolution.
 
 ## Frozen Correctness Contracts
 
@@ -181,9 +185,47 @@ Exit gate:
 - no mounted client path replays approved rows; and
 - non-edit route manifests no longer contain the former shared store/edit chunk.
 
+### Lean Step 2 follow-up gate: Close post-rebase correctness gaps
+
+Complete this gate before beginning Lean Step 3. It revises the landed runtime without restoring
+root replay, module-level edit proxies, or a universal published-data payload.
+
+1. Enforce the fixed-baseline session contract in retry handling:
+   - a retry before any runtime is installed may remount the lazy runtime and refetch the baseline;
+   - once a runtime is ready, a persistent route-revision mismatch must not key-remount the runtime,
+     fetch a newer baseline, or replay stored drafts over a replacement baseline;
+   - keep editing disabled and require an explicit edit-mode exit and re-entry to acquire a new
+     baseline; and
+   - prove that route navigation and retry do not change the active runtime or baseline identity.
+2. Audit normal-mode consumers changed from the replayed mutable stores to canonical static data,
+   including games, recommendations, article clients, win-rate views, navigation/search helpers,
+   and goto resolution:
+   - classify each static read as intentionally tied to the checked-in build or expected to reflect
+     approved public actions;
+   - pass a published server read model or narrow route projection to consumers in the second
+     category; and
+   - do not reintroduce root approved rows or the complete published graph in the root payload.
+3. Add focused regressions proving:
+   - initial-load failure remains retryable without constructing a partial runtime;
+   - an active-session revision mismatch cannot silently rebase cross-domain drafts;
+   - explicit exit and re-entry creates exactly one fresh baseline and runtime;
+   - representative normal consumers that require live published data render approved values; and
+   - reviewer submission modes, auto-approve outcomes, and result-derived success messages remain
+     intact through the runtime-backed page and relation hooks.
+4. Run focused edit/runtime tests, full Jest, Oxlint, strict TypeScript, Prettier, actor-profile
+   validation, `npm run build:skip-images`, and the representative route-manifest inspection.
+
+Exit gate:
+
+- one edit session retains one immutable baseline and runtime until explicit exit;
+- retry cannot replace an already-ready runtime;
+- every audited static consumer has a recorded static-or-published disposition;
+- representative published consumers show approved values without root replay; and
+- the complete validation set and bundle checks pass.
+
 ### Lean Step 3: Enable semantic dependency grouping
 
-Only begin after Lean Step 2 proves root-client replay is gone.
+Only begin after the Lean Step 2 follow-up gate passes. Root-client replay must remain absent.
 
 1. In the existing trusted publish preparation, merge prepared entries for the same entity type.
 2. Run the existing `groupActionEntriesByDependency` classifier on their top-level rows.
