@@ -4,6 +4,7 @@ import { use } from 'react';
 
 import { formatCompactDate } from '@/lib/dateUtils';
 import { sanitizeHTML } from '@/lib/xssUtils';
+import { contributors } from '@/data/contributors';
 import CharacterSection from '@/features/characters/components/character-detail/sections/CharacterSection';
 import AccordionCard from '@/components/ui/AccordionCard';
 import ButtonLink from '@/components/ui/ButtonLink';
@@ -29,6 +30,30 @@ const DEFAULT_ARTICLE_TITLE = '\u6587\u7ae0';
 const UNKNOWN_AUTHOR = '\u672a\u77e5';
 const AUTHOR_LABEL = '\u4f5c\u8005\uff1a';
 const AUTHOR_SEPARATOR = '\u3001';
+
+function renderAuthors(authors: readonly string[]) {
+  if (authors.length === 0) return UNKNOWN_AUTHOR;
+
+  return authors.map((author, index) => {
+    const contributor = contributors.find(({ nickname }) => nickname === author);
+
+    return (
+      <span key={`${author}-${index}`}>
+        {index > 0 && AUTHOR_SEPARATOR}
+        {contributor?.nickname ? (
+          <a
+            href={`/users/${encodeURIComponent(contributor.nickname)}`}
+            className='text-blue-600 underline hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300'
+          >
+            {author}
+          </a>
+        ) : (
+          author
+        )}
+      </span>
+    );
+  });
+}
 
 export default function CharacterArticle({
   content,
@@ -69,7 +94,7 @@ export default function CharacterArticle({
                 <UserCircleIcon className='size-4' strokeWidth={1.5} />
                 <span>
                   {AUTHOR_LABEL}
-                  {authors.length > 0 ? authors.join(AUTHOR_SEPARATOR) : UNKNOWN_AUTHOR}
+                  {renderAuthors(authors)}
                 </span>
               </div>
               {categoryName && (
@@ -138,10 +163,6 @@ export default function CharacterArticle({
           buttonClassName='px-2'
           items={normalizedArticles.map((article) => {
             const title = article.title?.trim() || DEFAULT_ARTICLE_TITLE;
-            const authorsText =
-              article.authors && article.authors.length > 0
-                ? article.authors.join(AUTHOR_SEPARATOR)
-                : UNKNOWN_AUTHOR;
             const dateText = article.createdAt
               ? formatCompactDate(article.createdAt, { invalidFallback: '' })
               : '';
@@ -161,7 +182,7 @@ export default function CharacterArticle({
                         <UserCircleIcon className='size-4' strokeWidth={1.5} />
                         <span>
                           {AUTHOR_LABEL}
-                          {authorsText}
+                          {renderAuthors(article.authors ?? [])}
                         </span>
                       </div>
                       {articleCategoryName && (

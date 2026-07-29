@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { cn } from '@/lib/design';
 import type { ContentEditor } from '@/lib/types';
+import { contributors } from '@/data/contributors';
 import { getContentWritersByCharacter } from '@/constants';
 
 interface ContentWriterDisplayProps {
@@ -56,7 +57,25 @@ export default function ContentWriterDisplay({
       >
         文案撰写：
         <span className={type === 'isMobile' ? '' : 'whitespace-pre'}>
-          {staticContentWriters.join('、')}
+          {staticContentWriters.map((writer, index) => {
+            const contributor = contributors.find(({ name }) => name === writer);
+
+            return (
+              <span key={writer}>
+                {index > 0 && '、'}
+                {contributor?.nickname ? (
+                  <a
+                    href={`/users/${encodeURIComponent(contributor.nickname)}`}
+                    className='no-underline transition-colors hover:text-gray-600 dark:hover:text-gray-300'
+                  >
+                    {writer}
+                  </a>
+                ) : (
+                  writer
+                )}
+              </span>
+            );
+          })}
         </span>
         {hasExtraEditors && !isExpanded && (
           <button

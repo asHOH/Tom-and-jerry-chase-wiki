@@ -2,6 +2,7 @@ import { PROJECT_STATEMENT_COPY } from '@/data/projectStatement';
 import CollapseCard from '@/components/ui/CollapseCard';
 import { InlineExternalLink } from '@/components/ui/InlineExternalLink';
 import Tooltip from '@/components/ui/Tooltip';
+import Link from '@/components/Link';
 import { CREATORS, DISCLAIMER_CONTENT, LICENSE_INFO, PROJECT_INFO } from '@/constants';
 
 interface ProjectStatementProps {
@@ -19,7 +20,15 @@ const renderCreatorLinks = (creatorIds: readonly string[]) => {
     return (
       <span key={creatorId}>
         {index > 0 && creatorSeparator}
-        {creator?.url ? (
+        {creator?.nickname ? (
+          <Link
+            href={`/users/${encodeURIComponent(creator.nickname)}`}
+            aria-label={`${displayName}（查看用户页）`}
+            className='rounded-0.5 whitespace-pre-wrap text-blue-600 underline hover:text-blue-800 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none dark:text-blue-400 dark:hover:text-blue-300'
+          >
+            {displayName}
+          </Link>
+        ) : creator?.url ? (
           <InlineExternalLink
             href={creator.url}
             ariaLabel={`${displayName}（在新标签页打开）`}

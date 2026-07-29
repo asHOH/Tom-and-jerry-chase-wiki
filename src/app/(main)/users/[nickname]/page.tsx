@@ -5,7 +5,9 @@ import { notFound } from 'next/navigation';
 import { formatCompactDateTime } from '@/lib/dateUtils';
 import { generatePageMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { getPublicUserProfile, type PublicContribution } from '@/lib/users/publicProfile';
+import { contributors } from '@/data/contributors';
 import Card from '@/components/ui/Card';
+import { InlineExternalLink } from '@/components/ui/InlineExternalLink';
 import Link from '@/components/Link';
 
 const getProfile = cache(getPublicUserProfile);
@@ -66,6 +68,8 @@ export default async function PublicUserPage({
 
   if (!profile) notFound();
 
+  const contributor = contributors.find(({ nickname }) => nickname === profile.nickname);
+
   return (
     <main className='mx-auto w-full max-w-5xl space-y-6 px-4 py-8 text-gray-900 sm:px-6 dark:text-gray-100'>
       <Card as='header' className='border border-gray-200 p-6 sm:p-8 dark:border-gray-700'>
@@ -99,6 +103,17 @@ export default async function PublicUserPage({
             <span className='text-sm text-gray-500 dark:text-gray-400'>暂无用户组</span>
           )}
         </div>
+
+        {contributor?.url ? (
+          <div className='mt-4'>
+            <InlineExternalLink
+              href={contributor.url}
+              ariaLabel={`${contributor.name}的外部主页（在新标签页打开）`}
+            >
+              外部主页
+            </InlineExternalLink>
+          </div>
+        ) : null}
       </Card>
 
       <section aria-labelledby='contribution-totals-heading'>
