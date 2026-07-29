@@ -4,8 +4,8 @@
 
 - Date: 2026-07-16
 - Last revised: 2026-07-29
-- State: Foundation, published-data selectors, Lean Steps 1 through 3, and the Step 2 follow-up gate
-  complete; Lean Step 4 is ready and next
+- State: Foundation, published-data selectors, Lean Steps 1 through 4, and the Step 2 follow-up
+  gate complete
 - Scope: Remove universal editable-store initialization and root approved-action replay, preserve
   edit behavior, then enable publish-time dependency grouping
 
@@ -326,9 +326,10 @@ Completion evidence:
 - Step 3 required no database migration, approved-row compaction, approved-action synchronization,
   or database write during validation.
 
-### Lean Step 4 (ready): Add small regression guards and finish the audit
+### Lean Step 4 (complete): Add small regression guards and finish the audit
 
-Step 4 is unblocked and is the only remaining implementation and validation stage.
+Step 4 added the final import-boundary regression guard and completed the bundle, payload, runtime,
+and repository-wide validation audit.
 
 1. Add or extend one straightforward import-boundary test proving:
    - `@/data` does not re-export mutable stores;
@@ -342,6 +343,25 @@ Step 4 is unblocked and is the only remaining implementation and validation stag
 4. Confirm that approved rows are absent from normal root payloads and edit-baseline responses.
 5. Run final focused manual edit checks, full Jest, lint, type-check, Prettier, and
    `npm run build:skip-images`.
+
+Completion evidence:
+
+- `gameDataImportBoundaries.test.ts` proves that `@/data` does not re-export mutable stores, root
+  providers do not statically import edit stores, the edit registry, or the edit runtime, normal
+  production code does not import `@/data/store`, and canonical source modules do not depend on edit
+  or replay code.
+- No additional canonical-client import restriction was needed: the production manifests for
+  `/_not-found`, `/`, `/characters/[characterId]`, and representative item, map, and relation routes
+  contain no edit runtime, active runtime, edit store, edit registry, or mutable-store references.
+- Root-provider guards reject raw approved-row payload dependencies, and the edit-baseline route
+  regression confirms that the response contains the published baseline and revision without raw
+  actions.
+- A production-server smoke test confirmed that a normal character route requests no edit baseline,
+  while the same route with edit mode activated requests `/api/game-data-actions/edit-baseline` and
+  mounts the edit toolbar. The audit also gated editable-autocomplete preparation on ready edit mode,
+  removing normal-mode attempts to read an inactive edit runtime.
+- Full Jest passes 225 suites and 1,230 tests. Oxlint, strict TypeScript, Prettier, actor-profile
+  validation, `npm run build:skip-images`, and diff checks pass.
 
 ## Validation Strategy
 

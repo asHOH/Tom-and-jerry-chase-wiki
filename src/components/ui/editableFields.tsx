@@ -298,6 +298,10 @@ function useInlineEditableContent(opts: {
   }, [content]);
 
   useEffect(() => {
+    if (!isEditMode) {
+      return;
+    }
+
     let disposed = false;
 
     getEditableAutocompleteCandidates()
@@ -313,7 +317,7 @@ function useInlineEditableContent(opts: {
     return () => {
       disposed = true;
     };
-  }, []);
+  }, [isEditMode]);
 
   useEffect(() => {
     autocompleteItemRefs.current = [];
