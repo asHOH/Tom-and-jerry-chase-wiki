@@ -106,7 +106,7 @@ export async function getEmbeddedArticlesForCharacter(
       });
     },
     {
-      revalidate: 60,
+      revalidate: 28800,
       tags: [CACHE_TAGS.articles],
     }
   );

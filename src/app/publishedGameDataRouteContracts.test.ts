@@ -24,8 +24,15 @@ describe('published game-data route rendering contracts', () => {
   });
 
   it('preserves character-detail time-based revalidation', () => {
-    const source = readFileSync('src/app/(main)/characters/[characterId]/page.tsx', 'utf8');
+    const routeSource = readFileSync('src/app/(main)/characters/[characterId]/page.tsx', 'utf8');
+    const articleSource = readFileSync(
+      'src/lib/articles/server/characterArticleQueries.ts',
+      'utf8'
+    );
+    const contentWritersSource = readFileSync('src/lib/gameData/contentWriters.ts', 'utf8');
 
-    expect(source).toContain('export const revalidate = 28800');
+    expect(routeSource).toContain('export const revalidate = 28800');
+    expect(articleSource).toContain('revalidate: 28800');
+    expect(contentWritersSource).toContain('revalidate: false');
   });
 });

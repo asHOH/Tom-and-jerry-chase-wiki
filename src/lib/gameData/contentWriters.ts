@@ -83,7 +83,7 @@ export async function getContentWritersForCharacter(
       [PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG, 'character-content-writers-v2', characterId],
       () => queryGameDataActionAuthors(characterId),
       {
-        revalidate: 300,
+        revalidate: false,
         tags: [PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG],
       }
     );
