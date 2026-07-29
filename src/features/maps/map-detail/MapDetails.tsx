@@ -9,7 +9,6 @@ import { useMobile } from '@/hooks/useMediaQuery';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
-import { fixtures } from '@/data/static';
 import type { Map as MapType, SingleItem } from '@/data/types';
 import DetailOwnbuffsCard from '@/features/shared/detail-view/DetailOwnbuffsCard';
 import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
@@ -26,18 +25,22 @@ import MapAttributesCard from './MapAttributesCard';
 
 export default function MapDetailClient({
   map,
-  fixturesData = fixtures,
-  modesData,
+  fixtureNames,
+  modeNames,
 }: {
   map: MapType;
-  fixturesData?: PublishedGameDataByType['fixtures'];
-  modesData?: PublishedGameDataByType['modes'];
+  fixtureNames: readonly string[];
+  modeNames: readonly string[];
 }) {
   const { isEditMode } = useEditMode();
   const { mapName } = useLocalMap();
   const ed = editable('maps');
 
   const editRuntime = useActiveEditRuntime();
+  const editFixtures = useOptionalEditSnapshot<PublishedGameDataByType['fixtures']>(
+    editRuntime?.stores.fixtures,
+    {}
+  );
   const rawLocalMap = editRuntime?.stores.maps[mapName];
   const localMapSnapshot = useOptionalEditSnapshot(rawLocalMap, map);
   const effectiveMap = isEditMode && rawLocalMap ? (localMapSnapshot as MapType) : map;
@@ -53,9 +56,11 @@ export default function MapDetailClient({
   const { isDetailedView } = useAppContext();
 
   // 检索相关组件
-  const ownFixtures: string[] = Object.entries(fixturesData)
-    .filter(([_, fixture]) => fixture.supportedMaps && fixture.supportedMaps.includes(map.name))
-    .map(([name, _]) => name);
+  const ownFixtures = editRuntime
+    ? Object.entries(editFixtures)
+        .filter(([_, fixture]) => fixture.supportedMaps?.includes(map.name))
+        .map(([name]) => name)
+    : fixtureNames;
 
   // 处理图片加载完成事件
   const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
@@ -243,12 +248,7 @@ export default function MapDetailClient({
   return (
     <>
       <DetailShell
-        leftColumn={
-          <MapAttributesCard
-            map={effectiveMap}
-            {...(modesData === undefined ? {} : { modesData })}
-          />
-        }
+        leftColumn={<MapAttributesCard map={effectiveMap} modeNames={modeNames} />}
         sections={sections}
         rightColumnProps={{ style: { whiteSpace: 'pre-wrap' } }}
       />

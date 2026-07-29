@@ -73,6 +73,11 @@ export default async function MapDetailPage({ params }: { params: Promise<{ mapN
     notFound();
   }
 
+  const fixtureNames = Object.entries(fixtures.data)
+    .filter(([_, fixture]) => fixture.supportedMaps?.includes(mapName))
+    .map(([fixtureName]) => fixtureName);
+  const modeNames = Object.keys(modes.data);
+
   return (
     <>
       <StructuredData data={generateStructuredData(mapName, map)} />
@@ -81,8 +86,8 @@ export default async function MapDetailPage({ params }: { params: Promise<{ mapN
         mapName={mapName}
         publishedRevision={readModel.revision}
         publishedHistory={readModel.history}
-        fixturesData={fixtures.data}
-        modesData={modes.data}
+        fixtureNames={fixtureNames}
+        modeNames={modeNames}
       />
     </>
   );

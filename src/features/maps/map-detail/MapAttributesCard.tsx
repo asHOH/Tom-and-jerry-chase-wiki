@@ -6,7 +6,6 @@ import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { useLocalMap } from '@/hooks/useLocalEditEntity';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
-import { modes } from '@/data/static';
 import { Map, SingleItem } from '@/data/types';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
 import AddAliasButton from '@/features/shared/detail-view/AddAliasButton';
@@ -21,10 +20,10 @@ import Image from '@/components/Image';
 
 export default function MapAttributesCard({
   map,
-  modesData = modes,
+  modeNames,
 }: {
   map: Map;
-  modesData?: PublishedGameDataByType['modes'];
+  modeNames: readonly string[];
 }) {
   const [isDarkMode] = useDarkMode();
   const { isEditMode } = useEditMode();
@@ -34,9 +33,12 @@ export default function MapAttributesCard({
   const editRuntime = useActiveEditRuntime();
   const rawMap = editRuntime?.stores.maps[mapName];
   const mapSnapshot = useOptionalEditSnapshot(rawMap, map);
-  const modesSnapshot = useOptionalEditSnapshot(editRuntime?.stores.modes, modesData);
+  const editModes = useOptionalEditSnapshot<PublishedGameDataByType['modes']>(
+    editRuntime?.stores.modes,
+    {}
+  );
   const effectiveMap = isEditMode && rawMap ? (mapSnapshot as Map) : map;
-  const availableModeOptions = Object.keys(modesSnapshot);
+  const availableModeOptions = editRuntime ? Object.keys(editModes) : modeNames;
   const activeSupportedModes = Array.isArray(effectiveMap?.supportedModes)
     ? effectiveMap.supportedModes
     : [];

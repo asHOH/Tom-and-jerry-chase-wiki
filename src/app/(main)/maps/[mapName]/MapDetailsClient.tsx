@@ -2,7 +2,6 @@
 
 import dynamic from 'next/dynamic';
 
-import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import type { PublishedEntityHistoryEntry } from '@/context/PublishedEntityHistoryContext';
 import type { Map } from '@/data/types';
 import EditModePageShell from '@/components/ui/EditModePageShell';
@@ -17,15 +16,15 @@ export default function MapDetailsClient({
   mapName,
   publishedRevision,
   publishedHistory,
-  fixturesData,
-  modesData,
+  fixtureNames,
+  modeNames,
 }: {
   map: Map;
   mapName: string;
   publishedRevision: `v1:${string}`;
   publishedHistory: readonly PublishedEntityHistoryEntry[];
-  fixturesData: PublishedGameDataByType['fixtures'];
-  modesData: PublishedGameDataByType['modes'];
+  fixtureNames: readonly string[];
+  modeNames: readonly string[];
 }) {
   return (
     <EditModePageShell
@@ -35,7 +34,7 @@ export default function MapDetailsClient({
       publishedRevision={publishedRevision}
       publishedHistory={publishedHistory}
     >
-      <MapDetails map={map} fixturesData={fixturesData} modesData={modesData} />
+      <MapDetails map={map} fixtureNames={fixtureNames} modeNames={modeNames} />
     </EditModePageShell>
   );
 }
