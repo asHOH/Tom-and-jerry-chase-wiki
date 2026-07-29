@@ -12,8 +12,7 @@ import FactionButton from '@/components/ui/FactionButton';
 import FeedbackSection, { FeedbackSectionRef } from '@/components/ui/FeedbackSection';
 import HomePageSection from '@/components/ui/NavSection';
 import OfficialSitesDisplay from '@/components/ui/OfficialSitesDisplay';
-import PageDescription from '@/components/ui/PageDescription';
-import PageTitle from '@/components/ui/PageTitle';
+import PageHeader from '@/components/ui/PageHeader';
 import LoginDialog from '@/components/LoginDialog';
 import { ProjectStatement } from '@/components/ProjectStatement';
 import { VersionDisplay } from '@/components/VersionDisplay';
@@ -63,10 +62,11 @@ export default function HomeContentClient({ description, hasServiceKey }: Props)
 
   return (
     <div className='space-y-6'>
-      <header className='space-y-2 text-center'>
-        <PageTitle>猫和老鼠手游wiki</PageTitle>
-        {!isMobile && <PageDescription>{description}</PageDescription>}
-      </header>
+      <PageHeader
+        title='猫和老鼠手游wiki'
+        description={description}
+        descriptionVisibility='desktop'
+      />
 
       {NAV_ITEMS.map((section, index) => {
         const buttons = getSectionButtons(section.children);

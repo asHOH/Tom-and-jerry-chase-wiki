@@ -19,8 +19,7 @@ import { useToast } from '@/context/ToastContext';
 import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import Notice from '@/components/ui/Notice';
-import PageDescription from '@/components/ui/PageDescription';
-import PageTitle from '@/components/ui/PageTitle';
+import PageHeader from '@/components/ui/PageHeader';
 import ArticleForm, { CategoryOption } from '@/components/articles/ArticleForm';
 import Link from '@/components/Link';
 
@@ -264,10 +263,7 @@ const EditArticleClient: React.FC<EditArticleClientProps> = ({ characterOptions 
   return (
     <div className='space-y-8 dark:text-slate-200'>
       {/* Header */}
-      <header className='mb-8 space-y-4 px-4 text-center'>
-        <PageTitle>编辑文章</PageTitle>
-        <PageDescription>修改和完善您的文章内容</PageDescription>
-
+      <PageHeader title='编辑文章' description='修改和完善您的文章内容' className='mb-8'>
         {/* Navigation Breadcrumb */}
         <div className='flex items-center justify-center gap-2 text-sm text-gray-600 dark:text-gray-400'>
           <Link
@@ -298,7 +294,7 @@ const EditArticleClient: React.FC<EditArticleClientProps> = ({ characterOptions 
           </svg>
           <span className='text-gray-900 dark:text-gray-100'>编辑文章</span>
         </div>
-      </header>
+      </PageHeader>
 
       {showSourcePicker && approvedSource && pendingSource && (
         <div className='mx-auto max-w-4xl px-4'>

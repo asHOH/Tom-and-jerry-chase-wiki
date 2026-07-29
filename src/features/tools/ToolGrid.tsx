@@ -6,8 +6,7 @@ import { TOOL_NAV_ITEMS } from '@/constants/navigation';
 import ChangeLogs, { ChangeLogsRef } from '@/components/ui/ChangeLogs';
 import FeedbackSection, { FeedbackSectionRef } from '@/components/ui/FeedbackSection';
 import HomePageSection from '@/components/ui/NavSection';
-import PageDescription from '@/components/ui/PageDescription';
-import PageTitle from '@/components/ui/PageTitle';
+import PageHeader from '@/components/ui/PageHeader';
 
 interface CharacterRankingGridProps {
   description?: string;
@@ -67,10 +66,7 @@ export default function CharacterRankingGrid({ description }: CharacterRankingGr
 
   return (
     <div className='mx-auto max-w-3xl space-y-2 p-2 md:max-w-7xl md:space-y-8 md:p-6 dark:text-slate-200'>
-      <header className='mb-4 space-y-2 px-2 text-center md:mb-8 md:space-y-4 md:px-4'>
-        <PageTitle>工具栏</PageTitle>
-        <PageDescription>{description}</PageDescription>
-      </header>
+      <PageHeader title='工具栏' description={description} className='mb-4 md:mb-8' />
 
       {SECTIONS.map((section, index) => {
         /*if (section.condition === false) return null;*/

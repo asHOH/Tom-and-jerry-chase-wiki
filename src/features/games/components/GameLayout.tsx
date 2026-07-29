@@ -3,8 +3,7 @@
 import type { ReactNode } from 'react';
 
 import { cn } from '@/lib/design';
-import PageDescription from '@/components/ui/PageDescription';
-import PageTitle from '@/components/ui/PageTitle';
+import PageHeader from '@/components/ui/PageHeader';
 
 type GameLayoutProps = {
   title: string;
@@ -26,10 +25,7 @@ export default function GameLayout({ title, description, children, className }: 
         className
       )}
     >
-      <header className='mb-4 space-y-2 px-2 text-center md:mb-8 md:space-y-4 md:px-4'>
-        <PageTitle>{title}</PageTitle>
-        {description && <PageDescription>{description}</PageDescription>}
-      </header>
+      <PageHeader title={title} description={description} className='mb-4 md:mb-8' />
       {children}
     </div>
   );

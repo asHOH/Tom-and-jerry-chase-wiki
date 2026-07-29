@@ -17,8 +17,7 @@ import Card from '@/components/ui/Card';
 import EntityCardFrame from '@/components/ui/EntityCardFrame';
 import FilterRow from '@/components/ui/FilterRow';
 import GameImage from '@/components/ui/GameImage';
-import PageDescription from '@/components/ui/PageDescription';
-import PageTitle from '@/components/ui/PageTitle';
+import PageHeader from '@/components/ui/PageHeader';
 
 import AdviceCharacterList from './AdviceCharacterList';
 
@@ -125,9 +124,11 @@ export default function SpecialSkillAdviceClient({
 
   return (
     <div className='mx-auto max-w-7xl space-y-8 p-6 dark:text-slate-200'>
-      <header className='mb-8 space-y-4 px-4 text-center'>
-        <PageTitle>特技推荐</PageTitle>
-        <PageDescription>根据各特技的应用场合和克制关系，选择最合适的特技</PageDescription>
+      <PageHeader
+        title='特技推荐'
+        description='根据各特技的应用场合和克制关系，选择最合适的特技'
+        className='mb-8'
+      >
         {/* Filters wrapper */}
         <div className='mx-auto w-full max-w-2xl space-y-0 md:px-2'>
           <FilterRow<'cat' | 'mouse'>
@@ -141,7 +142,7 @@ export default function SpecialSkillAdviceClient({
             }
           />
         </div>
-      </header>
+      </PageHeader>
       <div className='auto-fit-grid grid-container mt-8 grid gap-4'>
         {filteredSkills.map((skill) => (
           <Card

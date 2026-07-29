@@ -14,8 +14,7 @@ import Card from '@/components/ui/Card';
 import { FormInput } from '@/components/ui/FormControls';
 import LoadingState from '@/components/ui/LoadingState';
 import Notice, { type NoticeVariant } from '@/components/ui/Notice';
-import PageDescription from '@/components/ui/PageDescription';
-import PageTitle from '@/components/ui/PageTitle';
+import PageHeader from '@/components/ui/PageHeader';
 import SectionHeader from '@/components/ui/SectionHeader';
 import { ChatBubbleIcon, CheckCircleIcon, CloseIcon } from '@/components/icons/CommonIcons';
 import Link from '@/components/Link';
@@ -229,10 +228,7 @@ export default function NotificationsClient() {
 
   return (
     <main className='mx-auto w-full max-w-5xl space-y-8 px-4 py-8 text-gray-900 sm:px-6 dark:text-gray-100'>
-      <header className='text-center'>
-        <PageTitle>通知中心</PageTitle>
-        <PageDescription>查看站内通知，管理站内订阅与邮件设置</PageDescription>
-      </header>
+      <PageHeader title='通知中心' description='查看站内通知，管理站内订阅与邮件设置' />
 
       <div className='grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start'>
         <Card

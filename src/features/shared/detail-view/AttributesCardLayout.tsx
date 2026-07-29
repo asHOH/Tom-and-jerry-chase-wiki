@@ -8,6 +8,7 @@ import { useEditMode } from '@/context/EditModeContext';
 import DiscussEditButtons from '@/components/ui/DiscussEditButtons';
 import EntityCardFrame from '@/components/ui/EntityCardFrame';
 import GameImage from '@/components/ui/GameImage';
+import PageTitle from '@/components/ui/PageTitle';
 
 interface AttributesCardLayoutProps {
   imageUrl: string;
@@ -68,7 +69,9 @@ export default function AttributesCardLayout({
                 }}
               />
               <div>
-                <h1 className='pt-(--space-xs) text-2xl font-bold dark:text-white'>{title} </h1>
+                <PageTitle className='py-0 pt-(--space-xs) text-2xl md:text-2xl'>
+                  {title}{' '}
+                </PageTitle>
                 <DiscussEditButtons compact isEditMode={isEditMode} className='mt-1' />
                 {subtitle && (
                   <p className='text-lg font-normal text-gray-400 dark:text-gray-500'>{subtitle}</p>
@@ -91,14 +94,14 @@ export default function AttributesCardLayout({
           <div className='pb-(--space-xs4)'>
             <GameImage src={imageUrl} alt={alt} size='CARD_DETAILS' />
             <div className='px-(--space-md) pt-(--space-xs)'>
-              <h1 className='text-3xl font-bold dark:text-white'>
+              <PageTitle className='py-0 text-3xl md:text-3xl'>
                 {title}{' '}
                 {subtitle && (
                   <span className='text-xl font-normal text-gray-400 dark:text-gray-500'>
                     {subtitle}
                   </span>
                 )}
-              </h1>
+              </PageTitle>
               <DiscussEditButtons compact isEditMode={isEditMode} className='mt-2' />
             </div>
             {aliasList.length > 0 && (

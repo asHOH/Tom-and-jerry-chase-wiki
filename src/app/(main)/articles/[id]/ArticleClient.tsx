@@ -12,6 +12,7 @@ import { toChineseNumeral } from '@/lib/textUtils';
 import type { FactionId } from '@/data/types';
 import Button from '@/components/ui/Button';
 import ButtonLink from '@/components/ui/ButtonLink';
+import PageHeader from '@/components/ui/PageHeader';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
 import CommentsSection from '@/components/comments/CommentsSection';
 import {
@@ -517,11 +518,7 @@ export default function ArticleClient({
         <div className='flex-1'>
           {/* Header */}
           <div className='mb-8 flex flex-col'>
-            <header className='text-center'>
-              <h1 className={cn('py-3 font-bold text-blue-600 dark:text-blue-400', titleSize)}>
-                {article.title}
-              </h1>
-            </header>
+            <PageHeader title={article.title} titleClassName={titleSize} />
 
             {/* Article Meta */}
             <div className='p-2 md:mt-6 md:rounded-lg md:border md:border-gray-200 md:p-6 dark:md:border-gray-700'>

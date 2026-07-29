@@ -83,9 +83,9 @@ export default function CharacterArticle({
     return (
       <CharacterSection title={SECTION_TITLE}>
         <div className='mt-2 space-y-3'>
-          <h1 className='py-3 text-center text-4xl font-bold text-blue-600 dark:text-blue-400'>
+          <h3 className='py-3 text-center text-3xl font-bold text-blue-600 dark:text-blue-400'>
             {title}
-          </h1>
+          </h3>
 
           {/* Meta Info */}
           <div className='mt-6 rounded-lg border border-gray-200 p-4 dark:border-gray-700'>

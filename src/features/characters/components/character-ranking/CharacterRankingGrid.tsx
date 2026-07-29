@@ -17,8 +17,7 @@ import {
   rankCharactersByProperty,
 } from '@/features/characters/utils/ranking';
 import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
-import PageDescription from '@/components/ui/PageDescription';
-import PageTitle from '@/components/ui/PageTitle';
+import PageHeader from '@/components/ui/PageHeader';
 
 import CharacterRankingCard from './CharacterRankingCard';
 import PropertySelector from './PropertySelector';
@@ -156,13 +155,16 @@ export default function CharacterRankingGrid({
   if (!selectedProperty) {
     return (
       <div className='space-y-8'>
-        <header className='mb-8 space-y-4 px-4 text-center'>
-          <PageTitle>角色属性排行榜</PageTitle>
-          <PageDescription>
-            {description ?? ''}
-            {factionId && `，当前为: ${factionId === 'cat' ? '猫阵营' : '鼠阵营'}角色`}
-          </PageDescription>
-        </header>
+        <PageHeader
+          title='角色属性排行榜'
+          description={
+            <>
+              {description ?? ''}
+              {factionId && `，当前为: ${factionId === 'cat' ? '猫阵营' : '鼠阵营'}角色`}
+            </>
+          }
+          className='mb-8'
+        />
 
         <div className='mx-auto max-w-4xl px-4'>
           <PropertySelector
@@ -178,10 +180,7 @@ export default function CharacterRankingGrid({
   if (rankedCharacters.length === 0) {
     return (
       <div className='space-y-8'>
-        <header className='mb-8 space-y-4 px-4 text-center'>
-          <PageTitle>角色属性排行榜</PageTitle>
-          <PageDescription>没有角色拥有此属性</PageDescription>
-        </header>
+        <PageHeader title='角色属性排行榜' description='没有角色拥有此属性' className='mb-8' />
 
         <div className='mx-auto max-w-4xl px-4'>
           <PropertySelector
@@ -196,21 +195,26 @@ export default function CharacterRankingGrid({
 
   return (
     <div className='space-y-8'>
-      <header className='mb-8 space-y-4 px-4 text-center'>
-        <PageTitle>
-          {propertyInfo?.label}排行榜
-          {factionId && ` - ${factionId === 'cat' ? '猫阵营' : '鼠阵营'}`}
-        </PageTitle>
-        <PageDescription>
-          {propertyInfo?.description}
-          {charactersWithProperty.length > 0 && (
-            <span className='mt-2 block text-sm text-gray-600 dark:text-gray-400'>
-              共 {charactersWithProperty.length} 个角色拥有此属性
-              {propertyInfo?.higherIsBetter === false && ' (数值越低越好)'}
-            </span>
-          )}
-        </PageDescription>
-      </header>
+      <PageHeader
+        title={
+          <>
+            {propertyInfo?.label}排行榜
+            {factionId && ` - ${factionId === 'cat' ? '猫阵营' : '鼠阵营'}`}
+          </>
+        }
+        description={
+          <>
+            {propertyInfo?.description}
+            {charactersWithProperty.length > 0 && (
+              <span className='mt-2 block text-sm text-gray-600 dark:text-gray-400'>
+                共 {charactersWithProperty.length} 个角色拥有此属性
+                {propertyInfo?.higherIsBetter === false && ' (数值越低越好)'}
+              </span>
+            )}
+          </>
+        }
+        className='mb-8'
+      />
 
       {/* Property Selector */}
       <div className='mx-auto max-w-4xl px-4'>

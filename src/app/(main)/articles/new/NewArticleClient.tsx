@@ -10,8 +10,7 @@ import { useUser } from '@/hooks/useUser';
 import { useToast } from '@/context/ToastContext';
 import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
-import PageDescription from '@/components/ui/PageDescription';
-import PageTitle from '@/components/ui/PageTitle';
+import PageHeader from '@/components/ui/PageHeader';
 import ArticleForm, { CategoryOption } from '@/components/articles/ArticleForm';
 import Link from '@/components/Link';
 
@@ -199,10 +198,7 @@ const NewArticleClient: React.FC<NewArticleClientProps> = ({ characterOptions })
   return (
     <div className='space-y-8 dark:text-slate-200'>
       {/* Header */}
-      <header className='mb-8 space-y-4 px-4 text-center'>
-        <PageTitle>创建新文章</PageTitle>
-        <PageDescription>分享你的游戏心得和攻略技巧</PageDescription>
-
+      <PageHeader title='创建新文章' description='分享你的游戏心得和攻略技巧' className='mb-8'>
         {/* Navigation Breadcrumb */}
         <div className='flex items-center justify-center gap-2 text-sm text-gray-600 dark:text-gray-400'>
           <Link
@@ -220,7 +216,7 @@ const NewArticleClient: React.FC<NewArticleClientProps> = ({ characterOptions })
           </svg>
           <span className='text-gray-900 dark:text-gray-100'>创建新文章</span>
         </div>
-      </header>
+      </PageHeader>
 
       {/* Main Content */}
       <ArticleForm

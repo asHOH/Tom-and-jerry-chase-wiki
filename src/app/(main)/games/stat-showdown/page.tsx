@@ -4,8 +4,7 @@ import Link from 'next/link';
 
 import { generatePageMetadata } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
-import PageDescription from '@/components/ui/PageDescription';
-import PageTitle from '@/components/ui/PageTitle';
+import PageHeader from '@/components/ui/PageHeader';
 
 export const dynamic = 'force-static';
 
@@ -98,10 +97,7 @@ const MODES = [
 export default function StatShowdownHubPage() {
   return (
     <div className='mx-auto max-w-3xl space-y-2 p-2 md:max-w-6xl md:space-y-8 md:p-6 dark:text-slate-200'>
-      <header className='mb-4 space-y-2 px-2 text-center md:mb-8 md:space-y-4 md:px-4'>
-        <PageTitle>能力对决</PageTitle>
-        <PageDescription>{DESCRIPTION}</PageDescription>
-      </header>
+      <PageHeader title='能力对决' description={DESCRIPTION} className='mb-4 md:mb-8' />
 
       <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4'>
         {MODES.map((m) => (

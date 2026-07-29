@@ -9,8 +9,7 @@ import { useDarkMode } from '@/context/DarkModeContext';
 import type { FactionId } from '@/data/types';
 import { CharacterTable, winRatesData } from '@/data/winRates';
 import FilterRow from '@/components/ui/FilterRow';
-import PageDescription from '@/components/ui/PageDescription';
-import PageTitle from '@/components/ui/PageTitle';
+import PageHeader from '@/components/ui/PageHeader';
 import Link from '@/components/Link';
 
 type ColumnKey = 'rank' | 'faction' | 'character' | 'pickRate' | 'winRate' | 'banRate';
@@ -361,10 +360,7 @@ export default function WinRatesClient({ description, characterFactions }: WinRa
 
   return (
     <div className='mx-auto max-w-3xl space-y-2 p-2 md:max-w-7xl md:space-y-8 md:p-6 dark:text-slate-200'>
-      <header className='mb-4 space-y-2 px-2 text-center md:mb-8 md:space-y-4 md:px-4'>
-        <PageTitle>胜率数据统计</PageTitle>
-        <PageDescription>{description}</PageDescription>
-
+      <PageHeader title='胜率数据统计' description={description} className='mb-4 md:mb-8'>
         <div className='mx-auto w-full max-w-2xl space-y-0 md:px-2'>
           <FilterRow<string>
             label='赛季筛选:'
@@ -428,7 +424,7 @@ export default function WinRatesClient({ description, characterFactions }: WinRa
             </button>
           </div>
         </div>
-      </header>
+      </PageHeader>
 
       <section className='space-y-4'>
         <h2 className='text-2xl font-bold'>角色数据 ({filteredAndSortedData.length} 条记录)</h2>

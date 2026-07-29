@@ -7,7 +7,7 @@ import { formatArticleDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
 import ButtonLink from '@/components/ui/ButtonLink';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
-import PageTitle from '@/components/ui/PageTitle';
+import PageHeader from '@/components/ui/PageHeader';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
 import {
   ClockIcon,
@@ -159,9 +159,7 @@ export default function PreviewClient() {
       </div>
 
       {/* Article Header */}
-      <header className='mb-8 text-center'>
-        <PageTitle>{data.article.title}</PageTitle>
-
+      <PageHeader title={data.article.title} className='mb-8'>
         {/* Article Meta */}
         <div className='mt-6 p-6'>
           <div className='flex flex-wrap items-center gap-6 text-sm text-gray-600 dark:text-gray-400'>
@@ -221,7 +219,7 @@ export default function PreviewClient() {
             </div>
           )}
         </div>
-      </header>
+      </PageHeader>
 
       {/* Article Content */}
       <div className='p-8'>

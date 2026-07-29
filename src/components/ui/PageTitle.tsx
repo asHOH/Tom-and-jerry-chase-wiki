@@ -1,18 +1,18 @@
-import React from 'react';
+import type { ComponentPropsWithoutRef } from 'react';
 
-type PageTitleProps = {
-  children: React.ReactNode;
-};
+import { cn } from '@/lib/design';
 
-const PageTitle: React.FC<PageTitleProps> = ({ children }) => {
+type PageTitleProps = ComponentPropsWithoutRef<'h1'>;
+
+export default function PageTitle({ className, style, ...props }: PageTitleProps) {
   return (
     <h1
-      className='py-3 text-4xl leading-tight font-bold tracking-tight text-blue-600 md:text-5xl dark:text-blue-400'
-      style={{ fontFamily: 'var(--font-display-stack)' }}
-    >
-      {children}
-    </h1>
+      className={cn(
+        'py-3 text-4xl leading-tight font-bold tracking-tight text-blue-600 md:text-5xl dark:text-blue-400',
+        className
+      )}
+      style={{ ...style, fontFamily: 'var(--font-display-stack)' }}
+      {...props}
+    />
   );
-};
-
-export default PageTitle;
+}

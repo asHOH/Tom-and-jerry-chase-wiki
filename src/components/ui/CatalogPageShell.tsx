@@ -2,8 +2,7 @@ import type { ReactNode } from 'react';
 
 import { cn } from '@/lib/design';
 
-import PageDescription from './PageDescription';
-import PageTitle from './PageTitle';
+import PageHeader from './PageHeader';
 
 type CatalogPageShellProps = {
   title: ReactNode;
@@ -34,22 +33,19 @@ export default function CatalogPageShell({
 }: CatalogPageShellProps) {
   return (
     <section className={cn('mx-auto w-full max-w-6xl px-2 md:p-6 dark:text-slate-200', className)}>
-      <header className={cn('space-y-2 px-2 text-center md:space-y-4 md:px-4', headerClassName)}>
-        <PageTitle>{title}</PageTitle>
-        {description ? (
-          <div
-            className={descriptionVisibility === 'desktop' ? 'sr-only md:not-sr-only' : undefined}
-          >
-            <PageDescription>{description}</PageDescription>
-          </div>
-        ) : null}
-        {actions ? <div className='flex justify-center md:justify-end'>{actions}</div> : null}
+      <PageHeader
+        title={title}
+        description={description}
+        descriptionVisibility={descriptionVisibility}
+        actions={actions}
+        className={headerClassName}
+      >
         {filters ? (
           <div className={cn('mx-auto w-full max-w-2xl space-y-0 md:px-2', filtersClassName)}>
             {filters}
           </div>
         ) : null}
-      </header>
+      </PageHeader>
       <div className={cn(contentTopSpacing === 'default' && 'mt-6 md:mt-8', contentClassName)}>
         {children}
       </div>

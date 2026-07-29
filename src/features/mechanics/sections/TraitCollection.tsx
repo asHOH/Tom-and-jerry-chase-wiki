@@ -5,8 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import traits from '@/data/traits';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 import { OneTraitText } from '@/features/shared/traits/OneTraitText';
-import PageDescription from '@/components/ui/PageDescription';
-import PageTitle from '@/components/ui/PageTitle';
+import PageHeader from '@/components/ui/PageHeader';
 
 const processStrings = (input: string | string[]): string =>
   Array.isArray(input) ? input.join('\n') : input;
@@ -72,15 +71,16 @@ export default function TraitCollision() {
 
   return (
     <div ref={topRef} className={'mx-auto max-w-7xl space-y-2 pt-4 dark:text-slate-200'}>
-      <header className={'mb-2 space-y-2 px-2 text-center'}>
-        <PageTitle>特性大全</PageTitle>
-        <PageDescription>
+      <PageHeader
+        title='特性大全'
+        description={
           <TextWithHoverTooltips
             text={`
           列举已收录的所有特性，共$${`${allTraits.length}`}$font-bold#条，当前为第${startIndex + 1}-${Math.min(endIndex, allTraits.length)}条（第${currentPage}页/共${totalPages}页）`}
           />
-        </PageDescription>
-      </header>
+        }
+        className='mb-2'
+      />
 
       <div className='grid items-center justify-center'>
         <div className='mt-3 mb-6 flex flex-col flex-wrap gap-4 rounded-lg border border-dashed border-gray-400 bg-linear-to-br from-white to-gray-50 px-2 py-3 text-sm font-normal dark:border-gray-600 dark:from-slate-800 dark:to-slate-900 dark:text-slate-200 [&_img]:select-none'>

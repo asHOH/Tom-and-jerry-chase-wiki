@@ -3,8 +3,7 @@
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useNavigationTabs } from '@/hooks/useNavigationTabs';
 import ActionTile from '@/components/ui/ActionTile';
-import PageDescription from '@/components/ui/PageDescription';
-import PageTitle from '@/components/ui/PageTitle';
+import PageHeader from '@/components/ui/PageHeader';
 import Image from '@/components/Image';
 
 import { MECHANICS_NAV_ITEMS } from '../sections';
@@ -59,10 +58,7 @@ export default function MechanicsNavigation({ children, description }: Mechanics
 
   return (
     <div className='mx-auto max-w-3xl space-y-4 md:max-w-7xl md:space-y-8 md:p-6 dark:text-slate-200'>
-      <header className='mb-2 text-center md:mb-4 md:space-y-4 md:px-4'>
-        <PageTitle>局内机制</PageTitle>
-        <PageDescription>{description}</PageDescription>
-      </header>
+      <PageHeader title='局内机制' description={description} className='mb-2 md:mb-4' />
 
       <NavigationButtons isMobile={isMobile} isTabActive={isTabActive} />
 

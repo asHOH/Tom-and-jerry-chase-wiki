@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { generatePageMetadata } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
 import { getDocPages } from '@/features/articles/utils/docs';
+import PageHeader from '@/components/ui/PageHeader';
 import { ChevronRightIcon } from '@/components/icons/CommonIcons';
 import Link from '@/components/Link';
 
@@ -24,12 +25,7 @@ export default async function DocsIndexPage() {
 
   return (
     <div className='space-y-8'>
-      <div className='space-y-4 text-center'>
-        <h1 className='text-4xl font-bold text-gray-900 dark:text-gray-100'>文档</h1>
-        <p className='mx-auto max-w-2xl text-lg text-gray-600 dark:text-gray-400'>
-          欢迎来到猫和老鼠手游维基文档。浏览下面的指南和资源。
-        </p>
-      </div>
+      <PageHeader title='文档' description='欢迎来到猫和老鼠手游维基文档。浏览下面的指南和资源。' />
 
       {docPages.length > 0 ? (
         <div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3'>

@@ -13,7 +13,7 @@ import Button from '@/components/ui/Button';
 import ButtonLink from '@/components/ui/ButtonLink';
 import Card from '@/components/ui/Card';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
-import PageTitle from '@/components/ui/PageTitle';
+import PageHeader from '@/components/ui/PageHeader';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
 import { ClockIcon, UserCircleIcon } from '@/components/icons/CommonIcons';
 import Link from '@/components/Link';
@@ -189,10 +189,7 @@ export default function ArticleHistoryClient() {
 
     return (
       <div className='container mx-auto max-w-7xl px-4 py-8'>
-        <header className='mb-8 text-center'>
-          <PageTitle>版本差异</PageTitle>
-          <p className='mt-4 text-gray-600 dark:text-gray-400'>{data.article.title}</p>
-        </header>
+        <PageHeader title='版本差异' description={data.article.title} className='mb-8' />
 
         <ArticleDiffViewer
           key={`${comparison.oldVersion.id}-${comparison.newVersion.id}`}
@@ -219,7 +216,16 @@ export default function ArticleHistoryClient() {
   return (
     <div className='container mx-auto max-w-7xl px-4 py-8'>
       {/* Header */}
-      <header className='mb-8 text-center'>
+      <PageHeader
+        title='版本历史'
+        description={
+          <>
+            <span className='block'>分类: {data.article.categories?.name || '未分类'}</span>
+            <span className='mt-1 block'>共 {data.versions.length} 个版本</span>
+          </>
+        }
+        className='mb-8'
+      >
         {/* <div className='flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mb-4'>
           <Link
             href={`/articles/${articleId}`}
@@ -230,14 +236,7 @@ export default function ArticleHistoryClient() {
           <span>/</span>
           <span>历史版本</span>
         </div> */}
-
-        <PageTitle>版本历史</PageTitle>
-
-        <div className='mt-4 text-gray-600 dark:text-gray-400'>
-          <p>分类: {data.article.categories?.name || '未分类'}</p>
-          <p className='mt-1'>共 {data.versions.length} 个版本</p>
-        </div>
-      </header>
+      </PageHeader>
 
       {/* Comparison Actions */}
       {data.versions.length >= 2 && (

@@ -10,8 +10,7 @@ import {
   type RecentChangesFilter,
 } from '@/lib/recentChanges';
 import Card from '@/components/ui/Card';
-import PageDescription from '@/components/ui/PageDescription';
-import PageTitle from '@/components/ui/PageTitle';
+import PageHeader from '@/components/ui/PageHeader';
 import Link from '@/components/Link';
 
 const DESCRIPTION = '查看社区最近通过审核的文章与游戏数据更改';
@@ -49,10 +48,7 @@ export default async function RecentChangesPage({ searchParams }: PageProps) {
 
   return (
     <main className='mx-auto w-full max-w-5xl space-y-6 px-3 py-6 sm:px-6 sm:py-8 dark:text-gray-100'>
-      <header className='space-y-2 text-center'>
-        <PageTitle>最近更改</PageTitle>
-        <PageDescription>{DESCRIPTION}</PageDescription>
-      </header>
+      <PageHeader title='最近更改' description={DESCRIPTION} />
 
       <nav aria-label='更改类型筛选' className='flex justify-center gap-2'>
         {FILTERS.map((option) => {

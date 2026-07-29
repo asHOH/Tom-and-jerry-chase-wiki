@@ -24,6 +24,7 @@ import CollapseCard from '@/components/ui/CollapseCard';
 import DiscussEditButtons from '@/components/ui/DiscussEditButtons';
 import { editable } from '@/components/ui/editable';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
+import PageTitle from '@/components/ui/PageTitle';
 import { PlusIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 
@@ -138,7 +139,7 @@ export default function CharacterDetails({
                       </div>
                     </div>
                     <div className='flex items-center justify-between py-2'>
-                      <h1 className='text-3xl font-bold dark:text-white'>
+                      <PageTitle className='py-0 text-3xl md:text-3xl'>
                         <e.span
                           path='id'
                           initialValue={localCharacter.id}
@@ -148,7 +149,7 @@ export default function CharacterDetails({
                         <span className='text-xl font-normal text-gray-400 dark:text-gray-500'>
                           ({localCharacter.factionId == 'cat' ? '猫' : '鼠'}阵营)
                         </span>
-                      </h1>
+                      </PageTitle>
                       <DiscussEditButtons compact isEditMode={isEditMode} className='ml-2' />
                     </div>
                     <ContentWriterDisplay
@@ -186,9 +187,9 @@ export default function CharacterDetails({
                       <div className='-mt-2'>
                         <div className='flex items-start justify-between'>
                           <div>
-                            <h1 className='text-2xl font-bold dark:text-white'>
+                            <PageTitle className='py-0 text-2xl md:text-2xl'>
                               {localCharacter.id}{' '}
-                            </h1>
+                            </PageTitle>
                             <p className='text-lg font-normal text-gray-400 dark:text-gray-500'>
                               (
                               {localCharacter.factionId === 'cat'

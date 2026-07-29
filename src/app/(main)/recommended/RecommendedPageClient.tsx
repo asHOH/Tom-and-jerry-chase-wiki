@@ -7,8 +7,7 @@ import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import CharacterDisplay from '@/features/characters/components/character-grid/CharacterDisplay';
 import { getCharacterRelation } from '@/features/characters/utils/relationReadModel';
 import { CharacterSlotsSelector } from '@/components/ui/CharacterSelector';
-import PageDescription from '@/components/ui/PageDescription';
-import PageTitle from '@/components/ui/PageTitle';
+import PageHeader from '@/components/ui/PageHeader';
 
 type Props = {
   characters: PublishedGameDataByType['characters'];
@@ -84,10 +83,11 @@ export default function RecommendedPageClient({ characters, maps }: Props) {
 
   return (
     <div className='min-h-screen'>
-      <header className='mb-8 space-y-4 text-center dark:text-slate-200'>
-        <PageTitle>阵容推荐</PageTitle>
-        <PageDescription>选择对手的老鼠阵容，系统将为您推荐最佳的猫角色。</PageDescription>
-      </header>
+      <PageHeader
+        title='阵容推荐'
+        description='选择对手的老鼠阵容，系统将为您推荐最佳的猫角色。'
+        className='mb-8 dark:text-slate-200'
+      />
 
       {/* Map Selector */}
       <div className='mb-8 space-y-2'>

@@ -9,8 +9,7 @@ import { cn } from '@/lib/design';
 import Button from '@/components/ui/Button';
 import ButtonLink from '@/components/ui/ButtonLink';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
-import PageDescription from '@/components/ui/PageDescription';
-import PageTitle from '@/components/ui/PageTitle';
+import PageHeader from '@/components/ui/PageHeader';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
 import { CheckBadgeIcon, ClockIcon, CloseIcon, EyeIcon } from '@/components/icons/CommonIcons';
 import Link from '@/components/Link';
@@ -213,12 +212,11 @@ export default function PendingClient() {
 
   return (
     <div className='space-y-8 dark:text-slate-200'>
-      <header className='mb-8 space-y-2 px-4 text-center'>
-        <PageTitle>{canModerate ? '内容审核' : '待审核内容'}</PageTitle>
-        <PageDescription>
-          {canModerate ? '管理待审核的文章提交' : '查看您的待审核提交'}
-        </PageDescription>
-      </header>
+      <PageHeader
+        title={canModerate ? '内容审核' : '待审核内容'}
+        description={canModerate ? '管理待审核的文章提交' : '查看您的待审核提交'}
+        className='mb-8'
+      />
 
       <div className='mb-6'>
         <div className='p-6'>

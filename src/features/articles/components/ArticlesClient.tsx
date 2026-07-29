@@ -19,8 +19,7 @@ import { Article, ArticlesData, Category, type FactionId } from '@/data/types';
 import Button from '@/components/ui/Button';
 import ButtonLink from '@/components/ui/ButtonLink';
 import EntityCardFrame from '@/components/ui/EntityCardFrame';
-import PageDescription from '@/components/ui/PageDescription';
-import PageTitle from '@/components/ui/PageTitle';
+import PageHeader from '@/components/ui/PageHeader';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
 import { SkeletonArticleCard } from '@/components/ui/Skeleton';
 import { ClockIcon, PlusIcon } from '@/components/icons/CommonIcons';
@@ -275,10 +274,7 @@ export default function ArticlesClient({
   if (!isInitialized) {
     return (
       <div className='space-y-8 dark:text-slate-200'>
-        <header className='mb-8 space-y-4 px-4 text-center'>
-          <PageTitle>文章列表</PageTitle>
-          {description && <PageDescription>{description}</PageDescription>}
-        </header>
+        <PageHeader title='文章列表' description={description} className='mb-8' />
         <div className='mt-8 grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-6 px-4'>
           {Array.from({ length: 6 }).map((_, i) => (
             <SkeletonArticleCard key={i} />
@@ -290,10 +286,7 @@ export default function ArticlesClient({
   return (
     <div className='space-y-2 md:space-y-8 dark:text-slate-200'>
       {/* Header */}
-      <header className='mb-4 space-y-2 px-2 text-center md:mb-8 md:space-y-4 md:px-4'>
-        <PageTitle>文章列表</PageTitle>
-        {description && <PageDescription>{description}</PageDescription>}
-
+      <PageHeader title='文章列表' description={description} className='mb-4 md:mb-8'>
         <ArticleFilters
           categoriesForFilter={categoriesForFilter}
           categoryOptions={categoryOptions}
@@ -367,7 +360,7 @@ export default function ArticlesClient({
             )}
           </div>
         </div>
-      </header>
+      </PageHeader>
 
       {/* Screen reader announcement for filter results */}
       <div aria-live='polite' aria-atomic='true' className='sr-only'>
