@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 
+import type { ArticleCharacterOption } from '@/lib/articles/articleCharacterOptions';
 import { cn } from '@/lib/design';
 import { normalizeHeadingLevels } from '@/lib/richTextUtils';
 import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
@@ -20,6 +21,7 @@ export interface CategoryOption {
 }
 
 interface ArticleFormProps {
+  characterOptions: readonly ArticleCharacterOption[];
   title: string;
   onTitleChange: (value: string) => void;
   category: string;
@@ -47,6 +49,7 @@ interface ArticleFormProps {
 }
 
 const ArticleForm: React.FC<ArticleFormProps> = ({
+  characterOptions,
   title,
   onTitleChange,
   category,
@@ -196,6 +199,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
                 角色攻略文章需要选择一个关联角色
               </p>
               <ArticleCharacterSelector
+                characters={characterOptions}
                 selectedCharacterId={characterId ?? null}
                 onSelect={onCharacterChange ?? (() => {})}
                 disabled={isSubmitting}

@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import useSWR from 'swr';
 
+import type { ArticleCharacterOption } from '@/lib/articles/articleCharacterOptions';
 import {
   resolveEditFormState,
   type ArticleEditInfoResponse,
@@ -44,7 +45,11 @@ const fetcher = async (url: string) => {
   return res.json();
 };
 
-const EditArticleClient: React.FC = () => {
+type EditArticleClientProps = {
+  characterOptions: readonly ArticleCharacterOption[];
+};
+
+const EditArticleClient: React.FC<EditArticleClientProps> = ({ characterOptions }) => {
   const params = useParams();
   const id = params?.id as string;
   const router = useRouter();
@@ -351,6 +356,7 @@ const EditArticleClient: React.FC = () => {
 
       {/* Main Content */}
       <ArticleForm
+        characterOptions={characterOptions}
         title={title}
         onTitleChange={setTitle}
         category={category}

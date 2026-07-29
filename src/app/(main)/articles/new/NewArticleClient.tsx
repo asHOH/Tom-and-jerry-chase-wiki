@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import useSWR from 'swr';
 
+import type { ArticleCharacterOption } from '@/lib/articles/articleCharacterOptions';
 import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { useUser } from '@/hooks/useUser';
 import { useToast } from '@/context/ToastContext';
@@ -35,7 +36,11 @@ const fetcher = async (url: string) => {
   return res.json();
 };
 
-const NewArticleClient: React.FC = () => {
+type NewArticleClientProps = {
+  characterOptions: readonly ArticleCharacterOption[];
+};
+
+const NewArticleClient: React.FC<NewArticleClientProps> = ({ characterOptions }) => {
   const router = useRouter();
   const { isLoading: isUserLoading, isValidating: isUserValidating } = useUser();
   const permissions = usePermissions();
@@ -219,6 +224,7 @@ const NewArticleClient: React.FC = () => {
 
       {/* Main Content */}
       <ArticleForm
+        characterOptions={characterOptions}
         title={title}
         onTitleChange={setTitle}
         category={category}

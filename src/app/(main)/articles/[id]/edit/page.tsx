@@ -1,5 +1,7 @@
 import { Metadata } from 'next';
 
+import { selectArticleCharacterOptions } from '@/lib/articles/articleCharacterOptions';
+import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
 import { generatePageMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 
 import EditArticleClient from './EditArticleClient';
@@ -22,6 +24,8 @@ export async function generateMetadata({
   });
 }
 
-export default function EditArticlePage() {
-  return <EditArticleClient />;
+export default async function EditArticlePage() {
+  const characters = await getPublishedDomainReadModel('characters');
+
+  return <EditArticleClient characterOptions={selectArticleCharacterOptions(characters.data)} />;
 }

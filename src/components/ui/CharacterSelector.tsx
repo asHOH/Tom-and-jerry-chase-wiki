@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState } from 'react';
 
+import type { ArticleCharacterOption } from '@/lib/articles/articleCharacterOptions';
 import { AssetManager } from '@/lib/assetManager';
 import { cn } from '@/lib/design';
 import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
@@ -246,33 +247,29 @@ export function CharacterSlotsSelector({
  * Shows all characters in a dropdown with search functionality.
  */
 export function ArticleCharacterSelector({
+  characters,
   selectedCharacterId,
   onSelect,
   disabled = false,
 }: {
+  characters: readonly ArticleCharacterOption[];
   selectedCharacterId: string | null;
   onSelect: (characterId: string | null) => void;
   disabled?: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const editRuntime = useActiveEditRuntime();
-  const charactersSnapAr = useOptionalEditSnapshot(editRuntime?.stores.characters, characters);
-
-  const allCharacters = useMemo(() => {
-    return Object.values(charactersSnapAr) as Array<{ id: string; factionId: FactionId }>;
-  }, [charactersSnapAr]);
 
   const filteredCharacters = useMemo(() => {
-    if (!searchQuery.trim()) return allCharacters;
+    if (!searchQuery.trim()) return characters;
     const query = searchQuery.toLowerCase();
-    return allCharacters.filter((char) => char.id.toLowerCase().includes(query));
-  }, [allCharacters, searchQuery]);
+    return characters.filter((char) => char.id.toLowerCase().includes(query));
+  }, [characters, searchQuery]);
 
   const selectedCharacter = useMemo(() => {
     if (!selectedCharacterId) return null;
-    return allCharacters.find((c) => c.id === selectedCharacterId) || null;
-  }, [allCharacters, selectedCharacterId]);
+    return characters.find((character) => character.id === selectedCharacterId) ?? null;
+  }, [characters, selectedCharacterId]);
 
   const handleSelect = (characterId: string) => {
     onSelect(characterId);

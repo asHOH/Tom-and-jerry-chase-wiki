@@ -1,5 +1,7 @@
 import { Metadata } from 'next';
 
+import { selectArticleCharacterOptions } from '@/lib/articles/articleCharacterOptions';
+import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
 import { generatePageMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 
 import NewArticleClient from './NewArticleClient';
@@ -12,6 +14,8 @@ export const metadata: Metadata = generatePageMetadata({
   robots: { index: false },
 });
 
-export default function NewArticlePage() {
-  return <NewArticleClient />;
+export default async function NewArticlePage() {
+  const characters = await getPublishedDomainReadModel('characters');
+
+  return <NewArticleClient characterOptions={selectArticleCharacterOptions(characters.data)} />;
 }
