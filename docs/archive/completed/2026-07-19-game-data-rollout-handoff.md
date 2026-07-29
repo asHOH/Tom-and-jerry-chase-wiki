@@ -5,10 +5,9 @@ Updated: 2026-07-23
 This is the operational handoff for the
 [public-action semantic-ordering plan](./2026-07-17-public-action-semantic-ordering-plan.md). The
 [direct array-index dependency plan](./2026-07-23-direct-array-index-set-dependency-plan.md) is the
-immediate application-only correctness track. The
-[editable store-loading plan](./2026-07-16-editable-game-data-store-loading-plan.md) remains the
-larger follow-on architecture track; avoid starting it until the rollout gates below are
-deliberately closed or reprioritized.
+application-only correctness track. The
+[editable store-loading plan](./2026-07-16-editable-game-data-store-loading-plan.md) records the
+larger follow-on architecture work that was completed after the rollout gates below closed.
 
 ## Current state
 
@@ -96,7 +95,7 @@ Important details:
 - A catalog-only comparison at `2026-07-22T04:14:13Z` confirmed that the complete live definition,
   normalized function-body hash, attributes, owner, and execution privileges match migration
   `20260720000001`. The evidence is recorded in the
-  [live-comparison report](./reports/2026-07-22-anonymous-prepared-publish-live-comparison.md).
+  [live-comparison report](../../reports/2026-07-22-anonymous-prepared-publish-live-comparison.md).
   Approved history-only repair then recorded the version as applied at `2026-07-22T04:17:08Z`, and
   the migration list verified it on both sides. Its SQL was not re-executed.
 - Reconcile every other ledger difference deliberately before returning to push-based deployment.
@@ -131,13 +130,15 @@ Complete. With explicit production approval, the manually applied revoke passed 
 at `2026-07-23T15:19:22Z`, transactional deployment at `2026-07-23T15:19:48Z`, post-deployment
 catalog verification at `2026-07-23T15:20:14Z`, and migration-ledger repair. Step 5D's frozen,
 non-mutating role-context checks passed at `2026-07-23T15:21:11Z`. The full sanitized evidence is
-in the [Step 5C execution evidence report](./reports/2026-07-23-game-data-step-5c-execution-evidence.md).
+in the
+[Step 5C execution evidence report](../../reports/2026-07-23-game-data-step-5c-execution-evidence.md).
 
 Step 5E is complete. The post-revoke audit retained fingerprint
 `audit-f0429897bfb2022d8095508c61791e487de723ff6b6cd0db72387f5d669db246` and sanitized cohorts
 of 182 approved, 1,125 synced, and 5 pending rows. Its only nonzero finding was the previously
 dispositioned 27 synced atomic multi-action history rows; no detail query or repair was needed.
-See the [post-revoke audit report](./reports/2026-07-23-post-revoke-public-action-replay-audit-result.md).
+See the
+[post-revoke audit evidence](../../reports/2026-07-23-game-data-step-5c-execution-evidence.md#step-5e-post-revoke-audit).
 
 ### Why Step 5C requires explicit approval
 

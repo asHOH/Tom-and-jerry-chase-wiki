@@ -4,13 +4,13 @@
 
 - Date: 2026-07-16
 - Last revised: 2026-07-29
-- State: Foundation, published-data selectors, Lean Steps 1 through 4, and the Step 2 follow-up
-  gate complete
+- State: Completed and archived; Foundation, published-data selectors, Lean Steps 1 through 4, and
+  the Step 2 follow-up gate are complete
 - Scope: Remove universal editable-store initialization and root approved-action replay, preserve
   edit behavior, then enable publish-time dependency grouping
 
-This is the only active execution plan for the remaining game-data work. The completed
-[semantic-ordering trust-boundary record](./archive/completed/2026-07-17-public-action-semantic-ordering-plan.md)
+This completed plan records the game-data loading and semantic-grouping implementation. The
+[semantic-ordering trust-boundary record](./2026-07-17-public-action-semantic-ordering-plan.md)
 preserves the earlier security rollout and detailed replay decisions.
 
 ## Goal
@@ -19,7 +19,7 @@ Normal visitors must not load or initialize the complete mutable game-data graph
 still start from the complete published baseline, restore cross-domain drafts, and preserve the
 existing publish workflow.
 
-The remaining work solves that problem directly. It does not attempt to remove every static or
+The completed work solves that problem directly. It does not attempt to remove every static or
 canonical data value from every client bundle unless bundle measurements show that a particular
 value remains a material cost.
 
@@ -118,7 +118,7 @@ A focused import audit using `rg`, TypeScript errors, existing tests, and bundle
 sufficient. Migrate consumers that actually retain mutable stores or cause the measured shared
 graph; leave small static client assets alone unless evidence shows a material cost.
 
-## Remaining Work
+## Completed Work
 
 ### Lean Step 1 (complete): Sever legacy server mutation and mutable barrel imports
 
@@ -379,7 +379,7 @@ Do not require a full suite for every small import move.
 
 ## Acceptance Criteria
 
-The remaining work is complete when:
+The implementation satisfies these acceptance criteria:
 
 - normal unrelated routes do not load or initialize editable game-data stores;
 - the complete editable baseline is requested only after edit mode activation;

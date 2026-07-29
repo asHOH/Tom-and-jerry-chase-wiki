@@ -4,15 +4,15 @@
 
 - Date: 2026-07-17
 - Last revised: 2026-07-24
-- State: Archived trust-boundary record; remaining client cutover and Stage B work merged into the
-  lean active plan
+- State: Archived trust-boundary record; the later client cutover and Stage B work were completed
+  in the lean game-data plan
 - Scope: Public-row decoding and replay semantics, trusted publish and approval persistence, and
   publish-time dependency grouping
 
 This record preserves the completed security rollout and frozen semantic contracts. It no longer
-defines an active delivery sequence. The remaining client cutover and publish-time grouping work is
-owned by the
-[lean game-data plan](../../2026-07-16-editable-game-data-store-loading-plan.md).
+defines an active delivery sequence. The later client cutover and publish-time grouping work was
+completed in the
+[lean game-data plan](./2026-07-16-editable-game-data-store-loading-plan.md).
 
 Completed foundation:
 
@@ -55,13 +55,13 @@ Completed foundation:
   persist separately, while same-index, property, non-canonical, structural-operation, and invalid
   cases remain dependent or fail closed. The production-connected read-only audit reported no
   classification delta.
-- Editable-store Phase 1 now consumes the frozen decoder and checked replay contracts through one
-  immutable approved-action snapshot, deterministic action/global revisions, measured persistent
-  published caches, complete snapshot composition, and route/history selectors. It remains
-  alongside legacy replay until Lean Step 1 cuts server consumers over.
+- At this record's handoff, editable-store Phase 1 consumed the frozen decoder and checked replay
+  contracts through one immutable approved-action snapshot, deterministic action/global revisions,
+  measured persistent published caches, complete snapshot composition, and route/history selectors.
+  The subsequent lean plan removed the legacy replay path.
 
-No trust-boundary work remains in this archived plan. The active lean plan owns removal of legacy
-server/client replay, the lazy edit runtime, the Stage B gate, and final validation.
+No trust-boundary work remains in this archived plan. The completed lean plan records removal of
+legacy server/client replay, the lazy edit runtime, the Stage B gate, and final validation.
 
 ## Frozen Contract
 
@@ -166,9 +166,9 @@ server/client replay, the lazy edit runtime, the Stage B gate, and final validat
 Roll out additively: add the prepared RPC, deploy both route cutovers, then deploy the revoke. This
 stage changes validation and trust ownership but deliberately does not introduce dependency grouping.
 
-### Historical Stage B design (moved to the lean active plan)
+### Historical Stage B design (completed by the lean plan)
 
-The active wording and exit gate now live in the lean game-data plan. The original design is
+The final wording and completion evidence live in the lean game-data plan. The original design is
 retained below as historical context.
 
 After the editable-store Phase 4 gate passes:
@@ -244,7 +244,7 @@ is revoked and no browser-callable path can move a row into or out of the approv
 
 ## Historical Live Replay Handoff
 
-This handoff is superseded by the lean active plan. Its correctness order remains historical
+This handoff is superseded by the completed lean plan. Its correctness order remains historical
 context:
 
 1. The pure foundation and Phase 1 snapshot layer consume `decodeStoredActionRow`, shared touched
@@ -263,9 +263,8 @@ The pure foundation, editable-store Phase 1 snapshot/selectors, bounded preparat
 prepared RPCs, route cutovers, legacy revokes, post-revoke audit, direct-RPC security verification,
 and direct array-index classifier are complete.
 
-The remaining server/client cutover, root-replay removal, dependency grouping, and final audit were
-merged into the lean active plan. This archived record must not be used as a second execution
-sequence.
+The server/client cutover, root-replay removal, dependency grouping, and final audit were completed
+in the lean plan. This archived record must not be used as a second execution sequence.
 
 The post-bypass audit gate passed. Future reruns retain these two criteria:
 

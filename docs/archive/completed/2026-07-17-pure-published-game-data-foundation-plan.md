@@ -14,13 +14,14 @@ Implementation status:
   `5724e296`.
 - The server-only foundation is now consumed by trusted candidate replay in `85e5934f`.
 - Snapshot caching, revisions, route read models, client migration, and removal of legacy replay
-  remain owned by the parent store-loading plan and are not part of this plan's completion.
+  were subsequently completed by the parent store-loading plan and are not part of this plan's
+  completion.
 
 ## Relationship to Other Plans
 
-- `2026-07-16-editable-game-data-store-loading-plan.md` owns published-snapshot caching, build and
-  action revisions, route read models, server and client cutovers, the lazy edit runtime, and removal
-  of the transitional root replay.
+- `2026-07-16-editable-game-data-store-loading-plan.md` records the completed published-snapshot
+  caching, build and action revisions, route read models, server and client cutovers, lazy edit
+  runtime, and removal of the transitional root replay.
 - `docs/archive/completed/2026-07-17-public-action-semantic-ordering-plan.md` owns the historical
   database-row selection, decoding,
   normalization, deterministic ordering, path and touched-root interpretation, checked action
