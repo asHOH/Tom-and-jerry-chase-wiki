@@ -7,6 +7,7 @@ import useSWR from 'swr';
 import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useUser } from '@/hooks/useUser';
+import Button from '@/components/ui/Button';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import PageShell from '@/components/ui/PageShell';
 import LoginDialog from '@/components/LoginDialog';
@@ -170,13 +171,9 @@ export function TalkPageClient({
     return (
       <div className='rounded-lg border border-red-200 bg-red-50 p-6 text-center dark:border-red-800 dark:bg-red-950'>
         <p className='text-red-600 dark:text-red-400'>讨论加载失败</p>
-        <button
-          type='button'
-          onClick={() => void mutate()}
-          className='mt-3 rounded-md bg-red-600 px-4 py-1.5 text-sm text-white hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600'
-        >
+        <Button variant='danger' size='sm' className='mt-3' onClick={() => void mutate()}>
           重试
-        </button>
+        </Button>
       </div>
     );
   }
@@ -204,13 +201,9 @@ export function TalkPageClient({
           </h1>
           <p className='mt-1 text-sm text-gray-500 dark:text-gray-400'>讨论</p>
         </div>
-        <button
-          type='button'
-          onClick={handleCreateTopic}
-          className='rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600'
-        >
+        <Button variant='success' size='sm' onClick={handleCreateTopic}>
           新建话题
-        </button>
+        </Button>
       </div>
 
       {/* Info banner */}

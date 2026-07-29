@@ -2,6 +2,7 @@
 
 import { generateGuessShareText } from '@/lib/gameUtils';
 import { BaseDialog } from '@/components/ui/BaseDialog';
+import Button from '@/components/ui/Button';
 import GameImage from '@/components/ui/GameImage';
 
 type ResultDialogProps = {
@@ -61,12 +62,7 @@ export default function ResultDialog({
         </pre>
 
         {/* Action buttons */}
-        <button
-          onClick={onPlayAgain}
-          className='rounded-lg bg-blue-500 px-6 py-2.5 font-medium text-white transition-colors hover:bg-blue-600'
-        >
-          {isDaily ? '无限练习模式' : '再来一局'}
-        </button>
+        <Button onClick={onPlayAgain}>{isDaily ? '无限练习模式' : '再来一局'}</Button>
       </div>
     </BaseDialog>
   );

@@ -1,6 +1,7 @@
 'use client';
 
 import { BaseDialog } from '@/components/ui/BaseDialog';
+import Button from '@/components/ui/Button';
 
 type GameOverDialogProps = {
   open: boolean;
@@ -58,12 +59,7 @@ export default function GameOverDialog({
 
         <p className='text-sm text-gray-500 dark:text-gray-400'>最高纪录: {highScore}</p>
 
-        <button
-          onClick={onPlayAgain}
-          className='rounded-lg bg-blue-500 px-6 py-2.5 font-medium text-white transition-colors hover:bg-blue-600'
-        >
-          再来一局
-        </button>
+        <Button onClick={onPlayAgain}>再来一局</Button>
       </div>
     </BaseDialog>
   );

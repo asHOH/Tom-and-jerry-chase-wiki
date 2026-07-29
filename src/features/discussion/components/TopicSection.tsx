@@ -3,6 +3,7 @@
 import { useState } from 'react';
 
 import { formatArticleDate } from '@/lib/dateUtils';
+import Button from '@/components/ui/Button';
 
 import type { CommentNode } from '../types';
 
@@ -229,21 +230,18 @@ export function TopicSection({
             {error && <div className='mt-2 text-sm text-red-600 dark:text-red-400'>{error}</div>}
 
             <div className='mt-3 flex items-center justify-end gap-2'>
-              <button
-                type='button'
-                onClick={() => setReplyTargetId(null)}
-                className='rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700'
-              >
+              <Button variant='secondary' size='sm' onClick={() => setReplyTargetId(null)}>
                 取消
-              </button>
-              <button
-                type='button'
+              </Button>
+              <Button
+                variant='success'
+                size='sm'
                 onClick={() => void handleSubmitReply(replyTargetId)}
                 disabled={isSubmitting}
-                className='rounded-md bg-green-600 px-3 py-1.5 text-sm text-white hover:bg-green-700 disabled:opacity-60 dark:bg-green-700 dark:hover:bg-green-600'
+                loading={isSubmitting}
               >
                 {isSubmitting ? '发送中…' : '发表回复'}
-              </button>
+              </Button>
             </div>
           </div>
         )}

@@ -19,6 +19,12 @@ const actionPrimitiveTargets = [
   'src/components/ui/KnowledgeCardPicker.tsx',
   'src/components/ui/RichTextEditor/LinkDialog.tsx',
   'src/components/ui/RichTextEditor/ImagePickerModal.tsx',
+  'src/features/discussion/components/NewTopicForm.tsx',
+  'src/features/discussion/components/ReplyForm.tsx',
+  'src/features/discussion/components/TopicSection.tsx',
+  'src/features/discussion/TalkPageClient.tsx',
+  'src/app/(main)/games/guess-character/components/ResultDialog.tsx',
+  'src/app/(main)/games/stat-showdown/components/GameOverDialog.tsx',
 ] as const;
 
 const aliasIconPrimitiveTargets = [

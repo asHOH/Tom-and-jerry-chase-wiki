@@ -228,9 +228,8 @@ export default function CommentsSection({
             onClick={handleSubmit}
             disabled={!canComment || isSubmitting}
             loading={isSubmitting}
-            variant='primary'
+            variant='success'
             size='sm'
-            className='bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600'
           >
             {isSubmitting ? '发送中…' : '发表评论'}
           </Button>

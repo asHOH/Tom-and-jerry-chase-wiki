@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 
+import Button from '@/components/ui/Button';
+
 type NewTopicFormProps = {
   scope: string;
   targetId: string;
@@ -85,21 +87,18 @@ export function NewTopicForm({ scope, targetId, onSuccess, onCancel }: NewTopicF
       {error && <div className='mt-2 text-sm text-red-600 dark:text-red-400'>{error}</div>}
 
       <div className='mt-3 flex justify-end gap-2'>
-        <button
-          type='button'
-          onClick={onCancel}
-          className='rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700'
-        >
+        <Button variant='secondary' size='sm' onClick={onCancel}>
           取消
-        </button>
-        <button
-          type='button'
+        </Button>
+        <Button
+          variant='success'
+          size='sm'
           onClick={() => void handleSubmit()}
           disabled={isSubmitting}
-          className='rounded-md bg-green-600 px-3 py-1.5 text-sm text-white hover:bg-green-700 disabled:opacity-60 dark:bg-green-700 dark:hover:bg-green-600'
+          loading={isSubmitting}
         >
           {isSubmitting ? '发布中…' : '发布话题'}
-        </button>
+        </Button>
       </div>
     </div>
   );
