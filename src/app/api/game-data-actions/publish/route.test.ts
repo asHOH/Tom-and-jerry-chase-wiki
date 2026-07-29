@@ -274,7 +274,7 @@ describe('publish route', () => {
       expect.objectContaining({
         kind: 'game_data_action_approved',
         title: '游戏数据改动已自动公开',
-        body: '您提交的 1 条游戏数据改动已自动公开，后续仍可由有权限的用户复核或撤销。',
+        body: '您提交的 1 条道具「item」改动已自动公开，后续仍可由有权限的用户复核或撤销。',
         sourceIds: ['public-pending-1'],
       })
     );
