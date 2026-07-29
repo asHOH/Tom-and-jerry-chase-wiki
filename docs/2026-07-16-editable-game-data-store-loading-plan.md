@@ -5,7 +5,7 @@
 - Date: 2026-07-16
 - Last revised: 2026-07-29
 - State: Foundation, published-data selectors, Lean Steps 1 and 2, and the Step 2 follow-up gate
-  complete; Lean Step 3 is next
+  complete; Lean Step 3 is unblocked, actionable, and next
 - Scope: Remove universal editable-store initialization and root approved-action replay, preserve
   edit behavior, then enable publish-time dependency grouping
 
@@ -253,33 +253,58 @@ Completion evidence:
 - The `_not-found`, home, character, item, map, and relations client-reference manifests contain no
   `EditRuntime`, `activeEditRuntime`, `editStores`, or `editModeRegistry` references.
 
-### Lean Step 3: Enable semantic dependency grouping
+### Lean Step 3 (actionable): Enable semantic dependency grouping
 
-Only begin after the Lean Step 2 follow-up gate passes. Root-client replay must remain absent.
+Multiple users have reported valid game-data submissions failing with `dependent_rows`. A dependency
+group means that its actions must retain request order and one atomic persistence boundary; it does
+not make those actions invalid. Stage A deliberately rejected these requests as a temporary
+fail-safe while rows from one transaction could replay in UUID order.
 
-1. In the existing trusted publish preparation, merge prepared entries for the same entity type.
-2. Run the existing `groupActionEntriesByDependency` classifier on their top-level rows.
-3. Preserve singleton groups.
+Step 3 is unblocked. Root-client replay is absent, the Step 2 follow-up gate has passed, and strict
+decoding, the dependency classifier, complete candidate checked replay, the replay epoch, and the
+prepared service-role RPC are already in place.
+
+No database migration, approved-row compaction, or approved-action synchronization is a
+prerequisite. Existing public approved rows remain inputs to complete candidate replay while new
+grouped rows are checked against them. Marking an approved row synced is a separate operation that
+is valid only after its effect has been incorporated into the checked-in baseline and deployed;
+bulk marking rows synced would change the live replay set and must not be part of Step 3. A current
+read-only approved compatibility audit is rollout validation, not a blocker to implementation.
+
+1. Reuse the existing `rowsByEntityType` collection in trusted publish preparation, which already
+   merges repeated request items for the same entity type. Do not add another merge abstraction.
+2. Run the existing `groupActionEntriesByDependency` classifier on each entity type's top-level
+   rows.
+3. Preserve singleton groups as their existing canonical rows.
 4. Flatten each multi-row dependency group into one ordered canonical action array at its earliest
    member position.
-5. Re-check the generated row against `PUBLISH_LIMITS.actionsPerRow`. Reject an oversized dependent
-   group with the existing row-limit error; do not split a dependency group.
+5. Re-check every generated grouped row against `PUBLISH_LIMITS.actionsPerRow`. Reject an oversized
+   dependent group with the existing row-limit error; do not split a dependency group.
 6. Verify that entries crossed by the move commute with every group member and that every
    separately persisted row from one request commutes with the others.
-7. Persist through the existing prepared service-role RPC and retain complete candidate checked
-   replay plus replay-epoch comparison.
+7. Keep recursive permission derivation over every grouped child action, complete candidate checked
+   replay, and replay-epoch comparison unchanged.
+8. Persist through the existing prepared service-role RPC. Add regressions proving that advanced
+   submission modes, auto-approve outcomes, notifications, and result-derived client messaging
+   remain correct when several submitted rows become one persisted row.
 
 Exit gate:
 
+- sanitized reproductions of the reported valid `dependent_rows` failures are accepted and persisted
+  as ordered atomic rows;
+- ordinary groupable dependency is no longer returned as `dependent_rows`;
 - noncontiguous transitive groups preserve action order and final replay results;
 - independent rows remain separate;
 - dependency groups that exceed the per-row action bound are rejected before persistence;
-- same-index, parent/child, structural array, malformed, and unknown cases still fail closed or
-  group as defined by the existing classifier;
+- same-index, parent/child, and structural array cases group as defined by the classifier, while
+  malformed and unknown input still fails closed under the existing decoding and replay contracts;
 - route bounds, permission derivation, strict decoding, candidate replay, and atomic persistence
-  tests remain green; and
+  tests remain green;
+- result statuses, advanced submission modes, notifications, and success messages remain correct
+  after row cardinality changes;
 - the approved compatibility audit still reports zero malformed rows, checked-replay failures, and
-  unknown entity types.
+  unknown entity types; and
+- rollout requires no database migration or approved-action synchronization.
 
 ### Lean Step 4: Add small regression guards and finish the audit
 
