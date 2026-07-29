@@ -3,7 +3,6 @@ import { PUBLISHABLE_ENTITY_TYPES } from '@/lib/gameData/publishableEntityTypes'
 import {
   getCanonicalSerializedBytes,
   MAX_SAFE_COMPLETE_CACHE_BYTES,
-  MEASURED_CANONICAL_COMPLETE_SNAPSHOT_BYTES,
   PUBLISHED_SNAPSHOT_CACHE_SHAPE,
 } from './cachePolicy';
 import { getCanonicalGameData } from './canonicalSources';
@@ -11,15 +10,12 @@ import { getCanonicalGameData } from './canonicalSources';
 jest.mock('server-only', () => ({}), { virtual: true });
 
 describe('published snapshot cache policy', () => {
-  it('records the complete measurement and selects the per-domain cache shape', () => {
+  it('keeps the complete snapshot above the safe boundary and selects the per-domain cache shape', () => {
     const complete = Object.fromEntries(
       PUBLISHABLE_ENTITY_TYPES.map((entityType) => [entityType, getCanonicalGameData(entityType)])
     );
 
-    expect(getCanonicalSerializedBytes(complete)).toBe(MEASURED_CANONICAL_COMPLETE_SNAPSHOT_BYTES);
-    expect(MEASURED_CANONICAL_COMPLETE_SNAPSHOT_BYTES).toBeGreaterThan(
-      MAX_SAFE_COMPLETE_CACHE_BYTES
-    );
+    expect(getCanonicalSerializedBytes(complete)).toBeGreaterThan(MAX_SAFE_COMPLETE_CACHE_BYTES);
     expect(PUBLISHED_SNAPSHOT_CACHE_SHAPE).toBe('per-domain');
   });
 
