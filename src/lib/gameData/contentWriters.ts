@@ -2,6 +2,7 @@ import 'server-only';
 
 import { getPublicReadClient } from '@/lib/articles/server/readClient';
 import { flattenActionEntries, normalizePublicActionEntries } from '@/lib/gameData/actionEntries';
+import { GAME_DATA_CONTRIBUTION_FILTER } from '@/lib/gameData/contributionFilter';
 import { PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG } from '@/lib/gameData/publicActionsCache';
 import { getGameDataActionTarget } from '@/lib/gameData/scopedEntityPaths';
 import { cached } from '@/lib/serverCache';
@@ -32,7 +33,7 @@ async function queryGameDataActionAuthors(characterId: string): Promise<Aggregat
     .from('game_data_actions')
     .select('entry, created_by, users_public_view!created_by(nickname)')
     .eq('entity_type', 'characters')
-    .eq('is_public', true);
+    .or(GAME_DATA_CONTRIBUTION_FILTER);
 
   if (error) {
     console.error('Failed to load game-data action authors:', error);

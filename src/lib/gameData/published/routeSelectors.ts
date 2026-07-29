@@ -5,7 +5,10 @@ import type { FactionId } from '@/data/types';
 
 import type { ApprovedActionSnapshot } from './approvedActionSnapshot';
 import { getApprovedActionSnapshot } from './getApprovedActionSnapshot';
-import { selectPublishedEntityHistory, type PublishedEntityHistoryEntry } from './historySelectors';
+import {
+  getPublishedEntityHistoryReadModel,
+  type PublishedEntityHistoryEntry,
+} from './historySelectors';
 import { getPublishedDomainReadModel } from './publishedSnapshot';
 import type { PublishedGameDataEntityByType } from './types';
 
@@ -55,11 +58,16 @@ export async function getPublishedEntityRouteReadModel<EntityType extends Publis
 
   const history =
     normalizedEntityId && (!isFactionScoped(entityType) || normalizedFactionId)
-      ? selectPublishedEntityHistory(acquiredSnapshot, {
-          entityType,
-          entityId: normalizedEntityId,
-          ...(normalizedFactionId ? { factionId: normalizedFactionId } : {}),
-        })
+      ? (
+          await getPublishedEntityHistoryReadModel(
+            {
+              entityType,
+              entityId: normalizedEntityId,
+              ...(normalizedFactionId ? { factionId: normalizedFactionId } : {}),
+            },
+            acquiredSnapshot
+          )
+        ).history
       : [];
 
   return Object.freeze({
