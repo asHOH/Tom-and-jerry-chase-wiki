@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/design';
+import Card from '@/components/ui/Card';
 import Image from '@/components/Image';
 
 interface Character {
@@ -34,7 +35,7 @@ export default function AdviceCharacterList({
   const useSmallGrid = characters.length + isMinorCharacters.length > 8;
 
   return (
-    <div className='rounded-xl bg-white px-2 py-3 shadow-sm dark:bg-slate-800'>
+    <Card className='px-2 py-3'>
       <ul
         className='gap-4'
         style={{
@@ -97,6 +98,6 @@ export default function AdviceCharacterList({
           </li>
         ))}
       </ul>
-    </div>
+    </Card>
   );
 }

@@ -1,5 +1,6 @@
 'use client';
 
+import Card from '@/components/ui/Card';
 import Image from '@/components/Image';
 import Link from '@/components/Link';
 
@@ -19,7 +20,7 @@ export default function CharacterList({ characters, showList }: CharacterListPro
   }
 
   return (
-    <div className='rounded-xl bg-white px-2 py-3 shadow-sm dark:bg-slate-800'>
+    <Card className='px-2 py-3'>
       <ul className='grid [grid-template-columns:repeat(auto-fit,minmax(175px,1fr))] gap-1'>
         {characters.map((character) => (
           <li
@@ -50,6 +51,6 @@ export default function CharacterList({ characters, showList }: CharacterListPro
           </li>
         ))}
       </ul>
-    </div>
+    </Card>
   );
 }
