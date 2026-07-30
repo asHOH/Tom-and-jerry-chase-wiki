@@ -162,7 +162,7 @@ export default function MapDetailClient({
     sections.push({
       title: '交互地图',
       content: (
-        <Card className='overflow-hidden p-0'>
+        <Card interactive className='overflow-hidden p-0'>
           <Link
             href={`/maps/${encodeURIComponent(effectiveMap.name)}/interactive`}
             preserveEditParam

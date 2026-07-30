@@ -228,7 +228,7 @@ export default function SkillCard({
     isDetailed && level.detailedDescription?.trim() ? level.detailedDescription : level.description;
 
   return (
-    <Card className='px-4! py-6! md:p-6! dark:border-slate-700 dark:bg-slate-800'>
+    <Card className='px-4! py-6! md:p-6!'>
       <div className='flex items-start'>
         <SkillCardMedia
           skill={skill}

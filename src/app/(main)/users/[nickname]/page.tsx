@@ -99,7 +99,7 @@ export default async function PublicUserPage({
 
   return (
     <PageShell width='standard' className='space-y-6 py-8 text-gray-900 dark:text-gray-100'>
-      <Card as='header' className='border border-gray-200 p-6 sm:p-8 dark:border-gray-700'>
+      <Card as='header' className='p-6 sm:p-8'>
         <div className='flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between'>
           <div className='min-w-0'>
             <p className='text-sm font-medium text-blue-600 dark:text-blue-400'>Wiki 用户</p>
