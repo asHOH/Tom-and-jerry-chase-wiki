@@ -1,11 +1,18 @@
-import { cn, componentTokens, createStyleFromTokens, designTokens } from '@/lib/design';
+import { cn } from '@/lib/design';
 import Link from '@/components/Link';
+
+const variantClasses = {
+  portrait: 'flex flex-col items-center overflow-hidden p-0',
+  catalog: 'relative overflow-hidden p-0',
+  detail: 'h-full overflow-hidden',
+} as const;
 
 type EntityCardFrameProps = {
   children: React.ReactNode;
   onClick?: () => void;
   className?: string;
   variant?: 'portrait' | 'catalog' | 'detail';
+  interactive?: boolean;
   preserveEditParam?: boolean;
   // Accessibility props
   role?: string;
@@ -20,6 +27,7 @@ export default function EntityCardFrame({
   onClick,
   className = '',
   variant = 'portrait',
+  interactive,
   preserveEditParam = false,
   role,
   tabIndex,
@@ -28,52 +36,10 @@ export default function EntityCardFrame({
   'aria-label': ariaLabel,
 }: EntityCardFrameProps) {
   const isClickable = !!onClick || !!href;
-
-  const getVariantStyles = () => {
-    const entityCardFrameStyle = createStyleFromTokens(componentTokens.card.base);
-    const finalStyle = {
-      ...entityCardFrameStyle,
-      ...(isClickable && { cursor: 'pointer' }),
-    };
-    // The background is removed from here and will be handled by Tailwind classes.
-    delete (finalStyle as { background?: string }).background;
-
-    switch (variant) {
-      case 'portrait':
-        return {
-          ...finalStyle,
-          display: 'flex',
-          flexDirection: 'column' as const,
-          alignItems: 'center',
-          padding: 0,
-          overflow: 'hidden',
-          transition: designTokens.transitions.hover,
-        };
-      case 'catalog':
-        return {
-          ...finalStyle,
-          position: 'relative' as const,
-          overflow: 'hidden',
-          padding: 0,
-          transition: designTokens.transitions.hover,
-        };
-      case 'detail':
-        return {
-          ...finalStyle,
-          height: '100%',
-          overflow: 'hidden',
-        };
-      default:
-        return finalStyle;
-    }
-  };
-
-  const cardStyle = getVariantStyles();
+  const isInteractive = interactive ?? isClickable;
 
   const cardProps = href
-    ? {
-        style: cardStyle,
-      }
+    ? {}
     : isClickable
       ? {
           onClick,
@@ -81,17 +47,18 @@ export default function EntityCardFrame({
           role,
           tabIndex,
           'aria-label': ariaLabel,
-          style: cardStyle,
         }
       : {
           'aria-label': ariaLabel,
-          style: cardStyle,
         };
 
   const content = (
     <div
       className={cn(
-        'group flex-1 bg-linear-to-br from-white to-gray-50 dark:from-slate-800 dark:to-slate-900 dark:text-slate-200 [&_img]:select-none',
+        'group flex-1 rounded-lg border border-gray-200 bg-white dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 [&_img]:select-none',
+        variantClasses[variant],
+        isInteractive &&
+          'cursor-pointer shadow-sm transition-[border-color,box-shadow] duration-200 hover:border-blue-300 hover:shadow-md dark:hover:border-blue-500',
         className
       )}
       {...cardProps}

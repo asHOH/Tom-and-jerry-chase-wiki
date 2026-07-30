@@ -77,6 +77,7 @@ export default function CharacterCreate() {
   return (
     <EntityCardFrame
       variant='portrait'
+      interactive={!showInput}
       onClick={!showInput ? () => setShowInput(true) : () => {}}
       role='button'
       tabIndex={!showInput ? 0 : -1}

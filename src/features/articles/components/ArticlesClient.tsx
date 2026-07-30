@@ -416,7 +416,7 @@ export default function ArticlesClient({
                 <EntityCardFrame
                   variant='portrait'
                   aria-label={`查看文章 ${article.title}`}
-                  className='character-card transform transition-transform! hover:-translate-y-1 hover:shadow-lg'
+                  className='character-card transform transition-transform! hover:-translate-y-1'
                   href={`/articles/${article.id}`}
                   key={article.id}
                 >

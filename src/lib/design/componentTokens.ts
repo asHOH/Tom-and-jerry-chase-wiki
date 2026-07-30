@@ -91,13 +91,6 @@ export const componentTokens = {
 
   // Card component tokens
   card: {
-    base: {
-      borderRadius: designTokens.radius.lg,
-      boxShadow: designTokens.shadows.card,
-      transition: designTokens.transitions.hover,
-      border: 'none',
-      outline: 'none',
-    },
     content: {
       height: '16rem', // h-64 (256px)
     },

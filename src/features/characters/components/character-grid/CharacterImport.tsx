@@ -211,6 +211,7 @@ export default function CharacterImport() {
     <>
       <EntityCardFrame
         variant='portrait'
+        interactive={!showImportOptions && !showPasteInput}
         onClick={
           !showImportOptions && !showPasteInput ? () => setShowImportOptions(true) : () => {}
         }
