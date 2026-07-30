@@ -156,6 +156,13 @@ describe('UI style consistency', () => {
     expect(source).not.toContain("*[style*='user-select']");
   });
 
+  it('uses Tailwind radius variables in global styles', () => {
+    const source = fs.readFileSync(path.join(projectRoot, 'src/styles/base.css'), 'utf8');
+
+    expect(source).toContain('border-radius: var(--radius-lg)');
+    expect(source).not.toContain('--rounded-lg');
+  });
+
   it('uses shared action primitives in migrated surfaces', () => {
     const offenders = actionPrimitiveTargets.filter((relativePath) => {
       const source = fs.readFileSync(path.join(projectRoot, relativePath), 'utf8');

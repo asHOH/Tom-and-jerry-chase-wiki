@@ -3,8 +3,8 @@ import { designTokens } from './designTokens';
 export const componentTokens = {
   factionButton: {
     base: {
-      padding: '1rem 1.5rem', // 16px 24px
-      borderRadius: designTokens.radius.md,
+      padding: '1rem 1.5rem',
+      borderRadius: designTokens.radius.lg,
       fontSize: designTokens.typography.fontSize.base,
       fontWeight: designTokens.typography.fontWeight.bold,
       transition: designTokens.transitions.hover,
@@ -99,21 +99,21 @@ export const componentTokens = {
   tag: {
     base: {
       padding: `${designTokens.spacing.xs6} ${designTokens.spacing.xs}`, // 6px 8px
-      borderRadius: designTokens.radius.sm,
+      borderRadius: designTokens.radius.md,
       fontWeight: designTokens.typography.fontWeight.medium,
       display: 'inline-block',
       border: 'none',
     },
     compact: {
       padding: `${designTokens.spacing.xs5} ${designTokens.spacing.xs7}`, // 5px 7px
-      borderRadius: designTokens.radius.sm,
+      borderRadius: designTokens.radius.md,
       fontWeight: designTokens.typography.fontWeight.medium,
       display: 'inline-block',
       border: 'none',
     },
     micro: {
       padding: `${designTokens.spacing.xs3} ${designTokens.spacing.xs4}`, // 3px 4px
-      borderRadius: designTokens.radius.sm,
+      borderRadius: designTokens.radius.md,
       fontWeight: designTokens.typography.fontWeight.medium,
       display: 'inline-block',
       border: 'none',
@@ -131,7 +131,7 @@ export const componentTokens = {
     },
     container: {
       height: '12rem', // h-48 (192px)
-      borderRadius: `${designTokens.radius.lg} ${designTokens.radius.lg} 0 0`,
+      borderRadius: `${designTokens.radius.xl} ${designTokens.radius.xl} 0 0`,
     },
   },
 

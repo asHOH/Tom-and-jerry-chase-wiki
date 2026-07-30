@@ -368,11 +368,12 @@ export const designTokens = {
   },
   radius: {
     none: '0',
-    xs: '0.25rem', // 4px
-    sm: '0.375rem', // 6px
-    md: '0.5rem', // 8px
-    lg: '0.75rem', // 12px
-    xl: '1rem', // 16px
+    xs: 'var(--radius-xs)',
+    sm: 'var(--radius-sm)',
+    md: 'var(--radius-md)',
+    lg: 'var(--radius-lg)',
+    xl: 'var(--radius-xl)',
+    '2xl': 'var(--radius-2xl)',
     full: '9999px',
   },
 
