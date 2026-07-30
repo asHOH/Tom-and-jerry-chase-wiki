@@ -9,6 +9,7 @@ import { useMobile } from '@/hooks/useMediaQuery';
 import { useUser } from '@/hooks/useUser';
 import Button from '@/components/ui/Button';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import SectionHeader from '@/components/ui/SectionHeader';
 import LoginDialog from '@/components/LoginDialog';
 
 type CommentScope = 'articles';
@@ -183,10 +184,9 @@ export default function CommentsSection({
 
   return (
     <section id='comments' className='mt-8'>
-      <div className='mb-4 flex items-center justify-between'>
-        <h2 className='text-lg font-bold text-gray-900 dark:text-gray-100'>评论</h2>
+      <SectionHeader title='评论' variant='compact'>
         <span className='text-sm text-gray-500 dark:text-gray-400'>{comments.length} 条</span>
-      </div>
+      </SectionHeader>
 
       <div className='rounded-lg border border-gray-200 bg-white/70 p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900/40'>
         {replyTo ? (

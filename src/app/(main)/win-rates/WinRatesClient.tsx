@@ -11,6 +11,7 @@ import { CharacterTable, winRatesData } from '@/data/winRates';
 import FilterRow from '@/components/ui/FilterRow';
 import PageHeader from '@/components/ui/PageHeader';
 import PageShell from '@/components/ui/PageShell';
+import SectionHeader from '@/components/ui/SectionHeader';
 import Link from '@/components/Link';
 
 type ColumnKey = 'rank' | 'faction' | 'character' | 'pickRate' | 'winRate' | 'banRate';
@@ -427,8 +428,8 @@ export default function WinRatesClient({ description, characterFactions }: WinRa
         </div>
       </PageHeader>
 
-      <section className='space-y-4'>
-        <h2 className='text-2xl font-bold'>角色数据 ({filteredAndSortedData.length} 条记录)</h2>
+      <section>
+        <SectionHeader title={`角色数据 (${filteredAndSortedData.length} 条记录)`} />
 
         <div className='overflow-x-auto rounded-lg border border-gray-300 dark:border-gray-600'>
           <table className='min-w-full border-collapse bg-white dark:bg-gray-800'>
@@ -495,13 +496,13 @@ export default function WinRatesClient({ description, characterFactions }: WinRa
         </div>
 
         {displayRows.length === 0 && (
-          <p className='text-center text-gray-500 dark:text-gray-400'>没有符合条件的数据</p>
+          <p className='mt-4 text-center text-gray-500 dark:text-gray-400'>没有符合条件的数据</p>
         )}
       </section>
 
       {summaryData.length > 0 && (
-        <section className='space-y-4'>
-          <h2 className='text-2xl font-bold'>赛季总览</h2>
+        <section>
+          <SectionHeader title='赛季总览' />
           <div className='overflow-x-auto'>
             <table className='min-w-full border-collapse border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800'>
               <thead>

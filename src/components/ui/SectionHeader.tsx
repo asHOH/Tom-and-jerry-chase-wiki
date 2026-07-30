@@ -1,20 +1,40 @@
 'use client';
 
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
+import { cn } from '@/lib/design';
 import { LinkIcon } from '@/components/icons/CommonIcons';
 
-interface SectionHeaderProps {
+type SectionHeaderProps = {
   title: string;
   children?: ReactNode;
   id?: string;
-}
+  variant?: 'standard' | 'compact';
+};
 
-export default function SectionHeader({ title, children, id }: SectionHeaderProps) {
+const variantClasses = {
+  standard: {
+    container: 'mb-3',
+    title: 'py-2 text-2xl font-bold dark:text-white',
+  },
+  compact: {
+    container: 'mb-4',
+    title: 'text-lg font-bold text-gray-900 dark:text-gray-100',
+  },
+} as const;
+
+export default function SectionHeader({
+  title,
+  children,
+  id,
+  variant = 'standard',
+}: SectionHeaderProps) {
+  const classes = variantClasses[variant];
+
   return (
-    <div className='mb-3 flex items-center justify-between'>
+    <div className={cn('flex items-center justify-between', classes.container)}>
       <div className='flex min-w-0 items-center gap-1'>
-        <h2 id={id} className='scroll-mt-24 py-2 text-2xl font-bold dark:text-white'>
+        <h2 id={id} className={cn('scroll-mt-24', classes.title)}>
           {title}
         </h2>
         {id ? (
