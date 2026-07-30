@@ -45,12 +45,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const vercelAnalyticsEnabled = isVercelAnalyticsEnabled();
   const isVercel = process.env.VERCEL === '1';
   return (
-    <html
-      lang='zh-CN'
-      className='bg-gray-100 dark:bg-slate-900'
-      data-scroll-behavior='smooth'
-      suppressHydrationWarning
-    >
+    <html lang='zh-CN' data-scroll-behavior='smooth' suppressHydrationWarning>
       <head>
         <meta httpEquiv='X-Content-Type-Options' content='nosniff' />
         <meta httpEquiv='X-XSS-Protection' content='1; mode=block' />
@@ -123,7 +118,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           />
           {isVercel ? <DisableLinkPrefetch /> : null}
           <ErrorBoundary>
-            <main className='relative min-h-screen bg-gray-100 pt-0 dark:bg-slate-900'>
+            <main className='relative min-h-screen pt-0'>
               <UserProvider initialValue={initialUser}>
                 <Suspense fallback={null}>
                   <EditModeProvider>

@@ -1,6 +1,18 @@
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-rgb: 240, 240, 240;
+  /* Page canvas, including overscroll and loading areas */
+  --wiki-background: var(--color-gray-100);
+  /* Default inherited page text */
+  --wiki-foreground: var(--color-black);
+  /* Normal cards and contained panels */
+  --wiki-surface: var(--color-white);
+  /* Dialogs, menus, and elevated overlays; elevation currently comes from shadows */
+  --wiki-surface-raised: var(--color-white);
+  /* Secondary and explanatory text */
+  --wiki-muted-foreground: var(--color-gray-600);
+  /* Standard surface borders and dividers */
+  --wiki-border: var(--color-gray-200);
+  /* Default keyboard focus indicator */
+  --wiki-focus: var(--color-blue-500);
   --nav-z-index: 9999;
   --nav-height: 70px;
   --offline-banner-height: 40px;
@@ -14,5 +26,22 @@
 }
 
 .dark {
+  --wiki-background: var(--color-slate-900);
+  --wiki-foreground: var(--color-slate-200);
+  --wiki-surface: var(--color-slate-800);
+  --wiki-surface-raised: var(--color-slate-800);
+  --wiki-muted-foreground: var(--color-gray-400);
+  --wiki-border: var(--color-slate-700);
+  --wiki-focus: var(--color-blue-400);
   color-scheme: dark;
+}
+
+@theme inline {
+  --color-background: var(--wiki-background);
+  --color-foreground: var(--wiki-foreground);
+  --color-surface: var(--wiki-surface);
+  --color-surface-raised: var(--wiki-surface-raised);
+  --color-muted-foreground: var(--wiki-muted-foreground);
+  --color-border: var(--wiki-border);
+  --color-focus: var(--wiki-focus);
 }
