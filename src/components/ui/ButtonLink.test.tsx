@@ -48,7 +48,14 @@ describe('ButtonLink', () => {
     );
 
     const link = screen.getByRole('link', { name: '待审核' });
-    expect(link).toHaveClass('bg-yellow-500', 'text-sm', 'px-3', 'py-2', 'shadow-lg');
+    expect(link).toHaveClass(
+      'bg-amber-400',
+      'text-amber-950',
+      'text-sm',
+      'px-3',
+      'py-2',
+      'shadow-lg'
+    );
     expect(link).toHaveAttribute('data-preserve-edit-param', 'true');
   });
 

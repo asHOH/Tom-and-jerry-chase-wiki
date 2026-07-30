@@ -15,9 +15,9 @@ const actionButtonVariants = {
   ghost: 'text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700',
   danger: 'bg-red-600 text-white shadow-sm hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600',
   success:
-    'bg-green-600 text-white shadow-sm hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600',
+    'bg-green-700 text-white shadow-sm hover:bg-green-800 dark:bg-green-800 dark:hover:bg-green-700',
   warning:
-    'bg-yellow-500 text-white shadow-sm hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-500',
+    'bg-amber-400 text-amber-950 shadow-sm hover:bg-amber-500 dark:bg-amber-800 dark:text-white dark:hover:bg-amber-700',
 };
 
 const actionButtonSizes = {

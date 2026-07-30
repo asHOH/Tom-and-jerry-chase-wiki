@@ -8,4 +8,25 @@ describe('Button', () => {
 
     expect(screen.getByRole('button', { name: '保存' })).toHaveAttribute('type', 'button');
   });
+
+  it('uses accessible foreground and background pairs for semantic actions', () => {
+    render(
+      <>
+        <Button variant='success'>通过</Button>
+        <Button variant='warning'>待审核</Button>
+      </>
+    );
+
+    expect(screen.getByRole('button', { name: '通过' })).toHaveClass(
+      'bg-green-700',
+      'text-white',
+      'dark:bg-green-800'
+    );
+    expect(screen.getByRole('button', { name: '待审核' })).toHaveClass(
+      'bg-amber-400',
+      'text-amber-950',
+      'dark:bg-amber-800',
+      'dark:text-white'
+    );
+  });
 });

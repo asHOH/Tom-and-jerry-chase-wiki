@@ -4,6 +4,8 @@ import path from 'node:path';
 const projectRoot = process.cwd();
 
 const actionPrimitiveTargets = [
+  'src/app/not-found.tsx',
+  'src/app/(main)/offline/page.tsx',
   'src/features/articles/components/ArticlesClient.tsx',
   'src/app/(main)/articles/pending/PendingClient.tsx',
   'src/app/(main)/articles/preview/PreviewClient.tsx',

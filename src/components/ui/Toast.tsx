@@ -92,12 +92,12 @@ export function ToastViewport() {
         classNames: {
           toast: baseToastClass,
           title: 'text-white',
-          description: 'text-white/90',
+          description: 'text-white',
           content: 'flex-1',
           icon: iconClass,
-          success: 'bg-green-600 dark:bg-green-700',
+          success: 'bg-green-700 dark:bg-green-800',
           info: 'bg-blue-600 dark:bg-blue-700',
-          warning: 'bg-yellow-600 dark:bg-yellow-700',
+          warning: 'bg-amber-700 dark:bg-amber-800',
           error: 'bg-red-600 dark:bg-red-700',
         },
       }}
