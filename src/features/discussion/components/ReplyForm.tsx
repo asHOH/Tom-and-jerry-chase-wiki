@@ -3,6 +3,7 @@
 import { useState } from 'react';
 
 import Button from '@/components/ui/Button';
+import { FormTextarea } from '@/components/ui/FormControls';
 
 type ReplyFormProps = {
   scope: string;
@@ -88,13 +89,14 @@ export function ReplyForm({
         <div className='mb-3 text-sm text-gray-600 dark:text-gray-400'>登录后可参与讨论。</div>
       )}
 
-      <textarea
+      <FormTextarea
+        size='sm'
         value={content}
         onChange={(e) => setContent(e.target.value)}
         placeholder={isAuthenticated ? '写下你的回复…' : '请先登录后发表回复'}
         disabled={!isAuthenticated || isSubmitting}
         maxLength={2000}
-        className='h-24 w-full resize-none rounded-lg border border-gray-300 bg-white p-3 text-sm text-gray-900 disabled:opacity-60 dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100'
+        className='h-24 resize-none p-3'
       />
 
       {error && <div className='mt-2 text-sm text-red-600 dark:text-red-400'>{error}</div>}

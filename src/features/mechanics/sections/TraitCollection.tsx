@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import traits from '@/data/traits';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 import { OneTraitText } from '@/features/shared/traits/OneTraitText';
+import { FormInput } from '@/components/ui/FormControls';
 import PageHeader from '@/components/ui/PageHeader';
 
 const processStrings = (input: string | string[]): string =>
@@ -139,8 +140,10 @@ export default function TraitCollision() {
         <label htmlFor='trait-page-input' className='text-sm'>
           跳转到:
         </label>
-        <input
+        <FormInput
           type='number'
+          size='sm'
+          fullWidth={false}
           min='1'
           max={totalPages}
           value={pageInput}
@@ -148,7 +151,7 @@ export default function TraitCollision() {
           onBlur={handlePageInputSubmit}
           onKeyPress={handlePageInputKeyPress}
           id='trait-page-input'
-          className='hide-spinner w-16 rounded border border-gray-300 bg-white px-2 py-1 text-center text-sm dark:border-gray-600 dark:bg-gray-700'
+          className='hide-spinner w-16 rounded py-1 text-center'
         />
         <span className='text-sm'>页</span>
       </div>

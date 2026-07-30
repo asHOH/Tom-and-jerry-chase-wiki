@@ -12,6 +12,7 @@ import {
   type GameDataSubmitMode,
 } from '@/lib/gameData/submitMode';
 import { useEditMode } from '@/context/EditModeContext';
+import { FormTextarea } from '@/components/ui/FormControls';
 import {
   CheckBadgeIcon,
   CloseIcon,
@@ -223,8 +224,9 @@ export default function EditModeToolbar({
               transition={{ duration: 0.15 }}
             >
               <div className='relative'>
-                <textarea
-                  className='w-full resize-none rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-400 dark:focus:ring-blue-400'
+                <FormTextarea
+                  size='sm'
+                  className='resize-none p-2.5'
                   rows={2}
                   placeholder='描述您的修改内容（可选）'
                   value={publishMessage}

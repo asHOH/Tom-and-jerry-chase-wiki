@@ -27,6 +27,31 @@ const actionPrimitiveTargets = [
   'src/app/(main)/games/stat-showdown/components/GameOverDialog.tsx',
 ] as const;
 
+const formControlPrimitiveTargets = [
+  {
+    primitive: 'FormInput',
+    rawElementPattern: /<input\b/,
+    relativePaths: [
+      'src/features/discussion/components/NewTopicForm.tsx',
+      'src/features/mechanics/sections/TraitCollection.tsx',
+    ],
+  },
+  {
+    primitive: 'FormSelect',
+    rawElementPattern: /<select\b/,
+    relativePaths: ['src/app/(main)/recommended/RecommendedPageClient.tsx'],
+  },
+  {
+    primitive: 'FormTextarea',
+    rawElementPattern: /<textarea\b/,
+    relativePaths: [
+      'src/features/discussion/components/NewTopicForm.tsx',
+      'src/features/discussion/components/ReplyForm.tsx',
+      'src/components/ui/EditModeToolbar.tsx',
+    ],
+  },
+] as const;
+
 const aliasIconPrimitiveTargets = [
   'src/features/achievements/achievement-detail/AchievementAttributesCard.tsx',
   'src/features/buffs/components/buff-detail/BuffAttributesCard.tsx',
@@ -92,6 +117,20 @@ describe('UI style consistency', () => {
       const source = fs.readFileSync(path.join(projectRoot, relativePath), 'utf8');
       return rawActionPattern.test(source);
     });
+
+    expect(offenders).toEqual([]);
+  });
+
+  it('uses shared form controls in migrated generic form fields', () => {
+    const offenders = formControlPrimitiveTargets.flatMap(
+      ({ primitive, rawElementPattern, relativePaths }) =>
+        relativePaths.flatMap((relativePath) => {
+          const source = fs.readFileSync(path.join(projectRoot, relativePath), 'utf8');
+          return !source.includes(`<${primitive}`) || rawElementPattern.test(source)
+            ? [`${relativePath} (${primitive})`]
+            : [];
+        })
+    );
 
     expect(offenders).toEqual([]);
   });

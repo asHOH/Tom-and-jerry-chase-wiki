@@ -7,6 +7,7 @@ import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import CharacterDisplay from '@/features/characters/components/character-grid/CharacterDisplay';
 import { getCharacterRelation } from '@/features/characters/utils/relationReadModel';
 import { CharacterSlotsSelector } from '@/components/ui/CharacterSelector';
+import { FormSelect } from '@/components/ui/FormControls';
 import PageHeader from '@/components/ui/PageHeader';
 import PageShell from '@/components/ui/PageShell';
 
@@ -96,10 +97,10 @@ export default function RecommendedPageClient({ characters, maps }: Props) {
           选择地图（仅显示支持经典奶酪赛的地图）
         </div>
         <div className='mx-auto max-w-md px-4'>
-          <select
+          <FormSelect
             value={selectedMapName}
             onChange={(e) => setSelectedMapName(e.target.value)}
-            className='w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-base text-gray-900 transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100'
+            className='px-4 text-base'
             aria-label='选择地图（经典奶酪赛）'
             title='选择地图（经典奶酪赛）'
           >
@@ -109,7 +110,7 @@ export default function RecommendedPageClient({ characters, maps }: Props) {
                 {m.name}
               </option>
             ))}
-          </select>
+          </FormSelect>
         </div>
       </div>
 

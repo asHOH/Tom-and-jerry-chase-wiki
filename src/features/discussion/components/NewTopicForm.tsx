@@ -3,6 +3,7 @@
 import { useState } from 'react';
 
 import Button from '@/components/ui/Button';
+import { FormInput, FormTextarea } from '@/components/ui/FormControls';
 
 type NewTopicFormProps = {
   scope: string;
@@ -67,21 +68,23 @@ export function NewTopicForm({ scope, targetId, onSuccess, onCancel }: NewTopicF
     <div className='mb-8 rounded-lg border border-gray-200 bg-gray-50/60 px-5 py-4 dark:border-gray-700 dark:bg-gray-900/30'>
       <h3 className='mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100'>新建话题</h3>
 
-      <input
+      <FormInput
         type='text'
+        size='sm'
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         placeholder='话题标题'
         maxLength={200}
-        className='w-full rounded-lg border border-gray-300 bg-white p-3 text-sm text-gray-900 placeholder:text-gray-400 dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100 dark:placeholder:text-gray-500'
+        className='p-3'
       />
 
-      <textarea
+      <FormTextarea
+        size='sm'
         value={content}
         onChange={(e) => setContent(e.target.value)}
         placeholder='话题内容'
         maxLength={2000}
-        className='mt-3 h-32 w-full resize-none rounded-lg border border-gray-300 bg-white p-3 text-sm text-gray-900 placeholder:text-gray-400 dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100 dark:placeholder:text-gray-500'
+        className='mt-3 h-32 resize-none p-3'
       />
 
       {error && <div className='mt-2 text-sm text-red-600 dark:text-red-400'>{error}</div>}
