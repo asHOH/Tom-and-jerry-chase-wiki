@@ -601,6 +601,14 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                       </li>
                       <li>
                         <Link
+                          href='/contributions/'
+                          className='block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700'
+                        >
+                          我的贡献
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
                           href='/notifications/'
                           className='flex items-center justify-between px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700'
                         >

@@ -8,7 +8,8 @@ export type NotificationKind =
   | 'game_data_action_rejected'
   | 'game_data_action_created'
   | 'article_comment_created'
-  | 'discussion_comment_created';
+  | 'discussion_comment_created'
+  | 'contribution_thanked';
 
 type ModerationNotificationKind = Extract<
   NotificationKind,
@@ -60,6 +61,10 @@ const NOTIFICATION_KIND_META: Record<NotificationKind, NotificationKindMeta> = {
   discussion_comment_created: {
     eyebrow: '讨论评论',
     tone: 'info',
+  },
+  contribution_thanked: {
+    eyebrow: '贡献感谢',
+    tone: 'success',
   },
 };
 

@@ -5,12 +5,14 @@ import Link from 'next/link';
 
 import { formatCompactDateTime } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
+import { GAME_DATA_ENTITY_LABELS } from '@/lib/gameData/contributionDisplay';
 import { useToast } from '@/context/ToastContext';
 import { Database } from '@/data/database.types';
 import type { GameActionDiffView } from '@/features/admin/utils/gameActionDiff';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import { FormInput, FormSelect } from '@/components/ui/FormControls';
+import ThankContributionDialog from '@/components/contributions/ThankContributionDialog';
 import { ChevronRightIcon } from '@/components/icons/CommonIcons';
 
 import GameDataActionPreviewList, { GameDataActionChangeViewer } from './GameDataActionPreviewList';
@@ -38,6 +40,12 @@ type ModerationAction = PendingModerationAction | 'mark-synced' | 'revoke';
 type ModerationFailure = {
   actionId: string;
   message: string;
+};
+
+type ThankTarget = {
+  actionId: string;
+  contributionTitle: string;
+  approveFirst: boolean;
 };
 
 const ACTION_STATUS_META: Record<ActionStatus, { label: string; className: string }> = {
@@ -84,6 +92,7 @@ const GameDataActionModerationPanel = ({
   const [selectedActionIds, setSelectedActionIds] = useState<Set<string>>(() => new Set());
   const [diffView, setDiffView] = useState<GameActionDiffView>('unified');
   const [showAllDiffContext, setShowAllDiffContext] = useState(false);
+  const [thankTarget, setThankTarget] = useState<ThankTarget | null>(null);
   const { success, error } = useToast();
 
   const copyText = async (text: string) => {
@@ -124,10 +133,29 @@ const GameDataActionModerationPanel = ({
     }
   };
 
+  const submitThanksRequest = async (actionId: string, message: string) => {
+    const response = await fetch(
+      `/api/contributions/game-data/${encodeURIComponent(actionId)}/thank`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message }),
+      }
+    );
+    const payload = (await response.json().catch(() => null)) as {
+      created?: boolean;
+      error?: string;
+    } | null;
+    if (!response.ok) {
+      throw new Error(payload?.error ?? '感谢发送失败');
+    }
+    return payload?.created !== false;
+  };
+
   const moderateAction = async (
     actionId: string,
     action: ModerationAction,
-    opts?: { reason?: string | null; skipPrompt?: boolean }
+    opts?: { reason?: string | null; skipPrompt?: boolean; thankMessage?: string }
   ) => {
     if (isModerating) return;
 
@@ -144,8 +172,40 @@ const GameDataActionModerationPanel = ({
       }
 
       await submitModerationRequest(actionId, action, reason);
-      success(MODERATION_ACTION_SUCCESS_MESSAGE[action]);
+      let thanksFailed = false;
+      if (action === 'approve' && opts?.thankMessage) {
+        try {
+          await submitThanksRequest(actionId, opts.thankMessage);
+        } catch (thankError) {
+          error(
+            `改动已批准，但感谢发送失败：${
+              thankError instanceof Error ? thankError.message : '未知错误'
+            }`
+          );
+          thanksFailed = true;
+        }
+      }
+      if (!thanksFailed) {
+        success(
+          action === 'approve' && opts?.thankMessage
+            ? '已批准并向编辑者发送感谢'
+            : MODERATION_ACTION_SUCCESS_MESSAGE[action]
+        );
+      }
       await mutatePendingActions();
+    } catch (failure) {
+      error(getModerationFailureMessage(failure));
+    } finally {
+      setModeratingActionId(null);
+    }
+  };
+
+  const thankApprovedAction = async (actionId: string, message: string) => {
+    if (isModerating) return;
+    setModeratingActionId(actionId);
+    try {
+      const created = await submitThanksRequest(actionId, message);
+      success(created ? '已向编辑者发送感谢' : '这次贡献已经感谢过了');
     } catch (failure) {
       error(getModerationFailureMessage(failure));
     } finally {
@@ -595,6 +655,25 @@ const GameDataActionModerationPanel = ({
                                 批准
                               </Button>
                             )}
+                            {canApproveActions && submission.created_by && (
+                              <Button
+                                disabled={isModerating}
+                                onClick={() =>
+                                  setThankTarget({
+                                    actionId: submission.action_id,
+                                    contributionTitle: `${
+                                      GAME_DATA_ENTITY_LABELS[submission.entity_type] ??
+                                      submission.entity_type
+                                    }改动`,
+                                    approveFirst: true,
+                                  })
+                                }
+                                variant='secondary'
+                                size='sm'
+                              >
+                                批准并感谢
+                              </Button>
+                            )}
                             {!submission.is_public && canRejectActions && (
                               <Button
                                 disabled={isModerating}
@@ -641,6 +720,27 @@ const GameDataActionModerationPanel = ({
                             标为已同步
                           </Button>
                         )}
+                        {canApproveActions &&
+                          submission.created_by &&
+                          (submission.status === 'approved' || submission.status === 'synced') && (
+                            <Button
+                              disabled={isModerating}
+                              onClick={() =>
+                                setThankTarget({
+                                  actionId: submission.action_id,
+                                  contributionTitle: `${
+                                    GAME_DATA_ENTITY_LABELS[submission.entity_type] ??
+                                    submission.entity_type
+                                  }改动`,
+                                  approveFirst: false,
+                                })
+                              }
+                              variant='secondary'
+                              size='sm'
+                            >
+                              感谢
+                            </Button>
+                          )}
                         {canRevokeActions && submission.status === 'approved' && (
                           <Button
                             disabled={isModerating}
@@ -739,6 +839,24 @@ const GameDataActionModerationPanel = ({
           })}
         </div>
       )}
+
+      <ThankContributionDialog
+        open={thankTarget !== null}
+        contributionTitle={thankTarget?.contributionTitle ?? '这次游戏数据贡献'}
+        submitting={thankTarget ? moderatingActionId === thankTarget.actionId : false}
+        actionLabel={thankTarget?.approveFirst ? '批准并发送感谢' : '发送感谢'}
+        onClose={() => setThankTarget(null)}
+        onSubmit={(message) => {
+          const target = thankTarget;
+          if (!target) return;
+          setThankTarget(null);
+          if (target.approveFirst) {
+            void moderateAction(target.actionId, 'approve', { thankMessage: message });
+          } else {
+            void thankApprovedAction(target.actionId, message);
+          }
+        }}
+      />
     </div>
   );
 };

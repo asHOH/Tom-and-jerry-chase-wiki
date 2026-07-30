@@ -10,6 +10,17 @@ import { CACHE_TAGS, invalidateCache } from '@/lib/cacheTags';
 import { publishNotification } from '@/lib/notificationUtils';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 
+const readReviewFeedback = async (request: NextRequest): Promise<string | null> => {
+  try {
+    const body = (await request.json()) as { feedback?: unknown };
+    if (typeof body.feedback !== 'string') return null;
+    const feedback = body.feedback.trim();
+    return feedback ? feedback.slice(0, 1000) : null;
+  } catch {
+    return null;
+  }
+};
+
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ versionId: string }> }
@@ -42,12 +53,15 @@ export async function POST(
     });
     if ('error' in guard) return guard.error;
     const { supabase } = guard;
+    const reviewFeedback =
+      action === 'approve' || action === 'reject' ? await readReviewFeedback(request) : null;
 
     const { error: actionError } = await supabaseAdmin.rpc('prepared_article_version_moderation', {
       p_actor_id: guard.userId,
       p_ip: getRequestIp(request),
       p_action: action,
       p_version_id: versionId,
+      p_feedback: reviewFeedback,
     });
     if (actionError) {
       console.error(`Error executing ${action} action:`, actionError);
@@ -86,9 +100,12 @@ export async function POST(
             decisionOrigin: 'manual',
             title: approved ? '文章已通过审核' : '文章未通过审核',
             body: approved
-              ? `您的文章《${proposed_title || '文章'}》已通过审核并发布。`
-              : `您的文章《${proposed_title || '文章'}》未通过审核。`,
-            href: approved && article_id ? `/articles/${article_id}/` : '/articles/pending/',
+              ? `您的文章《${proposed_title || '文章'}》已通过审核并发布。${reviewFeedback ? `审核反馈：${reviewFeedback}` : ''}`
+              : `您的文章《${proposed_title || '文章'}》未通过审核。${reviewFeedback ? `审核反馈：${reviewFeedback}` : ''}`,
+            href:
+              approved && article_id
+                ? `/articles/${article_id}/`
+                : `/contributions/?highlight=${encodeURIComponent(versionId)}`,
             sourceIds: [versionId],
             dedupeKey: `article-version:${versionId}:${approved ? 'approved' : 'rejected'}`,
           });

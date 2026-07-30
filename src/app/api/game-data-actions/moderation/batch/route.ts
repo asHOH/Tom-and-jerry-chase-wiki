@@ -113,7 +113,9 @@ export async function POST(request: Request) {
         decisionOrigin: 'manual',
         title: approved ? '游戏数据改动批量审核通过' : '游戏数据改动批量审核未通过',
         body: `您提交的 ${group.length} 条${details.summary}改动${approved ? '已通过审核' : '未通过审核'}。${reasonSuffix}`,
-        href: details.href ?? '/admin/?tab=actions',
+        href: approved
+          ? (details.href ?? '/contributions/')
+          : `/contributions/?highlight=${encodeURIComponent(sourceIds[0]!)}`,
         sourceIds,
         dedupeKey: `game-data-actions:batch:${action}:${sourceIds.join(',')}`,
       });

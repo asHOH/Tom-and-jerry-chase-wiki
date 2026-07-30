@@ -45,6 +45,9 @@ export type Database = {
           proposed_category_id: string | null;
           proposed_character_id: string | null;
           proposed_title: string | null;
+          review_feedback: string | null;
+          reviewed_at: string | null;
+          reviewed_by: string | null;
           status: Database['public']['Enums']['version_status'];
         };
         Insert: {
@@ -58,6 +61,9 @@ export type Database = {
           proposed_category_id?: string | null;
           proposed_character_id?: string | null;
           proposed_title?: string | null;
+          review_feedback?: string | null;
+          reviewed_at?: string | null;
+          reviewed_by?: string | null;
           status: Database['public']['Enums']['version_status'];
         };
         Update: {
@@ -71,6 +77,9 @@ export type Database = {
           proposed_category_id?: string | null;
           proposed_character_id?: string | null;
           proposed_title?: string | null;
+          review_feedback?: string | null;
+          reviewed_at?: string | null;
+          reviewed_by?: string | null;
           status?: Database['public']['Enums']['version_status'];
         };
         Relationships: [
@@ -100,6 +109,20 @@ export type Database = {
             columns: ['proposed_category_id'];
             isOneToOne: false;
             referencedRelation: 'categories';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'article_versions_reviewed_by_fkey';
+            columns: ['reviewed_by'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'article_versions_reviewed_by_fkey';
+            columns: ['reviewed_by'];
+            isOneToOne: false;
+            referencedRelation: 'users_public_view';
             referencedColumns: ['id'];
           },
         ];
@@ -1024,7 +1047,13 @@ export type Database = {
         Returns: undefined;
       };
       prepared_article_version_moderation: {
-        Args: { p_action: string; p_actor_id: string; p_ip: string | null; p_version_id: string };
+        Args: {
+          p_action: string;
+          p_actor_id: string;
+          p_feedback?: string | null;
+          p_ip: string | null;
+          p_version_id: string;
+        };
         Returns: undefined;
       };
       create_permission_group: {

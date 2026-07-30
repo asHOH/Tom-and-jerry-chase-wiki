@@ -12,6 +12,7 @@ import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import PageHeader from '@/components/ui/PageHeader';
 import PageShell from '@/components/ui/PageShell';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
+import ThankContributionDialog from '@/components/contributions/ThankContributionDialog';
 import { CheckBadgeIcon, ClockIcon, CloseIcon, EyeIcon } from '@/components/icons/CommonIcons';
 import Link from '@/components/Link';
 
@@ -72,6 +73,7 @@ export default function PendingClient() {
   const permissions = usePermissions();
   const [processingVersions, setProcessingVersions] = useState<Set<string>>(new Set());
   const [filter, setFilter] = useState<'all' | 'pending' | 'rejected'>('all');
+  const [thankTarget, setThankTarget] = useState<Submission | null>(null);
 
   const canModerate = permissions.has('article_version.approve');
 
@@ -118,14 +120,24 @@ export default function PendingClient() {
 
   const loading = !data && !error;
 
-  const handleModerationAction = async (versionId: string, action: 'approve' | 'reject') => {
+  const handleModerationAction = async (
+    versionId: string,
+    action: 'approve' | 'reject',
+    thankMessage?: string
+  ) => {
     if (processingVersions.has(versionId)) return;
+
+    const feedback =
+      action === 'reject' ? window.prompt('审核反馈（可选，取消则不执行拒绝）') : null;
+    if (action === 'reject' && feedback === null) return;
 
     setProcessingVersions((prev) => new Set([...Array.from(prev), versionId]));
 
     try {
       const response = await fetch(`/api/moderation/${versionId}?action=${action}`, {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(feedback?.trim() ? { feedback: feedback.trim() } : {}),
       });
 
       if (!response.ok) {
@@ -133,8 +145,36 @@ export default function PendingClient() {
         throw new Error(errorData.error || `${action} 操作失败`);
       }
 
+      let thanksSent = false;
+      if (action === 'approve' && thankMessage) {
+        const thanksResponse = await fetch(
+          `/api/contributions/article/${encodeURIComponent(versionId)}/thank`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: thankMessage }),
+          }
+        );
+        if (!thanksResponse.ok) {
+          const payload = (await thanksResponse.json().catch(() => null)) as {
+            error?: string;
+          } | null;
+          alert(`文章已批准，但感谢发送失败: ${payload?.error ?? '未知错误'}`);
+        } else {
+          thanksSent = true;
+        }
+      }
+
       await mutate();
-      alert(`已成功${action === 'approve' ? '批准' : '拒绝'}此提交`);
+      if (!thankMessage || thanksSent) {
+        alert(
+          action === 'approve'
+            ? thankMessage
+              ? '已批准此提交并向编辑者发送感谢'
+              : '已成功批准此提交'
+            : '已成功拒绝此提交'
+        );
+      }
     } catch (err) {
       console.error(`Error ${action}ing submission:`, err);
       alert(
@@ -353,6 +393,17 @@ export default function PendingClient() {
                         批准
                       </Button>
 
+                      {submission.editor_id && (
+                        <Button
+                          onClick={() => setThankTarget(submission)}
+                          disabled={processingVersions.has(submission.version_id)}
+                          variant='secondary'
+                          size='sm'
+                        >
+                          批准并感谢
+                        </Button>
+                      )}
+
                       <Button
                         onClick={() => handleModerationAction(submission.version_id, 'reject')}
                         disabled={processingVersions.has(submission.version_id)}
@@ -413,6 +464,20 @@ export default function PendingClient() {
           )}
         </div>
       </div>
+
+      <ThankContributionDialog
+        open={thankTarget !== null}
+        contributionTitle={thankTarget ? `文章《${thankTarget.title}》` : '这次文章贡献'}
+        submitting={thankTarget ? processingVersions.has(thankTarget.version_id) : false}
+        actionLabel='批准并发送感谢'
+        onClose={() => setThankTarget(null)}
+        onSubmit={(message) => {
+          const target = thankTarget;
+          if (!target) return;
+          setThankTarget(null);
+          void handleModerationAction(target.version_id, 'approve', message);
+        }}
+      />
     </PageShell>
   );
 }

@@ -146,7 +146,7 @@ export async function POST(
           decisionOrigin: 'manual',
           title: '游戏数据改动未通过审核',
           body: `您的${details.summary}修改未通过审核。${reasonSuffix}`,
-          href: details.href ?? '/admin/?tab=actions',
+          href: `/contributions/?highlight=${encodeURIComponent(actionId)}`,
           sourceIds: [actionId],
           dedupeKey: `game-data-action:${actionId}:rejected`,
         });
