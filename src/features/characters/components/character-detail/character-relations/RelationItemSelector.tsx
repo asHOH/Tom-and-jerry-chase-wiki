@@ -53,7 +53,7 @@ const RelationItemSelector: React.FC<RelationItemSelectorProps> = ({
       </IconButton>
 
       {isOpen && (
-        <div className='absolute top-full right-0 z-50 mt-1 max-h-48 w-48 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800'>
+        <div className='border-border bg-surface-raised text-foreground absolute top-full right-0 z-50 mt-1 max-h-48 w-48 overflow-y-auto rounded-lg border shadow-lg'>
           {options.map(({ id, imageUrl, imageClassName }) => (
             <button
               key={id}

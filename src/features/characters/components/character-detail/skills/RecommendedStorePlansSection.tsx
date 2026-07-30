@@ -75,7 +75,7 @@ export default function RecommendedStorePlansSection() {
                           className='h-auto w-auto scale-[0.55] object-contain transition-transform group-hover:scale-[0.6]'
                         />
                       </span>
-                      <span className='absolute bottom-0 left-1/2 min-w-7 -translate-x-1/2 translate-y-1/2 rounded-full bg-white px-1.5 py-px text-center text-[10px] leading-4 font-medium text-gray-600 shadow-sm dark:bg-gray-800 dark:text-gray-300'>
+                      <span className='bg-surface-raised text-muted-foreground absolute bottom-0 left-1/2 min-w-7 -translate-x-1/2 translate-y-1/2 rounded-full px-1.5 py-px text-center text-[10px] leading-4 font-medium shadow-sm'>
                         {item?.price ?? '—'}
                       </span>
                     </Link>

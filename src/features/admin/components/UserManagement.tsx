@@ -239,7 +239,7 @@ const UserManagement: React.FC<UserManagementProps> = ({
                         />
                       </button>
                       {openGroupUserId === user.id && (
-                        <div className='mt-1 max-h-64 w-full overflow-y-auto rounded-md border border-gray-200 bg-white p-1 shadow-lg dark:border-slate-600 dark:bg-slate-800'>
+                        <div className='border-border bg-surface-raised text-foreground mt-1 max-h-64 w-full overflow-y-auto rounded-md border p-1 shadow-lg'>
                           {groups.map((group) => {
                             const checked = user.groupIds.includes(group.id);
                             return (

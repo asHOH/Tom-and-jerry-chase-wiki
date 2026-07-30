@@ -175,7 +175,7 @@ export default function EditModeToolbar({
       onDragStart={() => document.body.classList.add('select-none')}
       onDragEnd={() => document.body.classList.remove('select-none')}
     >
-      <div className='relative rounded-xl bg-white/95 py-3 pr-4 pl-10 shadow-lg ring-1 ring-gray-200 backdrop-blur-sm dark:bg-slate-800/95 dark:ring-slate-700'>
+      <div className='bg-surface-raised/95 text-foreground ring-border relative rounded-xl py-3 pr-4 pl-10 shadow-lg ring-1 backdrop-blur-sm'>
         {/* Drag handle */}
         <div
           data-tutorial-id='edit-mode-toolbar-drag'
@@ -353,7 +353,7 @@ export default function EditModeToolbar({
               {isDraftsOpen && draftsSummary.length > 0 && (
                 <m.div
                   key='drafts-dropdown'
-                  className='absolute bottom-full left-0 z-50 mb-2 w-56 overflow-hidden rounded-lg border border-amber-100 bg-white shadow-lg dark:border-amber-900/50 dark:bg-slate-800'
+                  className='bg-surface-raised text-foreground absolute bottom-full left-0 z-50 mb-2 w-56 overflow-hidden rounded-lg border border-amber-100 shadow-lg dark:border-amber-900/50'
                   initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 6, scale: 0.98 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 6, scale: 0.98 }}

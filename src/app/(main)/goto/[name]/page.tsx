@@ -4,6 +4,7 @@ import { notFound, redirect } from 'next/navigation';
 
 import { getPublishedGameDataSnapshot } from '@/lib/gameData/published/publishedSnapshot';
 import { getGotoResult } from '@/lib/gotoUtils';
+import Card from '@/components/ui/Card';
 import PageHeader from '@/components/ui/PageHeader';
 import PageShell from '@/components/ui/PageShell';
 import GotoLink from '@/components/GotoLink';
@@ -41,7 +42,10 @@ export default async function GotoPage({
   return (
     <PageShell width='narrow' className='py-6'>
       <PageHeader title={result.name} description={`${result.name}可能指：`} />
-      <ul className='mt-4 list-inside list-disc space-y-2 rounded-lg bg-white/60 p-4 text-lg text-gray-800 shadow-sm dark:bg-slate-900/40 dark:text-gray-200'>
+      <Card
+        as='ul'
+        className='bg-surface/60 text-foreground dark:bg-background/40 mt-4 list-inside list-disc space-y-2 text-lg shadow-sm'
+      >
         {result.candidates.map((c) => (
           <li key={`${c.type}@@${c.url}`}>
             <GotoLink
@@ -66,7 +70,7 @@ export default async function GotoPage({
             <span className='text-gray-600 dark:text-gray-400'>，{c.kindDescription}</span>
           </li>
         ))}
-      </ul>
+      </Card>
     </PageShell>
   );
 }

@@ -1,5 +1,6 @@
 import { LOADING_COUNTS } from '@/constants/loadingCounts';
 import { RANKABLE_PROPERTIES } from '@/features/characters/utils/ranking';
+import Card from '@/components/ui/Card';
 import PageShell from '@/components/ui/PageShell';
 import { Skeleton } from '@/components/ui/Skeleton';
 
@@ -49,10 +50,7 @@ export default function Loading() {
         {/* Rankings grid skeleton */}
         <div className='grid grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4'>
           {Array.from({ length: LOADING_COUNTS.rankings }).map((_, i) => (
-            <div
-              key={i}
-              className='character-card overflow-hidden rounded-lg bg-white shadow-md dark:bg-slate-800'
-            >
+            <Card key={i} className='character-card overflow-hidden p-0 shadow-md'>
               {/* Character image skeleton */}
               <div className='flex justify-center'>
                 <Skeleton className='mt-4 h-20 w-20' />
@@ -66,7 +64,7 @@ export default function Loading() {
                   <Skeleton className='h-5 w-14 rounded' />
                 </div>
               </div>
-            </div>
+            </Card>
           ))}
         </div>
 

@@ -4,6 +4,7 @@ import isEqual from 'lodash-es/isEqual';
 
 import { cn } from '@/lib/design';
 import type { Action } from '@/lib/edit/diffUtils';
+import Card from '@/components/ui/Card';
 
 type GameDataActionVisualDiffProps = {
   entry: unknown;
@@ -240,7 +241,11 @@ function ValueDiff({ before, after }: { before: unknown; after: unknown }) {
 
 function ActionDiff({ action }: { action: Action }) {
   return (
-    <article className='rounded-xl border border-gray-200 bg-white p-3 shadow-sm dark:border-slate-700 dark:bg-slate-900/60'>
+    <Card
+      as='article'
+      bordered
+      className='bg-surface/80 dark:bg-background/60 rounded-xl p-3 shadow-sm'
+    >
       <header className='mb-3 flex flex-wrap items-center gap-2'>
         <span
           className={cn(
@@ -259,7 +264,7 @@ function ActionDiff({ action }: { action: Action }) {
         </code>
       </header>
       <ValueDiff before={action.oldValue} after={action.newValue} />
-    </article>
+    </Card>
   );
 }
 

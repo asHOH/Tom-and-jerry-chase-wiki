@@ -102,6 +102,36 @@ const knowledgeCardSemanticColorTargets = [
   'src/features/characters/components/character-detail/knowledge-cards/PriorityWarningBadge.tsx',
 ] as const;
 
+const semanticCardMigrationTargets = [
+  'src/app/(main)/articles/[id]/ArticleClient.tsx',
+  'src/app/(main)/goto/[name]/page.tsx',
+  'src/app/(main)/notifications/NotificationsClient.tsx',
+  'src/app/(main)/ranks/loading.tsx',
+  'src/components/comments/CommentsSection.tsx',
+  'src/components/ui/ChangeLogs.tsx',
+  'src/components/ui/LoadingState.tsx',
+  'src/components/ui/Skeleton.tsx',
+  'src/features/admin/components/GameDataActionModerationPanel.tsx',
+  'src/features/articles/components/ArticleDiffViewer.tsx',
+  'src/features/discussion/TalkPageClient.tsx',
+  'src/features/shared/components/GameDataActionVisualDiff.tsx',
+] as const;
+
+const semanticRaisedSurfaceTargets = [
+  'src/components/EditRuntime.tsx',
+  'src/components/TabNavigation.tsx',
+  'src/components/ui/CharacterSelector.tsx',
+  'src/components/ui/DocsSidebar.tsx',
+  'src/components/ui/EditModeToolbar.tsx',
+  'src/components/ui/editableFields.tsx',
+  'src/features/admin/components/UserManagement.tsx',
+  'src/features/characters/components/character-detail/character-relations/RelationItemSelector.tsx',
+  'src/features/characters/components/character-detail/knowledge-cards/EditableTreeNode.tsx',
+  'src/features/characters/components/character-detail/positioning-tags/PositioningTagsSection.tsx',
+  'src/features/characters/components/character-detail/skills/RecommendedStorePlansSection.tsx',
+  'src/features/maps/interactive-map/PointDetails.tsx',
+] as const;
+
 const rawActionPattern =
   /<(?:button|Link)\b(?=[^>]*\bclassName=)[^>]*\b(?:bg-blue|bg-green|bg-red|bg-yellow|bg-gray-100|bg-gray-200|bg-gray-300|bg-gray-500|bg-gray-600)/;
 
@@ -203,6 +233,36 @@ describe('UI style consistency', () => {
     expect(source).not.toContain("'use client'");
     expect(source).toContain("'bg-surface rounded-lg p-4'");
     expect(source).toContain("'border-border border'");
+  });
+
+  it('uses Card for migrated passive and skeleton surfaces', () => {
+    const offenders = semanticCardMigrationTargets.filter((relativePath) => {
+      const source = fs.readFileSync(path.join(projectRoot, relativePath), 'utf8');
+      return !source.includes('<Card');
+    });
+
+    expect(offenders).toEqual([]);
+  });
+
+  it('uses the raised semantic token for migrated overlays and popovers', () => {
+    const offenders = semanticRaisedSurfaceTargets.filter((relativePath) => {
+      const source = fs.readFileSync(path.join(projectRoot, relativePath), 'utf8');
+      return !source.includes('bg-surface-raised');
+    });
+
+    expect(offenders).toEqual([]);
+  });
+
+  it('consolidates catalog skeleton shells through SkeletonCard', () => {
+    const source = fs.readFileSync(
+      path.join(projectRoot, 'src/components/ui/Skeleton.tsx'),
+      'utf8'
+    );
+
+    expect(source.match(/<SkeletonCard>/g)).toHaveLength(4);
+    expect(source).not.toContain(
+      'rounded-lg border border-gray-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800'
+    );
   });
 
   it('uses Button for generic edit toolbar actions', () => {

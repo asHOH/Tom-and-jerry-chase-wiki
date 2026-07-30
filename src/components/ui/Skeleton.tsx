@@ -1,4 +1,5 @@
 import { cn } from '@/lib/design';
+import Card from '@/components/ui/Card';
 
 interface SkeletonProps {
   className?: string;
@@ -65,6 +66,14 @@ function SkeletonText({
   );
 }
 
+function SkeletonCard({ children, className }: { children: React.ReactNode; className?: string }) {
+  return (
+    <Card bordered className={cn('overflow-hidden p-0 shadow-sm', className)}>
+      {children}
+    </Card>
+  );
+}
+
 /**
  * Skeleton for character card
  */
@@ -118,7 +127,7 @@ export function SkeletonItemCard({
   tagCount?: number;
 }) {
   return (
-    <div className='overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800'>
+    <SkeletonCard>
       <Skeleton className='h-48 w-full rounded-none' animate={animate} />
       <div className='space-y-2 px-3 pt-2 pb-4 text-center'>
         <Skeleton className='mx-auto h-4 w-3/4' animate={animate} />
@@ -130,7 +139,7 @@ export function SkeletonItemCard({
           </div>
         )}
       </div>
-    </div>
+    </SkeletonCard>
   );
 }
 
@@ -139,12 +148,12 @@ export function SkeletonItemCard({
  */
 export function SkeletonSpecialSkillCard({ animate = true }: { animate?: boolean }) {
   return (
-    <div className='overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800'>
+    <SkeletonCard>
       <Skeleton className='h-48 w-full rounded-none' animate={animate} />
       <div className='space-y-2 px-3 pt-2 pb-4 text-center'>
         <Skeleton className='mx-auto h-5 w-3/4' animate={animate} />
       </div>
-    </div>
+    </SkeletonCard>
   );
 }
 
@@ -153,7 +162,7 @@ export function SkeletonSpecialSkillCard({ animate = true }: { animate?: boolean
  */
 export function SkeletonBuffCard({ animate = true }: { animate?: boolean }) {
   return (
-    <div className='overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800'>
+    <SkeletonCard>
       <div className='flex items-center gap-3 border border-dotted border-gray-200 p-2 dark:border-slate-600'>
         <Skeleton className='h-10 w-10 rounded' animate={animate} />
         <div className='flex-1 space-y-2'>
@@ -164,7 +173,7 @@ export function SkeletonBuffCard({ animate = true }: { animate?: boolean }) {
           </div>
         </div>
       </div>
-    </div>
+    </SkeletonCard>
   );
 }
 
@@ -173,7 +182,7 @@ export function SkeletonBuffCard({ animate = true }: { animate?: boolean }) {
  */
 export function SkeletonArticleCard({ animate = true }: { animate?: boolean }) {
   return (
-    <div className='space-y-3 rounded-lg border border-gray-200 bg-white px-4 pt-2 pb-5 dark:border-gray-700 dark:bg-gray-800'>
+    <Card bordered className='space-y-3 px-4 pt-2 pb-5'>
       {/* Article title */}
       <Skeleton className='h-7 w-3/4' animate={animate} />
 
@@ -195,7 +204,7 @@ export function SkeletonArticleCard({ animate = true }: { animate?: boolean }) {
         </div>
         <Skeleton className='h-8 w-8 rounded-lg' animate={animate} />
       </div>
-    </div>
+    </Card>
   );
 }
 
@@ -207,7 +216,7 @@ export function SkeletonCharacterDetail({ animate = true }: { animate?: boolean 
     <div className='space-y-8'>
       <div className='flex flex-col gap-8 md:flex-row'>
         <div className='md:w-1/3'>
-          <div className='rounded-lg bg-white p-4 shadow-md dark:bg-slate-800'>
+          <Card className='shadow-md'>
             <Skeleton className='-mx-4 -mt-4 mb-4 h-64 rounded-t-lg' animate={animate} />
             <div className='flex items-center justify-between py-2'>
               <Skeleton className='h-9 w-3/4' animate={animate} />
@@ -234,7 +243,7 @@ export function SkeletonCharacterDetail({ animate = true }: { animate?: boolean 
                 <Skeleton className='h-8 w-full' animate={animate} />
               </div>
             </div>
-          </div>
+          </Card>
         </div>
 
         <div className='overflow-y-hidden md:w-2/3'>
@@ -272,7 +281,7 @@ export function SkeletonDetailLayout({
     <div className={cn('space-y-8', className)}>
       <div className='flex flex-col gap-8 md:flex-row'>
         <div className='md:w-1/3'>
-          <div className='overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800'>
+          <SkeletonCard>
             <Skeleton className='h-48 w-full rounded-none' animate={animate} />
             <div className='space-y-3 px-4 py-4'>
               <Skeleton className='h-6 w-3/4' animate={animate} />
@@ -287,17 +296,17 @@ export function SkeletonDetailLayout({
                 <Skeleton className='h-3 w-2/3' animate={animate} />
               </div>
             </div>
-          </div>
+          </SkeletonCard>
         </div>
         <div className='space-y-6 md:w-2/3'>
           {Array.from({ length: sectionCount }).map((_, i) => (
             <div key={i} className='space-y-3'>
               <Skeleton className='h-5 w-32' animate={animate} />
-              <div className='rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800'>
+              <Card bordered className='shadow-sm'>
                 <Skeleton className='h-4 w-full' animate={animate} />
                 <Skeleton className='mt-2 h-4 w-5/6' animate={animate} />
                 <Skeleton className='mt-2 h-4 w-3/4' animate={animate} />
-              </div>
+              </Card>
             </div>
           ))}
         </div>

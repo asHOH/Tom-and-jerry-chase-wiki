@@ -72,7 +72,7 @@ const GroupHeader = memo(
             +子组
           </button>
           {showAddGroupPopover && (
-            <span className='absolute top-full left-0 z-30 mt-1 flex gap-1 rounded border border-gray-200 bg-white p-1 shadow-sm dark:border-slate-600 dark:bg-slate-700'>
+            <span className='border-border bg-surface-raised text-foreground absolute top-full left-0 z-30 mt-1 flex gap-1 rounded border p-1 shadow-sm'>
               <button
                 type='button'
                 className={cn(smallButtonClass, 'text-blue-600 dark:text-blue-400')}

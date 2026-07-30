@@ -8,6 +8,7 @@ import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useUser } from '@/hooks/useUser';
 import Button from '@/components/ui/Button';
+import Card from '@/components/ui/Card';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import PageShell from '@/components/ui/PageShell';
 import LoginDialog from '@/components/LoginDialog';
@@ -227,9 +228,9 @@ export function TalkPageClient({
 
       {/* Empty state */}
       {topics.length === 0 && (
-        <div className='rounded-lg border border-gray-200 bg-white/70 p-8 text-center dark:border-slate-700 dark:bg-slate-900/40'>
+        <Card bordered className='bg-surface/70 dark:bg-background/40 p-8 text-center'>
           <p className='text-gray-500 dark:text-gray-400'>暂无讨论，来创建第一个话题吧</p>
-        </div>
+        </Card>
       )}
 
       {/* Topic sections */}

@@ -196,7 +196,10 @@ export default function ArticleDiffViewer({
 
   return (
     <div className='space-y-8'>
-      <div className='flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white/80 p-3 shadow-sm backdrop-blur dark:border-slate-700 dark:bg-slate-900/70'>
+      <Card
+        bordered
+        className='bg-surface/80 dark:bg-background/70 flex flex-wrap items-center justify-between gap-3 rounded-xl p-3 shadow-sm backdrop-blur'
+      >
         <ButtonLink href={`/articles/${articleId}/history`} variant='secondary' size='sm'>
           返回版本历史
         </ButtonLink>
@@ -212,7 +215,7 @@ export default function ArticleDiffViewer({
             </ButtonLink>
           )}
         </div>
-      </div>
+      </Card>
 
       <div className='flex flex-wrap items-center gap-x-5 gap-y-2 px-1 text-sm text-slate-600 dark:text-slate-400'>
         <span className='font-semibold text-slate-800 dark:text-slate-200'>差异标记</span>

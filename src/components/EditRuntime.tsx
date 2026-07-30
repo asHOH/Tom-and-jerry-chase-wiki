@@ -180,7 +180,7 @@ export default function EditRuntime({
 
   return (
     <div className='pointer-events-none fixed inset-x-0 bottom-3 z-[10060] flex justify-center px-3'>
-      <div className='pointer-events-auto rounded-lg border border-blue-200 bg-white/95 px-3 py-2 text-sm text-gray-700 shadow-lg backdrop-blur dark:border-blue-900 dark:bg-gray-900/95 dark:text-gray-200'>
+      <div className='bg-surface-raised/95 text-foreground pointer-events-auto rounded-lg border border-blue-200 px-3 py-2 text-sm shadow-lg backdrop-blur dark:border-blue-900'>
         {status === 'error'
           ? requiresFreshEditSession
             ? `${errorMessage ?? '编辑环境版本已过期'}，请退出编辑模式后重新进入`

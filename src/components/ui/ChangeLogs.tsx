@@ -9,6 +9,7 @@ import { contributors } from '@/data/contributors';
 import { changeLogs, type ChangeType } from '@/data/generated/changeLogs';
 import ActionTile from '@/components/ui/ActionTile';
 import { BaseDialog } from '@/components/ui/BaseDialog';
+import Card from '@/components/ui/Card';
 import { HOME_ACTION_TILE_PROPS } from '@/components/ui/homeActionTileStyles';
 import { ChevronDownIcon } from '@/components/icons/CommonIcons';
 
@@ -197,10 +198,7 @@ const ChangeLogs = forwardRef<ChangeLogsRef>((_props, ref) => {
               );
 
               return (
-                <div
-                  key={dailyLog.date}
-                  className='overflow-hidden rounded-lg border border-gray-300 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800'
-                >
+                <Card key={dailyLog.date} bordered className='overflow-hidden p-0 shadow-sm'>
                   <button
                     onClick={() => toggleDate(dailyLog.date)}
                     className='flex w-full items-center justify-between px-4 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-gray-900/50'
@@ -276,7 +274,7 @@ const ChangeLogs = forwardRef<ChangeLogsRef>((_props, ref) => {
                       </div>
                     </div>
                   )}
-                </div>
+                </Card>
               );
             })}
           </div>

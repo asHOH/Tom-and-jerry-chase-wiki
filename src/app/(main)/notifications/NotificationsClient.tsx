@@ -292,11 +292,13 @@ export default function NotificationsClient() {
               {notifications.map((notification) => {
                 const kindMeta = getNotificationKindMeta(notification.kind);
                 const content = (
-                  <article
+                  <Card
+                    as='article'
+                    bordered
                     className={cn(
-                      'group flex gap-3 rounded-lg border px-3.5 py-3.5 transition-all sm:gap-4 sm:px-4',
+                      'group flex gap-3 px-3.5 py-3.5 transition-all sm:gap-4 sm:px-4',
                       notification.read_at
-                        ? 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-600 dark:hover:bg-gray-700/70'
+                        ? 'hover:border-gray-300 hover:bg-gray-50 dark:hover:border-gray-600 dark:hover:bg-gray-700/70'
                         : 'border-blue-200 bg-blue-50/80 shadow-sm hover:border-blue-300 dark:border-blue-800 dark:bg-blue-950/30 dark:hover:border-blue-700 dark:hover:bg-blue-950/50'
                     )}
                   >
@@ -343,7 +345,7 @@ export default function NotificationsClient() {
                         )}
                       </div>
                     </div>
-                  </article>
+                  </Card>
                 );
 
                 return notification.href ? (

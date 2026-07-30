@@ -25,7 +25,7 @@ export default function DocsSidebar({ docPages }: DocsSidebarProps) {
       {/* Mobile menu button */}
       <button
         onClick={toggleSidebar}
-        className='fixed top-4 left-4 z-50 rounded-md border border-gray-200 bg-white p-2 shadow-md lg:hidden dark:border-slate-700 dark:bg-slate-800'
+        className='border-border bg-surface-raised text-foreground fixed top-4 left-4 z-50 rounded-md border p-2 shadow-md lg:hidden'
         aria-label='Toggle sidebar'
       >
         {isOpen ? (
@@ -58,7 +58,7 @@ export default function DocsSidebar({ docPages }: DocsSidebarProps) {
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-40 border-r border-gray-200 bg-white lg:static dark:border-slate-700 dark:bg-slate-800',
+          'border-border bg-surface text-foreground fixed inset-y-0 left-0 z-40 border-r lg:static',
           'transform transition-all duration-300 ease-in-out lg:block',
           isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
           isCollapsed ? 'lg:w-16' : 'w-full sm:w-80 lg:w-64'
@@ -66,7 +66,7 @@ export default function DocsSidebar({ docPages }: DocsSidebarProps) {
       >
         <div className='flex h-full flex-col'>
           {/* Header */}
-          <div className='relative border-b border-gray-200 p-6 dark:border-slate-700'>
+          <div className='border-border relative border-b p-6'>
             {!isCollapsed && (
               <>
                 <h2 className='text-lg font-semibold text-gray-900 dark:text-gray-100'>文档</h2>
@@ -179,7 +179,7 @@ export default function DocsSidebar({ docPages }: DocsSidebarProps) {
 
           {/* Footer */}
           {!isCollapsed && (
-            <div className='border-t border-gray-200 p-4 dark:border-slate-700'>
+            <div className='border-border border-t p-4'>
               <div className='space-y-1 text-xs text-gray-500 dark:text-gray-400'>
                 <p className='flex items-center'>
                   <svg className='mr-1 h-3 w-3' fill='currentColor' viewBox='0 0 20 20'>

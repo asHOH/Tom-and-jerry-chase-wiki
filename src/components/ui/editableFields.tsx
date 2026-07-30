@@ -650,7 +650,7 @@ function useInlineEditableContent(opts: {
     ? createPortal(
         <div
           ref={autocompleteListRef}
-          className='z-120 max-h-64 min-w-0 overflow-y-auto rounded-md border border-slate-200 bg-white p-1 text-slate-900 shadow-xl ring-1 ring-black/5 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:ring-white/10'
+          className='border-border bg-surface-raised text-foreground z-120 max-h-64 min-w-0 overflow-y-auto rounded-md border p-1 shadow-xl ring-1 ring-black/5 dark:ring-white/10'
           style={{
             position: 'fixed',
             top: autocompletePosition.top,

@@ -83,7 +83,7 @@ export default function PointDetails({
           (isRelatedEntryDescriptionLoading ? '' : isEditMode ? '请在标注面板中补充介绍。' : ''));
 
   return (
-    <aside className='absolute right-0 bottom-0 left-0 z-700 max-h-[52%] overflow-auto rounded-t-2xl bg-white p-5 text-slate-900 shadow-2xl md:top-0 md:left-auto md:h-full md:max-h-none md:w-80 md:rounded-none md:pt-14 dark:bg-slate-900 dark:text-white'>
+    <aside className='bg-surface-raised text-foreground absolute right-0 bottom-0 left-0 z-700 max-h-[52%] overflow-auto rounded-t-2xl p-5 shadow-2xl md:top-0 md:left-auto md:h-full md:max-h-none md:w-80 md:rounded-none md:pt-14'>
       <button
         type='button'
         onClick={onClose}

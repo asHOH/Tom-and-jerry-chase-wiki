@@ -12,6 +12,7 @@ import { toChineseNumeral } from '@/lib/textUtils';
 import type { FactionId } from '@/data/types';
 import Button from '@/components/ui/Button';
 import ButtonLink from '@/components/ui/ButtonLink';
+import Card from '@/components/ui/Card';
 import PageHeader from '@/components/ui/PageHeader';
 import PageShell from '@/components/ui/PageShell';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
@@ -511,9 +512,13 @@ export default function ArticleClient({
 
       <div className='flex flex-col lg:flex-row lg:items-start lg:gap-10'>
         {hasToc && (
-          <aside className='sticky top-24 hidden h-max max-h-[75vh] overflow-auto rounded-lg border border-gray-200 bg-white/60 p-4 shadow-sm backdrop-blur lg:block lg:w-64 dark:border-gray-700 dark:bg-gray-900/40'>
+          <Card
+            as='aside'
+            bordered
+            className='bg-surface/60 dark:bg-background/40 sticky top-24 hidden h-max max-h-[75vh] overflow-auto shadow-sm backdrop-blur lg:block lg:w-64'
+          >
             {renderTocList('text-left')}
-          </aside>
+          </Card>
         )}
 
         <div className='flex-1'>
@@ -633,14 +638,14 @@ export default function ArticleClient({
           </div>
 
           {hasToc && (
-            <div className='mb-6 rounded-lg border border-gray-200 bg-white/70 p-4 shadow-sm lg:hidden dark:border-gray-700 dark:bg-gray-900/40'>
+            <Card bordered className='bg-surface/70 dark:bg-background/40 mb-6 shadow-sm lg:hidden'>
               <details open>
                 <summary className='cursor-pointer text-sm font-semibold text-gray-800 dark:text-gray-200'>
                   目录
                 </summary>
                 <div className='mt-3'>{renderTocList('text-left', false)}</div>
               </details>
-            </div>
+            </Card>
           )}
 
           {/* Article Content */}

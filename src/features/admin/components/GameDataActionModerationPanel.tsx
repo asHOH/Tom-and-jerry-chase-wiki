@@ -8,6 +8,7 @@ import { cn } from '@/lib/design';
 import { useToast } from '@/context/ToastContext';
 import { Database } from '@/data/database.types';
 import Button from '@/components/ui/Button';
+import Card from '@/components/ui/Card';
 import { FormInput, FormSelect } from '@/components/ui/FormControls';
 import { ChevronRightIcon } from '@/components/icons/CommonIcons';
 
@@ -325,7 +326,7 @@ const GameDataActionModerationPanel = ({
 
   return (
     <div className='space-y-4'>
-      <div className='flex flex-col gap-3 rounded-md bg-white p-4 md:flex-row md:items-center md:justify-between dark:bg-slate-800'>
+      <Card className='flex flex-col gap-3 rounded-md md:flex-row md:items-center md:justify-between'>
         <div className='flex flex-wrap items-center gap-2'>
           <label className='text-sm text-gray-600 dark:text-slate-300'>状态</label>
           <FormSelect
@@ -422,12 +423,10 @@ const GameDataActionModerationPanel = ({
             </Button>
           )}
         </div>
-      </div>
+      </Card>
 
       {pendingActions.length === 0 ? (
-        <div className='rounded-md bg-white p-4 text-gray-600 dark:bg-slate-800 dark:text-slate-300'>
-          暂无待审核改动
-        </div>
+        <Card className='rounded-md text-gray-600 dark:text-slate-300'>暂无待审核改动</Card>
       ) : (
         <div className='space-y-3'>
           {filteredActions.map((submission) => {
@@ -436,7 +435,7 @@ const GameDataActionModerationPanel = ({
             const isExpanded = expandedActionIds.has(submission.action_id);
 
             return (
-              <div key={submission.action_id} className='rounded-md bg-white p-4 dark:bg-slate-800'>
+              <Card key={submission.action_id} className='rounded-md'>
                 <div className='flex items-start gap-3'>
                   <div className='pt-1'>
                     {submission.status === 'pending' &&
@@ -682,7 +681,7 @@ const GameDataActionModerationPanel = ({
                     )}
                   </div>
                 </div>
-              </div>
+              </Card>
             );
           })}
         </div>

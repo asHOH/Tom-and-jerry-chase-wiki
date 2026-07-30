@@ -289,7 +289,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     pathname === '/' || pathname === '' || pathname.startsWith('/articles');
 
   return (
-    <div className='fixed top-0 right-0 left-0 z-50 w-full bg-white py-2 shadow-md dark:bg-slate-900 dark:shadow-lg'>
+    <div className='bg-surface-raised fixed top-0 right-0 left-0 z-50 w-full py-2 shadow-md dark:shadow-lg'>
       <div className='mx-auto flex max-w-7xl items-center justify-between gap-4 px-4'>
         {/* Left-aligned navigation buttons */}
         <div className={cn('relative flex flex-nowrap gap-1 md:gap-2 lg:gap-2.5')}>
@@ -362,7 +362,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                       <m.div
                         key={`group-${entry.id}-dropdown`}
                         className={cn(
-                          'absolute z-9999 mt-2 min-w-35 rounded-md bg-white shadow-lg dark:bg-slate-800',
+                          'bg-surface-raised absolute z-9999 mt-2 min-w-35 rounded-md shadow-lg',
                           dropdownAlignmentClass
                         )}
                         initial={
@@ -456,7 +456,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                   <m.div
                     key='tab-overflow-menu'
                     className={cn(
-                      'absolute z-9999 mt-2 min-w-35 rounded-md bg-white shadow-lg dark:bg-slate-800',
+                      'bg-surface-raised absolute z-9999 mt-2 min-w-35 rounded-md shadow-lg',
                       dropdownAlignmentClass
                     )}
                     initial={
@@ -556,7 +556,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                 {userDropdownOpen && (
                   <m.div
                     key='user-settings-dropdown'
-                    className='absolute right-0 z-99999 mt-2 w-64 rounded-md bg-white shadow-lg dark:bg-slate-800'
+                    className='bg-surface-raised absolute right-0 z-99999 mt-2 w-64 rounded-md shadow-lg'
                     initial={
                       shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: -6, scale: 0.98 }
                     }

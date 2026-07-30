@@ -2,6 +2,7 @@ import React from 'react';
 
 import { cn } from '@/lib/design';
 
+import Card from './Card';
 import LoadingSpinner from './LoadingSpinner';
 import PageShell, { type PageShellWidth } from './PageShell';
 import {
@@ -269,10 +270,7 @@ export default function LoadingState({
 
           <div className='space-y-4'>
             {Array.from({ length: count }).map((_, i) => (
-              <div
-                key={i}
-                className='rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800'
-              >
+              <Card key={i} bordered className='shadow-sm'>
                 <div className='flex flex-col gap-4 md:flex-row'>
                   <div className='md:w-1/5'>
                     <SkeletonSpecialSkillCard animate={animate} />
@@ -284,7 +282,7 @@ export default function LoadingState({
                     <Skeleton className='h-4 w-3/4' animate={animate} />
                   </div>
                 </div>
-              </div>
+              </Card>
             ))}
           </div>
         </div>

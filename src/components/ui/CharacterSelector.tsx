@@ -77,7 +77,7 @@ export function CharacterSelector({
       </IconButton>
 
       {isOpen && (
-        <div className='absolute top-full right-0 z-50 mt-1 max-h-60 w-56 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg ring-1 ring-black/5 dark:border-gray-700 dark:bg-slate-900 dark:ring-white/10'>
+        <div className='border-border bg-surface-raised text-foreground absolute top-full right-0 z-50 mt-1 max-h-60 w-56 overflow-y-auto rounded-lg border shadow-lg ring-1 ring-black/5 dark:ring-white/10'>
           {availableCharacters.map((char) => (
             <button
               key={char.id}
@@ -351,8 +351,8 @@ export function ArticleCharacterSelector({
       {isOpen && (
         <>
           <div className='fixed inset-0 z-40' onClick={() => setIsOpen(false)} />
-          <div className='absolute top-full left-0 z-50 mt-1 w-full rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-slate-900'>
-            <div className='border-b border-gray-200 p-2 dark:border-gray-700'>
+          <div className='border-border bg-surface-raised text-foreground absolute top-full left-0 z-50 mt-1 w-full rounded-lg border shadow-lg'>
+            <div className='border-border border-b p-2'>
               <FormInput
                 type='text'
                 value={searchQuery}

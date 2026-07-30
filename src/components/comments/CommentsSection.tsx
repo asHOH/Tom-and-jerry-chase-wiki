@@ -8,6 +8,7 @@ import { formatArticleDate } from '@/lib/dateUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useUser } from '@/hooks/useUser';
 import Button from '@/components/ui/Button';
+import Card from '@/components/ui/Card';
 import { FormTextarea } from '@/components/ui/FormControls';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import SectionHeader from '@/components/ui/SectionHeader';
@@ -139,9 +140,10 @@ export default function CommentsSection({
     const authorName = comment.author.nickname || '匿名';
 
     return (
-      <div
+      <Card
         key={comment.id}
-        className='rounded-lg border border-gray-200 bg-white/70 p-3 shadow-sm dark:border-slate-700 dark:bg-slate-900/40'
+        bordered
+        className='bg-surface/70 dark:bg-background/40 p-3 shadow-sm'
         style={{ marginLeft: depth ? Math.min(depth, 3) * 12 : 0 }}
       >
         <div className='flex items-center justify-between gap-3'>
@@ -177,7 +179,7 @@ export default function CommentsSection({
             {tree.get(comment.id)!.map((child) => renderComment(child, depth + 1))}
           </div>
         ) : null}
-      </div>
+      </Card>
     );
   };
 
@@ -189,7 +191,7 @@ export default function CommentsSection({
         <span className='text-sm text-gray-500 dark:text-gray-400'>{comments.length} 条</span>
       </SectionHeader>
 
-      <div className='rounded-lg border border-gray-200 bg-white/70 p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900/40'>
+      <Card bordered className='bg-surface/70 dark:bg-background/40 shadow-sm'>
         {replyTo ? (
           <div className='mb-3 flex items-center justify-between gap-3 rounded-md bg-gray-100 px-3 py-2 text-sm text-gray-700 dark:bg-slate-800 dark:text-gray-200'>
             <div className='min-w-0 truncate'>回复 {replyTo.nickname || '匿名'}</div>
@@ -236,7 +238,7 @@ export default function CommentsSection({
             {isSubmitting ? '发送中…' : '发表评论'}
           </Button>
         </div>
-      </div>
+      </Card>
 
       <div className='mt-4 space-y-3'>
         {loading ? (
@@ -244,13 +246,19 @@ export default function CommentsSection({
             <LoadingSpinner size='md' />
           </div>
         ) : loadError ? (
-          <div className='rounded-lg border border-gray-200 bg-white/70 p-4 text-sm text-gray-600 dark:border-slate-700 dark:bg-slate-900/40 dark:text-gray-400'>
+          <Card
+            bordered
+            className='bg-surface/70 text-muted-foreground dark:bg-background/40 text-sm'
+          >
             评论加载失败，请稍后再试。
-          </div>
+          </Card>
         ) : comments.length === 0 ? (
-          <div className='rounded-lg border border-gray-200 bg-white/70 p-4 text-sm text-gray-600 dark:border-slate-700 dark:bg-slate-900/40 dark:text-gray-400'>
+          <Card
+            bordered
+            className='bg-surface/70 text-muted-foreground dark:bg-background/40 text-sm'
+          >
             暂无评论，来抢沙发吧。
-          </div>
+          </Card>
         ) : (
           (tree.get(null) ?? []).map((comment) => renderComment(comment, 0))
         )}
