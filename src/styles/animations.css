@@ -141,13 +141,47 @@
   animation-delay: 1.5s;
 }
 
+/* One-shot diagonal highlight for undiscovered action buttons */
+@keyframes edit-button-sheen {
+  from {
+    transform: translateX(-160%) rotate(25deg);
+  }
+  to {
+    transform: translateX(160%) rotate(25deg);
+  }
+}
+
+.edit-button-sheen {
+  position: relative;
+  overflow: hidden;
+}
+
+.edit-button-sheen > * {
+  position: relative;
+  z-index: 1;
+}
+
+.edit-button-sheen::after {
+  position: absolute;
+  top: -60%;
+  bottom: -60%;
+  left: -35%;
+  z-index: 2;
+  width: 28%;
+  pointer-events: none;
+  content: '';
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 75%), transparent);
+  animation: edit-button-sheen 1.2s ease-out 2;
+}
+
 /* Respect users who prefer reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .skeleton-shimmer,
   .animate-fadeInUp,
   .animate-slideInLeft,
   .animate-slideInRight,
-  .animate-attention-pulse {
+  .animate-attention-pulse,
+  .edit-button-sheen::after {
     animation: none !important;
   }
 }

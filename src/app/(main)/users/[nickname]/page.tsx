@@ -2,16 +2,35 @@ import { cache } from 'react';
 import type { Metadata, Route } from 'next';
 import { notFound } from 'next/navigation';
 
+import type { PermissionKey } from '@/lib/auth/permissions';
+import { loadPermissionGrants } from '@/lib/auth/requirePermission';
 import { formatCompactDateTime } from '@/lib/dateUtils';
 import { generatePageMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
-import { getPublicUserProfile, type PublicContribution } from '@/lib/users/publicProfile';
+import { createClient } from '@/lib/supabase/server';
+import {
+  getGameDataActionApprovalRate,
+  getPublicUserProfile,
+  type PublicContribution,
+} from '@/lib/users/publicProfile';
 import { contributors, RoleType } from '@/data/contributors';
 import Card from '@/components/ui/Card';
 import { InlineExternalLink } from '@/components/ui/InlineExternalLink';
 import PageShell from '@/components/ui/PageShell';
 import Link from '@/components/Link';
 
+export const dynamic = 'force-dynamic';
+
 const getProfile = cache(getPublicUserProfile);
+const USER_MANAGEMENT_PERMISSIONS = new Set<PermissionKey>([
+  'user.read',
+  'user.update',
+  'group.assign',
+]);
+
+const approvalRateFormatter = new Intl.NumberFormat('zh-CN', {
+  style: 'percent',
+  maximumFractionDigits: 1,
+});
 
 function decodeNickname(value: string): string {
   try {
@@ -71,7 +90,17 @@ function getContributionStatsGridClassName(statCount: number): string {
   if (statCount <= 1) return 'grid grid-cols-1 gap-3 sm:grid-cols-1';
   if (statCount === 2) return 'grid grid-cols-2 gap-3 sm:grid-cols-2';
   if (statCount === 3) return 'grid grid-cols-3 gap-3 sm:grid-cols-3';
-  return 'grid grid-cols-2 gap-3 sm:grid-cols-4';
+  if (statCount === 4) return 'grid grid-cols-2 gap-3 sm:grid-cols-4';
+  return 'grid grid-cols-2 gap-3 sm:grid-cols-5';
+}
+
+async function canViewGameDataActionApprovalRate(): Promise<boolean> {
+  const supabase = await createClient();
+  const grants = await loadPermissionGrants(supabase);
+
+  return grants.some(
+    (grant) => grant.scope === 'global' && USER_MANAGEMENT_PERMISSIONS.has(grant.permission)
+  );
 }
 
 export async function generateMetadata({
@@ -115,15 +144,30 @@ export default async function PublicUserPage({
 
   if (!profile) notFound();
 
+  let gameDataActionApprovalRate: number | null = null;
+  try {
+    if (await canViewGameDataActionApprovalRate()) {
+      gameDataActionApprovalRate = await getGameDataActionApprovalRate(profile.id);
+    }
+  } catch (error) {
+    console.error('Failed to load game data action approval rate:', error);
+  }
+
   const contributor = contributors.find(({ nickname }) => nickname === profile.nickname);
   const externalWebsiteName = contributor?.url ? getWebsiteName(contributor.url) : null;
   const characterContributionCount = getCharacterContributionCount(contributor);
-  const contributionStats = [
+  const contributionStats: Array<{ label: string; value: number | string }> = [
     { label: '角色文案撰写', value: characterContributionCount },
     { label: '文章编辑', value: profile.contributionTotals.articles },
     { label: '游戏数据编辑', value: profile.contributionTotals.gameData },
     { label: '审核', value: profile.reviewCount },
   ].filter((stat) => stat.value > 0);
+  if (gameDataActionApprovalRate !== null) {
+    contributionStats.push({
+      label: '游戏数据改动通过率',
+      value: approvalRateFormatter.format(gameDataActionApprovalRate),
+    });
+  }
 
   return (
     <PageShell width='standard' className='space-y-6 py-8 text-gray-900 dark:text-gray-100'>

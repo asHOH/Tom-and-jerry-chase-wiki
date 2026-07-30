@@ -8,6 +8,8 @@ import { GAME_DATA_CONTRIBUTION_FILTER } from '@/lib/gameData/contributionFilter
 import { hasSupabaseAdminConfig, supabaseAdmin } from '@/lib/supabase/admin';
 
 const RECENT_CONTRIBUTION_LIMIT = 10;
+const REVIEWED_GAME_DATA_ACTION_STATUSES = ['approved', 'rejected', 'synced', 'revoked'] as const;
+const APPROVED_GAME_DATA_ACTION_STATUSES = ['approved', 'synced'] as const;
 
 const GAME_DATA_LABELS: Record<string, string> = {
   achievements: '成就',
@@ -98,6 +100,31 @@ export function mergeRecentContributions(
   return [...articles, ...gameData]
     .sort((left, right) => Date.parse(right.createdAt) - Date.parse(left.createdAt))
     .slice(0, limit);
+}
+
+export async function getGameDataActionApprovalRate(userId: string): Promise<number | null> {
+  if (!hasSupabaseAdminConfig()) return null;
+
+  const [approvedResult, reviewedResult] = await Promise.all([
+    supabaseAdmin
+      .from('game_data_actions')
+      .select('id', { count: 'exact', head: true })
+      .eq('created_by', userId)
+      .in('status', APPROVED_GAME_DATA_ACTION_STATUSES),
+    supabaseAdmin
+      .from('game_data_actions')
+      .select('id', { count: 'exact', head: true })
+      .eq('created_by', userId)
+      .in('status', REVIEWED_GAME_DATA_ACTION_STATUSES),
+  ]);
+
+  if (approvedResult.error) throw approvedResult.error;
+  if (reviewedResult.error) throw reviewedResult.error;
+
+  const reviewedCount = reviewedResult.count ?? 0;
+  if (reviewedCount === 0) return null;
+
+  return (approvedResult.count ?? 0) / reviewedCount;
 }
 
 export async function getPublicUserProfile(nickname: string): Promise<PublicUserProfile | null> {

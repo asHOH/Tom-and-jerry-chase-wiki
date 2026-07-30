@@ -1,5 +1,7 @@
 'use client';
 
+import { cn } from '@/lib/design';
+import { useFeatureDiscovery } from '@/hooks/useFeatureDiscovery';
 import { useSearchParamEditMode } from '@/hooks/useSearchParamEditMode';
 import Button from '@/components/ui/Button';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
@@ -12,7 +14,14 @@ export type EditButtonProps = {
 
 export default function EditButton({ className, compact = false }: EditButtonProps) {
   const { isEditMode, enterEditMode } = useSearchParamEditMode();
+  const { shouldPrompt: showEditHint, dismiss: dismissEditHint } =
+    useFeatureDiscovery('edit_button');
   const title = '编辑此页面';
+
+  const handleEnterEditMode = () => {
+    if (showEditHint) dismissEditHint();
+    enterEditMode();
+  };
 
   if (isEditMode) return null;
 
@@ -24,8 +33,8 @@ export default function EditButton({ className, compact = false }: EditButtonPro
         title={title}
         variant='edit'
         size='sm'
-        className={className}
-        onClick={enterEditMode}
+        className={cn(showEditHint && 'edit-button-sheen', className)}
+        onClick={handleEnterEditMode}
       >
         <PencilSquareIcon className={getIconButtonIconClassName('sm')} aria-hidden='true' />
       </IconButton>
@@ -37,8 +46,8 @@ export default function EditButton({ className, compact = false }: EditButtonPro
       type='button'
       variant='primary'
       size='sm'
-      className={className}
-      onClick={enterEditMode}
+      className={cn(showEditHint && 'edit-button-sheen', className)}
+      onClick={handleEnterEditMode}
       leadingIcon={<PencilSquareIcon className='h-4 w-4' aria-hidden='true' />}
       title={title}
     >
