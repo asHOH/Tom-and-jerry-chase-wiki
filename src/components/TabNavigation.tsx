@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import type { Route } from 'next';
 import { usePathname } from 'next/navigation';
 import { AnimatePresence, m, useReducedMotion } from 'motion/react';
 import { useMediaQuery } from 'usehooks-ts';
@@ -584,6 +585,14 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                       )}
                       <li className='px-4 py-2 text-sm text-gray-800 dark:text-gray-200'>
                         你好，{nickname}
+                      </li>
+                      <li>
+                        <Link
+                          href={`/users/${encodeURIComponent(nickname)}/` as Route}
+                          className='block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700'
+                        >
+                          个人主页
+                        </Link>
                       </li>
                       <li>
                         <Link
