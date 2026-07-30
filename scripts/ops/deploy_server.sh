@@ -14,6 +14,7 @@ NODE_MEMORY_LIMIT="${NODE_MEMORY_LIMIT:-auto}"
 PINNED_NPM_VERSION="11.18.0"
 ENV_FILE=".env.production"
 PM2_APP_NAME="tjwiki"
+PM2_DAEMON_VERSION_CHECKED=0
 START_SCRIPT="scripts/ops/start_server.sh"
 
 if [ -d "$SCRIPT_DIR/../../.git" ]; then
@@ -185,23 +186,55 @@ build_output_is_valid() {
   [ -f ".next/BUILD_ID" ] && [ -d ".next/server" ] && [ -d ".next/static" ]
 }
 
-ensure_pm2_cli() {
-  if command -v pm2 >/dev/null 2>&1; then
+sync_pm2_daemon_version() {
+  local report daemon_version cli_version
+
+  if [ "$PM2_DAEMON_VERSION_CHECKED" -eq 1 ]; then
     return 0
   fi
 
-  echo "PM2 is not available for the active Node.js version. Installing PM2 globally..."
-  if ! npm install -g pm2; then
-    echo "Fatal: failed to install PM2 globally for the active Node.js version."
-    exit 1
+  report="$(pm2 report 2>/dev/null || true)"
+  daemon_version="$(
+    printf '%s\n' "$report" |
+      sed -n 's/^[[:space:]]*pm2d version[[:space:]]*:[[:space:]]*//p' |
+      head -n 1
+  )"
+  cli_version="$(
+    printf '%s\n' "$report" |
+      sed -n 's/^[[:space:]]*local pm2[[:space:]]*:[[:space:]]*//p' |
+      head -n 1
+  )"
+
+  if [ -n "$daemon_version" ] && [ "$daemon_version" = "$cli_version" ]; then
+    PM2_DAEMON_VERSION_CHECKED=1
+    return 0
   fi
 
-  hash -r 2>/dev/null || true
+  echo "Updating the in-memory PM2 daemon to match the installed CLI..."
+  if ! pm2 update; then
+    echo "Fatal: failed to update the in-memory PM2 daemon."
+    exit 1
+  fi
+  PM2_DAEMON_VERSION_CHECKED=1
+}
+
+ensure_pm2_cli() {
+  if ! command -v pm2 >/dev/null 2>&1; then
+    echo "PM2 is not available for the active Node.js version. Installing PM2 globally..."
+    if ! npm install -g pm2; then
+      echo "Fatal: failed to install PM2 globally for the active Node.js version."
+      exit 1
+    fi
+
+    hash -r 2>/dev/null || true
+  fi
 
   if ! command -v pm2 >/dev/null 2>&1; then
     echo "Fatal: pm2 is still not available after npm install -g pm2."
     exit 1
   fi
+
+  sync_pm2_daemon_version
 }
 
 stop_pm2_process_for_build() {
