@@ -219,6 +219,29 @@ clean_build_output() {
   rm -f public/sw.js public/workbox-*.js
 }
 
+wait_for_application_health() {
+  local health_url="${HEALTH_CHECK_URL:-http://127.0.0.1:${PORT:-3000}/api/health}"
+  local max_attempts=30
+  local attempt=1
+
+  echo "Waiting for application health check at $health_url..."
+  while [ "$attempt" -le "$max_attempts" ]; do
+    if curl --fail --silent --show-error --connect-timeout 2 --max-time 5 "$health_url" >/dev/null 2>&1; then
+      echo "Application health check passed."
+      return 0
+    fi
+
+    if [ "$attempt" -lt "$max_attempts" ]; then
+      sleep 2
+    fi
+    attempt=$((attempt + 1))
+  done
+
+  echo "Fatal: application health check failed after $max_attempts attempts."
+  pm2 describe "$PM2_APP_NAME" || true
+  return 1
+}
+
 ensure_pm2_process() {
   ensure_pm2_cli
 
@@ -230,6 +253,7 @@ ensure_pm2_process() {
     pm2 start "$START_SCRIPT" --name "$PM2_APP_NAME" --interpreter bash --cwd "$PWD"
   fi
 
+  wait_for_application_health
   pm2 save
 }
 
