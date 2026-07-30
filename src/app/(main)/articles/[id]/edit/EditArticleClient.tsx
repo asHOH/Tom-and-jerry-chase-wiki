@@ -14,6 +14,7 @@ import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { formatArticleDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
 import { normalizeHeadingLevels } from '@/lib/richTextUtils';
+import { useContributionSubmissionFeedback } from '@/hooks/useContributionSubmissionFeedback';
 import { useUser } from '@/hooks/useUser';
 import { useToast } from '@/context/ToastContext';
 import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
@@ -58,7 +59,8 @@ const EditArticleClient: React.FC<EditArticleClientProps> = ({ characterOptions 
   const permissions = usePermissions();
   const canEditArticle =
     permissions.has('article.update_own') || permissions.has('article.update_any');
-  const { success: showSuccess, error: showError } = useToast();
+  const { error: showError } = useToast();
+  const showSubmissionFeedback = useContributionSubmissionFeedback();
 
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
@@ -210,10 +212,8 @@ const EditArticleClient: React.FC<EditArticleClientProps> = ({ characterOptions 
       });
 
       if (response.ok) {
-        showSuccess('文章更新成功！正在跳转...');
-        setTimeout(() => {
-          router.push(`/articles/${id}`);
-        }, 2000);
+        router.push(`/articles/${id}`);
+        showSubmissionFeedback('文章更新已提交，正在等待审核。');
       } else {
         const errorData = await response.json();
         showError(errorData.message || '更新文章失败');

@@ -43,6 +43,8 @@ export type PageEditModeOptions = {
   entityId: string;
   /** Toast function to show notifications */
   showToast?: (message: string, duration?: number) => void;
+  /** Called with the user-facing message after a successful submission */
+  onPublishSuccess?: (message: string) => void;
 };
 
 export type PageEditModeResult = {
@@ -93,7 +95,7 @@ function resolveDraftItemLabel(
  * Provides draft saving, publishing, and dirty state tracking for a specific entity.
  */
 export function usePageEditMode(options: PageEditModeOptions): PageEditModeResult {
-  const { entityType, entityId, showToast } = options;
+  const { entityType, entityId, showToast, onPublishSuccess } = options;
   const permissions = usePermissions();
   const entityKey = entityId.trim();
   const { isEditMode: originalIsEditMode, isPreviewMode } = useEditMode();
@@ -328,13 +330,14 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
         setDraftInfo(null);
         setActionCountTrigger((prev) => prev + 1);
 
-        if (showToast) {
-          showToast(
-            getGameDataSubmitSuccessMessage(
-              '改动',
-              getGameDataSubmitOutcomeFromResults(body?.result ?? [])
-            )
-          );
+        const successMessage = getGameDataSubmitSuccessMessage(
+          '改动',
+          getGameDataSubmitOutcomeFromResults(body?.result ?? [])
+        );
+        if (onPublishSuccess) {
+          onPublishSuccess(successMessage);
+        } else if (showToast) {
+          showToast(successMessage);
         }
 
         return true;
@@ -346,7 +349,7 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
         setIsPublishing(false);
       }
     },
-    [entityType, getPublishDraft, showToast]
+    [entityType, getPublishDraft, onPublishSuccess, showToast]
   );
 
   return {

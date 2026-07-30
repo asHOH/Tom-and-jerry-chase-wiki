@@ -95,6 +95,8 @@ export function ToastViewport() {
           description: 'text-white',
           content: 'flex-1',
           icon: iconClass,
+          actionButton:
+            'shrink-0 rounded-md bg-white/20 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-white/30 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none',
           success: 'bg-green-700 dark:bg-green-800',
           info: 'bg-blue-600 dark:bg-blue-700',
           warning: 'bg-amber-700 dark:bg-amber-800',

@@ -28,6 +28,7 @@ import {
   type GameDataAdvancedSubmit,
   type GameDataSubmitMode,
 } from '@/lib/gameData/submitMode';
+import { useContributionSubmissionFeedback } from '@/hooks/useContributionSubmissionFeedback';
 import { useToast } from '@/context/ToastContext';
 import type { Json } from '@/data/database.types';
 
@@ -70,7 +71,8 @@ const resolveCharacterLabel = (
 
 export const useRelationMatrixEditMode = (): RelationMatrixEditModeResult => {
   const permissions = usePermissions();
-  const { info, success, error } = useToast();
+  const { info, error } = useToast();
+  const showSubmissionFeedback = useContributionSubmissionFeedback();
   const editRuntime = useActiveEditRuntime();
   const characters = editRuntime?.stores.characters;
   const [isPublishing, setIsPublishing] = useState(false);
@@ -190,7 +192,7 @@ export const useRelationMatrixEditMode = (): RelationMatrixEditModeResult => {
 
         writeRemainingCharacterActions(remaining);
         setActionCountTrigger((current) => current + 1);
-        success(
+        showSubmissionFeedback(
           getGameDataSubmitSuccessMessage(
             '关系修改',
             getGameDataSubmitOutcomeFromResults(body?.result ?? [])
@@ -205,7 +207,7 @@ export const useRelationMatrixEditMode = (): RelationMatrixEditModeResult => {
         setIsPublishing(false);
       }
     },
-    [characters, error, getPublishDraft, info, success]
+    [characters, error, getPublishDraft, info, showSubmissionFeedback]
   );
 
   return {

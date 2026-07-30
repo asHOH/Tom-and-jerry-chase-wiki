@@ -288,12 +288,9 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   );
   const shouldAlignLeft = showDetailToggle || !!nickname;
   const dropdownAlignmentClass = shouldAlignLeft ? 'left-0' : 'right-0';
-  const shouldDisplayUserSettings =
-    pathname === '/' || pathname === '' || pathname.startsWith('/articles');
-
   return (
     <div className='bg-surface-raised fixed top-0 right-0 left-0 z-50 w-full py-2 shadow-md dark:shadow-lg'>
-      <div className='mx-auto flex max-w-7xl items-center justify-between gap-4 px-4'>
+      <div className='mx-auto flex max-w-7xl items-center justify-between gap-1 px-2 sm:gap-4 sm:px-4'>
         {/* Left-aligned navigation buttons */}
         <div className={cn('relative flex flex-nowrap gap-1 md:gap-2 lg:gap-2.5')}>
           <Tooltip content='首页' className='border-none' disabled={isLg}>
@@ -518,7 +515,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
           <DarkModeToggleButton />
           {showDetailToggle ? <DetailViewToggle /> : null}
           {/* User Settings Dropdown (deferred until mounted to avoid hydration mismatch) */}
-          {mounted && !!nickname && shouldDisplayUserSettings && hasSupabasePublicConfig() && (
+          {mounted && !!nickname && hasSupabasePublicConfig() && (
             <div className='relative' data-user-dropdown-root>
               <Tooltip
                 content={hasActiveBlock ? '账号受限：点击查看详情' : '用户设置'}

@@ -2,9 +2,14 @@ export type TutorialType = 'character-edit' | 'edit-mode-toolbar';
 
 export type TutorialStep = {
   id: string;
-  targetSelector: string;
+  targetSelector?: string;
   message: string;
   position: 'top' | 'bottom' | 'left' | 'right';
+};
+
+export type TutorialHelpLink = {
+  href: string;
+  label: string;
 };
 
 export const TUTORIAL_STEPS: Record<TutorialType, readonly TutorialStep[]> = {
@@ -39,30 +44,30 @@ export const TUTORIAL_STEPS: Record<TutorialType, readonly TutorialStep[]> = {
   ],
   'edit-mode-toolbar': [
     {
-      id: 'edit-mode-toolbar-drag',
-      targetSelector: '[data-tutorial-id="edit-mode-toolbar-drag"]',
-      message: '可拖动这里调整编辑工具栏的位置。',
-      position: 'top',
-    },
-    {
-      id: 'edit-mode-toolbar-drafts',
-      targetSelector: '[data-tutorial-id="edit-mode-toolbar-drafts"]',
-      message: '草稿可查看当前保存的本地修改。',
+      id: 'edit-page-content',
+      message: '直接点击页面中带有编辑样式的字段进行修改。改动会先保存在当前浏览器的本地草稿中。',
       position: 'top',
     },
     {
       id: 'edit-mode-toolbar-preview',
       targetSelector: '[data-tutorial-id="edit-mode-toolbar-preview"]',
-      message: '预览可暂时查看非编辑模式下的信息显示。',
+      message: '完成修改后，可以点击“预览”检查内容在普通浏览状态下的显示效果。',
       position: 'top',
     },
     {
       id: 'edit-mode-toolbar-publish',
       targetSelector: '[data-tutorial-id="edit-mode-toolbar-publish"]',
-      message: '完成修改后，点击发布并填写说明提交；也可通过退出或放弃按钮离开编辑模式。',
+      message: '确认无误后，点击“发布”、填写修改说明并提交审核。审核通过后才会更新公开内容。',
       position: 'top',
     },
   ],
+};
+
+export const TUTORIAL_HELP_LINKS: Partial<Record<TutorialType, TutorialHelpLink>> = {
+  'edit-mode-toolbar': {
+    href: '/usages/edit',
+    label: '查看完整编辑指南',
+  },
 };
 
 const TUTORIAL_SEEN_KEYS: Record<TutorialType, string> = {

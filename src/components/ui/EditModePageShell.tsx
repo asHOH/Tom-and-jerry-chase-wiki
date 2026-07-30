@@ -4,6 +4,7 @@ import { ReactNode, useCallback, useEffect, useMemo } from 'react';
 
 import type { PublishableEntityType } from '@/lib/gameData/publishableEntityTypes';
 import type { GameDataSubmitMode } from '@/lib/gameData/submitMode';
+import { useContributionSubmissionFeedback } from '@/hooks/useContributionSubmissionFeedback';
 import { usePageEditMode } from '@/hooks/usePageEditMode';
 import { useSearchParamEditMode } from '@/hooks/useSearchParamEditMode';
 import { EditModeContext, useEditMode } from '@/context/EditModeContext';
@@ -35,6 +36,7 @@ export default function EditModePageShell({
 }: EditModePageShellProps) {
   const { exitEditMode } = useSearchParamEditMode();
   const { info } = useToast();
+  const showSubmissionFeedback = useContributionSubmissionFeedback();
   const {
     isDirty,
     isPublishing,
@@ -48,6 +50,7 @@ export default function EditModePageShell({
     entityType,
     entityId,
     showToast: info,
+    onPublishSuccess: showSubmissionFeedback,
   });
   const editMode = useEditMode();
   const { isEditMode, isPreviewMode, registerPublishedRevision } = editMode;

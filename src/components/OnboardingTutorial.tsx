@@ -7,10 +7,12 @@ import { createPortal } from 'react-dom';
 import {
   hasUserSeenTutorial,
   markTutorialAsSeen,
+  TUTORIAL_HELP_LINKS,
   TUTORIAL_STEPS,
   type TutorialType,
 } from '@/lib/tutorialUtils';
 import Button from '@/components/ui/Button';
+import Link from '@/components/Link';
 
 type OnboardingTutorialProps = {
   tutorial: TutorialType;
@@ -24,6 +26,7 @@ export default function OnboardingTutorial({
   isEnabled,
 }: OnboardingTutorialProps) {
   const steps = TUTORIAL_STEPS[tutorial];
+  const helpLink = TUTORIAL_HELP_LINKS[tutorial];
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const [targetRect, setTargetRect] = useState<DOMRect | null>(null);
@@ -44,6 +47,10 @@ export default function OnboardingTutorial({
     if (!currentStep) return;
 
     const updateTargetRect = () => {
+      if (!currentStep.targetSelector) {
+        setTargetRect(null);
+        return;
+      }
       const targetElement = document.querySelector(currentStep.targetSelector);
       if (targetElement) {
         setTargetRect(targetElement.getBoundingClientRect());
@@ -154,14 +161,30 @@ export default function OnboardingTutorial({
           className='bg-surface-raised text-foreground absolute max-w-xs rounded-lg p-4 shadow-lg'
           style={{ left: tooltipX, top: tooltipY, width: tooltipWidth }}
         >
-          <p className='mb-2 text-sm'>{currentStep.message}</p>
-          <div className='flex justify-end space-x-2'>
-            <Button onClick={closeTutorial} variant='secondary' size='sm' className='py-1'>
-              跳过
-            </Button>
-            <Button onClick={handleNext} size='sm' className='py-1'>
-              {currentStepIndex === steps.length - 1 ? '完成' : '下一步'}
-            </Button>
+          <div className='mb-2 text-xs font-medium text-blue-600'>
+            第 {currentStepIndex + 1} / {steps.length} 步
+          </div>
+          <p className='mb-3 text-sm'>{currentStep.message}</p>
+          <div className='flex flex-wrap items-center justify-between gap-2'>
+            {helpLink ? (
+              <Link
+                href={helpLink.href}
+                onClick={closeTutorial}
+                className='text-xs text-blue-600 hover:underline'
+              >
+                {helpLink.label}
+              </Link>
+            ) : (
+              <span />
+            )}
+            <div className='flex space-x-2'>
+              <Button onClick={closeTutorial} variant='secondary' size='sm' className='py-1'>
+                跳过
+              </Button>
+              <Button onClick={handleNext} size='sm' className='py-1'>
+                {currentStepIndex === steps.length - 1 ? '完成' : '下一步'}
+              </Button>
+            </div>
           </div>
           {targetRect && (
             <m.div

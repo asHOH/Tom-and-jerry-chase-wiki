@@ -6,6 +6,7 @@ import useSWR from 'swr';
 
 import type { ArticleCharacterOption } from '@/lib/articles/articleCharacterOptions';
 import { usePermissions } from '@/lib/auth/PermissionProvider';
+import { useContributionSubmissionFeedback } from '@/hooks/useContributionSubmissionFeedback';
 import { useUser } from '@/hooks/useUser';
 import { useToast } from '@/context/ToastContext';
 import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
@@ -45,7 +46,8 @@ const NewArticleClient: React.FC<NewArticleClientProps> = ({ characterOptions })
   const { isLoading: isUserLoading, isValidating: isUserValidating } = useUser();
   const permissions = usePermissions();
   const canCreateArticle = permissions.has('article.create');
-  const { success: showSuccess, error: showError } = useToast();
+  const { error: showError } = useToast();
+  const showSubmissionFeedback = useContributionSubmissionFeedback();
 
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
@@ -160,10 +162,8 @@ const NewArticleClient: React.FC<NewArticleClientProps> = ({ characterOptions })
       });
 
       if (response.ok) {
-        showSuccess('文章提交成功！正在跳转...');
-        setTimeout(() => {
-          router.push('/articles');
-        }, 2000);
+        router.push('/articles');
+        showSubmissionFeedback('文章提交成功，正在等待审核。');
       } else {
         const errorData = await response.json();
         showError(errorData.message || '提交文章失败');

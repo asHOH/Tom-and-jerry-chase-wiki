@@ -7,8 +7,8 @@ import { clearTestEditRuntime, installTestEditRuntime } from '@/testUtils/editRu
 import { useRelationMatrixEditMode } from './useRelationMatrixEditMode';
 
 const mockInfo = jest.fn();
-const mockSuccess = jest.fn();
 const mockError = jest.fn();
+const mockShowSubmissionFeedback = jest.fn();
 let mockPermissionProfile: 'contributor' | 'reviewer' | 'coordinator' | null = 'contributor';
 
 jest.mock('@/lib/auth/PermissionProvider', () => {
@@ -32,9 +32,12 @@ jest.mock('@/lib/auth/PermissionProvider', () => {
 jest.mock('@/context/ToastContext', () => ({
   useToast: () => ({
     info: mockInfo,
-    success: mockSuccess,
     error: mockError,
   }),
+}));
+
+jest.mock('@/hooks/useContributionSubmissionFeedback', () => ({
+  useContributionSubmissionFeedback: () => mockShowSubmissionFeedback,
 }));
 
 const storageKey = getActionsStorageKey('characters');
@@ -96,8 +99,8 @@ describe('useRelationMatrixEditMode', () => {
     mockPermissionProfile = 'contributor';
     window.localStorage.clear();
     mockInfo.mockClear();
-    mockSuccess.mockClear();
     mockError.mockClear();
+    mockShowSubmissionFeedback.mockClear();
     global.fetch = jest.fn();
   });
 
@@ -278,7 +281,7 @@ describe('useRelationMatrixEditMode', () => {
       });
 
       await waitFor(() => {
-        expect(mockSuccess).toHaveBeenCalledWith(expectedToast);
+        expect(mockShowSubmissionFeedback).toHaveBeenCalledWith(expectedToast);
       });
     }
   );

@@ -1,10 +1,10 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 
 import type { GameDataSubmitMode } from '@/lib/gameData/submitMode';
-import { hasUserSeenTutorial } from '@/lib/tutorialUtils';
 import { CharacterDetailsProps } from '@/lib/types';
+import { useContributionSubmissionFeedback } from '@/hooks/useContributionSubmissionFeedback';
 import { useKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { usePageEditMode } from '@/hooks/usePageEditMode';
@@ -15,7 +15,6 @@ import { useToast } from '@/context/ToastContext';
 import { CharacterDetails } from '@/features/characters/components/character-detail';
 import EditModeToolbar from '@/components/ui/EditModeToolbar';
 import PageShell from '@/components/ui/PageShell';
-import OnboardingTutorial from '@/components/OnboardingTutorial';
 
 export default function CharacterDetailsClient(props: CharacterDetailsProps) {
   const editMode = useEditMode();
@@ -23,6 +22,7 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
   const { characterId } = useLocalCharacter();
   const { exitEditMode } = useSearchParamEditMode();
   const { info } = useToast();
+  const showSubmissionFeedback = useContributionSubmissionFeedback();
   const currentCharacterId = characterId || props.character.id;
 
   // Page-level edit mode management
@@ -39,9 +39,8 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
     entityType: 'characters',
     entityId: currentCharacterId,
     showToast: info,
+    onPublishSuccess: showSubmissionFeedback,
   });
-  const [showCharacterTutorial, setShowCharacterTutorial] = useState(false);
-  const [isToolbarTutorialEnabled, setIsToolbarTutorialEnabled] = useState(false);
 
   // Keyboard navigation
   useKeyboardNavigation(currentCharacterId, isEditMode);
@@ -50,23 +49,6 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
     if (!props.publishedRevision) return undefined;
     return registerPublishedRevision(props.publishedRevision);
   }, [props.publishedRevision, registerPublishedRevision]);
-
-  useEffect(() => {
-    if (!isEditMode) {
-      setShowCharacterTutorial(false);
-      setIsToolbarTutorialEnabled(false);
-      return;
-    }
-
-    const shouldShowCharacterTutorial = !hasUserSeenTutorial('character-edit');
-    setShowCharacterTutorial(shouldShowCharacterTutorial);
-    setIsToolbarTutorialEnabled(!shouldShowCharacterTutorial);
-  }, [isEditMode]);
-
-  const handleTutorialClose = useCallback(() => {
-    setShowCharacterTutorial(false);
-    setIsToolbarTutorialEnabled(true);
-  }, []);
 
   const handlePublish = useCallback(
     (
@@ -122,14 +104,6 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
         </EditModeContext>
       </PageShell>
 
-      {showCharacterTutorial && (
-        <OnboardingTutorial
-          tutorial='character-edit'
-          onClose={handleTutorialClose}
-          isEnabled={showCharacterTutorial}
-        />
-      )}
-
       {/* Edit mode toolbar */}
       {isEditMode && (
         <>
@@ -144,7 +118,7 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
             entityName={currentCharacterId}
             draftInfo={draftInfo}
             draftsSummary={draftsSummary}
-            isTutorialEnabled={isToolbarTutorialEnabled}
+            isTutorialEnabled
           />
         </>
       )}

@@ -11,9 +11,14 @@ const mockInfo = jest.fn();
 const mockExitEditMode = jest.fn();
 const mockEditModeToolbar = jest.fn();
 const mockSetIsPreviewMode = jest.fn();
+const mockShowSubmissionFeedback = jest.fn();
 
 jest.mock('@/hooks/usePageEditMode', () => ({
   usePageEditMode: (options: unknown) => mockUsePageEditMode(options),
+}));
+
+jest.mock('@/hooks/useContributionSubmissionFeedback', () => ({
+  useContributionSubmissionFeedback: () => mockShowSubmissionFeedback,
 }));
 
 jest.mock('@/context/ToastContext', () => ({
@@ -79,6 +84,7 @@ describe('EditModePageShell', () => {
       entityType: 'items',
       entityId: 'fork',
       showToast: mockInfo,
+      onPublishSuccess: mockShowSubmissionFeedback,
     });
     expect(screen.getByText('content')).toBeInTheDocument();
     expect(screen.getByRole('main')).toHaveClass('mx-auto', 'w-full', 'max-w-7xl');

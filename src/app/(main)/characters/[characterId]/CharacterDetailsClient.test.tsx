@@ -36,6 +36,10 @@ jest.mock('@/hooks/usePageEditMode', () => ({
   }),
 }));
 
+jest.mock('@/hooks/useContributionSubmissionFeedback', () => ({
+  useContributionSubmissionFeedback: () => jest.fn(),
+}));
+
 jest.mock('@/hooks/useSearchParamEditMode', () => ({
   useSearchParamEditMode: () => ({ exitEditMode: mockExitEditMode }),
 }));
@@ -53,11 +57,6 @@ jest.mock('@/features/characters/components/character-detail', () => ({
 }));
 
 jest.mock('@/components/ui/EditModeToolbar', () => ({
-  __esModule: true,
-  default: () => null,
-}));
-
-jest.mock('@/components/OnboardingTutorial', () => ({
   __esModule: true,
   default: () => null,
 }));

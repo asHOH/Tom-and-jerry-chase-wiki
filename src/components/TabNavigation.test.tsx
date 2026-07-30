@@ -13,6 +13,7 @@ type MockNavigationTabsResult = {
 };
 
 const mockUseNavigationTabs = jest.fn<MockNavigationTabsResult, []>();
+let mockNickname: string | null = null;
 const mockResizeObserver = jest.fn(() => ({
   observe: jest.fn(),
   unobserve: jest.fn(),
@@ -65,12 +66,16 @@ jest.mock('@/components/ChangePasswordDialog', () => ({
 
 jest.mock('@/hooks/useUser', () => ({
   useUser: () => ({
-    nickname: null,
+    nickname: mockNickname,
     grants: [],
     groups: [],
     blockSummary: [],
     clearData: jest.fn(),
   }),
+}));
+
+jest.mock('@/lib/supabase/config', () => ({
+  hasSupabasePublicConfig: () => true,
 }));
 
 jest.mock('@/lib/auth/PermissionProvider', () => ({
@@ -120,6 +125,7 @@ describe('TabNavigation', () => {
   });
 
   beforeEach(() => {
+    mockNickname = null;
     mockUsePathname.mockReturnValue('/cards/知识卡');
     mockUseNavigationTabs.mockReturnValue({
       items: [],
@@ -132,6 +138,18 @@ describe('TabNavigation', () => {
     render(<TabNavigation />);
 
     expect(screen.getByRole('button', { name: '搜索' })).toBeInTheDocument();
+  });
+
+  it('makes contribution status available from the user menu on game-data pages', () => {
+    mockNickname = '贡献者';
+
+    render(<TabNavigation />);
+    fireEvent.click(screen.getByRole('button', { name: '用户设置' }));
+
+    expect(screen.getByRole('link', { name: '我的贡献' })).toHaveAttribute(
+      'href',
+      '/contributions'
+    );
   });
 
   it('forces dropdown icon dimensions so image aspect ratios cannot change row height', () => {
