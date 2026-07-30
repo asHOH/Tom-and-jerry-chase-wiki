@@ -7,12 +7,13 @@ import { formatCompactDateTime } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
 import { useToast } from '@/context/ToastContext';
 import { Database } from '@/data/database.types';
+import type { GameActionDiffView } from '@/features/admin/utils/gameActionDiff';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import { FormInput, FormSelect } from '@/components/ui/FormControls';
 import { ChevronRightIcon } from '@/components/icons/CommonIcons';
 
-import GameDataActionPreviewList, { GameDataActionRawPreview } from './GameDataActionPreviewList';
+import GameDataActionPreviewList, { GameDataActionChangeViewer } from './GameDataActionPreviewList';
 
 type ActionStatus = Database['public']['Enums']['game_data_action_status'];
 type ActionStatusFilter = 'all' | ActionStatus;
@@ -81,6 +82,8 @@ const GameDataActionModerationPanel = ({
   const [actionStatus, setActionStatus] = useState<ActionStatusFilter>('pending');
   const [expandedActionIds, setExpandedActionIds] = useState<Set<string>>(() => new Set());
   const [selectedActionIds, setSelectedActionIds] = useState<Set<string>>(() => new Set());
+  const [diffView, setDiffView] = useState<GameActionDiffView>('unified');
+  const [showAllDiffContext, setShowAllDiffContext] = useState(false);
   const { success, error } = useToast();
 
   const copyText = async (text: string) => {
@@ -195,6 +198,9 @@ const GameDataActionModerationPanel = ({
   const allVisiblePendingSelected =
     actionableActions.length > 0 &&
     actionableActions.every((action) => selectedActionIds.has(action.action_id));
+  const allVisibleActionsExpanded =
+    filteredActions.length > 0 &&
+    filteredActions.every((action) => expandedActionIds.has(action.action_id));
 
   useEffect(() => {
     const pendingActionIds = new Set(
@@ -290,6 +296,20 @@ const GameDataActionModerationPanel = ({
     });
   };
 
+  const toggleAllVisibleExpanded = () => {
+    setExpandedActionIds((prev) => {
+      const next = new Set(prev);
+      for (const action of filteredActions) {
+        if (allVisibleActionsExpanded) {
+          next.delete(action.action_id);
+        } else {
+          next.add(action.action_id);
+        }
+      }
+      return next;
+    });
+  };
+
   const toggleSelectedAction = (actionId: string) => {
     setSelectedActionIds((prev) => {
       const next = new Set(prev);
@@ -369,6 +389,19 @@ const GameDataActionModerationPanel = ({
             size='sm'
           />
 
+          <label className='ml-2 text-sm text-gray-600 dark:text-slate-300'>对比方式</label>
+          <FormSelect
+            title='选择改动对比方式'
+            value={diffView}
+            onChange={(e) => setDiffView(e.target.value as GameActionDiffView)}
+            fullWidth={false}
+            size='sm'
+          >
+            <option value='unified'>统一差异</option>
+            <option value='normal'>传统 diff</option>
+            <option value='split'>并排对比</option>
+          </FormSelect>
+
           <div className='flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400'>
             <span>
               显示 {filteredActions.length} / {pendingActions.length}
@@ -385,6 +418,23 @@ const GameDataActionModerationPanel = ({
             size='sm'
           >
             {allVisiblePendingSelected ? '取消全选待审核' : '全选待审核'}
+          </Button>
+          <Button
+            disabled={filteredActions.length === 0}
+            onClick={toggleAllVisibleExpanded}
+            variant='secondary'
+            size='sm'
+          >
+            {allVisibleActionsExpanded ? '收起全部详情' : '展开全部详情'}
+          </Button>
+          <Button
+            disabled={diffView === 'normal'}
+            onClick={() => setShowAllDiffContext((current) => !current)}
+            variant='secondary'
+            size='sm'
+            title={diffView === 'normal' ? '传统 diff 不显示上下文行' : undefined}
+          >
+            {showAllDiffContext ? '仅显示3行上下文' : '显示全部上下文'}
           </Button>
           <Button
             disabled={isModerating || selectedActionIds.size === 0}
@@ -673,9 +723,12 @@ const GameDataActionModerationPanel = ({
                           entityType={submission.entity_type}
                         />
 
-                        <GameDataActionRawPreview
+                        <GameDataActionChangeViewer
                           entry={submission.entry}
                           entityType={submission.entity_type}
+                          view={diffView}
+                          showAllContext={showAllDiffContext}
+                          onCopyText={copyText}
                         />
                       </div>
                     )}

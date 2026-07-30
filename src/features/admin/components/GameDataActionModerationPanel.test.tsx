@@ -325,7 +325,6 @@ describe('GameDataActionModerationPanel', () => {
       )
     ).not.toBeInTheDocument();
     expect(screen.queryByText('undefined')).not.toBeInTheDocument();
-    expect(screen.getAllByText(projectedCounters[0]!.id).length).toBeGreaterThan(0);
   });
 
   it('keeps read-only controls enabled while moderation is in flight', async () => {
