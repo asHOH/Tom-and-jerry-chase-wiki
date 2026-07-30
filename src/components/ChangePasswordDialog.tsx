@@ -1,24 +1,23 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { m, useReducedMotion } from 'motion/react';
 
 import { checkPasswordStrength, PasswordStrength } from '@/lib/passwordUtils';
 import { useToast } from '@/context/ToastContext';
+import { BaseDialog } from '@/components/ui/BaseDialog';
 import Button from '@/components/ui/Button';
 import { FormInput } from '@/components/ui/FormControls';
 import { CloseIcon } from '@/components/icons/CommonIcons';
 
 type ChangePasswordDialogProps = {
+  open: boolean;
   onClose: () => void;
 };
 
-export default function ChangePasswordDialog({ onClose }: ChangePasswordDialogProps) {
+export default function ChangePasswordDialog({ open, onClose }: ChangePasswordDialogProps) {
   const router = useRouter();
   const { success, error: showError } = useToast();
-  const dialogRef = useRef<HTMLDivElement>(null);
-  const shouldReduceMotion = useReducedMotion();
 
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -35,12 +34,13 @@ export default function ChangePasswordDialog({ onClose }: ChangePasswordDialogPr
   }, [newPassword]);
 
   useEffect(() => {
-    const handler = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
-  }, [onClose]);
+    if (open) return;
+
+    setOldPassword('');
+    setNewPassword('');
+    setErrMsg(null);
+    setIsLoading(false);
+  }, [open]);
 
   const strengthText = useMemo(() => {
     if (!passwordStrength) return null;
@@ -82,84 +82,75 @@ export default function ChangePasswordDialog({ onClose }: ChangePasswordDialogPr
   };
 
   return (
-    <m.div
-      className='fixed inset-0 z-100000 flex items-center justify-center bg-black/50 p-4'
-      role='dialog'
-      aria-modal='true'
-      aria-label='修改密码'
-      onMouseDown={(e) => {
-        if (e.target === e.currentTarget) onClose();
+    <BaseDialog
+      open={open}
+      onOpenChange={(nextOpen) => {
+        if (!nextOpen) onClose();
       }}
-      initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.16, ease: 'easeOut' }}
+      ariaLabelledBy='change-password-dialog-title'
+      lockScroll={false}
+      backdropClassName='z-100000'
+      panelClassName='inset-auto top-1/2 left-1/2 z-100001 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 p-4'
     >
-      <m.div
-        ref={dialogRef}
-        className='w-full max-w-md rounded-lg bg-white p-4 shadow-lg dark:bg-slate-800'
-        initial={
-          shouldReduceMotion ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 10, scale: 0.98 }
-        }
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 10, scale: 0.98 }}
-        transition={{ duration: 0.18, ease: 'easeOut' }}
-      >
-        <div className='mb-3 flex items-center justify-between'>
-          <h2 className='text-lg font-bold text-gray-900 dark:text-white'>修改密码</h2>
-          <Button
-            aria-label='关闭'
-            variant='ghost'
-            size='sm'
-            className='h-8 w-8 p-0'
-            onClick={onClose}
-          >
-            <CloseIcon className='size-5' />
-          </Button>
+      <div className='mb-3 flex items-center justify-between'>
+        <h2
+          id='change-password-dialog-title'
+          className='text-lg font-bold text-gray-900 dark:text-white'
+        >
+          修改密码
+        </h2>
+        <Button
+          aria-label='关闭'
+          variant='ghost'
+          size='sm'
+          className='h-8 w-8 p-0'
+          onClick={onClose}
+        >
+          <CloseIcon className='size-5' />
+        </Button>
+      </div>
+
+      {!!errMsg && <div className='mb-3 text-sm text-red-600 dark:text-red-400'>{errMsg}</div>}
+
+      <div className='space-y-3'>
+        <div>
+          <label className='mb-1 block text-sm text-gray-700 dark:text-gray-200'>
+            旧密码（如果已设置）
+          </label>
+          <FormInput
+            type='password'
+            value={oldPassword}
+            onChange={(e) => setOldPassword(e.target.value)}
+            placeholder='旧密码'
+            autoComplete='current-password'
+          />
         </div>
 
-        {!!errMsg && <div className='mb-3 text-sm text-red-600 dark:text-red-400'>{errMsg}</div>}
-
-        <div className='space-y-3'>
-          <div>
-            <label className='mb-1 block text-sm text-gray-700 dark:text-gray-200'>
-              旧密码（如果已设置）
-            </label>
-            <FormInput
-              type='password'
-              value={oldPassword}
-              onChange={(e) => setOldPassword(e.target.value)}
-              placeholder='旧密码'
-              autoComplete='current-password'
-            />
-          </div>
-
-          <div>
-            <label className='mb-1 block text-sm text-gray-700 dark:text-gray-200'>新密码</label>
-            <FormInput
-              type='password'
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              placeholder='新密码'
-              autoComplete='new-password'
-            />
-            {!!strengthText && (
-              <div className='mt-1 text-xs text-gray-600 dark:text-gray-300'>{strengthText}</div>
-            )}
-          </div>
-
-          <Button
-            onClick={submit}
-            loading={isLoading}
-            disabled={isLoading}
-            variant='primary'
-            size='md'
-            fullWidth
-          >
-            {isLoading ? '提交中…' : '确认修改'}
-          </Button>
+        <div>
+          <label className='mb-1 block text-sm text-gray-700 dark:text-gray-200'>新密码</label>
+          <FormInput
+            type='password'
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            placeholder='新密码'
+            autoComplete='new-password'
+          />
+          {!!strengthText && (
+            <div className='mt-1 text-xs text-gray-600 dark:text-gray-300'>{strengthText}</div>
+          )}
         </div>
-      </m.div>
-    </m.div>
+
+        <Button
+          onClick={submit}
+          loading={isLoading}
+          disabled={isLoading}
+          variant='primary'
+          size='md'
+          fullWidth
+        >
+          {isLoading ? '提交中…' : '确认修改'}
+        </Button>
+      </div>
+    </BaseDialog>
   );
 }

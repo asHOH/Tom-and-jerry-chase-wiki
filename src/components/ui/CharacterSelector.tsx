@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useId, useMemo, useState } from 'react';
 
 import type { ArticleCharacterOption } from '@/lib/articles/articleCharacterOptions';
 import { AssetManager } from '@/lib/assetManager';
@@ -8,6 +8,7 @@ import { cn } from '@/lib/design';
 import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { characters } from '@/data/static';
 import type { CharacterRelationItem, FactionId } from '@/data/types';
+import { BaseDialog } from '@/components/ui/BaseDialog';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import { ChevronDownIcon, PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
@@ -121,6 +122,7 @@ export function CharacterSlotsSelector({
 }) {
   const [isSelectorOpen, setIsSelectorOpen] = useState(false);
   const [activeSlotIndex, setActiveSlotIndex] = useState<number | null>(null);
+  const dialogTitleId = useId();
 
   const handleSlotClick = (index: number) => {
     setActiveSlotIndex(index);
@@ -185,59 +187,63 @@ export function CharacterSlotsSelector({
         ))}
       </div>
 
-      {isSelectorOpen && (
-        <div
-          className='fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4'
-          onClick={() => setIsSelectorOpen(false)}
-        >
-          <div
-            className='flex max-h-[80vh] w-full max-w-2xl flex-col overflow-hidden rounded-xl bg-white shadow-xl dark:bg-slate-800'
-            onClick={(e) => e.stopPropagation()}
+      <BaseDialog
+        open={isSelectorOpen}
+        onOpenChange={(nextOpen) => {
+          if (!nextOpen) setIsSelectorOpen(false);
+        }}
+        ariaLabelledBy={dialogTitleId}
+        closeOnEsc={false}
+        lockScroll={false}
+        panelClassName='inset-auto top-1/2 left-1/2 flex max-h-[80vh] w-[calc(100%-2rem)] max-w-2xl -translate-x-1/2 -translate-y-1/2 flex-col'
+      >
+        <div className='flex items-center justify-between border-b border-gray-200 p-4 dark:border-gray-700'>
+          <h3
+            id={dialogTitleId}
+            className='text-lg font-semibold text-gray-900 dark:text-slate-100'
           >
-            <div className='flex items-center justify-between border-b border-gray-200 p-4 dark:border-gray-700'>
-              <h3 className='text-lg font-semibold text-gray-900 dark:text-slate-100'>{title}</h3>
-              <button
-                onClick={() => setIsSelectorOpen(false)}
-                className='text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
-                aria-label='关闭选择器'
-                type='button'
-              >
-                ✕
-              </button>
-            </div>
-            <div className='grid grid-cols-4 gap-4 overflow-y-auto p-4 sm:grid-cols-5 md:grid-cols-6'>
-              {characterList.map((character) => {
-                const isSelected = selectedIds.includes(character.id);
-                return (
-                  <button
-                    key={character.id}
-                    onClick={() => !isSelected && handleSelect(character.id)}
-                    disabled={isSelected}
-                    type='button'
-                    className={cn(
-                      'flex flex-col items-center gap-2 rounded-lg p-2 transition-colors',
-                      isSelected
-                        ? 'cursor-not-allowed opacity-50 grayscale'
-                        : 'hover:bg-gray-100 focus:outline-none focus-visible:bg-gray-100 dark:hover:bg-gray-700 dark:focus-visible:bg-gray-700'
-                    )}
-                  >
-                    <Image
-                      src={getCharacterImageUrl(character.id)}
-                      alt={character.id}
-                      width={48}
-                      height={48}
-                      className='h-12 w-12 object-contain'
-                    />
-                    <span className='text-center text-xs text-gray-800 dark:text-slate-200'>
-                      {character.id}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+            {title}
+          </h3>
+          <button
+            onClick={() => setIsSelectorOpen(false)}
+            className='text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+            aria-label='关闭选择器'
+            type='button'
+          >
+            ✕
+          </button>
         </div>
-      )}
+        <div className='grid grid-cols-4 gap-4 overflow-y-auto p-4 sm:grid-cols-5 md:grid-cols-6'>
+          {characterList.map((character) => {
+            const isSelected = selectedIds.includes(character.id);
+            return (
+              <button
+                key={character.id}
+                onClick={() => !isSelected && handleSelect(character.id)}
+                disabled={isSelected}
+                type='button'
+                className={cn(
+                  'flex flex-col items-center gap-2 rounded-lg p-2 transition-colors',
+                  isSelected
+                    ? 'cursor-not-allowed opacity-50 grayscale'
+                    : 'hover:bg-gray-100 focus:outline-none focus-visible:bg-gray-100 dark:hover:bg-gray-700 dark:focus-visible:bg-gray-700'
+                )}
+              >
+                <Image
+                  src={getCharacterImageUrl(character.id)}
+                  alt={character.id}
+                  width={48}
+                  height={48}
+                  className='h-12 w-12 object-contain'
+                />
+                <span className='text-center text-xs text-gray-800 dark:text-slate-200'>
+                  {character.id}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </BaseDialog>
     </>
   );
 }

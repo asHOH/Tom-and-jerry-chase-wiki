@@ -58,6 +58,11 @@ jest.mock('@/components/Image', () => ({
     createElement('img', { ...props, alt: alt ?? '' }),
 }));
 
+jest.mock('@/components/ChangePasswordDialog', () => ({
+  __esModule: true,
+  default: () => null,
+}));
+
 jest.mock('@/hooks/useUser', () => ({
   useUser: () => ({
     nickname: null,

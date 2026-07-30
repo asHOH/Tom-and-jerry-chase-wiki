@@ -649,11 +649,10 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
         </div>
       </div>
 
-      <AnimatePresence initial={false}>
-        {changePasswordOpen && (
-          <ChangePasswordDialog onClose={() => setChangePasswordOpen(false)} />
-        )}
-      </AnimatePresence>
+      <ChangePasswordDialog
+        open={changePasswordOpen}
+        onClose={() => setChangePasswordOpen(false)}
+      />
     </div>
   );
 }

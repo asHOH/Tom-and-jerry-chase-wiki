@@ -91,7 +91,10 @@ export function BaseDialog({
     if (lockScroll) lockBodyScroll();
 
     queueMicrotask(() => {
-      panelRef.current?.focus();
+      const panel = panelRef.current;
+      if (!panel?.contains(document.activeElement)) {
+        panel?.focus();
+      }
     });
 
     return () => {

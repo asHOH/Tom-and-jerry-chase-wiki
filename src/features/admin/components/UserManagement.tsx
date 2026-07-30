@@ -6,6 +6,7 @@ import { useSWRConfig } from 'swr';
 
 import { cn } from '@/lib/design';
 import { USER_API_KEY } from '@/hooks/useUser';
+import { BaseDialog } from '@/components/ui/BaseDialog';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import { FormInput } from '@/components/ui/FormControls';
@@ -114,10 +115,25 @@ const UserManagement: React.FC<UserManagementProps> = ({
         </div>
       )}
 
-      {modalOpen && selectedUser && (
-        <div className='bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black'>
-          <Card className='mx-4 w-full max-w-md p-6 dark:text-slate-100'>
-            <h2 className='mb-4 text-xl font-bold text-gray-900 dark:text-gray-100'>编辑用户</h2>
+      <BaseDialog
+        open={modalOpen && selectedUser !== null}
+        onOpenChange={(nextOpen) => {
+          if (!nextOpen) handleCloseModal();
+        }}
+        ariaLabelledBy='edit-user-dialog-title'
+        closeOnEsc={false}
+        closeOnOutsideClick={false}
+        lockScroll={false}
+        panelClassName='inset-auto top-1/2 left-1/2 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 p-6 dark:text-slate-100'
+      >
+        {selectedUser ? (
+          <>
+            <h2
+              id='edit-user-dialog-title'
+              className='mb-4 text-xl font-bold text-gray-900 dark:text-gray-100'
+            >
+              编辑用户
+            </h2>
             <label className='mb-2 block'>
               昵称:
               <FormInput
@@ -152,9 +168,9 @@ const UserManagement: React.FC<UserManagementProps> = ({
                 保存
               </Button>
             </div>
-          </Card>
-        </div>
-      )}
+          </>
+        ) : null}
+      </BaseDialog>
 
       <Card className='dark:text-slate-200'>
         <div className='mb-4 flex items-center justify-between'>
