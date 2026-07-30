@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import traits from '@/data/traits';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 import { OneTraitText } from '@/features/shared/traits/OneTraitText';
+import Button from '@/components/ui/Button';
 import { FormInput } from '@/components/ui/FormControls';
 import PageHeader from '@/components/ui/PageHeader';
 
@@ -100,39 +101,47 @@ export default function TraitCollision() {
 
       {/* 分页控件 */}
       <div className='mt-8 mb-4 flex items-center justify-center space-x-4'>
-        <button
+        <Button
+          variant='secondary'
+          size='sm'
           onClick={goToFirstPage}
           disabled={currentPage === 1}
-          className='rounded bg-gray-200 px-3 py-1 text-sm transition-colors hover:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-700 dark:hover:bg-gray-600'
+          className='rounded py-1'
         >
           首页
-        </button>
-        <button
+        </Button>
+        <Button
+          variant='secondary'
+          size='sm'
           onClick={goToPreviousPage}
           disabled={currentPage === 1}
-          className='rounded bg-gray-200 px-3 py-1 text-sm transition-colors hover:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-700 dark:hover:bg-gray-600'
+          className='rounded py-1'
         >
           上一页
-        </button>
+        </Button>
 
         <span className='text-sm'>
           第 {currentPage} 页 / 共 {totalPages} 页
         </span>
 
-        <button
+        <Button
+          variant='secondary'
+          size='sm'
           onClick={goToNextPage}
           disabled={currentPage === totalPages}
-          className='rounded bg-gray-200 px-3 py-1 text-sm transition-colors hover:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-700 dark:hover:bg-gray-600'
+          className='rounded py-1'
         >
           下一页
-        </button>
-        <button
+        </Button>
+        <Button
+          variant='secondary'
+          size='sm'
           onClick={goToLastPage}
           disabled={currentPage === totalPages}
-          className='rounded bg-gray-200 px-3 py-1 text-sm transition-colors hover:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-700 dark:hover:bg-gray-600'
+          className='rounded py-1'
         >
           末页
-        </button>
+        </Button>
       </div>
 
       {/* 页面跳转输入框 */}

@@ -24,7 +24,9 @@ const actionPrimitiveTargets = [
   'src/features/discussion/components/TopicSection.tsx',
   'src/features/discussion/TalkPageClient.tsx',
   'src/app/(main)/games/guess-character/components/ResultDialog.tsx',
+  'src/app/(main)/games/playstyle-quiz/GameClient.tsx',
   'src/app/(main)/games/stat-showdown/components/GameOverDialog.tsx',
+  'src/features/mechanics/sections/TraitCollection.tsx',
 ] as const;
 
 const formControlPrimitiveTargets = [
@@ -88,6 +90,9 @@ const knowledgeCardSemanticColorTargets = [
 const rawActionPattern =
   /<(?:button|Link)\b(?=[^>]*\bclassName=)[^>]*\b(?:bg-blue|bg-green|bg-red|bg-yellow|bg-gray-100|bg-gray-200|bg-gray-300|bg-gray-500|bg-gray-600)/;
 
+const rawEditModeToolbarGenericActionPattern =
+  /<button\b(?=[^>]*(?:onClick=\{handleDiscard\}|data-tutorial-id='edit-mode-toolbar-(?:preview|publish)'))/;
+
 const rawAliasAddButtonPattern =
   /<button\b(?=[\s\S]{0,800}aria-label='添加别名')(?=[\s\S]{0,800}<\/button>)[\s\S]{0,800}<\/button>/;
 
@@ -112,13 +117,23 @@ const duplicateFocusVisibleOutlinePattern =
 const hardCodedSemanticHexPattern = /#[0-9A-Fa-f]{3,8}|(?:bg|text|border)-\[#/;
 
 describe('UI style consistency', () => {
-  it('uses shared action primitives in migrated article, admin, and modal surfaces', () => {
+  it('uses shared action primitives in migrated surfaces', () => {
     const offenders = actionPrimitiveTargets.filter((relativePath) => {
       const source = fs.readFileSync(path.join(projectRoot, relativePath), 'utf8');
       return rawActionPattern.test(source);
     });
 
     expect(offenders).toEqual([]);
+  });
+
+  it('uses Button for generic edit toolbar actions', () => {
+    const source = fs.readFileSync(
+      path.join(projectRoot, 'src/components/ui/EditModeToolbar.tsx'),
+      'utf8'
+    );
+
+    expect(source).not.toMatch(rawEditModeToolbarGenericActionPattern);
+    expect(source.match(/<Button\b/g)).toHaveLength(3);
   });
 
   it('uses shared form controls in migrated generic form fields', () => {

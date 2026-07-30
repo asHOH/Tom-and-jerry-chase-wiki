@@ -12,6 +12,7 @@ import {
   type GameDataSubmitMode,
 } from '@/lib/gameData/submitMode';
 import { useEditMode } from '@/context/EditModeContext';
+import Button from '@/components/ui/Button';
 import { FormTextarea } from '@/components/ui/FormControls';
 import {
   CheckBadgeIcon,
@@ -307,33 +308,25 @@ export default function EditModeToolbar({
         {/* Action buttons */}
         <div className='flex items-center gap-2'>
           {/* Discard */}
-          <button
-            type='button'
+          <Button
+            variant={isConfirmingDiscard ? 'danger' : 'secondary'}
+            size='sm'
             onClick={handleDiscard}
             disabled={isPublishing}
-            className={cn(
-              'flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-              isConfirmingDiscard
-                ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700 dark:text-gray-300 dark:hover:bg-slate-600',
-              isPublishing && 'cursor-not-allowed opacity-60'
-            )}
+            className='rounded-lg font-medium'
+            leadingIcon={
+              isDirty ? (
+                <TrashIcon size={16} strokeWidth={2} />
+              ) : (
+                <CloseIcon className='h-4 w-4' strokeWidth={2} />
+              )
+            }
             title={isDirty ? '放弃修改' : '退出编辑'}
           >
-            {isDirty ? (
-              <>
-                <TrashIcon size={16} strokeWidth={2} />
-                <span className='hidden sm:inline'>
-                  {isConfirmingDiscard ? '确认放弃？' : '放弃'}
-                </span>
-              </>
-            ) : (
-              <>
-                <CloseIcon className='h-4 w-4' strokeWidth={2} />
-                <span className='hidden sm:inline'>退出</span>
-              </>
-            )}
-          </button>
+            <span className='hidden sm:inline'>
+              {isDirty ? (isConfirmingDiscard ? '确认放弃？' : '放弃') : '退出'}
+            </span>
+          </Button>
 
           {/* Drafts dropdown */}
           <div className='relative' data-drafts-dropdown-root>
@@ -398,60 +391,29 @@ export default function EditModeToolbar({
           <div className='flex-1' />
 
           {/* Preview */}
-          <button
+          <Button
             data-tutorial-id='edit-mode-toolbar-preview'
-            type='button'
+            variant={isPreviewMode ? 'primary' : 'secondary'}
+            size='sm'
             onClick={() => setIsPreviewMode(!isPreviewMode)}
-            className={cn(
-              'flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium transition-colors',
-              isPreviewMode
-                ? 'bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700 dark:text-gray-300 dark:hover:bg-slate-600'
-            )}
+            className='rounded-lg px-4 font-medium'
+            leadingIcon={<EyeIcon size={16} strokeWidth={2} />}
           >
-            <EyeIcon size={16} strokeWidth={2} />
             <span>{isPreviewMode ? '退出预览' : '预览'}</span>
-          </button>
+          </Button>
 
           {/* Publish */}
-          <button
+          <Button
             data-tutorial-id='edit-mode-toolbar-publish'
-            type='button'
+            size='sm'
             onClick={handlePublish}
             disabled={!isDirty || isPublishing || (showMessageInput && !agreedToLicense)}
-            className={cn(
-              'flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium transition-colors',
-              isDirty && !isPublishing && (!showMessageInput || agreedToLicense)
-                ? 'bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600'
-                : 'cursor-not-allowed bg-gray-200 text-gray-500 dark:bg-slate-700 dark:text-gray-500'
-            )}
+            loading={isPublishing}
+            className='rounded-lg px-4 font-medium'
+            leadingIcon={<CheckBadgeIcon size={16} strokeWidth={2} />}
           >
-            {isPublishing ? (
-              <>
-                <svg className='h-4 w-4 animate-spin' fill='none' viewBox='0 0 24 24'>
-                  <circle
-                    className='opacity-25'
-                    cx='12'
-                    cy='12'
-                    r='10'
-                    stroke='currentColor'
-                    strokeWidth='4'
-                  />
-                  <path
-                    className='opacity-75'
-                    fill='currentColor'
-                    d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
-                  />
-                </svg>
-                <span>发布中...</span>
-              </>
-            ) : (
-              <>
-                <CheckBadgeIcon size={16} strokeWidth={2} />
-                <span>{showMessageInput ? '确认发布' : '发布'}</span>
-              </>
-            )}
-          </button>
+            <span>{isPublishing ? '发布中...' : showMessageInput ? '确认发布' : '发布'}</span>
+          </Button>
         </div>
       </div>
     </m.div>

@@ -6,6 +6,7 @@ import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { catCharacterIds, mouseCharacterIds } from '@/features/characters/data/characterMetadata';
 import GameLayout from '@/features/games/components/GameLayout';
+import Button from '@/components/ui/Button';
 
 import QuestionCard from './components/QuestionCard';
 import QuizProgress from './components/QuizProgress';
@@ -154,12 +155,9 @@ export default function PlaystyleQuizClient({ description, characters: charsSnap
             allCharacters={playableCharacters}
           />
           <div className='flex justify-center gap-4'>
-            <button
-              onClick={handleRetake}
-              className='rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
-            >
+            <Button variant='secondary' size='sm' className='px-5 py-2.5' onClick={handleRetake}>
               重新测试
-            </button>
+            </Button>
           </div>
         </div>
       )}
