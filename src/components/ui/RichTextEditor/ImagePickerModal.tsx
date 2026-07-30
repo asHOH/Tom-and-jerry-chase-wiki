@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { createPortal } from 'react-dom';
 
 import { RTE_IMAGE_ALLOWED_MIME_TYPES, RTE_IMAGE_MAX_BYTES } from '@/lib/richtext/imagePolicy';
+import { BaseDialog } from '@/components/ui/BaseDialog';
 import Button from '@/components/ui/Button';
 import { FormInput } from '@/components/ui/FormControls';
 import { Img } from '@/components/Image';
@@ -69,8 +69,6 @@ const dateFormatter = new Intl.DateTimeFormat('zh-CN', {
 
 const IMAGE_EXT_HINT = '支持 PNG、JPEG、WEBP、AVIF、GIF';
 
-const portalElement = typeof document !== 'undefined' ? document.body : null;
-
 const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
   isOpen,
   onClose,
@@ -94,27 +92,6 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
   const [siteParentPath, setSiteParentPath] = useState<string | null>(null);
   const [siteError, setSiteError] = useState<string | null>(null);
   const [siteLoading, setSiteLoading] = useState(false);
-
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const originalOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = originalOverflow;
-    };
-  }, [isOpen]);
-
-  useEffect(() => {
-    if (!isOpen) return;
-    const handler = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        onClose();
-      }
-    };
-    window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
-  }, [isOpen, onClose]);
 
   useEffect(() => {
     if (isOpen) {
@@ -187,12 +164,6 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
     // oxlint-disable-next-line react/exhaustive-deps
   }, [isOpen, activeTab, fetchSiteEntries]);
 
-  const handleOverlayClick = useCallback(() => {
-    if (!isUploading) {
-      onClose();
-    }
-  }, [isUploading, onClose]);
-
   const handleUploadInputChange = useCallback(
     async (event: React.ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
@@ -242,10 +213,6 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
     if (!siteParentPath) return;
     fetchSiteEntries(siteParentPath === '' ? '' : siteParentPath);
   }, [fetchSiteEntries, siteParentPath]);
-
-  if (!isOpen || !portalElement) {
-    return null;
-  }
 
   const TabButton = ({ id, label }: { id: TabId; label: string }) => (
     <Button
@@ -446,46 +413,51 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
     </div>
   );
 
-  return createPortal(
-    <div className='fixed inset-0 z-120 flex items-center justify-center p-4'>
-      <div className='absolute inset-0 bg-black/60' onClick={handleOverlayClick} />
-      <div
-        role='dialog'
-        aria-modal='true'
-        className='relative z-10 w-full max-w-4xl rounded-lg border border-gray-200 bg-white shadow-2xl dark:border-gray-700 dark:bg-gray-900'
-        onClick={(event) => event.stopPropagation()}
-      >
-        <div className='flex items-center justify-between border-b border-gray-200 px-6 py-4 dark:border-gray-700'>
-          <div>
-            <h2 className='text-lg font-semibold text-gray-900 dark:text-gray-100'>插入图片</h2>
-          </div>
-          <button
-            type='button'
-            onClick={onClose}
-            className='text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
-            aria-label='关闭图片选择器'
+  return (
+    <BaseDialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) onClose();
+      }}
+      ariaLabelledBy='image-picker-dialog-title'
+      closeOnOutsideClick={!isUploading}
+      backdropClassName='z-120 bg-black/60 backdrop-blur-none'
+      panelClassName='inset-auto top-1/2 left-1/2 z-130 max-h-[calc(100%-2rem)] w-[calc(100%-2rem)] max-w-4xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto border border-gray-200 shadow-2xl dark:border-gray-700'
+    >
+      <div className='flex items-center justify-between border-b border-gray-200 px-6 py-4 dark:border-gray-700'>
+        <div>
+          <h2
+            id='image-picker-dialog-title'
+            className='text-lg font-semibold text-gray-900 dark:text-gray-100'
           >
-            ✕
-          </button>
+            插入图片
+          </h2>
         </div>
-        <div className='space-y-4 px-6 py-4'>
-          <div className='flex flex-wrap gap-2'>
-            {TABS.map((tab) => (
-              <TabButton key={tab.id} id={tab.id} label={tab.label} />
-            ))}
-          </div>
-          {activeTab === 'upload' && renderUploadTab()}
-          {activeTab === 'library' && renderLibraryTab()}
-          {activeTab === 'site' && renderSiteTab()}
-        </div>
-        <div className='flex justify-end border-t border-gray-200 px-6 py-3 dark:border-gray-700'>
-          <Button onClick={onClose} variant='secondary'>
-            关闭
-          </Button>
-        </div>
+        <button
+          type='button'
+          onClick={onClose}
+          className='text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+          aria-label='关闭图片选择器'
+        >
+          ✕
+        </button>
       </div>
-    </div>,
-    portalElement
+      <div className='space-y-4 px-6 py-4'>
+        <div className='flex flex-wrap gap-2'>
+          {TABS.map((tab) => (
+            <TabButton key={tab.id} id={tab.id} label={tab.label} />
+          ))}
+        </div>
+        {activeTab === 'upload' && renderUploadTab()}
+        {activeTab === 'library' && renderLibraryTab()}
+        {activeTab === 'site' && renderSiteTab()}
+      </div>
+      <div className='flex justify-end border-t border-gray-200 px-6 py-3 dark:border-gray-700'>
+        <Button onClick={onClose} variant='secondary'>
+          关闭
+        </Button>
+      </div>
+    </BaseDialog>
   );
 };
 
