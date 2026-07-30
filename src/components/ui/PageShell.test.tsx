@@ -13,7 +13,12 @@ describe('PageShell', () => {
   it('uses the standard width by default', () => {
     render(<PageShell>页面内容</PageShell>);
 
-    expect(screen.getByRole('main')).toHaveClass('mx-auto', 'w-full', 'max-w-5xl');
+    expect(screen.getByRole('main')).toHaveClass(
+      'mx-auto',
+      'w-full',
+      'max-w-5xl',
+      'text-foreground'
+    );
   });
 
   it.each(WIDTH_CASES)('maps the %s width to %s', (width, expectedClassName) => {
@@ -24,13 +29,18 @@ describe('PageShell', () => {
 
   it('supports semantic element and class overrides', () => {
     render(
-      <PageShell as='section' aria-label='页面区域' width='wide' className='max-w-3xl py-8'>
+      <PageShell
+        as='section'
+        aria-label='页面区域'
+        width='wide'
+        className='max-w-3xl py-8 text-gray-700'
+      >
         页面内容
       </PageShell>
     );
 
     const shell = screen.getByRole('region', { name: '页面区域' });
-    expect(shell).toHaveClass('mx-auto', 'w-full', 'max-w-3xl', 'py-8');
-    expect(shell).not.toHaveClass('max-w-6xl');
+    expect(shell).toHaveClass('mx-auto', 'w-full', 'max-w-3xl', 'py-8', 'text-gray-700');
+    expect(shell).not.toHaveClass('max-w-6xl', 'text-foreground');
   });
 });

@@ -33,7 +33,7 @@ export default function CatalogPageShell({
   children,
 }: CatalogPageShellProps) {
   return (
-    <PageShell as='section' width='wide' className={cn('dark:text-slate-200', className)}>
+    <PageShell as='section' width='wide' className={className}>
       <PageHeader
         title={title}
         description={description}

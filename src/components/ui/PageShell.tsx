@@ -24,5 +24,10 @@ export default function PageShell<E extends ElementType = 'main'>({
 }: PageShellProps<E>) {
   const Component = (as ?? 'main') as ElementType;
 
-  return <Component className={cn('mx-auto w-full', widthClasses[width], className)} {...props} />;
+  return (
+    <Component
+      className={cn('text-foreground mx-auto w-full', widthClasses[width], className)}
+      {...props}
+    />
+  );
 }
