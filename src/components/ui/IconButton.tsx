@@ -3,6 +3,7 @@
 import { forwardRef, type ButtonHTMLAttributes } from 'react';
 
 import { cn } from '@/lib/design';
+import Button from '@/components/ui/Button';
 
 export type IconButtonVariant = 'add' | 'delete' | 'edit';
 export type IconButtonSize = 'xs' | 'sm' | 'md';
@@ -38,7 +39,8 @@ export function getIconButtonIconClassName(size: IconButtonSize = 'md'): string 
 
 const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
   ({ variant, size = 'md', className, disabled, type = 'button', children, ...rest }, ref) => (
-    <button
+    <Button
+      variant='unstyled'
       ref={ref}
       type={type}
       disabled={disabled}
@@ -53,7 +55,7 @@ const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
       {...rest}
     >
       {children}
-    </button>
+    </Button>
   )
 );
 

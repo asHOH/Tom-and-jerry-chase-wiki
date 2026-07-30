@@ -10,6 +10,7 @@ import { useNavigation } from '@/hooks/useNavigation';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { BaseDialog } from '@/components/ui/BaseDialog';
+import Button from '@/components/ui/Button';
 import { FormInput } from '@/components/ui/FormControls';
 import Tag from '@/components/ui/Tag';
 import { ChatBubbleIcon, CloseIcon, SearchIcon } from '@/components/icons/CommonIcons';
@@ -336,14 +337,15 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
           : 'inset-auto top-1/2 left-1/2 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2'
       )}
     >
-      <button
+      <Button
+        variant='unstyled'
         type='button'
         onClick={onClose}
         className='absolute top-2 right-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
         aria-label='关闭搜索对话框'
       >
         <CloseIcon className='h-6 w-6' />
-      </button>
+      </Button>
       <div className='mb-4 pr-8'>
         <h2
           id='search-dialog-title'
@@ -441,7 +443,8 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
               }}
               transition={{ duration: 0.2 }}
             >
-              <button
+              <Button
+                variant='unstyled'
                 type='button'
                 onClick={() => handleResultClick(result)}
                 className={cn(
@@ -478,7 +481,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
                 >
                   {getResultLabel(result)}
                 </Tag>
-              </button>
+              </Button>
             </m.li>
           ))}
         </m.ul>

@@ -1,6 +1,7 @@
 import React, { startTransition, useState } from 'react';
 
 import { cn } from '@/lib/design';
+import Button from '@/components/ui/Button';
 
 type AccordionItem = {
   id: string;
@@ -81,7 +82,8 @@ export default function AccordionCard({
           const titleColor = colorMap[colorToUse];
 
           return (
-            <button
+            <Button
+              variant='unstyled'
               key={item.id}
               type='button'
               onClick={() => toggleItem(item.id)}
@@ -96,7 +98,7 @@ export default function AccordionCard({
               aria-expanded={isExpanded}
             >
               <span className={titleSizeClassName}>{item.title}</span>
-            </button>
+            </Button>
           );
         })}
       </div>

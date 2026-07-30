@@ -19,6 +19,7 @@ import PermissionGroupManagement, {
   type PermissionGroup,
 } from '@/features/admin/components/PermissionGroupManagement';
 import UserManagement from '@/features/admin/components/UserManagement';
+import Button from '@/components/ui/Button';
 
 type Category = Database['public']['Tables']['categories']['Row'];
 
@@ -189,42 +190,59 @@ const AdminPanel = () => {
 
       <div className='mb-6 flex border-b border-gray-200 dark:border-slate-700'>
         {enableUserAccess && (
-          <button onClick={() => setActiveTab('users')} className={getTabClassName('users')}>
+          <Button
+            variant='unstyled'
+            onClick={() => setActiveTab('users')}
+            className={getTabClassName('users')}
+          >
             用户管理
             {users.length > 0 && (
               <span className='ml-1.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-blue-100 px-1.5 text-xs font-medium text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'>
                 {users.length}
               </span>
             )}
-          </button>
+          </Button>
         )}
         {enableGroupAccess && (
-          <button onClick={() => setActiveTab('groups')} className={getTabClassName('groups')}>
+          <Button
+            variant='unstyled'
+            onClick={() => setActiveTab('groups')}
+            className={getTabClassName('groups')}
+          >
             用户组
-          </button>
+          </Button>
         )}
         {enableCategoryAccess && (
-          <button
+          <Button
+            variant='unstyled'
             onClick={() => setActiveTab('categories')}
             className={getTabClassName('categories')}
           >
             分类管理
-          </button>
+          </Button>
         )}
         {enableActionModeration && (
-          <button onClick={() => setActiveTab('actions')} className={getTabClassName('actions')}>
+          <Button
+            variant='unstyled'
+            onClick={() => setActiveTab('actions')}
+            className={getTabClassName('actions')}
+          >
             改动审核
             {pendingCount > 0 && (
               <span className='ml-1.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-orange-100 px-1.5 text-xs font-medium text-orange-600 dark:bg-orange-900/30 dark:text-orange-400'>
                 {pendingCount}
               </span>
             )}
-          </button>
+          </Button>
         )}
         {enableBlockAccess && (
-          <button onClick={() => setActiveTab('blocks')} className={getTabClassName('blocks')}>
+          <Button
+            variant='unstyled'
+            onClick={() => setActiveTab('blocks')}
+            className={getTabClassName('blocks')}
+          >
             封禁管理
-          </button>
+          </Button>
         )}
       </div>
 

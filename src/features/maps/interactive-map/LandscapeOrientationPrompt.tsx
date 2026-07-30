@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState, type RefObject } from 'react';
 
 import { useMobile } from '@/hooks/useMediaQuery';
+import Button from '@/components/ui/Button';
 
 type LandscapeOrientationPromptProps = {
   fullscreenTargetRef: RefObject<HTMLElement | null>;
@@ -108,25 +109,27 @@ export default function LandscapeOrientationPrompt({
             地图内容较宽，横屏后可以看到更完整的地图和点位。
           </p>
         </div>
-        <button
+        <Button
+          variant='unstyled'
           type='button'
           className='w-full rounded-lg bg-cyan-400 px-4 py-3 font-semibold text-slate-950 shadow-lg shadow-cyan-950/40 transition hover:bg-cyan-300 disabled:cursor-wait disabled:opacity-70'
           onClick={handleLockRequest}
           disabled={isLocking}
         >
           {isLocking ? '正在尝试切换横屏…' : '尝试锁定横屏'}
-        </button>
+        </Button>
         <p className='text-xs leading-5 text-slate-400' aria-live='polite'>
           {lockMessage || '如果设备未自动旋转，请关闭系统方向锁定后将设备横置。'}
         </p>
-        <button
+        <Button
+          variant='unstyled'
           type='button'
           className='text-sm text-slate-300 underline decoration-slate-500 underline-offset-4 hover:text-white'
           onClick={handleIgnoreOrientation}
           disabled={isLocking}
         >
           忽略提示，继续使用
-        </button>
+        </Button>
       </div>
     </div>
   );

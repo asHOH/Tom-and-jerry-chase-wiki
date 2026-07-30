@@ -4,6 +4,7 @@ import useSWR from 'swr';
 
 import type { InteractiveMapPoint } from '@/data/types';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
+import Button from '@/components/ui/Button';
 import SingleItemButton from '@/components/ui/SingleItemButton';
 
 import {
@@ -84,14 +85,15 @@ export default function PointDetails({
 
   return (
     <aside className='bg-surface-raised text-foreground absolute right-0 bottom-0 left-0 z-700 max-h-[52%] overflow-auto rounded-t-2xl p-5 shadow-2xl md:top-0 md:left-auto md:h-full md:max-h-none md:w-80 md:rounded-none md:pt-14'>
-      <button
+      <Button
+        variant='unstyled'
         type='button'
         onClick={onClose}
         aria-label='关闭点位介绍'
         className='absolute top-3 right-3 rounded-full bg-slate-200/90 px-2 text-2xl leading-none text-slate-700 shadow-sm md:right-auto md:left-3 dark:bg-slate-800/90 dark:text-white'
       >
         ×
-      </button>
+      </Button>
       <p className='text-xs font-medium text-cyan-600 dark:text-cyan-300'>
         {point.subtype ?? MAP_CATEGORY_LABELS[point.category]}
       </p>
@@ -116,26 +118,28 @@ export default function PointDetails({
               </p>
             </div>
           </div>
-          <button
+          <Button
+            variant='unstyled'
             type='button'
             onClick={onNavigateToConnectedPoint}
             className='mt-3 w-full rounded-lg bg-cyan-700 px-3 py-2 text-sm font-medium text-white hover:bg-cyan-600'
           >
             查看对应管道
-          </button>
+          </Button>
         </div>
       )}
       {geometryBarrelTarget && (
         <div className='mt-4 rounded-xl border border-orange-200 bg-orange-50 p-3 dark:border-orange-800 dark:bg-orange-950/50'>
           <p className='text-xs text-slate-500 dark:text-slate-400'>火药桶飞行路线</p>
           <p className='mt-1 truncate text-sm font-semibold'>终点：目标火箭</p>
-          <button
+          <Button
+            variant='unstyled'
             type='button'
             onClick={onNavigateToGeometryBarrelTarget}
             className='mt-3 w-full rounded-lg bg-orange-700 px-3 py-2 text-sm font-medium text-white hover:bg-orange-600'
           >
             查看目标火箭
-          </button>
+          </Button>
         </div>
       )}
       {idleFruitPlateTarget && (
@@ -144,13 +148,14 @@ export default function PointDetails({
           <p className='mt-1 truncate text-sm font-semibold'>
             目标：{idleFruitPlateTarget.subtype ?? '对应墙缝'}
           </p>
-          <button
+          <Button
+            variant='unstyled'
             type='button'
             onClick={onNavigateToIdleFruitPlateTarget}
             className='mt-3 w-full rounded-lg bg-lime-700 px-3 py-2 text-sm font-medium text-white hover:bg-lime-600'
           >
             查看对应墙缝
-          </button>
+          </Button>
         </div>
       )}
       <p className='mt-4 text-sm leading-6 whitespace-pre-wrap text-slate-700 dark:text-slate-200'>

@@ -153,9 +153,13 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
           )}
         >
           {message.text}
-          <button onClick={() => setMessage(null)} className='ml-3 text-sm underline'>
+          <Button
+            variant='unstyled'
+            onClick={() => setMessage(null)}
+            className='ml-3 text-sm underline'
+          >
             关闭
-          </button>
+          </Button>
         </div>
       )}
 

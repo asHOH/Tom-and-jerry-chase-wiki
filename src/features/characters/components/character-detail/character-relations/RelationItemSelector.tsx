@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 
 import { cn } from '@/lib/design';
+import Button from '@/components/ui/Button';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import { PlusIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
@@ -55,7 +56,8 @@ const RelationItemSelector: React.FC<RelationItemSelectorProps> = ({
       {isOpen && (
         <div className='border-border bg-surface-raised text-foreground absolute top-full right-0 z-50 mt-1 max-h-48 w-48 overflow-y-auto rounded-lg border shadow-lg'>
           {options.map(({ id, imageUrl, imageClassName }) => (
-            <button
+            <Button
+              variant='unstyled'
               key={id}
               type='button'
               onClick={() => handleSelect(id)}
@@ -72,7 +74,7 @@ const RelationItemSelector: React.FC<RelationItemSelectorProps> = ({
                 />
               )}
               <span className='text-gray-700 dark:text-gray-300'>{id}</span>
-            </button>
+            </Button>
           ))}
         </div>
       )}

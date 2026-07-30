@@ -165,13 +165,14 @@ export default function CommentsSection({
         </div>
 
         <div className='mt-2 flex items-center gap-3 text-xs'>
-          <button
+          <Button
+            variant='unstyled'
             type='button'
             onClick={() => setReplyTo({ id: comment.id, nickname: comment.author.nickname })}
             className='text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'
           >
             回复
-          </button>
+          </Button>
         </div>
 
         {tree.get(comment.id)?.length ? (
@@ -195,14 +196,15 @@ export default function CommentsSection({
         {replyTo ? (
           <div className='mb-3 flex items-center justify-between gap-3 rounded-md bg-gray-100 px-3 py-2 text-sm text-gray-700 dark:bg-slate-800 dark:text-gray-200'>
             <div className='min-w-0 truncate'>回复 {replyTo.nickname || '匿名'}</div>
-            <button
+            <Button
+              variant='unstyled'
               type='button'
               onClick={() => setReplyTo(null)}
               className='shrink-0 text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'
               aria-label='取消回复'
             >
               ✕
-            </button>
+            </Button>
           </div>
         ) : null}
 

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useToast } from '@/context/ToastContext';
+import Button from '@/components/ui/Button';
 
 interface VersionInfo {
   version: string;
@@ -384,14 +385,15 @@ export const VersionChecker: React.FC = () => {
         <div className='fixed top-20 right-4 z-40 max-w-xs rounded border border-gray-600 bg-gray-800 px-3 py-2 font-mono text-xs text-white shadow-lg'>
           <div className='mb-2 flex items-center justify-between'>
             <div className='text-sm font-bold'>版本检查器</div>
-            <button
+            <Button
+              variant='unstyled'
               type='button'
               onClick={() => setShowDebugPanel(false)}
               className='text-lg leading-none text-gray-400 hover:text-white'
               title='关闭调试面板'
             >
               ×
-            </button>
+            </Button>
           </div>
           <div className='space-y-1'>
             <div>状态: {debugInfo.status}</div>
@@ -404,14 +406,15 @@ export const VersionChecker: React.FC = () => {
 
       {/* Debug Panel Toggle - Only in development when panel is hidden */}
       {process.env.NODE_ENV === 'development' && !showDebugPanel && (
-        <button
+        <Button
+          variant='unstyled'
           type='button'
           onClick={() => setShowDebugPanel(true)}
           className='fixed top-20 right-4 z-40 rounded bg-gray-800 px-2 py-1 font-mono text-xs text-white hover:bg-gray-700'
           title='显示调试面板'
         >
           调试
-        </button>
+        </Button>
       )}
     </>
   ) : null;

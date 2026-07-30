@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { cn } from '@/lib/design';
 import { useDarkMode } from '@/context/DarkModeContext';
 import type { TreeNode } from '@/features/knowledge-cards/utils/sections';
+import Button from '@/components/ui/Button';
 
 import KnowledgeCardLinkDisplay from './KnowledgeCardLinkDisplay';
 import { AndGroupLines, OrGroupLines } from './TreeLines';
@@ -112,25 +113,27 @@ const OrGroupDisplay: React.FC<
         {/* Navigation bar */}
         {childrenCount > 1 && (
           <div className='flex items-center gap-2 rounded-md bg-gray-100 px-3 py-1.5 dark:bg-slate-700'>
-            <button
+            <Button
+              variant='unstyled'
               type='button'
               onClick={() => handleNavigate('prev')}
               className='text-sm font-medium text-gray-700 transition-colors hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400'
               aria-label='上一个选项'
             >
               ←
-            </button>
+            </Button>
             <span className='text-xs font-medium text-gray-600 dark:text-gray-400'>
               {validSelectedIndex + 1} / {childrenCount}
             </span>
-            <button
+            <Button
+              variant='unstyled'
               type='button'
               onClick={() => handleNavigate('next')}
               className='text-sm font-medium text-gray-700 transition-colors hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400'
               aria-label='下一个选项'
             >
               →
-            </button>
+            </Button>
           </div>
         )}
       </div>

@@ -3,6 +3,7 @@
 import type { MouseEvent, ReactNode } from 'react';
 
 import { cn } from '@/lib/design';
+import Button from '@/components/ui/Button';
 import Link from '@/components/Link';
 
 export type ActionTileProps = {
@@ -145,7 +146,8 @@ export default function ActionTile({
   }
 
   return (
-    <button
+    <Button
+      variant='unstyled'
       type='button'
       className={tileClasses}
       disabled={isDisabled}
@@ -155,6 +157,6 @@ export default function ActionTile({
       {...(isCurrentPage ? { 'aria-current': 'page' as const } : {})}
     >
       {content}
-    </button>
+    </Button>
   );
 }

@@ -6,6 +6,7 @@ import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/active
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useScrollSpy } from '@/hooks/useScrollSpy';
 import type { Skill } from '@/data/types';
+import Button from '@/components/ui/Button';
 import { ChevronDownIcon } from '@/components/icons/CommonIcons';
 
 import { usePublishedCharacter } from '../PublishedCharacterContext';
@@ -87,7 +88,8 @@ export default function CharacterSectionIndex() {
           isActive={activeSection === 'Section:推荐知识卡组'}
         />
         <li>
-          <button
+          <Button
+            variant='unstyled'
             type='button'
             aria-label={skillsOpen ? '折叠技能描述' : '展开技能描述'}
             className={cn(
@@ -105,7 +107,7 @@ export default function CharacterSectionIndex() {
                 shouldExpandSkills ? 'rotate-0' : '-rotate-90'
               )}
             />
-          </button>
+          </Button>
           <div
             className={cn(
               'transition-all ease-out',

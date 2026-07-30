@@ -3,6 +3,7 @@
 import Image from 'next/image';
 
 import { cn } from '@/lib/design';
+import Button from '@/components/ui/Button';
 
 export type GameMode = 'cats' | 'mice' | 'all' | 'blitz';
 
@@ -98,7 +99,8 @@ export default function ModeSelector({ currentMode, onSelect }: ModeSelectorProp
   return (
     <div className='flex flex-wrap justify-center gap-2'>
       {MODES.map((m) => (
-        <button
+        <Button
+          variant='unstyled'
           key={m.id}
           onClick={() => onSelect(m.id)}
           className={cn(
@@ -112,7 +114,7 @@ export default function ModeSelector({ currentMode, onSelect }: ModeSelectorProp
           <span className='flex h-7 items-center justify-center'>{m.icon}</span>
           <span className='text-xs font-medium text-gray-700 dark:text-gray-300'>{m.label}</span>
           <span className='text-[10px] text-gray-400 dark:text-gray-500'>{m.desc}</span>
-        </button>
+        </Button>
       ))}
     </div>
   );

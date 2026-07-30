@@ -230,7 +230,8 @@ export default function PermissionGroupManagement({
         </div>
         <div className='flex gap-2 overflow-x-auto p-3 lg:flex-col lg:overflow-visible'>
           {groups.map((group) => (
-            <button
+            <Button
+              variant='unstyled'
               key={group.id}
               type='button'
               onClick={() => setSelectedId(group.id)}
@@ -267,7 +268,7 @@ export default function PermissionGroupManagement({
                   注册默认
                 </span>
               )}
-            </button>
+            </Button>
           ))}
           {groups.length === 0 && (
             <div className='w-full rounded-xl border border-dashed border-slate-300 p-6 text-center text-sm text-slate-500 dark:border-slate-700 dark:text-slate-400'>
@@ -463,7 +464,8 @@ export default function PermissionGroupManagement({
                             {index + 1}
                           </span>
                           {canManage && (
-                            <button
+                            <Button
+                              variant='unstyled'
                               type='button'
                               className='inline-flex min-h-9 items-center gap-1.5 rounded-lg px-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/30'
                               onClick={() =>
@@ -472,7 +474,7 @@ export default function PermissionGroupManagement({
                             >
                               <TrashIcon size={15} />
                               移除
-                            </button>
+                            </Button>
                           )}
                         </div>
                         <div className='grid gap-3 md:grid-cols-2 xl:grid-cols-4'>

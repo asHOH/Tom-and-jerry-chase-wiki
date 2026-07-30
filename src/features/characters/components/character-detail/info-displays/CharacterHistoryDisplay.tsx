@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react';
 import { cn } from '@/lib/design';
 import { getHistory } from '@/lib/historyUtils';
 import { ChangeType } from '@/data/types';
+import Button from '@/components/ui/Button';
 import { ChevronDownIcon } from '@/components/icons/CommonIcons';
 
 export default function CharacterHistoryDisplay({
@@ -53,7 +54,8 @@ export default function CharacterHistoryDisplay({
 
   return (
     <div className='mt-2 text-xs text-gray-400 dark:text-gray-500'>
-      <button
+      <Button
+        variant='unstyled'
         type='button'
         onClick={() => setIsExpanded(!isExpanded)}
         className='flex items-center gap-1 transition-colors hover:text-gray-600 dark:hover:text-gray-300'
@@ -66,7 +68,7 @@ export default function CharacterHistoryDisplay({
             isExpanded && 'rotate-180'
           )}
         />
-      </button>
+      </Button>
 
       {isExpanded && (
         <ul className='mt-2 space-y-1 pl-2'>

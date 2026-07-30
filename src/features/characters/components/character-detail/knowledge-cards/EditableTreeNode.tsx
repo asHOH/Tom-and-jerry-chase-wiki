@@ -4,6 +4,7 @@ import { memo, useState } from 'react';
 
 import { cn } from '@/lib/design';
 import type { CardGroup, CardGroupType } from '@/data/types';
+import Button from '@/components/ui/Button';
 import IconButton from '@/components/ui/IconButton';
 import { CloseIcon, PlusIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
@@ -52,28 +53,36 @@ const GroupHeader = memo(
     return (
       <div className='mb-1 flex flex-wrap items-center gap-1'>
         <span className={isOr ? orBadgeClass : andBadgeClass}>{isOr ? 'OR' : 'AND'}</span>
-        <button
+        <Button
+          variant='unstyled'
           type='button'
           className={smallButtonClass}
           onClick={() => onToggleGroupType(path, isOr ? 0 : 1)}
           title={isOr ? '切换为 AND' : '切换为 OR'}
         >
           切换
-        </button>
-        <button type='button' className={smallButtonClass} onClick={() => onRequestAddCard(path)}>
+        </Button>
+        <Button
+          variant='unstyled'
+          type='button'
+          className={smallButtonClass}
+          onClick={() => onRequestAddCard(path)}
+        >
           +卡
-        </button>
+        </Button>
         <span className='relative'>
-          <button
+          <Button
+            variant='unstyled'
             type='button'
             className={smallButtonClass}
             onClick={() => setShowAddGroupPopover((prev) => !prev)}
           >
             +子组
-          </button>
+          </Button>
           {showAddGroupPopover && (
             <span className='border-border bg-surface-raised text-foreground absolute top-full left-0 z-30 mt-1 flex gap-1 rounded border p-1 shadow-sm'>
-              <button
+              <Button
+                variant='unstyled'
                 type='button'
                 className={cn(smallButtonClass, 'text-blue-600 dark:text-blue-400')}
                 onClick={() => {
@@ -82,8 +91,9 @@ const GroupHeader = memo(
                 }}
               >
                 AND
-              </button>
-              <button
+              </Button>
+              <Button
+                variant='unstyled'
                 type='button'
                 className={cn(smallButtonClass, 'text-amber-600 dark:text-amber-400')}
                 onClick={() => {
@@ -92,18 +102,19 @@ const GroupHeader = memo(
                 }}
               >
                 OR
-              </button>
+              </Button>
             </span>
           )}
         </span>
-        <button
+        <Button
+          variant='unstyled'
           type='button'
           className={smallButtonClass}
           onClick={() => onUnwrapGroup(path)}
           title='拆分分组'
         >
           拆
-        </button>
+        </Button>
         <IconButton
           type='button'
           aria-label='删除分组'
@@ -219,27 +230,30 @@ function EditableTreeNode({
       {/* Root-level action bar */}
       {isRoot && (
         <div className='mt-3 flex flex-wrap gap-1.5'>
-          <button
+          <Button
+            variant='unstyled'
             type='button'
             className={cn(smallButtonClass, 'flex items-center gap-1')}
             onClick={() => onRequestAddCard([])}
           >
             <PlusIcon className='h-3 w-3' aria-hidden='true' /> 添加知识卡
-          </button>
-          <button
+          </Button>
+          <Button
+            variant='unstyled'
             type='button'
             className={cn(smallButtonClass, 'text-blue-600 dark:text-blue-400')}
             onClick={() => onAddGroup([], 0)}
           >
             + AND组
-          </button>
-          <button
+          </Button>
+          <Button
+            variant='unstyled'
             type='button'
             className={cn(smallButtonClass, 'text-amber-600 dark:text-amber-400')}
             onClick={() => onAddGroup([], 1)}
           >
             + OR组
-          </button>
+          </Button>
         </div>
       )}
     </div>

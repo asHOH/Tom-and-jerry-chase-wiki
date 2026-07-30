@@ -15,6 +15,7 @@ import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
 import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';
 import DetailTextSection from '@/features/shared/detail-view/DetailTextSection';
 import DetailTraitsCard from '@/features/shared/detail-view/DetailTraitsCard';
+import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import { editable } from '@/components/ui/editable';
 import SingleItemButton from '@/components/ui/SingleItemButton';
@@ -275,7 +276,8 @@ export default function MapDetailClient({
           }}
         >
           {/* 关闭按钮 */}
-          <button
+          <Button
+            variant='unstyled'
             className='absolute top-4 right-4 z-60 flex items-center justify-center rounded-full bg-black/60 text-2xl text-white hover:bg-black/80'
             style={{
               width: isMobile ? '50px' : '48px',
@@ -287,7 +289,7 @@ export default function MapDetailClient({
             aria-label='关闭全屏预览'
           >
             ×
-          </button>
+          </Button>
 
           {/* 图片容器 */}
           <div

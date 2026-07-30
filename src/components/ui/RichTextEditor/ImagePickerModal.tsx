@@ -304,7 +304,8 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
       ) : (
         <div className='grid max-h-90 grid-cols-1 gap-4 overflow-y-auto pr-1 sm:grid-cols-2 lg:grid-cols-3'>
           {filteredLibraryItems.map((item) => (
-            <button
+            <Button
+              variant='unstyled'
               type='button'
               key={item.path}
               className='group overflow-hidden rounded-lg border border-gray-200 bg-white text-left shadow-sm hover:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-900'
@@ -331,7 +332,7 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
                   {item.mimeType ? ` · ${item.mimeType}` : ''}
                 </p>
               </div>
-            </button>
+            </Button>
           ))}
         </div>
       )}
@@ -373,7 +374,8 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
       ) : (
         <div className='grid max-h-90 grid-cols-1 gap-3 overflow-y-auto pr-1 sm:grid-cols-2 lg:grid-cols-3'>
           {siteEntries.map((entry) => (
-            <button
+            <Button
+              variant='unstyled'
               type='button'
               key={entry.path}
               onClick={() => handleSiteEntryClick(entry)}
@@ -406,7 +408,7 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
               <span className='text-xs text-gray-400 dark:text-gray-500'>
                 {entry.type === 'directory' ? '打开' : '插入'}
               </span>
-            </button>
+            </Button>
           ))}
         </div>
       )}
@@ -433,14 +435,15 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
             插入图片
           </h2>
         </div>
-        <button
+        <Button
+          variant='unstyled'
           type='button'
           onClick={onClose}
           className='text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
           aria-label='关闭图片选择器'
         >
           ✕
-        </button>
+        </Button>
       </div>
       <div className='space-y-4 px-6 py-4'>
         <div className='flex flex-wrap gap-2'>

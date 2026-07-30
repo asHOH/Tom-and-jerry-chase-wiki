@@ -5,6 +5,7 @@ import { useMemo, useState } from 'react';
 import { cn } from '@/lib/design';
 import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { CharacterWinRateEntry, getCharacterWinRates } from '@/data/winRates';
+import Button from '@/components/ui/Button';
 import { ChevronDownIcon } from '@/components/icons/CommonIcons';
 
 import { usePublishedCharacter } from '../PublishedCharacterContext';
@@ -42,7 +43,8 @@ export default function WinRatesDisplay({ characterName }: WinRatesDisplayProps)
 
   return (
     <div className='mt-2 text-xs text-gray-400 dark:text-gray-500'>
-      <button
+      <Button
+        variant='unstyled'
         type='button'
         onClick={() => setIsExpanded(!isExpanded)}
         className='flex items-center gap-1 transition-colors hover:text-gray-600 dark:hover:text-gray-300'
@@ -55,7 +57,7 @@ export default function WinRatesDisplay({ characterName }: WinRatesDisplayProps)
             isExpanded && 'rotate-180'
           )}
         />
-      </button>
+      </Button>
 
       {isExpanded && (
         <div className='mt-2 space-y-3 pl-2'>

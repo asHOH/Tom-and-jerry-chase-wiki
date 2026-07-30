@@ -21,6 +21,7 @@ import {
 import { characters as staticCharacters } from '@/data/static';
 import type { FactionId, PositioningTag, PositioningTagLevel } from '@/data/types';
 import { getWeaponSkillImageUrl } from '@/features/characters/utils/weapons';
+import Button from '@/components/ui/Button';
 import { editable } from '@/components/ui/editable';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import Tag from '@/components/ui/Tag';
@@ -325,7 +326,8 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
             const isActive = viewMode === mode;
             const isDisabled = isEditMode && mode !== 'text';
             return (
-              <button
+              <Button
+                variant='unstyled'
                 key={mode}
                 type='button'
                 aria-pressed={isActive}
@@ -342,7 +344,7 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
                 )}
               >
                 {viewModeLabels[mode]}
-              </button>
+              </Button>
             );
           })}
         </div>

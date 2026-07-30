@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { m } from 'motion/react';
 
 import { getNavigationButtonClasses } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
+import MotionButton from '@/components/ui/MotionButton';
 import { SearchIcon } from '@/components/icons/CommonIcons';
 
 import SearchDialog from './SearchDialog';
@@ -45,7 +45,8 @@ const SearchBar: React.FC<object> = () => {
   return (
     <div>
       <Tooltip content='搜索 (快捷键：/ )' className='border-none' asChild>
-        <m.button
+        <MotionButton
+          variant='unstyled'
           type='button'
           onClick={handleOpenSearch}
           className={getNavigationButtonClasses(false, false, true)}
@@ -55,7 +56,7 @@ const SearchBar: React.FC<object> = () => {
         >
           {/* Search icon */}
           <SearchIcon className='h-6 w-6 text-gray-900 dark:text-gray-200' strokeWidth={1.5} />
-        </m.button>
+        </MotionButton>
       </Tooltip>
 
       <SearchDialog open={showSearchDialog} onClose={handleCloseSearch} isMobile={isMobile} />

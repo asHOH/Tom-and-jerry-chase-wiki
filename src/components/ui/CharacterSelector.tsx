@@ -9,6 +9,7 @@ import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/active
 import { characters } from '@/data/static';
 import type { CharacterRelationItem, FactionId } from '@/data/types';
 import { BaseDialog } from '@/components/ui/BaseDialog';
+import Button from '@/components/ui/Button';
 import { FormInput } from '@/components/ui/FormControls';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import { ChevronDownIcon, PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
@@ -79,7 +80,8 @@ export function CharacterSelector({
       {isOpen && (
         <div className='border-border bg-surface-raised text-foreground absolute top-full right-0 z-50 mt-1 max-h-60 w-56 overflow-y-auto rounded-lg border shadow-lg ring-1 ring-black/5 dark:ring-white/10'>
           {availableCharacters.map((char) => (
-            <button
+            <Button
+              variant='unstyled'
               key={char.id}
               type='button'
               onClick={() => handleSelect(char.id)}
@@ -100,7 +102,7 @@ export function CharacterSelector({
                 className='h-7 w-7 rounded-full object-cover'
               />
               <span className='text-gray-700 dark:text-slate-200'>{char.id}</span>
-            </button>
+            </Button>
           ))}
         </div>
       )}
@@ -169,14 +171,15 @@ export function CharacterSlotsSelector({
                   height={80}
                   className='h-20 w-20 object-contain'
                 />
-                <button
+                <Button
+                  variant='unstyled'
                   onClick={(e) => handleRemove(e, index)}
                   className='absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white shadow-sm hover:bg-red-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400/60 dark:bg-red-600 dark:hover:bg-red-500 dark:focus-visible:ring-red-300/70'
                   aria-label='移除已选择角色'
                   type='button'
                 >
                   <TrashIcon className='h-3 w-3' />
-                </button>
+                </Button>
                 <div className='absolute right-0 bottom-1 left-0 truncate px-1 text-center text-xs font-medium text-gray-700 dark:text-gray-300'>
                   {id}
                 </div>
@@ -205,20 +208,22 @@ export function CharacterSlotsSelector({
           >
             {title}
           </h3>
-          <button
+          <Button
+            variant='unstyled'
             onClick={() => setIsSelectorOpen(false)}
             className='text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
             aria-label='关闭选择器'
             type='button'
           >
             ✕
-          </button>
+          </Button>
         </div>
         <div className='grid grid-cols-4 gap-4 overflow-y-auto p-4 sm:grid-cols-5 md:grid-cols-6'>
           {characterList.map((character) => {
             const isSelected = selectedIds.includes(character.id);
             return (
-              <button
+              <Button
+                variant='unstyled'
                 key={character.id}
                 onClick={() => !isSelected && handleSelect(character.id)}
                 disabled={isSelected}
@@ -240,7 +245,7 @@ export function CharacterSlotsSelector({
                 <span className='text-center text-xs text-gray-800 dark:text-slate-200'>
                   {character.id}
                 </span>
-              </button>
+              </Button>
             );
           })}
         </div>
@@ -290,7 +295,8 @@ export function ArticleCharacterSelector({
 
   return (
     <div className='relative'>
-      <button
+      <Button
+        variant='unstyled'
         type='button'
         onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
@@ -328,10 +334,11 @@ export function ArticleCharacterSelector({
             isOpen && 'rotate-180'
           )}
         />
-      </button>
+      </Button>
 
       {selectedCharacter && !disabled && (
-        <button
+        <Button
+          variant='unstyled'
           type='button'
           onClick={handleClear}
           className='absolute top-1/2 right-9 -translate-y-1/2 rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:hover:bg-gray-700 dark:hover:text-gray-300'
@@ -345,7 +352,7 @@ export function ArticleCharacterSelector({
               d='M6 18L18 6M6 6l12 12'
             />
           </svg>
-        </button>
+        </Button>
       )}
 
       {isOpen && (
@@ -370,7 +377,8 @@ export function ArticleCharacterSelector({
                 </div>
               ) : (
                 filteredCharacters.map((char) => (
-                  <button
+                  <Button
+                    variant='unstyled'
                     key={char.id}
                     type='button'
                     onClick={() => handleSelect(char.id)}
@@ -399,7 +407,7 @@ export function ArticleCharacterSelector({
                     >
                       {char.factionId === 'cat' ? '猫' : '鼠'}
                     </span>
-                  </button>
+                  </Button>
                 ))
               )}
             </div>

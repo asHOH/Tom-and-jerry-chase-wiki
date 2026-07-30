@@ -12,6 +12,7 @@ import { Skill, SkillLevel } from '@/data/types';
 import { getSkillUsageSections } from '@/features/characters/utils/skillUsage';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 import TextWithItemKeyTooltips from '@/features/shared/components/TextWithItemKeyTooltips';
+import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import Image from '@/components/Image';
 
@@ -99,13 +100,14 @@ export default function EntitySkillCard({ skill }: SkillCardProps) {
 
             {skill.videoUrl && (
               <div className='mt-2'>
-                <button
+                <Button
+                  variant='unstyled'
                   type='button'
                   onClick={() => window.open(skill.videoUrl, '_blank', 'noopener,noreferrer')}
                   className='block w-full rounded-md bg-blue-50 px-2 py-1 text-center text-xs text-blue-600 transition-colors hover:bg-blue-100 hover:underline dark:bg-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-900'
                 >
                   查看视频
-                </button>
+                </Button>
               </div>
             )}
           </div>

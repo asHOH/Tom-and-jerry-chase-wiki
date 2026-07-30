@@ -4,6 +4,7 @@ import { useCallback, useState, type CSSProperties } from 'react';
 
 import { cn } from '@/lib/design';
 import type { CategoryHint } from '@/lib/types';
+import Button from '@/components/ui/Button';
 import Tooltip from '@/components/ui/Tooltip';
 import GotoLink from '@/components/GotoLink';
 
@@ -210,7 +211,8 @@ const MatrixCell = ({
       }}
     >
       {isEditableCell ? (
-        <button
+        <Button
+          variant='unstyled'
           type='button'
           aria-label={`编辑 ${row.label} 与 ${column.label} 的关系`}
           className={cn(
@@ -221,7 +223,7 @@ const MatrixCell = ({
           onClick={() => onCellSelect?.({ row, column, cell })}
         >
           {cell ? <CellMarker cell={cell} dotStyle={sizing.minorDot} /> : null}
-        </button>
+        </Button>
       ) : cell ? (
         <Tooltip
           content={cell.tooltipContent}

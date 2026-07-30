@@ -13,6 +13,7 @@ import { getGeneralKnowledgeCardGroupCount } from '@/features/characters/utils/r
 import { catKnowledgeCards } from '@/features/knowledge-cards/data/catKnowledgeCards';
 import { mouseKnowledgeCards } from '@/features/knowledge-cards/data/mouseKnowledgeCards';
 import { flattenCardGroup } from '@/features/knowledge-cards/utils/sections';
+import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import KnowledgeCardPicker from '@/components/ui/KnowledgeCardPicker';
@@ -350,7 +351,8 @@ export default function KnowledgeCardSection({
           <CharacterSection title='推荐知识卡组'>
             <Card className='space-y-3 p-4'>
               <div className='mb-4 flex items-center justify-between'>
-                <button
+                <Button
+                  variant='unstyled'
                   type='button'
                   onClick={cycleViewMode}
                   className={viewToggleButtonClass}
@@ -373,7 +375,7 @@ export default function KnowledgeCardSection({
                     </svg>
                   )}
                   {getViewModeLabel()}
-                </button>
+                </Button>
                 <IconButton
                   type='button'
                   aria-label='添加知识卡组'
@@ -397,7 +399,8 @@ export default function KnowledgeCardSection({
       <CharacterSection title='推荐知识卡组'>
         <Card className='space-y-3 p-4'>
           <div className='mb-4 flex items-center justify-between'>
-            <button
+            <Button
+              variant='unstyled'
               type='button'
               onClick={cycleViewMode}
               className={viewToggleButtonClass}
@@ -420,7 +423,7 @@ export default function KnowledgeCardSection({
                 </svg>
               )}
               {getViewModeLabel()}
-            </button>
+            </Button>
             {isEditMode && (
               <IconButton
                 type='button'

@@ -135,34 +135,38 @@ export function TopicSection({
 
           {/* Topic actions */}
           <div className='mt-2 flex items-center gap-3 text-xs'>
-            <button
+            <Button
+              variant='unstyled'
               type='button'
               onClick={() => startReply(topic.id)}
               className='text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'
             >
               回复
-            </button>
+            </Button>
 
             {isAdmin && topic.status !== 'deleted' && (
               <>
                 {topic.status !== 'hidden' ? (
-                  <button
+                  <Button
+                    variant='unstyled'
                     type='button'
                     onClick={() => handleStatusChange(topic.id, 'hidden')}
                     className='text-yellow-600 hover:text-yellow-800 dark:text-yellow-400 dark:hover:text-yellow-200'
                   >
                     隐藏
-                  </button>
+                  </Button>
                 ) : (
-                  <button
+                  <Button
+                    variant='unstyled'
                     type='button'
                     onClick={() => handleStatusChange(topic.id, 'visible')}
                     className='text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-200'
                   >
                     显示
-                  </button>
+                  </Button>
                 )}
-                <button
+                <Button
+                  variant='unstyled'
                   type='button'
                   onClick={() => {
                     if (window.confirm('确定要删除这条评论吗？')) {
@@ -172,7 +176,7 @@ export function TopicSection({
                   className='text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-200'
                 >
                   删除
-                </button>
+                </Button>
               </>
             )}
             {topic.status === 'deleted' && (
@@ -208,14 +212,15 @@ export function TopicSection({
                 <span className='truncate'>
                   回复 {findAuthorInTree(topic, replyTargetId) || '匿名'}
                 </span>
-                <button
+                <Button
+                  variant='unstyled'
                   type='button'
                   onClick={() => setReplyTargetId(null)}
                   className='shrink-0 text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'
                   aria-label='取消回复'
                 >
                   ✕
-                </button>
+                </Button>
               </div>
             )}
 
@@ -296,34 +301,38 @@ function ReplyItem({
 
         {/* Reply actions */}
         <div className='mt-1 flex items-center gap-3 text-xs'>
-          <button
+          <Button
+            variant='unstyled'
             type='button'
             onClick={() => onReply(reply.id)}
             className='text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'
           >
             回复
-          </button>
+          </Button>
 
           {isAdmin && !isDeleted && (
             <>
               {!isHidden ? (
-                <button
+                <Button
+                  variant='unstyled'
                   type='button'
                   onClick={() => onStatusChange(reply.id, 'hidden')}
                   className='text-yellow-600 hover:text-yellow-800 dark:text-yellow-400 dark:hover:text-yellow-200'
                 >
                   隐藏
-                </button>
+                </Button>
               ) : (
-                <button
+                <Button
+                  variant='unstyled'
                   type='button'
                   onClick={() => onStatusChange(reply.id, 'visible')}
                   className='text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-200'
                 >
                   显示
-                </button>
+                </Button>
               )}
-              <button
+              <Button
+                variant='unstyled'
                 type='button'
                 onClick={() => {
                   if (window.confirm('确定要删除这条评论吗？')) {
@@ -333,7 +342,7 @@ function ReplyItem({
                 className='text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-200'
               >
                 删除
-              </button>
+              </Button>
             </>
           )}
           {isDeleted && <span className='text-red-500 dark:text-red-400'>已删除</span>}

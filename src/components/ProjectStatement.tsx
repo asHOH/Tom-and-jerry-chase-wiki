@@ -1,4 +1,5 @@
 import { PROJECT_STATEMENT_COPY } from '@/data/projectStatement';
+import Button from '@/components/ui/Button';
 import CollapseCard from '@/components/ui/CollapseCard';
 import { InlineExternalLink } from '@/components/ui/InlineExternalLink';
 import Tooltip from '@/components/ui/Tooltip';
@@ -80,13 +81,14 @@ export const ProjectStatement = ({ onFeedbackClick }: ProjectStatementProps) => 
           </InlineExternalLink>
           {projectInfo.description.afterRepoLink}
           {onFeedbackClick ? (
-            <button
+            <Button
+              variant='unstyled'
               type='button'
               onClick={onFeedbackClick}
               className='font-inherit cursor-pointer rounded-xs border-none bg-transparent p-0 text-blue-600 underline hover:text-blue-800 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none dark:text-blue-400 dark:hover:text-blue-300'
             >
               {projectInfo.description.feedbackLinkText}
-            </button>
+            </Button>
           ) : (
             projectInfo.description.feedbackLinkText
           )}

@@ -1,9 +1,8 @@
 'use client';
 
-import { m } from 'motion/react';
-
 import { cn } from '@/lib/design';
 import { useCharacterNavigation } from '@/features/characters/hooks/useCharacterNavigation';
+import MotionButton from '@/components/ui/MotionButton';
 import { ChevronLeftIcon, ChevronRightIcon } from '@/components/icons/CommonIcons';
 
 interface CharacterNavigationButtonsProps {
@@ -20,7 +19,8 @@ export default function CharacterNavigationButtons({
 
   return (
     <div className={cn('flex items-center justify-between gap-4', className)}>
-      <m.button
+      <MotionButton
+        variant='unstyled'
         onClick={navigateToPrevious}
         disabled={!previousId}
         className={cn(
@@ -34,13 +34,14 @@ export default function CharacterNavigationButtons({
       >
         <ChevronLeftIcon className='h-4 w-4' />
         <span className='hidden sm:inline'>{previousId ?? '上一位'}</span>
-      </m.button>
+      </MotionButton>
 
       <div className='px-2 text-sm text-gray-600 dark:text-gray-400'>
         {currentIndex + 1} / {totalCharacters}
       </div>
 
-      <m.button
+      <MotionButton
+        variant='unstyled'
         onClick={navigateToNext}
         disabled={!nextId}
         className={cn(
@@ -54,7 +55,7 @@ export default function CharacterNavigationButtons({
       >
         <span className='hidden sm:inline'>{nextId ?? '下一位'}</span>
         <ChevronRightIcon className='h-4 w-4' />
-      </m.button>
+      </MotionButton>
     </div>
   );
 }

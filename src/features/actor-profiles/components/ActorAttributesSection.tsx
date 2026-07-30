@@ -6,6 +6,7 @@ import { cn } from '@/lib/design';
 import { useAppContext } from '@/context/AppContext';
 import type { FactionId } from '@/data/types';
 import type { RankableProperty } from '@/features/characters/utils/ranking';
+import Button from '@/components/ui/Button';
 import Tooltip from '@/components/ui/Tooltip';
 import { ChevronDownIcon } from '@/components/icons/CommonIcons';
 import Link from '@/components/Link';
@@ -398,7 +399,8 @@ export default function ActorAttributesSection({
       {hasMore ? (
         <div className='flex items-center justify-center gap-4 pt-1'>
           <div className='flex-1 border-t border-gray-200 dark:border-gray-700' />
-          <button
+          <Button
+            variant='unstyled'
             type='button'
             onClick={() => setExpanded((current) => !current)}
             aria-controls={contentId}
@@ -412,7 +414,7 @@ export default function ActorAttributesSection({
                 expanded && 'rotate-180'
               )}
             />
-          </button>
+          </Button>
           <div className='flex-1 border-t border-gray-200 dark:border-gray-700' />
         </div>
       ) : null}

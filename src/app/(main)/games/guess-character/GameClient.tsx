@@ -16,6 +16,7 @@ import { catCharacterIds, mouseCharacterIds } from '@/features/characters/data/c
 import GameLayout from '@/features/games/components/GameLayout';
 import StreakCounter from '@/features/games/components/StreakCounter';
 import { getRelationsBySubject } from '@/features/shared/traits/relationIndex';
+import Button from '@/components/ui/Button';
 
 import CluePanel, { type ClueEntry } from './components/CluePanel';
 import GuessHistory from './components/GuessHistory';
@@ -366,7 +367,8 @@ export default function GuessCharacterClient({ description, characters: charsSna
     <GameLayout title='猜角色' description={description}>
       {/* Mode toggle */}
       <div className='flex justify-center gap-3'>
-        <button
+        <Button
+          variant='unstyled'
           onClick={() => {
             setMode('daily');
             setShowResult(todayPlayed);
@@ -391,8 +393,9 @@ export default function GuessCharacterClient({ description, characters: charsSna
             />
           </svg>
           每日挑战
-        </button>
-        <button
+        </Button>
+        <Button
+          variant='unstyled'
           onClick={switchToPractice}
           className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
             mode === 'practice'
@@ -414,7 +417,7 @@ export default function GuessCharacterClient({ description, characters: charsSna
             />
           </svg>
           无限练习
-        </button>
+        </Button>
       </div>
 
       {/* Daily info */}

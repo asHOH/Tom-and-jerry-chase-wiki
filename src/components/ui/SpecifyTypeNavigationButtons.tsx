@@ -1,9 +1,8 @@
 'use client';
 
-import { m } from 'motion/react';
-
 import { cn } from '@/lib/design';
 import { useSpecifyTypeNavigation } from '@/hooks/useSpecifyTypeNavigation';
+import MotionButton from '@/components/ui/MotionButton';
 import { ChevronLeftIcon, ChevronRightIcon } from '@/components/icons/CommonIcons';
 
 type typelist =
@@ -48,7 +47,8 @@ export default function SpecifyTypeNavigationButtons({
   return (
     <div className={cn('flex items-center justify-between gap-3', className)}>
       {/* Previous Target Button */}
-      <m.button
+      <MotionButton
+        variant='unstyled'
         onClick={navigateToPrevious}
         disabled={!previousTarget}
         className={cn(
@@ -60,7 +60,7 @@ export default function SpecifyTypeNavigationButtons({
       >
         <ChevronLeftIcon className='h-4 w-4' />
         <span className='inline'>{previousTarget?.target ?? ''}</span>
-      </m.button>
+      </MotionButton>
 
       {/* Target Counter */}
       <div className='flex items-baseline gap-1 text-sm text-gray-600 dark:text-gray-400'>
@@ -69,7 +69,8 @@ export default function SpecifyTypeNavigationButtons({
       </div>
 
       {/* Next Target Button */}
-      <m.button
+      <MotionButton
+        variant='unstyled'
         onClick={navigateToNext}
         disabled={!nextTarget}
         className={cn(baseButtonClasses, nextTarget ? enabledButtonClasses : disabledButtonClasses)}
@@ -78,7 +79,7 @@ export default function SpecifyTypeNavigationButtons({
       >
         <span className='inline'>{nextTarget?.target ?? ''}</span>
         <ChevronRightIcon className='h-4 w-4' />
-      </m.button>
+      </MotionButton>
     </div>
   );
 }

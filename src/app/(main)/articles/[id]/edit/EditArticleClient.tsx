@@ -17,6 +17,7 @@ import { normalizeHeadingLevels } from '@/lib/richTextUtils';
 import { useUser } from '@/hooks/useUser';
 import { useToast } from '@/context/ToastContext';
 import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
+import Button from '@/components/ui/Button';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import Notice from '@/components/ui/Notice';
 import PageHeader from '@/components/ui/PageHeader';
@@ -306,7 +307,8 @@ const EditArticleClient: React.FC<EditArticleClientProps> = ({ characterOptions 
             </div>
 
             <div className='grid gap-3 md:grid-cols-2'>
-              <button
+              <Button
+                variant='unstyled'
                 type='button'
                 onClick={() => handleSourceChange('approved')}
                 className={cn(
@@ -322,9 +324,10 @@ const EditArticleClient: React.FC<EditArticleClientProps> = ({ characterOptions 
                 <div className='mt-1 text-xs text-gray-600 dark:text-gray-400'>
                   更新时间: {formatArticleDate(approvedSource.created_at)}
                 </div>
-              </button>
+              </Button>
 
-              <button
+              <Button
+                variant='unstyled'
                 type='button'
                 onClick={() => handleSourceChange('pending_mine')}
                 className={cn(
@@ -345,7 +348,7 @@ const EditArticleClient: React.FC<EditArticleClientProps> = ({ characterOptions 
                     提交说明: {pendingSource.commit_message}
                   </div>
                 )}
-              </button>
+              </Button>
             </div>
           </Notice>
         </div>

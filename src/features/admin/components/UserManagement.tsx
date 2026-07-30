@@ -109,9 +109,13 @@ const UserManagement: React.FC<UserManagementProps> = ({
           )}
         >
           {message.text}
-          <button onClick={() => setMessage(null)} className='ml-3 text-sm underline'>
+          <Button
+            variant='unstyled'
+            onClick={() => setMessage(null)}
+            className='ml-3 text-sm underline'
+          >
             关闭
-          </button>
+          </Button>
         </div>
       )}
 
@@ -208,7 +212,8 @@ const UserManagement: React.FC<UserManagementProps> = ({
                   </td>
                   <td className='px-4 py-3 text-sm text-gray-600 dark:text-gray-300'>
                     <div className='w-52'>
-                      <button
+                      <Button
+                        variant='unstyled'
                         type='button'
                         aria-expanded={openGroupUserId === user.id}
                         onClick={() =>
@@ -237,7 +242,7 @@ const UserManagement: React.FC<UserManagementProps> = ({
                             openGroupUserId === user.id && 'rotate-180'
                           )}
                         />
-                      </button>
+                      </Button>
                       {openGroupUserId === user.id && (
                         <div className='border-border bg-surface-raised text-foreground mt-1 max-h-64 w-full overflow-y-auto rounded-md border p-1 shadow-lg'>
                           {groups.map((group) => {

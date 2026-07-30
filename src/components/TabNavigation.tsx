@@ -18,6 +18,8 @@ import { useNavigationTabs } from '@/hooks/useNavigationTabs';
 import { useNotificationCount } from '@/hooks/useNotificationCount';
 import { useUser } from '@/hooks/useUser';
 import { isNavGroup, NavEntry, NavItem } from '@/constants/navigation';
+import Button from '@/components/ui/Button';
+import MotionButton from '@/components/ui/MotionButton';
 import ChangePasswordDialog from '@/components/ChangePasswordDialog';
 import DetailViewToggle from '@/components/DetailViewToggle';
 import { HomeIcon, UserCircleIcon } from '@/components/icons/CommonIcons';
@@ -328,7 +330,8 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
               return (
                 <div key={entry.id} className='relative' data-group-dropdown-root>
                   <Tooltip content={entry.label} className='border-none' disabled={isMd}>
-                    <m.button
+                    <MotionButton
+                      variant='unstyled'
                       type='button'
                       aria-label={entry.label}
                       aria-expanded={isGroupOpen}
@@ -356,7 +359,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                       )}
                       <span className='hidden md:inline'>{entry.label}</span>
                       <span className='sr-only md:hidden'>{entry.label}</span>
-                    </m.button>
+                    </MotionButton>
                   </Tooltip>
                   <AnimatePresence initial={false}>
                     {isGroupOpen && (
@@ -439,7 +442,8 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
           })}
           {!!overflowTabs.length && (
             <div className='relative' data-overflow-root>
-              <m.button
+              <MotionButton
+                variant='unstyled'
                 type='button'
                 aria-label='更多分类'
                 className={getNavigationButtonClasses(false, overflowOpen, true)}
@@ -451,7 +455,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                 whileTap={{ scale: 0.95 }}
               >
                 ⋮
-              </m.button>
+              </MotionButton>
               <AnimatePresence initial={false}>
                 {overflowOpen && (
                   <m.div
@@ -520,7 +524,8 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                 content={hasActiveBlock ? '账号受限：点击查看详情' : '用户设置'}
                 className='border-none'
               >
-                <m.button
+                <MotionButton
+                  variant='unstyled'
                   type='button'
                   aria-label={userSettingsLabel}
                   className={cn(
@@ -551,7 +556,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                       </span>
                     )}
                   </span>
-                </m.button>
+                </MotionButton>
               </Tooltip>
               <AnimatePresence initial={false}>
                 {userDropdownOpen && (
@@ -608,7 +613,8 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                         </Link>
                       </li>
                       <li>
-                        <button
+                        <Button
+                          variant='unstyled'
                           type='button'
                           className='w-full cursor-pointer px-4 py-2 text-left text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700'
                           onClick={() => {
@@ -617,7 +623,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                           }}
                         >
                           修改密码
-                        </button>
+                        </Button>
                       </li>
                       {canAccessAdmin && (
                         <li>
@@ -635,7 +641,8 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                         </li>
                       )}
                       <li>
-                        <button
+                        <Button
+                          variant='unstyled'
                           type='button'
                           className={cn(
                             'w-full cursor-pointer rounded-b-md px-4 py-2 text-left text-sm text-gray-800 dark:text-gray-200',
@@ -647,7 +654,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                           disabled={signingOut}
                         >
                           {signingOut ? '正在退出…' : '退出登录'}
-                        </button>
+                        </Button>
                       </li>
                     </ul>
                   </m.div>

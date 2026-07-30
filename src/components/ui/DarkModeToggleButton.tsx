@@ -1,12 +1,12 @@
-import { m } from 'motion/react';
-
 import { getNavigationButtonClasses } from '@/lib/design';
 import { useDarkMode } from '@/context/DarkModeContext';
+import MotionButton from '@/components/ui/MotionButton';
 
 export function DarkModeToggleButton() {
   const [, toggleDarkMode] = useDarkMode(); // Avoid SSR/client mismatch by not branching on theme
   return (
-    <m.button
+    <MotionButton
+      variant='unstyled'
       type='button'
       onClick={toggleDarkMode}
       className={getNavigationButtonClasses(false, false, true)}
@@ -42,6 +42,6 @@ export function DarkModeToggleButton() {
           d='M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z'
         />
       </svg>
-    </m.button>
+    </MotionButton>
   );
 }

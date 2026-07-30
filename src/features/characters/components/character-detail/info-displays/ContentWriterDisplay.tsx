@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { cn } from '@/lib/design';
 import type { ContentEditor } from '@/lib/types';
 import { contributors } from '@/data/contributors';
+import Button from '@/components/ui/Button';
 import { getContentWritersByCharacter } from '@/constants';
 
 interface ContentWriterDisplayProps {
@@ -78,7 +79,8 @@ export default function ContentWriterDisplay({
           })}
         </span>
         {hasExtraEditors && !isExpanded && (
-          <button
+          <Button
+            variant='unstyled'
             type='button'
             onClick={() => setIsExpanded((expanded) => !expanded)}
             className='ml-1 cursor-pointer transition-colors hover:text-gray-600 dark:hover:text-gray-300'
@@ -86,7 +88,7 @@ export default function ContentWriterDisplay({
             aria-label='展开文案编辑者'
           >
             、...
-          </button>
+          </Button>
         )}
       </div>
       {isExpanded && editorLine}

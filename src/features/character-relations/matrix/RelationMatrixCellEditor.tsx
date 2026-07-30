@@ -195,7 +195,8 @@ export default function RelationMatrixCellEditor({
             { value: false, label: '主要' },
             { value: true, label: '次要' },
           ].map((option) => (
-            <button
+            <Button
+              variant='unstyled'
               key={option.label}
               type='button'
               aria-pressed={isMinor === option.value}
@@ -208,7 +209,7 @@ export default function RelationMatrixCellEditor({
               )}
             >
               {option.label}
-            </button>
+            </Button>
           ))}
         </div>
 

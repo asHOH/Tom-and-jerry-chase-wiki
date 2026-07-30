@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import { cn } from '@/lib/design';
+import Button from '@/components/ui/Button';
 import { env } from '@/env';
 
 import {
@@ -94,7 +95,8 @@ const ToolbarButton = React.memo(function ToolbarButton({
   mode: EditorViewMode;
 }) {
   const button = (
-    <button
+    <Button
+      variant='unstyled'
       type='button'
       onClick={onClick}
       disabled={disabled || mode !== 'rich'}
@@ -109,7 +111,7 @@ const ToolbarButton = React.memo(function ToolbarButton({
       )}
     >
       {children}
-    </button>
+    </Button>
   );
 
   if (title) {
@@ -263,7 +265,8 @@ const Toolbar = React.memo(function Toolbar({
             表格
           </ToolbarButton>
           <Tooltip content={showTableTools ? '收起表格工具' : '展开表格工具'} asChild>
-            <button
+            <Button
+              variant='unstyled'
               type='button'
               onClick={() => setShowTableTools((v) => !v)}
               aria-pressed={showTableTools}
@@ -286,7 +289,7 @@ const Toolbar = React.memo(function Toolbar({
               >
                 <path d='M7.21 14.77a.75.75 0 01.02-1.06L10.94 10 7.23 6.29a.75.75 0 111.06-1.06l4.24 4.24a.75.75 0 010 1.06L8.29 14.77a.75.75 0 01-1.08-.02z' />
               </svg>
-            </button>
+            </Button>
           </Tooltip>
           {showTableTools && (
             <>

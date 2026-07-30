@@ -8,6 +8,7 @@ import { requireActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
 import { CATEGORY_HINTS } from '@/lib/types';
 import { useEditMode } from '@/context/EditModeContext';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
+import Button from '@/components/ui/Button';
 
 import {
   deletePairedBraceAtCaret,
@@ -662,7 +663,8 @@ function useInlineEditableContent(opts: {
           {autocompleteItems.map((candidate, index) => {
             const isActive = index === activeAutocompleteIndex;
             return (
-              <button
+              <Button
+                variant='unstyled'
                 key={`${candidate.source}-${candidate.label}`}
                 ref={(node) => {
                   autocompleteItemRefs.current[index] = node;
@@ -683,7 +685,7 @@ function useInlineEditableContent(opts: {
                 <span className='text-muted-foreground ml-2 shrink-0 text-[11px]'>
                   {candidate.source}
                 </span>
-              </button>
+              </Button>
             );
           })}
         </div>,

@@ -3,6 +3,7 @@
 import { cn } from '@/lib/design';
 import { useFeatureDiscovery } from '@/hooks/useFeatureDiscovery';
 import { useAppContext } from '@/context/AppContext';
+import Button from '@/components/ui/Button';
 
 import AttentionDot from './ui/AttentionDot';
 import Tooltip from './ui/Tooltip';
@@ -15,7 +16,8 @@ export default function DetailViewToggle() {
 
   return (
     <Tooltip content={toggleLabel} className='border-none'>
-      <button
+      <Button
+        variant='unstyled'
         type='button'
         aria-pressed={isDetailedView}
         aria-label={toggleLabel}
@@ -67,7 +69,7 @@ export default function DetailViewToggle() {
           <span className='lg:hidden'>详</span>
           <span className='hidden lg:inline'>详细</span>
         </div>
-      </button>
+      </Button>
     </Tooltip>
   );
 }

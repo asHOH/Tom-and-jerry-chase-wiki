@@ -5,6 +5,7 @@ import { useState } from 'react';
 
 import { cn } from '@/lib/design';
 import { SingleItem } from '@/data/types';
+import Button from '@/components/ui/Button';
 import SingleItemButton from '@/components/ui/SingleItemButton';
 
 // 箭头SVG组件 - 与原文件保持一致
@@ -85,14 +86,15 @@ export default function CollapsibleItems({
           <div className='flex flex-wrap items-center gap-1'>
             {firstItem !== undefined ? <SingleItemButton singleItem={firstItem} /> : null}
             {`…(${itemsArray.length})`}
-            <button
+            <Button
+              variant='unstyled'
               onClick={() => setExpanded(!expanded)}
               className='ml-1 flex items-center justify-center rounded-full p-1.5 transition-all duration-300 hover:bg-gray-100 focus:ring-2 focus:ring-gray-300 focus:outline-none dark:hover:bg-gray-800 dark:focus:ring-gray-600'
               aria-label={expanded ? `折叠${label}列表` : `展开${label}列表`}
               type='button'
             >
               <ArrowIcon expanded={expanded} />
-            </button>
+            </Button>
           </div>
         </div>
 

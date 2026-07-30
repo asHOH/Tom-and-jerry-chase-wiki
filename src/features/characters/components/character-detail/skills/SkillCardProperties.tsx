@@ -18,6 +18,7 @@ import {
 } from '@/features/characters/utils/skillUsage';
 import TextWithItemKeyTooltips from '@/features/shared/components/TextWithItemKeyTooltips';
 import AddAliasButton from '@/features/shared/detail-view/AddAliasButton';
+import Button from '@/components/ui/Button';
 import { editable } from '@/components/ui/editable';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
@@ -67,14 +68,15 @@ function PropertyContainer({
 function AddPartButton({ skillRef }: { skillRef: Skill }) {
   const isMultiPart = 'parts' in skillRef;
   return (
-    <button
+    <Button
+      variant='unstyled'
       type='button'
       onClick={() => (isMultiPart ? addSkillPart(skillRef) : convertSkillToParts(skillRef))}
       className='mt-2 inline-flex items-center gap-1 rounded border border-dashed border-blue-400 px-2 py-1 text-xs text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-950/30'
     >
       <PlusIcon className='h-3 w-3' aria-hidden='true' />
       {isMultiPart ? '添加技能段' : '转换为多段技能'}
-    </button>
+    </Button>
   );
 }
 

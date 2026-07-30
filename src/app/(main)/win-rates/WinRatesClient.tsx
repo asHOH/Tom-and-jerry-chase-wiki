@@ -8,6 +8,7 @@ import { useFilterState } from '@/lib/filterUtils';
 import { useDarkMode } from '@/context/DarkModeContext';
 import type { FactionId } from '@/data/types';
 import { CharacterTable, winRatesData } from '@/data/winRates';
+import Button from '@/components/ui/Button';
 import FilterRow from '@/components/ui/FilterRow';
 import PageHeader from '@/components/ui/PageHeader';
 import PageShell from '@/components/ui/PageShell';
@@ -410,7 +411,8 @@ export default function WinRatesClient({ description, characterFactions }: WinRa
           />
 
           <div className='mt-2 flex justify-center md:mt-4'>
-            <button
+            <Button
+              variant='unstyled'
               type='button'
               onClick={handleExportCsv}
               disabled={displayRows.length === 0}
@@ -423,7 +425,7 @@ export default function WinRatesClient({ description, characterFactions }: WinRa
               aria-label='导出当前表格为 CSV'
             >
               导出 CSV
-            </button>
+            </Button>
           </div>
         </div>
       </PageHeader>

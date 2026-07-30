@@ -6,6 +6,7 @@ import { cn } from '@/lib/design';
 import { useWikiHistory } from '@/hooks/useWikiHistory';
 import { usePublishedEntityHistory } from '@/context/PublishedEntityHistoryContext';
 import { SingleItem, WikiChangeType } from '@/data/types';
+import Button from '@/components/ui/Button';
 import { ChevronDownIcon } from '@/components/icons/CommonIcons';
 
 function formatHistoryChangeText(type: WikiChangeType, description: string) {
@@ -65,7 +66,8 @@ export default function SingleItemWikiHistoryDisplay({ singleItem }: { singleIte
 
   return (
     <div className='mt-2 text-xs text-gray-400 dark:text-gray-500'>
-      <button
+      <Button
+        variant='unstyled'
         type='button'
         onClick={() => setIsExpanded(!isExpanded)}
         className='flex items-center gap-1 transition-colors hover:text-gray-600 dark:hover:text-gray-300'
@@ -78,7 +80,7 @@ export default function SingleItemWikiHistoryDisplay({ singleItem }: { singleIte
             isExpanded && 'rotate-180'
           )}
         />
-      </button>
+      </Button>
 
       {isExpanded && (
         <ul className='mt-2 space-y-1 pl-2'>

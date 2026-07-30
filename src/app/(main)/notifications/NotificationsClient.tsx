@@ -247,7 +247,8 @@ export default function NotificationsClient() {
             <div className='flex flex-wrap items-center justify-between gap-3'>
               <div className='inline-flex rounded-lg border border-gray-200 bg-gray-50 p-1 dark:border-gray-600 dark:bg-gray-900/60'>
                 {(['all', 'unread'] as const).map((value) => (
-                  <button
+                  <Button
+                    variant='unstyled'
                     key={value}
                     type='button'
                     aria-pressed={filter === value}
@@ -260,7 +261,7 @@ export default function NotificationsClient() {
                     onClick={() => setFilter(value)}
                   >
                     {value === 'all' ? '全部' : '未读'}
-                  </button>
+                  </Button>
                 ))}
               </div>
               {unreadCount > 0 && (
@@ -358,14 +359,15 @@ export default function NotificationsClient() {
                     {content}
                   </Link>
                 ) : (
-                  <button
+                  <Button
+                    variant='unstyled'
                     key={notification.id}
                     type='button'
                     className='block w-full rounded-lg text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500'
                     onClick={() => void markRead(notification.id)}
                   >
                     {content}
-                  </button>
+                  </Button>
                 );
               })}
             </div>

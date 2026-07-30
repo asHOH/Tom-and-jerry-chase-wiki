@@ -3,6 +3,7 @@
 import React from 'react';
 
 import { cn } from '@/lib/design';
+import Button from '@/components/ui/Button';
 
 interface ArticlePaginationProps {
   currentPage: number;
@@ -45,7 +46,8 @@ const ArticlePagination: React.FC<ArticlePaginationProps> = ({
       </div>
 
       <div className='flex items-center gap-2'>
-        <button
+        <Button
+          variant='unstyled'
           type='button'
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage <= 1}
@@ -56,11 +58,12 @@ const ArticlePagination: React.FC<ArticlePaginationProps> = ({
           )}
         >
           上一页
-        </button>
+        </Button>
 
         {startPage > 1 && (
           <>
-            <button
+            <Button
+              variant='unstyled'
               type='button'
               onClick={() => handlePageChange(1)}
               aria-label='第 1 页'
@@ -70,7 +73,7 @@ const ArticlePagination: React.FC<ArticlePaginationProps> = ({
               )}
             >
               1
-            </button>
+            </Button>
             {startPage > 2 && (
               <span className='px-2 text-gray-500' aria-hidden='true'>
                 ...
@@ -80,7 +83,8 @@ const ArticlePagination: React.FC<ArticlePaginationProps> = ({
         )}
 
         {pages.map((page) => (
-          <button
+          <Button
+            variant='unstyled'
             type='button'
             key={page}
             onClick={() => handlePageChange(page)}
@@ -94,7 +98,7 @@ const ArticlePagination: React.FC<ArticlePaginationProps> = ({
             )}
           >
             {page}
-          </button>
+          </Button>
         ))}
 
         {endPage < clientTotalPages && (
@@ -104,7 +108,8 @@ const ArticlePagination: React.FC<ArticlePaginationProps> = ({
                 ...
               </span>
             )}
-            <button
+            <Button
+              variant='unstyled'
               type='button'
               onClick={() => handlePageChange(clientTotalPages)}
               aria-label={`第 ${clientTotalPages} 页`}
@@ -114,11 +119,12 @@ const ArticlePagination: React.FC<ArticlePaginationProps> = ({
               )}
             >
               {clientTotalPages}
-            </button>
+            </Button>
           </>
         )}
 
-        <button
+        <Button
+          variant='unstyled'
           type='button'
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage >= clientTotalPages}
@@ -129,7 +135,7 @@ const ArticlePagination: React.FC<ArticlePaginationProps> = ({
           )}
         >
           下一页
-        </button>
+        </Button>
       </div>
 
       {/* Mobile swipe hint */}

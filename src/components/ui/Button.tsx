@@ -10,8 +10,10 @@ import {
 } from '@/lib/design';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
-type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: ActionButtonVariant;
+export type ButtonVariant = ActionButtonVariant | 'unstyled';
+
+export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
+  variant?: ButtonVariant;
   size?: ActionButtonSize;
   fullWidth?: boolean;
   loading?: boolean;
@@ -38,10 +40,10 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref
   ) => {
-    const computedClassName = cn(
-      getActionButtonClasses(variant, size, { fullWidth, loading }),
-      className
-    );
+    const computedClassName =
+      variant === 'unstyled'
+        ? className
+        : cn(getActionButtonClasses(variant, size, { fullWidth, loading }), className);
 
     return (
       <button

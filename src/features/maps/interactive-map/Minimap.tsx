@@ -3,6 +3,7 @@
 import { useEffect, useRef, type CSSProperties, type MouseEvent as ReactMouseEvent } from 'react';
 
 import type { InteractiveMapConfig, MapCoordinate, MapPointCategory } from '@/data/types';
+import Button from '@/components/ui/Button';
 import Image from '@/components/Image';
 
 import { CATEGORY_ICONS } from './constants';
@@ -180,7 +181,8 @@ function MinimapDiagram({
         const pointClassName = `absolute -translate-x-1/2 -translate-y-1/2 ${point.isRandomCandidate ? 'opacity-50' : ''} ${interactive ? 'cursor-pointer appearance-none border-0 bg-transparent p-0' : 'pointer-events-none'}`;
 
         return interactive ? (
-          <button
+          <Button
+            variant='unstyled'
             type='button'
             key={pointIndex}
             className={pointClassName}
@@ -189,7 +191,7 @@ function MinimapDiagram({
             onClick={(event) => handlePointClick(event, point.position)}
           >
             {pointChildren}
-          </button>
+          </Button>
         ) : (
           <span key={pointIndex} className={pointClassName} style={pointStyle} aria-hidden='true'>
             {pointChildren}
@@ -250,7 +252,8 @@ export default function Minimap({
           />
         </div>
       ) : (
-        <button
+        <Button
+          variant='unstyled'
           type='button'
           className='relative h-full w-full text-left'
           aria-label='展开小地图'
@@ -267,7 +270,7 @@ export default function Minimap({
             highlightedPointIds={highlightedPointIds}
             interactive={false}
           />
-        </button>
+        </Button>
       )}
     </div>
   );
@@ -282,7 +285,8 @@ export function MinimapVisibilityButton({ isVisible, onToggle }: MinimapVisibili
   const label = isVisible ? '隐藏小地图' : '显示小地图';
 
   return (
-    <button
+    <Button
+      variant='unstyled'
       type='button'
       className='absolute top-[76px] left-[10px] z-500 flex size-[30px] items-center justify-center rounded-sm border-2 border-black/20 bg-white text-slate-800 shadow-sm hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-500'
       aria-label={label}
@@ -310,6 +314,6 @@ export function MinimapVisibilityButton({ isVisible, onToggle }: MinimapVisibili
           />
         )}
       </svg>
-    </button>
+    </Button>
   );
 }

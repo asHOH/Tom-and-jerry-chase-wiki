@@ -48,6 +48,8 @@ import type { EditorMode, InteractiveMapProps } from './types';
 
 import 'leaflet/dist/leaflet.css';
 
+import Button from '@/components/ui/Button';
+
 const INTERACTIVE_MAP_ZOOM_STEP = 2 / 3;
 
 export default function InteractiveMap({
@@ -501,7 +503,8 @@ export default function InteractiveMap({
           sizes='100vw'
           className='object-contain'
         />
-        <button
+        <Button
+          variant='unstyled'
           type='button'
           className='absolute right-3 bottom-3 rounded bg-slate-900/90 px-3 py-2 text-sm text-white'
           onClick={() => {
@@ -510,7 +513,7 @@ export default function InteractiveMap({
           }}
         >
           重试交互地图
-        </button>
+        </Button>
       </div>
     );
   }
@@ -747,7 +750,8 @@ export default function InteractiveMap({
 
       {!alwaysFullscreen && (
         <div className='absolute top-3 right-3 z-500 flex gap-2'>
-          <button
+          <Button
+            variant='unstyled'
             type='button'
             className='rounded-md bg-slate-900/90 px-3 py-2 text-sm text-white shadow hover:bg-slate-800'
             onClick={() => {
@@ -764,7 +768,7 @@ export default function InteractiveMap({
             }}
           >
             {isFullscreen ? '退出全屏' : '全屏地图'}
-          </button>
+          </Button>
         </div>
       )}
 
@@ -908,13 +912,23 @@ export default function InteractiveMap({
       {tileFailed && (
         <div className='absolute inset-x-4 bottom-4 z-600 rounded-lg bg-red-950/95 p-3 text-center text-sm text-white shadow-xl'>
           部分地图瓦片加载失败，请检查网络后重试。
-          <button type='button' className='ml-3 underline' onClick={() => window.location.reload()}>
+          <Button
+            variant='unstyled'
+            type='button'
+            className='ml-3 underline'
+            onClick={() => window.location.reload()}
+          >
             重新加载
-          </button>
+          </Button>
           {fallbackImageUrl && (
-            <button type='button' className='ml-3 underline' onClick={() => setUseFallback(true)}>
+            <Button
+              variant='unstyled'
+              type='button'
+              className='ml-3 underline'
+              onClick={() => setUseFallback(true)}
+            >
               使用静态预览
-            </button>
+            </Button>
           )}
         </div>
       )}

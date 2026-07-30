@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { cn } from '@/lib/design';
+import Button from '@/components/ui/Button';
 import { ChevronDownIcon } from '@/components/icons/CommonIcons';
 
 type CollapseCardProps = {
@@ -94,7 +95,8 @@ export default function CollapseCard({
 
   return (
     <div className='overflow-hidden'>
-      <button
+      <Button
+        variant='unstyled'
         type='button'
         onClick={handleToggle}
         className={cn(
@@ -113,7 +115,7 @@ export default function CollapseCard({
           )}
           size={width}
         />
-      </button>
+      </Button>
 
       {/* 动画容器 */}
       <div

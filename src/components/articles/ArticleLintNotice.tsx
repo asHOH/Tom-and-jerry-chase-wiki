@@ -1,5 +1,6 @@
 import React from 'react';
 
+import Button from '@/components/ui/Button';
 import Notice from '@/components/ui/Notice';
 
 type ArticleLintSeverity = 'error' | 'warning';
@@ -41,13 +42,14 @@ export const ArticleLintNotice: React.FC<ArticleLintNoticeProps> = ({ results, o
                     <span className='flex-1'>{item.message}</span>
                     {(item.id === 'no-h1' || item.id.startsWith('heading-order')) &&
                       onFixHeadings && (
-                        <button
+                        <Button
+                          variant='unstyled'
                           type='button'
                           onClick={onFixHeadings}
                           className='shrink-0 rounded border border-current px-2 py-1 text-xs font-semibold transition hover:bg-white/20'
                         >
                           一键修复
-                        </button>
+                        </Button>
                       )}
                   </div>
                 </div>

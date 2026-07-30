@@ -2,7 +2,7 @@
  * @jest-environment node
  */
 
-import { type ReactNode } from 'react';
+import { type ComponentType, type ReactNode } from 'react';
 import { renderToString } from 'react-dom/server';
 
 import CharacterDetails from './CharacterDetails';
@@ -14,6 +14,7 @@ jest.mock('motion/react', () => {
     AnimatePresence: ({ children }: { children: ReactNode }) => <>{children}</>,
     m: {
       button: ({ children }: { children: ReactNode }) => <button type='button'>{children}</button>,
+      create: (Component: ComponentType) => Component,
     },
   };
 });

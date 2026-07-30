@@ -1,7 +1,8 @@
 import React, { ReactNode, useId } from 'react';
-import { m, MotionStyle } from 'motion/react';
+import type { MotionStyle } from 'motion/react';
 
 import { cn, getFilterButtonActiveToneClasses, type FilterButtonTone } from '@/lib/design';
+import MotionButton from '@/components/ui/MotionButton';
 
 import FilterLabel from './FilterLabel';
 
@@ -82,7 +83,8 @@ export default function FilterRow<T extends string | number>(props: FilterRowPro
               : 'hover:text-gray-900 dark:hover:text-gray-100';
             const labelNode = getOptionLabel ? getOptionLabel(opt as T, active) : String(opt);
             const button = (
-              <m.button
+              <MotionButton
+                variant='unstyled'
                 key={String(opt)}
                 type='button'
                 aria-pressed={active}
@@ -102,7 +104,7 @@ export default function FilterRow<T extends string | number>(props: FilterRowPro
                 whileTap={{ scale: 0.95 }}
               >
                 {labelNode}
-              </m.button>
+              </MotionButton>
             );
             return renderOption ? renderOption(opt as T, button) : button;
           })}

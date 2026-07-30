@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 
 import { cn } from '@/lib/design';
 import { DocPage } from '@/features/articles/utils/docs';
+import Button from '@/components/ui/Button';
 import { ChevronLeftIcon, ChevronRightIcon, CloseIcon } from '@/components/icons/CommonIcons';
 import Link from '@/components/Link';
 
@@ -23,7 +24,8 @@ export default function DocsSidebar({ docPages }: DocsSidebarProps) {
   return (
     <>
       {/* Mobile menu button */}
-      <button
+      <Button
+        variant='unstyled'
         onClick={toggleSidebar}
         className='border-border bg-surface-raised text-foreground fixed top-4 left-4 z-50 rounded-md border p-2 shadow-md lg:hidden'
         aria-label='Toggle sidebar'
@@ -45,7 +47,7 @@ export default function DocsSidebar({ docPages }: DocsSidebarProps) {
             />
           </svg>
         )}
-      </button>
+      </Button>
 
       {/* Overlay for mobile */}
       {isOpen && (
@@ -75,7 +77,8 @@ export default function DocsSidebar({ docPages }: DocsSidebarProps) {
             )}
 
             {/* Desktop collapse button */}
-            <button
+            <Button
+              variant='unstyled'
               onClick={toggleCollapse}
               className={cn(
                 'absolute top-6 right-4 hidden rounded-md p-1 text-gray-400 transition-colors hover:text-gray-600 lg:flex dark:hover:text-gray-300',
@@ -88,7 +91,7 @@ export default function DocsSidebar({ docPages }: DocsSidebarProps) {
               ) : (
                 <ChevronLeftIcon className='h-4 w-4' />
               )}
-            </button>
+            </Button>
           </div>
 
           {/* Navigation */}

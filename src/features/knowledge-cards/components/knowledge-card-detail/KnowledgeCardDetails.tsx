@@ -19,6 +19,7 @@ import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
 import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';
 import DetailTextSection from '@/features/shared/detail-view/DetailTextSection';
 import DetailTraitsCard from '@/features/shared/detail-view/DetailTraitsCard';
+import Button from '@/components/ui/Button';
 import { editable } from '@/components/ui/editable';
 import Image from '@/components/Image';
 
@@ -124,7 +125,8 @@ export default function KnowledgeCardDetails({
           }
           headerContent={
             fromCharacter ? (
-              <button
+              <Button
+                variant='unstyled'
                 type='button'
                 aria-label={`返回 ${fromCharacter.id}`}
                 onClick={() => handleSelectCharacter(fromCharacterId!)}
@@ -140,7 +142,7 @@ export default function KnowledgeCardDetails({
                     className='h-10 w-auto rounded-full object-cover'
                   />
                 )}
-              </button>
+              </Button>
             ) : undefined
           }
         >

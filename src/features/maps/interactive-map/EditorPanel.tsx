@@ -8,6 +8,7 @@ import type {
   MapPointCategory,
   SingleItemOrGroup,
 } from '@/data/types';
+import Button from '@/components/ui/Button';
 
 import { CATEGORY_ICONS } from './constants';
 import { ALWAYS_VISIBLE_CATEGORIES, MAP_CATEGORY_LABELS } from './mapUtils';
@@ -57,55 +58,65 @@ export default function EditorPanel(props: EditorPanelProps) {
       <div className='mb-3 flex items-center justify-between'>
         <strong>地图标注</strong>
         <div className='flex gap-1'>
-          <button
+          <Button
+            variant='unstyled'
             type='button'
             disabled={!props.canUndo}
             onClick={props.onUndo}
             className='rounded bg-white/10 px-2 py-1 disabled:opacity-30'
           >
             撤销
-          </button>
-          <button
+          </Button>
+          <Button
+            variant='unstyled'
             type='button'
             disabled={!props.canRedo}
             onClick={props.onRedo}
             className='rounded bg-white/10 px-2 py-1 disabled:opacity-30'
           >
             重做
-          </button>
+          </Button>
         </div>
       </div>
       {props.editorMode === 'browse' && (
         <div className='grid grid-cols-2 gap-2'>
-          <button
+          <Button
+            variant='unstyled'
             type='button'
             className='rounded bg-cyan-700 px-2 py-2'
             onClick={() => props.onEditorMode('addPoint')}
           >
             添加点位
-          </button>
-          <button
+          </Button>
+          <Button
+            variant='unstyled'
             type='button'
             className='rounded bg-cyan-700 px-2 py-2'
             onClick={() => props.onEditorMode('selectRoom')}
           >
             选择区域
-          </button>
-          <button
+          </Button>
+          <Button
+            variant='unstyled'
             type='button'
             className='rounded bg-cyan-700 px-2 py-2'
             onClick={() => props.onEditorMode('drawRoom')}
           >
             绘制区域
-          </button>
+          </Button>
         </div>
       )}
       {props.editorMode === 'selectRoom' && (
         <div className='space-y-2'>
           <p className='text-xs text-white/65'>点击地图上的区域以选择并编辑。</p>
-          <button type='button' onClick={props.onCancelDrawing} className='underline'>
+          <Button
+            variant='unstyled'
+            type='button'
+            onClick={props.onCancelDrawing}
+            className='underline'
+          >
             取消
-          </button>
+          </Button>
         </div>
       )}
       {props.editorMode === 'addPoint' && (
@@ -122,33 +133,53 @@ export default function EditorPanel(props: EditorPanelProps) {
             ))}
           </select>
           <p className='text-xs text-white/65'>选择类型后，在地图上点击放置。</p>
-          <button type='button' onClick={props.onCancelDrawing} className='underline'>
+          <Button
+            variant='unstyled'
+            type='button'
+            onClick={props.onCancelDrawing}
+            className='underline'
+          >
             取消
-          </button>
+          </Button>
         </div>
       )}
       {props.editorMode === 'placeGeometryBarrelFirecracker' && (
         <div className='space-y-2'>
           <p className='text-xs text-white/65'>点击地图放置小鞭炮，放置后可拖动微调。</p>
-          <button type='button' onClick={props.onCancelDrawing} className='underline'>
+          <Button
+            variant='unstyled'
+            type='button'
+            onClick={props.onCancelDrawing}
+            className='underline'
+          >
             取消
-          </button>
+          </Button>
         </div>
       )}
       {props.editorMode === 'selectGeometryBarrelRocket' && (
         <div className='space-y-2'>
           <p className='text-xs text-white/65'>点击地图上高亮的火箭，设为飞行路线终点。</p>
-          <button type='button' onClick={props.onCancelDrawing} className='underline'>
+          <Button
+            variant='unstyled'
+            type='button'
+            onClick={props.onCancelDrawing}
+            className='underline'
+          >
             取消
-          </button>
+          </Button>
         </div>
       )}
       {props.editorMode === 'selectIdleFruitPlateWallCrack' && (
         <div className='space-y-2'>
           <p className='text-xs text-white/65'>点击地图上高亮的墙缝，设为果盘可远程攻击的目标。</p>
-          <button type='button' onClick={props.onCancelDrawing} className='underline'>
+          <Button
+            variant='unstyled'
+            type='button'
+            onClick={props.onCancelDrawing}
+            className='underline'
+          >
             取消
-          </button>
+          </Button>
         </div>
       )}
       {props.editorMode === 'drawRoom' && (
@@ -163,16 +194,22 @@ export default function EditorPanel(props: EditorPanelProps) {
             依次点击边界顶点，至少需要 3 点。当前 {props.draftPointCount} 点。
           </p>
           <div className='flex gap-2'>
-            <button
+            <Button
+              variant='unstyled'
               type='button'
               onClick={props.onFinishRoom}
               className='rounded bg-cyan-700 px-2 py-1'
             >
               完成
-            </button>
-            <button type='button' onClick={props.onCancelDrawing} className='underline'>
+            </Button>
+            <Button
+              variant='unstyled'
+              type='button'
+              onClick={props.onCancelDrawing}
+              className='underline'
+            >
               取消
-            </button>
+            </Button>
           </div>
         </div>
       )}
@@ -225,7 +262,8 @@ export default function EditorPanel(props: EditorPanelProps) {
                   className='mt-1 w-full rounded bg-white/10 px-2 py-2'
                 />
               </label>
-              <button
+              <Button
+                variant='unstyled'
                 type='button'
                 className='w-full rounded bg-orange-700 px-2 py-2 hover:bg-orange-600'
                 onClick={props.onPlaceGeometryBarrelFirecracker}
@@ -233,8 +271,9 @@ export default function EditorPanel(props: EditorPanelProps) {
                 {props.selectedPoint.geometryBarrelRoute?.firecrackerPosition
                   ? '重新放置小鞭炮'
                   : '放置小鞭炮'}
-              </button>
-              <button
+              </Button>
+              <Button
+                variant='unstyled'
                 type='button'
                 className='w-full rounded bg-orange-700 px-2 py-2 hover:bg-orange-600'
                 onClick={props.onSelectGeometryBarrelRocket}
@@ -242,36 +281,39 @@ export default function EditorPanel(props: EditorPanelProps) {
                 {props.selectedPoint.geometryBarrelRoute?.targetRocketPointId
                   ? '重新选择目标火箭'
                   : '选择目标火箭'}
-              </button>
+              </Button>
               {props.selectedPoint.geometryBarrelRoute?.targetRocketPointId && (
-                <button
+                <Button
+                  variant='unstyled'
                   type='button'
                   className='text-xs text-red-300 underline'
                   onClick={props.onClearGeometryBarrelTarget}
                 >
                   清除目标火箭
-                </button>
+                </Button>
               )}
             </div>
           )}
           {props.selectedPoint.category === 'idleFruitPlate' && (
             <div className='space-y-2 rounded border border-lime-300/30 bg-lime-950/20 p-2'>
               <p className='text-xs font-medium text-lime-200'>对应墙缝</p>
-              <button
+              <Button
+                variant='unstyled'
                 type='button'
                 className='w-full rounded bg-lime-700 px-2 py-2 hover:bg-lime-600'
                 onClick={props.onSelectIdleFruitPlateWallCrack}
               >
                 {props.selectedPoint.targetWallCrackPointId ? '重新选择墙缝' : '选择墙缝'}
-              </button>
+              </Button>
               {props.selectedPoint.targetWallCrackPointId && (
-                <button
+                <Button
+                  variant='unstyled'
                   type='button'
                   className='text-xs text-red-300 underline'
                   onClick={props.onClearIdleFruitPlateTarget}
                 >
                   清除对应墙缝
-                </button>
+                </Button>
               )}
             </div>
           )}
@@ -350,7 +392,8 @@ export default function EditorPanel(props: EditorPanelProps) {
                     className='mb-1 flex justify-between gap-2'
                   >
                     <span>{entry.name}</span>
-                    <button
+                    <Button
+                      variant='unstyled'
                       type='button'
                       className='text-red-300'
                       onClick={() =>
@@ -363,7 +406,7 @@ export default function EditorPanel(props: EditorPanelProps) {
                       }
                     >
                       删除
-                    </button>
+                    </Button>
                   </div>
                 ))}
                 <div className='grid grid-cols-[minmax(0,1fr)_4.5rem] gap-1'>
@@ -389,7 +432,8 @@ export default function EditorPanel(props: EditorPanelProps) {
                     <option value='entity'>衍生物</option>
                   </select>
                 </div>
-                <button
+                <Button
+                  variant='unstyled'
                   type='button'
                   className='mt-2 underline'
                   onClick={() => {
@@ -404,13 +448,18 @@ export default function EditorPanel(props: EditorPanelProps) {
                   }}
                 >
                   添加关联
-                </button>
+                </Button>
               </div>
             </div>
           </details>
-          <button type='button' onClick={props.onDeletePoint} className='text-red-300 underline'>
+          <Button
+            variant='unstyled'
+            type='button'
+            onClick={props.onDeletePoint}
+            className='text-red-300 underline'
+          >
             删除点位
-          </button>
+          </Button>
         </div>
       )}
       {props.selectedRoomId && props.editorMode === 'browse' && (
@@ -418,42 +467,51 @@ export default function EditorPanel(props: EditorPanelProps) {
           <p className='mb-2 text-xs text-white/65'>拖动地图上的青色顶点可调整区域。</p>
           <div className='mb-2 grid w-28 grid-cols-3 gap-1 text-center'>
             <span />
-            <button
+            <Button
+              variant='unstyled'
               type='button'
               className='rounded bg-white/10'
               onClick={() => props.onMoveRoom(0, -0.002)}
             >
               ↑
-            </button>
+            </Button>
             <span />
-            <button
+            <Button
+              variant='unstyled'
               type='button'
               className='rounded bg-white/10'
               onClick={() => props.onMoveRoom(-0.002, 0)}
             >
               ←
-            </button>
+            </Button>
             <span />
-            <button
+            <Button
+              variant='unstyled'
               type='button'
               className='rounded bg-white/10'
               onClick={() => props.onMoveRoom(0.002, 0)}
             >
               →
-            </button>
+            </Button>
             <span />
-            <button
+            <Button
+              variant='unstyled'
               type='button'
               className='rounded bg-white/10'
               onClick={() => props.onMoveRoom(0, 0.002)}
             >
               ↓
-            </button>
+            </Button>
             <span />
           </div>
-          <button type='button' onClick={props.onDeleteRoom} className='text-red-300 underline'>
+          <Button
+            variant='unstyled'
+            type='button'
+            onClick={props.onDeleteRoom}
+            className='text-red-300 underline'
+          >
             删除所选区域
-          </button>
+          </Button>
         </div>
       )}
     </div>

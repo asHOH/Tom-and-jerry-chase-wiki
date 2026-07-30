@@ -4,6 +4,7 @@ import type { DeepReadonly } from '@/types/deep-readonly';
 import { cn } from '@/lib/design';
 import { useAppContext } from '@/context/AppContext';
 import type { KnowledgeCardGroupSet } from '@/data/types';
+import Button from '@/components/ui/Button';
 import { editable } from '@/components/ui/editable';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
@@ -76,7 +77,8 @@ const KnowledgeCardGroupSetDisplay = ({
       )}
     >
       <div className='flex items-center justify-between gap-2'>
-        <button
+        <Button
+          variant='unstyled'
           type='button'
           aria-label={isOpen ? `折叠${groupSet.id}` : `展开${groupSet.id}`}
           className={cn(
@@ -92,7 +94,7 @@ const KnowledgeCardGroupSetDisplay = ({
             className='pl-1 text-lg'
             enableEdit={canEdit}
           />
-        </button>
+        </Button>
 
         {canEdit && (
           <div className='flex gap-2'>

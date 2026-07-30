@@ -6,6 +6,7 @@ import type { DeepReadonly } from '@/types/deep-readonly';
 import { cn } from '@/lib/design';
 import { requireActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
 import type { Skill } from '@/data/types';
+import Button from '@/components/ui/Button';
 import { editable } from '@/components/ui/editable';
 import Image from '@/components/Image';
 
@@ -41,7 +42,8 @@ export default function SkillCardMedia({
       </div>
       {isEditMode && (
         <div className='mt-2'>
-          <button
+          <Button
+            variant='unstyled'
             type='button'
             onClick={() => setShowVideoAddress(!showVideoAddress)}
             className={cn(
@@ -53,7 +55,7 @@ export default function SkillCardMedia({
             data-tutorial-id='skill-video-url-edit'
           >
             {showVideoAddress ? '隐藏视频地址' : skill.videoUrl ? '查看视频' : '无视频'}
-          </button>
+          </Button>
           {showVideoAddress && (
             <e.div
               className='mt-2 block w-full rounded-md bg-blue-50 px-2 py-1 text-center text-xs wrap-anywhere text-blue-600 transition-colors hover:bg-blue-100 hover:underline dark:bg-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-900'
@@ -75,13 +77,14 @@ export default function SkillCardMedia({
 
       {!isEditMode && skill.videoUrl && (
         <div className='mt-2'>
-          <button
+          <Button
+            variant='unstyled'
             type='button'
             onClick={() => window.open(skill.videoUrl, '_blank', 'noopener,noreferrer')}
             className='block w-full rounded-md bg-blue-50 px-2 py-1 text-center text-xs text-blue-600 transition-colors hover:bg-blue-100 hover:underline dark:bg-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-900'
           >
             查看视频
-          </button>
+          </Button>
         </div>
       )}
     </div>

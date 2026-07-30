@@ -4,6 +4,7 @@ import { ReactNode, useState } from 'react';
 
 import { cn } from '@/lib/design';
 import { useNavigation } from '@/hooks/useNavigation';
+import Button from '@/components/ui/Button';
 import { ChevronDownIcon, LinkIcon } from '@/components/icons/CommonIcons';
 
 export default function CharacterSection({
@@ -48,13 +49,14 @@ export default function CharacterSection({
       <div className='mb-1 flex items-center px-2 py-3 text-2xl font-bold dark:text-white'>
         <div className='flex min-w-0 items-center gap-1'>
           <h2>
-            <button
+            <Button
+              variant='unstyled'
               type='button'
               className='cursor-pointer focus:outline-none'
               onClick={toggleOpen}
             >
               {title}
-            </button>
+            </Button>
           </h2>
           <a
             href={`#${sectionId}`}
@@ -65,7 +67,8 @@ export default function CharacterSection({
             <LinkIcon className='size-4' />
           </a>
         </div>
-        <button
+        <Button
+          variant='unstyled'
           type='button'
           aria-label={to ? `前往${title}` : isOpen ? `折叠${title}` : `展开${title}`}
           className='ml-auto cursor-pointer rounded p-1 focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:outline-none'
@@ -94,7 +97,7 @@ export default function CharacterSection({
               )}
             />
           )}
-        </button>
+        </Button>
       </div>
       {isMounted && (
         <div

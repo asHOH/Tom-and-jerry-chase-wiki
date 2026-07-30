@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { cn } from '@/lib/design';
 import { supportsCharacterRelationTags } from '@/features/characters/utils/characterRelationTags';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
+import Button from '@/components/ui/Button';
 import { editable } from '@/components/ui/editable';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
@@ -236,14 +237,15 @@ function RelationTagEditor({ item }: { item: RelationDisplayItem }) {
           </IconButton>
         </div>
       ))}
-      <button
+      <Button
+        variant='unstyled'
         type='button'
         onClick={() => setTagPairs((current) => [...current, { counters: '', counteredBy: '' }])}
         className='inline-flex w-fit items-center gap-1 rounded-md px-1.5 py-1 text-xs text-blue-600 hover:bg-blue-100 dark:text-blue-300 dark:hover:bg-blue-900/40'
       >
         <PlusIcon className='h-3.5 w-3.5' aria-hidden='true' />
         添加克制分类
-      </button>
+      </Button>
     </div>
   );
 }
@@ -289,14 +291,15 @@ function RelationItemCard({
         <div className='flex items-center gap-1'>
           <span className={relationItemNameClassName}>{item.id}</span>
           {canEdit && item.isEditable && item.onToggleMinor ? (
-            <button
+            <Button
+              variant='unstyled'
               type='button'
               onClick={() => item.onToggleMinor?.()}
               className={themeClasses.toggle}
               aria-label={item.getToggleLabel?.(!!item.isMinor) ?? '切换关系'}
             >
               {item.isMinor ? '次要' : '主要'}
-            </button>
+            </Button>
           ) : (
             item.isMinor && <span className={minorLabelClassName}>(次要)</span>
           )}

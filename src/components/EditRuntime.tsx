@@ -12,6 +12,7 @@ import { createEditModeRegistry } from '@/lib/edit/editModeRegistry';
 import type { EditRuntimeStatus } from '@/lib/edit/editRuntimeStatus';
 import { createEditStores } from '@/lib/edit/editStores';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
+import Button from '@/components/ui/Button';
 
 type EditBaselineResponse = {
   revision: `v1:${string}`;
@@ -189,13 +190,14 @@ export default function EditRuntime({
             ? '正在恢复编辑环境…'
             : '正在加载编辑数据…'}
         {!requiresFreshEditSession ? (
-          <button
+          <Button
+            variant='unstyled'
             type='button'
             onClick={onRetry}
             className='ml-3 text-blue-600 hover:underline dark:text-blue-400'
           >
             重试
-          </button>
+          </Button>
         ) : null}
       </div>
     </div>

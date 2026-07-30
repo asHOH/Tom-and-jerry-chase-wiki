@@ -3,6 +3,7 @@
 import { m, useReducedMotion } from 'motion/react';
 
 import { cn } from '@/lib/design';
+import Button from '@/components/ui/Button';
 import GameImage from '@/components/ui/GameImage';
 
 type ComparisonCardProps = {
@@ -45,7 +46,8 @@ export default function ComparisonCard({
         : 'ring-4 ring-red-400 dark:ring-red-500 shadow-lg shadow-red-400/30';
 
   return (
-    <button
+    <Button
+      variant='unstyled'
       onClick={onSelect}
       disabled={disabled}
       className={cn(
@@ -106,6 +108,6 @@ export default function ComparisonCard({
           <span className='text-xs text-gray-500 dark:text-gray-400'>{statLabel}</span>
         </div>
       </m.div>
-    </button>
+    </Button>
   );
 }

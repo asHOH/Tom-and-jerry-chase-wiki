@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { cn } from '@/lib/design';
+import Button from '@/components/ui/Button';
 
 export type EditorViewMode = 'rich' | 'wiki' | 'html';
 
@@ -44,7 +45,8 @@ const ViewModeToggle = React.memo(function ViewModeToggle({
   return (
     <div className={cn('flex items-center gap-1', className)}>
       {buttonConfigs.map(({ mode: targetMode, label, title }) => (
-        <button
+        <Button
+          variant='unstyled'
           key={targetMode}
           type='button'
           onClick={() => onChange(targetMode)}
@@ -53,7 +55,7 @@ const ViewModeToggle = React.memo(function ViewModeToggle({
           title={title}
         >
           {label}
-        </button>
+        </Button>
       ))}
     </div>
   );
