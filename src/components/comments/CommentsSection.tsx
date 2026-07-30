@@ -8,6 +8,7 @@ import { formatArticleDate } from '@/lib/dateUtils';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useUser } from '@/hooks/useUser';
 import Button from '@/components/ui/Button';
+import { FormTextarea } from '@/components/ui/FormControls';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import SectionHeader from '@/components/ui/SectionHeader';
 import LoginDialog from '@/components/LoginDialog';
@@ -207,12 +208,13 @@ export default function CommentsSection({
           <div className='mb-3 text-sm text-gray-600 dark:text-gray-400'>登录后可发表评论。</div>
         ) : null}
 
-        <textarea
+        <FormTextarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder={canComment ? '写下你的评论…' : '请先登录后发表评论'}
           disabled={!canComment || isSubmitting}
-          className='h-24 w-full resize-none rounded-lg border border-gray-300 bg-white p-3 text-sm text-gray-900 disabled:opacity-60 dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100'
+          size='sm'
+          className='h-24 resize-none p-3'
         />
 
         {error ? <div className='mt-2 text-sm text-red-600 dark:text-red-400'>{error}</div> : null}

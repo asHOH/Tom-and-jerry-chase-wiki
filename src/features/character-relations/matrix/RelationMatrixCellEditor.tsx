@@ -11,6 +11,7 @@ import {
 import { supportsCharacterRelationTags } from '@/features/characters/utils/characterRelationTags';
 import { BaseDialog } from '@/components/ui/BaseDialog';
 import Button from '@/components/ui/Button';
+import { FormInput, FormSelect, FormTextarea } from '@/components/ui/FormControls';
 
 import type { RelationMatrixCellSelection } from './CharacterRelationsMatrix';
 import {
@@ -161,13 +162,15 @@ export default function RelationMatrixCellEditor({
           <div className='mt-2 flex flex-wrap items-center gap-2 text-sm text-gray-700 dark:text-gray-200'>
             <span className='font-medium text-gray-900 dark:text-white'>{selection.row.label}</span>
             {legalKinds.length > 1 ? (
-              <select
+              <FormSelect
                 aria-label='关系类型'
                 value={selectedKind}
                 onChange={(event) =>
                   setSelectedKind(event.currentTarget.value as TraitRelationKind)
                 }
-                className='h-9 min-w-28 rounded-md border border-gray-300 bg-white px-2.5 text-sm font-medium text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-800 dark:text-white'
+                size='sm'
+                fullWidth={false}
+                className='h-9 min-w-28 rounded-md px-2.5 font-medium focus:ring-1'
               >
                 <option value=''>选择关系</option>
                 {legalKinds.map((kind) => (
@@ -175,7 +178,7 @@ export default function RelationMatrixCellEditor({
                     {getRelationKindLabel(kind)}
                   </option>
                 ))}
-              </select>
+              </FormSelect>
             ) : (
               <span className='inline-flex h-9 items-center rounded-md border border-gray-200 bg-gray-50 px-2.5 text-sm font-medium text-gray-700 dark:border-slate-700 dark:bg-slate-800 dark:text-gray-200'>
                 {selectedKind ? getRelationKindLabel(selectedKind) : '不可编辑'}
@@ -219,7 +222,7 @@ export default function RelationMatrixCellEditor({
             </p>
             {tagPairs.map((tag, index) => (
               <div key={index} className='grid grid-cols-[1fr_1fr_auto] items-center gap-2'>
-                <input
+                <FormInput
                   value={tag.counters}
                   onChange={(event) =>
                     setTagPairs((current) =>
@@ -232,9 +235,10 @@ export default function RelationMatrixCellEditor({
                   }
                   aria-label={`克制方分类 ${index + 1}`}
                   placeholder='如：高伤'
-                  className='min-w-0 rounded-md border border-gray-300 bg-white px-2 py-1.5 text-sm text-gray-900 dark:border-slate-600 dark:bg-slate-800 dark:text-white'
+                  size='sm'
+                  className='min-w-0 rounded-md py-1.5'
                 />
-                <input
+                <FormInput
                   value={tag.counteredBy}
                   onChange={(event) =>
                     setTagPairs((current) =>
@@ -247,7 +251,8 @@ export default function RelationMatrixCellEditor({
                   }
                   aria-label={`被克制方分类 ${index + 1}`}
                   placeholder='如：怕高伤'
-                  className='min-w-0 rounded-md border border-gray-300 bg-white px-2 py-1.5 text-sm text-gray-900 dark:border-slate-600 dark:bg-slate-800 dark:text-white'
+                  size='sm'
+                  className='min-w-0 rounded-md py-1.5'
                 />
                 <Button
                   variant='danger'
@@ -275,11 +280,12 @@ export default function RelationMatrixCellEditor({
 
         <label className='flex flex-col gap-1 text-sm font-medium text-gray-700 dark:text-gray-200'>
           说明（建议以角色名开头）
-          <textarea
+          <FormTextarea
             value={description}
             onChange={(event) => setDescription(event.currentTarget.value)}
             rows={4}
-            className='resize-none rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-800 dark:text-white'
+            size='sm'
+            className='resize-none rounded-md px-3 focus:ring-1'
           />
         </label>
       </div>

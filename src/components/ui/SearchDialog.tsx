@@ -10,6 +10,7 @@ import { useNavigation } from '@/hooks/useNavigation';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { BaseDialog } from '@/components/ui/BaseDialog';
+import { FormInput } from '@/components/ui/FormControls';
 import Tag from '@/components/ui/Tag';
 import { ChatBubbleIcon, CloseIcon, SearchIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
@@ -357,10 +358,11 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
         )}
       </div>
       <div className='relative mb-4'>
-        <input
+        <FormInput
           type='text'
           placeholder='搜索角色、知识卡、道具、状态、地图、文档...'
-          className='w-full rounded-md border border-gray-300 p-2 pl-10 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-400'
+          size='sm'
+          className='rounded-md p-2 pl-10 text-base'
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           autoFocus

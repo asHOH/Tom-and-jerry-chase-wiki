@@ -7,15 +7,15 @@ describe('Card', () => {
     render(<Card>内容</Card>);
 
     const card = screen.getByText('内容');
-    expect(card).toHaveClass('rounded-lg', 'bg-white');
-    expect(card).not.toHaveClass('border', 'border-gray-200');
+    expect(card).toHaveClass('rounded-lg', 'bg-surface');
+    expect(card).not.toHaveClass('border', 'border-border');
     expect(card).not.toHaveClass('shadow-sm', 'hover:shadow-md');
   });
 
   it('adds a border only when requested', () => {
     render(<Card bordered>带边框内容</Card>);
 
-    expect(screen.getByText('带边框内容')).toHaveClass('border', 'border-gray-200');
+    expect(screen.getByText('带边框内容')).toHaveClass('border', 'border-border');
   });
 
   it('adds elevation without a border when interactive', () => {

@@ -10,6 +10,7 @@ import {
   TUTORIAL_STEPS,
   type TutorialType,
 } from '@/lib/tutorialUtils';
+import Button from '@/components/ui/Button';
 
 type OnboardingTutorialProps = {
   tutorial: TutorialType;
@@ -150,27 +151,21 @@ export default function OnboardingTutorial({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, type: 'spring', stiffness: 200, damping: 20 }}
-          className='absolute max-w-xs rounded-lg bg-white p-4 text-gray-800 shadow-lg'
+          className='bg-surface-raised text-foreground absolute max-w-xs rounded-lg p-4 shadow-lg'
           style={{ left: tooltipX, top: tooltipY, width: tooltipWidth }}
         >
           <p className='mb-2 text-sm'>{currentStep.message}</p>
           <div className='flex justify-end space-x-2'>
-            <button
-              onClick={closeTutorial}
-              className='rounded-md bg-gray-200 px-3 py-1 text-sm hover:bg-gray-300'
-            >
+            <Button onClick={closeTutorial} variant='secondary' size='sm' className='py-1'>
               跳过
-            </button>
-            <button
-              onClick={handleNext}
-              className='rounded-md bg-blue-500 px-3 py-1 text-sm text-white hover:bg-blue-600'
-            >
+            </Button>
+            <Button onClick={handleNext} size='sm' className='py-1'>
               {currentStepIndex === steps.length - 1 ? '完成' : '下一步'}
-            </button>
+            </Button>
           </div>
           {targetRect && (
             <m.div
-              className='absolute h-0 w-0 border-r-10 border-b-10 border-l-10 border-r-transparent border-b-white border-l-transparent'
+              className='border-b-surface-raised absolute h-0 w-0 border-r-10 border-b-10 border-l-10 border-r-transparent border-l-transparent'
               style={{
                 left: targetRect.left + targetRect.width / 2 - tooltipX - 10,
                 top: currentStep.position === 'bottom' ? -10 : 'auto',

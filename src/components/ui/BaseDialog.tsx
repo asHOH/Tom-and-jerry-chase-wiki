@@ -147,7 +147,7 @@ export function BaseDialog({
             aria-labelledby={effectiveLabelledBy}
             aria-describedby={ariaDescribedBy}
             className={cn(
-              'fixed inset-5 z-50 overflow-hidden rounded-xl bg-white shadow-xl md:inset-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:transform dark:bg-slate-800',
+              'bg-surface-raised text-foreground fixed inset-5 z-50 overflow-hidden rounded-xl shadow-xl md:inset-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:transform',
               panelClassName
             )}
             initial={panelInitial}

@@ -6,6 +6,9 @@ const projectRoot = process.cwd();
 const actionPrimitiveTargets = [
   'src/app/not-found.tsx',
   'src/app/(main)/offline/page.tsx',
+  'src/components/CacheDebugPanel.tsx',
+  'src/components/ErrorBoundary.tsx',
+  'src/components/OnboardingTutorial.tsx',
   'src/features/articles/components/ArticlesClient.tsx',
   'src/app/(main)/articles/pending/PendingClient.tsx',
   'src/app/(main)/articles/preview/PreviewClient.tsx',
@@ -36,21 +39,31 @@ const formControlPrimitiveTargets = [
     primitive: 'FormInput',
     rawElementPattern: /<input\b/,
     relativePaths: [
+      'src/components/ui/CharacterSelector.tsx',
+      'src/components/ui/SearchDialog.tsx',
       'src/features/discussion/components/NewTopicForm.tsx',
+      'src/features/character-relations/matrix/RelationMatrixCellEditor.tsx',
       'src/features/mechanics/sections/TraitCollection.tsx',
     ],
   },
   {
     primitive: 'FormSelect',
     rawElementPattern: /<select\b/,
-    relativePaths: ['src/app/(main)/recommended/RecommendedPageClient.tsx'],
+    relativePaths: [
+      'src/app/(main)/recommended/RecommendedPageClient.tsx',
+      'src/features/character-relations/matrix/RelationMatrixCellEditor.tsx',
+      'src/features/characters/components/character-detail/skills/RecommendedStorePlansSection.tsx',
+    ],
   },
   {
     primitive: 'FormTextarea',
     rawElementPattern: /<textarea\b/,
     relativePaths: [
+      'src/components/comments/CommentsSection.tsx',
       'src/features/discussion/components/NewTopicForm.tsx',
       'src/features/discussion/components/ReplyForm.tsx',
+      'src/features/discussion/components/TopicSection.tsx',
+      'src/features/character-relations/matrix/RelationMatrixCellEditor.tsx',
       'src/components/ui/EditModeToolbar.tsx',
     ],
   },
@@ -172,6 +185,24 @@ describe('UI style consistency', () => {
     });
 
     expect(offenders).toEqual([]);
+  });
+
+  it('uses Button for the generic playstyle quiz submission action', () => {
+    const source = fs.readFileSync(
+      path.join(projectRoot, 'src/app/(main)/games/playstyle-quiz/components/QuestionCard.tsx'),
+      'utf8'
+    );
+
+    expect(source).toContain('<Button');
+    expect(source.match(/<button\b/g)).toHaveLength(1);
+  });
+
+  it('keeps the passive Card primitive server-compatible', () => {
+    const source = fs.readFileSync(path.join(projectRoot, 'src/components/ui/Card.tsx'), 'utf8');
+
+    expect(source).not.toContain("'use client'");
+    expect(source).toContain("'bg-surface rounded-lg p-4'");
+    expect(source).toContain("'border-border border'");
   });
 
   it('uses Button for generic edit toolbar actions', () => {

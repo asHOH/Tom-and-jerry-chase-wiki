@@ -46,7 +46,14 @@ describe('EntityCardFrame', () => {
     );
 
     const frame = screen.getByText('角色属性').parentElement;
-    expect(frame).toHaveClass('rounded-lg', 'border', 'border-gray-200', 'bg-white', 'h-full');
+    expect(frame).toHaveClass(
+      'rounded-lg',
+      'border',
+      'border-border',
+      'bg-surface',
+      'text-foreground',
+      'h-full'
+    );
     expect(frame).not.toHaveClass('shadow-sm', 'hover:shadow-md');
   });
 

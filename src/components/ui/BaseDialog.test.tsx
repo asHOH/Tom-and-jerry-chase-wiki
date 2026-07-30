@@ -12,9 +12,9 @@ describe('BaseDialog', () => {
 
     expect(screen.getByRole('dialog', { name: '测试对话框' })).toHaveClass(
       'rounded-xl',
-      'bg-white',
-      'shadow-xl',
-      'dark:bg-slate-800'
+      'bg-surface-raised',
+      'text-foreground',
+      'shadow-xl'
     );
   });
 

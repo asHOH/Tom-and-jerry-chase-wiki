@@ -3,6 +3,7 @@
 import { Component, ErrorInfo, ReactNode } from 'react';
 
 import { cn } from '@/lib/design';
+import Button from '@/components/ui/Button';
 
 interface Props {
   children: ReactNode;
@@ -130,19 +131,13 @@ function ErrorDisplay({
         {/* Actions */}
         <div className='flex flex-col justify-center gap-3 sm:flex-row'>
           {onRetry && (
-            <button
-              onClick={onRetry}
-              className='rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none'
-            >
+            <Button onClick={onRetry} className='py-2'>
               重试
-            </button>
+            </Button>
           )}
-          <button
-            onClick={() => window.location.reload()}
-            className='rounded-lg bg-gray-600 px-4 py-2 text-white transition-colors hover:bg-gray-700 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:outline-none'
-          >
+          <Button onClick={() => window.location.reload()} variant='secondary' className='py-2'>
             刷新页面
-          </button>
+          </Button>
         </div>
 
         {/* Debug info (development only) */}

@@ -9,6 +9,7 @@ import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/active
 import { characters } from '@/data/static';
 import type { CharacterRelationItem, FactionId } from '@/data/types';
 import { BaseDialog } from '@/components/ui/BaseDialog';
+import { FormInput } from '@/components/ui/FormControls';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import { ChevronDownIcon, PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
@@ -352,12 +353,13 @@ export function ArticleCharacterSelector({
           <div className='fixed inset-0 z-40' onClick={() => setIsOpen(false)} />
           <div className='absolute top-full left-0 z-50 mt-1 w-full rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-slate-900'>
             <div className='border-b border-gray-200 p-2 dark:border-gray-700'>
-              <input
+              <FormInput
                 type='text'
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder='搜索角色...'
-                className='w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-400'
+                size='sm'
+                className='rounded-md px-3 focus:ring-1'
                 autoFocus
               />
             </div>

@@ -55,7 +55,7 @@ export default function EntityCardFrame({
   const content = (
     <div
       className={cn(
-        'group flex-1 rounded-lg border border-gray-200 bg-white dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 [&_img]:select-none',
+        'border-border bg-surface text-foreground group flex-1 rounded-lg border [&_img]:select-none',
         variantClasses[variant],
         isInteractive &&
           'cursor-pointer shadow-sm transition-[border-color,box-shadow] duration-200 hover:border-blue-300 hover:shadow-md dark:hover:border-blue-500',

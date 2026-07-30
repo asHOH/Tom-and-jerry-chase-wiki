@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 
 import { useToast } from '@/context/ToastContext';
+import Button from '@/components/ui/Button';
 
 export const CacheDebugPanel: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -75,27 +76,27 @@ export const CacheDebugPanel: React.FC = () => {
           )}
         </div>
         <div className='space-y-1'>
-          <button
-            type='button'
+          <Button
             onClick={clearAllCaches}
-            className='w-full rounded bg-red-600 px-2 py-1 text-xs hover:bg-red-700'
+            variant='danger'
+            size='sm'
+            fullWidth
+            className='rounded px-2 py-1 text-xs'
           >
             Clear All Caches
-          </button>
-          <button
-            type='button'
-            onClick={forceReload}
-            className='w-full rounded bg-blue-600 px-2 py-1 text-xs hover:bg-blue-700'
-          >
+          </Button>
+          <Button onClick={forceReload} size='sm' fullWidth className='rounded px-2 py-1 text-xs'>
             Force Reload
-          </button>
-          <button
-            type='button'
+          </Button>
+          <Button
             onClick={getCacheInfo}
-            className='w-full rounded bg-gray-600 px-2 py-1 text-xs hover:bg-gray-700'
+            variant='secondary'
+            size='sm'
+            fullWidth
+            className='rounded px-2 py-1 text-xs'
           >
             Refresh Cache Info
-          </button>
+          </Button>
         </div>
         <div className='text-xs text-gray-300'>Press Ctrl+Shift+D to toggle</div>
       </div>

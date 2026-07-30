@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 import { formatArticleDate } from '@/lib/dateUtils';
 import Button from '@/components/ui/Button';
+import { FormTextarea } from '@/components/ui/FormControls';
 
 import type { CommentNode } from '../types';
 
@@ -218,13 +219,14 @@ export function TopicSection({
               </div>
             )}
 
-            <textarea
+            <FormTextarea
               value={replyContent}
               onChange={(e) => setReplyContent(e.target.value)}
               placeholder='写下你的回复…'
               maxLength={2000}
               disabled={isSubmitting}
-              className='h-24 w-full resize-none rounded-lg border border-gray-300 bg-white p-3 text-sm text-gray-900 placeholder:text-gray-400 dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100 dark:placeholder:text-gray-500'
+              size='sm'
+              className='h-24 resize-none p-3'
             />
 
             {error && <div className='mt-2 text-sm text-red-600 dark:text-red-400'>{error}</div>}

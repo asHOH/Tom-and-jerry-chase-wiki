@@ -2,6 +2,7 @@
 
 import { cn } from '@/lib/design';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
+import Button from '@/components/ui/Button';
 import { CheckCircleIcon, CircleIcon } from '@/components/icons/CommonIcons';
 
 import type { QuizQuestion } from '../data/catQuestions';
@@ -65,18 +66,14 @@ export default function QuestionCard({
         })}
       </div>
 
-      <button
+      <Button
         onClick={onSubmit}
         disabled={count === 0 || isSubmitting}
-        className={cn(
-          'w-full rounded-lg px-5 py-3 text-center font-medium transition-all duration-150',
-          count > 0 && !isSubmitting
-            ? 'bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600'
-            : 'cursor-not-allowed bg-gray-300 text-gray-500 dark:bg-gray-600 dark:text-gray-400'
-        )}
+        fullWidth
+        className='px-5 py-3 font-medium transition-all duration-150'
       >
         确认选择 ({count}/{total})
-      </button>
+      </Button>
     </div>
   );
 }

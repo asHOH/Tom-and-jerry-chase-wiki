@@ -4,6 +4,7 @@ import { useEditMode } from '@/context/EditModeContext';
 import { items as staticItems } from '@/data/static';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 import { editable } from '@/components/ui/editable';
+import { FormSelect } from '@/components/ui/FormControls';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 import { Img } from '@/components/Image';
@@ -79,21 +80,22 @@ export default function RecommendedStorePlansSection() {
                       </span>
                     </Link>
                     {isEditMode && (
-                      <select
+                      <FormSelect
                         aria-label={`方案 ${planIndex + 1} 的第 ${itemIndex + 1} 件道具`}
                         value={itemName}
                         onChange={(event) => {
                           rawCharacter!.recommendedStorePlans![planIndex]!.items[itemIndex] =
                             event.target.value;
                         }}
-                        className='mt-2 w-full rounded border border-gray-300 bg-white px-1 py-1 text-xs dark:border-gray-500 dark:bg-gray-800'
+                        size='sm'
+                        className='mt-2 rounded px-1 py-1 text-xs'
                       >
                         {storeItems.map((option) => (
                           <option key={option.name} value={option.name}>
                             {option.name}
                           </option>
                         ))}
-                      </select>
+                      </FormSelect>
                     )}
                   </div>
                 );
