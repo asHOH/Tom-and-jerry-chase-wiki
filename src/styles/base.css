@@ -21,11 +21,17 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Focus styles for elements that do not provide their own Tailwind ring */
-*:focus-visible:not([class*='focus:ring-'], [class*='focus-visible:ring-']) {
+/* Focus styles for elements that do not provide their own Tailwind ring or outline */
+*:focus-visible:not(
+    [class*='focus:ring-'],
+    [class*='focus-visible:ring-'],
+    [class~='focus:outline'],
+    [class*='focus:outline-'],
+    [class~='focus-visible:outline'],
+    [class*='focus-visible:outline-']
+  ) {
   outline: 2px solid #3b82f6;
   outline-offset: 2px;
-  border-radius: 4px;
 }
 
 /* Remove default focus outline when focus-visible is available */
@@ -63,14 +69,6 @@ img {
   -moz-user-select: none !important;
   -ms-user-select: none !important;
   user-select: none !important;
-}
-
-/* Global override for any user-select properties missing vendor prefixes */
-*[style*='user-select'] {
-  -webkit-user-select: inherit !important;
-  -moz-user-select: inherit !important;
-  -ms-user-select: inherit !important;
-  user-select: inherit !important;
 }
 
 .leaflet-control-attribution {

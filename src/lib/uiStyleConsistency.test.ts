@@ -140,6 +140,22 @@ describe('UI style consistency', () => {
     expect(offenders).toEqual([]);
   });
 
+  it('keeps the global focus fallback from overriding component focus styles', () => {
+    const source = fs.readFileSync(path.join(projectRoot, 'src/styles/base.css'), 'utf8');
+
+    expect(source).toContain("[class*='focus:ring-']");
+    expect(source).toContain("[class*='focus-visible:ring-']");
+    expect(source).toContain("[class*='focus:outline-']");
+    expect(source).toContain("[class*='focus-visible:outline-']");
+    expect(source).not.toMatch(/\*:focus-visible:not\([^)]*\)\s*\{[^}]*border-radius\s*:/s);
+  });
+
+  it('does not override intentional inline user-select behavior', () => {
+    const source = fs.readFileSync(path.join(projectRoot, 'src/styles/base.css'), 'utf8');
+
+    expect(source).not.toContain("*[style*='user-select']");
+  });
+
   it('uses shared action primitives in migrated surfaces', () => {
     const offenders = actionPrimitiveTargets.filter((relativePath) => {
       const source = fs.readFileSync(path.join(projectRoot, relativePath), 'utf8');
