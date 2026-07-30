@@ -282,9 +282,13 @@ ensure_pinned_npm
 # 4. Install dependencies.
 install_dependencies
 
-# 5. Build the application only if code has changed.
+# 5. Build the application only if build inputs have changed.
 BUILD_HASH_FILE=".next/.build_hash"
 CURRENT_HASH="$(git rev-parse HEAD)"
+ENV_FILE_HASH="$(sha256sum "$ENV_FILE" | awk '{ print $1 }')"
+CURRENT_BUILD_HASH="$(
+  printf '%s\n%s\n' "$CURRENT_HASH" "$ENV_FILE_HASH" | sha256sum | awk '{ print $1 }'
+)"
 LAST_BUILD_HASH=""
 
 export COMMIT_SHA="$CURRENT_HASH"
@@ -294,9 +298,9 @@ if [ -f "$BUILD_HASH_FILE" ]; then
   LAST_BUILD_HASH="$(cat "$BUILD_HASH_FILE")"
 fi
 
-if [ "$CURRENT_HASH" != "$LAST_BUILD_HASH" ] || ! build_output_is_valid; then
-  if [ "$CURRENT_HASH" != "$LAST_BUILD_HASH" ]; then
-    echo "Code has changed since the last build. Building application..."
+if [ "$CURRENT_BUILD_HASH" != "$LAST_BUILD_HASH" ] || ! build_output_is_valid; then
+  if [ "$CURRENT_BUILD_HASH" != "$LAST_BUILD_HASH" ]; then
+    echo "Code or production environment has changed since the last build. Building application..."
   else
     echo "Existing build output is missing or incomplete. Rebuilding application..."
   fi
@@ -325,7 +329,7 @@ if [ "$CURRENT_HASH" != "$LAST_BUILD_HASH" ] || ! build_output_is_valid; then
 
     echo "Build successful."
     mkdir -p .next
-    echo "$CURRENT_HASH" > "$BUILD_HASH_FILE"
+    echo "$CURRENT_BUILD_HASH" > "$BUILD_HASH_FILE"
   else
     BUILD_EXIT_CODE=$?
     echo "Fatal: build failed with exit code $BUILD_EXIT_CODE."
