@@ -21,6 +21,33 @@ function decodeNickname(value: string): string {
   }
 }
 
+const compoundPublicSuffixes = new Set(['ac', 'co', 'com', 'edu', 'gov', 'net', 'org']);
+
+function getWebsiteName(url: string): string {
+  try {
+    const hostname = new URL(url).hostname.toLowerCase().replace(/^www\./, '');
+    const hostnameParts = hostname.split('.');
+    const topLevelDomain = hostnameParts.at(-1);
+    const secondLevelDomain = hostnameParts.at(-2);
+    const websitePart =
+      topLevelDomain?.length === 2 &&
+      secondLevelDomain &&
+      compoundPublicSuffixes.has(secondLevelDomain)
+        ? hostnameParts.at(-3)
+        : secondLevelDomain;
+
+    if (!websitePart) return '外部网站';
+
+    return websitePart
+      .split(/[-_]/)
+      .filter(Boolean)
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(' ');
+  } catch {
+    return '外部网站';
+  }
+}
+
 const registrationDateFormatter = new Intl.DateTimeFormat('zh-CN', {
   year: 'numeric',
   month: 'long',
@@ -89,6 +116,7 @@ export default async function PublicUserPage({
   if (!profile) notFound();
 
   const contributor = contributors.find(({ nickname }) => nickname === profile.nickname);
+  const externalWebsiteName = contributor?.url ? getWebsiteName(contributor.url) : null;
   const characterContributionCount = getCharacterContributionCount(contributor);
   const contributionStats = [
     { label: '角色文案撰写', value: characterContributionCount },
@@ -133,11 +161,11 @@ export default async function PublicUserPage({
           )}
         </div>
 
-        {contributor?.url ? (
+        {contributor?.url && externalWebsiteName ? (
           <div className='mt-6 border-t border-gray-200 pt-4 dark:border-gray-700'>
             <InlineExternalLink
               href={contributor.url}
-              ariaLabel={`${contributor.name}的外部主页（在新标签页打开）`}
+              ariaLabel={`访问${externalWebsiteName}主页（在新标签页打开）`}
               className='group inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3.5 py-2.5 font-medium no-underline shadow-sm transition-colors hover:border-blue-300 hover:bg-blue-100 dark:border-blue-800 dark:bg-blue-950/40 dark:hover:border-blue-700 dark:hover:bg-blue-900/60'
             >
               <svg
@@ -154,7 +182,7 @@ export default async function PublicUserPage({
                   d='M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V16.5M14.25 3H21m0 0v6.75M21 3l-9.75 9.75'
                 />
               </svg>
-              <span>访问外部主页</span>
+              <span>访问{externalWebsiteName}主页</span>
             </InlineExternalLink>
           </div>
         ) : null}
