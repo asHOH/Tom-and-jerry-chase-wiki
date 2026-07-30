@@ -87,7 +87,7 @@ export default function CatalogCard({
             truncateTitle
               ? 'h-6 truncate overflow-hidden font-bold whitespace-nowrap text-gray-800 dark:text-white'
               : 'h-6 font-bold whitespace-pre text-gray-800 dark:text-white',
-            shouldUseCompactTitle ? 'text-md' : 'mb-1 text-lg',
+            shouldUseCompactTitle ? 'text-base' : 'mb-1 text-lg',
             titleClassName
           )}
           title={truncateTitle ? title : undefined}

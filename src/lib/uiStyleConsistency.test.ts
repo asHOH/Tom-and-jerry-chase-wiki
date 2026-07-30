@@ -116,7 +116,30 @@ const duplicateFocusVisibleOutlinePattern =
 
 const hardCodedSemanticHexPattern = /#[0-9A-Fa-f]{3,8}|(?:bg|text|border)-\[#/;
 
+const unsupportedTailwindUtilityPattern = /\b(?:text-md|rounded-0\.5)\b/;
+
+const findSourceFiles = (directory: string): string[] =>
+  fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+    const entryPath = path.join(directory, entry.name);
+
+    if (entry.isDirectory()) return findSourceFiles(entryPath);
+
+    return /\.(?:css|html|js|jsx|ts|tsx)$/.test(entry.name) ? [entryPath] : [];
+  });
+
 describe('UI style consistency', () => {
+  it('does not use unsupported project Tailwind utilities', () => {
+    const sourceRoot = path.join(projectRoot, 'src');
+    const offenders = findSourceFiles(sourceRoot)
+      .filter((filePath) => !/\.(?:test|spec)\.[jt]sx?$/.test(filePath))
+      .filter((filePath) =>
+        unsupportedTailwindUtilityPattern.test(fs.readFileSync(filePath, 'utf8'))
+      )
+      .map((filePath) => path.relative(projectRoot, filePath));
+
+    expect(offenders).toEqual([]);
+  });
+
   it('uses shared action primitives in migrated surfaces', () => {
     const offenders = actionPrimitiveTargets.filter((relativePath) => {
       const source = fs.readFileSync(path.join(projectRoot, relativePath), 'utf8');

@@ -39,7 +39,7 @@ export default function BuffCardDisplay({ buff }: { buff: Buff }) {
           <h3
             className={cn(
               'mb-1 h-6 font-bold whitespace-pre text-gray-800 dark:text-white',
-              buff.name.length >= 6 ? 'text-md' : 'text-lg'
+              buff.name.length >= 6 ? 'text-base' : 'text-lg'
             )}
           >
             {buff.name}

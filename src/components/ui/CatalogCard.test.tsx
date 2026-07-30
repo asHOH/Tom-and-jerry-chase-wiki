@@ -111,6 +111,6 @@ describe('CatalogCard', () => {
       />
     );
 
-    expect(screen.getByRole('heading', { name: '超级胡椒粉瓶' })).toHaveClass('text-md');
+    expect(screen.getByRole('heading', { name: '超级胡椒粉瓶' })).toHaveClass('text-base');
   });
 });

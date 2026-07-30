@@ -128,7 +128,7 @@ export default function KnowledgeCardDetails({
                 type='button'
                 aria-label={`返回 ${fromCharacter.id}`}
                 onClick={() => handleSelectCharacter(fromCharacterId!)}
-                className='text-md flex items-center gap-2 rounded-full rounded-r-lg border border-blue-200 bg-blue-50 py-1.5 pr-2 pl-4 font-bold text-blue-700 shadow-sm transition-all duration-200 hover:-translate-x-1.25 hover:border-blue-500 hover:bg-blue-500 hover:text-white dark:border-blue-700 dark:bg-blue-900/50 dark:text-blue-300 dark:hover:border-blue-600 dark:hover:bg-blue-600 dark:hover:text-white'
+                className='flex items-center gap-2 rounded-full rounded-r-lg border border-blue-200 bg-blue-50 py-1.5 pr-2 pl-4 text-base font-bold text-blue-700 shadow-sm transition-all duration-200 hover:-translate-x-1.25 hover:border-blue-500 hover:bg-blue-500 hover:text-white dark:border-blue-700 dark:bg-blue-900/50 dark:text-blue-300 dark:hover:border-blue-600 dark:hover:bg-blue-600 dark:hover:text-white'
               >
                 ← 返回 {fromCharacter.id}
                 {fromCharacter.imageUrl && (
