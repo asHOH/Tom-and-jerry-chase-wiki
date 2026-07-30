@@ -3,13 +3,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AnimatePresence, m, useReducedMotion } from 'motion/react';
-import { createPortal } from 'react-dom';
 import { useSWRConfig } from 'swr';
 
 import { cn } from '@/lib/design';
 import { checkPasswordStrength, PasswordStrength } from '@/lib/passwordUtils';
 import { convertToPinyin } from '@/lib/pinyinUtils';
 import { USER_API_KEY } from '@/hooks/useUser';
+import { BaseDialog } from '@/components/ui/BaseDialog';
 import Button from '@/components/ui/Button';
 import { FormInput } from '@/components/ui/FormControls';
 import { CloseIcon } from '@/components/icons/CommonIcons';
@@ -17,16 +17,18 @@ import { CloseIcon } from '@/components/icons/CommonIcons';
 import CaptchaComponent from './CaptchaComponent';
 
 type LoginDialogProps = {
+  open: boolean;
   onClose: () => void;
   isMobile: boolean;
 };
 
 type AuthStep = 'username' | 'password' | 'register';
 
-const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
+const LoginDialog: React.FC<LoginDialogProps> = ({ open, onClose, isMobile }) => {
   const router = useRouter();
   const { mutate } = useSWRConfig();
   const shouldReduceMotion = useReducedMotion();
+  const dialogSessionRef = useRef(0);
   const [step, setStep] = useState<AuthStep>('username');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -41,24 +43,60 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
   const [passwordStrength, setPasswordStrength] = useState<PasswordStrength | null>(null);
 
   useEffect(() => {
+    if (open) return;
+
+    dialogSessionRef.current += 1;
+    setStep('username');
+    setUsername('');
+    setPassword('');
+    setConfirmPassword('');
+    setNickname('');
+    setIsLoading(false);
+    setError(null);
+    setToken(null);
+    setCaptchaProof(null);
+    setIsUsernameCorrect(false);
+    setPasswordStrength(null);
+  }, [open]);
+
+  useEffect(() => {
+    const session = dialogSessionRef.current;
+    let cancelled = false;
+
     convertToPinyin(username).then((pinyin) => {
+      if (cancelled || !open || session !== dialogSessionRef.current) return;
+
       setIsUsernameCorrect(
         pinyin != '' &&
           /^[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*$/.test(pinyin)
       );
     });
-  }, [username]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [open, username]);
 
   // Check password strength when in register step
   useEffect(() => {
-    if (step === 'register' && password) {
-      checkPasswordStrength(password).then(setPasswordStrength);
-    } else {
+    if (!open || step !== 'register' || !password) {
       setPasswordStrength(null);
+      return;
     }
-  }, [password, step]);
 
-  const dialogRef = useRef<HTMLDivElement>(null);
+    const session = dialogSessionRef.current;
+    let cancelled = false;
+
+    checkPasswordStrength(password).then((strength) => {
+      if (!cancelled && session === dialogSessionRef.current) {
+        setPasswordStrength(strength);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [open, password, step]);
 
   const checkUsername = async () => {
     if (token === null) {
@@ -69,6 +107,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
       setError('用户名格式错误。');
       return;
     }
+    const session = dialogSessionRef.current;
     setIsLoading(true);
     setError(null);
     try {
@@ -81,6 +120,8 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
       if (!response.ok) {
         throw new Error(data.error || '发生错误。');
       }
+      if (session !== dialogSessionRef.current) return;
+
       if (data.captchaProof) {
         setCaptchaProof(data.captchaProof);
       }
@@ -101,15 +142,25 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
           setError('从服务器收到意外响应。');
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An unknown error occurred.');
+      if (session === dialogSessionRef.current) {
+        setError(err instanceof Error ? err.message : 'An unknown error occurred.');
+      }
     } finally {
-      setIsLoading(false);
+      if (session === dialogSessionRef.current) {
+        setIsLoading(false);
+      }
     }
   };
 
-  const handleLogin = async (isPasswordless = false, proof: string | null = null) => {
-    setIsLoading(true);
-    setError(null);
+  const handleLogin = async (
+    isPasswordless = false,
+    proof: string | null = null,
+    session = dialogSessionRef.current
+  ) => {
+    if (session === dialogSessionRef.current) {
+      setIsLoading(true);
+      setError(null);
+    }
     try {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
@@ -129,9 +180,13 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
       await mutate(USER_API_KEY);
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : '发生未知错误。');
+      if (session === dialogSessionRef.current) {
+        setError(err instanceof Error ? err.message : '发生未知错误。');
+      }
     } finally {
-      setIsLoading(false);
+      if (session === dialogSessionRef.current) {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -152,6 +207,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
       setError('两次输入的密码不一致。');
       return;
     }
+    const session = dialogSessionRef.current;
     setIsLoading(true);
     setError(null);
     try {
@@ -165,11 +221,15 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
         throw new Error(data.error || '注册失败。');
       }
       // After successful registration, log the user in.
-      await handleLogin(false, captchaProof);
+      await handleLogin(false, captchaProof, session);
     } catch (err) {
-      setError(err instanceof Error ? err.message : '发生未知错误。');
+      if (session === dialogSessionRef.current) {
+        setError(err instanceof Error ? err.message : '发生未知错误。');
+      }
     } finally {
-      setIsLoading(false);
+      if (session === dialogSessionRef.current) {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -182,38 +242,6 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
     } else {
       handleRegister();
     }
-  };
-
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        onClose();
-      }
-    };
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [onClose]);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dialogRef.current && !dialogRef.current.contains(event.target as Node)) {
-        onClose();
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [onClose]);
-
-  const dialogVariants = {
-    hidden: { opacity: 0, scale: 0.95 },
-    visible: { opacity: 1, scale: 1 },
-    exit: { opacity: 0, scale: 0.95 },
-  };
-
-  const backdropVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1 },
-    exit: { opacity: 0 },
   };
 
   const renderStep = () => {
@@ -355,78 +383,66 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ onClose, isMobile }) => {
     }
   };
 
-  return document
-    ? createPortal(
-        <m.div
-          className={cn(
-            'fixed inset-0 z-50 flex items-center justify-center bg-gray-800/40 backdrop-blur-sm',
-            isMobile && 'p-0'
-          )}
-          initial='hidden'
-          animate='visible'
-          exit='exit'
-          variants={backdropVariants}
-          transition={{ duration: 0.2 }}
-        >
-          <m.div
-            ref={dialogRef}
-            className={cn(
-              'relative bg-white p-6 shadow-xl dark:bg-gray-800',
-              isMobile
-                ? 'flex h-full w-full flex-col rounded-none'
-                : 'mx-auto w-full max-w-sm rounded-lg'
-            )}
-            variants={dialogVariants}
-            transition={{ duration: 0.2 }}
-          >
-            <button
-              type='button'
-              onClick={onClose}
-              className='absolute top-3 right-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
-              aria-label='关闭对话框'
+  return (
+    <BaseDialog
+      open={open}
+      onOpenChange={(nextOpen) => {
+        if (!nextOpen) onClose();
+      }}
+      ariaLabel='登录或注册'
+      lockScroll={false}
+      panelClassName={cn(
+        'p-6',
+        isMobile
+          ? 'inset-0 flex h-full w-full flex-col overflow-y-auto rounded-none'
+          : 'inset-auto top-1/2 left-1/2 w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 -translate-y-1/2'
+      )}
+    >
+      <button
+        type='button'
+        onClick={onClose}
+        className='absolute top-3 right-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+        aria-label='关闭对话框'
+      >
+        <CloseIcon className='h-6 w-6' />
+      </button>
+
+      <form onSubmit={handleSubmit}>
+        <div className='mb-4'>
+          <AnimatePresence mode='wait' initial={false}>
+            <m.div
+              key={step}
+              initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -6 }}
+              transition={{ duration: 0.16, ease: 'easeOut' }}
             >
-              <CloseIcon className='h-6 w-6' />
-            </button>
+              {renderStep()}
+            </m.div>
+          </AnimatePresence>
+        </div>
 
-            <form onSubmit={handleSubmit}>
-              <div className='mb-4'>
-                <AnimatePresence mode='wait' initial={false}>
-                  <m.div
-                    key={step}
-                    initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -6 }}
-                    transition={{ duration: 0.16, ease: 'easeOut' }}
-                  >
-                    {renderStep()}
-                  </m.div>
-                </AnimatePresence>
-              </div>
+        {error && <p className='mb-4 text-sm text-red-500'>{error}</p>}
 
-              {error && <p className='mb-4 text-sm text-red-500'>{error}</p>}
-
-              <Button
-                type='submit'
-                fullWidth
-                variant='primary'
-                size='md'
-                loading={isLoading}
-                disabled={
-                  isLoading ||
-                  !isUsernameCorrect ||
-                  (step === 'register' &&
-                    ((!!password && !!passwordStrength && passwordStrength.strength <= 1) ||
-                      (!!password && !!confirmPassword && password !== confirmPassword)))
-                }
-              >
-                继续
-              </Button>
-            </form>
-          </m.div>
-        </m.div>,
-        document.body
-      )
-    : null;
+        <Button
+          type='submit'
+          fullWidth
+          variant='primary'
+          size='md'
+          loading={isLoading}
+          disabled={
+            isLoading ||
+            !isUsernameCorrect ||
+            (step === 'register' &&
+              ((!!password && !!passwordStrength && passwordStrength.strength <= 1) ||
+                (!!password && !!confirmPassword && password !== confirmPassword)))
+          }
+        >
+          继续
+        </Button>
+      </form>
+    </BaseDialog>
+  );
 };
 
 export default LoginDialog;

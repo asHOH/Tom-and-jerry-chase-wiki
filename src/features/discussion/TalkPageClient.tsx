@@ -250,9 +250,11 @@ export function TalkPageClient({
           )
       )}
 
-      {showLoginDialog && (
-        <LoginDialog onClose={() => setShowLoginDialog(false)} isMobile={isMobile} />
-      )}
+      <LoginDialog
+        open={showLoginDialog}
+        onClose={() => setShowLoginDialog(false)}
+        isMobile={isMobile}
+      />
     </PageShell>
   );
 }

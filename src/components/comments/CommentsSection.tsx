@@ -254,9 +254,11 @@ export default function CommentsSection({
         )}
       </div>
 
-      {showLoginDialog ? (
-        <LoginDialog onClose={() => setShowLoginDialog(false)} isMobile={isMobile} />
-      ) : null}
+      <LoginDialog
+        open={showLoginDialog}
+        onClose={() => setShowLoginDialog(false)}
+        isMobile={isMobile}
+      />
     </section>
   );
 }

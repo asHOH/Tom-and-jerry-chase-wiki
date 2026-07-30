@@ -9,13 +9,15 @@ import { useChat } from '@/hooks/useChat';
 import { useNavigation } from '@/hooks/useNavigation';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
+import { BaseDialog } from '@/components/ui/BaseDialog';
 import Tag from '@/components/ui/Tag';
 import { ChatBubbleIcon, CloseIcon, SearchIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 
 type SearchDialogProps = {
+  open: boolean;
   onClose: () => void;
-  isMobile: boolean; // Add isMobile prop
+  isMobile: boolean;
 };
 
 const highlightMatch = (text: string, query: string, isPinyinMatch: boolean) => {
@@ -76,17 +78,25 @@ const highlightMatch = (text: string, query: string, isPinyinMatch: boolean) => 
   return <>{parts}</>;
 };
 
-const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
+const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const dialogRef = useRef<HTMLDivElement>(null);
   const searchIdRef = useRef(0); // To keep track of the latest search request
   const resultsListRef = useRef<HTMLUListElement>(null);
   const { handleSelectCard, handleSelectCharacter } = useAppContext();
   const { navigate } = useNavigation();
   const [isDarkMode] = useDarkMode();
+
+  useEffect(() => {
+    if (open) return;
+
+    searchIdRef.current += 1;
+    setSearchQuery('');
+    setSearchResults([]);
+    setHighlightedIndex(-1);
+  }, [open]);
 
   const getResultLabel = (result: SearchResult): string => {
     switch (result.type) {
@@ -145,10 +155,10 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
 
   // Use chat hook to get AI response for the search query
   const { responseText: aiResponseText, isLoading: isChatLoading } = useChat(
-    searchQuery.length > 1 ? searchQuery : undefined,
+    open && searchQuery.length > 1 ? searchQuery : undefined,
     2000
   );
-  const hasAiResult = searchQuery.length > 1 && Boolean(aiResponseText?.trim());
+  const hasAiResult = open && searchQuery.length > 1 && Boolean(aiResponseText?.trim());
 
   const handleResultClick = useCallback(
     (result: SearchResult) => {
@@ -211,27 +221,10 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
     [handleSelectCharacter, handleSelectCard, navigate, onClose]
   );
 
-  // Animation variants for the dialog
-  const dialogVariants = {
-    hidden: { opacity: 0, scale: 0.95 },
-    visible: { opacity: 1, scale: 1 },
-    exit: { opacity: 0, scale: 0.95 },
-  };
-
-  // Animation variants for the backdrop
-  const backdropVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1 },
-    exit: { opacity: 0 },
-  };
-
   useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        onClose();
-        return;
-      }
+    if (!open) return;
 
+    const handleKeyDown = (event: KeyboardEvent) => {
       // Handle navigation keys
       const totalResults = hasAiResult ? searchResults.length + 1 : searchResults.length;
       switch (event.key) {
@@ -275,11 +268,11 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [onClose, highlightedIndex, searchResults, handleResultClick, hasAiResult]);
+  }, [open, highlightedIndex, searchResults, handleResultClick, hasAiResult]);
 
   // Scroll highlighted item into view
   useEffect(() => {
-    if (highlightedIndex >= 0 && resultsListRef.current) {
+    if (open && highlightedIndex >= 0 && resultsListRef.current) {
       const highlightedElement = resultsListRef.current.children[highlightedIndex] as HTMLElement;
       if (highlightedElement) {
         highlightedElement.scrollIntoView({
@@ -288,10 +281,12 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
         });
       }
     }
-  }, [highlightedIndex]);
+  }, [open, highlightedIndex]);
 
   useEffect(() => {
-    searchIdRef.current = Date.now(); // Assign a new ID for each new search effect run
+    if (!open) return;
+
+    searchIdRef.current += 1;
     const currentId = searchIdRef.current;
 
     const handler = setTimeout(async () => {
@@ -321,194 +316,176 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ onClose, isMobile }) => {
 
     return () => {
       clearTimeout(handler);
-      // On cleanup, ensure any ongoing search for this effect run is marked as stale
-      // This is implicitly handled by `searchIdRef.current = Date.now()` in the next effect run
+      searchIdRef.current += 1;
     };
-  }, [searchQuery]);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dialogRef.current && !dialogRef.current.contains(event.target as Node)) {
-        onClose();
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [onClose]);
+  }, [open, searchQuery]);
 
   return (
-    <m.div
-      className={cn(
-        'fixed inset-0 z-50 flex items-center justify-center bg-gray-800/40 backdrop-blur-sm',
-        isMobile && 'p-0'
+    <BaseDialog
+      open={open}
+      onOpenChange={(nextOpen) => {
+        if (!nextOpen) onClose();
+      }}
+      ariaLabelledBy='search-dialog-title'
+      lockScroll={false}
+      panelClassName={cn(
+        'p-4',
+        isMobile
+          ? 'inset-0 flex h-full w-full flex-col rounded-none'
+          : 'inset-auto top-1/2 left-1/2 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2'
       )}
-      initial='hidden'
-      animate='visible'
-      exit='exit'
-      variants={backdropVariants} // Apply backdrop animation
-      transition={{ duration: 0.2 }}
     >
-      <m.div
-        ref={dialogRef}
-        className={cn(
-          'relative bg-white p-4 shadow-xl dark:bg-gray-800',
-          isMobile
-            ? 'flex h-full w-full flex-col rounded-none'
-            : 'mx-auto w-full max-w-md rounded-lg'
-        )}
-        variants={dialogVariants} // Apply dialog animation
-        transition={{ duration: 0.2 }}
+      <button
+        type='button'
+        onClick={onClose}
+        className='absolute top-2 right-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+        aria-label='关闭搜索对话框'
       >
-        <button
-          type='button'
-          onClick={onClose}
-          className='absolute top-2 right-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
-          aria-label='关闭搜索对话框'
+        <CloseIcon className='h-6 w-6' />
+      </button>
+      <div className='mb-4 pr-8'>
+        <h2
+          id='search-dialog-title'
+          className='mb-1 text-xl font-bold text-gray-900 dark:text-white'
         >
-          <CloseIcon className='h-6 w-6' />
-        </button>
-        <div className='mb-4 pr-8'>
-          <h2 className='mb-1 text-xl font-bold text-gray-900 dark:text-white'>搜索</h2>
-          {(searchResults.length > 0 || hasAiResult) && (
-            <span className='text-sm text-gray-500 dark:text-gray-400'>
-              {searchResults.length + (hasAiResult ? 1 : 0)} 个结果
-            </span>
-          )}
-        </div>
-        <div className='relative mb-4'>
-          <input
-            type='text'
-            placeholder='搜索角色、知识卡、道具、状态、地图、文档...'
-            className='w-full rounded-md border border-gray-300 p-2 pl-10 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-400'
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            autoFocus
-            ref={searchInputRef}
-            id='search-input'
+          搜索
+        </h2>
+        {(searchResults.length > 0 || hasAiResult) && (
+          <span className='text-sm text-gray-500 dark:text-gray-400'>
+            {searchResults.length + (hasAiResult ? 1 : 0)} 个结果
+          </span>
+        )}
+      </div>
+      <div className='relative mb-4'>
+        <input
+          type='text'
+          placeholder='搜索角色、知识卡、道具、状态、地图、文档...'
+          className='w-full rounded-md border border-gray-300 p-2 pl-10 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-400'
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          autoFocus
+          ref={searchInputRef}
+          id='search-input'
+        />
+        <div className='pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3'>
+          <SearchIcon
+            className='h-5 w-5 text-gray-400 dark:text-gray-500'
+            decorative={false}
+            aria-label='搜索图标'
           />
-          <div className='pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3'>
-            <SearchIcon
-              className='h-5 w-5 text-gray-400 dark:text-gray-500'
-              decorative={false}
-              aria-label='搜索图标'
-            />
-          </div>
         </div>
+      </div>
 
-        {searchQuery.length > 0 && (searchResults.length > 0 || hasAiResult) && (
-          <m.ul
-            ref={resultsListRef}
-            className={cn(
-              'overflow-y-auto rounded-md border border-gray-300 dark:border-gray-600',
-              isMobile ? 'flex-1' : 'max-h-60'
-            )}
-            initial='hidden'
-            animate='visible'
-            variants={{
-              visible: {
-                transition: {
-                  staggerChildren: 0.05, // Stagger animation for children
-                },
+      {searchQuery.length > 0 && (searchResults.length > 0 || hasAiResult) && (
+        <m.ul
+          ref={resultsListRef}
+          className={cn(
+            'overflow-y-auto rounded-md border border-gray-300 dark:border-gray-600',
+            isMobile ? 'flex-1' : 'max-h-60'
+          )}
+          initial='hidden'
+          animate='visible'
+          variants={{
+            visible: {
+              transition: {
+                staggerChildren: 0.05, // Stagger animation for children
               },
-            }}
-          >
-            {/* Chat result as first item */}
-            {hasAiResult && (
-              <m.li
-                key='chat-result'
-                className='border-b border-gray-200 dark:border-gray-700'
-                variants={{
-                  hidden: { opacity: 0, y: 10 },
-                  visible: { opacity: 1, y: 0 },
-                }}
-                transition={{ duration: 0.2 }}
+            },
+          }}
+        >
+          {/* Chat result as first item */}
+          {hasAiResult && (
+            <m.li
+              key='chat-result'
+              className='border-b border-gray-200 dark:border-gray-700'
+              variants={{
+                hidden: { opacity: 0, y: 10 },
+                visible: { opacity: 1, y: 0 },
+              }}
+              transition={{ duration: 0.2 }}
+            >
+              <div
+                className={cn(
+                  'flex items-start bg-blue-50 p-3 dark:bg-blue-900/20',
+                  highlightedIndex === 0 && 'bg-blue-100 dark:bg-blue-900/40'
+                )}
+                onMouseEnter={() => setHighlightedIndex(0)}
               >
-                <div
-                  className={cn(
-                    'flex items-start bg-blue-50 p-3 dark:bg-blue-900/20',
-                    highlightedIndex === 0 && 'bg-blue-100 dark:bg-blue-900/40'
-                  )}
-                  onMouseEnter={() => setHighlightedIndex(0)}
-                >
-                  <div className='mr-3 shrink-0'>
-                    <div className='flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 dark:bg-blue-600'>
-                      <ChatBubbleIcon className='h-4 w-4 text-white' strokeWidth={2} />
-                    </div>
-                  </div>
-                  <div className='min-w-0 flex-1'>
-                    <div className='mb-1 text-sm font-medium text-blue-700 dark:text-blue-300'>
-                      AI 助手回答
-                    </div>
-                    <div className='text-sm text-gray-700 dark:text-gray-300'>
-                      <div className='whitespace-pre-wrap'>{aiResponseText}</div>
-                    </div>
+                <div className='mr-3 shrink-0'>
+                  <div className='flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 dark:bg-blue-600'>
+                    <ChatBubbleIcon className='h-4 w-4 text-white' strokeWidth={2} />
                   </div>
                 </div>
-              </m.li>
-            )}
-
-            {/* Regular search results */}
-            {searchResults.map((result, index) => (
-              <m.li
-                key={getResultKey(result)}
-                className='border-b border-gray-200 last:border-b-0 dark:border-gray-700'
-                variants={{
-                  hidden: { opacity: 0, y: 10 },
-                  visible: { opacity: 1, y: 0 },
-                }}
-                transition={{ duration: 0.2 }}
-              >
-                <button
-                  type='button'
-                  onClick={() => handleResultClick(result)}
-                  className={cn(
-                    'flex w-full items-center gap-2 p-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700',
-                    highlightedIndex === (hasAiResult ? index + 1 : index) &&
-                      'bg-gray-100 dark:bg-gray-700'
-                  )}
-                  onMouseEnter={() => setHighlightedIndex(hasAiResult ? index + 1 : index)}
-                >
-                  {result.imageUrl && (
-                    <Image
-                      src={result.imageUrl}
-                      alt={getResultName(result)}
-                      width={32}
-                      height={32}
-                      className='mr-3 object-cover'
-                    />
-                  )}
-                  <div className='min-w-0 flex-1'>
-                    <span className='block truncate text-gray-900 dark:text-white'>
-                      {getResultName(result)}
-                    </span>
-                    {result.matchContext && (
-                      <span className='mt-0.5 hidden truncate text-sm text-gray-500 md:block dark:text-gray-400'>
-                        {highlightMatch(result.matchContext, searchQuery, result.isPinyinMatch)}
-                      </span>
-                    )}
+                <div className='min-w-0 flex-1'>
+                  <div className='mb-1 text-sm font-medium text-blue-700 dark:text-blue-300'>
+                    AI 助手回答
                   </div>
-                  <Tag
-                    colorStyles={getTypeLabelColors(getTypeColorKey(result), isDarkMode)}
-                    size='xs'
-                    margin='compact'
-                    className='shrink-0'
-                  >
-                    {getResultLabel(result)}
-                  </Tag>
-                </button>
-              </m.li>
-            ))}
-          </m.ul>
-        )}
+                  <div className='text-sm text-gray-700 dark:text-gray-300'>
+                    <div className='whitespace-pre-wrap'>{aiResponseText}</div>
+                  </div>
+                </div>
+              </div>
+            </m.li>
+          )}
 
-        {searchQuery.length > 0 && searchResults.length === 0 && !hasAiResult && !isChatLoading && (
-          <div className='p-2 pr-8 text-gray-500 dark:text-gray-400'>无结果</div>
-        )}
-      </m.div>
-    </m.div>
+          {/* Regular search results */}
+          {searchResults.map((result, index) => (
+            <m.li
+              key={getResultKey(result)}
+              className='border-b border-gray-200 last:border-b-0 dark:border-gray-700'
+              variants={{
+                hidden: { opacity: 0, y: 10 },
+                visible: { opacity: 1, y: 0 },
+              }}
+              transition={{ duration: 0.2 }}
+            >
+              <button
+                type='button'
+                onClick={() => handleResultClick(result)}
+                className={cn(
+                  'flex w-full items-center gap-2 p-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700',
+                  highlightedIndex === (hasAiResult ? index + 1 : index) &&
+                    'bg-gray-100 dark:bg-gray-700'
+                )}
+                onMouseEnter={() => setHighlightedIndex(hasAiResult ? index + 1 : index)}
+              >
+                {result.imageUrl && (
+                  <Image
+                    src={result.imageUrl}
+                    alt={getResultName(result)}
+                    width={32}
+                    height={32}
+                    className='mr-3 object-cover'
+                  />
+                )}
+                <div className='min-w-0 flex-1'>
+                  <span className='block truncate text-gray-900 dark:text-white'>
+                    {getResultName(result)}
+                  </span>
+                  {result.matchContext && (
+                    <span className='mt-0.5 hidden truncate text-sm text-gray-500 md:block dark:text-gray-400'>
+                      {highlightMatch(result.matchContext, searchQuery, result.isPinyinMatch)}
+                    </span>
+                  )}
+                </div>
+                <Tag
+                  colorStyles={getTypeLabelColors(getTypeColorKey(result), isDarkMode)}
+                  size='xs'
+                  margin='compact'
+                  className='shrink-0'
+                >
+                  {getResultLabel(result)}
+                </Tag>
+              </button>
+            </m.li>
+          ))}
+        </m.ul>
+      )}
+
+      {searchQuery.length > 0 && searchResults.length === 0 && !hasAiResult && !isChatLoading && (
+        <div className='p-2 pr-8 text-gray-500 dark:text-gray-400'>无结果</div>
+      )}
+    </BaseDialog>
   );
 };
 

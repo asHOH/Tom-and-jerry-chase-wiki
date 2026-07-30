@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { AnimatePresence, m } from 'motion/react';
+import { m } from 'motion/react';
 
 import { getNavigationButtonClasses } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
@@ -58,16 +58,7 @@ const SearchBar: React.FC<object> = () => {
         </m.button>
       </Tooltip>
 
-      <AnimatePresence mode='wait'>
-        {' '}
-        {/* Wrap with AnimatePresence */}
-        {showSearchDialog && (
-          <SearchDialog
-            onClose={handleCloseSearch}
-            isMobile={isMobile} // Pass isMobile prop
-          />
-        )}
-      </AnimatePresence>
+      <SearchDialog open={showSearchDialog} onClose={handleCloseSearch} isMobile={isMobile} />
     </div>
   );
 };
