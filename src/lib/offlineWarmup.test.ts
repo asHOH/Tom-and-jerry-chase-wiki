@@ -44,8 +44,8 @@ describe('offlineWarmup', () => {
     expect(imageUrls).toContain('/images/mice/杰瑞.png');
   });
 
-  it('should reference existing optimized image assets', () => {
-    const missingImageUrls = getOfflineWarmupImageUrls(true).filter((imageUrl) => {
+  it('should reference existing source image assets', () => {
+    const missingImageUrls = getOfflineWarmupImageUrls(false).filter((imageUrl) => {
       const relativePath = decodeURIComponent(imageUrl).replace(/^\//, '');
       return !existsSync(path.join(process.cwd(), 'public', relativePath));
     });
