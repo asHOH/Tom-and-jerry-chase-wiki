@@ -227,7 +227,7 @@ export default function ArticleDiffViewer({
         <span className='text-xs text-slate-500 dark:text-slate-500'>仅显示可见文字变化</span>
       </div>
 
-      <Card className='overflow-hidden p-0'>
+      <Card bordered className='overflow-hidden p-0'>
         <div className='overflow-x-auto' data-testid='article-diff-table-scroll'>
           <table className='w-full min-w-200 table-fixed border-collapse'>
             <colgroup>
@@ -331,7 +331,7 @@ export default function ArticleDiffViewer({
             </p>
           </div>
         </div>
-        <Card className='p-6 md:p-8'>
+        <Card bordered className='p-6 md:p-8'>
           <RichTextDisplay content={newVersion.content} />
         </Card>
       </section>

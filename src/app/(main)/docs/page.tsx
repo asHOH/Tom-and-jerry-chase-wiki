@@ -31,7 +31,7 @@ export default async function DocsIndexPage() {
       {docPages.length > 0 ? (
         <div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3'>
           {docPages.map((page) => (
-            <Card key={page.slug} as='article' interactive className='group p-0'>
+            <Card key={page.slug} as='article' bordered interactive className='group p-0'>
               <Link href={page.path} className='block h-full p-6 no-underline'>
                 <div className='space-y-3'>
                   <h2 className='text-xl font-semibold text-gray-900 transition-colors group-hover:text-blue-600 dark:text-gray-100 dark:group-hover:text-blue-400'>
