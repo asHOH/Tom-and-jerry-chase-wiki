@@ -70,9 +70,9 @@ export function ReplyForm({
   };
 
   return (
-    <div className='rounded-lg border border-gray-200 bg-gray-50/60 px-5 py-4 dark:border-gray-700 dark:bg-gray-900/30'>
+    <div className='rounded-lg border border-gray-200 bg-gray-50/60 px-5 py-4 dark:border-slate-700 dark:bg-slate-900/30'>
       {replyToNickname && (
-        <div className='mb-3 flex items-center justify-between gap-3 rounded-md bg-gray-100 px-3 py-2 text-sm text-gray-700 dark:bg-gray-800 dark:text-gray-200'>
+        <div className='mb-3 flex items-center justify-between gap-3 rounded-md bg-gray-100 px-3 py-2 text-sm text-gray-700 dark:bg-slate-800 dark:text-gray-200'>
           <div className='min-w-0 truncate'>回复 {replyToNickname}</div>
           <button
             type='button'

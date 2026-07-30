@@ -11,7 +11,7 @@ export function TableOfContents({ topics }: TableOfContentsProps) {
 
   return (
     <nav
-      className='mb-8 rounded-lg border border-gray-200 bg-gray-50/70 px-5 py-3 dark:border-gray-700 dark:bg-gray-900/30'
+      className='mb-8 rounded-lg border border-gray-200 bg-gray-50/70 px-5 py-3 dark:border-slate-700 dark:bg-slate-900/30'
       aria-label='目录'
     >
       <h2 className='mb-2 text-sm font-semibold text-gray-800 dark:text-gray-200'>目录</h2>

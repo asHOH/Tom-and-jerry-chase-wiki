@@ -50,7 +50,7 @@ export default function ComparisonCard({
       disabled={disabled}
       className={cn(
         'relative w-full max-w-50 touch-manipulation',
-        'rounded-xl bg-white shadow-md dark:bg-gray-800',
+        'rounded-xl bg-white shadow-md dark:bg-slate-800',
         'transition-all duration-200',
         'focus:ring-2 focus:ring-blue-400 focus:outline-none',
         !disabled && !isFlipped && 'cursor-pointer hover:-translate-y-1 hover:shadow-lg',

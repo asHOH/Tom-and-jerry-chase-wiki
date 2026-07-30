@@ -139,7 +139,7 @@ export default function CommentsSection({
     return (
       <div
         key={comment.id}
-        className='rounded-lg border border-gray-200 bg-white/70 p-3 shadow-sm dark:border-gray-800 dark:bg-gray-900/40'
+        className='rounded-lg border border-gray-200 bg-white/70 p-3 shadow-sm dark:border-slate-700 dark:bg-slate-900/40'
         style={{ marginLeft: depth ? Math.min(depth, 3) * 12 : 0 }}
       >
         <div className='flex items-center justify-between gap-3'>
@@ -188,9 +188,9 @@ export default function CommentsSection({
         <span className='text-sm text-gray-500 dark:text-gray-400'>{comments.length} 条</span>
       </div>
 
-      <div className='rounded-lg border border-gray-200 bg-white/70 p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900/40'>
+      <div className='rounded-lg border border-gray-200 bg-white/70 p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900/40'>
         {replyTo ? (
-          <div className='mb-3 flex items-center justify-between gap-3 rounded-md bg-gray-100 px-3 py-2 text-sm text-gray-700 dark:bg-gray-800 dark:text-gray-200'>
+          <div className='mb-3 flex items-center justify-between gap-3 rounded-md bg-gray-100 px-3 py-2 text-sm text-gray-700 dark:bg-slate-800 dark:text-gray-200'>
             <div className='min-w-0 truncate'>回复 {replyTo.nickname || '匿名'}</div>
             <button
               type='button'
@@ -242,11 +242,11 @@ export default function CommentsSection({
             <LoadingSpinner size='md' />
           </div>
         ) : loadError ? (
-          <div className='rounded-lg border border-gray-200 bg-white/70 p-4 text-sm text-gray-600 dark:border-gray-800 dark:bg-gray-900/40 dark:text-gray-400'>
+          <div className='rounded-lg border border-gray-200 bg-white/70 p-4 text-sm text-gray-600 dark:border-slate-700 dark:bg-slate-900/40 dark:text-gray-400'>
             评论加载失败，请稍后再试。
           </div>
         ) : comments.length === 0 ? (
-          <div className='rounded-lg border border-gray-200 bg-white/70 p-4 text-sm text-gray-600 dark:border-gray-800 dark:bg-gray-900/40 dark:text-gray-400'>
+          <div className='rounded-lg border border-gray-200 bg-white/70 p-4 text-sm text-gray-600 dark:border-slate-700 dark:bg-slate-900/40 dark:text-gray-400'>
             暂无评论，来抢沙发吧。
           </div>
         ) : (

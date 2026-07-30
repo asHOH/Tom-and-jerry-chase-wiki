@@ -65,7 +65,7 @@ export function NewTopicForm({ scope, targetId, onSuccess, onCancel }: NewTopicF
   };
 
   return (
-    <div className='mb-8 rounded-lg border border-gray-200 bg-gray-50/60 px-5 py-4 dark:border-gray-700 dark:bg-gray-900/30'>
+    <div className='mb-8 rounded-lg border border-gray-200 bg-gray-50/60 px-5 py-4 dark:border-slate-700 dark:bg-slate-900/30'>
       <h3 className='mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100'>新建话题</h3>
 
       <FormInput

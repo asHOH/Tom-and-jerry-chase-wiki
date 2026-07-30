@@ -227,7 +227,7 @@ export function TalkPageClient({
 
       {/* Empty state */}
       {topics.length === 0 && (
-        <div className='rounded-lg border border-gray-200 bg-white/70 p-8 text-center dark:border-gray-700 dark:bg-gray-900/40'>
+        <div className='rounded-lg border border-gray-200 bg-white/70 p-8 text-center dark:border-slate-700 dark:bg-slate-900/40'>
           <p className='text-gray-500 dark:text-gray-400'>暂无讨论，来创建第一个话题吧</p>
         </div>
       )}

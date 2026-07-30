@@ -30,7 +30,7 @@ type ModeNavProps = {
 export default function ModeNav({ currentMode }: ModeNavProps) {
   return (
     <nav className='flex justify-center'>
-      <div className='inline-flex rounded-lg border border-gray-200 bg-gray-50 p-1 dark:border-gray-600 dark:bg-gray-800'>
+      <div className='inline-flex rounded-lg border border-gray-200 bg-gray-50 p-1 dark:border-slate-700 dark:bg-slate-800'>
         {MODES.map((m) => (
           <Link
             key={m.id}
@@ -38,7 +38,7 @@ export default function ModeNav({ currentMode }: ModeNavProps) {
             className={cn(
               'rounded-md px-3 py-1.5 text-sm font-medium transition-colors',
               currentMode === m.id
-                ? 'bg-white text-blue-600 shadow-sm dark:bg-gray-700 dark:text-blue-400'
+                ? 'bg-white text-blue-600 shadow-sm dark:bg-slate-700 dark:text-blue-400'
                 : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
             )}
           >

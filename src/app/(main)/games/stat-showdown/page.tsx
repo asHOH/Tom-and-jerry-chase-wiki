@@ -105,7 +105,7 @@ export default function StatShowdownHubPage() {
           <Link
             key={m.id}
             href={m.href}
-            className='group flex flex-col items-center gap-3 rounded-xl border-2 border-gray-200 bg-white p-6 transition-all hover:-translate-y-1 hover:border-blue-300 hover:shadow-lg dark:border-gray-600 dark:bg-gray-800 dark:hover:border-blue-500'
+            className='group flex flex-col items-center gap-3 rounded-xl border-2 border-gray-200 bg-white p-6 transition-all hover:-translate-y-1 hover:border-blue-300 hover:shadow-lg dark:border-slate-700 dark:bg-slate-800 dark:hover:border-blue-500'
           >
             <span className='text-gray-700 transition-colors group-hover:text-blue-500 dark:text-gray-300 dark:group-hover:text-blue-400'>
               {m.icon}

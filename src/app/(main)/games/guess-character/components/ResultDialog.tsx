@@ -57,7 +57,7 @@ export default function ResultDialog({
         </div>
 
         {/* Result grid */}
-        <pre className='rounded-lg bg-gray-50 p-4 text-center font-mono text-sm leading-relaxed whitespace-pre-wrap text-gray-800 dark:bg-gray-800 dark:text-gray-200'>
+        <pre className='rounded-lg bg-gray-50 p-4 text-center font-mono text-sm leading-relaxed whitespace-pre-wrap text-gray-800 dark:bg-slate-900/40 dark:text-gray-200'>
           {generateGuessShareText(puzzleNumber)}
         </pre>
 

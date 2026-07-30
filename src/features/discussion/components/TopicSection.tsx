@@ -104,7 +104,7 @@ export function TopicSection({
 
   return (
     <section id={`comment-${topic.id}`}>
-      <hr className='border-gray-200 dark:border-gray-700' />
+      <hr className='border-gray-200 dark:border-slate-700' />
 
       <div className='py-5'>
         {/* Topic heading */}
@@ -201,9 +201,9 @@ export function TopicSection({
 
         {/* Inline reply form */}
         {replyTargetId !== null && (
-          <div className='mt-4 rounded-lg border border-gray-200 bg-gray-50/60 px-4 py-3 dark:border-gray-700 dark:bg-gray-900/30'>
+          <div className='mt-4 rounded-lg border border-gray-200 bg-gray-50/60 px-4 py-3 dark:border-slate-700 dark:bg-slate-900/30'>
             {replyTargetId !== topic.id && (
-              <div className='mb-3 flex items-center justify-between rounded-md bg-gray-100 px-3 py-1.5 text-sm text-gray-700 dark:bg-gray-800 dark:text-gray-300'>
+              <div className='mb-3 flex items-center justify-between rounded-md bg-gray-100 px-3 py-1.5 text-sm text-gray-700 dark:bg-slate-800 dark:text-gray-300'>
                 <span className='truncate'>
                   回复 {findAuthorInTree(topic, replyTargetId) || '匿名'}
                 </span>
