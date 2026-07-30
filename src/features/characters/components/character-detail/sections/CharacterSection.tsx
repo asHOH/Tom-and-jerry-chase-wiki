@@ -47,9 +47,15 @@ export default function CharacterSection({
     >
       <div className='mb-1 flex items-center px-2 py-3 text-2xl font-bold dark:text-white'>
         <div className='flex min-w-0 items-center gap-1'>
-          <button type='button' className='cursor-pointer focus:outline-none' onClick={toggleOpen}>
-            <h3>{title}</h3>
-          </button>
+          <h2>
+            <button
+              type='button'
+              className='cursor-pointer focus:outline-none'
+              onClick={toggleOpen}
+            >
+              {title}
+            </button>
+          </h2>
           <a
             href={`#${sectionId}`}
             aria-label={`链接到${title}`}

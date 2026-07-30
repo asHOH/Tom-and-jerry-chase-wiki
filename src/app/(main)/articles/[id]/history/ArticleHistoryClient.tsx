@@ -170,9 +170,9 @@ export default function ArticleHistoryClient() {
       <PageShell width='maximum' className='py-8'>
         <Card className='py-12 text-center'>
           <div className='mb-4 text-6xl'>📚</div>
-          <h2 className='mb-2 text-2xl font-bold text-gray-800 dark:text-gray-200'>
+          <h1 className='mb-2 text-2xl font-bold text-gray-800 dark:text-gray-200'>
             {error ? '加载历史版本失败' : '历史版本未找到'}
-          </h2>
+          </h1>
           <p className='mb-6 text-gray-600 dark:text-gray-400'>无法加载此文章的历史版本</p>
           <ButtonLink href={`/articles/${articleId}`}>返回文章</ButtonLink>
         </Card>

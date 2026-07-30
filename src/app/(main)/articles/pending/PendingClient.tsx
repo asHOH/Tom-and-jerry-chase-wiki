@@ -194,11 +194,11 @@ export default function PendingClient() {
       <PageShell width='standard' className='py-8'>
         <div className='py-12 text-center'>
           <div className='mb-4 text-6xl'>🚫</div>
-          <h2 className='mb-2 text-2xl font-bold text-gray-800 dark:text-gray-200'>
+          <h1 className='mb-2 text-2xl font-bold text-gray-800 dark:text-gray-200'>
             {error.status === 403 || error.status === 401
               ? '您没有权限访问此页面'
               : '加载待审核内容失败'}
-          </h2>
+          </h1>
           <p className='mb-6 text-gray-600 dark:text-gray-400'>
             {(permissions.has('article.update_own') || permissions.has('article.update_any')) &&
             !permissions.has('article_version.approve')

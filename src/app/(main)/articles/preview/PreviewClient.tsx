@@ -80,9 +80,9 @@ export default function PreviewClient() {
       <PageShell width='narrow' className='py-8'>
         <div className='py-12 text-center'>
           <div className='mb-4 text-6xl'>🔗</div>
-          <h2 className='mb-2 text-2xl font-bold text-gray-800 dark:text-gray-200'>
+          <h1 className='mb-2 text-2xl font-bold text-gray-800 dark:text-gray-200'>
             {error ? '加载预览失败' : '预览不可用'}
-          </h2>
+          </h1>
           <p className='mb-6 text-gray-600 dark:text-gray-400'>
             此预览链接可能无效、已过期或文章已被删除
           </p>

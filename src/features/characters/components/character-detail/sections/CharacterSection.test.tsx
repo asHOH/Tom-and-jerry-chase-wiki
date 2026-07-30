@@ -18,7 +18,9 @@ describe('CharacterSection', () => {
     const heading = screen.getByRole('heading', { name: '技能描述' });
     expect(permalink).toHaveAttribute('href', '#Section:技能描述');
     expect(permalink.closest('[id]')).toHaveAttribute('id', 'Section:技能描述');
-    expect(heading.closest('button')?.nextElementSibling).toBe(permalink);
+    expect(heading).toHaveProperty('tagName', 'H2');
+    expect(heading).toContainElement(screen.getByRole('button', { name: '技能描述' }));
+    expect(heading.nextElementSibling).toBe(permalink);
     expect(screen.getByRole('button', { name: '折叠技能描述' })).toBeInTheDocument();
 
     fireEvent.click(permalink);
