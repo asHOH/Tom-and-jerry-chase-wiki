@@ -57,6 +57,19 @@ describe('EntityCardFrame', () => {
     expect(frame).not.toHaveClass('shadow-sm', 'hover:shadow-md');
   });
 
+  it.each(['catalog', 'portrait'] as const)(
+    'does not add an inset border to %s cards',
+    (variant) => {
+      render(
+        <EntityCardFrame variant={variant}>
+          <span>角色预览</span>
+        </EntityCardFrame>
+      );
+
+      expect(screen.getByText('角色预览').parentElement).not.toHaveClass('border', 'border-border');
+    }
+  );
+
   it('adds elevation and hover feedback to interactive surfaces', () => {
     render(
       <EntityCardFrame variant='catalog' interactive>
