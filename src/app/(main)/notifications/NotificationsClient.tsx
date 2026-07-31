@@ -276,7 +276,7 @@ export default function NotificationsClient() {
             {isLoading && <LoadingState message='正在加载通知…' />}
             {error && <Notice variant='error'>通知加载失败，请稍后重试。</Notice>}
             {!isLoading && !error && notifications.length === 0 && (
-              <div className='rounded-lg border border-dashed border-gray-300 bg-gray-50/70 px-5 py-12 text-center dark:border-gray-600 dark:bg-gray-900/30'>
+              <Card bordered className='bg-background/60 border-dashed px-5 py-12 text-center'>
                 <div className='mx-auto mb-3 flex size-11 items-center justify-center rounded-full bg-gray-200 text-gray-500 dark:bg-gray-700 dark:text-gray-300'>
                   <CheckCircleIcon className='size-6' />
                 </div>
@@ -286,7 +286,7 @@ export default function NotificationsClient() {
                 <p className='mt-1 text-sm text-gray-500 dark:text-gray-400'>
                   站内通知会显示在这里
                 </p>
-              </div>
+              </Card>
             )}
 
             <div className='space-y-2'>
@@ -404,12 +404,11 @@ export default function NotificationsClient() {
                 const disabled = !available || preferenceBusyKey !== null;
 
                 return (
-                  <label
+                  <Card
+                    as='label'
+                    bordered
                     key={item.key}
-                    className={cn(
-                      'flex items-start gap-3 rounded-lg border border-gray-200 bg-gray-50/70 px-3 py-3 dark:border-gray-700 dark:bg-gray-900/30',
-                      !available && 'opacity-75'
-                    )}
+                    className={cn('flex items-start gap-3 px-3 py-3', !available && 'opacity-75')}
                   >
                     <input
                       type='checkbox'
@@ -431,7 +430,7 @@ export default function NotificationsClient() {
                         </span>
                       )}
                     </span>
-                  </label>
+                  </Card>
                 );
               })}
 
@@ -454,7 +453,7 @@ export default function NotificationsClient() {
             ) : (
               <div className='space-y-4'>
                 {emailSettings?.email && (
-                  <div className='rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-gray-600 dark:bg-gray-900/40'>
+                  <Card bordered className='p-3'>
                     <p className='truncate text-sm font-semibold text-gray-900 dark:text-gray-100'>
                       {emailSettings.email}
                     </p>
@@ -482,7 +481,7 @@ export default function NotificationsClient() {
                         移除
                       </Button>
                     </div>
-                  </div>
+                  </Card>
                 )}
 
                 {emailSettings?.pendingEmail && (

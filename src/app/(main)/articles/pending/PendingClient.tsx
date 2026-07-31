@@ -8,6 +8,7 @@ import { formatArticleDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
 import Button from '@/components/ui/Button';
 import ButtonLink from '@/components/ui/ButtonLink';
+import Card from '@/components/ui/Card';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import PageHeader from '@/components/ui/PageHeader';
 import PageShell from '@/components/ui/PageShell';
@@ -327,7 +328,7 @@ export default function PendingClient() {
       ) : (
         <div className='space-y-4'>
           {filteredSubmissions.map((submission) => (
-            <div key={submission.version_id} className='p-6'>
+            <Card key={submission.version_id} bordered className='p-6'>
               <div className='flex flex-col gap-6 lg:flex-row lg:items-start'>
                 <div className='flex-1'>
                   <div className='mb-4 flex items-start justify-between'>
@@ -360,9 +361,9 @@ export default function PendingClient() {
                     )}
                   </div>
 
-                  <div className='rounded-lg bg-gray-50 p-4 dark:bg-gray-800'>
+                  <Card className='bg-background/60 p-4'>
                     <RichTextDisplay content={submission.content} preview />
-                  </div>
+                  </Card>
                 </div>
 
                 <div className='flex flex-col gap-3 lg:w-48'>
@@ -440,7 +441,7 @@ export default function PendingClient() {
                   </ButtonLink>
                 </div>
               </div>
-            </div>
+            </Card>
           ))}
         </div>
       )}

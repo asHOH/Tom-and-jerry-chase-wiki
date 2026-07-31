@@ -3,6 +3,7 @@
 import { useState } from 'react';
 
 import Button from '@/components/ui/Button';
+import Card from '@/components/ui/Card';
 import { FormInput, FormTextarea } from '@/components/ui/FormControls';
 
 type NewTopicFormProps = {
@@ -65,7 +66,7 @@ export function NewTopicForm({ scope, targetId, onSuccess, onCancel }: NewTopicF
   };
 
   return (
-    <div className='mb-8 rounded-lg border border-gray-200 bg-gray-50/60 px-5 py-4 dark:border-slate-700 dark:bg-slate-900/30'>
+    <Card bordered className='mb-8 px-5 py-4'>
       <h3 className='mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100'>新建话题</h3>
 
       <FormInput
@@ -103,6 +104,6 @@ export function NewTopicForm({ scope, targetId, onSuccess, onCancel }: NewTopicF
           {isSubmitting ? '发布中…' : '发布话题'}
         </Button>
       </div>
-    </div>
+    </Card>
   );
 }

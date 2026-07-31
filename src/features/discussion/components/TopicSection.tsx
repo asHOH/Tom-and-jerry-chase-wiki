@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 import { formatArticleDate } from '@/lib/dateUtils';
 import Button from '@/components/ui/Button';
+import Card from '@/components/ui/Card';
 import { FormTextarea } from '@/components/ui/FormControls';
 
 import type { CommentNode } from '../types';
@@ -206,7 +207,7 @@ export function TopicSection({
 
         {/* Inline reply form */}
         {replyTargetId !== null && (
-          <div className='mt-4 rounded-lg border border-gray-200 bg-gray-50/60 px-4 py-3 dark:border-slate-700 dark:bg-slate-900/30'>
+          <Card bordered className='mt-4 px-4 py-3'>
             {replyTargetId !== topic.id && (
               <div className='mb-3 flex items-center justify-between rounded-md bg-gray-100 px-3 py-1.5 text-sm text-gray-700 dark:bg-slate-800 dark:text-gray-300'>
                 <span className='truncate'>
@@ -250,7 +251,7 @@ export function TopicSection({
                 {isSubmitting ? '发送中…' : '发表回复'}
               </Button>
             </div>
-          </div>
+          </Card>
         )}
       </div>
     </section>

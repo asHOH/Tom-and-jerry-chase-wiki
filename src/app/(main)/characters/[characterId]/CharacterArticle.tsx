@@ -8,6 +8,7 @@ import { contributors } from '@/data/contributors';
 import CharacterSection from '@/features/characters/components/character-detail/sections/CharacterSection';
 import AccordionCard from '@/components/ui/AccordionCard';
 import ButtonLink from '@/components/ui/ButtonLink';
+import Card from '@/components/ui/Card';
 import { renderRichTextContent } from '@/components/ui/RichTextContent';
 import StyledMDX from '@/components/ui/StyledMDX';
 import { ClockIcon, EyeIcon, FolderIcon, UserCircleIcon } from '@/components/icons/CommonIcons';
@@ -88,7 +89,7 @@ export default function CharacterArticle({
           </h3>
 
           {/* Meta Info */}
-          <div className='mt-6 rounded-lg border border-gray-200 p-4 dark:border-gray-700'>
+          <Card bordered className='mt-6'>
             <div className='flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400'>
               <div className='flex items-center gap-2'>
                 <UserCircleIcon className='size-4' strokeWidth={1.5} />
@@ -133,7 +134,7 @@ export default function CharacterArticle({
                 历史版本
               </ButtonLink>
             </div>
-          </div>
+          </Card>
 
           <StyledMDX className='mx-0 max-w-none p-0 sm:p-0'>
             {renderRichTextContent(sanitizeHTML(single.content))}
@@ -176,7 +177,7 @@ export default function CharacterArticle({
               children: (
                 <div className='space-y-3 px-1 py-2'>
                   {/* Meta Info */}
-                  <div className='rounded-lg border border-gray-200 p-3 dark:border-gray-700'>
+                  <Card bordered className='p-3'>
                     <div className='flex flex-wrap items-center gap-3 text-sm text-gray-600 dark:text-gray-400'>
                       <div className='flex items-center gap-2'>
                         <UserCircleIcon className='size-4' strokeWidth={1.5} />
@@ -221,7 +222,7 @@ export default function CharacterArticle({
                         历史版本
                       </ButtonLink>
                     </div>
-                  </div>
+                  </Card>
                   {article.content ? (
                     <StyledMDX className='mx-0 max-w-none p-0 sm:p-0'>
                       {renderRichTextContent(sanitizeHTML(article.content))}
