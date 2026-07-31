@@ -115,18 +115,6 @@ async function buildEditableAutocompleteCandidates(): Promise<EditableAutocomple
     });
   };
 
-  const addAliases = (aliases: unknown, source: EditableAutocompleteSource) => {
-    if (!Array.isArray(aliases)) {
-      return;
-    }
-
-    aliases.forEach((alias) => {
-      if (typeof alias === 'string') {
-        add(alias, source);
-      }
-    });
-  };
-
   const addFromRecord = (record: Record<string, unknown>, source: EditableAutocompleteSource) => {
     Object.entries(record).forEach(([recordKey, rawEntry]) => {
       add(recordKey, source);
@@ -142,27 +130,20 @@ async function buildEditableAutocompleteCandidates(): Promise<EditableAutocomple
       if (typeof entry.id === 'string') {
         add(entry.id, source);
       }
-
-      addAliases(entry.aliases, source);
     });
   };
 
   Object.entries(characters).forEach(([name, character]) => {
     add(name, '角色');
     add(character.id, '角色');
-    addAliases(character.aliases, '角色');
     character.skills.forEach((skill) => {
       add(skill.name, '技能');
-      addAliases(skill.aliases, '技能');
     });
   });
 
   Object.entries(cards).forEach(([name, card]) => {
     add(name, '知识卡');
     add(card.id, '知识卡');
-    if ('aliases' in card && Array.isArray(card.aliases)) {
-      card.aliases.forEach((alias) => add(alias, '知识卡'));
-    }
   });
 
   addFromRecord(items as unknown as Record<string, unknown>, '道具');
