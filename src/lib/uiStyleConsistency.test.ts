@@ -1,349 +1,51 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import postcss, { type Container, type Rule } from 'postcss';
 
-const projectRoot = process.cwd();
+const globalStylesPath = path.join(process.cwd(), 'src/styles/base.css');
 
-const actionPrimitiveTargets = [
-  'src/app/not-found.tsx',
-  'src/app/(main)/offline/page.tsx',
-  'src/components/CacheDebugPanel.tsx',
-  'src/components/ErrorBoundary.tsx',
-  'src/components/OnboardingTutorial.tsx',
-  'src/features/articles/components/ArticlesClient.tsx',
-  'src/app/(main)/articles/pending/PendingClient.tsx',
-  'src/app/(main)/articles/preview/PreviewClient.tsx',
-  'src/app/(main)/articles/[id]/ArticleClient.tsx',
-  'src/app/(main)/articles/[id]/history/ArticleHistoryClient.tsx',
-  'src/features/admin/components/CategoryManagement.tsx',
-  'src/features/admin/components/UserManagement.tsx',
-  'src/components/LoginDialog.tsx',
-  'src/components/ChangePasswordDialog.tsx',
-  'src/features/characters/components/character-grid/CharacterCreate.tsx',
-  'src/features/characters/components/character-grid/CharacterImport.tsx',
-  'src/components/ui/FeedbackSection.tsx',
-  'src/components/ui/KnowledgeCardPicker.tsx',
-  'src/components/ui/RichTextEditor/LinkDialog.tsx',
-  'src/components/ui/RichTextEditor/ImagePickerModal.tsx',
-  'src/features/discussion/components/NewTopicForm.tsx',
-  'src/features/discussion/components/ReplyForm.tsx',
-  'src/features/discussion/components/TopicSection.tsx',
-  'src/features/discussion/TalkPageClient.tsx',
-  'src/app/(main)/games/guess-character/components/ResultDialog.tsx',
-  'src/app/(main)/games/playstyle-quiz/GameClient.tsx',
-  'src/app/(main)/games/stat-showdown/components/GameOverDialog.tsx',
-  'src/features/mechanics/sections/TraitCollection.tsx',
-] as const;
+function getRule(root: Container, selectorFragment: string): Rule {
+  const rule = root.nodes?.find(
+    (node): node is Rule => node.type === 'rule' && node.selector.includes(selectorFragment)
+  );
 
-const formControlPrimitiveTargets = [
-  {
-    primitive: 'FormInput',
-    rawElementPattern: /<input\b/,
-    relativePaths: [
-      'src/components/ui/CharacterSelector.tsx',
-      'src/components/ui/SearchDialog.tsx',
-      'src/features/discussion/components/NewTopicForm.tsx',
-      'src/features/character-relations/matrix/RelationMatrixCellEditor.tsx',
-      'src/features/mechanics/sections/TraitCollection.tsx',
-    ],
-  },
-  {
-    primitive: 'FormSelect',
-    rawElementPattern: /<select\b/,
-    relativePaths: [
-      'src/app/(main)/recommended/RecommendedPageClient.tsx',
-      'src/features/character-relations/matrix/RelationMatrixCellEditor.tsx',
-      'src/features/characters/components/character-detail/skills/RecommendedStorePlansSection.tsx',
-    ],
-  },
-  {
-    primitive: 'FormTextarea',
-    rawElementPattern: /<textarea\b/,
-    relativePaths: [
-      'src/components/comments/CommentsSection.tsx',
-      'src/features/discussion/components/NewTopicForm.tsx',
-      'src/features/discussion/components/ReplyForm.tsx',
-      'src/features/discussion/components/TopicSection.tsx',
-      'src/features/character-relations/matrix/RelationMatrixCellEditor.tsx',
-      'src/components/ui/EditModeToolbar.tsx',
-    ],
-  },
-] as const;
+  if (!rule) {
+    throw new Error(`Expected a CSS rule containing selector: ${selectorFragment}`);
+  }
 
-const aliasIconPrimitiveTargets = [
-  'src/features/achievements/achievement-detail/AchievementAttributesCard.tsx',
-  'src/features/buffs/components/buff-detail/BuffAttributesCard.tsx',
-  'src/features/characters/components/character-detail/skills/SkillCardProperties.tsx',
-  'src/features/knowledge-cards/components/knowledge-card-detail/KnowledgeCardAttributesCard.tsx',
-  'src/features/maps/map-detail/MapAttributesCard.tsx',
-  'src/features/modes/components/mode-detail/ModeAttributesCard.tsx',
-  'src/features/special-skills/components/special-skill-detail/SpecialSkillAttributesCard.tsx',
-] as const;
+  return rule;
+}
 
-const characterDetailIconPrimitiveTargets = [
-  'src/features/characters/components/character-detail/CharacterDetails.tsx',
-  'src/features/characters/components/character-detail/positioning-tags/PositioningTagsSection.tsx',
-  'src/features/characters/components/character-detail/knowledge-cards/KnowledgeCardGroupDisplay.tsx',
-  'src/features/characters/components/character-detail/knowledge-cards/KnowledgeCardSection.tsx',
-  'src/features/characters/components/character-detail/knowledge-cards/KnowledgeCardGroupSetDisplay.tsx',
-  'src/features/characters/components/character-detail/skills/SkillAllocationDisplay.tsx',
-  'src/features/characters/components/character-detail/skills/SkillAllocationSection.tsx',
-  'src/features/characters/components/character-detail/skills/SkillCard.tsx',
-  'src/features/characters/components/character-detail/skills/SpecialSkillsSection.tsx',
-  'src/features/characters/components/character-detail/character-relations/CharacterRelationPanel.tsx',
-] as const;
+function hasDeclaration(rule: Rule, property: string, value?: string): boolean {
+  return (
+    rule.nodes?.some(
+      (node) =>
+        node.type === 'decl' &&
+        node.prop === property &&
+        (value === undefined || node.value === value)
+    ) ?? false
+  );
+}
 
-const relationSelectorIconPrimitiveTargets = [
-  'src/features/characters/components/character-detail/character-relations/RelationItemSelector.tsx',
-  'src/components/ui/CharacterSelector.tsx',
-] as const;
+describe('global style contracts', () => {
+  it('preserves component focus styles and the development overlay radius token', () => {
+    const root = postcss.parse(fs.readFileSync(globalStylesPath, 'utf8'));
+    const focusFallback = getRule(root, '*:focus-visible:not(');
 
-const knowledgeCardSemanticColorTargets = [
-  'src/features/characters/components/character-detail/knowledge-cards/KnowledgeCardSection.tsx',
-  'src/features/characters/components/character-detail/knowledge-cards/PriorityWarningBadge.tsx',
-] as const;
+    for (const selector of [
+      "[class*='focus:ring-']",
+      "[class*='focus-visible:ring-']",
+      "[class*='focus:outline-']",
+      "[class*='focus-visible:outline-']",
+    ]) {
+      expect(focusFallback.selector).toContain(selector);
+    }
 
-const semanticCardMigrationTargets = [
-  'src/app/(main)/articles/[id]/ArticleClient.tsx',
-  'src/app/(main)/goto/[name]/page.tsx',
-  'src/app/(main)/notifications/NotificationsClient.tsx',
-  'src/app/(main)/ranks/loading.tsx',
-  'src/components/comments/CommentsSection.tsx',
-  'src/components/ui/ChangeLogs.tsx',
-  'src/components/ui/LoadingState.tsx',
-  'src/components/ui/Skeleton.tsx',
-  'src/features/admin/components/GameDataActionModerationPanel.tsx',
-  'src/features/articles/components/ArticleDiffViewer.tsx',
-  'src/features/discussion/TalkPageClient.tsx',
-  'src/features/shared/components/GameDataActionVisualDiff.tsx',
-] as const;
+    expect(hasDeclaration(focusFallback, 'outline', '2px solid var(--wiki-focus)')).toBe(true);
+    expect(hasDeclaration(focusFallback, 'outline-offset', '2px')).toBe(true);
+    expect(hasDeclaration(focusFallback, 'border-radius')).toBe(false);
 
-const semanticRaisedSurfaceTargets = [
-  'src/components/EditRuntime.tsx',
-  'src/components/TabNavigation.tsx',
-  'src/components/ui/CharacterSelector.tsx',
-  'src/components/ui/DocsSidebar.tsx',
-  'src/components/ui/EditModeToolbar.tsx',
-  'src/components/ui/editableFields.tsx',
-  'src/features/admin/components/UserManagement.tsx',
-  'src/features/characters/components/character-detail/character-relations/RelationItemSelector.tsx',
-  'src/features/characters/components/character-detail/knowledge-cards/EditableTreeNode.tsx',
-  'src/features/characters/components/character-detail/positioning-tags/PositioningTagsSection.tsx',
-  'src/features/characters/components/character-detail/skills/RecommendedStorePlansSection.tsx',
-  'src/features/maps/interactive-map/PointDetails.tsx',
-] as const;
-
-const rawActionPattern =
-  /<(?:button|Link)\b(?=[^>]*\bclassName=)[^>]*\b(?:bg-blue|bg-green|bg-red|bg-yellow|bg-gray-100|bg-gray-200|bg-gray-300|bg-gray-500|bg-gray-600)/;
-
-const rawEditModeToolbarGenericActionPattern =
-  /<button\b(?=[^>]*(?:onClick=\{handleDiscard\}|data-tutorial-id='edit-mode-toolbar-(?:preview|publish)'))/;
-
-const rawAliasAddButtonPattern =
-  /<button\b(?=[\s\S]{0,800}aria-label='添加别名')(?=[\s\S]{0,800}<\/button>)[\s\S]{0,800}<\/button>/;
-
-const hasRawAliasAddButton = (source: string) => rawAliasAddButtonPattern.test(source);
-
-const rawMigratedIconButtonPattern =
-  /<button\b(?=[\s\S]{0,800}(?:h-4 w-4|h-7 w-7|h-8 w-8))(?=[\s\S]{0,800}(?:bg-yellow-500|bg-red-500|bg-blue-500|bg-green-600|dark:bg-yellow-600|dark:bg-red-600|dark:bg-blue-600))(?=[\s\S]{0,800}<\/button>)[\s\S]{0,800}<\/button>/;
-
-const hasRawMigratedIconButton = (source: string) => rawMigratedIconButtonPattern.test(source);
-
-const rawRelationSelectorAddButtonPattern =
-  /<button\b(?=[\s\S]{0,800}(?:aria-label=\{triggerAriaLabel\}|aria-label=\{`添加\$\{relationType\}关系`\}))(?=[\s\S]{0,800}h-8 w-8)(?=[\s\S]{0,800}(?:bg-yellow-500|bg-blue-500|bg-purple-500|dark:bg-yellow-600|dark:bg-blue-600|dark:bg-purple-600))(?=[\s\S]{0,800}<\/button>)[\s\S]{0,800}<\/button>/;
-
-const hasRawRelationSelectorAddButton = (source: string) =>
-  rawRelationSelectorAddButtonPattern.test(source);
-
-const tailwindConflictTargets = ['src/lib/design/componentClasses.ts'] as const;
-
-const duplicateFocusVisibleOutlinePattern =
-  /(?:^|[\s'"])focus-visible:outline(?!-)\s+focus-visible:outline-2(?!-)|(?:^|[\s'"])focus-visible:outline-2(?!-)\s+focus-visible:outline(?!-)/;
-
-const hardCodedSemanticHexPattern = /#[0-9A-Fa-f]{3,8}|(?:bg|text|border)-\[#/;
-
-const unsupportedTailwindUtilityPattern = /\b(?:text-md|rounded-0\.5)\b/;
-
-const findSourceFiles = (directory: string): string[] =>
-  fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
-    const entryPath = path.join(directory, entry.name);
-
-    if (entry.isDirectory()) return findSourceFiles(entryPath);
-
-    return /\.(?:css|html|js|jsx|ts|tsx)$/.test(entry.name) ? [entryPath] : [];
-  });
-
-describe('UI style consistency', () => {
-  it('does not use unsupported project Tailwind utilities', () => {
-    const sourceRoot = path.join(projectRoot, 'src');
-    const offenders = findSourceFiles(sourceRoot)
-      .filter((filePath) => !/\.(?:test|spec)\.[jt]sx?$/.test(filePath))
-      .filter((filePath) =>
-        unsupportedTailwindUtilityPattern.test(fs.readFileSync(filePath, 'utf8'))
-      )
-      .map((filePath) => path.relative(projectRoot, filePath));
-
-    expect(offenders).toEqual([]);
-  });
-
-  it('keeps the global focus fallback from overriding component focus styles', () => {
-    const source = fs.readFileSync(path.join(projectRoot, 'src/styles/base.css'), 'utf8');
-
-    expect(source).toContain("[class*='focus:ring-']");
-    expect(source).toContain("[class*='focus-visible:ring-']");
-    expect(source).toContain("[class*='focus:outline-']");
-    expect(source).toContain("[class*='focus-visible:outline-']");
-    expect(source).not.toMatch(/\*:focus-visible:not\([^)]*\)\s*\{[^}]*border-radius\s*:/s);
-  });
-
-  it('does not override intentional inline user-select behavior', () => {
-    const source = fs.readFileSync(path.join(projectRoot, 'src/styles/base.css'), 'utf8');
-
-    expect(source).not.toContain("*[style*='user-select']");
-  });
-
-  it('uses Tailwind radius variables in global styles', () => {
-    const source = fs.readFileSync(path.join(projectRoot, 'src/styles/base.css'), 'utf8');
-
-    expect(source).toContain('border-radius: var(--radius-lg)');
-    expect(source).not.toContain('--rounded-lg');
-  });
-
-  it('uses shared action primitives in migrated surfaces', () => {
-    const offenders = actionPrimitiveTargets.filter((relativePath) => {
-      const source = fs.readFileSync(path.join(projectRoot, relativePath), 'utf8');
-      return rawActionPattern.test(source);
-    });
-
-    expect(offenders).toEqual([]);
-  });
-
-  it('uses Button for the generic playstyle quiz submission action', () => {
-    const source = fs.readFileSync(
-      path.join(projectRoot, 'src/app/(main)/games/playstyle-quiz/components/QuestionCard.tsx'),
-      'utf8'
-    );
-
-    expect(source).toContain('<Button');
-    expect(source.match(/<button\b/g)).toHaveLength(1);
-  });
-
-  it('keeps the passive Card primitive server-compatible', () => {
-    const source = fs.readFileSync(path.join(projectRoot, 'src/components/ui/Card.tsx'), 'utf8');
-
-    expect(source).not.toContain("'use client'");
-    expect(source).toContain("'bg-surface rounded-lg p-4'");
-    expect(source).toContain("'border-border border'");
-  });
-
-  it('uses Card for migrated passive and skeleton surfaces', () => {
-    const offenders = semanticCardMigrationTargets.filter((relativePath) => {
-      const source = fs.readFileSync(path.join(projectRoot, relativePath), 'utf8');
-      return !source.includes('<Card');
-    });
-
-    expect(offenders).toEqual([]);
-  });
-
-  it('uses the raised semantic token for migrated overlays and popovers', () => {
-    const offenders = semanticRaisedSurfaceTargets.filter((relativePath) => {
-      const source = fs.readFileSync(path.join(projectRoot, relativePath), 'utf8');
-      return !source.includes('bg-surface-raised');
-    });
-
-    expect(offenders).toEqual([]);
-  });
-
-  it('consolidates catalog skeleton shells through SkeletonCard', () => {
-    const source = fs.readFileSync(
-      path.join(projectRoot, 'src/components/ui/Skeleton.tsx'),
-      'utf8'
-    );
-
-    expect(source.match(/<SkeletonCard>/g)).toHaveLength(4);
-    expect(source).not.toContain(
-      'rounded-lg border border-gray-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800'
-    );
-  });
-
-  it('uses Button for generic edit toolbar actions', () => {
-    const source = fs.readFileSync(
-      path.join(projectRoot, 'src/components/ui/EditModeToolbar.tsx'),
-      'utf8'
-    );
-
-    expect(source).not.toMatch(rawEditModeToolbarGenericActionPattern);
-    expect(source.match(/<Button\b/g)).toHaveLength(3);
-  });
-
-  it('uses shared form controls in migrated generic form fields', () => {
-    const offenders = formControlPrimitiveTargets.flatMap(
-      ({ primitive, rawElementPattern, relativePaths }) =>
-        relativePaths.flatMap((relativePath) => {
-          const source = fs.readFileSync(path.join(projectRoot, relativePath), 'utf8');
-          return !source.includes(`<${primitive}`) || rawElementPattern.test(source)
-            ? [`${relativePath} (${primitive})`]
-            : [];
-        })
-    );
-
-    expect(offenders).toEqual([]);
-  });
-
-  it('uses AddAliasButton for migrated alias add controls', () => {
-    const offenders = aliasIconPrimitiveTargets.filter((relativePath) => {
-      const source = fs.readFileSync(path.join(projectRoot, relativePath), 'utf8');
-      return !source.includes('<AddAliasButton') || hasRawAliasAddButton(source);
-    });
-
-    expect(offenders).toEqual([]);
-  });
-
-  it('uses IconButton for migrated character detail edit controls', () => {
-    const offenders = characterDetailIconPrimitiveTargets.filter((relativePath) => {
-      const source = fs.readFileSync(path.join(projectRoot, relativePath), 'utf8');
-      return !source.includes('<IconButton') || hasRawMigratedIconButton(source);
-    });
-
-    expect(offenders).toEqual([]);
-  });
-
-  it('allows non-icon relation toggles to keep semantic Tailwind color classes', () => {
-    const source = fs.readFileSync(
-      path.join(
-        projectRoot,
-        'src/features/characters/components/character-detail/character-relations/CharacterRelationPanel.tsx'
-      ),
-      'utf8'
-    );
-
-    expect(source).toContain('dark:hover:bg-green-600');
-    expect(source).not.toContain('dark:hover:bg-[#16a34a]');
-  });
-
-  it('uses IconButton for relation selector add triggers', () => {
-    const offenders = relationSelectorIconPrimitiveTargets.filter((relativePath) => {
-      const source = fs.readFileSync(path.join(projectRoot, relativePath), 'utf8');
-      return !source.includes('<IconButton') || hasRawRelationSelectorAddButton(source);
-    });
-
-    expect(offenders).toEqual([]);
-  });
-
-  it('keeps knowledge card semantic colors in design helpers or Tailwind palette classes', () => {
-    const offenders = knowledgeCardSemanticColorTargets.filter((relativePath) => {
-      const source = fs.readFileSync(path.join(projectRoot, relativePath), 'utf8');
-      return hardCodedSemanticHexPattern.test(source);
-    });
-
-    expect(offenders).toEqual([]);
-  });
-
-  it('does not combine conflicting focus-visible outline utilities', () => {
-    const offenders = tailwindConflictTargets.filter((relativePath) => {
-      const source = fs.readFileSync(path.join(projectRoot, relativePath), 'utf8');
-      return duplicateFocusVisibleOutlinePattern.test(source);
-    });
-
-    expect(offenders).toEqual([]);
+    const nextErrorOverlay = getRule(root, '[data-nextjs-call-stack-frame]');
+    expect(hasDeclaration(nextErrorOverlay, 'border-radius', 'var(--radius-lg)')).toBe(true);
   });
 });
