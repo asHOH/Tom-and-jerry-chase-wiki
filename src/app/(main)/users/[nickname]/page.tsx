@@ -122,6 +122,9 @@ function getContributionStatsGridClassName(statCount: number): string {
 
 async function canViewGameDataActionApprovalRate(): Promise<boolean> {
   const supabase = await createClient();
+  const { data: claimsData } = await supabase.auth.getClaims();
+  if (!claimsData?.claims.sub) return false;
+
   const grants = await loadPermissionGrants(supabase);
 
   return grants.some(
