@@ -260,12 +260,21 @@ export default async function PublicUserPage({ params, searchParams }: PublicUse
   }
 
   return (
-    <PageShell width='standard' className='space-y-6 py-8 text-gray-900 dark:text-gray-100'>
-      <Card as='header' bordered className='p-6 sm:p-8'>
-        <div className='flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between'>
+    <PageShell width='wide' className='space-y-8 py-6 text-gray-900 sm:py-8 dark:text-gray-100'>
+      <Card
+        as='header'
+        bordered
+        className='border-gray-200/80 p-5 shadow-sm sm:p-8 dark:border-gray-700/80'
+      >
+        <div className='flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between'>
           <div className='min-w-0'>
-            <p className='text-sm font-medium text-blue-600 dark:text-blue-400'>Wiki 用户</p>
-            <h1 className='mt-1 truncate text-3xl font-bold tracking-tight'>{profile.nickname}</h1>
+            <p className='inline-flex items-center gap-2 text-xs font-semibold tracking-[0.14em] text-blue-700 uppercase dark:text-blue-300'>
+              <span aria-hidden='true' className='h-1.5 w-1.5 rounded-full bg-blue-500' />
+              Wiki 用户
+            </p>
+            <h1 className='mt-1 truncate text-3xl font-bold tracking-tight sm:text-4xl'>
+              {profile.nickname}
+            </h1>
             {contributor?.name && contributor.name !== profile.nickname ? (
               <p className='mt-1 text-base text-gray-600 dark:text-gray-300'>{contributor.name}</p>
             ) : null}
@@ -278,17 +287,19 @@ export default async function PublicUserPage({ params, searchParams }: PublicUse
               {registrationDateFormatter.format(new Date(profile.registeredAt))}注册
             </p>
           </div>
-          <div className='rounded-xl bg-blue-50 px-6 py-4 text-center dark:bg-blue-950/40'>
-            <div className='text-3xl font-bold text-blue-700 dark:text-blue-300'>
+          <div className='shrink-0 rounded-2xl border border-blue-200/80 bg-blue-50/60 px-6 py-4 text-center shadow-sm sm:min-w-36 dark:border-blue-900/60 dark:bg-blue-950/25'>
+            <div className='text-4xl font-bold tracking-tight text-blue-700 dark:text-blue-300'>
               {profile.contributionTotals.all}
             </div>
-            <div className='mt-1 text-sm text-blue-700/80 dark:text-blue-300/80'>公开贡献</div>
+            <div className='mt-1 text-xs font-semibold tracking-wide text-gray-600 dark:text-gray-300'>
+              公开贡献
+            </div>
           </div>
         </div>
 
-        <div className='mt-6 space-y-3'>
-          <div className='flex flex-wrap items-center gap-2' aria-label='用户组'>
-            <span className='mr-1 text-xs font-semibold tracking-wide text-gray-500 uppercase dark:text-gray-400'>
+        <div className='mt-7 flex flex-col gap-4 border-t border-gray-200 pt-5 sm:flex-row sm:items-start sm:gap-8 dark:border-gray-700'>
+          <div className='flex min-w-0 flex-1 flex-wrap items-center gap-2' aria-label='用户组'>
+            <span className='mr-1 shrink-0 text-xs font-semibold tracking-wide text-gray-500 uppercase dark:text-gray-400'>
               用户组
             </span>
             {profile.groups.length > 0 ? (
@@ -305,14 +316,17 @@ export default async function PublicUserPage({ params, searchParams }: PublicUse
             )}
           </div>
           {contributorRoleLabels.length > 0 ? (
-            <div className='flex flex-wrap items-center gap-2' aria-label='贡献者身份'>
-              <span className='mr-1 text-xs font-semibold tracking-wide text-gray-500 uppercase dark:text-gray-400'>
+            <div
+              className='flex min-w-0 flex-1 flex-wrap items-center gap-2'
+              aria-label='贡献者身份'
+            >
+              <span className='mr-1 shrink-0 text-xs font-semibold tracking-wide text-gray-500 uppercase dark:text-gray-400'>
                 贡献者身份
               </span>
               {contributorRoleLabels.map((role) => (
                 <span
                   key={role}
-                  className='rounded-full bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700 dark:bg-blue-950/50 dark:text-blue-300'
+                  className='rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-sm font-medium text-blue-800 dark:border-blue-900/60 dark:bg-blue-950/45 dark:text-blue-200'
                 >
                   {role}
                 </span>
@@ -322,11 +336,11 @@ export default async function PublicUserPage({ params, searchParams }: PublicUse
         </div>
 
         {contributor?.url && externalWebsiteName ? (
-          <div className='mt-6 border-t border-gray-200 pt-4 dark:border-gray-700'>
+          <div className='mt-5 border-t border-gray-200 pt-4 dark:border-gray-700'>
             <InlineExternalLink
               href={contributor.url}
               ariaLabel={`访问${externalWebsiteName}主页（在新标签页打开）`}
-              className='group inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3.5 py-2.5 font-medium no-underline shadow-sm transition-colors hover:border-blue-300 hover:bg-blue-100 dark:border-blue-800 dark:bg-blue-950/40 dark:hover:border-blue-700 dark:hover:bg-blue-900/60'
+              className='group inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3.5 py-2.5 font-medium text-blue-800 no-underline shadow-sm transition-colors hover:border-blue-300 hover:bg-blue-100 dark:border-blue-800 dark:bg-blue-950/35 dark:text-blue-100 dark:hover:border-blue-700 dark:hover:bg-blue-950/60'
             >
               <svg
                 className='h-4 w-4 shrink-0'
@@ -349,17 +363,23 @@ export default async function PublicUserPage({ params, searchParams }: PublicUse
       </Card>
 
       {contributionStats.length > 0 ? (
-        <section aria-labelledby='contribution-totals-heading'>
-          <h2 id='contribution-totals-heading' className='mb-3 text-xl font-semibold'>
-            贡献统计
-          </h2>
+        <section aria-labelledby='contribution-totals-heading' className='space-y-4'>
+          <header>
+            <p className='text-xs font-semibold tracking-[0.14em] text-blue-700 uppercase dark:text-blue-300'>
+              数据概览
+            </p>
+            <h2 id='contribution-totals-heading' className='mt-1 text-xl font-semibold'>
+              贡献统计
+            </h2>
+          </header>
           <div className={getContributionStatsGridClassName(contributionStats.length)}>
             {contributionStats.map((stat) => (
               <Card
                 key={stat.label}
-                className='border border-gray-200 text-center dark:border-gray-700'
+                bordered
+                className='bg-surface/80 border-gray-200/80 text-center shadow-sm dark:border-gray-700/80'
               >
-                <div className='text-2xl font-bold'>{stat.value}</div>
+                <div className='text-2xl font-bold tracking-tight'>{stat.value}</div>
                 <div className='mt-1 text-sm text-gray-500 dark:text-gray-400'>{stat.label}</div>
               </Card>
             ))}

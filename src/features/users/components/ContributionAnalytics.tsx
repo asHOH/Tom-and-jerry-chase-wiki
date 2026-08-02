@@ -50,9 +50,9 @@ export type ContributionAnalyticsProps = {
 };
 
 const CATEGORY_BAR_CLASSES = [
-  'bg-blue-600 dark:bg-blue-400',
-  'bg-indigo-500 dark:bg-indigo-400',
-  'bg-sky-500 dark:bg-sky-400',
+  'bg-blue-500 dark:bg-blue-400',
+  'bg-emerald-500 dark:bg-emerald-400',
+  'bg-rose-500 dark:bg-rose-400',
   'bg-violet-500 dark:bg-violet-400',
 ] as const;
 
@@ -282,10 +282,13 @@ export function ContributionAnalytics({
       as='section'
       bordered
       aria-label='贡献分析'
-      className={cn('space-y-5 p-4 sm:p-5', className)}
+      className={cn('space-y-5 p-4 sm:p-6', className)}
     >
       <header>
-        <h2 className='text-lg font-semibold text-gray-900 dark:text-gray-100'>贡献分析</h2>
+        <p className='text-xs font-semibold tracking-[0.14em] text-blue-700 uppercase dark:text-blue-300'>
+          节奏分析
+        </p>
+        <h2 className='mt-1 text-lg font-semibold text-gray-900 dark:text-gray-100'>贡献分析</h2>
         <p className='mt-1 text-sm text-gray-500 dark:text-gray-400'>
           用连续性、活跃度和类型分布了解贡献节奏
         </p>
@@ -314,7 +317,7 @@ export function ContributionAnalytics({
                   <p className='text-xs font-medium text-gray-500 dark:text-gray-400'>
                     {metric.label}
                   </p>
-                  <p className='text-xl font-bold tracking-tight text-blue-700 dark:text-blue-300'>
+                  <p className='text-xl font-bold tracking-tight text-gray-900 dark:text-gray-100'>
                     {metric.value}
                   </p>
                   <p className='text-[11px] text-gray-500 dark:text-gray-400'>{metric.detail}</p>

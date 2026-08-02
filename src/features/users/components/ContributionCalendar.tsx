@@ -44,9 +44,9 @@ export type ContributionCalendarProps = {
 
 const LEVEL_CLASSES = [
   'bg-slate-100 ring-slate-200 dark:bg-slate-800 dark:ring-slate-700',
-  'bg-blue-200 ring-blue-200 dark:bg-blue-950/80 dark:ring-blue-900',
-  'bg-blue-400 ring-blue-300 dark:bg-blue-800 dark:ring-blue-700',
-  'bg-blue-600 ring-blue-500 dark:bg-blue-600 dark:ring-blue-500',
+  'bg-blue-100 ring-blue-200 dark:bg-blue-950/80 dark:ring-blue-900',
+  'bg-blue-300 ring-blue-300 dark:bg-blue-800 dark:ring-blue-700',
+  'bg-blue-500 ring-blue-400 dark:bg-blue-500 dark:ring-blue-400',
   'bg-blue-800 ring-blue-700 dark:bg-blue-300 dark:ring-blue-200',
 ] as const;
 
@@ -242,16 +242,21 @@ export function ContributionCalendar({
       as='section'
       bordered
       aria-label='贡献日历'
-      className={cn('space-y-4 overflow-hidden p-4 sm:p-5', className)}
+      className={cn('space-y-5 overflow-hidden p-4 sm:p-6', className)}
     >
       <header className='flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between'>
         <div>
-          <h2 className='text-lg font-semibold text-gray-900 dark:text-gray-100'>贡献日历</h2>
+          <p className='text-xs font-semibold tracking-[0.14em] text-blue-700 uppercase dark:text-blue-300'>
+            活动概览
+          </p>
+          <h2 className='mt-1 text-lg font-semibold text-gray-900 dark:text-gray-100'>贡献日历</h2>
           <p className='text-sm text-gray-500 dark:text-gray-400'>
             最近 365 天 · {formatDateKey(range.startDate)} 至 {formatDateKey(range.endDate)}
           </p>
         </div>
-        <span className='text-xs text-gray-400 dark:text-gray-500'>周日对齐</span>
+        <span className='hidden rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-500 sm:inline-flex dark:bg-gray-800 dark:text-gray-400'>
+          按周查看
+        </span>
       </header>
 
       {hasError ? (

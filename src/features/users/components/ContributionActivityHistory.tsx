@@ -32,7 +32,7 @@ const ACTIVITY_KIND_META = {
   },
   gameData: {
     label: '游戏数据',
-    className: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/40 dark:text-indigo-200',
+    className: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-200',
   },
 } as const;
 
@@ -122,14 +122,14 @@ function ActivityItemRow({ item }: { item: ContributionActivityItem }) {
     <Card
       as='article'
       bordered
-      className='relative overflow-hidden p-4 transition-shadow hover:shadow-sm'
+      className='relative overflow-hidden border-gray-200/80 bg-gray-50/40 p-4 transition-shadow hover:shadow-sm dark:border-gray-700/80 dark:bg-gray-900/20'
     >
       <div className='flex gap-3'>
         <span
           aria-hidden='true'
           className={cn(
-            'mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full ring-4 ring-blue-50 dark:ring-blue-950/40',
-            item.kind === 'article' ? 'bg-blue-500' : 'bg-indigo-500'
+            'mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full ring-4 ring-gray-100 dark:ring-gray-800',
+            item.kind === 'article' ? 'bg-blue-500' : 'bg-emerald-500'
           )}
         />
         <div className='min-w-0 flex-1'>
@@ -148,7 +148,7 @@ function ActivityItemRow({ item }: { item: ContributionActivityItem }) {
             {item.href ? (
               <Link
                 href={item.href}
-                className='rounded-sm text-blue-700 underline decoration-blue-300 underline-offset-2 transition-colors hover:text-blue-900 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:text-blue-300 dark:decoration-blue-700 dark:hover:text-blue-200'
+                className='rounded-sm text-gray-900 no-underline transition-colors hover:text-gray-600 focus:ring-2 focus:ring-gray-400 focus:outline-none dark:text-gray-100 dark:hover:text-gray-300'
               >
                 {title}
               </Link>
@@ -345,11 +345,14 @@ export function ContributionActivityHistory({
       as='section'
       bordered
       aria-label='贡献历史'
-      className={cn('space-y-5 p-4 sm:p-5', className)}
+      className={cn('space-y-5 p-4 sm:p-6', className)}
     >
       <header className='flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between'>
         <div>
-          <h2 className='text-lg font-semibold text-gray-900 dark:text-gray-100'>贡献历史</h2>
+          <p className='text-xs font-semibold tracking-[0.14em] text-blue-700 uppercase dark:text-blue-300'>
+            最近动态
+          </p>
+          <h2 className='mt-1 text-lg font-semibold text-gray-900 dark:text-gray-100'>贡献历史</h2>
           <p className='mt-1 text-sm text-gray-500 dark:text-gray-400'>
             按时间查看文章与游戏数据贡献
           </p>
