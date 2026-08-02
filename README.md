@@ -74,6 +74,7 @@
 |                 | `SUPABASE_SECRET_KEY`                         | Supabase Secret key                                                               |
 |                 | `NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN` | -                                                                                 |
 |                 | `NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS`         | 默认情况下仅在 Vercel 生产环境启用，设为 0 强制禁用或 1 强制启用 Vercel Analytics |
+|                 | `NEXT_PUBLIC_ICP_RECORD_NUMBER`               | 可选，设置后在网站页脚显示ICP备案号并链接至工信部备案管理系统                     |
 |                 | `FLOWKEY`                                     | 可选，为TJWiki MCP Server提供数据流转支持，默认情况下不填写此项则不开启它         |
 
 ### 开发步骤

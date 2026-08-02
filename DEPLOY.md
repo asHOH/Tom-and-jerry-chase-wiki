@@ -146,6 +146,9 @@ NEXT_PUBLIC_DISABLE_FEEDBACK_EMAIL=1
 # 关闭文章功能 (设为 1 则无需配置 Supabase)
 NEXT_PUBLIC_DISABLE_ARTICLES=1
 
+# ICP备案号（设置为已签发的准确备案号后，网站页脚会显示备案信息）
+# NEXT_PUBLIC_ICP_RECORD_NUMBER=your_issued_icp_record_number_here
+
 # ------------------------------
 # 2. Supabase 配置 (可选)
 # ------------------------------
@@ -194,6 +197,7 @@ npm run start
    - 在构建阶段注入 `COMMIT_SHA`（或 `DEPLOY_COMMIT_SHA`）以保证 `/api/version` 返回准确版本信息。
    - `DEPLOYMENT_ENVIRONMENT`（可选值 `development`/`preview`/`production`）标记运行环境；如不设置将回退为 `NODE_ENV`。
    - 默认不加载 Vercel Analytics/Speed Insights。若需使用，将 `NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS` 设为 `1`。
+   - （可选）设置 `NEXT_PUBLIC_ICP_RECORD_NUMBER` 为已签发的ICP备案号，在网站页脚将备案号本身作为工信部备案管理系统链接。
    - （可选，推荐）启用 API 防滥用限流：配置 `UPSTASH_REDIS_REST_URL` 与 `UPSTASH_REDIS_REST_TOKEN`（用于 `@upstash/redis` + `@upstash/ratelimit`）。未配置时将跳过限流。
 
 2. **安全头与缓存策略**

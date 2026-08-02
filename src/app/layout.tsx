@@ -12,6 +12,7 @@ import { AnalyticsComponent } from '@/components/AnalyticsComponent';
 import { ClientProviders } from '@/components/ClientProviders';
 import { DisableLinkPrefetch } from '@/components/DisableLinkPrefetch';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import IcpFooter from '@/components/IcpFooter';
 import { PerformanceMonitor } from '@/components/PerformanceMonitor';
 import { SpeedInsightsComponent } from '@/components/SpeedInsights';
 
@@ -129,6 +130,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               </UserProvider>
             </main>
           </ErrorBoundary>
+          <IcpFooter />
           <PerformanceMonitor />
           <SpeedInsightsComponent enabled={vercelAnalyticsEnabled} />
           <AnalyticsComponent enabled={vercelAnalyticsEnabled} />

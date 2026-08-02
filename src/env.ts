@@ -88,6 +88,9 @@ export const env = createEnv({
 
     // Custom Site URL (for mirror deployments)
     NEXT_PUBLIC_SITE_URL: z.url().optional(),
+
+    // Optional ICP filing footer
+    NEXT_PUBLIC_ICP_RECORD_NUMBER: z.string().trim().min(1).optional(),
   },
 
   experimental__runtimeEnv: {
@@ -107,6 +110,7 @@ export const env = createEnv({
     NEXT_PUBLIC_AI_CHAT_MODEL: process.env.NEXT_PUBLIC_AI_CHAT_MODEL,
     NEXT_PUBLIC_BUILD_TIMESTAMP: process.env.NEXT_PUBLIC_BUILD_TIMESTAMP,
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
+    NEXT_PUBLIC_ICP_RECORD_NUMBER: process.env.NEXT_PUBLIC_ICP_RECORD_NUMBER,
   },
 
   skipValidation: process.env.SKIP_ENV_VALIDATION === '1',
