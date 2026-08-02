@@ -4,19 +4,32 @@ import { notFound } from 'next/navigation';
 
 import type { PermissionKey } from '@/lib/auth/permissions';
 import { loadPermissionGrants } from '@/lib/auth/requirePermission';
-import { formatCompactDateTime } from '@/lib/dateUtils';
 import { generatePageMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { createClient } from '@/lib/supabase/server';
 import {
-  getGameDataActionApprovalRate,
-  getPublicUserProfile,
-  type PublicContribution,
-} from '@/lib/users/publicProfile';
+  calculateContributionMetrics,
+  getContributionDateRange,
+  getPublicContributionActivity,
+  getPublicContributionBreakdown,
+  getPublicContributionCalendar,
+  normalizeContributionFilter,
+  normalizeContributionPage,
+  type ContributionActivityFilter,
+  type ContributionActivityPage,
+  type ContributionBreakdown,
+  type ContributionCalendar,
+  type ContributionMetrics,
+} from '@/lib/users/contributionActivity';
+import { getGameDataActionApprovalRate, getPublicUserProfile } from '@/lib/users/publicProfile';
 import { contributors, RoleType } from '@/data/contributors';
+import {
+  ContributionActivityHistory,
+  ContributionAnalytics,
+  ContributionCalendar as ContributionCalendarView,
+} from '@/features/users/components';
 import Card from '@/components/ui/Card';
 import { InlineExternalLink } from '@/components/ui/InlineExternalLink';
 import PageShell from '@/components/ui/PageShell';
-import Link from '@/components/Link';
 
 export const dynamic = 'force-dynamic';
 
@@ -74,6 +87,11 @@ const registrationDateFormatter = new Intl.DateTimeFormat('zh-CN', {
   timeZone: 'Asia/Shanghai',
 });
 
+type PublicUserPageProps = {
+  params: Promise<{ nickname: string }>;
+  searchParams: Promise<{ type?: string; page?: string }>;
+};
+
 function getCharacterContributionCount(
   contributor: (typeof contributors)[number] | undefined
 ): number {
@@ -84,6 +102,14 @@ function getCharacterContributionCount(
       .filter((role) => role.type === RoleType.ContentWriter)
       .flatMap((role) => role.characters ?? [])
   ).size;
+}
+
+function getContributorRoleLabels(
+  contributor: (typeof contributors)[number] | undefined
+): string[] {
+  if (!contributor) return [];
+
+  return [...new Set(contributor.roles.map(({ type }) => type))];
 }
 
 function getContributionStatsGridClassName(statCount: number): string {
@@ -101,6 +127,19 @@ async function canViewGameDataActionApprovalRate(): Promise<boolean> {
   return grants.some(
     (grant) => grant.scope === 'global' && USER_MANAGEMENT_PERMISSIONS.has(grant.permission)
   );
+}
+function getUserActivityHref(
+  nickname: string,
+  filter: ContributionActivityFilter,
+  page = 1
+): Route {
+  const searchParams = new URLSearchParams();
+  if (filter !== 'all') searchParams.set('type', filter);
+  if (page > 1) searchParams.set('page', String(page));
+  const query = searchParams.toString();
+  const pathname = `/users/${encodeURIComponent(nickname)}`;
+
+  return (query ? `${pathname}?${query}` : pathname) as Route;
 }
 
 export async function generateMetadata({
@@ -126,13 +165,12 @@ export async function generateMetadata({
   }
 }
 
-export default async function PublicUserPage({
-  params,
-}: {
-  params: Promise<{ nickname: string }>;
-}) {
+export default async function PublicUserPage({ params, searchParams }: PublicUserPageProps) {
   const { nickname: encodedNickname } = await params;
+  const resolvedSearchParams = await searchParams;
   const nickname = decodeNickname(encodedNickname);
+  const contributionFilter = normalizeContributionFilter(resolvedSearchParams.type);
+  const requestedContributionPage = normalizeContributionPage(resolvedSearchParams.page);
   let profile;
 
   try {
@@ -144,18 +182,67 @@ export default async function PublicUserPage({
 
   if (!profile) notFound();
 
+  const contributionDateRange = getContributionDateRange();
+  let contributionCalendar: ContributionCalendar = [];
+  let contributionBreakdown: ContributionBreakdown = [];
+  let contributionMetrics: ContributionMetrics | null = null;
+  let contributionActivityPage: ContributionActivityPage | null = null;
+  let calendarError = false;
+  let breakdownError = false;
+  let activityError = false;
   let gameDataActionApprovalRate: number | null = null;
-  try {
-    if (await canViewGameDataActionApprovalRate()) {
-      gameDataActionApprovalRate = await getGameDataActionApprovalRate(profile.id);
-    }
-  } catch (error) {
-    console.error('Failed to load game data action approval rate:', error);
+
+  const [calendarResult, breakdownResult, activityResult, approvalRateResult] =
+    await Promise.allSettled([
+      getPublicContributionCalendar(profile.id, contributionDateRange),
+      getPublicContributionBreakdown(profile.id, contributionDateRange),
+      getPublicContributionActivity(profile.id, contributionFilter, requestedContributionPage),
+      (async () => {
+        if (!(await canViewGameDataActionApprovalRate())) return null;
+        return getGameDataActionApprovalRate(profile.id);
+      })(),
+    ]);
+
+  if (calendarResult.status === 'fulfilled') {
+    contributionCalendar = calendarResult.value;
+    contributionMetrics = calculateContributionMetrics(contributionCalendar);
+  } else {
+    calendarError = true;
+    console.error('Failed to load public contribution calendar:', calendarResult.reason);
   }
+
+  if (breakdownResult.status === 'fulfilled') {
+    contributionBreakdown = breakdownResult.value;
+  } else {
+    breakdownError = true;
+    console.error('Failed to load public contribution breakdown:', breakdownResult.reason);
+  }
+
+  if (activityResult.status === 'fulfilled') {
+    contributionActivityPage = activityResult.value;
+  } else {
+    activityError = true;
+    console.error('Failed to load public contribution activity:', activityResult.reason);
+  }
+
+  if (approvalRateResult.status === 'fulfilled') {
+    gameDataActionApprovalRate = approvalRateResult.value;
+  } else {
+    console.error('Failed to load game data action approval rate:', approvalRateResult.reason);
+  }
+
+  const contributionFilterHrefs: Readonly<Record<ContributionActivityFilter, Route>> = {
+    all: getUserActivityHref(profile.nickname, 'all'),
+    articles: getUserActivityHref(profile.nickname, 'articles'),
+    'game-data': getUserActivityHref(profile.nickname, 'game-data'),
+  };
+  const contributionPageHref = (page: number): Route =>
+    getUserActivityHref(profile.nickname, contributionFilter, page);
 
   const contributor = contributors.find(({ nickname }) => nickname === profile.nickname);
   const externalWebsiteName = contributor?.url ? getWebsiteName(contributor.url) : null;
   const characterContributionCount = getCharacterContributionCount(contributor);
+  const contributorRoleLabels = getContributorRoleLabels(contributor);
   const contributionStats: Array<{ label: string; value: number | string }> = [
     { label: '角色文案撰写', value: characterContributionCount },
     { label: '文章编辑', value: profile.contributionTotals.articles },
@@ -176,33 +263,59 @@ export default async function PublicUserPage({
           <div className='min-w-0'>
             <p className='text-sm font-medium text-blue-600 dark:text-blue-400'>Wiki 用户</p>
             <h1 className='mt-1 truncate text-3xl font-bold tracking-tight'>{profile.nickname}</h1>
+            {contributor?.name && contributor.name !== profile.nickname ? (
+              <p className='mt-1 text-base text-gray-600 dark:text-gray-300'>{contributor.name}</p>
+            ) : null}
+            {contributor?.description ? (
+              <p className='mt-3 max-w-3xl text-sm leading-6 text-gray-600 dark:text-gray-300'>
+                {contributor.description}
+              </p>
+            ) : null}
             <p className='mt-2 text-sm text-gray-500 dark:text-gray-400'>
               {registrationDateFormatter.format(new Date(profile.registeredAt))}注册
             </p>
           </div>
-          {profile.contributionTotals.all > 0 ? (
-            <div className='rounded-xl bg-blue-50 px-6 py-4 text-center dark:bg-blue-950/40'>
-              <div className='text-3xl font-bold text-blue-700 dark:text-blue-300'>
-                {profile.contributionTotals.all}
-              </div>
-              <div className='mt-1 text-sm text-blue-700/80 dark:text-blue-300/80'>公开贡献</div>
+          <div className='rounded-xl bg-blue-50 px-6 py-4 text-center dark:bg-blue-950/40'>
+            <div className='text-3xl font-bold text-blue-700 dark:text-blue-300'>
+              {profile.contributionTotals.all}
             </div>
-          ) : null}
+            <div className='mt-1 text-sm text-blue-700/80 dark:text-blue-300/80'>公开贡献</div>
+          </div>
         </div>
 
-        <div className='mt-6 flex flex-wrap gap-2' aria-label='用户组'>
-          {profile.groups.length > 0 ? (
-            profile.groups.map((group) => (
-              <span
-                key={group}
-                className='rounded-full bg-gray-100 px-3 py-1 text-sm font-medium text-gray-700 dark:bg-gray-700 dark:text-gray-200'
-              >
-                {group}
+        <div className='mt-6 space-y-3'>
+          <div className='flex flex-wrap items-center gap-2' aria-label='用户组'>
+            <span className='mr-1 text-xs font-semibold tracking-wide text-gray-500 uppercase dark:text-gray-400'>
+              用户组
+            </span>
+            {profile.groups.length > 0 ? (
+              profile.groups.map((group) => (
+                <span
+                  key={group}
+                  className='rounded-full bg-gray-100 px-3 py-1 text-sm font-medium text-gray-700 dark:bg-gray-700 dark:text-gray-200'
+                >
+                  {group}
+                </span>
+              ))
+            ) : (
+              <span className='text-sm text-gray-500 dark:text-gray-400'>暂无用户组</span>
+            )}
+          </div>
+          {contributorRoleLabels.length > 0 ? (
+            <div className='flex flex-wrap items-center gap-2' aria-label='贡献者身份'>
+              <span className='mr-1 text-xs font-semibold tracking-wide text-gray-500 uppercase dark:text-gray-400'>
+                贡献者身份
               </span>
-            ))
-          ) : (
-            <span className='text-sm text-gray-500 dark:text-gray-400'>暂无用户组</span>
-          )}
+              {contributorRoleLabels.map((role) => (
+                <span
+                  key={role}
+                  className='rounded-full bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700 dark:bg-blue-950/50 dark:text-blue-300'
+                >
+                  {role}
+                </span>
+              ))}
+            </div>
+          ) : null}
         </div>
 
         {contributor?.url && externalWebsiteName ? (
@@ -251,66 +364,25 @@ export default async function PublicUserPage({
         </section>
       ) : null}
 
-      <Card
-        as='section'
-        className='overflow-hidden border border-gray-200 p-0 dark:border-gray-700'
-        aria-labelledby='recent-contributions-heading'
-      >
-        <div className='border-b border-gray-200 px-4 py-4 sm:px-5 dark:border-gray-700'>
-          <h2 id='recent-contributions-heading' className='text-xl font-semibold'>
-            最近贡献
-          </h2>
-        </div>
-
-        {profile.recentContributions.length > 0 ? (
-          <ol className='divide-y divide-gray-100 dark:divide-gray-700'>
-            {profile.recentContributions.map((contribution) => (
-              <li key={`${contribution.kind}-${contribution.id}`}>
-                {contribution.href ? (
-                  <Link
-                    href={contribution.href as Route}
-                    className='block px-4 py-4 transition-colors hover:bg-gray-50 sm:px-5 dark:hover:bg-gray-700/50'
-                  >
-                    <ContributionContent contribution={contribution} />
-                  </Link>
-                ) : (
-                  <div className='px-4 py-4 sm:px-5'>
-                    <ContributionContent contribution={contribution} />
-                  </div>
-                )}
-              </li>
-            ))}
-          </ol>
-        ) : (
-          <p className='px-5 py-12 text-center text-gray-500 dark:text-gray-400'>暂无公开贡献</p>
-        )}
-      </Card>
+      <ContributionCalendarView
+        days={contributionCalendar}
+        asOf={contributionDateRange.endDate}
+        hasError={calendarError}
+      />
+      <ContributionAnalytics
+        metrics={contributionMetrics}
+        months={contributionMetrics?.monthlyBuckets ?? []}
+        categories={contributionBreakdown}
+        hasMetricsError={calendarError}
+        hasBreakdownError={breakdownError}
+      />
+      <ContributionActivityHistory
+        page={contributionActivityPage}
+        filter={contributionFilter}
+        filterHrefs={contributionFilterHrefs}
+        pageHref={contributionPageHref}
+        hasError={activityError}
+      />
     </PageShell>
-  );
-}
-
-function ContributionContent({ contribution }: { contribution: PublicContribution }) {
-  return (
-    <div className='flex items-start justify-between gap-4'>
-      <div className='min-w-0'>
-        <div className='flex flex-wrap items-center gap-2'>
-          <span className='font-medium'>{contribution.title}</span>
-          <span className='rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-500 dark:bg-gray-700 dark:text-gray-300'>
-            {contribution.kind === 'article' ? '文章' : '游戏数据'}
-          </span>
-        </div>
-        {contribution.description && (
-          <p className='mt-1 line-clamp-2 text-sm text-gray-600 dark:text-gray-300'>
-            {contribution.description}
-          </p>
-        )}
-      </div>
-      <time
-        dateTime={contribution.createdAt}
-        className='shrink-0 text-xs text-gray-500 dark:text-gray-400'
-      >
-        {formatCompactDateTime(contribution.createdAt)}
-      </time>
-    </div>
   );
 }

@@ -1210,6 +1210,50 @@ export type Database = {
           status: Database['public']['Enums']['game_data_action_status'];
         }[];
       };
+      get_public_contribution_activity: {
+        Args: {
+          p_filter?: string;
+          p_limit?: number;
+          p_offset?: number;
+          p_user_id: string;
+        };
+        Returns: {
+          actor_id: string | null;
+          article_id: string | null;
+          article_title: string | null;
+          created_at: string;
+          description: string | null;
+          entity_type: string | null;
+          entry: Json | null;
+          id: string;
+          kind: string;
+          total_count: number;
+        }[];
+      };
+      get_public_contribution_breakdown: {
+        Args: {
+          p_end_date: string;
+          p_start_date: string;
+          p_user_id: string;
+        };
+        Returns: {
+          category: string;
+          contribution_count: number;
+        }[];
+      };
+      get_public_contribution_calendar: {
+        Args: {
+          p_end_date: string;
+          p_start_date: string;
+          p_user_id: string;
+        };
+        Returns: {
+          activity_date: string;
+          article_count: number;
+          game_data_count: number;
+          total_count: number;
+        }[];
+      };
       get_article_version_notification_recipients: {
         Args: {
           p_actor_id?: string | null;
