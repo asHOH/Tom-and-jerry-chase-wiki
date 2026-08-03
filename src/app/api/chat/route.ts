@@ -1,13 +1,18 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { createOpenAI } from '@ai-sdk/openai';
-import { convertToModelMessages, streamText, type UIMessage } from 'ai';
+import { convertToModelMessages, stepCountIs, streamText, tool, type UIMessage } from 'ai';
 import { z } from 'zod';
 
+import { CHAT_CODE_MAX_LENGTH, executeChatCode } from '@/lib/ai/chatCodeExecution';
+import { selectChatGameData, type ChatGameData } from '@/lib/gameData/chatGameData';
 import { getPublishedGameDataSnapshot } from '@/lib/gameData/published/publishedSnapshot';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { historyData } from '@/data/history';
+import { actorProfileLookup } from '@/features/actor-profiles/serialization';
 import itemGroups from '@/features/items/data/itemGroups';
 import { env } from '@/env';
+
+export const runtime = 'nodejs';
 
 const debugLoggingEnabled = env.CHAT_DEBUG_LOG === '1';
 const logDebug = (message: string, detail?: unknown) => {
@@ -51,11 +56,14 @@ function buildFactionAliasMap(
 }
 
 // Build alias mappings
-async function buildSystemInstructionText(): Promise<string> {
-  const {
-    data: { buffs, cards, characters, entities, items, specialSkills },
-  } = await getPublishedGameDataSnapshot();
-
+function buildSystemInstructionText({
+  buffs,
+  cards,
+  characters,
+  entities,
+  items,
+  specialSkills,
+}: ChatGameData): string {
   const characterAliases = buildAliasMap(characters, 'Characters');
   const cardAliases = buildAliasMap(cards, 'Knowledge Cards');
   const specialSkillAliases = buildFactionAliasMap(specialSkills, 'Special Skills');
@@ -474,20 +482,6 @@ export type GameHistory = YearData[];
 `;
 }
 
-// Tool definition for executing JavaScript code to query game data
-// No execute handler — tool calls are streamed to the client for sandboxed iframe execution
-const executeCodeTool = {
-  description:
-    'Execute JavaScript code to query the Tom and Jerry: Chase game database. The code has access to multiple game data objects including characters, actorProfiles, cards, specialSkills, items, entities, buffs, itemGroups, and historyData.',
-  inputSchema: z.object({
-    code: z
-      .string()
-      .describe(
-        'JavaScript code to execute. Must include a return statement. Available variables: characters (Record<string, Character>), actorProfiles (Record<string, ActorProfile>), cards (Record<string, Card>), specialSkills ({cat: Record<string, SpecialSkill>, mouse: Record<string, SpecialSkill>}), items (Record<string, Item>), entities ({cat: Record<string, Entity>, mouse: Record<string, Entity>}), buffs (Record<string, Buff>), itemGroups (Record<string, ItemGroup>), historyData (GameHistory). Examples: return characters["汤姆"]; return actorProfiles["汤姆"]; return Object.values(specialSkills.cat); return items["火箭"]; return historyData.find(y => y.year === 2020)'
-      ),
-  }),
-};
-
 const requestSchema = z.object({
   messages: z.array(z.unknown()).min(1),
 });
@@ -526,13 +520,36 @@ export async function POST(req: NextRequest) {
       ...(env.OPENAI_BASE_URL ? { baseURL: env.OPENAI_BASE_URL } : {}),
     });
 
+    const snapshot = await getPublishedGameDataSnapshot();
+    const chatGameData = selectChatGameData(snapshot.data);
+    const executionContext = {
+      ...chatGameData,
+      actorProfiles: actorProfileLookup,
+      itemGroups,
+      historyData,
+    };
+    const executeCode = tool({
+      description:
+        'Execute JavaScript code to query the Tom and Jerry: Chase game database. The code has access to multiple game data objects including characters, actorProfiles, cards, specialSkills, items, entities, buffs, itemGroups, and historyData.',
+      inputSchema: z.object({
+        code: z
+          .string()
+          .max(CHAT_CODE_MAX_LENGTH)
+          .describe(
+            'JavaScript code to execute. Must include a return statement. Available variables: characters (Record<string, Character>), actorProfiles (Record<string, ActorProfile>), cards (Record<string, Card>), specialSkills ({cat: Record<string, SpecialSkill>, mouse: Record<string, SpecialSkill>}), items (Record<string, Item>), entities ({cat: Record<string, Entity>, mouse: Record<string, Entity>}), buffs (Record<string, Buff>), itemGroups (Record<string, ItemGroup>), historyData (GameHistory). Examples: return characters["汤姆"]; return actorProfiles["汤姆"]; return Object.values(specialSkills.cat); return items["火箭"]; return historyData.find(y => y.year === 2020)'
+          ),
+      }),
+      execute: ({ code }) => executeChatCode(code, executionContext),
+    });
+
     const result = streamText({
       model: openai(env.NEXT_PUBLIC_AI_CHAT_MODEL || 'gpt-5.5'),
-      system: await buildSystemInstructionText(),
+      system: buildSystemInstructionText(chatGameData),
       messages: await convertToModelMessages(messages as UIMessage[]),
       tools: {
-        executeCode: executeCodeTool,
+        executeCode,
       },
+      stopWhen: stepCountIs(3),
       abortSignal: req.signal,
     });
 

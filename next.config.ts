@@ -59,8 +59,9 @@ const nextConfig: NextConfig = {
     'domelementtype',
     'entities',
   ],
-  // Required for Serwist to work with Turbopack
-  serverExternalPackages: ['esbuild-wasm'],
+  // esbuild-wasm is required for Serwist with Turbopack; vm2 must retain its
+  // native Node.js runtime behavior for the server-only AI sandbox.
+  serverExternalPackages: ['esbuild-wasm', 'vm2'],
   typescript: {
     ignoreBuildErrors: process.env.SKIP_BUILD_CHECKS === 'true',
   },

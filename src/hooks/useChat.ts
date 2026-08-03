@@ -2,13 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useChat as useAIChat } from '@ai-sdk/react';
-import { DefaultChatTransport, lastAssistantMessageIsCompleteWithToolCalls } from 'ai';
+import { DefaultChatTransport } from 'ai';
 
-import type { ChatGameData } from '@/lib/gameData/chatGameData';
-import { fetchPublishedChatGameData } from '@/lib/gameData/chatGameDataClient';
-import { historyData } from '@/data/history';
-import { actorProfileLookup } from '@/features/actor-profiles/serialization';
-import itemGroups from '@/features/items/data/itemGroups';
 import { env } from '@/env';
 
 // Debounce utility to delay function execution
@@ -23,102 +18,8 @@ function debounce<T extends (...args: never[]) => void>(func: T, waitFor: number
   }) as T;
 }
 
-// Client-side code execution implementation
-// Executes JavaScript code in a sandboxed iframe for security
-async function executeCode({
-  code,
-  gameData,
-}: {
-  code: string;
-  gameData: ChatGameData;
-}): Promise<unknown> {
-  return new Promise((resolve) => {
-    try {
-      const { characters, cards, specialSkills, items, entities, buffs } = gameData;
-      const nonce = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString(16);
-      const csp = `default-src 'none'; script-src 'nonce-${nonce}';`;
-      // Create a sandboxed iframe for isolated code execution
-      const iframe = document.createElement('iframe');
-      iframe.style.display = 'none';
-      iframe.src =
-        'data:text/html;charset=utf-8,' +
-        encodeURIComponent(
-          `
-            <!DOCTYPE html>
-            <html>
-              <head>
-                <meta charset="utf-8">
-                <meta http-equiv="Content-Security-Policy" content="${csp}">
-                <script nonce="${nonce}">
-                  try {
-                    // Receive data from parent
-                    var characters = ${JSON.stringify(characters)};
-                    var actorProfiles = ${JSON.stringify(actorProfileLookup)};
-                    var cards = ${JSON.stringify(cards)};
-                    var specialSkills = ${JSON.stringify(specialSkills)};
-                    var items = ${JSON.stringify(items)};
-                    var entities = ${JSON.stringify(entities)};
-                    var buffs = ${JSON.stringify(buffs)};
-                    var itemGroups = ${JSON.stringify(itemGroups)};
-                    var historyData = ${JSON.stringify(historyData)};
-                    // Execute the user code
-                    var result = (function() {
-                      ${code}
-                    })();
-
-                    // Send result back to parent
-                    window.parent.postMessage(result, '*');
-                  } catch (error) {
-                    // Send error back to parent
-                    window.parent.postMessage({
-                      error: 'Code execution failed',
-                      details: error instanceof Error ? error.message : String(error)
-                    }, '*');
-                  }
-                </script>
-              </head>
-              <body></body>
-            </html>
-          `
-        );
-      iframe.setAttribute('sandbox', 'allow-scripts');
-      document.body.appendChild(iframe);
-
-      // Set up message handler to receive result from iframe
-      const messageHandler = (event: MessageEvent) => {
-        // Verify the message is from our iframe
-        if (event.source === iframe.contentWindow) {
-          window.removeEventListener('message', messageHandler);
-          document.body.removeChild(iframe);
-          resolve(event.data);
-        }
-      };
-
-      window.addEventListener('message', messageHandler);
-
-      // Set timeout to prevent hanging
-      setTimeout(() => {
-        window.removeEventListener('message', messageHandler);
-        if (document.body.contains(iframe)) {
-          document.body.removeChild(iframe);
-        }
-        resolve({
-          error: 'Code execution timeout',
-          details: 'Execution exceeded 10 seconds',
-        });
-      }, 10000);
-    } catch (error) {
-      // Return error information if setup fails
-      resolve({
-        error: 'Code execution setup failed',
-        details: error instanceof Error ? error.message : String(error),
-      });
-    }
-  });
-}
-
 /**
- * A hook for managing AI chat requests with client-side tool calling.
+ * A hook for managing AI chat requests.
  *
  * @param message The message to send to the chat API.
  * @param debounceMs The debounce delay in milliseconds for sending messages.
@@ -130,7 +31,6 @@ export function useChat(message?: string, debounceMs = 500) {
   const [error, setError] = useState<Error | null>(null);
   const pendingRef = useRef<string | null>(null);
   const mountedRef = useRef(true);
-  const chatGameDataPromiseRef = useRef<ReturnType<typeof fetchPublishedChatGameData> | null>(null);
 
   // Debounce the message updates
   const debouncedSetMessage = useMemo(() => {
@@ -150,45 +50,13 @@ export function useChat(message?: string, debounceMs = 500) {
 
   const featureEnabled = env.NEXT_PUBLIC_AI_CHAT_MODEL;
 
-  // Ref to hold addToolResult, avoiding circular dependency in onToolCall
-  const addToolResultRef = useRef<
-    ((options: { tool: string; toolCallId: string; output: unknown }) => void) | null
-  >(null);
-
   const {
     sendMessage,
     setMessages,
-    addToolResult,
     error: aiError,
     status,
   } = useAIChat({
     transport: new DefaultChatTransport({ api: '/api/chat' }),
-    sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
-    onToolCall: useCallback(async ({ toolCall }) => {
-      if (toolCall.toolName === 'executeCode' && 'input' in toolCall) {
-        const toolInput = toolCall.input as { code: string };
-        const gameDataPromise = chatGameDataPromiseRef.current ?? fetchPublishedChatGameData();
-        chatGameDataPromiseRef.current = gameDataPromise;
-        let result: unknown;
-        try {
-          const { data } = await gameDataPromise;
-          result = await executeCode({ code: toolInput.code, gameData: data });
-        } catch (error) {
-          if (chatGameDataPromiseRef.current === gameDataPromise) {
-            chatGameDataPromiseRef.current = null;
-          }
-          result = {
-            error: 'Code execution data load failed',
-            details: error instanceof Error ? error.message : String(error),
-          };
-        }
-        addToolResultRef.current?.({
-          tool: toolCall.toolName,
-          toolCallId: toolCall.toolCallId,
-          output: result,
-        });
-      }
-    }, []),
     onFinish: useCallback(({ message }) => {
       if (!mountedRef.current) return;
       const text = message.parts
@@ -201,11 +69,6 @@ export function useChat(message?: string, debounceMs = 500) {
     }, []),
   });
 
-  // Wire up addToolResult ref after render
-  useEffect(() => {
-    addToolResultRef.current = addToolResult;
-  }, [addToolResult]);
-
   // Map AI SDK error to local error state
   useEffect(() => {
     if (aiError && mountedRef.current) {
@@ -217,7 +80,6 @@ export function useChat(message?: string, debounceMs = 500) {
 
   // When debounced message changes, start a fresh conversation
   useEffect(() => {
-    chatGameDataPromiseRef.current = null;
     if (!debouncedMessage?.trim() || !featureEnabled) {
       setResponseText('');
       setError(null);

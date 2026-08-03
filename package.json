@@ -139,6 +139,7 @@
     "tailwind-merge": "^3.6.0",
     "usehooks-ts": "^3.1.1",
     "valtio": "^2.3.2",
+    "vm2": "^3.11.5",
     "zod": "^4.4.3"
   },
   "devDependencies": {
