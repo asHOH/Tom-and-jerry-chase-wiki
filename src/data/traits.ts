@@ -1178,6 +1178,27 @@ const traits: Record<string, Trait> = {
       ],
     ],
   },
+  '20260802-01': {
+    description: '泰克可以直接抓起持有“可直接抓起”效果的鼠角色。',
+    group: [
+      { name: '泰克', type: 'entity' },
+      { name: '可直接抓起', type: 'buff' },
+    ],
+  },
+  '20260803-01': {
+    description: '如玉在受到唤猫铃的影响时仍可以释放特殊爪刀。',
+    group: [
+      { name: '如玉', type: 'character' },
+      { name: '唤猫铃', type: 'fixture' },
+    ],
+  },
+  '20260803-02': {
+    description: '圆滚滚不能解除唤猫铃的控制。',
+    group: [
+      { name: '圆滚滚', type: 'skill' },
+      { name: '唤猫铃', type: 'fixture' },
+    ],
+  },
 };
 
 export default traits;
