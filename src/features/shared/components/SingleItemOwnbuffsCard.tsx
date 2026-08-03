@@ -17,13 +17,26 @@ interface State {
 
 function extractFullName(description: string): string {
   const match = description.match(/^“([^”]+)”/);
-  return match ? match[1] || '' : '';
+  if (!match) return '';
+  let content = match[1] || '';
+  const bracketMatch = content.match(/^\[([^\]]+)\]\([^)]*\)$/);
+  if (bracketMatch) {
+    content = bracketMatch[1] || '';
+  }
+  return content;
 }
 
 function getBaseName(fullName: string): string {
-  const lastDash = fullName.lastIndexOf('-');
-  if (lastDash === -1) return fullName;
-  return fullName.substring(0, lastDash);
+  let base = fullName;
+  const dashIndex = fullName.lastIndexOf('-');
+  if (dashIndex !== -1) {
+    base = fullName.substring(0, dashIndex);
+  }
+  const invalidChars = /[<>IlvLV.0-9()级烟雾debuffDEBUFF强化己敌]/;
+  while (base.length > 0 && invalidChars.test(base[base.length - 1] || '')) {
+    base = base.slice(0, -1);
+  }
+  return base;
 }
 
 export default class SingleItemOwnbuffsCard extends React.Component<
@@ -177,7 +190,7 @@ export default class SingleItemOwnbuffsCard extends React.Component<
 
         {displayBuffs.map(({ id, description }) => (
           <div key={id} id={`buff-${id}`} className='scroll-mt-24'>
-            <TextWithHoverTooltips text={description} />
+            <TextWithHoverTooltips text={' · ' + description} />
           </div>
         ))}
       </>

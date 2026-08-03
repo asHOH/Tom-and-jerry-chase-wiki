@@ -59,7 +59,7 @@ function extractTypeAndValue(field: string): { type: string; value: string } {
  */
 function findFirstNonQuotedMatch(text: string): number {
   const operatorRegex = /[+\-×÷]/;
-  const keywords = ['提高', '降低', '增加', '减少', '提前'];
+  const keywords = ['提高', '降低', '增加', '减少', '提前', '附加', '隶属'];
   let inQuote = false;
   let quoteChar: string | null = null;
   let i = 0;
@@ -128,6 +128,38 @@ function removeQuotedPairs(original: string, contentsToRemove: string[]): string
     result = result.replace(new RegExp(`(、|，)“${escaped}”`, 'g'), '');
   }
   return result.replace(/\s+/g, ' ').trim();
+}
+
+/** 判断一段文本（不含前缀）是否属于免疫/清除相关 */
+function isImmuneClearRelated(text: string): boolean {
+  return /^(清除|免疫)/.test(text) || /会被.*清除/.test(text) || /会被.*免疫/.test(text);
+}
+
+// ---------- 辅助函数：标准化免疫/清除字段，去除嵌套的 [免疫](...) 或 [清除](...) ----------
+function normalizeImmuneClearField(field: string): string {
+  const prefixMatch = field.match(/^(新增|不再|改为)/);
+  const prefix = prefixMatch ? prefixMatch[0] : '';
+  let content = prefixMatch ? field.slice(prefix.length) : field;
+
+  // 处理可被[免疫](...) 或 可被[清除](...)
+  const nestedMatch = content.match(/^可被\[(免疫|清除)\]\((.+)\)$/);
+  if (nestedMatch) {
+    content = nestedMatch[2] || '';
+    return prefix ? prefix + content : content;
+  }
+
+  // +++ 新增：处理 清除[部分状态](...) 或 免疫[部分状态](...) +++
+  const partStateMatch = content.match(/^(清除|免疫)\[部分状态\]\((.+)\)$/);
+  if (partStateMatch) {
+    // 动作词（清除/免疫）已在内容开头，直接拼上括号内文本即可
+    const action = partStateMatch[1] || '';
+    const inner = partStateMatch[2] || '';
+    content = action + inner;
+    return prefix ? prefix + content : content;
+  }
+
+  // 若没有匹配，原样返回（但保留前缀）
+  return prefix ? prefix + content : content;
 }
 
 /**
@@ -217,16 +249,58 @@ export function compareBuffDescriptions(desc1: string, desc2: string, name2: str
       removedFields.push(insertPrefix(f.original, '不再'));
     }
   }
+  // 分类
+  const immuneAdded: string[] = [];
+  const immuneRemoved: string[] = [];
+  const immuneChanged: string[] = [];
+  const normalAdded: string[] = [];
+  const normalChanged: string[] = [];
+  const normalRemoved: string[] = [];
 
+  const prefixRegex = /^(新增|不再|改为)/;
+
+  for (const item of addedFields) {
+    const raw = item.replace(prefixRegex, '');
+    if (isImmuneClearRelated(raw)) immuneAdded.push(item);
+    else normalAdded.push(item);
+  }
+  for (const item of removedFields) {
+    const raw = item.replace(prefixRegex, '');
+    if (isImmuneClearRelated(raw)) immuneRemoved.push(item);
+    else normalRemoved.push(item);
+  }
+  for (const item of changedFields) {
+    const raw = item.replace(prefixRegex, '');
+    if (isImmuneClearRelated(raw)) immuneChanged.push(item);
+    else normalChanged.push(item);
+  }
+
+  // ---------- 标准化免疫/清除条目 ----------
+  const normAdded = immuneAdded.map(normalizeImmuneClearField);
+  const normRemoved = immuneRemoved.map(normalizeImmuneClearField);
+  const normChanged = immuneChanged.map(normalizeImmuneClearField);
+
+  // ---------- 构建合并的免疫清除变化 ----------
+  const allImmuneChanges: string[] = [];
+  if (normAdded.length) allImmuneChanges.push(...normAdded);
+  if (normRemoved.length) allImmuneChanges.push(...normRemoved);
+  if (normChanged.length) allImmuneChanges.push(...normChanged);
+
+  let mergedImmuneClear = '';
+  if (allImmuneChanges.length) {
+    mergedImmuneClear = `[免疫与清除列表发生变化](${allImmuneChanges.join('；')})`;
+  }
+
+  // ---------- 重新组装最终内容 ----------
   const allParts: string[] = [];
-  if (addedFields.length) allParts.push(addedFields.join('；'));
-  if (changedFields.length) allParts.push(changedFields.join('；'));
-  if (removedFields.length) allParts.push(removedFields.join('；'));
+  if (normalAdded.length) allParts.push(normalAdded.join('；'));
+  if (normalChanged.length) allParts.push(normalChanged.join('；'));
+  if (normalRemoved.length) allParts.push(normalRemoved.join('；'));
+  if (mergedImmuneClear) allParts.push(mergedImmuneClear);
 
   const processedContent = allParts.join('；');
   if (!processedContent) {
     return '';
   }
-
   return `${name1}相比“${name2}”：${processedContent}。`;
 }
