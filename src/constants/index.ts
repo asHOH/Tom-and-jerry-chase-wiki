@@ -109,6 +109,8 @@ export const DISCLAIMER_CONTENT = {
     '为提供账户、评论、反馈、通知和安全防护功能，本网站可能处理用户名、昵称、联系方式、IP 地址、用户代理、访问记录及你主动提交的公开内容；部分功能还会使用第三方服务。相关信息仅在提供和维护服务所需范围内使用。请勿提交不必要的敏感个人信息。如需了解、更正或删除相关信息，请通过反馈功能联系项目维护者。',
   copyright:
     '本网站不代表 Warner Bros. Entertainment Inc.、Turner Entertainment Co.、网易或其他相关权利人。Tom and Jerry、相关角色、名称、标识及游戏素材的权利归相应权利人所有；本网站不因展示或整理相关资料而获得或授予相关知识产权。',
+  thirdPartyMaterials:
+    '本站部分页面可能展示相应权利人享有权利的游戏素材，使用目的为相关内容的识别、说明和讨论。本网站不主张这些素材的所有权，不授予再使用许可，也不代表权利人背书。权利人如有异议，请通过反馈入口联系我们。',
   takedownPolicy:
     '如您认为页面或素材涉及侵权，请通过反馈功能提供具体链接和权利证明，我们会在核查后按实际情况处理。',
   acknowledgements: generateAcknowledgements(),
@@ -119,6 +121,7 @@ export const DISCLAIMER_TEXT = [
   DISCLAIMER_CONTENT.intro,
   DISCLAIMER_CONTENT.privacy,
   DISCLAIMER_CONTENT.copyright,
+  DISCLAIMER_CONTENT.thirdPartyMaterials,
   DISCLAIMER_CONTENT.takedownPolicy,
   ...Object.values(DISCLAIMER_CONTENT.acknowledgements).map(
     (ack) =>

@@ -91,7 +91,7 @@ export const patchCommentSchema = z.object({
 });
 
 export const feedbackSchema = z.object({
-  type: z.enum(['suggestion', 'bug', 'data', 'other']).default('other'),
+  type: z.enum(['suggestion', 'bug', 'data', 'copyright', 'other']).default('other'),
   content: trimmedString,
   contact: z
     .string()

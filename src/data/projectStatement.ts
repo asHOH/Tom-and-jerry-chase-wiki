@@ -26,6 +26,7 @@ export interface ProjectStatementCopy {
     title: string;
     headings: {
       copyright: string;
+      thirdPartyMaterials: string;
       license: string;
     };
     copyright: {
@@ -65,6 +66,7 @@ export const PROJECT_STATEMENT_COPY: ProjectStatementCopy = {
     title: '版权与许可',
     headings: {
       copyright: '版权声明',
+      thirdPartyMaterials: '第三方素材说明',
       license: '开源许可',
     },
     copyright: {

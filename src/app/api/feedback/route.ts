@@ -156,6 +156,7 @@ function getFeedbackTypeText(type: string): string {
     suggestion: '功能建议',
     bug: '错误报告',
     data: '数据纠错',
+    copyright: '版权或素材问题',
     other: '其他反馈',
   };
   return types[type] || '未知类型';

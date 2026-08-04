@@ -67,7 +67,9 @@ const FeedbackSection =
                 ? '网站错误'
                 : feedbackFormData.type === 'data'
                   ? '数据建议'
-                  : '功能建议';
+                  : feedbackFormData.type === 'copyright'
+                    ? '版权或素材问题'
+                    : '功能建议';
             const contactText = isAnonymous ? '匿名' : feedbackFormData.contact;
             const body = `反馈类型: ${subject}\n\n内容:\n${feedbackFormData.content}\n\n联系方式: ${contactText}`;
             window.location.href = `mailto:your-email@example.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
@@ -180,6 +182,7 @@ const FeedbackSection =
                         <option value='suggestion'>功能建议</option>
                         <option value='bug'>网站错误</option>
                         <option value='data'>数据建议</option>
+                        <option value='copyright'>版权或素材问题</option>
                         <option value='other'>其他</option>
                       </FormSelect>
                     </div>
@@ -194,7 +197,11 @@ const FeedbackSection =
                         onChange={(e) =>
                           setFeedbackFormData({ ...feedbackFormData, content: e.target.value })
                         }
-                        placeholder='请详细描述您的建议或遇到的问题...'
+                        placeholder={
+                          feedbackFormData.type === 'copyright'
+                            ? '请提供具体页面或素材链接、权利主张和可核验的权利证明...'
+                            : '请详细描述您的建议或遇到的问题...'
+                        }
                         className='h-32 resize-none'
                         required
                       />

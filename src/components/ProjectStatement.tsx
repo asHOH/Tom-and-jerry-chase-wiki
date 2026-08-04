@@ -141,6 +141,8 @@ export const ProjectStatement = ({ onFeedbackClick }: ProjectStatementProps) => 
           <section aria-label={legal.copyright.ariaLabel} className='leading-6'>
             <h4 className='sr-only'>{legal.headings.copyright}</h4>
             <p>{DISCLAIMER_CONTENT.copyright}</p>
+            <h4 className='sr-only'>{legal.headings.thirdPartyMaterials}</h4>
+            <p className='mt-1'>{DISCLAIMER_CONTENT.thirdPartyMaterials}</p>
             <p className='mt-1'>{DISCLAIMER_CONTENT.takedownPolicy}</p>
           </section>
 
