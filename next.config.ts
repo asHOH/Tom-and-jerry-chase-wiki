@@ -183,7 +183,7 @@ const nextConfig: NextConfig = {
     // unoptimized: true,
     formats: ['image/avif' as const, 'image/webp' as const],
     minimumCacheTTL: 31536000, // 1 year
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+    deviceSizes: [320, 480, 640],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",

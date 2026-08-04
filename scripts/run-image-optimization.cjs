@@ -5,6 +5,10 @@ const sharp = require('sharp');
 
 // The top-level directory containing your images
 const imagesBaseDir = path.join(process.cwd(), 'public', 'images');
+const forceReencode = process.argv.includes('--force');
+const LOW_RESOLUTION_MAX_DIMENSION = 640;
+const WEBP_OPTIONS = { quality: 65, alphaQuality: 75, effort: 6 };
+const AVIF_OPTIONS = { quality: 45, effort: 7 };
 // Supported image extensions
 const supportedExtensions = ['.png', '.jpg', '.jpeg'];
 
@@ -33,7 +37,7 @@ async function findImageFiles(dir) {
 }
 
 /**
- * Converts a single image to WebP and AVIF formats.
+ * Converts a single image to low-resolution WebP and AVIF formats.
  * @param {string} filePath The full path to the image file.
  * @returns {Promise<void[]>} A promise that resolves when both conversions are settled.
  */
@@ -51,7 +55,7 @@ async function convertImage(filePath) {
 
     try {
       const webpStats = await fs.stat(webpPath);
-      if (webpStats.mtime > sourceStats.mtime) {
+      if (!forceReencode && webpStats.mtime > sourceStats.mtime) {
         shouldConvertWebP = false;
       }
     } catch {
@@ -60,7 +64,7 @@ async function convertImage(filePath) {
 
     try {
       const avifStats = await fs.stat(avifPath);
-      if (avifStats.mtime > sourceStats.mtime) {
+      if (!forceReencode && avifStats.mtime > sourceStats.mtime) {
         shouldConvertAvif = false;
       }
     } catch {
@@ -72,19 +76,22 @@ async function convertImage(filePath) {
 
   // Define conversion tasks for this image
   const conversions = [];
+  const resizedImage = sharp(filePath).resize({
+    width: LOW_RESOLUTION_MAX_DIMENSION,
+    height: LOW_RESOLUTION_MAX_DIMENSION,
+    fit: 'inside',
+    withoutEnlargement: true,
+    kernel: sharp.kernel.lanczos3,
+  });
 
   if (shouldConvertWebP) {
-    conversions.push(sharp(filePath).webp({ quality: 80 }).toFile(webpPath));
+    conversions.push(resizedImage.clone().webp(WEBP_OPTIONS).toFile(webpPath));
   } else {
     conversions.push(Promise.resolve({ skipped: true }));
   }
 
   if (shouldConvertAvif) {
-    conversions.push(
-      sharp(filePath)
-        .avif({ quality: 70, effort: 4 }) // 'effort' can be tuned (0-9), lower is faster
-        .toFile(avifPath)
-    );
+    conversions.push(resizedImage.clone().avif(AVIF_OPTIONS).toFile(avifPath));
   } else {
     conversions.push(Promise.resolve({ skipped: true }));
   }

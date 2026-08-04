@@ -20,6 +20,8 @@ const outputDirectory = path.join(outputRoot, mapIdArg);
 const tileSize = 512;
 const maxZoom = 4;
 const formats = ['webp', 'avif'];
+const WEBP_OPTIONS = { quality: 72, alphaQuality: 80, effort: 6 };
+const AVIF_OPTIONS = { quality: 45, effort: 7 };
 const metadata = await sharp(source).metadata();
 let generatedTileCount = 0;
 let generatedPreviewCount = 0;
@@ -38,9 +40,7 @@ const fileExists = async (filePath) => {
 };
 
 const encodeImage = (image, format) =>
-  format === 'avif'
-    ? image.avif({ quality: 52, effort: 5 })
-    : image.webp({ quality: 84, alphaQuality: 90, effort: 5 });
+  format === 'avif' ? image.avif(AVIF_OPTIONS) : image.webp(WEBP_OPTIONS);
 
 for (let zoom = 0; zoom <= maxZoom; zoom += 1) {
   const scale = 2 ** (zoom - maxZoom);
@@ -92,7 +92,7 @@ for (let zoom = 0; zoom <= maxZoom; zoom += 1) {
 
   const level = await sharp(source)
     .resize(width, height, { fit: 'fill', kernel: sharp.kernel.lanczos3 })
-    .webp({ quality: 84, alphaQuality: 90, effort: 5 })
+    .webp(WEBP_OPTIONS)
     .toBuffer();
 
   for (const tile of pendingTiles) {
