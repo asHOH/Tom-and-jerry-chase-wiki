@@ -13,6 +13,7 @@ import { ClientProviders } from '@/components/ClientProviders';
 import { DisableLinkPrefetch } from '@/components/DisableLinkPrefetch';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import IcpFooter from '@/components/IcpFooter';
+import ImageProtection from '@/components/ImageProtection';
 import { PerformanceMonitor } from '@/components/PerformanceMonitor';
 import { SpeedInsightsComponent } from '@/components/SpeedInsights';
 
@@ -108,6 +109,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {/* Next.js automatically self-hosts Google Fonts - no external requests needed */}
       </head>
       <body className={cn(inter.className, inter.variable, notoSansSC.variable)}>
+        <ImageProtection />
         <DarkModeProvider>
           <NextTopLoader
             color='#2563eb'

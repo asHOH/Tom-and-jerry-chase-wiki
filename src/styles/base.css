@@ -43,6 +43,9 @@ html {
 img {
   max-width: 100%;
   height: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
 }
 
 /* Image container constraints */
