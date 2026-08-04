@@ -7,7 +7,9 @@ import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import { FormTextarea } from '@/components/ui/FormControls';
 
+import type { ReviewEvent, ReviewSubmission } from '../reviewTypes';
 import type { CommentNode } from '../types';
+import { GameDataReviewWorkspace } from './GameDataReviewWorkspace';
 
 type TopicSectionProps = {
   topic: CommentNode;
@@ -18,6 +20,9 @@ type TopicSectionProps = {
   userNickname: string | null;
   onMutate: () => void;
   onLoginRequired: () => void;
+  reviewSubmissions?: ReviewSubmission[];
+  reviewEvents?: ReviewEvent[];
+  onReviewMutate?: () => void;
 };
 
 export function TopicSection({
@@ -29,6 +34,9 @@ export function TopicSection({
   userNickname,
   onMutate,
   onLoginRequired,
+  reviewSubmissions = [],
+  reviewEvents = [],
+  onReviewMutate,
 }: TopicSectionProps) {
   const [replyTargetId, setReplyTargetId] = useState<string | null>(null);
   const [replyContent, setReplyContent] = useState('');
@@ -187,6 +195,11 @@ export function TopicSection({
               <span className='text-yellow-500 dark:text-yellow-400'>已隐藏</span>
             )}
           </div>
+          <GameDataReviewWorkspace
+            submissions={reviewSubmissions}
+            events={reviewEvents}
+            onMutate={onReviewMutate ?? onMutate}
+          />
         </div>
 
         {/* Reply tree */}

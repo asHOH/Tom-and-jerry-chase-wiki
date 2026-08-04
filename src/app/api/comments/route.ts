@@ -244,7 +244,7 @@ export async function POST(req: Request) {
   }
 
   const { scope, targetId, parentId, content, title } = parsed.data;
-  const guard = await requirePermission(
+  const permissionGuard = await requirePermission(
     'comment.create',
     {
       resourceType: `comments/${scope}`,
@@ -253,8 +253,27 @@ export async function POST(req: Request) {
     'all',
     { request: req, blockAction: 'edit' }
   );
-  if ('error' in guard) return guard.error;
-  const { supabase } = guard;
+  let actorUserId: string;
+  let supabase: Awaited<ReturnType<typeof createClient>>;
+  let useReviewParticipation = false;
+  if ('error' in permissionGuard) {
+    if (!parentId) return permissionGuard.error;
+    const fallbackClient = await createClient();
+    const { data: claimsData } = await fallbackClient.auth.getClaims();
+    const fallbackUserId = claimsData?.claims.sub;
+    if (!fallbackUserId) return permissionGuard.error;
+    const { data: canParticipate, error: participationError } = await supabaseAdmin.rpc(
+      'can_participate_game_data_discussion',
+      { p_actor_id: fallbackUserId, p_parent_comment_id: parentId }
+    );
+    if (participationError || !canParticipate) return permissionGuard.error;
+    actorUserId = fallbackUserId;
+    supabase = fallbackClient;
+    useReviewParticipation = true;
+  } else {
+    actorUserId = permissionGuard.userId;
+    supabase = permissionGuard.supabase;
+  }
 
   const allowed = await shouldAllowComment({
     scope,
@@ -265,15 +284,25 @@ export async function POST(req: Request) {
   });
 
   try {
-    const { data: newId, error: rpcError } = await supabaseAdmin.rpc('prepared_create_comment', {
-      p_actor_id: guard.userId,
-      p_ip: getRequestIp(req),
-      p_scope: scope,
-      p_target_id: targetId,
-      p_content: content,
-      ...(parentId ? { p_parent_id: parentId } : {}),
-      ...(title ? { p_title: title } : {}),
-    });
+    const rpcResult = useReviewParticipation
+      ? await supabaseAdmin.rpc('prepared_create_game_data_review_comment', {
+          p_actor_id: actorUserId,
+          p_ip: getRequestIp(req),
+          p_scope: scope,
+          p_target_id: targetId,
+          p_content: content,
+          p_parent_id: parentId!,
+        })
+      : await supabaseAdmin.rpc('prepared_create_comment', {
+          p_actor_id: actorUserId,
+          p_ip: getRequestIp(req),
+          p_scope: scope,
+          p_target_id: targetId,
+          p_content: content,
+          ...(parentId ? { p_parent_id: parentId } : {}),
+          ...(title ? { p_title: title } : {}),
+        });
+    const { data: newId, error: rpcError } = rpcResult;
 
     if (rpcError || !newId) {
       console.error('Supabase RPC error:', rpcError);

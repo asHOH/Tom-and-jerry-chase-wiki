@@ -8,10 +8,11 @@ import { getGameDataNotificationDetails } from '@/lib/gameData/contributionDispl
 import {
   approvePreparedGameDataAction,
   loadTrustedGameDataAction,
+  recordGameDataDiscussionEvent,
   TrustedGameDataMutationError,
   type TrustedGameDataActionRecord,
 } from '@/lib/gameData/trustedGameDataMutations';
-import { publishNotification } from '@/lib/notificationUtils';
+import { notifyGameDataReviewEvent, publishNotification } from '@/lib/notificationUtils';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 
 const schema = z.object({
@@ -92,10 +93,63 @@ export async function POST(request: Request) {
     }
   }
 
+  if (succeeded.length > 0) {
+    if (typeof recordGameDataDiscussionEvent === 'function') {
+      try {
+        await recordGameDataDiscussionEvent({
+          actorId: guard.userId,
+          actionIds: succeeded,
+          eventType: action === 'approve' ? 'approved' : 'rejected',
+          ...(reason ? { note: reason } : {}),
+        });
+      } catch (eventError) {
+        console.error('Failed to record batch discussion event:', eventError);
+      }
+    }
+    if (typeof notifyGameDataReviewEvent === 'function') {
+      try {
+        await notifyGameDataReviewEvent({
+          actorUserId: guard.userId,
+          actionIds: succeeded,
+          title:
+            action === 'approve'
+              ? '讨论中的游戏数据改动已批量批准'
+              : '讨论中的游戏数据改动已批量拒绝',
+          body: reason || `审核者已批量${action === 'approve' ? '批准' : '拒绝'}改动。`,
+        });
+      } catch (notificationError) {
+        console.error('Failed to publish batch review notification:', notificationError);
+      }
+    }
+  }
+
+  const succeededSubmissionIds = Array.from(
+    new Set(
+      succeeded.flatMap((actionId) => {
+        const record = recordsById.get(actionId);
+        return record?.submission_id ? [record.submission_id] : [];
+      })
+    )
+  );
+  const { data: succeededSubmissions } = succeededSubmissionIds.length
+    ? await supabaseAdmin
+        .from('game_data_action_submissions')
+        .select('id, discussion_topic_id')
+        .in('id', succeededSubmissionIds)
+    : { data: [] };
+  const linkedSubmissionIds = new Set(
+    (succeededSubmissions ?? [])
+      .filter((submission) => submission.discussion_topic_id)
+      .map((submission) => submission.id)
+  );
   const grouped = new Map<string, TrustedGameDataActionRecord[]>();
   for (const actionId of succeeded) {
     const record = recordsById.get(actionId);
-    if (!record?.created_by) continue;
+    if (
+      !record?.created_by ||
+      (record.submission_id && linkedSubmissionIds.has(record.submission_id))
+    )
+      continue;
     const group = grouped.get(record.created_by) ?? [];
     group.push(record);
     grouped.set(record.created_by, group);

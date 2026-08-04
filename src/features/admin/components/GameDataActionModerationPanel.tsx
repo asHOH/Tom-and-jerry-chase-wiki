@@ -23,6 +23,9 @@ type ActionStatusFilter = 'all' | ActionStatus;
 export type PendingGameDataAction =
   Database['public']['Functions']['get_pending_game_data_actions']['Returns'][number] & {
     message?: string | null;
+    submission_id?: string;
+    discussion_topic?: { id: string; title: string | null; href: string } | null;
+    vote_totals?: { approve: number; reject: number; abstain: number };
   };
 
 type GameDataActionModerationPanelProps = {
@@ -152,6 +155,53 @@ const GameDataActionModerationPanel = ({
     return payload?.created !== false;
   };
 
+  const manageDiscussion = async (submissionId: string) => {
+    try {
+      const response = await fetch(
+        `/api/game-data-actions/submissions/${encodeURIComponent(submissionId)}/discussion`
+      );
+      const payload = (await response.json().catch(() => null)) as {
+        currentTopicId?: string | null;
+        topics?: Array<{ id: string; title: string | null }>;
+        error?: string;
+      } | null;
+      if (!response.ok) throw new Error(payload?.error ?? '讨论话题加载失败');
+      const topics = payload?.topics ?? [];
+      const list = topics
+        .map((topic, index) => `${index + 1}. ${topic.title ?? topic.id}`)
+        .join('\n');
+      const selected = window.prompt(
+        `输入话题序号或 UUID；留空可取消关联：\n${list}`,
+        payload?.currentTopicId ?? ''
+      );
+      if (selected === null) return;
+      const index = Number.parseInt(selected, 10);
+      const topicId = selected.trim()
+        ? Number.isFinite(index) && topics[index - 1]
+          ? topics[index - 1]!.id
+          : selected.trim()
+        : null;
+      const patchResponse = await fetch(
+        `/api/game-data-actions/submissions/${encodeURIComponent(submissionId)}/discussion`,
+        {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ topicId }),
+        }
+      );
+      if (!patchResponse.ok) {
+        const patchPayload = (await patchResponse.json().catch(() => null)) as {
+          error?: string;
+        } | null;
+        throw new Error(patchPayload?.error ?? '讨论关联更新失败');
+      }
+      success('讨论关联已更新');
+      await mutatePendingActions();
+    } catch (discussionError) {
+      error(discussionError instanceof Error ? discussionError.message : '讨论关联更新失败');
+    }
+  };
+
   const moderateAction = async (
     actionId: string,
     action: ModerationAction,
@@ -239,6 +289,26 @@ const GameDataActionModerationPanel = ({
       );
     });
   }, [pendingActions, actionEntityType, actionQuery, actionStatus]);
+
+  const groupedFilteredActions = useMemo(() => {
+    const groups = new Map<string, PendingGameDataAction[]>();
+    for (const action of filteredActions) {
+      const key = action.submission_id ?? action.action_id;
+      const group = groups.get(key) ?? [];
+      group.push(action);
+      groups.set(key, group);
+    }
+    return [...groups.values()].flat();
+  }, [filteredActions]);
+
+  const submissionGroupCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const action of groupedFilteredActions) {
+      const key = action.submission_id ?? action.action_id;
+      counts.set(key, (counts.get(key) ?? 0) + 1);
+    }
+    return counts;
+  }, [groupedFilteredActions]);
 
   const actionableActions = useMemo(
     () =>
@@ -539,123 +609,203 @@ const GameDataActionModerationPanel = ({
         <Card className='rounded-md text-gray-600 dark:text-slate-300'>暂无待审核改动</Card>
       ) : (
         <div className='space-y-3'>
-          {filteredActions.map((submission) => {
+          {groupedFilteredActions.map((submission, index) => {
             const statusMeta =
               ACTION_STATUS_META[submission.status as ActionStatus] ?? ACTION_STATUS_META.pending;
             const isExpanded = expandedActionIds.has(submission.action_id);
+            const submissionKey = submission.submission_id ?? submission.action_id;
+            const previousAction = groupedFilteredActions[index - 1];
+            const isSubmissionStart =
+              !previousAction ||
+              (previousAction.submission_id ?? previousAction.action_id) !== submissionKey;
 
             return (
-              <Card key={submission.action_id} className='rounded-md'>
-                <div className='flex items-start gap-3'>
-                  <div className='pt-1'>
-                    {submission.status === 'pending' &&
-                    (canApproveActions || (!submission.is_public && canRejectActions)) ? (
-                      <input
-                        type='checkbox'
-                        checked={selectedActionIds.has(submission.action_id)}
-                        disabled={isModerating}
-                        onChange={() => toggleSelectedAction(submission.action_id)}
-                        aria-label={`选择改动 ${submission.action_id}`}
-                        className='h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-500 dark:border-slate-600 dark:bg-slate-900 dark:focus:ring-green-400'
-                      />
-                    ) : (
-                      <span aria-hidden='true' className='block h-4 w-4' />
-                    )}
+              <div key={submission.action_id}>
+                {isSubmissionStart && (
+                  <div className='mb-2 flex flex-wrap items-center gap-2 text-xs font-medium text-gray-500 dark:text-slate-400'>
+                    <span>提交 {submissionKey}</span>
+                    <span>· {submissionGroupCounts.get(submissionKey) ?? 1} 项改动</span>
                   </div>
+                )}
+                <Card className='rounded-md'>
+                  <div className='flex items-start gap-3'>
+                    <div className='pt-1'>
+                      {submission.status === 'pending' &&
+                      (canApproveActions || (!submission.is_public && canRejectActions)) ? (
+                        <input
+                          type='checkbox'
+                          checked={selectedActionIds.has(submission.action_id)}
+                          disabled={isModerating}
+                          onChange={() => toggleSelectedAction(submission.action_id)}
+                          aria-label={`选择改动 ${submission.action_id}`}
+                          className='h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-500 dark:border-slate-600 dark:bg-slate-900 dark:focus:ring-green-400'
+                        />
+                      ) : (
+                        <span aria-hidden='true' className='block h-4 w-4' />
+                      )}
+                    </div>
 
-                  <div className='min-w-0 flex-1'>
-                    <div className='flex flex-wrap items-center justify-between gap-2'>
-                      <div className='flex items-center gap-2 text-sm text-gray-700 dark:text-slate-200'>
-                        <span className='font-medium'>{submission.entity_type}</span>
-                        <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
-                        <span className={statusMeta.className}>{statusMeta.label}</span>
-                        {submission.is_public && submission.status === 'pending' && (
-                          <>
-                            <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
-                            <span className='rounded bg-emerald-100 px-2 py-0.5 text-xs font-medium whitespace-nowrap text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300'>
-                              已公开
-                            </span>
-                          </>
-                        )}
-                        <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
-                        <span>
-                          {submission.created_by_nickname && submission.created_by ? (
-                            <>
-                              由{' '}
-                              <Link
-                                href={`/users/${encodeURIComponent(submission.created_by_nickname)}`}
-                                target='_blank'
-                                rel='noopener noreferrer'
-                                className='font-medium text-blue-600 hover:underline dark:text-blue-400'
-                              >
-                                {submission.created_by_nickname}
-                              </Link>{' '}
-                              提交
-                            </>
-                          ) : (
-                            '匿名提交'
-                          )}
-                        </span>
-                        <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
-                        <span>
-                          {formatCompactDateTime(submission.created_at, {
-                            invalidFallback: submission.created_at,
-                          })}
-                        </span>
-                        {submission.status !== 'pending' &&
-                          submission.reviewed_at &&
-                          submission.created_by !== submission.reviewed_by && (
+                    <div className='min-w-0 flex-1'>
+                      <div className='flex flex-wrap items-center justify-between gap-2'>
+                        <div className='flex items-center gap-2 text-sm text-gray-700 dark:text-slate-200'>
+                          <span className='font-medium'>{submission.entity_type}</span>
+                          <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
+                          <span className={statusMeta.className}>{statusMeta.label}</span>
+                          {submission.is_public && submission.status === 'pending' && (
                             <>
                               <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
-                              <span>
-                                {submission.reviewed_by_nickname && submission.reviewed_by ? (
-                                  <>
-                                    审核：
-                                    <Link
-                                      href={`/users/${encodeURIComponent(submission.reviewed_by_nickname)}`}
-                                      target='_blank'
-                                      rel='noopener noreferrer'
-                                      className='font-medium text-blue-600 hover:underline dark:text-blue-400'
-                                    >
-                                      {submission.reviewed_by_nickname}
-                                    </Link>
-                                  </>
-                                ) : (
-                                  '已审核'
-                                )}
-                              </span>
-                              <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
-                              <span>
-                                {formatCompactDateTime(submission.reviewed_at, {
-                                  invalidFallback: submission.reviewed_at,
-                                })}
+                              <span className='rounded bg-emerald-100 px-2 py-0.5 text-xs font-medium whitespace-nowrap text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300'>
+                                已公开
                               </span>
                             </>
                           )}
-                      </div>
-
-                      <div className='flex items-center gap-2'>
-                        {submission.status === 'pending' && (
-                          <>
-                            {canApproveActions && (
-                              <Button
-                                disabled={isModerating}
-                                onClick={() => {
-                                  const confirmed = window.confirm(
-                                    submission.is_public
-                                      ? '确认审核通过该已公开改动？'
-                                      : '确认批准并公开该改动？'
-                                  );
-                                  if (!confirmed) return;
-                                  void moderateAction(submission.action_id, 'approve');
-                                }}
-                                variant='success'
-                                size='sm'
-                              >
-                                批准
-                              </Button>
+                          <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
+                          <span>
+                            {submission.created_by_nickname && submission.created_by ? (
+                              <>
+                                由{' '}
+                                <Link
+                                  href={`/users/${encodeURIComponent(submission.created_by_nickname)}`}
+                                  target='_blank'
+                                  rel='noopener noreferrer'
+                                  className='font-medium text-blue-600 hover:underline dark:text-blue-400'
+                                >
+                                  {submission.created_by_nickname}
+                                </Link>{' '}
+                                提交
+                              </>
+                            ) : (
+                              '匿名提交'
                             )}
-                            {canApproveActions && submission.created_by && (
+                          </span>
+                          <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
+                          <span>
+                            {formatCompactDateTime(submission.created_at, {
+                              invalidFallback: submission.created_at,
+                            })}
+                          </span>
+                          {submission.status !== 'pending' &&
+                            submission.reviewed_at &&
+                            submission.created_by !== submission.reviewed_by && (
+                              <>
+                                <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
+                                <span>
+                                  {submission.reviewed_by_nickname && submission.reviewed_by ? (
+                                    <>
+                                      审核：
+                                      <Link
+                                        href={`/users/${encodeURIComponent(submission.reviewed_by_nickname)}`}
+                                        target='_blank'
+                                        rel='noopener noreferrer'
+                                        className='font-medium text-blue-600 hover:underline dark:text-blue-400'
+                                      >
+                                        {submission.reviewed_by_nickname}
+                                      </Link>
+                                    </>
+                                  ) : (
+                                    '已审核'
+                                  )}
+                                </span>
+                                <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
+                                <span>
+                                  {formatCompactDateTime(submission.reviewed_at, {
+                                    invalidFallback: submission.reviewed_at,
+                                  })}
+                                </span>
+                              </>
+                            )}
+                        </div>
+
+                        <div className='flex items-center gap-2'>
+                          {submission.status === 'pending' && (
+                            <>
+                              {canApproveActions && (
+                                <Button
+                                  disabled={isModerating}
+                                  onClick={() => {
+                                    const confirmed = window.confirm(
+                                      submission.is_public
+                                        ? '确认审核通过该已公开改动？'
+                                        : '确认批准并公开该改动？'
+                                    );
+                                    if (!confirmed) return;
+                                    void moderateAction(submission.action_id, 'approve');
+                                  }}
+                                  variant='success'
+                                  size='sm'
+                                >
+                                  批准
+                                </Button>
+                              )}
+                              {canApproveActions && submission.created_by && (
+                                <Button
+                                  disabled={isModerating}
+                                  onClick={() =>
+                                    setThankTarget({
+                                      actionId: submission.action_id,
+                                      contributionTitle: `${
+                                        GAME_DATA_ENTITY_LABELS[submission.entity_type] ??
+                                        submission.entity_type
+                                      }改动`,
+                                      approveFirst: true,
+                                    })
+                                  }
+                                  variant='secondary'
+                                  size='sm'
+                                >
+                                  批准并感谢
+                                </Button>
+                              )}
+                              {!submission.is_public && canRejectActions && (
+                                <Button
+                                  disabled={isModerating}
+                                  onClick={() => {
+                                    const confirmed = window.confirm('确认拒绝该改动？');
+                                    if (!confirmed) return;
+                                    void moderateAction(submission.action_id, 'reject');
+                                  }}
+                                  variant='danger'
+                                  size='sm'
+                                >
+                                  拒绝
+                                </Button>
+                              )}
+                              {submission.is_public && canRevokeActions && (
+                                <Button
+                                  disabled={isModerating}
+                                  onClick={() => {
+                                    const confirmed = window.confirm(
+                                      '确认撤销该已公开改动？撤销后将从公开数据中移除。'
+                                    );
+                                    if (!confirmed) return;
+                                    void moderateAction(submission.action_id, 'revoke');
+                                  }}
+                                  variant='danger'
+                                  size='sm'
+                                >
+                                  撤销
+                                </Button>
+                              )}
+                            </>
+                          )}
+                          {canMarkActionsSynced && submission.status === 'approved' && (
+                            <Button
+                              disabled={isModerating}
+                              onClick={() => {
+                                const confirmed = window.confirm('确认将该改动标记为已同步？');
+                                if (!confirmed) return;
+                                void moderateAction(submission.action_id, 'mark-synced');
+                              }}
+                              variant='secondary'
+                              size='sm'
+                            >
+                              标为已同步
+                            </Button>
+                          )}
+                          {canApproveActions &&
+                            submission.created_by &&
+                            (submission.status === 'approved' ||
+                              submission.status === 'synced') && (
                               <Button
                                 disabled={isModerating}
                                 onClick={() =>
@@ -665,176 +815,153 @@ const GameDataActionModerationPanel = ({
                                       GAME_DATA_ENTITY_LABELS[submission.entity_type] ??
                                       submission.entity_type
                                     }改动`,
-                                    approveFirst: true,
+                                    approveFirst: false,
                                   })
                                 }
                                 variant='secondary'
                                 size='sm'
                               >
-                                批准并感谢
+                                感谢
                               </Button>
                             )}
-                            {!submission.is_public && canRejectActions && (
-                              <Button
-                                disabled={isModerating}
-                                onClick={() => {
-                                  const confirmed = window.confirm('确认拒绝该改动？');
-                                  if (!confirmed) return;
-                                  void moderateAction(submission.action_id, 'reject');
-                                }}
-                                variant='danger'
-                                size='sm'
-                              >
-                                拒绝
-                              </Button>
-                            )}
-                            {submission.is_public && canRevokeActions && (
-                              <Button
-                                disabled={isModerating}
-                                onClick={() => {
-                                  const confirmed = window.confirm(
-                                    '确认撤销该已公开改动？撤销后将从公开数据中移除。'
-                                  );
-                                  if (!confirmed) return;
-                                  void moderateAction(submission.action_id, 'revoke');
-                                }}
-                                variant='danger'
-                                size='sm'
-                              >
-                                撤销
-                              </Button>
-                            )}
-                          </>
-                        )}
-                        {canMarkActionsSynced && submission.status === 'approved' && (
-                          <Button
-                            disabled={isModerating}
-                            onClick={() => {
-                              const confirmed = window.confirm('确认将该改动标记为已同步？');
-                              if (!confirmed) return;
-                              void moderateAction(submission.action_id, 'mark-synced');
-                            }}
-                            variant='secondary'
-                            size='sm'
-                          >
-                            标为已同步
-                          </Button>
-                        )}
-                        {canApproveActions &&
-                          submission.created_by &&
-                          (submission.status === 'approved' || submission.status === 'synced') && (
+                          {canRevokeActions && submission.status === 'approved' && (
                             <Button
                               disabled={isModerating}
-                              onClick={() =>
-                                setThankTarget({
-                                  actionId: submission.action_id,
-                                  contributionTitle: `${
-                                    GAME_DATA_ENTITY_LABELS[submission.entity_type] ??
-                                    submission.entity_type
-                                  }改动`,
-                                  approveFirst: false,
-                                })
-                              }
-                              variant='secondary'
+                              onClick={() => {
+                                const confirmed =
+                                  window.confirm('确认撤销该改动？撤销后将从公开数据中移除。');
+                                if (!confirmed) return;
+                                void moderateAction(submission.action_id, 'revoke');
+                              }}
+                              variant='danger'
                               size='sm'
                             >
-                              感谢
+                              撤销
                             </Button>
                           )}
-                        {canRevokeActions && submission.status === 'approved' && (
                           <Button
-                            disabled={isModerating}
-                            onClick={() => {
-                              const confirmed =
-                                window.confirm('确认撤销该改动？撤销后将从公开数据中移除。');
-                              if (!confirmed) return;
-                              void moderateAction(submission.action_id, 'revoke');
-                            }}
-                            variant='danger'
+                            onClick={() => toggleExpanded(submission.action_id)}
+                            aria-label={isExpanded ? '收起详情' : '展开详情'}
+                            aria-expanded={isExpanded}
+                            title={isExpanded ? '收起详情' : '展开详情'}
+                            variant='secondary'
                             size='sm'
+                            className='h-8 w-8 p-0'
                           >
-                            撤销
+                            <ChevronRightIcon
+                              className={cn(
+                                'h-4 w-4 transition-transform',
+                                isExpanded && 'rotate-90'
+                              )}
+                              aria-hidden='true'
+                            />
                           </Button>
-                        )}
-                        <Button
-                          onClick={() => toggleExpanded(submission.action_id)}
-                          aria-label={isExpanded ? '收起详情' : '展开详情'}
-                          aria-expanded={isExpanded}
-                          title={isExpanded ? '收起详情' : '展开详情'}
-                          variant='secondary'
-                          size='sm'
-                          className='h-8 w-8 p-0'
-                        >
-                          <ChevronRightIcon
-                            className={cn(
-                              'h-4 w-4 transition-transform',
-                              isExpanded && 'rotate-90'
-                            )}
-                            aria-hidden='true'
-                          />
-                        </Button>
-                      </div>
-                    </div>
-
-                    {submission.message && (
-                      <div className='mt-3 rounded bg-blue-50 p-2 text-sm text-blue-800 dark:bg-blue-900/30 dark:text-blue-200'>
-                        <span className='font-semibold'>留言：</span>
-                        {submission.message}
-                      </div>
-                    )}
-
-                    {isExpanded && (
-                      <div className='mt-3 space-y-2'>
-                        <div className='flex flex-wrap items-center justify-between gap-2'>
-                          <div className='flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500 dark:text-slate-400'>
-                            <span className='truncate'>action_id: {submission.action_id}</span>
-                            {submission.is_public !== undefined && (
-                              <span className='rounded bg-gray-100 px-2 py-0.5 whitespace-nowrap text-gray-700 dark:bg-slate-900/60 dark:text-slate-200'>
-                                {submission.is_public ? '已' : '未'}公开
-                              </span>
-                            )}
-                          </div>
-                          <div className='flex items-center gap-2'>
-                            <Button
-                              onClick={() => void copyText(submission.action_id)}
-                              variant='secondary'
-                              size='sm'
-                            >
-                              复制ID
-                            </Button>
-                            <Button
-                              onClick={() => void copyText(JSON.stringify(submission, null, 2))}
-                              variant='secondary'
-                              size='sm'
-                            >
-                              复制JSON
-                            </Button>
-                          </div>
                         </div>
-
-                        {submission.status === 'rejected' && submission.rejection_reason && (
-                          <div className='rounded border border-red-200 bg-red-50 p-3 text-sm text-red-800 dark:border-red-900/60 dark:bg-red-900/30 dark:text-red-200'>
-                            拒绝原因：{submission.rejection_reason}
-                          </div>
-                        )}
-
-                        <GameDataActionPreviewList
-                          entry={submission.entry}
-                          entityType={submission.entity_type}
-                        />
-
-                        <GameDataActionChangeViewer
-                          entry={submission.entry}
-                          entityType={submission.entity_type}
-                          view={diffView}
-                          showAllContext={showAllDiffContext}
-                          onCopyText={copyText}
-                        />
                       </div>
-                    )}
+
+                      {submission.message && (
+                        <div className='mt-3 rounded bg-blue-50 p-2 text-sm text-blue-800 dark:bg-blue-900/30 dark:text-blue-200'>
+                          <span className='font-semibold'>留言：</span>
+                          {submission.message}
+                        </div>
+                      )}
+
+                      <div className='mt-2 flex flex-wrap items-center gap-2 text-xs'>
+                        {submission.vote_totals && (
+                          <span className='text-gray-600 dark:text-slate-300'>
+                            投票：赞成 {submission.vote_totals.approve} · 反对{' '}
+                            {submission.vote_totals.reject} · 弃权 {submission.vote_totals.abstain}
+                          </span>
+                        )}
+                        {submission.status === 'pending' &&
+                          submission.vote_totals &&
+                          submission.vote_totals.approve !== submission.vote_totals.reject && (
+                            <span className='text-amber-700 dark:text-amber-300'>
+                              当前多数意见：
+                              {submission.vote_totals.approve > submission.vote_totals.reject
+                                ? '赞成'
+                                : '反对'}
+                              （仅供审核参考）
+                            </span>
+                          )}
+                        {submission.discussion_topic ? (
+                          <Link
+                            href={submission.discussion_topic.href as never}
+                            className='text-purple-700 hover:underline dark:text-purple-300'
+                          >
+                            关联讨论：{submission.discussion_topic.title || '未命名话题'}
+                          </Link>
+                        ) : (
+                          <span className='text-gray-500'>未关联审核讨论</span>
+                        )}
+                        {submission.submission_id &&
+                          (canApproveActions ||
+                            canRejectActions ||
+                            canRevokeActions ||
+                            canMarkActionsSynced) && (
+                            <Button
+                              size='sm'
+                              variant='ghost'
+                              onClick={() => void manageDiscussion(submission.submission_id!)}
+                            >
+                              {submission.discussion_topic ? '更改讨论' : '关联讨论'}
+                            </Button>
+                          )}
+                      </div>
+
+                      {isExpanded && (
+                        <div className='mt-3 space-y-2'>
+                          <div className='flex flex-wrap items-center justify-between gap-2'>
+                            <div className='flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500 dark:text-slate-400'>
+                              <span className='truncate'>action_id: {submission.action_id}</span>
+                              {submission.is_public !== undefined && (
+                                <span className='rounded bg-gray-100 px-2 py-0.5 whitespace-nowrap text-gray-700 dark:bg-slate-900/60 dark:text-slate-200'>
+                                  {submission.is_public ? '已' : '未'}公开
+                                </span>
+                              )}
+                            </div>
+                            <div className='flex items-center gap-2'>
+                              <Button
+                                onClick={() => void copyText(submission.action_id)}
+                                variant='secondary'
+                                size='sm'
+                              >
+                                复制ID
+                              </Button>
+                              <Button
+                                onClick={() => void copyText(JSON.stringify(submission, null, 2))}
+                                variant='secondary'
+                                size='sm'
+                              >
+                                复制JSON
+                              </Button>
+                            </div>
+                          </div>
+
+                          {submission.status === 'rejected' && submission.rejection_reason && (
+                            <div className='rounded border border-red-200 bg-red-50 p-3 text-sm text-red-800 dark:border-red-900/60 dark:bg-red-900/30 dark:text-red-200'>
+                              拒绝原因：{submission.rejection_reason}
+                            </div>
+                          )}
+
+                          <GameDataActionPreviewList
+                            entry={submission.entry}
+                            entityType={submission.entity_type}
+                          />
+
+                          <GameDataActionChangeViewer
+                            entry={submission.entry}
+                            entityType={submission.entity_type}
+                            view={diffView}
+                            showAllContext={showAllDiffContext}
+                            onCopyText={copyText}
+                          />
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </Card>
+                </Card>
+              </div>
             );
           })}
         </div>

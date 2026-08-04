@@ -15,6 +15,7 @@ export type ContributionStatusItem = {
   href: string | null;
   previewHref: string | null;
   reviseHref: string | null;
+  discussionHref: string | null;
   thanked: boolean;
   thankMessage: string | null;
 };

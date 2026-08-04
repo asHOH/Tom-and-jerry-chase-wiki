@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo } from 'react';
 
+import { getDiscussionTargetForEntity } from '@/lib/gameData/discussionTargets';
 import type { GameDataSubmitMode } from '@/lib/gameData/submitMode';
 import { CharacterDetailsProps } from '@/lib/types';
 import { useContributionSubmissionFeedback } from '@/hooks/useContributionSubmissionFeedback';
@@ -55,6 +56,7 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
       message?: string,
       options?: {
         submitMode?: GameDataSubmitMode;
+        discussionTopicId?: string;
       }
     ) => publishChanges(message, options),
     [publishChanges]
@@ -114,6 +116,7 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
             onDiscard={discardChanges}
             onPublish={handlePublish}
             advancedSubmit={advancedSubmit}
+            discussionTarget={getDiscussionTargetForEntity('characters', currentCharacterId)}
             onExitEditMode={exitEditMode}
             entityName={currentCharacterId}
             draftInfo={draftInfo}

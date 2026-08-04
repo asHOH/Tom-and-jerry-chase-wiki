@@ -16,6 +16,7 @@ import {
 } from '@/lib/notifications/kinds';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { SITE_URL } from '@/constants/seo';
+import type { Database } from '@/data/database.types';
 import { env } from '@/env';
 
 export type PublishNotificationInput = {
@@ -386,7 +387,36 @@ export async function notifyDiscussionCommentSubscribers(input: {
     throw new Error(`Failed to load discussion comment notification recipients: ${error.message}`);
   }
 
-  const recipientIds = uniqueIds((data ?? []).map((row) => row.user_id));
+  const { data: comments } = await supabaseAdmin
+    .from('comments')
+    .select('id, parent_id, author_id')
+    .eq('scope', input.scope as Database['public']['Enums']['comment_scope'])
+    .eq('target_id', input.targetId);
+  const parentById = new Map((comments ?? []).map((comment) => [comment.id, comment.parent_id]));
+  const rootOf = (commentId: string): string => {
+    let current = commentId;
+    const seen = new Set<string>();
+    while (parentById.get(current) && !seen.has(current)) {
+      seen.add(current);
+      current = parentById.get(current)!;
+    }
+    return current;
+  };
+  const rootTopicId = rootOf(input.commentId);
+  const participantIds = (comments ?? [])
+    .filter((comment) => rootOf(comment.id) === rootTopicId)
+    .map((comment) => comment.author_id);
+  const { data: linkedSubmissions } = await supabaseAdmin
+    .from('game_data_action_submissions')
+    .select('created_by')
+    .eq('discussion_topic_id', rootTopicId);
+  const recipientIds = uniqueIds([
+    ...(data ?? []).map((row) => row.user_id),
+    ...participantIds,
+    ...(linkedSubmissions ?? []).flatMap((submission) =>
+      submission.created_by ? [submission.created_by] : []
+    ),
+  ]).filter((recipientId) => recipientId !== input.actorUserId);
   if (recipientIds.length === 0) return;
 
   const target = getDiscussionNotificationTarget(input.scope, input.targetId);
@@ -410,6 +440,105 @@ export async function notifyDiscussionCommentSubscribers(input: {
         skipEmailDelivery: true,
       })
     )
+  );
+}
+
+export async function notifyGameDataReviewEvent(input: {
+  actorUserId: string | null;
+  actionIds: readonly string[];
+  title: string;
+  body: string;
+  topicIdOverride?: string;
+}): Promise<void> {
+  const actionIds = uniqueIds(input.actionIds);
+  if (actionIds.length === 0) return;
+  const { data: actions } = await supabaseAdmin
+    .from('game_data_actions')
+    .select('id, submission_id')
+    .in('id', actionIds);
+  const submissionIds = uniqueIds((actions ?? []).map((action) => action.submission_id));
+  if (submissionIds.length === 0) return;
+  const { data: submissions } = await supabaseAdmin
+    .from('game_data_action_submissions')
+    .select('id, created_by, discussion_topic_id')
+    .in('id', submissionIds);
+  const linked = input.topicIdOverride
+    ? (submissions ?? []).map((submission) => ({
+        ...submission,
+        discussion_topic_id: input.topicIdOverride!,
+      }))
+    : (submissions ?? []).filter((submission) => Boolean(submission.discussion_topic_id));
+  if (linked.length === 0) return;
+  const topicIds = uniqueIds(
+    linked.flatMap((submission) =>
+      submission.discussion_topic_id ? [submission.discussion_topic_id] : []
+    )
+  );
+  const { data: topics } = await supabaseAdmin
+    .from('comments')
+    .select('id, scope, target_id')
+    .in('id', topicIds)
+    .eq('status', 'visible');
+  if (!topics?.length) return;
+  const { data: subscribers } = await supabaseAdmin
+    .from('notification_subscription_settings')
+    .select('user_id')
+    .eq('discussion_comment_enabled', true);
+
+  await Promise.all(
+    topics.map(async (topic) => {
+      const topicSubmissions = linked.filter(
+        (submission) => submission.discussion_topic_id === topic.id
+      );
+      const topicSubmissionIds = new Set(topicSubmissions.map((submission) => submission.id));
+      const topicActionIds = (actions ?? [])
+        .filter((action) => topicSubmissionIds.has(action.submission_id))
+        .map((action) => action.id);
+      if (topicActionIds.length === 0) return;
+
+      const { data: comments } = await supabaseAdmin
+        .from('comments')
+        .select('id, parent_id, author_id')
+        .eq('scope', topic.scope)
+        .eq('target_id', topic.target_id);
+      const parentById = new Map(
+        (comments ?? []).map((comment) => [comment.id, comment.parent_id])
+      );
+      const belongsToTopic = (commentId: string): boolean => {
+        let current = commentId;
+        const seen = new Set<string>();
+        while (parentById.get(current) && !seen.has(current)) {
+          seen.add(current);
+          current = parentById.get(current)!;
+        }
+        return current === topic.id;
+      };
+      const recipientIds = uniqueIds([
+        ...topicSubmissions.flatMap((submission) =>
+          submission.created_by ? [submission.created_by] : []
+        ),
+        ...(comments ?? [])
+          .filter((comment) => belongsToTopic(comment.id))
+          .map((comment) => comment.author_id),
+        ...(subscribers ?? []).map((subscriber) => subscriber.user_id),
+      ]).filter((recipientId) => recipientId !== input.actorUserId);
+      const href = getDiscussionCommentHref(topic.scope, topic.target_id, topic.id);
+      await Promise.all(
+        recipientIds.map((recipientUserId) =>
+          publishNotification({
+            recipientUserId,
+            kind: 'game_data_review_event',
+            decisionOrigin: 'automatic',
+            title: input.title,
+            body: input.body,
+            href,
+            sourceIds: topicActionIds,
+            dedupeKey: `game-data-review:${input.title}:${topicActionIds.join(',')}:recipient:${recipientUserId}`,
+            skipEmailDelivery: true,
+          })
+        )
+      );
+    })
   );
 }
 

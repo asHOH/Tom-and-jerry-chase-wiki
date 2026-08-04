@@ -48,10 +48,12 @@ export interface EditModeToolbarProps {
     message?: string,
     options?: {
       submitMode?: GameDataSubmitMode;
+      discussionTopicId?: string;
     }
   ) => Promise<boolean>;
   /** Advanced submit controls for temporary permission downgrade */
   advancedSubmit?: GameDataAdvancedSubmit;
+  discussionTarget?: { scope: string; targetId: string; href: string };
   /** Called when user wants to exit edit mode */
   onExitEditMode: () => void;
   /** Entity display name for better UX */
@@ -69,6 +71,7 @@ export default function EditModeToolbar({
   onDiscard,
   onPublish,
   advancedSubmit,
+  discussionTarget,
   onExitEditMode,
   entityName,
   isTutorialEnabled = false,
@@ -81,6 +84,14 @@ export default function EditModeToolbar({
   const [isConfirmingDiscard, setIsConfirmingDiscard] = useState(false);
   const [isDraftsOpen, setIsDraftsOpen] = useState(false);
   const [agreedToLicense, setAgreedToLicense] = useState(false);
+  const [discussionMode, setDiscussionMode] = useState<'none' | 'existing' | 'new'>('none');
+  const [discussionTopics, setDiscussionTopics] = useState<Array<{ id: string; title: string }>>(
+    []
+  );
+  const [discussionTopicId, setDiscussionTopicId] = useState('');
+  const [newTopicTitle, setNewTopicTitle] = useState('');
+  const [newTopicContent, setNewTopicContent] = useState('');
+  const [discussionError, setDiscussionError] = useState<string | null>(null);
   const discardResetTimerRef = useRef<number | null>(null);
   const { isPreviewMode, setIsPreviewMode } = useEditMode();
 
@@ -102,20 +113,86 @@ export default function EditModeToolbar({
 
   const handlePublish = async () => {
     if (showMessageInput) {
+      let selectedTopicId = discussionMode === 'existing' ? discussionTopicId : undefined;
+      if (discussionMode === 'existing' && !selectedTopicId) {
+        setDiscussionError('请选择讨论话题');
+        return;
+      }
+      if (discussionMode === 'new') {
+        if (!discussionTarget || !newTopicTitle.trim() || !newTopicContent.trim()) {
+          setDiscussionError('请填写新话题标题和内容');
+          return;
+        }
+        const topicResponse = await fetch('/api/comments', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            scope: discussionTarget.scope,
+            targetId: discussionTarget.targetId,
+            title: newTopicTitle.trim(),
+            content: newTopicContent.trim(),
+          }),
+        });
+        const topicPayload = (await topicResponse.json().catch(() => null)) as {
+          comment?: { id?: string };
+          error?: string;
+        } | null;
+        if (!topicResponse.ok || !topicPayload?.comment?.id) {
+          setDiscussionError(topicPayload?.error ?? '创建讨论话题失败');
+          return;
+        }
+        selectedTopicId = topicPayload.comment.id;
+      }
+      const publishOptions = {
+        ...(advancedSubmit?.available ? { submitMode } : {}),
+        ...(selectedTopicId ? { discussionTopicId: selectedTopicId } : {}),
+      };
       const didPublish = await onPublish(
         publishMessage || undefined,
-        advancedSubmit?.available ? { submitMode } : undefined
+        Object.keys(publishOptions).length > 0 ? publishOptions : undefined
       );
       if (!didPublish) return;
       setPublishMessage('');
       setShowMessageInput(false);
       setSubmitMode('default');
       setAgreedToLicense(false);
+      setDiscussionMode('none');
+      setDiscussionTopicId('');
+      setNewTopicTitle('');
+      setNewTopicContent('');
+      setDiscussionError(null);
       onExitEditMode();
     } else {
       setShowMessageInput(true);
     }
   };
+
+  useEffect(() => {
+    if (!showMessageInput || !discussionTarget) return;
+    let active = true;
+    const url = `/api/comments?scope=${encodeURIComponent(discussionTarget.scope)}&targetId=${encodeURIComponent(discussionTarget.targetId)}&topicsOnly=true&limit=200`;
+    void fetch(url)
+      .then((response) => (response.ok ? response.json() : Promise.reject(new Error())))
+      .then((payload: { comments?: Array<{ id: string; title: string | null }> }) => {
+        if (!active) return;
+        setDiscussionTopics(
+          (payload.comments ?? []).flatMap((topic) =>
+            topic.title ? [{ id: topic.id, title: topic.title }] : []
+          )
+        );
+      })
+      .catch(() => {
+        if (active) setDiscussionError('讨论话题加载失败');
+      });
+    return () => {
+      active = false;
+    };
+  }, [discussionTarget, showMessageInput]);
+
+  useEffect(() => {
+    if (discussionMode === 'none' || !advancedSubmit?.modes.includes('force_pending')) return;
+    setSubmitMode('force_pending');
+  }, [advancedSubmit?.modes, discussionMode]);
 
   const handleDiscard = () => {
     if (isDirty) {
@@ -274,6 +351,88 @@ export default function EditModeToolbar({
                   进行授权发布。
                 </label>
               </div>
+              {discussionTarget && (
+                <div className='mt-2 rounded-lg border border-purple-200 bg-purple-50/70 p-3 text-xs dark:border-purple-800 dark:bg-purple-950/20'>
+                  <div className='flex flex-wrap items-center justify-between gap-2'>
+                    <span className='font-medium text-purple-900 dark:text-purple-100'>
+                      关联审核讨论（可选）
+                    </span>
+                    <a
+                      href={discussionTarget.href}
+                      target='_blank'
+                      rel='noreferrer'
+                      className='text-purple-700 hover:underline dark:text-purple-300'
+                    >
+                      打开讨论页
+                    </a>
+                  </div>
+                  <div className='mt-2 flex flex-wrap gap-2'>
+                    {(
+                      [
+                        ['none', '不关联'],
+                        ['existing', '选择已有话题'],
+                        ['new', '新建话题'],
+                      ] as const
+                    ).map(([value, label]) => (
+                      <button
+                        key={value}
+                        type='button'
+                        onClick={() => {
+                          setDiscussionMode(value);
+                          setDiscussionError(null);
+                        }}
+                        className={cn(
+                          'rounded-full border px-2.5 py-1',
+                          discussionMode === value
+                            ? 'border-purple-700 bg-purple-700 text-white'
+                            : 'border-purple-200 bg-white text-purple-900 dark:border-purple-700 dark:bg-slate-900 dark:text-purple-100'
+                        )}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                  {discussionMode === 'existing' && (
+                    <select
+                      value={discussionTopicId}
+                      onChange={(event) => setDiscussionTopicId(event.target.value)}
+                      className='mt-2 w-full rounded border border-purple-200 bg-white px-2 py-1.5 dark:border-purple-700 dark:bg-slate-900'
+                    >
+                      <option value=''>选择讨论话题</option>
+                      {discussionTopics.map((topic) => (
+                        <option key={topic.id} value={topic.id}>
+                          {topic.title}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                  {discussionMode === 'new' && (
+                    <div className='mt-2 space-y-2'>
+                      <input
+                        value={newTopicTitle}
+                        onChange={(event) => setNewTopicTitle(event.target.value)}
+                        maxLength={200}
+                        placeholder='话题标题'
+                        className='w-full rounded border border-purple-200 bg-white px-2 py-1.5 dark:border-purple-700 dark:bg-slate-900'
+                      />
+                      <textarea
+                        value={newTopicContent}
+                        onChange={(event) => setNewTopicContent(event.target.value)}
+                        maxLength={1800}
+                        rows={3}
+                        placeholder='说明希望讨论和审核的内容'
+                        className='w-full resize-none rounded border border-purple-200 bg-white px-2 py-1.5 dark:border-purple-700 dark:bg-slate-900'
+                      />
+                    </div>
+                  )}
+                  {discussionMode !== 'none' && (
+                    <p className='mt-2 text-purple-800 dark:text-purple-200'>
+                      关联后，待审核、拒绝和撤销的差异也会在话题中公开；默认以待审核方式提交。
+                    </p>
+                  )}
+                  {discussionError && <p className='mt-2 text-red-600'>{discussionError}</p>}
+                </div>
+              )}
               {advancedSubmit?.available && advancedSubmitDescription && (
                 <div className='mt-2 rounded-lg bg-blue-50 px-3 py-2 text-xs text-blue-900 dark:bg-blue-900/30 dark:text-blue-100'>
                   <div>{advancedSubmitDescription}</div>

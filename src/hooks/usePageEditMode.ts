@@ -59,6 +59,7 @@ export type PageEditModeResult = {
     message?: string,
     options?: {
       submitMode?: GameDataSubmitMode;
+      discussionTopicId?: string;
     }
   ) => Promise<boolean>;
   getActionCount: () => number;
@@ -272,6 +273,7 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
       message?: string,
       options?: {
         submitMode?: GameDataSubmitMode;
+        discussionTopicId?: string;
       }
     ): Promise<boolean> => {
       const { storageKey, remaining, squashed } = getPublishDraft();
@@ -301,6 +303,7 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
             entries: squashed,
             message,
             submitMode: options?.submitMode,
+            discussionTopicId: options?.discussionTopicId,
           }),
         });
 

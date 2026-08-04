@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { requirePermission } from '@/lib/auth/requirePermission';
+import { getDiscussionCommentHref } from '@/lib/comments/scopeMapping';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 
 const ALLOWED_STATUSES = ['pending', 'approved', 'rejected', 'synced', 'revoked', 'all'] as const;
@@ -26,7 +27,7 @@ export async function GET(request: NextRequest) {
     let query = supabase
       .from('game_data_actions')
       .select(
-        'id, created_at, created_by, entity_type, entry, is_public, message, rejection_reason, reviewed_at, reviewed_by, status'
+        'id, created_at, created_by, entity_type, entry, is_public, message, rejection_reason, reviewed_at, reviewed_by, status, submission_id'
       )
       .order('created_at', { ascending: false });
 
@@ -42,6 +43,35 @@ export async function GET(request: NextRequest) {
     }
 
     const rows = data ?? [];
+    const submissionIds = Array.from(
+      new Set(
+        rows.map((row) => row.submission_id).filter((value): value is string => Boolean(value))
+      )
+    );
+    const { data: submissionRows } = submissionIds.length
+      ? await supabaseAdmin
+          .from('game_data_action_submissions')
+          .select('id, discussion_topic_id')
+          .in('id', submissionIds)
+      : { data: [] };
+    const topicIds = (submissionRows ?? []).flatMap((row) =>
+      row.discussion_topic_id ? [row.discussion_topic_id] : []
+    );
+    const { data: topicRows } = topicIds.length
+      ? await supabaseAdmin
+          .from('comments')
+          .select('id, scope, target_id, title')
+          .in('id', topicIds)
+      : { data: [] };
+    const reviewActionIds = rows.filter((row) => Boolean(row.submission_id)).map((row) => row.id);
+    const { data: voteRows } = reviewActionIds.length
+      ? await supabaseAdmin
+          .from('game_data_action_votes')
+          .select('action_id, choice')
+          .in('action_id', reviewActionIds)
+      : { data: [] };
+    const submissionById = new Map((submissionRows ?? []).map((row) => [row.id, row]));
+    const topicById = new Map((topicRows ?? []).map((row) => [row.id, row]));
 
     const userIds = Array.from(
       new Set(
@@ -88,6 +118,29 @@ export async function GET(request: NextRequest) {
         reviewed_by: row.reviewed_by ?? '',
         reviewed_by_nickname: reviewedByNickname,
         status: row.status,
+        submission_id: row.submission_id,
+        vote_totals: {
+          approve: (voteRows ?? []).filter(
+            (vote) => vote.action_id === row.id && vote.choice === 'approve'
+          ).length,
+          reject: (voteRows ?? []).filter(
+            (vote) => vote.action_id === row.id && vote.choice === 'reject'
+          ).length,
+          abstain: (voteRows ?? []).filter(
+            (vote) => vote.action_id === row.id && vote.choice === 'abstain'
+          ).length,
+        },
+        discussion_topic: (() => {
+          const topicId = submissionById.get(row.submission_id)?.discussion_topic_id;
+          const topic = topicId ? topicById.get(topicId) : undefined;
+          return topic
+            ? {
+                id: topic.id,
+                title: topic.title,
+                href: getDiscussionCommentHref(topic.scope, topic.target_id, topic.id),
+              }
+            : null;
+        })(),
       };
     });
 
