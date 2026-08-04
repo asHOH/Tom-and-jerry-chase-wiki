@@ -21,7 +21,7 @@ export function DiscussionInfoBanner({ entityTitle, entityTypeLabel }: Discussio
       </p>
       <p className='mt-1 text-xs text-gray-500 dark:text-gray-400'>签名会自动附加在留言末尾。</p>
       <p className='mt-1 text-xs text-gray-500 dark:text-gray-400'>
-        请勿发布侵权、违法、骚扰、未经同意的个人信息或冒充官方内容；管理员可以隐藏或删除违规内容。
+        请勿发布侵权、违法、隐私或冒充官方内容；违规内容可能被隐藏或删除。
       </p>
     </div>
   );
