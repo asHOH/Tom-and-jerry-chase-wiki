@@ -53,6 +53,7 @@ export function useChat(message?: string, debounceMs = 500) {
   const {
     sendMessage,
     setMessages,
+    messages,
     error: aiError,
     status,
   } = useAIChat({
@@ -68,6 +69,21 @@ export function useChat(message?: string, debounceMs = 500) {
       }
     }, []),
   });
+
+  // Keep the displayed answer in sync with the assistant message while it streams.
+  useEffect(() => {
+    if (!mountedRef.current) return;
+
+    const latestAssistantMessage = [...messages]
+      .reverse()
+      .find((chatMessage) => chatMessage.role === 'assistant');
+    const text = latestAssistantMessage?.parts
+      .filter((part) => part.type === 'text')
+      .map((part) => part.text)
+      .join('');
+
+    setResponseText(text ?? '');
+  }, [messages]);
 
   // Map AI SDK error to local error state
   useEffect(() => {

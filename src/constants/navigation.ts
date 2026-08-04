@@ -159,7 +159,7 @@ export const NAV_ITEMS: readonly NavGroup[] = [
       {
         id: 'tools',
         label: '工具',
-        description: '胜率、属性和特技查询',
+        description: '胜率、属性、小游戏和特技查询',
         href: '/tools',
         iconSrc: '/images/entitySkills/%E7%A9%BA%E7%BD%AE%E9%81%93%E5%85%B7%E9%94%AE.png',
         iconAlt: '',
