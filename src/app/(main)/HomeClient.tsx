@@ -124,7 +124,7 @@ export default function HomeContentClient({ description, hasServiceKey }: Props)
         </div>
 
         <div className='mt-6 sm:mt-8'>
-          <h2 className='mb-6 text-3xl font-bold dark:text-white'>站点列表</h2>
+          <h2 className='mb-6 text-3xl font-bold dark:text-white'>本项目站点</h2>
           <OfficialSitesDisplay />
           <div className='mt-10'>
             <ExternalLinksDisplay />

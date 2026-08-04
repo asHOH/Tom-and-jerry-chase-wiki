@@ -18,7 +18,7 @@ const SITE_LANG = 'zh-CN';
 const SITE_LOCALE = 'zh_CN';
 const DEFAULT_IMAGE = '/icon.png';
 const SITE_TAGLINE =
-  '萌新友好的猫鼠手游维基百科网站，涵盖角色属性、技能、加点、克制关系、知识卡、特技、道具等，更多功能正持续开发中';
+  '非官方玩家维护的猫鼠手游维基百科网站，涵盖角色属性、技能、加点、克制关系、知识卡、特技、道具等，更多功能正持续开发中';
 
 const DEFAULT_DESCRIPTION = `${SITE_NAME} - ${SITE_TAGLINE}。${DISCLAIMER_TEXT}`;
 export const DEFAULT_KEYWORDS = [

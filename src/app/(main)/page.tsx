@@ -8,7 +8,7 @@ import { env } from '@/env';
 
 import HomeContentClient from './HomeClient';
 
-const DESCRIPTION = '查询猫和老鼠手游的角色、道具、知识卡等信息。';
+const DESCRIPTION = '非官方玩家资料站，查询猫和老鼠手游的角色、道具、知识卡等信息。';
 
 export const dynamic = 'force-static';
 export const metadata: Metadata = generatePageMetadata({

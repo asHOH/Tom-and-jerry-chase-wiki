@@ -181,6 +181,11 @@ export async function POST(request: Request) {
 
   const formData = await request.formData();
   const file = formData.get('file');
+  const rightsConfirmed = formData.get('rightsConfirmed') === 'true';
+
+  if (!rightsConfirmed) {
+    return NextResponse.json({ error: 'Image rights confirmation required' }, { status: 400 });
+  }
 
   if (!(file instanceof Blob)) {
     return NextResponse.json({ error: 'Missing file' }, { status: 400 });

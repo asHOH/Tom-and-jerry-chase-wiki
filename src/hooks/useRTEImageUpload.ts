@@ -36,6 +36,7 @@ export function useRTEImageUpload() {
 
       const formData = new FormData();
       formData.append('file', file, file.name);
+      formData.append('rightsConfirmed', 'true');
       setIsUploadingImage(true);
 
       try {

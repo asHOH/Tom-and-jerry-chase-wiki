@@ -5,6 +5,7 @@ import { useState } from 'react';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import { FormTextarea } from '@/components/ui/FormControls';
+import { CommunityConsent } from '@/components/UserContentConsent';
 
 type ReplyFormProps = {
   scope: string;
@@ -28,11 +29,16 @@ export function ReplyForm({
   const [content, setContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [communityRulesAccepted, setCommunityRulesAccepted] = useState(false);
 
   const handleSubmit = async () => {
     const trimmed = content.trim();
     if (!trimmed) {
       setError('请输入回复内容');
+      return;
+    }
+    if (!communityRulesAccepted) {
+      setError('请先确认讨论发布规则');
       return;
     }
 
@@ -48,6 +54,7 @@ export function ReplyForm({
           targetId,
           parentId,
           content: trimmed,
+          communityRulesAccepted: true,
         }),
       });
 
@@ -62,6 +69,7 @@ export function ReplyForm({
       }
 
       setContent('');
+      setCommunityRulesAccepted(false);
       onSuccess();
     } catch {
       setError('回复失败，请稍后重试');
@@ -101,6 +109,16 @@ export function ReplyForm({
         className='h-24 resize-none p-3'
       />
 
+      <div className='mt-3'>
+        <CommunityConsent
+          id={`reply-community-consent-${parentId}`}
+          checked={communityRulesAccepted}
+          onChange={setCommunityRulesAccepted}
+          disabled={!isAuthenticated || isSubmitting}
+          compact
+        />
+      </div>
+
       {error && <div className='mt-2 text-sm text-red-600 dark:text-red-400'>{error}</div>}
 
       <div className='mt-3 flex justify-end gap-2'>
@@ -111,7 +129,7 @@ export function ReplyForm({
           variant='success'
           size='sm'
           onClick={() => void handleSubmit()}
-          disabled={!isAuthenticated || isSubmitting}
+          disabled={!isAuthenticated || isSubmitting || !communityRulesAccepted}
           loading={isSubmitting}
         >
           {isSubmitting ? '发送中…' : '发表回复'}

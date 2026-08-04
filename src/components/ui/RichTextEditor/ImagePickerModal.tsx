@@ -7,6 +7,7 @@ import { BaseDialog } from '@/components/ui/BaseDialog';
 import Button from '@/components/ui/Button';
 import { FormInput } from '@/components/ui/FormControls';
 import { Img } from '@/components/Image';
+import { ImageRightsConsent } from '@/components/UserContentConsent';
 
 import { LoadingSpinnerIcon } from '../RichTextEditorIcons';
 
@@ -49,6 +50,8 @@ interface ImagePickerModalProps {
   isUploading: boolean;
   allowedSourcesDescription: string;
   refreshLibraryKey: number;
+  imageRightsConfirmed: boolean;
+  onImageRightsChange: (checked: boolean) => void;
 }
 
 function formatBytesForDisplay(bytes: number | null | undefined): string {
@@ -77,6 +80,8 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
   isUploading,
   allowedSourcesDescription,
   refreshLibraryKey,
+  imageRightsConfirmed,
+  onImageRightsChange,
 }) => {
   const [activeTab, setActiveTab] = useState<TabId>('upload');
   const [uploadError, setUploadError] = useState<string | null>(null);
@@ -168,6 +173,11 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
     async (event: React.ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
       if (!file) return;
+      if (!imageRightsConfirmed) {
+        setUploadError('请先确认图片使用权');
+        event.target.value = '';
+        return;
+      }
       setUploadError(null);
       try {
         const url = await onUpload(file);
@@ -179,21 +189,32 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
         event.target.value = '';
       }
     },
-    [onUpload, onSelect]
+    [imageRightsConfirmed, onUpload, onSelect]
+  );
+
+  const selectImage = useCallback(
+    (url: string) => {
+      if (!imageRightsConfirmed) {
+        setUploadError('请先确认图片使用权');
+        return;
+      }
+      onSelect(url);
+    },
+    [imageRightsConfirmed, onSelect]
   );
 
   const handleManualSubmit = useCallback(() => {
     const value = manualInput.trim();
     if (!value) return;
-    onSelect(value);
+    selectImage(value);
     setManualInput('');
-  }, [manualInput, onSelect]);
+  }, [manualInput, selectImage]);
 
   const handleSupabaseSelect = useCallback(
     (item: SupabaseImageItem) => {
-      onSelect(item.publicUrl);
+      selectImage(item.publicUrl);
     },
-    [onSelect]
+    [selectImage]
   );
 
   const handleSiteEntryClick = useCallback(
@@ -203,10 +224,10 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
         return;
       }
       if (entry.publicPath) {
-        onSelect(entry.publicPath);
+        selectImage(entry.publicPath);
       }
     },
-    [fetchSiteEntries, onSelect]
+    [fetchSiteEntries, selectImage]
   );
 
   const handleNavigateUp = useCallback(() => {
@@ -232,6 +253,15 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
         <p className='mb-4 text-sm text-gray-600 dark:text-gray-400'>
           {IMAGE_EXT_HINT}，单张不超过 {formatBytesForDisplay(RTE_IMAGE_MAX_BYTES)}。
         </p>
+        <div className='mb-4 text-left'>
+          <ImageRightsConsent
+            id='image-rights-consent'
+            checked={imageRightsConfirmed}
+            onChange={onImageRightsChange}
+            disabled={isUploading}
+            compact
+          />
+        </div>
         <label className='inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60'>
           {isUploading ? (
             <>
@@ -254,7 +284,7 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
       </div>
       <div className='rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-900'>
         <p className='text-sm text-gray-700 dark:text-gray-300'>
-          若已知图片 URL，可直接粘贴（仅支持站内/网站数据库的 URL）：
+          确认图片使用权后，可插入站内、网站数据库或已允许使用的图片 URL：
         </p>
         <div className='mt-2 flex gap-2'>
           <FormInput

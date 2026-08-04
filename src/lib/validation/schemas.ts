@@ -22,6 +22,7 @@ export const articleSubmitSchema = z.object({
     .trim()
     .optional()
     .transform((value) => (value && value.length > 0 ? value : undefined)),
+  contributionTermsAccepted: z.literal(true),
 });
 
 export const articleEditPendingSchema = z.object({
@@ -81,6 +82,7 @@ export const createCommentSchema = z.object({
     .max(200)
     .optional()
     .transform((value) => (value && value.length > 0 ? value : undefined)),
+  communityRulesAccepted: z.literal(true),
 });
 
 export const patchCommentSchema = z.object({

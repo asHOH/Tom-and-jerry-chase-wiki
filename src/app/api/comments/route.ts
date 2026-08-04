@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 
-import { requirePermission } from '../../../lib/auth/requirePermission';
+import {
+  requirePermission,
+  requirePermissionOrAnonymous,
+} from '../../../lib/auth/requirePermission';
 import { getRequestIp } from '../../../lib/blocks/server';
 import { shouldAllowComment } from '../../../lib/comments/moderation';
 import {
@@ -203,6 +206,16 @@ export async function GET(req: Request) {
     .eq('target_id', targetId)
     .order('created_at', { ascending: true })
     .limit(limit);
+
+  const moderationAccess = await requirePermissionOrAnonymous('comment.moderate', {
+    resourceType: `comments/${scope}`,
+    resourceId: targetId,
+  });
+  const canModerate = !('error' in moderationAccess) && moderationAccess.userId !== null;
+
+  if (!canModerate) {
+    query = query.eq('status', 'visible');
+  }
 
   if (topicsOnly) {
     query = query.is('parent_id', null).not('title', 'is', null);

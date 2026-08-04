@@ -153,7 +153,7 @@ const EditArticleClient: React.FC<EditArticleClientProps> = ({ characterOptions 
     return stripped === ARTICLE_EDITOR_PLACEHOLDER.replace(/\s+/g, '');
   };
 
-  const handleSave = async () => {
+  const handleSave = async (contributionTermsAccepted: true) => {
     if (isLoadingCategories) {
       return;
     }
@@ -205,6 +205,7 @@ const EditArticleClient: React.FC<EditArticleClientProps> = ({ characterOptions 
           title: title.trim(),
           category,
           content,
+          contributionTermsAccepted,
           // Only include character_id when required; null triggers schema validation error
           character_id: showCharacterSelector ? characterId : undefined,
           commit_message: commitMessage.trim(),

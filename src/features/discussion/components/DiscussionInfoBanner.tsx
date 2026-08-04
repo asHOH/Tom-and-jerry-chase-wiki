@@ -20,6 +20,9 @@ export function DiscussionInfoBanner({ entityTitle, entityTypeLabel }: Discussio
         的讨论页，用于讨论该页面的改进与维护。
       </p>
       <p className='mt-1 text-xs text-gray-500 dark:text-gray-400'>签名会自动附加在留言末尾。</p>
+      <p className='mt-1 text-xs text-gray-500 dark:text-gray-400'>
+        请勿发布侵权、违法、骚扰、未经同意的个人信息或冒充官方内容；管理员可以隐藏或删除违规内容。
+      </p>
     </div>
   );
 }

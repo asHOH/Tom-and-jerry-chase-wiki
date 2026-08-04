@@ -36,6 +36,8 @@ const defaultProps = {
   onUpload: jest.fn(async () => '/uploaded.png'),
   allowedSourcesDescription: '站内图片地址',
   refreshLibraryKey: 0,
+  imageRightsConfirmed: false,
+  onImageRightsChange: jest.fn(),
 };
 
 describe('ImagePickerModal', () => {

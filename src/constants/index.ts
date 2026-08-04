@@ -126,6 +126,16 @@ export const DISCLAIMER_TEXT = [
   ),
 ].join('\n');
 
+export const USER_CONTENT_COPY = {
+  contribution:
+    '我确认本次提交中的文字、测试记录、整理编排及其他内容为我原创或已取得相应授权；我不会将第三方游戏素材、截图、角色、地图、图标、音乐或他人个人信息作为自己的内容授权。仅我有权授权的原创文字和文档按 CC BY 4.0 发布，其他素材不在该许可范围内。网站可因侵权投诉或违反规则隐藏、修改或删除内容。',
+  community:
+    '我确认本次发布不包含侵权、违法、骚扰、恶意软件、未经同意的个人信息或冒充官方内容，并同意遵守社区规则。网站可审核、隐藏或删除违规内容。',
+  image:
+    '请仅插入你原创或已取得公开展示和信息网络传播许可的图片；第三方游戏素材、他人隐私信息和未经授权的内容不得上传或发布。',
+  nonOfficialNotice: '非官方玩家资料站。本网站不代表游戏开发商、发行商、运营方或其他相关权利人。',
+} as const;
+
 // Helper function to get ContentWriter contributors for a specific character
 export const getContentWritersByCharacter = (characterId: string): string[] => {
   return contributors

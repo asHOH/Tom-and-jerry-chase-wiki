@@ -65,8 +65,9 @@ export async function POST(request: Request, { params }: { params: Promise<{ id?
     const content = body?.content;
     const character_id = body?.character_id ?? null;
     const commit_message = body?.commit_message;
+    const contributionTermsAccepted = body?.contributionTermsAccepted;
 
-    if (!title || !category || !content) {
+    if (!title || !category || !content || contributionTermsAccepted !== true) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
     if (

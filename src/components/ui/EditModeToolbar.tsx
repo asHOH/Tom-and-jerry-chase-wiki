@@ -22,6 +22,7 @@ import {
   TrashIcon,
 } from '@/components/icons/CommonIcons';
 import OnboardingTutorial from '@/components/OnboardingTutorial';
+import { ContributionConsent } from '@/components/UserContentConsent';
 
 export interface EditModeToolbarProps {
   /** Whether there are unsaved changes */
@@ -80,7 +81,7 @@ export default function EditModeToolbar({
   const [submitMode, setSubmitMode] = useState<GameDataSubmitMode>('default');
   const [isConfirmingDiscard, setIsConfirmingDiscard] = useState(false);
   const [isDraftsOpen, setIsDraftsOpen] = useState(false);
-  const [agreedToLicense, setAgreedToLicense] = useState(false);
+  const [agreedToContributionTerms, setAgreedToContributionTerms] = useState(false);
   const discardResetTimerRef = useRef<number | null>(null);
   const { isPreviewMode, setIsPreviewMode } = useEditMode();
 
@@ -110,7 +111,7 @@ export default function EditModeToolbar({
       setPublishMessage('');
       setShowMessageInput(false);
       setSubmitMode('default');
-      setAgreedToLicense(false);
+      setAgreedToContributionTerms(false);
       onExitEditMode();
     } else {
       setShowMessageInput(true);
@@ -240,7 +241,7 @@ export default function EditModeToolbar({
                     setShowMessageInput(false);
                     setPublishMessage('');
                     setSubmitMode('default');
-                    setAgreedToLicense(false);
+                    setAgreedToContributionTerms(false);
                   }}
                   className='absolute top-1 right-1 rounded p-1 text-gray-400 hover:bg-gray-200 hover:text-gray-600 dark:hover:bg-slate-600 dark:hover:text-gray-300'
                   aria-label='取消'
@@ -248,31 +249,14 @@ export default function EditModeToolbar({
                   <CloseIcon className='h-4 w-4' />
                 </button>
               </div>
-              <div className='mt-2 flex items-start gap-2'>
-                <input
-                  type='checkbox'
-                  id='toolbar-license-agreement'
-                  checked={agreedToLicense}
-                  onChange={(e) => setAgreedToLicense(e.target.checked)}
-                  className='mt-0.5 shrink-0 rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800'
+              <div className='mt-2'>
+                <ContributionConsent
+                  id='toolbar-contribution-agreement'
+                  checked={agreedToContributionTerms}
+                  onChange={setAgreedToContributionTerms}
                   disabled={isPublishing}
+                  compact
                 />
-                <label
-                  htmlFor='toolbar-license-agreement'
-                  className='cursor-pointer text-xs text-gray-600 select-none dark:text-gray-400'
-                >
-                  提交即表示您同意将修改内容根据{' '}
-                  <a
-                    href='https://creativecommons.org/licenses/by/4.0/deed.zh-hans'
-                    className='text-blue-600 hover:underline dark:text-blue-400'
-                    target='_blank'
-                    rel='noopener noreferrer'
-                    title='Creative Commons Attribution 4.0 International'
-                  >
-                    CC BY 4.0 许可协议
-                  </a>{' '}
-                  进行授权发布。
-                </label>
               </div>
               {advancedSubmit?.available && advancedSubmitDescription && (
                 <div className='mt-2 rounded-lg bg-blue-50 px-3 py-2 text-xs text-blue-900 dark:bg-blue-900/30 dark:text-blue-100'>
@@ -407,7 +391,7 @@ export default function EditModeToolbar({
             data-tutorial-id='edit-mode-toolbar-publish'
             size='sm'
             onClick={handlePublish}
-            disabled={!isDirty || isPublishing || (showMessageInput && !agreedToLicense)}
+            disabled={!isDirty || isPublishing || (showMessageInput && !agreedToContributionTerms)}
             loading={isPublishing}
             className='rounded-lg px-4 font-medium'
             leadingIcon={<CheckBadgeIcon size={16} strokeWidth={2} />}

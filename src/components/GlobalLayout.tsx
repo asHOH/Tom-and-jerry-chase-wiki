@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 import { AnimatePresence, m, useReducedMotion } from 'motion/react';
 
 import TabNavigationWrapper from '@/components/TabNavigationWrapper';
+import { USER_CONTENT_COPY } from '@/constants';
 
 import { DynamicFaviconEditBadge } from './DynamicFaviconEditBadge';
 
@@ -33,6 +34,12 @@ export default function GlobalLayout({ children }: { children: React.ReactNode }
     <>
       <DynamicFaviconEditBadge />
       <TabNavigationWrapper showDetailToggle={showDetailToggle}>
+        <div
+          role='note'
+          className='mb-4 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-center text-xs text-amber-900 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-100'
+        >
+          {USER_CONTENT_COPY.nonOfficialNotice}
+        </div>
         <AnimatePresence mode='wait' initial={false}>
           <m.div
             key={pathname}

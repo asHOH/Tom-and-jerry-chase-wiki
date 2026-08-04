@@ -5,6 +5,7 @@ import { useState } from 'react';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import { FormInput, FormTextarea } from '@/components/ui/FormControls';
+import { CommunityConsent } from '@/components/UserContentConsent';
 
 type NewTopicFormProps = {
   scope: string;
@@ -18,6 +19,7 @@ export function NewTopicForm({ scope, targetId, onSuccess, onCancel }: NewTopicF
   const [content, setContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [communityRulesAccepted, setCommunityRulesAccepted] = useState(false);
 
   const handleSubmit = async () => {
     const trimmedTitle = title.trim();
@@ -29,6 +31,10 @@ export function NewTopicForm({ scope, targetId, onSuccess, onCancel }: NewTopicF
     }
     if (!trimmedContent) {
       setError('请输入话题内容');
+      return;
+    }
+    if (!communityRulesAccepted) {
+      setError('请先确认讨论发布规则');
       return;
     }
 
@@ -44,6 +50,7 @@ export function NewTopicForm({ scope, targetId, onSuccess, onCancel }: NewTopicF
           targetId,
           title: trimmedTitle,
           content: trimmedContent,
+          communityRulesAccepted: true,
         }),
       });
 
@@ -88,6 +95,16 @@ export function NewTopicForm({ scope, targetId, onSuccess, onCancel }: NewTopicF
         className='mt-3 h-32 resize-none p-3'
       />
 
+      <div className='mt-3'>
+        <CommunityConsent
+          id='new-topic-community-consent'
+          checked={communityRulesAccepted}
+          onChange={setCommunityRulesAccepted}
+          disabled={isSubmitting}
+          compact
+        />
+      </div>
+
       {error && <div className='mt-2 text-sm text-red-600 dark:text-red-400'>{error}</div>}
 
       <div className='mt-3 flex justify-end gap-2'>
@@ -98,7 +115,7 @@ export function NewTopicForm({ scope, targetId, onSuccess, onCancel }: NewTopicF
           variant='success'
           size='sm'
           onClick={() => void handleSubmit()}
-          disabled={isSubmitting}
+          disabled={isSubmitting || !communityRulesAccepted}
           loading={isSubmitting}
         >
           {isSubmitting ? '发布中…' : '发布话题'}

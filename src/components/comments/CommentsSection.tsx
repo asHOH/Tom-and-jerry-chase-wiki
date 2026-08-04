@@ -13,6 +13,7 @@ import { FormTextarea } from '@/components/ui/FormControls';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import SectionHeader from '@/components/ui/SectionHeader';
 import LoginDialog from '@/components/LoginDialog';
+import { CommunityConsent } from '@/components/UserContentConsent';
 
 type CommentScope = 'articles';
 
@@ -75,6 +76,7 @@ export default function CommentsSection({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
+  const [communityRulesAccepted, setCommunityRulesAccepted] = useState(false);
 
   const apiUrl = useMemo(
     () =>
@@ -102,6 +104,10 @@ export default function CommentsSection({
       setError('请输入评论内容');
       return;
     }
+    if (!communityRulesAccepted) {
+      setError('请先确认评论发布规则');
+      return;
+    }
 
     try {
       setIsSubmitting(true);
@@ -115,6 +121,7 @@ export default function CommentsSection({
           targetId,
           parentId: replyTo?.id,
           content: trimmed,
+          communityRulesAccepted: true,
         }),
       });
 
@@ -127,6 +134,7 @@ export default function CommentsSection({
 
       setContent('');
       setReplyTo(null);
+      setCommunityRulesAccepted(false);
       await mutate();
     } catch (err) {
       console.error('Failed to create comment:', err);
@@ -221,6 +229,16 @@ export default function CommentsSection({
           className='h-24 resize-none p-3'
         />
 
+        <div className='mt-3'>
+          <CommunityConsent
+            id={`comments-community-consent-${targetId}`}
+            checked={communityRulesAccepted}
+            onChange={setCommunityRulesAccepted}
+            disabled={!canComment || isSubmitting}
+            compact
+          />
+        </div>
+
         {error ? <div className='mt-2 text-sm text-red-600 dark:text-red-400'>{error}</div> : null}
 
         <div className='mt-3 flex items-center justify-end gap-2'>
@@ -232,7 +250,7 @@ export default function CommentsSection({
 
           <Button
             onClick={handleSubmit}
-            disabled={!canComment || isSubmitting}
+            disabled={!canComment || isSubmitting || !communityRulesAccepted}
             loading={isSubmitting}
             variant='success'
             size='sm'

@@ -109,7 +109,7 @@ const NewArticleClient: React.FC<NewArticleClientProps> = ({ characterOptions })
     }
   };
 
-  const handleSave = async () => {
+  const handleSave = async (contributionTermsAccepted: true) => {
     if (isLoadingCategories) {
       return;
     }
@@ -156,6 +156,7 @@ const NewArticleClient: React.FC<NewArticleClientProps> = ({ characterOptions })
           title: title.trim(),
           category,
           content,
+          contributionTermsAccepted,
           // Only send character_id when required to avoid schema rejection on null
           character_id: showCharacterSelector ? characterId : undefined,
         }),

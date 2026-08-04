@@ -63,6 +63,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   const [rawContent, setRawContent] = useState(initialHtml);
   const [showImagePicker, setShowImagePicker] = useState(false);
   const [showLinkDialog, setShowLinkDialog] = useState(false);
+  const [imageRightsConfirmed, setImageRightsConfirmed] = useState(false);
 
   const { isUploadingImage, libraryRefreshKey, uploadImageFile } = useRTEImageUpload();
   const { error: showError } = useToast();
@@ -137,6 +138,10 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   const handlePastedImages = useCallback(
     async (files: File[]) => {
       if (!editor || files.length === 0) return;
+      if (!imageRightsConfirmed) {
+        showError('请先打开图片选择器并确认图片使用权，再粘贴图片。');
+        return;
+      }
       for (const file of files) {
         try {
           const imageUrl = await uploadImageFile(file);
@@ -147,7 +152,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         }
       }
     },
-    [editor, uploadImageFile]
+    [editor, imageRightsConfirmed, showError, uploadImageFile]
   );
 
   const handlePaste = useCallback(
@@ -304,6 +309,8 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         isUploading={isUploadingImage}
         allowedSourcesDescription={allowedImageSourcesText}
         refreshLibraryKey={libraryRefreshKey}
+        imageRightsConfirmed={imageRightsConfirmed}
+        onImageRightsChange={setImageRightsConfirmed}
       />
       <LinkDialog
         isOpen={showLinkDialog}
