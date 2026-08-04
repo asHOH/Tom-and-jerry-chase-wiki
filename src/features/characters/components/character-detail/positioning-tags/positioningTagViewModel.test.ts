@@ -68,8 +68,8 @@ describe('positioningTagViewModel', () => {
   it.each([
     ['text', 'text'],
     ['bar', 'bar'],
-    ['rose', 'rose'],
-    ['radar', 'text'],
+    ['rose', 'radar'],
+    ['radar', 'radar'],
     ['unsupported', 'text'],
     [null, 'text'],
   ])('normalizes stored view mode %s', (value, expected) => {

@@ -120,16 +120,16 @@ describe('PositioningTagsSection views', () => {
       'aria-pressed',
       'true'
     );
-    expect(screen.queryByRole('button', { name: '定位雷达图视图' })).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '定位雷达图视图' })).toBeInTheDocument();
   });
 
   it.each([
     ['bar', 'positioning-bar-chart'],
-    ['rose', 'positioning-rose-chart'],
+    ['radar', 'positioning-radar-chart'],
   ] as const)('switches to the %s chart and persists the choice', async (mode, testId) => {
     render(<PositioningTagsSection tags={tags} factionId='cat' />);
 
-    const labels = { bar: '柱状图', rose: '玫瑰图' } as const;
+    const labels = { bar: '柱状图', radar: '雷达图' } as const;
     fireEvent.click(screen.getByRole('button', { name: `定位${labels[mode]}视图` }));
 
     expect(screen.getByTestId(testId)).toBeInTheDocument();
@@ -158,7 +158,7 @@ describe('PositioningTagsSection views', () => {
   });
 
   it('forces text editing while preserving the saved chart view', () => {
-    localStorage.setItem(POSITIONING_TAG_VIEW_STORAGE_KEY, '"rose"');
+    localStorage.setItem(POSITIONING_TAG_VIEW_STORAGE_KEY, '"radar"');
     mockIsEditMode = true;
 
     const { rerender } = render(<PositioningTagsSection tags={tags} factionId='cat' />);
@@ -168,11 +168,11 @@ describe('PositioningTagsSection views', () => {
       'aria-pressed',
       'true'
     );
-    expect(screen.getByRole('button', { name: '定位玫瑰图视图' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: '定位雷达图视图' })).toBeDisabled();
 
     mockIsEditMode = false;
     rerender(<PositioningTagsSection tags={tags} factionId='cat' />);
 
-    expect(screen.getByTestId('positioning-rose-chart')).toBeInTheDocument();
+    expect(screen.getByTestId('positioning-radar-chart')).toBeInTheDocument();
   });
 });

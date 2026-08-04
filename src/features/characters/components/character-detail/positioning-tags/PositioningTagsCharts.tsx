@@ -18,7 +18,7 @@ type PositioningTagsChartProps = {
 const MAX_LEVEL = 4;
 const CHART_LABELS: Record<Exclude<PositioningTagViewMode, 'text'>, string> = {
   bar: '柱状图',
-  rose: '玫瑰图',
+  radar: '雷达图',
 };
 
 const polarPoint = (center: number, radius: number, angle: number) => ({
@@ -46,6 +46,11 @@ function PositioningTagDataTable({
   data: readonly PositioningTagChartDatum[];
   viewMode: Exclude<PositioningTagViewMode, 'text'>;
 }) {
+  const tableData =
+    viewMode === 'bar'
+      ? data.filter((datum) => datum.level > 0).sort((left, right) => right.level - left.level)
+      : data;
+
   return (
     <table className='sr-only' aria-label={`定位${CHART_LABELS[viewMode]}数据`}>
       <thead>
@@ -55,7 +60,7 @@ function PositioningTagDataTable({
         </tr>
       </thead>
       <tbody>
-        {data.map((datum) => (
+        {tableData.map((datum) => (
           <tr key={datum.tagName}>
             <th scope='row'>{datum.tagName}</th>
             <td>{`${datum.level}/4`}</td>
@@ -73,11 +78,14 @@ function BarChart({
   isDarkMode,
   titleId,
 }: Omit<PositioningTagsChartProps, 'viewMode'> & { titleId: string }) {
+  const visibleData = data
+    .filter((datum) => datum.level > 0)
+    .sort((left, right) => right.level - left.level);
   const chartWidth = 230;
   const chartLeft = 78;
   const rowHeight = 27;
   const top = 18;
-  const chartHeight = top + rowHeight * data.length + 8;
+  const chartHeight = top + rowHeight * visibleData.length + 8;
 
   return (
     <svg
@@ -107,7 +115,7 @@ function BarChart({
           </g>
         );
       })}
-      {data.map((datum, index) => {
+      {visibleData.map((datum, index) => {
         const y = top + index * rowHeight;
         const width = (chartWidth * datum.level) / MAX_LEVEL;
         const color = getTagColor(datum, factionId, isDarkMode);
@@ -160,7 +168,7 @@ function BarChart({
   );
 }
 
-function RoseChart({
+function RadarChart({
   data,
   factionId,
   isDetailed,
@@ -169,19 +177,17 @@ function RoseChart({
 }: Omit<PositioningTagsChartProps, 'viewMode'> & { titleId: string }) {
   const center = 140;
   const radius = 94;
-  const gap = 0.035;
   const viewBox = '0 0 300 280';
-
-  const sectorPath = (index: number, value: number) => {
-    // Keep each sector centered on its tag's axis. The label and spoke use
-    // the axis angle, so the sector must extend equally on either side of it.
-    const { startAngle, endAngle } = getRoseSectorAngles(index, data.length, gap);
-    const outerRadius = (radius * value) / MAX_LEVEL;
-    const start = polarPoint(center, outerRadius, startAngle);
-    const end = polarPoint(center, outerRadius, endAngle);
-    const largeArc = endAngle - startAngle > Math.PI ? 1 : 0;
-    return `M ${center} ${center} L ${start.x.toFixed(2)} ${start.y.toFixed(2)} A ${outerRadius.toFixed(2)} ${outerRadius.toFixed(2)} 0 ${largeArc} 1 ${end.x.toFixed(2)} ${end.y.toFixed(2)} Z`;
-  };
+  const slice = (Math.PI * 2) / data.length;
+  const getAxisAngle = (index: number) => -Math.PI / 2 + index * slice;
+  const getPoint = (index: number, level: number) =>
+    polarPoint(center, (radius * level) / MAX_LEVEL, getAxisAngle(index));
+  const dataPoints = data
+    .map((datum, index) => {
+      const point = getPoint(index, datum.level);
+      return `${point.x.toFixed(2)},${point.y.toFixed(2)}`;
+    })
+    .join(' ');
 
   return (
     <svg
@@ -189,25 +195,36 @@ function RoseChart({
       viewBox={viewBox}
       role='img'
       aria-labelledby={titleId}
-      data-testid='positioning-rose-chart'
+      data-testid='positioning-radar-chart'
     >
-      <title id={titleId}>定位玫瑰图</title>
+      <title id={titleId}>定位雷达图</title>
       {[1, 2, 3, 4].map((level) => (
-        <circle
+        <polygon
           key={level}
-          cx={center}
-          cy={center}
-          r={(radius * level) / MAX_LEVEL}
+          points={data
+            .map((_, index) => {
+              const point = getPoint(index, level);
+              return `${point.x.toFixed(2)},${point.y.toFixed(2)}`;
+            })
+            .join(' ')}
           fill='none'
           stroke='currentColor'
           strokeDasharray='2 3'
           opacity={0.25}
         />
       ))}
+      <polygon
+        points={dataPoints}
+        fill='currentColor'
+        stroke='currentColor'
+        strokeLinejoin='round'
+        opacity={0.18}
+      />
       {data.map((datum, index) => {
-        const { axisAngle: angle } = getRoseSectorAngles(index, data.length, gap);
+        const angle = getAxisAngle(index);
         const axisEnd = polarPoint(center, radius, angle);
         const labelPoint = polarPoint(center, radius + 24, angle);
+        const valuePoint = getPoint(index, datum.level);
         const color = getTagColor(datum, factionId, isDarkMode);
         return (
           <g key={datum.tagName}>
@@ -219,14 +236,15 @@ function RoseChart({
               stroke='currentColor'
               opacity={0.25}
             />
-            <path
-              d={sectorPath(index, datum.level)}
-              fill={datum.level > 0 ? color : 'transparent'}
-              stroke={datum.level > 0 ? color : 'none'}
+            <circle
+              cx={valuePoint.x}
+              cy={valuePoint.y}
+              r='3.5'
+              fill={datum.level > 0 ? color : 'currentColor'}
               opacity={datum.level === 2 ? 0.75 : 1}
             >
               <title>{`${datum.tagName}：等级${datum.level}/4`}</title>
-            </path>
+            </circle>
             <Tooltip
               content={getPositioningTagTooltipContent(datum.tagName, factionId, isDetailed)}
               asChild
@@ -275,7 +293,7 @@ export default function PositioningTagsChart({
           titleId={titleId}
         />
       ) : (
-        <RoseChart
+        <RadarChart
           data={data}
           factionId={factionId}
           isDetailed={isDetailed}

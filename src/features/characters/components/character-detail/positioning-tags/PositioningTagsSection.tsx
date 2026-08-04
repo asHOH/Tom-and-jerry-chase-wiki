@@ -308,7 +308,7 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
   const viewModeLabels: Record<PositioningTagViewMode, string> = {
     text: '文本',
     bar: '柱状图',
-    rose: '玫瑰图',
+    radar: '雷达图',
   };
 
   if (sortedTags.length === 0 && !isEditMode) return null;

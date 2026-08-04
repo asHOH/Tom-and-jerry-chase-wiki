@@ -4,7 +4,7 @@ import {
 } from '@/constants/positioningTagSequences';
 import type { FactionId, PositioningTagLevel } from '@/data/types';
 
-export const POSITIONING_TAG_VIEW_MODES = ['text', 'bar', 'rose'] as const;
+export const POSITIONING_TAG_VIEW_MODES = ['text', 'bar', 'radar'] as const;
 
 export type PositioningTagViewMode = (typeof POSITIONING_TAG_VIEW_MODES)[number];
 
@@ -22,6 +22,9 @@ export type PositioningTagChartDatum = {
 export const POSITIONING_TAG_VIEW_STORAGE_KEY = 'tjwiki:character-positioning-view';
 
 export function normalizePositioningTagViewMode(value: string | null | undefined) {
+  // Migrate the previous persisted rose-chart preference to the radar chart.
+  if (value === 'rose') return 'radar';
+
   return POSITIONING_TAG_VIEW_MODES.includes(value as PositioningTagViewMode)
     ? (value as PositioningTagViewMode)
     : 'text';
@@ -49,7 +52,7 @@ export function getPositioningTagChartData(
     const level = levelsByName.get(tagName) ?? 0;
     return {
       tagName,
-      level: level >= 2 ? level : 0,
+      level: level >= 2 ? level : 1,
     };
   });
 }
