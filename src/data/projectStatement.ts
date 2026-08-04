@@ -18,6 +18,10 @@ export interface ProjectStatementCopy {
     title: string;
     ariaLabel: string;
   };
+  privacy: {
+    title: string;
+    ariaLabel: string;
+  };
   legal: {
     title: string;
     headings: {
@@ -26,11 +30,6 @@ export interface ProjectStatementCopy {
     };
     copyright: {
       ariaLabel: string;
-      brandLabel: string;
-      brandTooltip: string;
-      ownerTooltip: string;
-      textPrefix: string;
-      textSuffix: string;
     };
     license: {
       ariaLabel: string;
@@ -58,6 +57,10 @@ export const PROJECT_STATEMENT_COPY: ProjectStatementCopy = {
     title: '致谢',
     ariaLabel: '致谢详情',
   },
+  privacy: {
+    title: '隐私',
+    ariaLabel: '隐私说明',
+  },
   legal: {
     title: '版权与许可',
     headings: {
@@ -66,11 +69,6 @@ export const PROJECT_STATEMENT_COPY: ProjectStatementCopy = {
     },
     copyright: {
       ariaLabel: '版权声明',
-      brandLabel: '猫和老鼠',
-      brandTooltip: 'Tom and Jerry',
-      ownerTooltip: 'Warner Bros. Entertainment Inc.',
-      textPrefix: '角色版权归',
-      textSuffix: '所有。游戏素材版权归网易猫和老鼠手游所有。',
     },
     license: {
       ariaLabel: '开源许可',
