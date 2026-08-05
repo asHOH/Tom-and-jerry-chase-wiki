@@ -131,7 +131,6 @@ export const componentTokens = {
     },
     container: {
       height: '12rem', // h-48 (192px)
-      borderRadius: `${designTokens.radius.xl} ${designTokens.radius.xl} 0 0`,
     },
   },
 
