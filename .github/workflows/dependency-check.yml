@@ -2,10 +2,12 @@ name: Security Audit
 
 on:
   push:
+    branches: [main, develop]
     paths:
       - 'package.json'
       - 'package-lock.json'
   pull_request:
+    branches: [main, develop]
     paths:
       - 'package.json'
       - 'package-lock.json'
