@@ -31,8 +31,9 @@ export function normalizePositioningTagViewMode(value: string | null | undefined
 /**
  * Build a stable seven-axis data set for the character's faction.
  *
- * Public charts intentionally treat level 0/1 tags as absent. If malformed or
- * legacy data contains the same tag more than once, the highest level wins.
+ * Public charts use level 1 as the visual baseline for unspecified axes and
+ * source levels 0/1. If malformed or legacy data contains the same tag more
+ * than once, the highest level wins.
  */
 export function getPositioningTagChartData(
   tags: readonly PositioningTagChartInput[],

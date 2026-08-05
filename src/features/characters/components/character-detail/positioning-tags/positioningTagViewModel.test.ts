@@ -4,7 +4,7 @@ import {
 } from './positioningTagViewModel';
 
 describe('positioningTagViewModel', () => {
-  it('builds all seven cat axes in the canonical order and fills missing axes with zero', () => {
+  it('builds all seven cat axes in canonical order with a level-one baseline', () => {
     expect(
       getPositioningTagChartData(
         [
@@ -15,12 +15,12 @@ describe('positioningTagViewModel', () => {
       )
     ).toEqual([
       { tagName: '进攻', level: 4 },
-      { tagName: '防守', level: 0 },
-      { tagName: '追击', level: 0 },
-      { tagName: '打架', level: 0 },
-      { tagName: '速通', level: 0 },
+      { tagName: '防守', level: 1 },
+      { tagName: '追击', level: 1 },
+      { tagName: '打架', level: 1 },
+      { tagName: '速通', level: 1 },
       { tagName: '后期', level: 3 },
-      { tagName: '翻盘', level: 0 },
+      { tagName: '翻盘', level: 1 },
     ]);
   });
 
@@ -36,7 +36,7 @@ describe('positioningTagViewModel', () => {
     ]);
   });
 
-  it('treats edit-only levels as absent and keeps minor levels', () => {
+  it('uses the chart baseline for edit-only and absent levels and keeps minor levels', () => {
     expect(
       getPositioningTagChartData(
         [
@@ -47,9 +47,9 @@ describe('positioningTagViewModel', () => {
         'cat'
       ).slice(0, 3)
     ).toEqual([
-      { tagName: '进攻', level: 0 },
+      { tagName: '进攻', level: 1 },
       { tagName: '防守', level: 2 },
-      { tagName: '追击', level: 0 },
+      { tagName: '追击', level: 1 },
     ]);
   });
 
