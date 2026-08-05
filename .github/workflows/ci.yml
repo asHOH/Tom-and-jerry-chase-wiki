@@ -7,11 +7,9 @@ on:
     branches: [main, develop]
 
 jobs:
-  setup:
-    name: Setup Dependencies
+  code-quality:
+    name: Code Quality
     runs-on: ubuntu-latest
-    outputs:
-      cache-hit: ${{ steps.cache.outputs.cache-hit }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -26,68 +24,24 @@ jobs:
         working-directory: ${{ runner.temp }}
         run: npm install -g npm@11.18.0
 
-      - name: Cache dependencies
-        id: cache
-        uses: actions/cache@v6
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-24-${{ hashFiles('**/package-lock.json') }}
-
       - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
 
       - name: Validate actor profiles
         run: npm run validate:actor-profiles
 
-  code-quality:
-    name: Code Quality
-    runs-on: ubuntu-latest
-    needs: setup
-    strategy:
-      fail-fast: false
-      matrix:
-        check: [prettier, oxlint, typescript]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version: '24'
-          cache: 'npm'
-
-      - name: Install pinned npm
-        working-directory: ${{ runner.temp }}
-        run: npm install -g npm@11.18.0
-
-      - name: Restore dependencies
-        uses: actions/cache@v6
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-24-${{ hashFiles('**/package-lock.json') }}
-
-      - name: Install dependencies
-        if: needs.setup.outputs.cache-hit != 'true'
-        run: npm ci
-
       - name: Run Prettier check
-        if: matrix.check == 'prettier'
         run: npm run prettier:check
 
       - name: Run Oxlint
-        if: matrix.check == 'oxlint'
         run: npm run lint
 
       - name: Run TypeScript check
-        if: matrix.check == 'typescript'
         run: npm run type-check
 
   test:
     name: Tests & Coverage
     runs-on: ubuntu-latest
-    needs: setup
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -102,14 +56,7 @@ jobs:
         working-directory: ${{ runner.temp }}
         run: npm install -g npm@11.18.0
 
-      - name: Restore dependencies
-        uses: actions/cache@v6
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-24-${{ hashFiles('**/package-lock.json') }}
-
       - name: Install dependencies
-        if: needs.setup.outputs.cache-hit != 'true'
         run: npm ci
 
       - name: Run tests and generate coverage
