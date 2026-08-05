@@ -20,7 +20,7 @@ export default function CharacterRankingGrid({ description }: CharacterRankingGr
   const SECTIONS = [
     {
       title: '使用指南',
-      items: ['usage-use', 'usage-edit'],
+      items: ['usage-use', 'usage-edit', 'usage-manage'],
     },
     {
       title: '查询工具',

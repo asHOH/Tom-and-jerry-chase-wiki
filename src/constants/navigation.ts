@@ -194,6 +194,14 @@ export const TOOL_NAV_ITEMS: readonly NavItem[] = [
     iconSrc: '/images/mouseSkills/%E8%8E%B1%E6%81%A92-%E8%98%B8%E6%B0%B4%E7%AC%94.png',
     iconAlt: '',
   },
+  {
+    id: 'usage-manage',
+    label: '网站管理指南',
+    description: '介绍审核员与协调员的管理功能',
+    href: '/usages/manage',
+    iconSrc: '/images/icons/article.png',
+    iconAlt: '',
+  },
   //查询工具
   {
     id: 'ranks',

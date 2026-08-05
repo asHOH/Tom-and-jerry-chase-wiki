@@ -1,4 +1,5 @@
 import EditPage from './EditPage';
+import ManagePage from './ManagePage';
 import UsePage from './UsePage';
 
 //与navigation.ts的格式相同，日后有需要可以合并
@@ -14,6 +15,7 @@ type NavItem = {
 export const usagesSections = {
   use: UsePage,
   edit: EditPage,
+  manage: ManagePage,
   // 在此处添加新的模块
   // newSection: NewSectionComponent,
 } as const;
@@ -37,6 +39,12 @@ export const NAV_ITEM_CONFIGS: readonly NavItemConfig[] = [
     id: 'edit',
     label: '编辑指南',
     iconSrc: '/images/mouseSkills/%E8%8E%B1%E6%81%A92-%E8%98%B8%E6%B0%B4%E7%AC%94.png',
+    iconAlt: '',
+  },
+  {
+    id: 'manage',
+    label: '管理指南',
+    iconSrc: '/images/icons/article.png',
     iconAlt: '',
   },
 ] as const;
