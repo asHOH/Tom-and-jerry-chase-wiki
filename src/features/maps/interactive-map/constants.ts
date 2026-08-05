@@ -12,7 +12,6 @@ export const CATEGORY_ICONS: Partial<Record<MapPointCategory, string>> = {
   scoutingCanary: '/images/fixtures/侦查金丝雀.png',
 };
 
-export const FILTER_STORAGE_KEY = 'interactive-map:visible-categories:v3';
 export const HOTSPOT_CATEGORIES = new Set<MapPointCategory>([
   'teleport',
   ...ALWAYS_VISIBLE_CATEGORIES,

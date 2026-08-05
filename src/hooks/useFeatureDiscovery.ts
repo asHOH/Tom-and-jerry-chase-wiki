@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
-const STORAGE_PREFIX = 'feature_discovered_';
+import { getFeatureDiscoveryStorageKey, storage } from '@/lib/localStorage';
 
 /**
  * Tracks whether a user has discovered (interacted with) a feature.
@@ -9,26 +9,19 @@ const STORAGE_PREFIX = 'feature_discovered_';
  */
 export function useFeatureDiscovery(featureKey: string) {
   const [shouldPrompt, setShouldPrompt] = useState(false);
+  const storageKey = getFeatureDiscoveryStorageKey(featureKey);
 
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_PREFIX + featureKey);
-      if (!stored) {
-        setShouldPrompt(true);
-      }
-    } catch {
-      // localStorage unavailable — don't prompt
+    const stored = storage.getItem(storageKey);
+    if (!stored) {
+      setShouldPrompt(true);
     }
-  }, [featureKey]);
+  }, [storageKey]);
 
   const dismiss = useCallback(() => {
     setShouldPrompt(false);
-    try {
-      localStorage.setItem(STORAGE_PREFIX + featureKey, '1');
-    } catch {
-      // Ignore storage failures
-    }
-  }, [featureKey]);
+    storage.setItem(storageKey, '1');
+  }, [storageKey]);
 
   return { shouldPrompt, dismiss };
 }

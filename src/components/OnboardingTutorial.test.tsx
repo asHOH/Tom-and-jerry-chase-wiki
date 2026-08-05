@@ -1,6 +1,8 @@
 import type { AnchorHTMLAttributes, ReactNode } from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 
+import { StorageKey } from '@/lib/localStorage';
+
 import OnboardingTutorial from './OnboardingTutorial';
 
 jest.mock('@/components/Link', () => ({
@@ -45,7 +47,7 @@ describe('OnboardingTutorial', () => {
 
     fireEvent.click(screen.getByRole('button', { name: '完成' }));
     expect(screen.queryByText('第 3 / 3 步')).not.toBeInTheDocument();
-    expect(localStorage.getItem('hasUserSeenEditModeToolbarTutorial')).toBe('true');
+    expect(localStorage.getItem(StorageKey.TutorialEditModeToolbarSeen)).toBe('true');
   });
 
   it('links to the full guide and closes the introduction', () => {
@@ -56,6 +58,6 @@ describe('OnboardingTutorial', () => {
 
     fireEvent.click(guideLink);
     expect(screen.queryByRole('link', { name: '查看完整编辑指南' })).not.toBeInTheDocument();
-    expect(localStorage.getItem('hasUserSeenEditModeToolbarTutorial')).toBe('true');
+    expect(localStorage.getItem(StorageKey.TutorialEditModeToolbarSeen)).toBe('true');
   });
 });

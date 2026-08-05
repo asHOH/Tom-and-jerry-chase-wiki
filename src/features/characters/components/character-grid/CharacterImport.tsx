@@ -233,10 +233,7 @@ export default function CharacterImport() {
           <>
             <div
               className='relative mb-4 w-full overflow-hidden bg-gray-200 dark:bg-slate-700'
-              style={{
-                height: containerHeight,
-                borderRadius: componentTokens.image.container.borderRadius,
-              }}
+              style={{}}
             >
               <div className='flex h-full items-center justify-center p-2'>
                 <svg

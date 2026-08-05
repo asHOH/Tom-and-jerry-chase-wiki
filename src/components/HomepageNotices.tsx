@@ -3,12 +3,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import useSWR from 'swr';
 
+import { storage, StorageKey } from '@/lib/localStorage';
 import { sanitizeNoticeHTML } from '@/lib/notices/sanitize';
 import type { PublicNotice } from '@/lib/notices/types';
 import Button from '@/components/ui/Button';
 import { renderRichTextContent } from '@/components/ui/RichTextContent';
-
-const DISMISSED_NOTICE_KEY = 'homepage-dismissed-notices';
 
 const fetcher = async (url: string): Promise<{ notices: PublicNotice[] }> => {
   const response = await fetch(url, { cache: 'no-store' });
@@ -33,16 +32,11 @@ export default function HomepageNotices() {
   const [hasLoadedDismissals, setHasLoadedDismissals] = useState(false);
 
   useEffect(() => {
-    try {
-      const stored = JSON.parse(localStorage.getItem(DISMISSED_NOTICE_KEY) ?? '[]') as unknown;
-      if (Array.isArray(stored)) {
-        setDismissed(new Set(stored.filter((value): value is string => typeof value === 'string')));
-      }
-    } catch (error) {
-      console.warn('Failed to load dismissed homepage notices:', error);
-    } finally {
-      setHasLoadedDismissals(true);
+    const stored = storage.getJson<unknown>(StorageKey.HomepageDismissedNotices);
+    if (Array.isArray(stored)) {
+      setDismissed(new Set(stored.filter((value): value is string => typeof value === 'string')));
     }
+    setHasLoadedDismissals(true);
   }, []);
 
   const visibleNotices = useMemo(
@@ -58,10 +52,8 @@ export default function HomepageNotices() {
   const dismiss = (notice: PublicNotice) => {
     const next = new Set(dismissed).add(dismissalId(notice));
     setDismissed(next);
-    try {
-      localStorage.setItem(DISMISSED_NOTICE_KEY, JSON.stringify([...next]));
-    } catch (error) {
-      console.warn('Failed to save dismissed homepage notices:', error);
+    if (!storage.setJson(StorageKey.HomepageDismissedNotices, [...next])) {
+      console.warn('Failed to save dismissed homepage notices.');
     }
   };
 

@@ -34,6 +34,7 @@ import {
   type GameDataAdvancedSubmit,
   type GameDataSubmitMode,
 } from '@/lib/gameData/submitMode';
+import { storage } from '@/lib/localStorage';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { useEditMode } from '@/context/EditModeContext';
 import type { Json } from '@/data/database.types';
@@ -234,7 +235,7 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
 
         if (typeof window !== 'undefined') {
           if (remaining.length === 0) {
-            window.localStorage.removeItem(storageKey);
+            storage.removeItem(storageKey);
           } else {
             writeActionHistory(storageKey, remaining);
           }
@@ -281,7 +282,7 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
 
         if (typeof window !== 'undefined') {
           if (remaining.length === 0) {
-            window.localStorage.removeItem(storageKey);
+            storage.removeItem(storageKey);
           } else {
             writeActionHistory(storageKey, remaining);
           }
@@ -322,7 +323,7 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
         // Clear storage on success
         if (typeof window !== 'undefined') {
           if (remaining.length === 0) {
-            window.localStorage.removeItem(storageKey);
+            storage.removeItem(storageKey);
           } else {
             writeActionHistory(storageKey, remaining);
           }

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import L, { type LeafletMouseEvent, type TileLayerOptions } from 'leaflet';
 import { ImageOverlay, MapContainer, Marker, Polygon, Polyline, Tooltip } from 'react-leaflet';
 
+import { storage, StorageKey } from '@/lib/localStorage';
 import type {
   InteractiveMapConfig,
   InteractiveMapPoint,
@@ -12,7 +13,6 @@ import type {
 } from '@/data/types';
 import Image from '@/components/Image';
 
-import { FILTER_STORAGE_KEY } from './constants';
 import EditorPanel from './EditorPanel';
 import FilterPanel from './FilterPanel';
 import {
@@ -157,11 +157,9 @@ export default function InteractiveMap({
   }, [incomingConfig]);
 
   useEffect(() => {
-    try {
-      const stored = window.localStorage.getItem(FILTER_STORAGE_KEY);
-      if (stored) setVisibleCategories(new Set(JSON.parse(stored) as MapPointCategory[]));
-    } catch (error) {
-      console.warn('无法读取地图点位筛选设置：', error);
+    const stored = storage.getJson<unknown>(StorageKey.InteractiveMapVisibleCategories);
+    if (Array.isArray(stored)) {
+      setVisibleCategories(new Set(stored as MapPointCategory[]));
     }
   }, []);
 
@@ -249,10 +247,8 @@ export default function InteractiveMap({
     if (next.has(category)) next.delete(category);
     else next.add(category);
     setVisibleCategories(next);
-    try {
-      window.localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify([...next]));
-    } catch (error) {
-      console.warn('无法保存地图点位筛选设置：', error);
+    if (!storage.setJson(StorageKey.InteractiveMapVisibleCategories, [...next])) {
+      console.warn('无法保存地图点位筛选设置。');
     }
   };
 

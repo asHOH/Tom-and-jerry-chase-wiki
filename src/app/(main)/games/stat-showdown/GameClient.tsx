@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
+import { StorageKey } from '@/lib/localStorage';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { useTimer } from '@/hooks/useTimer';
 import type { FactionId } from '@/data/types';
@@ -118,7 +119,7 @@ export default function StatShowdownClient({
   } | null>(null);
   const blitzFeedbackTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const [highScores, setHighScores] = useLocalStorage<HighScores>('stat-showdown-scores', {
+  const [highScores, setHighScores] = useLocalStorage<HighScores>(StorageKey.StatShowdownScores, {
     cats: 0,
     mice: 0,
     all: 0,

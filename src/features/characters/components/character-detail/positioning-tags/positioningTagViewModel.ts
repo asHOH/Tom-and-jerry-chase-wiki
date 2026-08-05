@@ -19,8 +19,6 @@ export type PositioningTagChartDatum = {
   readonly level: PositioningTagLevel;
 };
 
-export const POSITIONING_TAG_VIEW_STORAGE_KEY = 'tjwiki:character-positioning-view';
-
 export function normalizePositioningTagViewMode(value: string | null | undefined) {
   // Migrate the previous persisted rose-chart preference to the radar chart.
   if (value === 'rose') return 'radar';

@@ -2,6 +2,7 @@ import isEqual from 'lodash-es/isEqual';
 import { getUntracked } from 'proxy-compare';
 import type { INTERNAL_Op } from 'valtio';
 
+import { getEditModeActionsStorageKey, storage } from '@/lib/localStorage';
 import { actionHistorySchema } from '@/lib/validation/schemas';
 
 export { squashActions } from './actionSquash';
@@ -20,14 +21,10 @@ export interface Action {
 
 export type ActionHistoryEntry = Action | Action[];
 
-const ACTIONS_STORAGE_PREFIX = 'editmode:actions:';
-
 /**
  * Returns the localStorage key used to persist action history for an entity store.
  */
-export function getActionsStorageKey(entityType: string): string {
-  return `${ACTIONS_STORAGE_PREFIX}${entityType}`;
-}
+export const getActionsStorageKey = getEditModeActionsStorageKey;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -287,25 +284,13 @@ export function invertActionEntry(entry: ActionHistoryEntry): ActionHistoryEntry
 }
 
 export function readActionHistory(storageKey: string): ActionHistoryEntry[] {
-  if (typeof window === 'undefined') return [];
-  try {
-    const raw = window.localStorage.getItem(storageKey);
-    if (!raw) return [];
-    const parsed = actionHistorySchema.safeParse(JSON.parse(raw));
-    if (!parsed.success) return [];
-    return filterActionHistory(parsed.data as ActionHistoryEntry[]);
-  } catch {
-    return [];
-  }
+  const parsed = actionHistorySchema.safeParse(storage.getJson<unknown>(storageKey));
+  if (!parsed.success) return [];
+  return filterActionHistory(parsed.data as ActionHistoryEntry[]);
 }
 
 export function writeActionHistory(storageKey: string, history: ActionHistoryEntry[]): void {
-  if (typeof window === 'undefined') return;
-  try {
-    window.localStorage.setItem(storageKey, JSON.stringify(history));
-  } catch {
-    // ignore storage failures
-  }
+  storage.setJson(storageKey, history);
 }
 
 export function appendActionHistoryEntry(storageKey: string, entry: ActionHistoryEntry): void {

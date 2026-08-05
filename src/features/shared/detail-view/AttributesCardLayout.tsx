@@ -2,7 +2,7 @@
 
 import { ReactNode, type CSSProperties } from 'react';
 
-import { componentTokens, designTokens } from '@/lib/design';
+import { designTokens } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useEditMode } from '@/context/EditModeContext';
 import DiscussEditButtons from '@/components/ui/DiscussEditButtons';
@@ -62,10 +62,6 @@ export default function AttributesCardLayout({
                 size='CARD_DETAILS'
                 style={{
                   height: '6rem',
-                  borderRadius: componentTokens.image.container.borderRadius.replace(
-                    / .*? /,
-                    ' 0 '
-                  ),
                 }}
               />
               <div>

@@ -14,6 +14,7 @@ import dynamic from 'next/dynamic';
 import { usePathname, useSearchParams } from 'next/navigation';
 
 import type { EditRuntimeStatus } from '@/lib/edit/editRuntimeStatus';
+import { storage, StorageKey } from '@/lib/localStorage';
 import { isEditModeSearchParamEnabled } from '@/hooks/useSearchParamEditMode';
 
 const EditRuntime = dynamic(() => import('@/components/EditRuntime'), {
@@ -96,13 +97,11 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
   }, [isEditModeRequested, pathname]);
 
   useEffect(() => {
-    try {
-      window.localStorage.setItem('isEditMode', JSON.stringify(isEditModeRequested));
-      if (isEditModeRequested) {
-        window.localStorage.setItem('editmode:enabledAt', String(Date.now()));
-      }
-    } catch (error) {
-      console.error('Failed to persist edit mode state:', error);
+    const persisted =
+      storage.setJson(StorageKey.EditMode, isEditModeRequested) &&
+      (!isEditModeRequested || storage.setItem(StorageKey.EditModeEnabledAt, String(Date.now())));
+    if (!persisted) {
+      console.error('Failed to persist edit mode state.');
     }
 
     window.dispatchEvent(

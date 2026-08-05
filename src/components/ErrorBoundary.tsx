@@ -3,6 +3,7 @@
 import { Component, ErrorInfo, ReactNode } from 'react';
 
 import { cn } from '@/lib/design';
+import { storage, StorageKey } from '@/lib/localStorage';
 import Button from '@/components/ui/Button';
 
 interface Props {
@@ -42,7 +43,8 @@ export class ErrorBoundary extends Component<Props, State> {
         timestamp: new Date().toISOString(),
       };
 
-      const errors = JSON.parse(localStorage.getItem('errorBoundaryErrors') || '[]');
+      const storedErrors = storage.getJson<unknown>(StorageKey.ErrorBoundaryErrors);
+      const errors = Array.isArray(storedErrors) ? storedErrors : [];
       errors.push(errorLog);
 
       // Keep only last 10 errors
@@ -50,7 +52,7 @@ export class ErrorBoundary extends Component<Props, State> {
         errors.splice(0, errors.length - 10);
       }
 
-      localStorage.setItem('errorBoundaryErrors', JSON.stringify(errors));
+      storage.setJson(StorageKey.ErrorBoundaryErrors, errors);
     }
   }
 

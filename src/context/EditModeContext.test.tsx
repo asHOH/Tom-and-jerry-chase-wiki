@@ -2,6 +2,7 @@ import { useSearchParams } from 'next/navigation';
 import { render, screen, waitFor } from '@testing-library/react';
 
 import type { EditRuntimeStatus } from '@/lib/edit/editRuntimeStatus';
+import { StorageKey } from '@/lib/localStorage';
 
 import { EditModeProvider, useEditMode } from './EditModeContext';
 
@@ -64,6 +65,6 @@ describe('EditModeContext', () => {
       expect(screen.getByTestId('edit-mode-state-probe')).toHaveAttribute('data-loading', 'false');
     });
 
-    expect(window.localStorage.getItem('isEditMode')).toBe('true');
+    expect(window.localStorage.getItem(StorageKey.EditMode)).toBe('true');
   });
 });

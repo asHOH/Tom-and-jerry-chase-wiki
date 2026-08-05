@@ -4,6 +4,7 @@ import type { DeepReadonly } from '@/types/deep-readonly';
 import { cn, getPositioningTagColors, getPositioningTagContainerColor } from '@/lib/design';
 import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { setNestedProperty } from '@/lib/editUtils';
+import { StorageKey } from '@/lib/localStorage';
 import { getPositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { CharacterWithFaction } from '@/lib/types';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
@@ -35,7 +36,6 @@ import {
   getPositioningTagChartData,
   normalizePositioningTagViewMode,
   POSITIONING_TAG_VIEW_MODES,
-  POSITIONING_TAG_VIEW_STORAGE_KEY,
   type PositioningTagViewMode,
 } from './positioningTagViewModel';
 
@@ -280,7 +280,7 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
   } = usePositioningTags({ factionId });
   const [isDarkMode] = useDarkMode();
   const [storedViewMode, setStoredViewMode] = useLocalStorage<string>(
-    POSITIONING_TAG_VIEW_STORAGE_KEY,
+    StorageKey.PositioningTagView,
     'text'
   );
   const savedViewMode = normalizePositioningTagViewMode(storedViewMode);

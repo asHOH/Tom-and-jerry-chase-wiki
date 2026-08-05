@@ -1,5 +1,6 @@
 import { Fragment, useMemo } from 'react';
 
+import { storage, StorageKey } from '@/lib/localStorage';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { getActorProfile } from '@/features/actor-profiles/selectors';
@@ -23,11 +24,7 @@ const shouldMeasureTooltipParsing = (): boolean => {
     return false;
   }
 
-  try {
-    return window.localStorage.getItem('tjwiki:measureTextWithHoverTooltips') === '1';
-  } catch {
-    return false;
-  }
+  return storage.getItem(StorageKey.TooltipMeasurement) === '1';
 };
 
 const getCurrentTime = (): number =>

@@ -1,10 +1,10 @@
 import { type ReactNode } from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
+import { StorageKey } from '@/lib/localStorage';
 import { getPositioningTagTooltipContent } from '@/lib/tooltipUtils';
 
 import PositioningTagsSection from './PositioningTagsSection';
-import { POSITIONING_TAG_VIEW_STORAGE_KEY } from './positioningTagViewModel';
 
 let mockIsEditMode = false;
 
@@ -134,7 +134,7 @@ describe('PositioningTagsSection views', () => {
 
     expect(screen.getByTestId(testId)).toBeInTheDocument();
     await waitFor(() =>
-      expect(localStorage.getItem(POSITIONING_TAG_VIEW_STORAGE_KEY)).toBe(`"${mode}"`)
+      expect(localStorage.getItem(StorageKey.PositioningTagView)).toBe(`"${mode}"`)
     );
   });
 
@@ -147,18 +147,16 @@ describe('PositioningTagsSection views', () => {
   });
 
   it('normalizes an invalid stored view to text', async () => {
-    localStorage.setItem(POSITIONING_TAG_VIEW_STORAGE_KEY, '"invalid"');
+    localStorage.setItem(StorageKey.PositioningTagView, '"invalid"');
 
     render(<PositioningTagsSection tags={tags} factionId='cat' />);
 
     expect(screen.getByText('进攻说明')).toBeInTheDocument();
-    await waitFor(() =>
-      expect(localStorage.getItem(POSITIONING_TAG_VIEW_STORAGE_KEY)).toBe('"text"')
-    );
+    await waitFor(() => expect(localStorage.getItem(StorageKey.PositioningTagView)).toBe('"text"'));
   });
 
   it('forces text editing while preserving the saved chart view', () => {
-    localStorage.setItem(POSITIONING_TAG_VIEW_STORAGE_KEY, '"radar"');
+    localStorage.setItem(StorageKey.PositioningTagView, '"radar"');
     mockIsEditMode = true;
 
     const { rerender } = render(<PositioningTagsSection tags={tags} factionId='cat' />);

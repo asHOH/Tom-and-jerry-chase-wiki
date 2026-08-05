@@ -5,6 +5,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { cn } from '@/lib/design';
 import { useActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
+import { storage, StorageKey } from '@/lib/localStorage';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { factionData } from '@/data/static';
@@ -99,7 +100,7 @@ export default function KnowledgeCardSection({
   } | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>(() =>
     normalizeViewMode(
-      typeof localStorage !== 'undefined' ? localStorage.getItem('view-mode') : null
+      typeof window !== 'undefined' ? storage.getItem(StorageKey.KnowledgeCardViewMode) : null
     )
   );
   const hasTreeStructure = useMemo(() => {
@@ -112,7 +113,7 @@ export default function KnowledgeCardSection({
   }, [knowledgeCardGroups]);
 
   useEffect(() => {
-    localStorage.setItem('view-mode', viewMode);
+    storage.setItem(StorageKey.KnowledgeCardViewMode, viewMode);
   }, [viewMode]);
 
   useEffect(() => {

@@ -5,6 +5,7 @@ import useSWR, { SWRConfig, useSWRConfig } from 'swr';
 
 import type { PermissionGrant } from '@/lib/auth/permissions';
 import type { BlockedUserSummary } from '@/lib/blocks/types';
+import { storage, StorageKey } from '@/lib/localStorage';
 import { supabase } from '@/lib/supabase/client';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
 
@@ -66,7 +67,6 @@ const AuthListener = () => {
 };
 
 const MAX_CACHE_SIZE = 1024 * 1024; // 1MB limit to prevent performance issues
-const CACHE_KEY = 'swr-cache';
 const SAVE_DEBOUNCE_MS = 1500;
 
 const localStorageProvider = () => {
@@ -75,20 +75,20 @@ const localStorageProvider = () => {
   let initialEntries: Array<[string, any]> = [];
   if (typeof window !== 'undefined') {
     try {
-      const stored = localStorage.getItem(CACHE_KEY);
+      const stored = storage.getItem(StorageKey.SwrCache);
       if (stored) {
         // Guard against oversized/corrupted cache to avoid parse overhead
         if (stored.length > MAX_CACHE_SIZE) {
           console.warn('SWR cache exceeds size limit, clearing');
-          localStorage.removeItem(CACHE_KEY);
+          storage.removeItem(StorageKey.SwrCache);
         } else {
           // oxlint-disable-next-line typescript/no-explicit-any
-          const parsed = JSON.parse(stored) as Array<[string, any]>;
+          const parsed = storage.parseJson<Array<[string, any]>>(stored);
           if (Array.isArray(parsed)) {
             // Filter out user data to avoid hydration mismatch with server-rendered HTML
             initialEntries = parsed.filter(([key]) => key !== USER_API_KEY);
           } else {
-            localStorage.removeItem(CACHE_KEY);
+            storage.removeItem(StorageKey.SwrCache);
           }
         }
       }
@@ -127,7 +127,9 @@ const localStorageProvider = () => {
       }
     }
 
-    localStorage.setItem(CACHE_KEY, serialized);
+    if (!storage.setItem(StorageKey.SwrCache, serialized)) {
+      throw new Error('Unable to persist SWR cache');
+    }
   };
 
   const flushNow = () => {
@@ -136,7 +138,7 @@ const localStorageProvider = () => {
     } catch (error) {
       console.warn('Failed to save SWR cache to localStorage', error);
       try {
-        localStorage.removeItem(CACHE_KEY);
+        storage.removeItem(StorageKey.SwrCache);
       } catch {
         // ignore
       }

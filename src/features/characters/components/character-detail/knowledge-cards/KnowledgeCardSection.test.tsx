@@ -2,6 +2,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { proxy } from 'valtio';
 
+import { StorageKey } from '@/lib/localStorage';
 import { characters } from '@/data/store';
 
 import { KnowledgeCardGroupDisplay } from './KnowledgeCardGroupDisplay';
@@ -183,7 +184,7 @@ describe('KnowledgeCardSection', () => {
   it.each(['image', 'flat', 'tree-folded', 'invalid'])(
     'normalizes unsupported stored view mode "%s" to tree',
     async (storedViewMode) => {
-      localStorage.setItem('view-mode', storedViewMode);
+      localStorage.setItem(StorageKey.KnowledgeCardViewMode, storedViewMode);
 
       render(
         <KnowledgeCardSection
@@ -196,7 +197,9 @@ describe('KnowledgeCardSection', () => {
       );
 
       expect(screen.getByRole('button', { name: '当前: 图片视图' })).toBeInTheDocument();
-      await waitFor(() => expect(localStorage.getItem('view-mode')).toBe('tree'));
+      await waitFor(() =>
+        expect(localStorage.getItem(StorageKey.KnowledgeCardViewMode)).toBe('tree')
+      );
     }
   );
 });

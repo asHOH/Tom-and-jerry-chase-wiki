@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { storage, StorageKey } from '@/lib/localStorage';
 import { useToast } from '@/context/ToastContext';
 import Button from '@/components/ui/Button';
 
@@ -37,7 +38,6 @@ export const VersionChecker: React.FC = () => {
   const [currentVersion, setCurrentVersion] = useState<string | null>(null);
   const { info } = useToast();
   // Persist the latest seen version across reloads to avoid duplicate prompts
-  const LATEST_SEEN_VERSION_KEY = 'tjcw.latestSeenVersion';
   const [latestSeenVersion, setLatestSeenVersion] = useState<string | null>(null);
   const [hasLoadedSeenVersion, setHasLoadedSeenVersion] = useState(false);
   const [showDebugPanel, setShowDebugPanel] = useState(true);
@@ -80,10 +80,8 @@ export const VersionChecker: React.FC = () => {
   const persistLatestSeenVersion = useCallback((version: string) => {
     setLatestSeenVersion(version);
     setHasLoadedSeenVersion(true);
-    try {
-      localStorage.setItem(LATEST_SEEN_VERSION_KEY, version);
-    } catch (error) {
-      console.warn('Unable to persist latest seen version:', error);
+    if (!storage.setItem(StorageKey.LatestSeenVersion, version)) {
+      console.warn('Unable to persist latest seen version.');
     }
   }, []);
 
@@ -199,13 +197,9 @@ export const VersionChecker: React.FC = () => {
       }
     };
     // Load last seen version from storage (best-effort)
-    try {
-      const stored = localStorage.getItem(LATEST_SEEN_VERSION_KEY);
-      if (stored) {
-        setLatestSeenVersion(stored);
-      }
-    } catch (error) {
-      console.warn('Unable to read latest seen version:', error);
+    const stored = storage.getItem(StorageKey.LatestSeenVersion);
+    if (stored) {
+      setLatestSeenVersion(stored);
     }
 
     markSeenVersionLoaded();

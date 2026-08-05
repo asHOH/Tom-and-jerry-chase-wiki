@@ -99,7 +99,6 @@ export default function CharacterCreate() {
             className='relative mb-4 flex w-full items-center justify-center overflow-hidden bg-gray-200 dark:bg-slate-700'
             style={{
               height: containerHeight,
-              borderRadius: componentTokens.image.container.borderRadius,
             }}
           >
             <PlusIcon

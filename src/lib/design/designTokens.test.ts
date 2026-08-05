@@ -20,8 +20,5 @@ describe('design tokens', () => {
     expect(componentTokens.tag.base.borderRadius).toBe(designTokens.radius.md);
     expect(componentTokens.tag.compact.borderRadius).toBe(designTokens.radius.md);
     expect(componentTokens.tag.micro.borderRadius).toBe(designTokens.radius.md);
-    expect(componentTokens.image.container.borderRadius).toBe(
-      `${designTokens.radius.xl} ${designTokens.radius.xl} 0 0`
-    );
   });
 });

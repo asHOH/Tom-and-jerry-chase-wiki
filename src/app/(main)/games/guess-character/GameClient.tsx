@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { formatDateKey, getDailyCharacterId, getGameDate, getPuzzleNumber } from '@/lib/gameUtils';
+import { StorageKey } from '@/lib/localStorage';
 import { buildSkillCluesForCharacter } from '@/lib/skillEffectUtils';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import {
@@ -90,13 +91,13 @@ export default function GuessCharacterClient({ description, characters: charsSna
   const [mode, setMode] = useState<'daily' | 'practice'>('daily');
 
   // Daily game persisted state
-  const [dailyState, setDailyState] = useLocalStorage<DailyState>('guess-character-daily', {
+  const [dailyState, setDailyState] = useLocalStorage<DailyState>(StorageKey.GuessCharacterDaily, {
     date: '',
     guesses: [],
     solved: false,
     startedAt: 0,
   });
-  const [streak, setStreak] = useLocalStorage<StreakState>('guess-character-streak', {
+  const [streak, setStreak] = useLocalStorage<StreakState>(StorageKey.GuessCharacterStreak, {
     currentStreak: 0,
     maxStreak: 0,
     lastPlayedDate: null,

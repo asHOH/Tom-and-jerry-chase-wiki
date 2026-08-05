@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
+import { storage } from '@/lib/localStorage';
+
 /**
  * SSR-safe localStorage hook with cross-tab synchronization.
  *
@@ -17,13 +19,9 @@ export function useLocalStorage<T>(
 
   // Initialize from localStorage on mount (SSR-safe)
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem(key);
-      if (stored !== null) {
-        setValue(JSON.parse(stored) as T);
-      }
-    } catch {
-      // localStorage unavailable or corrupted — keep default
+    const stored = storage.getJson<T>(key);
+    if (stored !== undefined) {
+      setValue(stored);
     }
   }, [key]);
 
@@ -31,14 +29,11 @@ export function useLocalStorage<T>(
   useEffect(() => {
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === key) {
-        try {
-          if (e.newValue !== null) {
-            setValue(JSON.parse(e.newValue) as T);
-          } else {
-            setValue(defaultValue);
-          }
-        } catch {
-          // Ignore parse errors from other tabs
+        if (e.newValue !== null) {
+          const parsed = storage.parseJson<T>(e.newValue);
+          if (parsed !== undefined) setValue(parsed);
+        } else {
+          setValue(defaultValue);
         }
       }
     };
@@ -51,11 +46,7 @@ export function useLocalStorage<T>(
     (newValue: T | ((prev: T) => T)) => {
       setValue((prev) => {
         const resolved = newValue instanceof Function ? newValue(prev) : newValue;
-        try {
-          localStorage.setItem(key, JSON.stringify(resolved));
-        } catch {
-          // Storage full or unavailable — silently ignore
-        }
+        storage.setJson(key, resolved);
         return resolved;
       });
     },

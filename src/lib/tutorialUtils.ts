@@ -1,3 +1,5 @@
+import { storage, StorageKey } from '@/lib/localStorage';
+
 export type TutorialType = 'character-edit' | 'edit-mode-toolbar';
 
 export type TutorialStep = {
@@ -70,24 +72,24 @@ export const TUTORIAL_HELP_LINKS: Partial<Record<TutorialType, TutorialHelpLink>
   },
 };
 
-const TUTORIAL_SEEN_KEYS: Record<TutorialType, string> = {
-  'character-edit': 'hasUserSeenCharacterEditTutorial',
-  'edit-mode-toolbar': 'hasUserSeenEditModeToolbarTutorial',
+const TUTORIAL_SEEN_KEYS: Record<TutorialType, StorageKey> = {
+  'character-edit': StorageKey.TutorialCharacterEditSeen,
+  'edit-mode-toolbar': StorageKey.TutorialEditModeToolbarSeen,
 };
 
 export const hasUserSeenTutorial = (tutorial: TutorialType): boolean => {
   if (typeof window === 'undefined') return true;
-  return localStorage.getItem(TUTORIAL_SEEN_KEYS[tutorial]) === 'true';
+  return storage.getItem(TUTORIAL_SEEN_KEYS[tutorial]) === 'true';
 };
 
 export const markTutorialAsSeen = (tutorial: TutorialType): void => {
   if (typeof window !== 'undefined') {
-    localStorage.setItem(TUTORIAL_SEEN_KEYS[tutorial], 'true');
+    storage.setItem(TUTORIAL_SEEN_KEYS[tutorial], 'true');
   }
 };
 
 export const resetTutorial = (tutorial: TutorialType): void => {
   if (typeof window !== 'undefined') {
-    localStorage.removeItem(TUTORIAL_SEEN_KEYS[tutorial]);
+    storage.removeItem(TUTORIAL_SEEN_KEYS[tutorial]);
   }
 };

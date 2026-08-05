@@ -28,6 +28,7 @@ import {
   type GameDataAdvancedSubmit,
   type GameDataSubmitMode,
 } from '@/lib/gameData/submitMode';
+import { storage } from '@/lib/localStorage';
 import { useContributionSubmissionFeedback } from '@/hooks/useContributionSubmissionFeedback';
 import { useToast } from '@/context/ToastContext';
 import type { Json } from '@/data/database.types';
@@ -54,7 +55,7 @@ const writeRemainingCharacterActions = (remaining: ReturnType<typeof readActionH
   if (typeof window === 'undefined') return;
 
   if (remaining.length === 0) {
-    window.localStorage.removeItem(RELATION_ACTIONS_STORAGE_KEY);
+    storage.removeItem(RELATION_ACTIONS_STORAGE_KEY);
     return;
   }
 

@@ -3,6 +3,7 @@ import { useSearchParams } from 'next/navigation';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import type { EditRuntimeStatus } from '@/lib/edit/editRuntimeStatus';
+import { StorageKey } from '@/lib/localStorage';
 
 import { EditModeProvider, useEditMode } from './EditModeContext';
 
@@ -96,7 +97,7 @@ describe('EditModeProvider', () => {
     });
     expect(screen.queryByTestId('edit-runtime')).not.toBeInTheDocument();
     expect(mockRuntimeRender).not.toHaveBeenCalled();
-    expect(window.localStorage.getItem('isEditMode')).toBe('false');
+    expect(window.localStorage.getItem(StorageKey.EditMode)).toBe('false');
   });
 
   it('mounts one lazy runtime for edit=1 and enables editing only after it is ready', async () => {
@@ -115,8 +116,8 @@ describe('EditModeProvider', () => {
     });
     expect(screen.getByTestId('edit-runtime')).toBeInTheDocument();
     expect(mockRuntimeRender).toHaveBeenLastCalledWith('v1:visible');
-    expect(window.localStorage.getItem('isEditMode')).toBe('true');
-    expect(Number(window.localStorage.getItem('editmode:enabledAt'))).toBeGreaterThan(0);
+    expect(window.localStorage.getItem(StorageKey.EditMode)).toBe('true');
+    expect(Number(window.localStorage.getItem(StorageKey.EditModeEnabledAt))).toBeGreaterThan(0);
   });
 
   it('keeps editing disabled when runtime initialization fails', async () => {

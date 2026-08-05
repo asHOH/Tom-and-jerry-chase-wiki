@@ -14,6 +14,7 @@ import {
 import type { EditStores } from '@/lib/edit/editStores';
 import type { PublishableEntityType } from '@/lib/gameData/publishableEntityTypes';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
+import { storage } from '@/lib/localStorage';
 
 unstable_enableOp(true);
 
@@ -128,7 +129,7 @@ export function createEditModeRegistry(
   };
 
   const loadDrafts = (): void => {
-    if (typeof localStorage === 'undefined') return;
+    if (typeof window === 'undefined') return;
 
     const errors: unknown[] = [];
     entityRegistry.forEach((entity, entityType) => {
@@ -162,14 +163,13 @@ export function createEditModeRegistry(
   };
 
   const clearActionHistoriesFromStorage = (): void => {
-    if (typeof localStorage === 'undefined') return;
+    if (typeof window === 'undefined') return;
 
     entityRegistry.forEach((_entity, entityType) => {
-      try {
-        localStorage.removeItem(entityType);
-        localStorage.removeItem(getActionsStorageKey(entityType));
-      } catch (error) {
-        console.error(`Failed to clear ${entityType} from localStorage:`, error);
+      const removedEntity = storage.removeItem(entityType);
+      const removedActions = storage.removeItem(getActionsStorageKey(entityType));
+      if (!removedEntity || !removedActions) {
+        console.error(`Failed to clear ${entityType} from localStorage.`);
       }
     });
   };

@@ -8,6 +8,7 @@ import { AssetManager } from '@/lib/assetManager';
 import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { formatArticleDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
+import { storage, StorageKey } from '@/lib/localStorage';
 import { toChineseNumeral } from '@/lib/textUtils';
 import type { FactionId } from '@/data/types';
 import Button from '@/components/ui/Button';
@@ -193,14 +194,14 @@ export default function ArticleClient({
   // Persist auto-numbering preference
   useEffect(() => {
     setMounted(true);
-    const saved = localStorage.getItem('wiki_auto_numbering_enabled');
+    const saved = storage.getItem(StorageKey.ArticleAutoNumbering);
     if (saved !== null) {
       setShowAutoNumbering(saved === 'true');
     }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('wiki_auto_numbering_enabled', String(showAutoNumbering));
+    storage.setItem(StorageKey.ArticleAutoNumbering, String(showAutoNumbering));
   }, [showAutoNumbering]);
 
   useEffect(() => {
