@@ -112,34 +112,10 @@ jobs:
         if: needs.setup.outputs.cache-hit != 'true'
         run: npm ci
 
-      - name: Check if tests exist
-        id: check-tests
-        run: |
-          TEST_FILE_COUNT=0
-          for DIR in src tests __tests__; do
-            if [ -d "$DIR" ]; then
-              COUNT=$(find "$DIR" -type f \( -name "*.test.ts" -o -name "*.test.tsx" -o -name "*.spec.ts" -o -name "*.spec.tsx" \) | wc -l)
-              TEST_FILE_COUNT=$((TEST_FILE_COUNT + COUNT))
-            fi
-          done
-
-          echo "Detected test files: $TEST_FILE_COUNT"
-          if [ "$TEST_FILE_COUNT" -gt 0 ]; then
-            echo "tests-exist=true" >> $GITHUB_OUTPUT
-          else
-            echo "tests-exist=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Run tests
-        if: steps.check-tests.outputs.tests-exist == 'true'
-        run: npm test
-
-      - name: Generate coverage report
-        if: steps.check-tests.outputs.tests-exist == 'true'
-        run: npm run test:coverage || echo "No coverage script found"
+      - name: Run tests and generate coverage
+        run: npm run test:ci
 
       - name: Upload coverage artifacts
-        if: steps.check-tests.outputs.tests-exist == 'true'
         uses: actions/upload-artifact@v7
         with:
           name: coverage-report-${{ github.sha }}
@@ -147,17 +123,12 @@ jobs:
           retention-days: 30
 
       - name: Upload coverage to Codecov
-        if: steps.check-tests.outputs.tests-exist == 'true'
         uses: codecov/codecov-action@v7
         with:
           files: ./coverage/lcov.info
           disable_search: true
           flags: unittests
           name: codecov-umbrella
-
-      - name: No tests found
-        if: steps.check-tests.outputs.tests-exist == 'false'
-        run: echo "⚠️ No tests found in the project. Consider adding tests for better code quality."
 
   summary:
     name: CI Summary
