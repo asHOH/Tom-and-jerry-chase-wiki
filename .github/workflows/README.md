@@ -17,16 +17,6 @@ This directory contains automated workflows for the project.
 - **Triggers**: Package.json changes, weekly schedule
 - **Purpose**: Security vulnerability detection
 
-### 3. **Project Health Check (maintenance.yml)**
-
-- **Triggers**: Monthly schedule (First Monday 9 AM UTC), manual dispatch
-- **Purpose**: Comprehensive project health analysis
-- **Features**:
-  - Test coverage analysis (warns if < 80%)
-  - Unused dependency detection
-  - Project complexity assessment
-  - Creates issues when attention is needed
-
 ## 🛡️ Quality Gates
 
 All workflows ensure:
@@ -43,13 +33,11 @@ All workflows ensure:
 CI ──── Tests & Coverage
 
 Security Audit ── Dependency vulnerability checks
-
-Maintenance ── Creates Issues (monthly)
 ```
 
 ## 🔧 Configuration
 
-- **Node.js Version**: 20
+- **Node.js Version**: 24
 - **Package Manager**: npm
 - **Build Tool**: Next.js
 - **Deployment**: Vercel (auto-deployment)
