@@ -27,6 +27,7 @@ export const permissionGrantsForProfile = (
     'category.create',
     'category.update',
     'category.delete',
+    'notice.manage',
   ];
   const coordinator: PermissionKey[] = [
     'game_data_action.mark_synced',

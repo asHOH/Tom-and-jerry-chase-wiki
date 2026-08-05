@@ -77,6 +77,7 @@ interface ToolbarProps {
   className?: string;
   hideWiki?: boolean;
   isUploadingImage?: boolean;
+  preset?: 'full' | 'notice';
 }
 
 const ToolbarButton = React.memo(function ToolbarButton({
@@ -133,6 +134,7 @@ const Toolbar = React.memo(function Toolbar({
   className,
   hideWiki,
   isUploadingImage,
+  preset = 'full',
 }: ToolbarProps) {
   const [showTableTools, setShowTableTools] = useState(false);
 
@@ -258,69 +260,73 @@ const Toolbar = React.memo(function Toolbar({
           </ToolbarButton>
         </div>
 
-        <div className='h-6 w-px bg-gray-300 dark:bg-gray-600' />
+        {preset === 'full' && (
+          <>
+            <div className='h-6 w-px bg-gray-300 dark:bg-gray-600' />
 
-        <div className='flex items-center gap-1'>
-          <ToolbarButton onClick={commands.insertTable} title='插入表格 (3x3)' mode={mode}>
-            表格
-          </ToolbarButton>
-          <Tooltip content={showTableTools ? '收起表格工具' : '展开表格工具'} asChild>
-            <Button
-              variant='unstyled'
-              type='button'
-              onClick={() => setShowTableTools((v) => !v)}
-              aria-pressed={showTableTools}
-              aria-label={showTableTools ? '收起表格工具' : '展开表格工具'}
-              className={cn(
-                'rounded p-1',
-                'border-0 bg-transparent',
-                'hover:bg-gray-100 dark:hover:bg-gray-700',
-                'focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none'
+            <div className='flex items-center gap-1'>
+              <ToolbarButton onClick={commands.insertTable} title='插入表格 (3x3)' mode={mode}>
+                表格
+              </ToolbarButton>
+              <Tooltip content={showTableTools ? '收起表格工具' : '展开表格工具'} asChild>
+                <Button
+                  variant='unstyled'
+                  type='button'
+                  onClick={() => setShowTableTools((v) => !v)}
+                  aria-pressed={showTableTools}
+                  aria-label={showTableTools ? '收起表格工具' : '展开表格工具'}
+                  className={cn(
+                    'rounded p-1',
+                    'border-0 bg-transparent',
+                    'hover:bg-gray-100 dark:hover:bg-gray-700',
+                    'focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none'
+                  )}
+                >
+                  <svg
+                    viewBox='0 0 20 20'
+                    fill='currentColor'
+                    className={cn(
+                      'h-4 w-4 transition-transform',
+                      showTableTools ? 'rotate-90' : 'rotate-0'
+                    )}
+                    aria-hidden='true'
+                  >
+                    <path d='M7.21 14.77a.75.75 0 01.02-1.06L10.94 10 7.23 6.29a.75.75 0 111.06-1.06l4.24 4.24a.75.75 0 010 1.06L8.29 14.77a.75.75 0 01-1.08-.02z' />
+                  </svg>
+                </Button>
+              </Tooltip>
+              {showTableTools && (
+                <>
+                  <ToolbarButton onClick={commands.toggleHeaderRow} title='开关表头行' mode={mode}>
+                    表头
+                  </ToolbarButton>
+                  <ToolbarButton
+                    onClick={commands.transposeTable}
+                    title='转置当前表格（沿对角线翻转）'
+                    mode={mode}
+                  >
+                    转置
+                  </ToolbarButton>
+                  <ToolbarButton onClick={commands.addRowAfter} title='在下方添加行' mode={mode}>
+                    加行
+                  </ToolbarButton>
+                  <ToolbarButton onClick={commands.addColumnAfter} title='在右侧添加列' mode={mode}>
+                    加列
+                  </ToolbarButton>
+                  <ToolbarButton onClick={commands.deleteRow} title='删除当前行' mode={mode}>
+                    删行
+                  </ToolbarButton>
+                  <ToolbarButton onClick={commands.deleteColumn} title='删除当前列' mode={mode}>
+                    删列
+                  </ToolbarButton>
+                  <ToolbarButton onClick={commands.deleteTable} title='删除表格' mode={mode}>
+                    删表
+                  </ToolbarButton>
+                </>
               )}
-            >
-              <svg
-                viewBox='0 0 20 20'
-                fill='currentColor'
-                className={cn(
-                  'h-4 w-4 transition-transform',
-                  showTableTools ? 'rotate-90' : 'rotate-0'
-                )}
-                aria-hidden='true'
-              >
-                <path d='M7.21 14.77a.75.75 0 01.02-1.06L10.94 10 7.23 6.29a.75.75 0 111.06-1.06l4.24 4.24a.75.75 0 010 1.06L8.29 14.77a.75.75 0 01-1.08-.02z' />
-              </svg>
-            </Button>
-          </Tooltip>
-          {showTableTools && (
-            <>
-              <ToolbarButton onClick={commands.toggleHeaderRow} title='开关表头行' mode={mode}>
-                表头
-              </ToolbarButton>
-              <ToolbarButton
-                onClick={commands.transposeTable}
-                title='转置当前表格（沿对角线翻转）'
-                mode={mode}
-              >
-                转置
-              </ToolbarButton>
-              <ToolbarButton onClick={commands.addRowAfter} title='在下方添加行' mode={mode}>
-                加行
-              </ToolbarButton>
-              <ToolbarButton onClick={commands.addColumnAfter} title='在右侧添加列' mode={mode}>
-                加列
-              </ToolbarButton>
-              <ToolbarButton onClick={commands.deleteRow} title='删除当前行' mode={mode}>
-                删行
-              </ToolbarButton>
-              <ToolbarButton onClick={commands.deleteColumn} title='删除当前列' mode={mode}>
-                删列
-              </ToolbarButton>
-              <ToolbarButton onClick={commands.deleteTable} title='删除表格' mode={mode}>
-                删表
-              </ToolbarButton>
-            </>
-          )}
-        </div>
+            </div>
+          </>
+        )}
 
         <div className='h-6 w-px bg-gray-300 dark:bg-gray-600' />
 
@@ -339,18 +345,40 @@ const Toolbar = React.memo(function Toolbar({
           <ToolbarButton onClick={commands.addLink} title='插入链接' mode={mode}>
             <LinkIcon />
           </ToolbarButton>
-          <ToolbarButton
-            onClick={commands.addImage}
-            title={isUploadingImage ? '图片上传中...' : '插入图片'}
-            mode={mode}
-            disabled={!!isUploadingImage}
-          >
-            {isUploadingImage ? (
-              <LoadingSpinnerIcon className='size-4 animate-spin' />
-            ) : (
-              <ImageIcon />
-            )}
-          </ToolbarButton>
+          {preset === 'notice' && (
+            <>
+              <ToolbarButton
+                onClick={commands.toggleInlineCode}
+                isActive={!!state.code}
+                title='行内代码'
+                mode={mode}
+              >
+                行内代码
+              </ToolbarButton>
+              <ToolbarButton
+                onClick={commands.toggleCodeBlock}
+                isActive={!!state.codeBlock}
+                title='代码块'
+                mode={mode}
+              >
+                代码块
+              </ToolbarButton>
+            </>
+          )}
+          {preset === 'full' && (
+            <ToolbarButton
+              onClick={commands.addImage}
+              title={isUploadingImage ? '图片上传中...' : '插入图片'}
+              mode={mode}
+              disabled={!!isUploadingImage}
+            >
+              {isUploadingImage ? (
+                <LoadingSpinnerIcon className='size-4 animate-spin' />
+              ) : (
+                <ImageIcon />
+              )}
+            </ToolbarButton>
+          )}
         </div>
 
         <div className='h-6 w-px bg-gray-300 dark:bg-gray-600' />
@@ -379,7 +407,10 @@ const Toolbar = React.memo(function Toolbar({
         <ViewModeToggle
           mode={mode}
           onChange={onModeChange}
-          hideWiki={hideWiki ?? (env.NEXT_PUBLIC_DISABLE_WIKITEXT_EDITOR === '1' ? true : false)}
+          hideWiki={
+            preset === 'notice' ||
+            (hideWiki ?? (env.NEXT_PUBLIC_DISABLE_WIKITEXT_EDITOR === '1' ? true : false))
+          }
         />
       </div>
     </div>

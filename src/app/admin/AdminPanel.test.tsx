@@ -61,6 +61,12 @@ jest.mock('@/features/admin/components/UserManagement', () => {
   };
 });
 
+jest.mock('@/features/admin/components/NoticeManagement', () => {
+  return function MockNoticeManagement() {
+    return <div>Notice Management</div>;
+  };
+});
+
 jest.mock('@/features/admin/components/GameDataActionModerationPanel', () => ({
   __esModule: true,
   default: function MockGameDataActionModerationPanel(props: {
@@ -155,6 +161,7 @@ describe('AdminPanel', () => {
       [null, expect.any(Function)],
       ['game-data-actions-admin', expect.any(Function)],
       [null, expect.any(Function)],
+      ['admin-notices', expect.any(Function)],
     ]);
   });
 
@@ -169,6 +176,7 @@ describe('AdminPanel', () => {
       ['permission-groups', expect.any(Function)],
       ['game-data-actions-admin', expect.any(Function)],
       [null, expect.any(Function)],
+      ['admin-notices', expect.any(Function)],
     ]);
 
     const [usersTab, , categoriesTab, actionsTab] = screen.getAllByRole('button');
@@ -203,6 +211,7 @@ describe('AdminPanel', () => {
     expect(screen.queryAllByRole('button')).toHaveLength(0);
 
     expect(mockUseSWR.mock.calls).toEqual([
+      [null, expect.any(Function)],
       [null, expect.any(Function)],
       [null, expect.any(Function)],
       [null, expect.any(Function)],

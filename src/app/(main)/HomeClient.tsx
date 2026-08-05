@@ -13,6 +13,7 @@ import HomePageSection from '@/components/ui/NavSection';
 import OfficialSitesDisplay from '@/components/ui/OfficialSitesDisplay';
 import PageHeader from '@/components/ui/PageHeader';
 import PageShell from '@/components/ui/PageShell';
+import HomepageNotices from '@/components/HomepageNotices';
 import LoginDialog from '@/components/LoginDialog';
 import { ProjectStatement } from '@/components/ProjectStatement';
 import { VersionDisplay } from '@/components/VersionDisplay';
@@ -67,6 +68,8 @@ export default function HomeContentClient({ description, hasServiceKey }: Props)
         description={description}
         descriptionVisibility='desktop'
       />
+
+      <HomepageNotices />
 
       {NAV_ITEMS.map((section, index) => {
         const buttons = getSectionButtons(section.children);
