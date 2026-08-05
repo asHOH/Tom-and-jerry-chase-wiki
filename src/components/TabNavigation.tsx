@@ -112,6 +112,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     'user.update',
     'group.manage',
     'group.assign',
+    'notice.manage',
   ];
   const canAccessAdmin =
     permissions.has('block.view') ||

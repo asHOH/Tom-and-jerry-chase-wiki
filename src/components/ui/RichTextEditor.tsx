@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { EditorContent } from '@tiptap/react';
 
 import { cn } from '@/lib/design';
+import { sanitizeNoticeHTML } from '@/lib/notices/sanitize';
 import {
   cleanHTMLForExport,
   normalizeTextAlignAttributes,
@@ -32,6 +33,7 @@ interface RichTextEditorProps {
   onChange?: (content: string) => void;
   placeholder?: string;
   className?: string;
+  preset?: 'full' | 'notice';
 }
 
 // inline Toolbar removed; using decoupled Toolbar component
@@ -41,13 +43,16 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   onChange,
   placeholder = '',
   className,
+  preset = 'full',
 }) => {
   const sanitizeEditorHtml = useCallback(
-    (html: string) =>
-      removeDisallowedClassAttributes(
+    (html: string) => {
+      const sanitized = removeDisallowedClassAttributes(
         removeInlineStyleAttributes(normalizeTextAlignAttributes(stripDisallowedImages(html)))
-      ),
-    []
+      );
+      return preset === 'notice' ? sanitizeNoticeHTML(sanitized) : sanitized;
+    },
+    [preset]
   );
   const sanitizedPlaceholder = useMemo(
     () => sanitizeEditorHtml(placeholder),
@@ -177,6 +182,11 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
       event.preventDefault();
 
+      if (preset === 'notice') {
+        showError('公告不支持插入图片。');
+        return;
+      }
+
       const allowedImages = imageFiles.filter((file) =>
         RTE_IMAGE_ALLOWED_MIME_TYPES.includes(file.type)
       );
@@ -195,7 +205,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         showError('部分图片格式不受支持，仅处理了 PNG、JPEG、WEBP、AVIF 或 GIF 图片。');
       }
     },
-    [editor, handlePastedImages, viewMode, showError]
+    [editor, handlePastedImages, preset, viewMode, showError]
   );
 
   const commands: ToolbarCommands = {
@@ -294,17 +304,20 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         mode={viewMode}
         onModeChange={handleModeChange}
         isUploadingImage={isUploadingImage}
+        preset={preset}
         className='z-10 flex-none'
       />
-      <ImagePickerModal
-        isOpen={showImagePicker}
-        onClose={() => setShowImagePicker(false)}
-        onSelect={handleImagePicked}
-        onUpload={uploadImageFile}
-        isUploading={isUploadingImage}
-        allowedSourcesDescription={allowedImageSourcesText}
-        refreshLibraryKey={libraryRefreshKey}
-      />
+      {preset === 'full' && (
+        <ImagePickerModal
+          isOpen={showImagePicker}
+          onClose={() => setShowImagePicker(false)}
+          onSelect={handleImagePicked}
+          onUpload={uploadImageFile}
+          isUploading={isUploadingImage}
+          allowedSourcesDescription={allowedImageSourcesText}
+          refreshLibraryKey={libraryRefreshKey}
+        />
+      )}
       <LinkDialog
         isOpen={showLinkDialog}
         onClose={() => setShowLinkDialog(false)}

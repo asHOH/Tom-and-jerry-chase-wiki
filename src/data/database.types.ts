@@ -748,6 +748,60 @@ export type Database = {
         };
         Relationships: [];
       };
+      site_notices: {
+        Row: {
+          content_html: string;
+          created_at: string;
+          created_by: string;
+          ends_at: string | null;
+          id: string;
+          is_published: boolean;
+          starts_at: string;
+          title: string;
+          updated_at: string;
+          updated_by: string;
+        };
+        Insert: {
+          content_html: string;
+          created_at?: string;
+          created_by: string;
+          ends_at?: string | null;
+          id?: string;
+          is_published?: boolean;
+          starts_at?: string;
+          title: string;
+          updated_at?: string;
+          updated_by: string;
+        };
+        Update: {
+          content_html?: string;
+          created_at?: string;
+          created_by?: string;
+          ends_at?: string | null;
+          id?: string;
+          is_published?: boolean;
+          starts_at?: string;
+          title?: string;
+          updated_at?: string;
+          updated_by?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'site_notices_created_by_fkey';
+            columns: ['created_by'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'site_notices_updated_by_fkey';
+            columns: ['updated_by'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       permission_catalog: {
         Row: {
           category: string;
