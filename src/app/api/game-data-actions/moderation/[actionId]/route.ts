@@ -8,10 +8,11 @@ import {
   approvePreparedGameDataAction,
   loadTrustedGameDataAction,
   markPreparedGameDataActionSynced,
+  recordGameDataDiscussionEvent,
   revokePreparedGameDataAction,
   TrustedGameDataMutationError,
 } from '@/lib/gameData/trustedGameDataMutations';
-import { publishNotification } from '@/lib/notificationUtils';
+import { notifyGameDataReviewEvent, publishNotification } from '@/lib/notificationUtils';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 
 const MODERATION_ACTIONS = ['approve', 'reject', 'mark-synced', 'revoke'] as const;
@@ -23,8 +24,9 @@ const isModerationAction = (action: string | null): action is ModerationAction =
 
 const readRejectionReason = async (request: NextRequest): Promise<string | undefined> => {
   try {
-    const body = (await request.json()) as { reason?: unknown };
-    if (typeof body?.reason === 'string' && body.reason.trim()) return body.reason.trim();
+    const body = (await request.json()) as { note?: unknown; reason?: unknown };
+    const value = typeof body?.reason === 'string' ? body.reason : body?.note;
+    if (typeof value === 'string' && value.trim()) return value.trim();
   } catch {
     // ignore
   }
@@ -53,6 +55,7 @@ export async function POST(
       { status: 400 }
     );
   }
+  const moderationNote = await readRejectionReason(request);
 
   try {
     const requiredPermission =
@@ -69,6 +72,14 @@ export async function POST(
     });
     if ('error' in guard) return guard.error;
     const recordData = await loadTrustedGameDataAction(actionId);
+    const { data: linkedSubmission } = recordData.submission_id
+      ? await supabaseAdmin
+          .from('game_data_action_submissions')
+          .select('discussion_topic_id')
+          .eq('id', recordData.submission_id)
+          .maybeSingle()
+      : { data: null };
+    const hasLinkedDiscussion = Boolean(linkedSubmission?.discussion_topic_id);
 
     const contexts = getGameActionResourceContexts(recordData.entity_type, [recordData.entry]);
     if (contexts.length === 0) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
@@ -87,12 +98,56 @@ export async function POST(
       }
 
       await markPreparedGameDataActionSynced(guard.userId, recordData, getRequestIp(request));
+      if (typeof recordGameDataDiscussionEvent === 'function') {
+        try {
+          await recordGameDataDiscussionEvent({
+            actorId: guard.userId,
+            actionIds: [actionId],
+            eventType: 'synced',
+            ...(moderationNote ? { note: moderationNote } : {}),
+          });
+        } catch (eventError) {
+          console.error('Failed to record sync discussion event:', eventError);
+        }
+      }
+      if (typeof notifyGameDataReviewEvent === 'function') {
+        await notifyGameDataReviewEvent({
+          actorUserId: guard.userId,
+          actionIds: [actionId],
+          title: '游戏数据改动已标记为同步',
+          body: moderationNote || '审核状态已更新。',
+        }).catch((notificationError) =>
+          console.error('Failed to publish sync review notification:', notificationError)
+        );
+      }
       return NextResponse.json({ message: 'Action marked as synced', action, action_id: actionId });
     }
 
     if (action === 'approve') {
       await approvePreparedGameDataAction(guard.userId, recordData, getRequestIp(request));
-      if (recordData?.created_by) {
+      if (typeof recordGameDataDiscussionEvent === 'function') {
+        try {
+          await recordGameDataDiscussionEvent({
+            actorId: guard.userId,
+            actionIds: [actionId],
+            eventType: 'approved',
+            ...(moderationNote ? { note: moderationNote } : {}),
+          });
+        } catch (eventError) {
+          console.error('Failed to record approval discussion event:', eventError);
+        }
+      }
+      if (typeof notifyGameDataReviewEvent === 'function') {
+        await notifyGameDataReviewEvent({
+          actorUserId: guard.userId,
+          actionIds: [actionId],
+          title: '讨论中的游戏数据改动已批准',
+          body: moderationNote || '审核者已批准该改动。',
+        }).catch((notificationError) =>
+          console.error('Failed to publish approval review notification:', notificationError)
+        );
+      }
+      if (recordData?.created_by && !hasLinkedDiscussion) {
         try {
           const details = getGameDataNotificationDetails([recordData]);
           await publishNotification({
@@ -115,6 +170,28 @@ export async function POST(
 
     if (action === 'revoke') {
       await revokePreparedGameDataAction(guard.userId, recordData, getRequestIp(request));
+      if (typeof recordGameDataDiscussionEvent === 'function') {
+        try {
+          await recordGameDataDiscussionEvent({
+            actorId: guard.userId,
+            actionIds: [actionId],
+            eventType: 'revoked',
+            ...(moderationNote ? { note: moderationNote } : {}),
+          });
+        } catch (eventError) {
+          console.error('Failed to record revoke discussion event:', eventError);
+        }
+      }
+      if (typeof notifyGameDataReviewEvent === 'function') {
+        await notifyGameDataReviewEvent({
+          actorUserId: guard.userId,
+          actionIds: [actionId],
+          title: '讨论中的游戏数据改动已撤销',
+          body: moderationNote || '审核者已撤销该改动。',
+        }).catch((notificationError) =>
+          console.error('Failed to publish revoke review notification:', notificationError)
+        );
+      }
       return NextResponse.json({ message: 'Action revoked', action, action_id: actionId });
     }
 
@@ -122,7 +199,7 @@ export async function POST(
     if (recordData.is_public) {
       return rejectConflictResponse();
     }
-    const reason = await readRejectionReason(request);
+    const reason = moderationNote;
 
     const { error } = await supabaseAdmin.rpc('prepared_reject_game_data_action', {
       p_actor_id: guard.userId,
@@ -136,7 +213,30 @@ export async function POST(
       return NextResponse.json({ error: 'Failed to reject action' }, { status: 500 });
     }
 
-    if (recordData?.created_by) {
+    if (typeof recordGameDataDiscussionEvent === 'function') {
+      try {
+        await recordGameDataDiscussionEvent({
+          actorId: guard.userId,
+          actionIds: [actionId],
+          eventType: 'rejected',
+          ...(reason ? { note: reason } : {}),
+        });
+      } catch (eventError) {
+        console.error('Failed to record rejection discussion event:', eventError);
+      }
+    }
+
+    if (typeof notifyGameDataReviewEvent === 'function') {
+      await notifyGameDataReviewEvent({
+        actorUserId: guard.userId,
+        actionIds: [actionId],
+        title: '讨论中的游戏数据改动已拒绝',
+        body: reason || '审核者已拒绝该改动。',
+      }).catch((notificationError) =>
+        console.error('Failed to publish rejection review notification:', notificationError)
+      );
+    }
+    if (recordData?.created_by && !hasLinkedDiscussion) {
       try {
         const reasonSuffix = reason ? `原因：${reason}` : '';
         const details = getGameDataNotificationDetails([recordData]);

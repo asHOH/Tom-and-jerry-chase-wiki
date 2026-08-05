@@ -317,6 +317,15 @@ export default function ContributionsClient() {
                               {contribution.status === 'rejected' ? '修改后重提' : '继续编辑'}
                             </ButtonLink>
                           )}
+                          {contribution.discussionHref && (
+                            <ButtonLink
+                              href={contribution.discussionHref as Route}
+                              size='sm'
+                              variant='secondary'
+                            >
+                              查看关联讨论
+                            </ButtonLink>
+                          )}
                         </div>
                       </div>
                     </Card>

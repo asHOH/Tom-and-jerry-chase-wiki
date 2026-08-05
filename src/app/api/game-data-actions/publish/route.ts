@@ -1,10 +1,12 @@
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
 
 import { requirePermissionOrAnonymous } from '@/lib/auth/requirePermission';
 import { getGameActionResourceContexts } from '@/lib/auth/resourceContexts';
 import { getRequestIp } from '@/lib/blocks/server';
 import { candidateConflictResponse } from '@/lib/gameData/candidateConflictResponse';
 import { getGameDataNotificationDetails } from '@/lib/gameData/contributionDisplay';
+import { actionMatchesDiscussionTarget } from '@/lib/gameData/discussionTargets';
 import { PUBLISH_LIMITS } from '@/lib/gameData/publishLimits';
 import {
   preparePublishActionItems,
@@ -19,9 +21,11 @@ import {
   TrustedGameDataMutationError,
 } from '@/lib/gameData/trustedGameDataMutations';
 import {
+  notifyGameDataReviewEvent,
   notifyPendingGameDataActionSubscribers,
   publishNotification,
 } from '@/lib/notificationUtils';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
 import type { Json } from '@/data/database.types';
 
@@ -39,6 +43,7 @@ function readActionItems(body: unknown): {
   items: UntrustedPublishActionItem[];
   message?: unknown;
   submitMode?: GameDataSubmitMode;
+  discussionTopicId?: string;
 } {
   if (!isRecord(body)) throw new PublishPreparationError('invalid_shape');
   const rawItems = Array.isArray(body.actions)
@@ -46,6 +51,8 @@ function readActionItems(body: unknown): {
     : [{ entityType: body.entityType, entries: body.entries }];
   if (rawItems.length === 0) throw new PublishPreparationError('invalid_shape');
   const submitMode = readSubmitMode(body.submitMode);
+  const discussionTopicId =
+    body.discussionTopicId === undefined ? undefined : z.uuid().parse(body.discussionTopicId);
 
   let entryCount = 0;
   const items = rawItems.map((item) => {
@@ -62,7 +69,39 @@ function readActionItems(body: unknown): {
     items,
     ...('message' in body ? { message: body.message } : {}),
     ...(submitMode === undefined ? {} : { submitMode }),
+    ...(discussionTopicId === undefined ? {} : { discussionTopicId }),
   };
+}
+
+async function validateDiscussionTopic(
+  topicId: string,
+  prepared: ReturnType<typeof preparePublishActionItems>
+): Promise<boolean> {
+  const { data: topic } = await supabaseAdmin
+    .from('comments')
+    .select('id, parent_id, scope, status, target_id, title')
+    .eq('id', topicId)
+    .maybeSingle();
+
+  if (
+    !topic ||
+    topic.parent_id !== null ||
+    !topic.title ||
+    topic.status !== 'visible' ||
+    topic.scope === 'articles' ||
+    topic.scope === 'list_pages'
+  ) {
+    return false;
+  }
+
+  return prepared.actions.every((action) =>
+    action.rows.every((row) =>
+      actionMatchesDiscussionTarget(action.entityType, row.canonicalEntry, {
+        scope: topic.scope,
+        targetId: topic.target_id,
+      })
+    )
+  );
 }
 
 export async function POST(request: Request) {
@@ -87,6 +126,12 @@ export async function POST(request: Request) {
 
   try {
     const prepared = preparePublishActionItems(untrusted.items, untrusted.message);
+    if (
+      untrusted.discussionTopicId &&
+      !(await validateDiscussionTopic(untrusted.discussionTopicId, prepared))
+    ) {
+      return NextResponse.json({ error: 'invalid_discussion_topic' }, { status: 400 });
+    }
     const contexts = prepared.actions.flatMap((item) =>
       getGameActionResourceContexts(
         item.entityType,
@@ -107,6 +152,9 @@ export async function POST(request: Request) {
       grants: guard.grants,
       prepared,
       ...(untrusted.submitMode === undefined ? {} : { submitMode: untrusted.submitMode }),
+      ...(untrusted.discussionTopicId === undefined
+        ? {}
+        : { discussionTopicId: untrusted.discussionTopicId }),
     });
 
     const notificationRecordsById = new Map<string, { entity_type: string; entry: unknown }>();
@@ -127,7 +175,7 @@ export async function POST(request: Request) {
     const pendingActionIds = results
       .filter((result) => result.status === 'pending' && !result.is_public)
       .map((result) => result.id);
-    if (pendingActionIds.length > 0) {
+    if (pendingActionIds.length > 0 && !untrusted.discussionTopicId) {
       try {
         await notifyPendingGameDataActionSubscribers({
           actorUserId: guard.userId,
@@ -140,9 +188,22 @@ export async function POST(request: Request) {
         );
       }
     }
+    if (untrusted.discussionTopicId) {
+      try {
+        await notifyGameDataReviewEvent({
+          actorUserId: guard.userId,
+          actionIds: results.map((result) => result.id),
+          title: '讨论中有新的游戏数据改动',
+          body: prepared.message || '有新的游戏数据改动等待讨论和审核。',
+        });
+      } catch (notificationError) {
+        console.error('Failed to publish review discussion notification:', notificationError);
+      }
+    }
 
     const recipientUserId = guard.userId;
     for (const outcome of ['public', 'rejected'] as const) {
+      if (untrusted.discussionTopicId) continue;
       const matching = results.filter((result) =>
         outcome === 'public' ? result.is_public : result.status === 'rejected'
       );

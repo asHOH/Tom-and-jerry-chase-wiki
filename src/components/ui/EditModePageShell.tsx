@@ -2,6 +2,7 @@
 
 import { ReactNode, useCallback, useEffect, useMemo } from 'react';
 
+import { getDiscussionTargetForEntity } from '@/lib/gameData/discussionTargets';
 import type { PublishableEntityType } from '@/lib/gameData/publishableEntityTypes';
 import type { GameDataSubmitMode } from '@/lib/gameData/submitMode';
 import { useContributionSubmissionFeedback } from '@/hooks/useContributionSubmissionFeedback';
@@ -74,6 +75,7 @@ export default function EditModePageShell({
       message?: string,
       options?: {
         submitMode?: GameDataSubmitMode;
+        discussionTopicId?: string;
       }
     ) => publishChanges(message, options),
     [publishChanges]
@@ -100,6 +102,7 @@ export default function EditModePageShell({
           onDiscard={discardChanges}
           onPublish={handlePublish}
           advancedSubmit={advancedSubmit}
+          discussionTarget={getDiscussionTargetForEntity(entityType, entityId)}
           onExitEditMode={exitEditMode}
           entityName={entityName}
           draftInfo={draftInfo}

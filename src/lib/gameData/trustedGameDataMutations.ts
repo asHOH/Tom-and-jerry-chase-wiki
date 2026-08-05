@@ -1,5 +1,7 @@
 import 'server-only';
 
+import { randomUUID } from 'node:crypto';
+
 import { canAccessAll, type PermissionGrant } from '@/lib/auth/permissions';
 import { getGameActionResourceContexts } from '@/lib/auth/resourceContexts';
 import { decodeStoredActionRow } from '@/lib/gameData/actionRowDecoder';
@@ -19,6 +21,7 @@ import type { Database, Json } from '@/data/database.types';
 
 type PublishPermission = 'game_data_action.create' | 'game_data_action.publish_relations';
 type ActionStatus = Database['public']['Enums']['game_data_action_status'];
+type DiscussionEventType = Database['public']['Enums']['game_data_discussion_event_type'];
 
 export type TrustedGameDataActionRecord = {
   id: string;
@@ -28,6 +31,7 @@ export type TrustedGameDataActionRecord = {
   created_by: string | null;
   status: ActionStatus;
   is_public: boolean;
+  submission_id?: string;
 };
 
 export type TrustedPublishResult = {
@@ -87,12 +91,30 @@ export async function loadTrustedGameDataAction(
 ): Promise<TrustedGameDataActionRecord> {
   const { data, error } = await supabaseAdmin
     .from('game_data_actions')
-    .select('id, entity_type, entry, created_at, created_by, status, is_public')
+    .select('id, entity_type, entry, created_at, created_by, status, is_public, submission_id')
     .eq('id', actionId)
     .maybeSingle();
   if (error) throw new TrustedGameDataMutationError('load_failed', error);
   if (!data) throw new TrustedGameDataMutationError('not_found');
   return data;
+}
+
+export async function recordGameDataDiscussionEvent(input: {
+  actorId: string | null;
+  actionIds: string[];
+  eventType: DiscussionEventType;
+  operationId?: string;
+  note?: string;
+}): Promise<void> {
+  if (input.actionIds.length === 0) return;
+  const { error } = await supabaseAdmin.rpc('record_game_data_discussion_event', {
+    p_actor_id: input.actorId,
+    p_action_ids: input.actionIds,
+    p_event_type: input.eventType,
+    p_operation_id: input.operationId ?? randomUUID(),
+    p_note: input.note ?? null,
+  });
+  if (error) throw new TrustedGameDataMutationError('persistence_failed', error);
 }
 
 export async function publishPreparedGameDataActions(options: {
@@ -102,6 +124,7 @@ export async function publishPreparedGameDataActions(options: {
   grants: readonly PermissionGrant[];
   prepared: PreparedPublishRequest;
   submitMode?: GameDataSubmitMode;
+  discussionTopicId?: string;
 }): Promise<TrustedPublishResult[]> {
   const actorId = options.actorId;
   const isAnonymous = actorId === null;
@@ -138,6 +161,8 @@ export async function publishPreparedGameDataActions(options: {
   validateCandidate([...candidateRows(snapshot), ...proposedApprovedRows]);
 
   const results: TrustedPublishResult[] = [];
+  const submissionId = randomUUID();
+  const operationId = randomUUID();
   let expectedEpoch = snapshot.replayEpoch;
   for (const action of options.prepared.actions) {
     const rpcResult = isAnonymous
@@ -163,6 +188,19 @@ export async function publishPreparedGameDataActions(options: {
     const actionResults = data ?? [];
     results.push(...actionResults);
     expectedEpoch += actionResults.filter((result) => result.is_public).length;
+  }
+
+  if (results.length > 0) {
+    const { error: groupingError } = await supabaseAdmin.rpc('prepared_group_game_data_actions', {
+      p_actor_id: actorId,
+      p_action_ids: results.map((result) => result.id),
+      p_submission_id: submissionId,
+      p_topic_id: options.discussionTopicId ?? null,
+      p_message: options.prepared.message ?? null,
+      p_operation_id: operationId,
+      p_ip: options.clientIp ?? null,
+    });
+    if (groupingError) throw persistenceError(groupingError);
   }
 
   if (results.some((result) => result.is_public)) {

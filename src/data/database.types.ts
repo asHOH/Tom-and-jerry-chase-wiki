@@ -358,6 +358,7 @@ export type Database = {
           reviewed_at: string | null;
           reviewed_by: string | null;
           status: Database['public']['Enums']['game_data_action_status'];
+          submission_id: string;
         };
         Insert: {
           created_at?: string;
@@ -371,6 +372,7 @@ export type Database = {
           reviewed_at?: string | null;
           reviewed_by?: string | null;
           status: Database['public']['Enums']['game_data_action_status'];
+          submission_id: string;
         };
         Update: {
           created_at?: string;
@@ -384,8 +386,16 @@ export type Database = {
           reviewed_at?: string | null;
           reviewed_by?: string | null;
           status?: Database['public']['Enums']['game_data_action_status'];
+          submission_id?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: 'game_data_actions_submission_id_fkey';
+            columns: ['submission_id'];
+            isOneToOne: false;
+            referencedRelation: 'game_data_action_submissions';
+            referencedColumns: ['id'];
+          },
           {
             foreignKeyName: 'game_data_actions_created_by_fkey';
             columns: ['created_by'];
@@ -415,6 +425,100 @@ export type Database = {
             referencedColumns: ['id'];
           },
         ];
+      };
+      game_data_action_submissions: {
+        Row: {
+          created_at: string;
+          created_by: string | null;
+          discussion_topic_id: string | null;
+          id: string;
+          message: string | null;
+        };
+        Insert: {
+          created_at?: string;
+          created_by?: string | null;
+          discussion_topic_id?: string | null;
+          id?: string;
+          message?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          created_by?: string | null;
+          discussion_topic_id?: string | null;
+          id?: string;
+          message?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'game_data_action_submissions_created_by_fkey';
+            columns: ['created_by'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'game_data_action_submissions_discussion_topic_id_fkey';
+            columns: ['discussion_topic_id'];
+            isOneToOne: false;
+            referencedRelation: 'comments';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      game_data_action_discussion_events: {
+        Row: {
+          abstain_votes: number;
+          action_id: string;
+          actor_id: string | null;
+          approve_votes: number;
+          created_at: string;
+          event_type: Database['public']['Enums']['game_data_discussion_event_type'];
+          id: string;
+          note: string | null;
+          operation_id: string;
+          reject_votes: number;
+          resulting_status: Database['public']['Enums']['game_data_action_status'];
+          submission_id: string;
+          topic_id: string;
+        };
+        Insert: {
+          abstain_votes?: number;
+          action_id: string;
+          actor_id?: string | null;
+          approve_votes?: number;
+          created_at?: string;
+          event_type: Database['public']['Enums']['game_data_discussion_event_type'];
+          id?: string;
+          note?: string | null;
+          operation_id: string;
+          reject_votes?: number;
+          resulting_status: Database['public']['Enums']['game_data_action_status'];
+          submission_id: string;
+          topic_id: string;
+        };
+        Update: never;
+        Relationships: [];
+      };
+      game_data_action_votes: {
+        Row: {
+          action_id: string;
+          choice: Database['public']['Enums']['game_data_action_vote_choice'];
+          created_at: string;
+          updated_at: string;
+          voter_id: string;
+        };
+        Insert: {
+          action_id: string;
+          choice: Database['public']['Enums']['game_data_action_vote_choice'];
+          created_at?: string;
+          updated_at?: string;
+          voter_id: string;
+        };
+        Update: {
+          choice?: Database['public']['Enums']['game_data_action_vote_choice'];
+          updated_at?: string;
+        };
+        Relationships: [];
       };
       game_data_approved_replay_epoch: {
         Row: {
@@ -953,6 +1057,10 @@ export type Database = {
       };
     };
     Functions: {
+      can_participate_game_data_discussion: {
+        Args: { p_actor_id: string; p_parent_comment_id: string };
+        Returns: boolean;
+      };
       block_snapshot: {
         Args: { p_block_id: string };
         Returns: Json;
@@ -1025,6 +1133,62 @@ export type Database = {
           submitted_status: Database['public']['Enums']['version_status'];
           submitted_version_id: string;
         }[];
+      };
+      prepared_create_game_data_review_comment: {
+        Args: {
+          p_actor_id: string;
+          p_content: string;
+          p_ip: string | null;
+          p_parent_id: string;
+          p_scope: Database['public']['Enums']['comment_scope'];
+          p_target_id: string;
+        };
+        Returns: string;
+      };
+      prepared_delete_game_data_action_vote: {
+        Args: { p_action_id: string; p_actor_id: string; p_ip?: string | null };
+        Returns: undefined;
+      };
+      prepared_group_game_data_actions: {
+        Args: {
+          p_action_ids: string[];
+          p_actor_id: string | null;
+          p_ip?: string | null;
+          p_message: string | null;
+          p_operation_id: string;
+          p_submission_id: string;
+          p_topic_id: string | null;
+        };
+        Returns: undefined;
+      };
+      prepared_set_game_data_action_vote: {
+        Args: {
+          p_action_id: string;
+          p_actor_id: string;
+          p_choice: Database['public']['Enums']['game_data_action_vote_choice'];
+          p_ip?: string | null;
+        };
+        Returns: undefined;
+      };
+      prepared_set_game_data_submission_topic: {
+        Args: {
+          p_actor_id: string;
+          p_ip?: string | null;
+          p_operation_id: string;
+          p_submission_id: string;
+          p_topic_id: string | null;
+        };
+        Returns: undefined;
+      };
+      record_game_data_discussion_event: {
+        Args: {
+          p_action_ids: string[];
+          p_actor_id: string | null;
+          p_event_type: Database['public']['Enums']['game_data_discussion_event_type'];
+          p_note?: string | null;
+          p_operation_id: string;
+        };
+        Returns: undefined;
       };
       prepared_submit_article: {
         Args: {
@@ -1506,6 +1670,16 @@ export type Database = {
         | 'list_pages';
       comment_status: 'visible' | 'hidden' | 'deleted';
       game_data_action_status: 'pending' | 'approved' | 'rejected' | 'synced' | 'revoked';
+      game_data_action_vote_choice: 'approve' | 'reject' | 'abstain';
+      game_data_discussion_event_type:
+        | 'submitted'
+        | 'linked'
+        | 'moved_out'
+        | 'unlinked'
+        | 'approved'
+        | 'rejected'
+        | 'revoked'
+        | 'synced';
       permission_scope: 'global' | 'resource_type' | 'resource';
       version_status: 'pending' | 'approved' | 'rejected' | 'revoked';
     };
@@ -1648,6 +1822,17 @@ export const Constants = {
       ],
       comment_status: ['visible', 'hidden', 'deleted'],
       game_data_action_status: ['pending', 'approved', 'rejected', 'synced', 'revoked'],
+      game_data_action_vote_choice: ['approve', 'reject', 'abstain'],
+      game_data_discussion_event_type: [
+        'submitted',
+        'linked',
+        'moved_out',
+        'unlinked',
+        'approved',
+        'rejected',
+        'revoked',
+        'synced',
+      ],
       permission_scope: ['global', 'resource_type', 'resource'],
       version_status: ['pending', 'approved', 'rejected', 'revoked'],
     },

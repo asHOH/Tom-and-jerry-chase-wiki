@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 
+import { getDiscussionCommentHref } from '@/lib/comments/scopeMapping';
 import { getGameDataNotificationDetails } from '@/lib/gameData/contributionDisplay';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { createClient } from '@/lib/supabase/server';
@@ -31,7 +32,7 @@ export async function GET() {
     supabaseAdmin
       .from('game_data_actions')
       .select(
-        'id, created_at, entity_type, entry, is_public, message, rejection_reason, reviewed_at, status'
+        'id, created_at, entity_type, entry, is_public, message, rejection_reason, reviewed_at, status, submission_id'
       )
       .eq('created_by', userId)
       .order('created_at', { ascending: false })
@@ -57,6 +58,25 @@ export async function GET() {
   }
   const articleRows = (articleResult.data ?? []).slice(0, CONTRIBUTION_LIMIT);
   const gameDataRows = (gameDataResult.data ?? []).slice(0, CONTRIBUTION_LIMIT);
+  const submissionIds = Array.from(new Set(gameDataRows.map((row) => row.submission_id)));
+  const { data: submissionRows } = submissionIds.length
+    ? await supabaseAdmin
+        .from('game_data_action_submissions')
+        .select('id, discussion_topic_id')
+        .in('id', submissionIds)
+    : { data: [] };
+  const topicIds = (submissionRows ?? []).flatMap((row) =>
+    row.discussion_topic_id ? [row.discussion_topic_id] : []
+  );
+  const { data: topicRows } = topicIds.length
+    ? await supabaseAdmin
+        .from('comments')
+        .select('id, scope, target_id')
+        .in('id', topicIds)
+        .eq('status', 'visible')
+    : { data: [] };
+  const submissionById = new Map((submissionRows ?? []).map((row) => [row.id, row]));
+  const topicById = new Map((topicRows ?? []).map((row) => [row.id, row]));
 
   const articleContributions: ContributionStatusItem[] = articleRows.map((row) => {
     const title = row.proposed_title ?? row.articles?.title ?? '未命名文章';
@@ -81,6 +101,7 @@ export async function GET() {
         row.status === 'pending' || row.status === 'rejected'
           ? `/articles/${row.article_id}/edit`
           : null,
+      discussionHref: null,
       thanked: thankMessageById.has(row.id),
       thankMessage: thankMessageById.get(row.id) ?? null,
     };
@@ -89,6 +110,8 @@ export async function GET() {
   const gameDataContributions: ContributionStatusItem[] = gameDataRows.map((row) => {
     const details = getGameDataNotificationDetails([row]);
     const isPublic = row.is_public || row.status === 'synced';
+    const topicId = submissionById.get(row.submission_id)?.discussion_topic_id;
+    const topic = topicId ? topicById.get(topicId) : undefined;
 
     return {
       id: row.id,
@@ -106,6 +129,9 @@ export async function GET() {
         row.status === 'rejected' && details.href
           ? `${details.href}${details.href.includes('?') ? '&' : '?'}edit=1`
           : null,
+      discussionHref: topic
+        ? getDiscussionCommentHref(topic.scope, topic.target_id, topic.id)
+        : null,
       thanked: thankMessageById.has(row.id),
       thankMessage: thankMessageById.get(row.id) ?? null,
     };

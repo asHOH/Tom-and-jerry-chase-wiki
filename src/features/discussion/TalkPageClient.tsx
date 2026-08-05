@@ -17,6 +17,7 @@ import { DiscussionInfoBanner } from './components/DiscussionInfoBanner';
 import { NewTopicForm } from './components/NewTopicForm';
 import { TableOfContents } from './components/TableOfContents';
 import { TopicSection } from './components/TopicSection';
+import type { DiscussionReviewWorkspaceResponse } from './reviewTypes';
 import type { CommentNode } from './types';
 
 type ApiComment = {
@@ -99,6 +100,15 @@ export function TalkPageClient({
     mutate,
     isLoading,
   } = useSWR<CommentsResponse>(targetId ? apiUrl : null, fetcher);
+  const reviewApiUrl = useMemo(
+    () =>
+      `/api/discussion-review?scope=${encodeURIComponent(scope)}&targetId=${encodeURIComponent(targetId)}`,
+    [scope, targetId]
+  );
+  const { data: reviewData, mutate: mutateReview } = useSWR<DiscussionReviewWorkspaceResponse>(
+    targetId ? reviewApiUrl : null,
+    fetcher
+  );
 
   const comments = useMemo(() => data?.comments ?? [], [data]);
 
@@ -247,6 +257,12 @@ export function TalkPageClient({
               userNickname={null}
               onMutate={handleMutate}
               onLoginRequired={handleLoginRequired}
+              reviewSubmissions={reviewData?.submissionsByTopic[node.id] ?? []}
+              reviewEvents={reviewData?.eventsByTopic[node.id] ?? []}
+              onReviewMutate={() => {
+                void mutateReview();
+                void mutate();
+              }}
             />
           )
       )}
