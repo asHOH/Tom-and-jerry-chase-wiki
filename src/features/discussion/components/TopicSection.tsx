@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 
 import { formatArticleDate } from '@/lib/dateUtils';
 import Button from '@/components/ui/Button';
@@ -8,6 +9,21 @@ import Card from '@/components/ui/Card';
 import { FormTextarea } from '@/components/ui/FormControls';
 
 import type { CommentNode } from '../types';
+
+function AuthorLink({ nickname }: { nickname: string | null }) {
+  const displayName = nickname || '匿名';
+
+  if (!nickname) return <span>{displayName}</span>;
+
+  return (
+    <Link
+      href={`/users/${encodeURIComponent(nickname)}/`}
+      className='text-blue-600 hover:underline dark:text-blue-400'
+    >
+      {displayName}
+    </Link>
+  );
+}
 
 type TopicSectionProps = {
   topic: CommentNode;
@@ -129,7 +145,8 @@ export function TopicSection({
                 {topic.content}
               </div>
               <div className='mt-2 text-xs text-gray-500 dark:text-gray-400'>
-                — {topic.author.nickname || '匿名'} {formatArticleDate(topic.createdAt)}
+                — <AuthorLink nickname={topic.author.nickname} />{' '}
+                {formatArticleDate(topic.createdAt)}
               </div>
             </>
           )}
@@ -292,7 +309,7 @@ function ReplyItem({
               {reply.content}
             </div>
             <div className='mt-1 text-xs text-gray-500 dark:text-gray-400'>
-              — {reply.author.nickname || '匿名'} {formatArticleDate(reply.createdAt)}
+              — <AuthorLink nickname={reply.author.nickname} /> {formatArticleDate(reply.createdAt)}
               {userNickname && reply.author.nickname === userNickname && (
                 <span className='ml-1'>（我）</span>
               )}
