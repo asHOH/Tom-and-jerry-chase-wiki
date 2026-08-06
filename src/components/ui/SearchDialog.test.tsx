@@ -11,6 +11,7 @@ jest.mock('@/hooks/useChat', () => ({
   useChat: () => ({
     responseText: null,
     isLoading: false,
+    stop: jest.fn(),
   }),
 }));
 

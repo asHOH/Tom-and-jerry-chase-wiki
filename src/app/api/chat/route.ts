@@ -489,6 +489,10 @@ const requestSchema = z.object({
 // Main POST handler — streams the AI response including tool calls to the client
 export async function POST(req: NextRequest) {
   try {
+    if (req.signal.aborted) {
+      return new NextResponse(null, { status: 204 });
+    }
+
     const rl = await checkRateLimit(req, 'expensive', 'chat');
     if (!rl.allowed) {
       return NextResponse.json(
@@ -521,6 +525,10 @@ export async function POST(req: NextRequest) {
     });
 
     const snapshot = await getPublishedGameDataSnapshot();
+    if (req.signal.aborted) {
+      return new NextResponse(null, { status: 204 });
+    }
+
     const chatGameData = selectChatGameData(snapshot.data);
     const executionContext = {
       ...chatGameData,
@@ -539,7 +547,12 @@ export async function POST(req: NextRequest) {
             'JavaScript code to execute. Must include a return statement. Available variables: characters (Record<string, Character>), actorProfiles (Record<string, ActorProfile>), cards (Record<string, Card>), specialSkills ({cat: Record<string, SpecialSkill>, mouse: Record<string, SpecialSkill>}), items (Record<string, Item>), entities ({cat: Record<string, Entity>, mouse: Record<string, Entity>}), buffs (Record<string, Buff>), itemGroups (Record<string, ItemGroup>), historyData (GameHistory). Examples: return characters["汤姆"]; return actorProfiles["汤姆"]; return Object.values(specialSkills.cat); return items["火箭"]; return historyData.find(y => y.year === 2020)'
           ),
       }),
-      execute: ({ code }) => executeChatCode(code, executionContext),
+      execute: ({ code }, { abortSignal }) => {
+        if (abortSignal?.aborted) {
+          throw abortSignal.reason ?? new DOMException('Chat request aborted', 'AbortError');
+        }
+        return executeChatCode(code, executionContext);
+      },
     });
 
     const result = streamText({
@@ -551,13 +564,16 @@ export async function POST(req: NextRequest) {
       },
       stopWhen: stepCountIs(3),
       abortSignal: req.signal,
+      onAbort: () => {
+        logDebug('Upstream chat generation was aborted.');
+      },
     });
 
     return result.toUIMessageStreamResponse();
   } catch (error) {
     if (error instanceof Error && error.name === 'AbortError') {
       logDebug('Request was aborted by the client.');
-      return new NextResponse('', { status: 204 });
+      return new NextResponse(null, { status: 204 });
     }
     console.error('Chat API error:', error);
     const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';

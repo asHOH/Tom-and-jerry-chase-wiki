@@ -6,18 +6,6 @@ import { DefaultChatTransport } from 'ai';
 
 import { env } from '@/env';
 
-// Debounce utility to delay function execution
-function debounce<T extends (...args: never[]) => void>(func: T, waitFor: number): T {
-  let timeout: ReturnType<typeof setTimeout> | null = null;
-
-  return ((...args: Parameters<T>) => {
-    if (timeout) {
-      clearTimeout(timeout);
-    }
-    timeout = setTimeout(() => func(...args), waitFor);
-  }) as T;
-}
-
 /**
  * A hook for managing AI chat requests.
  *
@@ -26,29 +14,14 @@ function debounce<T extends (...args: never[]) => void>(func: T, waitFor: number
  * @returns An object with the current response text, the loading state, and any error that occurred.
  */
 export function useChat(message?: string, debounceMs = 500) {
-  const [debouncedMessage, setDebouncedMessage] = useState<string | undefined>(message);
+  const [debouncedMessage, setDebouncedMessage] = useState<string | undefined>();
   const [responseText, setResponseText] = useState<string>('');
   const [error, setError] = useState<Error | null>(null);
   const pendingRef = useRef<string | null>(null);
   const mountedRef = useRef(true);
 
-  // Debounce the message updates
-  const debouncedSetMessage = useMemo(() => {
-    return debounce(setDebouncedMessage, debounceMs);
-  }, [debounceMs]);
-
-  useEffect(() => {
-    debouncedSetMessage(message);
-  }, [message, debouncedSetMessage]);
-
-  useEffect(() => {
-    mountedRef.current = true;
-    return () => {
-      mountedRef.current = false;
-    };
-  }, []);
-
   const featureEnabled = env.NEXT_PUBLIC_AI_CHAT_MODEL;
+  const transport = useMemo(() => new DefaultChatTransport({ api: '/api/chat' }), []);
 
   const {
     sendMessage,
@@ -56,10 +29,11 @@ export function useChat(message?: string, debounceMs = 500) {
     messages,
     error: aiError,
     status,
+    stop,
   } = useAIChat({
-    transport: new DefaultChatTransport({ api: '/api/chat' }),
-    onFinish: useCallback(({ message }) => {
-      if (!mountedRef.current) return;
+    transport,
+    onFinish: useCallback(({ message, isAbort }) => {
+      if (!mountedRef.current || isAbort) return;
       const text = message.parts
         ?.filter((p) => p.type === 'text')
         .map((p) => p.text)
@@ -69,6 +43,36 @@ export function useChat(message?: string, debounceMs = 500) {
       }
     }, []),
   });
+
+  const stopChat = useCallback(() => {
+    pendingRef.current = null;
+    stop();
+  }, [stop]);
+
+  // Stop the current paid request as soon as the input changes. Waiting for the
+  // debounce here would allow an obsolete response to keep generating tokens.
+  useEffect(() => {
+    stopChat();
+    setResponseText('');
+    setError(null);
+    setMessages([]);
+
+    if (!message?.trim() || !featureEnabled) {
+      setDebouncedMessage(undefined);
+      return;
+    }
+
+    const timeout = setTimeout(() => setDebouncedMessage(message), debounceMs);
+    return () => clearTimeout(timeout);
+  }, [debounceMs, featureEnabled, message, setMessages, stopChat]);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+      stopChat();
+    };
+  }, [stopChat]);
 
   // Keep the displayed answer in sync with the assistant message while it streams.
   useEffect(() => {
@@ -97,6 +101,7 @@ export function useChat(message?: string, debounceMs = 500) {
   // When debounced message changes, start a fresh conversation
   useEffect(() => {
     if (!debouncedMessage?.trim() || !featureEnabled) {
+      stopChat();
       setResponseText('');
       setError(null);
       setMessages([]);
@@ -120,7 +125,7 @@ export function useChat(message?: string, debounceMs = 500) {
         sendMessage({ text: msg });
       }
     });
-  }, [debouncedMessage, featureEnabled, setMessages, sendMessage]);
+  }, [debouncedMessage, featureEnabled, setMessages, sendMessage, stopChat]);
 
   const isLoading = status === 'submitted' || status === 'streaming';
 
@@ -129,10 +134,12 @@ export function useChat(message?: string, debounceMs = 500) {
         responseText,
         isLoading,
         error,
+        stop: stopChat,
       }
     : {
         responseText: null,
         isLoading: false,
         error: null,
+        stop: stopChat,
       };
 }

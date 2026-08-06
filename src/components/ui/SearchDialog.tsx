@@ -156,11 +156,13 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
   };
 
   // Use chat hook to get AI response for the search query
-  const { responseText: aiResponseText, isLoading: isChatLoading } = useChat(
-    open && searchQuery.length > 1 ? searchQuery : undefined,
-    2000
-  );
+  const {
+    responseText: aiResponseText,
+    isLoading: isChatLoading,
+    stop: stopChat,
+  } = useChat(open && searchQuery.length > 1 ? searchQuery : undefined, 2000);
   const hasAiResult = open && searchQuery.length > 1 && Boolean(aiResponseText?.trim());
+  const hasAiEntry = hasAiResult || (open && searchQuery.length > 1 && isChatLoading);
 
   const handleResultClick = useCallback(
     (result: SearchResult) => {
@@ -228,7 +230,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
 
     const handleKeyDown = (event: KeyboardEvent) => {
       // Handle navigation keys
-      const totalResults = hasAiResult ? searchResults.length + 1 : searchResults.length;
+      const totalResults = hasAiEntry ? searchResults.length + 1 : searchResults.length;
       switch (event.key) {
         case 'ArrowDown':
           event.preventDefault();
@@ -250,12 +252,12 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
             event.preventDefault();
             if (highlightedIndex >= 0) {
               // If chat result is highlighted (index 0 when chat is present), do nothing
-              if (hasAiResult && highlightedIndex === 0) {
+              if (hasAiEntry && highlightedIndex === 0) {
                 // Chat result is highlighted, do nothing for now
                 return;
               }
               // Handle regular search results
-              const resultIndex = hasAiResult ? highlightedIndex - 1 : highlightedIndex;
+              const resultIndex = hasAiEntry ? highlightedIndex - 1 : highlightedIndex;
               if (resultIndex >= 0 && searchResults[resultIndex]) {
                 handleResultClick(searchResults[resultIndex]);
               }
@@ -270,7 +272,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [open, highlightedIndex, searchResults, handleResultClick, hasAiResult]);
+  }, [open, highlightedIndex, searchResults, handleResultClick, hasAiEntry]);
 
   // Scroll highlighted item into view
   useEffect(() => {
@@ -353,9 +355,9 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
         >
           搜索
         </h2>
-        {(searchResults.length > 0 || hasAiResult) && (
+        {(searchResults.length > 0 || hasAiEntry) && (
           <span className='text-sm text-gray-500 dark:text-gray-400'>
-            {searchResults.length + (hasAiResult ? 1 : 0)} 个结果
+            {searchResults.length + (hasAiEntry ? 1 : 0)} 个结果
           </span>
         )}
       </div>
@@ -380,7 +382,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
         </div>
       </div>
 
-      {searchQuery.length > 0 && (searchResults.length > 0 || hasAiResult) && (
+      {searchQuery.length > 0 && (searchResults.length > 0 || hasAiEntry) && (
         <m.ul
           ref={resultsListRef}
           className={cn(
@@ -398,7 +400,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
           }}
         >
           {/* Chat result as first item */}
-          {hasAiResult && (
+          {hasAiEntry && (
             <m.li
               key='chat-result'
               className='border-b border-gray-200 dark:border-gray-700'
@@ -421,11 +423,26 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
                   </div>
                 </div>
                 <div className='min-w-0 flex-1'>
-                  <div className='mb-1 text-sm font-medium text-blue-700 dark:text-blue-300'>
-                    AI 助手回答
+                  <div className='mb-1 flex items-center justify-between gap-3'>
+                    <span className='text-sm font-medium text-blue-700 dark:text-blue-300'>
+                      {isChatLoading ? 'AI 助手正在回答' : 'AI 助手回答'}
+                    </span>
+                    {isChatLoading && (
+                      <Button
+                        variant='unstyled'
+                        size='sm'
+                        onClick={stopChat}
+                        className='pointer-events-auto shrink-0 rounded px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-100 dark:text-red-300 dark:hover:bg-red-900/40'
+                        aria-label='停止 AI 回答'
+                      >
+                        停止
+                      </Button>
+                    )}
                   </div>
                   <div className='text-sm text-gray-700 dark:text-gray-300'>
-                    <div className='whitespace-pre-wrap'>{aiResponseText}</div>
+                    <div className='whitespace-pre-wrap'>
+                      {aiResponseText || (isChatLoading ? '正在生成回答...' : '')}
+                    </div>
                   </div>
                 </div>
               </div>
