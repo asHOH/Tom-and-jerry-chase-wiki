@@ -175,16 +175,14 @@ describe('serverQueries', () => {
         {
           id: 'article-1',
           title: 'Guide',
-          latest_approved_version: [
-            {
-              id: 'version-1',
-              content: '<p>Current guide</p>',
-              created_at: '2026-01-02',
-              status: 'approved',
-              editor_id: 'user-1',
-              users_public_view: { nickname: 'Alice' },
-            },
-          ],
+          current_version: {
+            id: 'version-1',
+            content: '<p>Current guide</p>',
+            created_at: '2026-01-02',
+            status: 'approved',
+            editor_id: 'user-1',
+            users_public_view: { nickname: 'Alice' },
+          },
         },
       ],
       total_count: 20,

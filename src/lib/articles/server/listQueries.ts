@@ -33,17 +33,6 @@ const ARTICLE_LIST_SELECT = `
   )
 `;
 
-type ArticleListRow = Omit<ArticleListItem, 'latest_approved_version'> & {
-  current_version: ArticleListItem['latest_approved_version'][number] | null;
-};
-
-function normalizeCurrentVersions(rows: readonly ArticleListRow[]): ArticleListItem[] {
-  return rows.map(({ current_version: currentVersion, ...article }) => ({
-    ...article,
-    latest_approved_version: currentVersion ? [currentVersion] : [],
-  }));
-}
-
 export async function getArticlesPageData(): Promise<ArticlesData> {
   const supabase = getPublicReadClient();
   if (!supabase) return { articles: [], categories: [] };
@@ -63,7 +52,7 @@ export async function getArticlesPageData(): Promise<ArticlesData> {
         .order('name');
 
       return {
-        articles: normalizeCurrentVersions((articles ?? []) as unknown as ArticleListRow[]),
+        articles: (articles ?? []) as unknown as ArticleListItem[],
         categories: (categories || []) as unknown as Category[],
       };
     },
@@ -169,7 +158,7 @@ export async function getPaginatedArticles({
       }
 
       return {
-        articles: normalizeCurrentVersions((articles ?? []) as unknown as ArticleListRow[]),
+        articles: (articles ?? []) as unknown as ArticleListItem[],
         total_count: count || 0,
         current_page: page,
         total_pages: Math.ceil((count || 0) / limit),

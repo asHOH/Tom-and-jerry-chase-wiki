@@ -408,7 +408,7 @@ export default function ArticlesClient({
               useBalancedLayout: true,
             }}
             render={(article) => {
-              const latestVersion = article.latest_approved_version[0];
+              const latestVersion = article.current_version;
               const boundCharacter = article.character_id
                 ? characterSummaries[article.character_id]
                 : null;

@@ -617,14 +617,14 @@ export interface Article {
   view_count?: number;
   categories: { id: string; name: string };
   users_public_view: { nickname: string };
-  latest_approved_version: Array<{
+  current_version: {
     id: string | null;
     content: string | null;
     created_at: string | null;
     status: string | null;
     editor_id: string | null;
     users_public_view: { nickname: string } | null;
-  }>;
+  } | null;
 }
 
 export interface Category {
