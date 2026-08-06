@@ -21,7 +21,7 @@ const ARTICLE_LIST_SELECT = `
   users_public_view:author_id (
     nickname
   ),
-  latest_approved_version:article_versions_public_view!inner (
+  current_version:article_versions_public_view!articles_current_version_id_fkey (
     id,
     content,
     created_at,
@@ -33,6 +33,17 @@ const ARTICLE_LIST_SELECT = `
   )
 `;
 
+type ArticleListRow = Omit<ArticleListItem, 'latest_approved_version'> & {
+  current_version: ArticleListItem['latest_approved_version'][number] | null;
+};
+
+function normalizeCurrentVersions(rows: readonly ArticleListRow[]): ArticleListItem[] {
+  return rows.map(({ current_version: currentVersion, ...article }) => ({
+    ...article,
+    latest_approved_version: currentVersion ? [currentVersion] : [],
+  }));
+}
+
 export async function getArticlesPageData(): Promise<ArticlesData> {
   const supabase = getPublicReadClient();
   if (!supabase) return { articles: [], categories: [] };
@@ -43,12 +54,7 @@ export async function getArticlesPageData(): Promise<ArticlesData> {
       const { data: articles } = await supabase
         .from('articles')
         .select(ARTICLE_LIST_SELECT)
-        .eq('article_versions_public_view.status', 'approved')
-        .order('created_at', {
-          ascending: false,
-          referencedTable: 'article_versions_public_view',
-        })
-        .limit(1, { referencedTable: 'article_versions_public_view' })
+        .not('current_version_id', 'is', null)
         .order('created_at');
 
       const { data: categories } = await supabase
@@ -57,7 +63,7 @@ export async function getArticlesPageData(): Promise<ArticlesData> {
         .order('name');
 
       return {
-        articles: (articles || []) as unknown as ArticleListItem[],
+        articles: normalizeCurrentVersions((articles ?? []) as unknown as ArticleListRow[]),
         categories: (categories || []) as unknown as Category[],
       };
     },
@@ -116,7 +122,7 @@ export async function getPaginatedArticles({
       let query = supabase
         .from('articles')
         .select(ARTICLE_LIST_SELECT)
-        .eq('article_versions_public_view.status', 'approved')
+        .not('current_version_id', 'is', null)
         .order(sortBy, { ascending: sortOrder === 'asc' })
         .range(offset, offset + limit - 1);
 
@@ -137,8 +143,8 @@ export async function getPaginatedArticles({
 
       let countQuery = supabase
         .from('articles')
-        .select('id, article_versions_public_view!inner(id)', { count: 'exact', head: true })
-        .eq('article_versions_public_view.status', 'approved');
+        .select('id', { count: 'exact', head: true })
+        .not('current_version_id', 'is', null);
 
       if (category && category !== 'all') {
         countQuery = countQuery.eq('category_id', category);
@@ -163,7 +169,7 @@ export async function getPaginatedArticles({
       }
 
       return {
-        articles: (articles || []) as unknown as ArticleListItem[],
+        articles: normalizeCurrentVersions((articles ?? []) as unknown as ArticleListRow[]),
         total_count: count || 0,
         current_page: page,
         total_pages: Math.ceil((count || 0) / limit),

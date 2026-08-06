@@ -1,6 +1,7 @@
 import { supabaseAdmin } from '@/lib/supabase/admin';
 
 import {
+  getApprovedArticleVersion,
   getArticleDetailData,
   getArticleHistory,
   getArticlesPageData,
@@ -30,6 +31,7 @@ jest.mock('@/lib/cacheTags', () => ({
 const query = {
   select: jest.fn(),
   eq: jest.fn(),
+  not: jest.fn(),
   order: jest.fn(),
   limit: jest.fn(),
 };
@@ -56,6 +58,8 @@ function createThenableQuery<T>(result: T) {
   const query = {
     select: jest.fn(),
     eq: jest.fn(),
+    in: jest.fn(),
+    not: jest.fn(),
     order: jest.fn(),
     range: jest.fn(),
     ilike: jest.fn(),
@@ -64,6 +68,8 @@ function createThenableQuery<T>(result: T) {
 
   query.select.mockReturnValue(query);
   query.eq.mockReturnValue(query);
+  query.in.mockReturnValue(query);
+  query.not.mockReturnValue(query);
   query.order.mockReturnValue(query);
   query.range.mockReturnValue(query);
   query.ilike.mockReturnValue(query);
@@ -95,6 +101,7 @@ describe('serverQueries', () => {
 
     query.select.mockReturnValue(query);
     query.eq.mockReturnValue(query);
+    query.not.mockReturnValue(query);
     query.order.mockReturnValue(query);
     query.limit.mockReturnValue(query);
 
@@ -109,21 +116,29 @@ describe('serverQueries', () => {
     mockSupabaseAdmin.rpc.mockResolvedValue({ error: null });
   });
 
-  it('should select the newest approved embedded version for article list previews', async () => {
+  it('should select article list previews through the explicit current-version pointer', async () => {
     await getArticlesPageData();
 
-    expect(query.order).toHaveBeenCalledWith('created_at', {
-      ascending: false,
-      referencedTable: 'article_versions_public_view',
-    });
-    expect(query.limit).toHaveBeenCalledWith(1, {
-      referencedTable: 'article_versions_public_view',
-    });
+    expect(query.not).toHaveBeenCalledWith('current_version_id', 'is', null);
+    expect(query.order).toHaveBeenCalledWith('created_at');
   });
 
   it('should return paginated articles with filters and categories', async () => {
     const listQuery = createThenableQuery({
-      data: [{ id: 'article-1', title: 'Guide' }],
+      data: [
+        {
+          id: 'article-1',
+          title: 'Guide',
+          current_version: {
+            id: 'version-1',
+            content: '<p>Current guide</p>',
+            created_at: '2026-01-02',
+            status: 'approved',
+            editor_id: 'user-1',
+            users_public_view: { nickname: 'Alice' },
+          },
+        },
+      ],
       error: null,
     });
     const countQuery = createThenableQuery({
@@ -156,7 +171,22 @@ describe('serverQueries', () => {
         sortOrder: 'asc',
       })
     ).resolves.toEqual({
-      articles: [{ id: 'article-1', title: 'Guide' }],
+      articles: [
+        {
+          id: 'article-1',
+          title: 'Guide',
+          latest_approved_version: [
+            {
+              id: 'version-1',
+              content: '<p>Current guide</p>',
+              created_at: '2026-01-02',
+              status: 'approved',
+              editor_id: 'user-1',
+              users_public_view: { nickname: 'Alice' },
+            },
+          ],
+        },
+      ],
       total_count: 20,
       current_page: 2,
       total_pages: 4,
@@ -169,10 +199,11 @@ describe('serverQueries', () => {
     expect(listQuery.range).toHaveBeenCalledWith(5, 9);
     expect(listQuery.eq).toHaveBeenCalledWith('category_id', 'category-1');
     expect(listQuery.ilike).toHaveBeenCalledWith('title', '%tom%');
-    expect(countQuery.select).toHaveBeenCalledWith('id, article_versions_public_view!inner(id)', {
+    expect(countQuery.select).toHaveBeenCalledWith('id', {
       count: 'exact',
       head: true,
     });
+    expect(countQuery.not).toHaveBeenCalledWith('current_version_id', 'is', null);
     expect(countQuery.eq).toHaveBeenCalledWith('category_id', 'category-1');
     expect(countQuery.ilike).toHaveBeenCalledWith('title', '%tom%');
     expect(categoryQuery.order).toHaveBeenCalledWith('name');
@@ -182,17 +213,12 @@ describe('serverQueries', () => {
     const articleQuery = {
       select: jest.fn(),
       eq: jest.fn(),
+      not: jest.fn(),
       order: jest.fn(),
     };
-    const versionQuery = {
-      select: jest.fn(),
-      in: jest.fn(),
-      eq: jest.fn(),
-      order: jest.fn(),
-    };
-
     articleQuery.select.mockReturnValue(articleQuery);
     articleQuery.eq.mockReturnValue(articleQuery);
+    articleQuery.not.mockReturnValue(articleQuery);
     articleQuery.order.mockResolvedValue({
       data: [
         {
@@ -202,6 +228,10 @@ describe('serverQueries', () => {
           view_count: 12,
           categories: { name: 'Tips' },
           users_public_view: { nickname: 'Alice' },
+          current_version: {
+            content: '<h1>Remove me</h1><p>Keep me</p>',
+            created_at: '2026-01-02',
+          },
         },
         {
           id: 'article-2',
@@ -210,36 +240,16 @@ describe('serverQueries', () => {
           view_count: 3,
           categories: null,
           users_public_view: null,
-        },
-      ],
-    });
-
-    versionQuery.select.mockReturnValue(versionQuery);
-    versionQuery.in.mockReturnValue(versionQuery);
-    versionQuery.eq.mockReturnValue(versionQuery);
-    versionQuery.order.mockResolvedValue({
-      data: [
-        {
-          article_id: 'article-1',
-          content: '<h1>Remove me</h1><p>Keep me</p>',
-          created_at: '2026-01-02',
-        },
-        {
-          article_id: 'article-1',
-          content: '<p>Older content</p>',
-          created_at: '2026-01-01',
-        },
-        {
-          article_id: 'article-2',
-          content: null,
-          created_at: '2026-01-03',
+          current_version: {
+            content: null,
+            created_at: '2026-01-03',
+          },
         },
       ],
     });
 
     mockSupabaseAdmin.from.mockImplementation((table: string) => {
       if (table === 'articles') return articleQuery;
-      if (table === 'article_versions_public_view') return versionQuery;
       throw new Error(`Unexpected table: ${table}`);
     });
 
@@ -256,7 +266,7 @@ describe('serverQueries', () => {
       },
     ]);
     expect(articleQuery.eq).toHaveBeenCalledWith('character_id', 'tom');
-    expect(versionQuery.in).toHaveBeenCalledWith('article_id', ['article-1', 'article-2']);
+    expect(articleQuery.not).toHaveBeenCalledWith('current_version_id', 'is', null);
   });
 
   it('should return article detail data with the latest approved version', async () => {
@@ -270,23 +280,19 @@ describe('serverQueries', () => {
         view_count: 3,
         categories: { name: 'Tips' },
         users_public_view: { nickname: 'Alice' },
-      },
-      error: null,
-    });
-    const versionQuery = createSingleQuery({
-      data: {
-        id: 'version-1',
-        content: '<p>Guide content</p>',
-        created_at: '2026-01-02',
-        editor_id: 'user-2',
-        users_public_view: { nickname: 'Bob' },
+        current_version: {
+          id: 'version-1',
+          content: '<p>Guide content</p>',
+          created_at: '2026-01-02',
+          editor_id: 'user-2',
+          users_public_view: { nickname: 'Bob' },
+        },
       },
       error: null,
     });
 
     mockSupabaseAdmin.from.mockImplementation((table: string) => {
       if (table === 'articles') return articleQuery;
-      if (table === 'article_versions_public_view') return versionQuery;
       throw new Error(`Unexpected table: ${table}`);
     });
 
@@ -310,10 +316,36 @@ describe('serverQueries', () => {
       },
     });
     expect(articleQuery.eq).toHaveBeenCalledWith('id', 'article-1');
-    expect(versionQuery.eq).toHaveBeenCalledWith('article_id', 'article-1');
-    expect(versionQuery.eq).toHaveBeenCalledWith('status', 'approved');
-    expect(versionQuery.order).toHaveBeenCalledWith('created_at', { ascending: false });
-    expect(versionQuery.limit).toHaveBeenCalledWith(1);
+  });
+
+  it('should resolve the latest approved article version through the current pointer', async () => {
+    const articleQuery = createSingleQuery({
+      data: {
+        current_version: {
+          id: 'version-older-submission',
+          content: '<p>Approved later</p>',
+          created_at: '2026-01-01',
+          editor_id: 'user-2',
+          users_public_view: { nickname: 'Bob' },
+        },
+      },
+      error: null,
+    });
+
+    mockSupabaseAdmin.from.mockReturnValue(articleQuery);
+
+    await expect(getApprovedArticleVersion({ articleId: 'article-1' })).resolves.toEqual({
+      id: 'version-older-submission',
+      content: '<p>Approved later</p>',
+      created_at: '2026-01-01',
+      editor_id: 'user-2',
+      users_public_view: { nickname: 'Bob' },
+    });
+    expect(articleQuery.select).toHaveBeenCalledWith(
+      expect.stringContaining(
+        'current_version:article_versions_public_view!articles_current_version_id_fkey'
+      )
+    );
   });
 
   it('should return validation details for invalid article detail payloads', async () => {
@@ -424,7 +456,7 @@ describe('serverQueries', () => {
     expect(articleQuery.eq).toHaveBeenCalledWith('id', 'article-1');
     expect(versionQuery.eq).toHaveBeenCalledWith('article_id', 'article-1');
     expect(versionQuery.eq).toHaveBeenCalledWith('status', 'approved');
-    expect(versionQuery.order).toHaveBeenCalledWith('created_at', { ascending: false });
+    expect(versionQuery.order).toHaveBeenCalledWith('publication_revision', { ascending: false });
   });
 
   it('should increment article view count through the article RPC', async () => {

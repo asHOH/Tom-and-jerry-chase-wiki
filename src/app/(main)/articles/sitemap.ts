@@ -34,7 +34,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     async () => {
       const { data: articlesWithVersions } = await supabase
         .from('articles')
-        .select('id, article_versions(created_at)')
+        .select(
+          'id, current_version:article_versions_public_view!articles_current_version_id_fkey(created_at)'
+        )
+        .not('current_version_id', 'is', null)
         .order('created_at', { ascending: false });
 
       const sitemap: MetadataRoute.Sitemap = [
@@ -48,9 +51,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
       if (articlesWithVersions) {
         articlesWithVersions.forEach((article) => {
-          const versions = article.article_versions as { created_at: string }[] | null;
-          const lastModified = versions?.length
-            ? new Date(Math.max(...versions.map((v) => new Date(v.created_at).getTime())))
+          const currentVersion = article.current_version as { created_at: string } | null;
+          const lastModified = currentVersion?.created_at
+            ? new Date(currentVersion.created_at)
             : new Date();
 
           sitemap.push({

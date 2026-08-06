@@ -47,6 +47,7 @@ export async function getArticleBasicInfo(articleId: string): Promise<ArticleBas
           `
         )
         .eq('id', articleId)
+        .not('current_version_id', 'is', null)
         .single();
 
       return (article as unknown as ArticleBasicInfo) ?? null;
@@ -78,7 +79,27 @@ export async function getApprovedArticleVersion(args: {
   return cached(
     ['article', articleId, 'approved-version', versionId ?? 'latest'],
     async () => {
-      let query = supabase
+      if (!versionId) {
+        const { data: article } = await supabase
+          .from('articles')
+          .select(
+            `
+              current_version:article_versions_public_view!articles_current_version_id_fkey(
+                id,
+                content,
+                created_at,
+                editor_id,
+                users_public_view!editor_id(nickname)
+              )
+            `
+          )
+          .eq('id', articleId)
+          .single();
+
+        return (article?.current_version as unknown as ArticleApprovedVersion | null) ?? null;
+      }
+
+      const query = supabase
         .from('article_versions_public_view')
         .select(
           `
@@ -90,13 +111,8 @@ export async function getApprovedArticleVersion(args: {
           `
         )
         .eq('article_id', articleId)
-        .eq('status', 'approved');
-
-      if (versionId) {
-        query = query.eq('id', versionId);
-      } else {
-        query = query.order('created_at', { ascending: false });
-      }
+        .eq('status', 'approved')
+        .eq('id', versionId);
 
       const { data } = await query.limit(1).single();
       return (data as unknown as ArticleApprovedVersion) ?? null;
@@ -143,7 +159,14 @@ export async function getArticleDetailData(
             created_at,
             view_count,
             categories(name),
-            users_public_view!author_id(nickname)
+            users_public_view!author_id(nickname),
+            current_version:article_versions_public_view!articles_current_version_id_fkey(
+              id,
+              content,
+              created_at,
+              editor_id,
+              users_public_view!editor_id(nickname)
+            )
           `
         )
         .eq('id', articleId)
@@ -163,29 +186,12 @@ export async function getArticleDetailData(
         } as const;
       }
 
-      const { data: latestVersion, error: versionError } = await supabase
-        .from('article_versions_public_view')
-        .select(
-          `
-            id,
-            content,
-            created_at,
-            editor_id,
-            users_public_view!editor_id(nickname)
-          `
-        )
-        .eq('article_id', articleId)
-        .eq('status', 'approved')
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single();
-
-      if (versionError) {
-        console.error('Error fetching latest version:', versionError);
+      const currentVersion = article.current_version;
+      if (!currentVersion) {
         return { error: 'No approved version found' } as const;
       }
 
-      const parsedVersion = articleVersionSchema.safeParse(latestVersion);
+      const parsedVersion = articleVersionSchema.safeParse(currentVersion);
       if (!parsedVersion.success) {
         console.error('Article version payload validation failed', parsedVersion.error.format());
         return {
@@ -276,7 +282,7 @@ export async function getArticleHistory(
         )
         .eq('article_id', articleId)
         .eq('status', 'approved')
-        .order('created_at', { ascending: false });
+        .order('publication_revision', { ascending: false });
 
       if (versionsError) {
         console.error('Error fetching versions:', versionsError);

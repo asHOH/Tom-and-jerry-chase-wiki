@@ -42,6 +42,7 @@ export type Database = {
           editor_id: string;
           id: string;
           preview_token: string;
+          publication_revision: number | null;
           proposed_category_id: string | null;
           proposed_character_id: string | null;
           proposed_title: string | null;
@@ -58,6 +59,7 @@ export type Database = {
           editor_id: string;
           id?: string;
           preview_token: string;
+          publication_revision?: number | null;
           proposed_category_id?: string | null;
           proposed_character_id?: string | null;
           proposed_title?: string | null;
@@ -74,6 +76,7 @@ export type Database = {
           editor_id?: string;
           id?: string;
           preview_token?: string;
+          publication_revision?: number | null;
           proposed_category_id?: string | null;
           proposed_character_id?: string | null;
           proposed_title?: string | null;
@@ -172,6 +175,7 @@ export type Database = {
           category_id: string;
           character_id: string | null;
           created_at: string;
+          current_version_id: string | null;
           id: string;
           title: string;
           view_count: number;
@@ -181,6 +185,7 @@ export type Database = {
           category_id: string;
           character_id?: string | null;
           created_at?: string;
+          current_version_id?: string | null;
           id?: string;
           title: string;
           view_count?: number;
@@ -190,6 +195,7 @@ export type Database = {
           category_id?: string;
           character_id?: string | null;
           created_at?: string;
+          current_version_id?: string | null;
           id?: string;
           title?: string;
           view_count?: number;
@@ -214,6 +220,20 @@ export type Database = {
             columns: ['category_id'];
             isOneToOne: false;
             referencedRelation: 'categories';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'articles_current_version_id_fkey';
+            columns: ['current_version_id'];
+            isOneToOne: false;
+            referencedRelation: 'article_versions';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'articles_current_version_id_fkey';
+            columns: ['current_version_id'];
+            isOneToOne: false;
+            referencedRelation: 'article_versions_public_view';
             referencedColumns: ['id'];
           },
         ];
@@ -827,6 +847,7 @@ export type Database = {
           created_at: string | null;
           editor_id: string | null;
           id: string | null;
+          publication_revision: number | null;
           status: Database['public']['Enums']['version_status'] | null;
         };
         Insert: {
@@ -836,6 +857,7 @@ export type Database = {
           created_at?: string | null;
           editor_id?: string | null;
           id?: string | null;
+          publication_revision?: number | null;
           status?: Database['public']['Enums']['version_status'] | null;
         };
         Update: {
@@ -845,6 +867,7 @@ export type Database = {
           created_at?: string | null;
           editor_id?: string | null;
           id?: string | null;
+          publication_revision?: number | null;
           status?: Database['public']['Enums']['version_status'] | null;
         };
         Relationships: [
