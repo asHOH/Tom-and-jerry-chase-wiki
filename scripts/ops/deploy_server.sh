@@ -18,6 +18,12 @@ PM2_DAEMON_VERSION_CHECKED=0
 START_SCRIPT="scripts/ops/start_server.sh"
 LAST_HEALTH_CHECK_ERROR=""
 FETCH_ENDPOINT_RESPONSE=""
+DEPLOY_STARTED_AT="$(date +%s)"
+BUILD_ACTION="not-started"
+BUILD_DURATION_SECONDS="0"
+NODE_VERSION="unknown"
+NPM_VERSION="unknown"
+PM2_VERSION="unknown"
 
 if [ -d "$SCRIPT_DIR/../../.git" ]; then
   REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
@@ -53,6 +59,23 @@ run_with_retry() {
 
 run_git_with_retry() {
   run_with_retry 5 git -c http.lowSpeedLimit=1000 -c http.lowSpeedTime=60 "$@"
+}
+
+begin_phase() {
+  echo
+  echo "[deploy] Phase $1"
+}
+
+format_duration() {
+  local total_seconds="$1"
+  local minutes=$((total_seconds / 60))
+  local seconds=$((total_seconds % 60))
+
+  if [ "$minutes" -gt 0 ]; then
+    printf '%dm %ds' "$minutes" "$seconds"
+  else
+    printf '%ds' "$seconds"
+  fi
 }
 
 load_env_file() {
@@ -396,7 +419,7 @@ ensure_pm2_process() {
   pm2 save
 }
 
-# 1. Clone or update the repository.
+begin_phase "1/6: update source"
 if [ ! -d "$REPO_ROOT/.git" ]; then
   echo "Cloning repository..."
   cd "$REPO_PARENT_DIR"
@@ -424,7 +447,10 @@ else
   fi
 fi
 
-# 2. Set up production environment variables.
+CURRENT_HASH="$(git rev-parse HEAD)"
+echo "Resolved source: branch=$TARGET_BRANCH commit=$CURRENT_HASH"
+
+begin_phase "2/6: load production environment"
 if [ ! -f "$ENV_FILE" ]; then
   if [ -f ".env.example" ]; then
     echo "Production environment file '$ENV_FILE' not found. Creating it from .env.example..."
@@ -439,21 +465,36 @@ fi
 echo "Loading production environment variables from $ENV_FILE..."
 load_env_file
 
-# 3. Ensure Node.js is available.
+begin_phase "3/6: prepare runtime tools"
 ensure_nvm
 ensure_pinned_npm
+ensure_pm2_cli
 
-# 4. Install dependencies.
+NODE_VERSION="$(node --version)"
+NPM_VERSION="$(npm --version)"
+PM2_VERSION="$(pm2 --version 2>/dev/null | tail -n 1)"
+echo "Runtime tools: node=$NODE_VERSION npm=$NPM_VERSION pm2=$PM2_VERSION"
+
+begin_phase "4/6: install dependencies"
 install_dependencies
 
-# 5. Build the application only if build inputs have changed.
+begin_phase "5/6: evaluate and build application"
 BUILD_HASH_FILE=".next/.build_hash"
-CURRENT_HASH="$(git rev-parse HEAD)"
+BUILD_SOURCE_HASH_FILE=".next/.build_source_hash"
+BUILD_ENV_HASH_FILE=".next/.build_env_hash"
+BUILD_TOOLCHAIN_HASH_FILE=".next/.build_toolchain_hash"
 ENV_FILE_HASH="$(sha256sum "$ENV_FILE" | awk '{ print $1 }')"
+TOOLCHAIN_HASH="$(
+  printf 'node=%s\nnpm=%s\napi_runtime=nodejs\n' "$NODE_VERSION" "$NPM_VERSION" | sha256sum | awk '{ print $1 }'
+)"
 CURRENT_BUILD_HASH="$(
-  printf '%s\n%s\n' "$CURRENT_HASH" "$ENV_FILE_HASH" | sha256sum | awk '{ print $1 }'
+  printf '%s\n%s\n%s\n' "$CURRENT_HASH" "$ENV_FILE_HASH" "$TOOLCHAIN_HASH" | sha256sum | awk '{ print $1 }'
 )"
 LAST_BUILD_HASH=""
+LAST_SOURCE_HASH=""
+LAST_ENV_HASH=""
+LAST_TOOLCHAIN_HASH=""
+BUILD_REASONS=()
 
 export COMMIT_SHA="$CURRENT_HASH"
 export NEXT_PUBLIC_BUILD_TIMESTAMP="$(git show -s --format=%cI "$CURRENT_HASH")"
@@ -461,13 +502,35 @@ export NEXT_PUBLIC_BUILD_TIMESTAMP="$(git show -s --format=%cI "$CURRENT_HASH")"
 if [ -f "$BUILD_HASH_FILE" ]; then
   LAST_BUILD_HASH="$(cat "$BUILD_HASH_FILE")"
 fi
+if [ -f "$BUILD_SOURCE_HASH_FILE" ]; then
+  LAST_SOURCE_HASH="$(cat "$BUILD_SOURCE_HASH_FILE")"
+fi
+if [ -f "$BUILD_ENV_HASH_FILE" ]; then
+  LAST_ENV_HASH="$(cat "$BUILD_ENV_HASH_FILE")"
+fi
+if [ -f "$BUILD_TOOLCHAIN_HASH_FILE" ]; then
+  LAST_TOOLCHAIN_HASH="$(cat "$BUILD_TOOLCHAIN_HASH_FILE")"
+fi
 
-if [ "$CURRENT_BUILD_HASH" != "$LAST_BUILD_HASH" ] || ! build_output_is_valid; then
-  if [ "$CURRENT_BUILD_HASH" != "$LAST_BUILD_HASH" ]; then
-    echo "Code or production environment has changed since the last build. Building application..."
-  else
-    echo "Existing build output is missing or incomplete. Rebuilding application..."
-  fi
+if [ "$CURRENT_HASH" != "$LAST_SOURCE_HASH" ]; then
+  BUILD_REASONS+=("source")
+fi
+if [ "$ENV_FILE_HASH" != "$LAST_ENV_HASH" ]; then
+  BUILD_REASONS+=("environment")
+fi
+if [ "$TOOLCHAIN_HASH" != "$LAST_TOOLCHAIN_HASH" ]; then
+  BUILD_REASONS+=("toolchain")
+fi
+if ! build_output_is_valid; then
+  BUILD_REASONS+=("output")
+fi
+if [ "$CURRENT_BUILD_HASH" != "$LAST_BUILD_HASH" ] && [ "${#BUILD_REASONS[@]}" -eq 0 ]; then
+  BUILD_REASONS+=("metadata")
+fi
+
+if [ "$CURRENT_BUILD_HASH" != "$LAST_BUILD_HASH" ] || [ "${#BUILD_REASONS[@]}" -gt 0 ]; then
+  echo "Build required; changed inputs: $(IFS=', '; echo "${BUILD_REASONS[*]}")"
+  BUILD_STARTED_AT="$(date +%s)"
 
   stop_pm2_process_for_build
   clean_build_output
@@ -494,6 +557,12 @@ if [ "$CURRENT_BUILD_HASH" != "$LAST_BUILD_HASH" ] || ! build_output_is_valid; t
     echo "Build successful."
     mkdir -p .next
     echo "$CURRENT_BUILD_HASH" > "$BUILD_HASH_FILE"
+    echo "$CURRENT_HASH" > "$BUILD_SOURCE_HASH_FILE"
+    echo "$ENV_FILE_HASH" > "$BUILD_ENV_HASH_FILE"
+    echo "$TOOLCHAIN_HASH" > "$BUILD_TOOLCHAIN_HASH_FILE"
+    BUILD_ACTION="built"
+    BUILD_DURATION_SECONDS="$(($(date +%s) - BUILD_STARTED_AT))"
+    echo "Build completed in $(format_duration "$BUILD_DURATION_SECONDS")."
   else
     BUILD_EXIT_CODE=$?
     echo "Fatal: build failed with exit code $BUILD_EXIT_CODE."
@@ -504,8 +573,13 @@ if [ "$CURRENT_BUILD_HASH" != "$LAST_BUILD_HASH" ] || ! build_output_is_valid; t
     exit 1
   fi
 else
-  echo "No code changes detected. Skipping build."
+  BUILD_ACTION="skipped"
+  echo "Build skipped; source, environment, toolchain, and output match the previous build."
 fi
 
-# 6. Start or reload the runtime process.
+begin_phase "6/6: activate and verify application"
 ensure_pm2_process
+
+DEPLOY_DURATION_SECONDS="$(($(date +%s) - DEPLOY_STARTED_AT))"
+echo
+echo "Deployment complete: commit=${CURRENT_HASH:0:8} branch=$TARGET_BRANCH build=$BUILD_ACTION build_time=$(format_duration "$BUILD_DURATION_SECONDS") total_time=$(format_duration "$DEPLOY_DURATION_SECONDS") node=$NODE_VERSION npm=$NPM_VERSION pm2=$PM2_VERSION"
