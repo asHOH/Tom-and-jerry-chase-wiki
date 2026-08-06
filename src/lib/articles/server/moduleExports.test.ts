@@ -6,7 +6,7 @@ import {
   getArticleHistory,
   incrementArticleViewCount,
 } from './detailQueries';
-import { getArticlesPageData, getPaginatedArticles } from './listQueries';
+import { getArticleListPage, getArticlesPageData } from './listQueries';
 
 jest.mock('server-only', () => ({}), { virtual: true });
 
@@ -37,7 +37,7 @@ jest.mock('@/lib/supabase/public', () => ({
 describe('article server query modules', () => {
   it('should expose focused internal modules behind the public facade', () => {
     expect(typeof getArticlesPageData).toBe('function');
-    expect(typeof getPaginatedArticles).toBe('function');
+    expect(typeof getArticleListPage).toBe('function');
     expect(typeof getArticleBasicInfo).toBe('function');
     expect(typeof getApprovedArticleVersion).toBe('function');
     expect(typeof getArticleDetailData).toBe('function');

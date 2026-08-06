@@ -849,6 +849,7 @@ export type Database = {
           content: string | null;
           created_at: string | null;
           editor_id: string | null;
+          excerpt: string | null;
           id: string | null;
           publication_revision: number | null;
           status: Database['public']['Enums']['version_status'] | null;
@@ -859,6 +860,7 @@ export type Database = {
           content?: string | null;
           created_at?: string | null;
           editor_id?: string | null;
+          excerpt?: string | null;
           id?: string | null;
           publication_revision?: number | null;
           status?: Database['public']['Enums']['version_status'] | null;
@@ -869,6 +871,7 @@ export type Database = {
           content?: string | null;
           created_at?: string | null;
           editor_id?: string | null;
+          excerpt?: string | null;
           id?: string | null;
           publication_revision?: number | null;
           status?: Database['public']['Enums']['version_status'] | null;

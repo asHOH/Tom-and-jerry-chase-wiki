@@ -7,7 +7,7 @@ import Button from '@/components/ui/Button';
 
 interface ArticlePaginationProps {
   currentPage: number;
-  clientTotalPages: number;
+  totalPages: number;
   handlePageChange: (newPage: number) => void;
   isMobile: boolean;
   selectedCategories: Set<string>;
@@ -15,16 +15,16 @@ interface ArticlePaginationProps {
 
 const ArticlePagination: React.FC<ArticlePaginationProps> = ({
   currentPage,
-  clientTotalPages,
+  totalPages,
   handlePageChange,
   isMobile,
   selectedCategories,
 }) => {
-  if (clientTotalPages <= 1) return null;
+  if (totalPages <= 1) return null;
 
   const pages = [];
   const startPage = Math.max(1, currentPage - 2);
-  const endPage = Math.min(clientTotalPages, currentPage + 2);
+  const endPage = Math.min(totalPages, currentPage + 2);
 
   for (let i = startPage; i <= endPage; i++) {
     pages.push(i);
@@ -37,7 +37,7 @@ const ArticlePagination: React.FC<ArticlePaginationProps> = ({
     <div className='mt-8 flex flex-col items-center gap-4'>
       {/* Page indicator */}
       <div className='text-sm text-gray-600 dark:text-gray-400'>
-        第 {currentPage} 页，共 {clientTotalPages} 页
+        第 {currentPage} 页，共 {totalPages} 页
         {!isMobile && (
           <span className='ml-2 text-xs text-gray-400 dark:text-gray-500'>
             (← → 键翻页{selectedCategories.size > 0 ? '，Esc 清除筛选' : ''})
@@ -101,9 +101,9 @@ const ArticlePagination: React.FC<ArticlePaginationProps> = ({
           </Button>
         ))}
 
-        {endPage < clientTotalPages && (
+        {endPage < totalPages && (
           <>
-            {endPage < clientTotalPages - 1 && (
+            {endPage < totalPages - 1 && (
               <span className='px-2 text-gray-500' aria-hidden='true'>
                 ...
               </span>
@@ -111,14 +111,14 @@ const ArticlePagination: React.FC<ArticlePaginationProps> = ({
             <Button
               variant='unstyled'
               type='button'
-              onClick={() => handlePageChange(clientTotalPages)}
-              aria-label={`第 ${clientTotalPages} 页`}
+              onClick={() => handlePageChange(totalPages)}
+              aria-label={`第 ${totalPages} 页`}
               className={cn(
                 paginationButtonBase,
                 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
               )}
             >
-              {clientTotalPages}
+              {totalPages}
             </Button>
           </>
         )}
@@ -127,7 +127,7 @@ const ArticlePagination: React.FC<ArticlePaginationProps> = ({
           variant='unstyled'
           type='button'
           onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage >= clientTotalPages}
+          disabled={currentPage >= totalPages}
           aria-label='下一页'
           className={cn(
             paginationButtonBase,
@@ -139,7 +139,7 @@ const ArticlePagination: React.FC<ArticlePaginationProps> = ({
       </div>
 
       {/* Mobile swipe hint */}
-      {isMobile && clientTotalPages > 1 && (
+      {isMobile && totalPages > 1 && (
         <p className='text-xs text-gray-400 dark:text-gray-500'>👆 左右滑动翻页</p>
       )}
     </div>

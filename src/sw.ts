@@ -28,7 +28,6 @@ const isScriptOrStyleRequest = (request: Request) =>
 const LEGACY_API_CACHE_NAME = 'api-cache';
 const PUBLIC_API_CACHE_NAME = 'public-api-cache-v1';
 const CACHEABLE_PUBLIC_API_PATHS = new Set([
-  '/api/articles',
   '/api/categories',
   '/api/comments',
   '/api/entities/export',
