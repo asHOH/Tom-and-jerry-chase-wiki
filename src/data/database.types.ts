@@ -41,6 +41,7 @@ export type Database = {
           created_at: string;
           editor_id: string;
           id: string;
+          metadata_snapshot_complete: boolean;
           preview_token: string;
           publication_revision: number | null;
           proposed_category_id: string | null;
@@ -58,6 +59,7 @@ export type Database = {
           created_at?: string;
           editor_id: string;
           id?: string;
+          metadata_snapshot_complete?: never;
           preview_token: string;
           publication_revision?: number | null;
           proposed_category_id?: string | null;
@@ -75,6 +77,7 @@ export type Database = {
           created_at?: string;
           editor_id?: string;
           id?: string;
+          metadata_snapshot_complete?: never;
           preview_token?: string;
           publication_revision?: number | null;
           proposed_category_id?: string | null;
@@ -224,17 +227,17 @@ export type Database = {
           },
           {
             foreignKeyName: 'articles_current_version_id_fkey';
-            columns: ['current_version_id'];
+            columns: ['id', 'current_version_id'];
             isOneToOne: false;
             referencedRelation: 'article_versions';
-            referencedColumns: ['id'];
+            referencedColumns: ['article_id', 'id'];
           },
           {
             foreignKeyName: 'articles_current_version_id_fkey';
-            columns: ['current_version_id'];
+            columns: ['id', 'current_version_id'];
             isOneToOne: false;
             referencedRelation: 'article_versions_public_view';
-            referencedColumns: ['id'];
+            referencedColumns: ['article_id', 'id'];
           },
         ];
       };

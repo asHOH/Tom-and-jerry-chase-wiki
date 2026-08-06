@@ -5,7 +5,11 @@
 CREATE SEQUENCE public.article_version_publication_revision_seq;
 
 ALTER TABLE public.article_versions
-  ADD COLUMN publication_revision bigint;
+  ADD COLUMN publication_revision bigint,
+  ADD COLUMN metadata_snapshot_complete boolean
+    GENERATED ALWAYS AS (
+      proposed_title IS NOT NULL AND proposed_category_id IS NOT NULL
+    ) STORED;
 
 ALTER SEQUENCE public.article_version_publication_revision_seq
   OWNED BY public.article_versions.publication_revision;
@@ -62,7 +66,8 @@ WITH current_versions AS (
     id,
     proposed_title,
     proposed_category_id,
-    proposed_character_id
+    proposed_character_id,
+    metadata_snapshot_complete
   FROM public.article_versions
   WHERE status = 'approved'
   ORDER BY article_id, created_at DESC, id DESC
@@ -70,16 +75,32 @@ WITH current_versions AS (
 UPDATE public.articles AS article
 SET
   current_version_id = current_version.id,
-  title = COALESCE(current_version.proposed_title, article.title),
-  category_id = COALESCE(current_version.proposed_category_id, article.category_id),
-  character_id = current_version.proposed_character_id
+  title = CASE
+    WHEN current_version.metadata_snapshot_complete
+      THEN current_version.proposed_title
+    ELSE article.title
+  END,
+  category_id = CASE
+    WHEN current_version.metadata_snapshot_complete
+      THEN current_version.proposed_category_id
+    ELSE article.category_id
+  END,
+  character_id = CASE
+    WHEN current_version.metadata_snapshot_complete
+      THEN current_version.proposed_character_id
+    ELSE article.character_id
+  END
 FROM current_versions AS current_version
 WHERE article.id = current_version.article_id;
 
+ALTER TABLE public.article_versions
+  ADD CONSTRAINT article_versions_article_id_id_key
+  UNIQUE (article_id, id);
+
 ALTER TABLE public.articles
   ADD CONSTRAINT articles_current_version_id_fkey
-  FOREIGN KEY (current_version_id)
-  REFERENCES public.article_versions(id);
+  FOREIGN KEY (id, current_version_id)
+  REFERENCES public.article_versions(article_id, id);
 
 CREATE INDEX articles_current_version_id_idx
   ON public.articles (current_version_id)
@@ -98,6 +119,52 @@ SELECT
   commit_message,
   publication_revision
 FROM public.article_versions;
+
+CREATE OR REPLACE FUNCTION public.enforce_article_current_version()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, pg_temp
+AS $$
+DECLARE
+  published_version public.article_versions%ROWTYPE;
+BEGIN
+  IF NEW.current_version_id IS NULL THEN
+    RETURN NEW;
+  END IF;
+
+  SELECT article_version.*
+  INTO published_version
+  FROM public.article_versions AS article_version
+  WHERE article_version.id = NEW.current_version_id
+    AND article_version.article_id = NEW.id
+    AND article_version.status = 'approved';
+
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'Current article version must be approved and belong to the same article'
+      USING ERRCODE = '23514';
+  END IF;
+
+  IF published_version.metadata_snapshot_complete THEN
+    NEW.title := published_version.proposed_title;
+    NEW.category_id := published_version.proposed_category_id;
+    NEW.character_id := published_version.proposed_character_id;
+  ELSIF TG_OP = 'INSERT'
+    OR OLD.current_version_id IS DISTINCT FROM NEW.current_version_id
+  THEN
+    RAISE EXCEPTION 'Cannot publish an article version with an incomplete metadata snapshot'
+      USING ERRCODE = '23514';
+  END IF;
+
+  RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER article_enforce_current_version
+  BEFORE INSERT OR UPDATE OF current_version_id, title, category_id, character_id
+  ON public.articles
+  FOR EACH ROW
+  EXECUTE FUNCTION public.enforce_article_current_version();
 
 -- Public visibility now follows the same explicit pointer as public readers.
 DROP POLICY IF EXISTS "Anon can view approved articles" ON public.articles;
@@ -194,13 +261,9 @@ BEGIN
     WHERE id = NEW.article_id
     FOR UPDATE;
 
-    UPDATE public.articles AS article
-    SET
-      current_version_id = NEW.id,
-      title = COALESCE(NEW.proposed_title, article.title),
-      category_id = COALESCE(NEW.proposed_category_id, article.category_id),
-      character_id = NEW.proposed_character_id
-    WHERE article.id = NEW.article_id;
+    UPDATE public.articles
+    SET current_version_id = NEW.id
+    WHERE id = NEW.article_id;
   ELSIF TG_OP = 'UPDATE'
     AND OLD.status = 'approved'
     AND NEW.status IS DISTINCT FROM 'approved'
@@ -231,16 +294,11 @@ BEGIN
       LIMIT 1;
 
       IF FOUND THEN
-        UPDATE public.articles AS article
-        SET
-          current_version_id = fallback_version.id,
-          title = COALESCE(fallback_version.proposed_title, article.title),
-          category_id = COALESCE(
-            fallback_version.proposed_category_id,
-            article.category_id
-          ),
-          character_id = fallback_version.proposed_character_id
-        WHERE article.id = NEW.article_id;
+        -- The article pointer guard rejects legacy fallbacks whose metadata
+        -- snapshot is incomplete, rolling back the revocation transaction.
+        UPDATE public.articles
+        SET current_version_id = fallback_version.id
+        WHERE id = NEW.article_id;
       ELSE
         UPDATE public.articles
         SET current_version_id = NULL
@@ -260,6 +318,8 @@ CREATE TRIGGER article_version_sync_current
   EXECUTE FUNCTION public.sync_article_current_version();
 
 REVOKE ALL ON FUNCTION public.assign_article_version_publication_revision()
+  FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION public.enforce_article_current_version()
   FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION public.sync_article_current_version()
   FROM PUBLIC, anon, authenticated;

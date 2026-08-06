@@ -28,6 +28,16 @@ export function mapModerationActionError(
     };
   }
 
+  if (normalizedMessage.includes('incomplete metadata snapshot')) {
+    return {
+      error:
+        action === 'revoke'
+          ? 'This version cannot be revoked because the preceding legacy version has no complete metadata snapshot.'
+          : 'This legacy article version cannot be published because its metadata snapshot is incomplete.',
+      status: 409,
+    };
+  }
+
   if (normalizedMessage.includes('not found')) {
     return {
       error: `Article version not found or not in the correct status for ${action}`,

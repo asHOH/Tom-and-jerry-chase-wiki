@@ -31,6 +31,19 @@ describe('mapModerationActionError', () => {
     });
   });
 
+  it('maps incomplete legacy metadata to a safe conflict', () => {
+    expect(
+      mapModerationActionError(
+        'revoke',
+        'Cannot publish an article version with an incomplete metadata snapshot'
+      )
+    ).toEqual({
+      error:
+        'This version cannot be revoked because the preceding legacy version has no complete metadata snapshot.',
+      status: 409,
+    });
+  });
+
   it('returns null for unknown errors', () => {
     expect(mapModerationActionError('approve', 'unexpected error')).toBeNull();
   });
