@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { AssetManager } from '@/lib/assetManager';
@@ -9,8 +8,8 @@ import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { formatArticleDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
 import { storage, StorageKey } from '@/lib/localStorage';
-import { toChineseNumeral } from '@/lib/textUtils';
 import type { FactionId } from '@/data/types';
+import { useArticleToc } from '@/features/articles/hooks/useArticleToc';
 import Button from '@/components/ui/Button';
 import ButtonLink from '@/components/ui/ButtonLink';
 import Card from '@/components/ui/Card';
@@ -47,117 +46,6 @@ interface ArticleData {
   };
 }
 
-interface TocItem {
-  id: string;
-  text: string;
-  level: number;
-  prefix: string;
-}
-
-const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-const removeLeadingCharactersFromHeading = (heading: HTMLHeadingElement, count: number) => {
-  if (!count) {
-    return;
-  }
-  const walker = document.createTreeWalker(heading, NodeFilter.SHOW_TEXT, null);
-  let remaining = count;
-
-  while (remaining > 0) {
-    const node = walker.nextNode() as Text | null;
-    if (!node) {
-      break;
-    }
-    const text = node.textContent ?? '';
-    if (!text.length) {
-      continue;
-    }
-    if (text.length <= remaining) {
-      node.textContent = '';
-      remaining -= text.length;
-    } else {
-      node.textContent = text.slice(remaining);
-      remaining = 0;
-    }
-  }
-  heading.normalize();
-};
-
-const buildHeadingPrefixMatchers = (prefix: string, numericTokens: number[]): RegExp[] => {
-  const candidates = new Set<string>();
-  const trimmedPrefix = prefix.trim();
-  if (trimmedPrefix) {
-    candidates.add(trimmedPrefix);
-  }
-  if (trimmedPrefix.endsWith('、') || trimmedPrefix.endsWith('.')) {
-    candidates.add(trimmedPrefix.slice(0, -1).trim());
-  }
-
-  if (numericTokens.length) {
-    const numericSequence = numericTokens.join('.');
-    candidates.add(numericSequence);
-    candidates.add(`${numericSequence}.`);
-    candidates.add(`${numericSequence}、`);
-  }
-
-  if (numericTokens.length === 1) {
-    const chinese = toChineseNumeral(numericTokens[0] ?? 0);
-    if (chinese) {
-      candidates.add(chinese);
-      candidates.add(`${chinese}、`);
-      candidates.add(`${chinese}.`);
-    }
-  }
-
-  const matchers: RegExp[] = [];
-  candidates.forEach((candidate) => {
-    if (!candidate) {
-      return;
-    }
-    const escaped = escapeRegExp(candidate);
-    if (!escaped) {
-      return;
-    }
-    matchers.push(new RegExp(`^${escaped}(?:[\\s、.:-]+)?`));
-  });
-
-  if (numericTokens.length > 1) {
-    const sequence = numericTokens.map((token) => escapeRegExp(String(token))).join('[\\s、.:-]+');
-    matchers.push(new RegExp(`^${sequence}(?:[\\s、.:-]+)?`));
-  }
-
-  return matchers;
-};
-
-const stripExistingHeadingNumbering = (
-  heading: HTMLHeadingElement,
-  rawText: string,
-  prefix: string,
-  numericTokens: number[]
-): string => {
-  if (!rawText.trim()) {
-    return rawText;
-  }
-  const leadingWhitespaceMatch = rawText.match(/^\s+/);
-  const leadingWhitespaceLength = leadingWhitespaceMatch?.[0]?.length ?? 0;
-  const trimmed = rawText.slice(leadingWhitespaceLength);
-  if (!trimmed) {
-    return rawText.trim();
-  }
-
-  const matchers = buildHeadingPrefixMatchers(prefix, numericTokens);
-  for (const matcher of matchers) {
-    const match = trimmed.match(matcher);
-    if (match?.[0]) {
-      const removeLength = leadingWhitespaceLength + match[0].length;
-      removeLeadingCharactersFromHeading(heading, removeLength);
-      return (heading.textContent ?? '').trim();
-    }
-  }
-
-  return rawText.trim();
-};
-
 // const fetcher = (url: string) =>
 //   fetch(url).then((res) => {
 //     if (!res.ok) {
@@ -181,12 +69,8 @@ export default function ArticleClient({
   boundCharacter: { id: string; factionId?: FactionId } | null;
   sanitizedContent: string;
 }) {
-  const params = useParams();
   const permissions = usePermissions();
-  const articleId = params?.id as string;
-  const contentRef = useRef<HTMLDivElement | null>(null);
-  const [tocItems, setTocItems] = useState<TocItem[]>([]);
-  const [activeHeadingId, setActiveHeadingId] = useState<string>('');
+  const articleId = article.id;
   const [showAutoNumbering, setShowAutoNumbering] = useState(false);
   const [readingProgress, setReadingProgress] = useState(0);
   const [mounted, setMounted] = useState(false);
@@ -216,243 +100,12 @@ export default function ArticleClient({
     return () => window.removeEventListener('scroll', updateProgress);
   }, []);
 
-  const articleContent = useMemo(
-    () => article.latest_version?.content ?? '',
-    [article.latest_version?.content]
-  );
-
-  useLayoutEffect(() => {
-    const container = contentRef.current;
-    if (!container) {
-      setTocItems([]);
-      return;
-    }
-
-    let isIterating = false;
-    let observer: MutationObserver | null = null;
-
-    const generateTocItems = () => {
-      if (isIterating) return;
-      isIterating = true;
-
-      // Stop observing while we make changes
-      observer?.disconnect();
-
-      const headingElements = Array.from(
-        container.querySelectorAll<HTMLHeadingElement>('h1, h2, h3, h4, h5, h6')
-      );
-
-      if (!headingElements.length) {
-        setTocItems((prev) => {
-          if (!prev.length) {
-            return prev;
-          }
-          return [];
-        });
-        setActiveHeadingId((prev) => (prev ? '' : prev));
-        return;
-      }
-
-      const levelCounts: Record<number, number> = {};
-      headingElements.forEach((heading) => {
-        const level = Number(heading.tagName.substring(1));
-        if (!Number.isNaN(level)) {
-          levelCounts[level] = (levelCounts[level] ?? 0) + 1;
-        }
-      });
-
-      const shouldSkipSingleH1 = (levelCounts[1] ?? 0) === 1;
-      const targetHeadings = shouldSkipSingleH1
-        ? headingElements.filter((heading) => heading.tagName.toUpperCase() !== 'H1')
-        : headingElements;
-
-      if (!targetHeadings.length) {
-        setTocItems((prev) => {
-          if (!prev.length) {
-            return prev;
-          }
-          return [];
-        });
-        setActiveHeadingId((prev) => (prev ? '' : prev));
-        return;
-      }
-
-      const slugCounts: Record<string, number> = {};
-      const mapHeadingToId = (text: string, fallbackIndex: number) => {
-        const normalizedText = text
-          .trim()
-          .toLowerCase()
-          .replace(/\s+/g, '-')
-          .replace(/[!"#$%&'()*+,./:;<=>?@[\\\]^`{|}~]/g, '');
-
-        const baseId = normalizedText || `section-${fallbackIndex + 1}`;
-        const currentCount = slugCounts[baseId] ?? 0;
-        slugCounts[baseId] = currentCount + 1;
-        return currentCount ? `${baseId}-${currentCount}` : baseId;
-      };
-
-      const minLevel = targetHeadings.reduce((min, h) => {
-        const level = Number(h.tagName.substring(1));
-        return Number.isNaN(level) ? min : Math.min(min, level);
-      }, 6);
-      const counters: number[] = [0, 0, 0, 0, 0, 0];
-
-      const generatedItems = targetHeadings
-        .map((heading, index) => {
-          const originalHtmlAttr = heading.getAttribute('data-heading-original-html');
-          if (originalHtmlAttr) {
-            if (heading.innerHTML !== originalHtmlAttr) {
-              heading.innerHTML = originalHtmlAttr;
-            }
-          } else {
-            heading.setAttribute('data-heading-original-html', heading.innerHTML);
-          }
-
-          const rawText = heading.textContent?.trim() ?? '';
-          if (!rawText) {
-            return null;
-          }
-
-          const level = Number(heading.tagName.substring(1));
-          const relativeLevel = level - minLevel;
-
-          // Reset deeper levels
-          for (let i = relativeLevel + 1; i < counters.length; i++) {
-            counters[i] = 0;
-          }
-          // Increment current level
-          if (relativeLevel >= 0 && relativeLevel < counters.length) {
-            counters[relativeLevel] = (counters[relativeLevel] || 0) + 1;
-          }
-
-          let prefix = '';
-          if (relativeLevel === 0) {
-            prefix = `${toChineseNumeral(counters[0] || 0)}、`;
-          } else if (relativeLevel === 1) {
-            prefix = `${counters[1] || 0}`;
-          } else if (relativeLevel >= 2) {
-            const parts = [];
-            for (let i = 1; i <= relativeLevel; i++) {
-              parts.push(counters[i] || 0);
-            }
-            prefix = parts.join('.');
-          }
-
-          const existingId = heading.id.trim();
-          const id = existingId || mapHeadingToId(rawText, index);
-          heading.id = id;
-          heading.classList.add('scroll-mt-24');
-          let headingText = rawText;
-
-          if (showAutoNumbering) {
-            const numericTokens =
-              relativeLevel === 0
-                ? [counters[0] || 0]
-                : counters.slice(1, relativeLevel + 1).map((value) => value || 0);
-            heading.setAttribute('data-heading-prefix', prefix);
-            headingText = stripExistingHeadingNumbering(heading, rawText, prefix, numericTokens);
-          } else {
-            heading.removeAttribute('data-heading-prefix');
-          }
-
-          return { id, text: headingText, level, prefix } satisfies TocItem;
-        })
-        .filter((item): item is TocItem => Boolean(item));
-
-      setTocItems((prev) => {
-        if (
-          prev.length === generatedItems.length &&
-          prev.every((item, idx) => {
-            const next = generatedItems[idx];
-            if (!next) {
-              return false;
-            }
-            return item.id === next.id && item.text === next.text && item.level === next.level;
-          })
-        ) {
-          return prev;
-        }
-        return generatedItems;
-      });
-
-      setActiveHeadingId((prev) =>
-        prev && generatedItems.some((item) => item.id === prev)
-          ? prev
-          : (generatedItems[0]?.id ?? '')
-      );
-
-      // Re-observe
-      if (container) {
-        observer?.observe(container, { childList: true, subtree: true, characterData: true });
-      }
-      isIterating = false;
-    };
-
-    observer = new MutationObserver(() => {
-      generateTocItems();
-    });
-
-    generateTocItems();
-
-    return () => observer?.disconnect();
-  }, [articleContent, showAutoNumbering]);
-
-  useEffect(() => {
-    if (!tocItems.length) {
-      return;
-    }
-
-    const handleScroll = () => {
-      let currentId = tocItems[0]?.id ?? '';
-      for (const item of tocItems) {
-        const element = document.getElementById(item.id);
-        if (!element) {
-          continue;
-        }
-        const { top } = element.getBoundingClientRect();
-        if (top <= 128) {
-          currentId = item.id;
-        } else {
-          break;
-        }
-      }
-
-      setActiveHeadingId((prev) => (prev === currentId ? prev : currentId));
-    };
-
-    handleScroll();
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [tocItems]);
-
-  // Handle initial hash scroll since IDs are generated client-side
-  const hasScrolledRef = useRef(false);
-  useEffect(() => {
-    let timer: NodeJS.Timeout | null = null;
-
-    if (
-      !hasScrolledRef.current &&
-      tocItems.length > 0 &&
-      typeof window !== 'undefined' &&
-      window.location.hash
-    ) {
-      const hashId = decodeURIComponent(window.location.hash.substring(1));
-      if (tocItems.some((item) => item.id === hashId)) {
-        const element = document.getElementById(hashId);
-        if (element) {
-          hasScrolledRef.current = true;
-          // Small delay to ensure layout has settled
-          timer = setTimeout(() => {
-            element.scrollIntoView({ behavior: 'smooth' });
-          }, 100);
-        }
-      }
-    }
-
-    return () => {
-      if (timer) clearTimeout(timer);
-    };
-  }, [tocItems]);
+  const articleContent = article.latest_version?.content ?? '';
+  const { contentRef, tocItems, activeHeadingId } = useArticleToc({
+    articleId,
+    content: articleContent,
+    showAutoNumbering,
+  });
 
   const canEdit = permissions.has('article.update_own') || permissions.has('article.update_any');
   const titleSize = article.title.length <= 10 ? 'text-3xl md:text-4xl' : 'text-2xl md:text-3xl';
