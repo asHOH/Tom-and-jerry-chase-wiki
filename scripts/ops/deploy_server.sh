@@ -19,11 +19,6 @@ START_SCRIPT="scripts/ops/start_server.sh"
 LAST_HEALTH_CHECK_ERROR=""
 FETCH_ENDPOINT_RESPONSE=""
 DEPLOY_STARTED_AT="$(date +%s)"
-BUILD_ACTION="not-started"
-BUILD_DURATION_SECONDS="0"
-NODE_VERSION="unknown"
-NPM_VERSION="unknown"
-PM2_VERSION="unknown"
 
 if [ -d "$SCRIPT_DIR/../../.git" ]; then
   REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
@@ -479,37 +474,21 @@ begin_phase "4/6: install dependencies"
 install_dependencies
 
 begin_phase "5/6: evaluate and build application"
-BUILD_HASH_FILE=".next/.build_hash"
-BUILD_SOURCE_HASH_FILE=".next/.build_source_hash"
-BUILD_ENV_HASH_FILE=".next/.build_env_hash"
-BUILD_TOOLCHAIN_HASH_FILE=".next/.build_toolchain_hash"
+BUILD_INPUTS_FILE=".next/.build_inputs"
+API_RUNTIME="nodejs"
 ENV_FILE_HASH="$(sha256sum "$ENV_FILE" | awk '{ print $1 }')"
-TOOLCHAIN_HASH="$(
-  printf 'node=%s\nnpm=%s\napi_runtime=nodejs\n' "$NODE_VERSION" "$NPM_VERSION" | sha256sum | awk '{ print $1 }'
-)"
-CURRENT_BUILD_HASH="$(
-  printf '%s\n%s\n%s\n' "$CURRENT_HASH" "$ENV_FILE_HASH" "$TOOLCHAIN_HASH" | sha256sum | awk '{ print $1 }'
-)"
-LAST_BUILD_HASH=""
 LAST_SOURCE_HASH=""
 LAST_ENV_HASH=""
-LAST_TOOLCHAIN_HASH=""
+LAST_NODE_VERSION=""
+LAST_NPM_VERSION=""
+LAST_API_RUNTIME=""
 BUILD_REASONS=()
 
 export COMMIT_SHA="$CURRENT_HASH"
 export NEXT_PUBLIC_BUILD_TIMESTAMP="$(git show -s --format=%cI "$CURRENT_HASH")"
 
-if [ -f "$BUILD_HASH_FILE" ]; then
-  LAST_BUILD_HASH="$(cat "$BUILD_HASH_FILE")"
-fi
-if [ -f "$BUILD_SOURCE_HASH_FILE" ]; then
-  LAST_SOURCE_HASH="$(cat "$BUILD_SOURCE_HASH_FILE")"
-fi
-if [ -f "$BUILD_ENV_HASH_FILE" ]; then
-  LAST_ENV_HASH="$(cat "$BUILD_ENV_HASH_FILE")"
-fi
-if [ -f "$BUILD_TOOLCHAIN_HASH_FILE" ]; then
-  LAST_TOOLCHAIN_HASH="$(cat "$BUILD_TOOLCHAIN_HASH_FILE")"
+if [ -f "$BUILD_INPUTS_FILE" ]; then
+  IFS=$'\t' read -r LAST_SOURCE_HASH LAST_ENV_HASH LAST_NODE_VERSION LAST_NPM_VERSION LAST_API_RUNTIME < "$BUILD_INPUTS_FILE" || true
 fi
 
 if [ "$CURRENT_HASH" != "$LAST_SOURCE_HASH" ]; then
@@ -518,18 +497,19 @@ fi
 if [ "$ENV_FILE_HASH" != "$LAST_ENV_HASH" ]; then
   BUILD_REASONS+=("environment")
 fi
-if [ "$TOOLCHAIN_HASH" != "$LAST_TOOLCHAIN_HASH" ]; then
+if [ "$NODE_VERSION" != "$LAST_NODE_VERSION" ] ||
+  [ "$NPM_VERSION" != "$LAST_NPM_VERSION" ] ||
+  [ "$API_RUNTIME" != "$LAST_API_RUNTIME" ]; then
   BUILD_REASONS+=("toolchain")
 fi
 if ! build_output_is_valid; then
   BUILD_REASONS+=("output")
 fi
-if [ "$CURRENT_BUILD_HASH" != "$LAST_BUILD_HASH" ] && [ "${#BUILD_REASONS[@]}" -eq 0 ]; then
-  BUILD_REASONS+=("metadata")
-fi
 
-if [ "$CURRENT_BUILD_HASH" != "$LAST_BUILD_HASH" ] || [ "${#BUILD_REASONS[@]}" -gt 0 ]; then
-  echo "Build required; changed inputs: $(IFS=', '; echo "${BUILD_REASONS[*]}")"
+if [ "${#BUILD_REASONS[@]}" -gt 0 ]; then
+  BUILD_REASON_LIST="$(printf '%s, ' "${BUILD_REASONS[@]}")"
+  BUILD_REASON_LIST="${BUILD_REASON_LIST%, }"
+  echo "Build required; changed inputs: $BUILD_REASON_LIST"
   BUILD_STARTED_AT="$(date +%s)"
 
   stop_pm2_process_for_build
@@ -556,13 +536,13 @@ if [ "$CURRENT_BUILD_HASH" != "$LAST_BUILD_HASH" ] || [ "${#BUILD_REASONS[@]}" -
 
     echo "Build successful."
     mkdir -p .next
-    echo "$CURRENT_BUILD_HASH" > "$BUILD_HASH_FILE"
-    echo "$CURRENT_HASH" > "$BUILD_SOURCE_HASH_FILE"
-    echo "$ENV_FILE_HASH" > "$BUILD_ENV_HASH_FILE"
-    echo "$TOOLCHAIN_HASH" > "$BUILD_TOOLCHAIN_HASH_FILE"
+    printf '%s\t%s\t%s\t%s\t%s\n' \
+      "$CURRENT_HASH" "$ENV_FILE_HASH" "$NODE_VERSION" "$NPM_VERSION" "$API_RUNTIME" \
+      > "$BUILD_INPUTS_FILE"
     BUILD_ACTION="built"
     BUILD_DURATION_SECONDS="$(($(date +%s) - BUILD_STARTED_AT))"
-    echo "Build completed in $(format_duration "$BUILD_DURATION_SECONDS")."
+    BUILD_DURATION="$(format_duration "$BUILD_DURATION_SECONDS")"
+    echo "Build completed in $BUILD_DURATION."
   else
     BUILD_EXIT_CODE=$?
     echo "Fatal: build failed with exit code $BUILD_EXIT_CODE."
@@ -574,6 +554,7 @@ if [ "$CURRENT_BUILD_HASH" != "$LAST_BUILD_HASH" ] || [ "${#BUILD_REASONS[@]}" -
   fi
 else
   BUILD_ACTION="skipped"
+  BUILD_DURATION="skipped"
   echo "Build skipped; source, environment, toolchain, and output match the previous build."
 fi
 
@@ -582,4 +563,4 @@ ensure_pm2_process
 
 DEPLOY_DURATION_SECONDS="$(($(date +%s) - DEPLOY_STARTED_AT))"
 echo
-echo "Deployment complete: commit=${CURRENT_HASH:0:8} branch=$TARGET_BRANCH build=$BUILD_ACTION build_time=$(format_duration "$BUILD_DURATION_SECONDS") total_time=$(format_duration "$DEPLOY_DURATION_SECONDS") node=$NODE_VERSION npm=$NPM_VERSION pm2=$PM2_VERSION"
+echo "Deployment complete: commit=${CURRENT_HASH:0:8} branch=$TARGET_BRANCH build=$BUILD_ACTION build_time=$BUILD_DURATION total_time=$(format_duration "$DEPLOY_DURATION_SECONDS") node=$NODE_VERSION npm=$NPM_VERSION pm2=$PM2_VERSION"
