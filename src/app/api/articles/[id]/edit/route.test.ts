@@ -1,7 +1,9 @@
+import { resolveArticleCharacterForWrite } from '@/lib/articles/articleWriteRelations';
 import { canAccess } from '@/lib/auth/permissions';
 import { loadPermissionGrants } from '@/lib/auth/requirePermission';
 import { requireNotBlocked } from '@/lib/blocks/server';
 import { notifyArticleVersionSubscribers, publishNotification } from '@/lib/notificationUtils';
+import { checkRateLimit } from '@/lib/rateLimit';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { createClient } from '@/lib/supabase/server';
 
@@ -19,6 +21,11 @@ jest.mock('next/server', () => ({
   NextResponse: {
     json: jest.fn(jsonResponse),
   },
+}));
+
+jest.mock('@/lib/articles/articleWriteRelations', () => ({
+  ArticleWriteValidationError: class ArticleWriteValidationError extends Error {},
+  resolveArticleCharacterForWrite: jest.fn(),
 }));
 
 jest.mock('@/lib/auth/permissions', () => ({
@@ -39,6 +46,10 @@ jest.mock('@/lib/notificationUtils', () => ({
   publishNotification: jest.fn(),
 }));
 
+jest.mock('@/lib/rateLimit', () => ({
+  checkRateLimit: jest.fn(),
+}));
+
 jest.mock('@/lib/supabase/admin', () => ({
   supabaseAdmin: { from: jest.fn(), rpc: jest.fn() },
 }));
@@ -48,13 +59,16 @@ jest.mock('@/lib/supabase/server', () => ({
 }));
 
 const canAccessMock = jest.mocked(canAccess);
+const resolveArticleCharacterForWriteMock = jest.mocked(resolveArticleCharacterForWrite);
 const loadPermissionGrantsMock = jest.mocked(loadPermissionGrants);
 const requireNotBlockedMock = jest.mocked(requireNotBlocked);
 const notifyArticleVersionSubscribersMock = jest.mocked(notifyArticleVersionSubscribers);
 const publishNotificationMock = jest.mocked(publishNotification);
+const checkRateLimitMock = jest.mocked(checkRateLimit);
 const createClientMock = jest.mocked(createClient);
 const adminFromMock = jest.mocked(supabaseAdmin.from);
 const adminRpcMock = jest.mocked(supabaseAdmin.rpc);
+const CATEGORY_ID = '11111111-1111-4111-8111-111111111111';
 
 const articleQuery = {
   select: jest.fn(),
@@ -78,7 +92,9 @@ describe('article edit route', () => {
     } as never);
     loadPermissionGrantsMock.mockResolvedValue([]);
     canAccessMock.mockReturnValue(true);
+    checkRateLimitMock.mockResolvedValue({ allowed: true });
     requireNotBlockedMock.mockResolvedValue(null);
+    resolveArticleCharacterForWriteMock.mockResolvedValue(null);
     notifyArticleVersionSubscribersMock.mockResolvedValue(undefined);
     publishNotificationMock.mockResolvedValue({
       created: true,
@@ -89,7 +105,7 @@ describe('article edit route', () => {
     articleQuery.select.mockReturnValue(articleQuery);
     articleQuery.eq.mockReturnValue(articleQuery);
     articleQuery.single.mockResolvedValue({
-      data: { author_id: 'editor-1', category_id: 'category-1' },
+      data: { author_id: 'editor-1', category_id: CATEGORY_ID },
       error: null,
     });
 
@@ -108,8 +124,9 @@ describe('article edit route', () => {
     const response = await POST(
       createRequest({
         title: '测试文章',
-        category: 'category-1',
+        category: CATEGORY_ID,
         content: '修改内容',
+        commit_message: '补充说明',
       }),
       { params: Promise.resolve({ id: 'article-1' }) }
     );
@@ -119,7 +136,7 @@ describe('article edit route', () => {
       actorUserId: 'editor-1',
       articleId: 'article-1',
       articleTitle: '测试文章',
-      proposedCategoryId: 'category-1',
+      proposedCategoryId: CATEGORY_ID,
       versionId: 'version-1',
     });
     expect(publishNotificationMock).not.toHaveBeenCalled();
@@ -134,8 +151,9 @@ describe('article edit route', () => {
     const response = await POST(
       createRequest({
         title: '测试文章',
-        category: 'category-1',
+        category: CATEGORY_ID,
         content: '修改内容',
+        commit_message: '补充说明',
       }),
       { params: Promise.resolve({ id: 'article-1' }) }
     );
@@ -143,5 +161,35 @@ describe('article edit route', () => {
     expect(response.status).toBe(200);
     expect(notifyArticleVersionSubscribersMock).not.toHaveBeenCalled();
     expect(publishNotificationMock).toHaveBeenCalled();
+  });
+
+  it('returns 400 for a non-string commit message', async () => {
+    const response = await POST(
+      createRequest({
+        title: '测试文章',
+        category: CATEGORY_ID,
+        content: '修改内容',
+        commit_message: { text: 'not a string' },
+      }),
+      { params: Promise.resolve({ id: 'article-1' }) }
+    );
+
+    expect(response.status).toBe(400);
+    expect(adminRpcMock).not.toHaveBeenCalled();
+  });
+
+  it('returns 429 before authenticating', async () => {
+    checkRateLimitMock.mockResolvedValue({
+      allowed: false,
+      headers: { 'Retry-After': '60' },
+      retryAfterSeconds: 60,
+    });
+
+    const response = await POST(createRequest(null), {
+      params: Promise.resolve({ id: 'article-1' }),
+    });
+
+    expect(response.status).toBe(429);
+    expect(createClientMock).not.toHaveBeenCalled();
   });
 });

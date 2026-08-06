@@ -247,18 +247,21 @@ export type Database = {
           id: string;
           name: string;
           parent_category_id: string | null;
+          requires_character: boolean;
         };
         Insert: {
           default_visibility?: Database['public']['Enums']['version_status'] | null;
           id?: string;
           name: string;
           parent_category_id?: string | null;
+          requires_character?: boolean;
         };
         Update: {
           default_visibility?: Database['public']['Enums']['version_status'] | null;
           id?: string;
           name?: string;
           parent_category_id?: string | null;
+          requires_character?: boolean;
         };
         Relationships: [
           {
@@ -1076,9 +1079,11 @@ export type Database = {
           p_actor_id: string;
           p_article_id: string;
           p_category_id: string;
+          p_character_id?: string | null;
           p_content: string;
           p_ip: string | null;
           p_title: string;
+          p_update_character?: boolean;
           p_version_id: string;
         };
         Returns: undefined;
@@ -1512,8 +1517,10 @@ export type Database = {
         Args: {
           p_article_id: string;
           p_category_id: string;
+          p_character_id: string | null;
           p_content: string;
           p_title: string;
+          p_update_character: boolean;
           p_version_id: string;
         };
         Returns: undefined;

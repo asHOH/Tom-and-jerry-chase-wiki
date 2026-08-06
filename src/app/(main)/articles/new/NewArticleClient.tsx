@@ -71,14 +71,9 @@ const NewArticleClient: React.FC<NewArticleClientProps> = ({ characterOptions })
     ) || [];
   const isLoadingCategories = !categoriesData && !categoriesError;
 
-  // Check if selected category is "角色攻略" (game strategy) - requires character binding
-  const isGameStrategyCategory = (categoryId: string): boolean => {
-    if (!categoryId || categories.length === 0) return false;
-    const selectedCat = categories.find((c) => c.id === categoryId);
-    return selectedCat?.name === '角色攻略';
-  };
-
-  const showCharacterSelector = isGameStrategyCategory(category);
+  const showCharacterSelector =
+    categories.find((categoryOption) => categoryOption.id === category)?.requires_character ??
+    false;
 
   const isContentEmpty = (html: string) => {
     if (!html) return true;
@@ -103,8 +98,10 @@ const NewArticleClient: React.FC<NewArticleClientProps> = ({ characterOptions })
 
   const handleCategoryChange = (newCategory: string) => {
     setCategory(newCategory);
-    // Clear character selection if switching away from game strategy category
-    if (!isGameStrategyCategory(newCategory)) {
+    const requiresCharacter =
+      categories.find((categoryOption) => categoryOption.id === newCategory)?.requires_character ??
+      false;
+    if (!requiresCharacter) {
       setCharacterId(null);
     }
   };

@@ -18,6 +18,7 @@ import { CheckBadgeIcon, CloseIcon } from '@/components/icons/CommonIcons';
 export interface CategoryOption {
   id: string;
   name: string;
+  requires_character: boolean;
 }
 
 interface ArticleFormProps {
