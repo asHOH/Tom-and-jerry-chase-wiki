@@ -16,6 +16,8 @@ ENV_FILE=".env.production"
 PM2_APP_NAME="tjwiki"
 PM2_DAEMON_VERSION_CHECKED=0
 START_SCRIPT="scripts/ops/start_server.sh"
+LAST_HEALTH_CHECK_ERROR=""
+FETCH_ENDPOINT_RESPONSE=""
 
 if [ -d "$SCRIPT_DIR/../../.git" ]; then
   REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
@@ -252,26 +254,130 @@ clean_build_output() {
   rm -f public/sw.js public/workbox-*.js
 }
 
+summarize_response() {
+  printf '%s' "$1" | tr '\r\n' ' ' | cut -c1-500
+}
+
+fetch_endpoint() {
+  local url="$1"
+
+  if ! FETCH_ENDPOINT_RESPONSE="$(
+    curl --fail --silent --show-error --location \
+      --connect-timeout 2 --max-time 5 "$url" 2>&1
+  )"; then
+    LAST_HEALTH_CHECK_ERROR="Request to $url failed: $(summarize_response "$FETCH_ENDPOINT_RESPONSE")"
+    return 1
+  fi
+}
+
+check_health_endpoint() {
+  local url="$1"
+  local response
+
+  if ! fetch_endpoint "$url"; then
+    return 1
+  fi
+  response="$FETCH_ENDPOINT_RESPONSE"
+
+  if ! printf '%s' "$response" | node -e '
+    const fs = require("node:fs");
+    try {
+      const body = JSON.parse(fs.readFileSync(0, "utf8"));
+      if (body?.status !== "ok") process.exit(1);
+    } catch {
+      process.exit(1);
+    }
+  '; then
+    LAST_HEALTH_CHECK_ERROR="Unexpected health response from $url: $(summarize_response "$response")"
+    return 1
+  fi
+}
+
+check_version_endpoint() {
+  local url="$1"
+  local expected_commit="$2"
+  local response
+
+  if ! fetch_endpoint "$url"; then
+    return 1
+  fi
+  response="$FETCH_ENDPOINT_RESPONSE"
+
+  if ! printf '%s' "$response" | node -e '
+    const fs = require("node:fs");
+    const expected = process.argv[1].slice(0, 8);
+    try {
+      const body = JSON.parse(fs.readFileSync(0, "utf8"));
+      if (body?.commitSha !== expected) process.exit(1);
+    } catch {
+      process.exit(1);
+    }
+  ' "$expected_commit"; then
+    LAST_HEALTH_CHECK_ERROR="Version mismatch at $url; expected ${expected_commit:0:8}, received: $(summarize_response "$response")"
+    return 1
+  fi
+}
+
+report_application_failure() {
+  if [ -n "$LAST_HEALTH_CHECK_ERROR" ]; then
+    echo "Last verification error: $LAST_HEALTH_CHECK_ERROR"
+  fi
+
+  echo "PM2 process details:"
+  pm2 describe "$PM2_APP_NAME" || true
+  echo "Recent PM2 logs:"
+  pm2 logs "$PM2_APP_NAME" --lines 100 --nostream || true
+}
+
 wait_for_application_health() {
   local health_url="${HEALTH_CHECK_URL:-http://127.0.0.1:${PORT:-3000}/api/health}"
-  local max_attempts=30
+  local version_url="${VERSION_CHECK_URL:-http://127.0.0.1:${PORT:-3000}/api/version}"
+  local public_health_url="${PUBLIC_HEALTH_CHECK_URL:-}"
+  local public_version_url="${PUBLIC_VERSION_CHECK_URL:-}"
+  local expected_commit="${EXPECTED_COMMIT_SHA:-$CURRENT_HASH}"
+  local max_attempts="${HEALTH_CHECK_MAX_ATTEMPTS:-30}"
+  local retry_delay="${HEALTH_CHECK_RETRY_DELAY_SECONDS:-2}"
   local attempt=1
 
-  echo "Waiting for application health check at $health_url..."
+  if [[ ! "$max_attempts" =~ ^[1-9][0-9]*$ ]]; then
+    echo "Fatal: HEALTH_CHECK_MAX_ATTEMPTS must be a positive integer, found '$max_attempts'."
+    return 1
+  fi
+  if [[ ! "$retry_delay" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
+    echo "Fatal: HEALTH_CHECK_RETRY_DELAY_SECONDS must be a non-negative number, found '$retry_delay'."
+    return 1
+  fi
+
+  echo "Waiting for application verification at $health_url..."
+  echo "Expecting deployed commit ${expected_commit:0:8} from $version_url."
+  if [ -n "$public_health_url" ]; then
+    echo "Public health verification is enabled at $public_health_url."
+  fi
+  if [ -n "$public_version_url" ]; then
+    echo "Public version verification is enabled at $public_version_url."
+  fi
+
   while [ "$attempt" -le "$max_attempts" ]; do
-    if curl --fail --silent --show-error --connect-timeout 2 --max-time 5 "$health_url" >/dev/null 2>&1; then
-      echo "Application health check passed."
+    LAST_HEALTH_CHECK_ERROR=""
+    if check_health_endpoint "$health_url" &&
+      check_version_endpoint "$version_url" "$expected_commit" &&
+      { [ -z "$public_health_url" ] || check_health_endpoint "$public_health_url"; } &&
+      { [ -z "$public_version_url" ] || check_version_endpoint "$public_version_url" "$expected_commit"; }; then
+      echo "Application verification passed on attempt $attempt; commit ${expected_commit:0:8} is serving."
       return 0
     fi
 
     if [ "$attempt" -lt "$max_attempts" ]; then
-      sleep 2
+      if [ "$attempt" -eq 1 ] || [ $((attempt % 5)) -eq 0 ]; then
+        echo "Verification attempt $attempt/$max_attempts failed: $LAST_HEALTH_CHECK_ERROR"
+      fi
+      sleep "$retry_delay"
     fi
     attempt=$((attempt + 1))
   done
 
-  echo "Fatal: application health check failed after $max_attempts attempts."
-  pm2 describe "$PM2_APP_NAME" || true
+  echo "Fatal: application verification failed after $max_attempts attempts."
+  report_application_failure
   return 1
 }
 
@@ -313,7 +419,8 @@ else
       git reset --hard "origin/$TARGET_BRANCH"
     fi
   else
-    echo "Could not update from remote. Starting with the existing local code."
+    echo "Fatal: could not update '$TARGET_BRANCH' from origin. The existing application process is unchanged."
+    exit 1
   fi
 fi
 

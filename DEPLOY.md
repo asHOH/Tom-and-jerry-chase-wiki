@@ -103,6 +103,18 @@ docker compose up -d
 
    脚本会在构建成功后自动执行 `pm2 reload tjwiki --update-env`；如果构建失败，会保留当前正在运行的旧版本。
 
+   如果无法从远程仓库拉取 `develop`，部署会以非零状态退出。
+
+   重载后，脚本会同时检查本机 `/api/health` 的响应内容和 `/api/version` 返回的提交版本。可按需设置以下变量来检查经过反向代理或 CDN 的公开访问路径：
+
+   ```bash
+   PUBLIC_HEALTH_CHECK_URL=https://tjwiki.com/api/health \
+   PUBLIC_VERSION_CHECK_URL=https://tjwiki.com/api/version \
+   ./deploy_server.sh
+   ```
+
+   可通过 `HEALTH_CHECK_MAX_ATTEMPTS` 和 `HEALTH_CHECK_RETRY_DELAY_SECONDS` 调整验证次数与间隔。
+
 4. 配置 pm2 开机自启：
 
    ```bash
