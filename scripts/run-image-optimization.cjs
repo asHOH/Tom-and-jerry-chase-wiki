@@ -15,19 +15,14 @@ const supportedExtensions = ['.png', '.jpg', '.jpeg'];
  */
 async function findImageFiles(dir) {
   let filesList = [];
-  try {
-    const items = await fs.readdir(dir, { withFileTypes: true });
-    for (const item of items) {
-      const fullPath = path.join(dir, item.name);
-      if (item.isDirectory()) {
-        // Recurse into subdirectories and concatenate results
-        filesList = filesList.concat(await findImageFiles(fullPath));
-      } else if (supportedExtensions.includes(path.extname(item.name).toLowerCase())) {
-        filesList.push(fullPath);
-      }
+  const items = await fs.readdir(dir, { withFileTypes: true });
+  for (const item of items) {
+    const fullPath = path.join(dir, item.name);
+    if (item.isDirectory()) {
+      filesList = filesList.concat(await findImageFiles(fullPath));
+    } else if (supportedExtensions.includes(path.extname(item.name).toLowerCase())) {
+      filesList.push(fullPath);
     }
-  } catch (err) {
-    console.error(`Could not read directory: ${dir}`, err);
   }
   return filesList;
 }
@@ -35,128 +30,123 @@ async function findImageFiles(dir) {
 /**
  * Converts a single image to WebP and AVIF formats.
  * @param {string} filePath The full path to the image file.
- * @returns {Promise<void[]>} A promise that resolves when both conversions are settled.
+ * @returns {Promise<Array<{filePath: string, format: string, status: 'converted' | 'skipped' | 'failed', error?: unknown}>>}
  */
 async function convertImage(filePath) {
   const baseName = path.basename(filePath, path.extname(filePath));
   const dirName = path.dirname(filePath);
   const webpPath = path.join(dirName, `${baseName}.webp`);
   const avifPath = path.join(dirName, `${baseName}.avif`);
+  const outputs = [
+    {
+      format: 'WebP',
+      outputPath: webpPath,
+      convert: () => sharp(filePath).webp({ quality: 80 }).toFile(webpPath),
+    },
+    {
+      format: 'AVIF',
+      outputPath: avifPath,
+      convert: () => sharp(filePath).avif({ quality: 70, effort: 4 }).toFile(avifPath),
+    },
+  ];
 
-  let shouldConvertWebP = true;
-  let shouldConvertAvif = true;
-
+  let sourceStats;
   try {
-    const sourceStats = await fs.stat(filePath);
+    sourceStats = await fs.stat(filePath);
+  } catch (error) {
+    return outputs.map(({ format }) => ({ filePath, format, status: 'failed', error }));
+  }
 
-    try {
-      const webpStats = await fs.stat(webpPath);
-      if (webpStats.mtime > sourceStats.mtime) {
-        shouldConvertWebP = false;
+  return Promise.all(
+    outputs.map(async ({ format, outputPath, convert }) => {
+      try {
+        const outputStats = await fs.stat(outputPath);
+        if (outputStats.mtime > sourceStats.mtime) {
+          return { filePath, format, status: 'skipped' };
+        }
+      } catch (error) {
+        if (error?.code !== 'ENOENT') {
+          return { filePath, format, status: 'failed', error };
+        }
       }
-    } catch {
-      // WebP doesn't exist or error reading stats, proceed with conversion
-    }
 
-    try {
-      const avifStats = await fs.stat(avifPath);
-      if (avifStats.mtime > sourceStats.mtime) {
-        shouldConvertAvif = false;
+      try {
+        await convert();
+        return { filePath, format, status: 'converted' };
+      } catch (error) {
+        return { filePath, format, status: 'failed', error };
       }
-    } catch {
-      // AVIF doesn't exist or error reading stats, proceed with conversion
-    }
-  } catch (err) {
-    console.error(`Error reading stats for ${filePath}:`, err);
-  }
-
-  // Define conversion tasks for this image
-  const conversions = [];
-
-  if (shouldConvertWebP) {
-    conversions.push(sharp(filePath).webp({ quality: 80 }).toFile(webpPath));
-  } else {
-    conversions.push(Promise.resolve({ skipped: true }));
-  }
-
-  if (shouldConvertAvif) {
-    conversions.push(
-      sharp(filePath)
-        .avif({ quality: 70, effort: 4 }) // 'effort' can be tuned (0-9), lower is faster
-        .toFile(avifPath)
-    );
-  } else {
-    conversions.push(Promise.resolve({ skipped: true }));
-  }
-
-  // Return a promise that settles when both conversions for this image are done
-  return Promise.allSettled(conversions);
+    })
+  );
 }
 
-// --- Main Execution ---
-(async () => {
+async function main() {
   console.log('Starting parallel image conversion...');
   const startTime = Date.now();
 
-  // 1. Find all image files recursively
   const allImages = await findImageFiles(imagesBaseDir);
   if (allImages.length === 0) {
-    console.log('No images found to convert.');
+    console.log('Image optimization summary: images=0 outputs=0 converted=0 skipped=0 failed=0');
     return;
   }
-  console.log(`Found ${allImages.length} images to process.`);
+  console.log(
+    `Found ${allImages.length} source images (${allImages.length * 2} output candidates).`
+  );
 
   const milestonePercents = [0.2, 0.4, 0.6, 0.8, 1];
-  let processedCount = 0;
+  let inspectedCount = 0;
   let nextMilestoneIndex = 0;
 
-  // 2. Create an array of conversion promises for all images
   const conversionTasks = allImages.map((imagePath) =>
     convertImage(imagePath).then((result) => {
-      processedCount++;
-      const progress = processedCount / allImages.length;
+      inspectedCount++;
+      const progress = inspectedCount / allImages.length;
+      let reachedMilestone;
 
       while (
         nextMilestoneIndex < milestonePercents.length &&
         progress >= milestonePercents[nextMilestoneIndex]
       ) {
+        reachedMilestone = milestonePercents[nextMilestoneIndex];
+        nextMilestoneIndex++;
+      }
+
+      if (reachedMilestone !== undefined) {
         const elapsedSeconds = ((Date.now() - startTime) / 1000).toFixed(1);
         console.log(
-          `Progress: processed ${processedCount}/${allImages.length} images (${Math.round(
-            milestonePercents[nextMilestoneIndex] * 100
+          `Progress: inspected ${inspectedCount}/${allImages.length} images (${Math.round(
+            reachedMilestone * 100
           )}%) in ${elapsedSeconds}s`
         );
-        nextMilestoneIndex++;
       }
 
       return result;
     })
   );
 
-  // 3. Execute all conversion tasks in parallel
-  const results = await Promise.all(conversionTasks);
+  const results = (await Promise.all(conversionTasks)).flat();
+  const counts = { converted: 0, skipped: 0, failed: 0 };
 
-  const endTime = Date.now();
-  console.log(`\nImage conversion finished in ${(endTime - startTime) / 1000} seconds.`);
-
-  // 4. (Optional) Log results for failures
-  let failedCount = 0;
-  results.flat().forEach((result, index) => {
-    if (result.status === 'rejected') {
-      failedCount++;
-      // The original file path can be inferred from the index
-      const imageIndex = Math.floor(index / 2);
-      const format = index % 2 === 0 ? 'WebP' : 'AVIF';
-      console.error(
-        `Failed to convert ${allImages[imageIndex]} to ${format}:`,
-        result.reason.message
-      );
+  for (const result of results) {
+    counts[result.status]++;
+    if (result.status === 'failed') {
+      const message = result.error instanceof Error ? result.error.message : String(result.error);
+      console.error(`Failed to optimize ${result.filePath} as ${result.format}: ${message}`);
     }
-  });
-
-  if (failedCount > 0) {
-    console.log(`\n${failedCount} conversion(s) failed. See logs above.`);
-  } else {
-    console.log('All images converted successfully!');
   }
-})();
+
+  const elapsedSeconds = ((Date.now() - startTime) / 1000).toFixed(3);
+  console.log(
+    `Image optimization summary: images=${allImages.length} outputs=${results.length} converted=${counts.converted} skipped=${counts.skipped} failed=${counts.failed} duration=${elapsedSeconds}s`
+  );
+
+  if (counts.failed > 0) {
+    process.exitCode = 1;
+  }
+}
+
+main().catch((error) => {
+  const message = error instanceof Error ? error.stack || error.message : String(error);
+  console.error(`Fatal: image optimization could not complete: ${message}`);
+  process.exitCode = 1;
+});
