@@ -14,6 +14,7 @@ import {
   ClockIcon,
   EyeIcon,
   FolderIcon,
+  LinkIcon,
   PencilSquareIcon,
   UserCircleIcon,
 } from '@/components/icons/CommonIcons';
@@ -25,6 +26,8 @@ interface PreviewData {
   article: {
     id: string;
     title: string;
+    category_id: string;
+    character_id: string | null;
     categories: { name: string };
     users_public_view: { nickname: string };
     version: {
@@ -172,6 +175,23 @@ export default function PreviewClient() {
             <div className='flex items-center gap-2'>
               <FolderIcon className='size-4' strokeWidth={1.5} />
               <span>分类: {data.article.categories?.name || '未分类'}</span>
+            </div>
+
+            <div className='flex items-center gap-2'>
+              <LinkIcon className='size-4' strokeWidth={1.5} />
+              <span>
+                关联角色:{' '}
+                {data.article.character_id ? (
+                  <Link
+                    href={`/characters/${encodeURIComponent(data.article.character_id)}`}
+                    className='hover:text-blue-600 hover:underline dark:hover:text-blue-400'
+                  >
+                    {data.article.character_id}
+                  </Link>
+                ) : (
+                  '未关联'
+                )}
+              </span>
             </div>
 
             <div className='flex items-center gap-2'>
