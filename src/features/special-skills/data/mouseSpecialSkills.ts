@@ -9,7 +9,7 @@ const mouseSpecialSkillDefinitions: Record<string, SpecialSkillDefinition> = {
     cooldown: 80,
     description: '回复Hp并解除部分负面效果，且短暂加速。',
     detailedDescription:
-      '回复25Hp，解除[部分不良状态](包括受伤、香水反向、烟雾失明、莱特宁1级被动标记等效果)，且加速20%，持续1.15秒。',
+      '回复25Hp，解除[部分不良状态](包括受伤、香水反向、烟雾失明、莱特宁1级被动标记等效果)，且加速13%，持续1.2秒。',
     adviceDescription: '适合**难以被快速击杀或需要额外恢复能力**的老鼠。用于增加续航。',
   },
   急速翻滚: {
@@ -22,7 +22,7 @@ const mouseSpecialSkillDefinitions: Record<string, SpecialSkillDefinition> = {
     cooldown: 80,
     description: '下次投掷命中敌方时，额外造成硬直效果。',
     detailedDescription:
-      '在9.9秒内，投掷命中敌方时，额外造成0.95秒硬直效果（硬直：与眩晕类似，但不会击落道具和老鼠），触发1次后消失。',
+      '在9.9秒内，投掷命中敌方时，额外造成1秒硬直效果（硬直：与眩晕类似，但不会击落道具和老鼠），触发1次后消失。',
     adviceDescription:
       '适合**需要干扰或牵制猫咪**的老鼠，或用于**对策部分怕干扰的猫咪**。用于破盾、补充控制或打断技能。',
   },

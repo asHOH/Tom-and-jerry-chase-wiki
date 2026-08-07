@@ -516,6 +516,637 @@ const mapDefinitions: Record<string, MapDefinition> = {
           ],
           targetWallCrackPointId: 'map-point-967d07cc-773f-470f-996e-7ffefd2ed8e6',
         },
+        {
+          id: 'map-point-8f5ce768-83fa-4865-99e7-81a98a8ef82f',
+          category: 'wallCrack',
+          position: {
+            x: 0.3846879421474611,
+            y: 0.4196215322432482,
+          },
+          isInvisible: false,
+          relatedEntries: [
+            {
+              name: '墙缝',
+              type: 'fixture',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-0fef13a5-d90f-4fff-a921-aa3976c093b4',
+          category: 'wallCrack',
+          position: {
+            x: 0.7678431064298067,
+            y: 0.15175454712474737,
+          },
+          relatedEntries: [
+            {
+              name: '墙缝',
+              type: 'fixture',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-dbdeecd3-2d6e-4d0b-be8c-b431778ccd7b',
+          category: 'wallCrack',
+          position: {
+            x: 0.7661924225750668,
+            y: 0.36340253536652584,
+          },
+          relatedEntries: [
+            {
+              name: '墙缝',
+              type: 'fixture',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-5ac9e469-50fc-4cab-814b-bd3de014f4c6',
+          category: 'wallCrack',
+          position: {
+            x: 0.5626473824870304,
+            y: 0.4323902259783208,
+          },
+          relatedEntries: [
+            {
+              name: '墙缝',
+              type: 'fixture',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-89208b9e-40f0-4681-ad15-c8831d049f4c',
+          category: 'wallCrack',
+          position: {
+            x: 0.5434680081748153,
+            y: 0.6911629616020577,
+          },
+          relatedEntries: [
+            {
+              name: '墙缝',
+              type: 'fixture',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-dbda90eb-e493-40ac-9fd2-92ff68394b0d',
+          category: 'wallCrack',
+          position: {
+            x: 0.7374626631032857,
+            y: 0.9398309755649458,
+          },
+          relatedEntries: [
+            {
+              name: '墙缝',
+              type: 'fixture',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-0b864eb0-a330-4f8d-b94a-7eff98447fab',
+          category: 'wallCrack',
+          position: {
+            x: 0.43908190536079234,
+            y: 0.6913466838140732,
+          },
+          relatedEntries: [
+            {
+              name: '墙缝',
+              type: 'fixture',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-94b3920e-dc25-432b-babd-c666e8bb7fa4',
+          category: 'cheese',
+          position: {
+            x: 0.36248231410155635,
+            y: 0.615285688039684,
+          },
+          relatedEntries: [
+            {
+              name: '奶酪',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-4c077df4-8a6b-4ba8-8365-3312e7500615',
+          category: 'drink',
+          position: {
+            x: 0.3652727558559975,
+            y: 0.557964357890869,
+          },
+          relatedEntries: [
+            {
+              name: '饮料',
+              type: 'itemGroup',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-09d3bfd6-ae6f-41ba-b8b7-2dbebbbd58e5',
+          category: 'rocket',
+          position: {
+            x: 0.37458732903631503,
+            y: 0.5419805254455263,
+          },
+          relatedEntries: [
+            {
+              name: '火箭',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-d467b431-9a48-4898-a0e8-823c5be95052',
+          category: 'rocket',
+          position: {
+            x: 0.37057852538908975,
+            y: 0.6940106558882969,
+          },
+          relatedEntries: [
+            {
+              name: '火箭',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-d328c4bf-9dea-4c36-b042-20c4389f419c',
+          category: 'rocket',
+          position: {
+            x: 0.10572237069643138,
+            y: 0.6559801580011023,
+          },
+          relatedEntries: [
+            {
+              name: '火箭',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-a5651df3-e7d7-4aa4-84c0-a8092bbb2000',
+          category: 'rocket',
+          position: {
+            x: 0.11039930828486087,
+            y: 0.591952967113724,
+          },
+          relatedEntries: [
+            {
+              name: '火箭',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-00d3b417-23cb-4471-b58e-c6f375b7467d',
+          category: 'rocket',
+          position: {
+            x: 0.05863857883980506,
+            y: 0.6939187947822891,
+          },
+          relatedEntries: [
+            {
+              name: '火箭',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-1efb748a-0287-4c72-b6f1-f9a11c222612',
+          category: 'rocket',
+          position: {
+            x: 0.015484986637321176,
+            y: 0.5979239390042256,
+          },
+          relatedEntries: [
+            {
+              name: '火箭',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-ed2424ba-d498-493a-ad2b-bc544c588b5b',
+          category: 'cheese',
+          position: {
+            x: 0.027432793585914165,
+            y: 0.6158368546757303,
+          },
+          relatedEntries: [
+            {
+              name: '奶酪',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-f3298aca-3733-4937-a86b-cd40743ef34d',
+          category: 'rocket',
+          position: {
+            x: 0.1767410784467851,
+            y: 0.5861657174352379,
+          },
+          relatedEntries: [
+            {
+              name: '火箭',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-c7cbd821-5d63-45cd-a36b-6a116ebfbfaa',
+          category: 'rocket',
+          position: {
+            x: 0.6552035843420846,
+            y: 0.942678669851185,
+          },
+          relatedEntries: [
+            {
+              name: '火箭',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-256f61ee-8e85-4a57-bb30-bd3021300378',
+          category: 'cheese',
+          position: {
+            x: 0.6931693130011004,
+            y: 0.9305530038581664,
+          },
+          relatedEntries: [
+            {
+              name: '奶酪',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-3ce9a3e4-f6e7-4423-94eb-e26403036d8d',
+          category: 'rocket',
+          position: {
+            x: 0.794647068071058,
+            y: 0.9439647253352931,
+          },
+          relatedEntries: [
+            {
+              name: '火箭',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-1b539baa-61d6-4005-88fc-830ca0418b1f',
+          category: 'rocket',
+          position: {
+            x: 0.865508567835246,
+            y: 0.8497152305713761,
+          },
+          relatedEntries: [
+            {
+              name: '火箭',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-af4a45ec-f992-4cb0-a6c0-801fd59b5e7a',
+          category: 'rocket',
+          position: {
+            x: 0.823730545511712,
+            y: 0.6938269336762815,
+          },
+          relatedEntries: [
+            {
+              name: '火箭',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-535c377c-9cb1-4c8c-b0a1-c0eec5d15463',
+          category: 'rocket',
+          position: {
+            x: 0.8006995755384374,
+            y: 0.5654969685835017,
+          },
+          relatedEntries: [
+            {
+              name: '火箭',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-ba6aed59-5f5a-4142-93f4-0dfe1d3e2aab',
+          category: 'cheese',
+          position: {
+            x: 0.7916994183304512,
+            y: 0.5824912731949292,
+          },
+          relatedEntries: [
+            {
+              name: '奶酪',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-0aee9195-9865-461f-89dd-c01ca1d83766',
+          category: 'drink',
+          position: {
+            x: 0.6982392705549442,
+            y: 0.5691714128238105,
+          },
+          relatedEntries: [
+            {
+              name: '饮料',
+              type: 'itemGroup',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-30edb8b6-9982-44a2-9235-83a4e6f8d387',
+          category: 'rocket',
+          position: {
+            x: 0.6864486715925169,
+            y: 0.15588829689509462,
+          },
+          relatedEntries: [
+            {
+              name: '火箭',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-6b6dad2e-8488-42a3-9910-0284aa82d28d',
+          category: 'rocket',
+          position: {
+            x: 0.715728659015878,
+            y: 0.07725519015248944,
+          },
+          relatedEntries: [
+            {
+              name: '火箭',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-f1076432-3600-410f-b5f0-2a0233e4ce1f',
+          category: 'rocket',
+          position: {
+            x: 0.7521616098097783,
+            y: 0.15588829689509462,
+          },
+          relatedEntries: [
+            {
+              name: '火箭',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-c137b2af-aee0-4e62-8bec-37eee09199c9',
+          category: 'rocket',
+          position: {
+            x: 0.8239270554944191,
+            y: 0.11262171596546022,
+          },
+          relatedEntries: [
+            {
+              name: '火箭',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-f7215a1f-d7a5-4427-88bc-7fcec989d298',
+          category: 'rocket',
+          position: {
+            x: 0.8351281245087251,
+            y: 0.1557045746830792,
+          },
+          relatedEntries: [
+            {
+              name: '火箭',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-53a66a78-16db-4a5d-8398-70e1fc100e52',
+          category: 'rocket',
+          position: {
+            x: 0.8662553057695331,
+            y: 0.15588829689509462,
+          },
+          relatedEntries: [
+            {
+              name: '火箭',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-4cf90d6c-b00a-4e5d-b5b4-e43550271c81',
+          category: 'drink',
+          position: {
+            x: 0.8234161295393806,
+            y: 0.28504501194194376,
+          },
+          relatedEntries: [
+            {
+              name: '饮料',
+              type: 'itemGroup',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-5f3b82dd-d658-4242-bddf-201b2076b97d',
+          category: 'drink',
+          position: {
+            x: 0.3306869988995441,
+            y: 0.5441851919897116,
+          },
+          relatedEntries: [
+            {
+              name: '饮料',
+              type: 'itemGroup',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-98ce8d84-d89c-4de9-bb85-377f2eb00391',
+          category: 'cheese',
+          position: {
+            x: 0.69729602263795,
+            y: 0.09489252250597097,
+          },
+          relatedEntries: [
+            {
+              name: '奶酪',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-6075599e-093e-404e-abd5-fa23acf4571f',
+          category: 'drink',
+          position: {
+            x: 0.8670020437038202,
+            y: 0.08864596729744627,
+          },
+          relatedEntries: [
+            {
+              name: '饮料',
+              type: 'itemGroup',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-81b9e5b3-cd36-4d1a-93e2-709b3fa98a02',
+          category: 'rocket',
+          position: {
+            x: 0.38574909605407953,
+            y: 0.2638250964541613,
+          },
+          relatedEntries: [
+            {
+              name: '火箭',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-b74a1d15-3002-48ce-9b2f-996fcf59c5fd',
+          category: 'cheese',
+          position: {
+            x: 0.3963213331237227,
+            y: 0.2821054565496969,
+          },
+          relatedEntries: [
+            {
+              name: '奶酪',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-fec79ed4-5da8-4b92-9276-04ae450c4210',
+          category: 'rocket',
+          position: {
+            x: 0.4129853796572866,
+            y: 0.42246922652948743,
+          },
+          relatedEntries: [
+            {
+              name: '火箭',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-20c312af-bb63-4d56-aba0-3b197be4d156',
+          category: 'rocket',
+          position: {
+            x: 0.4886810249960698,
+            y: 0.3047951497336028,
+          },
+          relatedEntries: [
+            {
+              name: '火箭',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-92061956-2adb-41d5-a7e9-da04444ee5ef',
+          category: 'drink',
+          position: {
+            x: 0.49689514227322745,
+            y: 0.2771449568252802,
+          },
+          relatedEntries: [
+            {
+              name: '饮料',
+              type: 'itemGroup',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-f41788f6-9f25-458f-91b0-85e70f136435',
+          category: 'cheese',
+          position: {
+            x: 0.14887596289891528,
+            y: 0.6099577438912365,
+          },
+          relatedEntries: [
+            {
+              name: '奶酪',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-5ce4afc1-d25f-43f0-9be1-c43f575f1adf',
+          category: 'rocket',
+          position: {
+            x: 0.22437509825499136,
+            y: 0.6944699614183355,
+          },
+          relatedEntries: [
+            {
+              name: '火箭',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: true,
+        },
       ],
     },
     description:

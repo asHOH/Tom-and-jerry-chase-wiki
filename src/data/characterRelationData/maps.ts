@@ -169,7 +169,7 @@ export const characterRelationMapTraits: CharacterRelationTrait[] = [
     },
   },
   {
-    description: '地图太大，鼠方容易拉扯',
+    description: '地图大，洞口之间距离较远，侦探汤姆不好捡线索',
     relation: {
       kind: 'disadvantageMaps',
       subject: { name: '侦探汤姆', type: 'character' },
@@ -178,7 +178,7 @@ export const characterRelationMapTraits: CharacterRelationTrait[] = [
     },
   },
   {
-    description: '地图太大，鼠方容易拉扯',
+    description: '地图大，洞口之间距离较远，侦探汤姆不好捡线索',
     relation: {
       kind: 'disadvantageMaps',
       subject: { name: '侦探汤姆', type: 'character' },

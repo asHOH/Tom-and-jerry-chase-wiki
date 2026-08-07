@@ -8,7 +8,7 @@ const catSpecialSkillDefinitions: Record<string, SpecialSkillDefinition> = {
   应急治疗: {
     cooldown: 60,
     description: '回复Hp，且短暂加速。',
-    detailedDescription: '回复75Hp，且加速20%，持续1.5秒。',
+    detailedDescription: '回复75Hp，且加速18%，持续1.5秒。',
     adviceDescription: '适合**极少数需要额外恢复能力**的猫咪。用于提高续航。',
   },
   急速翻滚: {
@@ -21,7 +21,7 @@ const catSpecialSkillDefinitions: Record<string, SpecialSkillDefinition> = {
   长爪一击: {
     cooldown: 50,
     description: '下次爪刀攻击距离大幅度提升。若爪刀未命中，则返还一定爪刀CD。',
-    detailedDescription: '使9.9秒内的下次爪刀攻击距离提升50%。若爪刀未命中，则返还80%爪刀CD。',
+    detailedDescription: '使10秒内的下次爪刀攻击距离提升60%。若爪刀未命中，则返还80%爪刀CD。',
     adviceDescription: '暂无猫咪适配该特技。',
   },
   '我生气了！': {
@@ -37,7 +37,7 @@ const catSpecialSkillDefinitions: Record<string, SpecialSkillDefinition> = {
     description:
       '下次爪刀攻击距离提升，可击飞道具；若成功击飞道具，将刷新爪刀CD，并在短时间内提高自身移速和攻击增伤。若爪刀未命中，则返还一定爪刀CD。',
     detailedDescription:
-      '使9.9秒内的下次爪刀攻击距离提升35%，可击飞部分道具；若成功击飞道具，将刷新爪刀CD，并在9.9秒内使自身加速30%，攻击增伤提高25。若爪刀未命中，则返还80%爪刀CD。\n\n可命中道具：{盘子}/{扁盘}/{玻璃杯}/{碗}/{高尔夫球}/{香水瓶}/{胡椒瓶}/{番茄}/{灰花瓶}/{蓝花瓶}。',
+      '使10秒内的下次爪刀攻击距离提升30%，可击飞部分道具；若成功击飞道具，将刷新爪刀CD，并在10秒内使自身加速30%，攻击增伤提高25。若爪刀未命中，则返还80%爪刀CD。\n\n可命中道具：{盘子}/{扁盘}/{玻璃杯}/{碗}/{高尔夫球}/{香水瓶}/{胡椒瓶}/{番茄}/{灰花瓶}/{蓝花瓶}。',
     adviceDescription:
       '适合**受攻击增伤和加速的收益较高**的猫咪。通常用于在自身投出道具后将其击飞，提高伤害并提供爆发能力。推荐有一定熟练度后再使用该特技。',
   },
@@ -46,14 +46,14 @@ const catSpecialSkillDefinitions: Record<string, SpecialSkillDefinition> = {
     description:
       '下次爪刀攻击距离提升，命中敌方时，自己主动和武器技能的剩余CD减半。若爪刀未命中，则返还一定爪刀CD。',
     detailedDescription:
-      '使9.9秒内的下次爪刀攻击距离提升35%，命中敌方时，自己主动和武器技能的剩余CD减半。若爪刀未命中，则返还80%爪刀CD。',
+      '使9.9秒内的下次爪刀攻击距离提升30%，命中敌方时，自己主动和武器技能的剩余CD减半。若爪刀未命中，则返还80%爪刀CD。',
     adviceDescription: '暂无猫咪适配该特技。',
   },
   蓄力重击: {
     aliases: ['蓄重'],
     cooldown: 60,
     description: '蓄力一段时间后，对前方一定范围内的敌方造成极大伤害。',
-    detailedDescription: '蓄力0.9秒后，对前方330范围内的敌方造成1000伤害。',
+    detailedDescription: '蓄力0.9秒后，对前方330范围内的敌方造成999伤害。',
     adviceDescription:
       '适合**有控制但缺乏伤害**的猫咪。可搭配{击晕}提高命中率。用于补伤害或击倒高Hp老鼠。',
   },
@@ -61,7 +61,7 @@ const catSpecialSkillDefinitions: Record<string, SpecialSkillDefinition> = {
     aliases: ['霸体', '解控'],
     cooldown: 90,
     description: '处于眩晕状态时可用，解除受到的眩晕；否则获得霸体（免疫虚弱）。',
-    detailedDescription: '处于眩晕状态时可用，解除受到的眩晕；否则获得2.45秒霸体（免疫虚弱）。',
+    detailedDescription: '处于眩晕状态时可用，解除受到的眩晕；否则获得2.5秒霸体（免疫虚弱）。',
     adviceDescription:
       '适合**绝大部分**猫咪，尤其适合缺乏霸体能力的猫咪。用于打架、解控或强绑火箭。',
   },
