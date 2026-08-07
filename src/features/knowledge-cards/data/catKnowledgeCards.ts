@@ -198,9 +198,21 @@ const catKnowledgeCardDefinitions: Record<string, Card> = {
     detailedDescription:
       '必胜的信念让猫都燃起来了。穷追不舍状态**提升**猫咪的攻击力和移速。该状态在成功将老鼠绑上火箭或累计击倒8次老鼠时移除。“追寻的路上不乏激情，但成功后空虚往往随之而来，火总会熄灭的，捉老鼠如此，猫生亦是如此。”',
     levels: [
-      { level: 1, description: '攻击力提升**30**，加速**3.5%**。' },
-      { level: 2, description: '攻击力提升**40**，加速**5.5%**。' },
-      { level: 3, description: '攻击力提升**50**，加速**8.5%**。' },
+      {
+        level: 1,
+        description: '攻击力提升**30**，加速**3.5%**。',
+        detailedDescription: '攻击力提升**30**，加速**4%**。',
+      },
+      {
+        level: 2,
+        description: '攻击力提升**40**，加速**5.5%**。',
+        detailedDescription: '攻击力提升**40**，加速**6%**。',
+      },
+      {
+        level: 3,
+        description: '攻击力提升**50**，加速**8.5%**。',
+        detailedDescription: '攻击力提升**50**，加速**8%**。',
+      },
     ],
     priority: '3级质变',
   },
@@ -226,7 +238,7 @@ const catKnowledgeCardDefinitions: Record<string, Card> = {
     cost: 4,
     description: '每次进入{虚弱}，永久提升Hp上限、Hp恢复速度和移速，可**叠加**。',
     detailedDescription:
-      '每次进入{虚弱}，Hp上限永久提升25，Hp恢复速度提升1.5/秒，移速提升1.5%，可**叠加**（每层移速加成间乘算，其他加成为加算）。',
+      '每次进入{虚弱}，Hp上限永久提升25，Hp恢复速度提升1.5/秒，移速提升1%，可**叠加**（每层移速加成间乘算，其他加成为加算）。',
     levels: [
       { level: 1, description: '最多叠加**3**层。' },
       { level: 2, description: '最多叠加**4**层。' },
@@ -272,9 +284,9 @@ const catKnowledgeCardDefinitions: Record<string, Card> = {
     cost: 4,
     description: '火箭附近老鼠越多，救援速度越**慢**。（注：基础救援速度为1s）',
     levels: [
-      { level: 1, description: '每只老鼠降低**11%**救援速度。' },
-      { level: 2, description: '每只老鼠降低**18%**救援速度。' },
-      { level: 3, description: '每只老鼠降低**25%**救援速度。' },
+      { level: 1, description: '每只老鼠降低**6%**救援速度。' },
+      { level: 2, description: '每只老鼠降低**12%**救援速度。' },
+      { level: 3, description: '每只老鼠降低**20%**救援速度。' },
     ],
     priority: '提升明显',
   },
@@ -313,8 +325,8 @@ const catKnowledgeCardDefinitions: Record<string, Card> = {
     cost: 3,
     description: '有老鼠被绑在火箭上时，鼠方投掷伤害**降低**固定值。',
     levels: [
-      { level: 1, description: '投掷伤害降低**10**。' },
-      { level: 2, description: '投掷伤害降低**15**。' },
+      { level: 1, description: '投掷伤害降低**16**。' },
+      { level: 2, description: '投掷伤害降低**18**。' },
       { level: 3, description: '投掷伤害降低**20**。' },
     ],
     priority: '提升明显',
@@ -339,7 +351,7 @@ const catKnowledgeCardDefinitions: Record<string, Card> = {
     cost: 4,
     description: '爪刀使老鼠在**较长时间**内推速大幅下降。',
     detailedDescription:
-      '爪刀对老鼠造成恐吓，使老鼠在**较长时间**内推速下降60%。\n由于{全局推奶酪加速}的效果，老鼠在奶酪期最后1分30秒时免疫恐吓。',
+      '爪刀对老鼠造成恐吓，使老鼠在**较长时间**内推速下降70%。\n由于{全局推奶酪加速}的效果，老鼠在奶酪期最后1分30秒时免疫恐吓。',
     levels: [
       { level: 1, description: '恐吓效果持续**30**秒。' },
       { level: 2, description: '恐吓效果持续**45**秒。' },
@@ -457,7 +469,7 @@ const catKnowledgeCardDefinitions: Record<string, Card> = {
     cost: 3,
     description: '墙缝出现后，移动、跳跃速度**短暂**提升。',
     detailedDescription:
-      '最后的关头！墙缝出现后，愤怒的猫咪鼓起气势，移动、跳跃速度**短暂**提升30%。',
+      '最后的关头！墙缝出现后，愤怒的猫咪鼓起气势，移动、跳跃速度分别**短暂**提升30%、20%。',
     levels: [
       { level: 1, description: '效果持续**10**秒。' },
       { level: 2, description: '效果持续**15**秒。' },

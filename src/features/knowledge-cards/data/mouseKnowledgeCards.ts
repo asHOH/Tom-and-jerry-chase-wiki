@@ -18,7 +18,7 @@ const mouseKnowledgeCardDefinitions: Record<string, Card> = {
       {
         level: 1,
         description: '额外**略微加速**。',
-        detailedDescription: '额外**加速3.5%**。',
+        detailedDescription: '额外**加速5%**。',
       },
       {
         level: 2,
@@ -58,7 +58,7 @@ const mouseKnowledgeCardDefinitions: Record<string, Card> = {
     description:
       '从火箭上救下队友后，对方获得**短暂**的{无敌(状态)}，自己获得3秒{无敌(状态)}，无敌期间固定增加推速，但此期间无法使用技能与道具；对方的无敌结束后陷入短暂的眩晕。(CD: 60秒)',
     detailedDescription:
-      '从火箭上救下队友后，对方获得**短暂**的{无敌(状态)}，自己获得3秒{无敌(状态)}，无敌期间[固定增加推速2.5%/秒](该类效果不受其他任何百分比推速增/减效果影响，独立结算)，但此期间无法使用技能与道具；对方的无敌结束后眩晕1.2秒。(CD: 60秒)',
+      '从火箭上救下队友后，对方获得**短暂**的{无敌(状态)}，自己获得3秒{无敌(状态)}，无敌期间[固定增加推速0.5%/秒](该类效果不受其他任何百分比推速增/减效果影响，独立结算)，但此期间无法使用技能与道具；对方的无敌结束后眩晕1.2秒。(CD: 60秒)',
     levels: [
       { level: 1, description: '无畏持续**6**秒。' },
       { level: 2, description: '无畏持续**6.5**秒。' },
@@ -102,7 +102,8 @@ const mouseKnowledgeCardDefinitions: Record<string, Card> = {
     rank: 'S',
     cost: 5,
     description: '从火箭上救下队友后，与队友互换Hp，并给予队友**短暂**的{无敌(状态)}。(CD: 50秒)',
-    // detailedDescription: '',
+    detailedDescription:
+      '从火箭上救下队友后，自己的Hp变为队友的Hp，然后队友的Hp变为原本自己的Hp，最后给予队友**短暂**的{无敌(状态)}。(CD: 50秒)',
     levels: [
       { level: 1, description: '无敌持续**4**秒。' },
       { level: 2, description: '无敌持续**4.5**秒。' },
@@ -191,7 +192,7 @@ const mouseKnowledgeCardDefinitions: Record<string, Card> = {
     cost: 4,
     description: '自己被放飞时，全体队友回复部分Hp、获得经验，并**短暂**提升移动和跳跃速度。',
     detailedDescription:
-      '这是心的呼唤，这是爱的奉献！自己[被放飞](部分复活类效果触发时依然算作被放飞，此时复活体因被击倒而放飞时不再触发祝愿效果)时，全体队友回复50Hp、平分2500经验，并**短暂**提升14%移动和跳跃速度。',
+      '这是心的呼唤，这是爱的奉献！自己[被放飞](部分复活类效果触发时依然算作被放飞，此时复活体因被击倒而放飞时不再触发祝愿效果)时，全体队友回复75Hp、平分2500经验，并**短暂**提升10%移动和跳跃速度。',
     levels: [
       { level: 1, description: '队友的增益持续**10**秒。' },
       { level: 2, description: '队友的增益持续**11**秒。' },
@@ -208,9 +209,9 @@ const mouseKnowledgeCardDefinitions: Record<string, Card> = {
     detailedDescription:
       '老鼠掌握更酷的技巧，经过冰面或冰块命中后获得5秒**加速**。“身轻若健燕，潇洒若游龙，翩若惊鸿，婉若游龙。”',
     levels: [
-      { level: 1, description: '加速**10%**。' },
-      { level: 2, description: '加速**15%**。' },
-      { level: 3, description: '加速**20%**。' },
+      { level: 1, description: '加速**10%**。', detailedDescription: '加速**21%**。' },
+      { level: 2, description: '加速**15%**。', detailedDescription: '加速**23%**。' },
+      { level: 3, description: '加速**20%**。', detailedDescription: '加速**25%**。' },
     ],
     priority: '提升明显',
   },
@@ -221,7 +222,7 @@ const mouseKnowledgeCardDefinitions: Record<string, Card> = {
     cost: 4,
     description: '受到猫咪的攻击后，**短暂**提升移动、跳跃速度和Hp恢复速度。(CD：35秒)',
     detailedDescription:
-      '受到猫咪的攻击后，**短暂**提升移动、跳跃速度20%，并[获得2Hp/秒的恢复效果](该效果与角色基础Hp恢复不同，不会因受伤效果而失效)。(CD：35秒)',
+      '受到猫咪的攻击后，**短暂**提升移动速度25%，略微提升跳跃高度，并[获得2Hp/秒的恢复效果](该效果与角色基础Hp恢复不同，不会因受伤效果而失效)。(CD：35秒)',
     levels: [
       { level: 1, description: '效果持续**8**秒。' },
       { level: 2, description: '效果持续**9**秒。' },
@@ -280,7 +281,7 @@ const mouseKnowledgeCardDefinitions: Record<string, Card> = {
     cost: 5,
     description: '上火箭后可以从火箭上挣扎下来，每局限1次；墙缝期不可触发。',
     detailedDescription:
-      '幸运的老鼠，上火箭后可以从火箭上挣扎下来，每局限1次；墙缝期不可触发。（注：星星棒需要21次挣扎）',
+      '幸运的老鼠，上火箭后可以从火箭上挣扎下来，挣扎下获得一层护盾，持续2秒，每局限1次；墙缝期不可触发。（注：星星棒需要21次挣扎）',
     levels: [
       { level: 1, description: '首次挣扎速度提升**10%**。' },
       { level: 2, description: '首次挣扎速度提升**20%**。' },
@@ -379,7 +380,7 @@ const mouseKnowledgeCardDefinitions: Record<string, Card> = {
     rank: 'B',
     cost: 4,
     description: '从火箭上救下队友后，彼此获得**短暂**加速。',
-    detailedDescription: '老鼠从火箭上救下队友后连忙逃走，彼此**短暂**提高22%移速。',
+    detailedDescription: '老鼠从火箭上救下队友后连忙逃走，彼此**短暂**提高20%移速。',
     levels: [
       { level: 1, description: '加速持续**5**秒。' },
       { level: 2, description: '加速持续**6**秒。' },
