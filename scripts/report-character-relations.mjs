@@ -1,8 +1,5 @@
-import fs from 'node:fs';
 import path from 'node:path';
-import vm from 'node:vm';
 import { createJiti } from 'jiti';
-import ts from 'typescript';
 
 const jiti = createJiti(import.meta.url);
 
@@ -11,46 +8,21 @@ const sourceJiti = createJiti(sourcePath, {
   tsconfigPaths: path.join(process.cwd(), 'tsconfig.json'),
 });
 
-const loadRawCharacterRelationTraits = () => {
-  const source = fs.readFileSync(sourcePath, 'utf8');
+const loadRawCharacterRelationTraits = async () => {
+  const { characterRelationTraits } = await sourceJiti.import('./characterRelations.ts');
 
-  const { outputText } = ts.transpileModule(source, {
-    compilerOptions: {
-      module: ts.ModuleKind.CommonJS,
-      target: ts.ScriptTarget.ES2022,
-    },
-    fileName: sourcePath,
-  });
-
-  const virtualModule = { exports: {} };
-  const context = vm.createContext({
-    exports: virtualModule.exports,
-    module: virtualModule,
-    require: (specifier) => {
-      if (specifier === './characterRelationValidation') {
-        return {
-          assertValidCharacterRelations: () => {},
-        };
-      }
-
-      return sourceJiti(specifier);
-    },
-  });
-
-  new vm.Script(outputText, { filename: sourcePath }).runInContext(context);
-
-  if (!Array.isArray(virtualModule.exports.characterRelationTraits)) {
+  if (!Array.isArray(characterRelationTraits)) {
     throw new Error('Failed to load characterRelationTraits from source.');
   }
 
-  return virtualModule.exports.characterRelationTraits;
+  return characterRelationTraits;
 };
 
 const main = async () => {
   const args = new Set(process.argv.slice(2));
   const json = args.has('--json');
 
-  const traits = loadRawCharacterRelationTraits();
+  const traits = await loadRawCharacterRelationTraits();
   const { buildCharacterRelationEdgeKey, findCharacterRelationValidationErrors } =
     await jiti.import('../src/data/characterRelationValidation.ts');
 
