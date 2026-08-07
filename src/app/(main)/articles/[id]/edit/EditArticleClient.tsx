@@ -80,14 +80,9 @@ const EditArticleClient: React.FC<EditArticleClientProps> = ({ characterOptions 
   const categories: Category[] = categoriesData?.categories || [];
   const isLoadingCategories = !categoriesData && !categoriesError;
 
-  // Check if selected category is "角色攻略" (game strategy) - requires character binding
-  const isGameStrategyCategory = (categoryId: string): boolean => {
-    if (!categoryId || categories.length === 0) return false;
-    const selectedCat = categories.find((c) => c.id === categoryId);
-    return selectedCat?.name === '角色攻略';
-  };
-
-  const showCharacterSelector = isGameStrategyCategory(category);
+  const showCharacterSelector =
+    categories.find((categoryOption) => categoryOption.id === category)?.requires_character ??
+    false;
 
   const { data: articleData, error: articleError } = useSWR<ArticleEditInfoResponse>(
     id && canEditArticle ? `/api/articles/${id}/info` : null,
@@ -136,8 +131,10 @@ const EditArticleClient: React.FC<EditArticleClientProps> = ({ characterOptions 
 
   const handleCategoryChange = (newCategory: string) => {
     setCategory(newCategory);
-    // Clear character selection if switching away from game strategy category
-    if (!isGameStrategyCategory(newCategory)) {
+    const requiresCharacter =
+      categories.find((categoryOption) => categoryOption.id === newCategory)?.requires_character ??
+      false;
+    if (!requiresCharacter) {
       setCharacterId(null);
     }
   };

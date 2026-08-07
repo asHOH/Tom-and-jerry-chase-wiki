@@ -41,7 +41,9 @@ export type Database = {
           created_at: string;
           editor_id: string;
           id: string;
+          metadata_snapshot_complete: boolean;
           preview_token: string;
+          publication_revision: number | null;
           proposed_category_id: string | null;
           proposed_character_id: string | null;
           proposed_title: string | null;
@@ -57,7 +59,9 @@ export type Database = {
           created_at?: string;
           editor_id: string;
           id?: string;
+          metadata_snapshot_complete?: never;
           preview_token: string;
+          publication_revision?: number | null;
           proposed_category_id?: string | null;
           proposed_character_id?: string | null;
           proposed_title?: string | null;
@@ -73,7 +77,9 @@ export type Database = {
           created_at?: string;
           editor_id?: string;
           id?: string;
+          metadata_snapshot_complete?: never;
           preview_token?: string;
+          publication_revision?: number | null;
           proposed_category_id?: string | null;
           proposed_character_id?: string | null;
           proposed_title?: string | null;
@@ -172,6 +178,7 @@ export type Database = {
           category_id: string;
           character_id: string | null;
           created_at: string;
+          current_version_id: string | null;
           id: string;
           title: string;
           view_count: number;
@@ -181,6 +188,7 @@ export type Database = {
           category_id: string;
           character_id?: string | null;
           created_at?: string;
+          current_version_id?: string | null;
           id?: string;
           title: string;
           view_count?: number;
@@ -190,6 +198,7 @@ export type Database = {
           category_id?: string;
           character_id?: string | null;
           created_at?: string;
+          current_version_id?: string | null;
           id?: string;
           title?: string;
           view_count?: number;
@@ -216,6 +225,20 @@ export type Database = {
             referencedRelation: 'categories';
             referencedColumns: ['id'];
           },
+          {
+            foreignKeyName: 'articles_current_version_id_fkey';
+            columns: ['id', 'current_version_id'];
+            isOneToOne: false;
+            referencedRelation: 'article_versions';
+            referencedColumns: ['article_id', 'id'];
+          },
+          {
+            foreignKeyName: 'articles_current_version_id_fkey';
+            columns: ['id', 'current_version_id'];
+            isOneToOne: false;
+            referencedRelation: 'article_versions_public_view';
+            referencedColumns: ['article_id', 'id'];
+          },
         ];
       };
       categories: {
@@ -224,18 +247,21 @@ export type Database = {
           id: string;
           name: string;
           parent_category_id: string | null;
+          requires_character: boolean;
         };
         Insert: {
           default_visibility?: Database['public']['Enums']['version_status'] | null;
           id?: string;
           name: string;
           parent_category_id?: string | null;
+          requires_character?: boolean;
         };
         Update: {
           default_visibility?: Database['public']['Enums']['version_status'] | null;
           id?: string;
           name?: string;
           parent_category_id?: string | null;
+          requires_character?: boolean;
         };
         Relationships: [
           {
@@ -826,7 +852,9 @@ export type Database = {
           content: string | null;
           created_at: string | null;
           editor_id: string | null;
+          excerpt: string | null;
           id: string | null;
+          publication_revision: number | null;
           status: Database['public']['Enums']['version_status'] | null;
         };
         Insert: {
@@ -835,7 +863,9 @@ export type Database = {
           content?: string | null;
           created_at?: string | null;
           editor_id?: string | null;
+          excerpt?: string | null;
           id?: string | null;
+          publication_revision?: number | null;
           status?: Database['public']['Enums']['version_status'] | null;
         };
         Update: {
@@ -844,7 +874,9 @@ export type Database = {
           content?: string | null;
           created_at?: string | null;
           editor_id?: string | null;
+          excerpt?: string | null;
           id?: string | null;
+          publication_revision?: number | null;
           status?: Database['public']['Enums']['version_status'] | null;
         };
         Relationships: [
@@ -1047,9 +1079,11 @@ export type Database = {
           p_actor_id: string;
           p_article_id: string;
           p_category_id: string;
+          p_character_id?: string | null;
           p_content: string;
           p_ip: string | null;
           p_title: string;
+          p_update_character?: boolean;
           p_version_id: string;
         };
         Returns: undefined;
@@ -1483,8 +1517,10 @@ export type Database = {
         Args: {
           p_article_id: string;
           p_category_id: string;
+          p_character_id: string | null;
           p_content: string;
           p_title: string;
+          p_update_character: boolean;
           p_version_id: string;
         };
         Returns: undefined;

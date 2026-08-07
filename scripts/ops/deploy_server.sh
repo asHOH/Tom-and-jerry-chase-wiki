@@ -16,6 +16,9 @@ ENV_FILE=".env.production"
 PM2_APP_NAME="tjwiki"
 PM2_DAEMON_VERSION_CHECKED=0
 START_SCRIPT="scripts/ops/start_server.sh"
+LAST_HEALTH_CHECK_ERROR=""
+FETCH_ENDPOINT_RESPONSE=""
+DEPLOY_STARTED_AT="$(date +%s)"
 
 if [ -d "$SCRIPT_DIR/../../.git" ]; then
   REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
@@ -51,6 +54,23 @@ run_with_retry() {
 
 run_git_with_retry() {
   run_with_retry 5 git -c http.lowSpeedLimit=1000 -c http.lowSpeedTime=60 "$@"
+}
+
+begin_phase() {
+  echo
+  echo "[deploy] Phase $1"
+}
+
+format_duration() {
+  local total_seconds="$1"
+  local minutes=$((total_seconds / 60))
+  local seconds=$((total_seconds % 60))
+
+  if [ "$minutes" -gt 0 ]; then
+    printf '%dm %ds' "$minutes" "$seconds"
+  else
+    printf '%ds' "$seconds"
+  fi
 }
 
 load_env_file() {
@@ -252,26 +272,130 @@ clean_build_output() {
   rm -f public/sw.js public/workbox-*.js
 }
 
+summarize_response() {
+  printf '%s' "$1" | tr '\r\n' ' ' | cut -c1-500
+}
+
+fetch_endpoint() {
+  local url="$1"
+
+  if ! FETCH_ENDPOINT_RESPONSE="$(
+    curl --fail --silent --show-error --location \
+      --connect-timeout 2 --max-time 5 "$url" 2>&1
+  )"; then
+    LAST_HEALTH_CHECK_ERROR="Request to $url failed: $(summarize_response "$FETCH_ENDPOINT_RESPONSE")"
+    return 1
+  fi
+}
+
+check_health_endpoint() {
+  local url="$1"
+  local response
+
+  if ! fetch_endpoint "$url"; then
+    return 1
+  fi
+  response="$FETCH_ENDPOINT_RESPONSE"
+
+  if ! printf '%s' "$response" | node -e '
+    const fs = require("node:fs");
+    try {
+      const body = JSON.parse(fs.readFileSync(0, "utf8"));
+      if (body?.status !== "ok") process.exit(1);
+    } catch {
+      process.exit(1);
+    }
+  '; then
+    LAST_HEALTH_CHECK_ERROR="Unexpected health response from $url: $(summarize_response "$response")"
+    return 1
+  fi
+}
+
+check_version_endpoint() {
+  local url="$1"
+  local expected_commit="$2"
+  local response
+
+  if ! fetch_endpoint "$url"; then
+    return 1
+  fi
+  response="$FETCH_ENDPOINT_RESPONSE"
+
+  if ! printf '%s' "$response" | node -e '
+    const fs = require("node:fs");
+    const expected = process.argv[1].slice(0, 8);
+    try {
+      const body = JSON.parse(fs.readFileSync(0, "utf8"));
+      if (body?.commitSha !== expected) process.exit(1);
+    } catch {
+      process.exit(1);
+    }
+  ' "$expected_commit"; then
+    LAST_HEALTH_CHECK_ERROR="Version mismatch at $url; expected ${expected_commit:0:8}, received: $(summarize_response "$response")"
+    return 1
+  fi
+}
+
+report_application_failure() {
+  if [ -n "$LAST_HEALTH_CHECK_ERROR" ]; then
+    echo "Last verification error: $LAST_HEALTH_CHECK_ERROR"
+  fi
+
+  echo "PM2 process details:"
+  pm2 describe "$PM2_APP_NAME" || true
+  echo "Recent PM2 logs:"
+  pm2 logs "$PM2_APP_NAME" --lines 100 --nostream || true
+}
+
 wait_for_application_health() {
   local health_url="${HEALTH_CHECK_URL:-http://127.0.0.1:${PORT:-3000}/api/health}"
-  local max_attempts=30
+  local version_url="${VERSION_CHECK_URL:-http://127.0.0.1:${PORT:-3000}/api/version}"
+  local public_health_url="${PUBLIC_HEALTH_CHECK_URL:-}"
+  local public_version_url="${PUBLIC_VERSION_CHECK_URL:-}"
+  local expected_commit="${EXPECTED_COMMIT_SHA:-$CURRENT_HASH}"
+  local max_attempts="${HEALTH_CHECK_MAX_ATTEMPTS:-30}"
+  local retry_delay="${HEALTH_CHECK_RETRY_DELAY_SECONDS:-2}"
   local attempt=1
 
-  echo "Waiting for application health check at $health_url..."
+  if [[ ! "$max_attempts" =~ ^[1-9][0-9]*$ ]]; then
+    echo "Fatal: HEALTH_CHECK_MAX_ATTEMPTS must be a positive integer, found '$max_attempts'."
+    return 1
+  fi
+  if [[ ! "$retry_delay" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
+    echo "Fatal: HEALTH_CHECK_RETRY_DELAY_SECONDS must be a non-negative number, found '$retry_delay'."
+    return 1
+  fi
+
+  echo "Waiting for application verification at $health_url..."
+  echo "Expecting deployed commit ${expected_commit:0:8} from $version_url."
+  if [ -n "$public_health_url" ]; then
+    echo "Public health verification is enabled at $public_health_url."
+  fi
+  if [ -n "$public_version_url" ]; then
+    echo "Public version verification is enabled at $public_version_url."
+  fi
+
   while [ "$attempt" -le "$max_attempts" ]; do
-    if curl --fail --silent --show-error --connect-timeout 2 --max-time 5 "$health_url" >/dev/null 2>&1; then
-      echo "Application health check passed."
+    LAST_HEALTH_CHECK_ERROR=""
+    if check_health_endpoint "$health_url" &&
+      check_version_endpoint "$version_url" "$expected_commit" &&
+      { [ -z "$public_health_url" ] || check_health_endpoint "$public_health_url"; } &&
+      { [ -z "$public_version_url" ] || check_version_endpoint "$public_version_url" "$expected_commit"; }; then
+      echo "Application verification passed on attempt $attempt; commit ${expected_commit:0:8} is serving."
       return 0
     fi
 
     if [ "$attempt" -lt "$max_attempts" ]; then
-      sleep 2
+      if [ "$attempt" -eq 1 ] || [ $((attempt % 5)) -eq 0 ]; then
+        echo "Verification attempt $attempt/$max_attempts failed: $LAST_HEALTH_CHECK_ERROR"
+      fi
+      sleep "$retry_delay"
     fi
     attempt=$((attempt + 1))
   done
 
-  echo "Fatal: application health check failed after $max_attempts attempts."
-  pm2 describe "$PM2_APP_NAME" || true
+  echo "Fatal: application verification failed after $max_attempts attempts."
+  report_application_failure
   return 1
 }
 
@@ -290,7 +414,7 @@ ensure_pm2_process() {
   pm2 save
 }
 
-# 1. Clone or update the repository.
+begin_phase "1/6: update source"
 if [ ! -d "$REPO_ROOT/.git" ]; then
   echo "Cloning repository..."
   cd "$REPO_PARENT_DIR"
@@ -313,11 +437,15 @@ else
       git reset --hard "origin/$TARGET_BRANCH"
     fi
   else
-    echo "Could not update from remote. Starting with the existing local code."
+    echo "Fatal: could not update '$TARGET_BRANCH' from origin. The existing application process is unchanged."
+    exit 1
   fi
 fi
 
-# 2. Set up production environment variables.
+CURRENT_HASH="$(git rev-parse HEAD)"
+echo "Resolved source: branch=$TARGET_BRANCH commit=$CURRENT_HASH"
+
+begin_phase "2/6: load production environment"
 if [ ! -f "$ENV_FILE" ]; then
   if [ -f ".env.example" ]; then
     echo "Production environment file '$ENV_FILE' not found. Creating it from .env.example..."
@@ -332,35 +460,57 @@ fi
 echo "Loading production environment variables from $ENV_FILE..."
 load_env_file
 
-# 3. Ensure Node.js is available.
+begin_phase "3/6: prepare runtime tools"
 ensure_nvm
 ensure_pinned_npm
+ensure_pm2_cli
 
-# 4. Install dependencies.
+NODE_VERSION="$(node --version)"
+NPM_VERSION="$(npm --version)"
+PM2_VERSION="$(pm2 --version 2>/dev/null | tail -n 1)"
+echo "Runtime tools: node=$NODE_VERSION npm=$NPM_VERSION pm2=$PM2_VERSION"
+
+begin_phase "4/6: install dependencies"
 install_dependencies
 
-# 5. Build the application only if build inputs have changed.
-BUILD_HASH_FILE=".next/.build_hash"
-CURRENT_HASH="$(git rev-parse HEAD)"
+begin_phase "5/6: evaluate and build application"
+BUILD_INPUTS_FILE=".next/.build_inputs"
+API_RUNTIME="nodejs"
 ENV_FILE_HASH="$(sha256sum "$ENV_FILE" | awk '{ print $1 }')"
-CURRENT_BUILD_HASH="$(
-  printf '%s\n%s\n' "$CURRENT_HASH" "$ENV_FILE_HASH" | sha256sum | awk '{ print $1 }'
-)"
-LAST_BUILD_HASH=""
+LAST_SOURCE_HASH=""
+LAST_ENV_HASH=""
+LAST_NODE_VERSION=""
+LAST_NPM_VERSION=""
+LAST_API_RUNTIME=""
+BUILD_REASONS=()
 
 export COMMIT_SHA="$CURRENT_HASH"
 export NEXT_PUBLIC_BUILD_TIMESTAMP="$(git show -s --format=%cI "$CURRENT_HASH")"
 
-if [ -f "$BUILD_HASH_FILE" ]; then
-  LAST_BUILD_HASH="$(cat "$BUILD_HASH_FILE")"
+if [ -f "$BUILD_INPUTS_FILE" ]; then
+  IFS=$'\t' read -r LAST_SOURCE_HASH LAST_ENV_HASH LAST_NODE_VERSION LAST_NPM_VERSION LAST_API_RUNTIME < "$BUILD_INPUTS_FILE" || true
 fi
 
-if [ "$CURRENT_BUILD_HASH" != "$LAST_BUILD_HASH" ] || ! build_output_is_valid; then
-  if [ "$CURRENT_BUILD_HASH" != "$LAST_BUILD_HASH" ]; then
-    echo "Code or production environment has changed since the last build. Building application..."
-  else
-    echo "Existing build output is missing or incomplete. Rebuilding application..."
-  fi
+if [ "$CURRENT_HASH" != "$LAST_SOURCE_HASH" ]; then
+  BUILD_REASONS+=("source")
+fi
+if [ "$ENV_FILE_HASH" != "$LAST_ENV_HASH" ]; then
+  BUILD_REASONS+=("environment")
+fi
+if [ "$NODE_VERSION" != "$LAST_NODE_VERSION" ] ||
+  [ "$NPM_VERSION" != "$LAST_NPM_VERSION" ] ||
+  [ "$API_RUNTIME" != "$LAST_API_RUNTIME" ]; then
+  BUILD_REASONS+=("toolchain")
+fi
+if ! build_output_is_valid; then
+  BUILD_REASONS+=("output")
+fi
+
+if [ "${#BUILD_REASONS[@]}" -gt 0 ]; then
+  BUILD_REASON_LIST="$(printf '%s, ' "${BUILD_REASONS[@]}")"
+  BUILD_REASON_LIST="${BUILD_REASON_LIST%, }"
+  echo "Build required; changed inputs: $BUILD_REASON_LIST"
+  BUILD_STARTED_AT="$(date +%s)"
 
   stop_pm2_process_for_build
   clean_build_output
@@ -386,7 +536,13 @@ if [ "$CURRENT_BUILD_HASH" != "$LAST_BUILD_HASH" ] || ! build_output_is_valid; t
 
     echo "Build successful."
     mkdir -p .next
-    echo "$CURRENT_BUILD_HASH" > "$BUILD_HASH_FILE"
+    printf '%s\t%s\t%s\t%s\t%s\n' \
+      "$CURRENT_HASH" "$ENV_FILE_HASH" "$NODE_VERSION" "$NPM_VERSION" "$API_RUNTIME" \
+      > "$BUILD_INPUTS_FILE"
+    BUILD_ACTION="built"
+    BUILD_DURATION_SECONDS="$(($(date +%s) - BUILD_STARTED_AT))"
+    BUILD_DURATION="$(format_duration "$BUILD_DURATION_SECONDS")"
+    echo "Build completed in $BUILD_DURATION."
   else
     BUILD_EXIT_CODE=$?
     echo "Fatal: build failed with exit code $BUILD_EXIT_CODE."
@@ -397,8 +553,14 @@ if [ "$CURRENT_BUILD_HASH" != "$LAST_BUILD_HASH" ] || ! build_output_is_valid; t
     exit 1
   fi
 else
-  echo "No code changes detected. Skipping build."
+  BUILD_ACTION="skipped"
+  BUILD_DURATION="skipped"
+  echo "Build skipped; source, environment, toolchain, and output match the previous build."
 fi
 
-# 6. Start or reload the runtime process.
+begin_phase "6/6: activate and verify application"
 ensure_pm2_process
+
+DEPLOY_DURATION_SECONDS="$(($(date +%s) - DEPLOY_STARTED_AT))"
+echo
+echo "Deployment complete: commit=${CURRENT_HASH:0:8} branch=$TARGET_BRANCH build=$BUILD_ACTION build_time=$BUILD_DURATION total_time=$(format_duration "$DEPLOY_DURATION_SECONDS") node=$NODE_VERSION npm=$NPM_VERSION pm2=$PM2_VERSION"

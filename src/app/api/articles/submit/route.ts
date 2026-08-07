@@ -1,5 +1,9 @@
 import { NextResponse } from 'next/server';
 
+import {
+  ArticleWriteValidationError,
+  resolveArticleCharacterForWrite,
+} from '@/lib/articles/articleWriteRelations';
 import { requirePermission } from '@/lib/auth/requirePermission';
 import { getRequestIp } from '@/lib/blocks/server';
 import { CACHE_TAGS, invalidateCache } from '@/lib/cacheTags';
@@ -14,7 +18,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429, headers: rl.headers });
   }
 
-  const parsed = articleSubmitSchema.safeParse(await req.json());
+  const parsed = articleSubmitSchema.safeParse(await req.json().catch(() => null));
   if (!parsed.success) {
     return NextResponse.json(
       { error: 'Invalid request body', details: formatZodError(parsed.error) },
@@ -35,6 +39,10 @@ export async function POST(req: Request) {
   const { userId } = guard;
 
   try {
+    const resolvedCharacterId = await resolveArticleCharacterForWrite({
+      categoryId: category,
+      characterId: character_id,
+    });
     const { data: submittedVersions, error: rpcError } = await supabaseAdmin.rpc(
       'prepared_create_article',
       {
@@ -43,7 +51,7 @@ export async function POST(req: Request) {
         p_title: title,
         p_content: content,
         p_category_id: category,
-        ...(character_id ? { p_character_id: character_id } : {}),
+        p_character_id: resolvedCharacterId,
       }
     );
 
@@ -109,6 +117,9 @@ export async function POST(req: Request) {
       article_id: newArticleId,
     });
   } catch (err) {
+    if (err instanceof ArticleWriteValidationError) {
+      return NextResponse.json({ error: err.message }, { status: 400 });
+    }
     console.error('API error:', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+import { resolveArticleCategoryPolicy } from '@/lib/articles/articleCategoryPolicy';
 import { CACHE_TAGS } from '@/lib/cacheTags';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { cached } from '@/lib/serverCache';
@@ -23,14 +24,20 @@ export async function GET(request: NextRequest) {
       async () => {
         const { data, error } = await supabaseServerPublic
           .from('categories')
-          .select('id, name')
+          .select('id, name, parent_category_id, requires_character')
           .order('name');
 
         if (error) {
           console.error('Error fetching categories:', error);
           throw new Error('Failed to fetch categories');
         }
-        return data || [];
+        const categoryRows = data ?? [];
+        return categoryRows.map((category) => ({
+          id: category.id,
+          name: category.name,
+          requires_character:
+            resolveArticleCategoryPolicy(categoryRows, category.id)?.requiresCharacter ?? false,
+        }));
       },
       {
         revalidate: 7200, // 2 hours

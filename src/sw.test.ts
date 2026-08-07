@@ -151,7 +151,6 @@ describe('service worker runtime caching', () => {
   });
 
   it.each([
-    '/api/articles',
     '/api/articles/article-id',
     '/api/articles/article-id/history',
     '/api/categories',

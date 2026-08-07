@@ -71,7 +71,7 @@ docker compose up -d
 
 - **部署与运行分离**: 构建失败时不会影响当前在线进程
 - **环境配置**: 自动安装 NVM 与 Node.js；自动切换 npm 镜像源（npmmirror/官方）
-- **智能更新**: Git 拉取防超时；仅在代码变更时增量构建
+- **智能更新**: Git 拉取防超时；代码、生产环境或 Node/npm 工具链变化时才重新构建
 - **运行托管**: pm2 只托管站点进程；`cloudflared` 单独作为系统服务运行
 
 ### 使用方法
@@ -102,6 +102,18 @@ docker compose up -d
    ```
 
    脚本会在构建成功后自动执行 `pm2 reload tjwiki --update-env`；如果构建失败，会保留当前正在运行的旧版本。
+
+   如果无法从远程仓库拉取 `develop`，部署会以非零状态退出。
+
+   重载后，脚本会同时检查本机 `/api/health` 的响应内容和 `/api/version` 返回的提交版本。可按需设置以下变量来检查经过反向代理或 CDN 的公开访问路径：
+
+   ```bash
+   PUBLIC_HEALTH_CHECK_URL=https://tjwiki.com/api/health \
+   PUBLIC_VERSION_CHECK_URL=https://tjwiki.com/api/version \
+   ./deploy_server.sh
+   ```
+
+   可通过 `HEALTH_CHECK_MAX_ATTEMPTS` 和 `HEALTH_CHECK_RETRY_DELAY_SECONDS` 调整验证次数与间隔。
 
 4. 配置 pm2 开机自启：
 

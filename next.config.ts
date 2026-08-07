@@ -7,6 +7,11 @@ import { buildCspHeader } from './csp.config';
 import './src/env';
 
 const productionBuildIdentity = process.env.DEPLOY_BUILD_ID?.trim() || randomUUID();
+const requestedBuildCpuCount = Number.parseInt(process.env.NEXT_CPU_COUNT ?? '', 10);
+const buildCpuCount =
+  Number.isInteger(requestedBuildCpuCount) && requestedBuildCpuCount > 0
+    ? requestedBuildCpuCount
+    : undefined;
 
 let withBundleAnalyzer = (config: NextConfig) => config;
 
@@ -211,6 +216,7 @@ const nextConfig: NextConfig = {
   typedRoutes: true,
   experimental: {
     useTypeScriptCli: true,
+    ...(buildCpuCount ? { cpus: buildCpuCount } : {}),
   },
 };
 

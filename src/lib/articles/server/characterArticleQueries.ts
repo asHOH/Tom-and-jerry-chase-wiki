@@ -13,12 +13,10 @@ type CharacterArticleMetaRow = {
   view_count: number | null;
   categories: { name: string } | null;
   users_public_view: { nickname: string | null } | null;
-};
-
-type CharacterArticleVersionRow = {
-  article_id: string | null;
-  content: string | null;
-  created_at: string | null;
+  current_version: {
+    content: string | null;
+    created_at: string | null;
+  } | null;
 };
 
 export type EmbeddedCharacterArticle = {
@@ -44,9 +42,21 @@ export async function getEmbeddedArticlesForCharacter(
       const { data: articleRows } = await supabase
         .from('articles')
         .select(
-          'id, title, created_at, view_count, categories(name), users_public_view!author_id(nickname)'
+          `
+            id,
+            title,
+            created_at,
+            view_count,
+            categories(name),
+            users_public_view!author_id(nickname),
+            current_version:article_versions_public_view!articles_current_version_id_fkey(
+              content,
+              created_at
+            )
+          `
         )
         .eq('character_id', characterId)
+        .not('current_version_id', 'is', null)
         .order('created_at', { ascending: false });
 
       const articles = (articleRows ?? []) as unknown as CharacterArticleMetaRow[];
@@ -55,34 +65,8 @@ export async function getEmbeddedArticlesForCharacter(
         return [];
       }
 
-      const articleIds = articles.map((article) => article.id);
-      const { data: versionRows } = await supabase
-        .from('article_versions_public_view')
-        .select('article_id, content, created_at')
-        .in('article_id', articleIds)
-        .eq('status', 'approved')
-        .order('created_at', { ascending: false });
-
-      const latestByArticleId = new Map<
-        string,
-        {
-          content: string | null;
-          created_at: string | null;
-        }
-      >();
-
-      for (const version of (versionRows ?? []) as unknown as CharacterArticleVersionRow[]) {
-        if (!version.article_id) continue;
-        if (!latestByArticleId.has(version.article_id)) {
-          latestByArticleId.set(version.article_id, {
-            content: version.content ?? null,
-            created_at: version.created_at ?? null,
-          });
-        }
-      }
-
       return articles.flatMap((article): EmbeddedCharacterArticle[] => {
-        const latest = latestByArticleId.get(article.id);
+        const latest = article.current_version;
         if (!latest?.content) return [];
 
         const content = sanitizeHTML(latest.content, { removeH1: true });

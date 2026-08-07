@@ -39,14 +39,15 @@ export async function GET(request: NextRequest) {
           return { error: 'Preview not found' } as const;
         }
 
-        // Get article and editor information
-        const { data: article, error: articleError } = await adminClient
+        // Get article and editor information in parallel
+        const articleRequest = adminClient
           .from('articles')
           .select(
             `
               id,
               title,
               category_id,
+              character_id,
               author_id,
               created_at,
               categories(name),
@@ -55,28 +56,64 @@ export async function GET(request: NextRequest) {
           )
           .eq('id', version.article_id)
           .single();
+        const editorRequest = adminClient
+          .from('users_public_view')
+          .select('id, nickname')
+          .eq('id', version.editor_id)
+          .single();
+
+        const [{ data: article, error: articleError }, { data: editor, error: editorError }] =
+          await Promise.all([articleRequest, editorRequest]);
 
         if (articleError) {
           console.error('Error fetching article for preview:', articleError);
           return { error: 'Article not found' } as const;
         }
 
-        // Get editor information
-        const { data: editor, error: editorError } = await adminClient
-          .from('users_public_view')
-          .select('id, nickname')
-          .eq('id', version.editor_id)
-          .single();
-
         if (editorError) {
           console.error('Error fetching editor info:', editorError);
           // Don't fail the request if editor info is missing
+        }
+
+        // A complete snapshot may intentionally use a null character ID to remove a binding.
+        // Only legacy versions without the required title/category snapshot fall back wholesale.
+        const previewMetadata =
+          version.proposed_title !== null && version.proposed_category_id !== null
+            ? {
+                title: version.proposed_title,
+                categoryId: version.proposed_category_id,
+                characterId: version.proposed_character_id,
+              }
+            : {
+                title: article.title,
+                categoryId: article.category_id,
+                characterId: article.character_id,
+              };
+
+        let previewCategory = article.categories;
+        if (previewMetadata.categoryId !== article.category_id) {
+          const { data: proposedCategory, error: categoryError } = await adminClient
+            .from('categories')
+            .select('name')
+            .eq('id', previewMetadata.categoryId)
+            .single();
+
+          if (categoryError) {
+            console.error('Error fetching proposed category for preview:', categoryError);
+            return { error: 'Article category not found' } as const;
+          }
+
+          previewCategory = proposedCategory;
         }
 
         return {
           preview: {
             article: {
               ...article,
+              title: previewMetadata.title,
+              category_id: previewMetadata.categoryId,
+              character_id: previewMetadata.characterId,
+              categories: previewCategory,
               version: {
                 id: version.id,
                 content: version.content,
@@ -104,7 +141,8 @@ export async function GET(request: NextRequest) {
       const status =
         response.error === 'Invalid preview token' ||
         response.error === 'Preview not found' ||
-        response.error === 'Article not found'
+        response.error === 'Article not found' ||
+        response.error === 'Article category not found'
           ? 404
           : 500;
       return NextResponse.json(response, { status });

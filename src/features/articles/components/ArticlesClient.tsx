@@ -1,27 +1,25 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { m, useReducedMotion } from 'motion/react';
 import { Masonry } from 'react-plock';
 
+import { buildArticleListHref, type ArticleListParams } from '@/lib/articles/listParams';
 import { AssetManager } from '@/lib/assetManager';
 import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { formatCompactDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
-import { useFilterState } from '@/lib/filterUtils';
 import { shouldIgnorePageNavigationKey } from '@/lib/keyboardNavigation';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useSwipeGesture } from '@/hooks/useSwipeGesture';
 import { useEditMode } from '@/context/EditModeContext';
 import { useToast } from '@/context/ToastContext';
-import { Article, ArticlesData, Category, type FactionId } from '@/data/types';
+import { ArticleListPageData, Category, type FactionId } from '@/data/types';
 import Button from '@/components/ui/Button';
 import ButtonLink from '@/components/ui/ButtonLink';
 import EntityCardFrame from '@/components/ui/EntityCardFrame';
 import PageHeader from '@/components/ui/PageHeader';
-import RichTextDisplay from '@/components/ui/RichTextDisplay';
-import { SkeletonArticleCard } from '@/components/ui/Skeleton';
 import { ClockIcon, PlusIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 
@@ -30,33 +28,29 @@ import ArticleFilters from './ArticleFilters';
 import ArticlePagination from './ArticlePagination';
 
 interface ArticlesClientProps {
-  articles: ArticlesData;
+  articles: ArticleListPageData;
+  listParams: ArticleListParams;
   characterSummaries: Readonly<Record<string, { id: string; factionId?: FactionId }>>;
   description?: string;
 }
 
 export default function ArticlesClient({
   articles: data,
+  listParams,
   characterSummaries,
   description,
 }: ArticlesClientProps) {
   const permissions = usePermissions();
   const isMobile = useMobile();
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { isEditMode } = useEditMode();
   const { info } = useToast();
   const articlesGridRef = useRef<HTMLDivElement>(null);
   const shouldReduceMotion = useReducedMotion();
-
-  // Use centralized filter state management
-  const {
-    selectedFilters: selectedCategories,
-    toggleFilter: toggleCategoryFilter,
-    hasFilter: hasCategoryFilter,
-    clearFilters: clearCategoryFilters,
-    setFilters: setCategoryFilters,
-  } = useFilterState<string>();
+  const selectedCategories = useMemo(
+    () => new Set(listParams.categoryIds),
+    [listParams.categoryIds]
+  );
 
   const categoriesForFilter = useMemo<Category[]>(() => {
     if (!data?.categories) return [];
@@ -75,124 +69,37 @@ export default function ArticlesClient({
     [categoriesForFilter]
   );
 
-  // Initialize state from URL params
-  const [currentPage, setCurrentPage] = useState(() => {
-    const page = searchParams.get('page');
-    return page ? Math.max(1, parseInt(page, 10) || 1) : 1;
-  });
-  const [sortBy, setSortBy] = useState<'created_at' | 'title' | 'view_count'>(() => {
-    const sort = searchParams.get('sort');
-    if (sort === 'title' || sort === 'view_count') return sort;
-    return 'created_at';
-  });
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>(() => {
-    const order = searchParams.get('order');
-    return order === 'asc' ? 'asc' : 'desc';
-  });
-  const [isInitialized, setIsInitialized] = useState(false);
+  const currentPage = data.current_page;
+  const totalPages = Math.max(1, data.total_pages);
+  const sortBy = listParams.sortBy;
+  const sortOrder = listParams.sortOrder;
 
-  useArticleListScrollRestoration(isInitialized);
+  useArticleListScrollRestoration(true);
 
-  // Initialize category filters from URL on mount
-  useEffect(() => {
-    const categoryParam = searchParams.get('category');
-    if (categoryParam) {
-      const categoryIds = categoryParam.split(',').filter(Boolean);
-      if (categoryIds.length > 0) {
-        setCategoryFilters(new Set(categoryIds));
-      }
-    }
-    setIsInitialized(true);
-  }, []); // oxlint-disable-line react/exhaustive-deps
-
-  // Sync state to URL
   const updateURL = useCallback(
-    (params: { page?: number; sort?: string; order?: string; category?: string }) => {
-      const newParams = new URLSearchParams(searchParams.toString());
-
-      if (params.page !== undefined) {
-        if (params.page === 1) newParams.delete('page');
-        else newParams.set('page', String(params.page));
-      }
-      if (params.sort !== undefined) {
-        if (params.sort === 'created_at') newParams.delete('sort');
-        else newParams.set('sort', params.sort);
-      }
-      if (params.order !== undefined) {
-        if (params.order === 'desc') newParams.delete('order');
-        else newParams.set('order', params.order);
-      }
-      if (params.category !== undefined) {
-        if (!params.category) newParams.delete('category');
-        else newParams.set('category', params.category);
-      }
-
-      const queryString = newParams.toString();
-      router.replace(queryString ? `?${queryString}` : '/articles', { scroll: false });
+    (params: ArticleListParams) => {
+      router.replace(buildArticleListHref(params), { scroll: false });
     },
-    [router, searchParams]
+    [router]
   );
-
-  const filteredArticles = (() => {
-    if (!data?.articles) return [] as Article[];
-    if (selectedCategories.size === 0) return data.articles;
-    return data.articles.filter((a) => selectedCategories.has(a.category_id));
-  })();
-
-  const sortedArticles = (() => {
-    const arr = [...filteredArticles];
-    if (sortBy === 'created_at') {
-      arr.sort((a, b) =>
-        sortOrder === 'desc'
-          ? new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-          : new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-      );
-    } else if (sortBy === 'title') {
-      arr.sort((a, b) => {
-        const at = a.title || '';
-        const bt = b.title || '';
-        return sortOrder === 'asc' ? at.localeCompare(bt, 'zh-CN') : bt.localeCompare(at, 'zh-CN');
-      });
-    } else if (sortBy === 'view_count') {
-      arr.sort((a, b) => {
-        const at = a.view_count || 0;
-        const bt = b.view_count || 0;
-        return sortOrder === 'asc' ? at - bt : bt - at;
-      });
-    }
-    return arr;
-  })();
-
-  const pageSize = 18;
-  const clientTotalPages = Math.max(1, Math.ceil(sortedArticles.length / pageSize));
-  const clampedPage = Math.min(currentPage, clientTotalPages);
-  const startIndex = (clampedPage - 1) * pageSize;
-  const visibleArticles = sortedArticles.slice(startIndex, startIndex + pageSize);
-
-  useEffect(() => {
-    if (currentPage > clientTotalPages) {
-      setCurrentPage(1);
-      updateURL({ page: 1 });
-    }
-  }, [clientTotalPages, currentPage, updateURL]);
+  const hasCategoryFilter = useCallback(
+    (categoryId: string) => selectedCategories.has(categoryId),
+    [selectedCategories]
+  );
 
   const handlePageChange = useCallback(
     (newPage: number) => {
-      if (newPage >= 1 && newPage <= clientTotalPages) {
-        setCurrentPage(newPage);
-        updateURL({ page: newPage });
+      if (newPage >= 1 && newPage <= totalPages) {
+        updateURL({ ...listParams, page: newPage });
         // Scroll to top of articles grid for better UX
         articlesGridRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
     },
-    [clientTotalPages, updateURL]
+    [listParams, totalPages, updateURL]
   );
 
   const handleCategoryToggle = useCallback(
     (categoryId: string) => {
-      toggleCategoryFilter(categoryId);
-      setCurrentPage(1);
-      // Update URL with new category state
       const newCategories = new Set(selectedCategories);
       if (newCategories.has(categoryId)) {
         newCategories.delete(categoryId);
@@ -200,34 +107,36 @@ export default function ArticlesClient({
         newCategories.add(categoryId);
       }
       updateURL({
+        ...listParams,
         page: 1,
-        category: Array.from(newCategories).join(','),
+        categoryIds: Array.from(newCategories),
       });
     },
-    [toggleCategoryFilter, selectedCategories, updateURL]
+    [listParams, selectedCategories, updateURL]
+  );
+  const handleCategorySelect = useCallback(
+    (categoryId: string) => {
+      updateURL({ ...listParams, page: 1, categoryIds: [categoryId] });
+    },
+    [listParams, updateURL]
   );
 
   const handleClearFilters = useCallback(() => {
-    clearCategoryFilters();
-    setCurrentPage(1);
-    updateURL({ page: 1, category: '' });
+    updateURL({ ...listParams, page: 1, categoryIds: [] });
     info('已清除所有筛选条件');
-  }, [clearCategoryFilters, updateURL, info]);
+  }, [info, listParams, updateURL]);
 
   const handleSortChange = useCallback(
     (newSortBy: 'created_at' | 'title' | 'view_count', newSortOrder: 'asc' | 'desc') => {
-      setSortBy(newSortBy);
-      setSortOrder(newSortOrder);
-      setCurrentPage(1);
-      updateURL({ page: 1, sort: newSortBy, order: newSortOrder });
+      updateURL({ ...listParams, page: 1, sortBy: newSortBy, sortOrder: newSortOrder });
     },
-    [updateURL]
+    [listParams, updateURL]
   );
 
   // Swipe gesture for mobile pagination - returns ref to attach to swipeable element
   const swipeContainerRef = useSwipeGesture({
     onSwipeLeft: () => {
-      if (currentPage < clientTotalPages) {
+      if (currentPage < totalPages) {
         handlePageChange(currentPage + 1);
       }
     },
@@ -236,7 +145,7 @@ export default function ArticlesClient({
         handlePageChange(currentPage - 1);
       }
     },
-    disabled: !isMobile || clientTotalPages <= 1,
+    disabled: !isMobile || totalPages <= 1,
     threshold: 80,
   });
 
@@ -250,7 +159,7 @@ export default function ArticlesClient({
       if (e.key === 'ArrowLeft' && currentPage > 1) {
         e.preventDefault();
         handlePageChange(currentPage - 1);
-      } else if (e.key === 'ArrowRight' && currentPage < clientTotalPages) {
+      } else if (e.key === 'ArrowRight' && currentPage < totalPages) {
         e.preventDefault();
         handlePageChange(currentPage + 1);
       } else if (e.key === 'Escape' && selectedCategories.size > 0) {
@@ -263,26 +172,13 @@ export default function ArticlesClient({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [
     currentPage,
-    clientTotalPages,
+    totalPages,
     handlePageChange,
     isEditMode,
     selectedCategories.size,
     handleClearFilters,
   ]);
 
-  // Show skeleton while initializing from URL params
-  if (!isInitialized) {
-    return (
-      <div className='space-y-8 dark:text-slate-200'>
-        <PageHeader title='文章列表' description={description} className='mb-8' />
-        <div className='mt-8 grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-6 px-4'>
-          {Array.from({ length: 6 }).map((_, i) => (
-            <SkeletonArticleCard key={i} />
-          ))}
-        </div>
-      </div>
-    );
-  }
   return (
     <div className='space-y-2 md:space-y-8 dark:text-slate-200'>
       {/* Header */}
@@ -307,13 +203,13 @@ export default function ArticlesClient({
           )}
         >
           <div className='text-center text-sm text-gray-600 sm:text-left dark:text-gray-400'>
-            共 {filteredArticles.length} 篇文章
+            共 {data.total_count} 篇文章
             {selectedCategories.size > 0 && (
               <span className='block sm:inline'>
                 {' '}
                 (已筛选:{' '}
                 {Array.from(selectedCategories)
-                  .map((id) => data?.categories.find((c) => c.id === id)?.name)
+                  .map((id) => data.categories.find((c) => c.id === id)?.name)
                   .filter(Boolean)
                   .join(', ')}
                 )
@@ -364,12 +260,12 @@ export default function ArticlesClient({
 
       {/* Screen reader announcement for filter results */}
       <div aria-live='polite' aria-atomic='true' className='sr-only'>
-        {filteredArticles.length} 篇文章
+        {data.total_count} 篇文章
         {selectedCategories.size > 0 && `，已筛选 ${selectedCategories.size} 个分类`}
       </div>
 
       {/* Articles List */}
-      {filteredArticles.length === 0 ? (
+      {data.articles.length === 0 ? (
         <div className='px-4 py-12 text-center'>
           <div className='mb-4 text-6xl'>📄</div>
           <h3 className='mb-2 text-xl font-semibold text-gray-800 dark:text-gray-200'>
@@ -400,7 +296,7 @@ export default function ArticlesClient({
           transition={{ duration: 0.16, ease: 'easeOut' }}
         >
           <Masonry
-            items={visibleArticles}
+            items={data.articles}
             config={{
               columns: [1, 2, 3],
               gap: [16, 24, 24],
@@ -408,7 +304,7 @@ export default function ArticlesClient({
               useBalancedLayout: true,
             }}
             render={(article) => {
-              const latestVersion = article.latest_approved_version[0];
+              const latestVersion = article.current_version;
               const boundCharacter = article.character_id
                 ? characterSummaries[article.character_id]
                 : null;
@@ -450,7 +346,7 @@ export default function ArticlesClient({
                         className='rounded bg-blue-100 px-2 py-1 text-xs text-blue-700 transition-colors hover:bg-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:hover:bg-blue-800/50'
                         onClick={(ev) => {
                           ev.preventDefault();
-                          setCategoryFilters(new Set([article.category_id]));
+                          handleCategorySelect(article.category_id);
                         }}
                         role='button'
                       >
@@ -458,7 +354,9 @@ export default function ArticlesClient({
                       </span>
                     </div>
 
-                    <RichTextDisplay content={latestVersion?.content} preview />
+                    <p className='mt-1 mb-3 line-clamp-3 text-sm'>
+                      {latestVersion?.excerpt || '暂无摘要'}
+                    </p>
 
                     <div className='mt-auto mb-2 flex'>
                       <div className='items-left flex flex-col justify-between text-xs text-gray-600 dark:text-gray-400'>
@@ -505,7 +403,7 @@ export default function ArticlesClient({
       {/* Pagination */}
       <ArticlePagination
         currentPage={currentPage}
-        clientTotalPages={clientTotalPages}
+        totalPages={totalPages}
         handlePageChange={handlePageChange}
         isMobile={isMobile}
         selectedCategories={selectedCategories}

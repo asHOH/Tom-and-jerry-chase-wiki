@@ -1,9 +1,14 @@
 import { revalidateTag } from 'next/cache';
 import { NextResponse } from 'next/server';
 
+import {
+  ArticleWriteValidationError,
+  resolveArticleCharacterForWrite,
+} from '@/lib/articles/articleWriteRelations';
 import { requirePermission } from '@/lib/auth/requirePermission';
 import { getRequestIp, requireNotBlocked } from '@/lib/blocks/server';
 import { CACHE_TAGS } from '@/lib/cacheTags';
+import { checkRateLimit } from '@/lib/rateLimit';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { articleEditPendingSchema, formatZodError } from '@/lib/validation/schemas';
 
@@ -11,6 +16,11 @@ export async function POST(
   request: Request,
   { params }: { params: Promise<{ versionId?: string }> }
 ) {
+  const rl = await checkRateLimit(request, 'write', 'articles-edit-pending');
+  if (!rl.allowed) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429, headers: rl.headers });
+  }
+
   const versionId = (await params)?.versionId;
 
   if (!versionId) {
@@ -28,7 +38,7 @@ export async function POST(
       { status: 400 }
     );
   }
-  const { title, category, content } = parsed.data;
+  const { title, category, content, character_id } = parsed.data;
 
   try {
     // Get the article_id from the version.
@@ -53,6 +63,11 @@ export async function POST(
     });
     if (blocked) return blocked;
 
+    const resolvedCharacterId = await resolveArticleCharacterForWrite({
+      categoryId: category,
+      characterId: character_id,
+    });
+
     // Call RPC to update pending article in a transaction
     const { error: rpcError } = await supabaseAdmin.rpc('prepared_update_pending_article', {
       p_actor_id: userId,
@@ -62,6 +77,8 @@ export async function POST(
       p_title: title,
       p_content: content,
       p_category_id: category,
+      p_character_id: resolvedCharacterId,
+      p_update_character: true,
     });
 
     if (rpcError) {
@@ -97,6 +114,9 @@ export async function POST(
 
     return NextResponse.json({ message: 'Pending article updated successfully' }, { status: 200 });
   } catch (err) {
+    if (err instanceof ArticleWriteValidationError) {
+      return NextResponse.json({ error: err.message }, { status: 400 });
+    }
     console.error('API error:', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }

@@ -617,14 +617,15 @@ export interface Article {
   view_count?: number;
   categories: { id: string; name: string };
   users_public_view: { nickname: string };
-  latest_approved_version: Array<{
+  current_version: {
     id: string | null;
-    content: string | null;
+    content?: string | null;
+    excerpt?: string | null;
     created_at: string | null;
     status: string | null;
     editor_id: string | null;
     users_public_view: { nickname: string } | null;
-  }>;
+  } | null;
 }
 
 export interface Category {
@@ -635,6 +636,14 @@ export interface Category {
 export interface ArticlesData {
   articles: Article[];
   categories: Category[];
+}
+
+export interface ArticleListPageData extends ArticlesData {
+  total_count: number;
+  current_page: number;
+  total_pages: number;
+  has_next: boolean;
+  has_prev: boolean;
 }
 
 export type ModeTypeList = '经典模式' | '休闲模式' | '特殊模式';

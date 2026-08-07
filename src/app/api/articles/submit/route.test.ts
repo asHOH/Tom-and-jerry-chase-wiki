@@ -1,3 +1,4 @@
+import { resolveArticleCharacterForWrite } from '@/lib/articles/articleWriteRelations';
 import { requirePermission } from '@/lib/auth/requirePermission';
 import { invalidateCache } from '@/lib/cacheTags';
 import { notifyArticleVersionSubscribers, publishNotification } from '@/lib/notificationUtils';
@@ -18,6 +19,11 @@ jest.mock('next/server', () => ({
   NextResponse: {
     json: jest.fn(jsonResponse),
   },
+}));
+
+jest.mock('@/lib/articles/articleWriteRelations', () => ({
+  ArticleWriteValidationError: class ArticleWriteValidationError extends Error {},
+  resolveArticleCharacterForWrite: jest.fn(),
 }));
 
 jest.mock('@/lib/auth/requirePermission', () => ({
@@ -52,11 +58,13 @@ jest.mock('@/lib/supabase/admin', () => ({
 }));
 
 const requirePermissionMock = jest.mocked(requirePermission);
+const resolveArticleCharacterForWriteMock = jest.mocked(resolveArticleCharacterForWrite);
 const invalidateCacheMock = jest.mocked(invalidateCache);
 const notifyArticleVersionSubscribersMock = jest.mocked(notifyArticleVersionSubscribers);
 const publishNotificationMock = jest.mocked(publishNotification);
 const checkRateLimitMock = jest.mocked(checkRateLimit);
 const rpcMock = jest.mocked(supabaseAdmin.rpc);
+const CATEGORY_ID = '11111111-1111-4111-8111-111111111111';
 
 const createRequest = (body: unknown) =>
   ({
@@ -79,6 +87,7 @@ describe('article submit route', () => {
       suppressed: false,
       emailStatus: 'skipped',
     });
+    resolveArticleCharacterForWriteMock.mockResolvedValue(null);
   });
 
   it('notifies subscribers when a submission stays pending', async () => {
@@ -96,7 +105,7 @@ describe('article submit route', () => {
     const response = await POST(
       createRequest({
         title: '测试文章',
-        category: 'category-1',
+        category: CATEGORY_ID,
         content: '内容',
       })
     );
@@ -106,7 +115,7 @@ describe('article submit route', () => {
       actorUserId: 'author-1',
       articleId: 'article-1',
       articleTitle: '测试文章',
-      proposedCategoryId: 'category-1',
+      proposedCategoryId: CATEGORY_ID,
       versionId: 'version-1',
     });
     expect(publishNotificationMock).not.toHaveBeenCalled();
@@ -127,7 +136,7 @@ describe('article submit route', () => {
     const response = await POST(
       createRequest({
         title: '测试文章',
-        category: 'category-1',
+        category: CATEGORY_ID,
         content: '内容',
       })
     );
@@ -135,5 +144,27 @@ describe('article submit route', () => {
     expect(response.status).toBe(200);
     expect(notifyArticleVersionSubscribersMock).not.toHaveBeenCalled();
     expect(publishNotificationMock).toHaveBeenCalled();
+  });
+
+  it('returns 400 for malformed JSON without calling the RPC', async () => {
+    const response = await POST({
+      json: async () => Promise.reject(new Error('bad json')),
+    } as unknown as Request);
+
+    expect(response.status).toBe(400);
+    expect(rpcMock).not.toHaveBeenCalled();
+  });
+
+  it('returns 429 before parsing or authorizing', async () => {
+    checkRateLimitMock.mockResolvedValue({
+      allowed: false,
+      headers: { 'Retry-After': '60' },
+      retryAfterSeconds: 60,
+    });
+
+    const response = await POST(createRequest(null));
+
+    expect(response.status).toBe(429);
+    expect(requirePermissionMock).not.toHaveBeenCalled();
   });
 });

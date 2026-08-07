@@ -2,6 +2,11 @@ import { z } from 'zod';
 
 const trimmedString = z.string().trim().min(1);
 
+export const ARTICLE_TITLE_MAX_LENGTH = 200;
+export const ARTICLE_CONTENT_MAX_LENGTH = 250_000;
+export const ARTICLE_CHARACTER_ID_MAX_LENGTH = 128;
+export const ARTICLE_COMMIT_MESSAGE_MAX_LENGTH = 500;
+
 export const authRegisterSchema = z.object({
   username: trimmedString,
   nickname: trimmedString,
@@ -13,22 +18,23 @@ export const authRegisterSchema = z.object({
   captchaToken: trimmedString,
 });
 
-export const articleSubmitSchema = z.object({
-  title: trimmedString,
-  category: trimmedString,
-  content: trimmedString,
+const articleWriteSchema = z.object({
+  title: z.string().trim().min(1).max(ARTICLE_TITLE_MAX_LENGTH),
+  category: z.uuid(),
+  content: z.string().trim().min(1).max(ARTICLE_CONTENT_MAX_LENGTH),
   character_id: z
-    .string()
-    .trim()
+    .union([z.string().trim().min(1).max(ARTICLE_CHARACTER_ID_MAX_LENGTH), z.null()])
     .optional()
-    .transform((value) => (value && value.length > 0 ? value : undefined)),
+    .transform((value) => value ?? null),
 });
 
-export const articleEditPendingSchema = z.object({
-  title: trimmedString,
-  category: trimmedString,
-  content: trimmedString,
+export const articleSubmitSchema = articleWriteSchema;
+
+export const articleEditSchema = articleWriteSchema.extend({
+  commit_message: z.string().trim().min(1).max(ARTICLE_COMMIT_MESSAGE_MAX_LENGTH),
 });
+
+export const articleEditPendingSchema = articleWriteSchema;
 
 export const COMMENT_SCOPES = [
   'articles',

@@ -586,27 +586,28 @@ export default function ArticleClient({
                   <span>浏览: {article.view_count ?? 0}</span>
                 </div>
 
-                {article.latest_version && (
-                  <div className='flex items-center gap-2'>
-                    <PencilSquareIcon className='size-4' strokeWidth={1.5} />
+                {article.latest_version.created_at &&
+                  article.latest_version.created_at !== article.created_at && (
+                    <div className='flex items-center gap-2'>
+                      <PencilSquareIcon className='size-4' strokeWidth={1.5} />
 
-                    <span>
-                      最后编辑: {formatArticleDate(article.latest_version.created_at!)}
-                      {article.latest_version.users_public_view?.nickname &&
-                        article.latest_version.editor_id && (
-                          <>
-                            {' 由 '}
-                            <Link
-                              href={`/users/${encodeURIComponent(article.latest_version.users_public_view.nickname)}`}
-                              className='hover:text-blue-600 hover:underline dark:hover:text-blue-400'
-                            >
-                              {article.latest_version.users_public_view.nickname}
-                            </Link>
-                          </>
-                        )}
-                    </span>
-                  </div>
-                )}
+                      <span>
+                        最后编辑: {formatArticleDate(article.latest_version.created_at)}
+                        {article.latest_version.users_public_view?.nickname &&
+                          article.latest_version.editor_id && (
+                            <>
+                              {' 由 '}
+                              <Link
+                                href={`/users/${encodeURIComponent(article.latest_version.users_public_view.nickname)}`}
+                                className='hover:text-blue-600 hover:underline dark:hover:text-blue-400'
+                              >
+                                {article.latest_version.users_public_view.nickname}
+                              </Link>
+                            </>
+                          )}
+                      </span>
+                    </div>
+                  )}
               </div>
 
               {/* Action Buttons */}

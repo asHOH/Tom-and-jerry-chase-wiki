@@ -1,6 +1,11 @@
 import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 
-import { getArticlesPageData } from '@/lib/articles/serverQueries';
+import {
+  normalizeArticleListParams,
+  type ArticleListSearchParams,
+} from '@/lib/articles/listParams';
+import { getArticleListPage } from '@/lib/articles/serverQueries';
 import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
 import { generatePageMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import type { FactionId } from '@/data/types';
@@ -18,11 +23,21 @@ export const metadata: Metadata = generatePageMetadata({
   canonicalUrl: getCanonicalUrl('/articles'),
 });
 
-export default async function ArticlesPage() {
+export default async function ArticlesPage({
+  searchParams,
+}: {
+  searchParams: Promise<ArticleListSearchParams>;
+}) {
+  const listParams = normalizeArticleListParams(await searchParams);
   const [articles, characters] = await Promise.all([
-    getArticlesPageData(),
+    getArticleListPage(listParams),
     getPublishedDomainReadModel('characters'),
   ]);
+
+  if (listParams.page > Math.max(1, articles.total_pages)) {
+    notFound();
+  }
+
   const boundCharacterIds = new Set(
     articles.articles
       .map((article) => article.character_id)
@@ -39,6 +54,7 @@ export default async function ArticlesPage() {
     <PageShell width='wide'>
       <ArticlesClient
         articles={articles}
+        listParams={listParams}
         characterSummaries={characterSummaries}
         description={DESCRIPTION}
       />
