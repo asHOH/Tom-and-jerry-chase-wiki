@@ -46,41 +46,6 @@ const normalizeTargetCidr = (targetType: 'account' | 'ip' | 'range', raw: string
   return `${address}/${parsedMask}`;
 };
 
-type BlockRow = {
-  id: string;
-  target_type: string;
-  target_user_id: string | null;
-  target_cidr: string | null;
-  reason: string;
-  created_by: string;
-  created_at: string;
-  expires_at: string | null;
-  revoked_at: string | null;
-  revoked_by: string | null;
-  is_autoblock: boolean;
-  autoblock_enabled: boolean;
-  parent_block_id: string | null;
-  hard_block: boolean;
-  block_restrictions: Array<{
-    action: string;
-    resource_type: string | null;
-    resource_id: string | null;
-  }>;
-};
-
-type BlockLogRow = {
-  id: string;
-  block_id: string | null;
-  event_type: string;
-  actor_id: string | null;
-  reason: string | null;
-  snapshot: Json;
-  created_at: string;
-};
-
-const isActive = (row: BlockRow) =>
-  !row.revoked_at && (!row.expires_at || new Date(row.expires_at).getTime() > Date.now());
-
 const loadResourceOptions = async () => {
   const [{ data: articles }, { data: categories }] = await Promise.all([
     requireSupabaseAdminClient().from('articles').select('id, title').order('title').limit(1000),
@@ -125,8 +90,10 @@ export async function GET(request: Request) {
   if (error || logError)
     return NextResponse.json({ error: 'Failed to load block history' }, { status: 500 });
 
-  const rows = (data ?? []) as unknown as BlockRow[];
-  const logs = (logRows ?? []) as unknown as BlockLogRow[];
+  const rows = data ?? [];
+  const logs = logRows ?? [];
+  const isActive = (row: (typeof rows)[number]) =>
+    !row.revoked_at && (!row.expires_at || new Date(row.expires_at).getTime() > Date.now());
   const userIds = [
     ...new Set([
       ...rows.flatMap((row) => [row.target_user_id, row.created_by, row.revoked_by]),
