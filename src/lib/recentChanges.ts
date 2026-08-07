@@ -150,7 +150,9 @@ async function countGameDataChanges(): Promise<number> {
 async function queryArticleChanges(from: number, to: number): Promise<ArticleChangeRow[]> {
   const { data, error } = await supabaseServerPublic
     .from('article_versions_public_view')
-    .select('id, article_id, commit_message, created_at, editor_id, articles(title)')
+    .select(
+      'id, article_id, commit_message, created_at, editor_id, articles!article_versions_article_id_fkey(title)'
+    )
     .eq('status', 'approved')
     .order('created_at', { ascending: false })
     .order('id', { ascending: false })

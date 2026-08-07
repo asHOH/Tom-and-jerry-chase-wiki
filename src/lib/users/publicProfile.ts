@@ -170,7 +170,9 @@ export async function getPublicUserProfile(nickname: string): Promise<PublicUser
       .not('reviewed_at', 'is', null),
     supabaseAdmin
       .from('article_versions')
-      .select('id, article_id, commit_message, created_at, articles(title)')
+      .select(
+        'id, article_id, commit_message, created_at, articles!article_versions_article_id_fkey(title)'
+      )
       .eq('editor_id', userId)
       .eq('status', 'approved')
       .order('created_at', { ascending: false })

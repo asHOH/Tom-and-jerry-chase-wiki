@@ -23,7 +23,7 @@ export async function GET() {
     supabaseAdmin
       .from('article_versions')
       .select(
-        'id, article_id, commit_message, created_at, preview_token, proposed_title, review_feedback, reviewed_at, status, articles(title)'
+        'id, article_id, commit_message, created_at, preview_token, proposed_title, review_feedback, reviewed_at, status, articles!article_versions_article_id_fkey(title)'
       )
       .eq('editor_id', userId)
       .order('created_at', { ascending: false })
