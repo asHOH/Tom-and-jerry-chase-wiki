@@ -557,6 +557,15 @@ export const characterRelationCharacterCollaboratorTraits: CharacterRelationTrai
     },
   },
   {
+    description: '玛丽的3级扇子可以与恶魔泰菲的核弹配合，实现更加精准的墙缝爆破',
+    relation: {
+      kind: 'collaborators',
+      subject: { name: '玛丽', type: 'character' },
+      target: { name: '恶魔泰菲', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
     description: '米雪儿的漂浮气球配合泰菲圆滚滚解控，可大大提高泰菲的续航和容错率，使其不易被击倒',
     relation: {
       kind: 'collaborators',

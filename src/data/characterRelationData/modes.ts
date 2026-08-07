@@ -56,6 +56,16 @@ export const characterRelationModeTraits: CharacterRelationTrait[] = [
     },
   },
   {
+    description:
+      '侦探汤姆的放大镜可以无视护盾和无敌造成沉默效果，配合猛攻可以让对面猫一整局放不出技能。',
+    relation: {
+      kind: 'advantageModes',
+      subject: { name: '侦探汤姆', type: 'character' },
+      target: { name: '装饰树大作战', type: 'mode' },
+      isMinor: false,
+    },
+  },
+  {
     description: '开局十级给予斯飞极大优势',
     relation: {
       kind: 'advantageModes',

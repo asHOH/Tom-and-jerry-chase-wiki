@@ -186,6 +186,15 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
     },
   },
   {
+    description: '侦探汤姆放大镜的沉默与高伤十分克制采访中的米可。',
+    relation: {
+      kind: 'counters',
+      subject: { name: '侦探汤姆', type: 'character' },
+      target: { name: '米可', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
     description:
       '侦探汤姆被动直接放飞能力克制剑客泰菲稳救，剑客泰菲推奶酪刷勇气会刷大量线索被侦探汤姆克制。',
     relation: {
