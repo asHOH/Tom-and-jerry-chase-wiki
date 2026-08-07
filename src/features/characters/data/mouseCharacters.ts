@@ -1328,7 +1328,7 @@ const mouseCharacterDefinitions = {
         level: 2,
         description:
           '多在单排无稳救阵容中体现，冰保或自起加圆滚滚可以大幅增加泰菲的容错，抵挡攻击，再加上地雷威慑，操作得当能够实现稳定救援',
-        additionalDescription: '缺点是怕高伤，怕猫的攻击、控制手段多，冰保、自起冷却较长',
+        additionalDescription: '缺点是怕高伤，怕猫的防御、攻击、控制手段多，冰保、自起冷却较长',
       },
     ],
     skillAllocations: [
@@ -1379,11 +1379,6 @@ const mouseCharacterDefinitions = {
           '生存卡组，这套卡也是主点被动，用于牵制救援充足的阵容，{不屈}加{逃窜}再加被动，速度快，回血快，续航稳定，增加容错',
       },
       {
-        cards: ['S-舍己', 'S-铁血', 'A-冲冠一怒', 'C-不屈', 'C-救救我'],
-        description:
-          '救援卡组，用于大图，冲冠一怒增强泰菲的机动性，方便泰菲快速支援队友，在阵容泰菲为副推时使用',
-      },
-      {
         cards: ['S-舍己', 'S-铁血', 'S-护佑', 'C-救救我'],
         description: '生存卡组，护佑用于前期三级自保（试用卡组自带，无需配置）',
       },
@@ -1409,7 +1404,8 @@ const mouseCharacterDefinitions = {
         name: '圆滚滚',
         type: 'active',
         description: '向前翻滚一段距离。',
-        detailedDescription: '向前翻滚一段距离，期间可通过跳跃键打断。',
+        detailedDescription:
+          '向前滚动一段距离，滚动结束后角色会保持惯性继续位移0.2秒，滚动期间可通过跳跃键取消滚动。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '无前摇',
@@ -1422,19 +1418,19 @@ const mouseCharacterDefinitions = {
             description:
               '向前翻滚一段距离。技能可以在被眩晕时释放，并解除自身的眩晕效果，但会略微延长技能冷却时间',
             detailedDescription:
-              '向前滚动1.1秒，滚动结束后有0.2秒惯性；期间速度提70%；可以在被控制状态下使用，并解除当前所受的控制，但技能冷却时间会增加6秒。',
+              '向前滚动1.2秒；期间速度提70%；可以在被控制状态下使用，并解除当前所受的控制，但技能冷却时间会增加6秒。',
             cooldown: 12,
           },
           {
             level: 2,
             description: '滚动时无敌；滚动后短暂提升跳跃高度。',
-            detailedDescription: '滚动时于无敌状态；滚动结束后极短暂地提升跳跃高度。',
+            detailedDescription: '滚动时于无敌状态；滚动结束后提升30%跳跃能力，持续1秒。',
             cooldown: 12,
           },
           {
             level: 3,
             description: '滚得更快更远。',
-            detailedDescription: '滚动时间延长至1.4秒；期间速度提升增加至105%。',
+            detailedDescription: '滚动时间延长至1.5秒；期间速度提升增加至104%。',
             cooldown: 12,
           },
         ],
@@ -1487,7 +1483,7 @@ const mouseCharacterDefinitions = {
         description:
           '放下{感应雷}，一段时间后隐形。感应雷在敌方靠近时解除隐形，并在1.5秒后飞向敌方并爆炸，造成伤害和控制。',
         detailedDescription:
-          '放下{感应雷}，一段时间后隐形。感应雷在敌方靠近时解除隐形，并在1.5秒后飞向敌方并爆炸，对周围的敌方和墙缝造成一定伤害、1.9秒爆炸眩晕和击退。爆炸也会弹飞老鼠，但不造成伤害。隐身状态的猫咪不会触发雷。雷被道具攻击后会在一段时间后原地爆炸。雷会在30秒后自然消失。',
+          '放下{感应雷}，感应雷1秒后隐形。感应雷在敌方靠近时解除隐形，并在1.5秒后飞向敌方并爆炸。感应雷爆炸会对在其爆炸范围内的敌方造成一定伤害和2秒眩晕，并弹飞敌方，对在其爆炸范围内的墙缝造成一定伤害。爆炸也会弹飞老鼠，但不造成伤害。隐身状态的猫咪不会触发雷。雷被道具攻击后会直接开启倒计时，1.5秒后原地爆炸。感应雷会在30秒后自然消失。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['道具键*'],
@@ -1527,14 +1523,15 @@ const mouseCharacterDefinitions = {
           {
             level: 1,
             description: '吃{食物}更快；{牛奶}加速生效期间，暂时提升25Hp上限。',
-            detailedDescription: '提高3%的吃{食物}速度；{牛奶}加速生效期间，暂时提升25Hp上限。',
+            detailedDescription:
+              '提高3%的吃蛋糕与喝牛奶速度；{牛奶}加速生效期间，暂时提升25Hp上限。',
           },
           {
             level: 2,
             description:
               '可以持续缓慢恢复健康值（受伤状态也触发）；吃食物更快；推奶酪时不会因受到眩晕而打断；并在搬起奶酪、推奶酪、火箭救援时额外获得短暂的健康值缓慢恢复和减伤。',
             detailedDescription:
-              'Hp恢复提升2.5（受伤状态也触发，该效果不与牛奶恢复效果重叠，若两者同时存在，仅生效牛奶效果）；吃食物速度提20%；在推奶酪状态下，免疫控制效果（不免疫强制位移）；在搬奶酪、推奶酪、火箭救援时获得25%减伤和0.5/s的健康值回复。',
+              'Hp恢复提升2.5（受伤状态也触发，该效果不与牛奶恢复效果重叠，若两者同时存在，仅生效牛奶效果）；吃蛋糕与喝牛奶的速度提升20%；在推奶酪状态下，免疫控制效果（不免疫强制位移）；在搬奶酪、推奶酪、火箭救援时获得23%减伤和0.2点/s的健康值回复。',
           },
           {
             level: 3,
@@ -4340,7 +4337,7 @@ const mouseCharacterDefinitions = {
         weapon: 1,
         description:
           '后期三级折扇可吹动地上的大量道具砸墙，且可吹动{鞭炮束}分解出的{小鞭炮}实现对墙缝的高额伤害',
-        additionalDescription: '新增标签介绍',
+        additionalDescription: '小心别炸到队友/冰到队友',
       },
     ],
     skillAllocations: [

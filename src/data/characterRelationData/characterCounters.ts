@@ -625,7 +625,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '泰菲的圆滚滚可以解控，配合治疗可以克制米特的刷尸，2级圆滚滚可以看刷挣扎动作的前摇卡时间无伤逃跑；泰菲的圆滚滚可以把米特的饭盒踩掉，克制米特的防守。但米特的野性层数叠加到七层时可以一刀秒泰菲，被动还可以短时间内取消泰菲被动的回血buff，不利于泰菲强行推奶酪。',
+      '泰菲的圆滚滚可以解控，配合治疗可以克制米特的刷尸，2级圆滚滚可以看刷挣扎动作的前摇卡时间无伤逃跑；泰菲的圆滚滚可以把米特的饭盒踩掉，克制米特的防守。但米特的野性层数叠加到七层时可以一刀秒泰菲，被动还可以短时间内取消泰菲被动的回血buff，生效期间泰菲无法利用圆滚滚解控加治疗避免刷尸，也不利于泰菲强行推奶酪，。',
     relation: {
       kind: 'counterEachOther',
       subject: { name: '泰菲', type: 'character' },
@@ -650,16 +650,6 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       kind: 'counterEachOther',
       subject: { name: '泰菲', type: 'character' },
       target: { name: '汤姆', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
-    description:
-      '泰菲的圆滚滚可以解控，克制恶汤火车头控制、被动控制，泰菲的火箭筒有两段伤害，克制恶汤的的火车盾（盾只有一层）；恶汤的火车有强制位移，克制泰菲被动霸体减伤推奶酪，恶汤的打碟有霸体，克制泰菲的火箭筒打控制，恶汤的绑火箭速度快，打碟有霸体，克制泰菲的地雷拖延绑火箭',
-    relation: {
-      kind: 'counterEachOther',
-      subject: { name: '泰菲', type: 'character' },
-      target: { name: '恶魔汤姆', type: 'character' },
       isMinor: false,
     },
   },
@@ -1931,6 +1921,25 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       subject: { name: '泰菲', type: 'character' },
       target: { name: '图多盖洛', type: 'character' },
       isMinor: false,
+    },
+  },
+  {
+    description:
+      '恶汤火车冷却时间短，且可储存多次，泰菲圆滚滚解控后冷却时间长，不可储存，容易在技能真空期被恶汤磨死；恶汤打碟有霸体，克制泰菲火箭筒和地雷打控制；恶汤绑火箭速度快，克制地雷拖延绑火箭',
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '恶魔汤姆', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '凯特在被动加持下伤害高，泰菲Hp较低，容易被秒杀',
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '凯特', type: 'character' },
+      isMinor: true,
     },
   },
   {

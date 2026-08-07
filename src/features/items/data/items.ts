@@ -773,7 +773,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
       aliases: ['笋'],
       create: '在熊猫馆地图中的熊猫谷和熊猫家园固定位置刷新，或通过商店购买。',
       store: true,
-      price: 2000,
+      price: 500,
       storeCD: 120,
       teamCD: true,
     },

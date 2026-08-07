@@ -4,13 +4,13 @@ const getAchievementImageUrl = (name: string): string =>
   `/images/achievements/${encodeURIComponent(name)}.png`;
 
 const catAchievementDefinitions: Record<string, AchievementDefinition> = {
-  四抓: { score: 800, description: '抓住并放飞4只老鼠' },
+  四抓: { score: 800, description: '抓住并放飞4只老鼠', aliases: ['四飞'] },
   极速: { score: 500, description: '5分钟内结束游戏' },
   猫皇: { score: 400, description: '抓住并放飞3只老鼠' },
   狂攻: { score: 200, description: '击倒9次老鼠' },
   凶猛: { score: 200, description: '将老鼠绑上火箭6次' },
   翻盘: { score: 200, description: '猫在逃脱期获得胜利' },
-  双抓: { score: 200, description: '抓住并放飞2只老鼠' },
+  双抓: { score: 200, description: '抓住并放飞2只老鼠', aliases: ['二飞', '双飞'] },
   强势: { score: 100, description: '猫没有被打爆过' },
   精准: { score: 100, description: '猫使用道具砸中老鼠5次' },
   霉运: { score: 100, description: '抓住后20秒内被挣脱' },
