@@ -4337,7 +4337,7 @@ const mouseCharacterDefinitions = {
         weapon: 1,
         description:
           '后期三级折扇可吹动地上的大量道具砸墙，且可吹动{鞭炮束}分解出的{小鞭炮}实现对墙缝的高额伤害',
-        additionalDescription: '小心别炸到队友/冰到队友',
+        additionalDescription: '小心不要炸到队友／冰到队友了。',
       },
     ],
     skillAllocations: [
@@ -6408,7 +6408,7 @@ const mouseCharacterDefinitions = {
             cooldown: 8,
             charges: 3,
             detailedDescription:
-              '在蓝图上绘制时，改为绘制对应的强化图形。\n{强化圆形}●：会进行弹跳，改为造成{30*,不受来源影响}伤害，但移速减慢至原来的60%。\n{强化三角}▲：踩中后将飞出3个普通{三角}。\n{强化方块}■：反弹碰到的敌方，第一次反弹0.65秒，其余反弹0.1秒。',
+              '在蓝图上绘制时，改为绘制对应的强化图形。\n{强化圆形}●：会进行弹跳，改为造成{30*,固定}伤害，但移速减慢至原来的60%。\n{强化三角}▲：踩中后将飞出3个普通{三角}。\n{强化方块}■：反弹碰到的敌方，第一次反弹0.65秒，其余反弹0.1秒。',
           },
           {
             level: 3,

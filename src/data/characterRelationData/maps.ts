@@ -897,4 +897,14 @@ export const characterRelationMapTraits: CharacterRelationTrait[] = [
       isMinor: true,
     },
   },
+  {
+    description:
+      '太空堡垒II底部的“奶酪矿-走廊-休闲舱”三个房间是联通的，朝圣者泰菲可以在这里水平发射{木塞子}使其不断反弹，使猫在这三个房间内时极易被木塞子命中。',
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '朝圣者泰菲', type: 'character' },
+      target: { name: '太空堡垒II', type: 'map' },
+      isMinor: false,
+    },
+  },
 ];

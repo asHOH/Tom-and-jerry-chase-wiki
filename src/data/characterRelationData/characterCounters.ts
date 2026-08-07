@@ -342,6 +342,16 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
     },
   },
   {
+    description:
+      '苏蕊跳舞免控可以有效克制音乐家杰瑞的拆火箭，但音乐家杰瑞主动技能可以为自身加速，武器技能可以无前摇获得护盾，让苏蕊难以击倒音乐家杰瑞，且音乐家杰瑞伤害较高，而苏蕊血量较低，易被击倒。',
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '苏蕊', type: 'character' },
+      target: { name: '音乐家杰瑞', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
     description: '牛仔汤姆害怕剑客泰菲的稳救、强推与墙缝期的破局能力。',
     relation: {
       kind: 'counteredBy',
@@ -808,7 +818,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       kind: 'counters',
       subject: { name: '汤姆', type: 'character' },
       target: { name: '朝圣者泰菲', type: 'character' },
-      isMinor: false,
+      isMinor: true,
     },
   },
   {
@@ -3006,12 +3016,13 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
     },
   },
   {
-    description: '朝圣者泰菲射出来的子弹伤害较高，非常容易触发如玉坚毅状态。',
+    description:
+      '朝圣者泰菲射出来的{木塞子}伤害较高，非常容易触发如玉坚毅状态。且如玉可以主动开启{舞花枪}去接朝圣者泰菲的木塞子，从而反击到朝圣者泰菲。',
     relation: {
       kind: 'counters',
       subject: { name: '如玉', type: 'character' },
       target: { name: '朝圣者泰菲', type: 'character' },
-      isMinor: true,
+      isMinor: false,
     },
   },
   {

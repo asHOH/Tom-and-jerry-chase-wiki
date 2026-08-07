@@ -6,7 +6,7 @@ const getAchievementImageUrl = (name: string): string =>
 const catAchievementDefinitions: Record<string, AchievementDefinition> = {
   四抓: { score: 800, description: '抓住并放飞4只老鼠', aliases: ['四飞'] },
   极速: { score: 500, description: '5分钟内结束游戏' },
-  猫皇: { score: 400, description: '抓住并放飞3只老鼠' },
+  猫皇: { score: 400, description: '抓住并放飞3只老鼠', aliases: ['猫黄', '三飞', '三抓'] },
   狂攻: { score: 200, description: '击倒9次老鼠' },
   凶猛: { score: 200, description: '将老鼠绑上火箭6次' },
   翻盘: { score: 200, description: '猫在逃脱期获得胜利' },
