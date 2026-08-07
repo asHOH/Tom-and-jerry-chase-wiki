@@ -20,12 +20,12 @@ export const characterRelationKnowledgeCardTraits: CharacterRelationTrait[] = [
     },
   },
   {
-    description: '侦探汤姆主要用爪刀输出。',
+    description: '侦探汤姆对“被看穿”的敌方造成伤害后免疫缴械效果',
     relation: {
-      kind: 'counteredByKnowledgeCards',
+      kind: 'countersKnowledgeCards',
       subject: { name: '侦探汤姆', type: 'character' },
       target: { name: '缴械', type: 'knowledgeCard', factionId: 'mouse' },
-      isMinor: false,
+      isMinor: true,
     },
   },
   {
