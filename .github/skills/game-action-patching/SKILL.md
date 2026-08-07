@@ -98,6 +98,9 @@ Use `characterCounters.ts`, `characterCollaborators.ts`, `knowledgeCards.ts`, `s
 ## Safety Gates
 
 - Check newValue placement and schema shape.
+- For paired summary/detail fields (e.g. a skill level's `description` and
+  `detailedDescription`), check that a new value does not contradict its sibling. If it does,
+  report and defer the action; do not mark it synced without user-approved reconciliation.
 - Verify message intent (e.g. relation added and old deleted).
 - Relations: run targeted Prettier, grep/read checks, and
   `npm run report:character-relations` (the report does not check formatting).

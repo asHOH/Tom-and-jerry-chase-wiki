@@ -200,18 +200,15 @@ const catKnowledgeCardDefinitions: Record<string, Card> = {
     levels: [
       {
         level: 1,
-        description: '攻击力提升**30**，加速**3.5%**。',
-        detailedDescription: '攻击力提升**30**，加速**4%**。',
+        description: '攻击力提升**30**，加速**4%**。',
       },
       {
         level: 2,
-        description: '攻击力提升**40**，加速**5.5%**。',
-        detailedDescription: '攻击力提升**40**，加速**6%**。',
+        description: '攻击力提升**40**，加速**6%**。',
       },
       {
         level: 3,
-        description: '攻击力提升**50**，加速**8.5%**。',
-        detailedDescription: '攻击力提升**50**，加速**8%**。',
+        description: '攻击力提升**50**，加速**8%**。',
       },
     ],
     priority: '3级质变',
