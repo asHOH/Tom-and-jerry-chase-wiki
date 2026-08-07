@@ -539,8 +539,9 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     type: ['组件类', '可交互'],
     source: '地图组件',
     aliases: ['推车', '手推车', '婴儿车'],
-    move: false,
-    gravity: false,
+    move: true,
+    gravity: true,
+    collision: ['墙壁', '平台', '地面'],
     supportedMaps: ['经典之家I', '经典之家II', '经典之家III', '雪夜古堡-疯狂奶酪赛', '家之典经'],
     description:
       '小推车可被推动，{击退}碰到的角色。角色可跳入小推车中隐藏位置（躲藏期间仍能被正常命中）（该特点与{桶}类似，但小推车不会因躲藏过久而晃动）。',

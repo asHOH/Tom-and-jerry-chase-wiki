@@ -687,13 +687,20 @@ const catCharacterDefinitions = {
         description: '主布局，防守。',
       },
       {
-        cards: [
-          'S-乾坤一掷',
-          'S-猛攻',
-          'B-皮糙肉厚',
-          [CardGroupType.Or, 'A-熊熊燃烧', [CardGroupType.And, 'A-心灵手巧', 'C-猫是液体']],
+        id: '伤害高，但需要一定基本功。',
+        groups: [
+          {
+            cards: [
+              'S-乾坤一掷',
+              'S-猛攻',
+              'B-皮糙肉厚',
+              [CardGroupType.Or, 'A-熊熊燃烧', [CardGroupType.And, 'A-心灵手巧', 'C-猫是液体']],
+            ],
+            description: '伤害高，但需要一定基本功。',
+          },
         ],
         description: '伤害高，但需要一定基本功。',
+        defaultFolded: false,
       },
     ],
     specialSkills: [
