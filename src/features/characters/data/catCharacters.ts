@@ -24,8 +24,8 @@ const catCharacterDefinitions = {
       },
       {
         tagName: '打架',
-        level: 4,
-        description: '{主动技能}提供无敌和解控，{1级被动}提供续航，克制打架阵容。',
+        level: 2,
+        description: '{主动技能}提供无敌和解控，{2级被动}提供续航，克制打架阵容。',
         additionalDescription: '',
       },
       {
@@ -687,7 +687,7 @@ const catCharacterDefinitions = {
         description: '主布局，防守。',
       },
       {
-        id: '伤害高，但需要一定基本功。',
+        id: '咸鱼猛攻乾坤流',
         groups: [
           {
             cards: [
@@ -696,11 +696,11 @@ const catCharacterDefinitions = {
               'B-皮糙肉厚',
               [CardGroupType.Or, 'A-熊熊燃烧', [CardGroupType.And, 'A-心灵手巧', 'C-猫是液体']],
             ],
-            description: '伤害高，但需要一定基本功。',
+            description: '搭配二武{咸鱼}使用，偏打架，伤害高，但需要一定基本功。',
           },
         ],
-        description: '伤害高，但需要一定基本功。',
-        defaultFolded: false,
+        description: '',
+        defaultFolded: true,
       },
     ],
     specialSkills: [
@@ -2000,7 +2000,7 @@ const catCharacterDefinitions = {
         tagName: '速通',
         level: 4,
         description: '{武器技能}可甩火箭。',
-        additionalDescription: '配合熊熊燃烧，9秒火箭可直接甩。',
+        additionalDescription: '配合熊熊燃烧，10秒内的火箭可直接甩。',
         weapon: 1,
       },
       {
@@ -2011,7 +2011,7 @@ const catCharacterDefinitions = {
       },
       {
         tagName: '防守',
-        level: 4,
+        level: 3,
         description: '仙人球陷阱提供了防守能力，并且可根据实际需要变换防守策略。',
         additionalDescription: '',
         weapon: 2,
@@ -2873,7 +2873,7 @@ const catCharacterDefinitions = {
       {
         id: '击晕',
         description:
-          '{击晕}卡组比较适合新手，还能提供一定干扰。但可能会出现跳舞爪刀伤害不够的情况，需要更多的衔接瑜伽球和道具，且跳舞爪刀cd较长。',
+          '{击晕}卡组比较适合新手，还能提供一定干扰。但可能会出现跳舞爪刀伤害不够的情况，且跳舞爪刀CD较长，需要及时地衔接瑜伽球和道具。',
         groups: [
           {
             cards: ['S-击晕', 'A-熊熊燃烧', 'A-穷追猛打', 'A-加大火力'],
