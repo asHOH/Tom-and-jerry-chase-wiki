@@ -186,6 +186,7 @@
     "schema-dts": "^2.0.0",
     "server-only": "^0.0.1",
     "size-limit": "^12.1.0",
+    "supabase": "2.111.0",
     "tailwindcss": "^4.3.0",
     "typescript": "^7.0.2"
   },

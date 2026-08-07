@@ -27,6 +27,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Verify pinned Supabase CLI
+        run: npm exec -- supabase --version
+
       - name: Validate actor profiles
         run: npm run validate:actor-profiles
 
