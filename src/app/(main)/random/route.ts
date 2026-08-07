@@ -1,10 +1,10 @@
-import { NextResponse } from 'next/server';
+import { redirect } from 'next/navigation';
 
 import { getPublishedGameDataSnapshot } from '@/lib/gameData/published/publishedSnapshot';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(request: Request) {
+export async function GET() {
   const {
     data: { buffs, cards, characters, entities, fixtures, items, maps, modes, specialSkills },
   } = await getPublishedGameDataSnapshot();
@@ -24,5 +24,5 @@ export async function GET(request: Request) {
     ...Object.keys(modes).map((name) => `/modes/${encodeURIComponent(name)}`),
   ];
   const path = entryPaths[Math.floor(Math.random() * entryPaths.length)]!;
-  return NextResponse.redirect(new URL(path, request.url));
+  redirect(path);
 }
