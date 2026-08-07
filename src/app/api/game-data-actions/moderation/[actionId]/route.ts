@@ -12,7 +12,7 @@ import {
   TrustedGameDataMutationError,
 } from '@/lib/gameData/trustedGameDataMutations';
 import { publishNotification } from '@/lib/notificationUtils';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
 
 const MODERATION_ACTIONS = ['approve', 'reject', 'mark-synced', 'revoke'] as const;
 
@@ -124,7 +124,7 @@ export async function POST(
     }
     const reason = await readRejectionReason(request);
 
-    const { error } = await supabaseAdmin.rpc('prepared_reject_game_data_action', {
+    const { error } = await requireSupabaseAdminClient().rpc('prepared_reject_game_data_action', {
       p_actor_id: guard.userId,
       p_action_id: actionId,
       p_reason: reason ?? '',

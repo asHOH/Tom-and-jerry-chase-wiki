@@ -11,7 +11,7 @@ import { getRequestIp, requireNotBlocked } from '@/lib/blocks/server';
 import { CACHE_TAGS } from '@/lib/cacheTags';
 import { notifyArticleVersionSubscribers, publishNotification } from '@/lib/notificationUtils';
 import { checkRateLimit } from '@/lib/rateLimit';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
 import { createClient } from '@/lib/supabase/server';
 import { articleEditSchema, formatZodError } from '@/lib/validation/schemas';
 
@@ -37,7 +37,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id?
 
   try {
     // Authorize before parsing body — fail fast on missing article or insufficient permissions
-    const { data: article, error: articleError } = await supabaseAdmin
+    const { data: article, error: articleError } = await requireSupabaseAdminClient()
       .from('articles')
       .select('author_id, category_id')
       .eq('id', id)
@@ -104,7 +104,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id?
       characterId: character_id,
     });
 
-    const { data, error } = await supabaseAdmin.rpc('prepared_submit_article', {
+    const { data, error } = await requireSupabaseAdminClient().rpc('prepared_submit_article', {
       p_actor_id: userId,
       p_ip: getRequestIp(request),
       p_article_id: id,

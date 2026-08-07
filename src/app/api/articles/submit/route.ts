@@ -9,7 +9,7 @@ import { getRequestIp } from '@/lib/blocks/server';
 import { CACHE_TAGS, invalidateCache } from '@/lib/cacheTags';
 import { notifyArticleVersionSubscribers, publishNotification } from '@/lib/notificationUtils';
 import { checkRateLimit } from '@/lib/rateLimit';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
 import { articleSubmitSchema, formatZodError } from '@/lib/validation/schemas';
 
 export async function POST(req: Request) {
@@ -43,7 +43,7 @@ export async function POST(req: Request) {
       categoryId: category,
       characterId: character_id,
     });
-    const { data: submittedVersions, error: rpcError } = await supabaseAdmin.rpc(
+    const { data: submittedVersions, error: rpcError } = await requireSupabaseAdminClient().rpc(
       'prepared_create_article',
       {
         p_actor_id: userId,

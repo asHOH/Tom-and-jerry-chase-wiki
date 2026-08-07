@@ -3,7 +3,7 @@ import 'server-only';
 import { isIP } from 'node:net';
 
 import { getClientIp } from '@/lib/requestIp';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { getOptionalSupabaseAdminClient } from '@/lib/supabase/adminClient';
 
 import {
   BLOCK_ACTIONS,
@@ -35,6 +35,7 @@ const getFirstBlock = async (
   action: BlockAction,
   context?: BlockResourceContext
 ): Promise<BlockInfo | null> => {
+  const supabaseAdmin = getOptionalSupabaseAdminClient();
   if (!supabaseAdmin) return null;
   const { data, error } = await supabaseAdmin.rpc('find_effective_block', {
     p_action: action,
@@ -77,6 +78,7 @@ export const getActiveBlock = async ({
   createAutoblock?: boolean;
 }): Promise<BlockInfo | null> => {
   const ip = request ? normalizeIp(getClientIp(request)) : null;
+  const supabaseAdmin = getOptionalSupabaseAdminClient();
   if (
     createAutoblock &&
     userId &&
@@ -101,6 +103,7 @@ export const getActiveBlock = async ({
 
 export const recordUserIp = async (userId: string, request: Request): Promise<void> => {
   const ip = normalizeIp(getClientIp(request));
+  const supabaseAdmin = getOptionalSupabaseAdminClient();
   if (!ip || !supabaseAdmin) return;
   const { error } = await supabaseAdmin.rpc('record_user_last_ip', {
     p_user_id: userId,

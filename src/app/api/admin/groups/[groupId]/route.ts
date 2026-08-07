@@ -8,7 +8,7 @@ import {
   isPermissionResourceTypeAllowed,
   isScopableResourceType,
 } from '@/lib/auth/resourceContexts';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
 
 const updateSchema = z.object({
   name: z.string().trim().min(1).max(50),
@@ -52,7 +52,7 @@ const resourceExists = async (grant: GrantInput) => {
   if (staticResult !== null) return staticResult;
   const table = grant.resourceType === 'comments/articles' ? 'articles' : grant.resourceType;
   if (table !== 'articles' && table !== 'categories') return false;
-  const { data } = await supabaseAdmin
+  const { data } = await requireSupabaseAdminClient()
     .from(table)
     .select('id')
     .eq('id', grant.resourceId)

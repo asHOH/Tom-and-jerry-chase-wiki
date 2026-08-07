@@ -32,7 +32,7 @@ const canAccessAllMock = jest.mocked(canAccessAll);
 const readSnapshotMock = jest.mocked(readApprovedReplaySnapshot);
 const validateCandidateMock = jest.mocked(validateApprovedCandidateReplay);
 const invalidateMock = jest.mocked(invalidatePublicGameDataActionsCache);
-const adminRpcMock = jest.mocked(supabaseAdmin.rpc);
+const adminRpcMock = jest.mocked(supabaseAdmin!.rpc);
 
 const action = (path: string, newValue: unknown) => ({
   op: 'set' as const,

@@ -74,13 +74,13 @@ const configureSupabase = ({
   settingsQuery.select.mockReturnValue(settingsQuery);
   settingsQuery.eq.mockReturnValue(settingsQuery);
 
-  jest.mocked(supabaseAdmin.from).mockImplementation((table: string) => {
+  jest.mocked(supabaseAdmin!.from).mockImplementation((table: string) => {
     if (table === 'users') return userQuery as never;
     if (table === 'notifications') return notificationQuery as never;
     if (table === 'notification_email_settings') return settingsQuery as never;
     throw new Error(`Unexpected table: ${table}`);
   });
-  jest.mocked(supabaseAdmin.rpc).mockResolvedValue({ data: canApprove, error: null } as never);
+  jest.mocked(supabaseAdmin!.rpc).mockResolvedValue({ data: canApprove, error: null } as never);
 
   return { notificationQuery };
 };
@@ -156,7 +156,7 @@ describe('publishNotification', () => {
       suppressed: true,
       emailStatus: 'skipped',
     });
-    expect(supabaseAdmin.from).toHaveBeenCalledTimes(1);
+    expect(supabaseAdmin!.from).toHaveBeenCalledTimes(1);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 

@@ -17,7 +17,7 @@ jest.mock('@/lib/supabase/admin', () => ({
 }));
 
 const getPublishedDomainReadModelMock = jest.mocked(getPublishedDomainReadModel);
-const adminFromMock = jest.mocked(supabaseAdmin.from);
+const adminFromMock = jest.mocked(supabaseAdmin!.from);
 const categorySelectMock = jest.fn();
 
 describe('resolveArticleCharacterForWrite', () => {

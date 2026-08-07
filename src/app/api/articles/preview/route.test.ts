@@ -29,8 +29,8 @@ jest.mock('@/lib/supabase/admin', () => ({
   supabaseAdmin: { from: jest.fn(), rpc: jest.fn() },
 }));
 
-const adminFromMock = jest.mocked(supabaseAdmin.from);
-const adminRpcMock = jest.mocked(supabaseAdmin.rpc);
+const adminFromMock = jest.mocked(supabaseAdmin!.from);
+const adminRpcMock = jest.mocked(supabaseAdmin!.rpc);
 
 function createSingleQuery(result: unknown) {
   const query = {

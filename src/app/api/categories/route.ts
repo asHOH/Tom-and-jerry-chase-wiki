@@ -4,7 +4,7 @@ import { resolveArticleCategoryPolicy } from '@/lib/articles/articleCategoryPoli
 import { CACHE_TAGS } from '@/lib/cacheTags';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { cached } from '@/lib/serverCache';
-import { supabaseServerPublic } from '@/lib/supabase/public';
+import { getOptionalSupabasePublicClient } from '@/lib/supabase/publicClient';
 
 export async function GET(request: NextRequest) {
   const rl = await checkRateLimit(request, 'read', 'categories-list');
@@ -18,11 +18,14 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
   }
 
+  const supabase = getOptionalSupabasePublicClient();
+  if (!supabase) return NextResponse.json({ categories: [] });
+
   try {
     const categories = await cached(
       ['api', 'categories'],
       async () => {
-        const { data, error } = await supabaseServerPublic
+        const { data, error } = await supabase
           .from('categories')
           .select('id, name, parent_category_id, requires_character')
           .order('name');

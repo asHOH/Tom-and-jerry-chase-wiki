@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 import { requirePermission } from '@/lib/auth/requirePermission';
 import { noticePatchSchema, sanitizeNoticeInput } from '@/lib/notices/validation';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
 
 type RouteContext = { params: Promise<{ noticeId: string }> };
 
@@ -42,7 +42,7 @@ export async function PATCH(request: Request, { params }: RouteContext) {
     return NextResponse.json({ error: 'Notice content is empty or too long' }, { status: 400 });
   }
 
-  const { data, error } = await supabaseAdmin
+  const { data, error } = await requireSupabaseAdminClient()
     .from('site_notices')
     .update(update)
     .eq('id', noticeId)
@@ -65,7 +65,7 @@ export async function DELETE(request: Request, { params }: RouteContext) {
   if ('error' in guard) return guard.error;
 
   const noticeId = (await params).noticeId;
-  const { data: existing, error: readError } = await supabaseAdmin
+  const { data: existing, error: readError } = await requireSupabaseAdminClient()
     .from('site_notices')
     .select('is_published')
     .eq('id', noticeId)
@@ -80,7 +80,7 @@ export async function DELETE(request: Request, { params }: RouteContext) {
     return NextResponse.json({ error: 'Unpublish the notice before deleting it' }, { status: 409 });
   }
 
-  const { data, error } = await supabaseAdmin
+  const { data, error } = await requireSupabaseAdminClient()
     .from('site_notices')
     .delete()
     .eq('id', noticeId)

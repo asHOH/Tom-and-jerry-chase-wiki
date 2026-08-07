@@ -10,7 +10,7 @@ import { usePermissions } from '@/lib/auth/PermissionProvider';
 import type { PermissionKey } from '@/lib/auth/permissions';
 import type { BlockAction, BlockedUserSummary } from '@/lib/blocks/types';
 import { cn, getNavigationButtonClasses } from '@/lib/design';
-import { supabase } from '@/lib/supabase/client';
+import { getOptionalSupabaseBrowserClient } from '@/lib/supabase/browserClient';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useNavigationProgress } from '@/hooks/useNavigationProgress';
@@ -246,6 +246,11 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     setSignOutError(null);
     setSigningOut(true);
     try {
+      const supabase = getOptionalSupabaseBrowserClient();
+      if (!supabase) {
+        setSignOutError('登录服务未配置');
+        return;
+      }
       const { error } = await supabase.auth.signOut();
       if (error) {
         setSignOutError(error.message || '退出登录失败，请稍后再试');

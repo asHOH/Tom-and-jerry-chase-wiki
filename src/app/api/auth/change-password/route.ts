@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { checkPasswordStrength } from '@/lib/passwordUtils';
 import { checkRateLimit } from '@/lib/rateLimit';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
 import { createSupabaseRouteClient } from '@/lib/supabase/ssrClient';
 
 const hashPassword = (password: string, salt: string) =>
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: `密码强度不足：${strength.reason}` }, { status: 400 });
     }
 
-    const { data: current, error: fetchError } = await supabaseAdmin
+    const { data: current, error: fetchError } = await requireSupabaseAdminClient()
       .from('users')
       .select('password_hash, salt')
       .eq('id', userId)
@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
     const nextSalt = randomBytes(16).toString('hex');
     const nextPasswordHash = hashPassword(newPassword, nextSalt);
 
-    const { error: updateError } = await supabaseAdmin
+    const { error: updateError } = await requireSupabaseAdminClient()
       .from('users')
       .update({ password_hash: nextPasswordHash, salt: nextSalt })
       .eq('id', userId);
@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
     if (supabaseAuthUpdateError) {
       console.error('Failed to update supabase auth password:', supabaseAuthUpdateError);
 
-      const { error: revertError } = await supabaseAdmin
+      const { error: revertError } = await requireSupabaseAdminClient()
         .from('users')
         .update({ password_hash: previousPasswordHash, salt: previousSalt })
         .eq('id', userId);
@@ -127,7 +127,7 @@ export async function POST(request: NextRequest) {
       return response;
     }
 
-    const { error: signOutOthersError } = await supabaseAdmin.auth.admin.signOut(
+    const { error: signOutOthersError } = await requireSupabaseAdminClient().auth.admin.signOut(
       session.access_token,
       'others'
     );

@@ -21,6 +21,35 @@ export function resolveSupabaseSecretKey(values: SupabaseSecretKeyEnv): string |
 export const supabaseUrl = env.NEXT_PUBLIC_SUPABASE_URL;
 export const supabasePublishableKey = resolveSupabasePublishableKey(env);
 
+export type SupabaseClientKind = 'admin' | 'browser' | 'public' | 'server';
+
+export class SupabaseConfigurationError extends Error {
+  constructor(public readonly clientKind: SupabaseClientKind) {
+    super(
+      `Supabase ${clientKind} client is unavailable because Supabase is disabled or not configured`
+    );
+    this.name = 'SupabaseConfigurationError';
+  }
+}
+
+export type SupabasePublicConfig = {
+  url: string;
+  publishableKey: string;
+};
+
+export function getOptionalSupabasePublicConfig(): SupabasePublicConfig | undefined {
+  if (!hasSupabasePublicConfig()) return undefined;
+  return { url: supabaseUrl!, publishableKey: supabasePublishableKey! };
+}
+
+export function requireSupabasePublicConfig(
+  clientKind: Exclude<SupabaseClientKind, 'admin'>
+): SupabasePublicConfig {
+  const config = getOptionalSupabasePublicConfig();
+  if (!config) throw new SupabaseConfigurationError(clientKind);
+  return config;
+}
+
 export function hasSupabasePublicConfig(): boolean {
   return env.NEXT_PUBLIC_DISABLE_ARTICLES !== '1' && !!supabaseUrl && !!supabasePublishableKey;
 }

@@ -100,7 +100,7 @@ describe('public game data actions', () => {
     const { supabaseServerPublic } = jest.requireMock('@/lib/supabase/public') as {
       supabaseServerPublic: { from: jest.Mock };
     };
-    supabaseServerPublic.from.mockReturnValue(query);
+    supabaseServerPublic!.from.mockReturnValue(query);
   });
 
   afterEach(() => {

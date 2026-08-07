@@ -7,7 +7,7 @@ import {
 import { requireNotBlocked } from '@/lib/blocks/server';
 import { generateCaptchaProof, verifyCaptchaToken } from '@/lib/captchaUtils';
 import { checkRateLimit } from '@/lib/rateLimit';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { getOptionalSupabaseAdminClient } from '@/lib/supabase/adminClient';
 import { createClient } from '@/lib/supabase/server';
 import { env } from '@/env';
 
@@ -42,6 +42,7 @@ export async function POST(request: NextRequest) {
 
     const captchaProof = generateCaptchaProof(username);
 
+    const supabaseAdmin = getOptionalSupabaseAdminClient();
     if (!supabaseAdmin) {
       console.error('Supabase admin client is not configured (missing secret key).');
       return NextResponse.json({ error: 'Server misconfigured' }, { status: 500 });

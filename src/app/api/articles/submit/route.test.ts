@@ -63,7 +63,7 @@ const invalidateCacheMock = jest.mocked(invalidateCache);
 const notifyArticleVersionSubscribersMock = jest.mocked(notifyArticleVersionSubscribers);
 const publishNotificationMock = jest.mocked(publishNotification);
 const checkRateLimitMock = jest.mocked(checkRateLimit);
-const rpcMock = jest.mocked(supabaseAdmin.rpc);
+const rpcMock = jest.mocked(supabaseAdmin!.rpc);
 const CATEGORY_ID = '11111111-1111-4111-8111-111111111111';
 
 const createRequest = (body: unknown) =>

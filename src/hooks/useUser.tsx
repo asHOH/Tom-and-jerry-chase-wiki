@@ -6,7 +6,7 @@ import useSWR, { SWRConfig, useSWRConfig } from 'swr';
 import type { PermissionGrant } from '@/lib/auth/permissions';
 import type { BlockedUserSummary } from '@/lib/blocks/types';
 import { storage, StorageKey } from '@/lib/localStorage';
-import { supabase } from '@/lib/supabase/client';
+import { getOptionalSupabaseBrowserClient } from '@/lib/supabase/browserClient';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
 
 export type UserType = {
@@ -53,6 +53,8 @@ const AuthListener = () => {
   const { mutate } = useSWRConfig();
 
   useEffect(() => {
+    const supabase = getOptionalSupabaseBrowserClient();
+    if (!supabase) return;
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(() => {

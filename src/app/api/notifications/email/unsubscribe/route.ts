@@ -4,7 +4,7 @@ import {
   createNotificationUnsubscribeToken,
   getNotificationUnsubscribeUserId,
 } from '@/lib/notificationUtils';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
 
 const escapeHtml = (value: string) =>
   value.replace(/[&<>"']/g, (character) => {
@@ -35,7 +35,7 @@ const loadSettingsForToken = async (token: string) => {
   const userId = getNotificationUnsubscribeUserId(token);
   if (!userId) return null;
 
-  const { data, error } = await supabaseAdmin
+  const { data, error } = await requireSupabaseAdminClient()
     .from('notification_email_settings')
     .select('email, email_enabled')
     .eq('user_id', userId)
@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
   if (!settings) return htmlResponse('链接无效', '取消订阅链接无效或已失效。', undefined, 400);
 
   if (settings.enabled) {
-    const { error } = await supabaseAdmin
+    const { error } = await requireSupabaseAdminClient()
       .from('notification_email_settings')
       .update({ email_enabled: false, updated_at: new Date().toISOString() })
       .eq('user_id', settings.userId);

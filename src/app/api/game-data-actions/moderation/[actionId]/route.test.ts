@@ -39,7 +39,7 @@ const approveMock = jest.mocked(approvePreparedGameDataAction);
 const markSyncedMock = jest.mocked(markPreparedGameDataActionSynced);
 const revokeMock = jest.mocked(revokePreparedGameDataAction);
 const publishNotificationMock = jest.mocked(publishNotification);
-const adminRpcMock = jest.mocked(supabaseAdmin.rpc);
+const adminRpcMock = jest.mocked(supabaseAdmin!.rpc);
 const rpcMock = jest.fn().mockResolvedValue({ error: null });
 
 const record = (status: 'pending' | 'approved' = 'pending', isPublic = status === 'approved') => ({

@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 
 import { cn } from '@/lib/design';
-import { supabase } from '@/lib/supabase/client';
+import { requireSupabaseBrowserClient } from '@/lib/supabase/browserClient';
 import { Database } from '@/data/database.types';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
@@ -40,6 +40,7 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
   canDelete,
   mutateCategories,
 }) => {
+  const supabase = requireSupabaseBrowserClient();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 

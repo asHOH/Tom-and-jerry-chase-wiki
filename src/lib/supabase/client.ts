@@ -1,13 +1,11 @@
 import { createBrowserClient } from '@supabase/ssr';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 import type { Database } from '@/data/database.types';
 
-import { hasSupabasePublicConfig, supabasePublishableKey, supabaseUrl } from './config';
+import { getOptionalSupabasePublicConfig } from './config';
 
-function createClient() {
-  return !hasSupabasePublicConfig()
-    ? (void 0 as never)
-    : createBrowserClient<Database>(supabaseUrl!, supabasePublishableKey!);
-}
-
-export const supabase = createClient();
+const config = getOptionalSupabasePublicConfig();
+export const supabase: SupabaseClient<Database> | undefined = config
+  ? createBrowserClient<Database>(config.url, config.publishableKey)
+  : undefined;

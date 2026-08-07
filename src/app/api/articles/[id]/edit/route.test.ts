@@ -66,8 +66,8 @@ const notifyArticleVersionSubscribersMock = jest.mocked(notifyArticleVersionSubs
 const publishNotificationMock = jest.mocked(publishNotification);
 const checkRateLimitMock = jest.mocked(checkRateLimit);
 const createClientMock = jest.mocked(createClient);
-const adminFromMock = jest.mocked(supabaseAdmin.from);
-const adminRpcMock = jest.mocked(supabaseAdmin.rpc);
+const adminFromMock = jest.mocked(supabaseAdmin!.from);
+const adminRpcMock = jest.mocked(supabaseAdmin!.rpc);
 const CATEGORY_ID = '11111111-1111-4111-8111-111111111111';
 
 const articleQuery = {

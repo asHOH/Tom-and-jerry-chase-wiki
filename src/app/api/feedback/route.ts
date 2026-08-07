@@ -6,7 +6,7 @@ import {
   renderWikiEmailTemplate,
 } from '@/lib/emailTemplate';
 import { checkRateLimit } from '@/lib/rateLimit';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { getOptionalSupabaseAdminClient } from '@/lib/supabase/adminClient';
 import { feedbackSchema, formatZodError } from '@/lib/validation/schemas';
 import { env } from '@/env';
 
@@ -54,6 +54,7 @@ export async function POST(request: NextRequest) {
     };
 
     // Save to Supabase Database
+    const supabaseAdmin = getOptionalSupabaseAdminClient();
     if (supabaseAdmin) {
       try {
         const { error: dbError } = await supabaseAdmin.from('feedback').insert({

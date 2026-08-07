@@ -120,7 +120,7 @@ describe('mergeRecentContributions', () => {
 
   it('counts synced game-data rows as contributions even after they leave the replay set', async () => {
     hasSupabaseAdminConfig.mockReturnValue(true);
-    supabaseAdmin.auth.admin.getUserById.mockResolvedValue({
+    supabaseAdmin!.auth.admin.getUserById.mockResolvedValue({
       data: { user: { created_at: '2026-07-01T00:00:00Z' } },
       error: null,
     });
@@ -142,7 +142,7 @@ describe('mergeRecentContributions', () => {
       error: null,
     });
 
-    supabaseAdmin.from
+    supabaseAdmin!.from
       .mockImplementationOnce(() =>
         createMaybeSingleQuery({
           data: { id: 'user-1', nickname: '测试用户' },

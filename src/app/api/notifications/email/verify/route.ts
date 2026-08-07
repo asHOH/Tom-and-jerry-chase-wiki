@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { getActiveBlock } from '@/lib/blocks/server';
 import { hashNotificationVerificationToken } from '@/lib/notificationUtils';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
 import { SITE_URL } from '@/constants/seo';
 
 const redirectToNotifications = (status: 'verified' | 'invalid' | 'blocked') => {
@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
   if (!token) return redirectToNotifications('invalid');
 
   const tokenHash = hashNotificationVerificationToken(token);
-  const { data, error } = await supabaseAdmin
+  const { data, error } = await requireSupabaseAdminClient()
     .from('notification_email_settings')
     .select('user_id, pending_email')
     .eq('verification_token_hash', tokenHash)
@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
   if (block) return redirectToNotifications('blocked');
 
   const now = new Date().toISOString();
-  const { error: updateError } = await supabaseAdmin
+  const { error: updateError } = await requireSupabaseAdminClient()
     .from('notification_email_settings')
     .update({
       email: data.pending_email,

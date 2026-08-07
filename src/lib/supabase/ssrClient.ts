@@ -3,11 +3,12 @@ import { createServerClient } from '@supabase/ssr';
 
 import type { Database } from '@/data/database.types';
 
-import { supabasePublishableKey, supabaseUrl } from './config';
+import { requireSupabasePublicConfig } from './config';
 import { fetchWithRetry } from './fetch-retry';
 
 export function createSupabaseRouteClient(request: NextRequest, response: NextResponse) {
-  return createServerClient<Database>(supabaseUrl!, supabasePublishableKey!, {
+  const config = requireSupabasePublicConfig('server');
+  return createServerClient<Database>(config.url, config.publishableKey, {
     cookies: {
       getAll() {
         return request.cookies.getAll();
@@ -25,11 +26,12 @@ export function createSupabaseRouteClient(request: NextRequest, response: NextRe
 }
 
 export function createSupabaseProxyClient(request: NextRequest) {
+  const config = requireSupabasePublicConfig('server');
   let response = NextResponse.next({
     request,
   });
 
-  const supabase = createServerClient<Database>(supabaseUrl!, supabasePublishableKey!, {
+  const supabase = createServerClient<Database>(config.url, config.publishableKey, {
     cookies: {
       getAll() {
         return request.cookies.getAll();

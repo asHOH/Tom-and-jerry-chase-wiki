@@ -2,13 +2,18 @@ import { NextResponse } from 'next/server';
 
 import { sanitizeNoticeHTML } from '@/lib/notices/sanitize';
 import type { PublicNotice } from '@/lib/notices/types';
-import { supabaseServerPublic } from '@/lib/supabase/public';
+import { getOptionalSupabasePublicClient } from '@/lib/supabase/publicClient';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
+  const supabase = getOptionalSupabasePublicClient();
+  if (!supabase) {
+    return NextResponse.json({ notices: [] }, { headers: { 'Cache-Control': 'no-store' } });
+  }
+
   const now = new Date().toISOString();
-  const { data, error } = await supabaseServerPublic
+  const { data, error } = await supabase
     .from('site_notices')
     .select('id, title, content_html, starts_at, ends_at')
     .eq('is_published', true)

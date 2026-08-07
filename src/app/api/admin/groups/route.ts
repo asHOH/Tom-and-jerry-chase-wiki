@@ -11,7 +11,7 @@ import {
   isPermissionResourceTypeAllowed,
   isScopableResourceType,
 } from '@/lib/auth/resourceContexts';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
 
 const PROTECTED_GROUP_IDS = new Set([
   '00000000-0000-4000-8000-000000000001',
@@ -56,7 +56,7 @@ const resourceExists = async (grant: z.infer<typeof grantSchema>) => {
   if (staticResult !== null) return staticResult;
   const table = grant.resourceType === 'comments/articles' ? 'articles' : grant.resourceType;
   if (table !== 'articles' && table !== 'categories') return false;
-  const { data } = await supabaseAdmin
+  const { data } = await requireSupabaseAdminClient()
     .from(table)
     .select('id')
     .eq('id', grant.resourceId)
@@ -89,8 +89,8 @@ export async function GET() {
       .from('permission_catalog')
       .select('key, category, label_zh, global_only, sort_order')
       .order('sort_order'),
-    supabaseAdmin.from('articles').select('id, title').order('title'),
-    supabaseAdmin.from('categories').select('id, name').order('name'),
+    requireSupabaseAdminClient().from('articles').select('id, title').order('title'),
+    requireSupabaseAdminClient().from('categories').select('id, name').order('name'),
   ]);
 
   if (error) return NextResponse.json({ error: 'Failed to fetch groups' }, { status: 500 });

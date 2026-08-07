@@ -2,7 +2,7 @@ import { pbkdf2Sync, randomBytes } from 'crypto';
 import { NextResponse } from 'next/server';
 
 import { requirePermission } from '@/lib/auth/requirePermission';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
 
 const hashPassword = (password: string, salt: string) =>
   pbkdf2Sync(password, salt, 100000, 64, 'sha512').toString('hex');
@@ -58,9 +58,12 @@ export async function POST(request: Request) {
   }
 
   if (password) {
-    const { error: authError } = await supabaseAdmin.auth.admin.updateUserById(userId, {
-      password,
-    });
+    const { error: authError } = await requireSupabaseAdminClient().auth.admin.updateUserById(
+      userId,
+      {
+        password,
+      }
+    );
 
     if (authError) {
       console.error('Failed to update auth user password after profile update:', authError);

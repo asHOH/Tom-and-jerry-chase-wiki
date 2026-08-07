@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { requirePermission } from '@/lib/auth/requirePermission';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
 
 const ALLOWED_STATUSES = ['pending', 'approved', 'rejected', 'synced', 'revoked', 'all'] as const;
 
@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
 
     const nicknameByUserId = new Map<string, string>();
     if (userIds.length > 0) {
-      const { data: users, error: usersError } = await supabaseAdmin
+      const { data: users, error: usersError } = await requireSupabaseAdminClient()
         .from('users_public_view')
         .select('id, nickname')
         .in('id', userIds);

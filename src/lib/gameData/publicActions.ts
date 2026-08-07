@@ -3,9 +3,8 @@ import 'server-only';
 import type { ActionHistoryEntry } from '@/lib/edit/diffUtils';
 import { PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG } from '@/lib/gameData/publicActionsCache';
 import { cached } from '@/lib/serverCache';
-import { hasSupabaseAdminConfig, supabaseAdmin } from '@/lib/supabase/admin';
-import { hasSupabasePublicConfig } from '@/lib/supabase/config';
-import { supabaseServerPublic } from '@/lib/supabase/public';
+import { getOptionalSupabaseAdminClient } from '@/lib/supabase/adminClient';
+import { getOptionalSupabasePublicClient } from '@/lib/supabase/publicClient';
 
 import { normalizePublicActionEntries } from './actionEntries';
 import {
@@ -83,12 +82,10 @@ export async function getEntityUpdateHistory(): Promise<Map<string, EntityUpdate
 }
 
 export async function fetchPublicGameDataActionHistory(): Promise<PublicActionRow[]> {
-  if (!hasSupabaseAdminConfig() && !hasSupabasePublicConfig()) {
-    return [];
-  }
+  const client = getOptionalSupabaseAdminClient() ?? getOptionalSupabasePublicClient();
+  if (!client) return [];
 
   try {
-    const client = hasSupabaseAdminConfig() ? supabaseAdmin : supabaseServerPublic;
     return await cached(
       [PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG, 'history'],
       () => queryPublicActionHistoryRows(client),
@@ -107,14 +104,13 @@ export async function fetchPublicGameDataActionHistory(): Promise<PublicActionRo
 }
 
 export async function fetchPublicGameDataActions(): Promise<PublicActionRow[]> {
-  if (!hasSupabasePublicConfig()) {
-    return [];
-  }
+  const client = getOptionalSupabasePublicClient();
+  if (!client) return [];
 
   try {
     return await cached(
       [PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG],
-      () => queryApprovedPublicActionRows(supabaseServerPublic),
+      () => queryApprovedPublicActionRows(client),
       {
         // Public actions change only through server mutations, which explicitly
         // revalidate this tag. Avoid periodic database reads on public page requests.

@@ -12,7 +12,7 @@ import {
   type TrustedGameDataActionRecord,
 } from '@/lib/gameData/trustedGameDataMutations';
 import { publishNotification } from '@/lib/notificationUtils';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
 
 const schema = z.object({
   actionIds: z.array(z.uuid()).min(1).max(200),
@@ -72,12 +72,15 @@ export async function POST(request: Request) {
       if (action === 'approve') {
         await approvePreparedGameDataAction(guard.userId, record, getRequestIp(request));
       } else {
-        const { error } = await supabaseAdmin.rpc('prepared_reject_game_data_action', {
-          p_actor_id: guard.userId,
-          p_action_id: actionId,
-          p_reason: reason ?? '',
-          p_ip: getRequestIp(request),
-        });
+        const { error } = await requireSupabaseAdminClient().rpc(
+          'prepared_reject_game_data_action',
+          {
+            p_actor_id: guard.userId,
+            p_action_id: actionId,
+            p_reason: reason ?? '',
+            p_ip: getRequestIp(request),
+          }
+        );
         if (error) throw error;
       }
       succeeded.push(actionId);

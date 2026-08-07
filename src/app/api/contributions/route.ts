@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
 import { getGameDataNotificationDetails } from '@/lib/gameData/contributionDisplay';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
 import { createClient } from '@/lib/supabase/server';
 import type {
   ContributionStatusItem,
@@ -20,7 +20,7 @@ export async function GET() {
   }
 
   const [articleResult, gameDataResult, thanksResult] = await Promise.all([
-    supabaseAdmin
+    requireSupabaseAdminClient()
       .from('article_versions')
       .select(
         'id, article_id, commit_message, created_at, preview_token, proposed_title, review_feedback, reviewed_at, status, articles!article_versions_article_id_fkey(title)'
@@ -28,7 +28,7 @@ export async function GET() {
       .eq('editor_id', userId)
       .order('created_at', { ascending: false })
       .limit(CONTRIBUTION_LIMIT + 1),
-    supabaseAdmin
+    requireSupabaseAdminClient()
       .from('game_data_actions')
       .select(
         'id, created_at, entity_type, entry, is_public, message, rejection_reason, reviewed_at, status'
@@ -36,7 +36,7 @@ export async function GET() {
       .eq('created_by', userId)
       .order('created_at', { ascending: false })
       .limit(CONTRIBUTION_LIMIT + 1),
-    supabaseAdmin
+    requireSupabaseAdminClient()
       .from('notifications')
       .select('body, source_ids')
       .eq('user_id', userId)

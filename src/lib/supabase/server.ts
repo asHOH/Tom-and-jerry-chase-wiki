@@ -4,17 +4,16 @@ import { createServerClient } from '@supabase/ssr';
 
 import type { Database } from '@/data/database.types';
 
-import { hasSupabasePublicConfig, supabasePublishableKey, supabaseUrl } from './config';
+import { getOptionalSupabasePublicConfig, SupabaseConfigurationError } from './config';
 import { fetchWithRetry } from './fetch-retry';
 
-async function _createClient() {
-  if (!hasSupabasePublicConfig()) {
-    return void 0 as never;
-  }
+async function _createOptionalClient() {
+  const config = getOptionalSupabasePublicConfig();
+  if (!config) return undefined;
 
   const cookieStore = await cookies();
 
-  return createServerClient<Database>(supabaseUrl!, supabasePublishableKey!, {
+  return createServerClient<Database>(config.url, config.publishableKey, {
     cookies: {
       getAll() {
         return cookieStore.getAll();
@@ -35,4 +34,13 @@ async function _createClient() {
   });
 }
 
+export const createOptionalClient = cache(_createOptionalClient);
+
+async function _createClient() {
+  const client = await createOptionalClient();
+  if (!client) throw new SupabaseConfigurationError('server');
+  return client;
+}
+
+/** Create the required cookie-aware server client. */
 export const createClient = cache(_createClient);

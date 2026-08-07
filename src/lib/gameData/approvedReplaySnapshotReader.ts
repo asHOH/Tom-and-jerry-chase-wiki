@@ -9,7 +9,7 @@ import {
   type ApprovedActionSnapshot,
   type ApprovedActionSnapshotRowInput,
 } from '@/lib/gameData/published/approvedActionSnapshot';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
 import type { Database } from '@/data/database.types';
 
 type SnapshotRpcClient = Pick<SupabaseClient<Database>, 'rpc'>;
@@ -61,7 +61,7 @@ function parseRow(value: unknown): PublicActionRow {
 }
 
 export async function readApprovedReplaySnapshot(
-  client: SnapshotRpcClient = supabaseAdmin
+  client: SnapshotRpcClient = requireSupabaseAdminClient()
 ): Promise<ApprovedReplaySnapshot> {
   const { data, error } = await client.rpc('read_game_data_approved_replay_snapshot');
   if (error) throw new ApprovedReplaySnapshotReadError('read_failed', error);

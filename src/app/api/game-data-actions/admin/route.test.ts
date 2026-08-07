@@ -28,7 +28,7 @@ jest.mock('@/lib/supabase/admin', () => ({
 }));
 
 const requirePermissionMock = jest.mocked(requirePermission);
-const adminFromMock = jest.mocked(supabaseAdmin.from);
+const adminFromMock = jest.mocked(supabaseAdmin!.from);
 
 const visibleRows = [
   {

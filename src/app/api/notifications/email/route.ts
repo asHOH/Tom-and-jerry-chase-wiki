@@ -8,7 +8,7 @@ import {
   sendNotificationEmailVerification,
 } from '@/lib/notificationUtils';
 import { checkRateLimit } from '@/lib/rateLimit';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
 import { createClient } from '@/lib/supabase/server';
 
 const emailSchema = z.object({ email: z.email() });
@@ -23,7 +23,7 @@ export async function GET() {
   const userId = await getUserId();
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const { data, error } = await supabaseAdmin
+  const { data, error } = await requireSupabaseAdminClient()
     .from('notification_email_settings')
     .select('email, email_enabled, email_verified_at, pending_email, verification_expires_at')
     .eq('user_id', userId)
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
   const expiresAt = new Date(Date.now() + 30 * 60 * 1000).toISOString();
   const now = new Date().toISOString();
 
-  const { error } = await supabaseAdmin.from('notification_email_settings').upsert(
+  const { error } = await requireSupabaseAdminClient().from('notification_email_settings').upsert(
     {
       user_id: userId,
       pending_email: email,
@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
     await sendNotificationEmailVerification(email, token);
   } catch (sendError) {
     console.error('Failed to send notification email verification:', sendError);
-    await supabaseAdmin
+    await requireSupabaseAdminClient()
       .from('notification_email_settings')
       .update({
         pending_email: null,
@@ -112,7 +112,7 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
   }
 
-  const { data, error } = await supabaseAdmin
+  const { data, error } = await requireSupabaseAdminClient()
     .from('notification_email_settings')
     .update({ email_enabled: body.enabled, updated_at: new Date().toISOString() })
     .eq('user_id', userId)
@@ -131,7 +131,7 @@ export async function DELETE() {
   const userId = await getUserId();
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const { error } = await supabaseAdmin
+  const { error } = await requireSupabaseAdminClient()
     .from('notification_email_settings')
     .delete()
     .eq('user_id', userId);

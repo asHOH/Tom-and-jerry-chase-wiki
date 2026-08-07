@@ -6,7 +6,7 @@ import { requirePermission } from '@/lib/auth/requirePermission';
 import { getGameActionResourceContexts } from '@/lib/auth/resourceContexts';
 import { getGameDataNotificationDetails } from '@/lib/gameData/contributionDisplay';
 import { publishNotification } from '@/lib/notificationUtils';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
 
 const idSchema = z.uuid();
 const bodySchema = z.object({
@@ -19,7 +19,7 @@ type ThankTarget = {
 };
 
 const getReviewerNickname = async (reviewerId: string): Promise<string | null> => {
-  const { data, error } = await supabaseAdmin
+  const { data, error } = await requireSupabaseAdminClient()
     .from('users_public_view')
     .select('nickname')
     .eq('id', reviewerId)
@@ -57,7 +57,7 @@ export async function POST(
     if ('error' in guard) return guard.error;
     reviewerId = guard.userId;
 
-    const { data: version, error } = await supabaseAdmin
+    const { data: version, error } = await requireSupabaseAdminClient()
       .from('article_versions')
       .select(
         'article_id, editor_id, proposed_category_id, proposed_title, status, articles(title, category_id)'
@@ -107,7 +107,7 @@ export async function POST(
     if ('error' in initialGuard) return initialGuard.error;
     reviewerId = initialGuard.userId;
 
-    const { data: action, error } = await supabaseAdmin
+    const { data: action, error } = await requireSupabaseAdminClient()
       .from('game_data_actions')
       .select('created_by, entity_type, entry, status')
       .eq('id', contributionId.data)

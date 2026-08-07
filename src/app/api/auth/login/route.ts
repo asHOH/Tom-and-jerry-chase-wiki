@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { recordUserIp } from '@/lib/blocks/server';
 import { verifyCaptchaProof } from '@/lib/captchaUtils';
 import { checkRateLimit } from '@/lib/rateLimit';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
 import { createSupabaseRouteClient } from '@/lib/supabase/ssrClient';
 
 const hashUsername = (username: string) => {
@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
     const usernameHash = hashUsername(username);
 
     // Query the custom users table to find a user with the matching username_hash
-    const { data: user, error: userError } = await supabaseAdmin
+    const { data: user, error: userError } = await requireSupabaseAdminClient()
       .from('users')
       .select('id, password_hash, salt')
       .eq('username_hash', usernameHash)
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
     const {
       data: { user: authUser },
       error: authUserError,
-    } = await supabaseAdmin.auth.admin.getUserById(user.id);
+    } = await requireSupabaseAdminClient().auth.admin.getUserById(user.id);
 
     if (authUserError || !authUser) {
       console.error('Error fetching auth user:', authUserError);

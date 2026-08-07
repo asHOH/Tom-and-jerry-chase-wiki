@@ -3,7 +3,7 @@
 import { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { supabase } from '@/lib/supabase/client';
+import { getOptionalSupabaseBrowserClient } from '@/lib/supabase/browserClient';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
 import { useUser } from '@/hooks/useUser';
 import { useToast } from '@/context/ToastContext';
@@ -26,10 +26,13 @@ export function useContributionSubmissionFeedback() {
 
         if (!isAuthenticated && hasSupabasePublicConfig()) {
           try {
-            const {
-              data: { session },
-            } = await supabase.auth.getSession();
-            isAuthenticated = Boolean(session?.user);
+            const supabase = getOptionalSupabaseBrowserClient();
+            if (supabase) {
+              const {
+                data: { session },
+              } = await supabase.auth.getSession();
+              isAuthenticated = Boolean(session?.user);
+            }
           } catch {
             // Fall back to the anonymous message when session detection is unavailable.
           }

@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { createClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
 import { Database } from '@/data/database.types';
 import { env } from '@/env';
@@ -16,9 +16,9 @@ export function hasSupabaseAdminConfig(): boolean {
 
 // Note: this client is a singleton and can be used across the server-side of the app.
 // It has elevated privileges and should be used with caution.
-export const supabaseAdmin =
+export const supabaseAdmin: SupabaseClient<Database> | undefined =
   env.NEXT_PUBLIC_DISABLE_ARTICLES === '1' || !supabaseUrl || !supabaseSecretKey
-    ? (void 0 as never)
+    ? undefined
     : createClient<Database>(supabaseUrl, supabaseSecretKey, {
         global: {
           fetch: fetchWithRetry,

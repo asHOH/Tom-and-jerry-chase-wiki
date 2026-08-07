@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { buildEditSourcePolicy, type EditSourceSnapshot } from '@/lib/articles/editSources';
 import { canAccess } from '@/lib/auth/permissions';
 import { loadPermissionGrants } from '@/lib/auth/requirePermission';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
 import { createClient } from '@/lib/supabase/server';
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id?: string }> }) {
@@ -23,7 +23,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ error: 'Missing article ID' }, { status: 400 });
     }
 
-    const { data: article, error: articleError } = await supabaseAdmin
+    const { data: article, error: articleError } = await requireSupabaseAdminClient()
       .from('articles')
       .select('id, title, category_id, character_id, created_at, author_id')
       .eq('id', id)
@@ -49,7 +49,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const { data: approvedVersion, error: approvedError } = await supabaseAdmin
+    const { data: approvedVersion, error: approvedError } = await requireSupabaseAdminClient()
       .from('article_versions')
       .select('id, content, created_at')
       .eq('article_id', id)
@@ -63,7 +63,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ error: 'Failed to fetch approved version' }, { status: 500 });
     }
 
-    const { data: ownPendingVersion, error: pendingError } = await supabaseAdmin
+    const { data: ownPendingVersion, error: pendingError } = await requireSupabaseAdminClient()
       .from('article_versions')
       .select(
         'id, content, created_at, commit_message, proposed_title, proposed_category_id, proposed_character_id'

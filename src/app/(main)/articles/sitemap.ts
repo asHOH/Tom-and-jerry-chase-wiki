@@ -3,8 +3,7 @@ import { MetadataRoute } from 'next';
 import { CACHE_TAGS } from '@/lib/cacheTags';
 import { normalizeUrlWithTrailingSlash } from '@/lib/metadataUtils';
 import { cached } from '@/lib/serverCache';
-import { hasSupabasePublicConfig } from '@/lib/supabase/config';
-import { supabaseServerPublic } from '@/lib/supabase/public';
+import { getOptionalSupabasePublicClient } from '@/lib/supabase/publicClient';
 import { SITE_URL } from '@/constants/seo';
 
 export const revalidate = 3600;
@@ -19,11 +18,7 @@ function normalizeSitemapEntries(entries: MetadataRoute.Sitemap): MetadataRoute.
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = SITE_URL;
 
-  if (!hasSupabasePublicConfig()) {
-    return [];
-  }
-
-  const supabase = supabaseServerPublic as typeof supabaseServerPublic | undefined;
+  const supabase = getOptionalSupabasePublicClient();
   if (!supabase) return [];
 
   return cached(

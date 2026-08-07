@@ -14,7 +14,7 @@ import {
   isModerationNotificationKind,
   type NotificationKind,
 } from '@/lib/notifications/kinds';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
 import { SITE_URL } from '@/constants/seo';
 import { env } from '@/env';
 
@@ -124,7 +124,7 @@ export const getNotificationUnsubscribeUserId = (token: string): string | null =
 export const publishNotification = async (
   input: PublishNotificationInput
 ): Promise<PublishNotificationResult> => {
-  const { data: recipient, error: recipientError } = await supabaseAdmin
+  const { data: recipient, error: recipientError } = await requireSupabaseAdminClient()
     .from('users')
     .select('id')
     .eq('id', input.recipientUserId)
@@ -136,13 +136,11 @@ export const publishNotification = async (
     );
   }
 
-  const { data: canApproveArticles, error: permissionError } = await supabaseAdmin.rpc(
-    'user_has_permission',
-    {
+  const { data: canApproveArticles, error: permissionError } =
+    await requireSupabaseAdminClient().rpc('user_has_permission', {
       p_user_id: input.recipientUserId,
       p_permission_key: 'article_version.approve',
-    }
-  );
+    });
   if (permissionError) {
     throw new Error(
       `Failed to load notification recipient permissions: ${permissionError.message}`
@@ -157,7 +155,7 @@ export const publishNotification = async (
     return { created: false, suppressed: true, emailStatus: 'skipped' };
   }
 
-  const { data: createdNotification, error: insertError } = await supabaseAdmin
+  const { data: createdNotification, error: insertError } = await requireSupabaseAdminClient()
     .from('notifications')
     .upsert(
       {
@@ -191,7 +189,7 @@ export const publishNotification = async (
     return { created: true, suppressed: false, emailStatus: 'skipped' };
   }
 
-  const { data: emailSettings, error: settingsError } = await supabaseAdmin
+  const { data: emailSettings, error: settingsError } = await requireSupabaseAdminClient()
     .from('notification_email_settings')
     .select('email, email_enabled, email_verified_at')
     .eq('user_id', input.recipientUserId)
@@ -263,7 +261,7 @@ export async function loadGameDataActionNotificationRecords(
   const uniqueActionIds = uniqueIds(actionIds);
   if (uniqueActionIds.length === 0) return [];
 
-  const { data, error } = await supabaseAdmin
+  const { data, error } = await requireSupabaseAdminClient()
     .from('game_data_actions')
     .select('id, entity_type, entry')
     .in('id', uniqueActionIds);
@@ -282,11 +280,14 @@ export async function notifyArticleVersionSubscribers(input: {
   proposedCategoryId: string;
   versionId: string;
 }): Promise<void> {
-  const { data, error } = await supabaseAdmin.rpc('get_article_version_notification_recipients', {
-    p_actor_id: input.actorUserId,
-    p_article_id: input.articleId,
-    p_proposed_category_id: input.proposedCategoryId,
-  });
+  const { data, error } = await requireSupabaseAdminClient().rpc(
+    'get_article_version_notification_recipients',
+    {
+      p_actor_id: input.actorUserId,
+      p_article_id: input.articleId,
+      p_proposed_category_id: input.proposedCategoryId,
+    }
+  );
 
   if (error) {
     throw new Error(`Failed to load article version notification recipients: ${error.message}`);
@@ -324,7 +325,7 @@ export async function notifyPendingGameDataActionSubscribers(input: {
 
   await Promise.all(
     actionIds.map(async (actionId) => {
-      const { data, error } = await supabaseAdmin.rpc(
+      const { data, error } = await requireSupabaseAdminClient().rpc(
         'get_game_data_action_notification_recipients',
         {
           p_action_id: actionId,
@@ -376,7 +377,7 @@ export async function notifyDiscussionCommentSubscribers(input: {
   targetId: string;
   body: string;
 }): Promise<void> {
-  const { data, error } = await supabaseAdmin
+  const { data, error } = await requireSupabaseAdminClient()
     .from('notification_subscription_settings')
     .select('user_id')
     .eq('discussion_comment_enabled', true)

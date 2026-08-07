@@ -8,7 +8,7 @@ import { requirePermission } from '@/lib/auth/requirePermission';
 import { getRequestIp } from '@/lib/blocks/server';
 import { CACHE_TAGS, invalidateCache } from '@/lib/cacheTags';
 import { publishNotification } from '@/lib/notificationUtils';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
 
 const readReviewFeedback = async (request: NextRequest): Promise<string | null> => {
   try {
@@ -56,13 +56,16 @@ export async function POST(
     const reviewFeedback =
       action === 'approve' || action === 'reject' ? await readReviewFeedback(request) : null;
 
-    const { error: actionError } = await supabaseAdmin.rpc('prepared_article_version_moderation', {
-      p_actor_id: guard.userId,
-      p_ip: getRequestIp(request),
-      p_action: action,
-      p_version_id: versionId,
-      p_feedback: reviewFeedback,
-    });
+    const { error: actionError } = await requireSupabaseAdminClient().rpc(
+      'prepared_article_version_moderation',
+      {
+        p_actor_id: guard.userId,
+        p_ip: getRequestIp(request),
+        p_action: action,
+        p_version_id: versionId,
+        p_feedback: reviewFeedback,
+      }
+    );
     if (actionError) {
       console.error(`Error executing ${action} action:`, actionError);
 

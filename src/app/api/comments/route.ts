@@ -8,7 +8,10 @@ import {
   publishNotification,
 } from '../../../lib/notificationUtils';
 import { checkRateLimit } from '../../../lib/rateLimit';
-import { supabaseAdmin } from '../../../lib/supabase/admin';
+import {
+  getOptionalSupabaseAdminClient,
+  requireSupabaseAdminClient,
+} from '../../../lib/supabase/adminClient';
 import { hasSupabasePublicConfig } from '../../../lib/supabase/config';
 import { createClient } from '../../../lib/supabase/server';
 import {
@@ -38,7 +41,7 @@ async function getNicknamesByUserIds(userIds: string[]): Promise<Map<string, str
     return new Map();
   }
 
-  const adminClient = supabaseAdmin as unknown as typeof supabaseAdmin | undefined;
+  const adminClient = getOptionalSupabaseAdminClient();
   if (!adminClient) {
     return new Map();
   }
@@ -101,7 +104,7 @@ const buildCommentPreview = (value: string): string => {
 async function getArticleNotificationTarget(
   articleId: string
 ): Promise<ArticleNotificationTarget | null> {
-  const { data, error } = await supabaseAdmin
+  const { data, error } = await requireSupabaseAdminClient()
     .from('articles')
     .select('author_id, title')
     .eq('id', articleId)
@@ -230,6 +233,11 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Comments are disabled' }, { status: 503 });
   }
 
+  const adminClient = getOptionalSupabaseAdminClient();
+  if (!adminClient) {
+    return NextResponse.json({ error: 'Comments are unavailable' }, { status: 503 });
+  }
+
   const rl = await checkRateLimit(req, 'write', 'comments-post');
   if (!rl.allowed) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429, headers: rl.headers });
@@ -265,7 +273,7 @@ export async function POST(req: Request) {
   });
 
   try {
-    const { data: newId, error: rpcError } = await supabaseAdmin.rpc('prepared_create_comment', {
+    const { data: newId, error: rpcError } = await adminClient.rpc('prepared_create_comment', {
       p_actor_id: guard.userId,
       p_ip: getRequestIp(req),
       p_scope: scope,
@@ -312,15 +320,12 @@ export async function POST(req: Request) {
 
     // Placeholder auto-hide: if later this returns false, we will hide it.
     if (!allowed) {
-      const adminClient = supabaseAdmin as unknown as typeof supabaseAdmin | undefined;
-      if (adminClient) {
-        const { error: hideError } = await adminClient
-          .from('comments')
-          .update({ status: 'hidden' })
-          .eq('id', newId);
-        if (hideError) {
-          console.error('Failed to auto-hide comment:', hideError);
-        }
+      const { error: hideError } = await adminClient
+        .from('comments')
+        .update({ status: 'hidden' })
+        .eq('id', newId);
+      if (hideError) {
+        console.error('Failed to auto-hide comment:', hideError);
       }
     }
 
@@ -366,6 +371,11 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ error: 'Comments are disabled' }, { status: 503 });
   }
 
+  const adminClient = getOptionalSupabaseAdminClient();
+  if (!adminClient) {
+    return NextResponse.json({ error: 'Comments are unavailable' }, { status: 503 });
+  }
+
   const parsed = patchCommentSchema.safeParse(await req.json().catch(() => null));
   if (!parsed.success) {
     return NextResponse.json(
@@ -375,7 +385,7 @@ export async function PATCH(req: Request) {
   }
 
   const { commentId, status } = parsed.data;
-  const { data: target } = await supabaseAdmin
+  const { data: target } = await adminClient
     .from('comments')
     .select('scope, target_id')
     .eq('id', commentId)
@@ -392,7 +402,7 @@ export async function PATCH(req: Request) {
   );
   if ('error' in guard) return guard.error;
   try {
-    const { error: rpcError } = await supabaseAdmin.rpc('prepared_set_comment_status', {
+    const { error: rpcError } = await adminClient.rpc('prepared_set_comment_status', {
       p_actor_id: guard.userId,
       p_ip: getRequestIp(req),
       p_comment_id: commentId,

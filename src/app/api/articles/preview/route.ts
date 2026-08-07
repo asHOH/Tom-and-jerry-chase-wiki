@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { CACHE_TAGS } from '@/lib/cacheTags';
 import { cached } from '@/lib/serverCache';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { getOptionalSupabaseAdminClient } from '@/lib/supabase/adminClient';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Missing preview token' }, { status: 400 });
   }
 
-  const adminClient = supabaseAdmin as unknown as typeof supabaseAdmin | undefined;
+  const adminClient = getOptionalSupabaseAdminClient();
   if (!adminClient) {
     return NextResponse.json({ error: 'Articles disabled' }, { status: 404 });
   }

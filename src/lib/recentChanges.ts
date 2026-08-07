@@ -10,9 +10,11 @@ import {
 import { GAME_DATA_CONTRIBUTION_FILTER } from '@/lib/gameData/contributionFilter';
 import { PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG } from '@/lib/gameData/publicActionsCache';
 import { cached } from '@/lib/serverCache';
-import { hasSupabaseAdminConfig, supabaseAdmin } from '@/lib/supabase/admin';
-import { hasSupabasePublicConfig } from '@/lib/supabase/config';
-import { supabaseServerPublic } from '@/lib/supabase/public';
+import { getOptionalSupabaseAdminClient } from '@/lib/supabase/adminClient';
+import {
+  getOptionalSupabasePublicClient,
+  requireSupabasePublicClient,
+} from '@/lib/supabase/publicClient';
 
 export const RECENT_CHANGES_PAGE_SIZE = 20;
 export const RECENT_CHANGES_MAX_ITEMS = 100;
@@ -129,7 +131,7 @@ export function mergeRecentChangeRows(
 }
 
 async function countArticleChanges(): Promise<number> {
-  const { count, error } = await supabaseServerPublic
+  const { count, error } = await requireSupabasePublicClient()
     .from('article_versions_public_view')
     .select('id', { count: 'exact', head: true })
     .eq('status', 'approved');
@@ -138,7 +140,7 @@ async function countArticleChanges(): Promise<number> {
 }
 
 async function countGameDataChanges(): Promise<number> {
-  const client = hasSupabaseAdminConfig() ? supabaseAdmin : supabaseServerPublic;
+  const client = getOptionalSupabaseAdminClient() ?? requireSupabasePublicClient();
   const { count, error } = await client
     .from('game_data_actions')
     .select('id', { count: 'exact', head: true })
@@ -148,7 +150,7 @@ async function countGameDataChanges(): Promise<number> {
 }
 
 async function queryArticleChanges(from: number, to: number): Promise<ArticleChangeRow[]> {
-  const { data, error } = await supabaseServerPublic
+  const { data, error } = await requireSupabasePublicClient()
     .from('article_versions_public_view')
     .select(
       'id, article_id, commit_message, created_at, editor_id, articles!article_versions_article_id_fkey(title)'
@@ -162,7 +164,7 @@ async function queryArticleChanges(from: number, to: number): Promise<ArticleCha
 }
 
 async function queryGameDataChanges(from: number, to: number): Promise<GameDataChangeRow[]> {
-  const client = hasSupabaseAdminConfig() ? supabaseAdmin : supabaseServerPublic;
+  const client = getOptionalSupabaseAdminClient() ?? requireSupabasePublicClient();
   const { data, error } = await client
     .from('game_data_actions')
     .select('id, entity_type, entry, message, created_at, created_by')
@@ -178,7 +180,8 @@ async function attachPublicUserNames(
   articleRows: ArticleChangeRow[],
   gameDataRows: GameDataChangeRow[]
 ): Promise<void> {
-  if (!hasSupabaseAdminConfig()) return;
+  const supabaseAdmin = getOptionalSupabaseAdminClient();
+  if (!supabaseAdmin) return;
 
   const userIds = [
     ...articleRows.map((row) => row.editor_id),
@@ -254,7 +257,7 @@ export async function getRecentChanges(
   filter: RecentChangesFilter,
   page: number
 ): Promise<RecentChangesPage> {
-  if (!hasSupabasePublicConfig()) {
+  if (!getOptionalSupabasePublicClient()) {
     return { changes: [], currentPage: 1, totalItems: 0, totalPages: 1 };
   }
 

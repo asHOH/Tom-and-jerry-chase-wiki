@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { getAllStaticPermissionResourceOptions } from '@/lib/auth/permissionResources';
 import { requirePermission } from '@/lib/auth/requirePermission';
 import { BLOCK_ACTIONS, isValidBlockAction } from '@/lib/blocks/types';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
 import type { Json } from '@/data/database.types';
 
 const restrictionSchema = z
@@ -83,8 +83,8 @@ const isActive = (row: BlockRow) =>
 
 const loadResourceOptions = async () => {
   const [{ data: articles }, { data: categories }] = await Promise.all([
-    supabaseAdmin.from('articles').select('id, title').order('title').limit(1000),
-    supabaseAdmin.from('categories').select('id, name').order('name').limit(1000),
+    requireSupabaseAdminClient().from('articles').select('id, title').order('title').limit(1000),
+    requireSupabaseAdminClient().from('categories').select('id, name').order('name').limit(1000),
   ]);
   return {
     ...getAllStaticPermissionResourceOptions(),
@@ -103,7 +103,7 @@ export async function GET(request: Request) {
   const search = url.searchParams.get('search')?.trim().toLowerCase() ?? '';
   const [{ data, error }, resourceOptions, { data: allUsers }, { data: logRows, error: logError }] =
     await Promise.all([
-      supabaseAdmin
+      requireSupabaseAdminClient()
         .from('blocks')
         .select(
           'id, target_type, target_user_id, target_cidr, reason, created_by, created_at, expires_at, revoked_at, revoked_by, is_autoblock, autoblock_enabled, parent_block_id, hard_block, block_restrictions(action, resource_type, resource_id)'
@@ -111,8 +111,12 @@ export async function GET(request: Request) {
         .order('created_at', { ascending: false })
         .limit(1000),
       loadResourceOptions(),
-      supabaseAdmin.from('users').select('id, nickname').order('nickname').limit(5000),
-      supabaseAdmin
+      requireSupabaseAdminClient()
+        .from('users')
+        .select('id, nickname')
+        .order('nickname')
+        .limit(5000),
+      requireSupabaseAdminClient()
         .from('block_log')
         .select('id, block_id, event_type, actor_id, reason, snapshot, created_at')
         .order('created_at', { ascending: false })
@@ -130,7 +134,7 @@ export async function GET(request: Request) {
     ]),
   ].filter((id): id is string => Boolean(id));
   const { data: users } = userIds.length
-    ? await supabaseAdmin.from('users').select('id, nickname').in('id', userIds)
+    ? await requireSupabaseAdminClient().from('users').select('id, nickname').in('id', userIds)
     : { data: [] };
   const nicknameById = new Map((users ?? []).map((user) => [user.id, user.nickname]));
 

@@ -3,13 +3,13 @@ import { NextResponse } from 'next/server';
 import { requirePermission } from '@/lib/auth/requirePermission';
 import type { AdminNotice } from '@/lib/notices/types';
 import { noticeMutationSchema, sanitizeNoticeInput } from '@/lib/notices/validation';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
 
 export async function GET() {
   const guard = await requirePermission('notice.manage');
   if ('error' in guard) return guard.error;
 
-  const { data, error } = await supabaseAdmin
+  const { data, error } = await requireSupabaseAdminClient()
     .from('site_notices')
     .select(
       'id, title, content_html, is_published, starts_at, ends_at, created_by, updated_by, created_at, updated_at'
@@ -26,7 +26,7 @@ export async function GET() {
     ...new Set((data ?? []).flatMap((notice) => [notice.created_by, notice.updated_by])),
   ];
   const { data: users, error: usersError } = userIds.length
-    ? await supabaseAdmin.from('users').select('id, nickname').in('id', userIds)
+    ? await requireSupabaseAdminClient().from('users').select('id, nickname').in('id', userIds)
     : { data: [], error: null };
 
   if (usersError) {
@@ -69,7 +69,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Notice content is empty or too long' }, { status: 400 });
   }
 
-  const { data, error } = await supabaseAdmin
+  const { data, error } = await requireSupabaseAdminClient()
     .from('site_notices')
     .insert({
       title: input.title,

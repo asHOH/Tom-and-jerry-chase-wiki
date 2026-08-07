@@ -5,7 +5,7 @@ import {
   getGameDataDetailHref,
 } from '@/lib/gameData/contributionDisplay';
 import { GAME_DATA_CONTRIBUTION_FILTER } from '@/lib/gameData/contributionFilter';
-import { hasSupabaseAdminConfig, supabaseAdmin } from '@/lib/supabase/admin';
+import { getOptionalSupabaseAdminClient } from '@/lib/supabase/adminClient';
 
 const RECENT_CONTRIBUTION_LIMIT = 10;
 const REVIEWED_GAME_DATA_ACTION_STATUSES = ['approved', 'rejected', 'synced', 'revoked'] as const;
@@ -103,7 +103,8 @@ export function mergeRecentContributions(
 }
 
 export async function getGameDataActionApprovalRate(userId: string): Promise<number | null> {
-  if (!hasSupabaseAdminConfig()) return null;
+  const supabaseAdmin = getOptionalSupabaseAdminClient();
+  if (!supabaseAdmin) return null;
 
   const [approvedResult, reviewedResult] = await Promise.all([
     supabaseAdmin
@@ -128,7 +129,8 @@ export async function getGameDataActionApprovalRate(userId: string): Promise<num
 }
 
 export async function getPublicUserProfile(nickname: string): Promise<PublicUserProfile | null> {
-  if (!hasSupabaseAdminConfig()) return null;
+  const supabaseAdmin = getOptionalSupabaseAdminClient();
+  if (!supabaseAdmin) return null;
 
   const { data: userRow, error: userError } = await supabaseAdmin
     .from('users')

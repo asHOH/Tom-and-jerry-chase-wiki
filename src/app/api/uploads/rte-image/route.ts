@@ -12,7 +12,7 @@ import {
   RTE_IMAGE_MAX_BYTES,
   RTE_IMAGE_PUBLIC_BASE,
 } from '@/lib/richtext/imagePolicy';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
 import { createClient } from '@/lib/supabase/server';
 import { formatZodError, rteImageListQuerySchema } from '@/lib/validation/schemas';
 
@@ -41,7 +41,9 @@ async function collectFiles(
     sortBy: { column: 'updated_at', order: 'desc' } as const,
   };
 
-  const { data, error } = await supabaseAdmin.storage.from(RTE_IMAGE_BUCKET).list(prefix, options);
+  const { data, error } = await requireSupabaseAdminClient()
+    .storage.from(RTE_IMAGE_BUCKET)
+    .list(prefix, options);
 
   if (error) {
     throw error;
@@ -128,7 +130,8 @@ export async function GET(request: NextRequest) {
     const mimeType = entry.metadata?.mimetype;
     const publicUrl = RTE_IMAGE_PUBLIC_BASE
       ? `${RTE_IMAGE_PUBLIC_BASE}/${path}`
-      : supabaseAdmin.storage.from(RTE_IMAGE_BUCKET).getPublicUrl(path).data.publicUrl;
+      : requireSupabaseAdminClient().storage.from(RTE_IMAGE_BUCKET).getPublicUrl(path).data
+          .publicUrl;
     return {
       name: path.split('/').pop() ?? '',
       path,
@@ -204,8 +207,8 @@ export async function POST(request: Request) {
   ).padStart(2, '0')}`;
   const objectKey = `${userId}/${folder}/${randomUUID()}.${extension}`;
 
-  const { error: uploadError } = await supabaseAdmin.storage
-    .from(RTE_IMAGE_BUCKET)
+  const { error: uploadError } = await requireSupabaseAdminClient()
+    .storage.from(RTE_IMAGE_BUCKET)
     .upload(objectKey, buffer, {
       upsert: false,
       contentType: file.type,
@@ -219,7 +222,7 @@ export async function POST(request: Request) {
 
   const {
     data: { publicUrl },
-  } = supabaseAdmin.storage.from(RTE_IMAGE_BUCKET).getPublicUrl(objectKey);
+  } = requireSupabaseAdminClient().storage.from(RTE_IMAGE_BUCKET).getPublicUrl(objectKey);
 
   if (!normalizeHostedImageUrl(publicUrl)) {
     console.error('Uploaded image URL failed policy check', publicUrl);

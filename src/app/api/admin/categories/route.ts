@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requirePermission } from '@/lib/auth/requirePermission';
 import { getRequestIp } from '@/lib/blocks/server';
 import { CACHE_TAGS } from '@/lib/cacheTags';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
 
 export async function GET() {
   const guard = await requirePermission(['category.create', 'category.update', 'category.delete']);
@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
   }
 
-  const { error } = await supabaseAdmin.rpc('prepared_create_category', {
+  const { error } = await requireSupabaseAdminClient().rpc('prepared_create_category', {
     p_actor_id: guard.userId,
     p_ip: getRequestIp(request),
     p_name: name,
@@ -63,7 +63,7 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
   }
 
-  const { error } = await supabaseAdmin.rpc('prepared_update_category', {
+  const { error } = await requireSupabaseAdminClient().rpc('prepared_update_category', {
     p_actor_id: guard.userId,
     p_ip: getRequestIp(request),
     p_id: id,
@@ -94,7 +94,7 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
   }
 
-  const { error } = await supabaseAdmin.rpc('prepared_delete_category', {
+  const { error } = await requireSupabaseAdminClient().rpc('prepared_delete_category', {
     p_actor_id: guard.userId,
     p_ip: getRequestIp(request),
     p_id: id,

@@ -14,7 +14,7 @@ import {
 import { invalidatePublicGameDataActionsCache } from '@/lib/gameData/publicActionsCache';
 import type { PreparedPublishRequest } from '@/lib/gameData/publishPreparation';
 import type { GameDataSubmitMode } from '@/lib/gameData/submitMode';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
 import type { Database, Json } from '@/data/database.types';
 
 type PublishPermission = 'game_data_action.create' | 'game_data_action.publish_relations';
@@ -85,7 +85,7 @@ function persistenceError(error: {
 export async function loadTrustedGameDataAction(
   actionId: string
 ): Promise<TrustedGameDataActionRecord> {
-  const { data, error } = await supabaseAdmin
+  const { data, error } = await requireSupabaseAdminClient()
     .from('game_data_actions')
     .select('id, entity_type, entry, created_at, created_by, status, is_public')
     .eq('id', actionId)
@@ -141,14 +141,14 @@ export async function publishPreparedGameDataActions(options: {
   let expectedEpoch = snapshot.replayEpoch;
   for (const action of options.prepared.actions) {
     const rpcResult = isAnonymous
-      ? await supabaseAdmin.rpc('prepared_publish_anonymous_game_data_actions', {
+      ? await requireSupabaseAdminClient().rpc('prepared_publish_anonymous_game_data_actions', {
           p_entity_type: action.entityType,
           p_entries: action.rows.map((row) => asJson(row.canonicalEntry)),
           p_message: options.prepared.message ?? null,
           p_expected_replay_epoch: expectedEpoch,
           ...(options.clientIp === undefined ? {} : { p_ip: options.clientIp }),
         })
-      : await supabaseAdmin.rpc('prepared_publish_game_data_actions', {
+      : await requireSupabaseAdminClient().rpc('prepared_publish_game_data_actions', {
           p_actor_id: actorId,
           p_permission_key: options.permission,
           p_entity_type: action.entityType,
@@ -220,7 +220,7 @@ export async function approvePreparedGameDataAction(
     validateCandidate(insertCandidateInSemanticOrder(snapshot, record));
   }
 
-  const { error } = await supabaseAdmin.rpc('prepared_approve_game_data_action', {
+  const { error } = await requireSupabaseAdminClient().rpc('prepared_approve_game_data_action', {
     p_actor_id: actorId,
     p_action_id: record.id,
     p_expected_entity_type: record.entity_type,
@@ -246,14 +246,17 @@ export async function markPreparedGameDataActionSynced(
   }
   validateCandidate(candidateRows(snapshot).filter((row) => row.rowId !== record.id));
 
-  const { error } = await supabaseAdmin.rpc('prepared_mark_game_data_action_synced', {
-    p_actor_id: actorId,
-    p_action_id: record.id,
-    p_expected_entity_type: record.entity_type,
-    p_expected_entry: record.entry,
-    p_expected_replay_epoch: snapshot.replayEpoch,
-    ...(clientIp === undefined ? {} : { p_ip: clientIp }),
-  });
+  const { error } = await requireSupabaseAdminClient().rpc(
+    'prepared_mark_game_data_action_synced',
+    {
+      p_actor_id: actorId,
+      p_action_id: record.id,
+      p_expected_entity_type: record.entity_type,
+      p_expected_entry: record.entry,
+      p_expected_replay_epoch: snapshot.replayEpoch,
+      ...(clientIp === undefined ? {} : { p_ip: clientIp }),
+    }
+  );
   if (error) throw persistenceError(error);
   invalidatePublicGameDataActionsCache();
 }
@@ -272,7 +275,7 @@ export async function revokePreparedGameDataAction(
   }
   validateCandidate(candidateRows(snapshot).filter((row) => row.rowId !== record.id));
 
-  const { error } = await supabaseAdmin.rpc('prepared_revoke_game_data_action', {
+  const { error } = await requireSupabaseAdminClient().rpc('prepared_revoke_game_data_action', {
     p_actor_id: actorId,
     p_action_id: record.id,
     p_expected_entity_type: record.entity_type,

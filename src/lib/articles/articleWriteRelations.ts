@@ -3,7 +3,7 @@ import 'server-only';
 import { resolveArticleCategoryPolicy } from '@/lib/articles/articleCategoryPolicy';
 import { selectArticleCharacterOptions } from '@/lib/articles/articleCharacterOptions';
 import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
 
 export class ArticleWriteValidationError extends Error {
   constructor(message: string) {
@@ -19,7 +19,7 @@ export async function resolveArticleCharacterForWrite({
   categoryId: string;
   characterId: string | null;
 }): Promise<string | null> {
-  const { data: categories, error } = await supabaseAdmin
+  const { data: categories, error } = await requireSupabaseAdminClient()
     .from('categories')
     .select('id, parent_category_id, requires_character');
 

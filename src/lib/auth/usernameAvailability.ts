@@ -1,7 +1,8 @@
 import { createHash } from 'crypto';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 import { convertToPinyin } from '@/lib/pinyinUtils';
-import type { supabaseAdmin } from '@/lib/supabase/admin';
+import type { Database } from '@/data/database.types';
 
 type SupabaseLookupError = {
   code?: string | undefined;
@@ -86,7 +87,7 @@ export const checkUsernameAvailability = async ({
 };
 
 export const createSupabaseUsernameAvailabilityDataSource = (
-  supabase: typeof supabaseAdmin
+  supabase: SupabaseClient<Database>
 ): UsernameAvailabilityDataSource => ({
   async findUserByUsernameHash(usernameHash) {
     const { data, error } = await supabase

@@ -10,7 +10,7 @@ import { recordUserIp, requireNotBlocked } from '@/lib/blocks/server';
 import { verifyCaptchaProof } from '@/lib/captchaUtils';
 import { checkPasswordStrength } from '@/lib/passwordUtils';
 import { checkRateLimit } from '@/lib/rateLimit';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
 import { createClient } from '@/lib/supabase/server';
 import { createSupabaseRouteClient } from '@/lib/supabase/ssrClient';
 import { authRegisterSchema, formatZodError } from '@/lib/validation/schemas';
@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
     const availability = await checkUsernameAvailability({
       username,
       authEmailDomain,
-      dataSource: createSupabaseUsernameAvailabilityDataSource(supabaseAdmin),
+      dataSource: createSupabaseUsernameAvailabilityDataSource(requireSupabaseAdminClient()),
     });
 
     if (availability.status === 'lookup_error') {
@@ -103,11 +103,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { data: existingByNickname, error: nicknameLookupError } = await supabaseAdmin
-      .from('users')
-      .select('id')
-      .eq('nickname', nickname)
-      .maybeSingle();
+    const { data: existingByNickname, error: nicknameLookupError } =
+      await requireSupabaseAdminClient()
+        .from('users')
+        .select('id')
+        .eq('nickname', nickname)
+        .maybeSingle();
 
     if (nicknameLookupError && nicknameLookupError.code !== 'PGRST116') {
       console.error('Error checking existing nickname:', nicknameLookupError);
@@ -128,11 +129,12 @@ export async function POST(request: NextRequest) {
     const passwordHash = password ? hashPassword(password, salt) : '';
 
     const authUserEmail = availability.authEmail;
-    const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
-      email: authUserEmail,
-      password: authPassword,
-      email_confirm: true,
-    });
+    const { data: authData, error: authError } =
+      await requireSupabaseAdminClient().auth.admin.createUser({
+        email: authUserEmail,
+        password: authPassword,
+        email_confirm: true,
+      });
 
     if (authError || !authData.user) {
       console.error('Error creating auth user:', authError);
@@ -144,25 +146,27 @@ export async function POST(request: NextRequest) {
     }
     const authUserId = authData.user.id;
 
-    const { error: insertError } = await supabaseAdmin.from('users').insert({
-      id: authUserId, // Use the ID from auth.users
-      username_hash: hashUsername(username),
-      nickname,
-      password_hash: passwordHash,
-      salt,
-    } as TablesInsert<'users'>);
+    const { error: insertError } = await requireSupabaseAdminClient()
+      .from('users')
+      .insert({
+        id: authUserId, // Use the ID from auth.users
+        username_hash: hashUsername(username),
+        nickname,
+        password_hash: passwordHash,
+        salt,
+      } as TablesInsert<'users'>);
 
     if (insertError) {
       // Unique constraint violation codes for PostgreSQL
       if (insertError.code === '23505') {
-        await supabaseAdmin.auth.admin.deleteUser(authUserId);
+        await requireSupabaseAdminClient().auth.admin.deleteUser(authUserId);
         return NextResponse.json(
           { error: 'Username or nickname is already taken.' },
           { status: 409 }
         );
       }
       console.error('Error inserting user:', insertError);
-      await supabaseAdmin.auth.admin.deleteUser(authUserId);
+      await requireSupabaseAdminClient().auth.admin.deleteUser(authUserId);
       return NextResponse.json({ error: 'Could not create user.' }, { status: 500 });
     }
 

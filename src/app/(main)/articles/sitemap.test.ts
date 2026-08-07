@@ -1,5 +1,5 @@
-import { hasSupabasePublicConfig } from '@/lib/supabase/config';
 import { supabaseServerPublic } from '@/lib/supabase/public';
+import { getOptionalSupabasePublicClient } from '@/lib/supabase/publicClient';
 
 import sitemap from './sitemap';
 
@@ -17,20 +17,20 @@ jest.mock('@/lib/serverCache', () => ({
   ) => fn(),
 }));
 
-jest.mock('@/lib/supabase/config', () => ({
-  hasSupabasePublicConfig: jest.fn(),
-}));
-
 jest.mock('@/lib/supabase/public', () => ({
   supabaseServerPublic: { from: jest.fn() },
+}));
+
+jest.mock('@/lib/supabase/publicClient', () => ({
+  getOptionalSupabasePublicClient: jest.fn(),
 }));
 
 jest.mock('@/constants/seo', () => ({
   SITE_URL: 'https://tjwiki.test',
 }));
 
-const hasSupabasePublicConfigMock = jest.mocked(hasSupabasePublicConfig);
-const publicFromMock = jest.mocked(supabaseServerPublic.from);
+const getOptionalSupabasePublicClientMock = jest.mocked(getOptionalSupabasePublicClient);
+const publicFromMock = jest.mocked(supabaseServerPublic!.from);
 
 const query = {
   select: jest.fn(),
@@ -42,7 +42,7 @@ const query = {
 describe('article sitemap', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    hasSupabasePublicConfigMock.mockReturnValue(true);
+    getOptionalSupabasePublicClientMock.mockReturnValue(supabaseServerPublic);
     query.select.mockReturnValue(query);
     query.not.mockReturnValue(query);
     query.eq.mockReturnValue(query);
@@ -109,7 +109,7 @@ describe('article sitemap', () => {
   });
 
   it('returns no sitemap entries when public Supabase is disabled', async () => {
-    hasSupabasePublicConfigMock.mockReturnValue(false);
+    getOptionalSupabasePublicClientMock.mockReturnValue(undefined);
 
     await expect(sitemap()).resolves.toEqual([]);
     expect(publicFromMock).not.toHaveBeenCalled();

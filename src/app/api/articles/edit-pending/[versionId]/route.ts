@@ -9,7 +9,7 @@ import { requirePermission } from '@/lib/auth/requirePermission';
 import { getRequestIp, requireNotBlocked } from '@/lib/blocks/server';
 import { CACHE_TAGS } from '@/lib/cacheTags';
 import { checkRateLimit } from '@/lib/rateLimit';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
 import { articleEditPendingSchema, formatZodError } from '@/lib/validation/schemas';
 
 export async function POST(
@@ -42,7 +42,7 @@ export async function POST(
 
   try {
     // Get the article_id from the version.
-    const { data: version, error: versionError } = await supabaseAdmin
+    const { data: version, error: versionError } = await requireSupabaseAdminClient()
       .from('article_versions')
       .select('article_id')
       .eq('id', versionId)
@@ -69,17 +69,20 @@ export async function POST(
     });
 
     // Call RPC to update pending article in a transaction
-    const { error: rpcError } = await supabaseAdmin.rpc('prepared_update_pending_article', {
-      p_actor_id: userId,
-      p_ip: getRequestIp(request),
-      p_version_id: versionId,
-      p_article_id: version.article_id,
-      p_title: title,
-      p_content: content,
-      p_category_id: category,
-      p_character_id: resolvedCharacterId,
-      p_update_character: true,
-    });
+    const { error: rpcError } = await requireSupabaseAdminClient().rpc(
+      'prepared_update_pending_article',
+      {
+        p_actor_id: userId,
+        p_ip: getRequestIp(request),
+        p_version_id: versionId,
+        p_article_id: version.article_id,
+        p_title: title,
+        p_content: content,
+        p_category_id: category,
+        p_character_id: resolvedCharacterId,
+        p_update_character: true,
+      }
+    );
 
     if (rpcError) {
       console.error('Supabase RPC error:', rpcError);

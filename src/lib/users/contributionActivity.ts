@@ -4,7 +4,10 @@ import {
   getAffectedGameDataNames,
   getGameDataDetailHref,
 } from '@/lib/gameData/contributionDisplay';
-import { hasSupabaseAdminConfig, supabaseAdmin } from '@/lib/supabase/admin';
+import {
+  getOptionalSupabaseAdminClient,
+  requireSupabaseAdminClient,
+} from '@/lib/supabase/adminClient';
 import type { Database } from '@/data/database.types';
 
 const SHANGHAI_TIME_ZONE = 'Asia/Shanghai';
@@ -408,7 +411,8 @@ export async function getPublicContributionCalendar(
   range: ContributionDateRangeInput
 ): Promise<ContributionCalendar> {
   const resolvedRange = resolveDateRange(range);
-  if (!hasSupabaseAdminConfig()) return [];
+  const supabaseAdmin = getOptionalSupabaseAdminClient();
+  if (!supabaseAdmin) return [];
 
   const { data, error } = await supabaseAdmin.rpc('get_public_contribution_calendar', {
     p_end_date: resolvedRange.endDate,
@@ -434,7 +438,8 @@ export async function getPublicContributionBreakdown(
   range: ContributionDateRangeInput
 ): Promise<ContributionBreakdown> {
   const resolvedRange = resolveDateRange(range);
-  if (!hasSupabaseAdminConfig()) return [];
+  const supabaseAdmin = getOptionalSupabaseAdminClient();
+  if (!supabaseAdmin) return [];
 
   const { data, error } = await supabaseAdmin.rpc('get_public_contribution_breakdown', {
     p_end_date: resolvedRange.endDate,
@@ -463,12 +468,15 @@ async function queryContributionActivity(
   limit: number,
   offset: number
 ): Promise<ContributionActivityRpcRow[]> {
-  const { data, error } = await supabaseAdmin.rpc('get_public_contribution_activity', {
-    p_filter: filter,
-    p_limit: limit,
-    p_offset: offset,
-    p_user_id: userId,
-  });
+  const { data, error } = await requireSupabaseAdminClient().rpc(
+    'get_public_contribution_activity',
+    {
+      p_filter: filter,
+      p_limit: limit,
+      p_offset: offset,
+      p_user_id: userId,
+    }
+  );
   if (error) throw error;
   return data ?? [];
 }
@@ -478,7 +486,7 @@ export async function getPublicContributionActivity(
   filter: ContributionFilter | string | null | undefined,
   requestedPage: string | number | null | undefined
 ): Promise<ContributionActivityPage> {
-  if (!hasSupabaseAdminConfig()) return emptyContributionActivityPage();
+  if (!getOptionalSupabaseAdminClient()) return emptyContributionActivityPage();
 
   const normalizedFilter = normalizeContributionFilter(filter);
   const requestedPageNumber = normalizeContributionPage(requestedPage);

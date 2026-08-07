@@ -37,8 +37,8 @@ const shouldAllowCommentMock = jest.mocked(shouldAllowComment);
 const notifyDiscussionCommentSubscribersMock = jest.mocked(notifyDiscussionCommentSubscribers);
 const publishNotificationMock = jest.mocked(publishNotification);
 const checkRateLimitMock = jest.mocked(checkRateLimit);
-const adminFromMock = jest.mocked(supabaseAdmin.from);
-const adminRpcMock = jest.mocked(supabaseAdmin.rpc);
+const adminFromMock = jest.mocked(supabaseAdmin!.from);
+const adminRpcMock = jest.mocked(supabaseAdmin!.rpc);
 const hasSupabasePublicConfigMock = jest.mocked(hasSupabasePublicConfig);
 
 const commentId = '00000000-0000-4000-8000-000000000001';

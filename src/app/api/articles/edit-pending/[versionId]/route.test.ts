@@ -31,8 +31,8 @@ const requirePermissionMock = jest.mocked(requirePermission);
 const requireNotBlockedMock = jest.mocked(requireNotBlocked);
 const checkRateLimitMock = jest.mocked(checkRateLimit);
 const resolveArticleCharacterForWriteMock = jest.mocked(resolveArticleCharacterForWrite);
-const adminFromMock = jest.mocked(supabaseAdmin.from);
-const adminRpcMock = jest.mocked(supabaseAdmin.rpc);
+const adminFromMock = jest.mocked(supabaseAdmin!.from);
+const adminRpcMock = jest.mocked(supabaseAdmin!.rpc);
 
 const versionQuery = {
   select: jest.fn(),

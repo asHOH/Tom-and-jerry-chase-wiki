@@ -102,7 +102,7 @@ describe('recent changes contribution queries', () => {
       error: null,
     });
 
-    supabaseAdmin.from
+    supabaseAdmin!.from
       .mockImplementationOnce(() => countQuery)
       .mockImplementationOnce(() => rowsQuery)
       .mockImplementationOnce(() => usersQuery);
@@ -124,6 +124,6 @@ describe('recent changes contribution queries', () => {
     });
     expect(countQuery.or).toHaveBeenCalledWith(GAME_DATA_CONTRIBUTION_FILTER);
     expect(rowsQuery.or).toHaveBeenCalledWith(GAME_DATA_CONTRIBUTION_FILTER);
-    expect(supabaseServerPublic.from).not.toHaveBeenCalled();
+    expect(supabaseServerPublic!.from).not.toHaveBeenCalled();
   });
 });

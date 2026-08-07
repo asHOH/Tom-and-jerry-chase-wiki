@@ -6,8 +6,7 @@ import { queryApprovedPublicActionRows } from '@/lib/gameData/publicActionQuerie
 import { PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG } from '@/lib/gameData/publicActionsCache';
 import type { PublicActionRow } from '@/lib/gameData/publicActionsTypes';
 import { cached } from '@/lib/serverCache';
-import { hasSupabasePublicConfig } from '@/lib/supabase/config';
-import { supabaseServerPublic } from '@/lib/supabase/public';
+import { getOptionalSupabasePublicClient } from '@/lib/supabase/publicClient';
 
 import {
   createApprovedActionSnapshotFromRows,
@@ -16,11 +15,12 @@ import {
 import { PRODUCTION_BUILD_IDENTITY } from './buildIdentity';
 
 async function getCachedApprovedRows(): Promise<PublicActionRow[]> {
-  if (!hasSupabasePublicConfig()) return [];
+  const client = getOptionalSupabasePublicClient();
+  if (!client) return [];
 
   return cached(
     [PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG, 'approved-snapshot', 'v1', PRODUCTION_BUILD_IDENTITY],
-    () => queryApprovedPublicActionRows(supabaseServerPublic),
+    () => queryApprovedPublicActionRows(client),
     {
       revalidate: false,
       tags: [PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG],
