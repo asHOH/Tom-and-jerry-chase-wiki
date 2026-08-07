@@ -11,7 +11,7 @@ export const CHAT_CODE_MAX_LENGTH = 8 * 1024;
 
 const CHAT_CODE_TIMEOUT_MS = 1000;
 const CHAT_CODE_BUFFER_ALLOC_LIMIT = 8 * 1024 * 1024;
-const CHAT_CODE_MAX_OUTPUT_BYTES = 128 * 1024;
+const CHAT_CODE_MAX_OUTPUT_BYTES = 32 * 1024;
 
 type HardenedVMOptions = VMOptions & {
   bufferAllocLimit: number;
