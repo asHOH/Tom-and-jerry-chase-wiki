@@ -118,6 +118,16 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
     },
   },
   {
+    description:
+      '朝圣者泰菲在圆球形态无法被放大镜照射，救人的时候无法有效处理。并且伤害极高，容易击倒侦探汤姆。',
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '侦探汤姆', type: 'character' },
+      target: { name: '朝圣者泰菲', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
     description: '侦探汤姆可以移除国王杰瑞的护盾状态，不利于其进行单救。',
     relation: {
       kind: 'counters',
@@ -830,7 +840,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
     },
   },
   {
-    description: '充能的道具会触发反击，被动霸体使无效输出。',
+    description: '充能的道具会触发反击，被动霸体使无效输出，但朵朵可以通过加速来躲避反击。',
     relation: {
       kind: 'counters',
       subject: { name: '如玉', type: 'character' },
@@ -1362,7 +1372,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '牛仔杰瑞的两个技能都能打断舞花枪和花枪反击，且仙人掌的控制和持续伤害属于无来源伤害，吉他只有控制效果不附带伤害，因此均不会触发反击。同时三级被动可以让如玉陷入更长的控制时间，能够有效的干扰如玉。',
+      '牛仔杰瑞的两个技能都能打断舞花枪和花枪反击，且仙人掌的控制和持续伤害属于无来源伤害，吉他只有控制效果不附带伤害，因此均不会触发反击。同时三级被动可以让如玉陷入更长的控制时间，能够有效的干扰如玉，同时124血搭配逃窜可以硬抗一次暴怒跳劈伤害',
     relation: {
       kind: 'counters',
       subject: { name: '牛仔杰瑞', type: 'character' },
@@ -2880,7 +2890,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
     },
   },
   {
-    description: '不能反击，124血还不容易打死。',
+    description: '技能无法触发反击，124血搭配逃窜可以硬抗一次暴怒跳劈伤害',
     relation: {
       kind: 'counters',
       subject: { name: '佩克斯', type: 'character' },
@@ -2957,7 +2967,8 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
     },
   },
   {
-    description: '如玉2级被动让她被连续控制时会自动反击反击，对拿坡里鼠有一定反制作用。',
+    description:
+      '如玉2级被动让她被连续控制时会自动反击反击，拿坡里鼠使用二武致盲眩晕如玉可以通过二级被动直接触发反击，而且反击速度比出斜塔速度快',
     relation: {
       kind: 'counters',
       subject: { name: '如玉', type: 'character' },
@@ -2977,7 +2988,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '剑客汤姆爪刀较长，搭配击晕知识卡可以使用打断位移，同时可以使用闪电旋风劈在音乐家杰瑞使用位移的时候打断技能，但是三级位移自带两层护盾，剑客汤姆无法打断技能，但是可以使用闪电旋风劈把音乐家杰瑞带走。',
+      '剑客汤姆爪刀较长，搭配击晕知识卡可以使用打断位移，同时可以使用{旋刃剑舞}在音乐家杰瑞使用位移的时候打断技能，但是三级位移自带两层护盾，剑客汤姆无法打断技能，但是可以使用旋刃剑舞把音乐家杰瑞带走。',
     relation: {
       kind: 'counters',
       subject: { name: '剑客汤姆', type: 'character' },
