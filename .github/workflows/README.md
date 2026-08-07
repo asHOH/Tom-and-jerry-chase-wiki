@@ -9,6 +9,7 @@ This directory contains automated workflows for the project.
 - **Triggers**: Push/PR to main/develop branches
 - **Purpose**: Code quality checks and testing
 - **Jobs**:
+  - Database Types: Replay migrations and verify generated Supabase types
   - Code Quality: Prettier formatting, Oxlint, TypeScript compilation
   - Tests & Coverage: Run tests and generate coverage reports
 
@@ -22,6 +23,7 @@ This directory contains automated workflows for the project.
 All workflows ensure:
 
 - ✅ Code formatting (Prettier) - _Handled by Husky pre-commit hooks_
+- ✅ Supabase database type generation remains synchronized with migrations
 - ✅ Linting (Oxlint) - _Handled by Husky pre-commit hooks_
 - ✅ Type checking (TypeScript)
 - ✅ Test execution and coverage
@@ -30,7 +32,7 @@ All workflows ensure:
 ## 📋 Workflow Dependencies
 
 ```
-CI ──── Tests & Coverage
+CI ──── Database Types, Code Quality, Tests & Coverage
 
 Security Audit ── Dependency vulnerability checks
 ```
