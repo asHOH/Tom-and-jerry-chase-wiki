@@ -834,12 +834,12 @@ export const characterRelationMapTraits: CharacterRelationTrait[] = [
   },
   {
     description:
-      '游乐场地图大，开放性强，高低差大适合恶菲一被牵制，而且奶酪转点极其方便，且各奶酪洞口附近蓝色小淘气架点都有明确有效点位。',
+      '游乐场地图大，开放性强，高低差大适合恶菲一被走位，奶酪转点方便，但由于其开放性导致不适合恶菲进行绿恶魔灌伤。',
     relation: {
       kind: 'advantageMaps',
       subject: { name: '恶魔泰菲', type: 'character' },
       target: { name: '游乐场', type: 'map' },
-      isMinor: false,
+      isMinor: true,
     },
   },
   {

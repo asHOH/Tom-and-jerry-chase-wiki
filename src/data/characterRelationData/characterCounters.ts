@@ -381,7 +381,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '罗宾汉泰菲机动性强，善于拉扯，可以让如玉占不到便宜；但Hp上限低，进行干扰时又依赖近身连续控制，容易被反击击倒。',
+      '罗宾汉泰菲机动性强，善于拉扯，可以让如玉占不到便宜；当如玉进行反击时可以在圆滚滚状态下打断反击，但罗宾汉泰菲HP上限低，进行干扰时又依赖近身连续控制，容易被反击击倒。',
     relation: {
       kind: 'counterEachOther',
       subject: { name: '如玉', type: 'character' },
@@ -1353,12 +1353,12 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '牛仔杰瑞的两个技能都能打断舞花枪和花枪反击，且仙人掌的控制和持续伤害属于无来源伤害，吉他的第一段控制效果不附带伤害，因此均不会触发反击；但吉他后续的持续伤害有伤害来源，如玉可借助该伤害进行反击，因此需避免如玉在吉他范围内待得过久。',
+      '牛仔杰瑞的两个技能都能打断舞花枪和花枪反击，且仙人掌的控制和持续伤害属于无来源伤害，吉他只有控制效果不附带伤害，因此均不会触发反击。同时三级被动可以让如玉陷入更长的控制时间，能够有效的干扰如玉。',
     relation: {
       kind: 'counters',
       subject: { name: '牛仔杰瑞', type: 'character' },
       target: { name: '如玉', type: 'character' },
-      isMinor: true,
+      isMinor: false,
     },
   },
   {
@@ -2121,7 +2121,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
     },
   },
   {
-    description: '鲍姆爆炸无法触发如玉反击。',
+    description: '鲍姆爆炸无法触发如玉反击，同时也可以打断如玉反击。',
     relation: {
       kind: 'counters',
       subject: { name: '鲍姆', type: 'character' },
@@ -2958,7 +2958,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '音乐家杰瑞狂想状态下拥有较高伤害，容易触发如玉坚毅。同时音乐家杰瑞使用位移救队友拆火箭，当如玉距离音乐家较近会触发反击。',
+      '音乐家杰瑞狂想状态下拥有较高伤害，容易触发如玉坚毅。同时音乐家的位移是连续控制，会触发如玉2级被动造成反击。',
     relation: {
       kind: 'counters',
       subject: { name: '如玉', type: 'character' },
