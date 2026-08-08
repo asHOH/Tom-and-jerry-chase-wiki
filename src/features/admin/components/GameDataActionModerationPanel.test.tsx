@@ -28,17 +28,30 @@ const sampleAction: PendingGameDataAction = {
   reviewed_by_nickname: '',
   rejection_reason: '',
   is_public: false,
-  entry: {
-    op: 'set',
-    path: '侦探泰菲.mousePositioningTags',
-    oldValue: ['奶酪'],
-    newValue: ['奶酪', '救援'],
-  },
 };
+
+const sampleEntry = {
+  op: 'set',
+  path: '侦探泰菲.mousePositioningTags',
+  oldValue: ['奶酪'],
+  newValue: ['奶酪', '救援'],
+};
+
+const detailEntries: Record<string, unknown> = {};
 
 describe('GameDataActionModerationPanel', () => {
   beforeEach(() => {
     jest.restoreAllMocks();
+    for (const key of Object.keys(detailEntries)) delete detailEntries[key];
+    detailEntries[sampleAction.action_id] = sampleEntry;
+    global.fetch = jest.fn(async (input: RequestInfo | URL) => {
+      const url = String(input);
+      const actionId = decodeURIComponent(url.split('/').at(-1) ?? '');
+      return {
+        ok: true,
+        json: async () => ({ action_id: actionId, entry: detailEntries[actionId] ?? sampleEntry }),
+      } as Response;
+    });
   });
 
   it('hides the year for current-year submit and review dates', () => {
@@ -179,37 +192,32 @@ describe('GameDataActionModerationPanel', () => {
     expect(screen.getByRole('button', { name: '撤销' })).toBeInTheDocument();
   });
 
-  it('searches the full game data action entry content', () => {
+  it('uses an exact action UUID lookup instead of scanning list content', () => {
+    const onActionIdChange = jest.fn();
+    const actionId = 'de305d54-75b4-431b-adb2-eb6b9e546014';
     const otherAction: PendingGameDataAction = {
       ...sampleAction,
       action_id: 'action-2',
-      entry: {
-        op: 'set',
-        path: '汤姆.description',
-        oldValue: '旧描述',
-        newValue: '这是可搜索的嵌套改动内容',
-      },
     };
 
     render(
       <GameDataActionModerationPanel
         pendingActions={[sampleAction, otherAction]}
         mutatePendingActions={jest.fn()}
+        onActionIdChange={onActionIdChange}
       />
     );
 
-    fireEvent.change(screen.getByPlaceholderText('action_id / 类型 / 提交者 / 改动内容'), {
-      target: { value: '嵌套改动内容' },
+    fireEvent.change(screen.getByPlaceholderText('完整 action UUID'), {
+      target: { value: actionId },
     });
+    fireEvent.click(screen.getByRole('button', { name: '查找ID' }));
 
-    expect(screen.getByRole('checkbox', { name: '选择改动 action-2' })).toBeInTheDocument();
-    expect(screen.queryByRole('checkbox', { name: '选择改动 action-1' })).not.toBeInTheDocument();
-    expect(
-      screen.getByText((_content, element) => element?.textContent === '显示 1 / 2')
-    ).toBeInTheDocument();
+    expect(onActionIdChange).toHaveBeenCalledWith(actionId);
+    expect(screen.getByText('本页已加载 2 条')).toBeInTheDocument();
   });
 
-  it('keeps copy ID with copy JSON in expanded details and uses an icon-only expander', () => {
+  it('keeps copy ID with copy JSON in expanded details and uses an icon-only expander', async () => {
     render(
       <GameDataActionModerationPanel
         pendingActions={[sampleAction]}
@@ -235,28 +243,33 @@ describe('GameDataActionModerationPanel', () => {
     );
     expect(screen.getByRole('button', { name: '复制ID' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '复制JSON' })).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByRole('button', { name: '复制JSON' })).toBeEnabled());
+
+    fireEvent.click(screen.getByRole('button', { name: '收起详情' }));
+    fireEvent.click(screen.getByRole('button', { name: '展开详情' }));
+    expect(global.fetch).toHaveBeenCalledTimes(1);
   });
 
-  it('hides unchanged array summaries when changed fields explain the diff', () => {
+  it('hides unchanged array summaries when changed fields explain the diff', async () => {
     const actionWithNestedArrayChange: PendingGameDataAction = {
       ...sampleAction,
       action_id: 'action-nested-array-change',
-      entry: {
-        op: 'set',
-        path: '侍卫汤姆.countersKnowledgeCards',
-        oldValue: [
-          { id: '回家', isMinor: false, description: '侍卫汤姆的警戒可以清除回家的护盾' },
-          { id: '护佑', isMinor: false, description: '侍卫汤姆的警戒可以清除护佑的护盾' },
-          { id: '无畏', isMinor: true, description: '侍卫汤姆的警戒可以清除无畏的无敌' },
-          { id: '舍己', isMinor: false, description: '侍卫汤姆的警戒可以清除舍己的无敌' },
-        ],
-        newValue: [
-          { id: '回家', isMinor: false, description: '侍卫汤姆的警戒可以清除回家的护盾' },
-          { id: '护佑', isMinor: false, description: '侍卫汤姆的警戒可以清除护佑的护盾' },
-          { id: '无畏', isMinor: true, description: '侍卫汤姆的警戒可以清除无畏的无敌' },
-          { id: '舍己', isMinor: true, description: '侍卫汤姆的警戒可以清除舍己的无敌' },
-        ],
-      },
+    };
+    detailEntries[actionWithNestedArrayChange.action_id] = {
+      op: 'set',
+      path: '侍卫汤姆.countersKnowledgeCards',
+      oldValue: [
+        { id: '回家', isMinor: false, description: '侍卫汤姆的警戒可以清除回家的护盾' },
+        { id: '护佑', isMinor: false, description: '侍卫汤姆的警戒可以清除护佑的护盾' },
+        { id: '无畏', isMinor: true, description: '侍卫汤姆的警戒可以清除无畏的无敌' },
+        { id: '舍己', isMinor: false, description: '侍卫汤姆的警戒可以清除舍己的无敌' },
+      ],
+      newValue: [
+        { id: '回家', isMinor: false, description: '侍卫汤姆的警戒可以清除回家的护盾' },
+        { id: '护佑', isMinor: false, description: '侍卫汤姆的警戒可以清除护佑的护盾' },
+        { id: '无畏', isMinor: true, description: '侍卫汤姆的警戒可以清除无畏的无敌' },
+        { id: '舍己', isMinor: true, description: '侍卫汤姆的警戒可以清除舍己的无敌' },
+      ],
     };
 
     render(
@@ -268,7 +281,7 @@ describe('GameDataActionModerationPanel', () => {
 
     fireEvent.click(screen.getByRole('button', { name: '展开详情' }));
 
-    expect(screen.getByText('侍卫汤姆.countersKnowledgeCards')).toBeInTheDocument();
+    expect(await screen.findByText('侍卫汤姆.countersKnowledgeCards')).toBeInTheDocument();
     expect(screen.getByText('变更字段：')).toBeInTheDocument();
     expect(
       screen.getAllByText(
@@ -279,7 +292,7 @@ describe('GameDataActionModerationPanel', () => {
     expect(screen.queryByText('数组(4: 回家、护佑、无畏 等)')).not.toBeInTheDocument();
   });
 
-  it('uses projected character relations as the old preview value when relation overlays are first set', () => {
+  it('uses projected character relations as the old preview value when relation overlays are first set', async () => {
     const projectedCounters = getCharacterRelation(characters, '恶魔汤姆').counters;
     const existingCounterId = projectedCounters[0]?.id;
 
@@ -290,18 +303,18 @@ describe('GameDataActionModerationPanel', () => {
       ...sampleAction,
       action_id: 'action-character-relation-overlay',
       entity_type: 'characters',
-      entry: {
-        op: 'set',
-        path: '恶魔汤姆.counters',
-        newValue: [
-          ...projectedCounters,
-          {
-            id: '__preview_added__',
-            isMinor: false,
-            description: 'new preview relation',
-          },
-        ],
-      },
+    };
+    detailEntries[actionWithMissingRelationOldValue.action_id] = {
+      op: 'set',
+      path: '恶魔汤姆.counters',
+      newValue: [
+        ...projectedCounters,
+        {
+          id: '__preview_added__',
+          isMinor: false,
+          description: 'new preview relation',
+        },
+      ],
     };
 
     render(
@@ -313,7 +326,9 @@ describe('GameDataActionModerationPanel', () => {
 
     fireEvent.click(screen.getByRole('button', { name: '展开详情' }));
 
-    expect(screen.getByText(summarizeGameActionValue(projectedCounters))).toBeInTheDocument();
+    expect(
+      await screen.findByText(summarizeGameActionValue(projectedCounters))
+    ).toBeInTheDocument();
     expect(
       screen.getByText(
         (content) => content.includes('新增ID') && content.includes('__preview_added__')
@@ -329,12 +344,17 @@ describe('GameDataActionModerationPanel', () => {
 
   it('keeps read-only controls enabled while moderation is in flight', async () => {
     let resolveFetch: (value: Response) => void = () => {};
-    global.fetch = jest.fn(
-      () =>
-        new Promise<Response>((resolve) => {
-          resolveFetch = resolve;
-        })
-    );
+    global.fetch = jest.fn((input: RequestInfo | URL) => {
+      if (String(input).startsWith('/api/game-data-actions/admin/')) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({ action_id: sampleAction.action_id, entry: sampleEntry }),
+        } as Response);
+      }
+      return new Promise<Response>((resolve) => {
+        resolveFetch = resolve;
+      });
+    });
     jest.spyOn(window, 'confirm').mockReturnValue(true);
 
     render(
@@ -345,6 +365,7 @@ describe('GameDataActionModerationPanel', () => {
     );
 
     fireEvent.click(screen.getByRole('button', { name: '展开详情' }));
+    await waitFor(() => expect(screen.getByRole('button', { name: '复制JSON' })).toBeEnabled());
     fireEvent.click(screen.getByRole('button', { name: '批准' }));
 
     await waitFor(() => {

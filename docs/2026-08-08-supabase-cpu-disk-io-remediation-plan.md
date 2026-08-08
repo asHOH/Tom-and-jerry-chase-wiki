@@ -18,45 +18,45 @@ observation window are operational thresholds rather than values derived from th
 
 ## Phase 1 — Stop unnecessary requests
 
-- [ ] Fetch game-data actions only when the admin actions tab is active and the user has moderation
+- [x] Fetch game-data actions only when the admin actions tab is active and the user has moderation
       access.
-- [ ] Define moderation access consistently in the UI and API as having at least one of
+- [x] Define moderation access consistently in the UI and API as having at least one of
       `game_data_action.approve`, `game_data_action.reject`, `game_data_action.mark_synced`, or
       `game_data_action.revoke`.
-- [ ] Include the active status and all other server-side filters in the SWR key.
-- [ ] Disable automatic focus revalidation for this SWR request.
-- [ ] Keep explicit refreshes after moderation operations.
-- [ ] Make `pending` the API and UI default status.
-- [ ] Return `400` for an unknown status instead of silently falling back to `all`.
-- [ ] Do not issue a separate pending-count request while another admin tab is active. Hide the
+- [x] Include the active status and all other server-side filters in the SWR key.
+- [x] Disable automatic focus revalidation for this SWR request.
+- [x] Keep explicit refreshes after moderation operations.
+- [x] Make `pending` the API and UI default status.
+- [x] Return `400` for an unknown status instead of silently falling back to `all`.
+- [x] Do not issue a separate pending-count request while another admin tab is active. Hide the
       pending badge until the actions tab has been loaded, then reuse its cached page-local result.
 
 **Target:** Opening the admin panel on another tab does not issue an action-list request.
 
 ## Phase 2 — Bound the API and UI
 
-- [ ] Keep the existing server-side status filter, but wire the selected UI status to it.
-- [ ] Move the entity-type filter to the server and replace the broad free-text search with an exact
+- [x] Keep the existing server-side status filter, but wire the selected UI status to it.
+- [x] Move the entity-type filter to the server and replace the broad free-text search with an exact
       action-ID lookup. Do not scan submitter nicknames or arbitrary `entry` JSON from the list path.
-- [ ] Add keyset pagination ordered by `created_at DESC, id DESC`.
-- [ ] Use a default page size of 50 and enforce a maximum of 100.
-- [ ] Return `nextCursor: null | string`; validate malformed cursors with `400` and bind cursors to
+- [x] Add keyset pagination ordered by `created_at DESC, id DESC`.
+- [x] Use a default page size of 50 and enforce a maximum of 100.
+- [x] Return `nextCursor: null | string`; validate malformed cursors with `400` and bind cursors to
       the active filter set so they cannot be reused with different filters.
-- [ ] Select only list-summary fields; do not include the `entry` JSON in list responses.
-- [ ] Add an authenticated, RLS-scoped detail endpoint that loads the full `entry` for one action.
-- [ ] Cache details by action ID in the client and fetch them only following an explicit expansion.
-- [ ] Remove the current “expand all details” behavior so a page cannot fan out into 50–100 detail
+- [x] Select only list-summary fields; do not include the `entry` JSON in list responses.
+- [x] Add an authenticated, RLS-scoped detail endpoint that loads the full `entry` for one action.
+- [x] Cache details by action ID in the client and fetch them only following an explicit expansion.
+- [x] Remove the current “expand all details” behavior so a page cannot fan out into 50–100 detail
       requests.
-- [ ] Reset the cursor and page-local selection when a server-side filter changes.
-- [ ] Use page replacement with a client-held cursor stack for previous-page navigation. Keep
+- [x] Reset the cursor and page-local selection when a server-side filter changes.
+- [x] Use page replacement with a client-held cursor stack for previous-page navigation. Keep
       selection page-local. After moderation, remove a successful row only if its new status no
       longer matches the active filter; otherwise patch its summary or wait for current-page
       revalidation.
-- [ ] Populate the entity-type selector from the canonical entity catalog, not only the current page.
-- [ ] Label list counts explicitly as loaded/page counts. Derive the badge only from the cached
+- [x] Populate the entity-type selector from the canonical entity catalog, not only the current page.
+- [x] Label list counts explicitly as loaded/page counts. Derive the badge only from the cached
       `pending` response; display `${loadedPendingCount}+` when it has a `nextCursor` and otherwise
       display the loaded pending count.
-- [ ] Update moderation refreshes to reload the active page and status without returning to
+- [x] Update moderation refreshes to reload the active page and status without returning to
       `status=all`.
 
 The `status=all` option may remain, but it must use the same deterministic order and hard page limit;

@@ -5,7 +5,16 @@ import Link from 'next/link';
 
 import { formatCompactDateTime } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
+import type {
+  GameDataActionDetail,
+  GameDataActionStatusFilter,
+  GameDataActionSummary,
+} from '@/lib/gameData/adminActionTypes';
 import { GAME_DATA_ENTITY_LABELS } from '@/lib/gameData/contributionDisplay';
+import {
+  PUBLISHABLE_ENTITY_TYPES,
+  type PublishableEntityType,
+} from '@/lib/gameData/publishableEntityTypes';
 import { useToast } from '@/context/ToastContext';
 import { Database } from '@/data/database.types';
 import type { GameActionDiffView } from '@/features/admin/utils/gameActionDiff';
@@ -18,12 +27,8 @@ import { ChevronRightIcon } from '@/components/icons/CommonIcons';
 import GameDataActionPreviewList, { GameDataActionChangeViewer } from './GameDataActionPreviewList';
 
 type ActionStatus = Database['public']['Enums']['game_data_action_status'];
-export type GameDataActionStatusFilter = 'all' | ActionStatus;
-
-export type PendingGameDataAction =
-  Database['public']['Functions']['get_pending_game_data_actions']['Returns'][number] & {
-    message?: string | null;
-  };
+export type { GameDataActionStatusFilter } from '@/lib/gameData/adminActionTypes';
+export type PendingGameDataAction = GameDataActionSummary;
 
 type GameDataActionModerationPanelProps = {
   canApproveActions?: boolean;
@@ -32,7 +37,16 @@ type GameDataActionModerationPanelProps = {
   canRevokeActions?: boolean;
   actionStatus?: GameDataActionStatusFilter;
   onActionStatusChange?: (status: GameDataActionStatusFilter) => void;
+  actionEntityType?: PublishableEntityType | null;
+  onActionEntityTypeChange?: (entityType: PublishableEntityType | null) => void;
+  actionId?: string | null;
+  onActionIdChange?: (actionId: string | null) => void;
   pendingActions: PendingGameDataAction[];
+  nextCursor?: string | null;
+  hasPreviousPage?: boolean;
+  onNextPage?: () => void;
+  onPreviousPage?: () => void;
+  pageKey?: string;
   mutatePendingActions: () => Promise<unknown> | unknown;
 };
 
@@ -65,6 +79,8 @@ const MODERATION_ACTION_SUCCESS_MESSAGE: Record<ModerationAction, string> = {
   revoke: '已撤销，该改动已从公开 replay 移除',
 };
 
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
 const getModerationFailureMessage = (failure: unknown): string =>
   failure instanceof Error ? failure.message : '操作失败';
 
@@ -84,17 +100,38 @@ const GameDataActionModerationPanel = ({
   canRevokeActions: canRevokeActions = false,
   actionStatus: controlledActionStatus,
   onActionStatusChange,
+  actionEntityType: controlledActionEntityType,
+  onActionEntityTypeChange,
+  actionId: controlledActionId,
+  onActionIdChange,
   pendingActions,
+  nextCursor = null,
+  hasPreviousPage = false,
+  onNextPage,
+  onPreviousPage,
+  pageKey = '',
   mutatePendingActions,
 }: GameDataActionModerationPanelProps) => {
   const [moderatingActionId, setModeratingActionId] = useState<string | null>(null);
   const isModerating = moderatingActionId !== null;
-  const [actionQuery, setActionQuery] = useState('');
-  const [actionEntityType, setActionEntityType] = useState<string>('all');
+  const [actionIdDraft, setActionIdDraft] = useState('');
+  const [uncontrolledActionEntityType, setUncontrolledActionEntityType] =
+    useState<PublishableEntityType | null>(null);
+  const actionEntityType =
+    controlledActionEntityType === undefined
+      ? uncontrolledActionEntityType
+      : controlledActionEntityType;
+  const [uncontrolledActionId, setUncontrolledActionId] = useState<string | null>(null);
+  const actionId = controlledActionId === undefined ? uncontrolledActionId : controlledActionId;
   const [uncontrolledActionStatus, setUncontrolledActionStatus] =
     useState<GameDataActionStatusFilter>('pending');
   const actionStatus = controlledActionStatus ?? uncontrolledActionStatus;
   const [expandedActionIds, setExpandedActionIds] = useState<Set<string>>(() => new Set());
+  const [actionDetails, setActionDetails] = useState<Record<string, GameDataActionDetail>>({});
+  const [loadingDetailActionIds, setLoadingDetailActionIds] = useState<Set<string>>(
+    () => new Set()
+  );
+  const [detailErrors, setDetailErrors] = useState<Record<string, string>>({});
   const [selectedActionIds, setSelectedActionIds] = useState<Set<string>>(() => new Set());
   const [diffView, setDiffView] = useState<GameActionDiffView>('unified');
   const [showAllDiffContext, setShowAllDiffContext] = useState(false);
@@ -219,32 +256,7 @@ const GameDataActionModerationPanel = ({
     }
   };
 
-  const uniqueEntityTypes = useMemo(() => {
-    const set = new Set<string>();
-    for (const action of pendingActions) {
-      set.add(action.entity_type);
-    }
-    return Array.from(set).sort((a, b) => a.localeCompare(b));
-  }, [pendingActions]);
-
-  const filteredActions = useMemo(() => {
-    const q = actionQuery.trim().toLowerCase();
-
-    return pendingActions.filter((submission) => {
-      if (actionStatus !== 'all' && submission.status !== actionStatus) return false;
-      if (actionEntityType !== 'all' && submission.entity_type !== actionEntityType) return false;
-      if (!q) return true;
-
-      const createdBy = (submission.created_by_nickname ?? '').toLowerCase();
-      const entryContent = JSON.stringify(submission.entry)?.toLowerCase() ?? '';
-      return (
-        submission.action_id.toLowerCase().includes(q) ||
-        submission.entity_type.toLowerCase().includes(q) ||
-        createdBy.includes(q) ||
-        entryContent.includes(q)
-      );
-    });
-  }, [pendingActions, actionEntityType, actionQuery, actionStatus]);
+  const filteredActions = pendingActions;
 
   const actionableActions = useMemo(
     () =>
@@ -264,10 +276,6 @@ const GameDataActionModerationPanel = ({
   const allVisiblePendingSelected =
     actionableActions.length > 0 &&
     actionableActions.every((action) => selectedActionIds.has(action.action_id));
-  const allVisibleActionsExpanded =
-    filteredActions.length > 0 &&
-    filteredActions.every((action) => expandedActionIds.has(action.action_id));
-
   useEffect(() => {
     const pendingActionIds = new Set(
       pendingActions
@@ -291,6 +299,11 @@ const GameDataActionModerationPanel = ({
       return next.size === prev.size ? prev : next;
     });
   }, [canApproveActions, canRejectActions, pendingActions]);
+
+  useEffect(() => {
+    setSelectedActionIds(new Set());
+    setExpandedActionIds(new Set());
+  }, [pageKey]);
 
   const moderateMany = async (action: PendingModerationAction) => {
     if (isModerating || selectedPendingActions.length === 0) return;
@@ -350,30 +363,59 @@ const GameDataActionModerationPanel = ({
     }
   };
 
-  const toggleExpanded = (actionId: string) => {
-    setExpandedActionIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(actionId)) {
-        next.delete(actionId);
-      } else {
-        next.add(actionId);
-      }
-      return next;
-    });
-  };
+  const toggleExpanded = (selectedActionId: string) => {
+    const shouldLoad =
+      !expandedActionIds.has(selectedActionId) &&
+      actionDetails[selectedActionId] === undefined &&
+      !loadingDetailActionIds.has(selectedActionId);
 
-  const toggleAllVisibleExpanded = () => {
     setExpandedActionIds((prev) => {
       const next = new Set(prev);
-      for (const action of filteredActions) {
-        if (allVisibleActionsExpanded) {
-          next.delete(action.action_id);
-        } else {
-          next.add(action.action_id);
-        }
+      if (next.has(selectedActionId)) {
+        next.delete(selectedActionId);
+      } else {
+        next.add(selectedActionId);
       }
       return next;
     });
+
+    if (!shouldLoad) return;
+    setLoadingDetailActionIds((current) => new Set(current).add(selectedActionId));
+    setDetailErrors((current) => {
+      const next = { ...current };
+      delete next[selectedActionId];
+      return next;
+    });
+
+    void fetch(`/api/game-data-actions/admin/${encodeURIComponent(selectedActionId)}`)
+      .then(async (response) => {
+        const payload = (await response.json().catch(() => null)) as
+          (Partial<GameDataActionDetail> & { error?: string }) | null;
+        if (
+          !response.ok ||
+          payload?.action_id !== selectedActionId ||
+          payload.entry === undefined
+        ) {
+          throw new Error(payload?.error ?? '详情加载失败');
+        }
+        setActionDetails((current) => ({
+          ...current,
+          [selectedActionId]: payload as GameDataActionDetail,
+        }));
+      })
+      .catch((failure: unknown) => {
+        setDetailErrors((current) => ({
+          ...current,
+          [selectedActionId]: getModerationFailureMessage(failure),
+        }));
+      })
+      .finally(() => {
+        setLoadingDetailActionIds((current) => {
+          const next = new Set(current);
+          next.delete(selectedActionId);
+          return next;
+        });
+      });
   };
 
   const toggleSelectedAction = (actionId: string) => {
@@ -422,6 +464,9 @@ const GameDataActionModerationPanel = ({
             onChange={(e) => {
               const nextStatus = e.target.value as GameDataActionStatusFilter;
               setUncontrolledActionStatus(nextStatus);
+              setUncontrolledActionId(null);
+              setActionIdDraft('');
+              onActionIdChange?.(null);
               onActionStatusChange?.(nextStatus);
             }}
             fullWidth={false}
@@ -438,27 +483,64 @@ const GameDataActionModerationPanel = ({
           <label className='text-sm text-gray-600 dark:text-slate-300'>实体类型</label>
           <FormSelect
             title='过滤实体类型'
-            value={actionEntityType}
-            onChange={(e) => setActionEntityType(e.target.value)}
+            value={actionEntityType ?? 'all'}
+            onChange={(e) => {
+              const value = e.target.value;
+              const nextEntityType = value === 'all' ? null : (value as PublishableEntityType);
+              setUncontrolledActionEntityType(nextEntityType);
+              setUncontrolledActionId(null);
+              setActionIdDraft('');
+              onActionIdChange?.(null);
+              onActionEntityTypeChange?.(nextEntityType);
+            }}
             fullWidth={false}
             size='sm'
           >
             <option value='all'>全部</option>
-            {uniqueEntityTypes.map((type) => (
+            {PUBLISHABLE_ENTITY_TYPES.map((type) => (
               <option key={type} value={type}>
-                {type}
+                {GAME_DATA_ENTITY_LABELS[type] ?? type}（{type}）
               </option>
             ))}
           </FormSelect>
 
-          <label className='ml-2 text-sm text-gray-600 dark:text-slate-300'>搜索</label>
+          <label className='ml-2 text-sm text-gray-600 dark:text-slate-300'>精确ID</label>
           <FormInput
-            value={actionQuery}
-            onChange={(e) => setActionQuery(e.target.value)}
-            placeholder='action_id / 类型 / 提交者 / 改动内容'
+            value={actionIdDraft}
+            onChange={(e) => setActionIdDraft(e.target.value)}
+            placeholder='完整 action UUID'
             className='md:w-64'
             size='sm'
           />
+          <Button
+            disabled={
+              isModerating ||
+              (actionIdDraft.trim() !== '' && !UUID_PATTERN.test(actionIdDraft.trim()))
+            }
+            onClick={() => {
+              const nextActionId = actionIdDraft.trim() || null;
+              setUncontrolledActionId(nextActionId);
+              onActionIdChange?.(nextActionId);
+            }}
+            variant='secondary'
+            size='sm'
+          >
+            {actionId === null ? '查找ID' : '更新ID'}
+          </Button>
+          {actionId !== null && (
+            <Button
+              disabled={isModerating}
+              onClick={() => {
+                setActionIdDraft('');
+                setUncontrolledActionId(null);
+                onActionIdChange?.(null);
+              }}
+              variant='secondary'
+              size='sm'
+            >
+              清除ID
+            </Button>
+          )}
 
           <label className='ml-2 text-sm text-gray-600 dark:text-slate-300'>对比方式</label>
           <FormSelect
@@ -474,9 +556,7 @@ const GameDataActionModerationPanel = ({
           </FormSelect>
 
           <div className='flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400'>
-            <span>
-              显示 {filteredActions.length} / {pendingActions.length}
-            </span>
+            <span>本页已加载 {pendingActions.length} 条</span>
             <span>(已选 {selectedPendingActions.length} 条)</span>
           </div>
         </div>
@@ -489,14 +569,6 @@ const GameDataActionModerationPanel = ({
             size='sm'
           >
             {allVisiblePendingSelected ? '取消全选待审核' : '全选待审核'}
-          </Button>
-          <Button
-            disabled={filteredActions.length === 0}
-            onClick={toggleAllVisibleExpanded}
-            variant='secondary'
-            size='sm'
-          >
-            {allVisibleActionsExpanded ? '收起全部详情' : '展开全部详情'}
           </Button>
           <Button
             disabled={diffView === 'normal'}
@@ -547,13 +619,16 @@ const GameDataActionModerationPanel = ({
       </Card>
 
       {pendingActions.length === 0 ? (
-        <Card className='rounded-md text-gray-600 dark:text-slate-300'>暂无待审核改动</Card>
+        <Card className='rounded-md text-gray-600 dark:text-slate-300'>本页没有符合条件的改动</Card>
       ) : (
         <div className='space-y-3'>
           {filteredActions.map((submission) => {
             const statusMeta =
               ACTION_STATUS_META[submission.status as ActionStatus] ?? ACTION_STATUS_META.pending;
             const isExpanded = expandedActionIds.has(submission.action_id);
+            const detail = actionDetails[submission.action_id];
+            const isLoadingDetail = loadingDetailActionIds.has(submission.action_id);
+            const detailError = detailErrors[submission.action_id];
 
             return (
               <Card key={submission.action_id} className='rounded-md'>
@@ -814,7 +889,10 @@ const GameDataActionModerationPanel = ({
                               复制ID
                             </Button>
                             <Button
-                              onClick={() => void copyText(JSON.stringify(submission, null, 2))}
+                              disabled={detail === undefined}
+                              onClick={() =>
+                                void copyText(JSON.stringify({ ...submission, ...detail }, null, 2))
+                              }
                               variant='secondary'
                               size='sm'
                             >
@@ -829,18 +907,32 @@ const GameDataActionModerationPanel = ({
                           </div>
                         )}
 
-                        <GameDataActionPreviewList
-                          entry={submission.entry}
-                          entityType={submission.entity_type}
-                        />
+                        {isLoadingDetail && (
+                          <div className='text-sm text-gray-500 dark:text-slate-400'>
+                            详情加载中…
+                          </div>
+                        )}
+                        {detailError && (
+                          <div className='rounded border border-red-200 bg-red-50 p-3 text-sm text-red-800 dark:border-red-900/60 dark:bg-red-900/30 dark:text-red-200'>
+                            {detailError}
+                          </div>
+                        )}
+                        {detail && (
+                          <>
+                            <GameDataActionPreviewList
+                              entry={detail.entry}
+                              entityType={submission.entity_type}
+                            />
 
-                        <GameDataActionChangeViewer
-                          entry={submission.entry}
-                          entityType={submission.entity_type}
-                          view={diffView}
-                          showAllContext={showAllDiffContext}
-                          onCopyText={copyText}
-                        />
+                            <GameDataActionChangeViewer
+                              entry={detail.entry}
+                              entityType={submission.entity_type}
+                              view={diffView}
+                              showAllContext={showAllDiffContext}
+                              onCopyText={copyText}
+                            />
+                          </>
+                        )}
                       </div>
                     )}
                   </div>
@@ -848,6 +940,27 @@ const GameDataActionModerationPanel = ({
               </Card>
             );
           })}
+        </div>
+      )}
+
+      {(hasPreviousPage || nextCursor !== null) && (
+        <div className='flex items-center justify-end gap-2'>
+          <Button
+            disabled={!hasPreviousPage || isModerating}
+            onClick={onPreviousPage}
+            variant='secondary'
+            size='sm'
+          >
+            上一页
+          </Button>
+          <Button
+            disabled={nextCursor === null || isModerating}
+            onClick={onNextPage}
+            variant='secondary'
+            size='sm'
+          >
+            下一页
+          </Button>
         </div>
       )}
 

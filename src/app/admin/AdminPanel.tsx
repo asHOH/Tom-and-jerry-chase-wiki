@@ -7,6 +7,8 @@ import useSWR from 'swr';
 import { usePermissions } from '@/lib/auth/PermissionProvider';
 import type { PermissionResourceOption } from '@/lib/auth/permissionResources';
 import { cn } from '@/lib/design';
+import type { AdminGameDataActionsResponse } from '@/lib/gameData/adminActionTypes';
+import type { PublishableEntityType } from '@/lib/gameData/publishableEntityTypes';
 import type { AdminNotice } from '@/lib/notices/types';
 import { useUser } from '@/hooks/useUser';
 import type { Database } from '@/data/database.types';
@@ -14,7 +16,6 @@ import BlockManagement from '@/features/admin/components/BlockManagement';
 import CategoryManagement from '@/features/admin/components/CategoryManagement';
 import GameDataActionModerationPanel, {
   type GameDataActionStatusFilter,
-  type PendingGameDataAction,
 } from '@/features/admin/components/GameDataActionModerationPanel';
 import NoticeManagement from '@/features/admin/components/NoticeManagement';
 import PermissionGroupManagement, {
@@ -69,21 +70,36 @@ const fetchGroups = async (): Promise<GroupsResponse> => {
   return response.json();
 };
 
-type GameDataActionsKey = readonly ['game-data-actions-admin', GameDataActionStatusFilter];
+const ACTION_PAGE_SIZE = 50;
 
-const fetchGameDataActions = async ([, status]: GameDataActionsKey): Promise<
-  PendingGameDataAction[]
-> => {
-  const response = await fetch(`/api/game-data-actions/admin?status=${encodeURIComponent(status)}`);
+type GameDataActionsKey = readonly [
+  'game-data-actions-admin',
+  GameDataActionStatusFilter,
+  PublishableEntityType | null,
+  string | null,
+  string | null,
+  typeof ACTION_PAGE_SIZE,
+];
+
+const fetchGameDataActions = async ([
+  ,
+  status,
+  entityType,
+  actionId,
+  cursor,
+  limit,
+]: GameDataActionsKey): Promise<AdminGameDataActionsResponse> => {
+  const searchParams = new URLSearchParams({ status, limit: String(limit) });
+  if (entityType !== null) searchParams.set('entityType', entityType);
+  if (actionId !== null) searchParams.set('actionId', actionId);
+  if (cursor !== null) searchParams.set('cursor', cursor);
+
+  const response = await fetch(`/api/game-data-actions/admin?${searchParams.toString()}`);
   if (!response.ok) {
-    throw new Error('Failed to fetch pending actions');
+    throw new Error('Failed to fetch game data actions');
   }
 
-  const data = (await response.json()) as {
-    submissions?: PendingGameDataAction[];
-  };
-
-  return data.submissions ?? [];
+  return (await response.json()) as AdminGameDataActionsResponse;
 };
 
 const fetchBlocks = async (): Promise<BlocksResponse> => {
@@ -115,7 +131,14 @@ const isAdminTab = (value: string | null): value is AdminTab =>
 const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState<AdminTab>('categories');
   const [actionStatus, setActionStatus] = useState<GameDataActionStatusFilter>('pending');
-  const [loadedPendingActionCount, setLoadedPendingActionCount] = useState<number | null>(null);
+  const [actionEntityType, setActionEntityType] = useState<PublishableEntityType | null>(null);
+  const [actionId, setActionId] = useState<string | null>(null);
+  const [actionCursor, setActionCursor] = useState<string | null>(null);
+  const [actionCursorStack, setActionCursorStack] = useState<(string | null)[]>([]);
+  const [loadedPendingPage, setLoadedPendingPage] = useState<{
+    count: number;
+    hasMore: boolean;
+  } | null>(null);
   const searchParams = useSearchParams();
   const permissions = usePermissions();
   const { blockSummary } = useUser();
@@ -197,7 +220,14 @@ const AdminPanel = () => {
 
   const { data: actionData, mutate: mutatePendingActions } = useSWR(
     enableActionModeration && activeTab === 'actions'
-      ? (['game-data-actions-admin', actionStatus] as const)
+      ? ([
+          'game-data-actions-admin',
+          actionStatus,
+          actionEntityType,
+          actionId,
+          actionCursor,
+          ACTION_PAGE_SIZE,
+        ] as const)
       : null,
     fetchGameDataActions,
     { revalidateOnFocus: false }
@@ -211,12 +241,63 @@ const AdminPanel = () => {
     fetchNotices
   );
 
-  const pendingActions = actionData ?? [];
+  const pendingActions = actionData?.submissions ?? [];
 
   useEffect(() => {
-    if (activeTab !== 'actions' || actionStatus !== 'pending' || actionData === undefined) return;
-    setLoadedPendingActionCount(actionData.filter((action) => action.status === 'pending').length);
-  }, [actionData, actionStatus, activeTab]);
+    if (
+      activeTab !== 'actions' ||
+      actionStatus !== 'pending' ||
+      actionEntityType !== null ||
+      actionId !== null ||
+      actionCursor !== null ||
+      actionData === undefined
+    ) {
+      return;
+    }
+    const nextPendingPage = {
+      count: actionData.submissions.length,
+      hasMore: actionData.nextCursor !== null,
+    };
+    setLoadedPendingPage((current) =>
+      current?.count === nextPendingPage.count && current.hasMore === nextPendingPage.hasMore
+        ? current
+        : nextPendingPage
+    );
+  }, [actionCursor, actionData, actionEntityType, actionId, actionStatus, activeTab]);
+
+  const resetActionPagination = () => {
+    setActionCursor(null);
+    setActionCursorStack([]);
+  };
+
+  const handleActionStatusChange = (status: GameDataActionStatusFilter) => {
+    setActionStatus(status);
+    resetActionPagination();
+  };
+
+  const handleActionEntityTypeChange = (entityType: PublishableEntityType | null) => {
+    setActionEntityType(entityType);
+    resetActionPagination();
+  };
+
+  const handleActionIdChange = (nextActionId: string | null) => {
+    setActionId(nextActionId);
+    resetActionPagination();
+  };
+
+  const showNextActionPage = () => {
+    if (!actionData?.nextCursor) return;
+    setActionCursorStack((current) => [...current, actionCursor]);
+    setActionCursor(actionData.nextCursor);
+  };
+
+  const showPreviousActionPage = () => {
+    setActionCursorStack((current) => {
+      if (current.length === 0) return current;
+      setActionCursor(current.at(-1) ?? null);
+      return current.slice(0, -1);
+    });
+  };
 
   const getTabClassName = (tab: AdminTab) =>
     cn(
@@ -270,9 +351,10 @@ const AdminPanel = () => {
             className={getTabClassName('actions')}
           >
             改动审核
-            {loadedPendingActionCount !== null && loadedPendingActionCount > 0 && (
+            {loadedPendingPage !== null && loadedPendingPage.count > 0 && (
               <span className='ml-1.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-orange-100 px-1.5 text-xs font-medium text-orange-600 dark:bg-orange-900/30 dark:text-orange-400'>
-                {loadedPendingActionCount}
+                {loadedPendingPage.count}
+                {loadedPendingPage.hasMore ? '+' : ''}
               </span>
             )}
           </Button>
@@ -334,8 +416,17 @@ const AdminPanel = () => {
           canMarkActionsSynced={permissions.has('game_data_action.mark_synced')}
           canRevokeActions={permissions.has('game_data_action.revoke')}
           actionStatus={actionStatus}
-          onActionStatusChange={setActionStatus}
+          onActionStatusChange={handleActionStatusChange}
+          actionEntityType={actionEntityType}
+          onActionEntityTypeChange={handleActionEntityTypeChange}
+          actionId={actionId}
+          onActionIdChange={handleActionIdChange}
           pendingActions={pendingActions}
+          nextCursor={actionData?.nextCursor ?? null}
+          hasPreviousPage={actionCursorStack.length > 0}
+          onNextPage={showNextActionPage}
+          onPreviousPage={showPreviousActionPage}
+          pageKey={`${actionStatus}:${actionEntityType ?? ''}:${actionId ?? ''}:${actionCursor ?? ''}`}
           mutatePendingActions={mutatePendingActions}
         />
       )}

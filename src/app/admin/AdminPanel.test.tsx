@@ -81,7 +81,16 @@ jest.mock('@/features/admin/components/GameDataActionModerationPanel', () => ({
     onActionStatusChange?: (
       status: 'pending' | 'approved' | 'rejected' | 'synced' | 'revoked' | 'all'
     ) => void;
+    actionEntityType?: string | null;
+    onActionEntityTypeChange?: (entityType: 'characters' | null) => void;
+    actionId?: string | null;
+    onActionIdChange?: (actionId: string | null) => void;
     pendingActions: PendingGameDataAction[];
+    nextCursor?: string | null;
+    hasPreviousPage?: boolean;
+    onNextPage?: () => void;
+    onPreviousPage?: () => void;
+    pageKey?: string;
     mutatePendingActions: () => Promise<unknown> | unknown;
   }) {
     mockModerationPanel(props);
@@ -108,12 +117,6 @@ const samplePendingActions: PendingGameDataAction[] = [
     reviewed_by_nickname: '',
     rejection_reason: '',
     is_public: false,
-    entry: {
-      op: 'set',
-      path: 'characters.tom',
-      oldValue: 'before',
-      newValue: 'after',
-    },
   },
 ];
 
@@ -153,7 +156,10 @@ describe('AdminPanel', () => {
       }
 
       if (Array.isArray(key) && key[0] === 'game-data-actions-admin') {
-        return createSWRResponse(samplePendingActions, mutatePendingActions);
+        return createSWRResponse(
+          { submissions: samplePendingActions, nextCursor: null },
+          mutatePendingActions
+        );
       }
 
       return createSWRResponse([], jest.fn());
@@ -216,11 +222,20 @@ describe('AdminPanel', () => {
       canRevokeActions: true,
       actionStatus: 'pending',
       onActionStatusChange: expect.any(Function),
+      actionEntityType: null,
+      onActionEntityTypeChange: expect.any(Function),
+      actionId: null,
+      onActionIdChange: expect.any(Function),
       pendingActions: samplePendingActions,
+      nextCursor: null,
+      hasPreviousPage: false,
+      onNextPage: expect.any(Function),
+      onPreviousPage: expect.any(Function),
+      pageKey: 'pending:::',
       mutatePendingActions,
     });
     expect(mockUseSWR).toHaveBeenCalledWith(
-      ['game-data-actions-admin', 'pending'],
+      ['game-data-actions-admin', 'pending', null, null, null, 50],
       expect.any(Function),
       { revalidateOnFocus: false }
     );
@@ -228,7 +243,7 @@ describe('AdminPanel', () => {
     fireEvent.click(screen.getByRole('button', { name: '加载已批准改动' }));
 
     expect(mockUseSWR).toHaveBeenCalledWith(
-      ['game-data-actions-admin', 'approved'],
+      ['game-data-actions-admin', 'approved', null, null, null, 50],
       expect.any(Function),
       { revalidateOnFocus: false }
     );
@@ -237,7 +252,7 @@ describe('AdminPanel', () => {
   it('uses the selected status in the action-list request', async () => {
     const fetchMock = jest.fn().mockResolvedValue({
       ok: true,
-      json: async () => ({ submissions: [] }),
+      json: async () => ({ submissions: [], nextCursor: null }),
     } as Response);
     global.fetch = fetchMock;
     renderAdminPanel('Coordinator');
@@ -253,12 +268,10 @@ describe('AdminPanel', () => {
       );
     if (!swrCall) throw new Error('Expected approved action-list SWR call');
 
-    const fetcher = swrCall[1] as unknown as (
-      key: readonly ['game-data-actions-admin', 'approved']
-    ) => Promise<unknown>;
-    await fetcher(swrCall[0] as readonly ['game-data-actions-admin', 'approved']);
+    const fetcher = swrCall[1] as unknown as (key: readonly unknown[]) => Promise<unknown>;
+    await fetcher(swrCall[0] as readonly unknown[]);
 
-    expect(fetchMock).toHaveBeenCalledWith('/api/game-data-actions/admin?status=approved');
+    expect(fetchMock).toHaveBeenCalledWith('/api/game-data-actions/admin?status=approved&limit=50');
   });
 
   it('keeps the cached pending badge after leaving the actions tab', async () => {
@@ -289,7 +302,7 @@ describe('AdminPanel', () => {
       })
     );
     expect(mockUseSWR).toHaveBeenCalledWith(
-      ['game-data-actions-admin', 'pending'],
+      ['game-data-actions-admin', 'pending', null, null, null, 50],
       expect.any(Function),
       { revalidateOnFocus: false }
     );
