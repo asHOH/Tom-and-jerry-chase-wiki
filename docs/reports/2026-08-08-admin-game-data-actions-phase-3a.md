@@ -282,9 +282,22 @@ or an explicit operator decision—it is not inferred from the 200 ms endpoint t
 Database report is the source for CPU and Disk IOPS; its API report or Management API request-count
 endpoint is the request-volume source used for normalization.
 
-Phase 4 still needs explicit tests for equal `created_at` values, insertion between page requests,
-unchanged-row duplicate/omission guarantees, membership changes caused by status transitions,
-realistically scoped RLS visibility, and detail denial outside the moderator's scope.
+### Phase 4A validation record
+
+Phase 4A completed at `2026-08-08 19:08:06 UTC`, before production deployment:
+
+- The existing Phase 2 API/UI suites retain coverage for validation bounds, filter-bound cursors,
+  exact-ID behavior, inactive-tab requests, SWR filter keys, pagination reset, the cached pending
+  badge, and one detail request per expansion.
+- `src/app/api/game-data-actions/admin/route.test.ts` now exercises equal timestamps across a page
+  boundary, insertion before the saved boundary, duplicate/omission guarantees for unchanged rows,
+  and expected pending-filter membership changes between requests.
+- `supabase/tests/database/game_data_action_admin_rls.test.sql` uses transactional global and
+  resource-type-scoped moderator grants through the `authenticated` role. All six assertions passed
+  on `tjwiki-test`, including denial of a private map detail to the characters-scoped moderator and
+  access to the same row by the global moderator. The fixture rollback was verified afterward.
+- Oxlint, TypeScript, and all 40 directly relevant Jest tests passed. Production deployment,
+  equal-duration pre/post snapshots, and the seven-day observation window remain Phase 4B.
 
 ## Harness validation
 

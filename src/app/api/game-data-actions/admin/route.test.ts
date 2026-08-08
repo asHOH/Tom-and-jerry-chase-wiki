@@ -30,7 +30,20 @@ jest.mock('@/lib/supabase/admin', () => ({
 const requirePermissionMock = jest.mocked(requirePermission);
 const adminFromMock = jest.mocked(supabaseAdmin!.from);
 
-const visibleRows = [
+type TestActionRow = {
+  id: string;
+  created_at: string;
+  created_by: string | null;
+  entity_type: string;
+  is_public: boolean;
+  message: string | null;
+  rejection_reason: string | null;
+  reviewed_at: string | null;
+  reviewed_by: string | null;
+  status: 'pending' | 'approved' | 'rejected' | 'synced' | 'revoked';
+};
+
+const visibleRows: TestActionRow[] = [
   {
     id: 'de305d54-75b4-431b-adb2-eb6b9e546014',
     created_at: '2026-07-17T00:00:00.000Z',
@@ -65,6 +78,82 @@ function createActionQuery(rows = visibleRows) {
   query.limit.mockReturnValue(query);
   return query;
 }
+
+function createInMemoryActionQuery(sourceRows: TestActionRow[]) {
+  const equalities = new Map<string, string>();
+  let boundary: { createdAt: string; id: string } | null = null;
+  let requestedLimit = sourceRows.length;
+  const query = {
+    select: jest.fn(),
+    order: jest.fn(),
+    eq: jest.fn(),
+    or: jest.fn(),
+    limit: jest.fn(),
+    then: (
+      onFulfilled: (value: { data: TestActionRow[]; error: null }) => unknown,
+      onRejected?: (reason: unknown) => unknown
+    ) => {
+      const data = sourceRows
+        .filter((row) =>
+          [...equalities].every(([column, value]) => row[column as keyof TestActionRow] === value)
+        )
+        .filter(
+          (row) =>
+            boundary === null ||
+            row.created_at < boundary.createdAt ||
+            (row.created_at === boundary.createdAt && row.id < boundary.id)
+        )
+        .toSorted(
+          (left, right) =>
+            right.created_at.localeCompare(left.created_at) || right.id.localeCompare(left.id)
+        )
+        .slice(0, requestedLimit);
+      return Promise.resolve({ data, error: null }).then(onFulfilled, onRejected);
+    },
+  };
+  query.select.mockReturnValue(query);
+  query.order.mockReturnValue(query);
+  query.eq.mockImplementation((column: string, value: string) => {
+    equalities.set(column, value);
+    return query;
+  });
+  query.or.mockImplementation((value: string) => {
+    const match = /^created_at\.lt\.(.+),and\(created_at\.eq\.(.+),id\.lt\.([^)]+)\)$/u.exec(value);
+    if (match?.[1] && match[2] === match[1] && match[3]) {
+      boundary = { createdAt: match[1], id: match[3] };
+    }
+    return query;
+  });
+  query.limit.mockImplementation((value: number) => {
+    requestedLimit = value;
+    return query;
+  });
+  return query;
+}
+
+function createPaginationRow(
+  sequence: number,
+  createdAt: string,
+  status: TestActionRow['status'] = 'pending'
+): TestActionRow {
+  return {
+    id: `00000000-0000-4000-8000-${sequence.toString().padStart(12, '0')}`,
+    created_at: createdAt,
+    created_by: null,
+    entity_type: 'characters',
+    is_public: false,
+    message: null,
+    rejection_reason: null,
+    reviewed_at: null,
+    reviewed_by: null,
+    status,
+  };
+}
+
+type ListPayload = {
+  submissions: Array<{ action_id: string }>;
+  nextCursor: string | null;
+};
 
 function createNicknameQuery() {
   const query = {
@@ -259,5 +348,101 @@ describe('admin game data actions route', () => {
 
     expect(response.status).toBe(400);
     expect(supabase.from).not.toHaveBeenCalled();
+  });
+
+  it('paginates equal timestamps without duplicates or omissions for unchanged rows', async () => {
+    const sharedTimestamp = '2026-07-17T00:00:00.000Z';
+    const rows = [
+      createPaginationRow(5, sharedTimestamp),
+      createPaginationRow(4, sharedTimestamp),
+      createPaginationRow(3, sharedTimestamp),
+      createPaginationRow(2, '2026-07-16T00:00:00.000Z'),
+      createPaginationRow(1, '2026-07-15T00:00:00.000Z'),
+    ];
+    const supabase = { from: jest.fn(() => createInMemoryActionQuery(rows)) };
+    requirePermissionMock.mockResolvedValue({ supabase } as never);
+
+    const seenIds: string[] = [];
+    let cursor: string | null = null;
+    do {
+      const response = await GET(
+        createRequest(
+          `status=pending&limit=2${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ''}`
+        )
+      );
+      const payload = (await response.json()) as ListPayload;
+      seenIds.push(...payload.submissions.map((submission) => submission.action_id));
+      cursor = payload.nextCursor;
+    } while (cursor !== null);
+
+    expect(seenIds).toEqual(rows.map((row) => row.id));
+    expect(new Set(seenIds).size).toBe(rows.length);
+  });
+
+  it('does not duplicate or omit unchanged rows when a newer row is inserted between pages', async () => {
+    const rows = [
+      createPaginationRow(4, '2026-07-17T04:00:00.000Z'),
+      createPaginationRow(3, '2026-07-17T03:00:00.000Z'),
+      createPaginationRow(2, '2026-07-17T02:00:00.000Z'),
+      createPaginationRow(1, '2026-07-17T01:00:00.000Z'),
+    ];
+    const originalIds = rows.map((row) => row.id);
+    const supabase = { from: jest.fn(() => createInMemoryActionQuery(rows)) };
+    requirePermissionMock.mockResolvedValue({ supabase } as never);
+
+    const firstPayload = (await (
+      await GET(createRequest('status=pending&limit=2'))
+    ).json()) as ListPayload;
+    const inserted = createPaginationRow(5, '2026-07-17T03:30:00.000Z');
+    rows.push(inserted);
+    const secondPayload = (await (
+      await GET(
+        createRequest(
+          `status=pending&limit=2&cursor=${encodeURIComponent(firstPayload.nextCursor!)}`
+        )
+      )
+    ).json()) as ListPayload;
+    const seenIds = [...firstPayload.submissions, ...secondPayload.submissions].map(
+      (submission) => submission.action_id
+    );
+
+    expect(seenIds).toEqual(originalIds);
+    expect(seenIds).not.toContain(inserted.id);
+    expect(new Set(seenIds).size).toBe(originalIds.length);
+  });
+
+  it('reflects expected pending membership changes between cursor requests', async () => {
+    const rows = [
+      createPaginationRow(5, '2026-07-17T05:00:00.000Z'),
+      createPaginationRow(4, '2026-07-17T04:00:00.000Z'),
+      createPaginationRow(3, '2026-07-17T03:00:00.000Z'),
+      createPaginationRow(2, '2026-07-17T02:00:00.000Z'),
+      createPaginationRow(1, '2026-07-17T01:00:00.000Z', 'approved'),
+    ];
+    const supabase = { from: jest.fn(() => createInMemoryActionQuery(rows)) };
+    requirePermissionMock.mockResolvedValue({ supabase } as never);
+
+    const firstPayload = (await (
+      await GET(createRequest('status=pending&limit=2'))
+    ).json()) as ListPayload;
+    rows[2]!.status = 'approved';
+    rows[0]!.status = 'approved';
+    rows[4]!.status = 'pending';
+    const secondPayload = (await (
+      await GET(
+        createRequest(
+          `status=pending&limit=2&cursor=${encodeURIComponent(firstPayload.nextCursor!)}`
+        )
+      )
+    ).json()) as ListPayload;
+
+    expect(firstPayload.submissions.map((submission) => submission.action_id)).toEqual([
+      rows[0]!.id,
+      rows[1]!.id,
+    ]);
+    expect(secondPayload.submissions.map((submission) => submission.action_id)).toEqual([
+      rows[3]!.id,
+      rows[4]!.id,
+    ]);
   });
 });

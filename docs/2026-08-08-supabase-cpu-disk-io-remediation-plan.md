@@ -133,17 +133,17 @@ the trusted server path. Add permission tests before adopting it.
 
 ## Phase 4 — Validate and deploy
 
-- [ ] Add API tests for the `pending` default, invalid statuses, page-limit bounds, malformed and
+- [x] Add API tests for the `pending` default, invalid statuses, page-limit bounds, malformed and
       filter-mismatched cursors, entity-type and action-ID validation, exact-ID filter independence,
       detail permissions, and scoped row visibility.
-- [ ] Test cursor boundaries where multiple rows share `created_at`, including an insertion between
+- [x] Test cursor boundaries where multiple rows share `created_at`, including an insertion between
       consecutive page requests. Guarantee no duplicates or omissions for rows whose sort key and
       filter membership remain unchanged; separately test concurrent status transitions as expected
       membership changes.
-- [ ] Add UI tests confirming inactive tabs do not fetch actions, status changes use a new SWR key,
+- [x] Add UI tests confirming inactive tabs do not fetch actions, status changes use a new SWR key,
       the pending badge does not trigger an eager count, entity/status/action-ID filter changes reset
       pagination, and one expansion performs no more than one detail request.
-- [ ] Run lint, type-check, and relevant Jest tests.
+- [x] Run lint, type-check, and relevant Jest tests.
 - [ ] Deploy any additive index first, then the compatible API/UI change during a low-traffic period.
       If rollback is needed, revert the application and leave harmless indexes in place until the
       observation window ends.
@@ -157,6 +157,13 @@ the trusted server path. Add permission tests before adopting it.
 - [ ] After the observation window, summarize Phase 3B/4 results in the handoff, archive this plan
       and its handoff under `docs/archive/completed/`, and delete the measurement harness only if it
       has no continuing operational owner.
+
+Phase 4A validation completed at `2026-08-08 19:08:06 UTC`. Phase 2 already supplied the API/UI
+contract tests in the first and third items. Phase 4 added stateful cursor tests for the remaining
+concurrency cases and a transactional database test using actual scoped/global grants and RLS on
+`tjwiki-test`. Lint, type-check, and all 40 directly relevant Jest tests passed; the six database
+assertions passed and their fixtures were confirmed rolled back. Deployment and observation remain
+Phase 4B.
 
 ### Success criteria
 
