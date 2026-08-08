@@ -13,7 +13,8 @@ import type { Database } from '@/data/database.types';
 import BlockManagement from '@/features/admin/components/BlockManagement';
 import CategoryManagement from '@/features/admin/components/CategoryManagement';
 import GameDataActionModerationPanel, {
-  PendingGameDataAction,
+  type GameDataActionStatusFilter,
+  type PendingGameDataAction,
 } from '@/features/admin/components/GameDataActionModerationPanel';
 import NoticeManagement from '@/features/admin/components/NoticeManagement';
 import PermissionGroupManagement, {
@@ -68,8 +69,12 @@ const fetchGroups = async (): Promise<GroupsResponse> => {
   return response.json();
 };
 
-const fetchPendingGameDataActions = async (): Promise<PendingGameDataAction[]> => {
-  const response = await fetch('/api/game-data-actions/admin?status=all');
+type GameDataActionsKey = readonly ['game-data-actions-admin', GameDataActionStatusFilter];
+
+const fetchGameDataActions = async ([, status]: GameDataActionsKey): Promise<
+  PendingGameDataAction[]
+> => {
+  const response = await fetch(`/api/game-data-actions/admin?status=${encodeURIComponent(status)}`);
   if (!response.ok) {
     throw new Error('Failed to fetch pending actions');
   }
@@ -109,6 +114,8 @@ const isAdminTab = (value: string | null): value is AdminTab =>
 
 const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState<AdminTab>('categories');
+  const [actionStatus, setActionStatus] = useState<GameDataActionStatusFilter>('pending');
+  const [loadedPendingActionCount, setLoadedPendingActionCount] = useState<number | null>(null);
   const searchParams = useSearchParams();
   const permissions = usePermissions();
   const { blockSummary } = useUser();
@@ -123,6 +130,7 @@ const AdminPanel = () => {
     !administrativeActionsBlocked &&
     (permissions.has('game_data_action.approve') ||
       permissions.has('game_data_action.reject') ||
+      permissions.has('game_data_action.mark_synced') ||
       permissions.has('game_data_action.revoke'));
   const enableGroupAccess =
     !administrativeActionsBlocked &&
@@ -187,9 +195,12 @@ const AdminPanel = () => {
     fetchGroups
   );
 
-  const { data: pendingActions = [], mutate: mutatePendingActions } = useSWR(
-    enableActionModeration ? 'game-data-actions-admin' : null,
-    fetchPendingGameDataActions
+  const { data: actionData, mutate: mutatePendingActions } = useSWR(
+    enableActionModeration && activeTab === 'actions'
+      ? (['game-data-actions-admin', actionStatus] as const)
+      : null,
+    fetchGameDataActions,
+    { revalidateOnFocus: false }
   );
   const { data: blocksData, mutate: mutateBlocks } = useSWR(
     enableBlockAccess ? 'admin-blocks' : null,
@@ -200,7 +211,12 @@ const AdminPanel = () => {
     fetchNotices
   );
 
-  const pendingCount = pendingActions.filter((a) => a.status === 'pending').length;
+  const pendingActions = actionData ?? [];
+
+  useEffect(() => {
+    if (activeTab !== 'actions' || actionStatus !== 'pending' || actionData === undefined) return;
+    setLoadedPendingActionCount(actionData.filter((action) => action.status === 'pending').length);
+  }, [actionData, actionStatus, activeTab]);
 
   const getTabClassName = (tab: AdminTab) =>
     cn(
@@ -254,9 +270,9 @@ const AdminPanel = () => {
             className={getTabClassName('actions')}
           >
             改动审核
-            {pendingCount > 0 && (
+            {loadedPendingActionCount !== null && loadedPendingActionCount > 0 && (
               <span className='ml-1.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-orange-100 px-1.5 text-xs font-medium text-orange-600 dark:bg-orange-900/30 dark:text-orange-400'>
-                {pendingCount}
+                {loadedPendingActionCount}
               </span>
             )}
           </Button>
@@ -317,6 +333,8 @@ const AdminPanel = () => {
           canRejectActions={permissions.has('game_data_action.reject')}
           canMarkActionsSynced={permissions.has('game_data_action.mark_synced')}
           canRevokeActions={permissions.has('game_data_action.revoke')}
+          actionStatus={actionStatus}
+          onActionStatusChange={setActionStatus}
           pendingActions={pendingActions}
           mutatePendingActions={mutatePendingActions}
         />

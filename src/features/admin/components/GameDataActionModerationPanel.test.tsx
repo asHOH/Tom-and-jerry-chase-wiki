@@ -351,6 +351,7 @@ describe('GameDataActionModerationPanel', () => {
       expect(screen.getByRole('button', { name: '批准' })).toBeDisabled();
     });
 
+    expect(screen.getByTitle('过滤状态')).toBeDisabled();
     expect(screen.getByRole('button', { name: '收起详情' })).not.toBeDisabled();
     expect(screen.getByRole('button', { name: '复制ID' })).not.toBeDisabled();
     expect(screen.getByRole('button', { name: '复制JSON' })).not.toBeDisabled();
@@ -362,6 +363,8 @@ describe('GameDataActionModerationPanel', () => {
       } as Response);
       await Promise.resolve();
     });
+
+    await waitFor(() => expect(screen.getByTitle('过滤状态')).not.toBeDisabled());
   });
 
   it('shows only the approved-action sync button for super admins', () => {
@@ -459,6 +462,7 @@ describe('GameDataActionModerationPanel', () => {
         expect.objectContaining({ method: 'POST' })
       );
     });
+    await waitFor(() => expect(mutatePendingActions).toHaveBeenCalledTimes(1));
   });
 
   it('submits super-admin mark-synced actions', async () => {
@@ -497,5 +501,6 @@ describe('GameDataActionModerationPanel', () => {
         expect.objectContaining({ method: 'POST' })
       );
     });
+    await waitFor(() => expect(mutatePendingActions).toHaveBeenCalledTimes(1));
   });
 });

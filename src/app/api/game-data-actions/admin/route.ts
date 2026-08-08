@@ -19,9 +19,13 @@ export async function GET(request: NextRequest) {
     const { supabase } = guard;
 
     const { searchParams } = new URL(request.url);
-    const statusParam = (searchParams.get('status') ?? 'all').trim() as AllowedStatus;
+    const statusParam = (searchParams.get('status') ?? 'pending').trim();
 
-    const status: AllowedStatus = ALLOWED_STATUSES.includes(statusParam) ? statusParam : 'all';
+    if (!ALLOWED_STATUSES.includes(statusParam as AllowedStatus)) {
+      return NextResponse.json({ error: 'Invalid action status' }, { status: 400 });
+    }
+
+    const status = statusParam as AllowedStatus;
 
     let query = supabase
       .from('game_data_actions')

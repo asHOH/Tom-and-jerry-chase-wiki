@@ -76,8 +76,10 @@ function createNicknameQuery() {
   return query;
 }
 
-const createRequest = (status = 'all') =>
-  ({ url: `https://example.test/api/game-data-actions/admin?status=${status}` }) as NextRequest;
+const createRequest = (status?: string) =>
+  ({
+    url: `https://example.test/api/game-data-actions/admin${status === undefined ? '' : `?status=${status}`}`,
+  }) as NextRequest;
 
 describe('admin game data actions route', () => {
   beforeEach(() => {
@@ -91,9 +93,15 @@ describe('admin game data actions route', () => {
     requirePermissionMock.mockResolvedValue({ supabase } as never);
     adminFromMock.mockReturnValue(nicknameQuery as never);
 
-    const response = await GET(createRequest());
+    const response = await GET(createRequest('all'));
 
     expect(response.status).toBe(200);
+    expect(requirePermissionMock).toHaveBeenCalledWith([
+      'game_data_action.approve',
+      'game_data_action.reject',
+      'game_data_action.mark_synced',
+      'game_data_action.revoke',
+    ]);
     expect(supabase.from).toHaveBeenCalledWith('game_data_actions');
     expect(adminFromMock).toHaveBeenCalledTimes(1);
     expect(adminFromMock).toHaveBeenCalledWith('users_public_view');
@@ -120,5 +128,28 @@ describe('admin game data actions route', () => {
 
     expect(response.status).toBe(200);
     expect(actionQuery.eq).toHaveBeenCalledWith('status', 'pending');
+  });
+
+  it('defaults the RLS-scoped action query to pending', async () => {
+    const actionQuery = createActionQuery();
+    const nicknameQuery = createNicknameQuery();
+    const supabase = { from: jest.fn(() => actionQuery) };
+    requirePermissionMock.mockResolvedValue({ supabase } as never);
+    adminFromMock.mockReturnValue(nicknameQuery as never);
+
+    const response = await GET(createRequest());
+
+    expect(response.status).toBe(200);
+    expect(actionQuery.eq).toHaveBeenCalledWith('status', 'pending');
+  });
+
+  it('rejects an unknown status instead of querying all actions', async () => {
+    const supabase = { from: jest.fn() };
+    requirePermissionMock.mockResolvedValue({ supabase } as never);
+
+    const response = await GET(createRequest('unknown'));
+
+    expect(response.status).toBe(400);
+    expect(supabase.from).not.toHaveBeenCalled();
   });
 });

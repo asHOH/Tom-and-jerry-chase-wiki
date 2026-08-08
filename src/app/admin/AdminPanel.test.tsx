@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import useSWR from 'swr';
 
 import type { BlockedUserSummary } from '@/lib/blocks/types';
@@ -19,6 +19,8 @@ const mockModerationPanel = jest.fn();
 
 let currentProfile: 'contributor' | 'reviewer' | 'coordinator' | null = null;
 let mockBlockSummary: BlockedUserSummary[] = [];
+let permissionOverrides: ReadonlySet<string> | null = null;
+const originalFetch = global.fetch;
 
 jest.mock('@/lib/auth/PermissionProvider', () => {
   const actual = jest.requireActual('@/lib/auth/permissions');
@@ -28,7 +30,8 @@ jest.mock('@/lib/auth/PermissionProvider', () => {
       const grants = fixtures.permissionGrantsForProfile(currentProfile);
       return {
         grants,
-        has: (permission: string) => actual.hasPermission(grants, permission),
+        has: (permission: string) =>
+          permissionOverrides?.has(permission) ?? actual.hasPermission(grants, permission),
         can: (permission: string, context?: unknown) =>
           actual.canAccess(grants, permission, context),
         canAll: (permission: string, contexts: unknown[]) =>
@@ -74,11 +77,20 @@ jest.mock('@/features/admin/components/GameDataActionModerationPanel', () => ({
     canRejectActions?: boolean;
     canMarkActionsSynced?: boolean;
     canRevokeActions?: boolean;
+    actionStatus?: 'pending' | 'approved' | 'rejected' | 'synced' | 'revoked' | 'all';
+    onActionStatusChange?: (
+      status: 'pending' | 'approved' | 'rejected' | 'synced' | 'revoked' | 'all'
+    ) => void;
     pendingActions: PendingGameDataAction[];
     mutatePendingActions: () => Promise<unknown> | unknown;
   }) {
     mockModerationPanel(props);
-    return <div data-testid='moderation-panel'>Moderation Panel</div>;
+    return (
+      <div data-testid='moderation-panel'>
+        Moderation Panel
+        <button onClick={() => props.onActionStatusChange?.('approved')}>加载已批准改动</button>
+      </div>
+    );
   },
 }));
 
@@ -128,6 +140,7 @@ describe('AdminPanel', () => {
     jest.clearAllMocks();
     currentProfile = null;
     mockBlockSummary = [];
+    permissionOverrides = null;
     currentSearchParams = new URLSearchParams();
 
     mockUseSWR.mockImplementation((key) => {
@@ -139,12 +152,16 @@ describe('AdminPanel', () => {
         return createSWRResponse([], mutateCategories);
       }
 
-      if (key === 'game-data-actions-admin') {
+      if (Array.isArray(key) && key[0] === 'game-data-actions-admin') {
         return createSWRResponse(samplePendingActions, mutatePendingActions);
       }
 
       return createSWRResponse([], jest.fn());
     });
+  });
+
+  afterEach(() => {
+    global.fetch = originalFetch;
   });
 
   it('renders the categories tab by default for reviewers and enables moderation without user access', () => {
@@ -159,7 +176,7 @@ describe('AdminPanel', () => {
       [null, expect.any(Function)],
       ['categories', expect.any(Function)],
       [null, expect.any(Function)],
-      ['game-data-actions-admin', expect.any(Function)],
+      [null, expect.any(Function), { revalidateOnFocus: false }],
       [null, expect.any(Function)],
       ['admin-notices', expect.any(Function)],
     ]);
@@ -174,7 +191,7 @@ describe('AdminPanel', () => {
       ['users', expect.any(Function)],
       ['categories', expect.any(Function)],
       ['permission-groups', expect.any(Function)],
-      ['game-data-actions-admin', expect.any(Function)],
+      [null, expect.any(Function), { revalidateOnFocus: false }],
       [null, expect.any(Function)],
       ['admin-notices', expect.any(Function)],
     ]);
@@ -191,15 +208,91 @@ describe('AdminPanel', () => {
     fireEvent.click(actionsTab!);
 
     expect(screen.getByTestId('moderation-panel')).toBeInTheDocument();
-    expect(mockModerationPanel).toHaveBeenCalledTimes(1);
-    expect(mockModerationPanel.mock.calls[0]?.[0]).toEqual({
+    expect(mockModerationPanel).toHaveBeenCalled();
+    expect(mockModerationPanel.mock.calls.at(-1)?.[0]).toEqual({
       canApproveActions: true,
       canRejectActions: true,
       canMarkActionsSynced: true,
       canRevokeActions: true,
+      actionStatus: 'pending',
+      onActionStatusChange: expect.any(Function),
       pendingActions: samplePendingActions,
       mutatePendingActions,
     });
+    expect(mockUseSWR).toHaveBeenCalledWith(
+      ['game-data-actions-admin', 'pending'],
+      expect.any(Function),
+      { revalidateOnFocus: false }
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: '加载已批准改动' }));
+
+    expect(mockUseSWR).toHaveBeenCalledWith(
+      ['game-data-actions-admin', 'approved'],
+      expect.any(Function),
+      { revalidateOnFocus: false }
+    );
+  });
+
+  it('uses the selected status in the action-list request', async () => {
+    const fetchMock = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ submissions: [] }),
+    } as Response);
+    global.fetch = fetchMock;
+    renderAdminPanel('Coordinator');
+
+    fireEvent.click(screen.getByRole('button', { name: /改动审核/ }));
+    fireEvent.click(screen.getByRole('button', { name: '加载已批准改动' }));
+
+    const swrCall = [...mockUseSWR.mock.calls]
+      .reverse()
+      .find(
+        ([key]) =>
+          Array.isArray(key) && key[0] === 'game-data-actions-admin' && key[1] === 'approved'
+      );
+    if (!swrCall) throw new Error('Expected approved action-list SWR call');
+
+    const fetcher = swrCall[1] as unknown as (
+      key: readonly ['game-data-actions-admin', 'approved']
+    ) => Promise<unknown>;
+    await fetcher(swrCall[0] as readonly ['game-data-actions-admin', 'approved']);
+
+    expect(fetchMock).toHaveBeenCalledWith('/api/game-data-actions/admin?status=approved');
+  });
+
+  it('keeps the cached pending badge after leaving the actions tab', async () => {
+    renderAdminPanel('Coordinator');
+    const actionsTab = screen.getByRole('button', { name: /改动审核/ });
+
+    expect(actionsTab).not.toHaveTextContent('1');
+    fireEvent.click(actionsTab);
+    await waitFor(() => expect(actionsTab).toHaveTextContent('1'));
+
+    fireEvent.click(screen.getByRole('button', { name: '分类管理' }));
+    expect(actionsTab).toHaveTextContent('1');
+  });
+
+  it('enables moderation for a mark-synced-only permission grant', () => {
+    permissionOverrides = new Set(['game_data_action.mark_synced']);
+    renderAdminPanel(null);
+
+    fireEvent.click(screen.getByRole('button', { name: /改动审核/ }));
+
+    expect(screen.getByTestId('moderation-panel')).toBeInTheDocument();
+    expect(mockModerationPanel.mock.calls.at(-1)?.[0]).toEqual(
+      expect.objectContaining({
+        canApproveActions: false,
+        canRejectActions: false,
+        canMarkActionsSynced: true,
+        canRevokeActions: false,
+      })
+    );
+    expect(mockUseSWR).toHaveBeenCalledWith(
+      ['game-data-actions-admin', 'pending'],
+      expect.any(Function),
+      { revalidateOnFocus: false }
+    );
   });
 
   it('keeps both user management and moderation hidden for unprivileged roles', () => {
@@ -214,7 +307,7 @@ describe('AdminPanel', () => {
       [null, expect.any(Function)],
       [null, expect.any(Function)],
       [null, expect.any(Function)],
-      [null, expect.any(Function)],
+      [null, expect.any(Function), { revalidateOnFocus: false }],
       [null, expect.any(Function)],
       [null, expect.any(Function)],
     ]);

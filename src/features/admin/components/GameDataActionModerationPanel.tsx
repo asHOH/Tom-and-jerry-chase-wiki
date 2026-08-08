@@ -18,7 +18,7 @@ import { ChevronRightIcon } from '@/components/icons/CommonIcons';
 import GameDataActionPreviewList, { GameDataActionChangeViewer } from './GameDataActionPreviewList';
 
 type ActionStatus = Database['public']['Enums']['game_data_action_status'];
-type ActionStatusFilter = 'all' | ActionStatus;
+export type GameDataActionStatusFilter = 'all' | ActionStatus;
 
 export type PendingGameDataAction =
   Database['public']['Functions']['get_pending_game_data_actions']['Returns'][number] & {
@@ -30,6 +30,8 @@ type GameDataActionModerationPanelProps = {
   canRejectActions?: boolean;
   canMarkActionsSynced?: boolean;
   canRevokeActions?: boolean;
+  actionStatus?: GameDataActionStatusFilter;
+  onActionStatusChange?: (status: GameDataActionStatusFilter) => void;
   pendingActions: PendingGameDataAction[];
   mutatePendingActions: () => Promise<unknown> | unknown;
 };
@@ -80,6 +82,8 @@ const GameDataActionModerationPanel = ({
   canRejectActions: canRejectActions = true,
   canMarkActionsSynced: canMarkActionsSynced = false,
   canRevokeActions: canRevokeActions = false,
+  actionStatus: controlledActionStatus,
+  onActionStatusChange,
   pendingActions,
   mutatePendingActions,
 }: GameDataActionModerationPanelProps) => {
@@ -87,7 +91,9 @@ const GameDataActionModerationPanel = ({
   const isModerating = moderatingActionId !== null;
   const [actionQuery, setActionQuery] = useState('');
   const [actionEntityType, setActionEntityType] = useState<string>('all');
-  const [actionStatus, setActionStatus] = useState<ActionStatusFilter>('pending');
+  const [uncontrolledActionStatus, setUncontrolledActionStatus] =
+    useState<GameDataActionStatusFilter>('pending');
+  const actionStatus = controlledActionStatus ?? uncontrolledActionStatus;
   const [expandedActionIds, setExpandedActionIds] = useState<Set<string>>(() => new Set());
   const [selectedActionIds, setSelectedActionIds] = useState<Set<string>>(() => new Set());
   const [diffView, setDiffView] = useState<GameActionDiffView>('unified');
@@ -412,7 +418,12 @@ const GameDataActionModerationPanel = ({
           <FormSelect
             title='过滤状态'
             value={actionStatus}
-            onChange={(e) => setActionStatus(e.target.value as ActionStatusFilter)}
+            disabled={isModerating}
+            onChange={(e) => {
+              const nextStatus = e.target.value as GameDataActionStatusFilter;
+              setUncontrolledActionStatus(nextStatus);
+              onActionStatusChange?.(nextStatus);
+            }}
             fullWidth={false}
             size='sm'
           >
