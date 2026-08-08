@@ -81,7 +81,6 @@ async function convertImage(filePath) {
 }
 
 async function main() {
-  console.log('Starting parallel image conversion...');
   const startTime = Date.now();
 
   const allImages = await findImageFiles(imagesBaseDir);
@@ -89,13 +88,30 @@ async function main() {
     console.log('Image optimization summary: images=0 outputs=0 converted=0 skipped=0 failed=0');
     return;
   }
-  console.log(
-    `Found ${allImages.length} source images (${allImages.length * 2} output candidates).`
-  );
+  console.log(`Optimizing ${allImages.length} source images...`);
 
+  const progressLogDelayMs = 3000;
   const milestonePercents = [0.2, 0.4, 0.6, 0.8, 1];
   let inspectedCount = 0;
   let nextMilestoneIndex = 0;
+  let progressLoggingEnabled = false;
+
+  const logProgress = (milestone) => {
+    const elapsedSeconds = ((Date.now() - startTime) / 1000).toFixed(1);
+    console.log(
+      `Progress: inspected ${inspectedCount}/${allImages.length} images (${Math.round(
+        milestone * 100
+      )}%) in ${elapsedSeconds}s`
+    );
+  };
+
+  const progressTimer = setTimeout(() => {
+    progressLoggingEnabled = true;
+    const latestReachedMilestone = milestonePercents[nextMilestoneIndex - 1];
+    if (latestReachedMilestone !== undefined) {
+      logProgress(latestReachedMilestone);
+    }
+  }, progressLogDelayMs);
 
   const conversionTasks = allImages.map((imagePath) =>
     convertImage(imagePath).then((result) => {
@@ -111,20 +127,17 @@ async function main() {
         nextMilestoneIndex++;
       }
 
-      if (reachedMilestone !== undefined) {
-        const elapsedSeconds = ((Date.now() - startTime) / 1000).toFixed(1);
-        console.log(
-          `Progress: inspected ${inspectedCount}/${allImages.length} images (${Math.round(
-            reachedMilestone * 100
-          )}%) in ${elapsedSeconds}s`
-        );
+      if (reachedMilestone !== undefined && progressLoggingEnabled) {
+        logProgress(reachedMilestone);
       }
 
       return result;
     })
   );
 
-  const results = (await Promise.all(conversionTasks)).flat();
+  const results = (
+    await Promise.all(conversionTasks).finally(() => clearTimeout(progressTimer))
+  ).flat();
   const counts = { converted: 0, skipped: 0, failed: 0 };
 
   for (const result of results) {

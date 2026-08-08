@@ -56,9 +56,24 @@ run_git_with_retry() {
   run_with_retry 5 git -c http.lowSpeedLimit=1000 -c http.lowSpeedTime=60 "$@"
 }
 
+run_quietly() {
+  local output exit_code
+
+  if output="$("$@" 2>&1)"; then
+    return 0
+  else
+    exit_code=$?
+  fi
+
+  if [ -n "$output" ]; then
+    printf '%s\n' "$output" >&2
+  fi
+  return "$exit_code"
+}
+
 begin_phase() {
   echo
-  echo "[deploy] Phase $1"
+  echo "[deploy $1] $2"
 }
 
 format_duration() {
@@ -71,6 +86,13 @@ format_duration() {
   else
     printf '%ds' "$seconds"
   fi
+}
+
+report_memory_status() {
+  local summary
+
+  summary="$(free -h 2>/dev/null | awk '/^Mem:/ { print $7 " available / " $2 " total" }')" || true
+  echo "Memory before build: ${summary:-unavailable}."
 }
 
 load_env_file() {
@@ -186,7 +208,7 @@ install_dependencies() {
       echo "Falling back to registry.npmjs.org..."
     fi
 
-    if npm ci --ignore-scripts --registry "$registry"; then
+    if npm ci --ignore-scripts --loglevel=error --registry "$registry"; then
       echo "Dependencies installed successfully."
       return 0
     fi
@@ -262,7 +284,7 @@ stop_pm2_process_for_build() {
 
   if pm2 describe "$PM2_APP_NAME" >/dev/null 2>&1; then
     echo "Stopping PM2 app '$PM2_APP_NAME' before rebuilding .next..."
-    pm2 stop "$PM2_APP_NAME"
+    run_quietly pm2 stop "$PM2_APP_NAME"
   fi
 }
 
@@ -386,7 +408,9 @@ wait_for_application_health() {
     fi
 
     if [ "$attempt" -lt "$max_attempts" ]; then
-      if [ "$attempt" -eq 1 ] || [ $((attempt % 5)) -eq 0 ]; then
+      if [ "$attempt" -eq 1 ]; then
+        echo "Application is starting; verification is not ready yet (attempt $attempt/$max_attempts)."
+      elif [ $((attempt % 5)) -eq 0 ]; then
         echo "Verification attempt $attempt/$max_attempts failed: $LAST_HEALTH_CHECK_ERROR"
       fi
       sleep "$retry_delay"
@@ -404,17 +428,17 @@ ensure_pm2_process() {
 
   if pm2 describe "$PM2_APP_NAME" >/dev/null 2>&1; then
     echo "Reloading PM2 app '$PM2_APP_NAME'..."
-    pm2 reload "$PM2_APP_NAME" --update-env
+    run_quietly pm2 reload "$PM2_APP_NAME" --update-env
   else
     echo "Starting PM2 app '$PM2_APP_NAME'..."
-    pm2 start "$START_SCRIPT" --name "$PM2_APP_NAME" --interpreter bash --cwd "$PWD"
+    run_quietly pm2 start "$START_SCRIPT" --name "$PM2_APP_NAME" --interpreter bash --cwd "$PWD"
   fi
 
   wait_for_application_health
-  pm2 save
+  run_quietly pm2 save
 }
 
-begin_phase "1/6: update source"
+begin_phase "1/6" "Update source"
 if [ ! -d "$REPO_ROOT/.git" ]; then
   echo "Cloning repository..."
   cd "$REPO_PARENT_DIR"
@@ -445,7 +469,7 @@ fi
 CURRENT_HASH="$(git rev-parse HEAD)"
 echo "Resolved source: branch=$TARGET_BRANCH commit=$CURRENT_HASH"
 
-begin_phase "2/6: load production environment"
+begin_phase "2/6" "Load production environment"
 if [ ! -f "$ENV_FILE" ]; then
   if [ -f ".env.example" ]; then
     echo "Production environment file '$ENV_FILE' not found. Creating it from .env.example..."
@@ -460,7 +484,7 @@ fi
 echo "Loading production environment variables from $ENV_FILE..."
 load_env_file
 
-begin_phase "3/6: prepare runtime tools"
+begin_phase "3/6" "Prepare runtime tools"
 ensure_nvm
 ensure_pinned_npm
 ensure_pm2_cli
@@ -470,10 +494,10 @@ NPM_VERSION="$(npm --version)"
 PM2_VERSION="$(pm2 --version 2>/dev/null | tail -n 1)"
 echo "Runtime tools: node=$NODE_VERSION npm=$NPM_VERSION pm2=$PM2_VERSION"
 
-begin_phase "4/6: install dependencies"
+begin_phase "4/6" "Install dependencies"
 install_dependencies
 
-begin_phase "5/6: evaluate and build application"
+begin_phase "5/6" "Evaluate and build application"
 BUILD_INPUTS_FILE=".next/.build_inputs"
 API_RUNTIME="nodejs"
 ENV_FILE_HASH="$(sha256sum "$ENV_FILE" | awk '{ print $1 }')"
@@ -517,8 +541,7 @@ if [ "${#BUILD_REASONS[@]}" -gt 0 ]; then
 
   npm run set-runtime:node
 
-  echo "Memory status before build:"
-  free -h 2>/dev/null || echo "Unable to check memory"
+  report_memory_status
 
   detect_node_memory_limit
 
@@ -534,7 +557,6 @@ if [ "${#BUILD_REASONS[@]}" -gt 0 ]; then
       exit 1
     fi
 
-    echo "Build successful."
     mkdir -p .next
     printf '%s\t%s\t%s\t%s\t%s\n' \
       "$CURRENT_HASH" "$ENV_FILE_HASH" "$NODE_VERSION" "$NPM_VERSION" "$API_RUNTIME" \
@@ -542,7 +564,7 @@ if [ "${#BUILD_REASONS[@]}" -gt 0 ]; then
     BUILD_ACTION="built"
     BUILD_DURATION_SECONDS="$(($(date +%s) - BUILD_STARTED_AT))"
     BUILD_DURATION="$(format_duration "$BUILD_DURATION_SECONDS")"
-    echo "Build completed in $BUILD_DURATION."
+    echo "Build successful in $BUILD_DURATION."
   else
     BUILD_EXIT_CODE=$?
     echo "Fatal: build failed with exit code $BUILD_EXIT_CODE."
@@ -558,7 +580,7 @@ else
   echo "Build skipped; source, environment, toolchain, and output match the previous build."
 fi
 
-begin_phase "6/6: activate and verify application"
+begin_phase "6/6" "Activate and verify application"
 ensure_pm2_process
 
 DEPLOY_DURATION_SECONDS="$(($(date +%s) - DEPLOY_STARTED_AT))"
