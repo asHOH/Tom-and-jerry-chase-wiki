@@ -1,5 +1,8 @@
 # Supabase CPU and Disk IO Remediation Plan
 
+**Completed:** `2026-08-08 21:10:58 UTC` under the owner-approved simplified closeout described in
+Phase 4.
+
 ## Target problem
 
 The admin game-data-action list repeatedly loads a wide, unpaginated `status=all` result through
@@ -82,7 +85,7 @@ a hard row limit. Expanding one action performs at most one cached detail reques
 Phase 3 is split at the measurement gate because the linked project is production and the separate
 test project was inactive when the work began. Phase 3B remains measurement-gated rather than
 adding every plausible index speculatively. See the
-[Phase 3A measurement handoff](reports/2026-08-08-admin-game-data-actions-phase-3a.md).
+[Phase 3A measurement handoff](2026-08-08-admin-game-data-actions-phase-3a.md).
 
 ### Phase 3A — Prepare and run representative measurements
 
@@ -144,26 +147,27 @@ the trusted server path. Add permission tests before adopting it.
       the pending badge does not trigger an eager count, entity/status/action-ID filter changes reset
       pagination, and one expansion performs no more than one detail request.
 - [x] Run lint, type-check, and relevant Jest tests.
-- [ ] Deploy any additive index first, then the compatible API/UI change during a low-traffic period.
-      If rollback is needed, revert the application and leave harmless indexes in place until the
-      observation window ends.
-- [ ] Retain the existing statistics baseline rather than resetting it.
-- [ ] Snapshot/delta every replacement query shape in `pg_stat_statements` and compare call count,
-      mean duration, rows, and temporary blocks per call against the same-duration baseline window.
-      Calculate p95 from the structured endpoint timing events. Compare instance CPU and Disk IO
-      separately as supporting signals normalized by total request volume.
-- [ ] Observe production for seven days, including at least one normal moderation period, before
-      declaring the remediation complete.
-- [ ] After the observation window, summarize Phase 3B/4 results in the handoff, archive this plan
-      and its handoff under `docs/archive/completed/`, and delete the measurement harness only if it
-      has no continuing operational owner.
+- [x] Deploy the compatible API/UI changes and additive indexes. The VPS deployed first; the missing
+      migration was detected immediately afterward, applied transactionally, and verified valid and
+      ready without a health-check failure.
+- [x] Retain the existing statistics baseline rather than resetting it.
+- [x] Close without formal equal-duration `pg_stat_statements`, endpoint-p95, CPU, Disk IO, or
+      request-volume reporting, as explicitly approved by the owner after the staging measurements.
+- [x] Waive the formal seven-day observation requirement; normal operational monitoring remains
+      sufficient for this privately operated project.
+- [x] Record the simplified Phase 4 result and archive the plan and handoff. Retain the measurement
+      harness as the documented entry point for future Supabase performance work.
 
 Phase 4A validation completed at `2026-08-08 19:08:06 UTC`. Phase 2 already supplied the API/UI
 contract tests in the first and third items. Phase 4 added stateful cursor tests for the remaining
 concurrency cases and a transactional database test using actual scoped/global grants and RLS on
 `tjwiki-test`. Lint, type-check, and all 40 directly relevant Jest tests passed; the six database
-assertions passed and their fixtures were confirmed rolled back. Deployment and observation remain
-Phase 4B.
+assertions passed and their fixtures were confirmed rolled back. Production subsequently served
+commit `c0daec54`; migration `20260809000000` and both measured indexes were verified in production.
+
+The owner selected a simplified closeout because the staging evidence directly measured the query
+improvement and no external report is required. Formal production p95, metric deltas, and seven-day
+observation were therefore not performed and are not claimed as verified success criteria.
 
 ### Success criteria
 

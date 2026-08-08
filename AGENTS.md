@@ -96,7 +96,7 @@ test/__mocks__/               # Jest-only mocks outside Jest's test discovery ro
 - `src/lib/supabase/server.ts`: cookie-aware, cached RSC/route-handler client; call await createClient()`.
 - `src/lib/supabase/public.ts`: server-only publishable-key client for unauthenticated public reads.
 - `src/lib/supabase/admin.ts`: server-only secret-key client with elevated privileges. Never import it into client code or expose its key.
-- For Supabase performance work, start with `docs/2026-08-08-supabase-cpu-disk-io-remediation-plan.md` and its linked handoff. Run `scripts/ops/measure-admin-game-data-actions.sql` only against `tjwiki-test` project via `STAGING_DATABASE_URL`, never production.
+- For Supabase performance work, start with `docs/archive/completed/2026-08-08-supabase-cpu-disk-io-remediation-plan.md` and its linked handoff. Run `scripts/ops/measure-admin-game-data-actions.sql` only against `tjwiki-test` project via `STAGING_DATABASE_URL`, never production.
 - Auth routes implement password hashing, rate limiting, and configurable hCaptcha or Turnstile. Preserve the existing helpers and the optional CAPTCHA behavior when provider secrets are absent.
 - Valtio handles shared reactive/editable state. React context and `next-themes` handle scoped UI state. SWR handles API caching; do not introduce another state layer without a clear need.
 

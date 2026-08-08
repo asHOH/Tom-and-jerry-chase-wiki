@@ -259,28 +259,17 @@ basis for the combined-filter index decision.
 
 ## Phase 4 baseline and completion record
 
-The application commits must be pushed/deployed before the post-change window begins. Fill every
-field below from a single declared source and use equal-duration pre/post windows:
+The owner approved a simplified closeout without formal equal-duration production metrics or a
+seven-day report. Production served commit `c0daec54`, built at `2026-08-09T04:07:05+08:00`, with a
+successful public health check. Migration `20260809000000_add_game_data_action_list_indexes` was
+then applied transactionally; its 120 KiB general ordering index and 16 KiB pending partial index
+were both verified valid and ready. Existing database statistics were not reset.
 
-| Field                         | Baseline | Post-change | Source / units / aggregation                                                    |
-| ----------------------------- | -------- | ----------- | ------------------------------------------------------------------------------- |
-| Window start (UTC)            |          |             | Exact timestamp                                                                 |
-| Window end (UTC)              |          |             | Exact timestamp                                                                 |
-| Deployed commit and timestamp | n/a      |             | Vercel deployment metadata                                                      |
-| CPU alert threshold           | 60%      | 60%         | Operator-selected operational threshold; average/max CPU still required         |
-| CPU                           |          |             | Supabase Observability → Database Health; state average/max and interval        |
-| Disk read IOPS                |          |             | Supabase Database report; operations/second and interval                        |
-| Disk write IOPS               |          |             | Supabase Database report; operations/second and interval                        |
-| Total request volume          |          |             | Supabase API report or Management API `usage.api-counts`; requests per interval |
-| `pg_stat_statements` snapshot |          |             | Calls, mean ms, rows, temp blocks per query ID                                  |
-| Per-shape endpoint p95        |          |             | Vercel timing export; milliseconds, nearest-rank p95                            |
-
-Also record zero temporary blocks for representative 50-row list queries; observation start/end;
-the timestamp and activity of at least one normal moderation period; the final success/failure
-decision; and any follow-up work. The numeric CPU threshold must come from the existing alert policy
-or an explicit operator decision—it is not inferred from the 200 ms endpoint target. Supabase's
-Database report is the source for CPU and Disk IOPS; its API report or Management API request-count
-endpoint is the request-volume source used for normalization.
+Final decision: successful based on the measured staging reduction to 1.5–6.6 ms, zero temporary
+blocks in representative list plans, passing API/UI/RLS tests, the production health/version check,
+and verified production indexes. The formal production p95, CPU/Disk IO deltas, and observation
+window were explicitly waived and are not claimed as measured results. The 60% CPU threshold remains
+the trigger for ordinary operational investigation.
 
 ### Phase 4A validation record
 
@@ -296,8 +285,7 @@ Phase 4A completed at `2026-08-08 19:08:06 UTC`, before production deployment:
   resource-type-scoped moderator grants through the `authenticated` role. All six assertions passed
   on `tjwiki-test`, including denial of a private map detail to the characters-scoped moderator and
   access to the same row by the global moderator. The fixture rollback was verified afterward.
-- Oxlint, TypeScript, and all 40 directly relevant Jest tests passed. Production deployment,
-  equal-duration pre/post snapshots, and the seven-day observation window remain Phase 4B.
+- Oxlint, TypeScript, and all 40 directly relevant Jest tests passed.
 
 ## Harness validation
 
@@ -308,15 +296,6 @@ data were removed after validation.
 
 ## Retention and cleanup
 
-- Keep this handoff through Phase 3B and the full Phase 4 observation window. It is the durable
-  baseline and decision record; do not delete it after indexes are selected.
-- Keep `scripts/ops/measure-admin-game-data-actions.sql` through Phase 4 so pre-index, post-index, and
-  post-deployment measurements use identical query shapes. After the full plan is complete, delete
-  the harness if it has no continuing operational owner; Git history will retain the exact version
-  used for this remediation.
-- Summarize representative Phase 3B results and index decisions in this handoff. Do not commit a
-  large raw psql transcript if it contains unnecessary query text or operational metadata; remove
-  the local transcript after its relevant figures have been recorded.
-- After the seven-day observation window and final success review, move this handoff and the main
-  remediation plan together to `docs/archive/completed/`. Keep any adopted index migration in
-  `supabase/migrations/` permanently.
+This handoff and its plan are archived together under `docs/archive/completed/`. Keep the adopted
+index migration permanently. The measurement harness remains because `AGENTS.md` identifies it as
+the safe staging-only entry point for future Supabase performance work.
