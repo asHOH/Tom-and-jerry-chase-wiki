@@ -79,12 +79,29 @@ a hard row limit. Expanding one action performs at most one cached detail reques
 
 ## Phase 3 — Optimize the database path
 
-- [ ] Preserve the authenticated client and existing row-level, resource-scoped authorization for
+Phase 3 is split at the measurement gate because the linked project is production and the separate
+test project is inactive. Phase 3B must remain measurement-gated rather than adding every plausible
+index speculatively. See the
+[Phase 3A measurement handoff](reports/2026-08-08-admin-game-data-actions-phase-3a.md).
+
+### Phase 3A — Prepare and run representative measurements
+
+- [x] Preserve the authenticated client and existing row-level, resource-scoped authorization for
       both list and detail requests.
-- [ ] Measure representative first-page and cursor-page queries for `pending`, historical statuses,
+- [x] Add a read-only, timeout-bounded measurement harness covering the representative list/detail
+      shapes through a supplied moderator identity and the authenticated RLS path. Snapshot
+      `pg_stat_statements` before and after without resetting it.
+- [x] Record the retained production `pg_stat_statements` baseline for the legacy wide list query,
+      plus catalog-only table size, distribution, grants, and index metadata without executing an
+      action query or resetting statistics.
+- [ ] Reactivate or restore a safe representative environment and measure first-page and cursor-page
+      queries for `pending`, historical statuses,
       `status + entityType`, `entityType + status=all`, unfiltered `status=all`, exact-ID, and detail
-      shapes with `EXPLAIN (ANALYZE, BUFFERS)` in staging or another safe representative environment,
-      using identities with realistic scoped permissions.
+      shapes with `EXPLAIN (ANALYZE, BUFFERS)` using both global and realistically scoped moderator
+      identities. Record the results in the Phase 3A handoff.
+
+### Phase 3B — Apply measurement-selected optimization
+
 - [ ] Compare the existing `(status, created_at)` index with
       `(status, created_at DESC, id DESC)` and add the latter in a new migration only if the measured
       plan needs it.
@@ -130,6 +147,9 @@ the trusted server path. Add permission tests before adopting it.
       separately as supporting signals normalized by total request volume.
 - [ ] Observe production for seven days, including at least one normal moderation period, before
       declaring the remediation complete.
+- [ ] After the observation window, summarize Phase 3B/4 results in the handoff, archive this plan
+      and its handoff under `docs/archive/completed/`, and delete the measurement harness only if it
+      has no continuing operational owner.
 
 ### Success criteria
 
