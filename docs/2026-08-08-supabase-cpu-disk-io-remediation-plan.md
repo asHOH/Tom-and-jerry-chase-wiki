@@ -80,8 +80,8 @@ a hard row limit. Expanding one action performs at most one cached detail reques
 ## Phase 3 — Optimize the database path
 
 Phase 3 is split at the measurement gate because the linked project is production and the separate
-test project is inactive. Phase 3B must remain measurement-gated rather than adding every plausible
-index speculatively. See the
+test project was inactive when the work began. Phase 3B remains measurement-gated rather than
+adding every plausible index speculatively. See the
 [Phase 3A measurement handoff](reports/2026-08-08-admin-game-data-actions-phase-3a.md).
 
 ### Phase 3A — Prepare and run representative measurements
@@ -94,27 +94,34 @@ index speculatively. See the
 - [x] Record the retained production `pg_stat_statements` baseline for the legacy wide list query,
       plus catalog-only table size, distribution, grants, and index metadata without executing an
       action query or resetting statistics.
-- [ ] Reactivate or restore a safe representative environment and measure first-page and cursor-page
+- [x] Reactivate or restore a safe representative environment and measure first-page and cursor-page
       queries for `pending`, historical statuses,
       `status + entityType`, `entityType + status=all`, unfiltered `status=all`, exact-ID, and detail
       shapes with `EXPLAIN (ANALYZE, BUFFERS)` using both global and realistically scoped moderator
-      identities. Record the results in the Phase 3A handoff.
+      identities. Record the results in the Phase 3A handoff. Pending cursor shapes were recorded as
+      skipped because the representative production-derived dataset contains only five pending rows.
 
 ### Phase 3B — Apply measurement-selected optimization
 
-- [ ] Compare the existing `(status, created_at)` index with
+- [x] Compare the existing `(status, created_at)` index with
       `(status, created_at DESC, id DESC)` and add the latter in a new migration only if the measured
-      plan needs it.
-- [ ] For combined filters, consider `(status, entity_type, created_at DESC, id DESC)`; for an
+      plan needs it. PostgreSQL did not select the candidate, so it was rejected.
+- [x] For combined filters, consider `(status, entity_type, created_at DESC, id DESC)`; for an
       entity-filtered `status=all` query, compare the existing entity index with
       `(entity_type, created_at DESC, id DESC)`. Add either only when its measured read benefit
-      justifies its write and storage cost.
-- [ ] Add `(created_at DESC, id DESC)` for `status=all` only if the measured all-history query needs
-      it.
-- [ ] Choose an index creation/deployment method that avoids an unacceptable write lock; use a
-      low-traffic maintenance window if the migration workflow cannot create it concurrently.
-- [ ] Investigate a paginated security-definer RPC only if bounded queries remain materially
-      expensive after filtering and indexing.
+      justifies its write and storage cost. Neither candidate produced a material benefit, so both
+      were rejected.
+- [x] Add `(created_at DESC, id DESC)` for `status=all` only if the measured all-history query needs
+      it. It reduced representative all-history pages from 847–972 ms to 1.5–6.6 ms. A 16 KiB
+      `(created_at DESC, id DESC) WHERE status = 'pending'` partial index was also selected by the
+      measured production skew, reducing pending shapes from 775–963 ms to 2.2–2.4 ms.
+- [x] Choose an index creation/deployment method that avoids an unacceptable write lock; use a
+      low-traffic maintenance window if the migration workflow cannot create it concurrently. The
+      two regular staging builds took 75.989 ms and 80.094 ms; deploy the transactional migration in
+      a recorded low-traffic production window.
+- [x] Investigate a paginated security-definer RPC only if bounded queries remain materially
+      expensive after filtering and indexing. The adopted indexes keep every measured list shape
+      below 7 ms, so the RPC gate was not crossed.
 
 Any security-definer RPC must preserve the current scoped `can_access_game_action` behavior, use a
 fixed safe `search_path`, derive or verify the acting user rather than trusting a caller-supplied

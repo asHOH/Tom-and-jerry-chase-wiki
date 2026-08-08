@@ -59,6 +59,7 @@
     "clean": "rimraf .next out coverage",
     "analyze": "cross-env ANALYZE=true npm run build",
     "audit:game-data-actions": "node scripts/audit-game-data-actions.mjs",
+    "report:admin-game-data-action-timings": "node scripts/ops/summarize-admin-game-data-action-timings.mjs",
     "audit": "npm audit --audit-level=moderate",
     "outdated": "npm outdated",
     "size": "size-limit",
