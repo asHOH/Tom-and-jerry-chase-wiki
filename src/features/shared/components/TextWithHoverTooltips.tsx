@@ -9,7 +9,10 @@ import Tooltip from '@/components/ui/Tooltip';
 
 import { renderColorfulHighlight } from './text-with-hover-tooltips/inlineMarkup';
 import { renderTextWithTooltips } from './text-with-hover-tooltips/renderTextWithTooltips';
-import { buildTextWithHoverTooltipTokens } from './text-with-hover-tooltips/textWithHoverTooltipTokens';
+import {
+  buildTextWithHoverTooltipTokens,
+  claimHighlightedDamageSuffixes,
+} from './text-with-hover-tooltips/textWithHoverTooltipTokens';
 import type { RenderTextPart } from './text-with-hover-tooltips/types';
 
 type TextWithHoverTooltipsProps = {
@@ -55,80 +58,92 @@ export default function TextWithHoverTooltips({ text: rawText }: TextWithHoverTo
   const colorfulHighlightedParts = useMemo(() => {
     const shouldMeasure = shouldMeasureTooltipParsing();
     const startTime = shouldMeasure ? getCurrentTime() : 0;
-    const intermediateParts: RenderTextPart[] = [];
+    const plannedTokens = claimHighlightedDamageSuffixes(parsedText.tokens, attackBoost !== null);
+    const renderedParts: RenderTextPart[] = [];
+    let highlightedChildren: RenderTextPart[] = [];
+    let highlightGroupIndex = 0;
 
-    parsedText.tokens.forEach((part, index) => {
-      switch (part.type) {
-        case 'text':
-          intermediateParts.push(part.text);
-          break;
-        case 'markdownHighlight':
-          intermediateParts.push(
-            <span key={`markdown-highlight-${index}`} className={markdownHighlightClassName}>
-              {part.text}
-            </span>
-          );
-          break;
-        case 'hoverTooltip': {
-          const visibleRendered = renderTextWithTooltips(
-            part.visibleText,
-            attackBoost,
-            part.sourceIndex,
-            wallCrackDamageBoost,
-            isDarkMode,
-            currentCharacterId
-          );
+    const flushHighlight = () => {
+      if (highlightedChildren.length === 0) return;
 
-          const tooltipRendered = renderTextWithTooltips(
-            part.tooltipContent,
-            attackBoost,
-            part.sourceIndex,
-            wallCrackDamageBoost,
-            isDarkMode,
-            currentCharacterId
-          );
+      renderedParts.push(
+        <span
+          key={`markdown-highlight-${highlightGroupIndex}`}
+          className={markdownHighlightClassName}
+        >
+          {highlightedChildren.map((child, childIndex) => (
+            <Fragment key={`highlight-child-${highlightGroupIndex}-${childIndex}`}>
+              {child}
+            </Fragment>
+          ))}
+        </span>
+      );
+      highlightedChildren = [];
+      highlightGroupIndex++;
+    };
 
-          intermediateParts.push(
-            <Tooltip key={`hover-${part.sourceIndex}-${part.matchIndex}`} content={tooltipRendered}>
-              {part.isQuoted ? (
-                <span className='text-orange-500'>{visibleRendered}</span>
-              ) : (
-                visibleRendered
-              )}
-            </Tooltip>
-          );
-          break;
-        }
+    plannedTokens.forEach((token, index) => {
+      let tokenParts: RenderTextPart[];
+
+      if (token.type === 'text') {
+        const semanticParts = renderTextWithTooltips(
+          token.text,
+          attackBoost,
+          index,
+          wallCrackDamageBoost,
+          isDarkMode,
+          currentCharacterId
+        );
+        tokenParts = token.isHighlighted
+          ? semanticParts
+          : semanticParts.flatMap((part) =>
+              typeof part === 'string' ? renderColorfulHighlight(part) : part
+            );
+      } else {
+        const visibleRendered = renderTextWithTooltips(
+          token.visibleText,
+          attackBoost,
+          token.sourceIndex,
+          wallCrackDamageBoost,
+          isDarkMode,
+          currentCharacterId
+        );
+
+        const tooltipRendered = renderTextWithTooltips(
+          token.tooltipContent,
+          attackBoost,
+          token.sourceIndex,
+          wallCrackDamageBoost,
+          isDarkMode,
+          currentCharacterId
+        );
+
+        tokenParts = [
+          <Tooltip key={`hover-${token.sourceIndex}-${token.matchIndex}`} content={tooltipRendered}>
+            {token.isQuoted ? (
+              <span className='text-orange-500'>{visibleRendered}</span>
+            ) : (
+              visibleRendered
+            )}
+          </Tooltip>,
+        ];
       }
-    });
 
-    const finalParts: RenderTextPart[] = [];
-
-    // Second pass: Handle {visible text} and $class$ patterns using the updated renderTextWithTooltips
-    intermediateParts.forEach((part, index) => {
-      if (typeof part === 'string') {
-        finalParts.push(
-          ...renderTextWithTooltips(
-            part,
-            attackBoost,
-            index,
-            wallCrackDamageBoost,
-            isDarkMode,
-            currentCharacterId
-          )
+      if (token.isHighlighted) {
+        highlightedChildren.push(
+          <Fragment key={`highlight-token-${index}`}>
+            {tokenParts.map((part, partIndex) => (
+              <Fragment key={`highlight-token-${index}-part-${partIndex}`}>{part}</Fragment>
+            ))}
+          </Fragment>
         );
       } else {
-        finalParts.push(part);
+        flushHighlight();
+        renderedParts.push(...tokenParts);
       }
     });
 
-    // 新增：对最终显示的纯文本部分进行橙色高亮（中文双引号、数字、运算符）
-    const renderedParts = finalParts.flatMap((part) => {
-      if (typeof part === 'string') {
-        return renderColorfulHighlight(part);
-      }
-      return part;
-    });
+    flushHighlight();
 
     if (shouldMeasure) {
       console.debug('[TextWithHoverTooltips]', {
@@ -136,7 +151,7 @@ export default function TextWithHoverTooltips({ text: rawText }: TextWithHoverTo
         inputLength: rawText.length,
         parsedTextLength: parsedText.text.length,
         tokenCount: parsedText.tokens.length,
-        intermediatePartCount: intermediateParts.length,
+        intermediatePartCount: plannedTokens.length,
         finalPartCount: renderedParts.length,
         actorProfileAvailable: actorProfile !== undefined,
       });

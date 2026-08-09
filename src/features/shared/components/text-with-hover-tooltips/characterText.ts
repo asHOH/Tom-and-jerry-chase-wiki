@@ -177,10 +177,6 @@ export const resolveCharacterExpression = (
 };
 
 export function preprocessText(text: string, currentCharacterName?: string | undefined): string {
-  if (text.includes('{') || text.includes('}') || text.includes('《') || text.includes('》')) {
-    return text;
-  }
-
   const currentCharacter = currentCharacterName ? characters[currentCharacterName] : undefined;
   const currentCharacterNames = new Set(
     [currentCharacterName, currentCharacter?.id, ...(currentCharacter?.aliases ?? [])].filter(
@@ -188,5 +184,27 @@ export function preprocessText(text: string, currentCharacterName?: string | und
     )
   );
 
-  return wrapAutoNamesWithMatcher(text, defaultAutoWrapNameMatcher, currentCharacterNames);
+  const explicitMarkupPattern = /\{[^{}]*\}|《[^《》]*》/g;
+  let result = '';
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = explicitMarkupPattern.exec(text)) !== null) {
+    result += wrapAutoNamesWithMatcher(
+      text.slice(lastIndex, match.index),
+      defaultAutoWrapNameMatcher,
+      currentCharacterNames
+    );
+    result += match[0];
+    lastIndex = explicitMarkupPattern.lastIndex;
+  }
+
+  return (
+    result +
+    wrapAutoNamesWithMatcher(
+      text.slice(lastIndex),
+      defaultAutoWrapNameMatcher,
+      currentCharacterNames
+    )
+  );
 }

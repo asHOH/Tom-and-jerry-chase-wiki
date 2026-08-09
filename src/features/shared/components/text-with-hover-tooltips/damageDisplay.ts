@@ -40,3 +40,33 @@ export const orderDamageSuffixes = (displaySuffixes: string[]): string[] => {
 
   return suffixItems;
 };
+
+const numericDamagePattern = /^-?\d+(?:\.\d+)?$/;
+
+/**
+ * Whether the final explicit marker in a text token renders its own `伤害` suffix.
+ * Keep this aligned with the numeric damage branches in renderTextWithTooltips.
+ */
+export const endsWithCalculatedDamageMarkup = (text: string, hasAttackBoost: boolean): boolean => {
+  const markerMatch = /(?:\{([^{}]+)\}|《([^《》]+)》)$/.exec(text);
+  let content = markerMatch?.[1] ?? markerMatch?.[2];
+  if (!content) return false;
+
+  if (content.endsWith('*')) {
+    content = content.slice(0, -1);
+  }
+
+  const isWallCrackDamage = content.startsWith('_');
+  if (isWallCrackDamage) {
+    content = content.slice(1);
+  } else if (!hasAttackBoost || content.includes('+')) {
+    return false;
+  }
+
+  let numericPart = content.split(',')[0]?.trim() ?? '';
+  if (numericPart.endsWith('*')) {
+    numericPart = numericPart.slice(0, -1);
+  }
+
+  return numericDamagePattern.test(numericPart);
+};

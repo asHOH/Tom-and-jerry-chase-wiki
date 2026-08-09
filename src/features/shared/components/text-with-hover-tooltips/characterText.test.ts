@@ -29,9 +29,18 @@ describe('preprocessText', () => {
     expect(preprocessText('汤姆登场', '汤姆')).toBe('汤姆登场');
   });
 
-  it('leaves already marked up text unchanged', () => {
-    expect(preprocessText('布奇{隐身}', '汤姆')).toBe('布奇{隐身}');
-    expect(preprocessText('布奇《主动技能》', '汤姆')).toBe('布奇《主动技能》');
+  it('wraps eligible names around existing markup without double-wrapping it', () => {
+    expect(preprocessText('布奇{隐身}', '汤姆')).toBe('{布奇}{隐身}');
+    expect(preprocessText('布奇《主动技能》', '汤姆')).toBe('{布奇}《主动技能》');
+    expect(preprocessText('{布奇}登场', '汤姆')).toBe('{布奇}登场');
+  });
+
+  it('preserves current-character exclusions around existing markup', () => {
+    expect(preprocessText('汤姆造成{25*}伤害', '汤姆')).toBe('汤姆造成{25*}伤害');
+  });
+
+  it('preserves malformed markup while wrapping eligible plain text', () => {
+    expect(preprocessText('布奇{未闭合', '汤姆')).toBe('{布奇}{未闭合');
   });
 });
 

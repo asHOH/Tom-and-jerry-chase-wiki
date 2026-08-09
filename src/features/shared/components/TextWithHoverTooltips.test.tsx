@@ -72,10 +72,26 @@ describe('TextWithHoverTooltips', () => {
     );
   });
 
+  it('renders automatic links inside markdown highlights', () => {
+    render(<TextWithHoverTooltips text='**布奇**登场' />);
+
+    const link = screen.getByText('布奇');
+    expect(link).toHaveAttribute('data-name', '布奇');
+    expect(link.closest('.box-decoration-clone')).toHaveClass('bg-amber-100/70');
+  });
+
   it('renders bracket tooltip text', () => {
     render(<TextWithHoverTooltips text='[短按](用于触发技能)' />);
 
     expect(screen.getByText('短按')).toHaveAttribute('data-tooltip', '用于触发技能');
+  });
+
+  it('renders bracket tooltips inside markdown highlights', () => {
+    render(<TextWithHoverTooltips text='**[短按](用于触发技能)**' />);
+
+    const trigger = screen.getByText('短按');
+    expect(trigger).toHaveAttribute('data-tooltip', '用于触发技能');
+    expect(trigger.closest('.box-decoration-clone')).toHaveClass('bg-amber-100/70');
   });
 
   it('renders braced text as a goto link', () => {
@@ -112,6 +128,14 @@ describe('TextWithHoverTooltips', () => {
     expect(screen.getByText('击晕').closest('a')).toHaveAttribute('data-category', '知识卡');
   });
 
+  it('preserves knowledge card links inside markdown highlights', () => {
+    render(<TextWithHoverTooltips text='**{击晕(知识卡)}**' />);
+
+    const card = screen.getByText('击晕');
+    expect(card.closest('a')).toHaveAttribute('data-category', '知识卡');
+    expect(card.closest('.box-decoration-clone')).toHaveClass('bg-amber-100/70');
+  });
+
   it('renders generic goto links for non-card entries', () => {
     render(<TextWithHoverTooltips text='获得{隐身}' />);
 
@@ -133,6 +157,12 @@ describe('TextWithHoverTooltips', () => {
 
     expect(container.querySelector('[data-name="汤姆"]')).not.toBeInTheDocument();
     expect(screen.getByText('汤姆登场')).toBeInTheDocument();
+  });
+
+  it('auto-wraps eligible names around existing semantic markup', () => {
+    render(<TextWithHoverTooltips text='布奇造成{5*}伤害' />);
+
+    expect(screen.getByText('布奇')).toHaveAttribute('data-name', '布奇');
   });
 
   it('replaces buff id placeholders before rendering', () => {
@@ -163,6 +193,17 @@ describe('TextWithHoverTooltips', () => {
       expect.stringContaining('该伤害无来源')
     );
     expect(container.textContent).toBe('造成5无来源伤害');
+  });
+
+  it.each([
+    ['**{5*}伤害**', '5伤害'],
+    ['**{5*}**伤害', '5伤害'],
+    ['**{_20*}**伤害', '20伤害'],
+  ])('renders highlighted damage suffixes exactly once for %s', (text, expectedText) => {
+    const { container } = render(<TextWithHoverTooltips text={text} />);
+
+    expect(container.textContent).toBe(expectedText);
+    expect(container.querySelector('.box-decoration-clone')).toHaveTextContent(expectedText);
   });
 
   it('renders wall crack damage tooltips', () => {

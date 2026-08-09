@@ -1,14 +1,11 @@
 import { replaceBuffIds } from '../replaceBuffIds';
 import { preprocessText } from './characterText';
+import { endsWithCalculatedDamageMarkup } from './damageDisplay';
 
 type PlainTextPlanPart = {
   type: 'text';
   text: string;
-};
-
-type MarkdownHighlightPlanPart = {
-  type: 'markdownHighlight';
-  text: string;
+  isHighlighted: boolean;
 };
 
 type HoverTooltipPlanPart = {
@@ -18,27 +15,21 @@ type HoverTooltipPlanPart = {
   isQuoted: boolean;
   sourceIndex: number;
   matchIndex: number;
+  isHighlighted: boolean;
 };
 
-export type TextWithHoverTooltipToken =
-  PlainTextPlanPart | MarkdownHighlightPlanPart | HoverTooltipPlanPart;
+export type TextWithHoverTooltipToken = PlainTextPlanPart | HoverTooltipPlanPart;
 
 export type TextWithHoverTooltipTokens = {
   text: string;
   tokens: TextWithHoverTooltipToken[];
 };
 
-type MarkdownSplitPart =
-  | {
-      type: 'text';
-      text: string;
-      sourceIndex: number;
-    }
-  | {
-      type: 'markdownHighlight';
-      text: string;
-      sourceIndex: number;
-    };
+type MarkdownSplitPart = {
+  text: string;
+  sourceIndex: number;
+  isHighlighted: boolean;
+};
 
 const splitMarkdownHighlights = (text: string): MarkdownSplitPart[] => {
   const parts: MarkdownSplitPart[] = [];
@@ -49,16 +40,16 @@ const splitMarkdownHighlights = (text: string): MarkdownSplitPart[] => {
   while ((match = highlightPattern.exec(text)) !== null) {
     if (match.index > lastIndex) {
       parts.push({
-        type: 'text',
         text: text.slice(lastIndex, match.index),
         sourceIndex: parts.length,
+        isHighlighted: false,
       });
     }
 
     parts.push({
-      type: 'markdownHighlight',
       text: match[1] || '',
       sourceIndex: parts.length,
+      isHighlighted: true,
     });
 
     lastIndex = highlightPattern.lastIndex;
@@ -66,9 +57,9 @@ const splitMarkdownHighlights = (text: string): MarkdownSplitPart[] => {
 
   if (lastIndex < text.length) {
     parts.push({
-      type: 'text',
       text: text.slice(lastIndex),
       sourceIndex: parts.length,
+      isHighlighted: false,
     });
   }
 
@@ -76,10 +67,6 @@ const splitMarkdownHighlights = (text: string): MarkdownSplitPart[] => {
 };
 
 const splitHoverTooltips = (part: MarkdownSplitPart): TextWithHoverTooltipToken[] => {
-  if (part.type === 'markdownHighlight') {
-    return [{ type: 'markdownHighlight', text: part.text }];
-  }
-
   const tokens: TextWithHoverTooltipToken[] = [];
   const hoverTooltipPattern = /\[([^\]]+?)\]\(([^)]+?)\)/g;
   let lastIndex = 0;
@@ -90,6 +77,7 @@ const splitHoverTooltips = (part: MarkdownSplitPart): TextWithHoverTooltipToken[
       tokens.push({
         type: 'text',
         text: part.text.slice(lastIndex, match.index),
+        isHighlighted: part.isHighlighted,
       });
     }
 
@@ -106,6 +94,7 @@ const splitHoverTooltips = (part: MarkdownSplitPart): TextWithHoverTooltipToken[
       isQuoted: prevChar === '“' && nextChar === '”',
       sourceIndex: part.sourceIndex,
       matchIndex: match.index,
+      isHighlighted: part.isHighlighted,
     });
 
     lastIndex = hoverTooltipPattern.lastIndex;
@@ -115,10 +104,40 @@ const splitHoverTooltips = (part: MarkdownSplitPart): TextWithHoverTooltipToken[
     tokens.push({
       type: 'text',
       text: part.text.slice(lastIndex),
+      isHighlighted: part.isHighlighted,
     });
   }
 
   return tokens;
+};
+
+export const claimHighlightedDamageSuffixes = (
+  tokens: TextWithHoverTooltipToken[],
+  hasAttackBoost: boolean
+): TextWithHoverTooltipToken[] => {
+  const claimedTokens = tokens.map((token) => ({ ...token }));
+
+  for (let index = 0; index < claimedTokens.length - 1; index++) {
+    const token = claimedTokens[index];
+    const nextToken = claimedTokens[index + 1];
+    if (
+      token?.type !== 'text' ||
+      !token.isHighlighted ||
+      nextToken?.type !== 'text' ||
+      nextToken.isHighlighted ||
+      !endsWithCalculatedDamageMarkup(token.text, hasAttackBoost)
+    ) {
+      continue;
+    }
+
+    const suffixMatch = /^(伤害|点伤害)/.exec(nextToken.text);
+    if (!suffixMatch) continue;
+
+    token.text += suffixMatch[0];
+    nextToken.text = nextToken.text.slice(suffixMatch[0].length);
+  }
+
+  return claimedTokens;
 };
 
 export const buildTextWithHoverTooltipTokens = (
