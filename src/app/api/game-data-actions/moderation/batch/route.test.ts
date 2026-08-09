@@ -6,6 +6,7 @@ import {
 } from '@/lib/gameData/trustedGameDataMutations';
 import { publishNotification } from '@/lib/notificationUtils';
 import { supabaseAdmin } from '@/lib/supabase/admin';
+import { getPublicUserSubmissionHref } from '@/lib/users/publicProfile';
 
 import { POST } from './route';
 
@@ -32,11 +33,13 @@ jest.mock('@/lib/gameData/trustedGameDataMutations', () => {
 });
 jest.mock('@/lib/notificationUtils', () => ({ publishNotification: jest.fn() }));
 jest.mock('@/lib/supabase/admin', () => ({ supabaseAdmin: { rpc: jest.fn() } }));
+jest.mock('@/lib/users/publicProfile', () => ({ getPublicUserSubmissionHref: jest.fn() }));
 
 const requirePermissionMock = jest.mocked(requirePermission);
 const loadRecordMock = jest.mocked(loadTrustedGameDataAction);
 const approveMock = jest.mocked(approvePreparedGameDataAction);
 const publishNotificationMock = jest.mocked(publishNotification);
+const getSubmissionHrefMock = jest.mocked(getPublicUserSubmissionHref);
 const adminRpcMock = jest.mocked(supabaseAdmin!.rpc);
 const actionId1 = '00000000-0000-4000-8000-000000000001';
 const actionId2 = '00000000-0000-4000-8000-000000000002';
@@ -79,6 +82,7 @@ describe('batch game data action moderation route', () => {
       ],
     } as never);
     loadRecordMock.mockImplementation(async (id) => record(id));
+    getSubmissionHrefMock.mockResolvedValue(null);
     publishNotificationMock.mockResolvedValue({
       created: true,
       suppressed: false,
@@ -124,6 +128,27 @@ describe('batch game data action moderation route', () => {
       p_ip: null,
     });
     expect(approveMock).not.toHaveBeenCalled();
+  });
+
+  it('still publishes a rejection notification when its profile link cannot be resolved', async () => {
+    const consoleErrorMock = jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    getSubmissionHrefMock.mockRejectedValueOnce(new Error('profile lookup failed'));
+
+    const response = await POST(createRequest('reject', [actionId1]));
+
+    expect(response.status).toBe(200);
+    expect(publishNotificationMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        kind: 'game_data_action_rejected',
+        sourceIds: [actionId1],
+      })
+    );
+    expect(publishNotificationMock.mock.calls[0]?.[0]).not.toHaveProperty('href');
+    expect(consoleErrorMock).toHaveBeenCalledWith(
+      'Failed to build contribution profile link:',
+      expect.any(Error)
+    );
+    consoleErrorMock.mockRestore();
   });
 
   it('reports public pending rows as revoke-only when batch rejecting', async () => {

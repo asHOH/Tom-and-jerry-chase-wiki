@@ -110,9 +110,18 @@ export async function POST(request: Request) {
     const details = getGameDataNotificationDetails(group);
     const approved = action === 'approve';
     const reasonSuffix = !approved && reason ? `原因：${reason}` : '';
+    let submissionHref: string | undefined;
+    if (!approved || !details.href) {
+      try {
+        submissionHref =
+          (await getPublicUserSubmissionHref(recipientUserId, sourceIds[0])) ?? undefined;
+      } catch (error) {
+        console.error('Failed to build contribution profile link:', error);
+      }
+    }
+    const notificationHref = approved ? (details.href ?? submissionHref) : submissionHref;
+
     try {
-      const submissionHref = await getPublicUserSubmissionHref(recipientUserId, sourceIds[0]);
-      const notificationHref = approved ? (details.href ?? submissionHref) : submissionHref;
       await publishNotification({
         recipientUserId,
         kind: approved ? 'game_data_action_approved' : 'game_data_action_rejected',
