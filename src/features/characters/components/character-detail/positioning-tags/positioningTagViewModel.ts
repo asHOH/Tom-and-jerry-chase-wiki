@@ -31,9 +31,9 @@ export function normalizePositioningTagViewMode(value: string | null | undefined
 /**
  * Build a stable seven-axis data set for the character's faction.
  *
- * Public charts use level 1 as the visual baseline for unspecified axes and
- * source levels 0/1. If malformed or legacy data contains the same tag more
- * than once, the highest level wins.
+ * Public charts treat unspecified and edit-only source levels 0/1 as absent.
+ * If malformed or legacy data contains the same tag more than once, the
+ * highest level wins.
  */
 export function getPositioningTagChartData(
   tags: readonly PositioningTagChartInput[],
@@ -51,7 +51,7 @@ export function getPositioningTagChartData(
     const level = levelsByName.get(tagName) ?? 0;
     return {
       tagName,
-      level: level >= 2 ? level : 1,
+      level: level >= 2 ? level : 0,
     };
   });
 }

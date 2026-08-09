@@ -5,10 +5,9 @@ import { useRouter } from 'next/navigation';
 
 import { getOptionalSupabaseBrowserClient } from '@/lib/supabase/browserClient';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
+import { getUserSubmissionHref } from '@/lib/users/profileRoutes';
 import { useUser } from '@/hooks/useUser';
 import { useToast } from '@/context/ToastContext';
-
-const CONTRIBUTIONS_PATH = '/contributions/';
 
 /**
  * Shows the next useful action after a contribution is submitted while leaving
@@ -23,6 +22,7 @@ export function useContributionSubmissionFeedback() {
     (message: string) => {
       const showFeedback = async () => {
         let isAuthenticated = Boolean(nickname);
+        let currentNickname = nickname;
 
         if (!isAuthenticated && hasSupabasePublicConfig()) {
           try {
@@ -39,7 +39,31 @@ export function useContributionSubmissionFeedback() {
         }
 
         if (isAuthenticated) {
-          successWithAction(message, '查看我的贡献', () => router.push(CONTRIBUTIONS_PATH), 8000);
+          if (!currentNickname) {
+            try {
+              const response = await fetch('/api/auth/me', {
+                headers: { 'Content-Type': 'application/json' },
+              });
+              if (response.ok) {
+                const data = (await response.json().catch(() => null)) as {
+                  nickname?: unknown;
+                } | null;
+                currentNickname =
+                  typeof data?.nickname === 'string' && data.nickname.trim()
+                    ? data.nickname.trim()
+                    : null;
+              }
+            } catch {
+              // The user provider may still be synchronizing after authentication.
+            }
+          }
+
+          if (currentNickname) {
+            const submissionsPath = getUserSubmissionHref(currentNickname);
+            successWithAction(message, '查看我的贡献', () => router.push(submissionsPath), 8000);
+          } else {
+            success(`${message} 登录状态正在同步，请刷新后重试。`, 8000);
+          }
           return;
         }
 

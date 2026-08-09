@@ -148,7 +148,7 @@ describe('TabNavigation', () => {
 
     expect(screen.getByRole('link', { name: '我的贡献' })).toHaveAttribute(
       'href',
-      '/contributions'
+      '/users/%E8%B4%A1%E7%8C%AE%E8%80%85?tab=submissions'
     );
   });
 

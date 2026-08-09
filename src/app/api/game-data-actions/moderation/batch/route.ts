@@ -13,6 +13,7 @@ import {
 } from '@/lib/gameData/trustedGameDataMutations';
 import { publishNotification } from '@/lib/notificationUtils';
 import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
+import { getPublicUserSubmissionHref } from '@/lib/users/publicProfile';
 
 const schema = z.object({
   actionIds: z.array(z.uuid()).min(1).max(200),
@@ -110,15 +111,15 @@ export async function POST(request: Request) {
     const approved = action === 'approve';
     const reasonSuffix = !approved && reason ? `原因：${reason}` : '';
     try {
+      const submissionHref = await getPublicUserSubmissionHref(recipientUserId, sourceIds[0]);
+      const notificationHref = approved ? (details.href ?? submissionHref) : submissionHref;
       await publishNotification({
         recipientUserId,
         kind: approved ? 'game_data_action_approved' : 'game_data_action_rejected',
         decisionOrigin: 'manual',
         title: approved ? '游戏数据改动批量审核通过' : '游戏数据改动批量审核未通过',
         body: `您提交的 ${group.length} 条${details.summary}改动${approved ? '已通过审核' : '未通过审核'}。${reasonSuffix}`,
-        href: approved
-          ? (details.href ?? '/contributions/')
-          : `/contributions/?highlight=${encodeURIComponent(sourceIds[0]!)}`,
+        ...(notificationHref ? { href: notificationHref } : {}),
         sourceIds,
         dedupeKey: `game-data-actions:batch:${action}:${sourceIds.join(',')}`,
       });

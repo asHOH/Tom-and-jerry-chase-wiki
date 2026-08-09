@@ -16,6 +16,7 @@ type PositioningTagsChartProps = {
 };
 
 const MAX_LEVEL = 4;
+const RADAR_MAX_DISPLAY_LEVEL = MAX_LEVEL + 1;
 const CHART_LABELS: Record<Exclude<PositioningTagViewMode, 'text'>, string> = {
   bar: '柱状图',
   radar: '雷达图',
@@ -28,6 +29,8 @@ const polarPoint = (center: number, radius: number, angle: number) => ({
 
 const getTagColor = (datum: PositioningTagChartDatum, factionId: FactionId, isDarkMode: boolean) =>
   getPositioningTagColors(datum.tagName, datum.level, false, factionId, isDarkMode).color;
+
+const getRadarDisplayLevel = (level: number) => level + 1;
 
 export function getRoseSectorAngles(index: number, dataLength: number, gap = 0.035) {
   const slice = (Math.PI * 2) / dataLength;
@@ -63,7 +66,11 @@ function PositioningTagDataTable({
         {tableData.map((datum) => (
           <tr key={datum.tagName}>
             <th scope='row'>{datum.tagName}</th>
-            <td>{`${datum.level}/4`}</td>
+            <td>
+              {viewMode === 'radar'
+                ? `${getRadarDisplayLevel(datum.level)}/${RADAR_MAX_DISPLAY_LEVEL}`
+                : `${datum.level}/${MAX_LEVEL}`}
+            </td>
           </tr>
         ))}
       </tbody>
@@ -180,11 +187,11 @@ function RadarChart({
   const viewBox = '0 0 300 280';
   const slice = (Math.PI * 2) / data.length;
   const getAxisAngle = (index: number) => -Math.PI / 2 + index * slice;
-  const getPoint = (index: number, level: number) =>
-    polarPoint(center, (radius * level) / MAX_LEVEL, getAxisAngle(index));
+  const getPoint = (index: number, displayLevel: number) =>
+    polarPoint(center, (radius * displayLevel) / RADAR_MAX_DISPLAY_LEVEL, getAxisAngle(index));
   const dataPoints = data
     .map((datum, index) => {
-      const point = getPoint(index, datum.level);
+      const point = getPoint(index, getRadarDisplayLevel(datum.level));
       return `${point.x.toFixed(2)},${point.y.toFixed(2)}`;
     })
     .join(' ');
@@ -198,7 +205,7 @@ function RadarChart({
       data-testid='positioning-radar-chart'
     >
       <title id={titleId}>定位雷达图</title>
-      {[1, 2, 3, 4].map((level) => (
+      {[1, 2, 3, 4, 5].map((level) => (
         <polygon
           key={level}
           points={data
@@ -224,7 +231,7 @@ function RadarChart({
         const angle = getAxisAngle(index);
         const axisEnd = polarPoint(center, radius, angle);
         const labelPoint = polarPoint(center, radius + 24, angle);
-        const valuePoint = getPoint(index, datum.level);
+        const valuePoint = getPoint(index, getRadarDisplayLevel(datum.level));
         const color = getTagColor(datum, factionId, isDarkMode);
         return (
           <g key={datum.tagName}>
@@ -243,7 +250,7 @@ function RadarChart({
               fill={datum.level > 0 ? color : 'currentColor'}
               opacity={datum.level === 2 ? 0.75 : 1}
             >
-              <title>{`${datum.tagName}：等级${datum.level}/4`}</title>
+              <title>{`${datum.tagName}：等级${getRadarDisplayLevel(datum.level)}/5`}</title>
             </circle>
             <Tooltip
               content={getPositioningTagTooltipContent(datum.tagName, factionId, isDetailed)}
@@ -267,7 +274,7 @@ function RadarChart({
         );
       })}
       <text x={center} y={center + 4} textAnchor='middle' fontSize='11' fill='currentColor'>
-        0–4
+        1–5
       </text>
     </svg>
   );

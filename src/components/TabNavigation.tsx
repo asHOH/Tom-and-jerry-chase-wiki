@@ -12,6 +12,7 @@ import type { BlockAction, BlockedUserSummary } from '@/lib/blocks/types';
 import { cn, getNavigationButtonClasses } from '@/lib/design';
 import { getOptionalSupabaseBrowserClient } from '@/lib/supabase/browserClient';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
+import { getUserProfileHref } from '@/lib/users/profileRoutes';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useNavigationProgress } from '@/hooks/useNavigationProgress';
 import { useNavigationTabs } from '@/hooks/useNavigationTabs';
@@ -596,7 +597,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                       </li>
                       <li>
                         <Link
-                          href={`/users/${encodeURIComponent(nickname)}/` as Route}
+                          href={getUserProfileHref(nickname, { tab: 'activity' }) as Route}
                           className='block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700'
                         >
                           个人主页
@@ -604,7 +605,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                       </li>
                       <li>
                         <Link
-                          href='/contributions/'
+                          href={getUserProfileHref(nickname, { tab: 'submissions' }) as Route}
                           className='block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700'
                         >
                           我的贡献

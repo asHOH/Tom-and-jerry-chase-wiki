@@ -13,6 +13,7 @@ import {
 } from '@/lib/gameData/trustedGameDataMutations';
 import { publishNotification } from '@/lib/notificationUtils';
 import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
+import { getPublicUserSubmissionHref } from '@/lib/users/publicProfile';
 
 const MODERATION_ACTIONS = ['approve', 'reject', 'mark-synced', 'revoke'] as const;
 
@@ -140,13 +141,14 @@ export async function POST(
       try {
         const reasonSuffix = reason ? `原因：${reason}` : '';
         const details = getGameDataNotificationDetails([recordData]);
+        const submissionHref = await getPublicUserSubmissionHref(recordData.created_by, actionId);
         await publishNotification({
           recipientUserId: recordData.created_by,
           kind: 'game_data_action_rejected',
           decisionOrigin: 'manual',
           title: '游戏数据改动未通过审核',
           body: `您的${details.summary}修改未通过审核。${reasonSuffix}`,
-          href: `/contributions/?highlight=${encodeURIComponent(actionId)}`,
+          ...(submissionHref ? { href: submissionHref } : {}),
           sourceIds: [actionId],
           dedupeKey: `game-data-action:${actionId}:rejected`,
         });

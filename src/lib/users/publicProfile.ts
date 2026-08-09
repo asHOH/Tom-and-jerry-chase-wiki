@@ -6,6 +6,7 @@ import {
 } from '@/lib/gameData/contributionDisplay';
 import { GAME_DATA_CONTRIBUTION_FILTER } from '@/lib/gameData/contributionFilter';
 import { getOptionalSupabaseAdminClient } from '@/lib/supabase/adminClient';
+import { getUserSubmissionHref } from '@/lib/users/profileRoutes';
 
 const RECENT_CONTRIBUTION_LIMIT = 10;
 const REVIEWED_GAME_DATA_ACTION_STATUSES = ['approved', 'rejected', 'synced', 'revoked'] as const;
@@ -46,6 +47,28 @@ export type PublicUserProfile = {
   };
   recentContributions: PublicContribution[];
 };
+
+export async function getPublicUserNickname(userId: string): Promise<string | null> {
+  const supabaseAdmin = getOptionalSupabaseAdminClient();
+  if (!supabaseAdmin) return null;
+
+  const { data, error } = await supabaseAdmin
+    .from('users_public_view')
+    .select('nickname')
+    .eq('id', userId)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data?.nickname ?? null;
+}
+
+export async function getPublicUserSubmissionHref(
+  userId: string,
+  highlight?: string | null
+): Promise<string | null> {
+  const nickname = await getPublicUserNickname(userId);
+  return nickname ? getUserSubmissionHref(nickname, highlight) : null;
+}
 
 type ArticleContributionRow = {
   id: string;

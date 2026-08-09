@@ -7,6 +7,7 @@ import { getGameActionResourceContexts } from '@/lib/auth/resourceContexts';
 import { getGameDataNotificationDetails } from '@/lib/gameData/contributionDisplay';
 import { publishNotification } from '@/lib/notificationUtils';
 import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
+import { getPublicUserSubmissionHref } from '@/lib/users/publicProfile';
 
 const idSchema = z.uuid();
 const bodySchema = z.object({
@@ -152,6 +153,14 @@ export async function POST(
   }
 
   try {
+    let contributionHref: string | undefined;
+    try {
+      contributionHref =
+        (await getPublicUserSubmissionHref(target.recipientUserId, contributionId.data)) ??
+        undefined;
+    } catch (error) {
+      console.error('Failed to build contribution profile link:', error);
+    }
     const reviewerNickname = await getReviewerNickname(reviewerId);
     const result = await publishNotification({
       recipientUserId: target.recipientUserId,
@@ -159,7 +168,7 @@ export async function POST(
       decisionOrigin: 'manual',
       title: '收到贡献感谢',
       body: `${reviewerNickname ? `审核者 ${reviewerNickname}` : '审核者'}感谢了您对${target.contributionLabel}的贡献：\n${body.data.message}`,
-      href: `/contributions/?highlight=${encodeURIComponent(contributionId.data)}`,
+      ...(contributionHref ? { href: contributionHref } : {}),
       sourceIds: [contributionId.data],
       dedupeKey: `contribution-thanked:${kind}:${contributionId.data}`,
     });

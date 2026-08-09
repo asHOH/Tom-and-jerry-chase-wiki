@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 
 import type { PermissionKey } from '@/lib/auth/permissions';
 import { loadPermissionGrants } from '@/lib/auth/requirePermission';
+import { cn } from '@/lib/design';
 import { generatePageMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { createClient } from '@/lib/supabase/server';
 import {
@@ -20,16 +21,23 @@ import {
   type ContributionCalendar,
   type ContributionMetrics,
 } from '@/lib/users/contributionActivity';
+import {
+  getUserProfileHref,
+  normalizeUserProfileTab,
+  type UserProfileTab,
+} from '@/lib/users/profileRoutes';
 import { getGameDataActionApprovalRate, getPublicUserProfile } from '@/lib/users/publicProfile';
 import { contributors, RoleType } from '@/data/contributors';
 import {
   ContributionActivityHistory,
   ContributionAnalytics,
   ContributionCalendar as ContributionCalendarView,
+  ContributionSubmissionStatus,
 } from '@/features/users/components';
 import Card from '@/components/ui/Card';
 import { InlineExternalLink } from '@/components/ui/InlineExternalLink';
 import PageShell from '@/components/ui/PageShell';
+import Link from '@/components/Link';
 
 export const dynamic = 'force-dynamic';
 
@@ -89,7 +97,7 @@ const registrationDateFormatter = new Intl.DateTimeFormat('zh-CN', {
 
 type PublicUserPageProps = {
   params: Promise<{ nickname: string }>;
-  searchParams: Promise<{ type?: string; page?: string }>;
+  searchParams: Promise<{ tab?: string; type?: string; page?: string }>;
 };
 
 function getCharacterContributionCount(
@@ -131,18 +139,19 @@ async function canViewGameDataActionApprovalRate(): Promise<boolean> {
     (grant) => grant.scope === 'global' && USER_MANAGEMENT_PERMISSIONS.has(grant.permission)
   );
 }
+
+async function getCurrentUserId(): Promise<string | null> {
+  const supabase = await createClient();
+  const { data: claimsData } = await supabase.auth.getClaims();
+  return claimsData?.claims.sub ?? null;
+}
+
 function getUserActivityHref(
   nickname: string,
   filter: ContributionActivityFilter,
   page = 1
 ): Route {
-  const searchParams = new URLSearchParams();
-  if (filter !== 'all') searchParams.set('type', filter);
-  if (page > 1) searchParams.set('page', String(page));
-  const query = searchParams.toString();
-  const pathname = `/users/${encodeURIComponent(nickname)}`;
-
-  return (query ? `${pathname}?${query}` : pathname) as Route;
+  return getUserProfileHref(nickname, { tab: 'activity', type: filter, page }) as Route;
 }
 
 export async function generateMetadata({
@@ -172,6 +181,7 @@ export default async function PublicUserPage({ params, searchParams }: PublicUse
   const { nickname: encodedNickname } = await params;
   const resolvedSearchParams = await searchParams;
   const nickname = decodeNickname(encodedNickname);
+  const requestedTab = normalizeUserProfileTab(resolvedSearchParams.tab);
   const contributionFilter = normalizeContributionFilter(resolvedSearchParams.type);
   const requestedContributionPage = normalizeContributionPage(resolvedSearchParams.page);
   let profile;
@@ -185,6 +195,10 @@ export default async function PublicUserPage({ params, searchParams }: PublicUse
 
   if (!profile) notFound();
 
+  const currentUserId = await getCurrentUserId();
+  const isOwnProfile = currentUserId === profile.id;
+  const activeTab: UserProfileTab =
+    requestedTab === 'submissions' && isOwnProfile ? 'submissions' : 'activity';
   const contributionDateRange = getContributionDateRange();
   let contributionCalendar: ContributionCalendar = [];
   let contributionBreakdown: ContributionBreakdown = [];
@@ -195,43 +209,45 @@ export default async function PublicUserPage({ params, searchParams }: PublicUse
   let activityError = false;
   let gameDataActionApprovalRate: number | null = null;
 
-  const [calendarResult, breakdownResult, activityResult, approvalRateResult] =
-    await Promise.allSettled([
-      getPublicContributionCalendar(profile.id, contributionDateRange),
-      getPublicContributionBreakdown(profile.id, contributionDateRange),
-      getPublicContributionActivity(profile.id, contributionFilter, requestedContributionPage),
-      (async () => {
-        if (!(await canViewGameDataActionApprovalRate())) return null;
-        return getGameDataActionApprovalRate(profile.id);
-      })(),
-    ]);
+  if (activeTab === 'activity') {
+    const [calendarResult, breakdownResult, activityResult, approvalRateResult] =
+      await Promise.allSettled([
+        getPublicContributionCalendar(profile.id, contributionDateRange),
+        getPublicContributionBreakdown(profile.id, contributionDateRange),
+        getPublicContributionActivity(profile.id, contributionFilter, requestedContributionPage),
+        (async () => {
+          if (!(await canViewGameDataActionApprovalRate())) return null;
+          return getGameDataActionApprovalRate(profile.id);
+        })(),
+      ]);
 
-  if (calendarResult.status === 'fulfilled') {
-    contributionCalendar = calendarResult.value;
-    contributionMetrics = calculateContributionMetrics(contributionCalendar);
-  } else {
-    calendarError = true;
-    console.error('Failed to load public contribution calendar:', calendarResult.reason);
-  }
+    if (calendarResult.status === 'fulfilled') {
+      contributionCalendar = calendarResult.value;
+      contributionMetrics = calculateContributionMetrics(contributionCalendar);
+    } else {
+      calendarError = true;
+      console.error('Failed to load public contribution calendar:', calendarResult.reason);
+    }
 
-  if (breakdownResult.status === 'fulfilled') {
-    contributionBreakdown = breakdownResult.value;
-  } else {
-    breakdownError = true;
-    console.error('Failed to load public contribution breakdown:', breakdownResult.reason);
-  }
+    if (breakdownResult.status === 'fulfilled') {
+      contributionBreakdown = breakdownResult.value;
+    } else {
+      breakdownError = true;
+      console.error('Failed to load public contribution breakdown:', breakdownResult.reason);
+    }
 
-  if (activityResult.status === 'fulfilled') {
-    contributionActivityPage = activityResult.value;
-  } else {
-    activityError = true;
-    console.error('Failed to load public contribution activity:', activityResult.reason);
-  }
+    if (activityResult.status === 'fulfilled') {
+      contributionActivityPage = activityResult.value;
+    } else {
+      activityError = true;
+      console.error('Failed to load public contribution activity:', activityResult.reason);
+    }
 
-  if (approvalRateResult.status === 'fulfilled') {
-    gameDataActionApprovalRate = approvalRateResult.value;
-  } else {
-    console.error('Failed to load game data action approval rate:', approvalRateResult.reason);
+    if (approvalRateResult.status === 'fulfilled') {
+      gameDataActionApprovalRate = approvalRateResult.value;
+    } else {
+      console.error('Failed to load game data action approval rate:', approvalRateResult.reason);
+    }
   }
 
   const contributionFilterHrefs: Readonly<Record<ContributionActivityFilter, Route>> = {
@@ -241,6 +257,10 @@ export default async function PublicUserPage({ params, searchParams }: PublicUse
   };
   const contributionPageHref = (page: number): Route =>
     getUserActivityHref(profile.nickname, contributionFilter, page);
+  const activityTabHref = getUserProfileHref(profile.nickname, { tab: 'activity' }) as Route;
+  const submissionsTabHref = getUserProfileHref(profile.nickname, {
+    tab: 'submissions',
+  }) as Route;
 
   const contributor = contributors.find(({ nickname }) => nickname === profile.nickname);
   const externalWebsiteName = contributor?.url ? getWebsiteName(contributor.url) : null;
@@ -362,50 +382,93 @@ export default async function PublicUserPage({ params, searchParams }: PublicUse
         ) : null}
       </Card>
 
-      {contributionStats.length > 0 ? (
-        <section aria-labelledby='contribution-totals-heading' className='space-y-4'>
-          <header>
-            <p className='text-xs font-semibold tracking-[0.14em] text-blue-700 uppercase dark:text-blue-300'>
-              数据概览
-            </p>
-            <h2 id='contribution-totals-heading' className='mt-1 text-xl font-semibold'>
-              贡献统计
-            </h2>
-          </header>
-          <div className={getContributionStatsGridClassName(contributionStats.length)}>
-            {contributionStats.map((stat) => (
-              <Card
-                key={stat.label}
-                bordered
-                className='bg-surface/80 border-gray-200/80 text-center shadow-sm dark:border-gray-700/80'
-              >
-                <div className='text-2xl font-bold tracking-tight'>{stat.value}</div>
-                <div className='mt-1 text-sm text-gray-500 dark:text-gray-400'>{stat.label}</div>
-              </Card>
-            ))}
-          </div>
-        </section>
-      ) : null}
+      <nav
+        aria-label='用户页内容'
+        role='tablist'
+        className='flex flex-wrap gap-2 border-b border-gray-200 pb-2 dark:border-gray-700'
+      >
+        <Link
+          href={activityTabHref}
+          role='tab'
+          aria-selected={activeTab === 'activity'}
+          className={cn(
+            'rounded-lg px-4 py-2 text-sm font-semibold transition-colors',
+            activeTab === 'activity'
+              ? 'bg-blue-100 text-blue-800 dark:bg-blue-950/50 dark:text-blue-200'
+              : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'
+          )}
+        >
+          贡献活动
+        </Link>
+        {isOwnProfile ? (
+          <Link
+            href={submissionsTabHref}
+            role='tab'
+            aria-selected={activeTab === 'submissions'}
+            className={cn(
+              'rounded-lg px-4 py-2 text-sm font-semibold transition-colors',
+              activeTab === 'submissions'
+                ? 'bg-blue-100 text-blue-800 dark:bg-blue-950/50 dark:text-blue-200'
+                : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'
+            )}
+          >
+            我的提交
+          </Link>
+        ) : null}
+      </nav>
 
-      <ContributionCalendarView
-        days={contributionCalendar}
-        asOf={contributionDateRange.endDate}
-        hasError={calendarError}
-      />
-      <ContributionAnalytics
-        metrics={contributionMetrics}
-        months={contributionMetrics?.monthlyBuckets ?? []}
-        categories={contributionBreakdown}
-        hasMetricsError={calendarError}
-        hasBreakdownError={breakdownError}
-      />
-      <ContributionActivityHistory
-        page={contributionActivityPage}
-        filter={contributionFilter}
-        filterHrefs={contributionFilterHrefs}
-        pageHref={contributionPageHref}
-        hasError={activityError}
-      />
+      {activeTab === 'submissions' ? (
+        <ContributionSubmissionStatus />
+      ) : (
+        <>
+          {contributionStats.length > 0 ? (
+            <section aria-labelledby='contribution-totals-heading' className='space-y-4'>
+              <header>
+                <p className='text-xs font-semibold tracking-[0.14em] text-blue-700 uppercase dark:text-blue-300'>
+                  数据概览
+                </p>
+                <h2 id='contribution-totals-heading' className='mt-1 text-xl font-semibold'>
+                  贡献统计
+                </h2>
+              </header>
+              <div className={getContributionStatsGridClassName(contributionStats.length)}>
+                {contributionStats.map((stat) => (
+                  <Card
+                    key={stat.label}
+                    bordered
+                    className='bg-surface/80 border-gray-200/80 text-center shadow-sm dark:border-gray-700/80'
+                  >
+                    <div className='text-2xl font-bold tracking-tight'>{stat.value}</div>
+                    <div className='mt-1 text-sm text-gray-500 dark:text-gray-400'>
+                      {stat.label}
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </section>
+          ) : null}
+
+          <ContributionCalendarView
+            days={contributionCalendar}
+            asOf={contributionDateRange.endDate}
+            hasError={calendarError}
+          />
+          <ContributionAnalytics
+            metrics={contributionMetrics}
+            months={contributionMetrics?.monthlyBuckets ?? []}
+            categories={contributionBreakdown}
+            hasMetricsError={calendarError}
+            hasBreakdownError={breakdownError}
+          />
+          <ContributionActivityHistory
+            page={contributionActivityPage}
+            filter={contributionFilter}
+            filterHrefs={contributionFilterHrefs}
+            pageHref={contributionPageHref}
+            hasError={activityError}
+          />
+        </>
+      )}
     </PageShell>
   );
 }

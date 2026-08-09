@@ -17,8 +17,6 @@ import ButtonLink from '@/components/ui/ButtonLink';
 import Card from '@/components/ui/Card';
 import LoadingState from '@/components/ui/LoadingState';
 import Notice from '@/components/ui/Notice';
-import PageHeader from '@/components/ui/PageHeader';
-import PageShell from '@/components/ui/PageShell';
 import Link from '@/components/Link';
 
 type FilterKind = 'all' | ContributionKind;
@@ -65,7 +63,7 @@ const jsonFetcher = async (url: string): Promise<ContributionStatusResponse> => 
   return (await response.json()) as ContributionStatusResponse;
 };
 
-export default function ContributionsClient() {
+export default function ContributionSubmissionStatus() {
   const searchParams = useSearchParams();
   const highlightedId = searchParams.get('highlight');
   const [kindFilter, setKindFilter] = useState<FilterKind>('all');
@@ -105,8 +103,18 @@ export default function ContributionsClient() {
   }, [data, highlightedId]);
 
   return (
-    <PageShell width='standard' className='space-y-6 py-8 text-gray-900 dark:text-gray-100'>
-      <PageHeader title='我的贡献' description='查看文章与游戏数据提交的审核状态和反馈' />
+    <section aria-labelledby='my-submissions-heading' className='space-y-6'>
+      <header>
+        <p className='text-xs font-semibold tracking-[0.14em] text-blue-700 uppercase dark:text-blue-300'>
+          私人记录
+        </p>
+        <h2 id='my-submissions-heading' className='mt-1 text-xl font-semibold'>
+          我的提交
+        </h2>
+        <p className='mt-1 text-sm text-gray-500 dark:text-gray-400'>
+          查看文章与游戏数据提交的审核状态和反馈
+        </p>
+      </header>
 
       {isLoading && <LoadingState message='正在加载贡献记录…' />}
 
@@ -259,7 +267,7 @@ export default function ContributionsClient() {
                             )}
                           </div>
 
-                          <h2 className='mt-2 text-lg font-semibold'>{contribution.title}</h2>
+                          <h3 className='mt-2 text-lg font-semibold'>{contribution.title}</h3>
                           {contribution.description && (
                             <p className='mt-2 text-sm text-gray-600 dark:text-gray-300'>
                               {contribution.description}
@@ -338,6 +346,6 @@ export default function ContributionsClient() {
           </div>
         </>
       )}
-    </PageShell>
+    </section>
   );
 }

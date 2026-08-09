@@ -9,6 +9,7 @@ import { getRequestIp } from '@/lib/blocks/server';
 import { CACHE_TAGS, invalidateCache } from '@/lib/cacheTags';
 import { publishNotification } from '@/lib/notificationUtils';
 import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
+import { getPublicUserSubmissionHref } from '@/lib/users/publicProfile';
 
 const readReviewFeedback = async (request: NextRequest): Promise<string | null> => {
   try {
@@ -97,6 +98,17 @@ export async function POST(
 
         if (editor_id && (action === 'approve' || action === 'reject')) {
           const approved = action === 'approve';
+          let submissionHref: string | undefined;
+          if (!approved) {
+            try {
+              submissionHref =
+                (await getPublicUserSubmissionHref(editor_id, versionId)) ?? undefined;
+            } catch (error) {
+              console.error('Failed to build contribution profile link:', error);
+            }
+          }
+          const notificationHref =
+            approved && article_id ? `/articles/${article_id}/` : submissionHref;
           await publishNotification({
             recipientUserId: editor_id,
             kind: approved ? 'article_version_approved' : 'article_version_rejected',
@@ -105,10 +117,7 @@ export async function POST(
             body: approved
               ? `您的文章《${proposed_title || '文章'}》已通过审核并发布。${reviewFeedback ? `审核反馈：${reviewFeedback}` : ''}`
               : `您的文章《${proposed_title || '文章'}》未通过审核。${reviewFeedback ? `审核反馈：${reviewFeedback}` : ''}`,
-            href:
-              approved && article_id
-                ? `/articles/${article_id}/`
-                : `/contributions/?highlight=${encodeURIComponent(versionId)}`,
+            ...(notificationHref ? { href: notificationHref } : {}),
             sourceIds: [versionId],
             dedupeKey: `article-version:${versionId}:${approved ? 'approved' : 'rejected'}`,
           });
