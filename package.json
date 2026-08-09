@@ -2,7 +2,7 @@
   "name": "tom-and-jerry-chase-wiki",
   "version": "0.1.0",
   "private": true,
-  "packageManager": "npm@11.18.0",
+  "packageManager": "npm@11.19.0",
   "description": "专为《猫和老鼠手游》玩家打造的数据查询网站",
   "homepage": "https://tjwiki.com",
   "repository": {
