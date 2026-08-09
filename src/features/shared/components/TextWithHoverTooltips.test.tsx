@@ -178,6 +178,13 @@ describe('TextWithHoverTooltips', () => {
     expect(screen.getByText('隐身')).toHaveAttribute('data-name', '隐身');
   });
 
+  it('resolves leveled skill aliases for the current character', () => {
+    render(<TextWithHoverTooltips text='强化{2级主动}' />);
+
+    expect(screen.getByText('2级主动')).toHaveAttribute('data-name', '2级发怒冲刺');
+    expect(screen.getByText('2级主动')).toHaveAttribute('data-category', '技能');
+  });
+
   it('resolves current character expressions', () => {
     render(<TextWithHoverTooltips text='命中CD为{:clawKnifeCdHit}秒' />);
 
@@ -247,6 +254,17 @@ describe('TextWithHoverTooltips', () => {
 
     expect(screen.getByText('20')).toHaveClass('text-red-500');
     expect(screen.getByText('20').closest('[data-tooltip]')).toHaveAttribute(
+      'data-tooltip',
+      expect.stringContaining('基础墙缝伤害20')
+    );
+  });
+
+  it('preserves the uncolored total for tagged wall crack damage', () => {
+    const { container } = render(<TextWithHoverTooltips text='{_20*,无来源}伤害' />);
+
+    expect(container).toHaveTextContent('20无来源伤害');
+    expect(container.querySelector('.text-red-500')).not.toBeInTheDocument();
+    expect(screen.getByText('无来源').closest('[data-tooltip]')).toHaveAttribute(
       'data-tooltip',
       expect.stringContaining('基础墙缝伤害20')
     );
