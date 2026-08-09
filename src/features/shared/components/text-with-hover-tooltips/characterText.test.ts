@@ -42,6 +42,10 @@ describe('preprocessText', () => {
   it('preserves malformed markup while wrapping eligible plain text', () => {
     expect(preprocessText('布奇{未闭合', '汤姆')).toBe('{布奇}{未闭合');
   });
+
+  it('does not auto-wrap names inside inline-class markup', () => {
+    expect(preprocessText('$布奇$text-orange-500#登场', '汤姆')).toBe('$布奇$text-orange-500#登场');
+  });
 });
 
 describe('resolveCharacterExpression', () => {

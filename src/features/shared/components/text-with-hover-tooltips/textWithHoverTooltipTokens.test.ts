@@ -53,4 +53,21 @@ describe('buildTextWithHoverTooltipTokens', () => {
 
     expect(claimHighlightedDamageSuffixes(parsed.tokens, true)).toEqual(parsed.tokens);
   });
+
+  it('applies automatic links after splitting highlights and bracket tooltips', () => {
+    const parsed = buildTextWithHoverTooltipTokens('**布奇**[布奇](布奇)', '汤姆');
+
+    expect(parsed.tokens).toEqual([
+      { type: 'text', text: '{布奇}', isHighlighted: true },
+      {
+        type: 'hoverTooltip',
+        visibleText: '{布奇}',
+        tooltipContent: '{布奇}',
+        isQuoted: false,
+        sourceIndex: 1,
+        matchIndex: 0,
+        isHighlighted: false,
+      },
+    ]);
+  });
 });

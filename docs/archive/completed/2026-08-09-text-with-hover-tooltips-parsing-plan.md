@@ -3,7 +3,8 @@
 ## Status
 
 - Date: 2026-08-09
-- State: Phase 1 complete; Phase 2 remains conditional
+- Last revised: 2026-08-10
+- State: Phase 1 and Phase 2 complete
 - Scope: Inline parsing and rendering performed by `TextWithHoverTooltips` and its helpers
 - Production impact: User-visible link and tooltip affordances; no data or API changes
 
@@ -84,17 +85,16 @@ Implementation result: automatic links are now applied around protected markup, 
 decoration flag over semantic text and bracket-tooltip tokens, and calculated damage claims an
 adjacent external suffix before rendering.
 
-## Phase 2: Conditional parser consolidation
+## Phase 2: Parser consolidation
 
-Phase 2 is not required to close the reported defect. Undertake it only if additional nesting is
-needed or parser-order regressions continue after Phase 1.
+Phase 2 was explicitly requested after Phase 1. Its scope remains limited to consolidating the
+project's existing inline syntax; it does not introduce a general Markdown grammar.
 
-If triggered, consolidate the remaining parsing flow so all supported inline constructs are
-tokenized before React elements are created and rendered through one semantic path. Extend the flat,
-decoration-aware token model from Phase 1 where practical. Introduce recursive syntax nodes only
-when actual supported nesting requires them.
+The remaining parsing flow tokenizes supported inline constructs before React elements are created
+and renders textual content through one semantic path. It extends the flat, decoration-aware token
+model from Phase 1 without adding arbitrary recursive syntax nodes.
 
-The consolidation should remove opaque intermediate elements and make parsing order explicit:
+The consolidation uses this explicit parsing order:
 
 1. replace buff identifiers;
 2. identify supported explicit containers;
@@ -102,12 +102,14 @@ The consolidation should remove opaque intermediate elements and make parsing or
 4. render semantic constructs; and
 5. apply visual-only coloring to remaining text.
 
-Do not build a general Markdown parser or arbitrary nesting grammar as part of this work. Phase 2
-should reduce the number of parsing paths rather than add another parser above the existing one.
+Implementation result: outer highlight and bracket-tooltip containers are identified before
+automatic linking; plain, inline-class, and explicit `{...}`/`《...》` content is converted to pure
+tokens; explicit content normalization and damage-suffix ownership are decided before rendering;
+and the renderer consumes that token plan without reparsing rendered React elements.
 
 ## Validation
 
-Use focused parser and component tests during implementation, then run lint, type-checking, and the
-full Jest suite because `TextWithHoverTooltips` is shared across many public pages. Manually verify
-the representative mixed-markup cases in light and dark themes and with keyboard, mouse, and touch
-interaction.
+Repository formatting, lint, and type-checking pass. Focused parser and component coverage passes,
+including automatic linking after container recognition, semantic markup nested in bracket
+tooltips, inline classes inside highlights, malformed input, and damage-suffix ownership. The full
+Jest suite passes.

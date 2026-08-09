@@ -144,8 +144,20 @@ export const buildTextWithHoverTooltipTokens = (
   rawText: string,
   currentCharacterId: string | undefined
 ): TextWithHoverTooltipTokens => {
-  const text = preprocessText(replaceBuffIds(rawText), currentCharacterId);
-  const tokens = splitMarkdownHighlights(text).flatMap(splitHoverTooltips);
+  const text = replaceBuffIds(rawText);
+  const tokens = splitMarkdownHighlights(text)
+    .flatMap(splitHoverTooltips)
+    .map((token): TextWithHoverTooltipToken => {
+      if (token.type === 'text') {
+        return { ...token, text: preprocessText(token.text, currentCharacterId) };
+      }
+
+      return {
+        ...token,
+        visibleText: preprocessText(token.visibleText, currentCharacterId),
+        tooltipContent: preprocessText(token.tooltipContent, currentCharacterId),
+      };
+    });
 
   return { text, tokens };
 };

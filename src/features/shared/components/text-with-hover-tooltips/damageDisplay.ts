@@ -1,3 +1,5 @@
+import { parseExplicitMarkup } from './explicitMarkup';
+
 export const calculateDamageValues = ({
   parsedNumber,
   boost,
@@ -49,12 +51,23 @@ const numericDamagePattern = /^-?\d+(?:\.\d+)?$/;
  */
 export const endsWithCalculatedDamageMarkup = (text: string, hasAttackBoost: boolean): boolean => {
   const markerMatch = /(?:\{([^{}]+)\}|《([^《》]+)》)$/.exec(text);
-  let content = markerMatch?.[1] ?? markerMatch?.[2];
+  const content = markerMatch?.[1] ?? markerMatch?.[2];
   if (!content) return false;
 
-  if (content.endsWith('*')) {
-    content = content.slice(0, -1);
-  }
+  return isCalculatedDamageMarkupContent(content, hasAttackBoost);
+};
+
+export const isCalculatedDamageMarkupContent = (
+  rawContent: string,
+  hasAttackBoost: boolean
+): boolean =>
+  isCalculatedDamageContentText(parseExplicitMarkup(rawContent).contentText, hasAttackBoost);
+
+export const isCalculatedDamageContentText = (
+  contentText: string,
+  hasAttackBoost: boolean
+): boolean => {
+  let content = contentText;
 
   const isWallCrackDamage = content.startsWith('_');
   if (isWallCrackDamage) {

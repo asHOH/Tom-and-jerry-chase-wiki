@@ -80,6 +80,14 @@ describe('TextWithHoverTooltips', () => {
     expect(link.closest('.box-decoration-clone')).toHaveClass('bg-amber-100/70');
   });
 
+  it('preserves inline-class tokens inside markdown highlights', () => {
+    render(<TextWithHoverTooltips text='**$重点$text-orange-500#**' />);
+
+    const styledText = screen.getByText('重点');
+    expect(styledText).toHaveClass('text-orange-500');
+    expect(styledText.closest('.box-decoration-clone')).toHaveClass('bg-amber-100/70');
+  });
+
   it('renders bracket tooltip text', () => {
     render(<TextWithHoverTooltips text='[短按](用于触发技能)' />);
 
@@ -94,6 +102,12 @@ describe('TextWithHoverTooltips', () => {
     expect(trigger.closest('.box-decoration-clone')).toHaveClass('bg-amber-100/70');
   });
 
+  it('renders semantic markup inside bracket-tooltip content through the same parser', () => {
+    render(<TextWithHoverTooltips text='[短按](获得{隐身})' />);
+
+    expect(screen.getByText('短按')).toHaveAttribute('data-tooltip', '获得隐身');
+  });
+
   it('renders braced text as a goto link', () => {
     render(<TextWithHoverTooltips text='获得{主动技能}' />);
 
@@ -106,6 +120,19 @@ describe('TextWithHoverTooltips', () => {
 
     expect(screen.getByText('5')).toHaveClass('text-red-500');
     expect(screen.getByText(/伤害/)).toBeInTheDocument();
+  });
+
+  it('keeps addition expressions distinct from calculated damage suffix ownership', () => {
+    const { container } = render(<TextWithHoverTooltips text='{5+2}伤害' />);
+
+    expect(screen.getByText('7')).toHaveAttribute('data-tooltip', '基础伤害5+角色增伤2');
+    expect(container.textContent).toBe('7伤害');
+  });
+
+  it('classifies styled numeric markup before consuming its damage suffix', () => {
+    const { container } = render(<TextWithHoverTooltips text='{$5$text-purple-500#}伤害' />);
+
+    expect(container.textContent).toBe('5伤害');
   });
 
   it('renders custom class spans', () => {

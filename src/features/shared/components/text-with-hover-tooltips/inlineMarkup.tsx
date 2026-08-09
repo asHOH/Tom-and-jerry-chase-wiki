@@ -1,59 +1,66 @@
-import React from 'react';
-
 import type { RenderTextPart } from './types';
 
-export const renderTextWithClasses = (text: string): RenderTextPart[] => {
-  const parts: RenderTextPart[] = [];
+export type InlineClassToken =
+  | {
+      type: 'text';
+      text: string;
+      sourceIndex: number;
+    }
+  | {
+      type: 'styledText';
+      text: string;
+      className: string;
+      sourceIndex: number;
+    };
+
+export const buildInlineClassTokens = (text: string): InlineClassToken[] => {
+  const tokens: InlineClassToken[] = [];
   let lastIndex = 0;
   const classPattern = /\$([^$]+)\$([^#]+)#?/g;
-  let match;
+  let match: RegExpExecArray | null;
 
   while ((match = classPattern.exec(text)) !== null) {
     if (match.index > lastIndex) {
-      parts.push(text.slice(lastIndex, match.index));
+      tokens.push({
+        type: 'text',
+        text: text.slice(lastIndex, match.index),
+        sourceIndex: lastIndex,
+      });
     }
 
-    const content = match[1] || '';
-    const className = match[2] || '';
-
-    parts.push(
-      <span key={`class-${match.index}`} className={className}>
-        {content}
-      </span>
-    );
+    tokens.push({
+      type: 'styledText',
+      text: match[1] || '',
+      className: match[2] || '',
+      sourceIndex: match.index,
+    });
 
     lastIndex = classPattern.lastIndex;
   }
 
   if (lastIndex < text.length) {
-    parts.push(text.slice(lastIndex));
+    tokens.push({ type: 'text', text: text.slice(lastIndex), sourceIndex: lastIndex });
   }
 
-  return parts;
+  return tokens;
 };
 
-export const extractTextFromElements = (elements: RenderTextPart[]): string => {
-  return elements
-    .map((element) => {
-      if (typeof element === 'string') {
-        return element;
-      }
+export const extractTextFromInlineClassTokens = (tokens: InlineClassToken[]): string =>
+  tokens.map((token) => token.text).join('');
 
-      const reactElement = element as React.ReactElement<{ children?: React.ReactNode }>;
-      if (reactElement.props && reactElement.props.children) {
-        if (typeof reactElement.props.children === 'string') {
-          return reactElement.props.children;
-        }
-
-        if (Array.isArray(reactElement.props.children)) {
-          return extractTextFromElements(reactElement.props.children);
-        }
-      }
-
-      return '';
-    })
-    .join('');
-};
+export const renderInlineClassTokens = (
+  tokens: InlineClassToken[],
+  keyPrefix: string = 'class'
+): RenderTextPart[] =>
+  tokens.map((token) =>
+    token.type === 'text' ? (
+      token.text
+    ) : (
+      <span key={`${keyPrefix}-${token.sourceIndex}`} className={token.className}>
+        {token.text}
+      </span>
+    )
+  );
 
 const applyDoubleQuotesOrange = (text: string): RenderTextPart[] => {
   const parts: RenderTextPart[] = [];

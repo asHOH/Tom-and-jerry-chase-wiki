@@ -11,43 +11,9 @@ import GotoLink from '@/components/GotoLink';
 import { resolveCharacterExpression } from './characterText';
 import { calculateDamageValues, orderDamageSuffixes } from './damageDisplay';
 import { parseDamageTags, TAG_DEFINITIONS } from './damageTags';
-import { extractTextFromElements, renderTextWithClasses } from './inlineMarkup';
-import type { CharacterRecord, ParsedName, RenderTextPart } from './types';
-
-/**
- * Check if a string has balanced parentheses and ends with ')' or '）'
- * Supports both ASCII () and full-width （）.
- */
-const hasBalancedParentheses = (text: string): boolean => {
-  let balance = 0;
-  for (let i = 0; i < text.length; i++) {
-    const ch = text[i];
-    if (ch === '(' || ch === '（') balance++;
-    if (ch === ')' || ch === '）') balance--;
-    if (balance < 0) return false;
-  }
-  return balance === 0 && (text.endsWith(')') || text.endsWith('）'));
-};
-
-/**
- * Extract the base name from content with parentheses
- * @param content - Content that may contain parentheses
- * @returns Object with baseName and categoryHint
- */
-const extractBaseNameAndCategoryHint = (content: string): ParsedName => {
-  // Check if content has balanced parentheses and ends with ')'
-  if (hasBalancedParentheses(content)) {
-    const lastOpenParen = Math.max(content.lastIndexOf('('), content.lastIndexOf('（'));
-    if (lastOpenParen !== -1) {
-      const baseName = content.substring(0, lastOpenParen).trim();
-      const categoryHint = content.substring(lastOpenParen + 1, content.length - 1).trim();
-      return { baseName, categoryHint };
-    }
-  }
-
-  // If no balanced parentheses, return the whole content as baseName
-  return { baseName: content, categoryHint: null };
-};
+import { renderInlineClassTokens } from './inlineMarkup';
+import { buildSemanticTextTokens } from './semanticTextTokens';
+import type { CharacterRecord, RenderTextPart } from './types';
 
 const renderDisplayElements = (elements: React.ReactNode[]): React.ReactElement[] =>
   elements.map((element, elementIndex) => (
@@ -72,44 +38,33 @@ export const renderTextWithTooltips = (
   const isCategoryHint = (v: string | null): v is CategoryHint =>
     !!v && (CATEGORY_HINTS as readonly string[]).includes(v);
 
-  // First, normalize 《content》 to {content} so we can reuse the same parser
-  const normalized = text.replace(/《([^》]+?)》/g, '{$1}');
+  const semanticTokens = buildSemanticTextTokens(text, attackBoost !== null);
 
-  // Process the text to handle both {} patterns and $class$ patterns
-  let lastIndex = 0;
-  const tooltipPattern = /\{([^}]+?)\}/g;
-  let match;
-
-  while ((match = tooltipPattern.exec(normalized)) !== null) {
-    // Add text before the match
-    if (match.index > lastIndex) {
-      const beforeText = normalized.slice(lastIndex, match.index);
-      // Process $class$ patterns in the text before the match
-      parts.push(...renderTextWithClasses(beforeText));
+  for (const token of semanticTokens) {
+    if (token.type === 'text') {
+      parts.push(token.text);
+      continue;
     }
 
-    const rawContent = match[1] || '';
-
-    // Detect trailing asterisk to indicate base damage only
-    let isBaseOnly = false;
-    let content = rawContent;
-    if (content.endsWith('*')) {
-      isBaseOnly = true;
-      content = content.slice(0, -1);
+    if (token.type === 'styledText') {
+      parts.push(...renderInlineClassTokens([token], `class-${index}`));
+      continue;
     }
 
-    // Extract base name and category hint (hide parentheses if present)
-    const { baseName, categoryHint } = extractBaseNameAndCategoryHint(content);
+    const rawContent = token.rawContent;
 
-    // Process the baseName for $class$ patterns
-    const classProcessedBaseName = renderTextWithClasses(baseName);
+    const { isBaseOnly, categoryHint, classTokens, contentText } = token.parsed;
+    const classProcessedBaseName = renderInlineClassTokens(
+      classTokens,
+      `explicit-${index}-${token.sourceIndex}`
+    );
 
     // Now process the class-processed content for tooltip logic
     let visibleText: string | RenderTextPart[] = classProcessedBaseName;
     let tooltipContent: string = '';
 
     // Convert the class-processed content to string for tooltip parsing
-    const contentForTooltip = extractTextFromElements(classProcessedBaseName);
+    const contentForTooltip = contentText;
 
     if (contentForTooltip.includes('+')) {
       const partsNum = contentForTooltip.split('+').map((s) => Number.parseFloat(s));
@@ -148,7 +103,7 @@ export const renderTextWithTooltips = (
               <GotoLink
                 name={linkName}
                 className='no-underline'
-                key={`${card.rank}-${match.index}`}
+                key={`${card.rank}-${token.sourceIndex}`}
                 {...(hint ? { categoryHint: hint } : {})}
               >
                 <Tag
@@ -168,14 +123,13 @@ export const renderTextWithTooltips = (
               <GotoLink
                 name={linkName}
                 className='underline'
-                key={`${linkName}-${tooltipPattern.lastIndex}`}
+                key={`${linkName}-${token.sourceEnd}`}
                 {...(hint2 ? { categoryHint: hint2 } : {})}
               >
                 {withoutUnderscore}
               </GotoLink>
             );
           }
-          lastIndex = tooltipPattern.lastIndex;
           continue;
         }
 
@@ -204,20 +158,14 @@ export const renderTextWithTooltips = (
         );
 
         parts.push(
-          <Tooltip key={`hover-${index}-${match.index}-${rawContent}`} content={tooltipContent}>
+          <Tooltip
+            key={`hover-${index}-${token.sourceIndex}-${rawContent}`}
+            content={tooltipContent}
+          >
             {displayText}
           </Tooltip>
         );
 
-        // Skip immediately following "伤害" or "点伤害" to avoid duplication
-        const afterMatch = normalized.slice(tooltipPattern.lastIndex);
-        const skipDamagePattern = /^(伤害|点伤害)/;
-        const skipMatch = skipDamagePattern.exec(afterMatch);
-        if (skipMatch) {
-          tooltipPattern.lastIndex += skipMatch[0].length;
-        }
-
-        lastIndex = tooltipPattern.lastIndex;
         continue;
       }
 
@@ -243,7 +191,7 @@ export const renderTextWithTooltips = (
             <GotoLink
               name={linkName}
               className='no-underline'
-              key={`${card.rank}-${match.index}`}
+              key={`${card.rank}-${token.sourceIndex}`}
               {...(hint ? { categoryHint: hint } : {})}
             >
               <Tag
@@ -263,14 +211,13 @@ export const renderTextWithTooltips = (
             <GotoLink
               name={linkName}
               className='underline'
-              key={`${linkName}-${tooltipPattern.lastIndex}`}
+              key={`${linkName}-${token.sourceEnd}`}
               {...(hint2 ? { categoryHint: hint2 } : {})}
             >
               {numericPart}
             </GotoLink>
           );
         }
-        lastIndex = tooltipPattern.lastIndex;
         continue;
       }
 
@@ -336,20 +283,11 @@ export const renderTextWithTooltips = (
       }
 
       parts.push(
-        <Tooltip key={`hover-${index}-${match.index}-${rawContent}`} content={fullTooltip}>
+        <Tooltip key={`hover-${index}-${token.sourceIndex}-${rawContent}`} content={fullTooltip}>
           <>{renderDisplayElements(displayElements)}</>
         </Tooltip>
       );
 
-      // Skip immediately following "伤害" or "点伤害"
-      const afterMatch = normalized.slice(tooltipPattern.lastIndex);
-      const skipDamagePattern = /^(伤害|点伤害)/;
-      const skipMatch = skipDamagePattern.exec(afterMatch);
-      if (skipMatch) {
-        tooltipPattern.lastIndex += skipMatch[0].length;
-      }
-
-      lastIndex = tooltipPattern.lastIndex;
       continue;
     } else {
       // Use the extracted baseName for further processing
@@ -362,7 +300,7 @@ export const renderTextWithTooltips = (
           <GotoLink
             name={linkName}
             className='underline'
-            key={`${linkName}-${tooltipPattern.lastIndex}`}
+            key={`${linkName}-${token.sourceEnd}`}
             categoryHint={hint2}
           >
             {typeof displayText === 'string' ? displayText : <>{displayText}</>}
@@ -388,7 +326,6 @@ export const renderTextWithTooltips = (
           const skill = owner?.skills?.find?.((s) => s.type === type);
           if (skill?.name) {
             pushSkillLink(visibleText, `${level}级${skill.name}`);
-            lastIndex = tooltipPattern.lastIndex;
             matchedLeveled = true;
             break;
           }
@@ -400,7 +337,6 @@ export const renderTextWithTooltips = (
           const active = owner?.skills?.find?.((s) => s.type === 'active');
           if (active?.name) {
             pushSkillLink(visibleText, active.name);
-            lastIndex = tooltipPattern.lastIndex;
             continue;
           }
         }
@@ -408,7 +344,6 @@ export const renderTextWithTooltips = (
           const w1 = owner?.skills?.find?.((s) => s.type === 'weapon1');
           if (w1?.name) {
             pushSkillLink(visibleText, w1.name);
-            lastIndex = tooltipPattern.lastIndex;
             continue;
           }
         }
@@ -417,7 +352,6 @@ export const renderTextWithTooltips = (
       // If matches leveled skill prefix like "2级机械身躯", render as a generic skill link
       if (/^\d+级/.test(contentForTooltip)) {
         pushSkillLink(visibleText, contentForTooltip);
-        lastIndex = tooltipPattern.lastIndex;
         continue;
       }
 
@@ -439,7 +373,6 @@ export const renderTextWithTooltips = (
             const evaluated = resolveCharacterExpression(contentForTooltip, currentCharacter);
             if (typeof evaluated === 'string' || typeof evaluated === 'number') {
               parts.push(String(evaluated));
-              lastIndex = tooltipPattern.lastIndex;
               continue;
             }
           }
@@ -453,7 +386,7 @@ export const renderTextWithTooltips = (
               <GotoLink
                 name={linkName}
                 className='no-underline'
-                key={`${card.rank}-${match.index}`}
+                key={`${card.rank}-${token.sourceIndex}`}
                 {...(hint ? { categoryHint: hint } : {})}
               >
                 <Tag
@@ -467,7 +400,6 @@ export const renderTextWithTooltips = (
                 </Tag>
               </GotoLink>
             );
-            lastIndex = tooltipPattern.lastIndex;
             continue;
           }
 
@@ -477,13 +409,12 @@ export const renderTextWithTooltips = (
             <GotoLink
               name={linkName}
               className='underline'
-              key={`${linkName}-${tooltipPattern.lastIndex}`}
+              key={`${linkName}-${token.sourceEnd}`}
               {...(hint2 ? { categoryHint: hint2 } : {})}
             >
               {typeof visibleText === 'string' ? visibleText : <>{visibleText}</>}
             </GotoLink>
           );
-          lastIndex = tooltipPattern.lastIndex;
           continue;
         }
 
@@ -513,20 +444,14 @@ export const renderTextWithTooltips = (
         );
 
         parts.push(
-          <Tooltip key={`hover-${index}-${match.index}-${rawContent}`} content={tooltipContent}>
+          <Tooltip
+            key={`hover-${index}-${token.sourceIndex}-${rawContent}`}
+            content={tooltipContent}
+          >
             {displayText}
           </Tooltip>
         );
 
-        // Skip immediately following "伤害" or "点伤害"
-        const afterMatch = normalized.slice(tooltipPattern.lastIndex);
-        const skipDamagePattern = /^(伤害|点伤害)/;
-        const skipMatch = skipDamagePattern.exec(afterMatch);
-        if (skipMatch) {
-          tooltipPattern.lastIndex += skipMatch[0].length;
-        }
-
-        lastIndex = tooltipPattern.lastIndex;
         continue;
       }
 
@@ -554,7 +479,7 @@ export const renderTextWithTooltips = (
             <GotoLink
               name={linkName}
               className='no-underline'
-              key={`${card.rank}-${match.index}`}
+              key={`${card.rank}-${token.sourceIndex}`}
               {...(hint ? { categoryHint: hint } : {})}
             >
               <Tag
@@ -574,14 +499,13 @@ export const renderTextWithTooltips = (
             <GotoLink
               name={linkName}
               className='underline'
-              key={`${linkName}-${tooltipPattern.lastIndex}`}
+              key={`${linkName}-${token.sourceEnd}`}
               {...(hint2 ? { categoryHint: hint2 } : {})}
             >
               {numericPart}
             </GotoLink>
           );
         }
-        lastIndex = tooltipPattern.lastIndex;
         continue;
       }
 
@@ -647,37 +571,20 @@ export const renderTextWithTooltips = (
       }
 
       parts.push(
-        <Tooltip key={`hover-${index}-${match.index}-${rawContent}`} content={fullTooltip}>
+        <Tooltip key={`hover-${index}-${token.sourceIndex}-${rawContent}`} content={fullTooltip}>
           <>{renderDisplayElements(displayElements)}</>
         </Tooltip>
       );
 
-      // Skip immediately following "伤害" or "点伤害"
-      const afterMatch = normalized.slice(tooltipPattern.lastIndex);
-      const skipDamagePattern = /^(伤害|点伤害)/;
-      const skipMatch = skipDamagePattern.exec(afterMatch);
-      if (skipMatch) {
-        tooltipPattern.lastIndex += skipMatch[0].length;
-      }
-
-      lastIndex = tooltipPattern.lastIndex;
       continue;
     }
 
     // For '+' and '_' branches (or invalid '+'), show tooltip for computed visible text
     parts.push(
-      <Tooltip key={`hover-${index}-${match.index}-${rawContent}`} content={tooltipContent}>
+      <Tooltip key={`hover-${index}-${token.sourceIndex}-${rawContent}`} content={tooltipContent}>
         {typeof visibleText === 'string' ? visibleText : <>{visibleText}</>}
       </Tooltip>
     );
-
-    lastIndex = tooltipPattern.lastIndex;
-  }
-
-  // Add remaining text after the last match
-  if (lastIndex < normalized.length) {
-    const remainingText = normalized.slice(lastIndex);
-    parts.push(...renderTextWithClasses(remainingText));
   }
 
   return parts;

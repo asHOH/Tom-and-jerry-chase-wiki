@@ -4,11 +4,6 @@ import type { characters } from '@/data/static';
 
 export type CharacterRecord = (typeof characters)[string];
 
-export type ParsedName = {
-  baseName: string;
-  categoryHint: string | null;
-};
-
 export type RenderTextPart = string | React.ReactElement;
 
 export type DamageTagCategory =

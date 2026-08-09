@@ -184,7 +184,7 @@ export function preprocessText(text: string, currentCharacterName?: string | und
     )
   );
 
-  const explicitMarkupPattern = /\{[^{}]*\}|《[^《》]*》/g;
+  const explicitMarkupPattern = /\{[^{}]*\}|《[^《》]*》|\$[^$]+\$[^#]+#?/g;
   let result = '';
   let lastIndex = 0;
   let match: RegExpExecArray | null;
