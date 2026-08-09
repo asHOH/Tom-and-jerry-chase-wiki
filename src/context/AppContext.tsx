@@ -1,7 +1,7 @@
 'use client';
 
-import { useLayoutEffect } from 'react';
-import { proxy, useSnapshot } from 'valtio';
+import { useLayoutEffect, useSyncExternalStore } from 'react';
+import { proxy, subscribe } from 'valtio';
 
 import { isOriginalCharacter } from '@/lib/editUtils';
 import { storage, StorageKey } from '@/lib/localStorage';
@@ -17,6 +17,13 @@ type AppContextType = {
 const isDetailedViewStore = proxy({ isDetailedView: false });
 let hasHydratedDetailedView = false;
 let hasRegisteredDetailedViewStorageListener = false;
+
+const subscribeDetailedView = (onStoreChange: () => void) =>
+  subscribe(isDetailedViewStore, onStoreChange, true);
+
+const getDetailedViewSnapshot = () => isDetailedViewStore.isDetailedView;
+
+const getServerDetailedViewSnapshot = () => false;
 
 const readStoredDetailedView = () => {
   return storage.getJson<boolean>(StorageKey.DetailedView) === true;
@@ -47,7 +54,11 @@ const hydrateDetailedViewStore = () => {
 
 export const useAppContext = () => {
   const { navigate } = useNavigation();
-  const { isDetailedView } = useSnapshot(isDetailedViewStore);
+  const isDetailedView = useSyncExternalStore(
+    subscribeDetailedView,
+    getDetailedViewSnapshot,
+    getServerDetailedViewSnapshot
+  );
 
   useLayoutEffect(() => {
     hydrateDetailedViewStore();
