@@ -8,7 +8,7 @@ import Tag from '@/components/ui/Tag';
 import Tooltip from '@/components/ui/Tooltip';
 import GotoLink from '@/components/GotoLink';
 
-import { calculateDamageValues, orderDamageSuffixes } from './damageDisplay';
+import { calculateDamageValues, isNumericDamageText, orderDamageSuffixes } from './damageDisplay';
 import { parseDamageTags } from './damageTags';
 import type { DamageTagEffects, RenderTextPart } from './types';
 
@@ -41,7 +41,12 @@ type DamageTooltipOptions = {
   elementKey: string;
 };
 
-const NUMERIC_DAMAGE_PATTERN = /^-?\d+(?:\.\d+)?$/;
+type DamageKindDefinition = {
+  damageLabel: string;
+  boostLabel: string;
+  round: boolean;
+  highlightTaggedTotal: boolean;
+};
 
 const LEVELED_SKILL_PATTERNS: ReadonlyArray<{ regex: RegExp; type: SkillType }> = [
   { regex: /^(\d+)级被动$/, type: 'passive' },
@@ -50,13 +55,32 @@ const LEVELED_SKILL_PATTERNS: ReadonlyArray<{ regex: RegExp; type: SkillType }> 
   { regex: /^(\d+)级二武$/, type: 'weapon2' },
 ];
 
+const GENERIC_LEVELED_SKILL_PATTERN = /^\d+级/;
+
 const SKILL_ALIAS_TYPES: Readonly<Record<string, SkillType>> = {
   主动技能: 'active',
   武器技能: 'weapon1',
 };
 
+const DAMAGE_KIND_DEFINITIONS = {
+  character: {
+    damageLabel: '基础伤害',
+    boostLabel: '角色增伤',
+    round: true,
+    highlightTaggedTotal: true,
+  },
+  wallCrack: {
+    damageLabel: '基础墙缝伤害',
+    boostLabel: '角色墙缝增伤',
+    round: false,
+    highlightTaggedTotal: false,
+  },
+} as const satisfies Record<DamageKind, DamageKindDefinition>;
+
+const CATEGORY_HINT_SET = new Set<string>(CATEGORY_HINTS);
+
 const isCategoryHint = (value: string | null): value is CategoryHint =>
-  !!value && (CATEGORY_HINTS as readonly string[]).includes(value);
+  value !== null && CATEGORY_HINT_SET.has(value);
 
 const asReactNode = (text: RenderableText): React.ReactNode =>
   typeof text === 'string' ? text : <>{text}</>;
@@ -114,7 +138,7 @@ export const parseDamageContent = (content: string, initialIsBaseOnly: boolean):
       numericPart: content,
       tagParts: null,
       isBaseOnly: initialIsBaseOnly,
-      isNumeric: NUMERIC_DAMAGE_PATTERN.test(content),
+      isNumeric: isNumericDamageText(content),
     };
   }
 
@@ -126,7 +150,7 @@ export const parseDamageContent = (content: string, initialIsBaseOnly: boolean):
     numericPart,
     tagParts,
     isBaseOnly: initialIsBaseOnly || hasInlineBaseOnlyMarker,
-    isNumeric: NUMERIC_DAMAGE_PATTERN.test(numericPart),
+    isNumeric: isNumericDamageText(numericPart),
   };
 };
 
@@ -196,7 +220,7 @@ export const resolveSkillLinkName = (
     }
   }
 
-  return /^\d+级/.test(content) ? content : null;
+  return GENERIC_LEVELED_SKILL_PATTERN.test(content) ? content : null;
 };
 
 export const renderSkillLink = (
@@ -222,21 +246,20 @@ export const renderDamageTooltip = ({
   tagParts,
   elementKey,
 }: DamageTooltipOptions): React.ReactElement => {
+  const definition = DAMAGE_KIND_DEFINITIONS[kind];
   const tagEffects = parseDamageTags(tagParts ?? []);
   const effectiveBoost = tagEffects.preventBoost ? 0 : boost;
   const { baseValue, totalValue } = calculateDamageValues({
     parsedNumber,
     boost: effectiveBoost,
     isBaseOnly,
-    round: kind === 'character',
+    round: definition.round,
   });
 
-  const damageLabel = kind === 'wallCrack' ? '基础墙缝伤害' : '基础伤害';
-  const boostLabel = kind === 'wallCrack' ? '角色墙缝增伤' : '角色增伤';
-  const tooltipContent = `${damageLabel}${baseValue}${
-    effectiveBoost !== 0 ? `+${boostLabel}${effectiveBoost}` : ''
+  const tooltipContent = `${definition.damageLabel}${baseValue}${
+    effectiveBoost !== 0 ? `+${definition.boostLabel}${effectiveBoost}` : ''
   }${tagEffects.tooltipAppends.join('')}`;
-  const highlightTotal = kind === 'character' || tagParts === null;
+  const highlightTotal = definition.highlightTaggedTotal || tagParts === null;
   const displayElements = buildDamageDisplayElements(totalValue, tagEffects, highlightTotal);
 
   return (

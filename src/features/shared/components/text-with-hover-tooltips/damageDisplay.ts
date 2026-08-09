@@ -1,5 +1,8 @@
 import { parseExplicitMarkup } from './explicitMarkup';
 
+const NUMERIC_DAMAGE_PATTERN = /^-?\d+(?:\.\d+)?$/;
+const CALCULATED_DAMAGE_MARKUP_PATTERN = /(?:\{([^{}]+)\}|《([^《》]+)》)$/;
+
 export const calculateDamageValues = ({
   parsedNumber,
   boost,
@@ -43,14 +46,14 @@ export const orderDamageSuffixes = (displaySuffixes: string[]): string[] => {
   return suffixItems;
 };
 
-const numericDamagePattern = /^-?\d+(?:\.\d+)?$/;
+export const isNumericDamageText = (text: string): boolean => NUMERIC_DAMAGE_PATTERN.test(text);
 
 /**
  * Whether the final explicit marker in a text token renders its own `伤害` suffix.
  * Keep this aligned with the numeric damage branches in renderTextWithTooltips.
  */
 export const endsWithCalculatedDamageMarkup = (text: string, hasAttackBoost: boolean): boolean => {
-  const markerMatch = /(?:\{([^{}]+)\}|《([^《》]+)》)$/.exec(text);
+  const markerMatch = CALCULATED_DAMAGE_MARKUP_PATTERN.exec(text);
   const content = markerMatch?.[1] ?? markerMatch?.[2];
   if (!content) return false;
 
@@ -81,5 +84,5 @@ export const isCalculatedDamageContentText = (
     numericPart = numericPart.slice(0, -1);
   }
 
-  return numericDamagePattern.test(numericPart);
+  return isNumericDamageText(numericPart);
 };
