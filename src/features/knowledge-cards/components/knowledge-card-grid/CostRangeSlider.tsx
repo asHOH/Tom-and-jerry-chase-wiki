@@ -5,13 +5,13 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { cn, getCardCostColors } from '@/lib/design';
 import { useDarkMode } from '@/context/DarkModeContext';
 
-interface CostRangeSliderProps {
+type CostRangeSliderProps = {
   min: number;
   max: number;
   value: [number, number];
   onChange: (value: [number, number]) => void;
   className?: string;
-}
+};
 
 type DraggedHandle = 0 | 1 | null;
 

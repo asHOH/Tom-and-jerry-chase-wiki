@@ -9,9 +9,9 @@ import Button from '@/components/ui/Button';
 import { ChevronLeftIcon, ChevronRightIcon, CloseIcon } from '@/components/icons/CommonIcons';
 import Link from '@/components/Link';
 
-interface DocsSidebarProps {
+type DocsSidebarProps = {
   docPages: DocPage[];
-}
+};
 
 export default function DocsSidebar({ docPages }: DocsSidebarProps) {
   const pathname = usePathname();

@@ -15,10 +15,10 @@ import { cards } from '@/data/static';
 import type { FactionId } from '@/data/types';
 import { CatalogGrid, CatalogGridItem } from '@/components/ui/CatalogGrid';
 import CatalogPageShell from '@/components/ui/CatalogPageShell';
-import CostRangeSlider from '@/components/ui/CostRangeSlider';
 import FilterLabel from '@/components/ui/FilterLabel';
 import FilterRow from '@/components/ui/FilterRow';
 
+import CostRangeSlider from './CostRangeSlider';
 import KnowledgeCardDisplay from './KnowledgeCardDisplay';
 
 type Props = {

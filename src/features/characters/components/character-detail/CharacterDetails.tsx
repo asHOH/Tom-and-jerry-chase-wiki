@@ -19,7 +19,6 @@ import SingleItemTraitsText from '@/features/shared/components/SingleItemTraitsT
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
 import { filterTraitsBySingleItem } from '@/features/shared/traits/filterTraitsBySingleItem';
 import Card from '@/components/ui/Card';
-import CharacterNavigationButtons from '@/components/ui/CharacterNavigationButtons';
 import CollapseCard from '@/components/ui/CollapseCard';
 import DiscussEditButtons from '@/components/ui/DiscussEditButtons';
 import { editable } from '@/components/ui/editable';
@@ -30,6 +29,7 @@ import { PlusIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 
 import CharacterRelationDisplay from './character-relations/CharacterRelationDisplay';
+import CharacterNavigationButtons from './CharacterNavigationButtons';
 import CharacterHistoryDisplay from './info-displays/CharacterHistoryDisplay';
 import ContentWriterDisplay from './info-displays/ContentWriterDisplay';
 import CreateDateDisplay from './info-displays/CreateDateDisplay';

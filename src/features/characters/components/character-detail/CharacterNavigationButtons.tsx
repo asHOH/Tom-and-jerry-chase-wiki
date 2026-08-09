@@ -5,10 +5,10 @@ import { useCharacterNavigation } from '@/features/characters/hooks/useCharacter
 import MotionButton from '@/components/ui/MotionButton';
 import { ChevronLeftIcon, ChevronRightIcon } from '@/components/icons/CommonIcons';
 
-interface CharacterNavigationButtonsProps {
+type CharacterNavigationButtonsProps = {
   currentCharacterId: string;
   className?: string;
-}
+};
 
 export default function CharacterNavigationButtons({
   currentCharacterId,

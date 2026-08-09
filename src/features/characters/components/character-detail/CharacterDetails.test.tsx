@@ -68,7 +68,7 @@ jest.mock('@/components/ui/CollapseCard', () => ({
   default: ({ children }: { children: ReactNode }) => <section>{children}</section>,
 }));
 
-jest.mock('@/components/ui/CharacterNavigationButtons', () => ({
+jest.mock('./CharacterNavigationButtons', () => ({
   __esModule: true,
   default: () => <nav />,
 }));
