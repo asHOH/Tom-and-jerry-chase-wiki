@@ -1,14 +1,25 @@
 'use client';
 
+import ShareButton from '@/features/games/components/ShareButton';
 import { BaseDialog } from '@/components/ui/BaseDialog';
 import Button from '@/components/ui/Button';
+
+import type { GameMode } from './ModeSelector';
 
 type GameOverDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  mode: GameMode;
   score: number;
   highScore: number;
   onPlayAgain: () => void;
+};
+
+const MODE_LABELS: Record<GameMode, string> = {
+  cats: '猫阵营',
+  mice: '鼠阵营',
+  all: '全部角色',
+  blitz: '限时挑战',
 };
 
 /**
@@ -17,6 +28,7 @@ type GameOverDialogProps = {
 export default function GameOverDialog({
   open,
   onOpenChange,
+  mode,
   score,
   highScore,
   onPlayAgain,
@@ -59,7 +71,20 @@ export default function GameOverDialog({
 
         <p className='text-sm text-gray-500 dark:text-gray-400'>最高纪录: {highScore}</p>
 
-        <Button onClick={onPlayAgain}>再来一局</Button>
+        <div className='flex flex-wrap justify-center gap-3'>
+          <ShareButton
+            getShareText={() =>
+              [
+                '能力对决',
+                '',
+                `我在${MODE_LABELS[mode]}模式获得了 ${score} 分！`,
+                '',
+                '来挑战：tjwiki.com/games/stat-showdown/',
+              ].join('\n')
+            }
+          />
+          <Button onClick={onPlayAgain}>再来一局</Button>
+        </div>
       </div>
     </BaseDialog>
   );

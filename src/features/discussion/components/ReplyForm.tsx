@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 
+import { cn } from '@/lib/design';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import { FormTextarea } from '@/components/ui/FormControls';
@@ -14,6 +15,7 @@ type ReplyFormProps = {
   onSuccess: () => void;
   onCancel: () => void;
   isAuthenticated: boolean;
+  className?: string;
 };
 
 export function ReplyForm({
@@ -24,6 +26,7 @@ export function ReplyForm({
   onSuccess,
   onCancel,
   isAuthenticated,
+  className,
 }: ReplyFormProps) {
   const [content, setContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -71,7 +74,7 @@ export function ReplyForm({
   };
 
   return (
-    <Card bordered className='px-5 py-4'>
+    <Card bordered className={cn('px-5 py-4', className)}>
       {replyToNickname && (
         <div className='mb-3 flex items-center justify-between gap-3 rounded-md bg-gray-100 px-3 py-2 text-sm text-gray-700 dark:bg-slate-800 dark:text-gray-200'>
           <div className='min-w-0 truncate'>回复 {replyToNickname}</div>

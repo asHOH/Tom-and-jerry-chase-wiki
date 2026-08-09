@@ -6,6 +6,7 @@ import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { catCharacterIds, mouseCharacterIds } from '@/features/characters/data/characterMetadata';
 import GameLayout from '@/features/games/components/GameLayout';
+import ShareButton from '@/features/games/components/ShareButton';
 import Button from '@/components/ui/Button';
 
 import QuestionCard from './components/QuestionCard';
@@ -14,7 +15,11 @@ import QuizSelector from './components/QuizSelector';
 import ResultCard from './components/ResultCard';
 import catQuestions, { type QuizOption } from './data/catQuestions';
 import mouseQuestions from './data/mouseQuestions';
-import { buildUserProfile, findClosestCharacters } from './utils/matchCalculator';
+import {
+  buildUserProfile,
+  findClosestCharacters,
+  generateQuizShareText,
+} from './utils/matchCalculator';
 
 type GamePhase = 'select' | 'quiz' | 'result';
 
@@ -154,7 +159,16 @@ export default function PlaystyleQuizClient({ description, characters: charsSnap
             similarMatches={result.similarMatches}
             allCharacters={playableCharacters}
           />
-          <div className='flex justify-center gap-4'>
+          <div className='flex flex-wrap justify-center gap-4'>
+            <ShareButton
+              getShareText={() =>
+                generateQuizShareText(
+                  faction === 'cat' ? '猫阵营' : '鼠阵营',
+                  result.topMatch.characterId,
+                  result.similarMatches.map((match) => match.characterId)
+                )
+              }
+            />
             <Button variant='secondary' size='sm' className='px-5 py-2.5' onClick={handleRetake}>
               重新测试
             </Button>

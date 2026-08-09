@@ -5,10 +5,9 @@ import Link from 'next/link';
 
 import { formatArticleDate } from '@/lib/dateUtils';
 import Button from '@/components/ui/Button';
-import Card from '@/components/ui/Card';
-import { FormTextarea } from '@/components/ui/FormControls';
 
 import type { CommentNode } from '../types';
+import { ReplyForm } from './ReplyForm';
 
 function AuthorLink({ nickname }: { nickname: string | null }) {
   const displayName = nickname || '匿名';
@@ -47,49 +46,11 @@ export function TopicSection({
   onLoginRequired,
 }: TopicSectionProps) {
   const [replyTargetId, setReplyTargetId] = useState<string | null>(null);
-  const [replyContent, setReplyContent] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const handleSubmitReply = async (parentId: string) => {
-    const trimmed = replyContent.trim();
-    if (!trimmed) {
-      setError('请输入回复内容');
-      return;
-    }
-
-    try {
-      setIsSubmitting(true);
-      setError(null);
-
-      const response = await fetch('/api/comments', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ scope, targetId, parentId, content: trimmed }),
-      });
-
-      const payload = (await response.json().catch(() => null)) as {
-        comment?: unknown;
-        error?: string;
-      } | null;
-
-      if (!response.ok) {
-        setError(payload?.error ?? '回复失败');
-        return;
-      }
-
-      setReplyContent('');
-      setReplyTargetId(null);
-      onMutate();
-    } catch {
-      setError('回复失败，请稍后重试');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   const handleStatusChange = async (commentId: string, status: string) => {
     try {
+      setError(null);
       const response = await fetch('/api/comments', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -116,7 +77,6 @@ export function TopicSection({
       return;
     }
     setReplyTargetId(targetId);
-    setReplyContent('');
     setError(null);
   };
 
@@ -204,6 +164,7 @@ export function TopicSection({
               <span className='text-yellow-500 dark:text-yellow-400'>已隐藏</span>
             )}
           </div>
+          {error && <div className='mt-2 text-sm text-red-600 dark:text-red-400'>{error}</div>}
         </div>
 
         {/* Reply tree */}
@@ -222,53 +183,22 @@ export function TopicSection({
           </div>
         )}
 
-        {/* Inline reply form */}
         {replyTargetId !== null && (
-          <Card bordered className='mt-4 px-4 py-3'>
-            {replyTargetId !== topic.id && (
-              <div className='mb-3 flex items-center justify-between rounded-md bg-gray-100 px-3 py-1.5 text-sm text-gray-700 dark:bg-slate-800 dark:text-gray-300'>
-                <span className='truncate'>
-                  回复 {findAuthorInTree(topic, replyTargetId) || '匿名'}
-                </span>
-                <Button
-                  variant='unstyled'
-                  type='button'
-                  onClick={() => setReplyTargetId(null)}
-                  className='shrink-0 text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'
-                  aria-label='取消回复'
-                >
-                  ✕
-                </Button>
-              </div>
-            )}
-
-            <FormTextarea
-              value={replyContent}
-              onChange={(e) => setReplyContent(e.target.value)}
-              placeholder='写下你的回复…'
-              maxLength={2000}
-              disabled={isSubmitting}
-              size='sm'
-              className='h-24 resize-none p-3'
-            />
-
-            {error && <div className='mt-2 text-sm text-red-600 dark:text-red-400'>{error}</div>}
-
-            <div className='mt-3 flex items-center justify-end gap-2'>
-              <Button variant='secondary' size='sm' onClick={() => setReplyTargetId(null)}>
-                取消
-              </Button>
-              <Button
-                variant='success'
-                size='sm'
-                onClick={() => void handleSubmitReply(replyTargetId)}
-                disabled={isSubmitting}
-                loading={isSubmitting}
-              >
-                {isSubmitting ? '发送中…' : '发表回复'}
-              </Button>
-            </div>
-          </Card>
+          <ReplyForm
+            scope={scope}
+            targetId={targetId}
+            parentId={replyTargetId}
+            replyToNickname={
+              replyTargetId === topic.id ? null : findAuthorInTree(topic, replyTargetId)
+            }
+            onSuccess={() => {
+              setReplyTargetId(null);
+              onMutate();
+            }}
+            onCancel={() => setReplyTargetId(null)}
+            isAuthenticated={isAuthenticated}
+            className='mt-4 px-4 py-3'
+          />
         )}
       </div>
     </section>

@@ -419,6 +419,7 @@ export default function StatShowdownClient({
       <GameOverDialog
         open={showDialog}
         onOpenChange={setShowDialog}
+        mode={mode}
         score={score}
         highScore={highScore}
         onPlayAgain={handlePlayAgain}

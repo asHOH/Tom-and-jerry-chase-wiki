@@ -1,6 +1,7 @@
 'use client';
 
 import { generateGuessShareText } from '@/lib/gameUtils';
+import ShareButton from '@/features/games/components/ShareButton';
 import { BaseDialog } from '@/components/ui/BaseDialog';
 import Button from '@/components/ui/Button';
 import GameImage from '@/components/ui/GameImage';
@@ -62,7 +63,10 @@ export default function ResultDialog({
         </pre>
 
         {/* Action buttons */}
-        <Button onClick={onPlayAgain}>{isDaily ? '无限练习模式' : '再来一局'}</Button>
+        <div className='flex flex-wrap justify-center gap-3'>
+          <ShareButton getShareText={() => generateGuessShareText(puzzleNumber)} />
+          <Button onClick={onPlayAgain}>{isDaily ? '无限练习模式' : '再来一局'}</Button>
+        </div>
       </div>
     </BaseDialog>
   );
