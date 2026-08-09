@@ -15,6 +15,18 @@ import { renderInlineClassTokens } from './inlineMarkup';
 import { buildSemanticTextTokens } from './semanticTextTokens';
 import type { CharacterRecord, RenderTextPart } from './types';
 
+const ADDITION_EXPRESSION_PATTERN = /^(-?\d+(?:\.\d+)?)\+(-?\d+(?:\.\d+)?)$/;
+
+const parseAdditionExpression = (value: string): { base: number; boost: number } | null => {
+  const match = ADDITION_EXPRESSION_PATTERN.exec(value);
+  if (!match) return null;
+
+  return {
+    base: Number(match[1]),
+    boost: Number(match[2]),
+  };
+};
+
 const renderDisplayElements = (elements: React.ReactNode[]): React.ReactElement[] =>
   elements.map((element, elementIndex) => (
     <React.Fragment key={`display-element-${elementIndex}`}>{element}</React.Fragment>
@@ -67,14 +79,9 @@ export const renderTextWithTooltips = (
     const contentForTooltip = contentText;
 
     if (contentForTooltip.includes('+')) {
-      const partsNum = contentForTooltip.split('+').map((s) => Number.parseFloat(s));
-      const [base, boost] = partsNum;
-      if (
-        base !== undefined &&
-        boost !== undefined &&
-        !Number.isNaN(base) &&
-        !Number.isNaN(boost)
-      ) {
+      const additionExpression = parseAdditionExpression(contentForTooltip);
+      if (additionExpression) {
+        const { base, boost } = additionExpression;
         visibleText = String(base + boost);
         tooltipContent = boost === 0 ? `基础伤害${base}` : `基础伤害${base}+角色增伤${boost}`;
       } else {

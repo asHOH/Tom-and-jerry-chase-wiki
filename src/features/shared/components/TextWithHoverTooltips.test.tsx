@@ -129,6 +129,15 @@ describe('TextWithHoverTooltips', () => {
     expect(container.textContent).toBe('7伤害');
   });
 
+  it.each(['5+2+999', '5abc+2xyz', '5+2xyz'])(
+    'preserves malformed addition expression %s instead of partially evaluating it',
+    (expression) => {
+      render(<TextWithHoverTooltips text={`{${expression}}`} />);
+
+      expect(screen.getByText(expression)).toHaveAttribute('data-tooltip', expression);
+    }
+  );
+
   it('classifies styled numeric markup before consuming its damage suffix', () => {
     const { container } = render(<TextWithHoverTooltips text='{$5$text-purple-500#}伤害' />);
 
