@@ -14,7 +14,8 @@ COPY . .
 ENV NEXT_PUBLIC_DISABLE_ARTICLES=1 \
     NEXT_PUBLIC_DISABLE_FEEDBACK_EMAIL=1 \
     NEXT_TELEMETRY_DISABLED=1
-RUN node scripts/run-image-optimization.cjs && npm run build:skip-images
+RUN --mount=type=cache,target=/app/.next/cache,sharing=locked \
+    node scripts/run-image-optimization.cjs && npm run build:skip-images
 RUN npm prune --omit=dev
 
 FROM base AS runner

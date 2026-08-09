@@ -289,8 +289,12 @@ stop_pm2_process_for_build() {
 }
 
 clean_build_output() {
-  echo "Cleaning generated build output..."
-  rm -rf .next
+  echo "Cleaning generated build output while preserving .next/cache..."
+  if [ -d ".next/cache" ]; then
+    find .next -mindepth 1 -maxdepth 1 ! -name cache -exec rm -rf -- {} +
+  else
+    rm -rf .next
+  fi
   rm -f public/sw.js public/workbox-*.js
 }
 
