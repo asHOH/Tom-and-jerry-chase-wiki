@@ -55,7 +55,7 @@ export default function HomeContentClient({ description, hasServiceKey }: Props)
           title: navItem.label,
           description: navItem.description,
           href: navItem.href,
-          ariaLabel: navItem.description,
+          ariaLabel: `${navItem.label}：${navItem.description}`,
         };
       })
       .filter((item): item is NonNullable<typeof item> => item !== null);
@@ -101,8 +101,8 @@ export default function HomeContentClient({ description, hasServiceKey }: Props)
           <div>
             <FactionButton
               title='使用指南'
-              description='wiki基础功能的使用'
-              ariaLabel='wiki基础功能的使用'
+              description='wiki功能简介'
+              ariaLabel='使用指南：wiki功能简介'
               imageSrc='/images/mouseSkills/%E8%8E%B1%E6%81%A91-%E8%93%9D%E5%9B%BE.png'
               href='/usages/use'
               className='px-2'
@@ -111,8 +111,8 @@ export default function HomeContentClient({ description, hasServiceKey }: Props)
           <div>
             <FactionButton
               title='编辑指南'
-              description='条目编辑、提交审核与文章投稿'
-              ariaLabel='条目编辑、提交审核与文章投稿'
+              description='条目编辑与文章投稿'
+              ariaLabel='编辑指南：条目编辑与文章投稿'
               imageSrc='/images/mouseSkills/%E8%8E%B1%E6%81%A92-%E8%98%B8%E6%B0%B4%E7%AC%94.png'
               href='/usages/edit'
               className='px-2'
