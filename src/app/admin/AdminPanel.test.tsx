@@ -182,19 +182,23 @@ describe('AdminPanel', () => {
     global.fetch = originalFetch;
   });
 
-  it('renders the categories tab by default for reviewers and enables moderation without user access', () => {
+  it('renders the action moderation tab by default for reviewers without user access', () => {
     renderAdminPanel('Reviewer');
 
-    expect(screen.getByText('Category Management')).toBeInTheDocument();
+    expect(screen.getByTestId('moderation-panel')).toBeInTheDocument();
+    expect(screen.queryByText('Category Management')).not.toBeInTheDocument();
     expect(screen.queryByText('User Management')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('moderation-panel')).not.toBeInTheDocument();
-    expect(mockModerationPanel).not.toHaveBeenCalled();
+    expect(mockModerationPanel).toHaveBeenCalled();
 
-    expect(mockUseSWR.mock.calls).toEqual([
+    expect(mockUseSWR.mock.calls.slice(0, 6)).toEqual([
       [null, expect.any(Function)],
       ['categories', expect.any(Function)],
       [null, expect.any(Function)],
-      [null, expect.any(Function), { revalidateOnFocus: false }],
+      [
+        ['game-data-actions-admin', 'pending', null, null, 1],
+        expect.any(Function),
+        { revalidateOnFocus: false },
+      ],
       [null, expect.any(Function)],
       ['admin-notices', expect.any(Function)],
     ]);
@@ -203,13 +207,18 @@ describe('AdminPanel', () => {
   it('renders coordinator-only user management and wires the moderation panel props on tab switch', () => {
     renderAdminPanel('Coordinator');
 
-    expect(screen.getByText('Category Management')).toBeInTheDocument();
+    expect(screen.getByTestId('moderation-panel')).toBeInTheDocument();
+    expect(screen.queryByText('Category Management')).not.toBeInTheDocument();
     expect(screen.queryByText('User Management')).not.toBeInTheDocument();
-    expect(mockUseSWR.mock.calls).toEqual([
+    expect(mockUseSWR.mock.calls.slice(0, 6)).toEqual([
       ['users', expect.any(Function)],
       ['categories', expect.any(Function)],
       ['permission-groups', expect.any(Function)],
-      [null, expect.any(Function), { revalidateOnFocus: false }],
+      [
+        ['game-data-actions-admin', 'pending', null, null, 1],
+        expect.any(Function),
+        { revalidateOnFocus: false },
+      ],
       [null, expect.any(Function)],
       ['admin-notices', expect.any(Function)],
     ]);
@@ -390,8 +399,6 @@ describe('AdminPanel', () => {
     renderAdminPanel('Coordinator');
     const actionsTab = screen.getByRole('button', { name: /改动审核/ });
 
-    expect(actionsTab).not.toHaveTextContent('1');
-    fireEvent.click(actionsTab);
     await waitFor(() => expect(actionsTab).toHaveTextContent('1'));
 
     fireEvent.click(screen.getByRole('button', { name: '分类管理' }));
@@ -420,6 +427,14 @@ describe('AdminPanel', () => {
     );
   });
 
+  it('falls back to category management without moderation access', () => {
+    permissionOverrides = new Set(['category.update']);
+    renderAdminPanel(null);
+
+    expect(screen.getByText('Category Management')).toBeInTheDocument();
+    expect(screen.queryByTestId('moderation-panel')).not.toBeInTheDocument();
+  });
+
   it('keeps both user management and moderation hidden for unprivileged roles', () => {
     renderAdminPanel(null);
 
@@ -428,7 +443,7 @@ describe('AdminPanel', () => {
     expect(screen.queryByTestId('moderation-panel')).not.toBeInTheDocument();
     expect(screen.queryAllByRole('button')).toHaveLength(0);
 
-    expect(mockUseSWR.mock.calls).toEqual([
+    expect(mockUseSWR.mock.calls.slice(0, 6)).toEqual([
       [null, expect.any(Function)],
       [null, expect.any(Function)],
       [null, expect.any(Function)],
@@ -457,11 +472,11 @@ describe('AdminPanel', () => {
   });
 
   it('opens the requested admin tab from the query string when allowed', () => {
-    currentSearchParams = new URLSearchParams('tab=actions');
+    currentSearchParams = new URLSearchParams('tab=categories');
 
     renderAdminPanel('Coordinator');
 
-    expect(screen.getByTestId('moderation-panel')).toBeInTheDocument();
-    expect(mockModerationPanel).toHaveBeenCalled();
+    expect(screen.getByText('Category Management')).toBeInTheDocument();
+    expect(screen.queryByTestId('moderation-panel')).not.toBeInTheDocument();
   });
 });

@@ -124,7 +124,7 @@ const isAdminTab = (value: string | null): value is AdminTab =>
   value !== null && ADMIN_TABS.includes(value as AdminTab);
 
 const AdminPanel = () => {
-  const [activeTab, setActiveTab] = useState<AdminTab>('categories');
+  const [activeTab, setActiveTab] = useState<AdminTab>('actions');
   const [actionStatus, setActionStatus] = useState<GameDataActionStatusFilter>('pending');
   const [actionEntityType, setActionEntityType] = useState<PublishableEntityType | null>(null);
   const [actionId, setActionId] = useState<string | null>(null);
@@ -158,6 +158,14 @@ const AdminPanel = () => {
   const enableNoticeAccess = !administrativeActionsBlocked && permissions.has('notice.manage');
 
   useEffect(() => {
+    if (activeTab === 'actions' && !enableActionModeration) {
+      if (enableCategoryAccess) setActiveTab('categories');
+      else if (enableGroupAccess) setActiveTab('groups');
+      else if (enableUserAccess) setActiveTab('users');
+      else if (enableNoticeAccess) setActiveTab('notices');
+      else if (enableBlockAccess) setActiveTab('blocks');
+    }
+
     if (activeTab === 'categories' && !enableCategoryAccess) {
       if (enableGroupAccess) setActiveTab('groups');
       else if (enableUserAccess) setActiveTab('users');
@@ -234,6 +242,7 @@ const AdminPanel = () => {
 
   useEffect(() => {
     if (
+      !enableActionModeration ||
       activeTab !== 'actions' ||
       actionStatus !== 'pending' ||
       actionEntityType !== null ||
@@ -244,7 +253,15 @@ const AdminPanel = () => {
       return;
     }
     setLoadedPendingCount(actionData.totalCount);
-  }, [actionData, actionEntityType, actionId, actionPage, actionStatus, activeTab]);
+  }, [
+    actionData,
+    actionEntityType,
+    actionId,
+    actionPage,
+    actionStatus,
+    activeTab,
+    enableActionModeration,
+  ]);
 
   useEffect(() => {
     if (actionData === undefined) return;
