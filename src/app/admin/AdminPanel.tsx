@@ -70,15 +70,12 @@ const fetchGroups = async (): Promise<GroupsResponse> => {
   return response.json();
 };
 
-const ACTION_PAGE_SIZE = 50;
-
 type GameDataActionsKey = readonly [
   'game-data-actions-admin',
   GameDataActionStatusFilter,
   PublishableEntityType | null,
   string | null,
-  string | null,
-  typeof ACTION_PAGE_SIZE,
+  number,
 ];
 
 const fetchGameDataActions = async ([
@@ -86,13 +83,11 @@ const fetchGameDataActions = async ([
   status,
   entityType,
   actionId,
-  cursor,
-  limit,
+  page,
 ]: GameDataActionsKey): Promise<AdminGameDataActionsResponse> => {
-  const searchParams = new URLSearchParams({ status, limit: String(limit) });
+  const searchParams = new URLSearchParams({ status, page: String(page) });
   if (entityType !== null) searchParams.set('entityType', entityType);
   if (actionId !== null) searchParams.set('actionId', actionId);
-  if (cursor !== null) searchParams.set('cursor', cursor);
 
   const response = await fetch(`/api/game-data-actions/admin?${searchParams.toString()}`);
   if (!response.ok) {
@@ -133,12 +128,8 @@ const AdminPanel = () => {
   const [actionStatus, setActionStatus] = useState<GameDataActionStatusFilter>('pending');
   const [actionEntityType, setActionEntityType] = useState<PublishableEntityType | null>(null);
   const [actionId, setActionId] = useState<string | null>(null);
-  const [actionCursor, setActionCursor] = useState<string | null>(null);
-  const [actionCursorStack, setActionCursorStack] = useState<(string | null)[]>([]);
-  const [loadedPendingPage, setLoadedPendingPage] = useState<{
-    count: number;
-    hasMore: boolean;
-  } | null>(null);
+  const [actionPage, setActionPage] = useState(1);
+  const [loadedPendingCount, setLoadedPendingCount] = useState<number | null>(null);
   const searchParams = useSearchParams();
   const permissions = usePermissions();
   const { blockSummary } = useUser();
@@ -218,16 +209,14 @@ const AdminPanel = () => {
     fetchGroups
   );
 
-  const { data: actionData, mutate: mutatePendingActions } = useSWR(
+  const {
+    data: actionData,
+    isLoading: isLoadingActions,
+    isValidating: isValidatingActions,
+    mutate: mutatePendingActions,
+  } = useSWR(
     enableActionModeration && activeTab === 'actions'
-      ? ([
-          'game-data-actions-admin',
-          actionStatus,
-          actionEntityType,
-          actionId,
-          actionCursor,
-          ACTION_PAGE_SIZE,
-        ] as const)
+      ? (['game-data-actions-admin', actionStatus, actionEntityType, actionId, actionPage] as const)
       : null,
     fetchGameDataActions,
     { revalidateOnFocus: false }
@@ -249,25 +238,22 @@ const AdminPanel = () => {
       actionStatus !== 'pending' ||
       actionEntityType !== null ||
       actionId !== null ||
-      actionCursor !== null ||
+      actionPage !== 1 ||
       actionData === undefined
     ) {
       return;
     }
-    const nextPendingPage = {
-      count: actionData.submissions.length,
-      hasMore: actionData.nextCursor !== null,
-    };
-    setLoadedPendingPage((current) =>
-      current?.count === nextPendingPage.count && current.hasMore === nextPendingPage.hasMore
-        ? current
-        : nextPendingPage
-    );
-  }, [actionCursor, actionData, actionEntityType, actionId, actionStatus, activeTab]);
+    setLoadedPendingCount(actionData.totalCount);
+  }, [actionData, actionEntityType, actionId, actionPage, actionStatus, activeTab]);
+
+  useEffect(() => {
+    if (actionData === undefined) return;
+    const lastAvailablePage = Math.max(actionData.totalPages, 1);
+    if (actionPage > lastAvailablePage) setActionPage(lastAvailablePage);
+  }, [actionData, actionPage]);
 
   const resetActionPagination = () => {
-    setActionCursor(null);
-    setActionCursorStack([]);
+    setActionPage(1);
   };
 
   const handleActionStatusChange = (status: GameDataActionStatusFilter) => {
@@ -286,17 +272,19 @@ const AdminPanel = () => {
   };
 
   const showNextActionPage = () => {
-    if (!actionData?.nextCursor) return;
-    setActionCursorStack((current) => [...current, actionCursor]);
-    setActionCursor(actionData.nextCursor);
+    if (!actionData || actionPage >= actionData.totalPages) return;
+    setActionPage((current) => current + 1);
   };
 
   const showPreviousActionPage = () => {
-    setActionCursorStack((current) => {
-      if (current.length === 0) return current;
-      setActionCursor(current.at(-1) ?? null);
-      return current.slice(0, -1);
-    });
+    setActionPage((current) => Math.max(1, current - 1));
+  };
+
+  const showFirstActionPage = () => setActionPage(1);
+
+  const showLastActionPage = () => {
+    if (!actionData || actionData.totalPages === 0) return;
+    setActionPage(actionData.totalPages);
   };
 
   const getTabClassName = (tab: AdminTab) =>
@@ -351,10 +339,9 @@ const AdminPanel = () => {
             className={getTabClassName('actions')}
           >
             改动审核
-            {loadedPendingPage !== null && loadedPendingPage.count > 0 && (
+            {loadedPendingCount !== null && loadedPendingCount > 0 && (
               <span className='ml-1.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-orange-100 px-1.5 text-xs font-medium text-orange-600 dark:bg-orange-900/30 dark:text-orange-400'>
-                {loadedPendingPage.count}
-                {loadedPendingPage.hasMore ? '+' : ''}
+                {loadedPendingCount}
               </span>
             )}
           </Button>
@@ -422,11 +409,14 @@ const AdminPanel = () => {
           actionId={actionId}
           onActionIdChange={handleActionIdChange}
           pendingActions={pendingActions}
-          nextCursor={actionData?.nextCursor ?? null}
-          hasPreviousPage={actionCursorStack.length > 0}
+          currentPage={actionData?.currentPage ?? 0}
+          totalPages={actionData?.totalPages ?? 0}
+          isPageLoading={isLoadingActions || isValidatingActions}
+          onFirstPage={showFirstActionPage}
           onNextPage={showNextActionPage}
           onPreviousPage={showPreviousActionPage}
-          pageKey={`${actionStatus}:${actionEntityType ?? ''}:${actionId ?? ''}:${actionCursor ?? ''}`}
+          onLastPage={showLastActionPage}
+          pageKey={`${actionStatus}:${actionEntityType ?? ''}:${actionId ?? ''}:${actionPage}`}
           mutatePendingActions={mutatePendingActions}
         />
       )}

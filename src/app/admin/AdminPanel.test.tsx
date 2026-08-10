@@ -86,10 +86,13 @@ jest.mock('@/features/admin/components/GameDataActionModerationPanel', () => ({
     actionId?: string | null;
     onActionIdChange?: (actionId: string | null) => void;
     pendingActions: PendingGameDataAction[];
-    nextCursor?: string | null;
-    hasPreviousPage?: boolean;
+    currentPage?: number;
+    totalPages?: number;
+    isPageLoading?: boolean;
+    onFirstPage?: () => void;
     onNextPage?: () => void;
     onPreviousPage?: () => void;
+    onLastPage?: () => void;
     pageKey?: string;
     mutatePendingActions: () => Promise<unknown> | unknown;
   }) {
@@ -98,6 +101,10 @@ jest.mock('@/features/admin/components/GameDataActionModerationPanel', () => ({
       <div data-testid='moderation-panel'>
         Moderation Panel
         <button onClick={() => props.onActionStatusChange?.('approved')}>加载已批准改动</button>
+        <button onClick={props.onFirstPage}>首页</button>
+        <button onClick={props.onPreviousPage}>上一页</button>
+        <button onClick={props.onNextPage}>下一页</button>
+        <button onClick={props.onLastPage}>尾页</button>
       </div>
     );
   },
@@ -157,7 +164,12 @@ describe('AdminPanel', () => {
 
       if (Array.isArray(key) && key[0] === 'game-data-actions-admin') {
         return createSWRResponse(
-          { submissions: samplePendingActions, nextCursor: null },
+          {
+            submissions: samplePendingActions,
+            currentPage: 1,
+            totalPages: 1,
+            totalCount: 1,
+          },
           mutatePendingActions
         );
       }
@@ -227,15 +239,18 @@ describe('AdminPanel', () => {
       actionId: null,
       onActionIdChange: expect.any(Function),
       pendingActions: samplePendingActions,
-      nextCursor: null,
-      hasPreviousPage: false,
+      currentPage: 1,
+      totalPages: 1,
+      isPageLoading: false,
+      onFirstPage: expect.any(Function),
       onNextPage: expect.any(Function),
       onPreviousPage: expect.any(Function),
-      pageKey: 'pending:::',
+      onLastPage: expect.any(Function),
+      pageKey: 'pending:::1',
       mutatePendingActions,
     });
     expect(mockUseSWR).toHaveBeenCalledWith(
-      ['game-data-actions-admin', 'pending', null, null, null, 50],
+      ['game-data-actions-admin', 'pending', null, null, 1],
       expect.any(Function),
       { revalidateOnFocus: false }
     );
@@ -243,7 +258,7 @@ describe('AdminPanel', () => {
     fireEvent.click(screen.getByRole('button', { name: '加载已批准改动' }));
 
     expect(mockUseSWR).toHaveBeenCalledWith(
-      ['game-data-actions-admin', 'approved', null, null, null, 50],
+      ['game-data-actions-admin', 'approved', null, null, 1],
       expect.any(Function),
       { revalidateOnFocus: false }
     );
@@ -252,7 +267,7 @@ describe('AdminPanel', () => {
   it('uses the selected status in the action-list request', async () => {
     const fetchMock = jest.fn().mockResolvedValue({
       ok: true,
-      json: async () => ({ submissions: [], nextCursor: null }),
+      json: async () => ({ submissions: [], currentPage: 0, totalPages: 0, totalCount: 0 }),
     } as Response);
     global.fetch = fetchMock;
     renderAdminPanel('Coordinator');
@@ -271,7 +286,104 @@ describe('AdminPanel', () => {
     const fetcher = swrCall[1] as unknown as (key: readonly unknown[]) => Promise<unknown>;
     await fetcher(swrCall[0] as readonly unknown[]);
 
-    expect(fetchMock).toHaveBeenCalledWith('/api/game-data-actions/admin?status=approved&limit=50');
+    expect(fetchMock).toHaveBeenCalledWith('/api/game-data-actions/admin?status=approved&page=1');
+  });
+
+  it('navigates by page number and resets to page one when a filter changes', () => {
+    mockUseSWR.mockImplementation((key) => {
+      if (Array.isArray(key) && key[0] === 'game-data-actions-admin') {
+        const page = key[4] as number;
+        return createSWRResponse(
+          {
+            submissions: samplePendingActions,
+            currentPage: page,
+            totalPages: 4,
+            totalCount: 151,
+          },
+          mutatePendingActions
+        );
+      }
+      return createSWRResponse([], jest.fn());
+    });
+    renderAdminPanel('Coordinator');
+
+    fireEvent.click(screen.getByRole('button', { name: /改动审核/ }));
+    fireEvent.click(screen.getByRole('button', { name: '下一页' }));
+    expect(mockUseSWR).toHaveBeenCalledWith(
+      ['game-data-actions-admin', 'pending', null, null, 2],
+      expect.any(Function),
+      { revalidateOnFocus: false }
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: '尾页' }));
+    expect(mockUseSWR).toHaveBeenCalledWith(
+      ['game-data-actions-admin', 'pending', null, null, 4],
+      expect.any(Function),
+      { revalidateOnFocus: false }
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: '加载已批准改动' }));
+    expect(mockUseSWR).toHaveBeenCalledWith(
+      ['game-data-actions-admin', 'approved', null, null, 1],
+      expect.any(Function),
+      { revalidateOnFocus: false }
+    );
+  });
+
+  it('clamps to the new last page when refreshed totals shrink', async () => {
+    mockUseSWR.mockImplementation((key) => {
+      if (Array.isArray(key) && key[0] === 'game-data-actions-admin') {
+        const page = key[4] as number;
+        return createSWRResponse(
+          {
+            submissions: page === 1 ? samplePendingActions : [],
+            currentPage: page,
+            totalPages: page === 1 ? 2 : 1,
+            totalCount: 50,
+          },
+          mutatePendingActions
+        );
+      }
+      return createSWRResponse([], jest.fn());
+    });
+    renderAdminPanel('Coordinator');
+
+    fireEvent.click(screen.getByRole('button', { name: /改动审核/ }));
+    fireEvent.click(screen.getByRole('button', { name: '下一页' }));
+
+    expect(mockUseSWR).toHaveBeenCalledWith(
+      ['game-data-actions-admin', 'pending', null, null, 2],
+      expect.any(Function),
+      { revalidateOnFocus: false }
+    );
+    await waitFor(() =>
+      expect(mockModerationPanel.mock.calls.at(-1)?.[0]).toEqual(
+        expect.objectContaining({ pageKey: 'pending:::1' })
+      )
+    );
+  });
+
+  it('uses the exact filtered pending total in the cached badge', async () => {
+    mockUseSWR.mockImplementation((key) => {
+      if (Array.isArray(key) && key[0] === 'game-data-actions-admin') {
+        return createSWRResponse(
+          {
+            submissions: samplePendingActions,
+            currentPage: 1,
+            totalPages: 3,
+            totalCount: 123,
+          },
+          mutatePendingActions
+        );
+      }
+      return createSWRResponse([], jest.fn());
+    });
+    renderAdminPanel('Coordinator');
+    const actionsTab = screen.getByRole('button', { name: /改动审核/ });
+
+    fireEvent.click(actionsTab);
+
+    await waitFor(() => expect(actionsTab).toHaveTextContent('123'));
   });
 
   it('keeps the cached pending badge after leaving the actions tab', async () => {
@@ -302,7 +414,7 @@ describe('AdminPanel', () => {
       })
     );
     expect(mockUseSWR).toHaveBeenCalledWith(
-      ['game-data-actions-admin', 'pending', null, null, null, 50],
+      ['game-data-actions-admin', 'pending', null, null, 1],
       expect.any(Function),
       { revalidateOnFocus: false }
     );

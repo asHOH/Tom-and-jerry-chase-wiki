@@ -10,18 +10,8 @@ import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
 
 const ALLOWED_STATUSES = ['pending', 'approved', 'rejected', 'synced', 'revoked', 'all'] as const;
 const DEFAULT_PAGE_SIZE = 50;
-const MAX_PAGE_SIZE = 100;
+const MAX_PAGE = 10_000;
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-const ISO_TIMESTAMP_PATTERN =
-  /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?(?:Z|[+-]\d{2}:\d{2})$/;
-
-type CursorPayload = {
-  version: 1;
-  createdAt: string;
-  id: string;
-  status: GameDataActionStatusFilter;
-  entityType: PublishableEntityType | null;
-};
 
 function errorResponse(message: string) {
   return NextResponse.json({ error: message }, { status: 400 });
@@ -35,42 +25,10 @@ function isUuid(value: string): boolean {
   return UUID_PATTERN.test(value);
 }
 
-function encodeCursor(payload: CursorPayload): string {
-  return Buffer.from(JSON.stringify(payload), 'utf8').toString('base64url');
-}
-
-function decodeCursor(
-  encoded: string,
-  filters: { status: GameDataActionStatusFilter; entityType: PublishableEntityType | null }
-): CursorPayload | null {
-  try {
-    const parsed = JSON.parse(Buffer.from(encoded, 'base64url').toString('utf8')) as unknown;
-    if (parsed === null || typeof parsed !== 'object') return null;
-
-    const cursor = parsed as Partial<CursorPayload>;
-    if (
-      cursor.version !== 1 ||
-      typeof cursor.createdAt !== 'string' ||
-      !ISO_TIMESTAMP_PATTERN.test(cursor.createdAt) ||
-      Number.isNaN(Date.parse(cursor.createdAt)) ||
-      typeof cursor.id !== 'string' ||
-      !isUuid(cursor.id) ||
-      cursor.status !== filters.status ||
-      cursor.entityType !== filters.entityType
-    ) {
-      return null;
-    }
-
-    return cursor as CursorPayload;
-  } catch {
-    return null;
-  }
-}
-
 function queryShape(options: {
   actionId: boolean;
-  cursor: boolean;
   entityType: boolean;
+  page: number;
   status: GameDataActionStatusFilter;
 }): string {
   if (options.actionId) return 'admin-game-data-actions:list:exact-id';
@@ -82,7 +40,7 @@ function queryShape(options: {
       : options.entityType
         ? 'status-and-entity'
         : 'status';
-  return `admin-game-data-actions:list:${filter}:${options.cursor ? 'cursor-page' : 'first-page'}`;
+  return `admin-game-data-actions:list:${filter}:${options.page === 1 ? 'first-page' : 'offset-page'}`;
 }
 
 function logTiming(shape: string, startedAt: number, rowCount: number, success: boolean): void {
@@ -116,7 +74,7 @@ export async function GET(request: NextRequest) {
     const actionId = searchParams.get('actionId')?.trim() ?? null;
 
     if (actionId !== null) {
-      shape = queryShape({ actionId: true, cursor: false, entityType: false, status: 'pending' });
+      shape = queryShape({ actionId: true, entityType: false, page: 1, status: 'pending' });
       if (!isUuid(actionId)) return errorResponse('Invalid action ID');
 
       const { data, error } = await supabase
@@ -132,7 +90,12 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: 'Failed to fetch actions' }, { status: 500 });
       }
 
-      const response = await createResponse(data ?? []);
+      const response = {
+        ...(await createResponse(data ?? [])),
+        currentPage: data?.length ? 1 : 0,
+        totalPages: data?.length ? 1 : 0,
+        totalCount: data?.length ?? 0,
+      };
       rowCount = response.submissions.length;
       logTiming(shape, startedAt, rowCount, true);
       timingLogged = true;
@@ -149,61 +112,52 @@ export async function GET(request: NextRequest) {
     }
     const entityType = entityTypeParam as PublishableEntityType | null;
 
-    const limitParam = searchParams.get('limit');
-    const limit = limitParam === null ? DEFAULT_PAGE_SIZE : Number(limitParam);
-    if (!Number.isInteger(limit) || limit < 1 || limit > MAX_PAGE_SIZE) {
-      return errorResponse(`Limit must be between 1 and ${MAX_PAGE_SIZE}`);
+    const pageParam = searchParams.get('page');
+    const page = pageParam === null ? 1 : Number(pageParam);
+    if (!Number.isInteger(page) || page < 1 || page > MAX_PAGE) {
+      return errorResponse(`Page must be between 1 and ${MAX_PAGE}`);
     }
-
-    const cursorParam = searchParams.get('cursor');
-    const cursor = cursorParam === null ? null : decodeCursor(cursorParam, { status, entityType });
-    if (cursorParam !== null && cursor === null) return errorResponse('Invalid cursor');
 
     shape = queryShape({
       actionId: false,
-      cursor: cursor !== null,
       entityType: entityType !== null,
+      page,
       status,
     });
 
     let query = supabase
       .from('game_data_actions')
       .select(
-        'id, created_at, created_by, entity_type, is_public, message, rejection_reason, reviewed_at, reviewed_by, status'
+        'id, created_at, created_by, entity_type, is_public, message, rejection_reason, reviewed_at, reviewed_by, status',
+        { count: 'exact' }
       );
 
     if (status !== 'all') query = query.eq('status', status);
     if (entityType !== null) query = query.eq('entity_type', entityType);
-    if (cursor !== null) {
-      query = query.or(
-        `created_at.lt.${cursor.createdAt},and(created_at.eq.${cursor.createdAt},id.lt.${cursor.id})`
-      );
-    }
 
-    const { data, error } = await query
+    const rangeFrom = (page - 1) * DEFAULT_PAGE_SIZE;
+    const rangeTo = rangeFrom + DEFAULT_PAGE_SIZE - 1;
+
+    const { data, error, count } = await query
       .order('created_at', { ascending: false })
       .order('id', { ascending: false })
-      .limit(limit + 1);
+      .range(rangeFrom, rangeTo);
 
     if (error) {
       console.error('Error fetching admin game data actions:', error);
       return NextResponse.json({ error: 'Failed to fetch actions' }, { status: 500 });
     }
+    if (count === null) {
+      console.error('Exact count missing from admin game data actions response');
+      return NextResponse.json({ error: 'Failed to count actions' }, { status: 500 });
+    }
 
-    const rows = data ?? [];
-    const pageRows = rows.slice(0, limit);
-    const response = await createResponse(pageRows);
-    const lastRow = pageRows.at(-1);
-    response.nextCursor =
-      rows.length > limit && lastRow
-        ? encodeCursor({
-            version: 1,
-            createdAt: lastRow.created_at,
-            id: lastRow.id,
-            status,
-            entityType,
-          })
-        : null;
+    const response = {
+      ...(await createResponse(data ?? [])),
+      currentPage: count === 0 ? 0 : page,
+      totalPages: Math.ceil(count / DEFAULT_PAGE_SIZE),
+      totalCount: count,
+    };
 
     rowCount = response.submissions.length;
     logTiming(shape, startedAt, rowCount, true);
@@ -267,6 +221,5 @@ async function createResponse(rows: SummaryRow[]) {
       reviewed_by_nickname: row.reviewed_by ? (nicknameByUserId.get(row.reviewed_by) ?? '') : '',
       status: row.status,
     })),
-    nextCursor: null as string | null,
   };
 }

@@ -217,6 +217,81 @@ describe('GameDataActionModerationPanel', () => {
     expect(screen.getByText('本页已加载 2 条')).toBeInTheDocument();
   });
 
+  it('shows page totals and invokes all page navigation callbacks', () => {
+    const onFirstPage = jest.fn();
+    const onPreviousPage = jest.fn();
+    const onNextPage = jest.fn();
+    const onLastPage = jest.fn();
+
+    render(
+      <GameDataActionModerationPanel
+        pendingActions={[sampleAction]}
+        currentPage={2}
+        totalPages={4}
+        onFirstPage={onFirstPage}
+        onPreviousPage={onPreviousPage}
+        onNextPage={onNextPage}
+        onLastPage={onLastPage}
+        mutatePendingActions={jest.fn()}
+      />
+    );
+
+    expect(screen.getByText('第 2 / 4 页')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: '首页' }));
+    fireEvent.click(screen.getByRole('button', { name: '上一页' }));
+    fireEvent.click(screen.getByRole('button', { name: '下一页' }));
+    fireEvent.click(screen.getByRole('button', { name: '尾页' }));
+
+    expect(onFirstPage).toHaveBeenCalledTimes(1);
+    expect(onPreviousPage).toHaveBeenCalledTimes(1);
+    expect(onNextPage).toHaveBeenCalledTimes(1);
+    expect(onLastPage).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows zero-page metadata and disables navigation for empty results', () => {
+    render(<GameDataActionModerationPanel pendingActions={[]} mutatePendingActions={jest.fn()} />);
+
+    expect(screen.getByText('第 0 / 0 页')).toBeInTheDocument();
+    expect(screen.getByText('本页没有符合条件的改动')).toBeInTheDocument();
+    for (const name of ['首页', '上一页', '下一页', '尾页']) {
+      expect(screen.getByRole('button', { name })).toBeDisabled();
+    }
+  });
+
+  it('disables navigation for a single exact-ID result', () => {
+    render(
+      <GameDataActionModerationPanel
+        pendingActions={[sampleAction]}
+        currentPage={1}
+        totalPages={1}
+        mutatePendingActions={jest.fn()}
+      />
+    );
+
+    expect(screen.getByText('第 1 / 1 页')).toBeInTheDocument();
+    for (const name of ['首页', '上一页', '下一页', '尾页']) {
+      expect(screen.getByRole('button', { name })).toBeDisabled();
+    }
+  });
+
+  it('shows a loading state and disables page navigation while revalidating', () => {
+    render(
+      <GameDataActionModerationPanel
+        pendingActions={[]}
+        currentPage={2}
+        totalPages={4}
+        isPageLoading
+        mutatePendingActions={jest.fn()}
+      />
+    );
+
+    expect(screen.getByText('改动列表加载中…')).toBeInTheDocument();
+    expect(screen.getByText('分页加载中…')).toBeInTheDocument();
+    for (const name of ['首页', '上一页', '下一页', '尾页']) {
+      expect(screen.getByRole('button', { name })).toBeDisabled();
+    }
+  });
+
   it('keeps copy ID with copy JSON in expanded details and uses an icon-only expander', async () => {
     render(
       <GameDataActionModerationPanel
@@ -360,6 +435,8 @@ describe('GameDataActionModerationPanel', () => {
     render(
       <GameDataActionModerationPanel
         pendingActions={[sampleAction]}
+        currentPage={2}
+        totalPages={4}
         mutatePendingActions={jest.fn().mockResolvedValue(undefined)}
       />
     );
@@ -371,6 +448,10 @@ describe('GameDataActionModerationPanel', () => {
     await waitFor(() => {
       expect(screen.getByRole('button', { name: '批准' })).toBeDisabled();
     });
+
+    for (const name of ['首页', '上一页', '下一页', '尾页']) {
+      expect(screen.getByRole('button', { name })).toBeDisabled();
+    }
 
     expect(screen.getByTitle('过滤状态')).toBeDisabled();
     expect(screen.getByRole('button', { name: '收起详情' })).not.toBeDisabled();

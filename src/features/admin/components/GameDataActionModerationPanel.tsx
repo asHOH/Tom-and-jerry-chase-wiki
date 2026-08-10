@@ -42,10 +42,13 @@ type GameDataActionModerationPanelProps = {
   actionId?: string | null;
   onActionIdChange?: (actionId: string | null) => void;
   pendingActions: PendingGameDataAction[];
-  nextCursor?: string | null;
-  hasPreviousPage?: boolean;
+  currentPage?: number;
+  totalPages?: number;
+  isPageLoading?: boolean;
+  onFirstPage?: () => void;
   onNextPage?: () => void;
   onPreviousPage?: () => void;
+  onLastPage?: () => void;
   pageKey?: string;
   mutatePendingActions: () => Promise<unknown> | unknown;
 };
@@ -105,10 +108,13 @@ const GameDataActionModerationPanel = ({
   actionId: controlledActionId,
   onActionIdChange,
   pendingActions,
-  nextCursor = null,
-  hasPreviousPage = false,
+  currentPage = 0,
+  totalPages = 0,
+  isPageLoading = false,
+  onFirstPage,
   onNextPage,
   onPreviousPage,
+  onLastPage,
   pageKey = '',
   mutatePendingActions,
 }: GameDataActionModerationPanelProps) => {
@@ -452,6 +458,10 @@ const GameDataActionModerationPanel = ({
     setSelectedActionIds(new Set());
   };
 
+  const paginationDisabled = isModerating || isPageLoading;
+  const canGoBackward = currentPage > 1;
+  const canGoForward = totalPages > 0 && currentPage < totalPages;
+
   return (
     <div className='space-y-4'>
       <Card className='flex flex-col gap-3 rounded-md md:flex-row md:items-center md:justify-between'>
@@ -618,7 +628,9 @@ const GameDataActionModerationPanel = ({
         </div>
       </Card>
 
-      {pendingActions.length === 0 ? (
+      {isPageLoading && pendingActions.length === 0 ? (
+        <Card className='rounded-md text-gray-600 dark:text-slate-300'>改动列表加载中…</Card>
+      ) : pendingActions.length === 0 ? (
         <Card className='rounded-md text-gray-600 dark:text-slate-300'>本页没有符合条件的改动</Card>
       ) : (
         <div className='space-y-3'>
@@ -943,26 +955,43 @@ const GameDataActionModerationPanel = ({
         </div>
       )}
 
-      {(hasPreviousPage || nextCursor !== null) && (
-        <div className='flex items-center justify-end gap-2'>
-          <Button
-            disabled={!hasPreviousPage || isModerating}
-            onClick={onPreviousPage}
-            variant='secondary'
-            size='sm'
-          >
-            上一页
-          </Button>
-          <Button
-            disabled={nextCursor === null || isModerating}
-            onClick={onNextPage}
-            variant='secondary'
-            size='sm'
-          >
-            下一页
-          </Button>
-        </div>
-      )}
+      <div className='flex flex-wrap items-center justify-end gap-2' aria-live='polite'>
+        <span className='mr-1 text-sm text-gray-600 dark:text-slate-300'>
+          {isPageLoading ? '分页加载中…' : `第 ${currentPage} / ${totalPages} 页`}
+        </span>
+        <Button
+          disabled={!canGoBackward || paginationDisabled}
+          onClick={onFirstPage}
+          variant='secondary'
+          size='sm'
+        >
+          首页
+        </Button>
+        <Button
+          disabled={!canGoBackward || paginationDisabled}
+          onClick={onPreviousPage}
+          variant='secondary'
+          size='sm'
+        >
+          上一页
+        </Button>
+        <Button
+          disabled={!canGoForward || paginationDisabled}
+          onClick={onNextPage}
+          variant='secondary'
+          size='sm'
+        >
+          下一页
+        </Button>
+        <Button
+          disabled={!canGoForward || paginationDisabled}
+          onClick={onLastPage}
+          variant='secondary'
+          size='sm'
+        >
+          尾页
+        </Button>
+      </div>
 
       <ThankContributionDialog
         open={thankTarget !== null}

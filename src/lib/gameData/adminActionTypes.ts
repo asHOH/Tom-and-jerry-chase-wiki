@@ -26,5 +26,7 @@ export type GameDataActionDetail = {
 
 export type AdminGameDataActionsResponse = {
   submissions: GameDataActionSummary[];
-  nextCursor: string | null;
+  currentPage: number;
+  totalPages: number;
+  totalCount: number;
 };
