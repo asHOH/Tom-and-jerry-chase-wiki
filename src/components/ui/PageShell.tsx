@@ -11,18 +11,18 @@ const widthClasses: Record<PageShellWidth, string> = {
   maximum: 'max-w-7xl',
 };
 
-type PageShellProps<E extends ElementType = 'main'> = {
+type PageShellProps<E extends ElementType = 'div'> = {
   as?: E;
   width?: PageShellWidth;
 } & Omit<ComponentPropsWithoutRef<E>, 'as'>;
 
-export default function PageShell<E extends ElementType = 'main'>({
+export default function PageShell<E extends ElementType = 'div'>({
   as,
   width = 'standard',
   className,
   ...props
 }: PageShellProps<E>) {
-  const Component = (as ?? 'main') as ElementType;
+  const Component = (as ?? 'div') as ElementType;
 
   return (
     <Component

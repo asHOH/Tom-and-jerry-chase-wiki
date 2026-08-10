@@ -42,13 +42,13 @@ export const OfflineIndicator: React.FC = () => {
 
   // Apply body class when offline
   useEffect(() => {
-    if (typeof document !== 'undefined' && isOnline !== null) {
-      if (!isOnline) {
-        document.body.classList.add('offline-banner-visible');
-      } else {
-        document.body.classList.remove('offline-banner-visible');
-      }
-    }
+    if (isOnline === null) return;
+
+    document.body.classList.toggle('offline-banner-visible', !isOnline);
+
+    return () => {
+      document.body.classList.remove('offline-banner-visible');
+    };
   }, [isOnline]);
 
   // Don't render anything during SSR or initial hydration
@@ -59,7 +59,7 @@ export const OfflineIndicator: React.FC = () => {
       {!isOnline && (
         <m.div
           key='offline-banner'
-          className='offline-banner fixed right-0 left-0 z-9998 bg-gray-600 px-4 py-2 text-sm font-medium text-gray-100'
+          className='offline-banner fixed right-0 left-0 z-9998 bg-gray-600 px-4 text-sm font-medium text-gray-100'
           initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
           exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -8 }}

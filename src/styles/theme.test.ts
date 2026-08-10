@@ -4,6 +4,7 @@ import path from 'node:path';
 const projectRoot = process.cwd();
 const themeSource = fs.readFileSync(path.join(projectRoot, 'src/styles/theme.css'), 'utf8');
 const baseSource = fs.readFileSync(path.join(projectRoot, 'src/styles/base.css'), 'utf8');
+const patternsSource = fs.readFileSync(path.join(projectRoot, 'src/styles/patterns.css'), 'utf8');
 const layoutSource = fs.readFileSync(path.join(projectRoot, 'src/app/layout.tsx'), 'utf8');
 
 const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -79,5 +80,15 @@ describe('semantic root theme', () => {
   it('does not retain competing root layout background utilities', () => {
     expect(layoutSource).not.toContain('bg-gray-100');
     expect(layoutSource).not.toContain('dark:bg-slate-900');
+  });
+
+  it('scopes fixed-navigation and offline clearance to the app content shell', () => {
+    expect(themeSource).toContain('--nav-height: 56px;');
+    expect(themeSource).toContain('--nav-height: 60px;');
+    expect(themeSource).toContain('--offline-banner-height: 40px;');
+    expect(themeSource).toContain('--content-top-gap: 20px;');
+    expect(patternsSource).toContain('top: var(--nav-height);');
+    expect(patternsSource).toContain('body.offline-banner-visible .app-content-shell');
+    expect(patternsSource).not.toMatch(/offline-banner-visible\s+main/);
   });
 });

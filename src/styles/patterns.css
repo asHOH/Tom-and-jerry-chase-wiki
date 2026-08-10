@@ -99,10 +99,18 @@
 }
 
 /* Offline indicator styles */
-.offline-banner {
-  top: calc(var(--nav-height) - 10px); /* Position below navigation bar */
+.app-content-shell {
+  padding-top: calc(var(--nav-height) + var(--content-top-gap));
 }
 
-body.offline-banner-visible main {
-  padding-top: calc(var(--nav-height) + 2.5rem); /* nav + offline banner space */
+.offline-banner {
+  top: var(--nav-height);
+  height: var(--offline-banner-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+body.offline-banner-visible .app-content-shell {
+  padding-top: calc(var(--nav-height) + var(--offline-banner-height) + var(--content-top-gap));
 }

@@ -13,18 +13,16 @@ describe('PageShell', () => {
   it('uses the standard width by default', () => {
     render(<PageShell>页面内容</PageShell>);
 
-    expect(screen.getByRole('main')).toHaveClass(
-      'mx-auto',
-      'w-full',
-      'max-w-5xl',
-      'text-foreground'
-    );
+    const shell = screen.getByText('页面内容');
+    expect(shell.tagName).toBe('DIV');
+    expect(shell).toHaveClass('mx-auto', 'w-full', 'max-w-5xl', 'text-foreground');
+    expect(screen.queryByRole('main')).not.toBeInTheDocument();
   });
 
   it.each(WIDTH_CASES)('maps the %s width to %s', (width, expectedClassName) => {
     render(<PageShell width={width}>页面内容</PageShell>);
 
-    expect(screen.getByRole('main')).toHaveClass(expectedClassName);
+    expect(screen.getByText('页面内容')).toHaveClass(expectedClassName);
   });
 
   it('supports semantic element and class overrides', () => {

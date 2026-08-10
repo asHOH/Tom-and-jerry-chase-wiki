@@ -14,8 +14,9 @@
   /* Default keyboard focus indicator */
   --wiki-focus: var(--color-blue-500);
   --nav-z-index: 9999;
-  --nav-height: 70px;
+  --nav-height: 56px;
   --offline-banner-height: 40px;
+  --content-top-gap: 20px;
   /* Typography stacks - allow user custom fonts via --font-* variables from layout */
   --font-sans-stack:
     var(--font-sans), var(--font-cjk), 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei',
@@ -23,6 +24,12 @@
   --font-display-stack:
     var(--font-sans), 'LXGW WenKai', 'Noto Serif SC', 'Source Han Serif SC', 'Songti SC',
     'Times New Roman', serif;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --nav-height: 60px;
+  }
 }
 
 .dark {

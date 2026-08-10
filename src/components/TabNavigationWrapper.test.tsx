@@ -25,9 +25,10 @@ describe('TabNavigationWrapper', () => {
       'px-4',
       'sm:px-6',
       'lg:px-8',
-      'pt-[calc(var(--nav-height)+20px)]',
+      'app-content-shell',
       'pb-6'
     );
+    expect(contentFrame?.className).not.toContain('pt-[');
     expect(contentFrame).not.toHaveClass('p-6');
   });
 

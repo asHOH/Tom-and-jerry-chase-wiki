@@ -73,7 +73,7 @@ describe('EditModePageShell', () => {
   });
 
   it('renders children and hides toolbar when not in edit mode', () => {
-    render(
+    const { container } = render(
       <EditModePageShell entityType='items' entityId='fork' entityName='Fork'>
         <div>content</div>
       </EditModePageShell>,
@@ -87,7 +87,8 @@ describe('EditModePageShell', () => {
       onPublishSuccess: mockShowSubmissionFeedback,
     });
     expect(screen.getByText('content')).toBeInTheDocument();
-    expect(screen.getByRole('main')).toHaveClass('mx-auto', 'w-full', 'max-w-7xl');
+    expect(container.firstElementChild).toHaveClass('mx-auto', 'w-full', 'max-w-7xl');
+    expect(screen.queryByRole('main')).not.toBeInTheDocument();
     expect(screen.queryByTestId('edit-mode-toolbar')).not.toBeInTheDocument();
     expect(mockEditModeToolbar).not.toHaveBeenCalled();
   });
