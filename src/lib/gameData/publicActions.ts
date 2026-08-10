@@ -1,7 +1,10 @@
 import 'server-only';
 
 import type { ActionHistoryEntry } from '@/lib/edit/diffUtils';
-import { PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG } from '@/lib/gameData/publicActionsCache';
+import {
+  PUBLIC_GAME_DATA_ACTIONS_CACHE_REVALIDATE_SECONDS,
+  PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG,
+} from '@/lib/gameData/publicActionsCache';
 import { cached } from '@/lib/serverCache';
 import { getOptionalSupabaseAdminClient } from '@/lib/supabase/adminClient';
 import { getOptionalSupabasePublicClient } from '@/lib/supabase/publicClient';
@@ -90,7 +93,7 @@ export async function fetchPublicGameDataActionHistory(): Promise<PublicActionRo
       [PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG, 'history'],
       () => queryPublicActionHistoryRows(client),
       {
-        revalidate: false,
+        revalidate: PUBLIC_GAME_DATA_ACTIONS_CACHE_REVALIDATE_SECONDS,
         tags: [PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG],
       }
     );
@@ -112,9 +115,7 @@ export async function fetchPublicGameDataActions(): Promise<PublicActionRow[]> {
       [PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG],
       () => queryApprovedPublicActionRows(client),
       {
-        // Public actions change only through server mutations, which explicitly
-        // revalidate this tag. Avoid periodic database reads on public page requests.
-        revalidate: false,
+        revalidate: PUBLIC_GAME_DATA_ACTIONS_CACHE_REVALIDATE_SECONDS,
         tags: [PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG],
       }
     );
