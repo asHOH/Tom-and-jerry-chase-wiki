@@ -89,7 +89,15 @@ export default function KnowledgeCardGrid({ description, data = cards, published
             options={RANK_OPTIONS}
             isActive={(opt) => hasRankFilter(opt)}
             onToggle={(opt) => toggleRankFilter(opt)}
-            getOptionLabel={(opt) => `${opt}级`}
+            getOptionLabel={(opt) => (
+              <>
+                <span className='sr-only'>{opt}级</span>
+                <span aria-hidden='true'>
+                  {opt}
+                  <span className='hidden sm:inline'>级</span>
+                </span>
+              </>
+            )}
             getButtonStyle={(opt, active) =>
               active ? getCardRankColors(opt, false, isDarkMode) : undefined
             }
