@@ -25,6 +25,7 @@ export default async function AdminPage() {
     'category.delete',
     'game_data_action.approve',
     'game_data_action.reject',
+    'game_data_action.mark_synced',
     'game_data_action.revoke',
     'user.read',
     'user.update',
