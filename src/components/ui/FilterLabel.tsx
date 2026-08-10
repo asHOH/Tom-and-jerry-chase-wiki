@@ -9,7 +9,8 @@ type FilterLabelProps = {
   className?: string;
 };
 
-const baseClasses = 'text-lg font-medium text-gray-700 dark:text-gray-300';
+const baseClasses =
+  'shrink-0 whitespace-nowrap text-lg font-medium text-gray-700 dark:text-gray-300';
 
 const deriveShortLabel = (full: React.ReactNode, provided?: React.ReactNode) => {
   if (provided !== undefined) return provided;
