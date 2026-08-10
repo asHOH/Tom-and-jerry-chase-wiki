@@ -3,6 +3,16 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import CollapseCard from './CollapseCard';
 
 describe('CollapseCard', () => {
+  it('keeps a visible keyboard focus indicator on its header', () => {
+    render(<CollapseCard title='Details'>Content</CollapseCard>);
+
+    expect(screen.getByRole('button', { name: /Details/i })).toHaveClass(
+      'focus-visible:ring-2',
+      'focus-visible:ring-inset',
+      'focus-visible:ring-blue-500'
+    );
+  });
+
   it('does not mount collapsed children until expanded when lazyMount is enabled', () => {
     render(
       <CollapseCard title='Details' lazyMount>

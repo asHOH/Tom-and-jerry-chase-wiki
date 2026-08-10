@@ -88,7 +88,8 @@ export default function AccordionCard({
               type='button'
               onClick={() => toggleItem(item.id)}
               className={cn(
-                'flex flex-1 cursor-pointer items-center justify-center px-1 py-1 font-bold text-black focus:outline-none dark:text-white',
+                'flex flex-1 cursor-pointer items-center justify-center px-1 py-1 font-bold text-black dark:text-white',
+                'focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none focus-visible:ring-inset dark:focus-visible:ring-blue-300',
                 'whitespace-nowrap transition-[background-color,border-color,box-shadow] duration-200',
                 useDefaultButtonColors && titleColor,
                 useDefaultButtonColors && isExpanded && 'italic underline',

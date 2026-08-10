@@ -100,7 +100,8 @@ export default function CollapseCard({
         type='button'
         onClick={handleToggle}
         className={cn(
-          'flex w-full cursor-pointer items-center justify-between px-1 py-1 font-bold text-black focus:outline-none dark:text-white',
+          'flex w-full cursor-pointer items-center justify-between px-1 py-1 font-bold text-black dark:text-white',
+          'focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none focus-visible:ring-inset dark:focus-visible:ring-blue-300',
           titleColor,
           titleClassName,
           !isExpanded && collapsedTitleClassName
