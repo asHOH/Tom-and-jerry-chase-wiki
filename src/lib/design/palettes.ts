@@ -1,4 +1,4 @@
-// Shared semantic palettes used by design tokens and color style helpers.
+// Shared semantic palettes used by game palettes and color style helpers.
 export const sharedPositioningTagPalettes = {
   crimson: {
     text: '#dc2626',

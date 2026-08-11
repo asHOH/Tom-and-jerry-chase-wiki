@@ -1,4 +1,49 @@
-import { getPositioningTagColors } from './colorStyles';
+import {
+  getCardCostColors,
+  getCardRankColors,
+  getFactionButtonColors,
+  getKnowledgeCardGroupMetaColors,
+  getPositioningTagColors,
+  getSkillLevelColors,
+} from './colorStyles';
+
+describe('game color styles', () => {
+  it('preserves card rank and cost colors across themes', () => {
+    expect(getCardRankColors('S', true, false)).toEqual({
+      color: '#ea580c',
+      backgroundColor: '#fef3e2',
+      borderColor: '#fdba74',
+    });
+    expect(getCardCostColors(6, true, true)).toEqual({
+      color: '#fca5a5',
+      backgroundColor: '#7f1d1d',
+      borderColor: '#dc2626',
+    });
+  });
+
+  it('preserves skill-level and knowledge-card metadata colors', () => {
+    expect(getSkillLevelColors(2, true, false)).toEqual({
+      color: '#d97706',
+      backgroundColor: '#fffbeb',
+      borderColor: '#f59e0b',
+    });
+    expect(getKnowledgeCardGroupMetaColors('missingWarning', true)).toEqual({
+      color: '#fef2f2',
+      backgroundColor: '#dc2626',
+    });
+  });
+
+  it('preserves faction button colors', () => {
+    expect(getFactionButtonColors('cat', false)).toEqual({
+      backgroundColor: '#E0F2FF',
+      color: '#0369A1',
+    });
+    expect(getFactionButtonColors('mouse', true)).toEqual({
+      backgroundColor: '#7c2d12',
+      color: '#fdbf74',
+    });
+  });
+});
 
 describe('getPositioningTagColors', () => {
   it('keeps levels 3 and 4 on the same major-tag presentation', () => {

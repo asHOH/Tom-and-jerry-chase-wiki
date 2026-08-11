@@ -1,7 +1,7 @@
 import { isPositioningTagMinor } from '@/constants/positioningTagSequences';
 import type { buffTypelist, FactionId, PositioningTagLevel } from '@/data/types';
 
-import { designTokens } from './designTokens';
+import { gameColorPalettes } from './gameColorPalettes';
 import { sharedPositioningTagPalettes } from './palettes';
 import type { PositioningTagColorStyle } from './types';
 
@@ -9,7 +9,7 @@ import type { PositioningTagColorStyle } from './types';
 // Internal Maps and Helpers
 // ============================================================================
 
-const positioningTagNameMap: Record<string, keyof typeof designTokens.colors.positioningTags> = {
+const positioningTagNameMap: Record<string, keyof typeof gameColorPalettes.positioningTags> = {
   进攻: 'attack',
   防守: 'defense',
   追击: 'chase',
@@ -38,7 +38,7 @@ const skillLevelContainerClasses: Record<1 | 2 | 3, string> = {
 };
 
 const positioningTagContainerClasses: Record<
-  keyof typeof designTokens.colors.positioningTags,
+  keyof typeof gameColorPalettes.positioningTags,
   string
 > = {
   attack:
@@ -72,10 +72,10 @@ const positioningTagContainerClasses: Record<
   minor: 'bg-gray-50 border border-gray-100 dark:bg-slate-800/50 dark:border-slate-700',
 };
 
-// Card utility functions using design tokens
+// Card utility functions using game color palettes
 export const getCardRankColors = (rank: string, includeBorder: boolean, isDarkMode: boolean) => {
-  const rankKey = rank as keyof typeof designTokens.colors.rank;
-  const colorScheme = designTokens.colors.rank[rankKey] || designTokens.colors.rank.default;
+  const rankKey = rank as keyof typeof gameColorPalettes.rank;
+  const colorScheme = gameColorPalettes.rank[rankKey] || gameColorPalettes.rank.default;
 
   return {
     color: isDarkMode && colorScheme.dark ? colorScheme.dark.text : colorScheme.text,
@@ -91,13 +91,13 @@ export const getCardCostColors = (cost: number, includeBorder: boolean, isDarkMo
   let colorScheme;
 
   if (cost >= 6) {
-    colorScheme = designTokens.colors.cost.high;
+    colorScheme = gameColorPalettes.cost.high;
   } else if (cost >= 5) {
-    colorScheme = designTokens.colors.cost.medium;
+    colorScheme = gameColorPalettes.cost.medium;
   } else if (cost >= 4) {
-    colorScheme = designTokens.colors.cost.low;
+    colorScheme = gameColorPalettes.cost.low;
   } else {
-    colorScheme = designTokens.colors.cost.veryLow;
+    colorScheme = gameColorPalettes.cost.veryLow;
   }
 
   return {
@@ -150,15 +150,15 @@ export const getPositioningTagColors = (
   const tagKey = resolvePositioningTagKey(tagName, faction);
   const colorScheme =
     (level ?? 0) < 2 || !tagKey
-      ? designTokens.colors.positioningTags.minor
-      : designTokens.colors.positioningTags[tagKey];
+      ? gameColorPalettes.positioningTags.minor
+      : gameColorPalettes.positioningTags[tagKey];
 
   // Base style object with consistent properties
 
   if (isPositioningTagMinor(level) && tagKey) {
     // For minor tags, create diagonal gradient background
-    const originalColorScheme = designTokens.colors.positioningTags[tagKey];
-    const greyColorScheme = designTokens.colors.positioningTags.minor;
+    const originalColorScheme = gameColorPalettes.positioningTags[tagKey];
+    const greyColorScheme = gameColorPalettes.positioningTags.minor;
 
     return {
       color:
@@ -184,7 +184,7 @@ export const getPositioningTagColors = (
 
   if (isPositioningTagMinor(level)) {
     // Fallback for minor tags without recognized tag name
-    const greyColorScheme = designTokens.colors.positioningTags.minor;
+    const greyColorScheme = gameColorPalettes.positioningTags.minor;
     return {
       color: isDarkMode && greyColorScheme.dark ? greyColorScheme.dark.text : greyColorScheme.text,
       backgroundColor:
@@ -274,13 +274,13 @@ export const getBuffTypeColors = (type: buffTypelist, isDarkMode: boolean) => {
   };
 };
 
-type KnowledgeCardGroupMetaColor = keyof typeof designTokens.colors.knowledgeCardGroupMeta;
+type KnowledgeCardGroupMetaColor = keyof typeof gameColorPalettes.knowledgeCardGroupMeta;
 
 export const getKnowledgeCardGroupMetaColors = (
   role: KnowledgeCardGroupMetaColor,
   isDarkMode: boolean
 ) => {
-  const scheme = designTokens.colors.knowledgeCardGroupMeta[role];
+  const scheme = gameColorPalettes.knowledgeCardGroupMeta[role];
   const theme = isDarkMode ? scheme.dark : scheme;
 
   return {
@@ -303,7 +303,7 @@ export const getAvatarFilterColors = (
   // 杰瑞和汤姆复用 faction colors
   if (option === '杰瑞' || option === '汤姆') {
     const factionKey = option === '杰瑞' ? 'mouse' : 'cat';
-    const c = designTokens.colors.factions[factionKey];
+    const c = gameColorPalettes.factions[factionKey];
     const theme = isDarkMode ? c.dark : c.light;
     return { color: theme.text, backgroundColor: theme.background };
   }
@@ -330,14 +330,14 @@ export const getSkillLevelColors = (level: number, includeBorder: boolean, isDar
   let colorScheme;
 
   if (level === 1) {
-    colorScheme = designTokens.colors.skillLevels.level1;
+    colorScheme = gameColorPalettes.skillLevels.level1;
   } else if (level === 2) {
-    colorScheme = designTokens.colors.skillLevels.level2;
+    colorScheme = gameColorPalettes.skillLevels.level2;
   } else if (level === 3) {
-    colorScheme = designTokens.colors.skillLevels.level3;
+    colorScheme = gameColorPalettes.skillLevels.level3;
   } else {
     // Default to level 1 colors for any other level
-    colorScheme = designTokens.colors.skillLevels.level1;
+    colorScheme = gameColorPalettes.skillLevels.level1;
   }
 
   return {
@@ -465,7 +465,7 @@ export const getMapTypeColors = (mapType: string, isDarkMode: boolean) => {
   };
   const skillType = mapTypeColorMap[mapType] || 'lateGameMouse';
   const colorScheme =
-    designTokens.colors.positioningTags[skillType] || designTokens.colors.skillTypes.passive;
+    gameColorPalettes.positioningTags[skillType] || gameColorPalettes.skillTypes.passive;
   return {
     color: isDarkMode && colorScheme.dark ? colorScheme.dark.text : colorScheme.text,
     backgroundColor:
@@ -499,7 +499,7 @@ export const getMapLevelColors = (level: string, isDarkMode: boolean) => {
     大师学业: 'S',
   };
   const skillType = levelColorMap[level] || 'C';
-  const colorScheme = designTokens.colors.rank[skillType] || designTokens.colors.skillTypes.passive;
+  const colorScheme = gameColorPalettes.rank[skillType] || gameColorPalettes.skillTypes.passive;
 
   return {
     color: isDarkMode && colorScheme.dark ? colorScheme.dark.text : colorScheme.text,
@@ -582,7 +582,7 @@ export function getFactionButtonColors(
   faction: FactionId,
   isDarkMode: boolean
 ): { backgroundColor: string; color: string } {
-  const palette = designTokens.colors.factions;
+  const palette = gameColorPalettes.factions;
   const scheme = faction === 'cat' ? palette.cat : palette.mouse;
   const theme = isDarkMode ? scheme.dark : scheme.light;
   return { backgroundColor: theme.background, color: theme.text };
