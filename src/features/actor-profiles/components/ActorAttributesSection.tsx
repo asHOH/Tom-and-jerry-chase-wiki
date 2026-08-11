@@ -405,7 +405,7 @@ export default function ActorAttributesSection({
             onClick={() => setExpanded((current) => !current)}
             aria-controls={contentId}
             aria-expanded={expanded}
-            className='flex shrink-0 items-center gap-1 rounded-sm text-base font-medium text-gray-500 transition-colors hover:text-gray-700 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:outline-none dark:text-gray-400 dark:hover:text-gray-200 dark:focus-visible:ring-blue-400 dark:focus-visible:ring-offset-slate-800'
+            className='focus-visible:ring-focus flex shrink-0 items-center gap-1 rounded-sm text-base font-medium text-gray-500 transition-colors hover:text-gray-700 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none dark:text-gray-400 dark:hover:text-gray-200 dark:focus-visible:ring-offset-slate-800'
           >
             <span>{expanded ? '收起' : '展开'}</span>
             <ChevronDownIcon

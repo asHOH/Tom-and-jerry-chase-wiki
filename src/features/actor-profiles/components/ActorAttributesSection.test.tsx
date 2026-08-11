@@ -99,7 +99,8 @@ describe('ActorAttributesSection', () => {
 
     const button = screen.getByRole('button', { name: '展开' });
     expect(button).toHaveAttribute('aria-expanded', 'false');
-    expect(button).toHaveClass('focus-visible:ring-2');
+    expect(button).toHaveClass('focus-visible:ring-2', 'focus-visible:ring-focus');
+    expect(button).not.toHaveClass('focus-visible:ring-blue-500');
     expect(button.querySelector('svg')).toHaveClass('motion-reduce:transition-none');
 
     fireEvent.click(button);

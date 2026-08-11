@@ -8,6 +8,8 @@ import { SingleItem } from '@/data/types';
 import Button from '@/components/ui/Button';
 import SingleItemButton from '@/components/ui/SingleItemButton';
 
+import { disclosureTriggerFocusClasses } from './disclosureStyles';
+
 // 箭头SVG组件 - 与原文件保持一致
 const ArrowIcon = ({ expanded }: { expanded: boolean }) => (
   <div className={cn('transition-transform duration-300', expanded ? 'rotate-90' : 'rotate-0')}>
@@ -88,9 +90,13 @@ export default function CollapsibleItems({
             {`…(${itemsArray.length})`}
             <Button
               variant='unstyled'
-              onClick={() => setExpanded(!expanded)}
-              className='hover:bg-control ml-1 flex items-center justify-center rounded-full p-1.5 transition-all duration-300 focus:ring-2 focus:ring-gray-300 focus:outline-none dark:focus:ring-gray-600'
+              onClick={() => setExpanded((current) => !current)}
+              className={cn(
+                'hover:bg-control ml-1 flex items-center justify-center rounded-full p-1.5 transition-all duration-300',
+                disclosureTriggerFocusClasses
+              )}
               aria-label={expanded ? `折叠${label}列表` : `展开${label}列表`}
+              aria-expanded={expanded}
               type='button'
             >
               <ArrowIcon expanded={expanded} />

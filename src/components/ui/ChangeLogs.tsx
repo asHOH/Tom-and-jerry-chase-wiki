@@ -14,6 +14,8 @@ import Card from '@/components/ui/Card';
 import { HOME_ACTION_TILE_PROPS } from '@/components/ui/homeActionTileStyles';
 import { ChevronDownIcon } from '@/components/icons/CommonIcons';
 
+import { disclosureTriggerFocusClasses } from './disclosureStyles';
+
 const typeColors: Record<ChangeType, string> = {
   feat: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
   fix: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
@@ -204,7 +206,10 @@ const ChangeLogs = forwardRef<ChangeLogsRef>((_props, ref) => {
                   <Button
                     variant='unstyled'
                     onClick={() => toggleDate(dailyLog.date)}
-                    className='hover:bg-surface-sunken/50 flex w-full items-center justify-between px-4 py-3 transition-colors'
+                    className={cn(
+                      'hover:bg-surface-sunken/50 flex w-full items-center justify-between px-4 py-3 transition-colors',
+                      disclosureTriggerFocusClasses
+                    )}
                     aria-expanded={isExpanded}
                   >
                     <div className='flex items-center gap-3'>
@@ -243,7 +248,11 @@ const ChangeLogs = forwardRef<ChangeLogsRef>((_props, ref) => {
                             <Button
                               variant='unstyled'
                               onClick={(e) => toggleMinorDate(dailyLog.date, e)}
-                              className='hover:bg-control-hover/50 flex w-full items-center justify-between px-4 py-2 text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-400'
+                              className={cn(
+                                'hover:bg-control-hover/50 flex w-full items-center justify-between px-4 py-2 text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-400',
+                                disclosureTriggerFocusClasses
+                              )}
+                              aria-expanded={isMinorExpanded}
                             >
                               <div className='flex items-center gap-2'>
                                 <span>技术细节</span>
