@@ -2,12 +2,12 @@
 
 import type { ReactNode } from 'react';
 
-import { cn, componentTokens } from '@/lib/design';
+import { cn } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import EntityCardFrame from '@/components/ui/EntityCardFrame';
 import GameImage from '@/components/ui/GameImage';
 
-type CatalogCardImageSize = keyof typeof componentTokens.image.dimensions;
+import type { GameImageSize } from './gameImageDimensions';
 
 type CatalogCardProps = {
   title: string;
@@ -19,7 +19,7 @@ type CatalogCardProps = {
   overlay?: ReactNode;
   href?: string;
   preserveEditParam?: boolean;
-  imageSize?: CatalogCardImageSize;
+  imageSize?: GameImageSize;
   imageClassName?: string;
   contentClassName?: string;
   titleClassName?: string;

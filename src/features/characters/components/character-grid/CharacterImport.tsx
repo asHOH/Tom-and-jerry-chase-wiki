@@ -7,7 +7,6 @@ import { proxy } from 'valtio';
 
 import { AssetManager } from '@/lib/assetManager';
 import { GameDataManager } from '@/lib/dataManager';
-import { componentTokens } from '@/lib/design';
 import { requireActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
 import { CharacterWithFaction } from '@/lib/types';
 import { useAppContext } from '@/context/AppContext';
@@ -18,6 +17,7 @@ import { processCharacters } from '@/features/characters/utils/skillId';
 import Button from '@/components/ui/Button';
 import EntityCardFrame from '@/components/ui/EntityCardFrame';
 import { FormTextarea } from '@/components/ui/FormControls';
+import { GAME_IMAGE_DIMENSIONS } from '@/components/ui/gameImageDimensions';
 
 function handleUploadedData(
   data: string,
@@ -68,14 +68,9 @@ function handleUploadedData(
 interface PasteInputModalProps {
   onPaste: (content: string) => void;
   onCancel: () => void;
-  containerHeight: string | number;
 }
 
-const PasteInputModal: React.FC<PasteInputModalProps> = ({
-  onPaste,
-  onCancel,
-  containerHeight,
-}) => {
+const PasteInputModal: React.FC<PasteInputModalProps> = ({ onPaste, onCancel }) => {
   const pasteInputRef = useRef<HTMLTextAreaElement>(null);
   const [textareaContent, setTextareaContent] = useState('');
 
@@ -98,10 +93,7 @@ const PasteInputModal: React.FC<PasteInputModalProps> = ({
   };
 
   return (
-    <div
-      className='flex w-full flex-col items-stretch justify-center p-4 dark:text-gray-200'
-      style={{ height: containerHeight }}
-    >
+    <div className='flex h-48 w-full flex-col items-stretch justify-center p-4 dark:text-gray-200'>
       <p className='mb-4 text-center'>请将内容粘贴到下方文本框:</p>
       <FormTextarea
         ref={pasteInputRef}
@@ -126,8 +118,7 @@ const PasteInputModal: React.FC<PasteInputModalProps> = ({
 };
 
 export default function CharacterImport() {
-  const { width, height } = componentTokens.image.dimensions.CHARACTER_CARD;
-  const containerHeight = componentTokens.image.container.height;
+  const { width, height } = GAME_IMAGE_DIMENSIONS.CHARACTER_CARD;
 
   const { isEditMode } = useEditMode();
   const { handleSelectCharacter } = useAppContext();
@@ -264,10 +255,7 @@ export default function CharacterImport() {
             </div>
           </>
         ) : showImportOptions ? (
-          <div
-            className='flex w-full flex-col items-stretch justify-center'
-            style={{ height: containerHeight }}
-          >
+          <div className='flex h-48 w-full flex-col items-stretch justify-center'>
             <Button
               aria-label='从文件上传角色数据'
               variant='ghost'
@@ -304,7 +292,6 @@ export default function CharacterImport() {
           <PasteInputModal
             onPaste={handlePasteModalContent}
             onCancel={() => setShowPasteInput(false)}
-            containerHeight={containerHeight}
           />
         )}
       </EntityCardFrame>

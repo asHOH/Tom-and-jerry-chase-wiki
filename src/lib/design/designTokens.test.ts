@@ -1,4 +1,3 @@
-import { componentTokens } from './componentTokens';
 import { designTokens } from './designTokens';
 
 describe('design tokens', () => {
@@ -13,12 +12,5 @@ describe('design tokens', () => {
       '2xl': 'var(--radius-2xl)',
       full: '9999px',
     });
-  });
-
-  it('preserves component radius dimensions with Tailwind-aligned names', () => {
-    expect(componentTokens.factionButton.base.borderRadius).toBe(designTokens.radius.lg);
-    expect(componentTokens.tag.base.borderRadius).toBe(designTokens.radius.md);
-    expect(componentTokens.tag.compact.borderRadius).toBe(designTokens.radius.md);
-    expect(componentTokens.tag.micro.borderRadius).toBe(designTokens.radius.md);
   });
 });

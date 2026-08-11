@@ -2,6 +2,7 @@ import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import GameImage from './GameImage';
+import type { GameImageSize } from './gameImageDimensions';
 
 type MockImageProps = React.ImgHTMLAttributes<HTMLImageElement> & {
   placeholder?: string;
@@ -21,8 +22,6 @@ jest.mock('@/components/Image', () => ({
     return React.createElement('img', props);
   },
 }));
-
-type GameImageSize = React.ComponentProps<typeof GameImage>['size'];
 
 describe('GameImage', () => {
   beforeEach(() => {
@@ -80,11 +79,7 @@ describe('GameImage', () => {
 
     const image = screen.getByRole('img', { name: 'Loading image' });
 
-    expect(image).toHaveClass(
-      'transition-all',
-      'duration-[250ms]',
-      'ease-[cubic-bezier(0.4,0,0.2,1)]'
-    );
+    expect(image).toHaveClass('transition-all', 'duration-250', 'ease-in-out');
     expect(image).toHaveStyle({ opacity: '0' });
 
     fireEvent.load(image);

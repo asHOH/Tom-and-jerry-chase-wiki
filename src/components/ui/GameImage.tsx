@@ -1,14 +1,14 @@
 import { CSSProperties, useState } from 'react';
 
-import { cn, componentTokens } from '@/lib/design';
+import { cn } from '@/lib/design';
 import Image from '@/components/Image';
 
-type ImageSize = keyof typeof componentTokens.image.dimensions;
+import { GAME_IMAGE_DIMENSIONS, type GameImageSize } from './gameImageDimensions';
 
 type GameImageProps = {
   src: string;
   alt: string;
-  size: ImageSize;
+  size: GameImageSize;
   className?: string;
   preload?: boolean;
   sizes?: string;
@@ -29,7 +29,7 @@ export default function GameImage({
   style,
 }: GameImageProps) {
   const [isLoaded, setIsLoaded] = useState(false);
-  const { width, height } = componentTokens.image.dimensions[size];
+  const { width, height } = GAME_IMAGE_DIMENSIONS[size];
 
   // Detect if this is a cat character image for larger display
   const isCatCharacter = src.includes('/images/cats/');

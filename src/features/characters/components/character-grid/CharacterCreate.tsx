@@ -3,7 +3,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 
-import { componentTokens } from '@/lib/design';
 import { requireActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
 import { handleCharacterIdChange } from '@/lib/editUtils';
 import type { CharacterWithFaction } from '@/lib/types';
@@ -13,11 +12,11 @@ import type { FactionId } from '@/data/types';
 import Button from '@/components/ui/Button';
 import EntityCardFrame from '@/components/ui/EntityCardFrame';
 import { FormInput } from '@/components/ui/FormControls';
+import { GAME_IMAGE_DIMENSIONS } from '@/components/ui/gameImageDimensions';
 import { PlusIcon } from '@/components/icons/CommonIcons';
 
 export default function CharacterCreate() {
-  const { width, height } = componentTokens.image.dimensions.CHARACTER_CARD;
-  const containerHeight = componentTokens.image.container.height;
+  const { width, height } = GAME_IMAGE_DIMENSIONS.CHARACTER_CARD;
   const factionId = usePathname().split('/').filter(Boolean).at(-1)! as FactionId;
   const { handleSelectCharacter } = useAppContext();
 
@@ -95,12 +94,7 @@ export default function CharacterCreate() {
     >
       {!showInput ? (
         <>
-          <div
-            className='relative mb-4 flex w-full items-center justify-center overflow-hidden bg-gray-200 dark:bg-slate-700'
-            style={{
-              height: containerHeight,
-            }}
-          >
+          <div className='relative mb-4 flex h-48 w-full items-center justify-center overflow-hidden bg-gray-200 dark:bg-slate-700'>
             <PlusIcon
               className='text-gray-500 transition-all duration-250 ease-in-out hover:scale-105 dark:text-gray-400'
               style={{
@@ -118,10 +112,7 @@ export default function CharacterCreate() {
           </div>
         </>
       ) : (
-        <div
-          className='flex w-full flex-col items-stretch justify-center p-4'
-          style={{ height: containerHeight }}
-        >
+        <div className='flex h-48 w-full flex-col items-stretch justify-center p-4'>
           <p className='mb-4 text-center dark:text-gray-200'>请输入角色名称:</p>
           <FormInput
             ref={inputRef}
