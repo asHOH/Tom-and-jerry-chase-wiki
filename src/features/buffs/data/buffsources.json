@@ -1651,6 +1651,10 @@
       "type": "entity"
     },
     {
+      "name": "七色花",
+      "type": "fixture"
+    },
+    {
       "name": "仙丹",
       "type": "fixture"
     },
@@ -2563,11 +2567,19 @@
       "type": "entity"
     },
     {
+      "name": "七色花",
+      "type": "fixture"
+    },
+    {
       "name": "喷洒间",
       "type": "fixture"
     },
     {
       "name": "大钟",
+      "type": "fixture"
+    },
+    {
+      "name": "嫦娥",
       "type": "fixture"
     },
     {
@@ -3415,7 +3427,19 @@
       "type": "entity"
     },
     {
+      "name": "七色花",
+      "type": "fixture"
+    },
+    {
+      "name": "保育箱",
+      "type": "fixture"
+    },
+    {
       "name": "喷洒间",
+      "type": "fixture"
+    },
+    {
+      "name": "嫦娥",
       "type": "fixture"
     },
     {
@@ -3685,6 +3709,18 @@
     {
       "name": "蓝图",
       "type": "entity"
+    },
+    {
+      "name": "七色花",
+      "type": "fixture"
+    },
+    {
+      "name": "保育箱",
+      "type": "fixture"
+    },
+    {
+      "name": "嫦娥",
+      "type": "fixture"
     },
     {
       "name": "小熊猫",
@@ -4033,7 +4069,19 @@
       "type": "entity"
     },
     {
+      "name": "七色花",
+      "type": "fixture"
+    },
+    {
       "name": "仙丹",
+      "type": "fixture"
+    },
+    {
+      "name": "保育箱",
+      "type": "fixture"
+    },
+    {
+      "name": "嫦娥",
       "type": "fixture"
     },
     {
@@ -5945,6 +5993,10 @@
       "type": "entity"
     },
     {
+      "name": "七色花",
+      "type": "fixture"
+    },
+    {
       "name": "银色花",
       "type": "fixture"
     },
@@ -6001,6 +6053,10 @@
     {
       "name": "饮料印记",
       "type": "entity"
+    },
+    {
+      "name": "七色花",
+      "type": "fixture"
     },
     {
       "name": "章鱼",
@@ -6111,6 +6167,10 @@
     {
       "name": "感知战旗",
       "type": "entity"
+    },
+    {
+      "name": "七色花",
+      "type": "fixture"
     },
     {
       "name": "银色花",
@@ -7459,6 +7519,10 @@
     {
       "name": "飓风",
       "type": "entity"
+    },
+    {
+      "name": "七色花",
+      "type": "fixture"
     },
     {
       "name": "仙丹",

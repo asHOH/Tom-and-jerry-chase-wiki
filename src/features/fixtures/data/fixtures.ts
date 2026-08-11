@@ -1599,6 +1599,17 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     description:
       '调料罐-钙被角色踩踏后将喷出调料，使自身范围内的所有角色在一段时间内提高Hp上限。调料罐被踩踏后将进入30秒内置CD，期间被踩踏不会产生效果。',
   },
+  保育箱: {
+    type: ['组件类', '可交互'],
+    source: '地图组件',
+    move: false,
+    gravity: false,
+    aliases: ['保育舱'],
+    supportedMaps: ['熊猫馆'],
+    description:
+      '保育箱初始为绿色，角色可以通过交互按绿-红-黄的顺序切换颜色。颜色将影响角色使用时获得的状态，切换颜色有5秒CD，使用保育箱有60秒CD。\n$绿色$text-green-700 dark:text-green-300 font-bold#：每秒恢复5Hp，持续30秒；\n$红色$text-red-700 dark:text-red-300 font-bold#：攻击力提升50，持续30秒；\n$黄色$text-amber-700 dark:text-amber-300 font-bold#：受到的伤害降低20，并[免疫部分状态](包括缴械在内的部分状态，具体可见本词条下方状态栏)，持续40秒。',
+    specialImageUrl: '/images/maps/%E7%86%8A%E7%8C%AB%E9%A6%86.png',
+  },
   '大堂吊灯-大': {
     type: ['平台类', '组件类'],
     source: '地图组件',
