@@ -1,8 +1,9 @@
 'use client';
 
 import { getItemSourceColors /* , getCardCostColors */, getItemTypeColors } from '@/lib/design';
-import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { getSingleItemPrototype, getSingleItemVariant } from '@/lib/singleItemTools';
+import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useLocalItem } from '@/hooks/useLocalEditEntity';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
@@ -23,14 +24,15 @@ import Tag from '@/components/ui/Tag';
 export default function ItemAttributesCard({ item }: { item: Item }) {
   const [isDarkMode] = useDarkMode();
   const { isDetailedView: isDetailed } = useAppContext();
-  const { isEditMode } = useEditMode();
+  const { isEditMode, isEditModeRequested, runtimeStatus } = useEditMode();
   const { itemName } = useLocalItem();
   const ed = editable('items');
 
-  const editRuntime = useActiveEditRuntime();
+  const editRuntime = useDraftDataRuntime();
   const rawItem = editRuntime?.stores.items[itemName];
   const itemSnapshot = useOptionalEditSnapshot(rawItem, item);
-  const effectiveItem = isEditMode && rawItem ? (itemSnapshot as Item) : item;
+  const usesDraftData = isEditModeRequested && runtimeStatus === 'ready';
+  const effectiveItem = usesDraftData && rawItem ? (itemSnapshot as Item) : item;
 
   /* 计算variant相关内容 */
   const prototype = getSingleItemPrototype({ name: item.name, type: 'item' });

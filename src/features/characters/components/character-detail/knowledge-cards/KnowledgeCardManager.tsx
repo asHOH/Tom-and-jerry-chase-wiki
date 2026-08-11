@@ -1,6 +1,7 @@
 'use client';
 
-import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { factionData } from '@/data/static';
 import type { FactionId, KnowledgeCardGroup } from '@/data/types';
@@ -16,7 +17,7 @@ interface KnowledgeCardManagerProps {
 // TODO: use local character to refactor
 export default function KnowledgeCardManager({ factionId }: KnowledgeCardManagerProps) {
   const { characterId } = useLocalCharacter();
-  const editRuntime = useActiveEditRuntime();
+  const editRuntime = useDraftDataRuntime();
   const editCharacter = editRuntime?.stores.characters[characterId];
   const publishedCharacter = usePublishedCharacter(characterId);
   const character = useOptionalEditSnapshot(editCharacter, publishedCharacter);

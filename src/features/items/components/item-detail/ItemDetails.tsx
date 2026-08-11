@@ -1,6 +1,7 @@
 'use client';
 
-import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useLocalItem } from '@/hooks/useLocalEditEntity';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
@@ -16,14 +17,15 @@ import { editable } from '@/components/ui/editable';
 import ItemAttributesCard from './ItemAttributesCard';
 
 export default function ItemDetailClient({ item }: { item: Item }) {
-  const { isEditMode } = useEditMode();
+  const { isEditMode, isEditModeRequested, runtimeStatus } = useEditMode();
   const { itemName } = useLocalItem();
   const ed = editable('items');
 
-  const editRuntime = useActiveEditRuntime();
+  const editRuntime = useDraftDataRuntime();
   const rawLocalItem = editRuntime?.stores.items[itemName];
   const localItemSnapshot = useOptionalEditSnapshot(rawLocalItem, item);
-  const effectiveItem = isEditMode && rawLocalItem ? (localItemSnapshot as Item) : item;
+  const usesDraftData = isEditModeRequested && runtimeStatus === 'ready';
+  const effectiveItem = usesDraftData && rawLocalItem ? (localItemSnapshot as Item) : item;
 
   // Keyboard navigation
   useSpecifyTypeKeyboardNavigation(effectiveItem.name, 'item');

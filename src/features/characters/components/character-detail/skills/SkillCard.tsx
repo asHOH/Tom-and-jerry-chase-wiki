@@ -5,12 +5,9 @@ import React, { Fragment } from 'react';
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { AssetManager } from '@/lib/assetManager';
 import { cn, getSkillLevelColors, getSkillLevelContainerColor } from '@/lib/design';
-import {
-  requireActiveEditRuntime,
-  useActiveEditRuntime,
-  useOptionalEditSnapshot,
-} from '@/lib/edit/activeEditRuntime';
+import { requireActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { CharacterWithFaction } from '@/lib/types';
+import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
@@ -214,7 +211,7 @@ export default function SkillCard({
 }: SkillCardProps) {
   const { isEditMode } = useEditMode();
   const { isDetailedView: isDetailed } = useAppContext();
-  const editRuntime = useActiveEditRuntime();
+  const editRuntime = useDraftDataRuntime();
   const publishedCharacter = usePublishedCharacter(characterId);
   const localCharacter = useOptionalEditSnapshot(
     editRuntime?.stores.characters[characterId],

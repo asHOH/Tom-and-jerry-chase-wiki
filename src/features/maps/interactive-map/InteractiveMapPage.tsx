@@ -3,7 +3,8 @@
 import { useRef } from 'react';
 import dynamic from 'next/dynamic';
 
-import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useEditMode } from '@/context/EditModeContext';
 import type { InteractiveMapConfig, Map as MapType } from '@/data/types';
 import EditButton from '@/components/ui/EditButton';
@@ -21,12 +22,13 @@ type InteractiveMapPageProps = {
 };
 
 function InteractiveMapPageContent({ map, mapName }: InteractiveMapPageProps) {
-  const { isEditMode } = useEditMode();
+  const { isEditMode, isEditModeRequested, runtimeStatus } = useEditMode();
   const orientationContainerRef = useRef<HTMLDivElement>(null);
-  const editRuntime = useActiveEditRuntime();
+  const editRuntime = useDraftDataRuntime();
   const rawLocalMap = editRuntime?.stores.maps[mapName];
   const localMapSnapshot = useOptionalEditSnapshot(rawLocalMap, map);
-  const effectiveMap = isEditMode && rawLocalMap ? (localMapSnapshot as MapType) : map;
+  const usesDraftData = isEditModeRequested && runtimeStatus === 'ready';
+  const effectiveMap = usesDraftData && rawLocalMap ? (localMapSnapshot as MapType) : map;
   const interactiveMap = effectiveMap.interactiveMap;
 
   if (!interactiveMap) return null;
@@ -51,7 +53,7 @@ function InteractiveMapPageContent({ map, mapName }: InteractiveMapPageProps) {
             : undefined
         }
       />
-      <div className='absolute top-3 right-3 z-[1100] flex gap-2'>
+      <div className='absolute top-3 right-3 z-1100 flex gap-2'>
         {!isEditMode && <EditButton className='shadow-lg' />}
         <Link
           href={`/maps/${encodeURIComponent(mapName)}`}

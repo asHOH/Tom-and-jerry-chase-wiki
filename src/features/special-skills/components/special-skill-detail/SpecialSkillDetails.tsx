@@ -1,7 +1,8 @@
 'use client';
 
-import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import type { SpecialSkillCharacterLookup } from '@/lib/gameData/published/clientProjections';
+import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useLocalSpecialSkill } from '@/hooks/useLocalEditEntity';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
@@ -27,10 +28,10 @@ export default function SpecialSkillDetailClient({
   skill,
   charactersData = characters,
 }: SpecialSkillDetailClientProps) {
-  const { isEditMode } = useEditMode();
+  const { isEditMode, isEditModeRequested, runtimeStatus } = useEditMode();
   const { factionId, skillId } = useLocalSpecialSkill();
   const ed = editable('specialSkills');
-  const editRuntime = useActiveEditRuntime();
+  const editRuntime = useDraftDataRuntime();
 
   const rawLocalSkill =
     factionId === 'cat'
@@ -39,7 +40,9 @@ export default function SpecialSkillDetailClient({
         ? editRuntime?.stores.specialSkills.mouse[skillId]
         : undefined;
   const localSkillSnapshot = useOptionalEditSnapshot(rawLocalSkill, skill);
-  const effectiveSkill = isEditMode && rawLocalSkill ? (localSkillSnapshot as SpecialSkill) : skill;
+  const usesDraftData = isEditModeRequested && runtimeStatus === 'ready';
+  const effectiveSkill =
+    usesDraftData && rawLocalSkill ? (localSkillSnapshot as SpecialSkill) : skill;
 
   // Keyboard navigation
   useSpecifyTypeKeyboardNavigation(

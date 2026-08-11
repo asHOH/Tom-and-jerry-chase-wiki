@@ -1,7 +1,8 @@
 'use client';
 
 import { getBuffTypeColors } from '@/lib/design';
-import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useLocalBuff } from '@/hooks/useLocalEditEntity';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
@@ -21,15 +22,16 @@ import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleIte
 
 export default function BuffAttributesCard({ buff }: { buff: Buff }) {
   const [isDarkMode] = useDarkMode();
-  const { isEditMode } = useEditMode();
+  const { isEditMode, isEditModeRequested, runtimeStatus } = useEditMode();
   const { buffName } = useLocalBuff();
   const ed = editable('buffs');
 
-  const editRuntime = useActiveEditRuntime();
+  const editRuntime = useDraftDataRuntime();
   const rawBuff = editRuntime?.stores.buffs[buffName];
   const buffSnapshot = useOptionalEditSnapshot(rawBuff, buff);
   const buffsSnapshot = useOptionalEditSnapshot(editRuntime?.stores.buffs, buffs);
-  const effectiveBuff = isEditMode && rawBuff ? (buffSnapshot as Buff) : buff;
+  const usesDraftData = isEditModeRequested && runtimeStatus === 'ready';
+  const effectiveBuff = usesDraftData && rawBuff ? (buffSnapshot as Buff) : buff;
 
   const availableAliases = (effectiveBuff.aliases ?? buff.aliases ?? [])
     .filter((i) => i && i[0] !== '#')

@@ -3,9 +3,10 @@
 import { useSearchParams } from 'next/navigation';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
-import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import type { KnowledgeCardCharacterLookup } from '@/lib/gameData/published/clientProjections';
 import type { KnowledgeCardDetailsProps, KnowledgeCardWithFaction } from '@/lib/types';
+import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useLocalCard } from '@/hooks/useLocalEditEntity';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
@@ -32,15 +33,16 @@ export default function KnowledgeCardDetails({
 }: KnowledgeCardDetailsProps & {
   charactersData?: KnowledgeCardCharacterLookup;
 }) {
-  const { isEditMode } = useEditMode();
+  const { isEditMode, isEditModeRequested, runtimeStatus } = useEditMode();
   const { cardId } = useLocalCard();
   const ed = editable('cards');
 
-  const editRuntime = useActiveEditRuntime();
+  const editRuntime = useDraftDataRuntime();
   const rawLocalCard = editRuntime?.stores.cards[cardId];
   const localCardSnapshot = useOptionalEditSnapshot(rawLocalCard, card);
+  const usesDraftData = isEditModeRequested && runtimeStatus === 'ready';
   const effectiveCard =
-    isEditMode && rawLocalCard ? (localCardSnapshot as KnowledgeCardWithFaction) : card;
+    usesDraftData && rawLocalCard ? (localCardSnapshot as KnowledgeCardWithFaction) : card;
 
   // Keyboard navigation
   useSpecifyTypeKeyboardNavigation(effectiveCard.id, 'knowledgeCard');

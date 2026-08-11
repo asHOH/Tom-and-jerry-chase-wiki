@@ -1,7 +1,8 @@
 'use client';
 
 import { getFactionButtonColors } from '@/lib/design';
-import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useLocalAchievement } from '@/hooks/useLocalEditEntity';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
@@ -16,10 +17,10 @@ import Tag from '@/components/ui/Tag';
 
 export default function AchievementAttributesCard({ achievement }: { achievement: Achievement }) {
   const [isDarkMode] = useDarkMode();
-  const { isEditMode } = useEditMode();
+  const { isEditMode, isEditModeRequested, runtimeStatus } = useEditMode();
   const { achievementName, factionId } = useLocalAchievement();
   const ed = editable('achievements');
-  const editRuntime = useActiveEditRuntime();
+  const editRuntime = useDraftDataRuntime();
 
   const factionAchievements =
     factionId === 'cat'
@@ -29,8 +30,9 @@ export default function AchievementAttributesCard({ achievement }: { achievement
         : undefined;
   const rawAchievement = factionAchievements?.[achievementName];
   const achievementSnapshot = useOptionalEditSnapshot(rawAchievement, achievement);
+  const usesDraftData = isEditModeRequested && runtimeStatus === 'ready';
   const effectiveAchievement = (
-    isEditMode && rawAchievement ? achievementSnapshot : achievement
+    usesDraftData && rawAchievement ? achievementSnapshot : achievement
   ) as Achievement;
 
   return (

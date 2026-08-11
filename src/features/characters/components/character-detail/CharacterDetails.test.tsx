@@ -8,6 +8,11 @@ import { renderToString } from 'react-dom/server';
 import CharacterDetails from './CharacterDetails';
 
 let mockIsEditMode = false;
+let mockIsEditModeRequested = false;
+let mockIsPreviewMode = false;
+let mockRuntimeStatus: 'idle' | 'refreshing' | 'ready' = 'idle';
+let mockDraftRuntime: { stores: { characters: Record<string, Record<string, unknown>> } } | null =
+  null;
 
 jest.mock('motion/react', () => {
   return {
@@ -42,7 +47,20 @@ jest.mock('@/data', () => ({
 
 jest.mock('@/context/EditModeContext', () => ({
   EditModeContext: ({ children }: { children: ReactNode }) => <>{children}</>,
-  useEditMode: () => ({ isEditMode: mockIsEditMode }),
+  useEditMode: () => ({
+    isEditMode: mockIsEditMode,
+    isEditModeRequested: mockIsEditModeRequested,
+    isPreviewMode: mockIsPreviewMode,
+    runtimeStatus: mockRuntimeStatus,
+  }),
+}));
+
+jest.mock('@/hooks/useDraftDataRuntime', () => ({
+  useDraftDataRuntime: () => mockDraftRuntime,
+}));
+
+jest.mock('@/lib/edit/activeEditRuntime', () => ({
+  useOptionalEditSnapshot: <T,>(store: T | undefined, fallback: T) => store ?? fallback,
 }));
 
 jest.mock('@/hooks/useLocalEditEntity', () => ({
@@ -160,7 +178,9 @@ jest.mock('./knowledge-cards/KnowledgeCardManager', () => ({
 
 jest.mock('./positioning-tags/PositioningTagsSection', () => ({
   __esModule: true,
-  default: () => <div />,
+  default: ({ tags }: { tags: readonly string[] }) => (
+    <div data-testid='positioning-tags'>{tags.join(',')}</div>
+  ),
 }));
 
 jest.mock('./skills/SkillAllocationSection', () => ({
@@ -206,6 +226,20 @@ describe('CharacterDetails', () => {
 
   beforeEach(() => {
     mockIsEditMode = false;
+    mockIsEditModeRequested = false;
+    mockIsPreviewMode = false;
+    mockRuntimeStatus = 'idle';
+    mockDraftRuntime = {
+      stores: {
+        characters: {
+          汤姆: {
+            ...character,
+            description: 'draft description',
+            catPositioningTags: ['draft positioning tag'],
+          },
+        },
+      },
+    };
   });
 
   it('should render on the server without accessing document for the portal target', () => {
@@ -221,11 +255,56 @@ describe('CharacterDetails', () => {
 
   it('keeps the discuss button fully rounded when edit mode hides the edit button', () => {
     mockIsEditMode = true;
+    mockIsEditModeRequested = true;
+    mockRuntimeStatus = 'ready';
 
     const html = renderToString(<CharacterDetails character={character} />);
 
     expect(html).toContain('data-discuss-class=""');
     expect(html).not.toContain('rounded-r-none');
     expect(html).not.toContain('>编辑<');
+  });
+
+  it('renders published character data outside edit mode', () => {
+    const html = renderToString(<CharacterDetails character={character} />);
+
+    expect(html).toContain('published description');
+    expect(html).not.toContain('draft description');
+    expect(html).not.toContain('draft positioning tag');
+  });
+
+  it('renders draft character data while editing', () => {
+    mockIsEditMode = true;
+    mockIsEditModeRequested = true;
+    mockRuntimeStatus = 'ready';
+
+    const html = renderToString(<CharacterDetails character={character} />);
+
+    expect(html).toContain('draft description');
+    expect(html).toContain('draft positioning tag');
+  });
+
+  it('renders a consistent draft without edit controls while previewing', () => {
+    mockIsEditModeRequested = true;
+    mockIsPreviewMode = true;
+    mockRuntimeStatus = 'ready';
+
+    const html = renderToString(<CharacterDetails character={character} />);
+
+    expect(html).toContain('draft description');
+    expect(html).toContain('draft positioning tag');
+    expect(html).not.toContain('published description');
+    expect(html).not.toContain('aria-label="添加第二武器"');
+  });
+
+  it('renders published character data while the runtime is refreshing', () => {
+    mockIsEditModeRequested = true;
+    mockRuntimeStatus = 'refreshing';
+
+    const html = renderToString(<CharacterDetails character={character} />);
+
+    expect(html).toContain('published description');
+    expect(html).not.toContain('draft description');
+    expect(html).not.toContain('draft positioning tag');
   });
 });

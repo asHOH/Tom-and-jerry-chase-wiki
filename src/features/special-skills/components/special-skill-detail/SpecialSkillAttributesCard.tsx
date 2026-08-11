@@ -1,6 +1,6 @@
 'use client';
 
-import { useActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
+import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useLocalSpecialSkill } from '@/hooks/useLocalEditEntity';
 import { useEditMode } from '@/context/EditModeContext';
 import { SpecialSkill } from '@/data/types';
@@ -19,7 +19,7 @@ export default function SpecialSkillAttributesCard({ skill }: SpecialSkillDetail
   const { isEditMode } = useEditMode();
   const { factionId, skillId } = useLocalSpecialSkill();
   const ed = editable('specialSkills');
-  const editRuntime = useActiveEditRuntime();
+  const editRuntime = useDraftDataRuntime();
 
   const rawSkill =
     factionId === 'cat'

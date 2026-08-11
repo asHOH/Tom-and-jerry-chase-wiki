@@ -1,6 +1,7 @@
 'use client';
 
-import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useLocalAchievement } from '@/hooks/useLocalEditEntity';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
@@ -15,10 +16,10 @@ import { editable } from '@/components/ui/editable';
 import AchievementAttributesCard from './AchievementAttributesCard';
 
 export default function AchievementDetailClient({ achievement }: { achievement: Achievement }) {
-  const { isEditMode } = useEditMode();
+  const { isEditMode, isEditModeRequested, runtimeStatus } = useEditMode();
   const { achievementName, factionId } = useLocalAchievement();
   const ed = editable('achievements');
-  const editRuntime = useActiveEditRuntime();
+  const editRuntime = useDraftDataRuntime();
 
   const rawLocalAchievement =
     factionId === 'cat'
@@ -27,8 +28,9 @@ export default function AchievementDetailClient({ achievement }: { achievement: 
         ? editRuntime?.stores.achievements.mouse[achievementName]
         : undefined;
   const localAchievementSnapshot = useOptionalEditSnapshot(rawLocalAchievement, achievement);
+  const usesDraftData = isEditModeRequested && runtimeStatus === 'ready';
   const effectiveAchievement =
-    isEditMode && rawLocalAchievement ? (localAchievementSnapshot as Achievement) : achievement;
+    usesDraftData && rawLocalAchievement ? (localAchievementSnapshot as Achievement) : achievement;
 
   // Keyboard navigation
   useSpecifyTypeKeyboardNavigation(

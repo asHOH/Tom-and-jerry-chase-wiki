@@ -5,8 +5,8 @@ import uniq from 'lodash-es/uniq';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { cn } from '@/lib/design';
-import { useActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
 import type { CharacterWithFaction } from '@/lib/types';
+import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import type { Skill, SkillLevel, SkillUsageProperties } from '@/data/types';
 import {
   addSkillPart,
@@ -89,7 +89,7 @@ export default function SkillCardProperties({
   isDetailed,
   isMobileEditMode = false,
 }: SkillCardPropertiesProps) {
-  const editRuntime = useActiveEditRuntime();
+  const editRuntime = useDraftDataRuntime();
   const skillRef =
     editRuntime?.stores.characters[characterId]?.skills[skillIndex] ??
     localCharacter.skills[skillIndex]!;

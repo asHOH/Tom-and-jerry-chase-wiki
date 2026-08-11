@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 
 import type { GameDataSubmitMode } from '@/lib/gameData/submitMode';
-import { EditModeContext } from '@/context/EditModeContext';
+import { EditModeContext, useEditMode } from '@/context/EditModeContext';
 
 import EditModePageShell from './EditModePageShell';
 import type { EditModeToolbarProps } from './EditModeToolbar';
@@ -12,6 +12,20 @@ const mockExitEditMode = jest.fn();
 const mockEditModeToolbar = jest.fn();
 const mockSetIsPreviewMode = jest.fn();
 const mockShowSubmissionFeedback = jest.fn();
+
+function EditModeContextProbe() {
+  const editMode = useEditMode();
+
+  return (
+    <div
+      data-testid='edit-mode-context'
+      data-requested={String(editMode.isEditModeRequested)}
+      data-runtime-status={editMode.runtimeStatus}
+      data-editable={String(editMode.isEditMode)}
+      data-preview={String(editMode.isPreviewMode)}
+    />
+  );
+}
 
 jest.mock('@/hooks/usePageEditMode', () => ({
   usePageEditMode: (options: unknown) => mockUsePageEditMode(options),
@@ -162,12 +176,16 @@ describe('EditModePageShell', () => {
   it('keeps the toolbar visible while previewing in edit mode', () => {
     render(
       <EditModePageShell entityType='items' entityId='fork' entityName='Fork'>
-        <div>content</div>
+        <EditModeContextProbe />
       </EditModePageShell>,
       { wrapper: createWrapper(true, true) }
     );
 
     expect(screen.getByTestId('edit-mode-toolbar')).toBeInTheDocument();
     expect(mockEditModeToolbar).toHaveBeenCalledTimes(1);
+    expect(screen.getByTestId('edit-mode-context')).toHaveAttribute('data-requested', 'true');
+    expect(screen.getByTestId('edit-mode-context')).toHaveAttribute('data-runtime-status', 'ready');
+    expect(screen.getByTestId('edit-mode-context')).toHaveAttribute('data-editable', 'false');
+    expect(screen.getByTestId('edit-mode-context')).toHaveAttribute('data-preview', 'true');
   });
 });

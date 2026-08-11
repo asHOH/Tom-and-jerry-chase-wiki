@@ -3,7 +3,8 @@
 import React from 'react';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
-import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useLocalEntity } from '@/hooks/useLocalEditEntity';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
@@ -20,14 +21,16 @@ import EntityAttributesCard from './EntityAttributesCard';
 import EntitySkillCard from './EntitySkillCard';
 
 export default function EntityDetailClient({ entity }: { entity: Entity }) {
-  const { isEditMode } = useEditMode();
+  const { isEditMode, isEditModeRequested, runtimeStatus } = useEditMode();
   const { entityName } = useLocalEntity();
   const ed = editable('entities');
 
-  const editRuntime = useActiveEditRuntime();
+  const editRuntime = useDraftDataRuntime();
   const rawLocalEntity = editRuntime?.stores.entities[entityName];
   const localEntitySnapshot = useOptionalEditSnapshot(rawLocalEntity, entity);
-  const effectiveEntity = isEditMode && rawLocalEntity ? (localEntitySnapshot as Entity) : entity;
+  const usesDraftData = isEditModeRequested && runtimeStatus === 'ready';
+  const effectiveEntity =
+    usesDraftData && rawLocalEntity ? (localEntitySnapshot as Entity) : entity;
 
   // Keyboard navigation
   useSpecifyTypeKeyboardNavigation(effectiveEntity.name, 'entity');

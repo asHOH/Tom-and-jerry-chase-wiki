@@ -2,8 +2,9 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
+import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useLocalMap } from '@/hooks/useLocalEditEntity';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
@@ -33,18 +34,19 @@ export default function MapDetailClient({
   fixtureNames: readonly string[];
   modeNames: readonly string[];
 }) {
-  const { isEditMode } = useEditMode();
+  const { isEditMode, isEditModeRequested, runtimeStatus } = useEditMode();
   const { mapName } = useLocalMap();
   const ed = editable('maps');
 
-  const editRuntime = useActiveEditRuntime();
+  const editRuntime = useDraftDataRuntime();
   const editFixtures = useOptionalEditSnapshot<PublishedGameDataByType['fixtures']>(
     editRuntime?.stores.fixtures,
     {}
   );
   const rawLocalMap = editRuntime?.stores.maps[mapName];
   const localMapSnapshot = useOptionalEditSnapshot(rawLocalMap, map);
-  const effectiveMap = isEditMode && rawLocalMap ? (localMapSnapshot as MapType) : map;
+  const usesDraftData = isEditModeRequested && runtimeStatus === 'ready';
+  const effectiveMap = usesDraftData && rawLocalMap ? (localMapSnapshot as MapType) : map;
 
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [imageAspectRatio, setImageAspectRatio] = useState<number | null>(null);

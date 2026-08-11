@@ -2,11 +2,12 @@ import React, { useCallback } from 'react';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { cn, getPositioningTagColors, getPositioningTagContainerColor } from '@/lib/design';
-import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { setNestedProperty } from '@/lib/editUtils';
 import { StorageKey } from '@/lib/localStorage';
 import { getPositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { CharacterWithFaction } from '@/lib/types';
+import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { useAppContext } from '@/context/AppContext';
@@ -115,7 +116,7 @@ function WeaponDropdown({
   characterId: string;
   onSelect: (value: 1 | 2 | null) => void;
 }) {
-  const editRuntime = useActiveEditRuntime();
+  const editRuntime = useDraftDataRuntime();
   const publishedCharacter = usePublishedCharacter(characterId);
   const character = useOptionalEditSnapshot(
     editRuntime?.stores.characters[characterId],
@@ -166,7 +167,7 @@ interface PositioningTagsSectionProps {
 
 function usePositioningTags({ factionId }: { factionId: FactionId }) {
   const { characterId } = useLocalCharacter();
-  const editRuntime = useActiveEditRuntime();
+  const editRuntime = useDraftDataRuntime();
   const rawCharacter = editRuntime?.stores.characters[characterId];
   const publishedCharacter = usePublishedCharacter(characterId);
   const localCharacter = useOptionalEditSnapshot(rawCharacter, publishedCharacter);
@@ -262,7 +263,7 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
   const { isEditMode } = useEditMode();
   const { isDetailedView: isDetailed } = useAppContext();
   const { characterId } = useLocalCharacter();
-  const editRuntime = useActiveEditRuntime();
+  const editRuntime = useDraftDataRuntime();
   const charactersSnap = useOptionalEditSnapshot(editRuntime?.stores.characters, staticCharacters);
 
   const borderColor =

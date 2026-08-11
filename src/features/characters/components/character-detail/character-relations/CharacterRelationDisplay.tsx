@@ -3,7 +3,8 @@
 import React from 'react';
 
 import { AssetManager } from '@/lib/assetManager';
-import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useNavigation } from '@/hooks/useNavigation';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
@@ -59,7 +60,7 @@ type Props = {
 const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
   'use no memo';
   const { isEditMode } = useEditMode();
-  const editRuntime = useActiveEditRuntime();
+  const editRuntime = useDraftDataRuntime();
   const mapsSnapshot = useOptionalEditSnapshot(editRuntime?.stores.maps, maps);
   const modesSnapshot = useOptionalEditSnapshot(editRuntime?.stores.modes, modes);
   const specialSkillsSnapshot = useOptionalEditSnapshot(

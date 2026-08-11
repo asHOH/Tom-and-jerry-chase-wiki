@@ -1,6 +1,7 @@
 'use client';
 
-import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useLocalBuff } from '@/hooks/useLocalEditEntity';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
@@ -17,14 +18,15 @@ import SingleItemButton from '@/components/ui/SingleItemButton';
 import BuffAttributesCard from './BuffAttributesCard';
 
 export default function BuffDetailClient({ buff }: { buff: Buff }) {
-  const { isEditMode } = useEditMode();
+  const { isEditMode, isEditModeRequested, runtimeStatus } = useEditMode();
   const { buffName } = useLocalBuff();
   const ed = editable('buffs');
 
-  const editRuntime = useActiveEditRuntime();
+  const editRuntime = useDraftDataRuntime();
   const rawLocalBuff = editRuntime?.stores.buffs[buffName];
   const localBuffSnapshot = useOptionalEditSnapshot(rawLocalBuff, buff);
-  const effectiveBuff = isEditMode && rawLocalBuff ? (localBuffSnapshot as Buff) : buff;
+  const usesDraftData = isEditModeRequested && runtimeStatus === 'ready';
+  const effectiveBuff = usesDraftData && rawLocalBuff ? (localBuffSnapshot as Buff) : buff;
 
   // Keyboard navigation
   useSpecifyTypeKeyboardNavigation(effectiveBuff.name, 'buff');

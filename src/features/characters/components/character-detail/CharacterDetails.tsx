@@ -6,9 +6,10 @@ import { AnimatePresence } from 'motion/react'; // smaller bundle size than fram
 import { createPortal } from 'react-dom';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
-import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import singleItemRreverse from '@/lib/singleItemReverse';
 import type { CharacterWithFaction, ContentEditor } from '@/lib/types';
+import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { EditModeContext, useEditMode } from '@/context/EditModeContext';
@@ -80,15 +81,16 @@ export default function CharacterDetails({
   children,
 }: CharacterDetailsWithTutorialProps) {
   const editMode = useEditMode();
-  const { isEditMode } = editMode;
+  const { isEditMode, isEditModeRequested, runtimeStatus } = editMode;
   const isMobile = useMobile();
   const { addSecondWeapon } = useCharacterActions();
   const { characterId } = useLocalCharacter();
-  const editRuntime = useActiveEditRuntime();
+  const editRuntime = useDraftDataRuntime();
   const rawEditCharacter =
     editRuntime?.stores.characters[characterId] ?? editRuntime?.stores.characters[character.id];
   const editCharacter = useOptionalEditSnapshot(rawEditCharacter, character);
-  const localCharacter = isEditMode && rawEditCharacter ? editCharacter : character;
+  const usesDraftData = isEditModeRequested && runtimeStatus === 'ready';
+  const localCharacter = usesDraftData && rawEditCharacter ? editCharacter : character;
   const factionId = localCharacter.factionId!;
 
   // Go to Top button state

@@ -1,11 +1,12 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { snapshot } from 'valtio';
 
 import '@testing-library/jest-dom';
 
 import type { ActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
 import type { CharacterWithFaction } from '@/lib/types';
+import { EditModeContext } from '@/context/EditModeContext';
 import type { Skill } from '@/data/types';
 import { clearTestEditRuntime, installTestEditRuntime } from '@/testUtils/editRuntime';
 
@@ -83,14 +84,25 @@ function setSkill(skill: Skill) {
 function renderProperties(skill: Skill, isEditMode = false) {
   const character = setSkill(skill);
   render(
-    <SkillCardProperties
-      skill={character.skills[0]!}
-      characterId='测试角色'
-      skillIndex={0}
-      localCharacter={character}
-      isEditMode={isEditMode}
-      isDetailed={false}
-    />
+    <EditModeContext
+      value={{
+        isEditMode,
+        isEditModeRequested: true,
+        runtimeStatus: 'ready',
+        isLoading: false,
+        isPreviewMode: false,
+        setIsPreviewMode: jest.fn(),
+      }}
+    >
+      <SkillCardProperties
+        skill={character.skills[0]!}
+        characterId='测试角色'
+        skillIndex={0}
+        localCharacter={character}
+        isEditMode={isEditMode}
+        isDetailed={false}
+      />
+    </EditModeContext>
   );
 }
 
@@ -110,7 +122,7 @@ describe('SkillCardProperties multi-part skills', () => {
   });
 
   afterEach(() => {
-    clearTestEditRuntime(runtime);
+    act(() => clearTestEditRuntime(runtime));
   });
 
   it('renders ordinal labels only when there are multiple parts', () => {

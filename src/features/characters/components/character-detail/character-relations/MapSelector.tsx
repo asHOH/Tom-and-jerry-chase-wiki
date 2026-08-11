@@ -2,7 +2,8 @@
 
 import React from 'react';
 
-import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { maps } from '@/data/static';
 import type { CharacterRelationItem } from '@/data/types';
 
@@ -15,7 +16,7 @@ type Props = {
 };
 
 const MapSelector: React.FC<Props> = ({ selected, onSelect, disabled }) => {
-  const editRuntime = useActiveEditRuntime();
+  const editRuntime = useDraftDataRuntime();
   const mapsSnapshot = useOptionalEditSnapshot(editRuntime?.stores.maps, maps);
   const selectedIds = new Set(selected.map(({ id }) => id));
   const options = Object.values(mapsSnapshot)

@@ -3,7 +3,8 @@
 import { useMemo, useState } from 'react';
 
 import { cn } from '@/lib/design';
-import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { CharacterWinRateEntry, getCharacterWinRates } from '@/data/winRates';
 import Button from '@/components/ui/Button';
 import { ChevronDownIcon } from '@/components/icons/CommonIcons';
@@ -16,7 +17,7 @@ interface WinRatesDisplayProps {
 
 export default function WinRatesDisplay({ characterName }: WinRatesDisplayProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const editRuntime = useActiveEditRuntime();
+  const editRuntime = useDraftDataRuntime();
   const publishedCharacter = usePublishedCharacter(characterName);
   const character = useOptionalEditSnapshot(
     editRuntime?.stores.characters[characterName],

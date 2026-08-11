@@ -4,8 +4,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { cn } from '@/lib/design';
-import { useActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
 import { storage, StorageKey } from '@/lib/localStorage';
+import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { factionData } from '@/data/static';
@@ -83,7 +83,7 @@ export default function KnowledgeCardSection({
 }: KnowledgeCardSectionProps) {
   const { handleSelectCard } = useAppContext();
   const { isEditMode } = useEditMode();
-  const editRuntime = useActiveEditRuntime();
+  const editRuntime = useDraftDataRuntime();
   const editCharacter = editRuntime?.stores.characters[characterId];
   const generalGroupCount = getGeneralKnowledgeCardGroupCount(factionData[factionId]);
   const [isPickerOpen, setPickerOpen] = useState(false);

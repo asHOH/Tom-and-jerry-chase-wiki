@@ -1,4 +1,5 @@
-import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useEditMode } from '@/context/EditModeContext';
 import { factionData, specialSkills } from '@/data/static';
@@ -19,7 +20,7 @@ export default function SpecialSkillsSection() {
   'use no memo';
   const { characterId } = useLocalCharacter();
   const { isEditMode } = useEditMode();
-  const editRuntime = useActiveEditRuntime();
+  const editRuntime = useDraftDataRuntime();
   const rawCharacter = editRuntime?.stores.characters[characterId];
   const publishedCharacter = usePublishedCharacter(characterId);
   const character = useOptionalEditSnapshot(rawCharacter, publishedCharacter);

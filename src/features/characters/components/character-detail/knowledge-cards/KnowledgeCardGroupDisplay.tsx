@@ -5,7 +5,8 @@ import some from 'lodash-es/some';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { cn, getKnowledgeCardGroupMetaColors } from '@/lib/design';
-import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { contributors, type Contributor } from '@/data/contributors';
@@ -29,7 +30,7 @@ import KnowledgeCardLinkDisplay from './KnowledgeCardLinkDisplay';
 import TreeCardDisplay from './TreeCardDisplay';
 
 function useCharacterSnapshot(characterId: string) {
-  const editRuntime = useActiveEditRuntime();
+  const editRuntime = useDraftDataRuntime();
   const publishedCharacter = usePublishedCharacter(characterId);
   return useOptionalEditSnapshot(editRuntime?.stores.characters[characterId], publishedCharacter);
 }

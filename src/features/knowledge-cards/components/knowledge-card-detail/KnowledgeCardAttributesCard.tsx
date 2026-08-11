@@ -1,8 +1,8 @@
 'use client';
 
 import { getCardCostColors, getCardRankColors } from '@/lib/design';
-import { useActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
 import { KnowledgeCardDetailsProps } from '@/lib/types';
+import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useLocalCard } from '@/hooks/useLocalEditEntity';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
@@ -20,7 +20,7 @@ export default function KnowledgeCardAttributesCard({ card }: KnowledgeCardDetai
   const { cardId } = useLocalCard();
   const ed = editable('cards');
 
-  const editRuntime = useActiveEditRuntime();
+  const editRuntime = useDraftDataRuntime();
   const rawCard = cardId ? editRuntime?.stores.cards[cardId] : undefined;
 
   const rankColors = getCardRankColors(card.rank, true, isDarkMode);

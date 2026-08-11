@@ -1,8 +1,9 @@
 'use client';
 
 import { getModeTypeColors } from '@/lib/design';
-import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
+import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useLocalMode } from '@/hooks/useLocalEditEntity';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
@@ -29,7 +30,7 @@ export default function ModeAttributesCard({
   const { modeName } = useLocalMode();
   const ed = editable('modes');
 
-  const editRuntime = useActiveEditRuntime();
+  const editRuntime = useDraftDataRuntime();
   const rawMode = editRuntime?.stores.modes[modeName];
   const mapsSnapshot = useOptionalEditSnapshot(editRuntime?.stores.maps, mapsData);
   const mapsSource = mapsSnapshot;

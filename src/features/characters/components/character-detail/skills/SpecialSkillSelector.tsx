@@ -2,7 +2,8 @@
 
 import React from 'react';
 
-import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { specialSkills } from '@/data/static';
 import type { CharacterRelationItem, FactionId } from '@/data/types';
 
@@ -16,7 +17,7 @@ type Props = {
 };
 
 const SpecialSkillSelector: React.FC<Props> = ({ selected, factionId, onSelect, disabled }) => {
-  const editRuntime = useActiveEditRuntime();
+  const editRuntime = useDraftDataRuntime();
   const specialSkillsSnapshot = useOptionalEditSnapshot(
     editRuntime?.stores.specialSkills,
     specialSkills

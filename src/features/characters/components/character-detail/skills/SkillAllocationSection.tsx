@@ -2,8 +2,9 @@
 
 import React, { useCallback } from 'react';
 
-import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { setNestedProperty } from '@/lib/editUtils';
+import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useEditMode } from '@/context/EditModeContext';
 import { FactionId, SkillAllocation } from '@/data/types';
@@ -17,7 +18,7 @@ import SkillAllocationDisplay from './SkillAllocationDisplay';
 
 const useSkillAllocationManagement = () => {
   const { characterId } = useLocalCharacter();
-  const editRuntime = useActiveEditRuntime();
+  const editRuntime = useDraftDataRuntime();
   const rawCharacter = editRuntime?.stores.characters[characterId];
   const publishedCharacter = usePublishedCharacter(characterId);
   const localCharacter = useOptionalEditSnapshot(rawCharacter, publishedCharacter);
@@ -66,7 +67,7 @@ interface SkillAllocationSectionProps {
 const SkillAllocationSection: React.FC<SkillAllocationSectionProps> = ({ factionId }) => {
   const { isEditMode } = useEditMode();
   const { characterId } = useLocalCharacter();
-  const editRuntime = useActiveEditRuntime();
+  const editRuntime = useDraftDataRuntime();
   const publishedCharacter = usePublishedCharacter(characterId);
   const character = useOptionalEditSnapshot(
     editRuntime?.stores.characters[characterId],
