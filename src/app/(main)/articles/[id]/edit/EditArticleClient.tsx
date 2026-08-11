@@ -312,7 +312,7 @@ const EditArticleClient: React.FC<EditArticleClientProps> = ({ characterOptions 
                   'rounded-lg border p-3 text-left transition-colors',
                   selectedSource === 'approved'
                     ? 'border-blue-600 bg-blue-50 dark:border-blue-500 dark:bg-blue-900/30'
-                    : 'border-gray-200 bg-white hover:border-blue-400 dark:border-gray-700 dark:bg-gray-900/50 dark:hover:border-blue-400'
+                    : 'border-border bg-surface-sunken hover:border-blue-400 dark:hover:border-blue-400'
                 )}
               >
                 <div className='text-sm font-semibold text-gray-900 dark:text-gray-100'>
@@ -331,7 +331,7 @@ const EditArticleClient: React.FC<EditArticleClientProps> = ({ characterOptions 
                   'rounded-lg border p-3 text-left transition-colors',
                   selectedSource === 'pending_mine'
                     ? 'border-blue-600 bg-blue-50 dark:border-blue-500 dark:bg-blue-900/30'
-                    : 'border-gray-200 bg-white hover:border-blue-400 dark:border-gray-700 dark:bg-gray-900/50 dark:hover:border-blue-400'
+                    : 'border-border bg-surface-sunken hover:border-blue-400 dark:hover:border-blue-400'
                 )}
               >
                 <div className='text-sm font-semibold text-gray-900 dark:text-gray-100'>

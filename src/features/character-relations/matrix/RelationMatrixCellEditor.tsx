@@ -180,7 +180,7 @@ export default function RelationMatrixCellEditor({
                 ))}
               </FormSelect>
             ) : (
-              <span className='inline-flex h-9 items-center rounded-md border border-gray-200 bg-gray-50 px-2.5 text-sm font-medium text-gray-700 dark:border-slate-700 dark:bg-slate-800 dark:text-gray-200'>
+              <span className='border-border bg-surface-sunken inline-flex h-9 items-center rounded-md border px-2.5 text-sm font-medium text-gray-700 dark:text-gray-200'>
                 {selectedKind ? getRelationKindLabel(selectedKind) : '不可编辑'}
               </span>
             )}
@@ -205,7 +205,7 @@ export default function RelationMatrixCellEditor({
                 'rounded-md border px-3 py-1.5 text-sm font-medium transition-colors',
                 isMinor === option.value
                   ? 'border-blue-500 bg-blue-50 text-blue-700 dark:border-blue-400 dark:bg-blue-950/40 dark:text-blue-300'
-                  : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50 dark:border-slate-600 dark:bg-slate-800 dark:text-gray-200 dark:hover:bg-slate-700'
+                  : 'bg-surface hover:bg-control border-gray-300 text-gray-700 dark:border-slate-600 dark:text-gray-200'
               )}
             >
               {option.label}
@@ -291,7 +291,7 @@ export default function RelationMatrixCellEditor({
         </label>
       </div>
 
-      <div className='flex items-center justify-between border-t border-gray-200 p-4 dark:border-slate-700'>
+      <div className='border-border flex items-center justify-between border-t p-4'>
         {canRemove ? (
           <Button variant='danger' size='sm' onClick={handleRemove}>
             移除

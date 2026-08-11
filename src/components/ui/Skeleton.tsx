@@ -239,7 +239,7 @@ export function SkeletonCharacterDetail({ animate = true }: { animate?: boolean 
               <Skeleton className='h-6 w-32' animate={animate} />
               <Skeleton className='h-6 w-40' animate={animate} />
               <Skeleton className='h-6 w-36' animate={animate} />
-              <div className='border-t border-gray-200 pt-4 dark:border-gray-700'>
+              <div className='border-border border-t pt-4'>
                 <Skeleton className='h-8 w-full' animate={animate} />
               </div>
             </div>
@@ -251,7 +251,7 @@ export function SkeletonCharacterDetail({ animate = true }: { animate?: boolean 
             {Array.from({ length: 3 }).map((_, i) => (
               <div key={i} className='space-y-3'>
                 <Skeleton className='h-8 w-40' animate={animate} />
-                <div className='space-y-3 rounded-lg border border-gray-200 p-4 dark:border-gray-700'>
+                <div className='border-border space-y-3 rounded-lg border p-4'>
                   <Skeleton className='h-4 w-full' animate={animate} />
                   <Skeleton className='h-4 w-5/6' animate={animate} />
                   <Skeleton className='h-4 w-3/4' animate={animate} />

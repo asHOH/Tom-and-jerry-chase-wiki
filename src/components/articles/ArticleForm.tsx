@@ -297,7 +297,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
             </label>
           </div>
 
-          <div className='flex flex-col gap-4 border-t border-gray-200 pt-6 md:flex-row dark:border-gray-700'>
+          <div className='border-border flex flex-col gap-4 border-t pt-6 md:flex-row'>
             <Button
               onClick={onSave}
               disabled={isSaveDisabled}

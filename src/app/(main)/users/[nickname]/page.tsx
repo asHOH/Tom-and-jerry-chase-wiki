@@ -281,11 +281,7 @@ export default async function PublicUserPage({ params, searchParams }: PublicUse
 
   return (
     <PageShell width='wide' className='space-y-8 py-6 text-gray-900 sm:py-8 dark:text-gray-100'>
-      <Card
-        as='header'
-        bordered
-        className='border-gray-200/80 p-5 shadow-sm sm:p-8 dark:border-gray-700/80'
-      >
+      <Card as='header' bordered className='border-border/80 p-5 shadow-sm sm:p-8'>
         <div className='flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between'>
           <div className='min-w-0'>
             <p className='inline-flex items-center gap-2 text-xs font-semibold tracking-[0.14em] text-blue-700 uppercase dark:text-blue-300'>
@@ -317,7 +313,7 @@ export default async function PublicUserPage({ params, searchParams }: PublicUse
           </div>
         </div>
 
-        <div className='mt-7 flex flex-col gap-4 border-t border-gray-200 pt-5 sm:flex-row sm:items-start sm:gap-8 dark:border-gray-700'>
+        <div className='border-border mt-7 flex flex-col gap-4 border-t pt-5 sm:flex-row sm:items-start sm:gap-8'>
           <div className='flex min-w-0 flex-1 flex-wrap items-center gap-2' aria-label='用户组'>
             <span className='mr-1 shrink-0 text-xs font-semibold tracking-wide text-gray-500 uppercase dark:text-gray-400'>
               用户组
@@ -326,7 +322,7 @@ export default async function PublicUserPage({ params, searchParams }: PublicUse
               profile.groups.map((group) => (
                 <span
                   key={group}
-                  className='rounded-full bg-gray-100 px-3 py-1 text-sm font-medium text-gray-700 dark:bg-gray-700 dark:text-gray-200'
+                  className='bg-surface-muted rounded-full px-3 py-1 text-sm font-medium text-gray-700 dark:text-gray-200'
                 >
                   {group}
                 </span>
@@ -356,7 +352,7 @@ export default async function PublicUserPage({ params, searchParams }: PublicUse
         </div>
 
         {contributor?.url && externalWebsiteName ? (
-          <div className='mt-5 border-t border-gray-200 pt-4 dark:border-gray-700'>
+          <div className='border-border mt-5 border-t pt-4'>
             <InlineExternalLink
               href={contributor.url}
               ariaLabel={`访问${externalWebsiteName}主页（在新标签页打开）`}
@@ -385,7 +381,7 @@ export default async function PublicUserPage({ params, searchParams }: PublicUse
       <nav
         aria-label='用户页内容'
         role='tablist'
-        className='flex flex-wrap gap-2 border-b border-gray-200 pb-2 dark:border-gray-700'
+        className='border-border flex flex-wrap gap-2 border-b pb-2'
       >
         <Link
           href={activityTabHref}
@@ -436,7 +432,7 @@ export default async function PublicUserPage({ params, searchParams }: PublicUse
                   <Card
                     key={stat.label}
                     bordered
-                    className='bg-surface/80 border-gray-200/80 text-center shadow-sm dark:border-gray-700/80'
+                    className='border-border/80 bg-surface/80 text-center shadow-sm'
                   >
                     <div className='text-2xl font-bold tracking-tight'>{stat.value}</div>
                     <div className='mt-1 text-sm text-gray-500 dark:text-gray-400'>

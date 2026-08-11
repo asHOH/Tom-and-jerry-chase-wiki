@@ -290,7 +290,7 @@ export default function PositioningTagsChart({
   const titleId = useId();
 
   return (
-    <div className='rounded-lg border border-gray-200 bg-gray-50/60 p-2 dark:border-gray-700 dark:bg-slate-800/40'>
+    <div className='border-border bg-surface-sunken/60 rounded-lg border p-2'>
       {viewMode === 'bar' ? (
         <BarChart
           data={data}

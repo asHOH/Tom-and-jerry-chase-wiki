@@ -94,7 +94,7 @@ export default function FilterRow<T extends string | number>(props: FilterRowPro
                   active
                     ? getFilterButtonActiveToneClasses(resolvedActiveTone)
                     : cn(
-                        'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-800 dark:text-gray-400 dark:hover:bg-slate-700',
+                        'bg-control hover:bg-control-hover text-gray-700 dark:text-gray-300',
                         inactiveHoverTextClassName
                       ),
                   getButtonClassName?.(opt as T, active)

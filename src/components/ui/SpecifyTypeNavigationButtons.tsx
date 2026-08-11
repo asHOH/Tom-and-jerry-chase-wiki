@@ -40,9 +40,9 @@ export default function SpecifyTypeNavigationButtons({
 
   const baseButtonClasses = 'flex items-center gap-1 rounded-lg px-3 py-2 transition-colors border';
   const enabledButtonClasses =
-    'bg-gray-100 text-gray-900 border-gray-300 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700 dark:hover:bg-gray-700';
+    'bg-control text-gray-900 border-gray-300 hover:bg-control-hover dark:text-gray-100 dark:border-gray-700';
   const disabledButtonClasses =
-    'cursor-not-allowed bg-gray-200 text-gray-500 border-gray-300 dark:bg-gray-700 dark:text-gray-500 dark:border-gray-700';
+    'bg-control-hover cursor-not-allowed border-gray-300 text-gray-500 dark:border-gray-700 dark:text-gray-500';
 
   return (
     <div className={cn('flex items-center justify-between gap-3', className)}>

@@ -117,7 +117,7 @@ export default function CharacterArticle({
                 </div>
               )}
             </div>
-            <div className='mt-3 flex flex-wrap gap-2 border-t border-gray-200 pt-3 dark:border-gray-700'>
+            <div className='border-border mt-3 flex flex-wrap gap-2 border-t pt-3'>
               <ButtonLink
                 href={`/articles/${encodeURIComponent(single.id)}`}
                 size='sm'
@@ -205,7 +205,7 @@ export default function CharacterArticle({
                         </div>
                       )}
                     </div>
-                    <div className='mt-3 flex flex-wrap gap-2 border-t border-gray-200 pt-3 dark:border-gray-700'>
+                    <div className='border-border mt-3 flex flex-wrap gap-2 border-t pt-3'>
                       <ButtonLink
                         href={`/articles/${encodeURIComponent(article.id)}`}
                         size='sm'

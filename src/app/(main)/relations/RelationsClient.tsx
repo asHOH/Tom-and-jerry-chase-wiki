@@ -259,7 +259,7 @@ export default function RelationsClient({
       descriptionVisibility='desktop'
       actions={canEditRelations && !isEditMode ? <EditButton /> : undefined}
       filters={
-        <div className='flex flex-col gap-3 rounded-md border border-gray-200 bg-gray-50 p-3 dark:border-slate-700 dark:bg-slate-900/60'>
+        <div className='border-border bg-surface-sunken flex flex-col gap-3 rounded-md border p-3'>
           <RowFactionSelector
             selected={rowFaction}
             onSelect={handleRowFactionSelect}

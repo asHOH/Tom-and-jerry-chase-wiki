@@ -236,7 +236,7 @@ const FeedbackSection =
                           setFeedbackFormData({ ...feedbackFormData, contact: e.target.value })
                         }
                         placeholder={isAnonymous ? '已匿名' : '请填写QQ号或其他联系方式，便于回复'}
-                        className='disabled:bg-gray-100 disabled:text-gray-400 disabled:dark:bg-gray-700/60 disabled:dark:text-gray-500'
+                        className='disabled:bg-control disabled:text-gray-400 disabled:dark:text-gray-500'
                         disabled={isAnonymous}
                         aria-disabled={isAnonymous}
                         aria-describedby='contact-help'

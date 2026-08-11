@@ -33,10 +33,10 @@ export default function TimerDisplay({
         className={cn(
           'inline-flex items-center gap-2 rounded-full px-4 py-1.5 font-mono text-xl font-bold',
           !started
-            ? 'bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-500'
+            ? 'bg-surface-muted text-gray-400 dark:text-gray-500'
             : isWarning
               ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400'
-              : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200'
+              : 'bg-surface-muted text-gray-700 dark:text-gray-200'
         )}
       >
         <svg

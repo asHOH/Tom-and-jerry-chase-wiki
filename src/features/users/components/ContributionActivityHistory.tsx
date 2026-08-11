@@ -103,7 +103,7 @@ function ActivityFilters({
               'rounded-full border px-3 py-1.5 text-sm font-medium transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none dark:focus:ring-offset-gray-900',
               isActive
                 ? 'border-blue-600 bg-blue-600 text-white shadow-sm dark:border-blue-400 dark:bg-blue-500'
-                : 'border-gray-200 bg-white text-gray-600 hover:border-blue-300 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-900/40 dark:text-gray-300 dark:hover:border-blue-700 dark:hover:text-blue-300'
+                : 'border-border bg-surface-sunken text-gray-600 hover:border-blue-300 hover:text-blue-700 dark:text-gray-300 dark:hover:border-blue-700 dark:hover:text-blue-300'
             )}
           >
             {label}
@@ -122,7 +122,7 @@ function ActivityItemRow({ item }: { item: ContributionActivityItem }) {
     <Card
       as='article'
       bordered
-      className='relative overflow-hidden border-gray-200/80 bg-gray-50/40 p-4 transition-shadow hover:shadow-sm dark:border-gray-700/80 dark:bg-gray-900/20'
+      className='border-border/80 bg-surface-sunken/40 relative overflow-hidden p-4 transition-shadow hover:shadow-sm'
     >
       <div className='flex gap-3'>
         <span
@@ -222,7 +222,7 @@ function PageLink({
       aria-label={`第 ${page} 页`}
       className={cn(
         classes,
-        'border-gray-200 bg-white text-gray-700 hover:border-blue-300 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-900/40 dark:text-gray-300 dark:hover:border-blue-700 dark:hover:text-blue-300'
+        'border-border bg-surface-sunken text-gray-700 hover:border-blue-300 hover:text-blue-700 dark:text-gray-300 dark:hover:border-blue-700 dark:hover:text-blue-300'
       )}
     >
       {page}
@@ -245,7 +245,7 @@ function ActivityPagination({
 
   const tokens = getPageTokens(currentPage, totalPages);
   const mutedButtonClasses =
-    'inline-flex h-9 items-center justify-center rounded-md border border-gray-200 bg-white px-3 text-sm font-medium text-gray-700 transition-colors hover:border-blue-300 hover:text-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none dark:border-gray-700 dark:bg-gray-900/40 dark:text-gray-300 dark:hover:border-blue-700 dark:hover:text-blue-300 dark:focus:ring-offset-gray-900';
+    'border-border bg-surface-sunken inline-flex h-9 items-center justify-center rounded-md border px-3 text-sm font-medium text-gray-700 transition-colors hover:border-blue-300 hover:text-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none dark:text-gray-300 dark:hover:border-blue-700 dark:hover:text-blue-300 dark:focus:ring-offset-gray-900';
 
   return (
     <nav aria-label='贡献记录分页' className='border-t border-gray-200 pt-4 dark:border-gray-800'>
@@ -396,7 +396,7 @@ export function ContributionActivityHistory({
           <ActivityPagination page={page} pageHref={pageHref} />
         </>
       ) : (
-        <div className='rounded-lg bg-gray-50 px-4 py-10 text-center dark:bg-gray-900/40'>
+        <div className='bg-surface-sunken rounded-lg px-4 py-10 text-center'>
           <p className='font-medium text-gray-700 dark:text-gray-200'>暂无贡献记录</p>
           <p className='mt-1 text-sm text-gray-500 dark:text-gray-400'>
             当前筛选条件下还没有公开活动。

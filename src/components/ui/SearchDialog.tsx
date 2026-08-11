@@ -403,7 +403,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
           {hasAiEntry && (
             <m.li
               key='chat-result'
-              className='border-b border-gray-200 dark:border-gray-700'
+              className='border-border border-b'
               variants={{
                 hidden: { opacity: 0, y: 10 },
                 visible: { opacity: 1, y: 0 },
@@ -453,7 +453,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
           {searchResults.map((result, index) => (
             <m.li
               key={getResultKey(result)}
-              className='border-b border-gray-200 last:border-b-0 dark:border-gray-700'
+              className='border-border border-b last:border-b-0'
               variants={{
                 hidden: { opacity: 0, y: 10 },
                 visible: { opacity: 1, y: 0 },
@@ -465,9 +465,8 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
                 type='button'
                 onClick={() => handleResultClick(result)}
                 className={cn(
-                  'flex w-full items-center gap-2 p-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700',
-                  highlightedIndex === (hasAiResult ? index + 1 : index) &&
-                    'bg-gray-100 dark:bg-gray-700'
+                  'hover:bg-control flex w-full items-center gap-2 p-2 text-left',
+                  highlightedIndex === (hasAiResult ? index + 1 : index) && 'bg-control'
                 )}
                 onMouseEnter={() => setHighlightedIndex(hasAiResult ? index + 1 : index)}
               >

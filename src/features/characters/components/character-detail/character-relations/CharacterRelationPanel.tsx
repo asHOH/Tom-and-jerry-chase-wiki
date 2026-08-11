@@ -104,10 +104,10 @@ const relationThemeClasses: Record<RelationTheme, RelationThemeClasses> = {
 const relationItemNameClassName = 'text-sm text-gray-700 dark:text-gray-300';
 const relationItemDescriptionClassName = 'mt-1 text-left text-xs text-gray-500 dark:text-gray-400';
 const relationItemTextareaClassName =
-  'mt-1 w-full resize-none rounded-md border border-gray-200 bg-white/60 px-2 py-1 text-left text-xs text-gray-600 focus:border-blue-400 focus:ring-1 focus:ring-blue-300 focus:outline-none dark:border-gray-600 dark:bg-slate-800/60 dark:text-gray-300';
+  'bg-surface/60 mt-1 w-full resize-none rounded-md border border-gray-200 px-2 py-1 text-left text-xs text-gray-600 focus:border-blue-400 focus:ring-1 focus:ring-blue-300 focus:outline-none dark:border-gray-600 dark:text-gray-300';
 const minorLabelClassName = 'text-[11px] text-gray-500 dark:text-gray-400';
 const relationTagClassName =
-  'inline-flex rounded-full bg-white/80 px-2 py-0.5 text-[11px] font-medium text-gray-600 ring-1 ring-gray-200 dark:bg-slate-800/80 dark:text-gray-300 dark:ring-slate-600';
+  'bg-surface/80 inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium text-gray-600 ring-1 ring-gray-200 dark:text-gray-300 dark:ring-slate-600';
 
 const getItemAriaLabel = (item: RelationDisplayItem, canEdit: boolean) =>
   item.type === 'character' ? item.getAriaLabel(canEdit) : item.ariaLabel;

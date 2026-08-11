@@ -106,7 +106,7 @@ export default function CharacterDisplay({
                     {tag.tagName}
                   </Tag>
                   {weaponImageUrl && (
-                    <div className='absolute -top-2 -right-0.5 flex h-4.5 w-4.5 items-center justify-center rounded-full border border-gray-300 bg-white/40 dark:border-gray-600 dark:bg-gray-800/40'>
+                    <div className='bg-surface/40 absolute -top-2 -right-0.5 flex h-4.5 w-4.5 items-center justify-center rounded-full border border-gray-300 dark:border-gray-600'>
                       <Image
                         src={weaponImageUrl}
                         alt={`武器${tag.weapon}`}

@@ -183,8 +183,8 @@ const UserManagement: React.FC<UserManagementProps> = ({
         </div>
 
         <div className='overflow-x-auto'>
-          <table className='min-w-full divide-y divide-gray-200 dark:divide-slate-700'>
-            <thead className='bg-gray-50 dark:bg-slate-900/40'>
+          <table className='divide-border min-w-full divide-y'>
+            <thead className='bg-surface-sunken'>
               <tr>
                 <th className='px-4 py-2 text-left text-sm font-medium text-gray-700 dark:text-slate-200'>
                   昵称
@@ -197,7 +197,7 @@ const UserManagement: React.FC<UserManagementProps> = ({
                 </th>
               </tr>
             </thead>
-            <tbody className='divide-y divide-gray-200 bg-white dark:divide-slate-700 dark:bg-slate-800'>
+            <tbody className='divide-border bg-surface divide-y'>
               {users.map((user) => (
                 <tr key={user.id}>
                   <td className='px-4 py-3 text-sm text-gray-800 dark:text-slate-100'>
@@ -219,7 +219,7 @@ const UserManagement: React.FC<UserManagementProps> = ({
                         onClick={() =>
                           setOpenGroupUserId((current) => (current === user.id ? null : user.id))
                         }
-                        className='flex min-h-9 w-full cursor-pointer items-center justify-between gap-2 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 transition-colors hover:border-blue-400 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:border-blue-500'
+                        className='bg-surface flex min-h-9 w-full cursor-pointer items-center justify-between gap-2 rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-700 transition-colors hover:border-blue-400 dark:border-slate-600 dark:text-slate-200 dark:hover:border-blue-500'
                       >
                         <span
                           className='truncate'
@@ -250,7 +250,7 @@ const UserManagement: React.FC<UserManagementProps> = ({
                             return (
                               <label
                                 key={group.id}
-                                className='flex cursor-pointer items-center gap-2 rounded px-2 py-2 text-sm hover:bg-gray-100 dark:hover:bg-slate-700'
+                                className='hover:bg-control flex cursor-pointer items-center gap-2 rounded px-2 py-2 text-sm'
                               >
                                 <input
                                   type='checkbox'

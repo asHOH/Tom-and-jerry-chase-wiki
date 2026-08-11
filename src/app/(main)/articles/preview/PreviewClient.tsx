@@ -215,7 +215,7 @@ export default function PreviewClient() {
 
           {/* Quick Actions */}
           {data.article.version.status === 'approved' && (
-            <div className='mt-4 border-t border-gray-200 pt-4 dark:border-gray-700'>
+            <div className='border-border mt-4 border-t pt-4'>
               <ButtonLink
                 href={`/articles/${data.article.id}`}
                 leadingIcon={

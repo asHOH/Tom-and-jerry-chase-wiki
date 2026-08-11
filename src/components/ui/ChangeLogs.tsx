@@ -204,7 +204,7 @@ const ChangeLogs = forwardRef<ChangeLogsRef>((_props, ref) => {
                   <Button
                     variant='unstyled'
                     onClick={() => toggleDate(dailyLog.date)}
-                    className='flex w-full items-center justify-between px-4 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-gray-900/50'
+                    className='hover:bg-surface-sunken/50 flex w-full items-center justify-between px-4 py-3 transition-colors'
                     aria-expanded={isExpanded}
                   >
                     <div className='flex items-center gap-3'>
@@ -234,16 +234,16 @@ const ChangeLogs = forwardRef<ChangeLogsRef>((_props, ref) => {
                   </Button>
 
                   {isExpanded && (
-                    <div className='border-t border-gray-300 bg-gray-50/50 dark:border-gray-700 dark:bg-gray-900/30'>
-                      <div className='divide-y divide-gray-200 dark:divide-gray-700'>
+                    <div className='bg-surface-sunken/50 border-t border-gray-300 dark:border-gray-700'>
+                      <div className='divide-border divide-y'>
                         {majorChanges.map(renderChange)}
 
                         {minorChanges.length > 0 && (
-                          <div className='bg-gray-100/50 dark:bg-gray-900/50'>
+                          <div className='bg-surface-muted/50'>
                             <Button
                               variant='unstyled'
                               onClick={(e) => toggleMinorDate(dailyLog.date, e)}
-                              className='flex w-full items-center justify-between px-4 py-2 text-xs font-medium tracking-wider text-gray-500 uppercase hover:bg-gray-200/50 dark:text-gray-400 dark:hover:bg-gray-800/50'
+                              className='hover:bg-control-hover/50 flex w-full items-center justify-between px-4 py-2 text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-400'
                             >
                               <div className='flex items-center gap-2'>
                                 <span>技术细节</span>
@@ -269,7 +269,7 @@ const ChangeLogs = forwardRef<ChangeLogsRef>((_props, ref) => {
                               />
                             </Button>
                             {isMinorExpanded && (
-                              <div className='divide-y divide-gray-200 border-t border-gray-200 dark:divide-gray-700 dark:border-gray-700'>
+                              <div className='divide-border border-border divide-y border-t'>
                                 {minorChanges.map(renderChange)}
                               </div>
                             )}

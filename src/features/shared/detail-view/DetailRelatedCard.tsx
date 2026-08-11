@@ -21,7 +21,7 @@ type DetailRelatedCardProps = {
 };
 
 const contentClassName =
-  'rounded-b-md border border-t-0 border-slate-200/80 bg-white/80 px-3 pb-3 pt-2 whitespace-pre-wrap shadow-sm dark:border-slate-700 dark:bg-slate-900/40';
+  'border-border/80 bg-surface-sunken/80 rounded-b-md border border-t-0 px-3 pt-2 pb-3 whitespace-pre-wrap shadow-sm';
 
 const titleClassName = 'rounded-t-md border px-3 pt-1.5 pb-1';
 const collapsedTitleClassName = 'rounded-md';
@@ -29,7 +29,7 @@ const accordionTitleClassName = 'mb-2 gap-1 rounded-lg bg-slate-100/80 p-1 dark:
 const accordionButtonClassName =
   'min-w-fit rounded-md border border-transparent bg-transparent px-2.5 py-1.5 text-gray-600 hover:bg-white/70 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-slate-900/70 dark:hover:text-white';
 const accordionActiveButtonClassName =
-  'border-orange-200/80 bg-white text-orange-700 shadow-sm not-italic no-underline hover:bg-white hover:text-orange-700 dark:border-orange-700/70 dark:bg-slate-900 dark:text-orange-200 dark:hover:bg-slate-900 dark:hover:text-orange-200';
+  'bg-surface-sunken border-orange-200/80 text-orange-700 shadow-sm not-italic no-underline hover:bg-surface-sunken hover:text-orange-700 dark:border-orange-700/70 dark:text-orange-200 dark:hover:bg-surface-sunken dark:hover:text-orange-200';
 const accordionContentContainerClassName = 'mt-2';
 
 export default function DetailRelatedCard({

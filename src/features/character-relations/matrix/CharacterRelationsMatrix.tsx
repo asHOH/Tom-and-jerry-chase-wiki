@@ -197,7 +197,7 @@ const MatrixCell = ({
       data-highlighted-row={isRowHighlighted ? '' : undefined}
       data-highlighted-col={isColumnHighlighted ? '' : undefined}
       className={cn(
-        'border border-gray-200 p-0 align-middle dark:border-slate-700',
+        'border-border border p-0 align-middle',
         !isEditMode && 'cursor-pointer',
         isRowHighlighted &&
           isColumnHighlighted &&
@@ -254,8 +254,8 @@ const ColumnHeader = ({
   <th
     scope='col'
     className={cn(
-      'sticky top-0 z-20 border border-gray-200 p-0 align-bottom dark:border-slate-700',
-      isHighlighted ? 'bg-blue-100 dark:bg-blue-900' : 'bg-white dark:bg-slate-900'
+      'border-border sticky top-0 z-20 border p-0 align-bottom',
+      isHighlighted ? 'bg-blue-100 dark:bg-blue-900' : 'bg-surface-sunken'
     )}
     style={sizing.columnHeader}
   >
@@ -290,8 +290,8 @@ const RowHeader = ({
   <th
     scope='row'
     className={cn(
-      'sticky left-0 z-10 max-w-28 min-w-24 border border-gray-200 p-0 dark:border-slate-700',
-      isHighlighted ? 'bg-blue-100 dark:bg-blue-900' : 'bg-white dark:bg-slate-900'
+      'border-border sticky left-0 z-10 max-w-28 min-w-24 border p-0',
+      isHighlighted ? 'bg-blue-100 dark:bg-blue-900' : 'bg-surface-sunken'
     )}
     style={sizing.rowHeader}
   >
@@ -348,7 +348,7 @@ export default function CharacterRelationsMatrix({
   }, []);
 
   return (
-    <div className='mx-auto max-h-[calc(100vh-15rem)] w-fit max-w-full overflow-auto border border-gray-200 bg-white dark:border-slate-700 dark:bg-slate-900'>
+    <div className='border-border bg-surface-sunken mx-auto max-h-[calc(100vh-15rem)] w-fit max-w-full overflow-auto border'>
       <table
         aria-label='角色关系矩阵'
         className='w-max border-separate border-spacing-0 text-xs text-gray-700 dark:text-gray-200'
@@ -357,7 +357,7 @@ export default function CharacterRelationsMatrix({
           <tr>
             <th
               scope='col'
-              className='sticky top-0 left-0 z-30 min-w-24 border border-gray-200 bg-white p-2 text-left align-bottom dark:border-slate-700 dark:bg-slate-900'
+              className='border-border bg-surface-sunken sticky top-0 left-0 z-30 min-w-24 border p-2 text-left align-bottom'
               style={sizing.cornerHeader}
             ></th>
             {viewModel.columns.map((column) => (

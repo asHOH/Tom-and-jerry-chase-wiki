@@ -2,8 +2,7 @@ import { cn } from './cn';
 
 const navButtonThemes = {
   active: 'bg-blue-600 text-white dark:bg-blue-700',
-  inactive:
-    'bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-slate-700 dark:text-gray-200 dark:hover:bg-slate-600',
+  inactive: 'bg-control text-gray-800 hover:bg-control-hover dark:text-gray-200',
   navigating: 'bg-gray-400 text-white cursor-not-allowed opacity-80 pointer-events-none',
 };
 
@@ -11,8 +10,8 @@ const actionButtonVariants = {
   primary:
     'bg-blue-600 text-white shadow-sm hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600',
   secondary:
-    'bg-gray-100 text-gray-800 hover:bg-gray-200 border border-gray-200 dark:bg-slate-700 dark:text-gray-100 dark:hover:bg-slate-600 dark:border-slate-600',
-  ghost: 'text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700',
+    'bg-control text-gray-800 hover:bg-control-hover border border-gray-200 dark:text-gray-100 dark:border-slate-600',
+  ghost: 'text-gray-700 hover:bg-control dark:text-gray-200',
   danger: 'bg-red-600 text-white shadow-sm hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600',
   success:
     'bg-green-700 text-white shadow-sm hover:bg-green-800 dark:bg-green-800 dark:hover:bg-green-700',
@@ -29,8 +28,7 @@ const actionButtonSizes = {
 export type FilterButtonTone = 'default' | 'blue' | 'green' | 'neutral';
 
 const filterButtonActiveToneClasses: Record<FilterButtonTone, string> = {
-  default:
-    'bg-gray-200 text-gray-900 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-700',
+  default: 'bg-control text-gray-900 hover:bg-control-hover dark:text-gray-100',
   blue: 'bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-600 dark:text-white dark:hover:bg-blue-700',
   green:
     'bg-green-600 text-white hover:bg-green-700 dark:bg-green-600 dark:text-white dark:hover:bg-green-700',
@@ -112,7 +110,7 @@ export function getFormControlClasses(options?: {
   const width = (options?.fullWidth ?? true) ? 'w-full' : 'w-auto';
 
   return cn(
-    'border bg-white text-gray-900 placeholder-gray-500 transition-all duration-200 focus:ring-2 disabled:cursor-not-allowed disabled:opacity-70 dark:bg-slate-900 dark:text-gray-100 dark:placeholder-gray-400',
+    'bg-surface-sunken border text-gray-900 placeholder-gray-500 transition-all duration-200 focus:ring-2 disabled:cursor-not-allowed disabled:opacity-70 dark:text-gray-100 dark:placeholder-gray-400',
     width,
     formControlSizes[size],
     state,

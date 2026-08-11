@@ -7,6 +7,14 @@
   --wiki-surface: var(--color-white);
   /* Dialogs, menus, and elevated overlays; elevation currently comes from shadows */
   --wiki-surface-raised: var(--color-white);
+  /* Low-emphasis, non-interactive regions such as neutral badges and code blocks */
+  --wiki-surface-muted: var(--color-gray-100);
+  /* Inset regions such as editor canvases, table wells, and secondary panels */
+  --wiki-surface-sunken: var(--color-gray-50);
+  /* Resting background for neutral buttons, tabs, and selectors */
+  --wiki-control: var(--color-gray-100);
+  /* Hover and pressed emphasis for neutral controls */
+  --wiki-control-hover: var(--color-gray-200);
   /* Secondary and explanatory text */
   --wiki-muted-foreground: var(--color-gray-600);
   /* Standard surface borders and dividers */
@@ -37,6 +45,10 @@
   --wiki-foreground: var(--color-slate-200);
   --wiki-surface: var(--color-slate-800);
   --wiki-surface-raised: var(--color-slate-800);
+  --wiki-surface-muted: var(--color-slate-700);
+  --wiki-surface-sunken: var(--color-slate-900);
+  --wiki-control: var(--color-slate-700);
+  --wiki-control-hover: var(--color-slate-600);
   --wiki-muted-foreground: var(--color-gray-400);
   --wiki-border: var(--color-slate-700);
   --wiki-focus: var(--color-blue-400);
@@ -48,6 +60,10 @@
   --color-foreground: var(--wiki-foreground);
   --color-surface: var(--wiki-surface);
   --color-surface-raised: var(--wiki-surface-raised);
+  --color-surface-muted: var(--wiki-surface-muted);
+  --color-surface-sunken: var(--wiki-surface-sunken);
+  --color-control: var(--wiki-control);
+  --color-control-hover: var(--wiki-control-hover);
   --color-muted-foreground: var(--wiki-muted-foreground);
   --color-border: var(--wiki-border);
   --color-focus: var(--wiki-focus);

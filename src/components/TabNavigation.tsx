@@ -44,7 +44,7 @@ const DETAIL_TOGGLE_WIDTH = 56;
 const USER_BUTTON_WIDTH = 44;
 const dropdownMenuIconClassName = '!h-6 !w-6 shrink-0 object-contain';
 const dropdownMenuLinkBaseClassName =
-  'flex min-h-10 items-center gap-2 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700';
+  'flex min-h-10 items-center gap-2 py-2 text-sm text-gray-800 hover:bg-control dark:text-gray-200';
 
 type DropdownNavLinkProps = {
   item: NavItem;
@@ -599,7 +599,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                       <li>
                         <Link
                           href={getUserProfileHref(nickname, { tab: 'activity' }) as Route}
-                          className='block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700'
+                          className='hover:bg-control block px-4 py-2 text-sm text-gray-800 dark:text-gray-200'
                         >
                           个人主页
                         </Link>
@@ -607,7 +607,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                       <li>
                         <Link
                           href={getUserProfileHref(nickname, { tab: 'submissions' }) as Route}
-                          className='block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700'
+                          className='hover:bg-control block px-4 py-2 text-sm text-gray-800 dark:text-gray-200'
                         >
                           我的贡献
                         </Link>
@@ -615,7 +615,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                       <li>
                         <Link
                           href='/notifications/'
-                          className='flex items-center justify-between px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700'
+                          className='hover:bg-control flex items-center justify-between px-4 py-2 text-sm text-gray-800 dark:text-gray-200'
                         >
                           <span>通知</span>
                           {unreadNotificationCount > 0 && (
@@ -629,7 +629,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                         <Button
                           variant='unstyled'
                           type='button'
-                          className='w-full cursor-pointer px-4 py-2 text-left text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700'
+                          className='hover:bg-control w-full cursor-pointer px-4 py-2 text-left text-sm text-gray-800 dark:text-gray-200'
                           onClick={() => {
                             setUserDropdownOpen(false);
                             setChangePasswordOpen(true);
@@ -642,7 +642,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                         <li>
                           <Link
                             href='/admin/'
-                            className='block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-slate-700'
+                            className='hover:bg-control block px-4 py-2 text-sm text-gray-800 dark:text-gray-200'
                           >
                             进入管理面板
                           </Link>
@@ -660,8 +660,8 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                           className={cn(
                             'w-full cursor-pointer rounded-b-md px-4 py-2 text-left text-sm text-gray-800 dark:text-gray-200',
                             signingOut
-                              ? 'pointer-events-none bg-gray-100 opacity-60 dark:bg-slate-700'
-                              : 'hover:bg-gray-100 dark:hover:bg-slate-700'
+                              ? 'bg-control pointer-events-none opacity-60'
+                              : 'hover:bg-control'
                           )}
                           onClick={handleSignOut}
                           disabled={signingOut}

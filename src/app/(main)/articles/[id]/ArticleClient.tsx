@@ -264,7 +264,7 @@ export default function ArticleClient({
               </div>
 
               {/* Action Buttons */}
-              <div className='mt-4 flex flex-wrap gap-3 border-t border-gray-200 pt-4 dark:border-gray-700'>
+              <div className='border-border mt-4 flex flex-wrap gap-3 border-t pt-4'>
                 <Button
                   onClick={() => setShowAutoNumbering(!showAutoNumbering)}
                   variant={showAutoNumbering ? 'primary' : 'secondary'}

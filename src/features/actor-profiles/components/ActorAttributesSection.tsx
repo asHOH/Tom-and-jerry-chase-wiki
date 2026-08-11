@@ -398,7 +398,7 @@ export default function ActorAttributesSection({
 
       {hasMore ? (
         <div className='flex items-center justify-center gap-4 pt-1'>
-          <div className='flex-1 border-t border-gray-200 dark:border-gray-700' />
+          <div className='border-border flex-1 border-t' />
           <Button
             variant='unstyled'
             type='button'
@@ -415,7 +415,7 @@ export default function ActorAttributesSection({
               )}
             />
           </Button>
-          <div className='flex-1 border-t border-gray-200 dark:border-gray-700' />
+          <div className='border-border flex-1 border-t' />
         </div>
       ) : null}
     </div>

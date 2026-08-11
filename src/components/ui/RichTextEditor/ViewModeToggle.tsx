@@ -32,7 +32,7 @@ const ViewModeToggle = React.memo(function ViewModeToggle({
   const activeClasses =
     'bg-blue-100 dark:bg-blue-900/30 border-blue-300 dark:border-blue-600 text-blue-700 dark:text-blue-300';
   const inactiveClasses =
-    'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300';
+    'bg-surface border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300';
   const buttonConfigs: Array<{ mode: EditorViewMode; label: string; title: string }> = [
     { mode: 'rich', label: l.rich, title: '富文本' },
     { mode: 'html', label: l.html, title: 'HTML' },

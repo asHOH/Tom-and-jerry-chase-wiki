@@ -228,8 +228,8 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
         </div>
 
         <div className='overflow-x-auto'>
-          <table className='min-w-full divide-y divide-gray-200 dark:divide-slate-700'>
-            <thead className='bg-gray-50 dark:bg-slate-900/40'>
+          <table className='divide-border min-w-full divide-y'>
+            <thead className='bg-surface-sunken'>
               <tr>
                 <th className='px-4 py-2 text-left text-sm font-medium text-gray-700 dark:text-slate-200'>
                   名称
@@ -245,7 +245,7 @@ const CategoryManagement: React.FC<CategoryManagementProps> = ({
                 </th>
               </tr>
             </thead>
-            <tbody className='divide-y divide-gray-200 bg-white dark:divide-slate-700 dark:bg-slate-800'>
+            <tbody className='divide-border bg-surface divide-y'>
               {categories.map((category) => (
                 <tr key={category.id}>
                   <td className='px-4 py-3 text-sm text-gray-800 dark:text-slate-100'>

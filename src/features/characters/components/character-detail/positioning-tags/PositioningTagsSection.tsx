@@ -314,7 +314,7 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
   if (sortedTags.length === 0 && !isEditMode) return null;
 
   return (
-    <div className='mt-6 border-t border-gray-200 pt-4 dark:border-gray-700'>
+    <div className='border-border mt-6 border-t pt-4'>
       <div className='mb-3 flex flex-wrap items-center justify-between gap-2'>
         <h3 className='text-lg font-semibold text-gray-800 dark:text-gray-200'>定位</h3>
         <div

@@ -109,7 +109,7 @@ const KnowledgeCardPicker: React.FC<KnowledgeCardPickerProps> = ({
           })}
         </div>
       </div>
-      <div className='mt-4 flex flex-none flex-col items-center justify-between gap-4 border-t border-gray-200 pt-4 sm:flex-row dark:border-slate-700'>
+      <div className='border-border mt-4 flex flex-none flex-col items-center justify-between gap-4 border-t pt-4 sm:flex-row'>
         <div className='text-center text-gray-800 sm:text-left dark:text-gray-200'>
           <span className='font-bold'>总知识量: {totalCost}</span>
           {totalCost > 21 && (

@@ -227,7 +227,7 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
 
   const renderUploadTab = () => (
     <div className='space-y-4'>
-      <div className='rounded-lg border border-dashed border-gray-300 bg-gray-50 p-6 text-center dark:border-gray-600 dark:bg-gray-800'>
+      <div className='bg-surface-sunken rounded-lg border border-dashed border-gray-300 p-6 text-center dark:border-gray-600'>
         <p className='mb-2 text-base font-semibold text-gray-900 dark:text-gray-100'>上传新图片</p>
         <p className='mb-4 text-sm text-gray-600 dark:text-gray-400'>
           {IMAGE_EXT_HINT}，单张不超过 {formatBytesForDisplay(RTE_IMAGE_MAX_BYTES)}。
@@ -252,7 +252,7 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
           <p className='mt-3 text-sm text-red-600 dark:text-red-400'>{uploadError}</p>
         )}
       </div>
-      <div className='rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-900'>
+      <div className='border-border bg-surface-sunken rounded-lg border p-4'>
         <p className='text-sm text-gray-700 dark:text-gray-300'>
           若已知图片 URL，可直接粘贴（仅支持站内/网站数据库的 URL）：
         </p>
@@ -308,10 +308,10 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
               variant='unstyled'
               type='button'
               key={item.path}
-              className='group overflow-hidden rounded-lg border border-gray-200 bg-white text-left shadow-sm hover:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-900'
+              className='border-border bg-surface-sunken group overflow-hidden rounded-lg border text-left shadow-sm hover:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none'
               onClick={() => handleSupabaseSelect(item)}
             >
-              <div className='relative aspect-video w-full overflow-hidden bg-gray-100 dark:bg-gray-800'>
+              <div className='bg-control relative aspect-video w-full overflow-hidden'>
                 <Img
                   src={item.publicUrl}
                   alt={item.name}
@@ -379,14 +379,14 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
               type='button'
               key={entry.path}
               onClick={() => handleSiteEntryClick(entry)}
-              className='flex items-center gap-3 rounded-lg border border-gray-200 bg-white px-3 py-2 text-left hover:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-900'
+              className='border-border bg-surface-sunken flex items-center gap-3 rounded-lg border px-3 py-2 text-left hover:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none'
             >
               {entry.type === 'directory' ? (
                 <div className='flex h-12 w-12 items-center justify-center rounded-md bg-blue-50 text-blue-600 dark:bg-blue-900/40 dark:text-blue-300'>
                   📁
                 </div>
               ) : (
-                <div className='flex h-12 w-12 items-center justify-center overflow-hidden rounded-md bg-gray-100 dark:bg-gray-800'>
+                <div className='bg-control flex h-12 w-12 items-center justify-center overflow-hidden rounded-md'>
                   <Img
                     src={entry.publicPath ?? ''}
                     alt={entry.name}
@@ -424,9 +424,9 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
       ariaLabelledBy='image-picker-dialog-title'
       closeOnOutsideClick={!isUploading}
       backdropClassName='z-120 bg-black/60 backdrop-blur-none'
-      panelClassName='inset-auto top-1/2 left-1/2 z-130 max-h-[calc(100%-2rem)] w-[calc(100%-2rem)] max-w-4xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto border border-gray-200 shadow-2xl dark:border-gray-700'
+      panelClassName='border-border inset-auto top-1/2 left-1/2 z-130 max-h-[calc(100%-2rem)] w-[calc(100%-2rem)] max-w-4xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto border shadow-2xl'
     >
-      <div className='flex items-center justify-between border-b border-gray-200 px-6 py-4 dark:border-gray-700'>
+      <div className='border-border flex items-center justify-between border-b px-6 py-4'>
         <div>
           <h2
             id='image-picker-dialog-title'
@@ -455,7 +455,7 @@ const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
         {activeTab === 'library' && renderLibraryTab()}
         {activeTab === 'site' && renderSiteTab()}
       </div>
-      <div className='flex justify-end border-t border-gray-200 px-6 py-3 dark:border-gray-700'>
+      <div className='border-border flex justify-end border-t px-6 py-3'>
         <Button onClick={onClose} variant='secondary'>
           关闭
         </Button>

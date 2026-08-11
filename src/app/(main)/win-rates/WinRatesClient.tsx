@@ -434,7 +434,7 @@ export default function WinRatesClient({ description, characterFactions }: WinRa
         <SectionHeader title={`角色数据 (${filteredAndSortedData.length} 条记录)`} />
 
         <div className='overflow-x-auto rounded-lg border border-gray-300 dark:border-gray-600'>
-          <table className='min-w-full border-collapse bg-white dark:bg-gray-800'>
+          <table className='bg-surface min-w-full border-collapse'>
             <thead>
               <tr className='bg-gray-50 dark:bg-gray-700'>
                 {renderTh('No.')}
@@ -506,9 +506,9 @@ export default function WinRatesClient({ description, characterFactions }: WinRa
         <section>
           <SectionHeader title='赛季总览' />
           <div className='overflow-x-auto'>
-            <table className='min-w-full border-collapse border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800'>
+            <table className='bg-surface min-w-full border-collapse border border-gray-300 dark:border-gray-600'>
               <thead>
-                <tr className='bg-gray-100 dark:bg-gray-700'>
+                <tr className='bg-surface-muted'>
                   <th className='border border-gray-300 px-4 py-2 text-left dark:border-gray-600'>
                     段位
                   </th>

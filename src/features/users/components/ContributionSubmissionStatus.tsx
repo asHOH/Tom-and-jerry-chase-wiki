@@ -49,7 +49,7 @@ const STATUS_META: Record<
   revoked: {
     label: '已撤回',
     filterLabel: '已撤回',
-    className: 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200',
+    className: 'bg-surface-muted text-gray-700 dark:text-gray-200',
   },
 };
 

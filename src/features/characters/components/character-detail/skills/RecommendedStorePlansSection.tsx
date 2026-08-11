@@ -32,7 +32,7 @@ export default function RecommendedStorePlansSection() {
   if (storePlans.length === 0 && !isEditMode) return null;
 
   return (
-    <div className='mt-6 border-t border-gray-200 pt-6 dark:border-gray-700'>
+    <div className='border-border mt-6 border-t pt-6'>
       <h3 className='mb-3 text-lg font-semibold text-gray-800 dark:text-gray-200'>推荐商店方案</h3>
       <ul className='space-y-3'>
         {storePlans.map((plan, planIndex) => (
@@ -66,7 +66,7 @@ export default function RecommendedStorePlansSection() {
                       onClick={(event) => {
                         if (isEditMode) event.preventDefault();
                       }}
-                      className='group relative flex aspect-square items-center justify-center rounded-lg border border-gray-200 bg-white transition-all hover:-translate-y-0.5 hover:border-gray-400 hover:shadow-sm focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:outline-none dark:border-gray-600 dark:bg-gray-800 dark:hover:border-gray-400 dark:focus-visible:ring-blue-500'
+                      className='bg-surface group relative flex aspect-square items-center justify-center rounded-lg border border-gray-200 transition-all hover:-translate-y-0.5 hover:border-gray-400 hover:shadow-sm focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:outline-none dark:border-gray-600 dark:hover:border-gray-400 dark:focus-visible:ring-blue-500'
                     >
                       <span className='flex size-full items-center justify-center overflow-hidden'>
                         <Img

@@ -112,7 +112,7 @@ const OrGroupDisplay: React.FC<
         />
         {/* Navigation bar */}
         {childrenCount > 1 && (
-          <div className='flex items-center gap-2 rounded-md bg-gray-100 px-3 py-1.5 dark:bg-slate-700'>
+          <div className='bg-surface-muted flex items-center gap-2 rounded-md px-3 py-1.5'>
             <Button
               variant='unstyled'
               type='button'

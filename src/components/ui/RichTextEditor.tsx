@@ -297,7 +297,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   }
 
   return (
-    <div className='flex max-h-[90vh] flex-col overflow-hidden rounded-lg border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-900'>
+    <div className='bg-surface-raised flex max-h-[90vh] flex-col overflow-hidden rounded-lg border border-gray-300 dark:border-gray-600'>
       <Toolbar
         state={toolbarState}
         commands={commands}
@@ -343,7 +343,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
               }
             }}
             className={cn(
-              'h-full min-h-100 w-full bg-gray-50 p-6 text-gray-900 dark:bg-gray-800 dark:text-gray-100',
+              'bg-surface-sunken h-full min-h-100 w-full p-6 text-gray-900 dark:text-gray-100',
               'resize-none font-mono text-sm focus:outline-none',
               className
             )}

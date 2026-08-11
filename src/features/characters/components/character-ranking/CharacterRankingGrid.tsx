@@ -239,7 +239,7 @@ export default function CharacterRankingGrid({
       {rankedCharacters.length > 0 &&
         rankedCharacters[0] &&
         rankedCharacters[rankedCharacters.length - 1] && (
-          <div className='mx-auto max-w-4xl border-t border-gray-200 px-4 pt-8 dark:border-gray-700'>
+          <div className='border-border mx-auto max-w-4xl border-t px-4 pt-8'>
             <div className='grid grid-cols-1 gap-4 text-center md:grid-cols-3'>
               {/* Highest -> S rank colors with soft background */}
               {(() => {

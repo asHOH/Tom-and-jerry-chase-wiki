@@ -146,7 +146,7 @@ function GameDataActionPreviewItem({ action, entityType }: GameDataActionPreview
   const showIdDiff = hasVisibleIdArrayDiff(idDiff);
 
   return (
-    <li className='rounded bg-white/80 px-2 py-1 text-gray-800 shadow-sm ring-1 ring-amber-100 dark:bg-slate-800/60 dark:text-slate-100 dark:ring-amber-900/50'>
+    <li className='bg-surface/80 dark:bg-surface/60 rounded px-2 py-1 text-gray-800 shadow-sm ring-1 ring-amber-100 dark:text-slate-100 dark:ring-amber-900/50'>
       <div className='flex flex-wrap items-center gap-2'>
         {action.op !== 'set' && (
           <span className='rounded bg-amber-600 px-1.5 py-0.5 text-[11px] font-semibold text-white'>
@@ -248,7 +248,7 @@ function JsonLineText({ value }: { value: string }) {
 
 function EmptyDiffState() {
   return (
-    <div className='rounded bg-gray-50 px-4 py-8 text-center text-sm text-gray-500 dark:bg-slate-900/40 dark:text-slate-400'>
+    <div className='bg-surface-sunken rounded px-4 py-8 text-center text-sm text-gray-500 dark:text-slate-400'>
       规范化后没有差异
     </div>
   );
@@ -295,7 +295,7 @@ function UnifiedDiffView({
   if (hunks.length === 0) return <EmptyDiffState />;
 
   return (
-    <div className='overflow-auto rounded border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900/50'>
+    <div className='border-border bg-surface-sunken overflow-auto rounded border'>
       <div className='min-w-max border-b border-slate-200 bg-red-50 px-3 py-1 font-mono text-xs text-red-800 dark:border-slate-700 dark:bg-red-950/40 dark:text-red-200'>
         --- {fileName}.old.json
       </div>
@@ -360,7 +360,7 @@ function NormalDiffView({ model }: { model: GameActionDiffModel }) {
   if (model.normalGroups.length === 0) return <EmptyDiffState />;
 
   return (
-    <div className='max-h-160 space-y-1 overflow-auto rounded border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900/50'>
+    <div className='border-border bg-surface-sunken max-h-160 space-y-1 overflow-auto rounded border'>
       {model.normalGroups.map((group, index) => (
         <NormalGroup key={`${index}-${group.command}`} group={group} />
       ))}
@@ -440,7 +440,7 @@ function SplitDiffView({
   if (model.identical) return <EmptyDiffState />;
 
   return (
-    <div className='overflow-auto rounded border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900/50'>
+    <div className='border-border bg-surface-sunken overflow-auto rounded border'>
       <div className='grid min-w-192 grid-cols-2 border-b border-slate-200 text-xs font-semibold dark:border-slate-700'>
         <div className='border-r border-slate-200 bg-red-50 px-3 py-2 text-red-800 dark:border-slate-700 dark:bg-red-950/40 dark:text-red-200'>
           旧值
@@ -481,7 +481,7 @@ function MalformedEntry({ entry }: { entry: unknown }) {
       <div className='rounded border border-yellow-300 bg-yellow-50 p-3 text-sm text-yellow-900 dark:border-yellow-800 dark:bg-yellow-950/30 dark:text-yellow-200'>
         该历史记录无法解析，以下显示原始 JSON。
       </div>
-      <pre className='max-h-96 overflow-auto rounded bg-gray-50 p-3 text-xs whitespace-pre-wrap text-gray-800 dark:bg-slate-900/40 dark:text-slate-100'>
+      <pre className='bg-surface-sunken max-h-96 overflow-auto rounded p-3 text-xs whitespace-pre-wrap text-gray-800 dark:text-slate-100'>
         {formatRawEntry(entry)}
       </pre>
     </div>
@@ -626,7 +626,7 @@ export default function GameDataActionPreviewList({
   if (!normalized.success) {
     return (
       <ul className='space-y-1 text-xs'>
-        <li className='rounded bg-white/60 px-2 py-1 text-gray-700 ring-1 ring-gray-100 dark:bg-slate-800/60 dark:text-slate-100 dark:ring-slate-700'>
+        <li className='bg-surface/60 rounded px-2 py-1 text-gray-700 ring-1 ring-gray-100 dark:text-slate-100 dark:ring-slate-700'>
           非法记录
         </li>
       </ul>

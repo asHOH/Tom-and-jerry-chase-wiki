@@ -159,7 +159,7 @@ export default function KnowledgeCardDetails({
               return (
                 <div
                   key={`${effectiveCard.id}-${level.level}`}
-                  className='rounded bg-gray-100 p-4 dark:bg-slate-700'
+                  className='bg-surface-muted rounded p-4'
                 >
                   <p className='px-2 py-1 text-black dark:text-gray-200'>
                     <span className='font-bold'>Lv.{level.level}:</span>{' '}

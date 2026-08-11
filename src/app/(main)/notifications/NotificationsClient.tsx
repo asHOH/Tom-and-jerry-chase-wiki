@@ -232,11 +232,8 @@ export default function NotificationsClient() {
       <PageHeader title='通知中心' description='查看站内通知，管理站内订阅与邮件设置' />
 
       <div className='grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start'>
-        <Card
-          as='section'
-          className='order-2 overflow-hidden border border-gray-200 p-0 lg:order-1 dark:border-gray-700'
-        >
-          <div className='border-b border-gray-200 px-4 py-4 sm:px-5 dark:border-gray-700'>
+        <Card as='section' className='border-border order-2 overflow-hidden border p-0 lg:order-1'>
+          <div className='border-border border-b px-4 py-4 sm:px-5'>
             <SectionHeader title='通知记录'>
               {unreadCount > 0 && (
                 <span className='rounded-full bg-blue-100 px-2.5 py-1 text-xs font-semibold text-blue-700 dark:bg-blue-900/40 dark:text-blue-300'>
@@ -245,7 +242,7 @@ export default function NotificationsClient() {
               )}
             </SectionHeader>
             <div className='flex flex-wrap items-center justify-between gap-3'>
-              <div className='inline-flex rounded-lg border border-gray-200 bg-gray-50 p-1 dark:border-gray-600 dark:bg-gray-900/60'>
+              <div className='bg-surface-sunken inline-flex rounded-lg border border-gray-200 p-1 dark:border-gray-600'>
                 {(['all', 'unread'] as const).map((value) => (
                   <Button
                     variant='unstyled'
@@ -382,10 +379,7 @@ export default function NotificationsClient() {
           </div>
         </Card>
 
-        <Card
-          as='aside'
-          className='order-1 border border-gray-200 lg:sticky lg:top-24 lg:order-2 dark:border-gray-700'
-        >
+        <Card as='aside' className='border-border order-1 border lg:sticky lg:top-24 lg:order-2'>
           <SectionHeader title='站内订阅' />
           <p className='mb-4 text-sm leading-6 text-gray-600 dark:text-gray-300'>
             按需接收全站范围的待审核提醒和讨论更新。
@@ -440,7 +434,7 @@ export default function NotificationsClient() {
             </div>
           )}
 
-          <div className='mt-6 border-t border-gray-200 pt-6 dark:border-gray-700'>
+          <div className='border-border mt-6 border-t pt-6'>
             <SectionHeader title='邮件通知' />
             <p className='mb-4 text-sm leading-6 text-gray-600 dark:text-gray-300'>
               将站内通知同步发送到您验证过的邮箱。
@@ -468,7 +462,7 @@ export default function NotificationsClient() {
                         {emailSettings.enabled ? '通知邮件已启用' : '通知邮件已停用'}
                       </span>
                     </div>
-                    <div className='mt-3 flex gap-2 border-t border-gray-200 pt-3 dark:border-gray-700'>
+                    <div className='border-border mt-3 flex gap-2 border-t pt-3'>
                       <Button
                         size='sm'
                         variant='secondary'

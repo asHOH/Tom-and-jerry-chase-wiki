@@ -54,7 +54,7 @@ const ArticlePagination: React.FC<ArticlePaginationProps> = ({
           aria-label='上一页'
           className={cn(
             paginationButtonBase,
-            'bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+            'bg-control hover:bg-control-hover text-gray-700 disabled:cursor-not-allowed disabled:opacity-50 dark:text-gray-300'
           )}
         >
           上一页
@@ -69,7 +69,7 @@ const ArticlePagination: React.FC<ArticlePaginationProps> = ({
               aria-label='第 1 页'
               className={cn(
                 paginationButtonBase,
-                'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+                'bg-control hover:bg-control-hover text-gray-700 dark:text-gray-300'
               )}
             >
               1
@@ -94,7 +94,7 @@ const ArticlePagination: React.FC<ArticlePaginationProps> = ({
               paginationButtonBase,
               page === currentPage
                 ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+                : 'bg-control hover:bg-control-hover text-gray-700 dark:text-gray-300'
             )}
           >
             {page}
@@ -115,7 +115,7 @@ const ArticlePagination: React.FC<ArticlePaginationProps> = ({
               aria-label={`第 ${totalPages} 页`}
               className={cn(
                 paginationButtonBase,
-                'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+                'bg-control hover:bg-control-hover text-gray-700 dark:text-gray-300'
               )}
             >
               {totalPages}
@@ -131,7 +131,7 @@ const ArticlePagination: React.FC<ArticlePaginationProps> = ({
           aria-label='下一页'
           className={cn(
             paginationButtonBase,
-            'bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+            'bg-control hover:bg-control-hover text-gray-700 disabled:cursor-not-allowed disabled:opacity-50 dark:text-gray-300'
           )}
         >
           下一页

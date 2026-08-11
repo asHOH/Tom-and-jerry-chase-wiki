@@ -61,7 +61,7 @@ const RelationItemSelector: React.FC<RelationItemSelectorProps> = ({
               key={id}
               type='button'
               onClick={() => handleSelect(id)}
-              className='flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700'
+              className='hover:bg-control flex w-full items-center gap-2 px-3 py-2 text-left text-sm'
               aria-label={optionAriaLabel(id)}
             >
               {imageUrl && (

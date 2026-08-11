@@ -265,7 +265,7 @@ export default function CharacterDetails({
                   </div>
 
                   {/* Character Navigation */}
-                  <div className='border-t border-gray-200 pt-4 dark:border-gray-700'>
+                  <div className='border-border border-t pt-4'>
                     <CharacterNavigationButtons currentCharacterId={localCharacter.id} />
                   </div>
                 </div>

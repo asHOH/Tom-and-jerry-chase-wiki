@@ -221,7 +221,7 @@ export default function EntityClient({ description, data = entities, publishedRe
             <label className='inline-flex cursor-pointer items-center select-none'>
               <input
                 type='checkbox'
-                className='h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600'
+                className='bg-control h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:ring-offset-gray-800 dark:focus:ring-blue-600'
                 checked={showTagFilter}
                 onChange={(e) => {
                   setShowTagFilter(e.target.checked);
@@ -239,7 +239,7 @@ export default function EntityClient({ description, data = entities, publishedRe
             <label className='inline-flex cursor-pointer items-center select-none'>
               <input
                 type='checkbox'
-                className='h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600'
+                className='bg-control h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:ring-offset-gray-800 dark:focus:ring-blue-600'
                 checked={andMode}
                 onChange={(e) => setAndMode(e.target.checked)}
               />

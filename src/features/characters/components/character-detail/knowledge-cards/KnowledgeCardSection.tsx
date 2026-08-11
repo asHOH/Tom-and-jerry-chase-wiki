@@ -337,7 +337,7 @@ export default function KnowledgeCardSection({
     isTwoModeCycle
       ? viewMode === 'compact'
         ? 'bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-900'
-        : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700 dark:text-gray-300 dark:hover:bg-slate-600'
+        : 'bg-control text-gray-700 hover:bg-control-hover dark:text-gray-300'
       : 'bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-900'
   );
   const viewToggleIconClass = cn(
@@ -460,7 +460,7 @@ export default function KnowledgeCardSection({
                   isGeneral={index >= Math.max(0, knowledgeCardGroups.length - generalGroupCount)}
                 />
                 {index < knowledgeCardGroups.length - 1 && (
-                  <div className='my-4 border-t border-gray-200 dark:border-slate-700'></div>
+                  <div className='border-border my-4 border-t'></div>
                 )}
               </React.Fragment>
             ) : (
@@ -484,7 +484,7 @@ export default function KnowledgeCardSection({
                   isGeneral={index >= Math.max(0, knowledgeCardGroups.length - generalGroupCount)}
                 />
                 {index < knowledgeCardGroups.length - 1 && (
-                  <div className='my-4 border-t border-gray-200 dark:border-slate-700'></div>
+                  <div className='border-border my-4 border-t'></div>
                 )}
               </React.Fragment>
             )

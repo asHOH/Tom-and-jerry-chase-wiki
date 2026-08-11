@@ -112,7 +112,7 @@ export default function AdvancedCardGroupEditor({
         )}
       >
         {/* Header */}
-        <div className='flex-none border-b border-gray-200 p-4 sm:p-6 dark:border-slate-700'>
+        <div className='border-border flex-none border-b p-4 sm:p-6'>
           <h2 className='text-xl font-bold text-gray-900 sm:text-2xl dark:text-white'>
             高级编辑知识卡组
           </h2>
@@ -134,7 +134,7 @@ export default function AdvancedCardGroupEditor({
         </div>
 
         {/* Footer */}
-        <div className='flex-none border-t border-gray-200 p-4 sm:p-6 dark:border-slate-700'>
+        <div className='border-border flex-none border-t p-4 sm:p-6'>
           <div className='flex items-center justify-between'>
             <div className='text-sm text-gray-600 dark:text-gray-400'>
               <span className='font-bold'>当前最大知识量: {maxCost}</span>

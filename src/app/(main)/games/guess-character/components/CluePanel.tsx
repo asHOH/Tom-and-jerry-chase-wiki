@@ -39,7 +39,7 @@ export default function CluePanel({ clues, revealedCount, maxClues }: CluePanelP
                 'rounded-lg border p-3 transition-all duration-300',
                 isRevealed
                   ? 'border-blue-200 bg-blue-50/50 dark:border-blue-700 dark:bg-blue-900/20'
-                  : 'border-gray-200 bg-gray-50 dark:border-slate-700 dark:bg-slate-800/50'
+                  : 'border-border bg-surface-sunken'
               )}
             >
               {isRevealed ? (

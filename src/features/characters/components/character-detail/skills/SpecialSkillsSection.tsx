@@ -52,7 +52,7 @@ export default function SpecialSkillsSection() {
     <div>
       {(hasSpecialSkills || isEditMode) && (
         <>
-          <h3 className='mt-6 mb-3 border-t border-gray-200 pt-6 text-lg font-semibold text-gray-800 dark:border-gray-700 dark:text-gray-200'>
+          <h3 className='border-border mt-6 mb-3 border-t pt-6 text-lg font-semibold text-gray-800 dark:text-gray-200'>
             {isEditMode ? (
               '推荐特技'
             ) : (
@@ -70,7 +70,7 @@ export default function SpecialSkillsSection() {
               return (
                 <li
                   key={skill.name + '-' + index}
-                  className='w-full rounded-md bg-gray-100 p-3 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600'
+                  className='bg-control hover:bg-control-hover w-full rounded-md p-3 transition-colors'
                 >
                   <div className='flex items-start gap-3'>
                     {/* Left: Icon (clickable) */}

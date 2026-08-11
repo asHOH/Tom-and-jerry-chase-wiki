@@ -69,7 +69,7 @@ export default function Loading() {
         </div>
 
         {/* Summary cards skeleton */}
-        <div className='mx-auto w-full max-w-4xl border-t border-gray-200 px-4 pt-8 dark:border-gray-700'>
+        <div className='border-border mx-auto w-full max-w-4xl border-t px-4 pt-8'>
           <div className='grid grid-cols-1 gap-4 text-center md:grid-cols-3'>
             {Array.from({ length: 3 }).map((_, i) => (
               <div key={i} className='rounded-lg p-4'>

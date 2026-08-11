@@ -6,6 +6,19 @@ const themeSource = fs.readFileSync(path.join(projectRoot, 'src/styles/theme.css
 const baseSource = fs.readFileSync(path.join(projectRoot, 'src/styles/base.css'), 'utf8');
 const patternsSource = fs.readFileSync(path.join(projectRoot, 'src/styles/patterns.css'), 'utf8');
 const layoutSource = fs.readFileSync(path.join(projectRoot, 'src/app/layout.tsx'), 'utf8');
+const sharedNeutralSources = [
+  'src/lib/design/componentClasses.ts',
+  'src/components/TabNavigation.tsx',
+  'src/components/ui/CharacterSelector.tsx',
+  'src/components/ui/RichTextEditor.tsx',
+  'src/components/ui/RichTextEditor/ImagePickerModal.tsx',
+  'src/components/ui/RichTextEditor/Toolbar.tsx',
+  'src/components/ui/SearchDialog.tsx',
+  'src/components/ui/SpecifyTypeNavigationButtons.tsx',
+].map((filePath) => ({
+  filePath,
+  source: fs.readFileSync(path.join(projectRoot, filePath), 'utf8'),
+}));
 
 const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
@@ -31,6 +44,22 @@ const semanticTokens = {
   '--wiki-surface-raised': {
     light: 'var(--color-white)',
     dark: 'var(--color-slate-800)',
+  },
+  '--wiki-surface-muted': {
+    light: 'var(--color-gray-100)',
+    dark: 'var(--color-slate-700)',
+  },
+  '--wiki-surface-sunken': {
+    light: 'var(--color-gray-50)',
+    dark: 'var(--color-slate-900)',
+  },
+  '--wiki-control': {
+    light: 'var(--color-gray-100)',
+    dark: 'var(--color-slate-700)',
+  },
+  '--wiki-control-hover': {
+    light: 'var(--color-gray-200)',
+    dark: 'var(--color-slate-600)',
   },
   '--wiki-muted-foreground': {
     light: 'var(--color-gray-600)',
@@ -80,6 +109,23 @@ describe('semantic root theme', () => {
   it('does not retain competing root layout background utilities', () => {
     expect(layoutSource).not.toContain('bg-gray-100');
     expect(layoutSource).not.toContain('dark:bg-slate-900');
+  });
+
+  it('keeps shared neutral recipes on semantic surface and control tokens', () => {
+    const manualThemePairs = [
+      /(?:bg-white|bg-gray-(?:50|100|200))[^'\n]*dark:bg-(?:slate|gray)-(?:600|700|800|900)/,
+      /hover:bg-gray-(?:100|200|300)[^'\n]*dark:hover:bg-(?:slate|gray)-(?:600|700|800)/,
+      /border-gray-200[^'\n]*dark:border-(?:slate|gray)-700/,
+    ];
+
+    for (const { filePath, source } of sharedNeutralSources) {
+      for (const pattern of manualThemePairs) {
+        expect({ filePath, match: source.match(pattern)?.[0] }).toEqual({
+          filePath,
+          match: undefined,
+        });
+      }
+    }
   });
 
   it('scopes fixed-navigation and offline clearance to the app content shell', () => {

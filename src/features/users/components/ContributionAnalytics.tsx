@@ -146,7 +146,7 @@ function MonthlyTrend({ months }: { months: readonly ContributionMonthInput[] })
       </div>
 
       {visibleMonths.length === 0 ? (
-        <p className='rounded-lg bg-gray-50 px-3 py-6 text-center text-sm text-gray-500 dark:bg-gray-900/40 dark:text-gray-400'>
+        <p className='bg-surface-sunken rounded-lg px-3 py-6 text-center text-sm text-gray-500 dark:text-gray-400'>
           暂无月度数据
         </p>
       ) : (
@@ -213,7 +213,7 @@ function CategoryBreakdown({
           类型分布加载失败，请稍后重试。
         </div>
       ) : visibleCategories.length === 0 ? (
-        <p className='rounded-lg bg-gray-50 px-3 py-6 text-center text-sm text-gray-500 dark:bg-gray-900/40 dark:text-gray-400'>
+        <p className='bg-surface-sunken rounded-lg px-3 py-6 text-center text-sm text-gray-500 dark:text-gray-400'>
           暂无类型数据
         </p>
       ) : (
@@ -312,7 +312,7 @@ export function ContributionAnalytics({
                 <Card
                   key={metric.label}
                   bordered
-                  className='space-y-1.5 border-gray-200 bg-gray-50/70 p-3 dark:border-gray-700 dark:bg-gray-900/30'
+                  className='border-border bg-surface-sunken/70 space-y-1.5 p-3'
                 >
                   <p className='text-xs font-medium text-gray-500 dark:text-gray-400'>
                     {metric.label}
@@ -325,7 +325,7 @@ export function ContributionAnalytics({
               ))}
             </div>
           ) : (
-            <div className='rounded-lg bg-gray-50 px-4 py-8 text-center text-sm text-gray-500 dark:bg-gray-900/40 dark:text-gray-400'>
+            <div className='bg-surface-sunken rounded-lg px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-400'>
               暂无贡献指标数据
             </div>
           )}
@@ -334,7 +334,7 @@ export function ContributionAnalytics({
             {hasMetricsError ? (
               <Card bordered as='section' aria-label='按月贡献趋势' className='space-y-3 p-4'>
                 <h3 className='font-semibold text-gray-900 dark:text-gray-100'>每月趋势</h3>
-                <p className='rounded-lg bg-gray-50 px-3 py-6 text-center text-sm text-gray-500 dark:bg-gray-900/40 dark:text-gray-400'>
+                <p className='bg-surface-sunken rounded-lg px-3 py-6 text-center text-sm text-gray-500 dark:text-gray-400'>
                   月度趋势暂不可用
                 </p>
               </Card>

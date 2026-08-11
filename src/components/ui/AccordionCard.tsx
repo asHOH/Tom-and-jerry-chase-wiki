@@ -26,7 +26,7 @@ type AccordionProps = {
 };
 
 const colorMap = {
-  default: 'bg-gray-200 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-700',
+  default: 'bg-control border-2 border-gray-300 dark:border-gray-700',
   red: 'bg-red-200 dark:bg-red-900 border-2 border-red-300 dark:border-red-700',
   orange: 'bg-orange-200 dark:bg-orange-900 border-2 border-orange-300 dark:border-orange-700',
   yellow: 'bg-yellow-200 dark:bg-yellow-900 border-2 border-yellow-300 dark:border-yellow-700',

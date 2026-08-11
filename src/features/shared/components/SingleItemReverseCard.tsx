@@ -173,11 +173,11 @@ function ReverseResultButton({
 
             {/* Type and faction tags */}
             <div className='flex shrink-0 items-center'>
-              <span className='rounded-md bg-white/70 px-1.5 py-0.5 text-xs text-gray-700 dark:bg-slate-800/80 dark:text-gray-300'>
+              <span className='bg-surface/70 dark:bg-surface/80 rounded-md px-1.5 py-0.5 text-xs text-gray-700 dark:text-gray-300'>
                 {SingleItemTypeChineseNameList[result.type]}
               </span>
               {factionLabel ? (
-                <span className='rounded-md bg-white/70 px-1.5 py-0.5 text-xs text-gray-700 dark:bg-slate-800/80 dark:text-gray-300'>
+                <span className='bg-surface/70 dark:bg-surface/80 rounded-md px-1.5 py-0.5 text-xs text-gray-700 dark:text-gray-300'>
                   {factionLabel}
                 </span>
               ) : null}

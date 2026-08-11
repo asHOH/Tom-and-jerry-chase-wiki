@@ -108,7 +108,7 @@ export default function ModeSelector({ currentMode, onSelect }: ModeSelectorProp
             'min-w-20 touch-manipulation',
             currentMode === m.id
               ? 'border-blue-500 bg-blue-50 dark:border-blue-400 dark:bg-blue-900/30'
-              : 'border-gray-200 bg-white hover:border-gray-300 dark:border-slate-700 dark:bg-slate-800 dark:hover:border-slate-600'
+              : 'border-border bg-surface hover:border-gray-300 dark:hover:border-slate-600'
           )}
         >
           <span className='flex h-7 items-center justify-center'>{m.icon}</span>

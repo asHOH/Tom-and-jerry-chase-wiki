@@ -179,7 +179,7 @@ export default function EditModeToolbar({
         {/* Drag handle */}
         <div
           data-tutorial-id='edit-mode-toolbar-drag'
-          className='absolute top-0 bottom-0 left-0 flex w-8 cursor-grab items-center justify-center rounded-l-xl transition-colors hover:bg-gray-100/50 active:cursor-grabbing dark:hover:bg-slate-700/50'
+          className='hover:bg-control/50 absolute top-0 bottom-0 left-0 flex w-8 cursor-grab items-center justify-center rounded-l-xl transition-colors active:cursor-grabbing'
           onPointerDown={(e) => dragControls.start(e)}
           style={{ touchAction: 'none' }}
           title='拖动位置'
@@ -242,7 +242,7 @@ export default function EditModeToolbar({
                     setSubmitMode('default');
                     setAgreedToLicense(false);
                   }}
-                  className='absolute top-1 right-1 rounded p-1 text-gray-400 hover:bg-gray-200 hover:text-gray-600 dark:hover:bg-slate-600 dark:hover:text-gray-300'
+                  className='hover:bg-control-hover absolute top-1 right-1 rounded p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'
                   aria-label='取消'
                 >
                   <CloseIcon className='h-4 w-4' />
@@ -254,7 +254,7 @@ export default function EditModeToolbar({
                   id='toolbar-license-agreement'
                   checked={agreedToLicense}
                   onChange={(e) => setAgreedToLicense(e.target.checked)}
-                  className='mt-0.5 shrink-0 rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800'
+                  className='bg-control mt-0.5 shrink-0 rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:opacity-50 dark:border-gray-600'
                   disabled={isPublishing}
                 />
                 <label
@@ -290,7 +290,7 @@ export default function EditModeToolbar({
                             'rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors',
                             isActive
                               ? 'border-blue-700 bg-blue-700 text-white dark:border-blue-400 dark:bg-blue-400 dark:text-slate-950'
-                              : 'border-blue-200 bg-white/80 text-blue-900 hover:bg-blue-100 dark:border-blue-500/40 dark:bg-slate-900/40 dark:text-blue-100 dark:hover:bg-blue-950/40',
+                              : 'bg-surface/80 border-blue-200 text-blue-900 hover:bg-blue-100 dark:border-blue-500/40 dark:text-blue-100 dark:hover:bg-blue-950/40',
                             'disabled:cursor-not-allowed disabled:opacity-60'
                           )}
                         >
@@ -339,7 +339,7 @@ export default function EditModeToolbar({
                 'flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
                 draftsSummary.length > 0
                   ? 'bg-amber-50 text-amber-700 hover:bg-amber-100 dark:bg-amber-900/30 dark:text-amber-300 dark:hover:bg-amber-900/40'
-                  : 'cursor-not-allowed bg-gray-100 text-gray-400 dark:bg-slate-700 dark:text-gray-500'
+                  : 'bg-control cursor-not-allowed text-gray-400 dark:text-gray-500'
               )}
               aria-expanded={isDraftsOpen}
               aria-haspopup='menu'

@@ -134,7 +134,7 @@ export default function ResultCard({
               return (
                 <span
                   key={m.characterId}
-                  className='rounded-md bg-gray-100 px-3 py-1 text-sm text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+                  className='bg-surface-muted rounded-md px-3 py-1 text-sm text-gray-700 dark:text-gray-300'
                 >
                   {char?.id ?? m.characterId} ({Math.round(m.score * 100)}%)
                 </span>

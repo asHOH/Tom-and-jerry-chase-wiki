@@ -71,11 +71,8 @@ export default async function RecentChangesPage({ searchParams }: PageProps) {
         })}
       </nav>
 
-      <Card
-        as='section'
-        className='overflow-hidden border border-gray-200 p-0 dark:border-gray-700'
-      >
-        <div className='flex items-center justify-between border-b border-gray-200 px-4 py-3 text-sm text-gray-500 sm:px-5 dark:border-gray-700 dark:text-gray-400'>
+      <Card as='section' className='border-border overflow-hidden border p-0'>
+        <div className='border-border flex items-center justify-between border-b px-4 py-3 text-sm text-gray-500 sm:px-5 dark:text-gray-400'>
           <span>共 {result.totalItems} 条公开更改</span>
           {result.totalItems > 0 && (
             <span>
@@ -117,7 +114,7 @@ function ChangeContent({ change }: { change: RecentChange }) {
           ) : (
             <span className='font-medium'>{change.title}</span>
           )}
-          <span className='rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-500 dark:bg-gray-700 dark:text-gray-300'>
+          <span className='bg-surface-muted rounded px-1.5 py-0.5 text-xs text-gray-500 dark:text-gray-300'>
             {change.kind === 'article' ? '文章' : '游戏数据'}
           </span>
         </div>

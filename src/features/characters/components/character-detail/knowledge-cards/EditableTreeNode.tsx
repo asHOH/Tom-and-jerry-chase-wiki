@@ -27,7 +27,7 @@ const orBadgeClass =
   'text-xs font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300';
 
 const smallButtonClass =
-  'px-1.5 py-0.5 text-xs rounded transition-colors hover:bg-gray-200 dark:hover:bg-slate-600 text-gray-600 dark:text-gray-400';
+  'hover:bg-control-hover rounded px-1.5 py-0.5 text-xs text-gray-600 transition-colors dark:text-gray-400';
 
 /** Renders a single group-tuple header with edit controls. */
 const GroupHeader = memo(
@@ -150,7 +150,7 @@ function EditableTreeNode({
     <div className='space-y-1.5'>
       {isRoot && (
         <div className='mb-2 flex items-center gap-2'>
-          <span className='rounded bg-gray-100 px-2 py-1 text-xs font-bold text-gray-500 dark:bg-slate-700 dark:text-gray-400'>
+          <span className='bg-surface-muted rounded px-2 py-1 text-xs font-bold text-gray-500 dark:text-gray-400'>
             隐式 AND (根层级)
           </span>
         </div>

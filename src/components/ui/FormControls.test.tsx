@@ -16,7 +16,7 @@ describe('FormControls', () => {
       'px-3',
       'py-3',
       'md:px-4',
-      'dark:bg-slate-900'
+      'bg-surface-sunken'
     );
     expect(ref.current).toBe(input);
   });

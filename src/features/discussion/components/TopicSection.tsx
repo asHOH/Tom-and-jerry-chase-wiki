@@ -82,7 +82,7 @@ export function TopicSection({
 
   return (
     <section id={`comment-${topic.id}`}>
-      <hr className='border-gray-200 dark:border-slate-700' />
+      <hr className='border-border' />
 
       <div className='py-5'>
         {/* Topic heading */}

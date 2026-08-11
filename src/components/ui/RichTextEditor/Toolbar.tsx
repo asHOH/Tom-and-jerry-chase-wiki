@@ -103,12 +103,12 @@ const ToolbarButton = React.memo(function ToolbarButton({
       disabled={disabled || mode !== 'rich'}
       className={cn(
         'inline-flex h-8 items-center justify-center rounded-md border p-2 text-sm font-medium transition-all duration-200',
-        'hover:bg-gray-100 dark:hover:bg-gray-700',
+        'hover:bg-control',
         'focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none',
         'disabled:cursor-not-allowed disabled:opacity-50',
         isActive
           ? 'border-blue-300 bg-blue-100 text-blue-700 dark:border-blue-600 dark:bg-blue-900/30 dark:text-blue-300'
-          : 'border-gray-300 bg-white text-gray-700 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300'
+          : 'bg-surface border-gray-300 text-gray-700 dark:border-gray-600 dark:text-gray-300'
       )}
     >
       {children}
@@ -141,7 +141,7 @@ const Toolbar = React.memo(function Toolbar({
   return (
     <div
       className={cn(
-        'border-b border-gray-300 bg-gray-50 p-3 dark:border-gray-600 dark:bg-gray-800/50',
+        'bg-surface-sunken border-b border-gray-300 p-3 dark:border-gray-600',
         className
       )}
     >
@@ -278,7 +278,7 @@ const Toolbar = React.memo(function Toolbar({
                   className={cn(
                     'rounded p-1',
                     'border-0 bg-transparent',
-                    'hover:bg-gray-100 dark:hover:bg-gray-700',
+                    'hover:bg-control',
                     'focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none'
                   )}
                 >

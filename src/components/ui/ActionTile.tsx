@@ -75,7 +75,7 @@ export default function ActionTile({
       ? layout === 'inline'
         ? 'bg-blue-600 text-white dark:bg-blue-700'
         : 'bg-blue-100 text-blue-900 ring-2 ring-blue-500 dark:bg-blue-900/40 dark:text-blue-100 dark:ring-blue-400'
-      : cn('bg-gray-200 text-gray-800', 'dark:bg-slate-700', 'dark:text-gray-200'),
+      : 'bg-control text-gray-800 dark:text-gray-200',
     allowHoverAccent &&
       'hover:-translate-y-1 hover:bg-blue-600 hover:text-white dark:hover:bg-blue-600',
     isCurrentPage && 'pointer-events-none cursor-not-allowed',

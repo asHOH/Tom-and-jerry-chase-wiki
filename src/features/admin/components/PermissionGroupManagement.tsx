@@ -239,7 +239,7 @@ export default function PermissionGroupManagement({
                 'group min-w-56 rounded-xl border p-3 text-left transition-all lg:w-full lg:min-w-0',
                 selected?.id === group.id
                   ? 'border-blue-300 bg-blue-50 shadow-sm ring-1 ring-blue-100 dark:border-blue-700 dark:bg-blue-950/40 dark:ring-blue-900/50'
-                  : 'border-transparent bg-slate-50 hover:border-slate-200 hover:bg-white hover:shadow-sm dark:bg-slate-900/40 dark:hover:border-slate-700 dark:hover:bg-slate-800'
+                  : 'bg-surface-sunken hover:bg-surface border-transparent hover:border-slate-200 hover:shadow-sm dark:hover:border-slate-700'
               )}
             >
               <span className='flex items-center justify-between gap-2'>
