@@ -518,7 +518,7 @@ function ActionDiffCard({
   };
 
   return (
-    <section className='space-y-2 rounded border border-slate-200 bg-slate-50/50 p-3 dark:border-slate-700 dark:bg-slate-900/25'>
+    <section className='border-border bg-surface-sunken/50 space-y-2 rounded border p-3'>
       <div className='flex flex-wrap items-center justify-between gap-2'>
         <div className='flex min-w-0 flex-wrap items-center gap-2 text-xs'>
           <span

@@ -284,7 +284,7 @@ export default function ArticleHistoryClient() {
                             }))
                           }
                           disabled={selectedNewIndex !== undefined && index <= selectedNewIndex}
-                          className='size-4 border-gray-300 text-orange-600 focus:ring-orange-500 dark:border-gray-600 dark:bg-gray-700'
+                          className='bg-control size-4 border-gray-300 text-orange-600 focus:ring-orange-500 dark:border-gray-600'
                           aria-label={`选择版本 #${data.versions.length - index} 作为旧版本`}
                         />
                         旧
@@ -301,7 +301,7 @@ export default function ArticleHistoryClient() {
                             }))
                           }
                           disabled={selectedOldIndex !== undefined && index >= selectedOldIndex}
-                          className='size-4 border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700'
+                          className='bg-control size-4 border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600'
                           aria-label={`选择版本 #${data.versions.length - index} 作为新版本`}
                         />
                         新

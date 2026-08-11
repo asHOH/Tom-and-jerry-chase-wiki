@@ -74,12 +74,12 @@ export default function GuessInput({
         placeholder={disabled ? '游戏已结束' : '输入角色名称后回车...'}
         disabled={disabled}
         className={cn(
-          'w-full rounded-lg border-2 bg-white px-4 py-3 text-lg',
+          'bg-surface-sunken w-full rounded-lg border-2 px-4 py-3 text-lg',
           'transition-colors duration-150',
           'placeholder:text-gray-400',
           'focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none',
           'disabled:cursor-not-allowed disabled:opacity-50',
-          'dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-500',
+          'dark:text-white dark:placeholder:text-gray-500',
           'dark:focus:ring-blue-800',
           error ? 'border-red-400 dark:border-red-500' : 'border-gray-300 dark:border-gray-600'
         )}

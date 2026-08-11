@@ -252,7 +252,7 @@ export default function NotificationsClient() {
                     className={cn(
                       'rounded-md px-3 py-1.5 text-sm font-medium transition-colors',
                       filter === value
-                        ? 'bg-white text-blue-700 shadow-sm dark:bg-gray-700 dark:text-blue-300'
+                        ? 'bg-surface text-blue-700 shadow-sm dark:text-blue-300'
                         : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100'
                     )}
                     onClick={() => setFilter(value)}
@@ -274,7 +274,7 @@ export default function NotificationsClient() {
             {error && <Notice variant='error'>通知加载失败，请稍后重试。</Notice>}
             {!isLoading && !error && notifications.length === 0 && (
               <Card bordered className='bg-background/60 border-dashed px-5 py-12 text-center'>
-                <div className='mx-auto mb-3 flex size-11 items-center justify-center rounded-full bg-gray-200 text-gray-500 dark:bg-gray-700 dark:text-gray-300'>
+                <div className='bg-surface-muted mx-auto mb-3 flex size-11 items-center justify-center rounded-full text-gray-500 dark:text-gray-300'>
                   <CheckCircleIcon className='size-6' />
                 </div>
                 <p className='font-medium text-gray-700 dark:text-gray-200'>
@@ -296,7 +296,7 @@ export default function NotificationsClient() {
                     className={cn(
                       'group flex gap-3 px-3.5 py-3.5 transition-all sm:gap-4 sm:px-4',
                       notification.read_at
-                        ? 'hover:border-gray-300 hover:bg-gray-50 dark:hover:border-gray-600 dark:hover:bg-gray-700/70'
+                        ? 'hover:bg-control/70 hover:border-gray-300 dark:hover:border-gray-600'
                         : 'border-blue-200 bg-blue-50/80 shadow-sm hover:border-blue-300 dark:border-blue-800 dark:bg-blue-950/30 dark:hover:border-blue-700 dark:hover:bg-blue-950/50'
                     )}
                   >
@@ -409,7 +409,7 @@ export default function NotificationsClient() {
                       checked={checked}
                       disabled={disabled}
                       onChange={() => void togglePreference(item.key)}
-                      className='mt-1 size-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-900'
+                      className='bg-surface-sunken mt-1 size-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600'
                     />
                     <span className='min-w-0'>
                       <span className='block text-sm font-medium text-gray-900 dark:text-gray-100'>

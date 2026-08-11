@@ -307,7 +307,7 @@ export default function ArticleClient({
           <div
             ref={contentRef}
             className={cn(
-              'article-content md:rounded-lg md:border md:border-transparent md:p-0 lg:bg-white/70 lg:p-8 lg:shadow-sm dark:lg:border-gray-800 dark:lg:bg-gray-900/40',
+              'article-content lg:bg-surface/70 dark:lg:border-border dark:lg:bg-surface-sunken/40 md:rounded-lg md:border md:border-transparent md:p-0 lg:p-8 lg:shadow-sm',
               showAutoNumbering && 'article-content-auto-numbered'
             )}
           >

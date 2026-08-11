@@ -19,6 +19,74 @@ const sharedNeutralSources = [
   filePath,
   source: fs.readFileSync(path.join(projectRoot, filePath), 'utf8'),
 }));
+const manualThemePairs = [
+  /(?:bg-white|bg-(?:gray|slate)-(?:50|100|200))[^'\n]*dark:bg-(?:slate|gray)-(?:600|700|800|900)/,
+  /hover:bg-(?:gray|slate)-(?:50|100|200|300)[^'\n]*dark:hover:bg-(?:slate|gray)-(?:600|700|800|900)/,
+  /border-(?:gray|slate)-200[^'\n]*dark:border-(?:slate|gray)-700/,
+];
+
+const collectSourceFiles = (relativePath: string): string[] => {
+  const absolutePath = path.join(projectRoot, relativePath);
+  const stat = fs.statSync(absolutePath);
+  if (stat.isFile()) return /\.tsx?$/.test(relativePath) ? [relativePath] : [];
+
+  return fs
+    .readdirSync(absolutePath, { withFileTypes: true })
+    .flatMap((entry) => collectSourceFiles(path.join(relativePath, entry.name)));
+};
+
+const highDriftNeutralSources = [
+  'src/app/(main)/articles',
+  'src/app/(main)/games',
+  'src/app/(main)/notifications',
+  'src/app/(main)/recent-changes',
+  'src/app/(main)/users',
+  'src/app/(main)/win-rates',
+  'src/components/articles',
+  'src/features/admin',
+  'src/features/articles',
+  'src/features/users',
+]
+  .flatMap(collectSourceFiles)
+  .map((filePath) => ({
+    filePath: filePath.split(path.sep).join('/'),
+    source: fs.readFileSync(path.join(projectRoot, filePath), 'utf8'),
+  }));
+
+const intentionalHighDriftNeutralPairs = [
+  {
+    filePath: 'src/app/(main)/articles/[id]/history/ArticleHistoryClient.tsx',
+    marker: 'bg-gray-100 text-gray-800 dark:bg-gray-900/20',
+  },
+  {
+    filePath: 'src/app/(main)/articles/preview/PreviewClient.tsx',
+    marker: 'bg-gray-100 text-gray-800 dark:bg-gray-900/30',
+  },
+  {
+    filePath: 'src/app/(main)/games/playstyle-quiz/components/QuizProgress.tsx',
+    marker: 'bg-gray-200 dark:bg-gray-700',
+  },
+  {
+    filePath: 'src/features/admin/components/GameDataActionPreviewList.tsx',
+    marker: 'bg-slate-50 px-3 text-slate-500 dark:bg-slate-900',
+  },
+  {
+    filePath: 'src/features/admin/components/NoticeManagement.tsx',
+    marker: 'bg-slate-100 text-slate-600 dark:bg-slate-700',
+  },
+  {
+    filePath: 'src/features/articles/components/ArticleDiffViewer.tsx',
+    marker: 'bg-white hover:bg-slate-50 dark:bg-slate-900',
+  },
+  {
+    filePath: 'src/features/users/components/ContributionAnalytics.tsx',
+    marker: 'bg-gray-100 dark:bg-gray-800',
+  },
+  {
+    filePath: 'src/features/users/components/ContributionCalendar.tsx',
+    marker: 'bg-slate-100 ring-slate-200 dark:bg-slate-800',
+  },
+] as const;
 
 const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
@@ -112,12 +180,6 @@ describe('semantic root theme', () => {
   });
 
   it('keeps shared neutral recipes on semantic surface and control tokens', () => {
-    const manualThemePairs = [
-      /(?:bg-white|bg-gray-(?:50|100|200))[^'\n]*dark:bg-(?:slate|gray)-(?:600|700|800|900)/,
-      /hover:bg-gray-(?:100|200|300)[^'\n]*dark:hover:bg-(?:slate|gray)-(?:600|700|800)/,
-      /border-gray-200[^'\n]*dark:border-(?:slate|gray)-700/,
-    ];
-
     for (const { filePath, source } of sharedNeutralSources) {
       for (const pattern of manualThemePairs) {
         expect({ filePath, match: source.match(pattern)?.[0] }).toEqual({
@@ -125,6 +187,30 @@ describe('semantic root theme', () => {
           match: undefined,
         });
       }
+    }
+  });
+
+  it('limits manual neutral pairs in high-drift features to intentional data states', () => {
+    const unexpectedPairs: Array<{ filePath: string; line: string }> = [];
+    const manualSurfacePairs = manualThemePairs.slice(0, 2);
+
+    for (const { filePath, source } of highDriftNeutralSources) {
+      for (const line of source.split('\n')) {
+        if (!manualSurfacePairs.some((pattern) => pattern.test(line))) continue;
+
+        const isIntentional = intentionalHighDriftNeutralPairs.some(
+          (exception) => exception.filePath === filePath && line.includes(exception.marker)
+        );
+        if (!isIntentional) unexpectedPairs.push({ filePath, line: line.trim() });
+      }
+    }
+
+    expect(unexpectedPairs).toEqual([]);
+    for (const exception of intentionalHighDriftNeutralPairs) {
+      const source = highDriftNeutralSources.find(
+        ({ filePath }) => filePath === exception.filePath
+      )?.source;
+      expect(source).toContain(exception.marker);
     }
   });
 

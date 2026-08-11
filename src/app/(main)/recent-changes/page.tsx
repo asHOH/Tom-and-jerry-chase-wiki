@@ -62,7 +62,7 @@ export default async function RecentChangesPage({ searchParams }: PageProps) {
               className={
                 active
                   ? 'rounded-full bg-blue-600 px-4 py-2 text-sm font-medium text-white'
-                  : 'rounded-full bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700'
+                  : 'bg-control hover:bg-control-hover rounded-full px-4 py-2 text-sm font-medium text-gray-700 transition-colors dark:text-gray-200'
               }
             >
               {option.label}
@@ -164,12 +164,12 @@ function Pagination({
       {currentPage > 1 ? (
         <Link
           href={recentChangesHref(filter, currentPage - 1)}
-          className='rounded-lg bg-gray-100 px-4 py-2 text-sm text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700'
+          className='bg-control hover:bg-control-hover rounded-lg px-4 py-2 text-sm text-gray-700 dark:text-gray-200'
         >
           上一页
         </Link>
       ) : (
-        <span className='cursor-not-allowed rounded-lg bg-gray-100 px-4 py-2 text-sm text-gray-400 opacity-60 dark:bg-gray-800'>
+        <span className='bg-control cursor-not-allowed rounded-lg px-4 py-2 text-sm text-gray-400 opacity-60'>
           上一页
         </span>
       )}
@@ -179,12 +179,12 @@ function Pagination({
       {currentPage < totalPages ? (
         <Link
           href={recentChangesHref(filter, currentPage + 1)}
-          className='rounded-lg bg-gray-100 px-4 py-2 text-sm text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700'
+          className='bg-control hover:bg-control-hover rounded-lg px-4 py-2 text-sm text-gray-700 dark:text-gray-200'
         >
           下一页
         </Link>
       ) : (
-        <span className='cursor-not-allowed rounded-lg bg-gray-100 px-4 py-2 text-sm text-gray-400 opacity-60 dark:bg-gray-800'>
+        <span className='bg-control cursor-not-allowed rounded-lg px-4 py-2 text-sm text-gray-400 opacity-60'>
           下一页
         </span>
       )}

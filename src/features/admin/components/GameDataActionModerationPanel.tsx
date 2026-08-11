@@ -654,7 +654,7 @@ const GameDataActionModerationPanel = ({
                         disabled={isModerating}
                         onChange={() => toggleSelectedAction(submission.action_id)}
                         aria-label={`选择改动 ${submission.action_id}`}
-                        className='h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-500 dark:border-slate-600 dark:bg-slate-900 dark:focus:ring-green-400'
+                        className='bg-surface-sunken h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-500 dark:border-slate-600 dark:focus:ring-green-400'
                       />
                     ) : (
                       <span aria-hidden='true' className='block h-4 w-4' />
@@ -887,7 +887,7 @@ const GameDataActionModerationPanel = ({
                           <div className='flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500 dark:text-slate-400'>
                             <span className='truncate'>action_id: {submission.action_id}</span>
                             {submission.is_public !== undefined && (
-                              <span className='rounded bg-gray-100 px-2 py-0.5 whitespace-nowrap text-gray-700 dark:bg-slate-900/60 dark:text-slate-200'>
+                              <span className='bg-surface-muted rounded px-2 py-0.5 whitespace-nowrap text-gray-700 dark:text-slate-200'>
                                 {submission.is_public ? '已' : '未'}公开
                               </span>
                             )}

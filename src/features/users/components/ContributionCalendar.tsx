@@ -254,7 +254,7 @@ export function ContributionCalendar({
             最近 365 天 · {formatDateKey(range.startDate)} 至 {formatDateKey(range.endDate)}
           </p>
         </div>
-        <span className='hidden rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-500 sm:inline-flex dark:bg-gray-800 dark:text-gray-400'>
+        <span className='bg-surface-muted hidden rounded-full px-2.5 py-1 text-xs font-medium text-gray-500 sm:inline-flex dark:text-gray-400'>
           按周查看
         </span>
       </header>

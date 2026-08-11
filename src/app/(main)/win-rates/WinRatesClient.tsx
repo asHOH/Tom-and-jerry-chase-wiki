@@ -286,7 +286,7 @@ export default function WinRatesClient({ description, characterFactions }: WinRa
   const renderSortableTh = (label: string, col: SortColumn) => {
     return (
       <th
-        className='cursor-pointer border border-gray-300 px-4 py-2 text-left hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-600'
+        className='hover:bg-control cursor-pointer border border-gray-300 px-4 py-2 text-left dark:border-gray-600'
         onClick={() => handleSort(col)}
       >
         {label} {getSortIcon(col)}
@@ -436,7 +436,7 @@ export default function WinRatesClient({ description, characterFactions }: WinRa
         <div className='overflow-x-auto rounded-lg border border-gray-300 dark:border-gray-600'>
           <table className='bg-surface min-w-full border-collapse'>
             <thead>
-              <tr className='bg-gray-50 dark:bg-gray-700'>
+              <tr className='bg-surface-muted'>
                 {renderTh('No.')}
                 {isColVisible('rank') && renderTh('段位')}
                 {isColVisible('faction') && renderTh('阵营')}
@@ -455,7 +455,7 @@ export default function WinRatesClient({ description, characterFactions }: WinRa
                 return (
                   <tr
                     key={`${row.rank}-${row.faction}-${row.character}-${idx}`}
-                    className='hover:bg-gray-50 dark:hover:bg-gray-700'
+                    className='hover:bg-control'
                   >
                     <td className={cn(cellClass, 'tabular-nums')}>{row.no}</td>
                     {isColVisible('rank') && (
@@ -540,7 +540,7 @@ export default function WinRatesClient({ description, characterFactions }: WinRa
                     },
                     index: number
                   ) => (
-                    <tr key={index} className='hover:bg-gray-50 dark:hover:bg-gray-700'>
+                    <tr key={index} className='hover:bg-control'>
                       <td className='border border-gray-300 px-4 py-2 dark:border-gray-600'>
                         {String(summary.rank)}
                       </td>

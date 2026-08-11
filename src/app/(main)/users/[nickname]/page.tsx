@@ -391,7 +391,7 @@ export default async function PublicUserPage({ params, searchParams }: PublicUse
             'rounded-lg px-4 py-2 text-sm font-semibold transition-colors',
             activeTab === 'activity'
               ? 'bg-blue-100 text-blue-800 dark:bg-blue-950/50 dark:text-blue-200'
-              : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'
+              : 'hover:bg-control text-gray-600 dark:text-gray-300'
           )}
         >
           贡献活动
@@ -405,7 +405,7 @@ export default async function PublicUserPage({ params, searchParams }: PublicUse
               'rounded-lg px-4 py-2 text-sm font-semibold transition-colors',
               activeTab === 'submissions'
                 ? 'bg-blue-100 text-blue-800 dark:bg-blue-950/50 dark:text-blue-200'
-                : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'
+                : 'hover:bg-control text-gray-600 dark:text-gray-300'
             )}
           >
             我的提交

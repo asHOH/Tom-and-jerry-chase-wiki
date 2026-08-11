@@ -281,7 +281,7 @@ export default function PermissionGroupManagement({
       <Card className='overflow-hidden p-0'>
         {!selected ? (
           <div className='flex min-h-72 flex-col items-center justify-center p-8 text-center'>
-            <span className='mb-3 flex size-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-400 dark:bg-slate-700 dark:text-slate-500'>
+            <span className='bg-surface-muted mb-3 flex size-14 items-center justify-center rounded-2xl text-slate-400 dark:text-slate-500'>
               <UserCircleIcon size={30} />
             </span>
             <p className='font-medium text-slate-700 dark:text-slate-200'>暂无用户组</p>
@@ -333,7 +333,7 @@ export default function PermissionGroupManagement({
                       onChange={(e) => setName(e.target.value)}
                     />
                   </label>
-                  <label className='flex min-h-11 cursor-pointer items-center gap-3 self-end rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 dark:border-slate-700 dark:bg-slate-900/40'>
+                  <label className='border-border bg-surface-sunken flex min-h-11 cursor-pointer items-center gap-3 self-end rounded-lg border px-3 py-2.5'>
                     <input
                       type='checkbox'
                       checked={isDefault}
@@ -457,7 +457,7 @@ export default function PermissionGroupManagement({
                     return (
                       <div
                         key={`${grant.permission}-${index}`}
-                        className='rounded-xl border border-slate-200 bg-slate-50/70 p-3 sm:p-4 dark:border-slate-700 dark:bg-slate-900/30'
+                        className='border-border bg-surface-sunken/70 rounded-xl border p-3 sm:p-4'
                       >
                         <div className='mb-3 flex items-center justify-between gap-3'>
                           <span className='inline-flex size-7 items-center justify-center rounded-lg bg-blue-100 text-xs font-bold text-blue-700 dark:bg-blue-950/60 dark:text-blue-300'>
