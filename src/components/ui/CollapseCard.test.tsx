@@ -9,7 +9,17 @@ describe('CollapseCard', () => {
     expect(screen.getByRole('button', { name: /Details/i })).toHaveClass(
       'focus-visible:ring-2',
       'focus-visible:ring-inset',
-      'focus-visible:ring-blue-500'
+      'focus-visible:ring-focus'
+    );
+  });
+
+  it('uses the shared neutral tone with row-specific border structure', () => {
+    render(<CollapseCard title='Details'>Content</CollapseCard>);
+
+    expect(screen.getByRole('button', { name: /Details/i })).toHaveClass(
+      'border-b',
+      'border-border',
+      'bg-control'
     );
   });
 

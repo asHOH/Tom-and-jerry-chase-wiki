@@ -3,13 +3,21 @@ import React, { startTransition, useState } from 'react';
 import { cn } from '@/lib/design';
 import Button from '@/components/ui/Button';
 
+import {
+  disclosureTitleSizeClasses,
+  disclosureToneClasses,
+  disclosureTriggerFocusClasses,
+  type DisclosureSize,
+  type DisclosureTone,
+} from './disclosureStyles';
+
 type AccordionItem = {
   id: string;
   title: string;
   children: React.ReactNode;
   className?: string;
-  color?: 'default' | 'red' | 'orange' | 'yellow' | 'green' | 'purple' | 'blue';
-  activeColor?: 'default' | 'red' | 'orange' | 'yellow' | 'green' | 'purple' | 'blue';
+  color?: DisclosureTone;
+  activeColor?: DisclosureTone;
 };
 
 type AccordionProps = {
@@ -17,7 +25,7 @@ type AccordionProps = {
   className?: string;
   titleClassName?: string;
   defaultOpenId?: string;
-  size?: 'xs' | 'sm' | 'md';
+  size?: DisclosureSize;
   useDefaultButtonColors?: boolean;
   buttonClassName?: string;
   activeButtonClassName?: string;
@@ -25,20 +33,10 @@ type AccordionProps = {
   contentPanelClassName?: string;
 };
 
-const colorMap = {
-  default: 'bg-control border-2 border-gray-300 dark:border-gray-700',
-  red: 'bg-red-200 dark:bg-red-900 border-2 border-red-300 dark:border-red-700',
-  orange: 'bg-orange-200 dark:bg-orange-900 border-2 border-orange-300 dark:border-orange-700',
-  yellow: 'bg-yellow-200 dark:bg-yellow-900 border-2 border-yellow-300 dark:border-yellow-700',
-  green: 'bg-green-200 dark:bg-green-900 border-2 border-green-400 dark:border-green-700',
-  blue: 'bg-blue-200 dark:bg-blue-900 border-2 border-blue-400 dark:border-blue-700',
-  purple: 'bg-fuchsia-200 dark:bg-fuchsia-900 border-2 border-fuchsia-300 dark:border-fuchsia-700',
-} as const;
-
-const titleSizeClasses = {
-  xs: 'text-sm',
-  sm: 'mx-1 text-xl',
-  md: 'mx-2 text-2xl',
+const titleSpacingClasses: Record<DisclosureSize, string> = {
+  xs: '',
+  sm: 'mx-1',
+  md: 'mx-2',
 } as const;
 
 export default function AccordionCard({
@@ -53,7 +51,11 @@ export default function AccordionCard({
   contentContainerClassName,
   contentPanelClassName,
 }: AccordionProps) {
-  const titleSizeClassName = titleSizeClasses[size || 'md'];
+  const resolvedSize = size ?? 'md';
+  const titleClassNames = cn(
+    disclosureTitleSizeClasses[resolvedSize],
+    titleSpacingClasses[resolvedSize]
+  );
   const [activeItemId, setActiveItemId] = useState<string | null>(defaultOpenId ?? null);
   const [renderedItemId, setRenderedItemId] = useState<string | null>(defaultOpenId ?? null);
 
@@ -79,7 +81,6 @@ export default function AccordionCard({
           const isExpanded = activeItemId === item.id;
           const colorToUse =
             isExpanded && item.activeColor ? item.activeColor : item.color || 'default';
-          const titleColor = colorMap[colorToUse];
 
           return (
             <Button
@@ -89,16 +90,21 @@ export default function AccordionCard({
               onClick={() => toggleItem(item.id)}
               className={cn(
                 'flex flex-1 cursor-pointer items-center justify-center px-1 py-1 font-bold text-black dark:text-white',
-                'focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none focus-visible:ring-inset dark:focus-visible:ring-blue-300',
+                disclosureTriggerFocusClasses,
                 'whitespace-nowrap transition-[background-color,border-color,box-shadow] duration-200',
-                useDefaultButtonColors && titleColor,
-                useDefaultButtonColors && isExpanded && 'italic underline',
+                useDefaultButtonColors && 'border-2',
+                useDefaultButtonColors && disclosureToneClasses[colorToUse],
+                useDefaultButtonColors &&
+                  isExpanded &&
+                  colorToUse === 'default' &&
+                  'bg-control-hover',
+                useDefaultButtonColors && isExpanded && 'shadow-inner',
                 buttonClassName,
                 isExpanded && activeButtonClassName
               )}
               aria-expanded={isExpanded}
             >
-              <span className={titleSizeClassName}>{item.title}</span>
+              <span className={titleClassNames}>{item.title}</span>
             </Button>
           );
         })}

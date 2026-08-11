@@ -4,24 +4,38 @@ import { cn } from '@/lib/design';
 import Button from '@/components/ui/Button';
 import { ChevronDownIcon } from '@/components/icons/CommonIcons';
 
+import {
+  disclosureTitleSizeClasses,
+  disclosureToneClasses,
+  disclosureTriggerFocusClasses,
+  type DisclosureSize,
+  type DisclosureTone,
+} from './disclosureStyles';
+
 type CollapseCardProps = {
   children: React.ReactNode;
   title: string;
   className?: string;
   titleClassName?: string;
   collapsedTitleClassName?: string;
-  size?: 'xs' | 'sm' | 'md';
-  color?: 'default' | 'red' | 'orange' | 'yellow' | 'green' | 'purple' | 'blue' | 'lime';
+  size?: DisclosureSize;
+  color?: DisclosureTone;
   openOnStart?: boolean;
   lazyMount?: boolean;
   openOnHashTargets?: string;
 };
 
-const titleSizeClasses = {
-  xs: 'text-sm',
-  sm: 'ml-1 text-xl',
-  md: 'ml-2 text-2xl',
+const titleSpacingClasses: Record<DisclosureSize, string> = {
+  xs: '',
+  sm: 'ml-1',
+  md: 'ml-2',
 } as const;
+
+const chevronSizes: Record<DisclosureSize, string> = {
+  xs: '15px',
+  sm: '25px',
+  md: '35px',
+};
 
 /**
  * 可折叠卡片组件
@@ -47,19 +61,7 @@ export default function CollapseCard({
 }: CollapseCardProps) {
   const [isExpanded, setIsExpanded] = useState(openOnStart);
   const [hasMountedChildren, setHasMountedChildren] = useState(openOnStart);
-  const width = { xs: '15px', sm: '25px', md: '35px' }[size];
-  const titleSizeClassName = titleSizeClasses[size];
-  const titleColor = {
-    default: 'border-b border-gray-100 dark:border-gray-800',
-    red: 'bg-red-200 dark:bg-red-900 border-2 border-red-300 dark:border-red-700',
-    orange: 'bg-orange-200 dark:bg-orange-900 border-2 border-orange-300 dark:border-orange-700',
-    yellow: 'bg-yellow-200 dark:bg-yellow-900 border-2 border-yellow-300 dark:border-yellow-700',
-    green: 'bg-green-200 dark:bg-green-900 border-2 border-green-400 dark:border-green-700',
-    blue: 'bg-blue-200 dark:bg-blue-900 border-2 border-blue-400 dark:border-blue-700',
-    purple:
-      'bg-fuchsia-200 dark:bg-fuchsia-900 border-2 border-fuchsia-300 dark:border-fuchsia-700',
-    lime: 'bg-lime-100 dark:bg-lime-900 border-2 border-lime-200 dark:border-lime-700',
-  }[color];
+  const titleClassNames = cn(disclosureTitleSizeClasses[size], titleSpacingClasses[size]);
   const shouldRenderChildren = !lazyMount || isExpanded || hasMountedChildren;
 
   useEffect(() => {
@@ -101,20 +103,21 @@ export default function CollapseCard({
         onClick={handleToggle}
         className={cn(
           'flex w-full cursor-pointer items-center justify-between px-1 py-1 font-bold text-black dark:text-white',
-          'focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none focus-visible:ring-inset dark:focus-visible:ring-blue-300',
-          titleColor,
+          disclosureTriggerFocusClasses,
+          color === 'default' ? 'border-b' : 'border-2',
+          disclosureToneClasses[color],
           titleClassName,
           !isExpanded && collapsedTitleClassName
         )}
         aria-expanded={isExpanded}
       >
-        <span className={titleSizeClassName}>{title}</span>
+        <span className={titleClassNames}>{title}</span>
         <ChevronDownIcon
           className={cn(
             'transform transition-transform duration-200 ease-in-out motion-reduce:transition-none',
             isExpanded ? 'rotate-0' : '-rotate-90'
           )}
-          size={width}
+          size={chevronSizes[size]}
         />
       </Button>
 
