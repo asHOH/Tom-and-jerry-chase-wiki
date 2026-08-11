@@ -463,9 +463,8 @@ export const getMapTypeColors = (mapType: string, isDarkMode: boolean) => {
     娱乐地图: 'breakthrough',
     广场地图: 'wallBreak',
   };
-  const skillType = mapTypeColorMap[mapType] || 'lateGameMouse';
-  const colorScheme =
-    gameColorPalettes.positioningTags[skillType] || gameColorPalettes.skillTypes.passive;
+  const paletteKey = mapTypeColorMap[mapType] || 'lateGameMouse';
+  const colorScheme = gameColorPalettes.positioningTags[paletteKey];
   return {
     color: isDarkMode && colorScheme.dark ? colorScheme.dark.text : colorScheme.text,
     backgroundColor:
@@ -498,8 +497,8 @@ export const getMapLevelColors = (level: string, isDarkMode: boolean) => {
     特级学业: 'A',
     大师学业: 'S',
   };
-  const skillType = levelColorMap[level] || 'C';
-  const colorScheme = gameColorPalettes.rank[skillType] || gameColorPalettes.skillTypes.passive;
+  const paletteKey = levelColorMap[level] || 'C';
+  const colorScheme = gameColorPalettes.rank[paletteKey];
 
   return {
     color: isDarkMode && colorScheme.dark ? colorScheme.dark.text : colorScheme.text,

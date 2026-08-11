@@ -3,6 +3,8 @@ import {
   getCardRankColors,
   getFactionButtonColors,
   getKnowledgeCardGroupMetaColors,
+  getMapLevelColors,
+  getMapTypeColors,
   getPositioningTagColors,
   getSkillLevelColors,
 } from './colorStyles';
@@ -41,6 +43,19 @@ describe('game color styles', () => {
     expect(getFactionButtonColors('mouse', true)).toEqual({
       backgroundColor: '#7c2d12',
       color: '#fdbf74',
+    });
+  });
+
+  it('preserves map fallbacks without a parallel skill-type palette', () => {
+    expect(getMapTypeColors('未知地图', false)).toEqual({
+      color: '#111111',
+      backgroundColor: '#dbdee3',
+      borderColor: '#ffffff',
+    });
+    expect(getMapLevelColors('未知学业', true)).toEqual({
+      color: '#86efac',
+      backgroundColor: '#065f46',
+      borderColor: '#16a34a',
     });
   });
 });
