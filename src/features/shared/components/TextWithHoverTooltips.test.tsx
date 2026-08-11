@@ -227,6 +227,32 @@ describe('TextWithHoverTooltips', () => {
     );
   });
 
+  it('uses zero attack boost for damage on non-character pages', () => {
+    mockCharacterId = '非角色页面';
+
+    render(<TextWithHoverTooltips text='造成{5*}伤害' />);
+
+    expect(screen.getByText('5').closest('[data-tooltip]')).toHaveAttribute(
+      'data-tooltip',
+      expect.stringContaining('基础伤害5')
+    );
+    expect(screen.getByText('5')).not.toHaveAttribute('data-name');
+  });
+
+  it('renders tagged damage as a tooltip on non-character pages', () => {
+    mockCharacterId = '非角色页面';
+
+    const { container } = render(<TextWithHoverTooltips text='受到{30*,不受来源影响}伤害' />);
+
+    expect(screen.getByText('30').closest('[data-tooltip]')).toHaveAttribute(
+      'data-tooltip',
+      expect.stringContaining('不受攻击增伤/减伤影响')
+    );
+    expect(screen.getByText('不计来源影响的')).toBeInTheDocument();
+    expect(screen.getByText('30')).not.toHaveAttribute('data-name');
+    expect(container.textContent).toBe('受到30不计来源影响的伤害');
+  });
+
   it('renders tagged damage notes and avoids duplicate trailing damage text', () => {
     const { container } = render(<TextWithHoverTooltips text='造成{5*,无来源}伤害' />);
 

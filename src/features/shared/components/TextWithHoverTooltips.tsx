@@ -39,7 +39,7 @@ export default function TextWithHoverTooltips({ text: rawText }: TextWithHoverTo
   const currentCharacterId = localCharacterCtx.characterId;
   const localCharacter = usePublishedCharacter(currentCharacterId);
   const actorProfile = localCharacter ? getActorProfile(currentCharacterId) : undefined;
-  const attackBoost = actorProfile?.attack ?? null;
+  const attackBoost = actorProfile?.attack ?? 0;
   const wallCrackDamageBoost =
     localCharacter?.factionId === 'mouse' ? actorProfile?.wallDamage : undefined;
   const parsedText = useMemo(
