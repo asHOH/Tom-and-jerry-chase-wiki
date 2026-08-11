@@ -1,6 +1,6 @@
 import { CSSProperties, useState } from 'react';
 
-import { componentTokens, designTokens } from '@/lib/design';
+import { cn, componentTokens } from '@/lib/design';
 import Image from '@/components/Image';
 
 type ImageSize = keyof typeof componentTokens.image.dimensions;
@@ -30,12 +30,6 @@ export default function GameImage({
 }: GameImageProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const { width, height } = componentTokens.image.dimensions[size];
-
-  // Use card height for details view, image height for others
-  const containerHeight =
-    size === 'CARD_DETAILS'
-      ? componentTokens.card.content.height
-      : componentTokens.image.container.height;
 
   // Detect if this is a cat character image for larger display
   const isCatCharacter = src.includes('/images/cats/');
@@ -68,11 +62,11 @@ export default function GameImage({
 
   return (
     <div
-      className='relative mb-3 w-full overflow-hidden bg-gray-200 dark:bg-slate-700'
-      style={{
-        height: containerHeight,
-        ...style,
-      }}
+      className={cn(
+        'relative mb-3 w-full overflow-hidden bg-gray-200 dark:bg-slate-700',
+        size === 'CARD_DETAILS' ? 'h-64' : 'h-48'
+      )}
+      style={style}
     >
       <div className='flex h-full items-center justify-center p-2'>
         <Image
@@ -91,10 +85,9 @@ export default function GameImage({
             maxHeight,
             maxWidth: '100%',
             height: 'auto',
-            transition: designTokens.transitions.normal,
             opacity: isLoaded ? 1 : 0,
           }}
-          className={className}
+          className={cn('transition-all duration-250 ease-in-out', className)}
         />
       </div>
     </div>

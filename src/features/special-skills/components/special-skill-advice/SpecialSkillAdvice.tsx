@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
-import { designTokens, getFactionButtonColors } from '@/lib/design';
+import { getFactionButtonColors } from '@/lib/design';
 import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { CharacterWithFaction } from '@/lib/types';
@@ -170,25 +170,11 @@ export default function SpecialSkillAdviceClient({
                 </div>
               </EntityCardFrame>
             </div>
-            <div
-              className='md:w-4/5'
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: designTokens.spacing.sm,
-                padding: designTokens.spacing.sm,
-              }}
-            >
+            <div className='flex flex-col gap-3 p-3 md:w-4/5'>
               {/*description*/}
               {skill.adviceDescription !== undefined && (
                 <div>
-                  <p
-                    className='text-lg text-black dark:text-gray-200'
-                    style={{
-                      paddingTop: designTokens.spacing.sm,
-                      paddingBottom: designTokens.spacing.sm,
-                    }}
-                  >
+                  <p className='py-3 text-lg text-black dark:text-gray-200'>
                     <TextWithHoverTooltips text={skill.adviceDescription as string} />
                   </p>
                 </div>

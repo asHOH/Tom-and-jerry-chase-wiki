@@ -7,7 +7,7 @@ import { proxy } from 'valtio';
 
 import { AssetManager } from '@/lib/assetManager';
 import { GameDataManager } from '@/lib/dataManager';
-import { componentTokens, designTokens } from '@/lib/design';
+import { componentTokens } from '@/lib/design';
 import { requireActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
 import { CharacterWithFaction } from '@/lib/types';
 import { useAppContext } from '@/context/AppContext';
@@ -242,14 +242,13 @@ export default function CharacterImport() {
                   viewBox='0 0 24 24'
                   strokeWidth={1.5}
                   stroke='currentColor'
-                  className='size-6 text-gray-500 hover:scale-105 dark:text-gray-400'
+                  className='size-6 text-gray-500 transition-all duration-250 ease-in-out hover:scale-105 dark:text-gray-400'
                   style={{
                     width: width,
                     height: height,
                     objectFit: 'contain',
                     maxHeight: '50%',
                     maxWidth: '70%',
-                    transition: designTokens.transitions.normal,
                   }}
                 >
                   <path

@@ -43,4 +43,33 @@ describe('DetailShell', () => {
       'custom-section-container'
     );
   });
+
+  it('uses utility spacing by default and preserves a runtime gap override', () => {
+    const { rerender } = render(
+      <DetailShell
+        leftColumn={<div />}
+        sections={[]}
+        containerProps={{ 'aria-label': 'detail-container' }}
+        layoutProps={{ 'aria-label': 'detail-layout' }}
+      />
+    );
+
+    expect(screen.getByLabelText('detail-container')).toHaveClass('flex', 'flex-col', 'gap-8');
+    expect(screen.getByLabelText('detail-layout')).toHaveClass('flex', 'flex-col', 'gap-8');
+
+    rerender(
+      <DetailShell
+        leftColumn={<div />}
+        sections={[]}
+        gap='1.25rem'
+        containerProps={{ 'aria-label': 'detail-container' }}
+        layoutProps={{ 'aria-label': 'detail-layout' }}
+      />
+    );
+
+    expect(screen.getByLabelText('detail-container')).not.toHaveClass('gap-8');
+    expect(screen.getByLabelText('detail-container')).toHaveStyle({ gap: '1.25rem' });
+    expect(screen.getByLabelText('detail-layout')).not.toHaveClass('gap-8');
+    expect(screen.getByLabelText('detail-layout')).toHaveStyle({ gap: '1.25rem' });
+  });
 });

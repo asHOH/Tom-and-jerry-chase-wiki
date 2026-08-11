@@ -1,8 +1,7 @@
 'use client';
 
-import { ReactNode, type CSSProperties } from 'react';
+import { ReactNode } from 'react';
 
-import { designTokens } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useEditMode } from '@/context/EditModeContext';
 import DiscussEditButtons from '@/components/ui/DiscussEditButtons';
@@ -37,16 +36,10 @@ export default function AttributesCardLayout({
 }: AttributesCardLayoutProps) {
   const isMobile = useMobile();
   const { isEditMode } = useEditMode();
-  const spacing = designTokens.spacing;
-  const spacingVars = {
-    '--space-xs': spacing.xs,
-    '--space-xs4': spacing.xs4,
-    '--space-md': spacing.md,
-  } as const;
   const aliasList = (aliases ?? []).filter(Boolean);
 
   return (
-    <div style={spacingVars as CSSProperties}>
+    <div>
       <EntityCardFrame variant='detail'>
         {isMobile ? (
           <div>
@@ -65,9 +58,7 @@ export default function AttributesCardLayout({
                 }}
               />
               <div>
-                <PageTitle className='py-0 pt-(--space-xs) text-2xl md:text-2xl'>
-                  {title}{' '}
-                </PageTitle>
+                <PageTitle className='py-0 pt-2 text-2xl md:text-2xl'>{title} </PageTitle>
                 <DiscussEditButtons compact isEditMode={isEditMode} className='mt-1' />
                 {subtitle && (
                   <p className='text-lg font-normal text-gray-400 dark:text-gray-500'>{subtitle}</p>
@@ -87,9 +78,9 @@ export default function AttributesCardLayout({
             </div>
           </div>
         ) : (
-          <div className='pb-(--space-xs4)'>
+          <div className='pb-1'>
             <GameImage src={imageUrl} alt={alt} size='CARD_DETAILS' />
-            <div className='px-(--space-md) pt-(--space-xs)'>
+            <div className='px-4 pt-2'>
               <PageTitle className='py-0 text-3xl md:text-3xl'>
                 {title}{' '}
                 {subtitle && (
@@ -101,22 +92,20 @@ export default function AttributesCardLayout({
               <DiscussEditButtons compact isEditMode={isEditMode} className='mt-2' />
             </div>
             {aliasList.length > 0 && (
-              <div className='mx-(--space-md) text-sm text-gray-400 dark:text-gray-500'>
+              <div className='mx-4 text-sm text-gray-400 dark:text-gray-500'>
                 {aliasLabel}: {aliasList.join('、')}
               </div>
             )}
             {aliasesContent && (
-              <div className='mx-(--space-md) mt-1 text-sm text-gray-400 dark:text-gray-500'>
+              <div className='mx-4 mt-1 text-sm text-gray-400 dark:text-gray-500'>
                 {aliasesContent}
               </div>
             )}
-            <div className='mx-(--space-md) text-sm text-gray-400 dark:text-gray-500'>
-              {wikiHistory}
-            </div>
+            <div className='mx-4 text-sm text-gray-400 dark:text-gray-500'>{wikiHistory}</div>
           </div>
         )}
 
-        <div className='mx-(--space-md) grid items-center gap-1 border-t border-gray-300 py-(--space-xs4) dark:border-gray-600'>
+        <div className='mx-4 grid items-center gap-1 border-t border-gray-300 py-1 dark:border-gray-600'>
           {attributes}
         </div>
 

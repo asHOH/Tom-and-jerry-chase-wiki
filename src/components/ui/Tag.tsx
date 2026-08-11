@@ -1,4 +1,4 @@
-import { componentTokens, createStyleFromTokens } from '@/lib/design';
+import { cn } from '@/lib/design';
 
 type TagProps = {
   children: React.ReactNode;
@@ -9,6 +9,19 @@ type TagProps = {
   className?: string;
 };
 
+const densityClasses: Record<NonNullable<TagProps['margin']>, string> = {
+  default: 'px-2 py-1.5',
+  compact: 'px-1.75 py-1.25',
+  micro: 'px-1 py-0.75',
+};
+
+const fontSizeClasses: Record<NonNullable<TagProps['size']>, string> = {
+  xxs: 'text-[0.625rem]',
+  xs: 'text-xs',
+  sm: 'text-sm',
+  md: 'text-base',
+};
+
 export default function Tag({
   children,
   colorStyles,
@@ -17,26 +30,17 @@ export default function Tag({
   role,
   className,
 }: TagProps) {
-  const baseTagStyle = createStyleFromTokens(
-    variant === 'micro'
-      ? componentTokens.tag.micro
-      : variant === 'compact'
-        ? componentTokens.tag.compact
-        : componentTokens.tag.base
-  );
-
-  // Size-based font sizing
-  const fontSize =
-    size === 'xxs' ? '0.625rem' : size === 'xs' ? '0.75rem' : size === 'sm' ? '0.875rem' : '1rem';
-
-  const tagStyle: React.CSSProperties = {
-    ...baseTagStyle,
-    fontSize,
-    ...colorStyles,
-  };
-
   return (
-    <span style={tagStyle} {...(role ? { role } : {})} className={className}>
+    <span
+      style={colorStyles}
+      {...(role ? { role } : {})}
+      className={cn(
+        'inline-block rounded-md border-0 font-medium',
+        densityClasses[variant],
+        fontSizeClasses[size],
+        className
+      )}
+    >
       {children}
     </span>
   );

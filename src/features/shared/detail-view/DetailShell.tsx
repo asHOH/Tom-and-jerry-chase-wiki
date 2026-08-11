@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { cn, designTokens } from '@/lib/design';
+import { cn } from '@/lib/design';
 import SectionHeader from '@/components/ui/SectionHeader';
 
 export type DetailSection = {
@@ -29,22 +29,19 @@ type DetailShellProps = {
 function DetailShell({
   leftColumn,
   sections,
-  gap = designTokens.spacing.xl,
+  gap,
   containerProps,
   layoutProps,
   leftColumnProps,
   rightColumnProps,
 }: DetailShellProps) {
   const containerStyle: React.CSSProperties = {
-    display: 'flex',
-    flexDirection: 'column',
-    gap,
+    ...(gap !== undefined ? { gap } : {}),
     ...containerProps?.style,
   };
 
   const layoutStyle: React.CSSProperties = {
-    display: 'flex',
-    gap,
+    ...(gap !== undefined ? { gap } : {}),
     ...layoutProps?.style,
   };
 
@@ -57,10 +54,18 @@ function DetailShell({
   };
 
   return (
-    <div {...containerProps} className={cn(containerProps?.className)} style={containerStyle}>
+    <div
+      {...containerProps}
+      className={cn('flex flex-col', gap === undefined && 'gap-8', containerProps?.className)}
+      style={containerStyle}
+    >
       <div
         {...layoutProps}
-        className={cn('flex flex-col md:flex-row', layoutProps?.className)}
+        className={cn(
+          'flex flex-col md:flex-row',
+          gap === undefined && 'gap-8',
+          layoutProps?.className
+        )}
         style={layoutStyle}
       >
         <div
