@@ -15,6 +15,10 @@
   --wiki-control: var(--color-gray-100);
   /* Hover and pressed emphasis for neutral controls */
   --wiki-control-hover: var(--color-gray-200);
+  /* Selected neutral controls that need stronger contrast than resting controls */
+  --wiki-control-active: var(--color-gray-400);
+  /* Hover emphasis for selected neutral controls */
+  --wiki-control-active-hover: var(--color-gray-300);
   /* Secondary and explanatory text */
   --wiki-muted-foreground: var(--color-gray-600);
   /* Standard surface borders and dividers */
@@ -49,6 +53,8 @@
   --wiki-surface-sunken: var(--color-slate-900);
   --wiki-control: var(--color-slate-700);
   --wiki-control-hover: var(--color-slate-600);
+  --wiki-control-active: var(--color-gray-600);
+  --wiki-control-active-hover: var(--color-gray-700);
   --wiki-muted-foreground: var(--color-gray-400);
   --wiki-border: var(--color-slate-700);
   --wiki-focus: var(--color-blue-400);
@@ -64,6 +70,8 @@
   --color-surface-sunken: var(--wiki-surface-sunken);
   --color-control: var(--wiki-control);
   --color-control-hover: var(--wiki-control-hover);
+  --color-control-active: var(--wiki-control-active);
+  --color-control-active-hover: var(--wiki-control-active-hover);
   --color-muted-foreground: var(--wiki-muted-foreground);
   --color-border: var(--wiki-border);
   --color-focus: var(--wiki-focus);

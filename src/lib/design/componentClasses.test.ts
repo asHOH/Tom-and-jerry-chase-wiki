@@ -1,12 +1,12 @@
 import { getFilterButtonActiveToneClasses } from './componentClasses';
 
 describe('component classes', () => {
-  it('uses accessible normal and hover colors for the neutral filter tone', () => {
+  it('uses the high-contrast semantic control colors for the neutral filter tone', () => {
+    expect(getFilterButtonActiveToneClasses('neutral')).toContain('border-control-active');
+    expect(getFilterButtonActiveToneClasses('neutral')).toContain('bg-control-active');
+    expect(getFilterButtonActiveToneClasses('neutral')).toContain('hover:bg-control-active-hover');
     expect(getFilterButtonActiveToneClasses('neutral')).toContain(
-      'bg-gray-400 text-gray-800 hover:bg-gray-300'
-    );
-    expect(getFilterButtonActiveToneClasses('neutral')).toContain(
-      'dark:bg-gray-600 dark:text-gray-100 dark:hover:bg-gray-700'
+      'text-gray-800 dark:text-gray-100'
     );
   });
 });

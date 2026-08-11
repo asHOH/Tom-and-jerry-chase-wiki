@@ -129,6 +129,14 @@ const semanticTokens = {
     light: 'var(--color-gray-200)',
     dark: 'var(--color-slate-600)',
   },
+  '--wiki-control-active': {
+    light: 'var(--color-gray-400)',
+    dark: 'var(--color-gray-600)',
+  },
+  '--wiki-control-active-hover': {
+    light: 'var(--color-gray-300)',
+    dark: 'var(--color-gray-700)',
+  },
   '--wiki-muted-foreground': {
     light: 'var(--color-gray-600)',
     dark: 'var(--color-gray-400)',

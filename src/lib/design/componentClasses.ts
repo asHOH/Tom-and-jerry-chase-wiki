@@ -33,7 +33,7 @@ const filterButtonActiveToneClasses: Record<FilterButtonTone, string> = {
   green:
     'bg-green-600 text-white hover:bg-green-700 dark:bg-green-600 dark:text-white dark:hover:bg-green-700',
   neutral:
-    'border border-gray-400 bg-gray-400 text-gray-800 hover:bg-gray-300 dark:border-gray-600 dark:bg-gray-600 dark:text-gray-100 dark:hover:bg-gray-700',
+    'border-control-active bg-control-active hover:bg-control-active-hover border text-gray-800 dark:text-gray-100',
 };
 
 const formControlSizes = {

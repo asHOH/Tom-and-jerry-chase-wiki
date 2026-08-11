@@ -33,6 +33,8 @@ describe('published game-data route rendering contracts', () => {
 
     expect(routeSource).toContain('export const revalidate = 28800');
     expect(articleSource).toContain('revalidate: 28800');
-    expect(contentWritersSource).toContain('revalidate: false');
+    expect(contentWritersSource).toContain(
+      'revalidate: PUBLIC_GAME_DATA_ACTIONS_CACHE_REVALIDATE_SECONDS'
+    );
   });
 });
