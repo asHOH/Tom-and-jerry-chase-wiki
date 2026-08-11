@@ -3,7 +3,10 @@ import 'server-only';
 import { cache } from 'react';
 
 import { queryApprovedPublicActionRows } from '@/lib/gameData/publicActionQueries';
-import { PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG } from '@/lib/gameData/publicActionsCache';
+import {
+  PUBLIC_GAME_DATA_ACTIONS_CACHE_REVALIDATE_SECONDS,
+  PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG,
+} from '@/lib/gameData/publicActionsCache';
 import type { PublicActionRow } from '@/lib/gameData/publicActionsTypes';
 import { cached } from '@/lib/serverCache';
 import { getOptionalSupabasePublicClient } from '@/lib/supabase/publicClient';
@@ -22,7 +25,7 @@ async function getCachedApprovedRows(): Promise<PublicActionRow[]> {
     [PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG, 'approved-snapshot', 'v1', PRODUCTION_BUILD_IDENTITY],
     () => queryApprovedPublicActionRows(client),
     {
-      revalidate: false,
+      revalidate: PUBLIC_GAME_DATA_ACTIONS_CACHE_REVALIDATE_SECONDS,
       tags: [PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG],
     }
   );

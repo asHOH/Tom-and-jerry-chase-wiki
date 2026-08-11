@@ -3,7 +3,10 @@ import 'server-only';
 import { getPublicReadClient } from '@/lib/articles/server/readClient';
 import { flattenActionEntries, normalizePublicActionEntries } from '@/lib/gameData/actionEntries';
 import { GAME_DATA_CONTRIBUTION_FILTER } from '@/lib/gameData/contributionFilter';
-import { PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG } from '@/lib/gameData/publicActionsCache';
+import {
+  PUBLIC_GAME_DATA_ACTIONS_CACHE_REVALIDATE_SECONDS,
+  PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG,
+} from '@/lib/gameData/publicActionsCache';
 import { getGameDataActionTarget } from '@/lib/gameData/scopedEntityPaths';
 import { cached } from '@/lib/serverCache';
 import type { ContentEditor } from '@/lib/types';
@@ -84,7 +87,7 @@ export async function getContentWritersForCharacter(
       [PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG, 'character-content-writers-v2', characterId],
       () => queryGameDataActionAuthors(characterId),
       {
-        revalidate: false,
+        revalidate: PUBLIC_GAME_DATA_ACTIONS_CACHE_REVALIDATE_SECONDS,
         tags: [PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG],
       }
     );

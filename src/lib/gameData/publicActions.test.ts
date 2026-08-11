@@ -17,6 +17,7 @@ jest.mock('@/lib/serverCache', () => ({
 }));
 
 jest.mock('@/lib/gameData/publicActionsCache', () => ({
+  PUBLIC_GAME_DATA_ACTIONS_CACHE_REVALIDATE_SECONDS: 3600,
   PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG: 'public-game-data-actions',
 }));
 
@@ -118,7 +119,7 @@ describe('public game data actions', () => {
     expect(query.order).toHaveBeenNthCalledWith(1, 'created_at', { ascending: true });
     expect(query.order).toHaveBeenNthCalledWith(2, 'id', { ascending: true });
     expect(cachedMock).toHaveBeenCalledWith(['public-game-data-actions'], expect.any(Function), {
-      revalidate: false,
+      revalidate: 3600,
       tags: ['public-game-data-actions'],
     });
   });

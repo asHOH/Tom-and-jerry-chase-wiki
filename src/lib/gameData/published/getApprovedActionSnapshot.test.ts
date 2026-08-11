@@ -17,6 +17,7 @@ jest.mock('@/lib/gameData/publicActionQueries', () => ({
   queryApprovedPublicActionRows: (...args: unknown[]) => mockQueryApprovedRows(...args),
 }));
 jest.mock('@/lib/gameData/publicActionsCache', () => ({
+  PUBLIC_GAME_DATA_ACTIONS_CACHE_REVALIDATE_SECONDS: 3600,
   PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG: 'public-game-data-actions',
 }));
 jest.mock('@/lib/supabase/config', () => ({
@@ -56,7 +57,7 @@ describe('getApprovedActionSnapshot', () => {
       ['public-game-data-actions', 'approved-snapshot', 'v1', 'snapshot-test-build'],
       expect.any(Function),
       {
-        revalidate: false,
+        revalidate: 3600,
         tags: ['public-game-data-actions'],
       }
     );

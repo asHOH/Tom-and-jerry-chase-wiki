@@ -2,7 +2,10 @@ import 'server-only';
 
 import { unstable_cache } from 'next/cache';
 
-import { PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG } from '@/lib/gameData/publicActionsCache';
+import {
+  PUBLIC_GAME_DATA_ACTIONS_CACHE_REVALIDATE_SECONDS,
+  PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG,
+} from '@/lib/gameData/publicActionsCache';
 import {
   PUBLISHABLE_ENTITY_TYPES,
   type PublishableEntityType,
@@ -36,7 +39,7 @@ async function readPersistentPublishedDomain<EntityType extends PublishableEntit
     async () => selectPublishedGameData(entityType, getCanonicalGameData(entityType), snapshot),
     createPublishedDomainCacheKey(buildIdentity, snapshot.actionRevision, entityType),
     {
-      revalidate: false,
+      revalidate: PUBLIC_GAME_DATA_ACTIONS_CACHE_REVALIDATE_SECONDS,
       tags: [PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG],
     }
   );
