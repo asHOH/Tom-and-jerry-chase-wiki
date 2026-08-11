@@ -128,6 +128,7 @@ export default function ItemClient({ description, data = items, publishedRevisio
             label='阵营筛选:'
             options={['cat', 'mouse', 'none']}
             isActive={(f) => selectedFactions.includes(f)}
+            activeTone={(f) => (f === 'none' ? 'neutral' : 'default')}
             onToggle={(f) =>
               setSelectedFactions((prev) =>
                 prev.includes(f) ? prev.filter((x) => x !== f) : [...prev, f]
@@ -147,11 +148,7 @@ export default function ItemClient({ description, data = items, publishedRevisio
                     : '通用'
             }
             getButtonStyle={(f, active) =>
-              active
-                ? f === 'none'
-                  ? { backgroundColor: '#e6d5f7', color: '#8b5cf6' }
-                  : getFactionButtonColors(f as 'cat' | 'mouse', isDarkMode)
-                : undefined
+              active && f !== 'none' ? getFactionButtonColors(f, isDarkMode) : undefined
             }
           />
         </>

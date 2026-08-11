@@ -43,8 +43,8 @@ describe('IconButton', () => {
     );
 
     expect(screen.getByRole('button', { name: '删除' })).toHaveClass(
-      'h-4',
-      'w-4',
+      'h-6',
+      'w-6',
       'bg-red-200',
       'text-red-800',
       'dark:bg-red-900/90',

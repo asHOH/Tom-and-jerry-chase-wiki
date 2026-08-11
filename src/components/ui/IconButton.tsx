@@ -22,7 +22,7 @@ const variantClasses: Record<IconButtonVariant, string> = {
 };
 
 const sizeClasses: Record<IconButtonSize, string> = {
-  xs: 'h-4 w-4 text-xs',
+  xs: 'h-6 w-6 text-xs',
   sm: 'h-7 w-7 text-xs',
   md: 'h-8 w-8 text-sm',
 };
