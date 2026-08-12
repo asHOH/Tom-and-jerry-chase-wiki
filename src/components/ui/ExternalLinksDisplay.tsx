@@ -16,6 +16,8 @@ const WeiboIcon = ({ className }: BrandIconProps) => (
   </svg>
 );
 
+// Adapted from Remix Icon's bilibili-fill.svg under Apache-2.0.
+// See THIRD_PARTY_NOTICES.md for the pinned source and modification details.
 const BilibiliIcon = ({ className }: BrandIconProps) => (
   <svg
     xmlns='http://www.w3.org/2000/svg'
