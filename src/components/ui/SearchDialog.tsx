@@ -374,11 +374,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
           id='search-input'
         />
         <div className='pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3'>
-          <SearchIcon
-            className='h-5 w-5 text-gray-400 dark:text-gray-500'
-            decorative={false}
-            aria-label='搜索图标'
-          />
+          <SearchIcon className='h-5 w-5 text-gray-400 dark:text-gray-500' />
         </div>
       </div>
 

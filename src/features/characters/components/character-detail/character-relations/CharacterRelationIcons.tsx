@@ -1,4 +1,10 @@
-import type { IconProps } from '@/components/icons/CommonIcons';
+import type { SVGProps } from 'react';
+
+type CharacterRelationIconProps = Omit<SVGProps<SVGSVGElement>, 'width' | 'height' | 'role'> & {
+  size?: number | string;
+  decorative?: boolean;
+  title?: string;
+};
 
 const getSvgAriaProps = (decorative: boolean, ariaLabel: string, title?: string) => {
   if (decorative) {
@@ -11,7 +17,12 @@ const getSvgAriaProps = (decorative: boolean, ariaLabel: string, title?: string)
   };
 };
 
-export const HappyFaceIcon = ({ size = 16, decorative = false, title, ...props }: IconProps) => {
+export const HappyFaceIcon = ({
+  size = 16,
+  decorative = false,
+  title,
+  ...props
+}: CharacterRelationIconProps) => {
   const { ['aria-label']: ariaLabelProp, ...rest } = props;
   const ariaLabel = ariaLabelProp ?? 'smile';
 
@@ -40,7 +51,12 @@ export const HappyFaceIcon = ({ size = 16, decorative = false, title, ...props }
   );
 };
 
-export const NeutralFaceIcon = ({ size = 16, decorative = false, title, ...props }: IconProps) => {
+export const NeutralFaceIcon = ({
+  size = 16,
+  decorative = false,
+  title,
+  ...props
+}: CharacterRelationIconProps) => {
   const { ['aria-label']: ariaLabelProp, ...rest } = props;
   const ariaLabel = ariaLabelProp ?? 'neutral';
 
@@ -69,7 +85,12 @@ export const NeutralFaceIcon = ({ size = 16, decorative = false, title, ...props
   );
 };
 
-export const SadFaceIcon = ({ size = 16, decorative = false, title, ...props }: IconProps) => {
+export const SadFaceIcon = ({
+  size = 16,
+  decorative = false,
+  title,
+  ...props
+}: CharacterRelationIconProps) => {
   const { ['aria-label']: ariaLabelProp, ...rest } = props;
   const ariaLabel = ariaLabelProp ?? 'sad';
 
@@ -98,7 +119,12 @@ export const SadFaceIcon = ({ size = 16, decorative = false, title, ...props }: 
   );
 };
 
-export const HeartIcon = ({ size = 16, decorative = false, title, ...props }: IconProps) => {
+export const HeartIcon = ({
+  size = 16,
+  decorative = false,
+  title,
+  ...props
+}: CharacterRelationIconProps) => {
   const { ['aria-label']: ariaLabelProp, ...rest } = props;
   const ariaLabel = ariaLabelProp ?? 'heart';
 
@@ -126,7 +152,12 @@ export const HeartIcon = ({ size = 16, decorative = false, title, ...props }: Ic
   );
 };
 // 在 CharacterRelationIcons.tsx 中恢复最初的设计
-export const AdvantageIcon = ({ size = 16, decorative = false, title, ...props }: IconProps) => {
+export const AdvantageIcon = ({
+  size = 16,
+  decorative = false,
+  title,
+  ...props
+}: CharacterRelationIconProps) => {
   const { ['aria-label']: ariaLabelProp, ...rest } = props;
   const ariaLabel = ariaLabelProp ?? 'advantage';
 
@@ -151,7 +182,12 @@ export const AdvantageIcon = ({ size = 16, decorative = false, title, ...props }
   );
 };
 
-export const DisadvantageIcon = ({ size = 16, decorative = false, title, ...props }: IconProps) => {
+export const DisadvantageIcon = ({
+  size = 16,
+  decorative = false,
+  title,
+  ...props
+}: CharacterRelationIconProps) => {
   const { ['aria-label']: ariaLabelProp, ...rest } = props;
   const ariaLabel = ariaLabelProp ?? 'disadvantage';
 
@@ -176,7 +212,12 @@ export const DisadvantageIcon = ({ size = 16, decorative = false, title, ...prop
   );
 };
 
-export const MapIcon = ({ size = 16, decorative = false, title, ...props }: IconProps) => {
+export const MapIcon = ({
+  size = 16,
+  decorative = false,
+  title,
+  ...props
+}: CharacterRelationIconProps) => {
   const { ['aria-label']: ariaLabelProp, ...rest } = props;
   const ariaLabel = ariaLabelProp ?? 'map';
 

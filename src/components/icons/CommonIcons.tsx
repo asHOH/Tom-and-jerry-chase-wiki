@@ -1,12 +1,30 @@
 import type { ReactNode, SVGProps } from 'react';
 
 // 一些用法：<PlusIcon className='w-5 h-5 text-muted-foreground' /> 或 <PlusIcon size={20} decorative={false} title='新增按钮' />
-export type IconProps = Omit<SVGProps<SVGSVGElement>, 'width' | 'height' | 'role'> & {
+type IconBaseProps = Omit<SVGProps<SVGSVGElement>, 'aria-label' | 'width' | 'height' | 'role'> & {
   size?: number | string;
-  decorative?: boolean;
-  title?: string;
   strokeWidth?: number | string;
 };
+
+type DecorativeIconProps = {
+  decorative?: true;
+  title?: string;
+  'aria-label'?: never;
+};
+
+type LabelledIconProps =
+  | {
+      decorative: false;
+      title: string;
+      'aria-label'?: string;
+    }
+  | {
+      decorative: false;
+      title?: string;
+      'aria-label': string;
+    };
+
+export type IconProps = IconBaseProps & (DecorativeIconProps | LabelledIconProps);
 
 type SvgIconProps = IconProps & {
   children: ReactNode;

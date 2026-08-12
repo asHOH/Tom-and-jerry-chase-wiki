@@ -70,6 +70,16 @@ jest.mock('motion/react', () => {
 });
 
 describe('SearchDialog', () => {
+  it('keeps the search glyph decorative beside the input', () => {
+    render(<SearchDialog open onClose={jest.fn()} isMobile={false} />);
+
+    const searchIcon = screen.getByRole('textbox').parentElement?.querySelector('svg');
+
+    expect(searchIcon).toHaveAttribute('aria-hidden', 'true');
+    expect(searchIcon).toHaveAttribute('focusable', 'false');
+    expect(screen.queryByRole('img', { name: '搜索图标' })).not.toBeInTheDocument();
+  });
+
   it('uses controlled dismissal and clears the query before reopening', () => {
     const onClose = jest.fn();
     const { rerender } = render(<SearchDialog open onClose={onClose} isMobile={false} />);

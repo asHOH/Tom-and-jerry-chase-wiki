@@ -116,33 +116,37 @@ export const AlignRightIcon = React.memo<IconProps>(({ className = 'size-4', ...
 AlignRightIcon.displayName = 'AlignRightIcon';
 
 // Special content icons
-export const BlockquoteIcon = React.memo<IconProps>(({ className = 'size-4', ...rest }) => (
-  <SvgIcon className={className} viewBox='0 0 24 24' fill='currentColor' stroke='none' {...rest}>
-    {/* <circle cx='7' cy='8.4' r='3.6' />
+export const BlockquoteIcon = React.memo<IconProps>(({ className = 'size-4', ...rest }) => {
+  const maskId = React.useId();
+
+  return (
+    <SvgIcon className={className} viewBox='0 0 24 24' fill='currentColor' stroke='none' {...rest}>
+      {/* <circle cx='7' cy='8.4' r='3.6' />
     <path d='M6.6 10.95C3.86 12.07 2.35 14.26 2.35 17.36c0 1.62.7 2.92 2.05 3.7l-.52.61c-.76.89-2.19.84-3.02-.03C.41 21.25 0 20.36 0 19.3v-3.2c0-3.77 2.04-6.59 5.38-7.95l1.33-.54c.72-.3 1.46.29 1.32 1.04-.18.95-.63 1.82-1.35 2.65l-.08.1Z' />
     <circle cx='17' cy='8.4' r='3.6' />
     <path d='M16.6 10.95c-2.74 1.12-4.25 3.31-4.25 6.41 0 1.62.7 2.92 2.05 3.7l-.52.61c-.76.89-2.19.84-3.02-.03-.45-.48-.86-1.37-.86-2.43v-3.2c0-3.77 2.04-6.59 5.38-7.95l1.33-.54c.72-.3 1.46.29 1.32 1.04-.18.95-.63 1.82-1.35 2.65l-.08.1Z' /> */}
-    <g fill='currentColor' transform='translate(1.25,13)'>
-      <defs>
-        <mask id='tailMask2x' maskContentUnits='userSpaceOnUse'>
-          <rect x='-100' y='-100' width='300' height='300' fill='black' />
-          <circle cx='10' cy='0' r='9' fill='white' />
-          <circle cx='10.9' cy='-4.4' r='4.7' fill='black' />
-          <rect x='-100' y='0' width='300' height='200' fill='black' />
-          <rect x='10' y='-200' width='200' height='400' fill='black' />
-        </mask>
-      </defs>
+      <g fill='currentColor' transform='translate(1.25,13)'>
+        <defs>
+          <mask id={maskId} maskContentUnits='userSpaceOnUse'>
+            <rect x='-100' y='-100' width='300' height='300' fill='black' />
+            <circle cx='10' cy='0' r='9' fill='white' />
+            <circle cx='10.9' cy='-4.4' r='4.7' fill='black' />
+            <rect x='-100' y='0' width='300' height='200' fill='black' />
+            <rect x='10' y='-200' width='200' height='400' fill='black' />
+          </mask>
+        </defs>
 
-      <circle cx='5' cy='0' r='4' />
-      <rect x='0' y='-10' width='20' height='20' mask='url(#tailMask2x)' />
-
-      <g transform='translate(11,0)'>
         <circle cx='5' cy='0' r='4' />
-        <rect x='0' y='-10' width='20' height='20' mask='url(#tailMask2x)' />
+        <rect x='0' y='-10' width='20' height='20' mask={`url(#${maskId})`} />
+
+        <g transform='translate(11,0)'>
+          <circle cx='5' cy='0' r='4' />
+          <rect x='0' y='-10' width='20' height='20' mask={`url(#${maskId})`} />
+        </g>
       </g>
-    </g>
-  </SvgIcon>
-));
+    </SvgIcon>
+  );
+});
 BlockquoteIcon.displayName = 'BlockquoteIcon';
 
 // export const CodeBlockIcon = React.memo<IconProps>(({ className = 'size-4', ...rest }) => (
