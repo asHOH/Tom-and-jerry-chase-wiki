@@ -46,27 +46,22 @@ src/
 │   ├── (main)/               # Public routes using GlobalLayout
 │   ├── admin/                # Dynamic admin UI
 │   ├── api/                  # Route handlers
-│   ├── maps/                 # Full-screen interactive map route outside (main)
-│   ├── layout.tsx            # Root providers, fonts, analytics, and error boundary
-│   └── globals.css           # Tailwind entry point; imports src/styles/*
+│   └── maps/                 # Full-screen interactive map route outside (main)
 ├── features/                 # Domain modules: data, components, hooks, and helpers
 ├── components/               # Cross-feature and app-level components
 │   └── ui/                   # Shared UI primitives
 ├── data/                     # Shared static data, generated data, types, and Valtio edit stores
 ├── lib/                      # Business logic and integrations
-│   ├── edit/                 # Local editing, diffs, persistence, and action squashing
-│   ├── gameData/             # Public game-data action replay and cache invalidation
-│   └── supabase/             # Browser, RSC, public, admin, and proxy clients
 ├── hooks/                    # Cross-feature hooks
 ├── context/                  # Theme, edit mode, toast, and wiki-history providers
-├── styles/                   # Global theme, base, typography, component, pattern, and animation CSS
-├── testUtils/                # Shared test fixtures
-└── env.ts                    # t3-oss/env-nextjs validation
+└── styles/                   # Global theme, base, typography, component, pattern, and animation CSS
 
 scripts/                      # Generation, validation, reports, image processing, and ops scripts
 supabase/migrations/          # Database schema history; add migrations rather than editing old ones
 test/__mocks__/               # Jest-only mocks outside Jest's test discovery roots
 ```
+
+After changing Supabase migrations, replay the local database, run `npm run generate:database-types`, and commit `src/data/database.generated.ts`. Do not manually edit that generated file.
 
 # Architecture
 
@@ -85,17 +80,20 @@ test/__mocks__/               # Jest-only mocks outside Jest's test discovery ro
 - `trailingSlash: true` and `typedRoutes: true` are enabled. Use typed `Route` values where Next.js navigation needs help proving a dynamic path.
 - React Compiler uses annotation mode. Preserve deliberate compiler directives such as `'use no memo'`; do not add compiler annotations casually.
 - `src/proxy.ts` is the request proxy. It refreshes Supabase sessions and applies preview no-index behavior; this project does not use a legacy root `middleware.ts`.
+- New public routes should follow adjacent metadata, canonical URL, structured-data, robots, and sitemap patterns.
 
 ## Dynamic Services and State
 
 - Supabase-backed articles, comments, users, permissions, notifications, and game-data actions are dynamic. Client-side API reads generally use SWR.
 - `src/lib/supabase/client.ts`: browser singleton.
-- `src/lib/supabase/server.ts`: cookie-aware, cached RSC/route-handler client; call await createClient()`.
+- `src/lib/supabase/server.ts`: cookie-aware, cached RSC/route-handler client; call `await createClient()`.
 - `src/lib/supabase/public.ts`: server-only publishable-key client for unauthenticated public reads.
 - `src/lib/supabase/admin.ts`: server-only secret-key client with elevated privileges. Never import it into client code or expose its key.
-- For Supabase performance work, start with `docs/archive/completed/2026-08-08-supabase-cpu-disk-io-remediation-plan.md` and its linked handoff. Run `scripts/ops/measure-admin-game-data-actions.sql` only against `tjwiki-test` project via `STAGING_DATABASE_URL`, never production.
+- Supabase-backed functionality must degrade safely when articles are disabled or credentials are absent. Choose optional versus required client helpers deliberately.
+- Run `scripts/ops/measure-admin-game-data-actions.sql` only against the `tjwiki-test` project via `STAGING_DATABASE_URL`, never production.
 - Auth routes implement password hashing, rate limiting, and configurable hCaptcha or Turnstile. Preserve the existing helpers and the optional CAPTCHA behavior when provider secrets are absent.
 - Valtio handles shared reactive/editable state. React context and `next-themes` handle scoped UI state. SWR handles API caching; do not introduce another state layer without a clear need.
+- When a mutation changes publicly rendered data, update the corresponding cache-tag invalidation, including sitemap and aggregate tags where applicable.
 
 ## Environment and PWA
 
@@ -110,17 +108,17 @@ Formatting and lint-enforced details are intentionally omitted here. Treat Prett
 ## TypeScript and Imports
 
 - Prefer `type` aliases for new local shapes. Use `interface` where extension, declaration merging, generated definitions, or established adjacent code makes it clearer.
-- Prefix intentionally unused parameters with `_`.
 - Use `@/` for imports across project areas. Use relative imports for files in the same local module.
 
 ## React and Components
 
-- Use functional components. Define props directly above the component and extend native element attributes when wrapping an HTML element.
+- Define props directly above the component and extend native element attributes when wrapping an HTML element.
 - Page modules and UI primitives generally use default exports. Utilities, hooks, and types use named exports. Follow the established pattern in the same directory.
 - Use `cn` from `@/lib/design` for conditional classes, reusable class composition, or merging an incoming `className`.
 - Prefer Tailwind for static styling. Use global CSS in `src/styles/` for shared tokens and patterns, and inline `style` only for runtime-computed values or values Tailwind cannot express cleanly.
 - Keep dark-mode behavior via `dark:` variants and the existing theme tokens. Test both themes when changing colors.
 - Use responsive Tailwind prefixes and existing media/gesture hooks for mobile behavior.
+- Preserve keyboard navigation, visible focus states, semantic and ARIA behavior, reduced-motion handling, and touch usability when changing interactive UI.
 
 ## Error Handling and Security
 
@@ -141,7 +139,7 @@ Formatting and lint-enforced details are intentionally omitted here. Treat Prett
   chcp 65001 | Out-Null
   ```
 
-# Validation, Git Hooks, and CI
+# Validation and CI
 
 Validate in proportion to the scope of change:
 
@@ -151,8 +149,4 @@ Validate in proportion to the scope of change:
 - Actor-profile data: also run `npm run validate:actor-profiles`.
 - Build/config/generation: run `npm run build:skip-images` when practical.
 
-Git hooks:
-
-- `pre-commit`: resets a generated service-worker cache version, runs lint-staged Oxlint with warnings denied and Prettier with write mode.
-- `commit-msg`: enforces `type(scope): description`; allowed type: `feat|fix|docs|style|refactor|perf|test|chore`. Breaking-change `!`, merge, and revert commits are supported.
-- `pre-push`: syncs README acknowledgments, runs Oxlint and Prettier, then type-checks in parallel with changed tests on feature/development branches or full CI tests on main-like branches.
+Git hooks and CI enforce formatting, linting, type-checking, tests, generated database types, and conventional commit messages. Treat their executable configuration as the source of truth.
