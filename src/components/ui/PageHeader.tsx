@@ -7,6 +7,7 @@ import PageTitle from './PageTitle';
 
 type PageHeaderProps = {
   title: ReactNode;
+  titleAs?: 'h1' | 'p';
   description?: ReactNode;
   descriptionVisibility?: 'always' | 'desktop';
   actions?: ReactNode;
@@ -18,6 +19,7 @@ type PageHeaderProps = {
 
 export default function PageHeader({
   title,
+  titleAs = 'h1',
   description,
   descriptionVisibility = 'always',
   actions,
@@ -28,7 +30,9 @@ export default function PageHeader({
 }: PageHeaderProps) {
   return (
     <header className={cn('space-y-2 text-center md:space-y-4', className)}>
-      <PageTitle className={titleClassName}>{title}</PageTitle>
+      <PageTitle as={titleAs} className={titleClassName}>
+        {title}
+      </PageTitle>
       {description ? (
         <div className={descriptionVisibility === 'desktop' ? 'sr-only md:not-sr-only' : undefined}>
           <PageDescription className={descriptionClassName}>{description}</PageDescription>

@@ -79,7 +79,10 @@ describe('SectionNavigationShell', () => {
       </SectionNavigationShell>
     );
 
-    expect(screen.getByText('Section title')).toBeInTheDocument();
+    expect(screen.getByText('Section title')).toHaveRole('paragraph');
+    expect(
+      screen.queryByRole('heading', { level: 1, name: 'Section title' })
+    ).not.toBeInTheDocument();
     expect(screen.getByText('Section description')).toBeInTheDocument();
     expect(screen.getByText('Section content')).toBeInTheDocument();
     expect(screen.getAllByTestId('action-tile')).toHaveLength(mockItems.length * 2);
@@ -121,6 +124,7 @@ describe('SectionNavigationShell', () => {
       />
     );
 
+    expect(screen.getByRole('heading', { level: 1, name: 'Section title' })).toBeInTheDocument();
     expect(screen.getAllByTestId('action-tile')).toHaveLength(mockItems.length);
   });
 

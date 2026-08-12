@@ -74,12 +74,17 @@ export default function SectionNavigationShell({
 }: SectionNavigationShellProps) {
   const isMobile = useMobile();
   const { isActive } = useNavigationTabs();
-  const showBottomNavigation =
-    bottomNavigation === 'always' || items.some((tab) => isActive(tab.href));
+  const hasActiveItem = items.some((tab) => isActive(tab.href));
+  const showBottomNavigation = bottomNavigation === 'always' || hasActiveItem;
 
   return (
     <PageShell width='maximum' className='space-y-4 md:space-y-8 dark:text-slate-200'>
-      <PageHeader title={title} description={description} className='mb-2 md:mb-4' />
+      <PageHeader
+        title={title}
+        titleAs={hasActiveItem ? 'p' : 'h1'}
+        description={description}
+        className='mb-2 md:mb-4'
+      />
 
       <NavigationButtons items={items} isMobile={isMobile} isTabActive={isActive} />
 
