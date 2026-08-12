@@ -12,7 +12,12 @@ import { BaseDialog } from '@/components/ui/BaseDialog';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import { HOME_ACTION_TILE_PROPS } from '@/components/ui/homeActionTileStyles';
-import { ChevronDownIcon } from '@/components/icons/CommonIcons';
+import {
+  ChevronDownIcon,
+  ChevronRightIcon,
+  DocumentTextIcon,
+  UserIcon,
+} from '@/components/icons/CommonIcons';
 
 import { disclosureTriggerFocusClasses } from './disclosureStyles';
 
@@ -117,14 +122,7 @@ const ChangeLogs = forwardRef<ChangeLogsRef>((_props, ref) => {
 
             {change.author && (
               <div className='mt-1 flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400'>
-                <svg className='h-3 w-3' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    strokeWidth={2}
-                    d='M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'
-                  />
-                </svg>
+                <UserIcon className='h-3 w-3' />
                 {change.author.split(', ').map((author, index, array) => (
                   <span key={author}>
                     {contributors.find(({ id }) => author === id)?.name || author}
@@ -145,21 +143,7 @@ const ChangeLogs = forwardRef<ChangeLogsRef>((_props, ref) => {
       <ActionTile
         title='更新日志'
         description='查看网站更新历史'
-        icon={
-          <svg
-            className='h-8 w-8'
-            fill='none'
-            stroke='currentColor'
-            viewBox='0 0 24 24'
-            strokeWidth={2}
-          >
-            <path
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              d='M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'
-            />
-          </svg>
-        }
+        icon={<DocumentTextIcon className='h-8 w-8' />}
         onClick={() => setIsChangeLogsOpen(true)}
         ariaLabel='更新日志'
         layout='stacked'
@@ -213,22 +197,12 @@ const ChangeLogs = forwardRef<ChangeLogsRef>((_props, ref) => {
                     aria-expanded={isExpanded}
                   >
                     <div className='flex items-center gap-3'>
-                      <svg
+                      <ChevronRightIcon
                         className={cn(
                           'h-5 w-5 text-gray-600 transition-transform dark:text-gray-400',
                           isExpanded && 'rotate-90'
                         )}
-                        fill='none'
-                        stroke='currentColor'
-                        viewBox='0 0 24 24'
-                      >
-                        <path
-                          strokeLinecap='round'
-                          strokeLinejoin='round'
-                          strokeWidth={2}
-                          d='M9 5l7 7-7 7'
-                        />
-                      </svg>
+                      />
                       <h4 className='text-base font-semibold text-gray-900 dark:text-gray-100'>
                         {formatCompactDate(dailyLog.date, { invalidFallback: dailyLog.date })}
                       </h4>

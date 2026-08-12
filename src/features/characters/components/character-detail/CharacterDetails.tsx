@@ -26,7 +26,7 @@ import { editable } from '@/components/ui/editable';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import MotionButton from '@/components/ui/MotionButton';
 import PageTitle from '@/components/ui/PageTitle';
-import { PlusIcon } from '@/components/icons/CommonIcons';
+import { ChevronUpIcon, PlusIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 
 import CharacterRelationDisplay from './character-relations/CharacterRelationDisplay';
@@ -366,16 +366,7 @@ export default function CharacterDetails({
                     exit={{ opacity: 0, scale: 0.8 }}
                     transition={{ duration: 0.2 }}
                   >
-                    <svg
-                      xmlns='http://www.w3.org/2000/svg'
-                      className='h-6 w-6'
-                      fill='none'
-                      viewBox='0 0 24 24'
-                      stroke='currentColor'
-                      strokeWidth={2}
-                    >
-                      <path strokeLinecap='round' strokeLinejoin='round' d='M5 15l7-7 7 7' />
-                    </svg>
+                    <ChevronUpIcon className='h-6 w-6' />
                   </MotionButton>
                 )}
               </AnimatePresence>,

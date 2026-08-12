@@ -18,6 +18,7 @@ import GameLayout from '@/features/games/components/GameLayout';
 import StreakCounter from '@/features/games/components/StreakCounter';
 import { getRelationsBySubject } from '@/features/shared/traits/relationIndex';
 import Button from '@/components/ui/Button';
+import { ArrowPathIcon, CalendarIcon } from '@/components/icons/CommonIcons';
 
 import CluePanel, { type ClueEntry } from './components/CluePanel';
 import GuessHistory from './components/GuessHistory';
@@ -380,19 +381,7 @@ export default function GuessCharacterClient({ description, characters: charsSna
               : 'bg-control hover:bg-control-hover text-gray-600 dark:text-gray-300'
           }`}
         >
-          <svg
-            className='h-4 w-4'
-            fill='none'
-            viewBox='0 0 24 24'
-            stroke='currentColor'
-            strokeWidth={2}
-          >
-            <path
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z'
-            />
-          </svg>
+          <CalendarIcon className='h-4 w-4' />
           每日挑战
         </Button>
         <Button
@@ -404,19 +393,7 @@ export default function GuessCharacterClient({ description, characters: charsSna
               : 'bg-control hover:bg-control-hover text-gray-600 dark:text-gray-300'
           }`}
         >
-          <svg
-            className='h-4 w-4'
-            fill='none'
-            viewBox='0 0 24 24'
-            stroke='currentColor'
-            strokeWidth={2}
-          >
-            <path
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              d='M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15'
-            />
-          </svg>
+          <ArrowPathIcon className='h-4 w-4' />
           无限练习
         </Button>
       </div>

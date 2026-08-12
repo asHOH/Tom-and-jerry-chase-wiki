@@ -4,6 +4,7 @@ import {
   CHARACTER_GAME_STAT_INFO,
   type CharacterGameStatKey,
 } from '@/features/games/characterStatCatalog';
+import { ChartLineIcon } from '@/components/icons/CommonIcons';
 
 type StatLabelProps = {
   statName: CharacterGameStatKey;
@@ -19,15 +20,7 @@ export default function StatLabel({ statName }: StatLabelProps) {
   return (
     <div className='space-y-1 text-center'>
       <span className='inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1 text-sm font-medium text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300'>
-        <svg
-          className='h-4 w-4'
-          fill='none'
-          viewBox='0 0 24 24'
-          stroke='currentColor'
-          strokeWidth={2}
-        >
-          <path strokeLinecap='round' strokeLinejoin='round' d='M3 3v18h18M7 16l4-8 4 4 4-6' />
-        </svg>
+        <ChartLineIcon className='h-4 w-4' />
         比较: {stat.label}
       </span>
       <p className='text-xs text-gray-400 dark:text-gray-500'>{direction}</p>

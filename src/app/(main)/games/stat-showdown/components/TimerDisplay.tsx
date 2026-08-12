@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/design';
+import { ClockIcon } from '@/components/icons/CommonIcons';
 
 type TimerDisplayProps = {
   timeLeft: number;
@@ -39,19 +40,7 @@ export default function TimerDisplay({
               : 'bg-surface-muted text-gray-700 dark:text-gray-200'
         )}
       >
-        <svg
-          className='h-5 w-5'
-          fill='none'
-          viewBox='0 0 24 24'
-          stroke='currentColor'
-          strokeWidth={2}
-        >
-          <path
-            strokeLinecap='round'
-            strokeLinejoin='round'
-            d='M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'
-          />
-        </svg>
+        <ClockIcon className='h-5 w-5' strokeWidth={2} />
         {formattedTime}
       </div>
 

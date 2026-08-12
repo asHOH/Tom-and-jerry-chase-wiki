@@ -6,6 +6,7 @@ import { generatePageMetadata } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
 import PageHeader from '@/components/ui/PageHeader';
 import PageShell from '@/components/ui/PageShell';
+import { ClockIcon, TargetIcon } from '@/components/icons/CommonIcons';
 
 export const dynamic = 'force-static';
 
@@ -24,23 +25,7 @@ const MODES = [
     label: '全部角色',
     desc: '60 名角色 · 4 项属性',
     href: '/games/stat-showdown/all/',
-    icon: (
-      <svg
-        className='h-10 w-10'
-        fill='none'
-        viewBox='0 0 24 24'
-        stroke='currentColor'
-        strokeWidth={1.5}
-      >
-        <path
-          strokeLinecap='round'
-          strokeLinejoin='round'
-          d='M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z'
-        />
-        <path strokeLinecap='round' strokeLinejoin='round' d='M12 18a6 6 0 100-12 6 6 0 000 12z' />
-        <path strokeLinecap='round' strokeLinejoin='round' d='M12 14a2 2 0 100-4 2 2 0 000 4z' />
-      </svg>
-    ),
+    icon: <TargetIcon className='h-10 w-10' />,
   },
   {
     id: 'cats',
@@ -77,21 +62,7 @@ const MODES = [
     label: '限时挑战',
     desc: '30 秒冲刺 · 4 项属性',
     href: '/games/stat-showdown/blitz/',
-    icon: (
-      <svg
-        className='h-10 w-10'
-        fill='none'
-        viewBox='0 0 24 24'
-        stroke='currentColor'
-        strokeWidth={1.5}
-      >
-        <path
-          strokeLinecap='round'
-          strokeLinejoin='round'
-          d='M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'
-        />
-      </svg>
-    ),
+    icon: <ClockIcon className='h-10 w-10' />,
   },
 ];
 

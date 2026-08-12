@@ -12,7 +12,7 @@ import { BaseDialog } from '@/components/ui/BaseDialog';
 import Button from '@/components/ui/Button';
 import { FormInput } from '@/components/ui/FormControls';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
-import { ChevronDownIcon, PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
+import { ChevronDownIcon, CloseIcon, PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 
 export type RelationKey = 'counters' | 'counteredBy' | 'counterEachOther' | 'collaborators';
@@ -344,14 +344,7 @@ export function ArticleCharacterSelector({
           className='hover:bg-control absolute top-1/2 right-9 -translate-y-1/2 rounded p-1 text-gray-400 hover:text-gray-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:hover:text-gray-300'
           aria-label='清除选择'
         >
-          <svg className='h-4 w-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-            <path
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              strokeWidth={2}
-              d='M6 18L18 6M6 6l12 12'
-            />
-          </svg>
+          <CloseIcon className='h-4 w-4' />
         </Button>
       )}
 

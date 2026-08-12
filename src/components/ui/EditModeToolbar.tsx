@@ -19,6 +19,7 @@ import {
   CloseIcon,
   EyeIcon,
   FolderIcon,
+  GripVerticalIcon,
   TrashIcon,
 } from '@/components/icons/CommonIcons';
 import OnboardingTutorial from '@/components/OnboardingTutorial';
@@ -184,18 +185,7 @@ export default function EditModeToolbar({
           style={{ touchAction: 'none' }}
           title='拖动位置'
         >
-          <svg
-            className='h-4 w-4 text-gray-400 dark:text-gray-500'
-            fill='currentColor'
-            viewBox='0 0 24 24'
-          >
-            <circle cx='9' cy='5' r='2' />
-            <circle cx='9' cy='12' r='2' />
-            <circle cx='9' cy='19' r='2' />
-            <circle cx='15' cy='5' r='2' />
-            <circle cx='15' cy='12' r='2' />
-            <circle cx='15' cy='19' r='2' />
-          </svg>
+          <GripVerticalIcon className='h-4 w-4 text-gray-400 dark:text-gray-500' />
         </div>
 
         {/* Header with edit status */}

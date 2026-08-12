@@ -1,26 +1,11 @@
 import { EXTERNAL_LINK_GROUPS } from '@/data/externalLinks';
 import ActionTile from '@/components/ui/ActionTile';
 import { HOME_ACTION_TILE_PROPS } from '@/components/ui/homeActionTileStyles';
-import { GlobeIcon } from '@/components/icons/CommonIcons';
+import { ArrowTopRightOnSquareIcon, GlobeIcon } from '@/components/icons/CommonIcons';
 
-const LinkIcon = ({ className }: { className?: string }) => (
-  <svg
-    xmlns='http://www.w3.org/2000/svg'
-    fill='none'
-    viewBox='0 0 24 24'
-    strokeWidth={1.5}
-    stroke='currentColor'
-    className={className}
-  >
-    <path
-      strokeLinecap='round'
-      strokeLinejoin='round'
-      d='M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25'
-    />
-  </svg>
-);
+type BrandIconProps = { className?: string | undefined };
 
-const WeiboIcon = ({ className }: { className?: string }) => (
+const WeiboIcon = ({ className }: BrandIconProps) => (
   <svg
     xmlns='http://www.w3.org/2000/svg'
     viewBox='0 0 32 32'
@@ -31,7 +16,7 @@ const WeiboIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const BilibiliIcon = ({ className }: { className?: string }) => (
+const BilibiliIcon = ({ className }: BrandIconProps) => (
   <svg
     xmlns='http://www.w3.org/2000/svg'
     viewBox='0 0 24 24'
@@ -42,7 +27,7 @@ const BilibiliIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const FandomIcon = ({ className }: { className?: string }) => (
+const FandomIcon = ({ className }: BrandIconProps) => (
   <svg
     xmlns='http://www.w3.org/2000/svg'
     viewBox='0 0 24 24'
@@ -53,7 +38,7 @@ const FandomIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const NeteaseGameIcon = ({ className }: { className?: string }) => (
+const NeteaseGameIcon = ({ className }: BrandIconProps) => (
   <svg
     xmlns='http://www.w3.org/2000/svg'
     viewBox='0 0 108 107'
@@ -73,7 +58,7 @@ export default function ExternalLinksDisplay() {
           <div className='flex flex-wrap justify-center gap-4'>
             {group.items.map((item) => {
               const isLinked = item.href !== undefined;
-              let Icon = LinkIcon;
+              let Icon = ArrowTopRightOnSquareIcon;
               if (item.iconType === 'weibo') Icon = WeiboIcon;
               if (item.iconType === 'bilibili') Icon = BilibiliIcon;
               if (item.iconType === 'fandom') Icon = FandomIcon;

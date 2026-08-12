@@ -11,7 +11,9 @@ import PageHeader from '@/components/ui/PageHeader';
 import PageShell from '@/components/ui/PageShell';
 import RichTextDisplay from '@/components/ui/RichTextDisplay';
 import {
+  ArrowTopRightOnSquareIcon,
   ClockIcon,
+  ExclamationTriangleIcon,
   EyeIcon,
   FolderIcon,
   LinkIcon,
@@ -218,22 +220,7 @@ export default function PreviewClient() {
             <div className='border-border mt-4 border-t pt-4'>
               <ButtonLink
                 href={`/articles/${data.article.id}`}
-                leadingIcon={
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    fill='none'
-                    viewBox='0 0 24 24'
-                    strokeWidth={1.5}
-                    stroke='currentColor'
-                    className='size-4'
-                  >
-                    <path
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
-                      d='M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25'
-                    />
-                  </svg>
-                }
+                leadingIcon={<ArrowTopRightOnSquareIcon className='size-4' />}
               >
                 查看正式发布版本
               </ButtonLink>
@@ -251,20 +238,7 @@ export default function PreviewClient() {
       <div className='mt-8 text-center'>
         <div className='border border-orange-200 bg-orange-50 p-4 dark:border-orange-800 dark:bg-orange-900/20'>
           <div className='flex items-center justify-center gap-2 text-sm text-orange-800 dark:text-orange-300'>
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              fill='none'
-              viewBox='0 0 24 24'
-              strokeWidth={1.5}
-              stroke='currentColor'
-              className='size-4'
-            >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                d='M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z'
-              />
-            </svg>
+            <ExclamationTriangleIcon className='size-4' />
             <span>这是一个预览页面，显示的内容可能与最终发布版本不同</span>
           </div>
         </div>

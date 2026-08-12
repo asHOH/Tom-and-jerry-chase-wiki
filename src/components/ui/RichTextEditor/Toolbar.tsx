@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 import { cn } from '@/lib/design';
 import Button from '@/components/ui/Button';
+import { ChevronRightSolidIcon } from '@/components/icons/CommonIcons';
 import { env } from '@/env';
 
 import {
@@ -282,17 +283,12 @@ const Toolbar = React.memo(function Toolbar({
                     'focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none'
                   )}
                 >
-                  <svg
-                    viewBox='0 0 20 20'
-                    fill='currentColor'
+                  <ChevronRightSolidIcon
                     className={cn(
                       'h-4 w-4 transition-transform',
                       showTableTools ? 'rotate-90' : 'rotate-0'
                     )}
-                    aria-hidden='true'
-                  >
-                    <path d='M7.21 14.77a.75.75 0 01.02-1.06L10.94 10 7.23 6.29a.75.75 0 111.06-1.06l4.24 4.24a.75.75 0 010 1.06L8.29 14.77a.75.75 0 01-1.08-.02z' />
-                  </svg>
+                  />
                 </Button>
               </Tooltip>
               {showTableTools && (

@@ -7,22 +7,14 @@ import { cn } from '@/lib/design';
 import { SingleItem } from '@/data/types';
 import Button from '@/components/ui/Button';
 import SingleItemButton from '@/components/ui/SingleItemButton';
+import { ChevronRightIcon } from '@/components/icons/CommonIcons';
 
 import { disclosureTriggerFocusClasses } from './disclosureStyles';
 
 // 箭头SVG组件 - 与原文件保持一致
 const ArrowIcon = ({ expanded }: { expanded: boolean }) => (
   <div className={cn('transition-transform duration-300', expanded ? 'rotate-90' : 'rotate-0')}>
-    <svg
-      className='h-5 w-5'
-      fill='none'
-      stroke='currentColor'
-      strokeWidth='2.5'
-      viewBox='0 0 24 24'
-      xmlns='http://www.w3.org/2000/svg'
-    >
-      <path strokeLinecap='round' strokeLinejoin='round' d='M9 5l7 7-7 7' />
-    </svg>
+    <ChevronRightIcon className='h-5 w-5' strokeWidth={2.5} />
   </div>
 );
 

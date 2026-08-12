@@ -18,7 +18,7 @@ import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import KnowledgeCardPicker from '@/components/ui/KnowledgeCardPicker';
-import { PlusIcon } from '@/components/icons/CommonIcons';
+import { ChevronUpCircleIcon, PlusIcon } from '@/components/icons/CommonIcons';
 
 import CharacterSection from '../sections/CharacterSection';
 import AdvancedCardGroupEditor from './AdvancedCardGroupEditor';
@@ -360,20 +360,7 @@ export default function KnowledgeCardSection({
                   aria-label={`当前: ${getViewModeLabel()}`}
                 >
                   {isTwoModeCycle && (
-                    <svg
-                      xmlns='http://www.w3.org/2000/svg'
-                      fill='none'
-                      viewBox='0 0 24 24'
-                      strokeWidth='2'
-                      stroke='currentColor'
-                      className={viewToggleIconClass}
-                    >
-                      <path
-                        strokeLinecap='round'
-                        strokeLinejoin='round'
-                        d='M8.25 13.75L12 10L15.75 13.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
-                      />
-                    </svg>
+                    <ChevronUpCircleIcon className={viewToggleIconClass} strokeWidth={2} />
                   )}
                   {getViewModeLabel()}
                 </Button>
@@ -408,20 +395,7 @@ export default function KnowledgeCardSection({
               aria-label={`当前: ${getViewModeLabel()}`}
             >
               {isTwoModeCycle && (
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                  strokeWidth='2'
-                  stroke='currentColor'
-                  className={viewToggleIconClass}
-                >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    d='M8.25 13.75L12 10L15.75 13.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
-                  />
-                </svg>
+                <ChevronUpCircleIcon className={viewToggleIconClass} strokeWidth={2} />
               )}
               {getViewModeLabel()}
             </Button>

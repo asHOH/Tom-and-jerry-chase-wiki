@@ -75,6 +75,22 @@ export const ChevronDownIcon = ({ strokeWidth = 2, ...props }: IconProps) => (
   </SvgIcon>
 );
 
+export const ChevronUpIcon = ({ strokeWidth = 2, ...props }: IconProps) => (
+  <SvgIcon strokeWidth={strokeWidth} {...props}>
+    <path strokeLinecap='round' strokeLinejoin='round' d='M5 15l7-7 7 7' />
+  </SvgIcon>
+);
+
+export const ChevronRightSolidIcon = (props: IconProps) => (
+  <SvgIcon viewBox='0 0 20 20' fill='currentColor' stroke='none' {...props}>
+    <path
+      fillRule='evenodd'
+      d='M7.293 14.707a1 1 0 0 1 0-1.414L10.586 10 7.293 6.707a1 1 0 0 1 1.414-1.414l4 4a1 1 0 0 1 0 1.414l-4 4a1 1 0 0 1-1.414 0Z'
+      clipRule='evenodd'
+    />
+  </SvgIcon>
+);
+
 export const SearchIcon = ({ strokeWidth = 2, ...props }: IconProps) => (
   <SvgIcon strokeWidth={strokeWidth} {...props}>
     <path
@@ -98,6 +114,12 @@ export const LinkIcon = ({ strokeWidth = 2, ...props }: IconProps) => (
 export const CheckBadgeIcon = ({ strokeWidth = 2, ...props }: IconProps) => (
   <SvgIcon strokeWidth={strokeWidth} {...props}>
     <path strokeLinecap='round' strokeLinejoin='round' d='M4.5 12.75l6 6 9-13.5' />
+  </SvgIcon>
+);
+
+export const CheckIcon = ({ strokeWidth = 2, ...props }: IconProps) => (
+  <SvgIcon strokeWidth={strokeWidth} {...props}>
+    <path strokeLinecap='round' strokeLinejoin='round' d='M5 13l4 4L19 7' />
   </SvgIcon>
 );
 
@@ -174,5 +196,218 @@ export const CheckCircleIcon = ({ strokeWidth = 2, ...props }: IconProps) => (
   <SvgIcon strokeWidth={strokeWidth} {...props}>
     <circle cx='12' cy='12' r='9' />
     <path strokeLinecap='round' strokeLinejoin='round' d='M8 12l2.5 2.5L16 9' />
+  </SvgIcon>
+);
+
+export const UserIcon = ({ strokeWidth = 2, ...props }: IconProps) => (
+  <SvgIcon strokeWidth={strokeWidth} {...props}>
+    <path
+      strokeLinecap='round'
+      strokeLinejoin='round'
+      d='M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0ZM12 14a7 7 0 0 0-7 7h14a7 7 0 0 0-7-7Z'
+    />
+  </SvgIcon>
+);
+
+export const ArrowTopRightOnSquareIcon = ({ strokeWidth = 1.5, ...props }: IconProps) => (
+  <SvgIcon strokeWidth={strokeWidth} {...props}>
+    <path
+      strokeLinecap='round'
+      strokeLinejoin='round'
+      d='M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25'
+    />
+  </SvgIcon>
+);
+
+export const ArrowUpTrayIcon = ({ strokeWidth = 1.5, ...props }: IconProps) => (
+  <SvgIcon strokeWidth={strokeWidth} {...props}>
+    <path
+      strokeLinecap='round'
+      strokeLinejoin='round'
+      d='M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5'
+    />
+  </SvgIcon>
+);
+
+export const ArrowPathIcon = ({ strokeWidth = 2, ...props }: IconProps) => (
+  <SvgIcon strokeWidth={strokeWidth} {...props}>
+    <path
+      strokeLinecap='round'
+      strokeLinejoin='round'
+      d='M4 4v5h.582m15.356 2A8.001 8.001 0 0 0 4.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 0 1-15.357-2m15.357 2H15'
+    />
+  </SvgIcon>
+);
+
+export const ArrowLeftOnRectangleIcon = ({ strokeWidth = 2, ...props }: IconProps) => (
+  <SvgIcon strokeWidth={strokeWidth} {...props}>
+    <path
+      strokeLinecap='round'
+      strokeLinejoin='round'
+      d='m7.49 12-3.75 3.75m0 0 3.75 3.75m-3.75-3.75h16.5V4.499'
+    />
+  </SvgIcon>
+);
+
+export const Bars3Icon = ({ strokeWidth = 2, ...props }: IconProps) => (
+  <SvgIcon strokeWidth={strokeWidth} {...props}>
+    <path strokeLinecap='round' strokeLinejoin='round' d='M4 6h16M4 12h16M4 18h16' />
+  </SvgIcon>
+);
+
+export const ArchiveBoxIcon = ({ strokeWidth = 2, ...props }: IconProps) => (
+  <SvgIcon strokeWidth={strokeWidth} {...props}>
+    <path
+      strokeLinecap='round'
+      strokeLinejoin='round'
+      d='M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2H5a2 2 0 0 0-2-2Z'
+    />
+    <path strokeLinecap='round' strokeLinejoin='round' d='M8 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2H8Z' />
+  </SvgIcon>
+);
+
+export const DocumentTextIcon = ({ strokeWidth = 2, ...props }: IconProps) => (
+  <SvgIcon strokeWidth={strokeWidth} {...props}>
+    <path
+      strokeLinecap='round'
+      strokeLinejoin='round'
+      d='M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2Z'
+    />
+  </SvgIcon>
+);
+
+export const CalendarIcon = ({ strokeWidth = 2, ...props }: IconProps) => (
+  <SvgIcon strokeWidth={strokeWidth} {...props}>
+    <path
+      strokeLinecap='round'
+      strokeLinejoin='round'
+      d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2Z'
+    />
+  </SvgIcon>
+);
+
+export const LockClosedIcon = ({ strokeWidth = 2, ...props }: IconProps) => (
+  <SvgIcon strokeWidth={strokeWidth} {...props}>
+    <path
+      strokeLinecap='round'
+      strokeLinejoin='round'
+      d='M12 15v2m-6 4h12a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2Zm10-10V7a4 4 0 0 0-8 0v4h8Z'
+    />
+  </SvgIcon>
+);
+
+export const ShareIcon = ({ strokeWidth = 2, ...props }: IconProps) => (
+  <SvgIcon strokeWidth={strokeWidth} {...props}>
+    <path
+      strokeLinecap='round'
+      strokeLinejoin='round'
+      d='M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 1 1 0-2.684m0 2.684 6.632 3.316m-6.632-6 6.632-3.316m0 0a3 3 0 1 1 5.367-2.684 3 3 0 0 1-5.367 2.684Zm0 9.316a3 3 0 1 1 5.368 2.684 3 3 0 0 1-5.368-2.684Z'
+    />
+  </SvgIcon>
+);
+
+export const SunIcon = ({ strokeWidth = 2, ...props }: IconProps) => (
+  <SvgIcon strokeWidth={strokeWidth} {...props}>
+    <circle cx='12' cy='12' r='5' />
+    <path
+      strokeLinecap='round'
+      strokeLinejoin='round'
+      d='M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72 1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42'
+    />
+  </SvgIcon>
+);
+
+export const MoonIcon = ({ strokeWidth = 2, ...props }: IconProps) => (
+  <SvgIcon strokeWidth={strokeWidth} {...props}>
+    <path
+      strokeLinecap='round'
+      strokeLinejoin='round'
+      d='M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z'
+    />
+  </SvgIcon>
+);
+
+export const GripVerticalIcon = (props: IconProps) => (
+  <SvgIcon fill='currentColor' stroke='none' {...props}>
+    <circle cx='9' cy='5' r='2' />
+    <circle cx='9' cy='12' r='2' />
+    <circle cx='9' cy='19' r='2' />
+    <circle cx='15' cy='5' r='2' />
+    <circle cx='15' cy='12' r='2' />
+    <circle cx='15' cy='19' r='2' />
+  </SvgIcon>
+);
+
+export const InformationCircleIcon = ({ strokeWidth = 1.5, ...props }: IconProps) => (
+  <SvgIcon strokeWidth={strokeWidth} {...props}>
+    <path
+      strokeLinecap='round'
+      strokeLinejoin='round'
+      d='M11.25 11.25l.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z'
+    />
+  </SvgIcon>
+);
+
+export const ExclamationTriangleIcon = ({ strokeWidth = 1.5, ...props }: IconProps) => (
+  <SvgIcon strokeWidth={strokeWidth} {...props}>
+    <path
+      strokeLinecap='round'
+      strokeLinejoin='round'
+      d='M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z'
+    />
+  </SvgIcon>
+);
+
+export const XCircleIcon = ({ strokeWidth = 1.5, ...props }: IconProps) => (
+  <SvgIcon strokeWidth={strokeWidth} {...props}>
+    <path
+      strokeLinecap='round'
+      strokeLinejoin='round'
+      d='m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z'
+    />
+  </SvgIcon>
+);
+
+export const XCircleSolidIcon = (props: IconProps) => (
+  <SvgIcon viewBox='0 0 20 20' fill='currentColor' stroke='none' {...props}>
+    <path
+      fillRule='evenodd'
+      d='M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16ZM8.707 7.293a1 1 0 0 0-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 1 0 1.414 1.414L10 11.414l1.293 1.293a1 1 0 0 0 1.414-1.414L11.414 10l1.293-1.293a1 1 0 0 0-1.414-1.414L10 8.586 8.707 7.293Z'
+      clipRule='evenodd'
+    />
+  </SvgIcon>
+);
+
+export const TargetIcon = ({ strokeWidth = 1.5, ...props }: IconProps) => (
+  <SvgIcon strokeWidth={strokeWidth} {...props}>
+    <circle cx='12' cy='12' r='10' />
+    <circle cx='12' cy='12' r='6' />
+    <circle cx='12' cy='12' r='2' />
+  </SvgIcon>
+);
+
+export const ChartLineIcon = ({ strokeWidth = 2, ...props }: IconProps) => (
+  <SvgIcon strokeWidth={strokeWidth} {...props}>
+    <path strokeLinecap='round' strokeLinejoin='round' d='M3 3v18h18M7 16l4-8 4 4 4-6' />
+  </SvgIcon>
+);
+
+export const SparklesIcon = ({ strokeWidth = 2, ...props }: IconProps) => (
+  <SvgIcon strokeWidth={strokeWidth} {...props}>
+    <path
+      strokeLinecap='round'
+      strokeLinejoin='round'
+      d='M5 3v4M3 5h4M6 17v4m-2-2h4m5-16 2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3Z'
+    />
+  </SvgIcon>
+);
+
+export const ChevronUpCircleIcon = ({ strokeWidth = 1.5, ...props }: IconProps) => (
+  <SvgIcon strokeWidth={strokeWidth} {...props}>
+    <path
+      strokeLinecap='round'
+      strokeLinejoin='round'
+      d='M8.25 13.75 12 10l3.75 3.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z'
+    />
   </SvgIcon>
 );

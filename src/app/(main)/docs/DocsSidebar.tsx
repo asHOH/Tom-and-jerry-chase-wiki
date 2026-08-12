@@ -6,7 +6,15 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/design';
 import { DocPage } from '@/features/articles/utils/docs';
 import Button from '@/components/ui/Button';
-import { ChevronLeftIcon, ChevronRightIcon, CloseIcon } from '@/components/icons/CommonIcons';
+import {
+  ArchiveBoxIcon,
+  Bars3Icon,
+  CheckCircleIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  CloseIcon,
+  DocumentTextIcon,
+} from '@/components/icons/CommonIcons';
 import Link from '@/components/Link';
 
 type DocsSidebarProps = {
@@ -33,19 +41,7 @@ export default function DocsSidebar({ docPages }: DocsSidebarProps) {
         {isOpen ? (
           <CloseIcon className='h-6 w-6 text-gray-600 dark:text-gray-300' />
         ) : (
-          <svg
-            className='h-6 w-6 text-gray-600 dark:text-gray-300'
-            fill='none'
-            stroke='currentColor'
-            viewBox='0 0 24 24'
-          >
-            <path
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              strokeWidth={2}
-              d='M4 6h16M4 12h16M4 18h16'
-            />
-          </svg>
+          <Bars3Icon className='h-6 w-6 text-gray-600 dark:text-gray-300' />
         )}
       </Button>
 
@@ -110,25 +106,7 @@ export default function DocsSidebar({ docPages }: DocsSidebarProps) {
                 onClick={() => setIsOpen(false)}
                 title={isCollapsed ? 'Overview' : undefined}
               >
-                <svg
-                  className={cn('h-4 w-4 shrink-0', !isCollapsed && 'mr-3')}
-                  fill='none'
-                  stroke='currentColor'
-                  viewBox='0 0 24 24'
-                >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    strokeWidth={2}
-                    d='M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z'
-                  />
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    strokeWidth={2}
-                    d='M8 5a2 2 0 012-2h2a2 2 0 012 2v0H8v0z'
-                  />
-                </svg>
+                <ArchiveBoxIcon className={cn('h-4 w-4 shrink-0', !isCollapsed && 'mr-3')} />
                 {!isCollapsed && <span>首页</span>}
               </Link>
 
@@ -157,19 +135,9 @@ export default function DocsSidebar({ docPages }: DocsSidebarProps) {
                           onClick={() => setIsOpen(false)}
                           title={isCollapsed ? page.title : undefined}
                         >
-                          <svg
+                          <DocumentTextIcon
                             className={cn('h-4 w-4 shrink-0', !isCollapsed && 'mr-3')}
-                            fill='none'
-                            stroke='currentColor'
-                            viewBox='0 0 24 24'
-                          >
-                            <path
-                              strokeLinecap='round'
-                              strokeLinejoin='round'
-                              strokeWidth={2}
-                              d='M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'
-                            />
-                          </svg>
+                          />
                           {!isCollapsed && <span className='truncate'>{page.title}</span>}
                         </Link>
                       );
@@ -185,9 +153,7 @@ export default function DocsSidebar({ docPages }: DocsSidebarProps) {
             <div className='border-border border-t p-4'>
               <div className='space-y-1 text-xs text-gray-500 dark:text-gray-400'>
                 <p className='flex items-center'>
-                  <svg className='mr-1 h-3 w-3' fill='currentColor' viewBox='0 0 20 20'>
-                    <path d='M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' />
-                  </svg>
+                  <CheckCircleIcon className='mr-1 h-3 w-3' />
                   {docPages.length}个页面
                 </p>
                 <p>页面由文档自动生成。</p>

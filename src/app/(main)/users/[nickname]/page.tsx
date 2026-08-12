@@ -37,6 +37,7 @@ import {
 import Card from '@/components/ui/Card';
 import { InlineExternalLink } from '@/components/ui/InlineExternalLink';
 import PageShell from '@/components/ui/PageShell';
+import { ArrowTopRightOnSquareIcon } from '@/components/icons/CommonIcons';
 import Link from '@/components/Link';
 
 export const dynamic = 'force-dynamic';
@@ -358,20 +359,7 @@ export default async function PublicUserPage({ params, searchParams }: PublicUse
               ariaLabel={`访问${externalWebsiteName}主页（在新标签页打开）`}
               className='group inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3.5 py-2.5 font-medium text-blue-800 no-underline shadow-sm transition-colors hover:border-blue-300 hover:bg-blue-100 dark:border-blue-800 dark:bg-blue-950/35 dark:text-blue-100 dark:hover:border-blue-700 dark:hover:bg-blue-950/60'
             >
-              <svg
-                className='h-4 w-4 shrink-0'
-                fill='none'
-                stroke='currentColor'
-                viewBox='0 0 24 24'
-                aria-hidden='true'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth={1.8}
-                  d='M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V16.5M14.25 3H21m0 0v6.75M21 3l-9.75 9.75'
-                />
-              </svg>
+              <ArrowTopRightOnSquareIcon className='h-4 w-4 shrink-0' strokeWidth={1.8} />
               <span>访问{externalWebsiteName}主页</span>
             </InlineExternalLink>
           </div>

@@ -18,6 +18,7 @@ import Button from '@/components/ui/Button';
 import EntityCardFrame from '@/components/ui/EntityCardFrame';
 import { FormTextarea } from '@/components/ui/FormControls';
 import { GAME_IMAGE_DIMENSIONS } from '@/components/ui/gameImageDimensions';
+import { ArrowUpTrayIcon } from '@/components/icons/CommonIcons';
 
 function handleUploadedData(
   data: string,
@@ -227,12 +228,7 @@ export default function CharacterImport() {
               style={{}}
             >
               <div className='flex h-full items-center justify-center p-2'>
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                  strokeWidth={1.5}
-                  stroke='currentColor'
+                <ArrowUpTrayIcon
                   className='size-6 text-gray-500 transition-all duration-250 ease-in-out hover:scale-105 dark:text-gray-400'
                   style={{
                     width: width,
@@ -241,13 +237,7 @@ export default function CharacterImport() {
                     maxHeight: '50%',
                     maxWidth: '70%',
                   }}
-                >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    d='M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5'
-                  />
-                </svg>
+                />
               </div>
             </div>
             <div className='px-6 pt-1 pb-6 text-center'>

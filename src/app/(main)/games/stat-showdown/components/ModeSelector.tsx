@@ -4,6 +4,7 @@ import Image from 'next/image';
 
 import { cn } from '@/lib/design';
 import Button from '@/components/ui/Button';
+import { ClockIcon, TargetIcon } from '@/components/icons/CommonIcons';
 
 export type GameMode = 'cats' | 'mice' | 'all' | 'blitz';
 
@@ -52,43 +53,13 @@ const MODES: ModeDef[] = [
     id: 'all',
     label: '全部角色',
     desc: '60 名角色',
-    icon: (
-      <svg
-        className='h-7 w-7'
-        fill='none'
-        viewBox='0 0 24 24'
-        stroke='currentColor'
-        strokeWidth={1.5}
-      >
-        <path
-          strokeLinecap='round'
-          strokeLinejoin='round'
-          d='M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z'
-        />
-        <path strokeLinecap='round' strokeLinejoin='round' d='M12 18a6 6 0 100-12 6 6 0 000 12z' />
-        <path strokeLinecap='round' strokeLinejoin='round' d='M12 14a2 2 0 100-4 2 2 0 000 4z' />
-      </svg>
-    ),
+    icon: <TargetIcon className='h-7 w-7' />,
   },
   {
     id: 'blitz',
     label: '限时挑战',
     desc: '30 秒冲刺',
-    icon: (
-      <svg
-        className='h-7 w-7'
-        fill='none'
-        viewBox='0 0 24 24'
-        stroke='currentColor'
-        strokeWidth={1.5}
-      >
-        <path
-          strokeLinecap='round'
-          strokeLinejoin='round'
-          d='M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'
-        />
-      </svg>
-    ),
+    icon: <ClockIcon className='h-7 w-7' />,
   },
 ];
 

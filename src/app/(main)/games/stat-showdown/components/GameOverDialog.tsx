@@ -3,6 +3,7 @@
 import ShareButton from '@/features/games/components/ShareButton';
 import { BaseDialog } from '@/components/ui/BaseDialog';
 import Button from '@/components/ui/Button';
+import { SparklesIcon } from '@/components/icons/CommonIcons';
 
 import type { GameMode } from './ModeSelector';
 
@@ -52,19 +53,7 @@ export default function GameOverDialog({
 
         {isNewHigh && (
           <p className='inline-flex items-center gap-1 rounded-full bg-yellow-100 px-3 py-1 text-sm font-medium text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300'>
-            <svg
-              className='h-4 w-4'
-              fill='none'
-              viewBox='0 0 24 24'
-              stroke='currentColor'
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                d='M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z'
-              />
-            </svg>
+            <SparklesIcon className='h-4 w-4' />
             新纪录！
           </p>
         )}
