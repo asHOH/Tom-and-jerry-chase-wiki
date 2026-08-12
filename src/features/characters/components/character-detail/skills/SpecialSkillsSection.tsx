@@ -69,10 +69,7 @@ export default function SpecialSkillsSection() {
               const canEdit = isEditMode && !isGeneral;
               if (!specialSkill && !isEditMode) return null;
               return (
-                <li
-                  key={skill.name + '-' + index}
-                  className='bg-control hover:bg-control-hover w-full rounded-md p-3 transition-colors'
-                >
+                <li key={skill.name + '-' + index} className='bg-surface w-full rounded-md p-3'>
                   <div className='flex items-start gap-3'>
                     {/* Left: Icon (clickable) */}
                     <Link
