@@ -4,7 +4,7 @@
   "private": true,
   "packageManager": "npm@11.18.0",
   "description": "专为《猫和老鼠手游》玩家打造的数据查询网站",
-  "homepage": "https://tjwiki.com",
+  "homepage": "https://www.tjwiki.com",
   "repository": {
     "type": "git",
     "url": "https://github.com/asHOH/Tom-and-jerry-chase-wiki.git"

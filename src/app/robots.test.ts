@@ -23,8 +23,8 @@ describe('robots', () => {
       disallow: '/api/',
     });
     expect(result.sitemap).toEqual([
-      'https://tjwiki.com/sitemap.xml',
-      'https://tjwiki.com/articles/sitemap.xml',
+      'https://www.tjwiki.com/sitemap.xml',
+      'https://www.tjwiki.com/articles/sitemap.xml',
     ]);
   });
 

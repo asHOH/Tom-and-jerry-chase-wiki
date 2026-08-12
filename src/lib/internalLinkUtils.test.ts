@@ -1,7 +1,7 @@
 import { getInternalLinkHref } from './internalLinkUtils';
 
 describe('getInternalLinkHref', () => {
-  const siteOrigin = 'https://tjwiki.com';
+  const siteOrigin = 'https://www.tjwiki.com';
 
   it('keeps root-relative links and their query/hash', () => {
     expect(getInternalLinkHref('/articles/example/?from=wiki#details', siteOrigin)).toBe(
@@ -11,13 +11,13 @@ describe('getInternalLinkHref', () => {
 
   it('converts same-origin absolute links to app paths', () => {
     expect(
-      getInternalLinkHref('https://tjwiki.com/articles/example/?from=wiki#details', siteOrigin)
+      getInternalLinkHref('https://www.tjwiki.com/articles/example/?from=wiki#details', siteOrigin)
     ).toBe('/articles/example/?from=wiki#details');
   });
 
   it('does not classify other origins or protocol-relative links as internal', () => {
     expect(getInternalLinkHref('https://example.com/articles', siteOrigin)).toBeNull();
-    expect(getInternalLinkHref('//tjwiki.com/articles', siteOrigin)).toBeNull();
+    expect(getInternalLinkHref('//www.tjwiki.com/articles', siteOrigin)).toBeNull();
   });
 
   it('does not classify fragment, mail, telephone, or non-http URLs as internal', () => {

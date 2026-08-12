@@ -2,7 +2,7 @@
 
 Tom and Jerry Chase Wiki is a Chinese game-data wiki for 猫和老鼠手游 (Tom and Jerry Chase mobile game). It uses Next.js 16 App Router, React 19, strict TypeScript, and Tailwind CSS 4.
 
-- Production (VPS+Cloudflared): <https://tjwiki.com>
+- Production (VPS+Cloudflared): <https://www.tjwiki.com>
 - Development preview (Vercel): <https://dev.tjwiki.com>
 - Codex agents: use the Vercel plugin for vercel platform guidance and preview deployment/log diagnostics; production deployment remains governed by `DEPLOY.md`.
 - Product UI language: `zh-CN`. This does not set the language of assistant responses.

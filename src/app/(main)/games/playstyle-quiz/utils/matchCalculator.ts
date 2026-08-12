@@ -134,6 +134,6 @@ export function generateQuizShareText(
     ``,
     `我（${faction}）的本命角色是：${characterName}${similar}`,
     ``,
-    '来测测你的：tjwiki.com/games/playstyle-quiz/',
+    '来测测你的：www.tjwiki.com/games/playstyle-quiz/',
   ].join('\n');
 }

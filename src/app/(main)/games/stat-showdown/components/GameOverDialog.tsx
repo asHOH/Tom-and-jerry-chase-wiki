@@ -68,7 +68,7 @@ export default function GameOverDialog({
                 '',
                 `我在${MODE_LABELS[mode]}模式获得了 ${score} 分！`,
                 '',
-                '来挑战：tjwiki.com/games/stat-showdown/',
+                '来挑战：www.tjwiki.com/games/stat-showdown/',
               ].join('\n')
             }
           />

@@ -68,7 +68,7 @@ export function getDailyCharacterId(
  * Generate the full shareable result text for Game 1 (Guess Character).
  */
 export function generateGuessShareText(puzzleNumber: number): string {
-  return [`猜角色 #${puzzleNumber}`, '来试试：tjwiki.com/games/guess-character/'].join('\n');
+  return [`猜角色 #${puzzleNumber}`, '来试试：www.tjwiki.com/games/guess-character/'].join('\n');
 }
 
 /**

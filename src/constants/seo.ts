@@ -11,9 +11,9 @@ const SITE_ALTERNATE_NAME = [
   '猫和老鼠手游百科',
   '猫鼠百科',
   'Tom and Jerry Chase Wiki',
-  'tjwiki.com',
+  'www.tjwiki.com',
 ];
-export const SITE_URL = env.NEXT_PUBLIC_SITE_URL ?? 'https://tjwiki.com';
+export const SITE_URL = env.NEXT_PUBLIC_SITE_URL ?? 'https://www.tjwiki.com';
 const SITE_LANG = 'zh-CN';
 const SITE_LOCALE = 'zh_CN';
 const DEFAULT_IMAGE = '/icon.png';
