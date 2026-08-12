@@ -4,6 +4,7 @@ import { useRef, useState } from 'react';
 
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useUser } from '@/hooks/useUser';
+import { QQ_GROUP_NUMBER, QQ_GROUP_URL } from '@/constants/community';
 import { isNavGroup, NAV_ITEMS, NavItem } from '@/constants/navigation';
 import ChangeLogs, { ChangeLogsRef } from '@/components/ui/ChangeLogs';
 import ExternalLinksDisplay from '@/components/ui/ExternalLinksDisplay';
@@ -14,6 +15,7 @@ import OfficialSitesDisplay from '@/components/ui/OfficialSitesDisplay';
 import PageHeader from '@/components/ui/PageHeader';
 import PageShell from '@/components/ui/PageShell';
 import HomepageNotices from '@/components/HomepageNotices';
+import { ChatBubbleIcon } from '@/components/icons/CommonIcons';
 import LoginDialog from '@/components/LoginDialog';
 import { ProjectStatement } from '@/components/ProjectStatement';
 import { VersionDisplay } from '@/components/VersionDisplay';
@@ -93,6 +95,17 @@ export default function HomeContentClient({ description, hasServiceKey }: Props)
         </h2>
         <div className='mx-auto max-w-2xl px-2 py-3 text-gray-600 sm:px-4 dark:text-gray-300'>
           <ProjectStatement onFeedbackClick={() => feedbackSectionRef.current?.openFeedback()} />
+          <a
+            href={QQ_GROUP_URL}
+            target='_blank'
+            rel='noopener noreferrer'
+            className='mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 underline-offset-4 transition-colors hover:text-blue-700 hover:underline focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:outline-none dark:text-blue-400 dark:hover:text-blue-300 dark:focus-visible:ring-blue-400 dark:focus-visible:ring-offset-gray-900'
+            aria-label={`加入QQ交流群 ${QQ_GROUP_NUMBER}（在新窗口打开）`}
+          >
+            <ChatBubbleIcon className='size-4' strokeWidth={2} />
+            <span>加入QQ交流群 {QQ_GROUP_NUMBER}</span>
+            <span aria-hidden='true'>↗</span>
+          </a>
         </div>
         <VersionDisplay />
         <div className='mt-4 flex flex-wrap justify-center gap-4 sm:mt-6'>
@@ -105,16 +118,6 @@ export default function HomeContentClient({ description, hasServiceKey }: Props)
               ariaLabel='使用指南：wiki功能简介'
               imageSrc='/images/mouseSkills/%E8%8E%B1%E6%81%A91-%E8%93%9D%E5%9B%BE.png'
               href='/usages/use'
-              className='px-2'
-            />
-          </div>
-          <div>
-            <FactionButton
-              title='编辑指南'
-              description='条目编辑与文章投稿'
-              ariaLabel='编辑指南：条目编辑与文章投稿'
-              imageSrc='/images/mouseSkills/%E8%8E%B1%E6%81%A92-%E8%98%B8%E6%B0%B4%E7%AC%94.png'
-              href='/usages/edit'
               className='px-2'
             />
           </div>
