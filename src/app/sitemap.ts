@@ -4,6 +4,7 @@ import { getPublishedGameDataSnapshot } from '@/lib/gameData/published/published
 import { normalizeUrlWithTrailingSlash } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
 import { RANKABLE_PROPERTIES } from '@/features/characters/utils/ranking';
+import itemGroups from '@/features/items/data/itemGroups';
 import { mechanicsSectionsList } from '@/features/mechanics/sections';
 import { usagesSectionsList } from '@/features/usages/sections';
 import { env } from '@/env';
@@ -51,18 +52,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.4,
   }));
 
-  const specialSkillsMap: MetadataRoute.Sitemap = [
-    ...Object.keys(specialSkills.cat).map((skillId) => `cat/${skillId}`),
-    ...Object.keys(specialSkills.mouse).map((skillId) => `mouse/${skillId}`),
-  ].map((skillPath) => ({
-    url: `${baseUrl}/special-skills/${encodeURIComponent(skillPath)}`,
+  const specialSkillsMap: MetadataRoute.Sitemap = (['cat', 'mouse'] as const).flatMap((factionId) =>
+    Object.keys(specialSkills[factionId]).map((skillId) => ({
+      url: `${baseUrl}/special-skills/${encodeURIComponent(factionId)}/${encodeURIComponent(skillId)}`,
+      lastModified: buildTime,
+      changeFrequency: 'monthly' as const,
+      priority: 0.4,
+    }))
+  );
+
+  const itemsMap: MetadataRoute.Sitemap = Object.keys(items).map((itemName) => ({
+    url: `${baseUrl}/items/${encodeURIComponent(itemName)}`,
     lastModified: buildTime,
     changeFrequency: 'monthly',
     priority: 0.4,
   }));
 
-  const itemsMap: MetadataRoute.Sitemap = Object.keys(items).map((itemName) => ({
-    url: `${baseUrl}/items/${encodeURIComponent(itemName)}`,
+  const itemGroupsMap: MetadataRoute.Sitemap = Object.keys(itemGroups).map((itemGroupName) => ({
+    url: `${baseUrl}/itemGroups/${encodeURIComponent(itemGroupName)}`,
     lastModified: buildTime,
     changeFrequency: 'monthly',
     priority: 0.4,
@@ -198,6 +205,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     },
     ...itemsMap,
+    // Item Groups
+    {
+      url: `${baseUrl}/itemGroups`,
+      lastModified: buildTime,
+      changeFrequency: 'monthly',
+      priority: 0.6,
+    },
+    ...itemGroupsMap,
     // Entities
     {
       url: `${baseUrl}/entities`,
