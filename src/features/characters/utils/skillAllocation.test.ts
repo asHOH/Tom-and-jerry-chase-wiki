@@ -76,6 +76,14 @@ describe('skillAllocationUtils', () => {
       expect(result.errors[0]?.message).toContain('包含无效字符');
     });
 
+    it.each([
+      ['an empty parallel group', '[]'],
+      ['an empty delayed group', '()'],
+      ['a dangling negative marker', '01-'],
+    ])('should reject %s', (_description, pattern) => {
+      expect(validateSkillAllocationPattern(pattern).isValid).toBe(false);
+    });
+
     it('should warn about long patterns', () => {
       const result = validateSkillAllocationPattern('012301230123012301230');
       expect(result.isValid).toBe(true);
@@ -136,6 +144,39 @@ describe('skillAllocationUtils', () => {
         hasNegativeEffect: true,
         isParallel: false,
       });
+    });
+
+    it('should preserve flags and ordering in a compound pattern', () => {
+      expect(parseSkillAllocationPattern('0-(1)[1230]')).toEqual([
+        {
+          skillTypeNum: '0',
+          isDelayed: false,
+          hasNegativeEffect: false,
+          isParallel: false,
+        },
+        {
+          skillTypeNum: '1',
+          isDelayed: true,
+          hasNegativeEffect: true,
+          isParallel: false,
+        },
+        {
+          skillTypeNum: '1',
+          isDelayed: false,
+          hasNegativeEffect: false,
+          isParallel: true,
+          parallelOptions: ['1', '3'],
+          bracketGroupId: 0,
+        },
+        {
+          skillTypeNum: '2',
+          isDelayed: false,
+          hasNegativeEffect: false,
+          isParallel: true,
+          parallelOptions: ['2', '0'],
+          bracketGroupId: 0,
+        },
+      ]);
     });
 
     it('should throw for invalid patterns', () => {

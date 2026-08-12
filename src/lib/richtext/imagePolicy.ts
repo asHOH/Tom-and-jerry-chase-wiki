@@ -53,7 +53,9 @@ export function normalizeHostedImageUrl(raw: string | null | undefined): string 
     if (url.protocol !== 'https:') {
       return null;
     }
-    if (candidate.startsWith(RTE_IMAGE_PUBLIC_BASE)) {
+    const publicBaseUrl = new URL(RTE_IMAGE_PUBLIC_BASE);
+    const publicBucketPath = `${publicBaseUrl.pathname.replace(/\/$/, '')}/`;
+    if (url.origin === publicBaseUrl.origin && url.pathname.startsWith(publicBucketPath)) {
       return candidate;
     }
   } catch (error) {

@@ -83,7 +83,7 @@ export const validateSkillAllocationPattern = (pattern: string): ValidationResul
   }
 
   // Check parallel group content
-  const bracketMatches = pattern.match(/\[([^\]]+)\]/g);
+  const bracketMatches = pattern.match(/\[([^\]]*)\]/g);
   if (bracketMatches) {
     bracketMatches.forEach((match, index) => {
       const content = match.slice(1, -1); // Remove brackets
@@ -109,7 +109,7 @@ export const validateSkillAllocationPattern = (pattern: string): ValidationResul
   }
 
   // Check parentheses content
-  const parenMatches = pattern.match(/\(([^)]+)\)/g);
+  const parenMatches = pattern.match(/\(([^)]*)\)/g);
   if (parenMatches) {
     parenMatches.forEach((match, index) => {
       const content = match.slice(1, -1); // Remove parentheses
@@ -130,6 +130,14 @@ export const validateSkillAllocationPattern = (pattern: string): ValidationResul
   // Check for common mistakes
   if (pattern.includes('--')) {
     warnings.push({ message: '检测到连续的负面效果标记', severity: 'warning' });
+  }
+
+  if (pattern.endsWith('-')) {
+    errors.push({
+      message: '负面效果标记后缺少技能类型',
+      position: pattern.length - 1,
+      severity: 'error',
+    });
   }
 
   if (pattern.length > 20) {
