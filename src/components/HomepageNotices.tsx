@@ -9,8 +9,10 @@ import type { PublicNotice } from '@/lib/notices/types';
 import Button from '@/components/ui/Button';
 import { renderRichTextContent } from '@/components/ui/RichTextContent';
 
+export const HOMEPAGE_NOTICES_REFRESH_INTERVAL_MS = 5 * 60 * 1000;
+
 const fetcher = async (url: string): Promise<{ notices: PublicNotice[] }> => {
-  const response = await fetch(url, { cache: 'no-store' });
+  const response = await fetch(url);
   if (!response.ok) throw new Error('Failed to load notices');
   return response.json();
 };
@@ -25,7 +27,7 @@ const RichNoticeContent = ({ html }: { html: string }) => (
 
 export default function HomepageNotices() {
   const { data } = useSWR<{ notices: PublicNotice[] }>('/api/notices', fetcher, {
-    refreshInterval: 60_000,
+    refreshInterval: HOMEPAGE_NOTICES_REFRESH_INTERVAL_MS,
     revalidateOnFocus: true,
   });
   const [dismissed, setDismissed] = useState<Set<string>>(new Set());

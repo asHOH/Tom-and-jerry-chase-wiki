@@ -5,11 +5,17 @@ import type { PublicNotice } from '@/lib/notices/types';
 import { getOptionalSupabasePublicClient } from '@/lib/supabase/publicClient';
 
 export const dynamic = 'force-dynamic';
+export const PUBLIC_NOTICES_CACHE_SECONDS = 5 * 60;
+
+const PUBLIC_NOTICES_CACHE_CONTROL = `public, s-maxage=${PUBLIC_NOTICES_CACHE_SECONDS}, stale-while-revalidate=60`;
 
 export async function GET() {
   const supabase = getOptionalSupabasePublicClient();
   if (!supabase) {
-    return NextResponse.json({ notices: [] }, { headers: { 'Cache-Control': 'no-store' } });
+    return NextResponse.json(
+      { notices: [] },
+      { headers: { 'Cache-Control': PUBLIC_NOTICES_CACHE_CONTROL } }
+    );
   }
 
   const now = new Date().toISOString();
@@ -35,5 +41,8 @@ export async function GET() {
     endsAt: notice.ends_at,
   }));
 
-  return NextResponse.json({ notices }, { headers: { 'Cache-Control': 'no-store, max-age=0' } });
+  return NextResponse.json(
+    { notices },
+    { headers: { 'Cache-Control': PUBLIC_NOTICES_CACHE_CONTROL } }
+  );
 }

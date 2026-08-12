@@ -14,6 +14,8 @@ interface VersionInfo {
   packageVersion: string;
 }
 
+export const VERSION_CHECK_INTERVAL_MS = 5 * 60 * 1000;
+
 const VERSION_REQUEST_OPTIONS: RequestInit = {
   cache: 'no-store',
   headers: {
@@ -232,7 +234,8 @@ export const VersionChecker: React.FC = () => {
   useEffect(() => {
     if (!currentVersion) return;
 
-    // Check for updates every 2 minutes
+    // Check for updates every 5 minutes to limit background requests while keeping
+    // deployment notifications reasonably prompt.
     const checkForUpdates = async () => {
       // Skip if hidden
       if (document.hidden) {
@@ -330,7 +333,7 @@ export const VersionChecker: React.FC = () => {
     };
 
     const initialTimer = setTimeout(checkForUpdates, 30000);
-    const interval = setInterval(checkForUpdates, 120000); // 2 minutes
+    const interval = setInterval(checkForUpdates, VERSION_CHECK_INTERVAL_MS);
 
     return () => {
       clearTimeout(initialTimer);
