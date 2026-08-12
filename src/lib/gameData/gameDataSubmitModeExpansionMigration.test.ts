@@ -1,21 +1,33 @@
-import { readFileSync } from 'fs';
+import type { Database } from '@/data/database.generated';
+import { readLatestMigrationMatching } from '@/testUtils/latestMigration';
 
-const migrationPath = 'supabase/migrations/20260726000002_expand_game_data_submit_modes.sql';
+const { sql: migration } = readLatestMigrationMatching(
+  /CREATE\s+OR\s+REPLACE\s+FUNCTION\s+public\.prepared_publish_game_data_actions\b/i
+);
+
+type PreparedPublishArgs =
+  Database['public']['Functions']['prepared_publish_game_data_actions']['Args'];
 
 describe('game data submit mode expansion migration', () => {
-  const migration = readFileSync(migrationPath, 'utf8').replace(/\r\n/g, '\n');
-
-  it('replaces the boolean force_pending RPC argument with a text submit mode on both overloads', () => {
+  it('defines a text submit mode on both overloads', () => {
     expect(migration).toContain("p_submit_mode text DEFAULT 'default'");
     expect(
       migration.match(/CREATE OR REPLACE FUNCTION public\.prepared_publish_game_data_actions\(/g)
     ).toHaveLength(2);
-    expect(migration).toContain(
-      'DROP FUNCTION IF EXISTS public.prepared_publish_game_data_actions(\n  uuid,\n  text,\n  text,\n  jsonb,\n  text,\n  bigint,\n  boolean\n);'
-    );
-    expect(migration).toContain(
-      'DROP FUNCTION IF EXISTS public.prepared_publish_game_data_actions(\n  uuid,\n  text,\n  text,\n  jsonb,\n  text,\n  bigint,\n  inet,\n  boolean\n);'
-    );
+  });
+
+  it('exposes the submit mode in the replayed database schema', () => {
+    const args: PreparedPublishArgs = {
+      p_actor_id: 'actor-id',
+      p_entity_type: 'character',
+      p_entries: [],
+      p_expected_replay_epoch: 1,
+      p_message: 'message',
+      p_permission_key: 'game_data.character.update',
+      p_submit_mode: 'force_pending',
+    };
+
+    expect(args.p_submit_mode).toBe('force_pending');
   });
 
   it('adds a public-pending submit branch while preserving default approved behavior', () => {

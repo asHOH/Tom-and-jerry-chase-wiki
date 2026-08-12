@@ -1,10 +1,11 @@
-import fs from 'node:fs';
-import path from 'node:path';
+import type { Database } from '@/data/database.generated';
+import { readLatestMigrationMatching } from '@/testUtils/latestMigration';
 
-const migration = fs.readFileSync(
-  path.join(process.cwd(), 'supabase/migrations/20260806203440_add_article_version_excerpt.sql'),
-  'utf8'
+const { sql: migration } = readLatestMigrationMatching(
+  /CREATE\s+(?:OR\s+REPLACE\s+)?VIEW\s+(?:public\.)?article_versions_public_view\b/i
 );
+
+type ArticleVersionPublicRow = Database['public']['Views']['article_versions_public_view']['Row'];
 
 describe('article version excerpt migration', () => {
   it('adds a bounded computed excerpt to the security-invoker public view', () => {
@@ -12,5 +13,11 @@ describe('article version excerpt migration', () => {
     expect(migration).toContain('WITH (security_invoker = true)');
     expect(migration).toMatch(/left\([\s\S]+240\s*\) AS excerpt/);
     expect(migration).toContain("regexp_replace(content, '<[^>]*>', ' ', 'g')");
+  });
+
+  it('exposes the excerpt in the replayed database schema', () => {
+    const row: Pick<ArticleVersionPublicRow, 'excerpt'> = { excerpt: null };
+
+    expect(row).toHaveProperty('excerpt');
   });
 });

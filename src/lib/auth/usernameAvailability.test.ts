@@ -8,21 +8,25 @@ type QueryResult = {
   error: { code?: string; message: string } | null;
 };
 
+type LookupError = NonNullable<QueryResult['error']>;
+
 const createAvailabilityClient = ({
   usernameResult,
   authEmailExists,
+  authEmailError = null,
 }: {
   usernameResult: QueryResult;
   authEmailExists: boolean;
+  authEmailError?: LookupError | null;
 }) => {
   const findUserByUsernameHash = jest
     .fn<Promise<QueryResult>, [string]>()
     .mockResolvedValue(usernameResult);
   const authEmailExistsLookup = jest
-    .fn<Promise<{ data: boolean; error: null }>, [string]>()
+    .fn<Promise<{ data: boolean; error: LookupError | null }>, [string]>()
     .mockResolvedValue({
       data: authEmailExists,
-      error: null,
+      error: authEmailError,
     });
 
   return {
@@ -94,5 +98,61 @@ describe('usernameAvailability', () => {
         pinyinConverter: async (value) => value,
       })
     ).resolves.toEqual({ status: 'available', authEmail: 'newuser@auth.example' });
+  });
+
+  it('returns a username lookup error without checking the auth email', async () => {
+    const error = { code: 'PGRST500', message: 'username lookup failed' };
+    const { dataSource, authEmailExistsLookup } = createAvailabilityClient({
+      usernameResult: { data: null, error },
+      authEmailExists: false,
+    });
+
+    await expect(
+      checkUsernameAvailability({
+        username: 'NewUser',
+        authEmailDomain: 'auth.example',
+        dataSource,
+        pinyinConverter: async (value) => value,
+      })
+    ).resolves.toEqual({ status: 'lookup_error', check: 'username', error });
+    expect(authEmailExistsLookup).not.toHaveBeenCalled();
+  });
+
+  it('treats PGRST116 as a missing username and continues checking the auth email', async () => {
+    const { dataSource, authEmailExistsLookup } = createAvailabilityClient({
+      usernameResult: {
+        data: null,
+        error: { code: 'PGRST116', message: 'no rows' },
+      },
+      authEmailExists: false,
+    });
+
+    await expect(
+      checkUsernameAvailability({
+        username: 'NewUser',
+        authEmailDomain: 'auth.example',
+        dataSource,
+        pinyinConverter: async (value) => value,
+      })
+    ).resolves.toEqual({ status: 'available', authEmail: 'newuser@auth.example' });
+    expect(authEmailExistsLookup).toHaveBeenCalledWith('newuser@auth.example');
+  });
+
+  it('returns an auth email lookup error', async () => {
+    const error = { message: 'auth email lookup failed' };
+    const { dataSource } = createAvailabilityClient({
+      usernameResult: { data: null, error: null },
+      authEmailExists: false,
+      authEmailError: error,
+    });
+
+    await expect(
+      checkUsernameAvailability({
+        username: 'NewUser',
+        authEmailDomain: 'auth.example',
+        dataSource,
+        pinyinConverter: async (value) => value,
+      })
+    ).resolves.toEqual({ status: 'lookup_error', check: 'auth_email', error });
   });
 });
