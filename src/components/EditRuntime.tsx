@@ -79,7 +79,6 @@ export default function EditRuntime({
           const fallbackMessages: Record<number, string> = {
             403: '编辑数据刷新请求来源无效',
             429: '编辑数据刷新过于频繁，请稍后重试',
-            503: '编辑数据刷新服务暂不可用，请稍后重试',
           };
           throw new Error(
             body?.error ??

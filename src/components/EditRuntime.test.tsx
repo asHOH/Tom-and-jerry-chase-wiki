@@ -161,8 +161,8 @@ describe('EditRuntime', () => {
   it('does not construct a partial runtime when the initial baseline request fails', async () => {
     global.fetch = jest.fn().mockResolvedValue({
       ok: false,
-      status: 503,
-      json: jest.fn(async () => ({ error: '编辑数据刷新服务暂不可用' })),
+      status: 500,
+      json: jest.fn(async () => ({ error: '加载编辑数据失败' })),
     });
     const onStatusChange = jest.fn();
     const onRetry = jest.fn();
@@ -176,7 +176,7 @@ describe('EditRuntime', () => {
     );
 
     await waitFor(() => {
-      expect(onStatusChange).toHaveBeenLastCalledWith('error', '编辑数据刷新服务暂不可用');
+      expect(onStatusChange).toHaveBeenLastCalledWith('error', '加载编辑数据失败');
     });
 
     expect(getActiveEditRuntime()).toBeNull();

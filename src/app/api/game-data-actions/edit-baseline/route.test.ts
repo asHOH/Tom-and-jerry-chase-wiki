@@ -2,7 +2,7 @@ import type { NextRequest } from 'next/server';
 
 import { invalidatePublicGameDataActionsCache } from '@/lib/gameData/publicActionsCache';
 import { getPublishedGameDataSnapshot } from '@/lib/gameData/published/publishedSnapshot';
-import { checkRateLimit, isRateLimitConfigured } from '@/lib/rateLimit';
+import { checkRateLimit } from '@/lib/rateLimit';
 
 import { GET, POST } from './route';
 
@@ -16,7 +16,6 @@ jest.mock('@/lib/gameData/published/publishedSnapshot', () => ({
 
 jest.mock('@/lib/rateLimit', () => ({
   checkRateLimit: jest.fn(),
-  isRateLimitConfigured: jest.fn(),
 }));
 
 jest.mock('next/server', () => ({
@@ -32,7 +31,6 @@ jest.mock('next/server', () => ({
 const mockGetPublishedGameDataSnapshot = jest.mocked(getPublishedGameDataSnapshot);
 const mockInvalidatePublicGameDataActionsCache = jest.mocked(invalidatePublicGameDataActionsCache);
 const mockCheckRateLimit = jest.mocked(checkRateLimit);
-const mockIsRateLimitConfigured = jest.mocked(isRateLimitConfigured);
 
 const publishedSnapshot = {
   revision: 'v1:published' as const,
@@ -63,7 +61,6 @@ describe('/api/game-data-actions/edit-baseline', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockGetPublishedGameDataSnapshot.mockResolvedValue(publishedSnapshot);
-    mockIsRateLimitConfigured.mockReturnValue(true);
     mockCheckRateLimit.mockResolvedValue({ allowed: true });
   });
 
@@ -100,37 +97,24 @@ describe('/api/game-data-actions/edit-baseline', () => {
 
     expect(response.status).toBe(403);
     expect(response.headers.get('Cache-Control')).toBe('private, no-store');
-    expect(mockIsRateLimitConfigured).not.toHaveBeenCalled();
     expect(mockCheckRateLimit).not.toHaveBeenCalled();
     expect(mockInvalidatePublicGameDataActionsCache).not.toHaveBeenCalled();
     expect(mockGetPublishedGameDataSnapshot).not.toHaveBeenCalled();
   });
 
-  it('fails closed when production rate limiting is not configured', async () => {
-    jest.replaceProperty(
-      process.env as Record<string, string | undefined>,
-      'NODE_ENV',
-      'production'
-    );
-    mockIsRateLimitConfigured.mockReturnValue(false);
-
-    const response = await POST(createRequest('https://dev.tjwiki.com'));
-
-    expect(response.status).toBe(503);
-    expect(mockCheckRateLimit).not.toHaveBeenCalled();
-    expect(mockInvalidatePublicGameDataActionsCache).not.toHaveBeenCalled();
-    expect(mockGetPublishedGameDataSnapshot).not.toHaveBeenCalled();
-  });
-
-  it('fails closed when the configured limiter is unavailable', async () => {
-    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+  it('fails open when the optional limiter is unavailable', async () => {
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
     mockCheckRateLimit.mockRejectedValue(new Error('Upstash unavailable'));
+    mockGetPublishedGameDataSnapshot.mockImplementation(async () => {
+      expect(mockInvalidatePublicGameDataActionsCache).toHaveBeenCalledTimes(1);
+      return publishedSnapshot;
+    });
 
     const response = await POST(createRequest('https://dev.tjwiki.com'));
 
-    expect(response.status).toBe(503);
-    expect(mockInvalidatePublicGameDataActionsCache).not.toHaveBeenCalled();
-    expect(mockGetPublishedGameDataSnapshot).not.toHaveBeenCalled();
+    expect(response.status).toBe(200);
+    expect(mockInvalidatePublicGameDataActionsCache).toHaveBeenCalledTimes(1);
+    expect(mockGetPublishedGameDataSnapshot).toHaveBeenCalledTimes(1);
   });
 
   it('returns limiter headers on a valid denial without invalidating', async () => {
@@ -153,13 +137,7 @@ describe('/api/game-data-actions/edit-baseline', () => {
     expect(mockGetPublishedGameDataSnapshot).not.toHaveBeenCalled();
   });
 
-  it('allows local development without Upstash and refreshes before reading', async () => {
-    jest.replaceProperty(
-      process.env as Record<string, string | undefined>,
-      'NODE_ENV',
-      'development'
-    );
-    mockIsRateLimitConfigured.mockReturnValue(false);
+  it('allows an unconfigured limiter and refreshes before reading', async () => {
     mockGetPublishedGameDataSnapshot.mockImplementation(async () => {
       expect(mockInvalidatePublicGameDataActionsCache).toHaveBeenCalledTimes(1);
       return publishedSnapshot;
@@ -171,7 +149,7 @@ describe('/api/game-data-actions/edit-baseline', () => {
     expect(response.status).toBe(200);
     expect(body).toMatchObject({ revision: 'v1:published' });
     expect(response.headers.get('Cache-Control')).toBe('private, no-store');
-    expect(mockCheckRateLimit).not.toHaveBeenCalled();
+    expect(mockCheckRateLimit).toHaveBeenCalledTimes(1);
     expect(mockInvalidatePublicGameDataActionsCache).toHaveBeenCalledTimes(1);
   });
 

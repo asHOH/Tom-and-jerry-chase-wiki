@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 
 import { invalidatePublicGameDataActionsCache } from '@/lib/gameData/publicActionsCache';
 import { getPublishedGameDataSnapshot } from '@/lib/gameData/published/publishedSnapshot';
-import { checkRateLimit, isRateLimitConfigured } from '@/lib/rateLimit';
+import { checkRateLimit } from '@/lib/rateLimit';
 
 export const dynamic = 'force-dynamic';
 
@@ -49,21 +49,15 @@ export async function POST(request: NextRequest) {
     return errorResponse('请求来源无效', 403);
   }
 
-  const rateLimitConfigured = isRateLimitConfigured();
-  if (process.env.NODE_ENV === 'production' && !rateLimitConfigured) {
-    return errorResponse('编辑数据刷新服务暂不可用', 503);
-  }
-
-  if (rateLimitConfigured) {
-    try {
-      const rateLimit = await checkRateLimit(request, 'expensive', 'game-data-edit-baseline');
-      if (!rateLimit.allowed) {
-        return errorResponse('请求过于频繁，请稍后重试', 429, rateLimit.headers);
-      }
-    } catch (error) {
-      console.error('Edit-baseline rate limit check failed.', error);
-      return errorResponse('编辑数据刷新服务暂不可用', 503);
+  try {
+    const rateLimit = await checkRateLimit(request, 'expensive', 'game-data-edit-baseline');
+    if (!rateLimit.allowed) {
+      return errorResponse('请求过于频繁，请稍后重试', 429, rateLimit.headers);
     }
+  } catch (error) {
+    // Upstash is an optional enhancement. Cache synchronization must remain
+    // available when the limiter is unconfigured or temporarily unavailable.
+    console.warn('Edit-baseline rate limit check failed open.', error);
   }
 
   try {
