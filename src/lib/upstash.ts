@@ -4,7 +4,7 @@ import { env } from '@/env';
 
 let redisSingleton: Redis | null | undefined;
 
-function hasUpstashEnv(): boolean {
+export function hasUpstashEnv(): boolean {
   return Boolean(env.UPSTASH_REDIS_REST_URL && env.UPSTASH_REDIS_REST_TOKEN);
 }
 

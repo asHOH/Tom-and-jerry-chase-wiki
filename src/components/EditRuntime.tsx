@@ -19,6 +19,10 @@ type EditBaselineResponse = {
   data: PublishedGameDataByType;
 };
 
+type EditBaselineErrorResponse = {
+  error?: string;
+};
+
 type EditRuntimeProps = {
   visibleRevision?: `v1:${string}`;
   onStatusChange: (status: EditRuntimeStatus, error?: string) => void;
@@ -63,12 +67,25 @@ export default function EditRuntime({
 
     reportStatus('loading');
     void fetch('/api/game-data-actions/edit-baseline', {
+      method: 'POST',
       cache: 'no-store',
       signal: controller.signal,
     })
       .then(async (response) => {
         if (!response.ok) {
-          throw new Error(`加载编辑数据失败 (${response.status})`);
+          const body = (await response
+            .json()
+            .catch(() => null)) as EditBaselineErrorResponse | null;
+          const fallbackMessages: Record<number, string> = {
+            403: '编辑数据刷新请求来源无效',
+            429: '编辑数据刷新过于频繁，请稍后重试',
+            503: '编辑数据刷新服务暂不可用，请稍后重试',
+          };
+          throw new Error(
+            body?.error ??
+              fallbackMessages[response.status] ??
+              `加载编辑数据失败 (${response.status})`
+          );
         }
         const body: unknown = await response.json();
         if (!isEditBaselineResponse(body)) {

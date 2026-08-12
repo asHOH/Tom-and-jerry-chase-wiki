@@ -2,11 +2,15 @@ import type { NextRequest } from 'next/server';
 import { Ratelimit, type Duration } from '@upstash/ratelimit';
 
 import { getClientIp } from './requestIp';
-import { getUpstashRedis } from './upstash';
+import { getUpstashRedis, hasUpstashEnv } from './upstash';
 
 export { getClientIp } from './requestIp';
 
 export type RateLimitProfile = 'auth' | 'read' | 'write' | 'expensive';
+
+export function isRateLimitConfigured(): boolean {
+  return hasUpstashEnv();
+}
 
 type ProfileConfig = {
   limit: number;
