@@ -1,5 +1,6 @@
 import type { Route } from 'next';
 
+import type { PublishableEntityType } from '@/lib/gameData/publishableEntityTypes';
 import type { FactionId } from '@/data/types';
 
 import { flattenActionEntries, normalizePublicActionEntries } from './actionEntries';
@@ -10,7 +11,7 @@ export type AffectedGameDataName = {
   factionId?: FactionId;
 };
 
-const GAME_DATA_ROUTES: Record<string, string> = {
+const KNOWN_GAME_DATA_ROUTES = {
   achievements: '/achievements',
   buffs: '/buffs',
   cards: '/cards',
@@ -21,9 +22,11 @@ const GAME_DATA_ROUTES: Record<string, string> = {
   maps: '/maps',
   modes: '/modes',
   specialSkills: '/special-skills',
-};
+} satisfies Record<PublishableEntityType, string>;
 
-export const GAME_DATA_ENTITY_LABELS: Record<string, string> = {
+const GAME_DATA_ROUTES: Readonly<Record<string, string>> = KNOWN_GAME_DATA_ROUTES;
+
+const KNOWN_GAME_DATA_ENTITY_LABELS = {
   achievements: '成就',
   buffs: '状态',
   cards: '知识卡',
@@ -34,7 +37,10 @@ export const GAME_DATA_ENTITY_LABELS: Record<string, string> = {
   maps: '地图',
   modes: '游戏模式',
   specialSkills: '特技',
-};
+} satisfies Record<PublishableEntityType, string>;
+
+export const GAME_DATA_ENTITY_LABELS: Readonly<Record<string, string>> =
+  KNOWN_GAME_DATA_ENTITY_LABELS;
 
 export function getAffectedGameDataNames(
   entityType: string,

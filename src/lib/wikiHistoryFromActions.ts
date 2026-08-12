@@ -1,4 +1,8 @@
 import type { Action } from '@/lib/edit/diffUtils';
+import {
+  isPublishableEntityType,
+  type PublishableEntityType,
+} from '@/lib/gameData/publishableEntityTypes';
 import { SingleItem, SingleItemTypeName, WikiChangeType, WikiYearData } from '@/data/types';
 
 import { flattenActionEntries, normalizePublicActionEntries } from './gameData/actionEntries';
@@ -8,7 +12,7 @@ import { getGameDataActionTarget } from './gameData/scopedEntityPaths';
 /**
  * Maps entity_type (used in game_data_actions) to SingleItemTypeName (used in wiki history)
  */
-const ENTITY_TYPE_TO_SINGLE_ITEM_TYPE: Record<string, SingleItemTypeName> = {
+const ENTITY_TYPE_TO_SINGLE_ITEM_TYPE = {
   characters: 'character',
   cards: 'knowledgeCard',
   specialSkills: 'specialSkill',
@@ -19,7 +23,7 @@ const ENTITY_TYPE_TO_SINGLE_ITEM_TYPE: Record<string, SingleItemTypeName> = {
   fixtures: 'fixture',
   modes: 'mode',
   achievements: 'achievement',
-};
+} satisfies Record<PublishableEntityType, SingleItemTypeName>;
 
 /**
  * Maps action operation to WikiChangeType
@@ -61,8 +65,9 @@ function actionToWikiHistoryInfo(
   entityType: string,
   createdAt: Date
 ): WikiHistoryFromAction | null {
+  if (!isPublishableEntityType(entityType)) return null;
+
   const singleItemType = ENTITY_TYPE_TO_SINGLE_ITEM_TYPE[entityType];
-  if (!singleItemType) return null;
 
   const target = getGameDataActionTarget(entityType, action.path);
   if (!target) return null;

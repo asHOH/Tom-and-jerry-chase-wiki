@@ -101,6 +101,23 @@ describe('publicActionsToWikiHistory', () => {
     expect(changes.map((change) => change.item.name)).toEqual(['Tom']);
   });
 
+  it('should skip unknown entity types', () => {
+    const changes = getBatchChanges([
+      row(
+        'unknown-entity-type',
+        {
+          op: 'set',
+          path: 'Tom.description',
+          oldValue: 'old',
+          newValue: 'new',
+        },
+        'unknown'
+      ),
+    ]);
+
+    expect(changes).toEqual([]);
+  });
+
   it('should preserve faction-scoped achievement identity and field paths', () => {
     const changes = getBatchChanges([
       row(

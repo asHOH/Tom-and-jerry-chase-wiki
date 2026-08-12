@@ -1,5 +1,6 @@
 import 'server-only';
 
+import type { PublishableEntityType } from '@/lib/gameData/publishableEntityTypes';
 import { mergeWikiHistoryData, publicActionsToWikiHistory } from '@/lib/wikiHistoryFromActions';
 import type {
   FactionId,
@@ -28,7 +29,7 @@ const ENTITY_TYPE_TO_SINGLE_ITEM_TYPE = {
   fixtures: 'fixture',
   modes: 'mode',
   achievements: 'achievement',
-} satisfies Record<string, SingleItemTypeName>;
+} satisfies Record<PublishableEntityType, SingleItemTypeName>;
 
 export type PublishedEntityHistoryScope = {
   entityType: keyof typeof ENTITY_TYPE_TO_SINGLE_ITEM_TYPE;
