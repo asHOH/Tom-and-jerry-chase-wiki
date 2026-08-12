@@ -12,9 +12,9 @@
   /* Inset regions such as editor canvases, table wells, and secondary panels */
   --wiki-surface-sunken: var(--color-gray-50);
   /* Resting background for neutral buttons, tabs, and selectors */
-  --wiki-control: var(--color-gray-100);
+  --wiki-control: var(--color-gray-200);
   /* Hover and pressed emphasis for neutral controls */
-  --wiki-control-hover: var(--color-gray-200);
+  --wiki-control-hover: var(--color-gray-300);
   /* Selected neutral controls that need stronger contrast than resting controls */
   --wiki-control-active: var(--color-gray-400);
   /* Hover emphasis for selected neutral controls */

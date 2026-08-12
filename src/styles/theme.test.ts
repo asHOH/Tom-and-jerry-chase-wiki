@@ -122,11 +122,11 @@ const semanticTokens = {
     dark: 'var(--color-slate-900)',
   },
   '--wiki-control': {
-    light: 'var(--color-gray-100)',
+    light: 'var(--color-gray-200)',
     dark: 'var(--color-slate-700)',
   },
   '--wiki-control-hover': {
-    light: 'var(--color-gray-200)',
+    light: 'var(--color-gray-300)',
     dark: 'var(--color-slate-600)',
   },
   '--wiki-control-active': {
