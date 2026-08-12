@@ -9,6 +9,7 @@ export const PUBLISHABLE_ENTITY_TYPES = Object.freeze([
   'modes',
   'specialSkills',
   'achievements',
+  'traits',
 ] as const);
 
 export type PublishableEntityType = (typeof PUBLISHABLE_ENTITY_TYPES)[number];

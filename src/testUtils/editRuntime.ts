@@ -17,6 +17,7 @@ import {
   maps,
   modes,
   specialSkills,
+  traits,
 } from '@/data/static';
 
 const baseline = {
@@ -30,6 +31,7 @@ const baseline = {
   maps,
   modes,
   specialSkills,
+  traits,
 } as PublishedGameDataByType;
 
 export function installTestEditRuntime(): ActiveEditRuntime {

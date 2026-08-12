@@ -11,6 +11,7 @@ import type {
   Item,
   Mode,
   SpecialSkill,
+  Trait,
 } from '@/data/types';
 
 import type { PublishedRevision } from './revision';
@@ -28,6 +29,7 @@ type PublishedGameDataShapeByType = {
   modes: Record<string, Mode>;
   specialSkills: FactionData<SpecialSkill>;
   achievements: FactionData<Achievement>;
+  traits: Record<string, Trait>;
 };
 
 export type PublishedGameDataEntityByType = {
@@ -41,6 +43,7 @@ export type PublishedGameDataEntityByType = {
   modes: Mode;
   specialSkills: SpecialSkill;
   achievements: Achievement;
+  traits: Trait;
 };
 
 export type PublishedGameDataByType = {

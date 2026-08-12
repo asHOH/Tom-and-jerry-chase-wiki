@@ -22,6 +22,7 @@ const KNOWN_GAME_DATA_ROUTES = {
   maps: '/maps',
   modes: '/modes',
   specialSkills: '/special-skills',
+  traits: '/mechanics/traitCollection',
 } satisfies Record<PublishableEntityType, string>;
 
 const GAME_DATA_ROUTES: Readonly<Record<string, string>> = KNOWN_GAME_DATA_ROUTES;
@@ -37,6 +38,7 @@ const KNOWN_GAME_DATA_ENTITY_LABELS = {
   maps: '地图',
   modes: '游戏模式',
   specialSkills: '特技',
+  traits: '特性',
 } satisfies Record<PublishableEntityType, string>;
 
 export const GAME_DATA_ENTITY_LABELS: Readonly<Record<string, string>> =
@@ -71,6 +73,8 @@ export function getGameDataDetailHref(
 ): Route | null {
   const route = GAME_DATA_ROUTES[entityType];
   if (!route || !target) return null;
+
+  if (entityType === 'traits') return route as Route;
 
   if (target.factionId) {
     return `${route}/${encodeURIComponent(target.factionId)}/${encodeURIComponent(target.name)}` as Route;

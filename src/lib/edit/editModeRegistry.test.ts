@@ -14,6 +14,7 @@ import {
   maps,
   modes,
   specialSkills,
+  traits,
 } from '@/data/static';
 
 import { getActionsStorageKey, readActionHistory } from './diffUtils';
@@ -31,6 +32,7 @@ const baseline = {
   maps,
   modes,
   specialSkills,
+  traits,
 } as PublishedGameDataByType;
 
 describe('editModeRegistry', () => {

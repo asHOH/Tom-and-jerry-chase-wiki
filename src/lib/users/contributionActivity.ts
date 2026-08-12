@@ -125,6 +125,7 @@ const GAME_DATA_LABELS: Record<string, string> = {
   maps: '地图',
   modes: '游戏模式',
   specialSkills: '特技',
+  traits: '特性',
 };
 
 const CONTRIBUTION_CATEGORY_LABELS: Record<string, string> = {

@@ -29,10 +29,18 @@ const ENTITY_TYPE_TO_SINGLE_ITEM_TYPE = {
   fixtures: 'fixture',
   modes: 'mode',
   achievements: 'achievement',
-} satisfies Record<PublishableEntityType, SingleItemTypeName>;
+} satisfies Partial<Record<PublishableEntityType, SingleItemTypeName>>;
+
+export type PublishedEntityHistoryEntityType = keyof typeof ENTITY_TYPE_TO_SINGLE_ITEM_TYPE;
+
+export function hasPublishedEntityHistory(
+  entityType: PublishableEntityType
+): entityType is PublishedEntityHistoryEntityType {
+  return entityType in ENTITY_TYPE_TO_SINGLE_ITEM_TYPE;
+}
 
 export type PublishedEntityHistoryScope = {
-  entityType: keyof typeof ENTITY_TYPE_TO_SINGLE_ITEM_TYPE;
+  entityType: PublishedEntityHistoryEntityType;
   entityId: string;
   factionId?: FactionId;
 };

@@ -9,6 +9,10 @@ jest.mock('usehooks-ts', () => ({
   useIntersectionObserver: jest.fn(() => [jest.fn(), true] as const),
 }));
 
+jest.mock('@/context/EditModeContext', () => ({
+  useEditMode: () => ({ isEditMode: false }),
+}));
+
 jest.mock('@/components/Link', () => ({
   __esModule: true,
   default: function MockLink({

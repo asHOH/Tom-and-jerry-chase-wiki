@@ -23,7 +23,15 @@ const ENTITY_TYPE_TO_SINGLE_ITEM_TYPE = {
   fixtures: 'fixture',
   modes: 'mode',
   achievements: 'achievement',
-} satisfies Record<PublishableEntityType, SingleItemTypeName>;
+} satisfies Partial<Record<PublishableEntityType, SingleItemTypeName>>;
+
+type WikiHistoryEntityType = keyof typeof ENTITY_TYPE_TO_SINGLE_ITEM_TYPE;
+
+function hasWikiHistoryMapping(
+  entityType: PublishableEntityType
+): entityType is WikiHistoryEntityType {
+  return entityType in ENTITY_TYPE_TO_SINGLE_ITEM_TYPE;
+}
 
 /**
  * Maps action operation to WikiChangeType
@@ -66,6 +74,7 @@ function actionToWikiHistoryInfo(
   createdAt: Date
 ): WikiHistoryFromAction | null {
   if (!isPublishableEntityType(entityType)) return null;
+  if (!hasWikiHistoryMapping(entityType)) return null;
 
   const singleItemType = ENTITY_TYPE_TO_SINGLE_ITEM_TYPE[entityType];
 

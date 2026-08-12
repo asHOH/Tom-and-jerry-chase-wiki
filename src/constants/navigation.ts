@@ -306,8 +306,8 @@ export const TOOL_NAV_ITEMS: readonly NavItem[] = [
   {
     id: 'trait-maker',
     label: '特性编辑器',
-    description: '编辑特性信息，导出代码片段提交给开发人员',
-    href: '/trait-maker.html',
+    description: '在线编辑和提交特性信息',
+    href: '/mechanics/traitCollection?edit=1',
     iconSrc: '/images/mouseSkills/%E8%8E%B1%E6%81%A92-%E8%98%B8%E6%B0%B4%E7%AC%94.png',
     iconAlt: '',
   },

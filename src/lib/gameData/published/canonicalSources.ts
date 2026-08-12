@@ -4,6 +4,7 @@ import type { DeepReadonly } from '@/types/deep-readonly';
 import { buildCardGameData, buildCharacterGameData } from '@/lib/dataManager';
 import type { PublishableEntityType } from '@/lib/gameData/publishableEntityTypes';
 import { createMapsData } from '@/data/maps';
+import { createTraitsData } from '@/data/traits';
 import { createCatAchievementsData } from '@/features/achievements/data/catAchievements';
 import { createMouseAchievementsData } from '@/features/achievements/data/mouseAchievements';
 import { createBuffsData } from '@/features/buffs/data/buffs';
@@ -46,6 +47,7 @@ const canonicalSources = {
     cat: createCatAchievementsData(),
     mouse: createMouseAchievementsData(),
   })),
+  traits: createCanonicalGetter(createTraitsData),
 } satisfies CanonicalSourceRegistry;
 
 export function getCanonicalGameData<EntityType extends PublishableEntityType>(

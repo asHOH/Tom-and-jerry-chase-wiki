@@ -42,6 +42,7 @@ describe('canonical game-data sources', () => {
       maps: [legacyStatic.maps, legacyStore.mapsEdit],
       modes: [legacyStatic.modes, legacyStore.modesEdit],
       specialSkills: [legacyStatic.specialSkills, legacyStore.specialSkillsEdit],
+      traits: [legacyStatic.traits],
     };
     const pristineByType = {} as Record<PublishableEntityType, unknown>;
 

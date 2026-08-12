@@ -113,6 +113,7 @@ describe('composePublishedGameDataSnapshot', () => {
       'modes',
       'specialSkills',
       'achievements',
+      'traits',
     ]);
   });
 
@@ -133,7 +134,7 @@ describe('composePublishedGameDataSnapshot', () => {
     expect((second.data.items as unknown as { projection: string }).projection).toBe(
       'canonical-v2'
     );
-    expect(misses).toHaveLength(20);
+    expect(misses).toHaveLength(PUBLISHABLE_ENTITY_TYPES.length * 2);
   });
 
   it('misses persistent domains when selector code changes under a new build identity', async () => {
@@ -152,6 +153,6 @@ describe('composePublishedGameDataSnapshot', () => {
     expect((changed.data.characters as unknown as { projection: string }).projection).toBe(
       'selector-v2'
     );
-    expect(misses).toHaveLength(20);
+    expect(misses).toHaveLength(PUBLISHABLE_ENTITY_TYPES.length * 2);
   });
 });

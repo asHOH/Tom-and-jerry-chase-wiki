@@ -15,6 +15,7 @@ import {
   maps,
   modes,
   specialSkills,
+  traits,
 } from '@/data/static';
 
 import EditRuntime from './EditRuntime';
@@ -36,6 +37,7 @@ const baselineData = {
   maps,
   modes,
   specialSkills,
+  traits,
 } as unknown as PublishedGameDataByType;
 
 const createFetchResponse = (revision: `v1:${string}`) => ({

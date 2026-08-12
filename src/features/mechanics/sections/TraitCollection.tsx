@@ -2,17 +2,34 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-import traits from '@/data/traits';
+import { useEditMode } from '@/context/EditModeContext';
+import { useTraitsData } from '@/context/TraitsContext';
+import type { Trait } from '@/data/types';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 import { OneTraitText } from '@/features/shared/traits/OneTraitText';
 import Button from '@/components/ui/Button';
+import EditButton from '@/components/ui/EditButton';
+import EditModePageShell from '@/components/ui/EditModePageShell';
 import { FormInput } from '@/components/ui/FormControls';
 import PageHeader from '@/components/ui/PageHeader';
+
+import TraitEditor from './TraitEditor';
 
 const processStrings = (input: string | string[]): string =>
   Array.isArray(input) ? input.join('\n') : input;
 
-export default function TraitCollision() {
+function TraitCollectionContent() {
+  const traits = useTraitsData();
+  const { isEditMode } = useEditMode();
+
+  return isEditMode ? (
+    <TraitEditor traitsSnapshot={traits} />
+  ) : (
+    <TraitCollectionView traits={traits} />
+  );
+}
+
+function TraitCollectionView({ traits }: { traits: Record<string, Trait> }) {
   const allTraits = Object.values(traits).filter((trait) => !trait.relation);
   const topRef = useRef<HTMLDivElement>(null);
 
@@ -81,6 +98,7 @@ export default function TraitCollision() {
           列举已收录的所有特性，共$${`${allTraits.length}`}$font-bold#条，当前为第${startIndex + 1}-${Math.min(endIndex, allTraits.length)}条（第${currentPage}页/共${totalPages}页）`}
           />
         }
+        actions={<EditButton />}
         className='mb-2'
       />
 
@@ -180,5 +198,13 @@ export default function TraitCollision() {
         }
       `}</style>
     </div>
+  );
+}
+
+export default function TraitCollection() {
+  return (
+    <EditModePageShell entityType='traits' entityId='' entityName='特性大全' withPageShell={false}>
+      <TraitCollectionContent />
+    </EditModePageShell>
   );
 }

@@ -15,6 +15,7 @@ describe('publishableEntityTypes', () => {
       'modes',
       'specialSkills',
       'achievements',
+      'traits',
     ]);
     expect(Object.isFrozen(PUBLISHABLE_ENTITY_TYPES)).toBe(true);
   });

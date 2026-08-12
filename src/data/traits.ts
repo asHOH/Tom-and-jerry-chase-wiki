@@ -1,6 +1,6 @@
-import { Trait } from './types';
+import type { Trait } from './types';
 
-const traits: Record<string, Trait> = {
+export const createTraitsData = (): Record<string, Trait> => ({
   /**
    * 格式说明：
    * 一条特性包括group，description和isMinor（可选）。其中group由若干个singleItem（即{name,type,factionId?}）组成
@@ -1199,6 +1199,8 @@ const traits: Record<string, Trait> = {
       { name: '唤猫铃', type: 'fixture' },
     ],
   },
-};
+});
+
+const traits = createTraitsData();
 
 export default traits;

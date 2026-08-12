@@ -23,6 +23,7 @@ type EditModePageShellProps = {
   entityName: string;
   publishedRevision?: `v1:${string}`;
   publishedHistory?: readonly PublishedEntityHistoryEntry[];
+  withPageShell?: boolean;
   children: ReactNode;
 };
 
@@ -32,6 +33,7 @@ export default function EditModePageShell({
   entityName,
   publishedRevision,
   publishedHistory,
+  withPageShell = true,
   children,
 }: EditModePageShellProps) {
   const { exitEditMode } = useSearchParamEditMode();
@@ -79,18 +81,18 @@ export default function EditModePageShell({
     [publishChanges]
   );
 
+  const content = publishedHistory ? (
+    <PublishedEntityHistoryProvider history={publishedHistory}>
+      {children}
+    </PublishedEntityHistoryProvider>
+  ) : (
+    children
+  );
+
   return (
     <>
       <EditModeContext value={editModeContextValue}>
-        <PageShell width='maximum'>
-          {publishedHistory ? (
-            <PublishedEntityHistoryProvider history={publishedHistory}>
-              {children}
-            </PublishedEntityHistoryProvider>
-          ) : (
-            children
-          )}
-        </PageShell>
+        {withPageShell ? <PageShell width='maximum'>{content}</PageShell> : content}
       </EditModeContext>
       {isEditMode ? (
         <EditModeToolbar

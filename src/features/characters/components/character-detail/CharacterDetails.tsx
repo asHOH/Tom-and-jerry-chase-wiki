@@ -13,6 +13,7 @@ import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { EditModeContext, useEditMode } from '@/context/EditModeContext';
+import { useTraitsData } from '@/context/TraitsContext';
 import { Skill } from '@/data/types';
 import ActorAttributesSection from '@/features/actor-profiles/components/ActorAttributesSection';
 import SingleItemReverseCard from '@/features/shared/components/SingleItemReverseCard';
@@ -81,6 +82,7 @@ export default function CharacterDetails({
   children,
 }: CharacterDetailsWithTutorialProps) {
   const editMode = useEditMode();
+  const traits = useTraitsData();
   const { isEditMode, isEditModeRequested, runtimeStatus } = editMode;
   const isMobile = useMobile();
   const { addSecondWeapon } = useCharacterActions();
@@ -115,7 +117,12 @@ export default function CharacterDetails({
       ? localCharacter.catPositioningTags || []
       : localCharacter.mousePositioningTags || [];
   const characterSingleItem = { name: localCharacter.id, type: 'character' as const };
-  const characterTraitCount = filterTraitsBySingleItem(characterSingleItem).length;
+  const characterTraitCount = filterTraitsBySingleItem(
+    characterSingleItem,
+    'default',
+    true,
+    traits
+  ).length;
   const characterReverseCount = singleItemRreverse(characterSingleItem).length;
 
   return (

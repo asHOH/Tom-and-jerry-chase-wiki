@@ -2,6 +2,7 @@
 
 import { useRef } from 'react';
 
+import { useEditMode } from '@/context/EditModeContext';
 import { TOOL_NAV_ITEMS } from '@/constants/navigation';
 import ChangeLogs, { ChangeLogsRef } from '@/components/ui/ChangeLogs';
 import FeedbackSection, { FeedbackSectionRef } from '@/components/ui/FeedbackSection';
@@ -14,6 +15,7 @@ interface CharacterRankingGridProps {
 }
 
 export default function CharacterRankingGrid({ description }: CharacterRankingGridProps) {
+  const { isEditMode } = useEditMode();
   const feedbackSectionRef = useRef<FeedbackSectionRef>(null);
   const changeLogsRef = useRef<ChangeLogsRef>(null);
 
@@ -41,11 +43,11 @@ export default function CharacterRankingGrid({ description }: CharacterRankingGr
       title: '建设中界面',
       items: ['fixtures', 'achievements'],
     },
-    /*{
+    {
       title: '编辑工具',
       condition: isEditMode,
-      items: ['item-maker', 'entity-maker', 'trait-maker'],
-    },*/
+      items: ['trait-maker'],
+    },
   ];
 
   const getSectionButtons = (items: string[]) => {
@@ -70,7 +72,7 @@ export default function CharacterRankingGrid({ description }: CharacterRankingGr
       <PageHeader title='工具栏' description={description} className='mb-4 md:mb-8' />
 
       {SECTIONS.map((section, index) => {
-        /*if (section.condition === false) return null;*/
+        if (section.condition === false) return null;
         const buttons = getSectionButtons(section.items);
         if (buttons.length === 0) return null;
         const props = section.title ? { title: section.title } : {};

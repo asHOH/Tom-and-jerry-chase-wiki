@@ -16,7 +16,6 @@ import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { contributors } from '@/data/contributors';
 import { historyData } from '@/data/history';
 import { itemGroups } from '@/data/static';
-import traits from '@/data/traits';
 import { WikiChangeType } from '@/data/types';
 import { wikiHistoryData } from '@/data/wikiHistory';
 import { winRatesData } from '@/data/winRates';
@@ -274,6 +273,7 @@ function createResolvers(data: PublishedGameDataByType): Record<string, PathReso
     maps,
     modes,
     specialSkills,
+    traits,
   } = data;
 
   return {

@@ -7,6 +7,7 @@ import type { ApprovedActionSnapshot } from './approvedActionSnapshot';
 import { getApprovedActionSnapshot } from './getApprovedActionSnapshot';
 import {
   getPublishedEntityHistoryReadModel,
+  hasPublishedEntityHistory,
   type PublishedEntityHistoryEntry,
 } from './historySelectors';
 import { getPublishedDomainReadModel } from './publishedSnapshot';
@@ -57,7 +58,9 @@ export async function getPublishedEntityRouteReadModel<EntityType extends Publis
   }
 
   const history =
-    normalizedEntityId && (!isFactionScoped(entityType) || normalizedFactionId)
+    normalizedEntityId &&
+    hasPublishedEntityHistory(entityType) &&
+    (!isFactionScoped(entityType) || normalizedFactionId)
       ? (
           await getPublishedEntityHistoryReadModel(
             {

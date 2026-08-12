@@ -9,6 +9,7 @@ import {
   maps,
   modes,
   specialSkills,
+  traits,
 } from '@/data/static';
 
 import type { PublishedGameDataByType } from './gameData/published/types';
@@ -51,6 +52,7 @@ describe('getGotoResult', () => {
       maps,
       modes,
       specialSkills,
+      traits,
     } as PublishedGameDataByType;
 
     const result = await getGotoResult(publishedAlias, '角色', { gameData });

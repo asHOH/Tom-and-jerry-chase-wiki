@@ -16,6 +16,7 @@ export const SCOPABLE_RESOURCE_TYPES = [
   'achievements',
   'special_skills',
   'specialSkills',
+  'traits',
   'list_pages',
 ] as const;
 
@@ -30,6 +31,7 @@ const GAME_DATA_RESOURCE_TYPES = new Set<string>([
   'modes',
   'achievements',
   'specialSkills',
+  'traits',
 ]);
 
 const RESOURCE_TYPE_SET = new Set<string>(SCOPABLE_RESOURCE_TYPES);

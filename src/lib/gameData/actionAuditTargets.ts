@@ -10,6 +10,7 @@ import {
   maps,
   modes,
   specialSkills,
+  traits,
 } from '@/data/static';
 
 import { cloneGameDataValue } from './cloneGameDataValue';
@@ -25,6 +26,7 @@ export const ACTION_AUDIT_TARGET_COUNTS = Object.freeze({
   maps: 2,
   modes: 2,
   specialSkills: 2,
+  traits: 1,
 } as const);
 
 export const ACTION_AUDIT_KNOWN_NOOP_ENTITY_TYPES = Object.freeze([] as const);
@@ -53,6 +55,7 @@ const baselineTargets: BaselineTargetRegistry = {
     specialSkills as unknown as Record<string, unknown>,
     specialSkills as unknown as Record<string, unknown>,
   ],
+  traits: [traits as unknown as Record<string, unknown>],
 };
 
 export class ActionAuditTargetCloneError extends Error {

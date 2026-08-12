@@ -56,6 +56,7 @@ function createEntityRegistry(
     ['maps', asRecord(stores.maps)],
     ['modes', asRecord(stores.modes)],
     ['specialSkills', asRecord(stores.specialSkills)],
+    ['traits', asRecord(stores.traits)],
   ]);
 }
 

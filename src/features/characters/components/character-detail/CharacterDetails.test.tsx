@@ -60,6 +60,7 @@ jest.mock('@/hooks/useDraftDataRuntime', () => ({
 }));
 
 jest.mock('@/lib/edit/activeEditRuntime', () => ({
+  useActiveEditRuntime: () => null,
   useOptionalEditSnapshot: <T,>(store: T | undefined, fallback: T) => store ?? fallback,
 }));
 

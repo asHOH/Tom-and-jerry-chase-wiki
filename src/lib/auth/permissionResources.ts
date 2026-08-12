@@ -11,6 +11,7 @@ import {
   maps,
   modes,
   specialSkills,
+  traits,
 } from '@/data';
 
 export type PermissionResourceOption = { id: string; label: string };
@@ -63,6 +64,7 @@ const staticOptions: Record<string, PermissionResourceOption[]> = {
     id: option.id.slice(option.id.indexOf('.') + 1),
     label: option.label,
   })),
+  traits: toOptions(traits),
   special_skills: specialSkillOptions,
   list_pages: LIST_PAGE_IDS.map((id) => ({ id, label: id })),
 };

@@ -18,6 +18,7 @@ import {
   maps,
   modes,
   specialSkills,
+  traits,
   type Skill,
 } from '@/data';
 
@@ -109,6 +110,7 @@ const staticGameData: PublishedGameDataByType = {
   maps,
   modes,
   specialSkills,
+  traits,
 };
 
 export async function ensureGotoIndex(gameData?: PublishedGameDataByType): Promise<GotoIndex> {

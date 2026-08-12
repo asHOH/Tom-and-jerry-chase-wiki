@@ -11,6 +11,7 @@ import type {
   Item,
   Mode,
   SpecialSkill,
+  Trait,
 } from '@/data/types';
 
 export type EditStores = {
@@ -24,6 +25,7 @@ export type EditStores = {
   modes: Record<string, Mode>;
   specialSkills: Record<'cat' | 'mouse', Record<string, SpecialSkill>>;
   achievements: Record<'cat' | 'mouse', Record<string, Achievement>>;
+  traits: Record<string, Trait>;
 };
 
 function createEditableStore<T extends object>(value: object): T {
@@ -42,5 +44,6 @@ export function createEditStores(baseline: PublishedGameDataByType): EditStores 
     maps: createEditableStore<EditStores['maps']>(baseline.maps),
     modes: createEditableStore<EditStores['modes']>(baseline.modes),
     specialSkills: createEditableStore<EditStores['specialSkills']>(baseline.specialSkills),
+    traits: createEditableStore<EditStores['traits']>(baseline.traits),
   };
 }

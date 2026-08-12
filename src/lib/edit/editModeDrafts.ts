@@ -11,7 +11,8 @@ export type DraftEntityType =
   | 'maps'
   | 'modes'
   | 'specialSkills'
-  | 'achievements';
+  | 'achievements'
+  | 'traits';
 
 export type DraftSummaryItem = {
   entityType: DraftEntityType;
@@ -40,6 +41,7 @@ const ENTITY_LABELS: Record<DraftEntityType, string> = {
   modes: '模式',
   specialSkills: '特技',
   achievements: '成就',
+  traits: '特性',
 };
 
 function formatEntityLabel(entityType: DraftEntityType): string {

@@ -47,6 +47,7 @@ const publishedSnapshot = {
     maps: {},
     modes: {},
     specialSkills: { cat: {}, mouse: {} },
+    traits: {},
   },
 };
 

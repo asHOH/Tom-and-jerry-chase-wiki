@@ -11,6 +11,7 @@ const CANONICAL_SOURCE_FILES = [
   'src/lib/gameData/published/canonicalSources.ts',
   'src/lib/dataManager.ts',
   'src/data/maps.ts',
+  'src/data/traits.ts',
   'src/features/achievements/data/catAchievements.ts',
   'src/features/achievements/data/mouseAchievements.ts',
   'src/features/buffs/data/buffs.ts',

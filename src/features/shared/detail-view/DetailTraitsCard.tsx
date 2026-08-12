@@ -1,4 +1,5 @@
 import { getSingleItemPrototype } from '@/lib/singleItemTools';
+import { useTraitsData } from '@/context/TraitsContext';
 import type { SingleItem } from '@/data/types';
 
 import SingleItemTraitsText from '../components/SingleItemTraitsText';
@@ -11,10 +12,11 @@ type DetailTraitsCardProps = {
 };
 
 export default function DetailTraitsCard({ singleItem }: DetailTraitsCardProps) {
+  const traits = useTraitsData();
   const ownEntities = getOwnEntities(singleItem);
   const ownPrototypes = getSingleItemPrototype(singleItem);
   const numberOfOwnTraits: number[] = [singleItem, ...ownEntities, ...ownPrototypes].map((item) => {
-    return filterTraitsBySingleItem(item).length;
+    return filterTraitsBySingleItem(item, 'default', true, traits).length;
   });
   const totalTraits = numberOfOwnTraits.reduce((a, b) => a + b, 0);
 

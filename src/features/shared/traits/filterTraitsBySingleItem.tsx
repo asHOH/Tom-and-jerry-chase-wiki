@@ -29,9 +29,10 @@ const getTraitKey = (trait: Trait): string => {
 export const filterTraitsBySingleItem = (
   singleItem: SingleItem,
   checkMode: 'default' | 'hard' = 'default',
-  searchBuff: boolean = true
+  searchBuff: boolean = true,
+  traitData: Record<string, Trait> = traits
 ): Trait[] => {
-  const filteredTraits = Object.values(traits).filter((trait) =>
+  const filteredTraits = Object.values(traitData).filter((trait) =>
     checkItemMatchesTrait(trait, singleItem, checkMode)
   );
   if (!searchBuff) return filteredTraits;
@@ -45,7 +46,7 @@ export const filterTraitsBySingleItem = (
       buffItems.push(buffItem);
 
       // 检索该buff相关的trait
-      const buffTraits = filterTraitsBySingleItem(buffItem, 'hard');
+      const buffTraits = filterTraitsBySingleItem(buffItem, 'hard', true, traitData);
       buffRelatedTraits.push(...buffTraits);
     });
   }

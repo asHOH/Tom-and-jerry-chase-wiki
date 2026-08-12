@@ -1,3 +1,4 @@
+import { useTraitsData } from '@/context/TraitsContext';
 import { SingleItem } from '@/data/types';
 
 import { filterTraitsBySingleItem } from '../traits/filterTraitsBySingleItem';
@@ -14,8 +15,9 @@ export default function SingleItemTraitsText({
   singleItem,
   searchBuff = true,
 }: SingleItemTraitsTextProps) {
+  const traits = useTraitsData();
   // 第1步：筛选包含该SingleItem的Trait
-  const allTraits = filterTraitsBySingleItem(singleItem, 'default', searchBuff);
+  const allTraits = filterTraitsBySingleItem(singleItem, 'default', searchBuff, traits);
 
   if (allTraits.length === 0) {
     return (
