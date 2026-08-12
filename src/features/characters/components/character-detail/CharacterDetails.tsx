@@ -16,9 +16,12 @@ import { EditModeContext, useEditMode } from '@/context/EditModeContext';
 import { useTraitsData } from '@/context/TraitsContext';
 import { Skill } from '@/data/types';
 import ActorAttributesSection from '@/features/actor-profiles/components/ActorAttributesSection';
+import { characterRelationTagPairs } from '@/features/characters/utils/characterRelationTags';
 import SingleItemReverseCard from '@/features/shared/components/SingleItemReverseCard';
 import SingleItemTraitsText from '@/features/shared/components/SingleItemTraitsText';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
+import EditableCheckboxGroup from '@/features/shared/detail-view/EditableCheckboxGroup';
+import EditableStringList from '@/features/shared/detail-view/EditableStringList';
 import { filterTraitsBySingleItem } from '@/features/shared/traits/filterTraitsBySingleItem';
 import Card from '@/components/ui/Card';
 import CollapseCard from '@/components/ui/CollapseCard';
@@ -236,6 +239,70 @@ export default function CharacterDetails({
                   initialValue={localCharacter.description}
                   className='mt-2 py-1 whitespace-pre-wrap text-gray-700 dark:text-gray-300'
                 />
+
+                {isEditMode ? (
+                  <div className='border-border bg-surface-muted mt-3 space-y-3 rounded-md border p-3 text-sm'>
+                    <div>
+                      <span className='text-xs text-gray-500 dark:text-gray-400'>角色别名</span>
+                      <EditableStringList
+                        values={localCharacter.aliases ?? []}
+                        itemLabel='角色别名'
+                        onChange={(aliases) => {
+                          if (!rawEditCharacter) return;
+                          if (aliases.length > 0) rawEditCharacter.aliases = aliases;
+                          else delete rawEditCharacter.aliases;
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <span className='text-xs text-gray-500 dark:text-gray-400'>关系标签</span>
+                      <EditableCheckboxGroup
+                        options={characterRelationTagPairs.flatMap((tag) => [
+                          tag.counters,
+                          tag.counteredBy,
+                        ])}
+                        selected={localCharacter.counterTags ?? []}
+                        ariaLabelPrefix='角色关系标签'
+                        onChange={(counterTags) => {
+                          if (!rawEditCharacter) return;
+                          if (counterTags.length > 0) rawEditCharacter.counterTags = counterTags;
+                          else delete rawEditCharacter.counterTags;
+                        }}
+                      />
+                    </div>
+                    <div className='grid gap-2 sm:grid-cols-2'>
+                      <span>
+                        英文名:{' '}
+                        <e.span
+                          path='EnglishName'
+                          initialValue={localCharacter.EnglishName ?? '<无内容>'}
+                          isSingleLine
+                          deleteOnEmpty
+                        />
+                      </span>
+                      <span>
+                        特殊爪刀CD(命中):{' '}
+                        <e.span
+                          path='specialClawKnifeCdHit'
+                          initialValue={localCharacter.specialClawKnifeCdHit ?? '<无内容>'}
+                          valueType='number'
+                          isSingleLine
+                          deleteOnEmpty
+                        />
+                      </span>
+                      <span>
+                        特殊爪刀CD(未命中):{' '}
+                        <e.span
+                          path='specialClawKnifeCdUnhit'
+                          initialValue={localCharacter.specialClawKnifeCdUnhit ?? '<无内容>'}
+                          valueType='number'
+                          isSingleLine
+                          deleteOnEmpty
+                        />
+                      </span>
+                    </div>
+                  </div>
+                ) : null}
 
                 <div className='mt-6 space-y-3'>
                   {localCharacter.EnglishName !== undefined ? (

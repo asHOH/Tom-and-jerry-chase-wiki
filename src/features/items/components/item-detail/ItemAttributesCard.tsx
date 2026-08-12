@@ -8,18 +8,30 @@ import { useLocalItem } from '@/hooks/useLocalEditEntity';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
-import { Item } from '@/data/types';
+import { Item, Itemsourcelist, Itemtypelist } from '@/data/types';
 import ActorAttributesSection from '@/features/actor-profiles/components/ActorAttributesSection';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
+import ActorProfileSelect from '@/features/shared/detail-view/ActorProfileSelect';
 import AddAliasButton from '@/features/shared/detail-view/AddAliasButton';
 import AttributesCardLayout from '@/features/shared/detail-view/AttributesCardLayout';
 import CharacterLikeAttributesSection from '@/features/shared/detail-view/CharacterLikeAttributesSection';
 import PhysicalAttributesSection from '@/features/shared/detail-view/PhysicalAttributesSection';
 import { editable } from '@/components/ui/editable';
+import { FormSelect } from '@/components/ui/FormControls';
 import NavigationButtonsRow from '@/components/ui/NavigationButtonsRow';
 import SingleItemAccordionCard from '@/components/ui/SingleItemAccordionCard';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import Tag from '@/components/ui/Tag';
+
+const ITEM_TYPES: readonly Itemtypelist[] = [
+  '投掷类',
+  '手持类',
+  '物件类',
+  '食物类',
+  '流程类',
+  '特殊类',
+];
+const ITEM_SOURCES: readonly Itemsourcelist[] = ['常规道具', '地图道具'];
 
 export default function ItemAttributesCard({ item }: { item: Item }) {
   const [isDarkMode] = useDarkMode();
@@ -95,24 +107,82 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
               margin='compact'
               colorStyles={getItemTypeColors(effectiveItem?.itemtype || '', isDarkMode)}
             >
-              <ed.span
-                path='itemtype'
-                initialValue={effectiveItem.itemtype ?? '<无内容>'}
-                isSingleLine
-              />
+              {isEditMode ? (
+                <select
+                  aria-label='道具类型'
+                  value={effectiveItem.itemtype}
+                  onChange={(event) => {
+                    if (rawItem) rawItem.itemtype = event.target.value as Itemtypelist;
+                  }}
+                  className='font-inherit cursor-pointer border-none bg-transparent text-inherit outline-none'
+                >
+                  {ITEM_TYPES.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                effectiveItem.itemtype
+              )}
             </Tag>
             <Tag
               size='sm'
               margin='compact'
               colorStyles={getItemSourceColors(effectiveItem?.itemsource || '', isDarkMode)}
             >
-              <ed.span
-                path='itemsource'
-                initialValue={effectiveItem.itemsource ?? '<无内容>'}
-                isSingleLine
-              />
+              {isEditMode ? (
+                <select
+                  aria-label='道具来源'
+                  value={effectiveItem.itemsource}
+                  onChange={(event) => {
+                    if (rawItem) rawItem.itemsource = event.target.value as Itemsourcelist;
+                  }}
+                  className='font-inherit cursor-pointer border-none bg-transparent text-inherit outline-none'
+                >
+                  {ITEM_SOURCES.map((source) => (
+                    <option key={source} value={source}>
+                      {source}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                effectiveItem.itemsource
+              )}
             </Tag>
           </div>
+          {isEditMode ? (
+            <div className='grid gap-2 border-t border-gray-300 pt-1 dark:border-gray-600'>
+              <label className='flex items-center gap-2 text-sm'>
+                <span className='shrink-0'>阵营:</span>
+                <FormSelect
+                  size='sm'
+                  value={effectiveItem.factionId ?? ''}
+                  aria-label='道具阵营'
+                  onChange={(event) => {
+                    if (!rawItem) return;
+                    const faction = event.target.value;
+                    if (faction === 'cat' || faction === 'mouse') rawItem.factionId = faction;
+                    else delete rawItem.factionId;
+                  }}
+                >
+                  <option value=''>无阵营</option>
+                  <option value='cat'>猫</option>
+                  <option value='mouse'>鼠</option>
+                </FormSelect>
+              </label>
+              <ActorProfileSelect
+                value={effectiveItem.actorProfileName}
+                onChange={(profileName) => {
+                  if (!rawItem) return;
+                  if (profileName) {
+                    rawItem.actorProfileName = profileName;
+                    delete rawItem.itemAttributesAsCharacter;
+                  } else delete rawItem.actorProfileName;
+                }}
+              />
+            </div>
+          ) : null}
           <div className='auto-fill-grid grid-container grid grid-cols-[repeat(2,minmax(40px,1fr))] items-center justify-center gap-1 text-sm font-normal'>
             {(isEditMode || effectiveItem?.damage !== undefined) && (
               <span className='text-sm whitespace-pre'>
@@ -122,6 +192,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                     path='damage'
                     initialValue={effectiveItem.damage ?? '<无内容>'}
                     valueType='number'
+                    deleteOnEmpty
                     isSingleLine
                   />
                 </span>
@@ -135,6 +206,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                     path='walldamage'
                     initialValue={effectiveItem.walldamage ?? '<无内容>'}
                     valueType='number'
+                    deleteOnEmpty
                     isSingleLine
                   />
                 </span>
@@ -149,6 +221,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                   path='exp'
                   initialValue={effectiveItem.exp ?? '<无内容>'}
                   valueType='number'
+                  deleteOnEmpty
                   isSingleLine
                 />
               </span>
@@ -169,6 +242,14 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
             attributes={effectiveItem.itemAttributesAsCharacter}
             intro='该道具特性与'
             isDetailed={isDetailed}
+            isEditMode={isEditMode}
+            onChange={(attributes) => {
+              if (!rawItem) return;
+              if (attributes) {
+                rawItem.itemAttributesAsCharacter = attributes;
+                delete rawItem.actorProfileName;
+              } else delete rawItem.itemAttributesAsCharacter;
+            }}
           />
           {effectiveItem.actorProfileName !== undefined ? (
             <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
@@ -220,6 +301,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                         path='price'
                         initialValue={effectiveItem.price ?? '<无内容>'}
                         valueType='number'
+                        deleteOnEmpty
                         isSingleLine
                       />
                     </span>
@@ -234,6 +316,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                           <ed.span
                             path='unlocktime'
                             initialValue={effectiveItem.unlocktime ?? '<无内容>'}
+                            deleteOnEmpty
                             isSingleLine
                           />
                         </span>
@@ -247,6 +330,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                         path='storeCD'
                         initialValue={effectiveItem.storeCD ?? '<无内容>'}
                         valueType='number'
+                        deleteOnEmpty
                         isSingleLine
                       />
                     </span>

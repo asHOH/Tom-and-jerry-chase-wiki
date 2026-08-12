@@ -136,6 +136,30 @@ export default function SpecialSkillDetailClient({
         </DetailTextSection>
       ),
     },
+    ...(isEditMode || effectiveSkill.adviceDescription !== undefined
+      ? [
+          {
+            key: 'advice',
+            content: (
+              <DetailTextSection
+                title='使用建议'
+                value={effectiveSkill.adviceDescription}
+                detailedValue={null}
+                isDetailedView={isDetailedView}
+                renderValue={
+                  isEditMode ? (
+                    <ed.span
+                      path='adviceDescription'
+                      initialValue={effectiveSkill.adviceDescription ?? '<无内容>'}
+                      deleteOnEmpty
+                    />
+                  ) : undefined
+                }
+              />
+            ),
+          },
+        ]
+      : []),
     {
       title: getCharacterSectionTitle(),
       content: (

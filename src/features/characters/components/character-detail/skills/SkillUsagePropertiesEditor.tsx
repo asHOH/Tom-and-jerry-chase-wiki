@@ -14,8 +14,6 @@ import {
 } from '@/features/characters/utils/skills';
 import { editable } from '@/components/ui/editable';
 
-const e = editable('characters');
-
 const cancelableOptions = [
   '道具键',
   '道具键*',
@@ -31,7 +29,8 @@ type SkillUsagePropertiesEditorProps = {
   usageRef: SkillUsageProperties;
   pathPrefix: string;
   radioNameSuffix: string;
-  factionId: FactionId;
+  factionId?: FactionId | undefined;
+  scope?: 'characters' | 'entities';
 };
 
 type BooleanProperty = 'canMoveWhileUsing' | 'canUseInAir' | 'canHitInPipe' | 'causesWoundedState';
@@ -72,9 +71,12 @@ function CancelableEditor({
   usageRef,
   pathPrefix,
   phase,
+  scope,
 }: Pick<SkillUsagePropertiesEditorProps, 'usage' | 'usageRef' | 'pathPrefix'> & {
   phase: 'forecast' | 'aftercast';
+  scope: 'characters' | 'entities';
 }) {
+  const e = scope === 'characters' ? editable('characters') : editable('entities');
   const isForecast = phase === 'forecast';
   const cancelProperty = isForecast ? 'cancelableSkill' : 'cancelableAftercast';
   const value = usage[phase];
@@ -237,6 +239,7 @@ export default function SkillUsagePropertiesEditor({
   pathPrefix,
   radioNameSuffix,
   factionId,
+  scope = 'characters',
 }: SkillUsagePropertiesEditorProps) {
   return (
     <div className='space-y-2'>
@@ -271,12 +274,14 @@ export default function SkillUsagePropertiesEditor({
         usageRef={usageRef}
         pathPrefix={pathPrefix}
         phase='forecast'
+        scope={scope}
       />
       <CancelableEditor
         usage={usage}
         usageRef={usageRef}
         pathPrefix={pathPrefix}
         phase='aftercast'
+        scope={scope}
       />
       <BooleanCheckbox
         usage={usage}

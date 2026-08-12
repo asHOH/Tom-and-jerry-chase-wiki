@@ -11,6 +11,7 @@ import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
 import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';
 import DetailTextSection from '@/features/shared/detail-view/DetailTextSection';
 import DetailTraitsCard from '@/features/shared/detail-view/DetailTraitsCard';
+import SingleItemListEditor from '@/features/shared/detail-view/SingleItemListEditor';
 import AccordionCard from '@/components/ui/AccordionCard';
 import { editable } from '@/components/ui/editable';
 import SingleItemButton from '@/components/ui/SingleItemButton';
@@ -52,6 +53,7 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
                     ? String(effectiveBuff.detailedDescription ?? effectiveBuff.description ?? '')
                     : String(effectiveBuff.description ?? '')
                 }
+                deleteOnEmpty
               />
             ) : undefined
           }
@@ -65,7 +67,7 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
     },
   ];
 
-  if (effectiveBuff.stack !== undefined) {
+  if (isEditMode || effectiveBuff.stack !== undefined) {
     sections.push({
       key: 'stack',
       content: (
@@ -83,6 +85,7 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
                     ? String(effectiveBuff.detailedStack ?? effectiveBuff.stack ?? '')
                     : String(effectiveBuff.stack ?? '')
                 }
+                deleteOnEmpty
               />
             ) : undefined
           }
@@ -91,7 +94,40 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
     });
   }
 
-  if (effectiveBuff.source) {
+  if (isEditMode) {
+    const sourceItems = effectiveBuff.source ?? [];
+
+    sections.push({
+      key: 'source',
+      content: (
+        <DetailTextSection
+          title={`具体来源（${sourceItems.length}个）`}
+          sectionId='Section:具体来源'
+          value={effectiveBuff.sourceDescription ?? ''}
+          fallbackText=''
+          detailedValue={null}
+          isDetailedView={isDetailedView}
+          renderValue={
+            <ed.span
+              path='sourceDescription'
+              initialValue={effectiveBuff.sourceDescription ?? '<无内容>'}
+              deleteOnEmpty
+            />
+          }
+        >
+          <SingleItemListEditor
+            items={sourceItems}
+            itemLabel='状态来源'
+            onChange={(items) => {
+              if (!rawLocalBuff) return;
+              if (items.length > 0) rawLocalBuff.source = items;
+              else delete rawLocalBuff.source;
+            }}
+          />
+        </DetailTextSection>
+      ),
+    });
+  } else if (effectiveBuff.source) {
     const sourceItems = effectiveBuff.source;
 
     sections.push({
@@ -169,6 +205,7 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
               <ed.span
                 path='sourceDescription'
                 initialValue={String(effectiveBuff.sourceDescription ?? '')}
+                deleteOnEmpty
               />
             ) : undefined
           }

@@ -43,7 +43,7 @@ export default function ModeDetailClient({
   if (!effectiveMode) return null;
 
   const sections: DetailSection[] = [
-    ...(effectiveMode.description !== undefined
+    ...(isEditMode || effectiveMode.description !== undefined
       ? [
           {
             key: 'description',

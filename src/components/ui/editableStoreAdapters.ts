@@ -25,7 +25,7 @@ type EditableRecordScope = Exclude<EditableScope, 'characters' | 'cards'>;
 
 type EditableStoreAdapter = {
   readStoredValue: () => string | number | undefined;
-  writeValue: (value: string | number) => void;
+  writeValue: (value: string | number | undefined) => void;
 };
 
 type EditableWriteTarget = {
@@ -197,7 +197,7 @@ function writeNestedTargetValue(
   scope: EditableScope,
   target: EditableWriteTarget,
   path: string,
-  value: string | number
+  value: string | number | undefined
 ) {
   assertEditableTargetLoaded(scope, target, path);
   setNestedProperty(target.root, `${target.pathPrefix}.${path}`, value);
@@ -222,7 +222,7 @@ export function useEditableCharactersAdapter(
   );
 
   const writeValue = useCallback(
-    (value: string | number) => {
+    (value: string | number | undefined) => {
       assertEditableTargetLoaded('characters', target, path);
 
       if (path === 'id') {
@@ -274,7 +274,7 @@ export function useEditableCardsAdapter(path: string): EditableStoreAdapter {
   );
 
   const writeValue = useCallback(
-    (value: string | number) => {
+    (value: string | number | undefined) => {
       assertEditableTargetLoaded('cards', target, path);
 
       // Knowledge card `id` is also the record key and route segment; avoid accidental breakage.
@@ -339,7 +339,7 @@ export function useEditableRecordAdapter(
   );
 
   const writeValue = useCallback(
-    (value: string | number) => {
+    (value: string | number | undefined) => {
       // Avoid breaking route segment keys (these entities are keyed by name/skillId).
       if (path === 'name' || path === 'id') {
         throw new Error(`Editing ${path} is not supported for ${scope} in local edit mode.`);

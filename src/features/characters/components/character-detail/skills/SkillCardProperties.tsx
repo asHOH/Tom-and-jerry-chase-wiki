@@ -95,11 +95,11 @@ export default function SkillCardProperties({
     localCharacter.skills[skillIndex]!;
 
   const getCooldownProperty = (): React.ReactNode => {
-    if (!skill.skillLevels.some((level: SkillLevel) => level.cooldown)) return null;
+    if (!isEditMode && !skill.skillLevels.some((level: SkillLevel) => level.cooldown)) return null;
 
-    const cooldowns = skill.skillLevels.map((level: SkillLevel) => level.cooldown || '-');
+    const cooldowns = skill.skillLevels.map((level: SkillLevel) => level.cooldown);
     const uniqueCooldowns = uniq(cooldowns);
-    if (uniqueCooldowns.length === 1 && uniqueCooldowns[0] !== '-' && !isEditMode) {
+    if (uniqueCooldowns.length === 1 && uniqueCooldowns[0] !== undefined && !isEditMode) {
       return `CD: ${uniqueCooldowns[0]} 秒`;
     }
 
@@ -111,8 +111,10 @@ export default function SkillCardProperties({
             {index !== 0 && '/'}
             <e.span
               path={`skills.${skillIndex}.skillLevels.${index}.cooldown`}
-              initialValue={cooldown}
+              initialValue={cooldown ?? (isEditMode ? '<无内容>' : '-')}
+              valueType='number'
               isSingleLine={true}
+              deleteOnEmpty
             />
           </React.Fragment>
         ))}{' '}
@@ -123,8 +125,9 @@ export default function SkillCardProperties({
 
   const getChargesProperty = (): React.ReactNode => {
     if (skill.type === 'passive') return null;
-    const charges = skill.skillLevels.map((level: SkillLevel) => level.charges || 1);
-    const uniqueCharges = uniq(charges);
+    const charges = skill.skillLevels.map((level: SkillLevel) => level.charges);
+    const displayCharges = charges.map((charge) => charge ?? 1);
+    const uniqueCharges = uniq(displayCharges);
     if (uniqueCharges.length === 1 && !isEditMode) {
       if (uniqueCharges[0] === 1) return null;
       return `技能存储次数: ${uniqueCharges[0]}`;
@@ -138,8 +141,10 @@ export default function SkillCardProperties({
             {index !== 0 && '/'}
             <e.span
               path={`skills.${skillIndex}.skillLevels.${index}.charges`}
-              initialValue={charge}
+              initialValue={charge ?? (isEditMode ? '<无内容>' : 1)}
+              valueType='number'
               isSingleLine={true}
+              deleteOnEmpty
             />
           </React.Fragment>
         ))}
@@ -151,7 +156,7 @@ export default function SkillCardProperties({
     (property): property is React.ReactNode => property !== null
   );
 
-  if (isEditMode && skill.type !== 'passive') {
+  if (isEditMode) {
     commonProperties.push(
       <div key='aliases' className='flex text-xs text-gray-400 dark:text-gray-500'>
         别名：

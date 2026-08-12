@@ -8,18 +8,37 @@ import { useLocalFixture } from '@/hooks/useLocalEditEntity';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
-import { Fixture } from '@/data/types';
+import { maps } from '@/data/static';
+import { Fixture, FixtureSourceList, FixtureTypeList } from '@/data/types';
 import ActorAttributesSection from '@/features/actor-profiles/components/ActorAttributesSection';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
+import ActorProfileSelect from '@/features/shared/detail-view/ActorProfileSelect';
 import AddAliasButton from '@/features/shared/detail-view/AddAliasButton';
 import AttributesCardLayout from '@/features/shared/detail-view/AttributesCardLayout';
 import CharacterLikeAttributesSection from '@/features/shared/detail-view/CharacterLikeAttributesSection';
+import EditableCheckboxGroup from '@/features/shared/detail-view/EditableCheckboxGroup';
+import EditableStringList from '@/features/shared/detail-view/EditableStringList';
 import PhysicalAttributesSection from '@/features/shared/detail-view/PhysicalAttributesSection';
 import { editable } from '@/components/ui/editable';
+import { FormSelect } from '@/components/ui/FormControls';
 import NavigationButtonsRow from '@/components/ui/NavigationButtonsRow';
 import SingleItemAccordionCard from '@/components/ui/SingleItemAccordionCard';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import Tag from '@/components/ui/Tag';
+
+const FIXTURE_TYPES: readonly FixtureTypeList[] = [
+  '平台类',
+  '地面类',
+  '墙壁类',
+  '组件类',
+  '流程类',
+  'NPC',
+  '可交互',
+];
+const FIXTURE_SOURCES: readonly FixtureSourceList[] = ['通用组件', '地图组件', '模式组件'];
+
+const toFixtureTypeArray = (type: Fixture['type']): FixtureTypeList[] =>
+  typeof type === 'string' ? [type] : [...type];
 
 export default function FixtureAttributesCard({ fixture }: { fixture: Fixture }) {
   const [isDarkMode] = useDarkMode();
@@ -31,6 +50,7 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
   const editRuntime = useDraftDataRuntime();
   const rawFixture = editRuntime?.stores.fixtures[fixtureName];
   const fixtureSnapshot = useOptionalEditSnapshot(rawFixture, fixture);
+  const mapsSnapshot = useOptionalEditSnapshot(editRuntime?.stores.maps, maps);
   const usesDraftData = isEditModeRequested && runtimeStatus === 'ready';
   const effectiveFixture = (usesDraftData && rawFixture ? fixtureSnapshot : fixture) as Fixture;
 
@@ -117,33 +137,89 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
         <>
           <div className='flex flex-wrap items-center gap-1 text-sm font-normal'>
             <span className='text-sm whitespace-pre'>类型: </span>
-            {putTypeTagOn(effectiveFixture)}
-            {effectiveFixture.source && (
+            {isEditMode ? (
+              <EditableCheckboxGroup
+                options={FIXTURE_TYPES}
+                selected={toFixtureTypeArray(effectiveFixture.type)}
+                minimumSelections={1}
+                ariaLabelPrefix='地图组件类型'
+                onChange={(types) => {
+                  if (!rawFixture || types.length === 0) return;
+                  rawFixture.type = types.length === 1 ? types[0]! : types;
+                }}
+              />
+            ) : (
+              putTypeTagOn(effectiveFixture)
+            )}
+            {isEditMode ? (
+              <FormSelect
+                size='sm'
+                fullWidth={false}
+                value={effectiveFixture.source}
+                aria-label='地图组件来源'
+                onChange={(event) => {
+                  if (rawFixture) {
+                    rawFixture.source = event.target.value as FixtureSourceList;
+                  }
+                }}
+              >
+                {FIXTURE_SOURCES.map((source) => (
+                  <option key={source} value={source}>
+                    {source}
+                  </option>
+                ))}
+              </FormSelect>
+            ) : effectiveFixture.source ? (
               <Tag
                 size='sm'
                 margin='compact'
                 colorStyles={getFixtureSourceColors(effectiveFixture.source, isDarkMode)}
               >
-                <ed.span
-                  path='source'
-                  initialValue={effectiveFixture.source ?? '<无内容>'}
-                  isSingleLine
-                />
+                {effectiveFixture.source}
               </Tag>
-            )}
+            ) : null}
           </div>
-          {isEditMode && !effectiveFixture.source && (
-            <div className='flex flex-wrap items-center gap-1 text-sm font-normal'>
-              <span className='text-sm whitespace-pre'>来源: </span>
-              <span className='text-indigo-700 dark:text-indigo-400'>
-                <ed.span path='source' initialValue={'<无内容>'} isSingleLine />
-              </span>
+          {isEditMode ? (
+            <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
+              <span className='text-lg font-bold whitespace-pre'>支持地图</span>
+              <EditableStringList
+                values={effectiveFixture.supportedMaps ?? []}
+                options={Object.keys(mapsSnapshot)}
+                itemLabel='支持地图'
+                onChange={(supportedMaps) => {
+                  if (!rawFixture) return;
+                  if (supportedMaps.length > 0) rawFixture.supportedMaps = supportedMaps;
+                  else delete rawFixture.supportedMaps;
+                }}
+              />
             </div>
-          )}
+          ) : null}
+          {isEditMode ? (
+            <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
+              <ActorProfileSelect
+                value={effectiveFixture.actorProfileName}
+                onChange={(profileName) => {
+                  if (!rawFixture) return;
+                  if (profileName) {
+                    rawFixture.actorProfileName = profileName;
+                    delete rawFixture.fixtureAttributesAsCharacter;
+                  } else delete rawFixture.actorProfileName;
+                }}
+              />
+            </div>
+          ) : null}
           <CharacterLikeAttributesSection
             attributes={effectiveFixture.fixtureAttributesAsCharacter}
             intro='该物件特性与'
             isDetailed={isDetailed}
+            isEditMode={isEditMode}
+            onChange={(attributes) => {
+              if (!rawFixture) return;
+              if (attributes) {
+                rawFixture.fixtureAttributesAsCharacter = attributes;
+                delete rawFixture.actorProfileName;
+              } else delete rawFixture.fixtureAttributesAsCharacter;
+            }}
           />
           {effectiveFixture.actorProfileName !== undefined ? (
             <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>

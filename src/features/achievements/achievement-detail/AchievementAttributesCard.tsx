@@ -88,7 +88,17 @@ export default function AchievementAttributesCard({ achievement }: { achievement
       }
       attributes={
         <>
-          <div className='text-sm font-normal'>成就分: {effectiveAchievement.score}</div>
+          <div className='text-sm font-normal'>
+            成就分:{' '}
+            <span className='text-indigo-700 dark:text-indigo-400'>
+              <ed.span
+                path='score'
+                initialValue={effectiveAchievement.score}
+                valueType='number'
+                isSingleLine
+              />
+            </span>
+          </div>
           <div className='flex flex-wrap items-center gap-1 text-sm font-normal'>
             <span className='text-sm whitespace-pre'>阵营: </span>
             <Tag

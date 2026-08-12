@@ -16,6 +16,8 @@ import DetailShell, { DetailSection } from '@/features/shared/detail-view/Detail
 import DetailTextSection from '@/features/shared/detail-view/DetailTextSection';
 import DetailTraitsCard from '@/features/shared/detail-view/DetailTraitsCard';
 import { editable } from '@/components/ui/editable';
+import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
+import { PlusIcon } from '@/components/icons/CommonIcons';
 
 import EntityAttributesCard from './EntityAttributesCard';
 import EntitySkillCard from './EntitySkillCard';
@@ -92,19 +94,39 @@ export default function EntityDetailClient({ entity }: { entity: Entity }) {
     },
   ];
 
-  if (effectiveEntity.skills !== undefined) {
+  if (isEditMode || effectiveEntity.skills !== undefined) {
     sections.push({
       title: '衍生物技能',
       content: (
         <div className='space-y-4'>
-          {effectiveEntity.skills
+          {(effectiveEntity.skills ?? [])
             .map((skill) => {
               const R: Skill & { cooldown?: number } = { ...skill, id: skill.type };
               return R;
             })
             .map<React.ReactNode>((skill: DeepReadonly<Skill & { cooldown?: number }>, index) => (
-              <EntitySkillCard key={skill.id} skill={skill} skillIndex={index} />
+              <EntitySkillCard key={`${skill.id}-${index}`} skill={skill} skillIndex={index} />
             ))}
+          {isEditMode ? (
+            <IconButton
+              type='button'
+              aria-label='添加衍生物技能'
+              variant='add'
+              size='md'
+              onClick={() => {
+                if (!rawLocalEntity) return;
+                rawLocalEntity.skills ??= [];
+                rawLocalEntity.skills.push({
+                  name: '新技能',
+                  type: 'active',
+                  description: '',
+                  skillLevels: [],
+                });
+              }}
+            >
+              <PlusIcon className={getIconButtonIconClassName('md')} aria-hidden='true' />
+            </IconButton>
+          ) : null}
         </div>
       ),
     });

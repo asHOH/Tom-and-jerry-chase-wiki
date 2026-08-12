@@ -7,17 +7,24 @@ import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useLocalMap } from '@/hooks/useLocalEditEntity';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
-import { Map, SingleItem } from '@/data/types';
+import { Map, MapSize, mapTypes, SingleItem, studyLevel } from '@/data/types';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
 import AddAliasButton from '@/features/shared/detail-view/AddAliasButton';
 import AttributesCardLayout from '@/features/shared/detail-view/AttributesCardLayout';
 import { editable } from '@/components/ui/editable';
+import { FormSelect } from '@/components/ui/FormControls';
+import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import NavigationButtonsRow from '@/components/ui/NavigationButtonsRow';
 import SingleItemAccordionCard from '@/components/ui/SingleItemAccordionCard';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import Tag from '@/components/ui/Tag';
 import Tooltip from '@/components/ui/Tooltip';
+import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
+
+const MAP_TYPES: readonly mapTypes[] = ['常规地图', '娱乐地图', '广场地图'];
+const MAP_SIZES: readonly MapSize[] = ['微型', '小型', '中型', '大型'];
+const STUDY_LEVELS: readonly studyLevel[] = ['见习学业', '高级学业', '特级学业', '大师学业'];
 
 export default function MapAttributesCard({
   map,
@@ -101,7 +108,24 @@ export default function MapAttributesCard({
               margin='compact'
               colorStyles={getMapTypeColors(effectiveMap.type, isDarkMode)}
             >
-              <ed.span path='type' initialValue={effectiveMap.type ?? '<无内容>'} isSingleLine />
+              {isEditMode ? (
+                <select
+                  aria-label='地图类型'
+                  value={effectiveMap.type}
+                  onChange={(event) => {
+                    if (rawMap) rawMap.type = event.target.value as mapTypes;
+                  }}
+                  className='font-inherit cursor-pointer border-none bg-transparent text-inherit outline-none'
+                >
+                  {MAP_TYPES.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                effectiveMap.type
+              )}
             </Tag>
             {!isEditMode && effectiveMap.size && (
               <Tag
@@ -128,21 +152,49 @@ export default function MapAttributesCard({
               <span className='text-sm whitespace-pre'>
                 规模：
                 <span className='text-indigo-700 dark:text-indigo-400'>
-                  <ed.span
-                    path='size'
-                    initialValue={effectiveMap.size ?? '<无内容>'}
-                    isSingleLine
-                  />
+                  <FormSelect
+                    size='sm'
+                    fullWidth={false}
+                    value={effectiveMap.size ?? ''}
+                    aria-label='地图规模'
+                    onChange={(event) => {
+                      if (!rawMap) return;
+                      const size = event.target.value;
+                      if (size) rawMap.size = size as MapSize;
+                      else delete rawMap.size;
+                    }}
+                  >
+                    <option value=''>未设置</option>
+                    {MAP_SIZES.map((size) => (
+                      <option key={size} value={size}>
+                        {size}
+                      </option>
+                    ))}
+                  </FormSelect>
                 </span>
               </span>
               <span className='text-sm whitespace-pre'>
                 学业等级：
                 <span className='text-indigo-700 dark:text-indigo-400'>
-                  <ed.span
-                    path='studyLevelUnlock'
-                    initialValue={effectiveMap.studyLevelUnlock ?? '<无内容>'}
-                    isSingleLine
-                  />
+                  <FormSelect
+                    size='sm'
+                    fullWidth={false}
+                    value={effectiveMap.studyLevelUnlock ?? ''}
+                    aria-label='地图解锁学业等级'
+                    onChange={(event) => {
+                      if (!rawMap) return;
+                      const level = event.target.value;
+                      if (level) rawMap.studyLevelUnlock = level as studyLevel;
+                      else delete rawMap.studyLevelUnlock;
+                    }}
+                  >
+                    <option value=''>未设置</option>
+                    {STUDY_LEVELS.map((level) => (
+                      <option key={level} value={level}>
+                        {level}
+                      </option>
+                    ))}
+                  </FormSelect>
                 </span>
               </span>
             </div>
@@ -166,6 +218,7 @@ export default function MapAttributesCard({
                       path='roomCount'
                       initialValue={effectiveMap.roomCount ?? '<无内容>'}
                       valueType='number'
+                      deleteOnEmpty
                       isSingleLine
                     />
                   </span>
@@ -186,6 +239,7 @@ export default function MapAttributesCard({
                       path='pipeCount'
                       initialValue={effectiveMap.pipeCount ?? '<无内容>'}
                       valueType='number'
+                      deleteOnEmpty
                       isSingleLine
                     />
                   </span>
@@ -206,6 +260,7 @@ export default function MapAttributesCard({
                       path='doorCount'
                       initialValue={effectiveMap.doorCount ?? '<无内容>'}
                       valueType='number'
+                      deleteOnEmpty
                       isSingleLine
                     />
                   </span>
@@ -222,6 +277,7 @@ export default function MapAttributesCard({
                       path='hiddenRoomCount'
                       initialValue={effectiveMap.hiddenRoomCount ?? '<无内容>'}
                       valueType='number'
+                      deleteOnEmpty
                       isSingleLine
                     />{' '}
                   </span>
@@ -338,11 +394,11 @@ export default function MapAttributesCard({
             </div>
           )}
 
-          {map.mapSkin && map.mapSkin.length > 0 && (
+          {(isEditMode || (effectiveMap.mapSkin && effectiveMap.mapSkin.length > 0)) && (
             <div className='border-t border-gray-300 py-1 dark:border-gray-600'>
               <span className='text-lg font-bold whitespace-pre'>地图换肤</span>
               <div className='mt-1 flex flex-col gap-2'>
-                {map.mapSkin.map((singleMapSkin, index) => {
+                {(effectiveMap.mapSkin ?? []).map((singleMapSkin, index) => {
                   return (
                     <div
                       key={index}
@@ -361,16 +417,74 @@ export default function MapAttributesCard({
                         </div>
                         <div className='flex flex-col'>
                           <span className='text-base font-bold dark:text-white'>
-                            {singleMapSkin.name}
+                            <ed.span
+                              path={`mapSkin.${index}.name`}
+                              initialValue={singleMapSkin.name}
+                              isSingleLine
+                            />
                           </span>
                           <span className='mt-1 text-xs wrap-break-word whitespace-pre-wrap text-gray-500 dark:text-gray-300'>
-                            {singleMapSkin.description}
+                            <ed.span
+                              path={`mapSkin.${index}.description`}
+                              initialValue={singleMapSkin.description}
+                            />
                           </span>
+                          {isEditMode ? (
+                            <span className='mt-1 text-xs text-gray-500 dark:text-gray-300'>
+                              图片:{' '}
+                              <ed.span
+                                path={`mapSkin.${index}.imageUrl`}
+                                initialValue={singleMapSkin.imageUrl}
+                                isSingleLine
+                              />
+                            </span>
+                          ) : null}
                         </div>
+                        {isEditMode ? (
+                          <IconButton
+                            type='button'
+                            aria-label={`删除地图换肤${index + 1}`}
+                            variant='delete'
+                            size='sm'
+                            className='ml-auto'
+                            onClick={() => {
+                              if (!rawMap?.mapSkin) return;
+                              const next = rawMap.mapSkin.filter(
+                                (_, skinIndex) => skinIndex !== index
+                              );
+                              if (next.length > 0) rawMap.mapSkin = next;
+                              else delete rawMap.mapSkin;
+                            }}
+                          >
+                            <TrashIcon
+                              className={getIconButtonIconClassName('sm')}
+                              aria-hidden='true'
+                            />
+                          </IconButton>
+                        ) : null}
                       </div>
                     </div>
                   );
                 })}
+                {isEditMode ? (
+                  <IconButton
+                    type='button'
+                    aria-label='添加地图换肤'
+                    variant='add'
+                    size='sm'
+                    onClick={() => {
+                      if (!rawMap) return;
+                      if (!rawMap.mapSkin) rawMap.mapSkin = [];
+                      rawMap.mapSkin.push({
+                        name: '新换肤',
+                        imageUrl: effectiveMap.imageUrl,
+                        description: '请填写换肤介绍',
+                      });
+                    }}
+                  >
+                    <PlusIcon className={getIconButtonIconClassName('sm')} aria-hidden='true' />
+                  </IconButton>
+                ) : null}
               </div>
             </div>
           )}

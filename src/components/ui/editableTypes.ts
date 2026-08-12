@@ -36,6 +36,7 @@ export type EditableFieldProps<TagName extends IntrinsicTagName> = Omit<
   path: EditableCharactersPath | EditableCardsPath | (string & {});
   initialValue: string | number;
   valueType?: 'string' | 'number' | undefined;
+  deleteOnEmpty?: boolean | undefined;
   onSave?: ((newValue: string) => void) | undefined;
   factionId?: string | undefined;
   isSingleLine?: boolean;

@@ -8,7 +8,7 @@ import { useLocalMode } from '@/hooks/useLocalEditEntity';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { maps } from '@/data/static';
-import { Mode, SingleItem } from '@/data/types';
+import { Mode, ModeTypeList, SingleItem } from '@/data/types';
 import SingleItemWikiHistoryDisplay from '@/features/shared/components/SingleItemWikiHistoryDisplay';
 import AddAliasButton from '@/features/shared/detail-view/AddAliasButton';
 import AttributesCardLayout from '@/features/shared/detail-view/AttributesCardLayout';
@@ -17,6 +17,8 @@ import NavigationButtonsRow from '@/components/ui/NavigationButtonsRow';
 import SingleItemAccordionCard from '@/components/ui/SingleItemAccordionCard';
 import SpecifyTypeNavigationButtons from '@/components/ui/SpecifyTypeNavigationButtons';
 import Tag from '@/components/ui/Tag';
+
+const MODE_TYPES: readonly ModeTypeList[] = ['经典模式', '休闲模式', '特殊模式'];
 
 export default function ModeAttributesCard({
   mode,
@@ -38,7 +40,24 @@ export default function ModeAttributesCard({
   function putTypeTagOn(mode: Mode) {
     return (
       <Tag size='xs' margin='compact' colorStyles={getModeTypeColors(mode.type, isDarkMode)}>
-        <ed.span path='type' initialValue={mode.type ?? '<无内容>'} isSingleLine />
+        {isEditMode ? (
+          <select
+            aria-label='游戏模式类型'
+            value={mode.type}
+            onChange={(event) => {
+              if (rawMode) rawMode.type = event.target.value as ModeTypeList;
+            }}
+            className='font-inherit cursor-pointer border-none bg-transparent text-inherit outline-none'
+          >
+            {MODE_TYPES.map((type) => (
+              <option key={type} value={type}>
+                {type}
+              </option>
+            ))}
+          </select>
+        ) : (
+          mode.type
+        )}
       </Tag>
     );
   }
@@ -104,7 +123,11 @@ export default function ModeAttributesCard({
               <span className='text-sm whitespace-pre'>
                 开放时间：
                 <span className='text-indigo-700 dark:text-indigo-400'>
-                  <ed.span path='openingTime' initialValue={mode.openingTime ?? '<无内容>'} />
+                  <ed.span
+                    path='openingTime'
+                    initialValue={mode.openingTime ?? '<无内容>'}
+                    deleteOnEmpty
+                  />
                 </span>
               </span>
             </div>
@@ -114,7 +137,7 @@ export default function ModeAttributesCard({
               <span className='text-sm whitespace-pre'>
                 赛制：
                 <span className='text-indigo-700 dark:text-indigo-400'>
-                  <ed.span path='format' initialValue={mode.format ?? '<无内容>'} />
+                  <ed.span path='format' initialValue={mode.format ?? '<无内容>'} deleteOnEmpty />
                 </span>
               </span>
             </div>

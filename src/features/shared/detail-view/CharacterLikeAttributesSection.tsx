@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 
 import { getTooltipContent } from '@/lib/tooltipUtils';
 import type { FactionId, ItemAttributesAsCharacter } from '@/data/types';
+import { FormInput, FormSelect } from '@/components/ui/FormControls';
 import Tooltip from '@/components/ui/Tooltip';
 
 import AttributeSection from './AttributeSection';
@@ -26,6 +27,8 @@ type CharacterLikeAttributesSectionProps = {
   attributes: ItemAttributesAsCharacter | undefined;
   intro: string;
   isDetailed: boolean;
+  isEditMode?: boolean;
+  onChange?: ((attributes: ItemAttributesAsCharacter | undefined) => void) | undefined;
   renderValue?:
     ((field: CharacterLikeAttributeField, value: number | string) => ReactNode) | undefined;
 };
@@ -72,15 +75,151 @@ export default function CharacterLikeAttributesSection({
   attributes,
   intro,
   isDetailed,
+  isEditMode = false,
+  onChange,
   renderValue,
 }: CharacterLikeAttributesSectionProps) {
-  if (attributes === undefined) return null;
+  if (attributes === undefined && !isEditMode) return null;
+
+  const updateAttributes = (update: (next: ItemAttributesAsCharacter) => void) => {
+    if (!onChange) return;
+    const next: ItemAttributesAsCharacter = attributes
+      ? { ...attributes }
+      : { type: 'special', factionBelong: 'other' };
+    update(next);
+    onChange(next);
+  };
+
+  const updateOptionalAttribute = (field: CharacterLikeAttributeField, rawValue: string) => {
+    updateAttributes((next) => {
+      const mutable = next as ItemAttributesAsCharacter & Record<string, unknown>;
+      const trimmed = rawValue.trim();
+      if (trimmed === '') {
+        delete mutable[field];
+        return;
+      }
+
+      const value = Number(trimmed);
+      if (!Number.isNaN(value)) {
+        mutable[field] = value;
+      }
+    });
+  };
+
+  if (isEditMode) {
+    return (
+      <AttributeSection title='角色类属性'>
+        <label className='mt-1 flex cursor-pointer items-center gap-1 text-xs'>
+          <input
+            type='checkbox'
+            checked={attributes !== undefined}
+            onChange={(event) => {
+              if (!onChange) return;
+              onChange(
+                event.target.checked ? { type: 'special', factionBelong: 'other' } : undefined
+              );
+            }}
+            className='h-3 w-3'
+          />
+          <span className='font-bold'>启用角色类属性</span>
+        </label>
+        {attributes ? (
+          <div className='mt-2 space-y-2'>
+            <div className='grid gap-2 sm:grid-cols-2'>
+              <label className='text-xs'>
+                角色类型
+                <FormSelect
+                  size='sm'
+                  className='mt-1'
+                  value={attributes.type}
+                  onChange={(event) =>
+                    updateAttributes((next) => {
+                      next.type = event.target.value as ItemAttributesAsCharacter['type'];
+                    })
+                  }
+                >
+                  <option value='cat'>猫角色</option>
+                  <option value='mouse'>鼠角色</option>
+                  <option value='special'>特殊角色</option>
+                </FormSelect>
+              </label>
+              <label className='text-xs'>
+                阵营归属
+                <FormSelect
+                  size='sm'
+                  className='mt-1'
+                  value={attributes.factionBelong}
+                  onChange={(event) =>
+                    updateAttributes((next) => {
+                      next.factionBelong = event.target
+                        .value as ItemAttributesAsCharacter['factionBelong'];
+                    })
+                  }
+                >
+                  <option value='cat'>猫阵营</option>
+                  <option value='mouse'>鼠阵营</option>
+                  <option value='other'>第三阵营</option>
+                </FormSelect>
+              </label>
+            </div>
+            <div className='grid gap-2 sm:grid-cols-2'>
+              {ATTRIBUTE_ROWS.map(({ field, title }) => (
+                <label className='text-xs' key={field}>
+                  <Tooltip
+                    content={getTooltipContent(
+                      title,
+                      attributes.type === 'cat' ? 'cat' : 'mouse',
+                      isDetailed
+                    )}
+                  >
+                    {title}
+                  </Tooltip>
+                  <FormInput
+                    size='sm'
+                    className='mt-1'
+                    type='number'
+                    step='any'
+                    disabled={field === 'maxHp' && attributes.maxHp === '一击即溃'}
+                    value={
+                      field === 'maxHp' && attributes.maxHp === '一击即溃'
+                        ? ''
+                        : (attributes[field] ?? '')
+                    }
+                    placeholder='未设置'
+                    onChange={(event) => updateOptionalAttribute(field, event.target.value)}
+                  />
+                  {field === 'maxHp' ? (
+                    <label className='mt-1 flex cursor-pointer items-center gap-1'>
+                      <input
+                        type='checkbox'
+                        checked={attributes.maxHp === '一击即溃'}
+                        onChange={(event) =>
+                          updateAttributes((next) => {
+                            if (event.target.checked) next.maxHp = '一击即溃';
+                            else delete next.maxHp;
+                          })
+                        }
+                        className='h-3 w-3'
+                      />
+                      <span>一击即溃</span>
+                    </label>
+                  ) : null}
+                </label>
+              ))}
+            </div>
+          </div>
+        ) : null}
+      </AttributeSection>
+    );
+  }
 
   const rows: CharacterLikeAttributeRow[] = ATTRIBUTE_ROWS.flatMap(({ field, title }) => {
-    const value = attributes[field];
+    const value = attributes?.[field];
     return value === undefined ? [] : [{ field, title, value }];
   });
-  const tooltipFaction: FactionId = attributes.type === 'cat' ? 'cat' : 'mouse';
+  const tooltipFaction: FactionId = attributes?.type === 'cat' ? 'cat' : 'mouse';
+
+  if (!attributes) return null;
 
   return (
     <AttributeSection>

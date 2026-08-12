@@ -230,14 +230,23 @@ function filterAutocompleteCandidates(
 function useInlineEditableContent(opts: {
   initialValue: string | number;
   valueType: 'string' | 'number';
+  deleteOnEmpty: boolean;
   isSingleLine: boolean;
   onSave?: ((newValue: string) => void) | undefined;
   enableEdit: boolean;
   readStoredValue: () => string | number | undefined;
-  writeValue: (value: string | number) => void;
+  writeValue: (value: string | number | undefined) => void;
 }) {
-  const { initialValue, valueType, isSingleLine, onSave, enableEdit, readStoredValue, writeValue } =
-    opts;
+  const {
+    initialValue,
+    valueType,
+    deleteOnEmpty,
+    isSingleLine,
+    onSave,
+    enableEdit,
+    readStoredValue,
+    writeValue,
+  } = opts;
 
   const { isEditMode } = useEditMode();
   const [content, setContent] = useState<string | number>(initialValue);
@@ -482,9 +491,14 @@ function useInlineEditableContent(opts: {
     const newContentStr = currentText === EMPTY_EDITABLE_PLACEHOLDER ? '' : currentText;
 
     const trimmed = newContentStr.trim();
-    const finalValue: string | number = valueType === 'number' ? parseFloat(trimmed) : trimmed;
+    const finalValue: string | number | undefined =
+      deleteOnEmpty && trimmed === ''
+        ? undefined
+        : valueType === 'number'
+          ? parseFloat(trimmed)
+          : trimmed;
 
-    if (valueType === 'number') {
+    if (valueType === 'number' && finalValue !== undefined) {
       if (typeof finalValue !== 'number' || Number.isNaN(finalValue)) {
         contentRef.current.textContent = String(content) || EMPTY_EDITABLE_PLACEHOLDER;
         return;
@@ -497,13 +511,13 @@ function useInlineEditableContent(opts: {
       } else {
         writeValue(finalValue);
       }
-      setContent(finalValue);
+      setContent(finalValue ?? '');
     } catch (error) {
       console.error('Failed to save editable value:', error);
       contentRef.current.textContent = String(content) || EMPTY_EDITABLE_PLACEHOLDER;
     }
     closeAutocomplete();
-  }, [closeAutocomplete, content, onSave, valueType, writeValue]);
+  }, [closeAutocomplete, content, deleteOnEmpty, onSave, valueType, writeValue]);
 
   const handleInput = useCallback(() => {
     if (isImeComposing) {
@@ -693,6 +707,7 @@ export function EditableCharactersField<TagName extends IntrinsicTagName>({
   path,
   initialValue,
   valueType: valueTypeProp,
+  deleteOnEmpty = false,
   onSave,
   factionId,
   isSingleLine = false,
@@ -718,6 +733,7 @@ export function EditableCharactersField<TagName extends IntrinsicTagName>({
   } = useInlineEditableContent({
     initialValue,
     valueType,
+    deleteOnEmpty,
     isSingleLine,
     onSave,
     enableEdit,
@@ -761,6 +777,7 @@ export function EditableCardsField<TagName extends IntrinsicTagName>({
   path,
   initialValue,
   valueType: valueTypeProp,
+  deleteOnEmpty = false,
   onSave,
   isSingleLine = false,
   enableEdit = true,
@@ -785,6 +802,7 @@ export function EditableCardsField<TagName extends IntrinsicTagName>({
   } = useInlineEditableContent({
     initialValue,
     valueType,
+    deleteOnEmpty,
     isSingleLine,
     onSave,
     enableEdit,
@@ -828,6 +846,7 @@ export function EditableRecordField<TagName extends IntrinsicTagName>({
   path,
   initialValue,
   valueType: valueTypeProp,
+  deleteOnEmpty = false,
   onSave,
   isSingleLine = false,
   enableEdit = true,
@@ -857,6 +876,7 @@ export function EditableRecordField<TagName extends IntrinsicTagName>({
   } = useInlineEditableContent({
     initialValue,
     valueType,
+    deleteOnEmpty,
     isSingleLine,
     onSave,
     enableEdit,
