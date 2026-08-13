@@ -6,6 +6,10 @@ import { checkRateLimit } from '@/lib/rateLimit';
 
 import { GET, POST } from './route';
 
+jest.mock('@/constants/seo', () => ({
+  SITE_URL: 'https://www.tjwiki.com',
+}));
+
 jest.mock('@/lib/gameData/publicActionsCache', () => ({
   invalidatePublicGameDataActionsCache: jest.fn(),
 }));
@@ -152,6 +156,15 @@ describe('/api/game-data-actions/edit-baseline', () => {
     expect(response.headers.get('Cache-Control')).toBe('private, no-store');
     expect(mockCheckRateLimit).toHaveBeenCalledTimes(1);
     expect(mockInvalidatePublicGameDataActionsCache).toHaveBeenCalledTimes(1);
+  });
+
+  it('allows the configured public origin behind a reverse proxy', async () => {
+    const response = await POST(createRequest('https://www.tjwiki.com', 'https://localhost:3000'));
+
+    expect(response.status).toBe(200);
+    expect(mockCheckRateLimit).toHaveBeenCalledTimes(1);
+    expect(mockInvalidatePublicGameDataActionsCache).toHaveBeenCalledTimes(1);
+    expect(mockGetPublishedGameDataSnapshot).toHaveBeenCalledTimes(1);
   });
 
   it('uses the expensive endpoint bucket before refreshing a configured deployment', async () => {

@@ -3,12 +3,14 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { invalidatePublicGameDataActionsCache } from '@/lib/gameData/publicActionsCache';
 import { getPublishedGameDataSnapshot } from '@/lib/gameData/published/publishedSnapshot';
 import { checkRateLimit } from '@/lib/rateLimit';
+import { SITE_URL } from '@/constants/seo';
 
 export const dynamic = 'force-dynamic';
 
 const NO_STORE_HEADERS = {
   'Cache-Control': 'private, no-store',
 };
+const PUBLIC_SITE_ORIGIN = new URL(SITE_URL).origin;
 
 async function baselineResponse() {
   const snapshot = await getPublishedGameDataSnapshot();
@@ -42,7 +44,11 @@ export async function POST(request: NextRequest) {
   const origin = request.headers.get('origin');
 
   try {
-    if (!origin || new URL(origin).origin !== origin || origin !== request.nextUrl.origin) {
+    if (
+      !origin ||
+      new URL(origin).origin !== origin ||
+      (origin !== PUBLIC_SITE_ORIGIN && origin !== request.nextUrl.origin)
+    ) {
       return errorResponse('请求来源无效', 403);
     }
   } catch {
