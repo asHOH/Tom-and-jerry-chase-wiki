@@ -69,7 +69,10 @@ export default function SpecialSkillsSection() {
               const canEdit = isEditMode && !isGeneral;
               if (!specialSkill && !isEditMode) return null;
               return (
-                <li key={skill.name + '-' + index} className='bg-surface w-full rounded-md p-3'>
+                <li
+                  key={skill.name + '-' + index}
+                  className='bg-surface-sunken w-full rounded-md p-3'
+                >
                   <div className='flex items-start gap-3'>
                     {/* Left: Icon (clickable) */}
                     <Link
@@ -132,7 +135,7 @@ export default function SpecialSkillsSection() {
                         )}
                       </div>
 
-                      <div className='mt-1 text-sm break-words whitespace-pre-wrap text-gray-500 dark:text-gray-300'>
+                      <div className='mt-1 text-sm wrap-break-word whitespace-pre-wrap text-gray-500 dark:text-gray-300'>
                         {canEdit ? (
                           <e.div
                             initialValue={skill.description}

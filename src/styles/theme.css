@@ -50,7 +50,7 @@
   --wiki-surface: var(--color-slate-800);
   --wiki-surface-raised: var(--color-slate-800);
   --wiki-surface-muted: var(--color-slate-700);
-  --wiki-surface-sunken: var(--color-slate-900);
+  --wiki-surface-sunken: color-mix(in oklab, var(--color-slate-800) 50%, var(--color-slate-900));
   --wiki-control: var(--color-slate-700);
   --wiki-control-hover: var(--color-slate-600);
   --wiki-control-active: var(--color-gray-600);

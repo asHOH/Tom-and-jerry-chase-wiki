@@ -119,7 +119,7 @@ const semanticTokens = {
   },
   '--wiki-surface-sunken': {
     light: 'var(--color-gray-50)',
-    dark: 'var(--color-slate-900)',
+    dark: 'color-mix(in oklab, var(--color-slate-800) 50%, var(--color-slate-900))',
   },
   '--wiki-control': {
     light: 'var(--color-gray-200)',
