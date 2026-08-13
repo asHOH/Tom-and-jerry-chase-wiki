@@ -25,14 +25,14 @@ const actionButtonSizes = {
   lg: 'text-lg px-5 py-3 rounded-lg',
 };
 
-export type FilterButtonTone = 'default' | 'blue' | 'green' | 'neutral';
+export type FilterButtonTone = 'default' | 'blue' | 'green' | 'strongNeutral';
 
 const filterButtonActiveToneClasses: Record<FilterButtonTone, string> = {
   default: 'bg-control text-gray-900 hover:bg-control-hover dark:text-gray-100',
   blue: 'bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-600 dark:text-white dark:hover:bg-blue-700',
   green:
     'bg-green-600 text-white hover:bg-green-700 dark:bg-green-600 dark:text-white dark:hover:bg-green-700',
-  neutral:
+  strongNeutral:
     'border-control-active bg-control-active hover:bg-control-active-hover border text-gray-800 dark:text-gray-100',
 };
 

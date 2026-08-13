@@ -128,7 +128,7 @@ export default function ItemClient({ description, data = items, publishedRevisio
             label='阵营筛选:'
             options={['cat', 'mouse', 'none']}
             isActive={(f) => selectedFactions.includes(f)}
-            activeTone={(f) => (f === 'none' ? 'neutral' : 'default')}
+            activeTone={(f) => (f === 'none' ? 'strongNeutral' : 'default')}
             onToggle={(f) =>
               setSelectedFactions((prev) =>
                 prev.includes(f) ? prev.filter((x) => x !== f) : [...prev, f]

@@ -196,7 +196,7 @@ export default function EntityClient({ description, data = entities, publishedRe
             label='阵营筛选:'
             options={['cat', 'mouse', 'other']}
             isActive={(f) => selectedFactions.includes(f)}
-            activeTone={(f) => (f === 'other' ? 'neutral' : 'default')}
+            activeTone={(f) => (f === 'other' ? 'strongNeutral' : 'default')}
             onToggle={(f) =>
               setSelectedFactions((prev) =>
                 prev.includes(f) ? prev.filter((x) => x !== f) : [...prev, f]
