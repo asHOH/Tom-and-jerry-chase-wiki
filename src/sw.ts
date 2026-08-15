@@ -41,6 +41,8 @@ const isCacheablePublicApiPath = (pathname: string) => {
   const articlePathMatch = normalizedPath.match(/^\/api\/articles\/([^/]+)(?:\/history)?$/);
   const articleId = articlePathMatch?.[1];
 
+  if (normalizedPath === '/api/echoflow/executecode') return false;
+
   return (
     CACHEABLE_PUBLIC_API_PATHS.has(normalizedPath) ||
     normalizedPath.startsWith('/api/echoflow/') ||
