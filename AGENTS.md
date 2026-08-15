@@ -9,6 +9,7 @@ Tom and Jerry Chase Wiki is a Chinese game-data wiki for 猫和老鼠手游 (Tom
 - Design mobile-first.
 - Use the Node.js and npm versions declared in `package.json` (`engines`, `packageManager`, and `devEngines`).
 - `DEPLOY.md` holds deployment options and environment setup; do not duplicate those details here.
+- If you discover an important gap or error in the project documentation, report it in your final response and suggest a correction.
 
 # Commands
 

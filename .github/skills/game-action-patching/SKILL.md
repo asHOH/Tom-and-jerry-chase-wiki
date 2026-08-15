@@ -68,6 +68,8 @@ Use `characterCounters.ts`, `characterCollaborators.ts`, `knowledgeCards.ts`, `s
    approved rows; never sync failed, fuzzy, skipped, pending, rejected, or revoked rows.
 6. Stay on the current branch. Treat Chinese terminal mojibake as a display issue unless file
    bytes/editor output prove corruption; do not rewrite strings solely to fix terminal display.
+7. Report any important gap or error discovered in these instructions. If it makes an action
+   ambiguous, defer that action rather than guessing.
 
 ## Verification
 
