@@ -115,6 +115,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       subject: { name: '侦探汤姆', type: 'character' },
       target: { name: '天使泰菲', type: 'character' },
       isMinor: true,
+      tags: [{ counters: '减伤强', counteredBy: '伤害低' }],
     },
   },
   {
@@ -184,6 +185,16 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       subject: { name: '侦探汤姆', type: 'character' },
       target: { name: '罗宾汉泰菲', type: 'character' },
       isMinor: true,
+    },
+  },
+  {
+    description:
+      '小兔子和大兔子都能主动吸引侦汤放大镜的光线，削弱侦汤的进攻能力。但是大兔子的举火箭无法阻止50线索的秒飞。',
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '侦探汤姆', type: 'character' },
+      target: { name: '魔术师', type: 'character' },
+      isMinor: false,
     },
   },
   {
@@ -478,7 +489,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '泰菲的隐形感应雷会触发如玉的花枪反击，Hp上限低，被如玉的高伤克制。但是泰菲的圆滚滚可以提供解控，在被反击打上火箭的失重状态下可以使用圆滚滚解控。2级主动提供的无敌效果也可以有效反制如玉的花枪反击。',
+      '泰菲的隐形感应雷会触发如玉的花枪反击，Hp上限低，被如玉的高伤克制。但是泰菲的圆滚滚可以提供解控，在被反击打上火箭的失重状态下可以使用圆滚滚解控。2级主动提供的无敌效果也可以有效反制如玉的花枪反击，泰菲可以利用如玉的花枪反击在如玉闪过来的瞬间预判开炮打断反击。',
     relation: {
       kind: 'counterEachOther',
       subject: { name: '如玉', type: 'character' },
@@ -1915,7 +1926,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '泰菲的地雷能协助牛仔汤姆卡时间放斗牛鞭尸触发2级被动，且牛仔汤姆攻击手段多，圆滚滚疲于应对。',
+      '泰菲的地雷能协助牛仔汤姆卡时间放斗牛鞭尸触发2级被动，且牛仔汤姆攻击手段多，伤害高，圆滚滚疲于应对。',
     relation: {
       kind: 'counteredBy',
       subject: { name: '泰菲', type: 'character' },
@@ -1935,7 +1946,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '恶汤火车冷却时间短，且可储存多次，泰菲圆滚滚解控后冷却时间长，不可储存，容易在技能真空期被恶汤磨死；恶汤打碟有霸体，克制泰菲火箭筒和地雷打控制；恶汤绑火箭速度快，克制地雷拖延绑火箭',
+      '恶汤火车冷却时间短，且可储存多次，泰菲圆滚滚解控后冷却时间长，不可储存，容易在技能真空期被恶汤利用易伤磨死；恶汤打碟有霸体，克制泰菲火箭筒和地雷打控制；恶汤绑火箭速度快，克制地雷拖延绑火箭',
     relation: {
       kind: 'counteredBy',
       subject: { name: '泰菲', type: 'character' },

@@ -664,27 +664,35 @@ const catCharacterDefinitions = {
       },
       {
         id: '咸鱼',
-        pattern: '100311330',
+        pattern: '10[13][13]030',
         weaponType: 'weapon2',
-        description: '需要很强的意识和思路。',
+        description:
+          '如果需要破盾或者需要闪回原火箭，优先点出一级咸鱼；如果上火箭吃力，优先点出二级咸鱼；咸鱼总体上需要较强的意识和思路。',
       },
     ],
     knowledgeCardGroups: [
       {
-        cards: ['S-击晕', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
-        description: '打架队用。',
-      },
-      {
-        cards: ['S-击晕', 'A-熊熊燃烧', 'A-心灵手巧', 'A-穷追猛打'],
-        description: '无管道用。',
-      },
-      {
-        cards: ['S-击晕', 'A-熊熊燃烧', 'B-皮糙肉厚', 'C-猫是液体', 'C-狡诈'],
-        description: '管道用，若没21知识点可以去掉{狡诈}。',
-      },
-      {
-        cards: ['S-击晕', 'A-熊熊燃烧', 'A-细心', 'B-皮糙肉厚'],
-        description: '主布局，防守。',
+        id: '击晕',
+        groups: [
+          {
+            cards: ['S-击晕', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
+            description: '打架队用。',
+          },
+          {
+            cards: ['S-击晕', 'A-熊熊燃烧', 'A-心灵手巧', 'A-穷追猛打'],
+            description: '无管道用。',
+          },
+          {
+            cards: ['S-击晕', 'A-熊熊燃烧', 'B-皮糙肉厚', 'C-猫是液体', 'C-狡诈'],
+            description: '管道用，若没21知识点可以去掉{狡诈}。',
+          },
+          {
+            cards: ['S-击晕', 'A-熊熊燃烧', 'A-细心', 'B-皮糙肉厚'],
+            description: '主布局，防守。',
+          },
+        ],
+        description: '',
+        defaultFolded: false,
       },
       {
         id: '咸鱼猛攻乾坤流',

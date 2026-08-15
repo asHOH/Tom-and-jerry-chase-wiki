@@ -1311,9 +1311,9 @@ const mouseCharacterDefinitions = {
       },
       {
         tagName: '奶酪',
-        level: 2,
+        level: 4,
         description:
-          '推速适中（对比其它奶酪位，泰菲推速较慢），且被动推奶酪有霸体和减伤，适合做副推位。',
+          '推速适中（对比其它奶酪位，泰菲推速较慢），且被动推奶酪有霸体和减伤，适合做主推或副推',
         additionalDescription: '',
       },
       {
@@ -1380,7 +1380,7 @@ const mouseCharacterDefinitions = {
       },
       {
         cards: ['S-舍己', 'S-铁血', 'S-护佑', 'C-救救我'],
-        description: '生存卡组，护佑用于前期三级自保（试用卡组自带，无需配置）',
+        description: '生存卡组，护佑用于前期三级自保',
       },
       {
         cards: ['S-舍己', 'S-铁血', 'A-闭门羹', 'C-不屈', 'C-救救我'],
@@ -1411,20 +1411,20 @@ const mouseCharacterDefinitions = {
         cancelableSkill: '无前摇',
         cancelableAftercast: '无后摇',
         forecast: 0,
-        videoUrl: 'https://www.bilibili.com/video/BV1fM411A7YF?t=11.15',
+        videoUrl: 'https://www.bilibili.com/video/BV158Kr6xEzn/?t=0',
         skillLevels: [
           {
             level: 1,
             description:
               '向前翻滚一段距离。技能可以在被眩晕时释放，并解除自身的眩晕效果，但会略微延长技能冷却时间',
             detailedDescription:
-              '向前滚动1.2秒；期间速度提70%；可以在被控制状态下使用，并解除当前所受的控制，但技能冷却时间会增加6秒。',
+              '向前滚动1.2秒；期间速度提升70%；可以在被控制状态下使用，并解除当前所受的控制，但技能冷却时间会增加6秒。',
             cooldown: 12,
           },
           {
             level: 2,
             description: '滚动时无敌；滚动后短暂提升跳跃高度。',
-            detailedDescription: '滚动时于无敌状态；滚动结束后提升30%跳跃能力，持续1秒。',
+            detailedDescription: '滚动时处于无敌状态；滚动结束后提升30%跳跃能力，持续1秒。',
             cooldown: 12,
           },
           {
@@ -1442,19 +1442,19 @@ const mouseCharacterDefinitions = {
         description:
           '发射{火箭炮}，接触敌方/墙缝/墙壁/平台/其他道具后爆炸，对小范围内敌方和墙缝造成伤害和眩晕。爆炸可以炸飞老鼠夹、叉子等道具。',
         detailedDescription:
-          '发射一枚{火箭筒}，直接命中敌方时造成一段伤害，对猫造成20%减速，持续2.5秒，且可触发[投掷效果](指的是以投掷命中为条件的效果，包括知识卡-缴械/精准投射/投手/追风，特技-干扰投掷/勇气投掷)；直接命中墙缝时[随机造成4.5~9伤害](泰菲自身破坏增伤0.5+火箭筒基础伤害4~8.5，具体伤害量随机，同一位置出现的伤害也会有不同，具体成因不详)；命中敌方角色/墙壁/平台/[其他道具](包括鞭炮堆、冰桶等)后爆炸，对一定范围内敌方造成伤害和眩晕，对一定范围内墙缝[随机造成3.5~9伤害](泰菲自身破坏增伤0.5+爆炸冲击波基础伤害3~8.5，具体伤害量随机，同一位置出现的伤害也会有不同，具体成因不详)。先结算直接命中伤害，后结算爆炸伤害。爆炸产生的冲击波可以炸飞老鼠夹、叉子等道具。',
+          '发射一枚{火箭炮}，直接命中敌方时造成一段伤害，对猫造成20%减速，持续2.5秒，且可触发[投掷效果](指的是以投掷命中为条件的效果，包括知识卡-缴械/精准投射/投手/追风，特技-干扰投掷/勇气投掷)；直接命中墙缝时[随机造成4.5~9伤害](泰菲自身破坏增伤0.5+火箭筒基础伤害4~8.5，具体伤害量随机，同一位置出现的伤害也会有不同，具体成因不详)；命中敌方角色/墙壁/平台/[其他道具](包括鞭炮堆、冰桶等)后爆炸，对一定范围内敌方造成伤害和眩晕，对一定范围内墙缝[随机造成3.5~9伤害](泰菲自身破坏增伤0.5+爆炸冲击波基础伤害3~8.5，具体伤害量随机，同一位置出现的伤害也会有不同，具体成因不详)。先结算直接命中伤害，后结算爆炸伤害。爆炸产生的冲击波可以炸飞老鼠夹、叉子等道具。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableAftercast: '不可取消',
         forecast: 0.8,
         aftercast: 1.1,
-        videoUrl: 'https://www.bilibili.com/video/BV1fM411A7YF?t=46.4',
+        videoUrl: 'https://www.bilibili.com/video/BV158Kr6xEzn/?t=75',
         skillLevels: [
           {
             level: 1,
             description: '',
             detailedDescription:
-              '火箭炮直接命中造成{50*}伤害，命中后爆炸造成{15*}伤害和1.5秒爆炸眩晕。',
+              '火箭弹直接命中造成{50*}伤害，命中后爆炸造成{15*}伤害和1.5秒爆炸眩晕。',
             cooldown: 30,
           },
           {
@@ -1471,7 +1471,7 @@ const mouseCharacterDefinitions = {
             cooldown: 30,
           },
         ],
-        aliases: ['炮'],
+        aliases: ['炮', '大炮'],
         cancelableSkill: '不可主动打断',
         canHitInPipe: false,
         cueRange: '全图可见',
@@ -1490,7 +1490,7 @@ const mouseCharacterDefinitions = {
         cancelableAftercast: '无后摇',
         forecast: 0.2,
         aftercast: 0,
-        videoUrl: 'https://www.bilibili.com/video/BV1fM411A7YF?t=73.05',
+        videoUrl: 'https://www.bilibili.com/video/BV158Kr6xEzn/?t=218',
         skillLevels: [
           {
             level: 1,
@@ -1518,7 +1518,7 @@ const mouseCharacterDefinitions = {
       {
         name: '茁壮成长',
         type: 'passive',
-        videoUrl: 'https://www.bilibili.com/video/BV1fM411A7YF?t=25.85',
+        videoUrl: 'https://www.bilibili.com/video/BV158Kr6xEzn/?t=324',
         skillLevels: [
           {
             level: 1,
@@ -4956,7 +4956,7 @@ const mouseCharacterDefinitions = {
     recommendedStorePlans: [
       {
         items: ['盘子', '玻璃杯', '灰花瓶', '冰块'],
-        description: '',
+        description: '前两者适合快速补刀，瓶子和冰块让音杰更灵活',
       },
     ],
     skills: [

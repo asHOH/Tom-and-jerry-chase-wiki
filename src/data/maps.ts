@@ -1147,6 +1147,186 @@ const mapDefinitions: Record<string, MapDefinition> = {
           ],
           isRandomCandidate: true,
         },
+        {
+          id: 'map-point-23d33862-d290-4dbf-9f26-dcf1858e467c',
+          category: 'cheese',
+          position: {
+            x: 0.8157522402138029,
+            y: 0.2875252618041521,
+          },
+          relatedEntries: [
+            {
+              name: '奶酪',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-b239b753-3f52-4dd1-b12a-7ad41c22b2ef',
+          category: 'rocket',
+          position: {
+            x: 0.820861499764188,
+            y: 0.33832445342641926,
+          },
+          relatedEntries: [
+            {
+              name: '火箭',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-574decb8-ba6d-4e11-ab3f-8680ec9a743b',
+          category: 'rocket',
+          position: {
+            x: 0.7316066656186134,
+            y: 0.4231122542715414,
+          },
+          relatedEntries: [
+            {
+              name: '火箭',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-9f4a24a7-2168-45e1-bf08-4405bb3e3d0a',
+          category: 'cheese',
+          position: {
+            x: 0.48942776293035684,
+            y: 0.2795333455814808,
+          },
+          relatedEntries: [
+            {
+              name: '奶酪',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-58368fc7-f79c-4ec9-b6be-f09a8231058a',
+          category: 'drink',
+          position: {
+            x: 0.020220877220562806,
+            y: 0.6134484659195296,
+          },
+          relatedEntries: [
+            {
+              name: '饮料',
+              type: 'itemGroup',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-db0d33d0-47f3-4bb5-bd73-5ccdfe82a746',
+          category: 'cheese',
+          position: {
+            x: 0.7941361421160195,
+            y: 0.09176924490170861,
+          },
+          relatedEntries: [
+            {
+              name: '奶酪',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-b378cf25-4806-4e86-85b8-103184433d55',
+          category: 'drink',
+          position: {
+            x: 0.7443012105014934,
+            y: 0.8591769244901709,
+          },
+          relatedEntries: [
+            {
+              name: '饮料',
+              type: 'itemGroup',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-a0a78978-b466-44e4-875d-ec6e3a3ec88c',
+          category: 'cheese',
+          position: {
+            x: 0.708968715610753,
+            y: 0.6208892155061547,
+          },
+          relatedEntries: [
+            {
+              name: '奶酪',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-8d270cf0-1dfc-4a8b-8b83-6d1d808ec229',
+          category: 'cheese',
+          position: {
+            x: 0.7885552586071373,
+            y: 0.26694837405842364,
+          },
+          relatedEntries: [
+            {
+              name: '奶酪',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-8fa25a3d-3a4e-4f4d-94c4-91ec508f87fc',
+          category: 'cheese',
+          position: {
+            x: 0.40563590630404023,
+            y: 0.5372956090391329,
+          },
+          relatedEntries: [
+            {
+              name: '奶酪',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-79013a4b-3486-4387-a32d-8a978d9ac1dc',
+          category: 'cheese',
+          position: {
+            x: 0.7343185033799717,
+            y: 0.8618408965643947,
+          },
+          relatedEntries: [
+            {
+              name: '奶酪',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: true,
+        },
+        {
+          id: 'map-point-ea833e4d-d156-4072-bfa5-43a18dbaf636',
+          category: 'cheese',
+          position: {
+            x: 0.17589608552114447,
+            y: 0.6037571192357156,
+          },
+          relatedEntries: [
+            {
+              name: '奶酪',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: true,
+        },
       ],
     },
     description:
