@@ -36,6 +36,26 @@ jobs:
       - name: Replay database migrations
         run: npm exec -- supabase db reset --local --no-seed
 
+      - name: Pull Supabase type generator image
+        shell: bash
+        run: |
+          # Keep this aligned with the postgres-meta version bundled by the pinned Supabase CLI.
+          image="public.ecr.aws/supabase/postgres-meta:v0.96.6"
+
+          for attempt in 1 2 3 4; do
+            if docker pull "$image"; then
+              exit 0
+            fi
+
+            if [ "$attempt" -eq 4 ]; then
+              exit 1
+            fi
+
+            delay=$((attempt * 20))
+            echo "Image pull failed; retrying in ${delay}s (attempt $((attempt + 1))/4)."
+            sleep "$delay"
+          done
+
       - name: Verify generated database types
         run: npm run check:database-types
 
