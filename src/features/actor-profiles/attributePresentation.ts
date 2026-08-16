@@ -51,7 +51,7 @@ export const ACTOR_ATTRIBUTE_PRESENTATION = defineActorAttributePresentation({
   jumpSpeed: {
     label: '跳跃速度',
     tooltip: '跳跃的初速度',
-    detailedTooltip: '跳跃的初速度；单位：单位长/s',
+    detailedTooltip: '跳跃的初速度；单位：单位长/s。另：鼠方基础重力加速度3202.94，猫方则为3543.22',
     suffix: '/s',
     numeric: true,
   },
