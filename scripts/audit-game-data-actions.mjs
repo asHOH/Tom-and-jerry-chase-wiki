@@ -5,6 +5,8 @@ import nextEnv from '@next/env';
 import { createClient } from '@supabase/supabase-js';
 import { createJiti } from 'jiti';
 
+import { fetchGameDataActionRows } from './lib/game-data-action-query.mjs';
+
 const projectDir = fileURLToPath(new URL('..', import.meta.url));
 nextEnv.loadEnvConfig(projectDir);
 
@@ -27,7 +29,6 @@ const { ACTION_AUDIT_KNOWN_NOOP_ENTITY_TYPES, createActionAuditTargetRegistry } 
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SERVICE_KEY = process.env.SUPABASE_SECRET_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY;
-const QUERY_PAGE_SIZE = 500;
 const SELECT_COLUMNS = 'id, entity_type, entry, created_at, created_by, status, is_public, message';
 
 class AuditScriptError extends Error {
@@ -81,46 +82,21 @@ function parseArgs(args) {
   return { selector, limit, cursor, measurePublishLimits };
 }
 
-function quotePostgrestValue(value) {
-  return `"${value.replaceAll('\\', '\\\\').replaceAll('"', '\\"')}"`;
-}
-
-function keysetFilter(cursor) {
-  const createdAt = quotePostgrestValue(cursor.created_at);
-  const id = quotePostgrestValue(cursor.id);
-  return `created_at.gt.${createdAt},and(created_at.eq.${createdAt},id.gt.${id})`;
-}
-
 async function fetchCohort(supabase, statuses, requirePublic = null) {
-  const rows = [];
-  let cursor;
-
-  while (true) {
-    let query = supabase.from('game_data_actions').select(SELECT_COLUMNS);
-
-    query = statuses.length === 1 ? query.eq('status', statuses[0]) : query.in('status', statuses);
-
-    if (requirePublic !== null) query = query.eq('is_public', requirePublic);
-    if (cursor !== undefined) query = query.or(keysetFilter(cursor));
-
-    const { data, error } = await query
-      .order('created_at', { ascending: true })
-      .order('id', { ascending: true })
-      .limit(QUERY_PAGE_SIZE);
-
-    if (error) throw new AuditScriptError('query_failed', { cohort: statuses.join(',') });
-    const page = data ?? [];
-    rows.push(...page);
-    if (page.length < QUERY_PAGE_SIZE) break;
-
-    const last = page.at(-1);
-    if (!last?.created_at || !last.id) {
-      throw new AuditScriptError('invalid_query_page', { cohort: statuses.join(',') });
+  const cohort = statuses.join(',');
+  try {
+    return await fetchGameDataActionRows(supabase, {
+      select: SELECT_COLUMNS,
+      statuses,
+      requirePublic,
+      scope: cohort,
+    });
+  } catch (error) {
+    if (error?.code === 'invalid_query_page') {
+      throw new AuditScriptError('invalid_query_page', { cohort });
     }
-    cursor = { created_at: last.created_at, id: last.id };
+    throw new AuditScriptError('query_failed', { cohort });
   }
-
-  return rows;
 }
 
 function updateFingerprint(hash, cohort, rows) {
