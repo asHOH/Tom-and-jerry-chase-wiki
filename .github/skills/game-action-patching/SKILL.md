@@ -159,16 +159,12 @@ Use `characterCounters.ts`, `characterCollaborators.ts`, `knowledgeCards.ts`, `s
 1. **Discovery**: Query approved actions via Supabase MCP using the date rules above.
 2. **Classify**: Map or Defer. For large sets, present chunk plan and wait for approval.
 3. **Apply & Verify**: Edit, run the verification recipe and safety gates, and pause between chunks.
-4. **Mark Synced**: Prefer `prepared_mark_game_data_action_synced`. It must atomically set
-   `status: 'synced'` and `is_public: false`; `is_public` controls live replay, while `synced`
-   preserves history. Leaving it true replays code already baked into source.
+   Then run `npm run verify:game-data-actions -- --ids=<comma-separated UUIDs>`; defer the whole
+   batch if any row is unsupported or mismatched.
+4. **Mark Synced**: For each verified ID, use the admin panel's **Mark Synced** action, which calls
+   `POST /api/game-data-actions/moderation/{actionId}?action=mark-synced`. Do not add mutation logic
+   to `scripts/verify-game-data-actions.mjs`.
 5. **Finalize**: Re-query both fields and summarize Synced and Deferred/Remaining rows.
-
-## Supabase MCP Fallback (If not exposed)
-
-- Use local JS client over NEXT_PUBLIC_SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY.
-- If the RPC is unavailable, update a specific ID guarded by `status = 'approved'` and
-  `is_public = true`; set both sync fields together, require one affected row, and re-query it.
 
 ## Safety Gates
 
