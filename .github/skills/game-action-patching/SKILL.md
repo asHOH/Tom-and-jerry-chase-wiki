@@ -9,7 +9,15 @@ user-invocable: true
 
 ## Goal
 
-Safely patch approved game_data_actions into code, verify, and set synced; defer/reject the rest.
+Safely patch approved game_data_actions into code and verify them; defer the rest.
+
+## Operation Boundary
+
+- Treat patching as a local source-code workflow by default.
+- Never open, inspect, or control a browser as part of this skill.
+- Do not mutate remote moderation status unless the user explicitly requests it as a separate
+  follow-up. If no authorized non-browser mechanism is specified, report the verified IDs for
+  manual syncing instead.
 
 ## Scope
 
@@ -83,12 +91,15 @@ Use `characterCounters.ts`, `characterCollaborators.ts`, `knowledgeCards.ts`, `s
 - **Equivalence**: Preserve existing orientation: `X.counteredBy Y` equals `Y.counters X`.
   `collaborators` and `counterEachOther` are symmetric, so reversed endpoints are also equal.
   Keep one edge; update only material fields (`description`, `isMinor`, tags).
-- **No-op**: Don't reorder or rewrite an equivalent unchanged relation; it may be synced after
-  verification.
+- **No-op**: Don't reorder or rewrite an equivalent unchanged relation. Report its ID as verified
+  after verification without changing remote status.
 - **Duplicate cleanup**: If an action removes a redundant edge that is already covered by another relation, remove only the redundant edge. Do not rewrite the other one.
 - **Indices**: Treat 0, 1 literally. Defer if oldValue mismatches.
-- **Flattened children**: If a parent `set` row is applied and child-path rows describe the same final value, verify against the final source once and sync all covered rows.
-- **Placeholder defaults**: If a child action only writes a likely UI default/placeholder value (e.g. `新别名`) and no later action replaces it with a real value, do not sync it; report it as a likely mis-add.
+- **Flattened children**: If a parent `set` row is applied and child-path rows describe the same
+  final value, verify against the final source once and report all covered rows as verified.
+- **Placeholder defaults**: If a child action only writes a likely UI default/placeholder value
+  (e.g. `新别名`) and no later action replaces it with a real value, do not report it verified or
+  remotely sync it; report it as a likely mis-add.
 
 ## Core Rules
 
@@ -124,7 +135,7 @@ Use `characterCounters.ts`, `characterCollaborators.ts`, `knowledgeCards.ts`, `s
      2. An earlier `synced` row whose resulting value equals `S` proves the source state, but does
         not repair a stale `O`; defer the current action and never infer or text-merge a value.
      3. An earlier row with `status = 'approved'` and `is_public = true` whose result supplies the
-        required `O` is an unsynced dependency. Apply and sync it first only when it is explicitly
+        required `O` is an unsynced dependency. Apply and verify it first only when it is explicitly
         in the current batch; otherwise defer and report the dependency.
      4. Replay multiple qualifying rows in `(created_at, id)` order. If their old/new chain breaks,
         two rows claim incompatible results, or no qualifying row produces `S`, defer.
@@ -137,8 +148,9 @@ Use `characterCounters.ts`, `characterCollaborators.ts`, `knowledgeCards.ts`, `s
    index whose skill/level and old value match; or one relation target/kind plus required
    `factionId`, including equivalent orientations. Missing/duplicate IDs, shifted indices,
    ambiguous factions, old-value mismatch, or unexplained ahead source are unclear.
-5. Valid statuses: `pending`, `approved`, `rejected`, `synced`, `revoked`. Sync only verified
-   approved rows; never sync failed, fuzzy, skipped, pending, rejected, or revoked rows.
+5. Valid statuses: `pending`, `approved`, `rejected`, `synced`, `revoked`. Only a separately
+   authorized moderation workflow may sync verified approved rows; never sync failed, fuzzy,
+   skipped, pending, rejected, or revoked rows.
 6. Stay on the current branch. Treat Chinese terminal mojibake as a display issue unless file
    bytes/editor output prove corruption; do not rewrite strings solely to fix terminal display.
 7. Report any important gap or error discovered in these instructions. If it makes an action
@@ -159,19 +171,26 @@ Use `characterCounters.ts`, `characterCollaborators.ts`, `knowledgeCards.ts`, `s
 1. **Discovery**: Query approved actions via Supabase MCP using the date rules above.
 2. **Classify**: Map or Defer. For large sets, present chunk plan and wait for approval.
 3. **Apply & Verify**: Edit, run the verification recipe and safety gates, and pause between chunks.
-   Then run `npm run verify:game-data-actions -- --ids=<comma-separated UUIDs>`; defer the whole
-   batch if any row is unsupported or mismatched.
-4. **Mark Synced**: For each verified ID, use the admin panel's **Mark Synced** action, which calls
-   `POST /api/game-data-actions/moderation/{actionId}?action=mark-synced`. Do not add mutation logic
-   to `scripts/verify-game-data-actions.mjs`.
-5. **Finalize**: Re-query both fields and summarize Synced and Deferred/Remaining rows.
+   Then run `npm run verify:game-data-actions -- --ids=<comma-separated UUIDs>`. Pass every row in
+   a parent/child or old/new chain together in the same invocation so reverse verification can
+   reconstruct intermediate states. Defer the whole submitted verification batch if any row is
+   unsupported or mismatched.
+4. **Report Verified IDs**: Stop after local verification. Report the verified IDs for manual
+   syncing; do not use a browser or mutate remote status as part of the normal workflow.
+5. **Optional Remote Moderation**: Only when the user explicitly requests it as a separate
+   follow-up, use an authorized non-browser mechanism. Do not add mutation logic to
+   `scripts/verify-game-data-actions.mjs`.
+6. **Finalize**: Re-query `status` and `is_public`, then summarize locally Verified,
+   Deferred/Remaining, and any remotely Synced rows. Do not describe a locally verified row as
+   synced unless the re-query confirms `status = 'synced'`.
 
 ## Safety Gates
 
 - Check newValue placement and schema shape.
 - For paired summary/detail fields (e.g. a skill level's `description` and
   `detailedDescription`), check that a new value does not contradict its sibling. If it does,
-  report and defer the action; do not mark it synced without user-approved reconciliation.
+  report and defer the action; do not report it verified or remotely sync it without user-approved
+  reconciliation.
 - Verify message intent (e.g. relation added and old deleted).
 - Relations: run targeted Prettier, grep/read checks, and
   `npm run report:character-relations` (the report does not check formatting).
