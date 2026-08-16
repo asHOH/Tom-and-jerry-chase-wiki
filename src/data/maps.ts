@@ -459,33 +459,6 @@ const mapDefinitions: Record<string, MapDefinition> = {
           ],
         },
         {
-          id: 'map-point-0795dbbb-353e-4f0d-9792-63ced448c3a9',
-          category: 'geometryBarrel',
-          position: {
-            x: 0.3290363150448043,
-            y: 0.7062274652786404,
-          },
-          isRandomCandidate: false,
-          relatedEntries: [
-            {
-              name: '小鞭炮',
-              type: 'item',
-            },
-            {
-              name: '火药桶',
-              type: 'entity',
-            },
-          ],
-          geometryBarrelRoute: {
-            firecrackerPosition: {
-              x: 0.32557773934915896,
-              y: 0.7076979606834466,
-            },
-            targetRocketPointId: 'map-point-38cac293-a8b0-48bf-b546-bc621185a14c',
-            barrelCountdownDisplayAtFirecrackerExplosion: 1,
-          },
-        },
-        {
           id: 'map-point-967d07cc-773f-470f-996e-7ffefd2ed8e6',
           category: 'wallCrack',
           position: {

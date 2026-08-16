@@ -205,6 +205,15 @@ export const characterRelationMapTraits: CharacterRelationTrait[] = [
     },
   },
   {
+    description: '地图大，老鼠容易拉扯，托普斯不好找节奏',
+    relation: {
+      kind: 'disadvantageMaps',
+      subject: { name: '托普斯', type: 'character' },
+      target: { name: '游乐场', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
     description: '',
     relation: {
       kind: 'advantageMaps',

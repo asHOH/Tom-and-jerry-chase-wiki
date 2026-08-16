@@ -1848,9 +1848,10 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
     },
   },
   {
-    description: '强推能力较强，与队友配合能较好的处理最后一个奶酪。',
+    description:
+      '侦探杰瑞强推能力较强，与队友配合能较好的处理最后一个奶酪。但托普斯的分身具有透视隐身的特性，使侦探杰瑞容易被反制。',
     relation: {
-      kind: 'counters',
+      kind: 'counterEachOther',
       subject: { name: '侦探杰瑞', type: 'character' },
       target: { name: '托普斯', type: 'character' },
       isMinor: true,
@@ -1975,7 +1976,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '航海士杰瑞的火药桶炸完火箭之后塔拉无法通过套索扔老鼠的方式上火箭，并且自身缺乏霸体。',
+      '航海士杰瑞的火药桶炸完火箭之后塔拉无法通过套索扔老鼠的方式上火箭，并且自身缺乏霸体。但塔拉视野大，航海士杰瑞的金币不好命中。',
     relation: {
       kind: 'counteredBy',
       subject: { name: '塔拉', type: 'character' },
@@ -2020,7 +2021,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
     },
   },
   {
-    description: '无法触发塔拉被动。',
+    description: '玛丽无法触发塔拉的被动。',
     relation: {
       kind: 'counteredBy',
       subject: { name: '塔拉', type: 'character' },
@@ -2759,6 +2760,15 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       kind: 'counters',
       subject: { name: '拿坡里鼠', type: 'character' },
       target: { name: '塔拉', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '{牛仔的礼物}能比较方便地破掉国王杰瑞的护盾，使国王杰瑞不好救援。',
+    relation: {
+      kind: 'counters',
+      subject: { name: '塔拉', type: 'character' },
+      target: { name: '国王杰瑞', type: 'character' },
       isMinor: true,
     },
   },
