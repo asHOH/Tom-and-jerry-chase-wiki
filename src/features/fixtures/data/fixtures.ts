@@ -176,7 +176,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
       '祥云',
       '莲花座',
     ],
-    move: false,
+    move: true,
     gravity: false,
     collision: ['道具', '角色'],
     supportedMaps: [
@@ -340,6 +340,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     aliases: ['墙洞'],
     move: false,
     gravity: true,
+    collision: ['地面', '道具'],
     supportedMaps: [
       ...regularMaps,
       '经典之家-疯狂奶酪赛',

@@ -701,7 +701,7 @@ const catCharacterDefinitions = {
         defaultFolded: false,
       },
       {
-        id: '咸鱼猛攻乾坤流',
+        id: '咸鱼乾坤流',
         groups: [
           {
             cards: [
@@ -711,6 +711,10 @@ const catCharacterDefinitions = {
               [CardGroupType.Or, 'A-熊熊燃烧', [CardGroupType.And, 'A-心灵手巧', 'C-猫是液体']],
             ],
             description: '搭配二武{咸鱼}使用，偏打架，伤害高，但需要一定基本功。',
+          },
+          {
+            cards: ['S-击晕', 'S-乾坤一掷', 'A-熊熊燃烧', 'C-猫是液体'],
+            description: '适合不习惯无击晕橘猫的玩家过渡，适应后可切换到前一套。',
           },
         ],
         description: '',

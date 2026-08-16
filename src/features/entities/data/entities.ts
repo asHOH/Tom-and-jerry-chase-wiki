@@ -1344,7 +1344,7 @@ export const entityDefinitions = {
   侦探泰菲分身: {
     entitytag: ['NPC', '巡逻'],
     owner: { name: '分身大师', type: 'skill' },
-    aliases: ['分身'],
+    aliases: ['分身', '牛汤的充电宝'],
     move: true,
     gravity: true,
     collision: ['墙壁', '平台', '地面'],

@@ -216,6 +216,15 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
     },
   },
   {
+    description: '侦探汤姆放大镜的沉默效果使蒙金奇无法主动下车导致被炸死。',
+    relation: {
+      kind: 'counters',
+      subject: { name: '侦探汤姆', type: 'character' },
+      target: { name: '蒙金奇', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
     description:
       '侦探汤姆被动直接放飞能力克制剑客泰菲稳救，剑客泰菲推奶酪刷勇气会刷大量线索被侦探汤姆克制。',
     relation: {
@@ -842,12 +851,13 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
     },
   },
   {
-    description: '牛会撞碎电池。',
+    description:
+      '牛仔汤姆缺乏回复与霸体，容易被朵朵拦截击倒，但牛仔汤姆的直接抓取可以应对朵朵的电池弹出，并且鞭子和牛能够击碎电池',
     relation: {
-      kind: 'counters',
+      kind: 'counterEachOther',
       subject: { name: '牛仔汤姆', type: 'character' },
       target: { name: '朵朵', type: 'character' },
-      isMinor: true,
+      isMinor: false,
     },
   },
   {
@@ -1297,12 +1307,23 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
     },
   },
   {
-    description: '雪梨能快速解除老鼠的受伤状态和恢复血量。',
+    description:
+      '主动技能可以使关键鼠方队友免疫直接抓取和解除受伤状态，花束也能快速回复血量脱离牛仔汤姆斩杀线，花洒能使牛仔汤姆防守压力倍增',
     relation: {
       kind: 'counters',
       subject: { name: '雪梨', type: 'character' },
       target: { name: '牛仔汤姆', type: 'character' },
-      isMinor: true,
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '朝圣者泰菲的武器技能的高伤害能够让牛仔汤姆的防守与进攻压力倍增，同时主动技能带来的霸体可以无视斗牛的控制效果。',
+    relation: {
+      kind: 'counters',
+      subject: { name: '朝圣者泰菲', type: 'character' },
+      target: { name: '牛仔汤姆', type: 'character' },
+      isMinor: false,
     },
   },
   {
@@ -1879,12 +1900,12 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '追风汤姆无限霸体克制天使杰瑞武器技能，且复活体容易被追风汤姆秒杀。但天使杰瑞1级被动和3级被动让追汤无法快速击倒。',
+      '天使杰瑞禁用爪刀技能与高额自然回血使追风汤姆难以击倒，且复活能有效克制追风汤姆只在前期强势的缺点。',
     relation: {
-      kind: 'counterEachOther',
+      kind: 'counters',
       subject: { name: '天使杰瑞', type: 'character' },
       target: { name: '追风汤姆', type: 'character' },
-      isMinor: false,
+      isMinor: true,
     },
   },
   {
