@@ -1199,6 +1199,223 @@ export const createTraitsData = (): Record<string, Trait> => ({
       { name: '唤猫铃', type: 'fixture' },
     ],
   },
+  '20260804-01': {
+    description: '火箭炮的伤害和爆炸眩晕会被目标身上已存在的共鸣冲击僵直伤害抑制，无法生效',
+    group: [
+      { name: '火箭炮', type: 'entity', factionId: 'mouse' },
+      { name: '共鸣冲击', type: 'buff', factionId: 'mouse' },
+    ],
+  },
+
+  '20260805-01': {
+    description: '火箭炮与莱恩的图形会发生碰撞，碰撞后火箭炮会爆炸',
+    group: [
+      { name: '火箭炮', type: 'entity', factionId: 'mouse' },
+      [{ name: '图形', type: 'itemGroup' }],
+    ],
+  },
+
+  '20260805-02': {
+    description: '火箭炮与斜塔会发生碰撞，碰撞后火箭炮会爆炸',
+    group: [
+      { name: '火箭炮', type: 'entity', factionId: 'mouse' },
+      { name: '斜塔', type: 'entity', factionId: 'mouse' },
+    ],
+  },
+
+  '20260805-03': {
+    description: '火箭炮与火药桶会发生碰撞，碰撞后火箭炮会爆炸，火药桶的引线会减少',
+    group: [
+      { name: '火箭炮', type: 'entity', factionId: 'mouse' },
+      { name: '火药桶', type: 'entity', factionId: 'mouse' },
+    ],
+  },
+
+  '20260805-04': {
+    description: '火箭炮爆炸时产生的冲击波可击飞战旗',
+    group: [
+      { name: '火箭炮', type: 'entity', factionId: 'mouse' },
+      { name: '战旗', type: 'itemGroup' },
+    ],
+  },
+
+  '20260805-05': {
+    description: '火箭炮与小恶魔会发生碰撞，碰撞后火箭炮会爆炸',
+    group: [
+      { name: '火箭炮', type: 'entity', factionId: 'mouse' },
+      { name: '小淘气', type: 'itemGroup' },
+    ],
+  },
+
+  '20260805-06': {
+    description: '火箭炮不会被魔音贯耳产生的音波改变运动状态',
+    group: [
+      { name: '火箭炮', type: 'entity', factionId: 'mouse' },
+      { name: '魔音贯耳', type: 'skill', factionId: 'mouse' },
+    ],
+  },
+
+  '20260805-07': {
+    description: '火箭炮与闪耀足球会发生碰撞，碰撞后火箭炮会爆炸',
+    group: [
+      { name: '火箭炮', type: 'entity', factionId: 'mouse' },
+      { name: '闪耀足球', type: 'entity', factionId: 'mouse' },
+    ],
+  },
+
+  /* '20260805-08': {
+    description: '火箭炮可被任何形式的受力改变其运动状态',
+    group: [
+      { name: '火箭炮', type: 'entity', factionId: 'mouse' },
+      { name: '受力', type: 'buff' },
+    ],
+  },*/ //当前受力已不是一个对道具施加的buff，先跳过
+
+  '20260805-09': {
+    description: '火箭炮的爆炸眩晕会被目标身上已存在的滑步踢眩晕抑制，无法生效',
+    group: [
+      { name: '火箭炮', type: 'entity', factionId: 'mouse' },
+      { name: '滑步踢', type: 'skill', factionId: 'mouse' },
+    ],
+  },
+
+  '20260805-10': {
+    description: '火箭炮无法被意念控制吸附',
+    group: [
+      { name: '火箭炮', type: 'entity', factionId: 'mouse' },
+      { name: '意念控制', type: 'skill', factionId: 'mouse' },
+    ],
+  },
+
+  '20260805-11': {
+    description: '火箭炮无法被恶魔之角复制',
+    group: [
+      { name: '火箭炮', type: 'entity', factionId: 'mouse' },
+      { name: '恶魔之角', type: 'skill', factionId: 'mouse' },
+    ],
+  },
+
+  '20260805-12': {
+    description: '火箭炮无法被Lv.3香风折扇吹飞',
+    group: [
+      { name: '火箭炮', type: 'entity', factionId: 'mouse' },
+      { name: '香风折扇', type: 'skill', factionId: 'mouse' },
+    ],
+  },
+
+  '20260805-13': {
+    description:
+      '火箭炮与漂浮的泡泡会发生碰撞，碰撞后火箭炮和泡泡会同时爆炸；火箭炮爆炸产生的冲击波会击飞漂浮的泡泡',
+    group: [
+      { name: '火箭炮', type: 'entity', factionId: 'mouse' },
+      { name: '泡泡', type: 'entity', factionId: 'cat' },
+    ],
+  },
+
+  '20260805-14': {
+    description: '火箭炮会被斗牛销毁并爆炸',
+    group: [
+      { name: '火箭炮', type: 'entity', factionId: 'mouse' },
+      { name: '斗牛', type: 'entity', factionId: 'cat' },
+    ],
+  },
+
+  '20260805-15': {
+    description: '火箭炮会被鞭子销毁并爆炸',
+    group: [
+      { name: '火箭炮', type: 'entity', factionId: 'mouse' },
+      { name: '鞭子', type: 'skill', factionId: 'cat' },
+    ],
+  },
+
+  '20260805-16': {
+    description: '火箭炮与胡椒粉罐头会发生碰撞，碰撞后火箭炮爆炸，胡椒粉罐头破碎',
+    group: [
+      { name: '火箭炮', type: 'entity', factionId: 'mouse' },
+      { name: '胡椒粉罐头', type: 'entity', factionId: 'cat' },
+    ],
+  },
+
+  '20260805-17': {
+    description:
+      '火箭炮与饭盒会发生碰撞，碰撞后火箭炮和饭盒同时爆炸，火箭炮爆炸产生的冲击波会击飞饭盒',
+    group: [
+      { name: '火箭炮', type: 'entity', factionId: 'mouse' },
+      { name: '饭盒', type: 'entity', factionId: 'cat' },
+    ],
+  },
+
+  '20260805-18': {
+    description: '火箭炮会被剑盾反弹',
+    group: [
+      { name: '火箭炮', type: 'entity', factionId: 'mouse' },
+      { name: '剑盾防御', type: 'skill', factionId: 'cat' },
+    ],
+  },
+
+  '20260805-19': {
+    description: '火箭炮与百科全书会发生碰撞，碰撞后火箭炮爆炸',
+    group: [
+      { name: '火箭炮', type: 'entity', factionId: 'mouse' },
+      { name: '百科全书', type: 'entity', factionId: 'cat' },
+    ],
+  },
+
+  '20260805-20': {
+    description: '火箭炮与旋转桶盖会发生碰撞，碰撞后火箭炮会爆炸',
+    group: [
+      { name: '火箭炮', type: 'entity', factionId: 'mouse' },
+      { name: '旋转桶盖', type: 'entity', factionId: 'cat' },
+    ],
+  },
+
+  '20260805-21': {
+    description: '火箭炮与大仙人掌球会发生碰撞，碰撞后火箭炮会爆炸，大仙人掌球会碎裂',
+    group: [
+      { name: '火箭炮', type: 'entity', factionId: 'mouse' },
+      { name: '大仙人掌球', type: 'entity', factionId: 'cat' },
+    ],
+  },
+
+  '20260805-23': {
+    description: '火箭炮爆炸产生的冲击波会击飞巨型胡萝卜',
+    group: [
+      { name: '火箭炮', type: 'entity', factionId: 'mouse' },
+      { name: '巨型胡萝卜', type: 'entity', factionId: 'cat' },
+    ],
+  },
+
+  '20260805-24': {
+    description: '感应雷与胡椒粉罐头会发生碰撞；感应雷会被胡椒粉罐头触发',
+    group: [
+      { name: '感应雷', type: 'entity', factionId: 'mouse' },
+      { name: '胡椒粉罐头', type: 'entity', factionId: 'cat' },
+    ],
+  },
+
+  '20260805-22': {
+    description: '感应雷与饭盒会发生碰撞；感应雷不会被饭盒触发，饭盒不会被感应雷触发',
+    group: [
+      { name: '感应雷', type: 'entity', factionId: 'mouse' },
+      { name: '饭盒', type: 'entity', factionId: 'cat' },
+    ],
+  },
+
+  '20260805-25': {
+    description: '感应雷的爆炸眩晕会被目标身上已存在的滑步踢眩晕抑制，无法生效',
+    group: [
+      { name: '感应雷', type: 'entity', factionId: 'mouse' },
+      { name: '滑步踢', type: 'skill', factionId: 'mouse' },
+    ],
+  },
+  '20260813-01': {
+    description:
+      '被天使祝福复活的老鼠可以前往天堂换下天堂火箭上的队友，并且换下后会进入天堂火箭的读秒，但在读秒结束前因为虚弱被放飞后扔会继续读秒，并且在读秒到1s时会卡死。',
+    group: [
+      { name: '天使祝福', type: 'skill' },
+      { name: '天堂火箭', type: 'entity' },
+    ],
+  },
 });
 
 const traits = createTraitsData();
