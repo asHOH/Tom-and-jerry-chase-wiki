@@ -4014,7 +4014,7 @@ const catCharacterDefinitions = {
       },
       {
         tagName: '翻盘',
-        level: 4,
+        level: 3,
         description: '如玉的知识卡适配暴怒，且墙缝期道具多，容易触发花枪反击。',
         additionalDescription: '',
       },

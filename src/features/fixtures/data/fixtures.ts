@@ -604,7 +604,7 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
   餐车: {
     type: ['平台类', '组件类'],
     source: '地图组件',
-    move: false,
+    move: true,
     gravity: false,
     collision: ['道具', '角色'],
     supportedMaps: ['经典之家I', '经典之家II', '经典之家III', '家之典经'],
