@@ -84,6 +84,190 @@ describe('verifyActionPatch', () => {
     ).toEqual({ verifiedRowIds: ['relation'], failures: [] });
   });
 
+  it('verifies relation endpoint deltas while preserving unrelated edges and fields', () => {
+    const rows = [
+      row(
+        'unrelated-field',
+        {
+          op: 'set',
+          path: 'Tom.counteredBy',
+          oldValue: [{ id: 'Unrelated', description: 'external-old', isMinor: false }],
+          newValue: [{ id: 'Unrelated', description: 'external-final', isMinor: false }],
+        },
+        '2026-07-22T00:00:00.000Z'
+      ),
+      row(
+        'disjoint-field',
+        {
+          op: 'set',
+          path: 'Tom.counteredBy',
+          oldValue: [{ id: 'Changed', description: 'old', isMinor: false }],
+          newValue: [{ id: 'Changed', description: 'old', isMinor: true }],
+        },
+        '2026-07-22T00:01:00.000Z'
+      ),
+      row(
+        'endpoint-delta',
+        {
+          op: 'set',
+          path: 'Tom.counteredBy',
+          oldValue: [
+            { id: 'Stable', description: 'snapshot', isMinor: false },
+            { id: 'Removed', description: 'remove me', isMinor: false },
+            { id: 'Changed', description: 'old', isMinor: false },
+          ],
+          newValue: [
+            { id: 'Stable', description: 'snapshot', isMinor: false },
+            { id: 'Added', description: 'add me', isMinor: false },
+            { id: 'Changed', description: 'new', isMinor: false },
+          ],
+        },
+        '2026-07-22T00:02:00.000Z'
+      ),
+    ];
+
+    expect(
+      verifyActionPatch(
+        rows,
+        targets({
+          Tom: {
+            counteredBy: [
+              { id: 'Unrelated', description: 'external-final', isMinor: false },
+              { id: 'Stable', description: 'newer unrelated value', isMinor: true },
+              { id: 'Added', description: 'add me', isMinor: false },
+              { id: 'Changed', description: 'new', isMinor: true },
+            ],
+          },
+        })
+      )
+    ).toEqual({
+      verifiedRowIds: ['unrelated-field', 'disjoint-field', 'endpoint-delta'],
+      failures: [],
+    });
+  });
+
+  it.each([
+    {
+      name: 'an added endpoint is missing',
+      oldValue: [],
+      newValue: [{ id: 'Added', description: 'new', isMinor: false }],
+      currentValue: [],
+      reason: 'added_endpoint_mismatch',
+    },
+    {
+      name: 'a removed endpoint is still present',
+      oldValue: [{ id: 'Removed', description: 'old', isMinor: false }],
+      newValue: [],
+      currentValue: [{ id: 'Removed', description: 'old', isMinor: false }],
+      reason: 'removed_endpoint_present',
+    },
+    {
+      name: 'a changed material field does not match',
+      oldValue: [{ id: 'Changed', description: 'old', isMinor: false }],
+      newValue: [{ id: 'Changed', description: 'new', isMinor: false }],
+      currentValue: [{ id: 'Changed', description: 'different', isMinor: false }],
+      reason: 'changed_material_mismatch',
+    },
+  ])('rejects a relation delta when $name', ({ oldValue, newValue, currentValue, reason }) => {
+    const result = verifyActionPatch(
+      [row('relation-mismatch', { op: 'set', path: 'Tom.counters', oldValue, newValue })],
+      targets({ Tom: { counters: currentValue } })
+    );
+
+    expect(result.verifiedRowIds).toEqual([]);
+    expect(result.failures).toEqual([
+      expect.objectContaining({
+        rowId: 'relation-mismatch',
+        code: 'projection_mismatch',
+        detail: expect.objectContaining({ reason }),
+      }),
+    ]);
+  });
+
+  it('uses factionId as part of a relation endpoint identity', () => {
+    expect(
+      verifyActionPatch(
+        [
+          row('faction-endpoint', {
+            op: 'set',
+            path: 'Tom.counteredBySpecialSkills',
+            oldValue: [
+              { id: 'Shared Skill', factionId: 'cat', description: 'cat', isMinor: false },
+            ],
+            newValue: [
+              { id: 'Shared Skill', factionId: 'cat', description: 'cat', isMinor: false },
+              { id: 'Shared Skill', factionId: 'mouse', description: 'mouse', isMinor: false },
+            ],
+          }),
+        ],
+        targets({
+          Tom: {
+            counteredBySpecialSkills: [
+              { id: 'Shared Skill', factionId: 'mouse', description: 'mouse', isMinor: false },
+              {
+                id: 'Shared Skill',
+                factionId: 'cat',
+                description: 'changed elsewhere',
+                isMinor: true,
+              },
+            ],
+          },
+        })
+      )
+    ).toEqual({ verifiedRowIds: ['faction-endpoint'], failures: [] });
+  });
+
+  it('compares changed relation tags without depending on tag order', () => {
+    const firstTag = { counters: '控制', counteredBy: '免控' };
+    const secondTag = { counters: '位移', counteredBy: '护盾' };
+
+    expect(
+      verifyActionPatch(
+        [
+          row('relation-tags', {
+            op: 'set',
+            path: 'Tom.counters',
+            oldValue: [{ id: 'Jerry', isMinor: false, tags: [firstTag] }],
+            newValue: [{ id: 'Jerry', isMinor: false, tags: [firstTag, secondTag] }],
+          }),
+        ],
+        targets({
+          Tom: {
+            counters: [{ id: 'Jerry', isMinor: false, tags: [secondTag, firstTag] }],
+          },
+        })
+      )
+    ).toEqual({ verifiedRowIds: ['relation-tags'], failures: [] });
+  });
+
+  it('rejects duplicate semantic relation endpoints', () => {
+    const result = verifyActionPatch(
+      [
+        row('duplicate-endpoint', {
+          op: 'set',
+          path: 'Tom.counteredBy',
+          oldValue: [],
+          newValue: [{ id: 'Jerry', isMinor: false }],
+        }),
+      ],
+      targets({
+        Tom: {
+          counteredBy: [
+            { id: 'Jerry', isMinor: false },
+            { id: 'Jerry', isMinor: false },
+          ],
+        },
+      })
+    );
+
+    expect(result.failures).toEqual([
+      expect.objectContaining({
+        rowId: 'duplicate-endpoint',
+        detail: expect.objectContaining({ reason: 'invalid_relation_array' }),
+      }),
+    ]);
+  });
+
   it('defers an array deletion without stable identity', () => {
     const result = verifyActionPatch(
       [row('delete', { op: 'delete', path: 'Tom.aliases.0', oldValue: 'old' })],

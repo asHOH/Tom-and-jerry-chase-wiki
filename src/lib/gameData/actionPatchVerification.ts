@@ -39,6 +39,14 @@ export type ActionPatchVerificationResult = {
 
 type ProjectedAction = Action & { path: string };
 type ReadResult = { exists: boolean; value: unknown };
+type ReverseActionResult =
+  | { success: true }
+  | { success: false; code: ActionPatchVerificationFailure['code']; detail?: unknown };
+type RelationMaterialKey = 'description' | 'isMinor' | 'tags';
+type RelationCollection = {
+  identities: string[];
+  byIdentity: Map<string, Record<string, unknown>>;
+};
 
 const RELATION_ARRAY_KEYS = new Set([
   'counters',
@@ -56,6 +64,11 @@ const RELATION_ARRAY_KEYS = new Set([
 ]);
 
 const POSITIONING_TAG_KEYS = new Set(['catPositioningTags', 'mousePositioningTags']);
+const RELATION_MATERIAL_KEYS = [
+  'description',
+  'isMinor',
+  'tags',
+] satisfies readonly RelationMaterialKey[];
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -233,6 +246,165 @@ function relationComparable(value: unknown): unknown {
     .sort((left, right) => JSON.stringify(left).localeCompare(JSON.stringify(right)));
 }
 
+function relationEndpointIdentity(value: Record<string, unknown>): string | null {
+  if (typeof value.id !== 'string') return null;
+  if (
+    value.factionId !== undefined &&
+    value.factionId !== null &&
+    typeof value.factionId !== 'string'
+  ) {
+    return null;
+  }
+  return JSON.stringify([value.id, value.factionId ?? null]);
+}
+
+function relationMaterialValue(value: Record<string, unknown>, key: RelationMaterialKey): unknown {
+  if (key === 'description') return value.description ?? '';
+  if (key === 'isMinor') return value.isMinor ?? false;
+  return Array.isArray(value.tags) ? value.tags.map((tag) => JSON.stringify(tag)).sort() : [];
+}
+
+function relationMaterialsMatch(
+  expected: Record<string, unknown>,
+  actual: Record<string, unknown>
+): boolean {
+  return RELATION_MATERIAL_KEYS.every((key) =>
+    isEqual(relationMaterialValue(expected, key), relationMaterialValue(actual, key))
+  );
+}
+
+function changedRelationMaterialKeys(
+  oldValue: Record<string, unknown>,
+  newValue: Record<string, unknown>
+): RelationMaterialKey[] {
+  return RELATION_MATERIAL_KEYS.filter(
+    (key) => !isEqual(relationMaterialValue(oldValue, key), relationMaterialValue(newValue, key))
+  );
+}
+
+function createRelationCollection(value: unknown): RelationCollection | null {
+  if (value === undefined) return { identities: [], byIdentity: new Map() };
+  if (!Array.isArray(value) || value.some((item) => !isRecord(item))) return null;
+
+  const values = value as Record<string, unknown>[];
+  const identities = values.map(relationEndpointIdentity);
+  if (identities.some((identity) => identity === null)) return null;
+  const concreteIdentities = identities as string[];
+  if (new Set(concreteIdentities).size !== concreteIdentities.length) return null;
+  return {
+    identities: concreteIdentities,
+    byIdentity: new Map(concreteIdentities.map((identity, index) => [identity, values[index]!])),
+  };
+}
+
+function relationMismatchDetail(
+  reason: string,
+  identity?: string,
+  field?: RelationMaterialKey
+): unknown {
+  return {
+    reason,
+    ...(identity === undefined ? {} : { endpoint: JSON.parse(identity) }),
+    ...(field === undefined ? {} : { field }),
+  };
+}
+
+function restoreRelationMaterial(
+  target: Record<string, unknown>,
+  source: Record<string, unknown>,
+  key: RelationMaterialKey
+): void {
+  if (Object.prototype.hasOwnProperty.call(source, key)) target[key] = cloneValue(source[key]);
+  else Reflect.deleteProperty(target, key);
+}
+
+function reverseRelationSet(currentValue: unknown, action: ProjectedAction): ReverseActionResult {
+  const oldCollection = createRelationCollection(action.oldValue);
+  const newCollection = createRelationCollection(action.newValue);
+  const currentCollection = createRelationCollection(currentValue);
+  if (!oldCollection || !newCollection || !currentCollection || !Array.isArray(currentValue)) {
+    return {
+      success: false,
+      code: 'projection_mismatch',
+      detail: relationMismatchDetail('invalid_relation_array'),
+    };
+  }
+
+  const added = newCollection.identities.filter(
+    (identity) => !oldCollection.byIdentity.has(identity)
+  );
+  const removed = oldCollection.identities.filter(
+    (identity) => !newCollection.byIdentity.has(identity)
+  );
+  const changed = oldCollection.identities
+    .filter((identity) => newCollection.byIdentity.has(identity))
+    .map((identity) => ({
+      identity,
+      oldValue: oldCollection.byIdentity.get(identity)!,
+      newValue: newCollection.byIdentity.get(identity)!,
+    }))
+    .map((item) => ({
+      ...item,
+      keys: changedRelationMaterialKeys(item.oldValue, item.newValue),
+    }))
+    .filter(({ keys }) => keys.length > 0);
+
+  for (const identity of added) {
+    const expected = newCollection.byIdentity.get(identity)!;
+    const actual = currentCollection.byIdentity.get(identity);
+    if (!actual || !relationMaterialsMatch(expected, actual)) {
+      return {
+        success: false,
+        code: 'projection_mismatch',
+        detail: relationMismatchDetail('added_endpoint_mismatch', identity),
+      };
+    }
+  }
+  for (const identity of removed) {
+    if (currentCollection.byIdentity.has(identity)) {
+      return {
+        success: false,
+        code: 'projection_mismatch',
+        detail: relationMismatchDetail('removed_endpoint_present', identity),
+      };
+    }
+  }
+  for (const { identity, newValue, keys } of changed) {
+    const actual = currentCollection.byIdentity.get(identity);
+    if (!actual) {
+      return {
+        success: false,
+        code: 'projection_mismatch',
+        detail: relationMismatchDetail('changed_endpoint_missing', identity),
+      };
+    }
+    const mismatchedKey = keys.find(
+      (key) => !isEqual(relationMaterialValue(newValue, key), relationMaterialValue(actual, key))
+    );
+    if (mismatchedKey) {
+      return {
+        success: false,
+        code: 'projection_mismatch',
+        detail: relationMismatchDetail('changed_material_mismatch', identity, mismatchedKey),
+      };
+    }
+  }
+
+  const addedSet = new Set(added);
+  for (let index = currentValue.length - 1; index >= 0; index -= 1) {
+    const identity = relationEndpointIdentity(currentValue[index] as Record<string, unknown>);
+    if (identity && addedSet.has(identity)) currentValue.splice(index, 1);
+  }
+  for (const { identity, oldValue, keys } of changed) {
+    const actual = currentCollection.byIdentity.get(identity)!;
+    for (const key of keys) restoreRelationMaterial(actual, oldValue, key);
+  }
+  for (const identity of removed) {
+    currentValue.push(cloneValue(oldCollection.byIdentity.get(identity)!));
+  }
+  return { success: true };
+}
+
 function valuesMatch(path: readonly string[], expected: unknown, actual: unknown): boolean {
   const relationKey = path[1];
   return relationKey && RELATION_ARRAY_KEYS.has(relationKey)
@@ -251,14 +423,20 @@ function mismatchDetail(expected: unknown, actual: unknown): unknown {
 function reverseAction(
   target: Record<string, unknown>,
   action: ProjectedAction
-):
-  | { success: true }
-  | { success: false; code: ActionPatchVerificationFailure['code']; detail?: unknown } {
+): ReverseActionResult {
   const parsed = parseActionPath(action.path);
   if (!parsed.success) return { success: false, code: 'projection_mismatch' };
   const segments = parsed.value.segments;
   const resolved = readParent(target, segments);
   const current = readAtPath(target, segments);
+  if (
+    action.op === 'set' &&
+    segments.length === 2 &&
+    RELATION_ARRAY_KEYS.has(segments[1]!) &&
+    current.exists
+  ) {
+    return reverseRelationSet(current.value, action);
+  }
   const isDelete = action.op === 'delete' || (action.op === 'set' && action.newValue === undefined);
 
   if (isDelete) {
