@@ -16,7 +16,7 @@ const getMarkerPictureHtml = (source: string, zoom = 1) => {
   const encodedAvifSource = encodeURI(`${sourceWithoutExtension}.avif`);
   const encodedWebpSource = encodeURI(`${sourceWithoutExtension}.webp`);
 
-  return `<picture class="block h-full w-full"><source srcset="${encodedAvifSource}" type="image/avif" /><source srcset="${encodedWebpSource}" type="image/webp" /><img src="${encodedSource}" alt="" class="h-full w-full object-contain drop-shadow-md" style="zoom: ${zoom};" /></picture>`;
+  return `<picture class="block h-full w-full"><source srcset="${encodedAvifSource}" type="image/avif" /><source srcset="${encodedWebpSource}" type="image/webp" /><img src="${encodedSource}" alt="" class="object-contain drop-shadow-md" style="width:auto;height:auto;max-width:none;max-height:none;zoom:${zoom};" /></picture>`;
 };
 
 const markerIconCache = new Map<string, L.DivIcon>();

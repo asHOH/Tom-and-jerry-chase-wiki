@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 
 import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
@@ -31,12 +31,25 @@ function InteractiveMapPageContent({ map, mapName }: InteractiveMapPageProps) {
   const effectiveMap = usesDraftData && rawLocalMap ? (localMapSnapshot as MapType) : map;
   const interactiveMap = effectiveMap.interactiveMap;
 
+  useEffect(() => {
+    const root = document.documentElement;
+    const previousRootOverflow = root.style.overflow;
+    const previousBodyOverflow = document.body.style.overflow;
+    root.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      root.style.overflow = previousRootOverflow;
+      document.body.style.overflow = previousBodyOverflow;
+    };
+  }, []);
+
   if (!interactiveMap) return null;
 
   return (
     <div
       ref={orientationContainerRef}
-      className='relative h-dvh w-screen overflow-hidden bg-slate-950'
+      className='fixed inset-0 z-1000 h-dvh w-full overflow-hidden bg-slate-950'
     >
       {/* <LandscapeOrientationPrompt fullscreenTargetRef={orientationContainerRef} /> */}
       <InteractiveMap
@@ -78,6 +91,7 @@ export default function InteractiveMapPage({
       entityId={mapName}
       entityName={mapName}
       publishedRevision={publishedRevision}
+      withPageShell={false}
     >
       <InteractiveMapPageContent
         map={map}

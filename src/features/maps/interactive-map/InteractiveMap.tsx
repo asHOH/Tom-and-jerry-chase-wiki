@@ -934,7 +934,7 @@ export default function InteractiveMap({
   return isFullscreenActive ? (
     <div
       data-main-map
-      className={`fixed inset-0 z-1000 bg-black ${alwaysFullscreen ? 'h-dvh w-screen overflow-hidden p-0' : 'p-0 sm:p-3'}`}
+      className={`fixed inset-0 z-1000 bg-black ${alwaysFullscreen ? 'h-dvh w-full overflow-hidden p-0' : 'p-0 sm:p-3'}`}
       role='dialog'
       aria-modal='true'
       aria-label={`${mapName}交互地图`}
