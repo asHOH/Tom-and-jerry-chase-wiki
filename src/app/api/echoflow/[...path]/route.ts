@@ -5,12 +5,7 @@
 
 import { timingSafeEqual } from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
 
-import {
-  ECHOFLOW_EXECUTE_CODE_MAX_LENGTH,
-  executeEchoFlowCode,
-} from '@/lib/ai/echoFlowCodeExecution';
 import { cached } from '@/lib/serverCache';
 import { env } from '@/env';
 
@@ -18,12 +13,6 @@ import { resolvePath } from '../resolvers';
 
 const MAX_URL_LENGTH = 2000;
 const MAX_DETAIL_ID_LENGTH = 100;
-const EXECUTE_CODE_PATH = 'executecode';
-const executeCodeRequestSchema = z
-  .object({
-    code: z.string().max(ECHOFLOW_EXECUTE_CODE_MAX_LENGTH),
-  })
-  .strict();
 const VALID_RESOURCE_TYPES = [
   'characters',
   'cards',
@@ -137,7 +126,7 @@ function isOriginAllowed(origin: string | null): boolean {
   }
 }
 
-function authorizeRequest(request: NextRequest): NextResponse | undefined {
+export async function GET(request: NextRequest, { params }: RouteParams) {
   const origin = request.headers.get('origin');
   const clientKey = request.headers.get(API_KEY_HEADER);
 
@@ -153,25 +142,18 @@ function authorizeRequest(request: NextRequest): NextResponse | undefined {
     );
   }
 
-  if (hasValidKey) return undefined;
-
-  if (!isOriginAllowed(origin)) {
+  if (!hasValidKey) {
+    if (!isOriginAllowed(origin)) {
+      return NextResponse.json(
+        { error: 'origin not allowed', code: 'ORIGIN_FORBIDDEN' },
+        { status: 403 }
+      );
+    }
     return NextResponse.json(
-      { error: 'origin not allowed', code: 'ORIGIN_FORBIDDEN' },
-      { status: 403 }
+      { error: 'Unauthorized', code: 'UNAUTHORIZED' },
+      { status: 401, headers: buildCorsHeaders(origin) }
     );
   }
-
-  return NextResponse.json(
-    { error: 'Unauthorized', code: 'UNAUTHORIZED' },
-    { status: 401, headers: buildCorsHeaders(origin) }
-  );
-}
-
-export async function GET(request: NextRequest, { params }: RouteParams) {
-  const origin = request.headers.get('origin');
-  const authorizationError = authorizeRequest(request);
-  if (authorizationError) return authorizationError;
 
   if (request.url.length > MAX_URL_LENGTH) {
     return NextResponse.json(
@@ -290,74 +272,6 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   }
 }
 
-export async function POST(request: NextRequest, { params }: RouteParams) {
-  const origin = request.headers.get('origin');
-  const authorizationError = authorizeRequest(request);
-  if (authorizationError) return authorizationError;
-
-  const { path: rawPathSegments } = await params;
-  const pathSegments = decodePathSegments(rawPathSegments);
-  if (pathSegments.length !== 1 || pathSegments[0]?.toLowerCase() !== EXECUTE_CODE_PATH) {
-    return NextResponse.json(
-      { error: 'Method not allowed', code: 'METHOD_NOT_ALLOWED' },
-      {
-        status: 405,
-        headers: {
-          Allow: 'GET, POST, OPTIONS',
-          ...buildCorsHeaders(origin),
-        },
-      }
-    );
-  }
-
-  let body: unknown;
-  try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json(
-      { error: 'Invalid JSON body', code: 'INVALID_BODY' },
-      { status: 400, headers: buildCorsHeaders(origin) }
-    );
-  }
-
-  const parsed = executeCodeRequestSchema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json(
-      { error: 'Invalid executeCode request', code: 'INVALID_REQUEST' },
-      { status: 400, headers: buildCorsHeaders(origin) }
-    );
-  }
-
-  try {
-    const result = await executeEchoFlowCode(parsed.data.code);
-    return NextResponse.json(result, {
-      headers: {
-        'Cache-Control': 'no-store',
-        'X-EchoFlow-Health': 'healthy',
-        'X-Content-Type-Options': 'nosniff',
-        'X-Frame-Options': 'DENY',
-        'Referrer-Policy': 'strict-origin-when-cross-origin',
-        Vary: 'Origin',
-        ...buildCorsHeaders(origin),
-      },
-    });
-  } catch (error) {
-    const isDev = process.env.NODE_ENV === 'development';
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    if (isDev) {
-      console.error('EchoFlow executeCode error:', errorMessage);
-    }
-    return NextResponse.json(
-      {
-        error: 'Internal server error',
-        code: 'INTERNAL_ERROR',
-        ...(isDev && { details: errorMessage }),
-      },
-      { status: 500, headers: buildCorsHeaders(origin) }
-    );
-  }
-}
-
 export async function OPTIONS(request: NextRequest) {
   const origin = request.headers.get('origin');
   const clientKey = request.headers.get(API_KEY_HEADER);
@@ -377,7 +291,7 @@ export async function OPTIONS(request: NextRequest) {
     status: 200,
     headers: {
       ...corsHeaders,
-      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Methods': 'GET, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-EchoFlow-Key',
       'Cache-Control': 'public, max-age=86400',
       'X-EchoFlow-Health': 'healthy',

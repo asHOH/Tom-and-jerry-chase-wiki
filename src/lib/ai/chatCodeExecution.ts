@@ -19,11 +19,8 @@ type HardenedVMOptions = VMOptions & {
 
 export type ChatCodeExecutionContext = ChatGameData & {
   readonly actorProfiles: ActorProfileLookup;
-  readonly characterProfiles?: ActorProfileLookup;
   readonly itemGroups: Readonly<Record<string, ItemGroup>>;
   readonly historyData: GameHistory;
-  readonly wikiHistoryData?: unknown;
-  readonly winRatesData?: unknown;
 };
 
 type ChatCodeExecutionError = Readonly<{

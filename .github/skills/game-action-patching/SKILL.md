@@ -29,47 +29,35 @@ Safely patch approved game_data_actions into code and verify them; defer the res
   `[2026-07-05T16:00:00Z, 2026-07-08T16:00:00Z)`. Apply the same next-day-exclusive rule to
   one day. Resolve omitted years from user/current-date context.
 
-## Discovery Queries
+## Inspection Command
 
-`game_data_actions` stores the operation and values in `entry` JSONB; do not query nonexistent
-flattened columns such as `entity_id`, `action`, `field_path`, `old_value`, or `new_value`.
-An `entry` may be one action or an action array. Start with one inventory row per decoded action,
-substituting the UTC bounds derived above:
+Use the repository inspector instead of writing one-off SQL or manually decoding `entry` JSONB:
 
-```sql
-select id, created_at, status, is_public, entity_type,
-       action.value->>'op' as op, action.value->>'path' as path,
-       pg_column_size(action.value->'oldValue') as old_bytes,
-       pg_column_size(action.value->'newValue') as new_bytes,
-       message
-from public.game_data_actions
-cross join lateral jsonb_array_elements(
-  case jsonb_typeof(entry) when 'array' then entry else jsonb_build_array(entry) end
-) with ordinality as outer_action(value, outer_ord)
-cross join lateral jsonb_array_elements(
-  case jsonb_typeof(outer_action.value)
-    when 'array' then outer_action.value else jsonb_build_array(outer_action.value)
-  end
-) with ordinality as action(value, action_ord)
-where status = 'approved'
-  and created_at >= timestamptz 'FROM_UTC'
-  and created_at <  timestamptz 'TO_UTC'
-order by created_at, id, outer_ord, action_ord;
+```powershell
+# Approved, public actions for one inclusive Beijing day
+npm run inspect:game-data-actions -- --date=2026-07-24
+
+# Approved, public actions for an inclusive Beijing range, optionally limited to one actor root
+npm run inspect:game-data-actions -- --from=2026-07-24 --to=2026-07-26 --actor=Tom
+
+# Exact rows, with small values and optional overlapping history
+npm run inspect:game-data-actions -- --ids=<comma-separated UUIDs> --values
+npm run inspect:game-data-actions -- --ids=<comma-separated UUIDs> --include-history
 ```
 
-Fetch complete values only after this inventory. Treat either value over 10,000 stored bytes as a
-large-payload heuristic, and aim to keep returned JSON text under about 50,000 bytes. For a large
-action, query it alone and return structure/diffs instead of both complete values:
+The command is read-only and uses the same service-key credential convention and paginated query
+adapter as `npm run audit:game-data-actions`. It decodes single, array, and nested-array entries;
+projects legacy paths; compares each action with current source; groups dependent rows; and checks
+same-path old/new chains. Date scopes perform the Beijing-to-UTC conversion and return inventory
+without complete values. Exact-ID scopes accept at most 25 IDs. `--values` returns complete values
+only for payloads at or below 10,000 serialized bytes; larger payloads always return bounded
+structural summaries/diffs. Total output is capped near 50,000 bytes, so split an exact-ID request
+if it reports `output_too_large`.
 
-- Object with a large array child: compare the objects with that child removed, then inspect the
-  child separately.
-- Array: get old/new lengths and compare order. Use `id`, then `name`, only when present and unique
-  in both arrays; otherwise compare by literal index. Return only added, removed, moved, or changed
-  elements with ordinality.
-- Chained parent sets: after legacy/schema projection, verify each `newValue` equals the next
-  `oldValue`; inspect the first old value, each step's changes, and the last new value.
-
-Do not request multiple complete map/large parent values in one MCP result.
+`--include-history` finds exact and ancestor/descendant path overlaps. Until relation-semantic
+history matching is implemented, also inspect inverse and symmetric relation endpoints using the
+mapping below. Report this limitation if it affects a decision. Use direct SQL only as a diagnosed
+fallback when the inspector cannot express the required scope, and report the missing capability.
 
 ## Relation Mapping (src/data/characterRelationData/\*.ts)
 
