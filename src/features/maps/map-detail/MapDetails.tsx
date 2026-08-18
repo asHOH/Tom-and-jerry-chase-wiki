@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import type { MapModeRelationCharacterLookup } from '@/lib/gameData/published/clientProjections';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useLocalMap } from '@/hooks/useLocalEditEntity';
@@ -11,6 +12,7 @@ import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboard
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
 import type { Map as MapType, SingleItem } from '@/data/types';
+import MapModeCharacterRelations from '@/features/characters/components/MapModeCharacterRelations';
 import DetailOwnbuffsCard from '@/features/shared/detail-view/DetailOwnbuffsCard';
 import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
 import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';
@@ -29,10 +31,12 @@ export default function MapDetailClient({
   map,
   fixtureNames,
   modeNames,
+  charactersData,
 }: {
   map: MapType;
   fixtureNames: readonly string[];
   modeNames: readonly string[];
+  charactersData: MapModeRelationCharacterLookup;
 }) {
   const { isEditMode, isEditModeRequested, runtimeStatus } = useEditMode();
   const { mapName } = useLocalMap();
@@ -247,6 +251,17 @@ export default function MapDetailClient({
       ),
     });
   }
+
+  sections.push({
+    key: 'character-relations',
+    content: (
+      <MapModeCharacterRelations
+        targetName={effectiveMap.name}
+        targetType='map'
+        charactersData={charactersData}
+      />
+    ),
+  });
 
   return (
     <>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import type { MapModeRelationCharacterLookup } from '@/lib/gameData/published/clientProjections';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useLocalMode } from '@/hooks/useLocalEditEntity';
@@ -8,6 +9,7 @@ import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboard
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { Mode } from '@/data/types';
+import MapModeCharacterRelations from '@/features/characters/components/MapModeCharacterRelations';
 import DetailOwnbuffsCard from '@/features/shared/detail-view/DetailOwnbuffsCard';
 import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
 import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';
@@ -22,9 +24,11 @@ import ModeAttributesCard from './ModeAttributesCard';
 export default function ModeDetailClient({
   mode,
   mapsData,
+  charactersData,
 }: {
   mode: Mode;
   mapsData?: PublishedGameDataByType['maps'];
+  charactersData: MapModeRelationCharacterLookup;
 }) {
   const { isEditMode, isEditModeRequested, runtimeStatus } = useEditMode();
   const { modeName } = useLocalMode();
@@ -97,6 +101,16 @@ export default function ModeDetailClient({
             <DetailOwnbuffsCard singleItem={{ name: effectiveMode.name, type: 'mode' }} />
           </div>
         </DetailTextSection>
+      ),
+    },
+    {
+      key: 'character-relations',
+      content: (
+        <MapModeCharacterRelations
+          targetName={effectiveMode.name}
+          targetType='mode'
+          charactersData={charactersData}
+        />
       ),
     },
   ];

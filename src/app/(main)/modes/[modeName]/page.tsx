@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
+import { projectMapModeRelationCharacters } from '@/lib/gameData/published/clientProjections';
 import { getApprovedActionSnapshot } from '@/lib/gameData/published/getApprovedActionSnapshot';
 import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
 import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
@@ -66,9 +67,10 @@ export default async function ModeDetailPage({
 }) {
   const modeName = decodeURIComponent((await params).modeName);
   const snapshot = await getApprovedActionSnapshot();
-  const [readModel, maps] = await Promise.all([
+  const [readModel, maps, characters] = await Promise.all([
     getPublishedEntityRouteReadModel('modes', modeName, undefined, snapshot),
     getPublishedDomainReadModel('maps', snapshot),
+    getPublishedDomainReadModel('characters', snapshot),
   ]);
   const mode = readModel.data;
 
@@ -85,6 +87,7 @@ export default async function ModeDetailPage({
         publishedRevision={readModel.revision}
         publishedHistory={readModel.history}
         mapsData={maps.data}
+        charactersData={projectMapModeRelationCharacters(characters.data)}
       />
     </>
   );
