@@ -277,10 +277,6 @@
       "type": "fixture"
     },
     {
-      "name": "小黄鸭",
-      "type": "fixture"
-    },
-    {
       "name": "挡板",
       "type": "fixture"
     },
@@ -346,14 +342,6 @@
     },
     {
       "name": "长柄斧",
-      "type": "fixture"
-    },
-    {
-      "name": "鸭妈妈",
-      "type": "fixture"
-    },
-    {
-      "name": "鸭爸爸",
       "type": "fixture"
     },
     {
@@ -1743,14 +1731,6 @@
       "type": "fixture"
     },
     {
-      "name": "鸭妈妈",
-      "type": "fixture"
-    },
-    {
-      "name": "鸭爸爸",
-      "type": "fixture"
-    },
-    {
       "name": "黄色花",
       "type": "fixture"
     },
@@ -1827,6 +1807,10 @@
       "type": "knowledgeCard"
     },
     {
+      "name": "减速警告",
+      "type": "knowledgeCard"
+    },
+    {
       "name": "回家",
       "type": "knowledgeCard"
     },
@@ -1899,15 +1883,15 @@
       "type": "knowledgeCard"
     },
     {
+      "name": "闭门羹",
+      "type": "knowledgeCard"
+    },
+    {
       "name": "5V5经典奶酪赛",
       "type": "mode"
     },
     {
       "name": "创意玩法",
-      "type": "mode"
-    },
-    {
-      "name": "婚礼大作战",
       "type": "mode"
     },
     {
@@ -2335,10 +2319,6 @@
       "type": "skill"
     },
     {
-      "name": "闭门羹",
-      "type": "skill"
-    },
-    {
       "name": "防狼锤",
       "type": "skill"
     },
@@ -2671,8 +2651,8 @@
       "type": "knowledgeCard"
     },
     {
-      "name": "婚礼大作战",
-      "type": "mode"
+      "name": "闭门羹",
+      "type": "knowledgeCard"
     },
     {
       "name": "疯狂奶酪赛",
@@ -2736,10 +2716,6 @@
     },
     {
       "name": "奇思妙想",
-      "type": "skill"
-    },
-    {
-      "name": "奶酪好手",
       "type": "skill"
     },
     {
@@ -2860,10 +2836,6 @@
     },
     {
       "name": "野生体格",
-      "type": "skill"
-    },
-    {
-      "name": "闭门羹",
       "type": "skill"
     },
     {
@@ -3479,10 +3451,6 @@
       "type": "mode"
     },
     {
-      "name": "婚礼大作战",
-      "type": "mode"
-    },
-    {
       "name": "混沌大作战",
       "type": "mode"
     },
@@ -3894,10 +3862,6 @@
     },
     {
       "name": "创意玩法",
-      "type": "mode"
-    },
-    {
-      "name": "婚礼大作战",
       "type": "mode"
     },
     {
@@ -4589,10 +4553,6 @@
       "type": "mode"
     },
     {
-      "name": "婚礼大作战",
-      "type": "mode"
-    },
-    {
       "name": "侦探放大镜",
       "type": "skill"
     },
@@ -4862,6 +4822,10 @@
     },
     {
       "name": "严防死守",
+      "type": "knowledgeCard"
+    },
+    {
+      "name": "夹不住我",
       "type": "knowledgeCard"
     },
     {
@@ -5139,14 +5103,6 @@
       "type": "fixture"
     },
     {
-      "name": "鸭妈妈",
-      "type": "fixture"
-    },
-    {
-      "name": "鸭爸爸",
-      "type": "fixture"
-    },
-    {
       "name": "变身饮料",
       "type": "item"
     },
@@ -5188,10 +5144,6 @@
     },
     {
       "name": "头盔",
-      "type": "skill"
-    },
-    {
-      "name": "奶酪好手",
       "type": "skill"
     },
     {
@@ -6079,10 +6031,6 @@
       "type": "mode"
     },
     {
-      "name": "婚礼大作战",
-      "type": "mode"
-    },
-    {
       "name": "仙人掌弹弓",
       "type": "skill"
     },
@@ -6572,10 +6520,6 @@
     },
     {
       "name": "喜剧之王",
-      "type": "skill"
-    },
-    {
-      "name": "奶酪好手",
       "type": "skill"
     },
     {
@@ -8431,10 +8375,6 @@
   "初始等级提高": [
     {
       "name": "创意玩法",
-      "type": "mode"
-    },
-    {
-      "name": "婚礼大作战",
       "type": "mode"
     },
     {

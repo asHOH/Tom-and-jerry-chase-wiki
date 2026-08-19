@@ -1,6 +1,6 @@
-import allBuffDetailedDescriptionsRaw from '@/data/allBuffDetailedDescriptions.json';
-import { buffMappingTable } from '@/data/buffMappingTable';
 import type { FactionId, SingleItem, SingleItemTypeName } from '@/data/types';
+import allBuffDetailedDescriptionsRaw from '@/features/buffs/data/allBuffDetailedDescriptions.json';
+import { buffMappingTable } from '@/features/buffs/data/buffMappingTable';
 import { buffs } from '@/data';
 
 import { convertToPinyin } from '../pinyinUtils';

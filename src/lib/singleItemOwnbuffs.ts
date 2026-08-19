@@ -1,6 +1,6 @@
-import allBuffDetailedDescriptionsRaw from '@/data/allBuffDetailedDescriptions.json';
-import { buffMappingTable } from '@/data/buffMappingTable';
 import { SingleItem } from '@/data/types';
+import allBuffDetailedDescriptionsRaw from '@/features/buffs/data/allBuffDetailedDescriptions.json';
+import { buffMappingTable } from '@/features/buffs/data/buffMappingTable';
 
 // 将导入的 JSON 断言为索引签名类型，允许字符串索引
 const allBuffDetailedDescriptions = allBuffDetailedDescriptionsRaw as Record<string, string>;

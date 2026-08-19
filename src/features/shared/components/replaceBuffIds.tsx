@@ -1,4 +1,4 @@
-import buffData from '@/data/allBuffDetailedDescriptions.json';
+import buffData from '@/features/buffs/data/allBuffDetailedDescriptions.json';
 
 // 保留原有的 extractFirstQuotedContent（或也可以从 compareBuff 导入，但为了不破坏依赖，这里保留副本或重新导出）
 // 为了保持原功能，这里保留本地副本，但为了一致性，也可以从 compareBuff 导入，但原文件原本有这些函数，我们移动后需要确保 replaceBuffIds 仍然可用。
