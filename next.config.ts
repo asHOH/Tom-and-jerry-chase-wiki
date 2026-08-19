@@ -45,6 +45,7 @@ const shouldIncludeVercelAnalytics = () => {
 };
 
 const nextConfig: NextConfig = {
+  agentRules: false,
   generateBuildId: () => productionBuildIdentity,
   pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
   transpilePackages: [
