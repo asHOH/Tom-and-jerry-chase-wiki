@@ -63,6 +63,15 @@ tmp/
 GEMINI.md
 .codex/
 
+# Repository-scoped Codex skills
+!/.agents/
+!/.agents/skills/
+/.agents/skills/*
+!/.agents/skills/game-action-compaction/
+!/.agents/skills/game-action-compaction/**
+!/.agents/skills/game-action-patching/
+!/.agents/skills/game-action-patching/**
+
 # Private normalization inputs
 /src/data/roles.json
 

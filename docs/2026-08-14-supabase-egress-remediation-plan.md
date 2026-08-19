@@ -730,7 +730,7 @@ If the gate is not met, record compaction as deferred and leave approved rows un
       freeze.
 - [ ] If the gate is met, create a separate reviewed compaction plan and recovery drill. Do not add its
       schema, RPCs, or deployment protocol to this incident plan.
-- [ ] Use `.github/skills/game-action-compaction/` to prepare and locally verify a manifest-based
+- [ ] Use `.agents/skills/game-action-compaction/` to prepare and locally verify a manifest-based
       candidate when appropriate. The skill is not the deployment/status cutover design.
 
 ### Required constraints for any future plan
