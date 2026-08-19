@@ -4813,6 +4813,149 @@ export const historyData: GameHistory = [
           },
         },
       },
+      {
+        date: '4.16',
+        description: '无战斗相关更新。',
+        details: {},
+      },
+      {
+        date: '4.23',
+        description: '更新魔镜皮歌剧幽影。调整局内快捷消息系统。',
+        details: {},
+      },
+      {
+        date: '4.30',
+        description:
+          '更新羽毛皮歌剧新娘，高定皮星光公主，足迹璀璨星光，墙缝聚光岁月，老鼠洞舞台时光。调整天梯玩法天宫、森林牧场、熊猫馆、游乐场地图道具刷新机制。',
+        details: {},
+      },
+      {
+        date: '5.7',
+        description: '无战斗相关更新。',
+        details: {},
+      },
+      {
+        date: '5.14',
+        description: '更新高定AP皮中华鼠当家。调整天梯玩法太空堡垒系列地图道具刷新机制。',
+        details: {},
+      },
+      {
+        date: '5.21',
+        description: '更新魔镜皮瓶中恶魔。调整天梯玩法夏日游轮系列地图道具刷新机制。',
+        details: {},
+      },
+      {
+        date: '5.28',
+        description:
+          '更新祈愿皮潮汐主宰。调整天梯玩法玩具王国、雪夜古堡系列地图道具刷新机制。调整试用卡组系统。调整地图装扮系统、收藏系统。调整大厅。',
+        details: {},
+      },
+      {
+        date: '6.4',
+        description:
+          '更新角色侦探汤姆，伴生皮苏格兰场探员。调整天梯玩法经典之家系列地图道具刷新机制。',
+        details: {
+          content: {
+            newCharacters: ['侦探汤姆'],
+          },
+        },
+      },
+      {
+        date: '6.11',
+        description: '更新羽毛皮跳频女郎。调整侦探汤姆。',
+        details: {
+          balance: {
+            characterChanges: [{ name: '侦探汤姆', changeType: ChangeType.ADJUSTMENT }],
+          },
+        },
+      },
+      {
+        date: '6.18',
+        description: '更新魔镜皮波西米亚。调整会员商城系统。',
+        details: {},
+      },
+      {
+        date: '6.25',
+        description:
+          '调整修理锤。调整局内商店系统。削弱米雪儿、魔术师、梦游杰瑞、表演者杰瑞、侦探杰瑞、如玉、斯飞、库博、米特，调整尼宝、佩克斯、罗宾汉泰菲、牛仔杰瑞、音乐家杰瑞、霜月、朝圣者泰菲、鲍姆、国王杰瑞、米可、苏蕊、布奇、侦探汤姆、恶魔汤姆、牛仔汤姆、莱特宁。调整试用卡组系统。',
+        details: {
+          balance: {
+            characterChanges: [
+              { name: '米雪儿', changeType: ChangeType.NERF },
+              { name: '魔术师', changeType: ChangeType.NERF },
+              { name: '梦游杰瑞', changeType: ChangeType.NERF },
+              { name: '表演者杰瑞', changeType: ChangeType.NERF },
+              { name: '侦探杰瑞', changeType: ChangeType.NERF },
+              { name: '如玉', changeType: ChangeType.NERF },
+              { name: '斯飞', changeType: ChangeType.NERF },
+              { name: '库博', changeType: ChangeType.NERF },
+              { name: '米特', changeType: ChangeType.NERF },
+              { name: '尼宝', changeType: ChangeType.ADJUSTMENT },
+              { name: '佩克斯', changeType: ChangeType.ADJUSTMENT },
+              { name: '罗宾汉泰菲', changeType: ChangeType.ADJUSTMENT },
+              { name: '牛仔杰瑞', changeType: ChangeType.ADJUSTMENT },
+              { name: '音乐家杰瑞', changeType: ChangeType.ADJUSTMENT },
+              { name: '霜月', changeType: ChangeType.ADJUSTMENT },
+              { name: '朝圣者泰菲', changeType: ChangeType.ADJUSTMENT },
+              { name: '鲍姆', changeType: ChangeType.ADJUSTMENT },
+              { name: '国王杰瑞', changeType: ChangeType.ADJUSTMENT },
+              { name: '米可', changeType: ChangeType.ADJUSTMENT },
+              { name: '苏蕊', changeType: ChangeType.ADJUSTMENT },
+              { name: '布奇', changeType: ChangeType.ADJUSTMENT },
+              { name: '侦探汤姆', changeType: ChangeType.ADJUSTMENT },
+              { name: '恶魔汤姆', changeType: ChangeType.ADJUSTMENT },
+              { name: '牛仔汤姆', changeType: ChangeType.ADJUSTMENT },
+              { name: '莱特宁', changeType: ChangeType.ADJUSTMENT },
+            ],
+            itemChanges: [{ name: '修理锤', changeType: ChangeType.ADJUSTMENT }],
+          },
+        },
+      },
+      {
+        date: '7.2',
+        description:
+          '加强罗宾汉杰瑞、拿坡里鼠、朝圣者泰菲、玛丽、侦探汤姆，调整图茨。调整部分角色个人表现分得分机制。调整天梯玩法机制，更新传奇资格赛系统。',
+        details: {
+          balance: {
+            characterChanges: [
+              { name: '罗宾汉杰瑞', changeType: ChangeType.BUFF },
+              { name: '拿坡里鼠', changeType: ChangeType.BUFF },
+              { name: '朝圣者泰菲', changeType: ChangeType.BUFF },
+              { name: '玛丽', changeType: ChangeType.BUFF },
+              { name: '侦探汤姆', changeType: ChangeType.BUFF },
+              { name: '图茨', changeType: ChangeType.ADJUSTMENT },
+            ],
+          },
+        },
+      },
+      {
+        date: '7.3',
+        description: 'S29赛季开始，货架皮雨中行，染色皮霓虹。',
+        details: {
+          milestone: 'S29赛季开始',
+        },
+      },
+      {
+        date: '7.9',
+        description: '更新染色皮精灵王爷夜爵。更新时光趣游赛限时玩法，同步更新赛季通行证。',
+        details: {},
+      },
+      {
+        date: '7.16',
+        description: '更新魔镜皮神秘新秀。调整魔瓶精灵的愿望契约。',
+        details: {},
+      },
+      {
+        date: '7.23',
+        description:
+          '更新活动皮地下女王，足迹隐秘之路，墙缝窃听仪，老鼠洞华丽阶梯。调整每日福利系统。',
+        details: {},
+      },
+      {
+        date: '8.6',
+        description: '更新高定皮熊宝大冒险。',
+        details: {},
+      },
     ],
   },
 ];
