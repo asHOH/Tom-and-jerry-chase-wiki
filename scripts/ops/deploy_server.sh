@@ -16,9 +16,12 @@ ENV_FILE=".env.production"
 PM2_APP_NAME="tjwiki"
 PM2_DAEMON_VERSION_CHECKED=0
 START_SCRIPT="scripts/ops/start_server.sh"
+DEPENDENCY_INPUTS_FILE="node_modules/.tjwiki_dependency_inputs"
+DEPENDENCY_INSTALL_POLICY="npm-ci-ignore-scripts-v1"
 LAST_HEALTH_CHECK_ERROR=""
 FETCH_ENDPOINT_RESPONSE=""
 DEPLOY_STARTED_AT="$(date +%s)"
+DEPENDENCY_ACTION="not-started"
 
 if [ -d "$SCRIPT_DIR/../../.git" ]; then
   REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
@@ -193,8 +196,43 @@ ensure_pinned_npm() {
   fi
 }
 
+calculate_dependency_inputs() {
+  local npmrc_hash="missing"
+
+  if [ -f ".npmrc" ]; then
+    npmrc_hash="$(sha256sum .npmrc | awk '{ print $1 }')"
+  fi
+
+  {
+    printf 'package_json=%s\n' "$(sha256sum package.json | awk '{ print $1 }')"
+    printf 'package_lock=%s\n' "$(sha256sum package-lock.json | awk '{ print $1 }')"
+    printf 'npmrc=%s\n' "$npmrc_hash"
+    printf 'node=%s\n' "$NODE_VERSION"
+    printf 'npm=%s\n' "$NPM_VERSION"
+    printf 'platform=%s\n' "$(uname -s)"
+    printf 'architecture=%s\n' "$(uname -m)"
+    printf 'install_policy=%s\n' "$DEPENDENCY_INSTALL_POLICY"
+  } | sha256sum | awk '{ print $1 }'
+}
+
 install_dependencies() {
+  local current_inputs previous_inputs=""
+
+  current_inputs="$(calculate_dependency_inputs)"
+  if [ -f "$DEPENDENCY_INPUTS_FILE" ]; then
+    previous_inputs="$(cat "$DEPENDENCY_INPUTS_FILE" 2>/dev/null || true)"
+  fi
+
+  if [ "${FORCE_DEPENDENCY_INSTALL:-0}" = "1" ]; then
+    echo "Dependency installation forced by FORCE_DEPENDENCY_INSTALL=1."
+  elif [ -d "node_modules" ] && [ "$current_inputs" = "$previous_inputs" ]; then
+    DEPENDENCY_ACTION="skipped"
+    echo "Dependencies skipped; manifest, lockfile, npm configuration, toolchain, and platform are unchanged."
+    return 0
+  fi
+
   echo "Installing project dependencies from package-lock.json..."
+  rm -f "$DEPENDENCY_INPUTS_FILE"
 
   local attempt=1
   while [ "$attempt" -le 3 ]; do
@@ -209,6 +247,8 @@ install_dependencies() {
     fi
 
     if npm ci --ignore-scripts --loglevel=error --registry "$registry"; then
+      printf '%s\n' "$current_inputs" > "$DEPENDENCY_INPUTS_FILE"
+      DEPENDENCY_ACTION="installed"
       echo "Dependencies installed successfully."
       return 0
     fi
@@ -589,4 +629,4 @@ ensure_pm2_process
 
 DEPLOY_DURATION_SECONDS="$(($(date +%s) - DEPLOY_STARTED_AT))"
 echo
-echo "Deployment complete: commit=${CURRENT_HASH:0:8} branch=$TARGET_BRANCH build=$BUILD_ACTION build_time=$BUILD_DURATION total_time=$(format_duration "$DEPLOY_DURATION_SECONDS") node=$NODE_VERSION npm=$NPM_VERSION pm2=$PM2_VERSION"
+echo "Deployment complete: commit=${CURRENT_HASH:0:8} branch=$TARGET_BRANCH dependencies=$DEPENDENCY_ACTION build=$BUILD_ACTION build_time=$BUILD_DURATION total_time=$(format_duration "$DEPLOY_DURATION_SECONDS") node=$NODE_VERSION npm=$NPM_VERSION pm2=$PM2_VERSION"

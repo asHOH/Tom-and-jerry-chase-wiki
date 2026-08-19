@@ -71,7 +71,7 @@ docker compose up -d
 
 - **原地构建**: 需要重新构建时会先停止 pm2 站点进程，构建期间站点不可用，失败时不会自动回滚
 - **环境配置**: 自动安装 NVM 与 Node.js；自动切换 npm 镜像源（npmmirror/官方）
-- **智能更新**: Git 拉取防超时；代码、生产环境或 Node/npm 工具链变化时才重新构建
+- **智能更新**: Git 拉取防超时；依赖输入未变化时跳过重复安装；代码、生产环境或 Node/npm 工具链变化时才重新构建
 - **运行托管**: pm2 只托管站点进程；`cloudflared` 单独作为系统服务运行
 
 ### 使用方法
@@ -102,6 +102,12 @@ docker compose up -d
    ```
 
    需要重新构建时，脚本会先停止 pm2 站点进程，再清理并原地生成 `.next`，以免运行中的 Next.js 读取正在变化的构建输出。构建成功后，脚本会自动执行 `pm2 reload tjwiki --update-env` 并验证健康状态；如果构建失败，部署会以非零状态退出，站点进程可能保持停止。脚本目前不会自动保留或恢复上一版本，需排查失败原因后重新部署或另行恢复已知可用版本。
+
+   依赖成功安装后，脚本会在 `node_modules` 中保存依赖输入指纹。`package.json`、`package-lock.json`、`.npmrc`、Node/npm 版本、平台架构及安装策略均未变化时，后续部署会跳过 `npm ci`。如需修复可能被手动修改或损坏的 `node_modules`，可强制重新安装：
+
+   ```bash
+   FORCE_DEPENDENCY_INSTALL=1 ./deploy_server.sh
+   ```
 
    如果无法从远程仓库拉取 `develop`，部署会以非零状态退出。
 
