@@ -517,7 +517,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '莱恩画出的方块能阻碍斯飞行动，同时三角形的减速与圆的伤害不可忽视，但莱恩无法轻易逃脱斯飞的追击。',
+      '莱恩画出的方块能阻碍斯飞行动，同时三角形的减速与圆的伤害不可忽视，但莱恩容易被斯飞击倒。',
     relation: {
       kind: 'counterEachOther',
       subject: { name: '斯飞', type: 'character' },
@@ -557,12 +557,12 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '音乐家杰瑞的音波能够造成短暂控制以及快速破坏火箭，并且墙缝期的辅助能力与音波破墙我威胁使斯飞难以防守，但斯飞疾冲状态的感电或者强化技能能够打断音乐家杰瑞武器技能状态',
+      '音乐家杰瑞的音波能够造成短暂控制以及快速破坏火箭，并且墙缝期的辅助能力与音波破墙我威胁使斯飞难以防守',
     relation: {
-      kind: 'counterEachOther',
-      subject: { name: '斯飞', type: 'character' },
-      target: { name: '音乐家杰瑞', type: 'character' },
-      isMinor: true,
+      kind: 'counters',
+      subject: { name: '音乐家杰瑞', type: 'character' },
+      target: { name: '斯飞', type: 'character' },
+      isMinor: false,
     },
   },
   {
@@ -925,15 +925,6 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
     },
   },
   {
-    description: '恶魔杰瑞的护盾会被喵喵叫快速击破，因此缺乏自保手段。',
-    relation: {
-      kind: 'counters',
-      subject: { name: '图茨', type: 'character' },
-      target: { name: '恶魔杰瑞', type: 'character' },
-      isMinor: true,
-    },
-  },
-  {
     description: '库博能一击击倒恶魔泰菲，还能在天堂看到恶魔泰菲，从而推断藏匿道具的位置。',
     relation: {
       kind: 'counters',
@@ -1132,12 +1123,12 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '斯飞疾冲状态带来的感电能够破掉米雪儿的变身与主动时的护盾，并且主动技能的拖拽能够中断米雪儿的主动技能',
+      '米雪儿气球能够牵制斯飞或者脱离追击，同时附着状态下会因为触发感电电击导致脱离时处于免疫感电电击的时间内，但斯飞疾冲状态带来的感电能够破掉米雪儿的变身与主动时的护盾，并且主动技能的拖拽能够中断米雪儿的主动技能',
     relation: {
-      kind: 'counters',
+      kind: 'counterEachOther',
       subject: { name: '斯飞', type: 'character' },
       target: { name: '米雪儿', type: 'character' },
-      isMinor: false,
+      isMinor: true,
     },
   },
   {
@@ -2126,12 +2117,13 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
     },
   },
   {
-    description: '天菲机动性不高，容易被追上。',
+    description:
+      '天使泰菲主动技能的免疫控制与武器技能的霸体使斯飞的主动技能无法有效给予牵制，后期的免疫虚弱使击杀天使泰菲难度加深。',
     relation: {
       kind: 'counters',
-      subject: { name: '斯飞', type: 'character' },
-      target: { name: '天使泰菲', type: 'character' },
-      isMinor: true,
+      subject: { name: '天使泰菲', type: 'character' },
+      target: { name: '斯飞', type: 'character' },
+      isMinor: false,
     },
   },
   {
@@ -2644,12 +2636,13 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
     },
   },
   {
-    description: '罗菲的圆球加投掷道具配合投手，可以暂时中断斯飞的疾冲状态，达到干扰效果。',
+    description:
+      '罗菲的圆球加投掷道具配合投手，可以暂时中断斯飞的疾冲状态，达到干扰效果，武器技能能够创造有利地形拉扯斯飞。',
     relation: {
       kind: 'counters',
       subject: { name: '罗宾汉泰菲', type: 'character' },
       target: { name: '斯飞', type: 'character' },
-      isMinor: true,
+      isMinor: false,
     },
   },
   {
@@ -3232,15 +3225,6 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       kind: 'counters',
       subject: { name: '天使汤姆', type: 'character' },
       target: { name: '剑客莉莉', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
-    description: '图茨的喵喵叫能快速破盾，使国王杰瑞很难单独救人。',
-    relation: {
-      kind: 'counters',
-      subject: { name: '图茨', type: 'character' },
-      target: { name: '国王杰瑞', type: 'character' },
       isMinor: false,
     },
   },

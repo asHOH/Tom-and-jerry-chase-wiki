@@ -742,11 +742,29 @@ export const characterRelationMapTraits: CharacterRelationTrait[] = [
     },
   },
   {
-    description: '横排上下两层的地图使莱特林在下方就能通过闪现管控上方奶酪。',
+    description: '横排上下两层的地图使莱特宁在下方就能通过闪现管控上方奶酪。',
     relation: {
       kind: 'advantageMaps',
       subject: { name: '莱特宁', type: 'character' },
       target: { name: '经典之家II', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '游乐场纵向空间大，火箭密集，可以用咸鱼快速转点拉扯老鼠',
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '莱特宁', type: 'character' },
+      target: { name: '游乐场', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '地图大，可以在左右钟楼反复换绑或上下闪现',
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '莱特宁', type: 'character' },
+      target: { name: '雪夜古堡III', type: 'map' },
       isMinor: false,
     },
   },
@@ -886,6 +904,69 @@ export const characterRelationMapTraits: CharacterRelationTrait[] = [
       subject: { name: '布奇', type: 'character' },
       target: { name: '天宫-云上', type: 'map' },
       isMinor: false,
+    },
+  },
+  {
+    description: '该地图的船长室与电影院与甲板的洞口中的奶酪容易被布奇冲出到不易搬回的地方',
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '布奇', type: 'character' },
+      target: { name: '夏日游轮I', type: 'map' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '该地图的船长室与电影院的洞口中的奶酪容易被布奇冲出到不易搬回的地方',
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '布奇', type: 'character' },
+      target: { name: '夏日游轮II', type: 'map' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '该地图的船长室与电影院与餐厅的洞口中的奶酪容易被布奇冲出到不易搬回的地方',
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '布奇', type: 'character' },
+      target: { name: '夏日游轮III', type: 'map' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '该地图的维修舱的洞口中的奶酪容易被布奇冲出到不易搬回的地方',
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '布奇', type: 'character' },
+      target: { name: '太空堡垒I', type: 'map' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '该地图的领航厅的洞口中的奶酪容易被布奇冲出到不易搬回的地方',
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '布奇', type: 'character' },
+      target: { name: '太空堡垒II', type: 'map' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '该地图的摩天轮的洞口中的奶酪容易被布奇冲出到不易搬回的地方',
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '布奇', type: 'character' },
+      target: { name: '游乐场', type: 'map' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '该地图的森林与码头的洞口中的奶酪容易被布奇冲出到不易搬回的地方',
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '布奇', type: 'character' },
+      target: { name: '森林牧场', type: 'map' },
+      isMinor: true,
     },
   },
   {

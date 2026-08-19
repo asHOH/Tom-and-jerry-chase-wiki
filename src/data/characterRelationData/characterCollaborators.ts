@@ -448,7 +448,7 @@ export const characterRelationCharacterCollaboratorTraits: CharacterRelationTrai
     },
   },
   {
-    description: '可以配合泥巴救援后传送',
+    description: '可以配合尼宝救援后传送',
     relation: {
       kind: 'collaborators',
       subject: { name: '尼宝', type: 'character' },

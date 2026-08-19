@@ -730,7 +730,7 @@ const itemDefinitions: Record<string, ItemDefinition> = {
   经验蛋糕: {
     itemtype: '特殊类' as const,
     itemsource: '常规道具' as const,
-    aliases: ['Exp蛋糕', '普通经验蛋糕'],
+    aliases: ['Exp蛋糕', '普通经验蛋糕', '牢糕'],
     description: '被猫咪拾取可直接获得经验，被机器鼠拾取并带回老鼠洞后可获得经验。',
     detailedDescription:
       '被猫咪拾取可直接获得经验，拾取第1/2/3/4/5/6+块经验蛋糕时获得1800/1200/1000/800/600/0经验；被机器鼠拾取并带回老鼠洞后可获得经验，获得第1/2/3/4/5/6+块经验蛋糕时获得6000/4800/4000/2400/1600/0经验。(注意：鼠方获得经验时，会平分给所有存活的队友)',
