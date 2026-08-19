@@ -5,6 +5,7 @@ export type PhysicsType = FactionId | 'special';
 
 export type ActorProfile = {
   name: string;
+  physicsBodyName?: string;
   actorType: ActorType;
   physicsType: PhysicsType;
   sex: 'male' | 'female' | 'none';
@@ -102,6 +103,7 @@ const RAW_KEYS = new Set<keyof RawActorProfile>([
 
 const CANONICAL_KEYS = new Set<keyof ActorProfile>([
   'name',
+  'physicsBodyName',
   'actorType',
   'physicsType',
   'sex',
@@ -290,6 +292,11 @@ export const parseActorProfiles = (input: unknown): readonly ActorProfile[] => {
 
     assertString(record.name, `${path}.name`);
     if (record.name.trim().length === 0) fail(`${path}.name`, 'expected a nonempty name');
+    if ('physicsBodyName' in record) {
+      assertString(record.physicsBodyName, `${path}.physicsBodyName`);
+      if (record.physicsBodyName.length === 0)
+        fail(`${path}.physicsBodyName`, 'expected a nonempty string');
+    }
     assertEnum(record.actorType, new Set(['mouse', 'cat', 'special']), `${path}.actorType`);
     assertEnum(record.physicsType, new Set(['mouse', 'cat', 'special']), `${path}.physicsType`);
     assertEnum(record.sex, new Set(['male', 'female', 'none']), `${path}.sex`);

@@ -44,6 +44,7 @@ const createContext = (
 
 const createCanonicalProfile = (overrides: Partial<ActorProfile> = {}): ActorProfile => ({
   name: '测试角色',
+  physicsBodyName: 'test',
   actorType: 'mouse',
   physicsType: 'mouse',
   sex: 'male',

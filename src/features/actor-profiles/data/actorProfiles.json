@@ -1,6 +1,7 @@
 [
   {
     "name": "汤姆",
+    "physicsBodyName": "tom",
     "actorType": "cat",
     "physicsType": "cat",
     "sex": "male",
@@ -31,6 +32,7 @@
   },
   {
     "name": "布奇",
+    "physicsBodyName": "tom",
     "actorType": "cat",
     "physicsType": "cat",
     "sex": "male",
@@ -61,6 +63,7 @@
   },
   {
     "name": "托普斯",
+    "physicsBodyName": "topsy",
     "actorType": "cat",
     "physicsType": "cat",
     "sex": "male",
@@ -90,6 +93,7 @@
   },
   {
     "name": "莱特宁",
+    "physicsBodyName": "tom",
     "actorType": "cat",
     "physicsType": "cat",
     "sex": "male",
@@ -120,6 +124,7 @@
   },
   {
     "name": "牛仔汤姆",
+    "physicsBodyName": "tom",
     "actorType": "cat",
     "physicsType": "cat",
     "sex": "male",
@@ -149,6 +154,7 @@
   },
   {
     "name": "图多盖洛",
+    "physicsBodyName": "tom",
     "actorType": "cat",
     "physicsType": "cat",
     "sex": "female",
@@ -178,6 +184,7 @@
   },
   {
     "name": "侍卫汤姆",
+    "physicsBodyName": "tom",
     "actorType": "cat",
     "physicsType": "cat",
     "sex": "male",
@@ -207,6 +214,7 @@
   },
   {
     "name": "图茨",
+    "physicsBodyName": "topsy",
     "actorType": "cat",
     "physicsType": "cat",
     "sex": "female",
@@ -236,6 +244,7 @@
   },
   {
     "name": "米特",
+    "physicsBodyName": "tom",
     "actorType": "cat",
     "physicsType": "cat",
     "sex": "male",
@@ -265,6 +274,7 @@
   },
   {
     "name": "塔拉",
+    "physicsBodyName": "tom",
     "actorType": "cat",
     "physicsType": "cat",
     "sex": "female",
@@ -294,6 +304,7 @@
   },
   {
     "name": "剑客汤姆",
+    "physicsBodyName": "tom",
     "actorType": "cat",
     "physicsType": "cat",
     "sex": "male",
@@ -323,6 +334,7 @@
   },
   {
     "name": "库博",
+    "physicsBodyName": "tom",
     "actorType": "cat",
     "physicsType": "cat",
     "sex": "male",
@@ -352,6 +364,7 @@
   },
   {
     "name": "凯特",
+    "physicsBodyName": "tom",
     "actorType": "cat",
     "physicsType": "cat",
     "sex": "female",
@@ -381,6 +394,7 @@
   },
   {
     "name": "苏蕊",
+    "physicsBodyName": "tom",
     "actorType": "cat",
     "physicsType": "cat",
     "sex": "female",
@@ -410,6 +424,7 @@
   },
   {
     "name": "天使汤姆",
+    "physicsBodyName": "tom",
     "actorType": "cat",
     "physicsType": "cat",
     "sex": "male",
@@ -439,6 +454,7 @@
   },
   {
     "name": "斯飞",
+    "physicsBodyName": "tom",
     "actorType": "cat",
     "physicsType": "cat",
     "sex": "male",
@@ -468,6 +484,7 @@
   },
   {
     "name": "恶魔汤姆",
+    "physicsBodyName": "tom",
     "actorType": "cat",
     "physicsType": "cat",
     "sex": "male",
@@ -497,6 +514,7 @@
   },
   {
     "name": "兔八哥",
+    "physicsBodyName": "tom",
     "actorType": "cat",
     "physicsType": "cat",
     "sex": "male",
@@ -526,6 +544,7 @@
   },
   {
     "name": "追风汤姆",
+    "physicsBodyName": "tom",
     "actorType": "cat",
     "physicsType": "cat",
     "sex": "male",
@@ -555,6 +574,7 @@
   },
   {
     "name": "如玉",
+    "physicsBodyName": "tom",
     "actorType": "cat",
     "physicsType": "cat",
     "sex": "female",
@@ -584,6 +604,7 @@
   },
   {
     "name": "侦探汤姆",
+    "physicsBodyName": "tom",
     "actorType": "cat",
     "physicsType": "cat",
     "sex": "male",
@@ -613,6 +634,7 @@
   },
   {
     "name": "杰瑞",
+    "physicsBodyName": "jerry",
     "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
@@ -640,6 +662,7 @@
   },
   {
     "name": "侦探杰瑞",
+    "physicsBodyName": "jerry",
     "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
@@ -666,6 +689,7 @@
   },
   {
     "name": "罗宾汉杰瑞",
+    "physicsBodyName": "jerry",
     "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
@@ -692,6 +716,7 @@
   },
   {
     "name": "航海士杰瑞",
+    "physicsBodyName": "jerry",
     "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
@@ -718,6 +743,7 @@
   },
   {
     "name": "国王杰瑞",
+    "physicsBodyName": "jerry",
     "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
@@ -744,6 +770,7 @@
   },
   {
     "name": "剑客杰瑞",
+    "physicsBodyName": "jerry",
     "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
@@ -770,6 +797,7 @@
   },
   {
     "name": "泰菲",
+    "physicsBodyName": "tuffy",
     "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
@@ -797,6 +825,7 @@
   },
   {
     "name": "剑客泰菲",
+    "physicsBodyName": "tuffy",
     "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
@@ -824,6 +853,7 @@
   },
   {
     "name": "牛仔杰瑞",
+    "physicsBodyName": "jerry",
     "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
@@ -850,6 +880,7 @@
   },
   {
     "name": "恶魔杰瑞",
+    "physicsBodyName": "jerry",
     "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
@@ -876,6 +907,7 @@
   },
   {
     "name": "恶魔泰菲",
+    "physicsBodyName": "tuffy",
     "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
@@ -903,6 +935,7 @@
   },
   {
     "name": "雪梨",
+    "physicsBodyName": "jerry",
     "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "female",
@@ -929,6 +962,7 @@
   },
   {
     "name": "天使杰瑞",
+    "physicsBodyName": "jerry",
     "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
@@ -955,6 +989,7 @@
   },
   {
     "name": "天使泰菲",
+    "physicsBodyName": "tuffy",
     "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
@@ -982,6 +1017,7 @@
   },
   {
     "name": "魔术师",
+    "physicsBodyName": "jerry",
     "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
@@ -1008,6 +1044,7 @@
   },
   {
     "name": "佩克斯",
+    "physicsBodyName": "jerry",
     "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
@@ -1034,6 +1071,7 @@
   },
   {
     "name": "拿坡里鼠",
+    "physicsBodyName": "jerry",
     "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
@@ -1060,6 +1098,7 @@
   },
   {
     "name": "侦探泰菲",
+    "physicsBodyName": "tuffy",
     "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
@@ -1087,6 +1126,7 @@
   },
   {
     "name": "剑客莉莉",
+    "physicsBodyName": "jerry",
     "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "female",
@@ -1113,6 +1153,7 @@
   },
   {
     "name": "罗宾汉泰菲",
+    "physicsBodyName": "tuffy",
     "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
@@ -1140,6 +1181,7 @@
   },
   {
     "name": "玛丽",
+    "physicsBodyName": "jerry",
     "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "female",
@@ -1166,6 +1208,7 @@
   },
   {
     "name": "马索尔",
+    "physicsBodyName": "jerry",
     "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
@@ -1192,6 +1235,7 @@
   },
   {
     "name": "米雪儿",
+    "physicsBodyName": "jerry",
     "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "female",
@@ -1218,6 +1262,7 @@
   },
   {
     "name": "音乐家杰瑞",
+    "physicsBodyName": "jerry",
     "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
@@ -1244,6 +1289,7 @@
   },
   {
     "name": "蒙金奇",
+    "physicsBodyName": "jerry",
     "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
@@ -1270,6 +1316,7 @@
   },
   {
     "name": "尼宝",
+    "physicsBodyName": "jerry",
     "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
@@ -1296,6 +1343,7 @@
   },
   {
     "name": "朵朵",
+    "physicsBodyName": "jerry",
     "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "female",
@@ -1322,6 +1370,7 @@
   },
   {
     "name": "仙女鼠",
+    "physicsBodyName": "jerry",
     "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "female",
@@ -1348,6 +1397,7 @@
   },
   {
     "name": "米可",
+    "physicsBodyName": "jerry",
     "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
@@ -1374,6 +1424,7 @@
   },
   {
     "name": "霜月",
+    "physicsBodyName": "jerry",
     "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "female",
@@ -1400,6 +1451,7 @@
   },
   {
     "name": "表演者•杰瑞",
+    "physicsBodyName": "jerry",
     "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
@@ -1426,6 +1478,7 @@
   },
   {
     "name": "莱恩",
+    "physicsBodyName": "jerry",
     "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
@@ -1452,6 +1505,7 @@
   },
   {
     "name": "梦游杰瑞",
+    "physicsBodyName": "jerry",
     "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
@@ -1478,6 +1532,7 @@
   },
   {
     "name": "鲍姆",
+    "physicsBodyName": "jerry",
     "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
@@ -1504,6 +1559,7 @@
   },
   {
     "name": "朝圣者泰菲",
+    "physicsBodyName": "tuffy",
     "actorType": "mouse",
     "physicsType": "mouse",
     "sex": "male",
@@ -1531,6 +1587,7 @@
   },
   {
     "name": "“正气守护”斯派克",
+    "physicsBodyName": "2v6dog",
     "actorType": "special",
     "physicsType": "cat",
     "sex": "none",
@@ -1555,6 +1612,7 @@
   },
   {
     "name": "仙女星星",
+    "physicsBodyName": "2v6bianshenxingxing",
     "actorType": "special",
     "physicsType": "special",
     "sex": "male",
@@ -1579,6 +1637,7 @@
   },
   {
     "name": "兔子先生",
+    "physicsBodyName": "jerry",
     "actorType": "special",
     "physicsType": "mouse",
     "sex": "none",
@@ -1603,6 +1662,7 @@
   },
   {
     "name": "兔子大表哥",
+    "physicsBodyName": "jiroutuzi",
     "actorType": "special",
     "physicsType": "cat",
     "sex": "none",
@@ -1627,6 +1687,7 @@
   },
   {
     "name": "兔霸哥",
+    "physicsBodyName": "big_chungus",
     "actorType": "special",
     "physicsType": "cat",
     "sex": "none",
@@ -1651,6 +1712,7 @@
   },
   {
     "name": "小象",
+    "physicsBodyName": "baby_elephant",
     "actorType": "special",
     "physicsType": "mouse",
     "sex": "none",
@@ -1675,6 +1737,7 @@
   },
   {
     "name": "小黄鸭",
+    "physicsBodyName": "Duck",
     "actorType": "special",
     "physicsType": "special",
     "sex": "none",
@@ -1699,6 +1762,7 @@
   },
   {
     "name": "年兽",
+    "physicsBodyName": "nianshou",
     "actorType": "special",
     "physicsType": "special",
     "sex": "none",
@@ -1723,6 +1787,7 @@
   },
   {
     "name": "斯派克之家",
+    "physicsBodyName": "doghouse",
     "actorType": "special",
     "physicsType": "cat",
     "sex": "none",
@@ -1747,6 +1812,7 @@
   },
   {
     "name": "机器鼠",
+    "physicsBodyName": "conmouse",
     "actorType": "special",
     "physicsType": "special",
     "sex": "none",
@@ -1771,6 +1837,7 @@
   },
   {
     "name": "机甲汤姆",
+    "physicsBodyName": "mecha_tom",
     "actorType": "special",
     "physicsType": "cat",
     "sex": "male",
@@ -1796,6 +1863,7 @@
   },
   {
     "name": "柠檬杰瑞",
+    "physicsBodyName": "jerry",
     "actorType": "special",
     "physicsType": "cat",
     "sex": "none",
@@ -1820,6 +1888,7 @@
   },
   {
     "name": "熊猫",
+    "physicsBodyName": "xiaoXiongmao",
     "actorType": "special",
     "physicsType": "special",
     "sex": "none",
@@ -1844,6 +1913,7 @@
   },
   {
     "name": "燃烧的仙女星",
+    "physicsBodyName": "2v6chaojibianshenxingxing",
     "actorType": "special",
     "physicsType": "special",
     "sex": "male",
@@ -1868,6 +1938,7 @@
   },
   {
     "name": "电风扇",
+    "physicsBodyName": "hold_agent_fanner",
     "actorType": "special",
     "physicsType": "special",
     "sex": "none",
@@ -1892,6 +1963,7 @@
   },
   {
     "name": "盔甲人",
+    "physicsBodyName": "kuijia",
     "actorType": "special",
     "physicsType": "special",
     "sex": "none",
@@ -1916,6 +1988,7 @@
   },
   {
     "name": "肌肉杰瑞",
+    "physicsBodyName": "muscle_jerry",
     "actorType": "special",
     "physicsType": "mouse",
     "sex": "none",
@@ -1940,6 +2013,7 @@
   },
   {
     "name": "肌肉汤姆",
+    "physicsBodyName": "muscle_tom",
     "actorType": "special",
     "physicsType": "cat",
     "sex": "none",
@@ -1964,6 +2038,7 @@
   },
   {
     "name": "胖呆呆",
+    "physicsBodyName": "qiankundai",
     "actorType": "special",
     "physicsType": "special",
     "sex": "male",
@@ -1988,6 +2063,7 @@
   },
   {
     "name": "超级仙女星",
+    "physicsBodyName": "2v6chaojibianshenxingxing",
     "actorType": "special",
     "physicsType": "special",
     "sex": "male",
@@ -2012,6 +2088,7 @@
   },
   {
     "name": "鸭妈妈",
+    "physicsBodyName": "mamaDuck",
     "actorType": "special",
     "physicsType": "special",
     "sex": "none",
@@ -2036,6 +2113,7 @@
   },
   {
     "name": "鸭爸爸",
+    "physicsBodyName": "dadDuck",
     "actorType": "special",
     "physicsType": "special",
     "sex": "none",
