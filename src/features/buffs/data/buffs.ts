@@ -1173,7 +1173,7 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       '“叠满获得新状态”是许多{可叠加}状态的底层执行逻辑之一，数量繁多，此处不再单独列举。',
   },
   更改效果数值: {
-    type: '瞬时效果',
+    type: '持续效果',
     class: '逻辑与互动',
     aliases: ['改为', '改变为', '变为', '改变', '更改', '更改效果'],
     description:
@@ -1231,6 +1231,13 @@ const buffDefinitions: Record<string, BuffDefinition> = {
       '使角色模型（包括昵称和Hp条）完全透明，且不再产生碰撞，但某些情况下仍能被少部分范围类效果影响。',
     sourceDescription:
       '该效果通常不由“状态”，而是由某些更为高级的内容施加。角色在使用{管道}等情形下会暂时隐藏自身模型。',
+    unuseImage: true,
+  },
+  角色闪烁: {
+    type: '瞬时效果',
+    aliases: ['闪烁'],
+    description: '使角色模型发生一次白光闪烁特效。',
+    sourceDescription: '许多状态均附带该效果，用于提示角色受到伤害等负面内容。此处不再单独列举。',
     unuseImage: true,
   },
   勇气值: {
