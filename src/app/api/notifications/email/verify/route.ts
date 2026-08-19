@@ -5,15 +5,16 @@ import { hashNotificationVerificationToken } from '@/lib/notificationUtils';
 import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
 import { SITE_URL } from '@/constants/seo';
 
-const redirectToNotifications = (status: 'verified' | 'invalid' | 'blocked') => {
-  const url = new URL('/notifications/', SITE_URL);
+const redirectToSettings = (status: 'verified' | 'invalid' | 'blocked') => {
+  const url = new URL('/settings/', SITE_URL);
   url.searchParams.set('email', status);
+  url.hash = 'notifications';
   return NextResponse.redirect(url);
 };
 
 export async function GET(request: NextRequest) {
   const token = request.nextUrl.searchParams.get('token');
-  if (!token) return redirectToNotifications('invalid');
+  if (!token) return redirectToSettings('invalid');
 
   const tokenHash = hashNotificationVerificationToken(token);
   const { data, error } = await requireSupabaseAdminClient()
@@ -23,10 +24,10 @@ export async function GET(request: NextRequest) {
     .gt('verification_expires_at', new Date().toISOString())
     .maybeSingle();
 
-  if (error || !data?.pending_email) return redirectToNotifications('invalid');
+  if (error || !data?.pending_email) return redirectToSettings('invalid');
 
   const block = await getActiveBlock({ request, userId: data.user_id, action: 'email' });
-  if (block) return redirectToNotifications('blocked');
+  if (block) return redirectToSettings('blocked');
 
   const now = new Date().toISOString();
   const { error: updateError } = await requireSupabaseAdminClient()
@@ -44,5 +45,5 @@ export async function GET(request: NextRequest) {
     .eq('user_id', data.user_id)
     .eq('verification_token_hash', tokenHash);
 
-  return redirectToNotifications(updateError ? 'invalid' : 'verified');
+  return redirectToSettings(updateError ? 'invalid' : 'verified');
 }

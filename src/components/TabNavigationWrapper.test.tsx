@@ -4,9 +4,7 @@ import TabNavigationWrapper from './TabNavigationWrapper';
 
 jest.mock('./TabNavigation', () => ({
   __esModule: true,
-  default: ({ showDetailToggle }: { showDetailToggle: boolean }) => (
-    <div data-testid='navigation' data-show-detail-toggle={showDetailToggle} />
-  ),
+  default: () => <div data-testid='navigation' />,
 }));
 
 describe('TabNavigationWrapper', () => {
@@ -30,15 +28,5 @@ describe('TabNavigationWrapper', () => {
     );
     expect(contentFrame?.className).not.toContain('pt-[');
     expect(contentFrame).not.toHaveClass('p-6');
-  });
-
-  it('forwards the detail-toggle state to the navigation', () => {
-    render(
-      <TabNavigationWrapper showDetailToggle>
-        <div>页面内容</div>
-      </TabNavigationWrapper>
-    );
-
-    expect(screen.getByTestId('navigation')).toHaveAttribute('data-show-detail-toggle', 'true');
   });
 });

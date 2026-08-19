@@ -1,5 +1,5 @@
 import { type ReactNode } from 'react';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 
 import { StorageKey } from '@/lib/localStorage';
 import { getPositioningTagTooltipContent } from '@/lib/tooltipUtils';
@@ -116,43 +116,32 @@ describe('PositioningTagsSection views', () => {
     render(<PositioningTagsSection tags={tags} factionId='cat' />);
 
     expect(screen.getByText('进攻说明')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '定位文本视图' })).toHaveAttribute(
-      'aria-pressed',
-      'true'
-    );
-    expect(screen.getByRole('button', { name: '定位雷达图视图' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /定位.*视图/ })).not.toBeInTheDocument();
   });
 
   it.each([
     ['bar', 'positioning-bar-chart'],
     ['radar', 'positioning-radar-chart'],
-  ] as const)('switches to the %s chart and persists the choice', async (mode, testId) => {
+  ] as const)('uses the stored %s chart preference', async (mode, testId) => {
+    localStorage.setItem(StorageKey.PositioningTagView, `"${mode}"`);
     render(<PositioningTagsSection tags={tags} factionId='cat' />);
 
-    const labels = { bar: '柱状图', radar: '雷达图' } as const;
-    fireEvent.click(screen.getByRole('button', { name: `定位${labels[mode]}视图` }));
-
-    expect(screen.getByTestId(testId)).toBeInTheDocument();
-    await waitFor(() =>
-      expect(localStorage.getItem(StorageKey.PositioningTagView)).toBe(`"${mode}"`)
-    );
+    expect(await screen.findByTestId(testId)).toBeInTheDocument();
   });
 
   it('uses the same positioning tag tooltip content for chart labels', () => {
+    localStorage.setItem(StorageKey.PositioningTagView, '"bar"');
     render(<PositioningTagsSection tags={tags} factionId='cat' />);
-
-    fireEvent.click(screen.getByRole('button', { name: '定位柱状图视图' }));
 
     expect(mockGetPositioningTagTooltipContent).toHaveBeenCalledWith('进攻', 'cat', false);
   });
 
-  it('normalizes an invalid stored view to text', async () => {
+  it('normalizes an invalid stored view to text', () => {
     localStorage.setItem(StorageKey.PositioningTagView, '"invalid"');
 
     render(<PositioningTagsSection tags={tags} factionId='cat' />);
 
     expect(screen.getByText('进攻说明')).toBeInTheDocument();
-    await waitFor(() => expect(localStorage.getItem(StorageKey.PositioningTagView)).toBe('"text"'));
   });
 
   it('forces text editing while preserving the saved chart view', () => {
@@ -162,11 +151,7 @@ describe('PositioningTagsSection views', () => {
     const { rerender } = render(<PositioningTagsSection tags={tags} factionId='cat' />);
 
     expect(screen.getByText('进攻说明')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '定位文本视图' })).toHaveAttribute(
-      'aria-pressed',
-      'true'
-    );
-    expect(screen.getByRole('button', { name: '定位雷达图视图' })).toBeDisabled();
+    expect(screen.queryByRole('button', { name: /定位.*视图/ })).not.toBeInTheDocument();
 
     mockIsEditMode = false;
     rerender(<PositioningTagsSection tags={tags} factionId='cat' />);

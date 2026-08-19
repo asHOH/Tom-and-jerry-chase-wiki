@@ -59,11 +59,6 @@ jest.mock('@/components/Image', () => ({
     createElement('img', { ...props, alt: alt ?? '' }),
 }));
 
-jest.mock('@/components/ChangePasswordDialog', () => ({
-  __esModule: true,
-  default: () => null,
-}));
-
 jest.mock('@/hooks/useUser', () => ({
   useUser: () => ({
     nickname: mockNickname,
@@ -111,14 +106,6 @@ jest.mock('./ui/SearchBar', () => ({
   ),
 }));
 
-jest.mock('./ui/DarkModeToggleButton', () => ({
-  DarkModeToggleButton: () => (
-    <button type='button' aria-label='切换深色模式'>
-      切换深色模式
-    </button>
-  ),
-}));
-
 describe('TabNavigation', () => {
   beforeAll(() => {
     global.ResizeObserver = mockResizeObserver as unknown as typeof ResizeObserver;
@@ -144,12 +131,13 @@ describe('TabNavigation', () => {
     mockNickname = '贡献者';
 
     render(<TabNavigation />);
-    fireEvent.click(screen.getByRole('button', { name: '用户设置' }));
+    fireEvent.click(screen.getByRole('button', { name: '用户菜单' }));
 
     expect(screen.getByRole('link', { name: '我的贡献' })).toHaveAttribute(
       'href',
       '/users/%E8%B4%A1%E7%8C%AE%E8%80%85?tab=submissions'
     );
+    expect(screen.getByRole('link', { name: '设置' })).toHaveAttribute('href', '/settings');
   });
 
   it('forces dropdown icon dimensions so image aspect ratios cannot change row height', () => {

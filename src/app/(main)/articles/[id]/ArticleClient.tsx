@@ -7,10 +7,9 @@ import { AssetManager } from '@/lib/assetManager';
 import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { formatArticleDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
-import { storage, StorageKey } from '@/lib/localStorage';
 import type { FactionId } from '@/data/types';
 import { useArticleToc } from '@/features/articles/hooks/useArticleToc';
-import Button from '@/components/ui/Button';
+import { useLocalPreference } from '@/features/settings/localPreferences';
 import ButtonLink from '@/components/ui/ButtonLink';
 import Card from '@/components/ui/Card';
 import PageHeader from '@/components/ui/PageHeader';
@@ -71,22 +70,13 @@ export default function ArticleClient({
 }) {
   const permissions = usePermissions();
   const articleId = article.id;
-  const [showAutoNumbering, setShowAutoNumbering] = useState(false);
+  const [showAutoNumbering] = useLocalPreference('articleAutoNumbering');
   const [readingProgress, setReadingProgress] = useState(0);
   const [mounted, setMounted] = useState(false);
 
-  // Persist auto-numbering preference
   useEffect(() => {
     setMounted(true);
-    const saved = storage.getItem(StorageKey.ArticleAutoNumbering);
-    if (saved !== null) {
-      setShowAutoNumbering(saved === 'true');
-    }
   }, []);
-
-  useEffect(() => {
-    storage.setItem(StorageKey.ArticleAutoNumbering, String(showAutoNumbering));
-  }, [showAutoNumbering]);
 
   useEffect(() => {
     const updateProgress = () => {
@@ -265,13 +255,6 @@ export default function ArticleClient({
 
               {/* Action Buttons */}
               <div className='border-border mt-4 flex flex-wrap gap-3 border-t pt-4'>
-                <Button
-                  onClick={() => setShowAutoNumbering(!showAutoNumbering)}
-                  variant={showAutoNumbering ? 'primary' : 'secondary'}
-                >
-                  {showAutoNumbering ? '隐藏编号' : '自动编号'}
-                </Button>
-
                 <ButtonLink
                   href={`/articles/${articleId}/history`}
                   variant='secondary'

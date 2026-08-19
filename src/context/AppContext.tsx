@@ -4,13 +4,18 @@ import { useLayoutEffect, useSyncExternalStore } from 'react';
 import { proxy, subscribe } from 'valtio';
 
 import { isOriginalCharacter } from '@/lib/editUtils';
-import { storage, StorageKey } from '@/lib/localStorage';
 import { useNavigation } from '@/hooks/useNavigation';
+import {
+  readLocalPreference,
+  subscribeToLocalPreference,
+  writeLocalPreference,
+} from '@/features/settings/localPreferences';
 
 type AppContextType = {
   isDetailedView: boolean;
   handleSelectCharacter: (characterId: string) => void;
   handleSelectCard: (cardId: string, fromCharacterId?: string) => void;
+  setDetailedView: (value: boolean) => void;
   toggleDetailedView: () => void;
 };
 
@@ -26,11 +31,11 @@ const getDetailedViewSnapshot = () => isDetailedViewStore.isDetailedView;
 const getServerDetailedViewSnapshot = () => false;
 
 const readStoredDetailedView = () => {
-  return storage.getJson<boolean>(StorageKey.DetailedView) === true;
+  return readLocalPreference('detailedView');
 };
 
 const persistDetailedView = (isDetailedView: boolean) => {
-  if (!storage.setJson(StorageKey.DetailedView, isDetailedView)) {
+  if (!writeLocalPreference('detailedView', isDetailedView)) {
     console.warn('Unable to persist detailed-view preference to localStorage.');
   }
 };
@@ -45,8 +50,7 @@ const hydrateDetailedViewStore = () => {
 
   if (hasRegisteredDetailedViewStorageListener) return;
 
-  window.addEventListener('storage', (event) => {
-    if (event.key !== StorageKey.DetailedView) return;
+  subscribeToLocalPreference('detailedView', () => {
     isDetailedViewStore.isDetailedView = readStoredDetailedView();
   });
   hasRegisteredDetailedViewStorageListener = true;
@@ -81,14 +85,16 @@ export const useAppContext = () => {
     }
   };
 
-  const toggleDetailedView = () => {
-    const next = !isDetailedViewStore.isDetailedView;
-    isDetailedViewStore.isDetailedView = next;
-    persistDetailedView(next);
+  const setDetailedView = (value: boolean) => {
+    isDetailedViewStore.isDetailedView = value;
+    persistDetailedView(value);
   };
+
+  const toggleDetailedView = () => setDetailedView(!isDetailedViewStore.isDetailedView);
 
   return {
     isDetailedView,
+    setDetailedView,
     toggleDetailedView,
     handleSelectCard,
     handleSelectCharacter,

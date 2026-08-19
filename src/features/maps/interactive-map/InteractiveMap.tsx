@@ -4,13 +4,13 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import L, { type LeafletMouseEvent, type TileLayerOptions } from 'leaflet';
 import { ImageOverlay, MapContainer, Marker, Polygon, Polyline, Tooltip } from 'react-leaflet';
 
-import { storage, StorageKey } from '@/lib/localStorage';
 import type {
   InteractiveMapConfig,
   InteractiveMapPoint,
   MapCoordinate,
   MapPointCategory,
 } from '@/data/types';
+import { useLocalPreference } from '@/features/settings/localPreferences';
 import Image from '@/components/Image';
 
 import EditorPanel from './EditorPanel';
@@ -27,7 +27,6 @@ import {
   clearGeometryBarrelTarget,
   cloneInteractiveMap,
   coordinateToLatLng,
-  DEFAULT_VISIBLE_CATEGORIES,
   deleteInteractiveMapPoint,
   getConnectedMapPoint,
   getDefaultMapPointRelatedEntries,
@@ -68,9 +67,8 @@ export default function InteractiveMap({
   const [selectedPointIndex, setSelectedPointIndex] = useState<number | null>(null);
   const [tileFailed, setTileFailed] = useState(false);
   const [useFallback, setUseFallback] = useState(false);
-  const [visibleCategories, setVisibleCategories] = useState<Set<MapPointCategory>>(
-    () => new Set(DEFAULT_VISIBLE_CATEGORIES)
-  );
+  const [visibleCategoryValues] = useLocalPreference('interactiveMapVisibleCategories');
+  const visibleCategories = useMemo(() => new Set(visibleCategoryValues), [visibleCategoryValues]);
   const [hiddenSubtypes, setHiddenSubtypes] = useState<Set<string>>(new Set());
   const [editorMode, setEditorMode] = useState<EditorMode>('browse');
   const [pointCategory, setPointCategory] = useState<MapPointCategory>('cheese');
@@ -157,13 +155,6 @@ export default function InteractiveMap({
   }, [incomingConfig]);
 
   useEffect(() => {
-    const stored = storage.getJson<unknown>(StorageKey.InteractiveMapVisibleCategories);
-    if (Array.isArray(stored)) {
-      setVisibleCategories(new Set(stored as MapPointCategory[]));
-    }
-  }, []);
-
-  useEffect(() => {
     const pointIndex = Number.parseInt(
       new URLSearchParams(window.location.search).get('point') ?? '',
       10
@@ -241,16 +232,6 @@ export default function InteractiveMap({
     },
     [selectedPointIndex, updateConfig]
   );
-
-  const toggleCategory = (category: MapPointCategory) => {
-    const next = new Set(visibleCategories);
-    if (next.has(category)) next.delete(category);
-    else next.add(category);
-    setVisibleCategories(next);
-    if (!storage.setJson(StorageKey.InteractiveMapVisibleCategories, [...next])) {
-      console.warn('无法保存地图点位筛选设置。');
-    }
-  };
 
   const openPoint = useCallback((pointIndex: number) => {
     setSelectedRoomId(null);
@@ -769,11 +750,8 @@ export default function InteractiveMap({
       )}
 
       <FilterPanel
-        config={config}
-        visibleCategories={visibleCategories}
         hiddenSubtypes={hiddenSubtypes}
         subtypes={subtypes}
-        onToggleCategory={toggleCategory}
         onToggleSubtype={(subtype) => {
           const next = new Set(hiddenSubtypes);
           if (next.has(subtype)) next.delete(subtype);

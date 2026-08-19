@@ -21,26 +21,18 @@ import { useUser } from '@/hooks/useUser';
 import { isNavGroup, NavEntry, NavItem } from '@/constants/navigation';
 import Button from '@/components/ui/Button';
 import MotionButton from '@/components/ui/MotionButton';
-import ChangePasswordDialog from '@/components/ChangePasswordDialog';
-import DetailViewToggle from '@/components/DetailViewToggle';
 import { HomeIcon, UserCircleIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 import Link from '@/components/Link';
 import { env } from '@/env';
 
-import { DarkModeToggleButton } from './ui/DarkModeToggleButton';
 import SearchBar from './ui/SearchBar';
 import Tooltip from './ui/Tooltip';
 
 const MotionLink = m.create(Link);
 
-type TabNavigationProps = {
-  showDetailToggle?: boolean;
-};
-
 const MOBILE_STACK_COLLAPSE_WIDTHS = [420, 376, 332] as const;
 
-const DETAIL_TOGGLE_WIDTH = 56;
 const USER_BUTTON_WIDTH = 44;
 const dropdownMenuIconClassName = '!h-6 !w-6 shrink-0 object-contain';
 const dropdownMenuLinkBaseClassName =
@@ -87,9 +79,8 @@ function DropdownNavLink({ item, isActive, paddingClassName, onClick }: Dropdown
   );
 }
 
-export default function TabNavigation({ showDetailToggle = false }: TabNavigationProps) {
+export default function TabNavigation() {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
-  const [changePasswordOpen, setChangePasswordOpen] = useState(false);
   const [overflowOpen, setOverflowOpen] = useState(false);
   const [openGroupId, setOpenGroupId] = useState<string | null>(null);
   const [signingOut, setSigningOut] = useState(false);
@@ -124,13 +115,13 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   const hasUnreadNotifications = unreadNotificationCount > 0;
   const unreadNotificationBadgeLabel =
     unreadNotificationCount > 99 ? '99+' : unreadNotificationCount.toString();
-  const userSettingsLabel = hasActiveBlock
+  const userMenuLabel = hasActiveBlock
     ? hasUnreadNotifications
-      ? `用户设置（账号受限，${unreadNotificationCount} 条未读通知）`
-      : '用户设置（账号受限）'
+      ? `用户菜单（账号受限，${unreadNotificationCount} 条未读通知）`
+      : '用户菜单（账号受限）'
     : hasUnreadNotifications
-      ? `用户设置（${unreadNotificationCount} 条未读通知）`
-      : '用户设置';
+      ? `用户菜单（${unreadNotificationCount} 条未读通知）`
+      : '用户菜单';
   const { items: rawItems, isActive } = useNavigationTabs();
   const isMobile = useMobile();
   const isMd = useMediaQuery('(min-width: 768px)', { initializeWithValue: false });
@@ -149,8 +140,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     if (typeof window === 'undefined') return;
 
     const width = window.innerWidth;
-    const extraWidth =
-      (showDetailToggle ? DETAIL_TOGGLE_WIDTH : 0) + (nickname ? USER_BUTTON_WIDTH : 0);
+    const extraWidth = nickname ? USER_BUTTON_WIDTH : 0;
     const adjustedWidth = Math.max(width - extraWidth, 0);
     const total = items.length;
     let nextCollapsed = 0;
@@ -169,7 +159,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     if (nextCollapsed === 0) {
       setOverflowOpen((prev) => (prev ? false : prev));
     }
-  }, [items, nickname, showDetailToggle, isMobile]);
+  }, [items, nickname, isMobile]);
 
   useEffect(() => {
     if (!mounted) return;
@@ -294,7 +284,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     'flex size-7 items-center justify-center overflow-hidden md:size-8',
     isCompactMode && 'shrink-0'
   );
-  const shouldAlignLeft = showDetailToggle || !!nickname;
+  const shouldAlignLeft = !!nickname;
   const dropdownAlignmentClass = shouldAlignLeft ? 'left-0' : 'right-0';
   return (
     <div className='bg-surface-raised fixed top-0 right-0 left-0 z-50 w-full py-2 shadow-md dark:shadow-lg'>
@@ -517,22 +507,20 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
           )}
         </div>
 
-        {/* Right-aligned detailed/simple view toggle button, SearchBar, and User Settings */}
+        {/* Right-aligned search and user menu */}
         <div className='flex items-center gap-1 md:gap-2 lg:gap-2.5'>
           <SearchBar />
-          <DarkModeToggleButton />
-          {showDetailToggle ? <DetailViewToggle /> : null}
-          {/* User Settings Dropdown (deferred until mounted to avoid hydration mismatch) */}
+          {/* User menu (deferred until mounted to avoid hydration mismatch) */}
           {mounted && !!nickname && hasSupabasePublicConfig() && (
             <div className='relative' data-user-dropdown-root>
               <Tooltip
-                content={hasActiveBlock ? '账号受限：点击查看详情' : '用户设置'}
+                content={hasActiveBlock ? '账号受限：点击查看详情' : '用户菜单'}
                 className='border-none'
               >
                 <MotionButton
                   variant='unstyled'
                   type='button'
-                  aria-label={userSettingsLabel}
+                  aria-label={userMenuLabel}
                   className={cn(
                     getNavigationButtonClasses(false, userDropdownOpen, true),
                     hasActiveBlock &&
@@ -626,17 +614,12 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
                         </Link>
                       </li>
                       <li>
-                        <Button
-                          variant='unstyled'
-                          type='button'
-                          className='hover:bg-control w-full cursor-pointer px-4 py-2 text-left text-sm text-gray-800 dark:text-gray-200'
-                          onClick={() => {
-                            setUserDropdownOpen(false);
-                            setChangePasswordOpen(true);
-                          }}
+                        <Link
+                          href='/settings/'
+                          className='hover:bg-control block px-4 py-2 text-sm text-gray-800 dark:text-gray-200'
                         >
-                          修改密码
-                        </Button>
+                          设置
+                        </Link>
                       </li>
                       {canAccessAdmin && (
                         <li>
@@ -677,11 +660,6 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
           )}
         </div>
       </div>
-
-      <ChangePasswordDialog
-        open={changePasswordOpen}
-        onClose={() => setChangePasswordOpen(false)}
-      />
     </div>
   );
 }

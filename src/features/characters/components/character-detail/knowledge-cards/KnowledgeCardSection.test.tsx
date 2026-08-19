@@ -199,10 +199,8 @@ describe('KnowledgeCardSection', () => {
         />
       );
 
-      expect(screen.getByRole('button', { name: '当前: 图片视图' })).toBeInTheDocument();
-      await waitFor(() =>
-        expect(localStorage.getItem(StorageKey.KnowledgeCardViewMode)).toBe('tree')
-      );
+      await waitFor(() => expect(screen.getByRole('img', { name: 'C-飞跃' })).toBeInTheDocument());
+      expect(screen.queryByRole('button', { name: /当前:/ })).not.toBeInTheDocument();
     }
   );
 });

@@ -1,37 +1,15 @@
-import type { ReactNode } from 'react';
 import { render, screen } from '@testing-library/react';
 import useSWR from 'swr';
-import useSWRInfinite from 'swr/infinite';
 
-import NotificationsClient from './NotificationsClient';
+import NotificationSettings from '@/features/settings/components/NotificationSettings';
 
 jest.mock('swr');
-jest.mock('swr/infinite');
 
 jest.mock('next/navigation', () => ({
   useSearchParams: () => new URLSearchParams(),
 }));
 
-jest.mock('@/components/Link', () => {
-  return function MockLink({
-    children,
-    href,
-    onClick,
-  }: {
-    children: ReactNode;
-    href: string;
-    onClick?: () => void;
-  }) {
-    return (
-      <a href={href} onClick={onClick}>
-        {children}
-      </a>
-    );
-  };
-});
-
 const mockUseSWR = useSWR as jest.MockedFunction<typeof useSWR>;
-const mockUseSWRInfinite = useSWRInfinite as jest.MockedFunction<typeof useSWRInfinite>;
 
 const createSWRResponse = <T,>(data: T) =>
   ({
@@ -42,19 +20,9 @@ const createSWRResponse = <T,>(data: T) =>
     mutate: jest.fn(),
   }) as never;
 
-describe('NotificationsClient', () => {
+describe('NotificationSettings', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-
-    mockUseSWRInfinite.mockReturnValue({
-      data: [{ notifications: [], unreadCount: 0, nextCursor: null }],
-      error: undefined,
-      size: 1,
-      setSize: jest.fn(),
-      mutate: jest.fn(),
-      isLoading: false,
-      isValidating: false,
-    } as never);
 
     mockUseSWR.mockImplementation((key) => {
       if (key === '/api/notifications/preferences') {
@@ -85,7 +53,7 @@ describe('NotificationsClient', () => {
   });
 
   it('renders notification toggles and explanatory copy', () => {
-    render(<NotificationsClient />);
+    render(<NotificationSettings />);
 
     expect(screen.getByText('非文章讨论区新评论')).toBeInTheDocument();
     expect(
@@ -96,7 +64,7 @@ describe('NotificationsClient', () => {
   });
 
   it('disables moderator-only toggles for ineligible users', () => {
-    render(<NotificationsClient />);
+    render(<NotificationSettings />);
 
     expect(screen.getByRole('checkbox', { name: /^新待审核文章/ })).toBeDisabled();
     expect(screen.getByRole('checkbox', { name: /^新待审核游戏数据改动/ })).toBeEnabled();

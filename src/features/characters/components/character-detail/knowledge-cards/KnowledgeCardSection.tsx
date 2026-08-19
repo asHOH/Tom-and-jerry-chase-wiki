@@ -3,8 +3,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
-import { cn } from '@/lib/design';
-import { storage, StorageKey } from '@/lib/localStorage';
 import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
@@ -14,11 +12,11 @@ import { getGeneralKnowledgeCardGroupCount } from '@/features/characters/utils/r
 import { catKnowledgeCards } from '@/features/knowledge-cards/data/catKnowledgeCards';
 import { mouseKnowledgeCards } from '@/features/knowledge-cards/data/mouseKnowledgeCards';
 import { flattenCardGroup } from '@/features/knowledge-cards/utils/sections';
-import Button from '@/components/ui/Button';
+import { useLocalPreference } from '@/features/settings/localPreferences';
 import Card from '@/components/ui/Card';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import KnowledgeCardPicker from '@/components/ui/KnowledgeCardPicker';
-import { ChevronUpCircleIcon, PlusIcon } from '@/components/icons/CommonIcons';
+import { PlusIcon } from '@/components/icons/CommonIcons';
 
 import CharacterSection from '../sections/CharacterSection';
 import AdvancedCardGroupEditor from './AdvancedCardGroupEditor';
@@ -66,14 +64,6 @@ type KnowledgeCardSectionProps = {
   onRemoveGroup: (topIndex: number, innerIndex?: number) => void;
 };
 
-const normalizeViewMode = (viewMode: string | null): ViewMode => {
-  if (viewMode === 'compact' || viewMode === 'tree' || viewMode === 'hybrid') {
-    return viewMode;
-  }
-
-  return 'tree';
-};
-
 export default function KnowledgeCardSection({
   knowledgeCardGroups,
   factionId,
@@ -98,11 +88,8 @@ export default function KnowledgeCardSection({
     topIndex: number;
     innerIndex?: number;
   } | null>(null);
-  const [viewMode, setViewMode] = useState<ViewMode>(() =>
-    normalizeViewMode(
-      typeof window !== 'undefined' ? storage.getItem(StorageKey.KnowledgeCardViewMode) : null
-    )
-  );
+  const [storedViewMode, setStoredViewMode] = useLocalPreference('knowledgeCardViewMode');
+  const viewMode: ViewMode = storedViewMode;
   const hasTreeStructure = useMemo(() => {
     return knowledgeCardGroups.some((group) => {
       if (isKnowledgeCardGroupSet(group)) {
@@ -113,14 +100,10 @@ export default function KnowledgeCardSection({
   }, [knowledgeCardGroups]);
 
   useEffect(() => {
-    storage.setItem(StorageKey.KnowledgeCardViewMode, viewMode);
-  }, [viewMode]);
-
-  useEffect(() => {
     if (!hasTreeStructure && viewMode === 'hybrid' /* || viewMode === 'tree-folded' */) {
-      setViewMode('tree');
+      setStoredViewMode('tree');
     }
-  }, [hasTreeStructure, viewMode]);
+  }, [hasTreeStructure, setStoredViewMode, viewMode]);
 
   const imageBasePath = factionId === 'cat' ? '/images/catCards/' : '/images/mouseCards/';
 
@@ -303,67 +286,13 @@ export default function KnowledgeCardSection({
     }
   }
 
-  const cycleViewMode = () => {
-    const availableModes: ViewMode[] = hasTreeStructure
-      ? ['tree', 'hybrid', 'compact']
-      : ['tree', 'compact'];
-
-    setViewMode((prev) => {
-      if (availableModes.length === 0) {
-        return prev;
-      }
-
-      const currentIndex = availableModes.indexOf(prev);
-      if (currentIndex === -1) {
-        return availableModes[0] as ViewMode;
-      }
-
-      const nextIndex = (currentIndex + 1) % availableModes.length;
-      return availableModes[nextIndex] as ViewMode;
-    });
-  };
-
-  const getViewModeLabel = () => {
-    if (viewMode === 'tree') return '图片视图';
-    // if (viewMode === 'tree-folded') return '折叠树状视图';
-    if (viewMode === 'hybrid') return '混合视图';
-    // if (viewMode === 'flat') return hasTreeStructure ? '扁平视图' : '图片视图';
-    return '紧凑视图';
-  };
-
-  const isTwoModeCycle = !hasTreeStructure;
-  const viewToggleButtonClass = cn(
-    'flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200',
-    isTwoModeCycle
-      ? viewMode === 'compact'
-        ? 'bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-900'
-        : 'bg-control text-gray-700 hover:bg-control-hover dark:text-gray-300'
-      : 'bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-900'
-  );
-  const viewToggleIconClass = cn(
-    'w-4 h-4 transition-transform duration-200',
-    viewMode === 'compact' ? 'rotate-90' : 'rotate-180'
-  );
-
   if (!knowledgeCardGroups || knowledgeCardGroups.length === 0) {
     if (isEditMode) {
       return (
         <div>
           <CharacterSection title='推荐知识卡组'>
             <Card className='space-y-3 p-4'>
-              <div className='mb-4 flex items-center justify-between'>
-                <Button
-                  variant='unstyled'
-                  type='button'
-                  onClick={cycleViewMode}
-                  className={viewToggleButtonClass}
-                  aria-label={`当前: ${getViewModeLabel()}`}
-                >
-                  {isTwoModeCycle && (
-                    <ChevronUpCircleIcon className={viewToggleIconClass} strokeWidth={2} />
-                  )}
-                  {getViewModeLabel()}
-                </Button>
+              <div className='mb-4 flex items-center justify-end'>
                 <IconButton
                   type='button'
                   aria-label='添加知识卡组'
@@ -386,19 +315,7 @@ export default function KnowledgeCardSection({
     <div>
       <CharacterSection title='推荐知识卡组'>
         <Card className='space-y-3 p-4'>
-          <div className='mb-4 flex items-center justify-between'>
-            <Button
-              variant='unstyled'
-              type='button'
-              onClick={cycleViewMode}
-              className={viewToggleButtonClass}
-              aria-label={`当前: ${getViewModeLabel()}`}
-            >
-              {isTwoModeCycle && (
-                <ChevronUpCircleIcon className={viewToggleIconClass} strokeWidth={2} />
-              )}
-              {getViewModeLabel()}
-            </Button>
+          <div className='mb-4 flex items-center justify-end'>
             {isEditMode && (
               <IconButton
                 type='button'
