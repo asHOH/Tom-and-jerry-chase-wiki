@@ -14,6 +14,7 @@ import Link from '@/components/Link';
 import { ACTOR_ATTRIBUTE_PRESENTATION, type ActorAttributeKey } from '../attributePresentation';
 import {
   formatActorAttributeNumber,
+  formatActorPhysicsBodyName,
   formatActorPhysicsType,
   formatActorSex,
   // formatActorSize,
@@ -228,6 +229,10 @@ const createDisplayedActorAttributes = (
     {
       key: 'physicsType',
       value: isObject ? formatActorPhysicsType(profile.physicsType) : undefined,
+    },
+    {
+      key: 'physicsBodyName',
+      value: formatActorPhysicsBodyName(profile.physicsBodyName),
     },
     { key: 'sex', value: formatActorSex(profile.sex) },
     { key: 'EnglishName', value: EnglishName },

@@ -23,6 +23,13 @@ export const ACTOR_ATTRIBUTE_PRESENTATION = defineActorAttributePresentation({
     detailedTooltip: '决定角色是否可进行某些交互，以及交互方式',
     numeric: false,
   },
+  physicsBodyName: {
+    label: '体型',
+    tooltip: '角色在游戏中的物理体型',
+    detailedTooltip:
+      '角色在游戏中的物理体型，影响碰撞和部分交互判定；常见体型参考：汤姆-180×264；杰瑞-85×130；托普斯-126×209；泰菲-66×101',
+    numeric: false,
+  },
   sex: {
     label: '性别',
     tooltip: '影响局内语音和塔拉技能效果',

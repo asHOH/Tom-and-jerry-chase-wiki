@@ -2,6 +2,7 @@ export { actorProfiles, actorProfilesByName } from './data';
 export {
   formatActorAttackCooldown,
   formatActorAttributeNumber,
+  formatActorPhysicsBodyName,
   formatActorPhysicsType,
   formatActorSex,
   formatActorSize,
