@@ -105,8 +105,8 @@ Deployment-specific cache identity also intentionally prevents reuse between sep
 
 These constraints apply to every phase:
 
-- Do not mark an approved action `synced` until its effect is present in the deployed checked-in
-  baseline and pre/post published output has been proven equivalent.
+- Do not complete an approved action's `synced` status cutover until its effect is present in the
+  release being activated and before/after published output has been proven equivalent.
 - Any future compaction design must prevent both double replay and concurrent approved-set changes
   during its deployment/status cutover.
 - Do not weaken RLS, permission checks, trusted RPC boundaries, or `server-only` imports to save
@@ -701,13 +701,14 @@ Choose one branch:
 Required branch: remove the cache headers/ETag and restore the prior client. Retired branch: restore
 the route for the compatibility window. Neither branch changes stored game data.
 
-## Phase 5 — Decide whether replay compaction is justified
+## Phase 5 — Decide whether baseline compaction is justified
 
 ### Independent problem
 
-Even after call amplification is fixed, every approved action enlarges the replay snapshot. The 595
-currently approved public rows contribute approximately 1.2 MB to every complete approved snapshot.
-Synced rows correctly leave the replay set but remain available for public contribution history.
+Even after call amplification is fixed, every approved action enlarges the replay snapshot. At the
+2026-08-14 measurement, the 595 approved public rows contributed approximately 1.2 MB to every
+complete approved snapshot. Synced rows correctly leave the replay set but remain available for
+public contribution history.
 
 ### Entry gate
 
@@ -729,14 +730,20 @@ If the gate is not met, record compaction as deferred and leave approved rows un
       freeze.
 - [ ] If the gate is met, create a separate reviewed compaction plan and recovery drill. Do not add its
       schema, RPCs, or deployment protocol to this incident plan.
+- [ ] Use `.github/skills/game-action-compaction/` to prepare and locally verify a manifest-based
+      candidate when appropriate. The skill is not the deployment/status cutover design.
 
 ### Required constraints for any future plan
 
-- Never mark an action synced before its effect is present in the deployed baseline.
-- Never deploy a baseline containing an action while also replaying that action; non-idempotent array
-  additions and deletes make double replay unsafe.
-- Use one reviewed action manifest and one enforced write-freeze/cutover mechanism so code deployment
-  and status changes cannot race.
+- Never complete the status cutover before the activating release contains the action's effect and
+  full published-domain parity has been proven.
+- Never activate a baseline containing an action while that action remains replayable;
+  non-idempotent array additions and deletes make double replay unsafe.
+- A naive serial `deploy then sync` or `sync then deploy` sequence cannot satisfy both invariants by
+  itself. The future plan must define an exclusion manifest or an equivalent coordinated transition.
+- Bind one reviewed exact-row manifest to the expected replay epoch, complete approved action
+  revision, and canonical row-content digests. Use an enforced write-freeze/cutover mechanism so
+  code deployment and status changes cannot race.
 - Exclude compacted rows from replay and trusted replay validation, but retain them for contribution
   and history semantics.
 - Require before/transition/after published-domain parity and an explicit post-sync recovery path.
@@ -904,6 +911,6 @@ The incident is complete only when:
 - Deleting synced contribution history is not an acceptable bandwidth optimization.
 - Adding speculative indexes does not reduce response bytes and should not be used as a substitute
   for call and payload reduction.
-- Implementing replay compaction, a per-target relation, or an auth-shell redesign before their
+- Implementing baseline compaction, a per-target relation, or an auth-shell redesign before their
   measurements justify separate work is not part of this incident response.
 - Resetting production `pg_stat_statements` is unnecessary; use retained snapshots and deltas.

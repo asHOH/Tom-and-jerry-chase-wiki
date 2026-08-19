@@ -1,6 +1,6 @@
 ﻿---
 name: game-action-patching
-description: 'Patch approved game_data_actions into character relation/data files.'
+description: 'Patch and verify small, clear cohorts of at most 25 approved game_data_actions in canonical character relation/data files. Use game-action-compaction for broad, oversized, or dependency-heavy cohorts.'
 argument-hint: 'Date range, actor filter, status policy'
 user-invocable: true
 ---
@@ -11,13 +11,21 @@ user-invocable: true
 
 Safely patch approved game_data_actions into code and verify them; defer the rest.
 
+## Routing
+
+Use this skill only when the cohort has at most 25 rows, every row maps clearly, and no dependency
+crosses the selected cohort. For a broad period, more than 25 rows, `output_too_large`, or
+dependency-heavy baseline compaction, read `../game-action-compaction/SKILL.md` and continue under
+that workflow. Do not turn one bulk compaction into unrelated 25-row patches.
+
 ## Operation Boundary
 
 - Treat patching as a local source-code workflow by default.
 - Never open, inspect, or control a browser as part of this skill.
 - Do not mutate remote moderation status unless the user explicitly requests it as a separate
-  follow-up. If no authorized non-browser mechanism is specified, report the verified IDs for
-  manual syncing instead.
+  follow-up and an established parity-preserving status-cutover workflow is available. Local
+  verification alone does not prove that a remote status transition is safe. Otherwise report the
+  verified IDs for a separately reviewed cutover.
 
 ## Scope
 
@@ -131,14 +139,16 @@ Use `characterCounters.ts`, `characterCollaborators.ts`, `knowledgeCards.ts`, `s
    Rows with `pending`, `rejected`, or `revoked` status never explain source state. Preserve values
    outside the write set. Never overwrite an unexplained or superseding source value.
 
-4. If <=25 rows all map clearly, proceed; otherwise chunk and present a plan. "Clear" means one
-   file/record and matching old projection: e.g. a unique `ItemId.description`; a nested skill
-   index whose skill/level and old value match; or one relation target/kind plus required
-   `factionId`, including equivalent orientations. Missing/duplicate IDs, shifted indices,
-   ambiguous factions, old-value mismatch, or unexplained ahead source are unclear.
+4. If at most 25 rows all map clearly, proceed. "Clear" means one file/record and matching old
+   projection: e.g. a unique `ItemId.description`; a nested skill index whose skill/level and old
+   value match; or one relation target/kind plus required `factionId`, including equivalent
+   orientations. Missing/duplicate IDs, shifted indices, ambiguous factions, old-value mismatch,
+   or unexplained ahead source are unclear. Route a larger, oversized, broad, or dependency-heavy
+   cohort to `game-action-compaction`; for an unclear small cohort, present a plan and defer
+   ambiguity rather than guessing.
 5. Valid statuses: `pending`, `approved`, `rejected`, `synced`, `revoked`. Only a separately
-   authorized moderation workflow may sync verified approved rows; never sync failed, fuzzy,
-   skipped, pending, rejected, or revoked rows.
+   authorized, parity-preserving status-cutover workflow may sync verified approved rows; never
+   sync failed, fuzzy, skipped, pending, rejected, or revoked rows.
 6. Stay on the current branch. Treat Chinese terminal mojibake as a display issue unless file
    bytes/editor output prove corruption; do not rewrite strings solely to fix terminal display.
 7. Report any important gap or error discovered in these instructions. If it makes an action
@@ -159,17 +169,21 @@ Use `characterCounters.ts`, `characterCollaborators.ts`, `knowledgeCards.ts`, `s
 1. **Discovery**: Run `npm run inspect:game-data-actions` with the date scope above. Use exact IDs
    with `--values` for rows being patched and `--include-history` when source matches neither old
    nor new.
-2. **Classify**: Map or Defer. For large sets, present chunk plan and wait for approval.
+2. **Classify**: Map or Defer. If discovery crosses the routing boundary above, stop this workflow
+   and continue under `game-action-compaction`. For an unclear small cohort, present a plan and wait
+   for approval.
 3. **Apply & Verify**: Edit, run the verification recipe and safety gates, and pause between chunks.
    Then run `npm run verify:game-data-actions -- --ids=<comma-separated UUIDs>`. Pass every row in
    a parent/child or old/new chain together in the same invocation so reverse verification can
    reconstruct intermediate states. Defer the whole submitted verification batch if any row is
    unsupported or mismatched.
-4. **Report Verified IDs**: Stop after local verification. Report the verified IDs for manual
-   syncing; do not use a browser or mutate remote status as part of the normal workflow.
-5. **Optional Remote Moderation**: Only when the user explicitly requests it as a separate
-   follow-up, use an authorized non-browser mechanism. Do not add mutation logic to
-   `scripts/verify-game-data-actions.mjs`.
+4. **Report Verified IDs**: Stop after local verification. Report the verified IDs for a separately
+   reviewed status cutover; do not use a browser or mutate remote status as part of the normal
+   workflow.
+5. **Optional Status Cutover**: Only when the user explicitly requests it as a separate follow-up,
+   use an authorized non-browser mechanism and an established workflow that preserves published
+   output without missing or double-replayed actions. Local reverse verification alone is
+   insufficient. Do not add mutation logic to `scripts/verify-game-data-actions.mjs`.
 6. **Finalize**: Re-run the inspector for the exact IDs to re-query `status` and `is_public`, then
    summarize locally Verified,
    Deferred/Remaining, and any remotely Synced rows. Do not describe a locally verified row as
