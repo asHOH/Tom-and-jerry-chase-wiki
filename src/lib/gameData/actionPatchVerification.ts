@@ -38,6 +38,7 @@ export type ActionPatchVerificationResult = {
 };
 
 type ProjectedAction = Action & { path: string };
+type DecodedActionPatchRow = { row: ActionPatchRow; actions: ProjectedAction[] };
 type ReadResult = { exists: boolean; value: unknown };
 type ReverseActionResult =
   | { success: true }
@@ -405,6 +406,61 @@ function reverseRelationSet(currentValue: unknown, action: ProjectedAction): Rev
   return { success: true };
 }
 
+function isOldValueLessRelationSnapshot(action: ProjectedAction): boolean {
+  if (action.op !== 'set' || action.oldValue !== undefined) return false;
+  const parsed = parseActionPath(action.path);
+  return (
+    parsed.success &&
+    parsed.value.segments.length === 2 &&
+    RELATION_ARRAY_KEYS.has(parsed.value.segments[1]!)
+  );
+}
+
+function relationSnapshotSubsumes(earlier: ProjectedAction, later: ProjectedAction): boolean {
+  if (
+    !isOldValueLessRelationSnapshot(earlier) ||
+    !isOldValueLessRelationSnapshot(later) ||
+    earlier.path !== later.path
+  ) {
+    return false;
+  }
+
+  const earlierCollection = createRelationCollection(earlier.newValue);
+  const laterCollection = createRelationCollection(later.newValue);
+  if (!earlierCollection || !laterCollection || earlierCollection.identities.length === 0) {
+    return false;
+  }
+
+  return earlierCollection.identities.every((identity) => {
+    const earlierEndpoint = earlierCollection.byIdentity.get(identity)!;
+    const laterEndpoint = laterCollection.byIdentity.get(identity);
+    return laterEndpoint !== undefined && relationMaterialsMatch(earlierEndpoint, laterEndpoint);
+  });
+}
+
+function findSubsumedRelationSnapshots(
+  decodedRows: readonly DecodedActionPatchRow[]
+): Set<ProjectedAction> {
+  const orderedActions = decodedRows.flatMap(({ row, actions }) =>
+    actions.map((action) => ({ action, entityType: row.entity_type }))
+  );
+  const subsumed = new Set<ProjectedAction>();
+
+  for (let index = 0; index < orderedActions.length; index += 1) {
+    const earlier = orderedActions[index]!;
+    const hasCoveringLaterSnapshot = orderedActions
+      .slice(index + 1)
+      .some(
+        (later) =>
+          later.entityType === earlier.entityType &&
+          relationSnapshotSubsumes(earlier.action, later.action)
+      );
+    if (hasCoveringLaterSnapshot) subsumed.add(earlier.action);
+  }
+
+  return subsumed;
+}
+
 function valuesMatch(path: readonly string[], expected: unknown, actual: unknown): boolean {
   const relationKey = path[1];
   return relationKey && RELATION_ARRAY_KEYS.has(relationKey)
@@ -498,7 +554,7 @@ export function verifyActionPatch(
   targets: ActionPatchTargetRegistry
 ): ActionPatchVerificationResult {
   const failures: ActionPatchVerificationFailure[] = [];
-  const decoded = [...rows].sort(compareRows).map((row) => {
+  const decoded: (DecodedActionPatchRow | null)[] = [...rows].sort(compareRows).map((row) => {
     if (row.status !== 'approved' || !row.is_public) {
       failures.push({ rowId: row.id, code: 'invalid_status' });
       return null;
@@ -529,11 +585,14 @@ export function verifyActionPatch(
     };
   }
 
-  for (const decodedRow of decoded.toReversed()) {
-    if (!decodedRow) continue;
+  const decodedRows = decoded.filter((item): item is DecodedActionPatchRow => item !== null);
+  const subsumedRelationSnapshots = findSubsumedRelationSnapshots(decodedRows);
+
+  for (const decodedRow of decodedRows.toReversed()) {
     const target = workingTargets[decodedRow.row.entity_type]!;
     for (let actionIndex = decodedRow.actions.length - 1; actionIndex >= 0; actionIndex -= 1) {
       const action = decodedRow.actions[actionIndex]!;
+      if (subsumedRelationSnapshots.has(action)) continue;
       const result = reverseAction(target, action);
       if (!result.success) {
         failures.push({
@@ -549,7 +608,7 @@ export function verifyActionPatch(
   }
 
   return {
-    verifiedRowIds: failures.length === 0 ? decoded.map((item) => item!.row.id) : [],
+    verifiedRowIds: failures.length === 0 ? decodedRows.map((item) => item.row.id) : [],
     failures,
   };
 }

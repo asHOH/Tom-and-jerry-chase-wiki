@@ -146,6 +146,93 @@ describe('verifyActionPatch', () => {
     });
   });
 
+  it('verifies an oldValue-less relation snapshot that a later same-path snapshot subsumes', () => {
+    const correctedHome = {
+      id: '经典之家II',
+      isMinor: false,
+      description: '横排上下两层的地图使莱特宁在下方就能通过闪现管控上方奶酪。',
+    };
+    const finalSnapshot = [
+      correctedHome,
+      { id: '游乐场', isMinor: false, description: '游乐场优势' },
+      { id: '雪夜古堡III', isMinor: false, description: '雪夜古堡优势' },
+    ];
+    const rows = [
+      row('typo-correction', {
+        op: 'set',
+        path: '莱特宁.advantageMaps',
+        newValue: [correctedHome],
+      }),
+      row(
+        'expanded-snapshot',
+        {
+          op: 'set',
+          path: '莱特宁.advantageMaps',
+          newValue: finalSnapshot,
+        },
+        '2026-07-22T00:01:00.000Z'
+      ),
+    ];
+
+    expect(
+      verifyActionPatch(
+        rows,
+        targets({
+          莱特宁: {
+            advantageMaps: [
+              ...finalSnapshot,
+              { id: '后续地图', isMinor: false, description: '不在本组内的后续关系' },
+            ],
+          },
+        })
+      )
+    ).toEqual({ verifiedRowIds: ['typo-correction', 'expanded-snapshot'], failures: [] });
+  });
+
+  it.each([
+    {
+      name: 'removes an earlier endpoint',
+      laterEndpoint: null,
+    },
+    {
+      name: 'changes an earlier material field',
+      laterEndpoint: { id: 'Stable', isMinor: false, description: 'changed' },
+    },
+  ])(
+    'does not treat a later relation snapshot as superseding when it $name',
+    ({ laterEndpoint }) => {
+      const earlierEndpoint = { id: 'Stable', isMinor: false, description: 'original' };
+      const laterSnapshot = [
+        ...(laterEndpoint === null ? [] : [laterEndpoint]),
+        { id: 'Added', isMinor: false, description: 'added' },
+      ];
+      const result = verifyActionPatch(
+        [
+          row('earlier-snapshot', {
+            op: 'set',
+            path: 'Tom.advantageMaps',
+            newValue: [earlierEndpoint],
+          }),
+          row(
+            'later-snapshot',
+            { op: 'set', path: 'Tom.advantageMaps', newValue: laterSnapshot },
+            '2026-07-22T00:01:00.000Z'
+          ),
+        ],
+        targets({ Tom: { advantageMaps: laterSnapshot } })
+      );
+
+      expect(result.verifiedRowIds).toEqual([]);
+      expect(result.failures).toEqual([
+        expect.objectContaining({
+          rowId: 'earlier-snapshot',
+          code: 'projection_mismatch',
+          detail: expect.objectContaining({ reason: 'added_endpoint_mismatch' }),
+        }),
+      ]);
+    }
+  );
+
   it.each([
     {
       name: 'an added endpoint is missing',
