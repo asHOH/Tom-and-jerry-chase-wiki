@@ -61,6 +61,7 @@
     "audit:game-data-actions": "node scripts/audit-game-data-actions.mjs",
     "inspect:game-data-actions": "node scripts/inspect-game-data-actions.mjs",
     "verify:game-data-actions": "node scripts/verify-game-data-actions.mjs",
+    "verify:game-data-compaction": "node scripts/verify-game-data-compaction.mjs",
     "report:admin-game-data-action-timings": "node scripts/ops/summarize-admin-game-data-action-timings.mjs",
     "audit": "npm audit --audit-level=moderate",
     "outdated": "npm outdated",

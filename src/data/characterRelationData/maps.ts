@@ -769,6 +769,15 @@ export const characterRelationMapTraits: CharacterRelationTrait[] = [
     },
   },
   {
+    description: '小图莱特宁全图可飞',
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '莱特宁', type: 'character' },
+      target: { name: '天宫-云上', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
     description: '典型的拉扯图容易苟到后期。',
     relation: {
       kind: 'advantageMaps',

@@ -2089,9 +2089,9 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '恶魔杰瑞的被动能够免疫斯飞的关键伤害或者控制，同时恶魔杰瑞的传送门能够大幅限制斯飞的攻势',
+      '恶魔杰瑞的3级被动能够免疫斯飞的关键伤害或者控制。但斯飞的电流能快速破盾，且面对恶魔杰瑞的传送门时斯飞可以先扔出{项坠}再穿过传送门，这样即使被传送走也能立即被项坠拉回来。',
     relation: {
-      kind: 'counteredBy',
+      kind: 'counterEachOther',
       subject: { name: '斯飞', type: 'character' },
       target: { name: '恶魔杰瑞', type: 'character' },
       isMinor: false,
