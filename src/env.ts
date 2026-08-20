@@ -38,6 +38,7 @@ export const env = createEnv({
 
     // Deployment metadata (optional)
     DEPLOY_BUILD_ID: z.string().min(1).optional(),
+    GAME_DATA_BUILD_ARTIFACT_PATH: z.string().min(1).optional(),
     COMMIT_SHA: z.string().optional(),
     DEPLOY_COMMIT_SHA: z.string().optional(),
     NETLIFY_COMMIT_SHA: z.string().optional(),

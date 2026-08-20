@@ -229,6 +229,12 @@ application data and is fully reversible.
 
 ## Phase 1 — Add one shared build-data prepass and lean observability
 
+**2026-08-21 foundation checkpoint:** The inactive shared artifact envelope, atomic file helpers,
+tagged server reader, privacy-safe summary/budget projection, build-source transport guard, and
+server-client constructor allowlist are implemented with focused tests. Build commands and selectors
+remain unchanged, so this checkpoint is not independently deployable and does not yet reduce egress.
+Phase 2 and Phase 3 must supply and validate both payloads before the wrapper is activated.
+
 ### Independent problem
 
 The current build lets static workers reach bulk data sources independently and does not report how
@@ -286,15 +292,15 @@ must never contain action contents, user identifiers, credentials, or URLs conta
       Supabase-enabled attempt, zero database fetches in a deliberately disabled attempt, and never
       more than one fetch per bulk source within any attempt. A bounded drift retry starts a new,
       separately logged attempt and does not relax its per-attempt budget.
-- [ ] Add the build-mode source-query guard to the shared server-side Supabase fetch transport. With
+- [x] Add the build-mode source-query guard to the shared server-side Supabase fetch transport. With
       the artifact variable present, parse the URL and reject the `game_data_actions` REST path and
       contributor-source RPC path with a typed error before invoking the underlying fetch or retry
       loop. Do not block unrelated Supabase requests required during a build.
-- [ ] Inject the guarded transport into every application server-side Supabase constructor, including
+- [x] Inject the guarded transport into every application server-side Supabase constructor, including
       publishable, admin, cookie-aware Server Component, route-handler, and proxy clients. The
       generator uses a separately constructed acquisition client before the wrapper passes the
       artifact variable only to `next build`; no transferable authorization token is needed.
-- [ ] Add an architecture check that server-side Supabase constructors remain confined to an explicit
+- [x] Add an architecture check that server-side Supabase constructors remain confined to an explicit
       allowlist, every allowed application constructor injects the guarded transport, and
       build-reachable readers cannot issue raw PostgREST/RPC requests around that seam.
 - [ ] Make CI fail if the applicable budget is exceeded or the build-mode guard records any worker
@@ -306,7 +312,7 @@ must never contain action contents, user identifiers, credentials, or URLs conta
 
 ### Tests
 
-- [ ] Unit-test summary calculation and prove that action contents, IDs, user IDs, and credentials
+- [x] Unit-test summary calculation and prove that action contents, IDs, user IDs, and credentials
       cannot appear in it.
 - [ ] Unit-test the generator with mocked sources: assert exactly one invocation of each bulk query in
       enabled mode, zero in disabled mode, and the same per-attempt limit across a drift retry.

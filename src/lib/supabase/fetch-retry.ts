@@ -1,8 +1,12 @@
+import { assertBuildSourceQueryAllowed } from './buildSourceGuard';
+
 const MAX_RETRIES = 3;
 const BASE_DELAY = 1000;
 const TIMEOUT_MS = 10000;
 
 export async function fetchWithRetry(input: RequestInfo | URL, init?: RequestInit) {
+  assertBuildSourceQueryAllowed(input);
+
   let lastError: unknown;
 
   for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
