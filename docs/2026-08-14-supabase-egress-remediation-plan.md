@@ -1,8 +1,9 @@
 # Supabase Egress Remediation Plan
 
-**Status:** Proposed  
-**Created:** 2026-08-14  
-**Billing cycle under investigation:** 2026-08-07 through 2026-09-07  
+**Status:** In progress
+**Created:** 2026-08-14
+**Last updated:** 2026-08-21
+**Billing cycle under investigation:** 2026-08-07 through 2026-09-07
 **Fair Use grace-period end:** 2026-09-13
 
 ## Problem statement
@@ -58,6 +59,14 @@ The action table contained:
 | Rejected | No     |   707 |              579 KiB |
 | Pending  | No     |    11 |          3,108 bytes |
 | Revoked  | No     |     6 |          2,519 bytes |
+
+### 2026-08-21 baseline refresh
+
+After the verified 27-action baseline compaction and production cutover, a read-only production
+count recorded 675 approved public rows, 1,373 synced rows, 9 private pending rows, 715 rejected rows,
+and 6 revoked rows. The compaction is an already completed exception to Phase 5's original ordering,
+not evidence that further compaction should precede the primary call-amplification fix. Refresh query
+counts and payload bytes again when Phases 1 through 3 enter their deployment gate.
 
 The character-author query loads 1,672 approved-or-synced character rows on every cache miss. It
 accepts a `characterId`, but the SQL query cannot use that value because the target character is
@@ -145,9 +154,9 @@ per attempt, one cleanup path, and one final summary. Implement and deploy them 
 smaller change can reuse that same boundary; do not create separate contributor and approved-action
 artifact systems merely to preserve phase independence.
 
-Phase 0 and Phase 4 remain independently deployable. Phases 5 through 7 are decision gates, not part
-of the initial incident implementation. If their measurements justify further work, create a separate
-reviewed design rather than expanding this remediation in place.
+The preview-containment prerequisite and Phase 4 remain independently deployable. Phases 5 through 7
+are decision gates, not part of the initial incident implementation. If their measurements justify
+further work, create a separate reviewed design rather than expanding this remediation in place.
 
 ## Operational tradeoffs and limitations
 
@@ -171,7 +180,12 @@ reviewed design rather than expanding this remediation in place.
   all build post-processing. A small unavoidable window remains between the build command returning
   and deployment activation.
 
-## Phase 0 — Contain preview-build amplification
+## Prerequisite — Contain preview-build amplification
+
+This is an operational gate, not a numbered implementation phase. Activate it before beginning
+Supabase-enabled implementation or validation builds for Phases 1 through 3, and keep it active until
+those phases are deployed and their build-fetch budgets are verified. It does not change the shared
+implementation boundary or create a partial-deployment option for Phases 1 through 3.
 
 ### Independent problem
 
@@ -183,16 +197,18 @@ material part of the monthly quota before a code fix reaches production.
 
 - [ ] Temporarily batch commits before pushing branches that trigger Vercel previews.
 - [ ] Cancel superseded preview builds as soon as a replacement is queued.
-- [ ] Review the Vercel Git deployment policy and avoid building automated dependency branches that
+- [x] Review the Vercel Git deployment policy and avoid building automated dependency branches that
       do not require a live application preview.
-- [ ] Choose one temporary containment mode until Phases 2 and 3 are deployed:
+- [x] Choose one temporary containment mode until Phases 2 and 3 are deployed:
   - pause automatic previews; or
   - set `NEXT_PUBLIC_DISABLE_ARTICLES=1` only in the Vercel Preview environment, accepting that auth,
     articles, and other Supabase-backed preview features will be unavailable; or
   - keep one designated integration preview connected to Supabase and make other branch previews
-    baseline-only.
-- [ ] Record the selected mode and the date it was enabled.
-- [ ] Do not change VPS production environment variables as part of this containment phase.
+    baseline-only or prevent them from building.
+- [ ] Record the selected mode and the date it was enabled. The configuration was staged on
+      2026-08-21: only the `develop` integration branch may auto-deploy to Vercel; all other Git
+      branches are prevented from building by `vercel.json`. Record its activation after deployment.
+- [x] Do not change VPS production environment variables as part of this containment phase.
 
 ### Validation
 
@@ -831,12 +847,12 @@ and a target relation in parallel.
 
 ## Recommended execution order
 
-| Priority | Work                                           | Expected impact | Risk   | Reason                                                   |
-| -------: | ---------------------------------------------- | --------------- | ------ | -------------------------------------------------------- |
-|        0 | Phase 0: preview containment                   | Immediate       | Low    | Stops avoidable quota growth while code is prepared      |
-|        1 | Phases 1–3: one shared build-data artifact     | Very high       | Medium | Removes both repeated bulk reads with one implementation |
-|        2 | Phase 4: public endpoint decision              | Low–medium      | Low    | Handles old clients and an uncached 1 MB response        |
-|        3 | Seven-day observation and incident disposition | Confirming      | None   | Determines whether any conditional follow-up is needed   |
+| Order        | Work                                           | Expected impact | Risk   | Reason                                                   |
+| ------------ | ---------------------------------------------- | --------------- | ------ | -------------------------------------------------------- |
+| Prerequisite | Preview containment                            | Immediate       | Low    | Stops avoidable quota growth while code is prepared      |
+| 1            | Phases 1–3: one shared build-data artifact     | Very high       | Medium | Removes both repeated bulk reads with one implementation |
+| 2            | Phase 4: public endpoint decision              | Low–medium      | Low    | Handles old clients and an uncached 1 MB response        |
+| 3            | Seven-day observation and incident disposition | Confirming      | None   | Determines whether any conditional follow-up is needed   |
 
 Phases 5 and 7 proceed only by opening separate reviewed plans after their entry gates are met.
 Phase 6 is a separate performance backlog measurement and does not block incident completion.
