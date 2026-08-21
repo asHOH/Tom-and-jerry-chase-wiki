@@ -101,8 +101,9 @@ Deployment-specific cache identity also intentionally prevents reuse between sep
 - Keep uncached Supabase egress below 5 GB per complete billing cycle, with a working target below
   150 MB per day averaged over seven days.
 - Reduce each identified bulk query shape by at least 95% before considering a plan upgrade.
-- Make each stable Supabase-enabled build attempt perform exactly one approved-snapshot bulk fetch and
-  one contributor-source bulk fetch. A deliberately disabled attempt performs zero database fetches.
+- Make each stable Supabase-enabled build attempt perform exactly one approved-snapshot,
+  contributor-source, and synced-history-source bulk fetch. A deliberately disabled attempt performs
+  zero database fetches.
 - Make character-contributor aggregation perform at most one bulk fetch per process/cache population
   or enabled build attempt, not one bulk fetch per character.
 - Preserve published game-data output, contributor attribution, action history, auth behavior,
@@ -132,15 +133,17 @@ These constraints apply to every phase:
   fields required by the build, revoke the default `PUBLIC` grant, use a fixed safe `search_path`, and
   have explicit permission and payload-shape tests.
 - Keep raw synced action rows outside anonymous table and RPC access. Synced actions remain eligible
-  for derived public contributor attribution, but the public contributor RPC must return only the
-  final character/contributor projection and never return action `entry` payloads or action IDs.
+  for derived public contributor attribution and published history, but the public RPCs must return
+  only their final projections and never return action `entry` payloads, action IDs, users, messages,
+  moderation metadata, or old/new values. The history projection is limited to entity type, creation
+  time, and ordered operation/path pairs.
 - The approved replay epoch protects only the public replay source. Contributor nicknames and other
   attribution-only inputs are eventually consistent, are not part of the replay-epoch fence, and have
   no fixed freshness guarantee.
-- During a static build, only the pre-build generator may query the two source boundaries. When the
+- During a static build, only the pre-build generator may query the three source boundaries. When the
   explicit build-artifact variable is present, the shared server-side Supabase fetch transport used by
   every application server client must reject direct `game_data_actions` requests and
-  contributor-source RPC calls before any network request or retry.
+  contributor-source and synced-history-source RPC calls before any network request or retry.
 - Keep build artifacts free of user emails, IP addresses, tokens, or other private auth data.
 - Run production action-table mutations only through existing trusted application/RPC paths.
 - Use `tjwiki-test` for database-changing validation. Do not run the admin action measurement SQL
@@ -165,20 +168,20 @@ further work, create a separate reviewed design rather than expanding this remed
   available and refresh through normal cache-tag invalidation.
 - A drifted deployment can take up to three Next.js build attempts and three bulk fetches per source,
   while each individual attempt remains within its one-fetch budget.
-- The replay epoch does not version contributor nicknames or synced-only attribution changes. A build
-  may therefore publish contributor attribution that is stale, including for longer than one hour in
-  a long-lived preview or cache population; this accepted staleness does not affect game-data replay.
+- The replay epoch does not version contributor nicknames or edits to already-synced history
+  metadata. A build may therefore publish those derived projections stale; this accepted staleness
+  does not affect game-data replay, and normal runtime ISR returns to the tagged database readers.
 - Artifact, credential, checksum, or epoch failures stop the candidate build instead of falling back to
   repeated Supabase reads.
 - Supabase-disabled previews save all database egress but cannot fully test auth, articles, or other
   dynamic Supabase features.
 - Preserving a VPS last-known-good release requires temporary disk space and cleanup, and may still
   involve brief planned downtime; the requirement guarantees recovery, not zero-downtime activation.
-- The public epoch and contributor-source RPCs are small security-sensitive migrations and must retain
-  their exact grants, minimal return shapes, and hardened definitions. The contributor RPC exposes only
-  derived attribution rows, not its raw synced-action inputs. The final replay-epoch check runs after
-  all build post-processing. A small unavoidable window remains between the build command returning
-  and deployment activation.
+- The public epoch, contributor-source, and synced-history-source RPCs are small security-sensitive
+  migrations and must retain their exact grants, minimal return shapes, and hardened definitions. The
+  derived RPCs do not expose their raw synced-action inputs. The final replay-epoch check runs after all
+  build post-processing. A small unavoidable window remains between the build command returning and
+  deployment activation.
 
 ## Prerequisite — Contain preview-build amplification
 
@@ -213,7 +216,7 @@ material part of the monthly quota before a code fix reaches production.
 ### Validation
 
 - [ ] Push one documentation-only test commit if a preview-policy check is necessary.
-- [ ] Confirm that ignored or Supabase-disabled previews no longer produce the two bulk query shapes.
+- [ ] Confirm that ignored or Supabase-disabled previews no longer produce the three bulk query shapes.
 - [ ] Confirm that `dev.tjwiki.com` retains the intended feature level for the selected containment
       mode.
 
@@ -233,7 +236,7 @@ application data and is fully reversible.
 tagged server reader, privacy-safe summary/budget projection, build-source transport guard, and
 server-client constructor allowlist are implemented with focused tests. Build commands and selectors
 remain unchanged, so this checkpoint is not independently deployable and does not yet reduce egress.
-Phase 2 and Phase 3 must supply and validate both payloads before the wrapper is activated.
+Phase 2 and Phase 3 must supply and validate all three payloads before the wrapper is activated.
 
 ### Independent problem
 
@@ -243,7 +246,7 @@ regression.
 
 ### Design
 
-Make one pre-build generator the only component allowed to perform the two bulk database reads during
+Make one pre-build generator the only component allowed to perform the three bulk database reads during
 a static build. It writes one atomic, deployment-identity-bound artifact under a unique
 attempt-specific `.tmp/` path; all Next workers read that artifact and must fail rather than query
 Supabase when it is unavailable or invalid.
@@ -253,8 +256,9 @@ Enforce that ownership at the existing shared server-side Supabase fetch seam, c
 constructor—publishable, admin, cookie-aware Server Component, route-handler, and proxy—must inject
 that transport. When the artifact-path variable is present, the transport parses the request URL and
 rejects the `game_data_actions` REST path and
-`read_game_data_character_contributor_source()` RPC path before the request reaches the network or
-retry loop. Browser clients are outside this build-worker contract.
+`read_game_data_character_contributor_source()` and
+`read_game_data_synced_history_source()` RPC paths before the request reaches the network or retry
+loop. Browser clients are outside this build-worker contract.
 
 The generator constructs its own acquisition client before the wrapper passes the artifact-path
 variable exclusively to `next build`. Do not create or transfer a capability token: process and
@@ -262,7 +266,7 @@ environment separation are sufficient. The transport guard, not the generator su
 authoritative prohibition against direct or future worker queries.
 
 Expose the artifact through one server-only, module-scoped cached reader tagged with
-`PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG`. Both the approved-snapshot and contributor selectors must use
+`PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG`. The approved-snapshot, contributor, and synced-history selectors must use
 that boundary during a build instead of reading the file directly. This preserves the cache-tag
 dependency of `force-static` route output even though the cache callback reads a local artifact rather
 than Supabase. After deployment, invalidation removes that dependency and the next runtime render uses
@@ -275,20 +279,20 @@ must never contain action contents, user identifiers, credentials, or URLs conta
 
 ### Actions
 
-- [ ] Add one build wrapper and shared build-data generator under `scripts/`.
-- [ ] Have the wrapper choose one `DEPLOY_BUILD_ID` when absent and pass the same value to the
+- [x] Add one build wrapper and shared build-data generator under `scripts/`.
+- [x] Have the wrapper choose one `DEPLOY_BUILD_ID` when absent and pass the same value to the
       generator and `next build`.
-- [ ] Write one versioned artifact atomically under an attempt-specific `.tmp/` path and remove it in a
+- [x] Write one versioned artifact atomically under an attempt-specific `.tmp/` path and remove it in a
       `finally` path. Overlapping local builds and drift retries must not share paths.
-- [ ] Pass the explicit artifact path to `next build`; do not expose it to normal runtime or ISR.
-- [ ] Add one module-scoped, server-only artifact reader tagged with
+- [x] Pass the explicit artifact path to `next build`; do not expose it to normal runtime or ISR.
+- [x] Add one module-scoped, server-only artifact reader tagged with
       `PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG`; selectors must not bypass it with raw filesystem reads.
       Pass the unique artifact path as an explicit cached-function argument so Next's preserved
       `.next/cache/fetch-cache` cannot reuse a rejected attempt's value.
-- [ ] Emit one generator summary containing each source's fetch count, rows, bytes, duration, and
+- [x] Emit one generator summary containing each source's fetch count, rows, bytes, duration, and
       payload checksum, plus the attempt number. Report lightweight epoch-validation calls separately
       from bulk fetches.
-- [ ] Enforce mode- and attempt-specific budgets: exactly one fetch for each bulk source in a stable
+- [x] Enforce mode- and attempt-specific budgets: exactly one fetch for each bulk source in a stable
       Supabase-enabled attempt, zero database fetches in a deliberately disabled attempt, and never
       more than one fetch per bulk source within any attempt. A bounded drift retry starts a new,
       separately logged attempt and does not relax its per-attempt budget.
@@ -514,6 +518,12 @@ caches, rollback requires no data repair.
 
 ## Phase 3 — Generate one approved-action snapshot per build attempt
 
+**2026-08-21 local implementation checkpoint:** The three-source artifact, epoch fence, bounded build
+wrapper, approved/contributor/synced-history selectors, generated database types, and VPS
+last-known-good recovery path are implemented locally. Publishable-only and deliberately disabled
+local builds pass with one and zero fetches per source respectively. The new migrations have not been
+applied remotely, and the deployment-gate items below remain open.
+
 ### Independent problem
 
 Static detail routes independently reach `getApprovedActionSnapshot()`. `unstable_cache` and React
@@ -527,24 +537,24 @@ once. Every static-generation worker reads that payload from the same local arti
 and ISR continue to use the current tagged Supabase cache so newly published actions remain visible
 after invalidation.
 
-The prepass must acquire both bulk sources exactly once using only the publishable-key configuration
-supported by production, but only the replay payload is epoch-protected. It performs the derived
-contributor-source RPC, reads the lightweight replay epoch, performs the existing canonical
-approved-action query, and reads the epoch again. It accepts the approved payload only when both
-non-null epochs match. The contributor projection is independently validated but is allowed to be
-stale because nickname and synced-only attribution changes do not affect replay correctness. The
-approved query requests an exact count in the same HTTP call and rejects any result whose returned row
-count does not equal that count, so a PostgREST row limit cannot silently truncate the replay snapshot.
+The prepass must acquire all three bulk sources exactly once using only the publishable-key
+configuration supported by production, but only the replay payload is epoch-protected. It performs
+the derived contributor-source RPC, the minimal synced-history-source RPC, reads the lightweight
+replay epoch, performs the existing canonical approved-action query, and reads the epoch again. It
+accepts the approved payload only when both non-null epochs match. The contributor and synced-history
+projections are independently validated but are allowed to be stale because they do not affect replay
+correctness. The approved query requests an exact count in the same HTTP call and rejects any result
+whose returned row count does not equal that count, so a PostgREST row limit cannot silently truncate
+the replay snapshot.
 
 After `next build`, Serwist generation, and any configured image optimization finish, but before the
 build command accepts the output, the wrapper reads the epoch once more. If any check differs, the
 wrapper discards that attempt and reruns the entire prepass and output-producing build pipeline, with a
 fresh artifact path, up to three total attempts. This optimistic fence protects the replay source
 without adding a public approved-snapshot endpoint or turning a routine race into an immediate outage.
-Each retry also refreshes the contributor projection, but contributor changes alone do not trigger a
-retry.
+Each retry also refreshes both derived projections, but changes to them alone do not trigger a retry.
 
-The shared artifact should contain only the public and derived fields required by its two readers:
+The shared artifact should contain only the public and derived fields required by its three readers:
 
 ```ts
 type BuildGameDataArtifact = {
@@ -562,6 +572,17 @@ type BuildGameDataArtifact = {
     characterCount: number;
     checksum: string;
     index: CharacterContributorIndex;
+  };
+  syncedHistory: {
+    sourceActionCount: number;
+    rowCount: number;
+    operationCount: number;
+    checksum: string;
+    rows: Array<{
+      entityType: string;
+      createdAt: string;
+      actions: Array<{ op: 'set' | 'add' | 'delete'; path: string }>;
+    }>;
   };
 };
 ```
@@ -583,50 +604,54 @@ Grant execution to `anon` and `authenticated` after revoking the default `PUBLIC
 epoch table itself remains service-role-only, make this a no-argument `SECURITY DEFINER` function
 owned by the migration owner, with a fixed safe `search_path` and an exact scalar query. It returns one
 epoch and exposes no action or profile fields. Phase 2 adds the separate hardened contributor-source
-RPC because anonymous table RLS intentionally hides synced rows. That RPC may read the raw rows under
-its definer rights but returns only the derived character/contributor projection. Keep the existing
-canonical public table query for approved rows; do not add a public approved-snapshot endpoint. The
-generator always uses the publishable client even if a secret key happens to exist in the environment.
-Controlled previews use `tjwiki-test` publishable credentials; arbitrary preview branches do not
-receive production secrets.
+RPC because anonymous table RLS intentionally hides synced rows. Phase 3 adds a second hardened RPC
+for the synced rows needed by published history; it returns only entity type, creation time, and
+ordered operation/path pairs. Neither derived RPC returns raw action rows. Keep the existing canonical
+public table query for approved rows; do not add a public approved-snapshot endpoint. The generator
+always uses the publishable client even if a secret key happens to exist in the environment. Controlled
+previews use `tjwiki-test` publishable credentials; arbitrary preview branches do not receive
+production secrets.
 
 ### Actions
 
-- [ ] Extend the shared build-data generator and artifact schema with the approved-action payload.
-- [ ] Keep the wrapper's `DEPLOY_BUILD_ID`, `next.config.ts` build ID, embedded
+- [x] Extend the shared build-data generator and artifact schema with the approved-action payload.
+- [x] Keep the wrapper's `DEPLOY_BUILD_ID`, `next.config.ts` build ID, embedded
       `TJWIKI_BUILD_IDENTITY`, and artifact deployment identity identical.
-- [ ] Reuse the canonical ordered query and validation logic; do not create a second interpretation
+- [x] Reuse the canonical ordered query and validation logic; do not create a second interpretation
       of public-row eligibility.
-- [ ] Add the narrowly scoped public epoch-only RPC described above, including explicit grants, fixed
+- [x] Add the narrowly scoped public epoch-only RPC described above, including explicit grants, fixed
       `search_path`, generated database types, and permission tests.
-- [ ] Add a publishable-client prepass that performs the contributor-source RPC, epoch-before, the
-      existing canonical approved-action query, and epoch-after in that order. Accept the approved
+- [x] Add a publishable-client prepass that performs the contributor-source RPC, synced-history-source
+      RPC, epoch-before, the existing canonical approved-action query, and epoch-after in that order. Accept the approved
       payload only when both epochs are equal and non-null; validate the contributor payload separately
       without assigning it a replay epoch. Do not call the current admin-only snapshot reader or require
       `SUPABASE_SECRET_KEY`; only the deliberately disabled empty artifact may use a `null` epoch.
-- [ ] Request an exact approved-row count in the same query call and reject a count mismatch rather
+- [x] Add the minimal synced-history RPC, payload validation/checksum, and artifact selector. It must
+      include only synced rows with published-history mappings and expose no raw entry, values,
+      identities, messages, or moderation fields.
+- [x] Request an exact approved-row count in the same query call and reject a count mismatch rather
       than accepting a PostgREST-truncated result. Validate row shape, ordering, duplicate IDs,
       supported entity types, and replay decodability.
-- [ ] Calculate the approved payload checksum over a canonical serialization of the ordered rows,
+- [x] Calculate the approved payload checksum over a canonical serialization of the ordered rows,
       excluding volatile metadata such as `fetchedAt`.
-- [ ] Wrap the complete prepass, `next build`, Serwist generation, and configured image optimization
+- [x] Wrap the complete prepass, `next build`, Serwist generation, and configured image optimization
       in at most three attempts. Run the final epoch guard after those output-producing steps. On an
       epoch mismatch, delete that attempt's output and artifact, choose a new artifact path, then
       regenerate the pipeline from scratch. Do not retry unrelated deterministic failures. If the epoch
       is unreadable or all drift attempts are exhausted, fail clearly and never deploy the candidate.
       Epoch checks are not bulk fetches.
-- [ ] Add a server-only selector used by `getApprovedActionSnapshot()` only when the explicit
+- [x] Add a server-only selector used by `getApprovedActionSnapshot()` only when the explicit
       build-artifact environment variable is present. It must consume the shared tagged artifact
       reader so `force-static` pages retain `PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG` invalidation.
-- [ ] Reject a missing, unreadable, stale-deployment-identity, checksum-invalid, or
+- [x] Reject a missing, unreadable, stale-deployment-identity, checksum-invalid, or
       schema-version-invalid artifact instead of silently issuing hundreds of fallback database
       queries during a build.
-- [ ] When Supabase is deliberately disabled, generate a valid empty artifact and preserve the
+- [x] When Supabase is deliberately disabled, generate a valid empty artifact and preserve the
       checked-in baseline behavior.
-- [ ] Keep normal runtime behavior on VPS and Vercel ISR unchanged: no build variable means the
+- [x] Keep normal runtime behavior on VPS and Vercel ISR unchanged: no build variable means the
       existing tagged Supabase cache is used.
-- [ ] Ensure neither publishable nor secret keys are written to the shared artifact or logs.
-- [ ] Before enabling this wrapper on the VPS, update `scripts/ops/deploy_server.sh` so a failed or
+- [x] Ensure neither publishable nor secret keys are written to the shared artifact or logs.
+- [x] Before enabling this wrapper on the VPS, update `scripts/ops/deploy_server.sh` so a failed or
       exhausted candidate build cannot leave production stopped. Preserve a verified last-known-good
       release (source revision and build output), restore it on failure, and restart PM2. A small
       candidate-release or backup/restore mechanism is sufficient; a general release platform is not
@@ -634,31 +659,31 @@ receive production secrets.
 
 ### Tests
 
-- [ ] Unit-test artifact validation, checksum verification, schema-version rejection, and deployment-ID
+- [x] Unit-test artifact validation, checksum verification, schema-version rejection, and deployment-ID
       mismatch handling.
-- [ ] Test the disabled-Supabase empty artifact.
-- [ ] Test a production-equivalent publishable-key-only build with `SUPABASE_SECRET_KEY` absent, and
+- [x] Test the disabled-Supabase empty artifact.
+- [x] Test a production-equivalent publishable-key-only build with `SUPABASE_SECRET_KEY` absent, and
       assert the generator never selects the admin client when a secret is present.
-- [ ] Test the epoch RPC grants and scalar return shape, including that it exposes no action, profile,
-      or other private fields. Test the contributor-source RPC grants and minimal JSON payload in the
-      Phase 2 suite.
+- [x] Test the epoch RPC grants and scalar return shape, including that it exposes no action, profile,
+      or other private fields. Test the contributor-source and synced-history-source RPC grants and
+      minimal JSON payloads.
 - [ ] Test that multiple simulated approved-action readers use one shared artifact generated by one
       approved-action database fetch.
 - [ ] Simulate a replay-set change during approved-source acquisition, `next build`, and post-build
       processing. Prove every case retries from a fresh artifact path and succeeds when the next
       attempt is stable. Test that a seeded prior-path fetch-cache value cannot be reused, repeated
       drift stops after three attempts, and the unchanged-epoch path uses one attempt.
-- [ ] Simulate nickname and synced-only attribution changes without a replay-epoch change. Prove they
+- [ ] Simulate nickname, synced-only attribution, and already-synced history changes without a replay-epoch change. Prove they
       do not trigger a retry or invalidate an otherwise valid build, and document that the accepted
       artifact may contain stale attribution.
-- [ ] Test that runtime without the build variable still calls the tagged Supabase reader.
+- [x] Test that runtime without the build variable still calls the tagged Supabase reader.
 - [ ] Test an actual artifact-backed `force-static` route: invalidate
       `PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG`, trigger revalidation, and prove it reads fresh runtime data.
 - [ ] Exercise the VPS failure path and prove the last-known-good release is restored and PM2 is
       running after a candidate build fails or exhausts its drift retries.
-- [ ] Compare approved snapshot revision, rows, route read models, and history selectors between the
+- [x] Compare approved snapshot revision, rows, route read models, and history selectors between the
       artifact and database paths.
-- [ ] Run published-game-data selector suites, route contract tests, lint, type-check, and
+- [x] Run published-game-data selector suites, route contract tests, lint, type-check, and
       `npm run build:skip-images`.
 
 ### Deployment gate
@@ -676,15 +701,17 @@ receive production secrets.
 
 ### Success criteria
 
-- Exactly one approved-action bulk fetch per stable enabled build attempt, zero in disabled mode, and
-  never more than one within any attempt, independent of static route count or worker count.
+- Exactly one approved-action, contributor-source, and synced-history-source bulk fetch per stable
+  enabled build attempt, zero in disabled mode, and never more than one of each within any attempt,
+  independent of static route count or worker count.
 - No build output is accepted when the approved replay epoch changes between the approved-source
   prepass guard and the end of all build post-processing.
 - Artifact-backed static routes remain attached to `PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG` and refresh
   from the runtime reader after invalidation.
 - Production-equivalent builds succeed without a Supabase secret. The new public RPCs expose only the
-  replay epoch and the derived character/contributor projection; no public RPC exposes raw synced
-  action rows, the approved replay snapshot, or private profile fields.
+  replay epoch, derived character/contributor projection, and minimal synced-history projection; no
+  public RPC exposes raw synced action rows, the approved replay snapshot, values, identity/moderation
+  fields, or private profile fields.
 - Drift retries are bounded, and a failed VPS candidate automatically restores a running
   last-known-good release.
 - No production output difference for an identical action snapshot.
@@ -693,9 +720,9 @@ receive production secrets.
 ### Rollback
 
 Restore direct `getApprovedActionSnapshot()` reads and remove the approved-action payload while
-retaining the shared wrapper for the contributor payload. If all shared-artifact phases are reverted,
-restore the previous npm build commands as well. Revoke and remove the epoch RPC in a forward rollback
-migration if it is no longer used; no production data rows require repair.
+retaining the shared wrapper for the derived payloads. If all shared-artifact phases are reverted,
+restore the previous npm build commands as well. Revoke and remove the epoch and synced-history RPCs
+in forward rollback migrations if they are no longer used; no production data rows require repair.
 
 ## Phase 4 — Bound or retire the legacy public-actions HTTP endpoint
 
@@ -925,11 +952,12 @@ The incident is complete only when:
       product decision accepts a paid plan;
 - [ ] seven-day average uncached egress is below 150 MB/day with representative traffic and normal
       deployment activity;
-- [ ] approved-snapshot and contributor-source query counts are each at least 95% below the audited
-      equivalent workload;
-- [ ] each stable Supabase-enabled Vercel build attempt performs exactly one approved-snapshot bulk
-      fetch and each deliberately disabled attempt performs zero; any drift retry is separately logged
-      and remains within the same per-attempt budget;
+- [ ] approved-snapshot, contributor-source, and synced-history-source query counts are each at least
+      95% below the audited equivalent workload;
+- [ ] each stable Supabase-enabled Vercel build attempt performs exactly one approved-snapshot,
+      contributor-source, and synced-history-source bulk fetch and each deliberately disabled attempt
+      performs zero; any drift retry is separately logged and remains within the same per-attempt
+      budget;
 - [ ] concurrent cold character lookups and a stable enabled multi-worker build attempt each
       demonstrate one contributor-source fetch for their respective cache population or build
       artifact, while disabled mode demonstrates zero;
@@ -940,9 +968,9 @@ The incident is complete only when:
       attempt's artifact or Next fetch-cache value;
 - [ ] contributor attribution, published revisions, route data, and action history pass equivalence
       tests;
-- [ ] the epoch and contributor-source RPC grants and minimal return shapes pass database tests, the
-      contributor RPC exposes only derived attribution, and no authorization, RLS, cache-invalidation,
-      or disabled-Supabase regression is present;
+- [ ] the epoch, contributor-source, and synced-history-source RPC grants and minimal return shapes
+      pass database tests, the derived RPCs expose no raw synced action rows, and no authorization,
+      RLS, cache-invalidation, or disabled-Supabase regression is present;
 - [ ] the shared guarded server-side fetch transport rejects every source query from a Next.js build
       worker across publishable, admin, cookie-aware server, route-handler, and proxy clients, including
       direct table and contributor-RPC calls, while the separately constructed generator client remains

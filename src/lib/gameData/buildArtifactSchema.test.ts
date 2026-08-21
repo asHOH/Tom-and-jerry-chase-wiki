@@ -11,6 +11,7 @@ const validArtifact = {
   fetchedAt: '2026-08-21T00:00:00.000Z',
   approvedActions: { rows: [] },
   contributors: { index: {} },
+  syncedHistory: { rows: [] },
 };
 
 describe('build game-data artifact schema', () => {
@@ -28,6 +29,7 @@ describe('build game-data artifact schema', () => {
     { artifact: { ...validArtifact, fetchedAt: 'not-a-date' }, code: 'artifact_invalid' },
     { artifact: { ...validArtifact, approvedActions: [] }, code: 'artifact_invalid' },
     { artifact: { ...validArtifact, contributors: null }, code: 'artifact_invalid' },
+    { artifact: { ...validArtifact, syncedHistory: [] }, code: 'artifact_invalid' },
     {
       artifact: validArtifact,
       code: 'artifact_deployment_mismatch',

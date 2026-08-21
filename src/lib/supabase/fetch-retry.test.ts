@@ -39,6 +39,10 @@ describe('fetchWithRetry build-source guard', () => {
         'https://project.supabase.co/rest/v1/rpc/read_game_data_character_contributor_source'
       ),
     ],
+    [
+      'synced-history',
+      new URL('https://project.supabase.co/rest/v1/rpc/read_game_data_synced_history_source'),
+    ],
   ] as const)('blocks the %s source before network access', async (source, input) => {
     process.env[BUILD_ARTIFACT_ENV_NAME] = 'D:/tmp/attempt-1.json';
     const networkFetch = installFetchMock();

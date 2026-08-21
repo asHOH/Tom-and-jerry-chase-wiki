@@ -75,6 +75,9 @@ GEMINI.md
 # Private normalization inputs
 /src/data/roles.json
 
+# Local database backups
+/backups/
+
 # Personal git workflow helpers
 /git-helpers/
 

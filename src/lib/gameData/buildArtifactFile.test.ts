@@ -30,6 +30,7 @@ describe('build game-data artifact file', () => {
       fetchedAt: '2026-08-21T00:00:00.000Z',
       approvedActions: { rows: [] },
       contributors: { index: {} },
+      syncedHistory: { rows: [] },
     };
 
     await writeBuildGameDataArtifactFile(artifactPath, artifact);
@@ -55,6 +56,7 @@ describe('build game-data artifact file', () => {
       fetchedAt: '2026-08-21T00:00:00.000Z',
       approvedActions: {},
       contributors: {},
+      syncedHistory: {},
     });
     await expect(readBuildGameDataArtifactFile(artifactPath, 'deployment-2')).rejects.toMatchObject(
       {

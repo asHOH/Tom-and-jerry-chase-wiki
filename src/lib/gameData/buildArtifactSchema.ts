@@ -6,6 +6,7 @@ export type BuildGameDataArtifact = {
   fetchedAt: string;
   approvedActions: unknown;
   contributors: unknown;
+  syncedHistory: unknown;
 };
 
 export type BuildGameDataArtifactErrorCode =
@@ -43,7 +44,8 @@ export function parseBuildGameDataArtifact(
     value.deploymentIdentity.length === 0 ||
     !isIsoTimestamp(value.fetchedAt) ||
     !isRecord(value.approvedActions) ||
-    !isRecord(value.contributors)
+    !isRecord(value.contributors) ||
+    !isRecord(value.syncedHistory)
   ) {
     throw new BuildGameDataArtifactError('artifact_invalid');
   }
@@ -57,5 +59,6 @@ export function parseBuildGameDataArtifact(
     fetchedAt: value.fetchedAt,
     approvedActions: value.approvedActions,
     contributors: value.contributors,
+    syncedHistory: value.syncedHistory,
   };
 }

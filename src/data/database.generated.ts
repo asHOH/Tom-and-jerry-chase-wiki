@@ -1310,6 +1310,14 @@ export type Database = {
           character_id: string;
         }[];
       };
+      game_data_history_actions_from_entry: {
+        Args: { p_entry: Json };
+        Returns: {
+          action_op: string;
+          action_ordinal: number;
+          action_path: string;
+        }[];
+      };
       generate_salt: { Args: never; Returns: string };
       get_article_version_by_preview: {
         Args: { p_token: string };
@@ -1733,6 +1741,7 @@ export type Database = {
           status: Database['public']['Enums']['game_data_action_status'];
         }[];
       };
+      read_game_data_approved_replay_epoch: { Args: never; Returns: number };
       read_game_data_approved_replay_snapshot: {
         Args: never;
         Returns: {
@@ -1744,6 +1753,7 @@ export type Database = {
         Args: never;
         Returns: Json;
       };
+      read_game_data_synced_history_source: { Args: never; Returns: Json };
       record_user_last_ip: {
         Args: { p_ip: unknown; p_user_id: string };
         Returns: undefined;

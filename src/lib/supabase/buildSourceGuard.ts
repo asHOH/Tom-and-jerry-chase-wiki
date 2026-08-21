@@ -1,6 +1,6 @@
 const BUILD_ARTIFACT_ENV_NAME = 'GAME_DATA_BUILD_ARTIFACT_PATH';
 
-export type BuildGameDataSource = 'approved-actions' | 'character-contributors';
+export type BuildGameDataSource = 'approved-actions' | 'character-contributors' | 'synced-history';
 
 export class BuildSourceQueryBlockedError extends Error {
   readonly code = 'build_source_query_blocked';
@@ -34,10 +34,13 @@ function identifyGuardedSource(pathname: string): BuildGameDataSource | undefine
   if (normalizedPath.endsWith('/rest/v1/rpc/read_game_data_character_contributor_source')) {
     return 'character-contributors';
   }
+  if (normalizedPath.endsWith('/rest/v1/rpc/read_game_data_synced_history_source')) {
+    return 'synced-history';
+  }
   return undefined;
 }
 
-/** Rejects build-worker reads of the two bulk game-data sources before network I/O. */
+/** Rejects build-worker reads of the bulk game-data sources before network I/O. */
 export function assertBuildSourceQueryAllowed(input: RequestInfo | URL): void {
   if (!getBuildGameDataArtifactPath()) return;
 

@@ -1,6 +1,10 @@
 import { GAME_DATA_CONTRIBUTION_FILTER } from './contributionFilter';
 import { fetchPublicGameDataActions, getEntityUpdateHistory } from './publicActions';
 import type { PublicActionRow } from './publicActionsTypes';
+import { createSyncedHistoryArtifactPayload } from './syncedHistory';
+
+const mockArtifactPath = jest.fn<string | undefined, []>(() => undefined);
+const mockReadArtifact = jest.fn();
 
 jest.mock('server-only', () => ({}), { virtual: true });
 
@@ -19,6 +23,14 @@ jest.mock('@/lib/serverCache', () => ({
 jest.mock('@/lib/gameData/publicActionsCache', () => ({
   PUBLIC_GAME_DATA_ACTIONS_CACHE_REVALIDATE_SECONDS: 3600,
   PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG: 'public-game-data-actions',
+}));
+
+jest.mock('@/lib/supabase/buildSourceGuard', () => ({
+  getBuildGameDataArtifactPath: () => mockArtifactPath(),
+}));
+
+jest.mock('@/lib/gameData/buildArtifactReader', () => ({
+  readBuildGameDataArtifact: (...args: unknown[]) => mockReadArtifact(...args),
 }));
 
 const query = {
@@ -86,6 +98,8 @@ let queryRows = publicRows;
 
 describe('public game data actions', () => {
   beforeEach(() => {
+    mockArtifactPath.mockReturnValue(undefined);
+    mockReadArtifact.mockReset();
     const { cached: cachedMock } = jest.requireMock('@/lib/serverCache') as {
       cached: jest.Mock;
     };
@@ -299,5 +313,32 @@ describe('public game data actions', () => {
       message: 'temporary history failure',
     });
     consoleError.mockRestore();
+  });
+
+  it('uses the minimal synced-history artifact without a build-worker database query', async () => {
+    mockArtifactPath.mockReturnValue('D:/artifact.json');
+    mockReadArtifact.mockResolvedValue({
+      syncedHistory: createSyncedHistoryArtifactPayload({
+        sourceActionCount: 1,
+        rowCount: 1,
+        operationCount: 1,
+        rows: [
+          {
+            entityType: 'characters',
+            createdAt: '2026-08-21T00:00:00.000Z',
+            actions: [{ op: 'set', path: 'Tom.description' }],
+          },
+        ],
+      }),
+    });
+
+    const history = await getEntityUpdateHistory();
+
+    expect(history.get('characters:Tom')).toMatchObject({
+      status: 'synced',
+      affectedPath: 'Tom.description',
+    });
+    expect(mockReadArtifact).toHaveBeenCalledTimes(1);
+    expect(query.or).not.toHaveBeenCalled();
   });
 });

@@ -1,12 +1,14 @@
 import 'server-only';
 
 import type { ActionHistoryEntry } from '@/lib/edit/diffUtils';
+import { readBuildGameDataArtifact } from '@/lib/gameData/buildArtifactReader';
 import {
   PUBLIC_GAME_DATA_ACTIONS_CACHE_REVALIDATE_SECONDS,
   PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG,
 } from '@/lib/gameData/publicActionsCache';
 import { cached } from '@/lib/serverCache';
 import { getOptionalSupabaseAdminClient } from '@/lib/supabase/adminClient';
+import { getBuildGameDataArtifactPath } from '@/lib/supabase/buildSourceGuard';
 import { getOptionalSupabasePublicClient } from '@/lib/supabase/publicClient';
 
 import { normalizePublicActionEntries } from './actionEntries';
@@ -17,6 +19,10 @@ import {
 } from './publicActionQueries';
 import type { PublicActionRow } from './publicActionsTypes';
 import { getGameDataActionEntityKey } from './scopedEntityPaths';
+import {
+  parseSyncedHistoryArtifactPayload,
+  syncedHistoryArtifactToPublicRows,
+} from './syncedHistory';
 
 export { PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG } from '@/lib/gameData/publicActionsCache';
 
@@ -85,6 +91,13 @@ export async function getEntityUpdateHistory(): Promise<Map<string, EntityUpdate
 }
 
 export async function fetchPublicGameDataActionHistory(): Promise<PublicActionRow[]> {
+  if (getBuildGameDataArtifactPath()) {
+    const artifact = await readBuildGameDataArtifact();
+    return syncedHistoryArtifactToPublicRows(
+      parseSyncedHistoryArtifactPayload(artifact.syncedHistory)
+    );
+  }
+
   const client = getOptionalSupabaseAdminClient() ?? getOptionalSupabasePublicClient();
   if (!client) return [];
 

@@ -1,15 +1,12 @@
 import 'server-only';
 
-import type { SupabaseClient } from '@supabase/supabase-js';
-
 import { readBuildGameDataArtifact } from '@/lib/gameData/buildArtifactReader';
 import {
   buildCharacterContributorIndex,
   parseCharacterContributorArtifactPayload,
-  parseCharacterContributorSourcePayload,
   type CharacterContributorIndex,
-  type CharacterContributorSourcePayload,
 } from '@/lib/gameData/characterContributors';
+import { queryCharacterContributorSource } from '@/lib/gameData/characterContributorSourceQuery';
 import {
   PUBLIC_GAME_DATA_ACTIONS_CACHE_REVALIDATE_SECONDS,
   PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG,
@@ -17,15 +14,8 @@ import {
 import { createCached } from '@/lib/serverCache';
 import { getBuildGameDataArtifactPath } from '@/lib/supabase/buildSourceGuard';
 import { getOptionalSupabasePublicClient } from '@/lib/supabase/publicClient';
-import type { Database } from '@/data/database.types';
 
-export async function queryCharacterContributorSource(
-  client: SupabaseClient<Database>
-): Promise<CharacterContributorSourcePayload> {
-  const { data, error } = await client.rpc('read_game_data_character_contributor_source');
-  if (error) throw new Error('character_contributor_source_query_failed', { cause: error });
-  return parseCharacterContributorSourcePayload(data);
-}
+export { queryCharacterContributorSource } from '@/lib/gameData/characterContributorSourceQuery';
 
 async function queryRuntimeCharacterContributorIndex(): Promise<CharacterContributorIndex> {
   const client = getOptionalSupabasePublicClient();

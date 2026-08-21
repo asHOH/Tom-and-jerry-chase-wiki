@@ -24,6 +24,14 @@ function createInput(mode: 'enabled' | 'disabled' = 'enabled'): BuildReadSummary
         durationMs: enabled ? 80 : 0,
         checksum: enabled ? checksum : null,
       },
+      {
+        source: 'synced-history',
+        fetchCount: enabled ? 1 : 0,
+        rowCount: enabled ? 24 : 0,
+        serializedBytes: enabled ? 4_000 : 0,
+        durationMs: enabled ? 20 : 0,
+        checksum: enabled ? checksum : null,
+      },
     ],
     epochValidation: { checkCount: enabled ? 3 : 0, durationMs: enabled ? 12 : 0 },
   };

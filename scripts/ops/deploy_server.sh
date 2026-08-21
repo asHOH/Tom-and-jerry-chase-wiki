@@ -22,6 +22,9 @@ LAST_HEALTH_CHECK_ERROR=""
 FETCH_ENDPOINT_RESPONSE=""
 DEPLOY_STARTED_AT="$(date +%s)"
 DEPENDENCY_ACTION="not-started"
+PREVIOUS_SOURCE_HASH=""
+LAST_KNOWN_GOOD_DIR=""
+ROLLBACK_ARMED=0
 
 if [ -d "$SCRIPT_DIR/../../.git" ]; then
   REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
@@ -120,8 +123,6 @@ cleanup_child_processes() {
     kill -9 $child_pids 2>/dev/null || true
   fi
 }
-
-trap cleanup_child_processes EXIT
 
 detect_node_memory_limit() {
   if [ -n "$NODE_MEMORY_LIMIT" ] && [ "$NODE_MEMORY_LIMIT" != "auto" ]; then
@@ -482,6 +483,77 @@ ensure_pm2_process() {
   run_quietly pm2 save
 }
 
+preserve_last_known_good_release() {
+  local health_url="${HEALTH_CHECK_URL:-http://127.0.0.1:${PORT:-3000}/api/health}"
+  local version_url="${VERSION_CHECK_URL:-http://127.0.0.1:${PORT:-3000}/api/version}"
+
+  if [ -z "$PREVIOUS_SOURCE_HASH" ] || ! build_output_is_valid; then
+    echo "Fatal: no complete last-known-good source and build output are available."
+    return 1
+  fi
+  if ! pm2 describe "$PM2_APP_NAME" >/dev/null 2>&1 ||
+    ! check_health_endpoint "$health_url" ||
+    ! check_version_endpoint "$version_url" "$PREVIOUS_SOURCE_HASH"; then
+    echo "Fatal: the existing release could not be verified before the candidate build."
+    [ -n "$LAST_HEALTH_CHECK_ERROR" ] && echo "$LAST_HEALTH_CHECK_ERROR"
+    return 1
+  fi
+
+  LAST_KNOWN_GOOD_DIR="$REPO_ROOT/.tmp/deploy-last-known-good"
+  rm -rf -- "$LAST_KNOWN_GOOD_DIR"
+  mkdir -p "$LAST_KNOWN_GOOD_DIR/public"
+  cp -a .next "$LAST_KNOWN_GOOD_DIR/.next"
+  find public -maxdepth 1 -type f \
+    \( -name 'sw.js*' -o -name 'swe-worker-*' -o -name 'workbox-*' -o -name 'fallback-*' -o -name 'version.json' \) \
+    -exec cp -a -- {} "$LAST_KNOWN_GOOD_DIR/public/" \;
+  printf '%s\n' "$PREVIOUS_SOURCE_HASH" > "$LAST_KNOWN_GOOD_DIR/source-revision"
+  ROLLBACK_ARMED=1
+  echo "Preserved verified last-known-good release ${PREVIOUS_SOURCE_HASH:0:8}."
+}
+
+restore_last_known_good_release() {
+  local rollback_hash
+
+  ROLLBACK_ARMED=0
+  if [ -z "$LAST_KNOWN_GOOD_DIR" ] || [ ! -f "$LAST_KNOWN_GOOD_DIR/source-revision" ]; then
+    echo "Fatal: last-known-good release metadata is unavailable; automatic recovery cannot continue."
+    return 1
+  fi
+  rollback_hash="$(cat "$LAST_KNOWN_GOOD_DIR/source-revision")"
+  echo "Restoring last-known-good release ${rollback_hash:0:8}..."
+
+  git reset --hard "$rollback_hash"
+  rm -rf -- "$REPO_ROOT/.next"
+  cp -a "$LAST_KNOWN_GOOD_DIR/.next" "$REPO_ROOT/.next"
+  find public -maxdepth 1 -type f \
+    \( -name 'sw.js*' -o -name 'swe-worker-*' -o -name 'workbox-*' -o -name 'fallback-*' -o -name 'version.json' \) \
+    -delete
+  find "$LAST_KNOWN_GOOD_DIR/public" -maxdepth 1 -type f -exec cp -a -- {} public/ \;
+
+  # A candidate may have changed package-lock.json and node_modules before it
+  # failed, so restore the dependency set for the preserved source as well.
+  install_dependencies
+  CURRENT_HASH="$rollback_hash"
+  EXPECTED_COMMIT_SHA="$rollback_hash"
+  ensure_pm2_process
+  echo "Automatic rollback succeeded; production is serving ${rollback_hash:0:8}."
+}
+
+handle_exit() {
+  local exit_code=$?
+
+  trap - EXIT
+  cleanup_child_processes
+  if [ "$exit_code" -ne 0 ] && [ "$ROLLBACK_ARMED" -eq 1 ]; then
+    if ! restore_last_known_good_release; then
+      echo "Fatal: automatic rollback failed. Manual recovery is required."
+    fi
+  fi
+  exit "$exit_code"
+}
+
+trap handle_exit EXIT
+
 begin_phase "1/6" "Update source"
 if [ ! -d "$REPO_ROOT/.git" ]; then
   echo "Cloning repository..."
@@ -494,6 +566,7 @@ if [ ! -d "$REPO_ROOT/.git" ]; then
 else
   echo "Repository exists. Attempting to update..."
   cd "$REPO_ROOT"
+  PREVIOUS_SOURCE_HASH="$(git rev-parse HEAD)"
 
   if run_git_with_retry fetch origin "$TARGET_BRANCH"; then
     echo "Update successful."
@@ -580,6 +653,14 @@ if [ "${#BUILD_REASONS[@]}" -gt 0 ]; then
   echo "Build required; changed inputs: $BUILD_REASON_LIST"
   BUILD_STARTED_AT="$(date +%s)"
 
+  if [ -n "$PREVIOUS_SOURCE_HASH" ] && build_output_is_valid; then
+    preserve_last_known_good_release
+  elif pm2 describe "$PM2_APP_NAME" >/dev/null 2>&1; then
+    echo "Fatal: PM2 is running but no complete last-known-good release can be preserved."
+    exit 1
+  else
+    echo "No existing production release is running; proceeding without a rollback candidate."
+  fi
   stop_pm2_process_for_build
   clean_build_output
 
@@ -626,6 +707,10 @@ fi
 
 begin_phase "6/6" "Activate and verify application"
 ensure_pm2_process
+ROLLBACK_ARMED=0
+if [ -n "$LAST_KNOWN_GOOD_DIR" ]; then
+  rm -rf -- "$LAST_KNOWN_GOOD_DIR"
+fi
 
 DEPLOY_DURATION_SECONDS="$(($(date +%s) - DEPLOY_STARTED_AT))"
 echo

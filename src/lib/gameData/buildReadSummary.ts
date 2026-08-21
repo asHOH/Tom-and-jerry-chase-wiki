@@ -1,7 +1,7 @@
 export type BuildReadMode = 'disabled' | 'enabled';
-export type BuildBulkSourceName = 'approved-actions' | 'character-contributors';
+export type BuildBulkSourceName = 'approved-actions' | 'character-contributors' | 'synced-history';
 
-const BULK_SOURCES = ['approved-actions', 'character-contributors'] as const;
+const BULK_SOURCES = ['approved-actions', 'character-contributors', 'synced-history'] as const;
 const SHA256_PATTERN = /^[a-f0-9]{64}$/;
 
 export type BuildBulkSourceMeasurement = {
