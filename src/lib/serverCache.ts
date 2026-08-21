@@ -20,11 +20,11 @@ function normalizeKeyParts(
  *
  * Use ONLY for public/anonymous data (never user-specific) unless your key includes user identity.
  */
-export async function cached<T>(
+export function createCached<T>(
   keyParts: Array<string | number | boolean | null | undefined>,
   fn: () => Promise<T>,
   options?: ServerCacheOptions
-): Promise<T> {
+): () => Promise<T> {
   const key = normalizeKeyParts(keyParts);
 
   const resourceType = String(keyParts[0] ?? 'unknown');
@@ -42,6 +42,13 @@ export async function cached<T>(
 
   const normalizedOptions = { ...options, revalidate };
 
-  const wrapped = unstable_cache(fn, key, normalizedOptions);
-  return wrapped();
+  return unstable_cache(fn, key, normalizedOptions);
+}
+
+export async function cached<T>(
+  keyParts: Array<string | number | boolean | null | undefined>,
+  fn: () => Promise<T>,
+  options?: ServerCacheOptions
+): Promise<T> {
+  return createCached(keyParts, fn, options)();
 }

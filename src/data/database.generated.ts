@@ -1304,6 +1304,12 @@ export type Database = {
         Args: { p_entity_type: string; p_entry: Json };
         Returns: string[];
       };
+      game_data_character_ids_from_entry: {
+        Args: { p_entry: Json };
+        Returns: {
+          character_id: string;
+        }[];
+      };
       generate_salt: { Args: never; Returns: string };
       get_article_version_by_preview: {
         Args: { p_token: string };
@@ -1733,6 +1739,10 @@ export type Database = {
           action_rows: Json;
           replay_epoch: number;
         }[];
+      };
+      read_game_data_character_contributor_source: {
+        Args: never;
+        Returns: Json;
       };
       record_user_last_ip: {
         Args: { p_ip: unknown; p_user_id: string };

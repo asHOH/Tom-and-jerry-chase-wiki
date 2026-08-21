@@ -390,73 +390,79 @@ hour and do not require a dedicated epoch, tag invalidation, or freshness SLA.
 
 ### Actions
 
-- [ ] Extract a pure `buildCharacterContributorIndex()` function.
-- [ ] Add `read_game_data_character_contributor_source()` in a forward Supabase migration. Make it a
+- [x] Extract a pure `buildCharacterContributorIndex()` function.
+- [x] Add `read_game_data_character_contributor_source()` in a forward Supabase migration. Make it a
       no-argument `SECURITY DEFINER` function owned by the migration owner with a fixed safe
       `search_path`; revoke the default `PUBLIC` grant and grant execution explicitly to `anon` and
       `authenticated`.
-- [ ] Return one JSON object rather than a set of rows. Include `sourceActionCount`, `rowCount`, and a
+- [x] Return one JSON object rather than a set of rows. Include `sourceActionCount`, `rowCount`, and a
       deterministically ordered `rows` array, and validate that `rowCount === rows.length`. For
       `entity_type = 'characters'` actions satisfying `is_public = true OR status = 'synced'`, expose
       only derived `{ characterId, contributorId, nickname, contributionCount }` rows. Do not expose
       action IDs, `entry`, messages, status, timestamps, review metadata, private user fields, or
       unrelated action types.
-- [ ] Normalize supported stored-entry shapes and extract distinct character IDs inside the protected
+- [x] Normalize supported stored-entry shapes and extract distinct character IDs inside the protected
       database implementation. Count at most one contribution per source action and character, then
       aggregate by character and contributor. Keep any internal helper ungranted and verify its output
       against the existing TypeScript normalization behavior before removing the legacy path.
 - [ ] Replace the misleading per-character database function with a publishable-client reader for this
       RPC. The build generator and normal runtime must not select the admin client for this source.
-- [ ] Validate the derived payload in TypeScript and convert it to `CharacterContributorIndex` without
+- [x] Validate the derived payload in TypeScript and convert it to `CharacterContributorIndex` without
       receiving or reparsing raw action entries.
-- [ ] Preserve author ordering by contribution count descending and nickname ascending.
-- [ ] Preserve deduplication against checked-in content writers and contributor IDs.
-- [ ] Cache the complete plain-object index under one global runtime key, without `characterId`, and
+- [x] Preserve author ordering by contribution count descending and nickname ascending.
+- [x] Preserve deduplication against checked-in content writers and contributor IDs.
+- [x] Cache the complete plain-object index under one global runtime key, without `characterId`, and
       define the cached wrapper once at module scope.
-- [ ] Wrap the runtime cache-miss callback in a process-local in-flight promise so simultaneous cold
+- [x] Wrap the runtime cache-miss callback in a process-local in-flight promise so simultaneous cold
       misses share one query without retaining a resolved value beyond the cache population attempt.
 - [ ] Extend the shared generator with one contributor-index payload built from exactly one contributor
       RPC call per attempt. Store only derived public `{ id, name, contributionCount }` entries, source
       action count, character count, and checksum. Do not claim that the replay epoch versions this
       payload.
-- [ ] Add a server-only contributor reader for the shared artifact. Build workers must fail on a
+- [x] Add a server-only contributor reader for the shared artifact. Build workers must fail on a
       missing, invalid, or deployment-identity-mismatched payload and never fall back to Supabase. It
       must select its payload through the shared tagged artifact reader, not read the file directly.
-- [ ] Keep the existing `PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG` and current configured revalidation so
+- [x] Keep the existing `PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG` and current configured revalidation so
       publication, approval, revocation, and mark-synced flows invalidate attribution. Treat timed
       revalidation as an implementation detail rather than a nickname-freshness guarantee; previews
       may retain attribution for their lifetime.
-- [ ] Ensure malformed or unsupported action entries are handled consistently with existing replay
+- [x] Ensure malformed or unsupported action entries are handled consistently with existing replay
       normalization.
-- [ ] Keep `getContentWritersForCharacter()`'s public return type unchanged.
+- [x] Keep `getContentWritersForCharacter()`'s public return type unchanged.
 
 ### Tests
 
 - [ ] Snapshot current outputs for characters with static authors, dynamic editors, duplicate names,
       and multiple contributions.
-- [ ] Start multiple character lookups concurrently with `Promise.all` against an empty runtime cache
+- [x] Start multiple character lookups concurrently with `Promise.all` against an empty runtime cache
       and assert one source query, including the error-and-retry path after the shared promise rejects.
 - [ ] Test that multiple simulated build-worker readers use the shared artifact generated by one
       contributor query and that no reader can fall back to Supabase.
 - [ ] Prove contributor-backed character pages retain the public-actions cache-tag dependency and are
       regenerated after publication invalidation.
-- [ ] Test an action touching multiple characters.
-- [ ] Test multiple entry fragments touching the same character.
-- [ ] Test public approved, public pending, and synced actions; reject private pending, rejected, and
+- [x] Test an action touching multiple characters.
+- [x] Test multiple entry fragments touching the same character.
+- [x] Test public approved, public pending, and synced actions; reject private pending, rejected, and
       revoked rows.
-- [ ] Test null creators, missing public profiles, blank nicknames, and malformed entries.
-- [ ] Test the contributor RPC grants and exact JSON shape. Prove an anonymous caller receives only
+- [x] Test null creators, missing public profiles, blank nicknames, and malformed entries.
+- [x] Test the contributor RPC grants and exact JSON shape. Prove an anonymous caller receives only
       derived character/contributor attribution and cannot recover action IDs, action `entry` values,
       unrelated action types, private user fields, or the underlying epoch table.
-- [ ] Compare the RPC projection with the legacy TypeScript aggregator across all supported entry
+- [x] Compare the RPC projection with the legacy TypeScript aggregator across all supported entry
       shapes, duplicate character paths, multiple characters, malformed entries, and contributor
       ordering.
-- [ ] Test a source larger than the configured PostgREST `max_rows` value and prove the single JSON
+- [x] Test a source larger than the configured PostgREST `max_rows` value and prove the single JSON
       result remains complete; also fail clearly if the RPC returns a malformed or incomplete payload.
-- [ ] Test deterministic ordering independent of input-row order where ordering is not semantically
+- [x] Test deterministic ordering independent of input-row order where ordering is not semantically
       meaningful.
-- [ ] Run relevant Jest tests, `npm run lint`, and `npm run type-check`.
+- [x] Run relevant Jest tests, `npm run lint`, and `npm run type-check`.
 - [ ] Run `npm run build:skip-images` with Supabase pointed to `tjwiki-test` when practical.
+
+Local implementation checkpoint (2026-08-21): the derived RPC, generated types, global runtime index,
+artifact reader, writer integration, and focused Jest/pgTAP coverage are complete. Generator integration,
+multi-worker artifact verification, invalidation regeneration, current-output snapshots, and the build and
+deployment gates remain open. This checkpoint is not independently deployable; complete the shared
+generator and wrapper work in Phase 3 before activation.
 
 ### Deployment gate
 
