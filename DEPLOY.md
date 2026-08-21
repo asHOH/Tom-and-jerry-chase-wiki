@@ -207,6 +207,19 @@ npm run build
 npm run start
 ```
 
+## Supabase 数据库迁移（维护者）
+
+当待部署代码包含 `supabase/migrations/` 中的新迁移时，应先在本地回放并测试迁移、重新生成数据库类型，然后在应用部署前核对并应用到已链接的目标项目：
+
+```bash
+npm exec -- supabase migration list --linked
+npm exec -- supabase db push --linked --dry-run
+npm exec -- supabase db push --linked
+```
+
+仅在 dry run 只列出预期迁移且已确认目标项目后继续。应用后验证迁移记录、函数权限和关键查询；回滚应使用新的前向迁移，不要修改已经应用的迁移文件。
+如果迁移通过 Supabase MCP 应用，应记录远端生成的迁移版本；发现本地与远端迁移历史不一致时先停止并核对，不要重复执行同一段 SQL。
+
 ## 进阶配置 (非 Vercel 部署)
 
 如需更高级的功能（版本显示、深色模式 Cookie 跨域、Analytics），请参考以下配置：

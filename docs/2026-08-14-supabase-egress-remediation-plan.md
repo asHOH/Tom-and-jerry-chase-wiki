@@ -464,6 +464,26 @@ multi-worker artifact verification, invalidation regeneration, current-output sn
 deployment gates remain open. This checkpoint is not independently deployable; complete the shared
 generator and wrapper work in Phase 3 before activation.
 
+Production performance containment (2026-08-21): the contributor RPC migration was applied during an
+egress-quota grace period. An initial compound verification statement exceeded 30 seconds, so public
+execution was revoked while the function was profiled. The RPC body itself completed in approximately
+31 ms, 71 ms, and 29 ms across three direct production executions; its exact query body completed in
+approximately 135 ms. Source filtering, stored-entry normalization, and aggregation completed in
+approximately 1.5 ms, 326 ms, and 107 ms in separate instrumented runs. The 7,262-byte result contained
+1,762 eligible source actions and 228 aggregate rows. No function rewrite or index is justified; the
+operational verifier must force one payload evaluation instead of composing repeated checks around a
+stable SQL function.
+
+- [x] Apply a forward migration that revokes contributor-RPC execution from `anon` and `authenticated`.
+- [x] Profile source filtering, stored-entry normalization, aggregation, and JSON construction separately
+      under bounded statement timeouts while the RPC is unavailable to public roles.
+- [x] Demonstrate three consecutive direct production executions below 10 seconds, with no execution
+      exceeding 15 seconds, and record the payload row counts and bytes.
+- [x] Add and validate a bounded operational verifier that materializes the contributor payload exactly
+      once before checking counts, exact JSON keys, privacy exclusions, and grants.
+- [x] Restore the explicit `anon` and `authenticated` grants in a final forward migration.
+- [x] Re-run the anonymous exact-shape and internal-helper denial checks before continuing to Phase 3.
+
 ### Deployment gate
 
 - [ ] Compare every generated character page's writer/editor output before and after the change.
