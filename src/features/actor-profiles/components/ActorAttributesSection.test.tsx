@@ -82,7 +82,7 @@ describe('ActorAttributesSection', () => {
 
     expect(screen.getByText('性别')).toBeInTheDocument();
     expect(screen.getByText('英文名')).toBeInTheDocument();
-    expect(screen.getByText('体型').closest('p')).toHaveTextContent('体型: 标准猫体型');
+    expect(screen.getByText('体型').closest('p')).toHaveTextContent('体型: “汤姆”');
     expect(screen.getByText('爪刀CD').closest('p')).toHaveTextContent('爪刀CD: 2.25 / 4.5 s');
     expect(screen.getByText('购物到货时间').closest('p')).toHaveTextContent('购物到货时间: 2.5s');
     expect(getRankingLink(container, 'climbSpeed', 'cat')).toBeDefined();

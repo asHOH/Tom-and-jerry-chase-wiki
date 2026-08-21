@@ -31,8 +31,8 @@ describe('actor profile domain', () => {
   it('should format canonical values without unknown fallbacks', () => {
     expect(formatActorType('special')).toBe('特殊');
     expect(formatActorPhysicsType('cat')).toBe('猫');
-    expect(formatActorPhysicsBodyName('tom')).toBe('标准猫体型');
-    expect(formatActorPhysicsBodyName('2v6dog')).toBe('正气守护斯派克体型');
+    expect(formatActorPhysicsBodyName('tom')).toBe('“汤姆”');
+    expect(formatActorPhysicsBodyName('2v6dog')).toBe('“斯派克”');
     expect(formatActorSex('none')).toBe('无性别');
     expect(formatActorSize({ width: 85, height: 130 })).toBe('85 × 130');
     expect(formatActorAttackCooldown({ hit: 4.5, miss: 2.25 })).toBe('未命中 2.25 s / 命中 4.5 s');
