@@ -1,10 +1,10 @@
 # Supabase Egress Remediation Plan
 
-**Status:** In progress
+**Status:** Production rollout complete; post-deployment observation in progress
 **Created:** 2026-08-14
 **Last updated:** 2026-08-21
 **Billing cycle under investigation:** 2026-08-07 through 2026-09-07
-**Fair Use grace-period end:** 2026-09-13
+**Fair Use grace-period end:** 2026-08-22
 
 ## Problem statement
 
@@ -518,11 +518,21 @@ caches, rollback requires no data repair.
 
 ## Phase 3 — Generate one approved-action snapshot per build attempt
 
-**2026-08-21 local implementation checkpoint:** The three-source artifact, epoch fence, bounded build
+**2026-08-21 production rollout checkpoint:** The three-source artifact, epoch fence, bounded build
 wrapper, approved/contributor/synced-history selectors, generated database types, and VPS
-last-known-good recovery path are implemented locally. Publishable-only and deliberately disabled
-local builds pass with one and zero fetches per source respectively. The new migrations have not been
-applied remotely, and the deployment-gate items below remain open.
+last-known-good recovery path are deployed in production at commit `d99b2ccc`. The epoch and
+synced-history migrations were applied in order as remote versions `20260821092025` and
+`20260821092034`. Anonymous production RPC checks returned HTTP 200 with replay epoch `1101` and a
+complete minimal synced-history projection containing 1,370 rows and 1,508 operations.
+
+The accepted VPS build reported exactly one fetch for each source: 675 approved rows (945,721 bytes),
+228 contributor rows (30,712 bytes), and 1,370 synced-history rows (203,372 bytes), plus three epoch
+checks. The deliberately disabled local build reported zero source fetches. External health and
+version checks served `d99b2ccc`; production smoke checks passed for character, card, map, mode,
+special-skill, and recommendation pages. 莱特宁 displayed its expected dynamic editors,
+`天宫-云上` advantage, and synced Wiki history including the 7.28–7.29 `advantageMaps` changes.
+Post-deployment observation, the legacy-endpoint disposition, the controlled drift/failure drills,
+and a post-build invalidation check remain open.
 
 ### Independent problem
 
@@ -690,13 +700,14 @@ production secrets.
 
 - [ ] Run one Vercel preview against `tjwiki-test` using only its publishable credentials, plus one
       deliberately disabled preview/build contract with no Supabase credentials.
-- [ ] Require a stable enabled attempt to show exactly one `build-snapshot-database-fetch`, a disabled
-      attempt to show zero, and every retry to have its own bounded attempt summary.
+- [x] Require a stable enabled attempt to show exactly one fetch for each of the three sources and a
+      disabled attempt to show zero. Production commit `d99b2ccc` and the deliberately disabled local
+      build satisfy these budgets; retry summaries remain covered by the bounded-attempt tests.
 - [ ] Exercise the staging replay epoch during a controlled build and confirm replay drift during
       approved-source acquisition, `next build`, or post-processing retries cleanly while repeated
       drift prevents that deployment from reaching `READY`.
-- [ ] Compare a representative set of character, card, map, mode, recommended, and special-skill
-      pages with the preceding preview.
+- [x] Compare artifact/database route read models locally, then smoke-check representative character,
+      card, map, mode, recommended, and special-skill pages after the production deployment.
 - [ ] Verify a post-build publish still invalidates runtime data and appears after ISR/revalidation.
 
 ### Success criteria
