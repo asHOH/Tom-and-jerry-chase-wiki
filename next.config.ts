@@ -126,6 +126,11 @@ const nextConfig: NextConfig = {
         source: '/special-skills/:factionId/:skillId/discussion/',
         destination: '/discuss/special-skills/:factionId/:skillId/',
       },
+      // Achievements: 4 segments
+      {
+        source: '/achievements/:factionId/:achievementName/discussion/',
+        destination: '/discuss/achievements/:factionId/:achievementName/',
+      },
       // Standard detail discussions: 3 segments
       {
         source: '/:entityType/:entityId/discussion/',

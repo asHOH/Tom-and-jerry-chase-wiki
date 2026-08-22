@@ -5,7 +5,7 @@ import { createHash, createHmac, timingSafeEqual } from 'crypto';
 import { getActiveBlock } from '@/lib/blocks/check';
 import {
   getDiscussionCommentHref,
-  getDiscussionNotificationTarget,
+  resolveDiscussionNotificationTarget,
 } from '@/lib/comments/scopeMapping';
 import { renderWikiEmailTemplate } from '@/lib/emailTemplate';
 import { getGameDataNotificationDetails } from '@/lib/gameData/contributionDisplay';
@@ -390,7 +390,7 @@ export async function notifyDiscussionCommentSubscribers(input: {
   const recipientIds = uniqueIds((data ?? []).map((row) => row.user_id));
   if (recipientIds.length === 0) return;
 
-  const target = getDiscussionNotificationTarget(input.scope, input.targetId);
+  const target = await resolveDiscussionNotificationTarget(input.scope, input.targetId);
   const href = getDiscussionCommentHref(input.scope, input.targetId, input.commentId);
   const labelSuffix =
     target.entityTitle === target.entityTypeLabel

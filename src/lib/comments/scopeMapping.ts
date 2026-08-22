@@ -1,183 +1,259 @@
-import {
-  achievements,
-  buffs,
-  cards,
-  characters,
-  entities,
-  fixtures,
-  items,
-  maps,
-  modes,
-  specialSkills,
-} from '@/data';
+import 'server-only';
 
-/**
- * Maps URL route segments to comment_scope enum values.
- * Used by the catch-all discussion route handler.
- */
-const ROUTE_SEGMENT_TO_SCOPE: Record<string, string> = {
-  entities: 'entities',
-  items: 'items',
-  buffs: 'buffs',
-  maps: 'maps',
-  fixtures: 'fixtures',
-  modes: 'modes',
-  achievements: 'achievements',
-  cards: 'knowledge_cards',
-  'special-skills': 'special_skills',
-  characters: 'characters',
-};
+import type { PublishableEntityType } from '@/lib/gameData/publishableEntityTypes';
+import type { FactionId } from '@/data/types';
 
-const SCOPE_TO_ROUTE_SEGMENT: Record<string, string> = {
-  entities: 'entities',
-  items: 'items',
-  buffs: 'buffs',
-  maps: 'maps',
-  fixtures: 'fixtures',
-  modes: 'modes',
-  achievements: 'achievements',
-  knowledge_cards: 'cards',
-  special_skills: 'special-skills',
-  characters: 'characters',
-};
+type DiscussionEntityConfig = Readonly<{
+  entityType: PublishableEntityType;
+  scope: string;
+  label: string;
+  factionScoped?: boolean;
+}>;
 
-export function routeSegmentToScope(segment: string): string {
-  return ROUTE_SEGMENT_TO_SCOPE[segment] ?? segment;
-}
+const DISCUSSION_ENTITY_CONFIGS = {
+  entities: { entityType: 'entities', scope: 'entities', label: '衍生物' },
+  items: { entityType: 'items', scope: 'items', label: '道具' },
+  buffs: { entityType: 'buffs', scope: 'buffs', label: '状态' },
+  maps: { entityType: 'maps', scope: 'maps', label: '地图' },
+  fixtures: { entityType: 'fixtures', scope: 'fixtures', label: '组件' },
+  modes: { entityType: 'modes', scope: 'modes', label: '模式' },
+  achievements: {
+    entityType: 'achievements',
+    scope: 'achievements',
+    label: '对局成就',
+    factionScoped: true,
+  },
+  cards: { entityType: 'cards', scope: 'knowledge_cards', label: '知识卡' },
+  'special-skills': {
+    entityType: 'specialSkills',
+    scope: 'special_skills',
+    label: '特技',
+    factionScoped: true,
+  },
+  characters: { entityType: 'characters', scope: 'characters', label: '角色' },
+} as const satisfies Record<string, DiscussionEntityConfig>;
 
-export function scopeToRouteSegment(scope: string): string {
-  return SCOPE_TO_ROUTE_SEGMENT[scope] ?? scope;
-}
+type DiscussionRouteSegment = keyof typeof DISCUSSION_ENTITY_CONFIGS;
 
-/** Chinese labels for entity types — used for discussion page titles. */
-export const ENTITY_LABELS: Record<string, string> = {
-  entities: '衍生物',
-  items: '道具',
-  buffs: '状态',
-  maps: '地图',
-  fixtures: '组件',
-  modes: '模式',
-  achievements: '对局成就',
-  cards: '知识卡',
-  'special-skills': '特技',
-  characters: '角色',
-};
+type DiscussionEntityAddress = Readonly<{
+  entityId: string;
+  targetId: string;
+  factionId?: FactionId;
+}>;
 
-/** All valid entity types for notFound() gating on discussion routes. */
-export const VALID_ENTITY_TYPES = [
-  'entities',
-  'items',
-  'buffs',
-  'maps',
-  'fixtures',
-  'modes',
-  'achievements',
-  'cards',
-  'special-skills',
-  'characters',
-] as const;
+export type DiscussionTarget = Readonly<{
+  metadataTitle: string;
+  scope: string;
+  targetId: string;
+  entityTitle: string;
+  entityTypeLabel: string;
+  parentUrl: string;
+}>;
 
-type EntityWithName = { name: string };
-
-/**
- * Looks up an entity by its type and ID in static data.
- * Returns the entity (which has a `name` property) or undefined if not found.
- *
- * Special cases:
- * - `cards`: uses `id` as the name (Card type uses `id` not `name`)
- * - `special-skills` and `achievements`: entityId is split by `.` into factionId + entity name
- * - `articles`: returns a synthetic object (Supabase-backed, no static data)
- */
-export function getEntityByTypeAndId(
-  entityType: string,
-  entityId: string
-): EntityWithName | undefined {
-  switch (entityType) {
-    case 'entities': {
-      const e = entities[entityId];
-      return e ? { name: e.name } : undefined;
-    }
-    case 'items': {
-      const e = items[entityId];
-      return e ? { name: e.name } : undefined;
-    }
-    case 'buffs': {
-      const e = buffs[entityId];
-      return e ? { name: e.name } : undefined;
-    }
-    case 'maps': {
-      const e = maps[entityId];
-      return e ? { name: e.name } : undefined;
-    }
-    case 'fixtures': {
-      const e = fixtures[entityId];
-      return e ? { name: e.name } : undefined;
-    }
-    case 'modes': {
-      const e = modes[entityId];
-      return e ? { name: e.name } : undefined;
-    }
-    case 'achievements': {
-      const dotIndex = entityId.indexOf('.');
-      if (dotIndex === -1) return undefined;
-      const factionId = entityId.slice(0, dotIndex);
-      const achievementName = entityId.slice(dotIndex + 1);
-      if (factionId !== 'cat' && factionId !== 'mouse') return undefined;
-      const achievement = achievements[factionId][achievementName];
-      return achievement ? { name: achievement.name } : undefined;
-    }
-    case 'cards': {
-      const e = cards[entityId];
-      return e ? { name: e.id } : undefined;
-    }
-    case 'characters': {
-      const e = characters[entityId];
-      return e ? { name: e.id } : undefined;
-    }
-    case 'special-skills': {
-      const dotIndex = entityId.indexOf('.');
-      if (dotIndex === -1) return undefined;
-      const factionId = entityId.slice(0, dotIndex);
-      const skillId = entityId.slice(dotIndex + 1);
-      if (factionId === 'cat' || factionId === 'mouse') {
-        const skills = specialSkills[factionId] as Record<string, { name: string }> | undefined;
-        const skill = skills?.[skillId];
-        return skill ? { name: skill.name } : undefined;
-      }
-      return undefined;
-    }
-    default:
-      return undefined;
-  }
-}
-
-export function getDiscussionNotificationTarget(
-  scope: string,
-  targetId: string
-): {
+export type DiscussionNotificationTarget = Readonly<{
   entityTitle: string;
   entityTypeLabel: string;
   href: string;
-} {
-  if (scope === 'list_pages') {
-    const entityTypeLabel = ENTITY_LABELS[targetId] ?? targetId;
+}>;
+
+function getDiscussionConfig(routeSegment: string): DiscussionEntityConfig | null {
+  if (!Object.prototype.hasOwnProperty.call(DISCUSSION_ENTITY_CONFIGS, routeSegment)) return null;
+  return DISCUSSION_ENTITY_CONFIGS[routeSegment as DiscussionRouteSegment];
+}
+
+function getDiscussionConfigByScope(
+  scope: string
+): { routeSegment: DiscussionRouteSegment; config: DiscussionEntityConfig } | null {
+  for (const [routeSegment, config] of Object.entries(DISCUSSION_ENTITY_CONFIGS)) {
+    if (config.scope === scope) {
+      return { routeSegment: routeSegment as DiscussionRouteSegment, config };
+    }
+  }
+  return null;
+}
+
+function isFactionId(value: string | undefined): value is FactionId {
+  return value === 'cat' || value === 'mouse';
+}
+
+function createEntityAddress(
+  config: DiscussionEntityConfig,
+  entityPathSegments: readonly string[]
+): DiscussionEntityAddress | null {
+  if (config.factionScoped) {
+    const factionId = entityPathSegments[0];
+    const entityId = entityPathSegments.slice(1).join('/').trim();
+    if (!isFactionId(factionId) || !entityId) return null;
+    return { factionId, entityId, targetId: `${factionId}.${entityId}` };
+  }
+
+  const entityId = entityPathSegments.join('/').trim();
+  return entityId ? { entityId, targetId: entityId } : null;
+}
+
+function createEntityAddressFromTargetId(
+  config: DiscussionEntityConfig,
+  targetId: string
+): DiscussionEntityAddress | null {
+  const normalizedTargetId = targetId.trim();
+  if (!normalizedTargetId) return null;
+  if (!config.factionScoped) {
+    return { entityId: normalizedTargetId, targetId: normalizedTargetId };
+  }
+
+  const separatorIndex = normalizedTargetId.search(/[./]/);
+  if (separatorIndex <= 0) return null;
+  const factionId = normalizedTargetId.slice(0, separatorIndex);
+  const entityId = normalizedTargetId.slice(separatorIndex + 1).trim();
+  if (!isFactionId(factionId) || !entityId) return null;
+  return { factionId, entityId, targetId: `${factionId}.${entityId}` };
+}
+
+function getEntityTitle(entityType: PublishableEntityType, entity: unknown): string | null {
+  if (!entity || typeof entity !== 'object') return null;
+  const titleKey = entityType === 'characters' || entityType === 'cards' ? 'id' : 'name';
+  const title = (entity as Record<string, unknown>)[titleKey];
+  return typeof title === 'string' && title.trim() ? title : null;
+}
+
+async function readPublishedEntityTitle(
+  config: DiscussionEntityConfig,
+  address: DiscussionEntityAddress
+): Promise<string | null> {
+  const { getPublishedDomainReadModel } =
+    await import('@/lib/gameData/published/publishedSnapshot');
+  const domain = await getPublishedDomainReadModel(config.entityType);
+  let entity: unknown;
+
+  if (address.factionId) {
+    const factionRoot = domain.data as unknown as Readonly<
+      Record<FactionId, Readonly<Record<string, unknown>>>
+    >;
+    entity = factionRoot[address.factionId]?.[address.entityId];
+  } else {
+    const entityRoot = domain.data as unknown as Readonly<Record<string, unknown>>;
+    entity = entityRoot[address.entityId];
+  }
+
+  return getEntityTitle(config.entityType, entity);
+}
+
+function getEntityParentUrl(
+  routeSegment: DiscussionRouteSegment,
+  address: DiscussionEntityAddress
+): string {
+  const encodedEntityId = encodeURIComponent(address.entityId);
+  return address.factionId
+    ? `/${routeSegment}/${address.factionId}/${encodedEntityId}/`
+    : `/${routeSegment}/${encodedEntityId}/`;
+}
+
+function getDiscussionHref(
+  routeSegment: DiscussionRouteSegment,
+  address?: DiscussionEntityAddress
+): string {
+  if (!address) return `/discuss/${encodeURIComponent(routeSegment)}/`;
+  const encodedEntityId = encodeURIComponent(address.entityId);
+  return address.factionId
+    ? `/discuss/${encodeURIComponent(routeSegment)}/${address.factionId}/${encodedEntityId}/`
+    : `/discuss/${encodeURIComponent(routeSegment)}/${encodedEntityId}/`;
+}
+
+/** Resolves one catch-all discussion route against the current published game-data snapshot. */
+export async function resolveDiscussionTarget(
+  segments: readonly string[]
+): Promise<DiscussionTarget | null> {
+  const routeSegment = segments[0];
+  if (!routeSegment) return null;
+  const config = getDiscussionConfig(routeSegment);
+  if (!config) return null;
+
+  if (segments.length === 1) {
     return {
-      entityTitle: entityTypeLabel,
-      entityTypeLabel,
-      href: `/discuss/${encodeURIComponent(targetId)}/`,
+      metadataTitle: `${config.label} - 讨论`,
+      scope: 'list_pages',
+      targetId: routeSegment,
+      entityTitle: config.label,
+      entityTypeLabel: config.label,
+      parentUrl: `/${routeSegment}/`,
     };
   }
 
-  const routeSegment = scopeToRouteSegment(scope);
-  const entity = getEntityByTypeAndId(routeSegment, targetId);
-  const entityTypeLabel = ENTITY_LABELS[routeSegment] ?? routeSegment;
+  const address = createEntityAddress(config, segments.slice(1));
+  if (!address) return null;
+  const entityTitle = await readPublishedEntityTitle(config, address);
+  if (!entityTitle) return null;
 
   return {
-    entityTitle: entity?.name ?? targetId,
-    entityTypeLabel,
-    href: `/discuss/${encodeURIComponent(routeSegment)}/${encodeURIComponent(targetId)}/`,
+    metadataTitle: `${entityTitle} (${config.label}) - 讨论`,
+    scope: config.scope,
+    targetId: address.targetId,
+    entityTitle,
+    entityTypeLabel: config.label,
+    parentUrl: getEntityParentUrl(routeSegment as DiscussionRouteSegment, address),
   };
 }
 
-export const getDiscussionCommentHref = (scope: string, targetId: string, commentId: string) =>
-  `${getDiscussionNotificationTarget(scope, targetId).href}#comment-${commentId}`;
+/** Resolves labels and links for a stored discussion comment target. */
+export async function resolveDiscussionNotificationTarget(
+  scope: string,
+  targetId: string
+): Promise<DiscussionNotificationTarget> {
+  if (scope === 'list_pages') {
+    const config = getDiscussionConfig(targetId);
+    const entityTypeLabel = config?.label ?? targetId;
+    return {
+      entityTitle: entityTypeLabel,
+      entityTypeLabel,
+      href: config
+        ? getDiscussionHref(targetId as DiscussionRouteSegment)
+        : `/discuss/${encodeURIComponent(targetId)}/`,
+    };
+  }
+
+  const matchedConfig = getDiscussionConfigByScope(scope);
+  if (!matchedConfig) {
+    return {
+      entityTitle: targetId,
+      entityTypeLabel: scope,
+      href: `/discuss/${encodeURIComponent(scope)}/${encodeURIComponent(targetId)}/`,
+    };
+  }
+
+  const { routeSegment, config } = matchedConfig;
+  const address = createEntityAddressFromTargetId(config, targetId);
+  const entityTitle = address ? await readPublishedEntityTitle(config, address) : null;
+
+  return {
+    entityTitle: entityTitle ?? targetId,
+    entityTypeLabel: config.label,
+    href: address
+      ? getDiscussionHref(routeSegment, address)
+      : `/discuss/${encodeURIComponent(routeSegment)}/${encodeURIComponent(targetId)}/`,
+  };
+}
+
+export function getDiscussionCommentHref(
+  scope: string,
+  targetId: string,
+  commentId: string
+): string {
+  if (scope === 'list_pages') {
+    const config = getDiscussionConfig(targetId);
+    const href = config
+      ? getDiscussionHref(targetId as DiscussionRouteSegment)
+      : `/discuss/${encodeURIComponent(targetId)}/`;
+    return `${href}#comment-${commentId}`;
+  }
+
+  const matchedConfig = getDiscussionConfigByScope(scope);
+  if (!matchedConfig) {
+    return `/discuss/${encodeURIComponent(scope)}/${encodeURIComponent(targetId)}/#comment-${commentId}`;
+  }
+
+  const address = createEntityAddressFromTargetId(matchedConfig.config, targetId);
+  const href = address
+    ? getDiscussionHref(matchedConfig.routeSegment, address)
+    : `/discuss/${encodeURIComponent(matchedConfig.routeSegment)}/${encodeURIComponent(targetId)}/`;
+  return `${href}#comment-${commentId}`;
+}
