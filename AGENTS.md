@@ -70,8 +70,8 @@ After changing Supabase migrations, replay the local database, run `npm run gene
 ## Game Data
 
 - TypeScript and JSON data under `src/data/` and `src/features/*/data/` form the checked-in baseline.
-- Approved public rows from Supabase `game_data_actions` are replayed over that baseline on the server and client. Keep server targets in `src/lib/gameData/publicActions.ts` and client targets in `src/hooks/usePublicGameDataActions.ts` aligned when adding an editable entity type.
-- Valtio proxies in `src/data/store.ts` back local edit mode. Edit persistence, diff recording, and action replay live under `src/lib/edit/`; do not mutate the static baseline ad hoc.
+- Approved public rows from Supabase `game_data_actions` are composed with the checked-in baseline by the server-only modules under `src/lib/gameData/published/`. Public rendering should read through `getPublishedDomainReadModel` or `getPublishedEntityRouteReadModel`, not import the static baseline for render-time entity lookup. When adding an editable entity type, keep `publishableEntityTypes.ts`, the published data types and canonical sources, the edit stores and registry, and their exhaustiveness tests aligned.
+- Local edit mode lazily fetches the published baseline in `src/components/EditRuntime.tsx` and creates Valtio proxies through `src/lib/edit/editStores.ts`. Edit persistence and diff recording live under `src/lib/edit/`; do not mutate the static baseline ad hoc. `src/data/store.ts` is a legacy test-only store and must not be imported by production modules.
 - `scripts/generate-doc-pages.mjs` writes `src/data/generated/docPages.json`. Changelog generation writes `src/data/generated/changeLogs.json`. Do not hand-edit generated JSON.
 - Actor-profile changes must pass `npm run validate:actor-profiles`.
 
