@@ -61,7 +61,7 @@ export async function POST(
     const { data: version, error } = await requireSupabaseAdminClient()
       .from('article_versions')
       .select(
-        'article_id, editor_id, proposed_category_id, proposed_title, status, articles(title, category_id)'
+        'article_id, editor_id, proposed_category_id, proposed_title, status, articles!article_versions_article_id_fkey(title, category_id)'
       )
       .eq('id', contributionId.data)
       .maybeSingle();
