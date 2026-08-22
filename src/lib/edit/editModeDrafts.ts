@@ -1,18 +1,9 @@
+import { getGameDataEntityLabel } from '@/lib/gameData/presentation';
+import type { PublishableEntityType } from '@/lib/gameData/publishableEntityTypes';
+
 import type { Action, ActionHistoryEntry } from './diffUtils';
 
-export type DraftEntityType =
-  | 'characters'
-  | 'factions'
-  | 'cards'
-  | 'entities'
-  | 'buffs'
-  | 'items'
-  | 'fixtures'
-  | 'maps'
-  | 'modes'
-  | 'specialSkills'
-  | 'achievements'
-  | 'traits';
+export type DraftEntityType = PublishableEntityType | 'factions';
 
 export type DraftSummaryItem = {
   entityType: DraftEntityType;
@@ -29,23 +20,8 @@ export type DraftItemLabelResolver = (draftPathParts: {
   factionId?: 'cat' | 'mouse';
 }) => string | undefined;
 
-const ENTITY_LABELS: Record<DraftEntityType, string> = {
-  characters: '角色',
-  factions: '阵营',
-  cards: '知识卡',
-  entities: '衍生物',
-  buffs: '状态',
-  items: '道具',
-  fixtures: '地图组件',
-  maps: '地图',
-  modes: '模式',
-  specialSkills: '特技',
-  achievements: '成就',
-  traits: '特性',
-};
-
 function formatEntityLabel(entityType: DraftEntityType): string {
-  return ENTITY_LABELS[entityType] ?? entityType;
+  return entityType === 'factions' ? '阵营' : getGameDataEntityLabel(entityType);
 }
 
 function normalizeActionEntry(actions: Action[]): ActionHistoryEntry {

@@ -5,26 +5,13 @@ import {
   getGameDataDetailHref,
 } from '@/lib/gameData/contributionDisplay';
 import { GAME_DATA_CONTRIBUTION_FILTER } from '@/lib/gameData/contributionFilter';
+import { getGameDataEntityLabel } from '@/lib/gameData/presentation';
 import { getOptionalSupabaseAdminClient } from '@/lib/supabase/adminClient';
 import { getUserSubmissionHref } from '@/lib/users/profileRoutes';
 
 const RECENT_CONTRIBUTION_LIMIT = 10;
 const REVIEWED_GAME_DATA_ACTION_STATUSES = ['approved', 'rejected', 'synced', 'revoked'] as const;
 const APPROVED_GAME_DATA_ACTION_STATUSES = ['approved', 'synced'] as const;
-
-const GAME_DATA_LABELS: Record<string, string> = {
-  achievements: '成就',
-  buffs: '增益与减益',
-  cards: '知识卡',
-  characters: '角色',
-  entities: '场景物件',
-  fixtures: '地图设施',
-  items: '道具',
-  maps: '地图',
-  modes: '游戏模式',
-  specialSkills: '特技',
-  traits: '特性',
-};
 
 export type PublicContribution = {
   id: string;
@@ -114,7 +101,7 @@ export function mergeRecentContributions(
     return {
       id: row.id,
       kind: 'gameData',
-      title: `更新${GAME_DATA_LABELS[row.entity_type] ?? '游戏数据'}${namesLabel}${overflowLabel}`,
+      title: `更新${getGameDataEntityLabel(row.entity_type, '游戏数据')}${namesLabel}${overflowLabel}`,
       description: row.message,
       href: getGameDataDetailHref(row.entity_type, names[0]),
       createdAt: row.created_at,

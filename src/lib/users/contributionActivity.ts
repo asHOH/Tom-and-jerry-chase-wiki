@@ -4,6 +4,7 @@ import {
   getAffectedGameDataNames,
   getGameDataDetailHref,
 } from '@/lib/gameData/contributionDisplay';
+import { getGameDataEntityLabel } from '@/lib/gameData/presentation';
 import {
   getOptionalSupabaseAdminClient,
   requireSupabaseAdminClient,
@@ -114,23 +115,8 @@ type ContributionBreakdownRpcRow =
 type ContributionActivityRpcRow =
   Database['public']['Functions']['get_public_contribution_activity']['Returns'][number];
 
-const GAME_DATA_LABELS: Record<string, string> = {
-  achievements: '成就',
-  buffs: '增益与减益',
-  cards: '知识卡',
-  characters: '角色',
-  entities: '场景物件',
-  fixtures: '地图设施',
-  items: '道具',
-  maps: '地图',
-  modes: '游戏模式',
-  specialSkills: '特技',
-  traits: '特性',
-};
-
 const CONTRIBUTION_CATEGORY_LABELS: Record<string, string> = {
   article: '文章',
-  ...GAME_DATA_LABELS,
 };
 
 function getShanghaiDate(date: Date): string {
@@ -236,7 +222,7 @@ function emptyContributionActivityPage(): ContributionActivityPage {
 }
 
 function getCategoryLabel(category: string): string {
-  return CONTRIBUTION_CATEGORY_LABELS[category] ?? '游戏数据';
+  return CONTRIBUTION_CATEGORY_LABELS[category] ?? getGameDataEntityLabel(category, '游戏数据');
 }
 
 function mapCalendarRow(row: ContributionCalendarRpcRow): ContributionCalendarDay {
@@ -278,7 +264,7 @@ function mapGameDataActivity(row: ContributionActivityRpcRow): ContributionActiv
   return {
     id: row.id,
     kind: 'gameData',
-    title: `更新${GAME_DATA_LABELS[entityType] ?? '游戏数据'}${namesLabel}${overflowLabel}`,
+    title: `更新${getGameDataEntityLabel(entityType, '游戏数据')}${namesLabel}${overflowLabel}`,
     description: row.description,
     href: getGameDataDetailHref(entityType, names[0]),
     createdAt: row.created_at,

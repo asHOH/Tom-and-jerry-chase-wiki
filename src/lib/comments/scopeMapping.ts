@@ -1,36 +1,34 @@
 import 'server-only';
 
+import { getGameDataEntityLabel } from '@/lib/gameData/presentation';
 import type { PublishableEntityType } from '@/lib/gameData/publishableEntityTypes';
 import type { FactionId } from '@/data/types';
 
 type DiscussionEntityConfig = Readonly<{
   entityType: PublishableEntityType;
   scope: string;
-  label: string;
   factionScoped?: boolean;
 }>;
 
 const DISCUSSION_ENTITY_CONFIGS = {
-  entities: { entityType: 'entities', scope: 'entities', label: '衍生物' },
-  items: { entityType: 'items', scope: 'items', label: '道具' },
-  buffs: { entityType: 'buffs', scope: 'buffs', label: '状态' },
-  maps: { entityType: 'maps', scope: 'maps', label: '地图' },
-  fixtures: { entityType: 'fixtures', scope: 'fixtures', label: '组件' },
-  modes: { entityType: 'modes', scope: 'modes', label: '模式' },
+  entities: { entityType: 'entities', scope: 'entities' },
+  items: { entityType: 'items', scope: 'items' },
+  buffs: { entityType: 'buffs', scope: 'buffs' },
+  maps: { entityType: 'maps', scope: 'maps' },
+  fixtures: { entityType: 'fixtures', scope: 'fixtures' },
+  modes: { entityType: 'modes', scope: 'modes' },
   achievements: {
     entityType: 'achievements',
     scope: 'achievements',
-    label: '对局成就',
     factionScoped: true,
   },
-  cards: { entityType: 'cards', scope: 'knowledge_cards', label: '知识卡' },
+  cards: { entityType: 'cards', scope: 'knowledge_cards' },
   'special-skills': {
     entityType: 'specialSkills',
     scope: 'special_skills',
-    label: '特技',
     factionScoped: true,
   },
-  characters: { entityType: 'characters', scope: 'characters', label: '角色' },
+  characters: { entityType: 'characters', scope: 'characters' },
 } as const satisfies Record<string, DiscussionEntityConfig>;
 
 type DiscussionRouteSegment = keyof typeof DISCUSSION_ENTITY_CONFIGS;
@@ -169,12 +167,13 @@ export async function resolveDiscussionTarget(
   if (!config) return null;
 
   if (segments.length === 1) {
+    const entityTypeLabel = getGameDataEntityLabel(config.entityType);
     return {
-      metadataTitle: `${config.label} - 讨论`,
+      metadataTitle: `${entityTypeLabel} - 讨论`,
       scope: 'list_pages',
       targetId: routeSegment,
-      entityTitle: config.label,
-      entityTypeLabel: config.label,
+      entityTitle: entityTypeLabel,
+      entityTypeLabel,
       parentUrl: `/${routeSegment}/`,
     };
   }
@@ -183,13 +182,14 @@ export async function resolveDiscussionTarget(
   if (!address) return null;
   const entityTitle = await readPublishedEntityTitle(config, address);
   if (!entityTitle) return null;
+  const entityTypeLabel = getGameDataEntityLabel(config.entityType);
 
   return {
-    metadataTitle: `${entityTitle} (${config.label}) - 讨论`,
+    metadataTitle: `${entityTitle} (${entityTypeLabel}) - 讨论`,
     scope: config.scope,
     targetId: address.targetId,
     entityTitle,
-    entityTypeLabel: config.label,
+    entityTypeLabel,
     parentUrl: getEntityParentUrl(routeSegment as DiscussionRouteSegment, address),
   };
 }
@@ -201,7 +201,7 @@ export async function resolveDiscussionNotificationTarget(
 ): Promise<DiscussionNotificationTarget> {
   if (scope === 'list_pages') {
     const config = getDiscussionConfig(targetId);
-    const entityTypeLabel = config?.label ?? targetId;
+    const entityTypeLabel = config ? getGameDataEntityLabel(config.entityType) : targetId;
     return {
       entityTitle: entityTypeLabel,
       entityTypeLabel,
@@ -223,10 +223,11 @@ export async function resolveDiscussionNotificationTarget(
   const { routeSegment, config } = matchedConfig;
   const address = createEntityAddressFromTargetId(config, targetId);
   const entityTitle = address ? await readPublishedEntityTitle(config, address) : null;
+  const entityTypeLabel = getGameDataEntityLabel(config.entityType);
 
   return {
     entityTitle: entityTitle ?? targetId,
-    entityTypeLabel: config.label,
+    entityTypeLabel,
     href: address
       ? getDiscussionHref(routeSegment, address)
       : `/discuss/${encodeURIComponent(routeSegment)}/${encodeURIComponent(targetId)}/`,

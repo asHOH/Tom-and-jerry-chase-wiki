@@ -8,6 +8,7 @@ import {
   getGameDataDetailHref,
 } from '@/lib/gameData/contributionDisplay';
 import { GAME_DATA_CONTRIBUTION_FILTER } from '@/lib/gameData/contributionFilter';
+import { getGameDataEntityLabel } from '@/lib/gameData/presentation';
 import { PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG } from '@/lib/gameData/publicActionsCache';
 import { cached } from '@/lib/serverCache';
 import { getOptionalSupabaseAdminClient } from '@/lib/supabase/adminClient';
@@ -58,20 +59,6 @@ type GameDataChangeRow = {
   users: { nickname: string } | null;
 };
 
-const GAME_DATA_LABELS: Record<string, string> = {
-  achievements: '成就',
-  buffs: '状态',
-  cards: '知识卡',
-  characters: '角色',
-  entities: '衍生物',
-  fixtures: '地图组件',
-  items: '道具',
-  maps: '地图',
-  modes: '游戏模式',
-  specialSkills: '特技',
-  traits: '特性',
-};
-
 export function normalizeRecentChangesFilter(value: string | undefined): RecentChangesFilter {
   return value === 'articles' || value === 'game-data' ? value : 'all';
 }
@@ -95,7 +82,7 @@ export function mapArticleChange(row: ArticleChangeRow): RecentChange {
 
 export function mapGameDataChange(row: GameDataChangeRow): RecentChange {
   const names = getAffectedGameDataNames(row.entity_type, row.entry);
-  const label = GAME_DATA_LABELS[row.entity_type] ?? '游戏数据';
+  const label = getGameDataEntityLabel(row.entity_type, '游戏数据');
   const namesLabel =
     names.length > 0
       ? `：${names

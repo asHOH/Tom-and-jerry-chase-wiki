@@ -10,7 +10,7 @@ import type {
   GameDataActionStatusFilter,
   GameDataActionSummary,
 } from '@/lib/gameData/adminActionTypes';
-import { GAME_DATA_ENTITY_LABELS } from '@/lib/gameData/contributionDisplay';
+import { getGameDataEntityLabel } from '@/lib/gameData/presentation';
 import {
   PUBLISHABLE_ENTITY_TYPES,
   type PublishableEntityType,
@@ -509,7 +509,7 @@ const GameDataActionModerationPanel = ({
             <option value='all'>全部</option>
             {PUBLISHABLE_ENTITY_TYPES.map((type) => (
               <option key={type} value={type}>
-                {GAME_DATA_ENTITY_LABELS[type] ?? type}（{type}）
+                {getGameDataEntityLabel(type)}（{type}）
               </option>
             ))}
           </FormSelect>
@@ -759,10 +759,9 @@ const GameDataActionModerationPanel = ({
                                 onClick={() =>
                                   setThankTarget({
                                     actionId: submission.action_id,
-                                    contributionTitle: `${
-                                      GAME_DATA_ENTITY_LABELS[submission.entity_type] ??
+                                    contributionTitle: `${getGameDataEntityLabel(
                                       submission.entity_type
-                                    }改动`,
+                                    )}改动`,
                                     approveFirst: true,
                                   })
                                 }
@@ -826,10 +825,9 @@ const GameDataActionModerationPanel = ({
                               onClick={() =>
                                 setThankTarget({
                                   actionId: submission.action_id,
-                                  contributionTitle: `${
-                                    GAME_DATA_ENTITY_LABELS[submission.entity_type] ??
+                                  contributionTitle: `${getGameDataEntityLabel(
                                     submission.entity_type
-                                  }改动`,
+                                  )}改动`,
                                   approveFirst: false,
                                 })
                               }

@@ -45,6 +45,24 @@ describe('discussion target resolution', () => {
     expect(getPublishedDomainReadModel).not.toHaveBeenCalled();
   });
 
+  it('uses canonical labels for discussion route metadata', async () => {
+    await expect(resolveDiscussionTarget(['fixtures'])).resolves.toMatchObject({
+      metadataTitle: '地图组件 - 讨论',
+      entityTitle: '地图组件',
+      entityTypeLabel: '地图组件',
+    });
+    await expect(resolveDiscussionTarget(['modes'])).resolves.toMatchObject({
+      metadataTitle: '游戏模式 - 讨论',
+      entityTitle: '游戏模式',
+      entityTypeLabel: '游戏模式',
+    });
+    await expect(resolveDiscussionTarget(['achievements'])).resolves.toMatchObject({
+      metadataTitle: '成就 - 讨论',
+      entityTitle: '成就',
+      entityTypeLabel: '成就',
+    });
+  });
+
   it('resolves detail discussions from the published read model', async () => {
     await expect(resolveDiscussionTarget(['items', '__published_item__'])).resolves.toEqual({
       metadataTitle: '已发布道具 (道具) - 讨论',

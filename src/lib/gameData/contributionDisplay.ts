@@ -4,6 +4,7 @@ import type { PublishableEntityType } from '@/lib/gameData/publishableEntityType
 import type { FactionId } from '@/data/types';
 
 import { flattenActionEntries, normalizePublicActionEntries } from './actionEntries';
+import { getGameDataEntityLabel } from './presentation';
 import { getGameDataActionTarget } from './scopedEntityPaths';
 
 export type AffectedGameDataName = {
@@ -26,23 +27,6 @@ const KNOWN_GAME_DATA_ROUTES = {
 } satisfies Record<PublishableEntityType, string>;
 
 const GAME_DATA_ROUTES: Readonly<Record<string, string>> = KNOWN_GAME_DATA_ROUTES;
-
-const KNOWN_GAME_DATA_ENTITY_LABELS = {
-  achievements: '成就',
-  buffs: '状态',
-  cards: '知识卡',
-  characters: '角色',
-  entities: '衍生物',
-  fixtures: '地图组件',
-  items: '道具',
-  maps: '地图',
-  modes: '游戏模式',
-  specialSkills: '特技',
-  traits: '特性',
-} satisfies Record<PublishableEntityType, string>;
-
-export const GAME_DATA_ENTITY_LABELS: Readonly<Record<string, string>> =
-  KNOWN_GAME_DATA_ENTITY_LABELS;
 
 export function getAffectedGameDataNames(
   entityType: string,
@@ -96,7 +80,7 @@ export function getGameDataNotificationEntities(
 ): GameDataNotificationEntity[] {
   return getAffectedGameDataNames(entityType, rawEntry).map((target) => ({
     entityType,
-    entityTypeLabel: GAME_DATA_ENTITY_LABELS[entityType] ?? entityType,
+    entityTypeLabel: getGameDataEntityLabel(entityType),
     entityName: target.name,
     entityUrl: getGameDataDetailHref(entityType, target),
   }));
@@ -122,11 +106,9 @@ export function getGameDataNotificationDetails(
         .slice(0, 3)
         .map((entity) => `${entity.entityTypeLabel}「${entity.entityName}」`)
         .join('、')}${uniqueEntities.length > 3 ? ` 等 ${uniqueEntities.length} 项` : ''}`
-    : [
-        ...new Set(
-          records.map((record) => GAME_DATA_ENTITY_LABELS[record.entity_type] ?? record.entity_type)
-        ),
-      ].join('、') || '游戏数据';
+    : [...new Set(records.map((record) => getGameDataEntityLabel(record.entity_type)))].join(
+        '、'
+      ) || '游戏数据';
 
   return {
     summary,
