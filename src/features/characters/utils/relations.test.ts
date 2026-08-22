@@ -1,7 +1,8 @@
+import type { ActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
 import { characterRelationTraits } from '@/data/characterRelations';
-import { characters } from '@/data/store';
 import type { CharacterRelation, TraitRelation } from '@/data/types';
 import { getRelationIndex } from '@/features/shared/traits/relationIndex';
+import { clearTestEditRuntime, installTestEditRuntime } from '@/testUtils/editRuntime';
 
 import {
   getAllSpecialSkillRelations,
@@ -9,17 +10,7 @@ import {
   getSpecialSkillRelationSummary,
 } from './relationReadModel';
 
-const cloneCharacters = () => structuredClone(characters);
-
-const restoreCharacters = (snapshot: Record<string, unknown>) => {
-  Object.keys(characters).forEach((key) => {
-    delete (characters as Record<string, unknown>)[key];
-  });
-
-  Object.entries(snapshot).forEach(([key, value]) => {
-    (characters as Record<string, unknown>)[key] = structuredClone(value);
-  });
-};
+let characters: ActiveEditRuntime['stores']['characters'];
 
 const setLegacyRelationItems = (
   id: string,
@@ -49,14 +40,15 @@ const findSharedCharacterRelation = (
 };
 
 describe('getCharacterRelation', () => {
-  let snapshot: Record<string, unknown>;
+  let runtime: ActiveEditRuntime;
 
   beforeEach(() => {
-    snapshot = cloneCharacters() as Record<string, unknown>;
+    runtime = installTestEditRuntime();
+    characters = runtime.stores.characters;
   });
 
   afterEach(() => {
-    restoreCharacters(snapshot);
+    clearTestEditRuntime(runtime);
   });
 
   it('should preserve graph-derived mutual relations for the current target page', () => {

@@ -1,8 +1,9 @@
 import { createContext, type ReactNode } from 'react';
 import { render } from '@testing-library/react';
 
+import type { ActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
 import type { CharacterWithFaction } from '@/lib/types';
-import { characters } from '@/data/store';
+import { clearTestEditRuntime, installTestEditRuntime } from '@/testUtils/editRuntime';
 
 import CharacterDetailsClient from './CharacterDetailsClient';
 
@@ -62,10 +63,12 @@ jest.mock('@/components/ui/EditModeToolbar', () => ({
 }));
 
 describe('CharacterDetailsClient', () => {
-  let snapshot: Record<string, unknown>;
+  let runtime: ActiveEditRuntime;
+  let characters: ActiveEditRuntime['stores']['characters'];
 
   beforeEach(() => {
-    snapshot = structuredClone(characters) as Record<string, unknown>;
+    runtime = installTestEditRuntime();
+    characters = runtime.stores.characters;
     mockExitEditMode.mockReset();
     mockUseEditMode.mockReturnValue({ isEditMode: false });
 
@@ -81,12 +84,7 @@ describe('CharacterDetailsClient', () => {
   });
 
   afterEach(() => {
-    Object.keys(characters).forEach((key) => {
-      delete (characters as Record<string, unknown>)[key];
-    });
-    Object.entries(snapshot).forEach(([key, value]) => {
-      (characters as Record<string, unknown>)[key] = value;
-    });
+    clearTestEditRuntime(runtime);
   });
 
   it('does not overwrite existing character store data when not in edit mode', () => {

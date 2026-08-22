@@ -1,9 +1,9 @@
 /* oxlint-disable typescript/no-explicit-any */
 import { render, screen, waitFor } from '@testing-library/react';
-import { proxy } from 'valtio';
 
+import type { ActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
 import { StorageKey } from '@/lib/localStorage';
-import { characters } from '@/data/store';
+import { clearTestEditRuntime, installTestEditRuntime } from '@/testUtils/editRuntime';
 
 import { KnowledgeCardGroupDisplay } from './KnowledgeCardGroupDisplay';
 import KnowledgeCardSection from './KnowledgeCardSection';
@@ -49,13 +49,23 @@ jest.mock('usehooks-ts', () => ({
   useMediaQuery: jest.fn(() => false),
 }));
 
+let runtime: ActiveEditRuntime;
+let characters: ActiveEditRuntime['stores']['characters'];
+
+beforeEach(() => {
+  runtime = installTestEditRuntime();
+  characters = runtime.stores.characters;
+});
+
+afterEach(() => {
+  clearTestEditRuntime(runtime);
+});
+
 describe('KnowledgeCard nested persistence (sanity tests)', () => {
   const charId = 'test-char-for-knowledgecard-section';
 
   beforeEach(() => {
-    // reset test character in the Valtio characters store
-    // minimal shape used by the components
-    (characters as any)[charId] = proxy({
+    (characters as any)[charId] = {
       id: charId,
       knowledgeCardGroups: [
         {
@@ -69,12 +79,7 @@ describe('KnowledgeCard nested persistence (sanity tests)', () => {
           ],
         },
       ],
-    });
-  });
-
-  afterEach(() => {
-    // cleanup
-    delete (characters as any)[charId];
+    };
   });
 
   test('writing nested group cards updates the Valtio characters store', () => {
@@ -101,12 +106,11 @@ describe('KnowledgeCardGroupDisplay', () => {
   beforeEach(() => {
     jest.useFakeTimers();
     jest.setSystemTime(new Date('2026-09-03T00:00:00+08:00'));
-    (characters as any)['test-character'] = proxy({ id: 'test-character' });
+    (characters as any)['test-character'] = { id: 'test-character' };
   });
 
   afterEach(() => {
     jest.useRealTimers();
-    delete (characters as any)['test-character'];
   });
 
   const defaultProps = {
@@ -170,15 +174,14 @@ describe('KnowledgeCardSection', () => {
   const characterId = 'test-character-with-view-mode';
 
   beforeEach(() => {
-    (characters as any)[characterId] = proxy({
+    (characters as any)[characterId] = {
       id: characterId,
       factionId: 'mouse',
-    });
+    };
   });
 
   afterEach(() => {
     localStorage.clear();
-    delete (characters as any)[characterId];
   });
 
   it.each(['image', 'flat', 'tree-folded', 'invalid'])(

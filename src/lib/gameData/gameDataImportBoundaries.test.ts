@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 const ROOT_PROVIDER_FILES = [
@@ -85,6 +85,10 @@ describe('game-data import and payload boundaries', () => {
     );
 
     expect(offenders).toEqual([]);
+  });
+
+  it('keeps the retired global edit-store module deleted', () => {
+    expect(existsSync('src/data/store.ts')).toBe(false);
   });
 
   it('keeps canonical source factories independent from edit and replay code', () => {

@@ -3,13 +3,12 @@ import { render, screen } from '@testing-library/react';
 
 import '@testing-library/jest-dom';
 
-import { proxy } from 'valtio';
-
+import type { ActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
 import type { CharacterWithFaction } from '@/lib/types';
 import { EditModeProvider } from '@/context/EditModeContext';
-import { characters } from '@/data/store';
 import type { SkillAllocation } from '@/data/types';
 import * as skillAllocationUtils from '@/features/characters/utils/skillAllocation';
+import { clearTestEditRuntime, installTestEditRuntime } from '@/testUtils/editRuntime';
 
 import SkillAllocationDisplay from './SkillAllocationDisplay';
 
@@ -61,6 +60,9 @@ const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 };
 
 describe('SkillAllocationDisplay', () => {
+  let runtime: ActiveEditRuntime;
+  let characters: ActiveEditRuntime['stores']['characters'];
+
   const mockAllocation: SkillAllocation = {
     id: 'test-allocation',
     pattern: '0123',
@@ -75,24 +77,27 @@ describe('SkillAllocationDisplay', () => {
     index: 0,
   };
 
-  beforeAll(() => {
-    characters['汤姆'] = proxy<CharacterWithFaction>({
+  beforeEach(() => {
+    runtime = installTestEditRuntime();
+    characters = runtime.stores.characters;
+    characters['汤姆'] = {
       id: '汤姆',
       description: 'A test character',
       skills: [],
       knowledgeCardGroups: [],
       imageUrl: '/images/cats/汤姆.png',
       createDate: '2018.2.8',
-    });
-  });
-
-  beforeEach(() => {
+    } as CharacterWithFaction;
     mockedParseSkillAllocationPattern.mockReturnValue([
       { skillTypeNum: '0', isParallel: false, isDelayed: false, hasNegativeEffect: false },
       { skillTypeNum: '1', isParallel: false, isDelayed: false, hasNegativeEffect: false },
       { skillTypeNum: '2', isParallel: false, isDelayed: false, hasNegativeEffect: false },
       { skillTypeNum: '3', isParallel: false, isDelayed: false, hasNegativeEffect: false },
     ]);
+  });
+
+  afterEach(() => {
+    clearTestEditRuntime(runtime);
   });
 
   it('should render allocation name and description', () => {

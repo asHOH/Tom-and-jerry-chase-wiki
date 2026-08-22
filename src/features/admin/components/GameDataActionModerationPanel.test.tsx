@@ -1,6 +1,6 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
-import { characters } from '@/data/store';
+import { characters } from '@/data/static';
 import { summarizeGameActionValue } from '@/features/admin/utils/gameActionPreview';
 import { getCharacterRelation } from '@/features/characters/utils/relationReadModel';
 
