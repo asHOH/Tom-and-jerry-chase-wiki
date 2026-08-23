@@ -1,8 +1,8 @@
 # Supabase Egress Remediation Plan
 
-**Status:** Production rollout complete; post-deployment observation in progress
+**Status:** Phase 3A implemented and locally verified; VPS deployment and 24-hour gate pending
 **Created:** 2026-08-14
-**Last updated:** 2026-08-21
+**Last updated:** 2026-08-24
 **Billing cycle under investigation:** 2026-08-07 through 2026-09-07
 **Fair Use grace-period end:** 2026-08-22
 
@@ -73,6 +73,46 @@ accepts a `characterId`, but the SQL query cannot use that value because the tar
 encoded inside each action's `entry` paths. The function therefore downloads all candidate rows,
 parses them in application code, and only then selects the requested character.
 
+### 2026-08-24 post-rollout investigation
+
+The observation gate was evaluated early rather than waiting for seven calendar days. The build
+artifact rollout is working, but the incident cannot close because production runtime traffic still
+recreates approximately the original 1 GB/day uncompressed bulk-read workload.
+
+A 23.5-hour Supabase edge-log window from `2026-08-22 21:08 UTC` through
+`2026-08-23 20:38 UTC` recorded:
+
+| Source                                               | Approved bulk reads | Approved-or-synced bulk reads |
+| ---------------------------------------------------- | ------------------: | ----------------------------: |
+| VPS network, current publishable/secret credentials  |                 183 |                           226 |
+| Vercel network, legacy anon/service-role credentials |                  13 |                            11 |
+
+All three Vercel deployment attempts since the rollout were blocked, including the `develop`
+attempt, so preview-build containment is preventing new build amplification. The small Vercel
+runtime remainder comes from an older deployment and is not the dominant source.
+
+At the time of measurement, the production action table produced approximately 1,044,883 bytes of
+JSON text for 709 approved rows and 3,402,863 bytes for 2,082 approved-or-synced rows. Multiplying
+those server-side estimates by only the VPS calls gives approximately 0.96 GB in 23.5 hours. This is
+an uncompressed ranking estimate, not an exact billed-egress figure, but it demonstrates that the
+runtime paths alone remain far above the 150 MB/day working target.
+
+The requests are bursty rather than one clean hourly refresh: the VPS calls occupied 90 approved
+minutes and 53 history minutes, 41 minutes contained both shapes, and the largest one-minute bursts
+contained 8 approved reads and 26 history reads. This supports two related causes in the current
+implementation:
+
+- `POST /api/game-data-actions/edit-baseline` expires the global
+  `PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG` whenever an edit session asks for a fresh baseline;
+- approved and history acquisition do not have the process-local cold-miss coalescing already used
+  by the character-contributor index, so concurrent readers can fan out after expiry; and
+- `/api/game-data-actions/public/` still bypasses the tagged reader and can account for some
+  approved-only calls from older clients, although current Supabase logs cannot attribute an
+  upstream VPS route precisely.
+
+These are confirmed runtime containment problems. Further baseline compaction or per-target schema
+work would not address them and remains deferred.
+
 ### Build-amplification evidence
 
 From `2026-08-09 03:46 UTC` through `2026-08-13 14:21 UTC`, Vercel recorded 27 deployment attempts:
@@ -99,7 +139,8 @@ Deployment-specific cache identity also intentionally prevents reuse between sep
 ## Goals
 
 - Keep uncached Supabase egress below 5 GB per complete billing cycle, with a working target below
-  150 MB per day averaged over seven days.
+  150 MB per representative day. Track the rolling seven-day and complete-cycle results as ongoing
+  operations after the incident closes.
 - Reduce each identified bulk query shape by at least 95% before considering a plan upgrade.
 - Make each stable Supabase-enabled build attempt perform exactly one approved-snapshot,
   contributor-source, and synced-history-source bulk fetch. A deliberately disabled attempt performs
@@ -735,6 +776,84 @@ retaining the shared wrapper for the derived payloads. If all shared-artifact ph
 restore the previous npm build commands as well. Revoke and remove the epoch and synced-history RPCs
 in forward rollback migrations if they are no longer used; no production data rows require repair.
 
+## Phase 3A — Contain runtime invalidation and cold-miss fan-out
+
+**2026-08-24 implementation checkpoint:** The runtime acquisition seam now owns the module-scoped
+approved and compact synced-history caches, process-local single-flight acquisition, and a separate
+non-persistent fresh approved reader. The edit-baseline route uses the fresh reader without expiring
+the shared tag, the compatibility endpoint uses the shared approved cache, and both routes emit
+privacy-safe countable request events. Existing mutation paths still invalidate the shared tag. The
+focused Phase 3A suites, full Jest suite (297 suites and 1,597 tests), lint, type-check, and
+`build:skip-images` passed. The build reported one fetch for each bulk source. This checkpoint changes
+no database schema or stored rows and has not yet been deployed to the VPS.
+
+### Independent problem
+
+Phases 1 through 3 removed build-worker amplification but deliberately left normal runtime readers
+unchanged. The 2026-08-24 investigation proved that those readers now dominate the same egress
+incident. Fresh edit-baseline requests expire a global tag, approved and history readers can race on
+the resulting cold miss, and the runtime history path still downloads complete approved and synced
+rows instead of reusing the compact synced-history projection.
+
+### Actions
+
+- [x] Add privacy-safe structured counters for `POST /api/game-data-actions/edit-baseline` and
+      `GET /api/game-data-actions/public`. Record route, status, duration, and a non-identifying
+      request category; do not log IP addresses, credentials, action contents, or user IDs.
+- [x] Give the edit-baseline route a dedicated fresh-snapshot acquisition path. It must obtain the
+      current approved replay snapshot without expiring the shared public-runtime tag merely because
+      one editor entered edit mode.
+- [x] Preserve immediate tag invalidation for actual publish, approval, revocation, and mark-synced
+      mutations.
+- [x] Define approved and history cached readers once at module scope and add process-local in-flight
+      coalescing for cold acquisition. Clear the in-flight promise after settlement so later tag
+      invalidation remains effective.
+- [x] Reuse the compact synced-history RPC for normal runtime history acquisition. Merge its result
+      with the approved snapshot where callers require both sets, preserving the build/runtime
+      history behavior and output.
+- [x] Make the legacy public-actions endpoint read from the same tagged approved snapshot immediately,
+      so compatibility traffic cannot issue a fresh database query per request. Phase 4 can still
+      retire the endpoint after its client-update window.
+- [ ] Deploy the containment change to the VPS and record the commit, deployment identity, and
+      production Node version.
+
+### Tests
+
+- [x] Prove many concurrent approved readers cause one source acquisition on a cold cache.
+- [x] Prove many concurrent history readers cause one compact synced-history acquisition on a cold
+      cache and retain approved-plus-synced selector output.
+- [x] Prove requesting a fresh edit baseline does not invalidate or reacquire unrelated runtime
+      caches, while returning the latest replay revision.
+- [x] Prove a real public-data mutation invalidates the tag and the next concurrent reader cohort
+      performs one acquisition before sharing the refreshed result.
+- [x] Prove repeated legacy-endpoint requests do not repeatedly query Supabase and preserve the
+      current filtered response shape.
+
+### Shortened production gate
+
+Do not wait seven days merely to confirm deterministic call coalescing. After deployment, observe one
+representative 24-hour window with normal traffic and at least one controlled mutation or explicit
+invalidation. The window must demonstrate:
+
+- no cold-miss burst greater than one source acquisition per process/cache population;
+- no global public-data tag expiry caused solely by entering edit mode;
+- at most 24 normal runtime acquisitions per bulk source in 24 hours when no mutation requires an
+  earlier refresh;
+- no direct database read per request from the legacy endpoint; and
+- measured uncached egress below 150 MB/day, or source-call and payload evidence that conservatively
+  projects below that threshold when the dashboard measurement is delayed.
+
+Continue the rolling seven-day and next complete billing-cycle checks as operational monitoring.
+They do not need to keep this implementation plan active once the 24-hour gate and all correctness
+criteria pass.
+
+### Rollback
+
+Restore the previous runtime readers and edit-baseline invalidation behavior. This phase changes no
+stored game data or database schema. If the compact runtime history adapter causes an output mismatch,
+retain cold-miss coalescing and temporarily restore the full history reader while correcting the
+adapter.
+
 ## Phase 4 — Bound or retire the legacy public-actions HTTP endpoint
 
 ### Independent problem
@@ -748,10 +867,10 @@ classifies it as a cacheable public endpoint and older installed clients may con
 - [ ] Add a privacy-safe request counter or inspect existing edge/runtime logs for this exact path.
 - [ ] Separate requests from current builds, current clients, old service workers, health checks, and
       bots where the available metadata permits it.
-- [ ] Observe at least seven representative days after Phases 2 and 3, unless quota containment
-      requires earlier caching.
+- [ ] Observe the representative 24-hour Phase 3A gate after runtime containment is deployed.
 
-Choose one branch:
+Apply the cached-reader containment from Phase 3A first. Then choose whether to keep and harden the
+compatibility endpoint through Branch A or retire it through Branch B.
 
 ### Branch A — Endpoint is still required
 
@@ -917,12 +1036,14 @@ and a target relation in parallel.
 
 ## Recommended execution order
 
-| Order        | Work                                           | Expected impact | Risk   | Reason                                                   |
-| ------------ | ---------------------------------------------- | --------------- | ------ | -------------------------------------------------------- |
-| Prerequisite | Preview containment                            | Immediate       | Low    | Stops avoidable quota growth while code is prepared      |
-| 1            | Phases 1–3: one shared build-data artifact     | Very high       | Medium | Removes both repeated bulk reads with one implementation |
-| 2            | Phase 4: public endpoint decision              | Low–medium      | Low    | Handles old clients and an uncached 1 MB response        |
-| 3            | Seven-day observation and incident disposition | Confirming      | None   | Determines whether any conditional follow-up is needed   |
+| Order    | Work                                           | Expected impact | Risk   | Reason                                                             |
+| -------- | ---------------------------------------------- | --------------- | ------ | ------------------------------------------------------------------ |
+| Complete | Preview containment                            | Immediate       | Low    | Prevents avoidable preview-build load                              |
+| Complete | Phases 1–3: one shared build-data artifact     | Very high       | Medium | Removes repeated bulk reads from static build workers              |
+| Complete | Phase 3A implementation and local verification | Very high       | Medium | Contains the measured runtime sources locally                      |
+| 1        | Deploy Phase 3A to the VPS                     | Very high       | Medium | Activates runtime containment under production traffic             |
+| 2        | Representative 24-hour production gate         | Confirming      | None   | Establishes incident containment without an arbitrary long wait    |
+| 3        | Phase 4: public endpoint disposition           | Low–medium      | Low    | Uses measured compatibility traffic to choose hardening or removal |
 
 Phases 5 and 7 proceed only by opening separate reviewed plans after their entry gates are met.
 Phase 6 is a separate performance backlog measurement and does not block incident completion.
@@ -957,12 +1078,14 @@ After any Supabase migration:
 
 ## Overall completion criteria
 
-The incident is complete only when:
+The engineering incident is complete only when:
 
-- [ ] the organization records a complete billing cycle below 5 GB uncached egress, or a documented
-      product decision accepts a paid plan;
-- [ ] seven-day average uncached egress is below 150 MB/day with representative traffic and normal
-      deployment activity;
+- [ ] one representative 24-hour production window is below 150 MB uncached egress, or conservative
+      source-call and payload evidence projects below that threshold while dashboard usage is delayed;
+- [ ] the next complete billing cycle below 5 GB and rolling seven-day average below 150 MB/day are
+      assigned to ongoing operational monitoring rather than left as unowned observations;
+- [ ] Phase 3A proves entering edit mode does not globally expire public runtime data, concurrent cold
+      readers coalesce to one acquisition, and runtime history uses the compact projection;
 - [ ] approved-snapshot, contributor-source, and synced-history-source query counts are each at least
       95% below the audited equivalent workload;
 - [ ] each stable Supabase-enabled Vercel build attempt performs exactly one approved-snapshot,

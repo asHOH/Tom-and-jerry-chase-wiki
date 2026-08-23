@@ -1,20 +1,15 @@
 import { NextResponse } from 'next/server';
 
-import {
-  PublicActionQueryError,
-  queryApprovedPublicActionRows,
-} from '@/lib/gameData/publicActionQueries';
-import { hasSupabasePublicConfig } from '@/lib/supabase/config';
-import { createClient } from '@/lib/supabase/server';
+import { PublicActionQueryError } from '@/lib/gameData/publicActionQueries';
+import { logPublicGameDataRouteMetric } from '@/lib/gameData/publicRouteMetrics';
+import { readCachedApprovedActionRows } from '@/lib/gameData/runtimeActionSources';
 
 export async function GET() {
-  if (!hasSupabasePublicConfig()) {
-    return NextResponse.json({ actions: [] });
-  }
+  const startedAt = performance.now();
+  let status = 500;
 
   try {
-    const supabase = await createClient();
-    const rows = await queryApprovedPublicActionRows(supabase);
+    const rows = await readCachedApprovedActionRows();
     const actions = rows.map(({ id, entity_type, entry, created_at }) => ({
       id,
       entity_type,
@@ -22,14 +17,26 @@ export async function GET() {
       created_at,
     }));
 
-    return NextResponse.json({ actions });
+    const response = NextResponse.json({ actions });
+    status = response.status;
+    return response;
   } catch (err) {
     if (err instanceof PublicActionQueryError) {
       console.error('Error fetching public game data actions:', err.cause);
-      return NextResponse.json({ error: 'Failed to fetch public actions' }, { status: 500 });
+      status = 500;
+      return NextResponse.json({ error: 'Failed to fetch public actions' }, { status });
     }
 
     console.error('API error:', err);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    status = 500;
+    return NextResponse.json({ error: 'Internal server error' }, { status });
+  } finally {
+    logPublicGameDataRouteMetric({
+      route: '/api/game-data-actions/public',
+      method: 'GET',
+      status,
+      startedAt,
+      requestCategory: 'legacy-public-actions',
+    });
   }
 }

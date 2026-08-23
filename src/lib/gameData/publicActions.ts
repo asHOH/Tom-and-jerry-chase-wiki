@@ -1,22 +1,16 @@
 import 'server-only';
 
 import type { ActionHistoryEntry } from '@/lib/edit/diffUtils';
+import { parseApprovedActionArtifactPayload } from '@/lib/gameData/approvedActionArtifact';
 import { readBuildGameDataArtifact } from '@/lib/gameData/buildArtifactReader';
 import {
-  PUBLIC_GAME_DATA_ACTIONS_CACHE_REVALIDATE_SECONDS,
-  PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG,
-} from '@/lib/gameData/publicActionsCache';
-import { cached } from '@/lib/serverCache';
-import { getOptionalSupabaseAdminClient } from '@/lib/supabase/adminClient';
+  readCachedApprovedActionRows,
+  readCachedSyncedHistoryRows,
+} from '@/lib/gameData/runtimeActionSources';
 import { getBuildGameDataArtifactPath } from '@/lib/supabase/buildSourceGuard';
-import { getOptionalSupabasePublicClient } from '@/lib/supabase/publicClient';
 
 import { normalizePublicActionEntries } from './actionEntries';
-import {
-  PublicActionQueryError,
-  queryApprovedPublicActionRows,
-  queryPublicActionHistoryRows,
-} from './publicActionQueries';
+import { PublicActionQueryError } from './publicActionQueries';
 import type { PublicActionRow } from './publicActionsTypes';
 import { getGameDataActionEntityKey } from './scopedEntityPaths';
 import {
@@ -35,6 +29,38 @@ export type EntityUpdateHistory = {
   reviewedAt: string | null;
   affectedPath: string;
 };
+
+function mergeOrderedActionRows(
+  approvedRows: readonly PublicActionRow[],
+  syncedRows: readonly PublicActionRow[]
+): PublicActionRow[] {
+  const rowsById = new Map<string, PublicActionRow>();
+  for (const row of approvedRows) rowsById.set(row.id, row);
+  for (const row of syncedRows) rowsById.set(row.id, row);
+
+  return [...rowsById.values()].sort(
+    (left, right) =>
+      left.created_at.localeCompare(right.created_at) || left.id.localeCompare(right.id)
+  );
+}
+
+async function readApprovedRowsForCurrentContext(): Promise<PublicActionRow[]> {
+  if (getBuildGameDataArtifactPath()) {
+    const artifact = await readBuildGameDataArtifact();
+    return parseApprovedActionArtifactPayload(artifact.approvedActions).payload.rows;
+  }
+  return readCachedApprovedActionRows();
+}
+
+async function readSyncedRowsForCurrentContext(): Promise<PublicActionRow[]> {
+  if (getBuildGameDataArtifactPath()) {
+    const artifact = await readBuildGameDataArtifact();
+    return syncedHistoryArtifactToPublicRows(
+      parseSyncedHistoryArtifactPayload(artifact.syncedHistory)
+    );
+  }
+  return readCachedSyncedHistoryRows();
+}
 
 function extractActionPaths(entry: ActionHistoryEntry): string[] {
   if (Array.isArray(entry)) {
@@ -91,25 +117,12 @@ export async function getEntityUpdateHistory(): Promise<Map<string, EntityUpdate
 }
 
 export async function fetchPublicGameDataActionHistory(): Promise<PublicActionRow[]> {
-  if (getBuildGameDataArtifactPath()) {
-    const artifact = await readBuildGameDataArtifact();
-    return syncedHistoryArtifactToPublicRows(
-      parseSyncedHistoryArtifactPayload(artifact.syncedHistory)
-    );
-  }
-
-  const client = getOptionalSupabaseAdminClient() ?? getOptionalSupabasePublicClient();
-  if (!client) return [];
-
   try {
-    return await cached(
-      [PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG, 'history'],
-      () => queryPublicActionHistoryRows(client),
-      {
-        revalidate: PUBLIC_GAME_DATA_ACTIONS_CACHE_REVALIDATE_SECONDS,
-        tags: [PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG],
-      }
-    );
+    const [approvedRows, syncedRows] = await Promise.all([
+      readApprovedRowsForCurrentContext(),
+      readSyncedRowsForCurrentContext(),
+    ]);
+    return mergeOrderedActionRows(approvedRows, syncedRows);
   } catch (error) {
     console.error(
       'Error fetching public game data action history:',
@@ -120,18 +133,8 @@ export async function fetchPublicGameDataActionHistory(): Promise<PublicActionRo
 }
 
 export async function fetchPublicGameDataActions(): Promise<PublicActionRow[]> {
-  const client = getOptionalSupabasePublicClient();
-  if (!client) return [];
-
   try {
-    return await cached(
-      [PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG],
-      () => queryApprovedPublicActionRows(client),
-      {
-        revalidate: PUBLIC_GAME_DATA_ACTIONS_CACHE_REVALIDATE_SECONDS,
-        tags: [PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG],
-      }
-    );
+    return await readApprovedRowsForCurrentContext();
   } catch (error) {
     console.error(
       'Error fetching public game data actions:',

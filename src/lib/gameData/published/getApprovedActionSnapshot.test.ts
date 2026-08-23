@@ -1,9 +1,13 @@
-import { getApprovedActionSnapshot } from './getApprovedActionSnapshot';
+import {
+  readCachedApprovedActionRows,
+  readFreshApprovedActionRows,
+} from '@/lib/gameData/runtimeActionSources';
 
-const mockCached = jest.fn(
-  async (_key: unknown, callback: () => Promise<unknown>, _options: unknown) => callback()
-);
-const mockQueryApprovedRows = jest.fn();
+import {
+  getApprovedActionSnapshot,
+  getFreshApprovedActionSnapshot,
+} from './getApprovedActionSnapshot';
+
 const mockArtifactPath = jest.fn<string | undefined, []>(() => undefined);
 const mockReadArtifact = jest.fn();
 
@@ -12,11 +16,9 @@ jest.mock('react', () => ({
   ...jest.requireActual('react'),
   cache: (callback: unknown) => callback,
 }));
-jest.mock('@/lib/serverCache', () => ({
-  cached: (...args: unknown[]) => mockCached(...(args as Parameters<typeof mockCached>)),
-}));
-jest.mock('@/lib/gameData/publicActionQueries', () => ({
-  queryApprovedPublicActionRows: (...args: unknown[]) => mockQueryApprovedRows(...args),
+jest.mock('@/lib/gameData/runtimeActionSources', () => ({
+  readCachedApprovedActionRows: jest.fn(),
+  readFreshApprovedActionRows: jest.fn(),
 }));
 jest.mock('@/lib/gameData/buildArtifactReader', () => ({
   readBuildGameDataArtifact: (...args: unknown[]) => mockReadArtifact(...args),
@@ -24,42 +26,31 @@ jest.mock('@/lib/gameData/buildArtifactReader', () => ({
 jest.mock('@/lib/supabase/buildSourceGuard', () => ({
   getBuildGameDataArtifactPath: () => mockArtifactPath(),
 }));
-jest.mock('@/lib/gameData/publicActionsCache', () => ({
-  PUBLIC_GAME_DATA_ACTIONS_CACHE_REVALIDATE_SECONDS: 3600,
-  PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG: 'public-game-data-actions',
-}));
-jest.mock('@/lib/supabase/config', () => ({
-  hasSupabasePublicConfig: () => true,
-}));
-jest.mock('@/lib/supabase/public', () => ({
-  supabaseServerPublic: { from: jest.fn() },
-}));
-jest.mock('./buildIdentity', () => ({
-  PRODUCTION_BUILD_IDENTITY: 'snapshot-test-build',
-}));
+
+const mockReadCachedRows = jest.mocked(readCachedApprovedActionRows);
+const mockReadFreshRows = jest.mocked(readFreshApprovedActionRows);
+const rows = [
+  {
+    id: 'snapshot-row',
+    entity_type: 'items',
+    entry: { op: 'set', path: '火箭.description', newValue: '发布值' },
+    created_at: '2026-07-24T00:00:00.000Z',
+    status: 'approved',
+    created_by: null,
+    message: null,
+    reviewed_at: null,
+  },
+];
 
 describe('getApprovedActionSnapshot', () => {
   beforeEach(() => {
+    jest.clearAllMocks();
     mockArtifactPath.mockReturnValue(undefined);
-    mockReadArtifact.mockReset();
-    mockQueryApprovedRows.mockReset();
-    mockCached.mockClear();
+    mockReadCachedRows.mockResolvedValue(rows);
+    mockReadFreshRows.mockResolvedValue(rows);
   });
 
-  it('uses the shared action tag and build-keyed persistent row cache', async () => {
-    mockQueryApprovedRows.mockResolvedValue([
-      {
-        id: 'snapshot-row',
-        entity_type: 'items',
-        entry: { op: 'set', path: '火箭.description', newValue: '发布值' },
-        created_at: '2026-07-24T00:00:00.000Z',
-        status: 'approved',
-        created_by: null,
-        message: null,
-        reviewed_at: null,
-      },
-    ]);
-
+  it('uses the shared cached runtime source', async () => {
     const snapshot = await getApprovedActionSnapshot();
 
     expect(snapshot.rows).toHaveLength(1);
@@ -68,31 +59,21 @@ describe('getApprovedActionSnapshot', () => {
       path: '火箭.description',
       newValue: '发布值',
     });
-    expect(mockCached).toHaveBeenCalledWith(
-      ['public-game-data-actions', 'approved-snapshot', 'v1', 'snapshot-test-build'],
-      expect.any(Function),
-      {
-        revalidate: 3600,
-        tags: ['public-game-data-actions'],
-      }
-    );
+    expect(mockReadCachedRows).toHaveBeenCalledTimes(1);
+    expect(mockReadFreshRows).not.toHaveBeenCalled();
   });
 
-  it('uses the shared checked artifact without a runtime database read', async () => {
+  it('provides a fresh snapshot without reading the persistent cache', async () => {
+    const snapshot = await getFreshApprovedActionSnapshot();
+
+    expect(snapshot.rows[0]).toMatchObject({ rowId: 'snapshot-row' });
+    expect(mockReadFreshRows).toHaveBeenCalledTimes(1);
+    expect(mockReadCachedRows).not.toHaveBeenCalled();
+  });
+
+  it('uses the shared checked artifact without a runtime source read', async () => {
     const { createApprovedActionArtifactPayload } =
       await import('@/lib/gameData/approvedActionArtifact');
-    const rows = [
-      {
-        id: 'artifact-row',
-        entity_type: 'items',
-        entry: { op: 'set', path: '火箭.description', newValue: '构建值' },
-        created_at: '2026-07-24T00:00:00.000Z',
-        status: 'approved',
-        created_by: null,
-        message: null,
-        reviewed_at: null,
-      },
-    ];
     mockArtifactPath.mockReturnValue('D:/artifact.json');
     mockReadArtifact.mockResolvedValue({
       approvedActions: createApprovedActionArtifactPayload(3, 1, rows),
@@ -100,8 +81,8 @@ describe('getApprovedActionSnapshot', () => {
 
     const snapshot = await getApprovedActionSnapshot();
 
-    expect(snapshot.rows[0]).toMatchObject({ rowId: 'artifact-row' });
+    expect(snapshot.rows[0]).toMatchObject({ rowId: 'snapshot-row' });
     expect(mockReadArtifact).toHaveBeenCalledTimes(1);
-    expect(mockQueryApprovedRows).not.toHaveBeenCalled();
+    expect(mockReadCachedRows).not.toHaveBeenCalled();
   });
 });
