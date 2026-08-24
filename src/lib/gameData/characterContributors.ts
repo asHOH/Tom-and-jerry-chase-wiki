@@ -2,6 +2,8 @@ import 'server-only';
 
 import { createHash } from 'node:crypto';
 
+import { isHiddenContributorNickname } from '@/data/hiddenContributorNicknames';
+
 export type CharacterContributor = {
   id: string;
   name: string;
@@ -109,6 +111,8 @@ export function buildCharacterContributorIndex(
 ): CharacterContributorIndex {
   const groups = new Map<string, CharacterContributor[]>();
   for (const row of rows) {
+    if (isHiddenContributorNickname(row.nickname)) continue;
+
     const contributors = groups.get(row.characterId) ?? [];
     contributors.push({
       id: row.contributorId,
@@ -130,6 +134,19 @@ export function buildCharacterContributorIndex(
             left.id.localeCompare(right.id)
         ),
       ])
+  );
+}
+
+export function filterHiddenCharacterContributors(
+  index: CharacterContributorIndex
+): CharacterContributorIndex {
+  return Object.fromEntries(
+    Object.entries(index).flatMap(([characterId, contributors]) => {
+      const visibleContributors = contributors.filter(
+        ({ name }) => !isHiddenContributorNickname(name)
+      );
+      return visibleContributors.length > 0 ? [[characterId, visibleContributors]] : [];
+    })
   );
 }
 

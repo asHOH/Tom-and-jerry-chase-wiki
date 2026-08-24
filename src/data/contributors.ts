@@ -1,3 +1,5 @@
+import { isHiddenContributorNickname } from './hiddenContributorNicknames';
+
 export interface Contributor {
   id: string;
   name: string; // Display name
@@ -23,8 +25,8 @@ export enum RoleType {
   VideoCreator = '制作教学视频',
 }
 
-// The list of all contributors
-export const contributors: Contributor[] = [
+// The list of all contributors before nickname-based visibility filtering.
+const allContributors: Contributor[] = [
   {
     id: 'asHOH',
     name: '小曙光',
@@ -663,3 +665,7 @@ export const contributors: Contributor[] = [
     roles: [{ type: RoleType.ArtProvider }],
   },
 ];
+
+export const contributors = allContributors.filter(
+  ({ nickname }) => nickname === undefined || !isHiddenContributorNickname(nickname)
+);

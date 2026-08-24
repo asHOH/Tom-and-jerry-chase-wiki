@@ -3,6 +3,7 @@ import 'server-only';
 import { readBuildGameDataArtifact } from '@/lib/gameData/buildArtifactReader';
 import {
   buildCharacterContributorIndex,
+  filterHiddenCharacterContributors,
   parseCharacterContributorArtifactPayload,
   type CharacterContributorIndex,
 } from '@/lib/gameData/characterContributors';
@@ -14,6 +15,7 @@ import {
 import { createCached } from '@/lib/serverCache';
 import { getBuildGameDataArtifactPath } from '@/lib/supabase/buildSourceGuard';
 import { getOptionalSupabasePublicClient } from '@/lib/supabase/publicClient';
+import { hiddenContributorNicknames } from '@/data/hiddenContributorNicknames';
 
 export { queryCharacterContributorSource } from '@/lib/gameData/characterContributorSourceQuery';
 
@@ -25,7 +27,12 @@ async function queryRuntimeCharacterContributorIndex(): Promise<CharacterContrib
 }
 
 const readCachedRuntimeCharacterContributorIndex = createCached(
-  [PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG, 'character-contributor-index', 'v1'],
+  [
+    PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG,
+    'character-contributor-index',
+    'v2',
+    ...hiddenContributorNicknames,
+  ],
   queryRuntimeCharacterContributorIndex,
   {
     revalidate: PUBLIC_GAME_DATA_ACTIONS_CACHE_REVALIDATE_SECONDS,
@@ -54,7 +61,9 @@ function readRuntimeCharacterContributorIndex(): Promise<CharacterContributorInd
 export async function getCharacterContributorIndex(): Promise<CharacterContributorIndex> {
   if (getBuildGameDataArtifactPath()) {
     const artifact = await readBuildGameDataArtifact();
-    return parseCharacterContributorArtifactPayload(artifact.contributors).index;
+    return filterHiddenCharacterContributors(
+      parseCharacterContributorArtifactPayload(artifact.contributors).index
+    );
   }
   return readRuntimeCharacterContributorIndex();
 }

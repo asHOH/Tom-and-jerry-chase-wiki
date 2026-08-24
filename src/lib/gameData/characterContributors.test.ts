@@ -8,10 +8,11 @@ import {
 const contributorA = '11111111-1111-4111-8111-111111111111';
 const contributorB = '22222222-2222-4222-8222-222222222222';
 const contributorC = '33333333-3333-4333-8333-333333333333';
+const hiddenContributor = '44444444-4444-4444-8444-444444444444';
 
 const sourceValue = {
   sourceActionCount: 8,
-  rowCount: 4,
+  rowCount: 5,
   rows: [
     {
       characterId: '汤姆',
@@ -37,6 +38,12 @@ const sourceValue = {
       nickname: '安全键',
       contributionCount: 1,
     },
+    {
+      characterId: '汤姆',
+      contributorId: hiddenContributor,
+      nickname: 'TJAI',
+      contributionCount: 10,
+    },
   ],
 };
 
@@ -57,7 +64,7 @@ describe('character contributor payloads', () => {
   });
 
   it.each([
-    { ...sourceValue, rowCount: 5 },
+    { ...sourceValue, rowCount: 6 },
     { ...sourceValue, privateField: 'must-fail' },
     { ...sourceValue, rows: [...sourceValue.rows, sourceValue.rows[0]] },
     {
@@ -81,6 +88,7 @@ describe('character contributor payloads', () => {
     expect(artifact.sourceActionCount).toBe(8);
     expect(artifact.characterCount).toBe(2);
     expect(artifact.checksum).toMatch(/^[a-f0-9]{64}$/);
+    expect(JSON.stringify(artifact)).not.toContain('TJAI');
     expect(parseCharacterContributorArtifactPayload(artifact)).toEqual(artifact);
 
     expect(() =>

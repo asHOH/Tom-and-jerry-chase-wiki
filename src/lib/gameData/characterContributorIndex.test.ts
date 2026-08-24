@@ -72,7 +72,7 @@ describe('character contributor index acquisition', () => {
       { 汤姆: [{ id: contributorId, name: '贡献者', contributionCount: 1 }] },
     ]);
     expect(createCachedMock).toHaveBeenCalledWith(
-      ['public-game-data-actions', 'character-contributor-index', 'v1'],
+      ['public-game-data-actions', 'character-contributor-index', 'v2', 'TJAI'],
       expect.any(Function),
       {
         revalidate: 60 * 60,
