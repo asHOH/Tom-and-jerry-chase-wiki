@@ -65,6 +65,11 @@ export default function ExternalLinksDisplay() {
       {EXTERNAL_LINK_GROUPS.map((group) => (
         <section key={group.title} className='space-y-3'>
           <h3 className='text-lg font-semibold text-gray-700 dark:text-gray-200'>{group.title}</h3>
+          {group.description ? (
+            <p className='mx-auto max-w-2xl text-sm text-gray-500 dark:text-gray-400'>
+              {group.description}
+            </p>
+          ) : null}
           <div className='flex flex-wrap justify-center gap-4'>
             {group.items.map((item) => {
               const isLinked = item.href !== undefined;

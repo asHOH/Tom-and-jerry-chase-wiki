@@ -8,6 +8,7 @@ type ExternalLinkItem = {
 
 export type ExternalLinkGroup = {
   title: string;
+  description?: string;
   hideDescriptions?: boolean;
   items: ExternalLinkItem[];
 };
@@ -33,7 +34,8 @@ export const EXTERNAL_LINK_GROUPS: ExternalLinkGroup[] = [
     ],
   },
   {
-    title: '网易官方资源',
+    title: '外部官方渠道',
+    description: '以下链接指向游戏相关的外部官方页面，相关页面与本网站不存在隶属或官方合作关系。',
     hideDescriptions: true,
     items: [
       {

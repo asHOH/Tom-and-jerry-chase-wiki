@@ -116,19 +116,6 @@ export const DISCLAIMER_CONTENT = {
   acknowledgements: generateAcknowledgements(),
 };
 
-// Generate plain text version for metadata
-export const DISCLAIMER_TEXT = [
-  DISCLAIMER_CONTENT.intro,
-  DISCLAIMER_CONTENT.privacy,
-  DISCLAIMER_CONTENT.copyright,
-  DISCLAIMER_CONTENT.thirdPartyMaterials,
-  DISCLAIMER_CONTENT.takedownPolicy,
-  ...Object.values(DISCLAIMER_CONTENT.acknowledgements).map(
-    (ack) =>
-      `${ack.prefix}${ack.creators.map((id) => CREATORS[id]?.name ?? id).join('、')}${ack.suffix}`
-  ),
-].join('\n');
-
 // Helper function to get ContentWriter contributors for a specific character
 export const getContentWritersByCharacter = (characterId: string): string[] => {
   return contributors
