@@ -69,9 +69,9 @@ docker compose up -d
 
 `scripts/ops/deploy_server.sh` 是推荐的 Linux 生产部署脚本，一次性执行拉取代码、安装依赖、构建，并在成功后重载 pm2。`scripts/ops/start_server.sh` 只负责运行时启动 `next start`，供 pm2 托管。特点：
 
-- **原地构建**: 需要重新构建时会先停止 pm2 站点进程，构建期间站点不可用，失败时不会自动回滚
+- **原地构建与恢复**: 需要重新构建时会先验证并保存当前可用版本，再停止 pm2 站点进程；构建期间站点不可用，候选版本失败时会自动尝试恢复已验证的上一版本
 - **环境配置**: 自动安装 NVM 与 Node.js；自动切换 npm 镜像源（npmmirror/官方）
-- **智能更新**: Git 拉取防超时；依赖输入未变化时跳过重复安装；代码、生产环境或 Node/npm 工具链变化时才重新构建
+- **智能更新**: Git 拉取防超时；依赖未变化时跳过重复安装
 - **运行托管**: pm2 只托管站点进程；`cloudflared` 单独作为系统服务运行
 
 ### 使用方法
@@ -101,7 +101,11 @@ docker compose up -d
    ./deploy_server.sh
    ```
 
-   需要重新构建时，脚本会先停止 pm2 站点进程，再清理并原地生成 `.next`，以免运行中的 Next.js 读取正在变化的构建输出。构建成功后，脚本会自动执行 `pm2 reload tjwiki --update-env` 并验证健康状态；如果构建失败，部署会以非零状态退出，站点进程可能保持停止。脚本目前不会自动保留或恢复上一版本，需排查失败原因后重新部署或另行恢复已知可用版本。
+4. 脚本技术细节（可忽略）
+
+   需要重新构建时，脚本会先验证当前 pm2 进程的健康状态、提交版本和构建输出，并保存该版本的提交号、`.next` 与生成的运行时公共文件，然后停止 pm2 站点进程并原地构建。构建成功后，pm2 会启动或重载 `tjwiki`、验证健康状态和提交版本，再清理临时备份。
+
+   如果候选版本在备份完成后的依赖安装、构建、启动或验证阶段失败，脚本会以非零状态退出，并自动尝试恢复上一源码提交、构建输出、生成的运行时公共文件和匹配的依赖，再重新启动并验证站点。自动恢复本身失败时仍需人工处理。构建和恢复期间站点不可用。
 
    依赖成功安装后，脚本会在 `node_modules` 中保存依赖输入指纹。`package.json`、`package-lock.json`、`.npmrc`、Node/npm 版本、平台架构及安装策略均未变化时，后续部署会跳过 `npm ci`。如需修复可能被手动修改或损坏的 `node_modules`，可强制重新安装：
 
@@ -111,7 +115,9 @@ docker compose up -d
 
    如果无法从远程仓库拉取 `develop`，部署会以非零状态退出。
 
-   重载后，脚本会同时检查本机 `/api/health` 的响应内容和 `/api/version` 返回的提交版本。可按需设置以下变量来检查经过反向代理或 CDN 的公开访问路径：
+5. 健康检查
+
+   部署后，脚本会同时检查本机 `/api/health` 的响应内容和 `/api/version` 返回的提交版本。可按需设置以下变量来检查经过反向代理或 CDN 的公开访问路径：
 
    ```bash
    PUBLIC_HEALTH_CHECK_URL=https://www.tjwiki.com/api/health \
@@ -121,7 +127,7 @@ docker compose up -d
 
    可通过 `HEALTH_CHECK_MAX_ATTEMPTS` 和 `HEALTH_CHECK_RETRY_DELAY_SECONDS` 调整验证次数与间隔。
 
-4. 配置 pm2 开机自启：
+6. 配置 pm2 开机自启：
 
    ```bash
    pm2 startup
@@ -150,47 +156,10 @@ cd Tom-and-jerry-chase-wiki
 
 ### 第 3 步 设置环境变量
 
-创建 `.env.local` 文件，填入以下内容（请替换为实际值）：
+[`.env.example`](./.env.example) 是部署环境变量示例，请复制为 `.env.local`，再按照文件内的注释替换需要启用的功能所对应的值：
 
 ```bash
-cat << EOF > .env.local
-# ------------------------------
-# 1. 核心功能开关 (推荐默认)
-# ------------------------------
-
-# 关闭反馈功能
-NEXT_PUBLIC_DISABLE_FEEDBACK_EMAIL=1
-
-# 关闭文章功能 (设为 1 则无需配置 Supabase)
-NEXT_PUBLIC_DISABLE_ARTICLES=1
-
-# ICP备案号（设置为已签发的准确备案号后，网站页脚会显示备案信息）
-# NEXT_PUBLIC_ICP_RECORD_NUMBER=your_issued_icp_record_number_here
-
-# ------------------------------
-# 2. Supabase 配置 (可选)
-# ------------------------------
-# 仅当 NEXT_PUBLIC_DISABLE_ARTICLES=0 时需要配置。
-# 如需启用文章功能（只读），请联系本站维护者获取生产环境的 URL 和 Publishable key。
-
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your_supabase_publishable_key
-
-# 服务端密钥 (考虑到安全风险，该密钥暂不开放)
-SUPABASE_SECRET_KEY=
-
-# 邮箱域名限制 (如需开放登录)
-NEXT_PUBLIC_SUPABASE_AUTH_USER_EMAIL_DOMAIN=email.tjwiki.com
-
-# ------------------------------
-# 3. 其他配置 (可选)
-# ------------------------------
-
-# 验证码服务 (防止滥用)
-# NEXT_PUBLIC_CAPTCHA_PROVIDER=hcaptcha
-# NEXT_PUBLIC_CAPTCHA_SITE_KEY=your_site_key
-# CAPTCHA_SECRET_KEY=your_secret_key
-EOF
+cp .env.example .env.local
 ```
 
 ### 第 4 步 安装依赖与构建
@@ -222,17 +191,9 @@ npm exec -- supabase db push --linked
 
 ## 进阶配置 (非 Vercel 部署)
 
-如需更高级的功能（版本显示、深色模式 Cookie 跨域、Analytics），请参考以下配置：
+如需启用版本显示、Analytics、ICP备案信息或 API 限流等可选功能，请以 [`.env.example`](./.env.example) 中的注释为准。
 
-1. **环境变量**
-   - 在构建阶段注入 `COMMIT_SHA`（或 `DEPLOY_COMMIT_SHA`）以保证 `/api/version` 返回准确版本信息。
-   - `DEPLOYMENT_ENVIRONMENT`（可选值 `development`/`preview`/`production`）标记运行环境；如不设置将回退为 `NODE_ENV`。
-   - 默认不加载 Vercel Analytics/Speed Insights。若需使用，将 `NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS` 设为 `1`。
-   - （可选）设置 `NEXT_PUBLIC_ICP_RECORD_NUMBER` 为已签发的ICP备案号，在网站页脚将备案号本身作为工信部备案管理系统链接。
-   - （可选，推荐）启用 API 防滥用限流：配置 `UPSTASH_REDIS_REST_URL` 与 `UPSTASH_REDIS_REST_TOKEN`（用于 `@upstash/redis` + `@upstash/ratelimit`）。未配置时将跳过限流。
-
-2. **安全头与缓存策略**
-   - `next.config.mjs` 已在运行时发送核心安全头（CSP、HSTS 等），请在目标平台（如 Netlify、Cloudflare、Nginx）继续配置静态资源头信息，保持与 `vercel.json` 一致的缓存策略。
+`next.config.ts` 已在运行时发送核心安全头（CSP、HSTS 等），请在目标平台（如 Netlify、Cloudflare、Nginx）继续配置静态资源头信息，保持与 `vercel.json` 一致的缓存策略。
 
 ## 可选 让别人用域名访问
 
