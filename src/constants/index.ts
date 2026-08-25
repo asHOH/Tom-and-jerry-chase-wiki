@@ -82,40 +82,46 @@ export const PROJECT_INFO = {
 // License information
 export const LICENSE_INFO = {
   title: '开源许可',
-  description: '本项目采用双重许可证：',
+  description: '本项目按内容类型使用不同许可证：',
   licenses: [
     {
       name: 'Creative Commons Attribution 4.0 International',
       shortName: 'CC BY 4.0',
       url: 'https://creativecommons.org/licenses/by/4.0/',
-      scope: '内容与文档',
-      additionalDescription: '使用时须署名原作者小曙光并链接到本项目的 GitHub 仓库',
+      scope: '本项目有权授权的原创数据与文档内容',
+      additionalDescription:
+        '第三方素材不在许可范围内；使用时请按许可证要求署名相关作者、链接许可证与本项目的 GitHub 仓库，并注明是否作出修改',
     },
     {
       name: 'GNU General Public License v3.0',
       shortName: 'GPL v3',
       url: 'https://www.gnu.org/licenses/gpl-3.0.html',
       scope: '源代码',
-      additionalDescription: '部署本网站者须公开完整的项目源代码',
+      additionalDescription: '分发本项目或其修改版本时，须遵守许可证规定的相应条件',
     },
   ],
 };
 
 // Structured disclaimer content - single source of truth
 export const DISCLAIMER_CONTENT = {
-  intro: '本网站为非盈利粉丝项目，仅供学习交流。',
-  policy: '本网站承诺永不收集任何用户数据、所有功能永久免费。',
+  intro: '本网站是独立维护的非官方玩家资料项目，仅供学习与交流。',
+  privacy:
+    '为提供账户、评论、反馈、通知、安全防护与站点分析等功能，本网站可能处理用户名、昵称、联系方式、IP 地址、用户代理、访问记录及用户主动提交的公开内容；启用的第三方服务也可能处理相关数据。具体处理情况取决于所启用的功能和部署环境。请勿提交不必要的敏感个人信息；如需查询、更正或删除相关信息，请通过本站提供的反馈或联系渠道联系维护者。',
   copyright:
-    '猫和老鼠（Tom and Jerry）角色版权归华纳兄弟娱乐公司（Warner Bros. Entertainment Inc.）所有。游戏素材版权归网易猫和老鼠手游所有。',
-  takedownPolicy: '若版权方提出要求，我们将立即调整。',
+    '本网站不代表 Warner Bros. Entertainment Inc.、Turner Entertainment Co.、网易或其他相关权利人，也不表示其认可、赞助或与本网站存在合作关系。Tom and Jerry、相关角色、名称、标识及游戏素材的权利归相应权利人所有。',
+  thirdPartyMaterials:
+    '本站部分页面可能展示第三方游戏画面、地图、图标及其他素材，用于相关内容的识别、说明和讨论。本网站不主张这些素材的所有权，不将其纳入本项目的开源许可，也不授予他人再使用许可。',
+  takedownPolicy:
+    '如您认为页面或素材涉及侵权，请通过本站提供的反馈或联系渠道提交具体链接、权利说明及必要的证明材料；维护者会在核查后按实际情况处理。',
   acknowledgements: generateAcknowledgements(),
 };
 
 // Generate plain text version for metadata
 export const DISCLAIMER_TEXT = [
   DISCLAIMER_CONTENT.intro,
-  DISCLAIMER_CONTENT.policy,
+  DISCLAIMER_CONTENT.privacy,
   DISCLAIMER_CONTENT.copyright,
+  DISCLAIMER_CONTENT.thirdPartyMaterials,
   DISCLAIMER_CONTENT.takedownPolicy,
   ...Object.values(DISCLAIMER_CONTENT.acknowledgements).map(
     (ack) =>

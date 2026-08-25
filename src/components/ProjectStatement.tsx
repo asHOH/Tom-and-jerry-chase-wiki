@@ -2,7 +2,6 @@ import { PROJECT_STATEMENT_COPY } from '@/data/projectStatement';
 import Button from '@/components/ui/Button';
 import CollapseCard from '@/components/ui/CollapseCard';
 import { InlineExternalLink } from '@/components/ui/InlineExternalLink';
-import Tooltip from '@/components/ui/Tooltip';
 import Link from '@/components/Link';
 import { CREATORS, DISCLAIMER_CONTENT, LICENSE_INFO, PROJECT_INFO } from '@/constants';
 
@@ -48,7 +47,7 @@ const renderCreatorLinks = (creatorIds: readonly string[]) => {
 };
 
 export const ProjectStatement = ({ onFeedbackClick }: ProjectStatementProps) => {
-  const { projectInfo, acknowledgements, legal } = PROJECT_STATEMENT_COPY;
+  const { projectInfo, acknowledgements, privacy, legal } = PROJECT_STATEMENT_COPY;
 
   return (
     <div className='space-y-4 text-left'>
@@ -95,7 +94,6 @@ export const ProjectStatement = ({ onFeedbackClick }: ProjectStatementProps) => 
           {projectInfo.description.afterFeedback}
         </p>
         <p className='mt-2 text-gray-700 dark:text-gray-300'>{DISCLAIMER_CONTENT.intro}</p>
-        <p className='mt-2 text-gray-700 dark:text-gray-300'>{DISCLAIMER_CONTENT.policy}</p>
       </section>
 
       {/* Acknowledgments */}
@@ -117,6 +115,18 @@ export const ProjectStatement = ({ onFeedbackClick }: ProjectStatementProps) => 
         </section>
       </CollapseCard>
 
+      <CollapseCard
+        title={privacy.title}
+        size='xs'
+        titleClassName='bg-transparent [&_span]:text-base'
+        className='p-4 text-sm text-gray-700 dark:text-gray-300'
+      >
+        <section aria-label={privacy.ariaLabel} className='leading-6'>
+          <h3 className='sr-only'>{privacy.title}</h3>
+          <p>{DISCLAIMER_CONTENT.privacy}</p>
+        </section>
+      </CollapseCard>
+
       {/* Real Disclaimers & Licenses */}
       <CollapseCard
         title={legal.title}
@@ -129,12 +139,9 @@ export const ProjectStatement = ({ onFeedbackClick }: ProjectStatementProps) => 
           {/* Copyright information */}
           <section aria-label={legal.copyright.ariaLabel} className='leading-6'>
             <h4 className='sr-only'>{legal.headings.copyright}</h4>
-            <p>
-              <Tooltip content={legal.copyright.brandTooltip}>{legal.copyright.brandLabel}</Tooltip>
-              {legal.copyright.textPrefix}
-              <Tooltip content={legal.copyright.ownerTooltip}>华纳兄弟娱乐公司</Tooltip>
-              {legal.copyright.textSuffix}
-            </p>
+            <p>{DISCLAIMER_CONTENT.copyright}</p>
+            <h4 className='sr-only'>{legal.headings.thirdPartyMaterials}</h4>
+            <p className='mt-1'>{DISCLAIMER_CONTENT.thirdPartyMaterials}</p>
             <p className='mt-1'>{DISCLAIMER_CONTENT.takedownPolicy}</p>
           </section>
 

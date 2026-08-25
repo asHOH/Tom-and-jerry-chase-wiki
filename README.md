@@ -164,27 +164,7 @@ npm run analyze         # 包分析
 └── package.json        # 项目依赖与脚本
 ```
 
-## 📄 版权与许可
-
-- **代码**: [GPL-3.0](./LICENSE-GPL) 许可。二次开发须以相同的许可证开源。
-- **数据和文档内容**: [CC BY 4.0](./LICENSE-CC-BY) 许可。使用时请署名原作者 **asHOH** 并链接到本仓库。
-- **第三方素材**: 保留其各自的许可证；来源、适用范围和许可证副本见 [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md)。这些许可证不改变本项目代码、数据或文档的上述许可方式。
-
-**注意**: 《猫和老鼠手游》素材的版权见[免责声明](#️-免责声明)。
-
-## ⚠️ 免责声明
-
-本网站为非盈利粉丝项目，仅供学习交流。
-
-**🔒 隐私承诺：** 永不收集任何用户数据。
-
-**💰 免费承诺：** 所有功能永久免费。
-
-猫和老鼠（Tom and Jerry）角色版权归华纳兄弟娱乐公司（Warner Bros. Entertainment Inc.）所有。游戏素材版权归网易猫和老鼠手游所有。
-
-若版权方提出要求，我们将立即调整。
-
-**特别鸣谢:**
+## 🙏 特别鸣谢
 
 <!-- prettier-ignore -->
 - [追风汤姆](https://space.bilibili.com/3493135485241940)、[隔壁老米LM](https://space.bilibili.com/3493090618771682)、[音乐家杰瑞](https://github.com/ConductorJerry)、[梦回\_淦德蒸蚌](https://space.bilibili.com/1193776217)、[是莫莫喵](https://space.bilibili.com/443541296)、如梦、[是红豆嗷](https://space.bilibili.com/515297471) 提供测试数据
@@ -192,6 +172,28 @@ npm run analyze         # 包分析
 - [海阔天空](https://github.com/3swordman)、[音乐家杰瑞](https://github.com/ConductorJerry) 进行项目开发
 - [海阔天空](https://github.com/3swordman)、[追风汤姆](https://space.bilibili.com/3493135485241940)、[隔壁老米LM](https://space.bilibili.com/3493090618771682)、[音乐家杰瑞](https://github.com/ConductorJerry)、[雨狼嗷嗷](https://space.bilibili.com/3546721078479411)、[爱你不慎走安详](https://space.bilibili.com/3493083362625926)、[虚拟未来](https://space.bilibili.com/489570540)、[人畜有害的白菜](https://space.bilibili.com/3494366331013311)、[SYSTEM\_CPYTHON](https://space.bilibili.com/2060407817)、[夜空乄浩瀚](https://space.bilibili.com/3546658333788386)、[追风汤姆Official](https://space.bilibili.com/1060009579)、[-无尽炽羽-](https://space.bilibili.com/3493104889891012)、[北雀](https://space.bilibili.com/510324311)、一个气球君、[樱鹜ying](https://space.bilibili.com/1441596139)、你小睿大帝、[大水将军](https://space.bilibili.com/1466875723)、[冰美式](https://space.bilibili.com/439320147)、[饮泉思源](https://zh.moegirl.org.cn/User:Yqsychzs)、[睡亿夏](https://space.bilibili.com/1350743315)、[港鸽](https://space.bilibili.com/431678062)、[若梦](https://space.bilibili.com/3537122405386648)、生煎包勇闯猫鼠、[祈风盼陌上花开](https://space.bilibili.com/3493133927057609)、[\_1322\_](https://space.bilibili.com/508985250)、dream、想&nbsp;&nbsp;笑、人偶、[青城落梦](https://space.bilibili.com/1183463489)、长河落日、豆浆、迷者很无聊、[HZZHD](https://space.bilibili.com/3493130452076692)、小郑、瘦宅、[五彩斑斓的铅](https://space.bilibili.com/2010889930)、[乐善好施陈阿姨](https://space.bilibili.com/418408689)、秋雨绵绵、无敌猫虎大王wy、如梦if、[丷小天丷](https://space.bilibili.com/3546770502060350)、sunny、[韶风愿の恶魔泰猫](https://space.bilibili.com/1945435633)、戍孝 撰写角色文案
 
----
-
 **再次感谢所有为项目作出贡献的玩家和开发者！** 🎮
+
+## 📄 版权与许可
+
+- **代码**: [GPL-3.0](./LICENSE-GPL) 许可。
+- **本项目有权授权的原创数据与文档内容**: [CC BY 4.0](./LICENSE-CC-BY) 许可；使用时请按许可证要求署名相关作者、链接许可证与本仓库，并注明是否作出修改。
+- **第三方开源素材**: 保留其各自的许可证；已收录素材的来源、适用范围和许可证副本见 [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md)。
+
+《猫和老鼠手游》的角色、名称、标识、画面、地图、图标及其他游戏素材不在上述开源许可范围内，相关权利归相应权利人所有。
+
+## ⚠️ 免责声明
+
+本网站是独立维护的非官方玩家资料项目，仅供学习与交流。
+
+### 隐私
+
+为提供账户、评论、反馈、通知、安全防护与站点分析等功能，本网站可能处理用户名、昵称、联系方式、IP 地址、用户代理、访问记录及用户主动提交的公开内容；启用的第三方服务也可能处理相关数据。具体处理情况取决于所启用的功能和部署环境。请勿提交不必要的敏感个人信息；如需查询、更正或删除相关信息，请通过本站提供的反馈或联系渠道联系维护者。
+
+### 知识产权与非关联声明
+
+本网站不代表 Warner Bros. Entertainment Inc.、Turner Entertainment Co.、网易或其他相关权利人，也不表示其认可、赞助或与本网站存在合作关系。Tom and Jerry、相关角色、名称、标识及游戏素材的权利归相应权利人所有。
+
+本站部分页面可能展示第三方游戏画面、地图、图标及其他素材，用于相关内容的识别、说明和讨论。本网站不主张这些素材的所有权，不将其纳入本项目的开源许可，也不授予他人再使用许可。
+
+如您认为页面或素材涉及侵权，请通过本站提供的反馈或联系渠道提交具体链接、权利说明及必要的证明材料；维护者会在核查后按实际情况处理。
