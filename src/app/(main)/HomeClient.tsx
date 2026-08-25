@@ -29,6 +29,7 @@ export default function HomeContentClient({ description, hasServiceKey }: Props)
   const changeLogsRef = useRef<ChangeLogsRef>(null);
   const { nickname } = useUser();
   const isMobile = useMobile();
+  const isFeedbackEnabled = env.NEXT_PUBLIC_DISABLE_FEEDBACK_EMAIL !== '1';
 
   // Double-click on 网站说明 now only triggers login dialog if not logged in
   // Edit mode is now controlled via ?edit=1 URL param on individual pages
@@ -94,7 +95,11 @@ export default function HomeContentClient({ description, hasServiceKey }: Props)
           网站说明
         </h2>
         <div className='mx-auto max-w-2xl px-2 py-3 text-gray-600 sm:px-4 dark:text-gray-300'>
-          <ProjectStatement onFeedbackClick={() => feedbackSectionRef.current?.openFeedback()} />
+          <ProjectStatement
+            {...(isFeedbackEnabled
+              ? { onFeedbackClick: () => feedbackSectionRef.current?.openFeedback() }
+              : {})}
+          />
           <a
             href={QQ_GROUP_URL}
             target='_blank'
