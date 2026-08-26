@@ -594,14 +594,6 @@ export default function TabNavigation() {
                       </li>
                       <li>
                         <Link
-                          href={getUserProfileHref(nickname, { tab: 'submissions' }) as Route}
-                          className='hover:bg-control block px-4 py-2 text-sm text-gray-800 dark:text-gray-200'
-                        >
-                          我的贡献
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
                           href='/notifications/'
                           className='hover:bg-control flex items-center justify-between px-4 py-2 text-sm text-gray-800 dark:text-gray-200'
                         >

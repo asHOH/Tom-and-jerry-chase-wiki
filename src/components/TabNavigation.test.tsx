@@ -127,16 +127,13 @@ describe('TabNavigation', () => {
     expect(screen.getByRole('button', { name: '搜索' })).toBeInTheDocument();
   });
 
-  it('makes contribution status available from the user menu on game-data pages', () => {
+  it('renders the user menu without a contribution link', () => {
     mockNickname = '贡献者';
 
     render(<TabNavigation />);
     fireEvent.click(screen.getByRole('button', { name: '用户菜单' }));
 
-    expect(screen.getByRole('link', { name: '我的贡献' })).toHaveAttribute(
-      'href',
-      '/users/%E8%B4%A1%E7%8C%AE%E8%80%85?tab=submissions'
-    );
+    expect(screen.queryByRole('link', { name: '我的贡献' })).not.toBeInTheDocument();
     expect(screen.getByRole('link', { name: '设置' })).toHaveAttribute('href', '/settings');
   });
 
