@@ -116,6 +116,7 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
           }
         >
           <SingleItemListEditor
+            actionPath={`${buffName}.source`}
             items={sourceItems}
             itemLabel='状态来源'
             onChange={(items) => {

@@ -7,6 +7,7 @@ import { useToast } from '@/context/ToastContext';
 import type { FactionId, SingleItemOrGroup, Trait, TraitGroup } from '@/data/types';
 import Button from '@/components/ui/Button';
 import { FormInput, FormSelect, FormTextarea } from '@/components/ui/FormControls';
+import { PendingActionWarningBoundary } from '@/components/ui/PendingActionWarning';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 
 const ITEM_TYPE_OPTIONS = [
@@ -192,124 +193,126 @@ function TraitCard({
   };
 
   return (
-    <details className='border-border bg-surface-raised group rounded-xl border shadow-sm'>
-      <summary className='flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 select-none'>
-        <span className='min-w-0 truncate font-semibold'>{traitId}</span>
-        <span className='text-muted-foreground line-clamp-1 min-w-0 flex-1 text-right text-sm'>
-          {trait.description || '尚未填写描述'}
-        </span>
-      </summary>
-      <div className='border-border space-y-5 border-t p-4'>
-        <div className='grid gap-4 md:grid-cols-[minmax(0,1fr)_12rem_auto]'>
-          <label className='space-y-1 text-sm font-medium'>
-            <span>特性编号</span>
-            <FormInput
-              value={draftId}
-              invalid={!draftId.trim()}
-              onChange={(event) => setDraftId(event.target.value)}
-              onBlur={commitRename}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter') event.currentTarget.blur();
+    <PendingActionWarningBoundary descriptors={[{ op: 'set', path: traitId, hasNewValue: true }]}>
+      <details className='border-border bg-surface-raised group rounded-xl border shadow-sm'>
+        <summary className='flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 select-none'>
+          <span className='min-w-0 truncate font-semibold'>{traitId}</span>
+          <span className='text-muted-foreground line-clamp-1 min-w-0 flex-1 text-right text-sm'>
+            {trait.description || '尚未填写描述'}
+          </span>
+        </summary>
+        <div className='border-border space-y-5 border-t p-4'>
+          <div className='grid gap-4 md:grid-cols-[minmax(0,1fr)_12rem_auto]'>
+            <label className='space-y-1 text-sm font-medium'>
+              <span>特性编号</span>
+              <FormInput
+                value={draftId}
+                invalid={!draftId.trim()}
+                onChange={(event) => setDraftId(event.target.value)}
+                onBlur={commitRename}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter') event.currentTarget.blur();
+                }}
+              />
+            </label>
+            <label className='space-y-1 text-sm font-medium'>
+              <span>拆解时排除阵营</span>
+              <FormSelect
+                value={trait.excludeFactionId ?? ''}
+                onChange={(event) => {
+                  const value = event.target.value;
+                  if (value === 'cat' || value === 'mouse') trait.excludeFactionId = value;
+                  else delete trait.excludeFactionId;
+                }}
+              >
+                <option value=''>不排除</option>
+                <option value='cat'>猫阵营</option>
+                <option value='mouse'>鼠阵营</option>
+              </FormSelect>
+            </label>
+            <Button
+              variant='danger'
+              size='sm'
+              className='self-end'
+              leadingIcon={<TrashIcon className='h-4 w-4' />}
+              onClick={() => {
+                if (window.confirm(`确认删除特性 ${traitId} 吗?`)) delete traits[traitId];
+              }}
+            >
+              删除特性
+            </Button>
+          </div>
+
+          <label className='block space-y-1 text-sm font-medium'>
+            <span>描述</span>
+            <FormTextarea
+              rows={4}
+              value={trait.description}
+              invalid={!trait.description.trim()}
+              onChange={(event) => {
+                trait.description = event.target.value;
               }}
             />
           </label>
-          <label className='space-y-1 text-sm font-medium'>
-            <span>拆解时排除阵营</span>
-            <FormSelect
-              value={trait.excludeFactionId ?? ''}
-              onChange={(event) => {
-                const value = event.target.value;
-                if (value === 'cat' || value === 'mouse') trait.excludeFactionId = value;
-                else delete trait.excludeFactionId;
-              }}
-            >
-              <option value=''>不排除</option>
-              <option value='cat'>猫阵营</option>
-              <option value='mouse'>鼠阵营</option>
-            </FormSelect>
-          </label>
-          <Button
-            variant='danger'
-            size='sm'
-            className='self-end'
-            leadingIcon={<TrashIcon className='h-4 w-4' />}
-            onClick={() => {
-              if (window.confirm(`确认删除特性 ${traitId} 吗?`)) delete traits[traitId];
-            }}
-          >
-            删除特性
-          </Button>
-        </div>
 
-        <label className='block space-y-1 text-sm font-medium'>
-          <span>描述</span>
-          <FormTextarea
-            rows={4}
-            value={trait.description}
-            invalid={!trait.description.trim()}
-            onChange={(event) => {
-              trait.description = event.target.value;
-            }}
-          />
-        </label>
+          <section className='space-y-2'>
+            <h3 className='font-semibold'>关联成员</h3>
+            <TraitGroupEditor group={trait.group} />
+          </section>
 
-        <section className='space-y-2'>
-          <h3 className='font-semibold'>关联成员</h3>
-          <TraitGroupEditor group={trait.group} />
-        </section>
-
-        <section className='space-y-3'>
-          <div className='flex items-center justify-between gap-3'>
-            <h3 className='font-semibold'>特殊情况</h3>
-            <Button
-              variant='secondary'
-              size='sm'
-              leadingIcon={<PlusIcon className='h-4 w-4' />}
-              onClick={() => {
-                trait.spacialCase ??= [];
-                trait.spacialCase.push({ description: '', group: [] });
-              }}
-            >
-              添加特殊情况
-            </Button>
-          </div>
-          {trait.spacialCase?.map((specialCase, specialCaseIndex) => (
-            <div
-              key={specialCaseIndex}
-              className='border-border bg-surface space-y-3 rounded-xl border p-3'
-            >
-              <div className='flex items-center justify-between gap-3'>
-                <span className='text-sm font-medium'>特殊情况 {specialCaseIndex + 1}</span>
-                <Button
-                  variant='danger'
-                  size='sm'
-                  onClick={() => {
-                    trait.spacialCase?.splice(specialCaseIndex, 1);
-                    if (trait.spacialCase?.length === 0) delete trait.spacialCase;
-                  }}
-                >
-                  删除
-                </Button>
-              </div>
-              <FormTextarea
-                rows={3}
-                aria-label={`特殊情况 ${specialCaseIndex + 1} 描述`}
-                placeholder='特殊情况描述'
-                value={specialCase.description}
-                invalid={!specialCase.description.trim()}
-                onChange={(event) => {
-                  specialCase.description = event.target.value;
+          <section className='space-y-3'>
+            <div className='flex items-center justify-between gap-3'>
+              <h3 className='font-semibold'>特殊情况</h3>
+              <Button
+                variant='secondary'
+                size='sm'
+                leadingIcon={<PlusIcon className='h-4 w-4' />}
+                onClick={() => {
+                  trait.spacialCase ??= [];
+                  trait.spacialCase.push({ description: '', group: [] });
                 }}
-              />
-              <TraitGroupEditor group={specialCase.group} />
+              >
+                添加特殊情况
+              </Button>
             </div>
-          ))}
-          {!trait.spacialCase?.length ? (
-            <p className='text-muted-foreground text-sm'>暂无特殊情况。</p>
-          ) : null}
-        </section>
-      </div>
-    </details>
+            {trait.spacialCase?.map((specialCase, specialCaseIndex) => (
+              <div
+                key={specialCaseIndex}
+                className='border-border bg-surface space-y-3 rounded-xl border p-3'
+              >
+                <div className='flex items-center justify-between gap-3'>
+                  <span className='text-sm font-medium'>特殊情况 {specialCaseIndex + 1}</span>
+                  <Button
+                    variant='danger'
+                    size='sm'
+                    onClick={() => {
+                      trait.spacialCase?.splice(specialCaseIndex, 1);
+                      if (trait.spacialCase?.length === 0) delete trait.spacialCase;
+                    }}
+                  >
+                    删除
+                  </Button>
+                </div>
+                <FormTextarea
+                  rows={3}
+                  aria-label={`特殊情况 ${specialCaseIndex + 1} 描述`}
+                  placeholder='特殊情况描述'
+                  value={specialCase.description}
+                  invalid={!specialCase.description.trim()}
+                  onChange={(event) => {
+                    specialCase.description = event.target.value;
+                  }}
+                />
+                <TraitGroupEditor group={specialCase.group} />
+              </div>
+            ))}
+            {!trait.spacialCase?.length ? (
+              <p className='text-muted-foreground text-sm'>暂无特殊情况。</p>
+            ) : null}
+          </section>
+        </div>
+      </details>
+    </PendingActionWarningBoundary>
   );
 }
 

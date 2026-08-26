@@ -94,12 +94,14 @@ describe('EditModePageShell', () => {
       { wrapper: createWrapper(false) }
     );
 
-    expect(mockUsePageEditMode).toHaveBeenCalledWith({
-      entityType: 'items',
-      entityId: 'fork',
-      showToast: mockInfo,
-      onPublishSuccess: mockShowSubmissionFeedback,
-    });
+    expect(mockUsePageEditMode).toHaveBeenCalledWith(
+      expect.objectContaining({
+        entityType: 'items',
+        entityId: 'fork',
+        showToast: mockInfo,
+        onPublishSuccess: mockShowSubmissionFeedback,
+      })
+    );
     expect(screen.getByText('content')).toBeInTheDocument();
     expect(container.firstElementChild).toHaveClass('mx-auto', 'w-full', 'max-w-7xl');
     expect(screen.queryByRole('main')).not.toBeInTheDocument();

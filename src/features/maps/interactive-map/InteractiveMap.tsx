@@ -762,6 +762,7 @@ export default function InteractiveMap({
 
       {isEditMode && (
         <EditorPanel
+          pendingActionPath={`${mapName}.interactiveMap`}
           config={config}
           editorMode={editorMode}
           pointCategory={pointCategory}

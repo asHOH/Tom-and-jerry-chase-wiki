@@ -7,17 +7,20 @@ import {
 } from '@/data/types';
 import { FormInput, FormSelect } from '@/components/ui/FormControls';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
+import { PendingActionWarningBoundary } from '@/components/ui/PendingActionWarning';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 
 const SINGLE_ITEM_TYPES = Object.keys(SingleItemTypeChineseNameList) as SingleItemTypeName[];
 
 type SingleItemListEditorProps = {
+  actionPath?: string;
   items: readonly Readonly<SingleItem>[];
   onChange: (items: SingleItem[]) => void;
   itemLabel: string;
 };
 
 export default function SingleItemListEditor({
+  actionPath,
   items,
   onChange,
   itemLabel,
@@ -30,7 +33,7 @@ export default function SingleItemListEditor({
     );
   };
 
-  return (
+  const content = (
     <div className='mt-1 space-y-2'>
       {items.map((item, index) => (
         <div
@@ -115,5 +118,15 @@ export default function SingleItemListEditor({
         <PlusIcon className={getIconButtonIconClassName('sm')} aria-hidden='true' />
       </IconButton>
     </div>
+  );
+
+  return actionPath ? (
+    <PendingActionWarningBoundary
+      descriptors={[{ op: 'set', path: actionPath, hasNewValue: true }]}
+    >
+      {content}
+    </PendingActionWarningBoundary>
+  ) : (
+    content
   );
 }

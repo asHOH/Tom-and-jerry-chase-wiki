@@ -20,6 +20,10 @@ import {
   sortDraftSummaryItems,
   type DraftSummaryItem,
 } from '@/lib/edit/editModeDrafts';
+import type {
+  PendingActionOverlapResponse,
+  PendingActionOverlapSummary,
+} from '@/lib/gameData/pendingActionAwarenessTypes';
 import { getPublishErrorMessage } from '@/lib/gameData/publishErrorMessage';
 import {
   getGameDataSubmitOutcomeFromResults,
@@ -30,6 +34,7 @@ import {
 } from '@/lib/gameData/submitMode';
 import { storage } from '@/lib/localStorage';
 import { useContributionSubmissionFeedback } from '@/hooks/useContributionSubmissionFeedback';
+import type { PendingActionAwarenessSource } from '@/context/PendingActionAwarenessContext';
 import { useToast } from '@/context/ToastContext';
 import type { Json } from '@/data/database.types';
 
@@ -39,10 +44,14 @@ type RelationMatrixEditModeResult = {
   draftInfo: { actionCount: number } | null;
   draftsSummary: DraftSummaryItem[];
   advancedSubmit: GameDataAdvancedSubmit;
+  pendingAwarenessUnavailable: boolean;
+  pendingDraftSummary: PendingActionOverlapSummary | null;
+  pendingOverlap: PendingActionOverlapResponse | null;
   discardChanges: () => void;
   publishChanges: (
     message?: string,
     options?: {
+      pendingAcknowledgementToken?: string;
       submitMode?: GameDataSubmitMode;
     }
   ) => Promise<boolean>;
@@ -70,7 +79,9 @@ const resolveCharacterLabel = (
   return character?.name ?? character?.id ?? entityId;
 };
 
-export const useRelationMatrixEditMode = (): RelationMatrixEditModeResult => {
+export const useRelationMatrixEditMode = (
+  pendingAwareness?: PendingActionAwarenessSource
+): RelationMatrixEditModeResult => {
   const permissions = usePermissions();
   const { info, error } = useToast();
   const showSubmissionFeedback = useContributionSubmissionFeedback();
@@ -78,6 +89,7 @@ export const useRelationMatrixEditMode = (): RelationMatrixEditModeResult => {
   const characters = editRuntime?.stores.characters;
   const [isPublishing, setIsPublishing] = useState(false);
   const [actionCountTrigger, setActionCountTrigger] = useState(0);
+  const [pendingOverlap, setPendingOverlap] = useState<PendingActionOverlapResponse | null>(null);
 
   useEffect(() => {
     if (!characters) return;
@@ -109,6 +121,18 @@ export const useRelationMatrixEditMode = (): RelationMatrixEditModeResult => {
     void actionCountTrigger;
     return getPublishDraft().squashed;
   }, [actionCountTrigger, getPublishDraft]);
+  const flattenedSquashedActions = useMemo(
+    () => squashedRelationActions.flatMap((entry) => (Array.isArray(entry) ? entry : [entry])),
+    [squashedRelationActions]
+  );
+  const pendingDraftSummary = useMemo(
+    () => pendingAwareness?.summarizeActions(flattenedSquashedActions) ?? null,
+    [flattenedSquashedActions, pendingAwareness]
+  );
+
+  useEffect(() => {
+    setPendingOverlap(null);
+  }, [squashedRelationActions]);
 
   const isDirty = squashedRelationActions.length > 0;
   const draftInfo = isDirty ? { actionCount: squashedRelationActions.length } : null;
@@ -152,6 +176,7 @@ export const useRelationMatrixEditMode = (): RelationMatrixEditModeResult => {
     async (
       message?: string,
       options?: {
+        pendingAcknowledgementToken?: string;
         submitMode?: GameDataSubmitMode;
       }
     ): Promise<boolean> => {
@@ -173,7 +198,12 @@ export const useRelationMatrixEditMode = (): RelationMatrixEditModeResult => {
         const response = await fetch('/api/game-data-actions/publish-relations', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ entries: squashed, message, submitMode: options?.submitMode }),
+          body: JSON.stringify({
+            entries: squashed,
+            message,
+            pendingAcknowledgementToken: options?.pendingAcknowledgementToken,
+            submitMode: options?.submitMode,
+          }),
         });
 
         if (!response.ok) {
@@ -182,6 +212,17 @@ export const useRelationMatrixEditMode = (): RelationMatrixEditModeResult => {
             message?: string;
             requestId?: string;
           } | null;
+          if (
+            response.status === 409 &&
+            body?.error === 'pending_action_overlap' &&
+            typeof (body as { pendingAcknowledgementToken?: unknown })
+              .pendingAcknowledgementToken === 'string'
+          ) {
+            setPendingOverlap(body as PendingActionOverlapResponse);
+            await pendingAwareness?.refresh();
+            error('检测到与待审核改动重叠的字段，请确认风险后重试');
+            return false;
+          }
           throw new Error(getPublishErrorMessage(body, '发布失败'));
         }
         const body = (await response.json().catch(() => null)) as {
@@ -192,7 +233,9 @@ export const useRelationMatrixEditMode = (): RelationMatrixEditModeResult => {
         } | null;
 
         writeRemainingCharacterActions(remaining);
+        setPendingOverlap(null);
         setActionCountTrigger((current) => current + 1);
+        await pendingAwareness?.refresh();
         showSubmissionFeedback(
           getGameDataSubmitSuccessMessage(
             '关系修改',
@@ -208,7 +251,7 @@ export const useRelationMatrixEditMode = (): RelationMatrixEditModeResult => {
         setIsPublishing(false);
       }
     },
-    [characters, error, getPublishDraft, info, showSubmissionFeedback]
+    [characters, error, getPublishDraft, info, pendingAwareness, showSubmissionFeedback]
   );
 
   return {
@@ -217,6 +260,9 @@ export const useRelationMatrixEditMode = (): RelationMatrixEditModeResult => {
     draftInfo,
     draftsSummary,
     advancedSubmit,
+    pendingAwarenessUnavailable: pendingAwareness?.error !== undefined,
+    pendingDraftSummary,
+    pendingOverlap,
     discardChanges,
     publishChanges,
     getActionCount,

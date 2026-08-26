@@ -5,10 +5,16 @@ import { createPortal } from 'react-dom';
 
 import { cn } from '@/lib/design';
 import { requireActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
+import type { ActionDependencyDescriptor } from '@/lib/gameData/actionDependencies';
 import { CATEGORY_HINTS } from '@/lib/types';
 import { useEditMode } from '@/context/EditModeContext';
+import { usePendingFieldAwareness } from '@/context/PendingActionAwarenessContext';
 import TextWithHoverTooltips from '@/features/shared/components/TextWithHoverTooltips';
 import Button from '@/components/ui/Button';
+import {
+  getPendingActionWarningClassName,
+  PendingActionWarningIndicator,
+} from '@/components/ui/PendingActionWarning';
 
 import {
   deletePairedBraceAtCaret,
@@ -51,6 +57,10 @@ type EditableAutocompleteCandidate = {
   pinyin: string;
   pinyinInitials: string;
 };
+
+function editableFieldDescriptor(path: string): readonly ActionDependencyDescriptor[] {
+  return [{ op: 'set', path, hasNewValue: true }];
+}
 
 let editableAutocompleteCandidatesPromise: Promise<EditableAutocompleteCandidate[]> | null = null;
 let pinyinModulePromise: Promise<typeof import('pinyin-pro')> | null = null;
@@ -712,12 +722,14 @@ export function EditableCharactersField<TagName extends IntrinsicTagName>({
   factionId,
   isSingleLine = false,
   enableEdit = true,
+  className,
   ...rest
 }: EditableFieldProps<TagName> & { tag: TagName }) {
   'use no memo';
   const valueType: 'string' | 'number' =
     valueTypeProp ?? (typeof initialValue === 'number' ? 'number' : 'string');
-  const { readStoredValue, writeValue } = useEditableCharactersAdapter(path, factionId);
+  const { actionPath, readStoredValue, writeValue } = useEditableCharactersAdapter(path, factionId);
+  const pendingSummary = usePendingFieldAwareness(editableFieldDescriptor(actionPath));
 
   const {
     isEditMode,
@@ -747,7 +759,9 @@ export function EditableCharactersField<TagName extends IntrinsicTagName>({
         {React.createElement(
           tag,
           {
+            ...(rest as React.ComponentPropsWithoutRef<TagName>),
             contentEditable: 'plaintext-only',
+            className: cn(className, getPendingActionWarningClassName(pendingSummary)),
             suppressContentEditableWarning: true,
             onBlur: handleBlur,
             onInput: handleInput,
@@ -756,10 +770,10 @@ export function EditableCharactersField<TagName extends IntrinsicTagName>({
             onCompositionEnd: handleCompositionEnd,
             onKeyDown: handleKeyDown,
             ref: setNodeRef as unknown as React.Ref<HTMLElementTagNameMap[TagName]>,
-            ...(rest as React.ComponentPropsWithoutRef<TagName>),
           },
           String(content) || EMPTY_EDITABLE_PLACEHOLDER
         )}
+        <PendingActionWarningIndicator summary={pendingSummary} />
         {autocompleteOverlay}
       </>
     );
@@ -767,7 +781,7 @@ export function EditableCharactersField<TagName extends IntrinsicTagName>({
 
   return React.createElement(
     tag,
-    rest as React.ComponentPropsWithoutRef<TagName>,
+    { ...rest, className } as React.ComponentPropsWithoutRef<TagName>,
     <TextWithHoverTooltips text={String(initialValue)} />
   );
 }
@@ -781,12 +795,14 @@ export function EditableCardsField<TagName extends IntrinsicTagName>({
   onSave,
   isSingleLine = false,
   enableEdit = true,
+  className,
   ...rest
 }: EditableFieldProps<TagName> & { tag: TagName }) {
   'use no memo';
   const valueType: 'string' | 'number' =
     valueTypeProp ?? (typeof initialValue === 'number' ? 'number' : 'string');
-  const { readStoredValue, writeValue } = useEditableCardsAdapter(path as string);
+  const { actionPath, readStoredValue, writeValue } = useEditableCardsAdapter(path as string);
+  const pendingSummary = usePendingFieldAwareness(editableFieldDescriptor(actionPath));
 
   const {
     isEditMode,
@@ -816,7 +832,9 @@ export function EditableCardsField<TagName extends IntrinsicTagName>({
         {React.createElement(
           tag,
           {
+            ...(rest as React.ComponentPropsWithoutRef<TagName>),
             contentEditable: 'plaintext-only',
+            className: cn(className, getPendingActionWarningClassName(pendingSummary)),
             suppressContentEditableWarning: true,
             onBlur: handleBlur,
             onInput: handleInput,
@@ -825,10 +843,10 @@ export function EditableCardsField<TagName extends IntrinsicTagName>({
             onCompositionEnd: handleCompositionEnd,
             onKeyDown: handleKeyDown,
             ref: setNodeRef as unknown as React.Ref<HTMLElementTagNameMap[TagName]>,
-            ...(rest as React.ComponentPropsWithoutRef<TagName>),
           },
           String(content) || EMPTY_EDITABLE_PLACEHOLDER
         )}
+        <PendingActionWarningIndicator summary={pendingSummary} />
         {autocompleteOverlay}
       </>
     );
@@ -836,7 +854,7 @@ export function EditableCardsField<TagName extends IntrinsicTagName>({
 
   return React.createElement(
     tag,
-    rest as React.ComponentPropsWithoutRef<TagName>,
+    { ...rest, className } as React.ComponentPropsWithoutRef<TagName>,
     <TextWithHoverTooltips text={String(initialValue)} />
   );
 }
@@ -851,6 +869,7 @@ export function EditableRecordField<TagName extends IntrinsicTagName>({
   isSingleLine = false,
   enableEdit = true,
   scope,
+  className,
   ...rest
 }: EditableFieldProps<TagName> & {
   tag: TagName;
@@ -860,7 +879,11 @@ export function EditableRecordField<TagName extends IntrinsicTagName>({
 
   const valueType: 'string' | 'number' =
     valueTypeProp ?? (typeof initialValue === 'number' ? 'number' : 'string');
-  const { readStoredValue, writeValue } = useEditableRecordAdapter(scope, path as string);
+  const { actionPath, readStoredValue, writeValue } = useEditableRecordAdapter(
+    scope,
+    path as string
+  );
+  const pendingSummary = usePendingFieldAwareness(editableFieldDescriptor(actionPath));
 
   const {
     isEditMode,
@@ -890,7 +913,9 @@ export function EditableRecordField<TagName extends IntrinsicTagName>({
         {React.createElement(
           tag,
           {
+            ...(rest as React.ComponentPropsWithoutRef<TagName>),
             contentEditable: 'plaintext-only',
+            className: cn(className, getPendingActionWarningClassName(pendingSummary)),
             suppressContentEditableWarning: true,
             onBlur: handleBlur,
             onInput: handleInput,
@@ -899,10 +924,10 @@ export function EditableRecordField<TagName extends IntrinsicTagName>({
             onCompositionEnd: handleCompositionEnd,
             onKeyDown: handleKeyDown,
             ref: setNodeRef as unknown as React.Ref<HTMLElementTagNameMap[TagName]>,
-            ...(rest as React.ComponentPropsWithoutRef<TagName>),
           },
           String(content) || EMPTY_EDITABLE_PLACEHOLDER
         )}
+        <PendingActionWarningIndicator summary={pendingSummary} />
         {autocompleteOverlay}
       </>
     );
@@ -910,7 +935,7 @@ export function EditableRecordField<TagName extends IntrinsicTagName>({
 
   return React.createElement(
     tag,
-    rest as React.ComponentPropsWithoutRef<TagName>,
+    { ...rest, className } as React.ComponentPropsWithoutRef<TagName>,
     <TextWithHoverTooltips text={String(initialValue)} />
   );
 }

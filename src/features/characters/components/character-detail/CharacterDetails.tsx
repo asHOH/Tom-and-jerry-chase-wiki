@@ -30,6 +30,7 @@ import { editable } from '@/components/ui/editable';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
 import MotionButton from '@/components/ui/MotionButton';
 import PageTitle from '@/components/ui/PageTitle';
+import { PendingActionWarningBoundary } from '@/components/ui/PendingActionWarning';
 import { ChevronUpIcon, PlusIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 
@@ -245,6 +246,7 @@ export default function CharacterDetails({
                     <div>
                       <span className='text-xs text-gray-500 dark:text-gray-400'>角色别名</span>
                       <EditableStringList
+                        actionPath={`${localCharacter.id}.aliases`}
                         values={localCharacter.aliases ?? []}
                         itemLabel='角色别名'
                         onChange={(aliases) => {
@@ -257,6 +259,7 @@ export default function CharacterDetails({
                     <div>
                       <span className='text-xs text-gray-500 dark:text-gray-400'>关系标签</span>
                       <EditableCheckboxGroup
+                        actionPath={`${localCharacter.id}.counterTags`}
                         options={characterRelationTagPairs.flatMap((tag) => [
                           tag.counters,
                           tag.counteredBy,
@@ -332,9 +335,31 @@ export default function CharacterDetails({
                     />
                   )}
 
-                  <PositioningTagsSection tags={positioningTags} factionId={factionId} />
+                  <PendingActionWarningBoundary
+                    descriptors={[
+                      {
+                        op: 'set',
+                        path: `${localCharacter.id}.${
+                          factionId === 'cat' ? 'catPositioningTags' : 'mousePositioningTags'
+                        }`,
+                        hasNewValue: true,
+                      },
+                    ]}
+                  >
+                    <PositioningTagsSection tags={positioningTags} factionId={factionId} />
+                  </PendingActionWarningBoundary>
 
-                  <SpecialSkillsSection />
+                  <PendingActionWarningBoundary
+                    descriptors={[
+                      {
+                        op: 'set',
+                        path: `${localCharacter.id}.specialSkills`,
+                        hasNewValue: true,
+                      },
+                    ]}
+                  >
+                    <SpecialSkillsSection />
+                  </PendingActionWarningBoundary>
 
                   <div className='hidden'>
                     <CharacterSectionIndex />
@@ -351,7 +376,17 @@ export default function CharacterDetails({
             <div className='overflow-y-hidden md:w-2/3'>
               <SkillAllocationSection factionId={factionId} />
 
-              <KnowledgeCardManager factionId={factionId} />
+              <PendingActionWarningBoundary
+                descriptors={[
+                  {
+                    op: 'set',
+                    path: `${localCharacter.id}.knowledgeCardGroups`,
+                    hasNewValue: true,
+                  },
+                ]}
+              >
+                <KnowledgeCardManager factionId={factionId} />
+              </PendingActionWarningBoundary>
 
               <CharacterSection title='技能描述'>
                 <div className='space-y-6'>

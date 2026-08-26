@@ -9,6 +9,10 @@ import { usePageEditMode } from '@/hooks/usePageEditMode';
 import { useSearchParamEditMode } from '@/hooks/useSearchParamEditMode';
 import { EditModeContext, useEditMode } from '@/context/EditModeContext';
 import {
+  PendingActionAwarenessProvider,
+  usePendingActionAwarenessSource,
+} from '@/context/PendingActionAwarenessContext';
+import {
   PublishedEntityHistoryProvider,
   type PublishedEntityHistoryEntry,
 } from '@/context/PublishedEntityHistoryContext';
@@ -39,12 +43,22 @@ export default function EditModePageShell({
   const { exitEditMode } = useSearchParamEditMode();
   const { info } = useToast();
   const showSubmissionFeedback = useContributionSubmissionFeedback();
+  const editMode = useEditMode();
+  const { isEditMode, isPreviewMode, registerPublishedRevision } = editMode;
+  const pendingAwareness = usePendingActionAwarenessSource({
+    enabled: isEditMode && !isPreviewMode,
+    entityType,
+    ...(entityId.trim() ? { entityKey: entityId } : {}),
+  });
   const {
     isDirty,
     isPublishing,
     draftInfo,
     draftsSummary,
     advancedSubmit,
+    pendingAwarenessUnavailable,
+    pendingDraftSummary,
+    pendingOverlap,
     discardChanges,
     publishChanges,
     getActionCount,
@@ -53,9 +67,8 @@ export default function EditModePageShell({
     entityId,
     showToast: info,
     onPublishSuccess: showSubmissionFeedback,
+    pendingAwareness,
   });
-  const editMode = useEditMode();
-  const { isEditMode, isPreviewMode, registerPublishedRevision } = editMode;
 
   useEffect(() => {
     if (!publishedRevision) return undefined;
@@ -75,6 +88,7 @@ export default function EditModePageShell({
     (
       message?: string,
       options?: {
+        pendingAcknowledgementToken?: string;
         submitMode?: GameDataSubmitMode;
       }
     ) => publishChanges(message, options),
@@ -92,7 +106,9 @@ export default function EditModePageShell({
   return (
     <>
       <EditModeContext value={editModeContextValue}>
-        {withPageShell ? <PageShell width='maximum'>{content}</PageShell> : content}
+        <PendingActionAwarenessProvider source={pendingAwareness}>
+          {withPageShell ? <PageShell width='maximum'>{content}</PageShell> : content}
+        </PendingActionAwarenessProvider>
       </EditModeContext>
       {isEditMode ? (
         <EditModeToolbar
@@ -102,6 +118,9 @@ export default function EditModePageShell({
           onDiscard={discardChanges}
           onPublish={handlePublish}
           advancedSubmit={advancedSubmit}
+          pendingAwarenessUnavailable={pendingAwarenessUnavailable}
+          pendingDraftSummary={pendingDraftSummary}
+          pendingOverlap={pendingOverlap}
           onExitEditMode={exitEditMode}
           entityName={entityName}
           draftInfo={draftInfo}

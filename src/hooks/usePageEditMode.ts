@@ -22,6 +22,10 @@ import {
   splitActionHistoryByEntity,
   type DraftSummaryItem,
 } from '@/lib/edit/editModeDrafts';
+import type {
+  PendingActionOverlapResponse,
+  PendingActionOverlapSummary,
+} from '@/lib/gameData/pendingActionAwarenessTypes';
 import {
   PUBLISHABLE_ENTITY_TYPES,
   type PublishableEntityType,
@@ -37,6 +41,7 @@ import {
 import { storage } from '@/lib/localStorage';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { useEditMode } from '@/context/EditModeContext';
+import type { PendingActionAwarenessSource } from '@/context/PendingActionAwarenessContext';
 import type { Json } from '@/data/database.types';
 
 export type PageEditModeOptions = {
@@ -46,6 +51,7 @@ export type PageEditModeOptions = {
   showToast?: (message: string, duration?: number) => void;
   /** Called with the user-facing message after a successful submission */
   onPublishSuccess?: (message: string) => void;
+  pendingAwareness?: PendingActionAwarenessSource;
 };
 
 export type PageEditModeResult = {
@@ -55,10 +61,14 @@ export type PageEditModeResult = {
   draftInfo: { actionCount: number } | null;
   draftsSummary: DraftSummaryItem[];
   advancedSubmit: GameDataAdvancedSubmit;
+  pendingAwarenessUnavailable: boolean;
+  pendingDraftSummary: PendingActionOverlapSummary | null;
+  pendingOverlap: PendingActionOverlapResponse | null;
   discardChanges: (options?: { showToast?: boolean; suppressSync?: boolean }) => void;
   publishChanges: (
     message?: string,
     options?: {
+      pendingAcknowledgementToken?: string;
       submitMode?: GameDataSubmitMode;
     }
   ) => Promise<boolean>;
@@ -96,7 +106,7 @@ function resolveDraftItemLabel(
  * Provides draft saving, publishing, and dirty state tracking for a specific entity.
  */
 export function usePageEditMode(options: PageEditModeOptions): PageEditModeResult {
-  const { entityType, entityId, showToast, onPublishSuccess } = options;
+  const { entityType, entityId, showToast, onPublishSuccess, pendingAwareness } = options;
   const permissions = usePermissions();
   const entityKey = entityId.trim();
   const { isEditMode: originalIsEditMode, isPreviewMode } = useEditMode();
@@ -107,6 +117,7 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
   const draftLoadedRef = useRef(false);
   const [draftInfo, setDraftInfo] = useState<PageEditModeResult['draftInfo']>(null);
   const [draftsSummary, setDraftsSummary] = useState<PageEditModeResult['draftsSummary']>([]);
+  const [pendingOverlap, setPendingOverlap] = useState<PendingActionOverlapResponse | null>(null);
   const isEditMode = originalIsEditMode && !isPreviewMode;
   const prevEditModeRef = useRef(isEditMode);
 
@@ -146,6 +157,18 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
     void _actionCountTrigger;
     return getPublishDraft().squashed;
   }, [_actionCountTrigger, getPublishDraft]);
+  const flattenedSquashedDraft = useMemo(
+    () => squashedDraft.flatMap((entry) => (Array.isArray(entry) ? entry : [entry])),
+    [squashedDraft]
+  );
+  const pendingDraftSummary = useMemo(
+    () => pendingAwareness?.summarizeActions(flattenedSquashedDraft) ?? null,
+    [flattenedSquashedDraft, pendingAwareness]
+  );
+
+  useEffect(() => {
+    setPendingOverlap(null);
+  }, [squashedDraft]);
 
   const isDirty = useMemo(() => {
     // Trigger re-evaluation when _actionCountTrigger changes
@@ -272,6 +295,7 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
     async (
       message?: string,
       options?: {
+        pendingAcknowledgementToken?: string;
         submitMode?: GameDataSubmitMode;
       }
     ): Promise<boolean> => {
@@ -301,6 +325,7 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
             entityType,
             entries: squashed,
             message,
+            pendingAcknowledgementToken: options?.pendingAcknowledgementToken,
             submitMode: options?.submitMode,
           }),
         });
@@ -311,6 +336,17 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
             message?: string;
             requestId?: string;
           } | null;
+          if (
+            res.status === 409 &&
+            body?.error === 'pending_action_overlap' &&
+            typeof (body as { pendingAcknowledgementToken?: unknown })
+              .pendingAcknowledgementToken === 'string'
+          ) {
+            setPendingOverlap(body as PendingActionOverlapResponse);
+            await pendingAwareness?.refresh();
+            if (showToast) showToast('检测到与待审核改动重叠的字段，请确认风险后重试');
+            return false;
+          }
           throw new Error(getPublishErrorMessage(body, '发布失败'));
         }
         const body = (await res.json().catch(() => null)) as {
@@ -329,7 +365,9 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
           }
         }
         setDraftInfo(null);
+        setPendingOverlap(null);
         setActionCountTrigger((prev) => prev + 1);
+        await pendingAwareness?.refresh();
 
         const successMessage = getGameDataSubmitSuccessMessage(
           '改动',
@@ -350,7 +388,7 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
         setIsPublishing(false);
       }
     },
-    [entityType, getPublishDraft, onPublishSuccess, showToast]
+    [entityType, getPublishDraft, onPublishSuccess, pendingAwareness, showToast]
   );
 
   return {
@@ -360,6 +398,9 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
     draftInfo,
     draftsSummary,
     advancedSubmit,
+    pendingAwarenessUnavailable: pendingAwareness?.error !== undefined,
+    pendingDraftSummary,
+    pendingOverlap,
     discardChanges,
     publishChanges,
     getActionCount,

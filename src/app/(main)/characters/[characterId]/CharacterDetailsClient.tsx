@@ -10,6 +10,10 @@ import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { usePageEditMode } from '@/hooks/usePageEditMode';
 import { useSearchParamEditMode } from '@/hooks/useSearchParamEditMode';
 import { EditModeContext, useEditMode } from '@/context/EditModeContext';
+import {
+  PendingActionAwarenessProvider,
+  usePendingActionAwarenessSource,
+} from '@/context/PendingActionAwarenessContext';
 import { PublishedEntityHistoryProvider } from '@/context/PublishedEntityHistoryContext';
 import { useToast } from '@/context/ToastContext';
 import { CharacterDetails } from '@/features/characters/components/character-detail';
@@ -24,6 +28,11 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
   const { info } = useToast();
   const showSubmissionFeedback = useContributionSubmissionFeedback();
   const currentCharacterId = characterId || props.character.id;
+  const pendingAwareness = usePendingActionAwarenessSource({
+    enabled: isEditMode && !isPreviewMode,
+    entityType: 'characters',
+    entityKey: currentCharacterId,
+  });
 
   // Page-level edit mode management
   const {
@@ -32,6 +41,9 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
     draftInfo,
     draftsSummary,
     advancedSubmit,
+    pendingAwarenessUnavailable,
+    pendingDraftSummary,
+    pendingOverlap,
     discardChanges,
     publishChanges,
     getActionCount,
@@ -40,6 +52,7 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
     entityId: currentCharacterId,
     showToast: info,
     onPublishSuccess: showSubmissionFeedback,
+    pendingAwareness,
   });
 
   // Keyboard navigation
@@ -54,6 +67,7 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
     (
       message?: string,
       options?: {
+        pendingAcknowledgementToken?: string;
         submitMode?: GameDataSubmitMode;
       }
     ) => publishChanges(message, options),
@@ -74,8 +88,22 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
     <>
       <PageShell width='maximum' className='min-h-screen'>
         <EditModeContext value={editModeContextValue}>
-          {props.publishedHistory ? (
-            <PublishedEntityHistoryProvider history={props.publishedHistory}>
+          <PendingActionAwarenessProvider source={pendingAwareness}>
+            {props.publishedHistory ? (
+              <PublishedEntityHistoryProvider history={props.publishedHistory}>
+                <CharacterDetails
+                  character={props.character}
+                  {...(props.contentWriters === undefined
+                    ? {}
+                    : { contentWriters: props.contentWriters })}
+                  {...(props.contentEditors === undefined
+                    ? {}
+                    : { contentEditors: props.contentEditors })}
+                >
+                  {props.children}
+                </CharacterDetails>
+              </PublishedEntityHistoryProvider>
+            ) : (
               <CharacterDetails
                 character={props.character}
                 {...(props.contentWriters === undefined
@@ -87,20 +115,8 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
               >
                 {props.children}
               </CharacterDetails>
-            </PublishedEntityHistoryProvider>
-          ) : (
-            <CharacterDetails
-              character={props.character}
-              {...(props.contentWriters === undefined
-                ? {}
-                : { contentWriters: props.contentWriters })}
-              {...(props.contentEditors === undefined
-                ? {}
-                : { contentEditors: props.contentEditors })}
-            >
-              {props.children}
-            </CharacterDetails>
-          )}
+            )}
+          </PendingActionAwarenessProvider>
         </EditModeContext>
       </PageShell>
 
@@ -114,6 +130,9 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
             onDiscard={discardChanges}
             onPublish={handlePublish}
             advancedSubmit={advancedSubmit}
+            pendingAwarenessUnavailable={pendingAwarenessUnavailable}
+            pendingDraftSummary={pendingDraftSummary}
+            pendingOverlap={pendingOverlap}
             onExitEditMode={exitEditMode}
             entityName={currentCharacterId}
             draftInfo={draftInfo}

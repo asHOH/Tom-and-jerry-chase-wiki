@@ -5,6 +5,7 @@ import { getGameActionResourceContexts } from '@/lib/auth/resourceContexts';
 import { getRequestIp } from '@/lib/blocks/server';
 import { candidateConflictResponse } from '@/lib/gameData/candidateConflictResponse';
 import { getGameDataNotificationDetails } from '@/lib/gameData/contributionDisplay';
+import { checkPendingActionAcknowledgement } from '@/lib/gameData/pendingActionAwarenessServer';
 import { PUBLISH_LIMITS } from '@/lib/gameData/publishLimits';
 import {
   preparePublishActionItems,
@@ -22,6 +23,7 @@ import {
   notifyPendingGameDataActionSubscribers,
   publishNotification,
 } from '@/lib/notificationUtils';
+import { hasSupabaseAdminConfig } from '@/lib/supabase/admin';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
 import type { Json } from '@/data/database.types';
 
@@ -35,9 +37,18 @@ function readSubmitMode(value: unknown): GameDataSubmitMode | undefined {
   return value;
 }
 
+function readPendingAcknowledgementToken(value: unknown): string | undefined {
+  if (value === undefined) return undefined;
+  if (typeof value !== 'string' || !/^v1:[a-f0-9]{64}$/.test(value)) {
+    throw new PublishPreparationError('invalid_shape');
+  }
+  return value;
+}
+
 function readActionItems(body: unknown): {
   items: UntrustedPublishActionItem[];
   message?: unknown;
+  pendingAcknowledgementToken?: string;
   submitMode?: GameDataSubmitMode;
 } {
   if (!isRecord(body)) throw new PublishPreparationError('invalid_shape');
@@ -46,6 +57,9 @@ function readActionItems(body: unknown): {
     : [{ entityType: body.entityType, entries: body.entries }];
   if (rawItems.length === 0) throw new PublishPreparationError('invalid_shape');
   const submitMode = readSubmitMode(body.submitMode);
+  const pendingAcknowledgementToken = readPendingAcknowledgementToken(
+    body.pendingAcknowledgementToken
+  );
 
   let entryCount = 0;
   const items = rawItems.map((item) => {
@@ -61,6 +75,7 @@ function readActionItems(body: unknown): {
   return {
     items,
     ...('message' in body ? { message: body.message } : {}),
+    ...(pendingAcknowledgementToken === undefined ? {} : { pendingAcknowledgementToken }),
     ...(submitMode === undefined ? {} : { submitMode }),
   };
 }
@@ -100,6 +115,24 @@ export async function POST(request: Request) {
       { request, blockAction: 'edit' }
     );
     if ('error' in resourceGuard) return resourceGuard.error;
+
+    if (hasSupabaseAdminConfig()) {
+      try {
+        const pendingOverlap = await checkPendingActionAcknowledgement({
+          prepared,
+          userId: guard.userId,
+          ...(untrusted.pendingAcknowledgementToken === undefined
+            ? {}
+            : { providedToken: untrusted.pendingAcknowledgementToken }),
+        });
+        if (pendingOverlap) {
+          return NextResponse.json(pendingOverlap, { status: 409 });
+        }
+      } catch (pendingError) {
+        console.warn('Pending game data action overlap check failed open:', pendingError);
+      }
+    }
+
     const results = await publishPreparedGameDataActions({
       actorId: guard.userId,
       clientIp: getRequestIp(request),

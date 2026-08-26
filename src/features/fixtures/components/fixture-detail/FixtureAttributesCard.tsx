@@ -139,6 +139,7 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
             <span className='text-sm whitespace-pre'>类型: </span>
             {isEditMode ? (
               <EditableCheckboxGroup
+                actionPath={`${fixtureName}.type`}
                 options={FIXTURE_TYPES}
                 selected={toFixtureTypeArray(effectiveFixture.type)}
                 minimumSelections={1}
@@ -183,6 +184,7 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
             <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
               <span className='text-lg font-bold whitespace-pre'>支持地图</span>
               <EditableStringList
+                actionPath={`${fixtureName}.supportedMaps`}
                 values={effectiveFixture.supportedMaps ?? []}
                 options={Object.keys(mapsSnapshot)}
                 itemLabel='支持地图'

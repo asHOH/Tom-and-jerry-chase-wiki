@@ -193,6 +193,7 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
             <span className='text-sm whitespace-pre'>类型: </span>
             {isEditMode ? (
               <EditableCheckboxGroup
+                actionPath={`${entityName}.entitytype`}
                 options={ENTITY_TYPES}
                 selected={toArray(effectiveEntity.entitytype)}
                 minimumSelections={1}
@@ -209,6 +210,7 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
             <span className='text-sm whitespace-pre'>标签: </span>
             {isEditMode ? (
               <EditableCheckboxGroup
+                actionPath={`${entityName}.entitytag`}
                 options={ENTITY_TAGS}
                 selected={toArray(effectiveEntity.entitytag)}
                 minimumSelections={1}
@@ -227,6 +229,7 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
             <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
               <span className='text-lg font-bold whitespace-pre'>归属者</span>
               <SingleItemListEditor
+                actionPath={`${entityName}.owner`}
                 items={ownerItems}
                 itemLabel='归属者'
                 onChange={(items) => {

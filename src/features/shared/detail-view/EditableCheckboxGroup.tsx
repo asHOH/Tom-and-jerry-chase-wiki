@@ -1,6 +1,9 @@
 'use client';
 
+import { PendingActionWarningBoundary } from '@/components/ui/PendingActionWarning';
+
 type EditableCheckboxGroupProps<Option extends string> = {
+  actionPath?: string;
   options: readonly Option[];
   selected: readonly Option[];
   onChange: (selected: Option[]) => void;
@@ -9,6 +12,7 @@ type EditableCheckboxGroupProps<Option extends string> = {
 };
 
 export default function EditableCheckboxGroup<Option extends string>({
+  actionPath,
   options,
   selected,
   onChange,
@@ -17,7 +21,7 @@ export default function EditableCheckboxGroup<Option extends string>({
 }: EditableCheckboxGroupProps<Option>) {
   const selectedSet = new Set(selected);
 
-  return (
+  const content = (
     <div className='flex flex-wrap gap-x-3 gap-y-1 text-xs'>
       {options.map((option) => {
         const checked = selectedSet.has(option);
@@ -41,5 +45,15 @@ export default function EditableCheckboxGroup<Option extends string>({
         );
       })}
     </div>
+  );
+
+  return actionPath ? (
+    <PendingActionWarningBoundary
+      descriptors={[{ op: 'set', path: actionPath, hasNewValue: true }]}
+    >
+      {content}
+    </PendingActionWarningBoundary>
+  ) : (
+    content
   );
 }

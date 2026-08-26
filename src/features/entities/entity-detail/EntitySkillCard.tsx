@@ -276,6 +276,7 @@ export default function EntitySkillCard({ skill, skillIndex }: SkillCardProps) {
           <div>
             <span className='text-xs text-gray-500 dark:text-gray-400'>技能别名</span>
             <EditableStringList
+              actionPath={`${entityName}.skills.${skillIndex}.aliases`}
               values={skill.aliases ?? []}
               itemLabel='技能别名'
               onChange={(aliases) => {

@@ -24,6 +24,7 @@ import type { EditableScope } from './editableTypes';
 type EditableRecordScope = Exclude<EditableScope, 'characters' | 'cards'>;
 
 type EditableStoreAdapter = {
+  actionPath: string;
   readStoredValue: () => string | number | undefined;
   writeValue: (value: string | number | undefined) => void;
 };
@@ -203,6 +204,10 @@ function writeNestedTargetValue(
   setNestedProperty(target.root, `${target.pathPrefix}.${path}`, value);
 }
 
+function getTargetActionPath(target: EditableWriteTarget, path: string): string {
+  return [target.pathPrefix, path].filter(Boolean).join('.');
+}
+
 export function useEditableCharactersAdapter(
   path: string,
   factionId?: string | undefined
@@ -256,7 +261,7 @@ export function useEditableCharactersAdapter(
     [factionId, handleSelectCharacter, path, target]
   );
 
-  return { readStoredValue, writeValue };
+  return { actionPath: getTargetActionPath(target, path), readStoredValue, writeValue };
 }
 
 export function useEditableCardsAdapter(path: string): EditableStoreAdapter {
@@ -287,7 +292,7 @@ export function useEditableCardsAdapter(path: string): EditableStoreAdapter {
     [path, target]
   );
 
-  return { readStoredValue, writeValue };
+  return { actionPath: getTargetActionPath(target, path), readStoredValue, writeValue };
 }
 
 export function useEditableRecordAdapter(
@@ -350,5 +355,5 @@ export function useEditableRecordAdapter(
     [scope, path, target]
   );
 
-  return { readStoredValue, writeValue };
+  return { actionPath: getTargetActionPath(target, path), readStoredValue, writeValue };
 }

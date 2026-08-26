@@ -9,6 +9,10 @@ import type { GameDataSubmitMode } from '@/lib/gameData/submitMode';
 import { useSearchParamEditMode } from '@/hooks/useSearchParamEditMode';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
+import {
+  PendingActionAwarenessProvider,
+  usePendingActionAwarenessSource,
+} from '@/context/PendingActionAwarenessContext';
 import { useToast } from '@/context/ToastContext';
 import {
   cards as staticCards,
@@ -178,18 +182,25 @@ export default function RelationsClient({
   const [columnCategory, setColumnCategory] = useState<RelationMatrixColumnCategory>('cat');
   const [matrixSize, setMatrixSize] = useState(DEFAULT_MATRIX_SIZE);
   const [selectedCell, setSelectedCell] = useState<RelationMatrixCellSelection | null>(null);
+  const canEditRelations = permissions.has('relation.update');
+  const isRelationEditMode = isEditMode && canEditRelations;
+  const pendingAwareness = usePendingActionAwarenessSource({
+    enabled: isRelationEditMode,
+    entityType: 'characters',
+  });
   const {
     isDirty,
     isPublishing,
     draftInfo,
     draftsSummary,
     advancedSubmit,
+    pendingAwarenessUnavailable,
+    pendingDraftSummary,
+    pendingOverlap,
     discardChanges,
     publishChanges,
     getActionCount,
-  } = useRelationMatrixEditMode();
-  const canEditRelations = permissions.has('relation.update');
-  const isRelationEditMode = isEditMode && canEditRelations;
+  } = useRelationMatrixEditMode(pendingAwareness);
   const coercedColumnCategory = coerceColumnCategory(rowFaction, columnCategory);
   const columnCategoryOptions = getLegalColumnCategories(rowFaction);
   const viewModel = useMemo(
@@ -277,40 +288,46 @@ export default function RelationsClient({
       }
       filtersClassName='max-w-5xl'
     >
-      <CharacterRelationsMatrix
-        viewModel={viewModel}
-        cellSize={matrixSize}
-        isEditMode={isRelationEditMode}
-        {...(isRelationEditMode ? { onCellSelect: handleCellSelect } : {})}
-      />
-      {isRelationEditMode ? (
-        <>
-          <RelationMatrixCellEditor
-            open={selectedCell !== null}
-            selection={selectedCell}
-            columnCategory={coercedColumnCategory}
-            onOpenChange={handleEditorOpenChange}
-          />
-          <EditModeToolbar
-            isDirty={isDirty}
-            actionCount={actionCount}
-            draftInfo={draftInfo}
-            draftsSummary={draftsSummary}
-            isTutorialEnabled
-            isPublishing={isPublishing}
-            onDiscard={discardChanges}
-            onPublish={(
-              message?: string,
-              options?: {
-                submitMode?: GameDataSubmitMode;
-              }
-            ) => publishChanges(message, options)}
-            advancedSubmit={advancedSubmit}
-            onExitEditMode={handleExitEditMode}
-            entityName='角色关系'
-          />
-        </>
-      ) : null}
+      <PendingActionAwarenessProvider source={pendingAwareness}>
+        <CharacterRelationsMatrix
+          viewModel={viewModel}
+          cellSize={matrixSize}
+          isEditMode={isRelationEditMode}
+          {...(isRelationEditMode ? { onCellSelect: handleCellSelect } : {})}
+        />
+        {isRelationEditMode ? (
+          <>
+            <RelationMatrixCellEditor
+              open={selectedCell !== null}
+              selection={selectedCell}
+              columnCategory={coercedColumnCategory}
+              onOpenChange={handleEditorOpenChange}
+            />
+            <EditModeToolbar
+              isDirty={isDirty}
+              actionCount={actionCount}
+              draftInfo={draftInfo}
+              draftsSummary={draftsSummary}
+              isTutorialEnabled
+              isPublishing={isPublishing}
+              onDiscard={discardChanges}
+              onPublish={(
+                message?: string,
+                options?: {
+                  pendingAcknowledgementToken?: string;
+                  submitMode?: GameDataSubmitMode;
+                }
+              ) => publishChanges(message, options)}
+              advancedSubmit={advancedSubmit}
+              pendingAwarenessUnavailable={pendingAwarenessUnavailable}
+              pendingDraftSummary={pendingDraftSummary}
+              pendingOverlap={pendingOverlap}
+              onExitEditMode={handleExitEditMode}
+              entityName='角色关系'
+            />
+          </>
+        ) : null}
+      </PendingActionAwarenessProvider>
     </CatalogPageShell>
   );
 }

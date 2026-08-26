@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { mutate as mutateSWR } from 'swr';
 
 import { formatCompactDateTime } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
@@ -94,6 +95,16 @@ const summarizeModerationFailures = (failures: ModerationFailure[]): string => {
     .join('；');
   const suffix = failures.length > 3 ? `；另有 ${failures.length - 3} 条失败` : '';
   return `${preview}${suffix}`;
+};
+
+const refreshPendingAwareness = async (): Promise<void> => {
+  try {
+    await mutateSWR(
+      (key) => typeof key === 'string' && key.startsWith('/api/game-data-actions/pending-targets?')
+    );
+  } catch {
+    // Pending awareness is advisory; moderation has already succeeded at this point.
+  }
 };
 
 const GameDataActionModerationPanel = ({
@@ -242,6 +253,7 @@ const GameDataActionModerationPanel = ({
         );
       }
       await mutatePendingActions();
+      await refreshPendingAwareness();
     } catch (failure) {
       error(getModerationFailureMessage(failure));
     } finally {
@@ -351,6 +363,7 @@ const GameDataActionModerationPanel = ({
       const successCount = result?.succeeded?.length ?? 0;
 
       await mutatePendingActions();
+      await refreshPendingAwareness();
 
       const actionLabel = action === 'approve' ? '批准' : '拒绝';
       if (failures.length === 0) {

@@ -17,6 +17,20 @@ type AnalyzedActionPath = {
 
 type ActionPathAnalysis = { success: true; value: AnalyzedActionPath } | { success: false };
 
+export type ActionDependencyDescriptor = Pick<Action, 'op' | 'path'> & {
+  hasNewValue: boolean;
+};
+
+export function toActionDependencyDescriptor(
+  action: Pick<Action, 'op' | 'path' | 'newValue'>
+): ActionDependencyDescriptor {
+  return {
+    op: action.op,
+    path: action.path,
+    hasNewValue: action.newValue !== undefined,
+  };
+}
+
 function isAtOrUnderPath(path: Path, parent: Path): boolean {
   if (path.length < parent.length) return false;
 
@@ -54,7 +68,7 @@ function structuralParentAffectsPath(analysis: AnalyzedActionPath, otherPath: Pa
   return !assignment || !entersDistinctCanonicalIndex(otherPath, assignment);
 }
 
-function analyzeActionPath(action: Action): ActionPathAnalysis {
+function analyzeActionPath(action: ActionDependencyDescriptor): ActionPathAnalysis {
   const parsed = parseActionPath(action.path);
   if (!parsed.success) return { success: false };
 
@@ -77,11 +91,7 @@ function analyzeActionPath(action: Action): ActionPathAnalysis {
       resolvedFinalSegment.value.key === 'length';
 
     if (isStructuralIndexOperation || isLengthSet) structuralArrayParent = parent;
-    if (
-      resolvedFinalSegment.value.kind === 'index' &&
-      action.op === 'set' &&
-      action.newValue !== undefined
-    ) {
+    if (resolvedFinalSegment.value.kind === 'index' && action.op === 'set' && action.hasNewValue) {
       directArrayIndexAssignment = {
         parent,
         index: resolvedFinalSegment.value.index,
@@ -95,7 +105,10 @@ function analyzeActionPath(action: Action): ActionPathAnalysis {
   };
 }
 
-export function areActionsOrderDependent(left: Action, right: Action): boolean {
+export function areActionDependencyDescriptorsOrderDependent(
+  left: ActionDependencyDescriptor,
+  right: ActionDependencyDescriptor
+): boolean {
   const leftAnalysis = analyzeActionPath(left);
   const rightAnalysis = analyzeActionPath(right);
   if (!leftAnalysis.success || !rightAnalysis.success) return true;
@@ -107,6 +120,13 @@ export function areActionsOrderDependent(left: Action, right: Action): boolean {
   return (
     structuralParentAffectsPath(leftAnalysis.value, rightPath) ||
     structuralParentAffectsPath(rightAnalysis.value, leftPath)
+  );
+}
+
+export function areActionsOrderDependent(left: Action, right: Action): boolean {
+  return areActionDependencyDescriptorsOrderDependent(
+    toActionDependencyDescriptor(left),
+    toActionDependencyDescriptor(right)
   );
 }
 

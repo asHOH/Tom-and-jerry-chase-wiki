@@ -10,6 +10,7 @@ import { useEditMode } from '@/context/EditModeContext';
 import { FactionId, SkillAllocation } from '@/data/types';
 import Card from '@/components/ui/Card';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
+import { PendingActionWarningBoundary } from '@/components/ui/PendingActionWarning';
 import { PlusIcon } from '@/components/icons/CommonIcons';
 
 import { usePublishedCharacter } from '../PublishedCharacterContext';
@@ -81,7 +82,9 @@ const SkillAllocationSection: React.FC<SkillAllocationSectionProps> = ({ faction
   }
 
   return (
-    <div>
+    <PendingActionWarningBoundary
+      descriptors={[{ op: 'set', path: `${character.id}.skillAllocations`, hasNewValue: true }]}
+    >
       <CharacterSection title='推荐加点'>
         <div className='space-y-3'>
           {skillAllocations && skillAllocations.length > 0
@@ -115,7 +118,7 @@ const SkillAllocationSection: React.FC<SkillAllocationSectionProps> = ({ faction
           )}
         </div>
       </CharacterSection>
-    </div>
+    </PendingActionWarningBoundary>
   );
 };
 

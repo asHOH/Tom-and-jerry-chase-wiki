@@ -1,14 +1,19 @@
 'use client';
 
-import { useCallback, useState, type CSSProperties } from 'react';
+import { useCallback, useMemo, useState, type CSSProperties } from 'react';
 
 import { cn } from '@/lib/design';
 import type { CategoryHint } from '@/lib/types';
+import { usePendingFieldAwareness } from '@/context/PendingActionAwarenessContext';
 import Button from '@/components/ui/Button';
+import {
+  getPendingActionWarningClassName,
+  PendingActionWarningIndicator,
+} from '@/components/ui/PendingActionWarning';
 import Tooltip from '@/components/ui/Tooltip';
 import GotoLink from '@/components/GotoLink';
 
-import { getLegalRelationKinds } from './relationMatrixEditing';
+import { getInverseCharacterRelationKind, getLegalRelationKinds } from './relationMatrixEditing';
 import {
   getRelationMatrixCell,
   type RelationMatrixCell,
@@ -186,8 +191,29 @@ const MatrixCell = ({
   onCellClick: (rowKey: string, columnKey: string) => void;
 }) => {
   const cell = getRelationMatrixCell(viewModel, row.key, column.key);
-  const isEditableCell =
-    isEditMode && getLegalRelationKinds(row, column, viewModel.columnCategory).length > 0;
+  const legalKinds = getLegalRelationKinds(row, column, viewModel.columnCategory);
+  const isEditableCell = isEditMode && legalKinds.length > 0;
+  const pendingDescriptors = useMemo(() => {
+    const descriptors = legalKinds.map((kind) => ({
+      op: 'set' as const,
+      path: `${row.id}.${kind}`,
+      hasNewValue: true,
+    }));
+    if (column.type === 'character') {
+      for (const kind of legalKinds) {
+        const inverseKind = getInverseCharacterRelationKind(kind);
+        if (inverseKind) {
+          descriptors.push({
+            op: 'set',
+            path: `${column.id}.${inverseKind}`,
+            hasNewValue: true,
+          });
+        }
+      }
+    }
+    return descriptors;
+  }, [column.id, column.type, legalKinds, row.id]);
+  const pendingSummary = usePendingFieldAwareness(pendingDescriptors);
   const isRowHighlighted = highlightedCell !== null && highlightedCell.rowKey === row.key;
   const isColumnHighlighted = highlightedCell !== null && highlightedCell.columnKey === column.key;
 
@@ -217,12 +243,14 @@ const MatrixCell = ({
           aria-label={`编辑 ${row.label} 与 ${column.label} 的关系`}
           className={cn(
             'flex items-center justify-center border-0 p-0 transition-opacity hover:opacity-85 focus:ring-2 focus:ring-blue-400 focus:outline-none',
+            getPendingActionWarningClassName(pendingSummary),
             cell && !cell.isMinor && RELATION_COLOR_CLASSES[cell.displayKind]
           )}
           style={sizing.cell}
           onClick={() => onCellSelect?.({ row, column, cell })}
         >
           {cell ? <CellMarker cell={cell} dotStyle={sizing.minorDot} /> : null}
+          <PendingActionWarningIndicator summary={pendingSummary} />
         </Button>
       ) : cell ? (
         <Tooltip

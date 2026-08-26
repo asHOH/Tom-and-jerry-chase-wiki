@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 
+import { cn } from '@/lib/design';
+import { usePendingFieldAwareness } from '@/context/PendingActionAwarenessContext';
 import type {
   InteractiveMapConfig,
   InteractiveMapPoint,
@@ -9,12 +11,17 @@ import type {
   SingleItemOrGroup,
 } from '@/data/types';
 import Button from '@/components/ui/Button';
+import {
+  getPendingActionWarningClassName,
+  PendingActionWarningIndicator,
+} from '@/components/ui/PendingActionWarning';
 
 import { CATEGORY_ICONS } from './constants';
 import { ALWAYS_VISIBLE_CATEGORIES, MAP_CATEGORY_LABELS } from './mapUtils';
 import type { EditorMode } from './types';
 
 type EditorPanelProps = {
+  pendingActionPath?: string;
   config: InteractiveMapConfig;
   editorMode: EditorMode;
   pointCategory: MapPointCategory;
@@ -53,10 +60,21 @@ export default function EditorPanel(props: EditorPanelProps) {
     (category) =>
       category === 'teleport' || ALWAYS_VISIBLE_CATEGORIES.has(category) || CATEGORY_ICONS[category]
   );
+  const pendingSummary = usePendingFieldAwareness(
+    props.pendingActionPath ? [{ op: 'set', path: props.pendingActionPath, hasNewValue: true }] : []
+  );
   return (
-    <div className='absolute bottom-3 left-3 z-600 max-h-[62%] w-72 overflow-auto rounded-lg bg-slate-950/95 p-3 text-sm text-white shadow-2xl'>
+    <div
+      className={cn(
+        'absolute bottom-3 left-3 z-600 max-h-[62%] w-72 overflow-auto rounded-lg bg-slate-950/95 p-3 text-sm text-white shadow-2xl',
+        getPendingActionWarningClassName(pendingSummary)
+      )}
+    >
       <div className='mb-3 flex items-center justify-between'>
-        <strong>地图标注</strong>
+        <strong>
+          地图标注
+          <PendingActionWarningIndicator summary={pendingSummary} />
+        </strong>
         <div className='flex gap-1'>
           <Button
             variant='unstyled'

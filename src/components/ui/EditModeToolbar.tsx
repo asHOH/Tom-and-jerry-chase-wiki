@@ -5,6 +5,10 @@ import { AnimatePresence, m, useDragControls, useReducedMotion } from 'motion/re
 import { createPortal } from 'react-dom';
 
 import { cn } from '@/lib/design';
+import type {
+  PendingActionOverlapResponse,
+  PendingActionOverlapSummary,
+} from '@/lib/gameData/pendingActionAwarenessTypes';
 import {
   getGameDataSubmitModeDescription,
   getGameDataSubmitModeLabel,
@@ -48,11 +52,15 @@ export interface EditModeToolbarProps {
   onPublish: (
     message?: string,
     options?: {
+      pendingAcknowledgementToken?: string;
       submitMode?: GameDataSubmitMode;
     }
   ) => Promise<boolean>;
   /** Advanced submit controls for temporary permission downgrade */
   advancedSubmit?: GameDataAdvancedSubmit;
+  pendingAwarenessUnavailable?: boolean;
+  pendingDraftSummary?: PendingActionOverlapSummary | null;
+  pendingOverlap?: PendingActionOverlapResponse | null;
   /** Called when user wants to exit edit mode */
   onExitEditMode: () => void;
   /** Entity display name for better UX */
@@ -70,6 +78,9 @@ export default function EditModeToolbar({
   onDiscard,
   onPublish,
   advancedSubmit,
+  pendingAwarenessUnavailable = false,
+  pendingDraftSummary = null,
+  pendingOverlap = null,
   onExitEditMode,
   entityName,
   isTutorialEnabled = false,
@@ -82,6 +93,7 @@ export default function EditModeToolbar({
   const [isConfirmingDiscard, setIsConfirmingDiscard] = useState(false);
   const [isDraftsOpen, setIsDraftsOpen] = useState(false);
   const [agreedToLicense, setAgreedToLicense] = useState(false);
+  const [acknowledgedPendingOverlap, setAcknowledgedPendingOverlap] = useState(false);
   const discardResetTimerRef = useRef<number | null>(null);
   const { isPreviewMode, setIsPreviewMode } = useEditMode();
 
@@ -89,6 +101,10 @@ export default function EditModeToolbar({
     if (advancedSubmit?.modes.includes(submitMode)) return;
     setSubmitMode('default');
   }, [advancedSubmit?.modes, submitMode]);
+
+  useEffect(() => {
+    setAcknowledgedPendingOverlap(false);
+  }, [pendingOverlap?.pendingAcknowledgementToken]);
 
   useEffect(() => {
     return () => {
@@ -105,13 +121,21 @@ export default function EditModeToolbar({
     if (showMessageInput) {
       const didPublish = await onPublish(
         publishMessage || undefined,
-        advancedSubmit?.available ? { submitMode } : undefined
+        advancedSubmit?.available || (pendingOverlap && acknowledgedPendingOverlap)
+          ? {
+              ...(advancedSubmit?.available ? { submitMode } : {}),
+              ...(pendingOverlap && acknowledgedPendingOverlap
+                ? { pendingAcknowledgementToken: pendingOverlap.pendingAcknowledgementToken }
+                : {}),
+            }
+          : undefined
       );
       if (!didPublish) return;
       setPublishMessage('');
       setShowMessageInput(false);
       setSubmitMode('default');
       setAgreedToLicense(false);
+      setAcknowledgedPendingOverlap(false);
       onExitEditMode();
     } else {
       setShowMessageInput(true);
@@ -231,6 +255,7 @@ export default function EditModeToolbar({
                     setPublishMessage('');
                     setSubmitMode('default');
                     setAgreedToLicense(false);
+                    setAcknowledgedPendingOverlap(false);
                   }}
                   className='hover:bg-control-hover absolute top-1 right-1 rounded p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'
                   aria-label='取消'
@@ -238,6 +263,45 @@ export default function EditModeToolbar({
                   <CloseIcon className='h-4 w-4' />
                 </button>
               </div>
+              {pendingAwarenessUnavailable ? (
+                <div className='mt-2 rounded-md border border-amber-300 bg-amber-50 px-2.5 py-2 text-xs text-amber-800 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-200'>
+                  暂时无法检查待审核改动，仍可继续提交。
+                </div>
+              ) : pendingOverlap ? (
+                <div className='mt-2 rounded-md border border-amber-400 bg-amber-50 px-2.5 py-2 text-xs text-amber-900 dark:border-amber-700 dark:bg-amber-950/50 dark:text-amber-100'>
+                  <p className='font-medium'>提交内容与待审核改动存在重叠</p>
+                  <p className='mt-1'>
+                    涉及 {pendingOverlap.affectedPathCount} 个字段；自己的待审核改动{' '}
+                    {pendingOverlap.ownCount} 条，其他编辑者的待审核改动 {pendingOverlap.otherCount}{' '}
+                    条。
+                  </p>
+                  {pendingOverlap.publicCount > 0 ? (
+                    <p className='mt-1'>
+                      其中 {pendingOverlap.publicCount} 条已公开但仍在等待复核。
+                    </p>
+                  ) : null}
+                  {pendingOverlap.truncated ? (
+                    <p className='mt-1'>待审核改动较多，当前摘要可能不完整。</p>
+                  ) : null}
+                  <label className='mt-2 flex cursor-pointer items-start gap-2'>
+                    <input
+                      type='checkbox'
+                      checked={acknowledgedPendingOverlap}
+                      onChange={(event) =>
+                        setAcknowledgedPendingOverlap(event.currentTarget.checked)
+                      }
+                      disabled={isPublishing}
+                      className='mt-0.5 shrink-0 rounded border-amber-400 text-amber-600 focus:ring-amber-500'
+                    />
+                    <span>我了解继续提交可能导致覆盖或审核冲突</span>
+                  </label>
+                </div>
+              ) : pendingDraftSummary ? (
+                <div className='mt-2 rounded-md border border-amber-300 bg-amber-50 px-2.5 py-2 text-xs text-amber-800 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-200'>
+                  当前草稿可能影响 {pendingDraftSummary.affectedPathCount}{' '}
+                  个有待审核改动的字段，提交时将再次检查。
+                </div>
+              ) : null}
               <div className='mt-2 flex items-start gap-2'>
                 <input
                   type='checkbox'
@@ -397,7 +461,12 @@ export default function EditModeToolbar({
             data-tutorial-id='edit-mode-toolbar-publish'
             size='sm'
             onClick={handlePublish}
-            disabled={!isDirty || isPublishing || (showMessageInput && !agreedToLicense)}
+            disabled={
+              !isDirty ||
+              isPublishing ||
+              (showMessageInput && !agreedToLicense) ||
+              (showMessageInput && !!pendingOverlap && !acknowledgedPendingOverlap)
+            }
             loading={isPublishing}
             className='rounded-lg px-4 font-medium'
             leadingIcon={<CheckBadgeIcon size={16} strokeWidth={2} />}

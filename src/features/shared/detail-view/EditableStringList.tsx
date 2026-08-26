@@ -2,9 +2,11 @@
 
 import { FormInput, FormSelect } from '@/components/ui/FormControls';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
+import { PendingActionWarningBoundary } from '@/components/ui/PendingActionWarning';
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 
 type EditableStringListProps = {
+  actionPath?: string;
   values: readonly string[];
   onChange: (values: string[]) => void;
   itemLabel: string;
@@ -12,6 +14,7 @@ type EditableStringListProps = {
 };
 
 export default function EditableStringList({
+  actionPath,
   values,
   onChange,
   itemLabel,
@@ -19,7 +22,7 @@ export default function EditableStringList({
 }: EditableStringListProps) {
   const availableOptions = options?.filter((option) => !values.includes(option)) ?? [];
 
-  return (
+  const content = (
     <div className='mt-1 space-y-2'>
       {values.map((value, index) => (
         <div key={`${itemLabel}-${index}`} className='flex items-center gap-2'>
@@ -83,5 +86,15 @@ export default function EditableStringList({
         <PlusIcon className={getIconButtonIconClassName('sm')} aria-hidden='true' />
       </IconButton>
     </div>
+  );
+
+  return actionPath ? (
+    <PendingActionWarningBoundary
+      descriptors={[{ op: 'set', path: actionPath, hasNewValue: true }]}
+    >
+      {content}
+    </PendingActionWarningBoundary>
+  ) : (
+    content
   );
 }
