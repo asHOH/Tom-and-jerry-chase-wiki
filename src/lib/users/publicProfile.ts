@@ -1,15 +1,22 @@
 import 'server-only';
 
+import { CACHE_TAGS } from '@/lib/cacheTags';
 import {
   getAffectedGameDataNames,
   getGameDataDetailHref,
 } from '@/lib/gameData/contributionDisplay';
 import { GAME_DATA_CONTRIBUTION_FILTER } from '@/lib/gameData/contributionFilter';
 import { getGameDataEntityLabel } from '@/lib/gameData/presentation';
+import {
+  PENDING_GAME_DATA_ACTIONS_CACHE_TAG,
+  PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG,
+} from '@/lib/gameData/publicActionsCache';
+import { cached, MAX_SERVER_CACHE_REVALIDATE_SECONDS } from '@/lib/serverCache';
 import { getOptionalSupabaseAdminClient } from '@/lib/supabase/adminClient';
 import { getUserSubmissionHref } from '@/lib/users/profileRoutes';
 
 const RECENT_CONTRIBUTION_LIMIT = 10;
+const PUBLIC_USER_CACHE_REVALIDATE_SECONDS = MAX_SERVER_CACHE_REVALIDATE_SECONDS;
 const REVIEWED_GAME_DATA_ACTION_STATUSES = ['approved', 'rejected', 'synced', 'revoked'] as const;
 const APPROVED_GAME_DATA_ACTION_STATUSES = ['approved', 'synced'] as const;
 
@@ -36,7 +43,7 @@ export type PublicUserProfile = {
   recentContributions: PublicContribution[];
 };
 
-export async function getPublicUserNickname(userId: string): Promise<string | null> {
+async function queryPublicUserNickname(userId: string): Promise<string | null> {
   const supabaseAdmin = getOptionalSupabaseAdminClient();
   if (!supabaseAdmin) return null;
 
@@ -48,6 +55,13 @@ export async function getPublicUserNickname(userId: string): Promise<string | nu
 
   if (error) throw error;
   return data?.nickname ?? null;
+}
+
+export async function getPublicUserNickname(userId: string): Promise<string | null> {
+  return cached(['public-user-nickname-v1', userId], () => queryPublicUserNickname(userId), {
+    revalidate: PUBLIC_USER_CACHE_REVALIDATE_SECONDS,
+    tags: [CACHE_TAGS.users],
+  });
 }
 
 export async function getPublicUserSubmissionHref(
@@ -137,6 +151,17 @@ export async function getGameDataActionApprovalRate(userId: string): Promise<num
   if (reviewedCount === 0) return null;
 
   return (approvedResult.count ?? 0) / reviewedCount;
+}
+
+export async function getCachedGameDataActionApprovalRate(userId: string): Promise<number | null> {
+  return cached(
+    ['public-user-game-data-approval-rate-v1', userId],
+    () => getGameDataActionApprovalRate(userId),
+    {
+      revalidate: PUBLIC_USER_CACHE_REVALIDATE_SECONDS,
+      tags: [PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG, PENDING_GAME_DATA_ACTIONS_CACHE_TAG],
+    }
+  );
 }
 
 export async function getPublicUserProfile(nickname: string): Promise<PublicUserProfile | null> {
@@ -243,4 +268,18 @@ export async function getPublicUserProfile(nickname: string): Promise<PublicUser
       gameDataRowsResult.data ?? []
     ),
   };
+}
+
+export async function getCachedPublicUserProfile(
+  nickname: string
+): Promise<PublicUserProfile | null> {
+  return cached(['public-user-profile-v1', nickname], () => getPublicUserProfile(nickname), {
+    revalidate: PUBLIC_USER_CACHE_REVALIDATE_SECONDS,
+    tags: [
+      CACHE_TAGS.users,
+      CACHE_TAGS.articles,
+      PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG,
+      PENDING_GAME_DATA_ACTIONS_CACHE_TAG,
+    ],
+  });
 }

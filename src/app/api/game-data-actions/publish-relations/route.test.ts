@@ -17,6 +17,13 @@ jest.mock('@/env', () => ({
   },
 }));
 jest.mock('@/lib/auth/requirePermission', () => ({ requirePermission: jest.fn() }));
+jest.mock('@/lib/gameData/publicActionsCache', () => ({
+  PENDING_GAME_DATA_ACTIONS_CACHE_REVALIDATE_SECONDS: 12 * 60 * 60,
+  PENDING_GAME_DATA_ACTIONS_CACHE_TAG: 'pending-game-data-actions',
+}));
+jest.mock('@/lib/serverCache', () => ({
+  cached: (_key: unknown, reader: () => Promise<unknown>) => reader(),
+}));
 jest.mock('@/lib/gameData/trustedGameDataMutations', () => {
   class MockTrustedGameDataMutationError extends Error {
     constructor(

@@ -8,8 +8,13 @@ import {
   type ActionDependencyDescriptor,
 } from '@/lib/gameData/actionDependencies';
 import { decodeStoredActionRow } from '@/lib/gameData/actionRowDecoder';
+import {
+  PENDING_GAME_DATA_ACTIONS_CACHE_REVALIDATE_SECONDS,
+  PENDING_GAME_DATA_ACTIONS_CACHE_TAG,
+} from '@/lib/gameData/publicActionsCache';
 import type { PreparedPublishRequest } from '@/lib/gameData/publishPreparation';
 import { getGameDataActionEntityKey } from '@/lib/gameData/scopedEntityPaths';
+import { cached } from '@/lib/serverCache';
 import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
 import type { Json } from '@/data/database.types';
 
@@ -46,6 +51,8 @@ type PendingTargetSnapshot = {
   targets: InternalPendingTarget[];
   truncated: boolean;
 };
+
+const pendingRowAcquisitions = new Map<string, Promise<PendingRow[]>>();
 
 function hashPendingRowState(row: PendingRow): string {
   return createHash('sha256')
@@ -105,7 +112,7 @@ function aggregateTargets(
   };
 }
 
-async function readPendingRows(entityTypes: readonly string[]): Promise<PendingRow[]> {
+async function queryPendingRows(entityTypes: readonly string[]): Promise<PendingRow[]> {
   const rows: PendingRow[] = [];
 
   for (let from = 0; ; from += QUERY_PAGE_SIZE) {
@@ -124,6 +131,30 @@ async function readPendingRows(entityTypes: readonly string[]): Promise<PendingR
   }
 
   return rows;
+}
+
+async function readPendingRows(entityTypes: readonly string[]): Promise<PendingRow[]> {
+  const normalizedEntityTypes = [...new Set(entityTypes)].sort();
+  const acquisitionKey = normalizedEntityTypes.join('\u0000');
+  const activeAcquisition = pendingRowAcquisitions.get(acquisitionKey);
+  if (activeAcquisition) return activeAcquisition;
+
+  const acquisition = cached(
+    ['pending-game-data-rows-v1', ...normalizedEntityTypes],
+    () => queryPendingRows(normalizedEntityTypes),
+    {
+      revalidate: PENDING_GAME_DATA_ACTIONS_CACHE_REVALIDATE_SECONDS,
+      tags: [PENDING_GAME_DATA_ACTIONS_CACHE_TAG],
+    }
+  );
+  pendingRowAcquisitions.set(acquisitionKey, acquisition);
+  const clearAcquisition = () => {
+    if (pendingRowAcquisitions.get(acquisitionKey) === acquisition) {
+      pendingRowAcquisitions.delete(acquisitionKey);
+    }
+  };
+  void acquisition.then(clearAcquisition, clearAcquisition);
+  return acquisition;
 }
 
 async function loadPendingTargetSnapshot(options: {

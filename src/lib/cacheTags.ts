@@ -3,6 +3,7 @@ import { revalidateTag, updateTag } from 'next/cache';
 export const CACHE_TAGS = {
   articles: 'articles',
   categories: 'categories',
+  users: 'users',
   sitemapArticles: 'sitemap:articles',
   article: (articleId: string) => `article:${articleId}`,
   articleVersions: (articleId: string) => `article-versions:${articleId}`,

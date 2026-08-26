@@ -22,6 +22,7 @@ jest.mock('@/lib/gameData/approvedCandidateReplay', () => ({
   validateApprovedCandidateReplay: jest.fn(),
 }));
 jest.mock('@/lib/gameData/publicActionsCache', () => ({
+  invalidatePendingGameDataActionsCache: jest.fn(),
   invalidatePublicGameDataActionsCache: jest.fn(),
 }));
 jest.mock('@/lib/supabase/admin', () => ({

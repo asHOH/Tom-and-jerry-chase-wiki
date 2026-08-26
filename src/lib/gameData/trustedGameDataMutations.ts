@@ -11,7 +11,10 @@ import {
   readApprovedReplaySnapshot,
   type ApprovedReplaySnapshot,
 } from '@/lib/gameData/approvedReplaySnapshotReader';
-import { invalidatePublicGameDataActionsCache } from '@/lib/gameData/publicActionsCache';
+import {
+  invalidatePendingGameDataActionsCache,
+  invalidatePublicGameDataActionsCache,
+} from '@/lib/gameData/publicActionsCache';
 import type { PreparedPublishRequest } from '@/lib/gameData/publishPreparation';
 import type { GameDataSubmitMode } from '@/lib/gameData/submitMode';
 import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
@@ -168,6 +171,9 @@ export async function publishPreparedGameDataActions(options: {
   if (results.some((result) => result.is_public)) {
     invalidatePublicGameDataActionsCache();
   }
+  if (results.some((result) => result.status === 'pending')) {
+    invalidatePendingGameDataActionsCache();
+  }
   return results;
 }
 
@@ -229,6 +235,7 @@ export async function approvePreparedGameDataAction(
     ...(clientIp === undefined ? {} : { p_ip: clientIp }),
   });
   if (error) throw persistenceError(error);
+  invalidatePendingGameDataActionsCache();
   invalidatePublicGameDataActionsCache();
 }
 

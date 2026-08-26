@@ -3,10 +3,10 @@ import { NextResponse } from 'next/server';
 import packageJson from '@/../package.json';
 import { env } from '@/env';
 
-// Version metadata is deployment-scoped, so generating it once at build time avoids
-// running a Function for every client update check.
+// Version metadata is deployment-scoped. Keep the route static while bounding the
+// framework cache lifetime to the project-wide maximum.
 export const dynamic = 'force-static';
-export const revalidate = false;
+export const revalidate = 12 * 60 * 60;
 
 // Server start time for development (when this module loads)
 const SERVER_START_TIME = new Date().toISOString();

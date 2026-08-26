@@ -4,6 +4,7 @@ import { requirePermission } from '@/lib/auth/requirePermission';
 import { getGameActionResourceContexts } from '@/lib/auth/resourceContexts';
 import { getRequestIp } from '@/lib/blocks/server';
 import { getGameDataNotificationDetails } from '@/lib/gameData/contributionDisplay';
+import { invalidatePendingGameDataActionsCache } from '@/lib/gameData/publicActionsCache';
 import {
   approvePreparedGameDataAction,
   loadTrustedGameDataAction,
@@ -136,6 +137,8 @@ export async function POST(
       console.error('Error rejecting game data action:', error);
       return NextResponse.json({ error: 'Failed to reject action' }, { status: 500 });
     }
+
+    invalidatePendingGameDataActionsCache();
 
     if (recordData?.created_by) {
       try {

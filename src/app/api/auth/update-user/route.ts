@@ -2,6 +2,7 @@ import { pbkdf2Sync, randomBytes } from 'crypto';
 import { NextResponse } from 'next/server';
 
 import { requirePermission } from '@/lib/auth/requirePermission';
+import { CACHE_TAGS, invalidateCache } from '@/lib/cacheTags';
 import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
 
 const hashPassword = (password: string, salt: string) =>
@@ -56,6 +57,7 @@ export async function POST(request: Request) {
     console.error('Failed to update user:', error);
     return NextResponse.json({ error: 'Failed to update user' }, { status: 500 });
   }
+  await invalidateCache(CACHE_TAGS.users);
 
   if (password) {
     const { error: authError } = await requireSupabaseAdminClient().auth.admin.updateUserById(

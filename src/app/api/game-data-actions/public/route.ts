@@ -1,10 +1,14 @@
-import { NextResponse } from 'next/server';
+import { createHash } from 'node:crypto';
+import { NextResponse, type NextRequest } from 'next/server';
 
 import { PublicActionQueryError } from '@/lib/gameData/publicActionQueries';
 import { logPublicGameDataRouteMetric } from '@/lib/gameData/publicRouteMetrics';
 import { readCachedApprovedActionRows } from '@/lib/gameData/runtimeActionSources';
 
-export async function GET() {
+const PUBLIC_ACTIONS_HTTP_CACHE_SECONDS = 5 * 60;
+const PUBLIC_ACTIONS_HTTP_CACHE_CONTROL = `public, s-maxage=${PUBLIC_ACTIONS_HTTP_CACHE_SECONDS}, stale-while-revalidate=60`;
+
+export async function GET(request?: NextRequest) {
   const startedAt = performance.now();
   let status = 500;
 
@@ -17,7 +21,17 @@ export async function GET() {
       created_at,
     }));
 
-    const response = NextResponse.json({ actions });
+    const etag = `"${createHash('sha256').update(JSON.stringify(actions)).digest('base64url')}"`;
+    const headers = {
+      'Cache-Control': PUBLIC_ACTIONS_HTTP_CACHE_CONTROL,
+      ETag: etag,
+    };
+    if (request?.headers.get('if-none-match') === etag) {
+      status = 304;
+      return new NextResponse(null, { status, headers });
+    }
+
+    const response = NextResponse.json({ actions }, { headers });
     status = response.status;
     return response;
   } catch (err) {

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import { requirePermission } from '@/lib/auth/requirePermission';
+import { CACHE_TAGS, invalidateCache } from '@/lib/cacheTags';
 
 const schema = z.object({ groupIds: z.array(z.uuid()).max(100) });
 
@@ -19,5 +20,6 @@ export async function PUT(request: Request, { params }: { params: Promise<{ user
     p_group_ids: parsed.data.groupIds,
   });
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+  await invalidateCache(CACHE_TAGS.users);
   return NextResponse.json({ ok: true });
 }

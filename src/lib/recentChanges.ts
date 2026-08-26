@@ -10,7 +10,7 @@ import {
 import { GAME_DATA_CONTRIBUTION_FILTER } from '@/lib/gameData/contributionFilter';
 import { getGameDataEntityLabel } from '@/lib/gameData/presentation';
 import { PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG } from '@/lib/gameData/publicActionsCache';
-import { cached } from '@/lib/serverCache';
+import { cached, MAX_SERVER_CACHE_REVALIDATE_SECONDS } from '@/lib/serverCache';
 import { getOptionalSupabaseAdminClient } from '@/lib/supabase/adminClient';
 import {
   getOptionalSupabasePublicClient,
@@ -119,22 +119,24 @@ export function mergeRecentChangeRows(
 }
 
 async function countArticleChanges(): Promise<number> {
-  const { count, error } = await requireSupabasePublicClient()
+  const { data, error } = await requireSupabasePublicClient()
     .from('article_versions_public_view')
-    .select('id', { count: 'exact', head: true })
-    .eq('status', 'approved');
+    .select('id')
+    .eq('status', 'approved')
+    .limit(RECENT_CHANGES_MAX_ITEMS);
   if (error) throw error;
-  return count ?? 0;
+  return data?.length ?? 0;
 }
 
 async function countGameDataChanges(): Promise<number> {
   const client = getOptionalSupabaseAdminClient() ?? requireSupabasePublicClient();
-  const { count, error } = await client
+  const { data, error } = await client
     .from('game_data_actions')
-    .select('id', { count: 'exact', head: true })
-    .or(GAME_DATA_CONTRIBUTION_FILTER);
+    .select('id')
+    .or(GAME_DATA_CONTRIBUTION_FILTER)
+    .limit(RECENT_CHANGES_MAX_ITEMS);
   if (error) throw error;
-  return count ?? 0;
+  return data?.length ?? 0;
 }
 
 async function queryArticleChanges(from: number, to: number): Promise<ArticleChangeRow[]> {
@@ -254,7 +256,7 @@ export async function getRecentChanges(
       ['recent-changes-v4', filter, String(page)],
       () => loadRecentChanges(filter, page),
       {
-        revalidate: 300,
+        revalidate: MAX_SERVER_CACHE_REVALIDATE_SECONDS,
         tags: [CACHE_TAGS.articles, PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG],
       }
     );

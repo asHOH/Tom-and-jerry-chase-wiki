@@ -3,7 +3,7 @@ import 'server-only';
 import type { z } from 'zod';
 
 import { CACHE_TAGS } from '@/lib/cacheTags';
-import { cached } from '@/lib/serverCache';
+import { cached, MAX_SERVER_CACHE_REVALIDATE_SECONDS } from '@/lib/serverCache';
 import {
   articleRecordSchema,
   articleVersionSchema,
@@ -118,7 +118,7 @@ export async function getApprovedArticleVersion(args: {
       return (data as unknown as ArticleApprovedVersion) ?? null;
     },
     {
-      revalidate: 60,
+      revalidate: MAX_SERVER_CACHE_REVALIDATE_SECONDS,
       tags: [CACHE_TAGS.articleVersions(articleId), CACHE_TAGS.article(articleId)],
     }
   );
@@ -208,7 +208,7 @@ export async function getArticleDetailData(
       };
     },
     {
-      revalidate: 60,
+      revalidate: MAX_SERVER_CACHE_REVALIDATE_SECONDS,
       tags: [
         CACHE_TAGS.article(articleId),
         CACHE_TAGS.articleVersions(articleId),
@@ -303,7 +303,7 @@ export async function getArticleHistory(
       };
     },
     {
-      revalidate: 300,
+      revalidate: MAX_SERVER_CACHE_REVALIDATE_SECONDS,
       tags: [CACHE_TAGS.article(articleId), CACHE_TAGS.articleVersions(articleId)],
     }
   );

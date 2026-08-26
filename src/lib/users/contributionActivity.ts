@@ -1,10 +1,13 @@
 import 'server-only';
 
+import { CACHE_TAGS } from '@/lib/cacheTags';
 import {
   getAffectedGameDataNames,
   getGameDataDetailHref,
 } from '@/lib/gameData/contributionDisplay';
 import { getGameDataEntityLabel } from '@/lib/gameData/presentation';
+import { PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG } from '@/lib/gameData/publicActionsCache';
+import { cached, MAX_SERVER_CACHE_REVALIDATE_SECONDS } from '@/lib/serverCache';
 import {
   getOptionalSupabaseAdminClient,
   requireSupabaseAdminClient,
@@ -16,6 +19,8 @@ const CALENDAR_DAYS = 365;
 const MAX_DATE_RANGE_DAYS = 366;
 const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
 const MAX_POSTGRES_INTEGER = 2_147_483_647;
+const PUBLIC_CONTRIBUTION_CACHE_REVALIDATE_SECONDS = MAX_SERVER_CACHE_REVALIDATE_SECONDS;
+const PUBLIC_CONTRIBUTION_CACHE_TAGS = [CACHE_TAGS.articles, PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG];
 
 export const CONTRIBUTION_ACTIVITY_PAGE_SIZE = 20;
 
@@ -509,6 +514,53 @@ export async function getPublicContributionActivity(
     totalItems,
     totalPages,
   };
+}
+
+export async function getCachedPublicContributionCalendar(
+  userId: string,
+  range: ContributionDateRangeInput
+): Promise<ContributionCalendar> {
+  const resolvedRange = resolveDateRange(range);
+  return cached(
+    ['public-contribution-calendar-v1', userId, resolvedRange.startDate, resolvedRange.endDate],
+    () => getPublicContributionCalendar(userId, resolvedRange),
+    {
+      revalidate: PUBLIC_CONTRIBUTION_CACHE_REVALIDATE_SECONDS,
+      tags: PUBLIC_CONTRIBUTION_CACHE_TAGS,
+    }
+  );
+}
+
+export async function getCachedPublicContributionBreakdown(
+  userId: string,
+  range: ContributionDateRangeInput
+): Promise<ContributionBreakdown> {
+  const resolvedRange = resolveDateRange(range);
+  return cached(
+    ['public-contribution-breakdown-v1', userId, resolvedRange.startDate, resolvedRange.endDate],
+    () => getPublicContributionBreakdown(userId, resolvedRange),
+    {
+      revalidate: PUBLIC_CONTRIBUTION_CACHE_REVALIDATE_SECONDS,
+      tags: PUBLIC_CONTRIBUTION_CACHE_TAGS,
+    }
+  );
+}
+
+export async function getCachedPublicContributionActivity(
+  userId: string,
+  filter: ContributionFilter | string | null | undefined,
+  requestedPage: string | number | null | undefined
+): Promise<ContributionActivityPage> {
+  const normalizedFilter = normalizeContributionFilter(filter);
+  const normalizedPage = normalizeContributionPage(requestedPage);
+  return cached(
+    ['public-contribution-activity-v1', userId, normalizedFilter, normalizedPage],
+    () => getPublicContributionActivity(userId, normalizedFilter, normalizedPage),
+    {
+      revalidate: PUBLIC_CONTRIBUTION_CACHE_REVALIDATE_SECONDS,
+      tags: PUBLIC_CONTRIBUTION_CACHE_TAGS,
+    }
+  );
 }
 
 export function calculateContributionMetrics(

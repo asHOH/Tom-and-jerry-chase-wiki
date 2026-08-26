@@ -3,6 +3,17 @@ import { GAME_DATA_CONTRIBUTION_FILTER } from '@/lib/gameData/contributionFilter
 import { getPublicUserProfile, mergeRecentContributions } from './publicProfile';
 
 jest.mock('server-only', () => ({}), { virtual: true });
+jest.mock('@/lib/serverCache', () => ({
+  cached: (_key: unknown, reader: () => Promise<unknown>) => reader(),
+  MAX_SERVER_CACHE_REVALIDATE_SECONDS: 12 * 60 * 60,
+}));
+jest.mock('@/lib/cacheTags', () => ({
+  CACHE_TAGS: { articles: 'articles', users: 'users' },
+}));
+jest.mock('@/lib/gameData/publicActionsCache', () => ({
+  PENDING_GAME_DATA_ACTIONS_CACHE_TAG: 'pending-game-data-actions',
+  PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG: 'public-game-data-actions',
+}));
 
 jest.mock('@/lib/supabase/admin', () => ({
   hasSupabaseAdminConfig: jest.fn(),

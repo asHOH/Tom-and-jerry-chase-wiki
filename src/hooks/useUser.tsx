@@ -57,7 +57,8 @@ const AuthListener = () => {
     if (!supabase) return;
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(() => {
+    } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'INITIAL_SESSION') return;
       mutate(USER_API_KEY);
     });
     return () => {
@@ -204,7 +205,7 @@ export const UserProvider = !hasSupabasePublicConfig()
           value={{
             fallback: { [USER_API_KEY]: initialValue },
             provider: localStorageProvider,
-            dedupingInterval: 10000,
+            dedupingInterval: 60_000,
           }}
         >
           <AuthListener />
@@ -214,7 +215,10 @@ export const UserProvider = !hasSupabasePublicConfig()
     };
 
 export const useUser = () => {
-  const { data, mutate, isLoading, isValidating } = useSWR<UserType>(USER_API_KEY, getUserData);
+  const { data, mutate, isLoading, isValidating } = useSWR<UserType>(USER_API_KEY, getUserData, {
+    revalidateOnFocus: false,
+    revalidateOnMount: false,
+  });
 
   const clearData = () => {
     mutate(EMPTY_USER, false);

@@ -3,16 +3,15 @@ import type { Metadata, Route } from 'next';
 import { notFound } from 'next/navigation';
 
 import type { PermissionKey } from '@/lib/auth/permissions';
-import { loadPermissionGrants } from '@/lib/auth/requirePermission';
 import { cn } from '@/lib/design';
 import { generatePageMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
-import { createClient } from '@/lib/supabase/server';
+import { getCurrentUserContext } from '@/lib/userActions';
 import {
   calculateContributionMetrics,
+  getCachedPublicContributionActivity,
+  getCachedPublicContributionBreakdown,
+  getCachedPublicContributionCalendar,
   getContributionDateRange,
-  getPublicContributionActivity,
-  getPublicContributionBreakdown,
-  getPublicContributionCalendar,
   normalizeContributionFilter,
   normalizeContributionPage,
   type ContributionActivityFilter,
@@ -26,7 +25,10 @@ import {
   normalizeUserProfileTab,
   type UserProfileTab,
 } from '@/lib/users/profileRoutes';
-import { getGameDataActionApprovalRate, getPublicUserProfile } from '@/lib/users/publicProfile';
+import {
+  getCachedGameDataActionApprovalRate,
+  getCachedPublicUserProfile,
+} from '@/lib/users/publicProfile';
 import { contributors, RoleType } from '@/data/contributors';
 import {
   ContributionActivityHistory,
@@ -42,7 +44,7 @@ import Link from '@/components/Link';
 
 export const dynamic = 'force-dynamic';
 
-const getProfile = cache(getPublicUserProfile);
+const getProfile = cache(getCachedPublicUserProfile);
 const USER_MANAGEMENT_PERMISSIONS = new Set<PermissionKey>([
   'user.read',
   'user.update',
@@ -129,22 +131,12 @@ function getContributionStatsGridClassName(statCount: number): string {
   return 'grid grid-cols-2 gap-3 sm:grid-cols-5';
 }
 
-async function canViewGameDataActionApprovalRate(): Promise<boolean> {
-  const supabase = await createClient();
-  const { data: claimsData } = await supabase.auth.getClaims();
-  if (!claimsData?.claims.sub) return false;
-
-  const grants = await loadPermissionGrants(supabase);
-
+function canViewGameDataActionApprovalRate(
+  grants: Awaited<ReturnType<typeof getCurrentUserContext>>['grants']
+): boolean {
   return grants.some(
     (grant) => grant.scope === 'global' && USER_MANAGEMENT_PERMISSIONS.has(grant.permission)
   );
-}
-
-async function getCurrentUserId(): Promise<string | null> {
-  const supabase = await createClient();
-  const { data: claimsData } = await supabase.auth.getClaims();
-  return claimsData?.claims.sub ?? null;
 }
 
 function getUserActivityHref(
@@ -196,8 +188,8 @@ export default async function PublicUserPage({ params, searchParams }: PublicUse
 
   if (!profile) notFound();
 
-  const currentUserId = await getCurrentUserId();
-  const isOwnProfile = currentUserId === profile.id;
+  const currentUser = await getCurrentUserContext();
+  const isOwnProfile = currentUser.userId === profile.id;
   const activeTab: UserProfileTab =
     requestedTab === 'submissions' && isOwnProfile ? 'submissions' : 'activity';
   const contributionDateRange = getContributionDateRange();
@@ -213,12 +205,16 @@ export default async function PublicUserPage({ params, searchParams }: PublicUse
   if (activeTab === 'activity') {
     const [calendarResult, breakdownResult, activityResult, approvalRateResult] =
       await Promise.allSettled([
-        getPublicContributionCalendar(profile.id, contributionDateRange),
-        getPublicContributionBreakdown(profile.id, contributionDateRange),
-        getPublicContributionActivity(profile.id, contributionFilter, requestedContributionPage),
+        getCachedPublicContributionCalendar(profile.id, contributionDateRange),
+        getCachedPublicContributionBreakdown(profile.id, contributionDateRange),
+        getCachedPublicContributionActivity(
+          profile.id,
+          contributionFilter,
+          requestedContributionPage
+        ),
         (async () => {
-          if (!(await canViewGameDataActionApprovalRate())) return null;
-          return getGameDataActionApprovalRate(profile.id);
+          if (!canViewGameDataActionApprovalRate(currentUser.grants)) return null;
+          return getCachedGameDataActionApprovalRate(profile.id);
         })(),
       ]);
 

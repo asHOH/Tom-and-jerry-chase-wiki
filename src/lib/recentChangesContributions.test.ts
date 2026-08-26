@@ -47,6 +47,7 @@ function createThenableQuery<T>(result: T) {
     or: jest.fn(),
     order: jest.fn(),
     range: jest.fn(),
+    limit: jest.fn(),
     in: jest.fn(),
     then: jest.fn((resolve: (value: T) => unknown) => Promise.resolve(resolve(result))),
   };
@@ -55,6 +56,7 @@ function createThenableQuery<T>(result: T) {
   query.or.mockReturnValue(query);
   query.order.mockReturnValue(query);
   query.range.mockReturnValue(query);
+  query.limit.mockReturnValue(query);
   query.in.mockReturnValue(query);
 
   return query;
@@ -83,7 +85,7 @@ describe('recent changes contribution queries', () => {
   });
 
   it('includes synced game-data rows as contributions and prefers the admin reader when available', async () => {
-    const countQuery = createThenableQuery({ count: 1, error: null });
+    const countQuery = createThenableQuery({ data: [{ id: 'synced-1' }], error: null });
     const rowsQuery = createThenableQuery({
       data: [
         {

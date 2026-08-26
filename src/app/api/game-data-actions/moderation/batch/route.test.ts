@@ -31,6 +31,9 @@ jest.mock('@/lib/gameData/trustedGameDataMutations', () => {
     TrustedGameDataMutationError: MockTrustedGameDataMutationError,
   };
 });
+jest.mock('@/lib/gameData/publicActionsCache', () => ({
+  invalidatePendingGameDataActionsCache: jest.fn(),
+}));
 jest.mock('@/lib/notificationUtils', () => ({ publishNotification: jest.fn() }));
 jest.mock('@/lib/supabase/admin', () => ({ supabaseAdmin: { rpc: jest.fn() } }));
 jest.mock('@/lib/users/publicProfile', () => ({ getPublicUserSubmissionHref: jest.fn() }));

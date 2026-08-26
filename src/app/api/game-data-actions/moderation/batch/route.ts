@@ -5,6 +5,7 @@ import { requirePermission } from '@/lib/auth/requirePermission';
 import { getGameActionResourceContexts } from '@/lib/auth/resourceContexts';
 import { getRequestIp } from '@/lib/blocks/server';
 import { getGameDataNotificationDetails } from '@/lib/gameData/contributionDisplay';
+import { invalidatePendingGameDataActionsCache } from '@/lib/gameData/publicActionsCache';
 import {
   approvePreparedGameDataAction,
   loadTrustedGameDataAction,
@@ -94,6 +95,10 @@ export async function POST(request: Request) {
             : 'Unknown moderation failure';
       failures.push({ actionId, message });
     }
+  }
+
+  if (succeeded.length > 0) {
+    invalidatePendingGameDataActionsCache();
   }
 
   const grouped = new Map<string, TrustedGameDataActionRecord[]>();

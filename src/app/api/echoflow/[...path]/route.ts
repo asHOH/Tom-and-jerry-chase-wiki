@@ -293,7 +293,7 @@ export async function OPTIONS(request: NextRequest) {
       ...corsHeaders,
       'Access-Control-Allow-Methods': 'GET, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-EchoFlow-Key',
-      'Cache-Control': 'public, max-age=86400',
+      'Cache-Control': 'public, max-age=43200',
       'X-EchoFlow-Health': 'healthy',
       Vary: 'Origin',
       'X-Content-Type-Options': 'nosniff',

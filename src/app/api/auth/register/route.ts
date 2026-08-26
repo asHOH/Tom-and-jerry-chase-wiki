@@ -7,6 +7,7 @@ import {
   hashUsername,
 } from '@/lib/auth/usernameAvailability';
 import { recordUserIp, requireNotBlocked } from '@/lib/blocks/server';
+import { CACHE_TAGS, invalidateCache } from '@/lib/cacheTags';
 import { verifyCaptchaProof } from '@/lib/captchaUtils';
 import { checkPasswordStrength } from '@/lib/passwordUtils';
 import { checkRateLimit } from '@/lib/rateLimit';
@@ -169,6 +170,7 @@ export async function POST(request: NextRequest) {
       await requireSupabaseAdminClient().auth.admin.deleteUser(authUserId);
       return NextResponse.json({ error: 'Could not create user.' }, { status: 500 });
     }
+    await invalidateCache(CACHE_TAGS.users);
 
     // After successful registration, sign in the user and attach cookies to response
     const response = NextResponse.json({ message: 'User created successfully' }, { status: 201 });

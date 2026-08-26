@@ -15,9 +15,9 @@ jest.mock('next/server', () => ({
 }));
 
 describe('version route', () => {
-  it('is generated once per deployment instead of consuming runtime compute', () => {
+  it('stays static with the project-wide maximum cache lifetime', () => {
     expect(dynamic).toBe('force-static');
-    expect(revalidate).toBe(false);
+    expect(revalidate).toBe(12 * 60 * 60);
   });
 
   it('returns deployment version metadata without allowing browser caching', async () => {

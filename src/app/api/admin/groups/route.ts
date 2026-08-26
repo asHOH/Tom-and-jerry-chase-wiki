@@ -11,6 +11,7 @@ import {
   isPermissionResourceTypeAllowed,
   isScopableResourceType,
 } from '@/lib/auth/resourceContexts';
+import { CACHE_TAGS, invalidateCache } from '@/lib/cacheTags';
 import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
 
 const PROTECTED_GROUP_IDS = new Set([
@@ -188,5 +189,6 @@ export async function POST(request: Request) {
     const status = error.message.includes('duplicate') ? 409 : 400;
     return NextResponse.json({ error: error.message }, { status });
   }
+  await invalidateCache(CACHE_TAGS.users);
   return NextResponse.json({ id: data }, { status: 201 });
 }
