@@ -19,7 +19,6 @@ import './globals.css';
 
 import { Suspense } from 'react';
 
-import { getUserData } from '@/lib/userActions';
 import { UserProvider } from '@/hooks/useUser';
 import { DarkModeProvider } from '@/context/DarkModeContext';
 import { EditModeProvider } from '@/context/EditModeContext';
@@ -40,8 +39,7 @@ const notoSansSC = Noto_Sans_SC({
 
 export const metadata: Metadata = defaultMetadata;
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const initialUser = await getUserData();
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   const vercelAnalyticsEnabled = isVercelAnalyticsEnabled();
   const isVercel = process.env.VERCEL === '1';
   return (
@@ -67,7 +65,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           {isVercel ? <DisableLinkPrefetch /> : null}
           <ErrorBoundary>
             <main className='relative min-h-screen pt-0'>
-              <UserProvider initialValue={initialUser}>
+              <UserProvider>
                 <Suspense fallback={null}>
                   <EditModeProvider>
                     <KeyboardNavigation />

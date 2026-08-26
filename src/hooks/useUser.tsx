@@ -88,8 +88,7 @@ const localStorageProvider = () => {
           // oxlint-disable-next-line typescript/no-explicit-any
           const parsed = storage.parseJson<Array<[string, any]>>(stored);
           if (Array.isArray(parsed)) {
-            // Filter out user data to avoid hydration mismatch with server-rendered HTML
-            initialEntries = parsed.filter(([key]) => key !== USER_API_KEY);
+            initialEntries = parsed;
           } else {
             storage.removeItem(StorageKey.SwrCache);
           }
@@ -195,29 +194,25 @@ const localStorageProvider = () => {
   return map;
 };
 
-export const UserProvider = !hasSupabasePublicConfig()
-  ? ({ children }: { children: ReactNode; initialValue: UserType }) => {
-      return children;
-    }
-  : ({ children, initialValue }: { children: ReactNode; initialValue: UserType }) => {
-      return (
-        <SWRConfig
-          value={{
-            fallback: { [USER_API_KEY]: initialValue },
-            provider: localStorageProvider,
-            dedupingInterval: 60_000,
-          }}
-        >
-          <AuthListener />
-          {children}
-        </SWRConfig>
-      );
-    };
+export const UserProvider = ({ children }: { children: ReactNode }) => {
+  if (!hasSupabasePublicConfig()) return children;
+
+  return (
+    <SWRConfig
+      value={{
+        provider: localStorageProvider,
+        dedupingInterval: 60_000,
+      }}
+    >
+      <AuthListener />
+      {children}
+    </SWRConfig>
+  );
+};
 
 export const useUser = () => {
   const { data, mutate, isLoading, isValidating } = useSWR<UserType>(USER_API_KEY, getUserData, {
     revalidateOnFocus: false,
-    revalidateOnMount: false,
   });
 
   const clearData = () => {
