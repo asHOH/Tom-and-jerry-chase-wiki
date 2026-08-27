@@ -88,7 +88,8 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (previousPathnameRef.current === pathname) return;
     previousPathnameRef.current = pathname;
-    setVisibleRevision(undefined);
+    // The route shell owns the revision lifecycle. Clearing it here can run after the
+    // incoming shell registers and discard the new route's revision.
     setIsPreviewMode(false);
     if (isEditModeRequested) {
       setRuntimeStatus('loading');
