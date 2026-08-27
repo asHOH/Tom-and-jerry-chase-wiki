@@ -75,7 +75,7 @@ export const PROJECT_INFO = {
   descriptionParts: {
     before: '已在 GitHub 开源，欢迎',
     feedbackLink: '给出建议',
-    after: '或点Star⭐！',
+    after: '，点Star⭐或通过 QQ 交流群加入我们！',
   },
 };
 
