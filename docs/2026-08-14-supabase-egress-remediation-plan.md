@@ -1,9 +1,11 @@
 # Supabase Egress Remediation Plan
 
-**Status:** Phase 3A implemented and locally verified; VPS deployment and 24-hour gate pending
+**Status:** Phase 3A deployed and its conservative production egress gate passed; Phase 4 Branch A
+implemented and locally verified, VPS deployment pending
 **Created:** 2026-08-14
-**Last updated:** 2026-08-24
-**Billing cycle under investigation:** 2026-08-07 through 2026-09-07
+**Last updated:** 2026-08-29
+**Temporary Pro billing cycle:** 2026-08-21 through 2026-09-21
+**Next Free-plan target cycle:** 2026-09-21 through 2026-10-21
 **Fair Use grace-period end:** 2026-08-22
 
 ## Problem statement
@@ -23,6 +25,12 @@ At the observed rate of approximately 1 GB of uncached egress per day, a full bi
 exceed 30 GB. Staying below 5 GB requires an approximate 84% reduction from that run rate. Usage
 already recorded in the current cycle cannot be reduced retroactively, so this plan targets future
 egress and the next complete billing cycle.
+
+The organization temporarily upgraded to Pro on 2026-08-21 to prevent a service restriction while
+the engineering fix was deployed. The resulting paid billing cycle runs from 2026-08-21 through
+2026-09-21. The owner does not intend to continue Pro for the following cycle, and the Pro quota is
+not a useful engineering constraint for this project. The incident therefore retains the Free-plan
+5 GB target for the next complete cycle after the intended return to Free.
 
 This is not primarily a Storage or user-growth problem. The production database contains only a
 small amount of application data, and cached Storage egress is well below its independent quota.
@@ -138,10 +146,12 @@ Deployment-specific cache identity also intentionally prevents reuse between sep
 
 ## Goals
 
-- Keep uncached Supabase egress below 5 GB per complete billing cycle, with a working target below
-  150 MB per representative day. Track the rolling seven-day and complete-cycle results as ongoing
-  operations after the incident closes.
-- Reduce each identified bulk query shape by at least 95% before considering a plan upgrade.
+- Keep uncached Supabase egress below 5 GB per complete Free-plan billing cycle, beginning with the
+  2026-09-21 through 2026-10-21 target cycle, with a working target below 150 MB per representative
+  day. Track the rolling seven-day and complete-cycle results as ongoing operations after the incident
+  closes.
+- Reduce each identified bulk query shape by at least 95%; temporary Pro coverage does not replace
+  this engineering requirement.
 - Make each stable Supabase-enabled build attempt perform exactly one approved-snapshot,
   contributor-source, and synced-history-source bulk fetch. A deliberately disabled attempt performs
   zero database fetches.
@@ -785,7 +795,18 @@ the shared tag, the compatibility endpoint uses the shared approved cache, and b
 privacy-safe countable request events. Existing mutation paths still invalidate the shared tag. The
 focused Phase 3A suites, full Jest suite (297 suites and 1,597 tests), lint, type-check, and
 `build:skip-images` passed. The build reported one fetch for each bulk source. This checkpoint changes
-no database schema or stored rows and has not yet been deployed to the VPS.
+no database schema or stored rows.
+
+**2026-08-29 production checkpoint:** The production version endpoint reports containment commit
+`b649c6d9`, built at `2026-08-24T05:27:12+08:00`. The Supabase organization usage page reports a
+2026-08-21 through 2026-09-21 Pro cycle with 0.842 GB uncached egress and 0.299 GB cached egress used
+as of the checkpoint. Dividing the entire uncached total by only the seven fully completed cycle days
+gives a conservative average no greater than approximately 120.3 MB/day. This numerator includes the
+pre-containment part of the cycle, so it conservatively passes the 150 MB/day egress gate. The usage
+dashboard does not attribute requests to individual application routes, and the privacy-safe route
+metric does not contain client identity; no finer split between old service workers, bots, and other
+compatibility callers is available. Production Node version capture remains assigned to the next VPS
+deployment record.
 
 ### Independent problem
 
@@ -814,8 +835,9 @@ rows instead of reusing the compact synced-history projection.
 - [x] Make the legacy public-actions endpoint read from the same tagged approved snapshot immediately,
       so compatibility traffic cannot issue a fresh database query per request. Phase 4 can still
       retire the endpoint after its client-update window.
-- [ ] Deploy the containment change to the VPS and record the commit, deployment identity, and
-      production Node version.
+- [x] Deploy the containment change to the VPS. Production reports commit and deployment identity
+      `b649c6d9`.
+- [ ] Record the production Node version during the next VPS deployment.
 
 ### Tests
 
@@ -847,6 +869,11 @@ Continue the rolling seven-day and next complete billing-cycle checks as operati
 They do not need to keep this implementation plan active once the 24-hour gate and all correctness
 criteria pass.
 
+The 2026-08-29 conservative multi-day dashboard check passes the egress portion of this gate. The
+deterministic cold-miss, invalidation, fresh-baseline, and compact-history behaviors remain covered by
+the Phase 3A regression suites; the retained production telemetry cannot reconstruct a more granular
+client-attributed 24-hour route window.
+
 ### Rollback
 
 Restore the previous runtime readers and edit-baseline invalidation behavior. This phase changes no
@@ -864,25 +891,35 @@ classifies it as a cacheable public endpoint and older installed clients may con
 
 ### Measurement-first decision
 
-- [ ] Add a privacy-safe request counter or inspect existing edge/runtime logs for this exact path.
-- [ ] Separate requests from current builds, current clients, old service workers, health checks, and
-      bots where the available metadata permits it.
-- [ ] Observe the representative 24-hour Phase 3A gate after runtime containment is deployed.
+- [x] Add a privacy-safe request counter or inspect existing edge/runtime logs for this exact path.
+- [x] Separate requests from current builds, current clients, old service workers, health checks, and
+      bots where the available metadata permits it. The deployed metric records the route, method,
+      status, duration, and compatibility category but deliberately has no client identity, so no
+      finer caller split is available from retained telemetry.
+- [x] Observe the post-deployment Phase 3A gate. The 2026-08-29 conservative multi-day dashboard
+      check records at most approximately 120.3 MB/day across seven fully completed cycle days,
+      including the pre-containment portion of the cycle.
 
 Apply the cached-reader containment from Phase 3A first. Then choose whether to keep and harden the
 compatibility endpoint through Branch A or retire it through Branch B.
 
+**2026-08-29 decision:** Use Branch A. The service worker still includes this route in its supported
+public API cache and no client-update retirement window has been completed. Keeping the compatibility
+endpoint while bounding its database acquisition and HTTP transfer is lower risk than retiring it
+without that window. Commit `4847b667` added the HTTP cache policy and validators on `develop`; the
+production deployment and Cloudflare/VPS boundary check remain pending.
+
 ### Branch A — Endpoint is still required
 
-- [ ] Switch the route from the cookie-aware server client to the anonymous public read client.
-- [ ] Serve the same filtered action shape from the existing tagged server cache.
-- [ ] Calculate an ETag from the public snapshot revision/checksum.
-- [ ] Honor `If-None-Match` with `304` and no JSON body.
-- [ ] Add an explicit shared-cache policy no longer than the already accepted five-minute service
+- [x] Switch the route from the cookie-aware server client to the anonymous public read client.
+- [x] Serve the same filtered action shape from the existing tagged server cache.
+- [x] Calculate an ETag from the public snapshot revision/checksum.
+- [x] Honor `If-None-Match` with `304` and no JSON body.
+- [x] Add an explicit shared-cache policy no longer than the already accepted five-minute service
       worker window, unless product requirements approve a different staleness bound.
-- [ ] Ensure responses never include `Set-Cookie` and do not vary by authenticated user.
-- [ ] Preserve cache-tag invalidation on all public-data mutations.
-- [ ] Test first request, repeat request, conditional request, mutation invalidation, disabled
+- [x] Ensure responses never include `Set-Cookie` and do not vary by authenticated user.
+- [x] Preserve cache-tag invalidation on all public-data mutations.
+- [x] Test first request, repeat request, conditional request, mutation invalidation, disabled
       Supabase, and error behavior.
 - [ ] Verify a repeat request becomes a shared-cache hit at the actual Cloudflare/VPS deployment
       boundary; do not assume headers alone guarantee caching.
@@ -1036,14 +1073,16 @@ and a target relation in parallel.
 
 ## Recommended execution order
 
-| Order    | Work                                           | Expected impact | Risk   | Reason                                                             |
-| -------- | ---------------------------------------------- | --------------- | ------ | ------------------------------------------------------------------ |
-| Complete | Preview containment                            | Immediate       | Low    | Prevents avoidable preview-build load                              |
-| Complete | Phases 1–3: one shared build-data artifact     | Very high       | Medium | Removes repeated bulk reads from static build workers              |
-| Complete | Phase 3A implementation and local verification | Very high       | Medium | Contains the measured runtime sources locally                      |
-| 1        | Deploy Phase 3A to the VPS                     | Very high       | Medium | Activates runtime containment under production traffic             |
-| 2        | Representative 24-hour production gate         | Confirming      | None   | Establishes incident containment without an arbitrary long wait    |
-| 3        | Phase 4: public endpoint disposition           | Low–medium      | Low    | Uses measured compatibility traffic to choose hardening or removal |
+| Order    | Work                                           | Expected impact | Risk   | Reason                                                        |
+| -------- | ---------------------------------------------- | --------------- | ------ | ------------------------------------------------------------- |
+| Complete | Preview containment                            | Immediate       | Low    | Prevents avoidable preview-build load                         |
+| Complete | Phases 1–3: one shared build-data artifact     | Very high       | Medium | Removes repeated bulk reads from static build workers         |
+| Complete | Phase 3A implementation and local verification | Very high       | Medium | Contains the measured runtime sources locally                 |
+| Complete | Deploy Phase 3A to the VPS                     | Very high       | Medium | Activated runtime containment at production commit `b649c6d9` |
+| Complete | Conservative production egress gate            | Confirming      | None   | Multi-day dashboard evidence projects below 150 MB/day        |
+| Complete | Phase 4 Branch A implementation and tests      | Low–medium      | Low    | Bounds the retained compatibility endpoint                    |
+| 1        | Deploy Phase 4 Branch A to the VPS             | Low–medium      | Low    | Activates the HTTP cache policy and validators                |
+| 2        | Verify the Cloudflare/VPS cache boundary       | Confirming      | None   | Proves repeat and conditional requests avoid full transfers   |
 
 Phases 5 and 7 proceed only by opening separate reviewed plans after their entry gates are met.
 Phase 6 is a separate performance backlog measurement and does not block incident completion.
@@ -1080,7 +1119,7 @@ After any Supabase migration:
 
 The engineering incident is complete only when:
 
-- [ ] one representative 24-hour production window is below 150 MB uncached egress, or conservative
+- [x] one representative 24-hour production window is below 150 MB uncached egress, or conservative
       source-call and payload evidence projects below that threshold while dashboard usage is delayed;
 - [ ] the next complete billing cycle below 5 GB and rolling seven-day average below 150 MB/day are
       assigned to ongoing operational monitoring rather than left as unowned observations;
@@ -1115,8 +1154,9 @@ The engineering incident is complete only when:
 
 ## Explicit non-goals
 
-- Upgrading to Pro is not an implementation fix and is not part of this plan. It remains a business
-  fallback if optimized legitimate usage still exceeds the Free-plan quota.
+- Temporary Pro coverage was activated on 2026-08-21 as a business-continuity measure, not an
+  implementation fix. The owner intends to return to Free for the next billing cycle, so the 5 GB
+  Free-plan target remains the engineering completion threshold.
 - Moving the 42 MB article image bucket is not justified by the current evidence.
 - Deleting synced contribution history is not an acceptable bandwidth optimization.
 - Adding speculative indexes does not reduce response bytes and should not be used as a substitute

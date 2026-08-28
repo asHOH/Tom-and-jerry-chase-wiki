@@ -1,3 +1,5 @@
+import type { NextRequest } from 'next/server';
+
 import { PublicActionQueryError } from '@/lib/gameData/publicActionQueries';
 import { logPublicGameDataRouteMetric } from '@/lib/gameData/publicRouteMetrics';
 import { readCachedApprovedActionRows } from '@/lib/gameData/runtimeActionSources';
@@ -5,14 +7,38 @@ import { readCachedApprovedActionRows } from '@/lib/gameData/runtimeActionSource
 import { GET } from './route';
 
 jest.mock('server-only', () => ({}), { virtual: true });
-jest.mock('next/server', () => ({
-  NextResponse: {
-    json: jest.fn((body: unknown, init?: { status?: number }) => ({
-      status: init?.status ?? 200,
-      json: async () => body,
-    })),
-  },
-}));
+jest.mock('next/server', () => {
+  class MockNextResponse {
+    readonly headers: { get: (name: string) => string | null };
+    readonly status: number;
+    private readonly responseBody: string | null;
+
+    constructor(body: string | null, init?: { headers?: Record<string, string>; status?: number }) {
+      const headers = init?.headers ?? {};
+      this.headers = {
+        get: (name: string) =>
+          Object.entries(headers).find(([key]) => key.toLowerCase() === name.toLowerCase())?.[1] ??
+          null,
+      };
+      this.responseBody = body;
+      this.status = init?.status ?? 200;
+    }
+
+    static json(body: unknown, init?: { headers?: Record<string, string>; status?: number }) {
+      return new MockNextResponse(JSON.stringify(body), init);
+    }
+
+    async json() {
+      return this.responseBody === null ? null : JSON.parse(this.responseBody);
+    }
+
+    async text() {
+      return this.responseBody ?? '';
+    }
+  }
+
+  return { NextResponse: MockNextResponse };
+});
 jest.mock('@/lib/gameData/runtimeActionSources', () => ({
   readCachedApprovedActionRows: jest.fn(),
 }));
@@ -22,6 +48,7 @@ jest.mock('@/lib/gameData/publicRouteMetrics', () => ({
 
 const mockReadApprovedRows = jest.mocked(readCachedApprovedActionRows);
 const mockLogRouteMetric = jest.mocked(logPublicGameDataRouteMetric);
+const publicCacheControl = 'public, s-maxage=300, stale-while-revalidate=60';
 
 const rows = [
   {
@@ -55,14 +82,54 @@ describe('public game data actions route', () => {
         },
       ],
     });
+    expect(response.status).toBe(200);
+    expect(response.headers.get('Cache-Control')).toBe(publicCacheControl);
+    expect(response.headers.get('ETag')).toMatch(/^"[A-Za-z0-9_-]+"$/);
+    expect(response.headers.get('Set-Cookie')).toBeNull();
     expect(mockReadApprovedRows).toHaveBeenCalledTimes(1);
   });
 
-  it('routes repeated compatibility requests through the same persistent reader', async () => {
-    await GET();
-    await GET();
+  it('returns a stable validator for repeated compatibility requests', async () => {
+    const firstResponse = await GET();
+    const secondResponse = await GET();
 
     expect(mockReadApprovedRows).toHaveBeenCalledTimes(2);
+    expect(secondResponse.headers.get('ETag')).toBe(firstResponse.headers.get('ETag'));
+    expect(secondResponse.headers.get('Cache-Control')).toBe(publicCacheControl);
+  });
+
+  it('honors a matching If-None-Match validator without a response body', async () => {
+    const firstResponse = await GET();
+    const etag = firstResponse.headers.get('ETag');
+    expect(etag).not.toBeNull();
+
+    const conditionalRequest = {
+      headers: new Headers({ 'If-None-Match': etag ?? '' }),
+    } as NextRequest;
+    const conditionalResponse = await GET(conditionalRequest);
+
+    expect(conditionalResponse.status).toBe(304);
+    expect(conditionalResponse.headers.get('ETag')).toBe(etag);
+    expect(conditionalResponse.headers.get('Cache-Control')).toBe(publicCacheControl);
+    await expect(conditionalResponse.text()).resolves.toBe('');
+    expect(mockLogRouteMetric).toHaveBeenLastCalledWith({
+      route: '/api/game-data-actions/public',
+      method: 'GET',
+      status: 304,
+      startedAt: expect.any(Number),
+      requestCategory: 'legacy-public-actions',
+    });
+  });
+
+  it('returns a cacheable empty snapshot when Supabase is disabled', async () => {
+    mockReadApprovedRows.mockResolvedValue([]);
+
+    const response = await GET();
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get('Cache-Control')).toBe(publicCacheControl);
+    expect(response.headers.get('ETag')).toMatch(/^"[A-Za-z0-9_-]+"$/);
+    await expect(response.json()).resolves.toEqual({ actions: [] });
   });
 
   it('preserves the structured failure when cached acquisition fails', async () => {
