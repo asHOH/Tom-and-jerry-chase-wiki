@@ -371,10 +371,18 @@ function updateManifest(manifest, evidence) {
       excludedRowCount: evidence.selection.cutoverRowIds.length,
       domains: evidence.parity.domains,
     },
-    remainingCutoverBlockers: [
-      'atomic batch status transition unavailable',
-      'reviewed post-transition recovery path unavailable',
-    ],
+    batchStatusTransition: {
+      status: 'available',
+      rpc: 'prepared_mark_game_data_actions_synced_batch',
+      replayEpochPolicy: 'existing per-row trigger',
+    },
+    recoveryPath: {
+      status: 'available',
+      deploymentFailure: 'status transition is gated on deployed artifact proof',
+      transitionFailure: 'database function rolls back the complete batch',
+      uncertainResponse: 'cutover command resolves outcome by exact status re-query',
+    },
+    remainingCutoverBlockers: [],
   };
 }
 

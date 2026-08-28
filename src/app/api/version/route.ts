@@ -11,7 +11,7 @@ import { env } from '@/env';
 // Version metadata is deployment-scoped. Keep the route static while bounding the
 // framework cache lifetime to the project-wide maximum.
 export const dynamic = 'force-static';
-export const revalidate = 12 * 60 * 60;
+export const revalidate = 43200;
 
 // Server start time for development (when this module loads)
 const SERVER_START_TIME = new Date().toISOString();

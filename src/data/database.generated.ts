@@ -1586,6 +1586,17 @@ export type Database = {
             };
             Returns: undefined;
           };
+      prepared_mark_game_data_actions_synced_batch: {
+        Args: {
+          p_action_ids: string[];
+          p_actor_id: string;
+          p_expected_replay_epoch: number;
+        };
+        Returns: {
+          replay_epoch: number;
+          synced_action_ids: string[];
+        }[];
+      };
       prepared_publish_anonymous_game_data_actions:
         | {
             Args: {

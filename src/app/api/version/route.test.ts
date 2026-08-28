@@ -32,7 +32,7 @@ jest.mock('next/server', () => ({
 describe('version route', () => {
   it('stays static with the project-wide maximum cache lifetime', () => {
     expect(dynamic).toBe('force-static');
-    expect(revalidate).toBe(12 * 60 * 60);
+    expect(revalidate).toBe(43200);
   });
 
   it('returns deployment version metadata without allowing browser caching', async () => {
