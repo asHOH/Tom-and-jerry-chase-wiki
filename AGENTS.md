@@ -66,6 +66,8 @@ test/__mocks__/               # Jest-only mocks outside Jest's test discovery ro
 
 After changing Supabase migrations, replay the local database, run `npm run generate:database-types`, and commit `src/data/database.generated.ts`. Do not manually edit that generated file.
 
+Maintainer checkouts remain linked to production; use `STAGING_DATABASE_URL` with `--db-url` for `tjwiki-test`. Confirm the target and dry run before every push, and preserve the same version and SQL for remotely applied migrations.
+
 # Architecture
 
 ## Game Data

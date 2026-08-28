@@ -178,7 +178,9 @@ npm run start
 
 ## Supabase 数据库迁移（维护者）
 
-当待部署代码包含 `supabase/migrations/` 中的新迁移时，应先在本地回放并测试迁移、重新生成数据库类型，然后在应用部署前核对并应用到已链接的目标项目：
+本节仅适用于你自己创建并有权管理的 Supabase 项目。官方站点及其测试项目的数据库凭据不会提供给第三方，也不应被请求、共享或复用。请按照 [`.env.example`](./.env.example) 配置你自己的项目；`SUPABASE_SECRET_KEY` 具有高权限，只能保存在服务端环境变量中，绝对不应提交到 Git 或发送到浏览器。
+
+当待部署代码包含 `supabase/migrations/` 中的新迁移时，应先在本地回放并测试迁移、重新生成数据库类型，然后将 Supabase CLI 链接到你自己的目标项目。以下命令中的 `--linked` 始终表示当前操作者自行链接的项目；执行前必须核对 project ref，确认不会误操作其他数据库：
 
 ```bash
 npm exec -- supabase migration list --linked
@@ -186,8 +188,9 @@ npm exec -- supabase db push --linked --dry-run
 npm exec -- supabase db push --linked
 ```
 
-仅在 dry run 只列出预期迁移且已确认目标项目后继续。应用后验证迁移记录、函数权限和关键查询；回滚应使用新的前向迁移，不要修改已经应用的迁移文件。
-如果迁移通过 Supabase MCP 应用，应记录远端生成的迁移版本；发现本地与远端迁移历史不一致时先停止并核对，不要重复执行同一段 SQL。
+仅在 migration list 两侧一致、dry run 只列出预期迁移且已确认目标项目后继续。应用后再次运行 dry run，要求返回无待应用迁移，并验证函数权限和关键查询。回滚应使用新的前向迁移，不要修改已经应用的迁移文件。
+
+`--include-all` 只用于经过审计的历史账本修复，不是常规部署选项。若迁移通过 Supabase MCP 或 Dashboard 应用，必须把远端生成的**同一版本号和 SQL**提交到 `supabase/migrations/`；不要随后用另一个时间戳提交等价迁移。发现本地与远端迁移历史不一致时立即停止并核对，不要重复执行 SQL 或直接采用 CLI 的批量 repair 建议。
 
 ## 进阶配置 (非 Vercel 部署)
 
