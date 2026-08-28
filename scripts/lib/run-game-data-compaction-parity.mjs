@@ -30,11 +30,25 @@ class ParityRunnerError extends Error {
   }
 }
 
+let runnerStage = 'startup';
+
 function normalizeCharacterRelations(relations) {
   return Object.fromEntries(
     CHARACTER_RELATION_KEYS.map((relationKey) => [
       relationKey,
-      [...relations[relationKey]].sort((left, right) => left.id.localeCompare(right.id, 'zh-CN')),
+      Object.fromEntries(
+        relations[relationKey]
+          .map((item) => ({
+            ...item,
+            description: item.description ?? '',
+            isMinor: item.isMinor ?? false,
+            tags: [...(item.tags ?? [])].sort((left, right) =>
+              JSON.stringify(left).localeCompare(JSON.stringify(right))
+            ),
+          }))
+          .sort((left, right) => left.id.localeCompare(right.id, 'zh-CN'))
+          .map((item) => [item.id, item])
+      ),
     ])
   );
 }
@@ -87,10 +101,13 @@ function parseArgs(args) {
 }
 
 async function main() {
+  runnerStage = 'parse_arguments';
   const args = parseArgs(process.argv.slice(2));
+  runnerStage = 'load_source_modules';
   const sourceJiti = createJiti(import.meta.url, {
     alias: {
       '@': join(args.sourceRoot, 'src'),
+      'lodash-es/isEqual': join(projectDir, 'node_modules/lodash-es/isEqual.js'),
       'server-only': serverOnlyStub,
     },
   });
@@ -116,11 +133,14 @@ async function main() {
     join(projectDir, 'src/lib/gameData/compactionVerification.ts')
   );
 
+  runnerStage = 'read_snapshot';
   const storedRows = JSON.parse(await readFile(args.snapshotFile, 'utf8'));
   if (!Array.isArray(storedRows)) throw new ParityRunnerError('invalid_snapshot_file');
   const rows = storedRows.filter((row) => !args.excludeIds.has(row.id));
+  runnerStage = 'create_snapshot';
   const snapshot = createApprovedActionSnapshotFromRows(rows);
   const publishedData = {};
+  runnerStage = 'select_published_domains';
   const domains = PUBLISHABLE_ENTITY_TYPES.map((entityType) => {
     const data = selectPublishedGameData(entityType, getCanonicalGameData(entityType), snapshot);
     const readModel =
@@ -146,6 +166,7 @@ async function main() {
 
   let patchVerification = null;
   if (args.verificationCutoverIds.length > 0 || args.verificationDependencyIds.length > 0) {
+    runnerStage = 'prepare_action_patch_rows';
     if (args.verificationCutoverIds.length === 0) {
       throw new ParityRunnerError('verification_cutover_ids_missing');
     }
@@ -156,16 +177,20 @@ async function main() {
         if (!row) throw new ParityRunnerError('verification_row_missing');
         return { ...row, is_public: true };
       });
+    runnerStage = 'load_action_patch_modules';
     const { createActionPatchTargetRegistry } = sourceJiti(
       join(args.sourceRoot, 'src/lib/gameData/actionPatchTargets.ts')
     );
-    const { verifyCompactionActionPatch } = sourceJiti(
-      join(args.sourceRoot, 'src/lib/gameData/compactionPatchVerification.ts')
+    const { verifyCompactionActionPatch } = helperJiti(
+      join(projectDir, 'src/lib/gameData/compactionPatchVerification.ts')
     );
+    runnerStage = 'create_action_patch_targets';
+    const targets = createActionPatchTargetRegistry();
+    runnerStage = 'verify_action_patch';
     patchVerification = verifyCompactionActionPatch(
       selectVerificationRows(args.verificationCutoverIds),
       selectVerificationRows(args.verificationDependencyIds),
-      createActionPatchTargetRegistry()
+      targets
     );
   }
 
@@ -175,8 +200,18 @@ async function main() {
 }
 
 main().catch((error) => {
+  const cause =
+    error instanceof Error
+      ? {
+          name: error.name,
+          code:
+            typeof error.code === 'string' && /^[a-z0-9_:-]+$/u.test(error.code)
+              ? error.code
+              : undefined,
+        }
+      : undefined;
   process.stderr.write(
-    `${JSON.stringify({ error: { code: error instanceof ParityRunnerError ? error.code : 'parity_runner_failed' } })}\n`
+    `${JSON.stringify({ error: { code: error instanceof ParityRunnerError ? error.code : 'parity_runner_failed', stage: runnerStage, cause } })}\n`
   );
   process.exitCode = 1;
 });

@@ -6,7 +6,10 @@ import { isAbsolute, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
 import nextEnv from '@next/env';
+import { createClient } from '@supabase/supabase-js';
 import { createJiti } from 'jiti';
+
+import { resolveSupabaseTarget } from './lib/supabase-target.mjs';
 
 const execFileAsync = promisify(execFile);
 const projectDir = fileURLToPath(new URL('..', import.meta.url));
@@ -31,6 +34,9 @@ function parseArgs(args) {
   let manifestPath;
   let patchedRef;
   let productionOrigin;
+  let retainedRowsPath;
+  let expectedSupabaseHost;
+  let mode = 'preflight';
   let writeManifest = false;
 
   for (const arg of args) {
@@ -38,14 +44,33 @@ function parseArgs(args) {
     else if (arg.startsWith('--patched-ref=')) patchedRef = arg.slice('--patched-ref='.length);
     else if (arg.startsWith('--production-origin=')) {
       productionOrigin = arg.slice('--production-origin='.length);
-    } else if (arg === '--write-manifest') writeManifest = true;
+    } else if (arg.startsWith('--retained-rows=')) {
+      retainedRowsPath = arg.slice('--retained-rows='.length);
+    } else if (arg.startsWith('--expected-supabase-host=')) {
+      expectedSupabaseHost = arg.slice('--expected-supabase-host='.length).trim().toLowerCase();
+    } else if (arg.startsWith('--mode=')) mode = arg.slice('--mode='.length);
+    else if (arg === '--write-manifest') writeManifest = true;
     else throw new CompactionScriptError('invalid_argument', { argument: arg });
   }
 
   if (!manifestPath || !patchedRef || !productionOrigin) {
     throw new CompactionScriptError('required_argument_missing');
   }
-  return { manifestPath, patchedRef, productionOrigin, writeManifest };
+  if (mode !== 'preflight' && mode !== 'post-cutover') {
+    throw new CompactionScriptError('invalid_mode');
+  }
+  if (mode === 'post-cutover' && (!retainedRowsPath || !expectedSupabaseHost)) {
+    throw new CompactionScriptError('post_cutover_argument_missing');
+  }
+  return {
+    manifestPath,
+    patchedRef,
+    productionOrigin,
+    retainedRowsPath,
+    expectedSupabaseHost,
+    mode,
+    writeManifest,
+  };
 }
 
 async function run(command, args, options = {}) {
@@ -105,6 +130,58 @@ async function readIgnoredManifest(manifestArg) {
     throw new CompactionScriptError('invalid_manifest');
   }
   return { manifest, manifestPath, manifestRelativePath };
+}
+
+async function readIgnoredRetainedRows(retainedRowsArg) {
+  const retainedRowsPath = resolve(projectDir, retainedRowsArg);
+  const retainedRowsRelativePath = relative(projectDir, retainedRowsPath);
+  if (
+    retainedRowsRelativePath.startsWith('..') ||
+    isAbsolute(retainedRowsRelativePath) ||
+    !retainedRowsRelativePath.replaceAll('\\', '/').startsWith('.tmp/')
+  ) {
+    throw new CompactionScriptError('retained_rows_must_be_under_tmp');
+  }
+  await run('git', ['check-ignore', '--quiet', '--', retainedRowsRelativePath]);
+  let retained;
+  try {
+    retained = JSON.parse(await readFile(retainedRowsPath, 'utf8'));
+  } catch {
+    throw new CompactionScriptError('invalid_retained_rows');
+  }
+  if (!Array.isArray(retained?.rows)) {
+    throw new CompactionScriptError('invalid_retained_rows');
+  }
+  return {
+    retained,
+    retainedRowsRelativePath: retainedRowsRelativePath.replaceAll('\\', '/'),
+  };
+}
+
+function chunk(values, size) {
+  const chunks = [];
+  for (let index = 0; index < values.length; index += size) {
+    chunks.push(values.slice(index, index + size));
+  }
+  return chunks;
+}
+
+async function readExactActionRows(client, actionIds) {
+  const rows = [];
+  for (const actionIdChunk of chunk(actionIds, 100)) {
+    const { data, error } = await client
+      .from('game_data_actions')
+      .select('id,entity_type,entry,created_at,created_by,status,is_public,message')
+      .in('id', actionIdChunk)
+      .order('created_at', { ascending: true })
+      .order('id', { ascending: true });
+    if (error) throw new CompactionScriptError('post_cutover_row_read_failed');
+    rows.push(...data);
+  }
+  return rows.sort(
+    (left, right) =>
+      left.created_at.localeCompare(right.created_at) || left.id.localeCompare(right.id)
+  );
 }
 
 async function readProductionProof(
@@ -225,7 +302,34 @@ async function runParity(path, snapshotFile, excludedIds, dataOutputFile, verifi
       `--verification-dependency-ids=${verification.verificationDependencyRowIds.join(',')}`
     );
   }
-  const { stdout } = await run(process.execPath, args);
+  let stdout;
+  try {
+    ({ stdout } = await execFileAsync(process.execPath, args, {
+      cwd: projectDir,
+      encoding: 'utf8',
+      maxBuffer: 64 * 1024 * 1024,
+      windowsHide: true,
+    }));
+  } catch (error) {
+    let runnerCode = 'parity_runner_failed';
+    let runnerStage;
+    let runnerCause;
+    try {
+      const parsed = JSON.parse(error?.stderr ?? '');
+      if (typeof parsed?.error?.code === 'string') runnerCode = parsed.error.code;
+      if (typeof parsed?.error?.stage === 'string') runnerStage = parsed.error.stage;
+      if (parsed?.error?.cause && typeof parsed.error.cause === 'object') {
+        runnerCause = parsed.error.cause;
+      }
+    } catch {
+      // Keep the bounded generic runner code.
+    }
+    throw new CompactionScriptError('parity_runner_failed', {
+      runnerCode,
+      runnerStage,
+      runnerCause,
+    });
+  }
   try {
     return JSON.parse(stdout);
   } catch {
@@ -356,7 +460,7 @@ function updateManifest(manifest, evidence) {
       verifiedAt: capturedAt,
       manifestUnchanged: true,
       snapshotStableDuringVerification: true,
-      idempotence: evidence.idempotence,
+      actionOperations: evidence.actionOperations,
       actionPatch: evidence.actionPatch,
       production: evidence.production,
       publishedParity: evidence.parity,
@@ -386,6 +490,237 @@ function updateManifest(manifest, evidence) {
   };
 }
 
+function updatePostCutoverManifest(manifest, evidence) {
+  const verifiedAt = new Date().toISOString();
+  manifest.result = {
+    ...manifest.result,
+    postCutoverVerification: {
+      receiptKind: 'postCutoverVerification',
+      verificationOnly: true,
+      verifiedAt,
+      target: evidence.target,
+      exactRows: {
+        rowCount: evidence.selection.actionIds.length,
+        originalManifestRowIds: evidence.selection.originalManifestRowIds,
+        additionalSyncedRowIds: evidence.selection.additionalSyncedRowIds,
+        verifiedRowIds: evidence.selection.actionIds,
+        status: 'synced',
+        isPublic: false,
+        rowContentDigests: evidence.rowEvidence.rowContentDigests,
+      },
+      retainedRows: evidence.retainedRows,
+      currentApprovedSnapshot: {
+        replayEpoch: evidence.replayEpoch,
+        actionRevision: evidence.actionRevision,
+        rowCount: evidence.snapshotRowCount,
+        stableDuringVerification: true,
+      },
+      idempotence: evidence.idempotence,
+      actionPatch: evidence.actionPatch,
+      production: {
+        ...evidence.production,
+        stableDuringVerification: true,
+      },
+      publishedParity: evidence.parity,
+      limitations: [
+        'verification-only receipt; it does not prove who performed the earlier status transition',
+        'verification-only receipt; it does not prove the earlier execution time or atomicity',
+        'pre-cutover replay fingerprint was not captured and is not reconstructed',
+      ],
+    },
+  };
+  manifest.workflowBoundary = {
+    ...manifest.workflowBoundary,
+    postCutoverVerification: {
+      status: 'passed',
+      verificationOnly: true,
+      baselineCommit: evidence.baselineCommit,
+      patchedCommit: evidence.patchedCommit,
+      reconstructedWithRetainedRows: evidence.selection.actionIds.length,
+      currentApprovedRows: evidence.snapshotRowCount,
+    },
+  };
+}
+
+async function runPostCutoverVerification({
+  args,
+  manifest,
+  manifestPath,
+  manifestRelativePath,
+  baselineCommit,
+  patchedCommit,
+  readApprovedReplaySnapshot,
+  createApprovedActionSnapshotFromRows,
+  findCompactionValueDifferences,
+  verifySetActionIdempotence,
+  resolvePostCutoverManifestSelection,
+  verifyPostCutoverRowEvidence,
+  verifyStablePostCutoverProduction,
+  verifyCompactionArtifactMetadata,
+}) {
+  const selectionResult = resolvePostCutoverManifestSelection(manifest);
+  if (!selectionResult.success) {
+    throw new CompactionScriptError('invalid_post_cutover_manifest', {
+      failures: selectionResult.failures,
+    });
+  }
+  const selection = selectionResult.value;
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceKey = process.env.SUPABASE_SECRET_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!supabaseUrl || !serviceKey) {
+    throw new CompactionScriptError('missing_supabase_credentials');
+  }
+  const target = resolveSupabaseTarget(supabaseUrl);
+  if (!target) throw new CompactionScriptError('invalid_supabase_url');
+  if (
+    args.expectedSupabaseHost !== target.host ||
+    selection.targetHost.toLowerCase() !== target.host
+  ) {
+    throw new CompactionScriptError('supabase_host_mismatch', {
+      expectedSupabaseHost: args.expectedSupabaseHost,
+      retrospectiveSupabaseHost: selection.targetHost,
+      actualSupabaseHost: target.host,
+    });
+  }
+
+  const { retained, retainedRowsRelativePath } = await readIgnoredRetainedRows(
+    args.retainedRowsPath
+  );
+  const client = createClient(supabaseUrl, serviceKey, {
+    auth: { autoRefreshToken: false, persistSession: false },
+  });
+  const snapshotBefore = await readApprovedReplaySnapshot(client);
+  const remoteRowsBefore = await readExactActionRows(client, selection.actionIds);
+  const rowEvidenceBefore = verifyPostCutoverRowEvidence(
+    selection.actionIds,
+    retained.rows,
+    remoteRowsBefore
+  );
+  if (!rowEvidenceBefore.proven) {
+    throw new CompactionScriptError('post_cutover_row_evidence_failed', {
+      failures: rowEvidenceBefore.failures,
+    });
+  }
+
+  const retainedSnapshot = createApprovedActionSnapshotFromRows(retained.rows);
+  const operationSummary = verifySetActionIdempotence(retainedSnapshot.rows);
+  const actionOperations = {
+    actionCount: operationSummary.actionCount,
+    operationCounts: operationSummary.operationCounts,
+    setOnly: operationSummary.proven,
+    nonSetActions: operationSummary.failures,
+  };
+
+  const currentIds = new Set(snapshotBefore.rows.map((row) => row.id));
+  const overlap = selection.actionIds.filter((rowId) => currentIds.has(rowId));
+  if (overlap.length > 0) {
+    throw new CompactionScriptError('synced_rows_still_in_approved_snapshot', { rowIds: overlap });
+  }
+  const reconstructedRows = [...snapshotBefore.rows, ...retained.rows].sort(
+    (left, right) =>
+      left.created_at.localeCompare(right.created_at) || left.id.localeCompare(right.id)
+  );
+  const expectedArtifact = {
+    replayEpoch: snapshotBefore.replayEpoch,
+    actionRevision: snapshotBefore.actionSnapshot.actionRevision,
+    rowCount: snapshotBefore.rows.length,
+  };
+  const verificationSelection = {
+    cutoverRowIds: selection.actionIds,
+    verificationDependencyRowIds: [],
+    verificationRowIds: selection.actionIds,
+  };
+  const { parity, actionPatch } = await createParityProof(
+    baselineCommit,
+    patchedCommit,
+    reconstructedRows,
+    selection.actionIds,
+    findCompactionValueDifferences,
+    verificationSelection
+  );
+
+  const snapshotAfter = await readApprovedReplaySnapshot(client);
+  const remoteRowsAfter = await readExactActionRows(client, selection.actionIds);
+  const rowEvidenceAfter = verifyPostCutoverRowEvidence(
+    selection.actionIds,
+    retained.rows,
+    remoteRowsAfter
+  );
+  if (!rowEvidenceAfter.proven) {
+    throw new CompactionScriptError('post_cutover_row_evidence_changed', {
+      failures: rowEvidenceAfter.failures,
+    });
+  }
+  if (
+    snapshotAfter.replayEpoch !== snapshotBefore.replayEpoch ||
+    snapshotAfter.actionSnapshot.actionRevision !== snapshotBefore.actionSnapshot.actionRevision ||
+    snapshotAfter.rows.length !== snapshotBefore.rows.length
+  ) {
+    throw new CompactionScriptError('snapshot_changed_during_verification');
+  }
+  const productionBefore = await readProductionProof(
+    args.productionOrigin,
+    patchedCommit,
+    expectedArtifact,
+    verifyCompactionArtifactMetadata
+  );
+  const productionAfter = await readProductionProof(
+    args.productionOrigin,
+    patchedCommit,
+    expectedArtifact,
+    verifyCompactionArtifactMetadata
+  );
+  const productionStability = verifyStablePostCutoverProduction(
+    productionBefore,
+    productionAfter,
+    expectedArtifact
+  );
+  if (!productionStability.proven) {
+    throw new CompactionScriptError('production_changed_during_verification', {
+      failures: productionStability.failures,
+    });
+  }
+
+  const evidence = {
+    baselineCommit,
+    patchedCommit,
+    target,
+    replayEpoch: snapshotBefore.replayEpoch,
+    actionRevision: snapshotBefore.actionSnapshot.actionRevision,
+    snapshotRowCount: snapshotBefore.rows.length,
+    selection,
+    rowEvidence: rowEvidenceAfter,
+    retainedRows: {
+      path: retainedRowsRelativePath,
+      capturedAt: typeof retained.capturedAt === 'string' ? retained.capturedAt : null,
+      replayEpochAtCapture: Number.isSafeInteger(retained.replayEpoch)
+        ? retained.replayEpoch
+        : null,
+      rowCount: retained.rows.length,
+    },
+    actionOperations,
+    actionPatch,
+    production: productionAfter,
+    parity,
+  };
+  if (args.writeManifest) {
+    updatePostCutoverManifest(manifest, evidence);
+    await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, 'utf8');
+  }
+  process.stdout.write(
+    `${JSON.stringify(
+      {
+        mode: 'post-cutover',
+        manifest: manifestRelativePath.replaceAll('\\', '/'),
+        wroteManifest: args.writeManifest,
+        evidence,
+      },
+      null,
+      2
+    )}\n`
+  );
+}
+
 function sanitizedError(error) {
   return error instanceof CompactionScriptError
     ? { code: error.code, ...error.details }
@@ -409,7 +744,7 @@ async function main() {
   const { readApprovedReplaySnapshot } = jiti(
     '../src/lib/gameData/approvedReplaySnapshotReader.ts'
   );
-  const { createApprovedActionRevision } = jiti(
+  const { createApprovedActionRevision, createApprovedActionSnapshotFromRows } = jiti(
     '../src/lib/gameData/published/approvedActionSnapshot.ts'
   );
   const {
@@ -419,6 +754,31 @@ async function main() {
     verifyCompactionManifestRows,
     verifySetActionIdempotence,
   } = jiti('../src/lib/gameData/compactionVerification.ts');
+  const {
+    resolvePostCutoverManifestSelection,
+    verifyPostCutoverRowEvidence,
+    verifyStablePostCutoverProduction,
+  } = jiti('../src/lib/gameData/compactionPostCutoverVerification.ts');
+
+  if (args.mode === 'post-cutover') {
+    await runPostCutoverVerification({
+      args,
+      manifest,
+      manifestPath,
+      manifestRelativePath,
+      baselineCommit,
+      patchedCommit,
+      readApprovedReplaySnapshot,
+      createApprovedActionSnapshotFromRows,
+      findCompactionValueDifferences,
+      verifySetActionIdempotence,
+      resolvePostCutoverManifestSelection,
+      verifyPostCutoverRowEvidence,
+      verifyStablePostCutoverProduction,
+      verifyCompactionArtifactMetadata,
+    });
+    return;
+  }
 
   const selectionResult = resolveCompactionManifestSelection(manifest.rows, {
     cutoverRowIds: manifest.cutoverRowIds,

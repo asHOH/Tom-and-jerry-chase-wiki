@@ -30,6 +30,7 @@ function parseArgs(args) {
   let manifestPath;
   let patchedRef;
   let productionOrigin;
+  let retainedRowsPath;
   let actorId;
   let confirmation;
   let expectedSupabaseHost;
@@ -41,7 +42,9 @@ function parseArgs(args) {
     else if (arg.startsWith('--production-origin=')) {
       productionOrigin = arg.slice('--production-origin='.length);
     } else if (arg.startsWith('--actor-id=')) actorId = arg.slice('--actor-id='.length);
-    else if (arg.startsWith('--confirm=')) confirmation = arg.slice('--confirm='.length);
+    else if (arg.startsWith('--retained-rows=')) {
+      retainedRowsPath = arg.slice('--retained-rows='.length);
+    } else if (arg.startsWith('--confirm=')) confirmation = arg.slice('--confirm='.length);
     else if (arg.startsWith('--expected-supabase-host=')) {
       expectedSupabaseHost = arg.slice('--expected-supabase-host='.length).trim().toLowerCase();
     } else if (arg.startsWith('--mode=')) mode = arg.slice('--mode='.length);
@@ -50,7 +53,9 @@ function parseArgs(args) {
   if (!manifestPath || !patchedRef || !productionOrigin) {
     throw new CutoverScriptError('required_argument_missing');
   }
-  if (mode !== 'check' && mode !== 'sync') throw new CutoverScriptError('invalid_mode');
+  if (!['check', 'sync', 'post-check'].includes(mode)) {
+    throw new CutoverScriptError('invalid_mode');
+  }
   if (mode === 'sync') {
     if (
       !actorId ||
@@ -65,10 +70,14 @@ function parseArgs(args) {
       throw new CutoverScriptError('expected_supabase_host_required');
     }
   }
+  if (mode === 'post-check' && (!retainedRowsPath || !expectedSupabaseHost)) {
+    throw new CutoverScriptError('post_check_argument_missing');
+  }
   return {
     manifestPath,
     patchedRef,
     productionOrigin,
+    retainedRowsPath,
     actorId,
     expectedSupabaseHost,
     mode,
@@ -125,6 +134,43 @@ async function runPreflight(args) {
     );
   } catch (error) {
     throw new CutoverScriptError('preflight_failed', { exitCode: error?.code });
+  }
+}
+
+async function runPostCheck(args) {
+  try {
+    const { stdout } = await execFileAsync(
+      process.execPath,
+      [
+        verifierPath,
+        `--manifest=${args.manifestPath}`,
+        `--patched-ref=${args.patchedRef}`,
+        `--production-origin=${args.productionOrigin}`,
+        `--retained-rows=${args.retainedRowsPath}`,
+        `--expected-supabase-host=${args.expectedSupabaseHost}`,
+        '--mode=post-cutover',
+        '--write-manifest',
+      ],
+      {
+        cwd: projectDir,
+        encoding: 'utf8',
+        maxBuffer: 64 * 1024 * 1024,
+        windowsHide: true,
+      }
+    );
+    process.stdout.write(stdout);
+  } catch (error) {
+    let verifierError;
+    try {
+      const parsed = JSON.parse(error?.stderr ?? '');
+      if (parsed?.error && typeof parsed.error === 'object') verifierError = parsed.error;
+    } catch {
+      // Keep the bounded generic failure when the verifier did not emit structured JSON.
+    }
+    throw new CutoverScriptError('post_check_failed', {
+      exitCode: error?.code,
+      verifierError,
+    });
   }
 }
 
@@ -232,6 +278,10 @@ async function main() {
       expectedSupabaseHost: args.expectedSupabaseHost,
       actualSupabaseHost: target.host,
     });
+  }
+  if (args.mode === 'post-check') {
+    await runPostCheck(args);
+    return;
   }
   await runPreflight(args);
   const { manifest, manifestPath, manifestRelativePath } = await readIgnoredManifest(
