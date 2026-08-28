@@ -10,6 +10,7 @@ import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { contributors, type Contributor } from '@/data/contributors';
+import { isHiddenContributorNickname } from '@/data/hiddenContributorNicknames';
 import type { CardGroup } from '@/data/types';
 import {
   buildTreeStructure,
@@ -119,7 +120,8 @@ const GroupMetaRow = ({
   isDarkMode,
   missingWarningMessage,
 }: GroupMetaRowProps) => {
-  const shouldShowContributor = !!contributor && !isEditMode;
+  const shouldShowContributor =
+    !!contributor && !isEditMode && !isHiddenContributorNickname(contributor);
   if (!shouldShowContributor && !missingWarningMessage) {
     return null;
   }
