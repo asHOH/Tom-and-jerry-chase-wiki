@@ -189,6 +189,20 @@ Use `characterCounters.ts`, `characterCollaborators.ts`, `knowledgeCards.ts`, `s
    Deferred/Remaining, and any remotely Synced rows. Do not describe a locally verified row as
    synced unless the re-query confirms `status = 'synced'`.
 
+## Status-Cutover Handoff
+
+Small-batch patching never implies permission to transition status. For a separately authorized
+cutover, use the compaction workflow and read the
+[human operator runbook](../../../docs/operations/game-data-action-compaction.md) before acting.
+
+Hand off exact cutover and verification-only row IDs as separate sets. The normal path accepts only
+concrete `set` actions and requires two deployments plus explicit Supabase target confirmation. If
+rows are already `synced/private`, never restore or sync them again; use the read-only `post-check`
+recovery path.
+
+The reconciled 2026-07-28 through 2026-07-29 cohort (24 original rows plus 3 G09 rows) is already
+synced and must never enter status-cutover mode again.
+
 ## Safety Gates
 
 - Check newValue placement and schema shape.

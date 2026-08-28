@@ -183,6 +183,29 @@ cutover must also satisfy all of these:
 If no established repository workflow satisfies these gates, stop after local verification and
 recommend a separate reviewed cutover plan.
 
+## Production Cutover
+
+Before any production status transition, read the
+[human operator runbook](../../../docs/operations/game-data-action-compaction.md) and follow it as
+the source of truth for commands, deployment order, recovery, and stop conditions.
+
+Agent-specific invariants:
+
+- Keep `cutoverRowIds`, `verificationDependencyRowIds`, and retrospective observations separate.
+  Only the exact cutover set may reach the RPC; never rewrite the original manifest `rows`.
+- The normal path requires concrete `set` actions, a deployment-bound check, one separately
+  authorized atomic transition, and a second deployment. Always print and verify the expected
+  Supabase host/project ref.
+- If rows are already `synced/private`, never restore or sync them again. Use the read-only retained-row
+  `post-check` path; it may write only `postCutoverVerification` after strict parity and production
+  artifact proof pass.
+- Never infer missing actor, time, fingerprint, or atomicity evidence, and never weaken an exact
+  equality or stop condition.
+
+The reconciled 2026-07-28 through 2026-07-29 cohort (24 original rows plus 3 G09 rows) is already
+synced and must never enter sync mode again. Its character-relation parity mismatch remains a
+verification blocker.
+
 ## Final Report
 
 Report:

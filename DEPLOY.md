@@ -143,8 +143,10 @@ docker compose up -d
 ```bash
 curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 source ~/.nvm/nvm.sh
-# 请安装 20.3.0 以上版本
-nvm install 20
+# 版本要求以 package.json 的 engines、packageManager 和 devEngines 为准
+nvm install 22
+nvm use 22
+npm install --global npm@11.18.0
 ```
 
 ### 第 2 步 下载项目
@@ -191,6 +193,12 @@ npm exec -- supabase db push --linked
 仅在 migration list 两侧一致、dry run 只列出预期迁移且已确认目标项目后继续。应用后再次运行 dry run，要求返回无待应用迁移，并验证函数权限和关键查询。回滚应使用新的前向迁移，不要修改已经应用的迁移文件。
 
 `--include-all` 只用于经过审计的历史账本修复，不是常规部署选项。若迁移通过 Supabase MCP 或 Dashboard 应用，必须把远端生成的**同一版本号和 SQL**提交到 `supabase/migrations/`；不要随后用另一个时间戳提交等价迁移。发现本地与远端迁移历史不一致时立即停止并核对，不要重复执行 SQL 或直接采用 CLI 的批量 repair 建议。
+
+## 运行一段时间后的游戏数据整理（维护者）
+
+首次部署和日常代码更新不需要阅读本节。
+
+只有当站点已经运行一段时间、Supabase 中积累了已审核的游戏数据修改，并准备把这些修改永久合并进仓库、停止从数据库重复加载它们时，才需要执行这项维护操作。具体步骤见[游戏数据修改归档与切换运维手册](./docs/operations/game-data-action-compaction.md)。
 
 ## 进阶配置 (非 Vercel 部署)
 
