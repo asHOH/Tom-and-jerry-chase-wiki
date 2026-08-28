@@ -107,7 +107,12 @@ async function readIgnoredManifest(manifestArg) {
   return { manifest, manifestPath, manifestRelativePath };
 }
 
-async function readProductionProof(originArg, patchedCommit) {
+async function readProductionProof(
+  originArg,
+  patchedCommit,
+  expectedArtifact,
+  verifyArtifactMetadata
+) {
   let origin;
   try {
     origin = new URL(originArg);
@@ -129,6 +134,14 @@ async function readProductionProof(originArg, patchedCommit) {
     throw new CompactionScriptError('production_check_failed');
   }
 
+  const artifact = version.gameDataArtifact;
+  const artifactProof = verifyArtifactMetadata(artifact, expectedArtifact);
+  if (!artifactProof.proven) {
+    throw new CompactionScriptError('production_artifact_mismatch', {
+      fields: artifactProof.mismatchedFields,
+    });
+  }
+
   const deployedCommit = await resolveCommit(version.commitSha);
   if (!(await isAncestor(patchedCommit, deployedCommit))) {
     throw new CompactionScriptError('patched_commit_not_deployed');
@@ -138,6 +151,12 @@ async function readProductionProof(originArg, patchedCommit) {
     status: health.status,
     deployedCommit,
     buildTime: typeof version.buildTime === 'string' ? version.buildTime : null,
+    gameDataArtifact: {
+      deploymentIdentity: artifact.deploymentIdentity,
+      replayEpoch: artifact.replayEpoch,
+      actionRevision: artifact.actionRevision,
+      rowCount: artifact.rowCount,
+    },
   };
 }
 
@@ -192,7 +211,7 @@ async function removeWorktree(path) {
   }
 }
 
-async function runParity(path, snapshotFile, excludedIds, dataOutputFile) {
+async function runParity(path, snapshotFile, excludedIds, dataOutputFile, verification) {
   const args = [
     runnerPath,
     `--source-root=${path}`,
@@ -200,6 +219,12 @@ async function runParity(path, snapshotFile, excludedIds, dataOutputFile) {
     `--exclude-ids=${excludedIds.join(',')}`,
     `--data-output-file=${dataOutputFile}`,
   ];
+  if (verification) {
+    args.push(`--verification-cutover-ids=${verification.cutoverRowIds.join(',')}`);
+    args.push(
+      `--verification-dependency-ids=${verification.verificationDependencyRowIds.join(',')}`
+    );
+  }
   const { stdout } = await run(process.execPath, args);
   try {
     return JSON.parse(stdout);
@@ -213,7 +238,8 @@ async function createParityProof(
   patchedCommit,
   rows,
   excludedIds,
-  findDifferences
+  findDifferences,
+  verification
 ) {
   const tempRoot = await mkdtemp(join(tmpdir(), TEMP_PREFIX));
   assertTemporaryRoot(tempRoot);
@@ -232,7 +258,32 @@ async function createParityProof(
     await addWorktree(patchedPath, patchedCommit);
     patchedAdded = true;
     const before = await runParity(baselinePath, snapshotFile, [], beforeDataFile);
-    const after = await runParity(patchedPath, snapshotFile, excludedIds, afterDataFile);
+    const after = await runParity(
+      patchedPath,
+      snapshotFile,
+      excludedIds,
+      afterDataFile,
+      verification
+    );
+    const expectedVerifiedIds = verification.verificationRowIds;
+    const verifiedIds = after.patchVerification?.verifiedRowIds;
+    const verifiedIdSet = new Set(verifiedIds ?? []);
+    const patchFailures = after.patchVerification?.failures ?? [];
+    const dependencyReplayFailures = after.patchVerification?.dependencyReplayFailures ?? [];
+    if (
+      !Array.isArray(verifiedIds) ||
+      verifiedIds.length !== expectedVerifiedIds.length ||
+      expectedVerifiedIds.some((rowId) => !verifiedIdSet.has(rowId)) ||
+      patchFailures.length > 0 ||
+      dependencyReplayFailures.length > 0
+    ) {
+      throw new CompactionScriptError('action_patch_verification_failed', {
+        failures: patchFailures,
+        dependencyReplayFailures,
+        expectedRowCount: expectedVerifiedIds.length,
+        verifiedRowCount: Array.isArray(verifiedIds) ? verifiedIds.length : 0,
+      });
+    }
     const parity = compareParityReports(before, after);
     if (!parity.proven) {
       const beforeData = JSON.parse(await readFile(beforeDataFile, 'utf8'));
@@ -250,7 +301,7 @@ async function createParityProof(
         differences,
       });
     }
-    return parity;
+    return { parity, actionPatch: after.patchVerification };
   } finally {
     if (patchedAdded) await removeWorktree(patchedPath);
     if (baselineAdded) await removeWorktree(baselinePath);
@@ -281,6 +332,8 @@ function verifyExistingFingerprint(manifest, snapshot, rowContentDigests) {
 
 function updateManifest(manifest, evidence) {
   const capturedAt = new Date().toISOString();
+  manifest.cutoverRowIds = evidence.selection.cutoverRowIds;
+  manifest.verificationDependencyRowIds = evidence.selection.verificationDependencyRowIds;
   manifest.rows = manifest.rows.map((row) => ({
     ...row,
     contentDigest: evidence.rowContentDigests[row.id],
@@ -304,6 +357,7 @@ function updateManifest(manifest, evidence) {
       manifestUnchanged: true,
       snapshotStableDuringVerification: true,
       idempotence: evidence.idempotence,
+      actionPatch: evidence.actionPatch,
       production: evidence.production,
       publishedParity: evidence.parity,
     },
@@ -314,7 +368,7 @@ function updateManifest(manifest, evidence) {
       status: 'passed',
       baselineCommit: evidence.baselineCommit,
       patchedCommit: evidence.patchedCommit,
-      excludedRowCount: manifest.rows.length,
+      excludedRowCount: evidence.selection.cutoverRowIds.length,
       domains: evidence.parity.domains,
     },
     remainingCutoverBlockers: [
@@ -352,13 +406,35 @@ async function main() {
   );
   const {
     findCompactionValueDifferences,
+    resolveCompactionManifestSelection,
+    verifyCompactionArtifactMetadata,
     verifyCompactionManifestRows,
     verifySetActionIdempotence,
   } = jiti('../src/lib/gameData/compactionVerification.ts');
 
+  const selectionResult = resolveCompactionManifestSelection(manifest.rows, {
+    cutoverRowIds: manifest.cutoverRowIds,
+    verificationDependencyRowIds: manifest.verificationDependencyRowIds,
+  });
+  if (!selectionResult.success) {
+    throw new CompactionScriptError('invalid_manifest_selection', {
+      failures: selectionResult.failures,
+    });
+  }
+  const selection = selectionResult.value;
+
   const snapshotBefore = await readApprovedReplaySnapshot();
-  const manifestIds = manifest.rows.map((row) => row.id);
+  const manifestIds = selection.cutoverRowIds;
   const manifestIdSet = new Set(manifestIds);
+  const snapshotRowIds = new Set(snapshotBefore.rows.map((row) => row.id));
+  const missingVerificationRowIds = selection.verificationRowIds.filter(
+    (rowId) => !snapshotRowIds.has(rowId)
+  );
+  if (missingVerificationRowIds.length > 0) {
+    throw new CompactionScriptError('verification_rows_missing', {
+      rowIds: missingVerificationRowIds,
+    });
+  }
   const selectedRows = snapshotBefore.actionSnapshot.rows.filter((row) =>
     manifestIdSet.has(row.rowId)
   );
@@ -382,13 +458,23 @@ async function main() {
     });
   }
 
-  const production = await readProductionProof(args.productionOrigin, patchedCommit);
-  const parity = await createParityProof(
+  const production = await readProductionProof(
+    args.productionOrigin,
+    patchedCommit,
+    {
+      replayEpoch: snapshotBefore.replayEpoch,
+      actionRevision: snapshotBefore.actionSnapshot.actionRevision,
+      rowCount: snapshotBefore.rows.length,
+    },
+    verifyCompactionArtifactMetadata
+  );
+  const { parity, actionPatch } = await createParityProof(
     baselineCommit,
     patchedCommit,
     snapshotBefore.rows,
     manifestIds,
-    findCompactionValueDifferences
+    findCompactionValueDifferences,
+    selection
   );
   const snapshotAfter = await readApprovedReplaySnapshot();
   if (
@@ -406,6 +492,8 @@ async function main() {
     snapshotRowCount: snapshotBefore.rows.length,
     rowContentDigests,
     idempotence,
+    selection,
+    actionPatch,
     production,
     parity,
   };

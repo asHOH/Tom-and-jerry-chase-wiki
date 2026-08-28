@@ -44,6 +44,8 @@ function parseArgs(args) {
   let snapshotFile;
   let dataOutputFile;
   let excludeIds = [];
+  let verificationCutoverIds = [];
+  let verificationDependencyIds = [];
 
   for (const arg of args) {
     if (arg.startsWith('--source-root=')) sourceRoot = arg.slice('--source-root='.length);
@@ -53,6 +55,16 @@ function parseArgs(args) {
       excludeIds = arg.slice('--exclude-ids='.length).split(',').filter(Boolean);
     } else if (arg.startsWith('--data-output-file=')) {
       dataOutputFile = arg.slice('--data-output-file='.length);
+    } else if (arg.startsWith('--verification-cutover-ids=')) {
+      verificationCutoverIds = arg
+        .slice('--verification-cutover-ids='.length)
+        .split(',')
+        .filter(Boolean);
+    } else if (arg.startsWith('--verification-dependency-ids=')) {
+      verificationDependencyIds = arg
+        .slice('--verification-dependency-ids='.length)
+        .split(',')
+        .filter(Boolean);
     } else {
       throw new ParityRunnerError('invalid_argument');
     }
@@ -69,6 +81,8 @@ function parseArgs(args) {
           ? dataOutputFile
           : resolve(dataOutputFile),
     excludeIds: new Set(excludeIds),
+    verificationCutoverIds,
+    verificationDependencyIds,
   };
 }
 
@@ -130,7 +144,34 @@ async function main() {
     await writeFile(args.dataOutputFile, JSON.stringify(publishedData), 'utf8');
   }
 
-  process.stdout.write(`${JSON.stringify({ sourceRoot: args.sourceRoot, domains })}\n`);
+  let patchVerification = null;
+  if (args.verificationCutoverIds.length > 0 || args.verificationDependencyIds.length > 0) {
+    if (args.verificationCutoverIds.length === 0) {
+      throw new ParityRunnerError('verification_cutover_ids_missing');
+    }
+    const storedRowsById = new Map(storedRows.map((row) => [row.id, row]));
+    const selectVerificationRows = (ids) =>
+      ids.map((rowId) => {
+        const row = storedRowsById.get(rowId);
+        if (!row) throw new ParityRunnerError('verification_row_missing');
+        return { ...row, is_public: true };
+      });
+    const { createActionPatchTargetRegistry } = sourceJiti(
+      join(args.sourceRoot, 'src/lib/gameData/actionPatchTargets.ts')
+    );
+    const { verifyCompactionActionPatch } = sourceJiti(
+      join(args.sourceRoot, 'src/lib/gameData/compactionPatchVerification.ts')
+    );
+    patchVerification = verifyCompactionActionPatch(
+      selectVerificationRows(args.verificationCutoverIds),
+      selectVerificationRows(args.verificationDependencyIds),
+      createActionPatchTargetRegistry()
+    );
+  }
+
+  process.stdout.write(
+    `${JSON.stringify({ sourceRoot: args.sourceRoot, domains, patchVerification })}\n`
+  );
 }
 
 main().catch((error) => {

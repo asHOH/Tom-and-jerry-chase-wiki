@@ -4,6 +4,8 @@ import {
   createCanonicalCompactionDigest,
   encodeCanonicalCompactionValue,
   findCompactionValueDifferences,
+  resolveCompactionManifestSelection,
+  verifyCompactionArtifactMetadata,
   verifyCompactionManifestRows,
   verifySetActionIdempotence,
   type CompactionSnapshotRow,
@@ -28,6 +30,67 @@ const snapshotRow = (
 });
 
 describe('compaction verification', () => {
+  it('keeps manifest rows as the backward-compatible cutover set', () => {
+    const rows = [{ id: 'cutover-1' }, { id: 'cutover-2' }];
+
+    expect(resolveCompactionManifestSelection(rows, {})).toEqual({
+      success: true,
+      value: {
+        cutoverRowIds: ['cutover-1', 'cutover-2'],
+        verificationDependencyRowIds: [],
+        verificationRowIds: ['cutover-1', 'cutover-2'],
+      },
+    });
+    expect(
+      resolveCompactionManifestSelection(rows, {
+        cutoverRowIds: ['cutover-1', 'cutover-2'],
+        verificationDependencyRowIds: ['dependency-1'],
+      })
+    ).toEqual({
+      success: true,
+      value: {
+        cutoverRowIds: ['cutover-1', 'cutover-2'],
+        verificationDependencyRowIds: ['dependency-1'],
+        verificationRowIds: ['cutover-1', 'cutover-2', 'dependency-1'],
+      },
+    });
+  });
+
+  it('rejects ambiguous cutover and verification dependency roles', () => {
+    const rows = [{ id: 'cutover-1' }, { id: 'cutover-2' }];
+
+    expect(
+      resolveCompactionManifestSelection(rows, {
+        cutoverRowIds: ['cutover-2', 'cutover-1'],
+        verificationDependencyRowIds: ['cutover-1', 'dependency-1', 'dependency-1'],
+      })
+    ).toEqual({
+      success: false,
+      failures: expect.arrayContaining([
+        { code: 'cutover_row_ids_mismatch' },
+        { code: 'verification_dependency_overlaps_cutover', rowId: 'cutover-1' },
+        { code: 'duplicate_verification_dependency_id', rowId: 'dependency-1' },
+      ]),
+    });
+  });
+
+  it('binds production proof to a concrete build artifact and frozen snapshot', () => {
+    const expected = { replayEpoch: 42, actionRevision: 'v1:revision', rowCount: 3 };
+
+    expect(
+      verifyCompactionArtifactMetadata({ deploymentIdentity: 'build-1', ...expected }, expected)
+    ).toEqual({ proven: true, mismatchedFields: [] });
+    expect(
+      verifyCompactionArtifactMetadata(
+        { deploymentIdentity: '', replayEpoch: 41, actionRevision: 'old', rowCount: 2 },
+        expected
+      )
+    ).toEqual({
+      proven: false,
+      mismatchedFields: ['deploymentIdentity', 'replayEpoch', 'actionRevision', 'rowCount'],
+    });
+  });
+
   it('creates canonical digests independent of object-key order while preserving array order', () => {
     const first = createCanonicalCompactionDigest({ b: 2, a: [1, undefined] });
     const reordered = createCanonicalCompactionDigest({ a: [1, undefined], b: 2 });

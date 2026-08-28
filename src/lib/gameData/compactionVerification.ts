@@ -45,6 +45,31 @@ export type CompactionIdempotenceFailure = {
   code: 'non_set_operation' | 'missing_set_value';
 };
 
+export type CompactionManifestSelectionFailure = {
+  code:
+    | 'invalid_cutover_row_ids'
+    | 'cutover_row_ids_mismatch'
+    | 'invalid_verification_dependency_row_ids'
+    | 'duplicate_verification_dependency_id'
+    | 'verification_dependency_overlaps_cutover';
+  rowId?: string;
+};
+
+export type CompactionManifestSelection = {
+  cutoverRowIds: string[];
+  verificationDependencyRowIds: string[];
+  verificationRowIds: string[];
+};
+
+export type CompactionArtifactMetadata = {
+  deploymentIdentity: string;
+  replayEpoch: number | null;
+  actionRevision: string;
+  rowCount: number;
+};
+
+export type CompactionArtifactMetadataField = keyof CompactionArtifactMetadata;
+
 export type CompactionValueDifference = {
   path: string;
   code: 'type_mismatch' | 'value_mismatch' | 'missing_before' | 'missing_after';
@@ -176,6 +201,90 @@ export function findCompactionValueDifferences(
   const differences: CompactionValueDifference[] = [];
   collectValueDifferences(before, after, '$', differences, limit);
   return differences;
+}
+
+function isUniqueStringArray(value: unknown): value is string[] {
+  return (
+    Array.isArray(value) &&
+    value.every((item) => typeof item === 'string' && item.length > 0) &&
+    new Set(value).size === value.length
+  );
+}
+
+export function resolveCompactionManifestSelection(
+  manifestRows: readonly Pick<CompactionManifestRow, 'id'>[],
+  selection: {
+    cutoverRowIds?: unknown;
+    verificationDependencyRowIds?: unknown;
+  }
+):
+  | { success: true; value: CompactionManifestSelection }
+  | { success: false; failures: CompactionManifestSelectionFailure[] } {
+  const manifestRowIds = manifestRows.map((row) => row.id);
+  const cutoverRowIds = selection.cutoverRowIds ?? manifestRowIds;
+  const dependencyRowIds = selection.verificationDependencyRowIds ?? [];
+  const failures: CompactionManifestSelectionFailure[] = [];
+
+  if (!isUniqueStringArray(cutoverRowIds)) {
+    failures.push({ code: 'invalid_cutover_row_ids' });
+  } else if (
+    cutoverRowIds.length !== manifestRowIds.length ||
+    cutoverRowIds.some((rowId, index) => rowId !== manifestRowIds[index])
+  ) {
+    failures.push({ code: 'cutover_row_ids_mismatch' });
+  }
+
+  if (
+    !Array.isArray(dependencyRowIds) ||
+    dependencyRowIds.some((rowId) => typeof rowId !== 'string' || rowId.length === 0)
+  ) {
+    failures.push({ code: 'invalid_verification_dependency_row_ids' });
+  } else {
+    const seen = new Set<string>();
+    const cutoverSet = new Set(manifestRowIds);
+    for (const rowId of dependencyRowIds) {
+      if (seen.has(rowId)) {
+        failures.push({ code: 'duplicate_verification_dependency_id', rowId });
+      }
+      if (cutoverSet.has(rowId)) {
+        failures.push({ code: 'verification_dependency_overlaps_cutover', rowId });
+      }
+      seen.add(rowId);
+    }
+  }
+
+  if (failures.length > 0 || !isUniqueStringArray(cutoverRowIds)) {
+    return { success: false, failures };
+  }
+  const verificationDependencyRowIds = dependencyRowIds as string[];
+  return {
+    success: true,
+    value: {
+      cutoverRowIds,
+      verificationDependencyRowIds,
+      verificationRowIds: [...cutoverRowIds, ...verificationDependencyRowIds],
+    },
+  };
+}
+
+export function verifyCompactionArtifactMetadata(
+  value: unknown,
+  expected: Omit<CompactionArtifactMetadata, 'deploymentIdentity'>
+): { proven: boolean; mismatchedFields: CompactionArtifactMetadataField[] } {
+  const metadata =
+    value !== null && typeof value === 'object' && !Array.isArray(value)
+      ? (value as Record<string, unknown>)
+      : {};
+  const mismatchedFields: CompactionArtifactMetadataField[] = [];
+  if (typeof metadata.deploymentIdentity !== 'string' || metadata.deploymentIdentity.length === 0) {
+    mismatchedFields.push('deploymentIdentity');
+  }
+  if (metadata.replayEpoch !== expected.replayEpoch) mismatchedFields.push('replayEpoch');
+  if (metadata.actionRevision !== expected.actionRevision) {
+    mismatchedFields.push('actionRevision');
+  }
+  if (metadata.rowCount !== expected.rowCount) mismatchedFields.push('rowCount');
+  return { proven: mismatchedFields.length === 0, mismatchedFields };
 }
 
 export function verifyCompactionManifestRows(
