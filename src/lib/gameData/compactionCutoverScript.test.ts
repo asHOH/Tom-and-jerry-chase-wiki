@@ -17,6 +17,9 @@ describe('game-data compaction cutover command', () => {
     expect(script).toContain('verify-game-data-compaction.mjs');
     expect(script).toContain("mode = 'check'");
     expect(script).toContain('confirmation !== CONFIRMATION');
+    expect(script).toContain('expected_supabase_host_required');
+    expect(script).toContain('supabase_host_mismatch');
+    expect(script).toContain('target,');
   });
 
   it('uses the atomic RPC and exact postcondition reads instead of table updates', () => {

@@ -5,6 +5,7 @@ import { createClient } from '@supabase/supabase-js';
 import { createJiti } from 'jiti';
 
 import { fetchGameDataActionRows } from './lib/game-data-action-query.mjs';
+import { resolveSupabaseTarget } from './lib/supabase-target.mjs';
 
 const projectDir = fileURLToPath(new URL('..', import.meta.url));
 nextEnv.loadEnvConfig(projectDir);
@@ -125,6 +126,8 @@ async function main() {
   if (!SUPABASE_URL || !SERVICE_KEY) {
     throw new InspectionScriptError('missing_supabase_credentials');
   }
+  const target = resolveSupabaseTarget(SUPABASE_URL);
+  if (!target) throw new InspectionScriptError('invalid_supabase_url');
 
   const supabase = createClient(SUPABASE_URL, SERVICE_KEY, {
     auth: { autoRefreshToken: false, persistSession: false },
@@ -165,6 +168,7 @@ async function main() {
   });
 
   writeOutput({
+    target,
     scope:
       args.ids === undefined
         ? { kind: 'beijing-date-range', ...args.dateRange, actor: args.actor ?? null }

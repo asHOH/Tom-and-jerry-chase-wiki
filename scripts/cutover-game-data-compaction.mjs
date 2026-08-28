@@ -8,6 +8,8 @@ import nextEnv from '@next/env';
 import { createClient } from '@supabase/supabase-js';
 import { createJiti } from 'jiti';
 
+import { resolveSupabaseTarget } from './lib/supabase-target.mjs';
+
 const execFileAsync = promisify(execFile);
 const projectDir = fileURLToPath(new URL('..', import.meta.url));
 const verifierPath = fileURLToPath(new URL('./verify-game-data-compaction.mjs', import.meta.url));
@@ -30,6 +32,7 @@ function parseArgs(args) {
   let productionOrigin;
   let actorId;
   let confirmation;
+  let expectedSupabaseHost;
   let mode = 'check';
 
   for (const arg of args) {
@@ -39,7 +42,9 @@ function parseArgs(args) {
       productionOrigin = arg.slice('--production-origin='.length);
     } else if (arg.startsWith('--actor-id=')) actorId = arg.slice('--actor-id='.length);
     else if (arg.startsWith('--confirm=')) confirmation = arg.slice('--confirm='.length);
-    else if (arg.startsWith('--mode=')) mode = arg.slice('--mode='.length);
+    else if (arg.startsWith('--expected-supabase-host=')) {
+      expectedSupabaseHost = arg.slice('--expected-supabase-host='.length).trim().toLowerCase();
+    } else if (arg.startsWith('--mode=')) mode = arg.slice('--mode='.length);
     else throw new CutoverScriptError('invalid_argument', { argument: arg });
   }
   if (!manifestPath || !patchedRef || !productionOrigin) {
@@ -56,8 +61,18 @@ function parseArgs(args) {
     if (confirmation !== CONFIRMATION) {
       throw new CutoverScriptError('confirmation_required', { expected: CONFIRMATION });
     }
+    if (!expectedSupabaseHost) {
+      throw new CutoverScriptError('expected_supabase_host_required');
+    }
   }
-  return { manifestPath, patchedRef, productionOrigin, actorId, mode };
+  return {
+    manifestPath,
+    patchedRef,
+    productionOrigin,
+    actorId,
+    expectedSupabaseHost,
+    mode,
+  };
 }
 
 async function readIgnoredManifest(manifestArg) {
@@ -208,6 +223,16 @@ function sanitizedError(error) {
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (!supabaseUrl) throw new CutoverScriptError('missing_supabase_credentials');
+  const target = resolveSupabaseTarget(supabaseUrl);
+  if (!target) throw new CutoverScriptError('invalid_supabase_url');
+  if (args.expectedSupabaseHost && args.expectedSupabaseHost !== target.host) {
+    throw new CutoverScriptError('supabase_host_mismatch', {
+      expectedSupabaseHost: args.expectedSupabaseHost,
+      actualSupabaseHost: target.host,
+    });
+  }
   await runPreflight(args);
   const { manifest, manifestPath, manifestRelativePath } = await readIgnoredManifest(
     args.manifestPath
@@ -230,6 +255,7 @@ async function main() {
       `${JSON.stringify(
         {
           mode: args.mode,
+          target,
           manifest: manifestRelativePath,
           cutoverReady: true,
           actionCount: prepared.value.actionIds.length,
@@ -244,9 +270,8 @@ async function main() {
     return;
   }
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SECRET_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!supabaseUrl || !serviceKey) throw new CutoverScriptError('missing_supabase_credentials');
+  if (!serviceKey) throw new CutoverScriptError('missing_supabase_credentials');
   const client = createClient(supabaseUrl, serviceKey, {
     auth: { autoRefreshToken: false, persistSession: false },
   });
@@ -257,6 +282,7 @@ async function main() {
     remoteCutover: {
       executedAt,
       actorId: args.actorId,
+      target,
       replayEpochBefore: prepared.value.replayEpoch,
       ...cutover,
     },
@@ -273,6 +299,7 @@ async function main() {
     `${JSON.stringify(
       {
         mode: args.mode,
+        target,
         manifest: manifestRelativePath,
         rowCount: cutover.syncedActionIds.length,
         status: 'synced',
