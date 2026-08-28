@@ -5,6 +5,7 @@ Tom and Jerry Chase Wiki is a Chinese game-data wiki for 猫和老鼠手游 (Tom
 - Production (VPS+Cloudflared): <https://www.tjwiki.com>
 - Development preview (Vercel): <https://dev.tjwiki.com>
 - Codex agents: use the Vercel plugin for vercel platform guidance and preview deployment/log diagnostics; production deployment remains governed by `DEPLOY.md`.
+- If `.codex/AGENTS.md` exists, read it before starting task work and treat it as private, project-local operator context. The file is intentionally untracked and may be absent.
 - Product UI language: `zh-CN`. This does not set the language of assistant responses.
 - Design mobile-first.
 - Use the Node.js and npm versions declared in `package.json` (`engines`, `packageManager`, and `devEngines`).
