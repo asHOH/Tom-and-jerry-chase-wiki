@@ -1562,6 +1562,17 @@ const mapDefinitions: Record<string, MapDefinition> = {
     description:
       '$彩蛋区域$text-fuchsia-600 dark:text-fuchsia-400#：所有角色均可乘坐领航厅右侧发射器前往彩蛋房，内有1个{老鼠夹}、1瓶{神秘药水}和1个{苍蝇拍}，可在彩蛋房乘坐火箭返回本地图的货仓左侧。发射器和火箭的特性与{管道}类似，但使用CD为20秒。\n$特殊机制$text-indigo-700 dark:text-indigo-400#：位于奶酪矿的道具生成口可能会刷新{奶酪}，至多3块。',
     specialImageUrl: '/images/maps/太空堡垒.png',
+    interactiveMap: {
+      width: 19214,
+      height: 11782,
+      tileSize: 512,
+      minZoom: 0,
+      maxZoom: 4,
+      tileUrl: '/images/map-tiles/space-fortress-i/{z}/{y}/{x}.webp',
+      previewUrl: '/images/map-tiles/space-fortress-i/preview.webp',
+      rooms: [],
+      points: [],
+    },
     mapSkin: [
       {
         name: '星海堡垒I',
@@ -1590,6 +1601,17 @@ const mapDefinitions: Record<string, MapDefinition> = {
     description:
       '$特殊机制$text-indigo-700 dark:text-indigo-400#：所有角色均可乘坐实验舱右侧发射器前往左侧太空。发射器的特性与{管道}类似，但使用CD为20秒。\n在本地图中，位于货仓的道具生成口可能会刷新{奶酪}，至多3块。',
     specialImageUrl: '/images/maps/太空堡垒.png',
+    interactiveMap: {
+      width: 19456,
+      height: 11037,
+      tileSize: 512,
+      minZoom: 0,
+      maxZoom: 4,
+      tileUrl: '/images/map-tiles/space-fortress-ii/{z}/{y}/{x}.webp',
+      previewUrl: '/images/map-tiles/space-fortress-ii/preview.webp',
+      rooms: [],
+      points: [],
+    },
     mapSkin: [
       {
         name: '星海堡垒II',
@@ -1620,6 +1642,17 @@ const mapDefinitions: Record<string, MapDefinition> = {
     description:
       '$彩蛋区域$text-fuchsia-600 dark:text-fuchsia-400#：所有角色均可乘坐领航厅右侧发射器前往彩蛋房，内有1个{老鼠夹}、1瓶{神秘药水}和1个{苍蝇拍}，可在彩蛋房乘坐火箭返回本地图的奶酪矿左侧。发射器和火箭的特性与{管道}类似，但使用CD为20秒。\n$特殊机制$text-indigo-700 dark:text-indigo-400#：位于奶酪矿的道具生成口可能会刷新{奶酪}，至多3块。\n$地形更改$text-fuchsia-600 dark:text-fuchsia-400#：在{特工行动}中，本地图维修舱不刷新{老鼠洞}（即本地图只有4个老鼠洞）。',
     specialImageUrl: '/images/maps/太空堡垒.png',
+    interactiveMap: {
+      width: 19214,
+      height: 11696,
+      tileSize: 512,
+      minZoom: 0,
+      maxZoom: 4,
+      tileUrl: '/images/map-tiles/space-fortress-iii/{z}/{y}/{x}.webp',
+      previewUrl: '/images/map-tiles/space-fortress-iii/preview.webp',
+      rooms: [],
+      points: [],
+    },
     mapSkin: [
       {
         name: '星海堡垒III',

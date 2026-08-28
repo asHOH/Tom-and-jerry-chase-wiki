@@ -1,0 +1,8 @@
+{
+  "width": 19214,
+  "height": 11696,
+  "tileSize": 512,
+  "minZoom": 0,
+  "maxZoom": 4,
+  "formats": ["webp", "avif"]
+}

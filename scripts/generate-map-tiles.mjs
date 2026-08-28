@@ -1,15 +1,26 @@
 import { access, mkdir, writeFile } from 'node:fs/promises';
+import { availableParallelism } from 'node:os';
 import path from 'node:path';
 import sharp from 'sharp';
 
 const args = process.argv.slice(2);
 const force = args.includes('--force');
-const positionalArgs = args.filter((arg) => arg !== '--force');
+const concurrencyArg = args.find((arg) => arg.startsWith('--concurrency='));
+const requestedConcurrency = concurrencyArg?.slice('--concurrency='.length);
+const parsedConcurrency = requestedConcurrency ? Number.parseInt(requestedConcurrency, 10) : null;
+if (
+  requestedConcurrency !== undefined &&
+  (!Number.isInteger(parsedConcurrency) || parsedConcurrency < 1)
+) {
+  console.error('--concurrency 必须是大于或等于 1 的整数');
+  process.exit(1);
+}
+const positionalArgs = args.filter((arg) => arg !== '--force' && !arg.startsWith('--concurrency='));
 const [sourceArg, mapIdArg, outputArg] = positionalArgs;
 
 if (!sourceArg || !mapIdArg) {
   console.error(
-    '用法: npm run generate:map-tiles -- <源图片> <地图标识> [输出目录，默认 public/images/map-tiles] [--force]'
+    '用法: npm run generate:map-tiles -- <源图片> <地图标识> [输出目录，默认 public/images/map-tiles] [--force] [--concurrency=并行数]'
   );
   process.exit(1);
 }
@@ -19,7 +30,9 @@ const outputRoot = path.resolve(outputArg ?? 'public/images/map-tiles');
 const outputDirectory = path.join(outputRoot, mapIdArg);
 const tileSize = 512;
 const maxZoom = 4;
+const webpMaxDimension = 16383;
 const formats = ['webp', 'avif'];
+const rowConcurrency = parsedConcurrency ?? Math.min(2, availableParallelism());
 const metadata = await sharp(source).metadata();
 let generatedTileCount = 0;
 let generatedPreviewCount = 0;
@@ -42,6 +55,52 @@ const encodeImage = (image, format) =>
     ? image.avif({ quality: 52, effort: 5 })
     : image.webp({ quality: 84, alphaQuality: 90, effort: 5 });
 
+const runWithConcurrency = async (items, concurrency, worker) => {
+  let nextIndex = 0;
+  await Promise.all(
+    Array.from({ length: Math.min(concurrency, items.length) }, async () => {
+      while (nextIndex < items.length) {
+        const item = items[nextIndex];
+        nextIndex += 1;
+        await worker(item);
+      }
+    })
+  );
+};
+
+const createProgressReporter = (zoom, total) => {
+  let completed = 0;
+  let lastRenderedAt = 0;
+  let lastLoggedPercent = -10;
+
+  const render = (forceRender = false) => {
+    const now = Date.now();
+    const percent = Math.floor((completed / total) * 100);
+    if (!forceRender && now - lastRenderedAt < 100) return;
+
+    const message = `${mapIdArg} zoom ${zoom}: ${completed}/${total} (${percent}%)，并行数 ${rowConcurrency}`;
+    if (process.stdout.isTTY) {
+      process.stdout.write(`\r${message}\x1b[K`);
+    } else if (forceRender || percent >= lastLoggedPercent + 10) {
+      console.log(message);
+      lastLoggedPercent = percent;
+    }
+    lastRenderedAt = now;
+  };
+
+  return {
+    start: () => render(true),
+    increment: () => {
+      completed += 1;
+      render();
+    },
+    finish: () => {
+      render(true);
+      if (process.stdout.isTTY) process.stdout.write('\n');
+    },
+  };
+};
+
 for (let zoom = 0; zoom <= maxZoom; zoom += 1) {
   const scale = 2 ** (zoom - maxZoom);
   const width = Math.max(1, Math.round(metadata.width * scale));
@@ -49,33 +108,33 @@ for (let zoom = 0; zoom <= maxZoom; zoom += 1) {
   const zoomDirectory = path.join(outputDirectory, String(zoom));
   await mkdir(zoomDirectory, { recursive: true });
 
-  const pendingTiles = [];
+  const pendingRows = [];
 
   for (let y = 0; y < Math.ceil(height / tileSize); y += 1) {
     const rowDirectory = path.join(zoomDirectory, String(y));
     await mkdir(rowDirectory, { recursive: true });
+    const top = y * tileSize;
+    const extractHeight = Math.min(tileSize, height - top);
+    const tiles = [];
     for (let x = 0; x < Math.ceil(width / tileSize); x += 1) {
       const left = x * tileSize;
-      const top = y * tileSize;
       const extractWidth = Math.min(tileSize, width - left);
-      const extractHeight = Math.min(tileSize, height - top);
       const pendingFormats = [];
       for (const format of formats) {
         const outputPath = path.join(rowDirectory, `${x}.${format}`);
         if (force || !(await fileExists(outputPath))) pendingFormats.push(format);
       }
       if (pendingFormats.length > 0) {
-        pendingTiles.push({
+        tiles.push({
           left,
-          top,
           extractWidth,
-          extractHeight,
           pendingFormats,
           rowDirectory,
           x,
         });
       }
     }
+    if (tiles.length > 0) pendingRows.push({ top, extractHeight, tiles });
   }
 
   const pendingPreviewFormats =
@@ -88,42 +147,73 @@ for (let zoom = 0; zoom <= maxZoom; zoom += 1) {
         ).then((results) => results.filter((format) => format !== null))
       : [];
 
-  if (pendingTiles.length === 0 && pendingPreviewFormats.length === 0) continue;
+  if (pendingRows.length === 0 && pendingPreviewFormats.length === 0) continue;
 
-  const level = await sharp(source)
-    .resize(width, height, { fit: 'fill', kernel: sharp.kernel.lanczos3 })
-    .webp({ quality: 84, alphaQuality: 90, effort: 5 })
-    .toBuffer();
+  const pendingResourceCount =
+    pendingRows.reduce(
+      (rowCount, row) =>
+        rowCount + row.tiles.reduce((tileCount, tile) => tileCount + tile.pendingFormats.length, 0),
+      0
+    ) + pendingPreviewFormats.length;
+  const progress = createProgressReporter(zoom, pendingResourceCount);
 
-  for (const tile of pendingTiles) {
-    const image = sharp(level)
-      .extract({
-        left: tile.left,
-        top: tile.top,
-        width: tile.extractWidth,
-        height: tile.extractHeight,
-      })
-      .extend({
-        right: tileSize - tile.extractWidth,
-        bottom: tileSize - tile.extractHeight,
-        background: { r: 0, g: 0, b: 0, alpha: 0 },
-      });
-    await Promise.all(
-      tile.pendingFormats.map((format) =>
-        encodeImage(image.clone(), format).toFile(
-          path.join(tile.rowDirectory, `${tile.x}.${format}`)
-        )
-      )
-    );
-    generatedTileCount += tile.pendingFormats.length;
+  let level = source;
+  if (width !== metadata.width || height !== metadata.height) {
+    const resizedLevel = sharp(source).resize(width, height, {
+      fit: 'fill',
+      kernel: sharp.kernel.lanczos3,
+    });
+    level =
+      width <= webpMaxDimension && height <= webpMaxDimension
+        ? await resizedLevel.webp({ quality: 84, alphaQuality: 90, effort: 5 }).toBuffer()
+        : await resizedLevel.png().toBuffer();
   }
 
-  await Promise.all(
-    pendingPreviewFormats.map((format) =>
-      encodeImage(sharp(level), format).toFile(path.join(outputDirectory, `preview.${format}`))
-    )
-  );
-  generatedPreviewCount += pendingPreviewFormats.length;
+  progress.start();
+  try {
+    await runWithConcurrency(pendingRows, rowConcurrency, async (row) => {
+      const { data: rowData, info: rowInfo } = await sharp(level)
+        .extract({ left: 0, top: row.top, width, height: row.extractHeight })
+        .raw()
+        .toBuffer({ resolveWithObject: true });
+
+      for (const tile of row.tiles) {
+        const image = sharp(rowData, { raw: rowInfo })
+          .extract({
+            left: tile.left,
+            top: 0,
+            width: tile.extractWidth,
+            height: row.extractHeight,
+          })
+          .extend({
+            right: tileSize - tile.extractWidth,
+            bottom: tileSize - row.extractHeight,
+            background: { r: 0, g: 0, b: 0, alpha: 0 },
+          });
+        await Promise.all(
+          tile.pendingFormats.map(async (format) => {
+            await encodeImage(image.clone(), format).toFile(
+              path.join(tile.rowDirectory, `${tile.x}.${format}`)
+            );
+            generatedTileCount += 1;
+            progress.increment();
+          })
+        );
+      }
+    });
+
+    await Promise.all(
+      pendingPreviewFormats.map(async (format) => {
+        await encodeImage(sharp(level), format).toFile(
+          path.join(outputDirectory, `preview.${format}`)
+        );
+        generatedPreviewCount += 1;
+        progress.increment();
+      })
+    );
+  } finally {
+    progress.finish();
+  }
 }
 
 await writeFile(
