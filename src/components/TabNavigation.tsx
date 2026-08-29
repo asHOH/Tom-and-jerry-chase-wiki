@@ -21,6 +21,7 @@ import { useUser } from '@/hooks/useUser';
 import { isNavGroup, NavEntry, NavItem } from '@/constants/navigation';
 import Button from '@/components/ui/Button';
 import MotionButton from '@/components/ui/MotionButton';
+import DetailViewToggle from '@/components/DetailViewToggle';
 import { HomeIcon, UserCircleIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 import Link from '@/components/Link';
@@ -31,8 +32,13 @@ import Tooltip from './ui/Tooltip';
 
 const MotionLink = m.create(Link);
 
+type TabNavigationProps = {
+  showDetailToggle?: boolean;
+};
+
 const MOBILE_STACK_COLLAPSE_WIDTHS = [420, 376, 332] as const;
 
+const DETAIL_TOGGLE_WIDTH = 56;
 const USER_BUTTON_WIDTH = 44;
 const dropdownMenuIconClassName = '!h-6 !w-6 shrink-0 object-contain';
 const dropdownMenuLinkBaseClassName =
@@ -79,7 +85,7 @@ function DropdownNavLink({ item, isActive, paddingClassName, onClick }: Dropdown
   );
 }
 
-export default function TabNavigation() {
+export default function TabNavigation({ showDetailToggle = false }: TabNavigationProps) {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [overflowOpen, setOverflowOpen] = useState(false);
   const [openGroupId, setOpenGroupId] = useState<string | null>(null);
@@ -140,7 +146,8 @@ export default function TabNavigation() {
     if (typeof window === 'undefined') return;
 
     const width = window.innerWidth;
-    const extraWidth = nickname ? USER_BUTTON_WIDTH : 0;
+    const extraWidth =
+      (showDetailToggle ? DETAIL_TOGGLE_WIDTH : 0) + (nickname ? USER_BUTTON_WIDTH : 0);
     const adjustedWidth = Math.max(width - extraWidth, 0);
     const total = items.length;
     let nextCollapsed = 0;
@@ -159,7 +166,7 @@ export default function TabNavigation() {
     if (nextCollapsed === 0) {
       setOverflowOpen((prev) => (prev ? false : prev));
     }
-  }, [items, nickname, isMobile]);
+  }, [items, nickname, showDetailToggle, isMobile]);
 
   useEffect(() => {
     if (!mounted) return;
@@ -284,7 +291,7 @@ export default function TabNavigation() {
     'flex size-7 items-center justify-center overflow-hidden md:size-8',
     isCompactMode && 'shrink-0'
   );
-  const shouldAlignLeft = !!nickname;
+  const shouldAlignLeft = showDetailToggle || !!nickname;
   const dropdownAlignmentClass = shouldAlignLeft ? 'left-0' : 'right-0';
   return (
     <div className='bg-surface-raised fixed top-0 right-0 left-0 z-50 w-full py-2 shadow-md dark:shadow-lg'>
@@ -507,9 +514,10 @@ export default function TabNavigation() {
           )}
         </div>
 
-        {/* Right-aligned search and user menu */}
+        {/* Right-aligned detailed/simple view toggle, search, and user menu */}
         <div className='flex items-center gap-1 md:gap-2 lg:gap-2.5'>
           <SearchBar />
+          {showDetailToggle ? <DetailViewToggle /> : null}
           {/* User menu (deferred until mounted to avoid hydration mismatch) */}
           {mounted && !!nickname && hasSupabasePublicConfig() && (
             <div className='relative' data-user-dropdown-root>

@@ -11,10 +11,23 @@ export default function GlobalLayout({ children }: { children: React.ReactNode }
   const pathname = usePathname();
   const shouldReduceMotion = useReducedMotion();
 
+  // Detail pages can switch between concise and detailed descriptions from the navigation bar.
+  const showDetailToggle =
+    (pathname.startsWith('/characters/') ||
+      pathname.startsWith('/cards/') ||
+      pathname.startsWith('/special-skills/') ||
+      pathname.startsWith('/entities/') ||
+      pathname.startsWith('/buffs/') ||
+      pathname.startsWith('/items/') ||
+      pathname.startsWith('/maps/') ||
+      pathname.startsWith('/fixtures/') ||
+      pathname.startsWith('/modes/')) &&
+    pathname.split('/').length > 3;
+
   return (
     <>
       <DynamicFaviconEditBadge />
-      <TabNavigationWrapper>
+      <TabNavigationWrapper showDetailToggle={showDetailToggle}>
         <AnimatePresence mode='wait' initial={false}>
           <m.div
             key={pathname}
