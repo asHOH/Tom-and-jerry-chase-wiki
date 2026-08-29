@@ -1,12 +1,33 @@
 # Supabase Egress Remediation Plan
 
-**Status:** Phase 3A deployed and its conservative production egress gate passed; Phase 4 Branch A
-implemented and locally verified, VPS deployment pending
+**Status:** Completed and archived on 2026-08-30
 **Created:** 2026-08-14
-**Last updated:** 2026-08-29
+**Last updated:** 2026-08-30
 **Temporary Pro billing cycle:** 2026-08-21 through 2026-09-21
 **Next Free-plan target cycle:** 2026-09-21 through 2026-10-21
 **Fair Use grace-period end:** 2026-08-22
+
+## Closure record — 2026-08-30
+
+The engineering incident is closed. Phases 1 through 3 shipped the build artifact and guarded source
+acquisition at production commit `d99b2ccc`; Phase 3A shipped runtime containment at `b649c6d9`; and
+Phase 4 Branch A shipped at `a24e2978`. The production egress checkpoint conservatively projects no
+more than approximately 120.3 MB/day, and the final Cloudflare boundary check demonstrated a stable
+ETag, no `Set-Cookie`, edge `HIT` responses with an increasing `Age`, and a cached zero-body `304`.
+
+The following dispositions are authoritative for the archived plan:
+
+- The `develop`-only Vercel preview policy in `vercel.json` is retained as the adopted deployment
+  policy rather than treated as temporary incident state.
+- The project maintainer owns the rolling seven-day check and the 2026-09-21 through 2026-10-21
+  Free-plan cycle check. These are ongoing operations and do not keep the engineering plan active.
+- Phases 5 and 7 are deferred because their measured-egress entry gates are not met. Phase 6 remains
+  an independent performance backlog item.
+- The production Node version was not captured from the VPS. This documentation omission is waived
+  for incident closure because the deployed release passed its build, health, version, and behavior
+  gates under the repository's enforced Node engine range. A future routine deployment may record it.
+- Unchecked items retained below are historical unselected branches, gated follow-ups, or granular
+  evidence requests superseded by the consolidated production checkpoints. They are not active work.
 
 ## Problem statement
 
@@ -907,7 +928,16 @@ compatibility endpoint through Branch A or retire it through Branch B.
 public API cache and no client-update retirement window has been completed. Keeping the compatibility
 endpoint while bounding its database acquisition and HTTP transfer is lower risk than retiring it
 without that window. Commit `4847b667` added the HTTP cache policy and validators on `develop`; the
-production deployment and Cloudflare/VPS boundary check remain pending.
+production checkpoint below records their activation and boundary verification.
+
+**2026-08-30 production checkpoint:** Production commit `a24e2978` serves the compatibility endpoint
+with `Cache-Control: public, s-maxage=300, stale-while-revalidate=60`, a stable strong ETag, and no
+`Set-Cookie`. An exact-path Cloudflare Cache Rule makes the response eligible for cache while using
+the origin cache-control header and respecting the origin browser TTL. Two requests through the same
+SJC edge location returned `HIT` with `Age` increasing from 104 to 105 seconds. A matching
+`If-None-Match` request returned a cached `304`, the same ETag, and a zero-byte body. An initial
+four-hour browser `max-age` inherited from the zone default was removed by setting the rule's Browser
+TTL to respect the origin. This completes the Cloudflare/VPS boundary gate.
 
 ### Branch A — Endpoint is still required
 
@@ -921,7 +951,7 @@ production deployment and Cloudflare/VPS boundary check remain pending.
 - [x] Preserve cache-tag invalidation on all public-data mutations.
 - [x] Test first request, repeat request, conditional request, mutation invalidation, disabled
       Supabase, and error behavior.
-- [ ] Verify a repeat request becomes a shared-cache hit at the actual Cloudflare/VPS deployment
+- [x] Verify a repeat request becomes a shared-cache hit at the actual Cloudflare/VPS deployment
       boundary; do not assume headers alone guarantee caching.
 
 ### Branch B — Endpoint is no longer required
@@ -1073,16 +1103,16 @@ and a target relation in parallel.
 
 ## Recommended execution order
 
-| Order    | Work                                           | Expected impact | Risk   | Reason                                                        |
-| -------- | ---------------------------------------------- | --------------- | ------ | ------------------------------------------------------------- |
-| Complete | Preview containment                            | Immediate       | Low    | Prevents avoidable preview-build load                         |
-| Complete | Phases 1–3: one shared build-data artifact     | Very high       | Medium | Removes repeated bulk reads from static build workers         |
-| Complete | Phase 3A implementation and local verification | Very high       | Medium | Contains the measured runtime sources locally                 |
-| Complete | Deploy Phase 3A to the VPS                     | Very high       | Medium | Activated runtime containment at production commit `b649c6d9` |
-| Complete | Conservative production egress gate            | Confirming      | None   | Multi-day dashboard evidence projects below 150 MB/day        |
-| Complete | Phase 4 Branch A implementation and tests      | Low–medium      | Low    | Bounds the retained compatibility endpoint                    |
-| 1        | Deploy Phase 4 Branch A to the VPS             | Low–medium      | Low    | Activates the HTTP cache policy and validators                |
-| 2        | Verify the Cloudflare/VPS cache boundary       | Confirming      | None   | Proves repeat and conditional requests avoid full transfers   |
+| Order    | Work                                           | Expected impact | Risk   | Reason                                                          |
+| -------- | ---------------------------------------------- | --------------- | ------ | --------------------------------------------------------------- |
+| Complete | Preview containment                            | Immediate       | Low    | Prevents avoidable preview-build load                           |
+| Complete | Phases 1–3: one shared build-data artifact     | Very high       | Medium | Removes repeated bulk reads from static build workers           |
+| Complete | Phase 3A implementation and local verification | Very high       | Medium | Contains the measured runtime sources locally                   |
+| Complete | Deploy Phase 3A to the VPS                     | Very high       | Medium | Activated runtime containment at production commit `b649c6d9`   |
+| Complete | Conservative production egress gate            | Confirming      | None   | Multi-day dashboard evidence projects below 150 MB/day          |
+| Complete | Phase 4 Branch A implementation and tests      | Low–medium      | Low    | Bounds the retained compatibility endpoint                      |
+| Complete | Deploy Phase 4 Branch A to the VPS             | Low–medium      | Low    | Activated the HTTP cache policy at production commit `a24e2978` |
+| Complete | Verify the Cloudflare/VPS cache boundary       | Confirming      | None   | Repeated and conditional requests are served from edge cache    |
 
 Phases 5 and 7 proceed only by opening separate reviewed plans after their entry gates are met.
 Phase 6 is a separate performance backlog measurement and does not block incident completion.
@@ -1117,7 +1147,10 @@ After any Supabase migration:
 
 ## Overall completion criteria
 
-The engineering incident is complete only when:
+The original plan used the following intentionally strict evidence checklist. The closure record above
+is the authoritative final disposition: production outcome evidence satisfied the incident goal, while
+unreconstructable per-attempt counters and future-cycle observations were handed off or waived rather
+than represented as completed measurements.
 
 - [x] one representative 24-hour production window is below 150 MB uncached egress, or conservative
       source-call and payload evidence projects below that threshold while dashboard usage is delayed;
