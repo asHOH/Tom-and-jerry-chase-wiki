@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import path from 'node:path';
 import { NextConfig } from 'next';
 import createMDX from '@next/mdx';
 
@@ -29,7 +30,10 @@ if (process.env.ANALYZE === 'true') {
 
 const withMDX = createMDX({
   options: {
-    remarkPlugins: ['remark-gfm'],
+    remarkPlugins: [
+      path.join(process.cwd(), 'scripts/remark-usage-last-updated.mjs'),
+      'remark-gfm',
+    ],
   },
 });
 
