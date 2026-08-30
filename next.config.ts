@@ -84,6 +84,30 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_BUILD_TIMESTAMP:
       process.env.NEXT_PUBLIC_BUILD_TIMESTAMP || new Date().toISOString(),
   },
+  async redirects() {
+    return [
+      {
+        source: '/special-skills/:factionId/:skillId/discussion/',
+        destination: '/discuss/special-skills/:factionId/:skillId/',
+        permanent: true,
+      },
+      {
+        source: '/achievements/:factionId/:achievementName/discussion/',
+        destination: '/discuss/achievements/:factionId/:achievementName/',
+        permanent: true,
+      },
+      {
+        source: '/:entityType/:entityId/discussion/',
+        destination: '/discuss/:entityType/:entityId/',
+        permanent: true,
+      },
+      {
+        source: '/:entityType/discussion/',
+        destination: '/discuss/:entityType/',
+        permanent: true,
+      },
+    ];
+  },
   async rewrites() {
     const supabasePublicKey =
       process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -122,28 +146,6 @@ const nextConfig: NextConfig = {
     if (process.env.NEXT_PUBLIC_DISABLE_FEEDBACK_EMAIL === '1') {
       rewriteContents.push({ source: '/api/feedback', destination: '/404' });
     }
-
-    // Discussion page rewrites — map sub-route discussion URLs to a single catch-all handler
-    // More-specific patterns (literal segments) take priority over generic :entityType ones
-    rewriteContents.push(
-      // Special skills: 4 segments
-      {
-        source: '/special-skills/:factionId/:skillId/discussion/',
-        destination: '/discuss/special-skills/:factionId/:skillId/',
-      },
-      // Achievements: 4 segments
-      {
-        source: '/achievements/:factionId/:achievementName/discussion/',
-        destination: '/discuss/achievements/:factionId/:achievementName/',
-      },
-      // Standard detail discussions: 3 segments
-      {
-        source: '/:entityType/:entityId/discussion/',
-        destination: '/discuss/:entityType/:entityId/',
-      },
-      // List discussions: 2 segments
-      { source: '/:entityType/discussion/', destination: '/discuss/:entityType/' }
-    );
 
     return rewriteContents;
   },

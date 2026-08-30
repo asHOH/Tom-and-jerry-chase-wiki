@@ -1,9 +1,11 @@
 'use client';
 
+import type { Route } from 'next';
 import { usePathname } from 'next/navigation';
 
 import { cn, getActionButtonClasses } from '@/lib/design';
 import { ChatBubbleIcon } from '@/components/icons/CommonIcons';
+import Link from '@/components/Link';
 
 export type DiscussButtonProps = {
   className?: string;
@@ -12,14 +14,13 @@ export type DiscussButtonProps = {
 
 export default function DiscussButton({ className, compact = false }: DiscussButtonProps) {
   const pathname = usePathname();
-  // Ensure trailing slash, then append discussion
   const base = pathname.endsWith('/') ? pathname : `${pathname}/`;
-  const discussUrl = `${base}discussion/`;
+  const discussUrl = `/discuss${base}` as Route;
   const title = '讨论此页面';
 
   if (compact) {
     return (
-      <a
+      <Link
         href={discussUrl}
         aria-label={title}
         title={title}
@@ -29,12 +30,12 @@ export default function DiscussButton({ className, compact = false }: DiscussBut
         )}
       >
         <ChatBubbleIcon className='h-3.5 w-3.5' aria-hidden='true' />
-      </a>
+      </Link>
     );
   }
 
   return (
-    <a
+    <Link
       href={discussUrl}
       className={cn(
         getActionButtonClasses('primary', 'sm'),
@@ -45,6 +46,6 @@ export default function DiscussButton({ className, compact = false }: DiscussBut
     >
       <ChatBubbleIcon className='h-4 w-4' aria-hidden='true' />
       讨论
-    </a>
+    </Link>
   );
 }
