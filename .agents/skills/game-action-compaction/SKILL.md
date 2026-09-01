@@ -1,8 +1,9 @@
 ---
 name: game-action-compaction
 description: 'Prepare large or dependency-heavy approved game_data_actions cohorts for baseline compaction through manifest-based planning, local source patching, and verification. Use for broad date ranges, more than 25 rows, oversized inspection output, or requests such as syncing a month of approved changes; use game-action-patching for small clear batches.'
-argument-hint: 'Date range, actor filter, manifest policy, status policy'
-user-invocable: true
+metadata:
+  argument-hint: 'Date range, actor filter, manifest policy, status policy'
+  user-invocable: true
 ---
 
 # Game Action Compaction
@@ -39,8 +40,8 @@ use the small-batch skill instead.
 - Stay on the current branch.
 - Do not use a browser.
 - Do not mutate remote moderation status, deploy, or perform a production cutover as part of this
-  workflow. A later explicit request still requires an authorized mechanism and the cutover gates
-  below.
+  workflow, except for an explicitly authorized duplicate rejection/revocation under the policy
+  below. A later explicit request still requires an authorized mechanism and the cutover gates below.
 - Never claim that a locally patched or verified row is `synced`. Only an exact re-query confirming
   `status = 'synced'` permits that wording.
 - Never rewrite complete aggregated published records merely because replay can construct them.
@@ -90,6 +91,35 @@ Build work groups around correctness and source locality, not arbitrary groups o
 - Never split a dependency group merely to satisfy the inspector's 25-ID detail limit. If a group
   exceeds the limit, fetch bounded detail slices but classify, apply, and verify the group as one
   logical unit. If the verifier cannot accept the complete group, report a tooling blocker.
+
+## Duplicate Resolution
+
+Apply this policy to exact duplicate database rows, including duplicates nested inside a larger
+dependency group. Two rows are exact duplicates only when their `entity_type` and complete decoded,
+ordered action content match; a repeated path with different content is not a duplicate.
+
+1. Inspect `created_by` without writing user identifiers to the manifest or report.
+2. If any duplicate copy is anonymous (`created_by = null`), retain a non-anonymous copy when one
+   exists and reject/revoke anonymous copies until one row remains. If all copies are anonymous,
+   retain the earliest row by `created_at`, then `id`.
+3. If all copies were submitted by the same non-anonymous user, retain the earliest row by
+   `created_at`, then `id`, and reject/revoke the other copies.
+4. If otherwise-identical copies were submitted by different non-anonymous users, classify the set
+   as **Review required**; this policy does not choose between distinct contributors.
+5. A pending/private duplicate uses the authorized reject path. An approved/public duplicate uses
+   the authorized revoke path because the repository's reject RPC is pending-only. Require explicit
+   authorization, an identified moderator actor, the prepared mutation RPC, replay-epoch protection,
+   and an exact post-mutation re-query. Never update status directly.
+   Read the local operator UUID from `GAME_DATA_COMPACTION_ACTOR_ID` when it is configured in an
+   ignored local environment file. Never put its value in this tracked skill, a manifest, logs, or a
+   user-facing report, and never treat the variable's presence as authorization for a mutation.
+6. Preserve the original discovery manifest. Record rejected/revoked row IDs only in a separate
+   deduplication observation, then freeze a new exact working or cutover manifest containing the one
+   retained row. Do not include a rejected/revoked duplicate in `cutoverRowIds` or
+   `verificationDependencyRowIds`.
+7. After the exact post-mutation re-query succeeds, continue classification, patching, replay, and
+   verification as though the removed duplicate had not existed. Recompute group membership,
+   chain links, row/action counts, fingerprints, and later-overlap evidence first.
 
 ## Classification
 
