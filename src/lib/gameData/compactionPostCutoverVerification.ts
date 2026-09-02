@@ -67,6 +67,38 @@ export function resolvePostCutoverManifestSelection(
   const observation = isRecord(value.retrospectiveObservation)
     ? value.retrospectiveObservation
     : undefined;
+  if (!observation) {
+    const cutoverRowIds = readUniqueIds(value.cutoverRowIds ?? originalManifestRowIds);
+    const result = isRecord(value.result) ? value.result : {};
+    const retained = isRecord(result.preCutoverRetainedRows)
+      ? result.preCutoverRetainedRows
+      : undefined;
+    const retainedTarget = isRecord(retained?.target) ? retained.target : {};
+    const hasExactCutoverRows =
+      originalManifestRowIds !== undefined &&
+      cutoverRowIds !== undefined &&
+      cutoverRowIds.length === originalManifestRowIds.length &&
+      cutoverRowIds.every((rowId, index) => rowId === originalManifestRowIds[index]);
+    if (
+      retained?.receiptKind === 'preCutoverRetainedRows' &&
+      typeof retained.path === 'string' &&
+      /^v1:[a-f0-9]{64}$/u.test(String(retained.fileDigest ?? '')) &&
+      retained.rowCount === cutoverRowIds?.length &&
+      typeof retainedTarget.host === 'string' &&
+      hasExactCutoverRows
+    ) {
+      return {
+        success: true,
+        value: {
+          originalManifestRowIds,
+          additionalSyncedRowIds: [],
+          actionIds: cutoverRowIds,
+          targetHost: retainedTarget.host,
+        },
+      };
+    }
+    return { success: false, failures: ['invalid_pre_cutover_retained_rows_binding'] };
+  }
   const additionalSyncedRowIds = readUniqueIds(observation?.additionalObservedSyncedRowIds);
   const originalPlan = isRecord(observation?.originalPlan) ? observation.originalPlan : {};
   const remoteState = isRecord(observation?.observedRemoteState)

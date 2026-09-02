@@ -224,8 +224,10 @@ Agent-specific invariants:
 - Keep `cutoverRowIds`, `verificationDependencyRowIds`, and retrospective observations separate.
   Only the exact cutover set may reach the RPC; never rewrite the original manifest `rows`.
 - The normal path requires concrete `set` actions, a deployment-bound check, one separately
-  authorized atomic transition, and a second deployment. Always print and verify the expected
-  Supabase host/project ref.
+  authorized atomic transition, and a second deployment. The sync command must durably capture the
+  exact pre-cutover rows first, bind the ignored retained file's path and digest to the manifest,
+  and stop before the RPC if that evidence cannot be verified. After the second deployment, use the
+  bound evidence for post-check. Always print and verify the expected Supabase host/project ref.
 - If rows are already `synced/private`, never restore or sync them again. Use the read-only retained-row
   `post-check` path; it may write only `postCutoverVerification` after strict parity and production
   artifact proof pass.

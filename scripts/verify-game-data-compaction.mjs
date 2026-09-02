@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { execFile } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { isAbsolute, join, relative, resolve } from 'node:path';
@@ -59,7 +60,7 @@ function parseArgs(args) {
   if (mode !== 'preflight' && mode !== 'post-cutover') {
     throw new CompactionScriptError('invalid_mode');
   }
-  if (mode === 'post-cutover' && (!retainedRowsPath || !expectedSupabaseHost)) {
+  if (mode === 'post-cutover' && !expectedSupabaseHost) {
     throw new CompactionScriptError('post_cutover_argument_missing');
   }
   return {
@@ -132,7 +133,27 @@ async function readIgnoredManifest(manifestArg) {
   return { manifest, manifestPath, manifestRelativePath };
 }
 
-async function readIgnoredRetainedRows(retainedRowsArg) {
+function readPreCutoverRetainedRowsBinding(manifest) {
+  const binding = manifest?.result?.preCutoverRetainedRows;
+  if (binding === undefined) return null;
+  if (
+    binding?.receiptKind !== 'preCutoverRetainedRows' ||
+    typeof binding.path !== 'string' ||
+    !/^v1:[a-f0-9]{64}$/u.test(binding.fileDigest ?? '') ||
+    typeof binding.capturedAt !== 'string' ||
+    !Number.isSafeInteger(binding.replayEpoch) ||
+    typeof binding.actionRevision !== 'string' ||
+    !Number.isSafeInteger(binding.snapshotRowCount) ||
+    !Number.isSafeInteger(binding.rowCount) ||
+    typeof binding.target?.host !== 'string' ||
+    typeof binding.target?.projectRef !== 'string'
+  ) {
+    throw new CompactionScriptError('invalid_pre_cutover_retained_rows_binding');
+  }
+  return binding;
+}
+
+async function readIgnoredRetainedRows(retainedRowsArg, manifest) {
   const retainedRowsPath = resolve(projectDir, retainedRowsArg);
   const retainedRowsRelativePath = relative(projectDir, retainedRowsPath);
   if (
@@ -144,13 +165,40 @@ async function readIgnoredRetainedRows(retainedRowsArg) {
   }
   await run('git', ['check-ignore', '--quiet', '--', retainedRowsRelativePath]);
   let retained;
+  let serialized;
   try {
-    retained = JSON.parse(await readFile(retainedRowsPath, 'utf8'));
+    serialized = await readFile(retainedRowsPath, 'utf8');
+    retained = JSON.parse(serialized);
   } catch {
     throw new CompactionScriptError('invalid_retained_rows');
   }
   if (!Array.isArray(retained?.rows)) {
     throw new CompactionScriptError('invalid_retained_rows');
+  }
+  const binding = readPreCutoverRetainedRowsBinding(manifest);
+  if (binding) {
+    const normalizedPath = retainedRowsRelativePath.replaceAll('\\', '/');
+    const digest = `v1:${createHash('sha256').update(serialized, 'utf8').digest('hex')}`;
+    const metadataMatches =
+      retained.schemaVersion === 1 &&
+      retained.receiptKind === binding.receiptKind &&
+      retained.capturedAt === binding.capturedAt &&
+      retained.replayEpoch === binding.replayEpoch &&
+      retained.actionRevision === binding.actionRevision &&
+      retained.snapshotRowCount === binding.snapshotRowCount &&
+      retained.rowCount === binding.rowCount &&
+      retained.rows.length === binding.rowCount &&
+      retained.target?.host === binding.target.host &&
+      retained.target?.projectRef === binding.target.projectRef;
+    if (normalizedPath !== binding.path) {
+      throw new CompactionScriptError('retained_rows_path_mismatch');
+    }
+    if (digest !== binding.fileDigest) {
+      throw new CompactionScriptError('retained_rows_digest_mismatch');
+    }
+    if (!metadataMatches) {
+      throw new CompactionScriptError('retained_rows_binding_mismatch');
+    }
   }
   return {
     retained,
@@ -584,7 +632,8 @@ async function runPostCutoverVerification({
   }
 
   const { retained, retainedRowsRelativePath } = await readIgnoredRetainedRows(
-    args.retainedRowsPath
+    args.retainedRowsPath,
+    manifest
   );
   const client = createClient(supabaseUrl, serviceKey, {
     auth: { autoRefreshToken: false, persistSession: false },
@@ -732,6 +781,11 @@ async function main() {
   const { manifest, manifestPath, manifestRelativePath } = await readIgnoredManifest(
     args.manifestPath
   );
+  if (args.mode === 'post-cutover' && !args.retainedRowsPath) {
+    const binding = readPreCutoverRetainedRowsBinding(manifest);
+    if (!binding) throw new CompactionScriptError('post_cutover_argument_missing');
+    args.retainedRowsPath = binding.path;
+  }
   const baselineCommit = await resolveCommit(manifest.repository.head);
   const patchedCommit = await resolveCommit(args.patchedRef);
 

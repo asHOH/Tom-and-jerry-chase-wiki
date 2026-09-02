@@ -56,9 +56,25 @@ Supabase 的 `game_data_actions` 保存网页中审核通过的动态修改。�
      --confirm=SYNC_APPROVED_COMPACTION_BATCH
    ```
 
+   `sync` 会在调用切换 RPC 前，从同一个 approved replay snapshot 自动保存精确的切换前 action 行，
+   写入被忽略的 `.tmp/` 文件，并把文件路径、摘要、目标、epoch/revision 和行数绑定到 manifest。
+   若证据无法持久写入、重新读取不一致或 snapshot 已变化，命令必须在 RPC 前停止。新批次不要手工构造 retained 文件。
+
 4. 精确复查：所有 cutover 行必须为 `synced/private`，所有 verification-only 行必须保持原状态。响应不确定时只能依靠精确复查判断结果，不得盲目重试。
 5. 再部署一次，使构建产物使用切换后的当前 approved snapshot。
-6. 部署后核对 `/api/version` 的 deployment identity、replay epoch、action revision、row count 和 commit，并再次精确查询两类行。
+6. 部署后运行只读 `post-check`。正常流程会自动使用 manifest 中绑定的 retained 证据，不需要传入路径：
+
+   ```bash
+   npm run cutover:game-data-compaction -- \
+     --mode=post-check \
+     --manifest=.tmp/<manifest>.json \
+     --patched-ref=<patched-baseline-commit> \
+     --production-origin=https://www.tjwiki.com \
+     --expected-supabase-host=<project-ref>.supabase.co
+   ```
+
+7. 核对 `/api/version` 的 deployment identity、replay epoch、action revision、row count 和 commit，
+   并再次精确查询两类行。`post-check` 只有在 retained 文件路径、摘要和元数据与 manifest 完全一致时才会继续。
 
 只读检查和切换不能合并，也不能省略第二次部署。
 
@@ -67,7 +83,8 @@ Supabase 的 `game_data_actions` 保存网页中审核通过的动态修改。�
 如果精确查询已经显示目标行是 `synced/private`，不要把它们恢复为 approved，也不要再次运行 sync。此时普通切换前检查已经不适用，只能验证当前生产状态。
 
 1. 保留原 manifest，不把后来观察到的行追加到原 `rows`。额外行应记录在明确标注的 retrospective observation 中。
-2. 使用被忽略的 `.tmp/` 文件保留切换前的精确 action 行。不得把 action payload、凭据或用户标识提交到 Git。
+2. 优先使用正常 `sync` 自动保存并绑定的 retained 文件。仅处理旧批次或未完成绑定的恢复操作时，
+   才手工指定被忽略的 `.tmp/` retained 文件。不得把 action payload、凭据或用户标识提交到 Git。
 3. 状态已经切换时只需部署一次。部署后运行：
 
    ```bash

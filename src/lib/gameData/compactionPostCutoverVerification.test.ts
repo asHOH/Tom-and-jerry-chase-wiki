@@ -16,6 +16,45 @@ const row = (id: string, status: string, isPublic: boolean, entry: unknown = { v
 });
 
 describe('post-cutover compaction verification', () => {
+  it('recovers the normal cutover selection from bound pre-cutover evidence', () => {
+    expect(
+      resolvePostCutoverManifestSelection({
+        rows: [{ id: '1' }, { id: '2' }],
+        cutoverRowIds: ['1', '2'],
+        result: {
+          preCutoverRetainedRows: {
+            receiptKind: 'preCutoverRetainedRows',
+            path: '.tmp/retained.json',
+            fileDigest: `v1:${'a'.repeat(64)}`,
+            rowCount: 2,
+            target: { host: 'project.supabase.co' },
+          },
+        },
+      })
+    ).toEqual({
+      success: true,
+      value: {
+        originalManifestRowIds: ['1', '2'],
+        additionalSyncedRowIds: [],
+        actionIds: ['1', '2'],
+        targetHost: 'project.supabase.co',
+      },
+    });
+  });
+
+  it('does not infer a recovery selection from unbound retained rows', () => {
+    expect(
+      resolvePostCutoverManifestSelection({
+        rows: [{ id: '1' }],
+        cutoverRowIds: ['1'],
+        result: { preCutoverRetainedRows: { path: '.tmp/retained.json' } },
+      })
+    ).toEqual({
+      success: false,
+      failures: ['invalid_pre_cutover_retained_rows_binding'],
+    });
+  });
+
   it('preserves the original manifest rows and adds only retrospective synced rows', () => {
     expect(
       resolvePostCutoverManifestSelection({

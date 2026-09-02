@@ -27,6 +27,7 @@ describe('game-data compaction cutover command', () => {
     expect(script).toContain("args.mode === 'post-check'");
     expect(script).toContain("'--mode=post-cutover'");
     expect(script).toContain('post_check_argument_missing');
+    expect(script).toContain('readAutomaticRetainedRowsPath(manifest)');
   });
 
   it('uses the atomic RPC and exact postcondition reads instead of table updates', () => {
@@ -42,5 +43,17 @@ describe('game-data compaction cutover command', () => {
 
   it('persists the idempotence evidence required by the cutover manifest gate', () => {
     expect(verifier).toContain('idempotence: evidence.idempotence');
+  });
+
+  it('durably captures and binds exact retained rows before the atomic transition', () => {
+    expect(script.indexOf('await capturePreCutoverRows({')).toBeGreaterThan(-1);
+    expect(script.indexOf('const cutover = await executeCutover(')).toBeGreaterThan(
+      script.indexOf('await capturePreCutoverRows({')
+    );
+    expect(script).toContain("handle = await open(path, 'wx')");
+    expect(script).toContain('await handle.sync()');
+    expect(script).toContain("receiptKind: 'preCutoverRetainedRows'");
+    expect(script).toContain('fileDigest: retainedRowsDigest(persisted.serialized)');
+    expect(verifier).toContain("throw new CompactionScriptError('retained_rows_digest_mismatch')");
   });
 });

@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 import { execFile } from 'node:child_process';
-import { readFile, writeFile } from 'node:fs/promises';
-import { isAbsolute, relative, resolve } from 'node:path';
+import { createHash } from 'node:crypto';
+import { open, readFile, writeFile } from 'node:fs/promises';
+import { basename, dirname, extname, isAbsolute, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { promisify } from 'node:util';
+import { isDeepStrictEqual, promisify } from 'node:util';
 import nextEnv from '@next/env';
 import { createClient } from '@supabase/supabase-js';
 import { createJiti } from 'jiti';
@@ -13,6 +14,7 @@ import { resolveSupabaseTarget } from './lib/supabase-target.mjs';
 const execFileAsync = promisify(execFile);
 const projectDir = fileURLToPath(new URL('..', import.meta.url));
 const verifierPath = fileURLToPath(new URL('./verify-game-data-compaction.mjs', import.meta.url));
+const serverOnlyStub = fileURLToPath(new URL('./lib/server-only-stub.mjs', import.meta.url));
 const CONFIRMATION = 'SYNC_APPROVED_COMPACTION_BATCH';
 
 nextEnv.loadEnvConfig(projectDir);
@@ -70,7 +72,7 @@ function parseArgs(args) {
       throw new CutoverScriptError('expected_supabase_host_required');
     }
   }
-  if (mode === 'post-check' && (!retainedRowsPath || !expectedSupabaseHost)) {
+  if (mode === 'post-check' && !expectedSupabaseHost) {
     throw new CutoverScriptError('post_check_argument_missing');
   }
   return {
@@ -84,34 +86,164 @@ function parseArgs(args) {
   };
 }
 
-async function readIgnoredManifest(manifestArg) {
-  const manifestPath = resolve(projectDir, manifestArg);
-  const manifestRelativePath = relative(projectDir, manifestPath);
+function normalizeRelativePath(path) {
+  return path.replaceAll('\\', '/');
+}
+
+async function resolveIgnoredTmpPath(pathArg, errorPrefix) {
+  const path = resolve(projectDir, pathArg);
+  const relativePath = relative(projectDir, path);
   if (
-    manifestRelativePath.startsWith('..') ||
-    isAbsolute(manifestRelativePath) ||
-    !manifestRelativePath.replaceAll('\\', '/').startsWith('.tmp/')
+    relativePath.startsWith('..') ||
+    isAbsolute(relativePath) ||
+    !normalizeRelativePath(relativePath).startsWith('.tmp/')
   ) {
-    throw new CutoverScriptError('manifest_must_be_under_tmp');
+    throw new CutoverScriptError(`${errorPrefix}_must_be_under_tmp`);
   }
   try {
-    await execFileAsync('git', ['check-ignore', '--quiet', '--', manifestRelativePath], {
+    await execFileAsync('git', ['check-ignore', '--quiet', '--', relativePath], {
       cwd: projectDir,
       windowsHide: true,
     });
   } catch {
-    throw new CutoverScriptError('manifest_must_be_ignored');
+    throw new CutoverScriptError(`${errorPrefix}_must_be_ignored`);
   }
+  return { path, relativePath: normalizeRelativePath(relativePath) };
+}
+
+async function readIgnoredManifest(manifestArg) {
+  const { path: manifestPath, relativePath: manifestRelativePath } = await resolveIgnoredTmpPath(
+    manifestArg,
+    'manifest'
+  );
 
   try {
     return {
       manifest: JSON.parse(await readFile(manifestPath, 'utf8')),
       manifestPath,
-      manifestRelativePath: manifestRelativePath.replaceAll('\\', '/'),
+      manifestRelativePath,
     };
   } catch {
     throw new CutoverScriptError('invalid_manifest');
   }
+}
+
+function defaultRetainedRowsPath(manifestPath, replayEpoch) {
+  const extension = extname(manifestPath);
+  const stem = basename(manifestPath, extension);
+  return resolve(dirname(manifestPath), `${stem}.retained-rows-${replayEpoch}.json`);
+}
+
+function readAutomaticRetainedRowsPath(manifest) {
+  const binding = manifest?.result?.preCutoverRetainedRows;
+  return binding?.receiptKind === 'preCutoverRetainedRows' && typeof binding.path === 'string'
+    ? binding.path
+    : undefined;
+}
+
+function retainedRowsDigest(serialized) {
+  return `v1:${createHash('sha256').update(serialized, 'utf8').digest('hex')}`;
+}
+
+async function writeRetainedRowsEvidence(path, evidence) {
+  let existingRaw;
+  try {
+    existingRaw = await readFile(path, 'utf8');
+  } catch (error) {
+    if (error?.code !== 'ENOENT') throw new CutoverScriptError('retained_rows_read_failed');
+  }
+
+  if (existingRaw !== undefined) {
+    let existing;
+    try {
+      existing = JSON.parse(existingRaw);
+    } catch {
+      throw new CutoverScriptError('retained_rows_conflict');
+    }
+    const { capturedAt: _existingCapturedAt, ...existingStable } = existing;
+    const { capturedAt: _nextCapturedAt, ...nextStable } = evidence;
+    if (!isDeepStrictEqual(existingStable, nextStable) || typeof existing.capturedAt !== 'string') {
+      throw new CutoverScriptError('retained_rows_conflict');
+    }
+    return { evidence: existing, serialized: existingRaw };
+  }
+
+  const serialized = `${JSON.stringify(evidence, null, 2)}\n`;
+  let handle;
+  try {
+    handle = await open(path, 'wx');
+    await handle.writeFile(serialized, 'utf8');
+    await handle.sync();
+  } catch (error) {
+    throw new CutoverScriptError('retained_rows_write_failed', { cause: error?.code });
+  } finally {
+    await handle?.close();
+  }
+
+  const persisted = await readFile(path, 'utf8');
+  if (persisted !== serialized)
+    throw new CutoverScriptError('retained_rows_write_verification_failed');
+  return { evidence, serialized };
+}
+
+async function capturePreCutoverRows({
+  args,
+  client,
+  manifest,
+  manifestPath,
+  prepared,
+  target,
+  readApprovedReplaySnapshot,
+}) {
+  const snapshot = await readApprovedReplaySnapshot(client);
+  if (
+    snapshot.replayEpoch !== prepared.replayEpoch ||
+    snapshot.actionSnapshot.actionRevision !== prepared.actionRevision
+  ) {
+    throw new CutoverScriptError('snapshot_changed_before_retained_capture');
+  }
+
+  const selectedIds = new Set(prepared.actionIds);
+  const rows = snapshot.rows
+    .filter((row) => selectedIds.has(row.id))
+    .map((row) => ({ ...row, is_public: true }));
+  if (
+    rows.length !== prepared.actionIds.length ||
+    rows.some((row, index) => row.id !== prepared.actionIds[index])
+  ) {
+    throw new CutoverScriptError('retained_rows_exact_set_mismatch');
+  }
+
+  const requestedPath =
+    args.retainedRowsPath ?? defaultRetainedRowsPath(manifestPath, prepared.replayEpoch);
+  const retainedPath = await resolveIgnoredTmpPath(requestedPath, 'retained_rows');
+  const capturedAt = new Date().toISOString();
+  const nextEvidence = {
+    schemaVersion: 1,
+    receiptKind: 'preCutoverRetainedRows',
+    capturedAt,
+    target,
+    replayEpoch: snapshot.replayEpoch,
+    actionRevision: snapshot.actionSnapshot.actionRevision,
+    snapshotRowCount: snapshot.rows.length,
+    rowCount: rows.length,
+    rows,
+  };
+  const persisted = await writeRetainedRowsEvidence(retainedPath.path, nextEvidence);
+  const binding = {
+    receiptKind: 'preCutoverRetainedRows',
+    path: retainedPath.relativePath,
+    fileDigest: retainedRowsDigest(persisted.serialized),
+    capturedAt: persisted.evidence.capturedAt,
+    target,
+    replayEpoch: persisted.evidence.replayEpoch,
+    actionRevision: persisted.evidence.actionRevision,
+    snapshotRowCount: persisted.evidence.snapshotRowCount,
+    rowCount: persisted.evidence.rowCount,
+  };
+  manifest.result = { ...manifest.result, preCutoverRetainedRows: binding };
+  await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, 'utf8');
+  return binding;
 }
 
 async function runPreflight(args) {
@@ -280,7 +412,10 @@ async function main() {
     });
   }
   if (args.mode === 'post-check') {
-    await runPostCheck(args);
+    const { manifest } = await readIgnoredManifest(args.manifestPath);
+    const retainedRowsPath = args.retainedRowsPath ?? readAutomaticRetainedRowsPath(manifest);
+    if (!retainedRowsPath) throw new CutoverScriptError('post_check_argument_missing');
+    await runPostCheck({ ...args, retainedRowsPath });
     return;
   }
   await runPreflight(args);
@@ -288,10 +423,16 @@ async function main() {
     args.manifestPath
   );
   const jiti = createJiti(import.meta.url, {
-    alias: { '@': fileURLToPath(new URL('../src', import.meta.url)) },
+    alias: {
+      '@': fileURLToPath(new URL('../src', import.meta.url)),
+      'server-only': serverOnlyStub,
+    },
   });
   const { prepareCompactionCutoverManifest } = jiti(
     '../src/lib/gameData/compactionCutoverManifest.ts'
+  );
+  const { readApprovedReplaySnapshot } = jiti(
+    '../src/lib/gameData/approvedReplaySnapshotReader.ts'
   );
   const prepared = prepareCompactionCutoverManifest(manifest);
   if (!prepared.success) {
@@ -324,6 +465,15 @@ async function main() {
   if (!serviceKey) throw new CutoverScriptError('missing_supabase_credentials');
   const client = createClient(supabaseUrl, serviceKey, {
     auth: { autoRefreshToken: false, persistSession: false },
+  });
+  const retainedRows = await capturePreCutoverRows({
+    args,
+    client,
+    manifest,
+    manifestPath,
+    prepared: prepared.value,
+    target,
+    readApprovedReplaySnapshot,
   });
   const cutover = await executeCutover(client, args.actorId, prepared.value);
   const executedAt = new Date().toISOString();
@@ -364,6 +514,7 @@ async function main() {
         mode: args.mode,
         target,
         manifest: manifestRelativePath,
+        retainedRows,
         rowCount: cutover.syncedActionIds.length,
         status: 'synced',
         isPublic: false,
