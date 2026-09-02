@@ -34,6 +34,8 @@ describe('game-data compaction cutover command', () => {
     expect(script).toContain("client.rpc(\n    'read_game_data_approved_replay_epoch'");
     expect(script).toContain(".select('id,status,is_public,created_at')");
     expect(script).not.toMatch(/\.from\('game_data_actions'\)[\s\S]*?\.update\(/u);
+    expect(script).not.toContain('actorId: args.actorId');
+    expect(script).toContain('authorizedActorProvided: true');
   });
 
   it('persists the idempotence evidence required by the cutover manifest gate', () => {

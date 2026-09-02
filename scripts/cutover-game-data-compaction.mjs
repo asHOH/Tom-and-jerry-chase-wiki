@@ -331,7 +331,7 @@ async function main() {
     ...manifest.result,
     remoteCutover: {
       executedAt,
-      actorId: args.actorId,
+      authorizedActorProvided: true,
       target,
       replayEpochBefore: prepared.value.replayEpoch,
       ...cutover,
