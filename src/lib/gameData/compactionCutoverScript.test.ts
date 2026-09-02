@@ -10,6 +10,10 @@ describe('game-data compaction cutover command', () => {
     path.join(process.cwd(), 'scripts/verify-game-data-compaction.mjs'),
     'utf8'
   );
+  const lifecycle = readFileSync(
+    path.join(process.cwd(), 'src/lib/gameData/compactionCutoverLifecycle.ts'),
+    'utf8'
+  );
   const packageJson = JSON.parse(
     readFileSync(path.join(process.cwd(), 'package.json'), 'utf8')
   ) as { scripts?: Record<string, string> };
@@ -36,9 +40,9 @@ describe('game-data compaction cutover command', () => {
     expect(script).toContain(".select('id,status,is_public,created_at')");
     expect(script).not.toMatch(/\.from\('game_data_actions'\)[\s\S]*?\.update\(/u);
     expect(script).not.toContain('actorId: args.actorId');
-    expect(script).toContain('authorizedActorProvided: true');
-    expect(script).toContain('manifest.retrospectiveObservation = {');
-    expect(script).toContain('additionalObservedSyncedRowIds: []');
+    expect(lifecycle).toContain('authorizedActorProvided: true');
+    expect(lifecycle).toContain('manifest.retrospectiveObservation = {');
+    expect(lifecycle).toContain('additionalObservedSyncedRowIds: []');
   });
 
   it('persists the idempotence evidence required by the cutover manifest gate', () => {
@@ -46,9 +50,10 @@ describe('game-data compaction cutover command', () => {
   });
 
   it('durably captures and binds exact retained rows before the atomic transition', () => {
-    expect(script.indexOf('await capturePreCutoverRows({')).toBeGreaterThan(-1);
-    expect(script.indexOf('const cutover = await executeCutover(')).toBeGreaterThan(
-      script.indexOf('await capturePreCutoverRows({')
+    expect(script).toContain('runCompactionCutoverSync({');
+    expect(lifecycle.indexOf('await capturePreCutoverRows()')).toBeGreaterThan(-1);
+    expect(lifecycle.indexOf('await executeCutover()')).toBeGreaterThan(
+      lifecycle.indexOf('await persistManifest(manifest)')
     );
     expect(script).toContain("handle = await open(path, 'wx')");
     expect(script).toContain('await handle.sync()');

@@ -538,58 +538,6 @@ function updateManifest(manifest, evidence) {
   };
 }
 
-function updatePostCutoverManifest(manifest, evidence) {
-  const verifiedAt = new Date().toISOString();
-  manifest.result = {
-    ...manifest.result,
-    postCutoverVerification: {
-      receiptKind: 'postCutoverVerification',
-      verificationOnly: true,
-      verifiedAt,
-      target: evidence.target,
-      exactRows: {
-        rowCount: evidence.selection.actionIds.length,
-        originalManifestRowIds: evidence.selection.originalManifestRowIds,
-        additionalSyncedRowIds: evidence.selection.additionalSyncedRowIds,
-        verifiedRowIds: evidence.selection.actionIds,
-        status: 'synced',
-        isPublic: false,
-        rowContentDigests: evidence.rowEvidence.rowContentDigests,
-      },
-      retainedRows: evidence.retainedRows,
-      currentApprovedSnapshot: {
-        replayEpoch: evidence.replayEpoch,
-        actionRevision: evidence.actionRevision,
-        rowCount: evidence.snapshotRowCount,
-        stableDuringVerification: true,
-      },
-      idempotence: evidence.idempotence,
-      actionPatch: evidence.actionPatch,
-      production: {
-        ...evidence.production,
-        stableDuringVerification: true,
-      },
-      publishedParity: evidence.parity,
-      limitations: [
-        'verification-only receipt; it does not prove who performed the earlier status transition',
-        'verification-only receipt; it does not prove the earlier execution time or atomicity',
-        'pre-cutover replay fingerprint was not captured and is not reconstructed',
-      ],
-    },
-  };
-  manifest.workflowBoundary = {
-    ...manifest.workflowBoundary,
-    postCutoverVerification: {
-      status: 'passed',
-      verificationOnly: true,
-      baselineCommit: evidence.baselineCommit,
-      patchedCommit: evidence.patchedCommit,
-      reconstructedWithRetainedRows: evidence.selection.actionIds.length,
-      currentApprovedRows: evidence.snapshotRowCount,
-    },
-  };
-}
-
 async function runPostCutoverVerification({
   args,
   manifest,
@@ -605,6 +553,7 @@ async function runPostCutoverVerification({
   verifyPostCutoverRowEvidence,
   verifyStablePostCutoverProduction,
   verifyCompactionArtifactMetadata,
+  recordCompactionPostCutoverVerification,
 }) {
   const selectionResult = resolvePostCutoverManifestSelection(manifest);
   if (!selectionResult.success) {
@@ -747,13 +696,14 @@ async function runPostCutoverVerification({
         : null,
       rowCount: retained.rows.length,
     },
+    idempotence: operationSummary,
     actionOperations,
     actionPatch,
     production: productionAfter,
     parity,
   };
   if (args.writeManifest) {
-    updatePostCutoverManifest(manifest, evidence);
+    recordCompactionPostCutoverVerification(manifest, evidence);
     await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, 'utf8');
   }
   process.stdout.write(
@@ -813,6 +763,9 @@ async function main() {
     verifyPostCutoverRowEvidence,
     verifyStablePostCutoverProduction,
   } = jiti('../src/lib/gameData/compactionPostCutoverVerification.ts');
+  const { recordCompactionPostCutoverVerification } = jiti(
+    '../src/lib/gameData/compactionCutoverLifecycle.ts'
+  );
 
   if (args.mode === 'post-cutover') {
     await runPostCutoverVerification({
@@ -830,6 +783,7 @@ async function main() {
       verifyPostCutoverRowEvidence,
       verifyStablePostCutoverProduction,
       verifyCompactionArtifactMetadata,
+      recordCompactionPostCutoverVerification,
     });
     return;
   }

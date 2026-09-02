@@ -189,7 +189,6 @@ async function writeRetainedRowsEvidence(path, evidence) {
 async function capturePreCutoverRows({
   args,
   client,
-  manifest,
   manifestPath,
   prepared,
   target,
@@ -241,8 +240,6 @@ async function capturePreCutoverRows({
     snapshotRowCount: persisted.evidence.snapshotRowCount,
     rowCount: persisted.evidence.rowCount,
   };
-  manifest.result = { ...manifest.result, preCutoverRetainedRows: binding };
-  await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, 'utf8');
   return binding;
 }
 
@@ -431,6 +428,7 @@ async function main() {
   const { prepareCompactionCutoverManifest } = jiti(
     '../src/lib/gameData/compactionCutoverManifest.ts'
   );
+  const { runCompactionCutoverSync } = jiti('../src/lib/gameData/compactionCutoverLifecycle.ts');
   const { readApprovedReplaySnapshot } = jiti(
     '../src/lib/gameData/approvedReplaySnapshotReader.ts'
   );
@@ -466,47 +464,23 @@ async function main() {
   const client = createClient(supabaseUrl, serviceKey, {
     auth: { autoRefreshToken: false, persistSession: false },
   });
-  const retainedRows = await capturePreCutoverRows({
-    args,
-    client,
+  const { retainedRows, cutover } = await runCompactionCutoverSync({
     manifest,
-    manifestPath,
     prepared: prepared.value,
     target,
-    readApprovedReplaySnapshot,
+    capturePreCutoverRows: () =>
+      capturePreCutoverRows({
+        args,
+        client,
+        manifestPath,
+        prepared: prepared.value,
+        target,
+        readApprovedReplaySnapshot,
+      }),
+    executeCutover: () => executeCutover(client, args.actorId, prepared.value),
+    persistManifest: (nextManifest) =>
+      writeFile(manifestPath, `${JSON.stringify(nextManifest, null, 2)}\n`, 'utf8'),
   });
-  const cutover = await executeCutover(client, args.actorId, prepared.value);
-  const executedAt = new Date().toISOString();
-  manifest.result = {
-    ...manifest.result,
-    remoteCutover: {
-      executedAt,
-      authorizedActorProvided: true,
-      target,
-      replayEpochBefore: prepared.value.replayEpoch,
-      ...cutover,
-    },
-  };
-  manifest.retrospectiveObservation = {
-    target,
-    originalPlan: {
-      plannedCutoverRowCount: prepared.value.actionIds.length,
-      deferredRowCount: 0,
-    },
-    observedRemoteState: {
-      rowCount: cutover.syncedActionIds.length,
-      status: 'synced',
-      isPublic: false,
-    },
-    additionalObservedSyncedRowIds: [],
-  };
-  manifest.workflowBoundary = {
-    ...manifest.workflowBoundary,
-    remoteMutation: true,
-    cutover: true,
-    remainingCutoverBlockers: [],
-  };
-  await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, 'utf8');
 
   process.stdout.write(
     `${JSON.stringify(
