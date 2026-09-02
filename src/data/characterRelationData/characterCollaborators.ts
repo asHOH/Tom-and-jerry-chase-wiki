@@ -512,7 +512,7 @@ export const characterRelationCharacterCollaboratorTraits: CharacterRelationTrai
   },
   {
     description:
-      '感应雷可以中断交互动作，和火药桶可以相互配合，让猫难以绑上火箭，硬拖时间给队友机会。',
+      '感应雷可以中断交互动作，和火药桶可以相互配合，能让猫难以绑上火箭，硬拖时间给队友机会。',
     relation: {
       kind: 'collaborators',
       subject: { name: '泰菲', type: 'character' },
@@ -521,7 +521,7 @@ export const characterRelationCharacterCollaboratorTraits: CharacterRelationTrai
     },
   },
   {
-    description: '雪梨的回血配合泰菲被动霸体和减伤，没有强制位移和高伤的情况下可以强行推奶酪',
+    description: '雪梨的强力治疗有利于泰菲利用二级被动强行推奶酪',
     relation: {
       kind: 'collaborators',
       subject: { name: '泰菲', type: 'character' },
@@ -530,7 +530,7 @@ export const characterRelationCharacterCollaboratorTraits: CharacterRelationTrai
     },
   },
   {
-    description: '泰菲蹭国王的强化救援战旗，利用圆滚滚的无敌位移可以实现稳救',
+    description: '国王的救援战旗配合泰菲的二级圆滚滚，可以让泰菲实现稳救',
     relation: {
       kind: 'collaborators',
       subject: { name: '泰菲', type: 'character' },
@@ -539,7 +539,8 @@ export const characterRelationCharacterCollaboratorTraits: CharacterRelationTrai
     },
   },
   {
-    description: '泰菲可以利用罗菲的树快速回血，弥补健康值低的缺点，有利于强行推奶酪',
+    description:
+      '泰菲可以利用罗菲的树快速回血，弥补健康值低的缺点，配合泰菲二级被动有利于强行推奶酪',
     relation: {
       kind: 'collaborators',
       subject: { name: '泰菲', type: 'character' },
@@ -548,7 +549,7 @@ export const characterRelationCharacterCollaboratorTraits: CharacterRelationTrai
     },
   },
   {
-    description: '玛丽的扇子可以加快泰菲推速，帮助泰菲回血，有利于在残血前尽可能多推进奶酪',
+    description: '玛丽的扇子可以加快泰菲推速，帮助泰菲回血，有利于泰菲利用二级被动强行推奶酪',
     relation: {
       kind: 'collaborators',
       subject: { name: '泰菲', type: 'character' },
@@ -575,7 +576,7 @@ export const characterRelationCharacterCollaboratorTraits: CharacterRelationTrai
     },
   },
   {
-    description: '感应雷可以和斜塔搭配守火箭，拖延时间，在一些吃地形的图有奇效',
+    description: '感应雷可以中断交互动作，可以和斜塔搭配守火箭，拖延时间，在一些吃地形的图有奇效',
     relation: {
       kind: 'collaborators',
       subject: { name: '泰菲', type: 'character' },

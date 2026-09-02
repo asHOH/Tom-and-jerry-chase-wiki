@@ -3,7 +3,7 @@ import type { CharacterRelationTrait } from '@/data/types';
 export const characterRelationMapTraits: CharacterRelationTrait[] = [
   {
     description:
-      '地图房间分布呈树状 利于泰菲卡视野伏击；地图为中型，房间紧凑，利于机动性差的泰菲发挥',
+      '地图房间分布呈树状，利于泰菲卡视野伏击；地图为中型，房间紧凑，利于机动性差的泰菲发挥',
     relation: {
       kind: 'advantageMaps',
       subject: { name: '泰菲', type: 'character' },

@@ -139,12 +139,12 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '侦探汤姆的武器技能可以无视圆滚滚的无敌状态直接添加“被看穿”状态，且泰菲自身Hp较低容易被击倒。',
+      '侦汤的{侦探放大镜}可以无视{圆滚滚}的无敌状态直接添加{“被看穿”}状态；侦汤可以一刀秒杀被侦探放大镜放大的泰菲；被放大镜放大后会禁用技能，导致泰菲无法用圆滚滚规避伤害',
     relation: {
       kind: 'counters',
       subject: { name: '侦探汤姆', type: 'character' },
       target: { name: '泰菲', type: 'character' },
-      isMinor: true,
+      isMinor: false,
     },
   },
   {
@@ -498,7 +498,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '泰菲的隐形感应雷会触发如玉的花枪反击，Hp上限低，被如玉的高伤克制。但是泰菲的圆滚滚可以提供解控，在被反击打上火箭的失重状态下可以使用圆滚滚解控。2级主动提供的无敌效果也可以有效反制如玉的花枪反击，泰菲可以利用如玉的花枪反击在如玉闪过来的瞬间预判开炮打断反击。',
+      '泰菲可以用{圆滚滚}规避或解除如玉的花枪反击或闪刀的伤害和眩晕，也可以卡时间用{火箭弹}打断如玉的花枪反击或闪刀；圆滚滚不易被未到Lv.3的{掷花枪}卡真空期。如玉的伤害高，攻击手段多，容易压制血量低的泰菲，不利于泰菲利用Lv.2{茁壮成长}强行推奶酪；Lv.3掷花枪容易卡圆滚滚真空期；{地雷}可以给如玉创造闪现反击机会',
     relation: {
       kind: 'counterEachOther',
       subject: { name: '如玉', type: 'character' },
@@ -635,7 +635,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '追风飞行时机动性很强，使其很难被预警太长的地雷和炮命中。但泰菲的圆滚滚可以解控，强行打断追风技能造成的眩晕，追风伤害较低，不易将其击倒；追风可以利用飞行碰撞箱强行顶开在平台推奶酪的泰菲',
+      '泰菲可以用{圆滚滚}规避或解除追风{铁砧}、{飓风}、{俯冲}的伤害和控制；追风的伤害较低，难以一套秒杀泰菲。追风飞行时机动性很强，并且是{霸体}状态，使其很难被预警太长的{地雷}和{火箭弹}命中；追风攻击手段较多，技能CD较短，容易卡圆滚滚真空期；追风可以利用{追风状态}的飞行碰撞箱或{俯冲}强行打断推奶酪状态下的泰菲，使其无法利用Lv.2{茁壮成长}强行推奶酪',
     relation: {
       kind: 'counterEachOther',
       subject: { name: '泰菲', type: 'character' },
@@ -645,7 +645,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '泰菲的圆滚滚可以解控，导致托普斯很难刀接网或使用我生气了抓住泰菲。但泰菲的炮前摇长，近身很容易被托普斯找到机会网住，托普斯三级分身可以转移伤害，炮无法控制住本体，而且泰菲在圆滚滚真空期内时，只要被托普斯找到机会，就会被网住，因此泰菲被动的减伤霸体无法发挥用处',
+      '泰菲可以用{圆滚滚}解控避免被托普斯的{捕虫网}网住，泰菲在被Lv.1捕虫网扔出落地时也可以用圆滚滚解控避免被再次打死；Lv.2圆滚滚可以避免被{泡泡}罩住；圆滚滚不易被未到Lv.3的捕虫网卡真空期；{地雷}的伤害控制是延时的，还可以强行弹飞托普斯，某些时候被网住可以自救。捕虫网能取消释放，托普斯可以假装放网骗出泰菲的圆滚滚；圆滚滚无法解除泡泡的控制效果；Lv.3{双重猫格}可以有效规避{火箭弹}和地雷的伤害和控制；捕虫网可以网住霸体老鼠，能有效克制泰菲利用Lv.2{茁壮成长}强行推奶酪',
     relation: {
       kind: 'counterEachOther',
       subject: { name: '泰菲', type: 'character' },
@@ -655,17 +655,17 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '泰菲的圆滚滚可以解控，配合治疗可以克制米特的刷尸，2级圆滚滚可以看刷挣扎动作的前摇卡时间无伤逃跑；泰菲的圆滚滚可以把米特的饭盒踩掉，克制米特的防守。但米特的野性层数叠加到七层时可以一刀秒泰菲，被动还可以短时间内取消泰菲被动的回血buff，生效期间泰菲无法利用圆滚滚解控加治疗避免刷尸，也不利于泰菲强行推奶酪，。',
+      '泰菲可以用{圆滚滚}解控配合{应急治疗}或{冰冻保鲜}，避免米特利用{胡椒粉}刷尸；米特的攻击手段少，很难卡圆滚滚真空期将泰菲击倒。米特的{野性迸发}积累到一定层数时爪刀伤害高，容易压制血量低的泰菲，不利于泰菲利用Lv.2{茁壮成长}强行推奶酪；米特二级被动可以短时间内取消泰菲Lv.2茁壮成长的回血buff，生效期间泰菲无法利用圆滚滚解控加应急治疗避免刷尸，也不利于泰菲强行推奶酪；泰菲的{火箭弹}和Lv.2{地雷}可以击落米特的{胡椒粉罐头}，会协助米特刷尸',
     relation: {
       kind: 'counterEachOther',
       subject: { name: '泰菲', type: 'character' },
       target: { name: '米特', type: 'character' },
-      isMinor: false,
+      isMinor: true,
     },
   },
   {
     description:
-      '泰菲的二级圆滚滚没有前摇，有无敌，可以克制天汤开飞行刷虚弱拉火箭；但天汤机动性高、伤害高，二被有霸体，克制机动性差、血量少、主要打控制的泰菲',
+      '泰菲可以利用Lv.2{圆滚滚}避免被天汤开启{自由翱翔}刷尸拉火箭；圆滚滚不易被天汤卡真空期；泰菲可以利用{火箭弹}的溅射爆炸避免被飞行状态下的天汤近身攻击。天汤用自由翱翔飞行时很难被预警太长的{地雷}命中；天汤的道具伤害很高，容易压制血量低的泰菲；天汤的二级{天使强化}提供的{弱霸体}能够免疫火箭弹和地雷的控制；天汤用自由翱翔吸火箭能够避免被泰菲的地雷威慑',
     relation: {
       kind: 'counterEachOther',
       subject: { name: '泰菲', type: 'character' },
@@ -675,16 +675,17 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '泰菲的圆滚滚可以解控，克制汤姆的枪、锅眩晕，地雷可以强行击飞汤姆无敌，拖延汤姆的无敌绑火箭时间；汤姆的发怒冲刺为无敌状态，可以解控，克制泰菲火箭筒和地雷打控制，汤姆三级被动可以禁用泰菲的圆滚滚，后期很克制泰菲',
+      '泰菲可以利用{圆滚滚}规避或解除{平底锅}和{手型枪}的伤害和控制；圆滚滚不易被汤姆卡真空期；{地雷}可以强行弹飞开启{发怒冲刺}的汤姆，造成一定干扰。汤姆可以利用发怒冲刺有效规避或解除{火箭弹}和地雷的伤害和控制；汤姆三级{捕鼠专家}可以禁用泰菲的圆滚滚，使其无法利用圆滚滚解控，后期很克制泰菲',
     relation: {
       kind: 'counterEachOther',
       subject: { name: '泰菲', type: 'character' },
       target: { name: '汤姆', type: 'character' },
-      isMinor: false,
+      isMinor: true,
     },
   },
   {
-    description: '泰菲的圆滚滚是无敌状态，可以解控，克制斯飞的疾冲电击、穿刺以及勾子控制',
+    description:
+      '泰菲的{圆滚滚}能够避免被斯飞的{狂}、{猎}、配合扑击一波杀死；圆滚滚不易被斯飞卡真空期；{火箭弹}会对斯飞造成减速，有一定的干扰作用',
     relation: {
       kind: 'counters',
       subject: { name: '泰菲', type: 'character' },
@@ -1508,20 +1509,20 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '侍卫汤姆移速快，且在Lv.2被动加成下能一击击倒泰菲。并且侍卫视野大，远程火箭筒被克死，侍卫还能用火炮刷新护盾，每打中一次就有两层盾，可抵消火箭筒的两段伤害。',
+      '侍卫移速快，容易追杀泰菲；侍卫在Lv.2{随机应变}加持下伤害高，可以秒杀泰菲；{警戒}赋予侍卫大范围视野，使侍卫很难被远程{火箭弹}命中；{炮弹}命中敌方会使侍卫自身获得两层{护盾}，可以抵消火箭弹两段伤害以及控制效果；炮弹命中泰菲会禁用{圆滚滚}，导致泰菲无法用圆滚滚解控',
     relation: {
       kind: 'counters',
       subject: { name: '侍卫汤姆', type: 'character' },
       target: { name: '泰菲', type: 'character' },
-      isMinor: true,
+      isMinor: false,
     },
   },
   {
     description:
-      '苏蕊跳舞有霸体、伤害高，克制伤害高、血量低、主要打控制的泰菲；苏蕊跳舞可直接把老鼠带上火箭，克制泰菲地雷拖延绑火箭；泰菲火箭筒前摇长，近身容易被苏蕊瑜伽球打断',
+      '塔拉速度快，十分容易追杀机动性差的泰菲；塔拉在Lv.2{心思缜密}下视野较大，使其较难被远程{火箭弹}命中；Lv.3{心思缜密}赋予的{免控}可以有效规避火箭弹和地雷的控制效果；{牛仔的礼物}的防守能力极强，导致泰菲无法利用Lv.2{茁壮成长}推奶酪或者救援队友',
     relation: {
       kind: 'counters',
-      subject: { name: '苏蕊', type: 'character' },
+      subject: { name: '塔拉', type: 'character' },
       target: { name: '泰菲', type: 'character' },
       isMinor: false,
     },
@@ -1901,7 +1902,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '库博的伤害很高，克制血量少的泰菲，克制泰菲的被动；库博机动性强，思路很难被判断，泰菲无法及时支援队友；库博的隐身导致地雷无法被触发',
+      '库博在Lv.2{虚幻梦影}和Lv.2{身体素质}的加持下伤害极高，可以一刀秒泰菲，能有效克制泰菲利用Lv.2{茁壮成长}强行推奶酪；库博使用虚幻梦影会获得{间歇性隐身}状态，很难触发地雷，并且很难被{火箭弹}预判命中；库博的机动性极强，使泰菲很难逃脱库博的追击',
     relation: {
       kind: 'counteredBy',
       subject: { name: '泰菲', type: 'character' },
@@ -1911,7 +1912,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '兔八哥伤害高，克制血量少的泰菲，兔八哥二级被动可以闪避泰菲的炮，兔八哥的巨型胡萝卜克制泰菲霸体减伤推奶酪，兔八哥的打洞可以躲避泰菲的地雷锁定',
+      '兔八哥的{胡萝卜飞镖}在敌方被宣战时伤害持续，容易压制血量少的泰菲；Lv.2{我，兔八哥}可以闪避泰菲的{火箭弹}；{巨型胡萝卜}能够能有效克制泰菲利用Lv.2{茁壮成长}推奶酪，兔八哥的{狡兔三窟}可以躲避泰菲的{地雷}锁定',
     relation: {
       kind: 'counteredBy',
       subject: { name: '泰菲', type: 'character' },
@@ -1939,7 +1940,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '泰菲的地雷能协助牛仔汤姆卡时间放斗牛鞭尸触发2级被动，且牛仔汤姆攻击手段多，伤害高，圆滚滚疲于应对。',
+      '泰菲的{地雷}和能协助牛仔汤姆卡时间使用{斗牛}鞭尸触发2级被动；牛汤极容易卡{圆滚滚}真空期；牛汤Lv.3{游刃有余}在泰菲受伤状态下可以无视泰菲Lv.2{茁壮成长}减伤直接秒杀泰菲；',
     relation: {
       kind: 'counteredBy',
       subject: { name: '泰菲', type: 'character' },
@@ -1949,17 +1950,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '泰菲可以用圆滚滚抵挡图多的吻和指甲油外刀，但图多伤害较高，技能冷却快，后期攻击手段多，三级吻可以禁用技能，让泰菲疲于应对；图多的三级指甲油赋予长时间霸体，克制泰菲的炮和地雷打控制；图多的三级香水可以禁用技能，图多在三级香水中伤害十分高，爪刀冷却快，克制泰菲被动推奶酪',
-    relation: {
-      kind: 'counteredBy',
-      subject: { name: '泰菲', type: 'character' },
-      target: { name: '图多盖洛', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
-    description:
-      '恶汤火车冷却时间短，且可储存多次，泰菲圆滚滚解控后冷却时间长，不可储存，容易在技能真空期被恶汤利用易伤磨死；恶汤打碟有霸体，克制泰菲火箭筒和地雷打控制；恶汤绑火箭速度快，克制地雷拖延绑火箭',
+      '恶汤{迷乱列车}冷却时间短，且可储存多次，泰菲{圆滚滚}解控后冷却时间长，不可储存，容易在技能真空期被恶汤利用易伤磨死；恶汤开启{狂欢时刻}会获得{霸体}，能有效规避泰菲{火箭弹}和{地雷}的{爆炸眩晕}；恶汤绑火箭速度快，克制地雷拖延绑火箭',
     relation: {
       kind: 'counteredBy',
       subject: { name: '泰菲', type: 'character' },
@@ -1968,12 +1959,12 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
     },
   },
   {
-    description: '凯特在被动加持下伤害高，泰菲Hp较低，容易被秒杀',
+    description: '泰菲Hp较低，被凯特的{骄傲的学霸}叠加{破绽}状态后容易被秒杀',
     relation: {
       kind: 'counteredBy',
       subject: { name: '泰菲', type: 'character' },
       target: { name: '凯特', type: 'character' },
-      isMinor: true,
+      isMinor: false,
     },
   },
   {
@@ -2252,7 +2243,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '泰菲的圆滚滚有无敌，可以解控，克制布奇的冲撞和桶盖；泰菲的地雷有强制位移，克制布奇利用桶盖霸体强行绑火箭；泰菲的地雷有碰撞体积，可撞走桶盖规避伤害',
+      '泰菲的{圆滚滚}可以避免被布奇的{横冲直撞}、{垃圾盖}和{旋转桶盖}一波杀死；圆滚滚不易被布奇卡真空期；泰菲的{地雷}有碰撞体积，可撞走旋转桶盖规避伤害；',
     relation: {
       kind: 'counters',
       subject: { name: '泰菲', type: 'character' },
@@ -3145,7 +3136,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '剑汤的连招被泰菲的圆滚滚的无敌和解控死死克制，并且泰菲的角色模型矮，连斩很多情况无法锁定；在剑客汤姆连斩友方过程中布雷，可能炸飞队友或眩晕剑汤，也有少量帮助',
+      '泰菲的{圆滚滚}可以避免被剑汤的{骑士连斩}与{旋刃剑舞}的连招一波杀死；圆滚滚不易被未点Lv.3{骑士之剑}的剑汤卡真空期；泰菲的角色模型矮，骑士连斩第三段很多情况无法锁定；剑汤本身除骑士连斩的短暂无敌外并无其他无敌霸体技能，大大提高了{地雷}的威慑度；泰菲在剑客汤姆连斩友方过程中布雷，可能炸飞队友或眩晕剑汤，也有少量帮助；剑汤很难对点了Lv.2{茁壮成长}推奶酪的泰菲造成有效伤害',
     relation: {
       kind: 'counters',
       subject: { name: '泰菲', type: 'character' },
@@ -3155,16 +3146,17 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '地雷的强制位移能带走垃圾桶，咸鱼可以被圆滚滚强行踩掉，莱特宁闪现过来泰菲也可以秒开圆滚滚躲避攻击。',
+      '地雷的强制位移能带走{垃圾桶}；{咸鱼-投射物}可以被圆滚滚强行踩掉；泰菲可以用Lv.2{圆滚滚}躲避莱特宁的{瞬移闪击}；莱特宁自身没有无敌霸体技能，大大增加了{地雷}的威慑度；但圆滚滚能被莱特宁的瞬移闪击卡真空期',
     relation: {
       kind: 'counters',
       subject: { name: '泰菲', type: 'character' },
       target: { name: '莱特宁', type: 'character' },
-      isMinor: false,
+      isMinor: true,
     },
   },
   {
-    description: '圆滚滚的无敌和解控克制喵喵叫，但三级汽水罐使泰菲有些疲于应对',
+    description:
+      '{圆滚滚}可以免疫或解除{喵喵叫}的伤害和眩晕；圆滚滚前期不易被没到6级的图茨卡真空期，但后期能被卡真空期',
     relation: {
       kind: 'counters',
       subject: { name: '泰菲', type: 'character' },
@@ -3486,7 +3478,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
     },
   },
   {
-    description: '剑客汤姆除了携带特技蓄力一击几乎没有办法快速击倒兔子大表哥从而无法及时减员。',
+    description: '剑客汤姆除了携带特技蓄力重击几乎没有办法快速击倒兔子大表哥从而无法及时减员。',
     relation: {
       kind: 'counters',
       subject: { name: '魔术师', type: 'character' },

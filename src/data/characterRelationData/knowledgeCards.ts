@@ -277,22 +277,12 @@ export const characterRelationKnowledgeCardTraits: CharacterRelationTrait[] = [
     },
   },
   {
-    description: '皮糙肉厚减伤导致绝反炮菲无法发挥伤害高的优势。',
-    relation: {
-      kind: 'counteredByKnowledgeCards',
-      subject: { name: '泰菲', type: 'character' },
-      target: { name: '皮糙肉厚', type: 'knowledgeCard', factionId: 'cat' },
-      isMinor: true,
-    },
-  },
-  {
-    description:
-      '有乾坤一掷加持下的猫扔一个基础伤害为50的道具就可以秒掉泰菲，但带乾坤一掷的猫很少，所以克制不明显。',
+    description: '有{乾坤一掷}加持下的猫扔一个基础伤害为50的道具就可以秒掉泰菲',
     relation: {
       kind: 'counteredByKnowledgeCards',
       subject: { name: '泰菲', type: 'character' },
       target: { name: '乾坤一掷', type: 'knowledgeCard', factionId: 'cat' },
-      isMinor: true,
+      isMinor: false,
     },
   },
   {
@@ -397,7 +387,16 @@ export const characterRelationKnowledgeCardTraits: CharacterRelationTrait[] = [
     },
   },
   {
-    description: '猛攻可以禁用泰菲的圆滚滚，导致泰菲无法使用圆滚滚解控',
+    description: '泰菲可以用{圆滚滚}解除{击晕}造成的僵直效果',
+    relation: {
+      kind: 'countersKnowledgeCards',
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '击晕', type: 'knowledgeCard', factionId: 'cat' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '{猛攻}可以禁用泰菲的{圆滚滚}，导致泰菲无法使用圆滚滚解控',
     relation: {
       kind: 'counteredByKnowledgeCards',
       subject: { name: '泰菲', type: 'character' },
@@ -406,7 +405,7 @@ export const characterRelationKnowledgeCardTraits: CharacterRelationTrait[] = [
     },
   },
   {
-    description: '泰菲血量低，前期三级自保较弱，容易被伤害高的穷追猫针对',
+    description: '泰菲血量低，前期三级自保较弱，容易被携带{穷追猛打}的猫针对',
     relation: {
       kind: 'counteredByKnowledgeCards',
       subject: { name: '泰菲', type: 'character' },
@@ -415,7 +414,8 @@ export const characterRelationKnowledgeCardTraits: CharacterRelationTrait[] = [
     },
   },
   {
-    description: '泰菲机动性差，基础速度不高，没队友干扰的情况下容易被速度高的乘胜猫追杀',
+    description:
+      '泰菲机动性差，基础速度不高，没队友干扰的情况下容易被携带{乘胜追击}的猫追杀；乘胜追击赋予猫的高移速使得{地雷}很难命中猫',
     relation: {
       kind: 'counteredByKnowledgeCards',
       subject: { name: '泰菲', type: 'character' },
@@ -424,7 +424,7 @@ export const characterRelationKnowledgeCardTraits: CharacterRelationTrait[] = [
     },
   },
   {
-    description: '暴怒赋予猫长时间高伤，克制血量低的泰菲',
+    description: '{暴怒}赋予猫高伤，容易压制血量低的泰菲',
     relation: {
       kind: 'counteredByKnowledgeCards',
       subject: { name: '泰菲', type: 'character' },

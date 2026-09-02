@@ -183,7 +183,7 @@ export const characterRelationSpecialSkillTraits: CharacterRelationTrait[] = [
     },
   },
   {
-    description: '炮不能取消后摇，容易被霸体反杀。',
+    description: '{火箭筒}不能取消后摇，容易被猫开启{绝地反击}反杀。',
     relation: {
       kind: 'counteredBySpecialSkills',
       subject: { name: '泰菲', type: 'character' },
@@ -192,7 +192,8 @@ export const characterRelationSpecialSkillTraits: CharacterRelationTrait[] = [
     },
   },
   {
-    description: '泰菲的圆滚滚可以解控，猫无法用无限爪刀秒掉泰菲',
+    description:
+      '泰菲可以用{圆滚滚}解控避免猫用{击晕}配合{我生气了！}状态下的快速爪刀秒掉泰菲；圆滚滚很难被我生气了卡真空期',
     relation: {
       kind: 'countersSpecialSkills',
       subject: { name: '泰菲', type: 'character' },
@@ -201,20 +202,29 @@ export const characterRelationSpecialSkillTraits: CharacterRelationTrait[] = [
     },
   },
   {
-    description: '泰菲的圆滚滚可以解控，克制猫用击晕接蓄重',
+    description: '泰菲可以用{圆滚滚}解控避免被猫控制接{蓄力重击}秒杀；圆滚滚很难被蓄力重击卡真空期',
     relation: {
       kind: 'countersSpecialSkills',
       subject: { name: '泰菲', type: 'character' },
       target: { name: '蓄力重击', type: 'specialSkill', factionId: 'cat' },
-      isMinor: true,
+      isMinor: false,
     },
   },
   {
-    description: '全垒打赋予猫高伤，克制血量低的泰菲',
+    description: '{全垒打}赋予猫高伤和高移速，容易压制血量低的泰菲',
     relation: {
       kind: 'counteredBySpecialSkills',
       subject: { name: '泰菲', type: 'character' },
       target: { name: '全垒打', type: 'specialSkill', factionId: 'cat' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '猫可以用{急速翻滚}快速接近机动性差的泰菲',
+    relation: {
+      kind: 'counteredBySpecialSkills',
+      subject: { name: '泰菲', type: 'character' },
+      target: { name: '急速翻滚', type: 'specialSkill', factionId: 'cat' },
       isMinor: true,
     },
   },

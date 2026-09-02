@@ -955,7 +955,7 @@ export const entityDefinitions = {
   火箭炮: {
     entitytag: ['抛掷', '伤害', '硬控', '群体'],
     owner: { name: '火箭筒', type: 'skill' },
-    aliases: ['炮', '炮弹', '弹头'],
+    aliases: ['炮', '炮弹', '弹头', '火箭弹'],
     move: true,
     gravity: true,
     collision: ['道具', '墙壁', '平台', '地面'],
