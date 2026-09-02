@@ -337,6 +337,19 @@ async function main() {
       ...cutover,
     },
   };
+  manifest.retrospectiveObservation = {
+    target,
+    originalPlan: {
+      plannedCutoverRowCount: prepared.value.actionIds.length,
+      deferredRowCount: 0,
+    },
+    observedRemoteState: {
+      rowCount: cutover.syncedActionIds.length,
+      status: 'synced',
+      isPublic: false,
+    },
+    additionalObservedSyncedRowIds: [],
+  };
   manifest.workflowBoundary = {
     ...manifest.workflowBoundary,
     remoteMutation: true,
