@@ -6,6 +6,10 @@ describe('game-data compaction cutover command', () => {
     path.join(process.cwd(), 'scripts/cutover-game-data-compaction.mjs'),
     'utf8'
   );
+  const verifier = readFileSync(
+    path.join(process.cwd(), 'scripts/verify-game-data-compaction.mjs'),
+    'utf8'
+  );
   const packageJson = JSON.parse(
     readFileSync(path.join(process.cwd(), 'package.json'), 'utf8')
   ) as { scripts?: Record<string, string> };
@@ -30,5 +34,9 @@ describe('game-data compaction cutover command', () => {
     expect(script).toContain("client.rpc(\n    'read_game_data_approved_replay_epoch'");
     expect(script).toContain(".select('id,status,is_public,created_at')");
     expect(script).not.toMatch(/\.from\('game_data_actions'\)[\s\S]*?\.update\(/u);
+  });
+
+  it('persists the idempotence evidence required by the cutover manifest gate', () => {
+    expect(verifier).toContain('idempotence: evidence.idempotence');
   });
 });

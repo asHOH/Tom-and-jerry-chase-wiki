@@ -460,7 +460,7 @@ function updateManifest(manifest, evidence) {
       verifiedAt: capturedAt,
       manifestUnchanged: true,
       snapshotStableDuringVerification: true,
-      actionOperations: evidence.actionOperations,
+      idempotence: evidence.idempotence,
       actionPatch: evidence.actionPatch,
       production: evidence.production,
       publishedParity: evidence.parity,
