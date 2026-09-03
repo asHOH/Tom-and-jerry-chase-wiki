@@ -68,6 +68,10 @@ type FunctionOverrides = {
     PublicFunctions['prepared_publish_anonymous_game_data_actions'],
     { p_message: string | null }
   >;
+  prepared_publish_game_data_actions_request: OverrideFunctionArgs<
+    PublicFunctions['prepared_publish_game_data_actions_request'],
+    { p_actor_id: string | null; p_message: string | null }
+  >;
   prepared_publish_game_data_actions: OverrideFunctionArgs<
     PublicFunctions['prepared_publish_game_data_actions'],
     { p_message: string | null }

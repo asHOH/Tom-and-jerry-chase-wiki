@@ -93,22 +93,6 @@ function persistenceError(error: {
   return new TrustedGameDataMutationError('persistence_failed', error);
 }
 
-type PublishOperationQuery = {
-  select(columns: string): PublishOperationQuery;
-  eq(column: string, value: string): PublishOperationQuery;
-  order(column: string, options?: { ascending?: boolean }): PublishOperationQuery;
-  maybeSingle(): Promise<{ data: unknown; error: { code?: string; message?: string } | null }>;
-};
-
-type DynamicAdminClient = {
-  from(table: string): PublishOperationQuery;
-};
-
-type PublishRpcResult = {
-  data: unknown;
-  error: { code?: string; message?: string } | null;
-};
-
 function operationFingerprint(options: {
   permission: PublishPermission;
   prepared: PreparedPublishRequest;
@@ -135,7 +119,7 @@ async function readExistingPublishOperation(options: {
   operationId: string;
   fingerprint: string;
 }): Promise<TrustedPublishResult[] | null> {
-  const client = requireSupabaseAdminClient() as unknown as DynamicAdminClient;
+  const client = requireSupabaseAdminClient();
   const operationResult = await client
     .from('game_data_action_publish_operations')
     .select('request_fingerprint')
@@ -144,28 +128,18 @@ async function readExistingPublishOperation(options: {
   if (operationResult.error) throw persistenceError(operationResult.error);
   if (!operationResult.data) return null;
 
-  const operation = operationResult.data as { request_fingerprint?: unknown };
-  if (operation.request_fingerprint !== options.fingerprint) {
+  if (operationResult.data.request_fingerprint !== options.fingerprint) {
     throw new TrustedGameDataMutationError('idempotency_key_reused');
   }
 
-  const rowsResult = await (client
+  const rowsResult = await client
     .from('game_data_actions')
-    .select('id, publish_operation_initial_public, publish_operation_initial_status' as never)
+    .select('id, publish_operation_initial_public, publish_operation_initial_status')
     .eq('publish_operation_id', options.operationId)
-    .order('publish_operation_ordinal', { ascending: true }) as unknown as Promise<{
-    data: unknown;
-    error: { code?: string; message?: string } | null;
-  }>);
+    .order('publish_operation_ordinal', { ascending: true });
   if (rowsResult.error) throw persistenceError(rowsResult.error);
 
-  const rows = (
-    (rowsResult.data ?? []) as Array<{
-      id: string;
-      publish_operation_initial_public?: boolean | null;
-      publish_operation_initial_status?: ActionStatus | null;
-    }>
-  ).map((row) => {
+  const rows = (rowsResult.data ?? []).map((row) => {
     if (
       row.publish_operation_initial_public === null ||
       row.publish_operation_initial_public === undefined ||
@@ -194,26 +168,25 @@ async function publishWithOperation(options: {
   clientIp?: string | null;
   submitMode?: GameDataSubmitMode;
 }): Promise<TrustedPublishResult[]> {
-  const rpc = requireSupabaseAdminClient().rpc as unknown as (
-    functionName: string,
-    args: Record<string, unknown>
-  ) => Promise<PublishRpcResult>;
-  const { data, error } = await rpc('prepared_publish_game_data_actions_request', {
-    p_operation_id: options.operationId,
-    p_request_fingerprint: options.fingerprint,
-    p_actor_id: options.actorId,
-    p_permission_key: options.permission,
-    p_actions: options.prepared.actions.map((action) => ({
-      entity_type: action.entityType,
-      entries: action.rows.map((row) => asJson(row.canonicalEntry)),
-    })),
-    p_message: options.prepared.message ?? null,
-    p_expected_replay_epoch: options.expectedEpoch,
-    p_submit_mode: options.submitMode ?? 'default',
-    ...(options.clientIp === undefined ? {} : { p_ip: options.clientIp }),
-  });
+  const { data, error } = await requireSupabaseAdminClient().rpc(
+    'prepared_publish_game_data_actions_request',
+    {
+      p_operation_id: options.operationId,
+      p_request_fingerprint: options.fingerprint,
+      p_actor_id: options.actorId,
+      p_permission_key: options.permission,
+      p_actions: options.prepared.actions.map((action) => ({
+        entity_type: action.entityType,
+        entries: action.rows.map((row) => asJson(row.canonicalEntry)),
+      })),
+      p_message: options.prepared.message ?? null,
+      p_expected_replay_epoch: options.expectedEpoch,
+      p_submit_mode: options.submitMode ?? 'default',
+      ...(options.clientIp === undefined ? {} : { p_ip: options.clientIp }),
+    }
+  );
   if (error) throw persistenceError(error);
-  return (data ?? []) as TrustedPublishResult[];
+  return data ?? [];
 }
 
 export async function loadTrustedGameDataAction(

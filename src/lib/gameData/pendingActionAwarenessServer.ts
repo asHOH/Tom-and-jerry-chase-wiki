@@ -16,7 +16,7 @@ import type { PreparedPublishRequest } from '@/lib/gameData/publishPreparation';
 import { getGameDataActionEntityKey } from '@/lib/gameData/scopedEntityPaths';
 import { cached } from '@/lib/serverCache';
 import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
-import type { Json } from '@/data/database.types';
+import type { Tables } from '@/data/database.types';
 
 import { summarizePendingActionTargets } from './pendingActionAwareness';
 import type {
@@ -28,15 +28,16 @@ import type {
 const QUERY_PAGE_SIZE = 500;
 const TARGET_LIMIT = 512;
 
-type PendingRow = {
-  id: string;
-  entity_type: string;
-  entry: Json;
-  created_at: string;
-  created_by: string | null;
-  is_public: boolean;
-  publish_operation_id: string | null;
-};
+type PendingRow = Pick<
+  Tables<'game_data_actions'>,
+  | 'id'
+  | 'entity_type'
+  | 'entry'
+  | 'created_at'
+  | 'created_by'
+  | 'is_public'
+  | 'publish_operation_id'
+>;
 
 type InternalPendingTarget = ActionDependencyDescriptor & {
   rowId: string;
@@ -117,11 +118,9 @@ async function queryPendingRows(entityTypes: readonly string[]): Promise<Pending
   const rows: PendingRow[] = [];
 
   for (let from = 0; ; from += QUERY_PAGE_SIZE) {
-    const { data: rawData, error } = await requireSupabaseAdminClient()
+    const { data, error } = await requireSupabaseAdminClient()
       .from('game_data_actions')
-      .select(
-        'id, entity_type, entry, created_at, created_by, is_public, publish_operation_id' as never
-      )
+      .select('id, entity_type, entry, created_at, created_by, is_public, publish_operation_id')
       .eq('status', 'pending')
       .in('entity_type', [...entityTypes])
       .order('created_at', { ascending: true })
@@ -129,7 +128,6 @@ async function queryPendingRows(entityTypes: readonly string[]): Promise<Pending
       .range(from, from + QUERY_PAGE_SIZE - 1);
 
     if (error) throw error;
-    const data = rawData as unknown as PendingRow[] | null;
     rows.push(...(data ?? []));
     if (!data || data.length < QUERY_PAGE_SIZE) break;
   }

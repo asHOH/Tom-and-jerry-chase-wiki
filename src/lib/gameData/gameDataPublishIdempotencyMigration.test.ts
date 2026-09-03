@@ -3,6 +3,9 @@ import { readLatestMigrationMatching } from '@/testUtils/latestMigration';
 const { filename, sql: migration } = readLatestMigrationMatching(
   /CREATE\s+OR\s+REPLACE\s+FUNCTION\s+public\.prepared_publish_game_data_actions_request\b/i
 );
+const { filename: privilegeFilename, sql: privilegeMigration } = readLatestMigrationMatching(
+  /REVOKE\s+ALL\s+ON\s+TABLE\s+public\.game_data_action_publish_operations\s+FROM\s+service_role;/i
+);
 
 describe('game data publish idempotency migration', () => {
   it('adds a durable operation key and stable row ordinals without content uniqueness', () => {
@@ -42,6 +45,15 @@ describe('game data publish idempotency migration', () => {
     );
     expect(migration).toMatch(
       /GRANT EXECUTE ON FUNCTION public\.prepared_publish_game_data_actions_request\([\s\S]*?TO service_role/
+    );
+  });
+
+  it('limits direct operation-table access to service-role reads', () => {
+    expect(privilegeFilename).toBe(
+      '20260903000001_restrict_game_data_publish_operation_privileges.sql'
+    );
+    expect(privilegeMigration).toMatch(
+      /REVOKE\s+ALL\s+ON\s+TABLE\s+public\.game_data_action_publish_operations\s+FROM\s+service_role;[\s\S]*GRANT\s+SELECT\s+ON\s+TABLE\s+public\.game_data_action_publish_operations\s+TO\s+service_role;/i
     );
   });
 });

@@ -1,6 +1,11 @@
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: '14.5';
+  };
   graphql_public: {
     Tables: {
       [_ in never]: never;
@@ -512,6 +517,24 @@ export type Database = {
         };
         Relationships: [];
       };
+      game_data_action_publish_operations: {
+        Row: {
+          created_at: string;
+          operation_id: string;
+          request_fingerprint: string;
+        };
+        Insert: {
+          created_at?: string;
+          operation_id: string;
+          request_fingerprint: string;
+        };
+        Update: {
+          created_at?: string;
+          operation_id?: string;
+          request_fingerprint?: string;
+        };
+        Relationships: [];
+      };
       game_data_actions: {
         Row: {
           created_at: string;
@@ -521,6 +544,11 @@ export type Database = {
           id: string;
           is_public: boolean;
           message: string | null;
+          publish_operation_id: string | null;
+          publish_operation_initial_public: boolean | null;
+          publish_operation_initial_status:
+            Database['public']['Enums']['game_data_action_status'] | null;
+          publish_operation_ordinal: number | null;
           rejection_reason: string | null;
           reviewed_at: string | null;
           reviewed_by: string | null;
@@ -534,6 +562,11 @@ export type Database = {
           id?: string;
           is_public?: boolean;
           message?: string | null;
+          publish_operation_id?: string | null;
+          publish_operation_initial_public?: boolean | null;
+          publish_operation_initial_status?:
+            Database['public']['Enums']['game_data_action_status'] | null;
+          publish_operation_ordinal?: number | null;
           rejection_reason?: string | null;
           reviewed_at?: string | null;
           reviewed_by?: string | null;
@@ -547,6 +580,11 @@ export type Database = {
           id?: string;
           is_public?: boolean;
           message?: string | null;
+          publish_operation_id?: string | null;
+          publish_operation_initial_public?: boolean | null;
+          publish_operation_initial_status?:
+            Database['public']['Enums']['game_data_action_status'] | null;
+          publish_operation_ordinal?: number | null;
           rejection_reason?: string | null;
           reviewed_at?: string | null;
           reviewed_by?: string | null;
@@ -566,6 +604,13 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: 'users_public_view';
             referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'game_data_actions_publish_operation_id_fkey';
+            columns: ['publish_operation_id'];
+            isOneToOne: false;
+            referencedRelation: 'game_data_action_publish_operations';
+            referencedColumns: ['operation_id'];
           },
           {
             foreignKeyName: 'game_data_actions_reviewed_by_fkey';
@@ -1659,6 +1704,24 @@ export type Database = {
               status: Database['public']['Enums']['game_data_action_status'];
             }[];
           };
+      prepared_publish_game_data_actions_request: {
+        Args: {
+          p_actions: Json;
+          p_actor_id: string;
+          p_expected_replay_epoch: number;
+          p_ip?: unknown;
+          p_message: string;
+          p_operation_id: string;
+          p_permission_key: string;
+          p_request_fingerprint: string;
+          p_submit_mode?: string;
+        };
+        Returns: {
+          id: string;
+          is_public: boolean;
+          status: Database['public']['Enums']['game_data_action_status'];
+        }[];
+      };
       prepared_reject_game_data_action: {
         Args: {
           p_action_id: string;
