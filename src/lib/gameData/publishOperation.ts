@@ -11,6 +11,13 @@ export class InvalidPublishOperationIdError extends Error {
   }
 }
 
+export class PublishOperationConflictError extends Error {
+  constructor() {
+    super('publish_operation_conflict');
+    this.name = 'PublishOperationConflictError';
+  }
+}
+
 export function isPublishOperationId(value: string): boolean {
   return OPERATION_ID_PATTERN.test(value);
 }
@@ -69,6 +76,7 @@ function readStoredOperation(scope: string): StoredPublishOperation | null {
 export function getOrCreatePublishOperationId(scope: string, fingerprint: string): string {
   const existing = readStoredOperation(scope);
   if (existing?.fingerprint === fingerprint) return existing.operationId;
+  if (existing) throw new PublishOperationConflictError();
 
   const operationId = crypto.randomUUID();
   const storage = getSessionStorage();

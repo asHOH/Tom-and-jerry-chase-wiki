@@ -3,6 +3,7 @@ import {
   getOrCreatePublishOperationId,
   getPublishOperationFingerprint,
   isPublishOperationId,
+  PublishOperationConflictError,
   readPublishOperationId,
 } from './publishOperation';
 
@@ -11,19 +12,21 @@ describe('publish operation identity', () => {
     window.sessionStorage.clear();
   });
 
-  it('reuses a stored UUID for the same semantic draft and rotates on change', () => {
+  it('reuses a stored UUID for the same semantic draft and blocks a changed fingerprint', () => {
     const firstFingerprint = getPublishOperationFingerprint({ entries: ['first'] });
     const secondFingerprint = getPublishOperationFingerprint({ entries: ['second'] });
 
     const first = getOrCreatePublishOperationId('page:items:item-1', firstFingerprint);
     expect(getOrCreatePublishOperationId('page:items:item-1', firstFingerprint)).toBe(first);
 
+    expect(() => getOrCreatePublishOperationId('page:items:item-1', secondFingerprint)).toThrow(
+      PublishOperationConflictError
+    );
+
+    clearPublishOperation('page:items:item-1');
     const second = getOrCreatePublishOperationId('page:items:item-1', secondFingerprint);
     expect(second).not.toBe(first);
     expect(isPublishOperationId(second)).toBe(true);
-
-    clearPublishOperation('page:items:item-1');
-    expect(getOrCreatePublishOperationId('page:items:item-1', secondFingerprint)).not.toBe(second);
   });
 
   it('strictly accepts UUID v4 idempotency headers and keeps missing headers compatible', () => {

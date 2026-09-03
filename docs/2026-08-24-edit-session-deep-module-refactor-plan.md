@@ -1,6 +1,6 @@
 # Edit Session Deep-Module Refactor Plan
 
-**Status:** Proposed; revised after repository review; not started  
+**Status:** Phase 0 landed; Phases 1–5 not started
 **Created:** 2026-08-24  
 **Revised:** 2026-09-04  
 **Scope:** Client-side game-data edit runtime, draft lifecycle, and feature-facing edit interfaces
@@ -23,7 +23,7 @@ compatibility runtime. Once feature callers no longer need raw stores, the curre
 registry implementation can be folded behind the session interface and its raw exports removed.
 
 This is primarily a maintainability and testability investment. The publish-history reconciliation
-work in Phase 0 is a correctness fix and may land independently; the remaining refactor should not
+work in Phase 0 has landed independently as a correctness fix; the remaining refactor should not
 displace higher-priority production work.
 
 ## Current repository facts
@@ -41,6 +41,11 @@ The following remain true as of the revision date:
   - pending-action overlap acknowledgement through `pendingAcknowledgementToken`;
   - advisory pending-action refresh after conflict or success; and
   - advanced submit modes derived from permissions and the selected actions.
+- Phase 0 inventory baseline: `65` feature-facing production files cross the raw runtime seam.
+  Read paths include `53` `useOptionalEditSnapshot` and `39` `useDraftDataRuntime` callers;
+  mutation and character-special-operation paths include `8` direct
+  `requireActiveEditRuntime` callers. Draft orchestration remains in the page and relation hooks,
+  runtime lifecycle remains in four edit modules, and `15` tests use raw runtime/store setup.
 - Shared action types and replay helpers from `diffUtils` are consumed by server-side replay, audit,
   decoding, dependency, compaction, and publish modules. They are not solely edit-session details.
 

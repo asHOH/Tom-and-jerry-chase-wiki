@@ -11,10 +11,10 @@ import {
   getActionsStorageKey,
   invertActionEntry,
   readActionHistory,
+  replaceActionHistory,
   squashActions,
   subscribers,
   withRecordingSuppressed,
-  writeActionHistory,
 } from '@/lib/edit/diffUtils';
 import {
   buildDraftSummaryItemsForType,
@@ -22,6 +22,7 @@ import {
   splitActionHistoryByEntity,
   type DraftSummaryItem,
 } from '@/lib/edit/editModeDrafts';
+import { reconcilePublishHistory } from '@/lib/edit/publishHistory';
 import type {
   PendingActionOverlapResponse,
   PendingActionOverlapSummary,
@@ -35,6 +36,7 @@ import {
   clearPublishOperation,
   getOrCreatePublishOperationId,
   getPublishOperationFingerprint,
+  PublishOperationConflictError,
 } from '@/lib/gameData/publishOperation';
 import {
   getGameDataSubmitOutcomeFromResults,
@@ -43,7 +45,6 @@ import {
   type GameDataAdvancedSubmit,
   type GameDataSubmitMode,
 } from '@/lib/gameData/submitMode';
-import { storage } from '@/lib/localStorage';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { useEditMode } from '@/context/EditModeContext';
 import type { PendingActionAwarenessSource } from '@/context/PendingActionAwarenessContext';
@@ -151,11 +152,11 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
 
   const getPublishDraft = useCallback(() => {
     const storageKey = getActionsStorageKey(entityType);
-    const history = readActionHistory(storageKey);
-    const { matching, remaining } = splitActionHistoryByEntity(history, entityKey);
+    const source = readActionHistory(storageKey);
+    const { matching, remaining } = splitActionHistoryByEntity(source, entityKey);
     const currentRoot = entityRegistry?.get(entityType);
     const squashed = squashActions(matching, currentRoot ? { currentRoot } : undefined);
-    return { storageKey, remaining, squashed };
+    return { storageKey, source, remaining, squashed };
   }, [entityRegistry, entityType, entityKey]);
   const publishOperationScope = `page:${entityType}:${entityKey}`;
 
@@ -234,6 +235,7 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
       const { showToast: shouldShowToast = true, suppressSync = false } = options ?? {};
       const storageKey = getActionsStorageKey(entityType);
       const entity = entityRegistry?.get(entityType);
+      let cleanupSucceeded = true;
 
       if (entity) {
         const history = readActionHistory(storageKey);
@@ -262,23 +264,22 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
           }
         }
 
-        if (typeof window !== 'undefined') {
-          if (remaining.length === 0) {
-            storage.removeItem(storageKey);
-          } else {
-            writeActionHistory(storageKey, remaining);
-          }
+        cleanupSucceeded =
+          typeof window === 'undefined' || replaceActionHistory(storageKey, remaining);
+
+        if (!cleanupSucceeded) {
+          if (shouldShowToast && showToast) showToast('放弃修改后本地草稿清理失败，请重试');
+        } else {
+          clearPublishOperation(publishOperationScope);
         }
       }
 
-      setDraftInfo(null);
-
-      clearPublishOperation(publishOperationScope);
+      if (cleanupSucceeded && entityRegistry?.get(entityType)) setDraftInfo(null);
 
       GameDataManager.invalidate();
       setActionCountTrigger((prev) => prev + 1);
 
-      if (shouldShowToast && showToast) showToast('已放弃所有修改');
+      if (cleanupSucceeded && shouldShowToast && showToast) showToast('已放弃所有修改');
     },
     [entityRegistry, entityType, entityKey, isEditMode, publishOperationScope, showToast]
   );
@@ -307,36 +308,31 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
         submitMode?: GameDataSubmitMode;
       }
     ): Promise<boolean> => {
-      const { storageKey, remaining, squashed } = getPublishDraft();
+      const { storageKey, source, remaining, squashed } = getPublishDraft();
 
       if (squashed.length === 0) {
-        if (showToast) showToast('没有需要发布的修改');
-
-        if (typeof window !== 'undefined') {
-          if (remaining.length === 0) {
-            storage.removeItem(storageKey);
-          } else {
-            writeActionHistory(storageKey, remaining);
-          }
+        const cleanupSucceeded =
+          typeof window === 'undefined' || replaceActionHistory(storageKey, remaining);
+        if (cleanupSucceeded) {
+          setDraftInfo(null);
+          clearPublishOperation(publishOperationScope);
+          if (showToast) showToast('没有需要发布的修改');
+        } else if (showToast) {
+          showToast('本地草稿清理失败，请重试');
         }
-        setDraftInfo(null);
-        clearPublishOperation(publishOperationScope);
         setActionCountTrigger((prev) => prev + 1);
         return false;
       }
 
-      const operationId = getOrCreatePublishOperationId(
-        publishOperationScope,
-        getPublishOperationFingerprint({
-          endpoint: '/api/game-data-actions/publish',
-          entries: squashed,
-          message: message?.trim() || null,
-          submitMode: options?.submitMode ?? 'default',
-        })
-      );
-
+      const fingerprint = getPublishOperationFingerprint({
+        endpoint: '/api/game-data-actions/publish',
+        entries: squashed,
+        message: message?.trim() || null,
+        submitMode: options?.submitMode ?? 'default',
+      });
       setIsPublishing(true);
       try {
+        const operationId = getOrCreatePublishOperationId(publishOperationScope, fingerprint);
         const res = await fetch('/api/game-data-actions/publish', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Idempotency-Key': operationId },
@@ -362,7 +358,14 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
               .pendingAcknowledgementToken === 'string'
           ) {
             setPendingOverlap(body as PendingActionOverlapResponse);
-            await pendingAwareness?.refresh();
+            try {
+              await pendingAwareness?.refresh();
+            } catch (refreshError) {
+              console.warn(
+                'Failed to refresh pending action awareness after overlap.',
+                refreshError
+              );
+            }
             if (showToast) showToast('检测到与待审核改动重叠的字段，请确认风险后重试');
             return false;
           }
@@ -375,19 +378,35 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
           }>;
         } | null;
 
-        // Clear storage on success
-        if (typeof window !== 'undefined') {
-          if (remaining.length === 0) {
-            storage.removeItem(storageKey);
-          } else {
-            writeActionHistory(storageKey, remaining);
-          }
+        const latest = readActionHistory(storageKey);
+        const reconciled = reconcilePublishHistory(source, remaining, latest);
+        const cleanupSucceeded =
+          reconciled !== null &&
+          (typeof window === 'undefined' || replaceActionHistory(storageKey, reconciled));
+        if (cleanupSucceeded) clearPublishOperation(publishOperationScope);
+        const cleanupWarning =
+          reconciled === null
+            ? '发布成功，但本地草稿历史已变化，未清理已发布草稿，请确认后重试。'
+            : cleanupSucceeded
+              ? null
+              : '发布成功，但本地草稿清理失败，请确认后重试。';
+
+        if (reconciled !== null) {
+          const { matching } = splitActionHistoryByEntity(reconciled, entityKey);
+          const currentRoot = entityRegistry?.get(entityType);
+          const remainingCount = squashActions(
+            matching,
+            currentRoot ? { currentRoot } : undefined
+          ).length;
+          setDraftInfo(remainingCount > 0 ? { actionCount: remainingCount } : null);
         }
-        setDraftInfo(null);
-        clearPublishOperation(publishOperationScope);
         setPendingOverlap(null);
         setActionCountTrigger((prev) => prev + 1);
-        await pendingAwareness?.refresh();
+        try {
+          await pendingAwareness?.refresh();
+        } catch (refreshError) {
+          console.warn('Failed to refresh pending action awareness after publish.', refreshError);
+        }
 
         const successMessage = getGameDataSubmitSuccessMessage(
           '改动',
@@ -399,8 +418,25 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
           showToast(successMessage);
         }
 
-        return true;
+        if (cleanupWarning && showToast) showToast(cleanupWarning);
+        if (!cleanupSucceeded) return false;
+
+        const currentHistory = readActionHistory(storageKey);
+        const { matching: remainingMatching } = splitActionHistoryByEntity(
+          currentHistory,
+          entityKey
+        );
+        const currentRoot = entityRegistry?.get(entityType);
+        return (
+          squashActions(remainingMatching, currentRoot ? { currentRoot } : undefined).length === 0
+        );
       } catch (e) {
+        if (e instanceof PublishOperationConflictError) {
+          if (showToast) {
+            showToast('当前发布操作仍待处理，请先完成清理或放弃草稿后再提交不同修改。');
+          }
+          return false;
+        }
         const errorMsg = e instanceof Error ? e.message : '发布失败';
         if (showToast) showToast(errorMsg);
         return false;
@@ -409,6 +445,8 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
       }
     },
     [
+      entityKey,
+      entityRegistry,
       entityType,
       getPublishDraft,
       onPublishSuccess,

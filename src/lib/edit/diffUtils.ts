@@ -289,8 +289,14 @@ export function readActionHistory(storageKey: string): ActionHistoryEntry[] {
   return filterActionHistory(parsed.data as ActionHistoryEntry[]);
 }
 
-export function writeActionHistory(storageKey: string, history: ActionHistoryEntry[]): void {
-  storage.setJson(storageKey, history);
+export function writeActionHistory(storageKey: string, history: ActionHistoryEntry[]): boolean {
+  return storage.setJson(storageKey, history);
+}
+
+export function replaceActionHistory(storageKey: string, history: ActionHistoryEntry[]): boolean {
+  return history.length === 0
+    ? storage.removeItem(storageKey)
+    : writeActionHistory(storageKey, history);
 }
 
 export function appendActionHistoryEntry(storageKey: string, entry: ActionHistoryEntry): void {

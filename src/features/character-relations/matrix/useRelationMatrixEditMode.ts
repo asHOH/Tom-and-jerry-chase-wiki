@@ -11,15 +11,16 @@ import {
   getActionsStorageKey,
   invertActionEntry,
   readActionHistory,
+  replaceActionHistory,
   squashActions,
   withRecordingSuppressed,
-  writeActionHistory,
 } from '@/lib/edit/diffUtils';
 import {
   buildDraftSummaryItemsForType,
   sortDraftSummaryItems,
   type DraftSummaryItem,
 } from '@/lib/edit/editModeDrafts';
+import { reconcilePublishHistory } from '@/lib/edit/publishHistory';
 import type {
   PendingActionOverlapResponse,
   PendingActionOverlapSummary,
@@ -29,6 +30,7 @@ import {
   clearPublishOperation,
   getOrCreatePublishOperationId,
   getPublishOperationFingerprint,
+  PublishOperationConflictError,
 } from '@/lib/gameData/publishOperation';
 import {
   getGameDataSubmitOutcomeFromResults,
@@ -37,7 +39,6 @@ import {
   type GameDataAdvancedSubmit,
   type GameDataSubmitMode,
 } from '@/lib/gameData/submitMode';
-import { storage } from '@/lib/localStorage';
 import { useContributionSubmissionFeedback } from '@/hooks/useContributionSubmissionFeedback';
 import type { PendingActionAwarenessSource } from '@/context/PendingActionAwarenessContext';
 import { useToast } from '@/context/ToastContext';
@@ -65,17 +66,6 @@ type RelationMatrixEditModeResult = {
 
 const RELATION_ACTIONS_STORAGE_KEY = getActionsStorageKey('characters');
 const RELATION_PUBLISH_OPERATION_SCOPE = 'relations:characters';
-
-const writeRemainingCharacterActions = (remaining: ReturnType<typeof readActionHistory>) => {
-  if (typeof window === 'undefined') return;
-
-  if (remaining.length === 0) {
-    storage.removeItem(RELATION_ACTIONS_STORAGE_KEY);
-    return;
-  }
-
-  writeActionHistory(RELATION_ACTIONS_STORAGE_KEY, remaining);
-};
 
 const resolveCharacterLabel = (
   characters: Record<string, unknown>,
@@ -118,10 +108,11 @@ export const useRelationMatrixEditMode = (
   }, [characters, getRelationActions]);
 
   const getPublishDraft = useCallback(() => {
-    const { matching, remaining } = getRelationActions();
+    const source = readActionHistory(RELATION_ACTIONS_STORAGE_KEY);
+    const { matching, remaining } = splitCharacterRelationActionHistory(source);
     const squashed = characters ? squashActions(matching, { currentRoot: characters }) : [];
-    return { remaining, squashed };
-  }, [characters, getRelationActions]);
+    return { source, remaining, squashed };
+  }, [characters]);
 
   const squashedRelationActions = useMemo(() => {
     void actionCountTrigger;
@@ -173,11 +164,17 @@ export const useRelationMatrixEditMode = (
       });
     }
 
-    writeRemainingCharacterActions(remaining);
-    clearPublishOperation(RELATION_PUBLISH_OPERATION_SCOPE);
+    const cleanupSucceeded =
+      typeof window === 'undefined' ||
+      replaceActionHistory(RELATION_ACTIONS_STORAGE_KEY, remaining);
+    if (cleanupSucceeded) {
+      clearPublishOperation(RELATION_PUBLISH_OPERATION_SCOPE);
+      info('已放弃关系修改');
+    } else {
+      error('放弃关系修改后本地草稿清理失败，请重试');
+    }
     setActionCountTrigger((current) => current + 1);
-    info('已放弃关系修改');
-  }, [characters, getRelationActions, info]);
+  }, [characters, error, getRelationActions, info]);
 
   const publishChanges = useCallback(
     async (
@@ -191,28 +188,34 @@ export const useRelationMatrixEditMode = (
         error('编辑数据尚未就绪');
         return false;
       }
-      const { remaining, squashed } = getPublishDraft();
+      const { source, remaining, squashed } = getPublishDraft();
 
       if (squashed.length === 0) {
-        writeRemainingCharacterActions(remaining);
-        clearPublishOperation(RELATION_PUBLISH_OPERATION_SCOPE);
+        const cleanupSucceeded =
+          typeof window === 'undefined' ||
+          replaceActionHistory(RELATION_ACTIONS_STORAGE_KEY, remaining);
+        if (cleanupSucceeded) {
+          clearPublishOperation(RELATION_PUBLISH_OPERATION_SCOPE);
+          info('没有需要发布的关系修改');
+        } else {
+          error('本地关系草稿清理失败，请重试');
+        }
         setActionCountTrigger((current) => current + 1);
-        info('没有需要发布的关系修改');
         return false;
       }
 
-      const operationId = getOrCreatePublishOperationId(
-        RELATION_PUBLISH_OPERATION_SCOPE,
-        getPublishOperationFingerprint({
-          endpoint: '/api/game-data-actions/publish-relations',
-          entries: squashed,
-          message: message?.trim() || null,
-          submitMode: options?.submitMode ?? 'default',
-        })
-      );
-
+      const fingerprint = getPublishOperationFingerprint({
+        endpoint: '/api/game-data-actions/publish-relations',
+        entries: squashed,
+        message: message?.trim() || null,
+        submitMode: options?.submitMode ?? 'default',
+      });
       setIsPublishing(true);
       try {
+        const operationId = getOrCreatePublishOperationId(
+          RELATION_PUBLISH_OPERATION_SCOPE,
+          fingerprint
+        );
         const response = await fetch('/api/game-data-actions/publish-relations', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Idempotency-Key': operationId },
@@ -237,7 +240,14 @@ export const useRelationMatrixEditMode = (
               .pendingAcknowledgementToken === 'string'
           ) {
             setPendingOverlap(body as PendingActionOverlapResponse);
-            await pendingAwareness?.refresh();
+            try {
+              await pendingAwareness?.refresh();
+            } catch (refreshError) {
+              console.warn(
+                'Failed to refresh pending action awareness after overlap.',
+                refreshError
+              );
+            }
             error('检测到与待审核改动重叠的字段，请确认风险后重试');
             return false;
           }
@@ -250,19 +260,41 @@ export const useRelationMatrixEditMode = (
           }>;
         } | null;
 
-        writeRemainingCharacterActions(remaining);
-        clearPublishOperation(RELATION_PUBLISH_OPERATION_SCOPE);
+        const latest = readActionHistory(RELATION_ACTIONS_STORAGE_KEY);
+        const reconciled = reconcilePublishHistory(source, remaining, latest);
+        const cleanupSucceeded =
+          reconciled !== null &&
+          (typeof window === 'undefined' ||
+            replaceActionHistory(RELATION_ACTIONS_STORAGE_KEY, reconciled));
+        if (cleanupSucceeded) clearPublishOperation(RELATION_PUBLISH_OPERATION_SCOPE);
         setPendingOverlap(null);
         setActionCountTrigger((current) => current + 1);
-        await pendingAwareness?.refresh();
+        try {
+          await pendingAwareness?.refresh();
+        } catch (refreshError) {
+          console.warn('Failed to refresh pending action awareness after publish.', refreshError);
+        }
         showSubmissionFeedback(
           getGameDataSubmitSuccessMessage(
             '关系修改',
             getGameDataSubmitOutcomeFromResults(body?.result ?? [])
           )
         );
-        return true;
+        if (!cleanupSucceeded) {
+          error(
+            reconciled === null
+              ? '发布成功，但本地草稿历史已变化，未清理已发布关系草稿，请确认后重试。'
+              : '发布成功，但本地关系草稿清理失败，请确认后重试。'
+          );
+          return false;
+        }
+
+        return splitCharacterRelationActionHistory(reconciled).matching.length === 0;
       } catch (caught) {
+        if (caught instanceof PublishOperationConflictError) {
+          error('当前发布操作仍待处理，请先完成清理或放弃草稿后再提交不同修改。');
+          return false;
+        }
         const message = caught instanceof Error ? caught.message : '发布失败';
         error(message);
         return false;
