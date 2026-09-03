@@ -13,6 +13,7 @@ const customJestConfig = {
     '<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}',
     '<rootDir>/src/**/*.(test|spec).{js,jsx,ts,tsx}',
   ],
+  modulePathIgnorePatterns: ['<rootDir>/.tmp/'],
   // Transform ESM packages that ship untranspiled code
   // Keep the sanitize-html parser packages in sync with next.config.ts transpilePackages.
   transformIgnorePatterns: [

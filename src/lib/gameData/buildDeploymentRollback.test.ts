@@ -8,9 +8,12 @@ describe('VPS build rollback contract', () => {
     expect(deployScript).toContain('check_health_endpoint "$health_url"');
     expect(deployScript).toContain('check_version_endpoint "$version_url" "$PREVIOUS_SOURCE_HASH"');
     expect(deployScript).toContain('cp -a .next "$LAST_KNOWN_GOOD_DIR/.next"');
-    expect(deployScript.indexOf('preserve_last_known_good_release\n')).toBeLessThan(
-      deployScript.lastIndexOf('stop_pm2_process_for_build\n')
-    );
+    const preserveCall = deployScript.search(/^\s+preserve_last_known_good_release\s*$/m);
+    const stopCall = deployScript.search(/^\s+stop_pm2_process_for_build\s*$/m);
+
+    expect(preserveCall).toBeGreaterThanOrEqual(0);
+    expect(stopCall).toBeGreaterThanOrEqual(0);
+    expect(preserveCall).toBeLessThan(stopCall);
   });
 
   it('arms an exit trap that restores source, output, dependencies, and PM2', () => {
