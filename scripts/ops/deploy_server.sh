@@ -11,7 +11,7 @@ TARGET_BRANCH="develop"
 TARGET_COMMIT=""
 # Node.js memory limit in MB. Leave empty to auto-detect from available RAM.
 NODE_MEMORY_LIMIT="${NODE_MEMORY_LIMIT:-auto}"
-PINNED_NPM_VERSION="11.18.0"
+PINNED_NPM_VERSION="11.19.1"
 ENV_FILE=".env.production"
 PM2_APP_NAME="tjwiki"
 PM2_DAEMON_VERSION_CHECKED=0
