@@ -58,7 +58,11 @@ const notifyPendingGameDataActionSubscribersMock = jest.mocked(
 const publishNotificationMock = jest.mocked(publishNotification);
 const mutableEnv = env as unknown as { NEXT_PUBLIC_DISABLE_ARTICLES?: string };
 
-function createRequest(body: unknown, declaredLength?: number): Request {
+function createRequest(
+  body: unknown,
+  declaredLength?: number,
+  operationId?: string | null
+): Request {
   const bytes = new TextEncoder().encode(JSON.stringify(body));
   let delivered = false;
   return {
@@ -66,7 +70,9 @@ function createRequest(body: unknown, declaredLength?: number): Request {
       get: (name: string) =>
         name.toLowerCase() === 'content-length' && declaredLength !== undefined
           ? String(declaredLength)
-          : null,
+          : name.toLowerCase() === 'idempotency-key'
+            ? (operationId ?? null)
+            : null,
     },
     body: {
       getReader: () => ({
@@ -110,6 +116,16 @@ describe('publish route', () => {
     expect(response.status).toBe(413);
     expect(requirePermissionMock).not.toHaveBeenCalled();
     expect(publishPreparedMock).not.toHaveBeenCalled();
+  });
+
+  it('rejects malformed idempotency keys at the request boundary', async () => {
+    const { POST } = await import('./route');
+
+    const response = await POST(createRequest(validBody, undefined, 'not-a-uuid'));
+
+    expect(response.status).toBe(400);
+    await expect(response.json()).resolves.toEqual({ error: 'invalid_idempotency_key' });
+    expect(requirePermissionMock).not.toHaveBeenCalled();
   });
 
   it('establishes the actor before strict decoding and persistence', async () => {
@@ -192,6 +208,16 @@ describe('publish route', () => {
         submitMode: 'force_public_pending',
       })
     );
+  });
+
+  it('passes a valid idempotency key through to trusted persistence', async () => {
+    const { POST } = await import('./route');
+    const operationId = 'a3bb189e-8c21-4b8d-9a4f-5e24b7c29a10';
+
+    const response = await POST(createRequest(validBody, undefined, operationId));
+
+    expect(response.status).toBe(200);
+    expect(publishPreparedMock).toHaveBeenCalledWith(expect.objectContaining({ operationId }));
   });
 
   it('rejects invalid submitMode values as invalid_shape', async () => {

@@ -26,6 +26,11 @@ import type {
 } from '@/lib/gameData/pendingActionAwarenessTypes';
 import { getPublishErrorMessage } from '@/lib/gameData/publishErrorMessage';
 import {
+  clearPublishOperation,
+  getOrCreatePublishOperationId,
+  getPublishOperationFingerprint,
+} from '@/lib/gameData/publishOperation';
+import {
   getGameDataSubmitOutcomeFromResults,
   getGameDataSubmitSuccessMessage,
   resolveGameDataAdvancedSubmit,
@@ -59,6 +64,7 @@ type RelationMatrixEditModeResult = {
 };
 
 const RELATION_ACTIONS_STORAGE_KEY = getActionsStorageKey('characters');
+const RELATION_PUBLISH_OPERATION_SCOPE = 'relations:characters';
 
 const writeRemainingCharacterActions = (remaining: ReturnType<typeof readActionHistory>) => {
   if (typeof window === 'undefined') return;
@@ -168,6 +174,7 @@ export const useRelationMatrixEditMode = (
     }
 
     writeRemainingCharacterActions(remaining);
+    clearPublishOperation(RELATION_PUBLISH_OPERATION_SCOPE);
     setActionCountTrigger((current) => current + 1);
     info('已放弃关系修改');
   }, [characters, getRelationActions, info]);
@@ -188,16 +195,27 @@ export const useRelationMatrixEditMode = (
 
       if (squashed.length === 0) {
         writeRemainingCharacterActions(remaining);
+        clearPublishOperation(RELATION_PUBLISH_OPERATION_SCOPE);
         setActionCountTrigger((current) => current + 1);
         info('没有需要发布的关系修改');
         return false;
       }
 
+      const operationId = getOrCreatePublishOperationId(
+        RELATION_PUBLISH_OPERATION_SCOPE,
+        getPublishOperationFingerprint({
+          endpoint: '/api/game-data-actions/publish-relations',
+          entries: squashed,
+          message: message?.trim() || null,
+          submitMode: options?.submitMode ?? 'default',
+        })
+      );
+
       setIsPublishing(true);
       try {
         const response = await fetch('/api/game-data-actions/publish-relations', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', 'Idempotency-Key': operationId },
           body: JSON.stringify({
             entries: squashed,
             message,
@@ -233,6 +251,7 @@ export const useRelationMatrixEditMode = (
         } | null;
 
         writeRemainingCharacterActions(remaining);
+        clearPublishOperation(RELATION_PUBLISH_OPERATION_SCOPE);
         setPendingOverlap(null);
         setActionCountTrigger((current) => current + 1);
         await pendingAwareness?.refresh();

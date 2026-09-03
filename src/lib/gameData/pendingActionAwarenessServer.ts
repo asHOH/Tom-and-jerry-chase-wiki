@@ -35,6 +35,7 @@ type PendingRow = {
   created_at: string;
   created_by: string | null;
   is_public: boolean;
+  publish_operation_id: string | null;
 };
 
 type InternalPendingTarget = ActionDependencyDescriptor & {
@@ -116,9 +117,11 @@ async function queryPendingRows(entityTypes: readonly string[]): Promise<Pending
   const rows: PendingRow[] = [];
 
   for (let from = 0; ; from += QUERY_PAGE_SIZE) {
-    const { data, error } = await requireSupabaseAdminClient()
+    const { data: rawData, error } = await requireSupabaseAdminClient()
       .from('game_data_actions')
-      .select('id, entity_type, entry, created_at, created_by, is_public')
+      .select(
+        'id, entity_type, entry, created_at, created_by, is_public, publish_operation_id' as never
+      )
       .eq('status', 'pending')
       .in('entity_type', [...entityTypes])
       .order('created_at', { ascending: true })
@@ -126,6 +129,7 @@ async function queryPendingRows(entityTypes: readonly string[]): Promise<Pending
       .range(from, from + QUERY_PAGE_SIZE - 1);
 
     if (error) throw error;
+    const data = rawData as unknown as PendingRow[] | null;
     rows.push(...(data ?? []));
     if (!data || data.length < QUERY_PAGE_SIZE) break;
   }
@@ -161,6 +165,7 @@ async function loadPendingTargetSnapshot(options: {
   entityTypes: readonly string[];
   entityKey?: string;
   userId: string | null;
+  operationId?: string;
   maxTargets?: number;
 }): Promise<PendingTargetSnapshot> {
   const rows = await readPendingRows(options.entityTypes);
@@ -168,6 +173,9 @@ async function loadPendingTargetSnapshot(options: {
   let truncated = false;
 
   for (const row of rows) {
+    if (options.operationId !== undefined && row.publish_operation_id === options.operationId) {
+      continue;
+    }
     let decoded: ReturnType<typeof decodeStoredActionRow>;
     try {
       decoded = decodeStoredActionRow(row);
@@ -277,11 +285,16 @@ export async function checkPendingActionAcknowledgement(options: {
   prepared: PreparedPublishRequest;
   userId: string | null;
   providedToken?: string;
+  operationId?: string;
 }): Promise<PendingActionOverlapResponse | null> {
   const actions = preparedActionDescriptors(options.prepared);
   if (actions.length === 0) return null;
   const entityTypes = [...new Set(actions.map((action) => action.entityType))];
-  const snapshot = await loadPendingTargetSnapshot({ entityTypes, userId: options.userId });
+  const snapshot = await loadPendingTargetSnapshot({
+    entityTypes,
+    userId: options.userId,
+    ...(options.operationId === undefined ? {} : { operationId: options.operationId }),
+  });
   const overlappingTargets = snapshot.targets.filter((target) =>
     targetOverlapsActions(target, actions)
   );

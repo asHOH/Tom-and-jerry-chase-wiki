@@ -8,6 +8,10 @@ import { getGameDataNotificationDetails } from '@/lib/gameData/contributionDispl
 import { checkPendingActionAcknowledgement } from '@/lib/gameData/pendingActionAwarenessServer';
 import { PUBLISH_LIMITS } from '@/lib/gameData/publishLimits';
 import {
+  InvalidPublishOperationIdError,
+  readPublishOperationId,
+} from '@/lib/gameData/publishOperation';
+import {
   preparePublishActionItems,
   PublishPreparationError,
   readBoundedJsonBody,
@@ -85,6 +89,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Supabase is disabled' }, { status: 501 });
   }
 
+  let operationId: string | undefined;
+  try {
+    operationId = readPublishOperationId(request);
+  } catch (error) {
+    if (error instanceof InvalidPublishOperationIdError) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+    throw error;
+  }
+
   let untrusted: ReturnType<typeof readActionItems>;
   try {
     untrusted = readActionItems(await readBoundedJsonBody(request));
@@ -124,6 +138,7 @@ export async function POST(request: Request) {
           ...(untrusted.pendingAcknowledgementToken === undefined
             ? {}
             : { providedToken: untrusted.pendingAcknowledgementToken }),
+          ...(operationId === undefined ? {} : { operationId }),
         });
         if (pendingOverlap) {
           return NextResponse.json(pendingOverlap, { status: 409 });
@@ -139,6 +154,7 @@ export async function POST(request: Request) {
       permission: 'game_data_action.create',
       grants: guard.grants,
       prepared,
+      ...(operationId === undefined ? {} : { operationId }),
       ...(untrusted.submitMode === undefined ? {} : { submitMode: untrusted.submitMode }),
     });
 
@@ -228,6 +244,9 @@ export async function POST(request: Request) {
         return candidateConflictResponse(error, '/api/game-data-actions/publish');
       }
       if (error.code === 'replay_epoch_conflict') {
+        return NextResponse.json({ error: error.code }, { status: 409 });
+      }
+      if (error.code === 'idempotency_key_reused') {
         return NextResponse.json({ error: error.code }, { status: 409 });
       }
     }

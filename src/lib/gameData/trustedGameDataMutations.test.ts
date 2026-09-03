@@ -1,7 +1,10 @@
+import { createHash } from 'node:crypto';
+
 import { canAccessAll } from '@/lib/auth/permissions';
 import { validateApprovedCandidateReplay } from '@/lib/gameData/approvedCandidateReplay';
 import { readApprovedReplaySnapshot } from '@/lib/gameData/approvedReplaySnapshotReader';
 import { invalidatePublicGameDataActionsCache } from '@/lib/gameData/publicActionsCache';
+import { getPublishOperationFingerprint } from '@/lib/gameData/publishOperation';
 import { preparePublishActionItems } from '@/lib/gameData/publishPreparation';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 
@@ -34,6 +37,7 @@ const readSnapshotMock = jest.mocked(readApprovedReplaySnapshot);
 const validateCandidateMock = jest.mocked(validateApprovedCandidateReplay);
 const invalidateMock = jest.mocked(invalidatePublicGameDataActionsCache);
 const adminRpcMock = jest.mocked(supabaseAdmin!.rpc);
+const adminFromMock = jest.mocked(supabaseAdmin!.from);
 
 const action = (path: string, newValue: unknown) => ({
   op: 'set' as const,
@@ -79,6 +83,28 @@ const prepared = {
   message: 'message',
 };
 
+function createHashForTest(options: {
+  permission: string;
+  prepared: typeof prepared;
+  submitMode?: string;
+}): string {
+  return createHash('sha256')
+    .update(
+      getPublishOperationFingerprint({
+        version: 1,
+        permission: options.permission,
+        submitMode: options.submitMode ?? 'default',
+        message: options.prepared.message ?? null,
+        actions: options.prepared.actions.map((action) => ({
+          entityType: action.entityType,
+          entries: action.rows.map((row) => row.canonicalEntry),
+        })),
+      }),
+      'utf8'
+    )
+    .digest('hex');
+}
+
 const groupedPrepared = preparePublishActionItems(
   [
     {
@@ -114,6 +140,157 @@ describe('trusted game data mutations', () => {
       data: [{ id: 'new-1', is_public: true, status: 'approved' }],
       error: null,
     } as never);
+  });
+
+  const operationQuery = (data: unknown, error: unknown = null) => ({
+    select: jest.fn(() => ({
+      eq: jest.fn(() => ({
+        maybeSingle: jest.fn().mockResolvedValue({ data, error }),
+      })),
+    })),
+  });
+
+  const operationRowsQuery = (data: unknown[], error: unknown = null) => ({
+    select: jest.fn(() => ({
+      eq: jest.fn(() => ({
+        order: jest.fn().mockResolvedValue({ data, error }),
+      })),
+    })),
+  });
+
+  it('returns the original rows for an operation replay before candidate validation', async () => {
+    const operationId = 'a3bb189e-8c21-4b8d-9a4f-5e24b7c29a10';
+    const fingerprint = createHashForTest({
+      permission: 'game_data_action.create',
+      prepared,
+    });
+    adminFromMock
+      .mockReturnValueOnce(operationQuery({ request_fingerprint: fingerprint }) as never)
+      .mockReturnValueOnce(
+        operationRowsQuery([
+          {
+            id: 'original-1',
+            publish_operation_initial_public: false,
+            publish_operation_initial_status: 'pending',
+          },
+          {
+            id: 'original-2',
+            publish_operation_initial_public: true,
+            publish_operation_initial_status: 'approved',
+          },
+        ]) as never
+      );
+
+    const result = await publishPreparedGameDataActions({
+      actorId: 'actor-1',
+      permission: 'game_data_action.create',
+      grants: [],
+      prepared,
+      operationId,
+    });
+
+    expect(result).toEqual([
+      { id: 'original-1', is_public: false, status: 'pending' },
+      { id: 'original-2', is_public: true, status: 'approved' },
+    ]);
+    expect(readSnapshotMock).not.toHaveBeenCalled();
+    expect(validateCandidateMock).not.toHaveBeenCalled();
+    expect(adminRpcMock).not.toHaveBeenCalled();
+  });
+
+  it('rejects reusing an operation key for a different semantic request', async () => {
+    const operationId = 'a3bb189e-8c21-4b8d-9a4f-5e24b7c29a10';
+    adminFromMock.mockReturnValueOnce(
+      operationQuery({ request_fingerprint: '0'.repeat(64) }) as never
+    );
+
+    await expect(
+      publishPreparedGameDataActions({
+        actorId: null,
+        permission: 'game_data_action.create',
+        grants: [],
+        prepared,
+        operationId,
+      })
+    ).rejects.toMatchObject({ code: 'idempotency_key_reused' });
+    expect(readSnapshotMock).not.toHaveBeenCalled();
+    expect(adminRpcMock).not.toHaveBeenCalled();
+  });
+
+  it('uses the atomic request RPC for a new keyed operation', async () => {
+    const operationId = 'a3bb189e-8c21-4b8d-9a4f-5e24b7c29a10';
+    adminFromMock.mockReturnValueOnce(operationQuery(null) as never);
+    adminRpcMock.mockResolvedValueOnce({
+      data: [{ id: 'keyed-1', is_public: true, status: 'approved' }],
+      error: null,
+    } as never);
+
+    const result = await publishPreparedGameDataActions({
+      actorId: 'actor-1',
+      permission: 'game_data_action.create',
+      grants: [],
+      prepared,
+      operationId,
+    });
+
+    expect(result).toEqual([{ id: 'keyed-1', is_public: true, status: 'approved' }]);
+    expect(adminRpcMock).toHaveBeenCalledWith(
+      'prepared_publish_game_data_actions_request',
+      expect.objectContaining({
+        p_operation_id: operationId,
+        p_request_fingerprint: expect.stringMatching(/^[0-9a-f]{64}$/),
+        p_actor_id: 'actor-1',
+        p_permission_key: 'game_data_action.create',
+        p_expected_replay_epoch: 9,
+      })
+    );
+  });
+
+  it('replays one anonymous operation after authentication without a second effect', async () => {
+    const operationId = 'a3bb189e-8c21-4b8d-9a4f-5e24b7c29a10';
+    const fingerprint = createHashForTest({
+      permission: 'game_data_action.create',
+      prepared,
+    });
+    adminFromMock.mockReturnValueOnce(operationQuery(null) as never);
+    adminRpcMock.mockResolvedValueOnce({
+      data: [{ id: 'anonymous-1', is_public: false, status: 'pending' }],
+      error: null,
+    } as never);
+
+    const first = await publishPreparedGameDataActions({
+      actorId: null,
+      permission: 'game_data_action.create',
+      grants: [],
+      prepared,
+      operationId,
+    });
+
+    adminFromMock
+      .mockReturnValueOnce(operationQuery({ request_fingerprint: fingerprint }) as never)
+      .mockReturnValueOnce(
+        operationRowsQuery([
+          {
+            id: 'anonymous-1',
+            publish_operation_initial_public: false,
+            publish_operation_initial_status: 'pending',
+          },
+        ]) as never
+      );
+
+    const second = await publishPreparedGameDataActions({
+      actorId: 'authenticated-1',
+      permission: 'game_data_action.create',
+      grants: [],
+      prepared,
+      operationId,
+    });
+
+    expect(first).toEqual([{ id: 'anonymous-1', is_public: false, status: 'pending' }]);
+    expect(second).toEqual(first);
+    expect(readSnapshotMock).toHaveBeenCalledTimes(1);
+    expect(validateCandidateMock).toHaveBeenCalledTimes(1);
+    expect(adminRpcMock).toHaveBeenCalledTimes(1);
   });
 
   it('checks every server-derived resource context before reading the approved snapshot', async () => {

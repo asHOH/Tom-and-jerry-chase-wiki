@@ -105,6 +105,7 @@ describe('usePageEditMode', () => {
     mockPermissionProfile = 'contributor';
     mockShowToast.mockClear();
     window.localStorage.clear();
+    window.sessionStorage.clear();
     global.fetch = jest.fn();
   });
 
@@ -112,6 +113,7 @@ describe('usePageEditMode', () => {
     cleanup();
     clearTestEditRuntime(runtime);
     window.localStorage.clear();
+    window.sessionStorage.clear();
     jest.restoreAllMocks();
   });
 
@@ -229,7 +231,10 @@ describe('usePageEditMode', () => {
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledWith('/api/game-data-actions/publish', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: expect.objectContaining({
+          'Content-Type': 'application/json',
+          'Idempotency-Key': expect.any(String),
+        }),
         body: JSON.stringify({
           entityType: 'characters',
           entries: [
@@ -293,7 +298,10 @@ describe('usePageEditMode', () => {
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledWith('/api/game-data-actions/publish', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: expect.objectContaining({
+          'Content-Type': 'application/json',
+          'Idempotency-Key': expect.any(String),
+        }),
         body: JSON.stringify({
           entityType: 'characters',
           entries: [
@@ -432,7 +440,10 @@ describe('usePageEditMode', () => {
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledWith('/api/game-data-actions/publish', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: expect.objectContaining({
+          'Content-Type': 'application/json',
+          'Idempotency-Key': expect.any(String),
+        }),
         body: JSON.stringify({
           entityType: 'characters',
           entries: [

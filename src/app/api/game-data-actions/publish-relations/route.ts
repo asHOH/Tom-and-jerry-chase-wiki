@@ -7,6 +7,10 @@ import { isCharacterRelationAction } from '@/lib/edit/characterRelationActions';
 import { candidateConflictResponse } from '@/lib/gameData/candidateConflictResponse';
 import { checkPendingActionAcknowledgement } from '@/lib/gameData/pendingActionAwarenessServer';
 import {
+  InvalidPublishOperationIdError,
+  readPublishOperationId,
+} from '@/lib/gameData/publishOperation';
+import {
   preparePublishActionItems,
   PublishPreparationError,
   readBoundedJsonBody,
@@ -42,6 +46,16 @@ function readPendingAcknowledgementToken(value: unknown): string | undefined {
 export async function POST(request: Request) {
   if (!hasSupabasePublicConfig()) {
     return NextResponse.json({ error: 'Supabase is disabled' }, { status: 501 });
+  }
+
+  let operationId: string | undefined;
+  try {
+    operationId = readPublishOperationId(request);
+  } catch (error) {
+    if (error instanceof InvalidPublishOperationIdError) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+    throw error;
   }
 
   let body: Record<string, unknown> & {
@@ -106,6 +120,7 @@ export async function POST(request: Request) {
           ...(body.pendingAcknowledgementToken === undefined
             ? {}
             : { providedToken: body.pendingAcknowledgementToken }),
+          ...(operationId === undefined ? {} : { operationId }),
         });
         if (pendingOverlap) {
           return NextResponse.json(pendingOverlap, { status: 409 });
@@ -121,6 +136,7 @@ export async function POST(request: Request) {
       permission: 'game_data_action.publish_relations',
       grants: guard.grants,
       prepared,
+      ...(operationId === undefined ? {} : { operationId }),
       ...(body.submitMode === undefined ? {} : { submitMode: body.submitMode }),
     });
     return NextResponse.json({ result });
@@ -136,6 +152,9 @@ export async function POST(request: Request) {
         return candidateConflictResponse(error, '/api/game-data-actions/publish-relations');
       }
       if (error.code === 'replay_epoch_conflict') {
+        return NextResponse.json({ error: error.code }, { status: 409 });
+      }
+      if (error.code === 'idempotency_key_reused') {
         return NextResponse.json({ error: error.code }, { status: 409 });
       }
     }

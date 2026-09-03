@@ -32,6 +32,11 @@ import {
 } from '@/lib/gameData/publishableEntityTypes';
 import { getPublishErrorMessage } from '@/lib/gameData/publishErrorMessage';
 import {
+  clearPublishOperation,
+  getOrCreatePublishOperationId,
+  getPublishOperationFingerprint,
+} from '@/lib/gameData/publishOperation';
+import {
   getGameDataSubmitOutcomeFromResults,
   getGameDataSubmitSuccessMessage,
   resolveGameDataAdvancedSubmit,
@@ -152,6 +157,7 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
     const squashed = squashActions(matching, currentRoot ? { currentRoot } : undefined);
     return { storageKey, remaining, squashed };
   }, [entityRegistry, entityType, entityKey]);
+  const publishOperationScope = `page:${entityType}:${entityKey}`;
 
   const squashedDraft = useMemo(() => {
     void _actionCountTrigger;
@@ -267,12 +273,14 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
 
       setDraftInfo(null);
 
+      clearPublishOperation(publishOperationScope);
+
       GameDataManager.invalidate();
       setActionCountTrigger((prev) => prev + 1);
 
       if (shouldShowToast && showToast) showToast('已放弃所有修改');
     },
-    [entityRegistry, entityType, entityKey, isEditMode, showToast]
+    [entityRegistry, entityType, entityKey, isEditMode, publishOperationScope, showToast]
   );
 
   // Reset draft loaded flag when exiting edit mode (not on preview toggle)
@@ -312,15 +320,26 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
           }
         }
         setDraftInfo(null);
+        clearPublishOperation(publishOperationScope);
         setActionCountTrigger((prev) => prev + 1);
         return false;
       }
+
+      const operationId = getOrCreatePublishOperationId(
+        publishOperationScope,
+        getPublishOperationFingerprint({
+          endpoint: '/api/game-data-actions/publish',
+          entries: squashed,
+          message: message?.trim() || null,
+          submitMode: options?.submitMode ?? 'default',
+        })
+      );
 
       setIsPublishing(true);
       try {
         const res = await fetch('/api/game-data-actions/publish', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', 'Idempotency-Key': operationId },
           body: JSON.stringify({
             entityType,
             entries: squashed,
@@ -365,6 +384,7 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
           }
         }
         setDraftInfo(null);
+        clearPublishOperation(publishOperationScope);
         setPendingOverlap(null);
         setActionCountTrigger((prev) => prev + 1);
         await pendingAwareness?.refresh();
@@ -388,7 +408,14 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
         setIsPublishing(false);
       }
     },
-    [entityType, getPublishDraft, onPublishSuccess, pendingAwareness, showToast]
+    [
+      entityType,
+      getPublishDraft,
+      onPublishSuccess,
+      pendingAwareness,
+      publishOperationScope,
+      showToast,
+    ]
   );
 
   return {

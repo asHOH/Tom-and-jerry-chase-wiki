@@ -98,6 +98,7 @@ describe('useRelationMatrixEditMode', () => {
     characters = runtime.stores.characters;
     mockPermissionProfile = 'contributor';
     window.localStorage.clear();
+    window.sessionStorage.clear();
     mockInfo.mockClear();
     mockError.mockClear();
     mockShowSubmissionFeedback.mockClear();
@@ -108,6 +109,7 @@ describe('useRelationMatrixEditMode', () => {
     cleanup();
     clearTestEditRuntime(runtime);
     window.localStorage.clear();
+    window.sessionStorage.clear();
     jest.restoreAllMocks();
   });
 
@@ -152,7 +154,10 @@ describe('useRelationMatrixEditMode', () => {
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledWith('/api/game-data-actions/publish-relations', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: expect.objectContaining({
+          'Content-Type': 'application/json',
+          'Idempotency-Key': expect.any(String),
+        }),
         body: JSON.stringify({
           entries: [{ op: 'set', path: '杰瑞.counters', oldValue: [], newValue: [{ id: '汤姆' }] }],
           message: '关系更新',
@@ -192,7 +197,10 @@ describe('useRelationMatrixEditMode', () => {
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledWith('/api/game-data-actions/publish-relations', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: expect.objectContaining({
+          'Content-Type': 'application/json',
+          'Idempotency-Key': expect.any(String),
+        }),
         body: JSON.stringify({
           entries: [{ op: 'set', path: '杰瑞.counters', oldValue: [], newValue: [{ id: '汤姆' }] }],
           message: '关系更新',
@@ -238,7 +246,10 @@ describe('useRelationMatrixEditMode', () => {
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledWith('/api/game-data-actions/publish-relations', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: expect.objectContaining({
+          'Content-Type': 'application/json',
+          'Idempotency-Key': expect.any(String),
+        }),
         body: JSON.stringify({
           entries: [
             {

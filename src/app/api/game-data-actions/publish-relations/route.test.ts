@@ -46,11 +46,14 @@ const mutableEnv = env as unknown as {
   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY?: string;
 };
 
-function createRequest(body: unknown): Request {
+function createRequest(body: unknown, operationId?: string | null): Request {
   const bytes = new TextEncoder().encode(JSON.stringify(body));
   let delivered = false;
   return {
-    headers: { get: () => null },
+    headers: {
+      get: (name: string) =>
+        name.toLowerCase() === 'idempotency-key' ? (operationId ?? null) : null,
+    },
     body: {
       getReader: () => ({
         read: async () => {
@@ -182,6 +185,16 @@ describe('publish-relations route', () => {
       expect.objectContaining({ error: 'invalid_shape' })
     );
     expect(publishPreparedMock).not.toHaveBeenCalled();
+  });
+
+  it('passes a valid idempotency key through to trusted persistence', async () => {
+    const { POST } = await import('./route');
+    const operationId = 'a3bb189e-8c21-4b8d-9a4f-5e24b7c29a10';
+
+    const response = await POST(createRequest({ entries: validEntries }, operationId));
+
+    expect(response.status).toBe(200);
+    expect(publishPreparedMock).toHaveBeenCalledWith(expect.objectContaining({ operationId }));
   });
 
   it('passes dependent relation rows to persistence as one ordered canonical row', async () => {
