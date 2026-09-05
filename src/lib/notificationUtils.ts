@@ -226,7 +226,7 @@ export const publishNotification = async (
         message: input.body,
         tone: kindMeta.tone,
         action: { label: '查看详情', url: link },
-        notice: '您可以随时在 Wiki 的设置页面管理邮件通知设置。',
+        notice: '您可以随时在百科的设置页面管理邮件通知设置。',
         unsubscribeUrl: unsubscribeLink,
       }),
       headers: {

@@ -284,7 +284,7 @@ export default async function PublicUserPage({ params, searchParams }: PublicUse
           <div className='min-w-0'>
             <p className='inline-flex items-center gap-2 text-xs font-semibold tracking-[0.14em] text-blue-700 uppercase dark:text-blue-300'>
               <span aria-hidden='true' className='h-1.5 w-1.5 rounded-full bg-blue-500' />
-              Wiki 用户
+              百科用户
             </p>
             <h1 className='mt-1 truncate text-3xl font-bold tracking-tight sm:text-4xl'>
               {profile.nickname}

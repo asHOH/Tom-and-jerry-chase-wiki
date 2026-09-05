@@ -116,8 +116,8 @@ export default function HomeContentClient({ description, hasServiceKey }: Props)
           <div>
             <FactionButton
               title='使用指南'
-              description='wiki功能简介'
-              ariaLabel='使用指南：wiki功能简介'
+              description='百科功能简介'
+              ariaLabel='使用指南：百科功能简介'
               imageSrc='/images/mouseSkills/%E8%8E%B1%E6%81%A91-%E8%93%9D%E5%9B%BE.png'
               href='/usages/use'
               className='px-2'

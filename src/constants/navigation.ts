@@ -181,7 +181,7 @@ export const TOOL_NAV_ITEMS: readonly NavItem[] = [
   {
     id: 'usage-use',
     label: '网站使用指南',
-    description: '介绍wiki基础功能的使用',
+    description: '介绍百科基础功能的使用',
     href: '/usages/use',
     iconSrc: '/images/mouseSkills/%E8%8E%B1%E6%81%A91-%E8%93%9D%E5%9B%BE.png',
     iconAlt: '',
@@ -189,7 +189,7 @@ export const TOOL_NAV_ITEMS: readonly NavItem[] = [
   {
     id: 'usage-edit',
     label: '网站编辑指南',
-    description: '介绍wiki进阶功能的使用',
+    description: '介绍百科进阶功能的使用',
     href: '/usages/edit',
     iconSrc: '/images/mouseSkills/%E8%8E%B1%E6%81%A92-%E8%98%B8%E6%B0%B4%E7%AC%94.png',
     iconAlt: '',

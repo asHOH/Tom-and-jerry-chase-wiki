@@ -743,7 +743,7 @@ function createResolvers(data: PublishedGameDataByType): Record<string, PathReso
     },
 
     history: {
-      description: 'Wiki 编辑历史',
+      description: '百科编辑历史',
       list: () => {
         return createListResult(historyData, 'HistoryEntry', '/history', false);
       },
@@ -753,7 +753,7 @@ function createResolvers(data: PublishedGameDataByType): Record<string, PathReso
     },
 
     'wiki-history': {
-      description: 'Wiki 历史数据',
+      description: '百科历史数据',
       list: () => {
         return createListResult(wikiHistoryData, 'WikiHistoryEntry', '/wiki-history', false);
       },
@@ -763,7 +763,7 @@ function createResolvers(data: PublishedGameDataByType): Record<string, PathReso
     },
 
     contributors: {
-      description: 'Wiki 贡献者统计',
+      description: '百科贡献者统计',
       list: () => {
         return createListResult(contributors, 'Contributor', '/contributors', false);
       },
@@ -773,7 +773,7 @@ function createResolvers(data: PublishedGameDataByType): Record<string, PathReso
     },
 
     articles: {
-      description: 'Wiki 文章列表',
+      description: '百科文章列表',
       list: async () => {
         const { articles: articlesList } = await getArticlesPageData();
         return createListResult(articlesList, 'Article', '/articles', true);

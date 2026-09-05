@@ -115,7 +115,7 @@ async function sendFeedbackEmail(feedbackData: FeedbackData) {
           preheader: `新的${getFeedbackTypeText(feedbackData.type)}：${feedbackData.content}`,
           eyebrow: '站点反馈',
           title: `收到新的${getFeedbackTypeText(feedbackData.type)}`,
-          message: '一位 Wiki 用户提交了新的反馈，详细信息如下。',
+          message: '一位百科用户提交了新的反馈，详细信息如下。',
           tone: 'warning',
           contentHtml: `${renderWikiEmailDetails([
             { label: '反馈类型', value: getFeedbackTypeText(feedbackData.type) },

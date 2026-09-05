@@ -73,7 +73,7 @@ export default function SingleItemWikiHistoryDisplay({ singleItem }: { singleIte
         className='flex items-center gap-1 transition-colors hover:text-gray-600 dark:hover:text-gray-300'
         aria-expanded={isExpanded}
       >
-        <span>Wiki历史记录</span>
+        <span>百科历史记录</span>
         <ChevronDownIcon
           className={cn(
             'h-3 w-3 transition-transform motion-reduce:transition-none',

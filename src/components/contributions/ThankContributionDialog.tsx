@@ -10,7 +10,7 @@ import { CloseIcon } from '@/components/icons/CommonIcons';
 export const THANK_MESSAGE_TEMPLATES = [
   '感谢你认真核对并完善这项内容，你的贡献让资料更加准确。',
   '感谢你为本次版本更新补充资料，也期待你继续参与编辑！',
-  '这次修改说明清晰、依据充分，感谢你帮助提升Wiki内容质量。',
+  '这次修改说明清晰、依据充分，感谢你帮助提升百科内容质量。',
   '感谢你的贡献！这个改动已经帮助我们完善相关条目。',
 ] as const;
 
