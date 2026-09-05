@@ -9,6 +9,7 @@ import {
   getPublishedEntityHistoryReadModel,
   hasPublishedEntityHistory,
   type PublishedEntityHistoryEntry,
+  type PublishedRelatedEntityHistory,
 } from './historySelectors';
 import { getPublishedDomainReadModel } from './publishedSnapshot';
 import type { PublishedGameDataEntityByType } from './types';
@@ -20,6 +21,11 @@ export type PublishedEntityRouteReadModel<EntityType extends PublishableEntityTy
   factionId: FactionId | null;
   data: PublishedGameDataEntityByType[EntityType] | null;
   history: readonly PublishedEntityHistoryEntry[];
+  relatedHistory?: readonly PublishedRelatedEntityHistory[];
+}>;
+
+type CharacterHistoryProjection = Readonly<{
+  skills: readonly Readonly<{ name: string }>[];
 }>;
 
 function isFactionId(value: unknown): value is FactionId {
@@ -57,21 +63,41 @@ export async function getPublishedEntityRouteReadModel<EntityType extends Publis
     }
   }
 
-  const history =
+  let history: readonly PublishedEntityHistoryEntry[] = [];
+  let relatedHistory: readonly PublishedRelatedEntityHistory[] = [];
+
+  if (
     normalizedEntityId &&
     hasPublishedEntityHistory(entityType) &&
     (!isFactionScoped(entityType) || normalizedFactionId)
-      ? (
-          await getPublishedEntityHistoryReadModel(
-            {
-              entityType,
-              entityId: normalizedEntityId,
-              ...(normalizedFactionId ? { factionId: normalizedFactionId } : {}),
-            },
-            acquiredSnapshot
-          )
-        ).history
-      : [];
+  ) {
+    const characterRoot =
+      entityType === 'characters'
+        ? (domain.data as unknown as Readonly<Record<string, CharacterHistoryProjection>>)
+        : undefined;
+    const selectedCharacter = characterRoot?.[normalizedEntityId];
+    const historyReadModel = await getPublishedEntityHistoryReadModel(
+      {
+        entityType,
+        entityId: normalizedEntityId,
+        ...(normalizedFactionId ? { factionId: normalizedFactionId } : {}),
+      },
+      acquiredSnapshot,
+      undefined,
+      characterRoot
+        ? {
+            resolveCharacterSkillName: (characterId, skillIndex) =>
+              characterRoot[characterId]?.skills[skillIndex]?.name,
+            relatedItems: (selectedCharacter?.skills ?? []).map((skill) => ({
+              name: skill.name,
+              type: 'skill',
+            })),
+          }
+        : {}
+    );
+    history = historyReadModel.history;
+    relatedHistory = historyReadModel.relatedHistory;
+  }
 
   return Object.freeze({
     revision: domain.revision,
@@ -80,5 +106,6 @@ export async function getPublishedEntityRouteReadModel<EntityType extends Publis
     factionId: normalizedFactionId,
     data,
     history: Object.freeze(history),
+    relatedHistory: Object.freeze(relatedHistory),
   });
 }

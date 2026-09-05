@@ -26,7 +26,7 @@ function formatHistoryChangeText(type: WikiChangeType, description: string) {
 export default function SingleItemWikiHistoryDisplay({ singleItem }: { singleItem: SingleItem }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const fallbackHistory = useWikiHistory([singleItem]);
-  const publishedHistory = usePublishedEntityHistory();
+  const publishedHistory = usePublishedEntityHistory(singleItem);
   const history = publishedHistory ?? fallbackHistory;
   const currentYear = new Date().getFullYear();
 

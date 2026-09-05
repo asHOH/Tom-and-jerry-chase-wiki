@@ -90,7 +90,13 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
         <EditModeContext value={editModeContextValue}>
           <PendingActionAwarenessProvider source={pendingAwareness}>
             {props.publishedHistory ? (
-              <PublishedEntityHistoryProvider history={props.publishedHistory}>
+              <PublishedEntityHistoryProvider
+                history={props.publishedHistory}
+                item={{ name: props.character.id, type: 'character' }}
+                {...(props.publishedRelatedHistory === undefined
+                  ? {}
+                  : { relatedHistory: props.publishedRelatedHistory })}
+              >
                 <CharacterDetails
                   character={props.character}
                   {...(props.contentWriters === undefined

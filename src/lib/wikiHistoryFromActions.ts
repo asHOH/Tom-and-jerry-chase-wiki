@@ -65,23 +65,55 @@ export type NormalizedWikiHistoryActionRow = {
   actions: readonly Readonly<Action>[];
 };
 
+export type WikiHistoryConversionOptions = {
+  resolveCharacterSkillName?: (characterId: string, skillIndex: number) => string | undefined;
+};
+
+function getActionSkillName(action: Action): string | undefined {
+  const candidate = action.op === 'delete' ? action.oldValue : action.newValue;
+  if (!candidate || typeof candidate !== 'object' || Array.isArray(candidate)) return undefined;
+
+  const name = (candidate as { name?: unknown }).name;
+  return typeof name === 'string' && name.trim() ? name : undefined;
+}
+
 /**
  * Converts a single action to wiki history info
  */
 function actionToWikiHistoryInfo(
   action: Action,
   entityType: string,
-  createdAt: Date
+  createdAt: Date,
+  options: WikiHistoryConversionOptions
 ): WikiHistoryFromAction | null {
   if (!isPublishableEntityType(entityType)) return null;
   if (!hasWikiHistoryMapping(entityType)) return null;
 
-  const singleItemType = ENTITY_TYPE_TO_SINGLE_ITEM_TYPE[entityType];
-
   const target = getGameDataActionTarget(entityType, action.path);
   if (!target) return null;
 
-  const itemPathDepth = target.factionId ? 2 : 1;
+  let singleItem: SingleItem = {
+    name: target.entityId,
+    type: ENTITY_TYPE_TO_SINGLE_ITEM_TYPE[entityType],
+    ...(target.factionId && { factionId: target.factionId }),
+  };
+  let itemPathDepth = target.factionId ? 2 : 1;
+
+  if (entityType === 'characters' && target.pathParts[itemPathDepth] === 'skills') {
+    const skillIndexPart = target.pathParts[itemPathDepth + 1];
+    const skillIndex = skillIndexPart === undefined ? NaN : Number(skillIndexPart);
+
+    if (Number.isInteger(skillIndex) && skillIndex >= 0) {
+      const skillName =
+        options.resolveCharacterSkillName?.(target.entityId, skillIndex) ??
+        getActionSkillName(action);
+
+      if (skillName) {
+        singleItem = { name: skillName, type: 'skill' };
+        itemPathDepth += 2;
+      }
+    }
+  }
 
   const year = createdAt.getFullYear();
   const month = createdAt.getMonth() + 1;
@@ -110,11 +142,7 @@ function actionToWikiHistoryInfo(
   return {
     year,
     date,
-    item: {
-      name: target.entityId,
-      type: singleItemType,
-      ...(target.factionId && { factionId: target.factionId }),
-    },
+    item: singleItem,
     changeType,
     description,
   };
@@ -124,7 +152,8 @@ function actionToWikiHistoryInfo(
  * Converts public action rows to wiki history entries grouped by year
  */
 export function normalizedActionsToWikiHistory(
-  rows: readonly NormalizedWikiHistoryActionRow[]
+  rows: readonly NormalizedWikiHistoryActionRow[],
+  options: WikiHistoryConversionOptions = {}
 ): WikiYearData[] {
   const yearMap = new Map<number, Map<string, WikiHistoryFromAction[]>>();
 
@@ -140,7 +169,7 @@ export function normalizedActionsToWikiHistory(
     const dateKey = `${month}.${day}`;
 
     for (const action of row.actions) {
-      const info = actionToWikiHistoryInfo(action as Action, row.entityType, createdAt);
+      const info = actionToWikiHistoryInfo(action as Action, row.entityType, createdAt, options);
       if (!info) continue;
 
       if (!yearMap.has(year)) {
@@ -205,7 +234,10 @@ export function normalizedActionsToWikiHistory(
  * Legacy adapter for the root action payload. Published selectors call the
  * normalized entry point with the immutable decoded snapshot instead.
  */
-export function publicActionsToWikiHistory(actions: PublicActionRow[]): WikiYearData[] {
+export function publicActionsToWikiHistory(
+  actions: PublicActionRow[],
+  options: WikiHistoryConversionOptions = {}
+): WikiYearData[] {
   return normalizedActionsToWikiHistory(
     actions.map((row) => {
       const entries = normalizePublicActionEntries(row.entry);
@@ -214,7 +246,8 @@ export function publicActionsToWikiHistory(actions: PublicActionRow[]): WikiYear
         createdAt: row.created_at,
         actions: flattenActionEntries(entries),
       };
-    })
+    }),
+    options
   );
 }
 

@@ -1,7 +1,11 @@
 import 'server-only';
 
 import type { PublishableEntityType } from '@/lib/gameData/publishableEntityTypes';
-import { mergeWikiHistoryData, publicActionsToWikiHistory } from '@/lib/wikiHistoryFromActions';
+import {
+  mergeWikiHistoryData,
+  publicActionsToWikiHistory,
+  type WikiHistoryConversionOptions,
+} from '@/lib/wikiHistoryFromActions';
 import type {
   FactionId,
   SingleItem,
@@ -55,6 +59,16 @@ export type PublishedEntityHistoryEntry = {
 export type PublishedEntityHistoryReadModel = {
   revision: PublishedRevision;
   history: PublishedEntityHistoryEntry[];
+  relatedHistory: PublishedRelatedEntityHistory[];
+};
+
+export type PublishedRelatedEntityHistory = {
+  item: SingleItem;
+  history: PublishedEntityHistoryEntry[];
+};
+
+type PublishedEntityHistoryOptions = WikiHistoryConversionOptions & {
+  relatedItems?: readonly SingleItem[];
 };
 
 function snapshotToPublicActionRows(snapshot: ApprovedActionSnapshot): PublicActionRow[] {
@@ -87,9 +101,10 @@ function mergeActionHistoryRows(
 
 function snapshotToWikiHistory(
   snapshot: ApprovedActionSnapshot,
-  historyRows: readonly PublicActionRow[]
+  historyRows: readonly PublicActionRow[],
+  options: WikiHistoryConversionOptions
 ): WikiYearData[] {
-  return publicActionsToWikiHistory(mergeActionHistoryRows(snapshot, historyRows));
+  return publicActionsToWikiHistory(mergeActionHistoryRows(snapshot, historyRows), options);
 }
 
 function matchesScope(item: SingleItem, scope: PublishedEntityHistoryScope): boolean {
@@ -102,24 +117,26 @@ function matchesScope(item: SingleItem, scope: PublishedEntityHistoryScope): boo
   );
 }
 
-export function selectPublishedWikiHistory(
-  snapshot: ApprovedActionSnapshot,
-  historyRows: readonly PublicActionRow[] = []
-): WikiYearData[] {
-  return mergeWikiHistoryData(wikiHistoryData, snapshotToWikiHistory(snapshot, historyRows));
+function matchesItem(left: SingleItem, right: SingleItem): boolean {
+  return (
+    left.type === right.type &&
+    left.name === right.name &&
+    (left.factionId === undefined ||
+      right.factionId === undefined ||
+      left.factionId === right.factionId)
+  );
 }
 
-export function selectPublishedEntityHistory(
-  snapshot: ApprovedActionSnapshot,
-  scope: PublishedEntityHistoryScope,
-  historyRows: readonly PublicActionRow[] = []
+function selectHistoryEntries(
+  wikiHistory: readonly WikiYearData[],
+  matches: (item: SingleItem) => boolean
 ): PublishedEntityHistoryEntry[] {
   const result: PublishedEntityHistoryEntry[] = [];
 
-  for (const yearData of selectPublishedWikiHistory(snapshot, historyRows)) {
+  for (const yearData of wikiHistory) {
     for (const event of yearData.events) {
       for (const change of event.details.data?.changes ?? []) {
-        if (!matchesScope(change.item, scope)) continue;
+        if (!matches(change.item)) continue;
         result.push({
           year: yearData.year,
           date: event.date,
@@ -130,7 +147,7 @@ export function selectPublishedEntityHistory(
 
       for (const batch of event.details.data?.batchChanges ?? []) {
         for (const change of batch.changes) {
-          if (!matchesScope(change.item, scope)) continue;
+          if (!matches(change.item)) continue;
           result.push({
             year: yearData.year,
             date: event.date,
@@ -145,15 +162,43 @@ export function selectPublishedEntityHistory(
   return result;
 }
 
+export function selectPublishedWikiHistory(
+  snapshot: ApprovedActionSnapshot,
+  historyRows: readonly PublicActionRow[] = [],
+  options: WikiHistoryConversionOptions = {}
+): WikiYearData[] {
+  return mergeWikiHistoryData(
+    wikiHistoryData,
+    snapshotToWikiHistory(snapshot, historyRows, options)
+  );
+}
+
+export function selectPublishedEntityHistory(
+  snapshot: ApprovedActionSnapshot,
+  scope: PublishedEntityHistoryScope,
+  historyRows: readonly PublicActionRow[] = [],
+  options: WikiHistoryConversionOptions = {}
+): PublishedEntityHistoryEntry[] {
+  return selectHistoryEntries(selectPublishedWikiHistory(snapshot, historyRows, options), (item) =>
+    matchesScope(item, scope)
+  );
+}
+
 export async function getPublishedEntityHistoryReadModel(
   scope: PublishedEntityHistoryScope,
   snapshot?: ApprovedActionSnapshot,
-  historyRows?: readonly PublicActionRow[]
+  historyRows?: readonly PublicActionRow[],
+  options: PublishedEntityHistoryOptions = {}
 ): Promise<PublishedEntityHistoryReadModel> {
   const acquiredSnapshot = snapshot ?? (await getApprovedActionSnapshot());
   const acquiredHistoryRows = historyRows ?? (await fetchPublicGameDataActionHistory());
+  const wikiHistory = selectPublishedWikiHistory(acquiredSnapshot, acquiredHistoryRows, options);
   return {
     revision: createPublishedRevision(PRODUCTION_BUILD_IDENTITY, acquiredSnapshot.actionRevision),
-    history: selectPublishedEntityHistory(acquiredSnapshot, scope, acquiredHistoryRows),
+    history: selectHistoryEntries(wikiHistory, (item) => matchesScope(item, scope)),
+    relatedHistory: (options.relatedItems ?? []).map((item) => ({
+      item,
+      history: selectHistoryEntries(wikiHistory, (candidate) => matchesItem(candidate, item)),
+    })),
   };
 }

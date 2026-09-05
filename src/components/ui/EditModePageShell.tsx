@@ -17,6 +17,7 @@ import {
   type PublishedEntityHistoryEntry,
 } from '@/context/PublishedEntityHistoryContext';
 import { useToast } from '@/context/ToastContext';
+import type { SingleItemTypeName } from '@/data/types';
 
 import EditModeToolbar from './EditModeToolbar';
 import PageShell from './PageShell';
@@ -30,6 +31,20 @@ type EditModePageShellProps = {
   withPageShell?: boolean;
   children: ReactNode;
 };
+
+const HISTORY_ITEM_TYPE_BY_ENTITY_TYPE: Partial<Record<PublishableEntityType, SingleItemTypeName>> =
+  {
+    characters: 'character',
+    cards: 'knowledgeCard',
+    specialSkills: 'specialSkill',
+    items: 'item',
+    entities: 'entity',
+    buffs: 'buff',
+    maps: 'map',
+    fixtures: 'fixture',
+    modes: 'mode',
+    achievements: 'achievement',
+  };
 
 export default function EditModePageShell({
   entityType,
@@ -95,13 +110,18 @@ export default function EditModePageShell({
     [publishChanges]
   );
 
-  const content = publishedHistory ? (
-    <PublishedEntityHistoryProvider history={publishedHistory}>
-      {children}
-    </PublishedEntityHistoryProvider>
-  ) : (
-    children
-  );
+  const historyItemType = HISTORY_ITEM_TYPE_BY_ENTITY_TYPE[entityType];
+  const content =
+    publishedHistory && historyItemType ? (
+      <PublishedEntityHistoryProvider
+        history={publishedHistory}
+        item={{ name: entityName, type: historyItemType }}
+      >
+        {children}
+      </PublishedEntityHistoryProvider>
+    ) : (
+      children
+    );
 
   return (
     <>
