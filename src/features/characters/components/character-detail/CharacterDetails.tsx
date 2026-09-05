@@ -430,7 +430,7 @@ export default function CharacterDetails({
                         <CollapseCard
                           title={`${localCharacter.id}自身的互动特性(${characterTraitCount})`}
                           size='xs'
-                          className='rounded-md border-x border-b border-gray-300 px-1 pb-1 whitespace-pre-wrap dark:border-gray-700'
+                          className='rounded-md px-1 pb-1 whitespace-pre-wrap'
                           titleClassName='pl-3'
                         >
                           <SingleItemTraitsText singleItem={characterSingleItem} />
@@ -440,7 +440,7 @@ export default function CharacterDetails({
                         <CollapseCard
                           title={`${localCharacter.id}自身的引用项(${characterReverseCount})`}
                           size='xs'
-                          className='rounded-md border-x border-b border-gray-300 px-1 pb-1 whitespace-pre-wrap dark:border-gray-700'
+                          className='rounded-md px-1 pb-1 whitespace-pre-wrap'
                           titleClassName='pl-3'
                         >
                           <SingleItemReverseCard singleItem={characterSingleItem} />

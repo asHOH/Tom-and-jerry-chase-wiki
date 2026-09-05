@@ -21,7 +21,7 @@ type DetailRelatedCardProps = {
 };
 
 const contentClassName =
-  'border-border/80 bg-surface-sunken/80 rounded-b-md border border-t-0 px-3 pt-2 pb-3 whitespace-pre-wrap shadow-sm';
+  'bg-surface-sunken/80 rounded-b-md px-3 pt-2 pb-3 whitespace-pre-wrap shadow-sm';
 
 const titleClassName = 'rounded-t-md border px-3 pt-1.5 pb-1';
 const collapsedTitleClassName = 'rounded-md';
