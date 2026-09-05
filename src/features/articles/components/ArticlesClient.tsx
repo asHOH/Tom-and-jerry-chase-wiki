@@ -228,6 +228,7 @@ export default function ArticlesClient({
                     href='/articles/pending'
                     variant='warning'
                     size='sm'
+                    className='text-white dark:text-white'
                     leadingIcon={<ClockIcon className='size-4' strokeWidth={1.5} />}
                   >
                     待审核
