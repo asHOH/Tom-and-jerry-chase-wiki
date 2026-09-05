@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 
 import { generatePageMetadata } from '@/lib/metadataUtils';
+import { SITE_NAME } from '@/constants/brand';
 import { SITE_URL } from '@/constants/seo';
 import { getDocPages } from '@/features/articles/utils/docs';
 import PageShell from '@/components/ui/PageShell';
@@ -8,7 +9,7 @@ import StyledMDX from '@/components/ui/StyledMDX';
 
 import DocsSidebar from './DocsSidebar';
 
-const DESCRIPTION = '猫和老鼠手游 wiki 操作技巧汇总。';
+const DESCRIPTION = `${SITE_NAME}操作技巧汇总。`;
 
 export const metadata: Metadata = generatePageMetadata({
   title: '文档',

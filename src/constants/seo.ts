@@ -1,23 +1,17 @@
 import type { Metadata } from 'next';
 import { WebSite, WithContext } from 'schema-dts';
 
+import { SITE_NAME, SITE_SHORT_NAME } from '@/constants/brand';
 import { env } from '@/env';
 
-export const SITE_NAME = '猫和老鼠手游wiki';
-export const SITE_SHORT_NAME = '猫鼠wiki';
-const SITE_ALTERNATE_NAME = [
-  SITE_SHORT_NAME,
-  '猫和老鼠手游百科',
-  '猫鼠百科',
-  'Tom and Jerry Chase Wiki',
-  'www.tjwiki.com',
-];
+const SITE_ALTERNATE_NAME = [SITE_SHORT_NAME, 'Tom and Jerry Chase Wiki', 'www.tjwiki.com'];
+export { SITE_NAME, SITE_SHORT_NAME } from '@/constants/brand';
 export const SITE_URL = env.NEXT_PUBLIC_SITE_URL ?? 'https://www.tjwiki.com';
 const SITE_LANG = 'zh-CN';
 const SITE_LOCALE = 'zh_CN';
 const DEFAULT_IMAGE = '/icon.png';
 const SITE_TAGLINE =
-  '非官方玩家维护的猫鼠手游维基百科网站，涵盖角色属性、技能、加点、克制关系、知识卡、特技、道具等信息';
+  '非官方玩家维护的猫和老鼠手游资料网站，涵盖角色属性、技能、加点、克制关系、知识卡、特技、道具等信息';
 
 const DEFAULT_DESCRIPTION = `${SITE_NAME} - ${SITE_TAGLINE}`;
 export const DEFAULT_KEYWORDS = [

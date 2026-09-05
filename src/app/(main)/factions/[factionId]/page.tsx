@@ -5,7 +5,7 @@ import { CollectionPage, WithContext } from 'schema-dts';
 import { GameDataManager } from '@/lib/dataManager';
 import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
 import { generatePageMetadata } from '@/lib/metadataUtils';
-import { SITE_URL } from '@/constants/seo';
+import { SITE_SHORT_NAME, SITE_URL } from '@/constants/seo';
 import { factionData } from '@/data/static';
 import type { FactionId } from '@/data/types';
 import StructuredData from '@/components/StructuredData';
@@ -28,7 +28,7 @@ function generateStructuredData(
   return {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    name: `${faction.name} - 猫鼠wiki`,
+    name: `${faction.name} - ${SITE_SHORT_NAME}`,
     description: faction.description,
     url: `${SITE_URL}/factions/${factionId}`,
     mainEntity: {

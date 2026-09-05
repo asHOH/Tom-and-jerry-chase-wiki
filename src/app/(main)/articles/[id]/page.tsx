@@ -10,7 +10,7 @@ import {
 import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
 import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { sanitizeHTML } from '@/lib/xssUtils';
-import { SITE_URL } from '@/constants/seo';
+import { SITE_NAME, SITE_URL } from '@/constants/seo';
 import StructuredData from '@/components/StructuredData';
 
 import ArticleClient from './ArticleClient';
@@ -42,7 +42,7 @@ function buildArticleStructuredData({
     headline: title,
     description,
     author: { '@type': 'Person', name: author },
-    publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: SITE_URL },
+    publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
     dateModified,
     datePublished,
     mainEntityOfPage: { '@type': 'WebPage', '@id': canonicalUrl },

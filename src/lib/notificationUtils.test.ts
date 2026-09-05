@@ -6,7 +6,8 @@ import {
 import { supabaseAdmin } from '@/lib/supabase/admin';
 
 jest.mock('@/constants/seo', () => ({
-  SITE_NAME: '猫鼠Wiki',
+  SITE_NAME: '猫和老鼠手游百科',
+  SITE_SHORT_NAME: '猫鼠百科',
   SITE_URL: 'https://tjwiki.test',
 }));
 

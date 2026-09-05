@@ -29,6 +29,7 @@ import {
   getCachedGameDataActionApprovalRate,
   getCachedPublicUserProfile,
 } from '@/lib/users/publicProfile';
+import { SITE_NAME } from '@/constants/brand';
 import { contributors, RoleType } from '@/data/contributors';
 import {
   ContributionActivityHistory,
@@ -161,7 +162,7 @@ export async function generateMetadata({
 
     return generatePageMetadata({
       title: `${profile.nickname}的用户页`,
-      description: `查看${profile.nickname}在猫和老鼠手游wiki的公开贡献。`,
+      description: `查看${profile.nickname}在${SITE_NAME}的公开贡献。`,
       canonicalUrl: getCanonicalUrl(`/users/${encodeURIComponent(nickname)}`),
     });
   } catch (error) {

@@ -12,7 +12,7 @@ import { getContentWritersForCharacter } from '@/lib/gameData/contentWriters';
 import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
 import { generatePageMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
-import { SITE_URL } from '@/constants/seo';
+import { SITE_NAME, SITE_URL } from '@/constants/seo';
 import { getTutorialPage } from '@/features/articles/utils/docs';
 import StructuredData from '@/components/StructuredData';
 import CharacterDetailsClient from '@/app/(main)/characters/[characterId]/CharacterDetailsClient';
@@ -57,7 +57,7 @@ function generateStructuredData(
     author,
     publisher: {
       '@type': 'Organization',
-      name: '猫和老鼠手游wiki',
+      name: SITE_NAME,
       url: SITE_URL,
     },
     mainEntityOfPage: {

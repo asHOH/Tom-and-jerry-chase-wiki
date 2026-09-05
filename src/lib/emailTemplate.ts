@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { SITE_NAME, SITE_URL } from '@/constants/seo';
+import { SITE_NAME, SITE_SHORT_NAME, SITE_URL } from '@/constants/seo';
 
 export type WikiEmailTone = 'danger' | 'info' | 'success' | 'warning';
 
@@ -80,7 +80,7 @@ export const renderWikiEmailCallout = (content: string) => `
 
 export const renderWikiEmailTemplate = ({
   preheader,
-  eyebrow = '猫鼠 Wiki 通知',
+  eyebrow = `${SITE_SHORT_NAME}通知`,
   title,
   message,
   tone = 'info',

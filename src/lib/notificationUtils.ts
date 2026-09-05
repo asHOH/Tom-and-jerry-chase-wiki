@@ -15,7 +15,7 @@ import {
   type NotificationKind,
 } from '@/lib/notifications/kinds';
 import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
-import { SITE_URL } from '@/constants/seo';
+import { SITE_SHORT_NAME, SITE_URL } from '@/constants/seo';
 import { env } from '@/env';
 
 export type PublishNotificationInput = {
@@ -217,7 +217,7 @@ export const publishNotification = async (
   try {
     const sent = await sendEmail({
       to: emailSettings.email,
-      subject: `[猫鼠Wiki] ${input.title}`,
+      subject: `[${SITE_SHORT_NAME}] ${input.title}`,
       text: `${input.title}\n\n${input.body}\n\n${link}\n\n取消订阅通知邮件：${unsubscribeLink}`,
       html: renderWikiEmailTemplate({
         preheader: `${input.title}：${input.body}`,
@@ -426,10 +426,10 @@ export const sendNotificationEmailVerification = async (
   const link = verifyUrl.toString();
   const sent = await sendEmail({
     to: email,
-    subject: '[猫鼠Wiki] 验证通知邮箱',
+    subject: `[${SITE_SHORT_NAME}] 验证通知邮箱`,
     text: `请在 30 分钟内验证您的通知邮箱：${link}`,
     html: renderWikiEmailTemplate({
-      preheader: '验证您的猫鼠 Wiki 通知邮箱',
+      preheader: `验证您的${SITE_SHORT_NAME}通知邮箱`,
       eyebrow: '邮箱验证',
       title: '验证通知邮箱',
       message: '请确认这是您希望用于接收站内通知邮件的邮箱地址。',

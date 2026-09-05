@@ -8,6 +8,7 @@ import {
 import { checkRateLimit } from '@/lib/rateLimit';
 import { getOptionalSupabaseAdminClient } from '@/lib/supabase/adminClient';
 import { feedbackSchema, formatZodError } from '@/lib/validation/schemas';
+import { SITE_SHORT_NAME } from '@/constants/brand';
 import { env } from '@/env';
 
 interface FeedbackData {
@@ -108,7 +109,7 @@ async function sendFeedbackEmail(feedbackData: FeedbackData) {
       body: JSON.stringify({
         from: env.RESEND_FROM_EMAIL || 'feedback@resend.dev', // Use your domain or Resend's shared domain
         to: [env.FEEDBACK_EMAIL || 'your-email@example.com'],
-        subject: `[猫鼠Wiki] ${getFeedbackTypeText(feedbackData.type)}`,
+        subject: `[${SITE_SHORT_NAME}] ${getFeedbackTypeText(feedbackData.type)}`,
         text: `收到新的用户反馈\n\n类型：${getFeedbackTypeText(feedbackData.type)}\n时间：${feedbackData.timestamp}\n联系方式：${feedbackData.contact}\n\n反馈内容：\n${feedbackData.content}\n\n用户代理：${feedbackData.userAgent}\nIP 地址：${feedbackData.ip}`,
         html: renderWikiEmailTemplate({
           preheader: `新的${getFeedbackTypeText(feedbackData.type)}：${feedbackData.content}`,

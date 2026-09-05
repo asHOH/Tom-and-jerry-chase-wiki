@@ -1,6 +1,6 @@
 # Project
 
-Tom and Jerry Chase Wiki is a Chinese game-data wiki for 猫和老鼠手游 (Tom and Jerry Chase mobile game). It uses Next.js 16 App Router, React 19, strict TypeScript, and Tailwind CSS 4.
+Tom and Jerry Chase Wiki, whose Chinese name is 猫和老鼠手游百科 (short name 猫鼠百科), is a Chinese game-data wiki for 猫和老鼠手游 (Tom and Jerry Chase mobile game). It uses Next.js 16 App Router, React 19, strict TypeScript, and Tailwind CSS 4.
 
 - Production (VPS+Cloudflared): <https://www.tjwiki.com>
 - Development preview (Vercel): <https://dev.tjwiki.com>

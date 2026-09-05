@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 
 import { generatePageMetadata } from '@/lib/metadataUtils';
+import { SITE_NAME } from '@/constants/brand';
 import { SITE_URL } from '@/constants/seo';
 import { getDocPages } from '@/features/articles/utils/docs';
 import Card from '@/components/ui/Card';
@@ -8,7 +9,7 @@ import PageHeader from '@/components/ui/PageHeader';
 import { ChevronRightIcon, DocumentTextIcon } from '@/components/icons/CommonIcons';
 import Link from '@/components/Link';
 
-const DESCRIPTION = '猫和老鼠手游 wiki 操作技巧汇总。';
+const DESCRIPTION = `${SITE_NAME}操作技巧汇总。`;
 
 export const metadata: Metadata = generatePageMetadata({
   title: '文档',
@@ -26,7 +27,7 @@ export default async function DocsIndexPage() {
 
   return (
     <div className='space-y-8'>
-      <PageHeader title='文档' description='欢迎来到猫和老鼠手游维基文档。浏览下面的指南和资源。' />
+      <PageHeader title='文档' description={`欢迎来到${SITE_NAME}文档。浏览下面的指南和资源。`} />
 
       {docPages.length > 0 ? (
         <div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3'>

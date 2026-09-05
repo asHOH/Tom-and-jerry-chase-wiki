@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 
 import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
 import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
-import { SITE_URL } from '@/constants/seo';
+import { SITE_NAME, SITE_URL } from '@/constants/seo';
 import { fixtures as canonicalFixtures } from '@/data/static';
 import type { Fixture } from '@/data/types';
 import StructuredData from '@/components/StructuredData';
@@ -25,8 +25,8 @@ function generateStructuredData(fixtureName: string, fixture: Fixture) {
     '@type': 'Article',
     headline: fixture.name,
     description: desc,
-    author: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: SITE_URL },
-    publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: SITE_URL },
+    author: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
+    publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
     image: fixture.imageUrl,
     mainEntityOfPage: {
       '@type': 'WebPage',

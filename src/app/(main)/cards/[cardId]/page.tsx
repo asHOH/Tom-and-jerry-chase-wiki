@@ -7,7 +7,7 @@ import { getApprovedActionSnapshot } from '@/lib/gameData/published/getApprovedA
 import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
 import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
 import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
-import { SITE_URL } from '@/constants/seo';
+import { SITE_NAME, SITE_URL } from '@/constants/seo';
 import { cards as canonicalCards } from '@/data/static';
 import type { Card } from '@/data/types';
 import StructuredData from '@/components/StructuredData';
@@ -29,8 +29,8 @@ function generateStructuredData(cardId: string, card: Card): WithContext<Article
     '@type': 'Article',
     headline: card.id,
     description: card.description,
-    author: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: SITE_URL },
-    publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: SITE_URL },
+    author: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
+    publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
     ...(card.imageUrl === undefined ? {} : { image: card.imageUrl }),
     mainEntityOfPage: {
       '@type': 'WebPage',

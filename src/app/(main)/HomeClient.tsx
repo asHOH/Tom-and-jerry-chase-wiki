@@ -4,6 +4,7 @@ import { useRef, useState } from 'react';
 
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useUser } from '@/hooks/useUser';
+import { SITE_NAME } from '@/constants/brand';
 import { QQ_GROUP_NUMBER, QQ_GROUP_URL } from '@/constants/community';
 import { isNavGroup, NAV_ITEMS, NavItem } from '@/constants/navigation';
 import ChangeLogs, { ChangeLogsRef } from '@/components/ui/ChangeLogs';
@@ -66,11 +67,7 @@ export default function HomeContentClient({ description, hasServiceKey }: Props)
 
   return (
     <PageShell width='wide' className='space-y-6'>
-      <PageHeader
-        title='猫和老鼠手游wiki'
-        description={description}
-        descriptionVisibility='desktop'
-      />
+      <PageHeader title={SITE_NAME} description={description} descriptionVisibility='desktop' />
 
       <HomepageNotices />
 

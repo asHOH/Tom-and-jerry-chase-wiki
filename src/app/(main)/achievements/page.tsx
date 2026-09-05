@@ -9,7 +9,7 @@ import AchievementGridClient from './AchievementGridClient';
 export const dynamic = 'force-static';
 
 export const metadata: Metadata = generatePageMetadata({
-  title: '对局成就列表 - 猫和老鼠手游wiki',
+  title: '对局成就列表',
   description: '查询猫和老鼠手游的所有对局成就信息。',
   canonicalUrl: getCanonicalUrl('/achievements'),
 });

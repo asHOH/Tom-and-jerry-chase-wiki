@@ -4,7 +4,7 @@ import { Article, WithContext } from 'schema-dts';
 
 import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
 import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
-import { SITE_URL } from '@/constants/seo';
+import { SITE_NAME, SITE_URL } from '@/constants/seo';
 import { buffs as canonicalBuffs } from '@/data/static';
 import type { Buff } from '@/data/types';
 import StructuredData from '@/components/StructuredData';
@@ -26,8 +26,8 @@ function generateStructuredData(buffName: string, buff: Buff): WithContext<Artic
     '@type': 'Article',
     headline: buff.name,
     description: desc,
-    author: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: SITE_URL },
-    publisher: { '@type': 'Organization', name: '猫和老鼠手游wiki', url: SITE_URL },
+    author: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
+    publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
     mainEntityOfPage: {
       '@type': 'WebPage',
       '@id': `${SITE_URL}/buffs/${encodeURIComponent(buffName)}`,
