@@ -42,7 +42,7 @@ describe('published route and history selectors', () => {
       year: 2026,
       date: '7.24',
       type: WikiChangeType.UPDATE,
-      description: '更新 description',
+      description: '更新 描述',
     });
     expect(result.revision).toMatch(/^v1:[a-f0-9]{64}$/);
   });

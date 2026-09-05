@@ -3,13 +3,18 @@ import { WikiChangeType } from '@/data/types';
 import type { PublicActionRow } from './gameData/publicActionsTypes';
 import { publicActionsToWikiHistory } from './wikiHistoryFromActions';
 
-const row = (id: string, entry: unknown, entityType = 'characters'): PublicActionRow => ({
+const row = (
+  id: string,
+  entry: unknown,
+  entityType = 'characters',
+  message: string | null = null
+): PublicActionRow => ({
   id,
   entity_type: entityType,
   entry,
   created_at: '2026-05-09T00:00:00.000Z',
   status: 'approved',
-  message: null,
+  message,
   reviewed_at: null,
   created_by: null,
 });
@@ -42,23 +47,34 @@ describe('publicActionsToWikiHistory', () => {
 
   it('should convert a plain action array into batch changes', () => {
     const changes = getBatchChanges([
-      row('plain-action-array', [
-        {
-          op: 'set',
-          path: 'Tom.description',
-          oldValue: 'old',
-          newValue: 'new',
-        },
-        {
-          op: 'set',
-          path: 'Jerry.description',
-          oldValue: 'old',
-          newValue: 'new',
-        },
-      ]),
+      row(
+        'plain-action-array',
+        [
+          {
+            op: 'set',
+            path: 'Tom.description',
+            oldValue: 'old',
+            newValue: 'new',
+          },
+          {
+            op: 'set',
+            path: 'Tom.EnglishName',
+            oldValue: 'old',
+            newValue: 'new',
+          },
+        ],
+        'characters',
+        '  完善角色资料  '
+      ),
     ]);
 
-    expect(changes.map((change) => change.item.name)).toEqual(['Tom', 'Jerry']);
+    expect(changes).toEqual([
+      expect.objectContaining({
+        item: { name: 'Tom', type: 'character' },
+        changeType: WikiChangeType.UPDATE,
+        description: '完善角色资料',
+      }),
+    ]);
   });
 
   it('should convert mixed action history entries into batch changes', () => {
@@ -73,8 +89,8 @@ describe('publicActionsToWikiHistory', () => {
         [
           {
             op: 'delete',
-            path: 'Jerry.aliases.0',
-            oldValue: 'alias',
+            path: 'Jerry.counteredBy.0.tags.1.counteredBy',
+            oldValue: '怕拉扯',
             newValue: undefined,
           },
         ],
@@ -82,6 +98,7 @@ describe('publicActionsToWikiHistory', () => {
     ]);
 
     expect(changes.map((change) => change.item.name)).toEqual(['Tom', 'Jerry']);
+    expect(changes[1]?.description).toBe('更新 第1个被克制对象的第2个关系标签的被克制方标签');
   });
 
   it('should skip invalid payloads', () => {
@@ -136,7 +153,7 @@ describe('publicActionsToWikiHistory', () => {
       expect.objectContaining({
         item: { name: '翻盘', type: 'achievement', factionId: 'cat' },
         changeType: WikiChangeType.UPDATE,
-        description: '更新 description',
+        description: '更新 描述',
       }),
     ]);
   });
@@ -158,7 +175,7 @@ describe('publicActionsToWikiHistory', () => {
     expect(changes[0]).toEqual(
       expect.objectContaining({
         item: { name: '急速翻滚', type: 'specialSkill', factionId: 'mouse' },
-        description: '更新 cooldown',
+        description: '更新 冷却时间',
       })
     );
   });
