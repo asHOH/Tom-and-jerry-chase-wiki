@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 
 import { cn } from '@/lib/design';
 import type { ContentEditor } from '@/lib/types';
@@ -31,17 +31,20 @@ export default function ContentWriterDisplay({
   const editorLine = hasExtraEditors ? (
     <div className='text-xs text-gray-400 dark:text-gray-500'>
       文案编辑：
-      <span className={type === 'isMobile' ? '' : 'whitespace-pre'}>
+      <span>
         {contentEditors.map((editor, index) => (
-          <span key={editor.id}>
-            {index > 0 && '、'}
-            <a
-              href={`/users/${encodeURIComponent(editor.name)}`}
-              className='no-underline transition-colors hover:text-gray-600 dark:hover:text-gray-300'
-            >
-              {editor.name}
-            </a>
-          </span>
+          <Fragment key={editor.id}>
+            <span className='whitespace-nowrap'>
+              <a
+                href={`/users/${encodeURIComponent(editor.name)}`}
+                className='no-underline transition-colors hover:text-gray-600 dark:hover:text-gray-300'
+              >
+                {editor.name}
+              </a>
+              {index < contentEditors.length - 1 && '、'}
+            </span>
+            {index < contentEditors.length - 1 && <wbr />}
+          </Fragment>
         ))}
       </span>
     </div>
@@ -57,24 +60,27 @@ export default function ContentWriterDisplay({
         className={cn('text-xs text-gray-400 dark:text-gray-500', type !== 'isMobile' && 'mt-2')}
       >
         文案撰写：
-        <span className={type === 'isMobile' ? '' : 'whitespace-pre'}>
+        <span>
           {staticContentWriters.map((writer, index) => {
             const contributor = contributors.find(({ name }) => name === writer);
 
             return (
-              <span key={writer}>
-                {index > 0 && '、'}
-                {contributor?.nickname ? (
-                  <a
-                    href={`/users/${encodeURIComponent(contributor.nickname)}`}
-                    className='no-underline transition-colors hover:text-gray-600 dark:hover:text-gray-300'
-                  >
-                    {writer}
-                  </a>
-                ) : (
-                  writer
-                )}
-              </span>
+              <Fragment key={writer}>
+                <span className='whitespace-nowrap'>
+                  {contributor?.nickname ? (
+                    <a
+                      href={`/users/${encodeURIComponent(contributor.nickname)}`}
+                      className='no-underline transition-colors hover:text-gray-600 dark:hover:text-gray-300'
+                    >
+                      {writer}
+                    </a>
+                  ) : (
+                    writer
+                  )}
+                  {index < staticContentWriters.length - 1 && '、'}
+                </span>
+                {index < staticContentWriters.length - 1 && <wbr />}
+              </Fragment>
             );
           })}
         </span>
