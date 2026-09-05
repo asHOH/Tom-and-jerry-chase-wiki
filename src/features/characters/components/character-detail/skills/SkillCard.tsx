@@ -20,7 +20,7 @@ import DetailTraitsCard from '@/features/shared/detail-view/DetailTraitsCard';
 import Card from '@/components/ui/Card';
 import { editable } from '@/components/ui/editable';
 import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButton';
-import { TrashIcon } from '@/components/icons/CommonIcons';
+import { LinkIcon, TrashIcon } from '@/components/icons/CommonIcons';
 
 import { usePublishedCharacter } from '../PublishedCharacterContext';
 import SkillCardMedia from './SkillCardMedia';
@@ -151,12 +151,14 @@ function SkillHeader({
   isEditMode: boolean;
   showHistory: boolean;
 }) {
+  const skillId = `Skill:${skill.name}`;
+
   return (
     <div className='flex items-center justify-between'>
       <h3 className='px-2 text-xl font-bold md:py-2 dark:text-white'>
         {skillTypeLabel} ·{' '}
         <e.span
-          id={`Skill:${skill.name}`}
+          id={skillId}
           path={`skills.${skillIndex}.name`}
           initialValue={skill.name}
           isSingleLine={true}
@@ -164,6 +166,14 @@ function SkillHeader({
             updateSkillName({ characterId, skillIndex, localCharacter, newName })
           }
         />
+        <a
+          href={`#${skillId}`}
+          aria-label={`链接到${skill.name}`}
+          title={`链接到“${skill.name}”`}
+          className='ml-1 inline-flex rounded p-1 text-gray-400 opacity-0 transition-opacity hover:text-blue-600 hover:opacity-100 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:outline-none dark:hover:text-blue-400'
+        >
+          <LinkIcon className='size-4' />
+        </a>
         {showHistory && <SkillHistory skill={skill} className='font-normal' />}
       </h3>
       {isEditMode && skill.type == 'weapon2' && <RemoveWeaponButton characterId={characterId} />}
