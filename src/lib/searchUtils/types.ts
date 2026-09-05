@@ -13,10 +13,13 @@ import {
 } from '@/data/types';
 
 export type SearchResult =
-  | ({ type: 'character'; matchContext: string; priority: number; isPinyinMatch: boolean } & Pick<
-      Character,
-      'id' | 'imageUrl'
-    >)
+  | ({
+      type: 'character';
+      matchContext: string;
+      priority: number;
+      isPinyinMatch: boolean;
+      matchedSkillName?: string;
+    } & Pick<Character, 'id' | 'imageUrl'>)
   | ({ type: 'card'; matchContext: string; priority: number; isPinyinMatch: boolean } & Pick<
       Card,
       'id' | 'imageUrl'

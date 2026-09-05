@@ -18,6 +18,7 @@ export async function* searchCharacters(
     let matchContext: string | undefined;
     let priority: number = 0;
     let isPinyinMatch: boolean = false;
+    let matchedSkillName: string | undefined;
 
     const characterIdLowerCase = character.id.toLowerCase();
     const characterIdPinyin = await convertToPinyin(character.id);
@@ -48,18 +49,21 @@ export async function* searchCharacters(
           break;
         }
       }
-    } else if (character.skills) {
+    }
+    if (!matchContext && character.skills) {
       for (const skill of character.skills) {
         const skillNameLowerCase = skill.name.toLowerCase();
         const skillNamePinyin = await convertToPinyin(skill.name);
 
         if (skillNameLowerCase.includes(lowerCaseQuery)) {
           matchContext = await findMatchContext([skill.name]);
+          matchedSkillName = skill.name;
           priority = 0.9;
           isPinyinMatch = false;
           break;
         } else if (skillNamePinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
           matchContext = await findMatchContext([skill.name]);
+          matchedSkillName = skill.name;
           priority = 0.85;
           isPinyinMatch = true;
           break;
@@ -75,11 +79,13 @@ export async function* searchCharacters(
 
             if (aliasLowerCase.includes(lowerCaseQuery)) {
               matchContext = `${skill.name} (${alias})`;
+              matchedSkillName = skill.name;
               priority = 0.84;
               isPinyinMatch = false;
               break;
             } else if (aliasPinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
               matchContext = `${skill.name} (${alias})`;
+              matchedSkillName = skill.name;
               priority = 0.83;
               isPinyinMatch = true;
               break;
@@ -223,11 +229,13 @@ export async function* searchCharacters(
 
         if (skill.description && skillDescriptionLowerCase?.includes(lowerCaseQuery)) {
           matchContext = await findMatchContext([skill.description]);
+          matchedSkillName = skill.name;
           priority = 0.4;
           isPinyinMatch = false;
           break;
         } else if (skillDescriptionPinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
           matchContext = await findMatchContext([skill.description]);
+          matchedSkillName = skill.name;
           priority = 0.35;
           isPinyinMatch = true;
           break;
@@ -241,11 +249,13 @@ export async function* searchCharacters(
 
         if (skill.detailedDescription && detailedDescriptionLowerCase?.includes(lowerCaseQuery)) {
           matchContext = await findMatchContext([skill.detailedDescription]);
+          matchedSkillName = skill.name;
           priority = 0.3;
           isPinyinMatch = false;
           break;
         } else if (detailedDescriptionPinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
           matchContext = await findMatchContext([skill.detailedDescription]);
+          matchedSkillName = skill.name;
           priority = 0.25;
           isPinyinMatch = true;
           break;
@@ -257,11 +267,13 @@ export async function* searchCharacters(
 
           if (levelDescriptionLowerCase.includes(lowerCaseQuery)) {
             matchContext = await findMatchContext([level.description]);
+            matchedSkillName = skill.name;
             priority = 0.2;
             isPinyinMatch = false;
             break;
           } else if (levelDescriptionPinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
             matchContext = await findMatchContext([level.description]);
+            matchedSkillName = skill.name;
             priority = 0.19;
             isPinyinMatch = true;
             break;
@@ -272,6 +284,7 @@ export async function* searchCharacters(
 
             if (levelDetailedDescriptionLowerCase.includes(lowerCaseQuery)) {
               matchContext = await findMatchContext([level.detailedDescription]);
+              matchedSkillName = skill.name;
               priority = 0.18;
               isPinyinMatch = false;
               break;
@@ -280,6 +293,7 @@ export async function* searchCharacters(
               pinyinQuery.length > 0
             ) {
               matchContext = await findMatchContext([level.detailedDescription]);
+              matchedSkillName = skill.name;
               priority = 0.17;
               isPinyinMatch = true;
               break;
@@ -298,6 +312,7 @@ export async function* searchCharacters(
         matchContext: matchContext,
         priority: priority,
         isPinyinMatch: isPinyinMatch,
+        ...(matchedSkillName ? { matchedSkillName } : {}),
       };
     }
   }

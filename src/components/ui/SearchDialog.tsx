@@ -168,7 +168,15 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
     (result: SearchResult) => {
       switch (result.type) {
         case 'character':
-          handleSelectCharacter(result.id);
+          if (result.matchedSkillName) {
+            navigate(
+              `/characters/${encodeURIComponent(result.id)}#Skill:${encodeURIComponent(
+                result.matchedSkillName
+              )}`
+            );
+          } else {
+            handleSelectCharacter(result.id);
+          }
           break;
         case 'card':
           handleSelectCard(result.id);
