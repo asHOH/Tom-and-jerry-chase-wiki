@@ -1,4 +1,4 @@
-﻿---
+---
 name: game-action-patching
 description: 'Patch and verify small, clear cohorts of at most 25 approved game_data_actions in canonical character relation/data files. Use game-action-compaction for broad, oversized, or dependency-heavy cohorts.'
 argument-hint: 'Date range, actor filter, status policy'
