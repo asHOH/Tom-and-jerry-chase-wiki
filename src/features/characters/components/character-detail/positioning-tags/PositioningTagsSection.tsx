@@ -2,10 +2,8 @@ import React, { useCallback } from 'react';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { cn, getPositioningTagColors, getPositioningTagContainerColor } from '@/lib/design';
-import { setNestedProperty } from '@/lib/editUtils';
 import { getPositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { CharacterWithFaction } from '@/lib/types';
-import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useEditableDomain, useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useAppContext } from '@/context/AppContext';
@@ -159,9 +157,8 @@ interface PositioningTagsSectionProps {
 
 function usePositioningTags({ factionId }: { factionId: FactionId }) {
   const { characterId } = useLocalCharacter();
-  const editRuntime = useDraftDataRuntime();
   const publishedCharacter = usePublishedCharacter(characterId);
-  const [localCharacter] = useEditableEntity(
+  const [localCharacter, updateCharacter] = useEditableEntity(
     { entityType: 'characters', entityId: characterId },
     publishedCharacter
   )!;
@@ -171,7 +168,6 @@ function usePositioningTags({ factionId }: { factionId: FactionId }) {
   }
   const updateTags = useCallback(
     (
-      prevChar: DeepReadonly<CharacterWithFaction>,
       updatedTags: {
         tagName: string;
         level?: PositioningTagLevel;
@@ -179,11 +175,19 @@ function usePositioningTags({ factionId }: { factionId: FactionId }) {
         additionalDescription: string;
       }[]
     ) => {
-      if (!editRuntime) return { ...prevChar, [key]: updatedTags };
-      setNestedProperty(editRuntime.stores.characters, `${localCharacter.id}.${key}`, updatedTags);
-      return { ...prevChar, [key]: updatedTags };
+      updateCharacter((draft) => {
+        if (key === 'catPositioningTags') {
+          draft.catPositioningTags = updatedTags as NonNullable<
+            CharacterWithFaction['catPositioningTags']
+          >;
+        } else {
+          draft.mousePositioningTags = updatedTags as NonNullable<
+            CharacterWithFaction['mousePositioningTags']
+          >;
+        }
+      });
     },
-    [editRuntime, key, localCharacter.id]
+    [key, updateCharacter]
   );
   const handleUpdate = useCallback(
     (
@@ -191,11 +195,10 @@ function usePositioningTags({ factionId }: { factionId: FactionId }) {
       newName: string,
       propName: 'tagName' | 'description' | 'additionalDescription'
     ) => {
-      // Removed setLocalCharacter call due to missing function.
       const updatedTags = getTags(localCharacter).map((tag, index) =>
         index == tagIndex ? { ...tag, [propName]: newName } : tag
       );
-      updateTags(localCharacter, updatedTags);
+      updateTags(updatedTags);
     },
     [localCharacter, updateTags]
   );
@@ -213,7 +216,7 @@ function usePositioningTags({ factionId }: { factionId: FactionId }) {
         }
         return tag;
       });
-      updateTags(localCharacter, updatedTags);
+      updateTags(updatedTags);
     },
     [localCharacter, updateTags]
   );
@@ -222,25 +225,23 @@ function usePositioningTags({ factionId }: { factionId: FactionId }) {
       const updatedTags = getTags(localCharacter).map((tag, index) =>
         index === tagIndex ? { ...tag, level } : tag
       );
-      updateTags(localCharacter, updatedTags);
+      updateTags(updatedTags);
     },
     [localCharacter, updateTags]
   );
   const handleAddPositioningTags = useCallback(() => {
-    // Removed setLocalCharacter call due to missing function.
     const updatedTags = getTags(localCharacter).concat({
       tagName: factionId == 'mouse' ? '奶酪' : ('进攻' as const),
       level: 4,
       description: '新增标签介绍',
       additionalDescription: '新增标签介绍',
     });
-    updateTags(localCharacter, updatedTags);
+    updateTags(updatedTags);
   }, [factionId, localCharacter, updateTags]);
   const handleRemovePositioningTags = useCallback(
     (tagIndex: number) => {
-      // Removed setLocalCharacter call due to missing function.
       const updatedTags = getTags(localCharacter).filter((_, index) => index != tagIndex);
-      updateTags(localCharacter, updatedTags);
+      updateTags(updatedTags);
     },
     [localCharacter, updateTags]
   );

@@ -96,11 +96,11 @@ function renderProperties(skill: Skill, isEditMode = false) {
     >
       <SkillCardProperties
         skill={character.skills[0]!}
-        characterId='测试角色'
         skillIndex={0}
         localCharacter={character}
         isEditMode={isEditMode}
         isDetailed={false}
+        updateCharacter={(mutate) => mutate(characters['测试角色']!)}
       />
     </EditModeContext>
   );

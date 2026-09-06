@@ -1,6 +1,5 @@
 'use client';
 
-import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { factionData } from '@/data/static';
@@ -14,13 +13,10 @@ interface KnowledgeCardManagerProps {
   factionId: FactionId;
 }
 
-// TODO: use local character to refactor
 export default function KnowledgeCardManager({ factionId }: KnowledgeCardManagerProps) {
   const { characterId } = useLocalCharacter();
-  const editRuntime = useDraftDataRuntime();
-  const editCharacter = editRuntime?.stores.characters[characterId];
   const publishedCharacter = usePublishedCharacter(characterId);
-  const [character] = useEditableEntity(
+  const [character, updateCharacter] = useEditableEntity(
     { entityType: 'characters', entityId: characterId },
     publishedCharacter
   )!;
@@ -31,28 +27,29 @@ export default function KnowledgeCardManager({ factionId }: KnowledgeCardManager
       cards: [],
       description: '待补充',
     };
-    const groups = editCharacter!.knowledgeCardGroups;
-    const generalStartIndex = Math.max(0, groups.length - generalGroupCount);
-    groups.splice(generalStartIndex, 0, newGroup);
+    updateCharacter((draft) => {
+      const groups = draft.knowledgeCardGroups;
+      const generalStartIndex = Math.max(0, groups.length - generalGroupCount);
+      groups.splice(generalStartIndex, 0, newGroup);
+    });
   };
 
   const handleRemoveGroup = (topIndex: number, innerIndex?: number) => {
-    const groups = editCharacter!.knowledgeCardGroups;
-    const generalStartIndex = Math.max(0, groups.length - generalGroupCount);
+    updateCharacter((draft) => {
+      const groups = draft.knowledgeCardGroups;
+      const generalStartIndex = Math.max(0, groups.length - generalGroupCount);
+      if (topIndex >= generalStartIndex) return;
 
-    if (topIndex >= generalStartIndex) return;
+      if (innerIndex === undefined) {
+        draft.knowledgeCardGroups = groups.filter((_, i) => i !== topIndex);
+        return;
+      }
 
-    // If no innerIndex is provided, remove a top-level group.
-    if (innerIndex === undefined) {
-      editCharacter!.knowledgeCardGroups = groups.filter((_, i) => i !== topIndex);
-      return;
-    }
-
-    // Otherwise remove the inner group from a KnowledgeCardGroupSet at topIndex.
-    const groupEntry = editCharacter!.knowledgeCardGroups[topIndex];
-    if (groupEntry && 'groups' in groupEntry && Array.isArray(groupEntry.groups)) {
-      groupEntry.groups = groupEntry.groups.filter((_, i) => i !== innerIndex);
-    }
+      const groupEntry = draft.knowledgeCardGroups[topIndex];
+      if (groupEntry && 'groups' in groupEntry && Array.isArray(groupEntry.groups)) {
+        groupEntry.groups = groupEntry.groups.filter((_, i) => i !== innerIndex);
+      }
+    });
   };
 
   return (
@@ -62,6 +59,7 @@ export default function KnowledgeCardManager({ factionId }: KnowledgeCardManager
       characterId={character.id}
       onCreateGroup={handleCreateGroup}
       onRemoveGroup={handleRemoveGroup}
+      updateCharacter={updateCharacter}
     />
   );
 }

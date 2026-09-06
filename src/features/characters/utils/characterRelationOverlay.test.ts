@@ -31,7 +31,7 @@ describe('characterRelationOverlay', () => {
   });
 
   it('should prefer page-local overlay items over projected read-model items for editable views', () => {
-    const editableRelations = getEditableCharacterRelations('莱特宁', {
+    const editableRelations = getEditableCharacterRelations(characters, '莱特宁', {
       counteredBy: [
         {
           id: '__overlay_only__',
@@ -51,9 +51,20 @@ describe('characterRelationOverlay', () => {
   });
 
   it('should write relation overlay updates under characters.<id>.<relationKind>', () => {
-    addCharacterRelationItem('莱特宁', 'counteredBy', createCharacterRelationItem('__added__'));
-    updateCharacterRelationDescription('莱特宁', 'counteredBy', '__added__', '  overlay note  ');
-    toggleCharacterRelationMinor('莱特宁', 'counteredBy', '__added__');
+    addCharacterRelationItem(
+      characters,
+      '莱特宁',
+      'counteredBy',
+      createCharacterRelationItem('__added__')
+    );
+    updateCharacterRelationDescription(
+      characters,
+      '莱特宁',
+      'counteredBy',
+      '__added__',
+      '  overlay note  '
+    );
+    toggleCharacterRelationMinor(characters, '莱特宁', 'counteredBy', '__added__');
 
     expect(
       (
@@ -90,7 +101,7 @@ describe('characterRelationOverlay', () => {
       },
     ];
 
-    removeCharacterRelationItem('莱特宁', 'counteredBy', '__remove__');
+    removeCharacterRelationItem(characters, '莱特宁', 'counteredBy', '__remove__');
 
     expect(
       (
@@ -108,12 +119,12 @@ describe('characterRelationOverlay', () => {
   });
 
   it('should upsert relation items without duplicating unchanged entries', () => {
-    upsertCharacterRelationItem('莱特宁', 'counteredBy', {
+    upsertCharacterRelationItem(characters, '莱特宁', 'counteredBy', {
       id: '__upsert__',
       description: 'first',
       isMinor: false,
     });
-    upsertCharacterRelationItem('莱特宁', 'counteredBy', {
+    upsertCharacterRelationItem(characters, '莱特宁', 'counteredBy', {
       id: '__upsert__',
       description: 'updated',
       isMinor: true,
@@ -125,7 +136,7 @@ describe('characterRelationOverlay', () => {
       }
     ).counteredBy;
 
-    upsertCharacterRelationItem('莱特宁', 'counteredBy', {
+    upsertCharacterRelationItem(characters, '莱特宁', 'counteredBy', {
       id: '__upsert__',
       description: 'updated',
       isMinor: true,
@@ -148,11 +159,16 @@ describe('characterRelationOverlay', () => {
   });
 
   it('should remove an item from multiple relation kinds while preserving projected items', () => {
-    const projected = getEditableCharacterRelations('莱特宁').counteredBy;
+    const projected = getEditableCharacterRelations(characters, '莱特宁').counteredBy;
     expect(projected.length).toBeGreaterThan(0);
 
     const removeId = projected[0]!.id;
-    removeCharacterRelationItemFromKinds('莱特宁', ['counteredBy', 'counters'], removeId);
+    removeCharacterRelationItemFromKinds(
+      characters,
+      '莱特宁',
+      ['counteredBy', 'counters'],
+      removeId
+    );
 
     const writtenCounteredBy = (
       characters['莱特宁'] as unknown as {

@@ -31,22 +31,6 @@ const rawEditRuntimeImportPattern =
 
 const mutationRuntimeExceptions = [
   'src/features/character-relations/matrix/useRelationMatrixEditMode.ts',
-  'src/features/characters/components/character-detail/CharacterDetails.tsx',
-  'src/features/characters/components/character-detail/knowledge-cards/KnowledgeCardManager.tsx',
-  'src/features/characters/components/character-detail/knowledge-cards/KnowledgeCardSection.tsx',
-  'src/features/characters/components/character-detail/positioning-tags/PositioningTagsSection.tsx',
-  'src/features/characters/components/character-detail/skills/RecommendedStorePlansSection.tsx',
-  'src/features/characters/components/character-detail/skills/SkillAllocationSection.tsx',
-  'src/features/characters/components/character-detail/skills/SkillCard.tsx',
-  'src/features/characters/components/character-detail/skills/SkillCardMedia.tsx',
-  'src/features/characters/components/character-detail/skills/SkillCardProperties.tsx',
-  'src/features/characters/components/character-detail/skills/SpecialSkillsSection.tsx',
-  'src/features/characters/components/character-detail/useCharacterActions.ts',
-  'src/features/characters/components/character-grid/CharacterCreate.tsx',
-  'src/features/characters/components/character-grid/CharacterImport.tsx',
-  'src/features/characters/utils/characterRelationOverlay.ts',
-  // Card-rank changes repair character references; Phase 3 owns that cross-domain mutation.
-  'src/features/knowledge-cards/components/knowledge-card-detail/KnowledgeCardAttributesCard.tsx',
 ].sort();
 
 function listSourceFiles(root: string): string[] {

@@ -4,7 +4,8 @@ import { useState } from 'react';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { cn } from '@/lib/design';
-import { requireActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
+import type { CharacterWithFaction } from '@/lib/types';
+import type { EditableUpdate } from '@/hooks/useEditableGameData';
 import type { Skill } from '@/data/types';
 import Button from '@/components/ui/Button';
 import { editable } from '@/components/ui/editable';
@@ -14,14 +15,14 @@ const e = editable('characters');
 
 export default function SkillCardMedia({
   skill,
-  characterId,
   skillIndex,
   isEditMode,
+  updateCharacter,
 }: {
   skill: DeepReadonly<Skill>;
-  characterId: string;
   skillIndex: number;
   isEditMode: boolean;
+  updateCharacter: EditableUpdate<CharacterWithFaction>;
 }) {
   const [showVideoAddress, setShowVideoAddress] = useState(false);
 
@@ -62,13 +63,14 @@ export default function SkillCardMedia({
               path={`skills.${skillIndex}.videoUrl`}
               initialValue={skill.videoUrl ?? '输入视频网址'}
               onSave={(newValue) => {
-                const skill =
-                  requireActiveEditRuntime().stores.characters[characterId]!.skills[skillIndex]!;
-                if (newValue.trim() === '输入视频网址' || newValue.trim() === '') {
-                  delete skill.videoUrl;
-                } else {
-                  skill.videoUrl = newValue.trim();
-                }
+                updateCharacter((draft) => {
+                  const skill = draft.skills[skillIndex]!;
+                  if (newValue.trim() === '输入视频网址' || newValue.trim() === '') {
+                    delete skill.videoUrl;
+                  } else {
+                    skill.videoUrl = newValue.trim();
+                  }
+                });
               }}
             />
           )}

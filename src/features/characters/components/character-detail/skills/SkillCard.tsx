@@ -5,9 +5,8 @@ import React, { Fragment } from 'react';
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { AssetManager } from '@/lib/assetManager';
 import { cn, getSkillLevelColors, getSkillLevelContainerColor } from '@/lib/design';
-import { requireActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
 import { CharacterWithFaction } from '@/lib/types';
-import { useEditableEntity } from '@/hooks/useEditableGameData';
+import { useEditableEntity, type EditableUpdate } from '@/hooks/useEditableGameData';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
@@ -85,38 +84,42 @@ function getSkillTypeLabel(type: string, isSingleWeapon?: boolean) {
 }
 
 function updateSkillName({
-  characterId,
   skillIndex,
   localCharacter,
+  updateCharacter,
   newName,
 }: {
-  characterId: string;
   skillIndex: number;
   localCharacter: CharacterWithFaction;
+  updateCharacter: EditableUpdate<CharacterWithFaction>;
   newName: string;
 }) {
   const factionId = localCharacter.factionId!;
-  const characters = requireActiveEditRuntime().stores.characters;
-  const skill = characters[characterId]!.skills[skillIndex]!;
-  skill.name = newName;
-  skill.imageUrl = AssetManager.getSkillImageUrl(
-    localCharacter.id,
-    { ...skill, name: newName },
-    factionId
-  );
+  updateCharacter((draft) => {
+    const skill = draft.skills[skillIndex]!;
+    skill.name = newName;
+    skill.imageUrl = AssetManager.getSkillImageUrl(
+      localCharacter.id,
+      { ...skill, name: newName },
+      factionId
+    );
+  });
 }
 
-function RemoveWeaponButton({ characterId }: { characterId: string }) {
+function RemoveWeaponButton({
+  updateCharacter,
+}: {
+  updateCharacter: EditableUpdate<CharacterWithFaction>;
+}) {
   return (
     <IconButton
       type='button'
       aria-label='移除技能'
-      onClick={() => {
-        const characters = requireActiveEditRuntime().stores.characters;
-        characters[characterId]!.skills = characters[characterId]!.skills.filter(
-          ({ type }: Skill) => type != 'weapon2'
-        );
-      }}
+      onClick={() =>
+        updateCharacter((draft) => {
+          draft.skills = draft.skills.filter(({ type }: Skill) => type != 'weapon2');
+        })
+      }
       variant='delete'
       size='md'
       className='ml-auto'
@@ -137,17 +140,17 @@ function SkillHistory({ skill, className }: { skill: DeepReadonly<Skill>; classN
 function SkillHeader({
   skill,
   skillTypeLabel,
-  characterId,
   skillIndex,
   localCharacter,
+  updateCharacter,
   isEditMode,
   showHistory,
 }: {
   skill: DeepReadonly<Skill>;
   skillTypeLabel: string;
-  characterId: string;
   skillIndex: number;
   localCharacter: CharacterWithFaction;
+  updateCharacter: EditableUpdate<CharacterWithFaction>;
   isEditMode: boolean;
   showHistory: boolean;
 }) {
@@ -163,7 +166,7 @@ function SkillHeader({
           initialValue={skill.name}
           isSingleLine={true}
           onSave={(newName) =>
-            updateSkillName({ characterId, skillIndex, localCharacter, newName })
+            updateSkillName({ skillIndex, localCharacter, updateCharacter, newName })
           }
         />
         <a
@@ -176,7 +179,9 @@ function SkillHeader({
         </a>
         {showHistory && <SkillHistory skill={skill} className='font-normal' />}
       </h3>
-      {isEditMode && skill.type == 'weapon2' && <RemoveWeaponButton characterId={characterId} />}
+      {isEditMode && skill.type == 'weapon2' && (
+        <RemoveWeaponButton updateCharacter={updateCharacter} />
+      )}
     </div>
   );
 }
@@ -222,10 +227,10 @@ export default function SkillCard({
   const { isEditMode } = useEditMode();
   const { isDetailedView: isDetailed } = useAppContext();
   const publishedCharacter = usePublishedCharacter(characterId);
-  const [localCharacter] = useEditableEntity(
+  const [localCharacter, updateCharacter] = useEditableEntity(
     { entityType: 'characters', entityId: characterId },
     publishedCharacter
-  ) as unknown as readonly [CharacterWithFaction];
+  ) as unknown as readonly [CharacterWithFaction, EditableUpdate<CharacterWithFaction>];
   const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
   const skillTypeLabel = getSkillTypeLabel(skill.type, isSingleWeapon);
@@ -238,28 +243,28 @@ export default function SkillCard({
       <div className='flex items-start'>
         <SkillCardMedia
           skill={skill}
-          characterId={characterId}
           skillIndex={skillIndex}
           isEditMode={isEditMode}
+          updateCharacter={updateCharacter}
         />
         <div className='flex-1'>
           <SkillHeader
             skill={skill}
             skillTypeLabel={skillTypeLabel}
-            characterId={characterId}
             skillIndex={skillIndex}
             localCharacter={localCharacter}
             isEditMode={isEditMode}
             showHistory={!isMobile && !isEditMode}
+            updateCharacter={updateCharacter}
           />
           {(!isMobile || !isEditMode) && (
             <SkillCardProperties
               skill={skill}
-              characterId={characterId}
               skillIndex={skillIndex}
               localCharacter={localCharacter}
               isEditMode={isEditMode}
               isDetailed={isDetailed}
+              updateCharacter={updateCharacter}
             />
           )}
           {!isMobile && (
@@ -279,12 +284,12 @@ export default function SkillCard({
           {isEditMode && (
             <SkillCardProperties
               skill={skill}
-              characterId={characterId}
               skillIndex={skillIndex}
               localCharacter={localCharacter}
               isEditMode={isEditMode}
               isDetailed={isDetailed}
               isMobileEditMode={true}
+              updateCharacter={updateCharacter}
             />
           )}
           <SkillDescription

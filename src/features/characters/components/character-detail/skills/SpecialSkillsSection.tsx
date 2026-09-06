@@ -1,4 +1,3 @@
-import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useEditableDomain, useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useEditMode } from '@/context/EditModeContext';
@@ -20,10 +19,8 @@ export default function SpecialSkillsSection() {
   'use no memo';
   const { characterId } = useLocalCharacter();
   const { isEditMode } = useEditMode();
-  const editRuntime = useDraftDataRuntime();
-  const rawCharacter = editRuntime?.stores.characters[characterId];
   const publishedCharacter = usePublishedCharacter(characterId);
-  const [character] = useEditableEntity(
+  const [character, updateCharacter] = useEditableEntity(
     { entityType: 'characters', entityId: characterId },
     publishedCharacter
   )!;
@@ -34,18 +31,18 @@ export default function SpecialSkillsSection() {
   const faction = character.factionId ? factionData[character.factionId] : undefined;
 
   const insertCustomSkill = () => {
-    const skills = rawCharacter!.specialSkills ?? [];
+    const skills = character.specialSkills ?? [];
     const generalStartIndex = faction
       ? skills.findIndex((skill) => isGeneralSpecialSkill(skill, faction))
       : -1;
     const insertionIndex = generalStartIndex === -1 ? skills.length : generalStartIndex;
 
-    if (!rawCharacter!.specialSkills) {
-      rawCharacter!.specialSkills = [];
-    }
-    rawCharacter!.specialSkills!.splice(insertionIndex, 0, {
-      name: character.factionId === 'cat' ? '绝地反击' : '魔术漂浮',
-      description: '',
+    updateCharacter((draft) => {
+      draft.specialSkills ??= [];
+      draft.specialSkills.splice(insertionIndex, 0, {
+        name: character.factionId === 'cat' ? '绝地反击' : '魔术漂浮',
+        description: '',
+      });
     });
   };
 
@@ -122,7 +119,11 @@ export default function SpecialSkillsSection() {
                           <IconButton
                             type='button'
                             aria-label='移除特技'
-                            onClick={() => rawCharacter!.specialSkills!.splice(index, 1)}
+                            onClick={() =>
+                              updateCharacter((draft) => {
+                                draft.specialSkills!.splice(index, 1);
+                              })
+                            }
                             variant='delete'
                             size='md'
                             className='ml-auto'

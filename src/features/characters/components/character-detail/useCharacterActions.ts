@@ -1,5 +1,4 @@
 import { AssetManager } from '@/lib/assetManager';
-import { requireActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
 import { generateTypescriptCodeFromCharacter } from '@/lib/editUtils';
 import type { CharacterWithFaction } from '@/lib/types';
 import { useEditableEntity } from '@/hooks/useEditableGameData';
@@ -11,7 +10,7 @@ import { usePublishedCharacter } from './PublishedCharacterContext';
 export function useCharacterActions() {
   const { characterId } = useLocalCharacter();
   const publishedCharacter = usePublishedCharacter(characterId);
-  const [localCharacter] = useEditableEntity(
+  const [localCharacter, updateCharacter] = useEditableEntity(
     { entityType: 'characters', entityId: characterId },
     publishedCharacter
   )!;
@@ -25,11 +24,10 @@ export function useCharacterActions() {
       imageUrl: AssetManager.getSkillImageUrl(localCharacter.id, firstWeapon, factionId),
       id: firstWeapon.id.slice(0, -1) + '2',
     };
-    function modifySkillObject(character: CharacterWithFaction) {
+    updateCharacter((character: CharacterWithFaction) => {
       const index = character.skills.findIndex(({ type }) => type == 'weapon1');
       character.skills.splice(index + 1, 0, secondWeapon as unknown as Skill);
-    }
-    modifySkillObject(requireActiveEditRuntime().stores.characters[localCharacter.id]!);
+    });
   }
 
   async function exportCharacter() {

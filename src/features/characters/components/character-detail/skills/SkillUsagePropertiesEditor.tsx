@@ -27,8 +27,7 @@ const cancelableOptions = [
 
 type SkillUsagePropertiesEditorProps = {
   usage: DeepReadonly<SkillUsageProperties>;
-  usageRef?: SkillUsageProperties | undefined;
-  updateUsage?: EditableUpdate<SkillUsageProperties> | undefined;
+  updateUsage: EditableUpdate<SkillUsageProperties>;
   pathPrefix: string;
   radioNameSuffix: string;
   factionId?: FactionId | undefined;
@@ -248,24 +247,17 @@ function RadioGroup<T extends string>({
 
 export default function SkillUsagePropertiesEditor({
   usage,
-  usageRef,
   updateUsage,
   pathPrefix,
   radioNameSuffix,
   factionId,
   scope = 'characters',
 }: SkillUsagePropertiesEditorProps) {
-  const mutateUsage: EditableUpdate<SkillUsageProperties> =
-    updateUsage ??
-    ((mutate) => {
-      if (usageRef) mutate(usageRef);
-    });
-
   return (
     <div className='space-y-2'>
       <BooleanCheckbox
         usage={usage}
-        updateUsage={mutateUsage}
+        updateUsage={updateUsage}
         property='canMoveWhileUsing'
         label='移动释放'
         trueText='可移动释放'
@@ -273,7 +265,7 @@ export default function SkillUsagePropertiesEditor({
       />
       <BooleanCheckbox
         usage={usage}
-        updateUsage={mutateUsage}
+        updateUsage={updateUsage}
         property='canUseInAir'
         label='空中释放'
         trueText='可空中释放'
@@ -282,7 +274,7 @@ export default function SkillUsagePropertiesEditor({
       {factionId === 'cat' && (
         <BooleanCheckbox
           usage={usage}
-          updateUsage={mutateUsage}
+          updateUsage={updateUsage}
           property='causesWoundedState'
           label='造成受伤状态'
           trueText='可造成受伤状态'
@@ -291,21 +283,21 @@ export default function SkillUsagePropertiesEditor({
       )}
       <CancelableEditor
         usage={usage}
-        updateUsage={mutateUsage}
+        updateUsage={updateUsage}
         pathPrefix={pathPrefix}
         phase='forecast'
         scope={scope}
       />
       <CancelableEditor
         usage={usage}
-        updateUsage={mutateUsage}
+        updateUsage={updateUsage}
         pathPrefix={pathPrefix}
         phase='aftercast'
         scope={scope}
       />
       <BooleanCheckbox
         usage={usage}
-        updateUsage={mutateUsage}
+        updateUsage={updateUsage}
         property='canHitInPipe'
         label='管道攻击'
         trueText='可击中管道中的角色'
@@ -313,7 +305,7 @@ export default function SkillUsagePropertiesEditor({
       />
       <RadioGroup
         usage={usage}
-        updateUsage={mutateUsage}
+        updateUsage={updateUsage}
         property='cooldownTiming'
         label='CD时机'
         options={['前摇前', '释放时', '释放后'] as const}
@@ -322,7 +314,7 @@ export default function SkillUsagePropertiesEditor({
       />
       <RadioGroup
         usage={usage}
-        updateUsage={mutateUsage}
+        updateUsage={updateUsage}
         property='cueRange'
         label='技能音效'
         options={['随距离远近变化', '全图可见', '本房间可见', '无音效'] as const}

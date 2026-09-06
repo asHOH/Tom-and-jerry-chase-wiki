@@ -196,6 +196,7 @@ describe('KnowledgeCardSection', () => {
           characterId={characterId}
           onCreateGroup={jest.fn()}
           onRemoveGroup={jest.fn()}
+          updateCharacter={(mutate) => mutate(characters[characterId]!)}
         />
       );
 

@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 
+import type { CharacterWithFaction } from '@/lib/types';
 import {
   removeCharacterRelationItemFromKinds,
   upsertCharacterRelationItem,
@@ -23,6 +24,7 @@ type MockBaseDialogProps = {
 const mockBaseDialog = jest.fn(({ open, children }: MockBaseDialogProps) =>
   open ? <div role='dialog'>{children}</div> : null
 );
+const mockCharacters: Record<string, CharacterWithFaction> = {};
 
 jest.mock('@/components/ui/BaseDialog', () => ({
   BaseDialog: (props: MockBaseDialogProps) => mockBaseDialog(props),
@@ -83,6 +85,7 @@ const renderEditor = ({
       selection={selection}
       columnCategory={columnCategory}
       onOpenChange={onOpenChange}
+      updateCharacters={(mutate) => mutate(mockCharacters)}
     />
   );
 
@@ -163,26 +166,40 @@ describe('RelationMatrixCellEditor', () => {
 
     expect(removeCharacterRelationItemFromKindsMock).toHaveBeenNthCalledWith(
       1,
+      mockCharacters,
       '杰瑞',
       ['counteredBy', 'counterEachOther'],
       '汤姆'
     );
     expect(removeCharacterRelationItemFromKindsMock).toHaveBeenNthCalledWith(
       2,
+      mockCharacters,
       '汤姆',
       ['counters', 'counterEachOther'],
       '杰瑞'
     );
-    expect(upsertCharacterRelationItemMock).toHaveBeenNthCalledWith(1, '杰瑞', 'counters', {
-      id: '汤姆',
-      description: '保留说明',
-      isMinor: true,
-    });
-    expect(upsertCharacterRelationItemMock).toHaveBeenNthCalledWith(2, '汤姆', 'counteredBy', {
-      id: '杰瑞',
-      description: '保留说明',
-      isMinor: true,
-    });
+    expect(upsertCharacterRelationItemMock).toHaveBeenNthCalledWith(
+      1,
+      mockCharacters,
+      '杰瑞',
+      'counters',
+      {
+        id: '汤姆',
+        description: '保留说明',
+        isMinor: true,
+      }
+    );
+    expect(upsertCharacterRelationItemMock).toHaveBeenNthCalledWith(
+      2,
+      mockCharacters,
+      '汤姆',
+      'counteredBy',
+      {
+        id: '杰瑞',
+        description: '保留说明',
+        isMinor: true,
+      }
+    );
     expect(onOpenChange).toHaveBeenCalledWith(false);
   });
 
@@ -196,12 +213,14 @@ describe('RelationMatrixCellEditor', () => {
 
     expect(removeCharacterRelationItemFromKindsMock).toHaveBeenNthCalledWith(
       1,
+      mockCharacters,
       '杰瑞',
       ['counters', 'counteredBy', 'counterEachOther'],
       '汤姆'
     );
     expect(removeCharacterRelationItemFromKindsMock).toHaveBeenNthCalledWith(
       2,
+      mockCharacters,
       '汤姆',
       ['counteredBy', 'counters', 'counterEachOther'],
       '杰瑞'

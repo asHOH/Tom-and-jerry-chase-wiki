@@ -3,12 +3,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
 import json5 from 'json5';
-import { proxy } from 'valtio';
 
 import { AssetManager } from '@/lib/assetManager';
 import { GameDataManager } from '@/lib/dataManager';
-import { requireActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
 import { CharacterWithFaction } from '@/lib/types';
+import { useEditableDomain, type EditableUpdate } from '@/hooks/useEditableGameData';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { useToast } from '@/context/ToastContext';
@@ -23,6 +22,7 @@ import { ArrowUpTrayIcon } from '@/components/icons/CommonIcons';
 function handleUploadedData(
   data: string,
   factionId: FactionId,
+  updateCharacters: EditableUpdate<Record<string, CharacterWithFaction>>,
   onImportSuccess: (names: string[]) => void
 ) {
   let newCharacters: Record<string, CharacterWithFaction>;
@@ -53,13 +53,7 @@ function handleUploadedData(
   }
 
   newCharacters = processCharacters(newCharacters) as Record<string, CharacterWithFaction>;
-  const characters = requireActiveEditRuntime().stores.characters;
-
-  // Update the global characters object
-  for (const [id, value] of Object.entries(newCharacters)) {
-    // Use proxies so sub-reads via useSnapshot work on nested structures
-    characters[id] = proxy(value);
-  }
+  updateCharacters((characters) => Object.assign(characters, newCharacters));
 
   // Trigger success callback - no reload needed, let's see if UI updates automatically
   GameDataManager.invalidate({ characters: true, factions: true });
@@ -129,6 +123,7 @@ export default function CharacterImport() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const params = useParams();
   const factionId = params?.factionId as FactionId;
+  const [, updateCharacters] = useEditableDomain('characters', {});
 
   const handleImportSuccess = (names: string[]) => {
     // Create the notification message
@@ -158,7 +153,7 @@ export default function CharacterImport() {
       reader.onload = (e) => {
         const content = e.target?.result;
         if (typeof content === 'string') {
-          handleUploadedData(content, factionId, handleImportSuccess);
+          handleUploadedData(content, factionId, updateCharacters, handleImportSuccess);
           setShowImportOptions(false);
         }
       };
@@ -172,7 +167,7 @@ export default function CharacterImport() {
       try {
         const clipboardContent = await navigator.clipboard.readText();
         if (!clipboardContent.includes('Error: Clipboard read operation is not allowed.')) {
-          handleUploadedData(clipboardContent, factionId, handleImportSuccess);
+          handleUploadedData(clipboardContent, factionId, updateCharacters, handleImportSuccess);
           setShowImportOptions(false);
         } else {
           setShowImportOptions(false);
@@ -191,7 +186,7 @@ export default function CharacterImport() {
   };
 
   const handlePasteModalContent = (content: string) => {
-    handleUploadedData(content, factionId, handleImportSuccess);
+    handleUploadedData(content, factionId, updateCharacters, handleImportSuccess);
     setShowPasteInput(false);
   };
 

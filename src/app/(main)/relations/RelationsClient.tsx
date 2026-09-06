@@ -173,7 +173,10 @@ export default function RelationsClient({
   const { isEditMode, registerPublishedRevision } = useEditMode();
   const { info } = useToast();
   const publishedData = data ?? STATIC_RELATION_DATA;
-  const [charactersSnapshot] = useEditableDomain('characters', publishedData.characters);
+  const [charactersSnapshot, updateCharacters] = useEditableDomain(
+    'characters',
+    publishedData.characters
+  );
   const [rowFaction, setRowFaction] = useState<RelationMatrixRowFaction>('mouse');
   const [columnCategory, setColumnCategory] = useState<RelationMatrixColumnCategory>('cat');
   const [matrixSize, setMatrixSize] = useState(DEFAULT_MATRIX_SIZE);
@@ -211,8 +214,7 @@ export default function RelationsClient({
             }
           : publishedData,
         getRelationsForRow: isRelationEditMode
-          ? (characterId) =>
-              getEditableCharacterRelations(characterId, charactersSnapshot[characterId])
+          ? (characterId) => getEditableCharacterRelations(charactersSnapshot, characterId)
           : (characterId) => getCharacterRelation(publishedData.characters, characterId),
       }),
     [charactersSnapshot, coercedColumnCategory, publishedData, isRelationEditMode, rowFaction]
@@ -298,6 +300,7 @@ export default function RelationsClient({
               selection={selectedCell}
               columnCategory={coercedColumnCategory}
               onOpenChange={handleEditorOpenChange}
+              updateCharacters={updateCharacters}
             />
             <EditModeToolbar
               isDirty={isDirty}

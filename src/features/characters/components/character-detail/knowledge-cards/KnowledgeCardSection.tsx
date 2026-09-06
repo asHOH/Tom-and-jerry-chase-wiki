@@ -3,7 +3,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
-import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
+import type { CharacterWithFaction } from '@/lib/types';
+import type { EditableUpdate } from '@/hooks/useEditableGameData';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { factionData } from '@/data/static';
@@ -62,6 +63,7 @@ type KnowledgeCardSectionProps = {
   characterId: string;
   onCreateGroup: () => void;
   onRemoveGroup: (topIndex: number, innerIndex?: number) => void;
+  updateCharacter: EditableUpdate<CharacterWithFaction>;
 };
 
 export default function KnowledgeCardSection({
@@ -70,11 +72,10 @@ export default function KnowledgeCardSection({
   characterId,
   onCreateGroup,
   onRemoveGroup,
+  updateCharacter,
 }: KnowledgeCardSectionProps) {
   const { handleSelectCard } = useAppContext();
   const { isEditMode } = useEditMode();
-  const editRuntime = useDraftDataRuntime();
-  const editCharacter = editRuntime?.stores.characters[characterId];
   const generalGroupCount = getGeneralKnowledgeCardGroupCount(factionData[factionId]);
   const [isPickerOpen, setPickerOpen] = useState(false);
   const [currentTarget, setCurrentTarget] = useState<{
@@ -139,16 +140,18 @@ export default function KnowledgeCardSection({
     innerIndex: number | undefined,
     newCards: readonly string[]
   ) => {
-    if (innerIndex === undefined) {
-      (editCharacter!.knowledgeCardGroups[topIndex] as KnowledgeCardGroup).cards = Array.from(
-        newCards
-      ) as CardGroup[];
-      return;
-    }
-    const groupEntry = editCharacter!.knowledgeCardGroups[topIndex];
-    if (groupEntry && 'groups' in groupEntry && Array.isArray(groupEntry.groups)) {
-      groupEntry.groups[innerIndex]!.cards = Array.from(newCards) as CardGroup[];
-    }
+    updateCharacter((draft) => {
+      if (innerIndex === undefined) {
+        (draft.knowledgeCardGroups[topIndex] as KnowledgeCardGroup).cards = Array.from(
+          newCards
+        ) as CardGroup[];
+        return;
+      }
+      const groupEntry = draft.knowledgeCardGroups[topIndex];
+      if (groupEntry && 'groups' in groupEntry && Array.isArray(groupEntry.groups)) {
+        groupEntry.groups[innerIndex]!.cards = Array.from(newCards) as CardGroup[];
+      }
+    });
   };
 
   const updateGroupSetMetadata = (
@@ -156,9 +159,11 @@ export default function KnowledgeCardSection({
     field: 'id' | 'description' | 'detailedDescription' | 'defaultFolded',
     value: string | boolean | undefined
   ) => {
-    const entry = editCharacter!.knowledgeCardGroups[topIndex];
-    if (!entry || !('groups' in entry)) return;
-    (entry as unknown as Record<string, string | boolean | undefined>)[field] = value;
+    updateCharacter((draft) => {
+      const entry = draft.knowledgeCardGroups[topIndex];
+      if (!entry || !('groups' in entry)) return;
+      (entry as unknown as Record<string, string | boolean | undefined>)[field] = value;
+    });
   };
 
   const handleEditClick = (topIndex: number, innerIndex?: number) => {
@@ -218,14 +223,16 @@ export default function KnowledgeCardSection({
     innerIndex: number | undefined,
     newCards: CardGroup[]
   ) => {
-    if (innerIndex === undefined) {
-      (editCharacter!.knowledgeCardGroups[topIndex] as KnowledgeCardGroup).cards = newCards;
-    } else {
-      const entry = editCharacter!.knowledgeCardGroups[topIndex];
-      if (entry && 'groups' in entry && Array.isArray(entry.groups)) {
-        entry.groups[innerIndex]!.cards = newCards;
+    updateCharacter((draft) => {
+      if (innerIndex === undefined) {
+        (draft.knowledgeCardGroups[topIndex] as KnowledgeCardGroup).cards = newCards;
+      } else {
+        const entry = draft.knowledgeCardGroups[topIndex];
+        if (entry && 'groups' in entry && Array.isArray(entry.groups)) {
+          entry.groups[innerIndex]!.cards = newCards;
+        }
       }
-    }
+    });
   };
 
   const handleAdvancedEditorSave = (newCards: CardGroup[]) => {
@@ -238,7 +245,7 @@ export default function KnowledgeCardSection({
 
   /** Convert a top-level KnowledgeCardGroup into a KnowledgeCardGroupSet. */
   const handleConvertToGroupSet = (topIndex: number) => {
-    const entry = editCharacter!.knowledgeCardGroups[topIndex];
+    const entry = knowledgeCardGroups[topIndex];
     if (!entry || !('cards' in entry)) return;
 
     const group = entry as KnowledgeCardGroup;
@@ -255,16 +262,18 @@ export default function KnowledgeCardSection({
       groups: [innerGroup, { cards: [], description: '待补充' }],
       defaultFolded: false,
     };
-    editCharacter!.knowledgeCardGroups[topIndex] = newSet;
+    updateCharacter((draft) => {
+      draft.knowledgeCardGroups[topIndex] = newSet;
+    });
   };
 
   /** Add a new empty inner group to an existing KnowledgeCardGroupSet. */
   const handleAddInnerGroup = (topIndex: number) => {
-    const entry = editCharacter!.knowledgeCardGroups[topIndex];
-    if (!entry || !('groups' in entry)) return;
-
-    const set = entry as KnowledgeCardGroupSet;
-    set.groups = [...set.groups, { cards: [], description: '待补充' }];
+    updateCharacter((draft) => {
+      const entry = draft.knowledgeCardGroups[topIndex];
+      if (!entry || !('groups' in entry)) return;
+      entry.groups = [...entry.groups, { cards: [], description: '待补充' }];
+    });
   };
 
   // Get initial selected cards - flatten for picker

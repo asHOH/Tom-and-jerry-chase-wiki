@@ -6,6 +6,7 @@ import type { DeepReadonly } from '@/types/deep-readonly';
 import { getNestedProperty, handleCharacterIdChange, setNestedProperty } from '@/lib/editUtils';
 import type { PublishableEntityType } from '@/lib/gameData/publishableEntityTypes';
 import {
+  useEditableDomain,
   useEditableEntity,
   type EditableEntityRef,
   type EditableUpdate,
@@ -138,6 +139,7 @@ export function useEditableCharactersAdapter(
     entityType: 'characters',
     entityId: characterId,
   });
+  const [, updateCharacters] = useEditableDomain('characters', {});
   const { handleSelectCharacter } = useAppContext();
   const pathPrefix = typeof character?.id === 'string' ? character.id : characterId;
 
@@ -160,19 +162,30 @@ export function useEditableCharactersAdapter(
           throw new Error(`Cannot edit characters.id because "${pathPrefix}" has no faction.`);
         }
 
-        handleCharacterIdChange(
-          pathPrefix,
-          String(value),
-          resolvedFactionId,
-          handleSelectCharacter,
-          true
+        updateCharacters((characters) =>
+          handleCharacterIdChange(
+            characters,
+            pathPrefix,
+            String(value),
+            resolvedFactionId,
+            handleSelectCharacter,
+            true
+          )
         );
         return;
       }
 
       updateCharacter((record) => setNestedProperty(record, path, value));
     },
-    [character?.factionId, factionId, handleSelectCharacter, path, pathPrefix, updateCharacter]
+    [
+      character?.factionId,
+      factionId,
+      handleSelectCharacter,
+      path,
+      pathPrefix,
+      updateCharacter,
+      updateCharacters,
+    ]
   );
 
   return { actionPath: getActionPath(pathPrefix, path), readStoredValue, writeValue };

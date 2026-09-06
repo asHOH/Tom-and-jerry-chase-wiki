@@ -1,7 +1,7 @@
-import { getActiveEditRuntime, requireActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
+import type { DeepReadonly } from '@/types/deep-readonly';
 import { CHARACTER_RELATION_KINDS } from '@/lib/edit/characterRelationActions';
 import { setNestedProperty } from '@/lib/editUtils';
-import { characters as staticCharacters } from '@/data/static';
+import type { CharacterWithFaction } from '@/lib/types';
 import type { CharacterRelationItem, TraitRelationKind } from '@/data/types';
 import { getCharacterRelation } from '@/features/characters/utils/relationReadModel';
 
@@ -9,6 +9,8 @@ export type EditableCharacterRelations = Record<TraitRelationKind, CharacterRela
 type CharacterRelationOverlayRecord = Partial<
   Record<TraitRelationKind, readonly Readonly<CharacterRelationItem>[]>
 >;
+type CharacterRelationsSource = DeepReadonly<Record<string, CharacterWithFaction>>;
+type MutableCharacters = Record<string, CharacterWithFaction>;
 
 const normalizeCharacterRelationItem = (
   item: Readonly<CharacterRelationItem>
@@ -37,8 +39,11 @@ const isSameCharacterRelationItem = (
   !!left.isMinor === !!right.isMinor &&
   JSON.stringify(left.tags ?? []) === JSON.stringify(right.tags ?? []);
 
-const ownsCharacterRelationKind = (characterId: string, relationKind: TraitRelationKind) => {
-  const characters = requireActiveEditRuntime().stores.characters;
+const ownsCharacterRelationKind = (
+  characters: CharacterRelationsSource,
+  characterId: string,
+  relationKind: TraitRelationKind
+) => {
   const characterRecord = characters[characterId] as
     Partial<Record<TraitRelationKind, CharacterRelationItem[]>> | undefined;
 
@@ -53,10 +58,10 @@ export const getCharacterRelationDescriptionPath = (
 ) => `${relationKind}.${index}`;
 
 export const getEditableCharacterRelations = (
+  characters: CharacterRelationsSource,
   characterId: string,
   character?: unknown
 ): EditableCharacterRelations => {
-  const characters = getActiveEditRuntime()?.stores.characters ?? staticCharacters;
   const characterRecord = character ?? characters[characterId];
   const projectedRelations = getCharacterRelation(characters, characterId);
 
@@ -78,25 +83,24 @@ export const getEditableCharacterRelations = (
 };
 
 const writeCharacterRelationItems = (
+  characters: MutableCharacters,
   characterId: string,
   relationKind: TraitRelationKind,
   items: CharacterRelationItem[]
 ) => {
-  const characters = requireActiveEditRuntime().stores.characters;
   setNestedProperty(characters, `${characterId}.${relationKind}`, items);
-  if (characters[characterId]) {
-    (characters[characterId] as Record<string, unknown>)[relationKind] = items;
-  }
 };
 
 const updateCharacterRelationItem = (
+  characters: MutableCharacters,
   characterId: string,
   relationKind: TraitRelationKind,
   itemId: string,
   updater: (item: CharacterRelationItem) => CharacterRelationItem
 ) => {
-  const current = getEditableCharacterRelations(characterId)[relationKind] ?? [];
+  const current = getEditableCharacterRelations(characters, characterId)[relationKind] ?? [];
   writeCharacterRelationItems(
+    characters,
     characterId,
     relationKind,
     current.map((item) => (item.id === itemId ? updater(item) : item))
@@ -110,26 +114,31 @@ export const createCharacterRelationItem = (id: string): CharacterRelationItem =
 });
 
 export const addCharacterRelationItem = (
+  characters: MutableCharacters,
   characterId: string,
   relationKind: TraitRelationKind,
   item: CharacterRelationItem
 ) => {
-  const current = getEditableCharacterRelations(characterId)[relationKind] ?? [];
+  const current = getEditableCharacterRelations(characters, characterId)[relationKind] ?? [];
   if (current.some((existing) => existing.id === item.id)) return;
-  writeCharacterRelationItems(characterId, relationKind, [...current, item]);
+  writeCharacterRelationItems(characters, characterId, relationKind, [...current, item]);
 };
 
 export const upsertCharacterRelationItem = (
+  characters: MutableCharacters,
   characterId: string,
   relationKind: TraitRelationKind,
   item: CharacterRelationItem
 ) => {
   const normalizedItem = normalizeCharacterRelationItem(item);
-  const current = getEditableCharacterRelations(characterId)[relationKind] ?? [];
+  const current = getEditableCharacterRelations(characters, characterId)[relationKind] ?? [];
   const currentIndex = current.findIndex((existing) => existing.id === normalizedItem.id);
 
   if (currentIndex === -1) {
-    writeCharacterRelationItems(characterId, relationKind, [...current, normalizedItem]);
+    writeCharacterRelationItems(characters, characterId, relationKind, [
+      ...current,
+      normalizedItem,
+    ]);
     return;
   }
 
@@ -139,6 +148,7 @@ export const upsertCharacterRelationItem = (
   }
 
   writeCharacterRelationItems(
+    characters,
     characterId,
     relationKind,
     current.map((existing, index) => (index === currentIndex ? normalizedItem : existing))
@@ -146,25 +156,27 @@ export const upsertCharacterRelationItem = (
 };
 
 export const updateCharacterRelationDescription = (
+  characters: MutableCharacters,
   characterId: string,
   relationKind: TraitRelationKind,
   itemId: string,
   description: string
 ) => {
   const nextDescription = description.trim();
-  updateCharacterRelationItem(characterId, relationKind, itemId, (item) => ({
+  updateCharacterRelationItem(characters, characterId, relationKind, itemId, (item) => ({
     ...item,
     description: nextDescription,
   }));
 };
 
 export const updateCharacterRelationTags = (
+  characters: MutableCharacters,
   characterId: string,
   relationKind: TraitRelationKind,
   itemId: string,
   tags: CharacterRelationItem['tags']
 ) => {
-  updateCharacterRelationItem(characterId, relationKind, itemId, (item) => {
+  updateCharacterRelationItem(characters, characterId, relationKind, itemId, (item) => {
     const normalizedTags = tags
       ?.map((tag) => ({
         counters: tag.counters.trim(),
@@ -182,23 +194,26 @@ export const updateCharacterRelationTags = (
 };
 
 export const toggleCharacterRelationMinor = (
+  characters: MutableCharacters,
   characterId: string,
   relationKind: TraitRelationKind,
   itemId: string
 ) => {
-  updateCharacterRelationItem(characterId, relationKind, itemId, (item) => ({
+  updateCharacterRelationItem(characters, characterId, relationKind, itemId, (item) => ({
     ...item,
     isMinor: !item.isMinor,
   }));
 };
 
 export const removeCharacterRelationItem = (
+  characters: MutableCharacters,
   characterId: string,
   relationKind: TraitRelationKind,
   itemId: string
 ) => {
-  const current = getEditableCharacterRelations(characterId)[relationKind] ?? [];
+  const current = getEditableCharacterRelations(characters, characterId)[relationKind] ?? [];
   writeCharacterRelationItems(
+    characters,
     characterId,
     relationKind,
     current.filter((item) => item.id !== itemId)
@@ -206,19 +221,21 @@ export const removeCharacterRelationItem = (
 };
 
 export const removeCharacterRelationItemFromKinds = (
+  characters: MutableCharacters,
   characterId: string,
   relationKinds: readonly TraitRelationKind[],
   itemId: string
 ) => {
   relationKinds.forEach((relationKind) => {
-    const current = getEditableCharacterRelations(characterId)[relationKind] ?? [];
+    const current = getEditableCharacterRelations(characters, characterId)[relationKind] ?? [];
     const hasTargetItem = current.some((item) => item.id === itemId);
 
-    if (!hasTargetItem && !ownsCharacterRelationKind(characterId, relationKind)) {
+    if (!hasTargetItem && !ownsCharacterRelationKind(characters, characterId, relationKind)) {
       return;
     }
 
     writeCharacterRelationItems(
+      characters,
       characterId,
       relationKind,
       current.filter((item) => item.id !== itemId)

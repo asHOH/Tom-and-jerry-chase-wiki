@@ -7,9 +7,10 @@ import { useEditableDomain, useEditableEntity } from '@/hooks/useEditableGameDat
 import { useNavigation } from '@/hooks/useNavigation';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
-import { maps, modes, specialSkills } from '@/data/static';
+import { maps, modes, specialSkills, characters as staticCharacters } from '@/data/static';
 import type { CharacterRelationItem, FactionId, TraitRelationKind } from '@/data/types';
 import {
+  addCharacterRelationItem,
   getCharacterRelationDescriptionPath,
   getEditableCharacterRelations,
   removeCharacterRelationItem,
@@ -62,6 +63,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
   const [mapsSnapshot] = useEditableDomain('maps', maps);
   const [modesSnapshot] = useEditableDomain('modes', modes);
   const [specialSkillsSnapshot] = useEditableDomain('specialSkills', specialSkills);
+  const [charactersSnapshot, updateCharacters] = useEditableDomain('characters', staticCharacters);
   const publishedCharacter = usePublishedCharacter(id);
   const getImageUrl = React.useCallback(
     (targetId: string) =>
@@ -73,6 +75,7 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
     publishedCharacter
   )!;
   const char = getEditableCharacterRelations(
+    charactersSnapshot,
     id,
     characterSnapshot as Partial<Record<TraitRelationKind, CharacterRelationItem[]>>
   );
@@ -85,15 +88,21 @@ const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
       characterId: id,
       relationKind,
       getDescriptionPath: getCharacterRelationDescriptionPath,
-      onToggleMinor: toggleCharacterRelationMinor,
-      onRemove: removeCharacterRelationItem,
-      onUpdateDescription: updateCharacterRelationDescription,
-      onUpdateTags: updateCharacterRelationTags,
+      onToggleMinor: (...args) =>
+        updateCharacters((characters) => toggleCharacterRelationMinor(characters, ...args)),
+      onRemove: (...args) =>
+        updateCharacters((characters) => removeCharacterRelationItem(characters, ...args)),
+      onUpdateDescription: (...args) =>
+        updateCharacters((characters) => updateCharacterRelationDescription(characters, ...args)),
+      onUpdateTags: (...args) =>
+        updateCharacters((characters) => updateCharacterRelationTags(characters, ...args)),
     });
   const createSelectHandler = (relationKind: TraitRelationKind) =>
     createRelationSelectHandler({
       characterId: id,
       relationKind,
+      addRelationItem: (...args) =>
+        updateCharacters((characters) => addCharacterRelationItem(characters, ...args)),
     });
 
   const countersItems = sortByImportance([

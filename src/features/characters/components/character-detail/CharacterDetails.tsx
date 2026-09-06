@@ -8,8 +8,7 @@ import { createPortal } from 'react-dom';
 import type { DeepReadonly } from '@/types/deep-readonly';
 import singleItemRreverse from '@/lib/singleItemReverse';
 import type { CharacterWithFaction, ContentEditor } from '@/lib/types';
-import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
-import { useEditableEntity } from '@/hooks/useEditableGameData';
+import { useEditableEntity, type EditableUpdate } from '@/hooks/useEditableGameData';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { EditModeContext, useEditMode } from '@/context/EditModeContext';
@@ -91,13 +90,13 @@ export default function CharacterDetails({
   const isMobile = useMobile();
   const { addSecondWeapon } = useCharacterActions();
   const { characterId } = useLocalCharacter();
-  const editRuntime = useDraftDataRuntime();
-  const rawEditCharacter =
-    editRuntime?.stores.characters[characterId] ?? editRuntime?.stores.characters[character.id];
-  const [localCharacter] = useEditableEntity(
+  const [localCharacter, updateCharacter] = useEditableEntity(
     { entityType: 'characters', entityId: characterId || character.id },
     character
-  ) as unknown as readonly [DeepReadonly<CharacterWithFaction>];
+  ) as unknown as readonly [
+    DeepReadonly<CharacterWithFaction>,
+    EditableUpdate<CharacterWithFaction>,
+  ];
   const factionId = localCharacter.factionId!;
 
   // Go to Top button state
@@ -251,9 +250,10 @@ export default function CharacterDetails({
                         values={localCharacter.aliases ?? []}
                         itemLabel='角色别名'
                         onChange={(aliases) => {
-                          if (!rawEditCharacter) return;
-                          if (aliases.length > 0) rawEditCharacter.aliases = aliases;
-                          else delete rawEditCharacter.aliases;
+                          updateCharacter((draft) => {
+                            if (aliases.length > 0) draft.aliases = aliases;
+                            else delete draft.aliases;
+                          });
                         }}
                       />
                     </div>
@@ -268,9 +268,10 @@ export default function CharacterDetails({
                         selected={localCharacter.counterTags ?? []}
                         ariaLabelPrefix='角色关系标签'
                         onChange={(counterTags) => {
-                          if (!rawEditCharacter) return;
-                          if (counterTags.length > 0) rawEditCharacter.counterTags = counterTags;
-                          else delete rawEditCharacter.counterTags;
+                          updateCharacter((draft) => {
+                            if (counterTags.length > 0) draft.counterTags = counterTags;
+                            else delete draft.counterTags;
+                          });
                         }}
                       />
                     </div>

@@ -1,6 +1,6 @@
 # Edit Session Deep-Module Refactor Plan
 
-**Status:** Phases 0–2 landed; Phases 3–5 not started
+**Status:** Phases 0–3 landed; Phases 4–5 not started
 **Created:** 2026-08-24  
 **Revised:** 2026-09-06
 **Scope:** Client-side game-data edit runtime, draft lifecycle, and feature-facing edit interfaces
@@ -429,8 +429,8 @@ server migration.
   semantically equivalent histories.
 - No method-per-field command surface is introduced.
 
-Phase 2 intentionally leaves the card-rank repair of character knowledge-card references on the
-existing raw-runtime path. Phase 3 owns that cross-domain character mutation.
+Phase 2 left the card-rank repair of character knowledge-card references on the existing
+raw-runtime path; Phase 3 migrated that cross-domain character mutation.
 
 ## Phase 3 — Migrate character and relation mutations
 

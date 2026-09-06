@@ -2,8 +2,7 @@
 
 import { getCardCostColors, getCardRankColors } from '@/lib/design';
 import type { KnowledgeCardDetailsProps, KnowledgeCardWithFaction } from '@/lib/types';
-import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
-import { useEditableEntity } from '@/hooks/useEditableGameData';
+import { useEditableDomain, useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalCard } from '@/hooks/useLocalEditEntity';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
@@ -61,7 +60,7 @@ export default function KnowledgeCardAttributesCard({ card }: KnowledgeCardDetai
   const { isEditMode } = useEditMode();
   const { cardId } = useLocalCard();
   const ed = editable('cards');
-  const editRuntime = useDraftDataRuntime();
+  const [, updateCharacters] = useEditableDomain('characters', {});
 
   const [effectiveCard, updateCard] = useEditableEntity(
     { entityType: 'cards', entityId: cardId },
@@ -143,12 +142,14 @@ export default function KnowledgeCardAttributesCard({ card }: KnowledgeCardDetai
                         draft.imageUrl = `/images/${draft.factionId}Cards/${nextKey}.png`;
                       }
                     });
-                    if (editRuntime) {
-                      replaceCharacterCardReferences(
-                        editRuntime.stores.characters as unknown as Record<string, unknown>,
-                        previousKey,
-                        nextKey
-                      );
+                    if (previousKey !== nextKey) {
+                      updateCharacters((characters) => {
+                        replaceCharacterCardReferences(
+                          characters as unknown as Record<string, unknown>,
+                          previousKey,
+                          nextKey
+                        );
+                      });
                     }
                   }}
                   className='font-inherit cursor-pointer border-none bg-transparent text-inherit outline-none'

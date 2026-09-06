@@ -1,4 +1,3 @@
-import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useEditableDomain, useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useEditMode } from '@/context/EditModeContext';
@@ -20,10 +19,8 @@ export default function RecommendedStorePlansSection() {
   'use no memo';
   const { characterId } = useLocalCharacter();
   const { isEditMode } = useEditMode();
-  const editRuntime = useDraftDataRuntime();
-  const rawCharacter = editRuntime?.stores.characters[characterId];
   const publishedCharacter = usePublishedCharacter(characterId);
-  const [character] = useEditableEntity(
+  const [character, updateCharacter] = useEditableEntity(
     { entityType: 'characters', entityId: characterId },
     publishedCharacter
   )!;
@@ -49,7 +46,11 @@ export default function RecommendedStorePlansSection() {
                 <IconButton
                   type='button'
                   aria-label={`移除商店方案 ${planIndex + 1}`}
-                  onClick={() => rawCharacter!.recommendedStorePlans!.splice(planIndex, 1)}
+                  onClick={() =>
+                    updateCharacter((draft) => {
+                      draft.recommendedStorePlans!.splice(planIndex, 1);
+                    })
+                  }
                   variant='delete'
                   size='sm'
                 >
@@ -88,8 +89,10 @@ export default function RecommendedStorePlansSection() {
                         aria-label={`方案 ${planIndex + 1} 的第 ${itemIndex + 1} 件道具`}
                         value={itemName}
                         onChange={(event) => {
-                          rawCharacter!.recommendedStorePlans![planIndex]!.items[itemIndex] =
-                            event.target.value;
+                          updateCharacter((draft) => {
+                            draft.recommendedStorePlans![planIndex]!.items[itemIndex] =
+                              event.target.value;
+                          });
                         }}
                         size='sm'
                         className='mt-2 rounded px-1 py-1 text-xs'
@@ -125,12 +128,12 @@ export default function RecommendedStorePlansSection() {
             type='button'
             aria-label='添加商店方案'
             onClick={() => {
-              if (!rawCharacter!.recommendedStorePlans) {
-                rawCharacter!.recommendedStorePlans = [];
-              }
-              rawCharacter!.recommendedStorePlans.push({
-                items: [...DEFAULT_STORE_PLAN],
-                description: '',
+              updateCharacter((draft) => {
+                draft.recommendedStorePlans ??= [];
+                draft.recommendedStorePlans.push({
+                  items: [...DEFAULT_STORE_PLAN],
+                  description: '',
+                });
               });
             }}
             variant='add'

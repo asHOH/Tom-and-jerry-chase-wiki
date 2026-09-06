@@ -3,9 +3,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 
-import { requireActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
 import { handleCharacterIdChange } from '@/lib/editUtils';
-import type { CharacterWithFaction } from '@/lib/types';
+import { useEditableDomain } from '@/hooks/useEditableGameData';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
 import type { FactionId } from '@/data/types';
@@ -19,6 +18,7 @@ export default function CharacterCreate() {
   const { width, height } = GAME_IMAGE_DIMENSIONS.CHARACTER_CARD;
   const factionId = usePathname().split('/').filter(Boolean).at(-1)! as FactionId;
   const { handleSelectCharacter } = useAppContext();
+  const [characters, updateCharacters] = useEditableDomain('characters', {});
 
   const { isEditMode } = useEditMode();
   const [showInput, setShowInput] = useState(false);
@@ -35,8 +35,6 @@ export default function CharacterCreate() {
   const handleSubmit = () => {
     const trimmedName = characterName.trim();
     if (!trimmedName) return;
-    const characters = requireActiveEditRuntime().stores.characters;
-
     if (characters[trimmedName]) {
       handleSelectCharacter(trimmedName);
       setCharacterName('');
@@ -45,12 +43,18 @@ export default function CharacterCreate() {
     }
 
     const templateId = factionId === 'cat' ? '汤姆' : '杰瑞';
-    handleCharacterIdChange(templateId, trimmedName, factionId, handleSelectCharacter, false);
-
-    const createdCharacter = characters[trimmedName] as CharacterWithFaction | undefined;
-    if (createdCharacter) {
-      createdCharacter.createDate = null;
-    }
+    updateCharacters((draft) => {
+      handleCharacterIdChange(
+        draft,
+        templateId,
+        trimmedName,
+        factionId,
+        handleSelectCharacter,
+        false
+      );
+      const createdCharacter = draft[trimmedName];
+      if (createdCharacter) createdCharacter.createDate = null;
+    });
 
     handleSelectCharacter(trimmedName);
     setCharacterName('');

@@ -1,10 +1,7 @@
 import React from 'react';
 
 import type { CharacterRelationItem, TraitRelationKind } from '@/data/types';
-import {
-  addCharacterRelationItem,
-  createCharacterRelationItem,
-} from '@/features/characters/utils/characterRelationOverlay';
+import { createCharacterRelationItem } from '@/features/characters/utils/characterRelationOverlay';
 
 type RelationSelectorToolbarProps = {
   children: React.ReactNode;
@@ -18,7 +15,7 @@ type RelationSelectorSlotProps = {
 type CreateRelationSelectHandlerParams = {
   characterId: string;
   relationKind: TraitRelationKind;
-  addRelationItem?: (
+  addRelationItem: (
     characterId: string,
     relationKind: TraitRelationKind,
     item: CharacterRelationItem
@@ -37,7 +34,7 @@ export const RelationSelectorSlot: React.FC<RelationSelectorSlotProps> = ({ titl
 export const createRelationSelectHandler = ({
   characterId,
   relationKind,
-  addRelationItem = addCharacterRelationItem,
+  addRelationItem,
   createRelationItem = createCharacterRelationItem,
 }: CreateRelationSelectHandlerParams) => {
   return (itemId: string) => {

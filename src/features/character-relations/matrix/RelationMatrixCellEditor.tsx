@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { cn } from '@/lib/design';
+import type { CharacterWithFaction } from '@/lib/types';
+import type { EditableUpdate } from '@/hooks/useEditableGameData';
 import type { CharacterRelationTag, TraitRelationKind } from '@/data/types';
 import {
   removeCharacterRelationItemFromKinds,
@@ -27,6 +29,7 @@ type RelationMatrixCellEditorProps = {
   selection: RelationMatrixCellSelection | null;
   columnCategory: RelationMatrixColumnCategory;
   onOpenChange: (open: boolean) => void;
+  updateCharacters: EditableUpdate<Record<string, CharacterWithFaction>>;
 };
 
 const getInitialRelationKind = (
@@ -53,6 +56,7 @@ export default function RelationMatrixCellEditor({
   selection,
   columnCategory,
   onOpenChange,
+  updateCharacters,
 }: RelationMatrixCellEditorProps) {
   const legalKinds = useMemo(
     () => (selection ? getLegalRelationKinds(selection.row, selection.column, columnCategory) : []),
@@ -99,50 +103,62 @@ export default function RelationMatrixCellEditor({
       ...(normalizedTagPairs.length > 0 ? { tags: normalizedTagPairs } : {}),
     };
 
-    removeCharacterRelationItemFromKinds(
-      selection.row.id,
-      getSiblingRelationKinds(selectedKind, legalKinds),
-      selection.column.id
-    );
+    updateCharacters((characters) => {
+      removeCharacterRelationItemFromKinds(
+        characters,
+        selection.row.id,
+        getSiblingRelationKinds(selectedKind, legalKinds),
+        selection.column.id
+      );
 
-    if (isCharacterTarget) {
-      const inverseSelectedKind = getInverseCharacterRelationKind(selectedKind);
-      if (inverseSelectedKind) {
-        removeCharacterRelationItemFromKinds(
-          selection.column.id,
-          getSiblingRelationKinds(inverseSelectedKind, toInverseRelationKinds(legalKinds)),
-          selection.row.id
-        );
+      if (isCharacterTarget) {
+        const inverseSelectedKind = getInverseCharacterRelationKind(selectedKind);
+        if (inverseSelectedKind) {
+          removeCharacterRelationItemFromKinds(
+            characters,
+            selection.column.id,
+            getSiblingRelationKinds(inverseSelectedKind, toInverseRelationKinds(legalKinds)),
+            selection.row.id
+          );
+        }
       }
-    }
 
-    upsertCharacterRelationItem(selection.row.id, selectedKind, item);
+      upsertCharacterRelationItem(characters, selection.row.id, selectedKind, item);
 
-    if (isCharacterTarget) {
-      const inverseSelectedKind = getInverseCharacterRelationKind(selectedKind);
-      if (inverseSelectedKind) {
-        upsertCharacterRelationItem(selection.column.id, inverseSelectedKind, {
-          id: selection.row.id,
-          description: trimmedDescription,
-          isMinor,
-          ...(normalizedTagPairs.length > 0 ? { tags: normalizedTagPairs } : {}),
-        });
+      if (isCharacterTarget) {
+        const inverseSelectedKind = getInverseCharacterRelationKind(selectedKind);
+        if (inverseSelectedKind) {
+          upsertCharacterRelationItem(characters, selection.column.id, inverseSelectedKind, {
+            id: selection.row.id,
+            description: trimmedDescription,
+            isMinor,
+            ...(normalizedTagPairs.length > 0 ? { tags: normalizedTagPairs } : {}),
+          });
+        }
       }
-    }
+    });
 
     onOpenChange(false);
   };
 
   const handleRemove = () => {
-    removeCharacterRelationItemFromKinds(selection.row.id, legalKinds, selection.column.id);
-
-    if (isCharacterTarget) {
+    updateCharacters((characters) => {
       removeCharacterRelationItemFromKinds(
-        selection.column.id,
-        toInverseRelationKinds(legalKinds),
-        selection.row.id
+        characters,
+        selection.row.id,
+        legalKinds,
+        selection.column.id
       );
-    }
+
+      if (isCharacterTarget) {
+        removeCharacterRelationItemFromKinds(
+          characters,
+          selection.column.id,
+          toInverseRelationKinds(legalKinds),
+          selection.row.id
+        );
+      }
+    });
 
     onOpenChange(false);
   };

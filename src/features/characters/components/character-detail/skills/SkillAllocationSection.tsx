@@ -2,8 +2,6 @@
 
 import React, { useCallback } from 'react';
 
-import { setNestedProperty } from '@/lib/editUtils';
-import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useEditMode } from '@/context/EditModeContext';
@@ -19,26 +17,18 @@ import SkillAllocationDisplay from './SkillAllocationDisplay';
 
 const useSkillAllocationManagement = () => {
   const { characterId } = useLocalCharacter();
-  const editRuntime = useDraftDataRuntime();
-  const rawCharacter = editRuntime?.stores.characters[characterId];
   const publishedCharacter = usePublishedCharacter(characterId);
-  const [localCharacter] = useEditableEntity(
+  const [localCharacter, updateCharacter] = useEditableEntity(
     { entityType: 'characters', entityId: characterId },
     publishedCharacter
   )!;
   const handleSaveChanges = useCallback(
     (updatedSkillAllocations: SkillAllocation[]) => {
-      if (!rawCharacter || !editRuntime) return;
-      setNestedProperty(
-        editRuntime.stores.characters,
-        `${localCharacter.id}.skillAllocations`,
-        updatedSkillAllocations
-      );
-      editRuntime.stores.characters[localCharacter.id]!.skillAllocations = updatedSkillAllocations;
-
-      // Removed setLocalCharacter call due to missing function.
+      updateCharacter((draft) => {
+        draft.skillAllocations = updatedSkillAllocations;
+      });
     },
-    [editRuntime, localCharacter.id, rawCharacter]
+    [updateCharacter]
   );
 
   const handleAddSkillAllocation = () => {

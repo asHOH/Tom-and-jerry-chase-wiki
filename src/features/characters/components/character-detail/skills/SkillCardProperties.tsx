@@ -6,8 +6,8 @@ import uniq from 'lodash-es/uniq';
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { cn } from '@/lib/design';
 import type { CharacterWithFaction } from '@/lib/types';
-import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
-import type { Skill, SkillLevel, SkillUsageProperties } from '@/data/types';
+import type { EditableUpdate } from '@/hooks/useEditableGameData';
+import type { Skill, SkillLevel } from '@/data/types';
 import {
   addSkillPart,
   convertSkillToParts,
@@ -29,12 +29,12 @@ const e = editable('characters');
 
 type SkillCardPropertiesProps = {
   skill: DeepReadonly<Skill>;
-  characterId: string;
   skillIndex: number;
   localCharacter: CharacterWithFaction;
   isEditMode: boolean;
   isDetailed: boolean;
   isMobileEditMode?: boolean;
+  updateCharacter: EditableUpdate<CharacterWithFaction>;
 };
 
 function InlinePropertyList({ properties }: { properties: React.ReactNode[] }) {
@@ -65,13 +65,21 @@ function PropertyContainer({
   );
 }
 
-function AddPartButton({ skillRef }: { skillRef: Skill }) {
-  const isMultiPart = 'parts' in skillRef;
+function AddPartButton({
+  skill,
+  updateSkill,
+}: {
+  skill: DeepReadonly<Skill>;
+  updateSkill: EditableUpdate<Skill>;
+}) {
+  const isMultiPart = 'parts' in skill;
   return (
     <Button
       variant='unstyled'
       type='button'
-      onClick={() => (isMultiPart ? addSkillPart(skillRef) : convertSkillToParts(skillRef))}
+      onClick={() =>
+        updateSkill((draft) => (isMultiPart ? addSkillPart(draft) : convertSkillToParts(draft)))
+      }
       className='mt-2 inline-flex items-center gap-1 rounded border border-dashed border-blue-400 px-2 py-1 text-xs text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-950/30'
     >
       <PlusIcon className='h-3 w-3' aria-hidden='true' />
@@ -82,17 +90,15 @@ function AddPartButton({ skillRef }: { skillRef: Skill }) {
 
 export default function SkillCardProperties({
   skill,
-  characterId,
   skillIndex,
   localCharacter,
   isEditMode,
   isDetailed,
   isMobileEditMode = false,
+  updateCharacter,
 }: SkillCardPropertiesProps) {
-  const editRuntime = useDraftDataRuntime();
-  const skillRef =
-    editRuntime?.stores.characters[characterId]?.skills[skillIndex] ??
-    localCharacter.skills[skillIndex]!;
+  const updateSkill: EditableUpdate<Skill> = (mutate) =>
+    updateCharacter((draft) => mutate(draft.skills[skillIndex]!));
 
   const getCooldownProperty = (): React.ReactNode => {
     if (!isEditMode && !skill.skillLevels.some((level: SkillLevel) => level.cooldown)) return null;
@@ -168,13 +174,13 @@ export default function SkillCardProperties({
               isSingleLine={true}
               onSave={(newValue) => {
                 const trimmed = newValue.trim();
-                if (trimmed === '') {
-                  skillRef.aliases = skillRef.aliases!.filter(
-                    (_, aliasIndex) => aliasIndex !== index
-                  );
-                } else {
-                  skillRef.aliases![index] = trimmed;
-                }
+                updateSkill((draft) => {
+                  if (trimmed === '') {
+                    draft.aliases = draft.aliases!.filter((_, aliasIndex) => aliasIndex !== index);
+                  } else {
+                    draft.aliases![index] = trimmed;
+                  }
+                });
               }}
             />
             {index < skill.aliases!.length - 1 && <span>、</span>}
@@ -182,8 +188,10 @@ export default function SkillCardProperties({
         ))}
         <AddAliasButton
           onAdd={() => {
-            skillRef.aliases ??= [];
-            if (!skillRef.aliases.includes('新别名')) skillRef.aliases.push('新别名');
+            updateSkill((draft) => {
+              draft.aliases ??= [];
+              if (!draft.aliases.includes('新别名')) draft.aliases.push('新别名');
+            });
           }}
         />
       </div>
@@ -254,8 +262,6 @@ export default function SkillCardProperties({
       )}
       <div className='mt-2 space-y-3'>
         {usageParts.map((usage, partIndex) => {
-          const usageRef: SkillUsageProperties =
-            'parts' in skillRef ? skillRef.parts[partIndex]! : skillRef;
           const pathPrefix = multiPart
             ? `skills.${skillIndex}.parts.${partIndex}`
             : `skills.${skillIndex}`;
@@ -276,7 +282,7 @@ export default function SkillCardProperties({
                   <IconButton
                     type='button'
                     aria-label={`移除第${partIndex + 1}段`}
-                    onClick={() => removeSkillPart(skillRef, partIndex)}
+                    onClick={() => updateSkill((draft) => removeSkillPart(draft, partIndex))}
                     variant='delete'
                     size='sm'
                   >
@@ -286,7 +292,12 @@ export default function SkillCardProperties({
               )}
               <SkillUsagePropertiesEditor
                 usage={usage}
-                usageRef={usageRef}
+                updateUsage={(mutate) =>
+                  updateSkill((draft) => {
+                    const usageDraft = 'parts' in draft ? draft.parts[partIndex] : draft;
+                    if (usageDraft) mutate(usageDraft);
+                  })
+                }
                 pathPrefix={pathPrefix}
                 radioNameSuffix={`${skillIndex}-${partIndex}`}
                 factionId={localCharacter.factionId!}
@@ -295,7 +306,7 @@ export default function SkillCardProperties({
           );
         })}
       </div>
-      <AddPartButton skillRef={skillRef} />
+      <AddPartButton skill={skill} updateSkill={updateSkill} />
     </PropertyContainer>
   );
 }
