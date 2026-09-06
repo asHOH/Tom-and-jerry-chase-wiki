@@ -30,9 +30,6 @@ const rawEditRuntimeImportPattern =
   /from ['"]@\/(?:lib\/edit\/(?:activeEditRuntime|editStores)|hooks\/useDraftDataRuntime)['"]/;
 
 const mutationRuntimeExceptions = [
-  'src/features/achievements/achievement-detail/AchievementAttributesCard.tsx',
-  'src/features/buffs/components/buff-detail/BuffAttributesCard.tsx',
-  'src/features/buffs/components/buff-detail/BuffDetails.tsx',
   'src/features/character-relations/matrix/useRelationMatrixEditMode.ts',
   'src/features/characters/components/character-detail/CharacterDetails.tsx',
   'src/features/characters/components/character-detail/knowledge-cards/KnowledgeCardManager.tsx',
@@ -48,17 +45,8 @@ const mutationRuntimeExceptions = [
   'src/features/characters/components/character-grid/CharacterCreate.tsx',
   'src/features/characters/components/character-grid/CharacterImport.tsx',
   'src/features/characters/utils/characterRelationOverlay.ts',
-  'src/features/entities/entity-detail/EntityAttributesCard.tsx',
-  'src/features/entities/entity-detail/EntityDetails.tsx',
-  'src/features/entities/entity-detail/EntitySkillCard.tsx',
-  'src/features/fixtures/components/fixture-detail/FixtureAttributesCard.tsx',
-  'src/features/items/components/item-detail/ItemAttributesCard.tsx',
+  // Card-rank changes repair character references; Phase 3 owns that cross-domain mutation.
   'src/features/knowledge-cards/components/knowledge-card-detail/KnowledgeCardAttributesCard.tsx',
-  'src/features/maps/interactive-map/InteractiveMapPage.tsx',
-  'src/features/maps/map-detail/MapAttributesCard.tsx',
-  'src/features/mechanics/sections/TraitEditor.tsx',
-  'src/features/modes/components/mode-detail/ModeAttributesCard.tsx',
-  'src/features/special-skills/components/special-skill-detail/SpecialSkillAttributesCard.tsx',
 ].sort();
 
 function listSourceFiles(root: string): string[] {

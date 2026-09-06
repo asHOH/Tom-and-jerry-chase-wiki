@@ -33,7 +33,7 @@ export default function CharacterDisplay({
   const [isDarkMode] = useDarkMode();
   const { isEditMode } = useEditMode();
   const isMobile = useMobile();
-  const charactersSnap = useEditableDomain('characters', characters);
+  const [charactersSnap] = useEditableDomain('characters', characters);
 
   const sortedPositioningTags = useMemo(() => {
     if (!positioningTags || positioningTags.length === 0) return [];

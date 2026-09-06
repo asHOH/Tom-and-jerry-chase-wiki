@@ -1,6 +1,5 @@
 'use client';
 
-import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalBuff } from '@/hooks/useLocalEditEntity';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
@@ -23,12 +22,10 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
   const { buffName } = useLocalBuff();
   const ed = editable('buffs');
 
-  const editRuntime = useDraftDataRuntime();
-  const rawLocalBuff = editRuntime?.stores.buffs[buffName];
-  const effectiveBuff = useEditableEntity(
+  const [effectiveBuff, updateBuff] = useEditableEntity(
     { entityType: 'buffs', entityId: buffName },
     buff
-  ) as Buff;
+  ) as unknown as readonly [Buff, (mutate: (value: Buff) => void) => void];
 
   // Keyboard navigation
   useSpecifyTypeKeyboardNavigation(effectiveBuff.name, 'buff');
@@ -121,9 +118,10 @@ export default function BuffDetailClient({ buff }: { buff: Buff }) {
             items={sourceItems}
             itemLabel='状态来源'
             onChange={(items) => {
-              if (!rawLocalBuff) return;
-              if (items.length > 0) rawLocalBuff.source = items;
-              else delete rawLocalBuff.source;
+              updateBuff((draft) => {
+                if (items.length > 0) draft.source = items;
+                else delete draft.source;
+              });
             }}
           />
         </DetailTextSection>

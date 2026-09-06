@@ -3,7 +3,6 @@
 import React from 'react';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
-import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalEntity } from '@/hooks/useLocalEditEntity';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
@@ -28,12 +27,10 @@ export default function EntityDetailClient({ entity }: { entity: Entity }) {
   const { entityName } = useLocalEntity();
   const ed = editable('entities');
 
-  const editRuntime = useDraftDataRuntime();
-  const rawLocalEntity = editRuntime?.stores.entities[entityName];
-  const effectiveEntity = useEditableEntity(
+  const [effectiveEntity, updateEntity] = useEditableEntity(
     { entityType: 'entities', entityId: entityName },
     entity
-  ) as Entity;
+  ) as unknown as readonly [Entity, (mutate: (value: Entity) => void) => void];
 
   // Keyboard navigation
   useSpecifyTypeKeyboardNavigation(effectiveEntity.name, 'entity');
@@ -118,13 +115,14 @@ export default function EntityDetailClient({ entity }: { entity: Entity }) {
                 variant='add'
                 size='md'
                 onClick={() => {
-                  if (!rawLocalEntity) return;
-                  rawLocalEntity.skills ??= [];
-                  rawLocalEntity.skills.push({
-                    name: '新技能',
-                    type: 'active',
-                    description: '',
-                    skillLevels: [],
+                  updateEntity((draft) => {
+                    draft.skills ??= [];
+                    draft.skills.push({
+                      name: '新技能',
+                      type: 'active',
+                      description: '',
+                      skillLevels: [],
+                    });
                   });
                 }}
               >

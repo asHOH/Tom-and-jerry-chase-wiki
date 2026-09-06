@@ -48,7 +48,7 @@ export default function MapModeCharacterRelations({
   targetType,
   charactersData,
 }: MapModeCharacterRelationsProps) {
-  const charactersSnapshot = useEditableDomain(
+  const [charactersSnapshot] = useEditableDomain(
     'characters',
     charactersData,
     projectMapModeRelationCharacters

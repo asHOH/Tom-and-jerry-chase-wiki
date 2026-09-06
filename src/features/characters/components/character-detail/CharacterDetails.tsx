@@ -94,10 +94,10 @@ export default function CharacterDetails({
   const editRuntime = useDraftDataRuntime();
   const rawEditCharacter =
     editRuntime?.stores.characters[characterId] ?? editRuntime?.stores.characters[character.id];
-  const localCharacter = useEditableEntity(
+  const [localCharacter] = useEditableEntity(
     { entityType: 'characters', entityId: characterId || character.id },
     character
-  ) as DeepReadonly<CharacterWithFaction>;
+  ) as unknown as readonly [DeepReadonly<CharacterWithFaction>];
   const factionId = localCharacter.factionId!;
 
   // Go to Top button state

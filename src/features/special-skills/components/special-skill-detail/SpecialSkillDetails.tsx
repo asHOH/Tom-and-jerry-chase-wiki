@@ -33,14 +33,14 @@ export default function SpecialSkillDetailClient({
   const { isEditMode } = useEditMode();
   const { factionId, skillId } = useLocalSpecialSkill();
   const ed = editable('specialSkills');
-  const effectiveSkill = useEditableEntity(
+  const [effectiveSkill] = useEditableEntity(
     {
       entityType: 'specialSkills',
       entityId: skillId,
       factionId: factionId === 'cat' || factionId === 'mouse' ? factionId : skill.factionId!,
     },
     skill
-  ) as SpecialSkill;
+  ) as unknown as readonly [SpecialSkill];
 
   // Keyboard navigation
   useSpecifyTypeKeyboardNavigation(
@@ -50,7 +50,7 @@ export default function SpecialSkillDetailClient({
   );
 
   const { isDetailedView } = useAppContext();
-  const charactersSnap = useEditableDomain(
+  const [charactersSnap] = useEditableDomain(
     'characters',
     charactersData,
     projectSpecialSkillCharacters

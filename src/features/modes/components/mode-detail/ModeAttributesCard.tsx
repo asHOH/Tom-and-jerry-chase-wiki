@@ -2,8 +2,7 @@
 
 import { getModeTypeColors } from '@/lib/design';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
-import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
-import { useEditableDomain } from '@/hooks/useEditableGameData';
+import { useEditableDomain, useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalMode } from '@/hooks/useLocalEditEntity';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
@@ -32,9 +31,11 @@ export default function ModeAttributesCard({
   const { modeName } = useLocalMode();
   const ed = editable('modes');
 
-  const editRuntime = useDraftDataRuntime();
-  const rawMode = editRuntime?.stores.modes[modeName];
-  const mapsSnapshot = useEditableDomain('maps', mapsData);
+  const [effectiveMode, updateMode] = useEditableEntity(
+    { entityType: 'modes', entityId: modeName },
+    mode
+  ) as unknown as readonly [Mode, (mutate: (value: Mode) => void) => void];
+  const [mapsSnapshot] = useEditableDomain('maps', mapsData);
   const mapsSource = mapsSnapshot;
 
   function putTypeTagOn(mode: Mode) {
@@ -45,7 +46,9 @@ export default function ModeAttributesCard({
             aria-label='游戏模式类型'
             value={mode.type}
             onChange={(event) => {
-              if (rawMode) rawMode.type = event.target.value as ModeTypeList;
+              updateMode((draft) => {
+                draft.type = event.target.value as ModeTypeList;
+              });
             }}
             className='font-inherit cursor-pointer border-none bg-transparent text-inherit outline-none'
           >
@@ -76,22 +79,23 @@ export default function ModeAttributesCard({
         isEditMode ? (
           <div className='flex items-center gap-1'>
             <span className='text-xs text-gray-400 dark:text-gray-500'>别名：</span>
-            {(rawMode?.aliases ?? mode.aliases ?? []).length > 0 ? (
-              (rawMode?.aliases ?? mode.aliases ?? []).map((alias, index, arr) => (
+            {(effectiveMode.aliases ?? mode.aliases ?? []).length > 0 ? (
+              (effectiveMode.aliases ?? mode.aliases ?? []).map((alias, index, arr) => (
                 <span key={`${alias}-${index}`} className='inline-flex items-center'>
                   <ed.span
                     initialValue={alias || '<无内容>'}
                     path={`aliases.${index}`}
                     isSingleLine
                     onSave={(newValue) => {
-                      if (!rawMode) return;
-                      if (!rawMode.aliases) rawMode.aliases = [];
-                      const trimmed = newValue.trim();
-                      if (trimmed === '') {
-                        rawMode.aliases = rawMode.aliases.filter((_, i) => i !== index);
-                      } else {
-                        rawMode.aliases[index] = trimmed;
-                      }
+                      updateMode((draft) => {
+                        if (!draft.aliases) draft.aliases = [];
+                        const trimmed = newValue.trim();
+                        if (trimmed === '') {
+                          draft.aliases = draft.aliases.filter((_, i) => i !== index);
+                        } else {
+                          draft.aliases[index] = trimmed;
+                        }
+                      });
                     }}
                   />
                   {index < arr.length - 1 && <span className='text-gray-400'>、</span>}
@@ -102,11 +106,10 @@ export default function ModeAttributesCard({
             )}
             <AddAliasButton
               onAdd={() => {
-                if (!rawMode) return;
-                if (!rawMode.aliases) rawMode.aliases = [];
-                if (!rawMode.aliases.includes('新别名')) {
-                  rawMode.aliases.push('新别名');
-                }
+                updateMode((draft) => {
+                  if (!draft.aliases) draft.aliases = [];
+                  if (!draft.aliases.includes('新别名')) draft.aliases.push('新别名');
+                });
               }}
             />
           </div>

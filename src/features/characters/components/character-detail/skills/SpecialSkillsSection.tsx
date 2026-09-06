@@ -23,11 +23,11 @@ export default function SpecialSkillsSection() {
   const editRuntime = useDraftDataRuntime();
   const rawCharacter = editRuntime?.stores.characters[characterId];
   const publishedCharacter = usePublishedCharacter(characterId);
-  const character = useEditableEntity(
+  const [character] = useEditableEntity(
     { entityType: 'characters', entityId: characterId },
     publishedCharacter
   )!;
-  const specialSkillsSnapshot = useEditableDomain('specialSkills', specialSkills);
+  const [specialSkillsSnapshot] = useEditableDomain('specialSkills', specialSkills);
   const hasSpecialSkills = Boolean(character.specialSkills?.length);
   const hasStorePlans = Boolean(character.recommendedStorePlans?.length);
   if (!hasSpecialSkills && !hasStorePlans && !isEditMode) return null;

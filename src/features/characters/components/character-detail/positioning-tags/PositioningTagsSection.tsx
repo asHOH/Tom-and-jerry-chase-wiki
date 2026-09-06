@@ -110,7 +110,7 @@ function WeaponDropdown({
   onSelect: (value: 1 | 2 | null) => void;
 }) {
   const publishedCharacter = usePublishedCharacter(characterId);
-  const character = useEditableEntity(
+  const [character] = useEditableEntity(
     { entityType: 'characters', entityId: characterId },
     publishedCharacter
   )!;
@@ -161,7 +161,7 @@ function usePositioningTags({ factionId }: { factionId: FactionId }) {
   const { characterId } = useLocalCharacter();
   const editRuntime = useDraftDataRuntime();
   const publishedCharacter = usePublishedCharacter(characterId);
-  const localCharacter = useEditableEntity(
+  const [localCharacter] = useEditableEntity(
     { entityType: 'characters', entityId: characterId },
     publishedCharacter
   )!;
@@ -257,7 +257,7 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
   const { isEditMode } = useEditMode();
   const { isDetailedView: isDetailed } = useAppContext();
   const { characterId } = useLocalCharacter();
-  const charactersSnap = useEditableDomain('characters', staticCharacters);
+  const [charactersSnap] = useEditableDomain('characters', staticCharacters);
 
   const borderColor =
     factionId === 'cat'

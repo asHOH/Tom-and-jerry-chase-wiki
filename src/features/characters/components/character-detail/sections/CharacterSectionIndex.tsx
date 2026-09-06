@@ -41,7 +41,7 @@ function CharacterSectionIndexItem({
 export default function CharacterSectionIndex() {
   const { characterId } = useLocalCharacter();
   const publishedCharacter = usePublishedCharacter(characterId);
-  const character = useEditableEntity(
+  const [character] = useEditableEntity(
     { entityType: 'characters', entityId: characterId },
     publishedCharacter
   )!;

@@ -31,7 +31,7 @@ export default function BuffClient({ description, data = buffs, publishedRevisio
   );
   const [isDarkMode] = useDarkMode();
 
-  const buffsSnapshot = useEditableDomain('buffs', data);
+  const [buffsSnapshot] = useEditableDomain('buffs', data);
   const allBuffs = Object.values(buffsSnapshot as Record<string, Buff>);
   const filteredAll = allBuffs.filter((buff) => {
     if (selectedTypes.length === 0) return true;

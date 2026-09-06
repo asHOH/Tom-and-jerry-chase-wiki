@@ -42,7 +42,7 @@ export default function ItemClient({ description, data = items, publishedRevisio
   const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
 
-  const itemsSnapshot = useEditableDomain('items', data);
+  const [itemsSnapshot] = useEditableDomain('items', data);
   const filteredItems = Object.values(itemsSnapshot as Record<string, Item>).filter(
     (item: Item) => {
       const typeMatch = selectedTypes.length === 0 || selectedTypes.includes(item.itemtype);

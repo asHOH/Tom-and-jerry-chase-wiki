@@ -15,7 +15,7 @@ type Props = {
 };
 
 const ModeSelector: React.FC<Props> = ({ selected, onSelect, disabled }) => {
-  const modesSnapshot = useEditableDomain('modes', modes);
+  const [modesSnapshot] = useEditableDomain('modes', modes);
   const selectedIds = new Set(selected.map(({ id }) => id));
   const options = Object.values(modesSnapshot)
     .filter(({ name }) => !selectedIds.has(name))

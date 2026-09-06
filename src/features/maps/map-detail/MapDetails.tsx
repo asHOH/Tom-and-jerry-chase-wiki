@@ -41,8 +41,11 @@ export default function MapDetailClient({
   const ed = editable('maps');
 
   const usesDraftData = isEditModeRequested && runtimeStatus === 'ready';
-  const editFixtures = useEditableDomain('fixtures', {});
-  const effectiveMap = useEditableEntity({ entityType: 'maps', entityId: mapName }, map) as MapType;
+  const [editFixtures] = useEditableDomain('fixtures', {});
+  const [effectiveMap] = useEditableEntity(
+    { entityType: 'maps', entityId: mapName },
+    map
+  ) as unknown as readonly [MapType];
 
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [imageAspectRatio, setImageAspectRatio] = useState<number | null>(null);

@@ -23,11 +23,11 @@ export default function RecommendedStorePlansSection() {
   const editRuntime = useDraftDataRuntime();
   const rawCharacter = editRuntime?.stores.characters[characterId];
   const publishedCharacter = usePublishedCharacter(characterId);
-  const character = useEditableEntity(
+  const [character] = useEditableEntity(
     { entityType: 'characters', entityId: characterId },
     publishedCharacter
   )!;
-  const items = useEditableDomain('items', staticItems);
+  const [items] = useEditableDomain('items', staticItems);
   const storePlans = character.recommendedStorePlans ?? [];
   const storeItems = Object.values(items).filter(
     (item) => item.store === true && item.price !== undefined

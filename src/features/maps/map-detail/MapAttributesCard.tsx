@@ -1,7 +1,6 @@
 'use client';
 
 import { getMapLevelColors, getMapSizeColors, getMapTypeColors } from '@/lib/design';
-import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useEditableDomain, useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalMap } from '@/hooks/useLocalEditEntity';
 import { useDarkMode } from '@/context/DarkModeContext';
@@ -37,11 +36,12 @@ export default function MapAttributesCard({
   const { mapName } = useLocalMap();
   const ed = editable('maps');
 
-  const editRuntime = useDraftDataRuntime();
-  const rawMap = editRuntime?.stores.maps[mapName];
-  const effectiveMap = useEditableEntity({ entityType: 'maps', entityId: mapName }, map) as Map;
-  const editModes = useEditableDomain('modes', {});
-  const availableModeOptions = editRuntime ? Object.keys(editModes) : modeNames;
+  const [effectiveMap, updateMap] = useEditableEntity(
+    { entityType: 'maps', entityId: mapName },
+    map
+  ) as unknown as readonly [Map, (mutate: (value: Map) => void) => void];
+  const [editModes] = useEditableDomain('modes', {});
+  const availableModeOptions = isEditMode ? Object.keys(editModes) : modeNames;
   const activeSupportedModes = Array.isArray(effectiveMap?.supportedModes)
     ? effectiveMap.supportedModes
     : [];
@@ -65,14 +65,15 @@ export default function MapAttributesCard({
                     path={`aliases.${index}`}
                     isSingleLine
                     onSave={(newValue) => {
-                      if (!rawMap) return;
-                      if (!rawMap.aliases) rawMap.aliases = [];
-                      const trimmed = newValue.trim();
-                      if (trimmed === '') {
-                        rawMap.aliases = rawMap.aliases.filter((_, i) => i !== index);
-                      } else {
-                        rawMap.aliases[index] = trimmed;
-                      }
+                      updateMap((draft) => {
+                        if (!draft.aliases) draft.aliases = [];
+                        const trimmed = newValue.trim();
+                        if (trimmed === '') {
+                          draft.aliases = draft.aliases.filter((_, i) => i !== index);
+                        } else {
+                          draft.aliases[index] = trimmed;
+                        }
+                      });
                     }}
                   />
                   {index < arr.length - 1 && <span className='text-gray-400'>、</span>}
@@ -83,11 +84,10 @@ export default function MapAttributesCard({
             )}
             <AddAliasButton
               onAdd={() => {
-                if (!rawMap) return;
-                if (!rawMap.aliases) rawMap.aliases = [];
-                if (!rawMap.aliases.includes('新别名')) {
-                  rawMap.aliases.push('新别名');
-                }
+                updateMap((draft) => {
+                  if (!draft.aliases) draft.aliases = [];
+                  if (!draft.aliases.includes('新别名')) draft.aliases.push('新别名');
+                });
               }}
             />
           </div>
@@ -107,7 +107,9 @@ export default function MapAttributesCard({
                   aria-label='地图类型'
                   value={effectiveMap.type}
                   onChange={(event) => {
-                    if (rawMap) rawMap.type = event.target.value as mapTypes;
+                    updateMap((draft) => {
+                      draft.type = event.target.value as mapTypes;
+                    });
                   }}
                   className='font-inherit cursor-pointer border-none bg-transparent text-inherit outline-none'
                 >
@@ -152,10 +154,11 @@ export default function MapAttributesCard({
                     value={effectiveMap.size ?? ''}
                     aria-label='地图规模'
                     onChange={(event) => {
-                      if (!rawMap) return;
                       const size = event.target.value;
-                      if (size) rawMap.size = size as MapSize;
-                      else delete rawMap.size;
+                      updateMap((draft) => {
+                        if (size) draft.size = size as MapSize;
+                        else delete draft.size;
+                      });
                     }}
                   >
                     <option value=''>未设置</option>
@@ -176,10 +179,11 @@ export default function MapAttributesCard({
                     value={effectiveMap.studyLevelUnlock ?? ''}
                     aria-label='地图解锁学业等级'
                     onChange={(event) => {
-                      if (!rawMap) return;
                       const level = event.target.value;
-                      if (level) rawMap.studyLevelUnlock = level as studyLevel;
-                      else delete rawMap.studyLevelUnlock;
+                      updateMap((draft) => {
+                        if (level) draft.studyLevelUnlock = level as studyLevel;
+                        else delete draft.studyLevelUnlock;
+                      });
                     }}
                   >
                     <option value=''>未设置</option>
@@ -285,8 +289,9 @@ export default function MapAttributesCard({
                       type='checkbox'
                       checked={effectiveMap.randomizedRoom ?? false}
                       onChange={(e) => {
-                        if (!rawMap) return;
-                        rawMap.randomizedRoom = e.target.checked;
+                        updateMap((draft) => {
+                          draft.randomizedRoom = e.target.checked;
+                        });
                       }}
                       className='h-3 w-3'
                     />
@@ -299,8 +304,9 @@ export default function MapAttributesCard({
                       type='checkbox'
                       checked={effectiveMap.changeWithStudyLevel ?? false}
                       onChange={(e) => {
-                        if (!rawMap) return;
-                        rawMap.changeWithStudyLevel = e.target.checked;
+                        updateMap((draft) => {
+                          draft.changeWithStudyLevel = e.target.checked;
+                        });
                       }}
                       className='h-3 w-3'
                     />
@@ -313,8 +319,9 @@ export default function MapAttributesCard({
                       type='checkbox'
                       checked={effectiveMap.changeWithMode ?? false}
                       onChange={(e) => {
-                        if (!rawMap) return;
-                        rawMap.changeWithMode = e.target.checked;
+                        updateMap((draft) => {
+                          draft.changeWithMode = e.target.checked;
+                        });
                       }}
                       className='h-3 w-3'
                     />
@@ -356,19 +363,16 @@ export default function MapAttributesCard({
                         type='checkbox'
                         checked={activeSupportedModes.includes(opt)}
                         onChange={(e) => {
-                          if (!rawMap) return;
-                          const current = Array.isArray(rawMap.supportedModes)
-                            ? rawMap.supportedModes
-                            : [];
-                          const next = new Set(current);
-                          if (e.target.checked) next.add(opt);
-                          else next.delete(opt);
-                          const arr = Array.from(next);
-                          if (arr.length === 0) {
-                            delete rawMap.supportedModes;
-                          } else {
-                            rawMap.supportedModes = arr;
-                          }
+                          updateMap((draft) => {
+                            const next = new Set(
+                              Array.isArray(draft.supportedModes) ? draft.supportedModes : []
+                            );
+                            if (e.target.checked) next.add(opt);
+                            else next.delete(opt);
+                            const values = Array.from(next);
+                            if (values.length === 0) delete draft.supportedModes;
+                            else draft.supportedModes = values;
+                          });
                         }}
                         className='h-3 w-3'
                       />
@@ -442,12 +446,14 @@ export default function MapAttributesCard({
                             size='sm'
                             className='ml-auto'
                             onClick={() => {
-                              if (!rawMap?.mapSkin) return;
-                              const next = rawMap.mapSkin.filter(
-                                (_, skinIndex) => skinIndex !== index
-                              );
-                              if (next.length > 0) rawMap.mapSkin = next;
-                              else delete rawMap.mapSkin;
+                              updateMap((draft) => {
+                                if (!draft.mapSkin) return;
+                                const next = draft.mapSkin.filter(
+                                  (_, skinIndex) => skinIndex !== index
+                                );
+                                if (next.length > 0) draft.mapSkin = next;
+                                else delete draft.mapSkin;
+                              });
                             }}
                           >
                             <TrashIcon
@@ -467,12 +473,13 @@ export default function MapAttributesCard({
                     variant='add'
                     size='sm'
                     onClick={() => {
-                      if (!rawMap) return;
-                      if (!rawMap.mapSkin) rawMap.mapSkin = [];
-                      rawMap.mapSkin.push({
-                        name: '新换肤',
-                        imageUrl: effectiveMap.imageUrl,
-                        description: '请填写换肤介绍',
+                      updateMap((draft) => {
+                        if (!draft.mapSkin) draft.mapSkin = [];
+                        draft.mapSkin.push({
+                          name: '新换肤',
+                          imageUrl: effectiveMap.imageUrl,
+                          description: '请填写换肤介绍',
+                        });
                       });
                     }}
                   >

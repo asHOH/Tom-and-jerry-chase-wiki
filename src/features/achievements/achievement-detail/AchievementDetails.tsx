@@ -18,14 +18,14 @@ export default function AchievementDetailClient({ achievement }: { achievement: 
   const { isEditMode } = useEditMode();
   const { achievementName, factionId } = useLocalAchievement();
   const ed = editable('achievements');
-  const effectiveAchievement = useEditableEntity(
+  const [effectiveAchievement] = useEditableEntity(
     {
       entityType: 'achievements',
       entityId: achievementName,
       factionId: factionId === 'cat' || factionId === 'mouse' ? factionId : achievement.factionId!,
     },
     achievement
-  ) as Achievement;
+  ) as unknown as readonly [Achievement];
 
   // Keyboard navigation
   useSpecifyTypeKeyboardNavigation(

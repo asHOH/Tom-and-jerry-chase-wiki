@@ -11,7 +11,7 @@ import { usePublishedCharacter } from './PublishedCharacterContext';
 export function useCharacterActions() {
   const { characterId } = useLocalCharacter();
   const publishedCharacter = usePublishedCharacter(characterId);
-  const localCharacter = useEditableEntity(
+  const [localCharacter] = useEditableEntity(
     { entityType: 'characters', entityId: characterId },
     publishedCharacter
   )!;

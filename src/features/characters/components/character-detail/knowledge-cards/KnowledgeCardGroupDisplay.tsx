@@ -31,10 +31,11 @@ import TreeCardDisplay from './TreeCardDisplay';
 
 function useCharacterSnapshot(characterId: string) {
   const publishedCharacter = usePublishedCharacter(characterId);
-  return useEditableEntity(
+  const [character] = useEditableEntity(
     { entityType: 'characters', entityId: characterId },
     publishedCharacter
-  )!;
+  );
+  return character;
 }
 
 const e = editable('characters');

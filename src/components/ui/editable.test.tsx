@@ -19,7 +19,11 @@ jest.mock('@/context/AppContext', () => ({
 }));
 
 jest.mock('@/context/EditModeContext', () => ({
-  useEditMode: () => ({ isEditMode: mockIsEditMode }),
+  useEditMode: () => ({
+    isEditMode: mockIsEditMode,
+    isEditModeRequested: mockIsEditMode,
+    runtimeStatus: mockIsEditMode ? 'ready' : 'idle',
+  }),
 }));
 
 jest.mock('@/hooks/useLocalEditEntity', () => ({

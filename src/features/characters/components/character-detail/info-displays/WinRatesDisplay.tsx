@@ -17,7 +17,7 @@ interface WinRatesDisplayProps {
 export default function WinRatesDisplay({ characterName }: WinRatesDisplayProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const publishedCharacter = usePublishedCharacter(characterName);
-  const character = useEditableEntity(
+  const [character] = useEditableEntity(
     { entityType: 'characters', entityId: characterName },
     publishedCharacter
   )!;

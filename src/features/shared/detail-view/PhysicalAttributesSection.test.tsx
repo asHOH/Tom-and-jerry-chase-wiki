@@ -30,7 +30,9 @@ describe('PhysicalAttributesSection', () => {
   it('toggles move and gravity on the draft object', () => {
     const draft = {};
 
-    render(<PhysicalAttributesSection attributes={{}} draftAttributes={draft} isEditMode />);
+    render(
+      <PhysicalAttributesSection attributes={{}} isEditMode onChange={(mutate) => mutate(draft)} />
+    );
 
     fireEvent.click(screen.getByRole('checkbox', { name: /移动/ }));
     fireEvent.click(screen.getByRole('checkbox', { name: /重力/ }));
@@ -44,8 +46,8 @@ describe('PhysicalAttributesSection', () => {
     const { rerender } = render(
       <PhysicalAttributesSection
         attributes={{ collision: ['角色'] }}
-        draftAttributes={draft}
         isEditMode
+        onChange={(mutate) => mutate(draft)}
       />
     );
 
@@ -55,8 +57,8 @@ describe('PhysicalAttributesSection', () => {
     rerender(
       <PhysicalAttributesSection
         attributes={{ collision: ['角色', '道具'] }}
-        draftAttributes={draft}
         isEditMode
+        onChange={(mutate) => mutate(draft)}
       />
     );
 
@@ -66,8 +68,8 @@ describe('PhysicalAttributesSection', () => {
     rerender(
       <PhysicalAttributesSection
         attributes={{ collision: ['道具'] }}
-        draftAttributes={draft}
         isEditMode
+        onChange={(mutate) => mutate(draft)}
       />
     );
 

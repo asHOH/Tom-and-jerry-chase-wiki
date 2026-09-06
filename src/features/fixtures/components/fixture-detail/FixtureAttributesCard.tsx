@@ -2,7 +2,6 @@
 
 import { getFixtureSourceColors, getFixtureTypeColors } from '@/lib/design';
 import { getSingleItemPrototype, getSingleItemVariant } from '@/lib/singleItemTools';
-import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useEditableDomain, useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalFixture } from '@/hooks/useLocalEditEntity';
 import { useAppContext } from '@/context/AppContext';
@@ -47,13 +46,11 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
   const { fixtureName } = useLocalFixture();
   const ed = editable('fixtures');
 
-  const editRuntime = useDraftDataRuntime();
-  const rawFixture = editRuntime?.stores.fixtures[fixtureName];
-  const effectiveFixture = useEditableEntity(
+  const [effectiveFixture, updateFixture] = useEditableEntity(
     { entityType: 'fixtures', entityId: fixtureName },
     fixture
-  ) as Fixture;
-  const mapsSnapshot = useEditableDomain('maps', maps);
+  ) as unknown as readonly [Fixture, (mutate: (value: Fixture) => void) => void];
+  const [mapsSnapshot] = useEditableDomain('maps', maps);
 
   /* 计算variant相关内容 */
   const prototype = getSingleItemPrototype({ name: fixture.name, type: 'fixture' });
@@ -106,14 +103,15 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
                     path={`aliases.${index}`}
                     isSingleLine
                     onSave={(newValue) => {
-                      if (!rawFixture) return;
-                      if (!rawFixture.aliases) rawFixture.aliases = [];
-                      const trimmed = newValue.trim();
-                      if (trimmed === '') {
-                        rawFixture.aliases = rawFixture.aliases.filter((_, i) => i !== index);
-                      } else {
-                        rawFixture.aliases[index] = trimmed;
-                      }
+                      updateFixture((draft) => {
+                        if (!draft.aliases) draft.aliases = [];
+                        const trimmed = newValue.trim();
+                        if (trimmed === '') {
+                          draft.aliases = draft.aliases.filter((_, i) => i !== index);
+                        } else {
+                          draft.aliases[index] = trimmed;
+                        }
+                      });
                     }}
                   />
                   {index < arr.length - 1 && <span className='text-gray-400'>、</span>}
@@ -124,11 +122,10 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
             )}
             <AddAliasButton
               onAdd={() => {
-                if (!rawFixture) return;
-                if (!rawFixture.aliases) rawFixture.aliases = [];
-                if (!rawFixture.aliases.includes('新别名')) {
-                  rawFixture.aliases.push('新别名');
-                }
+                updateFixture((draft) => {
+                  if (!draft.aliases) draft.aliases = [];
+                  if (!draft.aliases.includes('新别名')) draft.aliases.push('新别名');
+                });
               }}
             />
           </div>
@@ -146,8 +143,10 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
                 minimumSelections={1}
                 ariaLabelPrefix='地图组件类型'
                 onChange={(types) => {
-                  if (!rawFixture || types.length === 0) return;
-                  rawFixture.type = types.length === 1 ? types[0]! : types;
+                  if (types.length === 0) return;
+                  updateFixture((draft) => {
+                    draft.type = types.length === 1 ? types[0]! : types;
+                  });
                 }}
               />
             ) : (
@@ -160,9 +159,9 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
                 value={effectiveFixture.source}
                 aria-label='地图组件来源'
                 onChange={(event) => {
-                  if (rawFixture) {
-                    rawFixture.source = event.target.value as FixtureSourceList;
-                  }
+                  updateFixture((draft) => {
+                    draft.source = event.target.value as FixtureSourceList;
+                  });
                 }}
               >
                 {FIXTURE_SOURCES.map((source) => (
@@ -190,9 +189,10 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
                 options={Object.keys(mapsSnapshot)}
                 itemLabel='支持地图'
                 onChange={(supportedMaps) => {
-                  if (!rawFixture) return;
-                  if (supportedMaps.length > 0) rawFixture.supportedMaps = supportedMaps;
-                  else delete rawFixture.supportedMaps;
+                  updateFixture((draft) => {
+                    if (supportedMaps.length > 0) draft.supportedMaps = supportedMaps;
+                    else delete draft.supportedMaps;
+                  });
                 }}
               />
             </div>
@@ -202,11 +202,12 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
               <ActorProfileSelect
                 value={effectiveFixture.actorProfileName}
                 onChange={(profileName) => {
-                  if (!rawFixture) return;
-                  if (profileName) {
-                    rawFixture.actorProfileName = profileName;
-                    delete rawFixture.fixtureAttributesAsCharacter;
-                  } else delete rawFixture.actorProfileName;
+                  updateFixture((draft) => {
+                    if (profileName) {
+                      draft.actorProfileName = profileName;
+                      delete draft.fixtureAttributesAsCharacter;
+                    } else delete draft.actorProfileName;
+                  });
                 }}
               />
             </div>
@@ -217,11 +218,12 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
             isDetailed={isDetailed}
             isEditMode={isEditMode}
             onChange={(attributes) => {
-              if (!rawFixture) return;
-              if (attributes) {
-                rawFixture.fixtureAttributesAsCharacter = attributes;
-                delete rawFixture.actorProfileName;
-              } else delete rawFixture.fixtureAttributesAsCharacter;
+              updateFixture((draft) => {
+                if (attributes) {
+                  draft.fixtureAttributesAsCharacter = attributes;
+                  delete draft.actorProfileName;
+                } else delete draft.fixtureAttributesAsCharacter;
+              });
             }}
           />
           {effectiveFixture.actorProfileName !== undefined ? (
@@ -232,8 +234,8 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
           ) : null}
           <PhysicalAttributesSection
             attributes={effectiveFixture}
-            draftAttributes={rawFixture}
             isEditMode={isEditMode}
+            onChange={(mutate) => updateFixture(mutate)}
           />
           {(prototype.length > 0 || variant.length > 0) && (
             <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>

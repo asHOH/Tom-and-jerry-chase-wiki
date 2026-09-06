@@ -1,8 +1,9 @@
 'use client';
 
 import { getCardCostColors, getCardRankColors } from '@/lib/design';
-import { KnowledgeCardDetailsProps } from '@/lib/types';
+import type { KnowledgeCardDetailsProps, KnowledgeCardWithFaction } from '@/lib/types';
 import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
+import { useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalCard } from '@/hooks/useLocalEditEntity';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
@@ -60,9 +61,15 @@ export default function KnowledgeCardAttributesCard({ card }: KnowledgeCardDetai
   const { isEditMode } = useEditMode();
   const { cardId } = useLocalCard();
   const ed = editable('cards');
-
   const editRuntime = useDraftDataRuntime();
-  const rawCard = cardId ? editRuntime?.stores.cards[cardId] : undefined;
+
+  const [effectiveCard, updateCard] = useEditableEntity(
+    { entityType: 'cards', entityId: cardId },
+    card
+  ) as unknown as readonly [
+    KnowledgeCardWithFaction,
+    (mutate: (value: KnowledgeCardWithFaction) => void) => void,
+  ];
 
   const rankColors = getCardRankColors(card.rank, true, isDarkMode);
   const costColors = getCardCostColors(card.cost, true, isDarkMode);
@@ -78,22 +85,23 @@ export default function KnowledgeCardAttributesCard({ card }: KnowledgeCardDetai
         isEditMode ? (
           <div className='flex items-center gap-1'>
             <span className='text-xs text-gray-400 dark:text-gray-500'>别名：</span>
-            {(rawCard?.aliases ?? card.aliases ?? []).length > 0 ? (
-              (rawCard?.aliases ?? card.aliases ?? []).map((alias, index, arr) => (
+            {(effectiveCard.aliases ?? card.aliases ?? []).length > 0 ? (
+              (effectiveCard.aliases ?? card.aliases ?? []).map((alias, index, arr) => (
                 <span key={`${alias}-${index}`} className='inline-flex items-center'>
                   <ed.span
                     initialValue={alias || '<无内容>'}
                     path={`aliases.${index}`}
                     isSingleLine
                     onSave={(newValue) => {
-                      if (!rawCard) return;
-                      if (!rawCard.aliases) rawCard.aliases = [];
-                      const trimmed = newValue.trim();
-                      if (trimmed === '') {
-                        rawCard.aliases = rawCard.aliases.filter((_, i) => i !== index);
-                      } else {
-                        rawCard.aliases[index] = trimmed;
-                      }
+                      updateCard((draft) => {
+                        if (!draft.aliases) draft.aliases = [];
+                        const trimmed = newValue.trim();
+                        if (trimmed === '') {
+                          draft.aliases = draft.aliases.filter((_, i) => i !== index);
+                        } else {
+                          draft.aliases[index] = trimmed;
+                        }
+                      });
                     }}
                   />
                   {index < arr.length - 1 && <span className='text-gray-400'>、</span>}
@@ -104,11 +112,10 @@ export default function KnowledgeCardAttributesCard({ card }: KnowledgeCardDetai
             )}
             <AddAliasButton
               onAdd={() => {
-                if (!rawCard) return;
-                if (!rawCard.aliases) rawCard.aliases = [];
-                if (!rawCard.aliases.includes('新别名')) {
-                  rawCard.aliases.push('新别名');
-                }
+                updateCard((draft) => {
+                  if (!draft.aliases) draft.aliases = [];
+                  if (!draft.aliases.includes('新别名')) draft.aliases.push('新别名');
+                });
               }}
             />
           </div>
@@ -125,19 +132,24 @@ export default function KnowledgeCardAttributesCard({ card }: KnowledgeCardDetai
                   aria-label='知识卡等级'
                   value={card.rank}
                   onChange={(event) => {
-                    if (!rawCard || !editRuntime) return;
                     const nextRank = event.target.value as (typeof CARD_RANKS)[number];
-                    const previousKey = `${rawCard.rank}-${rawCard.id}`;
-                    const nextKey = `${nextRank}-${rawCard.id}`;
-                    rawCard.rank = nextRank;
-                    if (rawCard.factionId === 'cat' || rawCard.factionId === 'mouse') {
-                      rawCard.imageUrl = `/images/${rawCard.factionId}Cards/${nextKey}.png`;
+                    let previousKey = '';
+                    let nextKey = '';
+                    updateCard((draft) => {
+                      previousKey = `${draft.rank}-${draft.id}`;
+                      nextKey = `${nextRank}-${draft.id}`;
+                      draft.rank = nextRank;
+                      if (draft.factionId === 'cat' || draft.factionId === 'mouse') {
+                        draft.imageUrl = `/images/${draft.factionId}Cards/${nextKey}.png`;
+                      }
+                    });
+                    if (editRuntime) {
+                      replaceCharacterCardReferences(
+                        editRuntime.stores.characters as unknown as Record<string, unknown>,
+                        previousKey,
+                        nextKey
+                      );
                     }
-                    replaceCharacterCardReferences(
-                      editRuntime.stores.characters as unknown as Record<string, unknown>,
-                      previousKey,
-                      nextKey
-                    );
                   }}
                   className='font-inherit cursor-pointer border-none bg-transparent text-inherit outline-none'
                 >
@@ -170,10 +182,11 @@ export default function KnowledgeCardAttributesCard({ card }: KnowledgeCardDetai
                     aria-label='知识卡升级优先级'
                     value={card.priority ?? ''}
                     onChange={(event) => {
-                      if (!rawCard) return;
                       const priority = event.target.value;
-                      if (priority === '') delete rawCard.priority;
-                      else rawCard.priority = priority as (typeof CARD_PRIORITIES)[number];
+                      updateCard((draft) => {
+                        if (priority === '') delete draft.priority;
+                        else draft.priority = priority as (typeof CARD_PRIORITIES)[number];
+                      });
                     }}
                     className='font-inherit cursor-pointer border-none bg-transparent text-inherit outline-none'
                   >

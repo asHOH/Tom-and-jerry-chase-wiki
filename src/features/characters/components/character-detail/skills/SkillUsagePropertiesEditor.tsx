@@ -2,6 +2,7 @@
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { cn } from '@/lib/design';
+import type { EditableUpdate } from '@/hooks/useEditableGameData';
 import type {
   CancelableAftercastType,
   CancelableSkillType,
@@ -26,7 +27,8 @@ const cancelableOptions = [
 
 type SkillUsagePropertiesEditorProps = {
   usage: DeepReadonly<SkillUsageProperties>;
-  usageRef: SkillUsageProperties;
+  usageRef?: SkillUsageProperties | undefined;
+  updateUsage?: EditableUpdate<SkillUsageProperties> | undefined;
   pathPrefix: string;
   radioNameSuffix: string;
   factionId?: FactionId | undefined;
@@ -37,12 +39,13 @@ type BooleanProperty = 'canMoveWhileUsing' | 'canUseInAir' | 'canHitInPipe' | 'c
 
 function BooleanCheckbox({
   usage,
-  usageRef,
+  updateUsage,
   property,
   label,
   trueText,
   falseText,
-}: Pick<SkillUsagePropertiesEditorProps, 'usage' | 'usageRef'> & {
+}: Pick<SkillUsagePropertiesEditorProps, 'usage'> & {
+  updateUsage: EditableUpdate<SkillUsageProperties>;
   property: BooleanProperty;
   label: string;
   trueText: string;
@@ -56,7 +59,9 @@ function BooleanCheckbox({
           type='checkbox'
           checked={usage[property] ?? false}
           onChange={(event) => {
-            usageRef[property] = event.target.checked;
+            updateUsage((draft) => {
+              draft[property] = event.target.checked;
+            });
           }}
           className='h-3 w-3'
         />
@@ -68,11 +73,12 @@ function BooleanCheckbox({
 
 function CancelableEditor({
   usage,
-  usageRef,
+  updateUsage,
   pathPrefix,
   phase,
   scope,
-}: Pick<SkillUsagePropertiesEditorProps, 'usage' | 'usageRef' | 'pathPrefix'> & {
+}: Pick<SkillUsagePropertiesEditorProps, 'usage' | 'pathPrefix'> & {
+  updateUsage: EditableUpdate<SkillUsageProperties>;
   phase: 'forecast' | 'aftercast';
   scope: 'characters' | 'entities';
 }) {
@@ -92,20 +98,24 @@ function CancelableEditor({
       );
 
   const setCancelableValue = (next: CancelableSkillType | CancelableAftercastType | undefined) => {
-    if (next === undefined) {
-      delete usageRef[cancelProperty];
-    } else if (isForecast) {
-      usageRef.cancelableSkill = next as CancelableSkillType;
-    } else {
-      usageRef.cancelableAftercast = next as CancelableAftercastType;
-    }
+    updateUsage((draft) => {
+      if (next === undefined) {
+        delete draft[cancelProperty];
+      } else if (isForecast) {
+        draft.cancelableSkill = next as CancelableSkillType;
+      } else {
+        draft.cancelableAftercast = next as CancelableAftercastType;
+      }
+    });
   };
 
   const setDuration = (next: number) => {
-    usageRef[phase] = next;
-    if (next !== 0 && usageRef[cancelProperty] === noAnimationText) {
-      delete usageRef[cancelProperty];
-    }
+    updateUsage((draft) => {
+      draft[phase] = next;
+      if (next !== 0 && draft[cancelProperty] === noAnimationText) {
+        delete draft[cancelProperty];
+      }
+    });
   };
 
   const disabled = value === 0;
@@ -190,13 +200,14 @@ function CancelableEditor({
 
 function RadioGroup<T extends string>({
   usage,
-  usageRef,
+  updateUsage,
   property,
   label,
   options,
   defaultValue,
   radioNameSuffix,
-}: Pick<SkillUsagePropertiesEditorProps, 'usage' | 'usageRef' | 'radioNameSuffix'> & {
+}: Pick<SkillUsagePropertiesEditorProps, 'usage' | 'radioNameSuffix'> & {
+  updateUsage: EditableUpdate<SkillUsageProperties>;
   property: 'cooldownTiming' | 'cueRange';
   label: string;
   options: readonly T[];
@@ -215,13 +226,15 @@ function RadioGroup<T extends string>({
               name={`${property}-${radioNameSuffix}`}
               checked={currentValue === option}
               onChange={() => {
-                if (property === 'cooldownTiming') {
-                  usageRef.cooldownTiming = option as NonNullable<
-                    SkillUsageProperties['cooldownTiming']
-                  >;
-                } else {
-                  usageRef.cueRange = option as NonNullable<SkillUsageProperties['cueRange']>;
-                }
+                updateUsage((draft) => {
+                  if (property === 'cooldownTiming') {
+                    draft.cooldownTiming = option as NonNullable<
+                      SkillUsageProperties['cooldownTiming']
+                    >;
+                  } else {
+                    draft.cueRange = option as NonNullable<SkillUsageProperties['cueRange']>;
+                  }
+                });
               }}
               className='h-3 w-3'
             />
@@ -236,16 +249,23 @@ function RadioGroup<T extends string>({
 export default function SkillUsagePropertiesEditor({
   usage,
   usageRef,
+  updateUsage,
   pathPrefix,
   radioNameSuffix,
   factionId,
   scope = 'characters',
 }: SkillUsagePropertiesEditorProps) {
+  const mutateUsage: EditableUpdate<SkillUsageProperties> =
+    updateUsage ??
+    ((mutate) => {
+      if (usageRef) mutate(usageRef);
+    });
+
   return (
     <div className='space-y-2'>
       <BooleanCheckbox
         usage={usage}
-        usageRef={usageRef}
+        updateUsage={mutateUsage}
         property='canMoveWhileUsing'
         label='移动释放'
         trueText='可移动释放'
@@ -253,7 +273,7 @@ export default function SkillUsagePropertiesEditor({
       />
       <BooleanCheckbox
         usage={usage}
-        usageRef={usageRef}
+        updateUsage={mutateUsage}
         property='canUseInAir'
         label='空中释放'
         trueText='可空中释放'
@@ -262,7 +282,7 @@ export default function SkillUsagePropertiesEditor({
       {factionId === 'cat' && (
         <BooleanCheckbox
           usage={usage}
-          usageRef={usageRef}
+          updateUsage={mutateUsage}
           property='causesWoundedState'
           label='造成受伤状态'
           trueText='可造成受伤状态'
@@ -271,21 +291,21 @@ export default function SkillUsagePropertiesEditor({
       )}
       <CancelableEditor
         usage={usage}
-        usageRef={usageRef}
+        updateUsage={mutateUsage}
         pathPrefix={pathPrefix}
         phase='forecast'
         scope={scope}
       />
       <CancelableEditor
         usage={usage}
-        usageRef={usageRef}
+        updateUsage={mutateUsage}
         pathPrefix={pathPrefix}
         phase='aftercast'
         scope={scope}
       />
       <BooleanCheckbox
         usage={usage}
-        usageRef={usageRef}
+        updateUsage={mutateUsage}
         property='canHitInPipe'
         label='管道攻击'
         trueText='可击中管道中的角色'
@@ -293,7 +313,7 @@ export default function SkillUsagePropertiesEditor({
       />
       <RadioGroup
         usage={usage}
-        usageRef={usageRef}
+        updateUsage={mutateUsage}
         property='cooldownTiming'
         label='CD时机'
         options={['前摇前', '释放时', '释放后'] as const}
@@ -302,7 +322,7 @@ export default function SkillUsagePropertiesEditor({
       />
       <RadioGroup
         usage={usage}
-        usageRef={usageRef}
+        updateUsage={mutateUsage}
         property='cueRange'
         label='技能音效'
         options={['随距离远近变化', '全图可见', '本房间可见', '无音效'] as const}

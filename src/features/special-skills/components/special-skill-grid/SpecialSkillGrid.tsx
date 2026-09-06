@@ -30,7 +30,7 @@ export default function SpecialSkillClient({
   const [selectedFaction, setSelectedFaction] = useState<FactionId | null>(null);
   const [isDarkMode] = useDarkMode();
 
-  const specialSkillsSnapshot = useEditableDomain('specialSkills', data);
+  const [specialSkillsSnapshot] = useEditableDomain('specialSkills', data);
   const allSkills = [
     ...Object.values(specialSkillsSnapshot.cat),
     ...Object.values(specialSkillsSnapshot.mouse),

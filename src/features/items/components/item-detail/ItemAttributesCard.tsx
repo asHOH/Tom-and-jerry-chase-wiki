@@ -2,7 +2,6 @@
 
 import { getItemSourceColors /* , getCardCostColors */, getItemTypeColors } from '@/lib/design';
 import { getSingleItemPrototype, getSingleItemVariant } from '@/lib/singleItemTools';
-import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalItem } from '@/hooks/useLocalEditEntity';
 import { useAppContext } from '@/context/AppContext';
@@ -40,12 +39,10 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
   const { itemName } = useLocalItem();
   const ed = editable('items');
 
-  const editRuntime = useDraftDataRuntime();
-  const rawItem = editRuntime?.stores.items[itemName];
-  const effectiveItem = useEditableEntity(
+  const [effectiveItem, updateItem] = useEditableEntity(
     { entityType: 'items', entityId: itemName },
     item
-  ) as Item;
+  ) as unknown as readonly [Item, (mutate: (value: Item) => void) => void];
 
   /* 计算variant相关内容 */
   const prototype = getSingleItemPrototype({ name: item.name, type: 'item' });
@@ -63,14 +60,15 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
               path={`aliases.${index}`}
               isSingleLine
               onSave={(newValue) => {
-                if (!rawItem) return;
-                if (!rawItem.aliases) rawItem.aliases = [];
-                const trimmed = newValue.trim();
-                if (trimmed === '') {
-                  rawItem.aliases = rawItem.aliases.filter((_, i) => i !== index);
-                } else {
-                  rawItem.aliases[index] = trimmed;
-                }
+                updateItem((draft) => {
+                  if (!draft.aliases) draft.aliases = [];
+                  const trimmed = newValue.trim();
+                  if (trimmed === '') {
+                    draft.aliases = draft.aliases.filter((_, i) => i !== index);
+                  } else {
+                    draft.aliases[index] = trimmed;
+                  }
+                });
               }}
             />
             {index < arr.length - 1 && <span className='text-gray-400'>、</span>}
@@ -81,11 +79,10 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
       )}
       <AddAliasButton
         onAdd={() => {
-          if (!rawItem) return;
-          if (!rawItem.aliases) rawItem.aliases = [];
-          if (!rawItem.aliases.includes('新别名')) {
-            rawItem.aliases.push('新别名');
-          }
+          updateItem((draft) => {
+            if (!draft.aliases) draft.aliases = [];
+            if (!draft.aliases.includes('新别名')) draft.aliases.push('新别名');
+          });
         }}
       />
     </div>
@@ -113,7 +110,9 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                   aria-label='道具类型'
                   value={effectiveItem.itemtype}
                   onChange={(event) => {
-                    if (rawItem) rawItem.itemtype = event.target.value as Itemtypelist;
+                    updateItem((draft) => {
+                      draft.itemtype = event.target.value as Itemtypelist;
+                    });
                   }}
                   className='font-inherit cursor-pointer border-none bg-transparent text-inherit outline-none'
                 >
@@ -137,7 +136,9 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                   aria-label='道具来源'
                   value={effectiveItem.itemsource}
                   onChange={(event) => {
-                    if (rawItem) rawItem.itemsource = event.target.value as Itemsourcelist;
+                    updateItem((draft) => {
+                      draft.itemsource = event.target.value as Itemsourcelist;
+                    });
                   }}
                   className='font-inherit cursor-pointer border-none bg-transparent text-inherit outline-none'
                 >
@@ -161,10 +162,11 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                   value={effectiveItem.factionId ?? ''}
                   aria-label='道具阵营'
                   onChange={(event) => {
-                    if (!rawItem) return;
                     const faction = event.target.value;
-                    if (faction === 'cat' || faction === 'mouse') rawItem.factionId = faction;
-                    else delete rawItem.factionId;
+                    updateItem((draft) => {
+                      if (faction === 'cat' || faction === 'mouse') draft.factionId = faction;
+                      else delete draft.factionId;
+                    });
                   }}
                 >
                   <option value=''>无阵营</option>
@@ -175,11 +177,12 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
               <ActorProfileSelect
                 value={effectiveItem.actorProfileName}
                 onChange={(profileName) => {
-                  if (!rawItem) return;
-                  if (profileName) {
-                    rawItem.actorProfileName = profileName;
-                    delete rawItem.itemAttributesAsCharacter;
-                  } else delete rawItem.actorProfileName;
+                  updateItem((draft) => {
+                    if (profileName) {
+                      draft.actorProfileName = profileName;
+                      delete draft.itemAttributesAsCharacter;
+                    } else delete draft.actorProfileName;
+                  });
                 }}
               />
             </div>
@@ -245,11 +248,12 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
             isDetailed={isDetailed}
             isEditMode={isEditMode}
             onChange={(attributes) => {
-              if (!rawItem) return;
-              if (attributes) {
-                rawItem.itemAttributesAsCharacter = attributes;
-                delete rawItem.actorProfileName;
-              } else delete rawItem.itemAttributesAsCharacter;
+              updateItem((draft) => {
+                if (attributes) {
+                  draft.itemAttributesAsCharacter = attributes;
+                  delete draft.actorProfileName;
+                } else delete draft.itemAttributesAsCharacter;
+              });
             }}
           />
           {effectiveItem.actorProfileName !== undefined ? (
@@ -260,8 +264,8 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
           ) : null}
           <PhysicalAttributesSection
             attributes={effectiveItem}
-            draftAttributes={rawItem}
             isEditMode={isEditMode}
+            onChange={(mutate) => updateItem(mutate)}
           />
           {(isEditMode || effectiveItem?.store !== undefined) && (
             <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
@@ -273,8 +277,9 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                       type='checkbox'
                       checked={effectiveItem.store ?? false}
                       onChange={(e) => {
-                        if (!rawItem) return;
-                        rawItem.store = e.target.checked;
+                        updateItem((draft) => {
+                          draft.store = e.target.checked;
+                        });
                       }}
                       className='h-3 w-3'
                     />
@@ -343,8 +348,9 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
                         type='checkbox'
                         checked={effectiveItem.teamCD ?? false}
                         onChange={(e) => {
-                          if (!rawItem) return;
-                          rawItem.teamCD = e.target.checked;
+                          updateItem((draft) => {
+                            draft.teamCD = e.target.checked;
+                          });
                         }}
                         className='h-3 w-3'
                       />

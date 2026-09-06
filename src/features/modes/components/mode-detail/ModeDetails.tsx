@@ -33,10 +33,10 @@ export default function ModeDetailClient({
   const { modeName } = useLocalMode();
   const ed = editable('modes');
 
-  const effectiveMode = useEditableEntity(
+  const [effectiveMode] = useEditableEntity(
     { entityType: 'modes', entityId: modeName },
     mode
-  ) as Mode;
+  ) as unknown as readonly [Mode];
 
   // Keyboard navigation
   useSpecifyTypeKeyboardNavigation(effectiveMode.name, 'mode');

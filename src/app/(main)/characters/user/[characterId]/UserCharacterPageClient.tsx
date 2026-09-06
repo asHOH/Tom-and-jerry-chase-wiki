@@ -22,7 +22,7 @@ export default function UserCharacterPageClient({
   usePublishedRevision(publishedRevision);
   const { isLoading, isEditMode } = useEditMode();
   const { characterId } = useLocalCharacter();
-  const character = useEditableEntity({ entityType: 'characters', entityId: characterId }, null);
+  const [character] = useEditableEntity({ entityType: 'characters', entityId: characterId }, null);
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();

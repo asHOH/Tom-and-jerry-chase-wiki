@@ -1,10 +1,15 @@
 'use client';
 
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 
-import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
-import type { EditStores } from '@/lib/edit/editStores';
+import type { DeepReadonly } from '@/types/deep-readonly';
 import { getNestedProperty, handleCharacterIdChange, setNestedProperty } from '@/lib/editUtils';
+import type { PublishableEntityType } from '@/lib/gameData/publishableEntityTypes';
+import {
+  useEditableEntity,
+  type EditableEntityRef,
+  type EditableUpdate,
+} from '@/hooks/useEditableGameData';
 import {
   useLocalAchievement,
   useLocalBuff,
@@ -18,6 +23,7 @@ import {
   useLocalSpecialSkill,
 } from '@/hooks/useLocalEditEntity';
 import { useAppContext } from '@/context/AppContext';
+import type { FactionId } from '@/data/types';
 
 import type { EditableScope } from './editableTypes';
 
@@ -27,13 +33,6 @@ type EditableStoreAdapter = {
   actionPath: string;
   readStoredValue: () => string | number | undefined;
   writeValue: (value: string | number | undefined) => void;
-};
-
-type EditableWriteTarget = {
-  entityId: string;
-  root: Record<string, unknown>;
-  pathPrefix: string;
-  record: Record<string, unknown> | undefined;
 };
 
 type RecordRouteKeys = {
@@ -48,164 +47,86 @@ type RecordRouteKeys = {
   skillId: string;
 };
 
-const emptyObject: Record<string, unknown> = {};
+type RecordTarget = {
+  pathPrefix: string;
+  ref: EditableEntityRef<EditableRecordScope>;
+};
 
-function createMissingEditableTargetError(
-  scope: EditableScope,
-  entityId: string,
-  path: string
-): Error {
-  return new Error(`Cannot edit ${scope}.${path} because "${entityId}" is not loaded.`);
-}
+const emptyObject: DeepReadonly<Record<string, unknown>> = {};
 
-function assertEditableTargetLoaded(
-  scope: EditableScope,
-  target: EditableWriteTarget,
-  path: string
-): asserts target is EditableWriteTarget & { record: Record<string, unknown> } {
-  if (!target.entityId || !target.record) {
-    throw createMissingEditableTargetError(scope, target.entityId || '<unknown>', path);
-  }
-}
-
-function getCharacterWriteTarget(
-  stores: EditStores | undefined,
-  characterId: string
-): EditableWriteTarget {
-  const root = (stores?.characters ?? emptyObject) as unknown as Record<string, unknown>;
-  const record = root[characterId] as Record<string, unknown> | undefined;
-  return {
-    entityId: characterId,
-    root,
-    pathPrefix: record?.id ? String(record.id) : characterId,
-    record,
-  };
-}
-
-function getCardsWriteTarget(stores: EditStores | undefined, cardId: string): EditableWriteTarget {
-  const root = (stores?.cards ?? emptyObject) as unknown as Record<string, unknown>;
-  return {
-    entityId: cardId,
-    root,
-    pathPrefix: cardId,
-    record: root[cardId] as Record<string, unknown> | undefined,
-  };
-}
-
-function getRecordWriteTarget(
-  stores: EditStores | undefined,
-  scope: EditableRecordScope,
-  routeKeys: RecordRouteKeys
-): EditableWriteTarget {
-  const roots = {
-    achievements: (stores?.achievements ?? emptyObject) as unknown as Record<string, unknown>,
-    buffs: (stores?.buffs ?? emptyObject) as unknown as Record<string, unknown>,
-    entities: (stores?.entities ?? emptyObject) as unknown as Record<string, unknown>,
-    fixtures: (stores?.fixtures ?? emptyObject) as unknown as Record<string, unknown>,
-    items: (stores?.items ?? emptyObject) as unknown as Record<string, unknown>,
-    maps: (stores?.maps ?? emptyObject) as unknown as Record<string, unknown>,
-    modes: (stores?.modes ?? emptyObject) as unknown as Record<string, unknown>,
-    specialSkills: (stores?.specialSkills ?? emptyObject) as unknown as Record<string, unknown>,
-  };
-
+function getRecordTarget(scope: EditableRecordScope, routeKeys: RecordRouteKeys): RecordTarget {
   switch (scope) {
     case 'entities':
       return {
-        entityId: routeKeys.entityName,
-        root: roots.entities,
         pathPrefix: routeKeys.entityName,
-        record: roots.entities[routeKeys.entityName] as Record<string, unknown> | undefined,
+        ref: { entityType: scope, entityId: routeKeys.entityName },
       };
-    case 'achievements': {
-      const factionRoot =
-        routeKeys.factionId === 'cat'
-          ? stores?.achievements.cat
-          : routeKeys.factionId === 'mouse'
-            ? stores?.achievements.mouse
-            : undefined;
-      const pathPrefix =
-        routeKeys.factionId && routeKeys.achievementName
-          ? `${routeKeys.factionId}.${routeKeys.achievementName}`
-          : '';
+    case 'achievements':
       return {
-        entityId:
-          pathPrefix ||
-          `${routeKeys.factionId || '<unknown>'}.${routeKeys.achievementName || '<unknown>'}`,
-        root: roots.achievements,
-        pathPrefix,
-        record: factionRoot?.[routeKeys.achievementName] as Record<string, unknown> | undefined,
+        pathPrefix:
+          routeKeys.factionId && routeKeys.achievementName
+            ? `${routeKeys.factionId}.${routeKeys.achievementName}`
+            : '',
+        ref: {
+          entityType: scope,
+          entityId: routeKeys.achievementName,
+          factionId: routeKeys.factionId as FactionId,
+        },
       };
-    }
     case 'buffs':
       return {
-        entityId: routeKeys.buffName,
-        root: roots.buffs,
         pathPrefix: routeKeys.buffName,
-        record: roots.buffs[routeKeys.buffName] as Record<string, unknown> | undefined,
+        ref: { entityType: scope, entityId: routeKeys.buffName },
       };
     case 'items':
       return {
-        entityId: routeKeys.itemName,
-        root: roots.items,
         pathPrefix: routeKeys.itemName,
-        record: roots.items[routeKeys.itemName] as Record<string, unknown> | undefined,
+        ref: { entityType: scope, entityId: routeKeys.itemName },
       };
     case 'fixtures':
       return {
-        entityId: routeKeys.fixtureName,
-        root: roots.fixtures,
         pathPrefix: routeKeys.fixtureName,
-        record: roots.fixtures[routeKeys.fixtureName] as Record<string, unknown> | undefined,
+        ref: { entityType: scope, entityId: routeKeys.fixtureName },
       };
     case 'maps':
       return {
-        entityId: routeKeys.mapName,
-        root: roots.maps,
         pathPrefix: routeKeys.mapName,
-        record: roots.maps[routeKeys.mapName] as Record<string, unknown> | undefined,
+        ref: { entityType: scope, entityId: routeKeys.mapName },
       };
     case 'modes':
       return {
-        entityId: routeKeys.modeName,
-        root: roots.modes,
         pathPrefix: routeKeys.modeName,
-        record: roots.modes[routeKeys.modeName] as Record<string, unknown> | undefined,
+        ref: { entityType: scope, entityId: routeKeys.modeName },
       };
-    case 'specialSkills': {
-      const factionRoot =
-        routeKeys.factionId === 'cat'
-          ? stores?.specialSkills.cat
-          : routeKeys.factionId === 'mouse'
-            ? stores?.specialSkills.mouse
-            : undefined;
-      const pathPrefix =
-        routeKeys.factionId && routeKeys.skillId
-          ? `${routeKeys.factionId}.${routeKeys.skillId}`
-          : '';
-
+    case 'specialSkills':
       return {
-        entityId:
-          pathPrefix || `${routeKeys.factionId || '<unknown>'}.${routeKeys.skillId || '<unknown>'}`,
-        root: roots.specialSkills,
-        pathPrefix,
-        record: factionRoot?.[routeKeys.skillId] as Record<string, unknown> | undefined,
+        pathPrefix:
+          routeKeys.factionId && routeKeys.skillId
+            ? `${routeKeys.factionId}.${routeKeys.skillId}`
+            : '',
+        ref: {
+          entityType: scope,
+          entityId: routeKeys.skillId,
+          factionId: routeKeys.factionId as FactionId,
+        },
       };
-    }
   }
 }
 
-function writeNestedTargetValue(
-  scope: EditableScope,
-  target: EditableWriteTarget,
-  path: string,
-  value: string | number | undefined
-) {
-  assertEditableTargetLoaded(scope, target, path);
-  setNestedProperty(target.root, `${target.pathPrefix}.${path}`, value);
+function useRecord(
+  ref: EditableEntityRef<PublishableEntityType>
+): readonly [
+  DeepReadonly<Record<string, unknown>> | null,
+  EditableUpdate<Record<string, unknown>>,
+] {
+  return useEditableEntity(ref, null) as unknown as readonly [
+    DeepReadonly<Record<string, unknown>> | null,
+    EditableUpdate<Record<string, unknown>>,
+  ];
 }
 
-function getTargetActionPath(target: EditableWriteTarget, path: string): string {
-  return [target.pathPrefix, path].filter(Boolean).join('.');
+function getActionPath(pathPrefix: string, path: string): string {
+  return [pathPrefix, path].filter(Boolean).join('.');
 }
 
 export function useEditableCharactersAdapter(
@@ -213,27 +134,22 @@ export function useEditableCharactersAdapter(
   factionId?: string | undefined
 ): EditableStoreAdapter {
   const { characterId } = useLocalCharacter();
-  const editRuntime = useActiveEditRuntime();
-  const target = useMemo(
-    () => getCharacterWriteTarget(editRuntime?.stores, characterId),
-    [characterId, editRuntime]
-  );
-  const localCharacterSnapshot = useOptionalEditSnapshot(target.record, emptyObject);
+  const [character, updateCharacter] = useRecord({
+    entityType: 'characters',
+    entityId: characterId,
+  });
   const { handleSelectCharacter } = useAppContext();
+  const pathPrefix = typeof character?.id === 'string' ? character.id : characterId;
 
   const readStoredValue = useCallback(
-    () => getNestedProperty<string | number | undefined>(localCharacterSnapshot, path),
-    [localCharacterSnapshot, path]
+    () => getNestedProperty<string | number | undefined>(character ?? emptyObject, path),
+    [character, path]
   );
 
   const writeValue = useCallback(
     (value: string | number | undefined) => {
-      assertEditableTargetLoaded('characters', target, path);
-
       if (path === 'id') {
-        const currentCharacterId =
-          typeof target.record.id === 'string' ? target.record.id : target.entityId;
-        const rawFactionId = target.record.factionId;
+        const rawFactionId = character?.factionId;
         const resolvedFactionId =
           factionId === 'cat' || factionId === 'mouse'
             ? factionId
@@ -241,13 +157,11 @@ export function useEditableCharactersAdapter(
               ? rawFactionId
               : undefined;
         if (!resolvedFactionId) {
-          throw new Error(
-            `Cannot edit characters.id because "${currentCharacterId}" has no faction.`
-          );
+          throw new Error(`Cannot edit characters.id because "${pathPrefix}" has no faction.`);
         }
 
         handleCharacterIdChange(
-          currentCharacterId,
+          pathPrefix,
           String(value),
           resolvedFactionId,
           handleSelectCharacter,
@@ -256,43 +170,34 @@ export function useEditableCharactersAdapter(
         return;
       }
 
-      writeNestedTargetValue('characters', target, path, value);
+      updateCharacter((record) => setNestedProperty(record, path, value));
     },
-    [factionId, handleSelectCharacter, path, target]
+    [character?.factionId, factionId, handleSelectCharacter, path, pathPrefix, updateCharacter]
   );
 
-  return { actionPath: getTargetActionPath(target, path), readStoredValue, writeValue };
+  return { actionPath: getActionPath(pathPrefix, path), readStoredValue, writeValue };
 }
 
 export function useEditableCardsAdapter(path: string): EditableStoreAdapter {
   const { cardId } = useLocalCard();
-  const editRuntime = useActiveEditRuntime();
-  const target = useMemo(
-    () => getCardsWriteTarget(editRuntime?.stores, cardId),
-    [cardId, editRuntime]
-  );
-  const localCardSnapshot = useOptionalEditSnapshot(target.record, emptyObject);
+  const [card, updateCard] = useRecord({ entityType: 'cards', entityId: cardId });
 
   const readStoredValue = useCallback(
-    () => getNestedProperty<string | number | undefined>(localCardSnapshot, path),
-    [localCardSnapshot, path]
+    () => getNestedProperty<string | number | undefined>(card ?? emptyObject, path),
+    [card, path]
   );
 
   const writeValue = useCallback(
     (value: string | number | undefined) => {
-      assertEditableTargetLoaded('cards', target, path);
-
-      // Knowledge card `id` is also the record key and route segment; avoid accidental breakage.
       if (path === 'id') {
         throw new Error('Editing knowledge card id is not supported in local edit mode.');
       }
-
-      writeNestedTargetValue('cards', target, path, value);
+      updateCard((record) => setNestedProperty(record, path, value));
     },
-    [path, target]
+    [path, updateCard]
   );
 
-  return { actionPath: getTargetActionPath(target, path), readStoredValue, writeValue };
+  return { actionPath: getActionPath(cardId, path), readStoredValue, writeValue };
 }
 
 export function useEditableRecordAdapter(
@@ -307,53 +212,37 @@ export function useEditableRecordAdapter(
   const { mapName } = useLocalMap();
   const { modeName } = useLocalMode();
   const { factionId, skillId } = useLocalSpecialSkill();
-  const editRuntime = useActiveEditRuntime();
-
-  const target = useMemo(
-    () =>
-      getRecordWriteTarget(editRuntime?.stores, scope, {
-        entityName,
-        achievementName,
-        buffName,
-        itemName,
-        fixtureName,
-        mapName,
-        modeName,
-        factionId,
-        skillId,
-      }),
-    [
-      scope,
-      editRuntime,
-      entityName,
-      achievementName,
-      buffName,
-      itemName,
-      fixtureName,
-      mapName,
-      modeName,
-      factionId,
-      skillId,
-    ]
-  );
-  const recordSnapshot = useOptionalEditSnapshot(target.record, emptyObject);
+  const target = getRecordTarget(scope, {
+    entityName,
+    achievementName,
+    buffName,
+    itemName,
+    fixtureName,
+    mapName,
+    modeName,
+    factionId,
+    skillId,
+  });
+  const [record, updateRecord] = useRecord(target.ref);
 
   const readStoredValue = useCallback(
-    (): string | number | undefined => getNestedProperty(recordSnapshot, path),
-    [path, recordSnapshot]
+    (): string | number | undefined => getNestedProperty(record ?? emptyObject, path),
+    [path, record]
   );
 
   const writeValue = useCallback(
     (value: string | number | undefined) => {
-      // Avoid breaking route segment keys (these entities are keyed by name/skillId).
       if (path === 'name' || path === 'id') {
         throw new Error(`Editing ${path} is not supported for ${scope} in local edit mode.`);
       }
-
-      writeNestedTargetValue(scope, target, path, value);
+      updateRecord((current) => setNestedProperty(current, path, value));
     },
-    [scope, path, target]
+    [path, scope, updateRecord]
   );
 
-  return { actionPath: getTargetActionPath(target, path), readStoredValue, writeValue };
+  return {
+    actionPath: getActionPath(target.pathPrefix, path),
+    readStoredValue,
+    writeValue,
+  };
 }

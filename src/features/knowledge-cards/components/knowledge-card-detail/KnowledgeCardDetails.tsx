@@ -39,10 +39,10 @@ export default function KnowledgeCardDetails({
   const { cardId } = useLocalCard();
   const ed = editable('cards');
 
-  const effectiveCard = useEditableEntity(
+  const [effectiveCard] = useEditableEntity(
     { entityType: 'cards', entityId: cardId },
     card
-  ) as unknown as KnowledgeCardWithFaction;
+  ) as unknown as readonly [KnowledgeCardWithFaction];
 
   // Keyboard navigation
   useSpecifyTypeKeyboardNavigation(effectiveCard.id, 'knowledgeCard');
@@ -50,7 +50,7 @@ export default function KnowledgeCardDetails({
   const { handleSelectCharacter, isDetailedView } = useAppContext();
   const searchParams = useSearchParams();
   const fromCharacterId = searchParams ? searchParams.get('from') : null;
-  const charactersSnap = useEditableDomain(
+  const [charactersSnap] = useEditableDomain(
     'characters',
     charactersData,
     projectKnowledgeCardCharacters

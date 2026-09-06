@@ -222,10 +222,10 @@ export default function SkillCard({
   const { isEditMode } = useEditMode();
   const { isDetailedView: isDetailed } = useAppContext();
   const publishedCharacter = usePublishedCharacter(characterId);
-  const localCharacter = useEditableEntity(
+  const [localCharacter] = useEditableEntity(
     { entityType: 'characters', entityId: characterId },
     publishedCharacter
-  ) as unknown as CharacterWithFaction;
+  ) as unknown as readonly [CharacterWithFaction];
   const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
   const skillTypeLabel = getSkillTypeLabel(skill.type, isSingleWeapon);

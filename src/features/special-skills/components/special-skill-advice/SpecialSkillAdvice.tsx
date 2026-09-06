@@ -100,8 +100,8 @@ export default function SpecialSkillAdviceClient({
   const [selectedFaction, setSelectedFaction] = useState<FactionId | null>(null);
   const [isDarkMode] = useDarkMode();
 
-  const specialSkillsSnapshot = useEditableDomain('specialSkills', specialSkillsData);
-  const charactersSnap = useEditableDomain('characters', charactersData);
+  const [specialSkillsSnapshot] = useEditableDomain('specialSkills', specialSkillsData);
+  const [charactersSnap] = useEditableDomain('characters', charactersData);
   const allSkills = useMemo(
     () => [
       ...Object.values(specialSkillsSnapshot.cat).sort(

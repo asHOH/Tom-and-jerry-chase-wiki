@@ -42,7 +42,7 @@ export default function CharacterRankingGrid({
 
   const factionId = (useSearchParams().get('faction') ?? undefined) as FactionId | undefined;
   const [isDarkMode] = useDarkMode();
-  const charactersSnap = useEditableDomain('characters', data);
+  const [charactersSnap] = useEditableDomain('characters', data);
 
   // Helpers to create softer backgrounds from token colors
   const hexToRgba = (hex: string, alpha: number) => {

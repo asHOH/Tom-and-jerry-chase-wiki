@@ -30,7 +30,7 @@ import CharacterImport from './CharacterImport';
 
 export default function CharacterGrid({ factionId, characters }: FactionCharactersProps) {
   const { isEditMode } = useEditMode();
-  const localCharacters = useEditableDomain('characters', characters ?? staticCharacters);
+  const [localCharacters] = useEditableDomain('characters', characters ?? staticCharacters);
   const effectiveCharacters = isEditMode || characters === undefined ? localCharacters : characters;
   const faction = useMemo(() => {
     return GameDataManager.getFactionsWithCharacters(effectiveCharacters)[factionId];

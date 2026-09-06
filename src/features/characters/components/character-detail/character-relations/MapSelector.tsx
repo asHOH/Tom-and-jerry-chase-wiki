@@ -15,7 +15,7 @@ type Props = {
 };
 
 const MapSelector: React.FC<Props> = ({ selected, onSelect, disabled }) => {
-  const mapsSnapshot = useEditableDomain('maps', maps);
+  const [mapsSnapshot] = useEditableDomain('maps', maps);
   const selectedIds = new Set(selected.map(({ id }) => id));
   const options = Object.values(mapsSnapshot)
     .filter(({ name }) => !selectedIds.has(name))

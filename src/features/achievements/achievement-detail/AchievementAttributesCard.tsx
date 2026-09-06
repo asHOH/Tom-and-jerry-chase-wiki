@@ -1,7 +1,6 @@
 'use client';
 
 import { getFactionButtonColors } from '@/lib/design';
-import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalAchievement } from '@/hooks/useLocalEditEntity';
 import { useDarkMode } from '@/context/DarkModeContext';
@@ -20,23 +19,14 @@ export default function AchievementAttributesCard({ achievement }: { achievement
   const { isEditMode } = useEditMode();
   const { achievementName, factionId } = useLocalAchievement();
   const ed = editable('achievements');
-  const editRuntime = useDraftDataRuntime();
-
-  const factionAchievements =
-    factionId === 'cat'
-      ? editRuntime?.stores.achievements.cat
-      : factionId === 'mouse'
-        ? editRuntime?.stores.achievements.mouse
-        : undefined;
-  const rawAchievement = factionAchievements?.[achievementName];
-  const effectiveAchievement = useEditableEntity(
+  const [effectiveAchievement, updateAchievement] = useEditableEntity(
     {
       entityType: 'achievements',
       entityId: achievementName,
       factionId: factionId === 'cat' || factionId === 'mouse' ? factionId : achievement.factionId!,
     },
     achievement
-  ) as Achievement;
+  ) as unknown as readonly [Achievement, (mutate: (value: Achievement) => void) => void];
 
   return (
     <AttributesCardLayout
@@ -58,16 +48,15 @@ export default function AchievementAttributesCard({ achievement }: { achievement
                       path={`aliases.${index}`}
                       isSingleLine
                       onSave={(newValue) => {
-                        if (!rawAchievement) return;
-                        if (!rawAchievement.aliases) rawAchievement.aliases = [];
-                        const trimmed = newValue.trim();
-                        if (trimmed === '') {
-                          rawAchievement.aliases = rawAchievement.aliases.filter(
-                            (_, i) => i !== index
-                          );
-                        } else {
-                          rawAchievement.aliases[index] = trimmed;
-                        }
+                        updateAchievement((draft) => {
+                          if (!draft.aliases) draft.aliases = [];
+                          const trimmed = newValue.trim();
+                          if (trimmed === '') {
+                            draft.aliases = draft.aliases.filter((_, i) => i !== index);
+                          } else {
+                            draft.aliases[index] = trimmed;
+                          }
+                        });
                       }}
                     />
                     {index < arr.length - 1 && <span className='text-gray-400'>、</span>}
@@ -79,11 +68,10 @@ export default function AchievementAttributesCard({ achievement }: { achievement
             )}
             <AddAliasButton
               onAdd={() => {
-                if (!rawAchievement) return;
-                if (!rawAchievement.aliases) rawAchievement.aliases = [];
-                if (!rawAchievement.aliases.includes('新别名')) {
-                  rawAchievement.aliases.push('新别名');
-                }
+                updateAchievement((draft) => {
+                  if (!draft.aliases) draft.aliases = [];
+                  if (!draft.aliases.includes('新别名')) draft.aliases.push('新别名');
+                });
               }}
             />
           </div>

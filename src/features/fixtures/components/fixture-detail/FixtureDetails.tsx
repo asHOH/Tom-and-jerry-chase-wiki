@@ -23,10 +23,10 @@ export default function FixtureDetailClient({ fixture }: { fixture: Fixture }) {
   const { fixtureName } = useLocalFixture();
   const ed = editable('fixtures');
 
-  const effectiveFixture = useEditableEntity(
+  const [effectiveFixture] = useEditableEntity(
     { entityType: 'fixtures', entityId: fixtureName },
     fixture
-  ) as Fixture;
+  ) as unknown as readonly [Fixture];
 
   // Keyboard navigation
   useSpecifyTypeKeyboardNavigation(effectiveFixture.name, 'fixture');

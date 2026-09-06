@@ -33,7 +33,7 @@ export function CharacterSelector({
   disabled?: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const charactersSnap = useEditableDomain('characters', characters);
+  const [charactersSnap] = useEditableDomain('characters', characters);
 
   const availableCharacters = useMemo(() => {
     const allCharacters = Object.values(charactersSnap) as Array<{

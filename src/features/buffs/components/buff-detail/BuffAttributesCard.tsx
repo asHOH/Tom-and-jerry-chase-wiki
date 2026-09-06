@@ -1,7 +1,6 @@
 'use client';
 
 import { getBuffTypeColors } from '@/lib/design';
-import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useEditableDomain, useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalBuff } from '@/hooks/useLocalEditEntity';
 import { useDarkMode } from '@/context/DarkModeContext';
@@ -36,13 +35,11 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
   const { buffName } = useLocalBuff();
   const ed = editable('buffs');
 
-  const editRuntime = useDraftDataRuntime();
-  const rawBuff = editRuntime?.stores.buffs[buffName];
-  const effectiveBuff = useEditableEntity(
+  const [effectiveBuff, updateBuff] = useEditableEntity(
     { entityType: 'buffs', entityId: buffName },
     buff
-  ) as Buff;
-  const buffsSnapshot = useEditableDomain('buffs', buffs);
+  ) as unknown as readonly [Buff, (mutate: (value: Buff) => void) => void];
+  const [buffsSnapshot] = useEditableDomain('buffs', buffs);
 
   const availableAliases = (effectiveBuff.aliases ?? buff.aliases ?? [])
     .filter((i) => i && i[0] !== '#')
@@ -61,14 +58,15 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
               path={`aliases.${index}`}
               isSingleLine
               onSave={(newValue) => {
-                if (!rawBuff) return;
-                if (!rawBuff.aliases) rawBuff.aliases = [];
-                const trimmed = newValue.trim();
-                if (trimmed === '') {
-                  rawBuff.aliases = rawBuff.aliases.filter((_, i) => i !== index);
-                } else {
-                  rawBuff.aliases[index] = trimmed;
-                }
+                updateBuff((draft) => {
+                  if (!draft.aliases) draft.aliases = [];
+                  const trimmed = newValue.trim();
+                  if (trimmed === '') {
+                    draft.aliases = draft.aliases.filter((_, i) => i !== index);
+                  } else {
+                    draft.aliases[index] = trimmed;
+                  }
+                });
               }}
             />
             {index < arr.length - 1 && <span className='text-gray-400'>、</span>}
@@ -79,11 +77,10 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
       )}
       <AddAliasButton
         onAdd={() => {
-          if (!rawBuff) return;
-          if (!rawBuff.aliases) rawBuff.aliases = [];
-          if (!rawBuff.aliases.includes('新别名')) {
-            rawBuff.aliases.push('新别名');
-          }
+          updateBuff((draft) => {
+            if (!draft.aliases) draft.aliases = [];
+            if (!draft.aliases.includes('新别名')) draft.aliases.push('新别名');
+          });
         }}
       />
     </div>
@@ -117,7 +114,9 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
                   aria-label='状态类型'
                   value={effectiveBuff.type}
                   onChange={(event) => {
-                    if (rawBuff) rawBuff.type = event.target.value as buffTypelist;
+                    updateBuff((draft) => {
+                      draft.type = event.target.value as buffTypelist;
+                    });
                   }}
                   className='font-inherit cursor-pointer border-none bg-transparent text-inherit outline-none'
                 >
@@ -155,9 +154,10 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
                       type='checkbox'
                       checked={effectiveBuff.range !== undefined}
                       onChange={(event) => {
-                        if (!rawBuff) return;
-                        if (event.target.checked) rawBuff.range = [0, 'infinity'];
-                        else delete rawBuff.range;
+                        updateBuff((draft) => {
+                          if (event.target.checked) draft.range = [0, 'infinity'];
+                          else delete draft.range;
+                        });
                       }}
                       className='h-3 w-3'
                     />
@@ -174,12 +174,13 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
                               initialValue={effectiveBuff.range?.[rangeIndex] ?? 'infinity'}
                               isSingleLine
                               onSave={(value) => {
-                                if (!rawBuff?.range) return;
                                 const nextValue = parseRangeValue(value);
                                 if (nextValue === undefined) {
                                   throw new Error('状态取值范围必须是数值或 infinity。');
                                 }
-                                rawBuff.range[rangeIndex] = nextValue;
+                                updateBuff((draft) => {
+                                  if (draft.range) draft.range[rangeIndex] = nextValue;
+                                });
                               }}
                             />
                           </span>

@@ -28,7 +28,7 @@ export default function ModeClient({ description, data = modes, publishedRevisio
   const [selectedTypes, setSelectedTypes] = useState<ModeTypeList[]>([]);
   const [isDarkMode] = useDarkMode();
 
-  const modesSnapshot = useEditableDomain('modes', data);
+  const [modesSnapshot] = useEditableDomain('modes', data);
   const filteredModes = Object.values(modesSnapshot as Record<string, Mode>).filter(
     (mode: Mode) => {
       let typeMatch = true;

@@ -20,7 +20,7 @@ export default function KnowledgeCardManager({ factionId }: KnowledgeCardManager
   const editRuntime = useDraftDataRuntime();
   const editCharacter = editRuntime?.stores.characters[characterId];
   const publishedCharacter = usePublishedCharacter(characterId);
-  const character = useEditableEntity(
+  const [character] = useEditableEntity(
     { entityType: 'characters', entityId: characterId },
     publishedCharacter
   )!;

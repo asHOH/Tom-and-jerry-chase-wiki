@@ -3,7 +3,6 @@
 import { useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 
-import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useEditableEntity } from '@/hooks/useEditableGameData';
 import { useEditMode } from '@/context/EditModeContext';
 import type { InteractiveMapConfig, Map as MapType } from '@/data/types';
@@ -24,9 +23,10 @@ type InteractiveMapPageProps = {
 function InteractiveMapPageContent({ map, mapName }: InteractiveMapPageProps) {
   const { isEditMode } = useEditMode();
   const orientationContainerRef = useRef<HTMLDivElement>(null);
-  const editRuntime = useDraftDataRuntime();
-  const rawLocalMap = editRuntime?.stores.maps[mapName];
-  const effectiveMap = useEditableEntity({ entityType: 'maps', entityId: mapName }, map) as MapType;
+  const [effectiveMap, updateMap] = useEditableEntity(
+    { entityType: 'maps', entityId: mapName },
+    map
+  ) as unknown as readonly [MapType, (mutate: (value: MapType) => void) => void];
   const interactiveMap = effectiveMap.interactiveMap;
 
   useEffect(() => {
@@ -57,9 +57,11 @@ function InteractiveMapPageContent({ map, mapName }: InteractiveMapPageProps) {
         alwaysFullscreen
         fallbackImageUrl={effectiveMap.mapImageUrl}
         onConfigChange={
-          isEditMode && rawLocalMap
+          isEditMode
             ? (config: InteractiveMapConfig) => {
-                rawLocalMap.interactiveMap = config;
+                updateMap((draft) => {
+                  draft.interactiveMap = config;
+                });
               }
             : undefined
         }

@@ -173,7 +173,7 @@ export default function RelationsClient({
   const { isEditMode, registerPublishedRevision } = useEditMode();
   const { info } = useToast();
   const publishedData = data ?? STATIC_RELATION_DATA;
-  const charactersSnapshot = useEditableDomain('characters', publishedData.characters);
+  const [charactersSnapshot] = useEditableDomain('characters', publishedData.characters);
   const [rowFaction, setRowFaction] = useState<RelationMatrixRowFaction>('mouse');
   const [columnCategory, setColumnCategory] = useState<RelationMatrixColumnCategory>('cat');
   const [matrixSize, setMatrixSize] = useState(DEFAULT_MATRIX_SIZE);

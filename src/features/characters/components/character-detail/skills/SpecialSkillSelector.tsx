@@ -16,7 +16,7 @@ type Props = {
 };
 
 const SpecialSkillSelector: React.FC<Props> = ({ selected, factionId, onSelect, disabled }) => {
-  const specialSkillsSnapshot = useEditableDomain('specialSkills', specialSkills);
+  const [specialSkillsSnapshot] = useEditableDomain('specialSkills', specialSkills);
   const oppositeFaction: FactionId = factionId === 'cat' ? 'mouse' : 'cat';
   const selectedIds = new Set(selected.map(({ id }) => id));
   const options = Object.entries(specialSkillsSnapshot[oppositeFaction])

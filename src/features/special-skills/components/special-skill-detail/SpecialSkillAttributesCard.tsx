@@ -1,6 +1,6 @@
 'use client';
 
-import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
+import { useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalSpecialSkill } from '@/hooks/useLocalEditEntity';
 import { useEditMode } from '@/context/EditModeContext';
 import { SpecialSkill } from '@/data/types';
@@ -19,14 +19,14 @@ export default function SpecialSkillAttributesCard({ skill }: SpecialSkillDetail
   const { isEditMode } = useEditMode();
   const { factionId, skillId } = useLocalSpecialSkill();
   const ed = editable('specialSkills');
-  const editRuntime = useDraftDataRuntime();
-
-  const rawSkill =
-    factionId === 'cat'
-      ? editRuntime?.stores.specialSkills.cat[skillId]
-      : factionId === 'mouse'
-        ? editRuntime?.stores.specialSkills.mouse[skillId]
-        : undefined;
+  const [effectiveSkill, updateSkill] = useEditableEntity(
+    {
+      entityType: 'specialSkills',
+      entityId: skillId,
+      factionId: factionId === 'cat' || factionId === 'mouse' ? factionId : skill.factionId!,
+    },
+    skill
+  ) as unknown as readonly [SpecialSkill, (mutate: (value: SpecialSkill) => void) => void];
 
   return (
     <AttributesCardLayout
@@ -39,22 +39,23 @@ export default function SpecialSkillAttributesCard({ skill }: SpecialSkillDetail
         isEditMode ? (
           <div className='flex items-center gap-1'>
             <span className='text-xs text-gray-400 dark:text-gray-500'>别名：</span>
-            {(rawSkill?.aliases ?? skill.aliases ?? []).length > 0 ? (
-              (rawSkill?.aliases ?? skill.aliases ?? []).map((alias, index, arr) => (
+            {(effectiveSkill.aliases ?? skill.aliases ?? []).length > 0 ? (
+              (effectiveSkill.aliases ?? skill.aliases ?? []).map((alias, index, arr) => (
                 <span key={`${alias}-${index}`} className='inline-flex items-center'>
                   <ed.span
                     initialValue={alias || '<无内容>'}
                     path={`aliases.${index}`}
                     isSingleLine
                     onSave={(newValue) => {
-                      if (!rawSkill) return;
-                      if (!rawSkill.aliases) rawSkill.aliases = [];
-                      const trimmed = newValue.trim();
-                      if (trimmed === '') {
-                        rawSkill.aliases = rawSkill.aliases.filter((_, i) => i !== index);
-                      } else {
-                        rawSkill.aliases[index] = trimmed;
-                      }
+                      updateSkill((draft) => {
+                        if (!draft.aliases) draft.aliases = [];
+                        const trimmed = newValue.trim();
+                        if (trimmed === '') {
+                          draft.aliases = draft.aliases.filter((_, i) => i !== index);
+                        } else {
+                          draft.aliases[index] = trimmed;
+                        }
+                      });
                     }}
                   />
                   {index < arr.length - 1 && <span className='text-gray-400'>、</span>}
@@ -65,11 +66,10 @@ export default function SpecialSkillAttributesCard({ skill }: SpecialSkillDetail
             )}
             <AddAliasButton
               onAdd={() => {
-                if (!rawSkill) return;
-                if (!rawSkill.aliases) rawSkill.aliases = [];
-                if (!rawSkill.aliases.includes('新别名')) {
-                  rawSkill.aliases.push('新别名');
-                }
+                updateSkill((draft) => {
+                  if (!draft.aliases) draft.aliases = [];
+                  if (!draft.aliases.includes('新别名')) draft.aliases.push('新别名');
+                });
               }}
             />
           </div>

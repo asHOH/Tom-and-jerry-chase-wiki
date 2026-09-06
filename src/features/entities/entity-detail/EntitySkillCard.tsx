@@ -5,13 +5,13 @@ import uniq from 'lodash-es/uniq';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { cn, getSkillLevelColors, getSkillLevelContainerColor } from '@/lib/design';
-import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
+import { useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalEntity } from '@/hooks/useLocalEditEntity';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
-import { Skill, SkillLevel, SkillType, SkillUsageProperties } from '@/data/types';
+import { Entity, Skill, SkillLevel, SkillType } from '@/data/types';
 import SkillUsagePropertiesEditor from '@/features/characters/components/character-detail/skills/SkillUsagePropertiesEditor';
 import {
   addSkillPart,
@@ -60,9 +60,17 @@ export default function EntitySkillCard({ skill, skillIndex }: SkillCardProps) {
   const { isEditMode } = useEditMode();
   const { isDetailedView: isDetailed } = useAppContext();
   const { entityName } = useLocalEntity();
-  const editRuntime = useDraftDataRuntime();
-  const rawEntity = editRuntime?.stores.entities[entityName];
-  const rawSkill = rawEntity?.skills?.[skillIndex] as (Skill & { cooldown?: number }) | undefined;
+  const [effectiveEntity, updateEntity] = useEditableEntity(
+    { entityType: 'entities', entityId: entityName },
+    null
+  );
+  const updateSkill = (mutate: (draft: Skill & { cooldown?: number }) => void) => {
+    updateEntity((entity) => {
+      const draft = entity.skills?.[skillIndex] as (Skill & { cooldown?: number }) | undefined;
+      if (!draft) throw new Error(`Cannot edit skill ${skillIndex} because it is not loaded.`);
+      mutate(draft);
+    });
+  };
   const e = editable('entities');
   const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
@@ -109,7 +117,9 @@ export default function EntitySkillCard({ skill, skillIndex }: SkillCardProps) {
     cooldownProperty !== null || usageSections.some((section) => section.properties.length > 0);
   const usageParts = getSkillUsageParts(skill);
   const isMultiPart = hasSkillParts(skill);
-  const factionId = rawEntity ? getEntityFactionId(rawEntity) : undefined;
+  const factionId = effectiveEntity
+    ? getEntityFactionId(effectiveEntity as unknown as Entity)
+    : undefined;
 
   return (
     <Card className='p-6!'>
@@ -149,7 +159,9 @@ export default function EntitySkillCard({ skill, skillIndex }: SkillCardProps) {
                   aria-label={`衍生物技能${skillIndex + 1}类型`}
                   value={skill.type}
                   onChange={(event) => {
-                    if (rawSkill) rawSkill.type = event.target.value as SkillType;
+                    updateSkill((draft) => {
+                      draft.type = event.target.value as SkillType;
+                    });
                   }}
                   className='font-inherit cursor-pointer border-none bg-transparent text-inherit outline-none'
                 >
@@ -171,10 +183,12 @@ export default function EntitySkillCard({ skill, skillIndex }: SkillCardProps) {
                 variant='delete'
                 size='sm'
                 onClick={() => {
-                  if (!rawEntity?.skills) return;
-                  const next = rawEntity.skills.filter((_, index) => index !== skillIndex);
-                  if (next.length > 0) rawEntity.skills = next;
-                  else delete rawEntity.skills;
+                  updateEntity((draft) => {
+                    if (!draft.skills) return;
+                    const next = draft.skills.filter((_, index) => index !== skillIndex);
+                    if (next.length > 0) draft.skills = next;
+                    else delete draft.skills;
+                  });
                 }}
               >
                 <TrashIcon className={getIconButtonIconClassName('sm')} aria-hidden='true' />
@@ -280,21 +294,16 @@ export default function EntitySkillCard({ skill, skillIndex }: SkillCardProps) {
               values={skill.aliases ?? []}
               itemLabel='技能别名'
               onChange={(aliases) => {
-                if (!rawSkill) return;
-                if (aliases.length > 0) rawSkill.aliases = aliases;
-                else delete rawSkill.aliases;
+                updateSkill((draft) => {
+                  if (aliases.length > 0) draft.aliases = aliases;
+                  else delete draft.aliases;
+                });
               }}
             />
           </div>
           {skill.type !== 'passive' ? (
             <div className='space-y-3'>
               {usageParts.map((usage, partIndex) => {
-                const usageRef: SkillUsageProperties | undefined = rawSkill
-                  ? 'parts' in rawSkill
-                    ? rawSkill.parts[partIndex]
-                    : rawSkill
-                  : undefined;
-                if (!usageRef) return null;
                 const pathPrefix = isMultiPart
                   ? `skills.${skillIndex}.parts.${partIndex}`
                   : `skills.${skillIndex}`;
@@ -316,7 +325,7 @@ export default function EntitySkillCard({ skill, skillIndex }: SkillCardProps) {
                           size='xs'
                           disabled={usageParts.length <= 1}
                           onClick={() => {
-                            if (rawSkill) removeSkillPart(rawSkill, partIndex);
+                            updateSkill((draft) => removeSkillPart(draft, partIndex));
                           }}
                         >
                           <TrashIcon
@@ -328,7 +337,12 @@ export default function EntitySkillCard({ skill, skillIndex }: SkillCardProps) {
                     ) : null}
                     <SkillUsagePropertiesEditor
                       usage={usage}
-                      usageRef={usageRef}
+                      updateUsage={(mutate) =>
+                        updateSkill((draft) => {
+                          const usageDraft = 'parts' in draft ? draft.parts[partIndex] : draft;
+                          if (usageDraft) mutate(usageDraft);
+                        })
+                      }
                       pathPrefix={pathPrefix}
                       radioNameSuffix={`entity-${entityName}-${skillIndex}-${partIndex}`}
                       factionId={factionId}
@@ -342,9 +356,10 @@ export default function EntitySkillCard({ skill, skillIndex }: SkillCardProps) {
                 type='button'
                 className='inline-flex items-center gap-1 rounded border border-dashed border-blue-400 px-2 py-1 text-xs text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-950/30'
                 onClick={() => {
-                  if (!rawSkill) return;
-                  if ('parts' in rawSkill) addSkillPart(rawSkill);
-                  else convertSkillToParts(rawSkill);
+                  updateSkill((draft) => {
+                    if ('parts' in draft) addSkillPart(draft);
+                    else convertSkillToParts(draft);
+                  });
                 }}
               >
                 <PlusIcon className='h-3 w-3' aria-hidden='true' />
@@ -431,10 +446,11 @@ export default function EntitySkillCard({ skill, skillIndex }: SkillCardProps) {
                       variant='delete'
                       size='xs'
                       onClick={() => {
-                        if (!rawSkill) return;
-                        rawSkill.skillLevels = rawSkill.skillLevels.filter(
-                          (_, index) => index !== levelIndex
-                        );
+                        updateSkill((draft) => {
+                          draft.skillLevels = draft.skillLevels.filter(
+                            (_, index) => index !== levelIndex
+                          );
+                        });
                       }}
                     >
                       <TrashIcon className={getIconButtonIconClassName('xs')} aria-hidden='true' />
@@ -452,10 +468,10 @@ export default function EntitySkillCard({ skill, skillIndex }: SkillCardProps) {
             size='sm'
             className='mt-3'
             onClick={() => {
-              if (!rawSkill) return;
-              const nextLevel =
-                Math.max(0, ...rawSkill.skillLevels.map((level) => level.level)) + 1;
-              rawSkill.skillLevels.push({ level: nextLevel, description: '' });
+              updateSkill((draft) => {
+                const nextLevel = Math.max(0, ...draft.skillLevels.map((level) => level.level)) + 1;
+                draft.skillLevels.push({ level: nextLevel, description: '' });
+              });
             }}
           >
             <PlusIcon className={getIconButtonIconClassName('sm')} aria-hidden='true' />

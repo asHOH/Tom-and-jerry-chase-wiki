@@ -22,7 +22,7 @@ const useSkillAllocationManagement = () => {
   const editRuntime = useDraftDataRuntime();
   const rawCharacter = editRuntime?.stores.characters[characterId];
   const publishedCharacter = usePublishedCharacter(characterId);
-  const localCharacter = useEditableEntity(
+  const [localCharacter] = useEditableEntity(
     { entityType: 'characters', entityId: characterId },
     publishedCharacter
   )!;
@@ -72,7 +72,7 @@ const SkillAllocationSection: React.FC<SkillAllocationSectionProps> = ({ faction
   const { isEditMode } = useEditMode();
   const { characterId } = useLocalCharacter();
   const publishedCharacter = usePublishedCharacter(characterId);
-  const character = useEditableEntity(
+  const [character] = useEditableEntity(
     { entityType: 'characters', entityId: characterId },
     publishedCharacter
   )!;

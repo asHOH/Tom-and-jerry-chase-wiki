@@ -2,7 +2,6 @@
 
 import { getEntityTypeColors } from '@/lib/design';
 import { getSingleItemPrototype, getSingleItemVariant } from '@/lib/singleItemTools';
-import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
 import { useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalEntity } from '@/hooks/useLocalEditEntity';
 import { useAppContext } from '@/context/AppContext';
@@ -98,12 +97,10 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
   const { entityName } = useLocalEntity();
   const ed = editable('entities');
 
-  const editRuntime = useDraftDataRuntime();
-  const rawEntity = editRuntime?.stores.entities[entityName];
-  const effectiveEntity = useEditableEntity(
+  const [effectiveEntity, updateEntity] = useEditableEntity(
     { entityType: 'entities', entityId: entityName },
     entity
-  ) as Entity;
+  ) as unknown as readonly [Entity, (mutate: (value: Entity) => void) => void];
 
   /* 计算variant相关内容 */
   const prototype = getSingleItemPrototype({ name: entity.name, type: 'entity' });
@@ -160,14 +157,15 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
                     path={`aliases.${index}`}
                     isSingleLine
                     onSave={(newValue) => {
-                      if (!rawEntity) return;
-                      if (!rawEntity.aliases) rawEntity.aliases = [];
-                      const trimmed = newValue.trim();
-                      if (trimmed === '') {
-                        rawEntity.aliases = rawEntity.aliases.filter((_, i) => i !== index);
-                      } else {
-                        rawEntity.aliases[index] = trimmed;
-                      }
+                      updateEntity((draft) => {
+                        if (!draft.aliases) draft.aliases = [];
+                        const trimmed = newValue.trim();
+                        if (trimmed === '') {
+                          draft.aliases = draft.aliases.filter((_, i) => i !== index);
+                        } else {
+                          draft.aliases[index] = trimmed;
+                        }
+                      });
                     }}
                   />
                   {index < arr.length - 1 && <span className='text-gray-400'>、</span>}
@@ -178,11 +176,10 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
             )}
             <AddAliasButton
               onAdd={() => {
-                if (!rawEntity) return;
-                if (!rawEntity.aliases) rawEntity.aliases = [];
-                if (!rawEntity.aliases.includes('新别名')) {
-                  rawEntity.aliases.push('新别名');
-                }
+                updateEntity((draft) => {
+                  if (!draft.aliases) draft.aliases = [];
+                  if (!draft.aliases.includes('新别名')) draft.aliases.push('新别名');
+                });
               }}
             />
           </div>
@@ -200,7 +197,10 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
                 minimumSelections={1}
                 ariaLabelPrefix='衍生物类型'
                 onChange={(types) => {
-                  if (rawEntity && types.length > 0) rawEntity.entitytype = collapseValues(types);
+                  if (types.length === 0) return;
+                  updateEntity((draft) => {
+                    draft.entitytype = collapseValues(types);
+                  });
                 }}
               />
             ) : (
@@ -217,9 +217,11 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
                 minimumSelections={1}
                 ariaLabelPrefix='衍生物标签'
                 onChange={(tags) => {
-                  if (!rawEntity || tags.length === 0) return;
-                  rawEntity.entitytag = collapseValues(tags);
-                  rawEntity.entitytype = collapseValues(deriveEntityTypes(tags));
+                  if (tags.length === 0) return;
+                  updateEntity((draft) => {
+                    draft.entitytag = collapseValues(tags);
+                    draft.entitytype = collapseValues(deriveEntityTypes(tags));
+                  });
                 }}
               />
             ) : (
@@ -234,9 +236,10 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
                 items={ownerItems}
                 itemLabel='归属者'
                 onChange={(items) => {
-                  if (!rawEntity) return;
-                  if (items.length === 0) delete rawEntity.owner;
-                  else rawEntity.owner = items.length === 1 ? items[0]! : items;
+                  updateEntity((draft) => {
+                    if (items.length === 0) delete draft.owner;
+                    else draft.owner = items.length === 1 ? items[0]! : items;
+                  });
                 }}
               />
             </div>
@@ -254,10 +257,11 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
                   value={effectiveEntity.factionId ?? ''}
                   aria-label='衍生物阵营'
                   onChange={(event) => {
-                    if (!rawEntity) return;
                     const faction = event.target.value;
-                    if (faction === 'cat' || faction === 'mouse') rawEntity.factionId = faction;
-                    else delete rawEntity.factionId;
+                    updateEntity((draft) => {
+                      if (faction === 'cat' || faction === 'mouse') draft.factionId = faction;
+                      else delete draft.factionId;
+                    });
                   }}
                 >
                   <option value=''>继承归属者</option>
@@ -268,11 +272,12 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
               <ActorProfileSelect
                 value={effectiveEntity.actorProfileName}
                 onChange={(profileName) => {
-                  if (!rawEntity) return;
-                  if (profileName) {
-                    rawEntity.actorProfileName = profileName;
-                    delete rawEntity.entityAttributesAsCharacter;
-                  } else delete rawEntity.actorProfileName;
+                  updateEntity((draft) => {
+                    if (profileName) {
+                      draft.actorProfileName = profileName;
+                      delete draft.entityAttributesAsCharacter;
+                    } else delete draft.actorProfileName;
+                  });
                 }}
               />
             </div>
@@ -283,11 +288,12 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
             isDetailed={isDetailed}
             isEditMode={isEditMode}
             onChange={(attributes) => {
-              if (!rawEntity) return;
-              if (attributes) {
-                rawEntity.entityAttributesAsCharacter = attributes;
-                delete rawEntity.actorProfileName;
-              } else delete rawEntity.entityAttributesAsCharacter;
+              updateEntity((draft) => {
+                if (attributes) {
+                  draft.entityAttributesAsCharacter = attributes;
+                  delete draft.actorProfileName;
+                } else delete draft.entityAttributesAsCharacter;
+              });
             }}
           />
           {effectiveEntity.actorProfileName !== undefined ? (
@@ -298,8 +304,8 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
           ) : null}
           <PhysicalAttributesSection
             attributes={effectiveEntity}
-            draftAttributes={rawEntity}
             isEditMode={isEditMode}
+            onChange={(mutate) => updateEntity(mutate)}
           />
           {(prototype.length > 0 || variant.length > 0) && (
             <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>

@@ -59,16 +59,16 @@ type Props = {
 const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
   'use no memo';
   const { isEditMode } = useEditMode();
-  const mapsSnapshot = useEditableDomain('maps', maps);
-  const modesSnapshot = useEditableDomain('modes', modes);
-  const specialSkillsSnapshot = useEditableDomain('specialSkills', specialSkills);
+  const [mapsSnapshot] = useEditableDomain('maps', maps);
+  const [modesSnapshot] = useEditableDomain('modes', modes);
+  const [specialSkillsSnapshot] = useEditableDomain('specialSkills', specialSkills);
   const publishedCharacter = usePublishedCharacter(id);
   const getImageUrl = React.useCallback(
     (targetId: string) =>
       AssetManager.getCharacterImageUrl(targetId, factionId === 'cat' ? 'mouse' : 'cat'),
     [factionId]
   );
-  const characterSnapshot = useEditableEntity(
+  const [characterSnapshot] = useEditableEntity(
     { entityType: 'characters', entityId: id },
     publishedCharacter
   )!;

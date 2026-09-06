@@ -4,39 +4,11 @@ import AttributeSection from './AttributeSection';
 
 type PhysicalAttributesSectionProps = {
   attributes: PhysicalAttributes;
-  draftAttributes?: PhysicalAttributes | undefined;
   isEditMode: boolean;
+  onChange?: ((mutate: (attributes: PhysicalAttributes) => void) => void) | undefined;
 };
 
 const COLLISION_OPTIONS = ['角色', '道具', '墙壁', '平台', '地面'] as const;
-
-const setDraftBooleanAttribute = (
-  draftAttributes: PhysicalAttributes | undefined,
-  field: 'move' | 'gravity',
-  value: boolean
-) => {
-  if (!draftAttributes) return;
-  draftAttributes[field] = value;
-};
-
-const toggleDraftCollision = (
-  draftAttributes: PhysicalAttributes | undefined,
-  option: string,
-  checked: boolean
-) => {
-  if (!draftAttributes) return;
-
-  const current = Array.isArray(draftAttributes.collision) ? draftAttributes.collision : [];
-  const next = new Set(current);
-  if (checked) next.add(option);
-  else next.delete(option);
-  const arr = Array.from(next);
-  if (arr.length === 0) {
-    delete draftAttributes.collision;
-  } else {
-    draftAttributes.collision = arr;
-  }
-};
 
 const getCollisionClassName = (collisionTarget: string) => {
   if (collisionTarget === '角色') return 'text-red-600 dark:text-red-500';
@@ -46,8 +18,8 @@ const getCollisionClassName = (collisionTarget: string) => {
 
 export default function PhysicalAttributesSection({
   attributes,
-  draftAttributes,
   isEditMode,
+  onChange,
 }: PhysicalAttributesSectionProps) {
   if (
     !isEditMode &&
@@ -72,7 +44,9 @@ export default function PhysicalAttributesSection({
                   type='checkbox'
                   checked={attributes.move ?? false}
                   onChange={(e) => {
-                    setDraftBooleanAttribute(draftAttributes, 'move', e.target.checked);
+                    onChange?.((draft) => {
+                      draft.move = e.target.checked;
+                    });
                   }}
                   className='h-3 w-3'
                 />
@@ -88,7 +62,9 @@ export default function PhysicalAttributesSection({
                   type='checkbox'
                   checked={attributes.gravity ?? false}
                   onChange={(e) => {
-                    setDraftBooleanAttribute(draftAttributes, 'gravity', e.target.checked);
+                    onChange?.((draft) => {
+                      draft.gravity = e.target.checked;
+                    });
                   }}
                   className='h-3 w-3'
                 />
@@ -105,7 +81,14 @@ export default function PhysicalAttributesSection({
                     type='checkbox'
                     checked={activeCollision.includes(opt)}
                     onChange={(e) => {
-                      toggleDraftCollision(draftAttributes, opt, e.target.checked);
+                      onChange?.((draft) => {
+                        const next = new Set(Array.isArray(draft.collision) ? draft.collision : []);
+                        if (e.target.checked) next.add(opt);
+                        else next.delete(opt);
+                        const values = Array.from(next);
+                        if (values.length === 0) delete draft.collision;
+                        else draft.collision = values;
+                      });
                     }}
                     className='h-3 w-3'
                   />

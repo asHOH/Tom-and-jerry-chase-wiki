@@ -40,7 +40,7 @@ export default function MapClient({ description, data = maps, publishedRevision 
   const [selectedLevels, setSelectedLevels] = useState<(studyLevel | '其它')[]>([]);
   const [isDarkMode] = useDarkMode();
 
-  const mapsSnapshot = useEditableDomain('maps', data);
+  const [mapsSnapshot] = useEditableDomain('maps', data);
   const filteredMaps = Object.values(mapsSnapshot as Record<string, Map>).filter((map: Map) => {
     const typeMatch = selectedTypes.length === 0 || selectedTypes.includes(map.type);
     const sizeMatch = selectedSizes.length === 0 || (map.size && selectedSizes.includes(map.size));

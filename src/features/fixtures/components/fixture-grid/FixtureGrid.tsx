@@ -43,7 +43,7 @@ export default function FixtureClient({ description, data = fixtures, publishedR
   const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
 
-  const fixturesSnapshot = useEditableDomain('fixtures', data);
+  const [fixturesSnapshot] = useEditableDomain('fixtures', data);
   const filteredFixtures = Object.values(fixturesSnapshot as Record<string, Fixture>).filter(
     (fixture: Fixture) => {
       let typeMatch = true;

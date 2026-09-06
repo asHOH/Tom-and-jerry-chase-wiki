@@ -142,7 +142,7 @@ export default function EntityClient({ description, data = entities, publishedRe
     }
   }
 
-  const entitiesSnapshot = useEditableDomain('entities', data);
+  const [entitiesSnapshot] = useEditableDomain('entities', data);
   const filteredEntities = Object.values(entitiesSnapshot as Record<string, Entity>).filter(
     (entity: Entity) => {
       return matchesType(entity) && matchesFaction(entity) && matchesTag(entity);

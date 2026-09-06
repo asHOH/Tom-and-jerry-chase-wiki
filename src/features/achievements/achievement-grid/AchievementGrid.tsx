@@ -28,7 +28,7 @@ export default function AchievementGridClient({
   const [selectedFactions, setSelectedFactions] = useState<('cat' | 'mouse')[]>([]);
   const [isDarkMode] = useDarkMode();
 
-  const achievementsSnapshot = useEditableDomain('achievements', data);
+  const [achievementsSnapshot] = useEditableDomain('achievements', data);
   const allAchievements = [
     ...Object.values(achievementsSnapshot.cat),
     ...Object.values(achievementsSnapshot.mouse),
