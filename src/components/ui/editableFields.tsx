@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { cn } from '@/lib/design';
-import { requireActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
+import { requireActiveEditSession } from '@/lib/edit/activeEditSession';
 import type { ActionDependencyDescriptor } from '@/lib/gameData/actionDependencies';
 import { CATEGORY_HINTS } from '@/lib/types';
 import { useEditMode } from '@/context/EditModeContext';
@@ -96,6 +96,7 @@ async function toPinyinTokens(text: string): Promise<{ full: string; initials: s
 }
 
 async function buildEditableAutocompleteCandidates(): Promise<EditableAutocompleteCandidate[]> {
+  const session = requireActiveEditSession();
   const {
     achievements,
     buffs,
@@ -107,7 +108,18 @@ async function buildEditableAutocompleteCandidates(): Promise<EditableAutocomple
     maps,
     modes,
     specialSkills,
-  } = requireActiveEditRuntime().stores;
+  } = {
+    achievements: session.readDomain('achievements'),
+    buffs: session.readDomain('buffs'),
+    cards: session.readDomain('cards'),
+    characters: session.readDomain('characters'),
+    entities: session.readDomain('entities'),
+    fixtures: session.readDomain('fixtures'),
+    items: session.readDomain('items'),
+    maps: session.readDomain('maps'),
+    modes: session.readDomain('modes'),
+    specialSkills: session.readDomain('specialSkills'),
+  };
   const dedup = new Map<
     string,
     { label: string; insertText: string; source: EditableAutocompleteSource }

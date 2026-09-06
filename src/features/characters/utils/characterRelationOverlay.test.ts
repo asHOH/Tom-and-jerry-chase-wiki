@@ -1,5 +1,4 @@
-import type { ActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
-import { clearTestEditRuntime, installTestEditRuntime } from '@/testUtils/editRuntime';
+import { characters as canonicalCharacters } from '@/data/static';
 
 import {
   addCharacterRelationItem,
@@ -13,17 +12,11 @@ import {
   upsertCharacterRelationItem,
 } from './characterRelationOverlay';
 
-let runtime: ActiveEditRuntime;
-let characters: ActiveEditRuntime['stores']['characters'];
+let characters = structuredClone(canonicalCharacters);
 
 describe('characterRelationOverlay', () => {
   beforeEach(() => {
-    runtime = installTestEditRuntime();
-    characters = runtime.stores.characters;
-  });
-
-  afterEach(() => {
-    clearTestEditRuntime(runtime);
+    characters = structuredClone(canonicalCharacters);
   });
 
   it('should expose relation description paths relative to the current character overlay', () => {

@@ -1,11 +1,16 @@
 import type { ReactNode } from 'react';
 import { act, renderHook, waitFor } from '@testing-library/react';
 
-import type { ActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
-import { getActionsStorageKey, readActionHistory } from '@/lib/edit/diffUtils';
+import type { EditSession } from '@/lib/edit/editSession';
+import type { PublishedGameDataEntityByType } from '@/lib/gameData/published/types';
 import { EditModeContext } from '@/context/EditModeContext';
 import { achievements, characters, items } from '@/data/static';
-import { clearTestEditRuntime, installTestEditRuntime } from '@/testUtils/editRuntime';
+import {
+  clearTestEditSession,
+  getTestEditHistoryKey,
+  installTestEditSession,
+  readTestEditHistory,
+} from '@/testUtils/editRuntime';
 
 import { useEditableDomain, useEditableEntity } from './useEditableGameData';
 
@@ -29,20 +34,22 @@ function createWrapper(runtimeStatus: 'loading' | 'ready', isEditModeRequested =
 }
 
 describe('editable game-data reads', () => {
-  let runtime: ActiveEditRuntime;
+  let session: EditSession;
 
   beforeEach(() => {
     window.localStorage.clear();
-    runtime = installTestEditRuntime();
+    session = installTestEditSession();
   });
 
   afterEach(() => {
-    act(() => clearTestEditRuntime(runtime));
+    act(() => clearTestEditSession(session));
   });
 
   it('keeps the published fallback until the runtime is ready', () => {
     const itemId = Object.keys(items)[0]!;
-    runtime.stores.items[itemId]!.name = 'draft item';
+    session.updateEntity({ entityType: 'items', entityId: itemId }, (item) => {
+      item.name = 'draft item';
+    });
 
     const { result } = renderHook(
       () => useEditableEntity({ entityType: 'items', entityId: itemId }, items[itemId]!),
@@ -71,7 +78,9 @@ describe('editable game-data reads', () => {
     });
 
     await act(async () => {
-      runtime.stores.items[itemId]!.name = 'draft item';
+      session.updateEntity({ entityType: 'items', entityId: itemId }, (item) => {
+        item.name = 'draft item';
+      });
       await Promise.resolve();
     });
 
@@ -81,10 +90,9 @@ describe('editable game-data reads', () => {
   it('resolves faction-scoped and draft-only entities', () => {
     const achievementId = Object.keys(achievements.cat)[0]!;
     const characterId = 'draft-only-character';
-    runtime.stores.characters[characterId] = {
-      ...runtime.stores.characters[Object.keys(characters)[0]!]!,
-      id: characterId,
-    };
+    session.updateDomain('characters', (draft) => {
+      draft[characterId] = { ...draft[Object.keys(characters)[0]!]!, id: characterId };
+    });
 
     const achievement = renderHook(
       () =>
@@ -115,7 +123,9 @@ describe('editable game-data reads', () => {
     );
 
     await act(async () => {
-      runtime.stores.items[siblingId!]!.name = 'changed sibling';
+      session.updateEntity({ entityType: 'items', entityId: siblingId! }, (item) => {
+        item.name = 'changed sibling';
+      });
       await Promise.resolve();
     });
 
@@ -138,8 +148,10 @@ describe('editable game-data reads', () => {
       await Promise.resolve();
     });
 
-    expect(runtime.stores.items[itemId]!.name).toBe('updated item');
-    expect(snapshot).not.toBe(runtime.stores.items[itemId]);
+    expect(session.readEntity({ entityType: 'items', entityId: itemId })?.name).toBe(
+      'updated item'
+    );
+    expect(snapshot).not.toBe(session.readEntity({ entityType: 'items', entityId: itemId }));
   });
 
   it('updates faction-scoped entities through their full reference', async () => {
@@ -160,11 +172,13 @@ describe('editable game-data reads', () => {
       await Promise.resolve();
     });
 
-    expect(runtime.stores.achievements.cat[achievementId]!.description).toBe('updated description');
+    expect(
+      session.readEntity({ entityType: 'achievements', factionId: 'cat', entityId: achievementId })
+        ?.description
+    ).toBe('updated description');
   });
 
   it('records ordinary entity and faction mutations with their existing semantics', async () => {
-    runtime.registry.setupSubscribers();
     const itemId = Object.keys(items)[0]!;
     const achievementId = Object.keys(achievements.cat)[0]!;
     const item = renderHook(
@@ -181,19 +195,19 @@ describe('editable game-data reads', () => {
     );
 
     for (const mutate of [
-      (draft: (typeof runtime.stores.items)[string]) => {
+      (draft: PublishedGameDataEntityByType['items']) => {
         draft.aliases = ['first'];
       },
-      (draft: (typeof runtime.stores.items)[string]) => {
+      (draft: PublishedGameDataEntityByType['items']) => {
         draft.aliases!.push('second');
       },
-      (draft: (typeof runtime.stores.items)[string]) => {
+      (draft: PublishedGameDataEntityByType['items']) => {
         draft.aliases!.splice(0, 1);
       },
-      (draft: (typeof runtime.stores.items)[string]) => {
+      (draft: PublishedGameDataEntityByType['items']) => {
         draft.damage = 987_654;
       },
-      (draft: (typeof runtime.stores.items)[string]) => {
+      (draft: PublishedGameDataEntityByType['items']) => {
         delete draft.damage;
       },
     ]) {
@@ -210,14 +224,14 @@ describe('editable game-data reads', () => {
     });
 
     await waitFor(() => {
-      expect(readActionHistory(getActionsStorageKey('items')).length).toBeGreaterThanOrEqual(5);
-      expect(readActionHistory(getActionsStorageKey('achievements')).length).toBeGreaterThan(0);
+      expect(readTestEditHistory(getTestEditHistoryKey('items')).length).toBeGreaterThanOrEqual(5);
+      expect(readTestEditHistory(getTestEditHistoryKey('achievements')).length).toBeGreaterThan(0);
     });
 
-    const itemActions = readActionHistory(getActionsStorageKey('items')).flatMap((entry) =>
+    const itemActions = readTestEditHistory(getTestEditHistoryKey('items')).flatMap((entry) =>
       Array.isArray(entry) ? entry : [entry]
     );
-    const achievementActions = readActionHistory(getActionsStorageKey('achievements')).flatMap(
+    const achievementActions = readTestEditHistory(getTestEditHistoryKey('achievements')).flatMap(
       (entry) => (Array.isArray(entry) ? entry : [entry])
     );
 

@@ -1,7 +1,6 @@
 import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
 
-import { clearActiveEditRuntime, getActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
-import { getActionsStorageKey } from '@/lib/edit/diffUtils';
+import { clearActiveEditSession, getActiveEditSession } from '@/lib/edit/activeEditSession';
 import type { EditRuntimeStatus } from '@/lib/edit/editRuntimeStatus';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import {
@@ -17,6 +16,7 @@ import {
   specialSkills,
   traits,
 } from '@/data/static';
+import { getTestEditHistoryKey } from '@/testUtils/editRuntime';
 
 import EditRuntime from './EditRuntime';
 
@@ -50,13 +50,13 @@ describe('EditRuntime', () => {
   beforeEach(() => {
     mockRefresh.mockClear();
     window.localStorage.clear();
-    clearActiveEditRuntime();
+    clearActiveEditSession();
   });
 
   afterEach(() => {
     cleanup();
     window.localStorage.clear();
-    clearActiveEditRuntime();
+    clearActiveEditSession();
     jest.useRealTimers();
     jest.restoreAllMocks();
   });
@@ -65,7 +65,7 @@ describe('EditRuntime', () => {
     const characterId = '汤姆';
     const draftDescription = '本地草稿描述';
     window.localStorage.setItem(
-      getActionsStorageKey('characters'),
+      getTestEditHistoryKey('characters'),
       JSON.stringify([
         {
           op: 'set',
@@ -95,12 +95,13 @@ describe('EditRuntime', () => {
       '/api/game-data-actions/edit-baseline',
       expect.objectContaining({ method: 'POST', cache: 'no-store' })
     );
-    expect(getActiveEditRuntime()?.stores.characters[characterId]?.description).toBe(
-      draftDescription
-    );
+    expect(
+      getActiveEditSession()?.readEntity({ entityType: 'characters', entityId: characterId })
+        ?.description
+    ).toBe(draftDescription);
 
     view.unmount();
-    expect(getActiveEditRuntime()).toBeNull();
+    expect(getActiveEditSession()).toBeNull();
   });
 
   it('refreshes once on a revision mismatch and constructs stores only after revisions match', async () => {
@@ -114,7 +115,7 @@ describe('EditRuntime', () => {
     await waitFor(() => {
       expect(mockRefresh).toHaveBeenCalledTimes(1);
     });
-    expect(getActiveEditRuntime()).toBeNull();
+    expect(getActiveEditSession()).toBeNull();
 
     view.rerender(
       <EditRuntime
@@ -129,7 +130,7 @@ describe('EditRuntime', () => {
     });
     expect(mockRefresh).toHaveBeenCalledTimes(1);
     expect(global.fetch).toHaveBeenCalledTimes(1);
-    expect(getActiveEditRuntime()?.revision).toBe('v1:baseline');
+    expect(getActiveEditSession()?.revision).toBe('v1:baseline');
   });
 
   it('reports a retryable error when the route remains mismatched after refresh', async () => {
@@ -151,7 +152,7 @@ describe('EditRuntime', () => {
       await Promise.resolve();
     });
     expect(mockRefresh).toHaveBeenCalledTimes(1);
-    expect(getActiveEditRuntime()).toBeNull();
+    expect(getActiveEditSession()).toBeNull();
 
     act(() => {
       jest.advanceTimersByTime(5000);
@@ -181,7 +182,7 @@ describe('EditRuntime', () => {
       expect(onStatusChange).toHaveBeenLastCalledWith('error', '加载编辑数据失败');
     });
 
-    expect(getActiveEditRuntime()).toBeNull();
+    expect(getActiveEditSession()).toBeNull();
     expect(screen.getByRole('button', { name: '重试' })).toBeInTheDocument();
   });
 
@@ -205,12 +206,16 @@ describe('EditRuntime', () => {
       await Promise.resolve();
       await Promise.resolve();
     });
-    const runtime = getActiveEditRuntime();
-    expect(runtime).not.toBeNull();
+    const session = getActiveEditSession();
+    expect(session).not.toBeNull();
     const characterId = Object.keys(characters)[0]!;
     const itemId = Object.keys(items)[0]!;
-    runtime!.stores.characters[characterId]!.description = '跨域角色草稿';
-    runtime!.stores.items[itemId]!.description = '跨域道具草稿';
+    session!.updateEntity({ entityType: 'characters', entityId: characterId }, (character) => {
+      character.description = '跨域角色草稿';
+    });
+    session!.updateEntity({ entityType: 'items', entityId: itemId }, (item) => {
+      item.description = '跨域道具草稿';
+    });
 
     view.rerender(
       <EditRuntime
@@ -229,9 +234,13 @@ describe('EditRuntime', () => {
       jest.advanceTimersByTime(5000);
     });
 
-    expect(getActiveEditRuntime()).toBe(runtime);
-    expect(runtime!.stores.characters[characterId]!.description).toBe('跨域角色草稿');
-    expect(runtime!.stores.items[itemId]!.description).toBe('跨域道具草稿');
+    expect(getActiveEditSession()).toBe(session);
+    expect(
+      session!.readEntity({ entityType: 'characters', entityId: characterId })?.description
+    ).toBe('跨域角色草稿');
+    expect(session!.readEntity({ entityType: 'items', entityId: itemId })?.description).toBe(
+      '跨域道具草稿'
+    );
     expect(global.fetch).toHaveBeenCalledTimes(1);
     expect(screen.queryByRole('button', { name: '重试' })).not.toBeInTheDocument();
     expect(screen.getByText(/请退出编辑模式后重新进入/)).toBeInTheDocument();
@@ -248,21 +257,21 @@ describe('EditRuntime', () => {
     );
 
     await waitFor(() => {
-      expect(getActiveEditRuntime()?.revision).toBe('v1:first');
+      expect(getActiveEditSession()?.revision).toBe('v1:first');
     });
-    const firstRuntime = getActiveEditRuntime();
+    const firstSession = getActiveEditSession();
     firstView.unmount();
-    expect(getActiveEditRuntime()).toBeNull();
+    expect(getActiveEditSession()).toBeNull();
 
     const secondView = render(
       <EditRuntime visibleRevision='v1:second' onStatusChange={jest.fn()} onRetry={jest.fn()} />
     );
 
     await waitFor(() => {
-      expect(getActiveEditRuntime()?.revision).toBe('v1:second');
+      expect(getActiveEditSession()?.revision).toBe('v1:second');
     });
 
-    expect(getActiveEditRuntime()).not.toBe(firstRuntime);
+    expect(getActiveEditSession()).not.toBe(firstSession);
     expect(global.fetch).toHaveBeenCalledTimes(2);
     secondView.unmount();
   });

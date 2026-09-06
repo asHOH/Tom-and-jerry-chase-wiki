@@ -1,8 +1,7 @@
-import type { ActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
 import { characterRelationTraits } from '@/data/characterRelations';
+import { characters as canonicalCharacters } from '@/data/static';
 import type { CharacterRelation, TraitRelation } from '@/data/types';
 import { getRelationIndex } from '@/features/shared/traits/relationIndex';
-import { clearTestEditRuntime, installTestEditRuntime } from '@/testUtils/editRuntime';
 
 import {
   getAllSpecialSkillRelations,
@@ -10,7 +9,7 @@ import {
   getSpecialSkillRelationSummary,
 } from './relationReadModel';
 
-let characters: ActiveEditRuntime['stores']['characters'];
+let characters = structuredClone(canonicalCharacters);
 
 const setLegacyRelationItems = (
   id: string,
@@ -40,15 +39,8 @@ const findSharedCharacterRelation = (
 };
 
 describe('getCharacterRelation', () => {
-  let runtime: ActiveEditRuntime;
-
   beforeEach(() => {
-    runtime = installTestEditRuntime();
-    characters = runtime.stores.characters;
-  });
-
-  afterEach(() => {
-    clearTestEditRuntime(runtime);
+    characters = structuredClone(canonicalCharacters);
   });
 
   it('should preserve graph-derived mutual relations for the current target page', () => {

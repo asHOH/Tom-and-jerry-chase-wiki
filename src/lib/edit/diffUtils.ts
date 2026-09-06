@@ -2,12 +2,7 @@ import isEqual from 'lodash-es/isEqual';
 import { getUntracked } from 'proxy-compare';
 import type { INTERNAL_Op } from 'valtio';
 
-import { getEditModeActionsStorageKey, storage } from '@/lib/localStorage';
-import { actionHistorySchema } from '@/lib/validation/schemas';
-
 export { squashActions } from './actionSquash';
-
-export const subscribers: Record<string, [() => void, () => void]> = {};
 
 type DiffOp = 'set' | 'add' | 'delete';
 
@@ -20,11 +15,6 @@ export interface Action {
 }
 
 export type ActionHistoryEntry = Action | Action[];
-
-/**
- * Returns the localStorage key used to persist action history for an entity store.
- */
-export const getActionsStorageKey = getEditModeActionsStorageKey;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -70,7 +60,7 @@ function filterActionEntry(entry: ActionHistoryEntry): ActionHistoryEntry | null
   return isNoOpAction(entry) ? null : entry;
 }
 
-function filterActionHistory(history: ActionHistoryEntry[]): ActionHistoryEntry[] {
+export function normalizeActionHistory(history: ActionHistoryEntry[]): ActionHistoryEntry[] {
   const filtered: ActionHistoryEntry[] = [];
   for (const entry of history) {
     const next = filterActionEntry(entry);
@@ -281,41 +271,4 @@ export function invertActionEntry(entry: ActionHistoryEntry): ActionHistoryEntry
     .slice()
     .reverse()
     .map((a) => invertAction(a));
-}
-
-export function readActionHistory(storageKey: string): ActionHistoryEntry[] {
-  const parsed = actionHistorySchema.safeParse(storage.getJson<unknown>(storageKey));
-  if (!parsed.success) return [];
-  return filterActionHistory(parsed.data as ActionHistoryEntry[]);
-}
-
-export function writeActionHistory(storageKey: string, history: ActionHistoryEntry[]): boolean {
-  return storage.setJson(storageKey, history);
-}
-
-export function replaceActionHistory(storageKey: string, history: ActionHistoryEntry[]): boolean {
-  return history.length === 0
-    ? storage.removeItem(storageKey)
-    : writeActionHistory(storageKey, history);
-}
-
-export function appendActionHistoryEntry(storageKey: string, entry: ActionHistoryEntry): void {
-  const filteredEntry = filterActionEntry(entry);
-  if (!filteredEntry) return;
-  const history = readActionHistory(storageKey);
-  history.push(filteredEntry);
-  writeActionHistory(storageKey, history);
-}
-
-export function withRecordingSuppressed<T>(storageKey: string, fn: () => T): T {
-  if (storageKey in subscribers) {
-    subscribers[storageKey]![1]();
-    try {
-      return fn();
-    } finally {
-      subscribers[storageKey]![0]();
-    }
-  } else {
-    return fn();
-  }
 }

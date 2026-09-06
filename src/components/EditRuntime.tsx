@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { clearActiveEditSession, installActiveEditSession } from '@/lib/edit/activeEditRuntime';
+import { clearActiveEditSession, installActiveEditSession } from '@/lib/edit/activeEditSession';
 import type { EditRuntimeStatus } from '@/lib/edit/editRuntimeStatus';
 import { createEditSession, type EditSession } from '@/lib/edit/editSession';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';

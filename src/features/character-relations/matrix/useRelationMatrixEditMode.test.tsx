@@ -1,10 +1,15 @@
 import { useState } from 'react';
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
-import type { ActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
-import { getActionsStorageKey, readActionHistory, writeActionHistory } from '@/lib/edit/diffUtils';
+import type { EditSession } from '@/lib/edit/editSession';
 import type { PendingActionAwarenessSource } from '@/context/PendingActionAwarenessContext';
-import { clearTestEditRuntime, installTestEditRuntime } from '@/testUtils/editRuntime';
+import {
+  clearTestEditSession,
+  getTestEditHistoryKey,
+  installTestEditSession,
+  readTestEditHistory,
+  writeTestEditHistory,
+} from '@/testUtils/editRuntime';
 
 import { useRelationMatrixEditMode } from './useRelationMatrixEditMode';
 
@@ -43,7 +48,7 @@ jest.mock('@/hooks/useContributionSubmissionFeedback', () => ({
   useContributionSubmissionFeedback: () => mockShowSubmissionFeedback,
 }));
 
-const storageKey = getActionsStorageKey('characters');
+const storageKey = getTestEditHistoryKey('characters');
 const relationCountersOriginal = [{ id: '汤姆' }, { id: '布奇' }];
 const relationCountersFinal = [{ id: '汤姆' }];
 
@@ -55,8 +60,7 @@ function deferred<T>() {
   return { promise, resolve };
 }
 
-let runtime: ActiveEditRuntime;
-let characters: ActiveEditRuntime['stores']['characters'];
+let session: EditSession;
 
 function RelationEditModeProbe() {
   const [publishResult, setPublishResult] = useState<string | null>(null);
@@ -121,8 +125,7 @@ const renderProbe = () => render(<RelationEditModeProbe />);
 
 describe('useRelationMatrixEditMode', () => {
   beforeEach(() => {
-    runtime = installTestEditRuntime();
-    characters = runtime.stores.characters;
+    session = installTestEditSession();
     mockPermissionProfile = 'contributor';
     mockPendingAwareness = undefined;
     window.localStorage.clear();
@@ -135,14 +138,14 @@ describe('useRelationMatrixEditMode', () => {
 
   afterEach(() => {
     cleanup();
-    clearTestEditRuntime(runtime);
+    clearTestEditSession(session);
     window.localStorage.clear();
     window.sessionStorage.clear();
     jest.restoreAllMocks();
   });
 
   it('counts relation actions and excludes unrelated character drafts', () => {
-    writeActionHistory(storageKey, [
+    writeTestEditHistory(storageKey, [
       { op: 'set', path: '杰瑞.counters', oldValue: [], newValue: [{ id: '汤姆' }] },
       { op: 'set', path: '杰瑞.description', oldValue: 'old', newValue: 'new' },
       [
@@ -168,7 +171,7 @@ describe('useRelationMatrixEditMode', () => {
       }),
     });
     global.fetch = fetchMock;
-    writeActionHistory(storageKey, [
+    writeTestEditHistory(storageKey, [
       { op: 'set', path: '杰瑞.counters', oldValue: [], newValue: [{ id: '汤姆' }] },
       { op: 'set', path: '杰瑞.description', oldValue: 'old', newValue: 'new' },
     ]);
@@ -191,7 +194,7 @@ describe('useRelationMatrixEditMode', () => {
           message: '关系更新',
         }),
       });
-      expect(readActionHistory(storageKey)).toEqual([
+      expect(readTestEditHistory(storageKey)).toEqual([
         { op: 'set', path: '杰瑞.description', oldValue: 'old', newValue: 'new' },
       ]);
     });
@@ -206,7 +209,7 @@ describe('useRelationMatrixEditMode', () => {
       }),
     });
     global.fetch = fetchMock;
-    writeActionHistory(storageKey, [
+    writeTestEditHistory(storageKey, [
       { op: 'set', path: '杰瑞.counters', oldValue: [], newValue: [{ id: '汤姆' }] },
     ]);
     renderProbe();
@@ -246,8 +249,13 @@ describe('useRelationMatrixEditMode', () => {
       }),
     });
     global.fetch = fetchMock;
-    (characters['杰瑞'] as unknown as { counters?: unknown }).counters = relationCountersFinal;
-    writeActionHistory(storageKey, [
+    await act(async () => {
+      session.updateEntity({ entityType: 'characters', entityId: '杰瑞' }, (character) => {
+        (character as unknown as { counters?: unknown }).counters = relationCountersFinal;
+      });
+      await Promise.resolve();
+    });
+    writeTestEditHistory(storageKey, [
       {
         op: 'delete',
         path: '杰瑞.counters.1',
@@ -309,7 +317,7 @@ describe('useRelationMatrixEditMode', () => {
         json: jest.fn().mockResolvedValue({ result: [{ id: 'action-1', ...result }] }),
       });
       global.fetch = fetchMock;
-      writeActionHistory(storageKey, [
+      writeTestEditHistory(storageKey, [
         { op: 'set', path: '杰瑞.counters', oldValue: [], newValue: [{ id: '汤姆' }] },
       ]);
       renderProbe();
@@ -347,7 +355,7 @@ describe('useRelationMatrixEditMode', () => {
       oldValue: [],
       newValue: [{ id: '汤姆' }],
     };
-    writeActionHistory(storageKey, [draft]);
+    writeTestEditHistory(storageKey, [draft]);
     renderProbe();
 
     await act(async () => {
@@ -359,13 +367,18 @@ describe('useRelationMatrixEditMode', () => {
       expect(mockError).toHaveBeenCalledWith(
         `${errorBody.message}（请求编号：${errorBody.requestId}）`
       );
-      expect(readActionHistory(storageKey)).toEqual([draft]);
+      expect(readTestEditHistory(storageKey)).toEqual([draft]);
     });
   });
 
   it('discards relation actions with suppressed inverse replay and preserves unrelated drafts', async () => {
-    (characters['杰瑞'] as unknown as { counters?: unknown }).counters = [{ id: '汤姆' }];
-    writeActionHistory(storageKey, [
+    await act(async () => {
+      session.updateEntity({ entityType: 'characters', entityId: '杰瑞' }, (character) => {
+        (character as unknown as { counters?: unknown }).counters = [{ id: '汤姆' }];
+      });
+      await Promise.resolve();
+    });
+    writeTestEditHistory(storageKey, [
       { op: 'set', path: '杰瑞.counters', oldValue: [], newValue: [{ id: '汤姆' }] },
       { op: 'set', path: '杰瑞.description', oldValue: 'old', newValue: 'new' },
     ]);
@@ -377,8 +390,14 @@ describe('useRelationMatrixEditMode', () => {
     });
 
     await waitFor(() => {
-      expect((characters['杰瑞'] as unknown as { counters?: unknown }).counters).toEqual([]);
-      expect(readActionHistory(storageKey)).toEqual([
+      expect(
+        (
+          session.readEntity({ entityType: 'characters', entityId: '杰瑞' }) as unknown as {
+            counters?: unknown;
+          }
+        ).counters
+      ).toEqual([]);
+      expect(readTestEditHistory(storageKey)).toEqual([
         { op: 'set', path: '杰瑞.description', oldValue: 'old', newValue: 'new' },
       ]);
       expect(screen.getByTestId('dirty')).toHaveTextContent('false');
@@ -389,12 +408,14 @@ describe('useRelationMatrixEditMode', () => {
     renderProbe();
     expect(screen.getByTestId('dirty')).toHaveTextContent('false');
 
-    writeActionHistory(storageKey, [
+    writeTestEditHistory(storageKey, [
       { op: 'set', path: '杰瑞.counters', oldValue: [], newValue: [{ id: '汤姆' }] },
     ]);
 
     await act(async () => {
-      (characters['杰瑞'] as unknown as { counters?: unknown }).counters = [{ id: '汤姆' }];
+      session.updateEntity({ entityType: 'characters', entityId: '杰瑞' }, (character) => {
+        (character as unknown as { counters?: unknown }).counters = [{ id: '汤姆' }];
+      });
       await Promise.resolve();
     });
 
@@ -424,7 +445,7 @@ describe('useRelationMatrixEditMode', () => {
       { op: 'set' as const, path: '杰瑞.description', oldValue: 'old', newValue: 'new' },
       { op: 'set' as const, path: '杰瑞.name', oldValue: '杰瑞', newValue: '杰瑞（新）' },
     ];
-    writeActionHistory(storageKey, [submitted]);
+    writeTestEditHistory(storageKey, [submitted]);
     renderProbe();
 
     await act(async () => {
@@ -433,7 +454,7 @@ describe('useRelationMatrixEditMode', () => {
     });
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
 
-    writeActionHistory(storageKey, [submitted, sameScopeAppend, unrelatedAppend]);
+    writeTestEditHistory(storageKey, [submitted, sameScopeAppend, unrelatedAppend]);
     await act(async () => {
       response.resolve({
         ok: true,
@@ -443,7 +464,7 @@ describe('useRelationMatrixEditMode', () => {
     });
 
     await waitFor(() => {
-      expect(readActionHistory(storageKey)).toEqual([sameScopeAppend, unrelatedAppend]);
+      expect(readTestEditHistory(storageKey)).toEqual([sameScopeAppend, unrelatedAppend]);
       expect(screen.getByTestId('publish-result')).toHaveTextContent('false');
     });
   });
@@ -464,7 +485,7 @@ describe('useRelationMatrixEditMode', () => {
       oldValue: [{ id: '布奇' }],
       newValue: [{ id: '汤姆' }, { id: '布奇' }],
     };
-    writeActionHistory(storageKey, [submitted]);
+    writeTestEditHistory(storageKey, [submitted]);
     renderProbe();
 
     await act(async () => {
@@ -473,7 +494,7 @@ describe('useRelationMatrixEditMode', () => {
     });
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
 
-    writeActionHistory(storageKey, [divergent]);
+    writeTestEditHistory(storageKey, [divergent]);
     await act(async () => {
       response.resolve({
         ok: true,
@@ -483,7 +504,7 @@ describe('useRelationMatrixEditMode', () => {
     });
 
     await waitFor(() => {
-      expect(readActionHistory(storageKey)).toEqual([divergent]);
+      expect(readTestEditHistory(storageKey)).toEqual([divergent]);
       expect(screen.getByTestId('publish-result')).toHaveTextContent('false');
       expect(mockError).toHaveBeenCalledWith(
         '发布成功，但本地草稿历史已变化，未清理已发布关系草稿，请确认后重试。'
@@ -511,7 +532,7 @@ describe('useRelationMatrixEditMode', () => {
     };
     const fetchMock = jest.fn().mockResolvedValueOnce(overlap).mockResolvedValueOnce(success);
     global.fetch = fetchMock;
-    writeActionHistory(storageKey, [
+    writeTestEditHistory(storageKey, [
       { op: 'set', path: '杰瑞.counters', oldValue: [], newValue: [{ id: '汤姆' }] },
     ]);
     renderProbe();
@@ -557,7 +578,7 @@ describe('useRelationMatrixEditMode', () => {
       oldValue: [],
       newValue: [{ id: '汤姆' }],
     };
-    writeActionHistory(storageKey, [submitted]);
+    writeTestEditHistory(storageKey, [submitted]);
     const originalRemoveItem = Storage.prototype.removeItem;
     const removeItem = jest.spyOn(Storage.prototype, 'removeItem').mockImplementation(function (
       this: Storage,
@@ -574,7 +595,7 @@ describe('useRelationMatrixEditMode', () => {
     });
 
     await waitFor(() => {
-      expect(readActionHistory(storageKey)).toEqual([submitted]);
+      expect(readTestEditHistory(storageKey)).toEqual([submitted]);
       expect(screen.getByTestId('publish-result')).toHaveTextContent('false');
       expect(mockShowSubmissionFeedback).toHaveBeenCalledWith('关系修改已提交，等待审核');
       expect(mockError).toHaveBeenCalledWith('发布成功，但本地关系草稿清理失败，请确认后重试。');

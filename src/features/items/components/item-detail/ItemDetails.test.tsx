@@ -27,23 +27,19 @@ const draftItem = {
 } as Item;
 
 let mockEditMode: EditModeState;
-let mockDraftRuntime: { stores: { items: Record<string, Item> } } | null;
+let mockDraftItems: Record<string, Item> | null;
 
 jest.mock('@/context/EditModeContext', () => ({
   useEditMode: () => mockEditMode,
 }));
 
-jest.mock('@/hooks/useDraftDataRuntime', () => ({
-  useDraftDataRuntime: () => mockDraftRuntime,
-}));
-
 jest.mock('@/hooks/useEditableGameData', () => ({
   useEditableEntity: ({ entityId }: { entityId: string }, fallback: Item) => [
     mockEditMode.isEditModeRequested && mockEditMode.runtimeStatus === 'ready'
-      ? (mockDraftRuntime?.stores.items[entityId] ?? fallback)
+      ? (mockDraftItems?.[entityId] ?? fallback)
       : fallback,
     (mutate: (value: Item) => void) => {
-      const item = mockDraftRuntime?.stores.items[entityId];
+      const item = mockDraftItems?.[entityId];
       if (item) mutate(item);
     },
   ],
@@ -136,7 +132,7 @@ function renderWithState(state: EditModeState) {
 
 describe('ItemDetails draft data selection', () => {
   beforeEach(() => {
-    mockDraftRuntime = { stores: { items: { fork: draftItem } } };
+    mockDraftItems = { fork: draftItem };
   });
 
   it('renders published data outside edit mode', () => {

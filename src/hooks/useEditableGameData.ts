@@ -3,16 +3,15 @@
 import { useCallback, useMemo, useSyncExternalStore } from 'react';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
-import type { EditEntityRef } from '@/lib/edit/editSession';
-import type { EditStores } from '@/lib/edit/editStores';
+import { useActiveEditSession } from '@/lib/edit/activeEditSession';
+import type { EditDomainDraft, EditEntityRef } from '@/lib/edit/editSession';
 import type { PublishableEntityType } from '@/lib/gameData/publishableEntityTypes';
 import type {
   PublishedGameDataByType,
   PublishedGameDataEntityByType,
 } from '@/lib/gameData/published/types';
+import { useEditMode } from '@/context/EditModeContext';
 import type { FactionId } from '@/data/types';
-
-import { useDraftDataRuntime } from './useDraftDataRuntime';
 
 type FactionEntityType = 'achievements' | 'specialSkills';
 
@@ -28,30 +27,36 @@ export type EditableEntityRef<EntityType extends PublishableEntityType> =
     ? { entityType: EntityType; entityId: string; factionId: FactionId }
     : { entityType: EntityType; entityId: string; factionId?: never };
 
+function useDraftDataSession() {
+  const { isEditModeRequested, runtimeStatus } = useEditMode();
+  const session = useActiveEditSession();
+  return isEditModeRequested && runtimeStatus === 'ready' ? session : null;
+}
+
 export function useEditableDomain<EntityType extends PublishableEntityType>(
   entityType: EntityType,
   publishedFallback: PublishedGameDataByType[EntityType]
-): EditableResult<PublishedGameDataByType[EntityType], EditStores[EntityType]>;
+): EditableResult<PublishedGameDataByType[EntityType], EditDomainDraft<EntityType>>;
 export function useEditableDomain<EntityType extends PublishableEntityType, View>(
   entityType: EntityType,
   publishedFallback: PublishedGameDataByType[EntityType] extends DeepReadonly<View>
     ? DeepReadonly<View>
     : never
-): EditableResult<DeepReadonly<View>, EditStores[EntityType]>;
+): EditableResult<DeepReadonly<View>, EditDomainDraft<EntityType>>;
 export function useEditableDomain<EntityType extends PublishableEntityType, View>(
   entityType: EntityType,
   publishedFallback: DeepReadonly<View>,
   projectDraft: (draft: PublishedGameDataByType[EntityType]) => DeepReadonly<View>
-): EditableResult<DeepReadonly<View>, EditStores[EntityType]>;
+): EditableResult<DeepReadonly<View>, EditDomainDraft<EntityType>>;
 export function useEditableDomain<EntityType extends PublishableEntityType, View>(
   entityType: EntityType,
   publishedFallback: PublishedGameDataByType[EntityType] | DeepReadonly<View>,
   projectDraft?: (draft: PublishedGameDataByType[EntityType]) => DeepReadonly<View>
 ): EditableResult<
   PublishedGameDataByType[EntityType] | DeepReadonly<View>,
-  EditStores[EntityType]
+  EditDomainDraft<EntityType>
 > {
-  const editRuntime = useDraftDataRuntime();
+  const editRuntime = useDraftDataSession();
   const subscribe = useCallback(
     (listener: () => void) =>
       editRuntime?.subscribe({ kind: 'domain', entityType }, listener) ?? (() => undefined),
@@ -63,7 +68,7 @@ export function useEditableDomain<EntityType extends PublishableEntityType, View
   );
   const draft = useSyncExternalStore(subscribe, getSnapshot, () => publishedFallback);
 
-  const update = useCallback<EditableUpdate<EditStores[EntityType]>>(
+  const update = useCallback<EditableUpdate<EditDomainDraft<EntityType>>>(
     (mutate) => {
       if (!editRuntime) throw new Error(`Cannot edit ${entityType} because it is not loaded.`);
       editRuntime.updateDomain(entityType, mutate);
@@ -96,7 +101,7 @@ export function useEditableEntity<EntityType extends PublishableEntityType>(
   DeepReadonly<PublishedGameDataEntityByType[EntityType]> | null,
   PublishedGameDataEntityByType[EntityType]
 > {
-  const editRuntime = useDraftDataRuntime();
+  const editRuntime = useDraftDataSession();
   const { entityType, entityId } = ref;
   const factionId = 'factionId' in ref ? ref.factionId : undefined;
   const sessionRef = useMemo(

@@ -2,17 +2,14 @@ import { readdirSync, readFileSync, statSync } from 'fs';
 import { join, relative } from 'path';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
-import type { ActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
-import { clearTestEditRuntime, installTestEditRuntime } from '@/testUtils/editRuntime';
+import type { EditSession } from '@/lib/edit/editSession';
+import { clearTestEditSession, installTestEditSession } from '@/testUtils/editRuntime';
 
 import { editable } from './editable';
 
 let mockIsEditMode = false;
 const mockHandleSelectCharacter = jest.fn();
-let runtime: ActiveEditRuntime;
-let cardsEdit: ActiveEditRuntime['stores']['cards'];
-let characters: ActiveEditRuntime['stores']['characters'];
-let itemsEdit: ActiveEditRuntime['stores']['items'];
+let session: EditSession;
 
 jest.mock('@/context/AppContext', () => ({
   useAppContext: () => ({ handleSelectCharacter: mockHandleSelectCharacter }),
@@ -60,27 +57,31 @@ function listEditableSourceFiles(): string[] {
 }
 
 function seedEditableStoreFixtures() {
-  delete characters['renamed-character'];
-  characters['test-character'] = {
-    id: 'test-character',
-    description: 'Original Character',
-    factionId: 'cat',
-    faction: { id: 'cat', name: 'Cat' },
-    imageUrl: '',
-    skills: [],
-    knowledgeCardGroups: [],
-  } as unknown as (typeof characters)[string];
-
-  cardsEdit['test-card'] = {
-    id: 'test-card',
-    name: 'Original Card',
-    description: 'Old card description',
-  } as unknown as (typeof cardsEdit)[string];
-
-  itemsEdit['test-item'] = {
-    name: 'Original Item',
-    description: 'Old item description',
-  } as unknown as (typeof itemsEdit)[string];
+  session.updateDomain('characters', (characters) => {
+    delete characters['renamed-character'];
+    characters['test-character'] = {
+      id: 'test-character',
+      description: 'Original Character',
+      factionId: 'cat',
+      faction: { id: 'cat', name: 'Cat' },
+      imageUrl: '',
+      skills: [],
+      knowledgeCardGroups: [],
+    } as unknown as (typeof characters)[string];
+  });
+  session.updateDomain('cards', (cards) => {
+    cards['test-card'] = {
+      id: 'test-card',
+      name: 'Original Card',
+      description: 'Old card description',
+    } as unknown as (typeof cards)[string];
+  });
+  session.updateDomain('items', (items) => {
+    items['test-item'] = {
+      name: 'Original Item',
+      description: 'Old item description',
+    } as unknown as (typeof items)[string];
+  });
 }
 
 function editAndBlur(element: HTMLElement, text: string) {
@@ -90,17 +91,14 @@ function editAndBlur(element: HTMLElement, text: string) {
 
 describe('editable', () => {
   beforeEach(() => {
-    runtime = installTestEditRuntime();
-    cardsEdit = runtime.stores.cards;
-    characters = runtime.stores.characters;
-    itemsEdit = runtime.stores.items;
+    session = installTestEditSession();
     mockIsEditMode = false;
     mockHandleSelectCharacter.mockClear();
     seedEditableStoreFixtures();
   });
 
   afterEach(() => {
-    clearTestEditRuntime(runtime);
+    clearTestEditSession(session);
   });
 
   it('returns stable scoped proxies and tag components', () => {
@@ -169,7 +167,9 @@ describe('editable', () => {
     editAndBlur(screen.getByText('Old card description'), ' New card description ');
 
     await waitFor(() => {
-      expect(cardsEdit['test-card']?.description).toBe('New card description');
+      expect(session.readEntity({ entityType: 'cards', entityId: 'test-card' })?.description).toBe(
+        'New card description'
+      );
     });
   });
 
@@ -188,8 +188,10 @@ describe('editable', () => {
         expect.any(Error)
       );
     });
-    expect(cardsEdit['test-card']?.id).toBe('test-card');
-    expect(cardsEdit['renamed-card']).toBeUndefined();
+    expect(session.readEntity({ entityType: 'cards', entityId: 'test-card' })?.id).toBe(
+      'test-card'
+    );
+    expect(session.readEntity({ entityType: 'cards', entityId: 'renamed-card' })).toBeNull();
 
     consoleErrorSpy.mockRestore();
   });
@@ -203,7 +205,9 @@ describe('editable', () => {
     editAndBlur(screen.getByText('Original Character'), ' Updated Character ');
 
     await waitFor(() => {
-      expect(characters['test-character']?.description).toBe('Updated Character');
+      expect(
+        session.readEntity({ entityType: 'characters', entityId: 'test-character' })?.description
+      ).toBe('Updated Character');
     });
   });
 
@@ -216,7 +220,9 @@ describe('editable', () => {
     editAndBlur(screen.getByText('test-character'), 'renamed-character');
 
     await waitFor(() => {
-      expect(characters['renamed-character']?.id).toBe('renamed-character');
+      expect(
+        session.readEntity({ entityType: 'characters', entityId: 'renamed-character' })?.id
+      ).toBe('renamed-character');
     });
     expect(mockHandleSelectCharacter).toHaveBeenCalledWith('renamed-character');
   });
@@ -230,7 +236,9 @@ describe('editable', () => {
     editAndBlur(screen.getByText('Old item description'), ' New item description ');
 
     await waitFor(() => {
-      expect(itemsEdit['test-item']?.description).toBe('New item description');
+      expect(session.readEntity({ entityType: 'items', entityId: 'test-item' })?.description).toBe(
+        'New item description'
+      );
     });
   });
 
@@ -249,7 +257,9 @@ describe('editable', () => {
         expect.any(Error)
       );
     });
-    expect(itemsEdit['test-item']?.name).toBe('Original Item');
+    expect(session.readEntity({ entityType: 'items', entityId: 'test-item' })?.name).toBe(
+      'Original Item'
+    );
 
     consoleErrorSpy.mockRestore();
   });

@@ -1,7 +1,7 @@
+import { proxy } from 'valtio';
+
 import { GameDataManager } from '@/lib/dataManager';
-import type { ActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
 import type { CharacterWithFaction } from '@/lib/types';
-import { clearTestEditRuntime, installTestEditRuntime } from '@/testUtils/editRuntime';
 
 import { handleCharacterIdChange, isOriginalCharacter } from './characterEditHandlers';
 
@@ -10,16 +10,13 @@ describe('characterEditHandlers', () => {
   const canonicalTom = structuredClone(
     GameDataManager.getCharacters()['汤姆']!
   ) as CharacterWithFaction;
-  let runtime: ActiveEditRuntime;
-  let characters: ActiveEditRuntime['stores']['characters'];
+  let characters: Record<string, CharacterWithFaction>;
 
   beforeEach(() => {
-    runtime = installTestEditRuntime();
-    characters = runtime.stores.characters;
-  });
-
-  afterEach(() => {
-    clearTestEditRuntime(runtime);
+    characters = proxy(structuredClone(GameDataManager.getCharacters())) as Record<
+      string,
+      CharacterWithFaction
+    >;
   });
 
   it('does not classify locally created draft characters as canonical characters', () => {

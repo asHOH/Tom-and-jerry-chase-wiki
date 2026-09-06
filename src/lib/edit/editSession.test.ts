@@ -1,6 +1,9 @@
-import { subscribers, type ActionHistoryEntry } from '@/lib/edit/diffUtils';
+import { waitFor } from '@testing-library/react';
+
+import type { ActionHistoryEntry } from '@/lib/edit/diffUtils';
 import type { EditHistoryStore } from '@/lib/edit/editModeRegistry';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
+import { getEditModeActionsStorageKey } from '@/lib/localStorage';
 
 import { createEditSession, type EditSession, type EditSessionDependencies } from './editSession';
 
@@ -61,12 +64,44 @@ function memoryHistory(
 describe('createEditSession', () => {
   let session: EditSession | null = null;
 
-  beforeEach(() => window.sessionStorage.clear());
+  beforeEach(() => {
+    window.localStorage.clear();
+    window.sessionStorage.clear();
+  });
 
   afterEach(() => {
     session?.dispose();
     session = null;
+    window.localStorage.clear();
     window.sessionStorage.clear();
+  });
+
+  it('restores and records browser drafts through the session boundary', async () => {
+    const storageKey = getEditModeActionsStorageKey('characters');
+    window.localStorage.setItem(
+      storageKey,
+      JSON.stringify([
+        {
+          op: 'set',
+          path: '杰瑞.description',
+          oldValue: '原描述',
+          newValue: '浏览器草稿',
+        },
+      ])
+    );
+
+    session = createEditSession(baseline, 'v1:test');
+    expect(session.readEntity({ entityType: 'characters', entityId: '杰瑞' })?.description).toBe(
+      '浏览器草稿'
+    );
+
+    session.updateEntity({ entityType: 'characters', entityId: '杰瑞' }, (character) => {
+      character.description = '继续编辑';
+    });
+
+    await waitFor(() => {
+      expect(JSON.parse(window.localStorage.getItem(storageKey) ?? '[]')).toHaveLength(2);
+    });
   });
 
   it('restores existing history before recording new edits and disposes idempotently', async () => {
@@ -77,8 +112,7 @@ describe('createEditSession', () => {
       newValue: '已恢复',
     };
     const history = memoryHistory({ characters: [restored] });
-    const runtime = createEditSession(baseline, 'v1:test', { history: history.store });
-    session = runtime;
+    session = createEditSession(baseline, 'v1:test', { history: history.store });
     const listener = jest.fn();
     session.subscribe({ kind: 'domain', entityType: 'characters' }, listener);
 
@@ -97,11 +131,7 @@ describe('createEditSession', () => {
     session.dispose();
     session.dispose();
     listener.mockClear();
-    runtime.stores.characters['杰瑞']!.description = 'disposed mutation';
-    await Promise.resolve();
-    expect(listener).not.toHaveBeenCalled();
     expect(() => session?.readDomain('characters')).toThrow('disposed');
-    expect(Object.keys(subscribers)).toHaveLength(0);
   });
 
   it('discards relation actions while preserving ordinary character drafts', () => {
@@ -239,6 +269,5 @@ describe('createEditSession', () => {
     expect(() => createEditSession(baseline, 'v1:test', dependencies)).toThrow(
       'Failed to restore one or more edit-mode drafts.'
     );
-    expect(Object.keys(subscribers)).toHaveLength(0);
   });
 });

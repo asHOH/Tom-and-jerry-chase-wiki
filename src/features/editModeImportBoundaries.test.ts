@@ -23,13 +23,16 @@ const appFeatureConsumers = [
   'src/app/(main)/characters/user/[characterId]/UserCharacterPageClient.tsx',
 ];
 
+const productionRoots = ['src/app', 'src/components', 'src/context', 'src/features', 'src/hooks'];
+
 const broadEditModeContextImportPattern =
   /import\s+\{[^}]*\b(?:useLocal[A-Z]\w*|usePageEditMode|PUBLISHABLE_ENTITY_TYPES|clearAllEditModeData|entityRegistry|getEntityRegistry)\b[^}]*\}\s+from ['"]@\/context\/EditModeContext['"]/;
 
 const rawEditRuntimeImportPattern =
-  /from ['"]@\/(?:lib\/edit\/(?:activeEditRuntime|editStores)|hooks\/useDraftDataRuntime)['"]/;
+  /from ['"]@\/(?:lib\/edit\/(?:activeEditRuntime|editStores|editModeRegistry)|hooks\/useDraftDataRuntime)['"]/;
 
-const mutationRuntimeExceptions: string[] = [];
+const rawEditInternalsPattern =
+  /import\s+\{[^}]*(?:getActionsStorageKey|readActionHistory|writeActionHistory|replaceActionHistory|appendActionHistoryEntry|subscribers|withRecordingSuppressed)[^}]*\}\s+from ['"]@\/lib\/edit\/diffUtils['"]/s;
 
 function listSourceFiles(root: string): string[] {
   return readdirSync(root).flatMap((entry) => {
@@ -64,13 +67,16 @@ describe('feature edit mode import boundaries', () => {
     expect(offenders).toEqual([]);
   });
 
-  it('keeps raw edit-runtime imports limited to explicit mutation exceptions', () => {
-    const consumers = featureRoots
+  it('keeps production callers behind the edit-session boundary', () => {
+    const consumers = productionRoots
       .flatMap((root) => listSourceFiles(root))
-      .filter((filePath) => rawEditRuntimeImportPattern.test(readFileSync(filePath, 'utf8')))
+      .filter((filePath) => {
+        const source = readFileSync(filePath, 'utf8');
+        return rawEditRuntimeImportPattern.test(source) || rawEditInternalsPattern.test(source);
+      })
       .map((filePath) => relative(process.cwd(), filePath).replaceAll('\\', '/'))
       .sort();
 
-    expect(consumers).toEqual(mutationRuntimeExceptions);
+    expect(consumers).toEqual([]);
   });
 });

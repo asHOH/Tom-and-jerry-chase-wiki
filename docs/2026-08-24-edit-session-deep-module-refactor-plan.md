@@ -1,6 +1,6 @@
 # Edit Session Deep-Module Refactor Plan
 
-**Status:** Phases 0–4 landed; Phase 5 not started
+**Status:** Complete — Phases 0–5 landed
 **Created:** 2026-08-24  
 **Revised:** 2026-09-06
 **Scope:** Client-side game-data edit runtime, draft lifecycle, and feature-facing edit interfaces
@@ -28,24 +28,23 @@ displace higher-priority production work.
 
 ## Current repository facts
 
-The following remain true as of the revision date:
+The following are true as of the revision date:
 
-- `ActiveEditRuntime` exposes `stores` and `registry`.
-- Store construction, draft restoration, subscriber setup, runtime installation, and teardown span
-  `EditRuntime`, `editStores`, `editModeRegistry`, and `activeEditRuntime`.
-- Page and relation-matrix draft workflows duplicate selection, squashing, discard, publishing,
-  persistence, and result handling.
-- Read-only and mutation callers traverse raw store shapes throughout feature code.
+- The active holder exposes only `EditSession`; stores, registry topology, subscribers, and browser
+  history operations remain behind the session boundary.
+- Feature readers and mutations use typed editable-data hooks or the session's draft lifecycle.
+- Page and relation-matrix workflows delegate selection, squashing, discard, publishing,
+  persistence, and result handling to the session.
 - Publishing now includes behavior added after the original plan:
   - a stable `Idempotency-Key` header backed by a session-stored operation fingerprint;
   - pending-action overlap acknowledgement through `pendingAcknowledgementToken`;
   - advisory pending-action refresh after conflict or success; and
   - advanced submit modes derived from permissions and the selected actions.
-- Phase 0 inventory baseline: `65` feature-facing production files cross the raw runtime seam.
+- Phase 0 inventory baseline: `65` feature-facing production files crossed the raw runtime seam.
   Read paths include `53` `useOptionalEditSnapshot` and `39` `useDraftDataRuntime` callers;
   mutation and character-special-operation paths include `8` direct
   `requireActiveEditRuntime` callers. Draft orchestration remains in the page and relation hooks,
-  runtime lifecycle remains in four edit modules, and `15` tests use raw runtime/store setup.
+  runtime lifecycle remained in four edit modules, and `15` tests used raw runtime/store setup.
 - Shared action types and replay helpers from `diffUtils` are consumed by server-side replay, audit,
   decoding, dependency, compaction, and publish modules. They are not solely edit-session details.
 

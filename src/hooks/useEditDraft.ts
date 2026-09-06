@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useReducer } from 'react';
 
-import { useActiveEditSession } from '@/lib/edit/activeEditRuntime';
+import { useActiveEditSession } from '@/lib/edit/activeEditSession';
 import type {
   EditDiscardResult,
   EditDraftOverviewItem,

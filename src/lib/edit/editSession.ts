@@ -7,10 +7,8 @@ import { GameDataManager } from '@/lib/dataManager';
 import { splitCharacterRelationActionHistory } from '@/lib/edit/characterRelationActions';
 import {
   applyActionEntry,
-  getActionsStorageKey,
   invertActionEntry,
   squashActions,
-  withRecordingSuppressed,
   type ActionHistoryEntry,
 } from '@/lib/edit/diffUtils';
 import {
@@ -21,7 +19,6 @@ import {
   browserEditHistoryStore,
   createEditModeRegistry,
   type EditHistoryStore,
-  type EditModeRegistry,
 } from '@/lib/edit/editModeRegistry';
 import { createEditStores, type EditStores } from '@/lib/edit/editStores';
 import { reconcilePublishHistory } from '@/lib/edit/publishHistory';
@@ -105,6 +102,8 @@ export type EditSubscriptionTarget =
   | { kind: 'draft'; scope: EditDraftScope }
   | { kind: 'draft-overview' };
 
+export type EditDomainDraft<EntityType extends PublishableEntityType> = EditStores[EntityType];
+
 export type EditSession = Readonly<{
   revision: PublishedRevision;
   readDomain: <EntityType extends PublishableEntityType>(
@@ -116,7 +115,7 @@ export type EditSession = Readonly<{
   subscribe: (target: EditSubscriptionTarget, listener: () => void) => () => void;
   updateDomain: <EntityType extends PublishableEntityType>(
     entityType: EntityType,
-    mutate: (value: EditStores[EntityType]) => void
+    mutate: (value: EditDomainDraft<EntityType>) => void
   ) => void;
   updateEntity: <EntityType extends PublishableEntityType>(
     ref: EditEntityRef<EntityType>,
@@ -150,13 +149,6 @@ export type EditSessionDependencies = Readonly<{
   publish?: (request: PublishTransportRequest) => Promise<PublishTransportResult>;
   invalidate?: () => void;
 }>;
-
-/** Same session object; raw fields remain temporarily for Phase 5 test and legacy cleanup. */
-export type EditSessionRuntime = EditSession &
-  Readonly<{
-    stores: EditStores;
-    registry: EditModeRegistry;
-  }>;
 
 async function publishWithFetch(request: PublishTransportRequest): Promise<PublishTransportResult> {
   const response = await fetch(request.endpoint, {
@@ -244,12 +236,12 @@ export function createEditSession(
   baseline: PublishedGameDataByType,
   revision: PublishedRevision,
   dependencies: EditSessionDependencies = {}
-): EditSessionRuntime {
+): EditSession {
   const history = dependencies.history ?? browserEditHistoryStore;
   const publish = dependencies.publish ?? publishWithFetch;
   const invalidate = dependencies.invalidate ?? (() => GameDataManager.invalidate());
   const stores = createEditStores(baseline);
-  const registry = createEditModeRegistry(stores, baseline, history);
+  const registry = createEditModeRegistry(stores, history);
   const manualDraftListeners = new Set<() => void>();
   const sessionSubscriptions = new Set<() => void>();
   let disposed = false;
@@ -286,7 +278,7 @@ export function createEditSession(
   };
   const updateDomain: EditSession['updateDomain'] = <EntityType extends PublishableEntityType>(
     entityType: EntityType,
-    mutate: (value: EditStores[EntityType]) => void
+    mutate: (value: EditDomainDraft<EntityType>) => void
   ) => {
     assertActive();
     mutate(stores[entityType]);
@@ -303,10 +295,8 @@ export function createEditSession(
     mutate(entity as PublishedGameDataEntityByType[EntityType]);
   };
 
-  const session: EditSessionRuntime = Object.freeze({
+  const session: EditSession = Object.freeze({
     revision,
-    stores,
-    registry,
     readDomain,
     readEntity,
     subscribe: (target, listener) => {
@@ -370,11 +360,10 @@ export function createEditSession(
     discardDraft: (scope) => {
       assertActive();
       const entityType = scopeEntityType(scope);
-      const storageKey = getActionsStorageKey(entityType);
       const source = history.read(entityType);
       const { matching, remaining } = selectHistory(scope, source);
       if (matching.length > 0) {
-        withRecordingSuppressed(storageKey, () => {
+        registry.withRecordingSuppressed(entityType, () => {
           const root = mutableDomain(stores, entityType);
           for (let index = matching.length - 1; index >= 0; index -= 1) {
             applyActionEntry(root, invertActionEntry(matching[index]!));
@@ -389,7 +378,7 @@ export function createEditSession(
         cleanupError = error instanceof Error ? error : new Error('Failed to persist draft.');
       }
       if (!cleanupSucceeded && matching.length > 0) {
-        withRecordingSuppressed(storageKey, () => {
+        registry.withRecordingSuppressed(entityType, () => {
           const root = mutableDomain(stores, entityType);
           matching.forEach((entry) => applyActionEntry(root, entry));
         });

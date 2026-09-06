@@ -1,9 +1,9 @@
 import { createContext, type ReactNode } from 'react';
 import { render } from '@testing-library/react';
 
-import type { ActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
+import type { EditSession } from '@/lib/edit/editSession';
 import type { CharacterWithFaction } from '@/lib/types';
-import { clearTestEditRuntime, installTestEditRuntime } from '@/testUtils/editRuntime';
+import { clearTestEditSession, installTestEditSession } from '@/testUtils/editRuntime';
 
 import CharacterDetailsClient from './CharacterDetailsClient';
 
@@ -63,33 +63,34 @@ jest.mock('@/components/ui/EditModeToolbar', () => ({
 }));
 
 describe('CharacterDetailsClient', () => {
-  let runtime: ActiveEditRuntime;
-  let characters: ActiveEditRuntime['stores']['characters'];
+  let session: EditSession;
 
   beforeEach(() => {
-    runtime = installTestEditRuntime();
-    characters = runtime.stores.characters;
+    session = installTestEditSession();
     mockExitEditMode.mockReset();
     mockUseEditMode.mockReturnValue({ isEditMode: false });
 
-    (characters as Record<string, CharacterWithFaction>)[TEST_CHARACTER_ID] = {
-      id: TEST_CHARACTER_ID,
-      description: 'canonical props',
-      factionId: 'cat',
-      imageUrl: '',
-      createDate: null,
-      skills: [],
-      knowledgeCardGroups: [],
-    } as CharacterWithFaction;
+    session.updateDomain('characters', (characters) => {
+      (characters as Record<string, CharacterWithFaction>)[TEST_CHARACTER_ID] = {
+        id: TEST_CHARACTER_ID,
+        description: 'canonical props',
+        factionId: 'cat',
+        imageUrl: '',
+        createDate: null,
+        skills: [],
+        knowledgeCardGroups: [],
+      } as CharacterWithFaction;
+    });
   });
 
   afterEach(() => {
-    clearTestEditRuntime(runtime);
+    clearTestEditSession(session);
   });
 
   it('does not overwrite existing character store data when not in edit mode', () => {
-    const characterStore = characters as Record<string, { description?: string }>;
-    characterStore[TEST_CHARACTER_ID]!.description = 'public update';
+    session.updateEntity({ entityType: 'characters', entityId: TEST_CHARACTER_ID }, (character) => {
+      character.description = 'public update';
+    });
 
     render(
       <CharacterDetailsClient
@@ -105,6 +106,8 @@ describe('CharacterDetailsClient', () => {
       />
     );
 
-    expect(characterStore[TEST_CHARACTER_ID]!.description).toBe('public update');
+    expect(
+      session.readEntity({ entityType: 'characters', entityId: TEST_CHARACTER_ID })?.description
+    ).toBe('public update');
   });
 });

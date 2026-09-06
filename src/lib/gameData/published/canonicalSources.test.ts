@@ -1,11 +1,11 @@
 import { readFileSync } from 'fs';
 
-import type { ActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
+import type { EditSession } from '@/lib/edit/editSession';
 import {
   PUBLISHABLE_ENTITY_TYPES,
   type PublishableEntityType,
 } from '@/lib/gameData/publishableEntityTypes';
-import { clearTestEditRuntime, installTestEditRuntime } from '@/testUtils/editRuntime';
+import { clearTestEditSession, installTestEditSession } from '@/testUtils/editRuntime';
 
 jest.mock('server-only', () => ({}), { virtual: true });
 
@@ -26,32 +26,19 @@ function firstBranchKey(root: MutableRecord): string {
 }
 
 describe('canonical game-data sources', () => {
-  let runtime: ActiveEditRuntime;
+  let session: EditSession;
 
   beforeEach(() => {
-    runtime = installTestEditRuntime();
+    session = installTestEditSession();
   });
 
   afterEach(() => {
-    clearTestEditRuntime(runtime);
+    clearTestEditSession(session);
     jest.resetModules();
   });
 
   it('keeps canonical domains pristine and independent from mutable edit-runtime stores', async () => {
     const staticData = await import('@/data/static');
-    const editRuntimeTargets: Record<PublishableEntityType, MutableRecord> = {
-      achievements: runtime.stores.achievements,
-      characters: runtime.stores.characters,
-      cards: runtime.stores.cards,
-      entities: runtime.stores.entities,
-      buffs: runtime.stores.buffs,
-      items: runtime.stores.items,
-      fixtures: runtime.stores.fixtures,
-      maps: runtime.stores.maps,
-      modes: runtime.stores.modes,
-      specialSkills: runtime.stores.specialSkills,
-      traits: runtime.stores.traits,
-    };
     const staticTargets: Record<PublishableEntityType, MutableRecord> = {
       achievements: staticData.achievements,
       characters: staticData.characters,
@@ -71,9 +58,11 @@ describe('canonical game-data sources', () => {
       const staticTarget = staticTargets[entityType];
       pristineByType[entityType] = structuredClone(staticTarget);
 
-      const runtimeTarget = editRuntimeTargets[entityType];
-      const branch = asMutableRecord(runtimeTarget[firstBranchKey(runtimeTarget)]);
-      branch.__edit_runtime_mutation__ = true;
+      session.updateDomain(entityType, (runtimeTarget) => {
+        const root = runtimeTarget as unknown as MutableRecord;
+        const branch = asMutableRecord(root[firstBranchKey(root)]);
+        branch.__edit_runtime_mutation__ = true;
+      });
     }
 
     const { getCanonicalGameData } = await import('./canonicalSources');
@@ -81,7 +70,7 @@ describe('canonical game-data sources', () => {
     for (const entityType of PUBLISHABLE_ENTITY_TYPES) {
       const canonicalRoot = getCanonicalGameData(entityType) as unknown as MutableRecord;
       const staticTarget = staticTargets[entityType];
-      const runtimeTarget = editRuntimeTargets[entityType];
+      const runtimeTarget = session.readDomain(entityType) as unknown as MutableRecord;
 
       expect(canonicalRoot).toEqual(pristineByType[entityType]);
       expect(getCanonicalGameData(entityType)).toBe(canonicalRoot);
@@ -94,7 +83,9 @@ describe('canonical game-data sources', () => {
     }
 
     const canonicalCharacters = getCanonicalGameData('characters');
-    runtime.stores.characters['汤姆']!.description = 'mutable edit-runtime description';
+    session.updateEntity({ entityType: 'characters', entityId: '汤姆' }, (character) => {
+      character.description = 'mutable edit-runtime description';
+    });
     expect(canonicalCharacters).toEqual(pristineByType.characters);
   });
 

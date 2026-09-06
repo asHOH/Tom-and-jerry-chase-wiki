@@ -1,11 +1,16 @@
 import { useState } from 'react';
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
-import type { ActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
-import { getActionsStorageKey, readActionHistory, writeActionHistory } from '@/lib/edit/diffUtils';
+import type { EditSession } from '@/lib/edit/editSession';
 import { EditModeContext } from '@/context/EditModeContext';
 import type { PendingActionAwarenessSource } from '@/context/PendingActionAwarenessContext';
-import { clearTestEditRuntime, installTestEditRuntime } from '@/testUtils/editRuntime';
+import {
+  clearTestEditSession,
+  getTestEditHistoryKey,
+  installTestEditSession,
+  readTestEditHistory,
+  writeTestEditHistory,
+} from '@/testUtils/editRuntime';
 
 import { usePageEditMode } from './usePageEditMode';
 
@@ -46,8 +51,7 @@ function deferred<T>() {
   return { promise, resolve };
 }
 
-let runtime: ActiveEditRuntime;
-let characters: ActiveEditRuntime['stores']['characters'];
+let session: EditSession;
 
 function PageEditModeProbe() {
   const [refreshCount, setRefreshCount] = useState(0);
@@ -133,8 +137,7 @@ function renderInEditMode() {
 
 describe('usePageEditMode', () => {
   beforeEach(() => {
-    runtime = installTestEditRuntime();
-    characters = runtime.stores.characters;
+    session = installTestEditSession();
     mockPermissionProfile = 'contributor';
     mockShowToast.mockClear();
     mockPendingAwareness = undefined;
@@ -145,7 +148,7 @@ describe('usePageEditMode', () => {
 
   afterEach(() => {
     cleanup();
-    clearTestEditRuntime(runtime);
+    clearTestEditSession(session);
     window.localStorage.clear();
     window.sessionStorage.clear();
     jest.restoreAllMocks();
@@ -154,7 +157,7 @@ describe('usePageEditMode', () => {
   it('does not report a new edit as a restored draft', async () => {
     renderInEditMode();
 
-    writeActionHistory(getActionsStorageKey('characters'), [
+    writeTestEditHistory(getTestEditHistoryKey('characters'), [
       {
         op: 'set',
         path: `${TEST_CHARACTER_ID}.description`,
@@ -174,7 +177,7 @@ describe('usePageEditMode', () => {
     renderInEditMode();
 
     window.localStorage.setItem(
-      getActionsStorageKey('characters'),
+      getTestEditHistoryKey('characters'),
       JSON.stringify([
         {
           op: 'set',
@@ -204,7 +207,7 @@ describe('usePageEditMode', () => {
 
     await waitFor(() => {
       expect(screen.getByTestId('page-dirty')).toHaveTextContent('false');
-      expect(readActionHistory(getActionsStorageKey('characters'))).toEqual([
+      expect(readTestEditHistory(getTestEditHistoryKey('characters'))).toEqual([
         expect.objectContaining({
           op: 'set',
           path: '__other_character__.description',
@@ -218,7 +221,7 @@ describe('usePageEditMode', () => {
     renderInEditMode();
 
     window.localStorage.setItem(
-      getActionsStorageKey('characters'),
+      getTestEditHistoryKey('characters'),
       JSON.stringify([
         {
           op: 'set',
@@ -253,7 +256,7 @@ describe('usePageEditMode', () => {
     renderInEditMode();
 
     window.localStorage.setItem(
-      getActionsStorageKey('characters'),
+      getTestEditHistoryKey('characters'),
       JSON.stringify([
         {
           op: 'set',
@@ -301,7 +304,7 @@ describe('usePageEditMode', () => {
           message: 'hook publish',
         }),
       });
-      expect(readActionHistory(getActionsStorageKey('characters'))).toEqual([
+      expect(readTestEditHistory(getTestEditHistoryKey('characters'))).toEqual([
         expect.objectContaining({
           op: 'set',
           path: '__other_character__.description',
@@ -321,7 +324,7 @@ describe('usePageEditMode', () => {
     });
     global.fetch = fetchMock;
     window.localStorage.setItem(
-      getActionsStorageKey('characters'),
+      getTestEditHistoryKey('characters'),
       JSON.stringify([
         {
           op: 'set',
@@ -374,7 +377,7 @@ describe('usePageEditMode', () => {
 
   it('should summarize drafts across entity domains while editing one route', async () => {
     window.localStorage.setItem(
-      getActionsStorageKey('characters'),
+      getTestEditHistoryKey('characters'),
       JSON.stringify([
         {
           op: 'set',
@@ -385,7 +388,7 @@ describe('usePageEditMode', () => {
       ])
     );
     window.localStorage.setItem(
-      getActionsStorageKey('items'),
+      getTestEditHistoryKey('items'),
       JSON.stringify([
         {
           op: 'set',
@@ -430,7 +433,7 @@ describe('usePageEditMode', () => {
       oldValue: 'canonical description',
       newValue: 'draft description',
     };
-    window.localStorage.setItem(getActionsStorageKey('characters'), JSON.stringify([draft]));
+    window.localStorage.setItem(getTestEditHistoryKey('characters'), JSON.stringify([draft]));
     fireEvent.click(screen.getByRole('button', { name: 'refresh' }));
 
     await act(async () => {
@@ -442,7 +445,7 @@ describe('usePageEditMode', () => {
       expect(mockShowToast).toHaveBeenCalledWith(
         `${errorBody.message}（请求编号：${errorBody.requestId}）`
       );
-      expect(readActionHistory(getActionsStorageKey('characters'))).toEqual([draft]);
+      expect(readTestEditHistory(getTestEditHistoryKey('characters'))).toEqual([draft]);
     });
   });
 
@@ -454,16 +457,21 @@ describe('usePageEditMode', () => {
       }),
     });
     global.fetch = fetchMock;
-    characters[TEST_CHARACTER_ID] = {
-      id: TEST_CHARACTER_ID,
-      name: '玛丽',
-      specialSkills: marySpecialSkillsFinal,
-    } as unknown as (typeof characters)[string];
+    await act(async () => {
+      session.updateDomain('characters', (characters) => {
+        characters[TEST_CHARACTER_ID] = {
+          id: TEST_CHARACTER_ID,
+          name: '玛丽',
+          specialSkills: marySpecialSkillsFinal,
+        } as unknown as (typeof characters)[string];
+      });
+      await Promise.resolve();
+    });
 
     renderInEditMode();
 
     window.localStorage.setItem(
-      getActionsStorageKey('characters'),
+      getTestEditHistoryKey('characters'),
       JSON.stringify([
         {
           op: 'delete',
@@ -532,7 +540,7 @@ describe('usePageEditMode', () => {
       renderInEditMode();
 
       window.localStorage.setItem(
-        getActionsStorageKey('characters'),
+        getTestEditHistoryKey('characters'),
         JSON.stringify([
           {
             op: 'set',
@@ -585,7 +593,7 @@ describe('usePageEditMode', () => {
         newValue: '新名字',
       },
     ];
-    writeActionHistory(getActionsStorageKey('characters'), [submitted]);
+    writeTestEditHistory(getTestEditHistoryKey('characters'), [submitted]);
     renderInEditMode();
 
     await act(async () => {
@@ -594,7 +602,7 @@ describe('usePageEditMode', () => {
     });
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
 
-    writeActionHistory(getActionsStorageKey('characters'), [
+    writeTestEditHistory(getTestEditHistoryKey('characters'), [
       submitted,
       sameScopeAppend,
       unrelatedAppend,
@@ -608,7 +616,7 @@ describe('usePageEditMode', () => {
     });
 
     await waitFor(() => {
-      expect(readActionHistory(getActionsStorageKey('characters'))).toEqual([
+      expect(readTestEditHistory(getTestEditHistoryKey('characters'))).toEqual([
         sameScopeAppend,
         unrelatedAppend,
       ]);
@@ -632,7 +640,7 @@ describe('usePageEditMode', () => {
       oldValue: 'other old',
       newValue: 'other draft',
     };
-    writeActionHistory(getActionsStorageKey('characters'), [submitted]);
+    writeTestEditHistory(getTestEditHistoryKey('characters'), [submitted]);
     renderInEditMode();
 
     await act(async () => {
@@ -641,7 +649,7 @@ describe('usePageEditMode', () => {
     });
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
 
-    writeActionHistory(getActionsStorageKey('characters'), [divergent]);
+    writeTestEditHistory(getTestEditHistoryKey('characters'), [divergent]);
     await act(async () => {
       response.resolve({
         ok: true,
@@ -651,7 +659,7 @@ describe('usePageEditMode', () => {
     });
 
     await waitFor(() => {
-      expect(readActionHistory(getActionsStorageKey('characters'))).toEqual([divergent]);
+      expect(readTestEditHistory(getTestEditHistoryKey('characters'))).toEqual([divergent]);
       expect(screen.getByTestId('publish-result')).toHaveTextContent('false');
       expect(mockShowToast).toHaveBeenCalledWith(
         '发布成功，但本地草稿历史已变化，未清理已发布草稿，请确认后重试。'
@@ -677,7 +685,7 @@ describe('usePageEditMode', () => {
       .mockRejectedValueOnce(new Error('network failure'))
       .mockResolvedValueOnce(success);
     global.fetch = fetchMock;
-    writeActionHistory(getActionsStorageKey('characters'), [
+    writeTestEditHistory(getTestEditHistoryKey('characters'), [
       {
         op: 'set',
         path: `${TEST_CHARACTER_ID}.description`,
@@ -725,7 +733,7 @@ describe('usePageEditMode', () => {
       oldValue: 'old',
       newValue: 'draft',
     };
-    writeActionHistory(getActionsStorageKey('characters'), [submitted]);
+    writeTestEditHistory(getTestEditHistoryKey('characters'), [submitted]);
     const originalRemoveItem = Storage.prototype.removeItem;
     const removeItem = jest.spyOn(Storage.prototype, 'removeItem').mockImplementation(function (
       this: Storage,
@@ -742,7 +750,7 @@ describe('usePageEditMode', () => {
     });
 
     await waitFor(() => {
-      expect(readActionHistory(getActionsStorageKey('characters'))).toEqual([submitted]);
+      expect(readTestEditHistory(getTestEditHistoryKey('characters'))).toEqual([submitted]);
       expect(screen.getByTestId('publish-result')).toHaveTextContent('false');
       expect(mockShowToast).toHaveBeenCalledWith('改动已提交，等待审核');
       expect(mockShowToast).toHaveBeenCalledWith('发布成功，但本地草稿清理失败，请确认后重试。');

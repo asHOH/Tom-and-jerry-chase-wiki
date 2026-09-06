@@ -1,10 +1,8 @@
-import {
-  clearActiveEditRuntime,
-  installActiveEditRuntime,
-  type ActiveEditRuntime,
-} from '@/lib/edit/activeEditRuntime';
-import { createEditSession } from '@/lib/edit/editSession';
+import { clearActiveEditSession, installActiveEditSession } from '@/lib/edit/activeEditSession';
+import type { ActionHistoryEntry } from '@/lib/edit/diffUtils';
+import { createEditSession, type EditSession } from '@/lib/edit/editSession';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
+import { getEditModeActionsStorageKey, storage } from '@/lib/localStorage';
 import {
   achievements,
   buffs,
@@ -33,15 +31,23 @@ const baseline = {
   traits,
 } as PublishedGameDataByType;
 
-export function installTestEditRuntime(): ActiveEditRuntime {
-  const runtime = createEditSession(baseline, 'v1:test');
-  runtime.registry.teardownSubscribers();
-
-  installActiveEditRuntime(runtime);
-  return runtime;
+export function installTestEditSession(): EditSession {
+  const session = createEditSession(baseline, 'v1:test');
+  installActiveEditSession(session);
+  return session;
 }
 
-export function clearTestEditRuntime(runtime: ActiveEditRuntime): void {
-  runtime.dispose();
-  clearActiveEditRuntime(runtime);
+export function clearTestEditSession(session: EditSession): void {
+  session.dispose();
+  clearActiveEditSession(session);
+}
+
+export const getTestEditHistoryKey = getEditModeActionsStorageKey;
+
+export function readTestEditHistory(storageKey: string): ActionHistoryEntry[] {
+  return storage.getJson<ActionHistoryEntry[]>(storageKey) ?? [];
+}
+
+export function writeTestEditHistory(storageKey: string, history: ActionHistoryEntry[]): boolean {
+  return storage.setJson(storageKey, history);
 }

@@ -2,8 +2,8 @@
 
 import { createContext, useContext, type ReactNode } from 'react';
 
-import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
+import { useEditableDomain } from '@/hooks/useEditableGameData';
 import { usePublishedRevision } from '@/hooks/usePublishedRevision';
 import { useEditMode } from '@/context/EditModeContext';
 import canonicalTraits from '@/data/traits';
@@ -28,11 +28,8 @@ export function TraitsProvider({
 
 export function useTraitsData(): TraitsRecord {
   const publishedTraits = useContext(TraitsContext);
-  const editRuntime = useActiveEditRuntime();
+  const [editableTraits] = useEditableDomain('traits', publishedTraits);
   const { isEditModeRequested, isPreviewMode, runtimeStatus } = useEditMode();
   const usesDraft = isEditModeRequested && !isPreviewMode && runtimeStatus === 'ready';
-  return useOptionalEditSnapshot(
-    usesDraft ? editRuntime?.stores.traits : null,
-    publishedTraits
-  ) as unknown as TraitsRecord;
+  return (usesDraft ? editableTraits : publishedTraits) as TraitsRecord;
 }

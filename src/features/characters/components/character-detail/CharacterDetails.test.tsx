@@ -11,8 +11,7 @@ let mockIsEditMode = false;
 let mockIsEditModeRequested = false;
 let mockIsPreviewMode = false;
 let mockRuntimeStatus: 'idle' | 'refreshing' | 'ready' = 'idle';
-let mockDraftRuntime: { stores: { characters: Record<string, Record<string, unknown>> } } | null =
-  null;
+let mockDraftDomains: Record<string, Record<string, Record<string, unknown>>> | null = null;
 
 jest.mock('motion/react', () => {
   return {
@@ -55,21 +54,16 @@ jest.mock('@/context/EditModeContext', () => ({
   }),
 }));
 
-jest.mock('@/hooks/useDraftDataRuntime', () => ({
-  useDraftDataRuntime: () => mockDraftRuntime,
-}));
-
 jest.mock('@/hooks/useEditableGameData', () => ({
   useEditableDomain: (entityType: string, fallback: unknown) => [
     mockIsEditModeRequested && mockRuntimeStatus === 'ready'
-      ? ((mockDraftRuntime?.stores as Record<string, unknown> | undefined)?.[entityType] ??
-        fallback)
+      ? (mockDraftDomains?.[entityType] ?? fallback)
       : fallback,
     jest.fn(),
   ],
   useEditableEntity: ({ entityId }: { entityId: string }, fallback: unknown) => [
     mockIsEditModeRequested && mockRuntimeStatus === 'ready'
-      ? (mockDraftRuntime?.stores.characters[entityId] ?? fallback)
+      ? (mockDraftDomains?.characters?.[entityId] ?? fallback)
       : fallback,
     jest.fn(),
   ],
@@ -241,14 +235,12 @@ describe('CharacterDetails', () => {
     mockIsEditModeRequested = false;
     mockIsPreviewMode = false;
     mockRuntimeStatus = 'idle';
-    mockDraftRuntime = {
-      stores: {
-        characters: {
-          汤姆: {
-            ...character,
-            description: 'draft description',
-            catPositioningTags: ['draft positioning tag'],
-          },
+    mockDraftDomains = {
+      characters: {
+        汤姆: {
+          ...character,
+          description: 'draft description',
+          catPositioningTags: ['draft positioning tag'],
         },
       },
     };
