@@ -3,9 +3,9 @@
 import { useMemo, useState } from 'react';
 
 import { getEntityTypeColors, getFactionButtonColors } from '@/lib/design';
-import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
+import { useEditableDomain } from '@/hooks/useEditableGameData';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { usePublishedRevision } from '@/hooks/usePublishedRevision';
 import { useDarkMode } from '@/context/DarkModeContext';
@@ -142,8 +142,7 @@ export default function EntityClient({ description, data = entities, publishedRe
     }
   }
 
-  const editRuntime = useActiveEditRuntime();
-  const entitiesSnapshot = useOptionalEditSnapshot(editRuntime?.stores.entities, data);
+  const entitiesSnapshot = useEditableDomain('entities', data);
   const filteredEntities = Object.values(entitiesSnapshot as Record<string, Entity>).filter(
     (entity: Entity) => {
       return matchesType(entity) && matchesFaction(entity) && matchesTag(entity);

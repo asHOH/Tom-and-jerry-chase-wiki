@@ -2,8 +2,7 @@ import { useMemo, useState } from 'react';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { cn } from '@/lib/design';
-import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
-import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
+import { useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useScrollSpy } from '@/hooks/useScrollSpy';
 import type { Skill } from '@/data/types';
@@ -41,12 +40,11 @@ function CharacterSectionIndexItem({
 
 export default function CharacterSectionIndex() {
   const { characterId } = useLocalCharacter();
-  const editRuntime = useDraftDataRuntime();
   const publishedCharacter = usePublishedCharacter(characterId);
-  const character = useOptionalEditSnapshot(
-    editRuntime?.stores.characters[characterId],
+  const character = useEditableEntity(
+    { entityType: 'characters', entityId: characterId },
     publishedCharacter
-  );
+  )!;
   const [skillsOpen, setSkillsOpen] = useState(false);
 
   // Generate all section IDs for scroll spy

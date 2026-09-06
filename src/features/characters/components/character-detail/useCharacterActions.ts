@@ -1,11 +1,8 @@
 import { AssetManager } from '@/lib/assetManager';
-import {
-  requireActiveEditRuntime,
-  useActiveEditRuntime,
-  useOptionalEditSnapshot,
-} from '@/lib/edit/activeEditRuntime';
+import { requireActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
 import { generateTypescriptCodeFromCharacter } from '@/lib/editUtils';
 import type { CharacterWithFaction } from '@/lib/types';
+import { useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import type { Skill } from '@/data/types';
 
@@ -13,10 +10,11 @@ import { usePublishedCharacter } from './PublishedCharacterContext';
 
 export function useCharacterActions() {
   const { characterId } = useLocalCharacter();
-  const editRuntime = useActiveEditRuntime();
-  const rawCharacter = editRuntime?.stores.characters[characterId];
   const publishedCharacter = usePublishedCharacter(characterId);
-  const localCharacter = useOptionalEditSnapshot(rawCharacter, publishedCharacter);
+  const localCharacter = useEditableEntity(
+    { entityType: 'characters', entityId: characterId },
+    publishedCharacter
+  )!;
   const factionId = localCharacter.factionId!;
 
   function addSecondWeapon() {

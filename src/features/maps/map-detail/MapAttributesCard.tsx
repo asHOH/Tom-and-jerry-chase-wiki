@@ -1,9 +1,8 @@
 'use client';
 
 import { getMapLevelColors, getMapSizeColors, getMapTypeColors } from '@/lib/design';
-import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
-import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
+import { useEditableDomain, useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalMap } from '@/hooks/useLocalEditEntity';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
@@ -34,19 +33,14 @@ export default function MapAttributesCard({
   modeNames: readonly string[];
 }) {
   const [isDarkMode] = useDarkMode();
-  const { isEditMode, isEditModeRequested, runtimeStatus } = useEditMode();
+  const { isEditMode } = useEditMode();
   const { mapName } = useLocalMap();
   const ed = editable('maps');
 
   const editRuntime = useDraftDataRuntime();
   const rawMap = editRuntime?.stores.maps[mapName];
-  const mapSnapshot = useOptionalEditSnapshot(rawMap, map);
-  const editModes = useOptionalEditSnapshot<PublishedGameDataByType['modes']>(
-    editRuntime?.stores.modes,
-    {}
-  );
-  const usesDraftData = isEditModeRequested && runtimeStatus === 'ready';
-  const effectiveMap = usesDraftData && rawMap ? (mapSnapshot as Map) : map;
+  const effectiveMap = useEditableEntity({ entityType: 'maps', entityId: mapName }, map) as Map;
+  const editModes = useEditableDomain('modes', {});
   const availableModeOptions = editRuntime ? Object.keys(editModes) : modeNames;
   const activeSupportedModes = Array.isArray(effectiveMap?.supportedModes)
     ? effectiveMap.supportedModes

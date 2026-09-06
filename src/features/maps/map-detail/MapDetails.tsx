@@ -2,10 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import type { MapModeRelationCharacterLookup } from '@/lib/gameData/published/clientProjections';
-import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
-import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
+import { useEditableDomain, useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalMap } from '@/hooks/useLocalEditEntity';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
@@ -42,15 +40,9 @@ export default function MapDetailClient({
   const { mapName } = useLocalMap();
   const ed = editable('maps');
 
-  const editRuntime = useDraftDataRuntime();
-  const editFixtures = useOptionalEditSnapshot<PublishedGameDataByType['fixtures']>(
-    editRuntime?.stores.fixtures,
-    {}
-  );
-  const rawLocalMap = editRuntime?.stores.maps[mapName];
-  const localMapSnapshot = useOptionalEditSnapshot(rawLocalMap, map);
   const usesDraftData = isEditModeRequested && runtimeStatus === 'ready';
-  const effectiveMap = usesDraftData && rawLocalMap ? (localMapSnapshot as MapType) : map;
+  const editFixtures = useEditableDomain('fixtures', {});
+  const effectiveMap = useEditableEntity({ entityType: 'maps', entityId: mapName }, map) as MapType;
 
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [imageAspectRatio, setImageAspectRatio] = useState<number | null>(null);
@@ -63,7 +55,7 @@ export default function MapDetailClient({
   const { isDetailedView } = useAppContext();
 
   // 检索相关组件
-  const ownFixtures = editRuntime
+  const ownFixtures = usesDraftData
     ? Object.entries(editFixtures)
         .filter(([_, fixture]) => fixture.supportedMaps?.includes(map.name))
         .map(([name]) => name)

@@ -1,9 +1,9 @@
 'use client';
 
 import { getItemSourceColors /* , getCardCostColors */, getItemTypeColors } from '@/lib/design';
-import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { getSingleItemPrototype, getSingleItemVariant } from '@/lib/singleItemTools';
 import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
+import { useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalItem } from '@/hooks/useLocalEditEntity';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
@@ -36,15 +36,16 @@ const ITEM_SOURCES: readonly Itemsourcelist[] = ['常规道具', '地图道具']
 export default function ItemAttributesCard({ item }: { item: Item }) {
   const [isDarkMode] = useDarkMode();
   const { isDetailedView: isDetailed } = useAppContext();
-  const { isEditMode, isEditModeRequested, runtimeStatus } = useEditMode();
+  const { isEditMode } = useEditMode();
   const { itemName } = useLocalItem();
   const ed = editable('items');
 
   const editRuntime = useDraftDataRuntime();
   const rawItem = editRuntime?.stores.items[itemName];
-  const itemSnapshot = useOptionalEditSnapshot(rawItem, item);
-  const usesDraftData = isEditModeRequested && runtimeStatus === 'ready';
-  const effectiveItem = usesDraftData && rawItem ? (itemSnapshot as Item) : item;
+  const effectiveItem = useEditableEntity(
+    { entityType: 'items', entityId: itemName },
+    item
+  ) as Item;
 
   /* 计算variant相关内容 */
   const prototype = getSingleItemPrototype({ name: item.name, type: 'item' });

@@ -3,15 +3,12 @@
 import { useLayoutEffect } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
-import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
+import { useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { usePublishedRevision } from '@/hooks/usePublishedRevision';
 import { useEditMode } from '@/context/EditModeContext';
 import { PageLoadingState } from '@/components/ui/LoadingState';
 import CharacterDetailsClient from '@/app/(main)/characters/[characterId]/CharacterDetailsClient';
-
-const EMPTY_CHARACTERS: PublishedGameDataByType['characters'] = {};
 
 /**
  * This is the client component that contains the actual page logic.
@@ -25,9 +22,7 @@ export default function UserCharacterPageClient({
   usePublishedRevision(publishedRevision);
   const { isLoading, isEditMode } = useEditMode();
   const { characterId } = useLocalCharacter();
-  const editRuntime = useActiveEditRuntime();
-  const charactersSnap = useOptionalEditSnapshot(editRuntime?.stores.characters, EMPTY_CHARACTERS);
-  const character = characterId ? (charactersSnap[characterId] ?? null) : null;
+  const character = useEditableEntity({ entityType: 'characters', entityId: characterId }, null);
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();

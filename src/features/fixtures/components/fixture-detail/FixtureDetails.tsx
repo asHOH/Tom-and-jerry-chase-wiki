@@ -1,7 +1,6 @@
 'use client';
 
-import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
-import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
+import { useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalFixture } from '@/hooks/useLocalEditEntity';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
@@ -20,16 +19,14 @@ import SingleItemButton from '@/components/ui/SingleItemButton';
 import FixtureAttributesCard from './FixtureAttributesCard';
 
 export default function FixtureDetailClient({ fixture }: { fixture: Fixture }) {
-  const { isEditMode, isEditModeRequested, runtimeStatus } = useEditMode();
+  const { isEditMode } = useEditMode();
   const { fixtureName } = useLocalFixture();
   const ed = editable('fixtures');
 
-  const editRuntime = useDraftDataRuntime();
-  const rawLocalFixture = editRuntime?.stores.fixtures[fixtureName];
-  const localFixtureSnapshot = useOptionalEditSnapshot(rawLocalFixture, fixture);
-  const usesDraftData = isEditModeRequested && runtimeStatus === 'ready';
-  const effectiveFixture =
-    usesDraftData && rawLocalFixture ? (localFixtureSnapshot as Fixture) : fixture;
+  const effectiveFixture = useEditableEntity(
+    { entityType: 'fixtures', entityId: fixtureName },
+    fixture
+  ) as Fixture;
 
   // Keyboard navigation
   useSpecifyTypeKeyboardNavigation(effectiveFixture.name, 'fixture');

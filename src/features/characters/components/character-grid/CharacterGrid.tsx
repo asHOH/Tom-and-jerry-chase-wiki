@@ -4,11 +4,11 @@ import { useMemo } from 'react';
 
 import { GameDataManager } from '@/lib/dataManager';
 import { getAvatarFilterColors, getPositioningTagColors } from '@/lib/design';
-import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { getOriginalCharacterIds } from '@/lib/editUtils';
 import { useFilterState } from '@/lib/filterUtils';
 import { getPositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { FactionCharactersProps } from '@/lib/types';
+import { useEditableDomain } from '@/hooks/useEditableGameData';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
@@ -30,11 +30,7 @@ import CharacterImport from './CharacterImport';
 
 export default function CharacterGrid({ factionId, characters }: FactionCharactersProps) {
   const { isEditMode } = useEditMode();
-  const editRuntime = useActiveEditRuntime();
-  const localCharacters = useOptionalEditSnapshot(
-    editRuntime?.stores.characters,
-    characters ?? staticCharacters
-  );
+  const localCharacters = useEditableDomain('characters', characters ?? staticCharacters);
   const effectiveCharacters = isEditMode || characters === undefined ? localCharacters : characters;
   const faction = useMemo(() => {
     return GameDataManager.getFactionsWithCharacters(effectiveCharacters)[factionId];

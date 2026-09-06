@@ -3,9 +3,9 @@
 import { useMemo, useState } from 'react';
 
 import { getFactionButtonColors, getItemSourceColors, getItemTypeColors } from '@/lib/design';
-import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
+import { useEditableDomain } from '@/hooks/useEditableGameData';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { usePublishedRevision } from '@/hooks/usePublishedRevision';
 import { useDarkMode } from '@/context/DarkModeContext';
@@ -42,8 +42,7 @@ export default function ItemClient({ description, data = items, publishedRevisio
   const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
 
-  const editRuntime = useActiveEditRuntime();
-  const itemsSnapshot = useOptionalEditSnapshot(editRuntime?.stores.items, data);
+  const itemsSnapshot = useEditableDomain('items', data);
   const filteredItems = Object.values(itemsSnapshot as Record<string, Item>).filter(
     (item: Item) => {
       const typeMatch = selectedTypes.length === 0 || selectedTypes.includes(item.itemtype);

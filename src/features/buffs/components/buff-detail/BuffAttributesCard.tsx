@@ -1,8 +1,8 @@
 'use client';
 
 import { getBuffTypeColors } from '@/lib/design';
-import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
+import { useEditableDomain, useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalBuff } from '@/hooks/useLocalEditEntity';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
@@ -32,16 +32,17 @@ const parseRangeValue = (value: string): number | 'infinity' | undefined => {
 
 export default function BuffAttributesCard({ buff }: { buff: Buff }) {
   const [isDarkMode] = useDarkMode();
-  const { isEditMode, isEditModeRequested, runtimeStatus } = useEditMode();
+  const { isEditMode } = useEditMode();
   const { buffName } = useLocalBuff();
   const ed = editable('buffs');
 
   const editRuntime = useDraftDataRuntime();
   const rawBuff = editRuntime?.stores.buffs[buffName];
-  const buffSnapshot = useOptionalEditSnapshot(rawBuff, buff);
-  const buffsSnapshot = useOptionalEditSnapshot(editRuntime?.stores.buffs, buffs);
-  const usesDraftData = isEditModeRequested && runtimeStatus === 'ready';
-  const effectiveBuff = usesDraftData && rawBuff ? (buffSnapshot as Buff) : buff;
+  const effectiveBuff = useEditableEntity(
+    { entityType: 'buffs', entityId: buffName },
+    buff
+  ) as Buff;
+  const buffsSnapshot = useEditableDomain('buffs', buffs);
 
   const availableAliases = (effectiveBuff.aliases ?? buff.aliases ?? [])
     .filter((i) => i && i[0] !== '#')

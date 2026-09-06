@@ -4,8 +4,8 @@ import { useMemo, useState } from 'react';
 import Link from 'next/link';
 
 import { getBuffTypeColors } from '@/lib/design';
-import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
+import { useEditableDomain } from '@/hooks/useEditableGameData';
 import { usePublishedRevision } from '@/hooks/usePublishedRevision';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { buffs } from '@/data/static';
@@ -31,8 +31,7 @@ export default function BuffClient({ description, data = buffs, publishedRevisio
   );
   const [isDarkMode] = useDarkMode();
 
-  const editRuntime = useActiveEditRuntime();
-  const buffsSnapshot = useOptionalEditSnapshot(editRuntime?.stores.buffs, data);
+  const buffsSnapshot = useEditableDomain('buffs', data);
   const allBuffs = Object.values(buffsSnapshot as Record<string, Buff>);
   const filteredAll = allBuffs.filter((buff) => {
     if (selectedTypes.length === 0) return true;

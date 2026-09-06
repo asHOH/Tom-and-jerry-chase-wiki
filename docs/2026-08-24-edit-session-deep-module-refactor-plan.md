@@ -1,8 +1,8 @@
 # Edit Session Deep-Module Refactor Plan
 
-**Status:** Phase 0 landed; Phases 1–5 not started
+**Status:** Phases 0–1 landed; Phases 2–5 not started
 **Created:** 2026-08-24  
-**Revised:** 2026-09-04  
+**Revised:** 2026-09-06
 **Scope:** Client-side game-data edit runtime, draft lifecycle, and feature-facing edit interfaces
 
 ## Decision summary

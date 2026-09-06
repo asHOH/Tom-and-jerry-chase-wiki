@@ -4,9 +4,9 @@ import { useMemo, useState } from 'react';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { getFactionButtonColors } from '@/lib/design';
-import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { CharacterWithFaction } from '@/lib/types';
+import { useEditableDomain } from '@/hooks/useEditableGameData';
 import { usePublishedRevision } from '@/hooks/usePublishedRevision';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { characters, specialSkills } from '@/data/static';
@@ -100,12 +100,8 @@ export default function SpecialSkillAdviceClient({
   const [selectedFaction, setSelectedFaction] = useState<FactionId | null>(null);
   const [isDarkMode] = useDarkMode();
 
-  const editRuntime = useActiveEditRuntime();
-  const specialSkillsSnapshot = useOptionalEditSnapshot(
-    editRuntime?.stores.specialSkills,
-    specialSkillsData
-  );
-  const charactersSnap = useOptionalEditSnapshot(editRuntime?.stores.characters, charactersData);
+  const specialSkillsSnapshot = useEditableDomain('specialSkills', specialSkillsData);
+  const charactersSnap = useEditableDomain('characters', charactersData);
   const allSkills = useMemo(
     () => [
       ...Object.values(specialSkillsSnapshot.cat).sort(

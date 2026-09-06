@@ -1,9 +1,8 @@
 'use client';
 
-import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import type { MapModeRelationCharacterLookup } from '@/lib/gameData/published/clientProjections';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
-import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
+import { useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalMode } from '@/hooks/useLocalEditEntity';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
@@ -30,15 +29,14 @@ export default function ModeDetailClient({
   mapsData?: PublishedGameDataByType['maps'];
   charactersData: MapModeRelationCharacterLookup;
 }) {
-  const { isEditMode, isEditModeRequested, runtimeStatus } = useEditMode();
+  const { isEditMode } = useEditMode();
   const { modeName } = useLocalMode();
   const ed = editable('modes');
 
-  const editRuntime = useDraftDataRuntime();
-  const rawLocalMode = editRuntime?.stores.modes[modeName];
-  const localModeSnapshot = useOptionalEditSnapshot(rawLocalMode, mode);
-  const usesDraftData = isEditModeRequested && runtimeStatus === 'ready';
-  const effectiveMode = usesDraftData && rawLocalMode ? (localModeSnapshot as Mode) : mode;
+  const effectiveMode = useEditableEntity(
+    { entityType: 'modes', entityId: modeName },
+    mode
+  ) as Mode;
 
   // Keyboard navigation
   useSpecifyTypeKeyboardNavigation(effectiveMode.name, 'mode');

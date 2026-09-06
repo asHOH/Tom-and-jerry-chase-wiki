@@ -1,9 +1,9 @@
 'use client';
 
 import { getFixtureSourceColors, getFixtureTypeColors } from '@/lib/design';
-import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { getSingleItemPrototype, getSingleItemVariant } from '@/lib/singleItemTools';
 import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
+import { useEditableDomain, useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalFixture } from '@/hooks/useLocalEditEntity';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
@@ -43,16 +43,17 @@ const toFixtureTypeArray = (type: Fixture['type']): FixtureTypeList[] =>
 export default function FixtureAttributesCard({ fixture }: { fixture: Fixture }) {
   const [isDarkMode] = useDarkMode();
   const { isDetailedView: isDetailed } = useAppContext();
-  const { isEditMode, isEditModeRequested, runtimeStatus } = useEditMode();
+  const { isEditMode } = useEditMode();
   const { fixtureName } = useLocalFixture();
   const ed = editable('fixtures');
 
   const editRuntime = useDraftDataRuntime();
   const rawFixture = editRuntime?.stores.fixtures[fixtureName];
-  const fixtureSnapshot = useOptionalEditSnapshot(rawFixture, fixture);
-  const mapsSnapshot = useOptionalEditSnapshot(editRuntime?.stores.maps, maps);
-  const usesDraftData = isEditModeRequested && runtimeStatus === 'ready';
-  const effectiveFixture = (usesDraftData && rawFixture ? fixtureSnapshot : fixture) as Fixture;
+  const effectiveFixture = useEditableEntity(
+    { entityType: 'fixtures', entityId: fixtureName },
+    fixture
+  ) as Fixture;
+  const mapsSnapshot = useEditableDomain('maps', maps);
 
   /* 计算variant相关内容 */
   const prototype = getSingleItemPrototype({ name: fixture.name, type: 'fixture' });

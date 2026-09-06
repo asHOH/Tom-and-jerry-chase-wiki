@@ -1,9 +1,9 @@
 'use client';
 
 import { getEntityTypeColors } from '@/lib/design';
-import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { getSingleItemPrototype, getSingleItemVariant } from '@/lib/singleItemTools';
 import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
+import { useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalEntity } from '@/hooks/useLocalEditEntity';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
@@ -94,15 +94,16 @@ const deriveEntityTypes = (tags: readonly Entitytaglist[]): Entitytypelist[] => 
 export default function EntityAttributesCard({ entity }: { entity: Entity }) {
   const [isDarkMode] = useDarkMode();
   const { isDetailedView: isDetailed } = useAppContext();
-  const { isEditMode, isEditModeRequested, runtimeStatus } = useEditMode();
+  const { isEditMode } = useEditMode();
   const { entityName } = useLocalEntity();
   const ed = editable('entities');
 
   const editRuntime = useDraftDataRuntime();
   const rawEntity = editRuntime?.stores.entities[entityName];
-  const entitySnapshot = useOptionalEditSnapshot(rawEntity, entity);
-  const usesDraftData = isEditModeRequested && runtimeStatus === 'ready';
-  const effectiveEntity = (usesDraftData && rawEntity ? entitySnapshot : entity) as Entity;
+  const effectiveEntity = useEditableEntity(
+    { entityType: 'entities', entityId: entityName },
+    entity
+  ) as Entity;
 
   /* 计算variant相关内容 */
   const prototype = getSingleItemPrototype({ name: entity.name, type: 'entity' });

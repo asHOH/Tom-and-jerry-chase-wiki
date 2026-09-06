@@ -1,9 +1,11 @@
 'use client';
 
-import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
-import type { MapModeRelationCharacterLookup } from '@/lib/gameData/published/clientProjections';
+import {
+  projectMapModeRelationCharacters,
+  type MapModeRelationCharacterLookup,
+} from '@/lib/gameData/published/clientProjections';
 import type { CharacterWithFaction } from '@/lib/types';
-import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
+import { useEditableDomain } from '@/hooks/useEditableGameData';
 import { useAppContext } from '@/context/AppContext';
 import type { CharacterRelationItem, TraitRelationKind } from '@/data/types';
 import { getCharacterRelation } from '@/features/characters/utils/relationReadModel';
@@ -46,10 +48,10 @@ export default function MapModeCharacterRelations({
   targetType,
   charactersData,
 }: MapModeCharacterRelationsProps) {
-  const editRuntime = useDraftDataRuntime();
-  const charactersSnapshot = useOptionalEditSnapshot<MapModeRelationCharacterLookup>(
-    editRuntime?.stores.characters as unknown as MapModeRelationCharacterLookup | undefined,
-    charactersData
+  const charactersSnapshot = useEditableDomain(
+    'characters',
+    charactersData,
+    projectMapModeRelationCharacters
   );
   const { handleSelectCharacter } = useAppContext();
   const relationKinds = relationKindsByTarget[targetType];

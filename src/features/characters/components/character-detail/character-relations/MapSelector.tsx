@@ -2,8 +2,7 @@
 
 import React from 'react';
 
-import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
-import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
+import { useEditableDomain } from '@/hooks/useEditableGameData';
 import { maps } from '@/data/static';
 import type { CharacterRelationItem } from '@/data/types';
 
@@ -16,8 +15,7 @@ type Props = {
 };
 
 const MapSelector: React.FC<Props> = ({ selected, onSelect, disabled }) => {
-  const editRuntime = useDraftDataRuntime();
-  const mapsSnapshot = useOptionalEditSnapshot(editRuntime?.stores.maps, maps);
+  const mapsSnapshot = useEditableDomain('maps', maps);
   const selectedIds = new Set(selected.map(({ id }) => id));
   const options = Object.values(mapsSnapshot)
     .filter(({ name }) => !selectedIds.has(name))

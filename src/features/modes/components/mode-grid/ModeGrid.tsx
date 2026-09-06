@@ -3,8 +3,8 @@
 import { useMemo, useState } from 'react';
 
 import { getModeTypeColors } from '@/lib/design';
-import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
+import { useEditableDomain } from '@/hooks/useEditableGameData';
 import { usePublishedRevision } from '@/hooks/usePublishedRevision';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { modes } from '@/data/static';
@@ -28,8 +28,7 @@ export default function ModeClient({ description, data = modes, publishedRevisio
   const [selectedTypes, setSelectedTypes] = useState<ModeTypeList[]>([]);
   const [isDarkMode] = useDarkMode();
 
-  const editRuntime = useActiveEditRuntime();
-  const modesSnapshot = useOptionalEditSnapshot(editRuntime?.stores.modes, data);
+  const modesSnapshot = useEditableDomain('modes', data);
   const filteredModes = Object.values(modesSnapshot as Record<string, Mode>).filter(
     (mode: Mode) => {
       let typeMatch = true;

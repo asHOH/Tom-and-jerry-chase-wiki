@@ -4,8 +4,8 @@ import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 
 import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { getFactionButtonColors } from '@/lib/design';
-import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import type { GameDataSubmitMode } from '@/lib/gameData/submitMode';
+import { useEditableDomain } from '@/hooks/useEditableGameData';
 import { useSearchParamEditMode } from '@/hooks/useSearchParamEditMode';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
@@ -173,11 +173,7 @@ export default function RelationsClient({
   const { isEditMode, registerPublishedRevision } = useEditMode();
   const { info } = useToast();
   const publishedData = data ?? STATIC_RELATION_DATA;
-  const editRuntime = useActiveEditRuntime();
-  const charactersSnapshot = useOptionalEditSnapshot(
-    editRuntime?.stores.characters,
-    publishedData.characters
-  );
+  const charactersSnapshot = useEditableDomain('characters', publishedData.characters);
   const [rowFaction, setRowFaction] = useState<RelationMatrixRowFaction>('mouse');
   const [columnCategory, setColumnCategory] = useState<RelationMatrixColumnCategory>('cat');
   const [matrixSize, setMatrixSize] = useState(DEFAULT_MATRIX_SIZE);

@@ -1,5 +1,5 @@
-import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
+import { useEditableDomain, useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useEditMode } from '@/context/EditModeContext';
 import { factionData, specialSkills } from '@/data/static';
@@ -23,11 +23,11 @@ export default function SpecialSkillsSection() {
   const editRuntime = useDraftDataRuntime();
   const rawCharacter = editRuntime?.stores.characters[characterId];
   const publishedCharacter = usePublishedCharacter(characterId);
-  const character = useOptionalEditSnapshot(rawCharacter, publishedCharacter);
-  const specialSkillsSnapshot = useOptionalEditSnapshot(
-    editRuntime?.stores.specialSkills,
-    specialSkills
-  );
+  const character = useEditableEntity(
+    { entityType: 'characters', entityId: characterId },
+    publishedCharacter
+  )!;
+  const specialSkillsSnapshot = useEditableDomain('specialSkills', specialSkills);
   const hasSpecialSkills = Boolean(character.specialSkills?.length);
   const hasStorePlans = Boolean(character.recommendedStorePlans?.length);
   if (!hasSpecialSkills && !hasStorePlans && !isEditMode) return null;

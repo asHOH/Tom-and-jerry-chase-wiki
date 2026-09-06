@@ -2,8 +2,7 @@
 
 import React, { useMemo } from 'react';
 
-import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
-import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
+import { useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
@@ -61,12 +60,11 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
 }) => {
   const { isEditMode } = useEditMode();
   const { characterId } = useLocalCharacter();
-  const editRuntime = useDraftDataRuntime();
   const publishedCharacter = usePublishedCharacter(characterId);
-  const character = useOptionalEditSnapshot(
-    editRuntime?.stores.characters[characterId],
+  const character = useEditableEntity(
+    { entityType: 'characters', entityId: characterId },
     publishedCharacter
-  );
+  )!;
   const [isDarkMode] = useDarkMode();
   const { isDetailedView: isDetailed } = useAppContext();
 

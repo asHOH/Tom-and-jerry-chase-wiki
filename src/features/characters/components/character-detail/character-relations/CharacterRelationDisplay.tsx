@@ -3,8 +3,7 @@
 import React from 'react';
 
 import { AssetManager } from '@/lib/assetManager';
-import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
-import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
+import { useEditableDomain, useEditableEntity } from '@/hooks/useEditableGameData';
 import { useNavigation } from '@/hooks/useNavigation';
 import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
@@ -60,23 +59,19 @@ type Props = {
 const CharacterRelationDisplay: React.FC<Props> = ({ id, factionId }) => {
   'use no memo';
   const { isEditMode } = useEditMode();
-  const editRuntime = useDraftDataRuntime();
-  const mapsSnapshot = useOptionalEditSnapshot(editRuntime?.stores.maps, maps);
-  const modesSnapshot = useOptionalEditSnapshot(editRuntime?.stores.modes, modes);
-  const specialSkillsSnapshot = useOptionalEditSnapshot(
-    editRuntime?.stores.specialSkills,
-    specialSkills
-  );
+  const mapsSnapshot = useEditableDomain('maps', maps);
+  const modesSnapshot = useEditableDomain('modes', modes);
+  const specialSkillsSnapshot = useEditableDomain('specialSkills', specialSkills);
   const publishedCharacter = usePublishedCharacter(id);
   const getImageUrl = React.useCallback(
     (targetId: string) =>
       AssetManager.getCharacterImageUrl(targetId, factionId === 'cat' ? 'mouse' : 'cat'),
     [factionId]
   );
-  const characterSnapshot = useOptionalEditSnapshot(
-    editRuntime?.stores.characters[id],
+  const characterSnapshot = useEditableEntity(
+    { entityType: 'characters', entityId: id },
     publishedCharacter
-  );
+  )!;
   const char = getEditableCharacterRelations(
     id,
     characterSnapshot as Partial<Record<TraitRelationKind, CharacterRelationItem[]>>

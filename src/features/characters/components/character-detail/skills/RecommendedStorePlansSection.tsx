@@ -1,5 +1,5 @@
-import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
+import { useEditableDomain, useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useEditMode } from '@/context/EditModeContext';
 import { items as staticItems } from '@/data/static';
@@ -23,8 +23,11 @@ export default function RecommendedStorePlansSection() {
   const editRuntime = useDraftDataRuntime();
   const rawCharacter = editRuntime?.stores.characters[characterId];
   const publishedCharacter = usePublishedCharacter(characterId);
-  const character = useOptionalEditSnapshot(rawCharacter, publishedCharacter);
-  const items = useOptionalEditSnapshot(editRuntime?.stores.items, staticItems);
+  const character = useEditableEntity(
+    { entityType: 'characters', entityId: characterId },
+    publishedCharacter
+  )!;
+  const items = useEditableDomain('items', staticItems);
   const storePlans = character.recommendedStorePlans ?? [];
   const storeItems = Object.values(items).filter(
     (item) => item.store === true && item.price !== undefined

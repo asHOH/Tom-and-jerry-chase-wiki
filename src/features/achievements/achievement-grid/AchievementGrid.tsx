@@ -3,8 +3,8 @@
 import { useMemo, useState } from 'react';
 
 import { getFactionButtonColors } from '@/lib/design';
-import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
+import { useEditableDomain } from '@/hooks/useEditableGameData';
 import { usePublishedRevision } from '@/hooks/usePublishedRevision';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { achievements } from '@/data/static';
@@ -28,8 +28,7 @@ export default function AchievementGridClient({
   const [selectedFactions, setSelectedFactions] = useState<('cat' | 'mouse')[]>([]);
   const [isDarkMode] = useDarkMode();
 
-  const editRuntime = useActiveEditRuntime();
-  const achievementsSnapshot = useOptionalEditSnapshot(editRuntime?.stores.achievements, data);
+  const achievementsSnapshot = useEditableDomain('achievements', data);
   const allAchievements = [
     ...Object.values(achievementsSnapshot.cat),
     ...Object.values(achievementsSnapshot.mouse),

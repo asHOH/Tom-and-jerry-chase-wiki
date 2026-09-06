@@ -37,8 +37,11 @@ jest.mock('@/hooks/useDraftDataRuntime', () => ({
   useDraftDataRuntime: () => mockDraftRuntime,
 }));
 
-jest.mock('@/lib/edit/activeEditRuntime', () => ({
-  useOptionalEditSnapshot: (store: Item | undefined, fallback: Item) => store ?? fallback,
+jest.mock('@/hooks/useEditableGameData', () => ({
+  useEditableEntity: ({ entityId }: { entityId: string }, fallback: Item) =>
+    mockEditMode.isEditModeRequested && mockEditMode.runtimeStatus === 'ready'
+      ? (mockDraftRuntime?.stores.items[entityId] ?? fallback)
+      : fallback,
 }));
 
 jest.mock('@/hooks/useLocalEditEntity', () => ({

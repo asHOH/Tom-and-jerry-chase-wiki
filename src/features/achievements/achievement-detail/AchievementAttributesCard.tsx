@@ -1,8 +1,8 @@
 'use client';
 
 import { getFactionButtonColors } from '@/lib/design';
-import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
+import { useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalAchievement } from '@/hooks/useLocalEditEntity';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
@@ -17,7 +17,7 @@ import Tag from '@/components/ui/Tag';
 
 export default function AchievementAttributesCard({ achievement }: { achievement: Achievement }) {
   const [isDarkMode] = useDarkMode();
-  const { isEditMode, isEditModeRequested, runtimeStatus } = useEditMode();
+  const { isEditMode } = useEditMode();
   const { achievementName, factionId } = useLocalAchievement();
   const ed = editable('achievements');
   const editRuntime = useDraftDataRuntime();
@@ -29,10 +29,13 @@ export default function AchievementAttributesCard({ achievement }: { achievement
         ? editRuntime?.stores.achievements.mouse
         : undefined;
   const rawAchievement = factionAchievements?.[achievementName];
-  const achievementSnapshot = useOptionalEditSnapshot(rawAchievement, achievement);
-  const usesDraftData = isEditModeRequested && runtimeStatus === 'ready';
-  const effectiveAchievement = (
-    usesDraftData && rawAchievement ? achievementSnapshot : achievement
+  const effectiveAchievement = useEditableEntity(
+    {
+      entityType: 'achievements',
+      entityId: achievementName,
+      factionId: factionId === 'cat' || factionId === 'mouse' ? factionId : achievement.factionId!,
+    },
+    achievement
   ) as Achievement;
 
   return (

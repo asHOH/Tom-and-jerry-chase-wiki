@@ -5,7 +5,7 @@ import React, { useId, useMemo, useState } from 'react';
 import type { ArticleCharacterOption } from '@/lib/articles/articleCharacterOptions';
 import { AssetManager } from '@/lib/assetManager';
 import { cn } from '@/lib/design';
-import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { useEditableDomain } from '@/hooks/useEditableGameData';
 import { characters } from '@/data/static';
 import type { CharacterRelationItem, FactionId } from '@/data/types';
 import { BaseDialog } from '@/components/ui/BaseDialog';
@@ -33,8 +33,7 @@ export function CharacterSelector({
   disabled?: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const editRuntime = useActiveEditRuntime();
-  const charactersSnap = useOptionalEditSnapshot(editRuntime?.stores.characters, characters);
+  const charactersSnap = useEditableDomain('characters', characters);
 
   const availableCharacters = useMemo(() => {
     const allCharacters = Object.values(charactersSnap) as Array<{

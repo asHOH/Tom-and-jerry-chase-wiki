@@ -55,7 +55,23 @@ export function useActiveEditRuntime(): ActiveEditRuntime | null {
 export function useOptionalEditSnapshot<T extends object>(
   store: T | null | undefined,
   fallback: DeepReadonly<T>
-): DeepReadonly<T> {
+): DeepReadonly<T>;
+export function useOptionalEditSnapshot<T extends object>(
+  store: T | null | undefined,
+  fallback: null
+): DeepReadonly<T> | null;
+export function useOptionalEditSnapshot<T extends object>(
+  store: T | null | undefined,
+  fallback: undefined
+): DeepReadonly<T> | undefined;
+export function useOptionalEditSnapshot<T extends object>(
+  store: T | null | undefined,
+  fallback: DeepReadonly<T> | null
+): DeepReadonly<T> | null;
+export function useOptionalEditSnapshot<T extends object>(
+  store: T | null | undefined,
+  fallback: DeepReadonly<T> | null | undefined
+): DeepReadonly<T> | null | undefined {
   const subscribeToStore = useCallback(
     (listener: () => void) => (store ? subscribeValtio(store, listener) : () => undefined),
     [store]

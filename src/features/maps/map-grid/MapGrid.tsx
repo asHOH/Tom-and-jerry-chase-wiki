@@ -3,9 +3,9 @@
 import { useMemo, useState } from 'react';
 
 import { getMapLevelColors, getMapSizeColors, getMapTypeColors } from '@/lib/design';
-import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
+import { useEditableDomain } from '@/hooks/useEditableGameData';
 import { usePublishedRevision } from '@/hooks/usePublishedRevision';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { maps } from '@/data/static';
@@ -40,8 +40,7 @@ export default function MapClient({ description, data = maps, publishedRevision 
   const [selectedLevels, setSelectedLevels] = useState<(studyLevel | '其它')[]>([]);
   const [isDarkMode] = useDarkMode();
 
-  const editRuntime = useActiveEditRuntime();
-  const mapsSnapshot = useOptionalEditSnapshot(editRuntime?.stores.maps, data);
+  const mapsSnapshot = useEditableDomain('maps', data);
   const filteredMaps = Object.values(mapsSnapshot as Record<string, Map>).filter((map: Map) => {
     const typeMatch = selectedTypes.length === 0 || selectedTypes.includes(map.type);
     const sizeMatch = selectedSizes.length === 0 || (map.size && selectedSizes.includes(map.size));

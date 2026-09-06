@@ -3,9 +3,9 @@
 import { useMemo, useState } from 'react';
 
 import { getFixtureSourceColors, getFixtureTypeColors } from '@/lib/design';
-import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { getSpecifyTypePositioningTagTooltipContent } from '@/lib/tooltipUtils';
+import { useEditableDomain } from '@/hooks/useEditableGameData';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { usePublishedRevision } from '@/hooks/usePublishedRevision';
 import { useDarkMode } from '@/context/DarkModeContext';
@@ -43,8 +43,7 @@ export default function FixtureClient({ description, data = fixtures, publishedR
   const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
 
-  const editRuntime = useActiveEditRuntime();
-  const fixturesSnapshot = useOptionalEditSnapshot(editRuntime?.stores.fixtures, data);
+  const fixturesSnapshot = useEditableDomain('fixtures', data);
   const filteredFixtures = Object.values(fixturesSnapshot as Record<string, Fixture>).filter(
     (fixture: Fixture) => {
       let typeMatch = true;

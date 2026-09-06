@@ -5,9 +5,9 @@ import React, { Fragment } from 'react';
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { AssetManager } from '@/lib/assetManager';
 import { cn, getSkillLevelColors, getSkillLevelContainerColor } from '@/lib/design';
-import { requireActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import { requireActiveEditRuntime } from '@/lib/edit/activeEditRuntime';
 import { CharacterWithFaction } from '@/lib/types';
-import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
+import { useEditableEntity } from '@/hooks/useEditableGameData';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
@@ -221,12 +221,11 @@ export default function SkillCard({
 }: SkillCardProps) {
   const { isEditMode } = useEditMode();
   const { isDetailedView: isDetailed } = useAppContext();
-  const editRuntime = useDraftDataRuntime();
   const publishedCharacter = usePublishedCharacter(characterId);
-  const localCharacter = useOptionalEditSnapshot(
-    editRuntime?.stores.characters[characterId],
+  const localCharacter = useEditableEntity(
+    { entityType: 'characters', entityId: characterId },
     publishedCharacter
-  ) as CharacterWithFaction;
+  ) as unknown as CharacterWithFaction;
   const isMobile = useMobile();
   const [isDarkMode] = useDarkMode();
   const skillTypeLabel = getSkillTypeLabel(skill.type, isSingleWeapon);

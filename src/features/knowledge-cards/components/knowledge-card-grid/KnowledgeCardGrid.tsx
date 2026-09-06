@@ -3,10 +3,10 @@
 import { useId, useMemo, useState } from 'react';
 
 import { getCardRankColors, getFactionButtonColors } from '@/lib/design';
-import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { createRankFilter, RANK_OPTIONS, useFilterState } from '@/lib/filterUtils';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { sortCardsByRank } from '@/lib/sortingUtils';
+import { useEditableDomain } from '@/hooks/useEditableGameData';
 import { usePublishedRevision } from '@/hooks/usePublishedRevision';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
@@ -30,8 +30,7 @@ type Props = {
 export default function KnowledgeCardGrid({ description, data = cards, publishedRevision }: Props) {
   usePublishedRevision(publishedRevision);
   const { isEditMode } = useEditMode();
-  const editRuntime = useActiveEditRuntime();
-  const cardsEditSnapshot = useOptionalEditSnapshot(editRuntime?.stores.cards, data);
+  const cardsEditSnapshot = useEditableDomain('cards', data);
   const {
     selectedFilters: selectedRanks,
     toggleFilter: toggleRankFilter,

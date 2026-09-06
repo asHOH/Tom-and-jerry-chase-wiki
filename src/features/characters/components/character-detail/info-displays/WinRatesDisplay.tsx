@@ -3,8 +3,7 @@
 import { useMemo, useState } from 'react';
 
 import { cn } from '@/lib/design';
-import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
-import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
+import { useEditableEntity } from '@/hooks/useEditableGameData';
 import { CharacterWinRateEntry, getCharacterWinRates } from '@/data/winRates';
 import Button from '@/components/ui/Button';
 import { ChevronDownIcon } from '@/components/icons/CommonIcons';
@@ -17,12 +16,11 @@ interface WinRatesDisplayProps {
 
 export default function WinRatesDisplay({ characterName }: WinRatesDisplayProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const editRuntime = useDraftDataRuntime();
   const publishedCharacter = usePublishedCharacter(characterName);
-  const character = useOptionalEditSnapshot(
-    editRuntime?.stores.characters[characterName],
+  const character = useEditableEntity(
+    { entityType: 'characters', entityId: characterName },
     publishedCharacter
-  );
+  )!;
 
   const winRates = useMemo(
     () => getCharacterWinRates([characterName, ...(character.aliases ?? [])], character.factionId),

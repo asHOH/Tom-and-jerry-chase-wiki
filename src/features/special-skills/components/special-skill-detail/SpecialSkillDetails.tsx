@@ -1,8 +1,10 @@
 'use client';
 
-import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
-import type { SpecialSkillCharacterLookup } from '@/lib/gameData/published/clientProjections';
-import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
+import {
+  projectSpecialSkillCharacters,
+  type SpecialSkillCharacterLookup,
+} from '@/lib/gameData/published/clientProjections';
+import { useEditableDomain, useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalSpecialSkill } from '@/hooks/useLocalEditEntity';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
@@ -28,21 +30,17 @@ export default function SpecialSkillDetailClient({
   skill,
   charactersData = characters,
 }: SpecialSkillDetailClientProps) {
-  const { isEditMode, isEditModeRequested, runtimeStatus } = useEditMode();
+  const { isEditMode } = useEditMode();
   const { factionId, skillId } = useLocalSpecialSkill();
   const ed = editable('specialSkills');
-  const editRuntime = useDraftDataRuntime();
-
-  const rawLocalSkill =
-    factionId === 'cat'
-      ? editRuntime?.stores.specialSkills.cat[skillId]
-      : factionId === 'mouse'
-        ? editRuntime?.stores.specialSkills.mouse[skillId]
-        : undefined;
-  const localSkillSnapshot = useOptionalEditSnapshot(rawLocalSkill, skill);
-  const usesDraftData = isEditModeRequested && runtimeStatus === 'ready';
-  const effectiveSkill =
-    usesDraftData && rawLocalSkill ? (localSkillSnapshot as SpecialSkill) : skill;
+  const effectiveSkill = useEditableEntity(
+    {
+      entityType: 'specialSkills',
+      entityId: skillId,
+      factionId: factionId === 'cat' || factionId === 'mouse' ? factionId : skill.factionId!,
+    },
+    skill
+  ) as SpecialSkill;
 
   // Keyboard navigation
   useSpecifyTypeKeyboardNavigation(
@@ -52,9 +50,10 @@ export default function SpecialSkillDetailClient({
   );
 
   const { isDetailedView } = useAppContext();
-  const charactersSnap = useOptionalEditSnapshot<SpecialSkillCharacterLookup>(
-    editRuntime?.stores.characters,
-    charactersData
+  const charactersSnap = useEditableDomain(
+    'characters',
+    charactersData,
+    projectSpecialSkillCharacters
   );
 
   if (!effectiveSkill) return null;

@@ -3,8 +3,8 @@
 import { useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 
-import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
+import { useEditableEntity } from '@/hooks/useEditableGameData';
 import { useEditMode } from '@/context/EditModeContext';
 import type { InteractiveMapConfig, Map as MapType } from '@/data/types';
 import EditButton from '@/components/ui/EditButton';
@@ -22,13 +22,11 @@ type InteractiveMapPageProps = {
 };
 
 function InteractiveMapPageContent({ map, mapName }: InteractiveMapPageProps) {
-  const { isEditMode, isEditModeRequested, runtimeStatus } = useEditMode();
+  const { isEditMode } = useEditMode();
   const orientationContainerRef = useRef<HTMLDivElement>(null);
   const editRuntime = useDraftDataRuntime();
   const rawLocalMap = editRuntime?.stores.maps[mapName];
-  const localMapSnapshot = useOptionalEditSnapshot(rawLocalMap, map);
-  const usesDraftData = isEditModeRequested && runtimeStatus === 'ready';
-  const effectiveMap = usesDraftData && rawLocalMap ? (localMapSnapshot as MapType) : map;
+  const effectiveMap = useEditableEntity({ entityType: 'maps', entityId: mapName }, map) as MapType;
   const interactiveMap = effectiveMap.interactiveMap;
 
   useEffect(() => {

@@ -3,10 +3,12 @@
 import { useSearchParams } from 'next/navigation';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
-import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
-import type { KnowledgeCardCharacterLookup } from '@/lib/gameData/published/clientProjections';
+import {
+  projectKnowledgeCardCharacters,
+  type KnowledgeCardCharacterLookup,
+} from '@/lib/gameData/published/clientProjections';
 import type { KnowledgeCardDetailsProps, KnowledgeCardWithFaction } from '@/lib/types';
-import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
+import { useEditableDomain, useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalCard } from '@/hooks/useLocalEditEntity';
 import { useSpecifyTypeKeyboardNavigation } from '@/hooks/useSpecifyTypeKeyboardNavigation';
 import { useAppContext } from '@/context/AppContext';
@@ -33,16 +35,14 @@ export default function KnowledgeCardDetails({
 }: KnowledgeCardDetailsProps & {
   charactersData?: KnowledgeCardCharacterLookup;
 }) {
-  const { isEditMode, isEditModeRequested, runtimeStatus } = useEditMode();
+  const { isEditMode } = useEditMode();
   const { cardId } = useLocalCard();
   const ed = editable('cards');
 
-  const editRuntime = useDraftDataRuntime();
-  const rawLocalCard = editRuntime?.stores.cards[cardId];
-  const localCardSnapshot = useOptionalEditSnapshot(rawLocalCard, card);
-  const usesDraftData = isEditModeRequested && runtimeStatus === 'ready';
-  const effectiveCard =
-    usesDraftData && rawLocalCard ? (localCardSnapshot as KnowledgeCardWithFaction) : card;
+  const effectiveCard = useEditableEntity(
+    { entityType: 'cards', entityId: cardId },
+    card
+  ) as unknown as KnowledgeCardWithFaction;
 
   // Keyboard navigation
   useSpecifyTypeKeyboardNavigation(effectiveCard.id, 'knowledgeCard');
@@ -50,9 +50,10 @@ export default function KnowledgeCardDetails({
   const { handleSelectCharacter, isDetailedView } = useAppContext();
   const searchParams = useSearchParams();
   const fromCharacterId = searchParams ? searchParams.get('from') : null;
-  const charactersSnap = useOptionalEditSnapshot<KnowledgeCardCharacterLookup>(
-    editRuntime?.stores.characters,
-    charactersData
+  const charactersSnap = useEditableDomain(
+    'characters',
+    charactersData,
+    projectKnowledgeCardCharacters
   );
 
   const fromCharacter = fromCharacterId ? charactersSnap[fromCharacterId] : null;

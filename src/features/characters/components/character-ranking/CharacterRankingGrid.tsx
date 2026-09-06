@@ -4,8 +4,8 @@ import { useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 import { getCardRankColors } from '@/lib/design';
-import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
+import { useEditableDomain } from '@/hooks/useEditableGameData';
 import { usePublishedRevision } from '@/hooks/usePublishedRevision';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { characters } from '@/data/static';
@@ -42,8 +42,7 @@ export default function CharacterRankingGrid({
 
   const factionId = (useSearchParams().get('faction') ?? undefined) as FactionId | undefined;
   const [isDarkMode] = useDarkMode();
-  const editRuntime = useActiveEditRuntime();
-  const charactersSnap = useOptionalEditSnapshot(editRuntime?.stores.characters, data);
+  const charactersSnap = useEditableDomain('characters', data);
 
   // Helpers to create softer backgrounds from token colors
   const hexToRgba = (hex: string, alpha: number) => {

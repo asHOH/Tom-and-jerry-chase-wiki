@@ -2,11 +2,11 @@ import React, { useCallback } from 'react';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import { cn, getPositioningTagColors, getPositioningTagContainerColor } from '@/lib/design';
-import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { setNestedProperty } from '@/lib/editUtils';
 import { getPositioningTagTooltipContent } from '@/lib/tooltipUtils';
 import { CharacterWithFaction } from '@/lib/types';
 import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
+import { useEditableDomain, useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useAppContext } from '@/context/AppContext';
 import { useDarkMode } from '@/context/DarkModeContext';
@@ -109,12 +109,11 @@ function WeaponDropdown({
   characterId: string;
   onSelect: (value: 1 | 2 | null) => void;
 }) {
-  const editRuntime = useDraftDataRuntime();
   const publishedCharacter = usePublishedCharacter(characterId);
-  const character = useOptionalEditSnapshot(
-    editRuntime?.stores.characters[characterId],
+  const character = useEditableEntity(
+    { entityType: 'characters', entityId: characterId },
     publishedCharacter
-  );
+  )!;
   if (!~character.skills?.findIndex((skill) => skill.type === 'weapon2') && currentValue == null)
     return;
 
@@ -161,9 +160,11 @@ interface PositioningTagsSectionProps {
 function usePositioningTags({ factionId }: { factionId: FactionId }) {
   const { characterId } = useLocalCharacter();
   const editRuntime = useDraftDataRuntime();
-  const rawCharacter = editRuntime?.stores.characters[characterId];
   const publishedCharacter = usePublishedCharacter(characterId);
-  const localCharacter = useOptionalEditSnapshot(rawCharacter, publishedCharacter);
+  const localCharacter = useEditableEntity(
+    { entityType: 'characters', entityId: characterId },
+    publishedCharacter
+  )!;
   const key = factionId == 'cat' ? 'catPositioningTags' : 'mousePositioningTags';
   function getTags(char: DeepReadonly<CharacterWithFaction>) {
     return char.mousePositioningTags ?? char.catPositioningTags ?? [];
@@ -256,8 +257,7 @@ export default function PositioningTagsSection({ tags, factionId }: PositioningT
   const { isEditMode } = useEditMode();
   const { isDetailedView: isDetailed } = useAppContext();
   const { characterId } = useLocalCharacter();
-  const editRuntime = useDraftDataRuntime();
-  const charactersSnap = useOptionalEditSnapshot(editRuntime?.stores.characters, staticCharacters);
+  const charactersSnap = useEditableDomain('characters', staticCharacters);
 
   const borderColor =
     factionId === 'cat'

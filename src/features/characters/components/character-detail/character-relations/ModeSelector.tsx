@@ -2,8 +2,7 @@
 
 import React from 'react';
 
-import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
-import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
+import { useEditableDomain } from '@/hooks/useEditableGameData';
 import { modes } from '@/data/static';
 import type { CharacterRelationItem } from '@/data/types';
 
@@ -16,8 +15,7 @@ type Props = {
 };
 
 const ModeSelector: React.FC<Props> = ({ selected, onSelect, disabled }) => {
-  const editRuntime = useDraftDataRuntime();
-  const modesSnapshot = useOptionalEditSnapshot(editRuntime?.stores.modes, modes);
+  const modesSnapshot = useEditableDomain('modes', modes);
   const selectedIds = new Set(selected.map(({ id }) => id));
   const options = Object.values(modesSnapshot)
     .filter(({ name }) => !selectedIds.has(name))

@@ -3,8 +3,8 @@
 import { useMemo } from 'react';
 
 import { cn, getPositioningTagColors } from '@/lib/design';
-import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { CharacterDisplayProps } from '@/lib/types';
+import { useEditableDomain } from '@/hooks/useEditableGameData';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { useEditMode } from '@/context/EditModeContext';
@@ -33,8 +33,7 @@ export default function CharacterDisplay({
   const [isDarkMode] = useDarkMode();
   const { isEditMode } = useEditMode();
   const isMobile = useMobile();
-  const editRuntime = useActiveEditRuntime();
-  const charactersSnap = useOptionalEditSnapshot(editRuntime?.stores.characters, characters);
+  const charactersSnap = useEditableDomain('characters', characters);
 
   const sortedPositioningTags = useMemo(() => {
     if (!positioningTags || positioningTags.length === 0) return [];

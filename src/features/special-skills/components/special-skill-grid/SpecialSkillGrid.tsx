@@ -3,8 +3,8 @@
 import { useMemo, useState } from 'react';
 
 import { getFactionButtonColors } from '@/lib/design';
-import { useActiveEditRuntime, useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
+import { useEditableDomain } from '@/hooks/useEditableGameData';
 import { usePublishedRevision } from '@/hooks/usePublishedRevision';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { specialSkills } from '@/data/static';
@@ -30,8 +30,7 @@ export default function SpecialSkillClient({
   const [selectedFaction, setSelectedFaction] = useState<FactionId | null>(null);
   const [isDarkMode] = useDarkMode();
 
-  const editRuntime = useActiveEditRuntime();
-  const specialSkillsSnapshot = useOptionalEditSnapshot(editRuntime?.stores.specialSkills, data);
+  const specialSkillsSnapshot = useEditableDomain('specialSkills', data);
   const allSkills = [
     ...Object.values(specialSkillsSnapshot.cat),
     ...Object.values(specialSkillsSnapshot.mouse),

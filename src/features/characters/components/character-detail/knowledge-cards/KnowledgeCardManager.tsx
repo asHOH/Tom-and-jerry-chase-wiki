@@ -1,7 +1,7 @@
 'use client';
 
-import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
+import { useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { factionData } from '@/data/static';
 import type { FactionId, KnowledgeCardGroup } from '@/data/types';
@@ -20,7 +20,10 @@ export default function KnowledgeCardManager({ factionId }: KnowledgeCardManager
   const editRuntime = useDraftDataRuntime();
   const editCharacter = editRuntime?.stores.characters[characterId];
   const publishedCharacter = usePublishedCharacter(characterId);
-  const character = useOptionalEditSnapshot(editCharacter, publishedCharacter);
+  const character = useEditableEntity(
+    { entityType: 'characters', entityId: characterId },
+    publishedCharacter
+  )!;
   const generalGroupCount = getGeneralKnowledgeCardGroupCount(factionData[factionId]);
 
   const handleCreateGroup = () => {

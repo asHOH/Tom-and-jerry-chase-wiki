@@ -2,9 +2,9 @@
 
 import React, { useCallback } from 'react';
 
-import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
 import { setNestedProperty } from '@/lib/editUtils';
 import { useDraftDataRuntime } from '@/hooks/useDraftDataRuntime';
+import { useEditableEntity } from '@/hooks/useEditableGameData';
 import { useLocalCharacter } from '@/hooks/useLocalEditEntity';
 import { useEditMode } from '@/context/EditModeContext';
 import { FactionId, SkillAllocation } from '@/data/types';
@@ -22,7 +22,10 @@ const useSkillAllocationManagement = () => {
   const editRuntime = useDraftDataRuntime();
   const rawCharacter = editRuntime?.stores.characters[characterId];
   const publishedCharacter = usePublishedCharacter(characterId);
-  const localCharacter = useOptionalEditSnapshot(rawCharacter, publishedCharacter);
+  const localCharacter = useEditableEntity(
+    { entityType: 'characters', entityId: characterId },
+    publishedCharacter
+  )!;
   const handleSaveChanges = useCallback(
     (updatedSkillAllocations: SkillAllocation[]) => {
       if (!rawCharacter || !editRuntime) return;
@@ -68,12 +71,11 @@ interface SkillAllocationSectionProps {
 const SkillAllocationSection: React.FC<SkillAllocationSectionProps> = ({ factionId }) => {
   const { isEditMode } = useEditMode();
   const { characterId } = useLocalCharacter();
-  const editRuntime = useDraftDataRuntime();
   const publishedCharacter = usePublishedCharacter(characterId);
-  const character = useOptionalEditSnapshot(
-    editRuntime?.stores.characters[characterId],
+  const character = useEditableEntity(
+    { entityType: 'characters', entityId: characterId },
     publishedCharacter
-  );
+  )!;
   const skillAllocations = character.skillAllocations ?? [];
   const { handleAddSkillAllocation, handleRemoveSkillAllocation } = useSkillAllocationManagement();
 
