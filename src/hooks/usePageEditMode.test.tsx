@@ -151,6 +151,25 @@ describe('usePageEditMode', () => {
     jest.restoreAllMocks();
   });
 
+  it('does not report a new edit as a restored draft', async () => {
+    renderInEditMode();
+
+    writeActionHistory(getActionsStorageKey('characters'), [
+      {
+        op: 'set',
+        path: `${TEST_CHARACTER_ID}.description`,
+        oldValue: 'canonical description',
+        newValue: 'new edit',
+      },
+    ]);
+    fireEvent.click(screen.getByRole('button', { name: 'refresh' }));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('page-action-count')).toHaveTextContent('1');
+    });
+    expect(mockShowToast).not.toHaveBeenCalledWith(expect.stringContaining('已恢复草稿'), 4000);
+  });
+
   it('should discard only the current entity draft and preserve remaining drafts', async () => {
     renderInEditMode();
 

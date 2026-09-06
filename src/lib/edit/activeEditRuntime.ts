@@ -4,17 +4,12 @@ import { useCallback, useSyncExternalStore } from 'react';
 import { snapshot, subscribe as subscribeValtio } from 'valtio/vanilla';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
-import type { EditModeRegistry } from '@/lib/edit/editModeRegistry';
-import type { EditStores } from '@/lib/edit/editStores';
-import type { PublishedRevision } from '@/lib/gameData/published/revision';
+import type { EditSession, EditSessionRuntime } from '@/lib/edit/editSession';
 
-export type ActiveEditRuntime = Readonly<{
-  stores: EditStores;
-  registry: EditModeRegistry;
-  revision: PublishedRevision;
-}>;
+/** @deprecated Phase 5 removes the remaining raw runtime test helpers. */
+export type ActiveEditRuntime = EditSessionRuntime;
 
-let activeRuntime: ActiveEditRuntime | null = null;
+let activeRuntime: EditSessionRuntime | null = null;
 const listeners = new Set<() => void>();
 
 function subscribe(listener: () => void): () => void {
@@ -50,6 +45,22 @@ export function requireActiveEditRuntime(): ActiveEditRuntime {
 
 export function useActiveEditRuntime(): ActiveEditRuntime | null {
   return useSyncExternalStore(subscribe, getActiveEditRuntime, () => null);
+}
+
+export function installActiveEditSession(session: EditSessionRuntime): void {
+  installActiveEditRuntime(session);
+}
+
+export function clearActiveEditSession(session?: EditSession): void {
+  clearActiveEditRuntime(session as EditSessionRuntime | undefined);
+}
+
+export function getActiveEditSession(): EditSession | null {
+  return getActiveEditRuntime();
+}
+
+export function useActiveEditSession(): EditSession | null {
+  return useSyncExternalStore(subscribe, getActiveEditSession, () => null);
 }
 
 export function useOptionalEditSnapshot<T extends object>(

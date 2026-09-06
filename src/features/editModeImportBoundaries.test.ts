@@ -29,9 +29,7 @@ const broadEditModeContextImportPattern =
 const rawEditRuntimeImportPattern =
   /from ['"]@\/(?:lib\/edit\/(?:activeEditRuntime|editStores)|hooks\/useDraftDataRuntime)['"]/;
 
-const mutationRuntimeExceptions = [
-  'src/features/character-relations/matrix/useRelationMatrixEditMode.ts',
-].sort();
+const mutationRuntimeExceptions: string[] = [];
 
 function listSourceFiles(root: string): string[] {
   return readdirSync(root).flatMap((entry) => {

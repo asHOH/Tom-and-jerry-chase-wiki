@@ -3,8 +3,7 @@ import {
   installActiveEditRuntime,
   type ActiveEditRuntime,
 } from '@/lib/edit/activeEditRuntime';
-import { createEditModeRegistry } from '@/lib/edit/editModeRegistry';
-import { createEditStores } from '@/lib/edit/editStores';
+import { createEditSession } from '@/lib/edit/editSession';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import {
   achievements,
@@ -35,18 +34,14 @@ const baseline = {
 } as PublishedGameDataByType;
 
 export function installTestEditRuntime(): ActiveEditRuntime {
-  const stores = createEditStores(baseline);
-  const runtime: ActiveEditRuntime = {
-    stores,
-    registry: createEditModeRegistry(stores, baseline),
-    revision: 'v1:test',
-  };
+  const runtime = createEditSession(baseline, 'v1:test');
+  runtime.registry.teardownSubscribers();
 
   installActiveEditRuntime(runtime);
   return runtime;
 }
 
 export function clearTestEditRuntime(runtime: ActiveEditRuntime): void {
-  runtime.registry.teardownSubscribers();
+  runtime.dispose();
   clearActiveEditRuntime(runtime);
 }

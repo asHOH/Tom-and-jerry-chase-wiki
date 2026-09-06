@@ -1,9 +1,9 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useMemo, useSyncExternalStore } from 'react';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
-import { useOptionalEditSnapshot } from '@/lib/edit/activeEditRuntime';
+import type { EditEntityRef } from '@/lib/edit/editSession';
 import type { EditStores } from '@/lib/edit/editStores';
 import type { PublishableEntityType } from '@/lib/gameData/publishableEntityTypes';
 import type {
@@ -52,21 +52,26 @@ export function useEditableDomain<EntityType extends PublishableEntityType, View
   EditStores[EntityType]
 > {
   const editRuntime = useDraftDataRuntime();
-  const draft = useOptionalEditSnapshot<EditStores[EntityType]>(
-    editRuntime?.stores[entityType],
-    undefined
+  const subscribe = useCallback(
+    (listener: () => void) =>
+      editRuntime?.subscribe({ kind: 'domain', entityType }, listener) ?? (() => undefined),
+    [editRuntime, entityType]
   );
+  const getSnapshot = useCallback(
+    () => editRuntime?.readDomain(entityType) ?? publishedFallback,
+    [editRuntime, entityType, publishedFallback]
+  );
+  const draft = useSyncExternalStore(subscribe, getSnapshot, () => publishedFallback);
 
   const update = useCallback<EditableUpdate<EditStores[EntityType]>>(
     (mutate) => {
-      const domain = editRuntime?.stores[entityType];
-      if (!domain) throw new Error(`Cannot edit ${entityType} because it is not loaded.`);
-      mutate(domain);
+      if (!editRuntime) throw new Error(`Cannot edit ${entityType} because it is not loaded.`);
+      editRuntime.updateDomain(entityType, mutate);
     },
     [editRuntime, entityType]
   );
 
-  if (!draft) return [publishedFallback, update];
+  if (!editRuntime) return [publishedFallback, update];
   const publishedDraft = draft as PublishedGameDataByType[EntityType];
   return [projectDraft ? projectDraft(publishedDraft) : publishedDraft, update];
 }
@@ -94,32 +99,37 @@ export function useEditableEntity<EntityType extends PublishableEntityType>(
   const editRuntime = useDraftDataRuntime();
   const { entityType, entityId } = ref;
   const factionId = 'factionId' in ref ? ref.factionId : undefined;
-  const domain = editRuntime?.stores[entityType];
-  const draft = domain
-    ? factionId
-      ? (domain as EditStores[FactionEntityType])[factionId]?.[entityId]
-      : (domain as Exclude<EditStores[EntityType], EditStores[FactionEntityType]>)[entityId]
-    : undefined;
-
-  const value = useOptionalEditSnapshot(draft, publishedFallback) as DeepReadonly<
-    PublishedGameDataEntityByType[EntityType]
-  > | null;
+  const sessionRef = useMemo(
+    () =>
+      ({
+        entityType,
+        entityId,
+        ...(factionId ? { factionId } : {}),
+      }) as EditEntityRef<EntityType>,
+    [entityId, entityType, factionId]
+  );
+  const subscribe = useCallback(
+    (listener: () => void) =>
+      editRuntime?.subscribe({ kind: 'entity', entity: sessionRef }, listener) ?? (() => undefined),
+    [editRuntime, sessionRef]
+  );
+  const getSnapshot = useCallback(
+    () => editRuntime?.readEntity(sessionRef) ?? publishedFallback,
+    [editRuntime, publishedFallback, sessionRef]
+  );
+  const value = useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    () => publishedFallback
+  ) as DeepReadonly<PublishedGameDataEntityByType[EntityType]> | null;
   const update = useCallback<EditableUpdate<PublishedGameDataEntityByType[EntityType]>>(
     (mutate) => {
-      const currentDomain = editRuntime?.stores[entityType];
-      const current = currentDomain
-        ? factionId
-          ? (currentDomain as EditStores[FactionEntityType])[factionId]?.[entityId]
-          : (currentDomain as Exclude<EditStores[EntityType], EditStores[FactionEntityType]>)[
-              entityId
-            ]
-        : undefined;
-      if (!current) {
+      if (!editRuntime) {
         throw new Error(`Cannot edit ${entityType}.${entityId} because it is not loaded.`);
       }
-      mutate(current as PublishedGameDataEntityByType[EntityType]);
+      editRuntime.updateEntity(sessionRef, mutate);
     },
-    [editRuntime, entityId, entityType, factionId]
+    [editRuntime, entityId, entityType, sessionRef]
   );
 
   return [value, update];

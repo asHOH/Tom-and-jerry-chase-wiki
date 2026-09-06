@@ -52,6 +52,18 @@ describe('editable game-data reads', () => {
     expect(result.current[0]).toBe(items[itemId]);
   });
 
+  it('does not project an already-projected fallback before the runtime is ready', () => {
+    const fallback: readonly string[] = ['published'];
+    const projectDraft = jest.fn((): readonly string[] => ['draft']);
+
+    const { result } = renderHook(() => useEditableDomain('characters', fallback, projectDraft), {
+      wrapper: createWrapper('loading'),
+    });
+
+    expect(result.current[0]).toBe(fallback);
+    expect(projectDraft).not.toHaveBeenCalled();
+  });
+
   it('reads and subscribes to a ready draft domain', async () => {
     const itemId = Object.keys(items)[0]!;
     const { result } = renderHook(() => useEditableDomain('items', items), {

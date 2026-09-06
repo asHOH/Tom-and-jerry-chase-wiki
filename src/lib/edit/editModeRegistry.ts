@@ -8,8 +8,10 @@ import {
   applyActionEntry,
   getActionsStorageKey,
   readActionHistory,
+  replaceActionHistory,
   subscribers,
   withRecordingSuppressed,
+  type ActionHistoryEntry,
 } from '@/lib/edit/diffUtils';
 import type { EditStores } from '@/lib/edit/editStores';
 import type { PublishableEntityType } from '@/lib/gameData/publishableEntityTypes';
@@ -38,6 +40,18 @@ export type EditModeRegistry = Readonly<{
   clearAllData: () => void;
 }>;
 
+export type EditHistoryStore = Readonly<{
+  read: (entityType: PublishableEntityType) => ActionHistoryEntry[];
+  append: (entityType: PublishableEntityType, entry: ActionHistoryEntry) => void;
+  replace: (entityType: PublishableEntityType, history: ActionHistoryEntry[]) => boolean;
+}>;
+
+export const browserEditHistoryStore: EditHistoryStore = Object.freeze({
+  read: (entityType) => readActionHistory(getActionsStorageKey(entityType)),
+  append: (entityType, entry) => appendActionHistoryEntry(getActionsStorageKey(entityType), entry),
+  replace: (entityType, history) => replaceActionHistory(getActionsStorageKey(entityType), history),
+});
+
 function asRecord(value: object): Record<string, unknown> {
   return value as Record<string, unknown>;
 }
@@ -62,14 +76,13 @@ function createEntityRegistry(
 
 function syncEntityToLocalStorage(
   entityType: PublishableEntityType,
-  entity: Record<string, unknown>
+  entity: Record<string, unknown>,
+  historyStore: EditHistoryStore
 ): () => void {
-  const actionsStorageKey = getActionsStorageKey(entityType);
-
   return subscribe(entity, (ops) => {
     const actions = actionsFromValtioOps(ops);
     if (actions.length === 0) return;
-    appendActionHistoryEntry(actionsStorageKey, actions.length === 1 ? actions[0]! : actions);
+    historyStore.append(entityType, actions.length === 1 ? actions[0]! : actions);
   });
 }
 
@@ -95,7 +108,8 @@ function replaceProxyRecord(
 
 export function createEditModeRegistry(
   stores: EditStores,
-  baseline: PublishedGameDataByType
+  baseline: PublishedGameDataByType,
+  historyStore: EditHistoryStore = browserEditHistoryStore
 ): EditModeRegistry {
   const entityRegistry = createEntityRegistry(stores);
 
@@ -121,7 +135,7 @@ export function createEditModeRegistry(
 
       subscribers[key] = [
         () => {
-          subscribers[key]![1] = syncEntityToLocalStorage(entityType, entity);
+          subscribers[key]![1] = syncEntityToLocalStorage(entityType, entity, historyStore);
         },
         void 0 as unknown as () => void,
       ];
@@ -136,7 +150,7 @@ export function createEditModeRegistry(
     entityRegistry.forEach((entity, entityType) => {
       try {
         const actionsStorageKey = getActionsStorageKey(entityType);
-        const history = readActionHistory(actionsStorageKey);
+        const history = historyStore.read(entityType);
         if (history.length === 0) return;
 
         if (history.length > DRAFT_HISTORY_WARNING_THRESHOLD) {

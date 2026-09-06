@@ -3,14 +3,9 @@
 import { useCallback, useEffect, useRef, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 
-import {
-  clearActiveEditRuntime,
-  installActiveEditRuntime,
-  type ActiveEditRuntime,
-} from '@/lib/edit/activeEditRuntime';
-import { createEditModeRegistry } from '@/lib/edit/editModeRegistry';
+import { clearActiveEditSession, installActiveEditSession } from '@/lib/edit/activeEditRuntime';
 import type { EditRuntimeStatus } from '@/lib/edit/editRuntimeStatus';
-import { createEditStores } from '@/lib/edit/editStores';
+import { createEditSession, type EditSession } from '@/lib/edit/editSession';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import Button from '@/components/ui/Button';
 
@@ -52,7 +47,7 @@ export default function EditRuntime({
   const [isRefreshing, startRefreshTransition] = useTransition();
   const refreshAttemptedForRevisionRef = useRef<`v1:${string}` | null>(null);
   const sawRefreshPendingRef = useRef(false);
-  const activeRuntimeRef = useRef<ActiveEditRuntime | null>(null);
+  const activeRuntimeRef = useRef<EditSession | null>(null);
   const reportStatus = useCallback(
     (nextStatus: EditRuntimeStatus, error?: string) => {
       setStatus(nextStatus);
@@ -131,18 +126,9 @@ export default function EditRuntime({
 
     reportStatus('restoring');
     try {
-      const stores = createEditStores(baseline.data);
-      const registry = createEditModeRegistry(stores, baseline.data);
-      registry.loadDrafts();
-      registry.setupSubscribers();
-
-      const runtime = Object.freeze({
-        stores,
-        registry,
-        revision: baseline.revision,
-      });
+      const runtime = createEditSession(baseline.data, baseline.revision);
       activeRuntimeRef.current = runtime;
-      installActiveEditRuntime(runtime);
+      installActiveEditSession(runtime);
       reportStatus('ready');
     } catch (error) {
       reportStatus('error', error instanceof Error ? error.message : '恢复本地编辑草稿失败');
@@ -184,8 +170,8 @@ export default function EditRuntime({
     () => () => {
       const runtime = activeRuntimeRef.current;
       if (!runtime) return;
-      runtime.registry.teardownSubscribers();
-      clearActiveEditRuntime(runtime);
+      runtime.dispose();
+      clearActiveEditSession(runtime);
       activeRuntimeRef.current = null;
     },
     []
