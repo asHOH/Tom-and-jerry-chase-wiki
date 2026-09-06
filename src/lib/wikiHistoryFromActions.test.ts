@@ -45,7 +45,7 @@ describe('publicActionsToWikiHistory', () => {
     ]);
   });
 
-  it('should convert a plain action array into batch changes', () => {
+  it('should use localized paths instead of the submission message', () => {
     const changes = getBatchChanges([
       row(
         'plain-action-array',
@@ -72,7 +72,12 @@ describe('publicActionsToWikiHistory', () => {
       expect.objectContaining({
         item: { name: 'Tom', type: 'character' },
         changeType: WikiChangeType.UPDATE,
-        description: '完善角色资料',
+        description: '更新 描述',
+      }),
+      expect.objectContaining({
+        item: { name: 'Tom', type: 'character' },
+        changeType: WikiChangeType.UPDATE,
+        description: '更新 英文名',
       }),
     ]);
   });

@@ -347,7 +347,6 @@ interface WikiHistoryFromAction {
 export type NormalizedWikiHistoryActionRow = {
   entityType: string;
   createdAt: string;
-  message?: string | null;
   actions: readonly Readonly<Action>[];
 };
 
@@ -370,7 +369,6 @@ function actionToWikiHistoryInfo(
   action: Action,
   entityType: string,
   createdAt: Date,
-  actionDescription: string | undefined,
   options: WikiHistoryConversionOptions
 ): WikiHistoryFromAction | null {
   if (!isPublishableEntityType(entityType)) return null;
@@ -409,18 +407,17 @@ function actionToWikiHistoryInfo(
 
   const changeType = opToChangeType(action.op, action.path, itemPathDepth);
 
-  // Prefer the contributor's description, then fall back to the affected field.
-  let description = actionDescription ?? '';
+  let description = '';
   const pathParts = action.path.split('.').filter(Boolean);
 
-  if (!description && pathParts.length === itemPathDepth) {
+  if (pathParts.length === itemPathDepth) {
     // Top-level change (create/delete entire item)
     if (action.op === 'add') {
       description = '创建该条目';
     } else if (action.op === 'delete') {
       description = '移除该条目';
     }
-  } else if (!description) {
+  } else {
     // Nested change
     const fieldPath = translateWikiHistoryFieldPath(pathParts.slice(itemPathDepth));
     description = `更新 ${fieldPath}`;
@@ -448,7 +445,6 @@ export function normalizedActionsToWikiHistory(
     if (row.actions.length === 0) continue;
 
     const createdAt = new Date(row.createdAt);
-    const actionDescription = row.message?.trim() || undefined;
     const year = createdAt.getFullYear();
 
     // Group by date within year
@@ -457,13 +453,7 @@ export function normalizedActionsToWikiHistory(
     const dateKey = `${month}.${day}`;
 
     for (const action of row.actions) {
-      const info = actionToWikiHistoryInfo(
-        action as Action,
-        row.entityType,
-        createdAt,
-        actionDescription,
-        options
-      );
+      const info = actionToWikiHistoryInfo(action as Action, row.entityType, createdAt, options);
       if (!info) continue;
 
       if (!yearMap.has(year)) {
@@ -543,7 +533,6 @@ export function publicActionsToWikiHistory(
       return {
         entityType: row.entity_type,
         createdAt: row.created_at,
-        message: row.message,
         actions: flattenActionEntries(entries),
       };
     }),
