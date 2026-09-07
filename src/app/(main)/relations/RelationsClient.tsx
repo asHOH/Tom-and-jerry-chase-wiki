@@ -281,7 +281,7 @@ export default function RelationsClient({
             isDarkMode={isDarkMode}
           />
           <MatrixSizeSlider value={matrixSize} onChange={setMatrixSize} />
-          <RelationMatrixLegend />
+          <RelationMatrixLegend columnCategory={coercedColumnCategory} />
         </div>
       }
       filtersClassName='max-w-5xl'

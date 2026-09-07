@@ -9,6 +9,7 @@ interface TooltipProps {
   children: React.ReactNode;
   content: React.ReactNode;
   className?: string;
+  contentClassName?: string;
   disabled?: boolean;
   asChild?: boolean;
   clickToToggle?: boolean;
@@ -19,6 +20,7 @@ export default function Tooltip({
   children,
   content,
   className = '',
+  contentClassName,
   disabled = false,
   asChild = false,
   clickToToggle = false,
@@ -28,6 +30,15 @@ export default function Tooltip({
   const [isHoverOnly, setIsHoverOnly] = React.useState<boolean>(false);
   const [mounted, setMounted] = React.useState<boolean>(false);
   const longPressTimerRef = React.useRef<NodeJS.Timeout | null>(null);
+
+  const clearLongPress = React.useCallback(() => {
+    if (longPressTimerRef.current !== null) {
+      clearTimeout(longPressTimerRef.current);
+      longPressTimerRef.current = null;
+    }
+  }, []);
+
+  React.useEffect(() => clearLongPress, [clearLongPress]);
 
   React.useEffect(() => {
     setMounted(true);
@@ -53,17 +64,12 @@ export default function Tooltip({
   }, []);
 
   const handleTouchStart = () => {
+    clearLongPress();
     if (isHoverOnly || disabled) return;
     longPressTimerRef.current = setTimeout(() => {
+      longPressTimerRef.current = null;
       setOpen(true);
     }, 500);
-  };
-
-  const handleTouchEnd = () => {
-    if (longPressTimerRef.current) {
-      clearTimeout(longPressTimerRef.current);
-      longPressTimerRef.current = null;
-    }
   };
 
   const { className: triggerPropsClassName, ...triggerRestProps } = triggerProps ?? {};
@@ -92,14 +98,15 @@ export default function Tooltip({
         <TooltipPrimitive.Trigger
           asChild
           onClick={(e) => {
-            if ((!isHoverOnly || clickToToggle) && !asChild) {
+            if ((!isHoverOnly && !asChild) || clickToToggle) {
               e.preventDefault();
               setOpen((prev) => !prev);
             }
           }}
           onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-          onTouchMove={handleTouchEnd}
+          onTouchEnd={clearLongPress}
+          onTouchMove={clearLongPress}
+          onTouchCancel={clearLongPress}
         >
           {trigger}
         </TooltipPrimitive.Trigger>
@@ -109,7 +116,10 @@ export default function Tooltip({
             align='center'
             sideOffset={8}
             collisionPadding={{ top: 92, bottom: 8, left: 8, right: 8 }}
-            className='wrap-break-words z-10000 max-w-xs rounded-md bg-gray-800 px-3 py-2 text-sm whitespace-pre-wrap text-white shadow-lg dark:bg-black dark:text-gray-200'
+            className={cn(
+              'wrap-break-words z-10000 max-w-xs rounded-md bg-gray-800 px-3 py-2 text-sm whitespace-pre-wrap text-white shadow-lg dark:bg-black dark:text-gray-200',
+              contentClassName
+            )}
           >
             {content}
             <TooltipPrimitive.Arrow

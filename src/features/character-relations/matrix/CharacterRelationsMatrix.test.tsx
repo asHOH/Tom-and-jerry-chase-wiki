@@ -50,6 +50,17 @@ const getCellTestId = (viewModel: RelationMatrixViewModel, rowId: string, column
   `relation-cell-${getEntityKey(viewModel.rows, rowId)}-${getEntityKey(viewModel.columns, columnId)}`;
 
 describe('CharacterRelationsMatrix', () => {
+  it.each(['map', 'mode'] as const)(
+    'labels %s advantages from the row perspective',
+    (columnCategory) => {
+      render(<RelationMatrixLegend columnCategory={columnCategory} />);
+      expect(screen.getByText('优势')).toBeInTheDocument();
+      expect(screen.getByText('劣势')).toBeInTheDocument();
+      expect(screen.queryByText('克制')).not.toBeInTheDocument();
+      expect(screen.getByText('关系以行角色为主体；空白表示暂无记录。')).toBeInTheDocument();
+    }
+  );
+
   it('should render row and column headers as detail links', () => {
     const viewModel = buildRelationMatrixViewModel({
       rowFaction: 'mouse',
@@ -85,7 +96,11 @@ describe('CharacterRelationsMatrix', () => {
     render(<CharacterRelationsMatrix viewModel={viewModel} />);
 
     expect(
-      screen.getByTestId(`relation-cell-${getEntityKey(viewModel.rows, '杰瑞')}-${emptyColumn.key}`)
+      within(
+        screen.getByTestId(
+          `relation-cell-${getEntityKey(viewModel.rows, '杰瑞')}-${emptyColumn.key}`
+        )
+      ).getByRole('button', { name: `杰瑞 与 ${emptyColumn.label}：暂无关系记录` })
     ).toBeEmptyDOMElement();
 
     const majorCell = screen.getByTestId(getCellTestId(viewModel, '杰瑞', '汤姆'));
@@ -256,7 +271,7 @@ describe('CharacterRelationsMatrix', () => {
       render(<CharacterRelationsMatrix viewModel={viewModel} />);
 
       const jerryTomCell = screen.getByTestId(getCellTestId(viewModel, '杰瑞', '汤姆'));
-      fireEvent.click(jerryTomCell);
+      fireEvent.click(within(jerryTomCell).getByRole('button'));
 
       // The clicked cell should have both row and col highlight attributes
       expect(jerryTomCell).toHaveAttribute('data-highlighted-row', '');
@@ -288,10 +303,10 @@ describe('CharacterRelationsMatrix', () => {
 
       const cell = screen.getByTestId(getCellTestId(viewModel, '杰瑞', '汤姆'));
 
-      fireEvent.click(cell);
+      fireEvent.click(within(cell).getByRole('button'));
       expect(cell).toHaveAttribute('data-highlighted-row', '');
 
-      fireEvent.click(cell);
+      fireEvent.click(within(cell).getByRole('button'));
       expect(cell).not.toHaveAttribute('data-highlighted-row');
       expect(cell).not.toHaveAttribute('data-highlighted-col');
     });
@@ -307,10 +322,10 @@ describe('CharacterRelationsMatrix', () => {
       const firstCell = screen.getByTestId(getCellTestId(viewModel, '杰瑞', '汤姆'));
       const secondCell = screen.getByTestId(getCellTestId(viewModel, '罗宾汉杰瑞', '托普斯'));
 
-      fireEvent.click(firstCell);
+      fireEvent.click(within(firstCell).getByRole('button'));
       expect(firstCell).toHaveAttribute('data-highlighted-row', '');
 
-      fireEvent.click(secondCell);
+      fireEvent.click(within(secondCell).getByRole('button'));
       expect(firstCell).not.toHaveAttribute('data-highlighted-row');
       expect(secondCell).toHaveAttribute('data-highlighted-row', '');
       expect(secondCell).toHaveAttribute('data-highlighted-col', '');
@@ -349,4 +364,16 @@ describe('CharacterRelationsMatrix', () => {
       expect(emptyCell).not.toHaveAttribute('data-highlighted-row');
     });
   });
+});
+
+const originalResizeObserver = global.ResizeObserver;
+beforeAll(() => {
+  global.ResizeObserver = jest.fn(() => ({
+    observe: jest.fn(),
+    unobserve: jest.fn(),
+    disconnect: jest.fn(),
+  })) as unknown as typeof ResizeObserver;
+});
+afterAll(() => {
+  global.ResizeObserver = originalResizeObserver;
 });

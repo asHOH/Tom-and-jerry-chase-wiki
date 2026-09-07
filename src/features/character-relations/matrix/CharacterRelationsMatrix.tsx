@@ -224,7 +224,6 @@ const MatrixCell = ({
       data-highlighted-col={isColumnHighlighted ? '' : undefined}
       className={cn(
         'border-border border p-0 align-middle',
-        !isEditMode && 'cursor-pointer',
         isRowHighlighted &&
           isColumnHighlighted &&
           'bg-blue-100 ring-2 ring-blue-500 ring-inset dark:bg-blue-900',
@@ -232,9 +231,6 @@ const MatrixCell = ({
         !isRowHighlighted && isColumnHighlighted && 'bg-blue-50 dark:bg-blue-950'
       )}
       style={sizing.cell}
-      onClick={() => {
-        if (!isEditMode) onCellClick(row.key, column.key);
-      }}
     >
       {isEditableCell ? (
         <Button
@@ -252,16 +248,28 @@ const MatrixCell = ({
           {cell ? <CellMarker cell={cell} dotStyle={sizing.minorDot} /> : null}
           <PendingActionWarningIndicator summary={pendingSummary} />
         </Button>
-      ) : cell ? (
+      ) : cell || !isEditMode ? (
         <Tooltip
-          content={cell.tooltipContent}
-          className={cn(
-            'flex cursor-help items-center justify-center border-b-0 transition-opacity hover:opacity-85',
-            !cell.isMinor && RELATION_COLOR_CLASSES[cell.displayKind]
-          )}
-          triggerProps={{ 'aria-label': cell.tooltipContent, style: sizing.cell }}
+          asChild
+          clickToToggle
+          disabled={!cell}
+          content={cell?.tooltipContent}
+          contentClassName='[@media(pointer:coarse)]:pointer-events-none'
         >
-          <CellMarker cell={cell} dotStyle={sizing.minorDot} />
+          <Button
+            variant='unstyled'
+            aria-label={cell?.tooltipContent ?? `${row.label} 与 ${column.label}：暂无关系记录`}
+            aria-pressed={isRowHighlighted && isColumnHighlighted}
+            disabled={isEditMode}
+            className={cn(
+              'flex cursor-pointer items-center justify-center border-0 p-0 transition-opacity hover:opacity-85 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none focus-visible:ring-inset',
+              cell && !cell.isMinor && RELATION_COLOR_CLASSES[cell.displayKind]
+            )}
+            style={sizing.cell}
+            onClick={() => onCellClick(row.key, column.key)}
+          >
+            {cell ? <CellMarker cell={cell} dotStyle={sizing.minorDot} /> : null}
+          </Button>
         </Tooltip>
       ) : null}
     </td>
@@ -335,15 +343,34 @@ const RowHeader = ({
   </th>
 );
 
-export const RelationMatrixLegend = () => (
+export const RelationMatrixLegend = ({
+  rowFaction,
+  columnCategory,
+}: {
+  rowFaction: RelationMatrixRowFaction;
+  columnCategory: RelationMatrixColumnCategory;
+}) => (
   <div className='flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-600 dark:text-gray-300'>
-    {RELATION_LEGEND_ITEMS.map((item) => (
+    {RELATION_LEGEND_ITEMS.filter((item) => {
+      if (columnCategory === 'mouse' || columnCategory === 'cat') {
+        return rowFaction === columnCategory
+          ? rowFaction === 'mouse' && item.kind === 'collaborator'
+          : item.kind !== 'collaborator';
+      }
+      return item.kind === 'counter' || item.kind === 'counteredBy';
+    }).map((item) => (
       <span key={item.kind} className='inline-flex items-center gap-1'>
         <span
           aria-hidden='true'
           className={cn('h-2.5 w-2.5 rounded-xs', RELATION_COLOR_CLASSES[item.kind])}
         />
-        {item.label}
+        {columnCategory === 'map' || columnCategory === 'mode'
+          ? item.kind === 'counter'
+            ? '优势'
+            : item.kind === 'counteredBy'
+              ? '劣势'
+              : item.label
+          : item.label}
       </span>
     ))}
     <span className='inline-flex items-center gap-1'>
