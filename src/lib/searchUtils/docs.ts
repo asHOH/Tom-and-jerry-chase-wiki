@@ -1,6 +1,6 @@
 import docPagesJson from '@/data/generated/docPages.json';
 
-import { convertToPinyin } from '../pinyinUtils';
+import type { SearchQuery } from './matching';
 import type { SearchResult } from './types';
 
 type DocPage = {
@@ -25,52 +25,15 @@ const getDocPages = (): DocPage[] => {
     .sort((a, b) => a.title.localeCompare(b.title, 'zh-CN'));
 };
 
-export async function* searchDocs(
-  findMatchContext: (texts: (string | undefined)[]) => Promise<string | undefined>,
-  lowerCaseQuery: string,
-  pinyinQuery: string
-): AsyncGenerator<SearchResult> {
-  const docPages = getDocPages();
-
-  for (const page of docPages) {
-    let matchContext: string | undefined;
-    let priority = 0;
-    let isPinyinMatch = false;
-
-    const titleLowerCase = page.title.toLowerCase();
-    const titlePinyin = await convertToPinyin(page.title);
-    const slugLowerCase = page.slug.toLowerCase();
-    const slugPinyin = await convertToPinyin(page.slug);
-
-    if (titleLowerCase.includes(lowerCaseQuery)) {
-      matchContext = await findMatchContext([page.title]);
-      priority = 1.0;
-      isPinyinMatch = false;
-    } else if (titlePinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
-      matchContext = await findMatchContext([page.title]);
-      priority = 0.95;
-      isPinyinMatch = true;
-    } else if (slugLowerCase.includes(lowerCaseQuery)) {
-      matchContext = await findMatchContext([page.slug]);
-      priority = 0.9;
-      isPinyinMatch = false;
-    } else if (slugPinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
-      matchContext = await findMatchContext([page.slug]);
-      priority = 0.85;
-      isPinyinMatch = true;
-    }
-
-    if (matchContext) {
-      await new Promise((resolve) => setTimeout(resolve, 10));
-      yield {
-        type: 'doc',
-        name: page.title,
-        slug: page.slug,
-        path: page.path,
-        matchContext,
-        priority,
-        isPinyinMatch,
-      };
-    }
+export async function searchDocs(query: SearchQuery): Promise<SearchResult[]> {
+  const results: SearchResult[] = [];
+  for (const page of getDocPages()) {
+    const match = await query.matchFields([
+      [page.title, 1, 0.95],
+      [page.slug, 0.9, 0.85],
+    ]);
+    if (match)
+      results.push({ type: 'doc', name: page.title, slug: page.slug, path: page.path, ...match });
   }
+  return results;
 }

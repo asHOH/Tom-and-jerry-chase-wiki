@@ -327,21 +327,10 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
     const handler = setTimeout(async () => {
       if (searchQuery.length > 0) {
         setSearchResults([]); // Clear previous results
-        const searchGenerator = performSearch(searchQuery);
-        let newResults: SearchResult[] = [];
-
-        for await (const result of searchGenerator) {
-          // Only update if this is still the latest search query
-          if (searchIdRef.current === currentId) {
-            newResults = [...newResults, result];
-            setSearchResults(newResults); // Store all results (already sorted by searchUtils)
-            // Initialize highlighted index to the first visible result.
-            if (newResults.length === 1) {
-              setHighlightedIndex(0);
-            }
-          } else {
-            break; // A new search has started, stop processing old results
-          }
+        const results = await performSearch(searchQuery);
+        if (searchIdRef.current === currentId) {
+          setSearchResults(results);
+          setHighlightedIndex(results.length > 0 ? 0 : -1);
         }
       } else {
         setSearchResults([]);

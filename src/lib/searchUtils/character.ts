@@ -1,319 +1,104 @@
-// Character search logic extracted from searchUtils.ts
-
 import {
   getPositioningTagLevel,
   isPositioningTagVisible,
 } from '@/constants/positioningTagSequences';
 import { characters } from '@/data/static';
 
-import { convertToPinyin } from '../pinyinUtils';
+import type { SearchField, SearchQuery } from './matching';
 import type { SearchResult } from './types';
 
-export async function* searchCharacters(
-  findMatchContext: (texts: (string | undefined)[]) => Promise<string | undefined>,
-  lowerCaseQuery: string,
-  pinyinQuery: string
-): AsyncGenerator<SearchResult> {
+export async function searchCharacters(query: SearchQuery): Promise<SearchResult[]> {
+  const results: SearchResult[] = [];
   for (const character of Object.values(characters)) {
-    let matchContext: string | undefined;
-    let priority: number = 0;
-    let isPinyinMatch: boolean = false;
     let matchedSkillName: string | undefined;
+    let match = await query.matchFields([
+      [character.id, 1, 0.95, character.id],
+      ...(character.aliases ?? []).map((alias): SearchField => [
+        alias,
+        0.98,
+        0.97,
+        `${character.id} (${alias})`,
+      ]),
+    ]);
 
-    const characterIdLowerCase = character.id.toLowerCase();
-    const characterIdPinyin = await convertToPinyin(character.id);
-
-    if (characterIdLowerCase.includes(lowerCaseQuery)) {
-      matchContext = character.id;
-      priority = 1.0;
-      isPinyinMatch = false;
-    } else if (characterIdPinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
-      matchContext = character.id;
-      priority = 0.95;
-      isPinyinMatch = true;
-    }
-    if (!matchContext && character.aliases) {
-      for (const alias of character.aliases) {
-        const aliasLowerCase = alias.toLowerCase();
-        const aliasPinyin = await convertToPinyin(alias);
-
-        if (aliasLowerCase.includes(lowerCaseQuery)) {
-          matchContext = `${character.id} (${alias})`;
-          priority = 0.98;
-          isPinyinMatch = false;
-          break;
-        } else if (aliasPinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
-          matchContext = `${character.id} (${alias})`;
-          priority = 0.97;
-          isPinyinMatch = true;
-          break;
-        }
-      }
-    }
-    if (!matchContext && character.skills) {
+    if (!match) {
       for (const skill of character.skills) {
-        const skillNameLowerCase = skill.name.toLowerCase();
-        const skillNamePinyin = await convertToPinyin(skill.name);
-
-        if (skillNameLowerCase.includes(lowerCaseQuery)) {
-          matchContext = await findMatchContext([skill.name]);
+        match = await query.matchFields([[skill.name, 0.9, 0.85]]);
+        if (match) {
           matchedSkillName = skill.name;
-          priority = 0.9;
-          isPinyinMatch = false;
-          break;
-        } else if (skillNamePinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
-          matchContext = await findMatchContext([skill.name]);
-          matchedSkillName = skill.name;
-          priority = 0.85;
-          isPinyinMatch = true;
           break;
         }
       }
     }
-    if (!matchContext) {
+    if (!match) {
+      // Preserve the existing last-matching-skill precedence for aliases.
       for (const skill of character.skills) {
-        if (skill.aliases) {
-          for (const alias of skill.aliases) {
-            const aliasLowerCase = alias.toLowerCase();
-            const aliasPinyin = await convertToPinyin(alias);
-
-            if (aliasLowerCase.includes(lowerCaseQuery)) {
-              matchContext = `${skill.name} (${alias})`;
-              matchedSkillName = skill.name;
-              priority = 0.84;
-              isPinyinMatch = false;
-              break;
-            } else if (aliasPinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
-              matchContext = `${skill.name} (${alias})`;
-              matchedSkillName = skill.name;
-              priority = 0.83;
-              isPinyinMatch = true;
-              break;
-            }
-          }
+        const aliasMatch = await query.matchFields(
+          (skill.aliases ?? []).map((alias): SearchField => [
+            alias,
+            0.84,
+            0.83,
+            `${skill.name} (${alias})`,
+          ])
+        );
+        if (aliasMatch) {
+          match = aliasMatch;
+          matchedSkillName = skill.name;
         }
       }
     }
-    if (!matchContext) {
-      const descriptionLowerCase = character.description.toLowerCase();
-      const descriptionPinyin = await convertToPinyin(character.description);
-
-      if (descriptionLowerCase.includes(lowerCaseQuery)) {
-        matchContext = character.description;
-        priority = 0.8;
-        isPinyinMatch = false;
-      } else if (descriptionPinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
-        matchContext = character.description;
-        priority = 0.75;
-        isPinyinMatch = true;
-      }
+    if (!match) {
+      const tags = [
+        ...(character.catPositioningTags ?? []),
+        ...(character.mousePositioningTags ?? []),
+      ].filter((tag) => isPositioningTagVisible(getPositioningTagLevel(tag)));
+      match = await query.matchFields([
+        [character.description, 0.8, 0.75, character.description],
+        ...tags.map((tag): SearchField => [tag.tagName, 0.7, 0.65]),
+        ...tags.map((tag): SearchField => [tag.description, 0.6, 0.55]),
+        ...tags.map((tag): SearchField => [tag.additionalDescription, 0.5, 0.45]),
+      ]);
     }
-    if (!matchContext && character.catPositioningTags) {
-      for (const tag of character.catPositioningTags) {
-        if (!isPositioningTagVisible(getPositioningTagLevel(tag))) continue;
-        const tagNameLowerCase = tag.tagName.toLowerCase();
-        const tagNamePinyin = await convertToPinyin(tag.tagName);
-
-        if (tagNameLowerCase.includes(lowerCaseQuery)) {
-          matchContext = await findMatchContext([tag.tagName]);
-          priority = 0.7;
-          isPinyinMatch = false;
-          break;
-        } else if (tagNamePinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
-          matchContext = await findMatchContext([tag.tagName]);
-          priority = 0.65;
-          isPinyinMatch = true;
-          break;
-        }
-      }
-    }
-    if (!matchContext && character.mousePositioningTags) {
-      for (const tag of character.mousePositioningTags) {
-        if (!isPositioningTagVisible(getPositioningTagLevel(tag))) continue;
-        const tagNameLowerCase = tag.tagName.toLowerCase();
-        const tagNamePinyin = await convertToPinyin(tag.tagName);
-
-        if (tagNameLowerCase.includes(lowerCaseQuery)) {
-          matchContext = await findMatchContext([tag.tagName]);
-          priority = 0.7;
-          isPinyinMatch = false;
-          break;
-        } else if (tagNamePinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
-          matchContext = await findMatchContext([tag.tagName]);
-          priority = 0.65;
-          isPinyinMatch = true;
-          break;
-        }
-      }
-    }
-    if (!matchContext && character.catPositioningTags) {
-      for (const tag of character.catPositioningTags) {
-        if (!isPositioningTagVisible(getPositioningTagLevel(tag))) continue;
-        const tagDescriptionLowerCase = tag.description.toLowerCase();
-        const tagDescriptionPinyin = await convertToPinyin(tag.description);
-
-        if (tagDescriptionLowerCase.includes(lowerCaseQuery)) {
-          matchContext = await findMatchContext([tag.description]);
-          priority = 0.6;
-          isPinyinMatch = false;
-          break;
-        } else if (tagDescriptionPinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
-          matchContext = await findMatchContext([tag.description]);
-          priority = 0.55;
-          isPinyinMatch = true;
-          break;
-        }
-      }
-    }
-    if (!matchContext && character.mousePositioningTags) {
-      for (const tag of character.mousePositioningTags) {
-        if (!isPositioningTagVisible(getPositioningTagLevel(tag))) continue;
-        const tagDescriptionLowerCase = tag.description.toLowerCase();
-        const tagDescriptionPinyin = await convertToPinyin(tag.description);
-
-        if (tagDescriptionLowerCase.includes(lowerCaseQuery)) {
-          matchContext = await findMatchContext([tag.description]);
-          priority = 0.6;
-          isPinyinMatch = false;
-          break;
-        } else if (tagDescriptionPinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
-          matchContext = await findMatchContext([tag.description]);
-          priority = 0.55;
-          isPinyinMatch = true;
-          break;
-        }
-      }
-    }
-    if (!matchContext && character.catPositioningTags) {
-      for (const tag of character.catPositioningTags) {
-        if (!isPositioningTagVisible(getPositioningTagLevel(tag))) continue;
-        const additionalDescriptionLowerCase = tag.additionalDescription?.toLowerCase();
-        const additionalDescriptionPinyin = await convertToPinyin(tag.additionalDescription);
-
-        if (additionalDescriptionLowerCase?.includes(lowerCaseQuery)) {
-          matchContext = await findMatchContext([tag.additionalDescription]);
-          priority = 0.5;
-          isPinyinMatch = false;
-          break;
-        } else if (additionalDescriptionPinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
-          matchContext = await findMatchContext([tag.additionalDescription]);
-          priority = 0.45;
-          isPinyinMatch = true;
-          break;
-        }
-      }
-    }
-    if (!matchContext && character.mousePositioningTags) {
-      for (const tag of character.mousePositioningTags) {
-        if (!isPositioningTagVisible(getPositioningTagLevel(tag))) continue;
-        const additionalDescriptionLowerCase = tag.additionalDescription?.toLowerCase();
-        const additionalDescriptionPinyin = await convertToPinyin(tag.additionalDescription);
-
-        if (additionalDescriptionLowerCase?.includes(lowerCaseQuery)) {
-          matchContext = await findMatchContext([tag.additionalDescription]);
-          priority = 0.5;
-          isPinyinMatch = false;
-          break;
-        } else if (additionalDescriptionPinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
-          matchContext = await findMatchContext([tag.additionalDescription]);
-          priority = 0.45;
-          isPinyinMatch = true;
-          break;
-        }
-      }
-    }
-    if (!matchContext && character.skills) {
+    if (!match) {
       for (const skill of character.skills) {
-        const skillDescriptionLowerCase = skill.description?.toLowerCase();
-        const skillDescriptionPinyin = await convertToPinyin(skill.description);
-
-        if (skill.description && skillDescriptionLowerCase?.includes(lowerCaseQuery)) {
-          matchContext = await findMatchContext([skill.description]);
+        match = await query.matchFields([[skill.description, 0.4, 0.35]]);
+        if (match) {
           matchedSkillName = skill.name;
-          priority = 0.4;
-          isPinyinMatch = false;
-          break;
-        } else if (skillDescriptionPinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
-          matchContext = await findMatchContext([skill.description]);
-          matchedSkillName = skill.name;
-          priority = 0.35;
-          isPinyinMatch = true;
           break;
         }
       }
     }
-    if (!matchContext && character.skills) {
+    if (!match) {
       for (const skill of character.skills) {
-        const detailedDescriptionLowerCase = skill.detailedDescription?.toLowerCase();
-        const detailedDescriptionPinyin = await convertToPinyin(skill.detailedDescription);
-
-        if (skill.detailedDescription && detailedDescriptionLowerCase?.includes(lowerCaseQuery)) {
-          matchContext = await findMatchContext([skill.detailedDescription]);
+        const detailMatch = await query.matchFields([[skill.detailedDescription, 0.3, 0.25]]);
+        if (detailMatch) {
+          match = detailMatch;
           matchedSkillName = skill.name;
-          priority = 0.3;
-          isPinyinMatch = false;
-          break;
-        } else if (detailedDescriptionPinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
-          matchContext = await findMatchContext([skill.detailedDescription]);
-          matchedSkillName = skill.name;
-          priority = 0.25;
-          isPinyinMatch = true;
           break;
         }
-
-        for (const level of skill.skillLevels) {
-          const levelDescriptionLowerCase = level.description.toLowerCase();
-          const levelDescriptionPinyin = await convertToPinyin(level.description);
-
-          if (levelDescriptionLowerCase.includes(lowerCaseQuery)) {
-            matchContext = await findMatchContext([level.description]);
-            matchedSkillName = skill.name;
-            priority = 0.2;
-            isPinyinMatch = false;
-            break;
-          } else if (levelDescriptionPinyin.includes(pinyinQuery) && pinyinQuery.length > 0) {
-            matchContext = await findMatchContext([level.description]);
-            matchedSkillName = skill.name;
-            priority = 0.19;
-            isPinyinMatch = true;
-            break;
-          }
-          if (level.detailedDescription) {
-            const levelDetailedDescriptionLowerCase = level.detailedDescription.toLowerCase();
-            const levelDetailedDescriptionPinyin = await convertToPinyin(level.detailedDescription);
-
-            if (levelDetailedDescriptionLowerCase.includes(lowerCaseQuery)) {
-              matchContext = await findMatchContext([level.detailedDescription]);
-              matchedSkillName = skill.name;
-              priority = 0.18;
-              isPinyinMatch = false;
-              break;
-            } else if (
-              levelDetailedDescriptionPinyin.includes(pinyinQuery) &&
-              pinyinQuery.length > 0
-            ) {
-              matchContext = await findMatchContext([level.detailedDescription]);
-              matchedSkillName = skill.name;
-              priority = 0.17;
-              isPinyinMatch = true;
-              break;
-            }
-          }
+        const levelMatch = await query.matchFields(
+          skill.skillLevels.flatMap((level): SearchField[] => [
+            [level.description, 0.2, 0.19],
+            [level.detailedDescription, 0.18, 0.17],
+          ])
+        );
+        // Later skills can supersede a level match, as in the original search.
+        if (levelMatch) {
+          match = levelMatch;
+          matchedSkillName = skill.name;
         }
       }
     }
 
-    if (matchContext) {
-      await new Promise((resolve) => setTimeout(resolve, 10));
-      yield {
+    if (match) {
+      results.push({
         type: 'character',
         id: character.id,
         imageUrl: character.imageUrl!,
-        matchContext: matchContext,
-        priority: priority,
-        isPinyinMatch: isPinyinMatch,
+        ...match,
         ...(matchedSkillName ? { matchedSkillName } : {}),
-      };
+      });
     }
   }
+  return results;
 }

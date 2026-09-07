@@ -1,6 +1,7 @@
 import React, { type JSX } from 'react';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
+import { performSearch, type SearchResult } from '@/lib/searchUtils';
 import { useChat } from '@/hooks/useChat';
 import { env } from '@/env';
 
@@ -11,10 +12,10 @@ const mockSelectCharacter = jest.fn();
 jest.mock('@/env', () => ({ env: { NEXT_PUBLIC_AI_CHAT_MODEL: 'test-model' } }));
 
 jest.mock('@/lib/searchUtils', () => ({
-  performSearch: async function* () {
-    yield { type: 'character', id: '汤姆' };
-    yield { type: 'character', id: '杰瑞' };
-  },
+  performSearch: jest.fn(async () => [
+    { type: 'character', id: '汤姆' },
+    { type: 'character', id: '杰瑞' },
+  ]),
 }));
 
 jest.mock('@/hooks/useChat', () => ({
@@ -150,6 +151,26 @@ describe('SearchDialog', () => {
       error: null,
       stop: jest.fn(),
     });
+  });
+
+  it('ignores an older search that resolves after a newer query', async () => {
+    let resolveOldSearch!: (results: SearchResult[]) => void;
+    jest.mocked(performSearch).mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveOldSearch = resolve;
+        })
+    );
+    render(<SearchDialog open onClose={jest.fn()} isMobile={false} />);
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: '旧查询' } });
+    await waitFor(() => expect(performSearch).toHaveBeenCalledWith('旧查询'));
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: '新查询' } });
+    await screen.findByRole('button', { name: '汤姆 角色' });
+    await act(async () => {
+      resolveOldSearch([]);
+    });
+    expect(screen.getByRole('button', { name: '汤姆 角色' })).toBeInTheDocument();
+    expect(screen.getByText('2 个结果')).toBeInTheDocument();
   });
 
   it.each([false, true])(
