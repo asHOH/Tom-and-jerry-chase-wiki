@@ -50,14 +50,39 @@ const getCellTestId = (viewModel: RelationMatrixViewModel, rowId: string, column
   `relation-cell-${getEntityKey(viewModel.rows, rowId)}-${getEntityKey(viewModel.columns, columnId)}`;
 
 describe('CharacterRelationsMatrix', () => {
+  it.each([
+    ['mouse', 'mouse', ['协作']],
+    ['mouse', 'cat', ['克制', '被克制', '互克']],
+    ['cat', 'mouse', ['克制', '被克制', '互克']],
+    ['mouse', 'knowledgeCard', ['克制', '被克制']],
+    ['cat', 'knowledgeCard', ['克制', '被克制']],
+    ['mouse', 'specialSkill', ['克制', '被克制']],
+    ['cat', 'specialSkill', ['克制', '被克制']],
+    ['mouse', 'map', ['优势', '劣势']],
+    ['cat', 'map', ['优势', '劣势']],
+    ['mouse', 'mode', ['优势', '劣势']],
+    ['cat', 'mode', ['优势', '劣势']],
+  ] as const)(
+    'only shows allowed legends for %s versus %s',
+    (rowFaction, columnCategory, labels) => {
+      render(<RelationMatrixLegend rowFaction={rowFaction} columnCategory={columnCategory} />);
+      for (const label of ['克制', '被克制', '互克', '协作', '优势', '劣势']) {
+        if ((labels as readonly string[]).includes(label)) {
+          expect(screen.getByText(label)).toBeInTheDocument();
+        } else {
+          expect(screen.queryByText(label)).not.toBeInTheDocument();
+        }
+      }
+    }
+  );
+
   it.each(['map', 'mode'] as const)(
     'labels %s advantages from the row perspective',
     (columnCategory) => {
-      render(<RelationMatrixLegend columnCategory={columnCategory} />);
+      render(<RelationMatrixLegend rowFaction='mouse' columnCategory={columnCategory} />);
       expect(screen.getByText('优势')).toBeInTheDocument();
       expect(screen.getByText('劣势')).toBeInTheDocument();
       expect(screen.queryByText('克制')).not.toBeInTheDocument();
-      expect(screen.getByText('关系以行角色为主体；空白表示暂无记录。')).toBeInTheDocument();
     }
   );
 
@@ -155,7 +180,7 @@ describe('CharacterRelationsMatrix', () => {
 
     render(
       <>
-        <RelationMatrixLegend />
+        <RelationMatrixLegend rowFaction='mouse' columnCategory='cat' />
         <CharacterRelationsMatrix viewModel={viewModel} />
       </>
     );
