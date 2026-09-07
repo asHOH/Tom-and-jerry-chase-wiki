@@ -15,6 +15,7 @@ import { FormInput } from '@/components/ui/FormControls';
 import Tag from '@/components/ui/Tag';
 import { ChatBubbleIcon, CloseIcon, SearchIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
+import { env } from '@/env';
 
 type SearchDialogProps = {
   open: boolean;
@@ -84,12 +85,19 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const [isAiExpanded, setIsAiExpanded] = useState(false);
+  const [isAiStopped, setIsAiStopped] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchIdRef = useRef(0); // To keep track of the latest search request
   const resultsListRef = useRef<HTMLUListElement>(null);
   const { handleSelectCard, handleSelectCharacter } = useAppContext();
   const { navigate } = useNavigation();
   const [isDarkMode] = useDarkMode();
+
+  useEffect(() => {
+    setIsAiExpanded(false);
+    setIsAiStopped(false);
+  }, [open, searchQuery]);
 
   useEffect(() => {
     if (open) return;
@@ -155,14 +163,26 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
     }
   };
 
-  // Use chat hook to get AI response for the search query
+  const showAiPreview =
+    open && searchQuery.trim().length > 1 && Boolean(env.NEXT_PUBLIC_AI_CHAT_MODEL);
+
+  // Reserve the preview before the debounced request starts.
   const {
     responseText: aiResponseText,
     isLoading: isChatLoading,
+    error: chatError,
     stop: stopChat,
-  } = useChat(open && searchQuery.length > 1 ? searchQuery : undefined, 2000);
-  const hasAiResult = open && searchQuery.length > 1 && Boolean(aiResponseText?.trim());
-  const hasAiEntry = hasAiResult || (open && searchQuery.length > 1 && isChatLoading);
+  } = useChat(showAiPreview ? searchQuery : undefined, 2000);
+  const hasAiResult = showAiPreview && Boolean(aiResponseText?.trim());
+  const aiStatus = isAiStopped
+    ? '已停止回答'
+    : chatError
+      ? '暂时无法回答，请稍后重试'
+      : isChatLoading
+        ? '正在回答…'
+        : hasAiResult
+          ? '回答完成'
+          : '输入完成后自动回答';
 
   const handleResultClick = useCallback(
     (result: SearchResult) => {
@@ -237,8 +257,17 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
     if (!open) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
+      // Leave native keyboard activation and answer scrolling to their own controls.
+      if (
+        isAiExpanded ||
+        (event.target !== searchInputRef.current &&
+          !(event.target instanceof Node && resultsListRef.current?.contains(event.target)))
+      )
+        return;
+      if (event.key === 'Enter' && event.target !== searchInputRef.current) return;
       // Handle navigation keys
-      const totalResults = hasAiEntry ? searchResults.length + 1 : searchResults.length;
+      const totalResults = searchResults.length;
+      if (totalResults === 0) return;
       switch (event.key) {
         case 'ArrowDown':
           event.preventDefault();
@@ -259,15 +288,9 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
           if (document.activeElement !== searchInputRef.current || highlightedIndex >= 0) {
             event.preventDefault();
             if (highlightedIndex >= 0) {
-              // If chat result is highlighted (index 0 when chat is present), do nothing
-              if (hasAiEntry && highlightedIndex === 0) {
-                // Chat result is highlighted, do nothing for now
-                return;
-              }
-              // Handle regular search results
-              const resultIndex = hasAiEntry ? highlightedIndex - 1 : highlightedIndex;
-              if (resultIndex >= 0 && searchResults[resultIndex]) {
-                handleResultClick(searchResults[resultIndex]);
+              const result = searchResults[highlightedIndex];
+              if (result) {
+                handleResultClick(result);
               }
             }
           }
@@ -280,7 +303,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [open, highlightedIndex, searchResults, handleResultClick, hasAiEntry]);
+  }, [open, highlightedIndex, searchResults, handleResultClick, isAiExpanded]);
 
   // Scroll highlighted item into view
   useEffect(() => {
@@ -341,9 +364,9 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
       ariaLabelledBy='search-dialog-title'
       lockScroll={false}
       panelClassName={cn(
-        'p-4',
+        'flex max-h-[calc(100dvh-2rem)] flex-col p-4',
         isMobile
-          ? 'inset-0 flex h-full w-full flex-col rounded-none'
+          ? 'inset-0 h-full max-h-dvh w-full rounded-none'
           : 'inset-auto top-1/2 left-1/2 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2'
       )}
     >
@@ -356,20 +379,18 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
       >
         <CloseIcon className='h-6 w-6' />
       </Button>
-      <div className='mb-4 pr-8'>
+      <div className='mb-4 shrink-0 pr-8'>
         <h2
           id='search-dialog-title'
           className='mb-1 text-xl font-bold text-gray-900 dark:text-white'
         >
           搜索
         </h2>
-        {(searchResults.length > 0 || hasAiEntry) && (
-          <span className='text-sm text-gray-500 dark:text-gray-400'>
-            {searchResults.length + (hasAiEntry ? 1 : 0)} 个结果
-          </span>
-        )}
+        <div className='h-5 text-sm text-gray-500 dark:text-gray-400'>
+          {searchQuery.length > 0 && `${searchResults.length} 个结果`}
+        </div>
       </div>
-      <div className='relative mb-4'>
+      <div className='relative mb-4 shrink-0'>
         <FormInput
           type='text'
           placeholder='搜索角色、知识卡、道具、状态、地图、文档...'
@@ -386,129 +407,148 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
         </div>
       </div>
 
-      {searchQuery.length > 0 && (searchResults.length > 0 || hasAiEntry) && (
-        <m.ul
-          ref={resultsListRef}
-          className={cn(
-            'overflow-y-auto rounded-md border border-gray-300 dark:border-gray-600',
-            isMobile ? 'flex-1' : 'max-h-60'
-          )}
-          initial='hidden'
-          animate='visible'
-          variants={{
-            visible: {
-              transition: {
-                staggerChildren: 0.05, // Stagger animation for children
-              },
-            },
-          }}
-        >
-          {/* Chat result as first item */}
-          {hasAiEntry && (
-            <m.li
-              key='chat-result'
-              className='border-border border-b'
+      {searchQuery.length > 0 && (
+        <div className={cn('flex min-h-0 flex-col gap-3', isMobile ? 'flex-1' : 'h-100')}>
+          <div
+            hidden={isAiExpanded}
+            className='min-h-0 flex-1 overflow-y-auto rounded-md border border-gray-300 [overflow-anchor:none] dark:border-gray-600'
+          >
+            <m.ul
+              ref={resultsListRef}
+              initial='hidden'
+              animate='visible'
               variants={{
-                hidden: { opacity: 0, y: 10 },
-                visible: { opacity: 1, y: 0 },
+                visible: {
+                  transition: {
+                    staggerChildren: 0.05, // Stagger animation for children
+                  },
+                },
               }}
-              transition={{ duration: 0.2 }}
             >
-              <div
-                className={cn(
-                  'flex items-start bg-blue-50 p-3 dark:bg-blue-900/20',
-                  highlightedIndex === 0 && 'bg-blue-100 dark:bg-blue-900/40'
-                )}
-                onMouseEnter={() => setHighlightedIndex(0)}
-              >
-                <div className='mr-3 shrink-0'>
-                  <div className='flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 dark:bg-blue-600'>
-                    <ChatBubbleIcon className='h-4 w-4 text-white' strokeWidth={2} />
-                  </div>
-                </div>
-                <div className='min-w-0 flex-1'>
-                  <div className='mb-1 flex items-center justify-between gap-3'>
-                    <span className='text-sm font-medium text-blue-700 dark:text-blue-300'>
-                      {isChatLoading ? 'AI 助手正在回答' : 'AI 助手回答'}
-                    </span>
-                    {isChatLoading && (
-                      <Button
-                        variant='unstyled'
-                        size='sm'
-                        onClick={stopChat}
-                        className='pointer-events-auto shrink-0 rounded px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-100 dark:text-red-300 dark:hover:bg-red-900/40'
-                        aria-label='停止 AI 回答'
-                      >
-                        停止
-                      </Button>
+              {/* Regular search results */}
+              {searchResults.map((result, index) => (
+                <m.li
+                  key={getResultKey(result)}
+                  className='border-border border-b last:border-b-0'
+                  variants={{
+                    hidden: { opacity: 0, y: 10 },
+                    visible: { opacity: 1, y: 0 },
+                  }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Button
+                    variant='unstyled'
+                    type='button'
+                    onClick={() => handleResultClick(result)}
+                    className={cn(
+                      'hover:bg-control flex w-full items-center gap-2 p-2 text-left',
+                      highlightedIndex === index && 'bg-control'
                     )}
-                  </div>
-                  <div className='text-sm text-gray-700 dark:text-gray-300'>
-                    <div className='whitespace-pre-wrap'>
-                      {aiResponseText || (isChatLoading ? '正在生成回答...' : '')}
+                    onMouseEnter={() => setHighlightedIndex(index)}
+                  >
+                    {result.imageUrl && (
+                      <Image
+                        src={result.imageUrl}
+                        alt={getResultName(result)}
+                        width={32}
+                        height={32}
+                        className='mr-3 object-cover'
+                      />
+                    )}
+                    <div className='min-w-0 flex-1'>
+                      <span className='block truncate text-gray-900 dark:text-white'>
+                        {getResultName(result)}
+                      </span>
+                      {result.matchContext && (
+                        <span className='mt-0.5 hidden truncate text-sm text-gray-500 md:block dark:text-gray-400'>
+                          {highlightMatch(result.matchContext, searchQuery, result.isPinyinMatch)}
+                        </span>
+                      )}
                     </div>
-                  </div>
-                </div>
-              </div>
-            </m.li>
-          )}
-
-          {/* Regular search results */}
-          {searchResults.map((result, index) => (
-            <m.li
-              key={getResultKey(result)}
-              className='border-border border-b last:border-b-0'
-              variants={{
-                hidden: { opacity: 0, y: 10 },
-                visible: { opacity: 1, y: 0 },
-              }}
-              transition={{ duration: 0.2 }}
+                    <Tag
+                      colorStyles={getTypeLabelColors(getTypeColorKey(result), isDarkMode)}
+                      size='xs'
+                      margin='compact'
+                      className='shrink-0'
+                    >
+                      {getResultLabel(result)}
+                    </Tag>
+                  </Button>
+                </m.li>
+              ))}
+            </m.ul>
+            {searchResults.length === 0 && (
+              <div className='p-2 text-gray-500 dark:text-gray-400'>无结果</div>
+            )}
+          </div>
+          {showAiPreview && (
+            <section
+              aria-labelledby='search-ai-title'
+              className={cn(
+                'flex flex-col rounded-md bg-blue-50 p-3 text-sm dark:bg-blue-900/20',
+                isAiExpanded ? 'min-h-0 flex-1' : 'h-28 shrink-0'
+              )}
             >
-              <Button
-                variant='unstyled'
-                type='button'
-                onClick={() => handleResultClick(result)}
-                className={cn(
-                  'hover:bg-control flex w-full items-center gap-2 p-2 text-left',
-                  highlightedIndex === (hasAiResult ? index + 1 : index) && 'bg-control'
-                )}
-                onMouseEnter={() => setHighlightedIndex(hasAiResult ? index + 1 : index)}
-              >
-                {result.imageUrl && (
-                  <Image
-                    src={result.imageUrl}
-                    alt={getResultName(result)}
-                    width={32}
-                    height={32}
-                    className='mr-3 object-cover'
-                  />
-                )}
-                <div className='min-w-0 flex-1'>
-                  <span className='block truncate text-gray-900 dark:text-white'>
-                    {getResultName(result)}
+              <div className='flex h-8 shrink-0 items-center justify-between gap-2'>
+                <div className='flex min-w-0 items-center gap-2'>
+                  <h3
+                    id='search-ai-title'
+                    className='flex shrink-0 items-center gap-1.5 font-medium text-blue-700 dark:text-blue-300'
+                  >
+                    <ChatBubbleIcon className='h-4 w-4' />
+                    AI 助手
+                  </h3>
+                  <span
+                    role='status'
+                    title={aiStatus}
+                    className='truncate text-xs text-gray-500 dark:text-gray-400'
+                  >
+                    {aiStatus}
                   </span>
-                  {result.matchContext && (
-                    <span className='mt-0.5 hidden truncate text-sm text-gray-500 md:block dark:text-gray-400'>
-                      {highlightMatch(result.matchContext, searchQuery, result.isPinyinMatch)}
-                    </span>
+                </div>
+                <div className='flex shrink-0 items-center gap-1'>
+                  {(isAiExpanded || (hasAiResult && !isChatLoading)) && (
+                    <Button
+                      variant='secondary'
+                      size='sm'
+                      className='p-1.5 text-xs'
+                      aria-expanded={isAiExpanded}
+                      aria-controls='search-ai-answer'
+                      onClick={() => setIsAiExpanded((expanded) => !expanded)}
+                    >
+                      {isAiExpanded ? '返回搜索结果' : '展开'}
+                    </Button>
+                  )}
+                  {isChatLoading && !isAiStopped && (
+                    <Button
+                      variant='secondary'
+                      size='sm'
+                      className='p-1.5 text-xs'
+                      aria-label='停止 AI 回答'
+                      onClick={() => {
+                        stopChat();
+                        setIsAiStopped(true);
+                      }}
+                    >
+                      停止
+                    </Button>
                   )}
                 </div>
-                <Tag
-                  colorStyles={getTypeLabelColors(getTypeColorKey(result), isDarkMode)}
-                  size='xs'
-                  margin='compact'
-                  className='shrink-0'
-                >
-                  {getResultLabel(result)}
-                </Tag>
-              </Button>
-            </m.li>
-          ))}
-        </m.ul>
-      )}
-
-      {searchQuery.length > 0 && searchResults.length === 0 && !hasAiResult && !isChatLoading && (
-        <div className='p-2 pr-8 text-gray-500 dark:text-gray-400'>无结果</div>
+              </div>
+              <div
+                id='search-ai-answer'
+                tabIndex={isAiExpanded ? 0 : undefined}
+                className={cn(
+                  'mt-2 wrap-anywhere whitespace-pre-wrap text-gray-700 dark:text-gray-300',
+                  isAiExpanded ? 'min-h-0 flex-1 overflow-y-auto' : 'line-clamp-2 leading-6'
+                )}
+              >
+                {aiResponseText ||
+                  (isChatLoading && !isAiStopped ? '' : '可结合百科内容回答你的问题。')}
+              </div>
+            </section>
+          )}
+        </div>
       )}
     </BaseDialog>
   );
