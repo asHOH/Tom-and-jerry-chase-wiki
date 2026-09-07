@@ -1,6 +1,6 @@
 ---
 name: game-action-compaction
-description: 'Prepare large or dependency-heavy approved game_data_actions cohorts for baseline compaction through manifest-based planning, local source patching, and verification. Use for broad date ranges, more than 25 rows, oversized inspection output, or requests such as syncing a month of approved changes; use game-action-patching for small clear batches.'
+description: 'Prepare large or dependency-heavy approved game_data_actions cohorts for baseline compaction through manifest-based planning, local source patching, and verification. Use for broad date ranges, more than 25 rows, oversized date inventories, or requests such as syncing a month of approved changes; use game-action-patching for small clear batches.'
 metadata:
   argument-hint: 'Date range, actor filter, manifest policy, status policy'
   user-invocable: true
@@ -19,9 +19,9 @@ the repository inspector, checked replay, source projection, and reverse verifie
 
 ## Routing
 
-Read `../game-action-patching/SKILL.md` completely before acting. Its source-file mapping, relation
-semantics, write-set conflict rules, legacy projection, verification rules, and safety gates also
-apply here.
+Read [Shared Game Action Correctness Rules](../game-action-patching/references/action-correctness.md)
+before acting. It owns inspection commands, source mapping, conflict rules, dispositions, and
+verification gates; the small-batch workflow is not a prerequisite.
 
 Use this skill when any of the following is true:
 
@@ -32,7 +32,8 @@ Use this skill when any of the following is true:
 - the purpose is baseline compaction rather than one routine patch.
 
 If the cohort has at most 25 rows, every row maps clearly, and no dependency crosses the cohort,
-use the small-batch skill instead.
+use [game-action-patching](../game-action-patching/SKILL.md) for a routine patch. Explicit baseline
+compaction and dependency-heavy requests remain in this workflow regardless of row count.
 
 ## Operation Boundary
 
@@ -41,15 +42,13 @@ use the small-batch skill instead.
 - Do not use a browser.
 - Do not mutate remote moderation status, deploy, or perform a production cutover as part of this
   workflow, except for an explicitly authorized duplicate rejection/revocation under the policy
-  below. A later explicit request still requires an authorized mechanism and the cutover gates below.
+  below. A later explicit request still requires an authorized mechanism and the cutover handoff below.
 - Never claim that a locally patched or verified row is `synced`. Only an exact re-query confirming
   `status = 'synced'` permits that wording.
-- Never rewrite complete aggregated published records merely because replay can construct them.
-  Persist only source-aware changes in canonical feature-local or relation files.
 
 ## Cohort Discovery
 
-1. Interpret date ranges as inclusive Beijing calendar days using the small-batch skill's time rules.
+1. Interpret date ranges as inclusive Beijing calendar days using the shared reference's time rules.
 2. Run `npm run inspect:game-data-actions` with the requested date and actor scope.
 3. If the inventory exceeds its output cap, bisect the Beijing date range until every subrange
    succeeds. Do not add unbounded output or fetch complete values for the whole cohort.
@@ -62,14 +61,17 @@ use the small-batch skill instead.
    - dependency groups and same-path chain links reported by the inspector; and
    - the discovery timestamp.
      A cutover-grade manifest must additionally bind the complete approved snapshot's replay epoch and
-     action revision, plus a canonical content digest for every exact row. If supported acquisition
-     cannot provide those values, local preparation may continue after the required checkpoint, but
-     record `manifest fingerprint tooling unavailable` as a cutover blocker.
+     action revision, plus a canonical content digest for every exact cutover row. The supported
+     deployment-bound verifier can bind these later (see Verification). Until then, record that
+     cutover evidence is pending; local preparation may continue after the required checkpoint.
+     Report a specific tooling blocker if the supported path cannot produce the required evidence.
 6. Keep any machine-readable manifest under an ignored `.tmp/` path. Never commit action payloads,
    credentials, user identifiers, or temporary manifests.
 7. After discovery, use exact-ID queries in groups of at most 25 for `--values` and
    `--include-history`. Date scopes are inventory only; do not continue applying a mutable date-only
-   selection after freezing the manifest.
+   selection after freezing the manifest. Retain exact content or a supported content digest in
+   ignored companion evidence before editing so later content comparisons are possible. Bounded
+   structural summaries alone cannot prove equality; defer groups whose content cannot be compared.
 
 If rows change status, visibility, entry content, entity type, creation order, or membership between
 discovery and an exact-ID re-query, stop and regenerate the manifest. Do not silently mix snapshots.
@@ -121,26 +123,6 @@ ordered action content match; a repeated path with different content is not a du
    verification as though the removed duplicate had not existed. Recompute group membership,
    chain links, row/action counts, fingerprints, and later-overlap evidence first.
 
-## Classification
-
-Assign every group exactly one disposition before editing:
-
-- **Ready**: every write-set location is explainable under the small-batch `S/O/N` rules; every
-  physical target is unambiguous; required old/new or parent-array chains are valid; and no safety
-  gate raises a content concern.
-- **Represented**: the final effect is already present exactly or through an accepted semantic
-  relation equivalent. Plan no source rewrite, but retain every covered row for verification.
-- **Review required**: the source matches neither old nor new but bounded overlapping history may
-  explain it; relation orientation or material-field intent requires judgment; repeated submissions
-  conflict; or a paired field may contradict its sibling.
-- **Blocked**: malformed or unsupported data, unexplained broken chains, shifted or unstable array
-  identities, missing/duplicate source identities, ambiguous factions, likely placeholder children,
-  or any state that cannot be reconstructed without guessing.
-
-Do not turn `Review required` into `Ready` by replaying over unexplained source. Resolve it using the
-complete overlapping history allowed by the small-batch rules or leave it deferred. Pending,
-rejected, and revoked rows never explain source state.
-
 ## Required Checkpoint
 
 Before editing, present a concise plan and wait for approval. Include:
@@ -159,96 +141,53 @@ Do not begin a large local patch merely because discovery succeeded.
 After approval:
 
 1. Re-query each group's exact IDs immediately before editing and confirm they still match the
-   manifest's status and visibility.
-2. Process groups in deterministic row order, while applying parent actions before children inside
-   an overlapping group and preserving later/child results.
-3. Use checked/pure published replay only as an expected-output oracle. It is not a source writer and
+   manifest's status, visibility, entry content, entity type, creation order, and exact membership.
+2. Use checked/pure published replay only as an expected-output oracle. It is not a source writer and
    does not replace the write-set conflict rules.
-4. Edit canonical feature-local and relation sources according to the small-batch mapping. Preserve
-   values outside each write set, comments, file organization, and equivalent relation orientation.
-5. Do not rewrite a Represented group. Include it in verification when the verifier supports its
-   complete chain.
-6. Stop the current group on an unexplained mismatch. Do not contaminate later independent groups;
+3. Apply the shared ordering, source-mapping, and write-set rules; preserve comments and file organization.
+4. Stop the current group on an unexplained mismatch. Do not contaminate later independent groups;
    record the group as deferred and continue only when doing so cannot break a dependency.
-7. Pause after each coherent group or bounded set of independent groups and report progress. Do not
+5. Pause after each coherent group or bounded set of independent groups and report progress. Do not
    wait until the entire cohort is edited to expose failures.
 
 ## Verification
 
-For every applied or represented group:
+For every applied or represented group, run the shared verification recipe and domain safety
+gates, including complete-group reverse verification. Re-query exact IDs for current remote
+status and visibility; this consistency check does not authorize a mutation.
 
-1. Run targeted read/grep and Prettier checks on affected files.
-2. Run `npm run verify:game-data-actions -- --ids=<complete-group-row-ids>`. Pass all rows required
-   to reconstruct parent/child and old/new chains in the same invocation.
-3. Apply the small-batch domain gates, including `npm run report:character-relations` for relations
-   and `npm run lint` plus `npm run type-check` for static character data.
-4. Run relevant tests for shared projection, replay, verification, or source-mapping logic changed by
-   the patch. Ordinary data-only patches do not require unrelated full tests.
-5. Re-run exact-ID inspection to confirm current remote status and visibility; this is a consistency
-   check, not authorization to mutate them.
+Before cutover, also prove full published-domain equality between the original baseline plus the
+frozen approved snapshot and the patched baseline plus that snapshot with only cutover rows
+excluded. Verification-only dependencies remain in replay.
 
-Before any future remote cutover, additionally prove full published-domain equality between:
+The supported `npm run verify:game-data-compaction` preflight requires an ignored manifest with
+`repository.head` identifying the original baseline, a committed `--patched-ref`, and a
+`--production-origin` serving the matching patched deployment and approved snapshot. It checks
+concrete-set idempotence, artifact metadata, action patches, published parity, and snapshot stability.
+`--write-manifest` binds the resulting replay epoch, action revision, and row digests only after
+successful checks. It is not a local-only pre-deployment verifier.
 
-- the original checked-in baseline plus the frozen approved snapshot; and
-- the patched baseline plus the same snapshot with the manifest rows excluded.
+Use the operator runbook's `cutover:game-data-compaction --mode=check` path for target-confirmed
+deployment checks. Missing deployment evidence is a pending prerequisite, not proof that tooling
+is unavailable. Report specific unsupported cases or failed checks as cutover blockers; do not
+weaken equality or invent evidence.
 
-If the repository lacks a supported command that proves this equality for the complete manifest,
-report `published parity tooling unavailable` as a cutover blocker. Do not improvise a production
-status transition or weaken the gate.
+## Status-Cutover Handoff
 
-## Cutover Gates
+Local verification is not complete compaction. Before any separately authorized deployment/status
+cutover, read the [human operator runbook](../../../docs/operations/game-data-action-compaction.md)
+and follow it as the source of truth for target confirmation, deployment order, snapshot/digest
+binding, concurrency protection, retained evidence, recovery, and stop conditions.
 
-Local verification is not a complete compaction. Any separately authorized deployment/status
-cutover must also satisfy all of these:
-
-- the exact manifest is unchanged and bound to a stable approved replay epoch/revision;
-- the manifest contains a canonical content digest for every exact row;
-- every manifest row is locally verified or deliberately excluded with a recorded reason;
-- before/excluded-after published-domain parity is proven;
-- no deployment can serve a baseline containing a non-idempotent action while also replaying that
-  action;
-- concurrent approved-set mutations are prevented or detected; and
-- there is a reviewed recovery path for partial deployment or status-transition failure.
-
-If no established repository workflow satisfies these gates, stop after local verification and
-recommend a separate reviewed cutover plan.
-
-## Production Cutover
-
-Before any production status transition, read the
-[human operator runbook](../../../docs/operations/game-data-action-compaction.md) and follow it as
-the source of truth for commands, deployment order, recovery, and stop conditions.
-
-Agent-specific invariants:
-
-- Keep `cutoverRowIds`, `verificationDependencyRowIds`, and retrospective observations separate.
-  Only the exact cutover set may reach the RPC; never rewrite the original manifest `rows`.
-- The normal path requires concrete `set` actions, a deployment-bound check, one separately
-  authorized atomic transition, and a second deployment. The sync command must durably capture the
-  exact pre-cutover rows first, bind the ignored retained file's path and digest to the manifest,
-  and stop before the RPC if that evidence cannot be verified. After the second deployment, use the
-  bound evidence for post-check. Always print and verify the expected Supabase host/project ref.
-- If rows are already `synced/private`, never restore or sync them again. Use the read-only retained-row
-  `post-check` path; it may write only `postCutoverVerification` after strict parity and production
-  artifact proof pass.
-- Never infer missing actor, time, fingerprint, or atomicity evidence, and never weaken an exact
-  equality or stop condition.
-
-The reconciled 2026-07-28 through 2026-07-29 cohort (24 original rows plus 3 G09 rows) is already
-synced and must never enter sync mode again. Its character-relation parity mismatch remains a
-verification blocker.
+Keep `cutoverRowIds`, `verificationDependencyRowIds`, and retrospective observations separate.
+Only the exact cutover set may reach the RPC; never rewrite the original manifest `rows` or infer
+missing evidence. If the supported workflow cannot satisfy the runbook's gates, stop after local
+verification and report the blocker.
 
 ## Final Report
 
-Report:
-
-- manifest scope, row count, action count, and discovery timestamp;
-- each group's final disposition and affected files;
-- locally verified row IDs;
-- represented rows verified without edits;
-- deferred or blocked rows with stable reasons and dependencies;
-- validation commands and results;
-- remote statuses from the final exact re-query; and
-- remaining cutover blockers, especially missing full-manifest parity tooling.
+Reference the manifest for scope and inventory. Report changed files, verification commands/results
+and exact verified IDs (including represented rows), deferred IDs with reasons/dependencies, and
+cutover readiness. Include remote statuses from the final exact re-query.
 
 Keep `Patched`, `Verified`, `Deferred`, and remotely `Synced` as distinct states.
