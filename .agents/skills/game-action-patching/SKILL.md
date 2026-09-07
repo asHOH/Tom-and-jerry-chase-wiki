@@ -35,7 +35,9 @@ does not split the logical group or require switching workflows by itself.
    when source matches neither old nor new. Keep dependent rows and atomic multi-action rows together.
 2. **Classify**: Assign each group **Ready**, **Represented**, **Review required**, or **Blocked**
    using the shared definitions. Resolve review findings through overlapping history or defer
-   them. For an unclear small cohort, present a plan and wait for approval; never guess.
+   affected groups and their dependents. Present a concise plan, then continue independent Ready
+   and Represented groups within the user's authorized scope without another approval. Ask only
+   when resolving ambiguous content requires a user decision; do not block independent work.
 3. **Recheck**: Retain the exact selected row IDs, `created_at`, `entity_type`, status, visibility,
    and entry content from inspection. Re-query immediately before editing and compare all of
    them, not just status. If a row is missing or changed, stop and rediscover/reclassify the batch.
@@ -46,7 +48,7 @@ does not split the logical group or require switching workflows by itself.
 4. **Apply and verify**: Edit Ready groups using the shared write-set rules. Leave Represented
    groups unchanged but include them in verification. Run the shared verification recipe and
    domain safety gates; defer the whole submitted verification batch on unsupported or mismatched
-   rows. Pause between coherent groups to report progress.
+   rows. Report progress between coherent groups without waiting for acknowledgment.
 5. **Finalize**: Re-query exact IDs for status and visibility. Report changed files, verification
    results and exact verified IDs (including represented rows), deferred IDs with reasons/dependencies,
    and cutover readiness. Keep Patched, Verified, Deferred, and remotely Synced distinct.

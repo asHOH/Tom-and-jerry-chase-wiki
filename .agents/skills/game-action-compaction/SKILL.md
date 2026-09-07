@@ -63,7 +63,7 @@ compaction and dependency-heavy requests remain in this workflow regardless of r
      A cutover-grade manifest must additionally bind the complete approved snapshot's replay epoch and
      action revision, plus a canonical content digest for every exact cutover row. The supported
      deployment-bound verifier can bind these later (see Verification). Until then, record that
-     cutover evidence is pending; local preparation may continue after the required checkpoint.
+     cutover evidence is pending; local preparation may continue after presenting the plan below.
      Report a specific tooling blocker if the supported path cannot produce the required evidence.
 6. Keep any machine-readable manifest under an ignored `.tmp/` path. Never commit action payloads,
    credentials, user identifiers, or temporary manifests.
@@ -123,9 +123,9 @@ ordered action content match; a repeated path with different content is not a du
    verification as though the removed duplicate had not existed. Recompute group membership,
    chain links, row/action counts, fingerprints, and later-overlap evidence first.
 
-## Required Checkpoint
+## Local Preparation Plan
 
-Before editing, present a concise plan and wait for approval. Include:
+Before editing, present a concise plan. Include:
 
 - manifest row/action counts and the exact scope;
 - counts for Ready, Represented, Review required, and Blocked groups;
@@ -134,11 +134,14 @@ Before editing, present a concise plan and wait for approval. Include:
 - which groups will be deferred; and
 - the explicit stopping point: local verification only, unless the user later authorizes more.
 
-Do not begin a large local patch merely because discovery succeeded.
+When the user has requested patching or compaction, proceed with Ready and Represented groups
+without another approval. A discovery-only or plan-only request does not authorize edits. Defer
+unresolved groups and their dependents; ask when ambiguous content requires a user decision while
+continuing independent clear groups.
 
 ## Apply
 
-After approval:
+Within the authorized local scope:
 
 1. Re-query each group's exact IDs immediately before editing and confirm they still match the
    manifest's status, visibility, entry content, entity type, creation order, and exact membership.
@@ -147,8 +150,8 @@ After approval:
 3. Apply the shared ordering, source-mapping, and write-set rules; preserve comments and file organization.
 4. Stop the current group on an unexplained mismatch. Do not contaminate later independent groups;
    record the group as deferred and continue only when doing so cannot break a dependency.
-5. Pause after each coherent group or bounded set of independent groups and report progress. Do not
-   wait until the entire cohort is edited to expose failures.
+5. Report progress after each coherent group or bounded set of independent groups without waiting
+   for acknowledgment. Expose failures as they occur.
 
 ## Verification
 
