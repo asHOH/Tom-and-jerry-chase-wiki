@@ -122,6 +122,7 @@ Formatting and lint-enforced details are intentionally omitted here. Treat Prett
 - Page modules and UI primitives generally use default exports. Utilities, hooks, and types use named exports. Follow the established pattern in the same directory.
 - Use `cn` from `@/lib/design` for conditional classes, reusable class composition, or merging an incoming `className`.
 - Prefer Tailwind for static styling. Use global CSS in `src/styles/` for shared tokens and patterns, and inline `style` only for runtime-computed values or values Tailwind cannot express cleanly.
+- Prefer numeric sizing utilities (e.g. `min-h-105`, `min-w-30`) over arbitrary pixels (`min-h-[420px]`, `min-w-[120px]`), unless fixed CSS pixels are intentional; numeric sizes follow the rem-based spacing scale.
 - Keep dark-mode behavior via `dark:` variants and the existing theme tokens. Test both themes when changing colors.
 - Use responsive Tailwind prefixes and existing media/gesture hooks for mobile behavior.
 - Preserve keyboard navigation, visible focus states, semantic and ARIA behavior, reduced-motion handling, and touch usability when changing interactive UI.

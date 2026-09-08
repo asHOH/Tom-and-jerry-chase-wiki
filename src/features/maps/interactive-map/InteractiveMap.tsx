@@ -390,7 +390,7 @@ export default function InteractiveMap({
 
   if (useFallback && fallbackImageUrl) {
     return (
-      <div className='relative flex h-[62vh] min-h-[420px] items-center justify-center overflow-hidden rounded-lg bg-slate-950'>
+      <div className='relative flex h-[62vh] min-h-105 items-center justify-center overflow-hidden rounded-lg bg-slate-950'>
         <Image
           src={fallbackImageUrl}
           alt={`${mapName}静态地图预览`}
@@ -415,7 +415,7 @@ export default function InteractiveMap({
 
   const map = (
     <div
-      className={`relative h-full overflow-hidden bg-slate-950 ${alwaysFullscreen ? '' : 'min-h-[420px] rounded-lg'}`}
+      className={`relative h-full overflow-hidden bg-slate-950 ${alwaysFullscreen ? '' : 'min-h-105 rounded-lg'}`}
     >
       <MapContainer
         crs={L.CRS.Simple}
@@ -428,7 +428,7 @@ export default function InteractiveMap({
         wheelPxPerZoomLevel={120}
         zoomControl
         doubleClickZoom
-        className={`h-full w-full bg-slate-950 ${alwaysFullscreen ? '' : 'min-h-[420px]'}`}
+        className={`h-full w-full bg-slate-950 ${alwaysFullscreen ? '' : 'min-h-105'}`}
       >
         <MapGridBackground
           key={`${config.width}x${config.height}`}
@@ -839,7 +839,7 @@ export default function InteractiveMap({
       {map}
     </div>
   ) : (
-    <div data-main-map className='h-[62vh] min-h-[420px] w-full'>
+    <div data-main-map className='h-[62vh] min-h-105 w-full'>
       {map}
     </div>
   );

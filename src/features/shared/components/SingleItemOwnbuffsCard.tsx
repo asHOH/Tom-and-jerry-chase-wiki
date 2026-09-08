@@ -133,7 +133,7 @@ export default class SingleItemOwnbuffsCard extends React.Component<
         <div className='mb-1 flex flex-wrap items-center gap-3'>
           {/* 排序开关 */}
           <div
-            className='relative inline-flex h-6 min-w-[120px] cursor-pointer overflow-hidden rounded-full border border-gray-300 select-none dark:border-gray-600'
+            className='relative inline-flex h-6 min-w-30 cursor-pointer overflow-hidden rounded-full border border-gray-300 select-none dark:border-gray-600'
             onClick={this.toggleSort}
           >
             <div
@@ -159,7 +159,7 @@ export default class SingleItemOwnbuffsCard extends React.Component<
 
           {/* 比对模式开关 */}
           <div
-            className='relative inline-flex h-6 min-w-[120px] cursor-pointer overflow-hidden rounded-full border border-gray-300 select-none dark:border-gray-600'
+            className='relative inline-flex h-6 min-w-30 cursor-pointer overflow-hidden rounded-full border border-gray-300 select-none dark:border-gray-600'
             onClick={this.toggleCompare}
           >
             <div
