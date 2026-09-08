@@ -724,23 +724,25 @@ function useInlineEditableContent(opts: {
   };
 }
 
-export function EditableCharactersField<TagName extends IntrinsicTagName>({
+function InlineEditableField<TagName extends IntrinsicTagName>({
   tag,
-  path,
   initialValue,
   valueType: valueTypeProp,
   deleteOnEmpty = false,
   onSave,
-  factionId,
+  adapter,
   isSingleLine = false,
   enableEdit = true,
   className,
   ...rest
-}: EditableFieldProps<TagName> & { tag: TagName }) {
+}: Omit<EditableFieldProps<TagName>, 'path'> & {
+  tag: TagName;
+  adapter: ReturnType<typeof useEditableCharactersAdapter>;
+}) {
   'use no memo';
   const valueType: 'string' | 'number' =
     valueTypeProp ?? (typeof initialValue === 'number' ? 'number' : 'string');
-  const { actionPath, readStoredValue, writeValue } = useEditableCharactersAdapter(path, factionId);
+  const { actionPath, readStoredValue, writeValue } = adapter;
   const pendingSummary = usePendingFieldAwareness(editableFieldDescriptor(actionPath));
 
   const {
@@ -795,159 +797,49 @@ export function EditableCharactersField<TagName extends IntrinsicTagName>({
     tag,
     { ...rest, className } as React.ComponentPropsWithoutRef<TagName>,
     <TextWithHoverTooltips text={String(initialValue)} />
+  );
+}
+
+export function EditableCharactersField<TagName extends IntrinsicTagName>({
+  path,
+  factionId,
+  ...props
+}: EditableFieldProps<TagName> & { tag: TagName }) {
+  'use no memo';
+  const adapter = useEditableCharactersAdapter(path, factionId);
+  return (
+    <InlineEditableField
+      {...(props as Omit<EditableFieldProps<TagName>, 'path'>)}
+      tag={props.tag}
+      adapter={adapter}
+    />
   );
 }
 
 export function EditableCardsField<TagName extends IntrinsicTagName>({
-  tag,
   path,
-  initialValue,
-  valueType: valueTypeProp,
-  deleteOnEmpty = false,
-  onSave,
-  isSingleLine = false,
-  enableEdit = true,
-  className,
-  ...rest
+  ...props
 }: EditableFieldProps<TagName> & { tag: TagName }) {
   'use no memo';
-  const valueType: 'string' | 'number' =
-    valueTypeProp ?? (typeof initialValue === 'number' ? 'number' : 'string');
-  const { actionPath, readStoredValue, writeValue } = useEditableCardsAdapter(path as string);
-  const pendingSummary = usePendingFieldAwareness(editableFieldDescriptor(actionPath));
-
-  const {
-    isEditMode,
-    content,
-    setNodeRef,
-    handleBlur,
-    handleInput,
-    handleClick,
-    handleCompositionStart,
-    handleCompositionEnd,
-    handleKeyDown,
-    autocompleteOverlay,
-  } = useInlineEditableContent({
-    initialValue,
-    valueType,
-    deleteOnEmpty,
-    isSingleLine,
-    onSave,
-    enableEdit,
-    readStoredValue,
-    writeValue,
-  });
-
-  if (isEditMode) {
-    return (
-      <>
-        {React.createElement(
-          tag,
-          {
-            ...(rest as React.ComponentPropsWithoutRef<TagName>),
-            contentEditable: 'plaintext-only',
-            className: cn(className, getPendingActionWarningClassName(pendingSummary)),
-            suppressContentEditableWarning: true,
-            onBlur: handleBlur,
-            onInput: handleInput,
-            onClick: handleClick,
-            onCompositionStart: handleCompositionStart,
-            onCompositionEnd: handleCompositionEnd,
-            onKeyDown: handleKeyDown,
-            ref: setNodeRef as unknown as React.Ref<HTMLElementTagNameMap[TagName]>,
-          },
-          String(content) || EMPTY_EDITABLE_PLACEHOLDER
-        )}
-        <PendingActionWarningIndicator summary={pendingSummary} />
-        {autocompleteOverlay}
-      </>
-    );
-  }
-
-  return React.createElement(
-    tag,
-    { ...rest, className } as React.ComponentPropsWithoutRef<TagName>,
-    <TextWithHoverTooltips text={String(initialValue)} />
-  );
+  const adapter = useEditableCardsAdapter(path as string);
+  return <InlineEditableField {...props} adapter={adapter} />;
 }
 
 export function EditableRecordField<TagName extends IntrinsicTagName>({
-  tag,
   path,
-  initialValue,
-  valueType: valueTypeProp,
-  deleteOnEmpty = false,
-  onSave,
-  isSingleLine = false,
-  enableEdit = true,
   scope,
-  className,
-  ...rest
+  ...props
 }: EditableFieldProps<TagName> & {
   tag: TagName;
   scope: Exclude<EditableScope, 'characters' | 'cards'>;
 }) {
   'use no memo';
-
-  const valueType: 'string' | 'number' =
-    valueTypeProp ?? (typeof initialValue === 'number' ? 'number' : 'string');
-  const { actionPath, readStoredValue, writeValue } = useEditableRecordAdapter(
-    scope,
-    path as string
-  );
-  const pendingSummary = usePendingFieldAwareness(editableFieldDescriptor(actionPath));
-
-  const {
-    isEditMode,
-    content,
-    setNodeRef,
-    handleBlur,
-    handleInput,
-    handleClick,
-    handleCompositionStart,
-    handleCompositionEnd,
-    handleKeyDown,
-    autocompleteOverlay,
-  } = useInlineEditableContent({
-    initialValue,
-    valueType,
-    deleteOnEmpty,
-    isSingleLine,
-    onSave,
-    enableEdit,
-    readStoredValue,
-    writeValue,
-  });
-
-  if (isEditMode) {
-    return (
-      <>
-        {React.createElement(
-          tag,
-          {
-            ...(rest as React.ComponentPropsWithoutRef<TagName>),
-            contentEditable: 'plaintext-only',
-            className: cn(className, getPendingActionWarningClassName(pendingSummary)),
-            suppressContentEditableWarning: true,
-            onBlur: handleBlur,
-            onInput: handleInput,
-            onClick: handleClick,
-            onCompositionStart: handleCompositionStart,
-            onCompositionEnd: handleCompositionEnd,
-            onKeyDown: handleKeyDown,
-            ref: setNodeRef as unknown as React.Ref<HTMLElementTagNameMap[TagName]>,
-          },
-          String(content) || EMPTY_EDITABLE_PLACEHOLDER
-        )}
-        <PendingActionWarningIndicator summary={pendingSummary} />
-        {autocompleteOverlay}
-      </>
-    );
-  }
-
-  return React.createElement(
-    tag,
-    { ...rest, className } as React.ComponentPropsWithoutRef<TagName>,
-    <TextWithHoverTooltips text={String(initialValue)} />
+  const adapter = useEditableRecordAdapter(scope, path as string);
+  return (
+    <InlineEditableField
+      {...(props as Omit<EditableFieldProps<TagName>, 'path'>)}
+      tag={props.tag}
+      adapter={adapter}
+    />
   );
 }
