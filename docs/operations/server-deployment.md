@@ -18,6 +18,19 @@
 
 无法从远程仓库拉取 `develop` 时，脚本同样会以非零状态退出。
 
+### 数据库变化后的同版本重建
+
+部署脚本的跳过构建判断不包含数据库内容。游戏数据归档后，即使代码提交不变，也需要重新构建以更新数据快照。只重载 PM2 或看到提交号一致，不代表这一步完成。
+
+在 VPS 仓库根目录运行：
+
+```bash
+rm -f .next/.build_inputs
+./scripts/ops/deploy_server.sh
+```
+
+这只移除构建复用记录，保留现有构建和脚本的备份、恢复流程；不需要删除整个 `.next` 或强制安装依赖。确认最终日志为 `build=built`，然后按[游戏数据归档流程](./game-data-action-compaction.md)运行最终检查。
+
 ### 依赖安装
 
 依赖成功安装后，脚本会在 `node_modules` 中保存依赖输入指纹。`package.json`、`package-lock.json`、`.npmrc`、Node/npm 版本、平台架构及安装策略都未变化时，后续部署会跳过 `npm ci`。
