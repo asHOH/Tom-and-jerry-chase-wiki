@@ -2,6 +2,16 @@ import type { CharacterRelationTrait } from '@/data/types';
 
 export const characterRelationSpecialSkillTraits: CharacterRelationTrait[] = [
   {
+    description:
+      '侦探汤姆的{武器技能}能无视冰冻保鲜叠层，从而禁用技能然后卡冰冻保鲜的结束时间击倒老鼠。',
+    relation: {
+      kind: 'countersSpecialSkills',
+      subject: { name: '侦探汤姆', type: 'character' },
+      target: { name: '冰冻保鲜', type: 'specialSkill', factionId: 'mouse' },
+      isMinor: false,
+    },
+  },
+  {
     description: '魔术漂浮能躲开布奇的冲撞。',
     relation: {
       kind: 'counteredBySpecialSkills',

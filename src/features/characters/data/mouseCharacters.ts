@@ -1133,6 +1133,12 @@ const mouseCharacterDefinitions = {
         weaponType: 'weapon2',
         description: '用于打缺乏伤害的猫，偏自保，建议配合卡组3使用。',
       },
+      {
+        id: '剑舞（弃被动）',
+        pattern: '121221000',
+        weaponType: 'weapon1',
+        description: '主点苹果和剑，弥补剑舞CD长的缺点，以便随时有霸体加速增强自保',
+      },
     ],
     knowledgeCardGroups: [
       {
@@ -1304,21 +1310,21 @@ const mouseCharacterDefinitions = {
       },
       {
         tagName: '砸墙',
-        level: 4,
+        level: 3,
         description:
           '火箭筒及用道具触发地雷可以提供可观的砸墙伤害；三级被动免疫鞭炮和泡泡爆炸，可辅助砸墙。',
         additionalDescription: '',
       },
       {
         tagName: '奶酪',
-        level: 4,
+        level: 3,
         description:
           '推速适中（对比其它奶酪位，泰菲推速较慢），且被动推奶酪有霸体和减伤，适合做主推或副推',
         additionalDescription: '',
       },
       {
         tagName: '干扰',
-        level: 2,
+        level: 3,
         description:
           '远程火箭炮可以减少队友溜猫的压力；地雷可以进行威慑，逼迫猫离开地雷追踪爆炸范围或交技能进行防御；圆滚滚大大增加泰菲的容错率\n（缺点是两个武器CD都较长，圆滚滚真空期内容易被击倒）',
         additionalDescription: '',

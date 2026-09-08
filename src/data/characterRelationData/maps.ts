@@ -22,25 +22,6 @@ export const characterRelationMapTraits: CharacterRelationTrait[] = [
   },
   {
     description:
-      '圆滚滚赋予的跳跃加成有利于泰菲在森林行动；各个房间之间存在的双向管道多，有利于泰菲在各个房间之间穿梭',
-    relation: {
-      kind: 'advantageMaps',
-      subject: { name: '泰菲', type: 'character' },
-      target: { name: '森林牧场', type: 'map' },
-      isMinor: false,
-    },
-  },
-  {
-    description: '地图整体十分开阔，有利于泰菲远程架狙；地图两端有双向管道连通，有利于泰菲快速移动',
-    relation: {
-      kind: 'advantageMaps',
-      subject: { name: '泰菲', type: 'character' },
-      target: { name: '游乐场', type: 'map' },
-      isMinor: false,
-    },
-  },
-  {
-    description:
       '地图体积大，两个古堡之间无双向管道连通，不利于机动性差的泰菲移动；地图整体封闭，障碍物多，不利于泰菲架狙',
     relation: {
       kind: 'disadvantageMaps',
