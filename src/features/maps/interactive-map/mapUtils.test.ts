@@ -5,6 +5,7 @@ import type { InteractiveMapConfig, InteractiveMapPoint, InteractiveMapRoom } fr
 import {
   clearGeometryBarrelTarget,
   cloneInteractiveMap,
+  connectInteractiveMapPoint,
   coordinateToLatLng,
   DEFAULT_VISIBLE_CATEGORIES,
   deleteInteractiveMapPoint,
@@ -25,6 +26,7 @@ import {
   MAP_CATEGORY_LABELS,
   minimapPixelsToCoordinate,
   updateGeometryBarrelRoute,
+  updateInteractiveMapConnectionLabel,
   updateInteractiveMapPoint,
 } from './mapUtils';
 
@@ -225,6 +227,85 @@ describe('interactive map utilities', () => {
         connection: { targetPointId: 'missing', direction: 'both', label: 'A' },
       })
     ).toBeNull();
+  });
+
+  it('connects, relabels, reconnects, and disconnects both endpoints without mutating history', () => {
+    const original = {
+      ...config,
+      points: ['a', 'b', 'c', 'unrelated'].map((id) => ({ ...point, id })),
+    };
+    const before = cloneInteractiveMap(original);
+    const connected = connectInteractiveMapPoint(original, 0, 'b')!;
+    expect(connected.points[0]?.connection).toEqual({
+      targetPointId: 'b',
+      direction: 'both',
+      label: 'A',
+    });
+    expect(connected.points[1]?.connection).toEqual({
+      targetPointId: 'a',
+      direction: 'both',
+      label: 'A',
+    });
+
+    const labeled = updateInteractiveMapConnectionLabel(connected, 0, 'X')!;
+    expect(labeled.points.slice(0, 2).map((p) => p.connection?.label)).toEqual(['X', 'X']);
+    expect(connected.points.slice(0, 2).map((p) => p.connection?.label)).toEqual(['A', 'A']);
+
+    const reconnected = connectInteractiveMapPoint(labeled, 0, 'c')!;
+    expect(reconnected.points[0]?.connection).toEqual({
+      targetPointId: 'c',
+      direction: 'both',
+      label: 'X',
+    });
+    expect(reconnected.points[1]).not.toHaveProperty('connection');
+    expect(reconnected.points[2]?.connection).toEqual({
+      targetPointId: 'a',
+      direction: 'both',
+      label: 'X',
+    });
+    expect(labeled.points[1]?.connection?.targetPointId).toBe('a');
+
+    const disconnected = connectInteractiveMapPoint(reconnected, 0, '')!;
+    expect(disconnected.points[0]).not.toHaveProperty('connection');
+    expect(disconnected.points[2]).not.toHaveProperty('connection');
+    expect(disconnected.points[3]).toBe(original.points[3]);
+    expect(original).toEqual(before);
+  });
+
+  it('uses the target label when the source has none and preserves unrelated connections', () => {
+    const map: InteractiveMapConfig = {
+      ...config,
+      points: [
+        { ...point, id: 'a', connection: { targetPointId: 'b', direction: 'outbound' } },
+        {
+          ...point,
+          id: 'b',
+          connection: { targetPointId: 'c', direction: 'outbound', label: 'B' },
+        },
+        { ...point, id: 'c', connection: { targetPointId: 'b', direction: 'both', label: 'C' } },
+      ],
+    };
+    const labeled = updateInteractiveMapConnectionLabel(map, 0, '')!;
+    expect(labeled.points[0]?.connection).toEqual({
+      targetPointId: 'b',
+      direction: 'outbound',
+      label: '',
+    });
+    expect(labeled.points[1]).toBe(map.points[1]);
+    expect(connectInteractiveMapPoint(map, 0, '')?.points[1]).toBe(map.points[1]);
+    const connected = connectInteractiveMapPoint(map, 0, 'c')!;
+    expect(connected.points[0]?.connection?.label).toBe('C');
+    expect(connected.points[2]?.connection?.label).toBe('C');
+    expect(connected.points[1]).toBe(map.points[1]);
+  });
+
+  it('ignores connection mutations with missing source, target, id, or connection', () => {
+    const map = { ...config, points: [{ ...point, id: 'a' }, point] };
+    expect(connectInteractiveMapPoint(map, -1, 'a')).toBeNull();
+    expect(connectInteractiveMapPoint(map, 1, 'a')).toBeNull();
+    expect(connectInteractiveMapPoint(map, 0, 'missing')).toBeNull();
+    expect(updateInteractiveMapConnectionLabel(map, -1, 'X')).toBeNull();
+    expect(updateInteractiveMapConnectionLabel(map, 0, 'X')).toBeNull();
   });
 
   it('should resolve only a rocket as a geometry barrel target', () => {

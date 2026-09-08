@@ -361,3 +361,99 @@ export const deleteInteractiveMapPoint = (
 
   return { ...config, points: remainingPoints };
 };
+
+export const connectInteractiveMapPoint = (
+  current: InteractiveMapConfig,
+  pointIndex: number,
+  targetPointId: string
+): InteractiveMapConfig | null => {
+  const point = current.points[pointIndex];
+  const pointId = point?.id;
+  if (!point || !pointId) return null;
+
+  const previousTargetId = point.connection?.targetPointId;
+  const previousTarget = current.points.find((candidate) => candidate.id === previousTargetId);
+
+  if (!targetPointId) {
+    const points = current.points.map((candidate) => {
+      if (candidate.id === pointId) {
+        const nextCandidate = { ...candidate };
+        delete nextCandidate.connection;
+        return nextCandidate;
+      }
+      if (candidate.id === previousTarget?.id && candidate.connection?.targetPointId === pointId) {
+        const nextCandidate = { ...candidate };
+        delete nextCandidate.connection;
+        return nextCandidate;
+      }
+      return candidate;
+    });
+    return { ...current, points };
+  }
+
+  const target = current.points.find((candidate) => candidate.id === targetPointId);
+  if (!target) return null;
+  const label =
+    point.connection?.label ??
+    target.connection?.label ??
+    String.fromCharCode(65 + (pointIndex % 26));
+  const points = current.points.map((candidate) => {
+    if (candidate.id === pointId) {
+      const connection: NonNullable<InteractiveMapPoint['connection']> = {
+        targetPointId,
+        direction: 'both',
+        label,
+      };
+      return { ...candidate, connection };
+    }
+    if (candidate.id === targetPointId) {
+      const connection: NonNullable<InteractiveMapPoint['connection']> = {
+        targetPointId: pointId,
+        direction: 'both',
+        label,
+      };
+      return { ...candidate, connection };
+    }
+    if (candidate.id === previousTarget?.id && candidate.connection?.targetPointId === pointId) {
+      const nextCandidate = { ...candidate };
+      delete nextCandidate.connection;
+      return nextCandidate;
+    }
+    return candidate;
+  });
+  return { ...current, points };
+};
+
+export const updateInteractiveMapConnectionLabel = (
+  current: InteractiveMapConfig,
+  pointIndex: number,
+  label: string
+): InteractiveMapConfig | null => {
+  const point = current.points[pointIndex];
+  if (!point?.connection || !point.id) return null;
+  const targetPointId = point.connection.targetPointId;
+  const points = current.points.map((candidate) => {
+    if (candidate.id === point.id && candidate.connection) {
+      const connection: NonNullable<InteractiveMapPoint['connection']> = {
+        ...candidate.connection,
+        label,
+      };
+      return { ...candidate, connection };
+    }
+    const targetConnection = candidate.connection;
+    if (
+      candidate.id === targetPointId &&
+      targetConnection &&
+      targetConnection.targetPointId === point.id
+    ) {
+      const connection: NonNullable<InteractiveMapPoint['connection']> = {
+        targetPointId: targetConnection.targetPointId,
+        direction: targetConnection.direction,
+        label,
+      };
+      return { ...candidate, connection };
+    }
+    return candidate;
+  });
+  return { ...current, points };
+};

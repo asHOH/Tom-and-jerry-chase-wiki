@@ -26,6 +26,7 @@ import {
 import {
   clearGeometryBarrelTarget,
   cloneInteractiveMap,
+  connectInteractiveMapPoint,
   coordinateToLatLng,
   deleteInteractiveMapPoint,
   getConnectedMapPoint,
@@ -38,6 +39,7 @@ import {
   isRandomCandidateByDefault,
   latLngToCoordinate,
   updateGeometryBarrelRoute,
+  updateInteractiveMapConnectionLabel,
   updateInteractiveMapPoint,
 } from './mapUtils';
 import { firecrackerIcon, vertexIcon } from './markerIcons';
@@ -376,98 +378,14 @@ export default function InteractiveMap({
 
   const connectSelectedPoint = (targetPointId: string) => {
     if (selectedPointIndex === null || !selectedPoint?.id) return;
-    const current = configRef.current;
-    const point = current.points[selectedPointIndex];
-    const pointId = point?.id;
-    if (!point || !pointId) return;
-
-    const previousTargetId = point.connection?.targetPointId;
-    const previousTarget = current.points.find((candidate) => candidate.id === previousTargetId);
-
-    if (!targetPointId) {
-      const points = current.points.map((candidate) => {
-        if (candidate.id === pointId) {
-          const nextCandidate = { ...candidate };
-          delete nextCandidate.connection;
-          return nextCandidate;
-        }
-        if (
-          candidate.id === previousTarget?.id &&
-          candidate.connection?.targetPointId === pointId
-        ) {
-          const nextCandidate = { ...candidate };
-          delete nextCandidate.connection;
-          return nextCandidate;
-        }
-        return candidate;
-      });
-      updateConfig({ ...current, points });
-      return;
-    }
-
-    const target = current.points.find((candidate) => candidate.id === targetPointId);
-    if (!target) return;
-    const label =
-      point.connection?.label ??
-      target.connection?.label ??
-      String.fromCharCode(65 + (selectedPointIndex % 26));
-    const points = current.points.map((candidate) => {
-      if (candidate.id === pointId) {
-        const connection: NonNullable<InteractiveMapPoint['connection']> = {
-          targetPointId,
-          direction: 'both',
-          label,
-        };
-        return { ...candidate, connection };
-      }
-      if (candidate.id === targetPointId) {
-        const connection: NonNullable<InteractiveMapPoint['connection']> = {
-          targetPointId: pointId,
-          direction: 'both',
-          label,
-        };
-        return { ...candidate, connection };
-      }
-      if (candidate.id === previousTarget?.id && candidate.connection?.targetPointId === pointId) {
-        const nextCandidate = { ...candidate };
-        delete nextCandidate.connection;
-        return nextCandidate;
-      }
-      return candidate;
-    });
-    updateConfig({ ...current, points });
+    const next = connectInteractiveMapPoint(configRef.current, selectedPointIndex, targetPointId);
+    if (next) updateConfig(next);
   };
 
   const updateSelectedConnectionLabel = (label: string) => {
     if (selectedPointIndex === null || !selectedPoint?.connection) return;
-    const current = configRef.current;
-    const point = current.points[selectedPointIndex];
-    if (!point?.connection || !point.id) return;
-    const targetPointId = point.connection.targetPointId;
-    const points = current.points.map((candidate) => {
-      if (candidate.id === point.id && candidate.connection) {
-        const connection: NonNullable<InteractiveMapPoint['connection']> = {
-          ...candidate.connection,
-          label,
-        };
-        return { ...candidate, connection };
-      }
-      const targetConnection = candidate.connection;
-      if (
-        candidate.id === targetPointId &&
-        targetConnection &&
-        targetConnection.targetPointId === point.id
-      ) {
-        const connection: NonNullable<InteractiveMapPoint['connection']> = {
-          targetPointId: targetConnection.targetPointId,
-          direction: targetConnection.direction,
-          label,
-        };
-        return { ...candidate, connection };
-      }
-      return candidate;
-    });
-    updateConfig({ ...current, points });
+    const next = updateInteractiveMapConnectionLabel(configRef.current, selectedPointIndex, label);
+    if (next) updateConfig(next);
   };
 
   if (useFallback && fallbackImageUrl) {
