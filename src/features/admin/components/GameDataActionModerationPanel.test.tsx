@@ -1,4 +1,5 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import useSWR, { SWRConfig } from 'swr';
 
 import { characters } from '@/data/static';
 import { summarizeGameActionValue } from '@/features/admin/utils/gameActionPreview';
@@ -8,12 +9,24 @@ import GameDataActionModerationPanel, {
   type PendingGameDataAction,
 } from './GameDataActionModerationPanel';
 
+const mockSuccess = jest.fn();
+const mockError = jest.fn();
+
 jest.mock('@/context/ToastContext', () => ({
   useToast: () => ({
-    success: jest.fn(),
-    error: jest.fn(),
+    success: mockSuccess,
+    error: mockError,
   }),
 }));
+
+const filterProps = {
+  actionStatus: 'pending' as const,
+  actionEntityType: null,
+  actionId: null,
+  onActionStatusChange: jest.fn(),
+  onActionEntityTypeChange: jest.fn(),
+  onActionIdChange: jest.fn(),
+};
 
 const sampleAction: PendingGameDataAction = {
   action_id: 'action-1',
@@ -39,9 +52,17 @@ const sampleEntry = {
 
 const detailEntries: Record<string, unknown> = {};
 
+function PendingAwareness() {
+  useSWR('/api/game-data-actions/pending-targets?entityType=characters', (url: string) =>
+    fetch(url).then((response) => response.json())
+  );
+  return null;
+}
+
 describe('GameDataActionModerationPanel', () => {
   beforeEach(() => {
     jest.restoreAllMocks();
+    jest.clearAllMocks();
     for (const key of Object.keys(detailEntries)) delete detailEntries[key];
     detailEntries[sampleAction.action_id] = sampleEntry;
     global.fetch = jest.fn(async (input: RequestInfo | URL) => {
@@ -52,6 +73,213 @@ describe('GameDataActionModerationPanel', () => {
         json: async () => ({ action_id: actionId, entry: detailEntries[actionId] ?? sampleEntry }),
       } as Response;
     });
+  });
+
+  it('leaves applied filters with the parent and clears exact-ID drafts when filters change', () => {
+    const actionId = 'de305d54-75b4-431b-adb2-eb6b9e546014';
+    const { rerender } = render(
+      <GameDataActionModerationPanel
+        {...filterProps}
+        pendingActions={[sampleAction]}
+        mutatePendingActions={jest.fn()}
+      />
+    );
+    fireEvent.change(screen.getByPlaceholderText('完整 action UUID'), {
+      target: { value: actionId },
+    });
+    fireEvent.click(screen.getByRole('button', { name: '查找ID' }));
+    expect(filterProps.onActionIdChange).toHaveBeenLastCalledWith(actionId);
+    expect(screen.queryByRole('button', { name: '清除ID' })).not.toBeInTheDocument();
+
+    rerender(
+      <GameDataActionModerationPanel
+        {...filterProps}
+        actionId={actionId}
+        actionStatus='approved'
+        actionEntityType='characters'
+        pendingActions={[sampleAction]}
+        mutatePendingActions={jest.fn()}
+      />
+    );
+    expect(screen.getByTitle('过滤状态')).toHaveValue('approved');
+    expect(screen.getByTitle('过滤实体类型')).toHaveValue('characters');
+    expect(screen.getByRole('button', { name: '清除ID' })).toBeEnabled();
+
+    fireEvent.change(screen.getByTitle('过滤状态'), { target: { value: 'rejected' } });
+    expect(filterProps.onActionStatusChange).toHaveBeenLastCalledWith('rejected');
+    expect(filterProps.onActionIdChange).toHaveBeenLastCalledWith(null);
+    expect(screen.getByTitle('过滤状态')).toHaveValue('approved');
+    expect(screen.getByPlaceholderText('完整 action UUID')).toHaveValue('');
+
+    fireEvent.change(screen.getByTitle('过滤实体类型'), { target: { value: 'items' } });
+    expect(filterProps.onActionEntityTypeChange).toHaveBeenLastCalledWith('items');
+    expect(screen.getByTitle('过滤实体类型')).toHaveValue('characters');
+  });
+
+  it('loads details lazily, validates their identity, and retries on reopening', async () => {
+    global.fetch = jest
+      .fn()
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ action_id: 'wrong-action', entry: sampleEntry }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ action_id: sampleAction.action_id, entry: sampleEntry }),
+      });
+    render(
+      <GameDataActionModerationPanel
+        {...filterProps}
+        pendingActions={[sampleAction]}
+        mutatePendingActions={jest.fn()}
+      />
+    );
+    expect(global.fetch).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button', { name: '展开详情' }));
+    expect(await screen.findByText('详情加载失败')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '复制JSON' })).toBeDisabled();
+    fireEvent.click(screen.getByRole('button', { name: '收起详情' }));
+    fireEvent.click(screen.getByRole('button', { name: '展开详情' }));
+    await waitFor(() => expect(screen.getByRole('button', { name: '复制JSON' })).toBeEnabled());
+    expect(global.fetch).toHaveBeenCalledTimes(2);
+    expect(screen.queryByText('详情加载失败')).not.toBeInTheDocument();
+  });
+
+  it('deduplicates an in-flight detail request across collapse and reopen', async () => {
+    let resolveDetail!: (response: Response) => void;
+    global.fetch = jest.fn(
+      () =>
+        new Promise<Response>((resolve) => {
+          resolveDetail = resolve;
+        })
+    );
+    render(
+      <GameDataActionModerationPanel
+        {...filterProps}
+        pendingActions={[sampleAction]}
+        mutatePendingActions={jest.fn()}
+      />
+    );
+    fireEvent.click(screen.getByRole('button', { name: '展开详情' }));
+    expect(screen.getByText('详情加载中…')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: '收起详情' }));
+    fireEvent.click(screen.getByRole('button', { name: '展开详情' }));
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+    await act(async () =>
+      resolveDetail({
+        ok: true,
+        json: async () => ({ action_id: sampleAction.action_id, entry: sampleEntry }),
+      } as Response)
+    );
+    await waitFor(() => expect(screen.getByRole('button', { name: '复制JSON' })).toBeEnabled());
+  });
+
+  it('reports partial batch failure and refreshes the list before pending awareness', async () => {
+    const events: string[] = [];
+    global.fetch = jest.fn(async (input: RequestInfo | URL) => {
+      const batch = String(input).endsWith('/moderation/batch');
+      events.push(batch ? 'batch' : 'awareness');
+      return {
+        ok: true,
+        json: async () =>
+          batch
+            ? {
+                succeeded: ['action-1'],
+                failures: [{ actionId: 'action-2', message: 'Already reviewed' }],
+              }
+            : {},
+      } as Response;
+    });
+    jest.spyOn(window, 'confirm').mockReturnValue(true);
+    const refreshList = jest.fn(async () => {
+      events.push('list');
+    });
+    render(
+      <SWRConfig value={{ provider: () => new Map() }}>
+        <PendingAwareness />
+        <GameDataActionModerationPanel
+          {...filterProps}
+          pendingActions={[sampleAction, { ...sampleAction, action_id: 'action-2' }]}
+          mutatePendingActions={refreshList}
+        />
+      </SWRConfig>
+    );
+    await waitFor(() => expect(events).toEqual(['awareness']));
+    fireEvent.click(screen.getByRole('button', { name: '全选待审核' }));
+    fireEvent.click(screen.getByRole('button', { name: '批量批准' }));
+    await waitFor(() =>
+      expect(mockError).toHaveBeenCalledWith('已批准 1 条，失败 1 条：action-2: Already reviewed')
+    );
+    expect(events).toEqual(['awareness', 'batch', 'list', 'awareness']);
+    expect(global.fetch).toHaveBeenCalledWith(
+      '/api/game-data-actions/moderation/batch',
+      expect.objectContaining({
+        body: JSON.stringify({ actionIds: ['action-1', 'action-2'], action: 'approve' }),
+      })
+    );
+    expect(mockSuccess).not.toHaveBeenCalled();
+    expect(screen.getByRole('button', { name: '批量批准' })).toBeEnabled();
+  });
+
+  it('refreshes after approval even if sending thanks fails', async () => {
+    global.fetch = jest
+      .fn()
+      .mockResolvedValueOnce({ ok: true })
+      .mockResolvedValueOnce({ ok: false, json: async () => ({ error: 'Thanks unavailable' }) });
+    const refreshList = jest.fn();
+    render(
+      <GameDataActionModerationPanel
+        {...filterProps}
+        pendingActions={[sampleAction]}
+        mutatePendingActions={refreshList}
+      />
+    );
+    fireEvent.click(screen.getByRole('button', { name: '批准并感谢' }));
+    fireEvent.click(screen.getByRole('button', { name: '批准并发送感谢' }));
+    await waitFor(() =>
+      expect(mockError).toHaveBeenCalledWith('改动已批准，但感谢发送失败：Thanks unavailable')
+    );
+    await waitFor(() => expect(refreshList).toHaveBeenCalledTimes(1));
+    expect(global.fetch).toHaveBeenNthCalledWith(
+      1,
+      '/api/game-data-actions/moderation/action-1?action=approve',
+      expect.objectContaining({ method: 'POST' })
+    );
+    expect(global.fetch).toHaveBeenNthCalledWith(
+      2,
+      '/api/contributions/game-data/action-1/thank',
+      expect.objectContaining({ method: 'POST' })
+    );
+    expect(mockSuccess).not.toHaveBeenCalled();
+    expect(screen.getByRole('button', { name: '批准' })).toBeEnabled();
+  });
+
+  it('reports a failed rejection without refreshing and allows a later retry', async () => {
+    global.fetch = jest
+      .fn()
+      .mockResolvedValueOnce({ ok: false, json: async () => ({ error: 'Rejected request' }) })
+      .mockResolvedValueOnce({ ok: true });
+    jest.spyOn(window, 'confirm').mockReturnValue(true);
+    jest.spyOn(window, 'prompt').mockReturnValue('  reason  ');
+    const refreshList = jest.fn();
+    render(
+      <GameDataActionModerationPanel
+        {...filterProps}
+        pendingActions={[sampleAction]}
+        mutatePendingActions={refreshList}
+      />
+    );
+    fireEvent.click(screen.getByRole('button', { name: '拒绝' }));
+    await waitFor(() => expect(mockError).toHaveBeenCalledWith('Rejected request'));
+    expect(refreshList).not.toHaveBeenCalled();
+    expect(screen.getByRole('button', { name: '拒绝' })).toBeEnabled();
+    fireEvent.click(screen.getByRole('button', { name: '拒绝' }));
+    await waitFor(() => expect(refreshList).toHaveBeenCalledTimes(1));
+    expect(global.fetch).toHaveBeenLastCalledWith(
+      '/api/game-data-actions/moderation/action-1?action=reject',
+      expect.objectContaining({ body: JSON.stringify({ reason: 'reason' }) })
+    );
+    expect(mockSuccess).toHaveBeenCalledWith('已拒绝');
   });
 
   it('hides the year for current-year submit and review dates', () => {
@@ -80,6 +308,7 @@ describe('GameDataActionModerationPanel', () => {
 
     render(
       <GameDataActionModerationPanel
+        {...filterProps}
         pendingActions={[currentYearPendingAction, currentYearApprovedAction, previousYearAction]}
         mutatePendingActions={jest.fn()}
       />
@@ -111,6 +340,7 @@ describe('GameDataActionModerationPanel', () => {
 
     render(
       <GameDataActionModerationPanel
+        {...filterProps}
         pendingActions={[selfReviewedAction]}
         mutatePendingActions={jest.fn()}
       />
@@ -132,6 +362,7 @@ describe('GameDataActionModerationPanel', () => {
 
     render(
       <GameDataActionModerationPanel
+        {...filterProps}
         pendingActions={[publicPendingAction]}
         mutatePendingActions={jest.fn()}
         canRevokeActions
@@ -157,6 +388,7 @@ describe('GameDataActionModerationPanel', () => {
 
     render(
       <GameDataActionModerationPanel
+        {...filterProps}
         pendingActions={[approvedAction]}
         mutatePendingActions={jest.fn()}
       />
@@ -176,6 +408,7 @@ describe('GameDataActionModerationPanel', () => {
 
     render(
       <GameDataActionModerationPanel
+        {...filterProps}
         canApproveActions={false}
         canRejectActions={false}
         canRevokeActions
@@ -202,6 +435,7 @@ describe('GameDataActionModerationPanel', () => {
 
     render(
       <GameDataActionModerationPanel
+        {...filterProps}
         pendingActions={[sampleAction, otherAction]}
         mutatePendingActions={jest.fn()}
         onActionIdChange={onActionIdChange}
@@ -225,6 +459,7 @@ describe('GameDataActionModerationPanel', () => {
 
     render(
       <GameDataActionModerationPanel
+        {...filterProps}
         pendingActions={[sampleAction]}
         currentPage={2}
         totalPages={4}
@@ -249,7 +484,13 @@ describe('GameDataActionModerationPanel', () => {
   });
 
   it('shows zero-page metadata and disables navigation for empty results', () => {
-    render(<GameDataActionModerationPanel pendingActions={[]} mutatePendingActions={jest.fn()} />);
+    render(
+      <GameDataActionModerationPanel
+        {...filterProps}
+        pendingActions={[]}
+        mutatePendingActions={jest.fn()}
+      />
+    );
 
     expect(screen.getByText('第 0 / 0 页')).toBeInTheDocument();
     expect(screen.getByText('本页没有符合条件的改动')).toBeInTheDocument();
@@ -261,6 +502,7 @@ describe('GameDataActionModerationPanel', () => {
   it('disables navigation for a single exact-ID result', () => {
     render(
       <GameDataActionModerationPanel
+        {...filterProps}
         pendingActions={[sampleAction]}
         currentPage={1}
         totalPages={1}
@@ -277,6 +519,7 @@ describe('GameDataActionModerationPanel', () => {
   it('shows a loading state and disables page navigation while revalidating', () => {
     render(
       <GameDataActionModerationPanel
+        {...filterProps}
         pendingActions={[]}
         currentPage={2}
         totalPages={4}
@@ -295,6 +538,7 @@ describe('GameDataActionModerationPanel', () => {
   it('keeps copy ID with copy JSON in expanded details and uses an icon-only expander', async () => {
     render(
       <GameDataActionModerationPanel
+        {...filterProps}
         pendingActions={[sampleAction]}
         mutatePendingActions={jest.fn()}
       />
@@ -349,6 +593,7 @@ describe('GameDataActionModerationPanel', () => {
 
     render(
       <GameDataActionModerationPanel
+        {...filterProps}
         pendingActions={[actionWithNestedArrayChange]}
         mutatePendingActions={jest.fn()}
       />
@@ -394,6 +639,7 @@ describe('GameDataActionModerationPanel', () => {
 
     render(
       <GameDataActionModerationPanel
+        {...filterProps}
         pendingActions={[actionWithMissingRelationOldValue]}
         mutatePendingActions={jest.fn()}
       />
@@ -434,6 +680,7 @@ describe('GameDataActionModerationPanel', () => {
 
     render(
       <GameDataActionModerationPanel
+        {...filterProps}
         pendingActions={[sampleAction]}
         currentPage={2}
         totalPages={4}
@@ -491,6 +738,7 @@ describe('GameDataActionModerationPanel', () => {
 
     const { rerender } = render(
       <GameDataActionModerationPanel
+        {...filterProps}
         pendingActions={[approvedAction, rejectedAction]}
         mutatePendingActions={jest.fn()}
       />
@@ -504,6 +752,7 @@ describe('GameDataActionModerationPanel', () => {
 
     rerender(
       <GameDataActionModerationPanel
+        {...filterProps}
         pendingActions={[approvedAction, rejectedAction]}
         mutatePendingActions={jest.fn()}
         canMarkActionsSynced
@@ -548,6 +797,7 @@ describe('GameDataActionModerationPanel', () => {
 
     render(
       <GameDataActionModerationPanel
+        {...filterProps}
         pendingActions={[approvedAction, syncedAction, rejectedAction]}
         mutatePendingActions={mutatePendingActions}
         canRevokeActions
@@ -588,6 +838,7 @@ describe('GameDataActionModerationPanel', () => {
 
     render(
       <GameDataActionModerationPanel
+        {...filterProps}
         pendingActions={[approvedAction]}
         mutatePendingActions={mutatePendingActions}
         canMarkActionsSynced
