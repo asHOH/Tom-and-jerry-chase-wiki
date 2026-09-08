@@ -25,9 +25,11 @@ Supabase 的 `game_data_actions` 保存网页中审核通过的动态修改。�
 - 已独立确认生产 Supabase project ref，并可传入 `--expected-supabase-host=<project-ref>.supabase.co`。
 - 本地与目标数据库的 migration history 一致，没有待推送迁移。
 - 已确认本次部署的 production origin 和补丁提交。
-- 正常切换中的所有 cutover action 都是带具体 `newValue` 的 `set`。
+- 正常切换中的 cutover 行通过重复播放检查：支持带具体 `newValue` 的 `set`，以及下述同一行内的临时属性删除。
 
-最后一项是正常流程的硬限制。第一次部署到第二次部署之间，数据库中的公开修改可能被再次播放；具体的 `set` 重放后结果不变。验证依赖行不参与切换，因此不受此限制。
+核心要求是：**修改写入代码后，移除对应数据库行不能改变公开数据。** 完整 published parity 检查证明这一点。第一次部署到第二次部署之间，公开修改还可能再次播放，因此也要检查重复播放。
+
+临时属性删除仅支持这种情况：同一数据库行中，紧邻删除之前的操作已用具体 `set` 写入该属性，删除后再次用具体 `set` 写回同一路径；中间不能修改该属性的父级或子级。数组下标、数组长度和根实体删除不适用。这样可保留原始修改历史，无需拆行或改写数据库中的 action。其他 `add`/`delete` 仍不支持正常切换。验证依赖行不参与切换，因此不受此限制。
 
 ## 正常流程：两次部署
 
@@ -107,7 +109,7 @@ Supabase 的 `game_data_actions` 保存网页中审核通过的动态修改。�
 - Supabase host/project ref 与显式预期或 retrospective target 不一致。
 - 本地和远端 migration history 不一致，或 dry run 出现非预期迁移。
 - manifest、行角色、retained 精确集合、行 digest、epoch 或 revision 缺失、重叠、混合或发生变化。
-- 正常切换包含非具体 `set`，或 action patch、dependency replay、published parity 任一失败。
+- 正常切换未通过重复播放检查，或 action patch、dependency replay、published parity 任一失败。
 - 已部署提交不包含冻结的补丁提交，或 `/api/version` 任一字段不匹配。
 - RPC 响应不确定，且精确查询不能证明整个 batch 都是 `synced/private`。
 - 任一目标行已经 synced；此时只能使用只读恢复流程，不能重试切换。

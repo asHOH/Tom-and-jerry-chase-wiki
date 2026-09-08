@@ -166,7 +166,7 @@ excluded. Verification-only dependencies remain in replay.
 The supported `npm run verify:game-data-compaction` preflight requires an ignored manifest with
 `repository.head` identifying the original baseline, a committed `--patched-ref`, and a
 `--production-origin` serving the matching patched deployment and approved snapshot. It checks
-concrete-set idempotence, artifact metadata, action patches, published parity, and snapshot stability.
+supported row-sequence idempotence, artifact metadata, action patches, published parity, and snapshot stability.
 `--write-manifest` binds the resulting replay epoch, action revision, and row digests only after
 successful checks. It is not a local-only pre-deployment verifier.
 

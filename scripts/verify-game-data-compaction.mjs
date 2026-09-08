@@ -548,7 +548,7 @@ async function runPostCutoverVerification({
   readApprovedReplaySnapshot,
   createApprovedActionSnapshotFromRows,
   findCompactionValueDifferences,
-  verifySetActionIdempotence,
+  verifyCompactionActionIdempotence,
   resolvePostCutoverManifestSelection,
   verifyPostCutoverRowEvidence,
   verifyStablePostCutoverProduction,
@@ -601,7 +601,7 @@ async function runPostCutoverVerification({
   }
 
   const retainedSnapshot = createApprovedActionSnapshotFromRows(retained.rows);
-  const operationSummary = verifySetActionIdempotence(retainedSnapshot.rows);
+  const operationSummary = verifyCompactionActionIdempotence(retainedSnapshot.rows);
   const actionOperations = {
     actionCount: operationSummary.actionCount,
     operationCounts: operationSummary.operationCounts,
@@ -756,7 +756,7 @@ async function main() {
     resolveCompactionManifestSelection,
     verifyCompactionArtifactMetadata,
     verifyCompactionManifestRows,
-    verifySetActionIdempotence,
+    verifyCompactionActionIdempotence,
   } = jiti('../src/lib/gameData/compactionVerification.ts');
   const {
     resolvePostCutoverManifestSelection,
@@ -778,7 +778,7 @@ async function main() {
       readApprovedReplaySnapshot,
       createApprovedActionSnapshotFromRows,
       findCompactionValueDifferences,
-      verifySetActionIdempotence,
+      verifyCompactionActionIdempotence,
       resolvePostCutoverManifestSelection,
       verifyPostCutoverRowEvidence,
       verifyStablePostCutoverProduction,
@@ -827,7 +827,7 @@ async function main() {
   if (!consistency.unchanged) {
     throw new CompactionScriptError('manifest_changed', { failures: consistency.failures });
   }
-  const idempotence = verifySetActionIdempotence(selectedRows);
+  const idempotence = verifyCompactionActionIdempotence(selectedRows);
   if (!idempotence.proven) {
     throw new CompactionScriptError('non_idempotent_manifest_actions', {
       failures: idempotence.failures,

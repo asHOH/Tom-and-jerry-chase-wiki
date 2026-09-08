@@ -1,13 +1,14 @@
 import type { Action } from '@/lib/edit/diffUtils';
 
+import { applyCheckedActionRow } from './checkedActionReplay';
 import {
   createCanonicalCompactionDigest,
   encodeCanonicalCompactionValue,
   findCompactionValueDifferences,
   resolveCompactionManifestSelection,
+  verifyCompactionActionIdempotence,
   verifyCompactionArtifactMetadata,
   verifyCompactionManifestRows,
-  verifySetActionIdempotence,
   type CompactionSnapshotRow,
 } from './compactionVerification';
 
@@ -145,8 +146,8 @@ describe('compaction verification', () => {
     });
   });
 
-  it('proves only concrete set actions idempotent', () => {
-    expect(verifySetActionIdempotence([snapshotRow('1'), snapshotRow('2')])).toMatchObject({
+  it('accepts concrete sets and rejects missing values and array additions', () => {
+    expect(verifyCompactionActionIdempotence([snapshotRow('1'), snapshotRow('2')])).toMatchObject({
       proven: true,
       actionCount: 2,
       operationCounts: { set: 2 },
@@ -154,7 +155,7 @@ describe('compaction verification', () => {
     });
 
     expect(
-      verifySetActionIdempotence([
+      verifyCompactionActionIdempotence([
         snapshotRow('1', [
           set('item.description', undefined),
           { op: 'add', path: 'item.aliases.0', oldValue: undefined, newValue: 'alias' },
@@ -167,6 +168,73 @@ describe('compaction verification', () => {
         expect.objectContaining({ code: 'non_set_operation' }),
       ],
     });
+  });
+
+  it('accepts a temporary property delete and preserves the result on repeated row replay', () => {
+    const actions: Action[] = [
+      set('actor.skills.0.cancelableAftercast', ['跳跃键']),
+      {
+        op: 'delete',
+        path: 'actor.skills.0.cancelableAftercast',
+        oldValue: ['跳跃键'],
+        newValue: undefined,
+      },
+      set('actor.skills.0.aftercast', 0),
+      set('actor.skills.0.cancelableAftercast', '无后摇'),
+    ];
+    expect(verifyCompactionActionIdempotence([snapshotRow('1', actions)])).toMatchObject({
+      proven: true,
+      operationCounts: { set: 3, delete: 1 },
+      failures: [],
+    });
+    const expected = { actor: { skills: [{ aftercast: 0, cancelableAftercast: '无后摇' }] } };
+    const target = structuredClone(expected);
+    for (let run = 0; run < 2; run += 1) {
+      expect(applyCheckedActionRow({ rowId: '1', actions, targets: [target] }).success).toBe(true);
+      expect(target).toEqual(expected);
+    }
+  });
+
+  it.each([
+    ['array index', 'item.aliases.0', [set('item.aliases.0', 'restored')]],
+    ['array length', 'item.aliases.length', [set('item.aliases.length', 1)]],
+    ['root', 'item', [set('item', {})]],
+    ['no restoration', 'item.value', []],
+    ['missing restoration value', 'item.value', [set('item.value', undefined)]],
+    ['ancestor write', 'item.value', [set('item', {}), set('item.value', 'restored')]],
+    ['trimmed ancestor write', 'item.value', [set(' item ', {}), set('item.value', 'restored')]],
+    ['descendant write', 'item.value', [set('item.value.child', 1), set('item.value', 'restored')]],
+  ] as const)('rejects a delete with %s', (_label, path, following) => {
+    const actions: Action[] = [
+      set(path, 'initial'),
+      { op: 'delete', path, oldValue: 'initial', newValue: undefined },
+      ...following,
+    ];
+    expect(verifyCompactionActionIdempotence([snapshotRow('1', actions)])).toMatchObject({
+      proven: false,
+      failures: expect.arrayContaining([{ rowId: '1', actionIndex: 1, code: 'non_set_operation' }]),
+    });
+  });
+
+  it('requires the preceding set and restoration in the same atomic row', () => {
+    const deletion: Action = {
+      op: 'delete',
+      path: 'item.value',
+      oldValue: 'initial',
+      newValue: undefined,
+    };
+    expect(
+      verifyCompactionActionIdempotence([
+        snapshotRow('1', [set('item.value', 'initial')]),
+        snapshotRow('2', [deletion, set('item.value', 'restored')]),
+      ]).proven
+    ).toBe(false);
+    expect(
+      verifyCompactionActionIdempotence([
+        snapshotRow('1', [set('item.value', 'initial'), deletion]),
+        snapshotRow('2', [set('item.value', 'restored')]),
+      ]).proven
+    ).toBe(false);
   });
 
   it('reports bounded structural paths for parity diagnostics', () => {

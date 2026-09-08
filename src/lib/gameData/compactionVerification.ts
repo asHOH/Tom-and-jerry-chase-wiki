@@ -2,6 +2,8 @@ import { createHash } from 'node:crypto';
 
 import type { Action } from '@/lib/edit/diffUtils';
 
+import { parseActionPath } from './actionPath';
+
 type CanonicalValue =
   | ['undefined' | 'null']
   | ['boolean', boolean]
@@ -336,7 +338,41 @@ export function verifyCompactionManifestRows(
   return { unchanged: failures.length === 0, failures };
 }
 
-export function verifySetActionIdempotence(
+function isTemporaryPropertyDelete(actions: readonly Readonly<Action>[], index: number): boolean {
+  const action = actions[index]!;
+  const parsed = parseActionPath(action.path);
+  if (
+    action.op !== 'delete' ||
+    !parsed.success ||
+    parsed.value.segments.length < 2 ||
+    /^(?:\d+|length)$/.test(parsed.value.segments.at(-1)!)
+  ) {
+    return false;
+  }
+
+  const path = parsed.value.path;
+  // The preceding set guarantees existence on every replay. Only unrelated writes may
+  // intervene before restoration; array-index deletes cannot use this proof.
+  const previous = actions[index - 1];
+  if (previous?.op !== 'set' || previous.path.trim() !== path || previous.newValue === undefined) {
+    return false;
+  }
+  const nextOverlap = actions
+    .slice(index + 1)
+    .find(
+      (next) =>
+        next.path.trim() === path ||
+        next.path.trim().startsWith(`${path}.`) ||
+        path.startsWith(`${next.path.trim()}.`)
+    );
+  return (
+    nextOverlap?.op === 'set' &&
+    nextOverlap.path.trim() === path &&
+    nextOverlap.newValue !== undefined
+  );
+}
+
+export function verifyCompactionActionIdempotence(
   rows: readonly Pick<CompactionSnapshotRow, 'rowId' | 'actions'>[]
 ): {
   proven: boolean;
@@ -352,9 +388,9 @@ export function verifySetActionIdempotence(
     row.actions.forEach((action, actionIndex) => {
       actionCount += 1;
       operationCounts[action.op] = (operationCounts[action.op] ?? 0) + 1;
-      if (action.op !== 'set') {
+      if (action.op !== 'set' && !isTemporaryPropertyDelete(row.actions, actionIndex)) {
         failures.push({ rowId: row.rowId, actionIndex, code: 'non_set_operation' });
-      } else if (action.newValue === undefined) {
+      } else if (action.op === 'set' && action.newValue === undefined) {
         failures.push({ rowId: row.rowId, actionIndex, code: 'missing_set_value' });
       }
     });
