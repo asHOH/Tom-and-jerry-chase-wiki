@@ -210,6 +210,86 @@ describe('squashActions', () => {
     expect(squashActions(actions)).toEqual(actions);
   });
 
+  it.each([
+    ['array', ['first', 'second'], ['second', 'first']],
+    ['object', { enabled: true }, { enabled: false }],
+  ])(
+    'should cancel restored %s properties and retain real replacements',
+    (_label, original, changed) => {
+      const path = 'Tom.settings';
+      const restored = [
+        deleteAction(path, original),
+        setAction(path, undefined, structuredClone(original)),
+      ];
+      const historyCopy = structuredClone(restored);
+      expect(squashActions(restored, { currentRoot: { Tom: { settings: original } } })).toEqual([]);
+      expect(restored).toEqual(historyCopy);
+
+      expect(
+        squashActions([addAction(path, original), deleteAction(path, original)], {
+          currentRoot: { Tom: {} },
+        })
+      ).toEqual([]);
+      expect(
+        squashActions([deleteAction(path, original), addAction(path, changed)], {
+          currentRoot: { Tom: { settings: changed } },
+        })
+      ).toEqual([setAction(path, original, changed)]);
+      expect(
+        squashActions([deleteAction(path, original)], {
+          currentRoot: { Tom: {} },
+        })
+      ).toEqual([deleteAction(path, original)]);
+      expect(squashActions(restored)).toEqual(restored);
+    }
+  );
+
+  it('should remove the Tuffy type-change/delete/restore cycle while retaining another change', () => {
+    const path = 'Tuffy.skills.0.cancelableAftercast';
+    const aftercast = setAction('Tuffy.skills.0.aftercast', undefined, 0);
+    expect(
+      squashActions(
+        [
+          setAction(path, '无后摇', ['跳跃键']),
+          deleteAction(path, ['跳跃键']),
+          aftercast,
+          setAction(path, undefined, '无后摇'),
+        ],
+        {
+          currentRoot: { Tuffy: { skills: [{ aftercast: 0, cancelableAftercast: '无后摇' }] } },
+        }
+      )
+    ).toEqual([aftercast]);
+  });
+
+  it('should preserve nested changes around a restored container property', () => {
+    const original = { enabled: true };
+    const actions = [
+      deleteAction('Tom.settings', original),
+      setAction('Tom.settings', undefined, original),
+      setAction('Tom.settings.enabled', true, false),
+    ];
+    expect(
+      squashActions(actions, {
+        currentRoot: { Tom: { settings: { enabled: false } } },
+      })
+    ).toEqual(actions);
+  });
+
+  it('should preserve ancestor replacements around a container-property deletion', () => {
+    const original = { settings: ['old'] };
+    const actions = [
+      deleteAction('Tom.settings', original.settings),
+      setAction('Tom', {}, original),
+      setAction('Tom.settings', original.settings, ['new']),
+    ];
+    expect(
+      squashActions(actions, {
+        currentRoot: { Tom: { settings: ['new'] } },
+      })
+    ).toEqual(actions);
+  });
+
   it('should fold descendant sets into a newly set parent object', () => {
     const newKnowledgeCardGroup = setAction('剑客杰瑞.knowledgeCardGroups.4', undefined, {
       cards: [],

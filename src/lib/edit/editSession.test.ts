@@ -134,6 +134,49 @@ describe('createEditSession', () => {
     expect(() => session?.readDomain('characters')).toThrow('disposed');
   });
 
+  it.each([{ aliases: ['原别名'] }, { aliases: undefined }])(
+    'hides canceled container edits in the live draft and submits nothing: %j',
+    async ({ aliases }) => {
+      const history = memoryHistory({});
+      const publish = jest.fn(async () => ({
+        status: 'published' as const,
+        outcome: 'pending' as const,
+      }));
+      session = createEditSession(
+        {
+          ...baseline,
+          characters: {
+            ...baseline.characters,
+            杰瑞: { ...baseline.characters.杰瑞!, ...(aliases ? { aliases } : {}) },
+          },
+        },
+        'v1:test',
+        { history: history.store, publish }
+      );
+      const entity = { entityType: 'characters', entityId: '杰瑞' } as const;
+      const scope = { kind: 'entity', entity } as const;
+
+      session.updateEntity(entity, (character) => {
+        if (aliases) delete character.aliases;
+        else character.aliases = ['临时别名'];
+      });
+      await Promise.resolve();
+      expect(session.readDraft(scope).actionCount).toBe(1);
+
+      session.updateEntity(entity, (character) => {
+        if (aliases) character.aliases = [...aliases];
+        else delete character.aliases;
+      });
+      await Promise.resolve();
+      expect(session.readDraft(scope)).toEqual({ actionCount: 0, publishEntries: [] });
+      expect(session.readDraftOverview()).toEqual([]);
+      expect(history.read('characters')).toHaveLength(2);
+      await expect(session.publishDraft(scope)).resolves.toEqual({ status: 'empty' });
+      expect(publish).not.toHaveBeenCalled();
+      expect(history.read('characters')).toEqual([]);
+    }
+  );
+
   it('discards relation actions while preserving ordinary character drafts', () => {
     const relation = {
       op: 'set' as const,

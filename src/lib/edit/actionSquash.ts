@@ -239,15 +239,27 @@ function foldDescendantMutations(flat: FlatItem[], structuralParents: Set<string
 
 function isSquashablePropertyStructuralMutation(
   action: Action,
-  currentRoot?: Record<string, unknown>
+  currentRoot: Record<string, unknown> | undefined,
+  flat: readonly FlatItem[]
 ): boolean {
   if ((action.op !== 'add' && action.op !== 'delete') || !action.path || !currentRoot) return false;
 
-  const mutationValue = action.op === 'add' ? action.newValue : action.oldValue;
-  if (isContainer(mutationValue)) return false;
-
   const parent = getAtPath(currentRoot, getStructuralParent(action.path));
-  return isContainer(parent) && !Array.isArray(parent);
+  if (!isContainer(parent) || Array.isArray(parent)) return false;
+
+  const mutationValue = action.op === 'add' ? action.newValue : action.oldValue;
+  if (!isContainer(mutationValue)) return true;
+
+  // Container properties can cancel at the same path, but nested edits need their
+  // structural history. Leave numeric paths to the array normalization above.
+  return (
+    !isArrayIndex(parsePath(action.path).at(-1) ?? '') &&
+    !flat.some(
+      ({ action: other }) =>
+        other.path !== action.path &&
+        (isAtOrUnderPath(other.path, action.path) || isAtOrUnderPath(action.path, other.path))
+    )
+  );
 }
 
 function squashPathMutation(firstAction: Action, lastAction: Action): Action {
@@ -574,9 +586,10 @@ function normalizeStructuralArrayActions(
  * Squash an action history so that only the last safe `set` per path remains.
  *
  * Safety rules:
- * - Always keep array/container structural ops (`add`/`delete`) as-is.
- * - Fold scalar object-property adds/deletes with later mutations on the same path when the
- *   current root proves that the parent is not an array.
+ * - Normalize proven array edits to a parent set; otherwise preserve structural operations.
+ * - Fold object-property adds/deletes with later mutations on the same path when the current
+ *   root proves that the parent is not an array. Container values also require no ancestor
+ *   or descendant edits.
  * - Do not squash sets inside the parent subtree of any structural op.
  * - Fold descendant sets into an earlier parent set when oldValue matches the parent snapshot,
  *   or when the descendant newValue is already represented by that snapshot.
@@ -589,11 +602,12 @@ export function squashActions(
   const normalizedEntries = normalizeStructuralArrayActions(entries, options?.currentRoot);
   if (normalizedEntries.length === 0) return [];
 
+  const flat = buildFlatEntries(normalizedEntries);
   const structuralParents = new Set<string>();
 
   const recordStructuralParent = (action: Action) => {
     if (action.op !== 'add' && action.op !== 'delete') return;
-    if (isSquashablePropertyStructuralMutation(action, options?.currentRoot)) return;
+    if (isSquashablePropertyStructuralMutation(action, options?.currentRoot, flat)) return;
     if (!action.path) return;
     const parent = getStructuralParent(action.path);
     if (parent) structuralParents.add(parent);
@@ -607,8 +621,6 @@ export function squashActions(
     }
   });
 
-  const flat = buildFlatEntries(normalizedEntries);
-
   const foldedIndexes = foldDescendantMutations(flat, structuralParents);
 
   const latestByPath = new Map<string, number>();
@@ -620,7 +632,8 @@ export function squashActions(
     if (foldedIndexes.has(idx)) return;
 
     const isSquashableMutation =
-      action.op === 'set' || isSquashablePropertyStructuralMutation(action, options?.currentRoot);
+      action.op === 'set' ||
+      isSquashablePropertyStructuralMutation(action, options?.currentRoot, flat);
     if (isSquashableMutation && !isInStructuralZone(path, structuralParents)) {
       if (!firstMutationByPath.has(path)) {
         firstMutationByPath.set(path, action);
@@ -638,7 +651,8 @@ export function squashActions(
 
     const isSquashablePropertyMutation = isSquashablePropertyStructuralMutation(
       action,
-      options?.currentRoot
+      options?.currentRoot,
+      flat
     );
     const isStructural =
       ((action.op === 'add' || action.op === 'delete') && !isSquashablePropertyMutation) ||
