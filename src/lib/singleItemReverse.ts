@@ -347,189 +347,93 @@ export default function singleItemRreverse(
     return firstText.length > totalLength ? firstText.substring(0, totalLength) + '...' : firstText;
   };
 
-  const SkillResult = Object.values(characters)
-    .flatMap((c) => c.skills)
-    .filter((a) => {
-      return [
-        a.description,
-        a.detailedDescription,
-        ...a.skillLevels.flatMap((l) => [l.description, l.detailedDescription]),
-      ]
-        .filter((d): d is string => d != null)
-        .some((d) => allKeywords.some((string) => d.includes(string)));
-    })
-    .map((a): ReverseResultItem => {
-      const description = findDescriptionWithKeyword(
-        [
-          a.description,
-          a.detailedDescription,
-          ...a.skillLevels.flatMap((l) => [l.description, l.detailedDescription]),
-        ],
-        allKeywords
-      );
-      return { name: a.name, type: 'skill', description };
-    });
+  const matchReference = (
+    identity: Omit<ReverseResultItem, 'description'>,
+    descriptionFields: (string | null | undefined)[],
+    additionalSearchFields: (string | null | undefined)[] = []
+  ): ReverseResultItem[] => {
+    const matches = (text: string | null | undefined) =>
+      text != null && allKeywords.some((keyword) => text.includes(keyword));
+    if (!descriptionFields.some(matches) && !additionalSearchFields.some(matches)) return [];
 
-  const CardResult = Object.values(cards)
-    .filter((a) => {
-      return [a?.description, a?.detailedDescription]
-        .filter((d): d is string => d != null)
-        .some((d) => allKeywords.some((string) => d.includes(string)));
-    })
-    .map((a): ReverseResultItem => {
-      const description = findDescriptionWithKeyword(
-        [a?.description, a?.detailedDescription].filter((d): d is string => d != null),
-        allKeywords
-      );
-      return { name: a?.id || '', type: 'knowledgeCard', description };
-    });
-
-  const SpecialSkillResult = [
-    ...Object.values(specialSkills.cat)
-      .filter((a) => {
-        return [a.description, a.detailedDescription]
-          .filter((d): d is string => d != null)
-          .some((d) => allKeywords.some((string) => d.includes(string)));
-      })
-      .map((a): ReverseResultItem => {
-        const description = findDescriptionWithKeyword(
-          [a.description, a.detailedDescription],
-          allKeywords
-        );
-        return { name: a.name, type: 'specialSkill', factionId: 'cat', description };
-      }),
-    ...Object.values(specialSkills.mouse)
-      .filter((a) => {
-        return [a.description, a.detailedDescription]
-          .filter((d): d is string => d != null)
-          .some((d) => allKeywords.some((string) => d.includes(string)));
-      })
-      .map((a): ReverseResultItem => {
-        const description = findDescriptionWithKeyword(
-          [a.description, a.detailedDescription],
-          allKeywords
-        );
-        return { name: a.name, type: 'specialSkill', factionId: 'mouse', description };
-      }),
-  ];
-
-  const ItemResult = Object.values(items)
-    .filter((a) => {
-      return [a?.description, a?.detailedDescription]
-        .filter((d): d is string => d != null)
-        .some((d) => allKeywords.some((string) => d.includes(string)));
-    })
-    .map((a): ReverseResultItem => {
-      const description = findDescriptionWithKeyword(
-        [a?.description, a?.detailedDescription].filter((d): d is string => d != null),
-        allKeywords
-      );
-      return { name: a?.name || '', type: 'item', description };
-    });
-
-  const EntityResult = Object.values(entities)
-    .filter((a) => {
-      return [a.description, a.detailedDescription]
-        .filter((d): d is string => d != null)
-        .some((d) => allKeywords.some((string) => d.includes(string)));
-    })
-    .map((a): ReverseResultItem => {
-      const description = findDescriptionWithKeyword(
-        [a.description, a.detailedDescription],
-        allKeywords
-      );
-      return { name: a.name, type: 'entity', description };
-    });
-
-  const BuffResult = Object.values(buffs)
-    .filter((a) => {
-      return [a?.description, a?.detailedDescription]
-        .filter((d): d is string => d != null)
-        .some((d) => allKeywords.some((string) => d.includes(string)));
-    })
-    .map((a): ReverseResultItem => {
-      const description = findDescriptionWithKeyword(
-        [a?.description, a?.detailedDescription].filter((d): d is string => d != null),
-        allKeywords
-      );
-      return { name: a?.name || '', type: 'buff', description };
-    });
-
-  const MapResult = Object.values(maps)
-    .filter((a) => {
-      return [a?.description, a?.detailedDescription]
-        .filter((d): d is string => d != null)
-        .some((d) => allKeywords.some((string) => d.includes(string)));
-    })
-    .map((a): ReverseResultItem => {
-      const description = findDescriptionWithKeyword(
-        [a?.description, a?.detailedDescription].filter((d): d is string => d != null),
-        allKeywords
-      );
-      return { name: a?.name || '', type: 'map', description };
-    });
-
-  const ModeResult = Object.values(modes)
-    .filter((a) => {
-      return [a?.description, a?.detailedDescription, a?.rules, a?.detailedRules]
-        .filter((d): d is string => d != null)
-        .some((d) => allKeywords.some((string) => d.includes(string)));
-    })
-    .map((a): ReverseResultItem => {
-      const description = findDescriptionWithKeyword(
-        [a?.description, a?.detailedDescription].filter((d): d is string => d != null),
-        allKeywords
-      );
-      return { name: a?.name || '', type: 'mode', description };
-    });
-
-  const FixtureResult = Object.values(fixtures)
-    .filter((a) => {
-      return [a?.description, a?.detailedDescription]
-        .filter((d): d is string => d != null)
-        .some((d) => allKeywords.some((string) => d.includes(string)));
-    })
-    .map((a): ReverseResultItem => {
-      const description = findDescriptionWithKeyword(
-        [a?.description, a?.detailedDescription].filter((d): d is string => d != null),
-        allKeywords
-      );
-      return { name: a?.name || '', type: 'fixture', description };
-    });
-
-  const AchievementResult = [
-    ...Object.values(achievements.cat),
-    ...Object.values(achievements.mouse),
-  ]
-    .filter((a) => {
-      return [a?.description, a?.detailedDescription]
-        .filter((d): d is string => d != null)
-        .some((d) => allKeywords.some((string) => d.includes(string)));
-    })
-    .map((a): ReverseResultItem => {
-      const description = findDescriptionWithKeyword(
-        [a?.description, a?.detailedDescription].filter((d): d is string => d != null),
-        allKeywords
-      );
-      return {
-        name: a?.name || '',
-        type: 'achievement',
-        factionId: a.factionId,
-        description,
-      };
-    });
+    return [
+      { ...identity, description: findDescriptionWithKeyword(descriptionFields, allKeywords) },
+    ];
+  };
 
   const Result = [
-    ...SkillResult,
-    ...CardResult,
-    ...SpecialSkillResult,
-    ...ItemResult,
-    ...EntityResult,
-    ...BuffResult,
-    ...MapResult,
-    ...ModeResult,
-    ...FixtureResult,
-    ...AchievementResult,
+    ...Object.values(characters).flatMap((character) =>
+      character.skills.flatMap((skill) =>
+        matchReference({ name: skill.name, type: 'skill' }, [
+          skill.description,
+          skill.detailedDescription,
+          ...skill.skillLevels.flatMap((level) => [level.description, level.detailedDescription]),
+        ])
+      )
+    ),
+    ...Object.values(cards).flatMap((card) =>
+      matchReference({ name: card?.id || '', type: 'knowledgeCard' }, [
+        card?.description,
+        card?.detailedDescription,
+      ])
+    ),
+    ...Object.values(specialSkills.cat).flatMap((skill) =>
+      matchReference({ name: skill.name, type: 'specialSkill', factionId: 'cat' }, [
+        skill.description,
+        skill.detailedDescription,
+      ])
+    ),
+    ...Object.values(specialSkills.mouse).flatMap((skill) =>
+      matchReference({ name: skill.name, type: 'specialSkill', factionId: 'mouse' }, [
+        skill.description,
+        skill.detailedDescription,
+      ])
+    ),
+    ...Object.values(items).flatMap((item) =>
+      matchReference({ name: item?.name || '', type: 'item' }, [
+        item?.description,
+        item?.detailedDescription,
+      ])
+    ),
+    ...Object.values(entities).flatMap((entity) =>
+      matchReference({ name: entity.name, type: 'entity' }, [
+        entity.description,
+        entity.detailedDescription,
+      ])
+    ),
+    ...Object.values(buffs).flatMap((buff) =>
+      matchReference({ name: buff?.name || '', type: 'buff' }, [
+        buff?.description,
+        buff?.detailedDescription,
+      ])
+    ),
+    ...Object.values(maps).flatMap((map) =>
+      matchReference({ name: map?.name || '', type: 'map' }, [
+        map?.description,
+        map?.detailedDescription,
+      ])
+    ),
+    // Rules participate in matching, but mode excerpts still come from descriptions.
+    ...Object.values(modes).flatMap((mode) =>
+      matchReference(
+        { name: mode?.name || '', type: 'mode' },
+        [mode?.description, mode?.detailedDescription],
+        [mode?.rules, mode?.detailedRules]
+      )
+    ),
+    ...Object.values(fixtures).flatMap((fixture) =>
+      matchReference({ name: fixture?.name || '', type: 'fixture' }, [
+        fixture?.description,
+        fixture?.detailedDescription,
+      ])
+    ),
+    ...[...Object.values(achievements.cat), ...Object.values(achievements.mouse)].flatMap(
+      (achievement) =>
+        matchReference(
+          { name: achievement?.name || '', type: 'achievement', factionId: achievement.factionId },
+          [achievement?.description, achievement?.detailedDescription]
+        )
+    ),
   ];
 
   // Remove the input singleItem from results if present
