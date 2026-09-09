@@ -7,7 +7,6 @@ import useSWR from 'swr';
 import { usePermissions } from '@/lib/auth/PermissionProvider';
 import type { PermissionResourceOption } from '@/lib/auth/permissionResources';
 import { cn } from '@/lib/design';
-import type { AdminGameDataActionsResponse } from '@/lib/gameData/adminActionTypes';
 import type { PublishableEntityType } from '@/lib/gameData/publishableEntityTypes';
 import type { AdminNotice } from '@/lib/notices/types';
 import { useUser } from '@/hooks/useUser';
@@ -23,6 +22,7 @@ import PermissionGroupManagement, {
   type PermissionGroup,
 } from '@/features/admin/components/PermissionGroupManagement';
 import UserManagement from '@/features/admin/components/UserManagement';
+import { useGameDataActionList } from '@/features/admin/hooks/useGameDataActionList';
 import Button from '@/components/ui/Button';
 
 type Category = Database['public']['Tables']['categories']['Row'];
@@ -68,33 +68,6 @@ const fetchGroups = async (): Promise<GroupsResponse> => {
   const response = await fetch('/api/admin/groups');
   if (!response.ok) throw new Error('Failed to fetch groups');
   return response.json();
-};
-
-type GameDataActionsKey = readonly [
-  'game-data-actions-admin',
-  GameDataActionStatusFilter,
-  PublishableEntityType | null,
-  string | null,
-  number,
-];
-
-const fetchGameDataActions = async ([
-  ,
-  status,
-  entityType,
-  actionId,
-  page,
-]: GameDataActionsKey): Promise<AdminGameDataActionsResponse> => {
-  const searchParams = new URLSearchParams({ status, page: String(page) });
-  if (entityType !== null) searchParams.set('entityType', entityType);
-  if (actionId !== null) searchParams.set('actionId', actionId);
-
-  const response = await fetch(`/api/game-data-actions/admin?${searchParams.toString()}`);
-  if (!response.ok) {
-    throw new Error('Failed to fetch game data actions');
-  }
-
-  return (await response.json()) as AdminGameDataActionsResponse;
 };
 
 const fetchBlocks = async (): Promise<BlocksResponse> => {
@@ -219,16 +192,22 @@ const AdminPanel = () => {
 
   const {
     data: actionData,
+    error: actionError,
     isLoading: isLoadingActions,
     isValidating: isValidatingActions,
-    mutate: mutatePendingActions,
-  } = useSWR(
-    enableActionModeration && activeTab === 'actions'
-      ? (['game-data-actions-admin', actionStatus, actionEntityType, actionId, actionPage] as const)
-      : null,
-    fetchGameDataActions,
-    { revalidateOnFocus: false }
+    refresh: refreshActions,
+    scope: actionCacheScope,
+  } = useGameDataActionList(
+    enableActionModeration && activeTab === 'actions',
+    [actionStatus, actionEntityType, actionId],
+    actionPage,
+    JSON.stringify([permissions.grants, enableActionModeration])
   );
+  const mutatePendingActions = () => {
+    setLoadedPendingCount(null);
+    refreshActions();
+  };
+  useEffect(() => setLoadedPendingCount(null), [actionCacheScope]);
   const { data: blocksData, mutate: mutateBlocks } = useSWR(
     enableBlockAccess ? 'admin-blocks' : null,
     fetchBlocks
@@ -247,7 +226,6 @@ const AdminPanel = () => {
       actionStatus !== 'pending' ||
       actionEntityType !== null ||
       actionId !== null ||
-      actionPage !== 1 ||
       actionData === undefined
     ) {
       return;
@@ -413,6 +391,11 @@ const AdminPanel = () => {
         />
       )}
 
+      {enableActionModeration && activeTab === 'actions' && actionError && (
+        <p role='alert' className='text-red-600 dark:text-red-400'>
+          改动列表加载失败，请重试刷新
+        </p>
+      )}
       {enableActionModeration && activeTab === 'actions' && (
         <GameDataActionModerationPanel
           canApproveActions={permissions.has('game_data_action.approve')}

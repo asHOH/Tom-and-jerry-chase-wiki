@@ -117,6 +117,8 @@ export async function GET(request: NextRequest) {
     if (!Number.isInteger(page) || page < 1 || page > MAX_PAGE) {
       return errorResponse(`Page must be between 1 and ${MAX_PAGE}`);
     }
+    const countMode = searchParams.get('count') ?? 'exact';
+    if (countMode !== 'exact' && countMode !== 'none') return errorResponse('Invalid count mode');
 
     shape = queryShape({
       actionId: false,
@@ -129,7 +131,7 @@ export async function GET(request: NextRequest) {
       .from('game_data_actions')
       .select(
         'id, created_at, created_by, entity_type, is_public, message, rejection_reason, reviewed_at, reviewed_by, status',
-        { count: 'exact' }
+        countMode === 'exact' ? { count: 'exact' } : {}
       );
 
     if (status !== 'all') query = query.eq('status', status);
@@ -147,7 +149,7 @@ export async function GET(request: NextRequest) {
       console.error('Error fetching admin game data actions:', error);
       return NextResponse.json({ error: 'Failed to fetch actions' }, { status: 500 });
     }
-    if (count === null) {
+    if (countMode === 'exact' && count === null) {
       console.error('Exact count missing from admin game data actions response');
       return NextResponse.json({ error: 'Failed to count actions' }, { status: 500 });
     }
@@ -155,7 +157,7 @@ export async function GET(request: NextRequest) {
     const response = {
       ...(await createResponse(data ?? [])),
       currentPage: count === 0 ? 0 : page,
-      totalPages: Math.ceil(count / DEFAULT_PAGE_SIZE),
+      totalPages: count === null ? null : Math.ceil(count / DEFAULT_PAGE_SIZE),
       totalCount: count,
     };
 

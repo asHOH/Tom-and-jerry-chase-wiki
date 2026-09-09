@@ -88,7 +88,7 @@ const localStorageProvider = () => {
           // oxlint-disable-next-line typescript/no-explicit-any
           const parsed = storage.parseJson<Array<[string, any]>>(stored);
           if (Array.isArray(parsed)) {
-            initialEntries = parsed;
+            initialEntries = parsed.filter(([key]) => !key.includes('game-data-actions-admin'));
           } else {
             storage.removeItem(StorageKey.SwrCache);
           }
@@ -115,7 +115,10 @@ const localStorageProvider = () => {
   };
 
   const persistCache = () => {
-    const entries = Array.from(map.entries());
+    // Moderation pages are session-only; never restore them for another account.
+    const entries = Array.from(map.entries()).filter(
+      ([key]) => !key.includes('game-data-actions-admin')
+    );
     let payload = entries;
     let serialized = JSON.stringify(payload);
 

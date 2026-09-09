@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import useSWR from 'swr';
+import useSWR, { useSWRConfig } from 'swr';
 
 import type { BlockedUserSummary } from '@/lib/blocks/types';
 import type { PendingGameDataAction } from '@/features/admin/components/GameDataActionModerationPanel';
@@ -7,6 +7,10 @@ import type { PendingGameDataAction } from '@/features/admin/components/GameData
 import AdminPanel from './AdminPanel';
 
 jest.mock('swr');
+jest.mock('@/lib/supabase/browserClient', () => ({
+  getOptionalSupabaseBrowserClient: () => undefined,
+}));
+const mutateCache = jest.fn().mockResolvedValue([]);
 
 let currentSearchParams = new URLSearchParams();
 
@@ -148,6 +152,7 @@ const renderAdminPanel = (profile: 'Contributor' | 'Reviewer' | 'Coordinator' | 
 describe('AdminPanel', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.mocked(useSWRConfig).mockReturnValue({ mutate: mutateCache } as never);
     currentProfile = null;
     mockBlockSummary = [];
     permissionOverrides = null;
@@ -195,9 +200,14 @@ describe('AdminPanel', () => {
       ['categories', expect.any(Function)],
       [null, expect.any(Function)],
       [
-        ['game-data-actions-admin', 'pending', null, null, 1],
+        ['game-data-actions-admin', 'pending', null, null, 1, expect.any(String)],
         expect.any(Function),
-        { revalidateOnFocus: false },
+        {
+          revalidateOnFocus: false,
+          revalidateOnReconnect: false,
+          revalidateIfStale: false,
+          shouldRetryOnError: false,
+        },
       ],
       [null, expect.any(Function)],
       ['admin-notices', expect.any(Function)],
@@ -215,9 +225,14 @@ describe('AdminPanel', () => {
       ['categories', expect.any(Function)],
       ['permission-groups', expect.any(Function)],
       [
-        ['game-data-actions-admin', 'pending', null, null, 1],
+        ['game-data-actions-admin', 'pending', null, null, 1, expect.any(String)],
         expect.any(Function),
-        { revalidateOnFocus: false },
+        {
+          revalidateOnFocus: false,
+          revalidateOnReconnect: false,
+          revalidateIfStale: false,
+          shouldRetryOnError: false,
+        },
       ],
       [null, expect.any(Function)],
       ['admin-notices', expect.any(Function)],
@@ -256,20 +271,30 @@ describe('AdminPanel', () => {
       onPreviousPage: expect.any(Function),
       onLastPage: expect.any(Function),
       pageKey: 'pending:::1',
-      mutatePendingActions,
+      mutatePendingActions: expect.any(Function),
     });
     expect(mockUseSWR).toHaveBeenCalledWith(
-      ['game-data-actions-admin', 'pending', null, null, 1],
+      ['game-data-actions-admin', 'pending', null, null, 1, expect.any(String)],
       expect.any(Function),
-      { revalidateOnFocus: false }
+      {
+        revalidateOnFocus: false,
+        revalidateOnReconnect: false,
+        revalidateIfStale: false,
+        shouldRetryOnError: false,
+      }
     );
 
     fireEvent.click(screen.getByRole('button', { name: '加载已批准改动' }));
 
     expect(mockUseSWR).toHaveBeenCalledWith(
-      ['game-data-actions-admin', 'approved', null, null, 1],
+      ['game-data-actions-admin', 'approved', null, null, 1, expect.any(String)],
       expect.any(Function),
-      { revalidateOnFocus: false }
+      {
+        revalidateOnFocus: false,
+        revalidateOnReconnect: false,
+        revalidateIfStale: false,
+        shouldRetryOnError: false,
+      }
     );
   });
 
@@ -319,23 +344,38 @@ describe('AdminPanel', () => {
     fireEvent.click(screen.getByRole('button', { name: /改动审核/ }));
     fireEvent.click(screen.getByRole('button', { name: '下一页' }));
     expect(mockUseSWR).toHaveBeenCalledWith(
-      ['game-data-actions-admin', 'pending', null, null, 2],
+      ['game-data-actions-admin', 'pending', null, null, 2, expect.any(String)],
       expect.any(Function),
-      { revalidateOnFocus: false }
+      {
+        revalidateOnFocus: false,
+        revalidateOnReconnect: false,
+        revalidateIfStale: false,
+        shouldRetryOnError: false,
+      }
     );
 
     fireEvent.click(screen.getByRole('button', { name: '尾页' }));
     expect(mockUseSWR).toHaveBeenCalledWith(
-      ['game-data-actions-admin', 'pending', null, null, 4],
+      ['game-data-actions-admin', 'pending', null, null, 4, expect.any(String)],
       expect.any(Function),
-      { revalidateOnFocus: false }
+      {
+        revalidateOnFocus: false,
+        revalidateOnReconnect: false,
+        revalidateIfStale: false,
+        shouldRetryOnError: false,
+      }
     );
 
     fireEvent.click(screen.getByRole('button', { name: '加载已批准改动' }));
     expect(mockUseSWR).toHaveBeenCalledWith(
-      ['game-data-actions-admin', 'approved', null, null, 1],
+      ['game-data-actions-admin', 'approved', null, null, 1, expect.any(String)],
       expect.any(Function),
-      { revalidateOnFocus: false }
+      {
+        revalidateOnFocus: false,
+        revalidateOnReconnect: false,
+        revalidateIfStale: false,
+        shouldRetryOnError: false,
+      }
     );
   });
 
@@ -361,9 +401,14 @@ describe('AdminPanel', () => {
     fireEvent.click(screen.getByRole('button', { name: '下一页' }));
 
     expect(mockUseSWR).toHaveBeenCalledWith(
-      ['game-data-actions-admin', 'pending', null, null, 2],
+      ['game-data-actions-admin', 'pending', null, null, 2, expect.any(String)],
       expect.any(Function),
-      { revalidateOnFocus: false }
+      {
+        revalidateOnFocus: false,
+        revalidateOnReconnect: false,
+        revalidateIfStale: false,
+        shouldRetryOnError: false,
+      }
     );
     await waitFor(() =>
       expect(mockModerationPanel.mock.calls.at(-1)?.[0]).toEqual(
@@ -421,9 +466,14 @@ describe('AdminPanel', () => {
       })
     );
     expect(mockUseSWR).toHaveBeenCalledWith(
-      ['game-data-actions-admin', 'pending', null, null, 1],
+      ['game-data-actions-admin', 'pending', null, null, 1, expect.any(String)],
       expect.any(Function),
-      { revalidateOnFocus: false }
+      {
+        revalidateOnFocus: false,
+        revalidateOnReconnect: false,
+        revalidateIfStale: false,
+        shouldRetryOnError: false,
+      }
     );
   });
 
@@ -447,7 +497,16 @@ describe('AdminPanel', () => {
       [null, expect.any(Function)],
       [null, expect.any(Function)],
       [null, expect.any(Function)],
-      [null, expect.any(Function), { revalidateOnFocus: false }],
+      [
+        null,
+        expect.any(Function),
+        {
+          revalidateOnFocus: false,
+          revalidateOnReconnect: false,
+          revalidateIfStale: false,
+          shouldRetryOnError: false,
+        },
+      ],
       [null, expect.any(Function)],
       [null, expect.any(Function)],
     ]);

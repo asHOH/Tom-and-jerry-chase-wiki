@@ -202,6 +202,7 @@ describe('admin game data actions route', () => {
   });
 
   it.each([
+    ['count=estimated', 'unsupported count mode'],
     ['entityType=unknown', 'entity type'],
     ['page=0', 'zero page'],
     ['page=10001', 'page above the bound'],
@@ -281,6 +282,25 @@ describe('admin game data actions route', () => {
 
     expect(response.status).toBe(500);
     await expect(response.json()).resolves.toEqual({ error: 'Failed to count actions' });
+  });
+
+  it('skips counting without bypassing the filtered RLS query', async () => {
+    const query = createActionQuery(visibleRows, null);
+    requirePermissionMock.mockResolvedValue({ supabase: { from: jest.fn(() => query) } } as never);
+    adminFromMock.mockReturnValue(createNicknameQuery() as never);
+    const response = await GET(
+      createRequest('status=approved&entityType=characters&page=2&count=none')
+    );
+    expect(response.status).toBe(200);
+    expect(query.select).toHaveBeenCalledWith(expect.not.stringContaining('entry'), {});
+    expect(query.eq).toHaveBeenCalledWith('status', 'approved');
+    expect(query.eq).toHaveBeenCalledWith('entity_type', 'characters');
+    expect(query.range).toHaveBeenCalledWith(50, 99);
+    await expect(response.json()).resolves.toMatchObject({
+      currentPage: 2,
+      totalCount: null,
+      totalPages: null,
+    });
   });
 
   it('returns a structured failure when the filtered page query fails', async () => {
