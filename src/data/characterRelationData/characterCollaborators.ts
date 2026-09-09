@@ -187,16 +187,6 @@ export const characterRelationCharacterCollaboratorTraits: CharacterRelationTrai
   },
   {
     description:
-      '附身状态下的米雪儿可以抓住剑客泰菲的长枪，使剑客太妃能带着拥有长枪的米雪儿通过来回接触猫咪反复触发长枪伤害',
-    relation: {
-      kind: 'collaborators',
-      subject: { name: '剑客泰菲', type: 'character' },
-      target: { name: '米雪儿', type: 'character' },
-      isMinor: false,
-    },
-  },
-  {
-    description:
       '莱恩容易死，仙女鼠变六星提高下限，并且在遇到汤姆无敌强上火箭时，可强制造成伤害变线条，线条猫与八星一块干扰猫，使对面露出破绽。',
     relation: {
       kind: 'collaborators',
@@ -512,7 +502,7 @@ export const characterRelationCharacterCollaboratorTraits: CharacterRelationTrai
   },
   {
     description:
-      '感应雷可以中断交互动作，和火药桶可以相互配合，能让猫难以绑上火箭，硬拖时间给队友机会。',
+      '{地雷}可以中断交互动作，和{火药桶}可以相互配合，让猫难以绑上火箭，硬拖时间给队友机会。',
     relation: {
       kind: 'collaborators',
       subject: { name: '泰菲', type: 'character' },
@@ -521,7 +511,7 @@ export const characterRelationCharacterCollaboratorTraits: CharacterRelationTrai
     },
   },
   {
-    description: '雪梨的强力治疗有利于泰菲利用二级被动强行推奶酪',
+    description: '雪梨的强力治疗有利于泰菲利用Lv.2{茁壮成长}强行推奶酪',
     relation: {
       kind: 'collaborators',
       subject: { name: '泰菲', type: 'character' },
@@ -530,7 +520,7 @@ export const characterRelationCharacterCollaboratorTraits: CharacterRelationTrai
     },
   },
   {
-    description: '国王的救援战旗配合泰菲的二级圆滚滚，可以让泰菲实现稳救',
+    description: '国王的{救援战旗}配合泰菲的Lv.2{圆滚滚}，可以让泰菲实现稳救',
     relation: {
       kind: 'collaborators',
       subject: { name: '泰菲', type: 'character' },
@@ -540,7 +530,7 @@ export const characterRelationCharacterCollaboratorTraits: CharacterRelationTrai
   },
   {
     description:
-      '泰菲可以利用罗菲的树快速回血，弥补健康值低的缺点，配合泰菲二级被动有利于强行推奶酪',
+      '泰菲可以利用罗菲的{树}快速回血，弥补健康值低的缺点，有利于泰菲利用Lv.2{茁壮成长}强行推奶酪',
     relation: {
       kind: 'collaborators',
       subject: { name: '泰菲', type: 'character' },
@@ -549,7 +539,8 @@ export const characterRelationCharacterCollaboratorTraits: CharacterRelationTrai
     },
   },
   {
-    description: '玛丽的扇子可以加快泰菲推速，帮助泰菲回血，有利于泰菲利用二级被动强行推奶酪',
+    description:
+      '玛丽的{香风折扇}可以加快泰菲推速，帮助泰菲回血，有利于泰菲利用Lv.2{茁壮成长}强行推奶酪',
     relation: {
       kind: 'collaborators',
       subject: { name: '泰菲', type: 'character' },
@@ -567,7 +558,8 @@ export const characterRelationCharacterCollaboratorTraits: CharacterRelationTrai
     },
   },
   {
-    description: '米雪儿的漂浮气球配合泰菲圆滚滚解控，可大大提高泰菲的续航和容错率，使其不易被击倒',
+    description:
+      '米雪儿的{漂浮气球}配合泰菲{圆滚滚}解控，可大大提高泰菲的续航和容错率，使其不易被击倒',
     relation: {
       kind: 'collaborators',
       subject: { name: '泰菲', type: 'character' },
@@ -576,7 +568,7 @@ export const characterRelationCharacterCollaboratorTraits: CharacterRelationTrai
     },
   },
   {
-    description: '感应雷可以中断交互动作，可以和斜塔搭配守火箭，拖延时间，在一些吃地形的图有奇效',
+    description: '{地雷}可以中断交互动作，可以和{斜塔}搭配守火箭，拖延时间，在一些吃地形的图有奇效',
     relation: {
       kind: 'collaborators',
       subject: { name: '泰菲', type: 'character' },

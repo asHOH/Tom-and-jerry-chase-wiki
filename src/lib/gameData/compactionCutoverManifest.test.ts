@@ -1,4 +1,5 @@
 import { prepareCompactionCutoverManifest } from './compactionCutoverManifest';
+import { readCompactionReconciliation } from './compactionVerification';
 
 const manifest = () => ({
   rows: [{ id: 'cutover-1' }, { id: 'cutover-2' }],
@@ -39,6 +40,39 @@ const manifest = () => ({
 });
 
 describe('compaction cutover manifest', () => {
+  it('binds both verification proofs to the exact approved reconciliation', () => {
+    const approvedReconciliation = {
+      reason: 'Explicitly approved content correction',
+      sourceChanges: [],
+      publishedChanges: [{ path: ['items', 'item'], before: 'old', after: 'new' }],
+    };
+    const digest = readCompactionReconciliation(approvedReconciliation)!.digest;
+    const original = manifest();
+    const value = {
+      ...original,
+      approvedReconciliation,
+      result: {
+        cutoverVerification: {
+          ...original.result.cutoverVerification,
+          actionPatch: {
+            ...original.result.cutoverVerification.actionPatch,
+            approvedReconciliationDigest: digest,
+          },
+          publishedParity: {
+            proven: true,
+            strictlyEqual: false,
+            approvedReconciliationDigest: digest,
+          },
+        },
+      },
+    };
+    expect(prepareCompactionCutoverManifest(value).success).toBe(true);
+    approvedReconciliation.publishedChanges[0]!.after = 'unapproved';
+    expect(prepareCompactionCutoverManifest(value)).toEqual({
+      success: false,
+      failures: ['approved_reconciliation_not_bound'],
+    });
+  });
   it('extracts only cutover rows from complete deployment-bound evidence', () => {
     expect(prepareCompactionCutoverManifest(manifest())).toEqual({
       success: true,

@@ -89,20 +89,30 @@ fingerprints, and later overlaps before continuing with the retained rows.
 4. Run the shared domain checks and complete-group reverse verification for every patched or represented
    group. Re-query exact remote status/visibility. Verification does not itself authorize a mutation.
 
+## Commit convention
+
+- Use `docs(game-data): sync until M.DD`, with the inclusive Beijing cutoff date and a two-digit
+  day, for example `docs(game-data): sync until 8.02`. Use an explicitly requested commit title verbatim.
+- Keep one compaction batch in one commit, including approved content reconciliations needed for that
+  batch. Squash local intermediate commits before handoff. Separate commits are appropriate when the
+  task also includes non-compaction work.
+- A commit title does not prove remote sync. After rewriting commits, preserve the original evidence
+  and revalidate commit-bound manifests before cutover.
+
 ## Finish an authorized batch
 
 The runbook is the source of truth; do not duplicate its deployment commands here.
 
 - Keep `cutoverRowIds`, `verificationDependencyRowIds`, and retrospective observations separate. Only
   cutover IDs reach the RPC; verification-only dependencies remain in replay.
-- Full published-domain equality must hold between original baseline plus the frozen approved snapshot
-  and patched baseline plus that snapshot with only cutover rows excluded.
+- Require full published-domain equality, allowing only explicitly user-approved exact before/after
+  reconciliations frozen and verified through the runbook; all other differences must fail.
 - The supported verifier requires the original `repository.head`, a committed `--patched-ref`, and the
   matching deployed build/approved snapshot. It binds epoch, revision, and row digests only after checks
   pass. Local preparation does not constitute deployment-bound proof.
 - With batch authorization, run `sync` after the first deployment; it includes preflight. A separate
   `check` is optional. Follow the runbook for the actual second rebuild and final `post-check`.
-- If evidence or checks fail, report the specific blocker. Do not weaken equality, invent evidence,
+- If evidence or checks fail, report the specific blocker. Do not allow unapproved differences, invent evidence,
   silently change the frozen row set, or repeat a sync whose result is uncertain or already confirmed.
 
 ## Report

@@ -60,9 +60,12 @@ function parseArgs(args) {
   let excludeIds = [];
   let verificationCutoverIds = [];
   let verificationDependencyIds = [];
+  let reconciliationFile;
 
   for (const arg of args) {
-    if (arg.startsWith('--source-root=')) sourceRoot = arg.slice('--source-root='.length);
+    if (arg.startsWith('--reconciliation-file='))
+      reconciliationFile = arg.slice('--reconciliation-file='.length);
+    else if (arg.startsWith('--source-root=')) sourceRoot = arg.slice('--source-root='.length);
     else if (arg.startsWith('--snapshot-file=')) {
       snapshotFile = arg.slice('--snapshot-file='.length);
     } else if (arg.startsWith('--exclude-ids=')) {
@@ -97,6 +100,7 @@ function parseArgs(args) {
     excludeIds: new Set(excludeIds),
     verificationCutoverIds,
     verificationDependencyIds,
+    reconciliationFile,
   };
 }
 
@@ -129,8 +133,15 @@ async function main() {
   const { getCharacterRelation } = sourceJiti(
     join(args.sourceRoot, 'src/features/characters/utils/relationReadModel.ts')
   );
-  const { createCanonicalCompactionDigest } = helperJiti(
-    join(projectDir, 'src/lib/gameData/compactionVerification.ts')
+  const {
+    createCanonicalCompactionDigest,
+    readCompactionReconciliation,
+    applyCompactionReconciliation,
+  } = helperJiti(join(projectDir, 'src/lib/gameData/compactionVerification.ts'));
+  const reconciliation = readCompactionReconciliation(
+    args.reconciliationFile
+      ? JSON.parse(await readFile(args.reconciliationFile, 'utf8'))
+      : undefined
   );
 
   runnerStage = 'read_snapshot';
@@ -185,13 +196,17 @@ async function main() {
       join(projectDir, 'src/lib/gameData/compactionPatchVerification.ts')
     );
     runnerStage = 'create_action_patch_targets';
-    const targets = createActionPatchTargetRegistry();
+    const sourceTargets = createActionPatchTargetRegistry();
+    const targets = reconciliation
+      ? applyCompactionReconciliation(sourceTargets, reconciliation.sourceChanges, 'reverse')
+      : sourceTargets;
     runnerStage = 'verify_action_patch';
     patchVerification = verifyCompactionActionPatch(
       selectVerificationRows(args.verificationCutoverIds),
       selectVerificationRows(args.verificationDependencyIds),
       targets
     );
+    if (reconciliation) patchVerification.approvedReconciliationDigest = reconciliation.digest;
   }
 
   process.stdout.write(

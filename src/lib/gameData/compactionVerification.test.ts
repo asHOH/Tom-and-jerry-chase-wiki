@@ -2,9 +2,11 @@ import type { Action } from '@/lib/edit/diffUtils';
 
 import { applyCheckedActionRow } from './checkedActionReplay';
 import {
+  applyCompactionReconciliation,
   createCanonicalCompactionDigest,
   encodeCanonicalCompactionValue,
   findCompactionValueDifferences,
+  readCompactionReconciliation,
   resolveCompactionManifestSelection,
   verifyCompactionActionIdempotence,
   verifyCompactionArtifactMetadata,
@@ -31,6 +33,33 @@ const snapshotRow = (
 });
 
 describe('compaction verification', () => {
+  it('allows exact reviewed values in either direction without masking other changes', () => {
+    const before = { characters: { example: { tags: ['old'], description: 'unchanged' } } };
+    const after = { characters: { example: { tags: ['new'], description: 'unchanged' } } };
+    const changes = [{ path: ['characters', 'example', 'tags'], before: ['old'], after: ['new'] }];
+    expect(applyCompactionReconciliation(before, changes, 'forward')).toEqual(after);
+    expect(applyCompactionReconciliation(after, changes, 'reverse')).toEqual(before);
+    expect(before.characters.example.tags).toEqual(['old']);
+    const unexpected = structuredClone(after);
+    unexpected.characters.example.description = 'unexpected';
+    expect(applyCompactionReconciliation(before, changes, 'forward')).not.toEqual(unexpected);
+    expect(() => applyCompactionReconciliation(after, changes, 'forward')).toThrow(
+      'value_mismatch'
+    );
+    expect(() =>
+      applyCompactionReconciliation(before, [...changes, ...changes], 'forward')
+    ).toThrow('overlapping');
+    expect(() =>
+      applyCompactionReconciliation(before, [{ ...changes[0], path: ['missing'] }], 'forward')
+    ).toThrow('path_missing');
+    expect(() =>
+      applyCompactionReconciliation(before, [{ ...changes[0], path: ['__proto__'] }], 'forward')
+    ).toThrow('invalid');
+    expect(() =>
+      readCompactionReconciliation({ reason: 'approved', publishedChanges: [] })
+    ).toThrow('invalid');
+    expect(readCompactionReconciliation(undefined)).toBeUndefined();
+  });
   it('keeps manifest rows as the backward-compatible cutover set', () => {
     const rows = [{ id: 'cutover-1' }, { id: 'cutover-2' }];
 

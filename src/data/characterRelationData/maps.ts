@@ -2,35 +2,6 @@ import type { CharacterRelationTrait } from '@/data/types';
 
 export const characterRelationMapTraits: CharacterRelationTrait[] = [
   {
-    description:
-      '地图房间分布呈树状，利于泰菲卡视野伏击；地图为中型，房间紧凑，利于机动性差的泰菲发挥',
-    relation: {
-      kind: 'advantageMaps',
-      subject: { name: '泰菲', type: 'character' },
-      target: { name: '夏日游轮III', type: 'map' },
-      isMinor: false,
-    },
-  },
-  {
-    description: '地图存在的门较多，有利于泰菲使用卡门雷牵制猫；地图适合拉扯，可避免泰菲被猫针对',
-    relation: {
-      kind: 'advantageMaps',
-      subject: { name: '泰菲', type: 'character' },
-      target: { name: '经典之家II', type: 'map' },
-      isMinor: false,
-    },
-  },
-  {
-    description:
-      '地图体积大，两个古堡之间无双向管道连通，不利于机动性差的泰菲移动；地图整体封闭，障碍物多，不利于泰菲架狙',
-    relation: {
-      kind: 'disadvantageMaps',
-      subject: { name: '泰菲', type: 'character' },
-      target: { name: '雪夜古堡III', type: 'map' },
-      isMinor: false,
-    },
-  },
-  {
     description: '地图体积大，整体跨度大，不利于泰菲移动',
     relation: {
       kind: 'disadvantageMaps',

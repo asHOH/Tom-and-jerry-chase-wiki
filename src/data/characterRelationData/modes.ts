@@ -2,6 +2,15 @@ import type { CharacterRelationTrait } from '@/data/types';
 
 export const characterRelationModeTraits: CharacterRelationTrait[] = [
   {
+    description: '米特在得分高时增加伤害和受到伤害，胡椒粉极易毒死自己。',
+    relation: {
+      kind: 'disadvantageModes',
+      subject: { name: '米特', type: 'character' },
+      target: { name: '多元乱斗', type: 'mode' },
+      isMinor: false,
+    },
+  },
+  {
     description: '三级毛线球在该模式拉奶酪进洞口直接推入',
     relation: {
       kind: 'advantageModes',

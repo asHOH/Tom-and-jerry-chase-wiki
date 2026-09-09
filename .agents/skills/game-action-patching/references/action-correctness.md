@@ -132,7 +132,8 @@ Use `characterCounters.ts`, `characterCollaborators.ts`, `knowledgeCards.ts`, `s
 
 ## Classification
 
-Assign every group exactly one disposition before editing:
+Assign every group exactly one disposition before editing. For each deferred row, report its ID/path,
+current baseline value, recorded old/new values, reason, and dependencies; link full values if lengthy.
 
 - **Ready**: every write-set location is explainable under the `S/O/N` rules above; every
   physical target is unambiguous; required old/new or parent-array chains are valid; and no safety
@@ -141,7 +142,7 @@ Assign every group exactly one disposition before editing:
   relation equivalent. Plan no source rewrite, but retain every covered row for verification.
 - **Review required**: the source matches neither old nor new but bounded overlapping history may
   explain it; relation orientation or material-field intent requires judgment; repeated submissions
-  conflict; or a paired field may contradict its sibling.
+  conflict; or the action introduces a semantic contradiction with a paired field.
 - **Blocked**: malformed or unsupported data, unexplained broken chains, shifted or unstable array
   identities, missing/duplicate source identities, ambiguous factions, likely placeholder children,
   or any state that cannot be reconstructed without guessing.
@@ -169,10 +170,9 @@ report a tooling blocker if the verifier cannot accept the complete group.
 ## Safety Gates
 
 - Check newValue placement and schema shape.
-- For paired summary/detail fields (e.g. a skill level's `description` and
-  `detailedDescription`), check that a new value does not contradict its sibling. If it does,
-  report and defer the action; do not report it verified or remotely sync it without user-approved
-  reconciliation.
+- Report existing semantic differences (including summary/detail mismatches), but do not defer solely
+  because of them. Defer contradictions introduced by the action until user-approved reconciliation;
+  do not mark those actions verified or remotely sync them before resolution.
 - Verify message intent (e.g. relation added and old deleted).
 - Relations: run targeted Prettier, grep/read checks, and
   `npm run report:character-relations` (the report does not check formatting).

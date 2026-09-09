@@ -207,7 +207,7 @@ const mouseKnowledgeCardDefinitions: Record<string, Card> = {
     cost: 4,
     description: '经过冰面或冰块命中后获得短暂**加速**。',
     detailedDescription:
-      '老鼠掌握更酷的技巧，经过冰面或冰块命中后获得5秒**加速**。“身轻若健燕，潇洒若游龙，翩若惊鸿，婉若游龙。”',
+      '老鼠掌握更酷的技巧，[经过冰面](经过即可,即使自身处于霸体等状态而没有滑行)或冰块命中后获得5秒**加速**。“身轻若健燕，潇洒若游龙，翩若惊鸿，婉若游龙。”',
     levels: [
       { level: 1, description: '加速**10%**。', detailedDescription: '加速**21%**。' },
       { level: 2, description: '加速**15%**。', detailedDescription: '加速**23%**。' },
@@ -518,6 +518,7 @@ const mouseKnowledgeCardDefinitions: Record<string, Card> = {
       { level: 3, description: '每局**前4次**打开箱子时触发。' },
     ],
     priority: '本身无用',
+    aliases: ['美食夹'],
   },
 
   脱身: {

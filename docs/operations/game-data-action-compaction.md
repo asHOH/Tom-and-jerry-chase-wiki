@@ -6,7 +6,7 @@
 
 站点运行一段时间后，管理员在网页中审核通过的游戏数据修改会积累在 Supabase 中。只有当维护者准备把一批修改永久写入仓库，并让线上站点不再从数据库重复加载这批修改时，才使用本手册。时间不是触发条件：可能是数周、数月，也可能一直不需要。开始前必须已经完成批次清点、源码修改和本地验证，并获得生产操作授权。
 
-核心要求只有一个：**修改写入代码后，移除对应数据库行不能改变公开数据。** 比对、行清单和执行记录由工具处理，维护者不需要手工操作这些证据。
+核心要求：**移除对应数据库行后，公开数据只能发生维护者明确批准的内容修正，其他数据必须不变。** 比对、行清单和执行记录由工具处理，维护者不需要手工操作这些证据。
 
 ## 日常怎么做
 
@@ -52,7 +52,7 @@ Supabase 的 `game_data_actions` 保存网页中审核通过的动态修改。�
 - 已确认本次部署的 production origin 和补丁提交。
 - 正常切换中的 cutover 行通过重复播放检查：支持带具体 `newValue` 的 `set`，以及下述同一行内的临时属性删除。
 
-完整 published parity 检查证明公开数据不变。第一次部署到第二次部署之间，公开修改还可能再次播放，因此也要检查重复播放。
+默认 published parity 检查证明公开数据不变。若维护者明确批准归档时修正内容，在 ignored manifest 的 `approvedReconciliation` 中冻结 `reason`、`publishedChanges` 和 `sourceChanges`；每项使用字符串数组 `path` 和完整 `before`/`after` 值，不能只排除路径。工具先精确核对旧值，再将公开旧数据应用修正后与归档结果完整比较；action patch 仅在临时副本中逆转已批准的源码修正后验证原始修改链。两份证明绑定同一个修正摘要，内容变化必须重新验证；`strictlyEqual: false` 明确标记这不是无内容变化的归档。第一次部署到第二次部署之间，公开修改还可能再次播放，因此也要检查重复播放。
 
 临时属性删除仅支持这种情况：同一数据库行中，紧邻删除之前的操作已用具体 `set` 写入该属性，删除后再次用具体 `set` 写回同一路径；中间不能修改该属性的父级或子级。数组下标、数组长度和根实体删除不适用。这样可保留原始修改历史，无需拆行或改写数据库中的 action。其他 `add`/`delete` 仍不支持正常切换。验证依赖行不参与切换，因此不受此限制。
 
@@ -127,7 +127,7 @@ Supabase 的 `game_data_actions` 保存网页中审核通过的动态修改。�
 4. `post-check` 只读运行，不执行 approved-row preflight，也不调用 mutation RPC。它会确认精确行仍为 `synced/private`，并用保留的 action 和当前 approved snapshot 重建 published parity。
 5. `/api/version` 的 artifact epoch、revision、row count、deployment identity 和部署提交关系都必须匹配当前生产快照。全部通过后才允许写入 `result.postCutoverVerification`。
 
-恢复流程可以包含非 `set` action，因为它不会改变状态；published parity 仍必须严格通过。
+恢复流程可以包含非 `set` action，因为它不会改变状态；published parity 仍须按同一份已批准修正严格通过。
 
 ## 必须立即停止的情况
 
@@ -139,7 +139,7 @@ Supabase 的 `game_data_actions` 保存网页中审核通过的动态修改。�
 - RPC 响应不确定，且精确查询不能证明整个 batch 都是 `synced/private`。
 - 任一目标行已经 synced；此时只能使用只读恢复流程，不能重试切换。
 
-不要通过放宽等价判断、伪造历史证据、批量 restore、重复 sync 或跳过第二次部署来绕过停止条件。
+除上述精确冻结的已批准内容修正外，不要放宽等价判断；禁止伪造历史证据、批量 restore、重复 sync 或跳过第二次部署。
 
 ## 当前禁止再次切换的批次
 

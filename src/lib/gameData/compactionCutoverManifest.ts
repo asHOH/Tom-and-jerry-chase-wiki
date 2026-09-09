@@ -1,4 +1,5 @@
 import {
+  readCompactionReconciliation,
   resolveCompactionManifestSelection,
   verifyCompactionArtifactMetadata,
 } from './compactionVerification';
@@ -88,6 +89,17 @@ export function prepareCompactionCutoverManifest(value: unknown): CutoverManifes
   if (parity.proven !== true) failures.push('published_parity_not_proven');
 
   const actionPatch = isRecord(verification.actionPatch) ? verification.actionPatch : {};
+  try {
+    const reconciliation = readCompactionReconciliation(value.approvedReconciliation);
+    if (
+      parity.approvedReconciliationDigest !== reconciliation?.digest ||
+      actionPatch.approvedReconciliationDigest !== reconciliation?.digest
+    ) {
+      failures.push('approved_reconciliation_not_bound');
+    }
+  } catch {
+    failures.push('invalid_approved_reconciliation');
+  }
   if (
     !hasExactIds(actionPatch.verifiedRowIds, selection.value.verificationRowIds) ||
     !Array.isArray(actionPatch.failures) ||

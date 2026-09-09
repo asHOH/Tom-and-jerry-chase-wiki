@@ -2,6 +2,15 @@ import type { CharacterRelationTrait } from '@/data/types';
 
 export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] = [
   {
+    description: '米特的胡椒粉可以提前触发鲍姆的爆炸，二被可以让鲍姆无法回血。',
+    relation: {
+      kind: 'counters',
+      subject: { name: '米特', type: 'character' },
+      target: { name: '鲍姆', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
     description:
       '托普斯的网可以无视天使泰菲的技能。可能被托普斯利用{击晕}、{我生气了！}和{1级被动}进行连续控制。',
     relation: {
@@ -193,7 +202,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '小兔子和大兔子都能主动吸引侦汤放大镜的光线，削弱侦汤的进攻能力。但是大兔子的举火箭无法阻止50线索的秒飞。',
+      '小兔子和大兔子都能主动吸引侦汤放大镜的光线，削弱侦汤的进攻能力。但是大兔子的举火箭无法阻止50线索的秒飞，且魔术师抽卡切换卡牌会刷大量线索。',
     relation: {
       kind: 'counterEachOther',
       subject: { name: '侦探汤姆', type: 'character' },
@@ -464,7 +473,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '魔术师的红牌封锁技能使如玉无法释放花枪反击，黄蓝牌造成无伤害的控制也能克制如玉；如玉的前刺回马枪伤害极高，可以快速击倒兔子先生或兔子大表哥，此外掷花枪也能以兔子为跳板进行反击。',
+      '魔术师的红牌封锁技能使如玉无法释放花枪反击，红黄蓝牌造成无伤害的控制也能克制如玉；如玉的前刺回马枪伤害极高，可以快速击倒兔子先生或兔子大表哥，此外掷花枪也能以兔子为跳板进行反击。',
     relation: {
       kind: 'counterEachOther',
       subject: { name: '如玉', type: 'character' },
@@ -2470,7 +2479,8 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
     },
   },
   {
-    description: '恶魔汤姆用火车头打兔子较快，但怕魔术师的红牌锁技能，且打碟不免疫卡牌。',
+    description:
+      '恶魔汤姆用火车头打兔子较快，且火车提供的护盾可以挡住卡牌，但怕魔术师的红牌锁技能，且打碟不免疫卡牌。',
     relation: {
       kind: 'counterEachOther',
       subject: { name: '魔术师', type: 'character' },
@@ -2788,6 +2798,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       subject: { name: '米特', type: 'character' },
       target: { name: '国王杰瑞', type: 'character' },
       isMinor: false,
+      tags: [{ counters: '无视', counteredBy: '怕无视' }],
     },
   },
   {
@@ -2797,6 +2808,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       subject: { name: '米特', type: 'character' },
       target: { name: '恶魔杰瑞', type: 'character' },
       isMinor: false,
+      tags: [{ counters: '无视', counteredBy: '怕无视' }],
     },
   },
   {
@@ -3590,10 +3602,11 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       subject: { name: '米特', type: 'character' },
       target: { name: '雪梨', type: 'character' },
       isMinor: false,
+      tags: [{ counters: '无视', counteredBy: '怕无视' }],
     },
   },
   {
-    description: '米特的饭盒有效反制大表哥救援；胡椒粉还能防止大表哥闪拳拦截绑火箭。',
+    description: '米特的饭盒有效反制{大表哥}救援；胡椒粉还能防止{大表哥}闪拳拦截绑火箭。',
     relation: {
       kind: 'counters',
       subject: { name: '米特', type: 'character' },
@@ -3660,7 +3673,8 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
     },
   },
   {
-    description: '朝圣者泰菲长枪高伤和主动技能的变形可以快速处理托普斯的分身。',
+    description:
+      '朝圣者泰菲长枪高伤和主动技能的变形可以快速处理托普斯的分身，且{捕虫网}对{巨大泰菲球}无效。',
     relation: {
       kind: 'counteredBy',
       subject: { name: '托普斯', type: 'character' },

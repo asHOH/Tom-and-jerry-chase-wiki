@@ -128,6 +128,86 @@ export function createCanonicalCompactionDigest(value: unknown): {
   };
 }
 
+/** Exact, operator-approved content changes; never a path-only parity exclusion. */
+export function readCompactionReconciliation(value: unknown) {
+  if (value === undefined) return undefined;
+  if (
+    !value ||
+    typeof value !== 'object' ||
+    !('reason' in value) ||
+    typeof value.reason !== 'string' ||
+    !value.reason.trim() ||
+    !('publishedChanges' in value) ||
+    !Array.isArray(value.publishedChanges) ||
+    value.publishedChanges.length === 0 ||
+    !('sourceChanges' in value) ||
+    !Array.isArray(value.sourceChanges)
+  )
+    throw new Error('invalid_compaction_reconciliation');
+  return {
+    publishedChanges: value.publishedChanges as unknown[],
+    sourceChanges: value.sourceChanges as unknown[],
+    digest: createCanonicalCompactionDigest(value).digest,
+  };
+}
+
+export function applyCompactionReconciliation<T>(
+  data: T,
+  changes: readonly unknown[],
+  direction: 'forward' | 'reverse'
+): T {
+  const result = structuredClone(data);
+  const paths: string[][] = [];
+  for (const change of changes) {
+    if (
+      !change ||
+      typeof change !== 'object' ||
+      !('path' in change) ||
+      !Array.isArray(change.path) ||
+      change.path.length === 0 ||
+      change.path.some(
+        (key) =>
+          typeof key !== 'string' || !key || ['__proto__', 'prototype', 'constructor'].includes(key)
+      ) ||
+      !Object.hasOwn(change, 'before') ||
+      !Object.hasOwn(change, 'after')
+    )
+      throw new Error('invalid_compaction_reconciliation_change');
+    const { path, before, after } = change as { path: string[]; before: unknown; after: unknown };
+    if (
+      paths.some((prior) =>
+        prior
+          .slice(0, Math.min(prior.length, path.length))
+          .every((key, index) => key === path[index])
+      )
+    ) {
+      throw new Error('overlapping_compaction_reconciliation_paths');
+    }
+    paths.push(path);
+    let parent: unknown = result;
+    for (const key of path.slice(0, -1)) {
+      if (!parent || typeof parent !== 'object' || !Object.hasOwn(parent, key)) {
+        throw new Error('compaction_reconciliation_path_missing');
+      }
+      parent = (parent as Record<string, unknown>)[key];
+    }
+    const key = path.at(-1)!;
+    if (!parent || typeof parent !== 'object' || !Object.hasOwn(parent, key)) {
+      throw new Error('compaction_reconciliation_path_missing');
+    }
+    const expected = direction === 'forward' ? before : after;
+    const replacement = direction === 'forward' ? after : before;
+    if (
+      encodeCanonicalCompactionValue((parent as Record<string, unknown>)[key]) !==
+        encodeCanonicalCompactionValue(expected) ||
+      encodeCanonicalCompactionValue(expected) === encodeCanonicalCompactionValue(replacement)
+    )
+      throw new Error('compaction_reconciliation_value_mismatch');
+    (parent as Record<string, unknown>)[key] = structuredClone(replacement);
+  }
+  return result;
+}
+
 function valueKind(value: unknown): string {
   if (value === null) return 'null';
   if (Array.isArray(value)) return 'array';

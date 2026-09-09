@@ -336,7 +336,14 @@ async function removeWorktree(path) {
   }
 }
 
-async function runParity(path, snapshotFile, excludedIds, dataOutputFile, verification) {
+async function runParity(
+  path,
+  snapshotFile,
+  excludedIds,
+  dataOutputFile,
+  verification,
+  reconciliationFile
+) {
   const args = [
     runnerPath,
     `--source-root=${path}`,
@@ -344,6 +351,7 @@ async function runParity(path, snapshotFile, excludedIds, dataOutputFile, verifi
     `--exclude-ids=${excludedIds.join(',')}`,
     `--data-output-file=${dataOutputFile}`,
   ];
+  if (reconciliationFile) args.push(`--reconciliation-file=${reconciliationFile}`);
   if (verification) {
     args.push(`--verification-cutover-ids=${verification.cutoverRowIds.join(',')}`);
     args.push(
@@ -391,8 +399,13 @@ async function createParityProof(
   rows,
   excludedIds,
   findDifferences,
-  verification
+  verification,
+  approvedReconciliation
 ) {
+  const helpers = createJiti(import.meta.url, { alias: { '@': join(projectDir, 'src') } })(
+    '../src/lib/gameData/compactionVerification.ts'
+  );
+  const reconciliation = helpers.readCompactionReconciliation(approvedReconciliation);
   const tempRoot = await mkdtemp(join(tmpdir(), TEMP_PREFIX));
   assertTemporaryRoot(tempRoot);
   const baselinePath = join(tempRoot, 'baseline');
@@ -400,11 +413,14 @@ async function createParityProof(
   const snapshotFile = join(tempRoot, 'snapshot.json');
   const beforeDataFile = join(tempRoot, 'before-data.json');
   const afterDataFile = join(tempRoot, 'after-data.json');
+  const reconciliationFile = reconciliation ? join(tempRoot, 'reconciliation.json') : undefined;
   let baselineAdded = false;
   let patchedAdded = false;
 
   try {
     await writeFile(snapshotFile, JSON.stringify(rows), 'utf8');
+    if (reconciliationFile)
+      await writeFile(reconciliationFile, JSON.stringify(approvedReconciliation), 'utf8');
     await addWorktree(baselinePath, baselineCommit);
     baselineAdded = true;
     await addWorktree(patchedPath, patchedCommit);
@@ -415,7 +431,8 @@ async function createParityProof(
       snapshotFile,
       excludedIds,
       afterDataFile,
-      verification
+      verification,
+      reconciliationFile
     );
     const expectedVerifiedIds = verification.verificationRowIds;
     const verifiedIds = after.patchVerification?.verifiedRowIds;
@@ -436,7 +453,26 @@ async function createParityProof(
         verifiedRowCount: Array.isArray(verifiedIds) ? verifiedIds.length : 0,
       });
     }
-    const parity = compareParityReports(before, after);
+    let expectedBefore = before;
+    if (reconciliation) {
+      const beforeData = JSON.parse(await readFile(beforeDataFile, 'utf8'));
+      const expectedData = helpers.applyCompactionReconciliation(
+        beforeData,
+        reconciliation.publishedChanges,
+        'forward'
+      );
+      expectedBefore = {
+        domains: Object.entries(expectedData).map(([entityType, data]) => ({
+          entityType,
+          ...helpers.createCanonicalCompactionDigest(data),
+        })),
+      };
+    }
+    const parity = compareParityReports(expectedBefore, after);
+    if (reconciliation) {
+      parity.strictlyEqual = compareParityReports(before, after).proven;
+      parity.approvedReconciliationDigest = reconciliation.digest;
+    }
     if (!parity.proven) {
       const beforeData = JSON.parse(await readFile(beforeDataFile, 'utf8'));
       const afterData = JSON.parse(await readFile(afterDataFile, 'utf8'));
@@ -634,7 +670,8 @@ async function runPostCutoverVerification({
     reconstructedRows,
     selection.actionIds,
     findCompactionValueDifferences,
-    verificationSelection
+    verificationSelection,
+    manifest.approvedReconciliation
   );
 
   const snapshotAfter = await readApprovedReplaySnapshot(client);
@@ -850,7 +887,8 @@ async function main() {
     snapshotBefore.rows,
     manifestIds,
     findCompactionValueDifferences,
-    selection
+    selection,
+    manifest.approvedReconciliation
   );
   const snapshotAfter = await readApprovedReplaySnapshot();
   if (
