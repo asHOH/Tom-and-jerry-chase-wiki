@@ -1,6 +1,21 @@
 #!/bin/bash
 set -euo pipefail
 
+FORCE_BUILD=0
+for arg in "$@"; do
+  case "$arg" in
+    --force-build) FORCE_BUILD=1 ;;
+    -h|--help)
+      echo "Usage: $0 [--force-build]"
+      exit 0
+      ;;
+    *)
+      echo "Unknown argument: $arg. Usage: $0 [--force-build]" >&2
+      exit 2
+      ;;
+  esac
+done
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_DIR="Tom-and-jerry-chase-wiki"
 REPO_URL="https://github.com/asHOH/Tom-and-jerry-chase-wiki.git"
@@ -632,6 +647,9 @@ if [ -f "$BUILD_INPUTS_FILE" ]; then
   IFS=$'\t' read -r LAST_SOURCE_HASH LAST_ENV_HASH LAST_NODE_VERSION LAST_NPM_VERSION LAST_API_RUNTIME < "$BUILD_INPUTS_FILE" || true
 fi
 
+if [ "$FORCE_BUILD" -eq 1 ]; then
+  BUILD_REASONS+=("forced")
+fi
 if [ "$CURRENT_HASH" != "$LAST_SOURCE_HASH" ]; then
   BUILD_REASONS+=("source")
 fi

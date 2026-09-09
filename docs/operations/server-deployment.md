@@ -25,11 +25,10 @@
 在 VPS 仓库根目录运行：
 
 ```bash
-rm -f .next/.build_inputs
-./scripts/ops/deploy_server.sh
+./scripts/ops/deploy_server.sh --force-build
 ```
 
-这只移除构建复用记录，保留现有构建和脚本的备份、恢复流程；不需要删除整个 `.next` 或强制安装依赖。确认最终日志为 `build=built`，然后按[游戏数据归档流程](./game-data-action-compaction.md)运行最终检查。
+`--force-build` 强制进入现有构建流程，保留备份和失败恢复，不强制安装依赖；不需要手动删除构建复用记录或整个 `.next`。确认最终日志为 `build=built`，然后按[游戏数据归档流程](./game-data-action-compaction.md)运行最终检查。使用仓库外的脚本副本时，先更新该副本以支持此参数。
 
 ### 依赖安装
 

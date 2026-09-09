@@ -122,9 +122,9 @@ Use `characterCounters.ts`, `characterCollaborators.ts`, `knowledgeCards.ts`, `s
    Rows with `pending`, `rejected`, or `revoked` status never explain source state. Preserve values
    outside the write set. Never overwrite an unexplained or superseding source value.
 
-4. Valid statuses: `pending`, `approved`, `rejected`, `synced`, `revoked`. Only a separately
-   authorized, parity-preserving status-cutover workflow may sync verified approved rows; never
-   sync failed, fuzzy, skipped, pending, rejected, or revoked rows.
+4. Valid statuses: `pending`, `approved`, `rejected`, `synced`, `revoked`. Sync only verified approved
+   rows through an authorized cutover with parity or exact approved reconciliations; existing batch
+   authorization suffices. Never sync failed, fuzzy, skipped, pending, rejected, or revoked rows.
 5. Stay on the current branch. Treat Chinese terminal mojibake as a display issue unless file
    bytes/editor output prove corruption; do not rewrite strings solely to fix terminal display.
 6. Report any important gap or error discovered in these instructions. If it makes an action
@@ -177,6 +177,6 @@ report a tooling blocker if the verifier cannot accept the complete group.
 - Relations: run targeted Prettier, grep/read checks, and
   `npm run report:character-relations` (the report does not check formatting).
 - Static character data: run targeted Prettier, projection checks, `npm run lint`, and
-  `npm run type-check`. Run full tests only for shared logic/components or on request.
-- Run relevant tests when shared projection, replay, verification, source-mapping logic, or
-  components change. Ordinary data-only patches do not require unrelated full tests.
+  `npm run type-check`. Add relevant tests for logic/components; full tests for broad changes or on request.
+- Reuse passing local checks while their source/cohort is unchanged; rerun affected checks after changes
+  or failures. Fresh remote-state and deployment checks remain mandatory at cutover and post-check.

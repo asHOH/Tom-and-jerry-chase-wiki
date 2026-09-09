@@ -23,8 +23,8 @@ does not split the logical group or require switching workflows by itself.
 
 - Treat the normal workflow as read-only remote discovery plus local source edits.
 - Stay on the current branch; do not use a browser.
-- Stop after local verification. Do not deploy or mutate remote moderation status without a
-  separately authorized cutover under the handoff below.
+- Without cutover authorization, stop after local verification. If already authorized, continue
+  under the handoff below without asking again.
 - Local verification does not prove that a remote status transition is safe. Never describe a row
   as `synced` unless an exact re-query confirms that status.
 
@@ -55,7 +55,7 @@ does not split the logical group or require switching workflows by itself.
 
 ## Status-Cutover Handoff
 
-Small-batch patching never implies permission to transition status. For a separately authorized
+Small-batch patching alone does not authorize status changes. For an already authorized
 cutover, use [game-action-compaction](../game-action-compaction/SKILL.md) and read the
 [human operator runbook](../../../docs/operations/game-data-action-compaction.md).
 Hand off exact cutover and verification-only row IDs as separate sets. The runbook owns deployment

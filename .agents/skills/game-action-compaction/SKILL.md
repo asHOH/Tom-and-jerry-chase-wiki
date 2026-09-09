@@ -20,7 +20,7 @@ independent rows unless the user explicitly requests compaction.
 
 - Stay on the current branch. Do not use a browser.
 - Remote mutations, repository pushes, and deployments require authorization for the batch and target.
-  One authorization can cover the entire batch and persists across deployment handoffs; do not ask again.
+  Existing batch authorization persists across deployment handoffs; ask only for scope changes or new decisions.
   Without remote authorization, complete local preparation and stop there.
 - Only an exact remote re-query confirming `status = 'synced'` permits calling a row synced.
 - Use the [operator runbook](../../../docs/operations/game-data-action-compaction.md) for production
@@ -86,8 +86,8 @@ fingerprints, and later overlaps before continuing with the retained rows.
    Checked replay is an expected-output oracle, not a source writer or permission to overwrite conflicts.
 3. Stop and defer a group on an unexplained mismatch; continue only independent groups. Report coherent
    progress and failures without waiting for acknowledgment.
-4. Run the shared domain checks and complete-group reverse verification for every patched or represented
-   group. Re-query exact remote status/visibility. Verification does not itself authorize a mutation.
+4. Run the shared checks once per unchanged source/cohort; include represented rows without rewriting them.
+   Re-run affected checks after changes or failures; deployment-bound preflight and post-check remain required.
 
 ## Commit convention
 
@@ -110,8 +110,8 @@ The runbook is the source of truth; do not duplicate its deployment commands her
 - The supported verifier requires the original `repository.head`, a committed `--patched-ref`, and the
   matching deployed build/approved snapshot. It binds epoch, revision, and row digests only after checks
   pass. Local preparation does not constitute deployment-bound proof.
-- With batch authorization, run `sync` after the first deployment; it includes preflight. A separate
-  `check` is optional. Follow the runbook for the actual second rebuild and final `post-check`.
+- After the first deployment, run `sync` directly; use standalone `check` only for inspection or diagnosis.
+  Follow the runbook for the forced second build and one final read-only `post-check`; do not repeat sync.
 - If evidence or checks fail, report the specific blocker. Do not allow unapproved differences, invent evidence,
   silently change the frozen row set, or repeat a sync whose result is uncertain or already confirmed.
 

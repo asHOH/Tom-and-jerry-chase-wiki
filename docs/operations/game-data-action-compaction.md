@@ -27,11 +27,10 @@
 
 ```bash
 cd /workspace/Tom-and-jerry-chase-wiki
-rm -f .next/.build_inputs
-./scripts/ops/deploy_server.sh
+./scripts/ops/deploy_server.sh --force-build
 ```
 
-若安装目录不同，替换 `cd` 路径。这里只移除“可跳过构建”的记录，保留当前运行的构建文件，仍由部署脚本负责备份、构建失败恢复和激活。日志应显示实际构建并以 `build=built` 完成；`build=skipped` 不算完成归档后的部署。无需删除整个 `.next`，也无需重新安装依赖。
+若安装目录不同，替换 `cd` 路径。`--force-build` 强制重建，仍由部署脚本负责备份、构建失败恢复和激活。日志应以 `build=built` 完成；`build=skipped` 不算完成归档后的部署。无需删除构建复用记录、整个 `.next` 或重新安装依赖；仓库外的脚本副本须先更新以支持此参数。
 
 ## 理解这项操作
 
