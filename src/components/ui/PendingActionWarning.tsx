@@ -1,11 +1,12 @@
 'use client';
 
-import { useId, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
 import { cn } from '@/lib/design';
 import type { ActionDependencyDescriptor } from '@/lib/gameData/actionDependencies';
 import type { PendingActionOverlapSummary } from '@/lib/gameData/pendingActionAwarenessTypes';
 import { usePendingFieldAwareness } from '@/context/PendingActionAwarenessContext';
+import Tooltip from '@/components/ui/Tooltip';
 import { ExclamationTriangleIcon } from '@/components/icons/CommonIcons';
 
 export function getPendingActionWarningText(summary: PendingActionOverlapSummary): string {
@@ -36,31 +37,28 @@ export function PendingActionWarningIndicator({
 }: {
   summary: PendingActionOverlapSummary | null;
 }) {
-  const tooltipId = useId();
   if (!summary) return null;
   const text = getPendingActionWarningText(summary);
   const isOther = summary.otherCount > 0;
 
   return (
-    <span
-      className={cn(
-        'group/pending relative ml-1 inline-flex shrink-0 cursor-help align-middle',
-        isOther ? 'text-amber-600 dark:text-amber-300' : 'text-blue-600 dark:text-blue-300'
-      )}
-      tabIndex={0}
-      role='note'
-      aria-label={text}
-      aria-describedby={tooltipId}
+    <Tooltip
+      asChild
+      content={text}
+      contentClassName='border-border bg-surface-raised text-foreground w-64 border px-2.5 py-2 text-xs leading-5'
     >
-      <ExclamationTriangleIcon className='h-4 w-4' aria-hidden='true' />
       <span
-        id={tooltipId}
-        role='tooltip'
-        className='bg-surface-raised text-foreground border-border invisible absolute bottom-full left-1/2 z-120 mb-2 w-64 -translate-x-1/2 rounded-md border px-2.5 py-2 text-xs leading-5 shadow-xl group-hover/pending:visible group-focus/pending:visible'
+        className={cn(
+          'ml-1 inline-flex shrink-0 cursor-help align-middle',
+          isOther ? 'text-amber-600 dark:text-amber-300' : 'text-blue-600 dark:text-blue-300'
+        )}
+        tabIndex={0}
+        role='note'
+        aria-label={text}
       >
-        {text}
+        <ExclamationTriangleIcon className='h-4 w-4' aria-hidden='true' />
       </span>
-    </span>
+    </Tooltip>
   );
 }
 
