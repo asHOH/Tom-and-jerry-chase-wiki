@@ -21,7 +21,8 @@ independent rows unless the user explicitly requests compaction.
 - Stay on the current branch. Do not use a browser.
 - Except for deterministic exact-duplicate resolution within the requested batch (see below), remote
   mutations, repository pushes, and deployments require authorization for the batch and target.
-  Existing batch authorization persists across deployment handoffs; ask only for scope changes or new decisions.
+  Existing authorization persists across handoffs; ask only for new content/contributor decisions or expanded
+  external scope. The agent owns routine preparation, validation, and whole-group deferral within that scope.
   Without remote authorization, complete local preparation and stop there.
 - Only an exact remote re-query confirming `status = 'synced'` permits calling a row synced.
 - Use the [operator runbook](../../../docs/operations/game-data-action-compaction.md) for production
@@ -40,7 +41,11 @@ independent rows unless the user explicitly requests compaction.
 4. Fetch exact-ID details in slices of at most 25 using `--values` and `--include-history`. Retain complete
    action content or a supported content digest in ignored companion evidence. Structural summaries alone
    cannot prove equality; defer groups whose content cannot be compared. Date scopes are inventory only.
-5. If status, visibility, content, entity type, creation order, or membership changes, preserve the original
+5. Derive the execution manifest from frozen evidence using the schema and selection checks in
+   `src/lib/gameData/compactionVerification.ts`: `rows` contains only chronological cutover rows, with
+   `cutoverRowIds` in the same order. Keep discovery/deferred evidence separate; inventory JSON is not an
+   execution manifest. Validate its shape locally before deployment, without inventing bound fingerprints.
+6. If status, visibility, content, entity type, creation order, or membership changes, preserve the original
    evidence and freeze a new manifest before continuing. Never mix snapshots.
 
 Never commit manifests, payloads, credentials, or user identifiers. Deployment-bound epoch, action revision,
@@ -60,7 +65,8 @@ Group by dependency and source locality, not the 25-ID inspection limit:
 Use the shared Ready, Represented, Review required, and Blocked dispositions. Before editing, give a short
 plan: exact scope and row/action counts, disposition counts, group sizes, affected files/order, deferred
 rows and reasons, and the next operator handoff. Proceed with authorized Ready and Represented groups
-without another approval. Resolve ambiguous content with the user while continuing independent clear groups.
+without another approval. Defer unresolved groups and continue independently verified groups; report reduced
+coverage explicitly. Ask about ambiguous content only when a decision is needed to resume those groups.
 
 ## Exact duplicates
 
@@ -87,10 +93,16 @@ fingerprints, and later overlaps before continuing with the retained rows.
 1. Immediately before editing, re-query each group's exact IDs and compare all frozen content and metadata.
 2. Apply the shared write-set, ordering, and source-mapping rules. Preserve comments and unrelated fields.
    Checked replay is an expected-output oracle, not a source writer or permission to overwrite conflicts.
-3. Stop and defer a group on an unexplained mismatch; continue only independent groups. Report coherent
-   progress and failures without waiting for acknowledgment.
-4. Run the shared checks once per unchanged source/cohort; include represented rows without rewriting them.
-   Re-run affected checks after changes or failures; deployment-bound preflight and post-check remain required.
+3. Check full published-domain parity before an expensive build or readiness claim, using the original and
+   patched baselines with one approved snapshot. Also check patched replay before/after excluding cutover
+   rows. Allow only exact user-approved before/after reconciliations; source reversal alone is insufficient.
+4. On unexplained differences, defer the entire affected dependency group, freeze the reduced manifest,
+   and recheck the remainder without another approval. Never relax parity or split a group to pass.
+5. Carry approved content corrections through source and later replay: prepare narrow correction actions
+   from fresh endpoint/old-value checks and submit within existing remote authorization. Refreeze after
+   mutations; approval of wording alone does not authorize publication.
+6. Run shared checks once per unchanged source/cohort, including represented rows. Reuse passing results;
+   rerun affected checks after changes. Deployment-bound preflight and post-check remain required.
 
 ## Commit convention
 
@@ -108,15 +120,15 @@ The runbook is the source of truth; do not duplicate its deployment commands her
 
 - Keep `cutoverRowIds`, `verificationDependencyRowIds`, and retrospective observations separate. Only
   cutover IDs reach the RPC; verification-only dependencies remain in replay.
-- Require full published-domain equality, allowing only explicitly user-approved exact before/after
-  reconciliations frozen and verified through the runbook; all other differences must fail.
 - The supported verifier requires the original `repository.head`, a committed `--patched-ref`, and the
   matching deployed build/approved snapshot. It binds epoch, revision, and row digests only after checks
   pass. Local preparation does not constitute deployment-bound proof.
-- After the first deployment, run `sync` directly; use standalone `check` only for inspection or diagnosis.
-  Follow the runbook for the forced second build and one final read-only `post-check`; do not repeat sync.
-- If evidence or checks fail, report the specific blocker. Do not allow unapproved differences, invent evidence,
-  silently change the frozen row set, or repeat a sync whose result is uncertain or already confirmed.
+- Resume from saved evidence when the user reports deployment: after the first, run authorized `sync`
+  directly; after the forced second build, run read-only `post-check`. Use standalone `check` only for
+  diagnosis. Report the next operator step; never repeat an uncertain or confirmed sync.
+- Diagnose failures through the underlying verifier. Repair format-only errors from frozen evidence and
+  retry only when no mutation occurred; apply the runbook's stop/recovery rules to changed state or uncertain
+  outcomes. Never invent evidence or silently change membership.
 
 ## Report
 
