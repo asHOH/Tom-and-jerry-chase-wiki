@@ -20,7 +20,7 @@ describe('robots', () => {
     expect(result.rules).toEqual({
       userAgent: '*',
       allow: '/',
-      disallow: '/api/',
+      disallow: ['/api/', '/api.php', '/index.php'],
     });
     expect(result.sitemap).toEqual([
       'https://www.tjwiki.com/sitemap.xml',

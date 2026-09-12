@@ -22,7 +22,7 @@ import {
   type Skill,
 } from '@/data';
 
-type Kind =
+export type GotoIndexKind =
   | 'character'
   | 'itemGroup'
   | 'card'
@@ -38,8 +38,8 @@ type Kind =
   | 'mode'
   | 'achievement';
 
-type IndexEntry = {
-  kind: Kind;
+export type GotoIndexEntry = {
+  kind: GotoIndexKind;
   priority: number;
   goto: GotoResult; // base result; skills don't include level fields yet
   // Skill enrichment metadata
@@ -52,7 +52,7 @@ type IndexEntry = {
 };
 
 export type GotoIndex = {
-  byName: Map<string, IndexEntry[]>;
+  byName: Map<string, GotoIndexEntry[]>;
 };
 
 // Normalizes input names for indexing and lookups.
@@ -74,7 +74,7 @@ export function normalizeCategoryHint(raw?: string): CategoryHint | undefined {
   return (CATEGORY_HINTS as readonly string[]).includes(v) ? (v as CategoryHint) : undefined;
 }
 
-const PRIORITY: Record<Kind, { name: number; alias: number }> = {
+const PRIORITY: Record<GotoIndexKind, { name: number; alias: number }> = {
   character: { name: 1, alias: 14 },
   itemGroup: { name: 2, alias: 15 },
   card: { name: 3, alias: 99 }, // no alias search for cards in current behavior
@@ -91,7 +91,7 @@ const PRIORITY: Record<Kind, { name: number; alias: number }> = {
   achievement: { name: 22, alias: 22 },
 };
 
-function push(map: Map<string, IndexEntry[]>, key: string, entry: IndexEntry) {
+function push(map: Map<string, GotoIndexEntry[]>, key: string, entry: GotoIndexEntry) {
   const list = map.get(key);
   if (list) list.push(entry);
   else map.set(key, [entry]);
@@ -135,7 +135,7 @@ async function buildGotoIndex(gameData: PublishedGameDataByType): Promise<GotoIn
     modes,
     specialSkills,
   } = gameData;
-  const byName = new Map<string, IndexEntry[]>();
+  const byName = new Map<string, GotoIndexEntry[]>();
 
   // Characters
   for (const [id, c] of Object.entries(characters)) {
@@ -172,7 +172,7 @@ async function buildGotoIndex(gameData: PublishedGameDataByType): Promise<GotoIn
         ownerName: characterDisplayName,
         ...(c.factionId ? { ownerFactionId: c.factionId } : {}),
       };
-      const entryBase: IndexEntry = {
+      const entryBase: GotoIndexEntry = {
         kind: 'character-skill',
         priority: PRIORITY['character-skill'].name,
         goto: skillGoto,
