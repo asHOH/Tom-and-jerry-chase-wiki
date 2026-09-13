@@ -66,6 +66,8 @@ export type MediaWikiPage = Readonly<{
   factionId?: FactionId;
   ownerName?: string;
   ownerFactionId?: FactionId;
+  /** Alias-only matches that may also be relevant to a canonical title. */
+  suggestions?: readonly MediaWikiDisambiguationCandidate[];
   candidates?: readonly MediaWikiDisambiguationCandidate[];
 }>;
 
@@ -96,7 +98,10 @@ export type MediaWikiCatalog = Readonly<{
   articlePages: readonly MediaWikiPage[];
   pagesById: ReadonlyMap<number, MediaWikiPage>;
   pagesByRoute: ReadonlyMap<string, MediaWikiPage>;
-  /** Effective title lookup. Ambiguous names resolve to a disambiguation page. */
+  /**
+   * Effective title lookup. A unique canonical name wins over alias-only
+   * collisions; otherwise ambiguous names resolve to a disambiguation page.
+   */
   pagesByTitle: ReadonlyMap<string, MediaWikiPage>;
   /** Canonical and alias lookup candidates, before ambiguity is projected. */
   pagesByName: ReadonlyMap<string, readonly MediaWikiPage[]>;
@@ -106,6 +111,8 @@ type SourcePage = Readonly<{
   identity: string;
   entry: GotoIndexEntry;
   names: ReadonlySet<string>;
+  canonicalNames: ReadonlySet<string>;
+  aliasNames: ReadonlySet<string>;
   priority: number;
 }>;
 
@@ -113,6 +120,8 @@ type MutableSourcePage = {
   identity: string;
   entry: GotoIndexEntry;
   names: Set<string>;
+  canonicalNames: Set<string>;
+  aliasNames: Set<string>;
   priority: number;
 };
 
@@ -221,12 +230,16 @@ function collectSourcePages(index: { byName: Map<string, GotoIndexEntry[]> }): S
       const existing = byIdentity.get(identity);
       if (existing) {
         existing.names.add(normalizedName);
+        if (entry.matchType === 'alias') existing.aliasNames.add(normalizedName);
+        else existing.canonicalNames.add(normalizedName);
         existing.priority = Math.min(existing.priority, entry.priority);
       } else {
         byIdentity.set(identity, {
           identity,
           entry,
           names: new Set([normalizedName]),
+          canonicalNames: new Set(entry.matchType === 'alias' ? [] : [normalizedName]),
+          aliasNames: new Set(entry.matchType === 'alias' ? [normalizedName] : []),
           priority: entry.priority,
         });
       }
@@ -238,6 +251,8 @@ function collectSourcePages(index: { byName: Map<string, GotoIndexEntry[]> }): S
       identity: source.identity,
       entry: source.entry,
       names: source.names,
+      canonicalNames: source.canonicalNames,
+      aliasNames: source.aliasNames,
       priority: source.priority,
     }))
     .sort(
@@ -248,21 +263,30 @@ function collectSourcePages(index: { byName: Map<string, GotoIndexEntry[]> }): S
     );
 }
 
+type SourceNameCandidate = {
+  source: SourcePage;
+  canonical: boolean;
+};
+
 function addNameCandidate(
-  byName: Map<string, SourcePage[]>,
+  byName: Map<string, SourceNameCandidate[]>,
   name: string,
-  source: SourcePage
+  source: SourcePage,
+  canonical: boolean
 ): void {
   const normalizedName = normalizeName(name);
   if (!normalizedName) return;
 
   const candidates = byName.get(normalizedName);
   if (candidates) {
-    if (!candidates.some((candidate) => candidate.identity === source.identity)) {
-      candidates.push(source);
+    const existing = candidates.find((candidate) => candidate.source.identity === source.identity);
+    if (existing) {
+      existing.canonical ||= canonical;
+    } else {
+      candidates.push({ source, canonical });
     }
   } else {
-    byName.set(normalizedName, [source]);
+    byName.set(normalizedName, [{ source, canonical }]);
   }
 }
 
@@ -377,22 +401,35 @@ function makeMainPage(): MediaWikiPage {
   });
 }
 
+function toDisambiguationCandidate(candidate: MediaWikiPage): MediaWikiDisambiguationCandidate {
+  return {
+    pageid: candidate.pageid,
+    title: candidate.title,
+    qualifiedTitle: `${candidate.title}（${candidate.categoryLabel}）`,
+    kind: candidate.kind as GotoResult['type'],
+    categoryLabel: candidate.categoryLabel,
+    kindDescription: candidate.kindDescription,
+    route: candidate.route,
+    fullUrl: candidate.fullUrl,
+    description: candidate.description,
+    ...(candidate.imageUrl ? { imageUrl: candidate.imageUrl } : {}),
+  };
+}
+
+function toDisambiguationCandidates(
+  candidates: readonly MediaWikiPage[]
+): readonly MediaWikiDisambiguationCandidate[] {
+  return Object.freeze(candidates.map(toDisambiguationCandidate));
+}
+
+function withSuggestions(page: MediaWikiPage, candidates: readonly MediaWikiPage[]): MediaWikiPage {
+  const suggestions = toDisambiguationCandidates(candidates);
+  return suggestions.length > 0 ? Object.freeze({ ...page, suggestions }) : page;
+}
+
 function makeDisambiguationPage(name: string, candidates: readonly MediaWikiPage[]): MediaWikiPage {
   const route = `/goto/${encodeURIComponent(name)}`;
-  const disambiguationCandidates = Object.freeze(
-    candidates.map((candidate) => ({
-      pageid: candidate.pageid,
-      title: candidate.title,
-      qualifiedTitle: `${candidate.title}（${candidate.categoryLabel}）`,
-      kind: candidate.kind as GotoResult['type'],
-      categoryLabel: candidate.categoryLabel,
-      kindDescription: candidate.kindDescription,
-      route: candidate.route,
-      fullUrl: candidate.fullUrl,
-      description: candidate.description,
-      ...(candidate.imageUrl ? { imageUrl: candidate.imageUrl } : {}),
-    }))
-  );
+  const disambiguationCandidates = toDisambiguationCandidates(candidates);
   const description = `${name}可能指：\n${disambiguationCandidates
     .map((candidate) => `- ${candidate.qualifiedTitle}，${candidate.kindDescription}`)
     .join('\n')}`;
@@ -530,7 +567,7 @@ export function searchMediaWikiCatalog(
   );
 }
 
-/** Resolve an effective title or alias (ambiguous names resolve to a synthetic page). */
+/** Resolve an effective title or alias using the canonical-name precedence policy. */
 export function lookupMediaWikiPage(
   catalog: MediaWikiCatalog,
   title: string
@@ -560,9 +597,55 @@ export async function buildMediaWikiCatalog(
   const sources = collectSourcePages(index);
   const sectionsByCharacterRoute = buildCharacterSections(gameData);
 
-  const sourcePages = sources.map((source) =>
+  const baseSourcePages = sources.map((source) =>
     pageFromSource(source, gameData, sectionsByCharacterRoute)
   );
+  const basePageByIdentity = new Map<string, MediaWikiPage>();
+  for (const [source, page] of sources.map(
+    (source, index) => [source, baseSourcePages[index]!] as const
+  )) {
+    basePageByIdentity.set(source.identity, page);
+  }
+
+  const sourceCandidatesByName = new Map<string, SourceNameCandidate[]>();
+  for (const source of sources) {
+    addNameCandidate(sourceCandidatesByName, sourcePageTitle(source), source, true);
+    for (const name of source.canonicalNames) {
+      addNameCandidate(sourceCandidatesByName, name, source, true);
+    }
+    for (const name of source.aliasNames) {
+      addNameCandidate(sourceCandidatesByName, name, source, false);
+    }
+  }
+
+  const suggestionSourcesByIdentity = new Map<string, Map<string, SourcePage>>();
+  for (const candidates of sourceCandidatesByName.values()) {
+    if (candidates.length < 2) continue;
+
+    const canonicalSources = candidates.filter((candidate) => candidate.canonical);
+    if (canonicalSources.length !== 1) continue;
+
+    const canonicalSource = canonicalSources[0]!.source;
+    let suggestions = suggestionSourcesByIdentity.get(canonicalSource.identity);
+    if (!suggestions) {
+      suggestions = new Map<string, SourcePage>();
+      suggestionSourcesByIdentity.set(canonicalSource.identity, suggestions);
+    }
+    for (const candidate of candidates) {
+      if (candidate.source.identity !== canonicalSource.identity) {
+        suggestions.set(candidate.source.identity, candidate.source);
+      }
+    }
+  }
+
+  const sourcePages = sources.map((source, index) => {
+    const page = baseSourcePages[index]!;
+    const suggestionPages = [...(suggestionSourcesByIdentity.get(source.identity)?.values() ?? [])]
+      .map((candidate) => basePageByIdentity.get(candidate.identity))
+      .filter((candidate): candidate is MediaWikiPage => candidate !== undefined)
+      .sort(comparePages);
+    return withSuggestions(page, suggestionPages);
+  });
   const pageByIdentity = new Map<string, MediaWikiPage>();
   for (const [source, page] of sources.map(
     (source, index) => [source, sourcePages[index]!] as const
@@ -570,19 +653,30 @@ export async function buildMediaWikiCatalog(
     pageByIdentity.set(source.identity, page);
   }
 
-  const sourceCandidatesByName = new Map<string, SourcePage[]>();
-  for (const source of sources) {
-    addNameCandidate(sourceCandidatesByName, sourcePageTitle(source), source);
-    for (const name of source.names) addNameCandidate(sourceCandidatesByName, name, source);
-  }
-
-  const canonicalNameCandidates = new Map<string, readonly MediaWikiPage[]>();
+  const nameCandidates = new Map<
+    string,
+    {
+      pages: readonly MediaWikiPage[];
+      canonicalPages: readonly MediaWikiPage[];
+    }
+  >();
   for (const [name, candidates] of sourceCandidatesByName) {
-    const pages = candidates
-      .map((candidate) => pageByIdentity.get(candidate.identity))
-      .filter((page): page is MediaWikiPage => page !== undefined)
-      .sort(comparePages);
-    canonicalNameCandidates.set(name, Object.freeze(pages));
+    const pagesFor = (canonicalOnly: boolean): readonly MediaWikiPage[] =>
+      Object.freeze(
+        candidates
+          .filter((candidate) => !canonicalOnly || candidate.canonical)
+          .map((candidate) => pageByIdentity.get(candidate.source.identity))
+          .filter((page): page is MediaWikiPage => page !== undefined)
+          .filter(
+            (page, index, pages) =>
+              pages.findIndex((candidate) => candidate.pageid === page.pageid) === index
+          )
+          .sort(comparePages)
+      );
+    nameCandidates.set(name, {
+      pages: pagesFor(false),
+      canonicalPages: pagesFor(true),
+    });
   }
 
   const mainPage = makeMainPage();
@@ -599,11 +693,17 @@ export async function buildMediaWikiCatalog(
   pagesByName.set('main page', Object.freeze([mainPage]));
   pagesByName.set('首页', Object.freeze([mainPage]));
 
-  for (const [name, pages] of canonicalNameCandidates) {
+  for (const [name, { pages, canonicalPages }] of nameCandidates) {
     if (pages.length === 0) continue;
     pagesByName.set(name, pages);
     if (pages.length === 1) {
       effectiveTitlePages.set(name, pages[0]!);
+      continue;
+    }
+
+    if (canonicalPages.length === 1) {
+      const canonicalPage = canonicalPages[0]!;
+      effectiveTitlePages.set(name, canonicalPage);
       continue;
     }
 

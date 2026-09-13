@@ -38,9 +38,12 @@ export type GotoIndexKind =
   | 'mode'
   | 'achievement';
 
+export type GotoIndexMatchType = 'name' | 'alias';
+
 export type GotoIndexEntry = {
   kind: GotoIndexKind;
   priority: number;
+  matchType: GotoIndexMatchType;
   goto: GotoResult; // base result; skills don't include level fields yet
   // Skill enrichment metadata
   skillMeta?: {
@@ -151,12 +154,14 @@ async function buildGotoIndex(gameData: PublishedGameDataByType): Promise<GotoIn
     push(byName, normalizeName(id), {
       kind: 'character',
       priority: PRIORITY.character.name,
+      matchType: 'name',
       goto: base,
     });
     for (const alias of c.aliases ?? []) {
       push(byName, normalizeName(alias), {
         kind: 'character',
         priority: PRIORITY.character.alias,
+        matchType: 'alias',
         goto: base,
       });
     }
@@ -175,6 +180,7 @@ async function buildGotoIndex(gameData: PublishedGameDataByType): Promise<GotoIn
       const entryBase: GotoIndexEntry = {
         kind: 'character-skill',
         priority: PRIORITY['character-skill'].name,
+        matchType: 'name',
         goto: skillGoto,
         skillMeta: {
           type: s.type,
@@ -188,6 +194,7 @@ async function buildGotoIndex(gameData: PublishedGameDataByType): Promise<GotoIn
         push(byName, normalizeName(a), {
           ...entryBase,
           priority: PRIORITY['character-skill'].alias,
+          matchType: 'alias',
         });
       }
     }
@@ -205,12 +212,14 @@ async function buildGotoIndex(gameData: PublishedGameDataByType): Promise<GotoIn
     push(byName, normalizeName(name), {
       kind: 'itemGroup',
       priority: PRIORITY.itemGroup.name,
+      matchType: 'name',
       goto,
     });
     for (const a of g.aliases ?? []) {
       push(byName, normalizeName(a), {
         kind: 'itemGroup',
         priority: PRIORITY.itemGroup.alias,
+        matchType: 'alias',
         goto,
       });
     }
@@ -229,6 +238,7 @@ async function buildGotoIndex(gameData: PublishedGameDataByType): Promise<GotoIn
     push(byName, normalizeName(id), {
       kind: 'card',
       priority: PRIORITY.card.name,
+      matchType: 'name',
       goto,
     });
   }
@@ -245,12 +255,14 @@ async function buildGotoIndex(gameData: PublishedGameDataByType): Promise<GotoIn
     push(byName, normalizeName(name), {
       kind: 'entity',
       priority: PRIORITY.entity.name,
+      matchType: 'name',
       goto,
     });
     for (const a of it.aliases ?? []) {
       push(byName, normalizeName(a), {
         kind: 'entity',
         priority: PRIORITY.entity.alias,
+        matchType: 'alias',
         goto,
       });
     }
@@ -267,12 +279,14 @@ async function buildGotoIndex(gameData: PublishedGameDataByType): Promise<GotoIn
     push(byName, normalizeName(name), {
       kind: 'item',
       priority: PRIORITY.item.name,
+      matchType: 'name',
       goto,
     });
     for (const a of it.aliases ?? []) {
       push(byName, normalizeName(a), {
         kind: 'item',
         priority: PRIORITY.item.alias,
+        matchType: 'alias',
         goto,
       });
     }
@@ -291,6 +305,7 @@ async function buildGotoIndex(gameData: PublishedGameDataByType): Promise<GotoIn
     push(byName, normalizeName(name), {
       kind: 'buff',
       priority: PRIORITY.buff.name,
+      matchType: 'name',
       goto,
     });
   }
@@ -307,12 +322,14 @@ async function buildGotoIndex(gameData: PublishedGameDataByType): Promise<GotoIn
     push(byName, normalizeName(name), {
       kind: 'special-skill-cat',
       priority: PRIORITY['special-skill-cat'].name,
+      matchType: 'name',
       goto,
     });
     for (const a of s.aliases ?? []) {
       push(byName, normalizeName(a), {
         kind: 'special-skill-cat',
         priority: PRIORITY['special-skill-cat'].alias,
+        matchType: 'alias',
         goto,
       });
     }
@@ -328,12 +345,14 @@ async function buildGotoIndex(gameData: PublishedGameDataByType): Promise<GotoIn
     push(byName, normalizeName(name), {
       kind: 'special-skill-mouse',
       priority: PRIORITY['special-skill-mouse'].name,
+      matchType: 'name',
       goto,
     });
     for (const a of s.aliases ?? []) {
       push(byName, normalizeName(a), {
         kind: 'special-skill-mouse',
         priority: PRIORITY['special-skill-mouse'].alias,
+        matchType: 'alias',
         goto,
       });
     }
@@ -351,12 +370,14 @@ async function buildGotoIndex(gameData: PublishedGameDataByType): Promise<GotoIn
     push(byName, normalizeName(name), {
       kind: 'map',
       priority: PRIORITY.map.name,
+      matchType: 'name',
       goto,
     });
     for (const a of it.aliases ?? []) {
       push(byName, normalizeName(a), {
         kind: 'map',
         priority: PRIORITY.map.alias,
+        matchType: 'alias',
         goto,
       });
     }
@@ -374,12 +395,14 @@ async function buildGotoIndex(gameData: PublishedGameDataByType): Promise<GotoIn
     push(byName, normalizeName(name), {
       kind: 'fixture',
       priority: PRIORITY.fixture.name,
+      matchType: 'name',
       goto,
     });
     for (const a of it.aliases ?? []) {
       push(byName, normalizeName(a), {
         kind: 'fixture',
         priority: PRIORITY.fixture.alias,
+        matchType: 'alias',
         goto,
       });
     }
@@ -397,12 +420,14 @@ async function buildGotoIndex(gameData: PublishedGameDataByType): Promise<GotoIn
     push(byName, normalizeName(name), {
       kind: 'mode',
       priority: PRIORITY.mode.name,
+      matchType: 'name',
       goto,
     });
     for (const a of it.aliases ?? []) {
       push(byName, normalizeName(a), {
         kind: 'mode',
         priority: PRIORITY.mode.alias,
+        matchType: 'alias',
         goto,
       });
     }
@@ -422,12 +447,14 @@ async function buildGotoIndex(gameData: PublishedGameDataByType): Promise<GotoIn
       push(byName, normalizeName(name), {
         kind: 'achievement',
         priority: PRIORITY.achievement.name,
+        matchType: 'name',
         goto,
       });
       for (const alias of achievement.aliases ?? []) {
         push(byName, normalizeName(alias), {
           kind: 'achievement',
           priority: PRIORITY.achievement.alias,
+          matchType: 'alias',
           goto,
         });
       }
@@ -449,12 +476,14 @@ async function buildGotoIndex(gameData: PublishedGameDataByType): Promise<GotoIn
     push(byName, slugKey, {
       kind: 'doc',
       priority: PRIORITY.doc.name,
+      matchType: 'name',
       goto,
     });
     if (titleKey !== slugKey) {
       push(byName, titleKey, {
         kind: 'doc',
         priority: PRIORITY.doc.name,
+        matchType: 'name',
         goto,
       });
     }

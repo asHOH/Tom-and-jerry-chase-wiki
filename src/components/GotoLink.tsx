@@ -118,6 +118,7 @@ export default function GotoLink({
         description: result.description ?? '',
         imageUrl: result.imageUrl ?? '',
         ...(Array.isArray(result.candidates) ? { candidates: result.candidates } : {}),
+        ...(Array.isArray(result.suggestions) ? { suggestions: result.suggestions } : {}),
         className: '',
         ...(result.factionId ? { factionId: result.factionId } : {}),
         ...(result.ownerName ? { ownerName: result.ownerName } : {}),
@@ -254,6 +255,34 @@ export default function GotoLink({
     setOpen(nextOpen);
   };
 
+  const handleTriggerBlur = (event: React.FocusEvent<HTMLElement>) => {
+    const nextTarget = event.relatedTarget;
+    if (nextTarget instanceof Node && contentRef.current?.contains(nextTarget)) {
+      event.preventDefault();
+    }
+  };
+
+  const handleTriggerKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
+    if (event.key !== 'Tab' || event.shiftKey || !open) return;
+
+    const firstPreviewLink = contentRef.current?.querySelector<HTMLAnchorElement>('a[href]');
+    if (!firstPreviewLink) return;
+
+    event.preventDefault();
+    firstPreviewLink.focus();
+  };
+
+  const handleContentBlur = (event: React.FocusEvent<HTMLDivElement>) => {
+    const nextTarget = event.relatedTarget;
+    if (
+      nextTarget instanceof Node &&
+      (contentRef.current?.contains(nextTarget) || triggerRef.current?.contains(nextTarget))
+    ) {
+      return;
+    }
+    setOpen(false);
+  };
+
   const srOnlyInstructions = asPreviewOnly ? '单击可预览' : '单击可预览，双击跳转到对应页面';
 
   return (
@@ -271,6 +300,8 @@ export default function GotoLink({
                 className={linkClasses}
                 tabIndex={0}
                 onClick={handleTriggerClick}
+                onBlur={handleTriggerBlur}
+                onKeyDown={handleTriggerKeyDown}
                 aria-describedby={isTouchEnvironment ? touchInstructionsId : undefined}
               >
                 {children}
@@ -286,6 +317,8 @@ export default function GotoLink({
                 className={linkClasses}
                 tabIndex={0}
                 onClick={handleTriggerClick}
+                onBlur={handleTriggerBlur}
+                onKeyDown={handleTriggerKeyDown}
                 aria-describedby={isTouchEnvironment ? touchInstructionsId : undefined}
               >
                 {children}
@@ -303,9 +336,10 @@ export default function GotoLink({
             side='bottom'
             align='center'
             sideOffset={8}
-            className='pointer-events-none z-50'
+            className='pointer-events-auto z-50'
             style={{ width: 'clamp(300px, 60vw, 720px)' }}
             ref={contentRef}
+            onBlur={handleContentBlur}
           >
             {previewContent}
           </TooltipPrimitive.Content>

@@ -216,7 +216,25 @@ export async function getGotoResult(
     ['desc', 'asc', 'asc']
   );
 
-  const deduped = uniqBy(sortedPool, (c) => `${c.kind}@@${c.goto.url}`);
+  const candidateKey = (entry: (typeof sortedPool)[number]): string =>
+    `${entry.kind}@@${entry.goto.url}`;
+  const matchTypesByCandidate = new Map<string, Set<(typeof sortedPool)[number]['matchType']>>();
+  for (const entry of pool) {
+    const key = candidateKey(entry);
+    const matchTypes = matchTypesByCandidate.get(key);
+    if (matchTypes) matchTypes.add(entry.matchType);
+    else matchTypesByCandidate.set(key, new Set([entry.matchType]));
+  }
+
+  const deduped = uniqBy(sortedPool, candidateKey);
+  const nameMatched = deduped.filter((entry) =>
+    matchTypesByCandidate.get(candidateKey(entry))?.has('name')
+  );
+  const aliasMatched = deduped.filter((entry) =>
+    matchTypesByCandidate.get(candidateKey(entry))?.has('alias')
+  );
+  const nameMatchKeys = new Set(nameMatched.map(candidateKey));
+  const aliasOnlyMatched = aliasMatched.filter((entry) => !nameMatchKeys.has(candidateKey(entry)));
 
   const factionLabel = (factionId?: string): '猫' | '鼠' | undefined =>
     factionId === 'cat' ? '猫' : factionId === 'mouse' ? '鼠' : undefined;
@@ -273,7 +291,14 @@ export async function getGotoResult(
     };
   };
 
-  if (deduped.length >= 2) {
+  // A canonical name is more specific than an alias. Keep the canonical
+  // target as the navigation result, while exposing the alias-only matches
+  // as optional suggestions for previews and compatible API consumers.
+  const directNameMatch =
+    nameMatched.length === 1 && aliasOnlyMatched.length > 0 ? nameMatched[0] : null;
+  const aliasSuggestions = directNameMatch ? aliasOnlyMatched.map(toDisambiguationCandidate) : [];
+
+  if (deduped.length >= 2 && !directNameMatch) {
     const firstImage = deduped[0]?.goto.imageUrl;
     const disambiguationCandidates = deduped.map(toDisambiguationCandidate);
     const bulletLines = disambiguationCandidates
@@ -296,8 +321,11 @@ export async function getGotoResult(
     return disambiguation;
   }
 
-  const chosen = deduped[0];
+  const chosen = directNameMatch ?? deduped[0];
   if (chosen) {
+    const withSuggestions = (result: GotoResult): GotoResult =>
+      aliasSuggestions.length > 0 ? { ...result, suggestions: aliasSuggestions } : result;
+
     if (chosen.kind === 'character-skill') {
       const maybeOverrideSkillDescription = (): string | undefined => {
         if (descMode !== 'detailed') return chosen.goto.description;
@@ -312,20 +340,20 @@ export async function getGotoResult(
 
       if (skillLevelRequested) {
         const lvl = chosen.skillMeta?.levels.find((l) => l.level === skillLevelRequested!);
-        return {
+        return withSuggestions({
           ...chosen.goto,
           description: maybeOverrideSkillDescription(),
           skillLevel: skillLevelRequested,
           skillType: (chosen.skillMeta as { type: Skill['type'] }).type,
           ...(lvl ? { skillLevelDescription: chooseSkillLevelDescription(lvl) } : {}),
-        } as GotoResult;
+        } as GotoResult);
       }
-      return {
+      return withSuggestions({
         ...chosen.goto,
         description: maybeOverrideSkillDescription(),
-      };
+      });
     }
-    return chosen.goto;
+    return withSuggestions(chosen.goto);
   }
 
   // Fuzzy buff alias fallback (preserve existing behavior)

@@ -17,6 +17,7 @@ export type GotoPreviewCardProps = {
   description?: string;
   imageUrl?: string;
   candidates?: GotoDisambiguationCandidate[];
+  suggestions?: GotoDisambiguationCandidate[];
   className?: string;
   hideImage?: boolean;
   factionId?: FactionId;
@@ -55,6 +56,7 @@ export default function PreviewCard({
   description,
   imageUrl,
   candidates,
+  suggestions,
   className = '',
   hideImage = false,
   factionId,
@@ -78,6 +80,35 @@ export default function PreviewCard({
         <div className='mb-1'>{name}可能指：</div>
         <ul className='list-inside list-disc space-y-1'>
           {candidates.map((candidate) => (
+            <li key={`${candidate.type}@@${candidate.url}`} className='leading-relaxed'>
+              {clickable ? (
+                <span>
+                  {candidate.name}（{candidate.categoryLabel}）
+                </span>
+              ) : (
+                <Link
+                  href={candidate.url}
+                  className='underline decoration-solid decoration-1 underline-offset-2'
+                  aria-label={`前往：${candidate.name}（${candidate.categoryLabel}）`}
+                >
+                  {candidate.name}（{candidate.categoryLabel}）
+                </Link>
+              )}
+              <span className='text-gray-600 dark:text-gray-400'>
+                （{candidate.kindDescription}）
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ) : null;
+
+  const suggestionList =
+    type !== 'disambiguation' && Array.isArray(suggestions) && suggestions.length > 0 ? (
+      <div className='mt-2 w-full text-sm text-gray-700 dark:text-gray-300'>
+        <div className='mb-1'>你可能还想看：</div>
+        <ul className='list-inside list-disc space-y-1'>
+          {suggestions.map((candidate) => (
             <li key={`${candidate.type}@@${candidate.url}`} className='leading-relaxed'>
               {clickable ? (
                 <span>
@@ -175,9 +206,11 @@ export default function PreviewCard({
           </div>
         )}
 
-        {type === 'disambiguation' && disambiguationList
-          ? disambiguationList
-          : (() => {
+        {type === 'disambiguation' && disambiguationList ? (
+          disambiguationList
+        ) : (
+          <>
+            {(() => {
               if (type !== 'character-skill') {
                 if (!description) return null;
 
@@ -227,6 +260,9 @@ export default function PreviewCard({
                 </div>
               );
             })()}
+            {suggestionList}
+          </>
+        )}
       </div>
     </EntityCardFrame>
   );

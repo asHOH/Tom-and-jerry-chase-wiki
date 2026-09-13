@@ -96,6 +96,8 @@ export type GotoResult = {
   skillLevel?: number; // When query specified like "2级技能名"
   skillType?: SkillType;
   skillLevelDescription?: string; // Description for that level, if any
+  /** Alias matches that may also be relevant when the canonical name won. */
+  suggestions?: GotoDisambiguationCandidate[];
 };
 
 export type GotoDisambiguationCandidate = {

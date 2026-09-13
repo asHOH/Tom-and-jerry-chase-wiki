@@ -10,6 +10,7 @@ import {
   lookupMediaWikiPage,
   searchMediaWikiCatalog,
   type MediaWikiCatalog,
+  type MediaWikiDisambiguationCandidate,
   type MediaWikiPage,
 } from './catalog';
 
@@ -278,6 +279,15 @@ function clampExtract(value: string, params: URLSearchParams): string {
   return value.slice(0, length);
 }
 
+function extractForPage(page: MediaWikiPage): string {
+  if (!page.suggestions?.length) return page.extract;
+
+  const suggestions = page.suggestions
+    .map((candidate) => `- ${candidate.qualifiedTitle}，${candidate.kindDescription}`)
+    .join('\n');
+  return `${page.extract}\n\n你可能还想看：\n${suggestions}`;
+}
+
 function toPagePayload(page: MediaWikiPage, params: URLSearchParams): UnknownRecord {
   return {
     pageid: page.pageid,
@@ -287,7 +297,7 @@ function toPagePayload(page: MediaWikiPage, params: URLSearchParams): UnknownRec
     canonicalurl: page.canonicalUrl,
     // This facade intentionally exposes optional collections as empty values
     // for every virtual page, keeping AkariBot's old parser predictable.
-    extract: clampExtract(page.extract, params),
+    extract: clampExtract(extractForPage(page), params),
     templates: [],
     langlinks: [],
     pageprops: page.kind === 'disambiguation' ? { disambiguation: '' } : {},
@@ -413,8 +423,8 @@ function escapeHtml(value: string): string {
 }
 
 function renderPageBody(page: MediaWikiPage): string {
-  if (page.candidates?.length) {
-    const candidates = page.candidates
+  const renderCandidates = (candidates: readonly MediaWikiDisambiguationCandidate[]) =>
+    candidates
       .map((candidate) => {
         const href = escapeHtml(candidate.fullUrl);
         const title = escapeHtml(candidate.qualifiedTitle);
@@ -424,11 +434,17 @@ function renderPageBody(page: MediaWikiPage): string {
         return `<li><a href="${href}" title="${title}">${title}</a>${qualifier}</li>`;
       })
       .join('');
-    return `<p>${escapeHtml(page.title)}可能指：</p><ul>${candidates}</ul>`;
+
+  if (page.candidates?.length) {
+    return `<p>${escapeHtml(page.title)}可能指：</p><ul>${renderCandidates(page.candidates)}</ul>`;
   }
 
   const extract = page.extract.trim();
-  return extract ? `<p>${escapeHtml(extract).replace(/\n/g, '<br />')}</p>` : '';
+  const extractBody = extract ? `<p>${escapeHtml(extract).replace(/\n/g, '<br />')}</p>` : '';
+  const suggestionsBody = page.suggestions?.length
+    ? `<p>你可能还想看：</p><ul>${renderCandidates(page.suggestions)}</ul>`
+    : '';
+  return `${extractBody}${suggestionsBody}`;
 }
 
 function parsePage(page: MediaWikiPage, params: URLSearchParams): UnknownRecord {
