@@ -301,22 +301,6 @@ function toPagePayload(page: MediaWikiPage, params: URLSearchParams): UnknownRec
     templates: [],
     langlinks: [],
     pageprops: page.kind === 'disambiguation' ? { disambiguation: '' } : {},
-    // MediaWiki normally reserves imageinfo for File pages. AkariBot expects
-    // imageinfo[0].url on entity pages, so this compatibility behavior is
-    // intentional.
-    // AkariBot treats the presence of imageinfo as proof that element zero
-    // exists, so omit the property entirely for pages without an image.
-    ...(page.imageUrl
-      ? {
-          imageinfo: [
-            {
-              url: page.imageUrl,
-              descriptionurl: page.fullUrl,
-              descriptionshorturl: page.fullUrl,
-            },
-          ],
-        }
-      : {}),
   };
 }
 
