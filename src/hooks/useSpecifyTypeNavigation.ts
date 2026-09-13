@@ -1,9 +1,7 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { createRankFilter, useFilterState } from '@/lib/filterUtils';
 import { sortCardsByRank } from '@/lib/sortingUtils';
-import type { FactionId } from '@/data/types';
 import {
   achievements,
   buffs,
@@ -16,7 +14,7 @@ import {
   specialSkills,
 } from '@/data';
 
-type typelist =
+export type NavigationEntityType =
   | 'knowledgeCard'
   | 'specialSkill'
   | 'item'
@@ -35,24 +33,17 @@ type typelist =
  */
 export const useSpecifyTypeNavigation = (
   currentId: string,
-  specifyType: typelist,
+  specifyType: NavigationEntityType,
   under: boolean
 ) => {
   const router = useRouter();
 
-  const { selectedFilters: selectedRanks } = useFilterState<string>();
-  const [costRange] = useState<[number, number]>([2, 7]);
-  const [selectedFaction] = useState<FactionId | null>(null);
-
   const filteredAndSortedCards = sortCardsByRank(
-    Object.values(cards)
-      .filter(createRankFilter(selectedRanks))
-      .filter((card) => card.cost >= costRange[0] && card.cost <= costRange[1])
-      .filter((card) => !selectedFaction || card.factionId === selectedFaction)
+    Object.values(cards).filter((card) => card.cost >= 2 && card.cost <= 7)
   );
 
   // Get all Ids in the same order as displayed in entity grid
-  const allIds: Record<typelist, string[]> = {
+  const allIds: Record<NavigationEntityType, string[]> = {
     knowledgeCard: useMemo(() => {
       const cardlist: string[] = filteredAndSortedCards.map((card) => {
         return card.id;
@@ -91,14 +82,10 @@ export const useSpecifyTypeNavigation = (
   const Ids = allIds[specifyType];
 
   // Get current index
-  const currentIndex = useMemo(() => {
-    if (under) {
-      const Return = Ids.length - Ids.reverse().indexOf(currentId) - 1;
-      Ids.reverse();
-      return Return;
-    }
-    return Ids.indexOf(currentId);
-  }, [Ids, currentId, under]);
+  const currentIndex = useMemo(
+    () => (under ? Ids.lastIndexOf(currentId) : Ids.indexOf(currentId)),
+    [Ids, currentId, under]
+  );
 
   // Get previous target
   const previousTarget = useMemo(() => {
@@ -113,7 +100,7 @@ export const useSpecifyTypeNavigation = (
 
   // Get next target
   const nextTarget = useMemo(() => {
-    if (currentIndex >= Ids.length - 1) return null;
+    if (currentIndex < 0 || currentIndex >= Ids.length - 1) return null;
     const nextId = Ids[currentIndex + 1];
     if (!nextId) return null;
     return {

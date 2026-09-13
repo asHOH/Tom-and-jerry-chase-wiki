@@ -1,24 +1,16 @@
 'use client';
 
 import { cn } from '@/lib/design';
-import { useSpecifyTypeNavigation } from '@/hooks/useSpecifyTypeNavigation';
+import {
+  useSpecifyTypeNavigation,
+  type NavigationEntityType,
+} from '@/hooks/useSpecifyTypeNavigation';
 import MotionButton from '@/components/ui/MotionButton';
 import { ChevronLeftIcon, ChevronRightIcon } from '@/components/icons/CommonIcons';
 
-type typelist =
-  | 'knowledgeCard'
-  | 'specialSkill'
-  | 'item'
-  | 'entity'
-  | 'buff'
-  | 'map'
-  | 'fixture'
-  | 'mode'
-  | 'achievement';
-
 interface TargetNavigationButtonsProps {
   currentId: string;
-  specifyType: typelist;
+  specifyType: NavigationEntityType;
   under?: boolean;
   className?: string;
 }

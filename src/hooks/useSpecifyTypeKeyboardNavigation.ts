@@ -3,18 +3,7 @@ import { useEffect } from 'react';
 import { shouldIgnorePageNavigationKey } from '@/lib/keyboardNavigation';
 import { useEditMode } from '@/context/EditModeContext';
 
-import { useSpecifyTypeNavigation } from './useSpecifyTypeNavigation';
-
-type typelist =
-  | 'knowledgeCard'
-  | 'specialSkill'
-  | 'item'
-  | 'entity'
-  | 'buff'
-  | 'map'
-  | 'fixture'
-  | 'mode'
-  | 'achievement';
+import { useSpecifyTypeNavigation, type NavigationEntityType } from './useSpecifyTypeNavigation';
 
 /**
  * Navigation for knowledgeCards,specialSkills,items,entities
@@ -24,7 +13,7 @@ type typelist =
  */
 export const useSpecifyTypeKeyboardNavigation = (
   currentId: string,
-  specifyType: typelist,
+  specifyType: NavigationEntityType,
   under: boolean = false
 ) => {
   const { isEditMode } = useEditMode();
