@@ -43,11 +43,7 @@ export default function SpecialSkillDetailClient({
   ) as unknown as readonly [SpecialSkill];
 
   // Keyboard navigation
-  useSpecifyTypeKeyboardNavigation(
-    effectiveSkill.name,
-    'specialSkill',
-    effectiveSkill.factionId == 'cat' ? false : true
-  );
+  useSpecifyTypeKeyboardNavigation(effectiveSkill.name, 'specialSkill', effectiveSkill.factionId);
 
   const { isDetailedView } = useAppContext();
   const [charactersSnap] = useEditableDomain(

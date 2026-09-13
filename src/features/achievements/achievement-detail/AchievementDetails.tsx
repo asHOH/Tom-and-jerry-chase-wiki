@@ -31,7 +31,7 @@ export default function AchievementDetailClient({ achievement }: { achievement: 
   useSpecifyTypeKeyboardNavigation(
     effectiveAchievement.name,
     'achievement',
-    effectiveAchievement.factionId === 'mouse'
+    effectiveAchievement.factionId
   );
 
   const { isDetailedView } = useAppContext();

@@ -96,7 +96,7 @@ export default function SpecialSkillAttributesCard({ skill }: SpecialSkillDetail
           <SpecifyTypeNavigationButtons
             currentId={skill.name}
             specifyType='specialSkill'
-            under={skill.factionId == 'cat' ? false : true}
+            factionId={skill.factionId}
           />
         </NavigationButtonsRow>
       }

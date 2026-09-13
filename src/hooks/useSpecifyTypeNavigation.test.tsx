@@ -1,5 +1,7 @@
 import { renderHook } from '@testing-library/react';
 
+import type { FactionId } from '@/data/types';
+
 import { useSpecifyTypeNavigation } from './useSpecifyTypeNavigation';
 
 const mockPush = jest.fn();
@@ -37,8 +39,9 @@ it.each([
   ['achievement', 'achievements'],
 ] as const)('preserves duplicate-name and faction ordering for %s', (type, path) => {
   const { result, rerender } = renderHook(
-    ({ under }) => useSpecifyTypeNavigation('shared', type, under),
-    { initialProps: { under: false } }
+    ({ id, factionId }: { id: string; factionId: FactionId }) =>
+      useSpecifyTypeNavigation(id, type, factionId),
+    { initialProps: { id: 'shared', factionId: 'cat' } }
   );
 
   expect(result.current.currentIndex).toBe(1);
@@ -47,31 +50,51 @@ it.each([
   result.current.navigateToNext();
   expect(mockPush).toHaveBeenLastCalledWith(`/${path}/mouse/mouseFirst`);
 
-  rerender({ under: true });
+  rerender({ id: 'mouseFirst', factionId: 'mouse' });
+  result.current.navigateToPrevious();
+  expect(mockPush).toHaveBeenLastCalledWith(`/${path}/cat/shared`);
+
+  rerender({ id: 'shared', factionId: 'mouse' });
   expect(result.current.currentIndex).toBe(3);
   expect(result.current.nextTarget).toBeNull();
   result.current.navigateToPrevious();
   expect(mockPush).toHaveBeenLastCalledWith(`/${path}/mouse/mouseFirst`);
 
-  rerender({ under: false });
+  rerender({ id: 'shared', factionId: 'cat' });
   expect(result.current.currentIndex).toBe(1);
   expect(result.current.nextTarget?.id).toBe('mouseFirst');
 });
 
-it.each([false, true])('disables both neighbors for a missing ID with under=%s', (under) => {
-  const { result } = renderHook(() => useSpecifyTypeNavigation('missing', 'specialSkill', under));
+it.each(['specialSkill', 'achievement'] as const)(
+  'requires an exact faction identity for %s',
+  (type) => {
+    const { result, rerender } = renderHook(
+      ({ id, factionId }: { id: string; factionId: FactionId | undefined }) =>
+        useSpecifyTypeNavigation(id, type, factionId),
+      { initialProps: { id: 'missing', factionId: 'cat' } }
+    );
 
-  expect(result.current.currentIndex).toBe(-1);
-  expect(result.current.previousTarget).toBeNull();
-  expect(result.current.nextTarget).toBeNull();
-  result.current.navigateToPrevious();
-  result.current.navigateToNext();
-  expect(mockPush).not.toHaveBeenCalled();
-});
+    for (const [id, factionId] of [
+      ['missing', 'cat'],
+      ['missing', 'mouse'],
+      ['mouseFirst', 'cat'],
+      ['catFirst', 'mouse'],
+      ['shared', undefined],
+    ] as const) {
+      rerender({ id, factionId });
+      expect(result.current.currentIndex).toBe(-1);
+      expect(result.current.previousTarget).toBeNull();
+      expect(result.current.nextTarget).toBeNull();
+      result.current.navigateToPrevious();
+      result.current.navigateToNext();
+      expect(mockPush).not.toHaveBeenCalled();
+    }
+  }
+);
 
 it('preserves inclusive card cost limits and rank/cost ordering', () => {
   const { result, rerender } = renderHook(
-    ({ id }) => useSpecifyTypeNavigation(id, 'knowledgeCard', false),
+    ({ id }) => useSpecifyTypeNavigation(id, 'knowledgeCard'),
     { initialProps: { id: 'lowerCost' } }
   );
 

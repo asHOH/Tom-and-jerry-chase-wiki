@@ -107,7 +107,7 @@ export default function AchievementAttributesCard({ achievement }: { achievement
           <SpecifyTypeNavigationButtons
             currentId={achievement.name}
             specifyType='achievement'
-            under={achievement.factionId === 'mouse'}
+            factionId={achievement.factionId}
           />
         </NavigationButtonsRow>
       }

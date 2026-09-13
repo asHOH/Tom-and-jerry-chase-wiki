@@ -5,13 +5,14 @@ import {
   useSpecifyTypeNavigation,
   type NavigationEntityType,
 } from '@/hooks/useSpecifyTypeNavigation';
+import type { FactionId } from '@/data/types';
 import MotionButton from '@/components/ui/MotionButton';
 import { ChevronLeftIcon, ChevronRightIcon } from '@/components/icons/CommonIcons';
 
 interface TargetNavigationButtonsProps {
   currentId: string;
   specifyType: NavigationEntityType;
-  under?: boolean;
+  factionId?: FactionId | undefined;
   className?: string;
 }
 
@@ -19,16 +20,16 @@ interface TargetNavigationButtonsProps {
  * Navigation for knowledgeCards,specialSkills,items,entities
  * @param currentId - string - name of target to be searched
  * @param specifyType - 'knowledgeCard' | 'specialSkill' | 'item' | 'entity' | 'buff' -type of target to be searched
- * @param under - boolean(default false) - revease search to avoid same name(such as 应急治疗)
+ * @param factionId - Identifies the current special skill or achievement within its faction.
  */
 export default function SpecifyTypeNavigationButtons({
   currentId,
   specifyType,
-  under = false,
+  factionId,
   className = '',
 }: TargetNavigationButtonsProps) {
   const { previousTarget, nextTarget, navigateToPrevious, navigateToNext, currentIndex, totals } =
-    useSpecifyTypeNavigation(currentId, specifyType, under);
+    useSpecifyTypeNavigation(currentId, specifyType, factionId);
 
   const baseButtonClasses = 'flex items-center gap-1 rounded-lg px-3 py-2 transition-colors border';
   const enabledButtonClasses =

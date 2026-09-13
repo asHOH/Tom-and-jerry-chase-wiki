@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 
 import { shouldIgnorePageNavigationKey } from '@/lib/keyboardNavigation';
 import { useEditMode } from '@/context/EditModeContext';
+import type { FactionId } from '@/data/types';
 
 import { useSpecifyTypeNavigation, type NavigationEntityType } from './useSpecifyTypeNavigation';
 
@@ -9,16 +10,16 @@ import { useSpecifyTypeNavigation, type NavigationEntityType } from './useSpecif
  * Navigation for knowledgeCards,specialSkills,items,entities
  * @param currentId - string - name of target to be searched
  * @param specifyType - 'knowledgeCard' | 'specialSkill' | 'item' | 'entity' | 'buff' -type of target to be searched
- * @param under - boolean(default false) - revease search to avoid same name(such as 应急治疗)
+ * @param factionId - Identifies the current special skill or achievement within its faction.
  */
 export const useSpecifyTypeKeyboardNavigation = (
   currentId: string,
   specifyType: NavigationEntityType,
-  under: boolean = false
+  factionId?: FactionId
 ) => {
   const { isEditMode } = useEditMode();
   const { navigateToPrevious, navigateToNext, previousTarget, nextTarget } =
-    useSpecifyTypeNavigation(currentId, specifyType, under);
+    useSpecifyTypeNavigation(currentId, specifyType, factionId);
 
   useEffect(() => {
     if (isEditMode) return;

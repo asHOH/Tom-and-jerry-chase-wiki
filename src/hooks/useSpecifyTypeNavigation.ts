@@ -2,6 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { sortCardsByRank } from '@/lib/sortingUtils';
+import type { FactionId } from '@/data/types';
 import {
   achievements,
   buffs,
@@ -29,12 +30,12 @@ export type NavigationEntityType =
  * Navigation for knowledgeCards,specialSkills,items,entities
  * @param currentId - string - name of target to be searched
  * @param specifyType - 'knowledgeCard' | 'specialSkill' | 'item' | 'entity' | 'buff' -type of target to be searched
- * @param under - boolean(default false) - revease search to avoid same name(such as 应急治疗)
+ * @param factionId - Identifies the current special skill or achievement within its faction.
  */
 export const useSpecifyTypeNavigation = (
   currentId: string,
   specifyType: NavigationEntityType,
-  under: boolean
+  factionId?: FactionId
 ) => {
   const router = useRouter();
 
@@ -82,10 +83,16 @@ export const useSpecifyTypeNavigation = (
   const Ids = allIds[specifyType];
 
   // Get current index
-  const currentIndex = useMemo(
-    () => (under ? Ids.lastIndexOf(currentId) : Ids.indexOf(currentId)),
-    [Ids, currentId, under]
-  );
+  const currentIndex = useMemo(() => {
+    if (specifyType !== 'specialSkill' && specifyType !== 'achievement') {
+      return Ids.indexOf(currentId);
+    }
+    if (!factionId) return -1;
+    const catalog = specifyType === 'specialSkill' ? specialSkills : achievements;
+    const index = Object.keys(catalog[factionId]).indexOf(currentId);
+    if (index < 0) return -1;
+    return index + (factionId === 'mouse' ? Object.keys(catalog.cat).length : 0);
+  }, [Ids, currentId, specifyType, factionId]);
 
   // Get previous target
   const previousTarget = useMemo(() => {
