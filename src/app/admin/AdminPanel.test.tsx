@@ -202,6 +202,8 @@ describe('AdminPanel', () => {
       [null, expect.any(Function)],
       ['categories', expect.any(Function)],
       [null, expect.any(Function)],
+      [null, expect.any(Function)],
+      ['admin-notices', expect.any(Function)],
       [
         ['game-data-actions-admin', 'pending', null, null, 1, expect.any(String)],
         expect.any(Function),
@@ -212,8 +214,6 @@ describe('AdminPanel', () => {
           shouldRetryOnError: false,
         },
       ],
-      [null, expect.any(Function)],
-      ['admin-notices', expect.any(Function)],
     ]);
   });
 
@@ -227,6 +227,8 @@ describe('AdminPanel', () => {
       ['users', expect.any(Function)],
       ['categories', expect.any(Function)],
       ['permission-groups', expect.any(Function)],
+      [null, expect.any(Function)],
+      ['admin-notices', expect.any(Function)],
       [
         ['game-data-actions-admin', 'pending', null, null, 1, expect.any(String)],
         expect.any(Function),
@@ -237,8 +239,6 @@ describe('AdminPanel', () => {
           shouldRetryOnError: false,
         },
       ],
-      [null, expect.any(Function)],
-      ['admin-notices', expect.any(Function)],
     ]);
 
     const [usersTab, , categoriesTab, actionsTab] = screen.getAllByRole('button');
@@ -530,6 +530,25 @@ describe('AdminPanel', () => {
     );
   });
 
+  it('clears the reported count when access is lost while the moderation tab is inactive', () => {
+    const { rerender } = renderAdminPanel('Coordinator');
+    expect(screen.getByRole('button', { name: /改动审核/ })).toHaveTextContent('1');
+    fireEvent.click(screen.getByRole('button', { name: '分类管理' }));
+
+    permissionOverrides = new Set(['category.update']);
+    rerender(<AdminPanel />);
+    expect(screen.queryByRole('button', { name: /改动审核/ })).not.toBeInTheDocument();
+
+    permissionOverrides = null;
+    rerender(<AdminPanel />);
+    expect(screen.getByRole('button', { name: /改动审核/ })).not.toHaveTextContent('1');
+    expect(screen.queryByTestId('moderation-panel')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: /改动审核/ }));
+    expect(screen.getByTestId('moderation-panel')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /改动审核/ })).toHaveTextContent('1');
+  });
+
   it('falls back to category management without moderation access', () => {
     permissionOverrides = new Set(['category.update']);
     renderAdminPanel(null);
@@ -550,6 +569,8 @@ describe('AdminPanel', () => {
       [null, expect.any(Function)],
       [null, expect.any(Function)],
       [null, expect.any(Function)],
+      [null, expect.any(Function)],
+      [null, expect.any(Function)],
       [
         null,
         expect.any(Function),
@@ -560,8 +581,6 @@ describe('AdminPanel', () => {
           shouldRetryOnError: false,
         },
       ],
-      [null, expect.any(Function)],
-      [null, expect.any(Function)],
     ]);
   });
 

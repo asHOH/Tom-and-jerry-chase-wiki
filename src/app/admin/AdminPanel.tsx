@@ -12,14 +12,13 @@ import { useUser } from '@/hooks/useUser';
 import type { Database } from '@/data/database.types';
 import BlockManagement from '@/features/admin/components/BlockManagement';
 import CategoryManagement from '@/features/admin/components/CategoryManagement';
-import GameDataActionModerationPanel from '@/features/admin/components/GameDataActionModerationPanel';
+import GameDataActionModeration from '@/features/admin/components/GameDataActionModeration';
 import NoticeManagement from '@/features/admin/components/NoticeManagement';
 import PermissionGroupManagement, {
   type PermissionCatalogEntry,
   type PermissionGroup,
 } from '@/features/admin/components/PermissionGroupManagement';
 import UserManagement from '@/features/admin/components/UserManagement';
-import { useGameDataModerationList } from '@/features/admin/hooks/useGameDataModerationList';
 import Button from '@/components/ui/Button';
 
 type Category = Database['public']['Tables']['categories']['Row'];
@@ -95,6 +94,7 @@ const isAdminTab = (value: string | null): value is AdminTab =>
 
 const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState<AdminTab>('actions');
+  const [pendingCount, setPendingCount] = useState<number | null>(null);
   const searchParams = useSearchParams();
   const permissions = usePermissions();
   const { blockSummary } = useUser();
@@ -182,10 +182,6 @@ const AdminPanel = () => {
     fetchGroups
   );
 
-  const moderationList = useGameDataModerationList(
-    enableActionModeration && activeTab === 'actions',
-    JSON.stringify([permissions.grants, enableActionModeration])
-  );
   const { data: blocksData, mutate: mutateBlocks } = useSWR(
     enableBlockAccess ? 'admin-blocks' : null,
     fetchBlocks
@@ -247,12 +243,11 @@ const AdminPanel = () => {
             className={getTabClassName('actions')}
           >
             改动审核
-            {moderationList.loadedPendingCount !== null &&
-              moderationList.loadedPendingCount > 0 && (
-                <span className='ml-1.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-orange-100 px-1.5 text-xs font-medium text-orange-600 dark:bg-orange-900/30 dark:text-orange-400'>
-                  {moderationList.loadedPendingCount}
-                </span>
-              )}
+            {pendingCount !== null && pendingCount > 0 && (
+              <span className='ml-1.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-orange-100 px-1.5 text-xs font-medium text-orange-600 dark:bg-orange-900/30 dark:text-orange-400'>
+                {pendingCount}
+              </span>
+            )}
           </Button>
         )}
         {enableNoticeAccess && (
@@ -305,20 +300,12 @@ const AdminPanel = () => {
         />
       )}
 
-      {enableActionModeration && activeTab === 'actions' && moderationList.error && (
-        <p role='alert' className='text-red-600 dark:text-red-400'>
-          改动列表加载失败，请重试刷新
-        </p>
-      )}
-      {enableActionModeration && activeTab === 'actions' && (
-        <GameDataActionModerationPanel
-          canApproveActions={permissions.has('game_data_action.approve')}
-          canRejectActions={permissions.has('game_data_action.reject')}
-          canMarkActionsSynced={permissions.has('game_data_action.mark_synced')}
-          canRevokeActions={permissions.has('game_data_action.revoke')}
-          {...moderationList.panelProps}
-        />
-      )}
+      <GameDataActionModeration
+        permissions={permissions}
+        enabled={enableActionModeration}
+        active={activeTab === 'actions'}
+        onPendingCountChange={setPendingCount}
+      />
 
       {enableNoticeAccess && activeTab === 'notices' && (
         <NoticeManagement notices={noticesData?.notices ?? []} mutateNotices={mutateNotices} />
