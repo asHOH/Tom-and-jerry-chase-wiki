@@ -17,7 +17,15 @@ function parseCurid(rawCurid: string | null): number | null {
 }
 
 export async function GET(request: NextRequest) {
-  const curid = parseCurid(request.nextUrl.searchParams.get('curid'));
+  const rawCurid = request.nextUrl.searchParams.get('curid');
+  if (rawCurid === null) {
+    return NextResponse.redirect(new URL('/', request.url), {
+      status: 307,
+      headers: NO_STORE_HEADERS,
+    });
+  }
+
+  const curid = parseCurid(rawCurid);
   if (curid === null) {
     return NextResponse.json(
       { error: 'A valid positive integer curid is required' },
