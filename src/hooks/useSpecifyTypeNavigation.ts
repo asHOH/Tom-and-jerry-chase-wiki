@@ -39,48 +39,29 @@ export const useSpecifyTypeNavigation = (
 ) => {
   const router = useRouter();
 
-  const filteredAndSortedCards = sortCardsByRank(
-    Object.values(cards).filter((card) => card.cost >= 2 && card.cost <= 7)
-  );
-
-  // Get all Ids in the same order as displayed in entity grid
-  const allIds: Record<NavigationEntityType, string[]> = {
-    knowledgeCard: useMemo(() => {
-      const cardlist: string[] = filteredAndSortedCards.map((card) => {
-        return card.id;
-      });
-      return cardlist;
-    }, [filteredAndSortedCards]),
-    specialSkill: useMemo(() => {
-      const catIds = Object.keys(specialSkills['cat']);
-      const mouseIds = Object.keys(specialSkills['mouse']);
-      return [...catIds, ...mouseIds];
-    }, []),
-    item: useMemo(() => {
-      return Object.keys(items);
-    }, []),
-    entity: useMemo(() => {
-      return Object.keys(entities);
-    }, []),
-    buff: useMemo(() => {
-      return Object.keys(buffs);
-    }, []),
-    map: useMemo(() => {
-      return Object.keys(maps);
-    }, []),
-    fixture: useMemo(() => {
-      return Object.keys(fixtures);
-    }, []),
-    mode: useMemo(() => {
-      return Object.keys(modes);
-    }, []),
-    achievement: useMemo(() => {
-      return [...Object.keys(achievements.cat), ...Object.keys(achievements.mouse)];
-    }, []),
-  };
-
-  //Get specifyType's Ids
-  const Ids = allIds[specifyType];
+  // Keep the requested catalog in the same order as its entity grid.
+  const Ids = useMemo(() => {
+    switch (specifyType) {
+      case 'knowledgeCard':
+        return sortCardsByRank(Object.values(cards)).map((card) => card.id);
+      case 'specialSkill':
+        return [...Object.keys(specialSkills.cat), ...Object.keys(specialSkills.mouse)];
+      case 'item':
+        return Object.keys(items);
+      case 'entity':
+        return Object.keys(entities);
+      case 'buff':
+        return Object.keys(buffs);
+      case 'map':
+        return Object.keys(maps);
+      case 'fixture':
+        return Object.keys(fixtures);
+      case 'mode':
+        return Object.keys(modes);
+      case 'achievement':
+        return [...Object.keys(achievements.cat), ...Object.keys(achievements.mouse)];
+    }
+  }, [specifyType]);
 
   // Get current index
   const currentIndex = useMemo(() => {

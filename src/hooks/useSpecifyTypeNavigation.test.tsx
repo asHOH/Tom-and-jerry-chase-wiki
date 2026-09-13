@@ -1,13 +1,18 @@
 import { renderHook } from '@testing-library/react';
 
+import { sortCardsByRank } from '@/lib/sortingUtils';
 import type { FactionId } from '@/data/types';
 
-import { useSpecifyTypeNavigation } from './useSpecifyTypeNavigation';
+import { useSpecifyTypeNavigation, type NavigationEntityType } from './useSpecifyTypeNavigation';
 
 const mockPush = jest.fn();
 
 jest.mock('next/navigation', () => ({
   useRouter: () => ({ push: mockPush }),
+}));
+
+jest.mock('@/lib/sortingUtils', () => ({
+  sortCardsByRank: jest.fn(jest.requireActual('@/lib/sortingUtils').sortCardsByRank),
 }));
 
 jest.mock('@/data', () => ({
@@ -20,19 +25,44 @@ jest.mock('@/data', () => ({
     mouse: { mouseFirst: {}, shared: {} },
   },
   cards: {
-    tooCheap: { id: 'tooCheap', rank: 'S', cost: 1 },
     lowerRank: { id: 'lowerRank', rank: 'A', cost: 7 },
     lowerCost: { id: 'lowerCost', rank: 'S', cost: 2 },
     higherCost: { id: 'higherCost', rank: 'S', cost: 7 },
-    tooExpensive: { id: 'tooExpensive', rank: 'S', cost: 8 },
   },
-  items: {},
-  entities: {},
-  buffs: {},
-  maps: {},
-  fixtures: {},
-  modes: {},
+  items: { itemFirst: {}, itemLast: {} },
+  entities: { entityFirst: {}, entityLast: {} },
+  buffs: { buffFirst: {}, buffLast: {} },
+  maps: { mapFirst: {}, mapLast: {} },
+  fixtures: { fixtureFirst: {}, fixtureLast: {} },
+  modes: { modeFirst: {}, modeLast: {} },
 }));
+
+it('switches catalogs synchronously and only sorts when entering the card catalog', () => {
+  const { result, rerender } = renderHook(
+    ({ id, type }: { id: string; type: NavigationEntityType }) =>
+      useSpecifyTypeNavigation(id, type),
+    { initialProps: { id: 'itemFirst', type: 'item' } }
+  );
+
+  for (const type of ['item', 'entity', 'buff', 'map', 'fixture', 'mode'] as const) {
+    rerender({ id: `${type}First`, type });
+    expect(result.current.totals).toBe(2);
+    expect(result.current.currentIndex).toBe(0);
+    expect(result.current.nextTarget?.id).toBe(`${type}Last`);
+  }
+  expect(sortCardsByRank).not.toHaveBeenCalled();
+
+  rerender({ id: 'higherCost', type: 'knowledgeCard' });
+  expect(result.current.nextTarget?.id).toBe('lowerCost');
+  expect(sortCardsByRank).toHaveBeenCalledTimes(1);
+  rerender({ id: 'lowerCost', type: 'knowledgeCard' });
+  expect(result.current.nextTarget?.id).toBe('lowerRank');
+  expect(sortCardsByRank).toHaveBeenCalledTimes(1);
+
+  rerender({ id: 'itemFirst', type: 'item' });
+  expect(result.current.nextTarget?.id).toBe('itemLast');
+  expect(sortCardsByRank).toHaveBeenCalledTimes(1);
+});
 
 it.each([
   ['specialSkill', 'special-skills'],
@@ -92,7 +122,7 @@ it.each(['specialSkill', 'achievement'] as const)(
   }
 );
 
-it('preserves inclusive card cost limits and rank/cost ordering', () => {
+it('includes all cards in rank/cost order', () => {
   const { result, rerender } = renderHook(
     ({ id }) => useSpecifyTypeNavigation(id, 'knowledgeCard'),
     { initialProps: { id: 'lowerCost' } }
