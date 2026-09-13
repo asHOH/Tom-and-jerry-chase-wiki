@@ -7,22 +7,19 @@ import useSWR from 'swr';
 import { usePermissions } from '@/lib/auth/PermissionProvider';
 import type { PermissionResourceOption } from '@/lib/auth/permissionResources';
 import { cn } from '@/lib/design';
-import type { PublishableEntityType } from '@/lib/gameData/publishableEntityTypes';
 import type { AdminNotice } from '@/lib/notices/types';
 import { useUser } from '@/hooks/useUser';
 import type { Database } from '@/data/database.types';
 import BlockManagement from '@/features/admin/components/BlockManagement';
 import CategoryManagement from '@/features/admin/components/CategoryManagement';
-import GameDataActionModerationPanel, {
-  type GameDataActionStatusFilter,
-} from '@/features/admin/components/GameDataActionModerationPanel';
+import GameDataActionModerationPanel from '@/features/admin/components/GameDataActionModerationPanel';
 import NoticeManagement from '@/features/admin/components/NoticeManagement';
 import PermissionGroupManagement, {
   type PermissionCatalogEntry,
   type PermissionGroup,
 } from '@/features/admin/components/PermissionGroupManagement';
 import UserManagement from '@/features/admin/components/UserManagement';
-import { useGameDataActionList } from '@/features/admin/hooks/useGameDataActionList';
+import { useGameDataModerationList } from '@/features/admin/hooks/useGameDataModerationList';
 import Button from '@/components/ui/Button';
 
 type Category = Database['public']['Tables']['categories']['Row'];
@@ -98,11 +95,6 @@ const isAdminTab = (value: string | null): value is AdminTab =>
 
 const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState<AdminTab>('actions');
-  const [actionStatus, setActionStatus] = useState<GameDataActionStatusFilter>('pending');
-  const [actionEntityType, setActionEntityType] = useState<PublishableEntityType | null>(null);
-  const [actionId, setActionId] = useState<string | null>(null);
-  const [actionPage, setActionPage] = useState(1);
-  const [loadedPendingCount, setLoadedPendingCount] = useState<number | null>(null);
   const searchParams = useSearchParams();
   const permissions = usePermissions();
   const { blockSummary } = useUser();
@@ -190,24 +182,10 @@ const AdminPanel = () => {
     fetchGroups
   );
 
-  const {
-    data: actionData,
-    error: actionError,
-    isLoading: isLoadingActions,
-    isValidating: isValidatingActions,
-    refresh: refreshActions,
-    scope: actionCacheScope,
-  } = useGameDataActionList(
+  const moderationList = useGameDataModerationList(
     enableActionModeration && activeTab === 'actions',
-    [actionStatus, actionEntityType, actionId],
-    actionPage,
     JSON.stringify([permissions.grants, enableActionModeration])
   );
-  const mutatePendingActions = () => {
-    setLoadedPendingCount(null);
-    refreshActions();
-  };
-  useEffect(() => setLoadedPendingCount(null), [actionCacheScope]);
   const { data: blocksData, mutate: mutateBlocks } = useSWR(
     enableBlockAccess ? 'admin-blocks' : null,
     fetchBlocks
@@ -216,71 +194,6 @@ const AdminPanel = () => {
     enableNoticeAccess ? 'admin-notices' : null,
     fetchNotices
   );
-
-  const pendingActions = actionData?.submissions ?? [];
-
-  useEffect(() => {
-    if (
-      !enableActionModeration ||
-      activeTab !== 'actions' ||
-      actionStatus !== 'pending' ||
-      actionEntityType !== null ||
-      actionId !== null ||
-      actionData === undefined
-    ) {
-      return;
-    }
-    setLoadedPendingCount(actionData.totalCount);
-  }, [
-    actionData,
-    actionEntityType,
-    actionId,
-    actionPage,
-    actionStatus,
-    activeTab,
-    enableActionModeration,
-  ]);
-
-  useEffect(() => {
-    if (actionData === undefined) return;
-    const lastAvailablePage = Math.max(actionData.totalPages, 1);
-    if (actionPage > lastAvailablePage) setActionPage(lastAvailablePage);
-  }, [actionData, actionPage]);
-
-  const resetActionPagination = () => {
-    setActionPage(1);
-  };
-
-  const handleActionStatusChange = (status: GameDataActionStatusFilter) => {
-    setActionStatus(status);
-    resetActionPagination();
-  };
-
-  const handleActionEntityTypeChange = (entityType: PublishableEntityType | null) => {
-    setActionEntityType(entityType);
-    resetActionPagination();
-  };
-
-  const handleActionIdChange = (nextActionId: string | null) => {
-    setActionId(nextActionId);
-    resetActionPagination();
-  };
-
-  const showNextActionPage = () => {
-    if (!actionData || actionPage >= actionData.totalPages) return;
-    setActionPage((current) => current + 1);
-  };
-
-  const showPreviousActionPage = () => {
-    setActionPage((current) => Math.max(1, current - 1));
-  };
-
-  const showFirstActionPage = () => setActionPage(1);
-
-  const showLastActionPage = () => {
-    if (!actionData || actionData.totalPages === 0) return;
-    setActionPage(actionData.totalPages);
-  };
 
   const getTabClassName = (tab: AdminTab) =>
     cn(
@@ -334,11 +247,12 @@ const AdminPanel = () => {
             className={getTabClassName('actions')}
           >
             改动审核
-            {loadedPendingCount !== null && loadedPendingCount > 0 && (
-              <span className='ml-1.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-orange-100 px-1.5 text-xs font-medium text-orange-600 dark:bg-orange-900/30 dark:text-orange-400'>
-                {loadedPendingCount}
-              </span>
-            )}
+            {moderationList.loadedPendingCount !== null &&
+              moderationList.loadedPendingCount > 0 && (
+                <span className='ml-1.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-orange-100 px-1.5 text-xs font-medium text-orange-600 dark:bg-orange-900/30 dark:text-orange-400'>
+                  {moderationList.loadedPendingCount}
+                </span>
+              )}
           </Button>
         )}
         {enableNoticeAccess && (
@@ -391,7 +305,7 @@ const AdminPanel = () => {
         />
       )}
 
-      {enableActionModeration && activeTab === 'actions' && actionError && (
+      {enableActionModeration && activeTab === 'actions' && moderationList.error && (
         <p role='alert' className='text-red-600 dark:text-red-400'>
           改动列表加载失败，请重试刷新
         </p>
@@ -402,22 +316,7 @@ const AdminPanel = () => {
           canRejectActions={permissions.has('game_data_action.reject')}
           canMarkActionsSynced={permissions.has('game_data_action.mark_synced')}
           canRevokeActions={permissions.has('game_data_action.revoke')}
-          actionStatus={actionStatus}
-          onActionStatusChange={handleActionStatusChange}
-          actionEntityType={actionEntityType}
-          onActionEntityTypeChange={handleActionEntityTypeChange}
-          actionId={actionId}
-          onActionIdChange={handleActionIdChange}
-          pendingActions={pendingActions}
-          currentPage={actionData?.currentPage ?? 0}
-          totalPages={actionData?.totalPages ?? 0}
-          isPageLoading={isLoadingActions || isValidatingActions}
-          onFirstPage={showFirstActionPage}
-          onNextPage={showNextActionPage}
-          onPreviousPage={showPreviousActionPage}
-          onLastPage={showLastActionPage}
-          pageKey={`${actionStatus}:${actionEntityType ?? ''}:${actionId ?? ''}:${actionPage}`}
-          mutatePendingActions={mutatePendingActions}
+          {...moderationList.panelProps}
         />
       )}
 

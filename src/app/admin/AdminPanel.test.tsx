@@ -105,6 +105,9 @@ jest.mock('@/features/admin/components/GameDataActionModerationPanel', () => ({
       <div data-testid='moderation-panel'>
         Moderation Panel
         <button onClick={() => props.onActionStatusChange?.('approved')}>加载已批准改动</button>
+        <button onClick={() => props.onActionEntityTypeChange?.('characters')}>筛选角色</button>
+        <button onClick={() => props.onActionIdChange?.('action-1')}>查找改动</button>
+        <button onClick={() => void props.mutatePendingActions()}>刷新改动</button>
         <button onClick={props.onFirstPage}>首页</button>
         <button onClick={props.onPreviousPage}>上一页</button>
         <button onClick={props.onNextPage}>下一页</button>
@@ -376,6 +379,56 @@ describe('AdminPanel', () => {
         revalidateIfStale: false,
         shouldRetryOnError: false,
       }
+    );
+  });
+
+  it('preserves filters across tabs and resets pages and cached counts when refreshed', () => {
+    mockUseSWR.mockImplementation((key) => {
+      if (Array.isArray(key) && key[0] === 'game-data-actions-admin') {
+        return createSWRResponse(
+          {
+            submissions: samplePendingActions,
+            currentPage: key[4],
+            totalPages: 4,
+            totalCount: 151,
+          },
+          mutatePendingActions
+        );
+      }
+      return createSWRResponse([], jest.fn());
+    });
+    renderAdminPanel('Coordinator');
+    const actionsTab = screen.getByRole('button', { name: /改动审核/ });
+    expect(actionsTab).toHaveTextContent('151');
+
+    fireEvent.click(screen.getByRole('button', { name: '尾页' }));
+    fireEvent.click(screen.getByRole('button', { name: '筛选角色' }));
+    expect(mockModerationPanel.mock.calls.at(-1)?.[0]).toEqual(
+      expect.objectContaining({ pageKey: 'pending:characters::1' })
+    );
+    fireEvent.click(screen.getByRole('button', { name: '尾页' }));
+    fireEvent.click(screen.getByRole('button', { name: '查找改动' }));
+    expect(mockModerationPanel.mock.calls.at(-1)?.[0]).toEqual(
+      expect.objectContaining({ pageKey: 'pending:characters:action-1:1' })
+    );
+    fireEvent.click(screen.getByRole('button', { name: '下一页' }));
+    fireEvent.click(screen.getByRole('button', { name: '分类管理' }));
+    fireEvent.click(actionsTab);
+    expect(mockModerationPanel.mock.calls.at(-1)?.[0]).toEqual(
+      expect.objectContaining({ pageKey: 'pending:characters:action-1:2' })
+    );
+
+    const previousKey = mockUseSWR.mock.calls.findLast(
+      ([key]) => Array.isArray(key) && key[0] === 'game-data-actions-admin'
+    )?.[0];
+    fireEvent.click(screen.getByRole('button', { name: '刷新改动' }));
+    expect(actionsTab).not.toHaveTextContent('151');
+    const refreshedKey = mockUseSWR.mock.calls.findLast(
+      ([key]) => Array.isArray(key) && key[0] === 'game-data-actions-admin'
+    )?.[0];
+    expect(refreshedKey).not.toEqual(previousKey);
+    expect(mockModerationPanel.mock.calls.at(-1)?.[0]).toEqual(
+      expect.objectContaining({ pageKey: 'pending:characters:action-1:2' })
     );
   });
 
