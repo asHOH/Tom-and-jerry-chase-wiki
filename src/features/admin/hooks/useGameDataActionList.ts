@@ -26,6 +26,11 @@ export function useGameDataActionList(
 ) {
   const instance = useId();
   const [revision, setRevision] = useState(0);
+  const [previousPermissionContext, setPreviousPermissionContext] = useState(permissionContext);
+  if (previousPermissionContext !== permissionContext) {
+    setPreviousPermissionContext(permissionContext);
+    setRevision((value) => value + 1);
+  }
   const { scope, totals } = useMemo(
     () => ({
       scope: `${instance}:${revision}:${permissionContext}`,
