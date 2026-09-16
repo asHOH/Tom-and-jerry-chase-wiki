@@ -16,6 +16,23 @@
 
 1. 在本地回放并测试 migration。
 2. 运行 `npm run generate:database-types`，提交生成的 `src/data/database.generated.ts`；不要手工修改该文件。
+
+   类型文件必须通过仓库锁定的 CLI 从本地数据库生成，与 CI 保持一致。不要用 Dashboard、`--linked` 或 `--project-id` 的远端生成结果覆盖该文件：远端输出可能包含本地生成器不输出的 `__InternalSupabase.PostgrestVersion`，即使数据库结构一致也会导致 CI 失败。
+
+   在可丢弃的本地数据库上执行以下完整检查（`db reset --local` 会清空本地数据）：
+
+   ```bash
+   npm ci
+   npm exec -- supabase db start
+   npm exec -- supabase db reset --local --no-seed
+   npm run generate:database-types
+   npm run check:database-types
+   npm run type-check
+   git diff -- src/data/database.generated.ts
+   ```
+
+   检查输出的差异；若涉及表、字段或函数，先核对 migration 是否完整，不要只为通过 CI 删除类型。项目自定义的类型修正应放在 `src/data/database.types.ts`。
+
 3. 将 Supabase CLI 链接到自己确认过的目标项目。
 4. 查看迁移历史并执行 dry run：
 

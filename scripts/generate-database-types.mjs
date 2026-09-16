@@ -3,6 +3,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 import { fileURLToPath } from 'node:url';
+import { createTwoFilesPatch } from 'diff';
 import { format, resolveConfig } from 'prettier';
 
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -60,6 +61,14 @@ async function main() {
     if (current !== formatted) {
       console.error(
         'Database types are out of date. Run `npm run generate:database-types` after replaying migrations.'
+      );
+      console.error(
+        createTwoFilesPatch(
+          'committed/database.generated.ts',
+          'generated/database.generated.ts',
+          current,
+          formatted
+        )
       );
       process.exitCode = 1;
     }
