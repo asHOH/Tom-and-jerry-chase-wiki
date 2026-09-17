@@ -17,6 +17,7 @@ export async function searchItemGroups(query: SearchQuery): Promise<SearchResult
     if (match) {
       results.push({
         type: 'itemGroup',
+        href: `/itemGroups/${encodeURIComponent(group.name)}`,
         name: group.name,
         imageUrl: getItemGroupImageUrl(group),
         ...match,

@@ -33,7 +33,14 @@ export async function searchDocs(query: SearchQuery): Promise<SearchResult[]> {
       [page.slug, 0.9, 0.85],
     ]);
     if (match)
-      results.push({ type: 'doc', name: page.title, slug: page.slug, path: page.path, ...match });
+      results.push({
+        type: 'doc',
+        href: page.path,
+        name: page.title,
+        slug: page.slug,
+        path: page.path,
+        ...match,
+      });
   }
   return results;
 }

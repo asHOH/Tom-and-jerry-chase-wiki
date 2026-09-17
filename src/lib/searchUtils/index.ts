@@ -1,3 +1,5 @@
+import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
+
 import { searchAchievements } from './achievements';
 import { searchBuffs, searchDetailedBuffs } from './buffs';
 import { searchCards } from './cards';
@@ -17,22 +19,25 @@ import { SearchResult } from './types';
 const MAX_RESULTS_PER_TYPE = 5;
 const MAX_TOTAL_RESULTS = 20;
 
-export async function performSearch(query: string): Promise<SearchResult[]> {
+export async function performSearch(
+  query: string,
+  gameData: PublishedGameDataByType
+): Promise<SearchResult[]> {
   const searchQuery = createSearchQuery(query);
   if (!searchQuery.lowerCaseQuery) return [];
 
   const allSearchResults = await Promise.all([
-    searchCharacters(searchQuery),
-    searchCards(searchQuery),
-    searchSpecialSkills(searchQuery),
+    searchCharacters(searchQuery, gameData.characters),
+    searchCards(searchQuery, gameData.cards),
+    searchSpecialSkills(searchQuery, gameData.specialSkills),
     searchItemGroups(searchQuery),
-    searchItems(searchQuery),
-    searchEntities(searchQuery),
-    searchBuffs(searchQuery),
-    searchMaps(searchQuery),
-    searchFixtures(searchQuery),
-    searchModes(searchQuery),
-    searchAchievements(searchQuery),
+    searchItems(searchQuery, gameData.items),
+    searchEntities(searchQuery, gameData.entities),
+    searchBuffs(searchQuery, gameData.buffs),
+    searchMaps(searchQuery, gameData.maps),
+    searchFixtures(searchQuery, gameData.fixtures),
+    searchModes(searchQuery, gameData.modes),
+    searchAchievements(searchQuery, gameData.achievements),
     searchDocs(searchQuery),
     searchDetailedBuffs(searchQuery),
   ]);

@@ -1,15 +1,18 @@
+import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import {
   getPositioningTagLevel,
   isPositioningTagVisible,
 } from '@/constants/positioningTagSequences';
-import { characters } from '@/data/static';
 
 import type { SearchField, SearchQuery } from './matching';
 import type { SearchResult } from './types';
 
-export async function searchCharacters(query: SearchQuery): Promise<SearchResult[]> {
+export async function searchCharacters(
+  query: SearchQuery,
+  characters: PublishedGameDataByType['characters']
+): Promise<SearchResult[]> {
   const results: SearchResult[] = [];
-  for (const character of Object.values(characters)) {
+  for (const [entityId, character] of Object.entries(characters)) {
     let matchedSkillName: string | undefined;
     let match = await query.matchFields([
       [character.id, 1, 0.95, character.id],
@@ -93,6 +96,7 @@ export async function searchCharacters(query: SearchQuery): Promise<SearchResult
     if (match) {
       results.push({
         type: 'character',
+        href: `/characters/${encodeURIComponent(entityId)}${matchedSkillName ? `#Skill:${encodeURIComponent(matchedSkillName)}` : ''}`,
         id: character.id,
         imageUrl: character.imageUrl!,
         ...match,

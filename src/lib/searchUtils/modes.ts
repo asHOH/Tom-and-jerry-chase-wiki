@@ -1,11 +1,14 @@
-import { modes } from '@/data';
+import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 
 import { commonSearchFields, type SearchQuery } from './matching';
 import type { SearchResult } from './types';
 
-export async function searchModes(query: SearchQuery): Promise<SearchResult[]> {
+export async function searchModes(
+  query: SearchQuery,
+  modes: PublishedGameDataByType['modes']
+): Promise<SearchResult[]> {
   const results: SearchResult[] = [];
-  for (const mode of Object.values(modes)) {
+  for (const [entityId, mode] of Object.entries(modes)) {
     const match = await query.matchFields([
       ...commonSearchFields(mode),
       [mode.rules, 0.6, 0.55],
@@ -14,6 +17,7 @@ export async function searchModes(query: SearchQuery): Promise<SearchResult[]> {
     if (match) {
       results.push({
         type: 'mode',
+        href: `/modes/${encodeURIComponent(entityId)}`,
         name: mode.name,
         imageUrl: mode.imageUrl,
         ...match,

@@ -4,10 +4,11 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { m } from 'motion/react';
 
 import { cn, getTypeLabelColors } from '@/lib/design';
-import { performSearch, SearchResult } from '@/lib/searchUtils';
+import { performSearch } from '@/lib/searchUtils';
+import type { SearchResult } from '@/lib/searchUtils/types';
 import { useChat } from '@/hooks/useChat';
 import { useNavigation } from '@/hooks/useNavigation';
-import { useAppContext } from '@/context/AppContext';
+import { useSearchGameData } from '@/hooks/useSearchGameData';
 import { useDarkMode } from '@/context/DarkModeContext';
 import { BaseDialog } from '@/components/ui/BaseDialog';
 import Button from '@/components/ui/Button';
@@ -84,14 +85,16 @@ const highlightMatch = (text: string, query: string, isPinyinMatch: boolean) => 
 const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [searchError, setSearchError] = useState<string | null>(null);
+  const [isSearching, setIsSearching] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const [isAiExpanded, setIsAiExpanded] = useState(false);
   const [isAiStopped, setIsAiStopped] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchIdRef = useRef(0); // To keep track of the latest search request
   const resultsListRef = useRef<HTMLUListElement>(null);
-  const { handleSelectCard, handleSelectCharacter } = useAppContext();
   const { navigate } = useNavigation();
+  const gameData = useSearchGameData(open);
   const [isDarkMode] = useDarkMode();
 
   useEffect(() => {
@@ -150,19 +153,6 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
     return 'id' in result ? result.id : result.name;
   };
 
-  const getResultKey = (result: SearchResult): string => {
-    switch (result.type) {
-      case 'specialSkill':
-        return `${result.type}-${result.factionId}-${result.name}`;
-      case 'doc':
-        return `${result.type}-${result.slug}`;
-      case 'buff':
-        return `${result.type}-${result.detailedBuffId ?? result.name}`;
-      default:
-        return `${result.type}-${getResultName(result)}`;
-    }
-  };
-
   const showAiPreview =
     open && searchQuery.trim().length > 1 && Boolean(env.NEXT_PUBLIC_AI_CHAT_MODEL);
 
@@ -186,71 +176,12 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
 
   const handleResultClick = useCallback(
     (result: SearchResult) => {
-      switch (result.type) {
-        case 'character':
-          if (result.matchedSkillName) {
-            navigate(
-              `/characters/${encodeURIComponent(result.id)}#Skill:${encodeURIComponent(
-                result.matchedSkillName
-              )}`
-            );
-          } else {
-            handleSelectCharacter(result.id);
-          }
-          break;
-        case 'card':
-          handleSelectCard(result.id);
-          break;
-        case 'itemGroup':
-          navigate(`/itemGroups/${encodeURIComponent(result.name)}`);
-          break;
-        case 'item':
-          navigate(`/items/${encodeURIComponent(result.name)}`);
-          break;
-        case 'entity':
-          navigate(`/entities/${encodeURIComponent(result.name)}`);
-          break;
-        case 'buff':
-          if (result.href) {
-            navigate(result.href);
-          } else if (result.detailedBuffId) {
-            navigate('/buffs');
-          } else {
-            navigate(`/buffs/${encodeURIComponent(result.name)}`);
-          }
-          break;
-        case 'map':
-          navigate(`/maps/${encodeURIComponent(result.name)}`);
-          break;
-        case 'fixture':
-          navigate(`/fixtures/${encodeURIComponent(result.name)}`);
-          break;
-        case 'mode':
-          navigate(`/modes/${encodeURIComponent(result.name)}`);
-          break;
-        case 'specialSkill':
-          navigate(
-            `/special-skills/${encodeURIComponent(result.factionId)}/${encodeURIComponent(
-              result.name
-            )}`
-          );
-          break;
-        case 'achievement':
-          navigate(
-            `/achievements/${encodeURIComponent(result.factionId)}/${encodeURIComponent(result.name)}`
-          );
-          break;
-        case 'doc':
-          navigate(result.path);
-          break;
-        default:
-          break;
-      }
+      navigate(result.href);
       setSearchQuery(''); // Clear search query
       setSearchResults([]); // Clear search results
       onClose(); // Close dialog after selection
     },
-    [handleSelectCharacter, handleSelectCard, navigate, onClose]
+    [navigate, onClose]
   );
 
   useEffect(() => {
@@ -324,25 +255,33 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
     searchIdRef.current += 1;
     const currentId = searchIdRef.current;
 
+    setSearchResults([]);
+    setHighlightedIndex(-1);
+    setSearchError(null);
+    setIsSearching(Boolean(searchQuery.trim()));
+
     const handler = setTimeout(async () => {
-      if (searchQuery.length > 0) {
-        setSearchResults([]); // Clear previous results
-        const results = await performSearch(searchQuery);
+      if (!searchQuery.trim()) return;
+      try {
+        const results = await performSearch(searchQuery, gameData);
         if (searchIdRef.current === currentId) {
           setSearchResults(results);
           setHighlightedIndex(results.length > 0 ? 0 : -1);
         }
-      } else {
-        setSearchResults([]);
-        setHighlightedIndex(-1);
+      } catch {
+        if (searchIdRef.current === currentId) {
+          setSearchError('搜索暂时不可用，请稍后重试');
+        }
+      } finally {
+        if (searchIdRef.current === currentId) setIsSearching(false);
       }
-    }, 300); // Debounce for 300ms
+    }, 300);
 
     return () => {
       clearTimeout(handler);
       searchIdRef.current += 1;
     };
-  }, [open, searchQuery]);
+  }, [gameData, open, searchQuery]);
 
   return (
     <BaseDialog
@@ -376,7 +315,8 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
           搜索
         </h2>
         <div className='h-5 text-sm text-gray-500 dark:text-gray-400'>
-          {searchQuery.length > 0 && `${searchResults.length} 个结果`}
+          {searchQuery.length > 0 &&
+            (isSearching ? '搜索中…' : searchError ? '' : `${searchResults.length} 个结果`)}
         </div>
       </div>
       <div className='relative mb-4 shrink-0'>
@@ -417,7 +357,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
               {/* Regular search results */}
               {searchResults.map((result, index) => (
                 <m.li
-                  key={getResultKey(result)}
+                  key={`${result.type}:${result.href}`}
                   className='border-border border-b last:border-b-0'
                   variants={{
                     hidden: { opacity: 0, y: 10 },
@@ -466,8 +406,16 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
                 </m.li>
               ))}
             </m.ul>
-            {searchResults.length === 0 && (
-              <div className='p-2 text-gray-500 dark:text-gray-400'>无结果</div>
+            {searchError ? (
+              <div role='alert' className='p-2 text-gray-500 dark:text-gray-400'>
+                {searchError}
+              </div>
+            ) : (
+              searchResults.length === 0 && (
+                <div className='p-2 text-gray-500 dark:text-gray-400'>
+                  {isSearching ? '搜索中…' : '无结果'}
+                </div>
+              )
             )}
           </div>
           {showAiPreview && (

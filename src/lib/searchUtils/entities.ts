@@ -1,11 +1,14 @@
-import { entities } from '@/data';
+import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 
 import { commonSearchFields, type SearchField, type SearchQuery } from './matching';
 import type { SearchResult } from './types';
 
-export async function searchEntities(query: SearchQuery): Promise<SearchResult[]> {
+export async function searchEntities(
+  query: SearchQuery,
+  entities: PublishedGameDataByType['entities']
+): Promise<SearchResult[]> {
   const results: SearchResult[] = [];
-  for (const entity of Object.values(entities)) {
+  for (const [entityId, entity] of Object.entries(entities)) {
     const match = await query.matchFields([
       ...commonSearchFields(entity),
       [entity.create, 0.6, 0.55],
@@ -25,6 +28,7 @@ export async function searchEntities(query: SearchQuery): Promise<SearchResult[]
     if (match) {
       results.push({
         type: 'entity',
+        href: `/entities/${encodeURIComponent(entityId)}`,
         name: entity.name,
         imageUrl: entity.imageUrl,
         ...match,

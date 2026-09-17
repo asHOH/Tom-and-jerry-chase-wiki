@@ -1,22 +1,23 @@
 import React, { type JSX } from 'react';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
-import { performSearch, type SearchResult } from '@/lib/searchUtils';
+import { performSearch } from '@/lib/searchUtils';
+import type { SearchResult } from '@/lib/searchUtils/types';
 import { useChat } from '@/hooks/useChat';
+import { useSearchGameData } from '@/hooks/useSearchGameData';
 import { env } from '@/env';
 
 import SearchDialog from './SearchDialog';
 
-const mockSelectCharacter = jest.fn();
+const mockNavigate = jest.fn();
+const mockGameData = {} as ReturnType<typeof useSearchGameData>;
+
+jest.mock('@/hooks/useSearchGameData', () => ({
+  useSearchGameData: jest.fn(() => mockGameData),
+}));
+jest.mock('@/lib/searchUtils', () => ({ performSearch: jest.fn() }));
 
 jest.mock('@/env', () => ({ env: { NEXT_PUBLIC_AI_CHAT_MODEL: 'test-model' } }));
-
-jest.mock('@/lib/searchUtils', () => ({
-  performSearch: jest.fn(async () => [
-    { type: 'character', id: '汤姆' },
-    { type: 'character', id: '杰瑞' },
-  ]),
-}));
 
 jest.mock('@/hooks/useChat', () => ({
   useChat: jest.fn(() => ({
@@ -28,14 +29,7 @@ jest.mock('@/hooks/useChat', () => ({
 
 jest.mock('@/hooks/useNavigation', () => ({
   useNavigation: () => ({
-    navigate: jest.fn(),
-  }),
-}));
-
-jest.mock('@/context/AppContext', () => ({
-  useAppContext: () => ({
-    handleSelectCard: jest.fn(),
-    handleSelectCharacter: mockSelectCharacter,
+    navigate: mockNavigate,
   }),
 }));
 
@@ -88,7 +82,26 @@ describe('SearchDialog', () => {
 
   beforeEach(() => {
     HTMLElement.prototype.scrollIntoView = jest.fn();
-    mockSelectCharacter.mockClear();
+    mockNavigate.mockClear();
+    jest.mocked(useSearchGameData).mockReturnValue(mockGameData);
+    jest.mocked(performSearch).mockResolvedValue([
+      {
+        type: 'character',
+        id: '汤姆',
+        href: '/characters/tom-key',
+        matchContext: '',
+        priority: 1,
+        isPinyinMatch: false,
+      },
+      {
+        type: 'character',
+        id: '杰瑞',
+        href: '/characters/jerry-key',
+        matchContext: '',
+        priority: 1,
+        isPinyinMatch: false,
+      },
+    ]);
     Object.assign(env, { NEXT_PUBLIC_AI_CHAT_MODEL: 'test-model' });
     jest
       .mocked(useChat)
@@ -96,6 +109,7 @@ describe('SearchDialog', () => {
   });
 
   afterEach(() => {
+    jest.restoreAllMocks();
     if (originalScrollIntoView) {
       Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', originalScrollIntoView);
     } else {
@@ -144,7 +158,7 @@ describe('SearchDialog', () => {
     });
     rerender(<SearchDialog open onClose={jest.fn()} isMobile={false} />);
     fireEvent.keyDown(screen.getByRole('textbox'), { key: 'Enter' });
-    expect(mockSelectCharacter).toHaveBeenCalledWith('杰瑞');
+    expect(mockNavigate).toHaveBeenCalledWith('/characters/jerry-key');
     jest.mocked(useChat).mockReturnValue({
       isLoading: false,
       responseText: null,
@@ -163,7 +177,7 @@ describe('SearchDialog', () => {
     );
     render(<SearchDialog open onClose={jest.fn()} isMobile={false} />);
     fireEvent.change(screen.getByRole('textbox'), { target: { value: '旧查询' } });
-    await waitFor(() => expect(performSearch).toHaveBeenCalledWith('旧查询'));
+    await waitFor(() => expect(performSearch).toHaveBeenCalledWith('旧查询', mockGameData));
     fireEvent.change(screen.getByRole('textbox'), { target: { value: '新查询' } });
     await screen.findByRole('button', { name: '汤姆 角色' });
     await act(async () => {
@@ -171,6 +185,31 @@ describe('SearchDialog', () => {
     });
     expect(screen.getByRole('button', { name: '汤姆 角色' })).toBeInTheDocument();
     expect(screen.getByText('2 个结果')).toBeInTheDocument();
+  });
+
+  it('shows local search failures and recovers on a new query', async () => {
+    jest.mocked(performSearch).mockRejectedValueOnce(new Error('search failed'));
+    render(<SearchDialog open onClose={jest.fn()} isMobile={false} />);
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: '汤姆' } });
+    expect(await screen.findByRole('alert')).toHaveTextContent('搜索暂时不可用');
+    expect(screen.queryByText('无结果')).not.toBeInTheDocument();
+
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: '杰瑞' } });
+    fireEvent.click(await screen.findByRole('button', { name: '杰瑞 角色' }));
+    expect(mockNavigate).toHaveBeenCalledWith('/characters/jerry-key');
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  });
+
+  it('reruns the current query when a published snapshot arrives', async () => {
+    const { rerender } = render(<SearchDialog open onClose={jest.fn()} isMobile={false} />);
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: '新别名' } });
+    await screen.findByRole('button', { name: '汤姆 角色' });
+    const published = { ...mockGameData, characters: {} };
+    jest.mocked(useSearchGameData).mockReturnValue(published);
+    jest.mocked(performSearch).mockResolvedValueOnce([]);
+    rerender(<SearchDialog open onClose={jest.fn()} isMobile={false} />);
+    await waitFor(() => expect(performSearch).toHaveBeenLastCalledWith('新别名', published));
+    expect(await screen.findByText('无结果')).toBeInTheDocument();
   });
 
   it.each([false, true])(
@@ -211,7 +250,7 @@ describe('SearchDialog', () => {
       const expand = screen.getByRole('button', { name: '展开' });
       expand.focus();
       fireEvent.keyDown(expand, { key: 'Enter' });
-      expect(mockSelectCharacter).not.toHaveBeenCalled();
+      expect(mockNavigate).not.toHaveBeenCalled();
       fireEvent.click(expand);
       expect(screen.queryByRole('list')).not.toBeInTheDocument();
       expect(screen.getByRole('button', { name: '返回搜索结果' })).toHaveFocus();

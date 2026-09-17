@@ -1,11 +1,14 @@
-import { maps } from '@/data';
+import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 
 import { commonSearchFields, type SearchField, type SearchQuery } from './matching';
 import type { SearchResult } from './types';
 
-export async function searchMaps(query: SearchQuery): Promise<SearchResult[]> {
+export async function searchMaps(
+  query: SearchQuery,
+  maps: PublishedGameDataByType['maps']
+): Promise<SearchResult[]> {
   const results: SearchResult[] = [];
-  for (const map of Object.values(maps)) {
+  for (const [entityId, map] of Object.entries(maps)) {
     const match = await query.matchFields([
       ...commonSearchFields(map),
       ...(map.mapSkin ?? []).map((skin): SearchField => [
@@ -19,6 +22,7 @@ export async function searchMaps(query: SearchQuery): Promise<SearchResult[]> {
     if (match) {
       results.push({
         type: 'map',
+        href: `/maps/${encodeURIComponent(entityId)}`,
         name: map.name,
         imageUrl: map.imageUrl,
         ...match,

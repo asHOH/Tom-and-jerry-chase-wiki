@@ -12,7 +12,7 @@ import {
   SpecialSkill,
 } from '@/data/types';
 
-export type SearchResult =
+export type SearchResult = { href: string } & (
   | ({
       type: 'character';
       matchContext: string;
@@ -52,7 +52,6 @@ export type SearchResult =
       priority: number;
       isPinyinMatch: boolean;
       detailedBuffId?: string;
-      href?: string;
     } & Pick<Buff, 'name'> &
       Partial<Pick<Buff, 'imageUrl'>>)
   | ({ type: 'map'; matchContext: string; priority: number; isPinyinMatch: boolean } & Pick<
@@ -80,4 +79,5 @@ export type SearchResult =
   | ({ type: 'achievement'; matchContext: string; priority: number; isPinyinMatch: boolean } & Pick<
       Achievement,
       'name' | 'imageUrl' | 'factionId'
-    >);
+    >)
+);

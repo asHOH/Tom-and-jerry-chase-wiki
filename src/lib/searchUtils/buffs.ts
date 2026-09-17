@@ -1,7 +1,7 @@
+import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import type { FactionId, SingleItem, SingleItemTypeName } from '@/data/types';
 import allBuffDetailedDescriptionsRaw from '@/features/buffs/data/allBuffDetailedDescriptions.json';
 import { buffMappingTable } from '@/features/buffs/data/buffMappingTable';
-import { buffs } from '@/data';
 
 import { convertToPinyin } from '../pinyinUtils';
 import { getSingleItemHref } from '../singleItemTools';
@@ -59,9 +59,12 @@ const detailedBuffs = Object.entries(allBuffDetailedDescriptions).flatMap(
   }
 );
 
-export async function searchBuffs(query: SearchQuery): Promise<SearchResult[]> {
+export async function searchBuffs(
+  query: SearchQuery,
+  buffs: PublishedGameDataByType['buffs']
+): Promise<SearchResult[]> {
   const results: SearchResult[] = [];
-  for (const buff of Object.values(buffs)) {
+  for (const [entityId, buff] of Object.entries(buffs)) {
     const match = await query.matchFields([
       ...commonSearchFields({
         ...buff,
@@ -71,7 +74,14 @@ export async function searchBuffs(query: SearchQuery): Promise<SearchResult[]> {
       [buff.detailedStack, 0.5, 0.45],
       [buff.sourceDescription, 0.4, 0.35],
     ]);
-    if (match) results.push({ type: 'buff', name: buff.name, imageUrl: buff.imageUrl, ...match });
+    if (match)
+      results.push({
+        type: 'buff',
+        href: `/buffs/${encodeURIComponent(entityId)}`,
+        name: buff.name,
+        imageUrl: buff.imageUrl,
+        ...match,
+      });
   }
   return results;
 }
@@ -119,7 +129,7 @@ export async function searchDetailedBuffs(query: SearchQuery): Promise<SearchRes
         priority,
         isPinyinMatch,
         detailedBuffId: buff.buffId,
-        ...(buff.href ? { href: `${buff.href.split('#')[0]}#buff-${buff.buffId}` } : {}),
+        href: buff.href ? `${buff.href.split('#')[0]}#buff-${buff.buffId}` : '/buffs',
       });
     }
   }
