@@ -16,6 +16,7 @@ import AttributesCardLayout from '@/features/shared/detail-view/AttributesCardLa
 import CharacterLikeAttributesSection from '@/features/shared/detail-view/CharacterLikeAttributesSection';
 import EditableCheckboxGroup from '@/features/shared/detail-view/EditableCheckboxGroup';
 import PhysicalAttributesSection from '@/features/shared/detail-view/PhysicalAttributesSection';
+import PrototypeVariantSection from '@/features/shared/detail-view/PrototypeVariantSection';
 import SingleItemListEditor from '@/features/shared/detail-view/SingleItemListEditor';
 import { editable } from '@/components/ui/editable';
 import { FormSelect } from '@/components/ui/FormControls';
@@ -307,26 +308,7 @@ export default function EntityAttributesCard({ entity }: { entity: Entity }) {
             isEditMode={isEditMode}
             onChange={(mutate) => updateEntity(mutate)}
           />
-          {(prototype.length > 0 || variant.length > 0) && (
-            <div className='border-t border-gray-300 pt-1 dark:border-gray-600'>
-              {prototype.length > 0 && (
-                <div>
-                  <span className='text-lg font-bold whitespace-pre'>本内容为以下内容的变种：</span>
-                  <div className='mt-1'>
-                    <SingleItemAccordionCard items={prototype} />
-                  </div>
-                </div>
-              )}
-              {variant.length > 0 && (
-                <div className={prototype.length > 0 ? 'mt-2' : ''}>
-                  <span className='text-lg font-bold whitespace-pre'>本内容有以下变种：</span>
-                  <div className='mt-1'>
-                    <SingleItemAccordionCard items={variant} />
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
+          <PrototypeVariantSection prototypes={prototype} variants={variant} />
         </>
       }
       navigation={
