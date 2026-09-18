@@ -13,6 +13,7 @@ import {
 import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { formatArticleDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
+import { fetchJson } from '@/lib/fetchJson';
 import { normalizeHeadingLevels } from '@/lib/richTextUtils';
 import { useContributionSubmissionFeedback } from '@/hooks/useContributionSubmissionFeedback';
 import { useUser } from '@/hooks/useUser';
@@ -28,25 +29,6 @@ import { ChevronRightSolidIcon } from '@/components/icons/CommonIcons';
 import Link from '@/components/Link';
 
 type Category = CategoryOption;
-
-const fetcher = async (url: string) => {
-  const res = await fetch(url);
-  if (!res.ok) {
-    const error = new Error('An error occurred while fetching the data.') as Error & {
-      info?: unknown;
-      status?: number;
-    };
-    // Attach extra info to the error object.
-    try {
-      error.info = await res.json();
-    } catch {
-      error.info = { status: res.status };
-    }
-    error.status = res.status;
-    throw error;
-  }
-  return res.json();
-};
 
 type EditArticleClientProps = {
   characterOptions: readonly ArticleCharacterOption[];
@@ -76,7 +58,7 @@ const EditArticleClient: React.FC<EditArticleClientProps> = ({ characterOptions 
 
   const { data: categoriesData, error: categoriesError } = useSWR<{ categories: Category[] }>(
     canEditArticle ? '/api/categories' : null,
-    fetcher
+    fetchJson
   );
   const categories: Category[] = categoriesData?.categories || [];
   const isLoadingCategories = !categoriesData && !categoriesError;
@@ -87,7 +69,7 @@ const EditArticleClient: React.FC<EditArticleClientProps> = ({ characterOptions 
 
   const { data: articleData, error: articleError } = useSWR<ArticleEditInfoResponse>(
     id && canEditArticle ? `/api/articles/${id}/info` : null,
-    fetcher
+    fetchJson
   );
 
   const applySourceToForm = useCallback(

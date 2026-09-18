@@ -6,6 +6,7 @@ import useSWR from 'swr';
 import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { formatArticleDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
+import { fetchJson } from '@/lib/fetchJson';
 import Button from '@/components/ui/Button';
 import ButtonLink from '@/components/ui/ButtonLink';
 import Card from '@/components/ui/Card';
@@ -56,20 +57,6 @@ interface UserApiResponse {
   total_count: number;
 }
 
-const fetcher = (url: string) =>
-  fetch(url).then((res) => {
-    if (!res.ok) {
-      const error = new Error('An error occurred while fetching the data.') as Error & {
-        info: unknown;
-        status: number;
-      };
-      error.info = res.json();
-      error.status = res.status;
-      throw error;
-    }
-    return res.json();
-  });
-
 export default function PendingClient() {
   const permissions = usePermissions();
   const [processingVersions, setProcessingVersions] = useState<Set<string>>(new Set());
@@ -90,7 +77,7 @@ export default function PendingClient() {
     data: rawData,
     error,
     mutate,
-  } = useSWR<ModerationApiResponse | UserApiResponse>(apiEndpoint, fetcher);
+  } = useSWR<ModerationApiResponse | UserApiResponse>(apiEndpoint, fetchJson);
 
   const data: SubmissionsData | undefined = useMemo(() => {
     if (!rawData) return undefined;

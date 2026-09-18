@@ -1,6 +1,6 @@
 import type { AnchorHTMLAttributes, ReactNode } from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import useSWR from 'swr';
+import useSWR, { SWRConfig } from 'swr';
 
 import ArticleHistoryClient from './ArticleHistoryClient';
 
@@ -15,7 +15,11 @@ jest.mock('next/navigation', () => ({
   useSearchParams: () => ({ get: (key: string) => mockSearchValues[key] ?? null }),
 }));
 
-jest.mock('swr', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('swr', () => ({
+  ...jest.requireActual('swr'),
+  __esModule: true,
+  default: jest.fn(),
+}));
 
 jest.mock('@/lib/auth/PermissionProvider', () => ({
   usePermissions: () => ({ has: () => false }),
@@ -117,6 +121,33 @@ describe('ArticleHistoryClient diff selection', () => {
 
     fireEvent.click(screen.getByRole('button', { name: '比较选中的版本' }));
     expect(mockPush).toHaveBeenCalledWith('/articles/article-1/history?oldid=v2&diff=v3');
+  });
+
+  it('shows the load error when the history request is rate limited', async () => {
+    const originalFetch = global.fetch;
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: false,
+      status: 429,
+      json: async () => ({ error: 'Too many requests' }),
+    });
+    jest.mocked(useSWR).mockImplementation(jest.requireActual<typeof import('swr')>('swr').default);
+
+    try {
+      render(
+        <SWRConfig value={{ provider: () => new Map(), shouldRetryOnError: false }}>
+          <ArticleHistoryClient />
+        </SWRConfig>
+      );
+
+      expect(await screen.findByRole('heading', { name: '加载历史版本失败' })).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: '返回文章' })).toHaveAttribute(
+        'href',
+        '/articles/article-1'
+      );
+      expect(global.fetch).toHaveBeenCalledWith('/api/articles/article-1/history');
+    } finally {
+      global.fetch = originalFetch;
+    }
   });
 
   it('renders a valid deep-linked comparison in chronological order', () => {

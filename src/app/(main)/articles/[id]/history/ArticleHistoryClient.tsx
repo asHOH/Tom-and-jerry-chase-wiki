@@ -7,6 +7,7 @@ import useSWR from 'swr';
 import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { formatArticleDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
+import { fetchJson } from '@/lib/fetchJson';
 import { useToast } from '@/context/ToastContext';
 import ArticleDiffViewer from '@/features/articles/components/ArticleDiffViewer';
 import Button from '@/components/ui/Button';
@@ -39,8 +40,6 @@ interface ArticleHistoryData {
   total_count: number;
 }
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
-
 export default function ArticleHistoryClient() {
   const params = useParams();
   const router = useRouter();
@@ -51,7 +50,7 @@ export default function ArticleHistoryClient() {
 
   const { data, error } = useSWR<ArticleHistoryData>(
     articleId ? `/api/articles/${articleId}/history` : null,
-    fetcher
+    fetchJson
   );
 
   const [selectedVersions, setSelectedVersions] = useState<{

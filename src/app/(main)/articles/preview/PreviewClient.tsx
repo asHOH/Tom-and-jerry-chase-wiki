@@ -5,6 +5,7 @@ import useSWR from 'swr';
 
 import { formatArticleDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
+import { fetchJson } from '@/lib/fetchJson';
 import ButtonLink from '@/components/ui/ButtonLink';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import PageHeader from '@/components/ui/PageHeader';
@@ -44,27 +45,13 @@ interface PreviewData {
   };
 }
 
-const fetcher = (url: string) =>
-  fetch(url).then((res) => {
-    if (!res.ok) {
-      const error = new Error('An error occurred while fetching the data.') as Error & {
-        info: unknown;
-        status: number;
-      };
-      error.info = res.json();
-      error.status = res.status;
-      throw error;
-    }
-    return res.json();
-  });
-
 export default function PreviewClient() {
   const searchParams = useSearchParams();
   const token = searchParams?.get('token');
 
   const { data: previewData, error } = useSWR<{ preview: PreviewData }>(
     token ? `/api/articles/preview?token=${encodeURIComponent(token)}` : null,
-    fetcher
+    fetchJson
   );
 
   const data = previewData?.preview;

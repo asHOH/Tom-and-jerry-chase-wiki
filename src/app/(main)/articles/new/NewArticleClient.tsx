@@ -6,6 +6,7 @@ import useSWR from 'swr';
 
 import type { ArticleCharacterOption } from '@/lib/articles/articleCharacterOptions';
 import { usePermissions } from '@/lib/auth/PermissionProvider';
+import { fetchJson } from '@/lib/fetchJson';
 import { useContributionSubmissionFeedback } from '@/hooks/useContributionSubmissionFeedback';
 import { useUser } from '@/hooks/useUser';
 import { useToast } from '@/context/ToastContext';
@@ -18,25 +19,6 @@ import { ChevronRightSolidIcon } from '@/components/icons/CommonIcons';
 import Link from '@/components/Link';
 
 type Category = CategoryOption;
-
-const fetcher = async (url: string) => {
-  const res = await fetch(url);
-  if (!res.ok) {
-    const error = new Error('An error occurred while fetching the data.') as Error & {
-      info?: unknown;
-      status?: number;
-    };
-    // Attach extra info to the error object.
-    try {
-      error.info = await res.json();
-    } catch {
-      error.info = { status: res.status };
-    }
-    error.status = res.status;
-    throw error;
-  }
-  return res.json();
-};
 
 type NewArticleClientProps = {
   characterOptions: readonly ArticleCharacterOption[];
@@ -59,7 +41,7 @@ const NewArticleClient: React.FC<NewArticleClientProps> = ({ characterOptions })
 
   const { data: categoriesData, error: categoriesError } = useSWR<{ categories: Category[] }>(
     canCreateArticle ? '/api/categories' : null,
-    fetcher
+    fetchJson
   );
   const categories: Category[] =
     categoriesData?.categories.filter(
