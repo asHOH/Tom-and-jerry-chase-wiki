@@ -1,5 +1,7 @@
 import { diffLines, diffWords, type ChangeObject } from 'diff';
 
+import { collapseDiffRows, type DiffDisplayItem } from '@/lib/collapseDiffRows';
+
 const LINE_DIFF_TIMEOUT_MS = 500;
 const INLINE_DIFF_TIMEOUT_MS = 200;
 const MAX_LINE_EDIT_LENGTH = 10_000;
@@ -50,9 +52,7 @@ export type GameActionSplitRow = {
   newSegments: GameActionDiffSegment[];
 };
 
-export type GameActionSplitDisplayItem =
-  | { type: 'row'; row: GameActionSplitRow; rowIndex: number }
-  | { type: 'gap'; id: string; hiddenCount: number };
+export type GameActionSplitDisplayItem = DiffDisplayItem<GameActionSplitRow>;
 
 export type GameActionUnifiedLine = {
   kind: 'context' | 'added' | 'removed';
@@ -364,43 +364,7 @@ export function collapseGameActionSplitRows(
     return rows.map((row, rowIndex) => ({ type: 'row', row, rowIndex }));
   }
 
-  const items: GameActionSplitDisplayItem[] = [];
-  let index = 0;
-
-  while (index < rows.length) {
-    if (rows[index]?.kind !== 'context') {
-      items.push({ type: 'row', row: rows[index]!, rowIndex: index });
-      index += 1;
-      continue;
-    }
-
-    const runStart = index;
-    while (index < rows.length && rows[index]?.kind === 'context') index += 1;
-    const runEnd = index;
-    const keepBefore = runStart === 0 ? 0 : Math.min(contextLines, runEnd - runStart);
-    const keepAfter = runEnd === rows.length ? 0 : Math.min(contextLines, runEnd - runStart);
-    const hiddenStart = runStart + keepBefore;
-    const hiddenEnd = runEnd - keepAfter;
-
-    for (let rowIndex = runStart; rowIndex < hiddenStart; rowIndex += 1) {
-      items.push({ type: 'row', row: rows[rowIndex]!, rowIndex });
-    }
-
-    const gapId = `${hiddenStart}-${hiddenEnd}`;
-    if (hiddenEnd > hiddenStart && !expandedGapIds.has(gapId)) {
-      items.push({ type: 'gap', id: gapId, hiddenCount: hiddenEnd - hiddenStart });
-    } else {
-      for (let rowIndex = hiddenStart; rowIndex < hiddenEnd; rowIndex += 1) {
-        items.push({ type: 'row', row: rows[rowIndex]!, rowIndex });
-      }
-    }
-
-    for (let rowIndex = hiddenEnd; rowIndex < runEnd; rowIndex += 1) {
-      items.push({ type: 'row', row: rows[rowIndex]!, rowIndex });
-    }
-  }
-
-  return items;
+  return collapseDiffRows(rows, expandedGapIds, contextLines);
 }
 
 function contextLineToUnified(line: GameActionDiffContextLine): GameActionUnifiedLine {
