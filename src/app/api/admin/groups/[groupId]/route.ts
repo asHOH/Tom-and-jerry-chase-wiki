@@ -1,65 +1,24 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
-import { isKnownStaticPermissionResource } from '@/lib/auth/permissionResources';
-import { isPermissionKey } from '@/lib/auth/permissions';
-import { requirePermission } from '@/lib/auth/requirePermission';
 import {
-  isPermissionResourceTypeAllowed,
-  isScopableResourceType,
-} from '@/lib/auth/resourceContexts';
+  permissionGrantResourceExists,
+  permissionGrantSchema,
+} from '@/lib/auth/permissionGrantValidation';
+import { requirePermission } from '@/lib/auth/requirePermission';
 import { CACHE_TAGS, invalidateCache } from '@/lib/cacheTags';
-import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
 
 const updateSchema = z.object({
   name: z.string().trim().min(1).max(50),
   description: z.string().max(200),
   isDefault: z.boolean(),
   parentGroupId: z.string().uuid().nullable().optional(),
-  grants: z.array(
-    z.object({
-      permission: z.string(),
-      scope: z.enum(['global', 'resource_type', 'resource']),
-      resourceType: z.string().trim().min(1).max(100).nullable(),
-      resourceId: z.string().trim().min(1).max(200).nullable(),
-    })
-  ),
+  grants: z.array(permissionGrantSchema),
 });
 
 const grantsSchema = z.object({
-  grants: z.array(
-    z.object({
-      permission: z.string(),
-      scope: z.enum(['global', 'resource_type', 'resource']),
-      resourceType: z.string().trim().min(1).max(100).nullable(),
-      resourceId: z.string().trim().min(1).max(200).nullable(),
-    })
-  ),
+  grants: z.array(permissionGrantSchema),
 });
-
-type GrantInput = z.infer<typeof grantsSchema>['grants'][number];
-
-const isValidGrant = (grant: GrantInput) => {
-  if (!isPermissionKey(grant.permission)) return false;
-  if (grant.scope === 'global') return true;
-  if (!grant.resourceType || !isScopableResourceType(grant.resourceType)) return false;
-  if (!isPermissionResourceTypeAllowed(grant.permission, grant.resourceType)) return false;
-  return grant.scope !== 'resource' || Boolean(grant.resourceId);
-};
-
-const resourceExists = async (grant: GrantInput) => {
-  if (grant.scope !== 'resource' || !grant.resourceType || !grant.resourceId) return true;
-  const staticResult = isKnownStaticPermissionResource(grant.resourceType, grant.resourceId);
-  if (staticResult !== null) return staticResult;
-  const table = grant.resourceType === 'comments/articles' ? 'articles' : grant.resourceType;
-  if (table !== 'articles' && table !== 'categories') return false;
-  const { data } = await requireSupabaseAdminClient()
-    .from(table)
-    .select('id')
-    .eq('id', grant.resourceId)
-    .maybeSingle();
-  return Boolean(data);
-};
 
 const getGroupId = async (params: Promise<{ groupId: string }>) => (await params).groupId;
 
@@ -73,10 +32,10 @@ export async function PATCH(
   });
   if ('error' in guard) return guard.error;
   const parsed = updateSchema.safeParse(await request.json().catch(() => null));
-  if (!parsed.success || parsed.data.grants.some((grant) => !isValidGrant(grant))) {
+  if (!parsed.success) {
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
   }
-  if (!(await Promise.all(parsed.data.grants.map(resourceExists))).every(Boolean)) {
+  if (!(await Promise.all(parsed.data.grants.map(permissionGrantResourceExists))).every(Boolean)) {
     return NextResponse.json({ error: 'Unknown resource ID' }, { status: 400 });
   }
   const rpcArguments = {
@@ -105,10 +64,10 @@ export async function PUT(request: Request, { params }: { params: Promise<{ grou
   });
   if ('error' in guard) return guard.error;
   const parsed = grantsSchema.safeParse(await request.json().catch(() => null));
-  if (!parsed.success || parsed.data.grants.some((grant) => !isValidGrant(grant))) {
+  if (!parsed.success) {
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
   }
-  if (!(await Promise.all(parsed.data.grants.map(resourceExists))).every(Boolean)) {
+  if (!(await Promise.all(parsed.data.grants.map(permissionGrantResourceExists))).every(Boolean)) {
     return NextResponse.json({ error: 'Unknown resource ID' }, { status: 400 });
   }
   const { error } = await guard.supabase.rpc('set_group_grants', {
