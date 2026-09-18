@@ -44,12 +44,13 @@ export default function DetailReverseCard({ singleItem }: DetailReverseCardProps
       };
     }),
 
-    ...ownPrototypes.map((singleItem, key) => {
-      const count = numberOfOwnReverse[key + 1] ?? 0;
+    ...ownPrototypes.map((prototype, key) => {
+      const index = ownEntities.length + key + 1;
+      const count = numberOfOwnReverse[index] ?? 0;
       return {
-        id: String(key + 1),
-        title: `${singleItem.name}${singleItem.name === singleItem.name ? '-原型' : ''}(${count})`,
-        children: <SingleItemReverseCard singleItem={singleItem} />,
+        id: String(index),
+        title: `${prototype.name}${prototype.name === singleItem.name ? '-原型' : ''}(${count})`,
+        children: <SingleItemReverseCard singleItem={prototype} />,
         count,
         activeColor: 'orange' as const,
       };

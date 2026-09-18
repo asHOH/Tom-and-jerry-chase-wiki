@@ -44,12 +44,13 @@ export default function DetailTraitsCard({ singleItem }: DetailTraitsCardProps) 
       };
     }),
 
-    ...ownPrototypes.map((singleItem, key) => {
-      const count = numberOfOwnTraits[key + 1] ?? 0;
+    ...ownPrototypes.map((prototype, key) => {
+      const index = ownEntities.length + key + 1;
+      const count = numberOfOwnTraits[index] ?? 0;
       return {
-        id: String(key + 1),
-        title: `${singleItem.name}${singleItem.name === singleItem.name ? '-原型' : ''}(${count})`,
-        children: <SingleItemTraitsText singleItem={singleItem} />,
+        id: String(index),
+        title: `${prototype.name}${prototype.name === singleItem.name ? '-原型' : ''}(${count})`,
+        children: <SingleItemTraitsText singleItem={prototype} />,
         count,
         activeColor: 'orange' as const,
       };
