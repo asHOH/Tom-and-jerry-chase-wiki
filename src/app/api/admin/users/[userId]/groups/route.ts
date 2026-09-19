@@ -20,6 +20,6 @@ export async function PUT(request: Request, { params }: { params: Promise<{ user
     p_group_ids: parsed.data.groupIds,
   });
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
-  await invalidateCache(CACHE_TAGS.users);
+  invalidateCache(CACHE_TAGS.users, 'background');
   return NextResponse.json({ ok: true });
 }

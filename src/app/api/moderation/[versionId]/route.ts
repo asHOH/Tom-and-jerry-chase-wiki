@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+import { invalidateArticleCache } from '@/lib/articles/invalidateArticleCache';
 import {
   mapModerationActionError,
   type ModerationAction,
 } from '@/lib/articles/moderationActionError';
 import { requirePermission } from '@/lib/auth/requirePermission';
 import { getRequestIp } from '@/lib/blocks/server';
-import { CACHE_TAGS, invalidateCache } from '@/lib/cacheTags';
 import { publishNotification } from '@/lib/notificationUtils';
 import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
 import { getPublicUserSubmissionHref } from '@/lib/users/publicProfile';
@@ -57,6 +57,20 @@ export async function POST(
     const reviewFeedback =
       action === 'approve' || action === 'reject' ? await readReviewFeedback(request) : null;
 
+    // This lookup supplies an immutable cache target, not authorization; the RPC checks that.
+    const { data: target, error: targetError } = await requireSupabaseAdminClient()
+      .from('article_versions')
+      .select('article_id')
+      .eq('id', versionId)
+      .maybeSingle();
+    if (targetError) {
+      console.error('Failed to resolve moderation target:', { versionId, error: targetError });
+      return NextResponse.json({ error: 'Failed to resolve article version' }, { status: 500 });
+    }
+    if (!target?.article_id) {
+      return NextResponse.json({ error: 'Article version not found' }, { status: 404 });
+    }
+
     const { error: actionError } = await requireSupabaseAdminClient().rpc(
       'prepared_article_version_moderation',
       {
@@ -78,7 +92,13 @@ export async function POST(
       return NextResponse.json({ error: `Failed to ${action} article version` }, { status: 500 });
     }
 
-    // Best-effort: lookup article_id and author for targeted revalidation and notification.
+    const refreshResult = invalidateArticleCache({
+      articleId: target.article_id,
+      versionId,
+      status: action === 'approve' ? 'approved' : action === 'reject' ? 'rejected' : 'revoked',
+    });
+
+    // Notification metadata is optional and cannot prevent cache refresh after commit.
     try {
       const { data: versionRow, error: lookupError } = await supabase
         .from('article_versions')
@@ -87,15 +107,9 @@ export async function POST(
         .single();
 
       if (lookupError) {
-        console.error('Failed to lookup article for revalidation/notification:', lookupError);
+        console.error('Failed to lookup article for notification:', lookupError);
       } else if (versionRow) {
         const { article_id, editor_id, proposed_title } = versionRow;
-        if (article_id) {
-          // Nuke specific article versions to ensure fresh content
-          await invalidateCache(CACHE_TAGS.article(article_id), 'nuke');
-          await invalidateCache(CACHE_TAGS.articleVersions(article_id), 'nuke');
-        }
-
         if (editor_id && (action === 'approve' || action === 'reject')) {
           const approved = action === 'approve';
           let submissionHref: string | undefined;
@@ -124,17 +138,14 @@ export async function POST(
         }
       }
     } catch (e) {
-      console.error('Revalidation lookup error:', e);
+      console.error('Article moderation notification failed:', e);
     }
-
-    // Expire public lists (SWR strategy)
-    await invalidateCache(CACHE_TAGS.articles, 'expire');
-    await invalidateCache(CACHE_TAGS.sitemapArticles, 'expire');
 
     return NextResponse.json({
       message: `Article version successfully ${action}${action === 'approve' ? 'd' : action === 'reject' ? 'ed' : 'd'}`,
       action,
       version_id: versionId,
+      ...refreshResult,
     });
   } catch (err) {
     console.error('API error:', err);

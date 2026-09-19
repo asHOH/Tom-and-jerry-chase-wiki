@@ -1,5 +1,6 @@
 import type { NextRequest } from 'next/server';
 
+import { cached } from '@/lib/serverCache';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 
 import { GET } from './route';
@@ -15,14 +16,14 @@ jest.mock('next/server', () => ({
 }));
 
 jest.mock('@/lib/cacheTags', () => ({
-  CACHE_TAGS: { articles: 'articles' },
+  CACHE_TAGS: { articles: 'articles', articlePreviews: 'article-previews' },
 }));
 
 jest.mock('@/lib/serverCache', () => ({
-  cached: (
-    _keyParts: Array<string | number | boolean | null | undefined>,
-    fn: () => Promise<unknown>
-  ) => fn(),
+  cached: jest.fn(
+    (_keyParts: Array<string | number | boolean | null | undefined>, fn: () => Promise<unknown>) =>
+      fn()
+  ),
 }));
 
 jest.mock('@/lib/supabase/admin', () => ({
@@ -98,6 +99,11 @@ describe('article preview route', () => {
 
     const response = await GET(createRequest());
     const body = await response.json();
+    expect(cached).toHaveBeenCalledWith(
+      ['api', 'articles', 'preview', 'preview-token'],
+      expect.any(Function),
+      { revalidate: 30, tags: ['articles', 'article-previews'] }
+    );
 
     expect(response.status).toBe(200);
     expect(body.preview.article).toMatchObject({

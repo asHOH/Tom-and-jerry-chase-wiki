@@ -4,9 +4,9 @@ import {
   ArticleWriteValidationError,
   resolveArticleCharacterForWrite,
 } from '@/lib/articles/articleWriteRelations';
+import { invalidateArticleCache } from '@/lib/articles/invalidateArticleCache';
 import { requirePermission } from '@/lib/auth/requirePermission';
 import { getRequestIp } from '@/lib/blocks/server';
-import { CACHE_TAGS, invalidateCache } from '@/lib/cacheTags';
 import { notifyArticleVersionSubscribers, publishNotification } from '@/lib/notificationUtils';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
@@ -60,20 +60,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Failed to submit article version' }, { status: 500 });
     }
 
-    const newArticleId = submittedVersions?.[0]?.article_id;
-    if (!newArticleId) {
+    const submittedVersion = submittedVersions?.[0];
+    const newArticleId = submittedVersion?.article_id;
+    if (!submittedVersion || !newArticleId) {
       return NextResponse.json({ error: 'Failed to create article' }, { status: 500 });
     }
 
-    // Next 16 Granular Cache Strategy:
-    // 1. Nuke specific article metadata so users see the new page immediately.
-    // 2. Expire lists so they update in background without blocking redirection.
-    await invalidateCache(CACHE_TAGS.article(newArticleId), 'nuke');
-    await invalidateCache(CACHE_TAGS.articleVersions(newArticleId), 'nuke');
-    await invalidateCache(CACHE_TAGS.articles, 'expire');
-    await invalidateCache(CACHE_TAGS.sitemapArticles, 'expire');
-
-    const submittedVersion = submittedVersions?.[0];
+    const refreshResult = invalidateArticleCache({
+      articleId: newArticleId,
+      versionId: submittedVersion.submitted_version_id,
+      status: submittedVersion.submitted_status,
+    });
     if (submittedVersion?.submitted_status === 'pending') {
       try {
         await notifyArticleVersionSubscribers({
@@ -115,6 +112,7 @@ export async function POST(req: Request) {
     return NextResponse.json({
       message: 'Article submitted successfully',
       article_id: newArticleId,
+      ...refreshResult,
     });
   } catch (err) {
     if (err instanceof ArticleWriteValidationError) {

@@ -10,7 +10,7 @@ import { fetchJson } from '@/lib/fetchJson';
 import { useContributionSubmissionFeedback } from '@/hooks/useContributionSubmissionFeedback';
 import { useUser } from '@/hooks/useUser';
 import { useToast } from '@/context/ToastContext';
-import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
+import { ARTICLE_CACHE_REFRESH_WARNING, ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import PageHeader from '@/components/ui/PageHeader';
 import PageShell from '@/components/ui/PageShell';
@@ -29,7 +29,7 @@ const NewArticleClient: React.FC<NewArticleClientProps> = ({ characterOptions })
   const { isLoading: isUserLoading, isValidating: isUserValidating } = useUser();
   const permissions = usePermissions();
   const canCreateArticle = permissions.has('article.create');
-  const { error: showError } = useToast();
+  const { error: showError, warning } = useToast();
   const showSubmissionFeedback = useContributionSubmissionFeedback();
 
   const [title, setTitle] = useState('');
@@ -142,8 +142,13 @@ const NewArticleClient: React.FC<NewArticleClientProps> = ({ characterOptions })
       });
 
       if (response.ok) {
+        const result = (await response.json().catch(() => null)) as { warning?: string } | null;
         router.push('/articles');
-        showSubmissionFeedback('文章提交成功，正在等待审核。');
+        if (result?.warning === 'cache_refresh_failed') {
+          warning(ARTICLE_CACHE_REFRESH_WARNING, 8000);
+        } else {
+          showSubmissionFeedback('文章提交成功，正在等待审核。');
+        }
       } else {
         const errorData = await response.json();
         showError(errorData.message || '提交文章失败');

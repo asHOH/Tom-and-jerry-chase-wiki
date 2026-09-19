@@ -1,14 +1,13 @@
-import { revalidateTag } from 'next/cache';
 import { NextResponse } from 'next/server';
 
 import {
   ArticleWriteValidationError,
   resolveArticleCharacterForWrite,
 } from '@/lib/articles/articleWriteRelations';
+import { invalidateArticleCache } from '@/lib/articles/invalidateArticleCache';
 import { canAccess } from '@/lib/auth/permissions';
 import { loadPermissionGrants } from '@/lib/auth/requirePermission';
 import { getRequestIp, requireNotBlocked } from '@/lib/blocks/server';
-import { CACHE_TAGS } from '@/lib/cacheTags';
 import { notifyArticleVersionSubscribers, publishNotification } from '@/lib/notificationUtils';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
@@ -120,12 +119,13 @@ export async function POST(request: Request, { params }: { params: Promise<{ id?
       return NextResponse.json({ error: 'Failed to update article' }, { status: 500 });
     }
 
-    revalidateTag(CACHE_TAGS.article(id), 'max');
-    revalidateTag(CACHE_TAGS.articleVersions(id), 'max');
-    revalidateTag(CACHE_TAGS.articles, 'max');
-    revalidateTag(CACHE_TAGS.sitemapArticles, 'max');
-
     const submittedVersion = data?.[0];
+    const refreshResult = invalidateArticleCache({
+      articleId: id,
+      versionId: submittedVersion?.submitted_version_id ?? 'unknown',
+      // Conservatively expire public content if a committed RPC omits its result.
+      status: submittedVersion?.submitted_status ?? 'approved',
+    });
     if (submittedVersion?.submitted_status === 'pending') {
       try {
         await notifyArticleVersionSubscribers({
@@ -167,7 +167,10 @@ export async function POST(request: Request, { params }: { params: Promise<{ id?
       }
     }
 
-    return NextResponse.json({ message: 'Article updated successfully', data }, { status: 200 });
+    return NextResponse.json(
+      { message: 'Article updated successfully', data, ...refreshResult },
+      { status: 200 }
+    );
   } catch (err) {
     if (err instanceof ArticleWriteValidationError) {
       return NextResponse.json({ error: err.message }, { status: 400 });

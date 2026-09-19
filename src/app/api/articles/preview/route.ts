@@ -133,7 +133,7 @@ export async function GET(request: NextRequest) {
       },
       {
         revalidate: 30,
-        tags: [CACHE_TAGS.articles],
+        tags: [CACHE_TAGS.articles, CACHE_TAGS.articlePreviews],
       }
     );
 

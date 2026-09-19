@@ -15,7 +15,13 @@ function normalizeKeyParts(
   return keyParts.map((p) => String(p ?? 'null'));
 }
 
-const cacheAcquisitions = new Map<string, Promise<unknown>>();
+const cacheAcquisitions = new Map<string, { promise: Promise<unknown>; tags: readonly string[] }>();
+
+export function invalidateCacheAcquisitions(tag: string): void {
+  for (const [key, acquisition] of cacheAcquisitions) {
+    if (acquisition.tags.includes(tag)) cacheAcquisitions.delete(key);
+  }
+}
 
 /**
  * Caches the result across requests using Next.js Data Cache.
@@ -37,8 +43,8 @@ export function createCached<T>(
     revalidate = defaultRevalidate;
   }
 
-  // Tags can invalidate sooner, but a missed invalidation must not retain data
-  // beyond the project's maximum cache lifetime.
+  // Cap the revalidation interval, not observable staleness: background refresh
+  // may still serve the previous value until a successful revalidation.
   revalidate =
     revalidate === false
       ? MAX_SERVER_CACHE_REVALIDATE_SECONDS
@@ -55,13 +61,13 @@ export function cached<T>(
   options?: ServerCacheOptions
 ): Promise<T> {
   const acquisitionKey = JSON.stringify(normalizeKeyParts(keyParts));
-  const activeAcquisition = cacheAcquisitions.get(acquisitionKey) as Promise<T> | undefined;
-  if (activeAcquisition) return activeAcquisition;
+  const activeAcquisition = cacheAcquisitions.get(acquisitionKey);
+  if (activeAcquisition) return activeAcquisition.promise as Promise<T>;
 
   const acquisition = createCached(keyParts, fn, options)();
-  cacheAcquisitions.set(acquisitionKey, acquisition);
+  cacheAcquisitions.set(acquisitionKey, { promise: acquisition, tags: options?.tags ?? [] });
   const clearAcquisition = () => {
-    if (cacheAcquisitions.get(acquisitionKey) === acquisition) {
+    if (cacheAcquisitions.get(acquisitionKey)?.promise === acquisition) {
       cacheAcquisitions.delete(acquisitionKey);
     }
   };

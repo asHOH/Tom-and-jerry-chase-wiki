@@ -128,7 +128,7 @@ describe.each([
     expect(rpc).toHaveBeenCalledWith(rpcName, expect.objectContaining({ p_grants: grants }));
     expect(from.mock.calls).toEqual([['articles'], ['articles'], ['categories']]);
     expect(eq).toHaveBeenCalledWith('id', 'article-1');
-    expect(invalidateCache).toHaveBeenCalledWith('users');
+    expect(invalidateCache).toHaveBeenCalledWith('users', 'background');
   });
 });
 

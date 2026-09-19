@@ -1,3 +1,5 @@
+import { revalidateTag } from 'next/cache';
+
 import { resolveArticleCharacterForWrite } from '@/lib/articles/articleWriteRelations';
 import { canAccess } from '@/lib/auth/permissions';
 import { loadPermissionGrants } from '@/lib/auth/requirePermission';
@@ -177,6 +179,32 @@ describe('article edit route', () => {
     expect(response.status).toBe(400);
     expect(adminRpcMock).not.toHaveBeenCalled();
   });
+
+  it.each(['approved', 'pending', 'rejected'])(
+    'preserves success after refresh failure for %s edits',
+    async (status) => {
+      jest.spyOn(console, 'error').mockImplementation(() => {});
+      const data = [{ submitted_status: status, submitted_version_id: 'version-1' }];
+      adminRpcMock.mockResolvedValue({ data, error: null } as never);
+      jest.mocked(revalidateTag).mockImplementationOnce(() => {
+        throw new Error('cache failed');
+      });
+      const response = await POST(
+        createRequest({
+          title: '文章',
+          category: CATEGORY_ID,
+          content: '内容',
+          commit_message: '补充说明',
+        }),
+        { params: Promise.resolve({ id: 'article-1' }) }
+      );
+      expect(response.status).toBe(200);
+      expect(await response.json()).toMatchObject({ data, warning: 'cache_refresh_failed' });
+      expect(revalidateTag).toHaveBeenCalledTimes(status === 'approved' ? 5 : 2);
+      expect(revalidateTag).toHaveBeenLastCalledWith('article-previews', { expire: 0 });
+      expect(adminRpcMock).toHaveBeenCalledTimes(1);
+    }
+  );
 
   it('returns 429 before authenticating', async () => {
     checkRateLimitMock.mockResolvedValue({

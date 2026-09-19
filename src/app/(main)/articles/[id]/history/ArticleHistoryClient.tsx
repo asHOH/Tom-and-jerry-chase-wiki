@@ -9,6 +9,7 @@ import { formatArticleDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
 import { fetchJson } from '@/lib/fetchJson';
 import { useToast } from '@/context/ToastContext';
+import { ARTICLE_CACHE_REFRESH_WARNING } from '@/constants/articles';
 import ArticleDiffViewer from '@/features/articles/components/ArticleDiffViewer';
 import Button from '@/components/ui/Button';
 import ButtonLink from '@/components/ui/ButtonLink';
@@ -373,7 +374,15 @@ export default function ArticleHistoryClient() {
                             throw new Error(errorData.error || '撤销操作失败');
                           }
 
-                          success('版本已成功撤销，正在刷新...');
+                          const result = (await response.json().catch(() => null)) as {
+                            warning?: string;
+                          } | null;
+                          if (result?.warning === 'cache_refresh_failed') {
+                            // Keep the warning visible until acknowledged before reloading.
+                            window.alert(ARTICLE_CACHE_REFRESH_WARNING);
+                          } else {
+                            success('版本已成功撤销，正在刷新...');
+                          }
                           // Refresh the history data
                           setTimeout(() => {
                             window.location.reload();

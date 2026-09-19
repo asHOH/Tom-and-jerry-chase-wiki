@@ -39,6 +39,7 @@ jest.mock('@/lib/cacheTags', () => ({
     article: (id: string) => `article:${id}`,
     articleVersions: (id: string) => `article-versions:${id}`,
     articles: 'articles',
+    articlePreviews: 'article-previews',
     sitemapArticles: 'sitemapArticles',
   },
   invalidateCache: jest.fn(),
@@ -80,7 +81,7 @@ describe('article submit route', () => {
       grants: [],
       supabase: {} as never,
     } as never);
-    invalidateCacheMock.mockResolvedValue(undefined as never);
+    invalidateCacheMock.mockReset();
     notifyArticleVersionSubscribersMock.mockResolvedValue(undefined);
     publishNotificationMock.mockResolvedValue({
       created: true,
@@ -153,6 +154,66 @@ describe('article submit route', () => {
 
     expect(response.status).toBe(400);
     expect(rpcMock).not.toHaveBeenCalled();
+  });
+
+  it.each(['pending', 'approved', 'rejected'])(
+    'uses the committed %s outcome for refresh',
+    async (status) => {
+      rpcMock.mockResolvedValue({
+        data: [
+          {
+            article_id: 'article-1',
+            submitted_status: status,
+            submitted_version_id: 'version-1',
+          },
+        ],
+        error: null,
+      } as never);
+      const response = await POST(
+        createRequest({ title: '文章', category: CATEGORY_ID, content: '内容' })
+      );
+      expect(response.status).toBe(200);
+      expect(invalidateCacheMock).toHaveBeenCalledWith('article-previews', 'immediate');
+      expect(invalidateCacheMock).toHaveBeenCalledTimes(status === 'approved' ? 5 : 2);
+    }
+  );
+
+  it('returns success with a warning when invalidation fails after creation', async () => {
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+    rpcMock.mockResolvedValue({
+      data: [
+        {
+          article_id: 'article-1',
+          submitted_status: 'approved',
+          submitted_version_id: 'version-1',
+        },
+      ],
+      error: null,
+    } as never);
+    invalidateCacheMock.mockImplementationOnce(() => {
+      throw new Error('cache unavailable');
+    });
+    const response = await POST(
+      createRequest({ title: '文章', category: CATEGORY_ID, content: '内容' })
+    );
+    expect(response.status).toBe(200);
+    expect(await response.json()).toMatchObject({
+      article_id: 'article-1',
+      warning: 'cache_refresh_failed',
+    });
+    expect(invalidateCacheMock).toHaveBeenCalledTimes(5);
+    expect(rpcMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not refresh or notify after a failed creation', async () => {
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+    rpcMock.mockResolvedValue({ data: null, error: { message: 'write failed' } } as never);
+    expect(
+      (await POST(createRequest({ title: '文章', category: CATEGORY_ID, content: '内容' }))).status
+    ).toBe(500);
+    expect(invalidateCacheMock).not.toHaveBeenCalled();
+    expect(publishNotificationMock).not.toHaveBeenCalled();
+    expect(notifyArticleVersionSubscribersMock).not.toHaveBeenCalled();
   });
 
   it('returns 429 before parsing or authorizing', async () => {

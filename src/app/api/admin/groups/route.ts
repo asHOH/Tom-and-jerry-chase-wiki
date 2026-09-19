@@ -149,6 +149,6 @@ export async function POST(request: Request) {
     const status = error.message.includes('duplicate') ? 409 : 400;
     return NextResponse.json({ error: error.message }, { status });
   }
-  await invalidateCache(CACHE_TAGS.users);
+  invalidateCache(CACHE_TAGS.users, 'background');
   return NextResponse.json({ id: data }, { status: 201 });
 }

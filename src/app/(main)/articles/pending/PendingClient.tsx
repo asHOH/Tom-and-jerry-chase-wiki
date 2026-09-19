@@ -7,6 +7,7 @@ import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { formatArticleDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
 import { fetchJson } from '@/lib/fetchJson';
+import { ARTICLE_CACHE_REFRESH_WARNING } from '@/constants/articles';
 import Button from '@/components/ui/Button';
 import ButtonLink from '@/components/ui/ButtonLink';
 import Card from '@/components/ui/Card';
@@ -133,36 +134,46 @@ export default function PendingClient() {
         throw new Error(errorData.error || `${action} 操作失败`);
       }
 
+      const result = (await response.json().catch(() => null)) as { warning?: string } | null;
+      const warnings: string[] = [];
+      if (result?.warning === 'cache_refresh_failed') warnings.push(ARTICLE_CACHE_REFRESH_WARNING);
       let thanksSent = false;
       if (action === 'approve' && thankMessage) {
-        const thanksResponse = await fetch(
-          `/api/contributions/article/${encodeURIComponent(versionId)}/thank`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: thankMessage }),
+        try {
+          const thanksResponse = await fetch(
+            `/api/contributions/article/${encodeURIComponent(versionId)}/thank`,
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ message: thankMessage }),
+            }
+          );
+          if (!thanksResponse.ok) {
+            const payload = (await thanksResponse.json().catch(() => null)) as {
+              error?: string;
+            } | null;
+            throw new Error(payload?.error ?? '未知错误');
           }
-        );
-        if (!thanksResponse.ok) {
-          const payload = (await thanksResponse.json().catch(() => null)) as {
-            error?: string;
-          } | null;
-          alert(`文章已批准，但感谢发送失败: ${payload?.error ?? '未知错误'}`);
-        } else {
           thanksSent = true;
+        } catch (error) {
+          console.error('Thank-you failed after article approval:', error);
+          warnings.push(`感谢发送失败: ${error instanceof Error ? error.message : '未知错误'}`);
         }
       }
 
-      await mutate();
-      if (!thankMessage || thanksSent) {
-        alert(
-          action === 'approve'
-            ? thankMessage
-              ? '已批准此提交并向编辑者发送感谢'
-              : '已成功批准此提交'
-            : '已成功拒绝此提交'
-        );
+      try {
+        await mutate();
+      } catch (error) {
+        console.error('Queue refresh failed after article moderation:', error);
+        warnings.push('审核列表刷新失败，请刷新页面查看最新状态，无需重复审核。');
       }
+      const message =
+        action === 'approve'
+          ? thanksSent
+            ? '已批准此提交并向编辑者发送感谢'
+            : '已成功批准此提交'
+          : '已成功拒绝此提交';
+      alert([message, ...warnings].join('\n'));
     } catch (err) {
       console.error(`Error ${action}ing submission:`, err);
       alert(

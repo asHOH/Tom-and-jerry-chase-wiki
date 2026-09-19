@@ -1,3 +1,5 @@
+import { revalidateTag } from 'next/cache';
+
 import { resolveArticleCharacterForWrite } from '@/lib/articles/articleWriteRelations';
 import { requirePermission } from '@/lib/auth/requirePermission';
 import { requireNotBlocked } from '@/lib/blocks/server';
@@ -87,5 +89,27 @@ describe('pending article edit route', () => {
 
     expect(response.status).toBe(429);
     expect(requirePermissionMock).not.toHaveBeenCalled();
+  });
+
+  it('refreshes previews without expiring published content and reports cache failure as success', async () => {
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+    jest.mocked(revalidateTag).mockImplementationOnce(() => {
+      throw new Error('cache failed');
+    });
+    const response = await POST(
+      createRequest({
+        title: '文章',
+        category: CATEGORY_ID,
+        content: '内容',
+      }),
+      { params: Promise.resolve({ versionId: 'version-1' }) }
+    );
+    expect(response.status).toBe(200);
+    expect(await response.json()).toMatchObject({ warning: 'cache_refresh_failed' });
+    expect(jest.mocked(revalidateTag).mock.calls).toEqual([
+      ['articles', 'max'],
+      ['article-previews', { expire: 0 }],
+    ]);
+    expect(adminRpcMock).toHaveBeenCalledTimes(1);
   });
 });

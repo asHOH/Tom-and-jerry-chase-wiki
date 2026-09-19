@@ -170,7 +170,7 @@ export async function POST(request: NextRequest) {
       await requireSupabaseAdminClient().auth.admin.deleteUser(authUserId);
       return NextResponse.json({ error: 'Could not create user.' }, { status: 500 });
     }
-    await invalidateCache(CACHE_TAGS.users);
+    invalidateCache(CACHE_TAGS.users, 'background');
 
     // After successful registration, sign in the user and attach cookies to response
     const response = NextResponse.json({ message: 'User created successfully' }, { status: 201 });

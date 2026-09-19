@@ -53,7 +53,7 @@ export async function PATCH(
           p_parent_group_id: parsed.data.parentGroupId,
         });
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
-  await invalidateCache(CACHE_TAGS.users);
+  invalidateCache(CACHE_TAGS.users, 'background');
   return NextResponse.json({ ok: true });
 }
 
@@ -75,7 +75,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ grou
     p_grants: parsed.data.grants,
   });
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
-  await invalidateCache(CACHE_TAGS.users);
+  invalidateCache(CACHE_TAGS.users, 'background');
   return NextResponse.json({ ok: true });
 }
 
@@ -92,6 +92,6 @@ export async function DELETE(
     p_group_id: await getGroupId(params),
   });
   if (error) return NextResponse.json({ error: error.message }, { status: 409 });
-  await invalidateCache(CACHE_TAGS.users);
+  invalidateCache(CACHE_TAGS.users, 'background');
   return NextResponse.json({ ok: true });
 }

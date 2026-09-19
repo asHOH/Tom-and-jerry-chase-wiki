@@ -18,7 +18,7 @@ import { normalizeHeadingLevels } from '@/lib/richTextUtils';
 import { useContributionSubmissionFeedback } from '@/hooks/useContributionSubmissionFeedback';
 import { useUser } from '@/hooks/useUser';
 import { useToast } from '@/context/ToastContext';
-import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
+import { ARTICLE_CACHE_REFRESH_WARNING, ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
 import Button from '@/components/ui/Button';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import Notice from '@/components/ui/Notice';
@@ -42,7 +42,7 @@ const EditArticleClient: React.FC<EditArticleClientProps> = ({ characterOptions 
   const permissions = usePermissions();
   const canEditArticle =
     permissions.has('article.update_own') || permissions.has('article.update_any');
-  const { error: showError } = useToast();
+  const { error: showError, warning } = useToast();
   const showSubmissionFeedback = useContributionSubmissionFeedback();
 
   const [title, setTitle] = useState('');
@@ -192,8 +192,13 @@ const EditArticleClient: React.FC<EditArticleClientProps> = ({ characterOptions 
       });
 
       if (response.ok) {
+        const result = (await response.json().catch(() => null)) as { warning?: string } | null;
         router.push(`/articles/${id}`);
-        showSubmissionFeedback('文章更新已提交，正在等待审核。');
+        if (result?.warning === 'cache_refresh_failed') {
+          warning(ARTICLE_CACHE_REFRESH_WARNING, 8000);
+        } else {
+          showSubmissionFeedback('文章更新已提交，正在等待审核。');
+        }
       } else {
         const errorData = await response.json();
         showError(errorData.message || '更新文章失败');

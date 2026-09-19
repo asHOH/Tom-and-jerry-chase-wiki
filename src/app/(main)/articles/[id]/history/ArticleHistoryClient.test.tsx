@@ -1,6 +1,8 @@
 import type { AnchorHTMLAttributes, ReactNode } from 'react';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import useSWR, { SWRConfig } from 'swr';
+
+import { ARTICLE_CACHE_REFRESH_WARNING } from '@/constants/articles';
 
 import ArticleHistoryClient from './ArticleHistoryClient';
 
@@ -8,6 +10,7 @@ const mockPush = jest.fn();
 const mockReplace = jest.fn();
 const mockShowError = jest.fn();
 let mockSearchValues: Record<string, string | null> = {};
+let mockCanRevoke = false;
 
 jest.mock('next/navigation', () => ({
   useParams: () => ({ id: 'article-1' }),
@@ -22,7 +25,7 @@ jest.mock('swr', () => ({
 }));
 
 jest.mock('@/lib/auth/PermissionProvider', () => ({
-  usePermissions: () => ({ has: () => false }),
+  usePermissions: () => ({ has: () => mockCanRevoke }),
 }));
 
 jest.mock('@/context/ToastContext', () => ({
@@ -100,6 +103,7 @@ const historyData = {
 describe('ArticleHistoryClient diff selection', () => {
   beforeEach(() => {
     mockSearchValues = {};
+    mockCanRevoke = false;
     jest.mocked(useSWR).mockReturnValue({
       data: historyData,
       error: undefined,
@@ -121,6 +125,32 @@ describe('ArticleHistoryClient diff selection', () => {
 
     fireEvent.click(screen.getByRole('button', { name: '比较选中的版本' }));
     expect(mockPush).toHaveBeenCalledWith('/articles/article-1/history?oldid=v2&diff=v3');
+  });
+
+  it('shows a committed revocation warning before scheduling the existing reload', async () => {
+    const originalFetch = global.fetch;
+    jest.useFakeTimers();
+    jest.spyOn(window, 'confirm').mockReturnValue(true);
+    jest.spyOn(window, 'alert').mockImplementation(() => {});
+    mockCanRevoke = true;
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ warning: 'cache_refresh_failed' }),
+    });
+    try {
+      render(<ArticleHistoryClient />);
+      await act(async () => {
+        fireEvent.click(screen.getByRole('button', { name: '撤销版本' }));
+      });
+      expect(window.alert).toHaveBeenCalledWith(ARTICLE_CACHE_REFRESH_WARNING);
+      expect(jest.getTimerCount()).toBeGreaterThan(0);
+      expect(global.fetch).toHaveBeenCalledTimes(1);
+      expect(mockShowError).not.toHaveBeenCalled();
+    } finally {
+      global.fetch = originalFetch;
+      jest.clearAllTimers();
+      jest.useRealTimers();
+    }
   });
 
   it('shows the load error when the history request is rate limited', async () => {

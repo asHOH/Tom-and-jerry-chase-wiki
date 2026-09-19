@@ -57,7 +57,7 @@ export async function POST(request: Request) {
     console.error('Failed to update user:', error);
     return NextResponse.json({ error: 'Failed to update user' }, { status: 500 });
   }
-  await invalidateCache(CACHE_TAGS.users);
+  invalidateCache(CACHE_TAGS.users, 'background');
 
   if (password) {
     const { error: authError } = await requireSupabaseAdminClient().auth.admin.updateUserById(
