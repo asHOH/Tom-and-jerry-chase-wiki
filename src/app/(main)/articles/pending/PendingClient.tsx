@@ -1,12 +1,15 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import useSWR from 'swr';
 
+import type { ArticleMutationResult } from '@/lib/articles/mutationResult';
 import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { formatArticleDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
 import { fetchJson } from '@/lib/fetchJson';
+import { useClearArticleClientCache } from '@/hooks/useClearArticleClientCache';
 import { ARTICLE_CACHE_REFRESH_WARNING } from '@/constants/articles';
 import Button from '@/components/ui/Button';
 import ButtonLink from '@/components/ui/ButtonLink';
@@ -59,6 +62,8 @@ interface UserApiResponse {
 }
 
 export default function PendingClient() {
+  const router = useRouter();
+  const clearArticleClientCache = useClearArticleClientCache();
   const permissions = usePermissions();
   const [processingVersions, setProcessingVersions] = useState<Set<string>>(new Set());
   const [filter, setFilter] = useState<'all' | 'pending' | 'rejected'>('all');
@@ -134,11 +139,12 @@ export default function PendingClient() {
         throw new Error(errorData.error || `${action} 操作失败`);
       }
 
-      const result = (await response.json().catch(() => null)) as { warning?: string } | null;
+      const result = (await response.json().catch(() => null)) as ArticleMutationResult | null;
+      const status = result?.status ?? (action === 'approve' ? 'approved' : 'rejected');
       const warnings: string[] = [];
       if (result?.warning === 'cache_refresh_failed') warnings.push(ARTICLE_CACHE_REFRESH_WARNING);
       let thanksSent = false;
-      if (action === 'approve' && thankMessage) {
+      if (status === 'approved' && thankMessage) {
         try {
           const thanksResponse = await fetch(
             `/api/contributions/article/${encodeURIComponent(versionId)}/thank`,
@@ -161,18 +167,28 @@ export default function PendingClient() {
         }
       }
 
+      const refreshWarning = await clearArticleClientCache(result?.article_id);
+      if (refreshWarning) warnings.push(refreshWarning);
       try {
         await mutate();
       } catch (error) {
         console.error('Queue refresh failed after article moderation:', error);
         warnings.push('审核列表刷新失败，请刷新页面查看最新状态，无需重复审核。');
       }
+      try {
+        router.refresh();
+      } catch (error) {
+        console.error('Article data refresh failed after moderation:', error);
+        warnings.push('文章数据刷新失败，请刷新页面查看最新状态，无需重复审核。');
+      }
       const message =
-        action === 'approve'
+        status === 'approved'
           ? thanksSent
             ? '已批准此提交并向编辑者发送感谢'
             : '已成功批准此提交'
-          : '已成功拒绝此提交';
+          : status === 'rejected'
+            ? '已成功拒绝此提交'
+            : '审核操作已完成，请刷新页面查看最新状态。';
       alert([message, ...warnings].join('\n'));
     } catch (err) {
       console.error(`Error ${action}ing submission:`, err);

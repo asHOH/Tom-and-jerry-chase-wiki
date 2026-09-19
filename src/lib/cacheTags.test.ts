@@ -1,7 +1,7 @@
 import { revalidateTag, unstable_cache } from 'next/cache';
 
 import { CACHE_TAGS, invalidateCache } from './cacheTags';
-import { cached } from './serverCache';
+import { cached, createCached } from './serverCache';
 
 jest.mock('next/cache', () => ({
   revalidateTag: jest.fn(),
@@ -49,4 +49,26 @@ it('preserves background deduplication and the max profile for unrelated callers
   expect(cached(['background'], async () => 'new', { tags: ['users'] })).toBe(read);
   pending.resolve('user');
   await read;
+});
+
+it('retries invalidated fills before Next can store them, even without a coalesced acquisition', async () => {
+  const old = deferred<string>();
+  const source = jest.fn().mockReturnValueOnce(old.promise).mockResolvedValue('published body');
+  const read = createCached(['late-fill'], source, { tags: ['article:a'] });
+  const pending = read();
+  invalidateCache('article:a', 'immediate');
+  old.resolve('superseded body');
+  await expect(pending).resolves.toBe('published body');
+  expect(source).toHaveBeenCalledTimes(2);
+});
+
+it('does not retry unrelated or background-invalidated fills', async () => {
+  const old = deferred<string>();
+  const source = jest.fn(() => old.promise);
+  const pending = createCached(['unchanged-fill'], source, { tags: ['users'] })();
+  invalidateCache('article:a', 'immediate');
+  invalidateCache('users', 'background');
+  old.resolve('user');
+  await expect(pending).resolves.toBe('user');
+  expect(source).toHaveBeenCalledTimes(1);
 });

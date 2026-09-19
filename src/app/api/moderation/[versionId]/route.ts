@@ -5,11 +5,10 @@ import {
   mapModerationActionError,
   type ModerationAction,
 } from '@/lib/articles/moderationActionError';
+import { notifyArticleOutcome } from '@/lib/articles/notifyArticleOutcome';
 import { requirePermission } from '@/lib/auth/requirePermission';
 import { getRequestIp } from '@/lib/blocks/server';
-import { publishNotification } from '@/lib/notificationUtils';
 import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
-import { getPublicUserSubmissionHref } from '@/lib/users/publicProfile';
 
 const readReviewFeedback = async (request: NextRequest): Promise<string | null> => {
   try {
@@ -92,10 +91,11 @@ export async function POST(
       return NextResponse.json({ error: `Failed to ${action} article version` }, { status: 500 });
     }
 
+    const status = action === 'approve' ? 'approved' : action === 'reject' ? 'rejected' : 'revoked';
     const refreshResult = invalidateArticleCache({
       articleId: target.article_id,
       versionId,
-      status: action === 'approve' ? 'approved' : action === 'reject' ? 'rejected' : 'revoked',
+      status,
     });
 
     // Notification metadata is optional and cannot prevent cache refresh after commit.
@@ -111,29 +111,14 @@ export async function POST(
       } else if (versionRow) {
         const { article_id, editor_id, proposed_title } = versionRow;
         if (editor_id && (action === 'approve' || action === 'reject')) {
-          const approved = action === 'approve';
-          let submissionHref: string | undefined;
-          if (!approved) {
-            try {
-              submissionHref =
-                (await getPublicUserSubmissionHref(editor_id, versionId)) ?? undefined;
-            } catch (error) {
-              console.error('Failed to build contribution profile link:', error);
-            }
-          }
-          const notificationHref =
-            approved && article_id ? `/articles/${article_id}/` : submissionHref;
-          await publishNotification({
-            recipientUserId: editor_id,
-            kind: approved ? 'article_version_approved' : 'article_version_rejected',
-            decisionOrigin: 'manual',
-            title: approved ? '文章已通过审核' : '文章未通过审核',
-            body: approved
-              ? `您的文章《${proposed_title || '文章'}》已通过审核并发布。${reviewFeedback ? `审核反馈：${reviewFeedback}` : ''}`
-              : `您的文章《${proposed_title || '文章'}》未通过审核。${reviewFeedback ? `审核反馈：${reviewFeedback}` : ''}`,
-            ...(notificationHref ? { href: notificationHref } : {}),
-            sourceIds: [versionId],
-            dedupeKey: `article-version:${versionId}:${approved ? 'approved' : 'rejected'}`,
+          await notifyArticleOutcome({
+            source: 'moderation',
+            articleId: article_id,
+            versionId,
+            status,
+            userId: editor_id,
+            title: proposed_title || '文章',
+            feedback: reviewFeedback,
           });
         }
       }
@@ -144,7 +129,9 @@ export async function POST(
     return NextResponse.json({
       message: `Article version successfully ${action}${action === 'approve' ? 'd' : action === 'reject' ? 'ed' : 'd'}`,
       action,
+      article_id: target.article_id,
       version_id: versionId,
+      status,
       ...refreshResult,
     });
   } catch (err) {

@@ -5,10 +5,10 @@ import {
   resolveArticleCharacterForWrite,
 } from '@/lib/articles/articleWriteRelations';
 import { invalidateArticleCache } from '@/lib/articles/invalidateArticleCache';
+import { notifyArticleOutcome } from '@/lib/articles/notifyArticleOutcome';
 import { canAccess } from '@/lib/auth/permissions';
 import { loadPermissionGrants } from '@/lib/auth/requirePermission';
 import { getRequestIp, requireNotBlocked } from '@/lib/blocks/server';
-import { notifyArticleVersionSubscribers, publishNotification } from '@/lib/notificationUtils';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
 import { createClient } from '@/lib/supabase/server';
@@ -120,55 +120,36 @@ export async function POST(request: Request, { params }: { params: Promise<{ id?
     }
 
     const submittedVersion = data?.[0];
+    if (!submittedVersion) {
+      console.error('Committed article edit returned no version:', { articleId: id });
+    }
     const refreshResult = invalidateArticleCache({
       articleId: id,
       versionId: submittedVersion?.submitted_version_id ?? 'unknown',
       // Conservatively expire public content if a committed RPC omits its result.
       status: submittedVersion?.submitted_status ?? 'approved',
     });
-    if (submittedVersion?.submitted_status === 'pending') {
-      try {
-        await notifyArticleVersionSubscribers({
-          actorUserId: userId,
-          articleId: id,
-          articleTitle: title,
-          proposedCategoryId: category,
-          versionId: submittedVersion.submitted_version_id,
-        });
-      } catch (notificationError) {
-        console.error(
-          'Failed to publish article edit pending-review notifications:',
-          notificationError
-        );
-      }
-    }
-
-    if (
-      submittedVersion &&
-      (submittedVersion.submitted_status === 'approved' ||
-        submittedVersion.submitted_status === 'rejected')
-    ) {
-      const approved = submittedVersion.submitted_status === 'approved';
-      try {
-        await publishNotification({
-          recipientUserId: userId,
-          kind: approved ? 'article_version_approved' : 'article_version_rejected',
-          decisionOrigin: 'automatic',
-          title: approved ? '文章修改已自动通过审核' : '文章修改未通过审核',
-          body: approved
-            ? `您对《${title}》的修改已自动通过审核并发布。`
-            : `您对《${title}》的修改未通过自动审核。`,
-          href: approved ? `/articles/${id}/` : '/articles/pending/',
-          sourceIds: [submittedVersion.submitted_version_id],
-          dedupeKey: `article-version:${submittedVersion.submitted_version_id}:${submittedVersion.submitted_status}`,
-        });
-      } catch (notificationError) {
-        console.error('Failed to publish automatic article edit notification:', notificationError);
-      }
+    if (submittedVersion) {
+      await notifyArticleOutcome({
+        source: 'edit',
+        articleId: id,
+        versionId: submittedVersion.submitted_version_id,
+        status: submittedVersion.submitted_status,
+        userId,
+        title,
+        categoryId: category,
+      });
     }
 
     return NextResponse.json(
-      { message: 'Article updated successfully', data, ...refreshResult },
+      {
+        message: 'Article updated successfully',
+        data,
+        article_id: id,
+        version_id: submittedVersion?.submitted_version_id ?? null,
+        status: submittedVersion?.submitted_status ?? null,
+        ...refreshResult,
+      },
       { status: 200 }
     );
   } catch (err) {

@@ -6,7 +6,12 @@ import { ARTICLE_CACHE_REFRESH_WARNING } from '@/constants/articles';
 
 import PendingClient from './PendingClient';
 
-jest.mock('swr', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('swr', () => ({
+  __esModule: true,
+  default: jest.fn(),
+  useSWRConfig: () => ({ mutate: mockRefreshRelated }),
+}));
+jest.mock('next/navigation', () => ({ useRouter: () => ({ refresh: mockRefresh }) }));
 jest.mock('@/lib/auth/PermissionProvider', () => ({
   usePermissions: () => ({ has: () => true }),
 }));
@@ -22,6 +27,8 @@ jest.mock('@/components/ui/RichTextDisplay', () => ({
 }));
 
 const mutate = jest.fn();
+const mockRefreshRelated = jest.fn();
+const mockRefresh = jest.fn();
 const originalFetch = global.fetch;
 
 beforeEach(() => {
@@ -90,5 +97,42 @@ it('retains approval and cache warnings when refreshing the queue fails', async 
       `已成功批准此提交\n${ARTICLE_CACHE_REFRESH_WARNING}\n审核列表刷新失败，请刷新页面查看最新状态，无需重复审核。`
     )
   );
+  expect(fetch).toHaveBeenCalledTimes(1);
+});
+
+it('consumes the committed status and refreshes related history, edit data, previews and router data', async () => {
+  jest.spyOn(window, 'prompt').mockReturnValue('请补充来源');
+  jest.mocked(fetch).mockResolvedValueOnce({
+    ok: true,
+    json: async () => ({ article_id: 'a', version_id: 'v', status: 'rejected' }),
+  } as Response);
+  render(<PendingClient />);
+  fireEvent.click(screen.getByRole('button', { name: '拒绝' }));
+  await waitFor(() => expect(window.alert).toHaveBeenCalledWith('已成功拒绝此提交'));
+  const filter = mockRefreshRelated.mock.calls[0]![0] as (key: unknown) => boolean;
+  expect(filter('/api/articles/a/history')).toBe(true);
+  expect(filter('/api/articles/a/info')).toBe(true);
+  expect(filter('/api/articles/preview?token=t')).toBe(true);
+  expect(filter('/api/articles/b/history')).toBe(false);
+  expect(filter('/api/categories')).toBe(false);
+  expect(mockRefresh).toHaveBeenCalledTimes(1);
+  expect(mutate).toHaveBeenCalledTimes(1);
+  expect(fetch).toHaveBeenCalledTimes(1);
+});
+
+it('keeps the successful outcome if related article refresh fails', async () => {
+  jest.mocked(fetch).mockResolvedValueOnce({
+    ok: true,
+    json: async () => ({ status: 'approved', article_id: 'a' }),
+  } as Response);
+  mockRefreshRelated.mockRejectedValueOnce(new Error('unavailable'));
+  render(<PendingClient />);
+  fireEvent.click(screen.getByRole('button', { name: '批准' }));
+  await waitFor(() =>
+    expect(window.alert).toHaveBeenCalledWith(
+      expect.stringContaining('已成功批准此提交\n操作已成功，但页面数据刷新失败')
+    )
+  );
+  expect(mutate).toHaveBeenCalledTimes(1);
   expect(fetch).toHaveBeenCalledTimes(1);
 });

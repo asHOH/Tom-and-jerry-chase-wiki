@@ -16,8 +16,13 @@ function normalizeKeyParts(
 }
 
 const cacheAcquisitions = new Map<string, { promise: Promise<unknown>; tags: readonly string[] }>();
+// ponytail: guard in-process fills; cross-worker fencing needs a shared cache backend.
+const cacheFills = new Set<{ tags: readonly string[]; invalidated: boolean }>();
 
 export function invalidateCacheAcquisitions(tag: string): void {
+  for (const fill of cacheFills) {
+    if (fill.tags.includes(tag)) fill.invalidated = true;
+  }
   for (const [key, acquisition] of cacheAcquisitions) {
     if (acquisition.tags.includes(tag)) cacheAcquisitions.delete(key);
   }
@@ -52,7 +57,27 @@ export function createCached<T>(
 
   const normalizedOptions = { ...options, revalidate };
 
-  return unstable_cache(fn, key, normalizedOptions);
+  return unstable_cache(
+    async () => {
+      const fill = { tags: options?.tags ?? [], invalidated: false };
+      cacheFills.add(fill);
+      try {
+        let value: T;
+        do {
+          fill.invalidated = false;
+          value = await fn();
+          // Next caches callback results even if their tags expired while the read was pending.
+          // Retry before returning a superseded value, including background revalidation fills.
+        } while (fill.invalidated);
+        return value;
+      } finally {
+        cacheFills.delete(fill);
+      }
+    },
+    // Preserve callback identity now that Next sees the same wrapper for every reader.
+    [...key, fn.toString()],
+    normalizedOptions
+  );
 }
 
 export function cached<T>(

@@ -15,6 +15,8 @@ function jsonResponse(body: unknown, init?: { status?: number; headers?: Headers
   } as Response;
 }
 
+jest.mock('@/lib/users/publicProfile', () => ({ getPublicUserSubmissionHref: jest.fn() }));
+
 jest.mock('next/server', () => ({
   NextResponse: {
     json: jest.fn(jsonResponse),
@@ -173,6 +175,11 @@ describe('article submit route', () => {
         createRequest({ title: '文章', category: CATEGORY_ID, content: '内容' })
       );
       expect(response.status).toBe(200);
+      expect(await response.json()).toMatchObject({
+        article_id: 'article-1',
+        version_id: 'version-1',
+        status,
+      });
       expect(invalidateCacheMock).toHaveBeenCalledWith('article-previews', 'immediate');
       expect(invalidateCacheMock).toHaveBeenCalledTimes(status === 'approved' ? 5 : 2);
     }

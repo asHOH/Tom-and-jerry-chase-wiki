@@ -100,7 +100,12 @@ it.each(['approve', 'reject', 'revoke'])(
     });
     const response = await moderate(action);
     expect(response.status).toBe(200);
-    expect(await response.json()).toMatchObject({ action, version_id: 'v' });
+    expect(await response.json()).toMatchObject({
+      action,
+      article_id: 'a',
+      version_id: 'v',
+      status: action === 'approve' ? 'approved' : action === 'reject' ? 'rejected' : 'revoked',
+    });
     expect(targetLookup.mock.invocationCallOrder[0]).toBeLessThan(rpc.mock.invocationCallOrder[0]!);
     expect(revalidateTag).toHaveBeenCalledWith(
       'articles',

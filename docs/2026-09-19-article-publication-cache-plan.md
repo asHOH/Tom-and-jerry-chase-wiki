@@ -1,6 +1,7 @@
 # Article submission, moderation, and cache refresh
 
-**Status:** Phase one implemented; database/browser integration acceptance outstanding; phase two planned  
+**Status:** Both implementation phases and local database/browser acceptance complete
+
 **Date:** 2026-09-19  
 **Review corrections:** 2026-09-20  
 **Inspected baseline:** `8f7a2d5df68fb46d210046ef380f416703d0af46`
@@ -86,6 +87,13 @@ Its process-wide promise map otherwise lets a post-mutation read join a pre-muta
 consulting Next's cache. Preserve unrelated acquisitions and prevent an older promise's cleanup
 from removing a replacement acquisition. This narrowly scoped change is part of phase one.
 
+Database-backed acceptance also exposed a late-fill race: Next.js can store the result of an old
+read after the tag expired, overwriting a newer cache entry. Track active callback fills separately
+from coalesced requests, including background revalidations. If immediate invalidation overlaps a
+fill, reread its source before returning a value for Next to cache. Preserve callback identity in
+the cache key and release fill tracking on completion or failure. This guard is process-local;
+fencing writes across separate workers requires a shared cache backend and is outside this change.
+
 Search every caller. Existing user registration/update and admin group-assignment/group-management
 callers currently receive `'max'` behavior through the default. Migrate them explicitly to
 `background` to preserve behavior. Do not silently change their freshness contract. Existing
@@ -152,6 +160,9 @@ Expose additive, consistent response fields: `article_id`, `version_id`, and `st
 (`pending`, `approved`, `rejected`, or `revoked`), plus the optional refresh warning. Preserve existing
 response fields until all callers/tests have been checked. A successful pending-only edit reports
 `pending`; moderation derives the resulting status from its successfully committed action.
+If an edit RPC commits without returning its expected row, retain HTTP success, log the missing
+result, and expose `version_id: null` and `status: null`. Do not invent an approval or invite a
+duplicate submission; the client directs the user to their contributions to check the outcome.
 
 Extract a small article notification helper using `notifyArticleVersionSubscribers` and
 `publishNotification`. Preserve pending-recipient selection, automatic/manual distinction,
@@ -168,6 +179,14 @@ the destination's client data after server invalidation; do not assume `router.p
 freshness, or that `router.refresh` clears server caches. Retaining the current revoke reload is
 acceptable for the first change.
 
+The SWR provider in `useUser.tsx` persists its cache in local storage, including on `pagehide`.
+A full document navigation alone therefore does not clear history, previews, or review queues.
+Clear the affected SWR entries before navigating or reloading. Approved create/edit submissions
+acknowledge the result (including any warning) before a document navigation to the article, which
+also discards the Router Cache. Pending/rejected submissions retain contribution feedback.
+Moderation clears the same entries, revalidates its queue, and refreshes the router; revocation
+clears entries before its existing reload. Failed follow-ups retain the committed-write outcome.
+
 ## Delivery and acceptance
 
 ### Change 1 — cache correctness and moderation reliability
@@ -179,14 +198,15 @@ acceptable for the first change.
 - [x] Detach matching in-flight reads on immediate invalidation; test the publication race.
 - [x] Display refresh warnings in clients and isolate thank-you/queue-refresh failures after success.
 - [x] Test exact tag/profile coverage and failure paths, including preserved non-article behavior.
-- [ ] Complete the database-backed, production-mode warmed-cache integration check.
+- [x] Complete the database-backed, production-mode warmed-cache integration check.
 
 ### Change 2 — notification and UI consistency
 
-- [ ] Normalize additive response fields and consolidate article notification decisions.
-- [ ] Consume normalized statuses in create, edit, and moderation clients without duplicate writes.
-- [ ] Verify destination refresh and preserve review-queue/SWR updates.
-- [ ] Test automatic/manual approval, rejection, pending edits, and notification failures.
+- [x] Normalize additive response fields and consolidate article notification decisions.
+- [x] Consume normalized statuses in create, edit, and moderation clients without duplicate writes.
+- [x] Clear persisted SWR entries and refresh destinations while preserving review-queue updates.
+- [x] Test automatic/manual approval, rejection, pending edits, and notification failures.
+- [x] Complete database-backed browser publication/revocation acceptance with warmed caches.
 
 Required acceptance scenarios:
 
@@ -205,6 +225,8 @@ Required acceptance scenarios:
 6. Pause a read of the old published version, commit publication/revocation and invalidate, then
    start another read before releasing the first. The new read must not join the old acquisition.
    Settling the old acquisition must not remove its replacement or affect unrelated acquisitions.
+   After it settles, another read must still observe the new published version rather than an old
+   callback result written into Next's cache after invalidation.
 7. Approve successfully, then fail the optional thank-you request with a network exception. Report
    approval success plus the follow-up failure, refresh the queue, and submit moderation only once.
    Repeat with a failed queue refresh and with a successful response carrying a cache warning.
@@ -224,8 +246,8 @@ declared Node/npm versions and environment setup; do not bypass validation as a 
 Keep the existing RPCs and the current-version triggers in
 `supabase/migrations/20260806000000_add_article_current_version.sql`. Do not edit historical
 migrations, switch to Server Actions, migrate to Cache Components, or disable caching. Limit
-`serverCache.ts` changes to in-flight acquisition invalidation and correcting its cache-lifetime
-comment; a broader cache rewrite is outside this task.
+`serverCache.ts` changes to in-flight acquisition invalidation, retrying invalidated callback fills,
+and correcting its cache-lifetime comment; a broader cache rewrite is outside this task.
 
 The 12-hour value caps a revalidation interval, not a guaranteed maximum observable staleness.
 Browser Router Cache, SWR, service-worker fallback, and separate deployments are independent of
@@ -259,9 +281,73 @@ freshness test was performed at that point.
   or browser publication/revocation checks were performed. The runtime probe and mocked tests do
   not establish database pointer rollback behavior or complete browser freshness.
 
-Phase two retains response normalization, status-based submission feedback/navigation, notification
-consolidation, and destination refresh. Phase one preserves existing response fields and notification
-wording while adding the optional cache warning and isolating committed-write follow-up failures.
+### Phase-two implementation evidence — 2026-09-20
+
+- `npm run lint`, `npm run type-check`, and the full Jest suite passed: 328 suites, 1,915 tests.
+- `npm run build:skip-images` passed after the final source changes. Existing site-image pattern,
+  Edge Runtime, and missing commit-metadata warnings remain; transient public-read timeouts retried
+  successfully during page generation.
+- All four write routes expose article/version identifiers and committed status while retaining
+  existing response fields. The missing-edit-result exception uses nullable fields as described above.
+- Article notification decisions share one server-only helper. Existing pending recipients,
+  automatic/manual origin, create/edit wording, feedback, links, and dedupe keys are preserved;
+  the existing notification layer still owns automatic suppression and delivery deduplication.
+- Create/edit feedback distinguishes approval, pending review, rejection, and unavailable status.
+  Cache warnings accompany the actual outcome. Approved submissions acknowledge the message before
+  navigating to the article with a fresh document request. Optional feedback/navigation failures
+  do not claim the write failed.
+- A shared client hook clears article history/edit data, token previews, and both pending queues
+  through the active SWR provider, preserving unrelated data. A real-SWR test verifies the
+  serialized cache no longer contains affected values before a page reload restores it.
+- Moderation retains queue revalidation and refreshes Router Cache data after success. Revocation
+  clears persisted SWR data before the existing reload. Failure tests verify these follow-ups do
+  not repeat the write or replace success with a mutation-failed message.
+- A browser check against the local production build exercised the real edit client with fixture
+  API responses and a fixture article document. After visiting the old document, an approved edit
+  displayed the correct approval/cache-warning message, issued exactly one write request, and made
+  a second document request showing the new title. Seeded history, preview, pending-queue, and edit
+  values were absent from persisted SWR data after navigation. The service worker was disabled in
+  this isolated browser session so all requests could be intercepted; offline fallback was not tested.
+- This browser check does not establish database or server-cache freshness. Local Supabase still
+  was not listening on ports 54321/54322, and Docker's engine pipe was unavailable. The warmed-cache,
+  database-backed publication/revocation scenarios remain unchecked. No database writes or
+  deployments were performed.
+
+### Database-backed acceptance — 2026-09-20
+
+This completes the checks that were unavailable during the two implementation phases above.
+
+- Docker became available. The existing local database lacked normal table read/write grants, so
+  acceptance used a separate `article-publication-acceptance` stack on API/database ports
+  55421/55422, replayed from the checked-in migrations. Fixtures used isolated editor/reviewer
+  accounts and approved/pending/rejected categories. All application mutation requests went to
+  the local production server; no remote database writes or deployments were performed.
+- The 18 publication-pointer SQL assertions passed on both local databases. The test fixture now
+  creates its referenced `auth.users` row instead of disabling all user-table triggers, which the
+  normal local `postgres` role cannot do. Every SQL test transaction rolled back.
+- A delayed Supabase-read probe reproduced an additional bug: an old callback could finish after
+  invalidation and overwrite fresh Next.js cache data. Active fills now reread their source if
+  immediate invalidation overlaps them. Real Next.js production-cache probes passed for both a
+  cold fill and a background revalidation, including another fresh read after the old fill settled.
+- Production HTTP checks warmed detail, history, page, character-embed, and token-preview caches.
+  Automatic creation/editing and manual approval returned the new title/body/version. Pending and
+  rejected edits retained the published body; pending-only edits refreshed preview content; manual
+  rejection refreshed preview status. Approval embeds refreshed in the background as designed.
+- Revoking an older publication retained the current version and removed the older history entry.
+  Revoking the current publication restored the preceding title/body in detail, history, page,
+  and embeds. Revoking the final publication removed its public body and embed: detail returned
+  404, history returned an empty list, and the streamed page rendered Next's not-found/noindex state.
+- Real notification rows preserved review feedback, contribution links on rejection, and unique
+  dedupe keys. Failure-path coverage remains in the route/client tests; no production fault injection
+  was performed.
+- A browser with the service worker enabled visited article detail and history before editing.
+  The actual edit form showed automatic approval, returned to the updated title/body, and displayed
+  two history versions. Reviewer revocation reloaded history with one version and restored the
+  previous article title/body. Each action committed once; the normal trailing-slash HTTP redirect
+  did not repeat the mutation. These were responsive online checks, not offline-copy erasure tests.
+- Lint, type checking, formatting, and the full Jest suite passed: 328 suites, 1,917 tests. An initial
+  concurrent run hit an unrelated Windows temporary-directory cleanup failure; the full rerun with
+  two workers passed. The local production build passed with the previously documented warnings.
 
 Framework references, checked 2026-09-19:
 

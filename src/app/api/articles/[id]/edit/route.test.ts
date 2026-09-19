@@ -15,6 +15,8 @@ function jsonResponse(body: unknown, init?: { status?: number }): Response {
   return { status: init?.status ?? 200, json: async () => body } as Response;
 }
 
+jest.mock('@/lib/users/publicProfile', () => ({ getPublicUserSubmissionHref: jest.fn() }));
+
 jest.mock('next/cache', () => ({
   revalidateTag: jest.fn(),
 }));
@@ -199,12 +201,42 @@ describe('article edit route', () => {
         { params: Promise.resolve({ id: 'article-1' }) }
       );
       expect(response.status).toBe(200);
-      expect(await response.json()).toMatchObject({ data, warning: 'cache_refresh_failed' });
+      expect(await response.json()).toMatchObject({
+        data,
+        article_id: 'article-1',
+        version_id: 'version-1',
+        status,
+        warning: 'cache_refresh_failed',
+      });
       expect(revalidateTag).toHaveBeenCalledTimes(status === 'approved' ? 5 : 2);
       expect(revalidateTag).toHaveBeenLastCalledWith('article-previews', { expire: 0 });
       expect(adminRpcMock).toHaveBeenCalledTimes(1);
     }
   );
+
+  it('does not invent a status or invite retry when a committed edit omits its result', async () => {
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+    adminRpcMock.mockResolvedValue({ data: [], error: null } as never);
+    const response = await POST(
+      createRequest({
+        title: '文章',
+        category: CATEGORY_ID,
+        content: '内容',
+        commit_message: '更新',
+      }),
+      { params: Promise.resolve({ id: 'article-1' }) }
+    );
+    expect(response.status).toBe(200);
+    expect(await response.json()).toMatchObject({
+      article_id: 'article-1',
+      version_id: null,
+      status: null,
+    });
+    expect(publishNotificationMock).not.toHaveBeenCalled();
+    expect(notifyArticleVersionSubscribersMock).not.toHaveBeenCalled();
+    expect(revalidateTag).toHaveBeenCalledWith('article:article-1', { expire: 0 });
+    expect(adminRpcMock).toHaveBeenCalledTimes(1);
+  });
 
   it('returns 429 before authenticating', async () => {
     checkRateLimitMock.mockResolvedValue({

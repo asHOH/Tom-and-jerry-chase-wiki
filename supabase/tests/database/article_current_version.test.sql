@@ -5,9 +5,9 @@ SET search_path = public, extensions;
 
 SELECT plan(18);
 
--- The public user row is sufficient for these trigger-level tests. Avoid depending on
--- GoTrue fixture details while retaining the article/version foreign keys under test.
-ALTER TABLE public.users DISABLE TRIGGER ALL;
+-- Keep the real foreign key active; the local postgres role cannot disable system triggers.
+INSERT INTO auth.users (id)
+VALUES ('10000000-0000-0000-0000-000000000001');
 INSERT INTO public.users (id, username_hash, nickname, salt)
 VALUES (
   '10000000-0000-0000-0000-000000000001',
@@ -15,7 +15,6 @@ VALUES (
   'article-publication-test-user',
   'test-salt'
 );
-ALTER TABLE public.users ENABLE TRIGGER ALL;
 
 INSERT INTO public.categories (id, name, default_visibility)
 VALUES (

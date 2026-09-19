@@ -10,15 +10,20 @@ import {
   type ArticleEditInfoResponse,
   type EditSourceKey,
 } from '@/lib/articles/editSources';
+import {
+  articleSubmissionMessage,
+  type ArticleMutationResult,
+} from '@/lib/articles/mutationResult';
 import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { formatArticleDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
 import { fetchJson } from '@/lib/fetchJson';
 import { normalizeHeadingLevels } from '@/lib/richTextUtils';
+import { useClearArticleClientCache } from '@/hooks/useClearArticleClientCache';
 import { useContributionSubmissionFeedback } from '@/hooks/useContributionSubmissionFeedback';
 import { useUser } from '@/hooks/useUser';
 import { useToast } from '@/context/ToastContext';
-import { ARTICLE_CACHE_REFRESH_WARNING, ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
+import { ARTICLE_EDITOR_PLACEHOLDER } from '@/constants/articles';
 import Button from '@/components/ui/Button';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import Notice from '@/components/ui/Notice';
@@ -44,6 +49,7 @@ const EditArticleClient: React.FC<EditArticleClientProps> = ({ characterOptions 
     permissions.has('article.update_own') || permissions.has('article.update_any');
   const { error: showError, warning } = useToast();
   const showSubmissionFeedback = useContributionSubmissionFeedback();
+  const clearArticleClientCache = useClearArticleClientCache();
 
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
@@ -134,7 +140,7 @@ const EditArticleClient: React.FC<EditArticleClientProps> = ({ characterOptions 
   };
 
   const handleSave = async () => {
-    if (isLoadingCategories) {
+    if (isSubmitting || isLoadingCategories) {
       return;
     }
 
@@ -174,6 +180,7 @@ const EditArticleClient: React.FC<EditArticleClientProps> = ({ characterOptions 
       return;
     }
 
+    let committed = false;
     try {
       setIsSubmitting(true);
       setError(null);
@@ -192,20 +199,32 @@ const EditArticleClient: React.FC<EditArticleClientProps> = ({ characterOptions 
       });
 
       if (response.ok) {
-        const result = (await response.json().catch(() => null)) as { warning?: string } | null;
-        router.push(`/articles/${id}`);
-        if (result?.warning === 'cache_refresh_failed') {
-          warning(ARTICLE_CACHE_REFRESH_WARNING, 8000);
+        committed = true;
+        const result = (await response.json().catch(() => null)) as ArticleMutationResult | null;
+        const refreshWarning = await clearArticleClientCache(result?.article_id ?? id);
+        const message = [articleSubmissionMessage(result), refreshWarning]
+          .filter(Boolean)
+          .join('\n');
+        if (result?.status === 'approved' && result.article_id) {
+          // A document navigation also drops previously visited Router Cache entries.
+          window.alert(message);
+          window.location.assign(`/articles/${encodeURIComponent(result.article_id)}/`);
         } else {
-          showSubmissionFeedback('文章更新已提交，正在等待审核。');
+          showSubmissionFeedback(message);
+          router.push('/articles');
         }
       } else {
         const errorData = await response.json();
-        showError(errorData.message || '更新文章失败');
+        showError(errorData.error || errorData.message || '更新文章失败');
       }
     } catch (error) {
-      console.error('Error updating article:', error);
-      showError('更新文章时发生错误，请稍后重试');
+      if (committed) {
+        console.error('Article saved but feedback/navigation failed:', error);
+        warning('提交已成功，页面跳转失败。请刷新页面或查看我的贡献，请勿重复提交。', 8000);
+      } else {
+        console.error('Error updating article:', error);
+        showError('更新文章时发生错误，请稍后重试');
+      }
     } finally {
       setIsSubmitting(false);
     }

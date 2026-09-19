@@ -8,6 +8,7 @@ import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { formatArticleDate } from '@/lib/dateUtils';
 import { cn } from '@/lib/design';
 import { fetchJson } from '@/lib/fetchJson';
+import { useClearArticleClientCache } from '@/hooks/useClearArticleClientCache';
 import { useToast } from '@/context/ToastContext';
 import { ARTICLE_CACHE_REFRESH_WARNING } from '@/constants/articles';
 import ArticleDiffViewer from '@/features/articles/components/ArticleDiffViewer';
@@ -46,6 +47,7 @@ export default function ArticleHistoryClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const permissions = usePermissions();
+  const clearArticleClientCache = useClearArticleClientCache();
   const { success, error: showError } = useToast();
   const articleId = params?.id as string;
 
@@ -377,9 +379,19 @@ export default function ArticleHistoryClient() {
                           const result = (await response.json().catch(() => null)) as {
                             warning?: string;
                           } | null;
-                          if (result?.warning === 'cache_refresh_failed') {
+                          const refreshWarning = await clearArticleClientCache(articleId);
+                          if (result?.warning === 'cache_refresh_failed' || refreshWarning) {
                             // Keep the warning visible until acknowledged before reloading.
-                            window.alert(ARTICLE_CACHE_REFRESH_WARNING);
+                            window.alert(
+                              [
+                                result?.warning === 'cache_refresh_failed'
+                                  ? ARTICLE_CACHE_REFRESH_WARNING
+                                  : null,
+                                refreshWarning,
+                              ]
+                                .filter(Boolean)
+                                .join('\n')
+                            );
                           } else {
                             success('版本已成功撤销，正在刷新...');
                           }

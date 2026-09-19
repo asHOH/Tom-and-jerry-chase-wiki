@@ -116,7 +116,13 @@ export async function POST(
     });
 
     return NextResponse.json(
-      { message: 'Pending article updated successfully', ...refreshResult },
+      {
+        message: 'Pending article updated successfully',
+        article_id: version.article_id,
+        version_id: versionId,
+        status: 'pending',
+        ...refreshResult,
+      },
       { status: 200 }
     );
   } catch (err) {

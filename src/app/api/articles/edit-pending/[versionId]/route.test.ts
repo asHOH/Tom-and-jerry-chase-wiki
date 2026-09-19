@@ -70,6 +70,11 @@ describe('pending article edit route', () => {
     );
 
     expect(response.status).toBe(200);
+    expect(await response.json()).toMatchObject({
+      article_id: 'article-1',
+      version_id: 'version-1',
+      status: 'pending',
+    });
     expect(adminRpcMock).toHaveBeenCalledWith(
       'prepared_update_pending_article',
       expect.objectContaining({ p_character_id: 'Tom', p_update_character: true })
