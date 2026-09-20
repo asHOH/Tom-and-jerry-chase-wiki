@@ -4042,4 +4042,34 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       tags: [{ counters: '无惧', counteredBy: '怕无惧' }],
     },
   },
+  {
+    description:
+      '米雪儿二武为队友提供自保，且方便队友被打进铁血时下来哭给队友变大断追风节奏。附身时的碰撞箱会可将冲刺索敌转移到自己，并能挡飓风和铁砧。后期点出一被拥有减伤放大追风略缺伤的弊端',
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '追风汤姆', type: 'character' },
+      target: { name: '米雪儿', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '自身伤害高且追风飞行无法享受眩晕保护，拆火箭能防追风技能扔老鼠上火箭，礼服提供的盾使音杰拥有一定自保能力',
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '追风汤姆', type: 'character' },
+      target: { name: '音乐家杰瑞', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description:
+      '爆炸拆火箭让追风无法扔老鼠上火箭，能轻易救下部分难救的高点火箭，且鲍姆前期即可成型，二级锤子能提供一定自保和续航',
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '追风汤姆', type: 'character' },
+      target: { name: '鲍姆', type: 'character' },
+      isMinor: true,
+    },
+  },
 ];
