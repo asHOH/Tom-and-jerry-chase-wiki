@@ -68,6 +68,28 @@ rows and reasons, and the next operator handoff. Proceed with authorized Ready a
 without another approval. Defer unresolved groups and continue independently verified groups; report reduced
 coverage explicitly. Ask about ambiguous content only when a decision is needed to resume those groups.
 
+### Deferred groups with later coupled actions
+
+When a group is deferred because of overlapping history or published-replay interactions, inspect later
+history before reconciling it again. Prefer reconciling and compacting the complete coupled group together
+to avoid repeating the same work at successive date cutoffs.
+
+- Follow actual write-set and replay dependencies, including whole-array ownership, inverse relations,
+  and conflicting relation kinds. Follow newly found dependencies until no more coupled rows remain in
+  the frozen snapshot. Sharing a character or file alone does not establish coupling.
+- Inspect overlapping history beyond the requested cutoff as evidence. Prepare a combined candidate group
+  containing the deferred rows and later approved/public dependencies; keep synced history as evidence,
+  not cutover candidates. Preserve whole rows and process them in chronological action order.
+- Preserve the original discovery manifest and freeze the proposed expanded group with exact IDs,
+  dependency reasons, and date coverage. Beyond-cutoff inspection does not authorize beyond-cutoff sync:
+  obtain any missing scope authorization after preparing the concrete proposal. Until then, keep those
+  later rows as verification dependencies and defer any group that requires their joint cutover.
+- Resolve content and broken-chain issues explicitly; later values do not automatically repair them.
+  Require complete-group verification and full published-domain parity under the existing reconciliation
+  rules before joint sync. If the snapshot changes, refreeze rather than chasing a moving history.
+- Keep independent ready groups separate and moving. This rule does not require syncing all later dates
+  or clearing every deferred row before other work can proceed.
+
 ## Exact duplicates
 
 Rows are duplicates only when entity type and complete decoded, ordered actions match. Inspect `created_by`
