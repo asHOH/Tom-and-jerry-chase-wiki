@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 
 import { canAccessAll, type PermissionGrant } from '@/lib/auth/permissions';
 import { getGameActionResourceContexts } from '@/lib/auth/resourceContexts';
+import { StaleGameDataEditError, validateActionFreshness } from '@/lib/gameData/actionFreshness';
 import { decodeStoredActionRow } from '@/lib/gameData/actionRowDecoder';
 import {
   validateApprovedCandidateReplay,
@@ -49,6 +50,7 @@ export class TrustedGameDataMutationError extends Error {
     | 'forbidden'
     | 'invalid_row'
     | 'candidate_conflict'
+    | 'stale_edit'
     | 'replay_epoch_conflict'
     | 'idempotency_key_reused'
     | 'persistence_failed';
@@ -77,6 +79,20 @@ function validateCandidate(rows: readonly ApprovedCandidateReplayRow[]): void {
     validateApprovedCandidateReplay(rows);
   } catch (error) {
     throw new TrustedGameDataMutationError('candidate_conflict', error);
+  }
+}
+
+function validateFreshness(
+  currentRows: readonly ApprovedCandidateReplayRow[],
+  proposedRows: readonly ApprovedCandidateReplayRow[]
+): void {
+  try {
+    validateActionFreshness(currentRows, proposedRows);
+  } catch (error) {
+    throw new TrustedGameDataMutationError(
+      error instanceof StaleGameDataEditError ? 'stale_edit' : 'candidate_conflict',
+      error
+    );
   }
 }
 
@@ -218,7 +234,8 @@ export async function publishPreparedGameDataActions(options: {
   }
 
   const fingerprint = operationFingerprint(options);
-  if (options.operationId) {
+  const reuseOperation = async (): Promise<TrustedPublishResult[] | null> => {
+    if (!options.operationId) return null;
     const existing = await readExistingPublishOperation({
       operationId: options.operationId,
       fingerprint,
@@ -228,11 +245,14 @@ export async function publishPreparedGameDataActions(options: {
       if (existing.some((result) => result.status === 'pending')) {
         invalidatePendingGameDataActionsCache();
       }
-      return existing;
     }
-  }
+    return existing;
+  };
+  const existing = await reuseOperation();
+  if (existing) return existing;
 
   const proposedApprovedRows: ApprovedCandidateReplayRow[] = [];
+  const proposedRows: ApprovedCandidateReplayRow[] = [];
 
   for (const action of options.prepared.actions) {
     // Permission grants can change between this route-owned snapshot and the RPC's mandatory
@@ -254,10 +274,22 @@ export async function publishPreparedGameDataActions(options: {
         actions: row.actions,
       });
     }
+    proposedRows.push(...actionCandidateRows);
     if (!isAnonymous && autoPublishesAction) proposedApprovedRows.push(...actionCandidateRows);
   }
 
   const snapshot = await readApprovedReplaySnapshot();
+  try {
+    validateFreshness(candidateRows(snapshot), proposedRows);
+  } catch (error) {
+    if (error instanceof TrustedGameDataMutationError && error.code === 'stale_edit') {
+      // A concurrent retry with the same key may have committed after the initial lookup.
+      // Only report a definite rejection (which lets the client release its key) after rechecking.
+      const completed = await reuseOperation();
+      if (completed) return completed;
+    }
+    throw error;
+  }
   validateCandidate([...candidateRows(snapshot), ...proposedApprovedRows]);
 
   if (options.operationId) {
@@ -364,7 +396,14 @@ export async function approvePreparedGameDataAction(
       throw new TrustedGameDataMutationError('replay_epoch_conflict');
     }
   } else {
-    validateCandidate(insertCandidateInSemanticOrder(snapshot, record));
+    const ordered = insertCandidateInSemanticOrder(snapshot, record);
+    const candidateIndex = ordered.findIndex((row) => row.rowId === record.id);
+    const proposed = [ordered[candidateIndex]!];
+    validateFreshness(candidateRows(snapshot), proposed);
+    // Approval retains creation-time replay order. Also check the state at insertion so a
+    // pending row cannot modify history using an oldValue obtained from a later edit.
+    validateFreshness(ordered.slice(0, candidateIndex), proposed);
+    validateCandidate(ordered);
   }
 
   const { error } = await requireSupabaseAdminClient().rpc('prepared_approve_game_data_action', {

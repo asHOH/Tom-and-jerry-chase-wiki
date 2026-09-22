@@ -282,6 +282,33 @@ describe('GameDataActionModerationPanel', () => {
     expect(mockSuccess).toHaveBeenCalledWith('已拒绝');
   });
 
+  it('shows the server explanation when approval is rejected as stale', async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: false,
+      json: async () => ({
+        error: 'stale_edit',
+        message: '字段「杰瑞.description」已变化，改动仍保持待审核。',
+      }),
+    });
+    jest.spyOn(window, 'confirm').mockReturnValue(true);
+    const refreshList = jest.fn();
+    render(
+      <GameDataActionModerationPanel
+        {...filterProps}
+        pendingActions={[sampleAction]}
+        mutatePendingActions={refreshList}
+      />
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: '批准' }));
+
+    await waitFor(() =>
+      expect(mockError).toHaveBeenCalledWith('字段「杰瑞.description」已变化，改动仍保持待审核。')
+    );
+    expect(refreshList).not.toHaveBeenCalled();
+    expect(screen.getByRole('button', { name: '批准' })).toBeEnabled();
+  });
+
   it('hides the year for current-year submit and review dates', () => {
     const currentYear = new Date().getFullYear();
     const previousYear = currentYear - 1;

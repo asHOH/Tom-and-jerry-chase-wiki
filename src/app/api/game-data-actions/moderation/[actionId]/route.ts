@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requirePermission } from '@/lib/auth/requirePermission';
 import { getGameActionResourceContexts } from '@/lib/auth/resourceContexts';
 import { getRequestIp } from '@/lib/blocks/server';
+import { staleGameDataEditResponse } from '@/lib/gameData/candidateConflictResponse';
 import { getGameDataNotificationDetails } from '@/lib/gameData/contributionDisplay';
 import { invalidatePendingGameDataActionsCache } from '@/lib/gameData/publicActionsCache';
 import {
@@ -173,6 +174,7 @@ export async function POST(
       ) {
         return NextResponse.json({ error: err.code }, { status: 409 });
       }
+      if (err.code === 'stale_edit') return staleGameDataEditResponse(err, 'approval');
     }
     console.error('API error:', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

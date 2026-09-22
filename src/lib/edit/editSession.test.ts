@@ -74,6 +74,7 @@ describe('createEditSession', () => {
     session = null;
     window.localStorage.clear();
     window.sessionStorage.clear();
+    Reflect.deleteProperty(global, 'fetch');
   });
 
   it('restores and records browser drafts through the session boundary', async () => {
@@ -295,6 +296,74 @@ describe('createEditSession', () => {
       },
     });
     expect(history.read('characters')).toEqual([unrelated, appended]);
+  });
+
+  it.each([
+    {
+      label: 'a stale 409',
+      response: {
+        ok: false,
+        status: 409,
+        json: async () => ({ error: 'stale_edit', message: '字段已变化，草稿已保留。' }),
+      } as Response,
+      operationRemains: false,
+    },
+    {
+      label: 'an unknown server response',
+      response: {
+        ok: false,
+        status: 500,
+        json: async () => ({ error: 'Internal server error' }),
+      } as Response,
+      operationRemains: true,
+    },
+  ])('retains the draft and clears its operation only for $label', async (scenario) => {
+    const draft = {
+      op: 'set' as const,
+      path: '杰瑞.description',
+      oldValue: '原描述',
+      newValue: '旧草稿',
+    };
+    const history = memoryHistory({ characters: [draft] });
+    global.fetch = jest.fn().mockResolvedValue(scenario.response);
+    session = createEditSession(baseline, 'v1:test', { history: history.store });
+
+    const result = await session.publishDraft({
+      kind: 'entity',
+      entity: { entityType: 'characters', entityId: '杰瑞' },
+    });
+
+    expect(result.status).toBe('failed');
+    expect(history.read('characters')).toEqual([draft]);
+    const storedOperation = window.sessionStorage.getItem(
+      `game-data-publish-operation:v1:${encodeURIComponent('page:characters:杰瑞')}`
+    );
+    expect(storedOperation !== null).toBe(scenario.operationRemains);
+  });
+
+  it('keeps a publish operation after a network failure', async () => {
+    const draft = {
+      op: 'set' as const,
+      path: '杰瑞.description',
+      oldValue: '原描述',
+      newValue: '旧草稿',
+    };
+    const history = memoryHistory({ characters: [draft] });
+    global.fetch = jest.fn().mockRejectedValue(new Error('network unavailable'));
+    session = createEditSession(baseline, 'v1:test', { history: history.store });
+
+    const result = await session.publishDraft({
+      kind: 'entity',
+      entity: { entityType: 'characters', entityId: '杰瑞' },
+    });
+
+    expect(result.status).toBe('failed');
+    expect(history.read('characters')).toEqual([draft]);
+    expect(
+      window.sessionStorage.getItem(
+        `game-data-publish-operation:v1:${encodeURIComponent('page:characters:杰瑞')}`
+      )
+    ).not.toBeNull();
   });
 
   it('rolls back construction when draft restoration throws', () => {

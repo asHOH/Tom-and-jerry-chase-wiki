@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 
 import { canAccessAll } from '@/lib/auth/permissions';
+import { StaleGameDataEditError, validateActionFreshness } from '@/lib/gameData/actionFreshness';
 import { validateApprovedCandidateReplay } from '@/lib/gameData/approvedCandidateReplay';
 import { readApprovedReplaySnapshot } from '@/lib/gameData/approvedReplaySnapshotReader';
 import { invalidatePublicGameDataActionsCache } from '@/lib/gameData/publicActionsCache';
@@ -24,6 +25,10 @@ jest.mock('@/lib/gameData/approvedReplaySnapshotReader', () => ({
 jest.mock('@/lib/gameData/approvedCandidateReplay', () => ({
   validateApprovedCandidateReplay: jest.fn(),
 }));
+jest.mock('@/lib/gameData/actionFreshness', () => ({
+  ...jest.requireActual('@/lib/gameData/actionFreshness'),
+  validateActionFreshness: jest.fn(),
+}));
 jest.mock('@/lib/gameData/publicActionsCache', () => ({
   invalidatePendingGameDataActionsCache: jest.fn(),
   invalidatePublicGameDataActionsCache: jest.fn(),
@@ -35,6 +40,7 @@ jest.mock('@/lib/supabase/admin', () => ({
 const canAccessAllMock = jest.mocked(canAccessAll);
 const readSnapshotMock = jest.mocked(readApprovedReplaySnapshot);
 const validateCandidateMock = jest.mocked(validateApprovedCandidateReplay);
+const freshnessMock = jest.mocked(validateActionFreshness);
 const invalidateMock = jest.mocked(invalidatePublicGameDataActionsCache);
 const adminRpcMock = jest.mocked(supabaseAdmin!.rpc);
 const adminFromMock = jest.mocked(supabaseAdmin!.from);
@@ -194,6 +200,7 @@ describe('trusted game data mutations', () => {
       { id: 'original-2', is_public: true, status: 'approved' },
     ]);
     expect(readSnapshotMock).not.toHaveBeenCalled();
+    expect(freshnessMock).not.toHaveBeenCalled();
     expect(validateCandidateMock).not.toHaveBeenCalled();
     expect(adminRpcMock).not.toHaveBeenCalled();
   });
@@ -215,6 +222,41 @@ describe('trusted game data mutations', () => {
     ).rejects.toMatchObject({ code: 'idempotency_key_reused' });
     expect(readSnapshotMock).not.toHaveBeenCalled();
     expect(adminRpcMock).not.toHaveBeenCalled();
+  });
+
+  it('returns a concurrent successful retry instead of reporting a stale rejection', async () => {
+    const operationId = 'a3bb189e-8c21-4b8d-9a4f-5e24b7c29a10';
+    const fingerprint = createHashForTest({ permission: 'game_data_action.create', prepared });
+    adminFromMock
+      .mockReturnValueOnce(operationQuery(null) as never)
+      .mockReturnValueOnce(operationQuery({ request_fingerprint: fingerprint }) as never)
+      .mockReturnValueOnce(
+        operationRowsQuery([
+          {
+            id: 'concurrently-published',
+            publish_operation_initial_public: true,
+            publish_operation_initial_status: 'approved',
+          },
+        ]) as never
+      );
+    freshnessMock.mockImplementationOnce(() => {
+      throw new StaleGameDataEditError({
+        entityType: 'items',
+        path: 'item-b.description',
+        reason: 'value_changed',
+      });
+    });
+    await expect(
+      publishPreparedGameDataActions({
+        actorId: 'actor-1',
+        permission: 'game_data_action.create',
+        grants: [],
+        prepared,
+        operationId,
+      })
+    ).resolves.toEqual([{ id: 'concurrently-published', is_public: true, status: 'approved' }]);
+    expect(adminRpcMock).not.toHaveBeenCalled();
+    expect(invalidateMock).toHaveBeenCalled();
   });
 
   it('uses the atomic request RPC for a new keyed operation', async () => {
@@ -662,6 +704,11 @@ describe('trusted game data mutations', () => {
 
     await approvePreparedGameDataAction('moderator-1', record());
 
+    expect(freshnessMock.mock.calls.map(([current]) => current.map((row) => row.rowId))).toEqual([
+      ['approved-first', 'approved-last'],
+      ['approved-first'],
+    ]);
+
     expect(validateCandidateMock.mock.calls[0]?.[0].map((row) => row.rowId)).toEqual([
       'approved-first',
       'pending-1',
@@ -705,6 +752,7 @@ describe('trusted game data mutations', () => {
     await approvePreparedGameDataAction('moderator-1', publicPendingRecord);
 
     expect(validateCandidateMock).not.toHaveBeenCalled();
+    expect(freshnessMock).not.toHaveBeenCalled();
     expect(adminRpcMock).toHaveBeenCalledWith('prepared_approve_game_data_action', {
       p_actor_id: 'moderator-1',
       p_action_id: 'pending-1',
@@ -789,4 +837,57 @@ describe('trusted game data mutations', () => {
       })
     ).rejects.toMatchObject({ code: 'replay_epoch_conflict' });
   });
+
+  it.each([
+    { actorId: 'actor-1', permission: 'game_data_action.create' as const },
+    { actorId: null, permission: 'game_data_action.create' as const },
+    {
+      actorId: 'actor-1',
+      permission: 'game_data_action.create' as const,
+      submitMode: 'force_pending' as const,
+    },
+    { actorId: 'actor-1', permission: 'game_data_action.publish_relations' as const },
+  ])('rejects stale submissions before persistence for %j', async (options) => {
+    freshnessMock.mockImplementationOnce(
+      jest.requireActual('./actionFreshness').validateActionFreshness
+    );
+    const stalePrepared = preparePublishActionItems([
+      {
+        entityType: 'items',
+        entries: [
+          {
+            op: 'set',
+            path: 'item-a.description',
+            oldValue: 'before-approval',
+            newValue: 'my edit',
+          },
+        ],
+      },
+    ]);
+    await expect(
+      publishPreparedGameDataActions({ ...options, grants: [], prepared: stalePrepared })
+    ).rejects.toMatchObject({ code: 'stale_edit' });
+    expect(adminRpcMock).not.toHaveBeenCalled();
+    expect(invalidateMock).not.toHaveBeenCalled();
+  });
+
+  it.each([1, 2])(
+    'leaves a pending row untouched when approval freshness check %s fails',
+    async (check) => {
+      const conflict = new StaleGameDataEditError({
+        entityType: 'items',
+        path: 'item-b.description',
+        reason: 'value_changed',
+      });
+      if (check === 2) freshnessMock.mockImplementationOnce(() => undefined);
+      freshnessMock.mockImplementationOnce(() => {
+        throw conflict;
+      });
+      await expect(approvePreparedGameDataAction('moderator-1', record())).rejects.toMatchObject({
+        code: 'stale_edit',
+        cause: conflict,
+      });
+      expect(adminRpcMock).not.toHaveBeenCalled();
+    }
+  );
 });

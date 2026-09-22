@@ -417,6 +417,28 @@ describe('publish route', () => {
     warnSpy.mockRestore();
   });
 
+  it('returns field-specific stale-edit guidance and leaves the draft for the client', async () => {
+    publishPreparedMock.mockRejectedValueOnce(
+      new TrustedGameDataMutationError('stale_edit', {
+        detail: {
+          entityType: 'characters',
+          path: '杰瑞.description',
+          reason: 'value_changed',
+        },
+      })
+    );
+    const { POST } = await import('./route');
+
+    const response = await POST(createRequest(validBody));
+
+    expect(response.status).toBe(409);
+    await expect(response.json()).resolves.toEqual({
+      error: 'stale_edit',
+      message:
+        '提交已拒绝：字段「杰瑞.description」已发生变化，草稿已保留。请先保存想保留的内容，放弃旧草稿并刷新到最新数据，再手动重做后提交。',
+    });
+  });
+
   it('keeps replay epoch conflicts on their stable 409 response', async () => {
     publishPreparedMock.mockRejectedValueOnce(
       new TrustedGameDataMutationError('replay_epoch_conflict')

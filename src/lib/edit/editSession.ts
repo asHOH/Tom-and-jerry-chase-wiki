@@ -144,6 +144,13 @@ type PublishTransportResult =
   | { status: 'published'; outcome: GameDataSubmitOutcome }
   | { status: 'pending-conflict'; conflict: PendingActionOverlapResponse };
 
+class StaleGameDataEditSubmissionError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'StaleGameDataEditSubmissionError';
+  }
+}
+
 export type EditSessionDependencies = Readonly<{
   history?: EditHistoryStore;
   publish?: (request: PublishTransportRequest) => Promise<PublishTransportResult>;
@@ -175,7 +182,11 @@ async function publishWithFetch(request: PublishTransportRequest): Promise<Publi
     ) {
       return { status: 'pending-conflict', conflict: body as PendingActionOverlapResponse };
     }
-    throw new Error(getPublishErrorMessage(body, '发布失败'));
+    const message = getPublishErrorMessage(body, '发布失败');
+    if (response.status === 409 && body?.error === 'stale_edit') {
+      throw new StaleGameDataEditSubmissionError(message);
+    }
+    throw new Error(message);
   }
 
   return {
@@ -456,6 +467,10 @@ export function createEditSession(
         notifyDrafts();
         return result;
       } catch (error) {
+        if (error instanceof StaleGameDataEditSubmissionError) {
+          // A stale 409 confirms nothing was saved under this key; allow a manually rebuilt draft.
+          clearPublishOperation(publishScope);
+        }
         return { status: 'failed', error: error instanceof Error ? error : new Error('发布失败') };
       }
     },

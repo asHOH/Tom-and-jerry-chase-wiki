@@ -89,7 +89,7 @@ describe('squashActions', () => {
     ]);
   });
 
-  it('should squash clearing and replacing a scalar object property into one set', () => {
+  it('should squash clearing and replacing an indexed property with its list context', () => {
     expect(
       squashActions(
         [
@@ -105,11 +105,15 @@ describe('squashActions', () => {
         }
       )
     ).toEqual([
-      setAction('Tom.skills.0.videoUrl', 'https://example.com/old', 'https://example.com/new'),
+      setAction(
+        'Tom.skills',
+        [{ videoUrl: 'https://example.com/old' }],
+        [{ videoUrl: 'https://example.com/new' }]
+      ),
     ]);
   });
 
-  it('should keep a standalone scalar object-property deletion', () => {
+  it('should preserve a standalone indexed property deletion in a parent-list set', () => {
     const deletedVideoUrl = deleteAction('Tom.skills.0.videoUrl', 'https://example.com/old');
 
     expect(
@@ -120,7 +124,7 @@ describe('squashActions', () => {
           },
         },
       })
-    ).toEqual([deletedVideoUrl]);
+    ).toEqual([setAction('Tom.skills', [{ videoUrl: 'https://example.com/old' }], [{}])]);
   });
 
   it('should preserve the original old value when a scalar property is set and then deleted', () => {
@@ -142,7 +146,7 @@ describe('squashActions', () => {
           },
         }
       )
-    ).toEqual([deleteAction('Tom.skills.0.videoUrl', 'https://example.com/old')]);
+    ).toEqual([setAction('Tom.skills', [{ videoUrl: 'https://example.com/old' }], [{}])]);
   });
 
   it('should drop scalar property delete/set churn that restores the original value', () => {
@@ -197,7 +201,11 @@ describe('squashActions', () => {
         }
       )
     ).toEqual([
-      setAction('Tom.skills.0.videoUrl', 'https://example.com/old', 'https://example.com/new'),
+      setAction(
+        'Tom.skills',
+        [{ videoUrl: 'https://example.com/old' }],
+        [{ videoUrl: 'https://example.com/new' }]
+      ),
     ]);
   });
 
@@ -208,6 +216,29 @@ describe('squashActions', () => {
     ];
 
     expect(squashActions(actions)).toEqual(actions);
+  });
+
+  it('includes the outermost list context for a nested indexed field', () => {
+    const before = [
+      { id: 'first', levels: [{ cooldown: 1 }] },
+      { id: 'second', levels: [{ cooldown: 1 }] },
+    ];
+    const after = structuredClone(before);
+    after[0]!.levels[0]!.cooldown = 2;
+    expect(
+      squashActions([setAction('Tom.skills.0.levels.0.cooldown', 1, 2)], {
+        currentRoot: { Tom: { skills: after } },
+      })
+    ).toEqual([setAction('Tom.skills', before, after)]);
+  });
+
+  it('does not mistake numeric object keys for array positions', () => {
+    const action = setAction('Tom.settings.0.name', 'old', 'new');
+    expect(
+      squashActions([action], {
+        currentRoot: { Tom: { settings: { 0: { name: 'new' } } } },
+      })
+    ).toEqual([action]);
   });
 
   it.each([
@@ -259,7 +290,13 @@ describe('squashActions', () => {
           currentRoot: { Tuffy: { skills: [{ aftercast: 0, cancelableAftercast: '无后摇' }] } },
         }
       )
-    ).toEqual([aftercast]);
+    ).toEqual([
+      setAction(
+        'Tuffy.skills',
+        [{ cancelableAftercast: '无后摇' }],
+        [{ cancelableAftercast: '无后摇', aftercast: 0 }]
+      ),
+    ]);
   });
 
   it('should preserve nested changes around a restored container property', () => {

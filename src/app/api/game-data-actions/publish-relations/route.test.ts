@@ -296,6 +296,28 @@ describe('publish-relations route', () => {
     warnSpy.mockRestore();
   });
 
+  it('returns field-specific stale-edit guidance for relation drafts', async () => {
+    publishPreparedMock.mockRejectedValueOnce(
+      new TrustedGameDataMutationError('stale_edit', {
+        detail: {
+          entityType: 'characters',
+          path: '杰瑞.counters',
+          reason: 'array_context_required',
+        },
+      })
+    );
+    const { POST } = await import('./route');
+
+    const response = await POST(createRequest({ entries: validEntries }));
+
+    expect(response.status).toBe(409);
+    await expect(response.json()).resolves.toEqual({
+      error: 'stale_edit',
+      message:
+        '提交已拒绝：字段「杰瑞.counters」缺少完整的原始列表，草稿已保留。请先保存想保留的内容，放弃旧草稿并刷新到最新数据，再手动重做后提交。',
+    });
+  });
+
   it('keeps replay epoch conflicts on their stable 409 response', async () => {
     publishPreparedMock.mockRejectedValueOnce(
       new TrustedGameDataMutationError('replay_epoch_conflict')

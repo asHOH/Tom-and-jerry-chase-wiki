@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { requirePermission } from '@/lib/auth/requirePermission';
 import { getGameActionResourceContexts } from '@/lib/auth/resourceContexts';
 import { getRequestIp } from '@/lib/blocks/server';
+import { staleGameDataEditMessage } from '@/lib/gameData/candidateConflictResponse';
 import { getGameDataNotificationDetails } from '@/lib/gameData/contributionDisplay';
 import { invalidatePendingGameDataActionsCache } from '@/lib/gameData/publicActionsCache';
 import {
@@ -89,7 +90,9 @@ export async function POST(request: Request) {
     } catch (error) {
       const message =
         error instanceof TrustedGameDataMutationError
-          ? error.code
+          ? error.code === 'stale_edit'
+            ? staleGameDataEditMessage(error, 'approval')
+            : error.code
           : error instanceof Error
             ? error.message
             : 'Unknown moderation failure';

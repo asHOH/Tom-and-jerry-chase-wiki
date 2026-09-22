@@ -371,11 +371,21 @@ function reverseApplyActions(root: Container, flat: FlatItem[]): void {
   }
 }
 
-function getStructuralArrayCandidateParent(action: Action): string | null {
+function getStructuralArrayCandidateParent(
+  action: Action,
+  currentRoot: Record<string, unknown>
+): string | null {
   if (!action.path) return null;
 
   const parts = parsePath(action.path);
   if (parts.length < 2) return null;
+
+  // Indexed field edits also need the enclosing list's identities/order. Equal old leaf
+  // values alone cannot distinguish two entries after another editor reorders the list.
+  for (let index = 1; index < parts.length; index++) {
+    const ancestor = parts.slice(0, index).join('.');
+    if (Array.isArray(getAtPath(currentRoot, ancestor))) return ancestor;
+  }
 
   const last = parts[parts.length - 1]!;
   const parentPath = parts.slice(0, -1).join('.');
@@ -528,7 +538,7 @@ function normalizeStructuralArrayActions(
 
   const candidateParents = new Set<string>();
   flat.forEach((item) => {
-    const parentPath = getStructuralArrayCandidateParent(item.action);
+    const parentPath = getStructuralArrayCandidateParent(item.action, finalRoot);
     if (parentPath) candidateParents.add(parentPath);
   });
 
@@ -586,7 +596,7 @@ function normalizeStructuralArrayActions(
  * Squash an action history so that only the last safe `set` per path remains.
  *
  * Safety rules:
- * - Normalize proven array edits to a parent set; otherwise preserve structural operations.
+ * - Normalize proven array edits (including indexed fields) to a parent set; otherwise preserve them.
  * - Fold object-property adds/deletes with later mutations on the same path when the current
  *   root proves that the parent is not an array. Container values also require no ancestor
  *   or descendant edits.

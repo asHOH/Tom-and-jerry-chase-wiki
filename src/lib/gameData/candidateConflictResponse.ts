@@ -104,3 +104,40 @@ export function candidateConflictResponse(
     { status: 409 }
   );
 }
+
+type StaleEditContext = 'submission' | 'approval';
+
+function staleEditPath(error: TrustedGameDataMutationError): string {
+  if (!isRecord(error.cause) || !isRecord(error.cause.detail)) return '未知字段';
+  return boundedString(error.cause.detail.path, MAX_DIAGNOSTIC_TEXT_LENGTH) ?? '未知字段';
+}
+
+export function staleGameDataEditMessage(
+  error: TrustedGameDataMutationError,
+  context: StaleEditContext
+): string {
+  const path = staleEditPath(error);
+  const arrayContextRequired =
+    isRecord(error.cause) &&
+    isRecord(error.cause.detail) &&
+    error.cause.detail.reason === 'array_context_required';
+  const conflict = arrayContextRequired
+    ? `字段「${path}」缺少完整的原始列表`
+    : `字段「${path}」已发生变化`;
+
+  if (context === 'approval') {
+    return `待审核改动涉及的${conflict}，仍保持待审核。请核对差异，并联系提交者基于最新数据重新提交。`;
+  }
+
+  return `提交已拒绝：${conflict}，草稿已保留。请先保存想保留的内容，放弃旧草稿并刷新到最新数据，再手动重做后提交。`;
+}
+
+export function staleGameDataEditResponse(
+  error: TrustedGameDataMutationError,
+  context: StaleEditContext
+): NextResponse {
+  return NextResponse.json(
+    { error: error.code, message: staleGameDataEditMessage(error, context) },
+    { status: 409 }
+  );
+}

@@ -21,8 +21,11 @@ jest.mock('next/server', () => ({
 jest.mock('@/lib/auth/requirePermission', () => ({ requirePermission: jest.fn() }));
 jest.mock('@/lib/gameData/trustedGameDataMutations', () => {
   class MockTrustedGameDataMutationError extends Error {
-    constructor(readonly code: string) {
-      super(code);
+    constructor(
+      readonly code: string,
+      cause?: unknown
+    ) {
+      super(code, { cause });
     }
   }
   return {
@@ -118,6 +121,32 @@ describe('batch game data action moderation route', () => {
     expect(publishNotificationMock).toHaveBeenCalledWith(
       expect.objectContaining({ sourceIds: [actionId2] })
     );
+  });
+
+  it('reports stale approval fields in batch failures', async () => {
+    approveMock.mockRejectedValueOnce(
+      new TrustedGameDataMutationError('stale_edit', {
+        detail: {
+          entityType: 'characters',
+          path: '杰瑞.description',
+          reason: 'value_changed',
+        },
+      })
+    );
+
+    const response = await POST(createRequest('approve', [actionId1]));
+
+    await expect(response.json()).resolves.toEqual({
+      succeeded: [],
+      failures: [
+        {
+          actionId: actionId1,
+          message:
+            '待审核改动涉及的字段「杰瑞.description」已发生变化，仍保持待审核。请核对差异，并联系提交者基于最新数据重新提交。',
+        },
+      ],
+    });
+    expect(publishNotificationMock).not.toHaveBeenCalled();
   });
 
   it('keeps rejection available without requiring successful action decoding', async () => {

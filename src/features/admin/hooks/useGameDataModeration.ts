@@ -98,8 +98,11 @@ export function useGameDataModeration(refreshList: () => Promise<unknown> | unkn
         }
       );
       if (!response.ok) {
-        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
-        throw new Error(payload?.error || '操作失败');
+        const payload = (await response.json().catch(() => null)) as {
+          error?: string;
+          message?: string;
+        } | null;
+        throw new Error(payload?.message || payload?.error || '操作失败');
       }
 
       let thanksFailed = false;

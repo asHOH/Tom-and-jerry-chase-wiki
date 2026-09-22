@@ -344,9 +344,14 @@ describe('useRelationMatrixEditMode', () => {
       message: '发布前的数据兼容性检查未通过。草稿已保留。',
       requestId: 'request-789',
     },
-  ])('shows $error guidance with a request ID and retains relation drafts', async (errorBody) => {
+    {
+      error: 'stale_edit',
+      message: '提交已拒绝：字段「杰瑞.counters」缺少完整的原始列表，草稿已保留。请重新编辑。',
+    },
+  ])('shows $error guidance and retains relation drafts', async (errorBody) => {
     global.fetch = jest.fn().mockResolvedValue({
       ok: false,
+      status: errorBody.error === 'stale_edit' ? 409 : 400,
       json: jest.fn().mockResolvedValue(errorBody),
     });
     const draft = {
@@ -365,7 +370,9 @@ describe('useRelationMatrixEditMode', () => {
 
     await waitFor(() => {
       expect(mockError).toHaveBeenCalledWith(
-        `${errorBody.message}（请求编号：${errorBody.requestId}）`
+        errorBody.requestId
+          ? `${errorBody.message}（请求编号：${errorBody.requestId}）`
+          : errorBody.message
       );
       expect(readTestEditHistory(storageKey)).toEqual([draft]);
     });

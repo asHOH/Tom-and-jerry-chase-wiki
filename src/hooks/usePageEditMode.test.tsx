@@ -420,9 +420,14 @@ describe('usePageEditMode', () => {
       message: '发布前的数据兼容性检查未通过。草稿已保留。',
       requestId: 'request-456',
     },
-  ])('should show $error guidance with a request ID and retain the draft', async (errorBody) => {
+    {
+      error: 'stale_edit',
+      message: '提交已拒绝：字段「杰瑞.description」已发生变化，草稿已保留。请手动重做。',
+    },
+  ])('should show $error guidance and retain the draft', async (errorBody) => {
     global.fetch = jest.fn().mockResolvedValue({
       ok: false,
+      status: errorBody.error === 'stale_edit' ? 409 : 400,
       json: jest.fn().mockResolvedValue(errorBody),
     });
     renderInEditMode();
@@ -443,7 +448,9 @@ describe('usePageEditMode', () => {
 
     await waitFor(() => {
       expect(mockShowToast).toHaveBeenCalledWith(
-        `${errorBody.message}（请求编号：${errorBody.requestId}）`
+        errorBody.requestId
+          ? `${errorBody.message}（请求编号：${errorBody.requestId}）`
+          : errorBody.message
       );
       expect(readTestEditHistory(getTestEditHistoryKey('characters'))).toEqual([draft]);
     });

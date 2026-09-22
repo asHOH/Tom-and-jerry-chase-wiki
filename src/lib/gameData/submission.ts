@@ -14,7 +14,7 @@ import { hasSupabaseAdminConfig } from '@/lib/supabase/admin';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
 import type { Json } from '@/data/database.types';
 
-import { candidateConflictResponse } from './candidateConflictResponse';
+import { candidateConflictResponse, staleGameDataEditResponse } from './candidateConflictResponse';
 import { getGameDataNotificationDetails } from './contributionDisplay';
 import { checkPendingActionAcknowledgement } from './pendingActionAwarenessServer';
 import { PUBLISH_LIMITS } from './publishLimits';
@@ -283,6 +283,9 @@ export async function handleGameDataSubmission(
       }
       if (error.code === 'candidate_conflict') {
         return candidateConflictResponse(error, route);
+      }
+      if (error.code === 'stale_edit') {
+        return staleGameDataEditResponse(error, 'submission');
       }
       if (error.code === 'replay_epoch_conflict' || error.code === 'idempotency_key_reused') {
         return NextResponse.json({ error: error.code }, { status: 409 });
