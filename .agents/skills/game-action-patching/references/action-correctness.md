@@ -163,6 +163,13 @@ Use `characterCounters.ts`, `characterCollaborators.ts`, `knowledgeCards.ts`, `s
 Assign every group exactly one disposition before editing. For each deferred row, report its ID/path,
 current baseline value, recorded old/new values, reason, and dependencies; link full values if lengthy.
 
+When presenting concrete actions for a user decision, state each row's current database `status`
+and public visibility (`is_public`) alongside its ID, date, contributor, and relevant change.
+Use a fresh exact-ID query and give the check time; if unavailable, label the last-known state and
+its timestamp explicitly. Keep database status separate from local dispositions such as Verified
+or Deferred. For an option that changes status, state the proposed transition separately from the
+current status; do not make the user infer status from words such as "published" or "superseded".
+
 - **Ready**: every write-set location is explainable under the `S/O/N` rules above; every
   physical target is unambiguous; required old/new or parent-array chains are valid; and no safety
   gate raises a content concern.

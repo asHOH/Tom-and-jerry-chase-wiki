@@ -228,11 +228,6 @@ describe('compaction verification', () => {
     ['array index', 'item.aliases.0', [set('item.aliases.0', 'restored')]],
     ['array length', 'item.aliases.length', [set('item.aliases.length', 1)]],
     ['root', 'item', [set('item', {})]],
-    ['no restoration', 'item.value', []],
-    ['missing restoration value', 'item.value', [set('item.value', undefined)]],
-    ['ancestor write', 'item.value', [set('item', {}), set('item.value', 'restored')]],
-    ['trimmed ancestor write', 'item.value', [set(' item ', {}), set('item.value', 'restored')]],
-    ['descendant write', 'item.value', [set('item.value.child', 1), set('item.value', 'restored')]],
   ] as const)('rejects a delete with %s', (_label, path, following) => {
     const actions: Action[] = [
       set(path, 'initial'),
@@ -245,7 +240,7 @@ describe('compaction verification', () => {
     });
   });
 
-  it('requires the preceding set and restoration in the same atomic row', () => {
+  it('requires a concrete reset in the same atomic row for a delete', () => {
     const deletion: Action = {
       op: 'delete',
       path: 'item.value',
@@ -262,6 +257,76 @@ describe('compaction verification', () => {
       verifyCompactionActionIdempotence([
         snapshotRow('1', [set('item.value', 'initial'), deletion]),
         snapshotRow('2', [set('item.value', 'restored')]),
+      ]).proven
+    ).toBe(true);
+  });
+
+  it('accepts deletes inside a concrete reset and verifies repeated checked replay', () => {
+    const actions: Action[] = [
+      set('item.skill', { transient: false, parts: [{ value: 1 }, {}] }),
+      { op: 'delete', path: 'item.skill.transient', oldValue: false, newValue: undefined },
+      { op: 'delete', path: 'item.skill.parts.1', oldValue: {}, newValue: undefined },
+      { ...set('item.skill.parts.length', 1), oldValue: 2 },
+    ];
+    expect(verifyCompactionActionIdempotence([snapshotRow('1', actions)]).proven).toBe(true);
+    const target = { item: { skill: { parts: [{ value: 1 }] } } };
+    const expected = structuredClone(target);
+    for (let run = 0; run < 2; run += 1) {
+      expect(applyCheckedActionRow({ rowId: '1', actions, targets: [target] }).success).toBe(true);
+      expect(target).toEqual(expected);
+    }
+    expect(
+      verifyCompactionActionIdempotence([snapshotRow('1', [set('item.skill', {}), actions[1]!])])
+        .proven
+    ).toBe(false);
+  });
+
+  it('requires an indexed add to be followed by a full array reset in the same entity cohort', () => {
+    const addition: Action = {
+      op: 'add',
+      path: 'item.groups.1',
+      oldValue: undefined,
+      newValue: { cards: ['B'] },
+    };
+    const final = [{ cards: ['A'] }, { cards: ['B'] }];
+    const rows = [snapshotRow('1', [addition]), snapshotRow('2', [set('item.groups', final)])];
+    expect(verifyCompactionActionIdempotence(rows).proven).toBe(true);
+    const target = { item: { groups: structuredClone(final) } };
+    for (let run = 0; run < 2; run += 1) {
+      for (const entry of rows) {
+        expect(
+          applyCheckedActionRow({ rowId: entry.rowId, actions: entry.actions, targets: [target] })
+            .success
+        ).toBe(true);
+      }
+      expect(target.item.groups).toEqual(final);
+    }
+    expect(verifyCompactionActionIdempotence([rows[0]!]).proven).toBe(false);
+    expect(
+      verifyCompactionActionIdempotence(rows.map(({ rowId, actions }) => ({ rowId, actions })))
+        .proven
+    ).toBe(false);
+    expect(
+      verifyCompactionActionIdempotence([
+        rows[0]!,
+        { rowId: 'unknown', actions: [set('other.description', 'unknown entity')] },
+        rows[1]!,
+      ]).proven
+    ).toBe(false);
+    expect(
+      verifyCompactionActionIdempotence([
+        { rowId: 'same-row', actions: [addition, set('item.groups', final)] },
+      ]).proven
+    ).toBe(true);
+    expect(
+      verifyCompactionActionIdempotence([rows[0]!, { ...rows[1]!, entityType: 'characters' }])
+        .proven
+    ).toBe(false);
+    expect(
+      verifyCompactionActionIdempotence([
+        rows[0]!,
+        snapshotRow('2', [set('item.groups.0', final[0])]),
+        rows[1]!,
       ]).proven
     ).toBe(false);
   });

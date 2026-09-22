@@ -4,6 +4,7 @@ import {
   type ActionPatchRow,
   type ActionPatchTargetRegistry,
 } from './actionPatchVerification';
+import { applyCheckedActionRow } from './checkedActionReplay';
 
 const row = (
   id: string,
@@ -365,6 +366,95 @@ describe('verifyActionPatch', () => {
     expect(result.failures).toEqual([
       expect.objectContaining({ rowId: 'delete', code: 'ambiguous_array_delete' }),
     ]);
+  });
+
+  it('reconstructs unlabelled array edits from an exact reset, including captured splice length', () => {
+    const actions = [
+      { op: 'set' as const, path: 'Tom.parts', oldValue: undefined, newValue: [{ value: 1 }, {}] },
+      { op: 'delete' as const, path: 'Tom.parts.1', oldValue: {}, newValue: undefined },
+      { op: 'set' as const, path: 'Tom.parts.length', oldValue: 2, newValue: 1 },
+      { op: 'set' as const, path: 'Tom.parts.1', oldValue: undefined, newValue: {} },
+      { op: 'delete' as const, path: 'Tom.parts.1', oldValue: {}, newValue: undefined },
+      { op: 'set' as const, path: 'Tom.parts.length', oldValue: 2, newValue: 1 },
+    ];
+    const target = { Tom: {} };
+    expect(applyCheckedActionRow({ rowId: 'reset', actions, targets: [target] }).success).toBe(
+      true
+    );
+    expect(verifyActionPatch([row('reset', actions)], targets(target))).toEqual({
+      verifiedRowIds: ['reset'],
+      failures: [],
+    });
+    expect(
+      verifyActionPatch([row('reset', actions)], targets({ Tom: { parts: [{ value: 2 }] } }))
+        .verifiedRowIds
+    ).toEqual([]);
+    const stale = structuredClone(actions);
+    stale[4]!.oldValue = { unexpected: true };
+    expect(verifyActionPatch([row('stale', stale)], targets(target)).verifiedRowIds).toEqual([]);
+  });
+
+  it('does not use an indexed item reset as evidence for its containing array', () => {
+    expect(
+      verifyActionPatch(
+        [
+          row('unsafe', [
+            { op: 'set', path: 'Tom.parts.0', newValue: {} },
+            { op: 'delete', path: 'Tom.parts.0', oldValue: {} },
+          ]),
+        ],
+        targets({ Tom: { parts: [] } })
+      ).failures
+    ).toEqual([expect.objectContaining({ code: 'ambiguous_array_delete' })]);
+  });
+
+  it('reconstructs property-add then indexed-add container replacement and clamping', () => {
+    const original = { cards: ['A'], description: 'first' };
+    const replacement = { cards: ['A'], description: 'second' };
+    const actions = [
+      { op: 'add' as const, path: 'Tom.groups', oldValue: undefined, newValue: original },
+      { op: 'add' as const, path: 'Tom.groups.5', oldValue: undefined, newValue: replacement },
+      {
+        op: 'set' as const,
+        path: 'Tom.groups',
+        oldValue: [replacement],
+        newValue: [{ cards: ['B'] }],
+      },
+    ];
+    const target = { Tom: { groups: [{ cards: ['B'] }] } };
+    for (let run = 0; run < 2; run += 1) {
+      expect(applyCheckedActionRow({ rowId: 'convert', actions, targets: [target] }).success).toBe(
+        true
+      );
+      expect(target.Tom.groups).toEqual([{ cards: ['B'] }]);
+    }
+    const rows = actions.map((action, index) => row(`convert-${index}`, action));
+    expect(verifyActionPatch(rows, targets(target))).toEqual({
+      verifiedRowIds: ['convert-0', 'convert-1', 'convert-2'],
+      failures: [],
+    });
+    expect(
+      verifyActionPatch([row('unanchored', actions.slice(1))], targets(target)).verifiedRowIds
+    ).toEqual([]);
+    const broken = structuredClone(actions);
+    broken[2]!.oldValue = [original];
+    expect(verifyActionPatch([row('broken', broken)], targets(target)).verifiedRowIds).toEqual([]);
+  });
+
+  it('does not reconstruct truncated array values from length alone', () => {
+    expect(
+      verifyActionPatch(
+        [
+          row('truncate', {
+            op: 'set',
+            path: 'Tom.parts.length',
+            oldValue: 2,
+            newValue: 1,
+          }),
+        ],
+        targets({ Tom: { parts: [{}] } })
+      ).verifiedRowIds
+    ).toEqual([]);
   });
 
   it('verifies an array deletion with stable identity', () => {

@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto';
 import type { Action } from '@/lib/edit/diffUtils';
 
 import { parseActionPath } from './actionPath';
+import { reconstructResetAction } from './resetActionProof';
 
 type CanonicalValue =
   | ['undefined' | 'null']
@@ -453,7 +454,8 @@ function isTemporaryPropertyDelete(actions: readonly Readonly<Action>[], index: 
 }
 
 export function verifyCompactionActionIdempotence(
-  rows: readonly Pick<CompactionSnapshotRow, 'rowId' | 'actions'>[]
+  rows: readonly (Pick<CompactionSnapshotRow, 'rowId' | 'actions'> &
+    Partial<Pick<CompactionSnapshotRow, 'entityType'>>)[]
 ): {
   proven: boolean;
   actionCount: number;
@@ -463,12 +465,67 @@ export function verifyCompactionActionIdempotence(
   const failures: CompactionIdempotenceFailure[] = [];
   const operationCounts: Record<string, number> = {};
   let actionCount = 0;
+  const ordered = rows.flatMap((row) => row.actions.map((action) => ({ action, row })));
+  const knownEntityScope = rows.every(
+    (row) => typeof row.entityType === 'string' && row.entityType.length > 0
+  );
+  let orderedIndex = 0;
 
   for (const row of rows) {
     row.actions.forEach((action, actionIndex) => {
+      const parsed = parseActionPath(action.path);
+      const nextRootWrite =
+        action.op === 'add' && parsed.success
+          ? ordered.slice(orderedIndex + 1).find((next) => {
+              const nextPath = parseActionPath(next.action.path);
+              return (
+                (next.row === row ||
+                  (typeof row.entityType === 'string' &&
+                    row.entityType.length > 0 &&
+                    next.row.entityType === row.entityType)) &&
+                nextPath.success &&
+                nextPath.value.rootKey === parsed.value.rootKey
+              );
+            })?.action
+          : undefined;
+      // An indexed add really inserts again. It is safe only when the next write
+      // to this root resets that exact array in this complete cutover sequence.
+      const resetIndexedAdd =
+        action.op === 'add' &&
+        action.newValue !== undefined &&
+        parsed.success &&
+        /^\d+$/.test(parsed.value.segments.at(-1)!) &&
+        nextRootWrite?.op === 'set' &&
+        (knownEntityScope || row.actions.includes(nextRootWrite)) &&
+        nextRootWrite.path.trim() === parsed.value.segments.slice(0, -1).join('.') &&
+        Array.isArray(nextRootWrite.newValue);
+      const resetDelete =
+        action.op === 'delete' &&
+        parsed.success &&
+        parsed.value.segments.length > 1 &&
+        parsed.value.segments.at(-1) !== 'length' &&
+        reconstructResetAction(
+          row.actions,
+          actionIndex,
+          /^\d+$/.test(parsed.value.segments.at(-1)!)
+            ? parsed.value.segments.slice(0, -1).join('.')
+            : parsed.value.path
+        ) !== null;
+      const propertyAdd =
+        action.op === 'add' &&
+        action.newValue !== undefined &&
+        parsed.success &&
+        !/^(?:\d+|length)$/.test(parsed.value.segments.at(-1)!);
+      orderedIndex += 1;
       actionCount += 1;
       operationCounts[action.op] = (operationCounts[action.op] ?? 0) + 1;
-      if (action.op !== 'set' && !isTemporaryPropertyDelete(row.actions, actionIndex)) {
+      if (
+        action.op !== 'set' &&
+        !isTemporaryPropertyDelete(row.actions, actionIndex) &&
+        !resetDelete &&
+        !resetIndexedAdd &&
+        !propertyAdd
+      ) {
         failures.push({ rowId: row.rowId, actionIndex, code: 'non_set_operation' });
       } else if (action.op === 'set' && action.newValue === undefined) {
         failures.push({ rowId: row.rowId, actionIndex, code: 'missing_set_value' });

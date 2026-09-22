@@ -6,6 +6,7 @@ import { getPositioningTagLevel } from '@/constants/positioningTagSequences';
 import { parseActionPath } from './actionPath';
 import { decodeStoredActionRow } from './actionRowDecoder';
 import { cloneGameDataValue } from './cloneGameDataValue';
+import { reconstructResetAction } from './resetActionProof';
 
 export type ActionPatchRow = {
   id: string;
@@ -478,13 +479,49 @@ function mismatchDetail(expected: unknown, actual: unknown): unknown {
 
 function reverseAction(
   target: Record<string, unknown>,
-  action: ProjectedAction
+  action: ProjectedAction,
+  actions: readonly ProjectedAction[],
+  actionIndex: number
 ): ReverseActionResult {
   const parsed = parseActionPath(action.path);
   if (!parsed.success) return { success: false, code: 'projection_mismatch' };
   const segments = parsed.value.segments;
   const resolved = readParent(target, segments);
   const current = readAtPath(target, segments);
+  if (resolved && Array.isArray(resolved.parent) && /^(?:\d+|length)$/.test(resolved.key)) {
+    const parentPath = segments.slice(0, -1).join('.');
+    const proof = reconstructResetAction(actions, actionIndex, parentPath);
+    if (proof && proof.before.exists && Array.isArray(proof.after.value)) {
+      const previous = actions[actionIndex - 1];
+      // Valtio records delete(index), then length(old length -> shortened length).
+      // Checked replay already splices at delete, so the length assignment is a no-op.
+      const capturedSpliceLength =
+        resolved.key === 'length' &&
+        Array.isArray(proof.before.value) &&
+        action.op === 'set' &&
+        previous?.op === 'delete' &&
+        previous.path.startsWith(`${parentPath}.`) &&
+        /^\d+$/.test(previous.path.slice(parentPath.length + 1)) &&
+        action.oldValue === proof.before.value.length + 1 &&
+        action.newValue === proof.before.value.length;
+      const oldMatches =
+        action.op === 'add' ||
+        (action.oldValue === undefined
+          ? !proof.beforeAction.exists
+          : isEqual(action.oldValue, proof.beforeAction.value)) ||
+        capturedSpliceLength;
+      if (!oldMatches || !isEqual(resolved.parent, proof.after.value)) {
+        return { success: false, code: 'projection_mismatch' };
+      }
+      return writeAtPath(target, segments.slice(0, -1), proof.before.value)
+        ? { success: true }
+        : { success: false, code: 'projection_mismatch' };
+    }
+    if (resolved.key === 'length' && action.oldValue !== action.newValue) {
+      // Restoring a length cannot recover truncated values or distinguish holes.
+      return { success: false, code: 'projection_mismatch' };
+    }
+  }
   if (
     action.op === 'set' &&
     segments.length === 2 &&
@@ -587,13 +624,20 @@ export function verifyActionPatch(
 
   const decodedRows = decoded.filter((item): item is DecodedActionPatchRow => item !== null);
   const subsumedRelationSnapshots = findSubsumedRelationSnapshots(decodedRows);
+  const actionsByEntity = new Map<string, ProjectedAction[]>();
+  for (const { row, actions } of decodedRows) {
+    const sequence = actionsByEntity.get(row.entity_type) ?? [];
+    sequence.push(...actions);
+    actionsByEntity.set(row.entity_type, sequence);
+  }
 
   for (const decodedRow of decodedRows.toReversed()) {
     const target = workingTargets[decodedRow.row.entity_type]!;
     for (let actionIndex = decodedRow.actions.length - 1; actionIndex >= 0; actionIndex -= 1) {
       const action = decodedRow.actions[actionIndex]!;
       if (subsumedRelationSnapshots.has(action)) continue;
-      const result = reverseAction(target, action);
+      const sequence = actionsByEntity.get(decodedRow.row.entity_type)!;
+      const result = reverseAction(target, action, sequence, sequence.indexOf(action));
       if (!result.success) {
         failures.push({
           rowId: decodedRow.row.id,
