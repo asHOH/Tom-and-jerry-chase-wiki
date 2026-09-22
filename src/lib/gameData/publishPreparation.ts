@@ -2,7 +2,7 @@ import 'server-only';
 
 import type { Action } from '@/lib/edit/diffUtils';
 
-import { areActionsOrderDependent, groupActionEntriesByDependency } from './actionDependencies';
+import { groupActionEntriesByDependency } from './actionDependencies';
 import {
   decodeActionRowEntry,
   type ActionDecodeError,
@@ -22,28 +22,12 @@ export type PublishPreparationErrorCode =
   | 'too_many_actions_per_row'
   | 'path_too_long'
   | 'message_too_long'
-  | 'dependent_rows'
   | ActionDecodeError['code'];
-
-export type PublishDependencyDiagnostic = {
-  rowIndexes: readonly number[];
-  rows: readonly {
-    rowIndex: number;
-    actions: readonly {
-      op: Action['op'];
-      path: string;
-    }[];
-    omittedActionCount: number;
-  }[];
-  omittedRowCount: number;
-};
 
 type PublishPreparationErrorDetails = {
   code: PublishPreparationErrorCode;
   entityType?: string;
   entryIndex?: number;
-  dependencyGroups?: readonly PublishDependencyDiagnostic[];
-  omittedDependencyGroupCount?: number;
 };
 
 export class PublishPreparationError extends Error {
@@ -59,77 +43,6 @@ export class PublishPreparationError extends Error {
   }
 }
 
-const MAX_DIAGNOSTIC_GROUPS = 4;
-const MAX_DIAGNOSTIC_ROWS_PER_GROUP = 8;
-const MAX_DIAGNOSTIC_ACTIONS_PER_ROW = 8;
-
-function buildDependencyDiagnostics(
-  rows: readonly PreparedPublishRow[],
-  groups: readonly number[][]
-): {
-  dependencyGroups: readonly PublishDependencyDiagnostic[];
-  omittedDependencyGroupCount: number;
-} {
-  const dependentGroups = groups.filter((group) => group.length > 1);
-  const dependencyGroups = dependentGroups.slice(0, MAX_DIAGNOSTIC_GROUPS).map((group) => {
-    const includedRowIndexes = group.slice(0, MAX_DIAGNOSTIC_ROWS_PER_GROUP);
-    return Object.freeze({
-      rowIndexes: Object.freeze([...includedRowIndexes]),
-      rows: Object.freeze(
-        includedRowIndexes.map((rowIndex) => {
-          const actions = rows[rowIndex]?.actions ?? [];
-          return Object.freeze({
-            rowIndex,
-            actions: Object.freeze(
-              actions.slice(0, MAX_DIAGNOSTIC_ACTIONS_PER_ROW).map((action) =>
-                Object.freeze({
-                  op: action.op,
-                  path: action.path,
-                })
-              )
-            ),
-            omittedActionCount: Math.max(0, actions.length - MAX_DIAGNOSTIC_ACTIONS_PER_ROW),
-          });
-        })
-      ),
-      omittedRowCount: Math.max(0, group.length - MAX_DIAGNOSTIC_ROWS_PER_GROUP),
-    });
-  });
-
-  return {
-    dependencyGroups: Object.freeze(dependencyGroups),
-    omittedDependencyGroupCount: Math.max(0, dependentGroups.length - MAX_DIAGNOSTIC_GROUPS),
-  };
-}
-
-function rowsAreOrderDependent(left: PreparedPublishRow, right: PreparedPublishRow): boolean {
-  return left.actions.some((leftAction) =>
-    right.actions.some((rightAction) => areActionsOrderDependent(leftAction, rightAction))
-  );
-}
-
-function dependencyGroupsCommute(
-  rows: readonly PreparedPublishRow[],
-  groups: readonly number[][]
-): boolean {
-  for (let leftGroupIndex = 0; leftGroupIndex < groups.length; leftGroupIndex += 1) {
-    const leftGroup = groups[leftGroupIndex]!;
-    for (
-      let rightGroupIndex = leftGroupIndex + 1;
-      rightGroupIndex < groups.length;
-      rightGroupIndex += 1
-    ) {
-      const rightGroup = groups[rightGroupIndex]!;
-      for (const leftRowIndex of leftGroup) {
-        for (const rightRowIndex of rightGroup) {
-          if (rowsAreOrderDependent(rows[leftRowIndex]!, rows[rightRowIndex]!)) return false;
-        }
-      }
-    }
-  }
-  return true;
-}
-
 function canonicalActions(row: PreparedPublishRow): readonly CanonicalAction[] {
   return Array.isArray(row.canonicalEntry)
     ? (row.canonicalEntry as readonly CanonicalAction[])
@@ -141,16 +54,6 @@ function materializeDependencyGroups(
   rows: readonly PreparedPublishRow[],
   groups: readonly number[][]
 ): readonly PreparedPublishRow[] {
-  // This pairwise check is stronger than checking only rows crossed when a later group member
-  // moves to the group's earliest position. It also proves that every separately persisted row
-  // commutes with every other persisted row.
-  if (!dependencyGroupsCommute(rows, groups)) {
-    throw new PublishPreparationError('dependent_rows', {
-      entityType,
-      ...buildDependencyDiagnostics(rows, groups),
-    });
-  }
-
   return Object.freeze(
     groups.map((group) => {
       const firstRowIndex = group[0]!;

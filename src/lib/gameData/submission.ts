@@ -203,7 +203,7 @@ export async function handleGameDataSubmission(
     untrusted = readActionItems(await readBoundedJsonBody(request), kind);
   } catch (error) {
     return error instanceof PublishPreparationError
-      ? publishPreparationErrorResponse(error, route)
+      ? publishPreparationErrorResponse(error)
       : NextResponse.json({ error: 'invalid_json' }, { status: 400 });
   }
 
@@ -275,7 +275,7 @@ export async function handleGameDataSubmission(
     return NextResponse.json({ result: results });
   } catch (error) {
     if (error instanceof PublishPreparationError) {
-      return publishPreparationErrorResponse(error, route);
+      return publishPreparationErrorResponse(error);
     }
     if (error instanceof TrustedGameDataMutationError) {
       if (error.code === 'forbidden') {

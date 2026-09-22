@@ -146,6 +146,7 @@ function entriesAreOrderDependent(
 
 /**
  * Groups top-level history-entry indexes into transitive dependency clusters.
+ * Actions in different groups have no dependency edges under the supplied predicate.
  * Every input index occurs exactly once, and both groups and their members
  * preserve the original history order.
  */

@@ -237,6 +237,31 @@ describe('accepted direct array-index assignment pairs', () => {
 });
 
 describe('groupActionEntriesByDependency', () => {
+  it('leaves no cross-group dependencies after a late atomic entry joins earlier groups', () => {
+    const entries: Action[][] = [
+      [set('Tom.profile.name', 'Tom', 'Thomas')],
+      [set('Spike.description', 'old', 'new')],
+      [set('Jerry.profile.name', 'Jerry', 'Gerald')],
+      [set('Tom.profile.title', 'Cat', 'Champion')],
+      [set('Jerry.profile.title', 'Mouse', 'Champion')],
+      [set('Tom.profile', {}, {}), set('Jerry.profile', {}, {})],
+      [remove('Tom.aliases.0', 'first')],
+      [set('Tom.aliases.1', 'second', 'updated')],
+    ];
+    const groups = groupActionEntriesByDependency(entries);
+
+    expect(groups).toEqual([[0, 2, 3, 4, 5], [1], [6, 7]]);
+    for (const [index, group] of groups.entries()) {
+      const actions = group.flatMap((rowIndex) => entries[rowIndex]!);
+      const otherActions = groups
+        .slice(index + 1)
+        .flatMap((otherGroup) => otherGroup.flatMap((rowIndex) => entries[rowIndex]!));
+      for (const action of actions) {
+        for (const other of otherActions) expectPairDependency(action, other, false);
+      }
+    }
+  });
+
   it('should keep independent entries in separate ordered groups', () => {
     const entries: ActionHistoryEntry[] = [
       set('Tom.profile.name', 'Tom', 'Thomas'),
