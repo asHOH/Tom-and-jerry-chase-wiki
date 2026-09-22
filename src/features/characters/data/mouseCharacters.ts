@@ -478,31 +478,83 @@ const mouseCharacterDefinitions = {
     ],
     knowledgeCardGroups: [
       {
-        cards: ['S-铁血', 'S-舍己', 'A-逃窜', 'C-不屈', 'C-救救我'],
-        description:
-          '强自保，后期高等级时速度很快，猫很难追上。逃窜在受伤后加速，不屈献祭队友换取移速。',
-      },
-      {
-        cards: ['S-铁血', 'B-幸运', 'C-不屈', 'C-脱身', [CardGroupType.Or, 'A-逃窜', 'C-救救我']],
-        description: '幸运体系卡组，首次挣扎下火箭后务必注意自保。',
-      },
-      {
-        cards: [
-          'S-舍己',
-          'S-铁血',
-          'C-救救我',
-          'B-飞跃',
-          [CardGroupType.Or, 'C-不屈', 'B-夹不住我'],
+        id: '回家',
+        groups: [
+          {
+            cards: ['S-舍己', 'S-铁血', 'S-回家', 'C-救救我'],
+            description: '阵容缺砸墙位时使用，回家提升墙缝期综合能力',
+          },
         ],
-        description: '有飞跃可以跳上更多点位。可将不屈换为别的知识卡。',
+        description: '阵容缺砸墙位时使用，回家提升墙缝期综合能力',
+        defaultFolded: false,
+        detailedDescription: '',
       },
       {
-        cards: ['S-铁血', 'S-舍己', 'C-救救我', 'C-不屈', 'B-夹不住我'],
-        description: '20知识量平替卡组，不屈、夹不住我可换为别的知识卡。',
+        id: '强自保',
+        groups: [
+          {
+            cards: [
+              'S-舍己',
+              'S-铁血',
+              [CardGroupType.Or, 'A-逃窜', 'B-应激反应', 'B-夹不住我'],
+              'C-不屈',
+              'C-救救我',
+            ],
+            description:
+              '经典的自卫流卡组，逃窜、不屈可大大增强其自保能力。知识量不足将逃窜换为应激反应或夹不住我。',
+          },
+          {
+            cards: [
+              'B-幸运',
+              'S-铁血',
+              [CardGroupType.Or, 'A-逃窜', 'B-应激反应', 'B-夹不住我', 'B-求生欲'],
+              'C-不屈',
+              [CardGroupType.Or, 'C-救救我', 'C-脱身'],
+            ],
+            description:
+              '以幸运为核心的自私流。应用场景如队友过于不靠谱，想刷个人胜利；队内已有稳救位；队友实力较强，不需要救援等',
+          },
+          {
+            cards: [
+              'S-舍己',
+              'S-铁血',
+              'C-救救我',
+              'B-飞跃',
+              [CardGroupType.Or, 'C-不屈', 'B-夹不住我'],
+            ],
+            description: '有飞跃可以跳上更多点位。可将不屈换为别的知识卡。',
+          },
+          {
+            cards: ['S-铁血', 'S-舍己', 'C-救救我', 'C-不屈', 'B-夹不住我'],
+            description: '20知识量平替卡组，不屈、夹不住我可换为别的知识卡。',
+          },
+        ],
+        description: '',
+        defaultFolded: false,
+        detailedDescription: '',
       },
       {
-        cards: ['S-无畏', 'S-铁血', 'C-救救我', 'A-逃窜'],
-        description: '无畏流派卡组，打米特、图多盖洛等猫咪专用，一般情况不建议携带。',
+        id: '无畏',
+        groups: [
+          {
+            cards: [
+              'S-无畏',
+              'S-铁血',
+              [
+                CardGroupType.Or,
+                'A-逃窜',
+                'B-逃之夭夭',
+                [CardGroupType.And, [CardGroupType.Or, 'B-应激反应', 'B-夹不住我'], 'C-不屈'],
+              ],
+              'C-救救我',
+            ],
+            description: '必带无畏-铁血-救救我，剩下知识量可依据自身喜好携带自保卡。',
+          },
+        ],
+        description: '',
+        defaultFolded: true,
+        detailedDescription:
+          '打防守猫或者新手罗宾专用。由于无畏能给自己提供无敌，使用此套卡组推荐先升2级降落伞，救人时先开伞，利用2级伞给的救援加速救人。',
       },
     ],
     recommendedStorePlans: [
@@ -1595,7 +1647,7 @@ const mouseCharacterDefinitions = {
               '可免疫{小鞭炮}、{鞭炮束}、{炸药堆}、{火药桶}、{猫咪泡泡}、{墙缝泡泡}、Lv.2{感同身受}产生的{爆炸眩晕(状态)}和伤害；吃{食物(组合)}速度在基础值上提升45%。',
           },
         ],
-        description: '逐渐增加吃{食物(组合)}速度，并在一定条件下获得其他增益效果',
+        description: '吃{食物(组合)}速度逐渐提高，并在一定条件下获得其它增益效果',
         detailedDescription: '逐渐增加吃{食物(组合)}速度，并在一定条件下获得其他增益效果',
       },
     ],
@@ -5710,6 +5762,10 @@ const mouseCharacterDefinitions = {
       {
         cards: ['S-无畏', 'S-铁血', 'C-救救我', 'B-绝地反击', 'C-不屈'],
         description: '辅助救人',
+      },
+      {
+        cards: ['S-舍己', 'S-铁血', 'A-逃窜', 'B-绝地反击', 'C-救救我'],
+        description: '逃窜弥补前期自保，克制大部分击晕猫，而绝反提升星星伤害',
       },
     ],
     recommendedStorePlans: [

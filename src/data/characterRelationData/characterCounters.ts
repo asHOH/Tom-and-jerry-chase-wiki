@@ -2,6 +2,192 @@ import type { CharacterRelationTrait } from '@/data/types';
 
 export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] = [
   {
+    description: '魔术师的“拉扯”特性克制汤姆。',
+    relation: {
+      kind: 'counters',
+      subject: { name: '魔术师', type: 'character' },
+      target: { name: '汤姆', type: 'character' },
+      tags: [{ counters: '拉扯', counteredBy: '怕拉扯' }],
+      isMinor: false,
+    },
+  },
+  {
+    description: '魔术师的“拉扯”特性克制苏蕊。',
+    relation: {
+      kind: 'counters',
+      subject: { name: '魔术师', type: 'character' },
+      target: { name: '苏蕊', type: 'character' },
+      tags: [{ counters: '拉扯', counteredBy: '怕拉扯' }],
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '牛仔杰瑞可以通过开琴接吻使得魅惑之吻无效；点了一被动的牛仔杰瑞无法通过硬直解吻，且二武的图多盖洛等级高后可以通过指甲油对牛仔杰瑞的控制免疫。',
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '图多盖洛', type: 'character' },
+      target: { name: '牛仔杰瑞', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '朝圣者泰菲的爆头子弹可以对盔甲造成巨额伤害，并且子弹CD短，也不好追击变身后的朝圣者泰菲。',
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '侍卫汤姆', type: 'character' },
+      target: { name: '朝圣者泰菲', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '柠檬的柠檬旋风可以对盔甲人持续输出，有克制盔甲人的能力',
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '侍卫汤姆', type: 'character' },
+      target: { name: '表演者•杰瑞', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description:
+      '音乐家杰瑞音波伤害高范围较广且冷却不长，可以快速清除盔甲人，且协奏狂想提供的回血也可以有效对抗盔甲人持续伤害。',
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '侍卫汤姆', type: 'character' },
+      target: { name: '音乐家杰瑞', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '鲍姆的羊角锤有不错的攻击频率，三级之后也有不低的伤害，能够清理站桩盔甲人。',
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '侍卫汤姆', type: 'character' },
+      target: { name: '鲍姆', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '魔术师可以指挥兔子大表哥来处理奶酪洞口和火箭上的汽水罐。',
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '图茨', type: 'character' },
+      target: { name: '魔术师', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '魔术师可以指挥兔子大表哥来处理奶酪洞口和火箭下的饭盒陷阱。',
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '米特', type: 'character' },
+      target: { name: '魔术师', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '库博在天堂的蓝图内受到攻击也会变成粉笔猫并掉落手里的老鼠。',
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '库博', type: 'character' },
+      target: { name: '莱恩', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '魔术师的兔子大表哥可以挡住天使汤姆的道具，红牌也可以封锁技能道具，并且天使汤姆不能吸附正在被兔子大表哥举起的火箭。',
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '天使汤姆', type: 'character' },
+      target: { name: '魔术师', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '大兔子可以挡飓风，使追风用技能扔老鼠上火箭有一定难度，且魔术师的三种卡牌无视追风霸体',
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '追风汤姆', type: 'character' },
+      target: { name: '魔术师', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description:
+      '朝圣的吞食和变大提供了强自保和续航，追风不易击倒，且追风血量略低，恢复差，飞行时没有爆头免疫，更易被朝圣打枪高伤打死断掉节奏，使追风飞行免控的优点失效',
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '追风汤姆', type: 'character' },
+      target: { name: '朝圣者泰菲', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '图多盖洛的香水和吻痕导致杰瑞没法用技能，指甲油会免疫且杰瑞无法近身，对鸟哨稍有影响，对大铁锤的影响尤为明显。',
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '杰瑞', type: 'character' },
+      target: { name: '图多盖洛', type: 'character' },
+      tags: [{ counters: '免疫', counteredBy: '怕免疫' }],
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '骄傲的学霸二级被动带来的减控使得其可以在大锤释放的后摇攻击杰瑞，但对鸟哨影响较小。',
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '杰瑞', type: 'character' },
+      target: { name: '凯特', type: 'character' },
+      tags: [{ counters: '减控', counteredBy: '怕减控' }],
+      isMinor: true,
+    },
+  },
+  {
+    description: '莱特宁三级主动克制杰瑞铁锤的前后摇，大铁锤的带来的作用高低取决于杰瑞的操作如何。',
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '杰瑞', type: 'character' },
+      target: { name: '莱特宁', type: 'character' },
+      isMinor: true,
+    },
+  },
+  {
+    description: '剑杰的剑舞与极高的伤害能迅速消灭侍卫的二武盔甲',
+    relation: {
+      kind: 'counters',
+      subject: { name: '剑客杰瑞', type: 'character' },
+      target: { name: '侍卫汤姆', type: 'character' },
+      tags: [{ counters: '（带控）高伤', counteredBy: '怕高伤' }],
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '图多盖洛香水能够快速破盾，同时香水的增益效果也会导致音乐家杰瑞无法短时间击倒图多盖洛，3级香水还能禁用技能，满级指甲油也能够防音乐家的共鸣干扰。',
+    relation: {
+      kind: 'counteredBy',
+      subject: { name: '音乐家杰瑞', type: 'character' },
+      target: { name: '图多盖洛', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '皇家盔甲可以快速减少{头盔}的持续时间，阻止剑客泰菲利用其救人或强推。但剑菲的二武长枪可以对一列盔甲人造成伤害，且主动、二武攻击频率高，对盔甲人有一定伤害作用。',
+    relation: {
+      kind: 'counterEachOther',
+      subject: { name: '侍卫汤姆', type: 'character' },
+      target: { name: '剑客泰菲', type: 'character' },
+      isMinor: false,
+    },
+  },
+  {
     description: '米特的胡椒粉可以提前触发鲍姆的爆炸，二被可以让鲍姆无法回血。',
     relation: {
       kind: 'counters',
@@ -12,13 +198,13 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '托普斯的网可以无视天使泰菲的技能。可能被托普斯利用{击晕}、{我生气了！}和{1级被动}进行连续控制。',
+      '托普斯的网可以无视天使泰菲的技能，虽然天使泰菲的长时间免控使击晕接捕虫网的连招无法衔接，但托普斯在守火箭时可通过捕虫网直接逮住天使泰菲。',
     relation: {
       kind: 'counteredBy',
       subject: { name: '天使泰菲', type: 'character' },
       target: { name: '托普斯', type: 'character' },
       tags: [{ counters: '奇兵', counteredBy: '怕奇兵' }],
-      isMinor: false,
+      isMinor: true,
     },
   },
   {
@@ -123,15 +309,16 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
     },
   },
   {
-    description: '天使泰菲具备较高的减伤效果，在走位优秀的情况下不易被击倒。',
+    description:
+      '侦探汤姆的{侦探放大镜}可无视{友情庇护}的{霸体}施加被看穿状态，禁用技能，阻止其利用{天使翅膀}恢复{怜悯值}，施加被看穿后所造成的伤害为[固定伤害](基础伤害50；不受包括攻击增伤/减伤、受击增伤/减伤等效果在内的大多数效果的影响)，无视{友情庇护}为队友或自己带来的减伤，当{侦探放大镜}为Lv.2时，除非天使泰菲拥有足够怜悯值且{友情庇护}为Lv.3或{怜悯之心}Lv.3且拥有额外血条，否则可被其一击击倒',
     relation: {
-      kind: 'counteredBy',
+      kind: 'counters',
       subject: { name: '侦探汤姆', type: 'character' },
       target: { name: '天使泰菲', type: 'character' },
-      isMinor: true,
+      isMinor: false,
       tags: [
-        { counters: '减伤强', counteredBy: '伤害低' },
-        { counters: '自保', counteredBy: '怕自保' },
+        { counters: '无视', counteredBy: '怕无视' },
+        { counters: '奇兵', counteredBy: '怕奇兵' },
       ],
     },
   },
@@ -390,7 +577,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '苏蕊跳舞免控可以有效克制音乐家杰瑞的拆火箭，但音乐家杰瑞主动技能可以为自身加速，武器技能可以无前摇获得护盾，让苏蕊难以击倒音乐家杰瑞，且音乐家杰瑞伤害较高，而苏蕊血量较低，易被击倒。',
+      '苏蕊跳舞免控带来的强大的上火箭能力可以有效克制音乐家杰瑞守火箭，但音乐家杰瑞主动技能可以为自身加速，武器技能可以无前摇获得护盾，让苏蕊难以击倒音乐家杰瑞，且音乐家杰瑞伤害较高，而苏蕊血量较低，易被击倒。',
     relation: {
       kind: 'counterEachOther',
       subject: { name: '苏蕊', type: 'character' },
@@ -529,7 +716,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '泰菲可以用{圆滚滚}规避或解除如玉的花枪反击或闪刀的伤害和眩晕，也可以卡时间用{火箭弹}打断如玉的花枪反击或闪刀；圆滚滚不易被未到Lv.3的{掷花枪}卡真空期。如玉的伤害高，攻击手段多，容易压制血量低的泰菲，不利于泰菲利用Lv.2{茁壮成长}强行推奶酪；Lv.3掷花枪容易卡圆滚滚真空期；{地雷}可以给如玉创造闪现反击机会',
+      '泰菲可以用{圆滚滚}规避或解除如玉的花枪反击或闪刀的伤害和眩晕；圆滚滚不易被未到Lv.3的{掷花枪}卡真空期；火箭炮的爆炸眩晕在第二段伤害，不会触发如玉Lv.2{戏剧转折}的自动反击。如玉的伤害高，攻击手段多，容易压制Hp低的泰菲，也不利于泰菲利用Lv.2{茁壮成长}强行推奶酪；Lv.3掷花枪容易卡圆滚滚真空期；{感应雷}的延时爆炸可以给如玉创造闪现反击机会。',
     relation: {
       kind: 'counterEachOther',
       subject: { name: '如玉', type: 'character' },
@@ -667,7 +854,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '泰菲可以用{圆滚滚}规避或解除追风{铁砧}、{飓风}、{俯冲}的伤害和控制；追风的伤害较低，难以一套秒杀泰菲。追风飞行时机动性很强，并且是{霸体}状态，使其很难被预警太长的{地雷}和{火箭弹}命中；追风攻击手段较多，技能CD较短，容易卡圆滚滚真空期；追风可以利用{追风状态}的飞行碰撞箱或{俯冲}强行打断推奶酪状态下的泰菲，使其无法利用Lv.2{茁壮成长}强行推奶酪',
+      '泰菲可以用{圆滚滚}规避或解除追风汤姆{铁砧}、{飓风}、{俯冲}的伤害和控制；追风汤姆的伤害较低，难以一套秒杀泰菲。追风汤姆飞行时是{霸体}状态，能有效规避{火箭炮}和{感应雷}的{爆炸眩晕(状态)}；追风攻击手段较多，技能CD较短，容易卡圆滚滚真空期；追风可以利用{追风状态}的飞行碰撞箱或{俯冲}强行打断推奶酪状态下的泰菲，使其无法利用Lv.2{茁壮成长}强行推奶酪',
     relation: {
       kind: 'counterEachOther',
       subject: { name: '泰菲', type: 'character' },
@@ -677,7 +864,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '泰菲可以用{圆滚滚}解控避免被托普斯的{捕虫网}网住，泰菲在被Lv.1捕虫网扔出落地时也可以用圆滚滚解控避免被再次打死；Lv.2圆滚滚可以避免被{泡泡}罩住；圆滚滚不易被未到Lv.3的捕虫网卡真空期；{地雷}的伤害控制是延时的，还可以强行弹飞托普斯，某些时候被网住可以自救。捕虫网能取消释放，托普斯可以假装放网骗出泰菲的圆滚滚；圆滚滚无法解除泡泡的控制效果；Lv.3{双重猫格}可以有效规避{火箭弹}和地雷的伤害和控制；捕虫网可以网住霸体老鼠，能有效克制泰菲利用Lv.2{茁壮成长}强行推奶酪',
+      '泰菲可以用{圆滚滚}解控避免被托普斯的{捕虫网}网住，泰菲在被Lv.1捕虫网扔出落地时也可以用圆滚滚解控避免被再次打死；Lv.2圆滚滚可以避免被{泡泡}罩住；圆滚滚不易被未到Lv.3的捕虫网卡真空期；{感应雷}的爆炸是延时的，某些时候被网住可以自救。捕虫网能取消释放，托普斯可以假装放网骗出泰菲的圆滚滚；圆滚滚无法解除泡泡的控制效果；Lv.3{双重猫格}可以有效规避{火箭炮}和地雷的伤害和控制；捕虫网可以网住霸体老鼠，能有效克制泰菲利用Lv.2{茁壮成长}强行推奶酪',
     relation: {
       kind: 'counterEachOther',
       subject: { name: '泰菲', type: 'character' },
@@ -687,7 +874,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '泰菲可以用{圆滚滚}解控配合{应急治疗}或{冰冻保鲜}，避免米特利用{胡椒粉}刷尸；米特的攻击手段少，很难卡圆滚滚真空期将泰菲击倒。米特的{野性迸发}积累到一定层数时爪刀伤害高，容易压制血量低的泰菲，不利于泰菲利用Lv.2{茁壮成长}强行推奶酪；米特二级被动可以短时间内取消泰菲Lv.2茁壮成长的回血buff，生效期间泰菲无法利用圆滚滚解控加应急治疗避免刷尸，也不利于泰菲强行推奶酪；泰菲的{火箭弹}和Lv.2{地雷}可以击落米特的{胡椒粉罐头}，会协助米特刷尸',
+      '泰菲可以用{圆滚滚}解控配合{应急治疗}或{冰冻保鲜}，避免米特利用{胡椒粉}刷尸；米特的攻击手段少，很难卡圆滚滚真空期将泰菲击倒。米特的{野性迸发}积累到一定层数时爪刀伤害高，容易压制Hp低的泰菲；米特的Lv.2野性迸发在爪刀命中时可以短时间内取消泰菲Lv.2茁壮成长的回血buff，不利于泰菲强行推奶酪；泰菲的{火箭炮}和Lv.2{感应雷}可以击落米特的{胡椒粉罐头}，会协助米特刷尸。',
     relation: {
       kind: 'counterEachOther',
       subject: { name: '泰菲', type: 'character' },
@@ -697,7 +884,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '泰菲可以利用Lv.2{圆滚滚}避免被天汤开启{自由翱翔}刷尸拉火箭；圆滚滚不易被天汤卡真空期；泰菲可以利用{火箭弹}的溅射爆炸避免被飞行状态下的天汤近身攻击。天汤用自由翱翔飞行时很难被预警太长的{地雷}命中；天汤的道具伤害很高，容易压制血量低的泰菲；天汤的二级{天使强化}提供的{弱霸体}能够免疫火箭弹和地雷的控制；天汤用自由翱翔吸火箭能够避免被泰菲的地雷威慑',
+      '泰菲可以利用Lv.2{圆滚滚}避免被天汤开启{自由翱翔}刷尸拉火箭；圆滚滚不易被天汤卡真空期；泰菲可以利用{火箭炮}的溅射爆炸避免被飞行状态下的天汤近身攻击。天汤用自由翱翔飞行时很难被预警太长的{感应雷}命中；天汤的道具伤害很高，容易压制Hp低的泰菲；天汤的Lv.2{天使强化}提供的{霸体}能够免疫火箭弹和地雷的控制；天汤用自由翱翔拉火箭能够避免被泰菲的地雷威慑。',
     relation: {
       kind: 'counterEachOther',
       subject: { name: '泰菲', type: 'character' },
@@ -707,7 +894,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '泰菲可以利用{圆滚滚}规避或解除{平底锅}和{手型枪}的伤害和控制；圆滚滚不易被汤姆卡真空期；{地雷}可以强行弹飞开启{发怒冲刺}的汤姆，造成一定干扰。汤姆可以利用发怒冲刺有效规避或解除{火箭弹}和地雷的伤害和控制；汤姆三级{捕鼠专家}可以禁用泰菲的圆滚滚，使其无法利用圆滚滚解控，后期很克制泰菲',
+      '泰菲可以利用{圆滚滚}规避或解除{平底锅}和{手型枪}的伤害和控制；圆滚滚不易被汤姆卡真空期；汤姆可以利用发怒冲刺有效规避或解除{火箭炮}和{感应雷}的伤害和控制；汤姆的Lv.3{捕鼠专家}可以禁用泰菲的圆滚滚，使其无法利用圆滚滚解控，后期很克制泰菲',
     relation: {
       kind: 'counterEachOther',
       subject: { name: '泰菲', type: 'character' },
@@ -807,7 +994,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
     },
   },
   {
-    description: '霸体免疫鲍姆爆炸控制。',
+    description: '三级甲油带来的霸体免疫鲍姆爆炸控制，同时魅惑之吻也会限制鲍姆使用主动技能。',
     relation: {
       kind: 'counters',
       subject: { name: '图多盖洛', type: 'character' },
@@ -1151,10 +1338,10 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
     description:
       '侦探杰瑞的隐身克制莱特宁的闪现，不过隐身过长的前摇与全图可见的音效也容易被闪现抓住机会。',
     relation: {
-      kind: 'counters',
+      kind: 'counterEachOther',
       subject: { name: '侦探杰瑞', type: 'character' },
       target: { name: '莱特宁', type: 'character' },
-      isMinor: true,
+      isMinor: false,
     },
   },
   {
@@ -1168,7 +1355,8 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
     },
   },
   {
-    description: '侦探泰菲无前摇的隐身使库博难以捕捉。\n且推速快加快游戏节奏',
+    description:
+      '侦探泰菲无前摇的隐身使库博难以捕捉。\n且推速快加快游戏节奏。此外侦菲一被可以配合主动技能使库博隐身失效，给队友提供视野。',
     relation: {
       kind: 'counters',
       subject: { name: '侦探泰菲', type: 'character' },
@@ -1354,7 +1542,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
     },
   },
   {
-    description: '杰瑞的主动技能能够解除附近老鼠的受伤状态，且牛仔汤姆怕控制，易被鸟哨干扰防守。',
+    description: '杰瑞的三级主动能够解除附近老鼠的受伤状态，且牛仔汤姆怕控制，易被鸟哨干扰防守。',
     relation: {
       kind: 'counters',
       subject: { name: '杰瑞', type: 'character' },
@@ -1779,7 +1967,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '库博的被动和主动技能提供额外的攻击增伤，能击晕接道具秒天菲，或利用蓄势90*2的伤害打死三级翅膀的天菲。',
+      '库博的被动和主动技能提供额外的攻击增伤，能击晕接道具秒天菲，或利用蓄势83×2的伤害打死三级翅膀的天菲。',
     relation: {
       kind: 'counters',
       subject: { name: '库博', type: 'character' },
@@ -2327,16 +2515,12 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '杰瑞自身具备的高推速能够缩短奶酪期，同时斯飞需要注意杰瑞鸟哨下落的鞭炮，并且杰瑞主动技能给予的部分回血与延长火箭燃烧CD能够延长斯飞的节奏',
+      '杰瑞自身具备的高推速能够缩短奶酪期，同时斯飞需要注意杰瑞鸟哨下落的鞭炮，并且杰瑞主动技能给予的部分回血与延长火箭燃烧CD能够延长斯飞的节奏；而杰瑞使用大铁锤近身攻击斯飞时会被斯飞电击而无效，在当局很难发挥出作用。',
     relation: {
-      kind: 'counteredBy',
+      kind: 'counterEachOther',
       subject: { name: '斯飞', type: 'character' },
       target: { name: '杰瑞', type: 'character' },
-      tags: [
-        { counters: '干扰', counteredBy: '怕干扰' },
-        { counters: '辅助', counteredBy: '怕辅助' },
-      ],
-      isMinor: true,
+      isMinor: false,
     },
   },
   {
@@ -2443,7 +2627,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
     },
   },
   {
-    description: '鲍姆本身具备较强干扰能力，且剑客汤姆没有霸体上火箭困难。',
+    description: '鲍姆本身具备较强干扰能力，且剑客汤姆没有霸体上火箭困难。爆炸还能断掉连斩。',
     relation: {
       kind: 'counters',
       subject: { name: '鲍姆', type: 'character' },
@@ -2816,10 +3000,10 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
     description:
       '罗宾汉杰瑞的解控和高机动性让牛汤难以将其抓住，特别是携带鞭子的牛汤。不过，罗宾汉也没有破局能力，打以防守为主的弹弓牛汤比较吃力。',
     relation: {
-      kind: 'counters',
+      kind: 'counterEachOther',
       subject: { name: '罗宾汉杰瑞', type: 'character' },
       target: { name: '牛仔汤姆', type: 'character' },
-      isMinor: true,
+      isMinor: false,
     },
   },
   {
@@ -2928,7 +3112,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
     description:
       '米特缺乏主动霸体能力，并且机动性较差，可被罗菲连续控制或拉扯。罗菲能用控制效果击落米特手中的胡椒瓶，还能为全队提供恢复，克制胡椒粉的持续伤害。但米特爪刀伤害高，被动还有禁疗效果，一定程度上也能反制罗菲。',
     relation: {
-      kind: 'counters',
+      kind: 'counterEachOther',
       subject: { name: '罗宾汉泰菲', type: 'character' },
       target: { name: '米特', type: 'character' },
       isMinor: false,
@@ -2947,7 +3131,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '侍卫汤姆霸体减控能力间隔较长，所需等级较高，前期很容易被罗菲连续控制,且火炮的远程消耗可以被藤蔓的恢复化解。不过，侍卫汤姆移速快，Lv.2被动伤害高，超大的视野范围也能防范罗菲的偷袭，可以尝试抓住罗菲的破绽。',
+      '罗菲的藤蔓可以有效利用地形克制盔甲人，侍卫汤姆霸体减控能力间隔较长，所需等级较高，前期很容易被罗菲连续控制,且火炮的远程消耗可以被藤蔓的恢复化解。不过，侍卫汤姆移速快，Lv.2被动伤害高，超大的视野范围也能防范罗菲的偷袭，可以尝试抓住罗菲的破绽。',
     relation: {
       kind: 'counters',
       subject: { name: '罗宾汉泰菲', type: 'character' },
@@ -3081,7 +3265,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '兔子们的血量较高，能逼出侍卫汤姆的蓄势一击或蓄力重击。魔术师还能利用红牌封禁侍卫的技能，令其无法开炮。',
+      '魔术师可以指挥兔子大表哥阻挡飞来的炮弹，并且能利用红牌来封锁侍卫汤姆的技能，导致无法开炮。',
     relation: {
       kind: 'counters',
       subject: { name: '魔术师', type: 'character' },
@@ -3426,12 +3610,12 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
     },
   },
   {
-    description: '侍卫汤姆视野范围大，杰瑞自保能力差，容易成为突破口。',
+    description:
+      '侍卫汤姆视野范围大，杰瑞自保能力差，容易成为突破口。而其第二武器的皇家盔甲可以被用来叠铁锤荣耀的层数。',
     relation: {
-      kind: 'counters',
+      kind: 'counterEachOther',
       subject: { name: '侍卫汤姆', type: 'character' },
       target: { name: '杰瑞', type: 'character' },
-      tags: [{ counters: '破冰', counteredBy: '怕破冰' }],
       isMinor: false,
     },
   },
@@ -3510,7 +3694,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       subject: { name: '苏蕊', type: 'character' },
       target: { name: '杰瑞', type: 'character' },
       tags: [{ counters: '破冰', counteredBy: '怕破冰' }],
-      isMinor: false,
+      isMinor: true,
     },
   },
   {
@@ -3553,7 +3737,8 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
     },
   },
   {
-    description: '杰瑞自保能力差，汤姆无敌挡鸟哨轰炸。',
+    description:
+      '杰瑞自保能力差，汤姆无敌挡鸟哨轰炸，也可以解大铁锤的控制，让杰瑞在铁锤后摇时被攻击。',
     relation: {
       kind: 'counters',
       subject: { name: '汤姆', type: 'character' },
@@ -3685,7 +3870,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
     },
   },
   {
-    description: '杰瑞自保能力较差，托普斯三级分身眩晕转移也让鸟哨的干扰能力大打折扣。',
+    description: '杰瑞自保能力较差，托普斯三级分身眩晕转移也让鸟哨和大铁锤的干扰能力大打折扣。',
     relation: {
       kind: 'counters',
       subject: { name: '托普斯', type: 'character' },
@@ -3893,7 +4078,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '技能免疫控制，还能反伤削减追汤飞行时间。三级翅膀还可以在庇护结束时无缝衔接，帮助逃脱。',
+      '两个技能联动可以使天菲在一段时间内拥有霸体减伤和持续回血，自保很强，且使追风的多控技能失效，成型也快',
     relation: {
       kind: 'counteredBy',
       subject: { name: '追风汤姆', type: 'character' },

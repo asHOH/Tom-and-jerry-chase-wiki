@@ -434,7 +434,7 @@ export const characterRelationMapTraits: CharacterRelationTrait[] = [
     },
   },
   {
-    description: '罗宾汉可利用技能翻越井盖和部分楼层。古堡23同理',
+    description: '罗宾汉可利用技能翻越井盖和部分楼层。古堡23同理；古堡3还能在两个古堡间飞跃。',
     relation: {
       kind: 'advantageMaps',
       subject: { name: '罗宾汉杰瑞', type: 'character' },
@@ -476,6 +476,16 @@ export const characterRelationMapTraits: CharacterRelationTrait[] = [
       kind: 'advantageMaps',
       subject: { name: '罗宾汉杰瑞', type: 'character' },
       target: { name: '游乐场', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description:
+      '点位：二段跳+伞从休息厅柜台顶部直达走廊洞口。除此之外，罗宾自保强，采花比较方便。',
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '罗宾汉杰瑞', type: 'character' },
+      target: { name: '御门酒店', type: 'map' },
       isMinor: false,
     },
   },
