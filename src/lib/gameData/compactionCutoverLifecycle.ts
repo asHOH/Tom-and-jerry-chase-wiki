@@ -35,6 +35,7 @@ type RunCompactionCutoverSyncOptions = {
   prepared: CompactionCutoverInput;
   target: CompactionCutoverTarget;
   capturePreCutoverRows: () => Promise<PreCutoverRetainedRowsBinding>;
+  verifyDependencies: () => Promise<string[]>;
   executeCutover: () => Promise<CompactionCutoverTransition>;
   persistManifest: (manifest: MutableCompactionCutoverManifest) => Promise<void>;
   now?: () => string;
@@ -45,6 +46,7 @@ export async function runCompactionCutoverSync({
   prepared,
   target,
   capturePreCutoverRows,
+  verifyDependencies,
   executeCutover,
   persistManifest,
   now = () => new Date().toISOString(),
@@ -52,11 +54,13 @@ export async function runCompactionCutoverSync({
   retainedRows: PreCutoverRetainedRowsBinding;
   cutover: CompactionCutoverTransition;
 }> {
+  await verifyDependencies();
   const retainedRows = await capturePreCutoverRows();
   manifest.result = { ...manifest.result, preCutoverRetainedRows: retainedRows };
   await persistManifest(manifest);
 
   const cutover = await executeCutover();
+  const verifiedDependencyRowIds = await verifyDependencies();
   manifest.result = {
     ...manifest.result,
     remoteCutover: {
@@ -65,6 +69,7 @@ export async function runCompactionCutoverSync({
       target,
       replayEpochBefore: prepared.replayEpoch,
       ...cutover,
+      verifiedDependencyRowIds,
     },
   };
   manifest.retrospectiveObservation = {
@@ -105,6 +110,7 @@ type PostCutoverVerificationEvidence = {
   };
   rowEvidence: {
     proven: boolean;
+    verifiedDependencyRowIds: string[];
     rowContentDigests: Record<string, string>;
   };
   retainedRows: unknown;
@@ -143,6 +149,11 @@ export function recordCompactionPostCutoverVerification(
         rowContentDigests: evidence.rowEvidence.rowContentDigests,
       },
       retainedRows: evidence.retainedRows,
+      verificationDependencies: {
+        verifiedRowIds: evidence.rowEvidence.verifiedDependencyRowIds,
+        status: 'approved',
+        isPublic: true,
+      },
       currentApprovedSnapshot: {
         replayEpoch: evidence.replayEpoch,
         actionRevision: evidence.actionRevision,

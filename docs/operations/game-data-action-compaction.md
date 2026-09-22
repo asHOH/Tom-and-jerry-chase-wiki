@@ -15,9 +15,9 @@
 1. **维护者一次授权本批次**：说明截止日期、目标站点和允许的动作，包括是否允许推送代码、把已验证的行改为 `synced`，以及由谁部署 VPS。已授权的动作不在每个阶段重复询问；范围、目标改变或出现真实冲突时再确认。
 2. **Codex 准备代码**：冻结精确行清单，处理修改、运行验证、提交代码，并在已获授权时推送到指定仓库。只报告需要决定的内容冲突。
 3. **维护者第一次部署**：部署补丁代码，此时数据库行仍为 `approved/public`；完成后告诉 Codex。
-4. **Codex 归档数据库行**：直接运行 `sync`。它自带部署检查、完整数据比对、证据保存和原子状态切换，之后精确复查。已有本批次数据库授权就不再询问。
+4. **Codex 归档数据库行**：直接运行 `sync`。它自带部署检查、完整数据比对、证据保存、原子状态切换和两类行的精确复查。已有本批次数据库授权就不再询问。
 5. **维护者强制重新构建并部署**：数据库快照已变化，即使提交没有变化也必须重建；使用下方命令，不能只重载 PM2。
-6. **Codex 最终检查**：运行只读 `post-check`；通过后本批次完成。
+6. **Codex 最终检查**：运行只读 `post-check`；它自动核对部署版本、数据快照、归档行和依赖行，通过后本批次完成，无需再手工查询同一批行或 `/api/version`。
 
 只有想先查看检查结果、尚未授权数据库修改，或需要排查问题时，才单独运行 `check`。正常已授权批次不必先手工 `check` 再 `sync`，因为 `sync` 本身会重新检查。
 
@@ -70,18 +70,7 @@ Supabase 的 `game_data_actions` 保存网页中审核通过的动态修改。�
 ## 工具命令（由 Codex 或操作者执行）
 
 1. 在 cutover 行仍为 `approved/public` 时部署已写入补丁的基线。
-2. 可选：对第一次部署运行只读检查。完整授权后的正常流程可直接进入下一步：
-
-   ```bash
-   npm run cutover:game-data-compaction -- \
-     --mode=check \
-     --manifest=.tmp/<manifest>.json \
-     --patched-ref=<patched-baseline-commit> \
-     --production-origin=https://www.tjwiki.com \
-     --expected-supabase-host=<project-ref>.supabase.co
-   ```
-
-3. 在本批次数据库归档已获授权时执行一次原子切换。`sync` 会先核对目标并运行全部检查，失败时不会修改状态；无需再次索取相同授权：
+2. 在本批次数据库归档已获授权时执行 `sync`。它会先核对目标并运行全部预检，预检失败时不会修改状态；无需再次索取相同授权：
 
    ```bash
    npm run cutover:game-data-compaction -- \
@@ -98,9 +87,10 @@ Supabase 的 `game_data_actions` 保存网页中审核通过的动态修改。�
    写入被忽略的 `.tmp/` 文件，并把文件路径、摘要、目标、epoch/revision 和行数绑定到 manifest。
    若证据无法持久写入、重新读取不一致或 snapshot 已变化，命令必须在 RPC 前停止。新批次不要手工构造 retained 文件。
 
-4. 精确复查：所有 cutover 行必须为 `synced/private`，所有 verification-only 行必须保持原状态。响应不确定时只能依靠精确复查判断结果，不得盲目重试。
-5. 按上方命令强制重新构建并部署，使构建产物使用切换后的当前 approved snapshot。
-6. 部署后运行只读 `post-check`。正常流程会自动使用 manifest 中绑定的 retained 证据，不需要传入路径：
+   `sync` 自动复查所有 cutover 行已为 `synced/private`，所有 verification-only 行仍为 `approved/public`，并把已验证的依赖行 ID 写入切换记录。RPC 响应不确定时由精确复查判断结果，不会自动重试。**RPC 调用后的复查失败不代表数据库未变更**；此时保留证据，按只读恢复流程核实，不得再次运行 `sync`。
+
+3. 按上方 `--force-build` 命令重新构建并部署，使构建产物使用切换后的当前 approved snapshot。
+4. 部署后运行只读 `post-check`。正常流程会自动使用 manifest 中绑定的 retained 证据，不需要传入路径：
 
    ```bash
    npm run cutover:game-data-compaction -- \
@@ -111,10 +101,9 @@ Supabase 的 `game_data_actions` 保存网页中审核通过的动态修改。�
      --expected-supabase-host=<project-ref>.supabase.co
    ```
 
-7. 核对 `/api/version` 的 deployment identity、replay epoch、action revision、row count 和 commit，
-   并再次精确查询两类行。`post-check` 只有在 retained 文件路径、摘要和元数据与 manifest 完全一致时才会继续。
+   `post-check` 自动核对 retained 文件的路径、摘要和元数据，检查 `/api/version` 的 deployment identity、replay epoch、action revision、row count 和 commit，并在完整数据比对前后精确复查两类行。依赖行继续参与 action patch 验证，但不进入归档集合。缺行、状态变化或行角色重叠都会阻止生成通过记录。
 
-`sync` 内部的检查不可省略，但不要求额外手工运行一次 `check`。第二次实际构建和最终 `post-check` 仍是完成条件。
+仅诊断或尚未授权数据库修改时，把 `sync` 命令中的 `--mode=sync` 换成 `--mode=check`，并省略 `--actor-id` 和 `--confirm`。正常流程不必重复运行 `check`；第二次实际构建和最终 `post-check` 仍是完成条件。
 
 ## 数据库行已经切换时：只读恢复
 
@@ -135,7 +124,7 @@ Supabase 的 `game_data_actions` 保存网页中审核通过的动态修改。�
      --expected-supabase-host=<project-ref>.supabase.co
    ```
 
-4. `post-check` 只读运行，不执行 approved-row preflight，也不调用 mutation RPC。它会确认精确行仍为 `synced/private`，并用保留的 action 和当前 approved snapshot 重建 published parity。
+4. `post-check` 只读运行，不执行 approved-row preflight，也不调用 mutation RPC。它会确认归档行仍为 `synced/private`、manifest 中的依赖行仍为 `approved/public`，并用保留的 action 和当前 approved snapshot 重建 published parity。
 5. `/api/version` 的 artifact epoch、revision、row count、deployment identity 和部署提交关系都必须匹配当前生产快照。全部通过后才允许写入 `result.postCutoverVerification`。
 
 恢复流程可以包含非 `set` action，因为它不会改变状态；published parity 仍须按同一份已批准修正严格通过。

@@ -7,6 +7,7 @@ import {
 import { prepareCompactionCutoverManifest } from './compactionCutoverManifest';
 import {
   resolvePostCutoverManifestSelection,
+  verifyCompactionDependencyRows,
   verifyPostCutoverRowEvidence,
 } from './compactionPostCutoverVerification';
 
@@ -121,6 +122,10 @@ describe('game-data compaction cutover lifecycle', () => {
         return retainedBinding;
       },
       executeCutover: atomicRpc,
+      verifyDependencies: async () => {
+        events.push('verify-dependencies');
+        return ['dependency-1'];
+      },
       persistManifest: async (nextManifest) => {
         const persistedManifest = cloneManifest(nextManifest);
         persisted.push(persistedManifest);
@@ -134,9 +139,11 @@ describe('game-data compaction cutover lifecycle', () => {
     });
 
     expect(events).toEqual([
+      'verify-dependencies',
       'capture-retained',
       'persist-retained',
       'atomic-rpc',
+      'verify-dependencies',
       'persist-cutover',
     ]);
     expect(atomicRpc).toHaveBeenCalledTimes(1);
@@ -147,7 +154,8 @@ describe('game-data compaction cutover lifecycle', () => {
     const rowEvidence = verifyPostCutoverRowEvidence(
       selection.value.actionIds,
       retainedRows,
-      remoteRows
+      [...remoteRows, actionRow('dependency-1', 'approved', true)],
+      selection.value.verificationDependencyRowIds
     );
     expect(rowEvidence).toMatchObject({ proven: true, failures: [] });
 
@@ -197,6 +205,7 @@ describe('game-data compaction cutover lifecycle', () => {
           replayEpochBefore: 42,
           replayEpochAfter: 44,
           syncedActionIds: ['cutover-1', 'cutover-2'],
+          verifiedDependencyRowIds: ['dependency-1'],
         },
         postCutoverVerification: {
           receiptKind: 'postCutoverVerification',
@@ -207,6 +216,11 @@ describe('game-data compaction cutover lifecycle', () => {
             isPublic: false,
           },
           idempotence: { proven: true },
+          verificationDependencies: {
+            verifiedRowIds: ['dependency-1'],
+            status: 'approved',
+            isPublic: true,
+          },
         },
       },
       retrospectiveObservation: {
@@ -240,6 +254,7 @@ describe('game-data compaction cutover lifecycle', () => {
             throw new Error(failure);
           },
           executeCutover: atomicRpc,
+          verifyDependencies: async () => ['dependency-1'],
           persistManifest,
         })
       ).rejects.toThrow(failure);
@@ -262,6 +277,7 @@ describe('game-data compaction cutover lifecycle', () => {
         target,
         capturePreCutoverRows: async () => retainedBinding,
         executeCutover: atomicRpc,
+        verifyDependencies: async () => ['dependency-1'],
         persistManifest: async () => {
           throw new Error('manifest_write_failed');
         },
@@ -312,5 +328,44 @@ describe('game-data compaction cutover lifecycle', () => {
       })
     ).toThrow('post_cutover_row_evidence_not_proven');
     expect(manifest).not.toHaveProperty('result.postCutoverVerification');
+  });
+
+  it.each(['before', 'after'])('stops when a dependency changes %s the RPC', async (stage) => {
+    const manifest = createManifest();
+    const prepared = prepareCompactionCutoverManifest(manifest);
+    if (!prepared.success) throw new Error('fixture_not_cutover_ready');
+    let transitioned = false;
+    const executeCutover = jest.fn(async () => {
+      transitioned = true;
+      return {
+        outcome: 'confirmed' as const,
+        replayEpochAfter: 44,
+        observedReplayEpoch: 44,
+        syncedActionIds: ['cutover-1', 'cutover-2'],
+      };
+    });
+    const persistManifest = jest.fn();
+    await expect(
+      runCompactionCutoverSync({
+        manifest,
+        prepared: prepared.value,
+        target,
+        capturePreCutoverRows: async () => retainedBinding,
+        executeCutover,
+        verifyDependencies: async () => {
+          const changed = stage === 'before' || transitioned;
+          const proof = verifyCompactionDependencyRows(
+            prepared.value.verificationDependencyRowIds,
+            [actionRow('dependency-1', changed ? 'synced' : 'approved', !changed)]
+          );
+          if (!proof.proven) throw new Error('verification_dependencies_changed');
+          return proof.verifiedRowIds;
+        },
+        persistManifest,
+      })
+    ).rejects.toThrow('verification_dependencies_changed');
+    expect(executeCutover).toHaveBeenCalledTimes(stage === 'before' ? 0 : 1);
+    expect(persistManifest).toHaveBeenCalledTimes(stage === 'before' ? 0 : 1);
+    expect(manifest.result).not.toHaveProperty('remoteCutover');
   });
 });

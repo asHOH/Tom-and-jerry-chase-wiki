@@ -19,6 +19,7 @@ export type PostCutoverManifestSelection = {
   originalManifestRowIds: string[];
   additionalSyncedRowIds: string[];
   actionIds: string[];
+  verificationDependencyRowIds: string[];
   targetHost: string;
 };
 
@@ -35,7 +36,9 @@ export type PostCutoverRowEvidenceFailure = {
     | 'remote_row_set_mismatch'
     | 'retained_row_not_approved_public'
     | 'remote_row_not_synced_private'
-    | 'retained_row_content_mismatch';
+    | 'retained_row_content_mismatch'
+    | 'verification_dependency_row_set_mismatch'
+    | 'verification_dependency_not_approved_public';
   rowId?: string;
 };
 
@@ -67,6 +70,17 @@ export function resolvePostCutoverManifestSelection(
   const observation = isRecord(value.retrospectiveObservation)
     ? value.retrospectiveObservation
     : undefined;
+  const verificationDependencyRowIds = readUniqueIds(value.verificationDependencyRowIds ?? []);
+  if (!verificationDependencyRowIds || verificationDependencyRowIds.some((id) => !id)) {
+    return { success: false, failures: ['invalid_verification_dependency_row_ids'] };
+  }
+  const cutoverIds = new Set([
+    ...(originalManifestRowIds ?? []),
+    ...(readUniqueIds(observation?.additionalObservedSyncedRowIds) ?? []),
+  ]);
+  if (verificationDependencyRowIds.some((id) => cutoverIds.has(id))) {
+    return { success: false, failures: ['verification_dependency_overlaps_cutover'] };
+  }
   if (!observation) {
     const cutoverRowIds = readUniqueIds(value.cutoverRowIds ?? originalManifestRowIds);
     const result = isRecord(value.result) ? value.result : {};
@@ -93,6 +107,7 @@ export function resolvePostCutoverManifestSelection(
           originalManifestRowIds,
           additionalSyncedRowIds: [],
           actionIds: cutoverRowIds,
+          verificationDependencyRowIds,
           targetHost: retainedTarget.host,
         },
       };
@@ -134,6 +149,7 @@ export function resolvePostCutoverManifestSelection(
           originalManifestRowIds,
           additionalSyncedRowIds,
           actionIds,
+          verificationDependencyRowIds,
           targetHost: target.host as string,
         },
       };
@@ -194,18 +210,59 @@ function indexRows(
   return rows;
 }
 
+/** Dependency replay accepts only approved/public rows; these rows must stay in that state. */
+export function verifyCompactionDependencyRows(
+  expectedIds: readonly string[],
+  rows: readonly unknown[]
+): { proven: boolean; verifiedRowIds: string[]; failures: PostCutoverRowEvidenceFailure[] } {
+  const failures: PostCutoverRowEvidenceFailure[] = [];
+  const ids = rows.map((row) => (isRecord(row) ? row.id : undefined));
+  const actualIds = new Set(ids);
+  if (
+    rows.length !== expectedIds.length ||
+    actualIds.size !== rows.length ||
+    new Set(expectedIds).size !== expectedIds.length ||
+    expectedIds.some((id) => !actualIds.has(id))
+  ) {
+    failures.push({ code: 'verification_dependency_row_set_mismatch' });
+  }
+  for (const row of rows) {
+    if (!isRecord(row) || row.status !== 'approved' || row.is_public !== true) {
+      failures.push({
+        code: 'verification_dependency_not_approved_public',
+        ...(isRecord(row) && typeof row.id === 'string' ? { rowId: row.id } : {}),
+      });
+    }
+  }
+  const proven = failures.length === 0;
+  return { proven, verifiedRowIds: proven ? [...expectedIds] : [], failures };
+}
+
 export function verifyPostCutoverRowEvidence(
   expectedIds: readonly string[],
   retainedValues: readonly unknown[],
-  remoteValues: readonly unknown[]
+  remoteValues: readonly unknown[],
+  dependencyIds: readonly string[] = []
 ): {
   proven: boolean;
+  verifiedDependencyRowIds: string[];
   rowContentDigests: Record<string, string>;
   failures: PostCutoverRowEvidenceFailure[];
 } {
-  const failures: PostCutoverRowEvidenceFailure[] = [];
+  const dependencySet = new Set(dependencyIds);
+  const isDependency = (row: unknown) =>
+    isRecord(row) && typeof row.id === 'string' && dependencySet.has(row.id);
+  const dependencies = verifyCompactionDependencyRows(
+    dependencyIds,
+    remoteValues.filter(isDependency)
+  );
+  const failures = [...dependencies.failures];
   const retained = indexRows(retainedValues, 'retained', failures);
-  const remote = indexRows(remoteValues, 'remote', failures);
+  const remote = indexRows(
+    remoteValues.filter((row) => !isDependency(row)),
+    'remote',
+    failures
+  );
   const expectedIdSet = new Set(expectedIds);
   const hasExactSet = (rows: Map<string, EvidenceRow>) =>
     rows.size === expectedIdSet.size && [...rows.keys()].every((rowId) => expectedIdSet.has(rowId));
@@ -232,7 +289,12 @@ export function verifyPostCutoverRowEvidence(
     }
   }
 
-  return { proven: failures.length === 0, rowContentDigests, failures };
+  return {
+    proven: failures.length === 0,
+    verifiedDependencyRowIds: dependencies.verifiedRowIds,
+    rowContentDigests,
+    failures,
+  };
 }
 
 export function verifyStablePostCutoverProduction(

@@ -1,8 +1,9 @@
 ---
 name: game-action-patching
 description: 'Patch and verify small, clear cohorts of at most 25 approved game_data_actions in canonical character relation/data files. Use game-action-compaction for broad periods, oversized date inventories, or dependency-heavy cohorts.'
-argument-hint: 'Date range, actor filter, status policy'
-user-invocable: true
+metadata:
+  argument-hint: 'Date range, actor filter, status policy'
+  user-invocable: true
 ---
 
 # Game Action Patching
@@ -55,9 +56,7 @@ does not split the logical group or require switching workflows by itself.
 
 ## Status-Cutover Handoff
 
-Small-batch patching alone does not authorize status changes. For an already authorized
-cutover, use [game-action-compaction](../game-action-compaction/SKILL.md) and read the
-[human operator runbook](../../../docs/operations/game-data-action-compaction.md).
-Hand off exact cutover and verification-only row IDs as separate sets. The runbook owns deployment
-order, target confirmation, retained evidence, recovery, and historical cohort stop conditions.
-Do not add mutation logic to `scripts/verify-game-data-actions.mjs`.
+Small-batch patching alone does not authorize status changes. Hand an authorized cutover to
+[game-action-compaction](../game-action-compaction/SKILL.md) with separate cutover and verification-only
+ID sets; it owns completion and links the deployment/recovery runbook.
+Keep `scripts/verify-game-data-actions.mjs` read-only.

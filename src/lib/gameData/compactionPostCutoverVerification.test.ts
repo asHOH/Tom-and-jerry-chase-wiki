@@ -1,5 +1,6 @@
 import {
   resolvePostCutoverManifestSelection,
+  verifyCompactionDependencyRows,
   verifyPostCutoverRowEvidence,
   verifyStablePostCutoverProduction,
 } from './compactionPostCutoverVerification';
@@ -21,6 +22,7 @@ describe('post-cutover compaction verification', () => {
       resolvePostCutoverManifestSelection({
         rows: [{ id: '1' }, { id: '2' }],
         cutoverRowIds: ['1', '2'],
+        verificationDependencyRowIds: ['3'],
         result: {
           preCutoverRetainedRows: {
             receiptKind: 'preCutoverRetainedRows',
@@ -37,6 +39,7 @@ describe('post-cutover compaction verification', () => {
         originalManifestRowIds: ['1', '2'],
         additionalSyncedRowIds: [],
         actionIds: ['1', '2'],
+        verificationDependencyRowIds: ['3'],
         targetHost: 'project.supabase.co',
       },
     });
@@ -72,6 +75,7 @@ describe('post-cutover compaction verification', () => {
         originalManifestRowIds: ['1', '2'],
         additionalSyncedRowIds: ['3'],
         actionIds: ['1', '2', '3'],
+        verificationDependencyRowIds: [],
         targetHost: 'project.supabase.co',
       },
     });
@@ -119,6 +123,64 @@ describe('post-cutover compaction verification', () => {
         { code: 'retained_row_content_mismatch', rowId: '2' },
       ]),
     });
+  });
+
+  it.each([
+    { dependencies: ['1'] },
+    { dependencies: ['3'] },
+    { dependencies: ['4', '4'] },
+    { dependencies: [''] },
+  ])('rejects overlapping or invalid dependency roles: $dependencies', ({ dependencies }) => {
+    expect(
+      resolvePostCutoverManifestSelection({
+        rows: [{ id: '1' }, { id: '2' }],
+        verificationDependencyRowIds: dependencies,
+        retrospectiveObservation: {
+          target: { host: 'project.supabase.co' },
+          originalPlan: { plannedCutoverRowCount: 2, deferredRowCount: 1 },
+          observedRemoteState: { rowCount: 3, status: 'synced', isPublic: false },
+          additionalObservedSyncedRowIds: ['3'],
+        },
+      })
+    ).toMatchObject({ success: false });
+  });
+
+  it('keeps dependency rows separate from retained and archived rows', () => {
+    const retained = [row('1', 'approved', true)];
+    const remote = [row('1', 'synced', false), row('2', 'approved', true)];
+    expect(verifyPostCutoverRowEvidence(['1'], retained, remote, ['2'])).toMatchObject({
+      proven: true,
+      verifiedDependencyRowIds: ['2'],
+      failures: [],
+    });
+    expect(
+      verifyPostCutoverRowEvidence(['1'], retained, [remote[0], row('2', 'synced', false)], ['2'])
+    ).toMatchObject({
+      proven: false,
+      failures: [{ code: 'verification_dependency_not_approved_public', rowId: '2' }],
+    });
+    expect(verifyPostCutoverRowEvidence(['1'], retained, [remote[0]], ['2'])).toMatchObject({
+      proven: false,
+      failures: [{ code: 'verification_dependency_row_set_mismatch' }],
+    });
+  });
+
+  it('checks exact dependency sets, visibility, and approval status', () => {
+    expect(verifyCompactionDependencyRows([], [])).toMatchObject({ proven: true });
+    const approved = row('1', 'approved', true);
+    for (const rows of [
+      [],
+      [approved, approved],
+      [approved, row('2', 'approved', true)],
+      [row('1', 'pending', true)],
+      [row('1', 'approved', false)],
+      [null],
+    ]) {
+      expect(verifyCompactionDependencyRows(['1'], rows)).toMatchObject({
+        proven: false,
+        verifiedRowIds: [],
+      });
+    }
   });
 
   it('binds both production reads to one deployment identity and the current snapshot', () => {

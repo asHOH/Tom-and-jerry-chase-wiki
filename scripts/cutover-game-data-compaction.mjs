@@ -429,6 +429,9 @@ async function main() {
     '../src/lib/gameData/compactionCutoverManifest.ts'
   );
   const { runCompactionCutoverSync } = jiti('../src/lib/gameData/compactionCutoverLifecycle.ts');
+  const { verifyCompactionDependencyRows } = jiti(
+    '../src/lib/gameData/compactionPostCutoverVerification.ts'
+  );
   const { readApprovedReplaySnapshot } = jiti(
     '../src/lib/gameData/approvedReplaySnapshotReader.ts'
   );
@@ -477,6 +480,16 @@ async function main() {
         target,
         readApprovedReplaySnapshot,
       }),
+    verifyDependencies: async () => {
+      const ids = prepared.value.verificationDependencyRowIds;
+      const proof = verifyCompactionDependencyRows(ids, await readExactStatuses(client, ids));
+      if (!proof.proven) {
+        throw new CutoverScriptError('verification_dependencies_changed', {
+          failures: proof.failures,
+        });
+      }
+      return proof.verifiedRowIds;
+    },
     executeCutover: () => executeCutover(client, args.actorId, prepared.value),
     persistManifest: (nextManifest) =>
       writeFile(manifestPath, `${JSON.stringify(nextManifest, null, 2)}\n`, 'utf8'),

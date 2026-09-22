@@ -624,11 +624,13 @@ async function runPostCutoverVerification({
     auth: { autoRefreshToken: false, persistSession: false },
   });
   const snapshotBefore = await readApprovedReplaySnapshot(client);
-  const remoteRowsBefore = await readExactActionRows(client, selection.actionIds);
+  const verificationRowIds = [...selection.actionIds, ...selection.verificationDependencyRowIds];
+  const remoteRowsBefore = await readExactActionRows(client, verificationRowIds);
   const rowEvidenceBefore = verifyPostCutoverRowEvidence(
     selection.actionIds,
     retained.rows,
-    remoteRowsBefore
+    remoteRowsBefore,
+    selection.verificationDependencyRowIds
   );
   if (!rowEvidenceBefore.proven) {
     throw new CompactionScriptError('post_cutover_row_evidence_failed', {
@@ -661,8 +663,8 @@ async function runPostCutoverVerification({
   };
   const verificationSelection = {
     cutoverRowIds: selection.actionIds,
-    verificationDependencyRowIds: [],
-    verificationRowIds: selection.actionIds,
+    verificationDependencyRowIds: selection.verificationDependencyRowIds,
+    verificationRowIds,
   };
   const { parity, actionPatch } = await createParityProof(
     baselineCommit,
@@ -675,11 +677,12 @@ async function runPostCutoverVerification({
   );
 
   const snapshotAfter = await readApprovedReplaySnapshot(client);
-  const remoteRowsAfter = await readExactActionRows(client, selection.actionIds);
+  const remoteRowsAfter = await readExactActionRows(client, verificationRowIds);
   const rowEvidenceAfter = verifyPostCutoverRowEvidence(
     selection.actionIds,
     retained.rows,
-    remoteRowsAfter
+    remoteRowsAfter,
+    selection.verificationDependencyRowIds
   );
   if (!rowEvidenceAfter.proven) {
     throw new CompactionScriptError('post_cutover_row_evidence_changed', {

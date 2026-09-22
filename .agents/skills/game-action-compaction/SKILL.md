@@ -138,19 +138,15 @@ fingerprints, and later overlaps before continuing with the retained rows.
 
 ## Finish an authorized batch
 
-The runbook is the source of truth; do not duplicate its deployment commands here.
-
 - Keep `cutoverRowIds`, `verificationDependencyRowIds`, and retrospective observations separate. Only
   cutover IDs reach the RPC; verification-only dependencies remain in replay.
-- The supported verifier requires the original `repository.head`, a committed `--patched-ref`, and the
-  matching deployed build/approved snapshot. It binds epoch, revision, and row digests only after checks
-  pass. Local preparation does not constitute deployment-bound proof.
-- Resume from saved evidence when the user reports deployment: after the first, run authorized `sync`
-  directly; after the forced second build, run read-only `post-check`. Use standalone `check` only for
-  diagnosis. Report the next operator step; never repeat an uncertain or confirmed sync.
-- Diagnose failures through the underlying verifier. Repair format-only errors from frozen evidence and
-  retry only when no mutation occurred; apply the runbook's stop/recovery rules to changed state or uncertain
-  outcomes. Never invent evidence or silently change membership.
+- Resume from saved evidence under the runbook: first deployment → authorized `sync` → forced second
+  build/deployment → read-only `post-check`. Report the next operator step; standalone `check` is diagnostic.
+- Use successful command evidence to confirm cutover IDs are `synced/private` and dependencies remain
+  `approved/public`. The commands also verify deployment binding; no duplicate manual queries are needed.
+- On failure, preserve evidence and follow runbook recovery. A post-RPC failure may follow a committed
+  mutation: recover read-only and never repeat an uncertain or confirmed sync. Retry only proven
+  pre-mutation failures after repair; never invent evidence or silently change membership.
 
 ## Report
 
