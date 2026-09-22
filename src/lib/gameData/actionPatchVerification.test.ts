@@ -147,6 +147,87 @@ describe('verifyActionPatch', () => {
     });
   });
 
+  it('verifies a stale relation replacement and its correction without discarding the original edit', () => {
+    const blank = [{ id: 'Jerry', description: '', isMinor: true }];
+    const original = [{ ...blank[0], description: 'original contribution' }];
+    const added = { id: 'Tuffy', description: 'new endpoint', isMinor: false };
+    const rows = [
+      row('original', {
+        op: 'set',
+        path: 'Tom.counteredBy',
+        oldValue: blank,
+        newValue: original,
+      }),
+      row(
+        'stale',
+        {
+          op: 'set',
+          path: 'Tom.counteredBy',
+          oldValue: blank,
+          newValue: [...blank, added],
+        },
+        '2026-07-22T00:01:00.000Z'
+      ),
+      row(
+        'correction',
+        {
+          op: 'set',
+          path: 'Tom.counteredBy.0.description',
+          oldValue: '',
+          newValue: 'original contribution',
+        },
+        '2026-07-22T00:02:00.000Z'
+      ),
+    ];
+    const final = { Tom: { counteredBy: [...original, added] } };
+    expect(verifyActionPatch(rows, targets(final))).toEqual({
+      verifiedRowIds: ['original', 'stale', 'correction'],
+      failures: [],
+    });
+    expect(final.Tom.counteredBy).toEqual([...original, added]);
+
+    // A final field not explained by the full historical replacement must not
+    // qualify for reconstruction merely because its declared endpoint was added.
+    const unexplained = structuredClone(final);
+    unexplained.Tom.counteredBy[0]!.isMinor = false;
+    expect(verifyActionPatch(rows, targets(unexplained)).failures).not.toEqual([]);
+
+    // The stale row must still match old values for fields it explicitly changes.
+    const wrongOld = structuredClone(rows);
+    wrongOld[1]!.entry = {
+      op: 'set',
+      path: 'Tom.counteredBy',
+      oldValue: [{ ...blank[0], isMinor: false }],
+      newValue: [...blank, added],
+    };
+    expect(verifyActionPatch(wrongOld, targets(final)).failures).not.toEqual([]);
+  });
+
+  it('does not fall back to field deltas when concrete history disproves a declared old value', () => {
+    const current = [{ id: 'Jerry', description: 'new', isMinor: true }];
+    const rows = [
+      row('original', {
+        op: 'set',
+        path: 'Tom.counteredBy',
+        oldValue: [{ ...current[0], description: 'old' }],
+        newValue: current,
+      }),
+      row(
+        'stale',
+        {
+          op: 'set',
+          path: 'Tom.counteredBy',
+          oldValue: [{ ...current[0], isMinor: false }],
+          newValue: current,
+        },
+        '2026-07-22T00:01:00.000Z'
+      ),
+    ];
+    expect(
+      verifyActionPatch(rows, targets({ Tom: { counteredBy: current } })).failures
+    ).toContainEqual(expect.objectContaining({ rowId: 'stale', code: 'projection_mismatch' }));
+  });
+
   it('verifies an oldValue-less relation snapshot that a later same-path snapshot subsumes', () => {
     const correctedHome = {
       id: '经典之家II',

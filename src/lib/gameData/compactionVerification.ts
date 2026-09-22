@@ -140,9 +140,9 @@ export function readCompactionReconciliation(value: unknown) {
     !value.reason.trim() ||
     !('publishedChanges' in value) ||
     !Array.isArray(value.publishedChanges) ||
-    value.publishedChanges.length === 0 ||
     !('sourceChanges' in value) ||
-    !Array.isArray(value.sourceChanges)
+    !Array.isArray(value.sourceChanges) ||
+    (value.publishedChanges.length === 0 && value.sourceChanges.length === 0)
   )
     throw new Error('invalid_compaction_reconciliation');
   return {
@@ -484,12 +484,18 @@ export function verifyCompactionActionIdempotence(
                     row.entityType.length > 0 &&
                     next.row.entityType === row.entityType)) &&
                 nextPath.success &&
-                nextPath.value.rootKey === parsed.value.rootKey
+                nextPath.value.rootKey === parsed.value.rootKey &&
+                // A sibling property cannot shift a direct root-property array.
+                // Nested arrays retain the conservative whole-root boundary.
+                (parsed.value.segments.length !== 3 ||
+                  /^(?:\d+|length)$/.test(parsed.value.segments[1]!) ||
+                  nextPath.value.segments.length === 1 ||
+                  nextPath.value.segments[1] === parsed.value.segments[1])
               );
             })?.action
           : undefined;
       // An indexed add really inserts again. It is safe only when the next write
-      // to this root resets that exact array in this complete cutover sequence.
+      // affecting this array resets it in this complete cutover sequence.
       const resetIndexedAdd =
         action.op === 'add' &&
         action.newValue !== undefined &&

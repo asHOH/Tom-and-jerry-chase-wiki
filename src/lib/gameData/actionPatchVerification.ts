@@ -528,6 +528,32 @@ function reverseAction(
     RELATION_ARRAY_KEYS.has(segments[1]!) &&
     current.exists
   ) {
+    const proof = reconstructResetAction(actions, actionIndex, parsed.value.path);
+    const recordedOld = createRelationCollection(action.oldValue);
+    const actualOld = proof?.before.exists ? createRelationCollection(proof.before.value) : null;
+    if (
+      proof &&
+      recordedOld &&
+      actualOld &&
+      isEqual([...recordedOld.identities].sort(), [...actualOld.identities].sort()) &&
+      !valuesMatch(segments, action.oldValue, proof.before.value) &&
+      valuesMatch(segments, current.value, proof.after.value)
+    ) {
+      if (
+        !reverseRelationSet(cloneValue(proof.before.value), {
+          ...action,
+          oldValue: action.newValue,
+          newValue: action.oldValue,
+        }).success
+      )
+        return { success: false, code: 'projection_mismatch' };
+      // A historical full-list replacement can overwrite fields unchanged in its
+      // stale old/new pair. Require the complete replayed after-state and matching
+      // old values for its declared changes, then restore the evidenced pre-state.
+      return writeAtPath(target, segments, proof.before.value)
+        ? { success: true }
+        : { success: false, code: 'projection_mismatch' };
+    }
     return reverseRelationSet(current.value, action);
   }
   const isDelete = action.op === 'delete' || (action.op === 'set' && action.newValue === undefined);

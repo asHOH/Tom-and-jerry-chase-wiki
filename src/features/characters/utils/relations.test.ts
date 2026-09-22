@@ -19,6 +19,16 @@ const setLegacyRelationItems = (
   (characters[id] as Partial<CharacterRelation>)[key] = items;
 };
 
+const clearCounterTagsFor = (...characterIds: string[]) => {
+  characterIds.forEach((characterId) => {
+    const character = characters[characterId];
+    if (!character) {
+      throw new Error(`Missing character fixture for ${characterId}.`);
+    }
+    character.counterTags = [];
+  });
+};
+
 const findSharedCharacterRelation = (
   kind: 'collaborators' | 'counterEachOther' | 'counteredBy' | 'counters'
 ): TraitRelation => {
@@ -84,6 +94,7 @@ describe('getCharacterRelation', () => {
 
   it('should let page-local overlays override duplicate shared relation entries by id', () => {
     const relation = findSharedCharacterRelation('counters');
+    clearCounterTagsFor(relation.subject.name, relation.target.name);
     const overlayItem = {
       id: relation.target.name,
       description: 'legacy overlay wins duplicate shared edge',
@@ -100,6 +111,7 @@ describe('getCharacterRelation', () => {
 
   it('should use owned relation arrays as authoritative overrides even when empty', () => {
     const relation = findSharedCharacterRelation('counters');
+    clearCounterTagsFor(relation.subject.name, relation.target.name);
     setLegacyRelationItems(relation.subject.name, 'counters', []);
 
     expect(getCharacterRelation(characters, relation.subject.name).counters).not.toEqual(
@@ -135,6 +147,7 @@ describe('getCharacterRelation', () => {
 
   it('should dedupe direct and synthesized legacy entries for the same character id', () => {
     const relation = findSharedCharacterRelation('counters');
+    clearCounterTagsFor(relation.subject.name, relation.target.name);
     const directItem = {
       id: relation.subject.name,
       description: 'direct legacy relation wins synthesized inverse duplicate',

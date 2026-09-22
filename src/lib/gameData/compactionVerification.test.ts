@@ -60,6 +60,26 @@ describe('compaction verification', () => {
     ).toThrow('invalid');
     expect(readCompactionReconciliation(undefined)).toBeUndefined();
   });
+  it('supports source-only reconciliation after the approved correction is already public', () => {
+    const sourceChanges = [{ path: ['characters', 'Tom', 'name'], before: 'old', after: 'new' }];
+    const reconciliation = readCompactionReconciliation({
+      reason: 'Approved correction already published; reconcile only the historical source proof',
+      publishedChanges: [],
+      sourceChanges,
+    })!;
+    expect(reconciliation.sourceChanges).toEqual(sourceChanges);
+    const published = { characters: { Tom: { name: 'new' } } };
+    expect(
+      applyCompactionReconciliation(published, reconciliation.publishedChanges, 'forward')
+    ).toEqual(published);
+    expect(() =>
+      readCompactionReconciliation({
+        reason: 'empty',
+        publishedChanges: [],
+        sourceChanges: [],
+      })
+    ).toThrow('invalid_compaction_reconciliation');
+  });
   it('keeps manifest rows as the backward-compatible cutover set', () => {
     const rows = [{ id: 'cutover-1' }, { id: 'cutover-2' }];
 
@@ -291,9 +311,15 @@ describe('compaction verification', () => {
     const final = [{ cards: ['A'] }, { cards: ['B'] }];
     const rows = [snapshotRow('1', [addition]), snapshotRow('2', [set('item.groups', final)])];
     expect(verifyCompactionActionIdempotence(rows).proven).toBe(true);
+    const interleaved = [
+      rows[0]!,
+      snapshotRow('1a', [set('item.description', 'unrelated')]),
+      rows[1]!,
+    ];
+    expect(verifyCompactionActionIdempotence(interleaved).proven).toBe(true);
     const target = { item: { groups: structuredClone(final) } };
     for (let run = 0; run < 2; run += 1) {
-      for (const entry of rows) {
+      for (const entry of interleaved) {
         expect(
           applyCheckedActionRow({ rowId: entry.rowId, actions: entry.actions, targets: [target] })
             .success
@@ -302,6 +328,15 @@ describe('compaction verification', () => {
       expect(target.item.groups).toEqual(final);
     }
     expect(verifyCompactionActionIdempotence([rows[0]!]).proven).toBe(false);
+    expect(
+      verifyCompactionActionIdempotence([
+        snapshotRow('1', [{ ...addition, path: 'item.groups.1.cards.0' }]),
+        snapshotRow('2', [
+          { op: 'add', path: 'item.groups.0', oldValue: undefined, newValue: { cards: [] } },
+        ]),
+        snapshotRow('3', [set('item.groups.1.cards', ['B'])]),
+      ]).proven
+    ).toBe(false);
     expect(
       verifyCompactionActionIdempotence(rows.map(({ rowId, actions }) => ({ rowId, actions })))
         .proven
