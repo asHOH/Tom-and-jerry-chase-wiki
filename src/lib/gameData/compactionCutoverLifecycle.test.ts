@@ -86,7 +86,7 @@ const cloneManifest = (
   JSON.parse(JSON.stringify(manifest)) as MutableCompactionCutoverManifest;
 
 describe('game-data compaction cutover lifecycle', () => {
-  it('runs check, mocked atomic sync, and post-check with complete receipts', async () => {
+  it('records normal cutovers without recovery metadata and preserves legacy post-check limits', async () => {
     const manifest = createManifest();
     const check = prepareCompactionCutoverManifest(manifest);
     expect(check).toMatchObject({ success: true });
@@ -147,6 +147,8 @@ describe('game-data compaction cutover lifecycle', () => {
       'persist-cutover',
     ]);
     expect(atomicRpc).toHaveBeenCalledTimes(1);
+    expect(manifest).not.toHaveProperty('retrospectiveObservation');
+    expect(persisted.at(-1)).not.toHaveProperty('retrospectiveObservation');
 
     const selection = resolvePostCutoverManifestSelection(manifest);
     expect(selection).toMatchObject({ success: true });
@@ -159,41 +161,43 @@ describe('game-data compaction cutover lifecycle', () => {
     );
     expect(rowEvidence).toMatchObject({ proven: true, failures: [] });
 
+    const postCheckEvidence = {
+      baselineCommit: 'baseline-commit',
+      patchedCommit: 'deployed-commit',
+      target,
+      replayEpoch: 44,
+      actionRevision: `v1:${'e'.repeat(64)}`,
+      snapshotRowCount: 1,
+      selection: selection.value,
+      rowEvidence,
+      preCutoverFingerprintCaptured: true,
+      retainedRows: {
+        path: retainedBinding.path,
+        capturedAt: retainedBinding.capturedAt,
+        replayEpochAtCapture: retainedBinding.replayEpoch,
+        rowCount: retainedBinding.rowCount,
+      },
+      idempotence: {
+        proven: true,
+        actionCount: 2,
+        operationCounts: { set: 2 },
+        failures: [],
+      },
+      actionPatch: { verifiedRowIds: selection.value.actionIds, failures: [] },
+      production: {
+        deployedCommit: 'deployed-commit',
+        gameDataArtifact: {
+          deploymentIdentity: 'deployment-identity',
+          replayEpoch: 44,
+          actionRevision: `v1:${'e'.repeat(64)}`,
+          rowCount: 1,
+        },
+      },
+      parity: { proven: true, mismatchedDomains: [] },
+    };
     recordCompactionPostCutoverVerification(
       manifest,
-      {
-        baselineCommit: 'baseline-commit',
-        patchedCommit: 'deployed-commit',
-        target,
-        replayEpoch: 44,
-        actionRevision: `v1:${'e'.repeat(64)}`,
-        snapshotRowCount: 1,
-        selection: selection.value,
-        rowEvidence,
-        retainedRows: {
-          path: retainedBinding.path,
-          capturedAt: retainedBinding.capturedAt,
-          replayEpochAtCapture: retainedBinding.replayEpoch,
-          rowCount: retainedBinding.rowCount,
-        },
-        idempotence: {
-          proven: true,
-          actionCount: 2,
-          operationCounts: { set: 2 },
-          failures: [],
-        },
-        actionPatch: { verifiedRowIds: selection.value.actionIds, failures: [] },
-        production: {
-          deployedCommit: 'deployed-commit',
-          gameDataArtifact: {
-            deploymentIdentity: 'deployment-identity',
-            replayEpoch: 44,
-            actionRevision: `v1:${'e'.repeat(64)}`,
-            rowCount: 1,
-          },
-        },
-        parity: { proven: true, mismatchedDomains: [] },
-      },
+      postCheckEvidence,
       () => '2026-09-03T01:02:00.000Z'
     );
 
@@ -216,6 +220,10 @@ describe('game-data compaction cutover lifecycle', () => {
             isPublic: false,
           },
           idempotence: { proven: true },
+          limitations: [
+            'verification-only receipt; it does not prove who performed the earlier status transition',
+            'verification-only receipt; it does not prove the earlier execution time or atomicity',
+          ],
           verificationDependencies: {
             verifiedRowIds: ['dependency-1'],
             status: 'approved',
@@ -223,17 +231,39 @@ describe('game-data compaction cutover lifecycle', () => {
           },
         },
       },
-      retrospectiveObservation: {
-        originalPlan: { plannedCutoverRowCount: 2, deferredRowCount: 0 },
-        observedRemoteState: { rowCount: 2, status: 'synced', isPublic: false },
-        additionalObservedSyncedRowIds: [],
-      },
       workflowBoundary: {
         remoteMutation: true,
         cutover: true,
         postCutoverVerification: { status: 'passed' },
       },
     });
+
+    const observation = {
+      target,
+      originalPlan: { plannedCutoverRowCount: 2, deferredRowCount: 0 },
+      observedRemoteState: { rowCount: 2, status: 'synced', isPublic: false },
+      additionalObservedSyncedRowIds: [],
+    };
+    const recoveryManifest = {
+      rows: manifest.rows,
+      verificationDependencyRowIds: manifest.verificationDependencyRowIds,
+      retrospectiveObservation: observation,
+    };
+    expect(resolvePostCutoverManifestSelection(recoveryManifest)).toMatchObject({
+      success: true,
+      value: { actionIds: selection.value.actionIds },
+    });
+    recordCompactionPostCutoverVerification(recoveryManifest, {
+      ...postCheckEvidence,
+      preCutoverFingerprintCaptured: false,
+    });
+    expect(recoveryManifest.retrospectiveObservation).toEqual(observation);
+    expect(recoveryManifest).toHaveProperty(
+      'result.postCutoverVerification.limitations',
+      expect.arrayContaining([
+        'pre-cutover replay fingerprint was not captured and is not reconstructed',
+      ])
+    );
   });
 
   it.each(['snapshot_changed_before_retained_capture', 'retained_rows_write_failed'])(
@@ -320,6 +350,7 @@ describe('game-data compaction cutover lifecycle', () => {
           additionalSyncedRowIds: [],
         },
         rowEvidence,
+        preCutoverFingerprintCaptured: false,
         retainedRows: { path: retainedBinding.path },
         idempotence: { proven: true },
         actionPatch: { failures: [] },

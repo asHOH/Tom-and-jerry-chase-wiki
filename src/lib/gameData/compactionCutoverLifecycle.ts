@@ -72,19 +72,6 @@ export async function runCompactionCutoverSync({
       verifiedDependencyRowIds,
     },
   };
-  manifest.retrospectiveObservation = {
-    target,
-    originalPlan: {
-      plannedCutoverRowCount: prepared.actionIds.length,
-      deferredRowCount: 0,
-    },
-    observedRemoteState: {
-      rowCount: cutover.syncedActionIds.length,
-      status: 'synced',
-      isPublic: false,
-    },
-    additionalObservedSyncedRowIds: [],
-  };
   manifest.workflowBoundary = {
     ...manifest.workflowBoundary,
     remoteMutation: true,
@@ -114,6 +101,7 @@ type PostCutoverVerificationEvidence = {
     rowContentDigests: Record<string, string>;
   };
   retainedRows: unknown;
+  preCutoverFingerprintCaptured: boolean;
   idempotence: {
     proven: boolean;
     [key: string]: unknown;
@@ -170,7 +158,9 @@ export function recordCompactionPostCutoverVerification(
       limitations: [
         'verification-only receipt; it does not prove who performed the earlier status transition',
         'verification-only receipt; it does not prove the earlier execution time or atomicity',
-        'pre-cutover replay fingerprint was not captured and is not reconstructed',
+        ...(evidence.preCutoverFingerprintCaptured
+          ? []
+          : ['pre-cutover replay fingerprint was not captured and is not reconstructed']),
       ],
     },
   };

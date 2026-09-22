@@ -202,6 +202,7 @@ async function readIgnoredRetainedRows(retainedRowsArg, manifest) {
   }
   return {
     retained,
+    binding,
     retainedRowsRelativePath: retainedRowsRelativePath.replaceAll('\\', '/'),
   };
 }
@@ -616,7 +617,7 @@ async function runPostCutoverVerification({
     });
   }
 
-  const { retained, retainedRowsRelativePath } = await readIgnoredRetainedRows(
+  const { retained, binding, retainedRowsRelativePath } = await readIgnoredRetainedRows(
     args.retainedRowsPath,
     manifest
   );
@@ -728,6 +729,7 @@ async function runPostCutoverVerification({
     snapshotRowCount: snapshotBefore.rows.length,
     selection,
     rowEvidence: rowEvidenceAfter,
+    preCutoverFingerprintCaptured: binding !== null,
     retainedRows: {
       path: retainedRowsRelativePath,
       capturedAt: typeof retained.capturedAt === 'string' ? retained.capturedAt : null,
