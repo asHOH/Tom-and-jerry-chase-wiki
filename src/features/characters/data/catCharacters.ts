@@ -300,7 +300,7 @@ const catCharacterDefinitions = {
         description:
           '向前冲刺，冲刺期间加速并免疫控制效果，且撞飞碰到的道具（包括已放入{老鼠洞}的{奶酪}），并对撞到的老鼠造成伤害和短暂{眩晕}。冲刺过程中持有霸体且可通过方向键多次改变冲刺方向，也可以使用爪刀、道具和技能。',
         detailedDescription:
-          '向前冲刺，冲刺持续1.2秒，期间加速并免疫控制效果，且撞飞碰到的道具（包括已放入{老鼠洞}的{奶酪}），并对撞到老鼠造成{1*,可致伤}伤害和0.5秒{眩晕}。如果命中老鼠或奶酪，则自身增加{20}点攻击力，持续10秒。冲刺过程中持有霸体且可通过方向键多次改变冲刺方向，也可以使用爪刀、道具和技能。',
+          '向前冲刺，冲刺持续1.25秒，期间加速并免疫控制效果，且撞飞碰到的道具（包括已放入{老鼠洞}的{奶酪}），并对撞到老鼠造成{1*,可致伤}伤害和0.5秒{眩晕}。如果命中老鼠或奶酪，则自身增加{20}点攻击力，持续10秒。冲刺过程中持有霸体且可通过方向键多次改变冲刺方向，也可以使用爪刀、道具和技能。',
         aftercast: 0.2,
         canMoveWhileUsing: true,
         canUseInAir: true,
@@ -311,19 +311,20 @@ const catCharacterDefinitions = {
           {
             level: 1,
             description: '',
-            detailedDescription: '冲刺期间获得90%加速。',
+            detailedDescription: '冲刺期间获得75%加速。',
             cooldown: 20,
           },
           {
             level: 2,
             description: '冲刺期间获得更高加速。',
-            detailedDescription: '冲刺期间改为获得110%加速。',
+            detailedDescription: '冲刺期间改为获得100%加速。',
             cooldown: 20,
           },
           {
             level: 3,
             description: '碰撞到的老鼠会眩晕更长时间；命中老鼠或奶酪时获得短暂加速。',
-            detailedDescription: '碰撞到的老鼠眩晕时间延长到1秒；命中老鼠或奶酪时获得5秒30%加速。',
+            detailedDescription:
+              '碰撞到的老鼠眩晕时间延长到1.1秒；命中老鼠或奶酪时获得5秒30%加速。',
             cooldown: 20,
           },
         ],
@@ -3319,12 +3320,12 @@ const catCharacterDefinitions = {
           {
             level: 1,
             description: '投掷命中后降低其被救援速度。',
-            detailedDescription: '投掷命中后降低其被救援速度62.5%，持续60秒。',
+            detailedDescription: '投掷命中后降低其被救援速度20%，持续60秒。',
           },
           {
             level: 2,
             description: '投掷命中后获得霸体和回血。',
-            detailedDescription: '投掷命中后获得弱霸体和50Hp/秒的恢复状态，持续3秒。',
+            detailedDescription: '投掷命中后获得弱霸体和35Hp/秒的恢复状态，持续3秒。',
           },
           {
             level: 3,
@@ -3727,6 +3728,12 @@ const catCharacterDefinitions = {
         description:
           '兔子主流加点之一，在对面打架能力强时推荐使用，当对面前期就爱打架可以5级点二级洞。',
       },
+      {
+        id: '提前钻地',
+        pattern: '201022110',
+        weaponType: 'weapon1',
+        description: '兔子特殊加点，提前点出钻地便于阻止铁血老鼠救人。',
+      },
     ],
     knowledgeCardGroups: [
       {
@@ -3902,16 +3909,22 @@ const catCharacterDefinitions = {
       },
       {
         tagName: '追击',
-        level: 2,
+        level: 4,
         description: '飞行时不受常规地形约束且移速快，提供很好的追击手段。',
         additionalDescription: '',
       },
       {
         tagName: '防守',
-        level: 2,
+        level: 3,
         description:
           '守火箭能力强，风的范围大，易命中并击退前来救援的老鼠，且CD短；飞行时自身的碰撞箱可以打断老鼠跳救使其踩夹。',
         additionalDescription: '',
+      },
+      {
+        tagName: '进攻',
+        level: 3,
+        description: '追风两个技能都能补伤害和先手控制，且冷却短，配合蓄势一击可以稳定击倒老鼠',
+        additionalDescription: '无卡时进攻评分降为2',
       },
     ],
     skillAllocations: [
