@@ -1,14 +1,21 @@
 #!/usr/bin/env node
 import { execFile } from 'node:child_process';
-import { createHash } from 'node:crypto';
-import { open, readFile, writeFile } from 'node:fs/promises';
-import { basename, dirname, extname, isAbsolute, relative, resolve } from 'node:path';
+import { writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
-import { isDeepStrictEqual, promisify } from 'node:util';
+import { promisify } from 'node:util';
 import nextEnv from '@next/env';
 import { createClient } from '@supabase/supabase-js';
 import { createJiti } from 'jiti';
 
+import {
+  CompactionScriptError as CutoverScriptError,
+  defaultRetainedRowsPath,
+  readIgnoredManifest,
+  readPreCutoverRetainedRowsBinding,
+  resolveIgnoredTmpPath,
+  retainedRowsDigest,
+  writeRetainedRowsEvidence,
+} from './lib/game-data-compaction-evidence.mjs';
 import { resolveSupabaseTarget } from './lib/supabase-target.mjs';
 
 const execFileAsync = promisify(execFile);
@@ -18,15 +25,6 @@ const serverOnlyStub = fileURLToPath(new URL('./lib/server-only-stub.mjs', impor
 const CONFIRMATION = 'SYNC_APPROVED_COMPACTION_BATCH';
 
 nextEnv.loadEnvConfig(projectDir);
-
-class CutoverScriptError extends Error {
-  constructor(code, details = {}) {
-    super(code);
-    this.name = 'CutoverScriptError';
-    this.code = code;
-    this.details = details;
-  }
-}
 
 function parseArgs(args) {
   let manifestPath;
@@ -86,106 +84,6 @@ function parseArgs(args) {
   };
 }
 
-function normalizeRelativePath(path) {
-  return path.replaceAll('\\', '/');
-}
-
-async function resolveIgnoredTmpPath(pathArg, errorPrefix) {
-  const path = resolve(projectDir, pathArg);
-  const relativePath = relative(projectDir, path);
-  if (
-    relativePath.startsWith('..') ||
-    isAbsolute(relativePath) ||
-    !normalizeRelativePath(relativePath).startsWith('.tmp/')
-  ) {
-    throw new CutoverScriptError(`${errorPrefix}_must_be_under_tmp`);
-  }
-  try {
-    await execFileAsync('git', ['check-ignore', '--quiet', '--', relativePath], {
-      cwd: projectDir,
-      windowsHide: true,
-    });
-  } catch {
-    throw new CutoverScriptError(`${errorPrefix}_must_be_ignored`);
-  }
-  return { path, relativePath: normalizeRelativePath(relativePath) };
-}
-
-async function readIgnoredManifest(manifestArg) {
-  const { path: manifestPath, relativePath: manifestRelativePath } = await resolveIgnoredTmpPath(
-    manifestArg,
-    'manifest'
-  );
-
-  try {
-    return {
-      manifest: JSON.parse(await readFile(manifestPath, 'utf8')),
-      manifestPath,
-      manifestRelativePath,
-    };
-  } catch {
-    throw new CutoverScriptError('invalid_manifest');
-  }
-}
-
-function defaultRetainedRowsPath(manifestPath, replayEpoch) {
-  const extension = extname(manifestPath);
-  const stem = basename(manifestPath, extension);
-  return resolve(dirname(manifestPath), `${stem}.retained-rows-${replayEpoch}.json`);
-}
-
-function readAutomaticRetainedRowsPath(manifest) {
-  const binding = manifest?.result?.preCutoverRetainedRows;
-  return binding?.receiptKind === 'preCutoverRetainedRows' && typeof binding.path === 'string'
-    ? binding.path
-    : undefined;
-}
-
-function retainedRowsDigest(serialized) {
-  return `v1:${createHash('sha256').update(serialized, 'utf8').digest('hex')}`;
-}
-
-async function writeRetainedRowsEvidence(path, evidence) {
-  let existingRaw;
-  try {
-    existingRaw = await readFile(path, 'utf8');
-  } catch (error) {
-    if (error?.code !== 'ENOENT') throw new CutoverScriptError('retained_rows_read_failed');
-  }
-
-  if (existingRaw !== undefined) {
-    let existing;
-    try {
-      existing = JSON.parse(existingRaw);
-    } catch {
-      throw new CutoverScriptError('retained_rows_conflict');
-    }
-    const { capturedAt: _existingCapturedAt, ...existingStable } = existing;
-    const { capturedAt: _nextCapturedAt, ...nextStable } = evidence;
-    if (!isDeepStrictEqual(existingStable, nextStable) || typeof existing.capturedAt !== 'string') {
-      throw new CutoverScriptError('retained_rows_conflict');
-    }
-    return { evidence: existing, serialized: existingRaw };
-  }
-
-  const serialized = `${JSON.stringify(evidence, null, 2)}\n`;
-  let handle;
-  try {
-    handle = await open(path, 'wx');
-    await handle.writeFile(serialized, 'utf8');
-    await handle.sync();
-  } catch (error) {
-    throw new CutoverScriptError('retained_rows_write_failed', { cause: error?.code });
-  } finally {
-    await handle?.close();
-  }
-
-  const persisted = await readFile(path, 'utf8');
-  if (persisted !== serialized)
-    throw new CutoverScriptError('retained_rows_write_verification_failed');
-  return { evidence, serialized };
-}
-
 async function capturePreCutoverRows({
   args,
   client,
@@ -215,7 +113,7 @@ async function capturePreCutoverRows({
 
   const requestedPath =
     args.retainedRowsPath ?? defaultRetainedRowsPath(manifestPath, prepared.replayEpoch);
-  const retainedPath = await resolveIgnoredTmpPath(requestedPath, 'retained_rows');
+  const retainedPath = await resolveIgnoredTmpPath(projectDir, requestedPath, 'retained_rows');
   const capturedAt = new Date().toISOString();
   const nextEvidence = {
     schemaVersion: 1,
@@ -409,14 +307,16 @@ async function main() {
     });
   }
   if (args.mode === 'post-check') {
-    const { manifest } = await readIgnoredManifest(args.manifestPath);
-    const retainedRowsPath = args.retainedRowsPath ?? readAutomaticRetainedRowsPath(manifest);
+    const { manifest } = await readIgnoredManifest(projectDir, args.manifestPath);
+    const retainedRowsPath =
+      args.retainedRowsPath ?? readPreCutoverRetainedRowsBinding(manifest)?.path;
     if (!retainedRowsPath) throw new CutoverScriptError('post_check_argument_missing');
     await runPostCheck({ ...args, retainedRowsPath });
     return;
   }
   await runPreflight(args);
   const { manifest, manifestPath, manifestRelativePath } = await readIgnoredManifest(
+    projectDir,
     args.manifestPath
   );
   const jiti = createJiti(import.meta.url, {

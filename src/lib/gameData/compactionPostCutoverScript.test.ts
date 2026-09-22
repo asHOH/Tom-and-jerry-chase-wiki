@@ -28,7 +28,6 @@ describe('post-cutover compaction verifier script', () => {
     expect(lifecycle).toContain('postCutoverVerification');
     expect(lifecycle).toContain("receiptKind: 'postCutoverVerification'");
     expect(verifier).toContain('readPreCutoverRetainedRowsBinding(manifest)');
-    expect(verifier).toContain("throw new CompactionScriptError('retained_rows_path_mismatch')");
   });
 
   it('binds parity to historical source data while using the current verification engine', () => {

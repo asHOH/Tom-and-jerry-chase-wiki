@@ -1,15 +1,20 @@
 #!/usr/bin/env node
 import { execFile } from 'node:child_process';
-import { createHash } from 'node:crypto';
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { isAbsolute, join, relative, resolve } from 'node:path';
+import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
 import nextEnv from '@next/env';
 import { createClient } from '@supabase/supabase-js';
 import { createJiti } from 'jiti';
 
+import {
+  CompactionScriptError,
+  readIgnoredManifest,
+  readIgnoredRetainedRows,
+  readPreCutoverRetainedRowsBinding,
+} from './lib/game-data-compaction-evidence.mjs';
 import { resolveSupabaseTarget } from './lib/supabase-target.mjs';
 
 const execFileAsync = promisify(execFile);
@@ -21,15 +26,6 @@ const serverOnlyStub = fileURLToPath(new URL('./lib/server-only-stub.mjs', impor
 const TEMP_PREFIX = 'tjwiki-game-data-compaction-';
 
 nextEnv.loadEnvConfig(projectDir);
-
-class CompactionScriptError extends Error {
-  constructor(code, details = {}) {
-    super(code);
-    this.name = 'CompactionScriptError';
-    this.code = code;
-    this.details = details;
-  }
-}
 
 function parseArgs(args) {
   let manifestPath;
@@ -107,104 +103,6 @@ async function isAncestor(ancestor, descendant) {
     if (error?.code === 1) return false;
     throw new CompactionScriptError('ancestry_check_failed');
   }
-}
-
-async function readIgnoredManifest(manifestArg) {
-  const manifestPath = resolve(projectDir, manifestArg);
-  const manifestRelativePath = relative(projectDir, manifestPath);
-  if (
-    manifestRelativePath.startsWith('..') ||
-    isAbsolute(manifestRelativePath) ||
-    !manifestRelativePath.replaceAll('\\', '/').startsWith('.tmp/')
-  ) {
-    throw new CompactionScriptError('manifest_must_be_under_tmp');
-  }
-  await run('git', ['check-ignore', '--quiet', '--', manifestRelativePath]);
-
-  let manifest;
-  try {
-    manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
-  } catch {
-    throw new CompactionScriptError('invalid_manifest');
-  }
-  if (!Array.isArray(manifest?.rows) || typeof manifest?.repository?.head !== 'string') {
-    throw new CompactionScriptError('invalid_manifest');
-  }
-  return { manifest, manifestPath, manifestRelativePath };
-}
-
-function readPreCutoverRetainedRowsBinding(manifest) {
-  const binding = manifest?.result?.preCutoverRetainedRows;
-  if (binding === undefined) return null;
-  if (
-    binding?.receiptKind !== 'preCutoverRetainedRows' ||
-    typeof binding.path !== 'string' ||
-    !/^v1:[a-f0-9]{64}$/u.test(binding.fileDigest ?? '') ||
-    typeof binding.capturedAt !== 'string' ||
-    !Number.isSafeInteger(binding.replayEpoch) ||
-    typeof binding.actionRevision !== 'string' ||
-    !Number.isSafeInteger(binding.snapshotRowCount) ||
-    !Number.isSafeInteger(binding.rowCount) ||
-    typeof binding.target?.host !== 'string' ||
-    typeof binding.target?.projectRef !== 'string'
-  ) {
-    throw new CompactionScriptError('invalid_pre_cutover_retained_rows_binding');
-  }
-  return binding;
-}
-
-async function readIgnoredRetainedRows(retainedRowsArg, manifest) {
-  const retainedRowsPath = resolve(projectDir, retainedRowsArg);
-  const retainedRowsRelativePath = relative(projectDir, retainedRowsPath);
-  if (
-    retainedRowsRelativePath.startsWith('..') ||
-    isAbsolute(retainedRowsRelativePath) ||
-    !retainedRowsRelativePath.replaceAll('\\', '/').startsWith('.tmp/')
-  ) {
-    throw new CompactionScriptError('retained_rows_must_be_under_tmp');
-  }
-  await run('git', ['check-ignore', '--quiet', '--', retainedRowsRelativePath]);
-  let retained;
-  let serialized;
-  try {
-    serialized = await readFile(retainedRowsPath, 'utf8');
-    retained = JSON.parse(serialized);
-  } catch {
-    throw new CompactionScriptError('invalid_retained_rows');
-  }
-  if (!Array.isArray(retained?.rows)) {
-    throw new CompactionScriptError('invalid_retained_rows');
-  }
-  const binding = readPreCutoverRetainedRowsBinding(manifest);
-  if (binding) {
-    const normalizedPath = retainedRowsRelativePath.replaceAll('\\', '/');
-    const digest = `v1:${createHash('sha256').update(serialized, 'utf8').digest('hex')}`;
-    const metadataMatches =
-      retained.schemaVersion === 1 &&
-      retained.receiptKind === binding.receiptKind &&
-      retained.capturedAt === binding.capturedAt &&
-      retained.replayEpoch === binding.replayEpoch &&
-      retained.actionRevision === binding.actionRevision &&
-      retained.snapshotRowCount === binding.snapshotRowCount &&
-      retained.rowCount === binding.rowCount &&
-      retained.rows.length === binding.rowCount &&
-      retained.target?.host === binding.target.host &&
-      retained.target?.projectRef === binding.target.projectRef;
-    if (normalizedPath !== binding.path) {
-      throw new CompactionScriptError('retained_rows_path_mismatch');
-    }
-    if (digest !== binding.fileDigest) {
-      throw new CompactionScriptError('retained_rows_digest_mismatch');
-    }
-    if (!metadataMatches) {
-      throw new CompactionScriptError('retained_rows_binding_mismatch');
-    }
-  }
-  return {
-    retained,
-    binding,
-    retainedRowsRelativePath: retainedRowsRelativePath.replaceAll('\\', '/'),
-  };
 }
 
 function chunk(values, size) {
@@ -618,6 +516,7 @@ async function runPostCutoverVerification({
   }
 
   const { retained, binding, retainedRowsRelativePath } = await readIgnoredRetainedRows(
+    projectDir,
     args.retainedRowsPath,
     manifest
   );
@@ -771,6 +670,7 @@ function sanitizedError(error) {
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   const { manifest, manifestPath, manifestRelativePath } = await readIgnoredManifest(
+    projectDir,
     args.manifestPath
   );
   if (args.mode === 'post-cutover' && !args.retainedRowsPath) {

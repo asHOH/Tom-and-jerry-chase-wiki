@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 
@@ -31,7 +32,6 @@ describe('game-data compaction cutover command', () => {
     expect(script).toContain("args.mode === 'post-check'");
     expect(script).toContain("'--mode=post-cutover'");
     expect(script).toContain('post_check_argument_missing');
-    expect(script).toContain('readAutomaticRetainedRowsPath(manifest)');
   });
 
   it('uses the atomic RPC and exact postcondition reads instead of table updates', () => {
@@ -53,10 +53,19 @@ describe('game-data compaction cutover command', () => {
     expect(lifecycle.indexOf('await executeCutover()')).toBeGreaterThan(
       lifecycle.indexOf('await persistManifest(manifest)')
     );
-    expect(script).toContain("handle = await open(path, 'wx')");
-    expect(script).toContain('await handle.sync()');
     expect(script).toContain("receiptKind: 'preCutoverRetainedRows'");
     expect(script).toContain('fileDigest: retainedRowsDigest(persisted.serialized)');
-    expect(verifier).toContain("throw new CompactionScriptError('retained_rows_digest_mismatch')");
+  });
+
+  it('round-trips retained evidence and rejects unsafe paths and changed files', () => {
+    execFileSync(
+      process.execPath,
+      ['--test', 'scripts/lib/game-data-compaction-evidence.test.mjs'],
+      {
+        cwd: process.cwd(),
+        windowsHide: true,
+        stdio: 'pipe',
+      }
+    );
   });
 });
