@@ -58,9 +58,14 @@ const catCharacterDefinitions = {
           '经典776锅汤，适用大部分情况。{击晕}爪刀命中后，接二级平底锅接爪刀轻松打死124Hp老鼠、接三级平底锅还可以直接抓取。{乘胜追击}弥补机动性不足的缺点。{熊熊燃烧}配合主动技能增加绑火箭收益。但开局难找节奏，需留意。',
       },
       {
-        cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'A-加大火力'],
+        cards: [
+          'S-乘胜追击',
+          'A-熊熊燃烧',
+          'A-穷追猛打',
+          [CardGroupType.Or, 'B-皮糙肉厚', 'A-加大火力'],
+        ],
         description:
-          '手型枪双烧卡组，适合无管道图。{穷追猛打}解决开局难找节奏的问题，{乘胜追击}弥补机动性不足的缺点，{加大火力}进一步提高火箭收益。',
+          '手型枪双烧卡组，适合无管道图。{穷追猛打}解决开局难找节奏的问题，{乘胜追击}弥补机动性不足的缺点，{加大火力}进一步提高火箭收益或{皮糙肉厚}提高生存能力。',
       },
       {
         cards: ['S-乘胜追击', 'A-熊熊燃烧', 'A-穷追猛打', 'C-猫是液体', 'C-狡诈'],
@@ -957,6 +962,10 @@ const catCharacterDefinitions = {
             ],
             description: '',
           },
+          {
+            cards: ['S-乘胜追击', 'S-击晕', 'S-知识渊博'],
+            description: '鞭子经典777卡组，要移速有移速，要控制有控制，要经验有经验。',
+          },
         ],
         defaultFolded: false,
       },
@@ -1470,7 +1479,8 @@ const catCharacterDefinitions = {
       {
         tagName: '防守',
         level: 2,
-        description: '3级炮提供的守奶酪以及墙缝能力很强',
+        description:
+          '3级炮提供的守奶酪以及墙缝能力很强，皇家盔甲的盾可阻挡老鼠推入奶酪，多个皇家盔甲配合{蓄势一击}可快速击倒老鼠',
         additionalDescription: '',
       },
     ],
@@ -1929,11 +1939,16 @@ const catCharacterDefinitions = {
     ],
     skillAllocations: [
       {
-        id: '',
+        id: '一般加点',
         pattern: '10100[12]22',
         weaponType: 'weapon1',
-        description:
-          '正常7级点三级主动，但如果已经到了最后一块奶酪，可以考虑点饭盒防守。有表哥的阵容建议五级点饭盒。',
+        description: '正常7级点三级主动，但如果已经到了最后一块奶酪，可以考虑点饭盒防守。',
+      },
+      {
+        id: '表哥对策加点',
+        pattern: '101200122',
+        weaponType: 'weapon1',
+        description: '有表哥的阵容提前点饭盒，阻止表哥救援。',
       },
     ],
     knowledgeCardGroups: [
@@ -2119,7 +2134,12 @@ const catCharacterDefinitions = {
         description: '传统蓄势流，细心可换穷追猛打或加大火力。现版本压力较大建议击晕流。',
       },
       {
-        cards: ['S-击晕', 'A-熊熊燃烧', 'B-皮糙肉厚', 'A-加大火力'],
+        cards: [
+          'S-击晕',
+          'A-熊熊燃烧',
+          'B-皮糙肉厚',
+          [CardGroupType.Or, 'A-加大火力', 'A-穷追猛打'],
+        ],
         description: '击晕流：现版本主流卡组。加大可换穷追，根据角色地图决定。',
       },
       {
@@ -2562,6 +2582,10 @@ const catCharacterDefinitions = {
           {
             cards: ['S-乘胜追击', 'S-蓄势一击', 'A-穷追猛打', 'C-猫是液体', 'C-狡诈'],
             description: '携带{猫是液体}时的变种。',
+          },
+          {
+            cards: ['S-乘胜追击', 'S-蓄势一击', 'B-恐吓', 'B-皮糙肉厚'],
+            description: '携带{恐吓}时的变种，拖老鼠奶酪进度来放飞天堂火箭上的老鼠。',
           },
         ],
         defaultFolded: false,
@@ -3209,6 +3233,10 @@ const catCharacterDefinitions = {
         items: ['盘子', '苍蝇拍', '老鼠夹', '护盾饮料'],
         description: '兼顾控场、追击与自保。',
       },
+      {
+        items: ['盘子', '玻璃杯', '老鼠夹', '苍蝇拍'],
+        description: '小道具方便补伤害。',
+      },
     ],
     skills: [
       {
@@ -3529,7 +3557,7 @@ const catCharacterDefinitions = {
     knowledgeCardGroups: [
       {
         cards: ['S-蓄势一击', 'A-熊熊燃烧', 'A-穷追猛打', 'B-皮糙肉厚'],
-        description: '蓄势主流卡组',
+        description: '主流卡组',
       },
       {
         cards: ['A-加大火力', 'A-穷追猛打', 'A-熊熊燃烧', 'C-猫是液体', 'B-皮糙肉厚'],
@@ -4140,7 +4168,7 @@ const catCharacterDefinitions = {
     ],
     recommendedStorePlans: [
       {
-        items: ['盘子', '苍蝇拍', '老鼠夹', '护盾饮料'],
+        items: ['盘子', '玻璃杯', '老鼠夹', '护盾饮料'],
         description: '兼顾控场、追击与自保。',
       },
     ],
