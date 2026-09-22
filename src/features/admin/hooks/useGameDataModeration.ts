@@ -6,13 +6,12 @@ import { useSWRConfig } from 'swr';
 import { useToast } from '@/context/ToastContext';
 
 export type PendingModerationAction = 'approve' | 'reject';
-type ModerationAction = PendingModerationAction | 'mark-synced' | 'revoke';
+type ModerationAction = PendingModerationAction | 'revoke';
 type ModerationFailure = { actionId: string; message: string };
 
 const SUCCESS_MESSAGE: Record<ModerationAction, string> = {
   approve: '已批准，该改动已公开',
   reject: '已拒绝',
-  'mark-synced': '已标记为已同步',
   revoke: '已撤销，该改动已从公开 replay 移除',
 };
 

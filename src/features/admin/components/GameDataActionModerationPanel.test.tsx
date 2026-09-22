@@ -743,7 +743,7 @@ describe('GameDataActionModerationPanel', () => {
     await waitFor(() => expect(screen.getByTitle('过滤状态')).not.toBeDisabled());
   });
 
-  it('shows only the approved-action sync button for super admins', () => {
+  it('does not offer direct sync or status-reset buttons for reviewed actions', () => {
     const approvedAction: PendingGameDataAction = {
       ...sampleAction,
       action_id: 'action-approved',
@@ -763,7 +763,7 @@ describe('GameDataActionModerationPanel', () => {
       rejection_reason: '内容有误',
     };
 
-    const { rerender } = render(
+    render(
       <GameDataActionModerationPanel
         {...filterProps}
         pendingActions={[approvedAction, rejectedAction]}
@@ -774,20 +774,6 @@ describe('GameDataActionModerationPanel', () => {
     fireEvent.change(screen.getByTitle('过滤状态'), { target: { value: 'all' } });
 
     expect(screen.queryByRole('button', { name: '标为已同步' })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: '标为已拒绝' })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: '标为已批准' })).not.toBeInTheDocument();
-
-    rerender(
-      <GameDataActionModerationPanel
-        {...filterProps}
-        pendingActions={[approvedAction, rejectedAction]}
-        mutatePendingActions={jest.fn()}
-        canMarkActionsSynced
-      />
-    );
-
-    expect(screen.getByRole('button', { name: '标为已同步' })).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: '撤销' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: '标为已拒绝' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: '标为已批准' })).not.toBeInTheDocument();
   });
@@ -838,46 +824,6 @@ describe('GameDataActionModerationPanel', () => {
     await waitFor(() => {
       expect(fetchMock).toHaveBeenLastCalledWith(
         '/api/game-data-actions/moderation/action-approved?action=revoke',
-        expect.objectContaining({ method: 'POST' })
-      );
-    });
-    await waitFor(() => expect(mutatePendingActions).toHaveBeenCalledTimes(1));
-  });
-
-  it('submits super-admin mark-synced actions', async () => {
-    const mutatePendingActions = jest.fn().mockResolvedValue(undefined);
-    const fetchMock = jest.fn().mockResolvedValue({
-      ok: true,
-      json: async () => ({}),
-    } as Response);
-    global.fetch = fetchMock;
-    jest.spyOn(window, 'confirm').mockReturnValue(true);
-
-    const approvedAction: PendingGameDataAction = {
-      ...sampleAction,
-      action_id: 'action-approved',
-      status: 'approved',
-      reviewed_at: '2026-05-11T07:30:00.000Z',
-      reviewed_by: 'reviewer-1',
-      reviewed_by_nickname: 'Reviewer',
-      is_public: true,
-    };
-
-    render(
-      <GameDataActionModerationPanel
-        {...filterProps}
-        pendingActions={[approvedAction]}
-        mutatePendingActions={mutatePendingActions}
-        canMarkActionsSynced
-      />
-    );
-
-    fireEvent.change(screen.getByTitle('过滤状态'), { target: { value: 'all' } });
-
-    fireEvent.click(screen.getByRole('button', { name: '标为已同步' }));
-    await waitFor(() => {
-      expect(fetchMock).toHaveBeenLastCalledWith(
-        '/api/game-data-actions/moderation/action-approved?action=mark-synced',
         expect.objectContaining({ method: 'POST' })
       );
     });

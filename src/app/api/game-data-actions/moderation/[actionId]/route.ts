@@ -9,7 +9,6 @@ import { invalidatePendingGameDataActionsCache } from '@/lib/gameData/publicActi
 import {
   approvePreparedGameDataAction,
   loadTrustedGameDataAction,
-  markPreparedGameDataActionSynced,
   revokePreparedGameDataAction,
   TrustedGameDataMutationError,
 } from '@/lib/gameData/trustedGameDataMutations';
@@ -17,7 +16,7 @@ import { publishNotification } from '@/lib/notificationUtils';
 import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
 import { getPublicUserSubmissionHref } from '@/lib/users/publicProfile';
 
-const MODERATION_ACTIONS = ['approve', 'reject', 'mark-synced', 'revoke'] as const;
+const MODERATION_ACTIONS = ['approve', 'reject', 'revoke'] as const;
 
 type ModerationAction = (typeof MODERATION_ACTIONS)[number];
 
@@ -59,13 +58,11 @@ export async function POST(
 
   try {
     const requiredPermission =
-      action === 'mark-synced'
-        ? 'game_data_action.mark_synced'
-        : action === 'revoke'
-          ? 'game_data_action.revoke'
-          : action === 'reject'
-            ? 'game_data_action.reject'
-            : 'game_data_action.approve';
+      action === 'revoke'
+        ? 'game_data_action.revoke'
+        : action === 'reject'
+          ? 'game_data_action.reject'
+          : 'game_data_action.approve';
     const guard = await requirePermission(requiredPermission, undefined, 'all', {
       request,
       blockAction: 'edit',
@@ -80,18 +77,6 @@ export async function POST(
       blockAction: 'edit',
     });
     if ('error' in resourceGuard) return resourceGuard.error;
-
-    if (action === 'mark-synced') {
-      if (recordData.status !== 'approved') {
-        return NextResponse.json(
-          { error: 'Action must be approved before this transition' },
-          { status: 409 }
-        );
-      }
-
-      await markPreparedGameDataActionSynced(guard.userId, recordData, getRequestIp(request));
-      return NextResponse.json({ message: 'Action marked as synced', action, action_id: actionId });
-    }
 
     if (action === 'approve') {
       await approvePreparedGameDataAction(guard.userId, recordData, getRequestIp(request));

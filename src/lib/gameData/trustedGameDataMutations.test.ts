@@ -11,7 +11,6 @@ import { supabaseAdmin } from '@/lib/supabase/admin';
 
 import {
   approvePreparedGameDataAction,
-  markPreparedGameDataActionSynced,
   publishPreparedGameDataActions,
   revokePreparedGameDataAction,
   type TrustedGameDataActionRecord,
@@ -761,29 +760,6 @@ describe('trusted game data mutations', () => {
       p_expected_replay_epoch: 9,
     });
     expect(invalidateMock).toHaveBeenCalledTimes(1);
-  });
-
-  it('validates the complete remaining set before mark-synced persistence', async () => {
-    const target = approvedRow('approved-target', 'item-a.description');
-    const remaining = approvedRow('approved-remaining', 'item-b.description');
-    readSnapshotMock.mockResolvedValue(snapshot([target, remaining]) as never);
-    adminRpcMock.mockResolvedValue({ data: null, error: null } as never);
-
-    await markPreparedGameDataActionSynced(
-      'coordinator-1',
-      record({ id: 'approved-target', status: 'approved', is_public: true })
-    );
-
-    expect(validateCandidateMock).toHaveBeenCalledWith([
-      expect.objectContaining({ rowId: 'approved-remaining' }),
-    ]);
-    expect(adminRpcMock).toHaveBeenCalledWith('prepared_mark_game_data_action_synced', {
-      p_actor_id: 'coordinator-1',
-      p_action_id: 'approved-target',
-      p_expected_entity_type: 'items',
-      p_expected_entry: record().entry,
-      p_expected_replay_epoch: 9,
-    });
   });
 
   it('validates the complete remaining set before revoke persistence', async () => {

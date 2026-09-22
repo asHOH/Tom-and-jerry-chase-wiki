@@ -35,7 +35,6 @@ type GameDataActionRowProps = {
   submission: GameDataActionSummary;
   canApproveActions: boolean;
   canRejectActions: boolean;
-  canMarkActionsSynced: boolean;
   canRevokeActions: boolean;
   isModerating: boolean;
   isSelected: boolean;
@@ -53,7 +52,6 @@ export default function GameDataActionRow({
   submission,
   canApproveActions,
   canRejectActions,
-  canMarkActionsSynced,
   canRevokeActions,
   isModerating,
   isSelected,
@@ -230,20 +228,6 @@ export default function GameDataActionRow({
                     </Button>
                   )}
                 </>
-              )}
-              {canMarkActionsSynced && submission.status === 'approved' && (
-                <Button
-                  disabled={isModerating}
-                  onClick={() => {
-                    const confirmed = window.confirm('确认将该改动标记为已同步？');
-                    if (!confirmed) return;
-                    void moderateAction(submission.action_id, 'mark-synced');
-                  }}
-                  variant='secondary'
-                  size='sm'
-                >
-                  标为已同步
-                </Button>
               )}
               {canApproveActions &&
                 submission.created_by &&

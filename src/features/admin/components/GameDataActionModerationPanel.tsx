@@ -31,7 +31,6 @@ export type PendingGameDataAction = GameDataActionSummary;
 type GameDataActionModerationPanelProps = {
   canApproveActions?: boolean;
   canRejectActions?: boolean;
-  canMarkActionsSynced?: boolean;
   canRevokeActions?: boolean;
   actionStatus: GameDataActionStatusFilter;
   onActionStatusChange: (status: GameDataActionStatusFilter) => void;
@@ -59,7 +58,6 @@ const DETAIL_CACHE_CONFIG = { provider: () => new Map() };
 const GameDataActionModerationPanel = ({
   canApproveActions: canApproveActions = true,
   canRejectActions: canRejectActions = true,
-  canMarkActionsSynced: canMarkActionsSynced = false,
   canRevokeActions: canRevokeActions = false,
   actionStatus,
   onActionStatusChange,
@@ -393,7 +391,6 @@ const GameDataActionModerationPanel = ({
                 submission={submission}
                 canApproveActions={canApproveActions}
                 canRejectActions={canRejectActions}
-                canMarkActionsSynced={canMarkActionsSynced}
                 canRevokeActions={canRevokeActions}
                 isModerating={isModerating}
                 isSelected={selectedActionIds.has(submission.action_id)}

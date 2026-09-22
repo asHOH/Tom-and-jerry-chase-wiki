@@ -4,7 +4,6 @@ import { requirePermission } from '@/lib/auth/requirePermission';
 import {
   approvePreparedGameDataAction,
   loadTrustedGameDataAction,
-  markPreparedGameDataActionSynced,
   revokePreparedGameDataAction,
   TrustedGameDataMutationError,
 } from '@/lib/gameData/trustedGameDataMutations';
@@ -28,7 +27,6 @@ jest.mock('@/lib/gameData/trustedGameDataMutations', () => {
   return {
     approvePreparedGameDataAction: jest.fn(),
     loadTrustedGameDataAction: jest.fn(),
-    markPreparedGameDataActionSynced: jest.fn(),
     revokePreparedGameDataAction: jest.fn(),
     TrustedGameDataMutationError: MockTrustedGameDataMutationError,
   };
@@ -48,7 +46,6 @@ jest.mock('@/lib/supabase/admin', () => ({ supabaseAdmin: { rpc: jest.fn() } }))
 const requirePermissionMock = jest.mocked(requirePermission);
 const loadRecordMock = jest.mocked(loadTrustedGameDataAction);
 const approveMock = jest.mocked(approvePreparedGameDataAction);
-const markSyncedMock = jest.mocked(markPreparedGameDataActionSynced);
 const revokeMock = jest.mocked(revokePreparedGameDataAction);
 const publishNotificationMock = jest.mocked(publishNotification);
 const adminRpcMock = jest.mocked(supabaseAdmin!.rpc);
@@ -113,7 +110,7 @@ describe('game data action moderation route', () => {
     });
   });
 
-  it('marks approved rows synced only through the trusted prepared mutation', async () => {
+  it('rejects the retired mark-synced action without reading or mutating rows', async () => {
     loadRecordMock.mockResolvedValue(record('approved'));
     const { POST } = await import('./route');
 
@@ -121,14 +118,12 @@ describe('game data action moderation route', () => {
       params: Promise.resolve({ actionId: 'action-1' }),
     });
 
-    expect(response.status).toBe(200);
-    expect(requirePermissionMock).toHaveBeenCalledWith(
-      'game_data_action.mark_synced',
-      undefined,
-      'all',
-      expect.objectContaining({ blockAction: 'edit', request: expect.anything() })
-    );
-    expect(markSyncedMock).toHaveBeenCalledWith('moderator-1', record('approved'), null);
+    expect(response.status).toBe(400);
+    expect(requirePermissionMock).not.toHaveBeenCalled();
+    expect(loadRecordMock).not.toHaveBeenCalled();
+    expect(approveMock).not.toHaveBeenCalled();
+    expect(revokeMock).not.toHaveBeenCalled();
+    expect(adminRpcMock).not.toHaveBeenCalled();
     expect(rpcMock).not.toHaveBeenCalled();
   });
 

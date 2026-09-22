@@ -419,35 +419,6 @@ export async function approvePreparedGameDataAction(
   invalidatePublicGameDataActionsCache();
 }
 
-export async function markPreparedGameDataActionSynced(
-  actorId: string,
-  record: TrustedGameDataActionRecord,
-  clientIp?: string | null
-): Promise<void> {
-  if (record.status !== 'approved' || !record.is_public) {
-    throw new TrustedGameDataMutationError('not_found');
-  }
-  const snapshot = await readApprovedReplaySnapshot();
-  if (!snapshot.rows.some((row) => row.id === record.id)) {
-    throw new TrustedGameDataMutationError('replay_epoch_conflict');
-  }
-  validateCandidate(candidateRows(snapshot).filter((row) => row.rowId !== record.id));
-
-  const { error } = await requireSupabaseAdminClient().rpc(
-    'prepared_mark_game_data_action_synced',
-    {
-      p_actor_id: actorId,
-      p_action_id: record.id,
-      p_expected_entity_type: record.entity_type,
-      p_expected_entry: record.entry,
-      p_expected_replay_epoch: snapshot.replayEpoch,
-      ...(clientIp === undefined ? {} : { p_ip: clientIp }),
-    }
-  );
-  if (error) throw persistenceError(error);
-  invalidatePublicGameDataActionsCache();
-}
-
 export async function revokePreparedGameDataAction(
   actorId: string,
   record: TrustedGameDataActionRecord,

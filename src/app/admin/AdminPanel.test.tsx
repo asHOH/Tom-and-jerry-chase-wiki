@@ -79,7 +79,6 @@ jest.mock('@/features/admin/components/GameDataActionModerationPanel', () => ({
   default: function MockGameDataActionModerationPanel(props: {
     canApproveActions?: boolean;
     canRejectActions?: boolean;
-    canMarkActionsSynced?: boolean;
     canRevokeActions?: boolean;
     actionStatus?: 'pending' | 'approved' | 'rejected' | 'synced' | 'revoked' | 'all';
     onActionStatusChange?: (
@@ -257,7 +256,6 @@ describe('AdminPanel', () => {
     expect(mockModerationPanel.mock.calls.at(-1)?.[0]).toEqual({
       canApproveActions: true,
       canRejectActions: true,
-      canMarkActionsSynced: true,
       canRevokeActions: true,
       actionStatus: 'pending',
       onActionStatusChange: expect.any(Function),
@@ -503,7 +501,7 @@ describe('AdminPanel', () => {
     expect(actionsTab).toHaveTextContent('1');
   });
 
-  it('enables moderation for a mark-synced-only permission grant', () => {
+  it('keeps read-only action access for a compaction-only permission grant', () => {
     permissionOverrides = new Set(['game_data_action.mark_synced']);
     renderAdminPanel(null);
 
@@ -514,7 +512,6 @@ describe('AdminPanel', () => {
       expect.objectContaining({
         canApproveActions: false,
         canRejectActions: false,
-        canMarkActionsSynced: true,
         canRevokeActions: false,
       })
     );

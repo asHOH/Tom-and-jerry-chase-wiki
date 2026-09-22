@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
 /**
- * Squash pending game_data_actions rows to reduce duplicate SET spam.
+ * Preview squashed game_data_actions rows without changing the database.
  *
  * Usage:
- *   node scripts/squash-pending-game-data-actions.mjs [--apply] [--entity-type=characters] [--limit=20]
+ *   node scripts/squash-pending-game-data-actions.mjs [--entity-type=characters] [--limit=20]
  *   node scripts/squash-pending-game-data-actions.mjs --status=approved --date=2026-02-20 --created-by-nickname=SYSTEM-CPYTHON --entity-type=characters --export-json=./scripts/temp/squashed-2026-02-20-system-cpython.json
  *
- * Default: dry-run (no writes).
+ * Read-only: analysis and optional JSON export.
  */
 import fs from 'node:fs/promises';
 import path from 'node:path';
@@ -19,6 +19,14 @@ import { createJiti } from 'jiti';
 // ---------------------------------------------
 // Config & helpers
 // ---------------------------------------------
+const rawArgs = process.argv.slice(2);
+if (rawArgs.some((arg) => arg === '--apply' || arg.startsWith('--apply='))) {
+  console.error(
+    '--apply has been retired; this script only supports read-only analysis and export.'
+  );
+  process.exit(1);
+}
+
 const projectDir = new URL('..', import.meta.url).pathname.replace(/^\/([A-Z]:)/, '$1');
 nextEnv.loadEnvConfig(projectDir);
 const jiti = createJiti(import.meta.url);
@@ -34,9 +42,6 @@ if (!SUPABASE_URL || !SERVICE_KEY) {
   );
   process.exit(1);
 }
-
-const rawArgs = process.argv.slice(2);
-const isApply = rawArgs.includes('--apply');
 
 function getArgValue(name) {
   const eqArg = rawArgs.find((a) => a.startsWith(`${name}=`));
@@ -55,11 +60,6 @@ const filterDate = getArgValue('--date') || undefined;
 const filterCreatedBy = getArgValue('--created-by') || undefined;
 const filterCreatedByNickname = getArgValue('--created-by-nickname') || undefined;
 const exportJsonPath = getArgValue('--export-json') || undefined;
-
-if (isApply && filterStatus !== 'pending') {
-  console.error('--apply is only supported for --status=pending');
-  process.exit(1);
-}
 
 if (filterDate && !/^\d{4}-\d{2}-\d{2}$/.test(filterDate)) {
   console.error('--date must be in YYYY-MM-DD format');
@@ -143,7 +143,7 @@ async function main() {
 
   // Group by entity_type + author + root so each group is one user editing one root key.
   // A single DB row that touches multiple roots gets split across groups;
-  // we track which row IDs contributed to each group so we can supersede them.
+  // we retain the contributing row IDs in each exported group.
   const groups = new Map(); // key => { items: [], rowIds: Set }
 
   for (const row of rows ?? []) {
@@ -162,16 +162,8 @@ async function main() {
   }
 
   const groupEntries = [...groups.entries()].slice(0, groupLimit ?? groups.size);
-  console.log(
-    `Found ${groups.size} groups, processing ${groupEntries.length}${
-      isApply ? ' (apply mode)' : ' (dry-run)'
-    }`
-  );
+  console.log(`Found ${groups.size} groups, processing ${groupEntries.length} (read-only)`);
 
-  // Track which row IDs have been superseded across groups (a single row
-  // split across multiple root-groups should only be rejected once all its
-  // groups have been processed).
-  const supersededIds = new Set();
   const exportedGroups = [];
 
   for (const [key, { items, rowIds }] of groupEntries) {
@@ -200,70 +192,6 @@ async function main() {
         history,
         squashed,
       });
-    }
-
-    if (!isApply) continue;
-
-    if (squashed.length === 0) {
-      console.log('  Skipped insert (empty after squash)');
-    } else {
-      const first = items[0].row;
-      const messages = [...new Set(items.map((i) => i.row.message?.trim()).filter(Boolean))];
-      const combinedMessage =
-        messages.length > 0
-          ? `${messages.join('; ')} (auto-squashed)`
-          : 'auto-squashed pending batch';
-      const { data: inserted, error: insertError } = await supabase
-        .from('game_data_actions')
-        .insert([
-          {
-            entity_type: entityType,
-            entry: squashed,
-            status: 'pending',
-            is_public: false,
-            created_by: first.created_by ?? null,
-            created_at: first.created_at,
-            message: combinedMessage,
-          },
-        ])
-        .select('id')
-        .single();
-
-      if (insertError) {
-        console.error('  Insert failed:', insertError);
-        continue;
-      }
-
-      for (const id of rowIds) supersededIds.add(id);
-      console.log(`  Inserted ${inserted?.id}, will supersede ${rowIds.size} rows`);
-    }
-  }
-
-  if (isApply && supersededIds.size > 0) {
-    const ids = [...supersededIds];
-    // Only reject rows still pending — a reviewer may have approved/rejected
-    // some between our initial fetch and now.
-    const { data: updated, error: updateError } = await supabase
-      .from('game_data_actions')
-      .update({
-        status: 'rejected',
-        rejection_reason: `Superseded by squash ${new Date().toISOString()}`,
-        is_public: false,
-      })
-      .eq('status', 'pending')
-      .in('id', ids)
-      .select('id');
-
-    if (updateError) {
-      console.error('Mark original rows failed:', updateError);
-    } else {
-      const updatedCount = updated?.length ?? 0;
-      console.log(`Superseded ${updatedCount} of ${ids.length} original rows`);
-      if (updatedCount < ids.length) {
-        console.warn(
-          `  ${ids.length - updatedCount} row(s) were already approved/rejected and left untouched`
-        );
-      }
     }
   }
 
