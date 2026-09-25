@@ -450,4 +450,20 @@ describe('publish route', () => {
     expect(response.status).toBe(409);
     await expect(response.json()).resolves.toEqual({ error: 'replay_epoch_conflict' });
   });
+
+  it('explains invalid required data before a submission is persisted', async () => {
+    publishPreparedMock.mockRejectedValueOnce(
+      new TrustedGameDataMutationError('invalid_game_data', {
+        detail: { path: '鲍姆.skillAllocations.0.description' },
+      })
+    );
+    const { POST } = await import('./route');
+    const response = await POST(createRequest(validBody));
+    expect(response.status).toBe(422);
+    await expect(response.json()).resolves.toEqual({
+      error: 'invalid_game_data',
+      message:
+        '改动中的字段「鲍姆.skillAllocations.0.description」缺失或类型不正确，请修正后重新提交。',
+    });
+  });
 });

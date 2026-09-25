@@ -4,6 +4,7 @@ import { canAccessAll } from '@/lib/auth/permissions';
 import { StaleGameDataEditError, validateActionFreshness } from '@/lib/gameData/actionFreshness';
 import { validateApprovedCandidateReplay } from '@/lib/gameData/approvedCandidateReplay';
 import { readApprovedReplaySnapshot } from '@/lib/gameData/approvedReplaySnapshotReader';
+import { InvalidGameDataValueError } from '@/lib/gameData/characterDataValidation';
 import { invalidatePublicGameDataActionsCache } from '@/lib/gameData/publicActionsCache';
 import { getPublishOperationFingerprint } from '@/lib/gameData/publishOperation';
 import { preparePublishActionItems } from '@/lib/gameData/publishPreparation';
@@ -145,6 +146,32 @@ describe('trusted game data mutations', () => {
       data: [{ id: 'new-1', is_public: true, status: 'approved' }],
       error: null,
     } as never);
+  });
+
+  it('rejects invalid required data for submissions and approvals before persistence', async () => {
+    const invalid = new InvalidGameDataValueError({ path: 'Tom.skillAllocations.0.description' });
+    for (const submitMode of ['default', 'force_pending'] as const) {
+      freshnessMock.mockImplementationOnce(() => {
+        throw invalid;
+      });
+      await expect(
+        publishPreparedGameDataActions({
+          actorId: 'actor-1',
+          permission: 'game_data_action.create',
+          grants: [],
+          prepared,
+          submitMode,
+        })
+      ).rejects.toMatchObject({ code: 'invalid_game_data', cause: invalid });
+    }
+    freshnessMock.mockImplementationOnce(() => {
+      throw invalid;
+    });
+    await expect(approvePreparedGameDataAction('moderator-1', record())).rejects.toMatchObject({
+      code: 'invalid_game_data',
+      cause: invalid,
+    });
+    expect(adminRpcMock).not.toHaveBeenCalled();
   });
 
   const operationQuery = (data: unknown, error: unknown = null) => ({

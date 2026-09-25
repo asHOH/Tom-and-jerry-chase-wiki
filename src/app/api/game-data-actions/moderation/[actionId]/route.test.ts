@@ -246,4 +246,23 @@ describe('game data action moderation route', () => {
     });
     expect(publishNotificationMock).not.toHaveBeenCalled();
   });
+
+  it('returns actionable required-field errors without approving or notifying', async () => {
+    approveMock.mockRejectedValueOnce(
+      new TrustedGameDataMutationError('invalid_game_data', {
+        detail: { path: '鲍姆.skillAllocations.0.description' },
+      })
+    );
+    const { POST } = await import('./route');
+    const response = await POST(createRequest('approve'), {
+      params: Promise.resolve({ actionId: 'action-1' }),
+    });
+    expect(response.status).toBe(422);
+    await expect(response.json()).resolves.toEqual({
+      error: 'invalid_game_data',
+      message:
+        '改动中的字段「鲍姆.skillAllocations.0.description」缺失或类型不正确，请修正后重新提交。',
+    });
+    expect(publishNotificationMock).not.toHaveBeenCalled();
+  });
 });

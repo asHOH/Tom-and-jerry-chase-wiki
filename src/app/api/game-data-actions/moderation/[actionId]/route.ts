@@ -3,7 +3,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requirePermission } from '@/lib/auth/requirePermission';
 import { getGameActionResourceContexts } from '@/lib/auth/resourceContexts';
 import { getRequestIp } from '@/lib/blocks/server';
-import { staleGameDataEditResponse } from '@/lib/gameData/candidateConflictResponse';
+import {
+  invalidGameDataResponse,
+  staleGameDataEditResponse,
+} from '@/lib/gameData/candidateConflictResponse';
 import { getGameDataNotificationDetails } from '@/lib/gameData/contributionDisplay';
 import { invalidatePendingGameDataActionsCache } from '@/lib/gameData/publicActionsCache';
 import {
@@ -149,6 +152,7 @@ export async function POST(
     return NextResponse.json({ message: 'Action rejected', action, action_id: actionId });
   } catch (err) {
     if (err instanceof TrustedGameDataMutationError) {
+      if (err.code === 'invalid_game_data') return invalidGameDataResponse(err);
       if (err.code === 'not_found') {
         return NextResponse.json({ error: 'Action not found' }, { status: 404 });
       }

@@ -112,6 +112,17 @@ function staleEditPath(error: TrustedGameDataMutationError): string {
   return boundedString(error.cause.detail.path, MAX_DIAGNOSTIC_TEXT_LENGTH) ?? '未知字段';
 }
 
+export function invalidGameDataMessage(error: TrustedGameDataMutationError): string {
+  return `改动中的字段「${staleEditPath(error)}」缺失或类型不正确，请修正后重新提交。`;
+}
+
+export function invalidGameDataResponse(error: TrustedGameDataMutationError): NextResponse {
+  return NextResponse.json(
+    { error: error.code, message: invalidGameDataMessage(error) },
+    { status: 422 }
+  );
+}
+
 export function staleGameDataEditMessage(
   error: TrustedGameDataMutationError,
   context: StaleEditContext

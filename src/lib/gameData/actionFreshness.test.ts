@@ -3,6 +3,7 @@ import type { Action } from '@/lib/edit/diffUtils';
 
 import { StaleGameDataEditError, validateActionFreshness } from './actionFreshness';
 import type { ApprovedCandidateReplayRow } from './approvedCandidateReplay';
+import { InvalidGameDataValueError } from './characterDataValidation';
 import { getCanonicalGameData } from './published/canonicalSources';
 
 jest.mock('server-only', () => ({}), { virtual: true });
@@ -25,7 +26,10 @@ describe('new action freshness', () => {
   beforeEach(() => {
     baseline = {
       Tom: {
+        id: 'Tom',
         description: 'original',
+        skills: [],
+        knowledgeCardGroups: [],
         other: 'unchanged',
         nullable: null,
         counters: [
@@ -184,8 +188,8 @@ describe('new action freshness', () => {
         [
           row('delete', {
             op: 'delete',
-            path: 'Tom.description',
-            oldValue: 'original',
+            path: 'Tom.other',
+            oldValue: 'unchanged',
             newValue: undefined,
           }),
         ]
@@ -277,5 +281,38 @@ describe('new action freshness', () => {
       validateActionFreshness([], [row('invalid', set('Tom.__proto__.value', undefined, 'bad'))])
     ).toThrow();
     expect(({} as Record<string, unknown>).value).toBeUndefined();
+  });
+
+  it('rejects missing required fields but permits temporary removal restored within a request', () => {
+    const remove: Action = {
+      op: 'delete',
+      path: 'Tom.description',
+      oldValue: 'original',
+      newValue: undefined,
+    };
+    expect(() => validateActionFreshness([], [row('missing', remove)])).toThrow(
+      InvalidGameDataValueError
+    );
+    expect(() =>
+      validateActionFreshness(
+        [],
+        [row('restored', remove, set('Tom.description', undefined, 'restored'))]
+      )
+    ).not.toThrow();
+    const allocations = [{ id: 'plan', pattern: '012', weaponType: 'weapon1', description: 'old' }];
+    (baseline.Tom as Record<string, unknown>).skillAllocations = allocations;
+    expect(() =>
+      validateActionFreshness(
+        [],
+        [
+          row(
+            'parent',
+            set('Tom.skillAllocations', allocations, [
+              { id: 'plan', pattern: '012', weaponType: 'weapon1' },
+            ])
+          ),
+        ]
+      )
+    ).toThrow(InvalidGameDataValueError);
   });
 });

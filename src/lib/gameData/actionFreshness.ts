@@ -4,6 +4,7 @@ import isEqual from 'lodash-es/isEqual';
 
 import { parseActionPath, resolveArraySegment } from './actionPath';
 import type { ApprovedCandidateReplayRow } from './approvedCandidateReplay';
+import { validateCharacterData } from './characterDataValidation';
 import { applyCheckedAction } from './checkedActionReplay';
 import { isPublishableEntityType } from './publishableEntityTypes';
 import { createApprovedActionSnapshot } from './published/approvedActionSnapshot';
@@ -129,5 +130,14 @@ export function validateActionFreshness(
         checkedContainers.get(row.entityType)!.push(action.path);
       }
     }
+  }
+  const characters = targets.get('characters');
+  if (characters) {
+    validateCharacterData(
+      characters,
+      proposedRows
+        .filter((row) => row.entityType === 'characters')
+        .flatMap((row) => row.actions.map((action) => action.path))
+    );
   }
 }

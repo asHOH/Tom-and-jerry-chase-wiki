@@ -14,7 +14,11 @@ import { hasSupabaseAdminConfig } from '@/lib/supabase/admin';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
 import type { Json } from '@/data/database.types';
 
-import { candidateConflictResponse, staleGameDataEditResponse } from './candidateConflictResponse';
+import {
+  candidateConflictResponse,
+  invalidGameDataResponse,
+  staleGameDataEditResponse,
+} from './candidateConflictResponse';
 import { getGameDataNotificationDetails } from './contributionDisplay';
 import { checkPendingActionAcknowledgement } from './pendingActionAwarenessServer';
 import { PUBLISH_LIMITS } from './publishLimits';
@@ -278,6 +282,7 @@ export async function handleGameDataSubmission(
       return publishPreparationErrorResponse(error);
     }
     if (error instanceof TrustedGameDataMutationError) {
+      if (error.code === 'invalid_game_data') return invalidGameDataResponse(error);
       if (error.code === 'forbidden') {
         return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
       }

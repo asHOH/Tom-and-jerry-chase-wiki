@@ -14,6 +14,7 @@ import {
   readApprovedReplaySnapshot,
   type ApprovedReplaySnapshot,
 } from '@/lib/gameData/approvedReplaySnapshotReader';
+import { InvalidGameDataValueError } from '@/lib/gameData/characterDataValidation';
 import {
   invalidatePendingGameDataActionsCache,
   invalidatePublicGameDataActionsCache,
@@ -49,6 +50,7 @@ export class TrustedGameDataMutationError extends Error {
     | 'load_failed'
     | 'forbidden'
     | 'invalid_row'
+    | 'invalid_game_data'
     | 'candidate_conflict'
     | 'stale_edit'
     | 'replay_epoch_conflict'
@@ -90,7 +92,11 @@ function validateFreshness(
     validateActionFreshness(currentRows, proposedRows);
   } catch (error) {
     throw new TrustedGameDataMutationError(
-      error instanceof StaleGameDataEditError ? 'stale_edit' : 'candidate_conflict',
+      error instanceof StaleGameDataEditError
+        ? 'stale_edit'
+        : error instanceof InvalidGameDataValueError
+          ? 'invalid_game_data'
+          : 'candidate_conflict',
       error
     );
   }
