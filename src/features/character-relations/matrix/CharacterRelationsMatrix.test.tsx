@@ -49,6 +49,23 @@ const getEntityKey = (
 const getCellTestId = (viewModel: RelationMatrixViewModel, rowId: string, columnId: string) =>
   `relation-cell-${getEntityKey(viewModel.rows, rowId)}-${getEntityKey(viewModel.columns, columnId)}`;
 
+// The header test renders the full catalog; cell behavior only needs these real rows and columns.
+function buildFocusedMatrix(columnCategory: 'cat' | 'mouse'): RelationMatrixViewModel {
+  const viewModel = buildRelationMatrixViewModel({ rowFaction: 'mouse', columnCategory });
+  const rowIds = new Set(['杰瑞', '鲍姆', '罗宾汉杰瑞']);
+  const emptyColumn = viewModel.columns.find(
+    (column) =>
+      column.id !== '杰瑞' &&
+      !getRelationMatrixCell(viewModel, getEntityKey(viewModel.rows, '杰瑞'), column.key)
+  );
+  const columnIds = new Set([...rowIds, '汤姆', '托普斯', emptyColumn?.id]);
+  return {
+    ...viewModel,
+    rows: viewModel.rows.filter(({ id }) => rowIds.has(id)),
+    columns: viewModel.columns.filter(({ id }) => columnIds.has(id)),
+  };
+}
+
 describe('CharacterRelationsMatrix', () => {
   it.each([
     ['mouse', 'mouse', ['协作']],
@@ -107,10 +124,7 @@ describe('CharacterRelationsMatrix', () => {
   });
 
   it('should render blank empty cells, filled major cells, and dotted minor cells', () => {
-    const viewModel = buildRelationMatrixViewModel({
-      rowFaction: 'mouse',
-      columnCategory: 'cat',
-    });
+    const viewModel = buildFocusedMatrix('cat');
     const emptyColumn = viewModel.columns.find(
       (column) =>
         !getRelationMatrixCell(viewModel, getEntityKey(viewModel.rows, '杰瑞'), column.key)
@@ -145,10 +159,7 @@ describe('CharacterRelationsMatrix', () => {
   });
 
   it('should apply caller-controlled matrix sizing to cells and filled triggers', () => {
-    const viewModel = buildRelationMatrixViewModel({
-      rowFaction: 'mouse',
-      columnCategory: 'cat',
-    });
+    const viewModel = buildFocusedMatrix('cat');
 
     render(<CharacterRelationsMatrix viewModel={viewModel} cellSize={36} />);
 
@@ -161,10 +172,7 @@ describe('CharacterRelationsMatrix', () => {
   });
 
   it('should let row header links follow caller-controlled matrix sizing', () => {
-    const viewModel = buildRelationMatrixViewModel({
-      rowFaction: 'mouse',
-      columnCategory: 'cat',
-    });
+    const viewModel = buildFocusedMatrix('cat');
 
     render(<CharacterRelationsMatrix viewModel={viewModel} cellSize={36} />);
 
@@ -175,10 +183,7 @@ describe('CharacterRelationsMatrix', () => {
   });
 
   it('should reuse one relation color class for fills, dots, and legend markers', () => {
-    const viewModel = buildRelationMatrixViewModel({
-      rowFaction: 'mouse',
-      columnCategory: 'cat',
-    });
+    const viewModel = buildFocusedMatrix('cat');
 
     render(
       <>
@@ -202,10 +207,7 @@ describe('CharacterRelationsMatrix', () => {
   });
 
   it('should render legal empty cells as edit buttons in edit mode', () => {
-    const viewModel = buildRelationMatrixViewModel({
-      rowFaction: 'mouse',
-      columnCategory: 'mouse',
-    });
+    const viewModel = buildFocusedMatrix('mouse');
     const row = viewModel.rows.find((item) => item.id === '杰瑞');
     const emptyColumn = viewModel.columns.find(
       (column) =>
@@ -237,10 +239,7 @@ describe('CharacterRelationsMatrix', () => {
   });
 
   it('should render filled edit buttons without tooltip triggers and preserve relation visuals', () => {
-    const viewModel = buildRelationMatrixViewModel({
-      rowFaction: 'mouse',
-      columnCategory: 'cat',
-    });
+    const viewModel = buildFocusedMatrix('cat');
     const onCellSelect = jest.fn();
 
     render(
@@ -276,10 +275,7 @@ describe('CharacterRelationsMatrix', () => {
   });
 
   it('should not render invalid self-cells as edit buttons', () => {
-    const viewModel = buildRelationMatrixViewModel({
-      rowFaction: 'mouse',
-      columnCategory: 'mouse',
-    });
+    const viewModel = buildFocusedMatrix('mouse');
 
     render(<CharacterRelationsMatrix viewModel={viewModel} isEditMode />);
 
@@ -291,10 +287,7 @@ describe('CharacterRelationsMatrix', () => {
 
   describe('cell click highlighting', () => {
     it('should highlight the row and column when clicking a cell', () => {
-      const viewModel = buildRelationMatrixViewModel({
-        rowFaction: 'mouse',
-        columnCategory: 'cat',
-      });
+      const viewModel = buildFocusedMatrix('cat');
 
       render(<CharacterRelationsMatrix viewModel={viewModel} />);
 
@@ -322,10 +315,7 @@ describe('CharacterRelationsMatrix', () => {
     });
 
     it('should toggle off when clicking the same cell again', () => {
-      const viewModel = buildRelationMatrixViewModel({
-        rowFaction: 'mouse',
-        columnCategory: 'cat',
-      });
+      const viewModel = buildFocusedMatrix('cat');
 
       render(<CharacterRelationsMatrix viewModel={viewModel} />);
 
@@ -340,10 +330,7 @@ describe('CharacterRelationsMatrix', () => {
     });
 
     it('should move highlight to a new cell when clicking a different cell', () => {
-      const viewModel = buildRelationMatrixViewModel({
-        rowFaction: 'mouse',
-        columnCategory: 'cat',
-      });
+      const viewModel = buildFocusedMatrix('cat');
 
       render(<CharacterRelationsMatrix viewModel={viewModel} />);
 
@@ -360,10 +347,7 @@ describe('CharacterRelationsMatrix', () => {
     });
 
     it('should not trigger highlight in edit mode', () => {
-      const viewModel = buildRelationMatrixViewModel({
-        rowFaction: 'mouse',
-        columnCategory: 'mouse',
-      });
+      const viewModel = buildFocusedMatrix('mouse');
       const row = viewModel.rows.find((item) => item.id === '杰瑞');
       const emptyColumn = viewModel.columns.find(
         (column) =>

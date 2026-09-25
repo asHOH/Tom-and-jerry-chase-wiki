@@ -137,7 +137,7 @@ function renderInEditMode() {
 
 describe('usePageEditMode', () => {
   beforeEach(() => {
-    session = installTestEditSession();
+    session = installTestEditSession({});
     mockPermissionProfile = 'contributor';
     mockShowToast.mockClear();
     mockPendingAwareness = undefined;

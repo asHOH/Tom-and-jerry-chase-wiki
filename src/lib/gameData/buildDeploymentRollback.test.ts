@@ -1,3 +1,5 @@
+/** @jest-environment node */
+
 import { spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 
@@ -10,12 +12,35 @@ describe('VPS build rollback contract', () => {
       deployScript.indexOf('handle_exit()')
     );
     const bash = process.platform === 'win32' ? 'C:/Program Files/Git/bin/bash.exe' : 'bash';
-    const run = (body: unknown, mode = 'candidate', publicBody = body) =>
-      spawnSync(
-        bash,
-        [
-          '-c',
-          `set -euo pipefail
+    const complete = {
+      commitSha: '12345678',
+      gameDataArtifact: {
+        deploymentIdentity: 'test-build',
+        replayEpoch: null,
+        actionRevision: 'empty',
+        rowCount: 0,
+      },
+    };
+    const cases: Array<{
+      body: unknown;
+      publicBody?: unknown;
+      recovery?: boolean;
+      status: number;
+    }> = [
+      { body: complete, status: 0 },
+      ...[undefined, null, 'invalid', []].flatMap((gameDataArtifact) => {
+        const incomplete = { commitSha: '12345678', gameDataArtifact };
+        return [
+          { body: incomplete, status: 1 },
+          { body: complete, publicBody: incomplete, status: 1 },
+        ];
+      }),
+      { body: { ...complete, commitSha: 'wrong' }, status: 1 },
+      { body: { commitSha: '12345678' }, recovery: true, status: 0 },
+      { body: { commitSha: 'wrong' }, recovery: true, status: 1 },
+    ];
+    // Batch the cases in one shell; every case still runs the real endpoint validators.
+    const harness = `set -euo pipefail
 ${functions}
 CURRENT_HASH=12345678abcdef
 PM2_APP_NAME=test
@@ -33,43 +58,32 @@ fetch_endpoint() {
 ensure_pm2_cli() { :; }
 run_quietly() { "$@"; }
 pm2() { :; }
-if [ "$TEST_MODE" = recovery ]; then
-  ensure_pm2_process 0 || exit 1
-else
-  ensure_pm2_process || exit 1
-fi`,
-        ],
-        {
-          encoding: 'utf8',
-          env: {
-            ...process.env,
-            TEST_MODE: mode,
-            TEST_VERSION_BODY: JSON.stringify(body),
-            TEST_PUBLIC_BODY: JSON.stringify(publicBody),
-          },
-        }
-      );
-    const complete = {
-      commitSha: '12345678',
-      gameDataArtifact: {
-        deploymentIdentity: 'test-build',
-        replayEpoch: null,
-        actionRevision: 'empty',
-        rowCount: 0,
+case_count=0
+while IFS=$'\t' read -r require_artifact expected_status TEST_VERSION_BODY TEST_PUBLIC_BODY; do
+  case_count=$((case_count + 1))
+  if ensure_pm2_process "$require_artifact"; then actual_status=0; else actual_status=$?; fi
+  if [ "$actual_status" -ne "$expected_status" ]; then
+    echo "Case $case_count: expected $expected_status, received $actual_status" >&2
+    exit 1
+  fi
+done <<< "$TEST_CASES"
+printf 'Verified %s cases' "$case_count"`;
+    const result = spawnSync(bash, ['-s'], {
+      input: harness,
+      encoding: 'utf8',
+      env: {
+        ...process.env,
+        TEST_CASES: cases
+          .map(({ body, publicBody = body, recovery, status }) =>
+            [recovery ? 0 : 1, status, JSON.stringify(body), JSON.stringify(publicBody)].join('\t')
+          )
+          .join('\n'),
       },
-    };
-    const valid = run(complete);
-    expect(valid.error).toBeUndefined();
-    expect(valid.status).toBe(0);
-    for (const gameDataArtifact of [undefined, null, 'invalid', []]) {
-      const incomplete = { commitSha: '12345678', gameDataArtifact };
-      expect(run(incomplete).status).toBe(1);
-      expect(run(complete, 'candidate', incomplete).status).toBe(1);
-    }
-    expect(run({ ...complete, commitSha: 'wrong' }).status).toBe(1);
-    const legacy = { commitSha: '12345678' };
-    expect(run(legacy, 'recovery').status).toBe(0);
-    expect(run({ commitSha: 'wrong' }, 'recovery').status).toBe(1);
+    });
+    expect(result.error).toBeUndefined();
+    expect(result.stderr).toBe('');
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain(`Verified ${cases.length} cases`);
   }, 30_000);
 
   it('forces a build only when requested and rejects unknown arguments before deployment', () => {

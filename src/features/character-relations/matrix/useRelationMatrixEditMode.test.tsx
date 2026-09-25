@@ -3,6 +3,7 @@ import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-libra
 
 import type { EditSession } from '@/lib/edit/editSession';
 import type { PendingActionAwarenessSource } from '@/context/PendingActionAwarenessContext';
+import { characters } from '@/data/static';
 import {
   clearTestEditSession,
   getTestEditHistoryKey,
@@ -125,7 +126,9 @@ const renderProbe = () => render(<RelationEditModeProbe />);
 
 describe('useRelationMatrixEditMode', () => {
   beforeEach(() => {
-    session = installTestEditSession();
+    session = installTestEditSession({
+      characters: { 杰瑞: characters.杰瑞!, 汤姆: characters.汤姆! },
+    });
     mockPermissionProfile = 'contributor';
     mockPendingAwareness = undefined;
     window.localStorage.clear();

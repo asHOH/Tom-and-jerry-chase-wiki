@@ -31,8 +31,27 @@ const baseline = {
   traits,
 } as PublishedGameDataByType;
 
-export function installTestEditSession(): EditSession {
-  const session = createEditSession(baseline, 'v1:test');
+// Omitted domains stay empty when a test supplies its own baseline.
+export function installTestEditSession(
+  data: Partial<PublishedGameDataByType> = baseline
+): EditSession {
+  const session = createEditSession(
+    {
+      achievements: { cat: {}, mouse: {} },
+      buffs: {},
+      cards: {},
+      characters: {},
+      entities: {},
+      fixtures: {},
+      items: {},
+      maps: {},
+      modes: {},
+      specialSkills: { cat: {}, mouse: {} },
+      traits: {},
+      ...data,
+    },
+    'v1:test'
+  );
   installActiveEditSession(session);
   return session;
 }
