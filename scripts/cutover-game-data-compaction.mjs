@@ -27,12 +27,12 @@ const CONFIRMATION = 'SYNC_APPROVED_COMPACTION_BATCH';
 
 nextEnv.loadEnvConfig(projectDir);
 
-function parseArgs(args) {
+export function parseArgs(args) {
   let manifestPath;
   let patchedRef;
   let productionOrigin;
   let retainedRowsPath;
-  let actorId;
+  let actorId = process.env.GAME_DATA_COMPACTION_ACTOR_ID?.trim();
   let confirmation;
   let expectedSupabaseHost;
   let mode = 'check';

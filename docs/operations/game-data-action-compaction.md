@@ -86,6 +86,8 @@ npm run verify:game-data-compaction -- \
 1. 在 cutover 行仍为 `approved/public` 时部署已写入补丁的基线。
 2. 在本批次数据库归档已获授权时执行 `sync`。它会先核对目标并运行全部预检，预检失败时不会修改状态；无需再次索取相同授权：
 
+   先在本地被 Git 忽略的 `.env.local` 中配置 `GAME_DATA_COMPACTION_ACTOR_ID`，或通过已有环境变量提供授权操作者的 UUID。工具会直接读取它，无需把 ID 展开到命令参数或日志中。旧的 `--actor-id` 参数仍兼容并优先于环境变量；常规操作使用环境变量。
+
    ```bash
    npm run cutover:game-data-compaction -- \
      --mode=sync \
@@ -93,7 +95,6 @@ npm run verify:game-data-compaction -- \
      --patched-ref=<patched-baseline-commit> \
      --production-origin=https://www.tjwiki.com \
      --expected-supabase-host=<project-ref>.supabase.co \
-     --actor-id=<authorized-user-uuid> \
      --confirm=SYNC_APPROVED_COMPACTION_BATCH
    ```
 
@@ -119,7 +120,7 @@ npm run verify:game-data-compaction -- \
 
    `post-check` 自动核对 retained 文件的路径、摘要和元数据，检查 `/api/version` 的 deployment identity、replay epoch、action revision、row count 和 commit，并在完整数据比对前后精确复查两类行。依赖行继续参与 action patch 验证，但不进入归档集合。缺行、状态变化或行角色重叠都会阻止生成通过记录。
 
-仅诊断或尚未授权数据库修改时，把 `sync` 命令中的 `--mode=sync` 换成 `--mode=check`，并省略 `--actor-id` 和 `--confirm`。正常流程不必重复运行 `check`；第二次实际构建和最终 `post-check` 仍是完成条件。
+仅诊断或尚未授权数据库修改时，把 `sync` 命令中的 `--mode=sync` 换成 `--mode=check`，并省略 `--confirm`；只读模式不需要操作者 ID。正常流程不必重复运行 `check`；第二次实际构建和最终 `post-check` 仍是完成条件。
 
 ## 数据库行已经切换时：只读恢复
 

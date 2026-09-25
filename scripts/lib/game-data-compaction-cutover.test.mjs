@@ -3,7 +3,40 @@ import { spawnSync } from 'node:child_process';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 
-import { createVerifierFailure } from '../cutover-game-data-compaction.mjs';
+import { createVerifierFailure, parseArgs } from '../cutover-game-data-compaction.mjs';
+
+test('sync reads the actor from the environment, allows an explicit override, and keeps its guards', () => {
+  const previous = process.env.GAME_DATA_COMPACTION_ACTOR_ID;
+  const actor = '00000000-0000-4000-8000-000000000001';
+  const override = '00000000-0000-4000-8000-000000000002';
+  const args = [
+    '--manifest=.tmp/manifest.json',
+    '--patched-ref=HEAD',
+    '--production-origin=https://example.invalid',
+    '--mode=sync',
+    '--expected-supabase-host=example.supabase.co',
+    '--confirm=SYNC_APPROVED_COMPACTION_BATCH',
+  ];
+  try {
+    process.env.GAME_DATA_COMPACTION_ACTOR_ID = ` ${actor} `;
+    assert.equal(parseArgs(args).actorId, actor);
+    assert.equal(parseArgs([...args, `--actor-id=${override}`]).actorId, override);
+    assert.throws(() => parseArgs([...args, '--actor-id=invalid']), { code: 'invalid_actor_id' });
+    assert.throws(() => parseArgs(args.slice(0, -1)), { code: 'confirmation_required' });
+    for (const value of ['', 'invalid']) {
+      process.env.GAME_DATA_COMPACTION_ACTOR_ID = value;
+      assert.throws(() => parseArgs(args), { code: 'invalid_actor_id' });
+    }
+    delete process.env.GAME_DATA_COMPACTION_ACTOR_ID;
+    assert.throws(() => parseArgs(args), { code: 'invalid_actor_id' });
+    assert.equal(parseArgs([...args, `--actor-id=${override}`]).actorId, override);
+    assert.equal(parseArgs([...args, '--mode=check']).actorId, undefined);
+    assert.equal(parseArgs([...args, '--mode=post-check']).actorId, undefined);
+  } finally {
+    if (previous === undefined) delete process.env.GAME_DATA_COMPACTION_ACTOR_ID;
+    else process.env.GAME_DATA_COMPACTION_ACTOR_ID = previous;
+  }
+});
 
 test('cutover forwards sanitized verifier causes and discards unstructured child errors', () => {
   const cause = { code: 'production_artifact_mismatch', failures: [{ field: 'replayEpoch' }] };

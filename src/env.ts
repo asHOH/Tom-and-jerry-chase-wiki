@@ -17,6 +17,9 @@ export const env = createEnv({
     SUPABASE_SECRET_KEY: z.string().optional(),
     SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
 
+    // Local compaction CLI only; UUID validation happens when syncing a batch.
+    GAME_DATA_COMPACTION_ACTOR_ID: z.string().optional(),
+
     FLOWKEY: z.string().optional(),
 
     // Debug
