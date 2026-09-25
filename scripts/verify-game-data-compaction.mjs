@@ -27,7 +27,7 @@ const TEMP_PREFIX = 'tjwiki-game-data-compaction-';
 
 nextEnv.loadEnvConfig(projectDir);
 
-function parseArgs(args) {
+export function parseArgs(args) {
   let manifestPath;
   let patchedRef;
   let productionOrigin;
@@ -50,11 +50,14 @@ function parseArgs(args) {
     else throw new CompactionScriptError('invalid_argument', { argument: arg });
   }
 
-  if (!manifestPath || !patchedRef || !productionOrigin) {
+  if (!manifestPath || !patchedRef || (mode !== 'local' && !productionOrigin)) {
     throw new CompactionScriptError('required_argument_missing');
   }
-  if (mode !== 'preflight' && mode !== 'post-cutover') {
+  if (!['local', 'preflight', 'post-cutover'].includes(mode)) {
     throw new CompactionScriptError('invalid_mode');
+  }
+  if (mode === 'local' && writeManifest) {
+    throw new CompactionScriptError('local_mode_is_read_only');
   }
   if (mode === 'post-cutover' && !expectedSupabaseHost) {
     throw new CompactionScriptError('post_cutover_argument_missing');
@@ -776,16 +779,19 @@ async function main() {
     });
   }
 
-  const production = await readProductionProof(
-    args.productionOrigin,
-    patchedCommit,
-    {
-      replayEpoch: snapshotBefore.replayEpoch,
-      actionRevision: snapshotBefore.actionSnapshot.actionRevision,
-      rowCount: snapshotBefore.rows.length,
-    },
-    verifyCompactionArtifactMetadata
-  );
+  const production =
+    args.mode === 'local'
+      ? null
+      : await readProductionProof(
+          args.productionOrigin,
+          patchedCommit,
+          {
+            replayEpoch: snapshotBefore.replayEpoch,
+            actionRevision: snapshotBefore.actionSnapshot.actionRevision,
+            rowCount: snapshotBefore.rows.length,
+          },
+          verifyCompactionArtifactMetadata
+        );
   const { parity, actionPatch } = await createParityProof(
     baselineCommit,
     patchedCommit,
@@ -823,6 +829,7 @@ async function main() {
   process.stdout.write(
     `${JSON.stringify(
       {
+        mode: args.mode,
         manifest: manifestRelativePath.replaceAll('\\', '/'),
         wroteManifest: args.writeManifest,
         evidence,
@@ -833,7 +840,9 @@ async function main() {
   );
 }
 
-main().catch((error) => {
-  process.stderr.write(`${JSON.stringify({ error: sanitizedError(error) })}\n`);
-  process.exitCode = 1;
-});
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  main().catch((error) => {
+    process.stderr.write(`${JSON.stringify({ error: sanitizedError(error) })}\n`);
+    process.exitCode = 1;
+  });
+}

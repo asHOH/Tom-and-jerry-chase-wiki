@@ -17,7 +17,7 @@ describe('post-cutover compaction verifier script', () => {
   );
 
   it('uses retained rows and current approved rows without invoking approved-row preflight', () => {
-    expect(verifier).toContain("mode !== 'preflight' && mode !== 'post-cutover'");
+    expect(verifier).toContain("['local', 'preflight', 'post-cutover'].includes(mode)");
     expect(verifier).toContain(
       'const reconstructedRows = [...snapshotBefore.rows, ...retained.rows]'
     );

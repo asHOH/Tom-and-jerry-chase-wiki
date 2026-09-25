@@ -68,4 +68,12 @@ describe('game-data compaction cutover command', () => {
       }
     );
   });
+
+  it('runs the local preflight CLI without deployment or evidence writes', () => {
+    execFileSync(process.execPath, ['--test', 'scripts/lib/game-data-compaction-local.test.mjs'], {
+      cwd: process.cwd(),
+      windowsHide: true,
+      stdio: 'pipe',
+    });
+  }, 180_000);
 });

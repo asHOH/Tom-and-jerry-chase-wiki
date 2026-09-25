@@ -69,6 +69,20 @@ Supabase 的 `game_data_actions` 保存网页中审核通过的动态修改。�
 
 ## 工具命令（由 Codex 或操作者执行）
 
+部署前可先执行本地预检，无需 production origin：
+
+```bash
+npm run verify:game-data-compaction -- \
+  --mode=local \
+  --manifest=.tmp/<manifest>.json \
+  --patched-ref=<patched-baseline-commit>
+```
+
+本地预检仍读取配置的 Supabase approved snapshot，核对 manifest、重复播放、action patch、
+完整 published parity 和检查前后的 snapshot 稳定性；`local` 表示不依赖生产部署，不代表离线。
+它检查已提交的 Git ref，不包含未提交修改，不修改数据库或 manifest，并拒绝 `--write-manifest`。
+输出的 `production` 为 `null`，不能作为切换凭证。后续 `sync` 仍重跑全部检查并验证部署。
+
 1. 在 cutover 行仍为 `approved/public` 时部署已写入补丁的基线。
 2. 在本批次数据库归档已获授权时执行 `sync`。它会先核对目标并运行全部预检，预检失败时不会修改状态；无需再次索取相同授权：
 
