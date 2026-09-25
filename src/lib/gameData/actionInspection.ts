@@ -1,6 +1,9 @@
 import isEqual from 'lodash-es/isEqual';
 
-import { parseCharacterRelationActionPath } from '@/lib/edit/characterRelationActions';
+import {
+  isCharacterRelationKind,
+  parseCharacterRelationActionPath,
+} from '@/lib/edit/characterRelationActions';
 import type { Action, ActionHistoryEntry } from '@/lib/edit/diffUtils';
 
 import { areActionsOrderDependent, groupActionEntriesByDependency } from './actionDependencies';
@@ -48,7 +51,8 @@ export type ActionInspectionItem = {
   newBytes: number | null;
   largePayload: boolean;
   sourceExists: boolean;
-  sourceMatch: 'old' | 'new' | 'both' | 'neither' | 'unavailable';
+  sourceMatch: 'old' | 'new' | 'both' | 'neither' | 'unavailable' | 'unsupported';
+  pathIssue?: 'unsupported_relation_wrapper';
   message: string | null;
   values?: {
     oldValue?: unknown;
@@ -551,6 +555,11 @@ function createInspectionItems(
         (newBytes ?? 0) > LARGE_ACTION_PAYLOAD_BYTES;
       const entityTarget = targets[row.entity_type];
       const source = entityTarget ? readAtPath(entityTarget, action.path) : null;
+      const [, field, relationKind] = action.path.split('.');
+      const unsupportedRelationWrapper =
+        row.entity_type === 'characters' &&
+        field === 'relations' &&
+        (relationKind === undefined || isCharacterRelationKind(relationKind));
       const item: ActionInspectionItem = {
         rowId: row.id,
         actionIndex,
@@ -564,7 +573,10 @@ function createInspectionItems(
         newBytes,
         largePayload,
         sourceExists: source?.exists ?? false,
-        sourceMatch: sourceMatch(source, action),
+        sourceMatch: unsupportedRelationWrapper ? 'unsupported' : sourceMatch(source, action),
+        ...(unsupportedRelationWrapper
+          ? { pathIssue: 'unsupported_relation_wrapper' as const }
+          : {}),
         message: row.message,
       };
 

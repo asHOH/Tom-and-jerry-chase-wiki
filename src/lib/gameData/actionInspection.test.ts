@@ -44,6 +44,57 @@ describe('createBeijingDateRange', () => {
 });
 
 describe('createActionInspectionReport', () => {
+  it('flags unsupported relation wrappers before an absent old value can look usable', () => {
+    const paths = [
+      '米雪儿.relations',
+      '米雪儿.relations.advantageMaps',
+      '米雪儿.relations.advantageMaps.0.description',
+      '米雪儿.relations.counters',
+    ];
+    const report = createActionInspectionReport({
+      rows: paths.map((path) => row(path, { op: 'set', path, newValue: [] })),
+      targets: targets({ 米雪儿: { advantageMaps: [] } }),
+    });
+    expect(report.malformedRows).toEqual([]);
+    expect(report.rows).toHaveLength(paths.length);
+    for (const item of report.rows) {
+      expect(item).toMatchObject({
+        sourceExists: false,
+        sourceMatch: 'unsupported',
+        pathIssue: 'unsupported_relation_wrapper',
+      });
+      expect(paths).toContain(item.path);
+    }
+  });
+
+  it('keeps supported relation edits and legitimate absent-field additions usable', () => {
+    const rows = [
+      row('relation', {
+        op: 'set',
+        path: '米雪儿.advantageMaps',
+        oldValue: [],
+        newValue: [{ id: 'map' }],
+      }),
+      row('addition', { op: 'add', path: '米雪儿.description', newValue: 'description' }),
+      {
+        ...row('other-domain', { op: 'add', path: 'item.relations.advantageMaps', newValue: [] }),
+        entity_type: 'items',
+      },
+    ];
+    const report = createActionInspectionReport({
+      rows,
+      targets: {
+        ...targets({ 米雪儿: { advantageMaps: [] } }),
+        items: { item: { relations: {} } },
+      },
+    });
+    expect(report.rows).toHaveLength(3);
+    for (const item of report.rows) {
+      expect(item.sourceMatch).toBe('old');
+      expect(item.pathIssue).toBeUndefined();
+    }
+  });
+
   it.each([
     ['counters', 'counteredBy'],
     ['counteredBy', 'counters'],

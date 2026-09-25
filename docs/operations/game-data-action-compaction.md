@@ -47,6 +47,8 @@ Supabase 的 `game_data_actions` 保存网页中审核通过的动态修改。�
 
 ## 开始前检查
 
+`inspect:game-data-actions` 会将 `米雪儿.relations.advantageMaps` 等不支持的关系包装路径标为 `sourceMatch: "unsupported"`，并提供 `pathIssue: "unsupported_relation_wrapper"`。这类行应暂缓处理，不能因旧值和源码都不存在而判为可用，也不能自动去掉 `relations` 后继续归档。正常的 `old/new/both` 仅表示值匹配，最终仍须通过完整验证。
+
 - manifest 已冻结，源码补丁、action patch 验证和完整 published parity 均已通过。
 - 已独立确认生产 Supabase project ref，并可传入 `--expected-supabase-host=<project-ref>.supabase.co`。
 - 本地与目标数据库的 migration history 一致，没有待推送迁移。
