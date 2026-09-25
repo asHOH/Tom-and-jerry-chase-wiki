@@ -42,7 +42,7 @@ FORCE_DEPENDENCY_INSTALL=1 ./deploy_server.sh
 
 ### 公开路径健康检查
 
-部署脚本默认检查本机 `/api/health` 的响应和 `/api/version` 的提交版本。需要同时检查经过反向代理或 CDN 的公开路径时，传入：
+部署脚本默认检查本机 `/api/health` 的响应，以及 `/api/version` 是否包含预期提交版本和非空的 `gameDataArtifact` 对象。缺少构建快照时，即使提交号正确也会部署失败；关闭文章功能时生成的空快照仍可通过检查。保存和恢复旧版本时只要求健康状态和提交号匹配，以便从尚未提供快照信息的旧版本升级或回退。需要同时检查经过反向代理或 CDN 的公开路径时，传入：
 
 ```bash
 PUBLIC_HEALTH_CHECK_URL=https://www.example.com/api/health \
