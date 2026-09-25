@@ -69,6 +69,18 @@ describe('game-data compaction cutover command', () => {
     );
   });
 
+  it('reports structured preflight causes without echoing child-process errors', () => {
+    execFileSync(
+      process.execPath,
+      ['--test', 'scripts/lib/game-data-compaction-cutover.test.mjs'],
+      {
+        cwd: process.cwd(),
+        windowsHide: true,
+        stdio: 'pipe',
+      }
+    );
+  });
+
   it('runs the local preflight CLI without deployment or evidence writes', () => {
     execFileSync(process.execPath, ['--test', 'scripts/lib/game-data-compaction-local.test.mjs'], {
       cwd: process.cwd(),

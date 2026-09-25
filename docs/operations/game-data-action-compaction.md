@@ -103,6 +103,8 @@ npm run verify:game-data-compaction -- \
 
    `sync` 自动复查所有 cutover 行已为 `synced/private`，所有 verification-only 行仍为 `approved/public`，并把已验证的依赖行 ID 写入切换记录。RPC 响应不确定时由精确复查判断结果，不会自动重试。**RPC 调用后的复查失败不代表数据库未变更**；此时保留证据，按只读恢复流程核实，不得再次运行 `sync`。
 
+   预检失败时，输出保留外层 `preflight_failed`，并在 `error.verifierError` 中提供验证器的结构化原因，例如 `production_artifact_mismatch`。无法解析验证器输出时只报告通用失败和退出码，不回显原始命令或错误文本。
+
 3. 按上方 `--force-build` 命令重新构建并部署，使构建产物使用切换后的当前 approved snapshot。
 4. 部署后运行只读 `post-check`。正常流程会自动使用 manifest 中绑定的 retained 证据，不需要传入路径：
 

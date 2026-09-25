@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { execFile } from 'node:child_process';
 import { writeFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
 import nextEnv from '@next/env';
@@ -141,6 +142,24 @@ async function capturePreCutoverRows({
   return binding;
 }
 
+export function createVerifierFailure(code, error) {
+  let verifierError;
+  try {
+    const parsed = JSON.parse(error?.stderr ?? '');
+    if (
+      parsed?.error &&
+      typeof parsed.error === 'object' &&
+      !Array.isArray(parsed.error) &&
+      typeof parsed.error.code === 'string'
+    ) {
+      verifierError = parsed.error;
+    }
+  } catch {
+    // Never forward raw stderr or child-process errors, which may contain command arguments.
+  }
+  return new CutoverScriptError(code, { exitCode: error?.code, verifierError });
+}
+
 async function runPreflight(args) {
   try {
     await execFileAsync(
@@ -160,7 +179,7 @@ async function runPreflight(args) {
       }
     );
   } catch (error) {
-    throw new CutoverScriptError('preflight_failed', { exitCode: error?.code });
+    throw createVerifierFailure('preflight_failed', error);
   }
 }
 
@@ -187,17 +206,7 @@ async function runPostCheck(args) {
     );
     process.stdout.write(stdout);
   } catch (error) {
-    let verifierError;
-    try {
-      const parsed = JSON.parse(error?.stderr ?? '');
-      if (parsed?.error && typeof parsed.error === 'object') verifierError = parsed.error;
-    } catch {
-      // Keep the bounded generic failure when the verifier did not emit structured JSON.
-    }
-    throw new CutoverScriptError('post_check_failed', {
-      exitCode: error?.code,
-      verifierError,
-    });
+    throw createVerifierFailure('post_check_failed', error);
   }
 }
 
@@ -413,7 +422,9 @@ async function main() {
   );
 }
 
-main().catch((error) => {
-  process.stderr.write(`${JSON.stringify({ error: sanitizedError(error) })}\n`);
-  process.exitCode = 1;
-});
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  main().catch((error) => {
+    process.stderr.write(`${JSON.stringify({ error: sanitizedError(error) })}\n`);
+    process.exitCode = 1;
+  });
+}
