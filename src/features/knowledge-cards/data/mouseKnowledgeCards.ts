@@ -29,7 +29,8 @@ const mouseKnowledgeCardDefinitions: Record<string, Card> = {
       {
         level: 3,
         description: '再额外**获得2层护盾**。',
-        detailedDescription: '再额外**获得2层护盾**（该护盾持续时间无限，但会被碎片消耗）。',
+        detailedDescription:
+          '再额外**回复25Hp并获得2层护盾**（该护盾持续时间无限，但会被碎片消耗）。',
       },
     ],
     priority: '3级质变',
@@ -73,7 +74,7 @@ const mouseKnowledgeCardDefinitions: Record<string, Card> = {
     cost: 5,
     description: 'Hp在一半以上时，[牺牲自己的Hp](不会致死)为附近队友减伤。有内置**CD**。',
     detailedDescription:
-      '当自身Hp超过Hp上限的一半，且半径1150范围内队友受到猫咪伤害时，队友受到的伤害减免为原来的30%，然后该伤害每有5点，自身失去剩余Hp的3%（至少保留10Hp）。之后10秒内，逐渐恢复失去Hp的一半。有内置**CD**。“为众人抱薪者，不可使其冻毙于风雪。”',
+      '当自身Hp超过Hp上限的一半，且半径1120范围内队友受到猫咪伤害时，队友受到的伤害减免为原来的30%，然后该伤害每有5点，自身失去剩余Hp的3%（至少保留10Hp）。之后10秒内，逐渐恢复失去Hp的一半。有内置**CD**。“为众人抱薪者，不可使其冻毙于风雪。”',
     levels: [
       { level: 1, description: 'CD：**40**秒。' },
       { level: 2, description: 'CD：**35**秒。' },
@@ -116,9 +117,10 @@ const mouseKnowledgeCardDefinitions: Record<string, Card> = {
     id: '铁血',
     rank: 'S',
     cost: 6,
-    description: '即将虚弱时，可以继续行动**一段时间**，但无法使用技能与道具。(CD: 60秒)',
+    description:
+      '即将虚弱时，可以继续行动**一段时间**，但无法使用技能与道具；该状态结束后会进入{鼠虚弱}。(CD: 60秒)',
     detailedDescription:
-      '即将虚弱时，可以继续行动**一段时间**，但无法使用技能与道具，也无法获得{护盾}和{无敌(状态)}，随后再进入{鼠虚弱}。(CD: 60秒)',
+      '即将虚弱时，立即清除自身的[部分状态](会清除所有隶属于“分组7”的状态)，随后获得**一段时间**的“铁血”状态，期间无法使用技能与道具，无法购物，且免疫大部分{护盾}及{无敌(状态)}；“铁血”状态结束时，自身受到{999*}伤害并掉落手中道具。(CD: 60秒)',
     levels: [
       { level: 1, description: '铁血持续**4**秒。' },
       { level: 2, description: '铁血持续**4.5**秒。' },
@@ -149,7 +151,7 @@ const mouseKnowledgeCardDefinitions: Record<string, Card> = {
     cost: 5,
     description: '处于健康状态时，自己和附近队友推速**提升**。',
     detailedDescription:
-      '处于健康状态时，自己和半径1700范围内队友推速**提升**（多张团队领袖的效果不可叠加）。',
+      '处于健康状态时，自己和半径1000范围内队友推速**提升**（多张团队领袖的效果不可叠加）。',
     levels: [
       { level: 1, description: '推速提升**3%**。' },
       { level: 2, description: '推速提升**4%**。' },
@@ -162,8 +164,9 @@ const mouseKnowledgeCardDefinitions: Record<string, Card> = {
     id: '投手',
     rank: 'A',
     cost: 4,
-    description: '投掷道具额外**减速**猫咪。',
-    detailedDescription: '投掷道具额外**减速**猫咪，持续5秒，最多叠加2层（每层效果间乘算）。',
+    description: '投掷道具可额外**减速**敌方。',
+    detailedDescription:
+      '投掷道具命中敌方将额外对敌方造成**减速**状态，持续5秒，最多叠加2层（每层效果间乘算）。',
     levels: [
       { level: 1, description: '减速**6%**。' },
       { level: 2, description: '减速**8%**。' },
@@ -251,7 +254,7 @@ const mouseKnowledgeCardDefinitions: Record<string, Card> = {
     id: '夹不住我',
     rank: 'B',
     cost: 3,
-    description: '提升挣脱捕鼠夹的速度。',
+    description: '提升挣脱{老鼠夹}的速度。',
     levels: [
       { level: 1, description: '提升**20%**。' },
       { level: 2, description: '提升**25%**。' },
@@ -294,7 +297,7 @@ const mouseKnowledgeCardDefinitions: Record<string, Card> = {
     id: '应激反应',
     rank: 'B',
     cost: 3,
-    description: '受伤状态下，**提升**移速和跳跃高度。',
+    description: '受伤状态下，**提升**移速和跳跃能力。',
     // detailedDescription: '',
     levels: [
       { level: 1, description: '提升**7%**。' },
@@ -337,7 +340,7 @@ const mouseKnowledgeCardDefinitions: Record<string, Card> = {
     id: '精准投射',
     rank: 'B',
     cost: 4,
-    description: '道具击中猫咪后，**降低**自身技能CD。(CD：5秒)',
+    description: '道具击中猫咪后，**降低**自身主动和武器技能的当前CD。(CD：5秒)',
     // detailedDescription: '',
     levels: [
       { level: 1, description: '降低**2**秒CD。' },
@@ -436,13 +439,17 @@ const mouseKnowledgeCardDefinitions: Record<string, Card> = {
     id: '不屈',
     rank: 'C',
     cost: 3,
-    description: '每被放飞一名队友，自己的Hp上限、推速、**移速**提升。最多叠加3层。',
+    description: '每被放飞一名队友，自己的Hp上限、推速、移速**提高**，最多叠加3层。',
     detailedDescription:
-      '每被放飞一名队友，自己的Hp上限提高12，推速提升10%，**移速**提升。最多叠加3层（每层移速和推速加成间独立乘算，其他加成为加算）。',
+      '每被放飞一名队友，自己的Hp上限、推速、移速**提高**，最多叠加3层（$游戏内部分数值描述与实际不符$font-bold#）（各层移速和推速加成间独立乘算，Hp上限为加算）。',
     levels: [
-      { level: 1, description: '移速提升**5%**。' },
-      { level: 2, description: '移速提升**6%**。' },
-      { level: 3, description: '移速提升**7%**。' },
+      { level: 1, description: '每层使Hp上限提高**8**，推速提高5%，移速提高**5%**。' },
+      {
+        level: 2,
+        description: '每层使Hp上限提高**10**，推速提高5%，移速提高**6%**。',
+        detailedDescription: '每层使Hp上限提高**10**，推速提高5%，移速提高**6%**。',
+      },
+      { level: 3, description: '每层使Hp上限提高**12**，推速提高5%，移速提高**7%**。' },
     ],
     priority: '提升明显',
   },
@@ -451,8 +458,9 @@ const mouseKnowledgeCardDefinitions: Record<string, Card> = {
     id: '吃货',
     rank: 'C',
     cost: 3,
-    description: '**延长**{牛奶}的增益。',
-    detailedDescription: '这世上唯有美食不可辜负！**延长**{牛奶}和天宫仙丹的增益。',
+    description: '这世上唯有美食不可辜负！**延长**{牛奶}的增益状态持续时间。',
+    detailedDescription:
+      '这世上唯有美食不可辜负！**延长**{牛奶}（也包括{仙丹}）、{蛋糕}（[加成较低](现版本蛋糕的加成持续时间为0.1秒，且期间并无实际效果，但本知识卡仍保留了对其的增益效果)；不包括{蛋糕-旧版}）的增益状态持续时间。',
     levels: [
       { level: 1, description: '延长**20%**。' },
       { level: 2, description: '延长**30%**。' },
@@ -465,9 +473,9 @@ const mouseKnowledgeCardDefinitions: Record<string, Card> = {
     id: '强健',
     rank: 'C',
     cost: 4,
-    description: '**减少**虚弱时间；虚弱期间移速提高15%。',
+    description: '年轻鼠恢复的速度就是快！**减少**虚弱持续时间，且虚弱期间移速不会低于一定值。',
     detailedDescription:
-      '年轻鼠恢复的速度就是快！**减少**{鼠虚弱}时间；虚弱期间移速提高15%。（注：基础虚弱时长为10s、基础虚弱移速为0.2倍）',
+      '年轻鼠恢复的速度就是快！**减少**{鼠虚弱}持续时间，且虚弱期间移速不会低于角色基础移速的0.3倍。（注：基础虚弱时长为10秒、基础虚弱减速幅度为-80%）',
     levels: [
       { level: 1, description: '减少**20%**。' },
       { level: 2, description: '减少**25%**。' },
@@ -482,7 +490,7 @@ const mouseKnowledgeCardDefinitions: Record<string, Card> = {
     cost: 3,
     description: '当自己被绑在{火箭}上时，被救援速度**提升**，但队友推速小幅降低。',
     detailedDescription:
-      '当自己被绑在{火箭}上时，被救援速度**提升**，但队友推速降低10%。（注：基础救援时长为1s）',
+      '当自己被绑在{火箭}上时，使其他队友的救援交互速度**提升**，但推速降低10%。（注：基础救援时长为1s）',
     levels: [
       { level: 1, description: '提升**30%**。' },
       { level: 2, description: '提升**35%**。' },
@@ -495,9 +503,9 @@ const mouseKnowledgeCardDefinitions: Record<string, Card> = {
     id: '相助',
     rank: 'C',
     cost: 4,
-    description: '**提高**自己和附近队友的治疗、救援速度。',
+    description: '**提升**自己和附近队友的治疗、救援速度。',
     detailedDescription:
-      '守望相助的老鼠们，**提升**自己和附近队友的治疗、救援速度。（注：基础救援时长为1s，基础治疗时长为2.4s）',
+      '守望相助的老鼠们，使自己和以自身为中心、长800、宽800的矩形范围内的所有友方的治疗、救援速度得到**提升**。（注：基础救援时长为1s，基础治疗时长为2.4s）',
     levels: [
       { level: 1, description: '提升**8%**。' },
       { level: 2, description: '提升**12%**。' },
@@ -510,8 +518,9 @@ const mouseKnowledgeCardDefinitions: Record<string, Card> = {
     id: '美食家',
     rank: 'C',
     cost: 3,
-    description: '每局**前几次**打开箱子时，必然开出牛奶或蛋糕。',
-    detailedDescription: '孤独的美食家每局**前几次**打开箱子时，必然开出牛奶或蛋糕。',
+    description: '每局**前数次**打开箱子时，必然开出{牛奶}或{蛋糕}。',
+    detailedDescription:
+      '孤独的美食家每局**前数次**打开{大纸盒}/{小纸盒}/{藤蔓纸盒}时，必然开出{牛奶}或{蛋糕}。（对由{金钥匙}伪装成的道具不生效）',
     levels: [
       { level: 1, description: '每局**前2次**打开箱子时触发。' },
       { level: 2, description: '每局**前3次**打开箱子时触发。' },

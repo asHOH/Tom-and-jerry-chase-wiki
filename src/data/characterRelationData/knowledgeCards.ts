@@ -2,16 +2,6 @@ import type { CharacterRelationTrait } from '@/data/types';
 
 export const characterRelationKnowledgeCardTraits: CharacterRelationTrait[] = [
   {
-    description: '没有三级庇护的天使泰菲会被一刀秒。',
-    relation: {
-      kind: 'counteredByKnowledgeCards',
-      subject: { name: '天使泰菲', type: 'character' },
-      target: { name: '蓄势一击', type: 'knowledgeCard', factionId: 'cat' },
-      tags: [{ counters: '高伤', counteredBy: '怕高伤' }],
-      isMinor: false,
-    },
-  },
-  {
     description: '侦探汤姆可以使用主动技能直接移除回家给予的护盾效果。',
     relation: {
       kind: 'countersKnowledgeCards',
