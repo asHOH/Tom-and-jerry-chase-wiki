@@ -34,6 +34,8 @@ bash ./deploy_server.sh --force-build
 
 服务器构建继续跳过 TypeScript 检查，部署前应确保该提交已通过开发端或 CI 检查。脚本不会等待 CI。为避免准备阶段重启其他应用，部署不再自动执行 `pm2 update`；PM2 daemon 升级应单独安排。并发部署由 `flock` 拒绝。
 
+编辑器的“站内图片”列表读取构建生成的 `.site-images-index.json`，不再扫描线上图片目录。普通构建先优化图片，再生成索引，因此保留生成的 WebP/AVIF 选项；`build:skip-images` 只索引当前已有文件。索引随每个发布版本保留，Docker 镜像也会复制它，不能在部署后单独删除。`npm run dev` 会自动生成索引；开发期间增删图片后可运行 `npm run generate:site-images` 刷新列表，无需重启开发服务器。
+
 无法从远程仓库拉取 `develop` 时，脚本同样会以非零状态退出。
 
 ### 数据库变化后的同版本重建

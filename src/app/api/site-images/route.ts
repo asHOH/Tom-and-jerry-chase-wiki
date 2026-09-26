@@ -4,8 +4,6 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { createClient } from '@/lib/supabase/server';
 
-const PUBLIC_DIR = path.join(process.cwd(), 'public');
-const IMAGE_ROOT = path.join(PUBLIC_DIR, 'images');
 const IMAGE_EXTENSIONS = new Set(['.png', '.jpg', '.jpeg', '.webp', '.gif', '.avif', '.svg']);
 
 function sanitizeRelativePath(raw: string | null): string {
@@ -17,11 +15,6 @@ function sanitizeRelativePath(raw: string | null): string {
     return '';
   }
   return normalized;
-}
-
-function isPathWithinBase(baseDir: string, candidate: string): boolean {
-  const relative = path.relative(baseDir, candidate);
-  return !!relative && !relative.startsWith('..') && !path.isAbsolute(relative);
 }
 
 export const runtime = 'nodejs';
@@ -37,37 +30,47 @@ export async function GET(request: NextRequest) {
 
   const { searchParams } = new URL(request.url);
   const relativePath = sanitizeRelativePath(searchParams.get('path'));
-  const targetDir = path.join(IMAGE_ROOT, relativePath);
-
-  if (!isPathWithinBase(IMAGE_ROOT, targetDir) && path.resolve(targetDir) !== IMAGE_ROOT) {
+  if (
+    relativePath.startsWith('..') ||
+    relativePath.includes('\\') ||
+    path.win32.isAbsolute(relativePath)
+  ) {
     return NextResponse.json({ error: 'Invalid path' }, { status: 403 });
   }
 
   try {
-    const stat = await fs.stat(targetDir);
-    if (!stat.isDirectory()) {
-      return NextResponse.json({ error: 'Not a directory' }, { status: 400 });
+    // Trace only the generated index; images remain ordinary public assets.
+    const index: string[] = JSON.parse(
+      await fs.readFile(path.join(process.cwd(), '.site-images-index.json'), 'utf8')
+    );
+    const directoryPath = relativePath ? `${relativePath.replace(/\/$/, '')}/` : '/';
+    if (!index.includes(directoryPath)) {
+      return index.includes(relativePath)
+        ? NextResponse.json({ error: 'Not a directory' }, { status: 400 })
+        : NextResponse.json({ error: 'Not found' }, { status: 404 });
     }
 
-    const dirents = await fs.readdir(targetDir, { withFileTypes: true });
-    const entries = dirents
-      .filter((dirent) => {
-        if (dirent.isDirectory()) return true;
-        const ext = path.extname(dirent.name).toLowerCase();
-        return IMAGE_EXTENSIONS.has(ext);
-      })
-      .map((dirent) => {
-        const entryRelative = relativePath
-          ? path.posix.join(relativePath, dirent.name)
-          : dirent.name;
+    const prefix = directoryPath === '/' ? '' : directoryPath;
+    const entries = index
+      .filter((entry) => entry.startsWith(prefix) && entry !== directoryPath)
+      .map((entry) => entry.slice(prefix.length))
+      .filter((entry) => !entry.replace(/\/$/, '').includes('/'))
+      .map((entry) => {
+        const isDirectory = entry.endsWith('/');
+        const name = isDirectory ? entry.slice(0, -1) : entry;
+        const entryRelative = relativePath ? path.posix.join(relativePath, name) : name;
         const publicPath = `/${path.posix.join('images', entryRelative)}`;
         return {
-          name: dirent.name,
-          type: dirent.isDirectory() ? 'directory' : 'file',
+          name,
+          type: isDirectory ? 'directory' : 'file',
           path: entryRelative,
-          publicPath: dirent.isDirectory() ? null : publicPath,
+          publicPath: isDirectory ? null : publicPath,
         };
       })
+      .filter(
+        (entry) =>
+          entry.type === 'directory' || IMAGE_EXTENSIONS.has(path.extname(entry.name).toLowerCase())
+      )
       .sort((a, b) => {
         if (a.type === b.type) {
           return a.name.localeCompare(b.name, 'zh-CN');
@@ -85,10 +88,7 @@ export async function GET(request: NextRequest) {
       entries,
     });
   } catch (error) {
-    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
-      return NextResponse.json({ error: 'Not found' }, { status: 404 });
-    }
-    console.error('Failed to read site images', error);
+    console.error('Failed to read site image index', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

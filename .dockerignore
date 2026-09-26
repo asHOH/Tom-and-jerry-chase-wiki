@@ -106,5 +106,6 @@ public/fallback-*.js
 public/version.json
 
 # Generated images
+/.site-images-index.json
 public/images/*/*.webp
 public/images/*/*.avif
