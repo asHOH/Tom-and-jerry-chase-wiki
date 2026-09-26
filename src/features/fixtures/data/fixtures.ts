@@ -1291,7 +1291,9 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     gravity: false,
     supportedMaps: ['森林牧场', '御门酒店'],
     description:
-      '可通过交互采摘，一段时间内提高自身攻击力。\n花朵被采摘后需等待一段时间才会重新长出。',
+      '可通过交互采摘，一段时间内提高自身攻击力。\n红色花被采摘后需等待一段时间才会重新长出。',
+    detailedDescription:
+      '可通过交互采摘，老鼠/猫采摘后自身攻击力＋25/50，持续25/30s。\n红色花被采摘60s后会重新长出。',
   },
   黄色花: {
     type: ['组件类', '可交互'],
@@ -1302,6 +1304,8 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     supportedMaps: ['森林牧场', '御门酒店'],
     description:
       '可通过交互采摘，一段时间内提高自身移速和跳跃能力。\n花朵被采摘后需等待一段时间才会重新长出。',
+    detailedDescription:
+      '可通过交互采摘，采摘后内自身移速提升20%，跳跃能力提升10%，持续40s。\n花朵被采摘60s后会重新长出。',
   },
   金色花: {
     type: ['组件类', '可交互'],
@@ -1312,6 +1316,8 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     supportedMaps: ['森林牧场', '御门酒店'],
     description:
       '可通过交互采摘，一段时间内降低受到的伤害、免疫缴械等少量负面效果。\n花朵被采摘后需等待一段时间才会重新长出。',
+    detailedDescription:
+      '可通过交互采摘，老鼠/猫采摘后一段时间内降低10/20自身受到的伤害、免疫缴械等少量负面效果，持续30/40s。\n金色花被采摘60s后会重新长出。',
   },
   蓝色花: {
     type: ['组件类', '可交互'],
@@ -1321,6 +1327,8 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     gravity: false,
     supportedMaps: ['森林牧场', '御门酒店'],
     description: '可通过交互采摘，使敌方短暂暴露位置。\n花朵被采摘后需等待一段时间才会重新长出。',
+    detailedDescription:
+      '可通过交互采摘，使敌方短暂暴露位置，持续5s。\n蓝色花被采摘60s后会重新长出。',
   },
   青色花: {
     type: ['组件类', '可交互'],
@@ -1330,6 +1338,8 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     gravity: false,
     supportedMaps: ['森林牧场', '御门酒店'],
     description: '可通过交互采摘，一段时间内持续恢复Hp。\n花朵被采摘后需等待一段时间才会重新长出。',
+    detailedDescription:
+      '可通过交互采摘，老鼠采摘后会获得3Hp/s的Hp恢复效果，持续25s；猫采摘后会获得5Hp/s的Hp恢复效果，持续30s。\n青色花被采摘60s后会重新长出。',
   },
   银色花: {
     type: ['组件类', '可交互'],
@@ -1340,6 +1350,8 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     supportedMaps: ['森林牧场', '御门酒店'],
     description:
       '可通过交互采摘，一段时间内获得以下效果：不会显示在敌方小地图上、不会使敌方产生害怕、开关门不产生声音。\n花朵被采摘后需等待一段时间才会重新长出。',
+    detailedDescription:
+      '可通过交互采摘，一段时间内获得以下效果：不会显示在敌方小地图上、不会使敌方产生害怕、开关门不产生声音。老鼠采摘后该效果持续30s；猫采摘后该效果持续40s。\n银色花被采摘60s后会重新长出。',
   },
   紫色花: {
     type: ['组件类', '可交互'],
@@ -1349,6 +1361,8 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     gravity: false,
     supportedMaps: ['森林牧场', '御门酒店'],
     description: '可通过交互采摘，立即恢复大量Hp。\n花朵被采摘后需等待一段时间才会重新长出。',
+    detailedDescription:
+      '可通过交互采摘，老鼠/猫采摘后立即恢复100/200Hp。\n紫色花被采摘60s后会重新长出。',
   },
   七色花: {
     type: ['组件类', '可交互'],
@@ -1358,7 +1372,9 @@ const FixtureDefinitions: Record<string, FixtureDefinition> = {
     gravity: false,
     supportedMaps: ['森林牧场', '御门酒店'],
     description:
-      '可通过交互采摘，同时获得{红色花}、{橙色花}、{金色花}、{蓝色花}、{青色花}、{银色花}、{紫色花}的效果。\n七色被采摘后需等待较长时间才会重新长出。',
+      '可通过交互采摘，同时获得{红色花}、{橙色花}、{金色花}、{蓝色花}、{青色花}、{银色花}、{紫色花}的效果，在5v5森林牧场采摘后有概率获得强化效果，使七种花的效果得到增幅，且持续时间提升。\n七色被采摘后需等待较长时间才会重新长出。',
+    detailedDescription:
+      '可通过交互采摘，同时获得{红色花}、{橙色花}、{金色花}、{蓝色花}、{青色花}、{银色花}、{紫色花}的效果，{5V5森林牧场}的七色花被采摘后会有小概率触发强化效果，使七种花的效果分别得到增幅，且持续时间提升。\n森林牧场/5v5森林牧场/御门酒店的七色花被采摘120s/60s/180s后会重新长出。',
   },
   树丛: {
     type: '组件类',

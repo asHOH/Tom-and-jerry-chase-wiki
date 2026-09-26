@@ -28,9 +28,9 @@ const catKnowledgeCardDefinitions: Record<string, Card> = {
     rank: 'S',
     cost: 6,
     description:
-      '保持60%Hp以上**一段时间**后进入乾坤一掷状态，提高移速和投掷物伤害。Hp低于60%后移除该状态。',
+      '保持60%Hp以上**一段时间**后进入乾坤一掷状态，提高移速且投掷物会造成额外伤害。Hp低于60%后移除该状态。',
     detailedDescription:
-      '保持60%Hp以上**一段时间**后进入乾坤一掷状态，加速10%，投掷物伤害增加30。Hp低于60%后移除该状态。“待吾择良辰回首，今朝一掷定乾坤！”',
+      '保持60%Hp以上**一段时间**后进入乾坤一掷状态，该状态下：移速增加10%，指定投掷物命中敌方时[额外](与原伤害分为不同的两段)对目标造成{30*,不计来源影响,可致伤}伤害。Hp低于60%后移除该状态。\n可生效的投掷物清单：{玻璃杯}、{盘子}、{碗}、{扁盘}、{高尔夫球}、{叉子}、{冰块}、{胡椒瓶}、{香水瓶}、{灰花瓶}、{蓝花瓶}。',
     levels: [
       { level: 1, description: '保持**20**秒后进入乾坤一掷。' },
       { level: 2, description: '保持**19**秒后进入乾坤一掷。' },
@@ -150,13 +150,13 @@ const catKnowledgeCardDefinitions: Record<string, Card> = {
     id: '威压',
     rank: 'A',
     cost: 4,
-    description: '**减速**附近老鼠；使用技能后减速效果短暂增强。',
+    description: '使附近敌方移速**降低**，且自身使用技能后5秒内该效果**增强**。',
     detailedDescription:
-      '给附近的老鼠带来强大的压迫感，**减速**半径825范围内的老鼠；使用技能后5秒内，减速效果提高为18%。',
+      '给附近敌方带来强大的压迫感，使自身半径600范围内的敌方移速**降低**，且自身使用技能后5秒内该效果**增强**。',
     levels: [
-      { level: 1, description: '附近老鼠减速**6%**。' },
-      { level: 2, description: '附近老鼠减速**7%**。' },
-      { level: 3, description: '附近老鼠减速**8%**。' },
+      { level: 1, description: '初始减速**6%**，增强后变为减速**12%**。' },
+      { level: 2, description: '初始减速**7%**，增强后变为减速**14%**。' },
+      { level: 3, description: '初始减速**8%**，增强后变为减速**16%**。' },
     ],
     priority: '提升较小',
   },
@@ -165,9 +165,9 @@ const catKnowledgeCardDefinitions: Record<string, Card> = {
     id: '心灵手巧',
     rank: 'A',
     cost: 4,
-    description: '**提升**布置捕鼠夹、绑火箭、修复火箭的交互速度。',
+    description: '布置{老鼠夹}、绑火箭、修复火箭的交互速度**提升**。',
     detailedDescription:
-      '那些笨手笨脚的老鼠！心灵手巧的猫咪在布置捕鼠夹、绑火箭、修复火箭时，**提升**交互速度。（注：基础绑火箭时间为1.75s）',
+      '那些笨手笨脚的老鼠！心灵手巧的猫咪在布置{老鼠夹}、绑火箭（不包括{5V5经典奶酪赛}及{装饰树大作战}中的火箭）、修复火箭时，交互速度得到**提升**。\n（注：基础绑火箭时间为1.75s）',
     levels: [
       { level: 1, description: '提升**26%**。' },
       { level: 2, description: '提升**28%**。' },
@@ -218,9 +218,8 @@ const catKnowledgeCardDefinitions: Record<string, Card> = {
     id: '细心',
     rank: 'A',
     cost: 4,
-    description: '免疫捕鼠夹和[碎片](踩到的碎片仍会消失)，但**小幅**降低移速。',
-    detailedDescription:
-      '细心的猫咪能够有效地躲避捕鼠夹和[碎片](踩到的碎片仍会消失)，但**小幅**降低移速。',
+    description: '免疫{打开的老鼠夹}和{碎片}，但**小幅**降低移速。',
+    detailedDescription: '免疫{打开的老鼠夹}和{碎片}，但**小幅**降低移速。',
     levels: [
       { level: 1, description: '减速**7%**。' },
       { level: 2, description: '减速**6.5%**。' },
@@ -263,13 +262,22 @@ const catKnowledgeCardDefinitions: Record<string, Card> = {
     rank: 'A',
     cost: 4,
     description:
-      '爪刀范围**大幅**提高，但爪刀伤害固定为25点，不受任何攻击力加成。使用拍子只造成控制而不造成伤害。',
+      '攻击范围**改变**，爪刀伤害固定为25点且不受其它效果影响。{苍蝇拍}与{蓄势一击}不再造成伤害。',
     detailedDescription:
-      '爪刀范围**大幅**提高，但爪刀伤害固定为25点，不受任何攻击力加成，也不受[老鼠](包括胖呆呆)的减伤。[二段伤害](如凯特、米特、牛汤被动)仍能正常触发。使用拍子只造成控制而不造成伤害。爪刀范围不受任何[其他加成](拍子、变身药水、技能等)影响。',
+      '攻击范围**改变**且[不受其它效果影响](包括但不限于苍蝇拍、变身药水、技能等)；爪刀伤害固定为25点且[不受其它效果影响](包括但不限于攻击力、攻击增/减伤、受击增/减伤、胖呆呆的限制伤害等)（部分[额外伤害](如凯特、米特、牛汤被动)仍能正常触发）。{苍蝇拍}与{蓄势一击}不再造成伤害。',
     levels: [
-      { level: 1, description: '爪刀范围提高**64%**。' },
-      { level: 2, description: '爪刀范围提高**73%**。' },
-      { level: 3, description: '爪刀范围提高**82%**。' },
+      {
+        level: 1,
+        description: '攻击横向判定范围变为身前**338**与身后**112**，纵向判定范围变为**180**。',
+      },
+      {
+        level: 2,
+        description: '攻击横向判定范围变为身前**363**与身后**112**，纵向判定范围变为**190**。',
+      },
+      {
+        level: 3,
+        description: '攻击横向判定范围变为身前**388**与身后**112**，纵向判定范围变为**200**。',
+      },
     ],
     priority: '提升较小',
   },
@@ -335,7 +343,7 @@ const catKnowledgeCardDefinitions: Record<string, Card> = {
     id: '寻踪',
     rank: 'B',
     cost: 3,
-    description: '展示{虚弱}老鼠的小地图位置。',
+    description: '使处于{鼠虚弱}状态的老鼠{暴露位置}，至多同时对**数个**目标生效。',
     levels: [
       { level: 1, description: '最多展示**2**只老鼠。' },
       { level: 2, description: '最多展示**3**只老鼠。' },
@@ -378,9 +386,10 @@ const catKnowledgeCardDefinitions: Record<string, Card> = {
     id: '攻其不备',
     rank: 'B',
     cost: 3,
-    description: '老鼠推奶酪、且猫咪附近没有老鼠时，猫咪获得**加速**，持续8秒。',
+    description:
+      '当老鼠开始推奶酪且自身周围没有敌方角色时，自身移速**提升**，持续8秒，该状态持续期间无法重复获得。',
     detailedDescription:
-      '老鼠推奶酪、且猫咪附近没有老鼠时，猫咪试图快速接近老鼠，获得**加速**，持续8秒。',
+      '当老鼠开始推奶酪且自身半径960范围内没有[敌方角色](不包括部分NPC类角色)时，自身移速**提升**，持续8秒，该状态持续期间无法重复获得，生效期间有老鼠进入该范围内不会使本状态消失。',
     levels: [
       { level: 1, description: '加速**11%**。' },
       { level: 2, description: '加速**13%**。' },
@@ -439,8 +448,7 @@ const catKnowledgeCardDefinitions: Record<string, Card> = {
     rank: 'C',
     cost: 3,
     description: '**降低**附近老鼠推速。',
-    detailedDescription:
-      '四处巡逻的猫咪，**降低**以自身为中心、长2000、宽2000的矩形范围内的老鼠的推速。',
+    detailedDescription: '四处巡逻的猫咪，会**降低**自身左右两侧各1000范围内所有敌方老鼠的推速。',
     levels: [
       { level: 1, description: '降低**10%**。' },
       { level: 2, description: '降低**20%**。' },
@@ -453,13 +461,14 @@ const catKnowledgeCardDefinitions: Record<string, Card> = {
     id: '春风得意',
     rank: 'C',
     cost: 4,
-    description: '手握老鼠时，**提升**移动、跳跃速度，并免疫捕鼠夹和碎片，且绑火箭速度提高15%。',
+    description:
+      '手握老鼠时，自身移速提升**一定幅度**，绑火箭速度提升15%，并免疫{打开的老鼠夹}和{碎片}。',
     detailedDescription:
-      '终于抓住了一只小老鼠！手握老鼠时，**提升**移动、跳跃速度，并免疫捕鼠夹和碎片，且绑火箭速度提高15%。（注：基础绑火箭时间为1.75s）',
+      '终于抓住了一只小老鼠！手握老鼠时，自身移速提升**一定幅度**，绑火箭速度提升15%（不包括{5V5经典奶酪赛}和{装饰树大作战}的火箭），并免疫{打开的老鼠夹}和{碎片}。\n（注：基础绑火箭时间为1.75s）',
     levels: [
-      { level: 1, description: '移动、跳跃速度提升**5%**。' },
-      { level: 2, description: '移动、跳跃速度提升**6%**。' },
-      { level: 3, description: '移动、跳跃速度提升**7%**。' },
+      { level: 1, description: '移速提升**5%**。' },
+      { level: 2, description: '移速提升**6%**。' },
+      { level: 3, description: '移速提升**7%**。' },
     ],
     priority: '几乎无提升',
   },
