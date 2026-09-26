@@ -1033,4 +1033,22 @@ export const characterRelationMapTraits: CharacterRelationTrait[] = [
       isMinor: false,
     },
   },
+  {
+    description: '藤蔓的高回复与高机动会使猫在旋转木马洞口防守难度成倍增加。',
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '罗宾汉泰菲', type: 'character' },
+      target: { name: '游乐场', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '牛仔杰瑞的二级仙人掌在又小又紧凑的地图对抗怕控制的猫时具有非常好的效果。',
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '牛仔杰瑞', type: 'character' },
+      target: { name: '太空堡垒II', type: 'map' },
+      isMinor: false,
+    },
+  },
 ];

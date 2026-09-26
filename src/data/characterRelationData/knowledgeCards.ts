@@ -684,4 +684,13 @@ export const characterRelationKnowledgeCardTraits: CharacterRelationTrait[] = [
       isMinor: false,
     },
   },
+  {
+    description: '长爪的伤害无视天使泰菲的伤害转移。',
+    relation: {
+      kind: 'counteredByKnowledgeCards',
+      subject: { name: '天使泰菲', type: 'character' },
+      target: { name: '长爪', type: 'knowledgeCard', factionId: 'cat' },
+      isMinor: false,
+    },
+  },
 ];

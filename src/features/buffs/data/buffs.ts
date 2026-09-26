@@ -34,6 +34,8 @@ const buffDefinitions: Record<string, BuffDefinition> = {
     sourceDescription:
       '当猫角色[对敌方造成”可致伤“的伤害](实际上这并非造成受伤的必要条件，但现版本的受伤都可以归纳为该”因素“导致的)时，同步造成受伤。',
     unuseImage: true,
+    detailedDescription:
+      '!{10000}\n进入该状态会发出音效。其它老鼠可通过交互键治疗受伤的老鼠，治疗共需2.4秒，治疗期间双方无法移动，成功治疗时获得少量经验。多名老鼠可合作加速治疗。\n当角色当前HP超出当前HP上限时，会解除受伤，同时使HP复位为当前HP上限。',
   },
   猫虚弱: {
     type: '状态',

@@ -211,4 +211,13 @@ export const characterRelationModeTraits: CharacterRelationTrait[] = [
       isMinor: false,
     },
   },
+  {
+    description: '开局10级，能发挥剑汤连招多上限高的特点；疯奶也因此经常成为剑汤的练习模式',
+    relation: {
+      kind: 'advantageModes',
+      subject: { name: '剑客汤姆', type: 'character' },
+      target: { name: '疯狂奶酪赛', type: 'mode' },
+      isMinor: false,
+    },
+  },
 ];

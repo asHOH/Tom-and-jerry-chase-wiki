@@ -1300,6 +1300,177 @@ const mapDefinitions: Record<string, MapDefinition> = {
           ],
           isRandomCandidate: true,
         },
+        {
+          id: 'map-point-f4ef3795-8241-4671-a53d-7ff92cf98b02',
+          category: 'geometryBarrel',
+          position: {
+            x: 0.7364604621914793,
+            y: 0.8583042439830976,
+          },
+          relatedEntries: [
+            {
+              name: '小鞭炮',
+              type: 'item',
+            },
+            {
+              name: '火药桶',
+              type: 'entity',
+            },
+          ],
+          isRandomCandidate: false,
+          geometryBarrelRoute: {
+            firecrackerPosition: {
+              x: 0.7416483257349473,
+              y: 0.8591769244901709,
+            },
+            targetRocketPointId: 'map-point-c7cbd821-5d63-45cd-a36b-6a116ebfbfaa',
+            barrelCountdownDisplayAtFirecrackerExplosion: 1,
+          },
+        },
+        {
+          id: 'map-point-c091d916-d531-4ec7-b8ad-7c1b176ae712',
+          category: 'idleFruitPlate',
+          position: {
+            x: 0.8506596335538451,
+            y: 0.9275222573817304,
+          },
+          relatedEntries: [
+            {
+              name: '果盘',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: false,
+          targetWallCrackPointId: 'map-point-dbda90eb-e493-40ac-9fd2-92ff68394b0d',
+        },
+        {
+          id: 'map-point-1cb8527f-e687-4eb2-939f-394c786eb237',
+          category: 'idleFruitPlate',
+          position: {
+            x: 0.7087427286254254,
+            y: 0.8911806066682462,
+          },
+          relatedEntries: [
+            {
+              name: '果盘',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: false,
+          targetWallCrackPointId: 'map-point-967d07cc-773f-470f-996e-7ffefd2ed8e6',
+        },
+        {
+          id: 'map-point-00b8d25f-f232-4c4e-83d6-c2f414e753a9',
+          category: 'idleFruitPlate',
+          position: {
+            x: 0.3201540638264424,
+            y: 0.7108212382877089,
+          },
+          relatedEntries: [
+            {
+              name: '果盘',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: false,
+          targetWallCrackPointId: 'map-point-0b864eb0-a330-4f8d-b94a-7eff98447fab',
+        },
+        {
+          id: 'map-point-833d455a-1a06-49d4-a523-b1f1c524361d',
+          category: 'idleFruitPlate',
+          position: {
+            x: 0.5561795799567372,
+            y: 0.7107454682532077,
+          },
+          relatedEntries: [
+            {
+              name: '果盘',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: false,
+          targetWallCrackPointId: 'map-point-0b864eb0-a330-4f8d-b94a-7eff98447fab',
+        },
+        {
+          id: 'map-point-488e27a7-c89c-4b45-a153-3236d8c4d029',
+          category: 'idleFruitPlate',
+          position: {
+            x: 0.29670833717065254,
+            y: 0.4399191540189615,
+          },
+          relatedEntries: [
+            {
+              name: '果盘',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: false,
+          targetWallCrackPointId: 'map-point-8f5ce768-83fa-4865-99e7-81a98a8ef82f',
+        },
+        {
+          id: 'map-point-5f8a8c13-629e-4719-92c4-5bdfc8269094',
+          category: 'idleFruitPlate',
+          position: {
+            x: 0.5019650998270713,
+            y: 0.4394635311409149,
+          },
+          relatedEntries: [
+            {
+              name: '果盘',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: false,
+          targetWallCrackPointId: 'map-point-8f5ce768-83fa-4865-99e7-81a98a8ef82f',
+        },
+        {
+          id: 'map-point-2453f2c9-edad-42ea-bd7d-47a86a79d814',
+          category: 'idleFruitPlate',
+          position: {
+            x: 0.7023266781952523,
+            y: 0.4030865331618593,
+          },
+          relatedEntries: [
+            {
+              name: '果盘',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: false,
+          targetWallCrackPointId: 'map-point-dbdeecd3-2d6e-4d0b-be8c-b431778ccd7b',
+        },
+        {
+          id: 'map-point-74737771-0966-46eb-9c97-01b7f5b5a813',
+          category: 'idleFruitPlate',
+          position: {
+            x: 0.8692029555101399,
+            y: 0.17178026823442955,
+          },
+          relatedEntries: [
+            {
+              name: '果盘',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: false,
+          targetWallCrackPointId: 'map-point-0fef13a5-d90f-4fff-a921-aa3976c093b4',
+        },
+        {
+          id: 'map-point-8eb9c0a1-97f9-4b04-b664-eb76c3bbadb4',
+          category: 'idleFruitPlate',
+          position: {
+            x: 0.6550070743593774,
+            y: 0.1726988792945067,
+          },
+          relatedEntries: [
+            {
+              name: '果盘',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: false,
+          targetWallCrackPointId: 'map-point-0fef13a5-d90f-4fff-a921-aa3976c093b4',
+        },
       ],
     },
     description:
@@ -1335,7 +1506,7 @@ const mapDefinitions: Record<string, MapDefinition> = {
   经典之家II: {
     type: '常规地图',
     size: '中型',
-    aliases: ['经典2'],
+    aliases: ['经典2', '拉扯之家'],
     studyLevelUnlock: '见习学业',
     changeWithStudyLevel: true,
     roomCount: 8,
@@ -1571,7 +1742,98 @@ const mapDefinitions: Record<string, MapDefinition> = {
       tileUrl: '/images/map-tiles/space-fortress-i/{z}/{y}/{x}.webp',
       previewUrl: '/images/map-tiles/space-fortress-i/preview.webp',
       rooms: [],
-      points: [],
+      points: [
+        {
+          id: 'map-point-bd5999b3-916b-4bc4-9eec-7a656fcb2014',
+          category: 'idleFruitPlate',
+          position: {
+            x: 0.5555324222772482,
+            y: 0.40825330485318184,
+          },
+          relatedEntries: [
+            {
+              name: '果盘',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: false,
+        },
+        {
+          id: 'map-point-517612fb-3cec-460a-b9be-16d036cb3c2f',
+          category: 'idleFruitPlate',
+          position: {
+            x: 0.5464244807189644,
+            y: 0.40935678009478826,
+          },
+          relatedEntries: [
+            {
+              name: '果盘',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: false,
+        },
+        {
+          id: 'map-point-a3c18e6f-55d7-4d5f-bc49-c3d45e7710e0',
+          category: 'idleFruitPlate',
+          position: {
+            x: 0.5423649410529864,
+            y: 0.4293890998654892,
+          },
+          relatedEntries: [
+            {
+              name: '果盘',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: false,
+        },
+        {
+          id: 'map-point-8bbe9d8e-b8a7-447c-a0f4-fe5046729d85',
+          category: 'idleFruitPlate',
+          position: {
+            x: 0.5547517415722524,
+            y: 0.43074722323977394,
+          },
+          relatedEntries: [
+            {
+              name: '果盘',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: false,
+        },
+        {
+          id: 'map-point-731fc2b5-d849-4b1c-b688-a0d4a030c4a0',
+          category: 'idleFruitPlate',
+          position: {
+            x: 0.875351304280822,
+            y: 0.4357562453456736,
+          },
+          relatedEntries: [
+            {
+              name: '果盘',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: false,
+        },
+        {
+          id: 'map-point-0db775bf-66ab-4469-a634-25f47fafe710',
+          category: 'idleFruitPlate',
+          position: {
+            x: 0.8699579759267084,
+            y: 0.609591643956241,
+          },
+          relatedEntries: [
+            {
+              name: '果盘',
+              type: 'item',
+            },
+          ],
+          isRandomCandidate: false,
+        },
+      ],
     },
     mapSkin: [
       {
@@ -1673,7 +1935,7 @@ const mapDefinitions: Record<string, MapDefinition> = {
   森林牧场: {
     type: '常规地图',
     size: '大型',
-    aliases: ['牧场'],
+    aliases: ['牧场', '森林墓场'],
     studyLevelUnlock: '大师学业',
     roomCount: 5,
     pipeCount: 3,
@@ -1722,7 +1984,7 @@ const mapDefinitions: Record<string, MapDefinition> = {
   御门酒店: {
     type: '常规地图',
     size: '大型',
-    aliases: ['酒店'],
+    aliases: ['酒店', '郁闷酒店'],
     studyLevelUnlock: '大师学业',
     roomCount: 7,
     pipeCount: 1,

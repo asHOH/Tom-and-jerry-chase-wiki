@@ -1416,6 +1416,14 @@ export const createTraitsData = (): Record<string, Trait> => ({
       { name: '天堂火箭', type: 'entity' },
     ],
   },
+  '20260906-01': {
+    group: [
+      { name: '天堂火箭', type: 'entity' },
+      { name: '盔甲人', type: 'entity' },
+    ],
+    description:
+      '老鼠在将被天堂火箭放飞时进入雪夜古堡系列地图的盔甲人可以免疫被天堂火箭放飞，但如果盔甲人消失或退出盔甲人则会在约0.3秒左右后被放飞(不是瞬间放飞)，所以可以利用这段时间进墙缝，对手速要求极高。',
+  },
 });
 
 const traits = createTraitsData();
