@@ -19,6 +19,7 @@
 *.yaml text eol=lf
 *.css text eol=lf
 *.html text eol=lf
+*.sh text eol=lf
 
 # Ensure certain files keep their line endings
 *.bat text eol=crlf

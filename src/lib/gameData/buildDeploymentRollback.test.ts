@@ -1,7 +1,9 @@
 /** @jest-environment node */
 
 import { spawnSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
 
 const deployScript = readFileSync('scripts/ops/deploy_server.sh', 'utf8').replaceAll('\r\n', '\n');
 
@@ -61,7 +63,7 @@ pm2() { :; }
 case_count=0
 while IFS=$'\t' read -r require_artifact expected_status TEST_VERSION_BODY TEST_PUBLIC_BODY; do
   case_count=$((case_count + 1))
-  if ensure_pm2_process "$require_artifact"; then actual_status=0; else actual_status=$?; fi
+  if wait_for_application_health "$require_artifact"; then actual_status=0; else actual_status=$?; fi
   if [ "$actual_status" -ne "$expected_status" ]; then
     echo "Case $case_count: expected $expected_status, received $actual_status" >&2
     exit 1
@@ -106,6 +108,10 @@ NPM_VERSION=same
 LAST_NPM_VERSION=same
 API_RUNTIME=same
 LAST_API_RUNTIME=same
+ACTIVE_RELEASE=active
+REPO_ROOT=control
+DEPENDENCY_INPUTS_FILE=package.json
+calculate_dependency_inputs() { cat package.json; }
 BUILD_REASONS=()
 build_output_is_valid() { return 0; }
 ${decision}
@@ -126,30 +132,26 @@ printf '%s' "\${BUILD_REASONS[*]}"
     expect(invalid.stderr).toContain('Unknown argument');
   });
 
-  it('preserves a verified source revision and build before stopping production', () => {
-    expect(deployScript).toContain('preserve_last_known_good_release()');
-    expect(deployScript).toContain('check_health_endpoint "$health_url"');
-    expect(deployScript).toContain(
-      'check_version_endpoint "$version_url" "$PREVIOUS_SOURCE_HASH" 0'
-    );
-    expect(deployScript).toContain('cp -a .next "$LAST_KNOWN_GOOD_DIR/.next"');
-    const preserveCall = deployScript.search(/^\s+preserve_last_known_good_release\s*$/m);
-    const stopCall = deployScript.search(/^\s+stop_pm2_process_for_build\s*$/m);
-
-    expect(preserveCall).toBeGreaterThanOrEqual(0);
-    expect(stopCall).toBeGreaterThanOrEqual(0);
-    expect(preserveCall).toBeLessThan(stopCall);
-  });
-
-  it('arms an exit trap that restores source, output, dependencies, and PM2', () => {
-    expect(deployScript).toContain('trap handle_exit EXIT');
-    expect(deployScript).toContain('git reset --hard "$rollback_hash"');
-    expect(deployScript).toContain('cp -a "$LAST_KNOWN_GOOD_DIR/.next" "$REPO_ROOT/.next"');
-    expect(deployScript).toMatch(
-      /restore_last_known_good_release\(\)[\s\S]*?install_dependencies[\s\S]*?ensure_pm2_process 0 \|\| return 1/
-    );
-    expect(deployScript).toContain(
-      'Automatic rollback succeeded; production is serving ${rollback_hash:0:8}.'
-    );
-  });
+  it('keeps production intact during builds and recovers a failed cutover using isolated releases', () => {
+    const testRoot = mkdtempSync(path.join(tmpdir(), 'tjwiki-deploy-test-'));
+    try {
+      const bash = process.platform === 'win32' ? 'C:/Program Files/Git/bin/bash.exe' : 'bash';
+      const result = spawnSync(bash, ['scripts/ops/deploy_server.test.sh'], {
+        encoding: 'utf8',
+        timeout: 90_000,
+        env: { ...process.env, TEST_ROOT: testRoot },
+      });
+      expect({
+        error: result.error,
+        status: result.status,
+        output: result.stdout + result.stderr,
+      }).toEqual({
+        error: undefined,
+        status: 0,
+        output: expect.stringContaining('Verified isolated release deployments'),
+      });
+    } finally {
+      rmSync(testRoot, { recursive: true, force: true });
+    }
+  }, 95_000);
 });

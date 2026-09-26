@@ -29,7 +29,6 @@ NODE_MEMORY_LIMIT="${NODE_MEMORY_LIMIT:-auto}"
 PINNED_NPM_VERSION="11.18.0"
 ENV_FILE=".env.production"
 PM2_APP_NAME="tjwiki"
-PM2_DAEMON_VERSION_CHECKED=0
 START_SCRIPT="scripts/ops/start_server.sh"
 DEPENDENCY_INPUTS_FILE="node_modules/.tjwiki_dependency_inputs"
 DEPENDENCY_INSTALL_POLICY="npm-ci-ignore-scripts-v1"
@@ -40,14 +39,29 @@ DEPENDENCY_ACTION="not-started"
 PREVIOUS_SOURCE_HASH=""
 LAST_KNOWN_GOOD_DIR=""
 ROLLBACK_ARMED=0
+CANDIDATE_RELEASE=""
+ACTIVE_RELEASE=""
+RETIRED_RELEASE=""
+CUTOVER_STARTED_AT=""
+CUTOVER_DURATION="0s"
 
-if [ -d "$SCRIPT_DIR/../../.git" ]; then
-  REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+if [ -e "$SCRIPT_DIR/../../.git" ]; then
+  COMMON_GIT_DIR="$(git -C "$SCRIPT_DIR/../.." rev-parse --path-format=absolute --git-common-dir)"
+  REPO_ROOT="$(cd "$(dirname "$COMMON_GIT_DIR")" && pwd -P)"
   REPO_PARENT_DIR="$(cd "$REPO_ROOT/.." && pwd)"
 else
-  REPO_PARENT_DIR="$(pwd)"
+  REPO_PARENT_DIR="$(pwd -P)"
   REPO_ROOT="$REPO_PARENT_DIR/$REPO_DIR"
 fi
+
+RELEASES_DIR="$REPO_ROOT.releases"
+DEPLOY_STATE_DIR="$REPO_ROOT/.tmp/deploy"
+ENV_FILE="$REPO_ROOT/$ENV_FILE"
+
+# PM2 may launch a daemon. It must not inherit the deployment lock.
+pm2() {
+  command pm2 "$@" 9>&-
+}
 
 run_with_retry() {
   local max_attempts="$1"
@@ -145,7 +159,7 @@ detect_node_memory_limit() {
   fi
 
   if [ -r /proc/meminfo ]; then
-    local total_mb limit_mb
+    local total_mb available_mb limit_mb
 
     total_mb="$(awk '/MemTotal:/ { print int($2 / 1024) }' /proc/meminfo 2>/dev/null || echo "")"
     if [ -n "$total_mb" ] && [ "$total_mb" -gt 0 ]; then
@@ -156,15 +170,23 @@ detect_node_memory_limit() {
       if [ "$limit_mb" -gt 2048 ]; then
         limit_mb=2048
       fi
+      available_mb="$(awk '/MemAvailable:/ { print int($2 / 1024) }' /proc/meminfo)"
+      if [ -n "$available_mb" ] && [ "$limit_mb" -gt $((available_mb - 1024)) ]; then
+        limit_mb=$((available_mb - 1024))
+      fi
+      if [ "$limit_mb" -lt 768 ]; then
+        echo "Fatal: insufficient available RAM for an online build with 1 GiB of headroom. Build off-server or free memory first."
+        return 1
+      fi
 
       NODE_MEMORY_LIMIT="$limit_mb"
-      echo "Auto-detected Node.js memory limit: ${NODE_MEMORY_LIMIT} MB (system RAM: ${total_mb} MB)."
+      echo "Auto-detected V8 old-space limit: ${NODE_MEMORY_LIMIT} MB (system RAM: ${total_mb} MB; reserving available headroom for the live app and native allocations)."
       return 0
     fi
   fi
 
   NODE_MEMORY_LIMIT="2048"
-  echo "Could not detect system RAM. Falling back to ${NODE_MEMORY_LIMIT} MB for Node.js."
+  echo "Could not detect system RAM. Falling back to a ${NODE_MEMORY_LIMIT} MB V8 old-space limit."
 }
 
 ensure_nvm() {
@@ -186,8 +208,10 @@ ensure_nvm() {
 
   . "$NVM_DIR/nvm.sh"
   echo "Ensuring correct Node.js version is installed..."
-  nvm install
-  nvm use --silent >/dev/null
+  local requested_node
+  requested_node="$(git -C "$REPO_ROOT" show "$CURRENT_HASH:.nvmrc")"
+  nvm install "$requested_node"
+  nvm use --silent "$requested_node" >/dev/null
 }
 
 ensure_pinned_npm() {
@@ -284,40 +308,8 @@ build_output_is_valid() {
   [ -f ".next/BUILD_ID" ] && [ -d ".next/server" ] && [ -d ".next/static" ]
 }
 
-sync_pm2_daemon_version() {
-  local report daemon_version cli_version
-
-  if [ "$PM2_DAEMON_VERSION_CHECKED" -eq 1 ]; then
-    return 0
-  fi
-
-  report="$(pm2 report 2>/dev/null || true)"
-  daemon_version="$(
-    printf '%s\n' "$report" |
-      sed -n 's/^[[:space:]]*pm2d version[[:space:]]*:[[:space:]]*//p' |
-      head -n 1
-  )"
-  cli_version="$(
-    printf '%s\n' "$report" |
-      sed -n 's/^[[:space:]]*local pm2[[:space:]]*:[[:space:]]*//p' |
-      head -n 1
-  )"
-
-  if [ -n "$daemon_version" ] && [ "$daemon_version" = "$cli_version" ]; then
-    PM2_DAEMON_VERSION_CHECKED=1
-    return 0
-  fi
-
-  echo "Updating the in-memory PM2 daemon to match the installed CLI..."
-  if ! pm2 update; then
-    echo "Fatal: failed to update the in-memory PM2 daemon."
-    exit 1
-  fi
-  PM2_DAEMON_VERSION_CHECKED=1
-}
-
 ensure_pm2_cli() {
-  if ! command -v pm2 >/dev/null 2>&1; then
+  if ! type -P pm2 >/dev/null 2>&1; then
     echo "PM2 is not available for the active Node.js version. Installing PM2 globally..."
     if ! npm install -g pm2; then
       echo "Fatal: failed to install PM2 globally for the active Node.js version."
@@ -327,31 +319,12 @@ ensure_pm2_cli() {
     hash -r 2>/dev/null || true
   fi
 
-  if ! command -v pm2 >/dev/null 2>&1; then
+  if ! type -P pm2 >/dev/null 2>&1; then
     echo "Fatal: pm2 is still not available after npm install -g pm2."
     exit 1
   fi
 
-  sync_pm2_daemon_version
-}
-
-stop_pm2_process_for_build() {
-  ensure_pm2_cli
-
-  if pm2 describe "$PM2_APP_NAME" >/dev/null 2>&1; then
-    echo "Stopping PM2 app '$PM2_APP_NAME' before rebuilding .next..."
-    run_quietly pm2 stop "$PM2_APP_NAME"
-  fi
-}
-
-clean_build_output() {
-  echo "Cleaning generated build output while preserving .next/cache..."
-  if [ -d ".next/cache" ]; then
-    find .next -mindepth 1 -maxdepth 1 ! -name cache -exec rm -rf -- {} +
-  else
-    rm -rf .next
-  fi
-  rm -f public/sw.js public/workbox-*.js
+  # Updating the daemon can restart live apps; do that separately from deployment.
 }
 
 summarize_response() {
@@ -491,75 +464,127 @@ wait_for_application_health() {
 }
 
 ensure_pm2_process() {
-  ensure_pm2_cli
+  local require_artifact="${1:-1}"
+  local release="$2"
 
   if pm2 describe "$PM2_APP_NAME" >/dev/null 2>&1; then
-    echo "Reloading PM2 app '$PM2_APP_NAME'..."
-    run_quietly pm2 reload "$PM2_APP_NAME" --update-env
-  else
-    echo "Starting PM2 app '$PM2_APP_NAME'..."
-    run_quietly pm2 start "$START_SCRIPT" --name "$PM2_APP_NAME" --interpreter bash --cwd "$PWD"
+    run_quietly pm2 delete "$PM2_APP_NAME" || return 1
   fi
+  echo "Starting PM2 app '$PM2_APP_NAME' from $release..."
+  ENV_FILE="$release/.env.production" run_quietly pm2 start "$release/$START_SCRIPT" \
+    --name "$PM2_APP_NAME" --interpreter bash --cwd "$release" || return 1
 
-  wait_for_application_health "${1:-1}" || return 1
+  wait_for_application_health "$require_artifact" || return 1
   run_quietly pm2 save
 }
 
-preserve_last_known_good_release() {
+find_active_release() {
+  ACTIVE_RELEASE="$(pm2 jlist | node -e '
+    const fs = require("node:fs");
+    const apps = JSON.parse(fs.readFileSync(0, "utf8"));
+    const app = apps.find((item) => item.name === process.argv[1]);
+    if (app) {
+      if (!app.pm2_env?.pm_cwd) process.exit(1);
+      process.stdout.write(app.pm2_env.pm_cwd);
+    }
+  ' "$PM2_APP_NAME")"
+  if [ -z "$ACTIVE_RELEASE" ]; then
+    return 0
+  fi
+  ACTIVE_RELEASE="$(cd "$ACTIVE_RELEASE" && pwd -P)"
+  if [ "$ACTIVE_RELEASE" != "$REPO_ROOT" ] &&
+    [ "$(dirname "$ACTIVE_RELEASE")" != "$RELEASES_DIR" ]; then
+    echo "Fatal: PM2 app '$PM2_APP_NAME' uses an unmanaged directory: $ACTIVE_RELEASE"
+    return 1
+  fi
+  PREVIOUS_SOURCE_HASH="$(git -C "$ACTIVE_RELEASE" rev-parse HEAD)"
+  verify_active_release
+}
+
+verify_active_release() {
   local health_url="${HEALTH_CHECK_URL:-http://127.0.0.1:${PORT:-3000}/api/health}"
   local version_url="${VERSION_CHECK_URL:-http://127.0.0.1:${PORT:-3000}/api/version}"
 
-  if [ -z "$PREVIOUS_SOURCE_HASH" ] || ! build_output_is_valid; then
+  if ! (cd "$ACTIVE_RELEASE" && build_output_is_valid); then
     echo "Fatal: no complete last-known-good source and build output are available."
     return 1
   fi
-  if ! pm2 describe "$PM2_APP_NAME" >/dev/null 2>&1 ||
-    ! check_health_endpoint "$health_url" ||
+  if ! check_health_endpoint "$health_url" ||
     ! check_version_endpoint "$version_url" "$PREVIOUS_SOURCE_HASH" 0; then
-    echo "Fatal: the existing release could not be verified before the candidate build."
+    echo "Fatal: the existing release could not be verified."
     [ -n "$LAST_HEALTH_CHECK_ERROR" ] && echo "$LAST_HEALTH_CHECK_ERROR"
     return 1
   fi
+}
 
-  LAST_KNOWN_GOOD_DIR="$REPO_ROOT/.tmp/deploy-last-known-good"
-  rm -rf -- "$LAST_KNOWN_GOOD_DIR"
-  mkdir -p "$LAST_KNOWN_GOOD_DIR/public"
-  cp -a .next "$LAST_KNOWN_GOOD_DIR/.next"
-  find public -maxdepth 1 -type f \
-    \( -name 'sw.js*' -o -name 'swe-worker-*' -o -name 'workbox-*' -o -name 'fallback-*' -o -name 'version.json' \) \
-    -exec cp -a -- {} "$LAST_KNOWN_GOOD_DIR/public/" \;
-  printf '%s\n' "$PREVIOUS_SOURCE_HASH" > "$LAST_KNOWN_GOOD_DIR/source-revision"
-  ROLLBACK_ARMED=1
-  echo "Preserved verified last-known-good release ${PREVIOUS_SOURCE_HASH:0:8}."
+prepare_candidate_release() {
+  CANDIDATE_RELEASE="$(mktemp -d "$RELEASES_DIR/${CURRENT_HASH:0:8}-XXXXXXXX")"
+  git -C "$REPO_ROOT" worktree add --detach "$CANDIDATE_RELEASE" "$CURRENT_HASH"
+  cp -p "$ENV_FILE" "$CANDIDATE_RELEASE/.env.production"
+  chmod 600 "$CANDIDATE_RELEASE/.env.production"
+  cd "$CANDIDATE_RELEASE"
+
+  local base_release="${ACTIVE_RELEASE:-$REPO_ROOT}"
+  if [ "${FORCE_DEPENDENCY_INSTALL:-0}" != "1" ] &&
+    [ -f "$base_release/$DEPENDENCY_INPUTS_FILE" ] &&
+    [ "$(cat "$base_release/$DEPENDENCY_INPUTS_FILE")" = "$(calculate_dependency_inputs)" ]; then
+    echo "Copying matching dependencies into the isolated candidate..."
+    cp -a --reflink=auto "$base_release/node_modules" ./node_modules
+  fi
+  if [ -d "$base_release/.next/cache" ]; then
+    mkdir -p .next
+    cp -a --reflink=auto "$base_release/.next/cache" .next/cache
+  fi
+  echo "Candidate directory: $CANDIDATE_RELEASE; the current app remains running."
+}
+
+preserve_last_known_good_release() {
+  if [ -z "$ACTIVE_RELEASE" ]; then
+    return 0
+  fi
+  verify_active_release || return 1
+  LAST_KNOWN_GOOD_DIR="$ACTIVE_RELEASE"
+  if [ "$ACTIVE_RELEASE" = "$REPO_ROOT" ]; then
+    # One-time migration: retain the legacy release before updating the control checkout.
+    LAST_KNOWN_GOOD_DIR="$(mktemp -d "$RELEASES_DIR/${PREVIOUS_SOURCE_HASH:0:8}-legacy-XXXXXXXX")"
+    git -C "$REPO_ROOT" worktree add --detach "$LAST_KNOWN_GOOD_DIR" "$PREVIOUS_SOURCE_HASH" || return 1
+    cp -a --reflink=auto "$ACTIVE_RELEASE/.next" "$ACTIVE_RELEASE/node_modules" \
+      "$LAST_KNOWN_GOOD_DIR/" || return 1
+    cp -a --reflink=auto "$ACTIVE_RELEASE/public/." "$LAST_KNOWN_GOOD_DIR/public/" || return 1
+    cp -p "$ENV_FILE" "$LAST_KNOWN_GOOD_DIR/.env.production" || return 1
+    chmod 600 "$LAST_KNOWN_GOOD_DIR/.env.production" || return 1
+  fi
+  echo "Retained verified last-known-good release ${PREVIOUS_SOURCE_HASH:0:8} at $LAST_KNOWN_GOOD_DIR."
+}
+
+set_release_link() {
+  local name="$1" release="$2"
+  ln -s "$release" "$DEPLOY_STATE_DIR/$name.$$" || return 1
+  mv -Tf "$DEPLOY_STATE_DIR/$name.$$" "$DEPLOY_STATE_DIR/$name"
+}
+
+remove_release() {
+  local release="$1"
+  # Never remove the control checkout, current release, or an unrelated worktree.
+  if [ -n "$release" ] && [ "$(dirname "$release")" = "$RELEASES_DIR" ] &&
+    [ "$release" != "$ACTIVE_RELEASE" ] &&
+    [ "$release" != "$(readlink -f "$DEPLOY_STATE_DIR/current" 2>/dev/null || true)" ]; then
+    git -C "$REPO_ROOT" worktree remove --force "$release"
+  fi
 }
 
 restore_last_known_good_release() {
-  local rollback_hash
-
-  ROLLBACK_ARMED=0
-  if [ -z "$LAST_KNOWN_GOOD_DIR" ] || [ ! -f "$LAST_KNOWN_GOOD_DIR/source-revision" ]; then
+  if [ -z "$LAST_KNOWN_GOOD_DIR" ]; then
     echo "Fatal: last-known-good release metadata is unavailable; automatic recovery cannot continue."
     return 1
   fi
-  rollback_hash="$(cat "$LAST_KNOWN_GOOD_DIR/source-revision")"
-  echo "Restoring last-known-good release ${rollback_hash:0:8}..."
-
-  git reset --hard "$rollback_hash"
-  rm -rf -- "$REPO_ROOT/.next"
-  cp -a "$LAST_KNOWN_GOOD_DIR/.next" "$REPO_ROOT/.next"
-  find public -maxdepth 1 -type f \
-    \( -name 'sw.js*' -o -name 'swe-worker-*' -o -name 'workbox-*' -o -name 'fallback-*' -o -name 'version.json' \) \
-    -delete
-  find "$LAST_KNOWN_GOOD_DIR/public" -maxdepth 1 -type f -exec cp -a -- {} public/ \;
-
-  # A candidate may have changed package-lock.json and node_modules before it
-  # failed, so restore the dependency set for the preserved source as well.
-  install_dependencies
-  CURRENT_HASH="$rollback_hash"
-  EXPECTED_COMMIT_SHA="$rollback_hash"
-  # Recovery may restore a release from before build artifacts were exposed.
-  ensure_pm2_process 0 || return 1
-  echo "Automatic rollback succeeded; production is serving ${rollback_hash:0:8}."
+  echo "Restoring last-known-good release ${PREVIOUS_SOURCE_HASH:0:8}..."
+  EXPECTED_COMMIT_SHA="$PREVIOUS_SOURCE_HASH"
+  ensure_pm2_process 0 "$LAST_KNOWN_GOOD_DIR" || return 1
+  ACTIVE_RELEASE="$LAST_KNOWN_GOOD_DIR"
+  set_release_link current "$ACTIVE_RELEASE" || return 1
+  ROLLBACK_ARMED=0
+  echo "Automatic rollback succeeded; production is serving ${PREVIOUS_SOURCE_HASH:0:8}."
 }
 
 handle_exit() {
@@ -567,17 +592,42 @@ handle_exit() {
 
   trap - EXIT
   cleanup_child_processes
-  if [ "$exit_code" -ne 0 ] && [ "$ROLLBACK_ARMED" -eq 1 ]; then
-    if ! restore_last_known_good_release; then
-      echo "Fatal: automatic rollback failed. Manual recovery is required."
+  if [ "$exit_code" -ne 0 ]; then
+    if [ "$ROLLBACK_ARMED" -eq 1 ]; then
+      if ! restore_last_known_good_release; then
+        echo "Fatal: automatic rollback failed. Releases were retained for manual recovery."
+        exit "$exit_code"
+      fi
+    elif [ -n "$CUTOVER_STARTED_AT" ] && [ -z "$LAST_KNOWN_GOOD_DIR" ]; then
+      if pm2 describe "$PM2_APP_NAME" >/dev/null 2>&1; then
+        run_quietly pm2 delete "$PM2_APP_NAME" || exit "$exit_code"
+      fi
+      ACTIVE_RELEASE=""
+    fi
+    cd "$REPO_ROOT" || exit "$exit_code"
+    if [ -n "$CANDIDATE_RELEASE" ]; then
+      remove_release "$CANDIDATE_RELEASE" || echo "Warning: could not remove failed candidate $CANDIDATE_RELEASE."
+    fi
+    if [ "$ACTIVE_RELEASE" = "$REPO_ROOT" ] && [ -n "$LAST_KNOWN_GOOD_DIR" ]; then
+      remove_release "$LAST_KNOWN_GOOD_DIR" || echo "Warning: could not remove incomplete legacy snapshot $LAST_KNOWN_GOOD_DIR."
     fi
   fi
   exit "$exit_code"
 }
 
+# Parse the entry point before resetting the control checkout, which may replace this script.
+{
 trap handle_exit EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
 
-begin_phase "1/6" "Update source"
+exec 9>"$REPO_ROOT.deploy.lock"
+if ! flock -n 9; then
+  echo "Fatal: another deployment is already running."
+  exit 1
+fi
+
+begin_phase "1/6" "Fetch candidate source"
 if [ ! -d "$REPO_ROOT/.git" ]; then
   echo "Cloning repository..."
   cd "$REPO_PARENT_DIR"
@@ -589,24 +639,15 @@ if [ ! -d "$REPO_ROOT/.git" ]; then
 else
   echo "Repository exists. Attempting to update..."
   cd "$REPO_ROOT"
-  PREVIOUS_SOURCE_HASH="$(git rev-parse HEAD)"
-
   if run_git_with_retry fetch origin "$TARGET_BRANCH"; then
-    echo "Update successful."
-    if [ -n "$TARGET_COMMIT" ]; then
-      echo "Resetting to specific commit: $TARGET_COMMIT"
-      git reset --hard "$TARGET_COMMIT"
-    else
-      echo "Resetting to the latest version."
-      git reset --hard "origin/$TARGET_BRANCH"
-    fi
+    echo "Fetch successful; the serving checkout is unchanged."
   else
     echo "Fatal: could not update '$TARGET_BRANCH' from origin. The existing application process is unchanged."
     exit 1
   fi
 fi
 
-CURRENT_HASH="$(git rev-parse HEAD)"
+CURRENT_HASH="$(git rev-parse "${TARGET_COMMIT:-origin/$TARGET_BRANCH}^{commit}")"
 echo "Resolved source: branch=$TARGET_BRANCH commit=$CURRENT_HASH"
 
 begin_phase "2/6" "Load production environment"
@@ -634,10 +675,13 @@ NPM_VERSION="$(npm --version)"
 PM2_VERSION="$(pm2 --version 2>/dev/null | tail -n 1)"
 echo "Runtime tools: node=$NODE_VERSION npm=$NPM_VERSION pm2=$PM2_VERSION"
 
-begin_phase "4/6" "Install dependencies"
-install_dependencies
+mkdir -p "$RELEASES_DIR" "$DEPLOY_STATE_DIR"
+RELEASES_DIR="$(cd "$RELEASES_DIR" && pwd -P)"
+find_active_release
+RETIRED_RELEASE="$(readlink -f "$DEPLOY_STATE_DIR/previous" 2>/dev/null || true)"
 
-begin_phase "5/6" "Evaluate and build application"
+begin_phase "4/6" "Prepare isolated candidate"
+cd "${ACTIVE_RELEASE:-$REPO_ROOT}"
 BUILD_INPUTS_FILE=".next/.build_inputs"
 API_RUNTIME="nodejs"
 ENV_FILE_HASH="$(sha256sum "$ENV_FILE" | awk '{ print $1 }')"
@@ -672,6 +716,17 @@ fi
 if ! build_output_is_valid; then
   BUILD_REASONS+=("output")
 fi
+if [ "${FORCE_DEPENDENCY_INSTALL:-0}" = "1" ] ||
+  [ ! -f "$DEPENDENCY_INPUTS_FILE" ] ||
+  [ "$(cat "$DEPENDENCY_INPUTS_FILE")" != "$(calculate_dependency_inputs)" ]; then
+  BUILD_REASONS+=("dependencies")
+fi
+# The first deployment must move the process out of the mutable control checkout.
+if [ "$ACTIVE_RELEASE" = "$REPO_ROOT" ]; then
+  BUILD_REASONS+=("release-migration")
+elif [ -z "$ACTIVE_RELEASE" ]; then
+  BUILD_REASONS+=("no-active-release")
+fi
 
 if [ "${#BUILD_REASONS[@]}" -gt 0 ]; then
   BUILD_REASON_LIST="$(printf '%s, ' "${BUILD_REASONS[@]}")"
@@ -679,30 +734,18 @@ if [ "${#BUILD_REASONS[@]}" -gt 0 ]; then
   echo "Build required; changed inputs: $BUILD_REASON_LIST"
   BUILD_STARTED_AT="$(date +%s)"
 
-  if [ -n "$PREVIOUS_SOURCE_HASH" ] && build_output_is_valid; then
-    preserve_last_known_good_release
-  elif pm2 describe "$PM2_APP_NAME" >/dev/null 2>&1; then
-    echo "Fatal: PM2 is running but no complete last-known-good release can be preserved."
-    exit 1
-  else
-    echo "No existing production release is running; proceeding without a rollback candidate."
-  fi
-  stop_pm2_process_for_build
-  clean_build_output
-
+  prepare_candidate_release
+  install_dependencies
+  begin_phase "5/6" "Build while the current release serves"
   npm run set-runtime:node
 
   report_memory_status
 
   detect_node_memory_limit
 
-  export NODE_OPTIONS="--max-old-space-size=$NODE_MEMORY_LIMIT"
-  export NEXT_CPU_COUNT=1
-  export UV_THREADPOOL_SIZE=1
-  export SKIP_BUILD_CHECKS=true
-  export NEXT_TELEMETRY_DISABLED=1
-
-  if npm run build; then
+  # Keep build-only limits out of the serving process and any rollback process.
+  if NODE_OPTIONS="--max-old-space-size=$NODE_MEMORY_LIMIT" NEXT_CPU_COUNT=1 \
+    UV_THREADPOOL_SIZE=1 SKIP_BUILD_CHECKS=true NEXT_TELEMETRY_DISABLED=1 npm run build; then
     if ! build_output_is_valid; then
       echo "Fatal: build completed but .next output is missing required production files."
       exit 1
@@ -722,22 +765,45 @@ if [ "${#BUILD_REASONS[@]}" -gt 0 ]; then
     if [ "$BUILD_EXIT_CODE" -eq 137 ]; then
       echo "(Exit code 137 usually indicates out of memory.)"
     fi
-    echo "The app process may have been stopped before build to avoid serving mutated .next output."
+    echo "The existing release was not stopped or modified."
     exit 1
   fi
 else
+  DEPENDENCY_ACTION="skipped"
   BUILD_ACTION="skipped"
   BUILD_DURATION="skipped"
+  begin_phase "5/6" "Reuse verified release"
   echo "Build skipped; source, environment, toolchain, and output match the previous build."
 fi
 
 begin_phase "6/6" "Activate and verify application"
-ensure_pm2_process
-ROLLBACK_ARMED=0
-if [ -n "$LAST_KNOWN_GOOD_DIR" ]; then
-  rm -rf -- "$LAST_KNOWN_GOOD_DIR"
+if [ -n "$CANDIDATE_RELEASE" ]; then
+  preserve_last_known_good_release
+  if [ -n "$LAST_KNOWN_GOOD_DIR" ]; then
+    ROLLBACK_ARMED=1
+  fi
+  CUTOVER_STARTED_AT="$(date +%s)"
+  echo "Build is ready; beginning the brief PM2 cutover."
+  ensure_pm2_process 1 "$CANDIDATE_RELEASE"
+  CUTOVER_DURATION="$(format_duration "$(($(date +%s) - CUTOVER_STARTED_AT))")"
+  ACTIVE_RELEASE="$CANDIDATE_RELEASE"
+  set_release_link current "$ACTIVE_RELEASE"
+  if [ -n "$LAST_KNOWN_GOOD_DIR" ]; then
+    set_release_link previous "$LAST_KNOWN_GOOD_DIR"
+  fi
+  ROLLBACK_ARMED=0
+  CUTOVER_STARTED_AT=""
+  # The primary checkout now holds operator tools; PM2 serves a separate release.
+  cd "$REPO_ROOT"
+  git reset --hard "$CURRENT_HASH"
+  if [ "$RETIRED_RELEASE" != "$LAST_KNOWN_GOOD_DIR" ]; then
+    remove_release "$RETIRED_RELEASE" || echo "Warning: could not remove retired release $RETIRED_RELEASE."
+  fi
+else
+  wait_for_application_health
 fi
 
 DEPLOY_DURATION_SECONDS="$(($(date +%s) - DEPLOY_STARTED_AT))"
 echo
-echo "Deployment complete: commit=${CURRENT_HASH:0:8} branch=$TARGET_BRANCH dependencies=$DEPENDENCY_ACTION build=$BUILD_ACTION build_time=$BUILD_DURATION total_time=$(format_duration "$DEPLOY_DURATION_SECONDS") node=$NODE_VERSION npm=$NPM_VERSION pm2=$PM2_VERSION"
+echo "Deployment complete: commit=${CURRENT_HASH:0:8} branch=$TARGET_BRANCH dependencies=$DEPENDENCY_ACTION build=$BUILD_ACTION build_time=$BUILD_DURATION cutover_time=$CUTOVER_DURATION total_time=$(format_duration "$DEPLOY_DURATION_SECONDS") node=$NODE_VERSION npm=$NPM_VERSION pm2=$PM2_VERSION release=$ACTIVE_RELEASE"
+}
