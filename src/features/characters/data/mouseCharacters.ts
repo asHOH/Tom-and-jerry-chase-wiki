@@ -68,7 +68,7 @@ const mouseCharacterDefinitions = {
         type: 'active',
         description: '增加自身和附近队友的移速和跳跃高度。',
         detailedDescription:
-          '增加自身和920范围内队友的移速和跳跃高度。不同等级的鼓舞效果可以叠加。',
+          '为自身900范围内的所有友方（含自身）施加对应等级的鼓舞状态。不同等级的鼓舞状态[可以叠加](不同等级技能施加的状态为不同名称的状态，且彼此不会互相覆盖)。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '不可主动打断',
@@ -80,7 +80,7 @@ const mouseCharacterDefinitions = {
           {
             level: 1,
             description: '',
-            detailedDescription: '移速增加15%、跳跃速度增加30%，持续5秒。',
+            detailedDescription: '鼓舞使角色移速增加15%、跳跃能力增加30%，持续5秒。',
             cooldown: 18,
           },
           {
@@ -105,7 +105,7 @@ const mouseCharacterDefinitions = {
         type: 'weapon1',
         description: '举起大铁锤，对面前的敌方造成眩晕。',
         detailedDescription:
-          '举起大铁锤，对面前的敌方造成[眩晕](可击落道具和老鼠；不会在对方状态栏显示)。',
+          '举起大铁锤砸下，对自身前方260范围内的所有敌方造成持续2.5秒的{眩晕}（会掉落道具和老鼠）。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: ['道具键*'],
@@ -119,14 +119,14 @@ const mouseCharacterDefinitions = {
           {
             level: 1,
             description: '',
-            detailedDescription: 'CD为20秒，眩晕时间为2.5秒。',
+            detailedDescription: '',
             cooldown: 20,
           },
           {
             level: 2,
             description: '大铁锤额外造成伤害，且每次命中敌方时永久提升自身推速，可叠加。',
             detailedDescription:
-              '大铁锤额外造成{50*}伤害，且每次[命中敌方时](包括命中虚弱、霸体或无敌的猫咪时)会使自身[推速提高10%，最多叠加五层](每层之间独立计算。所有百分比推速加成之间均为乘算关系，包括游戏自带的百分比推速增减)，持续时间无限。',
+              '大铁锤额外造成{50*}伤害，且每次[命中敌方时](包括命中虚弱、霸体或无敌的猫咪时)会使自身推速[永久](实际为持续1000秒)提高10%，最多叠加五层。',
             cooldown: 16,
           },
           {
@@ -195,7 +195,7 @@ const mouseCharacterDefinitions = {
             description:
               '每当奶酪被推进或墙缝首次被破坏到一定程度时，解除虚弱和受伤、回复Hp、且移速短暂提高。',
             detailedDescription:
-              '每当奶酪被推进或墙缝首次被破坏到80%、60%、40%、20%、0%时，解除虚弱和受伤、Hp恢复25点、且移速提高20%，持续3秒。',
+              '每当奶酪被推进或墙缝首次被破坏到80%、60%、40%、20%、0%时，回复25Hp并解除{鼠虚弱}和{受伤}，随后移速提高20%，持续3秒。',
           },
         ],
       },
@@ -203,7 +203,7 @@ const mouseCharacterDefinitions = {
     specialSkills: [
       {
         name: '干扰投掷',
-        description: '与大铁锤搭配，提高命中率。',
+        description: '与大铁锤搭配，提高命中率，并且可以骗猫不使用霸体而救人（取决于猫的意识）。',
       },
       {
         name: '魔术漂浮',
@@ -289,7 +289,8 @@ const mouseCharacterDefinitions = {
         name: '隐身',
         type: 'active',
         description: '进入隐身状态，期间获得加速。',
-        detailedDescription: '进入隐身状态，期间加速15%。',
+        detailedDescription:
+          '获得对应等级的隐身状态并清除部分{反向}和{失明}状态；本技能隐身期间移速提高15%。',
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableSkill: '不可主动打断',
@@ -312,7 +313,8 @@ const mouseCharacterDefinitions = {
           {
             level: 3,
             description: '隐身持续更久；隐身状态下持续恢复Hp。',
-            detailedDescription: '隐身持续15秒；隐身状态下额外以1.67/s恢复Hp。', //FIXME: not sure about the recovery rate
+            detailedDescription:
+              '隐身持续15秒。\n自身处于由本技能或{隐身饮料}导致的隐身状态时，每秒恢复3.3Hp。', //FIXME: not sure about the recovery rate
             cooldown: 20,
           },
         ],
@@ -406,7 +408,8 @@ const mouseCharacterDefinitions = {
           {
             level: 3,
             description: '附近有猫咪时，移速和跳跃高度提升，但推速下降。',
-            detailedDescription: '附近有猫咪时，移速和跳跃高度提升10%，但推速下降30%。',
+            detailedDescription:
+              '自身半径1200范围内有敌方角色时，自身移速提高10%，跳跃能力提高5%，但推速下降30%。',
           },
         ],
       },
@@ -563,7 +566,7 @@ const mouseCharacterDefinitions = {
         type: 'active',
         description: '全体队友短暂获得加速和二段跳状态。',
         detailedDescription:
-          '[全体队友](除虚弱状态下的队友)短暂加速10%，并[获得二段跳状态](可被部分免疫状态的效果免疫，例如自身的降落伞降落期间)（可在空中[进行1次额外跳跃](从上一次接触平台/地面起，至多进行2次跳跃，再次接触平台/地面时重置)）。不同等级二段跳提供的移速加成可叠加。\n该状态属于{多段跳}。',
+          '[尝试](部分状态（如虚弱）下的队友会免疫本技能施加的状态)为所有队友施加对应等级的二段跳状态，该状态下角色移速提高10%，可跳跃次数提升至2（可在空中[进行1次额外跳跃](从上一次接触平台/地面起，至多进行2次跳跃，再次接触平台/地面时重置)）。\n不同等级的二段跳状态[可以叠加](不同等级技能施加的状态为不同名称的状态，且彼此不会互相覆盖)，但只有移速加成效果能叠加生效。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '无前摇',
@@ -575,21 +578,21 @@ const mouseCharacterDefinitions = {
           {
             level: 1,
             description: '',
-            detailedDescription: '二段跳持续3.9秒。',
+            detailedDescription: '二段跳持续4秒。',
             cooldown: 25,
           },
           {
             level: 2,
             description: '二段跳持续时间更长。',
             cooldown: 25,
-            detailedDescription: '二段跳持续时间延长至6.45秒。',
+            detailedDescription: '二段跳持续时间延长至6.5秒。',
           },
           {
             level: 3,
             description: '二段跳期间还能提高跳跃高度，且自身获得三段跳。',
             cooldown: 25,
             detailedDescription:
-              '二段跳状态额外使跳跃高度提高12.5%。自身[在二段跳状态下](包括因其他罗宾汉杰瑞技能而获得的二段跳状态)改为可进行{三段跳}（可在空中[进行2次额外跳跃](从上一次接触平台/地面起，至多进行3次跳跃，再次接触平台/地面时重置)）。',
+              '二段跳状态额外获得{跳跃能力}+100。\n自身[处于本技能导致的二段跳状态时](包括因任意罗宾汉杰瑞的任意等级技能而获得的二段跳状态)，可跳跃次数{改为}3。',
           },
         ],
         cooldownTiming: '释放时',
@@ -679,20 +682,20 @@ const mouseCharacterDefinitions = {
           {
             level: 1,
             description: '跳跃高度提高。',
-            detailedDescription: '跳跃高度提高7.5%（400→430）。',
+            detailedDescription: '跳跃能力+50。',
           },
           {
             level: 2,
             description:
               '受到敌方攻击后，[解除先前的控制](包括老鼠夹导致的控制，不包括虚弱)并短暂加速。',
             detailedDescription:
-              '[受到敌方攻击后](以敌方为伤害来源的伤害均在此列，例如平底锅，斗牛，剑客连斩，捕鼠夹知识卡)，[解除先前的控制](包括老鼠夹导致的控制，不包括虚弱)，并加速18.75%，持续3秒。',
+              '受到来自敌方的伤害后，[尝试](部分状态（如虚弱）下会免疫本技能施加的状态，导致技能失效)解除自身受到的{眩晕}状态，随后移速和跳跃能力各提升20%，持续3秒。',
           },
           {
             level: 3,
             description: '在敌方附近时，CD倒计时加快。',
             detailedDescription:
-              '附近1000范围内有敌方角色时，自身[CD倒计时加快33%](效果触发时，技能键上CD的显示值不变，但减少1单位CD所需的实际时间缩短为0.75单位)。',
+              '附近900范围内有敌方角色时，自身主动和武器技能CD倒计时速度[提高30%](效果触发时，技能键上CD的显示值不变，但减少1单位CD所需的实际时间缩短)。',
           },
         ],
       },
@@ -776,21 +779,20 @@ const mouseCharacterDefinitions = {
 
     knowledgeCardGroups: [
       {
-        cards: ['S-铁血', 'S-舍己', 'A-投手', 'C-不屈', 'C-救救我'],
-        description: '打怕减速的猫咪。投手和1级被动叠加后能让猫咪难以追上老鼠。',
-      },
-      {
-        cards: ['S-铁血', 'S-舍己', 'S-缴械', 'C-救救我'],
-        description: '打苏蕊、侍卫等单刀型猫咪。',
-      },
-      {
-        cards: ['S-铁血', 'S-舍己', 'B-飞跃', 'B-绝地反击', 'C-救救我'],
-        description: '各项能力较为均衡的卡组。',
-      },
-      {
-        cards: ['S-铁血', 'S-舍己', 'B-求生欲', 'C-脱身', 'C-救救我'],
+        cards: [
+          'S-舍己',
+          'S-铁血',
+          'C-救救我',
+          [
+            CardGroupType.Or,
+            'S-缴械',
+            [CardGroupType.And, 'A-投手', 'C-不屈'],
+            [CardGroupType.And, 'B-飞跃', 'B-绝地反击'],
+            [CardGroupType.And, 'B-求生欲', 'C-脱身'],
+          ],
+        ],
         description:
-          '求生欲和脱身配合{2级被动}达到快速挣扎的效果，适合中低端局自保，但上限较低，且较为依赖地图和敌方角色。',
+          '《缴械》打苏蕊、侍卫等单刀型猫咪。《投手》打怕减速的猫咪，和1级被动叠加后能让猫咪难以追上老鼠。第三套卡组为各项能力较为均衡的卡组。求生欲和脱身配合{2级被动}达到快速挣扎的效果，适合中低端局自保，但上限较低，且较为依赖地图和敌方角色。',
       },
     ],
 
@@ -913,18 +915,19 @@ const mouseCharacterDefinitions = {
           {
             level: 1,
             description: '投掷道具命中猫咪时，额外造成短暂的减速。',
-            detailedDescription: '投掷道具命中猫咪时，额外造成20%减速，持续3.5秒。',
+            detailedDescription:
+              '投掷道具命中敌方时，使其移速降低20%，跳跃能力降低10%，持续3.5秒。',
           },
           {
             level: 2,
             description: '挣扎速度变快；挣脱后获得短暂的护盾和加速效果。',
             detailedDescription:
-              '[挣扎速度提升50%](即通常情况下挣扎时间缩短为13.33秒)；挣脱后获得一层护盾，护盾存在期间移速增加15%，护盾持续4.75秒。',
+              '[挣扎速度提升50%](即通常情况下挣扎时间缩短为13.33秒)；挣脱后获得一层护盾，护盾存在期间移速增加15%，护盾持续5秒。',
           },
           {
             level: 3,
             description: '墙缝增伤增加。',
-            detailedDescription: '[墙缝增伤增加1.3](即墙缝增伤增加至2.8)。',
+            detailedDescription: '{破坏力}增加1.3。',
           },
         ],
       },
@@ -1047,7 +1050,8 @@ const mouseCharacterDefinitions = {
         aliases: ['大盾'],
         type: 'weapon1',
         description: '给予附近友方短暂的无敌。',
-        detailedDescription: '给予附近友方短暂的无敌。',
+        detailedDescription:
+          '使半径450范围内的友方（含自身）获得2.8秒的{无敌}状态，并[清除部分技能状态](清除由垃圾桶导致的臭气持续伤害、牛皮鞭导致的减速、感同身受导致的反向与失明、记录美好瞬间导致的被拍摄状态)。',
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableSkill: '不可主动打断',
@@ -1059,13 +1063,13 @@ const mouseCharacterDefinitions = {
           {
             level: 1,
             description: '',
-            detailedDescription: '给予半径480范围内的友方2.8秒的无敌。',
+            detailedDescription: '',
             cooldown: 30,
           },
           {
             level: 2,
             description: '扩大技能生效范围。',
-            detailedDescription: '技能生效半径扩大至[960](即扩大一倍)。',
+            detailedDescription: '技能生效半径扩大至700。',
             cooldown: 30,
           },
           {
@@ -1195,20 +1199,20 @@ const mouseCharacterDefinitions = {
     ],
     knowledgeCardGroups: [
       {
-        cards: ['S-铁血', 'S-舍己', 'A-投手', 'B-绝地反击', 'C-救救我'],
-        description: '双武器通用卡组，{投手}可换{应激反应}，有效输出的同时保证自保。',
-      },
-      {
-        cards: ['S-铁血', 'S-舍己', 'B-精准投射', 'B-绝地反击', 'C-救救我'],
-        description: '二武常用卡组，配合控制与{干扰投掷}，随时拥有反杀能力，上限极高。',
-      },
-      {
-        cards: ['S-铁血', 'S-舍己', 'A-逃窜', 'C-不屈', 'C-救救我'],
-        description: '用于对抗不怕剑杰干扰的猫，偏自保，{逃窜}可换{应激反应}。',
-      },
-      {
-        cards: ['S-铁血', 'S-舍己', 'B-绝地反击', 'C-不屈', 'C-救救我'],
-        description: '第一套卡的下位替代，兼具自保和输出。',
+        cards: [
+          'S-铁血',
+          'S-舍己',
+          'C-救救我',
+          [
+            CardGroupType.Or,
+            [CardGroupType.And, 'A-投手', 'B-绝地反击'],
+            [CardGroupType.And, 'B-精准投射', 'B-绝地反击'],
+            [CardGroupType.And, 'A-逃窜', 'C-不屈'],
+            [CardGroupType.And, 'B-绝地反击', 'C-不屈'],
+          ],
+        ],
+        description:
+          '《投手》+《绝地反击》为双武器通用卡组，{投手}可换{应激反应}，有效输出的同时保证自保。《精准投射》+《绝地反击》为二武常用卡组，配合控制与{干扰投掷}，随时拥有反杀能力，上限极高。《逃窜》+{不屈}用于对抗不怕剑杰干扰的猫，偏自保，{逃窜}可换{应激反应}。若无21知识点则带最后一套{绝地反击}+{不屈}。',
       },
     ],
     recommendedStorePlans: [
@@ -1224,7 +1228,7 @@ const mouseCharacterDefinitions = {
         description:
           '切碎并吃掉苹果，解除[部分不良状态](包括失明、反向等效果，不包括受伤)、减少武器技能CD、恢复或回复Hp。',
         detailedDescription:
-          '切碎并吃掉苹果，解除[部分不良状态](包括失明、反向等效果，不包括受伤)、减少武器技能CD、恢复或回复Hp。',
+          '切碎并吃掉苹果，解除[部分不良状态](包括部分反向、失明，穷追不舍的标记减速，牛皮鞭的减速)、减少武器技能CD、恢复或回复Hp。',
         canMoveWhileUsing: false,
         canUseInAir: false,
         cancelableSkill: '不可主动打断',
@@ -1245,7 +1249,8 @@ const mouseCharacterDefinitions = {
           {
             level: 3,
             description: '武器技能CD减少40秒；额外在一段时间内提升攻击增伤。',
-            detailedDescription: '武器技能CD减少40秒；额外提升15攻击增伤，持续14.9秒。',
+            detailedDescription:
+              '武器技能CD减少40秒；状态期间使{攻击力}+15，且持续时间延长至15秒。',
             cooldown: 10,
           },
         ],
@@ -1332,12 +1337,12 @@ const mouseCharacterDefinitions = {
           {
             level: 1,
             description: '攻击增伤提升。',
-            detailedDescription: '攻击增伤提升10点。',
+            detailedDescription: '{攻击力}+10。',
           },
           {
             level: 2,
             description: '减少虚弱时间。',
-            detailedDescription: '减少40%虚弱时间。',
+            detailedDescription: '自身受到的{鼠虚弱}状态持续时间降低至原本的0.6倍。',
           },
           {
             level: 3,
@@ -3724,8 +3729,9 @@ const mouseCharacterDefinitions = {
     ],
     recommendedStorePlans: [
       {
-        items: ['胡椒瓶', '冰块', '灰花瓶', '隐身饮料'],
-        description: '兼顾干扰、控制与救援。',
+        items: ['胡椒瓶', '冰块', '灰花瓶', '牛奶'],
+        description:
+          '通用配置，冰块花瓶用来干扰，牛奶用来配合二级世界波增加逃跑速度；可以将胡椒粉换为砸墙数值相同的香水瓶，也可以换成盘子去弥补伤害和触发世界波眩晕',
       },
     ],
     skills: [
@@ -3897,6 +3903,13 @@ const mouseCharacterDefinitions = {
         tagName: '救援',
         level: 2,
         description: '主动技能的隐身效果可以方便救援，但是在火箭下有老鼠夹时侦探泰菲难以应对。',
+        additionalDescription: '',
+      },
+      {
+        tagName: '后期',
+        level: 2,
+        description:
+          '主动技能到了三级可以舍己换位救人，或是低状态时直接换位跑路；三级被动站着不动就能回血。到了后期自保会很强悍。',
         additionalDescription: '',
       },
     ],
@@ -4918,7 +4931,7 @@ const mouseCharacterDefinitions = {
         description:
           '点击技能时米雪儿记录面前[最近的道具](被记录的道具将变成粉色)，再次点击技能将变成该[道具](可被使用)。变形后依然可以进行交互，同时提高视野范围。最多同时记录3个道具。受到伤害或点击技能键可变回；变回后道具消失。',
         detailedDescription:
-          '点击技能时米雪儿记录自身周围半径100范围内[最近的道具](被记录的道具将变成粉色；若没有道具将直接进入技能CD)，记录前摇1.5秒，再次点击技能将变成该[道具](可被正常使用；碰撞特性和体积会变为与该道具相同；部分角色功能的判定范围仍与变身前一致)，变身前摇0.5秒，持续60秒。变形后依然可以进行交互，同时提高视野范围至1.8倍。最多同时记录3个道具。受到伤害、所变道具损坏、再次点击技能键、达到最大持续时间后将变回，变回后技能进入5秒CD、道具消失。\n可以变形的道具为几乎所有投掷物（包括技能投掷物；例外：{剑客泰菲}的长枪、{魔术师}的卡牌、{恶魔泰菲}的红色小淘气）、手枪、子弹、果盘、水果、番茄、鞭炮堆、冰桶、牛奶、蛋糕、纸箱、拳头盒子、拍子、关闭的捕鼠夹、[部分地图场景物](经典之家：推车、水桶、木桶；夏日游轮：消防栓、锅；森林牧场：三角铁、浆果、除七色花外的所有花及其被采后留下的叶子；熊猫谷：胡萝卜、竹笋、收纳箱；御门酒店：礼盒、除七色花外的所有花及其被采后留下的花瓶)。无法变形机器鼠遥控、风扇。',
+          '点击技能时米雪儿记录自身周围半径100范围内[最近的道具](被记录的道具将变成粉色；若没有道具将直接进入技能CD)，记录前摇1.5秒，再次点击技能将变成该[道具](可被正常使用；碰撞特性和体积会变为与该道具相同；部分角色功能的判定范围仍与变身前一致)，变身前摇0.5秒，持续60秒。变形后依然可以进行交互，同时提高视野范围至1.8倍。最多同时记录3个道具。受到伤害、所变道具损坏、再次点击技能键、达到最大持续时间后将变回，变回后技能进入5秒CD、道具消失。\n可以变形的道具为几乎所有投掷物（包括技能投掷物；例外：{剑客泰菲}的长枪、{魔术师}的卡牌、{恶魔泰菲}的红色小淘气）、手枪、子弹、果盘、水果、番茄、鞭炮堆、冰桶、牛奶、蛋糕、纸箱、拳头盒子、拍子、关闭的捕鼠夹、[部分地图场景物](经典之家：推车、水桶、木桶；夏日游轮：消防栓、锅；森林牧场：三角铁、浆果、除七色花外的所有花及其被采后留下的叶子；熊猫谷：胡萝卜、竹笋、收纳箱(显示为水桶)；御门酒店：礼盒、除七色花外的所有花及其被采后留下的花瓶)。无法变形机器鼠遥控、风扇。',
         canMoveWhileUsing: false,
         canUseInAir: true,
         cancelableSkill: ['道具键*'],

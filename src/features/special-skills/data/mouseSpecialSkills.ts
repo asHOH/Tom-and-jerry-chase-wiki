@@ -15,7 +15,7 @@ const mouseSpecialSkillDefinitions: Record<string, SpecialSkillDefinition> = {
   急速翻滚: {
     cooldown: 80,
     description: '向前翻滚一段距离，且短暂加速。',
-    detailedDescription: '向前翻滚800距离，且加速12%，持续2秒。',
+    detailedDescription: '以1280/秒的固定速度向前翻滚0.4秒，随后移速提高12%，持续2秒。',
     adviceDescription: '只适合**少数**老鼠。用于补充位移和躲避技能，或与惯性类技能联动。',
   },
   干扰投掷: {
@@ -43,11 +43,10 @@ const mouseSpecialSkillDefinitions: Record<string, SpecialSkillDefinition> = {
     aliases: ['冰箱'],
     cooldown: 75,
     description:
-      '获得一段时间的冰冻和无敌效果。可再次点击技能提前结束该效果；任何方式结束技能都会失去无敌效果。',
+      '获得持续3秒的{冰冻}状态（[不会被免疫](不会被护盾、免控等类似状态免疫，但仍可被部分缩短控制状态持续时间的效果影响，导致缩短时间)）与{无敌}状态，可再次点击技能提前结束状态。以任何方式失去其中一种状态时都会同时失去另一种。',
     detailedDescription:
-      '获得2.95秒冰冻和无敌效果（可被部分减少控制时间的效果减短，但不会被免控或霸体等效果抵消）。可再次点击技能提前结束该效果；任何方式结束技能都会失去无敌效果。',
-    adviceDescription:
-      '只适合**少数**老鼠，或用于**对策少数猫咪**。用于规避猫咪的攻击，或与解控类技能联动。',
+      '获得持续3秒的{冰冻}状态（[不会被免疫](不会被护盾、免控等类似状态免疫，但仍可被部分缩短控制状态持续时间的效果影响，导致缩短时间)）与{无敌}状态，可再次点击技能提前结束状态。以任何方式失去其中一种状态时都会同时失去另一种。',
+    adviceDescription: '经过改版后，该特技适配**绝大多数**老鼠，可用于躲避致命攻击。',
   },
   绝处逢生: {
     aliases: ['自起'],

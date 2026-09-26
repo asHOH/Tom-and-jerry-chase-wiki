@@ -20,7 +20,11 @@ const mouseAchievementDefinitions: Record<string, AchievementDefinition> = {
   善良: { score: 100, description: '治疗队友3次' },
   欧皇: { score: 100, description: '火箭上挣脱1次', aliases: ['幸运'] },
   天命: { score: 100, description: '抓住后20秒内挣脱', aliases: ['求生欲'] },
-  胆小: { score: 50, description: '隐藏时间30秒' },
+  胆小: {
+    score: 50,
+    description: '隐藏时间30秒',
+    detailedDescription: '隐藏时间30秒(猫方亦可达成)',
+  },
   无畏: { score: 50, description: '踩2个老鼠夹(猫方亦可以达成)' },
   大胃: { score: 50, description: '吃6个食物' },
   '皮！': { score: 50, description: '砸碎道具10个（猫方亦可达成）' },

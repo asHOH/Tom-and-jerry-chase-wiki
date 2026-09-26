@@ -653,4 +653,13 @@ export const characterRelationCharacterCollaboratorTraits: CharacterRelationTrai
       isMinor: true,
     },
   },
+  {
+    description: '短时间内可以通过多层音波伤害获得大量星星，供仙女鼠使用。',
+    relation: {
+      kind: 'collaborators',
+      subject: { name: '仙女鼠', type: 'character' },
+      target: { name: '音乐家杰瑞', type: 'character' },
+      isMinor: true,
+    },
+  },
 ];

@@ -15,7 +15,7 @@ const catSpecialSkillDefinitions: Record<string, SpecialSkillDefinition> = {
     cooldown: 60,
     description: '向前翻滚一段距离，且短暂加速。释放后可在短时间内再次释放。',
     detailedDescription:
-      '向前翻滚1000距离，且移速提高18%，持续2秒。释放后可在9.9秒内再次释放。第二次释放后或第一次释放后的9.9秒后才进入CD。',
+      '以1600/秒的固定速度向前翻滚0.4秒，随后移速提高18%，持续2秒。首次释放后可在9.9秒内再次释放，成功再次释放或未在该时间内再次释放时才会进入CD。',
     adviceDescription: '适合**需要额外位移能力**的猫咪。用于赶路或追击，提高机动性。',
   },
   长爪一击: {
@@ -25,7 +25,7 @@ const catSpecialSkillDefinitions: Record<string, SpecialSkillDefinition> = {
     adviceDescription: '暂无猫咪适配该特技。',
   },
   '我生气了！': {
-    aliases: ['红温'],
+    aliases: ['红温', '狂暴'],
     cooldown: 70,
     description: '一段时间内爪刀CD大幅减少。',
     detailedDescription: '10秒内爪刀CD减少70%（即变为正常爪刀CD的30%）。',
@@ -53,7 +53,7 @@ const catSpecialSkillDefinitions: Record<string, SpecialSkillDefinition> = {
     aliases: ['蓄重'],
     cooldown: 60,
     description: '蓄力一段时间后，对前方一定范围内的敌方造成极大伤害。',
-    detailedDescription: '蓄力0.9秒后，对前方330范围内的敌方造成999伤害。',
+    detailedDescription: '蓄力0.9秒后，对前方300范围内的所有敌方造成{999*}伤害。',
     adviceDescription:
       '适合**有控制但缺乏伤害**的猫咪。可搭配{击晕}提高命中率。用于补伤害或击倒高Hp老鼠。',
   },
