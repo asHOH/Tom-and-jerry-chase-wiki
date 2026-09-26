@@ -224,7 +224,10 @@ function assertTemporaryRoot(tempRoot) {
 }
 
 async function addWorktree(path, commit) {
-  await run('git', ['worktree', 'add', '--detach', '--quiet', path, commit]);
+  await run('git', ['worktree', 'add', '--detach', '--no-checkout', '--quiet', path, commit]);
+  // Parity reads src and root configuration; avoid copying thousands of unrelated image assets.
+  await run('git', ['-C', path, 'sparse-checkout', 'set', '--cone', 'src']);
+  await run('git', ['-C', path, 'reset', '--hard', '--quiet', commit]);
 }
 
 async function removeWorktree(path) {
