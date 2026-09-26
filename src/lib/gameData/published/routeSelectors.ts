@@ -1,5 +1,7 @@
 import 'server-only';
 
+import { cache } from 'react';
+
 import type { PublishableEntityType } from '@/lib/gameData/publishableEntityTypes';
 import type { FactionId } from '@/data/types';
 
@@ -36,7 +38,7 @@ function isFactionScoped(entityType: PublishableEntityType): boolean {
   return entityType === 'specialSkills' || entityType === 'achievements';
 }
 
-export async function getPublishedEntityRouteReadModel<EntityType extends PublishableEntityType>(
+async function readPublishedEntityRouteReadModel<EntityType extends PublishableEntityType>(
   entityType: EntityType,
   entityId: string,
   factionId?: FactionId,
@@ -109,3 +111,6 @@ export async function getPublishedEntityRouteReadModel<EntityType extends Publis
     relatedHistory: Object.freeze(relatedHistory),
   });
 }
+
+// Share entity/history work between metadata and the page within one server render.
+export const getPublishedEntityRouteReadModel = cache(readPublishedEntityRouteReadModel);
