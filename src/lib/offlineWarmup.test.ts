@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 
-import { getOfflineWarmupImageUrls, warmOfflineImages } from './offlineWarmup';
+import { getOfflineWarmupImageUrls, warmOfflineImages, warmOfflinePage } from './offlineWarmup';
 
 const setOnlineStatus = (online: boolean) => {
   Object.defineProperty(window.navigator, 'onLine', {
@@ -85,5 +85,31 @@ describe('offlineWarmup', () => {
 
     expect(open).toHaveBeenCalledWith('images');
     expect(loadedImageUrls).toEqual([missingImageUrl]);
+  });
+
+  it('warms public HTML and missing same-origin assets, excluding private workflows', async () => {
+    const originalFetch = global.fetch;
+    const fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      text: async () => `<script src="/_next/static/chunks/page.js"></script>
+        <script src="https://example.test/external.js"></script>
+        <link rel="stylesheet" href="/_next/static/chunks/shared.css">`,
+    });
+    global.fetch = fetch;
+    const match = jest.fn(async (url: string) => (url.endsWith('/shared.css') ? {} : undefined));
+    Object.defineProperty(window, 'caches', { configurable: true, value: { match } });
+    try {
+      await warmOfflinePage('/characters/汤姆/');
+      expect(fetch.mock.calls).toEqual([
+        ['/characters/汤姆/', { headers: { Accept: 'text/html' } }],
+        [`${window.location.origin}/_next/static/chunks/page.js`, { cache: 'force-cache' }],
+      ]);
+      fetch.mockClear();
+      for (const route of ['/admin/', '/articles/new/', '/articles/123/edit/', '/api/auth/me'])
+        await warmOfflinePage(route);
+      expect(fetch).not.toHaveBeenCalled();
+    } finally {
+      global.fetch = originalFetch;
+    }
   });
 });

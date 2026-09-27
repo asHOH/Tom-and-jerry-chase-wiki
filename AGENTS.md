@@ -17,8 +17,8 @@ Tom and Jerry Chase Wiki, whose Chinese name is 猫和老鼠手游百科 (short 
 ```powershell
 # Development and builds
 npm run dev                    # Next.js dev server on localhost:3000
-npm run build                  # Validate actor profiles, generate docs, build Next/Serwist, optimize images
-npm run build:skip-images      # Same build without post-build image optimization
+npm run build                  # Validate profiles, generate docs, optimize/index images, build Next/Serwist
+npm run build:skip-images      # Same build without image optimization
 
 # Quality
 npm run lint                   # Oxlint
@@ -106,6 +106,7 @@ Maintainer checkouts remain linked to production; use `STAGING_DATABASE_URL` wit
 - Add or change environment variables in `src/env.ts` and mirror public variables in `experimental__runtimeEnv`. Keep `.env.example` and relevant deployment documentation in sync.
 - `SKIP_ENV_VALIDATION=1` bypasses validation. `SKIP_BUILD_CHECKS=true` only controls Next's TypeScript build-error handling; neither should be a normal development default.
 - Serwist builds `public/sw.js` from `src/sw.ts` using `serwist.config.mjs`. The service worker is disabled in development. Do not hand-maintain generated service-worker output.
+- Offline browsing preserves the homepage, both faction pages, and navigation/character images as startup content; other public pages are cached as visited. Editing/admin workflows are excluded. See `docs/operations/offline-browsing.md` for caching and verification details.
 
 # Code Conventions
 

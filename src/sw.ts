@@ -14,6 +14,8 @@ import {
   type SerwistGlobalConfig,
 } from 'serwist';
 
+import { isOfflinePublicPage, OFFLINE_PAGE_CACHE_NAME } from './lib/offlineRoutes';
+
 declare global {
   interface WorkerGlobalScope extends SerwistGlobalConfig {
     __SW_MANIFEST: (PrecacheEntry | string)[] | undefined;
@@ -54,6 +56,29 @@ const MAP_TILE_CACHE_VERSION = 1;
 
 // Custom runtime caching strategies (migrated from @ducanh2912/next-pwa config)
 const customRuntimeCaching: RuntimeCaching[] = [
+  // Keep private workflows out of the default HTML/RSC caches too.
+  {
+    matcher: ({ sameOrigin, url }) =>
+      sameOrigin &&
+      !url.pathname.startsWith('/api/') &&
+      !url.pathname.startsWith('/_next/') &&
+      !isOfflinePublicPage(url.pathname),
+    handler: new NetworkOnly(),
+  },
+  // Warmup fetches HTML with Accept: text/html. RSC payloads stay in separate caches.
+  {
+    matcher: ({ request, sameOrigin, url }) =>
+      sameOrigin &&
+      isOfflinePublicPage(url.pathname) &&
+      request.headers.get('RSC') !== '1' &&
+      (request.destination === 'document' ||
+        request.headers.get('Accept')?.includes('text/html') === true),
+    handler: new NetworkFirst({
+      cacheName: OFFLINE_PAGE_CACHE_NAME,
+      networkTimeoutSeconds: 3,
+      plugins: [new ExpirationPlugin({ maxEntries: 32, maxAgeSeconds: 24 * 60 * 60 })],
+    }),
+  },
   // Version API - always network, never cache
   {
     matcher: ({ url }) => /^https?:\/\/[^/]+\/api\/version.*$/.test(url.href),
@@ -92,12 +117,14 @@ const customRuntimeCaching: RuntimeCaching[] = [
   },
   // Static resources (JS/CSS) - stale while revalidate with 1 day expiration
   {
-    matcher: ({ request, sameOrigin }) => sameOrigin && isScriptOrStyleRequest(request),
+    matcher: ({ request, sameOrigin, url }) =>
+      sameOrigin &&
+      (isScriptOrStyleRequest(request) || /^\/_next\/static\/.+\.(?:js|css)$/.test(url.pathname)),
     handler: new StaleWhileRevalidate({
       cacheName: 'static-resources',
       plugins: [
         new ExpirationPlugin({
-          maxEntries: 100,
+          maxEntries: 200,
           maxAgeSeconds: 24 * 60 * 60, // 1 day
         }),
       ],

@@ -1,35 +1,51 @@
 // Client-side service worker registration
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
+import { usePathname } from 'next/navigation';
 
+import { OFFLINE_WARMUP_ROUTES } from '@/lib/offlineRoutes';
 import { useToast } from '@/context/ToastContext';
 import { env } from '@/env';
 
-const OFFLINE_ROUTE_CACHE_NAME = 'app-routes';
-const OFFLINE_WARMUP_ROUTES = ['/', '/factions/cat/', '/factions/mouse/'] as const;
-
-const waitForServiceWorkerControl = async (): Promise<boolean> => {
-  if (navigator.serviceWorker.controller) return true;
-
-  return await new Promise<boolean>((resolve) => {
-    const handleControllerChange = () => {
-      window.clearTimeout(timeoutId);
-      navigator.serviceWorker.removeEventListener('controllerchange', handleControllerChange);
-      resolve(true);
-    };
-    const timeoutId = window.setTimeout(() => {
-      navigator.serviceWorker.removeEventListener('controllerchange', handleControllerChange);
-      resolve(false);
-    }, 5000);
-
-    navigator.serviceWorker.addEventListener('controllerchange', handleControllerChange);
-    if (navigator.serviceWorker.controller) handleControllerChange();
-  });
-};
-
 export const ServiceWorkerRegistration: React.FC = () => {
   const { warning, info } = useToast();
+  const pathname = usePathname();
+  const warmedController = useRef<ServiceWorker | null>(null);
+
+  useEffect(() => {
+    if (!('serviceWorker' in navigator) || process.env.NODE_ENV !== 'production') return;
+    let disposed = false;
+    const warmContent = async () => {
+      const controller = navigator.serviceWorker.controller;
+      if (!controller) return;
+      const { warmOfflinePage, warmOfflineImages } = await import('@/lib/offlineWarmup');
+      if (disposed) return;
+      const warmStartup = warmedController.current !== controller;
+      warmedController.current = controller;
+      const routes = new Set(warmStartup ? [...OFFLINE_WARMUP_ROUTES, pathname] : [pathname]);
+      const results = await Promise.allSettled([
+        ...Array.from(routes, warmOfflinePage),
+        ...(warmStartup
+          ? [warmOfflineImages(env.NEXT_PUBLIC_DISABLE_IMAGE_OPTIMIZATION !== '1')]
+          : []),
+      ]);
+      for (const result of results) {
+        if (result.status === 'rejected')
+          console.warn('Unable to warm offline content:', result.reason);
+      }
+    };
+    const onControl = () => {
+      void warmContent().catch((error) => console.warn('Unable to start offline warmup:', error));
+    };
+    // Installation can take longer than five seconds. Control, not a timer, starts warmup.
+    navigator.serviceWorker.addEventListener('controllerchange', onControl);
+    onControl();
+    return () => {
+      disposed = true;
+      navigator.serviceWorker.removeEventListener('controllerchange', onControl);
+    };
+  }, [pathname]);
 
   useEffect(() => {
     if (
@@ -53,42 +69,6 @@ export const ServiceWorkerRegistration: React.FC = () => {
       } else if (data?.type === 'NAVIGATION_TO_UNCACHED_ROUTE') {
         const pathname = data.pathname;
         warning(`页面 "${pathname ?? ''}" 未缓存，请在联网时访问`);
-      }
-    };
-
-    const precacheRoutesBestEffort = async () => {
-      if (!('caches' in window)) return;
-
-      try {
-        const cache = await caches.open(OFFLINE_ROUTE_CACHE_NAME);
-
-        await Promise.allSettled(
-          OFFLINE_WARMUP_ROUTES.map(async (url) => {
-            if (!(await cache.match(url))) await cache.add(url);
-          })
-        );
-      } catch (error) {
-        console.warn('Unable to warm offline routes:', error);
-      }
-    };
-
-    const precacheImagesBestEffort = async () => {
-      if (!(await waitForServiceWorkerControl())) return;
-
-      const { warmOfflineImages } = await import('@/lib/offlineWarmup');
-      await warmOfflineImages(env.NEXT_PUBLIC_DISABLE_IMAGE_OPTIMIZATION !== '1');
-    };
-
-    const warmOfflineContentBestEffort = async () => {
-      const results = await Promise.allSettled([
-        precacheRoutesBestEffort(),
-        precacheImagesBestEffort(),
-      ]);
-
-      for (const result of results) {
-        if (result.status === 'rejected') {
-          console.warn('Unable to complete offline content warmup:', result.reason);
-        }
       }
     };
 
@@ -134,9 +114,6 @@ export const ServiceWorkerRegistration: React.FC = () => {
         });
 
         console.log('Service Worker registered successfully:', registration.scope);
-
-        // Run warmup in the background so registration and update checks are not delayed.
-        void warmOfflineContentBestEffort();
 
         // Best-effort: request a single update check. VersionChecker coordinates reload behavior.
         void registration.update().catch(() => {

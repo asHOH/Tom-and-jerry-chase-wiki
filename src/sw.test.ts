@@ -71,9 +71,9 @@ const getRuntimeCaching = () => {
   return mockCapturedConfig.runtimeCaching;
 };
 
-const findFirstMatchingRoute = (url: string, destination: RequestDestination) => {
+const findFirstMatchingRoute = (url: string, destination: RequestDestination, headers = {}) => {
   const parsedUrl = new URL(url, self.location.href);
-  const request = { destination } as Request;
+  const request = { destination, headers: new Headers(headers) } as Request;
   return getRuntimeCaching().find((route) =>
     route.matcher({
       request,
@@ -130,6 +130,34 @@ describe('service worker runtime caching', () => {
     expect(
       findFirstMatchingRoute('/images/maps/经典之家.avif', 'image')?.handler.strategyName
     ).toBe('StaleWhileRevalidate');
+  });
+
+  it('uses the same document cache for warmup and navigation without mixing in RSC', () => {
+    for (const route of [
+      findFirstMatchingRoute('/factions/mouse/', 'document'),
+      findFirstMatchingRoute('/factions/mouse/', '', { Accept: 'text/html' }),
+    ]) {
+      expect(route?.handler.strategyName).toBe('NetworkFirst');
+      expect(route?.handler.options).toMatchObject({ cacheName: 'app-routes' });
+    }
+    expect(findFirstMatchingRoute('/factions/mouse/', '', { RSC: '1' })).toBeUndefined();
+    expect(
+      findFirstMatchingRoute('/_next/static/chunks/lazy.js', '')?.handler.options
+    ).toMatchObject({ cacheName: 'static-resources' });
+  });
+
+  it.each([
+    '/admin/',
+    '/articles/new/',
+    '/articles/pending/',
+    '/articles/preview/',
+    '/articles/123/edit/',
+    '/settings/',
+    '/notifications/',
+    '/characters/user/draft/',
+  ])('keeps private workflow %s out of both HTML and RSC caches', (url) => {
+    expect(findFirstMatchingRoute(url, 'document')?.handler.strategyName).toBe('NetworkOnly');
+    expect(findFirstMatchingRoute(url, '', { RSC: '1' })?.handler.strategyName).toBe('NetworkOnly');
   });
 
   it.each([
