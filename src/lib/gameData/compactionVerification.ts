@@ -505,14 +505,21 @@ export function verifyCompactionActionIdempotence(
         (knownEntityScope || row.actions.includes(nextRootWrite)) &&
         nextRootWrite.path.trim() === parsed.value.segments.slice(0, -1).join('.') &&
         Array.isArray(nextRootWrite.newValue);
+      const deleteSequence =
+        action.op === 'delete' && knownEntityScope
+          ? ordered
+              .slice(0, orderedIndex + 1)
+              .filter((entry) => entry.row.entityType === row.entityType)
+              .map((entry) => entry.action)
+          : row.actions.slice(0, actionIndex + 1);
       const resetDelete =
         action.op === 'delete' &&
         parsed.success &&
         parsed.value.segments.length > 1 &&
         parsed.value.segments.at(-1) !== 'length' &&
         reconstructResetAction(
-          row.actions,
-          actionIndex,
+          deleteSequence,
+          deleteSequence.length - 1,
           /^\d+$/.test(parsed.value.segments.at(-1)!)
             ? parsed.value.segments.slice(0, -1).join('.')
             : parsed.value.path

@@ -267,6 +267,15 @@ export const characterRelationMapTraits: CharacterRelationTrait[] = [
     },
   },
   {
+    description: '',
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '库博', type: 'character' },
+      target: { name: '游乐场', type: 'map' },
+      isMinor: true,
+    },
+  },
+  {
     description: '库博在该地图表现更稳。',
     relation: {
       kind: 'advantageMaps',
@@ -1049,6 +1058,24 @@ export const characterRelationMapTraits: CharacterRelationTrait[] = [
       subject: { name: '牛仔杰瑞', type: 'character' },
       target: { name: '太空堡垒II', type: 'map' },
       isMinor: false,
+    },
+  },
+  {
+    description: '经典II平地多，适合斯飞水平跑动',
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '斯飞', type: 'character' },
+      target: { name: '经典之家II', type: 'map' },
+      isMinor: false,
+    },
+  },
+  {
+    description: '米雪儿利用二武很容易在经典II的地图里与队友配合上下穿墙运输奶酪拉扯猫咪',
+    relation: {
+      kind: 'advantageMaps',
+      subject: { name: '米雪儿', type: 'character' },
+      target: { name: '经典之家II', type: 'map' },
+      isMinor: true,
     },
   },
 ];

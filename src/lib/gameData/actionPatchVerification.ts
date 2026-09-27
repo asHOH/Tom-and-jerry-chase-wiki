@@ -481,7 +481,8 @@ function reverseAction(
   target: Record<string, unknown>,
   action: ProjectedAction,
   actions: readonly ProjectedAction[],
-  actionIndex: number
+  actionIndex: number,
+  atomicActions: readonly ProjectedAction[]
 ): ReverseActionResult {
   const parsed = parseActionPath(action.path);
   if (!parsed.success) return { success: false, code: 'projection_mismatch' };
@@ -598,6 +599,28 @@ function reverseAction(
       ? { success: true }
       : { success: false, code: 'projection_mismatch' };
   }
+  // An omitted old value can be recovered from a concrete earlier reset. Valtio
+  // also captures adjacent parent/child edits against the same pre-row state.
+  const atomicIndex = atomicActions.indexOf(action);
+  const parent = atomicActions[atomicIndex - 1];
+  const capturedParentOld =
+    parent?.op === 'set' && action.path.startsWith(`${parent.path}.`)
+      ? readAtPath({ value: parent.oldValue }, [
+          'value',
+          ...segments.slice(parent.path.split('.').length),
+        ])
+      : undefined;
+  const proof =
+    action.oldValue === undefined
+      ? reconstructResetAction(actions, actionIndex, parsed.value.path)
+      : capturedParentOld?.exists && isEqual(capturedParentOld.value, action.oldValue)
+        ? reconstructResetAction([parent!, action], 1, parsed.value.path)
+        : null;
+  if (proof?.before.exists && valuesMatch(segments, current.value, proof.after.value)) {
+    return writeAtPath(target, segments, proof.before.value)
+      ? { success: true }
+      : { success: false, code: 'projection_mismatch' };
+  }
   if (action.oldValue === undefined) {
     return deleteAtPath(target, segments)
       ? { success: true }
@@ -663,7 +686,13 @@ export function verifyActionPatch(
       const action = decodedRow.actions[actionIndex]!;
       if (subsumedRelationSnapshots.has(action)) continue;
       const sequence = actionsByEntity.get(decodedRow.row.entity_type)!;
-      const result = reverseAction(target, action, sequence, sequence.indexOf(action));
+      const result = reverseAction(
+        target,
+        action,
+        sequence,
+        sequence.indexOf(action),
+        decodedRow.actions
+      );
       if (!result.success) {
         failures.push({
           rowId: decodedRow.row.id,

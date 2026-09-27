@@ -260,18 +260,33 @@ describe('compaction verification', () => {
     });
   });
 
-  it('requires a concrete reset in the same atomic row for a delete', () => {
+  it('accepts a delete reset earlier in the complete entity cohort', () => {
     const deletion: Action = {
       op: 'delete',
       path: 'item.value',
       oldValue: 'initial',
       newValue: undefined,
     };
+    const rows = [
+      snapshotRow('1', [set('item.value', 'initial')]),
+      snapshotRow('2', [deletion, set('item.value', 'restored')]),
+    ];
+    expect(verifyCompactionActionIdempotence(rows).proven).toBe(true);
+    const target = { item: { value: 'restored' } };
+    for (let run = 0; run < 2; run += 1) {
+      for (const entry of rows) {
+        expect(applyCheckedActionRow({ ...entry, targets: [target] }).success).toBe(true);
+      }
+      expect(target).toEqual({ item: { value: 'restored' } });
+    }
+    expect(verifyCompactionActionIdempotence([rows[1]!]).proven).toBe(false);
     expect(
-      verifyCompactionActionIdempotence([
-        snapshotRow('1', [set('item.value', 'initial')]),
-        snapshotRow('2', [deletion, set('item.value', 'restored')]),
-      ]).proven
+      verifyCompactionActionIdempotence(rows.map(({ rowId, actions }) => ({ rowId, actions })))
+        .proven
+    ).toBe(false);
+    expect(
+      verifyCompactionActionIdempotence([rows[0]!, { ...rows[1]!, entityType: 'characters' }])
+        .proven
     ).toBe(false);
     expect(
       verifyCompactionActionIdempotence([

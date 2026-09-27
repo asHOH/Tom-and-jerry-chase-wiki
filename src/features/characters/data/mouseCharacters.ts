@@ -48,10 +48,6 @@ const mouseCharacterDefinitions = {
         description: '无救援卡，需要及时与队友沟通，尽量避免救援。',
       },
       {
-        cards: ['S-无畏', 'S-铁血', 'A-团队领袖', 'C-救救我'],
-        description: '新手未解锁+1知识量可用，也可针对米特。解锁后可将团队领袖换为缴械。',
-      },
-      {
         cards: ['S-无畏', 'S-铁血', 'S-回家', 'C-救救我'],
         description: '用于打防守猫。',
       },
@@ -188,7 +184,7 @@ const mouseCharacterDefinitions = {
             level: 2,
             description: '搬运{奶酪}时，移速和跳跃高度大幅增加，同时视野不再降低。',
             detailedDescription:
-              '搬运{奶酪}时，相比未搬运{奶酪}的一般状态，速度增加5%、跳跃速度增加15%，同时视野不再降低。（该效果需技能加点后再次搬奶酪才会触发）',
+              '搬运{奶酪}时，[改为](实际效果为将“搬起大奶酪减速-1”状态提供的移速&跳跃能力降低倍率改为新倍率，原有效果不再生效；该状态附带的其它效果不改变，照常生效)移速提升8%、跳跃能力提升8%。',
           },
           {
             level: 3,
@@ -242,6 +238,12 @@ const mouseCharacterDefinitions = {
           '烟雾弹的禁用技能和巨额推速加成能使鼠方快速地推完最后一块奶酪，克制大多数守奶酪的猫咪。',
         additionalDescription:
           '墙缝期时，烟雾弹也有着很强的干扰能力，尤其是阻止猫咪修墙。长时间的隐身也为烟雾弹的释放提供了保障。',
+      },
+      {
+        tagName: '救援',
+        level: 2,
+        description: '主动技能的隐身效果可以方便救援，但是在火箭下有老鼠夹时侦探杰瑞难以应对。',
+        additionalDescription: '',
       },
     ],
 
@@ -1016,7 +1018,9 @@ const mouseCharacterDefinitions = {
         name: '威严光盾',
         aliases: ['小盾'],
         type: 'active',
-        description: '',
+        description: '短暂获得一层护盾。',
+        detailedDescription:
+          '获得1层护盾，持续5秒；并[清除部分技能状态](清除由垃圾桶导致的臭气持续伤害、牛皮鞭导致的减速、感同身受导致的反向与失明、记录美好瞬间导致的被拍摄状态)。',
         canMoveWhileUsing: true,
         canUseInAir: true,
         cancelableSkill: '无前摇',
@@ -1028,7 +1032,7 @@ const mouseCharacterDefinitions = {
           {
             level: 1,
             description: '短暂获得一层护盾。',
-            detailedDescription: '获得一层护盾，持续4.9秒。',
+            detailedDescription: '',
             cooldown: 30,
           },
           {
@@ -1040,7 +1044,7 @@ const mouseCharacterDefinitions = {
           {
             level: 3,
             description: '改为获得两层护盾。',
-            detailedDescription: '改为获得两层护盾；护盾持续期间获得20%加速。',
+            detailedDescription: '改为获得2层护盾；护盾持续期间获得20%加速。',
             cooldown: 18,
           },
         ],

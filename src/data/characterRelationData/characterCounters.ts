@@ -179,7 +179,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '皇家盔甲可以快速减少{头盔}的持续时间，阻止剑客泰菲利用其救人或强推。但剑菲的二武长枪可以对一列盔甲人造成伤害，且主动、二武攻击频率高，对盔甲人有一定伤害作用。',
+      '皇家盔甲可以快速减少{头盔}的持续时间，阻止剑客泰菲利用其救人或强推。但剑菲的二武长枪可以对一列盔甲人造成伤害，且主动、二武攻击频率高，对盔甲人有一定伤害作用。剑客泰菲二武伤害较高，能快速击倒侍卫汤姆。',
     relation: {
       kind: 'counterEachOther',
       subject: { name: '侍卫汤姆', type: 'character' },
@@ -3278,7 +3278,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
     },
   },
   {
-    description: '兔子们的血量较高，能逼出塔拉的蓄势一击或蓄力重击。',
+    description: '魔术师能主动指挥兔子大表哥挡住塔拉的套索。',
     relation: {
       kind: 'counters',
       subject: { name: '魔术师', type: 'character' },

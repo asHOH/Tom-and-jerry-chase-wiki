@@ -1463,6 +1463,8 @@ export const entityDefinitions = {
     gravity: true,
     collision: ['墙壁', '平台', '地面'],
     description: '与{比利鼠}机制和特性基本相同，但体型更大，攻击力更高，持续时间往往更短。',
+    detailedDescription:
+      '与{比利鼠}机制和特性基本相同，但体型更大，攻击力更高，持续时间往往更短，且不会像普通比例鼠一样被净化萝卜消除。',
     create: '米雪儿-{小情绪}能将队友变为比利鼠。',
     skills: [
       {

@@ -87,9 +87,10 @@ const mouseKnowledgeCardDefinitions: Record<string, Card> = {
     id: '缴械',
     rank: 'S',
     cost: 6,
-    description: '道具命中猫咪后，使猫咪**一段时间**内禁用爪刀。',
+    description:
+      '道具命中猫咪后，使猫咪**一段时间**内禁用爪刀。缴械状态结束后，猫咪在30秒内免疫缴械状态。',
     detailedDescription:
-      '道具命中猫咪后，使猫咪**一段时间**内禁用爪刀。猫咪被缴械后，30秒内不会再次被缴械。',
+      '道具命中猫咪后，使猫咪**一段时间**内禁用爪刀。缴械状态结束后，猫咪在30秒内免疫缴械状态。',
     levels: [
       { level: 1, description: '缴械持续**3.5**秒。' },
       { level: 2, description: '缴械持续**4**秒。' },

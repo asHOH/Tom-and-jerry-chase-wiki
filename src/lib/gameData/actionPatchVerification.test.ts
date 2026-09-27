@@ -24,6 +24,60 @@ const targets = (characters: Record<string, unknown>): ActionPatchTargetRegistry
 });
 
 describe('verifyActionPatch', () => {
+  it('recovers omitted old values from the complete concrete reset chain', () => {
+    const rows = [
+      row('1', { op: 'set', path: 'Tom.description', newValue: 'earlier' }),
+      row('2', { op: 'set', path: 'Tom.description', newValue: 'corrected' }),
+    ];
+    expect(verifyActionPatch(rows, targets({ Tom: { description: 'corrected' } }))).toEqual({
+      verifiedRowIds: ['1', '2'],
+      failures: [],
+    });
+    expect(
+      verifyActionPatch(rows, targets({ Tom: { description: 'unrelated' } })).failures
+    ).not.toHaveLength(0);
+    expect(
+      verifyActionPatch(
+        [
+          rows[0]!,
+          row('2', {
+            op: 'set',
+            path: 'Tom.description',
+            oldValue: 'stale',
+            newValue: 'corrected',
+          }),
+        ],
+        targets({ Tom: { description: 'corrected' } })
+      ).failures
+    ).not.toHaveLength(0);
+  });
+
+  it('reconstructs adjacent parent/child captures only within the same atomic row', () => {
+    const parent = {
+      op: 'set' as const,
+      path: 'Tom.profile',
+      oldValue: { name: 'old' },
+      newValue: { name: 'partial' },
+    };
+    const child = {
+      op: 'set' as const,
+      path: 'Tom.profile.name',
+      oldValue: 'old',
+      newValue: 'final',
+    };
+    const result = targets({ Tom: { profile: { name: 'final' } } });
+    expect(verifyActionPatch([row('1', [parent, child])], result)).toEqual({
+      verifiedRowIds: ['1'],
+      failures: [],
+    });
+    expect(
+      verifyActionPatch([row('1', parent), row('2', child)], result).failures
+    ).not.toHaveLength(0);
+    expect(
+      verifyActionPatch([row('1', [parent, { ...child, oldValue: 'unrelated' }])], result).failures
+    ).not.toHaveLength(0);
+  });
+
   it('verifies overlapping parent and child actions in reverse order', () => {
     const rows = [
       row('parent', {

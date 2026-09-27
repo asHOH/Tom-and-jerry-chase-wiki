@@ -362,15 +362,6 @@ export const characterRelationKnowledgeCardTraits: CharacterRelationTrait[] = [
     },
   },
   {
-    description: '击晕知识卡可以在音乐家杰瑞未点三级位移的时候打断位移',
-    relation: {
-      kind: 'counteredByKnowledgeCards',
-      subject: { name: '音乐家杰瑞', type: 'character' },
-      target: { name: '击晕', type: 'knowledgeCard', factionId: 'cat' },
-      isMinor: true,
-    },
-  },
-  {
     description:
       '不屈增加的额外血量和移速增大了追汤打倒老鼠的难度，加的推速使老鼠发育更快并更易来到后期。',
     relation: {
