@@ -29,13 +29,13 @@ describe('publish operation identity', () => {
     expect(isPublishOperationId(second)).toBe(true);
   });
 
-  it('strictly accepts UUID v4 idempotency headers and keeps missing headers compatible', () => {
+  it('requires UUID v4 idempotency headers, including from cached clients', () => {
     const valid = 'A3BB189E-8C21-4B8D-9A4F-5E24B7C29A10';
     const request = (value: string | null) =>
       ({ headers: { get: () => value } }) as unknown as Request;
 
     expect(readPublishOperationId(request(valid))).toBe(valid.toLowerCase());
-    expect(readPublishOperationId(request(null))).toBeUndefined();
+    expect(() => readPublishOperationId(request(null))).toThrow('invalid_idempotency_key');
     expect(() => readPublishOperationId(request('not-a-uuid'))).toThrow('invalid_idempotency_key');
   });
 });

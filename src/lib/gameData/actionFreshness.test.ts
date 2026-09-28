@@ -30,13 +30,13 @@ describe('new action freshness', () => {
         description: 'original',
         skills: [],
         knowledgeCardGroups: [],
-        other: 'unchanged',
-        nullable: null,
+        EnglishName: 'unchanged',
+        createDate: null,
         counters: [
-          { id: 'Michelle', description: '' },
-          { id: 'Musician', description: '' },
+          { id: 'Michelle', description: '', isMinor: false },
+          { id: 'Musician', description: '', isMinor: false },
         ],
-        optional: undefined,
+        aliases: undefined,
       },
     };
     jest.mocked(getCanonicalGameData).mockReturnValue(baseline as never);
@@ -53,8 +53,8 @@ describe('new action freshness', () => {
 
   it('rejects stale whole-list addition that would erase newer descriptions (Wind Tom)', () => {
     const old = [
-      { id: 'Michelle', description: '' },
-      { id: 'Musician', description: '' },
+      { id: 'Michelle', description: '', isMinor: false },
+      { id: 'Musician', description: '', isMinor: false },
     ];
     const current = old.map((item) => ({ ...item, description: 'new description' }));
     expect(() =>
@@ -73,7 +73,7 @@ describe('new action freshness', () => {
   it('accepts independent edits despite other published changes and leaves inputs untouched', () => {
     const previous = structuredClone(baseline);
     const published = [row('published', set('Tom.description', 'original', 'newer'))];
-    const proposed = [row('independent', set('Tom.other', 'unchanged', 'my edit'))];
+    const proposed = [row('independent', set('Tom.EnglishName', 'unchanged', 'my edit'))];
     const actionsBefore = structuredClone([published, proposed]);
     expect(() => validateActionFreshness(published, proposed)).not.toThrow();
     expect(baseline).toEqual(previous);
@@ -115,9 +115,14 @@ describe('new action freshness', () => {
           row(
             'new',
             set('Tom.description', 'original', 'original'),
-            set('Tom.newField', undefined, 'added'),
-            { op: 'add', path: 'Tom.newObject', oldValue: undefined, newValue: { name: 'new' } },
-            set('Tom.newObject.name', 'new', 'updated')
+            set('Tom.imageUrl', undefined, 'added'),
+            {
+              op: 'add',
+              path: 'Tom.faction',
+              oldValue: undefined,
+              newValue: { id: 'cat', name: 'new' },
+            },
+            set('Tom.faction.name', 'new', 'updated')
           ),
         ]
       )
@@ -132,7 +137,7 @@ describe('new action freshness', () => {
 
   it('distinguishes absent fields from null and prevents replacing scalar ancestors', () => {
     expect(() =>
-      validateActionFreshness([], [row('null', set('Tom.nullable', undefined, 'replacement'))])
+      validateActionFreshness([], [row('null', set('Tom.createDate', undefined, 'replacement'))])
     ).toThrow(StaleGameDataEditError);
     expect(() =>
       validateActionFreshness(
@@ -141,7 +146,7 @@ describe('new action freshness', () => {
       )
     ).toThrow(StaleGameDataEditError);
     expect(() =>
-      validateActionFreshness([], [row('known-null', set('Tom.nullable', null, 'replacement'))])
+      validateActionFreshness([], [row('known-null', set('Tom.createDate', null, 'replacement'))])
     ).not.toThrow();
   });
 
@@ -188,7 +193,7 @@ describe('new action freshness', () => {
         [
           row('delete', {
             op: 'delete',
-            path: 'Tom.other',
+            path: 'Tom.EnglishName',
             oldValue: 'unchanged',
             newValue: undefined,
           }),
@@ -202,7 +207,7 @@ describe('new action freshness', () => {
     {
       op: 'delete',
       path: 'Tom.counters.0',
-      oldValue: { id: 'Michelle', description: '' },
+      oldValue: { id: 'Michelle', description: '', isMinor: false },
       newValue: undefined,
     },
     set('Tom.counters.length', 2, 1),
@@ -225,7 +230,7 @@ describe('new action freshness', () => {
         [
           row(
             'array',
-            set('Tom.counters', old, [...old, { id: 'Baum', description: '' }]),
+            set('Tom.counters', old, [...old, { id: 'Baum', description: '', isMinor: false }]),
             set('Tom.counters.2.description', '', 'added description')
           ),
         ]
@@ -235,7 +240,7 @@ describe('new action freshness', () => {
 
   it('accepts structural additions normalized by the existing editor', () => {
     const old = (baseline.Tom as { counters: unknown[] }).counters;
-    const added = { id: 'Baum', description: 'new' };
+    const added = { id: 'Baum', description: 'new', isMinor: false };
     const entries = squashActions([set('Tom.counters.2', undefined, added)], {
       currentRoot: { Tom: { ...(baseline.Tom as object), counters: [...old, added] } },
     });

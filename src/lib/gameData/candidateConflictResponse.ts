@@ -113,7 +113,17 @@ function staleEditPath(error: TrustedGameDataMutationError): string {
 }
 
 export function invalidGameDataMessage(error: TrustedGameDataMutationError): string {
-  return `改动中的字段「${staleEditPath(error)}」缺失或类型不正确，请修正后重新提交。`;
+  const path = staleEditPath(error);
+  const reason =
+    isRecord(error.cause) && isRecord(error.cause.detail) ? error.cause.detail.reason : undefined;
+  if (reason === 'new_character')
+    return `不能通过在线改动新增角色「${path}」，请通过角色数据文件添加。`;
+  if (reason === 'relation_conflict')
+    return `字段「${path}」包含矛盾或不允许的关系，请同时移除旧关系后重新提交。`;
+  if (reason === 'no_changes')
+    return `字段「${path}」所在的改动没有实际变化，未保存。请移除无变化的改动后重新提交。`;
+  if (reason === 'unsupported_field') return `不支持字段「${path}」，请修正后重新提交。`;
+  return `改动中的字段「${path}」缺失或类型不正确，请修正后重新提交。`;
 }
 
 export function invalidGameDataResponse(error: TrustedGameDataMutationError): NextResponse {

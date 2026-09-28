@@ -19,7 +19,11 @@ import {
   invalidatePendingGameDataActionsCache,
   invalidatePublicGameDataActionsCache,
 } from '@/lib/gameData/publicActionsCache';
-import { getPublishOperationFingerprint } from '@/lib/gameData/publishOperation';
+import {
+  getPublishOperationFingerprint,
+  InvalidPublishOperationIdError,
+  isPublishOperationId,
+} from '@/lib/gameData/publishOperation';
 import type { PreparedPublishRequest } from '@/lib/gameData/publishPreparation';
 import type { GameDataSubmitMode } from '@/lib/gameData/submitMode';
 import { requireSupabaseAdminClient } from '@/lib/supabase/adminClient';
@@ -231,8 +235,9 @@ export async function publishPreparedGameDataActions(options: {
   grants: readonly PermissionGrant[];
   prepared: PreparedPublishRequest;
   submitMode?: GameDataSubmitMode;
-  operationId?: string;
+  operationId: string;
 }): Promise<TrustedPublishResult[]> {
+  if (!isPublishOperationId(options.operationId)) throw new InvalidPublishOperationIdError();
   const actorId = options.actorId;
   const isAnonymous = actorId === null;
   if (isAnonymous && options.permission !== 'game_data_action.create') {
@@ -241,7 +246,6 @@ export async function publishPreparedGameDataActions(options: {
 
   const fingerprint = operationFingerprint(options);
   const reuseOperation = async (): Promise<TrustedPublishResult[] | null> => {
-    if (!options.operationId) return null;
     const existing = await readExistingPublishOperation({
       operationId: options.operationId,
       fingerprint,
@@ -288,7 +292,10 @@ export async function publishPreparedGameDataActions(options: {
   try {
     validateFreshness(candidateRows(snapshot), proposedRows);
   } catch (error) {
-    if (error instanceof TrustedGameDataMutationError && error.code === 'stale_edit') {
+    if (
+      error instanceof TrustedGameDataMutationError &&
+      (error.code === 'stale_edit' || error.code === 'invalid_game_data')
+    ) {
       // A concurrent retry with the same key may have committed after the initial lookup.
       // Only report a definite rejection (which lets the client release its key) after rechecking.
       const completed = await reuseOperation();
@@ -298,54 +305,16 @@ export async function publishPreparedGameDataActions(options: {
   }
   validateCandidate([...candidateRows(snapshot), ...proposedApprovedRows]);
 
-  if (options.operationId) {
-    const results = await publishWithOperation({
-      operationId: options.operationId,
-      fingerprint,
-      actorId,
-      permission: options.permission,
-      prepared: options.prepared,
-      expectedEpoch: snapshot.replayEpoch,
-      ...(options.clientIp === undefined ? {} : { clientIp: options.clientIp }),
-      ...(options.submitMode === undefined ? {} : { submitMode: options.submitMode }),
-    });
-    if (results.some((result) => result.is_public)) {
-      invalidatePublicGameDataActionsCache();
-    }
-    if (results.some((result) => result.status === 'pending')) {
-      invalidatePendingGameDataActionsCache();
-    }
-    return results;
-  }
-
-  // Legacy cached clients omit the key and remain on the historical non-idempotent path.
-  const results: TrustedPublishResult[] = [];
-  let expectedEpoch = snapshot.replayEpoch;
-  for (const action of options.prepared.actions) {
-    const rpcResult = isAnonymous
-      ? await requireSupabaseAdminClient().rpc('prepared_publish_anonymous_game_data_actions', {
-          p_entity_type: action.entityType,
-          p_entries: action.rows.map((row) => asJson(row.canonicalEntry)),
-          p_message: options.prepared.message ?? null,
-          p_expected_replay_epoch: expectedEpoch,
-          ...(options.clientIp === undefined ? {} : { p_ip: options.clientIp }),
-        })
-      : await requireSupabaseAdminClient().rpc('prepared_publish_game_data_actions', {
-          p_actor_id: actorId,
-          p_permission_key: options.permission,
-          p_entity_type: action.entityType,
-          p_entries: action.rows.map((row) => asJson(row.canonicalEntry)),
-          p_message: options.prepared.message ?? null,
-          p_expected_replay_epoch: expectedEpoch,
-          p_submit_mode: options.submitMode ?? 'default',
-          ...(options.clientIp === undefined ? {} : { p_ip: options.clientIp }),
-        });
-    const { data, error } = rpcResult;
-    if (error) throw persistenceError(error);
-    const actionResults = data ?? [];
-    results.push(...actionResults);
-    expectedEpoch += actionResults.filter((result) => result.is_public).length;
-  }
+  const results = await publishWithOperation({
+    operationId: options.operationId,
+    fingerprint,
+    actorId,
+    permission: options.permission,
+    prepared: options.prepared,
+    expectedEpoch: snapshot.replayEpoch,
+    ...(options.clientIp === undefined ? {} : { clientIp: options.clientIp }),
+    ...(options.submitMode === undefined ? {} : { submitMode: options.submitMode }),
+  });
 
   if (results.some((result) => result.is_public)) {
     invalidatePublicGameDataActionsCache();

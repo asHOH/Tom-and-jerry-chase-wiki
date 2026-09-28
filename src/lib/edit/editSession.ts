@@ -144,10 +144,10 @@ type PublishTransportResult =
   | { status: 'published'; outcome: GameDataSubmitOutcome }
   | { status: 'pending-conflict'; conflict: PendingActionOverlapResponse };
 
-class StaleGameDataEditSubmissionError extends Error {
+class RejectedGameDataEditSubmissionError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = 'StaleGameDataEditSubmissionError';
+    this.name = 'RejectedGameDataEditSubmissionError';
   }
 }
 
@@ -183,8 +183,11 @@ async function publishWithFetch(request: PublishTransportRequest): Promise<Publi
       return { status: 'pending-conflict', conflict: body as PendingActionOverlapResponse };
     }
     const message = getPublishErrorMessage(body, '发布失败');
-    if (response.status === 409 && body?.error === 'stale_edit') {
-      throw new StaleGameDataEditSubmissionError(message);
+    if (
+      (response.status === 409 && body?.error === 'stale_edit') ||
+      (response.status === 422 && body?.error === 'invalid_game_data')
+    ) {
+      throw new RejectedGameDataEditSubmissionError(message);
     }
     throw new Error(message);
   }
@@ -467,8 +470,8 @@ export function createEditSession(
         notifyDrafts();
         return result;
       } catch (error) {
-        if (error instanceof StaleGameDataEditSubmissionError) {
-          // A stale 409 confirms nothing was saved under this key; allow a manually rebuilt draft.
+        if (error instanceof RejectedGameDataEditSubmissionError) {
+          // A definitive rejection saved nothing under this key; allow a corrected draft.
           clearPublishOperation(publishScope);
         }
         return { status: 'failed', error: error instanceof Error ? error : new Error('发布失败') };

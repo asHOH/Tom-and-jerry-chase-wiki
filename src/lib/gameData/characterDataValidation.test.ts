@@ -1,3 +1,5 @@
+import { buildCharacterGameData } from '@/lib/dataManager';
+
 import { InvalidGameDataValueError, validateCharacterData } from './characterDataValidation';
 
 const valid = () => ({
@@ -15,6 +17,26 @@ const valid = () => ({
     knowledgeCardGroups: [{ cards: [] }],
     skillAllocations: [{ id: 'plan', pattern: '012', weaponType: 'weapon1', description: '' }],
   },
+});
+
+it('accepts every canonical character, including optional nested fields', () => {
+  const canonical = buildCharacterGameData();
+  expect(() => validateCharacterData(canonical, Object.keys(canonical))).not.toThrow();
+});
+
+it.each([
+  { path: 'Tom.relations', value: { relations: { advantageMaps: [] } } },
+  { path: 'Tom.notAWikiField', value: { notAWikiField: 'unused' } },
+  { path: 'Tom.skills', value: { skills: [{ ...valid().Tom.skills[0], typo: true }] } },
+  { path: 'Tom', value: { typo: true } },
+  {
+    path: 'Tom.knowledgeCardGroups',
+    value: { knowledgeCardGroups: [{ cards: [{ name: 'not a card group' }] }] },
+  },
+])('rejects unsupported structure at $path', ({ path, value }) => {
+  expect(() => validateCharacterData({ Tom: { ...valid().Tom, ...value } }, [path])).toThrow(
+    InvalidGameDataValueError
+  );
 });
 
 it('accepts absent optional descriptions and empty required text without changing data', () => {

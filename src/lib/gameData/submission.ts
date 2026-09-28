@@ -192,12 +192,15 @@ export async function handleGameDataSubmission(
     return NextResponse.json({ error: 'Supabase is disabled' }, { status: 501 });
   }
 
-  let operationId: string | undefined;
+  let operationId: string;
   try {
     operationId = readPublishOperationId(request);
   } catch (error) {
     if (error instanceof InvalidPublishOperationIdError) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
+      return NextResponse.json(
+        { error: error.message, message: '提交缺少有效的重试标识，请保存草稿并刷新页面后重试。' },
+        { status: 400 }
+      );
     }
     throw error;
   }
@@ -248,7 +251,7 @@ export async function handleGameDataSubmission(
           ...(untrusted.pendingAcknowledgementToken === undefined
             ? {}
             : { providedToken: untrusted.pendingAcknowledgementToken }),
-          ...(operationId === undefined ? {} : { operationId }),
+          operationId,
         });
         if (pendingOverlap) {
           return NextResponse.json(pendingOverlap, { status: 409 });
@@ -270,7 +273,7 @@ export async function handleGameDataSubmission(
       permission,
       grants: guard.grants,
       prepared,
-      ...(operationId === undefined ? {} : { operationId }),
+      operationId,
       ...(untrusted.submitMode === undefined ? {} : { submitMode: untrusted.submitMode }),
     });
 

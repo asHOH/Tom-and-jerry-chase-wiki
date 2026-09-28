@@ -59,12 +59,12 @@ const overlap: PendingActionOverlapResponse = {
   truncated: false,
 };
 
-function createRequest(body: unknown): Request {
+function createRequest(body: unknown, key: string | null = operationId): Request {
   const bytes = new TextEncoder().encode(JSON.stringify(body));
   let delivered = false;
   return {
     headers: {
-      get: (name: string) => (name.toLowerCase() === 'idempotency-key' ? operationId : null),
+      get: (name: string) => (name.toLowerCase() === 'idempotency-key' ? key : null),
     },
     body: {
       getReader: () => ({
@@ -112,6 +112,17 @@ describe.each(['ordinary', 'relations'] as const)('%s submission workflow', (kin
     jest.mocked(checkPendingActionAcknowledgement).mockResolvedValue(null);
     jest.mocked(publishPreparedGameDataActions).mockResolvedValue(results);
   });
+
+  it.each([null, 'invalid'])(
+    'rejects missing or invalid retry protection (%s) before persistence',
+    async (key) => {
+      const response = await handleGameDataSubmission(createRequest(body, key), kind);
+      expect(response.status).toBe(400);
+      await expect(response.json()).resolves.toMatchObject({ error: 'invalid_idempotency_key' });
+      expect(authorize).not.toHaveBeenCalled();
+      expect(publishPreparedGameDataActions).not.toHaveBeenCalled();
+    }
+  );
 
   it('checks every canonical resource before overlap detection or persistence', async () => {
     const response = await handleGameDataSubmission(createRequest(body), kind);

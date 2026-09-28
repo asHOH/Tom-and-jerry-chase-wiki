@@ -454,8 +454,7 @@ const mergeCharacterRelationProjection = (
     CharacterRelation,
     'collaborators' | 'counterEachOther' | 'counteredBy' | 'counters'
   >,
-  legacyOverlayProjection: LegacyOverlayProjection,
-  tagDerivedRelations: Pick<CharacterRelation, 'counters' | 'counteredBy'>
+  legacyOverlayProjection: LegacyOverlayProjection
 ): CharacterRelation => {
   const merged = {
     ...sharedTraitRelations,
@@ -489,28 +488,35 @@ const mergeCharacterRelationProjection = (
     }
   });
 
-  merged.counters = mergeTagDerivedRelationItems(merged.counters, tagDerivedRelations.counters);
-  merged.counteredBy = mergeTagDerivedRelationItems(
-    merged.counteredBy,
-    tagDerivedRelations.counteredBy
-  );
-
   return merged;
 };
 
-// The character detail page reads a hybrid projection: shared relation traits,
-// inverse shared character links, and page-local legacy overlay arrays.
-export function getCharacterRelation(
+/** Explicit relations before display normalization or tag-derived suggestions. */
+export function getExplicitCharacterRelation(
   charactersRecord: DeepReadonly<Record<string, CharacterWithFaction>>,
   id: string
 ): CharacterRelation {
   if (!charactersRecord[id]) return defaultRelation;
 
-  const mergedRelation = mergeCharacterRelationProjection(
+  return mergeCharacterRelationProjection(
     buildSharedTraitRelations(id),
     buildSharedInverseCharacterRelations(id),
-    buildLegacyOverlayRelations(charactersRecord, id),
-    buildTagDerivedCharacterRelations(charactersRecord, id)
+    buildLegacyOverlayRelations(charactersRecord, id)
+  );
+}
+
+// The character detail page reads shared traits, inverse links, and local overlays.
+export function getCharacterRelation(
+  charactersRecord: DeepReadonly<Record<string, CharacterWithFaction>>,
+  id: string
+): CharacterRelation {
+  if (!charactersRecord[id]) return defaultRelation;
+  const mergedRelation = getExplicitCharacterRelation(charactersRecord, id);
+  const derived = buildTagDerivedCharacterRelations(charactersRecord, id);
+  mergedRelation.counters = mergeTagDerivedRelationItems(mergedRelation.counters, derived.counters);
+  mergedRelation.counteredBy = mergeTagDerivedRelationItems(
+    mergedRelation.counteredBy,
+    derived.counteredBy
   );
 
   return normalizeCharacterRelationProjection(id, mergedRelation, {

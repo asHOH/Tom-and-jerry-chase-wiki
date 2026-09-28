@@ -45,6 +45,9 @@ const invalidateMock = jest.mocked(invalidatePublicGameDataActionsCache);
 const adminRpcMock = jest.mocked(supabaseAdmin!.rpc);
 const adminFromMock = jest.mocked(supabaseAdmin!.from);
 
+const defaultOperationId = 'a3bb189e-8c21-4b8d-9a4f-5e24b7c29a10';
+const operationIdentity = { operationId: defaultOperationId };
+
 const action = (path: string, newValue: unknown) => ({
   op: 'set' as const,
   path,
@@ -140,6 +143,7 @@ const record = (
 describe('trusted game data mutations', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    adminFromMock.mockReturnValue(operationQuery(null) as never);
     canAccessAllMock.mockReturnValue(true);
     readSnapshotMock.mockResolvedValue(snapshot() as never);
     adminRpcMock.mockResolvedValue({
@@ -147,6 +151,24 @@ describe('trusted game data mutations', () => {
       error: null,
     } as never);
   });
+
+  it.each([undefined, '', 'invalid'])(
+    'rejects an unprotected operation (%s) even at the trusted boundary',
+    async (operationId) => {
+      await expect(
+        publishPreparedGameDataActions({
+          operationId: operationId as string,
+          actorId: 'actor-1',
+          permission: 'game_data_action.create',
+          grants: [],
+          prepared,
+        })
+      ).rejects.toThrow('invalid_idempotency_key');
+      expect(adminFromMock).not.toHaveBeenCalled();
+      expect(adminRpcMock).not.toHaveBeenCalled();
+      expect(readSnapshotMock).not.toHaveBeenCalled();
+    }
+  );
 
   it('rejects invalid required data for submissions and approvals before persistence', async () => {
     const invalid = new InvalidGameDataValueError({ path: 'Tom.skillAllocations.0.description' });
@@ -156,6 +178,7 @@ describe('trusted game data mutations', () => {
       });
       await expect(
         publishPreparedGameDataActions({
+          ...operationIdentity,
           actorId: 'actor-1',
           permission: 'game_data_action.create',
           grants: [],
@@ -214,6 +237,7 @@ describe('trusted game data mutations', () => {
       );
 
     const result = await publishPreparedGameDataActions({
+      ...operationIdentity,
       actorId: 'actor-1',
       permission: 'game_data_action.create',
       grants: [],
@@ -239,6 +263,7 @@ describe('trusted game data mutations', () => {
 
     await expect(
       publishPreparedGameDataActions({
+        ...operationIdentity,
         actorId: null,
         permission: 'game_data_action.create',
         grants: [],
@@ -250,40 +275,46 @@ describe('trusted game data mutations', () => {
     expect(adminRpcMock).not.toHaveBeenCalled();
   });
 
-  it('returns a concurrent successful retry instead of reporting a stale rejection', async () => {
-    const operationId = 'a3bb189e-8c21-4b8d-9a4f-5e24b7c29a10';
-    const fingerprint = createHashForTest({ permission: 'game_data_action.create', prepared });
-    adminFromMock
-      .mockReturnValueOnce(operationQuery(null) as never)
-      .mockReturnValueOnce(operationQuery({ request_fingerprint: fingerprint }) as never)
-      .mockReturnValueOnce(
-        operationRowsQuery([
-          {
-            id: 'concurrently-published',
-            publish_operation_initial_public: true,
-            publish_operation_initial_status: 'approved',
-          },
-        ]) as never
-      );
-    freshnessMock.mockImplementationOnce(() => {
-      throw new StaleGameDataEditError({
-        entityType: 'items',
-        path: 'item-b.description',
-        reason: 'value_changed',
+  it.each(['stale', 'invalid'] as const)(
+    'returns a concurrent successful retry instead of reporting a %s rejection',
+    async (reason) => {
+      const operationId = 'a3bb189e-8c21-4b8d-9a4f-5e24b7c29a10';
+      const fingerprint = createHashForTest({ permission: 'game_data_action.create', prepared });
+      adminFromMock
+        .mockReturnValueOnce(operationQuery(null) as never)
+        .mockReturnValueOnce(operationQuery({ request_fingerprint: fingerprint }) as never)
+        .mockReturnValueOnce(
+          operationRowsQuery([
+            {
+              id: 'concurrently-published',
+              publish_operation_initial_public: true,
+              publish_operation_initial_status: 'approved',
+            },
+          ]) as never
+        );
+      freshnessMock.mockImplementationOnce(() => {
+        if (reason === 'invalid')
+          throw new InvalidGameDataValueError({ path: 'item-b.description', reason: 'no_changes' });
+        throw new StaleGameDataEditError({
+          entityType: 'items',
+          path: 'item-b.description',
+          reason: 'value_changed',
+        });
       });
-    });
-    await expect(
-      publishPreparedGameDataActions({
-        actorId: 'actor-1',
-        permission: 'game_data_action.create',
-        grants: [],
-        prepared,
-        operationId,
-      })
-    ).resolves.toEqual([{ id: 'concurrently-published', is_public: true, status: 'approved' }]);
-    expect(adminRpcMock).not.toHaveBeenCalled();
-    expect(invalidateMock).toHaveBeenCalled();
-  });
+      await expect(
+        publishPreparedGameDataActions({
+          ...operationIdentity,
+          actorId: 'actor-1',
+          permission: 'game_data_action.create',
+          grants: [],
+          prepared,
+          operationId,
+        })
+      ).resolves.toEqual([{ id: 'concurrently-published', is_public: true, status: 'approved' }]);
+      expect(adminRpcMock).not.toHaveBeenCalled();
+      expect(invalidateMock).toHaveBeenCalled();
+    }
+  );
 
   it('uses the atomic request RPC for a new keyed operation', async () => {
     const operationId = 'a3bb189e-8c21-4b8d-9a4f-5e24b7c29a10';
@@ -294,6 +325,7 @@ describe('trusted game data mutations', () => {
     } as never);
 
     const result = await publishPreparedGameDataActions({
+      ...operationIdentity,
       actorId: 'actor-1',
       permission: 'game_data_action.create',
       grants: [],
@@ -327,6 +359,7 @@ describe('trusted game data mutations', () => {
     } as never);
 
     const first = await publishPreparedGameDataActions({
+      ...operationIdentity,
       actorId: null,
       permission: 'game_data_action.create',
       grants: [],
@@ -347,6 +380,7 @@ describe('trusted game data mutations', () => {
       );
 
     const second = await publishPreparedGameDataActions({
+      ...operationIdentity,
       actorId: 'authenticated-1',
       permission: 'game_data_action.create',
       grants: [],
@@ -368,6 +402,7 @@ describe('trusted game data mutations', () => {
 
     await expect(
       publishPreparedGameDataActions({
+        ...operationIdentity,
         actorId: 'actor-1',
         permission: 'game_data_action.create',
         grants: [],
@@ -403,6 +438,7 @@ describe('trusted game data mutations', () => {
 
     await expect(
       publishPreparedGameDataActions({
+        ...operationIdentity,
         actorId: 'actor-1',
         permission: 'game_data_action.create',
         grants: [],
@@ -414,13 +450,14 @@ describe('trusted game data mutations', () => {
     expect(adminRpcMock).not.toHaveBeenCalled();
   });
 
-  it('publishes anonymous submissions through the pending-only RPC', async () => {
+  it('publishes anonymous submissions through the same atomic request RPC', async () => {
     adminRpcMock.mockResolvedValueOnce({
       data: [{ id: 'anonymous-1', is_public: false, status: 'pending' }],
       error: null,
     } as never);
 
     const result = await publishPreparedGameDataActions({
+      ...operationIdentity,
       actorId: null,
       permission: 'game_data_action.create',
       grants: [],
@@ -428,22 +465,27 @@ describe('trusted game data mutations', () => {
     });
 
     expect(canAccessAllMock).not.toHaveBeenCalled();
-    expect(adminRpcMock).toHaveBeenCalledWith('prepared_publish_anonymous_game_data_actions', {
-      p_entity_type: 'items',
-      p_entries: [
-        [
-          { op: 'set', path: 'item-b.description', newValue: 'first' },
-          { op: 'set', path: 'item-b.description', newValue: 'second' },
-        ],
+    expect(adminRpcMock).toHaveBeenCalledWith('prepared_publish_game_data_actions_request', {
+      p_operation_id: defaultOperationId,
+      p_request_fingerprint: expect.any(String),
+      p_actor_id: null,
+      p_permission_key: 'game_data_action.create',
+      p_actions: [
+        {
+          entity_type: 'items',
+          entries: groupedPrepared.actions[0]!.rows.map((row) => row.canonicalEntry),
+        },
       ],
       p_message: 'grouped message',
       p_expected_replay_epoch: 9,
+      p_submit_mode: 'default',
     });
     expect(result).toEqual([{ id: 'anonymous-1', is_public: false, status: 'pending' }]);
   });
 
   it('replays the complete approved candidate and persists canonical rows with the snapshot epoch', async () => {
     const result = await publishPreparedGameDataActions({
+      ...operationIdentity,
       actorId: 'actor-1',
       permission: 'game_data_action.create',
       grants: [],
@@ -458,15 +500,16 @@ describe('trusted game data mutations', () => {
         actions: [action('item-b.description', 'first'), action('item-b.description', 'second')],
       },
     ]);
-    expect(adminRpcMock).toHaveBeenCalledWith('prepared_publish_game_data_actions', {
+    expect(adminRpcMock).toHaveBeenCalledWith('prepared_publish_game_data_actions_request', {
+      p_operation_id: defaultOperationId,
+      p_request_fingerprint: expect.any(String),
       p_actor_id: 'actor-1',
       p_permission_key: 'game_data_action.create',
-      p_entity_type: 'items',
-      p_entries: [
-        [
-          { op: 'set', path: 'item-b.description', newValue: 'first' },
-          { op: 'set', path: 'item-b.description', newValue: 'second' },
-        ],
+      p_actions: [
+        {
+          entity_type: 'items',
+          entries: groupedPrepared.actions[0]!.rows.map((row) => row.canonicalEntry),
+        },
       ],
       p_message: 'grouped message',
       p_expected_replay_epoch: 9,
@@ -497,6 +540,7 @@ describe('trusted game data mutations', () => {
 
     await expect(
       publishPreparedGameDataActions({
+        ...operationIdentity,
         actorId: 'actor-1',
         permission: 'game_data_action.create',
         grants: [],
@@ -545,6 +589,7 @@ describe('trusted game data mutations', () => {
     } as never);
 
     await publishPreparedGameDataActions({
+      ...operationIdentity,
       actorId: 'actor-1',
       permission: 'game_data_action.create',
       grants: [],
@@ -568,6 +613,7 @@ describe('trusted game data mutations', () => {
     } as never);
 
     const result = await publishPreparedGameDataActions({
+      ...operationIdentity,
       actorId: 'actor-1',
       permission: 'game_data_action.create',
       grants: [],
@@ -589,6 +635,7 @@ describe('trusted game data mutations', () => {
     } as never);
 
     const result = await publishPreparedGameDataActions({
+      ...operationIdentity,
       actorId: 'actor-1',
       permission: 'game_data_action.create',
       grants: [],
@@ -600,15 +647,16 @@ describe('trusted game data mutations', () => {
       expect.objectContaining({ rowId: 'approved-1' }),
       expect.objectContaining({ rowId: 'proposed:items:0' }),
     ]);
-    expect(adminRpcMock).toHaveBeenCalledWith('prepared_publish_game_data_actions', {
+    expect(adminRpcMock).toHaveBeenCalledWith('prepared_publish_game_data_actions_request', {
+      p_operation_id: defaultOperationId,
+      p_request_fingerprint: expect.any(String),
       p_actor_id: 'actor-1',
       p_permission_key: 'game_data_action.create',
-      p_entity_type: 'items',
-      p_entries: [
-        [
-          { op: 'set', path: 'item-b.description', newValue: 'first' },
-          { op: 'set', path: 'item-b.description', newValue: 'second' },
-        ],
+      p_actions: [
+        {
+          entity_type: 'items',
+          entries: groupedPrepared.actions[0]!.rows.map((row) => row.canonicalEntry),
+        },
       ],
       p_message: 'grouped message',
       p_expected_replay_epoch: 9,
@@ -625,6 +673,7 @@ describe('trusted game data mutations', () => {
     } as never);
 
     const result = await publishPreparedGameDataActions({
+      ...operationIdentity,
       actorId: 'actor-1',
       permission: 'game_data_action.create',
       grants: [],
@@ -635,15 +684,16 @@ describe('trusted game data mutations', () => {
     expect(validateCandidateMock).toHaveBeenCalledWith([
       expect.objectContaining({ rowId: 'approved-1' }),
     ]);
-    expect(adminRpcMock).toHaveBeenCalledWith('prepared_publish_game_data_actions', {
+    expect(adminRpcMock).toHaveBeenCalledWith('prepared_publish_game_data_actions_request', {
+      p_operation_id: defaultOperationId,
+      p_request_fingerprint: expect.any(String),
       p_actor_id: 'actor-1',
       p_permission_key: 'game_data_action.create',
-      p_entity_type: 'items',
-      p_entries: [
-        [
-          { op: 'set', path: 'item-b.description', newValue: 'first' },
-          { op: 'set', path: 'item-b.description', newValue: 'second' },
-        ],
+      p_actions: [
+        {
+          entity_type: 'items',
+          entries: groupedPrepared.actions[0]!.rows.map((row) => row.canonicalEntry),
+        },
       ],
       p_message: 'grouped message',
       p_expected_replay_epoch: 9,
@@ -653,7 +703,7 @@ describe('trusted game data mutations', () => {
     expect(invalidateMock).not.toHaveBeenCalled();
   });
 
-  it('advances the expected epoch by persisted grouped-row results, not submitted rows', async () => {
+  it('persists every domain in one atomic request with one expected epoch', async () => {
     const groupedThenIndependent = preparePublishActionItems([
       {
         entityType: 'items',
@@ -667,43 +717,31 @@ describe('trusted game data mutations', () => {
         entries: [{ op: 'set', path: '汤姆.description', newValue: 'updated' }],
       },
     ]);
-    adminRpcMock
-      .mockResolvedValueOnce({
-        data: [{ id: 'grouped-1', is_public: true, status: 'approved' }],
-        error: null,
-      } as never)
-      .mockResolvedValueOnce({
-        data: [{ id: 'character-1', is_public: true, status: 'approved' }],
-        error: null,
-      } as never);
+    adminRpcMock.mockResolvedValueOnce({
+      data: [
+        { id: 'grouped-1', is_public: true, status: 'approved' },
+        { id: 'character-1', is_public: true, status: 'approved' },
+      ],
+      error: null,
+    } as never);
 
     const result = await publishPreparedGameDataActions({
+      ...operationIdentity,
       actorId: 'actor-1',
       permission: 'game_data_action.create',
       grants: [],
       prepared: groupedThenIndependent,
     });
 
-    expect(adminRpcMock).toHaveBeenNthCalledWith(
-      1,
-      'prepared_publish_game_data_actions',
+    expect(adminRpcMock).toHaveBeenCalledTimes(1);
+    expect(adminRpcMock).toHaveBeenCalledWith(
+      'prepared_publish_game_data_actions_request',
       expect.objectContaining({
-        p_entity_type: 'items',
-        p_entries: [
-          [
-            { op: 'set', path: 'item-b.description', newValue: 'first' },
-            { op: 'set', path: 'item-b.description', newValue: 'second' },
-          ],
-        ],
+        p_actions: groupedThenIndependent.actions.map((item) => ({
+          entity_type: item.entityType,
+          entries: item.rows.map((row) => row.canonicalEntry),
+        })),
         p_expected_replay_epoch: 9,
-      })
-    );
-    expect(adminRpcMock).toHaveBeenNthCalledWith(
-      2,
-      'prepared_publish_game_data_actions',
-      expect.objectContaining({
-        p_entity_type: 'characters',
-        p_expected_replay_epoch: 10,
       })
     );
     expect(result).toEqual([
@@ -833,6 +871,7 @@ describe('trusted game data mutations', () => {
 
     await expect(
       publishPreparedGameDataActions({
+        ...operationIdentity,
         actorId: 'actor-1',
         permission: 'game_data_action.create',
         grants: [],
@@ -868,7 +907,12 @@ describe('trusted game data mutations', () => {
       },
     ]);
     await expect(
-      publishPreparedGameDataActions({ ...options, grants: [], prepared: stalePrepared })
+      publishPreparedGameDataActions({
+        ...operationIdentity,
+        ...options,
+        grants: [],
+        prepared: stalePrepared,
+      })
     ).rejects.toMatchObject({ code: 'stale_edit' });
     expect(adminRpcMock).not.toHaveBeenCalled();
     expect(invalidateMock).not.toHaveBeenCalled();

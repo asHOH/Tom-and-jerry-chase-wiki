@@ -46,7 +46,10 @@ const mutableEnv = env as unknown as {
   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY?: string;
 };
 
-function createRequest(body: unknown, operationId?: string | null): Request {
+function createRequest(
+  body: unknown,
+  operationId: string | null = 'a3bb189e-8c21-4b8d-9a4f-5e24b7c29a10'
+): Request {
   const bytes = new TextEncoder().encode(JSON.stringify(body));
   let delivered = false;
   return {
@@ -137,6 +140,7 @@ describe('publish-relations route', () => {
       expect.objectContaining({ blockAction: 'edit', request: expect.anything() })
     );
     expect(publishPreparedMock).toHaveBeenCalledWith({
+      operationId: 'a3bb189e-8c21-4b8d-9a4f-5e24b7c29a10',
       actorId: 'test-user',
       clientIp: null,
       permission: 'game_data_action.publish_relations',

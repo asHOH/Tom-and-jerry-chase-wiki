@@ -61,7 +61,7 @@ const mutableEnv = env as unknown as { NEXT_PUBLIC_DISABLE_ARTICLES?: string };
 function createRequest(
   body: unknown,
   declaredLength?: number,
-  operationId?: string | null
+  operationId: string | null = 'a3bb189e-8c21-4b8d-9a4f-5e24b7c29a10'
 ): Request {
   const bytes = new TextEncoder().encode(JSON.stringify(body));
   let delivered = false;
@@ -124,7 +124,7 @@ describe('publish route', () => {
     const response = await POST(createRequest(validBody, undefined, 'not-a-uuid'));
 
     expect(response.status).toBe(400);
-    await expect(response.json()).resolves.toEqual({ error: 'invalid_idempotency_key' });
+    await expect(response.json()).resolves.toMatchObject({ error: 'invalid_idempotency_key' });
     expect(requirePermissionMock).not.toHaveBeenCalled();
   });
 
@@ -175,6 +175,7 @@ describe('publish route', () => {
       expect.objectContaining({ blockAction: 'edit', request: expect.anything() })
     );
     expect(publishPreparedMock).toHaveBeenCalledWith({
+      operationId: 'a3bb189e-8c21-4b8d-9a4f-5e24b7c29a10',
       actorId: 'actor-1',
       clientIp: null,
       permission: 'game_data_action.create',

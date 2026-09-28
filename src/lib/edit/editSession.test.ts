@@ -309,6 +309,15 @@ describe('createEditSession', () => {
       operationRemains: false,
     },
     {
+      label: 'a validation 422',
+      response: {
+        ok: false,
+        status: 422,
+        json: async () => ({ error: 'invalid_game_data', message: '字段不受支持，草稿已保留。' }),
+      } as Response,
+      operationRemains: false,
+    },
+    {
       label: 'an unknown server response',
       response: {
         ok: false,

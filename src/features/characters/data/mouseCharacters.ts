@@ -1436,7 +1436,6 @@ const mouseCharacterDefinitions = {
         cards: ['S-舍己', 'S-铁血', 'C-救救我', 'S-缴械'],
         description:
           '干扰卡组，用来打依赖爪刀或有{无敌(状态)}{霸体}技能的猫。泰菲的{火箭筒}无法取消后摇，{缴械}可以在一定程度上防止霸体卡后摇反杀。',
-        detailedDescription: '',
       },
       {
         cards: ['S-舍己', 'S-铁血', 'C-救救我', 'C-不屈', 'B-精准投射'],

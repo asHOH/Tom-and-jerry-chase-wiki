@@ -22,11 +22,10 @@ export function isPublishOperationId(value: string): boolean {
   return OPERATION_ID_PATTERN.test(value);
 }
 
-/** Read the optional header for compatibility with older cached clients. */
-export function readPublishOperationId(request: Request): string | undefined {
+/** Every submission must be safely retryable, including requests from cached clients. */
+export function readPublishOperationId(request: Request): string {
   const value = request.headers.get(PUBLISH_OPERATION_HEADER);
-  if (value === null) return undefined;
-  if (!isPublishOperationId(value)) throw new InvalidPublishOperationIdError();
+  if (value === null || !isPublishOperationId(value)) throw new InvalidPublishOperationIdError();
   return value.toLowerCase();
 }
 

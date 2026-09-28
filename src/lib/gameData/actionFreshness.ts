@@ -4,8 +4,8 @@ import isEqual from 'lodash-es/isEqual';
 
 import { parseActionPath, resolveArraySegment } from './actionPath';
 import type { ApprovedCandidateReplayRow } from './approvedCandidateReplay';
-import { validateCharacterData } from './characterDataValidation';
-import { applyCheckedAction } from './checkedActionReplay';
+import { InvalidGameDataValueError, validateCharacterData } from './characterDataValidation';
+import { applyCheckedAction, collectTouchedRootKeys } from './checkedActionReplay';
 import { isPublishableEntityType } from './publishableEntityTypes';
 import { createApprovedActionSnapshot } from './published/approvedActionSnapshot';
 import { getCanonicalGameData } from './published/canonicalSources';
@@ -55,6 +55,25 @@ export function validateActionFreshness(
       targets.set(row.entityType, target);
       checkedContainers.set(row.entityType, []);
     }
+
+    const roots = collectTouchedRootKeys(row.actions);
+    if (!roots.success) {
+      throw new PublishedGameDataReplayError({
+        ...roots.error,
+        rowId: row.rowId,
+        stage: 'parse',
+        actionIndex: roots.actionIndex,
+      });
+    }
+    if (row.entityType === 'characters') {
+      const canonical = getCanonicalGameData('characters');
+      for (const root of roots.value) {
+        if (!Object.hasOwn(canonical, root)) {
+          throw new InvalidGameDataValueError({ path: root, reason: 'new_character' });
+        }
+      }
+    }
+    const before = roots.value.map((root) => structuredClone(target[root]));
 
     for (const [actionIndex, action] of row.actions.entries()) {
       const fail = (
@@ -129,6 +148,16 @@ export function validateActionFreshness(
       if (action.newValue !== null && typeof action.newValue === 'object') {
         checkedContainers.get(row.entityType)!.push(action.path);
       }
+    }
+    // Keep unchanged container checks inside a meaningful atomic row, but never store
+    // rows whose complete effect is empty (including edits that cancel each other).
+    if (
+      isEqual(
+        before,
+        roots.value.map((root) => target[root])
+      )
+    ) {
+      throw new InvalidGameDataValueError({ path: row.actions[0]!.path, reason: 'no_changes' });
     }
   }
   const characters = targets.get('characters');
