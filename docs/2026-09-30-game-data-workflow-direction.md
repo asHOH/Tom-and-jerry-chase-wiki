@@ -1,7 +1,7 @@
 # Game-data workflow
 
 **Date:** 2026-09-30
-**Status:** Observe the current workflow before undertaking an overhaul.
+**Status:** Observe the current workflow before undertaking an overhaul; allow bounded editor safety fixes.
 **Purpose:** Preserve the reasoning for a future agent. This is a direction, not a fixed implementation specification or an instruction to start migrating now.
 
 ## Intent
@@ -18,6 +18,8 @@ The user has explicitly established that:
 
 Keeping the existing editor initially is a recommendation, not a confirmed requirement. No observation deadline, automatic monitoring schedule, or threshold for starting the overhaul has been agreed.
 
+The follow-up review of PR #261 authorized a minimal, low-risk extraction. A shared canonical relation record remains a useful direction, but introducing a new published domain now would also require changes to permissions, draft scoping, validation, and historical replay. That migration remains deferred; it is not a prerequisite for the bounded editor fix below.
+
 ## Where things stand
 
 Public game data currently combines a checked-in baseline with public database action rows. The database is therefore not yet the sole authority for current content. Publishing, historical replay, deployment, and eventual compaction all participate in the content lifecycle.
@@ -30,6 +32,8 @@ The recent fixes add server-side protection against:
 4. Submissions without retry protection. A UUID v4 operation key is now required, and submissions use the atomic request RPC.
 
 Rows with no net change are also rejected. Unchanged array context is still allowed inside a row containing a real edit. Definitively rejected drafts remain editable, while uncertain network outcomes retain the operation identity needed for a safe retry.
+
+The relation editor now builds saved collections from explicit relations rather than the rendered projection, which also includes tag-derived suggestions. Saving unchanged relation fields does not create an overlay; deliberately editing a suggestion makes only that selected relation explicit. Other suggestions remain visible without being saved as incidental edits. Existing character-owned action paths, inverse writes in the matrix, permissions, and publication remain in place. This is an editor safety fix, not completion of #261's single-record relation model; existing drafts and published actions are not rewritten or cleaned up automatically.
 
 The implementation session reported 2,024 passing tests, plus lint, type, formatting, and actor-profile checks. Those are historical validation results, not a claim about a later checkout or production deployment. The guards are present in the checkout inspected for this note; production deployment and current action backlog were not checked for this handoff. The earlier compaction's completion does not establish that the live backlog remains empty.
 
@@ -89,6 +93,6 @@ These questions should guide the next conversation; they are not blockers to obs
 - `src/lib/gameData/published/`: current baseline-plus-action public reads.
 - `src/lib/edit/editSession.ts`: the existing editor and draft-lifecycle boundary.
 - `src/features/characters/utils/relationReadModel.ts`: relation composition and display normalization.
-- [Edit-session refactor](2026-08-24-edit-session-deep-module-refactor-plan.md), [compaction operations](operations/game-data-action-compaction.md), and [pending-action recovery](operations/pending-game-data-recovery.md): relevant history and current procedures, not a requirement to preserve every mechanism in a replacement.
+- [Edit-session refactor](archive/completed/2026-08-24-edit-session-deep-module-refactor-plan.md), [compaction operations](operations/game-data-action-compaction.md), and [pending-action recovery](operations/pending-game-data-recovery.md): relevant history and current procedures, not a requirement to preserve every mechanism in a replacement.
 
 The handoff succeeds if the next agent understands why simplification matters and which user promises must survive. It does not need to inherit a predetermined implementation.
