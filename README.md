@@ -67,7 +67,7 @@
 
 | 配置文件 / 依赖 | 变量名 / 版本要求                             | 说明                                                                              |
 | :-------------- | :-------------------------------------------- | :-------------------------------------------------------------------------------- |
-| **Node.js**     | `^20.17.0 \|\| >=22.9.0`                      | 运行环境版本要求                                                                  |
+| **Node.js**     | 以 `package.json` 的 `engines.node` 为准      | 运行环境版本要求                                                                  |
 | **npm**         | `11.18.0`                                     | 包管理器版本要求                                                                  |
 | **.env.local**  | `NEXT_PUBLIC_SUPABASE_URL`                    | Supabase 项目 URL                                                                 |
 |                 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`        | Supabase Publishable key                                                          |
