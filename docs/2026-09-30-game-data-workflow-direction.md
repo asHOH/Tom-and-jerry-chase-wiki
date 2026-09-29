@@ -57,6 +57,10 @@ This should make routine baseline compaction unnecessary for the migrated conten
 
 Database authority here concerns editable published content. It does not imply moving application configuration, assets, or every static definition into the database.
 
+For character relations, the deferred goal is **canonical single-record storage**: each explicit relationship has one authoritative record, and character pages and the relation matrix edit that same fact. Inverse and symmetric views should be derived rather than independently saved copies. Tag-derived suggestions remain derived until an author deliberately makes one explicit. Single-record ownership is a separate decision from where published data lives; it does not require moving all game data into the database or adopting #261's implementation.
+
+Before switching relation writes, settle relation identity and directional metadata, preserve permissions and draft recovery from either editing surface, and verify atomic publication, review, and undo. Migration must preserve the currently published result, including uncompacted approved actions, and account for pending submissions and existing drafts. This remains a future design goal, not authorization to begin migration.
+
 ## Principles to preserve
 
 - **Publish intent, not incidental edit-session activity.** The submitted unit should contain the deliberate, reviewable changes. Initializing an editor, restoring drafts, or normalizing display data must not accidentally create contributions.
@@ -81,6 +85,7 @@ No table layout, API inventory, migration sequence, or implementation timetable 
 
 - May code deployments intentionally replace published content, or should content changes always go through publication while deployments change structure and behavior?
 - What is the unit of review and undo: a submission, an entity, or a coherent group of related changes? Atomic persistence alone does not settle this product decision.
+- Which relation fields are shared, and which may differ by direction? A single authoritative relationship must not erase intentional differences in descriptions or other metadata between its two views.
 - Which observation would justify the overhaul: recurring incorrect submissions, excessive manual cleanup, or maintenance complexity despite otherwise correct behavior?
 - How should database outages and schema changes affect public reads? An old checked-in baseline must not silently become a competing current authority.
 
