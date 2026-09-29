@@ -26,7 +26,7 @@ TARGET_BRANCH="develop"
 TARGET_COMMIT=""
 # Node.js memory limit in MB. Leave empty to auto-detect from available RAM.
 NODE_MEMORY_LIMIT="${NODE_MEMORY_LIMIT:-auto}"
-PINNED_NPM_VERSION="11.18.0"
+PINNED_NPM_VERSION="11.20.0"
 ENV_FILE=".env.production"
 PM2_APP_NAME="tjwiki"
 START_SCRIPT="scripts/ops/start_server.sh"

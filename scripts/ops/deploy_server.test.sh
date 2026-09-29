@@ -69,7 +69,7 @@ assert_live_files() {
 }
 npm() {
   case "$*" in
-    --version) echo 11.18.0 ;;
+    --version) echo 11.20.0 ;;
     ci*)
       assert_live_files || return 90
       echo install >> "$TEST_ROOT/events"
