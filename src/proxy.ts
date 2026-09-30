@@ -5,6 +5,34 @@ import { updateSession } from '@/lib/supabase/middleware';
 const IS_VERCEL = process.env.VERCEL === '1';
 const IS_VERCEL_PREVIEW = IS_VERCEL && process.env.VERCEL_ENV !== 'production';
 
+// These route trees render without server-side identity. Keep session refresh for
+// other routes (including user profiles) and for non-read requests.
+const PUBLIC_WIKI_ROUTE_ROOTS = new Set([
+  '',
+  'achievements',
+  'buffs',
+  'cards',
+  'characters',
+  'docs',
+  'entities',
+  'factions',
+  'fixtures',
+  'games',
+  'itemGroups',
+  'items',
+  'maps',
+  'mechanics',
+  'modes',
+  'offline',
+  'ranks',
+  'recommended',
+  'relations',
+  'special-skills',
+  'tools',
+  'usages',
+  'win-rates',
+]);
+
 const applyNoIndex = (res: NextResponse) => {
   if (IS_VERCEL_PREVIEW) {
     res.headers.set('X-Robots-Tag', 'noindex, nofollow');
@@ -71,7 +99,14 @@ export async function proxy(request: NextRequest) {
     return res;
   }
 
-  // Now, run the Supabase session update logic
+  if (
+    (request.method === 'GET' || request.method === 'HEAD') &&
+    PUBLIC_WIKI_ROUTE_ROOTS.has(url.pathname.split('/')[1] ?? '')
+  ) {
+    return applyNoIndex(NextResponse.next({ request }));
+  }
+
+  // Refresh sessions on routes that may need server-side identity.
   const supabaseResponse = await updateSession(request);
 
   // Return the response from Supabase middleware, which includes updated cookies
