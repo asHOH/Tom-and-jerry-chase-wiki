@@ -25,7 +25,7 @@ export function createSupabaseRouteClient(request: NextRequest, response: NextRe
   });
 }
 
-export function createSupabaseProxyClient(request: NextRequest) {
+export function createSupabaseProxyClient(request: NextRequest, signal: AbortSignal) {
   const config = requireSupabasePublicConfig('server');
   let response = NextResponse.next({
     request,
@@ -37,6 +37,8 @@ export function createSupabaseProxyClient(request: NextRequest) {
         return request.cookies.getAll();
       },
       setAll(cookiesToSet) {
+        // A timed-out refresh must not modify a request/response already returned.
+        if (signal.aborted) return;
         cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
         response = NextResponse.next({
           request,
@@ -47,7 +49,11 @@ export function createSupabaseProxyClient(request: NextRequest) {
       },
     },
     global: {
-      fetch: fetchWithRetry,
+      fetch: (input, init) =>
+        fetchWithRetry(input, {
+          ...init,
+          signal: init?.signal ? AbortSignal.any([init.signal, signal]) : signal,
+        }),
     },
   });
 

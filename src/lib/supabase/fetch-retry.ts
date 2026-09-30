@@ -10,6 +10,7 @@ export async function fetchWithRetry(input: RequestInfo | URL, init?: RequestIni
   let lastError: unknown;
 
   for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+    init?.signal?.throwIfAborted();
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
 

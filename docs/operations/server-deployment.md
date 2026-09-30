@@ -83,6 +83,14 @@ PUBLIC_VERSION_CHECK_URL=https://www.example.com/api/version \
 - HTTPS、Host、`X-Forwarded-For` 和 `X-Forwarded-Proto` 转发符合部署拓扑；
 - 旧构建资源不会覆盖当前部署。
 
+## Supabase 认证延迟
+
+生产项目 `tjwiki` 已于 2026-10-01 从旧版 HS256 签名迁移到 ES256；旧密钥保留为 `previously_used`，继续接受尚未过期的会话。新登录和令牌刷新会使用 ES256，`getClaims()` 可利用缓存的公钥在本地验签。首次获取公钥和刷新会话仍需要访问 Supabase。
+
+此迁移不需要替换 API key。撤销旧签名密钥是单独的维护操作：须先确认旧令牌已过期及旧版 API key 等依赖已处理，具体步骤见 [Supabase 签名密钥文档](https://supabase.com/docs/guides/auth/signing-keys)。
+
+公开百科页面的 GET/HEAD 请求跳过代理中的会话刷新。其余页面的代理认证最多等待 5 秒；超时或认证服务临时故障返回不可缓存的 `503`，并带有 `Retry-After: 5`，保留浏览器会话供用户重试。超时会取消进行中的请求并阻止后续重试访问网络或写入 Cookie。此限制仅作用于代理认证，不改变数据库查询、构建及 API 路由的重试策略。
+
 ## Cloudflare Tunnel
 
 首次部署推荐使用 [`DEPLOY.md`](../../DEPLOY.md) 中的 Dashboard 管理方式。Cloudflare 也建议大多数场景使用 remotely-managed Tunnel；本地管理方式主要用于测试、旧配置或必须把路由配置保存在服务器上的场景。

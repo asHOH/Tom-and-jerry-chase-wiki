@@ -119,7 +119,8 @@ describe('supabase ssr clients', () => {
       headers: { cookie: 'existing=1' },
     });
 
-    const proxyClient = createSupabaseProxyClient(request);
+    const controller = new AbortController();
+    const proxyClient = createSupabaseProxyClient(request, controller.signal);
     const cookies = jest.mocked(createServerClient).mock.calls[0]?.[2]?.cookies as
       CookieController | undefined;
     if (!cookies) throw new Error('Expected Supabase cookies adapter');
@@ -132,6 +133,11 @@ describe('supabase ssr clients', () => {
       },
     ]);
 
+    expect(request.cookies.get('sb-session')?.value).toBe('token');
+    expect(proxyClient.getResponse().cookies.get('sb-session')?.value).toBe('token');
+
+    controller.abort();
+    cookies.setAll([{ name: 'sb-session', value: 'late-token' }]);
     expect(request.cookies.get('sb-session')?.value).toBe('token');
     expect(proxyClient.getResponse().cookies.get('sb-session')?.value).toBe('token');
   });

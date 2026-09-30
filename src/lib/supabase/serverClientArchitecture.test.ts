@@ -42,7 +42,8 @@ describe('server-side Supabase client architecture', () => {
       const source = readFileSync(path.join(process.cwd(), repositoryPath), 'utf8');
       const constructorCount =
         source.match(/\bcreate(?:Server)?Client<Database>\s*\(/g)?.length ?? 0;
-      const guardedFetchCount = source.match(/\bfetch:\s*fetchWithRetry\b/g)?.length ?? 0;
+      const guardedFetchCount =
+        source.match(/\bfetch:\s*fetchWithRetry\b|\bfetchWithRetry\(/g)?.length ?? 0;
 
       expect(source).toContain("import { fetchWithRetry } from './fetch-retry';");
       expect(constructorCount).toBe(expectedCount);
