@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { execFile } from 'node:child_process';
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { join, relative } from 'node:path';
 import { test } from 'node:test';
@@ -63,6 +63,7 @@ test(
       response.end(JSON.stringify([{ replay_epoch: 1, action_rows: [row] }]));
     });
     await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+    await mkdir(join(projectDir, '.tmp'), { recursive: true });
     const testRoot = await mkdtemp(join(projectDir, '.tmp/compaction-local-test-'));
     const manifestPath = join(testRoot, 'manifest.json');
     try {

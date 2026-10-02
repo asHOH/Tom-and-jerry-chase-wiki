@@ -31,6 +31,7 @@ npm run validate:actor-profiles
 
 # Tests
 npm test                       # All Jest tests
+npm run test:scripts           # Node.js tests under scripts/ and scripts/lib/
 npm test -- path/to/file.test.ts
 npm test -- --testPathPatterns=filterUtils
 npm run test:watch
@@ -39,7 +40,7 @@ npm run test:coverage
 npm run test:ci                # CI Jest mode with coverage and 50% workers
 ```
 
-Tests are colocated with source as `*.test.ts` or `*.test.tsx`. Use React Testing Library for components and plain Jest for utilities. Jest only discovers tests under `src/`; `test/` currently contains mocks and support files.
+Tests are colocated with source as `*.test.ts` or `*.test.tsx`. Use React Testing Library for components and plain Jest for utilities. Jest only discovers tests under `src/`; `test/` currently contains mocks and support files. Script tests use Node.js's test runner via `npm run test:scripts` and run separately in CI; do not invoke those `.test.mjs` files from Jest wrappers.
 
 # Project Structure
 
@@ -154,6 +155,7 @@ Validate in proportion to the scope of change:
 
 - Source: run `npm run lint`, `npm run type-check`, and relevant tests.
 - Broad or cross-cutting: run full `npm test` suite.
+- Scripts or script-test configuration: run `npm run test:scripts`.
 - Markdown-only: run Prettier on the changed file; source tests are unnecessary.
 - Actor-profile data: also run `npm run validate:actor-profiles`.
 - Build/config/generation: run `npm run build:skip-images` when practical.

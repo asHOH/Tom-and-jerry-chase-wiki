@@ -37,9 +37,7 @@ jobs:
         run: npm exec -- supabase db reset --local --no-seed
 
       - name: Verify generated database types
-        run: |
-          node --test scripts/generate-database-types.test.mjs
-          npm run check:database-types
+        run: npm run check:database-types
 
   code-quality:
     name: Code Quality
@@ -92,6 +90,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Run script tests
+        run: npm run test:scripts
 
       - name: Run tests and generate coverage
         run: npm run test:ci

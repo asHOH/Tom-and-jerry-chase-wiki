@@ -1,6 +1,5 @@
 /** @jest-environment node */
 
-import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 
@@ -58,36 +57,4 @@ describe('game-data compaction cutover command', () => {
     expect(script).toContain("receiptKind: 'preCutoverRetainedRows'");
     expect(script).toContain('fileDigest: retainedRowsDigest(persisted.serialized)');
   });
-
-  it('round-trips retained evidence and rejects unsafe paths and changed files', () => {
-    execFileSync(
-      process.execPath,
-      ['--test', 'scripts/lib/game-data-compaction-evidence.test.mjs'],
-      {
-        cwd: process.cwd(),
-        windowsHide: true,
-        stdio: 'pipe',
-      }
-    );
-  });
-
-  it('reports structured preflight causes without echoing child-process errors', () => {
-    execFileSync(
-      process.execPath,
-      ['--test', 'scripts/lib/game-data-compaction-cutover.test.mjs'],
-      {
-        cwd: process.cwd(),
-        windowsHide: true,
-        stdio: 'pipe',
-      }
-    );
-  });
-
-  it('runs the local preflight CLI without deployment or evidence writes', () => {
-    execFileSync(process.execPath, ['--test', 'scripts/lib/game-data-compaction-local.test.mjs'], {
-      cwd: process.cwd(),
-      windowsHide: true,
-      stdio: 'pipe',
-    });
-  }, 180_000);
 });

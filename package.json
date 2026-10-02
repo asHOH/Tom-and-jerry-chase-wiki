@@ -56,6 +56,7 @@
     "type-check": "tsc --noEmit",
     "type-check:watch": "tsc --noEmit --watch",
     "test": "jest",
+    "test:scripts": "node --test scripts/*.test.mjs scripts/lib/*.test.mjs",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "test:ci": "jest --ci --coverage --watchAll=false --maxWorkers=50%",
