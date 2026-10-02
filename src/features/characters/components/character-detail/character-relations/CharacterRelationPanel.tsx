@@ -9,6 +9,7 @@ import IconButton, { getIconButtonIconClassName } from '@/components/ui/IconButt
 import { PlusIcon, TrashIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 
+import CharacterRelationTagSelect from './CharacterRelationTagSelect';
 import type { RelationDisplayItem } from './characterRelationViewModel';
 
 type RelationTheme = 'blue' | 'amber' | 'red' | 'green' | 'purple' | 'orange';
@@ -185,42 +186,23 @@ function RelationTagEditor({ item }: { item: RelationDisplayItem }) {
     setTagPairs(item.tagPairs);
   }, [item.id, item.relationKind, item.tagPairs]);
 
-  const updateTag = (index: number, field: 'counters' | 'counteredBy', value: string) => {
-    setTagPairs((current) =>
-      current.map((tag, tagIndex) => (tagIndex === index ? { ...tag, [field]: value } : tag))
-    );
-  };
-
-  const saveTags = () => {
-    const completeTags = tagPairs
-      .map((tag) => ({
-        counters: tag.counters.trim(),
-        counteredBy: tag.counteredBy.trim(),
-      }))
-      .filter((tag) => tag.counters && tag.counteredBy);
-
-    if (completeTags.length === tagPairs.length) {
-      item.onUpdateTags?.(completeTags);
-    }
-  };
-
   return (
-    <div className='mt-2 flex flex-col gap-1.5' onBlur={saveTags}>
+    <div className='mt-2 flex flex-col gap-1.5'>
       {tagPairs.map((tag, index) => (
-        <div key={index} className='grid grid-cols-[1fr_1fr_auto] items-center gap-1.5'>
-          <input
-            value={tag.counters}
-            onChange={(event) => updateTag(index, 'counters', event.currentTarget.value)}
-            className={relationItemTextareaClassName}
-            aria-label={`克制方分类 ${index + 1}`}
-            placeholder='克制方，如：高伤'
-          />
-          <input
-            value={tag.counteredBy}
-            onChange={(event) => updateTag(index, 'counteredBy', event.currentTarget.value)}
-            className={relationItemTextareaClassName}
-            aria-label={`被克制方分类 ${index + 1}`}
-            placeholder='被克制方，如：怕高伤'
+        <div key={index} className='grid grid-cols-[1fr_auto] items-center gap-1.5'>
+          <CharacterRelationTagSelect
+            value={tag}
+            existingTags={item.tagPairs}
+            onChange={(nextTag) => {
+              const nextTags = tagPairs.map((current, tagIndex) =>
+                tagIndex === index ? nextTag : current
+              );
+              setTagPairs(nextTags);
+              if (nextTags.every((current) => current.counters && current.counteredBy)) {
+                item.onUpdateTags?.(nextTags);
+              }
+            }}
+            aria-label={`克制分类 ${index + 1}`}
           />
           <IconButton
             type='button'

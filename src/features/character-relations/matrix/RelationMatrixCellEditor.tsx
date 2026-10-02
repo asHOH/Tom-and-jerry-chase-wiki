@@ -6,6 +6,7 @@ import { cn } from '@/lib/design';
 import type { CharacterWithFaction } from '@/lib/types';
 import type { EditableUpdate } from '@/hooks/useEditableGameData';
 import type { CharacterRelationTag, TraitRelationKind } from '@/data/types';
+import CharacterRelationTagSelect from '@/features/characters/components/character-detail/character-relations/CharacterRelationTagSelect';
 import {
   removeCharacterRelationItemFromKinds,
   upsertCharacterRelationItem,
@@ -13,7 +14,7 @@ import {
 import { supportsCharacterRelationTags } from '@/features/characters/utils/characterRelationTags';
 import { BaseDialog } from '@/components/ui/BaseDialog';
 import Button from '@/components/ui/Button';
-import { FormInput, FormSelect, FormTextarea } from '@/components/ui/FormControls';
+import { FormSelect, FormTextarea } from '@/components/ui/FormControls';
 
 import type { RelationMatrixCellSelection } from './CharacterRelationsMatrix';
 import {
@@ -235,41 +236,19 @@ export default function RelationMatrixCellEditor({
               克制分类
             </legend>
             <p className='text-xs text-gray-500 dark:text-gray-400'>
-              分别填写克制方与被克制方看到的标签，例如“高伤”和“怕高伤”。
+              选择已有的克制分类，标签将同时用于克制方与被克制方。
             </p>
             {tagPairs.map((tag, index) => (
-              <div key={index} className='grid grid-cols-[1fr_1fr_auto] items-center gap-2'>
-                <FormInput
-                  value={tag.counters}
-                  onChange={(event) =>
+              <div key={index} className='grid grid-cols-[1fr_auto] items-center gap-2'>
+                <CharacterRelationTagSelect
+                  value={tag}
+                  existingTags={selection.cell?.tagPairs ?? []}
+                  onChange={(nextTag) =>
                     setTagPairs((current) =>
-                      current.map((item, itemIndex) =>
-                        itemIndex === index
-                          ? { ...item, counters: event.currentTarget.value }
-                          : item
-                      )
+                      current.map((item, itemIndex) => (itemIndex === index ? nextTag : item))
                     )
                   }
-                  aria-label={`克制方分类 ${index + 1}`}
-                  placeholder='如：高伤'
-                  size='sm'
-                  className='min-w-0 rounded-md py-1.5'
-                />
-                <FormInput
-                  value={tag.counteredBy}
-                  onChange={(event) =>
-                    setTagPairs((current) =>
-                      current.map((item, itemIndex) =>
-                        itemIndex === index
-                          ? { ...item, counteredBy: event.currentTarget.value }
-                          : item
-                      )
-                    )
-                  }
-                  aria-label={`被克制方分类 ${index + 1}`}
-                  placeholder='如：怕高伤'
-                  size='sm'
-                  className='min-w-0 rounded-md py-1.5'
+                  aria-label={`克制分类 ${index + 1}`}
                 />
                 <Button
                   variant='danger'
