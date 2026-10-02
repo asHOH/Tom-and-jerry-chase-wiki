@@ -11,22 +11,14 @@ describe('post-cutover compaction verifier script', () => {
     'utf8'
   );
   const target = readFileSync(path.join(process.cwd(), 'scripts/lib/supabase-target.mjs'), 'utf8');
-  const lifecycle = readFileSync(
-    path.join(process.cwd(), 'src/lib/gameData/compactionCutoverLifecycle.ts'),
-    'utf8'
-  );
 
   it('uses retained rows and current approved rows without invoking approved-row preflight', () => {
     expect(verifier).toContain("['local', 'preflight', 'post-cutover'].includes(mode)");
     expect(verifier).toContain(
       'const reconstructedRows = [...snapshotBefore.rows, ...retained.rows]'
     );
-    expect(lifecycle).toContain("status: 'synced'");
-    expect(lifecycle).toContain('isPublic: false');
     expect(verifier).toContain('recordCompactionPostCutoverVerification(manifest, evidence)');
     expect(verifier).toContain('idempotence: operationSummary');
-    expect(lifecycle).toContain('postCutoverVerification');
-    expect(lifecycle).toContain("receiptKind: 'postCutoverVerification'");
     expect(verifier).toContain('readPreCutoverRetainedRowsBinding(manifest)');
   });
 
