@@ -60,30 +60,10 @@ const Link = forwardRef<HTMLAnchorElement, LinkProps>(
 
       e.preventDefault();
 
-      let targetPath: string;
-      if (typeof href === 'string') {
-        targetPath = href;
-      } else {
-        const { pathname, query } = href;
-        targetPath = pathname || '';
-        if (query) {
-          const queryString =
-            typeof query === 'string'
-              ? query
-              : new URLSearchParams(query as Record<string, string>).toString();
-
-          if (queryString) {
-            targetPath += `?${queryString}`;
-          }
-        }
-      }
-
       // Strip edit param when navigating to different pages (unless preserveEditParam is true)
-      if (!preserveEditParam) {
-        targetPath = stripEditParam(targetPath);
-      }
-
-      await navigate(targetPath, { replace: replace ?? false });
+      await navigate(preserveEditParam ? targetPath : stripEditParam(targetPath), {
+        replace: replace ?? false,
+      });
     };
 
     return (
