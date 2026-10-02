@@ -20,6 +20,7 @@ import { useNotificationCount } from '@/hooks/useNotificationCount';
 import { useUser } from '@/hooks/useUser';
 import { isNavGroup, NavEntry, NavItem } from '@/constants/navigation';
 import Button from '@/components/ui/Button';
+import { DarkModeToggleButton } from '@/components/ui/DarkModeToggleButton';
 import MotionButton from '@/components/ui/MotionButton';
 import DetailViewToggle from '@/components/DetailViewToggle';
 import { HomeIcon, UserCircleIcon } from '@/components/icons/CommonIcons';
@@ -39,6 +40,7 @@ type TabNavigationProps = {
 const MOBILE_STACK_COLLAPSE_WIDTHS = [420, 376, 332] as const;
 
 const DETAIL_TOGGLE_WIDTH = 56;
+const DARK_MODE_TOGGLE_WIDTH = 44;
 const USER_BUTTON_WIDTH = 44;
 const dropdownMenuIconClassName = '!h-6 !w-6 shrink-0 object-contain';
 const dropdownMenuLinkBaseClassName =
@@ -94,6 +96,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   const [mounted, setMounted] = useState(false);
   const [collapsedCount, setCollapsedCount] = useState(0);
   const pathname = usePathname();
+  const showDarkModeToggle = pathname === '/';
   const { nickname, blockSummary, clearData: clearUserData } = useUser();
   const hasEditBlock = blockSummary.some((block) => block.action === 'edit');
   const hasActiveBlock = blockSummary.length > 0;
@@ -147,7 +150,9 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
 
     const width = window.innerWidth;
     const extraWidth =
-      (showDetailToggle ? DETAIL_TOGGLE_WIDTH : 0) + (nickname ? USER_BUTTON_WIDTH : 0);
+      (showDetailToggle ? DETAIL_TOGGLE_WIDTH : 0) +
+      (showDarkModeToggle ? DARK_MODE_TOGGLE_WIDTH : 0) +
+      (nickname ? USER_BUTTON_WIDTH : 0);
     const adjustedWidth = Math.max(width - extraWidth, 0);
     const total = items.length;
     let nextCollapsed = 0;
@@ -166,7 +171,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     if (nextCollapsed === 0) {
       setOverflowOpen((prev) => (prev ? false : prev));
     }
-  }, [items, nickname, showDetailToggle, isMobile]);
+  }, [items, nickname, showDetailToggle, showDarkModeToggle, isMobile]);
 
   useEffect(() => {
     if (!mounted) return;
@@ -291,7 +296,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
     'flex size-7 items-center justify-center overflow-hidden md:size-8',
     isCompactMode && 'shrink-0'
   );
-  const shouldAlignLeft = showDetailToggle || !!nickname;
+  const shouldAlignLeft = showDetailToggle || showDarkModeToggle || !!nickname;
   const dropdownAlignmentClass = shouldAlignLeft ? 'left-0' : 'right-0';
   return (
     <div className='bg-surface-raised fixed top-0 right-0 left-0 z-50 w-full py-2 shadow-md dark:shadow-lg'>
@@ -514,9 +519,10 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
           )}
         </div>
 
-        {/* Right-aligned detailed/simple view toggle, search, and user menu */}
+        {/* Right-aligned search, theme and detail toggles, and user menu */}
         <div className='flex items-center gap-1 md:gap-2 lg:gap-2.5'>
           <SearchBar />
+          {showDarkModeToggle ? <DarkModeToggleButton /> : null}
           {showDetailToggle ? <DetailViewToggle /> : null}
           {/* User menu (deferred until mounted to avoid hydration mismatch) */}
           {mounted && !!nickname && hasSupabasePublicConfig() && (
