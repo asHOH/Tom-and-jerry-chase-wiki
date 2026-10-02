@@ -38,6 +38,7 @@ import {
   getOrCreatePublishOperationId,
   getPublishOperationFingerprint,
 } from '@/lib/gameData/publishOperation';
+import type { FactionScopedGameDataEntityType } from '@/lib/gameData/scopedEntityPaths';
 import {
   getGameDataSubmitOutcomeFromResults,
   type GameDataSubmitMode,
@@ -49,10 +50,8 @@ import {
   KNOWLEDGE_CARD_GROUP_COST_MESSAGE,
 } from '@/features/knowledge-cards/utils/groupCostValidation';
 
-type FactionScopedEditEntityType = Extract<PublishableEntityType, 'achievements' | 'specialSkills'>;
-
 export type EditEntityRef<EntityType extends PublishableEntityType = PublishableEntityType> =
-  EntityType extends FactionScopedEditEntityType
+  EntityType extends FactionScopedGameDataEntityType
     ? { entityType: EntityType; entityId: string; factionId: FactionId }
     : { entityType: EntityType; entityId: string; factionId?: never };
 

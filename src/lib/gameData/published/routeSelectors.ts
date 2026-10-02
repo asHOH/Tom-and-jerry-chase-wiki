@@ -3,6 +3,10 @@ import 'server-only';
 import { cache } from 'react';
 
 import type { PublishableEntityType } from '@/lib/gameData/publishableEntityTypes';
+import {
+  isFactionScopedGameDataEntityType,
+  type FactionScopedGameDataEntityType,
+} from '@/lib/gameData/scopedEntityPaths';
 import type { FactionId } from '@/data/types';
 
 import type { ApprovedActionSnapshot } from './approvedActionSnapshot';
@@ -34,10 +38,20 @@ function isFactionId(value: unknown): value is FactionId {
   return value === 'cat' || value === 'mouse';
 }
 
-function isFactionScoped(entityType: PublishableEntityType): boolean {
-  return entityType === 'specialSkills' || entityType === 'achievements';
-}
-
+function readPublishedEntityRouteReadModel<EntityType extends FactionScopedGameDataEntityType>(
+  entityType: EntityType,
+  entityId: string,
+  factionId: FactionId,
+  snapshot?: ApprovedActionSnapshot
+): Promise<PublishedEntityRouteReadModel<EntityType>>;
+function readPublishedEntityRouteReadModel<
+  EntityType extends Exclude<PublishableEntityType, FactionScopedGameDataEntityType>,
+>(
+  entityType: EntityType,
+  entityId: string,
+  factionId?: undefined,
+  snapshot?: ApprovedActionSnapshot
+): Promise<PublishedEntityRouteReadModel<EntityType>>;
 async function readPublishedEntityRouteReadModel<EntityType extends PublishableEntityType>(
   entityType: EntityType,
   entityId: string,
@@ -50,8 +64,11 @@ async function readPublishedEntityRouteReadModel<EntityType extends PublishableE
   const normalizedFactionId = isFactionId(factionId) ? factionId : null;
   let data: PublishedGameDataEntityByType[EntityType] | null = null;
 
-  if (normalizedEntityId && (!isFactionScoped(entityType) || normalizedFactionId)) {
-    if (entityType === 'specialSkills' || entityType === 'achievements') {
+  if (
+    normalizedEntityId &&
+    (!isFactionScopedGameDataEntityType(entityType) || normalizedFactionId)
+  ) {
+    if (isFactionScopedGameDataEntityType(entityType)) {
       const factionRoot = domain.data as unknown as Readonly<
         Record<FactionId, Readonly<Record<string, unknown>>>
       >;
@@ -71,7 +88,7 @@ async function readPublishedEntityRouteReadModel<EntityType extends PublishableE
   if (
     normalizedEntityId &&
     hasPublishedEntityHistory(entityType) &&
-    (!isFactionScoped(entityType) || normalizedFactionId)
+    (!isFactionScopedGameDataEntityType(entityType) || normalizedFactionId)
   ) {
     const characterRoot =
       entityType === 'characters'

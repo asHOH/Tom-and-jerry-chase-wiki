@@ -23,6 +23,14 @@ test('sync reads the actor from the environment, allows an explicit override, an
     assert.equal(parseArgs([...args, `--actor-id=${override}`]).actorId, override);
     assert.throws(() => parseArgs([...args, '--actor-id=invalid']), { code: 'invalid_actor_id' });
     assert.throws(() => parseArgs(args.slice(0, -1)), { code: 'confirmation_required' });
+    assert.throws(() => parseArgs([...args, '--confirm=wrong']), { code: 'confirmation_required' });
+    assert.throws(() => parseArgs([...args, '--expected-supabase-host=']), {
+      code: 'expected_supabase_host_required',
+    });
+    assert.throws(() => parseArgs([...args, '--mode=post-check', '--expected-supabase-host=']), {
+      code: 'post_check_argument_missing',
+    });
+    assert.equal(parseArgs(args.filter((arg) => !arg.startsWith('--mode='))).mode, 'check');
     for (const value of ['', 'invalid']) {
       process.env.GAME_DATA_COMPACTION_ACTOR_ID = value;
       assert.throws(() => parseArgs(args), { code: 'invalid_actor_id' });
@@ -36,6 +44,37 @@ test('sync reads the actor from the environment, allows an explicit override, an
     if (previous === undefined) delete process.env.GAME_DATA_COMPACTION_ACTOR_ID;
     else process.env.GAME_DATA_COMPACTION_ACTOR_ID = previous;
   }
+});
+
+test('the cutover CLI rejects a mismatched target before preflight or mutation', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      'scripts/cutover-game-data-compaction.mjs',
+      '--manifest=outside-tmp.json',
+      '--patched-ref=HEAD',
+      '--production-origin=https://example.invalid',
+      '--mode=sync',
+      '--actor-id=00000000-0000-4000-8000-000000000001',
+      '--confirm=SYNC_APPROVED_COMPACTION_BATCH',
+      '--expected-supabase-host=example.supabase.co',
+    ],
+    {
+      cwd: fileURLToPath(new URL('../..', import.meta.url)),
+      encoding: 'utf8',
+      windowsHide: true,
+      env: { ...process.env, NEXT_PUBLIC_SUPABASE_URL: 'http://127.0.0.1:1' },
+    }
+  );
+  assert.ifError(result.error);
+  assert.equal(result.status, 1);
+  assert.deepEqual(JSON.parse(result.stderr), {
+    error: {
+      code: 'supabase_host_mismatch',
+      expectedSupabaseHost: 'example.supabase.co',
+      actualSupabaseHost: '127.0.0.1:1',
+    },
+  });
 });
 
 test('cutover forwards sanitized verifier causes and discards unstructured child errors', () => {

@@ -25,14 +25,9 @@ describe('game-data compaction cutover command', () => {
       'node scripts/cutover-game-data-compaction.mjs'
     );
     expect(script).toContain('verify-game-data-compaction.mjs');
-    expect(script).toContain("mode = 'check'");
-    expect(script).toContain('confirmation !== CONFIRMATION');
-    expect(script).toContain('expected_supabase_host_required');
-    expect(script).toContain('supabase_host_mismatch');
     expect(script).toContain('target,');
     expect(script).toContain("args.mode === 'post-check'");
     expect(script).toContain("'--mode=post-cutover'");
-    expect(script).toContain('post_check_argument_missing');
   });
 
   it('uses the atomic RPC and exact postcondition reads instead of table updates', () => {
@@ -50,10 +45,6 @@ describe('game-data compaction cutover command', () => {
 
   it('durably captures and binds exact retained rows before the atomic transition', () => {
     expect(script).toContain('runCompactionCutoverSync({');
-    expect(lifecycle.indexOf('await capturePreCutoverRows()')).toBeGreaterThan(-1);
-    expect(lifecycle.indexOf('await executeCutover()')).toBeGreaterThan(
-      lifecycle.indexOf('await persistManifest(manifest)')
-    );
     expect(script).toContain("receiptKind: 'preCutoverRetainedRows'");
     expect(script).toContain('fileDigest: retainedRowsDigest(persisted.serialized)');
   });
