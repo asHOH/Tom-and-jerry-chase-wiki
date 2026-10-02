@@ -131,7 +131,7 @@ export async function POST(
 
     if (recordData?.created_by) {
       try {
-        const reasonSuffix = reason ? `原因：${reason}` : '';
+        const reasonSuffix = reason ? `，并有审核员留言：${reason}` : '';
         const details = getGameDataNotificationDetails([recordData]);
         const submissionHref = await getPublicUserSubmissionHref(recordData.created_by, actionId);
         await publishNotification({
@@ -139,7 +139,7 @@ export async function POST(
           kind: 'game_data_action_rejected',
           decisionOrigin: 'manual',
           title: '游戏数据改动未通过审核',
-          body: `您的${details.summary}修改未通过审核。${reasonSuffix}`,
+          body: `您的${details.summary}修改未通过审核${reasonSuffix}。`,
           ...(submissionHref ? { href: submissionHref } : {}),
           sourceIds: [actionId],
           dedupeKey: `game-data-action:${actionId}:rejected`,

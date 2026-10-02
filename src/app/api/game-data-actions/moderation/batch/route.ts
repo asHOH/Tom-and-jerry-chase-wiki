@@ -122,7 +122,7 @@ export async function POST(request: Request) {
     const sourceIds = group.map((record) => record.id).sort();
     const details = getGameDataNotificationDetails(group);
     const approved = action === 'approve';
-    const reasonSuffix = !approved && reason ? `原因：${reason}` : '';
+    const reasonSuffix = !approved && reason ? `，并有审核员留言：${reason}` : '';
     let submissionHref: string | undefined;
     if (!approved || !details.href) {
       try {
@@ -140,7 +140,7 @@ export async function POST(request: Request) {
         kind: approved ? 'game_data_action_approved' : 'game_data_action_rejected',
         decisionOrigin: 'manual',
         title: approved ? '游戏数据改动批量审核通过' : '游戏数据改动批量审核未通过',
-        body: `您提交的 ${group.length} 条${details.summary}改动${approved ? '已通过审核' : '未通过审核'}。${reasonSuffix}`,
+        body: `您提交的 ${group.length} 条${details.summary}改动${approved ? '已通过审核' : '未通过审核'}${reasonSuffix}。`,
         ...(notificationHref ? { href: notificationHref } : {}),
         sourceIds,
         dedupeKey: `game-data-actions:batch:${action}:${sourceIds.join(',')}`,
