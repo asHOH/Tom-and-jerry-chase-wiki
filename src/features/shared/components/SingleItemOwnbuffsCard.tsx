@@ -15,6 +15,10 @@ interface State {
   compareMode: boolean;
 }
 
+type BuffGroupMembers = Map<string, string[]>;
+
+const BUFF_GROUP_PATTERN = /分组(\d+(?:\s*[,，、]\s*\d+)*)/g;
+
 function extractFullName(description: string): string {
   const match = description.match(/^“([^”]+)”/);
   if (!match) return '';
@@ -37,6 +41,48 @@ function getBaseName(fullName: string): string {
     base = base.slice(0, -1);
   }
   return base;
+}
+
+function getBuffGroupIds(description: string): string[] {
+  return Array.from(description.matchAll(BUFF_GROUP_PATTERN)).flatMap((match) =>
+    (match[1] ?? '').split(/\s*[,，、]\s*/).filter(Boolean)
+  );
+}
+
+function getBuffGroupMembers(buffs: { id: string; description: string }[]): BuffGroupMembers {
+  const membersByGroup: BuffGroupMembers = new Map();
+
+  for (const buff of buffs) {
+    const name = extractFullName(buff.description);
+    if (!name) continue;
+
+    for (const groupId of getBuffGroupIds(buff.description)) {
+      const members = membersByGroup.get(groupId) ?? [];
+      if (!members.includes(name)) members.push(name);
+      membersByGroup.set(groupId, members);
+    }
+  }
+
+  return membersByGroup;
+}
+
+function addBuffGroupTooltips(description: string, membersByGroup: BuffGroupMembers): string {
+  return description.replace(BUFF_GROUP_PATTERN, (original, groupList: string) => {
+    const groupIds = groupList.split(/\s*[,，、]\s*/).filter(Boolean);
+    const renderedGroups = groupIds.map((groupId) => {
+      const members = membersByGroup.get(groupId);
+      if (!members?.length) return `分组${groupId}`;
+
+      const tooltip = [
+        `本技能中属于分组${groupId}的状态（${members.length}个）：`,
+        ...members.map((name) => `· ${name}`),
+      ].join('\n');
+
+      return `[分组${groupId}](${tooltip})`;
+    });
+
+    return renderedGroups.length > 0 ? renderedGroups.join('、') : original;
+  });
 }
 
 export default class SingleItemOwnbuffsCard extends React.Component<
@@ -69,6 +115,8 @@ export default class SingleItemOwnbuffsCard extends React.Component<
     const { singleItem } = this.props;
     const { sortMode, compareMode } = this.state;
     const ownedBuffs = getSingleItemOwnedBuffs(singleItem);
+    const buffGroupMembers =
+      singleItem.type === 'skill' ? getBuffGroupMembers(ownedBuffs) : undefined;
 
     if (ownedBuffs.length === 0) {
       return (
@@ -190,7 +238,14 @@ export default class SingleItemOwnbuffsCard extends React.Component<
 
         {displayBuffs.map(({ id, description }) => (
           <div key={id} id={`buff-${id}`} className='scroll-mt-24'>
-            <TextWithHoverTooltips text={' · ' + description} />
+            <TextWithHoverTooltips
+              text={
+                ' · ' +
+                (buffGroupMembers
+                  ? addBuffGroupTooltips(description, buffGroupMembers)
+                  : description)
+              }
+            />
           </div>
         ))}
       </>
