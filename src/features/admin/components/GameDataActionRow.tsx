@@ -66,6 +66,11 @@ export default function GameDataActionRow({
 }: GameDataActionRowProps) {
   const statusMeta =
     ACTION_STATUS_META[submission.status as ActionStatus] ?? ACTION_STATUS_META.pending;
+  const isAutoApproved =
+    submission.status !== 'pending' &&
+    !!submission.reviewed_at &&
+    submission.created_by === submission.reviewed_by &&
+    submission.created_at === submission.reviewed_at;
   return (
     <Card className='rounded-md'>
       <div className='flex items-start gap-3'>
@@ -124,36 +129,40 @@ export default function GameDataActionRow({
                   invalidFallback: submission.created_at,
                 })}
               </span>
-              {submission.status !== 'pending' &&
-                submission.reviewed_at &&
-                submission.created_by !== submission.reviewed_by && (
-                  <>
-                    <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
-                    <span>
-                      {submission.reviewed_by_nickname && submission.reviewed_by ? (
-                        <>
-                          审核：
-                          <Link
-                            href={`/users/${encodeURIComponent(submission.reviewed_by_nickname)}`}
-                            target='_blank'
-                            rel='noopener noreferrer'
-                            className='font-medium text-blue-600 hover:underline dark:text-blue-400'
-                          >
-                            {submission.reviewed_by_nickname}
-                          </Link>
-                        </>
-                      ) : (
-                        '已审核'
-                      )}
-                    </span>
-                    <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
-                    <span>
-                      {formatCompactDateTime(submission.reviewed_at, {
-                        invalidFallback: submission.reviewed_at,
-                      })}
-                    </span>
-                  </>
-                )}
+              {isAutoApproved && (
+                <>
+                  <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
+                  <span>由拥有批准权限的用户发布，并在发布时选择自行批准</span>
+                </>
+              )}
+              {submission.status !== 'pending' && submission.reviewed_at && !isAutoApproved && (
+                <>
+                  <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
+                  <span>
+                    {submission.reviewed_by_nickname && submission.reviewed_by ? (
+                      <>
+                        审核：
+                        <Link
+                          href={`/users/${encodeURIComponent(submission.reviewed_by_nickname)}`}
+                          target='_blank'
+                          rel='noopener noreferrer'
+                          className='font-medium text-blue-600 hover:underline dark:text-blue-400'
+                        >
+                          {submission.reviewed_by_nickname}
+                        </Link>
+                      </>
+                    ) : (
+                      '已审核'
+                    )}
+                  </span>
+                  <span className='mx-1 text-gray-300 dark:text-slate-600'>·</span>
+                  <span>
+                    {formatCompactDateTime(submission.reviewed_at, {
+                      invalidFallback: submission.reviewed_at,
+                    })}
+                  </span>
+                </>
+              )}
             </div>
 
             <div className='flex items-center gap-2'>

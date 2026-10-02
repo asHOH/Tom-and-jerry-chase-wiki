@@ -355,17 +355,17 @@ describe('GameDataActionModerationPanel', () => {
     );
   });
 
-  it('hides review details when the submitter reviewed their own action', () => {
+  it('hides self-review details only when the submit and review times match', () => {
     const selfReviewedAction: PendingGameDataAction = {
       ...sampleAction,
       status: 'approved',
-      reviewed_at: '2026-05-11T07:30:00.000Z',
+      reviewed_at: sampleAction.created_at,
       reviewed_by: sampleAction.created_by,
       reviewed_by_nickname: 'Alice',
       is_public: true,
     };
 
-    render(
+    const { rerender } = render(
       <GameDataActionModerationPanel
         {...filterProps}
         pendingActions={[selfReviewedAction]}
@@ -377,7 +377,23 @@ describe('GameDataActionModerationPanel', () => {
 
     expect(screen.getByRole('link', { name: 'Alice' })).toHaveAttribute('href', '/users/Alice');
     expect(screen.queryByText('审核：')).not.toBeInTheDocument();
-    expect(screen.queryByText('2026-05-11', { exact: false })).not.toBeInTheDocument();
+    expect(
+      screen.getByText('由拥有批准权限的用户发布，并在发布时选择自行批准')
+    ).toBeInTheDocument();
+
+    rerender(
+      <GameDataActionModerationPanel
+        {...filterProps}
+        pendingActions={[{ ...selfReviewedAction, reviewed_at: '2026-05-11T07:30:00.000Z' }]}
+        mutatePendingActions={jest.fn()}
+      />
+    );
+
+    expect(screen.getAllByRole('link', { name: 'Alice' })).toHaveLength(2);
+    expect(screen.getByText('审核：')).toBeInTheDocument();
+    expect(
+      screen.queryByText('由拥有批准权限的用户发布，并在发布时选择自行批准')
+    ).not.toBeInTheDocument();
   });
 
   it('distinguishes public pending rows and exposes approve plus revoke instead of reject', () => {
