@@ -5,7 +5,7 @@ CURRENT_BRANCH=$(git branch --show-current)
 MAIN_BRANCHES="main|master|production|prod"
 
 # Choose run mode
-if [ "$FORCE_FULL_PREPUSH" = "true" ] || echo "$CURRENT_BRANCH" | grep -qE "^($MAIN_BRANCHES)$"; then
+if [ "$FORCE_FULL_PREPUSH" = "true" ] || { [ "$FORCE_FAST_PREPUSH" != "true" ] && echo "$CURRENT_BRANCH" | grep -qE "^($MAIN_BRANCHES)$"; }; then
   if [ "$FORCE_FULL_PREPUSH" = "true" ]; then
     echo "[pre-push] Running FULL checks (forced via FORCE_FULL_PREPUSH)..."
   else
