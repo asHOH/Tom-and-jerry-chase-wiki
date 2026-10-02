@@ -22,7 +22,7 @@ export default function DiscussEditButtons({
         <DiscussButton compact={compact} />
       ) : (
         <>
-          <DiscussButton compact={compact} className='rounded-r-none' />
+          <DiscussButton compact={compact} className='not-last:rounded-r-none' />
           <EditButton compact={compact} className='-ml-px rounded-l-none' />
         </>
       )}

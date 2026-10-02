@@ -32,7 +32,7 @@ describe('DiscussEditButtons', () => {
     const discussButton = screen.getByRole('link', { name: '讨论' });
     const editButton = screen.getByRole('button', { name: '编辑' });
 
-    expect(discussButton).toHaveAttribute('data-class-name', 'rounded-r-none');
+    expect(discussButton).toHaveAttribute('data-class-name', 'not-last:rounded-r-none');
     expect(discussButton).toHaveAttribute('data-compact', 'true');
     expect(editButton).toHaveAttribute('data-class-name', '-ml-px rounded-l-none');
     expect(editButton).toHaveAttribute('data-compact', 'true');
