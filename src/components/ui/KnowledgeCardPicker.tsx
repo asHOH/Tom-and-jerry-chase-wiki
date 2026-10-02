@@ -1,12 +1,18 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import isEqual from 'lodash-es/isEqual';
 
 import { cn } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { Card, FactionId } from '@/data/types';
 import { catKnowledgeCards } from '@/features/knowledge-cards/data/catKnowledgeCards';
 import { mouseKnowledgeCards } from '@/features/knowledge-cards/data/mouseKnowledgeCards';
+import {
+  getKnowledgeCardGroupCostRange,
+  isKnowledgeCardGroupCostValid,
+  KNOWLEDGE_CARD_GROUP_COST_MESSAGE,
+} from '@/features/knowledge-cards/utils/groupCostValidation';
 import { BaseDialog } from '@/components/ui/BaseDialog';
 import Button from '@/components/ui/Button';
 import Image from '@/components/Image';
@@ -20,6 +26,7 @@ interface KnowledgeCardPickerProps {
   factionId: FactionId;
   initialSelectedCards: readonly string[];
   onSwitchToAdvancedEditor?: (selectedCards: readonly string[]) => void;
+  validateGroupCost?: boolean;
 }
 
 const KnowledgeCardPicker: React.FC<KnowledgeCardPickerProps> = ({
@@ -29,6 +36,7 @@ const KnowledgeCardPicker: React.FC<KnowledgeCardPickerProps> = ({
   factionId,
   initialSelectedCards,
   onSwitchToAdvancedEditor,
+  validateGroupCost = true,
 }) => {
   const [selectedCards, setSelectedCards] = useState<readonly string[]>(initialSelectedCards);
   const isMobile = useMobile();
@@ -47,6 +55,7 @@ const KnowledgeCardPicker: React.FC<KnowledgeCardPickerProps> = ({
   };
 
   const handleSave = () => {
+    if (isSaveBlocked) return;
     onSave(selectedCards);
     onClose();
   };
@@ -59,6 +68,10 @@ const KnowledgeCardPicker: React.FC<KnowledgeCardPickerProps> = ({
   };
 
   const totalCost = selectedCards.reduce((sum, cardId) => sum + getCardCost(cardId), 0);
+  const isSaveBlocked =
+    validateGroupCost &&
+    !isEqual(selectedCards, initialSelectedCards) &&
+    !isKnowledgeCardGroupCostValid(getKnowledgeCardGroupCostRange(selectedCards, getCardCost));
 
   return (
     <BaseDialog
@@ -118,6 +131,11 @@ const KnowledgeCardPicker: React.FC<KnowledgeCardPickerProps> = ({
           {totalCost === 21 && (
             <span className='ml-2 text-amber-500 dark:text-amber-400'>(需开启+1上限)</span>
           )}
+          {isSaveBlocked && (
+            <p role='alert' className='mt-1 text-sm text-red-500 dark:text-red-400'>
+              {KNOWLEDGE_CARD_GROUP_COST_MESSAGE}
+            </p>
+          )}
         </div>
         <div className='flex w-full items-center gap-2 sm:w-auto'>
           {onSwitchToAdvancedEditor && (
@@ -132,7 +150,7 @@ const KnowledgeCardPicker: React.FC<KnowledgeCardPickerProps> = ({
           <Button onClick={onClose} variant='secondary' className='mr-2 flex-1 sm:flex-none'>
             取消
           </Button>
-          <Button onClick={handleSave} className='flex-1 sm:flex-none'>
+          <Button onClick={handleSave} disabled={isSaveBlocked} className='flex-1 sm:flex-none'>
             保存
           </Button>
         </div>

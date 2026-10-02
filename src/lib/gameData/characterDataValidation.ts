@@ -137,7 +137,12 @@ export class InvalidGameDataValueError extends Error {
   constructor(
     readonly detail: {
       path: string;
-      reason?: 'unsupported_field' | 'new_character' | 'relation_conflict' | 'no_changes';
+      reason?:
+        | 'unsupported_field'
+        | 'new_character'
+        | 'relation_conflict'
+        | 'no_changes'
+        | 'knowledge_card_cost';
     }
   ) {
     super('invalid_game_data');

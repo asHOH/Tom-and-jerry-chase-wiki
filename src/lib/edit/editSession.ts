@@ -44,6 +44,10 @@ import {
   type GameDataSubmitOutcome,
 } from '@/lib/gameData/submitMode';
 import type { FactionId } from '@/data/types';
+import {
+  findInvalidModifiedKnowledgeCardGroup,
+  KNOWLEDGE_CARD_GROUP_COST_MESSAGE,
+} from '@/features/knowledge-cards/utils/groupCostValidation';
 
 type FactionScopedEditEntityType = Extract<PublishableEntityType, 'achievements' | 'specialSkills'>;
 
@@ -425,6 +429,23 @@ export function createEditSession(
         clearPublishOperation(publishScope);
         notifyDrafts();
         return { status: 'empty' };
+      }
+
+      if (entityType === 'characters') {
+        const invalidGroup = findInvalidModifiedKnowledgeCardGroup(
+          baseline.characters,
+          snapshot(stores.characters),
+          entries
+            .flatMap((entry) => (Array.isArray(entry) ? entry : [entry]))
+            .map((action) => action.path),
+          (cardId) => baseline.cards[cardId.slice(cardId.indexOf('-') + 1)]?.cost ?? 0
+        );
+        if (invalidGroup) {
+          return {
+            status: 'failed',
+            error: new Error(`${KNOWLEDGE_CARD_GROUP_COST_MESSAGE} (${invalidGroup})`),
+          };
+        }
       }
 
       const endpoint =

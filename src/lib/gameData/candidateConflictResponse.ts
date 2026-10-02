@@ -123,6 +123,8 @@ export function invalidGameDataMessage(error: TrustedGameDataMutationError): str
   if (reason === 'no_changes')
     return `字段「${path}」所在的改动没有实际变化，未保存。请移除无变化的改动后重新提交。`;
   if (reason === 'unsupported_field') return `不支持字段「${path}」，请修正后重新提交。`;
+  if (reason === 'knowledge_card_cost')
+    return `字段「${path}」对应的知识卡组每种组合的总知识量必须为18-21，请修正后重新提交。`;
   return `改动中的字段「${path}」缺失或类型不正确，请修正后重新提交。`;
 }
 

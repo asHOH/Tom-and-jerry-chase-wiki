@@ -1,11 +1,16 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import isEqual from 'lodash-es/isEqual';
 
 import { cn } from '@/lib/design';
 import { useMobile } from '@/hooks/useMediaQuery';
 import type { CardGroup, CardGroupType, FactionId } from '@/data/types';
-import { calculateMaxCostForTree } from '@/features/knowledge-cards/utils/sections';
+import {
+  getKnowledgeCardGroupCostRange,
+  isKnowledgeCardGroupCostValid,
+  KNOWLEDGE_CARD_GROUP_COST_MESSAGE,
+} from '@/features/knowledge-cards/utils/groupCostValidation';
 import {
   appendToPath,
   changeGroupType,
@@ -89,11 +94,16 @@ export default function AdvancedCardGroupEditor({
   };
 
   const handleSave = () => {
+    if (isSaveBlocked) return;
     onSave(cards);
     onClose();
   };
 
-  const maxCost = useMemo(() => calculateMaxCostForTree(cards, getCardCost), [cards, getCardCost]);
+  const costRange = useMemo(
+    () => getKnowledgeCardGroupCostRange(cards, getCardCost),
+    [cards, getCardCost]
+  );
+  const isSaveBlocked = !isEqual(cards, initialCards) && !isKnowledgeCardGroupCostValid(costRange);
 
   return (
     <>
@@ -135,21 +145,35 @@ export default function AdvancedCardGroupEditor({
 
         {/* Footer */}
         <div className='border-border flex-none border-t p-4 sm:p-6'>
-          <div className='flex items-center justify-between'>
+          <div className='flex flex-col items-center justify-between gap-4 sm:flex-row'>
             <div className='text-sm text-gray-600 dark:text-gray-400'>
-              <span className='font-bold'>当前最大知识量: {maxCost}</span>
-              {maxCost > 21 && (
+              <span className='font-bold'>
+                当前知识量:{' '}
+                {Number.isFinite(costRange.min) && Number.isFinite(costRange.max)
+                  ? costRange.min === costRange.max
+                    ? costRange.max
+                    : `${costRange.min}-${costRange.max}`
+                  : '无有效组合'}
+              </span>
+              {costRange.max > 21 && (
                 <span className='ml-2 text-red-500 dark:text-red-400'>(超出限制!)</span>
               )}
-              {maxCost === 21 && (
+              {costRange.max === 21 && (
                 <span className='ml-2 text-amber-500 dark:text-amber-400'>(需开启+1上限)</span>
               )}
+              {isSaveBlocked && (
+                <p role='alert' className='mt-1 text-red-500 dark:text-red-400'>
+                  {KNOWLEDGE_CARD_GROUP_COST_MESSAGE}
+                </p>
+              )}
             </div>
-            <div className='flex gap-2'>
+            <div className='flex w-full shrink-0 justify-end gap-2 sm:w-auto'>
               <Button onClick={onClose} variant='secondary'>
                 取消
               </Button>
-              <Button onClick={handleSave}>保存</Button>
+              <Button onClick={handleSave} disabled={isSaveBlocked}>
+                保存
+              </Button>
             </div>
           </div>
         </div>
@@ -165,6 +189,7 @@ export default function AdvancedCardGroupEditor({
         onSave={handleSubPickerSave}
         factionId={factionId}
         initialSelectedCards={[]}
+        validateGroupCost={false}
       />
     </>
   );

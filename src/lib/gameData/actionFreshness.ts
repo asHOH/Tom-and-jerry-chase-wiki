@@ -2,6 +2,9 @@ import 'server-only';
 
 import isEqual from 'lodash-es/isEqual';
 
+import type { CharacterGameData } from '@/lib/dataManager';
+import { findInvalidModifiedKnowledgeCardGroup } from '@/features/knowledge-cards/utils/groupCostValidation';
+
 import { parseActionPath, resolveArraySegment } from './actionPath';
 import type { ApprovedCandidateReplayRow } from './approvedCandidateReplay';
 import { InvalidGameDataValueError, validateCharacterData } from './characterDataValidation';
@@ -40,6 +43,7 @@ export function validateActionFreshness(
   );
   const targets = new Map<string, Record<string, unknown>>();
   const checkedContainers = new Map<string, string[]>();
+  let originalCharacters: CharacterGameData | undefined;
 
   for (const row of proposedRows) {
     if (!isPublishableEntityType(row.entityType)) throw new TypeError('Unknown entity type');
@@ -54,6 +58,9 @@ export function validateActionFreshness(
       ) as Record<string, unknown>;
       targets.set(row.entityType, target);
       checkedContainers.set(row.entityType, []);
+      if (row.entityType === 'characters') {
+        originalCharacters = structuredClone(target) as CharacterGameData;
+      }
     }
 
     const roots = collectTouchedRootKeys(row.actions);
@@ -162,11 +169,19 @@ export function validateActionFreshness(
   }
   const characters = targets.get('characters');
   if (characters) {
-    validateCharacterData(
-      characters,
-      proposedRows
-        .filter((row) => row.entityType === 'characters')
-        .flatMap((row) => row.actions.map((action) => action.path))
+    const actionPaths = proposedRows
+      .filter((row) => row.entityType === 'characters')
+      .flatMap((row) => row.actions.map((action) => action.path));
+    validateCharacterData(characters, actionPaths);
+    const cards = selectPublishedGameData('cards', getCanonicalGameData('cards'), snapshot);
+    const invalidGroup = findInvalidModifiedKnowledgeCardGroup(
+      originalCharacters!,
+      characters as CharacterGameData,
+      actionPaths,
+      (cardId) => cards[cardId.slice(cardId.indexOf('-') + 1)]?.cost ?? 0
     );
+    if (invalidGroup) {
+      throw new InvalidGameDataValueError({ path: invalidGroup, reason: 'knowledge_card_cost' });
+    }
   }
 }
