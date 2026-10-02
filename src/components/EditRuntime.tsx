@@ -170,9 +170,9 @@ export default function EditRuntime({
     () => () => {
       const runtime = activeRuntimeRef.current;
       if (!runtime) return;
-      runtime.dispose();
       clearActiveEditSession(runtime);
       activeRuntimeRef.current = null;
+      runtime.dispose();
     },
     []
   );

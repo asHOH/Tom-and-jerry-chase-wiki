@@ -80,7 +80,6 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
   const permissions = usePermissions();
   const { isEditMode: originalIsEditMode, isPreviewMode } = useEditMode();
   const isEditMode = originalIsEditMode && !isPreviewMode;
-  const previousEditMode = useRef(isEditMode);
   const restoredDraftShown = useRef(false);
   const [isPublishing, setIsPublishing] = useState(false);
   const [pendingOverlap, setPendingOverlap] = useState<PendingActionOverlapResponse | null>(null);
@@ -136,13 +135,11 @@ export function usePageEditMode(options: PageEditModeOptions): PageEditModeResul
     [discardDraft, showToast]
   );
 
+  // The toolbar discards before exiting. Leaving edit mode must not mutate a torn-down session.
   useEffect(() => {
-    const wasEditMode = previousEditMode.current;
-    previousEditMode.current = originalIsEditMode;
     if (originalIsEditMode) return;
     restoredDraftShown.current = false;
-    if (wasEditMode) discardChanges({ showToast: false });
-  }, [discardChanges, originalIsEditMode]);
+  }, [originalIsEditMode]);
 
   const refreshAwareness = useCallback(async () => {
     try {
