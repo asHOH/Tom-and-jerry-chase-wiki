@@ -5,6 +5,7 @@ import Link from 'next/link';
 import useSWR from 'swr';
 
 import { usePermissions } from '@/lib/auth/PermissionProvider';
+import { fetchJson } from '@/lib/fetchJson';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useUser } from '@/hooks/useUser';
 import Button from '@/components/ui/Button';
@@ -33,16 +34,6 @@ type ApiComment = {
 };
 
 type CommentsResponse = { comments: ApiComment[] };
-
-const fetcher = (url: string) =>
-  fetch(url).then((res) => {
-    if (!res.ok) {
-      const error = new Error('Failed to fetch') as Error & { status?: number };
-      error.status = res.status;
-      throw error;
-    }
-    return res.json();
-  });
 
 /** Build a nested reply tree from flat comments. */
 function buildReplyTree(comments: ApiComment[], parentId: string, depth: number): CommentNode[] {
@@ -98,7 +89,7 @@ export function TalkPageClient({
     error: loadError,
     mutate,
     isLoading,
-  } = useSWR<CommentsResponse>(targetId ? apiUrl : null, fetcher);
+  } = useSWR<CommentsResponse>(targetId ? apiUrl : null, fetchJson);
 
   const comments = useMemo(() => data?.comments ?? [], [data]);
 

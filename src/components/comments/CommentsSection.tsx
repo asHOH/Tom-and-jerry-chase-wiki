@@ -5,6 +5,7 @@ import useSWR from 'swr';
 
 import { usePermissions } from '@/lib/auth/PermissionProvider';
 import { formatArticleDate } from '@/lib/dateUtils';
+import { fetchJson } from '@/lib/fetchJson';
 import { useMobile } from '@/hooks/useMediaQuery';
 import { useUser } from '@/hooks/useUser';
 import Button from '@/components/ui/Button';
@@ -30,16 +31,6 @@ type ApiComment = {
 type CommentsResponse = { comments: ApiComment[] };
 
 type CreateCommentResponse = { comment?: ApiComment; error?: string };
-
-const fetcher = (url: string) =>
-  fetch(url).then((res) => {
-    if (!res.ok) {
-      const error = new Error('Failed to fetch') as Error & { status?: number };
-      error.status = res.status;
-      throw error;
-    }
-    return res.json();
-  });
 
 function buildTree(comments: ApiComment[]) {
   const byParent = new Map<string | null, ApiComment[]>();
@@ -86,7 +77,7 @@ export default function CommentsSection({
     data,
     error: loadError,
     mutate,
-  } = useSWR<CommentsResponse>(targetId ? apiUrl : null, fetcher);
+  } = useSWR<CommentsResponse>(targetId ? apiUrl : null, fetchJson);
 
   const comments = useMemo(() => data?.comments ?? [], [data?.comments]);
   const tree = useMemo(() => buildTree(comments), [comments]);
