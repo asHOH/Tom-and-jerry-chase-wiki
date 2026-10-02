@@ -31,7 +31,7 @@ export async function getArticleBasicInfo(articleId: string): Promise<ArticleBas
   return cached(
     ['article', articleId, 'basic'],
     async () => {
-      const { data: article } = await supabase
+      const { data: article, error } = await supabase
         .from('articles')
         .select(
           `
@@ -48,7 +48,9 @@ export async function getArticleBasicInfo(articleId: string): Promise<ArticleBas
         )
         .eq('id', articleId)
         .not('current_version_id', 'is', null)
-        .single();
+        .maybeSingle();
+
+      if (error) throw error;
 
       return (article as unknown as ArticleBasicInfo) ?? null;
     },
@@ -80,7 +82,7 @@ export async function getApprovedArticleVersion(args: {
     ['article', articleId, 'approved-version', versionId ?? 'latest'],
     async () => {
       if (!versionId) {
-        const { data: article } = await supabase
+        const { data: article, error } = await supabase
           .from('articles')
           .select(
             `
@@ -94,7 +96,9 @@ export async function getApprovedArticleVersion(args: {
             `
           )
           .eq('id', articleId)
-          .single();
+          .maybeSingle();
+
+        if (error) throw error;
 
         return (article?.current_version as unknown as ArticleApprovedVersion | null) ?? null;
       }
@@ -114,7 +118,8 @@ export async function getApprovedArticleVersion(args: {
         .eq('status', 'approved')
         .eq('id', versionId);
 
-      const { data } = await query.limit(1).single();
+      const { data, error } = await query.maybeSingle();
+      if (error) throw error;
       return (data as unknown as ArticleApprovedVersion) ?? null;
     },
     {
@@ -170,12 +175,10 @@ export async function getArticleDetailData(
           `
         )
         .eq('id', articleId)
-        .single();
+        .maybeSingle();
 
-      if (articleError) {
-        console.error('Error fetching article:', articleError);
-        return { error: 'Article not found' } as const;
-      }
+      if (articleError) throw articleError;
+      if (!article) return { error: 'Article not found' } as const;
 
       const parsedArticle = articleRecordSchema.safeParse(article);
       if (!parsedArticle.success) {
@@ -236,10 +239,7 @@ export type ArticleHistoryData = {
   total_count: number;
 };
 
-export type ArticleHistoryError =
-  | { error: 'Articles disabled' }
-  | { error: 'Article not found' }
-  | { error: 'Failed to fetch article history' };
+export type ArticleHistoryError = { error: 'Articles disabled' } | { error: 'Article not found' };
 
 type ArticleHistoryArticleRow = {
   id: string;
@@ -260,12 +260,10 @@ export async function getArticleHistory(
         .from('articles')
         .select('id, title, categories(name)')
         .eq('id', articleId)
-        .single();
+        .maybeSingle();
 
-      if (articleError || !article) {
-        console.error('Error fetching article:', articleError);
-        return { error: 'Article not found' } as const;
-      }
+      if (articleError) throw articleError;
+      if (!article) return { error: 'Article not found' } as const;
 
       const { data: versions, error: versionsError } = await supabase
         .from('article_versions_public_view')
@@ -284,10 +282,7 @@ export async function getArticleHistory(
         .eq('status', 'approved')
         .order('publication_revision', { ascending: false });
 
-      if (versionsError) {
-        console.error('Error fetching versions:', versionsError);
-        return { error: 'Failed to fetch article history' } as const;
-      }
+      if (versionsError) throw versionsError;
 
       const articleRow = article as unknown as ArticleHistoryArticleRow;
       const historyVersions = (versions ?? []) as ArticleHistoryData['versions'];

@@ -39,7 +39,7 @@ export async function getEmbeddedArticlesForCharacter(
   return cached(
     ['articles', 'character', characterId, 'embedded'],
     async () => {
-      const { data: articleRows } = await supabase
+      const { data: articleRows, error } = await supabase
         .from('articles')
         .select(
           `
@@ -58,6 +58,8 @@ export async function getEmbeddedArticlesForCharacter(
         .eq('character_id', characterId)
         .not('current_version_id', 'is', null)
         .order('created_at', { ascending: false });
+
+      if (error) throw error;
 
       const articles = (articleRows ?? []) as unknown as CharacterArticleMetaRow[];
 

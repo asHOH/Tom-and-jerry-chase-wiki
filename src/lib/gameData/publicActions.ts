@@ -10,7 +10,6 @@ import {
 import { getBuildGameDataArtifactPath } from '@/lib/supabase/buildSourceGuard';
 
 import { normalizePublicActionEntries } from './actionEntries';
-import { PublicActionQueryError } from './publicActionQueries';
 import type { PublicActionRow } from './publicActionsTypes';
 import { getGameDataActionEntityKey } from './scopedEntityPaths';
 import {
@@ -122,16 +121,4 @@ export async function fetchPublicGameDataActionHistory(): Promise<PublicActionRo
     readSyncedRowsForCurrentContext(),
   ]);
   return mergeOrderedActionRows(approvedRows, syncedRows);
-}
-
-export async function fetchPublicGameDataActions(): Promise<PublicActionRow[]> {
-  try {
-    return await readApprovedRowsForCurrentContext();
-  } catch (error) {
-    console.error(
-      'Error fetching public game data actions:',
-      error instanceof PublicActionQueryError ? error.cause : error
-    );
-    return [];
-  }
 }

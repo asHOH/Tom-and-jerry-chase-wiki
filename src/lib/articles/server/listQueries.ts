@@ -69,16 +69,19 @@ export async function getArticlesPageData(): Promise<ArticlesData> {
   return cached(
     ['articles', 'page-data'],
     async () => {
-      const { data: articles } = await supabase
+      const { data: articles, error: articlesError } = await supabase
         .from('articles')
         .select(ARTICLE_FULL_LIST_SELECT)
         .not('current_version_id', 'is', null)
         .order('created_at');
 
-      const { data: categories } = await supabase
+      if (articlesError) throw articlesError;
+
+      const { data: categories, error: categoriesError } = await supabase
         .from('categories')
         .select('id, name')
         .order('name');
+      if (categoriesError) throw categoriesError;
 
       return {
         articles: (articles ?? []) as unknown as ArticleListItem[],
@@ -135,14 +138,8 @@ export async function getArticleListPage({
         { data: categories, error: categoriesError },
       ] = await Promise.all([query, categoriesQuery]);
 
-      if (articlesError) {
-        console.error('Error fetching articles:', articlesError);
-        throw new Error('Failed to fetch articles');
-      }
-
-      if (categoriesError) {
-        console.error('Error fetching categories:', categoriesError);
-      }
+      if (articlesError) throw articlesError;
+      if (categoriesError) throw categoriesError;
 
       const totalCount = count ?? 0;
 

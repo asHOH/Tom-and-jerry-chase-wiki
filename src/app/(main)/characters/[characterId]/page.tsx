@@ -134,9 +134,9 @@ export default async function CharacterPage({
     : getEmbeddedArticlesForCharacter(characterId);
 
   // Keep existing behavior: the first visible embedded article counts as a view.
-  articleContent.then((result) =>
-    result?.[0]?.id ? incrementArticleViewCount(result[0].id) : null
-  );
+  void articleContent
+    .then((result) => (result[0]?.id ? incrementArticleViewCount(result[0].id) : null))
+    .catch((error) => console.error('Error recording embedded article view:', error));
 
   return (
     <>

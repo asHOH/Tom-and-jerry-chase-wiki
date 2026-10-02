@@ -2,6 +2,7 @@ import { supabaseAdmin } from '@/lib/supabase/admin';
 
 import {
   getApprovedArticleVersion,
+  getArticleBasicInfo,
   getArticleDetailData,
   getArticleHistory,
   getArticleListPage,
@@ -83,14 +84,16 @@ function createSingleQuery<T>(result: T) {
     eq: jest.fn(),
     order: jest.fn(),
     limit: jest.fn(),
-    single: jest.fn(),
+    not: jest.fn(),
+    maybeSingle: jest.fn(),
   };
 
   query.select.mockReturnValue(query);
   query.eq.mockReturnValue(query);
   query.order.mockReturnValue(query);
   query.limit.mockReturnValue(query);
-  query.single.mockResolvedValue(result);
+  query.not.mockReturnValue(query);
+  query.maybeSingle.mockResolvedValue(result);
 
   return query;
 }
@@ -114,6 +117,64 @@ describe('serverQueries', () => {
       throw new Error(`Unexpected table: ${table}`);
     });
     mockSupabaseAdmin.rpc.mockResolvedValue({ error: null });
+  });
+
+  it.each([
+    ['basic info', () => getArticleBasicInfo('article-1'), null],
+    ['current version', () => getApprovedArticleVersion({ articleId: 'article-1' }), null],
+    [
+      'specific version',
+      () => getApprovedArticleVersion({ articleId: 'article-1', versionId: 'v1' }),
+      null,
+    ],
+    ['detail', () => getArticleDetailData('article-1'), { error: 'Article not found' }],
+    ['history', () => getArticleHistory('article-1'), { error: 'Article not found' }],
+  ] as const)('distinguishes %s failures from missing rows', async (_name, read, missing) => {
+    const failure = { code: '08006', message: 'database unavailable' };
+    const articleQuery = createSingleQuery({ data: null, error: failure });
+    mockSupabaseAdmin.from.mockReturnValue(articleQuery);
+    await expect(read()).rejects.toBe(failure);
+    articleQuery.maybeSingle.mockResolvedValue({ data: null, error: null });
+    await expect(read()).resolves.toEqual(missing);
+  });
+
+  it.each([
+    ['embedded articles', () => getEmbeddedArticlesForCharacter('tom'), 'articles'],
+    ['full article list', () => getArticlesPageData(), 'articles'],
+    ['full list categories', () => getArticlesPageData(), 'categories'],
+    [
+      'paged articles',
+      () =>
+        getArticleListPage({ page: 1, categoryIds: [], sortBy: 'created_at', sortOrder: 'desc' }),
+      'articles',
+    ],
+    [
+      'paged categories',
+      () =>
+        getArticleListPage({ page: 1, categoryIds: [], sortBy: 'created_at', sortOrder: 'desc' }),
+      'categories',
+    ],
+  ] as const)(
+    'rejects %s outages and permits a later empty result',
+    async (_name, read, failedTable) => {
+      const failure = { message: 'database unavailable' };
+      mockSupabaseAdmin.from.mockImplementation((table: string) =>
+        createThenableQuery({ data: null, error: table === failedTable ? failure : null })
+      );
+      await expect(read()).rejects.toBe(failure);
+      mockSupabaseAdmin.from.mockImplementation(() =>
+        createThenableQuery({ data: [], error: null })
+      );
+      await expect(read()).resolves.toBeDefined();
+    }
+  );
+
+  it('rejects a version-list outage after finding the article', async () => {
+    const failure = { message: 'versions unavailable' };
+    mockSupabaseAdmin.from
+      .mockReturnValueOnce(createSingleQuery({ data: { id: 'article-1' }, error: null }))
+      .mockReturnValueOnce(createThenableQuery({ data: null, error: failure }));
+    await expect(getArticleHistory('article-1')).rejects.toBe(failure);
   });
 
   it('should select article list previews through the explicit current-version pointer', async () => {

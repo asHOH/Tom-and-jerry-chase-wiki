@@ -1,10 +1,5 @@
 import { createApprovedActionArtifactPayload } from './approvedActionArtifact';
-import { PublicActionQueryError } from './publicActionQueries';
-import {
-  fetchPublicGameDataActionHistory,
-  fetchPublicGameDataActions,
-  getEntityUpdateHistory,
-} from './publicActions';
+import { fetchPublicGameDataActionHistory, getEntityUpdateHistory } from './publicActions';
 import type { PublicActionRow } from './publicActionsTypes';
 import { readCachedApprovedActionRows, readCachedSyncedHistoryRows } from './runtimeActionSources';
 import { createSyncedHistoryArtifactPayload } from './syncedHistory';
@@ -69,11 +64,6 @@ describe('public game data actions', () => {
     mockReadSyncedRows.mockResolvedValue(syncedRows);
   });
 
-  it('reads approved rows through the shared runtime acquisition module', async () => {
-    await expect(fetchPublicGameDataActions()).resolves.toEqual(approvedRows);
-    expect(mockReadApprovedRows).toHaveBeenCalledTimes(1);
-  });
-
   it('merges approved rows with the compact synced projection in deterministic order', async () => {
     await expect(fetchPublicGameDataActionHistory()).resolves.toEqual([
       approvedRows[0],
@@ -122,19 +112,6 @@ describe('public game data actions', () => {
     mockReadSyncedRows.mockRejectedValueOnce(failure);
     await expect(getEntityUpdateHistory()).rejects.toBe(failure);
     await expect(fetchPublicGameDataActionHistory()).resolves.toHaveLength(2);
-  });
-
-  it('returns an empty fallback after an acquisition failure and retries later', async () => {
-    const cause = { message: 'temporary source failure' };
-    const failure = new PublicActionQueryError('source failed', cause);
-    mockReadApprovedRows.mockRejectedValueOnce(failure).mockResolvedValueOnce(approvedRows);
-    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => undefined);
-
-    await expect(fetchPublicGameDataActions()).resolves.toEqual([]);
-    await expect(fetchPublicGameDataActions()).resolves.toEqual(approvedRows);
-
-    expect(consoleError).toHaveBeenCalledWith('Error fetching public game data actions:', cause);
-    consoleError.mockRestore();
   });
 
   it('uses both checked build-artifact projections without runtime source reads', async () => {

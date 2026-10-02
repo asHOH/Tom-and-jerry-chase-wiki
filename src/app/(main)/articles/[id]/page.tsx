@@ -85,43 +85,21 @@ export default async function ArticlePage({
 }) {
   const { id } = await params;
   const { version } = await searchParams;
-  let response;
+  await incrementArticleViewCount(id);
+  const basicInfo = await getArticleBasicInfo(id);
+  if (!basicInfo) notFound();
 
-  try {
-    await incrementArticleViewCount(id);
+  const latestVersion = await getApprovedArticleVersion({
+    articleId: id,
+    ...(version ? { versionId: version } : {}),
+  });
+  if (!latestVersion) notFound();
 
-    // Get the article basic info
-    const article = await getArticleBasicInfo(id);
+  const article = { ...basicInfo, latest_version: latestVersion };
 
-    if (!article) {
-      notFound();
-    }
-
-    // Get the latest approved version with editor info
-    const latestVersion = await getApprovedArticleVersion({
-      articleId: id,
-      ...(version ? { versionId: version } : {}),
-    });
-
-    if (!latestVersion) {
-      notFound();
-    }
-
-    // Combine the data
-    response = {
-      article: {
-        ...article,
-        latest_version: latestVersion,
-      },
-    };
-  } catch (err) {
-    console.error('API error:', err);
-    notFound();
-  }
-
-  const sanitizedContent = sanitizeHTML(response.article.latest_version?.content ?? '');
-  const publishedCharacter = response.article.character_id
-    ? (await getPublishedEntityRouteReadModel('characters', response.article.character_id)).data
+  const sanitizedContent = sanitizeHTML(article.latest_version?.content ?? '');
+  const publishedCharacter = article.character_id
+    ? (await getPublishedEntityRouteReadModel('characters', article.character_id)).data
     : null;
   const boundCharacter = publishedCharacter
     ? {
@@ -134,18 +112,17 @@ export default async function ArticlePage({
     <>
       <StructuredData
         data={buildArticleStructuredData({
-          title: response.article.title,
-          author: response.article.users_public_view?.nickname || '匿名',
+          title: article.title,
+          author: article.users_public_view?.nickname || '匿名',
           description:
-            stripHtml(response.article.latest_version?.content ?? null).substring(0, 150) ||
-            response.article.title,
+            stripHtml(article.latest_version?.content ?? null).substring(0, 150) || article.title,
           canonicalUrl: getCanonicalUrl(`/articles/${id}`),
-          dateModified: response.article.latest_version?.created_at ?? response.article.created_at,
-          datePublished: response.article.created_at,
+          dateModified: article.latest_version?.created_at ?? article.created_at,
+          datePublished: article.created_at,
         })}
       />
       <ArticleClient
-        article={response.article}
+        article={article}
         boundCharacter={boundCharacter}
         sanitizedContent={sanitizedContent}
       />
