@@ -1,6 +1,7 @@
 import 'server-only';
 
 import type { PublishableEntityType } from '@/lib/gameData/publishableEntityTypes';
+import { getBuildGameDataArtifactPath } from '@/lib/supabase/buildSourceGuard';
 import {
   mergeWikiHistoryData,
   publicActionsToWikiHistory,
@@ -58,6 +59,7 @@ export type PublishedEntityHistoryEntry = {
 
 export type PublishedEntityHistoryReadModel = {
   revision: PublishedRevision;
+  unavailable: boolean;
   history: PublishedEntityHistoryEntry[];
   relatedHistory: PublishedRelatedEntityHistory[];
 };
@@ -191,10 +193,23 @@ export async function getPublishedEntityHistoryReadModel(
   options: PublishedEntityHistoryOptions = {}
 ): Promise<PublishedEntityHistoryReadModel> {
   const acquiredSnapshot = snapshot ?? (await getApprovedActionSnapshot());
-  const acquiredHistoryRows = historyRows ?? (await fetchPublicGameDataActionHistory());
+  let acquiredHistoryRows = historyRows;
+  let unavailable = false;
+  if (acquiredHistoryRows === undefined) {
+    try {
+      acquiredHistoryRows = await fetchPublicGameDataActionHistory();
+    } catch (error) {
+      // A configured build artifact must be valid; only optional runtime history can degrade.
+      if (getBuildGameDataArtifactPath()) throw error;
+      console.error('Error fetching published entity history:', error);
+      acquiredHistoryRows = [];
+      unavailable = true;
+    }
+  }
   const wikiHistory = selectPublishedWikiHistory(acquiredSnapshot, acquiredHistoryRows, options);
   return {
     revision: createPublishedRevision(PRODUCTION_BUILD_IDENTITY, acquiredSnapshot.actionRevision),
+    unavailable,
     history: selectHistoryEntries(wikiHistory, (item) => matchesScope(item, scope)),
     relatedHistory: (options.relatedItems ?? []).map((item) => ({
       item,

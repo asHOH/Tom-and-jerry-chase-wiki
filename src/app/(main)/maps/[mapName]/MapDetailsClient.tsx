@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic';
 
 import type { MapModeRelationCharacterLookup } from '@/lib/gameData/published/clientProjections';
-import type { PublishedEntityHistoryEntry } from '@/context/PublishedEntityHistoryContext';
+import type { PublishedEntityHistory } from '@/context/PublishedEntityHistoryContext';
 import type { Map } from '@/data/types';
 import EditModePageShell from '@/components/ui/EditModePageShell';
 import { PageLoadingState } from '@/components/ui/LoadingState';
@@ -24,7 +24,7 @@ export default function MapDetailsClient({
   map: Map;
   mapName: string;
   publishedRevision: `v1:${string}`;
-  publishedHistory: readonly PublishedEntityHistoryEntry[];
+  publishedHistory: PublishedEntityHistory;
   fixtureNames: readonly string[];
   modeNames: readonly string[];
   charactersData: MapModeRelationCharacterLookup;

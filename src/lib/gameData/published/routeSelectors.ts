@@ -7,6 +7,7 @@ import {
   isFactionScopedGameDataEntityType,
   type FactionScopedGameDataEntityType,
 } from '@/lib/gameData/scopedEntityPaths';
+import type { PublishedEntityHistory } from '@/context/PublishedEntityHistoryContext';
 import type { FactionId } from '@/data/types';
 
 import type { ApprovedActionSnapshot } from './approvedActionSnapshot';
@@ -26,7 +27,7 @@ export type PublishedEntityRouteReadModel<EntityType extends PublishableEntityTy
   entityId: string;
   factionId: FactionId | null;
   data: PublishedGameDataEntityByType[EntityType] | null;
-  history: readonly PublishedEntityHistoryEntry[];
+  history: PublishedEntityHistory;
   relatedHistory?: readonly PublishedRelatedEntityHistory[];
 }>;
 
@@ -83,6 +84,7 @@ async function readPublishedEntityRouteReadModel<EntityType extends PublishableE
   }
 
   let history: readonly PublishedEntityHistoryEntry[] = [];
+  let historyUnavailable = false;
   let relatedHistory: readonly PublishedRelatedEntityHistory[] = [];
 
   if (
@@ -115,6 +117,7 @@ async function readPublishedEntityRouteReadModel<EntityType extends PublishableE
         : {}
     );
     history = historyReadModel.history;
+    historyUnavailable = historyReadModel.unavailable;
     relatedHistory = historyReadModel.relatedHistory;
   }
 
@@ -124,7 +127,7 @@ async function readPublishedEntityRouteReadModel<EntityType extends PublishableE
     entityId: normalizedEntityId,
     factionId: normalizedFactionId,
     data,
-    history: Object.freeze(history),
+    history: Object.freeze({ entries: Object.freeze(history), unavailable: historyUnavailable }),
     relatedHistory: Object.freeze(relatedHistory),
   });
 }

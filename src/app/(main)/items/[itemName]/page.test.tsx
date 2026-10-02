@@ -46,7 +46,7 @@ describe('item detail published-data characterization', () => {
       entityType: 'items',
       entityId: itemName,
       factionId: null,
-      history: [],
+      history: { entries: [], unavailable: false },
     });
 
     const params = Promise.resolve({ itemName: encodeURIComponent(itemName) });

@@ -14,7 +14,7 @@ import {
 } from '@/context/PendingActionAwarenessContext';
 import {
   PublishedEntityHistoryProvider,
-  type PublishedEntityHistoryEntry,
+  type PublishedEntityHistory,
 } from '@/context/PublishedEntityHistoryContext';
 import { useToast } from '@/context/ToastContext';
 import type { SingleItemTypeName } from '@/data/types';
@@ -27,7 +27,7 @@ type EditModePageShellProps = {
   entityId: string;
   entityName: string;
   publishedRevision?: `v1:${string}`;
-  publishedHistory?: readonly PublishedEntityHistoryEntry[];
+  publishedHistory?: PublishedEntityHistory;
   withPageShell?: boolean;
   children: ReactNode;
 };

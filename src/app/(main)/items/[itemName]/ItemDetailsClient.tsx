@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic';
 
-import type { PublishedEntityHistoryEntry } from '@/context/PublishedEntityHistoryContext';
+import type { PublishedEntityHistory } from '@/context/PublishedEntityHistoryContext';
 import type { Item } from '@/data/types';
 import EditModePageShell from '@/components/ui/EditModePageShell';
 import { PageLoadingState } from '@/components/ui/LoadingState';
@@ -20,7 +20,7 @@ export default function ItemDetailsClient({
   item: Item;
   itemName: string;
   publishedRevision: `v1:${string}`;
-  publishedHistory: readonly PublishedEntityHistoryEntry[];
+  publishedHistory: PublishedEntityHistory;
 }) {
   return (
     <EditModePageShell

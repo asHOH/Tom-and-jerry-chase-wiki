@@ -9,7 +9,10 @@ import {
 } from '@/lib/articles/serverQueries';
 import { GameDataManager } from '@/lib/dataManager';
 import { getContentWritersForCharacter } from '@/lib/gameData/contentWriters';
-import { getPublishedEntityRouteReadModel } from '@/lib/gameData/published/routeSelectors';
+import {
+  getPublishedEntityRouteReadModel,
+  type PublishedEntityRouteReadModel,
+} from '@/lib/gameData/published/routeSelectors';
 import { generatePageMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
 import { SITE_NAME, SITE_URL } from '@/constants/seo';
@@ -40,9 +43,7 @@ export function generateStaticParams() {
 
 function generateStructuredData(
   characterId: string,
-  character: NonNullable<
-    Awaited<ReturnType<typeof getPublishedEntityRouteReadModel<'characters'>>>['data']
-  >,
+  character: NonNullable<PublishedEntityRouteReadModel<'characters'>['data']>,
   contentWriters: readonly string[]
 ): WithContext<Article> {
   const author = contentWriters.map((author) => ({
@@ -98,73 +99,68 @@ export default async function CharacterPage({
 }: {
   params: Promise<{ characterId: string }>;
 }) {
-  try {
-    const resolvedParams = await params;
-    const characterId = decodeURIComponent(resolvedParams.characterId); // Decode the URL-encoded character ID
-    const [readModel, docPage, contentWriterData] = await Promise.all([
-      getPublishedEntityRouteReadModel('characters', characterId),
-      getTutorialPage(characterId),
-      getContentWritersForCharacter(characterId),
-    ]);
-    const character = readModel.data;
+  const resolvedParams = await params;
+  const characterId = decodeURIComponent(resolvedParams.characterId); // Decode the URL-encoded character ID
+  const [readModel, docPage, contentWriterData] = await Promise.all([
+    getPublishedEntityRouteReadModel('characters', characterId),
+    getTutorialPage(characterId),
+    getContentWritersForCharacter(characterId),
+  ]);
+  const character = readModel.data;
 
-    if (!character) {
-      notFound();
-    }
-
-    if (!hasSupabasePublicConfig()) {
-      return (
-        <CharacterDetailsClient
-          character={character}
-          contentWriters={contentWriterData.writers}
-          contentEditors={contentWriterData.editors}
-          publishedRevision={readModel.revision}
-          publishedHistory={readModel.history}
-          {...(readModel.relatedHistory === undefined
-            ? {}
-            : { publishedRelatedHistory: readModel.relatedHistory })}
-        >
-          {docPage ? <CharacterDocs docPage={docPage}></CharacterDocs> : null}
-        </CharacterDetailsClient>
-      );
-    }
-
-    const articleContent = docPage
-      ? Promise.resolve([])
-      : getEmbeddedArticlesForCharacter(characterId);
-
-    // Keep existing behavior: the first visible embedded article counts as a view.
-    articleContent.then((result) =>
-      result?.[0]?.id ? incrementArticleViewCount(result[0].id) : null
-    );
-
-    return (
-      <>
-        <StructuredData
-          data={generateStructuredData(characterId, character, contentWriterData.writers)}
-        />
-        <CharacterDetailsClient
-          character={character}
-          contentWriters={contentWriterData.writers}
-          contentEditors={contentWriterData.editors}
-          publishedRevision={readModel.revision}
-          publishedHistory={readModel.history}
-          {...(readModel.relatedHistory === undefined
-            ? {}
-            : { publishedRelatedHistory: readModel.relatedHistory })}
-        >
-          {docPage ? (
-            <CharacterDocs docPage={docPage}></CharacterDocs>
-          ) : (
-            <Suspense fallback={null}>
-              <CharacterArticle content={articleContent} />
-            </Suspense>
-          )}
-        </CharacterDetailsClient>
-      </>
-    );
-  } catch (error) {
-    console.error('Error rendering character page:', error);
+  if (!character) {
     notFound();
   }
+
+  if (!hasSupabasePublicConfig()) {
+    return (
+      <CharacterDetailsClient
+        character={character}
+        contentWriters={contentWriterData.writers}
+        contentEditors={contentWriterData.editors}
+        publishedRevision={readModel.revision}
+        publishedHistory={readModel.history}
+        {...(readModel.relatedHistory === undefined
+          ? {}
+          : { publishedRelatedHistory: readModel.relatedHistory })}
+      >
+        {docPage ? <CharacterDocs docPage={docPage}></CharacterDocs> : null}
+      </CharacterDetailsClient>
+    );
+  }
+
+  const articleContent = docPage
+    ? Promise.resolve([])
+    : getEmbeddedArticlesForCharacter(characterId);
+
+  // Keep existing behavior: the first visible embedded article counts as a view.
+  articleContent.then((result) =>
+    result?.[0]?.id ? incrementArticleViewCount(result[0].id) : null
+  );
+
+  return (
+    <>
+      <StructuredData
+        data={generateStructuredData(characterId, character, contentWriterData.writers)}
+      />
+      <CharacterDetailsClient
+        character={character}
+        contentWriters={contentWriterData.writers}
+        contentEditors={contentWriterData.editors}
+        publishedRevision={readModel.revision}
+        publishedHistory={readModel.history}
+        {...(readModel.relatedHistory === undefined
+          ? {}
+          : { publishedRelatedHistory: readModel.relatedHistory })}
+      >
+        {docPage ? (
+          <CharacterDocs docPage={docPage}></CharacterDocs>
+        ) : (
+          <Suspense fallback={null}>
+            <CharacterArticle content={articleContent} />
+          </Suspense>
+        )}
+      </CharacterDetailsClient>
+    </>
+  );
 }

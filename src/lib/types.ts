@@ -8,7 +8,7 @@ import type { Snapshot } from 'valtio';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
 import type {
-  PublishedEntityHistoryEntry,
+  PublishedEntityHistory,
   PublishedRelatedEntityHistory,
 } from '@/context/PublishedEntityHistoryContext';
 import { SkillType } from '@/data/types';
@@ -53,7 +53,7 @@ export type CharacterDetailsProps = {
   contentWriters?: readonly string[];
   contentEditors?: readonly ContentEditor[];
   publishedRevision?: `v1:${string}`;
-  publishedHistory?: readonly PublishedEntityHistoryEntry[];
+  publishedHistory?: PublishedEntityHistory;
   publishedRelatedHistory?: readonly PublishedRelatedEntityHistory[];
   children?: ReactNode;
 };

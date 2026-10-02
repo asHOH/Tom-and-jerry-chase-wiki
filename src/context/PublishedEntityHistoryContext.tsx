@@ -11,6 +11,11 @@ export type PublishedEntityHistoryEntry = Readonly<{
   description: string;
 }>;
 
+export type PublishedEntityHistory = Readonly<{
+  entries: readonly PublishedEntityHistoryEntry[];
+  unavailable: boolean;
+}>;
+
 export type PublishedRelatedEntityHistory = Readonly<{
   item: SingleItem;
   history: readonly PublishedEntityHistoryEntry[];
@@ -18,7 +23,7 @@ export type PublishedRelatedEntityHistory = Readonly<{
 
 type PublishedEntityHistoryContextValue = Readonly<{
   item: SingleItem;
-  history: readonly PublishedEntityHistoryEntry[];
+  history: PublishedEntityHistory;
   relatedHistory: readonly PublishedRelatedEntityHistory[];
 }>;
 
@@ -43,7 +48,7 @@ export function PublishedEntityHistoryProvider({
   relatedHistory = [],
 }: {
   children: ReactNode;
-  history: readonly PublishedEntityHistoryEntry[];
+  history: PublishedEntityHistory;
   item: SingleItem;
   relatedHistory?: readonly PublishedRelatedEntityHistory[];
 }) {
@@ -54,15 +59,14 @@ export function PublishedEntityHistoryProvider({
   );
 }
 
-export function usePublishedEntityHistory(
-  item: SingleItem
-): readonly PublishedEntityHistoryEntry[] | null {
+export function usePublishedEntityHistory(item: SingleItem): PublishedEntityHistory | null {
   const publishedHistory = useContext(PublishedEntityHistoryContext);
   if (!publishedHistory) return null;
 
   if (matchesItem(publishedHistory.item, item)) return publishedHistory.history;
 
-  return (
-    publishedHistory.relatedHistory.find((entry) => matchesItem(entry.item, item))?.history ?? null
-  );
+  const related = publishedHistory.relatedHistory.find((entry) => matchesItem(entry.item, item));
+  return related
+    ? { entries: related.history, unavailable: publishedHistory.history.unavailable }
+    : null;
 }

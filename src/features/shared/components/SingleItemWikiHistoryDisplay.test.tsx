@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 
+import { PublishedEntityHistoryProvider } from '@/context/PublishedEntityHistoryContext';
 import { WikiChangeType } from '@/data/types';
 
 import SingleItemWikiHistoryDisplay from './SingleItemWikiHistoryDisplay';
@@ -52,5 +53,53 @@ describe('SingleItemWikiHistoryDisplay', () => {
     expect(
       getHistoryLine(`4.6 - ${WikiChangeType.UPDATE} collaborators`).closest('li')
     ).toHaveClass('grid', 'grid-cols-[3.25rem_auto_1fr]', 'gap-x-1');
+  });
+
+  it.each([false, true])('shows an unavailable notice with preserved entries: %s', (hasEntries) => {
+    const item = { name: '测试条目', type: 'character' } as const;
+    render(
+      <PublishedEntityHistoryProvider
+        item={item}
+        history={{
+          entries: hasEntries ? mockUseWikiHistory() : [],
+          unavailable: true,
+        }}
+      >
+        <SingleItemWikiHistoryDisplay singleItem={item} />
+      </PublishedEntityHistoryProvider>
+    );
+    expect(screen.getByRole('status')).toHaveTextContent(
+      hasEntries ? '部分更新记录未能加载' : '更新记录加载失败'
+    );
+    expect(screen.getByRole('button', { name: '刷新页面' })).toHaveAttribute('type', 'button');
+    if (hasEntries) {
+      fireEvent.click(screen.getByRole('button', { name: '百科历史记录' }));
+      expect(getHistoryLine(`4.6 - ${WikiChangeType.UPDATE} collaborators`)).toBeInTheDocument();
+    } else {
+      expect(screen.queryByRole('button', { name: '百科历史记录' })).not.toBeInTheDocument();
+    }
+  });
+
+  it('shares failure status with related skills without leaking it to unrelated items', () => {
+    mockUseWikiHistory.mockReturnValue([]);
+    const { rerender } = render(
+      <PublishedEntityHistoryProvider
+        item={{ name: '汤姆', type: 'character' }}
+        history={{ entries: [], unavailable: true }}
+        relatedHistory={[{ item: { name: '发怒', type: 'skill' }, history: [] }]}
+      >
+        <SingleItemWikiHistoryDisplay singleItem={{ name: '发怒', type: 'skill' }} />
+      </PublishedEntityHistoryProvider>
+    );
+    expect(screen.getByRole('status')).toHaveTextContent('更新记录加载失败');
+    rerender(
+      <PublishedEntityHistoryProvider
+        item={{ name: '汤姆', type: 'character' }}
+        history={{ entries: [], unavailable: true }}
+      >
+        <SingleItemWikiHistoryDisplay singleItem={{ name: '无关', type: 'item' }} />
+      </PublishedEntityHistoryProvider>
+    );
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
   });
 });

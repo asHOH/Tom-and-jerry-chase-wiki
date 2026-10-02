@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic';
 
 import type { SpecialSkillCharacterLookup } from '@/lib/gameData/published/clientProjections';
-import type { PublishedEntityHistoryEntry } from '@/context/PublishedEntityHistoryContext';
+import type { PublishedEntityHistory } from '@/context/PublishedEntityHistoryContext';
 import type { FactionId, SpecialSkill } from '@/data/types';
 import EditModePageShell from '@/components/ui/EditModePageShell';
 import { PageLoadingState } from '@/components/ui/LoadingState';
@@ -27,7 +27,7 @@ export default function SpecialSkillDetailClient({
   factionId: FactionId;
   skillId: string;
   publishedRevision: `v1:${string}`;
-  publishedHistory: readonly PublishedEntityHistoryEntry[];
+  publishedHistory: PublishedEntityHistory;
   charactersData: SpecialSkillCharacterLookup;
 }) {
   const entityId = `${factionId}.${skillId}`;

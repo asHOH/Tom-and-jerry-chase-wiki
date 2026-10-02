@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 
 import type { MapModeRelationCharacterLookup } from '@/lib/gameData/published/clientProjections';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
-import type { PublishedEntityHistoryEntry } from '@/context/PublishedEntityHistoryContext';
+import type { PublishedEntityHistory } from '@/context/PublishedEntityHistoryContext';
 import type { Mode } from '@/data/types';
 import EditModePageShell from '@/components/ui/EditModePageShell';
 import { PageLoadingState } from '@/components/ui/LoadingState';
@@ -24,7 +24,7 @@ export default function ModeDetailsClient({
   mode: Mode;
   modeName: string;
   publishedRevision: `v1:${string}`;
-  publishedHistory: readonly PublishedEntityHistoryEntry[];
+  publishedHistory: PublishedEntityHistory;
   mapsData: PublishedGameDataByType['maps'];
   charactersData: MapModeRelationCharacterLookup;
 }) {

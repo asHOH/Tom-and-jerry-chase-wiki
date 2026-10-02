@@ -117,6 +117,13 @@ describe('public game data actions', () => {
     });
   });
 
+  it('propagates history acquisition failures instead of caching an empty update map', async () => {
+    const failure = new Error('history unavailable');
+    mockReadSyncedRows.mockRejectedValueOnce(failure);
+    await expect(getEntityUpdateHistory()).rejects.toBe(failure);
+    await expect(fetchPublicGameDataActionHistory()).resolves.toHaveLength(2);
+  });
+
   it('returns an empty fallback after an acquisition failure and retries later', async () => {
     const cause = { message: 'temporary source failure' };
     const failure = new PublicActionQueryError('source failed', cause);

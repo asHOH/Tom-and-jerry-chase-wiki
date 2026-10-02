@@ -117,19 +117,11 @@ export async function getEntityUpdateHistory(): Promise<Map<string, EntityUpdate
 }
 
 export async function fetchPublicGameDataActionHistory(): Promise<PublicActionRow[]> {
-  try {
-    const [approvedRows, syncedRows] = await Promise.all([
-      readApprovedRowsForCurrentContext(),
-      readSyncedRowsForCurrentContext(),
-    ]);
-    return mergeOrderedActionRows(approvedRows, syncedRows);
-  } catch (error) {
-    console.error(
-      'Error fetching public game data action history:',
-      error instanceof PublicActionQueryError ? error.cause : error
-    );
-    return [];
-  }
+  const [approvedRows, syncedRows] = await Promise.all([
+    readApprovedRowsForCurrentContext(),
+    readSyncedRowsForCurrentContext(),
+  ]);
+  return mergeOrderedActionRows(approvedRows, syncedRows);
 }
 
 export async function fetchPublicGameDataActions(): Promise<PublicActionRow[]> {

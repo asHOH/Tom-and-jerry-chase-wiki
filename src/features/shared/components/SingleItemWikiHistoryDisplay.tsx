@@ -27,7 +27,8 @@ export default function SingleItemWikiHistoryDisplay({ singleItem }: { singleIte
   const [isExpanded, setIsExpanded] = useState(false);
   const fallbackHistory = useWikiHistory([singleItem]);
   const publishedHistory = usePublishedEntityHistory(singleItem);
-  const history = publishedHistory ?? fallbackHistory;
+  const history = publishedHistory?.entries ?? fallbackHistory;
+  const unavailable = publishedHistory?.unavailable ?? false;
   const currentYear = new Date().getFullYear();
 
   const sortedHistory = useMemo(() => {
@@ -60,27 +61,42 @@ export default function SingleItemWikiHistoryDisplay({ singleItem }: { singleIte
       .filter(({ count }) => count > 0);
   }, [sortedHistory]);
 
-  if (sortedHistory.length === 0) {
+  if (sortedHistory.length === 0 && !unavailable) {
     return null;
   }
 
   return (
     <div className='mt-2 text-xs text-gray-400 dark:text-gray-500'>
-      <Button
-        variant='unstyled'
-        type='button'
-        onClick={() => setIsExpanded(!isExpanded)}
-        className='flex items-center gap-1 transition-colors hover:text-gray-600 dark:hover:text-gray-300'
-        aria-expanded={isExpanded}
-      >
-        <span>百科历史记录</span>
-        <ChevronDownIcon
-          className={cn(
-            'h-3 w-3 transition-transform motion-reduce:transition-none',
-            isExpanded && 'rotate-180'
-          )}
-        />
-      </Button>
+      {unavailable && (
+        <p role='status' className='mb-1 text-amber-700 dark:text-amber-400'>
+          {sortedHistory.length > 0 ? '部分更新记录未能加载' : '更新记录加载失败'}
+          <Button
+            variant='unstyled'
+            type='button'
+            onClick={() => window.location.reload()}
+            className='ml-2 min-h-8 rounded-sm px-1 underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2'
+          >
+            刷新页面
+          </Button>
+        </p>
+      )}
+      {sortedHistory.length > 0 && (
+        <Button
+          variant='unstyled'
+          type='button'
+          onClick={() => setIsExpanded(!isExpanded)}
+          className='flex items-center gap-1 transition-colors hover:text-gray-600 dark:hover:text-gray-300'
+          aria-expanded={isExpanded}
+        >
+          <span>百科历史记录</span>
+          <ChevronDownIcon
+            className={cn(
+              'h-3 w-3 transition-transform motion-reduce:transition-none',
+              isExpanded && 'rotate-180'
+            )}
+          />
+        </Button>
+      )}
 
       {isExpanded && (
         <ul className='mt-2 space-y-1 pl-2'>

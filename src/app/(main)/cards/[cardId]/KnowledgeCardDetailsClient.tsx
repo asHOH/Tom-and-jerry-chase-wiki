@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 
 import type { KnowledgeCardCharacterLookup } from '@/lib/gameData/published/clientProjections';
 import { KnowledgeCardDetailsProps } from '@/lib/types';
-import type { PublishedEntityHistoryEntry } from '@/context/PublishedEntityHistoryContext';
+import type { PublishedEntityHistory } from '@/context/PublishedEntityHistoryContext';
 import EditModePageShell from '@/components/ui/EditModePageShell';
 import { PageLoadingState } from '@/components/ui/LoadingState';
 
@@ -22,7 +22,7 @@ const KnowledgeCardDetails = dynamic(
 type KnowledgeCardDetailsClientProps = KnowledgeCardDetailsProps & {
   cardId: string;
   publishedRevision: `v1:${string}`;
-  publishedHistory: readonly PublishedEntityHistoryEntry[];
+  publishedHistory: PublishedEntityHistory;
   charactersData: KnowledgeCardCharacterLookup;
 };
 
