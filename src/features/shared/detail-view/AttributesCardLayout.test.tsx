@@ -65,7 +65,7 @@ describe('AttributesCardLayout', () => {
       'px-4',
       'pt-2'
     );
-    expect(attributes).toHaveClass('mx-4', 'py-1');
+    expect(attributes).toHaveClass('mx-4', 'py-3');
   });
 
   it('preserves the compact mobile title padding', () => {

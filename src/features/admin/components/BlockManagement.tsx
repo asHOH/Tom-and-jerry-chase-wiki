@@ -328,7 +328,7 @@ export default function BlockManagement({
       <Card className='dark:text-slate-200'>
         <div className='mb-4 flex items-center justify-between'>
           <h2 className='text-xl font-semibold'>活动封禁</h2>
-          <span className='text-sm text-slate-500'>{activeBlocks.length} 条</span>
+          <span className='text-muted-foreground text-sm'>{activeBlocks.length} 条</span>
         </div>
         <div className='space-y-3'>
           {activeBlocks.map((block) => (
@@ -345,12 +345,12 @@ export default function BlockManagement({
                     ? (block.targetNickname ?? block.targetUserId)
                     : block.targetCidr}
                 </strong>
-                <span className='text-slate-500'>
+                <span className='text-muted-foreground'>
                   {block.isAutoblock ? '自动封禁' : '手动封禁'}
                 </span>
               </div>
               <p className='mt-1'>{block.reason}</p>
-              <p className='mt-1 text-slate-500'>到期：{formatExpiry(block.expiresAt)}</p>
+              <p className='text-muted-foreground mt-1'>到期：{formatExpiry(block.expiresAt)}</p>
               <div className='mt-2 flex gap-2'>
                 {canManage && !block.isAutoblock && (
                   <Button size='sm' variant='secondary' onClick={() => startEdit(block)}>
@@ -366,7 +366,7 @@ export default function BlockManagement({
             </div>
           ))}
           {activeBlocks.length === 0 && (
-            <p className='py-6 text-center text-slate-500'>暂无活动封禁</p>
+            <p className='text-muted-foreground py-6 text-center'>暂无活动封禁</p>
           )}
         </div>
       </Card>
@@ -383,14 +383,14 @@ export default function BlockManagement({
                   ? (block.targetNickname ?? block.targetUserId)
                   : block.targetCidr}
               </span>
-              <span className='text-slate-500'>
+              <span className='text-muted-foreground'>
                 {block.revokedAt ? '已解除' : `已到期：${formatExpiry(block.expiresAt)}`}
               </span>
               <span className='max-w-md text-slate-600 dark:text-slate-300'>{block.reason}</span>
             </div>
           ))}
           {historyBlocks.length === 0 && (
-            <p className='py-6 text-center text-slate-500'>暂无历史记录</p>
+            <p className='text-muted-foreground py-6 text-center'>暂无历史记录</p>
           )}
         </div>
         {logs.length > 0 && (
@@ -398,7 +398,7 @@ export default function BlockManagement({
             <h3 className='mb-2 font-semibold'>审计记录</h3>
             <div className='space-y-2 text-sm'>
               {logs.slice(0, 100).map((log) => (
-                <div key={log.id} className='flex flex-wrap gap-x-3 gap-y-1 text-slate-500'>
+                <div key={log.id} className='text-muted-foreground flex flex-wrap gap-x-3 gap-y-1'>
                   <span>{eventLabels[log.eventType] ?? log.eventType}</span>
                   <span>{formatExpiry(log.createdAt)}</span>
                   <span>{log.actorNickname ?? log.actorId ?? '系统'}</span>

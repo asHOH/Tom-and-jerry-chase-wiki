@@ -171,7 +171,7 @@ export function TalkPageClient({
   }
 
   return (
-    <PageShell width='narrow' className='py-6'>
+    <PageShell width='narrow' className='space-y-6'>
       {/* Page header */}
       <nav className='mb-1'>
         <Link
@@ -183,7 +183,7 @@ export function TalkPageClient({
         </Link>
       </nav>
 
-      <div className='mb-6 flex items-center justify-between'>
+      <div className='mb-6 flex flex-wrap items-start justify-between gap-3'>
         <div>
           <h1 className='text-2xl font-bold text-gray-900 dark:text-gray-100'>
             {entityTitle}

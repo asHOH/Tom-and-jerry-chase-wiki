@@ -48,7 +48,7 @@ export default async function RecentChangesPage({ searchParams }: PageProps) {
   const result = await getRecentChanges(filter, requestedPage);
 
   return (
-    <PageShell width='standard' className='space-y-6 py-6 sm:py-8 dark:text-gray-100'>
+    <PageShell width='standard' className='space-y-6 md:space-y-8'>
       <PageHeader title='最近更改' description={DESCRIPTION} />
 
       <nav aria-label='更改类型筛选' className='flex justify-center gap-2'>
@@ -61,8 +61,8 @@ export default async function RecentChangesPage({ searchParams }: PageProps) {
               aria-current={active ? 'page' : undefined}
               className={
                 active
-                  ? 'rounded-full bg-blue-600 px-4 py-2 text-sm font-medium text-white'
-                  : 'bg-control hover:bg-control-hover rounded-full px-4 py-2 text-sm font-medium text-gray-700 transition-colors dark:text-gray-200'
+                  ? 'rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white'
+                  : 'bg-control hover:bg-control-hover rounded-lg px-4 py-2 text-sm font-medium text-gray-700 transition-colors dark:text-gray-200'
               }
             >
               {option.label}

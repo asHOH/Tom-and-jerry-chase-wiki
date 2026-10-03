@@ -56,16 +56,12 @@
 }
 
 .prose thead {
-  border-bottom: 2px solid #d1d5db;
-}
-
-.dark .prose thead {
-  border-bottom-color: #252a30;
+  border-bottom: 2px solid var(--wiki-border);
 }
 
 .prose td,
 .prose th {
-  border: 1px solid #d1d5db; /* gray-300 */
+  border: 1px solid var(--wiki-border);
   box-sizing: border-box;
   min-width: 1em;
   padding: 0.5em 0.75em;
@@ -73,19 +69,10 @@
   vertical-align: top;
 }
 
-.dark .prose td,
-.dark .prose th {
-  border-color: #4b5563; /* gray-600 */
-}
-
 .prose th {
-  background-color: #f3f4f6; /* gray-100 */
+  background-color: var(--wiki-surface-muted);
   font-weight: 600;
   text-align: left;
-}
-
-.dark .prose th {
-  background-color: #1f2937; /* gray-800 */
 }
 
 .prose :where(.rte-text-left):not(:where([class~='not-prose'] *)) {
@@ -128,8 +115,13 @@
 }
 
 .tableWrapper {
+  max-width: 100%;
   overflow-x: auto;
   margin: 1em 0;
+}
+
+.tableWrapper > table {
+  margin: 0;
 }
 
 /* Auto-numbered headings */

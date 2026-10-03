@@ -14,7 +14,7 @@ describe('FormControls', () => {
       'w-full',
       'rounded-lg',
       'px-3',
-      'py-3',
+      'py-2',
       'md:px-4',
       'bg-surface-sunken'
     );

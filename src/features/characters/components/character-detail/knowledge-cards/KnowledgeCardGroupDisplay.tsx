@@ -217,12 +217,7 @@ const GroupDescriptionBlock = ({
   }
 
   return (
-    <div
-      className={cn(
-        'rounded-lg bg-gray-50 p-2 sm:p-3 dark:bg-slate-700/50',
-        'ml-11 sm:ml-12 md:ml-13 lg:ml-14'
-      )}
-    >
+    <div className={cn('bg-surface-sunken rounded-lg p-3', 'ml-11 sm:ml-12 md:ml-13 lg:ml-14')}>
       <e.div
         path={descriptionPath}
         initialValue={description ?? ''}

@@ -46,7 +46,7 @@ const GAME_BUTTONS = [
 
 export default function GamesPage() {
   return (
-    <PageShell width='wide' className='space-y-2 md:space-y-8 dark:text-slate-200'>
+    <PageShell width='wide' className='space-y-6 md:space-y-8'>
       <PageHeader title='小游戏' description={DESCRIPTION} className='mb-4 md:mb-8' />
 
       <HomePageSection title='游戏列表' buttons={GAME_BUTTONS} />

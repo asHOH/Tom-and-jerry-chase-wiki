@@ -20,9 +20,9 @@ const actionButtonVariants = {
 };
 
 const actionButtonSizes = {
-  sm: 'text-sm px-3 py-2 rounded-md',
-  md: 'text-base px-4 py-2.5 rounded-lg',
-  lg: 'text-lg px-5 py-3 rounded-lg',
+  sm: 'min-h-10 text-sm px-3 py-2 rounded-lg',
+  md: 'min-h-11 text-base px-4 py-2.5 rounded-lg',
+  lg: 'min-h-12 text-lg px-5 py-3 rounded-lg',
 };
 
 export type FilterButtonTone = 'default' | 'blue' | 'green' | 'strongNeutral';
@@ -37,8 +37,8 @@ const filterButtonActiveToneClasses: Record<FilterButtonTone, string> = {
 };
 
 const formControlSizes = {
-  sm: 'px-2 py-2 text-sm rounded-lg',
-  md: 'px-3 py-3 text-lg rounded-lg',
+  sm: 'min-h-10 px-2 py-2 text-sm leading-5 rounded-lg',
+  md: 'min-h-11 px-3 py-2 text-base leading-6 rounded-lg',
 };
 
 const formControlStateClasses = {
@@ -81,7 +81,7 @@ export function getActionButtonClasses(
   options?: { fullWidth?: boolean; loading?: boolean }
 ): string {
   const base =
-    'inline-flex items-center justify-center gap-2 font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 focus-visible:dark:outline-blue-300 disabled:cursor-not-allowed disabled:opacity-60';
+    'inline-flex shrink-0 items-center justify-center gap-2 text-center font-semibold leading-6 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-not-allowed disabled:opacity-60';
   return cn(
     base,
     actionButtonVariants[variant],
@@ -110,7 +110,7 @@ export function getFormControlClasses(options?: {
   const width = (options?.fullWidth ?? true) ? 'w-full' : 'w-auto';
 
   return cn(
-    'bg-surface-sunken border text-gray-900 placeholder-gray-500 transition-all duration-200 focus:ring-2 disabled:cursor-not-allowed disabled:opacity-70 dark:text-gray-100 dark:placeholder-gray-400',
+    'bg-surface-sunken text-foreground placeholder:text-muted-foreground min-w-0 border transition-[border-color,box-shadow] duration-200 focus:ring-2 disabled:cursor-not-allowed disabled:opacity-70 pointer-coarse:text-base',
     width,
     formControlSizes[size],
     state,

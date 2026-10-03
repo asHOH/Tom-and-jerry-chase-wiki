@@ -66,10 +66,10 @@ export default function ActionTile({
   };
 
   const tileClasses = cn(
-    'group overflow-hidden shadow-md transition-all duration-300 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none dark:focus-visible:ring-blue-400',
+    'group min-w-0 overflow-hidden shadow-sm transition-[background-color,color,box-shadow,transform] duration-200 motion-reduce:transform-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none dark:focus-visible:ring-blue-400',
     layout === 'inline'
       ? 'flex items-center rounded-lg'
-      : 'flex flex-col items-center justify-center rounded-md text-center',
+      : 'flex flex-col items-center justify-center rounded-lg text-center',
     sizeClasses[layout][size],
     tone === 'active'
       ? layout === 'inline'
@@ -90,14 +90,14 @@ export default function ActionTile({
   const titleClasses = cn(
     layout === 'inline'
       ? cn('truncate', size === 'sm' ? 'text-xs' : 'text-sm')
-      : cn('font-bold whitespace-nowrap', size === 'sm' ? 'text-xl' : 'text-2xl'),
+      : cn('font-bold wrap-break-word', size === 'sm' ? 'text-xl' : 'text-2xl'),
     allowHoverAccent && 'group-hover:text-white',
     titleClassName
   );
 
   const descriptionClasses = cn(
     'mt-1 text-sm',
-    tone === 'active' ? 'text-blue-700 dark:text-blue-300' : 'text-gray-500 dark:text-gray-400',
+    tone === 'active' ? 'text-blue-700 dark:text-blue-300' : 'text-muted-foreground',
     allowHoverAccent && 'group-hover:text-white',
     descriptionClassName
   );

@@ -4,7 +4,7 @@ import parse, { domToReact, type DOMNode, type HTMLReactParserOptions } from 'ht
 import { getInternalLinkHref } from '@/lib/internalLinkUtils';
 import Link from '@/components/Link';
 
-const parserOptions: HTMLReactParserOptions = {
+const linkParserOptions: HTMLReactParserOptions = {
   replace: (node, index) => {
     if (node.type !== 'tag' || node.name !== 'a') {
       return undefined;
@@ -26,9 +26,22 @@ const parserOptions: HTMLReactParserOptions = {
         {...(className ? { className } : {})}
         {...(title ? { title } : {})}
       >
-        {domToReact(node.children as DOMNode[], parserOptions)}
+        {domToReact(node.children as DOMNode[], linkParserOptions)}
       </Link>
     );
+  },
+};
+
+const parserOptions: HTMLReactParserOptions = {
+  replace: (node, index) => {
+    if (node.type === 'tag' && node.name === 'table') {
+      return (
+        <div className='tableWrapper' role='region' aria-label='表格' tabIndex={0}>
+          {domToReact([node], linkParserOptions)}
+        </div>
+      );
+    }
+    return linkParserOptions.replace?.(node, index);
   },
 };
 

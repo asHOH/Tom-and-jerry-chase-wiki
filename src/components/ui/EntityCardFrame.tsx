@@ -55,7 +55,7 @@ export default function EntityCardFrame({
   const content = (
     <div
       className={cn(
-        'bg-surface text-foreground group flex-1 rounded-lg [&_img]:select-none',
+        'bg-surface text-foreground group min-w-0 flex-1 rounded-lg [&_img]:select-none',
         variant === 'detail' && 'border-border border',
         variantClasses[variant],
         isInteractive &&
@@ -71,7 +71,7 @@ export default function EntityCardFrame({
   return href ? (
     <Link
       aria-label={ariaLabel}
-      className='flex'
+      className='focus-visible:outline-focus flex min-w-0 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2'
       href={href}
       {...(onClick ? { onClick: () => onClick() } : {})}
       preserveEditParam={preserveEditParam}

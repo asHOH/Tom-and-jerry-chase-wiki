@@ -392,7 +392,7 @@ export default function ActorAttributesSection({
               {': '}
               {value}
               {presentation.suffix ? (
-                <span className='shrink-0 text-xs text-gray-400 dark:text-gray-500'>
+                <span className='text-muted-foreground shrink-0 text-xs'>
                   {presentation.suffix}
                 </span>
               ) : null}

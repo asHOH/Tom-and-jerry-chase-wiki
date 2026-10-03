@@ -20,6 +20,8 @@ import PermissionGroupManagement, {
 } from '@/features/admin/components/PermissionGroupManagement';
 import UserManagement from '@/features/admin/components/UserManagement';
 import Button from '@/components/ui/Button';
+import PageShell from '@/components/ui/PageShell';
+import PageTitle from '@/components/ui/PageTitle';
 
 type Category = Database['public']['Tables']['categories']['Row'];
 
@@ -193,15 +195,15 @@ const AdminPanel = () => {
 
   const getTabClassName = (tab: AdminTab) =>
     cn(
-      'border-b-2 px-4 py-2 text-sm font-medium transition-colors',
+      'min-h-11 shrink-0 border-b-2 px-4 py-2 text-sm whitespace-nowrap font-medium transition-colors',
       activeTab === tab
         ? 'border-blue-500 text-blue-600 dark:border-blue-400 dark:text-blue-300'
         : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-slate-400 dark:hover:text-slate-200'
     );
 
   return (
-    <div className='mx-auto max-w-7xl p-6 dark:text-slate-200'>
-      <h1 className='mb-6 text-3xl font-bold text-gray-900 dark:text-gray-100'>管理面板</h1>
+    <PageShell width='maximum' className='px-4 py-6 sm:px-6 lg:px-8'>
+      <PageTitle className='mb-6'>管理面板</PageTitle>
 
       <div className='border-border mb-6 flex overflow-x-auto border-b'>
         {enableUserAccess && (
@@ -321,7 +323,7 @@ const AdminPanel = () => {
           mutateBlocks={mutateBlocks}
         />
       )}
-    </div>
+    </PageShell>
   );
 };
 

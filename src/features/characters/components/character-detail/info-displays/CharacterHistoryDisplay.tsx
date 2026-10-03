@@ -53,7 +53,7 @@ export default function CharacterHistoryDisplay({
   }
 
   return (
-    <div className='mt-2 text-xs text-gray-400 dark:text-gray-500'>
+    <div className='text-muted-foreground mt-2 text-xs'>
       <Button
         variant='unstyled'
         type='button'

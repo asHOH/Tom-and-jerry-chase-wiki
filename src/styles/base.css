@@ -21,6 +21,23 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Anchor targets share the same clearance as the fixed navigation and offline banner. */
+.wiki-anchor,
+.article-content :where(h1, h2, h3, h4, h5, h6)[id] {
+  scroll-margin-top: var(--app-content-offset);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  html,
+  body {
+    transition: none;
+  }
+}
+
 /* Focus styles for elements that do not provide their own Tailwind ring or outline */
 *:focus-visible:not(
     [class*='focus:ring-'],

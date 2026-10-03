@@ -141,8 +141,11 @@ fetch_endpoint() {
 HEALTH_CHECK_MAX_ATTEMPTS=1
 MOCKS
 
-# Inject fakes after real functions are defined, then execute the real entry point.
-sed '/^trap handle_exit EXIT/i source "$TEST_ROOT/mocks.sh"' "$DEPLOY_SCRIPT" | tr -d '\r' > "$TEST_ROOT/deploy.sh"
+# Keep the copied entry point two levels inside the fixture. The deployment script
+# discovers a checkout two levels above itself; a shallow repository-local TMPDIR
+# must never make this harness discover the real maintainer checkout.
+mkdir -p "$TEST_ROOT/runner/entrypoint"
+sed '/^trap handle_exit EXIT/i source "$TEST_ROOT/mocks.sh"' "$DEPLOY_SCRIPT" | tr -d '\r' > "$TEST_ROOT/runner/entrypoint/deploy.sh"
 export EXPECTED_LIVE_BUILD=old-build EXPECTED_LIVE_DEPENDENCY=old-dependency
 export EXPECTED_LIVE_CACHE=old-cache EXPECTED_CONTROL_HASH="$OLD_HASH"
 cd "$TEST_ROOT"
@@ -153,7 +156,7 @@ run_deploy() {
   shift 2
   : > events
   local status=0
-  bash deploy.sh "$@" > output 2>&1 || status=$?
+  bash "$TEST_ROOT/runner/entrypoint/deploy.sh" "$@" > output 2>&1 || status=$?
   if [ "$status" -ne "$expected" ]; then cat output; echo "Unexpected status for $TEST_MODE: $status"; exit 1; fi
 }
 

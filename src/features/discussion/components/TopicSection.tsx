@@ -88,7 +88,7 @@ export function TopicSection({
         {/* Topic heading */}
         <h2
           id={`topic-${topic.id}`}
-          className='text-xl font-semibold text-gray-900 dark:text-gray-100'
+          className='wiki-anchor text-xl font-semibold wrap-break-word text-gray-900 dark:text-gray-100'
         >
           {topic.title || '（无标题）'}
         </h2>
@@ -112,7 +112,7 @@ export function TopicSection({
           )}
 
           {/* Topic actions */}
-          <div className='mt-2 flex items-center gap-3 text-xs'>
+          <div className='mt-2 flex flex-wrap items-center gap-3 text-xs'>
             <Button
               variant='unstyled'
               type='button'
@@ -248,7 +248,7 @@ function ReplyItem({
         )}
 
         {/* Reply actions */}
-        <div className='mt-1 flex items-center gap-3 text-xs'>
+        <div className='mt-1 flex flex-wrap items-center gap-3 text-xs'>
           <Button
             variant='unstyled'
             type='button'

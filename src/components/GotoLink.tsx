@@ -166,7 +166,7 @@ export default function GotoLink({
   }, [data?.url, href]);
 
   const basePreviewContent = isLoading ? (
-    <div className='flex w-full animate-pulse flex-row items-start rounded-lg bg-gray-100 p-4 shadow-md dark:bg-gray-800'>
+    <div className='bg-surface-raised flex w-full animate-pulse flex-row items-start rounded-lg p-4 shadow-sm'>
       <div className='mr-4 h-24 w-24 shrink-0 rounded-lg bg-gray-200 dark:bg-gray-700' />
       <div className='flex flex-1 flex-col space-y-2'>
         <div className='h-4 w-1/3 rounded bg-gray-200 dark:bg-gray-700' />
@@ -182,7 +182,7 @@ export default function GotoLink({
       className='w-full max-w-none'
     />
   ) : (
-    <div className='flex w-full flex-col items-center justify-center rounded-lg bg-gray-100 p-4 shadow-md dark:bg-gray-800'>
+    <div className='bg-surface-raised flex w-full flex-col items-center justify-center rounded-lg p-4 shadow-sm'>
       <div className='text-lg text-gray-400'>未找到&ldquo;{name}&rdquo;的跳转目标</div>
     </div>
   );
@@ -194,7 +194,7 @@ export default function GotoLink({
       <div className='space-y-2'>
         {basePreviewContent}
         <div className='flex justify-center'>
-          <span className='rounded-md bg-gray-100/95 px-3 py-1 text-center text-xs text-gray-600 shadow-sm select-none dark:bg-gray-800/90 dark:text-gray-200'>
+          <span className='bg-surface-raised/95 text-muted-foreground rounded-md px-3 py-1 text-center text-xs shadow-sm select-none'>
             双击跳转到对应页面
           </span>
         </div>

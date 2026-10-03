@@ -31,7 +31,7 @@ type CatalogCardProps = {
 };
 
 const defaultImageClassName = 'h-32 w-auto hover:scale-105 md:h-auto';
-const defaultContentClassName = 'w-full pt-1 pb-3 text-center md:px-3';
+const defaultContentClassName = 'w-full min-w-0 px-2 pt-1 pb-3 text-center md:px-3';
 const defaultTagsClassName =
   'flex flex-wrap items-center justify-center gap-1.5 text-sm text-gray-600 dark:text-gray-300';
 
@@ -86,7 +86,7 @@ export default function CatalogCard({
           className={cn(
             truncateTitle
               ? 'h-6 truncate overflow-hidden font-bold whitespace-nowrap text-gray-800 dark:text-white'
-              : 'h-6 font-bold whitespace-pre text-gray-800 dark:text-white',
+              : 'min-h-6 font-bold wrap-break-word text-gray-800 dark:text-white',
             shouldUseCompactTitle ? 'text-base' : 'mb-1 text-lg',
             titleClassName
           )}

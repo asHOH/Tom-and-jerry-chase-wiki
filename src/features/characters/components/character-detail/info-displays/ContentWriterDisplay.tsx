@@ -29,7 +29,7 @@ export default function ContentWriterDisplay({
   }
 
   const editorLine = hasExtraEditors ? (
-    <div className='text-xs text-gray-400 dark:text-gray-500'>
+    <div className='text-muted-foreground text-xs'>
       文案编辑：
       <span>
         {contentEditors.map((editor, index) => (
@@ -56,9 +56,7 @@ export default function ContentWriterDisplay({
 
   return (
     <>
-      <div
-        className={cn('text-xs text-gray-400 dark:text-gray-500', type !== 'isMobile' && 'mt-2')}
-      >
+      <div className={cn('text-muted-foreground text-xs', type !== 'isMobile' && 'mt-2')}>
         文案撰写：
         <span>
           {staticContentWriters.map((writer, index) => {

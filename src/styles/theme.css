@@ -25,10 +25,18 @@
   --wiki-border: var(--color-gray-200);
   /* Default keyboard focus indicator */
   --wiki-focus: var(--color-blue-500);
-  --nav-z-index: 9999;
+  /* Shared page layers. Map-local Leaflet layers remain inside their own stacking context. */
+  --wiki-layer-banner: 40;
+  --wiki-layer-navigation: 50;
+  --wiki-layer-toolbar: 60;
+  --wiki-layer-backdrop: 80;
+  --wiki-layer-dialog: 90;
+  --wiki-layer-tooltip: 200;
+  --wiki-layer-tutorial: 210;
   --nav-height: 56px;
   --offline-banner-height: 40px;
   --content-top-gap: 20px;
+  --app-content-offset: calc(var(--nav-height) + var(--content-top-gap));
   /* Typography stacks - allow user custom fonts via --font-* variables from layout */
   --font-sans-stack:
     var(--font-sans), var(--font-cjk), 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei',

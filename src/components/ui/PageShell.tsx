@@ -26,7 +26,7 @@ export default function PageShell<E extends ElementType = 'div'>({
 
   return (
     <Component
-      className={cn('text-foreground mx-auto w-full', widthClasses[width], className)}
+      className={cn('text-foreground mx-auto w-full min-w-0', widthClasses[width], className)}
       {...props}
     />
   );

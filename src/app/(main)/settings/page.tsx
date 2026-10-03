@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 
 import { generatePageMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import SettingsClient from '@/features/settings/components/SettingsClient';
+import LoadingState from '@/components/ui/LoadingState';
 
 export const metadata: Metadata = generatePageMetadata({
   title: '设置',
@@ -13,7 +14,7 @@ export const metadata: Metadata = generatePageMetadata({
 
 export default function SettingsPage() {
   return (
-    <Suspense fallback={<div className='py-12 text-center text-slate-500'>正在加载设置…</div>}>
+    <Suspense fallback={<LoadingState message='正在加载设置…' />}>
       <SettingsClient />
     </Suspense>
   );

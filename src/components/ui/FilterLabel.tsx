@@ -10,7 +10,7 @@ type FilterLabelProps = {
 };
 
 const baseClasses =
-  'shrink-0 whitespace-nowrap text-lg font-medium text-gray-700 dark:text-gray-300';
+  'text-muted-foreground shrink-0 py-2 text-sm leading-6 font-medium whitespace-nowrap md:text-base';
 
 const deriveShortLabel = (full: React.ReactNode, provided?: React.ReactNode) => {
   if (provided !== undefined) return provided;

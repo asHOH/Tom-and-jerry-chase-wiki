@@ -99,7 +99,7 @@ const KnowledgeCardGroupSetDisplay = ({
         {canEdit && (
           <div className='flex gap-2'>
             <div className='flex items-center gap-1 text-xs'>
-              <span className='text-xs text-gray-400 dark:text-gray-500'>显示方式:</span>
+              <span className='text-muted-foreground text-xs'>显示方式:</span>
               <label className='flex cursor-pointer items-center gap-1'>
                 <input
                   type='checkbox'

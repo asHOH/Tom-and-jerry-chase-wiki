@@ -15,11 +15,11 @@ type SectionHeaderProps = {
 const variantClasses = {
   standard: {
     container: 'mb-3',
-    title: 'py-2 text-2xl font-bold dark:text-white',
+    title: 'text-foreground py-2 text-2xl leading-tight font-bold',
   },
   compact: {
     container: 'mb-4',
-    title: 'text-lg font-bold text-gray-900 dark:text-gray-100',
+    title: 'text-foreground text-lg leading-snug font-bold',
   },
 } as const;
 
@@ -32,9 +32,14 @@ export default function SectionHeader({
   const classes = variantClasses[variant];
 
   return (
-    <div className={cn('flex items-center justify-between', classes.container)}>
+    <div
+      className={cn(
+        'group/section flex flex-wrap items-center justify-between gap-x-3 gap-y-2',
+        classes.container
+      )}
+    >
       <div className='flex min-w-0 items-center gap-1'>
-        <h2 id={id} className={cn('scroll-mt-24', classes.title)}>
+        <h2 id={id} className={cn('wiki-anchor wrap-break-word', classes.title)}>
           {title}
         </h2>
         {id ? (
@@ -42,7 +47,7 @@ export default function SectionHeader({
             href={`#${id}`}
             aria-label={`链接到${title}`}
             title={`链接到“${title}”`}
-            className='rounded p-1 text-gray-400 opacity-0 transition-opacity hover:text-blue-600 hover:opacity-100 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:outline-none dark:hover:text-blue-400'
+            className='text-muted-foreground focus-visible:ring-focus inline-flex size-8 shrink-0 items-center justify-center rounded-md transition-colors hover:text-blue-600 focus-visible:ring-2 focus-visible:outline-none sm:opacity-0 sm:group-focus-within/section:opacity-100 sm:group-hover/section:opacity-100 dark:hover:text-blue-400'
           >
             <LinkIcon className='size-4' />
           </a>

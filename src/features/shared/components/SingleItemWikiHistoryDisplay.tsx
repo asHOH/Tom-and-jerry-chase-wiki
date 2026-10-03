@@ -66,7 +66,7 @@ export default function SingleItemWikiHistoryDisplay({ singleItem }: { singleIte
   }
 
   return (
-    <div className='mt-2 text-xs text-gray-400 dark:text-gray-500'>
+    <div className='text-muted-foreground mt-2 text-xs'>
       {unavailable && (
         <p role='status' className='mb-1 text-amber-700 dark:text-amber-400'>
           {sortedHistory.length > 0 ? '部分更新记录未能加载' : '更新记录加载失败'}

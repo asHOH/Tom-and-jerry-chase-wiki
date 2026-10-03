@@ -1,7 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { LazyMotion } from 'motion/react';
+import { LazyMotion, MotionConfig } from 'motion/react';
 
 import { PermissionProvider } from '@/lib/auth/PermissionProvider';
 import { ToastProvider } from '@/context/ToastContext';
@@ -18,13 +18,15 @@ const loadMotionFeatures = () => import('motion/react').then((mod) => mod.domMax
 export function ClientProviders({ children }: ClientProvidersProps) {
   return (
     <LazyMotion features={loadMotionFeatures} strict>
-      <ToastProvider>
-        <PermissionProvider>{children}</PermissionProvider>
-        <ServiceWorkerRegistration />
-        <CacheDebugPanel />
-        <VersionChecker />
-        <OfflineIndicator />
-      </ToastProvider>
+      <MotionConfig reducedMotion='user'>
+        <ToastProvider>
+          <PermissionProvider>{children}</PermissionProvider>
+          <ServiceWorkerRegistration />
+          <CacheDebugPanel />
+          <VersionChecker />
+          <OfflineIndicator />
+        </ToastProvider>
+      </MotionConfig>
     </LazyMotion>
   );
 }

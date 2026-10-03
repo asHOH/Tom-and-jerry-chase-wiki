@@ -416,7 +416,7 @@ export default function TraitEditor({ traitsSnapshot }: { traitsSnapshot: Record
 
   return (
     <div className='mx-auto max-w-5xl space-y-4 px-2 py-4 sm:px-4'>
-      <div className='border-border bg-surface-raised sticky top-2 z-20 flex flex-col gap-3 rounded-xl border p-3 shadow-md sm:flex-row'>
+      <div className='border-border bg-surface-raised sticky top-(--app-content-offset) z-20 flex flex-col gap-3 rounded-xl border p-3 shadow-md sm:flex-row'>
         <FormInput
           type='search'
           placeholder='搜索编号、描述或成员'

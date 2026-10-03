@@ -43,12 +43,7 @@ export default function AttributesCardLayout({
       <EntityCardFrame variant='detail'>
         {isMobile ? (
           <div>
-            <div
-              className='auto-fit-grid grid-container grid'
-              style={{
-                gridTemplateColumns: `5rem repeat(auto-fit, minmax(1px,1fr))`,
-              }}
-            >
+            <div className='grid grid-cols-[5rem_minmax(0,1fr)] gap-3 p-3'>
               <GameImage
                 src={imageUrl}
                 alt={alt}
@@ -57,21 +52,19 @@ export default function AttributesCardLayout({
                   height: '6rem',
                 }}
               />
-              <div>
+              <div className='min-w-0'>
                 <PageTitle className='py-0 pt-2 text-2xl md:text-2xl'>{title} </PageTitle>
                 <DiscussEditButtons compact isEditMode={isEditMode} className='mt-1' />
                 {subtitle && (
-                  <p className='text-lg font-normal text-gray-400 dark:text-gray-500'>{subtitle}</p>
+                  <p className='text-muted-foreground text-lg font-normal'>{subtitle}</p>
                 )}
                 {aliasList.length > 0 && (
-                  <p className='text-xs text-gray-400 dark:text-gray-500'>
+                  <p className='text-muted-foreground text-xs'>
                     {aliasLabel}: {aliasList.join('、')}
                   </p>
                 )}
                 {aliasesContent && (
-                  <div className='mt-1 text-xs text-gray-400 dark:text-gray-500'>
-                    {aliasesContent}
-                  </div>
+                  <div className='text-muted-foreground mt-1 text-xs'>{aliasesContent}</div>
                 )}
                 {wikiHistory}
               </div>
@@ -84,28 +77,24 @@ export default function AttributesCardLayout({
               <PageTitle className='py-0 text-3xl md:text-3xl'>
                 {title}{' '}
                 {subtitle && (
-                  <span className='text-xl font-normal text-gray-400 dark:text-gray-500'>
-                    {subtitle}
-                  </span>
+                  <span className='text-muted-foreground text-xl font-normal'>{subtitle}</span>
                 )}
               </PageTitle>
               <DiscussEditButtons compact isEditMode={isEditMode} className='mt-2' />
             </div>
             {aliasList.length > 0 && (
-              <div className='mx-4 text-sm text-gray-400 dark:text-gray-500'>
+              <div className='text-muted-foreground mx-4 text-sm'>
                 {aliasLabel}: {aliasList.join('、')}
               </div>
             )}
             {aliasesContent && (
-              <div className='mx-4 mt-1 text-sm text-gray-400 dark:text-gray-500'>
-                {aliasesContent}
-              </div>
+              <div className='text-muted-foreground mx-4 mt-1 text-sm'>{aliasesContent}</div>
             )}
-            <div className='mx-4 text-sm text-gray-400 dark:text-gray-500'>{wikiHistory}</div>
+            <div className='text-muted-foreground mx-4 text-sm'>{wikiHistory}</div>
           </div>
         )}
 
-        <div className='mx-4 grid items-center gap-1 border-t border-gray-300 py-1 dark:border-gray-600'>
+        <div className='border-border mx-4 grid min-w-0 items-center gap-2 border-t py-3'>
           {attributes}
         </div>
 

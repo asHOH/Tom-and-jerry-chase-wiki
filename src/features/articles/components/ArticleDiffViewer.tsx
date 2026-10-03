@@ -227,7 +227,7 @@ export default function ArticleDiffViewer({
           <span className='size-2.5 rounded-full bg-emerald-400 ring-4 ring-emerald-100 dark:ring-emerald-950' />
           新增内容
         </span>
-        <span className='text-xs text-slate-500 dark:text-slate-500'>仅显示可见文字变化</span>
+        <span className='text-muted-foreground text-xs'>仅显示可见文字变化</span>
       </div>
 
       <Card bordered className='overflow-hidden p-0'>

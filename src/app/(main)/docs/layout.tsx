@@ -26,10 +26,10 @@ export default async function DocsLayout({ children }: { children: React.ReactNo
   const docPages = await getDocPages();
 
   return (
-    <div className='flex min-h-screen'>
+    <div className='flex min-h-[60vh] min-w-0 flex-col lg:flex-row'>
       <DocsSidebar docPages={docPages} />
-      <div className='flex-1 lg:ml-0'>
-        <PageShell width='wide' className='py-6 lg:py-8'>
+      <div className='min-w-0 flex-1'>
+        <PageShell width='wide' className='lg:py-4'>
           <StyledMDX>{children}</StyledMDX>
         </PageShell>
       </div>

@@ -117,7 +117,7 @@ export default function Tooltip({
             sideOffset={8}
             collisionPadding={{ top: 92, bottom: 8, left: 8, right: 8 }}
             className={cn(
-              'wrap-break-words z-10000 max-w-xs rounded-md bg-gray-800 px-3 py-2 text-sm whitespace-pre-wrap text-white shadow-lg dark:bg-black dark:text-gray-200',
+              'wrap-break-words z-(--wiki-layer-tooltip) max-w-xs rounded-md bg-gray-800 px-3 py-2 text-sm whitespace-pre-wrap text-white shadow-lg dark:bg-black dark:text-gray-200',
               contentClassName
             )}
           >
