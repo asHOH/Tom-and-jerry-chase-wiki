@@ -65,6 +65,7 @@ describe('article sitemap', () => {
 
     const result = await sitemap();
 
+    expect(result[0]).not.toHaveProperty('lastModified');
     expect(publicFromMock).toHaveBeenCalledWith('articles');
     expect(query.select).toHaveBeenCalledWith(
       'id, current_version:article_versions_public_view!articles_current_version_id_fkey!inner(created_at, status)'
