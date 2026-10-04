@@ -285,6 +285,12 @@ YOUR_DOMAIN {
 sudo systemctl restart caddy
 ```
 
+## 可选：Cloudflare 公开 HTML 缓存试运行
+
+- 先部署发布成功后写入的 `tjwiki_recent_publish` cookie（300 秒），再启用缓存；它只绕过 Cloudflare，不保证离线或浏览器缓存的新鲜度。
+- 仅试运行公开角色 HTML；用 [Cache Response Rules](https://developers.cloudflare.com/cache/how-to/cache-response-rules/) 设置 `s-maxage=60`、`stale-while-revalidate=0`、`stale-if-error=0`（Cloudflare only），保留源站私有响应限制和浏览器 TTL。
+- 编辑、查询参数、RSC/预取、登录、上述 cookie及用户草稿请求绕过缓存；检查规则冲突，验证普通请求 HIT、绕过请求不 HIT 及发布后刷新，再扩大范围；异常时关闭允许缓存的规则。
+
 ## 部署完成后的维护
 
 首次部署后，遇到对应维护任务时可参考以下文档：

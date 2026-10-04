@@ -50,10 +50,23 @@ export function useEditDraft(scope: EditDraftScope) {
     return session.discardDraft(scope);
   }, [scope, session]);
   const publishDraft = useCallback(
-    (options?: EditPublishOptions): Promise<EditPublishResult> =>
-      session
-        ? session.publishDraft(scope, options)
-        : Promise.resolve({ status: 'failed', error: new Error('编辑数据尚未就绪') }),
+    async (options?: EditPublishOptions): Promise<EditPublishResult> => {
+      if (!session) return { status: 'failed', error: new Error('编辑数据尚未就绪') };
+      const result = await session.publishDraft(scope, options);
+      if (
+        (result.status === 'published' || result.status === 'cleanup-conflict') &&
+        result.outcome !== 'pending'
+      ) {
+        // Cloudflare bypasses HTML caching for recent publishers, including anonymous users.
+        // Keep this longer than the public HTML edge TTL documented in DEPLOY.md.
+        try {
+          document.cookie = 'tjwiki_recent_publish=1; Max-Age=300; Path=/; SameSite=Lax; Secure';
+        } catch (error) {
+          console.warn('Failed to enable the recent-publication cache bypass.', error);
+        }
+      }
+      return result;
+    },
     [scope, session]
   );
   const getActionCount = useCallback(

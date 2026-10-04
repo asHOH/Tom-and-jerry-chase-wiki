@@ -15,6 +15,7 @@ import {
 import { usePageEditMode } from './usePageEditMode';
 
 const mockShowToast = jest.fn();
+const mockSetCookie = jest.fn();
 let mockPermissionProfile: 'contributor' | 'reviewer' | 'coordinator' | null = 'contributor';
 let mockPendingAwareness: PendingActionAwarenessSource | undefined;
 
@@ -140,6 +141,8 @@ describe('usePageEditMode', () => {
     session = installTestEditSession({});
     mockPermissionProfile = 'contributor';
     mockShowToast.mockClear();
+    mockSetCookie.mockClear();
+    jest.spyOn(document, 'cookie', 'set').mockImplementation(mockSetCookie);
     mockPendingAwareness = undefined;
     window.localStorage.clear();
     window.sessionStorage.clear();
@@ -453,6 +456,7 @@ describe('usePageEditMode', () => {
           : errorBody.message
       );
       expect(readTestEditHistory(getTestEditHistoryKey('characters'))).toEqual([draft]);
+      expect(mockSetCookie).not.toHaveBeenCalled();
     });
   });
 
@@ -567,6 +571,13 @@ describe('usePageEditMode', () => {
       await waitFor(() => {
         expect(mockShowToast).toHaveBeenCalledWith(expectedToast);
       });
+      if (result.is_public) {
+        expect(mockSetCookie).toHaveBeenCalledWith(
+          'tjwiki_recent_publish=1; Max-Age=300; Path=/; SameSite=Lax; Secure'
+        );
+      } else {
+        expect(mockSetCookie).not.toHaveBeenCalled();
+      }
     }
   );
 
