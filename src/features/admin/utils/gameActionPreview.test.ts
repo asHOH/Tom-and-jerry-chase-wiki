@@ -25,6 +25,34 @@ describe('gameActionPreview', () => {
   });
 
   describe('diffGameActionIdArray', () => {
+    it('does not report unchanged arrays from independently decoded snapshots', () => {
+      const before = [
+        {
+          id: 'skill',
+          aliases: ['冲刺'],
+          skillLevels: [{ level: 1, description: 'unchanged', metadata: { tags: [] } }],
+          cancelableAftercast: ['道具键*', '道具键'],
+        },
+      ];
+      const after = JSON.parse(JSON.stringify(before));
+      expect(diffGameActionIdArray(before, after).changed).toEqual([]);
+      after[0].skillLevels[0].description = 'updated';
+      expect(diffGameActionIdArray(before, after).changed).toEqual([
+        { id: 'skill', fields: ['skillLevels[0].description'] },
+      ]);
+    });
+
+    it('still reports array additions, removals and order changes', () => {
+      for (const next of [['B', 'A'], ['A'], ['A', 'B', 'C']]) {
+        expect(
+          diffGameActionIdArray(
+            [{ id: 'skill', aliases: ['A', 'B'] }],
+            [{ id: 'skill', aliases: next }]
+          ).changed
+        ).toHaveLength(1);
+      }
+    });
+
     it('reports every changed item in an id-keyed relation array', () => {
       const diff = diffGameActionIdArray(
         [

@@ -58,11 +58,9 @@ function collectChangedLeafFields(oldValue: unknown, newValue: unknown, basePath
     if (!Array.isArray(oldValue) || !Array.isArray(newValue)) return [basePath || '值'];
     if (oldValue.length !== newValue.length) return [basePath || '值'];
 
-    const changedFields = oldValue.flatMap((oldItem, index) =>
+    return oldValue.flatMap((oldItem, index) =>
       collectChangedLeafFields(oldItem, newValue[index], `${basePath}[${index}]`)
     );
-
-    return changedFields.length > 0 ? changedFields : [basePath || '值'];
   }
 
   if (isRecord(oldValue) || isRecord(newValue)) {

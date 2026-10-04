@@ -142,7 +142,11 @@ function GameDataActionPreviewItem({ action, entityType }: GameDataActionPreview
   const previewOldValue = getPreviewOldValue(entityType, action);
   const oldSummary = summarizeGameActionValue(previewOldValue);
   const newSummary = summarizeGameActionValue(action.newValue);
-  const idDiff = diffGameActionIdArray(previewOldValue, action.newValue);
+  const folded =
+    entityType === 'characters'
+      ? foldUnchangedSkillStructure(previewOldValue, action.newValue)
+      : { oldValue: previewOldValue, convertedSkills: [] };
+  const idDiff = diffGameActionIdArray(folded.oldValue, action.newValue);
   const showValueTransition = shouldShowGameActionValueTransition(oldSummary, newSummary, idDiff);
   const showIdDiff = hasVisibleIdArrayDiff(idDiff);
 
@@ -189,6 +193,11 @@ function GameDataActionPreviewItem({ action, entityType }: GameDataActionPreview
               </ul>
             </div>
           )}
+        </div>
+      )}
+      {folded.convertedSkills.length > 0 && (
+        <div className='mt-1 text-[11px] text-gray-700 dark:text-slate-200'>
+          结构调整（数值未变）：{folded.convertedSkills.join('、')}的属性在技能与单个分段之间移动。
         </div>
       )}
     </li>
