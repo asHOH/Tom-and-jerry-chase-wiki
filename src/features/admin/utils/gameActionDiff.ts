@@ -325,7 +325,6 @@ export function createGameActionDiff(oldValue: unknown, newValue: unknown): Game
   } else {
     const changes = diffLines(oldText, newText, {
       maxEditLength: MAX_LINE_EDIT_LENGTH,
-      oneChangePerToken: true,
       timeout: LINE_DIFF_TIMEOUT_MS,
     });
 
@@ -438,7 +437,9 @@ export function createGameActionUnifiedHunks(
       beforeChunk?.kind === 'context'
         ? showAllContext
           ? beforeChunk.lines
-          : beforeChunk.lines.slice(-contextLines)
+          : contextLines > 0
+            ? beforeChunk.lines.slice(-contextLines)
+            : []
         : [];
     const afterLines =
       afterChunk?.kind === 'context'

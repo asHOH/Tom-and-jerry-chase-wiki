@@ -1,4 +1,48 @@
-import { collapseGameActionSplitRows, createGameActionDiff } from './gameActionDiff';
+import { applyPatch } from 'diff';
+
+import {
+  collapseGameActionSplitRows,
+  createGameActionDiff,
+  createGameActionUnifiedHunks,
+  formatGameActionUnifiedDiff,
+} from './gameActionDiff';
+
+describe('game action unified diff context', () => {
+  const before = Array.from({ length: 20 }, (_, index) => `line ${index}`);
+  const after = before.map((line, index) => (index === 10 ? 'edited' : line));
+
+  it('includes three context lines on each side and preserves the patch', () => {
+    const model = createGameActionDiff(before, after);
+    const hunks = createGameActionUnifiedHunks(model, false);
+    expect(hunks).toHaveLength(1);
+    expect(hunks[0]!.lines.filter((line) => line.kind === 'context')).toHaveLength(6);
+    expect(applyPatch(model.oldText, formatGameActionUnifiedDiff(model, 'skills', false))).toBe(
+      model.newText
+    );
+  });
+
+  it('shows every original and updated line when full context is requested', () => {
+    const model = createGameActionDiff(before, after);
+    const [hunk] = createGameActionUnifiedHunks(model, true);
+    expect(
+      hunk!.lines
+        .filter((line) => line.kind !== 'added')
+        .map((line) => line.text)
+        .join('\n')
+    ).toBe(model.oldText);
+    expect(
+      hunk!.lines
+        .filter((line) => line.kind !== 'removed')
+        .map((line) => line.text)
+        .join('\n')
+    ).toBe(model.newText);
+  });
+
+  it('omits all context when zero context is requested', () => {
+    const [hunk] = createGameActionUnifiedHunks(createGameActionDiff(before, after), false, 0);
+    expect(hunk!.lines.map((line) => line.kind)).toEqual(['removed', 'added']);
+  });
+});
 
 describe('game action split diff context', () => {
   it('renders a short unchanged run between changes only once', () => {

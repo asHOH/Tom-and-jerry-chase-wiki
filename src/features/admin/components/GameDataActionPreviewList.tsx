@@ -26,6 +26,7 @@ import {
   shouldShowGameActionValueTransition,
   summarizeGameActionValue,
 } from '@/features/admin/utils/gameActionPreview';
+import { foldUnchangedSkillStructure } from '@/features/admin/utils/skillStructureDiff';
 import { getCharacterRelation } from '@/features/characters/utils/relationReadModel';
 import Button from '@/components/ui/Button';
 
@@ -502,9 +503,24 @@ function ActionDiffCard({
   onCopyText: (text: string) => Promise<void> | void;
 }) {
   const oldValue = getPreviewOldValue(entityType, preview.action);
-  const model = useMemo(
+  const [showRawStructure, setShowRawStructure] = useState(false);
+  const folded = useMemo(
+    () =>
+      entityType === 'characters'
+        ? foldUnchangedSkillStructure(oldValue, preview.action.newValue)
+        : { oldValue, convertedSkills: [] },
+    [entityType, oldValue, preview.action.newValue]
+  );
+  const rawModel = useMemo(
     () => createGameActionDiff(oldValue, preview.action.newValue),
     [oldValue, preview.action.newValue]
+  );
+  const model = useMemo(
+    () =>
+      showRawStructure || folded.convertedSkills.length === 0
+        ? rawModel
+        : createGameActionDiff(folded.oldValue, preview.action.newValue),
+    [showRawStructure, folded, rawModel, preview.action.newValue]
   );
   const fileName = `${entityType}/${preview.action.path}`;
   const metadataEntries = Object.entries(preview.metadata);
@@ -512,8 +528,8 @@ function ActionDiffCard({
   const copyDiff = () => {
     const text =
       view === 'normal'
-        ? formatGameActionNormalDiff(model)
-        : formatGameActionUnifiedDiff(model, fileName, showAllContext);
+        ? formatGameActionNormalDiff(rawModel)
+        : formatGameActionUnifiedDiff(rawModel, fileName, showAllContext);
     return onCopyText(text);
   };
 
@@ -543,7 +559,7 @@ function ActionDiffCard({
           <Button
             variant='ghost'
             size='sm'
-            onClick={() => void onCopyText(model.oldText)}
+            onClick={() => void onCopyText(rawModel.oldText)}
             title='复制规范化后的旧值'
           >
             复制旧值
@@ -551,7 +567,7 @@ function ActionDiffCard({
           <Button
             variant='ghost'
             size='sm'
-            onClick={() => void onCopyText(model.newText)}
+            onClick={() => void onCopyText(rawModel.newText)}
             title='复制规范化后的新值'
           >
             复制新值
@@ -559,13 +575,30 @@ function ActionDiffCard({
           <Button
             variant='secondary'
             size='sm'
-            disabled={model.identical}
+            disabled={rawModel.identical}
             onClick={() => void copyDiff()}
           >
-            复制差异
+            {folded.convertedSkills.length > 0 ? '复制原始差异' : '复制差异'}
           </Button>
         </div>
       </div>
+
+      {folded.convertedSkills.length > 0 && (
+        <div className='border-border bg-surface space-y-2 rounded border p-2 text-xs text-slate-700 dark:text-slate-200'>
+          <p>
+            {folded.convertedSkills.join('、')}：属性在技能与单个分段之间调整了位置，数值未变。
+            {!showRawStructure && '下方已折叠这部分重复增删，仅显示内容变化。'}
+          </p>
+          <label className='flex min-h-9 cursor-pointer items-center gap-2'>
+            <input
+              type='checkbox'
+              checked={showRawStructure}
+              onChange={(event) => setShowRawStructure(event.target.checked)}
+            />
+            显示原始结构差异
+          </label>
+        </div>
+      )}
 
       {metadataEntries.length > 0 && (
         <pre className='overflow-auto rounded bg-slate-100 px-2 py-1 text-[11px] text-slate-600 dark:bg-slate-950/60 dark:text-slate-300'>
