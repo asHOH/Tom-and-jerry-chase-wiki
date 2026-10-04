@@ -10,6 +10,7 @@ import {
   getPublishedEntityRouteReadModel,
   type PublishedEntityRouteReadModel,
 } from '@/lib/gameData/published/routeSelectors';
+import { getHistory } from '@/lib/historyUtils';
 import { generatePageMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { hasSupabasePublicConfig } from '@/lib/supabase/config';
 import { SITE_NAME, SITE_URL } from '@/constants/seo';
@@ -108,11 +109,13 @@ export default async function CharacterPage({
   if (!character) {
     notFound();
   }
+  const gameHistory = getHistory([character.id, ...(character.aliases ?? [])]);
 
   if (!hasSupabasePublicConfig()) {
     return (
       <CharacterDetailsClient
         character={character}
+        gameHistory={gameHistory}
         contentWriters={contentWriterData.writers}
         contentEditors={contentWriterData.editors}
         publishedRevision={readModel.revision}
@@ -137,6 +140,7 @@ export default async function CharacterPage({
       />
       <CharacterDetailsClient
         character={character}
+        gameHistory={gameHistory}
         contentWriters={contentWriterData.writers}
         contentEditors={contentWriterData.editors}
         publishedRevision={readModel.revision}

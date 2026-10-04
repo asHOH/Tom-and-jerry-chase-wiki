@@ -1,13 +1,18 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import dynamic from 'next/dynamic';
 
 import { cn } from '@/lib/design';
-import { useWikiHistory } from '@/hooks/useWikiHistory';
-import { usePublishedEntityHistory } from '@/context/PublishedEntityHistoryContext';
+import {
+  usePublishedEntityHistory,
+  type PublishedEntityHistory,
+} from '@/context/PublishedEntityHistoryContext';
 import { SingleItem, WikiChangeType } from '@/data/types';
 import Button from '@/components/ui/Button';
 import { ChevronDownIcon } from '@/components/icons/CommonIcons';
+
+const LocalWikiHistoryDisplay = dynamic(() => import('./LocalWikiHistoryDisplay'));
 
 function formatHistoryChangeText(type: WikiChangeType, description: string) {
   const trimmedDescription = description.trim();
@@ -24,11 +29,16 @@ function formatHistoryChangeText(type: WikiChangeType, description: string) {
 }
 
 export default function SingleItemWikiHistoryDisplay({ singleItem }: { singleItem: SingleItem }) {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const fallbackHistory = useWikiHistory([singleItem]);
   const publishedHistory = usePublishedEntityHistory(singleItem);
-  const history = publishedHistory?.entries ?? fallbackHistory;
-  const unavailable = publishedHistory?.unavailable ?? false;
+  return publishedHistory ? (
+    <WikiHistoryDisplay {...publishedHistory} />
+  ) : (
+    <LocalWikiHistoryDisplay singleItem={singleItem} />
+  );
+}
+
+export function WikiHistoryDisplay({ entries: history, unavailable }: PublishedEntityHistory) {
+  const [isExpanded, setIsExpanded] = useState(false);
   const currentYear = new Date().getFullYear();
 
   const sortedHistory = useMemo(() => {

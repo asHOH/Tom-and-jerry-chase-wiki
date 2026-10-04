@@ -79,6 +79,7 @@ Maintainer checkouts remain linked to production; use `STAGING_DATABASE_URL` wit
 - New submissions require a UUID v4 `Idempotency-Key` and use the atomic request RPC. Character validation rejects unsupported fields, contradictory explicit relations, and new character roots; rows with no net change are rejected for every domain. Keep `src/lib/gameData/characterDataValidation.ts` aligned when adding character fields. Unchanged container checks may remain inside a row that makes a real edit.
 - Local edit mode lazily fetches the published baseline in `src/components/EditRuntime.tsx` and installs one `EditSession`. Feature code must use the typed editable-data hooks or session draft APIs; do not import raw edit stores, registry topology, subscribers, or browser-history helpers. Tests should use the behavior-oriented helpers in `src/testUtils/editRuntime.ts` and mutate/read through the session interface; shared action types and pure replay helpers remain available to server-side modules.
 - `scripts/generate-doc-pages.mjs` writes `src/data/generated/docPages.json`. Changelog generation writes `src/data/generated/changeLogs.json`. Do not hand-edit generated JSON.
+- `npm run generate:history-dates` derives `src/data/generated/historyDates.json` from the game timeline. Regenerate it after editing `src/data/history.ts`; development startup and builds also refresh it.
 - Actor-profile changes must pass `npm run validate:actor-profiles`.
 
 ## Rendering and Routing

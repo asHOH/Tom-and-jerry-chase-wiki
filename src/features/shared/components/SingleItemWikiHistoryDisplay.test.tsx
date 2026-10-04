@@ -15,6 +15,7 @@ jest.mock('@/hooks/useWikiHistory', () => ({
 
 describe('SingleItemWikiHistoryDisplay', () => {
   beforeEach(() => {
+    mockUseWikiHistory.mockClear();
     jest.useFakeTimers();
     jest.setSystemTime(new Date('2026-05-04T00:00:00+08:00'));
     mockUseWikiHistory.mockReturnValue([
@@ -37,10 +38,10 @@ describe('SingleItemWikiHistoryDisplay', () => {
     jest.useRealTimers();
   });
 
-  it('renders compact history lines and hides zero-count change type totals', () => {
+  it('renders compact history lines and hides zero-count change type totals', async () => {
     render(<SingleItemWikiHistoryDisplay singleItem={{ name: '测试条目', type: 'character' }} />);
 
-    fireEvent.click(screen.getByRole('button'));
+    fireEvent.click(await screen.findByRole('button', { name: '百科历史记录' }));
 
     expect(screen.getByText(`${WikiChangeType.UPDATE}:`)).toBeInTheDocument();
     expect(screen.getByText('2')).toBeInTheDocument();
@@ -54,6 +55,38 @@ describe('SingleItemWikiHistoryDisplay', () => {
       getHistoryLine(`4.6 - ${WikiChangeType.UPDATE} collaborators`).closest('li')
     ).toHaveClass('grid', 'grid-cols-[3.25rem_auto_1fr]', 'gap-x-1');
   });
+
+  it.each([false, true])(
+    'does not load fallback history when published entries exist: %s',
+    (empty) => {
+      const item = { name: '汤姆', type: 'character' } as const;
+      render(
+        <PublishedEntityHistoryProvider
+          item={item}
+          history={{
+            entries: empty
+              ? []
+              : [
+                  {
+                    year: 2026,
+                    date: '4.6',
+                    type: WikiChangeType.UPDATE,
+                    description: 'published entry',
+                  },
+                ],
+            unavailable: false,
+          }}
+        >
+          <SingleItemWikiHistoryDisplay singleItem={item} />
+        </PublishedEntityHistoryProvider>
+      );
+      expect(mockUseWikiHistory).not.toHaveBeenCalled();
+      if (!empty) {
+        fireEvent.click(screen.getByRole('button', { name: '百科历史记录' }));
+        expect(screen.getByText('更新 published entry')).toBeInTheDocument();
+      }
+    }
+  );
 
   it.each([false, true])('shows an unavailable notice with preserved entries: %s', (hasEntries) => {
     const item = { name: '测试条目', type: 'character' } as const;

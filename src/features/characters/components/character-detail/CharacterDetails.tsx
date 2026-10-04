@@ -1,11 +1,13 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
 import { AnimatePresence } from 'motion/react'; // smaller bundle size than framer-motion
 
 import { createPortal } from 'react-dom';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
+import type { HistoryEntry } from '@/lib/historyUtils';
 import singleItemRreverse from '@/lib/singleItemReverse';
 import type { CharacterWithFaction, ContentEditor } from '@/lib/types';
 import { useEditableEntity, type EditableUpdate } from '@/hooks/useEditableGameData';
@@ -50,9 +52,13 @@ import SpecialSkillsSection from './skills/SpecialSkillsSection';
 import { useCharacterActions } from './useCharacterActions';
 
 const e = editable('characters');
+const LocalCharacterHistoryDisplay = dynamic(
+  () => import('./info-displays/LocalCharacterHistoryDisplay')
+);
 
 interface CharacterDetailsWithTutorialProps {
   character: DeepReadonly<CharacterWithFaction>;
+  gameHistory?: readonly HistoryEntry[] | undefined;
   contentWriters?: readonly string[];
   contentEditors?: readonly ContentEditor[];
   children?: React.ReactNode;
@@ -82,6 +88,7 @@ function CharacterImage({ characterId, imageUrl }: { characterId: string; imageU
 
 export default function CharacterDetails({
   character,
+  gameHistory,
   contentWriters,
   contentEditors,
   children,
@@ -100,6 +107,16 @@ export default function CharacterDetails({
     EditableUpdate<CharacterWithFaction>,
   ];
   const factionId = localCharacter.factionId!;
+  const historyNames = [character.id, ...(character.aliases ?? [])];
+  const localHistoryNames = [localCharacter.id, ...(localCharacter.aliases ?? [])];
+  const characterHistory =
+    gameHistory !== undefined &&
+    historyNames.length === localHistoryNames.length &&
+    historyNames.every((name, index) => name === localHistoryNames[index]) ? (
+      <CharacterHistoryDisplay history={gameHistory} />
+    ) : (
+      <LocalCharacterHistoryDisplay names={localHistoryNames} />
+    );
 
   // Go to Top button state
   const [showGoTop, setShowGoTop] = useState(false);
@@ -174,10 +191,7 @@ export default function CharacterDetails({
                       {...(contentEditors === undefined ? {} : { contentEditors })}
                     />
                     <CreateDateDisplay createDate={localCharacter.createDate} />
-                    <CharacterHistoryDisplay
-                      name={localCharacter.id}
-                      aliases={localCharacter.aliases || []}
-                    />
+                    {characterHistory}
                     <WinRatesDisplay characterName={localCharacter.id} />
                     <SingleItemWikiHistoryDisplay
                       singleItem={{ name: localCharacter.id, type: 'character' }}
@@ -225,10 +239,7 @@ export default function CharacterDetails({
                           type='isMobile'
                         />
                         <CreateDateDisplay createDate={localCharacter.createDate} />
-                        <CharacterHistoryDisplay
-                          name={localCharacter.id}
-                          aliases={localCharacter.aliases || []}
-                        />
+                        {characterHistory}
                         <WinRatesDisplay characterName={localCharacter.id} />
                         <SingleItemWikiHistoryDisplay
                           singleItem={{ name: localCharacter.id, type: 'character' }}

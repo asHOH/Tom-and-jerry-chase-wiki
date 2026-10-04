@@ -114,6 +114,7 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
               >
                 <CharacterDetails
                   character={props.character}
+                  gameHistory={props.gameHistory}
                   {...(props.contentWriters === undefined
                     ? {}
                     : { contentWriters: props.contentWriters })}
@@ -127,6 +128,7 @@ export default function CharacterDetailsClient(props: CharacterDetailsProps) {
             ) : (
               <CharacterDetails
                 character={props.character}
+                gameHistory={props.gameHistory}
                 {...(props.contentWriters === undefined
                   ? {}
                   : { contentWriters: props.contentWriters })}

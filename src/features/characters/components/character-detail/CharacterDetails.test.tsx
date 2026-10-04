@@ -13,6 +13,12 @@ let mockIsPreviewMode = false;
 let mockRuntimeStatus: 'idle' | 'refreshing' | 'ready' = 'idle';
 let mockDraftDomains: Record<string, Record<string, Record<string, unknown>>> | null = null;
 
+jest.mock('next/dynamic', () => () => {
+  return function LocalHistory({ names }: { names: readonly string[] }) {
+    return <div data-testid='local-history'>{names.join(',')}</div>;
+  };
+});
+
 jest.mock('motion/react', () => {
   return {
     AnimatePresence: ({ children }: { children: ReactNode }) => <>{children}</>,
@@ -149,7 +155,7 @@ jest.mock('@/features/shared/traits/filterTraitsBySingleItem', () => ({
 
 jest.mock('./info-displays/CharacterHistoryDisplay', () => ({
   __esModule: true,
-  default: () => <div />,
+  default: () => <div data-testid='published-game-history' />,
 }));
 
 jest.mock('./character-relations/CharacterRelationDisplay', () => ({
@@ -248,6 +254,31 @@ describe('CharacterDetails', () => {
 
   it('should render on the server without accessing document for the portal target', () => {
     expect(() => renderToString(<CharacterDetails character={character} />)).not.toThrow();
+  });
+
+  it('uses supplied history, including an empty result, without loading local history', () => {
+    const html = renderToString(<CharacterDetails character={character} gameHistory={[]} />);
+    expect(html).toContain('published-game-history');
+    expect(html).not.toContain('local-history');
+  });
+
+  it('keeps supplied history for unrelated draft edits but switches when aliases change', () => {
+    mockIsEditModeRequested = true;
+    mockRuntimeStatus = 'ready';
+    const renderHistory = () =>
+      renderToString(<CharacterDetails character={character} gameHistory={[]} />);
+    expect(renderHistory()).toContain('published-game-history');
+    mockDraftDomains!.characters!.汤姆!.aliases = ['剑客杰瑞'];
+    const html = renderHistory();
+    expect(html).not.toContain('published-game-history');
+    expect(html).toContain('local-history');
+    expect(html).toContain('汤姆,剑客杰瑞');
+  });
+
+  it('uses local history when the server has not supplied entries', () => {
+    const html = renderToString(<CharacterDetails character={character} />);
+    expect(html).toContain('local-history');
+    expect(html).not.toContain('published-game-history');
   });
 
   it('should hide own traits and reverse cards when their counts are zero', () => {

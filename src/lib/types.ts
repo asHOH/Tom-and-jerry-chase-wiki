@@ -7,6 +7,7 @@ import { ReactNode } from 'react';
 import type { Snapshot } from 'valtio';
 
 import type { DeepReadonly } from '@/types/deep-readonly';
+import type { HistoryEntry } from '@/lib/historyUtils';
 import type {
   PublishedEntityHistory,
   PublishedRelatedEntityHistory,
@@ -50,6 +51,7 @@ export type KnowledgeCardDetailsProps = {
 
 export type CharacterDetailsProps = {
   character: DeepReadonly<CharacterWithFaction>;
+  gameHistory?: readonly HistoryEntry[] | undefined;
   contentWriters?: readonly string[];
   contentEditors?: readonly ContentEditor[];
   publishedRevision?: `v1:${string}`;

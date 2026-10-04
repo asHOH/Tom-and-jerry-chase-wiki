@@ -1,5 +1,5 @@
 import { DeepReadonly } from '@/types/deep-readonly';
-import { historyData } from '@/data/history';
+import historyDates from '@/data/generated/historyDates.json';
 import { Card, Character, Faction, FactionId } from '@/data/types';
 import { createCatCharactersWithImages } from '@/features/characters/data/catCharacters';
 import { createMouseCharactersWithImages } from '@/features/characters/data/mouseCharacters';
@@ -39,34 +39,8 @@ const rawFactionData: Record<FactionId, Faction> = {
   },
 };
 
-const createTimeLookup = new Map<string, string>();
-
-function populateCreateTimeLookup() {
-  if (createTimeLookup.size) return;
-
-  for (const entry of historyData) {
-    for (const event of entry.events) {
-      const additions = [
-        ...(event.details.content?.newCharacters ?? []),
-        ...(event.details.content?.newItems ?? []),
-        ...(event.details.content?.newKnowledgeCards ?? []),
-        ...(event.details.content?.newSecondWeapons ?? []),
-      ];
-
-      for (const item of additions) {
-        if (!createTimeLookup.has(item)) {
-          createTimeLookup.set(item, `${entry.year}.${event.date.split('-')[0]}`);
-        }
-      }
-    }
-  }
-}
-
+const createTimeLookup = new Map<string, string>(Object.entries(historyDates));
 function getCreateTime(name: string) {
-  if (!createTimeLookup.size) {
-    populateCreateTimeLookup();
-  }
-
   return createTimeLookup.get(name) ?? null;
 }
 

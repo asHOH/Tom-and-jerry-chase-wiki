@@ -1,20 +1,13 @@
 import { useMemo, useState } from 'react';
 
 import { cn } from '@/lib/design';
-import { getHistory } from '@/lib/historyUtils';
+import type { HistoryEntry } from '@/lib/historyUtils';
 import { ChangeType } from '@/data/types';
 import Button from '@/components/ui/Button';
 import { ChevronDownIcon } from '@/components/icons/CommonIcons';
 
-export default function CharacterHistoryDisplay({
-  name,
-  aliases,
-}: {
-  name: string;
-  aliases: readonly string[];
-}) {
+export default function CharacterHistoryDisplay({ history }: { history: readonly HistoryEntry[] }) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const history = useMemo(() => getHistory([name, ...aliases]), [name, aliases]);
 
   const sortedHistory = useMemo(() => {
     return [...history].sort((a, b) => {

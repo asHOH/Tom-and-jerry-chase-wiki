@@ -1,7 +1,7 @@
 import { historyData } from '@/data/history';
 import { ChangeType } from '@/data/types';
 
-type HistoryEntry = {
+export type HistoryEntry = {
   year: number;
   date: string;
   season: string;

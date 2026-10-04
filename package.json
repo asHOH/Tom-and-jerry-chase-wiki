@@ -26,11 +26,11 @@
     "react"
   ],
   "scripts": {
-    "dev": "node scripts/generate-site-images.mjs && next dev",
+    "dev": "npm run generate:history-dates && node scripts/generate-site-images.mjs && next dev",
     "build": "node scripts/run-build-with-game-data.mjs build:output",
     "build:debug": "node scripts/run-build-with-game-data.mjs build:output:debug",
-    "build:output": "npm run validate:actor-profiles && node scripts/generate-doc-pages.mjs && node scripts/run-image-optimization.cjs && node scripts/generate-site-images.mjs && next build && serwist build serwist.config.mjs",
-    "build:output:debug": "npm run validate:actor-profiles && node scripts/generate-doc-pages.mjs && node scripts/run-image-optimization.cjs && node scripts/generate-site-images.mjs && next build --debug && serwist build serwist.config.mjs",
+    "build:output": "npm run generate:history-dates && npm run validate:actor-profiles && node scripts/generate-doc-pages.mjs && node scripts/run-image-optimization.cjs && node scripts/generate-site-images.mjs && next build && serwist build serwist.config.mjs",
+    "build:output:debug": "npm run generate:history-dates && npm run validate:actor-profiles && node scripts/generate-doc-pages.mjs && node scripts/run-image-optimization.cjs && node scripts/generate-site-images.mjs && next build --debug && serwist build serwist.config.mjs",
     "generate:changelogs": "node scripts/generate-changelogs.mjs",
     "generate:database-types": "node scripts/generate-database-types.mjs",
     "generate:map-tiles": "node scripts/generate-map-tiles.mjs",
@@ -39,7 +39,7 @@
     "set-runtime:edge": "node scripts/set-api-runtime.mjs edge",
     "set-runtime:node": "node scripts/set-api-runtime.mjs nodejs",
     "build:skip-images": "node scripts/run-build-with-game-data.mjs build:output:skip-images",
-    "build:output:skip-images": "npm run validate:actor-profiles && node scripts/generate-doc-pages.mjs && node scripts/generate-site-images.mjs && next build && serwist build serwist.config.mjs",
+    "build:output:skip-images": "npm run generate:history-dates && npm run validate:actor-profiles && node scripts/generate-doc-pages.mjs && node scripts/generate-site-images.mjs && next build && serwist build serwist.config.mjs",
     "normalize:actor-profiles": "jiti scripts/normalize-actor-profiles.ts",
     "validate:actor-profiles": "jiti scripts/validate-actor-profiles.ts",
     "start": "next start",
@@ -76,7 +76,8 @@
     "cleanup-temp": "rimraf scripts/temp",
     "pre-push:force-fast": ".husky/pre-push-fast",
     "pre-push:force-full": "cross-env FORCE_FULL_PREPUSH=true .husky/pre-push",
-    "prepare": "husky"
+    "prepare": "husky",
+    "generate:history-dates": "node scripts/generate-history-dates.mjs"
   },
   "engines": {
     "node": "^22.9.0 || ^24.0.0 || ^26.0.0",
