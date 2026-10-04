@@ -1,4 +1,4 @@
-import { applyPatch } from 'diff';
+import { applyPatch, parsePatch, reversePatch } from 'diff';
 
 import {
   collapseGameActionSplitRows,
@@ -6,6 +6,35 @@ import {
   createGameActionUnifiedHunks,
   formatGameActionUnifiedDiff,
 } from './gameActionDiff';
+
+describe('game action unified diff export', () => {
+  it.each([
+    ['whole-value addition', undefined, { value: 'new' }],
+    ['whole-value deletion', { value: 'old' }, undefined],
+    ['final-line replacement', 'old', 'new'],
+    ['final context line', { value: 'old' }, { value: 'new' }],
+    [
+      'multiple hunks',
+      Array.from({ length: 20 }, (_, index) => index),
+      Array.from({ length: 20 }, (_, index) => (index === 1 || index === 18 ? -index : index)),
+    ],
+  ])('preserves exact text in both directions for %s', (_name, before, after) => {
+    const model = createGameActionDiff(before, after);
+    for (const showAllContext of [false, true]) {
+      const patch = formatGameActionUnifiedDiff(model, 'characters/example', showAllContext);
+      expect(patch.endsWith('\n')).toBe(true);
+      expect(applyPatch(model.oldText, patch)).toBe(model.newText);
+      const [parsed] = parsePatch(patch);
+      expect(applyPatch(model.newText, reversePatch(parsed!))).toBe(model.oldText);
+    }
+  });
+
+  it('does not export a patch for identical values', () => {
+    expect(formatGameActionUnifiedDiff(createGameActionDiff('same', 'same'), 'value', false)).toBe(
+      ''
+    );
+  });
+});
 
 describe('game action unified diff context', () => {
   const before = Array.from({ length: 20 }, (_, index) => `line ${index}`);

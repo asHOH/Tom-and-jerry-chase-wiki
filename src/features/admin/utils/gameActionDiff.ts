@@ -486,16 +486,24 @@ export function formatGameActionUnifiedDiff(
   const safeName = safeVirtualFileName(fileName);
   const hunks = createGameActionUnifiedHunks(model, showAllContext);
   const lines = [`--- ${safeName}.old.json`, `+++ ${safeName}.new.json`];
+  const oldFinalLine = model.oldText.endsWith('\n') ? null : splitLines(model.oldText).length;
+  const newFinalLine = model.newText.endsWith('\n') ? null : splitLines(model.newText).length;
 
   for (const hunk of hunks) {
     lines.push(hunk.header);
     for (const line of hunk.lines) {
       const prefix = line.kind === 'removed' ? '-' : line.kind === 'added' ? '+' : ' ';
       lines.push(`${prefix}${line.text}`);
+      if (
+        (line.oldLineNumber !== null && line.oldLineNumber === oldFinalLine) ||
+        (line.newLineNumber !== null && line.newLineNumber === newFinalLine)
+      ) {
+        lines.push('\\ No newline at end of file');
+      }
     }
   }
 
-  return lines.join('\n');
+  return `${lines.join('\n')}\n`;
 }
 
 export function formatGameActionNormalDiff(model: GameActionDiffModel): string {
