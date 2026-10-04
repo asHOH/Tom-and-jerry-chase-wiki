@@ -763,10 +763,13 @@ if [ "${#BUILD_REASONS[@]}" -gt 0 ]; then
     BUILD_EXIT_CODE=$?
     echo "Fatal: build failed with exit code $BUILD_EXIT_CODE."
     if [ "$BUILD_EXIT_CODE" -eq 137 ]; then
-      echo "(Exit code 137 usually indicates out of memory.)"
+      echo "Build was killed (137 / SIGKILL); an OOM kill is possible but not confirmed."
+      echo "Check: journalctl -k --since '30 minutes ago' --no-pager | grep -Ei 'oom|out of memory|killed process'"
+      echo "Check: free -h; swapon --show"
+      echo "NODE_MEMORY_LIMIT caps V8 old-space, not total build memory (including Turbopack/native allocations)."
     fi
     echo "The existing release was not stopped or modified."
-    exit 1
+    exit "$BUILD_EXIT_CODE"
   fi
 else
   DEPENDENCY_ACTION="skipped"

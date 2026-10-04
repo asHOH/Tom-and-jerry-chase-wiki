@@ -88,6 +88,7 @@ npm() {
       echo changed-cache > .next/cache/value
       [ "$(cat "$(cat "$TEST_ROOT/active")/.next/cache/value")" = "$EXPECTED_LIVE_CACHE" ] || return 92
       [ "$TEST_MODE" != build-fail ] || return 1
+      [ "$TEST_MODE" != build-oom ] || return 137
       mkdir -p .next/server .next/static
       echo new-build > .next/BUILD_ID
       echo new-worker > public/sw.js
@@ -168,6 +169,14 @@ for mode in install-fail build-fail; do
   [ "$(git -C "$CONTROL" rev-parse HEAD)" = "$OLD_HASH" ]
   [ "$(git -C "$CONTROL" worktree list --porcelain | grep -c '^worktree ')" -eq 1 ]
 done
+
+run_deploy 137 build-oom
+grep -q '137 / SIGKILL' output
+grep -q 'journalctl -k' output
+! grep -q delete events
+[ "$(cat active)" = "$CONTROL" ]
+[ "$(git -C "$CONTROL" rev-parse HEAD)" = "$OLD_HASH" ]
+[ "$(git -C "$CONTROL" worktree list --porcelain | grep -c '^worktree ')" -eq 1 ]
 
 for mode in start-fail activate-fail; do
   run_deploy 1 "$mode"

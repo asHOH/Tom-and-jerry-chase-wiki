@@ -1,4 +1,3 @@
-import { spawn } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import { readdir, rm } from 'node:fs/promises';
 import path from 'node:path';
@@ -6,6 +5,8 @@ import { fileURLToPath } from 'node:url';
 import nextEnv from '@next/env';
 import { createClient } from '@supabase/supabase-js';
 import { createJiti } from 'jiti';
+
+import { BuildOutputError, runBuildOutput } from './lib/run-build-output.mjs';
 
 const { loadEnvConfig } = nextEnv;
 const projectRoot = path.resolve(fileURLToPath(new URL('..', import.meta.url)));
@@ -93,28 +94,6 @@ async function removeGeneratedOutput() {
   );
 }
 
-async function runNpmScript(script, artifactPath) {
-  const npmCli = process.env.npm_execpath;
-  if (!npmCli) throw new Error('npm_execpath_unavailable');
-  await new Promise((resolve, reject) => {
-    const child = spawn(process.execPath, [npmCli, 'run', script], {
-      cwd: projectRoot,
-      env: {
-        ...process.env,
-        DEPLOY_BUILD_ID: deploymentIdentity,
-        GAME_DATA_BUILD_ARTIFACT_PATH: artifactPath,
-      },
-      stdio: 'inherit',
-      windowsHide: true,
-    });
-    child.once('error', reject);
-    child.once('exit', (code, signal) => {
-      if (code === 0) resolve();
-      else reject(new Error(`build_output_failed:${code ?? signal ?? 'unknown'}`));
-    });
-  });
-}
-
 await runBuildAttemptCoordinator({
   maxAttempts: 3,
   async prepareAttempt(attempt) {
@@ -130,7 +109,15 @@ await runBuildAttemptCoordinator({
     await writeBuildGameDataArtifactFile(artifactPath, result.artifact);
     return { artifactPath, replayEpoch: result.replayEpoch, summary: result.summary };
   },
-  runOutputPipeline: (_attempt, artifactPath) => runNpmScript(outputScript, artifactPath),
+  runOutputPipeline: (_attempt, artifactPath) =>
+    runBuildOutput(outputScript, {
+      cwd: projectRoot,
+      env: {
+        ...process.env,
+        DEPLOY_BUILD_ID: deploymentIdentity,
+        GAME_DATA_BUILD_ARTIFACT_PATH: artifactPath,
+      },
+    }),
   async readFinalEpoch() {
     if (!acquisitionClient) throw new Error('unexpected_disabled_epoch_read');
     const startedAt = performance.now();
@@ -146,4 +133,8 @@ await runBuildAttemptCoordinator({
   emitSummary(summary) {
     console.log(JSON.stringify(summary));
   },
+}).catch((error) => {
+  // The coordinator has finished cleanup; preserve the child's status for deploy diagnostics.
+  console.error(error);
+  process.exitCode = error instanceof BuildOutputError ? error.exitCode : 1;
 });
