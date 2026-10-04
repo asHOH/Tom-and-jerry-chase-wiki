@@ -2107,9 +2107,10 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
     },
   },
   {
-    description: '仙女鼠武器技能无视霸体，后期拥有高强度干扰能力。',
+    description:
+      '仙女鼠武器技能无视霸体，后期拥有高强度干扰能力。但是图多盖洛点出1被后会无视仙女鼠3被，并会收到加速，所以相当于直接废仙女鼠一个被动。',
     relation: {
-      kind: 'counters',
+      kind: 'counterEachOther',
       subject: { name: '仙女鼠', type: 'character' },
       target: { name: '图多盖洛', type: 'character' },
       isMinor: true,

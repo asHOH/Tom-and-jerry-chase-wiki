@@ -76,3 +76,12 @@ submission after those removals, preserving attribution and linking the original
 refetch, validation, idempotency, verification and retirement safeguards above. The text-edit
 preparation command does not prepare relation repairs; these require individual review. Never
 rewrite timestamps or weaken approval validation to force an old row through.
+
+If preserving the original row ID is required, a reviewed baseline correction can sometimes
+remove the historical conflict instead. Before deployment, verify that the corrected baseline
+plus existing public actions produces exactly the intended published result, that both freshness
+checks and complete candidate replay accept the original row, and that approving it would not
+change that result. Deploy the baseline correction first, recheck the live state, then approve
+the original row through the normal moderation path. Keep it pending until deployment. Any later
+transition to `synced` must use the normal approved/public compaction workflow; do not directly
+change a pending row to synced.
