@@ -383,7 +383,7 @@ function SplitRow({ row }: { row: GameActionSplitRow }) {
   const newChanged = row.kind === 'changed' || row.kind === 'added';
 
   return (
-    <div className='grid min-w-192 grid-cols-[3rem_1.5rem_minmax(18rem,1fr)_3rem_1.5rem_minmax(18rem,1fr)] font-mono text-xs leading-6'>
+    <div className='grid min-w-3xl grid-cols-[3rem_1.5rem_minmax(18rem,1fr)_3rem_1.5rem_minmax(18rem,1fr)] font-mono text-xs leading-6'>
       <span className='border-r border-b border-slate-200 bg-slate-50 px-2 text-right text-slate-400 select-none dark:border-slate-700 dark:bg-slate-950/60 dark:text-slate-500'>
         {row.oldLineNumber}
       </span>
@@ -451,7 +451,7 @@ function SplitDiffView({
 
   return (
     <div className='border-border bg-surface-sunken overflow-auto rounded border'>
-      <div className='grid min-w-192 grid-cols-2 border-b border-slate-200 text-xs font-semibold dark:border-slate-700'>
+      <div className='grid min-w-3xl grid-cols-2 border-b border-slate-200 text-xs font-semibold dark:border-slate-700'>
         <div className='border-r border-slate-200 bg-red-50 px-3 py-2 text-red-800 dark:border-slate-700 dark:bg-red-950/40 dark:text-red-200'>
           旧值
         </div>
@@ -463,7 +463,7 @@ function SplitDiffView({
         item.type === 'gap' ? (
           <div
             key={item.id}
-            className='min-w-192 border-b border-slate-200 bg-slate-100/80 p-1 text-center dark:border-slate-700 dark:bg-slate-950/70'
+            className='min-w-3xl border-b border-slate-200 bg-slate-100/80 p-1 text-center dark:border-slate-700 dark:bg-slate-950/70'
           >
             <Button
               variant='ghost'
