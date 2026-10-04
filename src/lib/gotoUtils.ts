@@ -73,8 +73,8 @@ export async function getGotoResult(
     if (hint === '技能') return (c: K) => c.kind === 'character-skill';
     if (hint === '道具') return (c: K) => c.kind === 'item' || c.kind === 'entity';
     if (hint === '衍生物') return (c: K) => c.kind === 'entity';
-    if (hint === '猫衍生物') return (c: K) => c.kind === 'entity';
-    if (hint === '鼠衍生物') return (c: K) => c.kind === 'entity';
+    if (hint === '猫衍生物') return (c: K) => c.kind === 'entity' && c.goto?.factionId === 'cat';
+    if (hint === '鼠衍生物') return (c: K) => c.kind === 'entity' && c.goto?.factionId === 'mouse';
     if (hint === '地图') return (c: K) => c.kind === 'map';
     if (hint === '地图组件') return (c: K) => c.kind === 'fixture';
     if (hint === '场景物') return (c: K) => c.kind === 'fixture';
@@ -204,6 +204,13 @@ export async function getGotoResult(
 
   const pred = categoryPredicate(normalizedCategory);
   const filtered = pred ? candidates.filter(pred as (c: { kind: string }) => boolean) : candidates;
+  // An explicit entity faction must not silently fall back to the opposite faction.
+  if (
+    (normalizedCategory === '猫衍生物' || normalizedCategory === '鼠衍生物') &&
+    filtered.length === 0
+  ) {
+    return null;
+  }
   const pool = filtered.length > 0 ? filtered : candidates;
 
   const sortedPool = orderBy(

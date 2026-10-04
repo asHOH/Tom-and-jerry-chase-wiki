@@ -3,7 +3,7 @@ import uniqBy from 'lodash-es/uniqBy';
 
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { CATEGORY_HINTS, type CategoryHint, type GotoResult } from '@/lib/types';
-import type { ItemGroupDefinition } from '@/data/types';
+import type { FactionId, ItemGroupDefinition, SingleItem } from '@/data/types';
 import { getDocPages } from '@/features/articles/utils/docs';
 import { getItemGroupImageUrl } from '@/features/items/components/itemGroups/itemGroup-grid/getItemGroupImageUrl';
 import {
@@ -140,6 +140,47 @@ async function buildGotoIndex(gameData: PublishedGameDataByType): Promise<GotoIn
   } = gameData;
   const byName = new Map<string, GotoIndexEntry[]>();
 
+  // Resolve against this snapshot; the display helper's static cache may contain older ownership.
+  const getOwnerFaction = (
+    owner: SingleItem,
+    visited = new Set<string>()
+  ): FactionId | undefined => {
+    if (owner.factionId) return owner.factionId;
+    switch (owner.type) {
+      case 'character':
+        return characters[owner.name]?.factionId;
+      case 'skill':
+        return Object.values(characters).find((character) =>
+          character.skills.some((skill) => skill.name === owner.name)
+        )?.factionId;
+      case 'knowledgeCard':
+        return cards[owner.name]?.factionId;
+      case 'item':
+        return items[owner.name]?.factionId;
+      case 'specialSkill':
+        return (specialSkills.cat[owner.name] ?? specialSkills.mouse[owner.name])?.factionId;
+      case 'achievement':
+        return (achievements.cat[owner.name] ?? achievements.mouse[owner.name])?.factionId;
+      case 'entity': {
+        const entity = entities[owner.name];
+        if (!entity || visited.has(owner.name)) return undefined;
+        if (entity.factionId) return entity.factionId;
+        const owners = Array.isArray(entity.owner)
+          ? entity.owner
+          : entity.owner
+            ? [entity.owner]
+            : [];
+        visited.add(owner.name);
+        const factions = new Set(owners.map((item) => getOwnerFaction(item, visited)));
+        visited.delete(owner.name);
+        factions.delete(undefined);
+        return factions.size === 1 ? factions.values().next().value : undefined;
+      }
+      default:
+        return undefined;
+    }
+  };
+
   // Characters
   for (const [id, c] of Object.entries(characters)) {
     const characterDisplayName = c.id === id ? c.id : `${c.id}（${id}）`;
@@ -245,12 +286,14 @@ async function buildGotoIndex(gameData: PublishedGameDataByType): Promise<GotoIn
 
   // Entities
   for (const [name, it] of Object.entries(entities)) {
+    const factionId = getOwnerFaction({ name, type: 'entity' });
     const goto: GotoResult = {
       url: `/entities/${encodeURIComponent(name)}`,
       type: 'entity',
       name: it.name,
       description: it.description,
       imageUrl: it.imageUrl,
+      ...(factionId ? { factionId } : {}),
     };
     push(byName, normalizeName(name), {
       kind: 'entity',
