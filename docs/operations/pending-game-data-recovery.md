@@ -51,3 +51,23 @@ For an authorized repair, keep the plan and execution receipts under ignored `.t
    only that step after verifying both records. If either record was moderated, stop and inspect.
 
 The preparation command never writes to Supabase. Do not commit plans, payloads or contributor IDs.
+
+## Relation replacements split across rows
+
+Submission and approval share the freshness and character validators, but submission checks the
+whole proposed request while approval also checks a row at its historical replay position. Replay
+orders rows by `created_at, id`; `publish_operation_ordinal` does not override that order. Rows from
+one request can share a timestamp, so a mutual-relation addition can sort before its required
+one-way-relation removals even after those removals are approved.
+
+Publish preparation keeps character relation edits from one request in one atomic row, including
+root replacements and faction changes that affect relation validity. Ordinary unrelated edits
+remain separate. This prevents future split replacements; it does not regroup stored rows.
+
+For an existing split replacement, inspect all rows in the original publish operation and replay
+both the current state and the historical insertion state. If the removals are already approved
+and the remaining addition passes against the current state, recover it as a new pending/private
+submission after those removals, preserving attribution and linking the original. Follow the
+refetch, validation, idempotency, verification and retirement safeguards above. The text-edit
+preparation command does not prepare relation repairs; these require individual review. Never
+rewrite timestamps or weaken approval validation to force an old row through.

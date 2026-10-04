@@ -48,6 +48,25 @@ describe('readBoundedJsonBody', () => {
 });
 
 describe('preparePublishActionItems', () => {
+  it('groups relation-affecting character edits across request items but leaves prose independent', () => {
+    const relation = { op: 'set', path: 'Tom.counters', newValue: [] };
+    const faction = { op: 'set', path: 'Jerry.factionId', newValue: 'mouse' };
+    const prose = { op: 'set', path: 'Tom.description', newValue: 'updated' };
+    const root = { op: 'set', path: 'Other', newValue: {} };
+    const result = preparePublishActionItems([
+      { entityType: 'characters', entries: [relation, prose] },
+      { entityType: 'characters', entries: [faction, root] },
+    ]);
+    expect(result.actions[0]!.rows.map((row) => row.canonicalEntry)).toEqual([
+      [relation, faction, root],
+      prose,
+    ]);
+    const otherDomain = preparePublishActionItems([
+      { entityType: 'items', entries: [relation, faction] },
+    ]);
+    expect(otherDomain.actions[0]!.rows).toHaveLength(2);
+  });
+
   it('strictly decodes rows and returns canonical persistence values', () => {
     const result = preparePublishActionItems(
       [

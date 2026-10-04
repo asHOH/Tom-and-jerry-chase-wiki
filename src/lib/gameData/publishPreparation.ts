@@ -1,8 +1,9 @@
 import 'server-only';
 
+import { isCharacterRelationKind } from '@/lib/edit/characterRelationActions';
 import type { Action } from '@/lib/edit/diffUtils';
 
-import { groupActionEntriesByDependency } from './actionDependencies';
+import { areActionsOrderDependent, groupActionEntriesByDependency } from './actionDependencies';
 import {
   decodeActionRowEntry,
   type ActionDecodeError,
@@ -95,6 +96,11 @@ export type PreparedPublishRequest = {
   actions: readonly PreparedPublishActionItem[];
   message?: string;
 };
+
+function affectsCharacterRelations(action: Action): boolean {
+  const field = action.path.split('.')[1];
+  return field === undefined || field === 'factionId' || isCharacterRelationKind(field);
+}
 
 export async function readBoundedJsonBody(request: Request): Promise<unknown> {
   const declaredLength = request.headers.get('content-length');
@@ -208,7 +214,15 @@ export function preparePublishActionItems(
   const preparedActions: PreparedPublishActionItem[] = [];
   for (const [entityType, rows] of rowsByEntityType) {
     const dependencyGroups = groupActionEntriesByDependency(
-      rows.map((row) => row.actions.map((action) => ({ ...action })))
+      rows.map((row) => row.actions.map((action) => ({ ...action }))),
+      (left, right) =>
+        areActionsOrderDependent(left, right) ||
+        // Relations include inverse links and shared-trait defaults, so disjoint paths
+        // can still form one replacement. Keep relation edits in a request atomic;
+        // otherwise separate reviews or UUID tie-breaking can publish half a change.
+        (entityType === 'characters' &&
+          affectsCharacterRelations(left) &&
+          affectsCharacterRelations(right))
     );
     preparedActions.push({
       entityType,

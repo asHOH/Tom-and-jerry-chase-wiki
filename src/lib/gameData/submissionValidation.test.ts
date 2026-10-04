@@ -1,4 +1,7 @@
-import { getCharacterRelation } from '@/features/characters/utils/relationReadModel';
+import {
+  getCharacterRelation,
+  getExplicitCharacterRelation,
+} from '@/features/characters/utils/relationReadModel';
 
 import { validateActionFreshness } from './actionFreshness';
 import { InvalidGameDataValueError } from './characterDataValidation';
@@ -88,6 +91,42 @@ it('allows an atomic relation replacement that explicitly removes the old relati
       ],
     ])
   ).not.toThrow();
+});
+
+it('keeps a cross-character relation replacement in one independently approvable row', () => {
+  const canonical = getCanonicalGameData('characters');
+  const fairy = getExplicitCharacterRelation(canonical, '仙女鼠');
+  const toodles = getExplicitCharacterRelation(canonical, '图多盖洛');
+  expect(fairy.counters.some((item) => item.id === '图多盖洛')).toBe(true);
+  expect(toodles.counteredBy.some((item) => item.id === '仙女鼠')).toBe(true);
+  expect(canonical.仙女鼠).not.toHaveProperty('counters');
+  expect(canonical.仙女鼠).not.toHaveProperty('counterEachOther');
+  expect(canonical.图多盖洛).not.toHaveProperty('counteredBy');
+  const entries = [
+    set(
+      '仙女鼠.counters',
+      undefined,
+      fairy.counters.filter((item) => item.id !== '图多盖洛')
+    ),
+    set(
+      '图多盖洛.counteredBy',
+      undefined,
+      toodles.counteredBy.filter((item) => item.id !== '仙女鼠')
+    ),
+    set('仙女鼠.counterEachOther', undefined, [
+      { id: '图多盖洛', description: 'mutual replacement', isMinor: true },
+    ]),
+  ];
+  // The addition alone conflicts with the original one-way relation.
+  expect(() => validate([entries[2]])).toThrow(InvalidGameDataValueError);
+  const prepared = preparePublishActionItems([{ entityType: 'characters', entries }]);
+  expect(prepared.actions[0]!.rows).toHaveLength(1);
+  expect(prepared.actions[0]!.rows[0]!.actions.map((action) => action.path)).toEqual(
+    entries.map((entry) => entry.path)
+  );
+  expect(() => validate(entries)).not.toThrow();
+  // Approval receives exactly this stored row, with no sibling UUID ordering dependency.
+  expect(() => validate([prepared.actions[0]!.rows[0]!.canonicalEntry])).not.toThrow();
 });
 
 it('rejects opposite map relations and duplicate relations within a collection', () => {
