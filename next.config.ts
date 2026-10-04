@@ -179,21 +179,36 @@ const nextConfig: NextConfig = {
     const allowedOrigin =
       process.env.NEXT_PUBLIC_SITE_URL ||
       (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined);
+    const corsHeaders = [
+      { key: 'Vary', value: 'Origin' },
+      { key: 'Access-Control-Allow-Methods', value: 'GET, POST, OPTIONS' },
+      { key: 'Access-Control-Allow-Headers', value: 'Content-Type, Authorization' },
+      { key: 'Access-Control-Allow-Credentials', value: 'true' },
+    ];
 
     if (allowedOrigin) {
       headers.push({
         source: '/api/(.*)',
-        headers: [
-          { key: 'Access-Control-Allow-Origin', value: allowedOrigin },
-          { key: 'Vary', value: 'Origin' },
-          { key: 'Access-Control-Allow-Methods', value: 'GET, POST, OPTIONS' },
-          { key: 'Access-Control-Allow-Headers', value: 'Content-Type, Authorization' },
-          { key: 'Access-Control-Allow-Credentials', value: 'true' },
-        ],
+        headers: [{ key: 'Access-Control-Allow-Origin', value: allowedOrigin }, ...corsHeaders],
       });
     }
 
-    return headers;
+    return [
+      ...headers,
+      {
+        source: '/api/(.*)',
+        // Next anchors this match and substitutes the captured origin into the header.
+        // Keep it last so trusted subdomains override the configured site origin.
+        has: [
+          {
+            type: 'header' as const,
+            key: 'origin',
+            value: '(?<origin>https://(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+tjwiki\\.com)',
+          },
+        ],
+        headers: [{ key: 'Access-Control-Allow-Origin', value: ':origin' }, ...corsHeaders],
+      },
+    ];
   },
   trailingSlash: true,
   images: {
