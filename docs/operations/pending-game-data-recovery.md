@@ -60,9 +60,14 @@ orders rows by `created_at, id`; `publish_operation_ordinal` does not override t
 one request can share a timestamp, so a mutual-relation addition can sort before its required
 one-way-relation removals even after those removals are approved.
 
-Publish preparation keeps character relation edits from one request in one atomic row, including
-root replacements and faction changes that affect relation validity. Ordinary unrelated edits
-remain separate. This prevents future split replacements; it does not regroup stored rows.
+Publish preparation keeps dependent character relation edits in one atomic row. Complete
+character-relation arrays are grouped by connected source/target characters; non-character
+relations are grouped by their owning character and target domain (cards, special skills, maps or
+modes). Provably independent groups remain separately reviewable. Root replacements, missing
+collection snapshots and other ambiguous dependencies are grouped conservatively. Faction changes
+stay together with character-relation edits because existing edges may be absent from the request.
+This prevents future split replacements; it does not
+regroup stored rows or increase the per-row action limit.
 
 For an existing split replacement, inspect all rows in the original publish operation and replay
 both the current state and the historical insertion state. If the removals are already approved

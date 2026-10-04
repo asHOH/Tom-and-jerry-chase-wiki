@@ -48,6 +48,126 @@ describe('readBoundedJsonBody', () => {
 });
 
 describe('preparePublishActionItems', () => {
+  it('keeps unrelated character pairs separately reviewable but joins inverse replacements', () => {
+    const relation = (path: string, oldIds: string[], newIds: string[]) => ({
+      op: 'set',
+      path,
+      oldValue: oldIds.map((id) => ({ id, isMinor: false })),
+      newValue: newIds.map((id) => ({ id, isMinor: false })),
+    });
+    const entries = [
+      relation('Tom.counters', ['Jerry'], []),
+      relation('Toodles.counters', [], ['Tuffy']),
+      relation('Jerry.counteredBy', ['Tom'], []),
+      relation('Jerry.counterEachOther', [], ['Tom']),
+    ];
+    const result = preparePublishActionItems([{ entityType: 'characters', entries }]);
+    expect(result.actions[0]!.rows.map((row) => row.canonicalEntry)).toEqual([
+      [entries[0], entries[2], entries[3]],
+      entries[1],
+    ]);
+  });
+
+  it('groups opposite non-character relations by owner and domain without coupling unrelated edits', () => {
+    const entries = [
+      'Tom.advantageMaps',
+      'Tom.disadvantageMaps',
+      'Tom.advantageModes',
+      'Jerry.advantageMaps',
+    ].map((path) => ({
+      op: 'set',
+      path,
+      newValue: [],
+    }));
+    const result = preparePublishActionItems([{ entityType: 'characters', entries }]);
+    expect(result.actions[0]!.rows.map((row) => row.canonicalEntry)).toEqual([
+      [entries[0], entries[1]],
+      entries[2],
+      entries[3],
+    ]);
+  });
+
+  it.each(['maps', 'characters'])(
+    'allows more than 128 independent %s relation edits',
+    (domain) => {
+      const entries = Array.from({ length: PUBLISH_LIMITS.actionsPerRow + 1 }, (_, index) => ({
+        op: 'set',
+        path: `character${index}.${domain === 'maps' ? 'advantageMaps' : 'counters'}`,
+        oldValue: [],
+        newValue: [{ id: `target${index}`, isMinor: false }],
+      }));
+      expect(
+        preparePublishActionItems([{ entityType: 'characters', entries }]).actions[0]!.rows
+      ).toHaveLength(entries.length);
+    }
+  );
+
+  it('still enforces the row limit for a connected relation group', () => {
+    const entries = Array.from({ length: PUBLISH_LIMITS.actionsPerRow + 1 }, (_, index) => ({
+      op: 'set',
+      path: `character${index}.counteredBy`,
+      oldValue: [],
+      newValue: [{ id: 'Tom', isMinor: false }],
+    }));
+    expect(() => preparePublishActionItems([{ entityType: 'characters', entries }])).toThrow(
+      expect.objectContaining({
+        detail: expect.objectContaining({ code: 'too_many_actions_per_row' }),
+      })
+    );
+  });
+
+  it.each([
+    { op: 'set', path: 'Tom.counters', newValue: [] },
+    { op: 'delete', path: 'Tom.counters', oldValue: [] },
+    { op: 'set', path: 'Tom.counters.0.description', oldValue: '', newValue: 'updated' },
+  ])('keeps incomplete character-relation context conservative: %j', (ambiguous) => {
+    const known = {
+      op: 'set',
+      path: 'Toodles.counterEachOther',
+      oldValue: [],
+      newValue: [{ id: 'Tuffy', isMinor: false }],
+    };
+    expect(
+      preparePublishActionItems([{ entityType: 'characters', entries: [ambiguous, known] }])
+        .actions[0]!.rows
+    ).toHaveLength(1);
+  });
+
+  it('keeps faction and character relation edits together when existing edges are unknown', () => {
+    const faction = { op: 'set', path: 'Jerry.factionId', oldValue: 'mouse', newValue: 'cat' };
+    const incoming = {
+      op: 'set',
+      path: 'Tom.counters',
+      oldValue: [{ id: 'Jerry', isMinor: false }],
+      newValue: [],
+    };
+    const independent = {
+      op: 'set',
+      path: 'Toodles.counters',
+      oldValue: [],
+      newValue: [{ id: 'Tuffy', isMinor: false }],
+    };
+    expect(
+      preparePublishActionItems([
+        { entityType: 'characters', entries: [faction, incoming, independent] },
+      ]).actions[0]!.rows.map((row) => row.canonicalEntry)
+    ).toEqual([[faction, incoming, independent]]);
+  });
+
+  it('keeps a faction swap atomic even when its existing relation is not edited', () => {
+    // For an existing Tom -> Jerry counter edge, the two faction changes are valid
+    // together, but either separately would leave a forbidden same-faction relation.
+    const entries = [
+      { op: 'set', path: 'Tom.factionId', oldValue: 'cat', newValue: 'mouse' },
+      { op: 'set', path: 'Jerry.factionId', oldValue: 'mouse', newValue: 'cat' },
+    ];
+    expect(
+      preparePublishActionItems([{ entityType: 'characters', entries }]).actions[0]!.rows.map(
+        (row) => row.canonicalEntry
+      )
+    ).toEqual([entries]);
+  });
+
   it('groups relation-affecting character edits across request items but leaves prose independent', () => {
     const relation = { op: 'set', path: 'Tom.counters', newValue: [] };
     const faction = { op: 'set', path: 'Jerry.factionId', newValue: 'mouse' };
