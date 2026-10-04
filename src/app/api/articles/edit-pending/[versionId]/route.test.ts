@@ -39,7 +39,7 @@ const adminRpcMock = jest.mocked(supabaseAdmin!.rpc);
 const versionQuery = {
   select: jest.fn(),
   eq: jest.fn(),
-  single: jest.fn(),
+  maybeSingle: jest.fn(),
 };
 
 const createRequest = (body: unknown) => ({ json: async () => body }) as Request;
@@ -53,9 +53,26 @@ describe('pending article edit route', () => {
     resolveArticleCharacterForWriteMock.mockResolvedValue('Tom');
     versionQuery.select.mockReturnValue(versionQuery);
     versionQuery.eq.mockReturnValue(versionQuery);
-    versionQuery.single.mockResolvedValue({ data: { article_id: 'article-1' }, error: null });
+    versionQuery.maybeSingle.mockResolvedValue({ data: { article_id: 'article-1' }, error: null });
     adminFromMock.mockReturnValue(versionQuery as never);
     adminRpcMock.mockResolvedValue({ data: null, error: null } as never);
+  });
+
+  it.each([
+    [{ message: 'database unavailable' }, 500, 'Internal server error'],
+    [null, 404, 'Article version not found'],
+  ])('stops before mutation when version lookup returns %j', async (error, status, message) => {
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+    versionQuery.maybeSingle.mockResolvedValue({ data: null, error });
+    const response = await POST(
+      createRequest({ title: '文章', category: CATEGORY_ID, content: '内容' }),
+      { params: Promise.resolve({ versionId: 'version-1' }) }
+    );
+
+    expect(response.status).toBe(status);
+    expect(await response.json()).toEqual({ error: message });
+    expect(adminRpcMock).not.toHaveBeenCalled();
+    expect(revalidateTag).not.toHaveBeenCalled();
   });
 
   it('validates and forwards character metadata', async () => {

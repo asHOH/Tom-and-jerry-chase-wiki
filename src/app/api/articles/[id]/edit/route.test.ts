@@ -77,7 +77,7 @@ const CATEGORY_ID = '11111111-1111-4111-8111-111111111111';
 const articleQuery = {
   select: jest.fn(),
   eq: jest.fn(),
-  single: jest.fn(),
+  maybeSingle: jest.fn(),
 };
 
 const createRequest = (body: unknown) =>
@@ -108,7 +108,7 @@ describe('article edit route', () => {
 
     articleQuery.select.mockReturnValue(articleQuery);
     articleQuery.eq.mockReturnValue(articleQuery);
-    articleQuery.single.mockResolvedValue({
+    articleQuery.maybeSingle.mockResolvedValue({
       data: { author_id: 'editor-1', category_id: CATEGORY_ID },
       error: null,
     });
@@ -117,6 +117,30 @@ describe('article edit route', () => {
       if (table === 'articles') return articleQuery as never;
       throw new Error(`Unexpected table: ${table}`);
     });
+  });
+
+  it.each([
+    [{ message: 'database unavailable' }, 500, 'Internal server error'],
+    [null, 404, 'Article not found'],
+  ])('stops before mutation when article lookup returns %j', async (error, status, message) => {
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+    articleQuery.maybeSingle.mockResolvedValue({ data: null, error });
+    const response = await POST(
+      createRequest({
+        title: '文章',
+        category: CATEGORY_ID,
+        content: '内容',
+        commit_message: '更新',
+      }),
+      { params: Promise.resolve({ id: 'article-1' }) }
+    );
+
+    expect(response.status).toBe(status);
+    expect(await response.json()).toEqual({ error: message });
+    expect(adminRpcMock).not.toHaveBeenCalled();
+    expect(revalidateTag).not.toHaveBeenCalled();
+    expect(notifyArticleVersionSubscribersMock).not.toHaveBeenCalled();
+    expect(publishNotificationMock).not.toHaveBeenCalled();
   });
 
   it('notifies subscribers when an edit stays pending', async () => {

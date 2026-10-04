@@ -40,9 +40,10 @@ export async function POST(request: Request, { params }: { params: Promise<{ id?
       .from('articles')
       .select('author_id, category_id')
       .eq('id', id)
-      .single();
+      .maybeSingle();
 
-    if (articleError) {
+    if (articleError) throw articleError;
+    if (!article) {
       return NextResponse.json({ error: 'Article not found' }, { status: 404 });
     }
 

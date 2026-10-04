@@ -45,9 +45,10 @@ export async function POST(
       .from('article_versions')
       .select('article_id')
       .eq('id', versionId)
-      .single();
+      .maybeSingle();
 
-    if (versionError || !version) {
+    if (versionError) throw versionError;
+    if (!version) {
       return NextResponse.json({ error: 'Article version not found' }, { status: 404 });
     }
 
