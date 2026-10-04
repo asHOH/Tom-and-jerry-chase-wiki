@@ -3,16 +3,34 @@
 import React, { useEffect, useState } from 'react';
 
 import { getNavigationButtonClasses } from '@/lib/design';
+import { scheduleBackgroundPreparation } from '@/lib/scheduleBackgroundPreparation';
 import { useMobile } from '@/hooks/useMediaQuery';
+import { usePreparedComponent } from '@/hooks/usePreparedComponent';
 import MotionButton from '@/components/ui/MotionButton';
 import { SearchIcon } from '@/components/icons/CommonIcons';
+import { searchDialogModule } from '@/components/panelModules';
 
-import SearchDialog from './SearchDialog';
+import { BaseDialog } from './BaseDialog';
+import Button from './Button';
 import Tooltip from './Tooltip';
 
 const SearchBar: React.FC<object> = () => {
   const isMobile = useMobile();
   const [showSearchDialog, setShowSearchDialog] = useState(false);
+  const [hasOpenedSearch, setHasOpenedSearch] = useState(false);
+  const {
+    Component: SearchDialog,
+    error,
+    retry,
+  } = usePreparedComponent(searchDialogModule, showSearchDialog);
+
+  useEffect(() => scheduleBackgroundPreparation([searchDialogModule.load]), []);
+
+  const prepareSearch = () => {
+    void searchDialogModule.load().catch((cause: unknown) => {
+      console.warn('Unable to prepare search:', cause);
+    });
+  };
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -23,6 +41,7 @@ const SearchBar: React.FC<object> = () => {
         !(event.target instanceof HTMLTextAreaElement)
       ) {
         event.preventDefault(); // Prevent the '/' character from being typed
+        setHasOpenedSearch(true);
         setShowSearchDialog(true);
       }
     };
@@ -35,6 +54,7 @@ const SearchBar: React.FC<object> = () => {
   }, []);
 
   const handleOpenSearch = () => {
+    setHasOpenedSearch(true);
     setShowSearchDialog(true);
   };
 
@@ -49,6 +69,8 @@ const SearchBar: React.FC<object> = () => {
           variant='unstyled'
           type='button'
           onClick={handleOpenSearch}
+          onPointerEnter={prepareSearch}
+          onFocus={prepareSearch}
           className={getNavigationButtonClasses(false, false, true)}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
@@ -59,7 +81,22 @@ const SearchBar: React.FC<object> = () => {
         </MotionButton>
       </Tooltip>
 
-      <SearchDialog open={showSearchDialog} onClose={handleCloseSearch} isMobile={isMobile} />
+      {SearchDialog && hasOpenedSearch ? (
+        <SearchDialog open={showSearchDialog} onClose={handleCloseSearch} isMobile={isMobile} />
+      ) : (
+        <BaseDialog
+          open={showSearchDialog}
+          onOpenChange={setShowSearchDialog}
+          ariaLabel='搜索'
+          panelClassName='max-w-md p-6 md:w-full'
+        >
+          <p role='status'>{error ? '搜索加载失败，请重试' : '正在准备搜索…'}</p>
+          {error && <Button onClick={retry}>重试</Button>}
+          <Button variant='secondary' onClick={handleCloseSearch}>
+            关闭
+          </Button>
+        </BaseDialog>
+      )}
     </div>
   );
 };

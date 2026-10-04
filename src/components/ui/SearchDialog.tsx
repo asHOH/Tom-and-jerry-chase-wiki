@@ -98,6 +98,14 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
   const [isDarkMode] = useDarkMode();
 
   useEffect(() => {
+    if (!open) return;
+    // A loading dialog may restore trigger focus during this dialog's mount.
+    // Focus after that handoff, once BaseDialog has completed its own focus setup.
+    const frame = window.requestAnimationFrame(() => searchInputRef.current?.focus());
+    return () => window.cancelAnimationFrame(frame);
+  }, [open]);
+
+  useEffect(() => {
     setIsAiExpanded(false);
     setIsAiStopped(false);
   }, [open, searchQuery]);

@@ -5,6 +5,7 @@ const ROOT_PROVIDER_FILES = [
   'src/app/layout.tsx',
   'src/components/ClientProviders.tsx',
   'src/context/EditModeContext.tsx',
+  'src/components/panelModules.ts',
 ] as const;
 
 const CANONICAL_SOURCE_FILES = [
@@ -28,6 +29,7 @@ const STATIC_ROOT_FORBIDDEN_IMPORTS = [
   '@/lib/edit/editStores',
   '@/lib/edit/editModeRegistry',
   '@/components/EditRuntime',
+  './EditRuntime',
 ] as const;
 
 function readSource(path: string): string {
@@ -75,7 +77,10 @@ describe('game-data import and payload boundaries', () => {
     }
 
     expect(readSource('src/context/EditModeContext.tsx')).toContain(
-      "dynamic(() => import('@/components/EditRuntime')"
+      'dynamic(editRuntimeModule.load'
+    );
+    expect(readSource('src/components/panelModules.ts')).toContain(
+      "preparedModule(() => import('./EditRuntime'))"
     );
   });
 

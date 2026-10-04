@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo } from 'react';
 
 import type { GameDataSubmitMode } from '@/lib/gameData/submitMode';
+import { scheduleBackgroundPreparation } from '@/lib/scheduleBackgroundPreparation';
 import { CharacterDetailsProps } from '@/lib/types';
 import { useContributionSubmissionFeedback } from '@/hooks/useContributionSubmissionFeedback';
 import { useKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
@@ -17,10 +18,24 @@ import {
 import { PublishedEntityHistoryProvider } from '@/context/PublishedEntityHistoryContext';
 import { useToast } from '@/context/ToastContext';
 import { CharacterDetails } from '@/features/characters/components/character-detail';
-import EditModeToolbar from '@/components/ui/EditModeToolbar';
 import PageShell from '@/components/ui/PageShell';
+import EditModeToolbar from '@/components/ui/PreparedEditModeToolbar';
+import {
+  editRuntimeModule,
+  editToolbarModule,
+  searchDialogModule,
+} from '@/components/panelModules';
 
 export default function CharacterDetailsClient(props: CharacterDetailsProps) {
+  useEffect(
+    () =>
+      scheduleBackgroundPreparation([
+        searchDialogModule.load,
+        editToolbarModule.load,
+        editRuntimeModule.load,
+      ]),
+    []
+  );
   const editMode = useEditMode();
   const { isEditMode, isPreviewMode, registerPublishedRevision } = editMode;
   const { characterId } = useLocalCharacter();

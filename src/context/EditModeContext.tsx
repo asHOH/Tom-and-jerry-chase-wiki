@@ -16,8 +16,9 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import type { EditRuntimeStatus } from '@/lib/edit/editRuntimeStatus';
 import { storage, StorageKey } from '@/lib/localStorage';
 import { isEditModeSearchParamEnabled } from '@/hooks/useSearchParamEditMode';
+import { editRuntimeModule } from '@/components/panelModules';
 
-const EditRuntime = dynamic(() => import('@/components/EditRuntime'), {
+const EditRuntime = dynamic(editRuntimeModule.load, {
   ssr: false,
 });
 

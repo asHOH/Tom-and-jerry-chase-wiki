@@ -7,6 +7,7 @@ import { useChat } from '@/hooks/useChat';
 import { useSearchGameData } from '@/hooks/useSearchGameData';
 import { env } from '@/env';
 
+import { BaseDialog } from './BaseDialog';
 import SearchDialog from './SearchDialog';
 
 const mockNavigate = jest.fn();
@@ -115,6 +116,23 @@ describe('SearchDialog', () => {
     } else {
       Reflect.deleteProperty(HTMLElement.prototype, 'scrollIntoView');
     }
+  });
+
+  it('focuses the search input after replacing a loading dialog and restores the trigger on close', async () => {
+    const trigger = document.createElement('button');
+    document.body.appendChild(trigger);
+    trigger.focus();
+    const { rerender } = render(
+      <BaseDialog key='loading' open onOpenChange={jest.fn()} ariaLabel='准备搜索'>
+        正在准备搜索…
+      </BaseDialog>
+    );
+    await waitFor(() => expect(screen.getByRole('dialog')).toHaveFocus());
+    rerender(<SearchDialog key='ready' open onClose={jest.fn()} isMobile={false} />);
+    await waitFor(() => expect(screen.getByRole('textbox')).toHaveFocus());
+    rerender(<SearchDialog key='ready' open={false} onClose={jest.fn()} isMobile={false} />);
+    expect(trigger).toHaveFocus();
+    trigger.remove();
   });
 
   it('preserves result positions and selection when AI content changes', async () => {
