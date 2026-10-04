@@ -255,7 +255,7 @@ function RelationItemCard({
         'flex flex-row items-center gap-3 rounded-lg p-2',
         themeClasses.itemBg,
         !canEdit && themeClasses.interactive,
-        item.isMinor && 'opacity-60'
+        item.isMinor && 'opacity-80'
       )}
       role={!canEdit ? 'button' : undefined}
       tabIndex={!canEdit ? 0 : undefined}
