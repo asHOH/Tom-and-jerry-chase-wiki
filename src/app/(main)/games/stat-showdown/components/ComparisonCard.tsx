@@ -80,7 +80,7 @@ export default function ComparisonCard({
           <GameImage src={imageUrl} alt={characterName} size='CHARACTER_CARD' />
           <p className='text-sm font-semibold text-gray-800 dark:text-gray-200'>{characterName}</p>
           {!isFlipped && !disabled && !showAdvanceHint && (
-            <p className='text-muted-foreground text-xs'>点击选择</p>
+            <p className='text-xs text-gray-400 dark:text-gray-500'>点击选择</p>
           )}
           {showAdvanceHint && <p className='text-xs text-blue-500 dark:text-blue-400'>点击继续</p>}
         </div>

@@ -1,84 +1,20 @@
 <!doctype html>
-<html lang="zh-CN">
+<html>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>清除网站数据 - 猫鼠百科</title>
+    <title>Clear Cache</title>
     <style>
-      :root {
-        color-scheme: light;
-        --background: #f3f4f6;
-        --surface: #ffffff;
-        --foreground: #111827;
-        --muted: #4b5563;
-        --border: #e5e7eb;
-      }
-      @media (prefers-color-scheme: dark) {
-        :root {
-          color-scheme: dark;
-          --background: #0f172a;
-          --surface: #1e293b;
-          --foreground: #e2e8f0;
-          --muted: #9ca3af;
-          --border: #334155;
-        }
-      }
-      * {
-        box-sizing: border-box;
-      }
-      body {
-        margin: 0;
-        min-height: 100vh;
-        display: grid;
-        place-items: center;
-        padding: 1rem;
-        font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
-        line-height: 1.65;
-        background: var(--background);
-        color: var(--foreground);
-      }
-      main {
-        width: 100%;
-        max-width: 28rem;
-        border: 1px solid var(--border);
-        border-radius: 0.5rem;
-        background: var(--surface);
-        padding: 1.5rem;
-        text-align: center;
-      }
-      h1 {
-        margin: 0 0 1rem;
-        font-size: 1.5rem;
-      }
-      p {
-        color: var(--muted);
-      }
       #btn {
-        min-height: 44px;
-        border: 0;
-        border-radius: 0.5rem;
-        padding: 0.625rem 1rem;
-        font: inherit;
-        font-weight: 600;
-        color: white;
-        background: #dc2626;
+        padding: 10px 20px;
+        font-size: 16px;
         cursor: pointer;
-      }
-      #btn:hover {
-        background: #b91c1c;
-      }
-      #btn:focus-visible {
-        outline: 2px solid #3b82f6;
-        outline-offset: 2px;
       }
     </style>
   </head>
   <body>
-    <main>
-      <h1>清除网站数据</h1>
-      <p>清除当前浏览器中的网站缓存、本地草稿、设置和登录状态。此操作无法恢复。</p>
-      <button id="btn" type="button">点击以清除网站数据</button>
-    </main>
+    <h1>清除网站数据</h1>
+    <button id="btn">点击以清除网站数据</button>
     <script type="application/javascript">
       /** @type {HTMLButtonElement} */ (window.btn).addEventListener('click', () => {
         if (window.caches) {

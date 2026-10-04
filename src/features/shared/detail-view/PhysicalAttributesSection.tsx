@@ -38,7 +38,7 @@ export default function PhysicalAttributesSection({
         {isEditMode ? (
           <>
             <div className='flex items-center gap-1 text-xs'>
-              <span className='text-muted-foreground text-xs'>移动:</span>
+              <span className='text-xs text-gray-400 dark:text-gray-500'>移动:</span>
               <label className='flex cursor-pointer items-center gap-1'>
                 <input
                   type='checkbox'
@@ -56,7 +56,7 @@ export default function PhysicalAttributesSection({
               </label>
             </div>
             <div className='flex items-center gap-1 text-xs'>
-              <span className='text-muted-foreground text-xs'>重力:</span>
+              <span className='text-xs text-gray-400 dark:text-gray-500'>重力:</span>
               <label className='flex cursor-pointer items-center gap-1'>
                 <input
                   type='checkbox'
@@ -74,7 +74,7 @@ export default function PhysicalAttributesSection({
               </label>
             </div>
             <div className='col-span-2 flex flex-wrap items-center gap-2 text-xs'>
-              <span className='text-muted-foreground text-xs'>碰撞:</span>
+              <span className='text-xs text-gray-400 dark:text-gray-500'>碰撞:</span>
               {COLLISION_OPTIONS.map((opt) => (
                 <label key={opt} className='flex cursor-pointer items-center gap-1'>
                   <input

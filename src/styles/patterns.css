@@ -2,8 +2,9 @@
 
 .auto-fit-grid {
   /* CSS containment for better performance */
-  /* Avoid paint containment, which clips card shadows and keyboard focus rings. */
-  contain: layout style;
+  contain: layout style paint;
+  /* Optimize for transform animations */
+  will-change: transform;
   /* Smooth scrolling */
   scroll-behavior: smooth;
   /* Prevent layout thrashing during scroll */
@@ -34,7 +35,7 @@
     /* Enhanced mobile scrolling */
     overscroll-behavior: contain;
     /* Reduce repaints during scroll without strict containment */
-    contain: layout style;
+    contain: layout style paint;
   }
 
   .character-card {
@@ -92,13 +93,14 @@
 }
 
 .filter-button:focus-visible {
-  outline: 2px solid var(--wiki-focus);
+  outline: 2px solid #0ea5e9;
   outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.35);
 }
 
 /* Offline indicator styles */
 .app-content-shell {
-  padding-top: var(--app-content-offset);
+  padding-top: calc(var(--nav-height) + var(--content-top-gap));
 }
 
 .offline-banner {
@@ -109,26 +111,6 @@
   justify-content: center;
 }
 
-body.offline-banner-visible {
-  --app-content-offset: calc(
-    var(--nav-height) + var(--offline-banner-height) + var(--content-top-gap)
-  );
-}
-
 body.offline-banner-visible .app-content-shell {
-  padding-top: var(--app-content-offset);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .auto-fit-grid {
-    scroll-behavior: auto;
-  }
-
-  .character-card,
-  .character-card:hover,
-  .character-card:active,
-  .character-card:focus {
-    transform: none;
-    transition: none;
-  }
+  padding-top: calc(var(--nav-height) + var(--offline-banner-height) + var(--content-top-gap));
 }

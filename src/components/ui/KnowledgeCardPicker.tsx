@@ -80,8 +80,9 @@ const KnowledgeCardPicker: React.FC<KnowledgeCardPickerProps> = ({
         if (!open) onClose();
       }}
       ariaLabel='选择知识卡'
+      backdropClassName='z-10000'
       panelClassName={cn(
-        'flex flex-col p-6',
+        'z-10001 flex flex-col p-6',
         isMobile
           ? 'inset-0 h-full w-full rounded-none'
           : 'inset-auto top-1/2 left-1/2 max-h-[80vh] w-[calc(100%-2rem)] max-w-3xl -translate-x-1/2 -translate-y-1/2'

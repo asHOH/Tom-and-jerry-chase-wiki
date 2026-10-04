@@ -2,7 +2,6 @@ import { Suspense } from 'react';
 import type { Metadata } from 'next';
 
 import { generatePageMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
-import LoadingState from '@/components/ui/LoadingState';
 
 import NotificationsClient from './NotificationsClient';
 
@@ -15,7 +14,7 @@ export const metadata: Metadata = generatePageMetadata({
 
 export default function NotificationsPage() {
   return (
-    <Suspense fallback={<LoadingState message='正在加载通知…' />}>
+    <Suspense fallback={<div className='py-12 text-center text-slate-500'>正在加载通知…</div>}>
       <NotificationsClient />
     </Suspense>
   );

@@ -94,7 +94,7 @@ export default function FixtureAttributesCard({ fixture }: { fixture: Fixture })
       aliasesContent={
         isEditMode ? (
           <div className='flex items-center gap-1'>
-            <span className='text-muted-foreground text-xs'>别名：</span>
+            <span className='text-xs text-gray-400 dark:text-gray-500'>别名：</span>
             {(effectiveFixture.aliases ?? fixture.aliases ?? []).length > 0 ? (
               (effectiveFixture.aliases ?? fixture.aliases ?? []).map((alias, index, arr) => (
                 <span key={`${alias}-${index}`} className='inline-flex items-center'>

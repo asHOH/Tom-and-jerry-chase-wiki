@@ -178,7 +178,7 @@ const SkillAllocationDisplay: React.FC<SkillAllocationDisplayProps> = ({
         )}
       </div>
       {shouldShowDescriptionBlock && (
-        <div className='bg-surface-sunken rounded-lg p-3'>
+        <div className='rounded-lg bg-gray-50 p-3 dark:bg-slate-800/50'>
           {isEditMode ? (
             <e.p
               path={`skillAllocations.${index}.description`}

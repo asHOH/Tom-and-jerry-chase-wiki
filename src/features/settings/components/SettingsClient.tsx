@@ -15,7 +15,7 @@ export default function SettingsClient() {
   const accountSettingsAvailable = hasSupabasePublicConfig();
 
   return (
-    <PageShell width='standard' className='space-y-6 md:space-y-8'>
+    <PageShell width='standard' className='space-y-8 py-8'>
       <PageHeader title='设置' description='管理此浏览器的显示偏好、本地数据和账号设置' />
       <LocalSettings />
 

@@ -45,9 +45,7 @@ describe('ImagePickerModal', () => {
       <ImagePickerModal {...defaultProps} onClose={onClose} isUploading />
     );
 
-    const uploadingBackdrop = document.querySelector(
-      '[aria-hidden="true"][class*="wiki-layer-backdrop"]'
-    );
+    const uploadingBackdrop = document.querySelector('.z-120[aria-hidden="true"]');
     if (!uploadingBackdrop) throw new Error('Expected image picker backdrop');
 
     fireEvent.mouseDown(uploadingBackdrop);
@@ -59,9 +57,7 @@ describe('ImagePickerModal', () => {
     onClose.mockClear();
     rerender(<ImagePickerModal {...defaultProps} onClose={onClose} isUploading={false} />);
 
-    const idleBackdrop = document.querySelector(
-      '[aria-hidden="true"][class*="wiki-layer-backdrop"]'
-    );
+    const idleBackdrop = document.querySelector('.z-120[aria-hidden="true"]');
     if (!idleBackdrop) throw new Error('Expected image picker backdrop');
 
     fireEvent.mouseDown(idleBackdrop);

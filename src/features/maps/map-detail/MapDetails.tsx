@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import type { MapModeRelationCharacterLookup } from '@/lib/gameData/published/clientProjections';
 import { useEditableDomain, useEditableEntity } from '@/hooks/useEditableGameData';
@@ -16,7 +16,6 @@ import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
 import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';
 import DetailTextSection from '@/features/shared/detail-view/DetailTextSection';
 import DetailTraitsCard from '@/features/shared/detail-view/DetailTraitsCard';
-import { BaseDialog } from '@/components/ui/BaseDialog';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import { editable } from '@/components/ui/editable';
@@ -51,6 +50,8 @@ export default function MapDetailClient({
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [imageAspectRatio, setImageAspectRatio] = useState<number | null>(null);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const imageRef = useRef<HTMLDivElement>(null);
+  const modalBackgroundRef = useRef<HTMLDivElement>(null);
   const isMobile = useMobile();
 
   useSpecifyTypeKeyboardNavigation(effectiveMap.name, 'map');
@@ -80,6 +81,21 @@ export default function MapDetailClient({
   const handleImageClick = () => {
     setIsFullScreen(true);
   };
+
+  // 处理键盘事件
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isFullScreen) {
+        setIsFullScreen(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isFullScreen]);
 
   if (!effectiveMap) return null;
 
@@ -180,7 +196,8 @@ export default function MapDetailClient({
         <Card>
           {/* 图片容器 */}
           <div
-            className='bg-surface-sunken relative w-full cursor-pointer rounded-lg transition-transform active:scale-95 motion-reduce:transform-none'
+            ref={imageRef}
+            className='relative w-full cursor-pointer bg-gray-100 transition-transform active:scale-95 dark:bg-gray-800'
             style={{
               aspectRatio: imageAspectRatio ? `${imageAspectRatio}` : '16/9',
               maxHeight: isMobile ? '70vh' : '80vh',
@@ -218,7 +235,7 @@ export default function MapDetailClient({
             />
             {!isImageLoaded && (
               <div className='absolute inset-0 flex items-center justify-center'>
-                <div className='text-muted-foreground'>图片加载中...</div>
+                <div className='text-gray-400 dark:text-gray-600'>图片加载中...</div>
               </div>
             )}
             <div className='pointer-events-none absolute right-2 bottom-2 rounded bg-black/60 px-2 py-1 text-xs text-white opacity-80'>
@@ -249,36 +266,75 @@ export default function MapDetailClient({
         rightColumnProps={{ style: { whiteSpace: 'pre-wrap' } }}
       />
 
-      <BaseDialog
-        open={isFullScreen}
-        onOpenChange={setIsFullScreen}
-        ariaLabel='全屏图片预览'
-        closeOnOutsideClick={false}
-        backdropClassName='bg-black/95 backdrop-blur-none'
-        panelClassName='inset-0 flex h-dvh w-screen max-w-none items-center justify-center rounded-none bg-transparent shadow-none md:inset-0 md:max-h-none md:max-w-none md:translate-x-0 md:translate-y-0 md:transform-none'
-      >
-        <Button
-          variant='unstyled'
-          className='focus-visible:ring-focus absolute top-4 right-4 z-10 flex size-12 items-center justify-center rounded-full bg-black/60 text-2xl text-white hover:bg-black/80 focus-visible:ring-2'
-          onClick={() => setIsFullScreen(false)}
-          aria-label='关闭全屏预览'
+      {/* 全屏模态框 - 仅保留关闭按钮和ESC键关闭 */}
+      {isFullScreen && (
+        <div
+          ref={modalBackgroundRef}
+          className='fixed inset-0 z-50 flex items-center justify-center'
+          role='dialog'
+          aria-modal='true'
+          aria-label='全屏图片预览'
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.95)',
+            WebkitOverflowScrolling: 'touch',
+            overscrollBehavior: 'contain',
+            pointerEvents: 'auto',
+            zIndex: 50,
+          }}
         >
-          ×
-        </Button>
-        <div className='relative h-full w-full'>
-          <Image
-            src={effectiveMap.mapImageUrl || ''}
-            alt={`${effectiveMap.name}地图预览`}
-            fill
-            className='object-contain p-3 select-none md:p-6'
-            sizes='100vw'
-            priority
-          />
+          {/* 关闭按钮 */}
+          <Button
+            variant='unstyled'
+            className='absolute top-4 right-4 z-60 flex items-center justify-center rounded-full bg-black/60 text-2xl text-white hover:bg-black/80'
+            style={{
+              width: isMobile ? '50px' : '48px',
+              height: isMobile ? '50px' : '48px',
+              minWidth: '48px',
+              minHeight: '48px',
+            }}
+            onClick={() => setIsFullScreen(false)}
+            aria-label='关闭全屏预览'
+          >
+            ×
+          </Button>
+
+          {/* 图片容器 */}
+          <div
+            className='relative'
+            style={{
+              width: '100%',
+              height: '100%',
+              maxWidth: isMobile ? '95vw' : '90vw',
+              maxHeight: isMobile ? '95vh' : '90vh',
+              padding: isMobile ? '10px' : '20px',
+              aspectRatio: imageAspectRatio ? `${imageAspectRatio}` : '16/9',
+            }}
+          >
+            <Image
+              src={effectiveMap.mapImageUrl || ''}
+              alt={`${effectiveMap.name}地图预览`}
+              fill
+              className='object-contain'
+              sizes='100vw'
+              priority
+              style={{
+                WebkitTouchCallout: 'none',
+                userSelect: 'none',
+              }}
+            />
+          </div>
+
+          {/* 提示信息 - 仅提示关闭按钮和ESC键 */}
+          <div className='absolute bottom-4 left-1/2 z-60 -translate-x-1/2 transform rounded-full bg-black/50 px-4 py-2 text-center text-sm whitespace-nowrap text-white/80'>
+            点击关闭按钮{isMobile ? '' : '或按ESC键'}退出
+          </div>
         </div>
-        <div className='absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-black/50 px-4 py-2 text-center text-sm whitespace-nowrap text-white/80'>
-          点击关闭按钮{isMobile ? '' : '或按ESC键'}退出
-        </div>
-      </BaseDialog>
+      )}
     </>
   );
 }

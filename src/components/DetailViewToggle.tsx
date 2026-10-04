@@ -22,9 +22,9 @@ export default function DetailViewToggle() {
         aria-pressed={isDetailedView}
         aria-label={toggleLabel}
         className={cn(
-          'bg-control relative flex min-h-10 cursor-pointer rounded-lg border-none p-1 transition-colors duration-200',
+          'relative flex min-h-10 cursor-pointer rounded-lg border-none bg-gray-100 p-1 transition-all duration-200',
           'focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-blue-500',
-          'md:min-h-11 dark:focus-visible:outline-blue-300'
+          'md:min-h-11 dark:border-gray-600 dark:bg-slate-800 dark:focus-visible:outline-blue-300'
         )}
         onClick={() => {
           toggleDetailedView();
@@ -49,7 +49,9 @@ export default function DetailViewToggle() {
         <div
           className={cn(
             'relative z-10 flex items-center justify-center px-2 py-1 text-xs font-medium whitespace-nowrap transition-colors duration-200 md:py-1.5 md:text-sm lg:py-2',
-            !isDetailedView ? 'text-blue-600 dark:text-blue-400' : 'text-muted-foreground'
+            !isDetailedView
+              ? 'text-blue-600 dark:text-blue-400'
+              : 'text-gray-500 dark:text-gray-500'
           )}
         >
           <span className='lg:hidden'>简</span>
@@ -59,7 +61,9 @@ export default function DetailViewToggle() {
         <div
           className={cn(
             'relative z-10 flex items-center justify-center px-2 py-1 text-xs font-medium whitespace-nowrap transition-colors duration-200 md:py-1.5 md:text-sm lg:py-2',
-            isDetailedView ? 'text-orange-600 dark:text-orange-400' : 'text-muted-foreground'
+            isDetailedView
+              ? 'text-orange-600 dark:text-orange-400'
+              : 'text-gray-500 dark:text-gray-500'
           )}
         >
           <span className='lg:hidden'>详</span>

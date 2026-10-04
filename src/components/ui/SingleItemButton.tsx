@@ -54,18 +54,14 @@ export default function SingleItemButton({ singleItem, size = 'default' }: Singl
     <li
       key={singleItem.name}
       className={cn(
-        'flex items-center rounded-lg transition-transform hover:-translate-y-1 motion-reduce:transform-none pointer-coarse:min-h-11',
+        'flex items-center overflow-hidden rounded-lg transition-all hover:-translate-y-1',
         sizeClasses.li
       )}
       style={getSingleItemButtonColor(singleItem)}
     >
       <a
         href={getSingleItemHref(singleItem)}
-        className={cn(
-          'focus-visible:ring-focus flex h-full min-h-[inherit] w-full min-w-0 items-center rounded-lg focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset',
-          sizeClasses.gap,
-          sizeClasses.padding
-        )}
+        className={cn('flex h-full w-full items-center', sizeClasses.gap, sizeClasses.padding)}
         tabIndex={0}
       >
         <Image

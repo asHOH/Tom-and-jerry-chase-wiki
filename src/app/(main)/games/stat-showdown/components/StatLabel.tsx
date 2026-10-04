@@ -23,7 +23,7 @@ export default function StatLabel({ statName }: StatLabelProps) {
         <ChartLineIcon className='h-4 w-4' />
         比较: {stat.label}
       </span>
-      <p className='text-muted-foreground text-xs'>{direction}</p>
+      <p className='text-xs text-gray-400 dark:text-gray-500'>{direction}</p>
     </div>
   );
 }

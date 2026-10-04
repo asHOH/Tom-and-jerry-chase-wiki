@@ -171,7 +171,7 @@ export default function TextWithHoverTooltips({ text: rawText }: TextWithHoverTo
   return (
     <>
       {referencedBuffIds.map((id) => (
-        <span key={id} id={`buff-${id}`} className='wiki-anchor' aria-hidden='true' />
+        <span key={id} id={`buff-${id}`} className='scroll-mt-24' aria-hidden='true' />
       ))}
       {colorfulHighlightedParts.map((part, index) => (
         <Fragment key={`text-part-${index}`}>{part}</Fragment>

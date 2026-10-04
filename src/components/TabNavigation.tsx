@@ -299,7 +299,7 @@ export default function TabNavigation({ showDetailToggle = false }: TabNavigatio
   const shouldAlignLeft = showDetailToggle || showDarkModeToggle || !!nickname;
   const dropdownAlignmentClass = shouldAlignLeft ? 'left-0' : 'right-0';
   return (
-    <div className='bg-surface-raised fixed top-0 right-0 left-0 z-(--wiki-layer-navigation) w-full py-2 shadow-md dark:shadow-lg'>
+    <div className='bg-surface-raised fixed top-0 right-0 left-0 z-50 w-full py-2 shadow-md dark:shadow-lg'>
       <div className='mx-auto flex max-w-7xl items-center justify-between gap-1 px-2 sm:gap-4 sm:px-4'>
         {/* Left-aligned navigation buttons */}
         <div className={cn('relative flex flex-nowrap gap-1 md:gap-2 lg:gap-2.5')}>

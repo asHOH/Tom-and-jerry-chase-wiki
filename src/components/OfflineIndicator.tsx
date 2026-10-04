@@ -59,7 +59,7 @@ export const OfflineIndicator: React.FC = () => {
       {!isOnline && (
         <m.div
           key='offline-banner'
-          className='offline-banner fixed right-0 left-0 z-(--wiki-layer-banner) bg-gray-600 px-4 text-sm font-medium text-gray-100'
+          className='offline-banner fixed right-0 left-0 z-9998 bg-gray-600 px-4 text-sm font-medium text-gray-100'
           initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
           exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -8 }}

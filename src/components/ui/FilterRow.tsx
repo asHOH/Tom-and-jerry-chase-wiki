@@ -51,12 +51,15 @@ export default function FilterRow<T extends string | number>(props: FilterRowPro
 
   return (
     <div
-      className={cn('mt-2 flex min-w-0 items-start justify-center gap-2 md:mt-4', className)}
+      className={cn('mt-1 flex items-center justify-center gap-2 md:mt-4', className)}
       role='group'
       aria-labelledby={labelId}
     >
       <FilterLabel id={labelId} full={label} />
-      <div className='flex min-w-0'>
+      {/* <div className='w-full md:w-32 text-left'>
+        <div className='font-medium'>{label}</div>
+      </div> */}
+      <div className='flex'>
         <div
           className={cn('flex flex-wrap gap-1 md:gap-2', innerClassName)}
           aria-label={ariaLabel || label}
@@ -87,7 +90,7 @@ export default function FilterRow<T extends string | number>(props: FilterRowPro
                 aria-pressed={active}
                 onClick={() => onToggle(opt as T)}
                 className={cn(
-                  'filter-button min-h-10 cursor-pointer rounded-lg border-none px-3 py-2 text-sm leading-6 font-medium ease-in-out disabled:cursor-not-allowed disabled:opacity-60',
+                  'filter-button cursor-pointer rounded-lg border-none px-3 py-2 text-sm font-medium ease-in-out',
                   active
                     ? getFilterButtonActiveToneClasses(resolvedActiveTone)
                     : cn(

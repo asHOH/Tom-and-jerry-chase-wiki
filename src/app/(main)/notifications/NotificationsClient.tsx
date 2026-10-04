@@ -65,7 +65,7 @@ export default function NotificationsClient() {
   };
 
   return (
-    <PageShell width='standard' className='space-y-6 md:space-y-8'>
+    <PageShell width='standard' className='space-y-8 py-8 text-gray-900 dark:text-gray-100'>
       <PageHeader title='通知中心' description='查看和管理站内通知' />
 
       <Card as='section' className='border-border overflow-hidden border p-0'>
@@ -86,7 +86,7 @@ export default function NotificationsClient() {
                   type='button'
                   aria-pressed={filter === value}
                   className={cn(
-                    'min-h-10 rounded-md px-3 py-2 text-sm font-medium transition-colors',
+                    'rounded-md px-3 py-1.5 text-sm font-medium transition-colors',
                     filter === value
                       ? 'bg-surface text-blue-700 shadow-sm dark:text-blue-300'
                       : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100'

@@ -188,7 +188,7 @@ export default function EditModeToolbar({
 
   const toolbarContent = (
     <m.div
-      className='fixed inset-x-0 bottom-4 z-(--wiki-layer-toolbar) mx-auto w-[calc(100%-2rem)] max-w-lg'
+      className='fixed inset-x-0 bottom-4 z-9999 mx-auto w-[calc(100%-2rem)] max-w-lg'
       initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 20 }}

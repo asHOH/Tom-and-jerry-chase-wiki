@@ -394,8 +394,8 @@ export default function CharacterRelationPanel({
   const visibleSections = sections.filter((section) => section.show !== false);
 
   return (
-    <div className='border-border bg-surface-sunken flex min-w-0 items-start gap-4 rounded-lg border p-4'>
-      <div className='flex min-w-0 flex-1 flex-col gap-4'>
+    <div className='flex items-start gap-6 rounded-lg bg-gray-50 p-4 shadow dark:bg-slate-800/50'>
+      <div className='flex flex-1 flex-col gap-4'>
         {visibleSections.map((section) => (
           <RelationSection
             key={section.key}

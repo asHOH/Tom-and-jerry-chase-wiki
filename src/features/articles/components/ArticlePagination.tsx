@@ -31,7 +31,7 @@ const ArticlePagination: React.FC<ArticlePaginationProps> = ({
   }
 
   const paginationButtonBase =
-    'min-h-10 min-w-10 rounded-lg px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900';
+    'rounded-lg px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900';
 
   return (
     <div className='mt-8 flex flex-col items-center gap-4'>
@@ -39,7 +39,7 @@ const ArticlePagination: React.FC<ArticlePaginationProps> = ({
       <div className='text-sm text-gray-600 dark:text-gray-400'>
         第 {currentPage} 页，共 {totalPages} 页
         {!isMobile && (
-          <span className='text-muted-foreground ml-2 text-xs'>
+          <span className='ml-2 text-xs text-gray-400 dark:text-gray-500'>
             (← → 键翻页{selectedCategories.size > 0 ? '，Esc 清除筛选' : ''})
           </span>
         )}
@@ -140,7 +140,7 @@ const ArticlePagination: React.FC<ArticlePaginationProps> = ({
 
       {/* Mobile swipe hint */}
       {isMobile && totalPages > 1 && (
-        <p className='text-muted-foreground text-xs'>👆 左右滑动翻页</p>
+        <p className='text-xs text-gray-400 dark:text-gray-500'>👆 左右滑动翻页</p>
       )}
     </div>
   );

@@ -70,14 +70,14 @@ function DetailShell({
       >
         <div
           {...leftColumnProps}
-          className={cn('min-w-0 md:w-1/3', leftColumnProps?.className)}
+          className={cn('md:w-1/3', leftColumnProps?.className)}
           style={leftStyle}
         >
           {leftColumn}
         </div>
         <div
           {...rightColumnProps}
-          className={cn('min-w-0 space-y-6 md:w-2/3', rightColumnProps?.className)}
+          className={cn('space-y-3 md:w-2/3', rightColumnProps?.className)}
           style={rightStyle}
         >
           {sections.map((section, index) => {

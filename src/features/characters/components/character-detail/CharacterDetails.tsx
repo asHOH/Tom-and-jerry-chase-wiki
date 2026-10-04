@@ -142,7 +142,7 @@ export default function CharacterDetails({
       <PublishedCharacterProvider character={character}>
         <div className='space-y-8'>
           <div className='flex flex-col gap-8 md:flex-row'>
-            <div className='min-w-0 md:w-1/3'>
+            <div className='md:w-1/3'>
               <Card className='h-full overflow-hidden'>
                 {(isEditMode || !isMobile) && (
                   <>
@@ -154,7 +154,7 @@ export default function CharacterDetails({
                         />
                       </div>
                     </div>
-                    <div className='flex flex-wrap items-start justify-between gap-2 py-2'>
+                    <div className='flex items-center justify-between py-2'>
                       <PageTitle className='py-0 text-3xl md:text-3xl'>
                         <e.span
                           path='id'
@@ -162,7 +162,7 @@ export default function CharacterDetails({
                           className='inline'
                           data-tutorial-id='character-name-edit'
                         />{' '}
-                        <span className='text-muted-foreground text-xl font-normal'>
+                        <span className='text-xl font-normal text-gray-400 dark:text-gray-500'>
                           ({localCharacter.factionId == 'cat' ? '猫' : '鼠'}阵营)
                         </span>
                       </PageTitle>
@@ -186,7 +186,12 @@ export default function CharacterDetails({
                 )}
                 {!isEditMode && isMobile && (
                   <div>
-                    <div className='grid grid-cols-[5rem_minmax(0,1fr)] gap-3'>
+                    <div
+                      className='auto-fit-grid grid-container grid'
+                      style={{
+                        gridTemplateColumns: `5rem repeat(auto-fit, minmax(1px,1fr))`,
+                      }}
+                    >
                       <div className='image-container relative -mt-4 -ml-4 rounded-tl-lg bg-gray-200 dark:bg-slate-700'>
                         <div className='flex h-full items-center justify-center'>
                           <CharacterImage
@@ -195,13 +200,13 @@ export default function CharacterDetails({
                           />
                         </div>
                       </div>
-                      <div className='-mt-2 min-w-0'>
-                        <div className='flex flex-wrap items-start justify-between gap-2'>
+                      <div className='-mt-2'>
+                        <div className='flex items-start justify-between'>
                           <div>
                             <PageTitle className='py-0 text-2xl md:text-2xl'>
                               {localCharacter.id}{' '}
                             </PageTitle>
-                            <p className='text-muted-foreground text-lg font-normal'>
+                            <p className='text-lg font-normal text-gray-400 dark:text-gray-500'>
                               (
                               {localCharacter.factionId === 'cat'
                                 ? '猫阵营'
@@ -372,7 +377,7 @@ export default function CharacterDetails({
               </Card>
             </div>
 
-            <div className='min-w-0 overflow-y-hidden md:w-2/3'>
+            <div className='overflow-y-hidden md:w-2/3'>
               <SkillAllocationSection factionId={factionId} />
 
               <PendingActionWarningBoundary

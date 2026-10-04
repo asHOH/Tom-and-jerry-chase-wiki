@@ -25,7 +25,7 @@ export default function DiscussButton({ className, compact = false }: DiscussBut
         aria-label={title}
         title={title}
         className={cn(
-          'inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md border-none bg-teal-100 text-xs font-semibold text-teal-700 transition-colors hover:bg-teal-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-500 dark:bg-teal-900/80 dark:text-teal-200 dark:hover:bg-teal-800/90 pointer-coarse:min-h-11 pointer-coarse:min-w-11',
+          'inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md border-none bg-teal-100 text-xs font-semibold text-teal-700 transition-colors hover:bg-teal-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-500 dark:bg-teal-900/80 dark:text-teal-200 dark:hover:bg-teal-800/90',
           className
         )}
       >

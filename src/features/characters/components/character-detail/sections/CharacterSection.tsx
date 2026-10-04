@@ -44,7 +44,7 @@ export default function CharacterSection({
   return (
     <div
       className={cn(
-        'wiki-anchor flex flex-col transition-all',
+        'flex scroll-mt-24 flex-col transition-all',
         isOpen ? 'duration-300 ease-out' : 'duration-200 ease-in',
         isOpen ? 'mb-8' : 'mb-0'
       )}

@@ -51,7 +51,7 @@ export default function ItemAttributesCard({ item }: { item: Item }) {
 
   const aliasesEditor = isEditMode ? (
     <div className='flex items-center gap-1'>
-      <span className='text-muted-foreground text-xs'>别名：</span>
+      <span className='text-xs text-gray-400 dark:text-gray-500'>别名：</span>
       {(effectiveItem.aliases ?? item.aliases ?? []).length > 0 ? (
         (effectiveItem.aliases ?? item.aliases ?? []).map((alias, index, arr) => (
           <span key={`${alias}-${index}`} className='inline-flex items-center'>

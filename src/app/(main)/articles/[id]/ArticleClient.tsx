@@ -145,7 +145,7 @@ export default function ArticleClient({
           <Card
             as='aside'
             bordered
-            className='bg-surface/60 dark:bg-background/40 sticky top-(--app-content-offset) hidden h-max max-h-[75vh] overflow-auto shadow-sm backdrop-blur lg:block lg:w-64'
+            className='bg-surface/60 dark:bg-background/40 sticky top-24 hidden h-max max-h-[75vh] overflow-auto shadow-sm backdrop-blur lg:block lg:w-64'
           >
             {renderTocList('text-left')}
           </Card>

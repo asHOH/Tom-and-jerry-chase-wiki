@@ -236,7 +236,7 @@ export default function ContributionSubmissionStatus() {
                       as='article'
                       id={`contribution-${contribution.id}`}
                       className={cn(
-                        'wiki-anchor',
+                        'scroll-mt-24',
                         highlightedId === contribution.id &&
                           'border-blue-400 ring-2 ring-blue-200 dark:border-blue-500 dark:ring-blue-900'
                       )}

@@ -294,7 +294,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({
               loading={isSubmitting}
               variant='primary'
               size='lg'
-              className='flex-1 sm:flex-none md:px-8'
+              className='flex-1 shadow-lg transition-transform hover:scale-[1.02] hover:shadow-xl sm:flex-none md:px-8'
               leadingIcon={!isSubmitting ? <CheckBadgeIcon className='size-5' /> : undefined}
             >
               {isSubmitting ? submittingLabel : submitLabel}

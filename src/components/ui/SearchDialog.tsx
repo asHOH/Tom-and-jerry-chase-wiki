@@ -302,12 +302,12 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onClose, isMobile }) 
         variant='unstyled'
         type='button'
         onClick={onClose}
-        className='absolute top-2 right-2 flex size-11 items-center justify-center rounded-lg text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+        className='absolute top-2 right-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
         aria-label='关闭搜索对话框'
       >
         <CloseIcon className='h-6 w-6' />
       </Button>
-      <div className='mb-4 shrink-0 pr-12'>
+      <div className='mb-4 shrink-0 pr-8'>
         <h2
           id='search-dialog-title'
           className='mb-1 text-xl font-bold text-gray-900 dark:text-white'

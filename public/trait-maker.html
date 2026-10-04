@@ -8,32 +8,32 @@
     <style>
       :root {
         color-scheme: light dark;
-        --bg: #f3f4f6;
+        --bg: #f7f7fa;
         --card: #ffffff;
-        --border: #e5e7eb;
-        --text: #111827;
-        --muted: #4b5563;
-        --primary: #2563eb;
+        --border: #d7d7e3;
+        --text: #1c1c28;
+        --muted: #5a6072;
+        --primary: #315efb;
         --primary-text: #ffffff;
         --danger: #d93025;
         --success: #0d8b68;
         --warning: #e6a23c;
-        --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        --shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
       }
 
       @media (prefers-color-scheme: dark) {
         :root {
-          --bg: #0f172a;
-          --card: #1e293b;
-          --border: #334155;
-          --text: #e2e8f0;
-          --muted: #9ca3af;
-          --primary: #1d4ed8;
-          --primary-text: #ffffff;
+          --bg: #111318;
+          --card: #1c1f24;
+          --border: #2a2e36;
+          --text: #f5f6fb;
+          --muted: #a0a5b5;
+          --primary: #7295ff;
+          --primary-text: #0b1228;
           --danger: #ff6b6b;
           --success: #2dd4a0;
           --warning: #e6c23c;
-          --shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+          --shadow: 0 12px 32px rgba(0, 0, 0, 0.32);
         }
       }
 
@@ -67,7 +67,7 @@
         flex-direction: column;
         gap: 12px;
         padding: 24px;
-        border-radius: 8px;
+        border-radius: 20px;
         background: var(--card);
         box-shadow: var(--shadow);
         border: 1px solid var(--border);
@@ -82,7 +82,7 @@
       header p {
         margin: 0;
         color: var(--muted);
-        font-size: 1rem;
+        font-size: 0.95rem;
       }
 
       .toolbar {
@@ -94,12 +94,10 @@
 
       button {
         appearance: none;
-        min-height: 44px;
-        font-family: inherit;
         border: none;
-        border-radius: 8px;
+        border-radius: 999px;
         padding: 10px 18px;
-        font-size: 1rem;
+        font-size: 0.95rem;
         font-weight: 600;
         cursor: pointer;
         transition:
@@ -154,7 +152,7 @@
       .trait-card {
         background: var(--card);
         border: 1px solid var(--border);
-        border-radius: 8px;
+        border-radius: 20px;
         box-shadow: var(--shadow);
         overflow: hidden;
         display: flex;
@@ -196,7 +194,7 @@
         align-items: center;
         justify-content: center;
         padding: 2px 8px;
-        border-radius: 8px;
+        border-radius: 999px;
         background: rgba(49, 94, 251, 0.12);
         color: var(--primary);
         font-size: 0.78rem;
@@ -278,10 +276,10 @@
       textarea {
         width: 100%;
         padding: 10px 12px;
-        border-radius: 8px;
+        border-radius: 12px;
         border: 1px solid var(--border);
         background: rgba(0, 0, 0, 0.02);
-        font-size: 1rem;
+        font-size: 0.95rem;
         color: var(--text);
         transition:
           border-color 0.2s ease,
@@ -315,7 +313,7 @@
       .export-card {
         background: var(--card);
         border: 1px solid var(--border);
-        border-radius: 8px;
+        border-radius: 20px;
         box-shadow: var(--shadow);
         padding: 24px;
         display: flex;
@@ -352,7 +350,7 @@
         bottom: 24px;
         right: 24px;
         padding: 12px 16px;
-        border-radius: 8px;
+        border-radius: 12px;
         background: var(--text);
         color: var(--card);
         font-size: 0.9rem;
@@ -403,7 +401,7 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        border-radius: 8px;
+        border-radius: 999px;
         padding: 2px 10px;
         font-size: 0.75rem;
         background: rgba(26, 86, 219, 0.14);
@@ -425,7 +423,7 @@
         gap: 12px;
         padding: 64px 16px;
         text-align: center;
-        border-radius: 8px;
+        border-radius: 20px;
         border: 1px dashed var(--border);
         color: var(--muted);
       }
@@ -437,7 +435,7 @@
 
       dialog {
         border: none;
-        border-radius: 8px;
+        border-radius: 20px;
         padding: 0;
         max-width: min(760px, 90vw);
         width: min(760px, 90vw);
@@ -468,7 +466,7 @@
 
       .item-group {
         border: 1px solid var(--border);
-        border-radius: 8px;
+        border-radius: 12px;
         padding: 16px;
         background: rgba(0, 0, 0, 0.02);
       }
@@ -521,14 +519,14 @@
       .add-item-form {
         background: var(--card);
         border: 1px solid var(--border);
-        border-radius: 8px;
+        border-radius: 12px;
         padding: 16px;
         margin-bottom: 8px;
       }
 
       .special-case {
         border: 1px solid var(--success);
-        border-radius: 8px;
+        border-radius: 12px;
         padding: 16px;
         background: rgba(13, 139, 104, 0.05);
         margin-bottom: 16px;
@@ -750,7 +748,7 @@
       .preview-section .preview-title {
         font-weight: 600;
         margin-bottom: 8px;
-        font-size: 1rem;
+        font-size: 0.95rem;
         display: flex;
         align-items: center;
         gap: 6px;
@@ -762,7 +760,7 @@
         line-height: 1.6;
         background: rgba(0, 0, 0, 0.02);
         padding: 12px;
-        border-radius: 8px;
+        border-radius: 12px;
         border: 1px solid var(--border);
         color: var(--text);
       }
@@ -802,23 +800,6 @@
         display: flex;
         flex-direction: column;
         gap: 18px;
-      }
-      :focus-visible {
-        outline: 2px solid var(--primary);
-        outline-offset: 2px;
-      }
-
-      @media (prefers-reduced-motion: reduce) {
-        *,
-        *::before,
-        *::after {
-          transition: none !important;
-          animation: none !important;
-        }
-
-        button:not(:disabled):hover {
-          transform: none;
-        }
       }
     </style>
   </head>

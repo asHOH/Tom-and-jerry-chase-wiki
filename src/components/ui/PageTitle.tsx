@@ -15,7 +15,7 @@ export default function PageTitle({
   return (
     <Component
       className={cn(
-        'py-3 text-3xl leading-tight font-bold tracking-tight wrap-break-word text-blue-600 md:text-5xl dark:text-blue-400',
+        'py-3 text-4xl leading-tight font-bold tracking-tight text-blue-600 md:text-5xl dark:text-blue-400',
         className
       )}
       style={{ ...style, fontFamily: 'var(--font-display-stack)' }}

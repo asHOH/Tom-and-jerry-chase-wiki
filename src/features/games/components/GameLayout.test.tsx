@@ -11,7 +11,7 @@ describe('GameLayout', () => {
     );
 
     const shell = container.firstElementChild;
-    expect(shell).toHaveClass('mx-auto', 'w-full', 'max-w-6xl', 'space-y-6', 'md:space-y-8');
+    expect(shell).toHaveClass('mx-auto', 'w-full', 'max-w-6xl', 'space-y-4', 'md:space-y-6');
     expect(shell).not.toHaveClass('p-3', 'md:p-6');
     expect(screen.queryByRole('main')).not.toBeInTheDocument();
     expect(screen.getByText('游戏内容')).toBeInTheDocument();

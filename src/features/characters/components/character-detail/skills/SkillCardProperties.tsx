@@ -164,7 +164,7 @@ export default function SkillCardProperties({
 
   if (isEditMode) {
     commonProperties.push(
-      <div key='aliases' className='text-muted-foreground flex text-xs'>
+      <div key='aliases' className='flex text-xs text-gray-400 dark:text-gray-500'>
         别名：
         {skill.aliases?.map((alias, index) => (
           <Fragment key={`${alias}-${index}`}>

@@ -237,7 +237,7 @@ export default class SingleItemOwnbuffsCard extends React.Component<
         </div>
 
         {displayBuffs.map(({ id, description }) => (
-          <div key={id} id={`buff-${id}`} className='wiki-anchor'>
+          <div key={id} id={`buff-${id}`} className='scroll-mt-24'>
             <TextWithHoverTooltips
               text={
                 ' · ' +

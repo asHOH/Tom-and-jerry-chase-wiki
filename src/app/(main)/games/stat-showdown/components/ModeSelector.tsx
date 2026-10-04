@@ -84,7 +84,7 @@ export default function ModeSelector({ currentMode, onSelect }: ModeSelectorProp
         >
           <span className='flex h-7 items-center justify-center'>{m.icon}</span>
           <span className='text-xs font-medium text-gray-700 dark:text-gray-300'>{m.label}</span>
-          <span className='text-muted-foreground text-[10px]'>{m.desc}</span>
+          <span className='text-[10px] text-gray-400 dark:text-gray-500'>{m.desc}</span>
         </Button>
       ))}
     </div>

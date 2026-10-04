@@ -106,7 +106,9 @@ function PropertySelector({ currentProperty, onPropertyChange }: PropertySelecto
               opt === 'all' ? '全部角色' : opt === 'cat' ? '仅猫阵营' : '仅鼠阵营'
             }
             getButtonClassName={(opt, active) =>
-              active && opt === 'all' ? 'bg-control text-foreground' : ''
+              active && opt === 'all'
+                ? 'bg-gray-200 text-gray-700 dark:bg-gray-200 dark:text-gray-700'
+                : ''
             }
             getButtonStyle={(opt, active) =>
               active && opt !== 'all' ? getFactionButtonColors(opt, isDarkMode) : undefined

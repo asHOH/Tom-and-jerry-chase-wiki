@@ -25,18 +25,10 @@
   --wiki-border: var(--color-gray-200);
   /* Default keyboard focus indicator */
   --wiki-focus: var(--color-blue-500);
-  /* Shared page layers. Map-local Leaflet layers remain inside their own stacking context. */
-  --wiki-layer-banner: 40;
-  --wiki-layer-navigation: 50;
-  --wiki-layer-toolbar: 60;
-  --wiki-layer-backdrop: 80;
-  --wiki-layer-dialog: 90;
-  --wiki-layer-tooltip: 200;
-  --wiki-layer-tutorial: 210;
+  --nav-z-index: 9999;
   --nav-height: 56px;
   --offline-banner-height: 40px;
   --content-top-gap: 20px;
-  --app-content-offset: calc(var(--nav-height) + var(--content-top-gap));
   /* Use Tailwind's system font stack for body text and headings without font downloads. */
   --font-sans-stack: var(--font-sans);
   --font-display-stack: var(--font-sans-stack);

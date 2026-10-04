@@ -49,7 +49,7 @@ export default function BuffAttributesCard({ buff }: { buff: Buff }) {
 
   const aliasesEditor = isEditMode ? (
     <div className='flex items-center gap-1'>
-      <span className='text-muted-foreground text-xs'>别名：</span>
+      <span className='text-xs text-gray-400 dark:text-gray-500'>别名：</span>
       {(effectiveBuff.aliases ?? buff.aliases ?? []).length > 0 ? (
         (effectiveBuff.aliases ?? buff.aliases ?? []).map((alias, index, arr) => (
           <span key={`${alias}-${index}`} className='inline-flex items-center'>

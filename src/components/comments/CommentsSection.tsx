@@ -185,7 +185,7 @@ export default function CommentsSection({
 
       <Card bordered className='bg-surface/70 dark:bg-background/40 shadow-sm'>
         {replyTo ? (
-          <div className='bg-surface-muted text-foreground mb-3 flex items-center justify-between gap-3 rounded-lg px-3 py-2 text-sm'>
+          <div className='mb-3 flex items-center justify-between gap-3 rounded-md bg-gray-100 px-3 py-2 text-sm text-gray-700 dark:bg-slate-800 dark:text-gray-200'>
             <div className='min-w-0 truncate'>回复 {replyTo.nickname || '匿名'}</div>
             <Button
               variant='unstyled'

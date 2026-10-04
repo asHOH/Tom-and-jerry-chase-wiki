@@ -5,33 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>离线 - 猫鼠百科</title>
     <style>
-      :root {
-        color-scheme: light;
-        --background: #f3f4f6;
-        --surface: #ffffff;
-        --foreground: #111827;
-        --muted: #4b5563;
-        --border: #e5e7eb;
-      }
-      @media (prefers-color-scheme: dark) {
-        :root {
-          color-scheme: dark;
-          --background: #0f172a;
-          --surface: #1e293b;
-          --foreground: #e2e8f0;
-          --muted: #9ca3af;
-          --border: #334155;
-        }
-      }
-      * {
-        box-sizing: border-box;
-      }
       body {
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         margin: 0;
-        padding: 1rem;
-        background-color: var(--background);
-        color: var(--foreground);
+        padding: 0;
+        background-color: #f3f4f6;
+        color: #1f2937;
         min-height: 100vh;
         display: flex;
         align-items: center;
@@ -40,16 +19,13 @@
       .container {
         text-align: center;
         padding: 2rem;
-        max-width: 28rem;
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: 0.5rem;
+        max-width: 400px;
       }
       .icon {
         width: 80px;
         height: 80px;
         margin: 0 auto 1.5rem;
-        background: #2563eb;
+        background: #3b82f6;
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -64,14 +40,12 @@
       }
       p {
         margin: 0 0 1.5rem;
-        color: var(--muted);
+        color: #6b7280;
         line-height: 1.6;
       }
       .retry-btn {
-        background: #2563eb;
+        background: #3b82f6;
         color: white;
-        min-height: 44px;
-        font-family: inherit;
         border: none;
         padding: 0.75rem 1.5rem;
         border-radius: 0.5rem;
@@ -80,7 +54,7 @@
         transition: background-color 0.2s;
       }
       .retry-btn:hover {
-        background: #1d4ed8;
+        background: #2563eb;
       }
       .features {
         margin-top: 2rem;
@@ -91,7 +65,7 @@
         align-items: center;
         margin: 0.5rem 0;
         font-size: 0.875rem;
-        color: var(--muted);
+        color: #6b7280;
       }
       .feature::before {
         content: '✓';
@@ -99,19 +73,10 @@
         font-weight: bold;
         margin-right: 0.5rem;
       }
-      .retry-btn:focus-visible {
-        outline: 2px solid #3b82f6;
-        outline-offset: 2px;
-      }
-      @media (prefers-reduced-motion: reduce) {
-        .retry-btn {
-          transition: none;
-        }
-      }
     </style>
   </head>
   <body>
-    <main class="container">
+    <div class="container">
       <div class="icon">📱</div>
       <h1>您正在离线浏览</h1>
       <p>无法连接到互联网，但您仍可以访问已缓存的页面和数据。</p>
@@ -123,7 +88,7 @@
         <div class="feature">知识卡信息本地存储</div>
         <div class="feature">基本功能正常使用</div>
       </div>
-    </main>
+    </div>
 
     <script>
       // Auto-retry connection after 30 seconds

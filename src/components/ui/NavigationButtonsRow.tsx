@@ -11,7 +11,7 @@ export default function NavigationButtonsRow({ children, className }: Navigation
   return (
     <div
       className={cn(
-        'border-border mx-4 flex flex-wrap items-center gap-3 border-t pt-3 pb-4 text-sm',
+        'mx-4 flex flex-wrap items-center gap-3 border-t border-gray-300 pt-2 pb-4 text-sm dark:border-gray-600',
         className
       )}
     >

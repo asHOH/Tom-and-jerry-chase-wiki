@@ -83,7 +83,7 @@ export default function KnowledgeCardAttributesCard({ card }: KnowledgeCardDetai
       aliasesContent={
         isEditMode ? (
           <div className='flex items-center gap-1'>
-            <span className='text-muted-foreground text-xs'>别名：</span>
+            <span className='text-xs text-gray-400 dark:text-gray-500'>别名：</span>
             {(effectiveCard.aliases ?? card.aliases ?? []).length > 0 ? (
               (effectiveCard.aliases ?? card.aliases ?? []).map((alias, index, arr) => (
                 <span key={`${alias}-${index}`} className='inline-flex items-center'>

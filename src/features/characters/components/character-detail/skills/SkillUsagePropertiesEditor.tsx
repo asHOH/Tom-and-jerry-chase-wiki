@@ -52,7 +52,7 @@ function BooleanCheckbox({
 }) {
   return (
     <div className='flex items-center gap-1 text-xs'>
-      <span className='text-muted-foreground'>{label}:</span>
+      <span className='text-gray-400 dark:text-gray-500'>{label}:</span>
       <label className='flex cursor-pointer items-center gap-1'>
         <input
           type='checkbox'
@@ -124,7 +124,7 @@ function CancelableEditor({
       <div className='text-xs'>{displayText}</div>
       <div className='flex items-center gap-2 text-xs'>
         <div className='flex items-center gap-1'>
-          <span className='text-muted-foreground'>{isForecast ? '前摇' : '后摇'}:</span>
+          <span className='text-gray-400 dark:text-gray-500'>{isForecast ? '前摇' : '后摇'}:</span>
           <e.span
             path={`${pathPrefix}.${phase}`}
             initialValue={value ?? ''}
@@ -134,7 +134,7 @@ function CancelableEditor({
               setDuration(Number.isFinite(parsed) ? parsed : -1);
             }}
           />
-          <span className='text-muted-foreground'>秒</span>
+          <span className='text-gray-400 dark:text-gray-500'>秒</span>
         </div>
         <label className='flex cursor-pointer items-center gap-1'>
           <input
@@ -164,7 +164,7 @@ function CancelableEditor({
         </label>
       </div>
       <div className={cn('flex flex-wrap gap-1 text-xs', disabled && 'opacity-50')}>
-        <span className='text-muted-foreground'>可被</span>
+        <span className='text-gray-400 dark:text-gray-500'>可被</span>
         {cancelableOptions.map((option) => (
           <label key={option} className='flex cursor-pointer items-center gap-1'>
             <input
@@ -191,7 +191,7 @@ function CancelableEditor({
             <span className={cn({ 'font-bold': activeOptions.includes(option) })}>{option}</span>
           </label>
         ))}
-        <span className='text-muted-foreground'>{actionText}</span>
+        <span className='text-gray-400 dark:text-gray-500'>{actionText}</span>
       </div>
     </div>
   );
@@ -216,7 +216,7 @@ function RadioGroup<T extends string>({
 
   return (
     <div className='flex items-center gap-1 text-xs'>
-      <span className='text-muted-foreground'>{label}:</span>
+      <span className='text-gray-400 dark:text-gray-500'>{label}:</span>
       <div className='flex flex-wrap gap-1'>
         {options.map((option) => (
           <label key={option} className='flex cursor-pointer items-center gap-1'>

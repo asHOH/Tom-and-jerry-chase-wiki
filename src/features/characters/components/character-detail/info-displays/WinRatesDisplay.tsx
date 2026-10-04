@@ -41,7 +41,7 @@ export default function WinRatesDisplay({ characterName }: WinRatesDisplayProps)
   }
 
   return (
-    <div className='text-muted-foreground mt-2 text-xs'>
+    <div className='mt-2 text-xs text-gray-400 dark:text-gray-500'>
       <Button
         variant='unstyled'
         type='button'

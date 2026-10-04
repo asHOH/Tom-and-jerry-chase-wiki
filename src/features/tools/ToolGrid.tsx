@@ -68,7 +68,7 @@ export default function CharacterRankingGrid({ description }: CharacterRankingGr
   };
 
   return (
-    <PageShell width='maximum' className='space-y-6 md:space-y-8'>
+    <PageShell width='maximum' className='space-y-2 md:space-y-8 dark:text-slate-200'>
       <PageHeader title='工具栏' description={description} className='mb-4 md:mb-8' />
 
       {SECTIONS.map((section, index) => {
@@ -79,7 +79,7 @@ export default function CharacterRankingGrid({ description }: CharacterRankingGr
         return <HomePageSection key={index} {...props} buttons={buttons} />;
       })}
 
-      <div className='mt-12 px-2 sm:px-4'>
+      <div className='mt-24 px-2 sm:px-4'>
         <div className='mx-auto max-w-4xl'>
           <div className='h-px w-full bg-gray-300 dark:bg-gray-700'></div>
         </div>
