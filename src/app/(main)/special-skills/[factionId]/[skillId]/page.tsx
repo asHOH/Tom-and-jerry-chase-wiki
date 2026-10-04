@@ -10,6 +10,7 @@ import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { SITE_NAME, SITE_URL } from '@/constants/seo';
 import { specialSkills as canonicalSpecialSkills } from '@/data/static';
 import type { FactionId, SpecialSkill } from '@/data/types';
+import PublishedRevisionBoundary from '@/components/PublishedRevisionBoundary';
 import StructuredData from '@/components/StructuredData';
 
 import SpecialSkillDetailClient from './SpecialSkillDetailClient';
@@ -93,7 +94,7 @@ export default async function SpecialSkillDetailPage({
     notFound();
   }
   const factionId = factionIdRaw as FactionId;
-  const snapshot = await getApprovedActionSnapshot();
+  const snapshot = await getApprovedActionSnapshot('specialSkills', 'characters');
   const [readModel, characters] = await Promise.all([
     getPublishedEntityRouteReadModel('specialSkills', skillId, factionId, snapshot),
     getPublishedDomainReadModel('characters', snapshot),
@@ -105,7 +106,7 @@ export default async function SpecialSkillDetailPage({
   }
 
   return (
-    <>
+    <PublishedRevisionBoundary revisions={[characters.revision]}>
       <StructuredData data={generateStructuredData(factionId, skillId, skill)} />
       <SpecialSkillDetailClient
         skill={skill}
@@ -115,6 +116,6 @@ export default async function SpecialSkillDetailPage({
         publishedHistory={readModel.history}
         charactersData={projectSpecialSkillCharacters(characters.data)}
       />
-    </>
+    </PublishedRevisionBoundary>
   );
 }

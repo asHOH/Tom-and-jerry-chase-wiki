@@ -4,9 +4,18 @@ import type { ActionHistoryEntry } from '@/lib/edit/diffUtils';
 import { parseApprovedActionArtifactPayload } from '@/lib/gameData/approvedActionArtifact';
 import { readBuildGameDataArtifact } from '@/lib/gameData/buildArtifactReader';
 import {
+  getPublicGameDataDomainCacheTag,
+  PUBLIC_GAME_DATA_ACTIONS_CACHE_REVALIDATE_SECONDS,
+} from '@/lib/gameData/publicActionsCache';
+import type { PublishableEntityType } from '@/lib/gameData/publishableEntityTypes';
+import { PRODUCTION_BUILD_IDENTITY } from '@/lib/gameData/published/buildIdentity';
+import {
   readCachedApprovedActionRows,
   readCachedSyncedHistoryRows,
+  readFreshApprovedActionRows,
+  readFreshSyncedHistoryRows,
 } from '@/lib/gameData/runtimeActionSources';
+import { cached } from '@/lib/serverCache';
 import { getBuildGameDataArtifactPath } from '@/lib/supabase/buildSourceGuard';
 
 import { normalizePublicActionEntries } from './actionEntries';
@@ -43,22 +52,22 @@ function mergeOrderedActionRows(
   );
 }
 
-async function readApprovedRowsForCurrentContext(): Promise<PublicActionRow[]> {
+async function readApprovedRowsForCurrentContext(fresh = false): Promise<PublicActionRow[]> {
   if (getBuildGameDataArtifactPath()) {
     const artifact = await readBuildGameDataArtifact();
     return parseApprovedActionArtifactPayload(artifact.approvedActions).payload.rows;
   }
-  return readCachedApprovedActionRows();
+  return fresh ? readFreshApprovedActionRows() : readCachedApprovedActionRows();
 }
 
-async function readSyncedRowsForCurrentContext(): Promise<PublicActionRow[]> {
+async function readSyncedRowsForCurrentContext(fresh = false): Promise<PublicActionRow[]> {
   if (getBuildGameDataArtifactPath()) {
     const artifact = await readBuildGameDataArtifact();
     return syncedHistoryArtifactToPublicRows(
       parseSyncedHistoryArtifactPayload(artifact.syncedHistory)
     );
   }
-  return readCachedSyncedHistoryRows();
+  return fresh ? readFreshSyncedHistoryRows() : readCachedSyncedHistoryRows();
 }
 
 function extractActionPaths(entry: ActionHistoryEntry): string[] {
@@ -115,7 +124,27 @@ export async function getEntityUpdateHistory(): Promise<Map<string, EntityUpdate
   return historyMap;
 }
 
-export async function fetchPublicGameDataActionHistory(): Promise<PublicActionRow[]> {
+export async function fetchPublicGameDataActionHistory(
+  entityType?: PublishableEntityType
+): Promise<PublicActionRow[]> {
+  if (entityType) {
+    return cached(
+      ['public-domain-history', 'v1', PRODUCTION_BUILD_IDENTITY, entityType],
+      async () => {
+        const [approvedRows, syncedRows] = await Promise.all([
+          readApprovedRowsForCurrentContext(true),
+          readSyncedRowsForCurrentContext(true),
+        ]);
+        return mergeOrderedActionRows(approvedRows, syncedRows).filter(
+          (row) => row.entity_type === entityType
+        );
+      },
+      {
+        revalidate: PUBLIC_GAME_DATA_ACTIONS_CACHE_REVALIDATE_SECONDS,
+        tags: [getPublicGameDataDomainCacheTag(entityType)],
+      }
+    );
+  }
   const [approvedRows, syncedRows] = await Promise.all([
     readApprovedRowsForCurrentContext(),
     readSyncedRowsForCurrentContext(),

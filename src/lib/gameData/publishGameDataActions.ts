@@ -30,7 +30,7 @@ export const publishGameDataActions = async (
   message?: string
 ): Promise<PublishGameDataActionResult[]> => {
   const allResults: PublishGameDataActionResult[] = [];
-  let hasPublishedPublicAction = false;
+  const publishedEntityTypes = new Set<string>();
 
   try {
     for (const action of actions) {
@@ -46,12 +46,12 @@ export const publishGameDataActions = async (
 
       if (data) {
         allResults.push(...data);
-        hasPublishedPublicAction ||= data.some((result) => result.is_public);
+        if (data.some((result) => result.is_public)) publishedEntityTypes.add(action.entityType);
       }
     }
   } finally {
-    if (hasPublishedPublicAction) {
-      invalidatePublicGameDataActionsCache();
+    if (publishedEntityTypes.size > 0) {
+      invalidatePublicGameDataActionsCache([...publishedEntityTypes]);
     }
   }
 

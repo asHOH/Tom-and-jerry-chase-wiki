@@ -23,7 +23,7 @@ import CharacterDetailsClient from '@/app/(main)/characters/[characterId]/Charac
 import CharacterArticle from './CharacterArticle';
 import CharacterDocs from './CharacterDocs';
 
-// Revalidate once per 8 hours to keep docs fresh
+// Docs refresh every eight hours; published-data dependencies can shorten the route interval.
 export const dynamic = 'force-static';
 export const revalidate = 28800;
 

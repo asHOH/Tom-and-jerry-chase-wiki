@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 
 import { getApprovedActionSnapshot } from '@/lib/gameData/published/getApprovedActionSnapshot';
 import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
+import { EditModeContext } from '@/context/EditModeContext';
 import { characters, maps } from '@/data/static';
 
 import RecommendedPage from './page';
@@ -65,7 +66,18 @@ describe('recommended page published-data projection', () => {
       } as never;
     });
 
-    render(await RecommendedPage());
+    render(
+      <EditModeContext.Provider
+        value={{
+          isEditMode: false,
+          isLoading: false,
+          isPreviewMode: false,
+          setIsPreviewMode: jest.fn(),
+        }}
+      >
+        {await RecommendedPage()}
+      </EditModeContext.Provider>
+    );
 
     expect(screen.getByTestId('published-character')).toHaveTextContent(
       publishedCharacterDescription
@@ -73,5 +85,6 @@ describe('recommended page published-data projection', () => {
     expect(screen.getByTestId('published-map')).toHaveTextContent(publishedMapDescription);
     expect(getPublishedDomainReadModel).toHaveBeenNthCalledWith(1, 'characters', snapshot);
     expect(getPublishedDomainReadModel).toHaveBeenNthCalledWith(2, 'maps', snapshot);
+    expect(getApprovedActionSnapshot).toHaveBeenCalledWith('characters', 'maps');
   });
 });

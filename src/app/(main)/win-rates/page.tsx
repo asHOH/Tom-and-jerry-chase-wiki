@@ -4,6 +4,7 @@ import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedS
 import { generatePageMetadata } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
 import type { FactionId } from '@/data/types';
+import PublishedRevisionBoundary from '@/components/PublishedRevisionBoundary';
 
 import WinRatesClient from './WinRatesClient';
 
@@ -25,5 +26,9 @@ export default async function WinRatesPage() {
   const characterFactions = Object.fromEntries(
     Object.values(characters.data).map((character) => [character.id, character.factionId])
   ) as Record<string, FactionId>;
-  return <WinRatesClient description={DESCRIPTION} characterFactions={characterFactions} />;
+  return (
+    <PublishedRevisionBoundary revisions={[characters.revision]}>
+      <WinRatesClient description={DESCRIPTION} characterFactions={characterFactions} />
+    </PublishedRevisionBoundary>
+  );
 }

@@ -36,8 +36,8 @@ type EditModeContextType = {
   isPreviewMode: boolean;
   /** Set preview mode. */
   setIsPreviewMode: (value: boolean) => void;
-  /** Published revision used to render the visible route data. */
-  publishedRevision?: `v1:${string}`;
+  /** Revisions of all published domains used by the visible route and its layouts. */
+  publishedRevisions?: readonly `v1:${string}`[];
   /** Register the revision carried by an edit-capable route shell. */
   registerPublishedRevision: (revision: `v1:${string}`) => () => void;
   /** Retry lazy runtime initialization after a recoverable failure. */
@@ -54,7 +54,7 @@ type EditModeContextInput = Pick<
       | 'isEditModeRequested'
       | 'runtimeStatus'
       | 'runtimeError'
-      | 'publishedRevision'
+      | 'publishedRevisions'
       | 'registerPublishedRevision'
       | 'retryEditRuntime'
     >
@@ -67,7 +67,10 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
   const searchParams = useSearchParams();
   const [runtimeStatus, setRuntimeStatus] = useState<EditRuntimeStatus>('idle');
   const [runtimeError, setRuntimeError] = useState<string | undefined>();
-  const [visibleRevision, setVisibleRevision] = useState<`v1:${string}` | undefined>();
+  const [revisionCounts, setRevisionCounts] = useState<ReadonlyMap<`v1:${string}`, number>>(
+    () => new Map()
+  );
+  const visibleRevisions = useMemo(() => [...revisionCounts.keys()].sort(), [revisionCounts]);
   const [retryKey, setRetryKey] = useState(0);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const previousPathnameRef = useRef(pathname);
@@ -119,9 +122,19 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
   }, [isEditModeRequested]);
 
   const registerPublishedRevision = useCallback((revision: `v1:${string}`) => {
-    setVisibleRevision(revision);
+    setRevisionCounts((current) => {
+      const next = new Map(current);
+      next.set(revision, (next.get(revision) ?? 0) + 1);
+      return next;
+    });
     return () => {
-      setVisibleRevision((current) => (current === revision ? undefined : current));
+      setRevisionCounts((current) => {
+        const next = new Map(current);
+        const count = next.get(revision) ?? 0;
+        if (count <= 1) next.delete(revision);
+        else next.set(revision, count - 1);
+        return next;
+      });
     };
   }, []);
 
@@ -151,7 +164,7 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
       ...(runtimeError === undefined ? {} : { runtimeError }),
       isPreviewMode,
       setIsPreviewMode,
-      ...(visibleRevision === undefined ? {} : { publishedRevision: visibleRevision }),
+      publishedRevisions: visibleRevisions,
       registerPublishedRevision,
       retryEditRuntime,
     }),
@@ -164,7 +177,7 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
       retryEditRuntime,
       runtimeError,
       runtimeStatus,
-      visibleRevision,
+      visibleRevisions,
     ]
   );
 
@@ -174,7 +187,7 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
       {isEditModeRequested ? (
         <EditRuntime
           key={retryKey}
-          {...(visibleRevision === undefined ? {} : { visibleRevision })}
+          visibleRevisions={visibleRevisions}
           onStatusChange={handleRuntimeStatusChange}
           onRetry={retryEditRuntime}
         />

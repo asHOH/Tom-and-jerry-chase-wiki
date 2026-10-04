@@ -9,6 +9,7 @@ import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { SITE_NAME, SITE_URL } from '@/constants/seo';
 import { maps as canonicalMaps } from '@/data/static';
 import type { Map as GameMap } from '@/data/types';
+import PublishedRevisionBoundary from '@/components/PublishedRevisionBoundary';
 import StructuredData from '@/components/StructuredData';
 
 import MapDetailClient from './MapDetailsClient';
@@ -62,7 +63,7 @@ export async function generateMetadata({
 
 export default async function MapDetailPage({ params }: { params: Promise<{ mapName: string }> }) {
   const mapName = decodeURIComponent((await params).mapName);
-  const snapshot = await getApprovedActionSnapshot();
+  const snapshot = await getApprovedActionSnapshot('maps', 'fixtures', 'modes', 'characters');
   const [readModel, fixtures, modes, characters] = await Promise.all([
     getPublishedEntityRouteReadModel('maps', mapName, undefined, snapshot),
     getPublishedDomainReadModel('fixtures', snapshot),
@@ -81,7 +82,7 @@ export default async function MapDetailPage({ params }: { params: Promise<{ mapN
   const modeNames = Object.keys(modes.data);
 
   return (
-    <>
+    <PublishedRevisionBoundary revisions={[fixtures.revision, modes.revision, characters.revision]}>
       <StructuredData data={generateStructuredData(mapName, map)} />
       <MapDetailClient
         map={map}
@@ -92,6 +93,6 @@ export default async function MapDetailPage({ params }: { params: Promise<{ mapN
         modeNames={modeNames}
         charactersData={projectMapModeRelationCharacters(characters.data)}
       />
-    </>
+    </PublishedRevisionBoundary>
   );
 }

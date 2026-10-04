@@ -21,7 +21,7 @@ import type { PublicActionRow } from '../publicActionsTypes';
 import type { ApprovedActionSnapshot } from './approvedActionSnapshot';
 import { PRODUCTION_BUILD_IDENTITY } from './buildIdentity';
 import { getApprovedActionSnapshot } from './getApprovedActionSnapshot';
-import { createPublishedRevision, type PublishedRevision } from './revision';
+import { createPublishedDomainRevision, type PublishedRevision } from './revision';
 
 const ENTITY_TYPE_TO_SINGLE_ITEM_TYPE = {
   characters: 'character',
@@ -192,12 +192,12 @@ export async function getPublishedEntityHistoryReadModel(
   historyRows?: readonly PublicActionRow[],
   options: PublishedEntityHistoryOptions = {}
 ): Promise<PublishedEntityHistoryReadModel> {
-  const acquiredSnapshot = snapshot ?? (await getApprovedActionSnapshot());
+  const acquiredSnapshot = snapshot ?? (await getApprovedActionSnapshot(scope.entityType));
   let acquiredHistoryRows = historyRows;
   let unavailable = false;
   if (acquiredHistoryRows === undefined) {
     try {
-      acquiredHistoryRows = await fetchPublicGameDataActionHistory();
+      acquiredHistoryRows = await fetchPublicGameDataActionHistory(scope.entityType);
     } catch (error) {
       // A configured build artifact must be valid; only optional runtime history can degrade.
       if (getBuildGameDataArtifactPath()) throw error;
@@ -208,7 +208,11 @@ export async function getPublishedEntityHistoryReadModel(
   }
   const wikiHistory = selectPublishedWikiHistory(acquiredSnapshot, acquiredHistoryRows, options);
   return {
-    revision: createPublishedRevision(PRODUCTION_BUILD_IDENTITY, acquiredSnapshot.actionRevision),
+    revision: createPublishedDomainRevision(
+      PRODUCTION_BUILD_IDENTITY,
+      scope.entityType,
+      acquiredSnapshot
+    ),
     unavailable,
     history: selectHistoryEntries(wikiHistory, (item) => matchesScope(item, scope)),
     relatedHistory: (options.relatedItems ?? []).map((item) => ({

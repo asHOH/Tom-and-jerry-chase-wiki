@@ -21,6 +21,7 @@ async function baselineResponse(
   return NextResponse.json(
     {
       revision: snapshot.revision,
+      domainRevisions: snapshot.domainRevisions,
       data: snapshot.data,
     },
     {

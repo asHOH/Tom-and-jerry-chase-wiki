@@ -3,8 +3,8 @@ import 'server-only';
 import { unstable_cache } from 'next/cache';
 
 import {
+  getPublicGameDataDomainCacheTag,
   PUBLIC_GAME_DATA_ACTIONS_CACHE_REVALIDATE_SECONDS,
-  PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG,
 } from '@/lib/gameData/publicActionsCache';
 import {
   PUBLISHABLE_ENTITY_TYPES,
@@ -16,7 +16,7 @@ import { PRODUCTION_BUILD_IDENTITY } from './buildIdentity';
 import { createPublishedDomainCacheKey, PUBLISHED_SNAPSHOT_CACHE_SHAPE } from './cachePolicy';
 import { getCanonicalGameData } from './canonicalSources';
 import { getApprovedActionSnapshot } from './getApprovedActionSnapshot';
-import { createPublishedRevision } from './revision';
+import { createPublishedDomainRevision, createPublishedRevision } from './revision';
 import { selectPublishedGameData } from './selectPublishedDomain';
 import type {
   PublishedDomainReadModel,
@@ -37,10 +37,14 @@ async function readPersistentPublishedDomain<EntityType extends PublishableEntit
 ): Promise<PublishedGameDataByType[EntityType]> {
   const read = unstable_cache(
     async () => selectPublishedGameData(entityType, getCanonicalGameData(entityType), snapshot),
-    createPublishedDomainCacheKey(buildIdentity, snapshot.actionRevision, entityType),
+    createPublishedDomainCacheKey(
+      buildIdentity,
+      createPublishedDomainRevision(buildIdentity, entityType, snapshot),
+      entityType
+    ),
     {
       revalidate: PUBLIC_GAME_DATA_ACTIONS_CACHE_REVALIDATE_SECONDS,
-      tags: [PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG],
+      tags: [getPublicGameDataDomainCacheTag(entityType)],
     }
   );
 
@@ -59,10 +63,16 @@ export async function composePublishedGameDataSnapshot(
   const buildIdentity = options.buildIdentity ?? PRODUCTION_BUILD_IDENTITY;
   const readDomain = options.readDomain ?? readPersistentPublishedDomain;
   const data: Partial<Record<PublishableEntityType, unknown>> = {};
+  const domainRevisions = {} as Record<PublishableEntityType, `v1:${string}`>;
 
   await Promise.all(
     PUBLISHABLE_ENTITY_TYPES.map(async (entityType) => {
       data[entityType] = await readDomain(entityType, snapshot, buildIdentity);
+      domainRevisions[entityType] = createPublishedDomainRevision(
+        buildIdentity,
+        entityType,
+        snapshot
+      );
     })
   );
 
@@ -70,6 +80,7 @@ export async function composePublishedGameDataSnapshot(
     revision: createPublishedRevision(buildIdentity, snapshot.actionRevision),
     actionRevision: snapshot.actionRevision,
     buildIdentity,
+    domainRevisions: Object.freeze(domainRevisions),
     data: Object.freeze(data) as PublishedGameDataByType,
   });
 }
@@ -85,7 +96,7 @@ export async function getPublishedDomainReadModel<EntityType extends Publishable
   entityType: EntityType,
   snapshot?: ApprovedActionSnapshot
 ): Promise<PublishedDomainReadModel<EntityType>> {
-  const acquiredSnapshot = snapshot ?? (await getApprovedActionSnapshot());
+  const acquiredSnapshot = snapshot ?? (await getApprovedActionSnapshot(entityType));
   const data = await readPersistentPublishedDomain(
     entityType,
     acquiredSnapshot,
@@ -93,7 +104,11 @@ export async function getPublishedDomainReadModel<EntityType extends Publishable
   );
 
   return Object.freeze({
-    revision: createPublishedRevision(PRODUCTION_BUILD_IDENTITY, acquiredSnapshot.actionRevision),
+    revision: createPublishedDomainRevision(
+      PRODUCTION_BUILD_IDENTITY,
+      entityType,
+      acquiredSnapshot
+    ),
     entityType,
     data,
   });

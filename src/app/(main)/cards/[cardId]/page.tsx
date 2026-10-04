@@ -10,6 +10,7 @@ import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { SITE_NAME, SITE_URL } from '@/constants/seo';
 import { cards as canonicalCards } from '@/data/static';
 import type { Card } from '@/data/types';
+import PublishedRevisionBoundary from '@/components/PublishedRevisionBoundary';
 import StructuredData from '@/components/StructuredData';
 
 import KnowledgeCardDetailsClient from './KnowledgeCardDetailsClient';
@@ -67,7 +68,7 @@ export async function generateMetadata({
 export default async function CardPage({ params }: { params: Promise<{ cardId: string }> }) {
   const resolvedParams = await params;
   const cardId = decodeURIComponent(resolvedParams.cardId); // Decode the URL-encoded card ID
-  const snapshot = await getApprovedActionSnapshot();
+  const snapshot = await getApprovedActionSnapshot('cards', 'characters');
   const [readModel, characters] = await Promise.all([
     getPublishedEntityRouteReadModel('cards', cardId, undefined, snapshot),
     getPublishedDomainReadModel('characters', snapshot),
@@ -79,7 +80,7 @@ export default async function CardPage({ params }: { params: Promise<{ cardId: s
   }
 
   return (
-    <>
+    <PublishedRevisionBoundary revisions={[characters.revision]}>
       <StructuredData data={generateStructuredData(cardId, card)} />
       <KnowledgeCardDetailsClient
         card={card}
@@ -88,6 +89,6 @@ export default async function CardPage({ params }: { params: Promise<{ cardId: s
         publishedHistory={readModel.history}
         charactersData={projectKnowledgeCardCharacters(characters.data)}
       />
-    </>
+    </PublishedRevisionBoundary>
   );
 }

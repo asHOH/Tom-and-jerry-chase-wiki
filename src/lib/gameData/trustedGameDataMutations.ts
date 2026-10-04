@@ -251,7 +251,11 @@ export async function publishPreparedGameDataActions(options: {
       fingerprint,
     });
     if (existing) {
-      if (existing.some((result) => result.is_public)) invalidatePublicGameDataActionsCache();
+      if (existing.some((result) => result.is_public)) {
+        invalidatePublicGameDataActionsCache(
+          options.prepared.actions.map((action) => action.entityType)
+        );
+      }
       if (existing.some((result) => result.status === 'pending')) {
         invalidatePendingGameDataActionsCache();
       }
@@ -317,7 +321,9 @@ export async function publishPreparedGameDataActions(options: {
   });
 
   if (results.some((result) => result.is_public)) {
-    invalidatePublicGameDataActionsCache();
+    invalidatePublicGameDataActionsCache(
+      options.prepared.actions.map((action) => action.entityType)
+    );
   }
   if (results.some((result) => result.status === 'pending')) {
     invalidatePendingGameDataActionsCache();
@@ -391,7 +397,7 @@ export async function approvePreparedGameDataAction(
   });
   if (error) throw persistenceError(error);
   invalidatePendingGameDataActionsCache();
-  invalidatePublicGameDataActionsCache();
+  invalidatePublicGameDataActionsCache([record.entity_type]);
 }
 
 export async function revokePreparedGameDataAction(
@@ -417,5 +423,5 @@ export async function revokePreparedGameDataAction(
     ...(clientIp === undefined ? {} : { p_ip: clientIp }),
   });
   if (error) throw persistenceError(error);
-  invalidatePublicGameDataActionsCache();
+  invalidatePublicGameDataActionsCache([record.entity_type]);
 }

@@ -9,10 +9,11 @@ import {
 } from '@/lib/gameData/characterContributors';
 import { queryCharacterContributorSource } from '@/lib/gameData/characterContributorSourceQuery';
 import {
+  getPublicGameDataDomainCacheTag,
   PUBLIC_GAME_DATA_ACTIONS_CACHE_REVALIDATE_SECONDS,
-  PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG,
 } from '@/lib/gameData/publicActionsCache';
-import { createCached } from '@/lib/serverCache';
+import { PRODUCTION_BUILD_IDENTITY } from '@/lib/gameData/published/buildIdentity';
+import { cached, createCached } from '@/lib/serverCache';
 import { getBuildGameDataArtifactPath } from '@/lib/supabase/buildSourceGuard';
 import { getOptionalSupabasePublicClient } from '@/lib/supabase/publicClient';
 import { hiddenContributorNicknames } from '@/data/hiddenContributorNicknames';
@@ -28,7 +29,7 @@ async function queryRuntimeCharacterContributorIndex(): Promise<CharacterContrib
 
 const readCachedRuntimeCharacterContributorIndex = createCached(
   [
-    PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG,
+    getPublicGameDataDomainCacheTag('characters'),
     'character-contributor-index',
     'v2',
     ...hiddenContributorNicknames,
@@ -36,7 +37,7 @@ const readCachedRuntimeCharacterContributorIndex = createCached(
   queryRuntimeCharacterContributorIndex,
   {
     revalidate: PUBLIC_GAME_DATA_ACTIONS_CACHE_REVALIDATE_SECONDS,
-    tags: [PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG],
+    tags: [getPublicGameDataDomainCacheTag('characters')],
   }
 );
 
@@ -60,9 +61,18 @@ function readRuntimeCharacterContributorIndex(): Promise<CharacterContributorInd
 
 export async function getCharacterContributorIndex(): Promise<CharacterContributorIndex> {
   if (getBuildGameDataArtifactPath()) {
-    const artifact = await readBuildGameDataArtifact();
-    return filterHiddenCharacterContributors(
-      parseCharacterContributorArtifactPayload(artifact.contributors).index
+    return cached(
+      ['build-character-contributors', 'v1', PRODUCTION_BUILD_IDENTITY],
+      async () => {
+        const artifact = await readBuildGameDataArtifact();
+        return filterHiddenCharacterContributors(
+          parseCharacterContributorArtifactPayload(artifact.contributors).index
+        );
+      },
+      {
+        revalidate: PUBLIC_GAME_DATA_ACTIONS_CACHE_REVALIDATE_SECONDS,
+        tags: [getPublicGameDataDomainCacheTag('characters')],
+      }
     );
   }
   return readRuntimeCharacterContributorIndex();

@@ -6,11 +6,16 @@ import { useRouter } from 'next/navigation';
 import { clearActiveEditSession, installActiveEditSession } from '@/lib/edit/activeEditSession';
 import type { EditRuntimeStatus } from '@/lib/edit/editRuntimeStatus';
 import { createEditSession, type EditSession } from '@/lib/edit/editSession';
+import {
+  PUBLISHABLE_ENTITY_TYPES,
+  type PublishableEntityType,
+} from '@/lib/gameData/publishableEntityTypes';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import Button from '@/components/ui/Button';
 
 type EditBaselineResponse = {
   revision: `v1:${string}`;
+  domainRevisions: Record<PublishableEntityType, `v1:${string}`>;
   data: PublishedGameDataByType;
 };
 
@@ -19,24 +24,33 @@ type EditBaselineErrorResponse = {
 };
 
 type EditRuntimeProps = {
-  visibleRevision?: `v1:${string}`;
+  visibleRevisions: readonly `v1:${string}`[];
   onStatusChange: (status: EditRuntimeStatus, error?: string) => void;
   onRetry: () => void;
 };
 
 function isEditBaselineResponse(value: unknown): value is EditBaselineResponse {
   if (!value || typeof value !== 'object') return false;
-  const candidate = value as { revision?: unknown; data?: unknown };
+  const candidate = value as {
+    revision?: unknown;
+    domainRevisions?: Record<string, unknown>;
+    data?: unknown;
+  };
   return (
     typeof candidate.revision === 'string' &&
     candidate.revision.startsWith('v1:') &&
+    !!candidate.domainRevisions &&
+    PUBLISHABLE_ENTITY_TYPES.every((entityType) => {
+      const revision = candidate.domainRevisions?.[entityType];
+      return typeof revision === 'string' && revision.startsWith('v1:');
+    }) &&
     !!candidate.data &&
     typeof candidate.data === 'object'
   );
 }
 
 export default function EditRuntime({
-  visibleRevision,
+  visibleRevisions,
   onStatusChange,
   onRetry,
 }: EditRuntimeProps) {
@@ -45,7 +59,15 @@ export default function EditRuntime({
   const [status, setStatus] = useState<EditRuntimeStatus>('idle');
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const [isRefreshing, startRefreshTransition] = useTransition();
-  const refreshAttemptedForRevisionRef = useRef<`v1:${string}` | null>(null);
+  const refreshAttemptedForRevisionRef = useRef<string | null>(null);
+  const visibleRevisionKey = [...new Set(visibleRevisions)].sort().join(',');
+  const baselineMatches =
+    !!baseline &&
+    visibleRevisions.length > 0 &&
+    visibleRevisions.every(
+      (revision) =>
+        revision === baseline.revision || Object.values(baseline.domainRevisions).includes(revision)
+    );
   const sawRefreshPendingRef = useRef(false);
   const activeRuntimeRef = useRef<EditSession | null>(null);
   const reportStatus = useCallback(
@@ -96,20 +118,20 @@ export default function EditRuntime({
   }, [reportStatus]);
 
   useEffect(() => {
-    if (visibleRevision || !baseline) return undefined;
+    if (visibleRevisionKey || !baseline) return undefined;
 
     const timeout = window.setTimeout(() => {
       reportStatus('error', '当前页面没有提供可验证的已发布数据版本');
     }, 5000);
     return () => window.clearTimeout(timeout);
-  }, [baseline, reportStatus, visibleRevision]);
+  }, [baseline, reportStatus, visibleRevisionKey]);
 
   useEffect(() => {
-    if (!baseline || !visibleRevision) return;
+    if (!baseline || !visibleRevisionKey) return;
 
-    if (baseline.revision !== visibleRevision) {
-      if (refreshAttemptedForRevisionRef.current !== visibleRevision) {
-        refreshAttemptedForRevisionRef.current = visibleRevision;
+    if (!baselineMatches) {
+      if (refreshAttemptedForRevisionRef.current !== visibleRevisionKey) {
+        refreshAttemptedForRevisionRef.current = visibleRevisionKey;
         sawRefreshPendingRef.current = false;
         reportStatus('refreshing');
         startRefreshTransition(() => router.refresh());
@@ -133,14 +155,14 @@ export default function EditRuntime({
     } catch (error) {
       reportStatus('error', error instanceof Error ? error.message : '恢复本地编辑草稿失败');
     }
-  }, [baseline, reportStatus, router, visibleRevision]);
+  }, [baseline, baselineMatches, reportStatus, router, visibleRevisionKey]);
 
   useEffect(() => {
     if (
       !baseline ||
-      !visibleRevision ||
-      baseline.revision === visibleRevision ||
-      refreshAttemptedForRevisionRef.current !== visibleRevision
+      !visibleRevisionKey ||
+      baselineMatches ||
+      refreshAttemptedForRevisionRef.current !== visibleRevisionKey
     ) {
       return undefined;
     }
@@ -149,22 +171,17 @@ export default function EditRuntime({
       reportStatus('error', '页面数据版本与编辑基线仍不一致，请重试');
     }, 5000);
     return () => window.clearTimeout(timeout);
-  }, [baseline, reportStatus, visibleRevision]);
+  }, [baseline, baselineMatches, reportStatus, visibleRevisionKey]);
 
   useEffect(() => {
     if (isRefreshing) {
       sawRefreshPendingRef.current = true;
       return;
     }
-    if (
-      sawRefreshPendingRef.current &&
-      baseline &&
-      visibleRevision &&
-      baseline.revision !== visibleRevision
-    ) {
+    if (sawRefreshPendingRef.current && baseline && visibleRevisionKey && !baselineMatches) {
       reportStatus('error', '页面数据版本与编辑基线仍不一致，请重试');
     }
-  }, [baseline, isRefreshing, reportStatus, visibleRevision]);
+  }, [baseline, baselineMatches, isRefreshing, reportStatus, visibleRevisionKey]);
 
   useEffect(
     () => () => {
@@ -188,7 +205,7 @@ export default function EditRuntime({
           ? requiresFreshEditSession
             ? `${errorMessage ?? '编辑环境版本已过期'}，请退出编辑模式后重新进入`
             : (errorMessage ?? '编辑环境初始化失败')
-          : baseline && visibleRevision && baseline.revision === visibleRevision
+          : baselineMatches
             ? '正在恢复编辑环境…'
             : '正在加载编辑数据…'}
         {!requiresFreshEditSession ? (

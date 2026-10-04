@@ -50,6 +50,19 @@ const publishedSnapshot = {
   revision: 'v1:published' as const,
   actionRevision: 'v1:fresh-actions' as const,
   buildIdentity: 'build',
+  domainRevisions: {
+    achievements: 'v1:achievements',
+    buffs: 'v1:buffs',
+    cards: 'v1:cards',
+    characters: 'v1:characters',
+    entities: 'v1:entities',
+    fixtures: 'v1:fixtures',
+    items: 'v1:items',
+    maps: 'v1:maps',
+    modes: 'v1:modes',
+    specialSkills: 'v1:specialSkills',
+    traits: 'v1:traits',
+  } as const,
   data: {
     achievements: { cat: {}, mouse: {} },
     characters: {},
@@ -86,6 +99,7 @@ describe('/api/game-data-actions/edit-baseline', () => {
 
     expect(body).toEqual({
       revision: 'v1:published',
+      domainRevisions: publishedSnapshot.domainRevisions,
       data: expect.objectContaining({ characters: {}, items: {}, maps: {} }),
     });
     expect(response.headers.get('Cache-Control')).toBe('private, no-store');

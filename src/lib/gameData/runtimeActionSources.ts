@@ -72,6 +72,7 @@ const readPersistentSyncedHistoryRows = createCached(
 const readCoalescedApprovedActionRows = singleFlight(readPersistentApprovedActionRows);
 const readCoalescedFreshApprovedActionRows = singleFlight(queryRuntimeApprovedActionRows);
 const readCoalescedSyncedHistoryRows = singleFlight(readPersistentSyncedHistoryRows);
+const readCoalescedFreshSyncedHistoryRows = singleFlight(queryRuntimeSyncedHistoryRows);
 
 /** Reads the tagged approved replay source and coalesces concurrent cold misses per process. */
 export function readCachedApprovedActionRows(): Promise<PublicActionRow[]> {
@@ -86,4 +87,9 @@ export function readFreshApprovedActionRows(): Promise<PublicActionRow[]> {
 /** Reads the tagged compact synced-history projection and coalesces concurrent cold misses. */
 export function readCachedSyncedHistoryRows(): Promise<PublicActionRow[]> {
   return readCoalescedSyncedHistoryRows();
+}
+
+/** Fills scoped history caches without inheriting the aggregate cache's tag or stale value. */
+export function readFreshSyncedHistoryRows(): Promise<PublicActionRow[]> {
+  return readCoalescedFreshSyncedHistoryRows();
 }

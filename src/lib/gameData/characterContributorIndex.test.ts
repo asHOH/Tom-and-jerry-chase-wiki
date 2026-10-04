@@ -7,8 +7,12 @@ const getArtifactPathMock = jest.fn((): string | undefined => undefined);
 const readArtifactMock = jest.fn();
 
 jest.mock('@/lib/serverCache', () => ({
+  cached: (_key: unknown, callback: () => Promise<unknown>) => callback(),
   createCached: (key: unknown, callback: () => Promise<unknown>, options?: unknown) =>
     createCachedMock(key, callback, options),
+}));
+jest.mock('./published/buildIdentity', () => ({
+  PRODUCTION_BUILD_IDENTITY: 'contributor-test-build',
 }));
 jest.mock('next/cache', () => ({
   revalidateTag: jest.fn(),
@@ -49,7 +53,7 @@ describe('character contributor index acquisition', () => {
     readArtifactMock.mockReset();
   });
 
-  it('uses one global tagged cache key and one in-flight runtime RPC', async () => {
+  it('uses one character-domain cache key and one in-flight runtime RPC', async () => {
     let resolveQuery: ((value: { data: unknown; error: null }) => void) | undefined;
     rpcMock.mockReturnValue(
       new Promise((resolve) => {
@@ -72,11 +76,11 @@ describe('character contributor index acquisition', () => {
       { 汤姆: [{ id: contributorId, name: '贡献者', contributionCount: 1 }] },
     ]);
     expect(createCachedMock).toHaveBeenCalledWith(
-      ['public-game-data-actions', 'character-contributor-index', 'v2', 'TJAI'],
+      ['public-game-data-actions:characters', 'character-contributor-index', 'v2', 'TJAI'],
       expect.any(Function),
       {
         revalidate: 60 * 60,
-        tags: ['public-game-data-actions'],
+        tags: ['public-game-data-actions:characters'],
       }
     );
   });

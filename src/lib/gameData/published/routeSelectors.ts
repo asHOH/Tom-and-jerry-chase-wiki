@@ -59,7 +59,7 @@ async function readPublishedEntityRouteReadModel<EntityType extends PublishableE
   factionId?: FactionId,
   snapshot?: ApprovedActionSnapshot
 ): Promise<PublishedEntityRouteReadModel<EntityType>> {
-  const acquiredSnapshot = snapshot ?? (await getApprovedActionSnapshot());
+  const acquiredSnapshot = snapshot ?? (await getApprovedActionSnapshot(entityType));
   const domain = await getPublishedDomainReadModel(entityType, acquiredSnapshot);
   const normalizedEntityId = entityId.trim();
   const normalizedFactionId = isFactionId(factionId) ? factionId : null;

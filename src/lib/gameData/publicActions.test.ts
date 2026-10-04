@@ -1,7 +1,12 @@
 import { createApprovedActionArtifactPayload } from './approvedActionArtifact';
 import { fetchPublicGameDataActionHistory, getEntityUpdateHistory } from './publicActions';
 import type { PublicActionRow } from './publicActionsTypes';
-import { readCachedApprovedActionRows, readCachedSyncedHistoryRows } from './runtimeActionSources';
+import {
+  readCachedApprovedActionRows,
+  readCachedSyncedHistoryRows,
+  readFreshApprovedActionRows,
+  readFreshSyncedHistoryRows,
+} from './runtimeActionSources';
 import { createSyncedHistoryArtifactPayload } from './syncedHistory';
 
 const mockArtifactPath = jest.fn<string | undefined, []>(() => undefined);
@@ -10,7 +15,11 @@ const mockReadArtifact = jest.fn();
 jest.mock('server-only', () => ({}), { virtual: true });
 jest.mock('@/lib/gameData/publicActionsCache', () => ({
   PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG: 'public-game-data-actions',
+  PUBLIC_GAME_DATA_ACTIONS_CACHE_REVALIDATE_SECONDS: 3600,
+  getPublicGameDataDomainCacheTag: (entityType: string) => `public-game-data-actions:${entityType}`,
 }));
+jest.mock('./published/buildIdentity', () => ({ PRODUCTION_BUILD_IDENTITY: 'history-test-build' }));
+jest.mock('next/cache', () => ({ unstable_cache: (callback: unknown) => callback }));
 jest.mock('@/lib/supabase/buildSourceGuard', () => ({
   getBuildGameDataArtifactPath: () => mockArtifactPath(),
 }));
@@ -20,6 +29,8 @@ jest.mock('@/lib/gameData/buildArtifactReader', () => ({
 jest.mock('@/lib/gameData/runtimeActionSources', () => ({
   readCachedApprovedActionRows: jest.fn(),
   readCachedSyncedHistoryRows: jest.fn(),
+  readFreshApprovedActionRows: jest.fn(),
+  readFreshSyncedHistoryRows: jest.fn(),
 }));
 
 const mockReadApprovedRows = jest.mocked(readCachedApprovedActionRows);
@@ -62,6 +73,15 @@ describe('public game data actions', () => {
     mockArtifactPath.mockReturnValue(undefined);
     mockReadApprovedRows.mockResolvedValue(approvedRows);
     mockReadSyncedRows.mockResolvedValue(syncedRows);
+    jest.mocked(readFreshApprovedActionRows).mockResolvedValue(approvedRows);
+    jest.mocked(readFreshSyncedHistoryRows).mockResolvedValue(syncedRows);
+  });
+
+  it('keeps domain history separate from aggregate cache reads', async () => {
+    await expect(fetchPublicGameDataActionHistory('items')).resolves.toEqual(syncedRows);
+    await expect(fetchPublicGameDataActionHistory('characters')).resolves.toEqual(approvedRows);
+    expect(mockReadApprovedRows).not.toHaveBeenCalled();
+    expect(mockReadSyncedRows).not.toHaveBeenCalled();
   });
 
   it('merges approved rows with the compact synced projection in deterministic order', async () => {

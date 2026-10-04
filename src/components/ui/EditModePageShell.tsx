@@ -94,9 +94,8 @@ export default function EditModePageShell({
     () => ({
       ...editMode,
       isEditMode: isEditMode && !isPreviewMode,
-      ...(publishedRevision === undefined ? {} : { publishedRevision }),
     }),
-    [editMode, isEditMode, isPreviewMode, publishedRevision]
+    [editMode, isEditMode, isPreviewMode]
   );
 
   const handlePublish = useCallback(

@@ -23,6 +23,10 @@ jest.mock('@/lib/gameData/runtimeActionSources', () => ({
 jest.mock('@/lib/gameData/buildArtifactReader', () => ({
   readBuildGameDataArtifact: (...args: unknown[]) => mockReadArtifact(...args),
 }));
+jest.mock('./buildIdentity', () => ({ PRODUCTION_BUILD_IDENTITY: 'snapshot-test-build' }));
+jest.mock('next/cache', () => ({
+  unstable_cache: (callback: unknown) => callback,
+}));
 jest.mock('@/lib/supabase/buildSourceGuard', () => ({
   getBuildGameDataArtifactPath: () => mockArtifactPath(),
 }));
@@ -71,6 +75,17 @@ describe('getApprovedActionSnapshot', () => {
     expect(mockReadCachedRows).not.toHaveBeenCalled();
   });
 
+  it('acquires only the requested domains without depending on a stale aggregate cache', async () => {
+    const snapshot = await getApprovedActionSnapshot('items');
+    const unrelated = await getApprovedActionSnapshot('traits');
+
+    expect(snapshot.rows).toHaveLength(1);
+    expect(unrelated.rows).toEqual([]);
+    expect(unrelated.actionRevision).not.toBe(snapshot.actionRevision);
+    expect(mockReadFreshRows).toHaveBeenCalledTimes(2);
+    expect(mockReadCachedRows).not.toHaveBeenCalled();
+  });
+
   it('uses the shared checked artifact without a runtime source read', async () => {
     const { createApprovedActionArtifactPayload } =
       await import('@/lib/gameData/approvedActionArtifact');
@@ -83,6 +98,20 @@ describe('getApprovedActionSnapshot', () => {
 
     expect(snapshot.rows[0]).toMatchObject({ rowId: 'snapshot-row' });
     expect(mockReadArtifact).toHaveBeenCalledTimes(1);
+    expect(mockReadCachedRows).not.toHaveBeenCalled();
+  });
+
+  it('scopes the build snapshot exactly like runtime data', async () => {
+    const { createApprovedActionArtifactPayload } =
+      await import('@/lib/gameData/approvedActionArtifact');
+    mockArtifactPath.mockReturnValue('D:/scoped-artifact.json');
+    mockReadArtifact.mockResolvedValue({
+      approvedActions: createApprovedActionArtifactPayload(3, 1, rows),
+    });
+
+    expect((await getApprovedActionSnapshot('items')).rows).toHaveLength(1);
+    expect((await getApprovedActionSnapshot('traits')).rows).toEqual([]);
+    expect(mockReadFreshRows).not.toHaveBeenCalled();
     expect(mockReadCachedRows).not.toHaveBeenCalled();
   });
 });

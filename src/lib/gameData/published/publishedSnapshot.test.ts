@@ -6,8 +6,12 @@ import {
 import { createApprovedActionSnapshotFromRows } from './approvedActionSnapshot';
 import { createPublishedDomainCacheKey } from './cachePolicy';
 import { getCanonicalGameData } from './canonicalSources';
-import { composePublishedGameDataSnapshot, type PublishedDomainReader } from './publishedSnapshot';
-import { createPublishedRevision } from './revision';
+import {
+  composePublishedGameDataSnapshot,
+  getPublishedDomainReadModel,
+  type PublishedDomainReader,
+} from './publishedSnapshot';
+import { createPublishedDomainRevision, createPublishedRevision } from './revision';
 import { selectPublishedGameData } from './selectPublishedDomain';
 import type { PublishedGameDataByType } from './types';
 
@@ -31,7 +35,7 @@ function createMapBackedReader(
   ): Promise<PublishedGameDataByType[EntityType]> => {
     const key = createPublishedDomainCacheKey(
       buildIdentity,
-      snapshot.actionRevision,
+      createPublishedDomainRevision(buildIdentity, entityType, snapshot),
       entityType
     ).join('\u0000');
     const hit = cache.get(key);
@@ -102,6 +106,11 @@ describe('composePublishedGameDataSnapshot', () => {
     expect(result.revision).toBe(createPublishedRevision('build-a', actionSnapshot.actionRevision));
     expect(result.actionRevision).toBe(actionSnapshot.actionRevision);
     expect(result.buildIdentity).toBe('build-a');
+    for (const entityType of PUBLISHABLE_ENTITY_TYPES) {
+      expect(result.domainRevisions[entityType]).toBe(
+        createPublishedDomainRevision('build-a', entityType, actionSnapshot)
+      );
+    }
     expect(Object.keys(result.data)).toEqual([
       'characters',
       'cards',
@@ -115,6 +124,39 @@ describe('composePublishedGameDataSnapshot', () => {
       'achievements',
       'traits',
     ]);
+  });
+
+  it('keeps unrelated domain output and cache entries stable when an item edit is published or revoked', async () => {
+    const before = createApprovedActionSnapshotFromRows([]);
+    const after = createApprovedActionSnapshotFromRows([
+      {
+        id: 'item-only-edit',
+        entity_type: 'items',
+        entry: { op: 'set', path: '火箭.description', newValue: '已修改的火箭' },
+        created_at: '2026-10-04T00:00:00Z',
+        status: 'approved',
+        created_by: null,
+        message: null,
+        reviewed_at: null,
+      },
+    ]);
+    const traitsBefore = await getPublishedDomainReadModel('traits', before);
+    const traitsAfter = await getPublishedDomainReadModel('traits', after);
+    expect(JSON.stringify(traitsAfter)).toBe(JSON.stringify(traitsBefore));
+    const itemsBefore = await getPublishedDomainReadModel('items', before);
+    const itemsAfter = await getPublishedDomainReadModel('items', after);
+    expect(itemsAfter.revision).not.toBe(itemsBefore.revision);
+    expect(itemsAfter.data['火箭']?.description).toBe('已修改的火箭');
+    expect(await getPublishedDomainReadModel('items', before)).toEqual(itemsBefore);
+
+    const misses: string[] = [];
+    const readDomain = createMapBackedReader(new Map(), 'same-build', misses);
+    const first = await composePublishedGameDataSnapshot(before, { readDomain });
+    const second = await composePublishedGameDataSnapshot(after, { readDomain });
+    expect(second.revision).not.toBe(first.revision);
+    expect(misses).toHaveLength(PUBLISHABLE_ENTITY_TYPES.length + 1);
+    expect(second.domainRevisions.traits).toBe(first.domainRevisions.traits);
+    expect(second.domainRevisions.items).not.toBe(first.domainRevisions.items);
   });
 
   it('misses persistent domains when canonical data changes under a new build identity', async () => {

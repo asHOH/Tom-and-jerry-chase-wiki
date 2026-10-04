@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
 import { generatePageMetadata } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
+import PublishedRevisionBoundary from '@/components/PublishedRevisionBoundary';
 
 import GameClient from './GameClient';
 
@@ -20,5 +21,9 @@ export const metadata: Metadata = generatePageMetadata({
 
 export default async function GuessCharacterPage() {
   const characters = await getPublishedDomainReadModel('characters');
-  return <GameClient description={DESCRIPTION} characters={characters.data} />;
+  return (
+    <PublishedRevisionBoundary revisions={[characters.revision]}>
+      <GameClient description={DESCRIPTION} characters={characters.data} />
+    </PublishedRevisionBoundary>
+  );
 }

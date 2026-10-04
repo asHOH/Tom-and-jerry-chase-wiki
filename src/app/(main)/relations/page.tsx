@@ -1,8 +1,10 @@
 import { Metadata } from 'next';
 
-import { getPublishedGameDataSnapshot } from '@/lib/gameData/published/publishedSnapshot';
+import { getApprovedActionSnapshot } from '@/lib/gameData/published/getApprovedActionSnapshot';
+import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
 import { generatePageMetadata } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
+import PublishedRevisionBoundary from '@/components/PublishedRevisionBoundary';
 
 import RelationsClient from './RelationsClient';
 
@@ -18,16 +20,37 @@ export const metadata: Metadata = generatePageMetadata({
 });
 
 export default async function RelationsPage() {
-  const snapshot = await getPublishedGameDataSnapshot();
+  const snapshot = await getApprovedActionSnapshot(
+    'characters',
+    'cards',
+    'specialSkills',
+    'maps',
+    'modes'
+  );
+  const [characters, cards, specialSkills, maps, modes] = await Promise.all([
+    getPublishedDomainReadModel('characters', snapshot),
+    getPublishedDomainReadModel('cards', snapshot),
+    getPublishedDomainReadModel('specialSkills', snapshot),
+    getPublishedDomainReadModel('maps', snapshot),
+    getPublishedDomainReadModel('modes', snapshot),
+  ]);
   const data = {
-    characters: snapshot.data.characters,
-    cards: snapshot.data.cards,
-    specialSkills: snapshot.data.specialSkills,
-    maps: snapshot.data.maps,
-    modes: snapshot.data.modes,
+    characters: characters.data,
+    cards: cards.data,
+    specialSkills: specialSkills.data,
+    maps: maps.data,
+    modes: modes.data,
   };
 
   return (
-    <RelationsClient description={DESCRIPTION} data={data} publishedRevision={snapshot.revision} />
+    <PublishedRevisionBoundary
+      revisions={[cards.revision, specialSkills.revision, maps.revision, modes.revision]}
+    >
+      <RelationsClient
+        description={DESCRIPTION}
+        data={data}
+        publishedRevision={characters.revision}
+      />
+    </PublishedRevisionBoundary>
   );
 }

@@ -9,6 +9,7 @@ import { generateArticleMetadata, getCanonicalUrl } from '@/lib/metadataUtils';
 import { SITE_NAME, SITE_URL } from '@/constants/seo';
 import { modes as canonicalModes } from '@/data/static';
 import type { Mode } from '@/data/types';
+import PublishedRevisionBoundary from '@/components/PublishedRevisionBoundary';
 import StructuredData from '@/components/StructuredData';
 
 import ModeDetailClient from './ModeDetailsClient';
@@ -66,7 +67,7 @@ export default async function ModeDetailPage({
   params: Promise<{ modeName: string }>;
 }) {
   const modeName = decodeURIComponent((await params).modeName);
-  const snapshot = await getApprovedActionSnapshot();
+  const snapshot = await getApprovedActionSnapshot('modes', 'maps', 'characters');
   const [readModel, maps, characters] = await Promise.all([
     getPublishedEntityRouteReadModel('modes', modeName, undefined, snapshot),
     getPublishedDomainReadModel('maps', snapshot),
@@ -79,7 +80,7 @@ export default async function ModeDetailPage({
   }
 
   return (
-    <>
+    <PublishedRevisionBoundary revisions={[maps.revision, characters.revision]}>
       <StructuredData data={generateStructuredData(modeName, mode)} />
       <ModeDetailClient
         mode={mode}
@@ -89,6 +90,6 @@ export default async function ModeDetailPage({
         mapsData={maps.data}
         charactersData={projectMapModeRelationCharacters(characters.data)}
       />
-    </>
+    </PublishedRevisionBoundary>
   );
 }

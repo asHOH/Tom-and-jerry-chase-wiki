@@ -69,6 +69,7 @@ export type PublishedGameDataSnapshot = DeepReadonly<{
   revision: PublishedRevision;
   actionRevision: `v1:${string}`;
   buildIdentity: string;
+  domainRevisions: Record<PublishableEntityType, PublishedRevision>;
   data: PublishedGameDataByType;
 }>;
 

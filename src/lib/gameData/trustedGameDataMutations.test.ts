@@ -312,7 +312,7 @@ describe('trusted game data mutations', () => {
         })
       ).resolves.toEqual([{ id: 'concurrently-published', is_public: true, status: 'approved' }]);
       expect(adminRpcMock).not.toHaveBeenCalled();
-      expect(invalidateMock).toHaveBeenCalled();
+      expect(invalidateMock).toHaveBeenCalledWith(['items']);
     }
   );
 
@@ -748,6 +748,7 @@ describe('trusted game data mutations', () => {
       { id: 'grouped-1', is_public: true, status: 'approved' },
       { id: 'character-1', is_public: true, status: 'approved' },
     ]);
+    expect(invalidateMock).toHaveBeenCalledWith(['items', 'characters']);
   });
 
   it('inserts an older pending row at its stored semantic position before approval', async () => {
@@ -785,6 +786,7 @@ describe('trusted game data mutations', () => {
       p_expected_entry: record().entry,
       p_expected_replay_epoch: 9,
     });
+    expect(invalidateMock).toHaveBeenCalledWith(['items']);
   });
 
   it('treats public pending approval as metadata-only review', async () => {

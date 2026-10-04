@@ -20,22 +20,22 @@ jest.mock('next/navigation', () => ({
 jest.mock('@/components/EditRuntime', () => ({
   __esModule: true,
   default: function MockEditRuntime({
-    visibleRevision,
+    visibleRevisions,
     onStatusChange,
     onRetry,
   }: {
-    visibleRevision?: `v1:${string}`;
+    visibleRevisions: readonly `v1:${string}`[];
     onStatusChange: (status: EditRuntimeStatus) => void;
     onRetry: () => void;
   }) {
     const { useEffect } = jest.requireActual<typeof import('react')>('react');
-    mockRuntimeRender(visibleRevision);
+    mockRuntimeRender(visibleRevisions);
     useEffect(() => {
       mockRuntimeMount();
     }, []);
     useEffect(() => {
       onStatusChange(mockRuntimeStatus);
-    }, [onStatusChange, visibleRevision]);
+    }, [onStatusChange, visibleRevisions]);
     return (
       <div data-testid='edit-runtime'>
         <button type='button' onClick={onRetry}>
@@ -115,7 +115,7 @@ describe('EditModeProvider', () => {
       expect(screen.getByTestId('edit-mode-probe')).toHaveAttribute('data-edit-mode', 'true');
     });
     expect(screen.getByTestId('edit-runtime')).toBeInTheDocument();
-    expect(mockRuntimeRender).toHaveBeenLastCalledWith('v1:visible');
+    expect(mockRuntimeRender).toHaveBeenLastCalledWith(['v1:visible']);
     expect(window.localStorage.getItem(StorageKey.EditMode)).toBe('true');
     expect(Number(window.localStorage.getItem(StorageKey.EditModeEnabledAt))).toBeGreaterThan(0);
   });

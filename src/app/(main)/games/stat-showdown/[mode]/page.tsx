@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
 import { generatePageMetadata } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
+import PublishedRevisionBoundary from '@/components/PublishedRevisionBoundary';
 
 import ModeNav from '../components/ModeNav';
 import type { GameMode } from '../components/ModeSelector';
@@ -63,11 +64,13 @@ export default async function StatShowdownModePage({ params }: Props) {
   const characters = await getPublishedDomainReadModel('characters');
 
   return (
-    <GameClient
-      mode={gameMode}
-      description={meta.description}
-      characters={characters.data}
-      modeNav={<ModeNav currentMode={gameMode} />}
-    />
+    <PublishedRevisionBoundary revisions={[characters.revision]}>
+      <GameClient
+        mode={gameMode}
+        description={meta.description}
+        characters={characters.data}
+        modeNav={<ModeNav currentMode={gameMode} />}
+      />
+    </PublishedRevisionBoundary>
   );
 }

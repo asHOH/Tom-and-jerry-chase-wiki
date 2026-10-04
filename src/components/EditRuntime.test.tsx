@@ -2,6 +2,7 @@ import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
 
 import { clearActiveEditSession, getActiveEditSession } from '@/lib/edit/activeEditSession';
 import type { EditRuntimeStatus } from '@/lib/edit/editRuntimeStatus';
+import { PUBLISHABLE_ENTITY_TYPES } from '@/lib/gameData/publishableEntityTypes';
 import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import {
   achievements,
@@ -43,7 +44,13 @@ const baselineData = {
 const createFetchResponse = (revision: `v1:${string}`) => ({
   ok: true,
   status: 200,
-  json: jest.fn(async () => ({ revision, data: baselineData })),
+  json: jest.fn(async () => ({
+    revision,
+    domainRevisions: Object.fromEntries(
+      PUBLISHABLE_ENTITY_TYPES.map((entityType) => [entityType, `v1:${entityType}`])
+    ),
+    data: baselineData,
+  })),
 });
 
 describe('EditRuntime', () => {
@@ -80,7 +87,7 @@ describe('EditRuntime', () => {
 
     const view = render(
       <EditRuntime
-        visibleRevision='v1:matching'
+        visibleRevisions={['v1:matching']}
         onStatusChange={onStatusChange}
         onRetry={jest.fn()}
       />
@@ -109,7 +116,11 @@ describe('EditRuntime', () => {
     const onStatusChange = jest.fn();
 
     const view = render(
-      <EditRuntime visibleRevision='v1:stale' onStatusChange={onStatusChange} onRetry={jest.fn()} />
+      <EditRuntime
+        visibleRevisions={['v1:stale']}
+        onStatusChange={onStatusChange}
+        onRetry={jest.fn()}
+      />
     );
 
     await waitFor(() => {
@@ -119,7 +130,7 @@ describe('EditRuntime', () => {
 
     view.rerender(
       <EditRuntime
-        visibleRevision='v1:baseline'
+        visibleRevisions={['v1:baseline']}
         onStatusChange={onStatusChange}
         onRetry={jest.fn()}
       />
@@ -133,6 +144,59 @@ describe('EditRuntime', () => {
     expect(getActiveEditSession()?.revision).toBe('v1:baseline');
   });
 
+  it('accepts unchanged visible domains even when unrelated data changed the global revision', async () => {
+    global.fetch = jest.fn().mockResolvedValue(createFetchResponse('v1:new-global-revision'));
+    const onStatusChange = jest.fn();
+    render(
+      <EditRuntime
+        visibleRevisions={['v1:traits', 'v1:items']}
+        onStatusChange={onStatusChange}
+        onRetry={jest.fn()}
+      />
+    );
+    await waitFor(() => expect(onStatusChange).toHaveBeenLastCalledWith('ready', undefined));
+    expect(mockRefresh).not.toHaveBeenCalled();
+    expect(getActiveEditSession()?.revision).toBe('v1:new-global-revision');
+  });
+
+  it('blocks a stale page domain even when its parent layout matches, then accepts a refreshed page', async () => {
+    global.fetch = jest.fn().mockResolvedValue(createFetchResponse('v1:global'));
+    const onStatusChange = jest.fn();
+    const view = render(
+      <EditRuntime
+        visibleRevisions={['v1:traits', 'v1:stale-items']}
+        onStatusChange={onStatusChange}
+        onRetry={jest.fn()}
+      />
+    );
+    await waitFor(() => expect(mockRefresh).toHaveBeenCalledTimes(1));
+    expect(getActiveEditSession()).toBeNull();
+    view.rerender(
+      <EditRuntime
+        visibleRevisions={['v1:traits', 'v1:items']}
+        onStatusChange={onStatusChange}
+        onRetry={jest.fn()}
+      />
+    );
+    await waitFor(() => expect(onStatusChange).toHaveBeenLastCalledWith('ready', undefined));
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it('also checks a secondary domain on pages that combine several domains', async () => {
+    global.fetch = jest.fn().mockResolvedValue(createFetchResponse('v1:global'));
+    const onStatusChange = jest.fn();
+    render(
+      <EditRuntime
+        visibleRevisions={['v1:traits', 'v1:maps', 'v1:stale-fixtures']}
+        onStatusChange={onStatusChange}
+        onRetry={jest.fn()}
+      />
+    );
+    await waitFor(() => expect(mockRefresh).toHaveBeenCalledTimes(1));
+    expect(getActiveEditSession()).toBeNull();
+    expect(onStatusChange).not.toHaveBeenCalledWith('ready', undefined);
+  });
+
   it('reports a retryable error when the route remains mismatched after refresh', async () => {
     jest.useFakeTimers();
     global.fetch = jest.fn().mockResolvedValue(createFetchResponse('v1:baseline'));
@@ -140,7 +204,7 @@ describe('EditRuntime', () => {
 
     render(
       <EditRuntime
-        visibleRevision='v1:stale'
+        visibleRevisions={['v1:stale']}
         onStatusChange={(status, error) => statuses.push([status, error])}
         onRetry={jest.fn()}
       />
@@ -172,7 +236,7 @@ describe('EditRuntime', () => {
 
     render(
       <EditRuntime
-        visibleRevision='v1:matching'
+        visibleRevisions={['v1:matching']}
         onStatusChange={onStatusChange}
         onRetry={onRetry}
       />
@@ -195,7 +259,7 @@ describe('EditRuntime', () => {
 
     const view = render(
       <EditRuntime
-        visibleRevision='v1:baseline'
+        visibleRevisions={['v1:baseline']}
         onStatusChange={onStatusChange}
         onRetry={jest.fn()}
       />
@@ -219,7 +283,7 @@ describe('EditRuntime', () => {
 
     view.rerender(
       <EditRuntime
-        visibleRevision='v1:newer-route'
+        visibleRevisions={['v1:newer-route']}
         onStatusChange={onStatusChange}
         onRetry={jest.fn()}
       />
@@ -253,7 +317,7 @@ describe('EditRuntime', () => {
       .mockResolvedValueOnce(createFetchResponse('v1:second'));
 
     const firstView = render(
-      <EditRuntime visibleRevision='v1:first' onStatusChange={jest.fn()} onRetry={jest.fn()} />
+      <EditRuntime visibleRevisions={['v1:first']} onStatusChange={jest.fn()} onRetry={jest.fn()} />
     );
 
     await waitFor(() => {
@@ -264,7 +328,11 @@ describe('EditRuntime', () => {
     expect(getActiveEditSession()).toBeNull();
 
     const secondView = render(
-      <EditRuntime visibleRevision='v1:second' onStatusChange={jest.fn()} onRetry={jest.fn()} />
+      <EditRuntime
+        visibleRevisions={['v1:second']}
+        onStatusChange={jest.fn()}
+        onRetry={jest.fn()}
+      />
     );
 
     await waitFor(() => {

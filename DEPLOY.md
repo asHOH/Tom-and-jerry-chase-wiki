@@ -8,6 +8,8 @@ Netlify 也一样：[![Deploy to Netlify](https://www.netlify.com/img/deploy/but
 
 <!-- TODO: Add button for cloudflare worker -->
 
+Vercel Preview（`VERCEL=1` 且 `VERCEL_ENV=preview`）的公开游戏数据缓存每 8 小时进入可刷新状态，VPS 和其他环境仍为 1 小时；实际刷新由后续访问触发，并可能先返回旧缓存。这不是所有页面的统一刷新间隔：文章等其他依赖可以缩短所在页面的间隔。发布、审核通过或撤销公开游戏数据时，当前部署会立即使相关数据域和全站汇总缓存失效；其他部署仍依靠自己的定时刷新。角色、道具等数据域分别维护缓存标签和版本，编辑模式核对页面及布局所用的所有数据域版本后才启用草稿。
+
 如果不使用这种 serverless 服务，还可以选择这三种自部署的方式，都会使服务在 3000 端口运行：
 
 - Docker
