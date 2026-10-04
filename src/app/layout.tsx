@@ -1,10 +1,7 @@
 import type { Metadata } from 'next';
-import { Noto_Sans_SC } from 'next/font/google';
-import localFont from 'next/font/local';
 import NextTopLoader from 'nextjs-toploader';
 
 import { getRuntimeCspHeader } from '@/lib/csp';
-import { cn } from '@/lib/design';
 import { isVercelAnalyticsEnabled } from '@/lib/platform';
 import { defaultMetadata } from '@/constants/seo';
 import { AnalyticsComponent } from '@/components/AnalyticsComponent';
@@ -24,19 +21,6 @@ import { DarkModeProvider } from '@/context/DarkModeContext';
 import { EditModeProvider } from '@/context/EditModeContext';
 import KeyboardNavigation from '@/components/KeyboardNavigation';
 
-const inter = localFont({
-  src: '../../public/fonts/inter/InterVariable.woff2',
-  display: 'swap',
-  variable: '--font-sans',
-});
-
-const notoSansSC = Noto_Sans_SC({
-  subsets: ['latin', 'latin-ext'],
-  display: 'swap',
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-cjk',
-});
-
 export const metadata: Metadata = defaultMetadata;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -50,9 +34,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name='referrer' content='strict-origin-when-cross-origin' />
         <meta httpEquiv='Content-Security-Policy' content={getRuntimeCspHeader()} />
         <meta name='format-detection' content='telephone=no, date=no, email=no, address=no' />
-        {/* Next.js automatically self-hosts Google Fonts - no external requests needed */}
       </head>
-      <body className={cn(inter.className, inter.variable, notoSansSC.variable)}>
+      <body>
         <DarkModeProvider>
           <NextTopLoader
             color='#2563eb'
