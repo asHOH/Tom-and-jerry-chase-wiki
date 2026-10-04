@@ -308,12 +308,12 @@ describe('serverQueries', () => {
         content: 'Remove me<p>Keep me</p>',
         authors: ['Alice'],
         createdAt: '2026-01-02',
-        viewCount: 12,
         categoryName: 'Tips',
         articleCreatedAt: '2026-01-01',
       },
     ]);
     expect(articleQuery.eq).toHaveBeenCalledWith('character_id', 'tom');
+    expect(articleQuery.select.mock.calls[0]?.[0]).not.toContain('view_count');
     expect(articleQuery.not).toHaveBeenCalledWith('current_version_id', 'is', null);
   });
 

@@ -3,10 +3,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Article, WithContext } from 'schema-dts';
 
-import {
-  getEmbeddedArticlesForCharacter,
-  incrementArticleViewCount,
-} from '@/lib/articles/serverQueries';
+import { getEmbeddedArticlesForCharacter } from '@/lib/articles/serverQueries';
 import { GameDataManager } from '@/lib/dataManager';
 import { getContentWritersForCharacter } from '@/lib/gameData/contentWriters';
 import {
@@ -132,11 +129,6 @@ export default async function CharacterPage({
   const articleContent = docPage
     ? Promise.resolve([])
     : getEmbeddedArticlesForCharacter(characterId);
-
-  // Keep existing behavior: the first visible embedded article counts as a view.
-  void articleContent
-    .then((result) => (result[0]?.id ? incrementArticleViewCount(result[0].id) : null))
-    .catch((error) => console.error('Error recording embedded article view:', error));
 
   return (
     <>

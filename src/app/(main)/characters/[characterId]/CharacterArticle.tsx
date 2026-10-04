@@ -1,17 +1,18 @@
 'use client';
 
-import { use } from 'react';
+import { use, useEffect, useRef } from 'react';
 
 import { formatCompactDate } from '@/lib/dateUtils';
 import { sanitizeHTML } from '@/lib/xssUtils';
 import { contributors } from '@/data/contributors';
+import ArticleViewCount from '@/features/articles/components/ArticleViewCount';
 import CharacterSection from '@/features/characters/components/character-detail/sections/CharacterSection';
 import AccordionCard from '@/components/ui/AccordionCard';
 import ButtonLink from '@/components/ui/ButtonLink';
 import Card from '@/components/ui/Card';
 import { renderRichTextContent } from '@/components/ui/RichTextContent';
 import StyledMDX from '@/components/ui/StyledMDX';
-import { ClockIcon, EyeIcon, FolderIcon, UserCircleIcon } from '@/components/icons/CommonIcons';
+import { ClockIcon, FolderIcon, UserCircleIcon } from '@/components/icons/CommonIcons';
 
 type CharacterArticleItem = {
   id: string | null;
@@ -19,7 +20,6 @@ type CharacterArticleItem = {
   content: string | null;
   authors: string[];
   createdAt?: string | null;
-  viewCount?: number | null;
   categoryName?: string | null;
   articleCreatedAt?: string | null;
 };
@@ -64,6 +64,22 @@ export default function CharacterArticle({
   const result = use(content);
 
   const articles: CharacterArticleItem[] = Array.isArray(result) ? result : result ? [result] : [];
+  const firstArticleId = articles[0]?.id;
+  const recordedArticleId = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!firstArticleId || recordedArticleId.current === firstArticleId) return;
+    recordedArticleId.current = firstArticleId;
+    // Preserve the first-article page-visit rule, independently of accordion toggles.
+    void fetch(`/api/articles/${encodeURIComponent(firstArticleId)}/views/`, {
+      method: 'POST',
+      keepalive: true,
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error(`Article view request failed (${response.status})`);
+      })
+      .catch((error: unknown) => console.error('Error recording embedded article view:', error));
+  }, [firstArticleId]);
 
   if (articles.length === 0) {
     return null;
@@ -79,7 +95,6 @@ export default function CharacterArticle({
       ? formatCompactDate(single.createdAt, { invalidFallback: '' })
       : '';
     const categoryName = single.categoryName ?? null;
-    const viewCount = single.viewCount ?? null;
 
     return (
       <CharacterSection title={SECTION_TITLE}>
@@ -104,12 +119,7 @@ export default function CharacterArticle({
                   <span>分类: {categoryName}</span>
                 </div>
               )}
-              {viewCount != null && (
-                <div className='flex items-center gap-2'>
-                  <EyeIcon className='size-4' strokeWidth={1.5} />
-                  <span>浏览: {viewCount}</span>
-                </div>
-              )}
+              <ArticleViewCount articleId={single.id} />
               {dateText && (
                 <div className='flex items-center gap-2'>
                   <ClockIcon className='size-4' strokeWidth={1.5} />
@@ -168,7 +178,6 @@ export default function CharacterArticle({
               ? formatCompactDate(article.createdAt, { invalidFallback: '' })
               : '';
             const articleCategoryName = article.categoryName ?? null;
-            const articleViewCount = article.viewCount ?? null;
 
             return {
               id: article.id,
@@ -192,12 +201,7 @@ export default function CharacterArticle({
                           <span>分类: {articleCategoryName}</span>
                         </div>
                       )}
-                      {articleViewCount != null && (
-                        <div className='flex items-center gap-2'>
-                          <EyeIcon className='size-4' strokeWidth={1.5} />
-                          <span>浏览: {articleViewCount}</span>
-                        </div>
-                      )}
+                      <ArticleViewCount articleId={article.id} />
                       {dateText && (
                         <div className='flex items-center gap-2'>
                           <ClockIcon className='size-4' strokeWidth={1.5} />

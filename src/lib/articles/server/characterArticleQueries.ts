@@ -10,7 +10,6 @@ type CharacterArticleMetaRow = {
   id: string;
   title: string;
   created_at: string | null;
-  view_count: number | null;
   categories: { name: string } | null;
   users_public_view: { nickname: string | null } | null;
   current_version: {
@@ -25,7 +24,6 @@ export type EmbeddedCharacterArticle = {
   content: string;
   authors: string[];
   createdAt: string | null;
-  viewCount: number | null;
   categoryName: string | null;
   articleCreatedAt: string | null;
 };
@@ -46,7 +44,6 @@ export async function getEmbeddedArticlesForCharacter(
             id,
             title,
             created_at,
-            view_count,
             categories(name),
             users_public_view!author_id(nickname),
             current_version:article_versions_public_view!articles_current_version_id_fkey(
@@ -84,7 +81,6 @@ export async function getEmbeddedArticlesForCharacter(
             content,
             authors,
             createdAt: latest.created_at ?? null,
-            viewCount: article.view_count,
             categoryName: article.categories?.name ?? null,
             articleCreatedAt: article.created_at,
           },
