@@ -684,4 +684,21 @@ export const characterRelationKnowledgeCardTraits: CharacterRelationTrait[] = [
       isMinor: false,
     },
   },
+
+  {
+    description: '不屈提供的额外血量使技能造成的受伤不生效。',
+    relation: {
+      kind: 'counteredByKnowledgeCards',
+      subject: {
+        name: '牛仔汤姆',
+        type: 'character',
+      },
+      target: {
+        name: '不屈',
+        type: 'knowledgeCard',
+        factionId: 'mouse',
+      },
+      isMinor: true,
+    },
+  },
 ];

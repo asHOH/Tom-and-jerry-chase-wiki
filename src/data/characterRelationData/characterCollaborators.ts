@@ -662,4 +662,20 @@ export const characterRelationCharacterCollaboratorTraits: CharacterRelationTrai
       isMinor: true,
     },
   },
+
+  {
+    description: '双拆阵容克制上火箭能力不强的猫',
+    relation: {
+      kind: 'collaborators',
+      subject: {
+        name: '音乐家杰瑞',
+        type: 'character',
+      },
+      target: {
+        name: '航海士杰瑞',
+        type: 'character',
+      },
+      isMinor: false,
+    },
+  },
 ];

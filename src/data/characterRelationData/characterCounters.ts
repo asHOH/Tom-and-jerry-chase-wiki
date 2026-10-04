@@ -133,7 +133,12 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       kind: 'counteredBy',
       subject: { name: '杰瑞', type: 'character' },
       target: { name: '图多盖洛', type: 'character' },
-      tags: [{ counters: '免疫', counteredBy: '怕免疫' }],
+      tags: [
+        {
+          counters: '机制',
+          counteredBy: '怕机制',
+        },
+      ],
       isMinor: false,
     },
   },
@@ -144,7 +149,12 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       kind: 'counteredBy',
       subject: { name: '杰瑞', type: 'character' },
       target: { name: '凯特', type: 'character' },
-      tags: [{ counters: '减控', counteredBy: '怕减控' }],
+      tags: [
+        {
+          counters: '机制',
+          counteredBy: '怕机制',
+        },
+      ],
       isMinor: true,
     },
   },
@@ -941,7 +951,12 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       kind: 'counters',
       subject: { name: '侦探杰瑞', type: 'character' },
       target: { name: '兔八哥', type: 'character' },
-      tags: [{ counters: '破冰', counteredBy: '怕破冰' }],
+      tags: [
+        {
+          counters: '破局',
+          counteredBy: '怕破局',
+        },
+      ],
       isMinor: false,
     },
   },
@@ -1049,7 +1064,12 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       kind: 'counters',
       subject: { name: '侦探杰瑞', type: 'character' },
       target: { name: '布奇', type: 'character' },
-      tags: [{ counters: '破冰', counteredBy: '怕破冰' }],
+      tags: [
+        {
+          counters: '破局',
+          counteredBy: '怕破局',
+        },
+      ],
       isMinor: false,
     },
   },
@@ -1190,7 +1210,12 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       kind: 'counters',
       subject: { name: '侦探杰瑞', type: 'character' },
       target: { name: '恶魔汤姆', type: 'character' },
-      tags: [{ counters: '破冰', counteredBy: '怕破冰' }],
+      tags: [
+        {
+          counters: '破局',
+          counteredBy: '怕破局',
+        },
+      ],
       isMinor: false,
     },
   },
@@ -1312,7 +1337,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '侦探杰瑞的推奶酪能力十分强大，能让库博的天堂火箭来不及放飞。另外侦探杰瑞的自保强，难以被针对。',
+      '侦探杰瑞的速推能力十分强大，能让库博的天堂火箭来不及放飞。另外侦探杰携带干扰器的自保强，难以被针对。',
     relation: {
       kind: 'counters',
       subject: { name: '侦探杰瑞', type: 'character' },
@@ -1547,7 +1572,16 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       kind: 'counters',
       subject: { name: '杰瑞', type: 'character' },
       target: { name: '牛仔汤姆', type: 'character' },
-      tags: [{ counters: '干扰', counteredBy: '怕干扰' }],
+      tags: [
+        {
+          counters: '辅助',
+          counteredBy: '怕辅助',
+        },
+        {
+          counters: '控制',
+          counteredBy: '怕控制',
+        },
+      ],
       isMinor: false,
     },
   },
@@ -1720,8 +1754,14 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       subject: { name: '侦探杰瑞', type: 'character' },
       target: { name: '如玉', type: 'character' },
       tags: [
-        { counters: '破冰', counteredBy: '怕破冰' },
-        { counters: '自保', counteredBy: '怕自保' },
+        {
+          counters: '破局',
+          counteredBy: '怕破局',
+        },
+        {
+          counters: '自保',
+          counteredBy: '怕自保',
+        },
       ],
       isMinor: true,
     },
@@ -1961,7 +2001,16 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       kind: 'counters',
       subject: { name: '侦探杰瑞', type: 'character' },
       target: { name: '汤姆', type: 'character' },
-      tags: [{ counters: '自保', counteredBy: '怕自保' }],
+      tags: [
+        {
+          counters: '速推',
+          counteredBy: '怕速推',
+        },
+        {
+          counters: '自保',
+          counteredBy: '怕自保',
+        },
+      ],
       isMinor: false,
     },
   },
@@ -2122,7 +2171,12 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       kind: 'counters',
       subject: { name: '侦探杰瑞', type: 'character' },
       target: { name: '图多盖洛', type: 'character' },
-      tags: [{ counters: '破冰', counteredBy: '怕破冰' }],
+      tags: [
+        {
+          counters: '破局',
+          counteredBy: '怕破局',
+        },
+      ],
       isMinor: false,
     },
   },
@@ -2282,7 +2336,7 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
   },
   {
     description:
-      '库博在Lv.2{虚幻梦影}和Lv.2{身体素质}的加持下伤害极高，可以一刀秒泰菲；库博使用虚幻梦影会获得{间歇性隐身}状态，很难触发地雷，并且很难被{火箭炮}预判命中；库博的机动性极强，使泰菲很难逃脱库博的追击',
+      '库博在Lv.2{虚幻梦影}和Lv.3{身体素质}的加持下伤害极高，可以一刀秒泰菲；库博使用虚幻梦影会获得{间歇性隐身}状态，很难触发地雷，并且很难被{火箭炮}预判命中；库博的机动性极强，使泰菲很难逃脱库博的追击',
     relation: {
       kind: 'counteredBy',
       subject: { name: '泰菲', type: 'character' },
@@ -3543,7 +3597,16 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       kind: 'counters',
       subject: { name: '如玉', type: 'character' },
       target: { name: '杰瑞', type: 'character' },
-      tags: [{ counters: '破冰', counteredBy: '怕破冰' }],
+      tags: [
+        {
+          counters: '机制',
+          counteredBy: '机制',
+        },
+        {
+          counters: '追击',
+          counteredBy: '怕追击',
+        },
+      ],
       isMinor: true,
     },
   },
@@ -3635,7 +3698,12 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       kind: 'counters',
       subject: { name: '侍卫汤姆', type: 'character' },
       target: { name: '侦探杰瑞', type: 'character' },
-      tags: [{ counters: '免疫', counteredBy: '怕免疫' }],
+      tags: [
+        {
+          counters: '机制',
+          counteredBy: '怕机制',
+        },
+      ],
       isMinor: false,
     },
   },
@@ -3694,7 +3762,12 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       kind: 'counters',
       subject: { name: '苏蕊', type: 'character' },
       target: { name: '杰瑞', type: 'character' },
-      tags: [{ counters: '破冰', counteredBy: '怕破冰' }],
+      tags: [
+        {
+          counters: '追击',
+          counteredBy: '怕追击',
+        },
+      ],
       isMinor: true,
     },
   },
@@ -3876,7 +3949,12 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       kind: 'counters',
       subject: { name: '托普斯', type: 'character' },
       target: { name: '杰瑞', type: 'character' },
-      tags: [{ counters: '免疫', counteredBy: '怕免疫' }],
+      tags: [
+        {
+          counters: '机制',
+          counteredBy: '怕机制',
+        },
+      ],
       isMinor: true,
     },
   },
@@ -4117,7 +4195,16 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       kind: 'counteredBy',
       subject: { name: '米特', type: 'character' },
       target: { name: '杰瑞', type: 'character' },
-      tags: [{ counters: '破冰', counteredBy: '怕破冰' }],
+      tags: [
+        {
+          counters: '控制',
+          counteredBy: '怕控制',
+        },
+        {
+          counters: '自保',
+          counteredBy: '怕自保',
+        },
+      ],
       isMinor: false,
     },
   },
@@ -4127,7 +4214,12 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       kind: 'counteredBy',
       subject: { name: '米特', type: 'character' },
       target: { name: '侦探杰瑞', type: 'character' },
-      tags: [{ counters: '破冰', counteredBy: '怕破冰' }],
+      tags: [
+        {
+          counters: '破局',
+          counteredBy: '怕破局',
+        },
+      ],
       isMinor: false,
     },
   },
@@ -4255,6 +4347,38 @@ export const characterRelationCharacterCounterTraits: CharacterRelationTrait[] =
       kind: 'counteredBy',
       subject: { name: '追风汤姆', type: 'character' },
       target: { name: '鲍姆', type: 'character' },
+      isMinor: true,
+    },
+  },
+
+  {
+    description: '莱恩具备较强的干扰能力，守火箭能力强，圆和方块能断掉连斩',
+    relation: {
+      kind: 'counteredBy',
+      subject: {
+        name: '剑客汤姆',
+        type: 'character',
+      },
+      target: {
+        name: '莱恩',
+        type: 'character',
+      },
+      isMinor: true,
+    },
+  },
+
+  {
+    description: '剑舞可以卷走无敌状态下的剑客莉莉阻止其救援，但容易被剑客莉莉干扰。',
+    relation: {
+      kind: 'counters',
+      subject: {
+        name: '剑客汤姆',
+        type: 'character',
+      },
+      target: {
+        name: '剑客莉莉',
+        type: 'character',
+      },
       isMinor: true,
     },
   },

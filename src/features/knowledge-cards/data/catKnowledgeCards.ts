@@ -112,6 +112,8 @@ const catKnowledgeCardDefinitions: Record<string, Card> = {
       { level: 3, description: '每隔**12**秒，获得蓄势一击状态。' },
     ],
     priority: '提升较小',
+
+    aliases: ['去世一击'],
   },
 
   猛攻: {
