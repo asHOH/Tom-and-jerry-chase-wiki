@@ -50,7 +50,7 @@ src/
 │   ├── (main)/               # Public routes using GlobalLayout
 │   ├── admin/                # Dynamic admin UI
 │   ├── api/                  # Route handlers
-│   └── maps/                 # Full-screen interactive map route outside (main)
+│   └── maps/                 # Legacy scene-map redirects outside (main)
 ├── features/                 # Domain modules: data, components, hooks, and helpers
 ├── components/               # Cross-feature and app-level components
 │   └── ui/                   # Shared UI primitives

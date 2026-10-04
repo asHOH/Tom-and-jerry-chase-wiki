@@ -3,7 +3,6 @@
 /// <reference lib="webworker" />
 import { defaultCache } from '@serwist/next/worker';
 import {
-  CacheFirst,
   ExpirationPlugin,
   NetworkFirst,
   NetworkOnly,
@@ -26,6 +25,7 @@ declare const self: ServiceWorkerGlobalScope;
 
 const isScriptOrStyleRequest = (request: Request) =>
   request.destination === 'script' || request.destination === 'style';
+const isSceneMapRedirect = (pathname: string) => /^\/maps\/[^/]+\/interactive\/?$/.test(pathname);
 
 const LEGACY_API_CACHE_NAME = 'api-cache';
 const PUBLIC_API_CACHE_NAME = 'public-api-cache-v1';
@@ -51,9 +51,6 @@ const isCacheablePublicApiPath = (pathname: string) => {
   );
 };
 
-// Bump this when generated tile contents change without changing their URLs.
-const MAP_TILE_CACHE_VERSION = 1;
-
 // Custom runtime caching strategies (migrated from @ducanh2912/next-pwa config)
 const customRuntimeCaching: RuntimeCaching[] = [
   // Keep private workflows out of the default HTML/RSC caches too.
@@ -62,7 +59,7 @@ const customRuntimeCaching: RuntimeCaching[] = [
       sameOrigin &&
       !url.pathname.startsWith('/api/') &&
       !url.pathname.startsWith('/_next/') &&
-      !isOfflinePublicPage(url.pathname),
+      (!isOfflinePublicPage(url.pathname) || isSceneMapRedirect(url.pathname)),
     handler: new NetworkOnly(),
   },
   // Warmup fetches HTML with Accept: text/html. RSC payloads stay in separate caches.
@@ -83,19 +80,6 @@ const customRuntimeCaching: RuntimeCaching[] = [
   {
     matcher: ({ url }) => /^https?:\/\/[^/]+\/api\/version.*$/.test(url.href),
     handler: new NetworkOnly(),
-  },
-  // Map tiles are numerous and immutable within a cache version, so keep them out of the shared image cache.
-  {
-    matcher: ({ sameOrigin, url }) => sameOrigin && url.pathname.startsWith('/images/map-tiles/'),
-    handler: new CacheFirst({
-      cacheName: `map-tiles-v${MAP_TILE_CACHE_VERSION}`,
-      plugins: [
-        new ExpirationPlugin({
-          maxEntries: 450,
-          maxAgeSeconds: 2592000, // 30 days
-        }),
-      ],
-    }),
   },
   // Images - stale while revalidate with 30 day expiration
   {
@@ -183,7 +167,25 @@ self.addEventListener('message', (event) => {
 });
 
 self.addEventListener('activate', (event) => {
-  event.waitUntil(self.caches.delete(LEGACY_API_CACHE_NAME));
+  event.waitUntil(
+    (async () => {
+      const names = await self.caches.keys();
+      await Promise.all(
+        names
+          .filter((name) => name === LEGACY_API_CACHE_NAME || name.startsWith('map-tiles-v'))
+          .map((name) => self.caches.delete(name))
+      );
+      if (names.includes(OFFLINE_PAGE_CACHE_NAME)) {
+        const pages = await self.caches.open(OFFLINE_PAGE_CACHE_NAME);
+        const requests = await pages.keys();
+        await Promise.all(
+          requests
+            .filter((request) => isSceneMapRedirect(new URL(request.url).pathname))
+            .map((request) => pages.delete(request))
+        );
+      }
+    })()
+  );
 });
 
 serwist.addEventListeners();

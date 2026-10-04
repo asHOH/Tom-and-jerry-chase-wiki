@@ -3,11 +3,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { storage, StorageKey } from '@/lib/localStorage';
-import type { MapPointCategory } from '@/data/types';
-import {
-  DEFAULT_VISIBLE_CATEGORIES,
-  MAP_CATEGORY_LABELS,
-} from '@/features/maps/interactive-map/mapUtils';
 
 export type ThemeMode = 'system' | 'light' | 'dark';
 export type KnowledgeCardViewMode = 'tree' | 'hybrid' | 'compact';
@@ -16,7 +11,6 @@ export type PositioningTagViewMode = 'text' | 'bar' | 'radar';
 export type LocalPreferences = {
   articleAutoNumbering: boolean;
   detailedView: boolean;
-  interactiveMapVisibleCategories: MapPointCategory[];
   knowledgeCardViewMode: KnowledgeCardViewMode;
   positioningTagViewMode: PositioningTagViewMode;
 };
@@ -24,7 +18,6 @@ export type LocalPreferences = {
 export const LOCAL_PREFERENCE_DEFAULTS: LocalPreferences = {
   articleAutoNumbering: false,
   detailedView: false,
-  interactiveMapVisibleCategories: [...DEFAULT_VISIBLE_CATEGORIES],
   knowledgeCardViewMode: 'tree',
   positioningTagViewMode: 'text',
 };
@@ -32,7 +25,6 @@ export const LOCAL_PREFERENCE_DEFAULTS: LocalPreferences = {
 const STORAGE_KEYS = {
   articleAutoNumbering: StorageKey.ArticleAutoNumbering,
   detailedView: StorageKey.DetailedView,
-  interactiveMapVisibleCategories: StorageKey.InteractiveMapVisibleCategories,
   knowledgeCardViewMode: StorageKey.KnowledgeCardViewMode,
   positioningTagViewMode: StorageKey.PositioningTagView,
 } as const satisfies Record<keyof LocalPreferences, StorageKey>;
@@ -40,9 +32,6 @@ const STORAGE_KEYS = {
 const LOCAL_PREFERENCE_EVENT = 'tjwiki:local-preference-change';
 const KNOWLEDGE_CARD_VIEW_MODES = new Set<KnowledgeCardViewMode>(['tree', 'hybrid', 'compact']);
 const POSITIONING_TAG_VIEW_MODES = new Set<PositioningTagViewMode>(['text', 'bar', 'radar']);
-const MAP_POINT_CATEGORIES = new Set<MapPointCategory>(
-  Object.keys(MAP_CATEGORY_LABELS) as MapPointCategory[]
-);
 
 const parseStoredValue = (value: string | null): unknown => {
   if (value === null) return undefined;
@@ -69,21 +58,6 @@ const normalizePreference = <K extends keyof LocalPreferences>(
           ? value
           : LOCAL_PREFERENCE_DEFAULTS.positioningTagViewMode
       ) as LocalPreferences[K];
-    case 'interactiveMapVisibleCategories': {
-      if (!Array.isArray(value)) {
-        return [
-          ...LOCAL_PREFERENCE_DEFAULTS.interactiveMapVisibleCategories,
-        ] as LocalPreferences[K];
-      }
-      return [
-        ...new Set(
-          value.filter(
-            (category): category is MapPointCategory =>
-              typeof category === 'string' && MAP_POINT_CATEGORIES.has(category as MapPointCategory)
-          )
-        ),
-      ] as LocalPreferences[K];
-    }
   }
 };
 

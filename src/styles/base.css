@@ -70,7 +70,3 @@ img {
   -ms-user-select: none !important;
   user-select: none !important;
 }
-
-.leaflet-control-attribution {
-  display: none;
-}

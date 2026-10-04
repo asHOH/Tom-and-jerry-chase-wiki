@@ -11,6 +11,7 @@ import { useAppContext } from '@/context/AppContext';
 import { useEditMode } from '@/context/EditModeContext';
 import type { Map as MapType, SingleItem } from '@/data/types';
 import MapModeCharacterRelations from '@/features/characters/components/MapModeCharacterRelations';
+import { getSceneMapUrl } from '@/features/maps/sceneMapLinks';
 import DetailOwnbuffsCard from '@/features/shared/detail-view/DetailOwnbuffsCard';
 import DetailReverseCard from '@/features/shared/detail-view/DetailReverseCard';
 import DetailShell, { DetailSection } from '@/features/shared/detail-view/DetailShell';
@@ -21,7 +22,6 @@ import Card from '@/components/ui/Card';
 import { editable } from '@/components/ui/editable';
 import SingleItemButton from '@/components/ui/SingleItemButton';
 import Image from '@/components/Image';
-import Link from '@/components/Link';
 
 import MapAttributesCard from './MapAttributesCard';
 
@@ -159,33 +159,26 @@ export default function MapDetailClient({
       ),
     });
   }
-  if (effectiveMap.interactiveMap) {
-    const previewUrl = effectiveMap.interactiveMap.previewUrl ?? effectiveMap.mapImageUrl;
+  const sceneMapUrl = getSceneMapUrl(mapName);
+  if (sceneMapUrl) {
     sections.push({
-      title: '交互地图',
+      title: '场景地图',
       content: (
         <Card interactive className='overflow-hidden p-0'>
-          <Link
-            href={`/maps/${encodeURIComponent(effectiveMap.name)}/interactive`}
-            preserveEditParam
-            className='group relative block h-[min(62vh,480px)] min-h-60 overflow-hidden bg-slate-950'
+          <a
+            href={sceneMapUrl}
+            target='_blank'
+            rel='noopener noreferrer'
+            aria-label={`在猫鼠地图百科中查看${effectiveMap.name}（新窗口）`}
+            className='flex min-h-36 flex-col items-center justify-center gap-3 p-6 text-center sm:min-h-44'
           >
-            {previewUrl && (
-              <Image
-                src={previewUrl}
-                alt={`${effectiveMap.name}交互地图预览`}
-                fill
-                sizes='100vw'
-                className='object-cover opacity-65 transition-opacity duration-200 group-hover:opacity-80'
-              />
-            )}
-            <div className='absolute inset-0 bg-slate-950/45' />
-            <div className='absolute inset-0 flex items-center justify-center'>
-              <span className='rounded-md bg-slate-950/90 px-4 py-2 text-sm text-white shadow-lg'>
-                进入全屏交互地图
-              </span>
-            </div>
-          </Link>
+            <span className='text-lg font-semibold text-blue-700 dark:text-blue-300'>
+              打开猫鼠地图百科
+            </span>
+            <span className='text-sm text-gray-600 dark:text-gray-300'>
+              浏览房间版本、地图组件与道具候选位置
+            </span>
+          </a>
         </Card>
       ),
     });

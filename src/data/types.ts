@@ -505,60 +505,6 @@ export type Trait = {
 export type mapTypes = '常规地图' | '娱乐地图' | '广场地图';
 export type MapSize = '微型' | '小型' | '中型' | '大型';
 export type studyLevel = '见习学业' | '高级学业' | '特级学业' | '大师学业';
-export type MapPointCategory =
-  | 'teleport'
-  | 'cheese'
-  | 'rocket'
-  | 'drink'
-  | 'wallCrack'
-  | 'idleFruitPlate'
-  | 'mouseHole'
-  | 'pipe'
-  | 'geometryBarrel'
-  | 'scoutingCanary';
-export type MapCoordinate = { x: number; y: number };
-export type InteractiveMapRoom = {
-  name: string;
-  showLabel?: boolean;
-  polygons: MapCoordinate[][];
-};
-export type GeometryBarrelRoute = {
-  firecrackerPosition?: MapCoordinate;
-  targetRocketPointId?: string;
-  /** 小鞭炮爆炸瞬间火药桶显示的倒计时数字，只能为 0、1 或 2。 */
-  barrelCountdownDisplayAtFirecrackerExplosion?: number;
-};
-export type InteractiveMapPoint = {
-  id?: string;
-  category: MapPointCategory;
-  subtype?: string;
-  position: MapCoordinate;
-  /** 仅显示在小地图上的可能移动路径。 */
-  minimapPaths?: MapCoordinate[][];
-  description?: string;
-  targetWallCrackPointId?: string;
-  geometryBarrelRoute?: GeometryBarrelRoute;
-  connection?: {
-    targetPointId: string;
-    direction: 'both' | 'outbound';
-    label?: string;
-  };
-  isInvisible?: boolean;
-  isRandomCandidate?: boolean;
-  minZoom?: number;
-  relatedEntries?: SingleItemOrGroup[];
-};
-export type InteractiveMapConfig = {
-  width: number;
-  height: number;
-  tileSize: number;
-  minZoom: number;
-  maxZoom: number;
-  tileUrl: string;
-  previewUrl?: string;
-  rooms: InteractiveMapRoom[];
-  points: InteractiveMapPoint[];
-};
 export type MapDefinition = {
   aliases?: string[];
   mapSkin?: { name: string; imageUrl: string; description: string }[]; //地图换肤变种名
@@ -581,7 +527,6 @@ export type MapDefinition = {
   specialImageUrl?: string;
 
   mapImageUrl?: string;
-  interactiveMap?: InteractiveMapConfig;
 };
 
 export type Map = MapDefinition & { name: string; imageUrl: string };

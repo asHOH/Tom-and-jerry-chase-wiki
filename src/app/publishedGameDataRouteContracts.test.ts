@@ -12,7 +12,6 @@ const publishedGameDataRoutes = [
   'src/app/(main)/maps/[mapName]/page.tsx',
   'src/app/(main)/modes/[modeName]/page.tsx',
   'src/app/(main)/special-skills/[factionId]/[skillId]/page.tsx',
-  'src/app/maps/[mapName]/interactive/page.tsx',
 ] as const;
 
 describe('published game-data route rendering contracts', () => {

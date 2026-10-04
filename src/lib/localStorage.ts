@@ -11,7 +11,6 @@ export const enum StorageKey {
   GuessCharacterDaily = 'guess-character-daily',
   GuessCharacterStreak = 'guess-character-streak',
   HomepageDismissedNotices = 'homepage-dismissed-notices',
-  InteractiveMapVisibleCategories = 'interactive-map:visible-categories:v3',
   KnowledgeCardViewMode = 'view-mode',
   LatestSeenVersion = 'tjcw.latestSeenVersion',
   PositioningTagView = 'tjwiki:character-positioning-view',

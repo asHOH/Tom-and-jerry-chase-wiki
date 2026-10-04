@@ -109,29 +109,6 @@ describe('service worker runtime caching', () => {
     ).toBe('NetworkOnly');
   });
 
-  it('should keep same-origin map tiles in a dedicated cache-first cache', () => {
-    const mapTileRoute = findFirstMatchingRoute(
-      '/images/map-tiles/classic-home-i/4/0/0.avif',
-      'image'
-    );
-
-    expect(mapTileRoute?.handler.strategyName).toBe('CacheFirst');
-    expect(mapTileRoute?.handler.options).toMatchObject({
-      cacheName: 'map-tiles-v1',
-      plugins: [
-        {
-          options: {
-            maxAgeSeconds: 2592000,
-            maxEntries: 450,
-          },
-        },
-      ],
-    });
-    expect(
-      findFirstMatchingRoute('/images/maps/经典之家.avif', 'image')?.handler.strategyName
-    ).toBe('StaleWhileRevalidate');
-  });
-
   it('uses the same document cache for warmup and navigation without mixing in RSC', () => {
     for (const route of [
       findFirstMatchingRoute('/factions/mouse/', 'document'),

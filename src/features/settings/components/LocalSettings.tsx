@@ -1,16 +1,10 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
 
-import { cn } from '@/lib/design';
 import { useAppContext } from '@/context/AppContext';
 import { useToast } from '@/context/ToastContext';
-import type { MapPointCategory } from '@/data/types';
-import {
-  ALWAYS_VISIBLE_CATEGORIES,
-  MAP_CATEGORY_LABELS,
-} from '@/features/maps/interactive-map/mapUtils';
 import {
   LOCAL_PREFERENCE_DEFAULTS,
   resetLocalPreferences,
@@ -63,10 +57,6 @@ export default function LocalSettings() {
     useLocalPreference('knowledgeCardViewMode');
   const [positioningTagViewMode, setPositioningTagViewMode] =
     useLocalPreference('positioningTagViewMode');
-  const [visibleMapCategories, setVisibleMapCategories] = useLocalPreference(
-    'interactiveMapVisibleCategories'
-  );
-  const visibleCategorySet = useMemo(() => new Set(visibleMapCategories), [visibleMapCategories]);
 
   useEffect(() => setMounted(true), []);
 
@@ -146,46 +136,6 @@ export default function LocalSettings() {
           options={POSITIONING_OPTIONS}
           onChange={(value) => reportSave(setPositioningTagViewMode(value))}
         />
-
-        <fieldset>
-          <legend className='mb-2 text-sm font-semibold text-gray-900 dark:text-gray-100'>
-            互动地图默认点位
-          </legend>
-          <div className='grid gap-2 sm:grid-cols-2'>
-            {(Object.keys(MAP_CATEGORY_LABELS) as MapPointCategory[]).map((category) => {
-              const alwaysVisible = ALWAYS_VISIBLE_CATEGORIES.has(category);
-              const checked = alwaysVisible || visibleCategorySet.has(category);
-              return (
-                <label
-                  key={category}
-                  className={cn(
-                    'flex items-center gap-3 rounded-lg border border-gray-200 px-3 py-2.5 dark:border-gray-700',
-                    alwaysVisible && 'opacity-70'
-                  )}
-                >
-                  <input
-                    type='checkbox'
-                    checked={checked}
-                    disabled={alwaysVisible}
-                    onChange={() => {
-                      const next = new Set(visibleCategorySet);
-                      if (next.has(category)) next.delete(category);
-                      else next.add(category);
-                      reportSave(setVisibleMapCategories([...next]));
-                    }}
-                    className='bg-surface-sunken size-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600'
-                  />
-                  <span className='text-sm text-gray-800 dark:text-gray-200'>
-                    {MAP_CATEGORY_LABELS[category]}
-                  </span>
-                  {alwaysVisible ? (
-                    <span className='ml-auto text-xs text-gray-500'>常驻</span>
-                  ) : null}
-                </label>
-              );
-            })}
-          </div>
-        </fieldset>
 
         <Button variant='secondary' onClick={resetDisplayPreferences}>
           恢复显示设置默认值
