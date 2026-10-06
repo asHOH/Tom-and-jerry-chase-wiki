@@ -420,7 +420,7 @@ export const SparklesIcon = ({ strokeWidth = 2, ...props }: IconProps) => (
   </SvgIcon>
 );
 
-const ChevronUpCircleIcon = ({ strokeWidth = 1.5, ...props }: IconProps) => (
+export const ChevronUpCircleIcon = ({ strokeWidth = 1.5, ...props }: IconProps) => (
   <SvgIcon strokeWidth={strokeWidth} {...props}>
     <path
       strokeLinecap='round'

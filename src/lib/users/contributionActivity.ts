@@ -51,7 +51,7 @@ export type ContributionCalendarDay = {
 
 export type ContributionCalendar = ContributionCalendarDay[];
 
-type ContributionCategory = {
+export type ContributionCategory = {
   key: string;
   label: string;
   count: number;
@@ -65,7 +65,7 @@ export type ContributionBreakdownItem = {
 
 export type ContributionBreakdown = ContributionBreakdownItem[];
 
-type ContributionMonth = {
+export type ContributionMonth = {
   key: string;
   label: string;
   count: number;

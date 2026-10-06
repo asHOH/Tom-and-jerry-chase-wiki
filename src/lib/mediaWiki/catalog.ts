@@ -582,7 +582,7 @@ export function getMediaWikiPageById(
   return catalog.pagesById.get(pageid);
 }
 
-function getMediaWikiPageByRoute(
+export function getMediaWikiPageByRoute(
   catalog: MediaWikiCatalog,
   route: string
 ): MediaWikiPage | undefined {

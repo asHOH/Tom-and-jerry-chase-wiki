@@ -64,8 +64,10 @@ const pageLoadingLayouts: Record<PageLoadingLayout, { width: PageShellWidth; cla
     catalog: { width: 'wide', className: 'space-y-8 dark:text-slate-200' },
   };
 
-const getPageLoadingStateClassName = (layout: PageLoadingLayout = 'detail', className?: string) =>
-  cn(pageLoadingLayouts[layout].className, className);
+export const getPageLoadingStateClassName = (
+  layout: PageLoadingLayout = 'detail',
+  className?: string
+) => cn(pageLoadingLayouts[layout].className, className);
 
 /**
  * Unified loading state component that provides consistent loading UI across the app

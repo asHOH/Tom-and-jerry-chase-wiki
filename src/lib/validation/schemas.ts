@@ -51,7 +51,7 @@ const COMMENT_SCOPES = [
   'list_pages',
 ] as const;
 
-type CommentScope = (typeof COMMENT_SCOPES)[number];
+export type CommentScope = (typeof COMMENT_SCOPES)[number];
 
 export const commentsListQuerySchema = z.object({
   scope: z.enum(COMMENT_SCOPES),

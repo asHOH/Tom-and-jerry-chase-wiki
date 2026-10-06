@@ -10,7 +10,7 @@ export type DiscussionTopic = {
   status: string;
 };
 
-type DiscussionPost = {
+export type DiscussionPost = {
   id: string;
   parentId: string | null;
   authorId: string;

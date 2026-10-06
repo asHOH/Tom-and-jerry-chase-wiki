@@ -578,4 +578,4 @@ export function createMouseCardsWithImages() {
   return structuredClone(pristineMouseCardsWithImages);
 }
 
-const mouseCardsWithImages = createMouseCardsWithImages();
+export const mouseCardsWithImages = createMouseCardsWithImages();

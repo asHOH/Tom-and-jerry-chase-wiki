@@ -214,7 +214,10 @@ export async function createEnabledBuildGameDataPrepass(
   };
 }
 
-function addFinalEpochMeasurement(summary: BuildReadSummary, durationMs: number): BuildReadSummary {
+export function addFinalEpochMeasurement(
+  summary: BuildReadSummary,
+  durationMs: number
+): BuildReadSummary {
   return createBuildReadSummary({
     ...summary,
     epochValidation: {

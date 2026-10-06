@@ -545,7 +545,7 @@ function decodeCursor(cursor: string): { fingerprint: string; selector: string; 
   }
 }
 
-function isActionAuditDetailSelector(value: string): value is ActionAuditDetailSelector {
+export function isActionAuditDetailSelector(value: string): value is ActionAuditDetailSelector {
   if ((ACTION_AUDIT_COHORTS as readonly string[]).includes(value)) return true;
   if ((ACTION_AUDIT_FINDING_CATEGORIES as readonly string[]).includes(value)) return true;
   const [cohort, category, extra] = value.split(':');

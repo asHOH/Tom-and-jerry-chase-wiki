@@ -66,7 +66,7 @@ const MODES: ModeDef[] = [
 /**
  * Mode selection buttons for the Stat Showdown game.
  */
-function ModeSelector({ currentMode, onSelect }: ModeSelectorProps) {
+export default function ModeSelector({ currentMode, onSelect }: ModeSelectorProps) {
   return (
     <div className='flex flex-wrap justify-center gap-2'>
       {MODES.map((m) => (

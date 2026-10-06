@@ -17,7 +17,7 @@ function pendingTargetAffectsDescriptor(
   return areActionDependencyDescriptorsOrderDependent(target, descriptor);
 }
 
-function pendingTargetAffectsAction(
+export function pendingTargetAffectsAction(
   target: ActionDependencyDescriptor,
   action: Readonly<Action>
 ): boolean {
