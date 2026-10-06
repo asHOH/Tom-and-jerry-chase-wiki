@@ -1,13 +1,13 @@
 // Wire contract v1. Keep this file aligned with tjwiki-maps/src/sceneAnnotations.ts.
-export type AnnotationPoint = { x: number; y: number };
-export type AnnotationAnchor = {
+type AnnotationPoint = { x: number; y: number };
+type AnnotationAnchor = {
   slot: string;
   variant: string;
   position: AnnotationPoint;
   source?: { skin: string; scene: string; objectId: string };
 };
-export type AnnotationEntry = { name: string; type: 'item' | 'entity' | 'fixture' | 'itemGroup' };
-export type SceneAnnotation = {
+type AnnotationEntry = { name: string; type: 'item' | 'entity' | 'fixture' | 'itemGroup' };
+type SceneAnnotation = {
   id: string;
   category: 'geometryBarrel' | 'idleFruitPlate' | 'scoutingCanary';
   anchor: AnnotationAnchor;
@@ -19,7 +19,7 @@ export type SceneAnnotation = {
 };
 export type SceneAnnotations = { version: 1; points: SceneAnnotation[] };
 export const emptyAnnotations = (): SceneAnnotations => ({ version: 1, points: [] });
-export const annotationLabels = {
+const annotationLabels = {
   geometryBarrel: '几何桶',
   idleFruitPlate: '挂机果盘点位',
   scoutingCanary: '侦查金丝雀',

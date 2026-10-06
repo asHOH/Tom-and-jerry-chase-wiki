@@ -23,7 +23,7 @@ import { handleGameDataSubmission } from './submission';
 import { resolveGameDataAdvancedSubmit } from './submitMode';
 
 export type SceneMapRouteContext = { params: Promise<{ mapId: string }> };
-export function sceneMapOriginAllowed(request: Request): boolean {
+function sceneMapOriginAllowed(request: Request): boolean {
   const origin = request.headers.get('origin');
   if (!origin) return true;
   if (origin === new URL(request.url).origin) return true;
@@ -33,7 +33,7 @@ export function sceneMapOriginAllowed(request: Request): boolean {
     /^http:\/\/(?:localhost|127\.0\.0\.1):(?:3000|5173|5175)$/.test(origin)
   );
 }
-export function sceneMapResponse(request: Request, response: NextResponse): NextResponse {
+function sceneMapResponse(request: Request, response: NextResponse): NextResponse {
   response.headers.set('Cache-Control', 'private, no-store');
   response.headers.set('Vary', 'Origin');
   const origin = request.headers.get('origin');
