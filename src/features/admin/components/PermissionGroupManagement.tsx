@@ -49,7 +49,7 @@ export type PermissionGroup = {
   inheritedGrants: InheritedPermissionGrant[];
 };
 
-export type InheritedPermissionGrant = PermissionGrant & {
+type InheritedPermissionGrant = PermissionGrant & {
   sourceGroupId: string;
   sourceGroupName: string;
 };

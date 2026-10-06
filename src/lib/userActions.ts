@@ -90,7 +90,7 @@ export async function getCurrentUserContext(): Promise<CurrentUserContext> {
   return readCurrentUserContext();
 }
 
-export async function getUserData() {
+async function getUserData() {
   const { userId: _userId, ...userData } = await getCurrentUserContext();
   return userData;
 }

@@ -1,5 +1,5 @@
 export type UserProfileTab = 'activity' | 'submissions';
-export type UserProfileActivityFilter = 'all' | 'articles' | 'game-data';
+type UserProfileActivityFilter = 'all' | 'articles' | 'game-data';
 
 export type UserProfileHrefOptions = {
   tab?: UserProfileTab;

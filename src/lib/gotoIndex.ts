@@ -38,7 +38,7 @@ export type GotoIndexKind =
   | 'mode'
   | 'achievement';
 
-export type GotoIndexMatchType = 'name' | 'alias';
+type GotoIndexMatchType = 'name' | 'alias';
 
 export type GotoIndexEntry = {
   kind: GotoIndexKind;

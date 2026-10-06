@@ -4,7 +4,7 @@ const trimmedString = z.string().trim().min(1);
 
 export const ARTICLE_TITLE_MAX_LENGTH = 200;
 export const ARTICLE_CONTENT_MAX_LENGTH = 250_000;
-export const ARTICLE_CHARACTER_ID_MAX_LENGTH = 128;
+const ARTICLE_CHARACTER_ID_MAX_LENGTH = 128;
 export const ARTICLE_COMMIT_MESSAGE_MAX_LENGTH = 500;
 
 export const authRegisterSchema = z.object({
@@ -36,7 +36,7 @@ export const articleEditSchema = articleWriteSchema.extend({
 
 export const articleEditPendingSchema = articleWriteSchema;
 
-export const COMMENT_SCOPES = [
+const COMMENT_SCOPES = [
   'articles',
   'characters',
   'knowledge_cards',
@@ -51,7 +51,7 @@ export const COMMENT_SCOPES = [
   'list_pages',
 ] as const;
 
-export type CommentScope = (typeof COMMENT_SCOPES)[number];
+type CommentScope = (typeof COMMENT_SCOPES)[number];
 
 export const commentsListQuerySchema = z.object({
   scope: z.enum(COMMENT_SCOPES),

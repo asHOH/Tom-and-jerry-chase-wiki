@@ -4,7 +4,7 @@ import { createContext, useContext, type ReactNode } from 'react';
 
 import type { SingleItem, WikiChangeType } from '@/data/types';
 
-export type PublishedEntityHistoryEntry = Readonly<{
+type PublishedEntityHistoryEntry = Readonly<{
   year: number;
   date: string;
   type: WikiChangeType;

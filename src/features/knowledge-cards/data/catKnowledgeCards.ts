@@ -583,4 +583,4 @@ export function createCatCardsWithImages() {
   return structuredClone(pristineCatCardsWithImages);
 }
 
-export const catCardsWithImages = createCatCardsWithImages();
+const catCardsWithImages = createCatCardsWithImages();

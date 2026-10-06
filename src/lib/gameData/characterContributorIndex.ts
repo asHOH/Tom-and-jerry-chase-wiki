@@ -18,8 +18,6 @@ import { getBuildGameDataArtifactPath } from '@/lib/supabase/buildSourceGuard';
 import { getOptionalSupabasePublicClient } from '@/lib/supabase/publicClient';
 import { hiddenContributorNicknames } from '@/data/hiddenContributorNicknames';
 
-export { queryCharacterContributorSource } from '@/lib/gameData/characterContributorSourceQuery';
-
 async function queryRuntimeCharacterContributorIndex(): Promise<CharacterContributorIndex> {
   const client = getOptionalSupabasePublicClient();
   if (!client) return {};

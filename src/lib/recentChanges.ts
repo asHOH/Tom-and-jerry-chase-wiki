@@ -68,7 +68,7 @@ export function normalizeRecentChangesPage(value: string | undefined): number {
   return Number.isSafeInteger(page) && page > 0 ? page : 1;
 }
 
-export function mapArticleChange(row: ArticleChangeRow): RecentChange {
+function mapArticleChange(row: ArticleChangeRow): RecentChange {
   return {
     id: row.id,
     kind: 'article',

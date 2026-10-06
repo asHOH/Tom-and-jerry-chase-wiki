@@ -26,8 +26,6 @@ import {
   syncedHistoryArtifactToPublicRows,
 } from './syncedHistory';
 
-export { PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG } from '@/lib/gameData/publicActionsCache';
-
 export type EntityUpdateHistory = {
   updatedAt: string;
   actionId: string;

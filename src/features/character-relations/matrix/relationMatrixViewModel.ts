@@ -66,8 +66,8 @@ export type RelationMatrixData = Pick<
   'characters' | 'cards' | 'specialSkills' | 'maps' | 'modes'
 >;
 
-export const DEFAULT_RELATION_MATRIX_ROW_FACTION = 'mouse' satisfies RelationMatrixRowFaction;
-export const DEFAULT_RELATION_MATRIX_COLUMN_CATEGORY = 'cat' satisfies RelationMatrixColumnCategory;
+const DEFAULT_RELATION_MATRIX_ROW_FACTION = 'mouse' satisfies RelationMatrixRowFaction;
+const DEFAULT_RELATION_MATRIX_COLUMN_CATEGORY = 'cat' satisfies RelationMatrixColumnCategory;
 
 const COLUMN_CATEGORY_OPTIONS: readonly RelationMatrixColumnCategoryOption[] = [
   { id: 'mouse', label: '鼠' },

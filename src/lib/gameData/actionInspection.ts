@@ -11,7 +11,7 @@ import { projectLegacyAction, type ActionPatchTargetRegistry } from './actionPat
 import { parseActionPath } from './actionPath';
 import { decodeStoredActionRow } from './actionRowDecoder';
 
-export const LARGE_ACTION_PAYLOAD_BYTES = 10_000;
+const LARGE_ACTION_PAYLOAD_BYTES = 10_000;
 const MAX_DIFF_ITEMS = 25;
 
 export type ActionInspectionRow = {
@@ -38,7 +38,7 @@ export type ActionInspectionReport = {
   overlapHistory: ActionInspectionHistoryItem[];
 };
 
-export type ActionInspectionItem = {
+type ActionInspectionItem = {
   rowId: string;
   actionIndex: number;
   createdAt: string;
@@ -67,7 +67,7 @@ export type ActionInspectionItem = {
   };
 };
 
-export type ActionInspectionHistoryItem = {
+type ActionInspectionHistoryItem = {
   rowId: string;
   actionIndex: number;
   createdAt: string;

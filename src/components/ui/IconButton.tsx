@@ -5,7 +5,7 @@ import { forwardRef, type ButtonHTMLAttributes } from 'react';
 import { cn } from '@/lib/design';
 import Button from '@/components/ui/Button';
 
-export type IconButtonVariant = 'add' | 'delete' | 'edit';
+type IconButtonVariant = 'add' | 'delete' | 'edit';
 export type IconButtonSize = 'xs' | 'sm' | 'md';
 
 type IconButtonProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'aria-label'> & {

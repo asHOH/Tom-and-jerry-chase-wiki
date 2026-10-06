@@ -21,7 +21,7 @@ export type NotificationSubscriptionUpdate = {
   [Key in NotificationSubscriptionKey]?: boolean | undefined;
 };
 
-export const DEFAULT_NOTIFICATION_SUBSCRIPTION_SETTINGS: NotificationSubscriptionSettings = {
+const DEFAULT_NOTIFICATION_SUBSCRIPTION_SETTINGS: NotificationSubscriptionSettings = {
   articleVersionPendingEnabled: false,
   gameDataActionPendingEnabled: false,
   discussionCommentEnabled: false,

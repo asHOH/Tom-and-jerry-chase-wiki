@@ -2,7 +2,7 @@ import type { PermissionKey, ResourceContext } from '@/lib/auth/permissions';
 import { getGameActionResourceContexts } from '@/lib/auth/resourceContexts';
 import type { Database, Json } from '@/data/database.types';
 
-export const GAME_DATA_SUBMIT_MODES = ['default', 'force_public_pending', 'force_pending'] as const;
+const GAME_DATA_SUBMIT_MODES = ['default', 'force_public_pending', 'force_pending'] as const;
 
 export type GameDataSubmitMode = (typeof GAME_DATA_SUBMIT_MODES)[number];
 export type GameDataSubmitOutcome = 'pending' | 'public_pending' | 'approved';
@@ -65,7 +65,7 @@ export function resolveGameDataAdvancedSubmit(args: {
   };
 }
 
-export function getGameDataSubmitOutcomeForMode(
+function getGameDataSubmitOutcomeForMode(
   submitMode: GameDataSubmitMode,
   defaultOutcome: GameDataSubmitOutcome
 ): GameDataSubmitOutcome {

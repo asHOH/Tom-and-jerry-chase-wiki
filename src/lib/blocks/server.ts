@@ -5,13 +5,7 @@ import { NextResponse } from 'next/server';
 import { getActiveBlock } from './check';
 import { type BlockAction, type BlockInfo, type BlockResourceContext } from './types';
 
-export {
-  getActiveBlock,
-  getRequestIp,
-  getUserBlockSummary,
-  normalizeIp,
-  recordUserIp,
-} from './check';
+export { getActiveBlock, getRequestIp, getUserBlockSummary, recordUserIp } from './check';
 
 export const blockedResponse = (block: BlockInfo): NextResponse =>
   NextResponse.json(

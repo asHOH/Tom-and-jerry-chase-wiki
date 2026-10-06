@@ -136,7 +136,7 @@ export type SuggestedSpecialSkillItem = {
   description: string;
 };
 
-export type RecommendedStorePlan = {
+type RecommendedStorePlan = {
   items: [string, string, string, string];
   description: string;
 };

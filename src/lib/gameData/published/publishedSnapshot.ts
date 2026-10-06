@@ -13,7 +13,7 @@ import {
 
 import type { ApprovedActionSnapshot } from './approvedActionSnapshot';
 import { PRODUCTION_BUILD_IDENTITY } from './buildIdentity';
-import { createPublishedDomainCacheKey, PUBLISHED_SNAPSHOT_CACHE_SHAPE } from './cachePolicy';
+import { createPublishedDomainCacheKey } from './cachePolicy';
 import { getCanonicalGameData } from './canonicalSources';
 import { getApprovedActionSnapshot } from './getApprovedActionSnapshot';
 import { createPublishedDomainRevision, createPublishedRevision } from './revision';
@@ -113,5 +113,3 @@ export async function getPublishedDomainReadModel<EntityType extends Publishable
     data,
   });
 }
-
-export { PUBLISHED_SNAPSHOT_CACHE_SHAPE };

@@ -27,7 +27,7 @@ import {
   isFactionDisplayedGravityUniform,
 } from '../selectors';
 
-export type ActorContext = 'character' | 'object';
+type ActorContext = 'character' | 'object';
 
 type CharacterContextProps = {
   context: 'character';

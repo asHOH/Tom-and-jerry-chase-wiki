@@ -15,7 +15,7 @@ import type {
 
 const EMPTY_DRAFT: EditDraftState = Object.freeze({ actionCount: 0, publishEntries: [] });
 
-export type EditDraftOverviewView = EditDraftOverviewItem & Readonly<{ itemLabel: string }>;
+type EditDraftOverviewView = EditDraftOverviewItem & Readonly<{ itemLabel: string }>;
 
 function overviewRef(item: EditDraftOverviewItem): EditEntityRef {
   return {

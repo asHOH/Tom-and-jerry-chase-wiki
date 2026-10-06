@@ -58,12 +58,12 @@ export type RawActorProfile = {
   buyDelay?: number;
 };
 
-export type PlayableCharacterRef = {
+type PlayableCharacterRef = {
   id: string;
   factionId: FactionId;
 };
 
-export type ActorProfileReference = {
+type ActorProfileReference = {
   source: string;
   name: string;
   hasLegacyRepresentation: boolean;

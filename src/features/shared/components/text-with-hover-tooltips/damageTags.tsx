@@ -17,7 +17,7 @@ type TagDefinition = {
 };
 
 // Tag definitions table
-export const TAG_DEFINITIONS: TagDefinition[] = [
+const TAG_DEFINITIONS: TagDefinition[] = [
   {
     category: 'source',
     names: ['有来源', '有来源伤害'],

@@ -15,7 +15,7 @@ export type GameActionDiffSegment = {
   kind: 'unchanged' | 'added' | 'removed';
 };
 
-export type GameActionDiffValueLine = {
+type GameActionDiffValueLine = {
   text: string;
   lineNumber: number;
   segments: GameActionDiffSegment[];
@@ -32,7 +32,7 @@ type GameActionDiffContextChunk = {
   lines: GameActionDiffContextLine[];
 };
 
-export type GameActionDiffChangeChunk = {
+type GameActionDiffChangeChunk = {
   kind: 'change';
   oldStart: number;
   newStart: number;
@@ -100,7 +100,7 @@ function normalizeJsonValue(value: unknown): unknown {
   );
 }
 
-export function formatGameActionDiffValue(value: unknown): string {
+function formatGameActionDiffValue(value: unknown): string {
   if (value === undefined) return '';
   return JSON.stringify(normalizeJsonValue(value), null, 2) ?? String(value);
 }

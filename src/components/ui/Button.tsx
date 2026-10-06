@@ -10,9 +10,9 @@ import {
 } from '@/lib/design';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
-export type ButtonVariant = ActionButtonVariant | 'unstyled';
+type ButtonVariant = ActionButtonVariant | 'unstyled';
 
-export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
+type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: ButtonVariant;
   size?: ActionButtonSize;
   fullWidth?: boolean;

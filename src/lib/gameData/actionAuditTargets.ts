@@ -33,7 +33,7 @@ const baselineTargets = {
   traits,
 } satisfies Record<PublishableEntityType, object>;
 
-export class ActionAuditTargetCloneError extends Error {
+class ActionAuditTargetCloneError extends Error {
   readonly detail: {
     code: 'clone_failed';
     entityType: string;

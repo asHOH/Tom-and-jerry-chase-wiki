@@ -6,8 +6,8 @@ const MAX_ARTICLE_LIST_PAGE = 10_000;
 const MAX_ARTICLE_LIST_CATEGORIES = 20;
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-export type ArticleListSort = 'created_at' | 'title' | 'view_count';
-export type ArticleListOrder = 'asc' | 'desc';
+type ArticleListSort = 'created_at' | 'title' | 'view_count';
+type ArticleListOrder = 'asc' | 'desc';
 
 export type ArticleListParams = {
   page: number;

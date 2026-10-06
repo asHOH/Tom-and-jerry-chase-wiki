@@ -4,7 +4,7 @@ import {
 } from '@/constants/positioningTagSequences';
 import type { FactionId, PositioningTagLevel } from '@/data/types';
 
-export const POSITIONING_TAG_VIEW_MODES = ['text', 'bar', 'radar'] as const;
+const POSITIONING_TAG_VIEW_MODES = ['text', 'bar', 'radar'] as const;
 
 export type PositioningTagViewMode = (typeof POSITIONING_TAG_VIEW_MODES)[number];
 

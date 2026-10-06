@@ -99,7 +99,7 @@ export class EditDraftCleanupError extends Error {
   }
 }
 
-export type EditSubscriptionTarget =
+type EditSubscriptionTarget =
   | { kind: 'domain'; entityType: PublishableEntityType }
   | { kind: 'entity'; entity: EditEntityRef }
   | { kind: 'draft'; scope: EditDraftScope }

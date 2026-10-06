@@ -249,13 +249,13 @@ const uniqueIds = (values: readonly string[]) => [
   ...new Set(values.filter((value) => value.trim().length > 0)),
 ];
 
-export type GameDataActionNotificationRecord = {
+type GameDataActionNotificationRecord = {
   id: string;
   entity_type: string;
   entry: unknown;
 };
 
-export async function loadGameDataActionNotificationRecords(
+async function loadGameDataActionNotificationRecords(
   actionIds: readonly string[]
 ): Promise<GameDataActionNotificationRecord[]> {
   const uniqueActionIds = uniqueIds(actionIds);

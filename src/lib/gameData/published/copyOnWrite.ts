@@ -1,6 +1,6 @@
 import { cloneGameDataValue } from '@/lib/gameData/cloneGameDataValue';
 
-export class PublishedGameDataCloneError extends TypeError {
+class PublishedGameDataCloneError extends TypeError {
   readonly detail: {
     code: 'clone_failed';
     rootKey: string;

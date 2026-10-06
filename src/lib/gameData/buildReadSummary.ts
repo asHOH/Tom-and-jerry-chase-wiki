@@ -1,10 +1,10 @@
-export type BuildReadMode = 'disabled' | 'enabled';
-export type BuildBulkSourceName = 'approved-actions' | 'character-contributors' | 'synced-history';
+type BuildReadMode = 'disabled' | 'enabled';
+type BuildBulkSourceName = 'approved-actions' | 'character-contributors' | 'synced-history';
 
 const BULK_SOURCES = ['approved-actions', 'character-contributors', 'synced-history'] as const;
 const SHA256_PATTERN = /^[a-f0-9]{64}$/;
 
-export type BuildBulkSourceMeasurement = {
+type BuildBulkSourceMeasurement = {
   source: BuildBulkSourceName;
   fetchCount: number;
   rowCount: number;

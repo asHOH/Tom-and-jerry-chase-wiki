@@ -7,7 +7,7 @@ import {
 import { decodeStoredActionRow } from './actionRowDecoder';
 import { applyCheckedActionRow } from './checkedActionReplay';
 
-export type CompactionDependencyReplayFailure = {
+type CompactionDependencyReplayFailure = {
   rowId: string;
   code: 'invalid_status' | 'unknown_entity_type' | 'invalid_row' | 'replay_failed';
   detail?: unknown;

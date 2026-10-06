@@ -13,7 +13,7 @@ import { cloneGameDataValue } from './cloneGameDataValue';
 type Container = Record<string, unknown> | unknown[];
 type ContainerKey = string | number;
 
-export type CheckedActionErrorCode = Extract<
+type CheckedActionErrorCode = Extract<
   ActionProcessingErrorCode,
   | 'invalid_path'
   | 'invalid_array_index'
@@ -24,7 +24,7 @@ export type CheckedActionErrorCode = Extract<
   | 'apply_failed'
 >;
 
-export type CheckedActionError = {
+type CheckedActionError = {
   code: CheckedActionErrorCode;
   message: string;
   operation: Action['op'];
@@ -34,7 +34,7 @@ export type CheckedActionError = {
   cause?: unknown;
 };
 
-export type CheckedActionFailure = { success: false; error: CheckedActionError };
+type CheckedActionFailure = { success: false; error: CheckedActionError };
 
 export type CheckedActionResult = { success: true } | CheckedActionFailure;
 

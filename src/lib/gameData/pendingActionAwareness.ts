@@ -10,14 +10,14 @@ import type {
   PendingActionTarget,
 } from './pendingActionAwarenessTypes';
 
-export function pendingTargetAffectsDescriptor(
+function pendingTargetAffectsDescriptor(
   target: ActionDependencyDescriptor,
   descriptor: ActionDependencyDescriptor
 ): boolean {
   return areActionDependencyDescriptorsOrderDependent(target, descriptor);
 }
 
-export function pendingTargetAffectsAction(
+function pendingTargetAffectsAction(
   target: ActionDependencyDescriptor,
   action: Readonly<Action>
 ): boolean {

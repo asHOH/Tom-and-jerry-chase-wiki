@@ -29,7 +29,7 @@ export const getCharacterRelationTagLabels = (
   return [];
 };
 
-export const getItemCharacterRelationTagLabels = (
+const getItemCharacterRelationTagLabels = (
   item: Pick<CharacterRelationItem, 'tags'>,
   kind: TraitRelationKind
 ): string[] => getCharacterRelationTagLabels(item.tags, kind);

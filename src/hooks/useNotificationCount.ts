@@ -12,7 +12,7 @@ const fetcher = async (url: string): Promise<NotificationSummary> => {
   return (await response.json()) as NotificationSummary;
 };
 
-export const NOTIFICATIONS_API_KEY = '/api/notifications?filter=all';
+const NOTIFICATIONS_API_KEY = '/api/notifications?filter=all';
 
 export const useNotificationCount = (enabled: boolean) => {
   const { data } = useSWR(enabled ? NOTIFICATIONS_API_KEY : null, fetcher, {

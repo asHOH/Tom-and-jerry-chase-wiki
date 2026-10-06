@@ -16,7 +16,7 @@ import {
   type ArticleDiffSegment,
 } from '../utils/articleDiff';
 
-export type ComparableArticleVersion = {
+type ComparableArticleVersion = {
   id: string;
   content: string | null;
   created_at: string | null;

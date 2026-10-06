@@ -8,12 +8,12 @@ type PublishedCharacter = PublishedGameDataByType['characters'][string];
 type MapModeRelationKind =
   'advantageMaps' | 'advantageModes' | 'disadvantageMaps' | 'disadvantageModes';
 
-export type KnowledgeCardCharacterView = Pick<
+type KnowledgeCardCharacterView = Pick<
   PublishedCharacter,
   'id' | 'imageUrl' | 'factionId' | 'knowledgeCardGroups'
 >;
 
-export type SpecialSkillCharacterView = Pick<
+type SpecialSkillCharacterView = Pick<
   PublishedCharacter,
   'id' | 'imageUrl' | 'factionId' | 'specialSkills'
 >;
@@ -26,10 +26,7 @@ export type SpecialSkillCharacterLookup = Readonly<
   Record<string, Readonly<SpecialSkillCharacterView>>
 >;
 
-export type MapModeRelationCharacterView = Pick<
-  PublishedCharacter,
-  'id' | 'imageUrl' | 'factionId'
-> &
+type MapModeRelationCharacterView = Pick<PublishedCharacter, 'id' | 'imageUrl' | 'factionId'> &
   Partial<Record<MapModeRelationKind, readonly DeepReadonly<CharacterRelationItem>[]>>;
 
 export type MapModeRelationCharacterLookup = Readonly<

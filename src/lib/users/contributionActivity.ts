@@ -22,7 +22,7 @@ const MAX_POSTGRES_INTEGER = 2_147_483_647;
 const PUBLIC_CONTRIBUTION_CACHE_REVALIDATE_SECONDS = MAX_SERVER_CACHE_REVALIDATE_SECONDS;
 const PUBLIC_CONTRIBUTION_CACHE_TAGS = [CACHE_TAGS.articles, PUBLIC_GAME_DATA_ACTIONS_CACHE_TAG];
 
-export const CONTRIBUTION_ACTIVITY_PAGE_SIZE = 20;
+const CONTRIBUTION_ACTIVITY_PAGE_SIZE = 20;
 
 export type ContributionFilter = 'all' | 'articles' | 'game-data';
 export type ContributionActivityFilter = ContributionFilter;
@@ -51,7 +51,7 @@ export type ContributionCalendarDay = {
 
 export type ContributionCalendar = ContributionCalendarDay[];
 
-export type ContributionCategory = {
+type ContributionCategory = {
   key: string;
   label: string;
   count: number;
@@ -65,7 +65,7 @@ export type ContributionBreakdownItem = {
 
 export type ContributionBreakdown = ContributionBreakdownItem[];
 
-export type ContributionMonth = {
+type ContributionMonth = {
   key: string;
   label: string;
   count: number;
@@ -80,7 +80,7 @@ export type ContributionMonthlyBucket = {
   gameDataCount: number;
 };
 
-export type ContributionActivityKind = 'article' | 'gameData';
+type ContributionActivityKind = 'article' | 'gameData';
 
 export type ContributionActivityItem = {
   id: string;
@@ -91,7 +91,7 @@ export type ContributionActivityItem = {
   createdAt: string;
 };
 
-export type ContributionBusiestDay = {
+type ContributionBusiestDay = {
   date: string;
   count: number;
 };
@@ -398,7 +398,7 @@ export function getContributionDateRange(now = new Date()): ContributionDateRang
   };
 }
 
-export async function getPublicContributionCalendar(
+async function getPublicContributionCalendar(
   userId: string,
   range: ContributionDateRangeInput
 ): Promise<ContributionCalendar> {
@@ -425,7 +425,7 @@ export async function getPublicContributionCalendar(
   );
 }
 
-export async function getPublicContributionBreakdown(
+async function getPublicContributionBreakdown(
   userId: string,
   range: ContributionDateRangeInput
 ): Promise<ContributionBreakdown> {
@@ -473,7 +473,7 @@ async function queryContributionActivity(
   return data ?? [];
 }
 
-export async function getPublicContributionActivity(
+async function getPublicContributionActivity(
   userId: string,
   filter: ContributionFilter | string | null | undefined,
   requestedPage: string | number | null | undefined

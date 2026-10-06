@@ -15,7 +15,7 @@ type EvidenceRow = {
   message: string | null;
 };
 
-export type PostCutoverManifestSelection = {
+type PostCutoverManifestSelection = {
   originalManifestRowIds: string[];
   additionalSyncedRowIds: string[];
   actionIds: string[];

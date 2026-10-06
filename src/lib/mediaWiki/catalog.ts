@@ -21,14 +21,14 @@ import {
 const HOME_DESCRIPTION = '非官方玩家资料站，查询猫和老鼠手游的角色、道具、知识卡等信息。';
 
 /** A section exposed by the compatibility layer's `action=parse` response. */
-export type MediaWikiSection = Readonly<{
+type MediaWikiSection = Readonly<{
   index: string;
   level: number;
   line: string;
   anchor: string;
 }>;
 
-export type MediaWikiPageKind = GotoResult['type'] | 'main' | 'disambiguation';
+type MediaWikiPageKind = GotoResult['type'] | 'main' | 'disambiguation';
 
 /** A candidate listed by a synthetic disambiguation page. */
 export type MediaWikiDisambiguationCandidate = Readonly<{
@@ -157,7 +157,7 @@ function toPlainText(value: string | undefined): string {
 }
 
 /** Convert a user-provided image reference into an absolute HTTP(S) URL. */
-export function normalizeMediaWikiImageUrl(imageUrl: string | undefined): string | undefined {
+function normalizeMediaWikiImageUrl(imageUrl: string | undefined): string | undefined {
   const candidate = imageUrl?.trim();
   if (!candidate) return undefined;
 
@@ -582,7 +582,7 @@ export function getMediaWikiPageById(
   return catalog.pagesById.get(pageid);
 }
 
-export function getMediaWikiPageByRoute(
+function getMediaWikiPageByRoute(
   catalog: MediaWikiCatalog,
   route: string
 ): MediaWikiPage | undefined {
@@ -590,9 +590,7 @@ export function getMediaWikiPageByRoute(
 }
 
 /** Build a catalog for a published game-data object. */
-export async function buildMediaWikiCatalog(
-  gameData: PublishedGameDataByType
-): Promise<MediaWikiCatalog> {
+async function buildMediaWikiCatalog(gameData: PublishedGameDataByType): Promise<MediaWikiCatalog> {
   const index = await ensureGotoIndex(gameData);
   const sources = collectSourcePages(index);
   const sectionsByCharacterRoute = buildCharacterSections(gameData);

@@ -344,7 +344,7 @@ interface WikiHistoryFromAction {
   description: string;
 }
 
-export type NormalizedWikiHistoryActionRow = {
+type NormalizedWikiHistoryActionRow = {
   entityType: string;
   createdAt: string;
   actions: readonly Readonly<Action>[];
@@ -435,7 +435,7 @@ function actionToWikiHistoryInfo(
 /**
  * Converts public action rows to wiki history entries grouped by year
  */
-export function normalizedActionsToWikiHistory(
+function normalizedActionsToWikiHistory(
   rows: readonly NormalizedWikiHistoryActionRow[],
   options: WikiHistoryConversionOptions = {}
 ): WikiYearData[] {

@@ -61,7 +61,7 @@ type HasExactlyPublishableEntityTypeKeys<T> =
 
 type Assert<T extends true> = T;
 
-export type PublishedGameDataByTypeIsExhaustive = Assert<
+type PublishedGameDataByTypeIsExhaustive = Assert<
   HasExactlyPublishableEntityTypeKeys<PublishedGameDataShapeByType>
 >;
 

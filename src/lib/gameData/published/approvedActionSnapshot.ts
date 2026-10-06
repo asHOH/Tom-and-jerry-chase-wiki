@@ -39,7 +39,7 @@ export type ApprovedActionSnapshot = DeepReadonly<{
   rows: readonly ApprovedActionSnapshotRow[];
 }>;
 
-export class ApprovedActionSnapshotError extends Error {
+class ApprovedActionSnapshotError extends Error {
   constructor(
     message: string,
     public readonly rowId: string,

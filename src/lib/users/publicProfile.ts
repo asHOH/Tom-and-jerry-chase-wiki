@@ -57,7 +57,7 @@ async function queryPublicUserNickname(userId: string): Promise<string | null> {
   return data?.nickname ?? null;
 }
 
-export async function getPublicUserNickname(userId: string): Promise<string | null> {
+async function getPublicUserNickname(userId: string): Promise<string | null> {
   return cached(['public-user-nickname-v1', userId], () => queryPublicUserNickname(userId), {
     revalidate: PUBLIC_USER_CACHE_REVALIDATE_SECONDS,
     tags: [CACHE_TAGS.users],
@@ -127,7 +127,7 @@ export function mergeRecentContributions(
     .slice(0, limit);
 }
 
-export async function getGameDataActionApprovalRate(userId: string): Promise<number | null> {
+async function getGameDataActionApprovalRate(userId: string): Promise<number | null> {
   const supabaseAdmin = getOptionalSupabaseAdminClient();
   if (!supabaseAdmin) return null;
 

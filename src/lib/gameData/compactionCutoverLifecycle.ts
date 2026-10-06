@@ -1,6 +1,6 @@
 import type { CompactionCutoverInput } from './compactionCutoverManifest';
 
-export type CompactionCutoverTarget = {
+type CompactionCutoverTarget = {
   host: string;
   projectRef: string;
 };

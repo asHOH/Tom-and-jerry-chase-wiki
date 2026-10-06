@@ -1,4 +1,4 @@
-export type NotificationTone = 'danger' | 'info' | 'success' | 'warning';
+type NotificationTone = 'danger' | 'info' | 'success' | 'warning';
 
 export type NotificationKind =
   | 'article_version_approved'

@@ -4,8 +4,6 @@ import { Ratelimit, type Duration } from '@upstash/ratelimit';
 import { getClientIp } from './requestIp';
 import { getUpstashRedis } from './upstash';
 
-export { getClientIp } from './requestIp';
-
 export type RateLimitProfile = 'auth' | 'read' | 'write' | 'expensive';
 
 type ProfileConfig = {

@@ -2,7 +2,7 @@ import 'server-only';
 
 import { SITE_NAME, SITE_SHORT_NAME, SITE_URL } from '@/constants/seo';
 
-export type WikiEmailTone = 'danger' | 'info' | 'success' | 'warning';
+type WikiEmailTone = 'danger' | 'info' | 'success' | 'warning';
 
 type WikiEmailTemplateInput = {
   preheader: string;
@@ -46,7 +46,7 @@ const toneStyles: Record<
   },
 };
 
-export const escapeEmailHtml = (value: string) =>
+const escapeEmailHtml = (value: string) =>
   value.replace(/[&<>"']/g, (character) => {
     const entities: Record<string, string> = {
       '&': '&amp;',

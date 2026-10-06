@@ -7,11 +7,11 @@ import { decodeStoredActionRow } from './actionRowDecoder';
 import { applyCheckedActionRow } from './checkedActionReplay';
 import { cloneGameDataValue } from './cloneGameDataValue';
 
-export const ACTION_AUDIT_COHORTS = Object.freeze(['approved', 'synced', 'pending'] as const);
+const ACTION_AUDIT_COHORTS = Object.freeze(['approved', 'synced', 'pending'] as const);
 
-export type ActionAuditCohort = (typeof ACTION_AUDIT_COHORTS)[number];
+type ActionAuditCohort = (typeof ACTION_AUDIT_COHORTS)[number];
 
-export const ACTION_AUDIT_FINDING_CATEGORIES = Object.freeze([
+const ACTION_AUDIT_FINDING_CATEGORIES = Object.freeze([
   'malformed_row',
   'dependent_candidate_cluster',
   'atomic_multi_action_row',
@@ -20,7 +20,7 @@ export const ACTION_AUDIT_FINDING_CATEGORIES = Object.freeze([
   'known_noop_row',
 ] as const);
 
-export type ActionAuditFindingCategory = (typeof ACTION_AUDIT_FINDING_CATEGORIES)[number];
+type ActionAuditFindingCategory = (typeof ACTION_AUDIT_FINDING_CATEGORIES)[number];
 
 type ActionAuditRowBase = {
   id: string;
@@ -53,7 +53,7 @@ type DecodedAuditRow<Row extends AnyActionAuditRow> = {
   actions: readonly Readonly<Action>[];
 };
 
-export type ActionAuditFinding = {
+type ActionAuditFinding = {
   cohort: ActionAuditCohort;
   category: ActionAuditFindingCategory;
   rowIds: readonly string[];
@@ -118,7 +118,7 @@ export type ActionAuditDetailSelector =
   | ActionAuditFindingCategory
   | `${ActionAuditCohort}:${ActionAuditFindingCategory}`;
 
-export type ActionAuditDetailItem = {
+type ActionAuditDetailItem = {
   cohort: ActionAuditCohort;
   category: ActionAuditFindingCategory;
   fingerprint: string;
@@ -152,7 +152,7 @@ const COHORT_ORDER: Record<ActionAuditCohort, number> = {
 };
 
 const MAX_REPRESENTATIVE_IDS = 10;
-export const MAX_ACTION_AUDIT_DETAIL_LIMIT = 25;
+const MAX_ACTION_AUDIT_DETAIL_LIMIT = 25;
 
 function createAuditState(options: RunActionAuditOptions): AuditState {
   return {
@@ -545,7 +545,7 @@ function decodeCursor(cursor: string): { fingerprint: string; selector: string; 
   }
 }
 
-export function isActionAuditDetailSelector(value: string): value is ActionAuditDetailSelector {
+function isActionAuditDetailSelector(value: string): value is ActionAuditDetailSelector {
   if ((ACTION_AUDIT_COHORTS as readonly string[]).includes(value)) return true;
   if ((ACTION_AUDIT_FINDING_CATEGORIES as readonly string[]).includes(value)) return true;
   const [cohort, category, extra] = value.split(':');

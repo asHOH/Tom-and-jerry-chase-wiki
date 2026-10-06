@@ -25,7 +25,6 @@ import ThankContributionDialog from '@/components/contributions/ThankContributio
 
 import GameDataActionRow, { type ThankTarget } from './GameDataActionRow';
 
-export type { GameDataActionStatusFilter } from '@/lib/gameData/adminActionTypes';
 export type PendingGameDataAction = GameDataActionSummary;
 
 type GameDataActionModerationPanelProps = {

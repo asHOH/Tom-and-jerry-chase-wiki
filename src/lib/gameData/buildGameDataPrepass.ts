@@ -46,7 +46,7 @@ export type BuildGameDataPrepassResult = {
   replayEpoch: number | null;
 };
 
-export class BuildReplayEpochDriftError extends Error {
+class BuildReplayEpochDriftError extends Error {
   readonly code = 'approved_replay_epoch_drift';
 
   constructor(public readonly summary: BuildReadSummary) {
@@ -214,10 +214,7 @@ export async function createEnabledBuildGameDataPrepass(
   };
 }
 
-export function addFinalEpochMeasurement(
-  summary: BuildReadSummary,
-  durationMs: number
-): BuildReadSummary {
+function addFinalEpochMeasurement(summary: BuildReadSummary, durationMs: number): BuildReadSummary {
   return createBuildReadSummary({
     ...summary,
     epochValidation: {

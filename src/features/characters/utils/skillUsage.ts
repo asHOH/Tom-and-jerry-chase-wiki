@@ -39,7 +39,7 @@ export function getSkillUsageParts(
   return [skill];
 }
 
-export function formatSkillUsageProperties(
+function formatSkillUsageProperties(
   usage: DeepReadonly<SkillUsageProperties>,
   skillType: SkillType
 ): string[] {

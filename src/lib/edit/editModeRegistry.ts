@@ -15,7 +15,7 @@ unstable_enableOp(true);
 
 const DRAFT_HISTORY_WARNING_THRESHOLD = 1000;
 
-export class EditDraftRestoreError extends Error {
+class EditDraftRestoreError extends Error {
   readonly causes: readonly unknown[];
 
   constructor(causes: readonly unknown[]) {

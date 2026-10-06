@@ -128,7 +128,7 @@ export function PendingActionAwarenessProvider({
   return <PendingActionAwarenessContext value={source}>{children}</PendingActionAwarenessContext>;
 }
 
-export function usePendingActionAwareness(): PendingActionAwarenessSource {
+function usePendingActionAwareness(): PendingActionAwarenessSource {
   return useContext(PendingActionAwarenessContext);
 }
 

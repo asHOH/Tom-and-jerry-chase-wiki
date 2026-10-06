@@ -1,4 +1,4 @@
-export const PERMISSION_KEYS = [
+const PERMISSION_KEYS = [
   'article.create',
   'article.update_own',
   'article.update_any',
@@ -42,7 +42,7 @@ export type ResourceContext = {
   resourceId?: string;
 };
 
-export const GLOBAL_ONLY_PERMISSIONS = new Set<PermissionKey>([
+const GLOBAL_ONLY_PERMISSIONS = new Set<PermissionKey>([
   'user.read',
   'user.update',
   'group.manage',

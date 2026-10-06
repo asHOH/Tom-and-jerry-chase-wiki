@@ -175,7 +175,7 @@ export function selectPublishedWikiHistory(
   );
 }
 
-export function selectPublishedEntityHistory(
+function selectPublishedEntityHistory(
   snapshot: ApprovedActionSnapshot,
   scope: PublishedEntityHistoryScope,
   historyRows: readonly PublicActionRow[] = [],

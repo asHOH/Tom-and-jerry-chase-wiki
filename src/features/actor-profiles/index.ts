@@ -1,7 +1,6 @@
-export { actorProfiles, actorProfilesByName } from './data';
+export { actorProfiles } from './data';
 export {
   formatActorAttackCooldown,
-  formatActorAttributeNumber,
   formatActorPhysicsBodyName,
   formatActorPhysicsType,
   formatActorSex,
@@ -12,13 +11,7 @@ export {
   getActorProfile,
   getActorProfileForCharacter,
   getActorJumpHeight,
-  getDisplayedActorGravity,
   haveUniformDisplayedGravity,
   isFactionDisplayedGravityUniform,
 } from './selectors';
-export type { ActorProfile, PhysicsType, ActorType } from './schema';
-export {
-  ACTOR_ATTRIBUTE_KEYS,
-  ACTOR_ATTRIBUTE_PRESENTATION,
-  type ActorAttributeKey,
-} from './attributePresentation';
+export { ACTOR_ATTRIBUTE_KEYS, ACTOR_ATTRIBUTE_PRESENTATION } from './attributePresentation';

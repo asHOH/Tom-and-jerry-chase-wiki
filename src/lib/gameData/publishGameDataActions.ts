@@ -14,7 +14,7 @@ export type PublishGameDataActionResult = {
   status: Database['public']['Enums']['game_data_action_status'];
 };
 
-export class PublishGameDataActionsError extends Error {
+class PublishGameDataActionsError extends Error {
   constructor(
     readonly entityType: string,
     readonly cause: unknown

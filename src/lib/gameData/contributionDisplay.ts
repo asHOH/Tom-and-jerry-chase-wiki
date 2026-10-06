@@ -67,14 +67,14 @@ export function getGameDataDetailHref(
   return `${route}/${encodeURIComponent(target.name)}` as Route;
 }
 
-export type GameDataNotificationEntity = {
+type GameDataNotificationEntity = {
   entityType: string;
   entityTypeLabel: string;
   entityName: string;
   entityUrl: Route | null;
 };
 
-export function getGameDataNotificationEntities(
+function getGameDataNotificationEntities(
   entityType: string,
   rawEntry: unknown
 ): GameDataNotificationEntity[] {

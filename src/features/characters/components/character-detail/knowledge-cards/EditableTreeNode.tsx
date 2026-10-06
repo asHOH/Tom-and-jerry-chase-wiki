@@ -9,7 +9,7 @@ import IconButton from '@/components/ui/IconButton';
 import { CloseIcon, PlusIcon } from '@/components/icons/CommonIcons';
 import Image from '@/components/Image';
 
-export interface EditableTreeNodeProps {
+interface EditableTreeNodeProps {
   cards: readonly CardGroup[];
   parentPath: readonly number[];
   depth: number;

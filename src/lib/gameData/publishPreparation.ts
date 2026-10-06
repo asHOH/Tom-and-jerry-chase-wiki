@@ -82,12 +82,12 @@ export type UntrustedPublishActionItem = {
   entries: unknown;
 };
 
-export type PreparedPublishRow = {
+type PreparedPublishRow = {
   canonicalEntry: CanonicalActionRowEntry;
   actions: readonly Readonly<Action>[];
 };
 
-export type PreparedPublishActionItem = {
+type PreparedPublishActionItem = {
   entityType: PublishableEntityType;
   rows: readonly PreparedPublishRow[];
 };

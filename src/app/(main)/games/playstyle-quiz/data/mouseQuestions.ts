@@ -1,6 +1,6 @@
 import type { CatPositioningTagName, MousePositioningTagName } from '@/data/types';
 
-export type MouseQuizOption = {
+type MouseQuizOption = {
   text: string;
   tags: { tagName: CatPositioningTagName | MousePositioningTagName; weight: number }[];
 };

@@ -1,9 +1,8 @@
 import 'server-only';
 
-export type PublicGameDataRoute =
-  '/api/game-data-actions/edit-baseline' | '/api/game-data-actions/public';
+type PublicGameDataRoute = '/api/game-data-actions/edit-baseline' | '/api/game-data-actions/public';
 
-export type PublicGameDataRequestCategory = 'edit-baseline-refresh' | 'legacy-public-actions';
+type PublicGameDataRequestCategory = 'edit-baseline-refresh' | 'legacy-public-actions';
 
 type PublicGameDataRouteMetric = {
   route: PublicGameDataRoute;

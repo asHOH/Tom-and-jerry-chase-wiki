@@ -20,12 +20,12 @@ const HISTORY_ENTITY_TYPES = new Set([
 const OPERATIONS = new Set(['set', 'add', 'delete']);
 const SHA256_PATTERN = /^[a-f0-9]{64}$/;
 
-export type SyncedHistoryAction = {
+type SyncedHistoryAction = {
   op: 'set' | 'add' | 'delete';
   path: string;
 };
 
-export type SyncedHistorySourceRow = {
+type SyncedHistorySourceRow = {
   entityType: string;
   createdAt: string;
   actions: SyncedHistoryAction[];

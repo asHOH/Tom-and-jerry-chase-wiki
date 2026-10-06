@@ -60,10 +60,7 @@ export const endsWithCalculatedDamageMarkup = (text: string, hasAttackBoost: boo
   return isCalculatedDamageMarkupContent(content, hasAttackBoost);
 };
 
-export const isCalculatedDamageMarkupContent = (
-  rawContent: string,
-  hasAttackBoost: boolean
-): boolean =>
+const isCalculatedDamageMarkupContent = (rawContent: string, hasAttackBoost: boolean): boolean =>
   isCalculatedDamageContentText(parseExplicitMarkup(rawContent).contentText, hasAttackBoost);
 
 export const isCalculatedDamageContentText = (

@@ -9,7 +9,7 @@ import { usePendingFieldAwareness } from '@/context/PendingActionAwarenessContex
 import Tooltip from '@/components/ui/Tooltip';
 import { ExclamationTriangleIcon } from '@/components/icons/CommonIcons';
 
-export function getPendingActionWarningText(summary: PendingActionOverlapSummary): string {
+function getPendingActionWarningText(summary: PendingActionOverlapSummary): string {
   const parts: string[] = [];
   if (summary.otherCount > 0) {
     parts.push(`其他编辑者有 ${summary.otherCount} 条待审核改动`);

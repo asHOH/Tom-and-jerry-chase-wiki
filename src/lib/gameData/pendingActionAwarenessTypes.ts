@@ -1,6 +1,6 @@
 import type { ActionDependencyDescriptor } from './actionDependencies';
 
-export type PendingActionOwnership = 'self' | 'other';
+type PendingActionOwnership = 'self' | 'other';
 
 export type PendingActionTarget = ActionDependencyDescriptor & {
   ownership: PendingActionOwnership;

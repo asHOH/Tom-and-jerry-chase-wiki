@@ -1,17 +1,6 @@
 import type { Action, ActionHistoryEntry } from '@/lib/edit/diffUtils';
 import { actionHistoryEntrySchema } from '@/lib/validation/schemas';
 
-export {
-  decodeActionRowEntry,
-  decodeStoredActionRow,
-  type ActionDecodeError,
-  type ActionDecodeResult,
-  type CanonicalAction,
-  type CanonicalActionRowEntry,
-  type DecodedActionRowEntry,
-  type DecodedStoredActionRow,
-} from './actionRowDecoder';
-
 /**
  * Normalizes DB action payloads into replayable action history entries.
  *

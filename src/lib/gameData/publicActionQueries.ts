@@ -9,7 +9,7 @@ import type { PublicActionRow } from './publicActionsTypes';
 
 type PublicActionQueryClient = Pick<SupabaseClient<Database>, 'from'>;
 
-export type ApprovedPublicActionSource = {
+type ApprovedPublicActionSource = {
   rows: PublicActionRow[];
   exactCount: number;
 };
@@ -51,7 +51,7 @@ async function queryPublicActionRows(
  * an exact count in the same PostgREST call. Build prepasses use this to reject
  * silently truncated responses.
  */
-export async function queryApprovedPublicActionSource(
+async function queryApprovedPublicActionSource(
   supabase: PublicActionQueryClient
 ): Promise<ApprovedPublicActionSource> {
   const { data, error, count } = await supabase
@@ -79,7 +79,7 @@ export function queryApprovedPublicActionRows(
 }
 
 /** Queries the ordered public rows retained in entity-update and audit history. */
-export function queryPublicActionHistoryRows(
+function queryPublicActionHistoryRows(
   supabase: PublicActionQueryClient
 ): Promise<PublicActionRow[]> {
   return queryPublicActionRows(supabase, true);

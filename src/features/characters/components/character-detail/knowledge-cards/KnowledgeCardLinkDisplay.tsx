@@ -5,7 +5,7 @@ import Image from '@/components/Image';
 
 import PriorityWarningBadge from './PriorityWarningBadge';
 
-export type KnowledgeCardLinkVariant = 'tag' | 'image';
+type KnowledgeCardLinkVariant = 'tag' | 'image';
 
 type KnowledgeCardLinkDisplayProps = {
   cardId: string;

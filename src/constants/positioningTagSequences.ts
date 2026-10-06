@@ -6,7 +6,7 @@ import type {
 } from '@/data/types';
 
 // Define display sequences for positioning tags
-export const CAT_POSITIONING_TAG_SEQUENCE: readonly CatPositioningTagName[] = [
+const CAT_POSITIONING_TAG_SEQUENCE: readonly CatPositioningTagName[] = [
   '进攻',
   '防守',
   '追击',
@@ -16,7 +16,7 @@ export const CAT_POSITIONING_TAG_SEQUENCE: readonly CatPositioningTagName[] = [
   '翻盘',
 ];
 
-export const MOUSE_POSITIONING_TAG_SEQUENCE: readonly MousePositioningTagName[] = [
+const MOUSE_POSITIONING_TAG_SEQUENCE: readonly MousePositioningTagName[] = [
   '奶酪',
   '干扰',
   '救援',

@@ -68,7 +68,7 @@ export function normalizeContributionDateKey(value: string): string | null {
 }
 
 /** Parses a canonical date key as a local calendar date. */
-export function parseContributionDate(value: string): Date | null {
+function parseContributionDate(value: string): Date | null {
   const key = normalizeContributionDateKey(value);
   if (!key) return null;
 
@@ -81,7 +81,7 @@ export function contributionDateKey(date: Date): string {
 }
 
 /** Keeps a supplied snapshot date from ever making the calendar show future days. */
-export function resolveContributionEndDate(asOf?: string): Date {
+function resolveContributionEndDate(asOf?: string): Date {
   const today = parseISO(getShanghaiDateKey(new Date()));
   const requested = asOf ? parseContributionDate(asOf) : null;
 

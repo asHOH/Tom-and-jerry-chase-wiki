@@ -47,7 +47,7 @@ export type CharacterRelationValidationContext = {
 
 const toSingleItemKey = (item: SingleItem) => `${item.type}:${item.name}:${item.factionId ?? ''}`;
 
-export const buildCharacterRelationEdgeKey = (relation: TraitRelation) =>
+const buildCharacterRelationEdgeKey = (relation: TraitRelation) =>
   `${relation.kind}::${toSingleItemKey(relation.subject)}::${toSingleItemKey(relation.target)}`;
 
 const buildDirectedPairKey = (relation: TraitRelation) =>

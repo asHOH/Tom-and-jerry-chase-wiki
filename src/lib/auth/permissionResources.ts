@@ -69,7 +69,7 @@ const staticOptions: Record<string, PermissionResourceOption[]> = {
   list_pages: LIST_PAGE_IDS.map((id) => ({ id, label: id })),
 };
 
-export const getStaticPermissionResourceOptions = (
+const getStaticPermissionResourceOptions = (
   resourceType: string
 ): PermissionResourceOption[] | null => {
   const normalizedType = resourceType.startsWith('comments/')

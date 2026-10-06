@@ -14,7 +14,7 @@ import type { Database } from '@/data/database.types';
 
 type SnapshotRpcClient = Pick<SupabaseClient<Database>, 'rpc'>;
 
-export class ApprovedReplaySnapshotReadError extends Error {
+class ApprovedReplaySnapshotReadError extends Error {
   readonly code: 'read_failed' | 'invalid_snapshot' | 'decode_failed';
 
   constructor(code: ApprovedReplaySnapshotReadError['code'], cause?: unknown) {

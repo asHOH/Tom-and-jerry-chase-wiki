@@ -1,6 +1,6 @@
 import type { BuildReadSummary } from './buildReadSummary';
 
-export type PreparedBuildAttempt = {
+type PreparedBuildAttempt = {
   artifactPath: string;
   replayEpoch: number | null;
   summary: BuildReadSummary;
