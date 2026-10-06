@@ -17,4 +17,9 @@ export const OFFICIAL_SITES: OfficialSite[] = [
     label: '开发站',
     description: '访问慢，功能全，不稳定',
   },
+  {
+    url: 'https://maps.tjwiki.com',
+    label: '地图站',
+    description: '查看地图场景',
+  },
 ];

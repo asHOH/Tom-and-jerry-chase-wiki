@@ -31,6 +31,13 @@ export const EXTERNAL_LINK_GROUPS: ExternalLinkGroup[] = [
         href: 'https://tjwiki.net/',
         iconType: 'site',
       },
+      {
+        title: '道具点位查询',
+        description: '浏览玩家分享的道具点位',
+        ariaLabel: '打开道具点位查询',
+        href: 'https://tjmap.top',
+        iconType: 'site',
+      },
     ],
   },
   {
