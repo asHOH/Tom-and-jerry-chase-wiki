@@ -197,3 +197,13 @@ npm run analyze         # 包分析
 本站部分页面可能展示第三方游戏画面、地图、图标及其他素材，用于相关内容的识别、说明和讨论。本网站不主张这些素材的所有权，不将其纳入本项目的开源许可，也不授予他人再使用许可。
 
 如您认为页面或素材涉及侵权，请通过本站提供的反馈或联系渠道提交具体链接、权利说明及必要的证明材料；维护者会在核查后按实际情况处理。
+
+### Standalone map annotation API
+
+The scene viewer at `maps.tjwiki.com` edits a separate user-annotation layer through the main site's `/api/maps/<map-id>/` routes. `GET` returns publicly published annotations and their maps-domain revision; `GET edit-context/` refreshes the baseline and supplies session permissions, pending awareness, and allowed submission modes. `POST annotations/` accepts `previous` (null for an absent field), a version-1 annotation document, an optional submission message/mode, and any pending-overlap acknowledgement token. A UUID v4 `Idempotency-Key` is required and preserved on retry.
+
+Canonical wiki map identities own the optional `sceneAnnotations` field. The endpoint translates document replacements into ordinary `maps` actions, preserving before-values. Existing authorization, blocks, request limits, idempotency, stale checks, pending acknowledgement, moderation, notifications, and cache invalidation remain authoritative. Validation also runs in generic action freshness and public-candidate replay so alternate submission and moderation routes cannot bypass annotation validation. There is no new table or migration. Legacy `interactiveMap` records are not converted or removed.
+
+Annotations include geometry-barrel setups, idle-fruit-plate targets, and scouting-canary points. They retain room-local source units with Y upward and explicit room-alternative identities, share named counterparts across skins, and do not modify renderer assets or source gameplay candidates. The frontend owns room transforms and the portable source identity catalog. Source target references are provenance; anchors in inactive or unmapped room alternatives remain unresolved.
+
+Credentialed CORS and OPTIONS support `https://maps.tjwiki.com` and the main-site origins; development additionally permits localhost/127.0.0.1 on ports 3000, 5173, and 5175. `Idempotency-Key` is included in allowed request headers. `/maps/login/` reuses the main-site login dialog for editors; returning to the original viewer window and refreshing its context picks up the session. Local authenticated development should use the same localhost hostname for both sites and direct requests to the local wiki API. Deploy these backend routes before enabling the corresponding viewer release. Disabled database services expose a non-submittable context while retaining public scene browsing and local drafts.

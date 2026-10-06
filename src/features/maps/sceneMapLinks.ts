@@ -28,3 +28,7 @@ export function getSceneMapUrl(mapName: string): string | undefined {
   url.searchParams.set('map', SCENE_MAP_IDS[mapName as keyof typeof SCENE_MAP_IDS]);
   return url.href;
 }
+
+export function getSceneMapName(mapId: string): string | undefined {
+  return Object.entries(SCENE_MAP_IDS).find(([, id]) => id === mapId)?.[0];
+}

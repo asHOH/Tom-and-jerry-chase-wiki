@@ -1,3 +1,5 @@
+import type { SceneAnnotations } from '@/features/maps/sceneAnnotations';
+
 // Define types for better type safety
 export type FactionId = 'cat' | 'mouse';
 
@@ -506,6 +508,7 @@ export type mapTypes = '常规地图' | '娱乐地图' | '广场地图';
 export type MapSize = '微型' | '小型' | '中型' | '大型';
 export type studyLevel = '见习学业' | '高级学业' | '特级学业' | '大师学业';
 export type MapDefinition = {
+  sceneAnnotations?: SceneAnnotations;
   aliases?: string[];
   mapSkin?: { name: string; imageUrl: string; description: string }[]; //地图换肤变种名
   type: mapTypes;

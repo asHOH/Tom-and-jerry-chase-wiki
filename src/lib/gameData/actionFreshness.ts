@@ -16,6 +16,7 @@ import {
   PublishedGameDataReplayError,
   selectPublishedGameData,
 } from './published/selectPublishedDomain';
+import { validateSceneAnnotationChanges } from './sceneAnnotationValidation';
 
 export class StaleGameDataEditError extends Error {
   constructor(
@@ -167,6 +168,14 @@ export function validateActionFreshness(
       throw new InvalidGameDataValueError({ path: row.actions[0]!.path, reason: 'no_changes' });
     }
   }
+  const maps = targets.get('maps');
+  if (maps)
+    validateSceneAnnotationChanges(
+      maps,
+      proposedRows
+        .filter((row) => row.entityType === 'maps')
+        .flatMap((row) => row.actions.map((action) => action.path))
+    );
   const characters = targets.get('characters');
   if (characters) {
     const actionPaths = proposedRows

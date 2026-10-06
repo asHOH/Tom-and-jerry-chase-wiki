@@ -6,6 +6,8 @@ import { createApprovedActionSnapshot } from '@/lib/gameData/published/approvedA
 import { getCanonicalGameData } from '@/lib/gameData/published/canonicalSources';
 import { selectPublishedGameData } from '@/lib/gameData/published/selectPublishedDomain';
 
+import { validateSceneAnnotationChanges } from './sceneAnnotationValidation';
+
 export type ApprovedCandidateReplayRow = {
   rowId: string;
   entityType: string;
@@ -25,6 +27,13 @@ export function validateApprovedCandidateReplay(rows: readonly ApprovedCandidate
   );
 
   for (const entityType of PUBLISHABLE_ENTITY_TYPES) {
-    selectPublishedGameData(entityType, getCanonicalGameData(entityType), snapshot);
+    const data = selectPublishedGameData(entityType, getCanonicalGameData(entityType), snapshot);
+    if (entityType === 'maps')
+      validateSceneAnnotationChanges(
+        data as Record<string, unknown>,
+        rows
+          .filter((row) => row.entityType === 'maps')
+          .flatMap((row) => row.actions.map((action) => action.path))
+      );
   }
 }

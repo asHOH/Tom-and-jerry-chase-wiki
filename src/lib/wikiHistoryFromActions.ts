@@ -175,6 +175,7 @@ const WIKI_HISTORY_FIELD_LABELS: Readonly<Record<string, string>> = {
   changeWithMode: '随模式变化',
   mapImageUrl: '地图图片',
   interactiveMap: '互动地图',
+  sceneAnnotations: '互动地图标注',
   tileSize: '图块大小',
   minZoom: '最小缩放级别',
   maxZoom: '最大缩放级别',

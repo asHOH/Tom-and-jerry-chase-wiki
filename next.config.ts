@@ -182,7 +182,10 @@ const nextConfig: NextConfig = {
     const corsHeaders = [
       { key: 'Vary', value: 'Origin' },
       { key: 'Access-Control-Allow-Methods', value: 'GET, POST, OPTIONS' },
-      { key: 'Access-Control-Allow-Headers', value: 'Content-Type, Authorization' },
+      {
+        key: 'Access-Control-Allow-Headers',
+        value: 'Content-Type, Authorization, Idempotency-Key',
+      },
       { key: 'Access-Control-Allow-Credentials', value: 'true' },
     ];
 
