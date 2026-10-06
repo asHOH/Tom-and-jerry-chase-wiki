@@ -1424,6 +1424,94 @@ export const createTraitsData = (): Record<string, Trait> => ({
     description:
       '老鼠在将被天堂火箭放飞时进入雪夜古堡系列地图的盔甲人可以免疫被天堂火箭放飞，但如果盔甲人消失或退出盔甲人则会在约0.3秒左右后被放飞(不是瞬间放飞)，所以可以利用这段时间进墙缝，对手速要求极高。',
   },
+  '20261004-01': {
+    description: '超级变！变！变！可以将电池记录并变身',
+    group: [
+      { name: '超级变！变！变！', type: 'skill', factionId: 'mouse' },
+      { name: '电池', type: 'entity', factionId: 'mouse' },
+    ],
+  },
+  '20261005-01': {
+    description: '冰箱可对机械鼠造成伤害',
+    group: [
+      { name: '冰箱', type: 'fixture' },
+      { name: '机器鼠', type: 'entity', factionId: 'mouse' },
+    ],
+  },
+  '20261005-02': {
+    description: '蓝图可随传送带或移动平台移动',
+    group: [
+      { name: '蓝图', type: 'entity', factionId: 'mouse' },
+      [
+        { name: '移动平台', type: 'fixture' },
+        { name: '传送带', type: 'fixture' },
+      ],
+    ],
+  },
+  '20261005-03': {
+    description: '旋刃剑舞第一段可打断头盔的释放',
+    group: [
+      { name: '旋刃剑舞', type: 'skill', factionId: 'cat' },
+      { name: '头盔', type: 'skill', factionId: 'mouse' },
+    ],
+  },
+  '20261005-04': {
+    description: '旋刃剑舞第一段可打断火箭筒的释放',
+    group: [
+      { name: '旋刃剑舞', type: 'skill', factionId: 'cat' },
+      { name: '火箭筒', type: 'skill', factionId: 'mouse' },
+    ],
+  },
+  '20261005-05': {
+    description: '旋刃剑舞可打断国王权杖的释放',
+    group: [
+      { name: '旋刃剑舞', type: 'skill', factionId: 'cat' },
+      { name: '国王权杖', type: 'skill', factionId: 'mouse' },
+    ],
+  },
+  '20261005-06': {
+    description: '果子可触发Lv.3游刃有余',
+    group: [
+      { name: '果子', type: 'entity' },
+      { name: '游刃有余', type: 'skill', factionId: 'cat' },
+    ],
+  },
+  '20261005-07': {
+    description: '通过恶魔之角复制的绿色小淘气会消耗黑暗印记',
+    group: [
+      { name: '恶魔之角', type: 'skill', factionId: 'mouse' },
+      { name: '绿色小淘气', type: 'entity', factionId: 'mouse' },
+      { name: '黑暗印记', type: 'skill', factionId: 'mouse' },
+    ],
+  },
+  '20261005-08': {
+    description: '友情庇护可以转移乾坤袋的虚弱',
+    group: [
+      { name: '友情庇护', type: 'skill', factionId: 'mouse' },
+      { name: '乾坤袋', type: 'entity', factionId: 'mouse' },
+    ],
+  },
+  '20261005-09': {
+    description: '意念控制可将毛线球吸附并导致收回毛线球技能失效',
+    group: [
+      { name: '意念控制', type: 'skill', factionId: 'mouse' },
+      { name: '毛线球', type: 'entity', factionId: 'mouse' },
+    ],
+  },
+  '20261005-10': {
+    description: '剑客莉莉的剑气会被由侦探锁定技能生成的踪迹阻挡并消失',
+    group: [
+      { name: '剑气', type: 'entity', factionId: 'mouse' },
+      { name: '侦探锁定', type: 'skill', factionId: 'cat' },
+    ],
+  },
+  '20261005-11': {
+    description: '长爪知识卡可无视爱神羁绊，对在爱神羁绊状态下的角色造成伤害',
+    group: [
+      { name: '长爪', type: 'knowledgeCard', factionId: 'cat' },
+      { name: '丘比特之箭', type: 'skill', factionId: 'mouse' },
+    ],
+  },
 });
 
 const traits = createTraitsData();
