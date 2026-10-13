@@ -6,6 +6,8 @@
     "src/mdx-components.tsx",
     "src/app/**/{page,layout,not-found,error,loading,sitemap,robots,manifest,viewport}.ts*",
     "src/lib/supabase/middleware.ts",
+    "src/lib/gameData/approvedReplayEpoch.ts",
+    "src/lib/gameData/actionPatchTargets.ts",
     "src/app/api/**/*.ts",
     "scripts/*.{mjs,cjs,js}"
   ],
