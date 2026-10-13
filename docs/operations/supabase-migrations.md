@@ -4,13 +4,24 @@
 
 首次部署只使用未启用 Supabase 动态功能的默认配置时，不需要执行这里的操作。
 
-本手册适用于维护自己创建且有权管理的 Supabase 项目，并且待部署代码在 `supabase/migrations/` 中包含目标数据库尚未应用的新 migration。官方站点及其测试项目的凭据不会提供给第三方，也不应被请求、共享或复用。
+本手册适用于升级仓库锁定的 Supabase CLI、回放本地 migration 和更新数据库类型，以及向自己有权管理的 Supabase 项目应用新 migration。官方站点及其测试项目的凭据不会提供给第三方，也不应被请求、共享或复用。
 
 ## 凭据和目标确认
 
 按照 [`.env.example`](../../.env.example) 配置自己的项目。`SUPABASE_SECRET_KEY` 具有高权限，只能保存在服务端环境变量中，不得提交到 Git、写入公开日志或发送给浏览器。
 
 维护者 checkout 可能仍链接到生产项目。每次操作前都必须独立核对 Supabase project ref；测试项目应通过 `STAGING_DATABASE_URL` 和 `--db-url` 明确指定，不要依赖当前 CLI link 或历史终端上下文猜测目标。
+
+## Supabase CLI 升级
+
+Dependabot 为 npm 包 `supabase` 的版本升级创建独立 PR。即使 migration 没有变化，新版生成器也可能改变类型结构、生成列的写入类型或输出格式，因此升级后必须重新生成并检查数据库类型。
+
+1. 切换到升级 PR 的分支，运行 `npm ci`，再用 `npm exec -- supabase --version` 确认实际版本与 `package.json` 中锁定的版本一致。
+2. 启动 Docker，在可丢弃的本地数据库上执行[迁移流程](#迁移流程)第 2 步的完整命令，回放 migration、生成类型并通过 `check:database-types` 和 `type-check`。`db reset --local` 会清空本地数据；有需要保留的数据时，先备份或使用隔离的本地环境。
+3. 检查生成差异，修复新版类型暴露的调用方错误，并运行相关测试。将有变化的 `src/data/database.generated.ts` 与 `package.json`、`package-lock.json` 放在同一个升级 PR 中提交；不要手工修改生成文件。
+4. 确认该 PR 的 `Database Types`、代码质量和测试检查通过后再合并。
+
+仅升级 CLI 不需要向远端数据库推送 migration；有新增 migration 时再按下方流程处理远端。
 
 ## 迁移流程
 

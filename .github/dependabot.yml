@@ -50,6 +50,8 @@ updates:
         patterns:
           - '*'
         exclude-patterns:
+          # CLI upgrades require type regeneration; see docs/operations/supabase-migrations.md.
+          - 'supabase'
           - '@testing-library/*'
           - '@types/*'
           - 'jest*'
