@@ -1,7 +1,7 @@
 # 猫和老鼠手游百科
 
 [![CI](https://github.com/asHOH/Tom-and-jerry-chase-wiki/actions/workflows/ci.yml/badge.svg)](https://github.com/asHOH/Tom-and-jerry-chase-wiki/actions/workflows/ci.yml)
-[![Vercel](https://img.shields.io/badge/Deploy-Vercel-black?logo=vercel&logoColor=white)](https://www.tjwiki.com)
+[猫鼠百科](https://www.tjwiki.com)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
 [![QQ群](https://img.shields.io/badge/QQ群-615882730-brightgreen?logo=tencentqq&logoColor=white)](https://qun.qq.com/universal-share/share?ac=1&authKey=%2BgPPblp3JfnQP2o3BI5PO1NmwvsNciCCaVCtSI9T6RAbv6yV2QHzzjz6gwY%2Bva9U&busi_data=eyJncm91cENvZGUiOiI2MTU4ODI3MzAiLCJ0b2tlbiI6Ijg3Ym9kMk9HTUVFTnJSU25GU2JCdWJoNEwxNGNOUlhWMGgvK3lMTWRGdy80Z0FnaUd4Yy9LYkZsYUJ5ZStTbUgiLCJ1aW4iOiIyOTAxODMzMjI1In0%3D&data=0yzCZAnaW0ZOxf01YibLkPBLkN17DRX2fS1NGi5Nndx2Qq2DMFDdWr1pxH3J8F9RefUGjWh_Zel5Rfjy-dPZ2A&svctype=4&tempid=h5_group_info)
@@ -53,7 +53,7 @@
 - **样式**: [Tailwind CSS 4](https://tailwindcss.com/)
 - **状态管理**: [Valtio](https://valtio.pmnd.rs/) & [SWR](https://swr.vercel.app/)
 - **测试**: [Jest](https://jestjs.io/) & [React Testing Library](https://testing-library.com/)
-- **部署**: [Vercel](https://vercel.com/)
+- **部署**: VPS + Cloudflare Tunnel（生产），[Vercel](https://vercel.com/)（开发预览）
 - **代码规范**: [Oxlint](https://oxc.rs/docs/guide/usage/linter.html) & [Prettier](https://prettier.io/)
 - **认证与数据**: [Supabase](https://supabase.com/) (Auth、Postgres、RPC)
 
