@@ -10,12 +10,7 @@ export type Database = {
     };
     Functions: {
       graphql: {
-        Args: {
-          extensions?: Json;
-          operationName?: string;
-          query?: string;
-          variables?: Json;
-        };
+        Args: { extensions?: Json; operationName?: string; query?: string; variables?: Json };
         Returns: Json;
       };
     };
@@ -47,6 +42,7 @@ export type Database = {
           reviewed_by: string | null;
           status: Database['public']['Enums']['version_status'];
         };
+        ComputedFields: never;
         Insert: {
           article_id: string;
           commit_message?: string | null;
@@ -54,7 +50,7 @@ export type Database = {
           created_at?: string;
           editor_id: string;
           id?: string;
-          metadata_snapshot_complete?: boolean | null;
+          metadata_snapshot_complete?: never;
           preview_token: string;
           proposed_category_id?: string | null;
           proposed_character_id?: string | null;
@@ -72,7 +68,7 @@ export type Database = {
           created_at?: string;
           editor_id?: string;
           id?: string;
-          metadata_snapshot_complete?: boolean | null;
+          metadata_snapshot_complete?: never;
           preview_token?: string;
           proposed_category_id?: string | null;
           proposed_character_id?: string | null;
@@ -139,6 +135,7 @@ export type Database = {
           title: string;
           view_count: number;
         };
+        ComputedFields: never;
         Insert: {
           author_id: string;
           category_id: string;
@@ -205,8 +202,9 @@ export type Database = {
           event_type: string;
           id: string;
           reason: string | null;
-          snapshot: Json;
+          snapshot: NonNullable<Json>;
         };
+        ComputedFields: never;
         Insert: {
           actor_id?: string | null;
           block_id?: string | null;
@@ -214,7 +212,7 @@ export type Database = {
           event_type: string;
           id?: string;
           reason?: string | null;
-          snapshot: Json;
+          snapshot: NonNullable<Json>;
         };
         Update: {
           actor_id?: string | null;
@@ -223,7 +221,7 @@ export type Database = {
           event_type?: string;
           id?: string;
           reason?: string | null;
-          snapshot?: Json;
+          snapshot?: NonNullable<Json>;
         };
         Relationships: [
           {
@@ -257,6 +255,7 @@ export type Database = {
           resource_id: string | null;
           resource_type: string | null;
         };
+        ComputedFields: never;
         Insert: {
           action: string;
           block_id: string;
@@ -298,6 +297,7 @@ export type Database = {
           target_type: string;
           target_user_id: string | null;
         };
+        ComputedFields: never;
         Insert: {
           autoblock_enabled?: boolean;
           created_at?: string;
@@ -390,6 +390,7 @@ export type Database = {
           parent_category_id: string | null;
           requires_character: boolean;
         };
+        ComputedFields: never;
         Insert: {
           default_visibility?: Database['public']['Enums']['version_status'] | null;
           id?: string;
@@ -426,6 +427,7 @@ export type Database = {
           target_id: string;
           title: string | null;
         };
+        ComputedFields: never;
         Insert: {
           author_id: string;
           content: string;
@@ -490,6 +492,7 @@ export type Database = {
           type: string;
           user_agent: string | null;
         };
+        ComputedFields: never;
         Insert: {
           contact?: string | null;
           content: string;
@@ -518,6 +521,7 @@ export type Database = {
           operation_id: string;
           request_fingerprint: string;
         };
+        ComputedFields: never;
         Insert: {
           created_at?: string;
           operation_id: string;
@@ -535,7 +539,7 @@ export type Database = {
           created_at: string;
           created_by: string | null;
           entity_type: string;
-          entry: Json;
+          entry: NonNullable<Json>;
           id: string;
           is_public: boolean;
           message: string | null;
@@ -549,11 +553,12 @@ export type Database = {
           reviewed_by: string | null;
           status: Database['public']['Enums']['game_data_action_status'];
         };
+        ComputedFields: never;
         Insert: {
           created_at?: string;
           created_by?: string | null;
           entity_type: string;
-          entry: Json;
+          entry: NonNullable<Json>;
           id?: string;
           is_public?: boolean;
           message?: string | null;
@@ -571,7 +576,7 @@ export type Database = {
           created_at?: string;
           created_by?: string | null;
           entity_type?: string;
-          entry?: Json;
+          entry?: NonNullable<Json>;
           id?: string;
           is_public?: boolean;
           message?: string | null;
@@ -629,6 +634,7 @@ export type Database = {
           singleton: boolean;
           updated_at: string;
         };
+        ComputedFields: never;
         Insert: {
           epoch?: number;
           singleton?: boolean;
@@ -650,6 +656,7 @@ export type Database = {
           resource_type: string;
           scope: Database['public']['Enums']['permission_scope'];
         };
+        ComputedFields: never;
         Insert: {
           created_at?: string;
           group_id: string;
@@ -695,6 +702,7 @@ export type Database = {
           verification_sent_at: string | null;
           verification_token_hash: string | null;
         };
+        ComputedFields: never;
         Insert: {
           email?: string | null;
           email_enabled?: boolean;
@@ -742,6 +750,7 @@ export type Database = {
           updated_at: string;
           user_id: string;
         };
+        ComputedFields: never;
         Insert: {
           article_version_pending_enabled?: boolean;
           discussion_comment_enabled?: boolean;
@@ -786,6 +795,7 @@ export type Database = {
           title: string;
           user_id: string;
         };
+        ComputedFields: never;
         Insert: {
           body: string;
           created_at?: string;
@@ -835,6 +845,7 @@ export type Database = {
           label_zh: string;
           sort_order: number;
         };
+        ComputedFields: never;
         Insert: {
           category: string;
           global_only?: boolean;
@@ -864,6 +875,7 @@ export type Database = {
           updated_at: string;
           updated_by: string;
         };
+        ComputedFields: never;
         Insert: {
           content_html: string;
           created_at?: string;
@@ -925,6 +937,7 @@ export type Database = {
           group_id: string;
           user_id: string;
         };
+        ComputedFields: never;
         Insert: {
           created_at?: string;
           group_id: string;
@@ -969,6 +982,7 @@ export type Database = {
           parent_group_id: string | null;
           updated_at: string;
         };
+        ComputedFields: never;
         Insert: {
           created_at?: string;
           description?: string;
@@ -1003,6 +1017,7 @@ export type Database = {
           last_seen_at: string;
           user_id: string;
         };
+        ComputedFields: never;
         Insert: {
           last_ip: unknown;
           last_seen_at?: string;
@@ -1038,6 +1053,7 @@ export type Database = {
           salt: string;
           username_hash: string;
         };
+        ComputedFields: never;
         Insert: {
           id: string;
           nickname: string;
@@ -1068,6 +1084,7 @@ export type Database = {
           publication_revision: number | null;
           status: Database['public']['Enums']['version_status'] | null;
         };
+        ComputedFields: never;
         Insert: {
           article_id?: string | null;
           commit_message?: string | null;
@@ -1126,6 +1143,7 @@ export type Database = {
           target_id: string | null;
           title: string | null;
         };
+        ComputedFields: never;
         Insert: {
           author_id?: string | null;
           content?: string | null;
@@ -1184,6 +1202,7 @@ export type Database = {
           id: string | null;
           nickname: string | null;
         };
+        ComputedFields: never;
         Insert: {
           id?: string | null;
           nickname?: string | null;
@@ -1196,14 +1215,8 @@ export type Database = {
       };
     };
     Functions: {
-      approve_article_version: {
-        Args: { p_version_id: string };
-        Returns: undefined;
-      };
-      approve_game_data_action: {
-        Args: { p_action_id: string };
-        Returns: undefined;
-      };
+      approve_article_version: { Args: { p_version_id: string }; Returns: undefined };
+      approve_game_data_action: { Args: { p_action_id: string }; Returns: undefined };
       assert_actor_not_blocked: {
         Args: {
           p_action: string;
@@ -1215,12 +1228,7 @@ export type Database = {
         Returns: undefined;
       };
       assert_game_data_entry_not_blocked: {
-        Args: {
-          p_entity_type: string;
-          p_entry: Json;
-          p_ip: unknown;
-          p_user_id: string;
-        };
+        Args: { p_entity_type: string; p_entry: Json; p_ip: unknown; p_user_id: string };
         Returns: undefined;
       };
       auth_email_exists: { Args: { p_email: string }; Returns: boolean };
@@ -1235,30 +1243,15 @@ export type Database = {
         Returns: boolean;
       };
       can_access_game_action: {
-        Args: {
-          p_entity_type: string;
-          p_entry: Json;
-          p_permission_key: string;
-          p_user_id: string;
-        };
+        Args: { p_entity_type: string; p_entry: Json; p_permission_key: string; p_user_id: string };
         Returns: boolean;
       };
-      can_moderate_article: {
-        Args: { p_article_id: string; p_user_id: string };
-        Returns: boolean;
-      };
+      can_moderate_article: { Args: { p_article_id: string; p_user_id: string }; Returns: boolean };
       can_moderate_article_version: {
-        Args: {
-          p_article_id: string;
-          p_proposed_category_id: string;
-          p_user_id: string;
-        };
+        Args: { p_article_id: string; p_proposed_category_id: string; p_user_id: string };
         Returns: boolean;
       };
-      can_view_article: {
-        Args: { p_article_id: string; p_user_id: string };
-        Returns: boolean;
-      };
+      can_view_article: { Args: { p_article_id: string; p_user_id: string }; Returns: boolean };
       create_autoblock_for_request: {
         Args: { p_action: string; p_ip: unknown; p_user_id: string };
         Returns: string;
@@ -1295,12 +1288,7 @@ export type Database = {
         Returns: string;
       };
       create_permission_group: {
-        Args: {
-          p_description?: string;
-          p_grants?: Json;
-          p_is_default?: boolean;
-          p_name: string;
-        };
+        Args: { p_description?: string; p_grants?: Json; p_is_default?: boolean; p_name: string };
         Returns: string;
       };
       create_permission_group_v2: {
@@ -1314,10 +1302,7 @@ export type Database = {
         Returns: string;
       };
       delete_category: { Args: { _id: string }; Returns: undefined };
-      delete_permission_group: {
-        Args: { p_group_id: string };
-        Returns: undefined;
-      };
+      delete_permission_group: { Args: { p_group_id: string }; Returns: undefined };
       find_effective_block: {
         Args: {
           p_action?: string;
@@ -1336,10 +1321,7 @@ export type Database = {
           target_type: string;
         }[];
       };
-      game_action_resource_id: {
-        Args: { p_entity_type: string; p_entry: Json };
-        Returns: string;
-      };
+      game_action_resource_id: { Args: { p_entity_type: string; p_entry: Json }; Returns: string };
       game_action_resource_ids: {
         Args: { p_entity_type: string; p_entry: Json };
         Returns: string[];
@@ -1358,7 +1340,7 @@ export type Database = {
           action_path: string;
         }[];
       };
-      generate_salt: { Args: never; Returns: string };
+      generate_salt: { Args: Record<PropertyKey, never>; Returns: string };
       get_article_version_by_preview: {
         Args: { p_token: string };
         Returns: {
@@ -1387,17 +1369,13 @@ export type Database = {
         };
       };
       get_article_version_notification_recipients: {
-        Args: {
-          p_actor_id?: string;
-          p_article_id: string;
-          p_proposed_category_id?: string;
-        };
+        Args: { p_actor_id?: string; p_article_id: string; p_proposed_category_id?: string };
         Returns: {
           user_id: string;
         }[];
       };
       get_categories: {
-        Args: never;
+        Args: Record<PropertyKey, never>;
         Returns: {
           default_visibility: Database['public']['Enums']['version_status'];
           id: string;
@@ -1412,7 +1390,7 @@ export type Database = {
         }[];
       };
       get_my_permission_grants: {
-        Args: never;
+        Args: Record<PropertyKey, never>;
         Returns: {
           permission_key: string;
           resource_id: string;
@@ -1421,7 +1399,7 @@ export type Database = {
         }[];
       };
       get_pending_game_data_actions: {
-        Args: never;
+        Args: Record<PropertyKey, never>;
         Returns: {
           action_id: string;
           created_at: string;
@@ -1439,7 +1417,7 @@ export type Database = {
         }[];
       };
       get_pending_versions_for_moderation: {
-        Args: never;
+        Args: Record<PropertyKey, never>;
         Returns: {
           article_id: string;
           article_title: string;
@@ -1461,12 +1439,7 @@ export type Database = {
         }[];
       };
       get_public_contribution_activity: {
-        Args: {
-          p_filter?: string;
-          p_limit?: number;
-          p_offset?: number;
-          p_user_id: string;
-        };
+        Args: { p_filter?: string; p_limit?: number; p_offset?: number; p_user_id: string };
         Returns: {
           actor_id: string;
           article_id: string;
@@ -1497,25 +1470,12 @@ export type Database = {
         }[];
       };
       has_permission: {
-        Args: {
-          p_permission_key: string;
-          p_resource_id?: string;
-          p_resource_type?: string;
-        };
+        Args: { p_permission_key: string; p_resource_id?: string; p_resource_type?: string };
         Returns: boolean;
       };
-      hash_credential: {
-        Args: { credential: string; salt: string };
-        Returns: string;
-      };
-      increment_article_view_count: {
-        Args: { p_article_id: string };
-        Returns: undefined;
-      };
-      is_game_strategy_category: {
-        Args: { p_category_id: string };
-        Returns: boolean;
-      };
+      hash_credential: { Args: { credential: string; salt: string }; Returns: string };
+      increment_article_view_count: { Args: { p_article_id: string }; Returns: undefined };
+      is_game_strategy_category: { Args: { p_category_id: string }; Returns: boolean };
       modify_block: {
         Args: {
           p_block_id: string;
@@ -1627,11 +1587,7 @@ export type Database = {
             Returns: undefined;
           };
       prepared_mark_game_data_actions_synced_batch: {
-        Args: {
-          p_action_ids: string[];
-          p_actor_id: string;
-          p_expected_replay_epoch: number;
-        };
+        Args: { p_action_ids: string[]; p_actor_id: string; p_expected_replay_epoch: number };
         Returns: {
           replay_epoch: number;
           synced_action_ids: string[];
@@ -1718,12 +1674,7 @@ export type Database = {
         }[];
       };
       prepared_reject_game_data_action: {
-        Args: {
-          p_action_id: string;
-          p_actor_id: string;
-          p_ip: unknown;
-          p_reason: string;
-        };
+        Args: { p_action_id: string; p_actor_id: string; p_ip: unknown; p_reason: string };
         Returns: undefined;
       };
       prepared_revoke_game_data_action:
@@ -1798,10 +1749,7 @@ export type Database = {
         };
         Returns: undefined;
       };
-      prune_redundant_group_grants: {
-        Args: { p_group_id: string };
-        Returns: undefined;
-      };
+      prune_redundant_group_grants: { Args: { p_group_id: string }; Returns: undefined };
       publish_game_data_actions: {
         Args: { p_entity_type: string; p_entries: Json; p_message?: string };
         Returns: {
@@ -1810,35 +1758,26 @@ export type Database = {
           status: Database['public']['Enums']['game_data_action_status'];
         }[];
       };
-      read_game_data_approved_replay_epoch: { Args: never; Returns: number };
+      read_game_data_approved_replay_epoch: { Args: Record<PropertyKey, never>; Returns: number };
       read_game_data_approved_replay_snapshot: {
-        Args: never;
+        Args: Record<PropertyKey, never>;
         Returns: {
           action_rows: Json;
           replay_epoch: number;
         }[];
       };
       read_game_data_character_contributor_source: {
-        Args: never;
+        Args: Record<PropertyKey, never>;
         Returns: Json;
       };
-      read_game_data_synced_history_source: { Args: never; Returns: Json };
-      record_user_last_ip: {
-        Args: { p_ip: unknown; p_user_id: string };
-        Returns: undefined;
-      };
-      reject_article_version: {
-        Args: { p_version_id: string };
-        Returns: undefined;
-      };
+      read_game_data_synced_history_source: { Args: Record<PropertyKey, never>; Returns: Json };
+      record_user_last_ip: { Args: { p_ip: unknown; p_user_id: string }; Returns: undefined };
+      reject_article_version: { Args: { p_version_id: string }; Returns: undefined };
       reject_game_data_action: {
         Args: { p_action_id: string; p_reason?: string };
         Returns: undefined;
       };
-      revoke_article_version: {
-        Args: { p_version_id: string };
-        Returns: undefined;
-      };
+      revoke_article_version: { Args: { p_version_id: string }; Returns: undefined };
       save_permission_group: {
         Args: {
           p_description: string;
@@ -1861,24 +1800,15 @@ export type Database = {
         Returns: undefined;
       };
       set_comment_status: {
-        Args: {
-          p_comment_id: string;
-          p_status: Database['public']['Enums']['comment_status'];
-        };
+        Args: { p_comment_id: string; p_status: Database['public']['Enums']['comment_status'] };
         Returns: undefined;
       };
-      set_group_grants: {
-        Args: { p_grants: Json; p_group_id: string };
-        Returns: undefined;
-      };
+      set_group_grants: { Args: { p_grants: Json; p_group_id: string }; Returns: undefined };
       set_group_parent: {
         Args: { p_group_id: string; p_parent_group_id: string };
         Returns: undefined;
       };
-      set_user_groups: {
-        Args: { p_group_ids: string[]; p_user_id: string };
-        Returns: undefined;
-      };
+      set_user_groups: { Args: { p_group_ids: string[]; p_user_id: string }; Returns: undefined };
       submit_article: {
         Args: {
           p_article_id: string;
@@ -1893,10 +1823,7 @@ export type Database = {
           submitted_version_id: string;
         }[];
       };
-      unblock: {
-        Args: { p_block_id: string; p_reason: string };
-        Returns: undefined;
-      };
+      unblock: { Args: { p_block_id: string; p_reason: string }; Returns: undefined };
       update_category: {
         Args: {
           _default_visibility?: Database['public']['Enums']['version_status'];
@@ -1919,12 +1846,7 @@ export type Database = {
         Returns: undefined;
       };
       update_permission_group: {
-        Args: {
-          p_description: string;
-          p_group_id: string;
-          p_is_default: boolean;
-          p_name: string;
-        };
+        Args: { p_description: string; p_group_id: string; p_is_default: boolean; p_name: string };
         Returns: undefined;
       };
       user_has_permission: {
@@ -1976,9 +1898,7 @@ export type Tables<
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Views'])
     : never) = never,
-> = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals;
-}
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof DatabaseWithoutInternals }
   ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
       DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Views'])[TableName] extends {
       Row: infer R;
@@ -2001,9 +1921,7 @@ export type TablesInsert<
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
     : never) = never,
-> = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals;
-}
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof DatabaseWithoutInternals }
   ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
       Insert: infer I;
     }
@@ -2025,9 +1943,7 @@ export type TablesUpdate<
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
     : never) = never,
-> = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals;
-}
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof DatabaseWithoutInternals }
   ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
       Update: infer U;
     }
@@ -2049,9 +1965,7 @@ export type Enums<
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions['schema']]['Enums']
     : never) = never,
-> = DefaultSchemaEnumNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals;
-}
+> = DefaultSchemaEnumNameOrOptions extends { schema: keyof DatabaseWithoutInternals }
   ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions['schema']]['Enums'][EnumName]
   : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema['Enums']
     ? DefaultSchema['Enums'][DefaultSchemaEnumNameOrOptions]
@@ -2065,9 +1979,7 @@ export type CompositeTypes<
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes']
     : never) = never,
-> = PublicCompositeTypeNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals;
-}
+> = PublicCompositeTypeNameOrOptions extends { schema: keyof DatabaseWithoutInternals }
   ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes'][CompositeTypeName]
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema['CompositeTypes']
     ? DefaultSchema['CompositeTypes'][PublicCompositeTypeNameOrOptions]
