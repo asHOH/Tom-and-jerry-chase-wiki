@@ -7,6 +7,11 @@
     }
   },
   "trailingSlash": true,
+  "functions": {
+    "src/app/api/chat/route.ts": {
+      "supportsCancellation": true
+    }
+  },
   "headers": [
     {
       "source": "/version.json",

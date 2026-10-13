@@ -1,7 +1,8 @@
 import 'server-only';
 
 import { Buffer } from 'node:buffer';
-import { VM, type VMOptions } from 'vm2';
+import { execFile } from 'node:child_process';
+import path from 'node:path';
 
 import type { ChatGameData } from '@/lib/gameData/chatGameData';
 import type { GameHistory, ItemGroup } from '@/data/types';
@@ -9,13 +10,10 @@ import type { ActorProfileLookup } from '@/features/actor-profiles/serialization
 
 export const CHAT_CODE_MAX_LENGTH = 8 * 1024;
 
-const CHAT_CODE_TIMEOUT_MS = 1000;
-const CHAT_CODE_BUFFER_ALLOC_LIMIT = 8 * 1024 * 1024;
+const CHAT_CODE_PROCESS_TIMEOUT_MS = 5000;
+const CHAT_CODE_MAX_INPUT_BYTES = 16 * 1024 * 1024;
 const CHAT_CODE_MAX_OUTPUT_BYTES = 32 * 1024;
-
-type HardenedVMOptions = VMOptions & {
-  bufferAllocLimit: number;
-};
+let executionActive = false;
 
 export type ChatCodeExecutionContext = ChatGameData & {
   readonly actorProfiles: ActorProfileLookup;
@@ -32,7 +30,12 @@ function executionError(error: string, details: string): ChatCodeExecutionError 
   return { error, details };
 }
 
-export function executeChatCode(code: string, context: ChatCodeExecutionContext): unknown {
+export async function executeChatCode(
+  code: string,
+  context: ChatCodeExecutionContext,
+  signal?: AbortSignal
+): Promise<unknown> {
+  signal?.throwIfAborted();
   if (Buffer.byteLength(code, 'utf8') > CHAT_CODE_MAX_LENGTH) {
     return executionError(
       'Code execution rejected',
@@ -40,59 +43,81 @@ export function executeChatCode(code: string, context: ChatCodeExecutionContext)
     );
   }
 
-  const vmOptions: HardenedVMOptions = {
-    timeout: CHAT_CODE_TIMEOUT_MS,
-    allowAsync: false,
-    eval: false,
-    wasm: false,
-    bufferAllocLimit: CHAT_CODE_BUFFER_ALLOC_LIMIT,
-  };
-  const vm = new VM(vmOptions);
-
-  for (const [name, value] of Object.entries(context)) {
-    vm.freeze(value, name);
+  if (executionActive) {
+    return executionError('Code execution busy', 'Another query is running. Please try again.');
   }
 
-  let serialized: unknown;
+  let input: string;
   try {
-    serialized = vm.run(
-      `(function () {
-'use strict';
-const result = (function () {
-${code}
-})();
-if (
-  result !== null &&
-  (typeof result === 'object' || typeof result === 'function') &&
-  typeof result.then === 'function'
-) {
-  throw new Error('Async results are not supported.');
-}
-return JSON.stringify(result);
-})()`,
-      { filename: 'ai-chat-tool.vm.js' }
-    );
+    input = JSON.stringify({ code, context });
   } catch {
+    return executionError('Code execution rejected', 'Game data could not be serialized.');
+  }
+  if (Buffer.byteLength(input, 'utf8') > CHAT_CODE_MAX_INPUT_BYTES) {
     return executionError(
-      'Code execution failed',
-      `Execution failed or exceeded the ${CHAT_CODE_TIMEOUT_MS}ms limit.`
+      'Code execution rejected',
+      'Game data exceeds the execution input limit.'
     );
   }
-
-  if (serialized === undefined) return null;
-  if (typeof serialized !== 'string') {
-    return executionError('Code execution failed', 'Execution returned an invalid result.');
-  }
-  if (Buffer.byteLength(serialized, 'utf8') > CHAT_CODE_MAX_OUTPUT_BYTES) {
-    return executionError(
-      'Code execution output too large',
-      `Serialized output must not exceed ${CHAT_CODE_MAX_OUTPUT_BYTES} bytes.`
-    );
-  }
-
-  try {
-    return JSON.parse(serialized) as unknown;
-  } catch {
-    return executionError('Code execution failed', 'Execution returned invalid serialized data.');
-  }
+  executionActive = true;
+  return new Promise((resolve, reject) => {
+    try {
+      const child = execFile(
+        process.execPath,
+        ['--max-old-space-size=128', path.join(process.cwd(), 'src/lib/ai/chatCodeRunner.cjs')],
+        {
+          timeout: CHAT_CODE_PROCESS_TIMEOUT_MS,
+          killSignal: 'SIGKILL',
+          maxBuffer: CHAT_CODE_MAX_OUTPUT_BYTES,
+          encoding: 'utf8',
+          windowsHide: true,
+          // shortcut: use an OS sandbox if hostile access or total memory must be contained.
+          env: {
+            NODE_ENV: 'production',
+            ...(process.platform === 'win32' ? { SystemRoot: process.env.SystemRoot } : {}),
+          },
+          ...(signal ? { signal } : {}),
+        },
+        (error, stdout) => {
+          if (signal?.aborted) {
+            reject(signal.reason);
+          } else if (error?.code === 'ERR_CHILD_PROCESS_STDIO_MAXBUFFER') {
+            resolve(
+              executionError(
+                'Code execution output too large',
+                `Serialized output must not exceed ${CHAT_CODE_MAX_OUTPUT_BYTES} bytes.`
+              )
+            );
+          } else if (error) {
+            resolve(
+              executionError('Code execution failed', 'Executor stopped or exceeded its deadline.')
+            );
+          } else {
+            try {
+              resolve(JSON.parse(stdout) as unknown);
+            } catch {
+              resolve(
+                executionError(
+                  'Code execution failed',
+                  'Execution returned invalid serialized data.'
+                )
+              );
+            }
+          }
+        }
+      );
+      // Abort can invoke the callback before the process has actually exited.
+      child.once('close', () => {
+        executionActive = false;
+      });
+      child.stdin?.on('error', () => {
+        // An early exit can close stdin while the snapshot is still being written.
+        child.kill('SIGKILL');
+      });
+      child.stdin?.end(input);
+    } catch {
+      executionActive = false;
+      resolve(executionError('Code execution failed', 'Executor could not be started.'));
+    }
+  });
 }

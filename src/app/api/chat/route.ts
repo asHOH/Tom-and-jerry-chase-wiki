@@ -122,7 +122,7 @@ export async function POST(req: NextRequest) {
         if (abortSignal?.aborted) {
           throw abortSignal.reason ?? new DOMException('Chat request aborted', 'AbortError');
         }
-        return executeChatCode(code, executionContext);
+        return executeChatCode(code, executionContext, abortSignal);
       },
     });
 

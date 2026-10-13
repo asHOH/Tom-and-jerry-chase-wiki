@@ -72,6 +72,14 @@ const nextConfig: NextConfig = {
   // esbuild-wasm is required for Serwist with Turbopack; vm2 must retain its
   // native Node.js runtime behavior for the server-only AI sandbox.
   serverExternalPackages: ['esbuild-wasm', 'vm2'],
+  outputFileTracingIncludes: {
+    '/api/chat': [
+      './src/lib/ai/chatCodeRunner.cjs',
+      './node_modules/vm2/**/*',
+      './node_modules/acorn/**/*',
+      './node_modules/acorn-walk/**/*',
+    ],
+  },
   typescript: {
     ignoreBuildErrors: process.env.SKIP_BUILD_CHECKS === 'true',
   },

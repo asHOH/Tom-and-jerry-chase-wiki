@@ -34,5 +34,6 @@ COPY --from=builder /app/csp.config.mjs ./csp.config.mjs
 COPY --from=builder /app/postcss.config.js ./postcss.config.js
 COPY --from=builder /app/tsconfig.json ./tsconfig.json
 COPY --from=builder /app/src/env.ts ./src/env.ts
+COPY --from=builder /app/src/lib/ai/chatCodeRunner.cjs ./src/lib/ai/chatCodeRunner.cjs
 EXPOSE 3000
 CMD ["npm", "run", "start"]
