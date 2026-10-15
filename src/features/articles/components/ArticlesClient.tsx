@@ -16,8 +16,8 @@ import { useSwipeGesture } from '@/hooks/useSwipeGesture';
 import { useEditMode } from '@/context/EditModeContext';
 import { useToast } from '@/context/ToastContext';
 import { ArticleListPageData, Category, type FactionId } from '@/data/types';
-import Button from '@/components/ui/Button';
 import ButtonLink from '@/components/ui/ButtonLink';
+import ClearFiltersButton from '@/components/ui/ClearFiltersButton';
 import EntityCardFrame from '@/components/ui/EntityCardFrame';
 import PageHeader from '@/components/ui/PageHeader';
 import { ClockIcon, PlusIcon } from '@/components/icons/CommonIcons';
@@ -278,11 +278,7 @@ export default function ArticlesClient({
               : '成为第一个创建文章的人吧！'}
           </p>
           <div className='flex flex-wrap justify-center gap-3'>
-            {selectedCategories.size > 0 && (
-              <Button onClick={handleClearFilters} variant='secondary'>
-                清除筛选
-              </Button>
-            )}
+            {selectedCategories.size > 0 && <ClearFiltersButton onClick={handleClearFilters} />}
             {permissions.has('article.create') && (
               <ButtonLink href='/articles/new'>创建文章</ButtonLink>
             )}

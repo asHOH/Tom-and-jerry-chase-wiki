@@ -2,18 +2,20 @@
 
 import { useMemo, useState } from 'react';
 
-import type { DeepReadonly } from '@/types/deep-readonly';
 import { cn, getFactionButtonColors } from '@/lib/design';
 import { useFilterState } from '@/lib/filterUtils';
 import { useDarkMode } from '@/context/DarkModeContext';
 import type { FactionId } from '@/data/types';
 import { CharacterTable, winRatesData } from '@/data/winRates';
 import Button from '@/components/ui/Button';
+import ClearFiltersButton from '@/components/ui/ClearFiltersButton';
 import FilterRow from '@/components/ui/FilterRow';
 import PageHeader from '@/components/ui/PageHeader';
 import PageShell from '@/components/ui/PageShell';
 import SectionHeader from '@/components/ui/SectionHeader';
 import Link from '@/components/Link';
+
+import { normalizeWinRateCharacterName, type WinRateCharacterLookup } from './characterLookup';
 
 type ColumnKey = 'rank' | 'faction' | 'character' | 'pickRate' | 'winRate' | 'banRate';
 type SortColumn = 'pickRate' | 'winRate' | 'banRate';
@@ -23,18 +25,19 @@ interface EnrichedCharacterRow {
   rank: string;
   rankOrder: number;
   character: string;
+  characterId: string | null;
   faction: FactionId;
   pickRate: string;
   winRate: string;
-  banRate: string;
+  banRate: string | null;
   pickRateNum: number;
   winRateNum: number;
-  banRateNum: number;
+  banRateNum: number | null;
 }
 
 interface WinRatesClientProps {
   description: string;
-  characterFactions: Readonly<Record<string, FactionId>>;
+  characterLookup: WinRateCharacterLookup;
 }
 
 function escapeCsvCell(value: unknown): string {
@@ -60,8 +63,7 @@ function sanitizeFileName(input: string): string {
     .trim();
 }
 
-function parseRate(rate: string | undefined): number {
-  if (!rate) return 0;
+function parseRate(rate: string): number {
   return parseFloat(rate.replace('%', ''));
 }
 
@@ -98,30 +100,30 @@ function normalizeTableFaction(tableFaction: unknown): FactionId | null {
 
 function enrichCharacterData(
   tables: CharacterTable[],
-  characterFactions: DeepReadonly<Record<string, FactionId>>
+  characterLookup: WinRateCharacterLookup
 ): EnrichedCharacterRow[] {
   const enriched: EnrichedCharacterRow[] = [];
 
   for (const table of tables) {
     const rank = String(table.rank);
     const rankOrder = getRankOrder(rank);
-    const factionFromTable = normalizeTableFaction(
-      (table as unknown as { faction?: unknown }).faction
-    );
+    const factionFromTable = normalizeTableFaction(table.faction);
 
     for (const row of table.rows) {
-      const faction = characterFactions[row.character] ?? factionFromTable ?? 'mouse';
+      const character = characterLookup[normalizeWinRateCharacterName(row.character)];
+      const faction = character?.factionId ?? factionFromTable ?? 'mouse';
       enriched.push({
         rank,
         rankOrder,
         character: row.character,
+        characterId: character?.id ?? null,
         faction,
         pickRate: row.pickRate,
         winRate: row.winRate,
-        banRate: row.banRate || '',
+        banRate: row.banRate ?? null,
         pickRateNum: parseRate(row.pickRate),
         winRateNum: parseRate(row.winRate),
-        banRateNum: parseRate(row.banRate),
+        banRateNum: row.banRate === undefined ? null : parseRate(row.banRate),
       });
     }
   }
@@ -154,7 +156,7 @@ function getRanksFromSeason(seasonIndex: number): string[] {
   return Array.from(ranks).sort((a, b) => getRankOrder(a) - getRankOrder(b));
 }
 
-export default function WinRatesClient({ description, characterFactions }: WinRatesClientProps) {
+export default function WinRatesClient({ description, characterLookup }: WinRatesClientProps) {
   const [isDarkMode] = useDarkMode();
 
   const seasons = useMemo(() => getSeasons(), []);
@@ -169,16 +171,26 @@ export default function WinRatesClient({ description, characterFactions }: WinRa
   const {
     selectedFilters: selectedFactions,
     toggleFilter: toggleFaction,
+    clearFilters: clearFactions,
     hasAnyFilters: hasAnyFactionFilters,
   } = useFilterState<FactionId>();
 
   const {
     selectedFilters: selectedRanks,
     toggleFilter: toggleRank,
+    clearFilters: clearRanks,
+    setFilters: setRanks,
     hasAnyFilters: hasAnyRankFilters,
   } = useFilterState<string>();
 
   const availableRanks = useMemo(() => getRanksFromSeason(selectedSeason), [selectedSeason]);
+
+  const handleSeasonChange = (season: string) => {
+    const nextSeason = seasons.indexOf(season);
+    const nextRanks = getRanksFromSeason(nextSeason);
+    setRanks(new Set([...selectedRanks].filter((rank) => nextRanks.includes(rank))));
+    setSelectedSeason(nextSeason);
+  };
 
   const enrichedData = useMemo(() => {
     const entry = winRatesData[selectedSeason];
@@ -198,8 +210,12 @@ export default function WinRatesClient({ description, characterFactions }: WinRa
       });
     }
 
-    return enrichCharacterData(tables, characterFactions);
-  }, [selectedSeason, characterFactions]);
+    return enrichCharacterData(tables, characterLookup);
+  }, [selectedSeason, characterLookup]);
+
+  const hasBanRates = enrichedData.some((row) => row.banRateNum !== null);
+  const effectiveSortColumn = sortColumn === 'banRate' && !hasBanRates ? 'winRate' : sortColumn;
+  const effectiveSortDirection = effectiveSortColumn === sortColumn ? sortDirection : 'desc';
 
   const filteredAndSortedData = useMemo(() => {
     let filtered = enrichedData;
@@ -218,7 +234,7 @@ export default function WinRatesClient({ description, characterFactions }: WinRa
   const displayRows = useMemo((): DisplayRow[] => {
     const compareMetric = (a: EnrichedCharacterRow, b: EnrichedCharacterRow) => {
       let comparison = 0;
-      switch (sortColumn) {
+      switch (effectiveSortColumn) {
         case 'pickRate':
           comparison = a.pickRateNum - b.pickRateNum;
           break;
@@ -226,10 +242,12 @@ export default function WinRatesClient({ description, characterFactions }: WinRa
           comparison = a.winRateNum - b.winRateNum;
           break;
         case 'banRate':
+          if (a.banRateNum === null) return b.banRateNum === null ? 0 : 1;
+          if (b.banRateNum === null) return -1;
           comparison = a.banRateNum - b.banRateNum;
           break;
       }
-      return sortDirection === 'asc' ? comparison : -comparison;
+      return effectiveSortDirection === 'asc' ? comparison : -comparison;
     };
 
     const sorted = [...filteredAndSortedData].sort((a, b) => {
@@ -250,7 +268,7 @@ export default function WinRatesClient({ description, characterFactions }: WinRa
       counts.set(key, nextNo);
       return { ...row, no: nextNo, groupStart: nextNo === 1 };
     });
-  }, [filteredAndSortedData, sortColumn, sortDirection]);
+  }, [filteredAndSortedData, effectiveSortColumn, effectiveSortDirection]);
 
   const summaryData = useMemo(() => {
     const entry = winRatesData[selectedSeason];
@@ -258,20 +276,19 @@ export default function WinRatesClient({ description, characterFactions }: WinRa
   }, [selectedSeason]);
 
   const handleSort = (column: SortColumn) => {
-    if (sortColumn === column) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-      return;
-    }
     setSortColumn(column);
-    setSortDirection('desc');
+    setSortDirection(
+      effectiveSortColumn === column && effectiveSortDirection === 'desc' ? 'asc' : 'desc'
+    );
   };
 
   const getSortIcon = (column: SortColumn) => {
-    if (sortColumn !== column) return '↕';
-    return sortDirection === 'asc' ? '↑' : '↓';
+    if (effectiveSortColumn !== column) return '↕';
+    return effectiveSortDirection === 'asc' ? '↑' : '↓';
   };
 
-  const isColVisible = (col: ColumnKey) => visibleColumns.has(col);
+  const isColVisible = (col: ColumnKey) =>
+    visibleColumns.has(col) && (col !== 'banRate' || hasBanRates);
 
   const toggleVisibleColumn = (col: ColumnKey) => {
     if (col === 'character') return;
@@ -369,7 +386,7 @@ export default function WinRatesClient({ description, characterFactions }: WinRa
             label='赛季筛选:'
             options={seasons}
             isActive={(opt) => seasons[selectedSeason] === opt}
-            onToggle={(opt) => setSelectedSeason(Math.max(0, seasons.indexOf(opt)))}
+            onToggle={handleSeasonChange}
           />
 
           <FilterRow<FactionId>
@@ -392,9 +409,24 @@ export default function WinRatesClient({ description, characterFactions }: WinRa
             />
           )}
 
+          {(hasAnyFactionFilters || hasAnyRankFilters) && (
+            <div className='mt-2 flex justify-center md:mt-4'>
+              <ClearFiltersButton
+                onClick={() => {
+                  clearFactions();
+                  clearRanks();
+                }}
+              />
+            </div>
+          )}
+
           <FilterRow<Exclude<ColumnKey, 'character'>>
             label='显示列:'
-            options={['rank', 'faction', 'pickRate', 'winRate', 'banRate']}
+            options={
+              hasBanRates
+                ? ['rank', 'faction', 'pickRate', 'winRate', 'banRate']
+                : ['rank', 'faction', 'pickRate', 'winRate']
+            }
             isActive={(opt) => isColVisible(opt)}
             onToggle={(opt) => toggleVisibleColumn(opt)}
             getOptionLabel={(opt) =>
@@ -433,6 +465,14 @@ export default function WinRatesClient({ description, characterFactions }: WinRa
       <section>
         <SectionHeader title={`角色数据 (${filteredAndSortedData.length} 条记录)`} />
 
+        {!hasBanRates ? (
+          <p className='mb-2 text-sm text-gray-500 dark:text-gray-400'>本赛季未提供禁用率数据。</p>
+        ) : isColVisible('banRate') && displayRows.some((row) => row.banRate === null) ? (
+          <p className='mb-2 text-sm text-gray-500 dark:text-gray-400'>
+            — 表示该条记录未提供禁用率数据。
+          </p>
+        ) : null}
+
         <div className='overflow-x-auto rounded-lg border border-gray-300 dark:border-gray-600'>
           <table className='bg-surface min-w-full border-collapse'>
             <thead>
@@ -470,9 +510,13 @@ export default function WinRatesClient({ description, characterFactions }: WinRa
                     )}
                     {isColVisible('character') && (
                       <td className={cn(cellClass, 'font-medium')}>
-                        <Link href={`/characters/${encodeURIComponent(row.character)}`}>
-                          {row.character}
-                        </Link>
+                        {row.characterId ? (
+                          <Link href={`/characters/${encodeURIComponent(row.characterId)}`}>
+                            {row.character}
+                          </Link>
+                        ) : (
+                          row.character
+                        )}
                       </td>
                     )}
                     {isColVisible('pickRate') && <td className={cellClass}>{row.pickRate}</td>}
@@ -489,7 +533,7 @@ export default function WinRatesClient({ description, characterFactions }: WinRa
                         </span>
                       </td>
                     )}
-                    {isColVisible('banRate') && <td className={cellClass}>{row.banRate}</td>}
+                    {isColVisible('banRate') && <td className={cellClass}>{row.banRate ?? '—'}</td>}
                   </tr>
                 );
               })}

@@ -203,4 +203,19 @@ describe('ArticlesClient server-driven navigation', () => {
     expect(mockReplace).toHaveBeenLastCalledWith('/articles', { scroll: false });
     expect(mockInfo).toHaveBeenCalledWith('已清除所有筛选条件');
   });
+
+  it('clears filters from the empty-results action while preserving sorting', () => {
+    render(
+      <ArticlesClient
+        articles={{ ...pageData, articles: [], total_count: 0 }}
+        listParams={{ ...listParams, sortBy: 'title', sortOrder: 'asc' }}
+        characterSummaries={{}}
+      />
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: '清除筛选' }));
+    expect(mockReplace).toHaveBeenLastCalledWith('/articles?sort=title&order=asc', {
+      scroll: false,
+    });
+  });
 });

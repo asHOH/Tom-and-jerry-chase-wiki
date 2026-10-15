@@ -3,9 +3,9 @@ import { Metadata } from 'next';
 import { getPublishedDomainReadModel } from '@/lib/gameData/published/publishedSnapshot';
 import { generatePageMetadata } from '@/lib/metadataUtils';
 import { SITE_URL } from '@/constants/seo';
-import type { FactionId } from '@/data/types';
 import PublishedRevisionBoundary from '@/components/PublishedRevisionBoundary';
 
+import { buildWinRateCharacterLookup } from './characterLookup';
 import WinRatesClient from './WinRatesClient';
 
 export const dynamic = 'force-static';
@@ -23,12 +23,10 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function WinRatesPage() {
   const characters = await getPublishedDomainReadModel('characters');
-  const characterFactions = Object.fromEntries(
-    Object.values(characters.data).map((character) => [character.id, character.factionId])
-  ) as Record<string, FactionId>;
+  const characterLookup = buildWinRateCharacterLookup(Object.values(characters.data));
   return (
     <PublishedRevisionBoundary revisions={[characters.revision]}>
-      <WinRatesClient description={DESCRIPTION} characterFactions={characterFactions} />
+      <WinRatesClient description={DESCRIPTION} characterLookup={characterLookup} />
     </PublishedRevisionBoundary>
   );
 }

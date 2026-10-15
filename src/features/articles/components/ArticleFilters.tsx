@@ -3,7 +3,7 @@
 import React from 'react';
 
 import { Category } from '@/data/types';
-import Button from '@/components/ui/Button';
+import ClearFiltersButton from '@/components/ui/ClearFiltersButton';
 import FilterRow from '@/components/ui/FilterRow';
 
 type SortBy = 'created_at' | 'title' | 'view_count';
@@ -56,14 +56,7 @@ const ArticleFilters: React.FC<ArticleFiltersProps> = ({
           />
           {selectedCategories.size > 0 && (
             <div className='mt-2 flex justify-center md:mt-4'>
-              <Button
-                variant='unstyled'
-                type='button'
-                onClick={handleClearFilters}
-                className='filter-button cursor-pointer rounded-md border-none bg-red-100 px-3 py-2 text-sm font-medium text-red-700 transition-all duration-200 hover:bg-red-200 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:outline-none dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30 dark:focus:ring-offset-gray-900'
-              >
-                清除筛选
-              </Button>
+              <ClearFiltersButton onClick={handleClearFilters} />
             </div>
           )}
         </>
