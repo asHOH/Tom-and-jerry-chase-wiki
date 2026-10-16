@@ -6,6 +6,7 @@ import { CATEGORY_HINTS, type CategoryHint, type GotoResult } from '@/lib/types'
 import type { FactionId, ItemGroupDefinition, SingleItem } from '@/data/types';
 import { getDocPages } from '@/features/articles/utils/docs';
 import { getItemGroupImageUrl } from '@/features/items/components/itemGroups/itemGroup-grid/getItemGroupImageUrl';
+import { resolveSpecialSkill } from '@/features/special-skills/resolveSpecialSkill';
 import {
   achievements,
   buffs,
@@ -145,6 +146,9 @@ async function buildGotoIndex(gameData: PublishedGameDataByType): Promise<GotoIn
     owner: SingleItem,
     visited = new Set<string>()
   ): FactionId | undefined => {
+    if (owner.type === 'specialSkill') {
+      return resolveSpecialSkill(specialSkills, owner.name, owner.factionId)?.factionId;
+    }
     if (owner.factionId) return owner.factionId;
     switch (owner.type) {
       case 'character':
@@ -157,8 +161,6 @@ async function buildGotoIndex(gameData: PublishedGameDataByType): Promise<GotoIn
         return cards[owner.name]?.factionId;
       case 'item':
         return items[owner.name]?.factionId;
-      case 'specialSkill':
-        return (specialSkills.cat[owner.name] ?? specialSkills.mouse[owner.name])?.factionId;
       case 'achievement':
         return (achievements.cat[owner.name] ?? achievements.mouse[owner.name])?.factionId;
       case 'entity': {

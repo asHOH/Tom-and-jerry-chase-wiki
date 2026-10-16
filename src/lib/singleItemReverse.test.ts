@@ -9,8 +9,8 @@ jest.mock('@/data', () => ({
   },
   cards: { card: { id: 'card-id', name: 'card-name', description: '{target}' } },
   specialSkills: {
-    cat: { shared: { name: 'shared', description: '{target} {shared}' } },
-    mouse: { shared: { name: 'shared', description: '{target} {shared}' } },
+    cat: { shared: { name: 'shared', factionId: 'cat', description: '{target} {shared}' } },
+    mouse: { shared: { name: 'shared', factionId: 'mouse', description: '{target} {shared}' } },
   },
   items: {
     target: { name: 'target', aliases: ['alias'], description: '{target}' },

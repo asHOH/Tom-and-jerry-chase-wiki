@@ -1,5 +1,6 @@
 import type { CharacterRelationTrait, SingleItem } from '@/data/types';
 import { characterFactionById } from '@/features/characters/data/characterMetadata';
+import { resolveSpecialSkill } from '@/features/special-skills/resolveSpecialSkill';
 
 import { splitCharacterRelationTraits } from './characterRelationData';
 import {
@@ -16,17 +17,8 @@ const toCharacterRelationExportKey = (trait: CharacterRelationTrait) =>
 export const characterRelationValidationContext = {
   getCharacterFactionId: (characterId: string) => characterFactionById[characterId],
   getKnowledgeCardFactionId: (cardId: string) => cards[cardId]?.factionId,
-  getSpecialSkillFactionId: ({ name, factionId }: SingleItem) => {
-    if (factionId && specialSkills[factionId][name]) return factionId;
-
-    const hasCatSkill = !!specialSkills.cat[name];
-    const hasMouseSkill = !!specialSkills.mouse[name];
-
-    if (hasCatSkill && !hasMouseSkill) return 'cat';
-    if (hasMouseSkill && !hasCatSkill) return 'mouse';
-
-    return undefined;
-  },
+  getSpecialSkillFactionId: ({ name, factionId }: SingleItem) =>
+    resolveSpecialSkill(specialSkills, name, factionId)?.factionId,
 } satisfies CharacterRelationValidationContext;
 
 export function buildCharacterRelationMap(

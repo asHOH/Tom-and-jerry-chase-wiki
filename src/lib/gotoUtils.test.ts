@@ -31,6 +31,24 @@ const baseline: PublishedGameDataByType = {
 
 describe('getGotoResult', () => {
   it.each([
+    [{ name: '应急治疗', type: 'specialSkill' }, undefined],
+    [{ name: '应急治疗', type: 'specialSkill', factionId: 'mouse' }, 'mouse'],
+    [{ name: '蓄力重击', type: 'specialSkill' }, 'cat'],
+    [{ name: '蓄力重击', type: 'specialSkill', factionId: 'mouse' }, undefined],
+  ] as const)(
+    'resolves owner %j without selecting an arbitrary faction',
+    async (owner, factionId) => {
+      const gameData: PublishedGameDataByType = {
+        ...baseline,
+        entities: { ...entities, 炮弹: { ...entities['炮弹']!, owner } },
+      };
+      const result = await getGotoResult('炮弹', '衍生物', { gameData });
+      expect(result).toMatchObject({ type: 'entity', name: '炮弹' });
+      expect(result && 'factionId' in result ? result.factionId : undefined).toBe(factionId);
+    }
+  );
+
+  it.each([
     ['炮弹', '猫衍生物', '炮弹', 'cat'],
     ['炮弹', '鼠衍生物', '火箭炮', 'mouse'],
     ['炮弹(猫衍生物)', undefined, '炮弹', 'cat'],

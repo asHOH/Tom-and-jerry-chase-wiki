@@ -1,6 +1,7 @@
 import { getFactionLabel } from '@/constants/factions';
 import type { FactionId, SingleItem, SingleItemOrGroup } from '@/data/types';
 import getEntityFactionId from '@/features/entities/lib/getEntityFactionId';
+import { resolveSpecialSkill } from '@/features/special-skills/resolveSpecialSkill';
 import {
   achievements,
   buffs,
@@ -32,11 +33,8 @@ export const getSingleItemHref = (singleItem: SingleItemOrGroup): string => {
   } else if (singleItem.type === 'knowledgeCard') {
     result = `/cards/${singleItem.name}`;
   } else if (singleItem.type === 'specialSkill') {
-    const allSpecialSkills = { ...specialSkills.cat, ...specialSkills.mouse };
-    const factionId =
-      singleItem.factionId ??
-      Object.values(allSpecialSkills).find((skill) => skill.name === singleItem.name)?.factionId;
-    result = `/special-skills/${factionId}/${singleItem.name}`;
+    const skill = resolveSpecialSkill(specialSkills, singleItem.name, singleItem.factionId);
+    if (skill) result = `/special-skills/${skill.factionId}/${skill.name}`;
   } else if (singleItem.type === 'item') {
     result = `/items/${singleItem.name}`;
   } else if (singleItem.type === 'entity') {
@@ -85,13 +83,7 @@ export const getSingleItemImageUrl = (singleItem: SingleItemOrGroup): string => 
   } else if (singleItem.type === 'knowledgeCard') {
     result = cards[singleItem.name]?.imageUrl;
   } else if (singleItem.type === 'specialSkill') {
-    if (['应急治疗', '急速翻滚'].includes(singleItem.name)) {
-      const factionId: FactionId = singleItem.factionId || 'mouse';
-      result = `/images/${factionId}SpecialSkills/${singleItem.name}.png`;
-    } else {
-      const allSpecialSkills = Object.values({ ...specialSkills.cat, ...specialSkills.mouse });
-      result = allSpecialSkills.find((skill) => skill.name === singleItem.name)?.imageUrl;
-    }
+    result = resolveSpecialSkill(specialSkills, singleItem.name, singleItem.factionId)?.imageUrl;
   } else if (singleItem.type === 'item') {
     result = items[singleItem.name]?.imageUrl;
   } else if (singleItem.type === 'entity') {
@@ -125,6 +117,10 @@ export const getSingleItemFactionId = (
   _visitedSet?: Set<string>,
   _cache?: Map<string, FactionId | undefined>
 ): FactionId | undefined => {
+  if (singleItem.type === 'specialSkill') {
+    return resolveSpecialSkill(specialSkills, singleItem.name, singleItem.factionId)?.factionId;
+  }
+
   if (singleItem.factionId !== undefined) {
     return singleItem.factionId;
   }
@@ -136,11 +132,6 @@ export const getSingleItemFactionId = (
 
     if (singleItem.type === 'knowledgeCard') {
       return cards[singleItem.name]?.factionId;
-    }
-
-    if (singleItem.type === 'specialSkill') {
-      const allSpecialSkills = Object.values({ ...specialSkills.cat, ...specialSkills.mouse });
-      return allSpecialSkills.find((skill) => skill.name === singleItem.name)?.factionId;
     }
 
     if (singleItem.type === 'item') {

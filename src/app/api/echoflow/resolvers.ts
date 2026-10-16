@@ -16,12 +16,13 @@ import type { PublishedGameDataByType } from '@/lib/gameData/published/types';
 import { contributors } from '@/data/contributors';
 import { historyData } from '@/data/history';
 import { itemGroups } from '@/data/static';
-import { WikiChangeType, type FactionId } from '@/data/types';
+import { WikiChangeType } from '@/data/types';
 import { wikiHistoryData } from '@/data/wikiHistory';
 import { winRatesData } from '@/data/winRates';
 import type { ActorProfile } from '@/features/actor-profiles/schema';
 import { getActorProfile } from '@/features/actor-profiles/selectors';
 import { getCharacterRelation } from '@/features/characters/utils/relations';
+import { resolveSpecialSkill } from '@/features/special-skills/resolveSpecialSkill';
 
 let updateLookup: Map<string, { date: string; description?: string }> | null = null;
 let updateLookupTimestamp: number | null = null;
@@ -551,18 +552,20 @@ function createResolvers(data: PublishedGameDataByType): Record<string, PathReso
       },
       detail: async (id: string) => {
         const decodedId = decodeURIComponent(id);
-        let skill = specialSkills.cat[decodedId];
-        let factionId: FactionId = 'cat';
-        if (!skill) {
-          skill = specialSkills.mouse[decodedId];
-          factionId = 'mouse';
-        }
+        const separatorIndex = decodedId.indexOf('.');
+        const factionId = separatorIndex === -1 ? undefined : decodedId.slice(0, separatorIndex);
+        const skillName = separatorIndex === -1 ? decodedId : decodedId.slice(separatorIndex + 1);
+        if (factionId !== undefined && factionId !== 'cat' && factionId !== 'mouse') return null;
+        const skill = resolveSpecialSkill(specialSkills, skillName, factionId);
         if (!skill) return null;
-        const updateInfo = await getMergedUpdateTime('specialSkills', `${factionId}.${decodedId}`);
+        const updateInfo = await getMergedUpdateTime(
+          'specialSkills',
+          `${skill.factionId}.${skillName}`
+        );
         return createDetailResult(
-          { ...skill, name: decodedId, factionId },
+          skill,
           'SpecialSkill',
-          `/special-skills/${factionId}/${decodedId}`,
+          `/special-skills/${skill.factionId}/${skillName}`,
           updateInfo?.date
         );
       },
@@ -915,9 +918,9 @@ function getDetailIds(resourcePath: string, data: PublishedGameDataByType): stri
         );
       }
       case 'special-skills': {
-        const catSkills = Object.keys(specialSkills.cat);
-        const mouseSkills = Object.keys(specialSkills.mouse);
-        return [...catSkills, ...mouseSkills];
+        return (['cat', 'mouse'] as const).flatMap((factionId) =>
+          Object.keys(specialSkills[factionId]).map((skillName) => `${factionId}.${skillName}`)
+        );
       }
       case 'factions': {
         return ['cat', 'mouse'];

@@ -1,7 +1,7 @@
 import { GameDataManager } from '@/lib/dataManager';
 import { getCharacterRelation } from '@/features/characters/utils/relations';
 
-import { getResolvers, type ResolverResult } from './resolvers';
+import { getAvailablePaths, getResolvers, type ResolverResult } from './resolvers';
 
 jest.mock('server-only', () => ({}), { virtual: true });
 jest.mock('next/cache', () => ({
@@ -37,6 +37,34 @@ const getRecommendedData = async (): Promise<RecommendedCharacter[]> => {
 };
 
 describe('echoflow resolvers', () => {
+  it.each([
+    ['cat.应急治疗', 'cat'],
+    ['mouse.应急治疗', 'mouse'],
+    ['蓄力重击', 'cat'],
+    ['冰冻保鲜', 'mouse'],
+  ])('resolves special skill %s to %s', async (id, factionId) => {
+    const resolver = (await getResolvers())['special-skills']!;
+    const result = await resolver.detail!(encodeURIComponent(id!));
+    expect(result?.data).toMatchObject({ factionId });
+    expect(result?.meta.path).toContain(`/special-skills/${factionId}/`);
+  });
+
+  it.each(['应急治疗', '急速翻滚', 'mouse.蓄力重击', 'other.冰冻保鲜', 'missing'])(
+    'leaves ambiguous or invalid special skill %s unresolved',
+    async (id) => {
+      const resolver = (await getResolvers())['special-skills']!;
+      expect(await resolver.detail!(id)).toBeNull();
+    }
+  );
+
+  it('advertises faction-qualified special-skill detail IDs', async () => {
+    const path = (await getAvailablePaths()).find(({ path }) => path === 'special-skills');
+    expect(path?.availableDetails).toEqual(
+      expect.arrayContaining(['cat.应急治疗', 'mouse.应急治疗'])
+    );
+    expect(path?.availableDetails).not.toContain('应急治疗');
+  });
+
   it('should expose actor profile data with a deprecated role alias', async () => {
     const resolvers = await getResolvers();
     const characterResolver = resolvers.characters;

@@ -1,6 +1,7 @@
 import { FACTION_NAMES } from '@/constants/factions';
 import { autoWrapNames } from '@/data/autoWrapNames';
 import { FactionId, SingleItem, SingleItemTypeName } from '@/data/types';
+import { resolveSpecialSkill } from '@/features/special-skills/resolveSpecialSkill';
 import {
   achievements,
   buffs,
@@ -68,7 +69,11 @@ function getChineseTypeNames(type: SingleItemTypeName, factionId?: FactionId): s
 }
 
 // Updated addBracket function to include Chinese type names
-function addBracket(strings: string[], type?: SingleItemTypeName, factionId?: FactionId): string[] {
+function addBracket(
+  strings: readonly string[],
+  type?: SingleItemTypeName,
+  factionId?: FactionId
+): string[] {
   return strings.flatMap((item) => {
     const baseBrackets = [`{${item}}`, `《${item}》`];
 
@@ -233,27 +238,23 @@ export interface CategorizedKeywords {
 
 // Helper function to get all reverse strings for highlighting
 export function getCategorizedKeywords(singleItem: SingleItem): CategorizedKeywords {
-  const getSingleItemAliases = (singleItem: SingleItem): string[] => {
-    let R: string[] | undefined;
+  const specialSkill =
+    singleItem.type === 'specialSkill'
+      ? resolveSpecialSkill(specialSkills, singleItem.name, singleItem.factionId)
+      : undefined;
+  if (singleItem.type === 'specialSkill' && !specialSkill) {
+    return { originalKeywords: [], aliasKeywords: [], groupKeywords: [], allKeywords: [] };
+  }
+  if (specialSkill) singleItem = { ...singleItem, factionId: specialSkill.factionId };
+
+  const getSingleItemAliases = (singleItem: SingleItem): readonly string[] => {
+    let R: readonly string[] | undefined;
     if (singleItem.type == 'character') {
       R = characters[singleItem.name]?.aliases;
     } else if (singleItem.type == 'knowledgeCard') {
       R = cards[singleItem.name]?.aliases;
     } else if (singleItem.type == 'specialSkill') {
-      if (['应急治疗', '急速翻滚'].includes(singleItem.name)) {
-        const factionId: FactionId = singleItem.factionId || 'mouse';
-        R =
-          factionId === 'cat'
-            ? Object.values(specialSkills.cat).find(
-                (specialSkill) => specialSkill.name === singleItem.name
-              )?.aliases
-            : Object.values(specialSkills.mouse).find(
-                (specialSkill) => specialSkill.name === singleItem.name
-              )?.aliases;
-      } else {
-        const allSpecialSkills = Object.values({ ...specialSkills.cat, ...specialSkills.mouse });
-        R = allSpecialSkills.find((specialSkill) => specialSkill.name === singleItem.name)?.aliases;
-      }
+      R = specialSkill?.aliases;
     } else if (singleItem.type == 'item') {
       R = items[singleItem.name]?.aliases;
     } else if (singleItem.type == 'entity') {

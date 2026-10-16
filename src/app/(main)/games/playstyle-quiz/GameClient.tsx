@@ -151,12 +151,12 @@ export default function PlaystyleQuizClient({ description, characters: charsSnap
         </div>
       )}
 
-      {phase === 'result' && result && (
+      {phase === 'result' && result && faction && (
         <div className='space-y-8'>
           <ResultCard
             match={result.topMatch}
             character={result.character!}
-            faction={faction!}
+            faction={faction}
             isDarkMode={isDarkMode}
             similarMatches={result.similarMatches}
             allCharacters={playableCharacters}
@@ -165,7 +165,7 @@ export default function PlaystyleQuizClient({ description, characters: charsSnap
             <ShareButton
               getShareText={() =>
                 generateQuizShareText(
-                  FACTION_FULL_NAMES[faction ?? 'mouse'],
+                  FACTION_FULL_NAMES[faction],
                   result.topMatch.characterId,
                   result.similarMatches.map((match) => match.characterId)
                 )
