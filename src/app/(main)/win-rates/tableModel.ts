@@ -8,6 +8,20 @@ export type SortColumn = 'pickRateNum' | 'winRateNum' | 'banRateNum';
 export type SortDirection = 'asc' | 'desc';
 export type DisplayRow = WinRateRow & { no: number; groupStart: boolean };
 
+export function getWinRateColor(rate: number): string {
+  const clampedRate = Math.min(72, Math.max(28, rate));
+  if (clampedRate <= 35) {
+    return `color-mix(in oklab, var(--wiki-win-rate-lowest), var(--wiki-win-rate-low) ${((clampedRate - 28) / 7) * 100}%)`;
+  }
+  if (clampedRate <= 50) {
+    return `color-mix(in oklab, var(--wiki-win-rate-low), var(--wiki-win-rate-mid) ${((clampedRate - 35) / 15) * 100}%)`;
+  }
+  if (clampedRate <= 65) {
+    return `color-mix(in oklab, var(--wiki-win-rate-mid), var(--wiki-win-rate-high) ${((clampedRate - 50) / 15) * 100}%)`;
+  }
+  return `color-mix(in oklab, var(--wiki-win-rate-high), var(--wiki-win-rate-highest) ${((clampedRate - 65) / 7) * 100}%)`;
+}
+
 type WinRateColumn = {
   key: ColumnKey;
   label: string;

@@ -2,7 +2,30 @@ import type { FactionId } from '@/data/types';
 import { buildWinRateCharacterLookup } from '@/data/winRates/characterLookup';
 import { normalizeWinRateRows } from '@/data/winRates/normalize';
 
-import { getWinRateDisplayRows, toWinRatesCsv, WIN_RATE_COLUMNS } from './tableModel';
+import {
+  getWinRateColor,
+  getWinRateDisplayRows,
+  toWinRatesCsv,
+  WIN_RATE_COLUMNS,
+} from './tableModel';
+
+it.each([
+  [0, 'lowest', 'low', 0],
+  [28, 'lowest', 'low', 0],
+  [31.5, 'lowest', 'low', 50],
+  [35, 'lowest', 'low', 100],
+  [42.5, 'low', 'mid', 50],
+  [50, 'low', 'mid', 100],
+  [57.5, 'mid', 'high', 50],
+  [65, 'mid', 'high', 100],
+  [68.5, 'high', 'highest', 50],
+  [72, 'high', 'highest', 100],
+  [100, 'high', 'highest', 100],
+] as const)('maps %s%% to the clamped OKLab win-rate scale', (rate, from, to, weight) => {
+  expect(getWinRateColor(rate)).toBe(
+    `color-mix(in oklab, var(--wiki-win-rate-${from}), var(--wiki-win-rate-${to}) ${weight}%)`
+  );
+});
 
 it('sorts within rank and faction groups, resets numbering, and leaves source rows intact', () => {
   const rows = normalizeWinRateRows(

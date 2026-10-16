@@ -20,6 +20,7 @@ import SectionHeader from '@/components/ui/SectionHeader';
 import Link from '@/components/Link';
 
 import {
+  getWinRateColor,
   getWinRateDisplayRows,
   sanitizeFileName,
   toWinRatesCsv,
@@ -325,11 +326,8 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
                               </Link>
                             ) : column.key === 'winRate' ? (
                               <span
-                                className={
-                                  row.winRateNum >= 50
-                                    ? 'font-semibold text-green-600 dark:text-green-400'
-                                    : 'text-red-600 dark:text-red-400'
-                                }
+                                className='font-semibold tabular-nums'
+                                style={{ color: getWinRateColor(row.winRateNum) }}
                               >
                                 {content}
                               </span>
@@ -391,8 +389,18 @@ export default function WinRatesClient({ description, characterLookup }: WinRate
                       >
                         <td className={cellClass}>{getRankLabel(summary.rank)}</td>
                         <td className={cellClass}>{summary.teamType}</td>
-                        <td className={cellClass}>{summary.catWin}</td>
-                        <td className={cellClass}>{summary.mouseWin}</td>
+                        <td
+                          className={cn(cellClass, 'font-semibold tabular-nums')}
+                          style={{ color: getWinRateColor(parseFloat(summary.catWin)) }}
+                        >
+                          {summary.catWin}
+                        </td>
+                        <td
+                          className={cn(cellClass, 'font-semibold tabular-nums')}
+                          style={{ color: getWinRateColor(parseFloat(summary.mouseWin)) }}
+                        >
+                          {summary.mouseWin}
+                        </td>
                         {showPercent && <td className={cellClass}>{summary.percent || '-'}</td>}
                       </tr>
                     );

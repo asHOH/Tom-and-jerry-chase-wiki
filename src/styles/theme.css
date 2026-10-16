@@ -25,6 +25,12 @@
   --wiki-border: var(--color-gray-200);
   /* Default keyboard focus indicator */
   --wiki-focus: var(--color-blue-500);
+  /* Win-rate text anchors at 28%, 35%, 50%, 65%, and 72%. */
+  --wiki-win-rate-lowest: #d00020;
+  --wiki-win-rate-low: #b91c1c;
+  --wiki-win-rate-mid: #854d0e;
+  --wiki-win-rate-high: #166534;
+  --wiki-win-rate-highest: #007a36;
   --nav-z-index: 9999;
   --nav-height: 56px;
   --offline-banner-height: 40px;
@@ -54,6 +60,11 @@
   --wiki-muted-foreground: var(--color-gray-400);
   --wiki-border: var(--color-slate-700);
   --wiki-focus: var(--color-blue-400);
+  --wiki-win-rate-lowest: #ff7373;
+  --wiki-win-rate-low: #fca5a5;
+  --wiki-win-rate-mid: #fde047;
+  --wiki-win-rate-high: #86efac;
+  --wiki-win-rate-highest: #22e880;
   color-scheme: dark;
 }
 
